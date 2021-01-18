@@ -43,7 +43,6 @@ DFSearch::DFSearch(const QString &searchPath, void *parent)
     app->config->locations = nullptr;
     g_mutex_init(&app->mutex);
     app->config->locations = g_list_append(app->config->locations, searchPath.toLocal8Bit().data());
-    load_database(app);//更新数据库
     app->pool = fsearch_thread_pool_init(); //初始化线程池
     app->search = db_search_new(fsearch_application_get_thread_pool(app));
 }
@@ -75,6 +74,8 @@ void DFSearch::searchByKeyWord(const QString &key, void (*callback)(void *, void
 {
     // 防止在db_search_results_clear中触发断言，导致文管退出，先自行判断一下
     if (app->search == nullptr) return;
+
+    load_database(app, &state);//加载数据库
     db_search_results_clear(app->search);
     Database *db = app->db;
     if (!db_try_lock(db)) {
@@ -98,6 +99,11 @@ void DFSearch::searchByKeyWord(const QString &key, void (*callback)(void *, void
     db_unlock(db);
     cbFunc = callback;
     return ;
+}
+
+void DFSearch::stop()
+{
+    state = false;
 }
 
 void DFSearch::fsearch_application_window_update_results(void *data, void *sender)

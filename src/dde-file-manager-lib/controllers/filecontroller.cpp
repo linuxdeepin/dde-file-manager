@@ -404,17 +404,17 @@ QString printList(BTreeNode *pNode)
     return fullPath;
 }
 
-class DFMAnythingDirIterator : public DDirIterator
+class DFMFSearchDirIterator : public DDirIterator
 {
 public:
-    DFMAnythingDirIterator(const QString &path, const QString &k)
+    DFMFSearchDirIterator(const QString &path, const QString &k)
         : keyword(k)
         , dir(path)
     {
         dfsearch = new DFSearch(path, this);
     }
 
-    ~DFMAnythingDirIterator() override
+    ~DFMFSearchDirIterator() override
     {
         if (dfsearch) {
             delete dfsearch;
@@ -427,7 +427,7 @@ public:
         if (!self || !back) {
             return;
         }
-        DFMAnythingDirIterator *it = static_cast<DFMAnythingDirIterator *>(self);
+        DFMFSearchDirIterator *it = static_cast<DFMFSearchDirIterator *>(self);
         DatabaseSearch *result = static_cast<DatabaseSearch *>(back);
         if (!result)
             return;
@@ -457,9 +457,9 @@ public:
                     }
                 }
             }
-            it->mDone = true;
             qDebug() << "-------callback:" << num_results;
         }
+        it->mDone = true;
     }
 
     DUrl next() override
@@ -485,8 +485,8 @@ public:
         }
         if (!resultinit) {
             int i = 0;
-            while (1) {
-                std::this_thread::sleep_for(std::chrono::seconds(2));
+            while (!closed) {
+                std::this_thread::sleep_for(std::chrono::seconds(1));
                 if (mDone || i++ > 10) {
                     break;
                 }
@@ -517,6 +517,13 @@ public:
     {
         return DUrl::fromLocalFile(dir.absolutePath());
     }
+
+    void close() override
+    {
+        closed = true;
+        if (dfsearch)
+            dfsearch->stop();
+    }
 private:
     QString keyword;
     mutable bool resultinit = false;
@@ -526,6 +533,7 @@ private:
     mutable QStringList searchResults;
 
     mutable bool mDone = false;
+    bool closed = false;
     DFSearch *dfsearch = nullptr;
     QDir dir;
     QFileInfo currentFileInfo;
@@ -549,6 +557,7 @@ public:
     DUrl fileUrl() const override;
     const DAbstractFileInfoPointer fileInfo() const override;
     DUrl url() const override;
+    void close() override;
 
     bool enableIteratorByKeyword(const QString &keyword) override;
 
@@ -1882,6 +1891,12 @@ DUrl FileDirIterator::url() const
     return iterator->url();
 }
 
+void FileDirIterator::close()
+{
+    if (iterator)
+        iterator->close();
+}
+
 bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 {
 #ifdef DISABLE_QUICK_SEARCH
@@ -1920,7 +1935,7 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
     if (iterator)
         delete iterator;
 
-    iterator = new DFMAnythingDirIterator(pathForSearching, keyword);
+    iterator = new DFMFSearchDirIterator(pathForSearching, keyword);
 
     return true;
 #endif

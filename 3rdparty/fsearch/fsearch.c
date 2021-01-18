@@ -35,7 +35,7 @@ enum {
 //static guint signals [LAST_SIGNAL];
 
 gpointer
-load_database (FsearchApplication*app);
+load_database (FsearchApplication*app, bool *state);
 
 Database *
 fsearch_application_get_db (FsearchApplication *fsearch)
@@ -89,7 +89,7 @@ fsearch_options_handler(FsearchApplication *gapp,
         fflush(stdout);
         gapp->config->update_database_on_launch = true;
 
-        load_database(gapp);
+        load_database(gapp, true);
         if (gapp->db) {
             db_save_locations (gapp->db);
             db_clear (gapp->db);
@@ -160,7 +160,7 @@ static inline void timer_stop()
 }
 
  gpointer
-load_database (FsearchApplication*app)
+load_database (FsearchApplication*app, bool *state)
 {
     if (!app->db) {
         // create new database
@@ -172,14 +172,14 @@ load_database (FsearchApplication*app)
         for (GList *l = app->config->locations; l != NULL; l = l->next) {
             char *data = strdup(l->data);
             if (app->config->update_database_on_launch) {
-                if (db_location_add (app->db, data, app->config, build_location_callback)) {
+                if (db_location_add (app->db, data, app->config, state, build_location_callback)) {
                     loaded = true;
                     build_new = true;
                 }
             }
             else {
                 if (!db_location_load (app->db, data)) {
-                    if (db_location_add (app->db, data, app->config, build_location_callback)) {
+                    if (db_location_add (app->db, data, app->config, state, build_location_callback)) {
                         loaded = true;
                         build_new = true;
                     }
@@ -209,7 +209,7 @@ load_database (FsearchApplication*app)
         if (app->config->locations) {
             for (GList *l = app->config->locations; l != NULL; l = l->next) {
                 char *data = strdup(l->data);
-                db_location_add (app->db, data, app->config, build_location_callback);
+                db_location_add (app->db, data, app->config, state, build_location_callback);
 
                 if (data){
                     free(data);

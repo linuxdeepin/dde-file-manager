@@ -41,6 +41,8 @@ public:
 
     void searchByKeyWord(const QString &key, void (*callback)(void *, void *));
 
+    void stop();
+
 private:
     static void fsearch_application_window_update_results(void *data, void *sender);
 
@@ -51,6 +53,7 @@ private:
     GPtrArray *results = nullptr;
     uint  num_results = 0;
     void *caller = nullptr;
+    bool state = true;
 };
 
 #endif
