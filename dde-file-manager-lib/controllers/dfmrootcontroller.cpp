@@ -179,6 +179,13 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         if (DUrl(gvfsmp->getRootFile()->uri()).scheme() == BURN_SCHEME) {
             continue;
         }
+        // fix bug 60719. 分区编辑器打开后，原本该被过滤的由 udisks2 控制的磁盘，现无法过滤了，导致缓存中的 udisks2 磁盘显示一次
+        // 在这里的 gvfs 里又显示一次，且数据内容不一致。
+        // 因此，在这里通过过滤 /meida/ 目录挂载点的方式，来过滤 udisks2 设备
+        if (gvfsmp->getRootFile()->uri().startsWith("file:///media")) {
+            continue;
+        }
+
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP);
