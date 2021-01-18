@@ -12,6 +12,7 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "singleton.h"
+#include "models/dfmrootfileinfo.h"
 
 #include <QLabel>
 #include <DPushButton>
@@ -48,8 +49,8 @@ public:
     void setupUi();
     void setDeviceProperty(DeviceProperty dp);
     void setCurrentDevice(const QString &dev);
+    void setCurrentFSByDev(const QString &dev);
     QString getCurrentDevice() const;
-    void updateBurnInfo();
     QString getVolTag();
 
     //fix: 根据光盘选择文件状态实时更新状态
@@ -62,9 +63,11 @@ private:
 
     QLabel *lb_mediatype = nullptr;
     QLabel *lb_available = nullptr;
+    QLabel *lb_udfsupport = nullptr;
     DPushButton *pb_burn = nullptr;
     QHBoxLayout *layout = nullptr;
     DFMOpticalMediaWidget *q_ptr;
+    QString curFS;
     QString curdev;
     QString strMntPath;
     QString defaultDiscName;
@@ -232,8 +235,8 @@ void DFMOpticalMediaWidget::setBurnCapacity(int status, QString strVolTag)
 void DFMOpticalMediaWidget::updateDiscInfo(QString dev)
 {
     Q_D(DFMOpticalMediaWidget);
+    d->setCurrentFSByDev(dev);
     d->setCurrentDevice(dev);
-
     //fix: 设置光盘容量属性
     DFMOpticalMediaWidget::setBurnCapacity(BCSA_BurnCapacityStatusAddMount, d->getVolTag());
 }
@@ -324,8 +327,10 @@ void DFMOpticalMediaWidgetPrivate::setupUi()
     q->setLayout(layout);
     layout->addWidget(lb_mediatype = new QLabel("<Media Type>"));
     layout->addWidget(lb_available = new QLabel("<Space Available>"));
+    layout->addWidget(lb_udfsupport = new QLabel(QObject::tr("It does not support burning UDF discs")));
     layout->addWidget(pb_burn = new DPushButton());
     pb_burn->setText(QObject::tr("Burn"));
+    lb_udfsupport->setVisible(false);
 
     pb_burn->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     lb_available->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -351,11 +356,17 @@ void DFMOpticalMediaWidgetPrivate::setDeviceProperty(DeviceProperty dp)
         {MediaType::BD_R, "BD-R"},
         {MediaType::BD_RE, "BD-RE"}
     };
-    //fix: 没有选择文件时防止误操作,故默认禁止操作
-    //pb_burn->setEnabled(dp.avail > 0);
-//    pb_burn->setEnabled(false);
+
     lb_available->setText(QObject::tr("Free Space %1").arg(FileUtils::formatSize(dp.avail)));
     lb_mediatype->setText(rtypemap[dp.media]);
+
+    if (curFS == "udf") {
+        lb_udfsupport->setVisible(true);
+        pb_burn->setEnabled(false);
+    } else {
+        lb_udfsupport->setVisible(false);
+        pb_burn->setEnabled(true);
+    }
 }
 
 void DFMOpticalMediaWidgetPrivate::setCurrentDevice(const QString &dev)
@@ -376,6 +387,12 @@ void DFMOpticalMediaWidgetPrivate::setCurrentDevice(const QString &dev)
     DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].bLoading = false;
 
     qDebug() << "get " << strKey << " catch path:" << cachePath;
+}
+
+void DFMOpticalMediaWidgetPrivate::setCurrentFSByDev(const QString &dev)
+{
+    DAbstractFileInfoPointer fi(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + dev.mid(QString("/dev/").length()) + "." SUFFIX_UDISKS)));
+    curFS = fi->extraProperties()["fsType"].toString().toLower();
 }
 
 QString DFMOpticalMediaWidgetPrivate::getCurrentDevice() const
