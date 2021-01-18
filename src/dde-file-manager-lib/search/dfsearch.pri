@@ -24,30 +24,30 @@
 #-------------------------------------------------
 HEADERS += \ 
     $$PWD/dfsearch.h \
-    $$PWD/fsearch/array.h \
-    $$PWD/fsearch/btree.h \
-    $$PWD/fsearch/database_search.h \
-    $$PWD/fsearch/database.h \
-    $$PWD/fsearch/fsearch_config.h \
-    $$PWD/fsearch/fsearch_limits.h \
-    $$PWD/fsearch/fsearch_thread_pool.h \
-    $$PWD/fsearch/fsearch.h \
-    $$PWD/fsearch/query.h \
-    $$PWD/fsearch/string_utils.h \
-    $$PWD/fsearch/utf8.h
+    $$PWD/../../../3rdparty/fsearch/array.h \
+    $$PWD/../../../3rdparty/fsearch/btree.h \
+    $$PWD/../../../3rdparty/fsearch/database_search.h \
+    $$PWD/../../../3rdparty/fsearch/database.h \
+    $$PWD/../../../3rdparty/fsearch/fsearch_config.h \
+    $$PWD/../../../3rdparty/fsearch/fsearch_limits.h \
+    $$PWD/../../../3rdparty/fsearch/fsearch_thread_pool.h \
+    $$PWD/../../../3rdparty/fsearch/fsearch.h \
+    $$PWD/../../../3rdparty/fsearch/query.h \
+    $$PWD/../../../3rdparty/fsearch/string_utils.h \
+    $$PWD/../../../3rdparty/fsearch/utf8.h
 
 SOURCES += \ 
     $$PWD/dfsearch.cpp \
-    $$PWD/fsearch/array.c \
-    $$PWD/fsearch/btree.c \
-    $$PWD/fsearch/database_search.c \
-    $$PWD/fsearch/database.c \
-    $$PWD/fsearch/fsearch_config.c \
-    $$PWD/fsearch/fsearch_thread_pool.c \
-    $$PWD/fsearch/fsearch.c \
-    $$PWD/fsearch/query.c \
-    $$PWD/fsearch/string_utils.c
+    $$PWD/../../../3rdparty/fsearch/array.c \
+    $$PWD/../../../3rdparty/fsearch/btree.c \
+    $$PWD/../../../3rdparty/fsearch/database_search.c \
+    $$PWD/../../../3rdparty/fsearch/database.c \
+    $$PWD/../../../3rdparty/fsearch/fsearch_config.c \
+    $$PWD/../../../3rdparty/fsearch/fsearch_thread_pool.c \
+    $$PWD/../../../3rdparty/fsearch/fsearch.c \
+    $$PWD/../../../3rdparty/fsearch/query.c \
+    $$PWD/../../../3rdparty/fsearch/string_utils.c
 
 CONFIG += link_pkgconfig
 
-INCLUDEPATH += $$PWD/fsearch
+INCLUDEPATH += $$PWD/../../../3rdparty/fsearch/
