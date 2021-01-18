@@ -3184,7 +3184,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
 
     //扩展菜单
-    DFileMenuManager::extendCustomMenu(menu, false, currentUrl() ,{},{});
+    DFileMenuManager::extendCustomMenu(menu, false, currentUrl() , {}, {}, true);
 
     connect(menu, &DFileMenu::triggered, this, [ = ](QAction * action) {
         qDebug() << "trigger action" << action->data();
@@ -3358,7 +3358,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 
     //扩展菜单
     if (customMenu)
-        DFileMenuManager::extendCustomMenu(menu, true, dirUrl, curUrl, realList);
+        DFileMenuManager::extendCustomMenu(menu, true, dirUrl, curUrl, realList, true);
 
     //断开连接，桌面优先处理
     //为了保证自动整理下右键菜单标记信息（需要虚拟路径）与右键取消共享文件夹（需要真是路径）无有冲突，

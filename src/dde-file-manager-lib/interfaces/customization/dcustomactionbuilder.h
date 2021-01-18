@@ -42,8 +42,8 @@ public:
     static DCustomActionDefines::ComboType checkFileCombo(const DUrlList &files);
     static QList<DCustomActionEntry> matchFileCombo(const QList<DCustomActionEntry> &rootActions,
                                                     DCustomActionDefines::ComboTypes type);
-    static void matchActions(const DUrlList &selects,
-                             QList<DCustomActionEntry> &targetActions,
+    static QList<DCustomActionEntry> matchActions(const DUrlList &selects,
+                             QList<DCustomActionEntry> oriActions,
                              bool onDesktop = false);
     static QPair<QString, QStringList> makeCommand(const QString &cmd, DCustomActionDefines::ActionArg arg,
                                const DUrl &dir, const DUrl& foucs, const DUrlList &files);
