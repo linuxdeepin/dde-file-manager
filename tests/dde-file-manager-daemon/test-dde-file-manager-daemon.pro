@@ -4,6 +4,11 @@
 #
 #-------------------------------------------------
 
+PRJ_FOLDER = $$PWD/../../
+SRC_FOLDER = $$PRJ_FOLDER/src
+DFM_DEAMON_SRC_FOLDER = $$SRC_FOLDER/dde-file-manager-daemon
+LIB_DFM_SRC_FOLDER = $$SRC_FOLDER/dde-file-manager-lib
+
 QT       += core dbus concurrent
 
 QT       -= gui
@@ -20,10 +25,11 @@ CONFIG(release, release|debug) {
 }
 CONFIG += c++11 link_pkgconfig
 
-LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager
+#LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager   #in test sh project
+LIBS += -L$$OUT_PWD/../../src/dde-file-manager-lib -ldde-file-manager  #in pro project
 
 CONFIG(debug, debug|release) {
-    DEPENDPATH += $$PWD/../dde-file-manager-lib
+    DEPENDPATH += $$LIB_DFM_SRC_FOLDER
     unix:QMAKE_RPATHDIR += $$OUT_PWD/../dde-file-manager-lib
 }
 
@@ -32,15 +38,16 @@ TEMPLATE = app
 #include(../utils/utils.pri)
 #include(../fileoperations/fileoperations.pri)
 
-INCLUDEPATH += dbusservice
-INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/.. \
-               $$PWD/../utils \
-               $$PWD/../dde-file-manager-lib/interfaces \
-               $$PWD/../dde-file-manager-lib/shutil
+INCLUDEPATH += $$DFM_DEAMON_SRC_FOLDER/dbusservice
+INCLUDEPATH += $$DFM_DEAMON_SRC_FOLDER  \
+               $$LIB_DFM_SRC_FOLDER  \
+               $$SRC_FOLDER/utils \
+               $$LIB_DFM_SRC_FOLDER/interfaces \
+               $$LIB_DFM_SRC_FOLDER/shutil
 
 DEFINES += QT_MESSAGELOGCONTEXT
 
-include(src.pri)
+include($$DFM_DEAMON_SRC_FOLDER/src.pri)
 
 target.path = /usr/bin
 
@@ -66,4 +73,4 @@ QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
 QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
 include(../../3rdparty/googletest/gtest_dependency.pri)
-include(tests/test.pri)
+include(test.pri)
