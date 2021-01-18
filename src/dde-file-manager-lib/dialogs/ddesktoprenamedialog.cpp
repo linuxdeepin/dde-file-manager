@@ -480,7 +480,7 @@ void DDesktopRenameDialog::onContentChangedForCustomzedSN(const QString &content
 
     std::string numberStr{ content.toStdString() };
     try {
-        std::stoull(numberStr);
+        Q_UNUSED(std::stoull(numberStr));
 
     } catch (const std::out_of_range &err) {
         (void)err;

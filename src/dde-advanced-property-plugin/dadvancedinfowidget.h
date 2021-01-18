@@ -38,7 +38,7 @@ class DAdvancedInfoWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit DAdvancedInfoWidget(QWidget *parent = 0, const QString& file = "");
+    explicit DAdvancedInfoWidget(QWidget *parent = nullptr, const QString &file = "");
     void initData();
     void initUI();
 
