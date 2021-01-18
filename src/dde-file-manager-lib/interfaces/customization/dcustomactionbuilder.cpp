@@ -119,8 +119,8 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchFileCombo(const QList<DCust
     return ret;
 }
 
-void DCustomActionBuilder::matchActions(const DUrlList &selects,
-                                        QList<DCustomActionEntry> &targetActions,
+QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const DUrlList &selects,
+                                        QList<DCustomActionEntry> oriActions,
                                         bool onDesktop)
 {
     //todo：细化功能颗粒度，一个函数尽量专职一件事
@@ -154,7 +154,8 @@ void DCustomActionBuilder::matchActions(const DUrlList &selects,
          * 归档管理器打开则会被作为解压
         */
 
-        QStringList fileMimeTypes, fileMimeTypesNoParent;
+        QStringList fileMimeTypes;
+        QStringList fileMimeTypesNoParent;
         fileMimeTypes.append(fileInfo->mimeType().name());
         fileMimeTypes.append(fileInfo->mimeType().aliases());
         const QMimeType &mt = fileInfo->mimeType();
@@ -163,20 +164,20 @@ void DCustomActionBuilder::matchActions(const DUrlList &selects,
         fileMimeTypes.removeAll({});
         fileMimeTypesNoParent.removeAll({});
 
-        for (auto it = targetActions.begin(); it != targetActions.end();) {
+        for (auto it = oriActions.begin(); it != oriActions.end();) {
             DCustomActionEntry &tempAction = *it;
-            auto temppppp = QString("%1_%2").arg(it->data().name()).arg(it->fileCombo());
+
             //协议，仅桌面显示，后缀；todo: only 桌面和文管是否必要...
             if (!isSchemeSupport(tempAction, singleUrl)
                 || !isActionShouldShow(tempAction, onDesktop)
                 || !isSuffixSupport(tempAction, singleUrl, bex7x)) {
-                it = targetActions.erase(it);   //不支持的action移除
+                it = oriActions.erase(it);   //不支持的action移除
                 continue;
             }
 
             //不支持的mimetypes,使用不包含父类型的mimetype集合过滤
             if (isMimeTypeMatch(fileMimeTypesNoParent, tempAction.excludeMimeTypes())) {
-                it = targetActions.erase(it);
+                it = oriActions.erase(it);
                 continue;
             }
 
@@ -197,13 +198,15 @@ void DCustomActionBuilder::matchActions(const DUrlList &selects,
                 match = false;
 
             if (!match) {
-                it = targetActions.erase(it);
+                it = oriActions.erase(it);
                 continue;
             }
             ++it;
         }
 
     }
+
+    return oriActions;
 }
 
 /*!
