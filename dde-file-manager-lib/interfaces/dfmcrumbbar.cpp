@@ -587,6 +587,9 @@ bool DFMCrumbBar::eventFilter(QObject *watched, QEvent *event)
 
 void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
 {
+    if (DFMGlobal::isTablet())
+        return;
+
     Q_D(DFMCrumbBar);
     QModelIndex index = d->crumbListView.indexAt(point);
     if (!index.isValid())
