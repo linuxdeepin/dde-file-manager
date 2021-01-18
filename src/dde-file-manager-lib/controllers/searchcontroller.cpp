@@ -654,6 +654,8 @@ DUrl SearchDiriterator::url() const
 void SearchDiriterator::close()
 {
     closed = true;
+    if (it)
+        it->close();
 }
 
 SearchController::SearchController(QObject *parent)

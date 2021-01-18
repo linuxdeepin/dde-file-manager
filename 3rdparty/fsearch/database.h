@@ -21,68 +21,69 @@ typedef struct _DatabaseLocation DatabaseLocation;
 typedef struct _FsearchConfig FsearchConfig;
 
 void
-db_location_free (DatabaseLocation *location);
+db_location_free(DatabaseLocation *location);
 
 bool
-db_location_load (Database *db, const char *location_name);
+db_location_load(Database *db, const char *location_name);
 
 bool
-db_location_add (Database *db,
-                 const char *location_name,
-                 FsearchConfig *config,
-                 void (*callback)(const char *));
+db_location_add(Database *db,
+                const char *location_name,
+                FsearchConfig *config,
+                bool *state,
+                void (*callback)(const char *));
 
 bool
-db_location_remove (Database *db, const char *path);
+db_location_remove(Database *db, const char *path);
 
 bool
-db_location_write_to_file (DatabaseLocation *location, const char *fname);
+db_location_write_to_file(DatabaseLocation *location, const char *fname);
 
 BTreeNode *
-db_location_get_entries (DatabaseLocation *location);
+db_location_get_entries(DatabaseLocation *location);
 
 void
-db_free (Database *db);
+db_free(Database *db);
 
 Database *
-db_new ();
+db_new();
 
 gboolean
-db_list_append_node (BTreeNode *node,
-                     gpointer data);
+db_list_append_node(BTreeNode *node,
+                    gpointer data);
 
 void
-db_update_sort_index (Database *db);
+db_update_sort_index(Database *db);
 
 bool
-db_save_locations (Database *db);
+db_save_locations(Database *db);
 
 void
-db_update_entries_list (Database *db);
+db_update_entries_list(Database *db);
 
 void
-db_build_initial_entries_list (Database *db);
+db_build_initial_entries_list(Database *db);
 
 time_t
-db_get_timestamp (Database *db);
+db_get_timestamp(Database *db);
 
 uint32_t
-db_get_num_entries (Database *db);
+db_get_num_entries(Database *db);
 
 void
-db_unlock (Database *db);
+db_unlock(Database *db);
 
 void
-db_lock (Database *db);
+db_lock(Database *db);
 
 bool
-db_try_lock (Database *db);
+db_try_lock(Database *db);
 
 DynamicArray *
-db_get_entries (Database *db);
+db_get_entries(Database *db);
 
 void
-db_sort (Database *db);
+db_sort(Database *db);
 
 bool
-db_clear (Database *db);
+db_clear(Database *db);

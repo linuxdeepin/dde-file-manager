@@ -18,7 +18,7 @@
 //#include "glib_support.h"
 #include "database_search.h"
 
-struct _FsearchApplication{
+struct _FsearchApplication {
     Database *db;
     DatabaseSearch *search;
     FsearchConfig *config;
@@ -30,27 +30,27 @@ typedef struct _FsearchApplication FsearchApplication;
 
 
 void
-fsearch_update_database (FsearchApplication *fsearch);
+fsearch_update_database(FsearchApplication *fsearch);
 
 Database *
-fsearch_application_get_db (FsearchApplication *fsearch);
+fsearch_application_get_db(FsearchApplication *fsearch);
 
 FsearchConfig *
-fsearch_application_get_config (FsearchApplication *fsearch);
+fsearch_application_get_config(FsearchApplication *fsearch);
 
 FsearchThreadPool *
-fsearch_application_get_thread_pool (FsearchApplication *fsearch);
+fsearch_application_get_thread_pool(FsearchApplication *fsearch);
 
 void
-fsearch_application_activate (FsearchApplication *app);
+fsearch_application_activate(FsearchApplication *app);
 
 void
-fsearch_application_startup (FsearchApplication* app);
+fsearch_application_startup(FsearchApplication *app);
 
 gpointer
-load_database (FsearchApplication*app);
+load_database(FsearchApplication *app, bool *state);
 GThread *
-load_database_thread (FsearchApplication *app);
+load_database_thread(FsearchApplication *app);
 
 void
-fsearch_application_init (FsearchApplication *app);
+fsearch_application_init(FsearchApplication *app);
