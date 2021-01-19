@@ -69,12 +69,12 @@ bool RecentFileInfo::isDir() const
 
 bool RecentFileInfo::isReadable() const
 {
-    return true;
+    return permissions().testFlag(QFile::Permission::ReadUser);
 }
 
 bool RecentFileInfo::isWritable() const
 {
-    return false;
+    return permissions().testFlag(QFile::Permission::WriteUser);
 }
 
 bool RecentFileInfo::canIteratorDir() const
