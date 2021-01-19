@@ -4,53 +4,53 @@ minimum_perc = 80
 mode = developer
 
 [deepin-file-manager.dde-file-manager]
-file_filter = dde-file-manager/translations/dde-file-manager-app_<lang>.ts
-source_file = dde-file-manager/translations/dde-file-manager-app.ts
+file_filter = src/dde-file-manager/translations/dde-file-manager-app_<lang>.ts
+source_file = src/dde-file-manager/translations/dde-file-manager-app.ts
 source_lang = en
 type = QT
 
 [deepin-file-manager.dde-file-manager-lib]
-file_filter = dde-file-manager-lib/translations/dde-file-manager_<lang>.ts
-source_file = dde-file-manager-lib/translations/dde-file-manager.ts
+file_filter = src/dde-file-manager-lib/translations/dde-file-manager_<lang>.ts
+source_file = src/dde-file-manager-lib/translations/dde-file-manager.ts
 source_lang = en
 type = QT
 
 [deepin-file-manager.dde-disk-mount-plugin]
-file_filter = dde-dock-plugins/disk-mount/translations/dde-disk-mount-plugin_<lang>.ts
-source_file = dde-dock-plugins/disk-mount/translations/dde-disk-mount-plugin.ts
+file_filter = src/dde-dock-plugins/disk-mount/translations/dde-disk-mount-plugin_<lang>.ts
+source_file = src/dde-dock-plugins/disk-mount/translations/dde-disk-mount-plugin.ts
 source_lang = en
 type = QT
 
 [deepin-file-manager.dde-desktop]
-file_filter = dde-desktop/translations/dde-desktop_<lang>.ts
-source_file = dde-desktop/translations/dde-desktop.ts
+file_filter = src/dde-desktop/translations/dde-desktop_<lang>.ts
+source_file = src/dde-desktop/translations/dde-desktop.ts
 source_lang = en
 type = QT
 
 [deepin-file-manager.dde-file-manager-desktop]
-file_filter = dde-file-manager/translations/dde-file-manager-desktop/desktop_<lang>.ts
-source_file = dde-file-manager/translations/dde-file-manager-desktop/desktop.ts
-preTranslate_file = dde-file-manager/dde-file-manager.desktop
+file_filter = src/dde-file-manager/translations/dde-file-manager-desktop/desktop_<lang>.ts
+source_file = src/dde-file-manager/translations/dde-file-manager-desktop/desktop.ts
+preTranslate_file = src/dde-file-manager/dde-file-manager.desktop
 source_lang = en
 type = QT
 
 [deepin-file-manager.dde-computer-desktop]
-file_filter = dde-desktop/translations/dde-computer-desktop/desktop_<lang>.ts
-source_file = dde-desktop/translations/dde-computer-desktop/desktop.ts
-preTranslate_file = dde-desktop/data/applications/dde-computer.desktop
+file_filter = src/dde-desktop/translations/dde-computer-desktop/desktop_<lang>.ts
+source_file = src/dde-desktop/translations/dde-computer-desktop/desktop.ts
+preTranslate_file = src/dde-desktop/data/applications/dde-computer.desktop
 source_lang = en
 type = QT
 
 [deepin-file-manager.dde-trash-desktop]
-file_filter = dde-desktop/translations/dde-trash-desktop/desktop_<lang>.ts
-source_file = dde-desktop/translations/dde-trash-desktop/desktop.ts
-preTranslate_file = dde-desktop/data/applications/dde-trash.desktop
+file_filter = src/dde-desktop/translations/dde-trash-desktop/desktop_<lang>.ts
+source_file = src/dde-desktop/translations/dde-trash-desktop/desktop.ts
+preTranslate_file = src/dde-desktop/data/applications/dde-trash.desktop
 source_lang = en
 type = QT
 
 [deepin-file-manager.dde-home-desktop]
-file_filter = dde-desktop/translations/dde-home-desktop/desktop_<lang>.ts
-source_file = dde-desktop/translations/dde-home-desktop/desktop.ts
-preTranslate_file = dde-desktop/data/applications/dde-home.desktop
+file_filter = src/dde-desktop/translations/dde-home-desktop/desktop_<lang>.ts
+source_file = src/dde-desktop/translations/dde-home-desktop/desktop.ts
+preTranslate_file = src/dde-desktop/data/applications/dde-home.desktop
 source_lang = en
 type = QT
