@@ -1448,7 +1448,7 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
             if (status == MOUNT_PASSWORD_WRONG && bshow) {
                 DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                              tr("Mounting device error"), tr("Wrong username or password"));
-            } else if (status == MOUNT_CANCEL) {
+            } else if (status == MOUNT_CANCEL && bshow) {
                 DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                              tr("Mounting device error"), tr(error->message));
             }
