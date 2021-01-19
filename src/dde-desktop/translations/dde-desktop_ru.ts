@@ -124,12 +124,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="925"/>
         <source>Loading wallpapers...</source>
-        <translation type="unfinished"/>
+        <translation>Загрузка обоев...</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="928"/>
         <source>Loading screensavers...</source>
-        <translation type="unfinished"/>
+        <translation>Загрузка заставок...</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="983"/>
@@ -152,12 +152,12 @@
     <message>
         <location filename="../view/watermaskframe.cpp" line="253"/>
         <source>Not authorized</source>
-        <translation type="unfinished"/>
+        <translation>Не авторизован</translation>
     </message>
     <message>
         <location filename="../view/watermaskframe.cpp" line="261"/>
         <source>In trial period</source>
-        <translation type="unfinished"/>
+        <translation>В испытательном периоде</translation>
     </message>
 </context>
 </TS>

@@ -45,7 +45,7 @@
     </message>
     <message>
         <source>Cannot find the mounted device</source>
-        <translation type="unfinished"/>
+        <translation>S’gjendet pajisje e montuar</translation>
     </message>
     <message>
         <source>Disks</source>

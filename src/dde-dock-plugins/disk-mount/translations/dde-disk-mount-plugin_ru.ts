@@ -2,52 +2,88 @@
 <context>
     <name>DeepinStorage</name>
     <message>
-        <location filename="../dattachedudisks2device.cpp" line="100"/>
-        <location filename="../dattachedudisks2device.cpp" line="115"/>
         <source>%1 Volume</source>
         <translation>%1 Объём</translation>
     </message>
 </context>
 <context>
+    <name>DiskControlItem</name>
+    <message>
+        <source>Unknown</source>
+        <translation>Неизвестно</translation>
+    </message>
+</context>
+<context>
     <name>DiskControlWidget</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="215"/>
-        <location filename="../diskcontrolwidget.cpp" line="223"/>
-        <location filename="../diskcontrolwidget.cpp" line="294"/>
-        <location filename="../diskcontrolwidget.cpp" line="455"/>
-        <source>Disk is busy, cannot eject now</source>
-        <translation> Диск занят и не может быть извлечён сейчас</translation>
+        <source>dde-file-manager</source>
+        <translation>dde-file-manager</translation>
     </message>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="469"/>
-        <source>dde-file-manager</source>
-        <translation type="unfinished"/>
+        <source>The device was not safely removed</source>
+        <translation>Устройство не было безопасно удалено</translation>
+    </message>
+    <message>
+        <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
+        <translation>В следующий раз нажмите &quot;Безопасное удаление&quot;, а затем отключите его</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>Устройство занято, сейчас извлечь нельзя</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>Устройство занято, сейчас удалить нельзя</translation>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>Не могу отключить устройство</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>Диск смонтирован пользователем &quot;%1&quot;, вы не сможете его размонтировать.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation>Не удается найти подключенное устройство</translation>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>Диски</translation>
     </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>
     <message>
-        <location filename="../diskmountplugin.cpp" line="49"/>
         <source>Disk</source>
         <translation>Диск</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="104"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="111"/>
-        <source>Unmount all</source>
-        <translation>Отмонтировать всё</translation>
+        <source>Eject all</source>
+        <translation>Извлечь все</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="390"/>
-        <source>Device has been removed</source>
-        <translation>Устройство было удалено</translation>
+        <source>The device has been safely removed</source>
+        <translation>Устройство было безопасно удалено</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Доступ закрыт</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>У вас нет разрешения на доступ к этой папке</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Подтвердить</translation>
     </message>
 </context>
 </TS>

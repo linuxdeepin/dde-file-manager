@@ -45,7 +45,7 @@
     </message>
     <message>
         <source>Cannot find the mounted device</source>
-        <translation type="unfinished"/>
+        <translation>No es pot trobar el dispositiu muntat.</translation>
     </message>
     <message>
         <source>Disks</source>

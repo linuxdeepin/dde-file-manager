@@ -29,11 +29,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation>El disco está ocupado, no se puede expulsar ahora</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"/>
+        <translation>El dispositivo está ocupado, no se puede quitar ahora</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -45,7 +45,7 @@
     </message>
     <message>
         <source>Cannot find the mounted device</source>
-        <translation type="unfinished"/>
+        <translation>No puedo encontrar el dispositivo montado</translation>
     </message>
     <message>
         <source>Disks</source>

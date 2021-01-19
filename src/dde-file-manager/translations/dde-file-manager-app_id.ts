@@ -2,22 +2,14 @@
 <context>
     <name>Application</name>
     <message>
-        <source>Deepin File Manager</source>
-        <translation type="vanished">Deepin File Manager</translation>
-    </message>
-    <message>
-        <location filename="../main.cpp" line="108"/>
+        <location filename="../main.cpp" line="167"/>
         <source>File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Manajer Berkas</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="112"/>
+        <location filename="../main.cpp" line="171"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation type="vanished">Manajer berkas merupakan alat manajemen berkas yang dikembangkan oleh Deepin Technology, memiliki fitur pencarian, penyalinan, hapus, kompresi/dekompresi, properti berkas dan fungsi manajemen berkas lainnya.</translation>
+        <translation>Manajer Berkas merupakan perkakas manajemen berkas yang mudah digunakan, meliputi fungsi pencarian, penyalinan, sampah, kompresi/dekompresi, properti berkas dan fungsi berguna lainnya.</translation>
     </message>
 </context>
 </TS>
