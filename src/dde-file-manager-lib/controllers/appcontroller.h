@@ -38,6 +38,7 @@ class FileController;
 class FileMonitor;
 class DRenameBar;
 class FileBatchProcess;
+class DefenderInterface;
 
 /**
  * @brief The UnmountWorker class 卸载操作类 用于在子线程执行卸载操作
@@ -109,10 +110,12 @@ public slots:
     void actionMount(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void doActionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionRestore(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionRestoreAll(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionEject(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void doSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionOpenInTerminal(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &event);
@@ -176,6 +179,7 @@ private:
     void createUserShareManager();
     void createDBusInterface();
     void showErrorDialog(const QString &title, const QString &content);
+    void popQueryScanningDialog(QObject *object, std::function<void()> onStop);
 
     QSharedPointer<DFMEvent> m_fmEvent;
     static QPair<DUrl, quint64> selectionAndRenameFile;        //###: for creating new file.
@@ -185,6 +189,8 @@ private:
     IntrospectableInterface *m_introspectableInterface = nullptr;
     QThread m_unmountThread;
     UnmountWorker *m_unmountWorker;
+    DefenderInterface *m_defenderInterface;
+
     volatile enum {UnkownIFS,NoneIFS,CreatingIFS,VaildIFS} m_statDBusInterface = UnkownIFS; //dbus接口创建状态
 
     friend class FileController;

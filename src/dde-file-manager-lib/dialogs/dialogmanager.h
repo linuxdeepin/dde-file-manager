@@ -154,6 +154,7 @@ public slots:
     void showBluetoothTransferDlg(const DUrlList &files);
 
     void showFormatDialog(const QString &devId); // sp3 feat 接入usb设备不能读取文件系统、存储信息、或是无法解锁的加密设备时，提示用户格式化
+    int showStopScanningDialog();              // 显示设备正在被扫描的提示
 
     /**
     * DUrlListCompare 用于判断传入url列表是否与m_urlList一样

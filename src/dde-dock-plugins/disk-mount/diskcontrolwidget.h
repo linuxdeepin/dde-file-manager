@@ -37,6 +37,9 @@ class DFMVfsManager;
 DFM_END_NAMESPACE
 
 class DGioVolumeManager;
+class DefenderInterface;
+class DiskControlItem;
+
 class DiskControlWidget : public QScrollArea
 {
     Q_OBJECT
@@ -49,6 +52,7 @@ public:
     DDiskManager*  startMonitor();
     void doStartupAutoMount();
     void unmountAll();
+    void doUnMountAll();
 
     const QList<QExplicitlySharedDataPointer<DGioMount> > getVfsMountList();
     static void NotifyMsg(QString msg);
@@ -56,6 +60,9 @@ public:
 
 signals:
     void diskCountChanged(const int count) const;
+
+private:
+    void popQueryScanningDialog(QObject *object, std::function<void()> onStop);
 
 private slots:
     void onDriveConnected(const QString &deviceId);
@@ -67,6 +74,7 @@ private slots:
     void onVolumeRemoved();
     void onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount> mount);
     void onBlockDeviceAdded(const QString &path);
+    void onItemUmountClicked(DiskControlItem *item);
 
 private:
     QVBoxLayout *m_centralLayout;
@@ -76,7 +84,7 @@ private:
     bool m_autoMountAndOpenEnable = false; // 配置项中的挂载并打开
 
     DDiskManager *m_diskManager;
-
+    DefenderInterface *m_defenderInterface;
     QScopedPointer<DGioVolumeManager> m_vfsManager;
 };
 

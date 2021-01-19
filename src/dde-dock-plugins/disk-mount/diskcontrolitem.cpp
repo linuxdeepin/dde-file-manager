@@ -138,8 +138,8 @@ DiskControlItem::DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QW
     setLayout(mainLay);
     setObjectName("DiskItem");
 
-    connect(m_unmountButton, &DIconButton::clicked, this, [this] {
-        attachedDevice->detach();
+    connect(m_unmountButton, &DIconButton::clicked, this, [this]() {
+        emit umountClicked(this);
     });
 
     if (gsGlobal->value("GenericAttribute", "DisableNonRemovableDeviceUnmount", false).toBool() && !attachedDevice->detachable()) {
@@ -168,6 +168,11 @@ void DiskControlItem::refreshIcon()
     m_unmountButton->setIcon(QIcon::fromTheme("dfm_unmount"));
 }
 
+void DiskControlItem::detachDevice()
+{
+    attachedDevice->detach();
+}
+
 QString DiskControlItem::tagName() const
 {
     return m_tagName;
@@ -176,6 +181,11 @@ QString DiskControlItem::tagName() const
 void DiskControlItem::setTagName(const QString &tagName)
 {
     m_tagName = tagName;
+}
+
+QUrl DiskControlItem::mountPointUrl()
+{
+    return attachedDevice->mountpointUrl();
 }
 
 QString DiskControlItem::sizeString(const QString &str)

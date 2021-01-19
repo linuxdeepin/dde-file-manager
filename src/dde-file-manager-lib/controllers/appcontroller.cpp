@@ -52,6 +52,7 @@
 #include "app/define.h"
 
 #include "interfaces/dfmstandardpaths.h"
+#include "interfaces/defenderinterface.h"
 #include "shutil/fileutils.h"
 #include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
@@ -682,7 +683,37 @@ void AppController::actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &even
     });
 }
 
+void AppController::popQueryScanningDialog(QObject *object, std::function<void()> onStop)
+{
+    QPointer<QObject> pobject = object;
+    int code = dialogManager->showStopScanningDialog();
+    // 用户选择'终止'
+    if (code > 0 && pobject)
+        onStop();
+}
+
 void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
+{
+    const DUrl &fileUrl = event->url();
+    DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
+    if (fi) {
+        DUrl url = fi->redirectedFileUrl();
+        if (url.isValid() && m_defenderInterface && m_defenderInterface->isScanning(url)) {
+            popQueryScanningDialog(this, [this, event, url](){
+                if (m_defenderInterface->stopScanning(url))
+                    doActionUnmount(event);
+                else
+                    qWarning() << "stopping scanning timeout.";
+            });
+            // 需要用户确认时弹框，提前结束卸载流程
+            return;
+        }
+    }
+    // 其它情况直接走卸载流程
+    doActionUnmount(event);
+}
+
+void AppController::doActionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
 
@@ -808,6 +839,27 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 }
 
 void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event)
+{
+    const DUrl &fileUrl = event->url();
+    DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
+    if (fi) {
+        DUrl url = fi->redirectedFileUrl();
+        if (url.isValid() && m_defenderInterface && m_defenderInterface->isScanning(url)) {
+            popQueryScanningDialog(this, [this, event, url](){
+                if (m_defenderInterface->stopScanning(url))
+                    doSafelyRemoveDrive(event);
+                else
+                    qWarning() << "stopping scanning timeout.";
+            });
+            // 需要用户确认时弹框，提前结束卸载流程
+            return;
+        }
+    }
+    // 其它情况直接走卸载流程
+    doSafelyRemoveDrive(event);
+}
+
+void AppController::doSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
 
@@ -1418,6 +1470,8 @@ void AppController::initConnect()
     connect(this, &AppController::doSaveRemove, m_unmountWorker, &UnmountWorker::doSaveRemove);
 
     m_unmountThread.start();
+
+    m_defenderInterface = new DefenderInterface(this);
 }
 
 void AppController::createGVfSManager()

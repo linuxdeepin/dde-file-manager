@@ -243,7 +243,8 @@ HEADERS += \
     $$PWD/dialogs/private/dfmsettingdialog_p.h \
     $$PWD/interfaces/plugins/private/dfmviewfactory_p.h \
     $$PWD/models/dfmrootfileinfo_p.h \
-    $$PWD/interfaces/private/dfmcrumbbar_p.h
+    $$PWD/interfaces/private/dfmcrumbbar_p.h \
+    $$PWD/interfaces/defenderinterface.h \
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
@@ -451,7 +452,8 @@ SOURCES += \
     $$PWD/bluetooth/bluetoothtransdialog.cpp \
     $$PWD/interfaces/drootfilemanager.cpp \
     $$PWD/interfaces/dgvfsfileinfo.cpp \
-    $$PWD/shutil/checknetwork.cpp
+    $$PWD/shutil/checknetwork.cpp \
+    $$PWD/interfaces/defenderinterface.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h
