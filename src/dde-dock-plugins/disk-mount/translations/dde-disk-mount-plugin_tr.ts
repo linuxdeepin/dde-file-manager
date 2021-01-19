@@ -29,11 +29,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation>Aygıt meşgul, şimdi çıkarılamıyor</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"/>
+        <translation>Aygıt meşgul, şimdi çıkarılamaz</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -45,7 +45,7 @@
     </message>
     <message>
         <source>Cannot find the mounted device</source>
-        <translation type="unfinished"/>
+        <translation>Takılı aygıt bulunamıyor</translation>
     </message>
     <message>
         <source>Disks</source>

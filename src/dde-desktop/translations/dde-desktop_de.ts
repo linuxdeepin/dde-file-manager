@@ -157,7 +157,7 @@
     <message>
         <location filename="../view/watermaskframe.cpp" line="261"/>
         <source>In trial period</source>
-        <translation type="unfinished"/>
+        <translation>In der Testphase</translation>
     </message>
 </context>
 </TS>

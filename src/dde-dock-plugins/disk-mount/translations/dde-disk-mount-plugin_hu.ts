@@ -45,7 +45,7 @@
     </message>
     <message>
         <source>Cannot find the mounted device</source>
-        <translation type="unfinished"/>
+        <translation>Nem található a csatlakoztatott eszköz</translation>
     </message>
     <message>
         <source>Disks</source>
