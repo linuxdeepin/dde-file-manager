@@ -896,168 +896,168 @@
 <context>
     <name>DFileCopyMoveJob</name>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="211"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="212"/>
         <source>Permission error</source>
         <translation>权限错误</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="213"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="214"/>
         <source>The action is denied</source>
         <translation>文件不支持此操作</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="219"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="220"/>
         <source>Failed to open the file</source>
         <translation>文件打开失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="221"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="222"/>
         <source>Failed to read the file</source>
         <translation>文件内容读取失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="223"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="224"/>
         <source>Failed to write the file</source>
         <translation>文件内容写入失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="225"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="226"/>
         <source>Failed to create the directory</source>
         <translation>目录创建失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="227"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="228"/>
         <source>Failed to delete the file</source>
         <translation>文件删除失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="229"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="230"/>
         <source>Failed to move the file</source>
         <translation>文件移动失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="231"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="232"/>
         <source>Original file does not exist</source>
         <translation>源文件不存在</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="233"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="234"/>
         <source>Failed, file size must be less than 4GB</source>
         <translation>操作失败，文件大小已超出上限值4GB！</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="235"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="236"/>
         <source>Not enough free space on the target disk</source>
         <translation>目标磁盘剩余空间不足</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="237"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="238"/>
         <source>File integrity was damaged</source>
         <translation>文件完整性检查失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="239"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="240"/>
         <source>The target device is read only</source>
         <translation>目标设备为只读</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="241"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="242"/>
         <source>Target folder is inside the source folder</source>
         <translation>目标文件夹位于源文件夹内</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="656"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="657"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1004"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1005"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation>目录打开失败，原因：文件名过长</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1154"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1622"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1886"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2032"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1163"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1631"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1895"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2041"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation>文件打开失败，原因：文件名过长</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3016"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3092"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3025"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3101"/>
         <source>Failed to write the file, cause:</source>
         <translation>文件内容写入失败，原因：</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3861"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3870"/>
         <source>Syncing data</source>
         <translation>数据同步中</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3861"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3870"/>
         <source>Ready to complete</source>
         <translation>即将完成，请稍候</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1014"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1015"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>目录创建失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1166"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1197"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1634"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1666"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1899"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2731"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1175"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1206"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1643"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1675"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1908"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2740"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>文件打开失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1193"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1662"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1202"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1671"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>文件打开失败，原因：权限不足</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1303"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1963"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1312"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1972"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>文件内容读取失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1362"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1437"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2808"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2899"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1371"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1446"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2817"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2908"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>文件内容写入失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1561"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1570"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>文件完整性检查失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2045"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2064"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2054"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2073"/>
         <source>Failed to open the file, cause: </source>
         <translation>文件打开失败，原因：</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2134"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2143"/>
         <source>Failed to read the file, cause: </source>
         <translation>文件内容读取失败，原因：</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2216"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2225"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>文件删除失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2310"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2319"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>创建链接失败，原因：%1</translation>
     </message>
@@ -1733,6 +1733,16 @@
         <location filename="../controllers/appcontroller.cpp" line="250"/>
         <source>Access denied</source>
         <translation>禁止访问</translation>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="1061"/>
+        <source>No permission</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="1062"/>
+        <source>You do not have permission to delete sub directory</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3379,15 +3389,20 @@
         <translation>文件已被移动或删除</translation>
     </message>
     <message>
+        <location filename="../interfaces/dfileinfo.cpp" line="841"/>
+        <source>You do not have permission to traverse files in it</source>
+        <translation>您没有权限遍历子文件</translation>
+    </message>
+    <message>
         <location filename="../controllers/appcontroller.cpp" line="250"/>
         <location filename="../interfaces/dfileinfo.cpp" line="837"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="845"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="851"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="850"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="856"/>
         <source>You do not have permission to access this folder</source>
         <translation>您没有权限访问该文件夹</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="855"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="861"/>
         <location filename="../models/masteredmediafileinfo.cpp" line="273"/>
         <location filename="../models/recentfileinfo.cpp" line="253"/>
         <location filename="../models/trashfileinfo.cpp" line="366"/>
@@ -3714,13 +3729,13 @@
         <translation>磁盘</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1690"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1699"/>
         <source>ftruncate error!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1716"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1740"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1725"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1749"/>
         <source>mmap file to memory fialed!</source>
         <translation type="unfinished"/>
     </message>
