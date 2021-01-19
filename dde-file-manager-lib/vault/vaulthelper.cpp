@@ -146,6 +146,11 @@ bool VaultHelper::killVaultTasks()
 
 bool VaultHelper::isVaultEnabled()
 {
+    //! 设备判断：平板中屏蔽保险箱
+    if (DFMGlobal::isTablet())
+        return false;
+
+    //! 版本判断
     if(!DSysInfo::isCommunityEdition()){    // 如果不是社区版
         DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
         // 如果是专业版
