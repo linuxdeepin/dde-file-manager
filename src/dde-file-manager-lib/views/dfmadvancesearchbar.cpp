@@ -101,7 +101,10 @@ void DFMAdvanceSearchBar::initUI()
     auto createLabelCombo = [ = ](int index, const QString & labelText) {
         asbLabels[index] = new QLabel(labelText);
         asbCombos[index] = new QComboBox(this);
+#ifndef __arm__
+        /*针对ARM部分机器上搜索高级选项下拉框不能使用做特殊处理*/
         asbCombos[index]->setFocusPolicy(Qt::NoFocus);
+#endif
         asbLabels[index]->setBuddy(asbCombos[index]);
     };
 
@@ -113,7 +116,10 @@ void DFMAdvanceSearchBar::initUI()
     createLabelCombo(CREATE_DATE_RANGE, qApp->translate("DFMAdvanceSearchBar", "Time Created:"));
 
     resetBtn = new DCommandLinkButton(qApp->translate("DFMAdvanceSearchBar", "Reset"), this);
+#ifndef __arm__
+    /*针对ARM部分机器上搜索高级选项下拉框不能使用做特殊处理*/
     resetBtn->setFocusPolicy(Qt::NoFocus);
+#endif
 
     int leftLebelWidth = 80; //  qMin(asbLabels[SEARCH_RANGE]->width(), asbLabels[SIZE_RANGE]->width())
     int rightLebelWidth = 90;
