@@ -27,6 +27,7 @@
 #include "dattachedudisks2device.h"
 #include "dattachedvfsdevice.h"
 #include "models/dfmrootfileinfo.h"
+#include "interfaces/defenderinterface.h"
 #include "diskglobal.h"
 
 #include <dgiovolumemanager.h>
@@ -38,6 +39,7 @@
 #include <ddiskdevice.h>
 #include <dfmsettings.h>
 #include <dgiosettings.h>
+#include <DDialog>
 #include <DDesktopServices>
 #include <DGuiApplicationHelper>
 
@@ -50,6 +52,9 @@
 #include <DDBusSender>
 #define WIDTH           300
 
+DWIDGET_BEGIN_NAMESPACE
+class DDialog;
+DWIDGET_END_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 DFM_USE_NAMESPACE
@@ -79,6 +84,8 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
     viewport()->setAutoFillBackground(false);
 
     m_diskManager = new DDiskManager(this);
+    m_defenderInterface = new DefenderInterface(this);
+
     initConnect();
 }
 
@@ -198,7 +205,49 @@ bool isProtectedDevice(DBlockDevice *blk)
     return false;
 }
 
+// onStop 为用户选择 Stop 后的回调
+void DiskControlWidget::popQueryScanningDialog(QObject *object, std::function<void()> onStop)
+{
+    DDialog *d = new DDialog;
+    d->setTitle(QObject::tr("Scanning the device, stop it?")); // 正在扫描当前设备，是否终止扫描？
+    d->setAttribute(Qt::WA_DeleteOnClose);
+    Qt::WindowFlags flags = d->windowFlags();
+    d->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
+    d->setIcon(QIcon::fromTheme("dialog-error"));
+    d->addButton(QObject::tr("Cancel"), true, DDialog::ButtonRecommend);
+    d->addButton(QObject::tr("Stop")); // 终止
+    d->setMaximumWidth(640);
+    d->show();
+
+    QPointer<QObject> pobject = object;
+    QObject::connect(d, &DDialog::buttonClicked, d, [=](int index, const QString &text){
+        qInfo() << "index:" << index << ", Text:" << text;
+        // 用户点击终止扫描
+        if (index == 1) {
+            qInfo() << "user click \'Stop\'.";
+            if (pobject) {
+                onStop();
+            }
+        }
+    });
+}
+
 void DiskControlWidget::unmountAll()
+{
+    // 直接停止所有扫描
+    if (m_defenderInterface->isScanning(QUrl::fromLocalFile("/"))) {
+        popQueryScanningDialog(this, [this]() {
+            if (m_defenderInterface->stopScanning(QUrl::fromLocalFile("/")))
+                doUnMountAll();
+            else
+                NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time") );
+        });
+        return;
+    }
+    doUnMountAll();
+}
+
+void DiskControlWidget::doUnMountAll()
 {
     QStringList blockDevices = m_diskManager->blockDevices({});
 
@@ -349,6 +398,8 @@ void DiskControlWidget::onDiskListChanged()
 
             m_centralLayout->addWidget(item);
             addSeparateLine(1);
+
+            connect(item, &DiskControlItem::umountClicked, this, &DiskControlWidget::onItemUmountClicked);
         }
     }
 
@@ -518,6 +569,26 @@ void DiskControlWidget::onBlockDeviceAdded(const QString &path)
         }
         DDesktopServices::showFolder(QUrl::fromLocalFile(mountPoint));
     }
+}
+
+void DiskControlWidget::onItemUmountClicked(DiskControlItem *item)
+{
+    if (!item) {
+        qWarning() << "DiskControlWidget, item is null.";
+        return;
+    }
+
+    QUrl mountUrl = item->mountPointUrl();
+    if (m_defenderInterface->isScanning(mountUrl)) {
+        popQueryScanningDialog(item, [this, item, mountUrl]() {
+            if (m_defenderInterface->stopScanning(mountUrl))
+                item->detachDevice();
+            else
+                NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time"));
+        });
+        return;
+    }
+    item->detachDevice();
 }
 
 void DiskControlWidget::NotifyMsg(QString msg)

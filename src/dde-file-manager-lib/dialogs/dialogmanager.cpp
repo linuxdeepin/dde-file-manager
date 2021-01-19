@@ -1564,6 +1564,16 @@ void DialogManager::showFormatDialog(const QString &devId)
     }
 }
 
+int DialogManager::showStopScanningDialog()
+{
+    DDialog dlg;
+    dlg.setIcon(m_dialogWarningIcon);
+    dlg.addButton(tr("Cancel"), true, DDialog::ButtonRecommend);
+    dlg.addButton(tr("Stop")); // 终止
+    dlg.setTitle(tr("Scanning the device, stop it?")); // 正在扫描当前设备，是否终止扫描？
+    return dlg.exec();
+}
+
 bool DialogManager::DUrlListCompare(DUrlList urls)
 {
     if (urls.size() != m_urlList.size()) {

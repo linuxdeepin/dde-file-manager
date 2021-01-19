@@ -52,12 +52,17 @@ public:
     ~DiskControlItem() override;
 
     static QString formatDiskSize(const quint64 num);
-
+    void detachDevice();
     QString tagName() const;
     void setTagName(const QString &tagName);
+    QUrl mountPointUrl();
+
+signals:
+    void umountClicked(DiskControlItem *item);
 
 private slots:
     static QString sizeString(const QString &str);
+
 private:
     void mouseReleaseEvent(QMouseEvent *e) override;
     void showEvent(QShowEvent *e) override;
