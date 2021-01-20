@@ -36,6 +36,8 @@ DFMVaultPageBase::DFMVaultPageBase(QWidget *parent)
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
         this->moveToCenter();
     }
+    // 修复BUG-45226 设置该弹窗为模态弹窗
+    this->setModal(true);
 }
 
 void DFMVaultPageBase::enterVaultDir()
