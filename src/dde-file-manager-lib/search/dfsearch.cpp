@@ -33,6 +33,7 @@ extern "C"
 
 DFSearch::DFSearch(const QString &searchPath, void *parent)
     : caller(parent)
+    , pathForSearching(searchPath)
 {
     app = (FsearchApplication *) calloc(1, sizeof(FsearchApplication));
     app->config = (FsearchConfig *)calloc(1, sizeof(FsearchConfig));
@@ -42,7 +43,6 @@ DFSearch::DFSearch(const QString &searchPath, void *parent)
     app->search = nullptr;
     app->config->locations = nullptr;
     g_mutex_init(&app->mutex);
-    app->config->locations = g_list_append(app->config->locations, searchPath.toLocal8Bit().data());
     app->pool = fsearch_thread_pool_init(); //初始化线程池
     app->search = db_search_new(fsearch_application_get_thread_pool(app));
 }
@@ -75,7 +75,7 @@ void DFSearch::searchByKeyWord(const QString &key, void (*callback)(void *, void
     // 防止在db_search_results_clear中触发断言，导致文管退出，先自行判断一下
     if (app->search == nullptr) return;
 
-    load_database(app, &state);//加载数据库
+    load_database(app, pathForSearching.toLocal8Bit().data(), &state);//加载数据库
     db_search_results_clear(app->search);
     Database *db = app->db;
     if (!db_try_lock(db)) {

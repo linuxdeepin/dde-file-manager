@@ -422,11 +422,7 @@ db_location_walk_tree_recursive (DatabaseLocation *location,
 
     struct dirent *dent = NULL;
     while ((*state) && (dent = readdir (dir))) {
-        if (!(spec & WS_DOTFILES) && dent->d_name[0] == '.') {
-            // file is dotfile, skip
-            continue;
-        }
-        if (!strcmp (dent->d_name, ".") || !strcmp (dent->d_name, "..")) {
+        if (!strcmp (dent->d_name, ".") || !strcmp (dent->d_name, "..") || dent->d_name[0] == '.') {
             continue;
         }
         if (file_is_excluded (dent->d_name, exclude_files)) {

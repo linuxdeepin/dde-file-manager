@@ -53,7 +53,11 @@ private:
     GPtrArray *results = nullptr;
     uint  num_results = 0;
     void *caller = nullptr;
+    /**
+     * @brief state 搜索状态值，用于打断后续遍历文件夹
+     */
     bool state = true;
+    QString pathForSearching;
 };
 
 #endif
