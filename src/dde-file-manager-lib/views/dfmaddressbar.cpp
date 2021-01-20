@@ -677,11 +677,7 @@ void DFMAddressBar::onTextEdited(const QString &text)
 
     // blumia: Assume address is: /aa/bbbb/cc , completion prefix should be "cc",
     //         completerBaseString should be "/aa/bbbb/"
-
-    //! 如果为保险箱路径则进行路径转换
-    QString realUrl = VaultController::toInternalPath(text);
-
-    updateCompletionState(realUrl);
+    updateCompletionState(text);
 }
 
 bool DFMAddressBar::event(QEvent *e)
