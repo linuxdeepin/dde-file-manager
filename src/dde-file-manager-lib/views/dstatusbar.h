@@ -109,6 +109,8 @@ public:
 
     qint64 computerSize(const DUrlList &urllist);
     int computerFolderContains(const DUrlList &urllist);
+    // 计算目录和文件的个数及大小
+    QVariantList calcFolderAndFile(const DUrlList &urllist);
 
 signals:
     void modeChanged();
@@ -118,6 +120,8 @@ public slots:
     void updateStatusMessage();
     void handdleComputerFileSizeFinished();
     void handdleComputerFolderContainsFinished();
+    // 更新目录和文件的个数及大小，并显示于状态栏
+    void handleCalcFolderAndFileFinished();
     void itemCounted(const DFMEvent &event, int number);
     void setLoadingIncatorVisible(bool visible, const QString &tipText = QString());
 

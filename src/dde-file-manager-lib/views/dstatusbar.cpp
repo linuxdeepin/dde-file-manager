@@ -31,7 +31,7 @@
 #include "dfmevent.h"
 #include "app/filesignalmanager.h"
 #include "app/define.h"
-
+#include "controllers/vaultcontroller.h"
 #include "shutil/fileutils.h"
 
 #include "dfileservices.h"
@@ -295,6 +295,27 @@ int DStatusBar::computerFolderContains(const DUrlList &urllist)
     return folderContains;
 }
 
+QVariantList DStatusBar::calcFolderAndFile(const DUrlList &urllist)
+{
+    int folderCount(0);
+    int folderContains(0);
+    int fileCount(0);
+    qint64 fileSize(0);
+    foreach (const DUrl &url, urllist) {
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
+        if (fileInfo->isDir()) {
+            // 统计目录个数及目录内的文件个数
+            folderCount++;
+            folderContains += fileInfo->filesCount();
+        } else {
+            // 统计文件个数及文件的大小
+            fileCount++;
+            fileSize += fileInfo->size();
+        }
+    }
+    return QVariantList{folderCount, folderContains, fileCount, fileSize};
+}
+
 void DStatusBar::initJobConnection()
 {
     if (!m_fileStatisticsJob) {
@@ -357,32 +378,37 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
         }
         bool isInGVFs = FileUtils::isGvfsMountFile(fileUrl.toLocalFile());
         DUrlList folderList;
-        if (isInGVFs) {
-            foreach (DUrl url, event.fileUrlList()) {
-                struct stat statInfo;
-                int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
-                if (0 != fileStat) {
-                    continue;
-                }
-                if (S_ISDIR(statInfo.st_mode)) {
-                    m_folderCount += 1;
-                    folderList << url;
-                } else {
-                    m_fileCount += 1;
+        if (!isInGVFs) {
+            // 保险箱内，全选文件达到2000个时，文管会很卡顿，以下修改优化该问题
+            if (VaultController::isVaultFile(fileUrl.toLocalFile())) {
+                // 将文件个数及大小的计算过程放入异步线程中
+                QFutureWatcher<QVariantList> *fileWatcher = new QFutureWatcher<QVariantList>();
+                connect(fileWatcher, &QFutureWatcher<QVariantList>::finished, this, &DStatusBar::handleCalcFolderAndFileFinished);
+                QFuture<QVariantList> fileFuture = QtConcurrent::run(this, &DStatusBar::calcFolderAndFile, event.fileUrlList());
+                fileWatcher->setFuture(fileFuture);
+            } else {
+                foreach (const DUrl &url, event.fileUrlList()) {
+                    struct stat statInfo;
+                    int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
+                    if (0 != fileStat)
+                        continue;
+                    if (S_ISDIR(statInfo.st_mode)) {
+                        m_folderCount++;
+                        folderList << url;
+                    } else {
+                        m_fileCount++;
+                        m_fileSize += statInfo.st_size;
+                    }
                 }
             }
         } else {
-            foreach (DUrl url, event.fileUrlList()) {
+            foreach (const DUrl &url, event.fileUrlList()) {
                 const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, url);
                 if (info->isDir()) {
-                    m_folderCount += 1;
+                    m_folderCount++;
                     folderList << url;
-                } else {
-                    if (!isInGVFs) {
-                        m_fileSize += info->size();
-                    }
-                    m_fileCount += 1;
-                }
+                } else
+                    m_fileCount++;
             }
         }
 
@@ -481,6 +507,25 @@ void DStatusBar::handdleComputerFolderContainsFinished()
     int result = watcher->future().result();
     m_folderContains = result;
     updateStatusMessage();
+    watcher->deleteLater();
+}
+
+void DStatusBar::handleCalcFolderAndFileFinished()
+{
+    QFutureWatcher<QVariantList> *watcher = dynamic_cast<QFutureWatcher<QVariantList> *>(sender());
+    if (watcher) {
+        QVariantList result = watcher->future().result();
+        if (result.size() == 4) {
+            // 设置目录和文件的个数及大小
+            m_folderCount = result[0].toInt();
+            m_folderContains = result[1].toInt();
+            m_fileCount = result[2].toInt();
+            m_fileSize = result[3].toLongLong();
+            // 状态栏显示目录和文件的个数及大小
+            updateStatusMessage();
+        }
+        watcher->deleteLater();
+    }
 }
 
 void DStatusBar::handdleComputerFileSizeFinished()
@@ -489,6 +534,7 @@ void DStatusBar::handdleComputerFileSizeFinished()
     qint64 result = watcher->future().result();
     m_fileSize = result;
     updateStatusMessage();
+    watcher->deleteLater();
 }
 
 void DStatusBar::itemCounted(const DFMEvent &event, int number)
