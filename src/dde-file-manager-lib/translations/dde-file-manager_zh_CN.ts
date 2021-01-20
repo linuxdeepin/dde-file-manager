@@ -1735,6 +1735,16 @@
         <source>Access denied</source>
         <translation>禁止访问</translation>
     </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="1061"/>
+        <source>Permission denied</source>
+        <translation>权限不足</translation>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="1062"/>
+        <source>You do not have permission to traverse files in it</source>
+        <translation>您没有权限遍历子文件</translation>
+    </message>
 </context>
 <context>
     <name>FileController</name>

@@ -37,6 +37,7 @@
 #include "dgiofiledevice.h"
 #include "deviceinfo/udisklistener.h"
 #include "app/define.h"
+#include "dialogs/dialogmanager.h"
 
 #include <QMutex>
 #include <QTimer>
@@ -1052,6 +1053,14 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(const QSharedPointer<DFileHandler> 
 
     if (enter_dir) {
         enterDirectory(fromInfo->fileUrl(), toInfo->fileUrl());
+    }
+
+    //目录没有执行权限时不能正确的遍历到子文件的信息，后续删除或剪切复制逻辑无法成立
+    //弹出错误弹窗，提示无权限
+    if (!fromInfo->isExecutable() && iterator->hasNext()) {
+        DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog, DialogManager::tr("Permission denied")
+                                     , DialogManager::tr("You do not have permission to traverse files in it"));
+        return false;
     }
 
     while (iterator->hasNext()) {
