@@ -1112,13 +1112,15 @@ void DFileManagerWindow::initTitleBar()
 
     initTitleFrame();
 
-    DFileMenu *menu = fileMenuManger->createToolBarSettingsMenu();
+    //此处关心dfm对menu的注册，原生自带menu的隐藏需要dtk支持
+    if (!DFMGlobal::isTablet()) {
+        DFileMenu *menu = fileMenuManger->createToolBarSettingsMenu();
+        menu->setProperty("DFileManagerWindow", (quintptr)this);
+        menu->setProperty("ToolBarSettingsMenu", true);
+        menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
+        titlebar()->setMenu(menu);
+    }
 
-    menu->setProperty("DFileManagerWindow", (quintptr)this);
-    menu->setProperty("ToolBarSettingsMenu", true);
-    menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
-
-    titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);
     titlebar()->setCustomWidget(d->titleFrame, false);
     titlebar()->setFocusPolicy(Qt::FocusPolicy::NoFocus);
