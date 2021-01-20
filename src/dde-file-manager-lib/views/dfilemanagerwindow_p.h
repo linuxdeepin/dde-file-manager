@@ -90,6 +90,8 @@ public:
     bool move = false;
     QPoint startPoint;
     QPoint windowPoint;
+    //是否需要关闭
+    QAtomicInteger<bool> m_isNeedClosed = false;
 
     DFileManagerWindow *q_ptr{ nullptr };
 
