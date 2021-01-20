@@ -48,9 +48,7 @@ void
 fsearch_application_startup(FsearchApplication *app);
 
 gpointer
-load_database(FsearchApplication *app, bool *state);
-GThread *
-load_database_thread(FsearchApplication *app);
+load_database(FsearchApplication *app, const char *path, bool *state);
 
 void
 fsearch_application_init(FsearchApplication *app);

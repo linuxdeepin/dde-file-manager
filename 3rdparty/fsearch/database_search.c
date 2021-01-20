@@ -66,6 +66,7 @@ fsearch_search_thread (gpointer user_data)
 
     g_mutex_lock (&search->query_mutex);
     while (true) {
+        search->search_thread_started = true;
         g_cond_wait (&search->search_thread_start_cond, &search->query_mutex);
         printf("---------------------------g_cond_wait (&search->search_thread_start_cond)\n");
         if (search->search_thread_terminate) {
@@ -93,7 +94,6 @@ fsearch_search_thread (gpointer user_data)
             }            
             result->cb_data = query->callback_data;
             query->callback (result, query->sender);
-            usleep(100);
             printf("+++++++++++++++++++++++++++++++++++++++++++query->callback\n");
             fsearch_query_free (query);
             g_mutex_lock (&search->query_mutex);
@@ -638,6 +638,7 @@ db_search_new (FsearchThreadPool *pool)
     assert (db_search != NULL);
 
     db_search->pool = pool;
+    db_search->search_thread_started = false;
     g_mutex_init (&db_search->query_mutex);
     g_cond_init (&db_search->search_thread_start_cond);
     db_search->search_thread = g_thread_new("fsearch_search_thread", fsearch_search_thread, db_search);
@@ -753,7 +754,10 @@ db_search_queue (DatabaseSearch *search, FsearchQuery *query)
     search->query_ctx = query;
 
     g_mutex_unlock (&search->query_mutex);
-    usleep(1000);
+    // 确保search线程处于wait状态，否则会照成流程阻塞
+    while (!search->search_thread_started) {
+        usleep(100);
+    }
     g_cond_signal (&search->search_thread_start_cond);
 
     printf("---------------------------g_cond_signal (&search->search_thread_start_cond)\n");
