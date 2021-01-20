@@ -272,6 +272,10 @@ void DToolBar::searchBarTextEntered(const QString textEntered)
         QDir::setCurrent(currentUrl.toLocalFile());
     }
 
+    //【recent:】后无斜杠、单斜杠、双斜杠、三斜杠均响应跳转只最近使用页面，无视其后输入的文件名是否存在
+    if (text.startsWith("recent:"))
+        text = "recent:///";
+
     DUrl inputUrl = DUrl::fromUserInput(text, false); ///###: here, judge whether the text is a local file path.
 
     QDir::setCurrent(currentDir);
