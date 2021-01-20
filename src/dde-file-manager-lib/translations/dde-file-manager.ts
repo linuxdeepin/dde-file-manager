@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en">
 <context>
     <name>AppController</name>
     <message>
@@ -896,168 +898,168 @@
 <context>
     <name>DFileCopyMoveJob</name>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="212"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="211"/>
         <source>Permission error</source>
         <translation>Permission error</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="214"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="213"/>
         <source>The action is denied</source>
         <translation>The action is denied</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="220"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="219"/>
         <source>Failed to open the file</source>
         <translation>Failed to open the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="222"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="221"/>
         <source>Failed to read the file</source>
         <translation>Failed to read the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="224"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="223"/>
         <source>Failed to write the file</source>
         <translation>Failed to write the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="226"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="225"/>
         <source>Failed to create the directory</source>
         <translation>Failed to create the directory</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="228"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="227"/>
         <source>Failed to delete the file</source>
         <translation>Failed to delete the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="230"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="229"/>
         <source>Failed to move the file</source>
         <translation>Failed to move the file</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="232"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="231"/>
         <source>Original file does not exist</source>
         <translation>Original file does not exist</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="234"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="233"/>
         <source>Failed, file size must be less than 4GB</source>
         <translation>Failed, file size must be less than 4GB</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="236"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="235"/>
         <source>Not enough free space on the target disk</source>
         <translation>Not enough free space on the target disk</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="238"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="237"/>
         <source>File integrity was damaged</source>
         <translation>File integrity was damaged</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="240"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="239"/>
         <source>The target device is read only</source>
         <translation>The target device is read only</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="242"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="241"/>
         <source>Target folder is inside the source folder</source>
         <translation>Target folder is inside the source folder</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="657"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="656"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>copy</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1005"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1004"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation>Failed to open the directory, cause: file name too long</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1163"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1631"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1895"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2041"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1154"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1622"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1886"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2032"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation>Failed to open the file, cause: file name too long</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3025"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3101"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3016"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3092"/>
         <source>Failed to write the file, cause:</source>
         <translation>Failed to write the file, cause:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3870"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3861"/>
         <source>Syncing data</source>
         <translation>Syncing data</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3870"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3861"/>
         <source>Ready to complete</source>
         <translation>Ready to complete</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1015"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1014"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>Failed to create the directory, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1175"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1206"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1643"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1675"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1908"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2740"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1166"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1197"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1634"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1666"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1899"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2731"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Failed to open the file, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1202"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1671"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1193"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1662"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>Failed to open the file, cause: Permission denied</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1312"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1972"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1303"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1963"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>Failed to read the file, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1371"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1446"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2817"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2908"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1362"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1437"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2808"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2899"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>Failed to write the file, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1570"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1561"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>File integrity was damaged, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2054"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2073"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2045"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2064"/>
         <source>Failed to open the file, cause: </source>
         <translation>Failed to open the file, cause: </translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2143"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2134"/>
         <source>Failed to read the file, cause: </source>
         <translation>Failed to read the file, cause: </translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2225"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2216"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>Failed to delete the file, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2319"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2310"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>Fail to create symlink, cause: %1</translation>
     </message>
@@ -1461,7 +1463,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="924"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1309"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1408"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
@@ -1734,41 +1735,36 @@
         <source>Access denied</source>
         <translation>Access denied</translation>
     </message>
-    <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1061"/>
-        <source>No permission</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1062"/>
-        <source>You do not have permission to delete sub directory</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="793"/>
-        <location filename="../controllers/filecontroller.cpp" line="812"/>
-        <location filename="../controllers/filecontroller.cpp" line="831"/>
+        <location filename="../controllers/filecontroller.cpp" line="752"/>
+        <source>Unable to find the original file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/filecontroller.cpp" line="806"/>
+        <location filename="../controllers/filecontroller.cpp" line="825"/>
+        <location filename="../controllers/filecontroller.cpp" line="844"/>
         <source>Kindly Reminder</source>
         <translation>Kindly Reminder</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="793"/>
-        <location filename="../controllers/filecontroller.cpp" line="812"/>
-        <location filename="../controllers/filecontroller.cpp" line="831"/>
+        <location filename="../controllers/filecontroller.cpp" line="806"/>
+        <location filename="../controllers/filecontroller.cpp" line="825"/>
+        <location filename="../controllers/filecontroller.cpp" line="844"/>
         <source>Please install File Roller first and then continue</source>
         <translation>Please install File Roller first and then continue</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1478"/>
-        <location filename="../controllers/filecontroller.cpp" line="1498"/>
+        <location filename="../controllers/filecontroller.cpp" line="1491"/>
+        <location filename="../controllers/filecontroller.cpp" line="1511"/>
         <source>Unable to create files here: %1</source>
         <translation>Unable to create files here: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1480"/>
+        <location filename="../controllers/filecontroller.cpp" line="1493"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
@@ -3384,25 +3380,25 @@
         <translation>Loading...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="835"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="834"/>
         <source>File has been moved or deleted</source>
         <translation>File has been moved or deleted</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="841"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="840"/>
         <source>You do not have permission to traverse files in it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="250"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="837"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="850"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="856"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="836"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="849"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="855"/>
         <source>You do not have permission to access this folder</source>
         <translation>You do not have permission to access this folder</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="861"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="860"/>
         <location filename="../models/masteredmediafileinfo.cpp" line="273"/>
         <location filename="../models/recentfileinfo.cpp" line="253"/>
         <location filename="../models/trashfileinfo.cpp" line="366"/>
@@ -3729,13 +3725,13 @@
         <translation>Disks</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1699"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1690"/>
         <source>ftruncate error!</source>
         <translation>ftruncate error!</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1725"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1749"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1716"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1740"/>
         <source>mmap file to memory fialed!</source>
         <translation>mmap file to memory fialed!</translation>
     </message>
