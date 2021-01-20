@@ -103,6 +103,8 @@ public:
     bool isAdvanceSearchBarVisible();
     void toggleAdvanceSearchBar(bool visible = true, bool resetForm = true);
     void showFilterButton();
+    //获取能否析构
+    bool getCanDestruct() const;
 
 signals:
     void aboutToClose();
@@ -144,6 +146,8 @@ public slots:
     void onRequestRedirectUrl(const DUrl &tabRootUrl, const DUrl &newUrl);
     //! close tab when root directory deleted.
     void onRequestCloseTabByUrl(const DUrl &rootUrl);
+    //! destruct current windows
+    void onRequestDestruct();
 
 protected:
     void showEvent(QShowEvent *event) override;

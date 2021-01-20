@@ -1271,8 +1271,13 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
 //            return;
 //        }
 //    }
-
-    return DListView::mouseMoveEvent(event);
+    Q_D(DFileView);
+    //fix bug 59239 drag事件的发起者是在mouseMoveEvent中，所以等待mouseMoveEvent结束才能析构窗口
+    d->m_isMouseMoveing.store(true);
+    DListView::mouseMoveEvent(event);
+    d->m_isMouseMoveing.store(false);
+    if (!d->m_isDragging.load())
+        emit requestWindowDestruct();
 }
 
 void DFileView::mouseReleaseEvent(QMouseEvent *event)
@@ -1637,6 +1642,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 
 void DFileView::dragEnterEvent(QDragEnterEvent *event)
 {
+    Q_D(DFileView);
     if (DFileDragClient::checkMimeData(event->mimeData())) {
         event->acceptProposedAction();
         DFileDragClient::setTargetUrl(event->mimeData(), rootUrl());
@@ -1668,8 +1674,6 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
             return;
         }
     }
-
-    Q_D(const DFileView);
 
     d->fileViewHelper->preproccessDropEvent(event, m_urlsForDragEvent);
 
@@ -1733,7 +1737,6 @@ void DFileView::dragLeaveEvent(QDragLeaveEvent *event)
 void DFileView::dropEvent(QDropEvent *event)
 {
     D_D(DFileView);
-
     d->dragMoveHoverIndex = QModelIndex();
     // clean old index area
     update();
@@ -1770,7 +1773,8 @@ void DFileView::dropEvent(QDropEvent *event)
 
         if (model()->supportedDropActions() & event->dropAction() && model()->flags(index) & Qt::ItemIsDropEnabled) {
             const Qt::DropAction action = dragDropMode() == InternalMove ? Qt::MoveAction : event->dropAction();
-
+            //fix bug 59239 drag事件的接受者要在dropMimeData处理完才能去析构本窗口
+            d->m_isDragging.store(true);
             if (model()->dropMimeData(event->mimeData(), action, index.row(), index.column(), index)) {
                 if (action != event->dropAction()) {
                     event->setDropAction(action);
@@ -1793,8 +1797,13 @@ void DFileView::dropEvent(QDropEvent *event)
         if (!index.isValid())
             index = rootIndex();
 
-        if (!index.isValid())
+        if (!index.isValid()) {
+            //fix bug 59239 drag事件的接受者要在dropMimeData处理完才能去析构本窗口
+            d->m_isDragging.store(false);
+            if (!d->m_isMouseMoveing.load())
+                emit requestWindowDestruct();
             return;
+        }
 
         event->acceptProposedAction();
         DFileDragClient::setTargetUrl(event->mimeData(), model()->getUrlByIndex(index));
@@ -1808,6 +1817,10 @@ void DFileView::dropEvent(QDropEvent *event)
             }
         });
     }
+    //fix bug 59239 drag事件的接受者要在dropMimeData处理完才能去析构本窗口
+    d->m_isDragging.store(false);
+    if (!d->m_isMouseMoveing.load())
+        emit requestWindowDestruct();
 }
 
 void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags)
@@ -2551,6 +2564,12 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
 
     return true;
+}
+
+bool DFileView::getCanDestruct() const
+{
+    Q_D(const DFileView);
+    return !(d->m_isDragging.load() || d->m_isMouseMoveing.load());
 }
 
 void DFileView::clearHeardView()

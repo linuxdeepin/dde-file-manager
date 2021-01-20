@@ -914,7 +914,15 @@ void DFileManagerWindow::moveTopRightByRect(QRect rect)
 
 void DFileManagerWindow::closeEvent(QCloseEvent *event)
 {
+    Q_D(DFileManagerWindow);
+
+    // fix bug 59239 drag事件的接受者的drop事件和发起drag事件的发起者的mousemove事件处理完成才能
+    // 析构本窗口
+    DFileView *fv = dynamic_cast<DFileView *>(d->currentView);
+    if (fv)
+        connect(fv,&DFileView::requestWindowDestruct,this,&DFileManagerWindow::onRequestDestruct);
     emit aboutToClose();
+    d->m_isNeedClosed.store(true);
 
     DMainWindow::closeEvent(event);
 }
@@ -1458,6 +1466,13 @@ void DFileManagerWindow::onRequestCloseTabByUrl(const DUrl &rootUrl)
     }
 }
 
+void DFileManagerWindow::onRequestDestruct()
+{
+    Q_D(DFileManagerWindow);
+    if (d->m_isNeedClosed)
+        deleteLater();
+}
+
 void DFileManagerWindow::showEvent(QShowEvent *event)
 {
     DMainWindow::showEvent(event);
@@ -1543,3 +1558,13 @@ void DFileManagerWindow::showFilterButton()
 
     d->toolbar->showFilterButton();
 }
+
+bool DFileManagerWindow::getCanDestruct() const
+{
+    Q_D(const DFileManagerWindow);
+    DFileView *fv = dynamic_cast<DFileView *>(d->currentView);
+    if (fv)
+        return fv->getCanDestruct();
+    return true;
+}
+

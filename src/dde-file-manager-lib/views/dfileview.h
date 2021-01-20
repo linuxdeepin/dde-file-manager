@@ -204,6 +204,8 @@ public slots:
     void setIconSizeBySizeIndex(const int &sizeIndex);
 
     bool setRootUrl(const DUrl &url) override;
+    //获取当前是否可以析构，判断当前是否是在draging中和mousemove中
+    bool getCanDestruct() const;
 
 #ifdef SW_LABEL
     bool checkRenamePrivilege_sw(DUrl fileUrl);
@@ -213,6 +215,8 @@ signals:
     void rootUrlChanged(const DUrl &url);
     void viewModeChanged(ViewMode viewMode);
     void viewStateChanged();
+    //drop或者mousemove结束请求关闭当前窗口
+    void requestWindowDestruct();
 
 private slots:
     void dislpayAsActionTriggered(QAction *action);

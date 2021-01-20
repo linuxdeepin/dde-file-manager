@@ -187,7 +187,8 @@ void WindowManager::showNewWindow(const DUrl &url, const bool &isNewWindow)
     QX11Info::setAppTime(QX11Info::appUserTime());
     DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewWindow) : url);
     loadWindowState(window);
-    window->setAttribute(Qt::WA_DeleteOnClose);
+    // fix bug 59239 drag事件的接受者的drop事件和发起drag事件的发起者的mousemove事件处理完成才能
+    // 析构本窗口，所以去掉属性Qt::WA_DeleteOnClose
     window->show();
 
     qDebug() << "new window" << window->winId() << url;
@@ -293,12 +294,17 @@ void WindowManager::setEnableAutoQuit(bool enableAutoQuit)
 
 void WindowManager::onWindowClosed()
 {
-    if (m_windows.count() == 1) {
-        DFileManagerWindow *window = static_cast<DFileManagerWindow *>(sender());
+    DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(sender());
+    if (m_windows.count() == 1) { 
         saveWindowState(window);
         dialogManager->closeAllPropertyDialog();
     }
     m_windows.remove(static_cast<const QWidget *>(sender()));
+
+    // fix bug 59239 drag事件的接受者的drop事件和发起drag事件的发起者的mousemove事件处理完成才能
+    // 析构本窗口，检查当前窗口是否可以析构
+    if (window && window->getCanDestruct())
+        window->deleteLater();
 }
 
 void WindowManager::onLastActivedWindowClosed(quint64 winId)

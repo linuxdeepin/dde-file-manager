@@ -140,6 +140,8 @@ public:
     bool isVaultDelSigConnected = false; //is vault delete signal connected.
 
     bool isAlwaysOpenInCurrentWindow = false;
+    QAtomicInteger<bool> m_isDragging = false;
+    QAtomicInteger<bool> m_isMouseMoveing = false;
 
     Q_DECLARE_PUBLIC(DFileView)
 };
