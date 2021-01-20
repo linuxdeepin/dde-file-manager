@@ -119,6 +119,7 @@ CanvasGridView::CanvasGridView(const QString &screen, QWidget *parent)
     : QAbstractItemView(parent)
     , d(new CanvasViewPrivate)
     , m_screenName(screen)
+    , m_currentTargetUrl(DUrl())
 {
     initUI();
     initConnection();
@@ -390,6 +391,15 @@ bool CanvasGridView::fetchDragEventUrlsFromSharedMemory()
     sm.detach();//与共享内存空间分离
 
     return true;
+}
+
+void CanvasGridView::setTargetUrlToApp(const QMimeData *data, const DUrl &url)
+{
+    //仅当target改变的时候才调用DFileDragClient::setTargetUrl
+    if (!m_currentTargetUrl.isValid() || m_currentTargetUrl.path() != url.path()) {
+        m_currentTargetUrl = url;
+        DFileDragClient::setTargetUrl(data, url);
+    }
 }
 
 void CanvasGridView::delayModelRefresh(int ms)
@@ -1172,7 +1182,7 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
 {
     if (DFileDragClient::checkMimeData(event->mimeData())) {
         event->acceptProposedAction();
-        DFileDragClient::setTargetUrl(event->mimeData(), currentUrl());
+        setTargetUrlToApp(event->mimeData(), currentUrl());
         return;
     }
 #ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
@@ -1227,7 +1237,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         if (!hoverIndex.isValid()) {
             if (DFileDragClient::checkMimeData(event->mimeData())) {
                 event->acceptProposedAction();
-                DFileDragClient::setTargetUrl(event->mimeData(), currentUrl());
+                setTargetUrlToApp(event->mimeData(), currentUrl());
             } else {
                 event->accept();
             }
@@ -1254,7 +1264,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
             } else {
                 if (DFileDragClient::checkMimeData(event->mimeData())) {
                     event->acceptProposedAction();
-                    DFileDragClient::setTargetUrl(event->mimeData(), fileInfo->fileUrl());
+                    setTargetUrlToApp(event->mimeData(), fileInfo->fileUrl());
                 } else {
                     event->accept();
                 }
@@ -1299,7 +1309,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         if (!hoverIndex.isValid()) {
             if (DFileDragClient::checkMimeData(event->mimeData())) {
                 event->acceptProposedAction();
-                DFileDragClient::setTargetUrl(event->mimeData(), currentUrl());
+                setTargetUrlToApp(event->mimeData(), currentUrl());
             } else {
                 event->accept();
             }
@@ -1490,7 +1500,7 @@ void CanvasGridView::dropEvent(QDropEvent *event)
     }
     if (DFileDragClient::checkMimeData(event->mimeData())) {
         event->acceptProposedAction();
-        DFileDragClient::setTargetUrl(event->mimeData(), model()->getUrlByIndex(targetIndex));
+        setTargetUrlToApp(event->mimeData(), model()->getUrlByIndex(targetIndex));
 
         // DFileDragClient deletelater() will be called after connection destroyed
         DFileDragClient *c = new DFileDragClient(event->mimeData());

@@ -1596,7 +1596,7 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
 {
     if (DFileDragClient::checkMimeData(event->mimeData())) {
         event->acceptProposedAction();
-        DFileDragClient::setTargetUrl(event->mimeData(), rootUrl());
+        setTargetUrlToApp(event->mimeData(), rootUrl());
         return;
     }
 
@@ -1662,7 +1662,7 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 
             if (DFileDragClient::checkMimeData(event->mimeData())) {
                 event->acceptProposedAction();
-                DFileDragClient::setTargetUrl(event->mimeData(), fileInfo->fileUrl());
+                setTargetUrlToApp(event->mimeData(), fileInfo->fileUrl());
             } else {
                 event->accept();
             }
@@ -1764,7 +1764,7 @@ void DFileView::dropEvent(QDropEvent *event)
             return;
 
         event->acceptProposedAction();
-        DFileDragClient::setTargetUrl(event->mimeData(), model()->getUrlByIndex(index));
+        setTargetUrlToApp(event->mimeData(), model()->getUrlByIndex(index));
 
         // DFileDragClient deletelater() will be called after connection destroyed
         DFileDragClient *c = new DFileDragClient(event->mimeData());
@@ -3219,6 +3219,15 @@ bool DFileView::fetchDragEventUrlsFromSharedMemory()
     sm.detach();//与共享内存空间分离
 
     return true;
+}
+
+void DFileView::setTargetUrlToApp(const QMimeData *data, const DUrl &url)
+{
+    //仅当target改变的时候才调用DFileDragClient::setTargetUrl
+    if (!m_currentTargetUrl.isValid() || m_currentTargetUrl.path() != url.path()) {
+        m_currentTargetUrl = url;
+        DFileDragClient::setTargetUrl(data, url);
+    }
 }
 
 int DFileViewPrivate::iconModeColumnCount(int itemWidth) const

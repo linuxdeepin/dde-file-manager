@@ -200,6 +200,14 @@ private:
     void setGeometry(int, int, int, int) = delete;
     bool fetchDragEventUrlsFromSharedMemory();
 
+    /**
+     * @brief setTargetUrlToApp 为其他应用设置目标Url
+     * 仅当被拖拽行为是DFileDrag时会被调用
+     * @param data mimeData
+     * @param url 目标Url
+     */
+    void setTargetUrlToApp(const QMimeData *data, const DUrl &url);
+
     QScopedPointer<CanvasViewPrivate> d;
     double m_dragMoveTime;
     QList<QUrl> m_urlsForDragEvent;
@@ -209,6 +217,8 @@ private:
 
     QTimer *m_refreshTimer = nullptr;
     QTime m_rt; //刷新计时，可以删除
+
+    DUrl m_currentTargetUrl; //缓存当前目标Url
 };
 
 
