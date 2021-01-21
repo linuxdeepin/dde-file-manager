@@ -46,6 +46,7 @@
 
 #include <memory>
 #include <QList>
+#include <QMap>
 #include <QDebug>
 #include <QMimeData>
 #include <QSharedPointer>
@@ -775,25 +776,36 @@ DFileSystemModelPrivate::~DFileSystemModelPrivate()
 
 bool DFileSystemModelPrivate::passNameFilters(const FileSystemNodePointer &node) const
 {
-    if (nameFilters.isEmpty()) {
+    if (nameFilters.isEmpty())
         return true;
-    }
+ 
+    if (!node || !node->fileInfo)
+        return true;
+
+    // 大量的过滤规则场景时，框选会出现卡顿，在性能较差的平台上较明显
+    const DUrl fileUrl = node->fileInfo->fileUrl();
+    if (nameFiltersMatchResultMap.contains(fileUrl))
+        return nameFiltersMatchResultMap.value(fileUrl, false);
 
     // Check the name regularexpression filters
     if (!(node->fileInfo->isDir() && (filters & QDir::Dirs))) {
         const Qt::CaseSensitivity caseSensitive = (filters & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
+        const QString &fileDisplayName = node->fileInfo->fileDisplayName();
+        QRegExp re("", caseSensitive, QRegExp::Wildcard);
 
         for (int i = 0; i < nameFilters.size(); ++i) {
-            QRegExp re(nameFilters.at(i), caseSensitive, QRegExp::Wildcard);
-
-            if (re.exactMatch(node->fileInfo->fileDisplayName())) {
+            re.setPattern(nameFilters.at(i));
+            if (re.exactMatch(fileDisplayName)) {
+                nameFiltersMatchResultMap[fileUrl] = true;
                 return true;
             }
         }
 
+        nameFiltersMatchResultMap[fileUrl] = false;
         return false;
     }
 
+    nameFiltersMatchResultMap[fileUrl] = true;
     return true;
 }
 
@@ -1921,6 +1933,7 @@ void DFileSystemModel::setNameFilters(const QStringList &nameFilters)
         return;
     }
 
+    d->nameFiltersMatchResultMap.clear();
     d->nameFilters = nameFilters;
 
     emitAllDataChanged();
@@ -1935,6 +1948,7 @@ void DFileSystemModel::setFilters(QDir::Filters filters)
         return;
     }
 
+    d->nameFiltersMatchResultMap.clear();
     d->filters = filters;
 
     refresh();
