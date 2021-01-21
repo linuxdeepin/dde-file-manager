@@ -1053,12 +1053,33 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
 {
     DUrlList canPreivewlist;
 
+    //记录是否有无效的链接文件
+    bool hasInvalidSymlink = false;
     for (const DUrl &url : selectUrls) {
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
         if (info && (info->fileUrl().isLocalFile() || info->toQFileInfo().exists())) {
+            //判断链接文件的源文件是否存在
+            if (info->isSymLink()) {
+                DUrl targetUrl = info->symLinkTarget();
+                if (!targetUrl.isValid()) {
+                    hasInvalidSymlink = true;
+                    continue;
+                }
+
+                const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, targetUrl);
+                if (!linkInfo || !linkInfo->exists()) {
+                    hasInvalidSymlink = true;
+                    continue;
+                }
+            }
             canPreivewlist << info->fileUrl();
         }
+    }
+
+    //链接文件源文件不存在或找不到的情况，弹错误提示窗
+    if (hasInvalidSymlink) {
+        dialogManager->showErrorDialog(tr("Unable to find the original file"), QString());
     }
 
     if (canPreivewlist.isEmpty()) {
