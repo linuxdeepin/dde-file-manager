@@ -1182,15 +1182,28 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
     }
 }
 
+/*
+ * 自定义菜单在以下作用域时支持：
+ * U盘盘内文件、移动硬盘盘内文件、桌面
+ *
+ * 自定义菜单在以下作用域时不支持：
+ * 光盘盘内文件、回收站入口、回收站目录内、搜索框内、
+ * 搜索结果列表页、文件管理器计算机主页面左侧导航全部菜单项、
+ * 文件管理器计算机主页面我的目录及分区、保险箱入口、保险箱路径
+ */
 bool DFileMenuManager::isCustomMenuSupported(const DUrl &viewRootUrl)
 {
-    //判断保险箱 回收站 smb ftp 光盘 U盘 手机
     const QString &path = viewRootUrl.toLocalFile();
+    //U盘、硬盘支持显示
+    if (deviceListener->isBlockFile(path))
+        return true;\
+
     DStorageInfo st(path);
     return st.isLocalDevice() //过滤 手机 网络 smb ftp
-            && !deviceListener->isBlockFile(path) //过滤 U盘 光盘 移动硬盘
-            && !viewRootUrl.isVaultFile() //过滤 保险箱
-            && !viewRootUrl.isTrashFile();//过滤 回收站
+            && !deviceListener->isFileFromDisc(path) //过滤光盘
+            && !viewRootUrl.isVaultFile() //过滤保险箱
+            && !viewRootUrl.isTrashFile();//过滤回收站
+
 }
 
 void DFileMenuManager::addActionWhitelist(MenuAction action)

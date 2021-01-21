@@ -1,6 +1,5 @@
 #include "dcustomactionbuilder.h"
 #include "dfilemenu.h"
-#include "interfaces/dfileservices.h"
 
 #include <QDir>
 #include <QUrl>
@@ -126,15 +125,12 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const DUrlList &sel
     //todo：细化功能颗粒度，一个函数尽量专职一件事
     /*
      *根据选中内容、配置项、选中项类型匹配合适的菜单项
-     *是否全为7zfile
      *是否桌面显示isActionShouldShow
      *是否action支持的协议
      *是否action支持的后缀
      *action不支持类型过滤（不加上父类型过滤，todo: 为何不支持项不考虑?）
      *action支持类型过滤(类型过滤要加上父类型一起过滤)
     */
-    //todo：这种特殊处理是否可以干掉
-    bool bex7x = DCustomActionBuilder::isAllEx7zFile(selects);
 
     //具体配置过滤
     for (auto &singleUrl : selects) {
@@ -156,21 +152,21 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const DUrlList &sel
 
         QStringList fileMimeTypes;
         QStringList fileMimeTypesNoParent;
-        fileMimeTypes.append(fileInfo->mimeType().name());
-        fileMimeTypes.append(fileInfo->mimeType().aliases());
-        const QMimeType &mt = fileInfo->mimeType();
-        fileMimeTypesNoParent = fileMimeTypes;
-        appendParentMimeType(mt.parentMimeTypes(), fileMimeTypes);
-        fileMimeTypes.removeAll({});
-        fileMimeTypesNoParent.removeAll({});
+//        fileMimeTypes.append(fileInfo->mimeType().name());
+//        fileMimeTypes.append(fileInfo->mimeType().aliases());
+//        const QMimeType &mt = fileInfo->mimeType();
+//        fileMimeTypesNoParent = fileMimeTypes;
+//        appendParentMimeType(mt.parentMimeTypes(), fileMimeTypes);
+//        fileMimeTypes.removeAll({});
+//        fileMimeTypesNoParent.removeAll({});
 
+        appendAllMimeTypes(fileInfo, fileMimeTypesNoParent, fileMimeTypes);
         for (auto it = oriActions.begin(); it != oriActions.end();) {
             DCustomActionEntry &tempAction = *it;
-
-            //协议，仅桌面显示，后缀；todo: only 桌面和文管是否必要...
+            //协议，文管和桌面显示，后缀
             if (!isSchemeSupport(tempAction, singleUrl)
                 || !isActionShouldShow(tempAction, onDesktop)
-                || !isSuffixSupport(tempAction, singleUrl, bex7x)) {
+                || !isSuffixSupport(tempAction, singleUrl)) {
                 it = oriActions.erase(it);   //不支持的action移除
                 continue;
             }
@@ -192,11 +188,12 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const DUrlList &sel
             supportMimeTypes.removeAll({});
             auto match = isMimeTypeMatch(fileMimeTypes, supportMimeTypes);
 
-            //todo：这种特殊处理是否可以干掉
-             //部分mtp挂载设备目录下文件属性不符合规范(普通目录mimetype被认为是octet-stream)，暂时做特殊处理
+//在自定义右键菜中有作用域限制，此类情况不显示自定义菜单，故可屏蔽，若后续有作用域的调整再考虑是否开放
+#if 0
+            //部分mtp挂载设备目录下文件属性不符合规范(普通目录mimetype被认为是octet-stream)，暂时做特殊处理-
             if (singleUrl.path().contains("/mtp:host") && supportMimeTypes.contains("application/octet-stream") && fileMimeTypes.contains("application/octet-stream"))
                 match = false;
-
+#endif
             if (!match) {
                 it = oriActions.erase(it);
                 continue;
@@ -379,6 +376,8 @@ bool DCustomActionBuilder::isActionShouldShow(const DCustomActionEntry &action, 
     auto notShowInList = action.notShowIn();
     if (notShowInList.isEmpty())
         return true;    //未明确指明仅显示在桌面或者文管窗口默认都显示
+    if (notShowInList.contains("*"))
+        return false;   //都不显示： 配置了"X-DFM-NotShowIn=*"或者"X-DFM-NotShowIn=desktop:dde-file-manager"
 
     // is menu triggered on desktop
     return (onDesktop && !notShowInList.contains("Desktop", Qt::CaseInsensitive)) ||
@@ -389,22 +388,21 @@ bool DCustomActionBuilder::isSchemeSupport(const DCustomActionEntry &action, con
 {
     // X-DFM-SupportSchemes not exist
     auto supportList = action.surpportSchemes();
-    if (supportList.isEmpty())
-        return true;    //未特殊指明默认支持所有相关协议
+    if (supportList.contains("*") || supportList.isEmpty())
+        return true;    //支持所有协议: 未特殊指明X-DFM-SupportSchemes或者"X-DFM-SupportSchemes=*"
     return supportList.contains(url.scheme(), Qt::CaseInsensitive);
 }
 
-bool DCustomActionBuilder::isSuffixSupport(const DCustomActionEntry &action, const DUrl &url, const bool ballEx7z)
+bool DCustomActionBuilder::isSuffixSupport(const DCustomActionEntry &action, const DUrl &url)
 {
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, url);
     auto supportList =  action.supportStuffix();
-    if (!fileInfo || fileInfo->isDir() || supportList.isEmpty()) {
-        //todo:理解ballEx7z = true时为何要return false
-        return !ballEx7z;
+    if (!fileInfo || fileInfo->isDir() || supportList.isEmpty() || supportList.contains("*")) {
+        return true;//未特殊指明支持项或者包含*为支持所有
     }
     QFileInfo info(url.toLocalFile());
 
-    // 7z.001,7z.002, 7z.003 ... 7z.xxx
+    //例如： 7z.001,7z.002, 7z.003 ... 7z.xxx
     QString cs = info.completeSuffix();
     if (supportList.contains(cs, Qt::CaseInsensitive)) {
         return true;
@@ -412,8 +410,9 @@ bool DCustomActionBuilder::isSuffixSupport(const DCustomActionEntry &action, con
 
     bool match = false;
     for (const QString &suffix : supportList) {
-        int endPos = suffix.lastIndexOf("*"); // 7z.*
-        if (endPos >= 0 && cs.length() > endPos && suffix.left(endPos) == cs.left(endPos)) {
+        auto tempSuffix = suffix;
+        int endPos = tempSuffix.lastIndexOf("*"); // 例如：7z.*
+        if (endPos >= 0 && cs.length() > endPos && tempSuffix.left(endPos) == cs.left(endPos)) {
             match = true;
             break;
         }
@@ -421,20 +420,15 @@ bool DCustomActionBuilder::isSuffixSupport(const DCustomActionEntry &action, con
     return match;
 }
 
-bool DCustomActionBuilder::isAllEx7zFile(const DUrlList &files)
+void DCustomActionBuilder::appendAllMimeTypes(const DAbstractFileInfoPointer &fileInfo, QStringList &noParentmimeTypes, QStringList &allMimeTypes)
 {
-    if (files.size() <= 1) {
-        return false;
-    }
-    for (const DUrl &f : files) {
-        QFileInfo info(f.toString());
-        // 7z.001,7z.002, 7z.003 ... 7z.xxx
-        QString cs = info.completeSuffix();
-        if (!cs.startsWith(QString("7z."))) {
-            return false;
-        }
-    }
-    return true;
+    noParentmimeTypes.append(fileInfo->mimeType().name());
+    noParentmimeTypes.append(fileInfo->mimeType().aliases());
+    const QMimeType &mt = fileInfo->mimeType();
+    allMimeTypes = noParentmimeTypes;
+    appendParentMimeType(mt.parentMimeTypes(), allMimeTypes);
+    noParentmimeTypes.removeAll({});
+    allMimeTypes.removeAll({});
 }
 
 void DCustomActionBuilder::appendParentMimeType(const QStringList &parentmimeTypes, QStringList &mimeTypes)

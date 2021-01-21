@@ -24,6 +24,7 @@
 
 #include "dcustomactiondata.h"
 #include "durl.h"
+#include "interfaces/dfileservices.h"
 
 #include <QObject>
 #include <QIcon>
@@ -53,8 +54,8 @@ private:
     static bool isMimeTypeMatch(const QStringList &fileMimeTypes, const QStringList &supportMimeTypes);
     static bool isActionShouldShow(const DCustomActionEntry &action, bool onDesktop);
     static bool isSchemeSupport(const DCustomActionEntry &action, const DUrl &url);
-    static bool isSuffixSupport(const DCustomActionEntry &action, const DUrl &url, const bool ballEx7z = false);
-    static bool isAllEx7zFile(const DUrlList &files);
+    static bool isSuffixSupport(const DCustomActionEntry &action, const DUrl &url);
+    static void appendAllMimeTypes(const DAbstractFileInfoPointer &fileInfo, QStringList &noParentmimeTypes, QStringList &allMimeTypes);
     static void appendParentMimeType(const QStringList &parentmimeTypes,  QStringList& mimeTypes);
 protected:
     QAction *createMenu(const DCustomActionData &actionData, QWidget *parentForSubmenu) const;
