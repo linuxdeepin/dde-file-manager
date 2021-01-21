@@ -701,17 +701,27 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
             QString path = fi->extraProperties()["rooturi"].toString();
             if (path.isEmpty()) {
                 //FIXME(zccrs): 为解决，无法访问smb共享地址时，点击卸载共享目录，创建的fileinfo拿到的path为""，所有就没办法umount，临时解决方案，重Durl中获取
-                path = QString("smb://");
-                QString mpp = QUrl::fromPercentEncoding(fileUrl.path().mid(1).chopped(QString("." SUFFIX_GVFSMP).length()).toUtf8());
-                QStringList strlist = mpp.split(",");
-                if (strlist.size() >= 2) {
-                    if (strlist.at(0).contains(QString("="))) {
-                        path = path + strlist.at(0).split("=").at(1) + QString("/");
-                    }
-                    if (strlist.at(1).contains(QString("="))) {
-                        path = path + strlist.at(1).split("=").at(1) + QString("/");
+                QString encodePath = QUrl::fromPercentEncoding(fileUrl.path().mid(1).chopped(
+                                                                   QString("." SUFFIX_GVFSMP).length()).toUtf8());
+                if (encodePath.contains(SMB_SCHEME) && encodePath.split(",").count() >= 2) {
+                    path = QString("smb://");
+                    QStringList strlist = encodePath.split(",");
+                    if (strlist.at(0).contains("="))
+                        path = path + strlist.at(0).mid(strlist.at(0).indexOf("=") + 1) + "/";
+                    if (strlist.at(1).contains("share=")) {
+                        QString shareName = strlist.at(1);
+                        path = path + shareName.replace(QString("share="), "") + "/";
                     }
                 }
+                //fix bug 61610 是ftp和sftp在断网的情况下，卸载ftp或者sftp时rooturi为空，通过url去获取
+                if (encodePath.contains(FTP_SCHEME)) {
+                    path = encodePath.contains(SFTP_SCHEME) ? QString("sftp://") : QString("ftp://");
+                    //匹配ip，找到ip
+                    QString Ip = encodePath.indexOf("=") >= 0 ?
+                                encodePath.mid(encodePath.indexOf("=") + 1) : QString();
+                    path = path + Ip + QString("/");
+                }
+                qInfo() << "umount path = " << path;
             }
 
             deviceListener->unmount(path);

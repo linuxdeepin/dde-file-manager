@@ -23,6 +23,7 @@
 
 #include "dstorageinfo.h"
 #include "controllers/vaultcontroller.h"
+#include "dfmglobal.h"
 
 #include <QRegularExpression>
 
@@ -337,7 +338,14 @@ bool DStorageInfo::isLowSpeedDevice(const QString &path)
     if (match.hasMatch()) {
         const QString &scheme = match.captured("scheme");
 
-        return (scheme == "mtp" || scheme == "gphoto" || scheme == "gphoto2" || scheme == "smb-share" || scheme == "smb");
+        return dfm_util::isContains(scheme,
+                                    QString(MTP_SCHEME),
+                                    QString(GPHOTO2_SCHEME),
+                                    QString("gphoto"),
+                                    QString("smb-share"),
+                                    QString(SMB_SCHEME),
+                                    QString(SFTP_SCHEME),
+                                    QString(FTP_SCHEME));
     }
 
     return DStorageInfo(path).isLowSpeedDevice();
