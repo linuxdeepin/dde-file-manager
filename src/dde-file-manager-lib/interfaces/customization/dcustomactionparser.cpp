@@ -79,12 +79,12 @@ bool DCustomActionParser::parseFile(QSettings &actionSetting)
     if (!actionFileInfos(basicInfos, actionSetting))
         return false;//关键信息无效则
 
-    auto actions = getValue(actionSetting, kMenuPrefix, kActionGroups).toString().trimmed();
+    auto actions = getValue(actionSetting, kMenuPrefix, kActionGroups).toString().simplified();
     if (actions.isEmpty())
         return false; //无一级菜单,无效文件
 
     auto actStr = getValue(actionSetting, kMenuPrefix, kActionGroups);
-    auto actList = actStr.toString().trimmed().split(":", QString::SkipEmptyParts);
+    auto actList = actStr.toString().simplified().split(":", QString::SkipEmptyParts);
 
     for(auto &once : actList) {
         if (m_topActionCount == kCustomMaxNumOne) //一级数量限制
@@ -119,18 +119,18 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
     QString name;
     auto getNameByType = [this, &name, &actionSetting, group](const QString& type) {
 
-        QString systemName = QLocale::system().name().trimmed();
+        QString systemName = QLocale::system().name().simplified();
         QString localName = QString("%1[%2]").arg(type).arg(systemName);
-        name = getValue(actionSetting, group, localName).toString().trimmed();
-        QStringList localeList = systemName.trimmed().split("_");
+        name = getValue(actionSetting, group, localName).toString().simplified();
+        QStringList localeList = systemName.simplified().split("_");
 
         if (name.isEmpty() && localeList.size() > 0) {
             localName = QString("%1[%2]").arg(type).arg(localeList.first());
-            name = getValue(actionSetting, group, localName).toString().trimmed();
+            name = getValue(actionSetting, group, localName).toString().simplified();
         }
 
         if (name.isEmpty()) {
-            name = getValue(actionSetting, group, type).toString().trimmed();
+            name = getValue(actionSetting, group, type).toString().simplified();
         }
     };
 
@@ -154,16 +154,16 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         isSort = false;
 
     //separator
-    QString separator = getValue(actionSetting, group, kActionSeparator).toString().trimmed();
+    QString separator = getValue(actionSetting, group, kActionSeparator).toString().simplified();
     actData.m_separator = m_separtor.value(separator, None);
 
     //actions 父子action级联与动作
 
     //actions 父级级联与动作
-    QString actions = getValue(actionSetting, group, kActionGroups).toString().trimmed();
+    QString actions = getValue(actionSetting, group, kActionGroups).toString().simplified();
     if (actions.isEmpty()) {
         //无级联检查是否有动作
-        QString command = getValue(actionSetting, group, kActionCmd).toString().trimmed();
+        QString command = getValue(actionSetting, group, kActionCmd).toString().simplified();
         if (command.isEmpty())
             return false; //无动作无子级
         actData.m_command = command;
@@ -173,7 +173,7 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         //add 子菜单项，父级有子菜单，则忽略动作，即便子菜单无一有效，后续也不再添加动作
         QList<DCustomActionData> tpChildrenActions;
         auto actStr = getValue(actionSetting, group, kActionGroups);
-        auto actList = actStr.toString().trimmed().split(":", QString::SkipEmptyParts);
+        auto actList = actStr.toString().simplified().split(":", QString::SkipEmptyParts);
 
         int actCount = 0;
         bool needSort = true;
@@ -207,7 +207,7 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         DCustomActionEntry tpEntry;
 
         //支持类型combo
-        auto comboStr = getValue(actionSetting, group, kConfCombo).toString().trimmed();
+        auto comboStr = getValue(actionSetting, group, kConfCombo).toString().simplified();
         if (comboStr.isEmpty()) {
             return false;//无支持选中类型默认该一级无效
         }
@@ -215,7 +215,7 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
             QStringList comboList = comboStr.split(":", QString::SkipEmptyParts);
             ComboTypes target;
             for (auto temp : comboList) {
-                auto tp = temp.trimmed();
+                auto tp = temp.simplified();
                 if (m_combos.contains(tp))
                     target = target | m_combos.value(temp);
             }
@@ -223,27 +223,27 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         }
 
         //MimeType
-        QString mimeTypeStr = getValue(actionSetting, group, kConfMimeType).toString().trimmed();
+        QString mimeTypeStr = getValue(actionSetting, group, kConfMimeType).toString().simplified();
         if (!mimeTypeStr.isEmpty())
             tpEntry.m_mimeTypes = mimeTypeStr.split(":");
 
         //X-DFM-ExcludeMimeTypes
-        QString excludeMimeTypesStr = getValue(actionSetting, group, kConfExcludeMimeTypes).toString().trimmed();
+        QString excludeMimeTypesStr = getValue(actionSetting, group, kConfExcludeMimeTypes).toString().simplified();
         if (!excludeMimeTypesStr.isEmpty())
             tpEntry.m_excludeMimeTypes= excludeMimeTypesStr.split(":");
 
         //X-DFM-SupportSchemes
-        QString supportSchemesStr = getValue(actionSetting, group, kConfSupportSchemes).toString().trimmed();
+        QString supportSchemesStr = getValue(actionSetting, group, kConfSupportSchemes).toString().simplified();
         if (!supportSchemesStr.isEmpty())
             tpEntry.m_supportSchemes = supportSchemesStr.split(":");
 
         //X-DFM-NotShowIn
-        QString supportNotShowInStr = getValue(actionSetting, group, kConfNotShowIn).toString().trimmed();
+        QString supportNotShowInStr = getValue(actionSetting, group, kConfNotShowIn).toString().simplified();
         if (!supportNotShowInStr.isEmpty())
             tpEntry.m_notShowIn = supportNotShowInStr.split(":");
 
         //X-DFM-SupportSuffix
-        QString supportSuffixStr = getValue(actionSetting, group, kConfSupportSuffix).toString().trimmed();
+        QString supportSuffixStr = getValue(actionSetting, group, kConfSupportSuffix).toString().simplified();
         if (!supportSuffixStr.isEmpty())
             tpEntry.m_supportSuffix = supportSuffixStr.split(":");
 
@@ -314,15 +314,15 @@ bool DCustomActionParser::actionFileInfos(FileBasicInfos &basicInfo, QSettings &
     basicInfo.m_package = actionSetting.fileName();
 
     //签名
-    basicInfo.m_sign = getValue(actionSetting, kMenuPrefix, kConfSign).toString().trimmed();
+    basicInfo.m_sign = getValue(actionSetting, kMenuPrefix, kConfSign).toString().simplified();
 
     //版本
-    basicInfo.m_version = getValue(actionSetting, kMenuPrefix, kConfFileVersion).toString().trimmed();
+    basicInfo.m_version = getValue(actionSetting, kMenuPrefix, kConfFileVersion).toString().simplified();
     if (basicInfo.m_version.isEmpty())
         return false;
 
     //描述
-    basicInfo.m_comment = getValue(actionSetting, kMenuPrefix, kConfComment).toString().trimmed();
+    basicInfo.m_comment = getValue(actionSetting, kMenuPrefix, kConfComment).toString().simplified();
     return true;
 }
 
@@ -384,13 +384,13 @@ void DCustomActionParser::execDynamicArg(DCustomActionData &act)
 bool DCustomActionParser::comboPosForTopAction(QSettings &actionSetting, const QString &group, DCustomActionData &act)
 {
     //能到这一步说明这个文件的有效性已经验证了
-    auto comboStr = getValue(actionSetting, group, kConfCombo).toString().trimmed();
+    auto comboStr = getValue(actionSetting, group, kConfCombo).toString().simplified();
     QStringList comboList = comboStr.split(":", QString::SkipEmptyParts);
 
     QString cPos;
     bool hasCombo = false;
     for (auto temp : comboList) {
-        cPos = QString("%1-%2").arg(kActionPos, temp.trimmed());
+        cPos = QString("%1-%2").arg(kActionPos, temp.simplified());
         auto ret = getValue(actionSetting, group, cPos);    //取出对应选中类型的pos
         if (m_combos.contains(temp)) {
             int pos = act.m_position;
