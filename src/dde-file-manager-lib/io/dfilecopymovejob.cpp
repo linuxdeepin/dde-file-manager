@@ -692,7 +692,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
     if (!source_info) {
 
         return setAndhandleError(DFileCopyMoveJob::UnknowUrlError, source_info, DAbstractFileInfoPointer(nullptr),
-                                 "Failed create file info") == DFileCopyMoveJob::SkipAction;
+                                 QObject::tr("Failed create file info")) == DFileCopyMoveJob::SkipAction;
     }
 
     if (!source_info->exists()) {
@@ -720,11 +720,43 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
     if (!handler) {
 
         return setAndhandleError(DFileCopyMoveJob::UnknowUrlError, source_info,
-                                 DAbstractFileInfoPointer(nullptr), "Failed create file handler") == DFileCopyMoveJob::SkipAction;
+                                 DAbstractFileInfoPointer(nullptr), QObject::tr("Failed create file handler")) == DFileCopyMoveJob::SkipAction;
     }
 
     // only remove
     if (!target_info) {
+        // BUG 59250 回收站文件夹下删除子文件会受到上级目录的权限管控
+        DUrl parentUrl;
+        QFile::Permissions parentUrlPermissions;
+        // 权限更改标识
+        bool permissionChangedFlag = false;
+
+        // 确定当前是从回收站强制删除且没有写权限(trashRemoveFlag 流控只针对回收站)
+        if (fileHints.testFlag(DFileCopyMoveJob::ForceDeleteFile)
+                && source_info->path().contains("/.local/share/Trash")) {
+            // 获取上级目录路径，获取缓存权限，判断当前是否进行权限更改
+            parentUrl = source_info->fileUrl().parentUrl();
+
+            //获取上层目录的Info对象
+            DAbstractFileInfoPointer parentInfo = DFileService::instance()->createFileInfo(nullptr, parentUrl);
+            if (parentInfo) {
+                parentUrlPermissions = parentInfo->permissions();
+            } else {
+                return setAndhandleError(DFileCopyMoveJob::UnknowUrlError,
+                                         parentInfo,DAbstractFileInfoPointer(nullptr),
+                                         QObject::tr("Failed create file info")) == DFileCopyMoveJob::SkipAction;
+            }
+
+            //没有写权限则不可操作子目录
+            permissionChangedFlag = !parentUrlPermissions.testFlag(QFileDevice::WriteUser);
+            // 触发当前权限更改可写入的流程操作
+            if (permissionChangedFlag) {
+                // 设置上级目录加入当前用户可写
+                handler->setPermissions(parentUrl, parentUrlPermissions | QFileDevice::WriteUser);
+            }
+        }
+
+
         bool ok = false;
         //可以显示进度条
         m_isShowProgress = true;
@@ -745,6 +777,11 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
             if (ok) {
                 joinToCompletedDirectoryList(from, DUrl(), size);
             }
+        }
+
+        //上级目录权限回设
+        if (permissionChangedFlag) {
+            handler->setPermissions(parentUrl,parentUrlPermissions);
         }
 
         return ok;
