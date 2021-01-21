@@ -542,7 +542,7 @@ void DFMAddressBar::updateCompletionState(const QString &text)
 
         // Check if (now is parent) url exist.
         if (url.isValid() && info && !info->exists()) {
-            url = info->parentUrl();
+            return;
         }
 
         // Check if we should start a new completion transmission.
@@ -555,6 +555,11 @@ void DFMAddressBar::updateCompletionState(const QString &text)
 
         // Set Base String
         this->completerBaseString = text.left(slashIndex + 1);
+
+        // start request
+        // 由于下方urlCompleter->setCompletionPrefix会触发onCompletionModelCountChanged接口
+        // 因此在这之前需要将completerModel清空，否则会使用上一次model中的数据
+        clearCompleterModel();
 
         // set completion prefix.
         urlCompleter->setCompletionPrefix(text.mid(slashIndex + 1));
@@ -590,8 +595,7 @@ void DFMAddressBar::updateCompletionState(const QString &text)
                 }
             });
         }
-        // start request
-        clearCompleterModel();
+
         //fix 33750 在匹配到smb:/，就创建url地址smb：///,去拉取url的目录，目前不知道什么原因造成gio mount smb：///失败就会出现提示框
         if (text.endsWith("smb:/")) {
             return;
