@@ -513,6 +513,12 @@ void RecentController::handleFileChanged()
                 }
             }
         }
+        //! 发送信号请求重新排列
+        QTimer::singleShot(100, this, [](){
+            DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
+                                              &DAbstractFileWatcher::fileModified,
+                                              DUrl("resort"));
+        });
     }
 
     // delete does not exist url.

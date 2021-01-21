@@ -1102,7 +1102,12 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
 
     const FileSystemNodePointer &node = rootNode;
 
-    if (!node) {
+    if (!node)
+        return;
+
+    //! 对文件列表进行排序
+    if (fileUrl.toString() == "resort") {
+        q->sort(true);
         return;
     }
 
@@ -1123,10 +1128,6 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
 
     q->parent()->parent()->update(index);
 //    emit q->dataChanged(index, index);
-    //这里调用refresh重刷界面
-    if (fileUrl.scheme() == RECENT_SCHEME) {
-        q->refresh(node->fileInfo->fileUrl());
-    }
 }
 
 void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &isExternalSource)
