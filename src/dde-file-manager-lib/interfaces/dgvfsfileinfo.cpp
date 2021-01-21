@@ -210,16 +210,9 @@ bool DGvfsFileInfo::isWritable() const
     Q_D(const DGvfsFileInfo);
     //fix bug 27828 打开挂载文件（有很多的文件夹和文件）在断网的情况下，滑动鼠标或者滚动鼠标滚轮时文管卡死，做缓存
     if (d->cacheCanWrite < 0) {
-        struct stat statinfo;
-        int filestat = stat(d->fileInfo.absoluteFilePath().toStdString().c_str(), &statinfo);
-        if (filestat == 0) {
-            d->cacheCanWrite = access(d->fileInfo.absoluteFilePath().toStdString().c_str(), W_OK) == 0 ? 1 : 0;
-        }
+        d->cacheCanWrite = access(d->fileInfo.absoluteFilePath().toStdString().c_str(), W_OK) == 0 ? 1 : 0;
     }
-    if ( d->cacheCanWrite >= 0) {
-        return d->cacheCanWrite;
-    }
-    return d->fileInfo.isWritable();
+    return d->cacheCanWrite;
 }
 
 bool DGvfsFileInfo::makeAbsolute()
