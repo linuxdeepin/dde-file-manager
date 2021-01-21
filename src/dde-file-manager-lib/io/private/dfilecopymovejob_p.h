@@ -146,6 +146,8 @@ public:
     bool mergeDirectory(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo);
     bool doCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
     bool doCopyFileBig(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
+    //线程池中拷贝大量小文件
+    bool doThreadPoolCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
     bool doCopyFileSmall(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
     bool doCopyFileU(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
     bool doRemoveFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fileInfo);
@@ -191,7 +193,13 @@ public:
      * @param fileNameList       文件路径
      */
     void setCutTrashData(QVariant fileNameList);
-
+    //fix bug 61565
+    //线程安全保存当前工作的device
+    void saveCurrentDevice(const DUrl &url,const QSharedPointer<DFileDevice> device);
+    //线程安全移出当前工作的device
+    void removeCurrentDevice(const DUrl &url);
+    //线程安全移出当前工作的device
+    void stopAllDeviceOperation();
     //! 剪切回收站文件路径
     QQueue<QString> m_fileNameList;
 
@@ -302,6 +310,9 @@ public:
     //拷贝信息的队列锁
     QMutex m_copyInfoQueueMutex;
     QMutex m_skipFileQueueMutex;
+    //当前拷贝的device
+    QMap<DUrl,QSharedPointer<DFileDevice>> m_currentDevice;
+    QMutex m_currentDeviceMutex;
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
 
