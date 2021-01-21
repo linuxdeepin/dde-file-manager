@@ -203,6 +203,7 @@ DFileCopyMoveJobPrivate::~DFileCopyMoveJobPrivate()
         updateSpeedTimer->deleteLater();
         updateSpeedTimer = nullptr;
     }
+    stopAllDeviceOperation();
 }
 
 QString DFileCopyMoveJobPrivate::errorToString(DFileCopyMoveJob::Error error)
@@ -1172,13 +1173,13 @@ bool DFileCopyMoveJobPrivate::doCopyFile(const DAbstractFileInfoPointer fromInfo
             close(fromfd);
         }
     }
-    QScopedPointer<DFileDevice> fromDevice(DFileService::instance()->createFileDevice(nullptr, fromInfo->fileUrl()));
+    QSharedPointer<DFileDevice> fromDevice(DFileService::instance()->createFileDevice(nullptr, fromInfo->fileUrl()));
     if (!fromDevice) {
         setError(DFileCopyMoveJob::UnknowUrlError, "Failed on create file device");
 
         return false;
     }
-    QScopedPointer<DFileDevice> toDevice(DFileService::instance()->createFileDevice(nullptr, toInfo->fileUrl()));
+    QSharedPointer<DFileDevice> toDevice(DFileService::instance()->createFileDevice(nullptr, toInfo->fileUrl()));
 
     if (!toDevice) {
         setError(DFileCopyMoveJob::UnknowUrlError, "Failed on create file device");
@@ -1302,14 +1303,10 @@ open_file: {
     DGIOFileDevice *fromgio = qobject_cast<DGIOFileDevice *>(fromDevice.data());
     DGIOFileDevice *togio = qobject_cast<DGIOFileDevice *>(toDevice.data());
     if (fromgio) {
-        fromgio->connect(q_ptr, &DFileCopyMoveJob::stopAllGioDervic, fromgio, [fromgio]() {
-            fromgio->cancelAllOperate();
-        });
+        saveCurrentDevice(fromInfo->fileUrl(),fromDevice);
     }
     if (togio) {
-        togio->connect(q_ptr, &DFileCopyMoveJob::stopAllGioDervic, togio, [togio]() {
-            togio->cancelAllOperate();
-        });
+        saveCurrentDevice(toInfo->fileUrl(),toDevice);
     }
 
     qint64 block_Size = fromInfo->size() > MAX_BUFFER_LEN ? MAX_BUFFER_LEN : fromInfo->size();
@@ -1556,8 +1553,6 @@ open_file: {
     if (Q_UNLIKELY(!stateCheck())) {
         return false;
     }
-
-    q_ptr->disconnect(q_ptr, &DFileCopyMoveJob::stopAllGioDervic, q_ptr, nullptr);
 
     if (fileHints.testFlag(DFileCopyMoveJob::DontIntegrityChecking)) {
         return true;
@@ -1901,6 +1896,14 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
 //    qCDebug(fileJob(), "adler value: 0x%lx", source_checksum);
 
     return true;
+}
+
+bool DFileCopyMoveJobPrivate::doThreadPoolCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize)
+{
+    bool ok = doCopyFile(fromInfo, toInfo, handler, blockSize);
+    removeCurrentDevice(fromInfo->fileUrl());
+    removeCurrentDevice(toInfo->fileUrl());
+    return ok;
 }
 
 bool DFileCopyMoveJobPrivate::doCopyFileSmall(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize)
@@ -2384,40 +2387,43 @@ bool DFileCopyMoveJobPrivate::process(const DUrl from, const DAbstractFileInfoPo
 
 bool DFileCopyMoveJobPrivate::copyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize)
 {
-//    Q_Q(DFileCopyMoveJob);
-//    qint64 elapsed = 0;
+    qint64 elapsed = 0;
     if (fileJob().isDebugEnabled()) {
-//        elapsed = updateSpeedElapsedTimer->elapsed();
+        elapsed = updateSpeedElapsedTimer->elapsed();
         updateSpeedElapsedTimer->elapsed();
     }
     beginJob(JobInfo::Copy, fromInfo->fileUrl(), toInfo->fileUrl());
+    bool ok = true;
     if (m_refineStat != DFileCopyMoveJob::Refine
             //! 为避免卡顿，保险箱用之前的拷贝方式
             || VaultController::isVaultFile(fromInfo->toLocalFile())
             || VaultController::isVaultFile(toInfo->toLocalFile())) {
-        return doCopyFile(fromInfo, toInfo, handler, blockSize);
+         ok = doCopyFile(fromInfo, toInfo, handler, blockSize);
     }
     //判读目标目录和本地目录是不是同盘，并且是大文件
     if (m_bDestLocal && isFromLocalUrls && fromInfo->size() > 500 * 1024 * 1024) {
-        bool ok = doCopyFileBig(fromInfo, toInfo, handler, blockSize);
+        ok = doCopyFileBig(fromInfo, toInfo, handler, blockSize);
         m_count.store(m_count.load() + 1);
-        return ok;
     }
     //1.判断源文件是本地，目标文件也是本地执行读写线程分离处理
     //2.判断源文件是本地，目标文件是（除光盘外的）块设备，
     else if (m_bDestLocal && isFromLocalUrls) {
         QtConcurrent::run(&m_pool, this, static_cast<bool(DFileCopyMoveJobPrivate::*)
                           (const DAbstractFileInfoPointer, const DAbstractFileInfoPointer, const QSharedPointer<DFileHandler> &, int)>
-                          (&DFileCopyMoveJobPrivate::doCopyFile), fromInfo, toInfo, handler, blockSize);
-        return true;
+                          (&DFileCopyMoveJobPrivate::doThreadPoolCopyFile), fromInfo, toInfo, handler, blockSize);
+        endJob();
+        qCDebug(fileJob(), "Time spent of copy the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed);
+        return ok;
     } else if ((isFromLocalUrls && !m_bDestLocal && m_isTagFromBlockDevice.load())) {
-        return doCopyFileU(fromInfo, toInfo, handler, blockSize);
+        ok = doCopyFileU(fromInfo, toInfo, handler, blockSize);
     } else {
-        return doCopyFile(fromInfo, toInfo, handler, blockSize);
+        ok = doCopyFile(fromInfo, toInfo, handler, blockSize);
     }
-
-//    qCDebug(fileJob(), "Time spent of copy the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed);
-
+    removeCurrentDevice(fromInfo->fileUrl());
+    removeCurrentDevice(toInfo->fileUrl());
+    endJob();
+    qCDebug(fileJob(), "Time spent of copy the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed);
+    return ok;
 }
 
 bool DFileCopyMoveJobPrivate::removeFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fileInfo)
@@ -3285,7 +3291,26 @@ void DFileCopyMoveJobPrivate::setCutTrashData(QVariant fileNameList)
     }
 }
 
+void DFileCopyMoveJobPrivate::saveCurrentDevice(const DUrl &url, const QSharedPointer<DFileDevice> device)
+{
+    QMutexLocker lk(&m_currentDeviceMutex);
+    m_currentDevice[url] = device;
+}
 
+void DFileCopyMoveJobPrivate::removeCurrentDevice(const DUrl &url)
+{
+    QMutexLocker lk(&m_currentDeviceMutex);
+    m_currentDevice.remove(url);
+}
+
+void DFileCopyMoveJobPrivate::stopAllDeviceOperation()
+{
+    QMutexLocker lk(&m_currentDeviceMutex);
+    for (auto url : m_currentDevice.keys()) {
+        m_currentDevice.value(url)->cancelAllOperate();
+    }
+    m_currentDevice.clear();
+}
 
 DFileCopyMoveJob::DFileCopyMoveJob(QObject *parent)
     : DFileCopyMoveJob(*new DFileCopyMoveJobPrivate(this), parent)
@@ -3607,7 +3632,7 @@ void DFileCopyMoveJob::stop()
     d->setState(StoppedState);
     d->waitCondition.wakeAll();
 
-    emit stopAllGioDervic();
+    d->stopAllDeviceOperation();
 }
 
 void DFileCopyMoveJob::togglePause()

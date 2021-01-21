@@ -477,7 +477,7 @@ void DGIOFileDevice::cancelAllOperate()
     closeWriteReadFailed(true);
     closeWriteReadFailed(false);
     d->m_cancel.store(true);
-    qDebug() << "stop all cancels";
+    qInfo() << "stop all cancels" << this << QThread::currentThreadId();
 }
 
 qint64 DGIOFileDevice::readData(char *data, qint64 maxlen)
@@ -515,7 +515,6 @@ qint64 DGIOFileDevice::writeData(const char *data, qint64 len)
         return -1;
     }
     qint64 size = g_output_stream_write(d->output_stream, data, static_cast<gsize>(len), d->m_writeCancel, &error);
-
     if (error) {
         setErrorString(QString::fromLocal8Bit(error->message));
 
