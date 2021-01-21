@@ -263,7 +263,7 @@ public:
 
     // 每列包含多个role时，存储此列活跃的role
     QMap<int, int> columnActiveRole;
-
+    mutable QMap<DUrl, bool> nameFiltersMatchResultMap;
     Q_DECLARE_PUBLIC(DFileSystemModel)
 };
 
