@@ -970,6 +970,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
     //找出url的rootfile路径，判断rootfile是否存在
     Q_D(DFileService);
 //    printStacktrace(6);
+    qDebug() << url << showdailog;
     //还原设置鼠标状态
     setCursorBusyState(false);
 
@@ -983,7 +984,8 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
             rootfilename = rootstrlist.at(1);
             rootfilename = rootfilename.replace(QString(".") + QString(SUFFIX_GVFSMP), "");
         }
-        if (!(rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(FTP_SCHEME))) {
+        if (!(rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(FTP_SCHEME)
+              || rootfilename.startsWith(SFTP_SCHEME))) {
             return false;
         }
         rooturl = url;
@@ -1019,7 +1021,8 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
             path = urlstr + urllast.left(qi);
         }
         if (path.isNull() || path.isEmpty() ||
-                !(rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(FTP_SCHEME) || rootfilename.startsWith(SFTP_SCHEME))) {
+                !(rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(FTP_SCHEME)
+                  || rootfilename.startsWith(SFTP_SCHEME))) {
             return false;
         }
         rooturl.setScheme(DFMROOT_SCHEME);
