@@ -35,9 +35,9 @@ isEmpty(DDE_FILE_MANAGER_DIR){
 
 PKGCONFIG += deepin-anything-server-lib
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/release -ldde-file-manager
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/debug -ldde-file-manager
-else:unix: LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../src/dde-file-manager-lib/release -ldde-file-manager
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../src/dde-file-manager-lib/debug -ldde-file-manager
+else:unix: LIBS += -L$$OUT_PWD/../../src/dde-file-manager-lib -ldde-file-manager
 
 INCLUDEPATH += $$DDE_FILE_MANAGER_LIB_DIR \
                $$DDE_FILE_MANAGER_LIB_DIR/interfaces \

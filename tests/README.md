@@ -20,9 +20,9 @@
 ./test-prj-running.sh --clear no --ut dde-desktop
 
 4. 支持只单独运行ut或者cppcheck
-#只运行ut
+只运行ut
 ./test-prj-running.sh --cppcheck no
-#只运行cppcheck
+只运行cppcheck
 ./test-prj-running.sh --ut no 或者 ./test-prj-running.sh --ut no --cppcheck yes
 
 5. 直接运行dde_file_manager UT case，并查看case 与 覆盖率情况
