@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     qDebug() << "end test cases ..............";
 
 #ifdef ENABLE_TSAN_TOOL
-    __sanitizer_set_report_path("../../build-ut/asan_dde-music-preview-plugin.log");
+    __sanitizer_set_report_path("../../asan_dde-music-preview-plugin.log");
 #endif
     return ret;
 }
