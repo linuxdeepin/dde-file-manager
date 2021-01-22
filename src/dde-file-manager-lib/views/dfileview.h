@@ -294,9 +294,18 @@ private:
     void refresh() override;
     bool fetchDragEventUrlsFromSharedMemory();
 
+    /**
+     * @brief setTargetUrlToApp 为其他应用设置目标Url
+     * 仅当被拖拽行为是DFileDrag时会被调用
+     * @param data mimeData
+     * @param url 目标Url
+     */
+    void setTargetUrlToApp(const QMimeData *data, const DUrl &url);
+
     bool m_isRemovingCase = false;
     QScopedPointer<DFileViewPrivate> d_ptr;
     QList<QUrl> m_urlsForDragEvent;
+    DUrl m_currentTargetUrl; //缓存当前目标Url
 
     // 处理选择文件的子线程对象
     SelectWork  *m_pSelectWork{nullptr};
