@@ -1484,6 +1484,27 @@ void FileUtils::addRecentFile(const QString &filePath, const DesktopFile &deskto
     DRecentManager::addItem(filePath, recentData);
 }
 
+bool FileUtils::copyOrCutFileByDdeFileManager(DFMGlobal::ClipboardAction action, const DUrl &toUrl, const DUrlList &fromUrlList)
+{
+    if (action == DFMGlobal::UnknowAction)
+        return false;
+    if (toUrl.scheme() == SEARCH_SCHEME)
+        return false;
+    if (action == DFMGlobal::CutAction)
+        DFMGlobal::instance()->clearClipboard();
+    QString type;
+    if (action == DFMGlobal::CutAction) {
+        type = DDE_FILE_MANAGER_CUT;
+    } else if (action == DFMGlobal::CopyAction) {
+        type = DDE_FILE_MANAGER_COPY;
+    }
+    QStringList arguments {"-c", type, toUrl.toLocalFile()};
+    foreach (const DUrl &url, fromUrlList) {
+        arguments << url.toLocalFile();
+    }
+    return QProcess::startDetached("dde-file-manager", arguments);
+}
+
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
 bool FileUtils::isDesktopFile(const QString &filePath)
 {

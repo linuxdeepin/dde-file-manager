@@ -32,7 +32,7 @@
 #include "dstorageinfo.h"
 #include "controllers/vaultcontroller.h"
 #include "dfmstandardpaths.h"
-
+#include "shutil/fileutils.h"
 #include "deviceinfo/udisklistener.h"
 
 #include <QTimer>
@@ -195,7 +195,16 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(paste_action, &QAction::triggered,
     q, [q] {
-        fileService->pasteFileByClipboard(q->parent(), q->currentUrl());
+        // 判断是桌面还是文管
+        bool isCanvas = q->property("isCanvasViewHelper").toBool();
+        if (isCanvas) {
+            const DUrlList &list = DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList());
+            DFMGlobal::ClipboardAction action = DFMGlobal::instance()->clipboardAction();
+            // 桌面调用文管拷贝或剪贴文件
+            FileUtils::copyOrCutFileByDdeFileManager(action, q->currentUrl(), list);
+        } else {
+            fileService->pasteFileByClipboard(q->parent(), q->currentUrl());
+        }
     });
 
     QAction *revocation_action = new QAction(q->parent());

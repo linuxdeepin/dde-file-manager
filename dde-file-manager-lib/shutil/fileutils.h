@@ -124,6 +124,8 @@ public:
     static bool isDesktopFile(const QFileInfo &fileInfo);
     static bool isDesktopFileOptmise(const QString& filePath);
     static void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
+    // 启动文管进程拷贝或剪贴文件
+    static bool copyOrCutFileByDdeFileManager(DFMGlobal::ClipboardAction action, const DUrl &toUrl, const DUrlList &fromUrlList);
 };
 
 #endif // FILEUTILS_H

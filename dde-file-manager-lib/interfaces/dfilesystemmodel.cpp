@@ -1855,10 +1855,19 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     switch (action) {
     case Qt::CopyAction:
         if (urlList.count() > 0) {
-            // blumia: 如果不在新线程跑的话，用户就只能在复制完毕之后才能进行新的拖拽操作。
-            QtConcurrent::run([ = ]() {
-                fileService->pasteFile(this, DFMGlobal::CopyAction, toUrl, urlList);
-            });
+            // 判断是否是桌面调用
+            bool isCanvas = false;
+            if (this->parent())
+                isCanvas = this->parent()->property("isCanvasViewHelper").toBool();
+            if (!isCanvas) {
+                // blumia: 如果不在新线程跑的话，用户就只能在复制完毕之后才能进行新的拖拽操作。
+                QtConcurrent::run([ = ]() {
+                    fileService->pasteFile(this, DFMGlobal::CopyAction, toUrl, urlList);
+                });
+            } else {
+                // 启用文管进程拷贝文件
+                FileUtils::copyOrCutFileByDdeFileManager(DFMGlobal::CopyAction, toUrl, urlList);
+            }
         }
         break;
     case Qt::LinkAction:

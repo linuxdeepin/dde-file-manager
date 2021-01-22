@@ -76,6 +76,9 @@ void CommandLineManager::initOptions()
                                         "directory");
     QCommandLineOption openWithDialog(QStringList() << "o" << "open", "open with dialog");
     QCommandLineOption openHomeOption(QStringList() << "O" << "open-home", "open home");
+    // 使用文管拷贝文件
+    QCommandLineOption copyFile(QStringList() << "c" << "copy" << "copy file");
+
 
     addOption(newWindowOption);
     addOption(backendOption);
@@ -88,6 +91,8 @@ void CommandLineManager::initOptions()
     addOption(workingDirOption);
     addOption(openWithDialog);
     addOption(openHomeOption);
+    // 文件拷贝
+    addOption(copyFile);
 }
 
 void CommandLineManager::addOption(const QCommandLineOption &option)
@@ -145,6 +150,28 @@ void CommandLineManager::processCommand()
          DUrl url = DUrl::fromUserInput(homePath);
          argumentUrls.append(url);
          DFMEventDispatcher::instance()->processEvent<DFMOpenNewWindowEvent>(Q_NULLPTR, argumentUrls, isSet("n"));
+        return;
+    }
+
+    // 文件拷贝命令
+    if (isSet("c")) {
+        QStringList argumentUrls = positionalArguments();
+        DUrl toUrl;
+        DUrlList urlList;
+        int nCount = argumentUrls.size();
+        if (nCount > 2) {
+           for (int i = 1; i < nCount; ++i) {
+                if (i == 1)
+                    toUrl = DUrl::fromLocalFile(argumentUrls[i]);
+                else
+                    urlList << DUrl::fromLocalFile(argumentUrls[i]);
+            }
+           if (argumentUrls[0] == DDE_FILE_MANAGER_COPY) {
+               DFileService::instance()->pasteFile(nullptr, DFMGlobal::CopyAction, toUrl, urlList);
+           } else if (argumentUrls[0] == DDE_FILE_MANAGER_CUT) {
+               DFileService::instance()->pasteFile(nullptr, DFMGlobal::CutAction, toUrl, urlList);
+           }
+        }
         return;
     }
 
