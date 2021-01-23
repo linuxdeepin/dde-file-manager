@@ -13,8 +13,9 @@ APP_NAME=${4}
 #下面是覆盖率目录操作，一种正向操作，一种逆向操作
 EXTRACT_INFO=${5} #针对当前目录进行覆盖率操作
 REMOVE_INFO=${6} #排除当前目录进行覆盖率操作
+SHOW_REPORT=${7} #是否显示报表
 
-if [ ! $# -eq 6 ]; then
+if [ ! $# -eq 7 ]; then
   echo "param number set err: "$# ": "$*
   echo "wrong param set,usage: <报告路径> <报告项目名> <编译路径> <可执行程序> <期望覆盖的路径> <不期望覆盖的路径>"
   exit 0
@@ -45,9 +46,11 @@ mv $RESULT_COVERAGE_DIR/index.html $RESULT_COVERAGE_DIR/cov_$REPORT_NAME.html
 mv $RESULT_COVERAGE_DIR/index-sort-f.html $RESULT_COVERAGE_DIR/index-sort-f_$REPORT_NAME.html
 mv $RESULT_COVERAGE_DIR/index-sort-l.html $RESULT_COVERAGE_DIR/index-sort-l_$REPORT_NAME.html
 
-nohup x-www-browser $RESULT_COVERAGE_DIR/cov_$REPORT_NAME.html &
-nohup x-www-browser $RESULT_UT_REPORT_DIR &
- 
+if [ ! -n "$SHOW_REPORT" ] || [ "$SHOW_REPORT" = "yes" ] ; then
+    nohup x-www-browser $RESULT_COVERAGE_DIR/cov_$REPORT_NAME.html &
+    nohup x-www-browser $RESULT_UT_REPORT_DIR &
+fi
+
 lcov -d $BUILD_DIR –z
 
 exit 0

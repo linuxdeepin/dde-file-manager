@@ -7,7 +7,8 @@ do
         echo "--clear:默认情况为yes删除当前build-ut下所有数据， 使用 --clear no 不进行清除操作"
         echo "--rebuild：默认为yes进行重新编译， 使用--rebuild no 不进行重新编译"
         echo "--ut:指定ut项目类型，可以使用类型：no all dde_file_manager dde-file-manager-lib dde-desktop dde-dock-plugins dde-file-manager-plugins dde-file-thumbnail-tool deepin-anything-server-plugins"
-        echo "--cppcheck：默认为no 不进行项目cpp-check文件扫描， 使用--cppcheck no 不进行cpp-check扫描"
+        echo "--cppcheck：默认为no 不进行项目cpp-check文件扫描， 使用--cppcheck yes 进行cpp-check扫描"
+        echo "--show：默认为no 不显示报表， 使用--show yes 显示当前报表"
         echo "--cpu：当前使用CPU数目，默认为16"
         exit 0
   fi
@@ -20,6 +21,7 @@ UT_COMMAND="all"; #运行UT类型 no all dde_file_manager dde-file-manager-lib d
 REBUILD_PTJ="yes";
 CPP_CHECK_COMMAND="no"; #是否运行cppcheck，no就不运行
 CPU_NUMBER=16; #当前使用CPU数目，默认为16
+SHOW_REPORT="no"; #默认为no 不显示报表
 
 while [ $# -ge 2 ] ; do
         case "$1" in
@@ -28,11 +30,12 @@ while [ $# -ge 2 ] ; do
                 --rebuild) REBUILD_PTJ="$2"; shift 2;;
                 --cppcheck) CPP_CHECK_COMMAND="$2"; shift 2;;
                 --cpu) CPU_NUMBER="$2"; shift 2;;
+                --show) SHOW_REPORT="$2"; shift 2;;
                 *) echo "Unknown command parameter $1 $2, break the process!" ; exit 0; break;;
         esac
 done
 
-echo "get command: " "--clear "$CLEAR_COMMAND "--ut "$UT_COMMAND "--rebuild "$REBUILD_PTJ "--cppcheck "$CPP_CHECK_COMMAND "--cpu "$CPU_NUMBER
+echo "get command: " "--clear "$CLEAR_COMMAND "--ut "$UT_COMMAND "--rebuild "$REBUILD_PTJ "--cppcheck "$CPP_CHECK_COMMAND "--cpu "$CPU_NUMBER "--show "$SHOW_REPORT
 
 # 定位脚本所在当前目录
 TESTS_FOLDER=$(cd "$(dirname "$0")";pwd)
@@ -61,10 +64,10 @@ echo "start dde-file-manager project all CI cases"
 # 下面是UT相关的case
 if [ ! -n "$UT_COMMAND" ] ; then
     echo "ut case type is all"
-    ./all-ut-prj-running.sh $PROJECT_FOLDER $BUILD_DIR "all" $REBUILD_PTJ $CPU_NUMBER
+    ./all-ut-prj-running.sh $PROJECT_FOLDER $BUILD_DIR "all" $REBUILD_PTJ $CPU_NUMBER $SHOW_REPORT
 elif [ $UT_COMMAND != "no" ] ; then
     echo "ut case type is " $UT_COMMAND
-    ./all-ut-prj-running.sh $PROJECT_FOLDER $BUILD_DIR $UT_COMMAND $REBUILD_PTJ $CPU_NUMBER
+    ./all-ut-prj-running.sh $PROJECT_FOLDER $BUILD_DIR $UT_COMMAND $REBUILD_PTJ $CPU_NUMBER $SHOW_REPORT
 fi
 
 # 下面是cppcheck相关case
