@@ -30,6 +30,7 @@ class DGIOFileDevicePrivate : public DFileDevicePrivate
 {
 public:
     explicit DGIOFileDevicePrivate(DGIOFileDevice *qq);
+    ~DGIOFileDevicePrivate() override;
 
     Q_DECLARE_PUBLIC(DGIOFileDevice)
 
@@ -53,6 +54,31 @@ DGIOFileDevicePrivate::DGIOFileDevicePrivate(DGIOFileDevice *qq)
     m_closeOutCancel = g_cancellable_new();
     m_closeTotalCancel = g_cancellable_new();
     m_closeInCancel = g_cancellable_new();
+}
+
+DGIOFileDevicePrivate::~DGIOFileDevicePrivate()
+{
+    //在使用完后要析构所有的gioobject
+    if (m_writeCancel) {
+        g_object_unref(m_writeCancel);
+        m_writeCancel = nullptr;
+    }
+    if (m_readCancel) {
+        g_object_unref(m_readCancel);
+        m_readCancel = nullptr;
+    }
+    if (m_closeOutCancel) {
+        g_object_unref(m_closeOutCancel);
+        m_closeOutCancel = nullptr;
+    }
+    if (m_closeTotalCancel) {
+        g_object_unref(m_closeTotalCancel);
+        m_closeTotalCancel = nullptr;
+    }
+    if (m_closeInCancel) {
+        g_object_unref(m_closeInCancel);
+        m_closeInCancel = nullptr;
+    }
 }
 
 DGIOFileDevice::DGIOFileDevice(const DUrl &url, QObject *parent)
