@@ -846,10 +846,13 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl, bool isPickU
 {
     Q_Q(DFileSystemModel);
 
-    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
+    DAbstractFileInfoPointer info = DAbstractFileInfo::getFileInfo(fileUrl);
     if (info) {
-        info->refresh(true);
+        info->refresh(info->isGvfsMountFile());
+    } else {
+        info = DFileService::instance()->createFileInfo(q, fileUrl);
     }
+
     if ((!info || !passFileFilters(info)) && !isPickUpQueue) {
         return;
     }
@@ -942,11 +945,7 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &i
     Q_Q(DFileSystemModel);
 
     const FileSystemNodePointer &node = rootNode;
-    //fix 27828 文件属性改变刷新一次缓存数据
-    DAbstractFileInfoPointer newFileInfo = fileService->createFileInfo(nullptr, fileUrl);
-    if (newFileInfo) {
-        newFileInfo->refresh(true);
-    }
+    //fix 27828 文件属性改变刷新一次缓存数据,这里只是刷缓存数据
     if (!node) {
         return;
     }
@@ -959,7 +958,7 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &i
 
     if (const DAbstractFileInfoPointer &fileInfo = q->fileInfo(index)) {
         if (isExternalSource) {
-            fileInfo->refresh();
+            fileInfo->refresh(fileInfo->isGvfsMountFile());
         }
     }
 
@@ -1022,7 +1021,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             continue;
         }
         if (event.first != AddFile) {
-            info->refresh(true);
+            info->refresh(info->isGvfsMountFile());
         }
         const DUrl &rootUrl = q->rootUrl();
         const DAbstractFileInfoPointer rootinfo = fileService->createFileInfo(q, rootUrl);

@@ -321,11 +321,14 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     QString query = m_url.query();
 
     if (m_url.scheme() == DFMROOT_SCHEME) {
-        DAbstractFileInfoPointer fi = fileService->createFileInfo(this, m_url);
-        Q_ASSERT(fi);
+        //dgvfsinfo有缓存的才去刷新缓存的信息
+        DAbstractFileInfoPointer fi = DAbstractFileInfo::getFileInfo(m_url);
         if (fi) {
-            fi->refresh(true);
+            fi->refresh(fi->isGvfsMountFile());
+        } else {
+            fi = fileService->createFileInfo(this, m_url);
         }
+        Q_ASSERT(fi);
 
         QString name = fi->fileDisplayName();
         QIcon icon = QIcon::fromTheme(fi->iconName());
@@ -433,13 +436,18 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             //! set scheme to get vault file info.
             realUrl.setScheme(DFMVAULT_SCHEME);
         }
-
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, realUrl);
+        //dgvfsinfo有缓存的才去刷新缓存的信息
+        DAbstractFileInfoPointer fileInfo = DAbstractFileInfo::getFileInfo(m_url);
+        if (fileInfo) {
+            fileInfo->refresh(fileInfo->isGvfsMountFile());
+        } else {
+            fileInfo = DFileService::instance()->createFileInfo(this, realUrl);
+        }
         if (!fileInfo) {
             close();
             return;
         }
-        fileInfo->refresh(true);
+
         m_icon->setPixmap(fileInfo->fileIcon().pixmap(128, 128));
         m_edit->setPlainText(fileInfo->fileDisplayName());
         m_edit->setAlignment(Qt::AlignHCenter);
