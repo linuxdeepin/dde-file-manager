@@ -1599,14 +1599,6 @@ TEST_F(CanvasGridViewTest, test_itemIconGeomerty)
     EXPECT_TRUE(QRect(9, 9, 9, 9) == rect2);
 }
 
-TEST_F(CanvasGridViewTest, test_fakeDropEvent)
-{
-    m_canvasGridView->d->dodgeDelayTimer.start(100);
-    m_canvasGridView->fakeDropEvent();
-    EXPECT_FALSE(m_canvasGridView->d->startDodge);
-    EXPECT_TRUE(!m_canvasGridView->d->dodgeDelayTimer.isActive());
-}
-
 TEST_F(CanvasGridViewTest, test_dragEnterEvent)
 {
     QPoint pos(10, 10);

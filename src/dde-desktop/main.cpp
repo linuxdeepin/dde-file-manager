@@ -7,31 +7,15 @@
  * (at your option) any later version.
  **/
 
-#include <QDebug>
-#include <QDBusError>
-#include <QDBusConnection>
-#include <QThreadPool>
-#include <QPixmapCache>
-#include <QSurfaceFormat>
-
-#include <DLog>
-#include <DApplication>
-
-#include <unistd.h>
-
-#include <dfmglobal.h>
-#include <dfmapplication.h>
-
-#include "log/dfmLogManager.h"
-
 #include "util/dde/ddesession.h"
-
 #include "config/config.h"
 #include "desktop.h"
 #include "view/canvasgridview.h"
 
-#include "deventfilter.h"
-#include "controllers/appcontroller.h"
+#include <controllers/appcontroller.h>
+#include <dfmglobal.h>
+#include <dfmapplication.h>
+#include <log/dfmLogManager.h>
 
 // DBus
 #include "filedialogmanager_adaptor.h"
@@ -41,9 +25,21 @@
 #include "util/dde/desktopinfo.h"
 #include "accessibility/acobjectlist.h"
 
-using namespace Dtk::Core;
-using namespace Dtk::Widget;
+#include <DLog>
+#include <DApplication>
 
+#include <QDebug>
+#include <QDBusError>
+#include <QDBusConnection>
+#include <QThreadPool>
+#include <QPixmapCache>
+#include <QSurfaceFormat>
+
+#include <unistd.h>
+
+DGUI_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
+DCORE_USE_NAMESPACE
 DFM_USE_NAMESPACE
 
 static bool registerDialogDBus()
@@ -100,7 +96,6 @@ static bool registerFileManager1DBus()
 
 int main(int argc, char *argv[])
 {
-    QString tmp;
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
@@ -131,7 +126,6 @@ int main(int argc, char *argv[])
 
     bool preload = false;
     bool fileDialogOnly = false;
-
     for (const QString &arg : app.arguments()) {
         if (arg == "--preload") {
             preload = true;
@@ -157,60 +151,52 @@ int main(int argc, char *argv[])
     app.setApplicationVersion(DApplication::buildVersion((GIT_VERSION)));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
-    const QString m_format = "%{time}{yyyyMMdd.HH:mm:ss.zzz}[%{type:1}][%{function:-35} %{line:-4} %{threadid} ] %{message}\n";
-    DFMLogManager::setLogFormat(m_format);
+    const QString logFormat = "%{time}{yyyyMMdd.HH:mm:ss.zzz}[%{type:1}][%{function:-35} %{line:-4} %{threadid} ] %{message}\n";
+    DFMLogManager::setLogFormat(logFormat);
     DFMLogManager::registerConsoleAppender();
 
-    if (!preload) {
+    if (!preload)
         DFMLogManager::registerFileAppender();
-    }
-    tmp.clear();
 
-    // init application object
     DFMApplication fmApp;
     Q_UNUSED(fmApp)
 
-    qDebug() << "start " << app.applicationName() << app.applicationVersion();
+    qInfo() << "start " << app.applicationName() << app.applicationVersion();
+    qInfo() << "pid:" << getpid() << " preload:" << preload << "fileDialogOnly:" << fileDialogOnly;
+
     if (!preload && !fileDialogOnly) {
         QDBusConnection conn = QDBusConnection::sessionBus();
 
         if (!conn.registerService(DesktopServiceName)) {
-            qDebug() << "registerService Failed, maybe service exist" << conn.lastError();
+            qCritical() << "registerService Failed, maybe service exist" << conn.lastError();
             exit(0x0002);
         }
 
-        if (!conn.registerObject(DesktopServicePath, Desktop::instance(),
-                                 QDBusConnection::ExportAllSlots |
-                                 QDBusConnection::ExportAllSignals |
-                                 QDBusConnection::ExportAllProperties)) {
-            qDebug() << "registerObject Failed" << conn.lastError();
+        auto registerOptions = QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
+        if (!conn.registerObject(DesktopServicePath, Desktop::instance(), registerOptions)) {
+            qCritical() << "registerObject Failed" << conn.lastError();
             exit(0x0003);
         }
     }
 
     if (!preload) {
         // Notify dde-desktop start up
-        if (!fileDialogOnly) {
+        if (!fileDialogOnly)
             Dde::Session::RegisterDdeSession();
-        }
 
-        // ---------------------------------------------------------------------------
         // ability to show file selection dialog
         if (!registerDialogDBus()) {
             qWarning() << "Register dialog dbus failed.";
-            if (fileDialogOnly) {
+            if (fileDialogOnly)
                 return 1;
-            }
         }
 
-        if (!registerFileManager1DBus()) {
+        if (!registerFileManager1DBus())
             qWarning() << "Register org.freedesktop.FileManager1 DBus service is failed";
-        }
     }
 
     // init pixmap cache size limit, 20MB * devicePixelRatio
     QPixmapCache::setCacheLimit(static_cast<int>(20 * 1024 * app.devicePixelRatio()));
-
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 
     if (!fileDialogOnly) {
@@ -219,10 +205,8 @@ int main(int argc, char *argv[])
     }
 
     DFMGlobal::installTranslator();
-
-    if (!fileDialogOnly) {
+    if (!fileDialogOnly)
         Desktop::instance()->loadData();
-    }
 
     if (preload) {
         QTimer::singleShot(1000, &app, &QCoreApplication::quit);
@@ -248,5 +232,7 @@ int main(int argc, char *argv[])
     });
 
     DFMGlobal::IsFileManagerDiloagProcess = true; // for compatibility.
-    return app.exec();
+    int ret = app.exec();
+    qInfo() << "exit: " << ret << "pid:" << getpid();
+    return ret;
 }

@@ -45,7 +45,6 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent) :
     m_logoLabel = new QLabel(this);
     m_textLabel = new QLabel(this);
 
-
     AC_SET_OBJECT_NAME( m_logoLabel, AC_WATER_MASK_LOGO_LABEL);
     AC_SET_ACCESSIBLE_NAME( m_logoLabel, AC_WATER_MASK_LOGO_LABEL);
     AC_SET_OBJECT_NAME( m_textLabel, AC_WATER_MASK_TEXT);
@@ -251,8 +250,10 @@ void WaterMaskFrame::initUI()
     }
 
     if(isNeedState()){
+        qInfo() << "get active state from com.deepin.license.Info";
         ActiveState stateType = static_cast<ActiveState>(m_licenseInterface->AuthorizationState());
-        qInfo() << "get active state from com.deepin.license.Info property AuthorizationState and value:"<<stateType;
+        qInfo() << "ActiveState:" << stateType;
+
         switch (stateType) {
         case Unauthorized:
         case AuthorizedLapse:
@@ -335,7 +336,7 @@ bool WaterMaskFrame::isNeedState()
 bool WaterMaskFrame::parseJson(QString key)
 {
     if(key.isNull() || key.isEmpty() || (!m_configs.contains(key))){
-        qDebug() << key <<"WaterMask load Config fail";
+        qWarning() << key <<"WaterMask load Config fail";
         return false;
     }
     else {

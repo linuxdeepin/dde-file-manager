@@ -31,7 +31,6 @@ class CanvasGridView: public QAbstractItemView
 
     Q_PROPERTY(double dodgeDuration READ dodgeDuration WRITE setDodgeDuration NOTIFY dodgeDurationChanged)
 public:
-    static std::atomic<bool> m_flag;
     static QMap<DMD_TYPES, bool> virtualEntryExpandState;
 
     explicit CanvasGridView(const QString &screen, QWidget *parent = Q_NULLPTR);
@@ -96,10 +95,7 @@ public:
 #if QT_CONFIG(draganddrop)
     virtual void startDrag(Qt::DropActions supportedActions) override;
 #endif
-
-    void fakeDropEvent()noexcept;
-    // list view function
-    QString canvansScreenName();
+    QString canvansScreenName() const;
     QRect rectForIndex(const QModelIndex &index) const;
     DUrl currentUrl() const;
     bool setCurrentUrl(const DUrl &url);

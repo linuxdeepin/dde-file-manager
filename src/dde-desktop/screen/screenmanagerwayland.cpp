@@ -230,7 +230,7 @@ void ScreenManagerWayland::init()
     connect(m_display, &DBusDisplay::DisplayModeChanged, this, [this]() {
         //emit sigDisplayModeChanged();
         int mode = m_display->GetRealDisplayMode();
-        qDebug() << "deal display mode changed " << mode;
+        qInfo() << "deal display mode changed " << mode;
         if (m_lastMode == mode)
             return;
         m_lastMode = mode;
@@ -240,7 +240,7 @@ void ScreenManagerWayland::init()
     //临时方案，使用PrimaryRectChanged信号作为拆分/合并信号
     connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [this]() {
         int mode = m_display->GetRealDisplayMode();
-        qDebug() << "deal merge and split" << mode << m_lastMode;
+        qInfo() << "deal merge and split" << mode << m_lastMode;
         if (m_lastMode == mode)
             return;
         m_lastMode = mode;
