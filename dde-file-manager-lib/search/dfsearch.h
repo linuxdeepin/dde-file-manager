@@ -48,6 +48,7 @@ private:
     GPtrArray *results;
     uint  num_results = 0;
     void *caller = nullptr;
+    QString pathForSearching;
 };
 
 #endif
