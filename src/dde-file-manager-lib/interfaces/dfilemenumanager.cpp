@@ -938,7 +938,7 @@ void DFileMenuData::initActions()
             continue;
         }
 
-        QAction *action = new QAction(actionIcons.value(key), actionKeys.value(key), 0);
+        QAction *action = new QAction(actionIcons.value(key), actionKeys.value(key), nullptr);
         action->setData(key);
         actions.insert(key, action);
         actionToMenuAction.insert(action, key);
@@ -1027,7 +1027,7 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
             QAction *action = DFileMenuData::actions.value(key);
 
             if (!action) {
-                action = new QAction(DFileMenuData::actionKeys.value(key), 0);
+                action = new QAction(DFileMenuData::actionKeys.value(key), nullptr);
                 action->setData(key);
                 DFileMenuData::actions[key] = action;
                 DFileMenuData::actionToMenuAction[action] = key;
@@ -1196,7 +1196,7 @@ bool DFileMenuManager::isCustomMenuSupported(const DUrl &viewRootUrl)
     const QString &path = viewRootUrl.toLocalFile();
     //U盘、硬盘支持显示
     if (deviceListener->isBlockFile(path))
-        return true;\
+        return true;
 
     DStorageInfo st(path);
     return st.isLocalDevice() //过滤 手机 网络 smb ftp
@@ -1263,7 +1263,7 @@ void DFileMenuManager::setActionString(MenuAction type, QString actionString)
 {
     DFileMenuData::actionKeys.insert(type, actionString);
 
-    QAction *action = new QAction(actionString, 0);
+    QAction *action = new QAction(actionString, nullptr);
     action->setData(type);
     DFileMenuData::actions.insert(type, action);
     DFileMenuData::actionToMenuAction[action] = type;

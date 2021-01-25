@@ -1,12 +1,15 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 #include <stub.h>
+#include <stubext.h>
 
 #include <QAction>
 
 #define private public
 #define protected public
 #include "customization/dcustomactionbuilder.h"
+#include "interfaces/dfileservices.h"
+#include "models/dfmrootfileinfo.h"
 
 TEST(DCustomActionBuilder, set_active_dir_empty)
 {
@@ -628,4 +631,247 @@ TEST(DCustomActionBuilder, createAciton)
     EXPECT_EQ(ac->property(DCustomActionDefines::kCustomActionCommand).toString(), ad.m_command);
     EXPECT_EQ(ac->property(DCustomActionDefines::kCustomActionCommandArgFlag).toInt(), ad.m_cmdArg);
     delete ac;
+}
+
+TEST(DCustomActionBuilder, isMimeTypeSupport)
+{
+    QString tgMimetype {"type0"};
+    QStringList sptMimeType {"type1","type2"};
+    DCustomActionBuilder builder;
+
+    EXPECT_FALSE(builder.isMimeTypeSupport(tgMimetype, sptMimeType));
+
+    sptMimeType.append("type0");
+    EXPECT_TRUE(builder.isMimeTypeSupport(tgMimetype, sptMimeType));
+}
+
+TEST(DCustomActionBuilder, isMimeTypeMatch)
+{
+    QStringList tgMimetype {"type0"};
+    QStringList sptMimeType {"type1","type2"};
+    DCustomActionBuilder builder;
+
+    EXPECT_FALSE(builder.isMimeTypeMatch(tgMimetype, sptMimeType));
+
+    sptMimeType.append("type0");
+    EXPECT_TRUE(builder.isMimeTypeMatch(tgMimetype, sptMimeType));
+
+    sptMimeType.clear();
+    sptMimeType.append("*");
+    EXPECT_TRUE(builder.isMimeTypeMatch(tgMimetype, sptMimeType));
+}
+
+TEST(DCustomActionBuilder, isActionShouldShow)
+{
+    DCustomActionBuilder builder;
+    DCustomActionEntry entry;
+
+    //Desktop
+    EXPECT_TRUE(builder.isActionShouldShow(entry, true));
+    entry.m_notShowIn.append("Desktop");
+    EXPECT_FALSE(builder.isActionShouldShow(entry, true));
+    entry.m_notShowIn.append("Filemanager");
+    EXPECT_FALSE(builder.isActionShouldShow(entry, true));
+    entry.m_notShowIn.clear();
+    entry.m_notShowIn.append("*");
+    EXPECT_FALSE(builder.isActionShouldShow(entry, true));
+    entry.m_notShowIn.append("Desktop");
+    EXPECT_FALSE(builder.isActionShouldShow(entry, true));
+
+    //Filemanager
+    entry.m_notShowIn.clear();
+    EXPECT_TRUE(builder.isActionShouldShow(entry, false));
+    entry.m_notShowIn.append("Filemanager");
+    EXPECT_FALSE(builder.isActionShouldShow(entry, false));
+    entry.m_notShowIn.append("Desktop");
+    EXPECT_FALSE(builder.isActionShouldShow(entry, false));
+    entry.m_notShowIn.clear();
+    entry.m_notShowIn.append("*");
+    EXPECT_FALSE(builder.isActionShouldShow(entry, false));
+    entry.m_notShowIn.append("Filemanager");
+    EXPECT_FALSE(builder.isActionShouldShow(entry, false));
+}
+
+TEST(DCustomActionBuilder, isSchemeSupport)
+{
+    DCustomActionBuilder builder;
+    DCustomActionEntry entry;
+
+    DUrl utUrlOne("file:///home/xxx/Desktop/zip.001");
+    DUrl utUrlTwo("trush:///home/xxx/Desktop/zip.001");
+
+
+    EXPECT_TRUE(builder.isSchemeSupport(entry, utUrlOne));
+    EXPECT_TRUE(builder.isSchemeSupport(entry, utUrlTwo));
+
+    entry.m_supportSchemes.append("*");
+    EXPECT_TRUE(builder.isSchemeSupport(entry, utUrlOne));
+    EXPECT_TRUE(builder.isSchemeSupport(entry, utUrlTwo));
+
+    entry.m_supportSchemes.clear();
+    entry.m_supportSchemes.append("file");
+    EXPECT_TRUE(builder.isSchemeSupport(entry, utUrlOne));
+    EXPECT_FALSE(builder.isSchemeSupport(entry, utUrlTwo));
+
+    entry.m_supportSchemes.append("*");
+    EXPECT_TRUE(builder.isSchemeSupport(entry, utUrlOne));
+    EXPECT_TRUE(builder.isSchemeSupport(entry, utUrlTwo));
+
+}
+
+TEST(DCustomActionBuilder, isSuffixSupport)
+{
+    DCustomActionBuilder builder;
+    DCustomActionEntry entry;
+    DUrl utUrl("usr/bin/dde-desktop");
+    EXPECT_TRUE(builder.isSuffixSupport(entry, utUrl));
+
+    DAbstractFileInfoPointer(*tempFunc)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) ->DAbstractFileInfoPointer {
+        return DAbstractFileInfoPointer(new DAbstractFileInfo(DUrl("usr/bin/dde-desktop")));
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, createFileInfo), tempFunc);
+
+    EXPECT_TRUE(builder.isSuffixSupport(entry, utUrl));
+    entry.m_supportSuffix.append("7z.*");
+    EXPECT_FALSE(builder.isSuffixSupport(entry, utUrl));
+}
+
+TEST(DCustomActionBuilder, appendParentMimeType)
+{
+    DCustomActionBuilder builder;
+    QStringList fileMimeTypes;
+    fileMimeTypes.append("application/wps-office.xlsx");
+    QStringList fileMimeTypesParent;
+    builder.appendParentMimeType(fileMimeTypesParent, fileMimeTypes);
+    EXPECT_TRUE(1 == fileMimeTypes.size());
+    EXPECT_TRUE("application/wps-office.xlsx" == fileMimeTypes.first());
+
+    fileMimeTypesParent.append("application/vnd.ms-excel");
+    fileMimeTypesParent.append("application/msexcel");
+    fileMimeTypesParent.append("application/x-msexcel");
+    fileMimeTypesParent.append("application/vnd.ms-excel.sheet.macroenabled.12");
+    fileMimeTypesParent.append("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+    int tempSize = fileMimeTypes.size() + fileMimeTypesParent.size();
+    builder.appendParentMimeType(fileMimeTypesParent, fileMimeTypes);
+    EXPECT_TRUE(tempSize < fileMimeTypes.size());
+}
+
+TEST(DCustomActionBuilder, matchActions)
+{
+    QList<DCustomActionEntry> oriActions;
+    DUrlList selects;
+    DCustomActionBuilder builder;
+    DCustomActionEntry actEntryZone;
+    actEntryZone.m_version = "1.0";
+    actEntryZone.m_fileCombo = DCustomActionDefines::ComboType::AllFile;
+    actEntryZone.data().name() = "utTestOne";
+    actEntryZone.m_supportSchemes.append("*");
+    actEntryZone.m_notShowIn.append("Desktop");
+    actEntryZone.m_supportSuffix.append("xlsx");
+    actEntryZone.m_mimeTypes.append("application/wps-office.xlsx");
+    oriActions.append(actEntryZone);
+    auto temp = builder.matchActions(selects, oriActions, true);
+    EXPECT_TRUE(1 == temp.size());
+
+    Stub stub;
+    //createFile
+    DAbstractFileInfoPointer(*tempFuncFile)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) ->DAbstractFileInfoPointer {
+        return DAbstractFileInfoPointer(nullptr);
+    };
+    stub.set(ADDR(DFileService, createFileInfo), tempFuncFile);
+    DUrl utUrl("usr/bin/dde-desktop");
+    selects.append(utUrl);
+    auto temp_1 = builder.matchActions(selects, oriActions, true);
+    EXPECT_TRUE(1 == temp_1.size());
+    DAbstractFileInfoPointer(*tempFuncFile_1)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) ->DAbstractFileInfoPointer {
+        return DAbstractFileInfoPointer(new DAbstractFileInfo(DUrl("usr/bin/dde-desktop")));
+    };
+    stub.set(ADDR(DFileService, createFileInfo), tempFuncFile_1);
+
+    //支持类型
+    void(*tempFunc)(const DAbstractFileInfoPointer &, QStringList &, QStringList &) = [](const DAbstractFileInfoPointer &fileInfo, QStringList &noParentmimeTypes, QStringList &allMimeTypes){
+        Q_UNUSED(fileInfo)
+        noParentmimeTypes.append("text/plain");
+        allMimeTypes.append("text/plain");
+    };
+    stub.set(ADDR(DCustomActionBuilder, appendAllMimeTypes), tempFunc);
+
+    //协议
+    bool(*tempSchemeFunc)(const DCustomActionEntry &, const DUrl &) = [](const DCustomActionEntry &, const DUrl &)->bool{
+        return false;
+    };
+    stub.set(ADDR(DCustomActionBuilder, isSchemeSupport), tempSchemeFunc);
+    auto tempSchemeFalse = builder.matchActions(selects, oriActions, true);
+    EXPECT_TRUE(0 == tempSchemeFalse.size());
+
+    //是否在文管或桌面
+    bool(*tempSchemeFunc_1)(const DCustomActionEntry &, const DUrl &) = [](const DCustomActionEntry &, const DUrl &)->bool{
+        return true;
+    };
+    bool(*tempShouldShowFunc)(const DCustomActionEntry &, bool) = [](const DCustomActionEntry &, bool )->bool{
+        return false;
+    };
+    stub.set(ADDR(DCustomActionBuilder, isSchemeSupport), tempSchemeFunc_1);
+    stub.set(ADDR(DCustomActionBuilder, isActionShouldShow), tempShouldShowFunc);
+    auto tempShouldShowFalse = builder.matchActions(selects, oriActions, true);
+    EXPECT_TRUE(0 == tempShouldShowFalse.size());
+
+    //后缀
+    bool(*tempShouldShowFunc_1)(const DCustomActionEntry &, bool) = [](const DCustomActionEntry &, bool )->bool{
+        return true;
+    };
+    bool(*tempSuffixSupportFunc)(const DCustomActionEntry &, const DUrl &) = [](const DCustomActionEntry &, const DUrl &)->bool{
+        return false;
+    };
+    stub.set(ADDR(DCustomActionBuilder, isActionShouldShow), tempShouldShowFunc_1);
+    stub.set(ADDR(DCustomActionBuilder, isSuffixSupport), tempSuffixSupportFunc);
+    auto tempSuffixFalse = builder.matchActions(selects, oriActions, true);
+    EXPECT_TRUE(0 == tempSuffixFalse.size());
+
+    bool(*tempSuffixSupportFunc_1)(const DCustomActionEntry &, const DUrl &) = [](const DCustomActionEntry &, const DUrl &)->bool{
+        return true;
+    };
+    stub.set(ADDR(DCustomActionBuilder, isSuffixSupport), tempSuffixSupportFunc_1);
+
+    ASSERT_TRUE(1 <= oriActions.size());
+    //不支持的mimetypes,不包含父类型的mimetype集合
+    oriActions[0].m_mimeTypes.clear();
+    oriActions[0].m_excludeMimeTypes.append("text/plain");
+    auto tempExcludeMimeTypes = builder.matchActions(selects, oriActions, true);
+    EXPECT_TRUE(0 == tempExcludeMimeTypes.size());
+
+    //父类mimetype类型
+    void(*tempFunc_1)(const DAbstractFileInfoPointer &, QStringList &, QStringList &) = [](const DAbstractFileInfoPointer &fileInfo, QStringList &noParentmimeTypes, QStringList &allMimeTypes){
+        Q_UNUSED(fileInfo)
+        noParentmimeTypes.append("application/wps-office.xlsx");
+        allMimeTypes = noParentmimeTypes;
+        allMimeTypes.append("application/vnd.ms-excel");
+        allMimeTypes.append("application/msexcel");
+        allMimeTypes.append("application/x-msexcel");
+        allMimeTypes.append("application/vnd.ms-excel.sheet.macroenabled.12");
+        allMimeTypes.append("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    };
+    stub.set(ADDR(DCustomActionBuilder, appendAllMimeTypes), tempFunc_1);
+    auto tempExcludeMimeTypes_1 = builder.matchActions(selects, oriActions, true);
+    EXPECT_TRUE(1 == tempExcludeMimeTypes_1.size());
+
+    oriActions[0].m_mimeTypes.append("text/plain");
+    auto tempMimeTypesNo = builder.matchActions(selects, oriActions, true);
+    EXPECT_TRUE(0 == tempMimeTypesNo.size());
+
+    oriActions[0].m_mimeTypes.clear();
+    oriActions[0].m_mimeTypes.append("application/wps-office.xlsx");
+    auto tempMimeTypesYes = builder.matchActions(selects, oriActions, true);
+    EXPECT_TRUE(1 == tempMimeTypesYes.size());
+
+    oriActions[0].m_mimeTypes.append("*");
+    auto tempMimeTypesYes_1 = builder.matchActions(selects, oriActions, true);
+    EXPECT_TRUE(1 == tempMimeTypesYes_1.size());
+
+    oriActions[0].m_mimeTypes.clear();
+    oriActions[0].m_mimeTypes.append("*");
+    auto tempMimeTypesYes_2 = builder.matchActions(selects, oriActions, true);
+    EXPECT_TRUE(1 == tempMimeTypesYes_2.size());
 }

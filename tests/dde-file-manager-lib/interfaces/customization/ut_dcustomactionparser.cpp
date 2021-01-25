@@ -448,6 +448,94 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     invalidFile.close();
 }
 
+TEST_F(TestDCustomActionParser, test_parse_Level_one_action_args)
+{
+    auto invalidFilePath = QString("%1/%2").arg(utDirPath).arg("test.conf");
+    QFile testFile(invalidFilePath);
+    testFile.open(QIODevice::WriteOnly | QIODevice::Append | QFile::Text);
+    QTextStream tsm(&testFile);
+    tsm.setCodec("UTF-8");
+    tsm << QString("[Menu Entry]").toUtf8() << endl
+        << QString("Comment=This is a test file!!!").toUtf8() << endl
+        << QString("Comment[zh_CN]=这是一个测试文件").toUtf8() << endl
+        << QString("Version=Uos1.0").toUtf8() << endl
+        << QString("Actions=Level-one").toUtf8() << endl;
+
+    QList<DCustomActionData> childrenActions;
+    FileBasicInfos basicInfos;
+    basicInfos.m_sign = "";
+    basicInfos.m_comment = "This is a test file!!!";
+    basicInfos.m_package = "invalid.conf";
+    basicInfos.m_version = "Uos1.0";
+    tsm.flush();
+    testFile.flush();
+
+    //一级菜单相关参数
+    tsm << QString("[Menu Action Level-one]")<<endl
+        << QString("Name=app-level-one").toUtf8() << endl
+        << QString("Name[zh_CN]=应用1级").toUtf8() << endl
+        << QString("PosNum=1").toUtf8() << endl
+        << QString("Separator=None").toUtf8() << endl
+        << QString("X-DFM-MenuTypes=SingleFile").toUtf8() << endl
+        << QString("MimeType=test-mimetype1:test-mimetype2") << endl
+        << QString("X-DFM-ExcludeMimeTypes=excludeMimtype1:excludeMimtype2").toUtf8() << endl
+        << QString("X-DFM-SupportSchemes=file").toUtf8() << endl
+        << QString("X-DFM-NotShowIn=desktop").toUtf8() << endl
+        << QString("X-DFM-SupportSuffix=*.7z.001").toUtf8() << endl
+        << QString("Actions=Level-two").toUtf8() << endl
+
+    //二级菜单
+        << QString("[Menu Action Level-two]").toUtf8() << endl
+        << QString("Name=app-level-two").toUtf8() << endl
+        << QString("Name[zh_CN]=应用2级").toUtf8() << endl
+        << QString("PosNum=1").toUtf8() << endl
+        << QString("Separator=None").toUtf8() << endl
+        << QString("Exec=xxx/xxx").toUtf8() << endl;
+    tsm.flush();
+    testFile.flush();
+
+    //解析菜单参数
+    QSettings actionSetting0(invalidFilePath, QSettings::IniFormat);
+    actionSetting0.setIniCodec("UTF-8");
+    m_parser.m_hierarchyNum = 0;
+    m_parser.m_actionEntry.clear();
+    m_parser.m_topActionCount = 0;
+    m_parser.parseFile(actionSetting0);
+
+    //combo,选中项类型
+    EXPECT_TRUE(DCustomActionDefines::ComboType::SingleDir == m_parser.m_combos.value("SingleDir"));
+    EXPECT_FALSE(m_parser.m_actionEntry.isEmpty());
+    ASSERT_TRUE(1 == m_parser.m_actionEntry.size());
+
+    //mimetype
+    auto utMimetype = m_parser.m_actionEntry.first().mimeTypes();
+    ASSERT_TRUE(2 == utMimetype.size());
+    EXPECT_TRUE("test-mimetype1" == utMimetype.first());
+    EXPECT_TRUE("test-mimetype2" == utMimetype.last());
+
+    //不支持的mimetype
+    auto utExcludeMimetype = m_parser.m_actionEntry.first().excludeMimeTypes();
+    ASSERT_TRUE(2 == utExcludeMimetype.size());
+    EXPECT_TRUE("excludeMimtype1" == utExcludeMimetype.first());
+    EXPECT_TRUE("excludeMimtype2" == utExcludeMimetype.last());
+
+    //支持协议
+    auto utSupportSchemes = m_parser.m_actionEntry.first().surpportSchemes();
+    ASSERT_TRUE(1 == utSupportSchemes.size());
+    EXPECT_TRUE("file" == utSupportSchemes.first());
+
+    //不展示在桌面或文管
+    auto utNotShowIn = m_parser.m_actionEntry.first().notShowIn();
+    ASSERT_TRUE(1 == utNotShowIn.size());
+    EXPECT_TRUE("desktop" == utNotShowIn.first());
+
+    //不支持的后缀
+    auto utSupportSuffix= m_parser.m_actionEntry.first().supportStuffix();
+    ASSERT_TRUE(1 == utSupportSuffix.size());
+    EXPECT_TRUE("*.7z.001" == utSupportSuffix.first());
+}
+
+
 TEST_F(TestDCustomActionParser, test_init_hash)
 {
     EXPECT_TRUE (6 == m_parser.m_combos.size());
