@@ -826,7 +826,7 @@ bool GridManager::add(int screenNum, const QString &id)
         return true;
     for (int screenNum : d->screenCode()) {
         if (d->m_itemGrids.value(screenNum).contains(id)) {
-            qDebug() << "item exist item" << screenNum << id;
+            qWarning() << "item exist item" << screenNum << id;
             return false;
         }
     }

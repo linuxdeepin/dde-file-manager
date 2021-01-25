@@ -91,7 +91,7 @@ DFMSocketInterface::DFMSocketInterface(QObject *parent) : QObject(parent), d_ptr
 
     d->socket = new QLocalSocket();
     QString socketPath = QString("/var/run/user/%1/dde-file-manager").arg(getuid());
-    qDebug() << "connect to socket" << socketPath;
+    qInfo() << "connect to socket" << socketPath;
     connect(d->socket, static_cast<void(QLocalSocket::*)(QLocalSocket::LocalSocketError)>(&QLocalSocket::error),
     this, [ = ](QLocalSocket::LocalSocketError socketError) {
         d->socket->close();

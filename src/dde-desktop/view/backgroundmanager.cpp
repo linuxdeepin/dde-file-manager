@@ -128,7 +128,7 @@ void BackgroundManager::onScreenGeometryChanged()
     bool changed = false;
     for (ScreenPointer sp : m_backgroundMap.keys()) {
         BackgroundWidgetPointer bw = m_backgroundMap.value(sp);
-        qInfo() << "screen geometry change:" << sp.get() << bw.get();
+        qDebug() << "screen geometry change:" << sp.get() << bw.get();
         if (bw.get() != nullptr) {
             //bw->windowHandle()->handle()->setGeometry(sp->handleGeometry()); //不能设置，设置了widget的geometry会被乱改
             //fix bug32166 bug32205
@@ -180,7 +180,7 @@ void BackgroundManager::pullImageSettings()
                     path = defaultPath;
                 }
             }
-            qDebug() << "screen" << sc->name() << "set background " << path;
+            qInfo() << "screen" << sc->name() << "set background " << path;
             m_backgroundImagePath.insert(sc->name(), path);
         }
     }
@@ -204,7 +204,7 @@ QString BackgroundManager::getBackgroundFromWm(const QString &screen)
                             << "use wm config file:" << ret;
             }
         } else {
-            qDebug() << "getBackgroundFromWm GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << screen;
+            qInfo() << "getBackgroundFromWm GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << screen;
             ret = path;
         }
     }
@@ -255,7 +255,7 @@ QString BackgroundManager::getDefaultBackground() const
             }
             else {
                 defaultPath = path;
-                qDebug() << "default background path:" << path;
+                qInfo() << "default background path:" << path;
                 break;
             }
         }
@@ -276,7 +276,7 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
     //bwp->createWinId();   //不创建，4k下有bug
     //bwp->windowHandle()->handle()->setGeometry(screen->handleGeometry()); //不能设置，设置了widget的geometry会被乱改//分辨率原始大小
     bwp->setGeometry(screen->geometry()); //经过缩放的区域
-    qInfo() << "screen name" << screen->name() << "geometry" << screen->geometry() << bwp.get();
+    qDebug() << "screen name" << screen->name() << "geometry" << screen->geometry() << bwp.get();
 
     if (m_preview) {
         DesktopUtil::set_prview_window(bwp.data());
@@ -326,7 +326,7 @@ void BackgroundManager::onBackgroundBuild()
 {
     //屏幕模式判断
     AbstractScreenManager::DisplayMode mode = ScreenMrg->lastChangedMode();
-    qDebug() << "screen mode" << mode << "screen count" << ScreenMrg->screens().size();
+    qInfo() << "screen mode" << mode << "screen count" << ScreenMrg->screens().size();
 
     //删除不存在的屏
     m_backgroundMap.clear();
@@ -353,7 +353,7 @@ void BackgroundManager::onBackgroundBuild()
         if (m_visible)
             bwp->show();
         else
-            qDebug() << "Disable show the background widget, of screen:" << primary->name() << primary->geometry();
+            qWarning() << "Disable show the background widget, of screen:" << primary->name() << primary->geometry();
     } else { //多屏
         for (ScreenPointer sc : ScreenMrg->logicScreens()) {
             BackgroundWidgetPointer bwp = createBackgroundWidget(sc);
@@ -362,7 +362,7 @@ void BackgroundManager::onBackgroundBuild()
             if (m_visible)
                 bwp->show();
             else
-                qDebug() << "Disable show the background widget, of screen:" << sc->name() << sc->geometry();
+                qWarning() << "Disable show the background widget, of screen:" << sc->name() << sc->geometry();
         }
 
         onResetBackgroundImage();
@@ -446,7 +446,7 @@ void BackgroundManager::onWmDbusStarted(QString name, QString oldOwner, QString 
     Q_UNUSED(newOwner)
     //窗管服务注销也会进入该函数，因此需要判断服务是否已注册
     if (name == QString("com.deepin.wm") && QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm")) {
-        qDebug()<<"dbus server com.deepin.wm started.";
+        qInfo() << "dbus server com.deepin.wm started.";
         pullImageSettings();
         onResetBackgroundImage();
     }

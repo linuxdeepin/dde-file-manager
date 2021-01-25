@@ -26,7 +26,7 @@ void ScreenManagerPrivate::readyShot(int wait)
     m_eventShot = new QTimer;
     QObject::connect(m_eventShot,&QTimer::timeout,q,[=]() {
         m_eventShot->stop();
-        //事件优先级。由上往下，背景和画布模块在处理上层的事件以及处理过下层事件的涉及的改变，因此直接忽略
+        //事件优先级。由上往下，背景和画布模块在处理上层的事件已经处理过下层事件的涉及的改变，因此直接忽略
         if (m_events.contains(AbstractScreenManager::Mode)) {
             emit q->sigDisplayModeChanged();
         }

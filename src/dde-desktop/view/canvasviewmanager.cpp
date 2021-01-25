@@ -137,9 +137,9 @@ void CanvasViewManager::onBackgroundEnableChanged()
             if (bw == nullptr) {
                 auto datas = m_background->allbackgroundWidgets();
                 for (auto bsp : datas.keys()) {
-                    qDebug()<<"BackgroundManager give screen:"<<bsp->name();
+                    qWarning() << "BackgroundManager give screen:" << bsp->name();
                 }
-                qDebug()<<"CanvasViewManager give screen:"<<sp->name();
+                qWarning() << "CanvasViewManager give screen:" << sp->name();
                 m_canvasMap.clear();
                 qCritical() << "ERROR!! The screen data obtained by CanvasViewManager is inconsistent with that obtained by BackGroundManager.";
                 return;

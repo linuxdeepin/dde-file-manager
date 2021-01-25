@@ -894,10 +894,10 @@ void Frame::initSize()
 #endif
     setFixedSize(screenRect.width() - 20, actualHeight);
 
-    qDebug() << "move befor: " << this->geometry() << m_wallpaperList->geometry();
+    qInfo() << "move befor: " << this->geometry() << m_wallpaperList->geometry();
     move(screenRect.x() + 10, screenRect.y() + screenRect.height() - height());
     m_wallpaperList->setFixedSize(screenRect.width() - 20, ListHeight);
-    qDebug() << "this move : " << this->geometry() << m_wallpaperList->geometry();
+    qInfo() << "this move : " << this->geometry() << m_wallpaperList->geometry();
 }
 
 void Frame::loading()
@@ -1155,7 +1155,7 @@ QStringList Frame::processListReply(const QString &reply)
 QString Frame::getWallpaperSlideShow()
 {
     if(nullptr == m_dbusAppearance) {
-        qDebug() << "m_dbusAppearance is nullptr";
+        qWarning() << "m_dbusAppearance is nullptr";
         return QString();
     }
 
@@ -1167,21 +1167,21 @@ QString Frame::getWallpaperSlideShow()
 void Frame::setWallpaperSlideShow(QString slideShow)
 {
     if(nullptr == m_dbusAppearance) {
-        qDebug() << "m_dbusAppearance is nullptr";
+        qWarning() << "m_dbusAppearance is nullptr";
         return;
     }
 
-    qDebug() << "dbus Appearance SetWallpaperSlideShow is called";
+    qInfo() << "dbus Appearance SetWallpaperSlideShow is called";
     m_dbusAppearance->SetWallpaperSlideShow(m_screenName, slideShow);
 }
 
 void Frame::setBackground()
 {
     if(nullptr == m_dbusAppearance) {
-        qDebug() << "m_dbusAppearance is nullptr";
+        qWarning() << "m_dbusAppearance is nullptr";
         return;
     }
 
-    qDebug() << "dbus Appearance SetMonitorBackground is called " << m_screenName << " " << m_desktopWallpaper;
+    qInfo() << "dbus Appearance SetMonitorBackground is called " << m_screenName << " " << m_desktopWallpaper;
     m_dbusAppearance->SetMonitorBackground(m_screenName, m_desktopWallpaper);
 }

@@ -69,7 +69,6 @@
 
 #define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
 
-std::atomic<bool> CanvasGridView::m_flag{ false };
 QMap<DMD_TYPES, bool> CanvasGridView::virtualEntryExpandState;
 
 static const QMap<int, int> kSortActions = {{MenuAction::Name, DFileSystemModel::FileDisplayNameRole}
@@ -359,7 +358,7 @@ bool CanvasGridView::fetchDragEventUrlsFromSharedMemory()
 
     if (!sm.isAttached()) {
         if (!sm.attach()) {
-            qDebug() << "FQSharedMemory detach failed.";
+            qWarning() << "FQSharedMemory detach failed.";
             return false;
         }
     }
@@ -1325,7 +1324,6 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
 
 void CanvasGridView::dragLeaveEvent(QDragLeaveEvent *event)
 {
-    CanvasGridView::m_flag.store(false, std::memory_order_release);
     d->dodgeDelayTimer.stop();
     d->startDodge = false;
     d->dragTargetGrid = QPoint(-1, -1);
@@ -1335,8 +1333,6 @@ void CanvasGridView::dragLeaveEvent(QDragLeaveEvent *event)
 
 void CanvasGridView::dropEvent(QDropEvent *event)
 {
-    CanvasGridView::m_flag.store(false, std::memory_order_release);
-
     d->dodgeDelayTimer.stop();
     d->startDodge = false;
     d->dragTargetGrid = QPoint(-1, -1);
@@ -1842,14 +1838,7 @@ void CanvasGridView::keyboardSearch(const QString &search)
     d->fileViewHelper->keyboardSearch(search.toLocal8Bit().at(0));
 }
 
-void CanvasGridView::fakeDropEvent() noexcept
-{
-    d->dodgeDelayTimer.stop();
-    d->startDodge = false;
-    d->dragTargetGrid = QPoint(-1, -1);
-}
-
-QString CanvasGridView::canvansScreenName()
+QString CanvasGridView::canvansScreenName() const
 {
     return m_screenName;
 }
@@ -1934,7 +1923,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     DUrl fileUrl = url;
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, fileUrl);
     if (!info) {
-        qDebug() << "This scheme isn't support";
+        qWarning() << "This scheme isn't support";
         return false;
     }
 
@@ -3033,7 +3022,7 @@ void CanvasGridView::handleContextMenuAction(int action)
         break;
 
     default:
-        qDebug() << action;
+        qInfo() << action;
     }
 
     if (changeSort) {

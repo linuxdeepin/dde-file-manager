@@ -7,7 +7,6 @@ SOURCES += \
     $$PWD/view/ut_backgroundmanager_test.cpp \
     $$PWD/view/ut_backgroundwidget_test.cpp \
     $$PWD/ut-desktop-test.cpp \
-#    $$PWD/ut-deventfileter-test.cpp\
     $$PWD/global/ut_coorinate_test.cpp \
     $$PWD/global/ut_singleton_test.cpp \
     $$PWD/view/ut_canvasgridview_test.cpp \

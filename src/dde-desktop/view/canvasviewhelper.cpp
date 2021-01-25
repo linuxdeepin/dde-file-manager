@@ -62,13 +62,11 @@ const DUrlList CanvasViewHelper::selectedUrls() const
 
 void CanvasViewHelper::select(const QList<DUrl> &list)
 {
-//    qDebug() << "+++++++++++++++ ------------" << list;
     return parent()->select(list);
 }
 
 void CanvasViewHelper::edit(const DFMEvent &event)
 {
-//    qDebug() << event.windowId() << windowId();
     if (event.windowId() != windowId() || event.fileUrlList().isEmpty()) {
         return;
     }

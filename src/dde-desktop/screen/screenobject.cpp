@@ -49,7 +49,7 @@ QRect ScreenObject::availableGeometry() const
 
     int dockHideMode = DockInfoIns->hideMode();
     if ( 1 == dockHideMode) {//隐藏
-        qDebug() << "dock is Hidden";
+        qInfo() << "dock is Hidden";
         return ret;
     }
 
@@ -61,8 +61,10 @@ QRect ScreenObject::availableGeometry() const
     //bug 52241
     QRect t_rect = handleGeometry();
 
-    if (!t_rect.contains(dockrectI)) //使用原始大小判断的dock区所在的屏幕
+    if (!t_rect.contains(dockrectI)) { //使用原始大小判断的dock区所在的屏幕
+        qDebug() << "screen:" << name() << "  handleGeometry:" << t_rect << "    dockrectI:" << dockrectI;
         return ret;
+    }
 #endif
 
      qDebug() << "frontendWindowRect: dockrectI " << QRect(dockrectI);
@@ -100,7 +102,7 @@ QRect ScreenObject::availableGeometry() const
         qDebug() << "dock on left,availableGeometry" << ret;
         break;
     default:
-        qCritical() << "dock postion error!";
+        qCritical() << "dock postion error!" << "and  handleGeometry:" << t_rect << "    dockrectI:" << dockrectI;
         break;
     }
     return ret;

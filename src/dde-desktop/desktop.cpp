@@ -8,7 +8,6 @@
  **/
 
 #include "desktop.h"
-
 #include <QDebug>
 #include <QApplication>
 #include <QStandardPaths>
@@ -27,12 +26,10 @@
 Desktop::Desktop()
     : d(new DesktopPrivate)
 {
-
 }
 
 Desktop::~Desktop()
 {
-
 }
 
 void Desktop::preInit()
@@ -82,13 +79,11 @@ void Desktop::showWallpaperSettings(QString name, int mode)
 
     connect(d->wallpaperSettings, &Frame::aboutHide, this, [this] {
         WallpaperSettings *setting = dynamic_cast<WallpaperSettings *>(sender());
-        if (setting)
-        {
+        if (setting) {
             QPair<QString, QString> screenImage = setting->desktopBackground();
             d->m_background->setBackgroundImage(screenImage.first, screenImage.second);
         }
     }, Qt::DirectConnection);
-
 
     d->wallpaperSettings->show();
 

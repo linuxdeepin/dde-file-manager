@@ -16,7 +16,7 @@ bool needShowScreensaver()
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     if ((env.contains(DESKTOP_CAN_SCREENSAVER) && env.value(DESKTOP_CAN_SCREENSAVER).startsWith("N")))
     {
-        qDebug() << "System environment variables do not support screen savers";
+        qWarning() << "System environment variables do not support screen savers";
         return false;
     }
 
@@ -27,14 +27,14 @@ bool needShowScreensaver()
             && response.arguments().takeFirst().toList().contains("com.deepin.ScreenSaver")){
         qDebug() << "com.deepin.ScreenSaver is ok";
     }else {
-        qDebug() << "The screen saver is uninstalled";
+        qWarning() << "The screen saver is uninstalled";
         return false;
     }
 
     //3 Gsetting 判断屏保是否可用...
     DGioSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
     if (desktopSettings.keys().contains("show-screen-saver") && false == desktopSettings.value("show-screen-saver").toBool()) {
-        qDebug() << "Gsetting show-screen-saver is false";
+        qWarning() << "Gsetting show-screen-saver is false";
         return false;
     }
 
