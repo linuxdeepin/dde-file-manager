@@ -17,8 +17,8 @@ SHOW_REPORT=${7} #是否显示报表
 
 if [ ! $# -eq 7 ]; then
   echo "param number set err: "$# ": "$*
-  echo "wrong param set,usage: <报告路径> <报告项目名> <编译路径> <可执行程序> <期望覆盖的路径> <不期望覆盖的路径>"
-  exit 0
+  echo "wrong param set,usage: <报告路径> <报告项目名> <编译路径> <可执行程序> <期望覆盖的路径> <不期望覆盖的路径> <是否显示报表>"
+  exit 1
 fi
 
 RESULT_COVERAGE_DIR=$REPORT_DIR/html
@@ -27,11 +27,14 @@ mkdir -p $RESULT_COVERAGE_DIR
 
 COVERAGE_INFO=$BUILD_DIR/covinfo_$REPORT_NAME.info
 
-RESULT_UT_REPORT_DIR=$REPORT_DIR/report/report_$REPORT_NAME.xml
+RESULT_UT_REPORT_FILE=$REPORT_DIR/report/report_$REPORT_NAME.xml
 
-$BUILD_DIR/$APP_NAME --gtest_output=xml:$RESULT_UT_REPORT_DIR
+$BUILD_DIR/$APP_NAME --gtest_output=xml:$RESULT_UT_REPORT_FILE
 
-
+if [ ! -f "$RESULT_UT_REPORT_FILE" ]; then
+　　echo "Error: UT process is broken by: " $RESULT_UT_REPORT_FILE
+   exit 1
+fi
 
 lcov -d $BUILD_DIR -c -o $COVERAGE_INFO
 
@@ -42,13 +45,19 @@ lcov --list-full-path -e $COVERAGE_INFO –o $BUILD_DIR/coverage-stripped.info
 
 genhtml -o $RESULT_COVERAGE_DIR $COVERAGE_INFO
 
-mv $RESULT_COVERAGE_DIR/index.html $RESULT_COVERAGE_DIR/cov_$REPORT_NAME.html
+LOV_REPORT_FILE=$RESULT_COVERAGE_DIR/cov_$REPORT_NAME.html
+mv $RESULT_COVERAGE_DIR/index.html $LOV_REPORT_FILE
 mv $RESULT_COVERAGE_DIR/index-sort-f.html $RESULT_COVERAGE_DIR/index-sort-f_$REPORT_NAME.html
 mv $RESULT_COVERAGE_DIR/index-sort-l.html $RESULT_COVERAGE_DIR/index-sort-l_$REPORT_NAME.html
 
+if [ ! -f "$LOV_REPORT_FILE" ]; then
+　　echo "Error: UT lcov process is broken by: " $LOV_REPORT_FILE
+   exit 1
+fi
+
 if [ ! -n "$SHOW_REPORT" ] || [ "$SHOW_REPORT" = "yes" ] ; then
     nohup x-www-browser $RESULT_COVERAGE_DIR/cov_$REPORT_NAME.html &
-    nohup x-www-browser $RESULT_UT_REPORT_DIR &
+    nohup x-www-browser $RESULT_UT_REPORT_FILE &
 fi
 
 lcov -d $BUILD_DIR –z
