@@ -38,6 +38,14 @@ CPU_NUMBER=${5}
 #是否显示报告
 SHOW_REPORT=${6}
 
+check_ut_result()
+{
+  if [ $1 != 0 ]; then
+     echo "Error: UT process is broken by: " $2 ",end with: "$1
+     exit $1
+  fi
+}
+
 # 打印当前目录，当前目录应当是 build-ut
 echo `pwd`
 echo "start dde-file-manager all UT cases:" $UT_PRJ_TYPE
@@ -62,6 +70,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANA
 	remove_path_dde_file_manager_lib="*/tests/* */3rdParty/* */dde-file-manager-lib/vault/openssl/* */build-ut/* */dde-file-manager-lib/vault/qrencode/*"
         # report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
 	./../../../tests/ut-target-running.sh $BUILD_DIR dde-file-manager-lib $DIR_TEST_DDE_FILE_MANAGER_LIB test-dde-file-manager-lib "$extract_path_dde_file_manager_lib" "$remove_path_dde_file_manager_lib" $SHOW_REPORT
+        check_ut_result $? $UT_TYPE_FILE_MANAGER_LIB
 fi
 # 2 编译lib库用于支持其他项目
 NEED_LIB_DDE_FILE_MANAGER=true
@@ -106,6 +115,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_DDE_DESKT
     dde_desktop_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */build-ut/* */dde-wallpaper-chooser/dbus/*  *moc_* *qrc_*"
 	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
 	./../../../tests/ut-target-running.sh $BUILD_DIR dde-desktop $DIR_TEST_DDE_DESKTOP test-dde-desktop "$dde_desktop_extract_path" "$dde_desktop_remove_path" $SHOW_REPORT
+        check_ut_result $? $UT_TYPE_DDE_DESKTOP
 fi
 
 # 4. 子项目 dde-dock-plugins/disk-mount 单元测试与覆盖率测试
@@ -126,6 +136,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_DOCK_PLUG
 	disk_mount_remove_path="*/third-party/* *tests* */build-ut/* *moc_* *qrc_*"
 	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
 	./../../../tests/ut-target-running.sh $BUILD_DIR disk-mount $DIR_TEST_DDE_DOCK/disk-mount test-dde-disk-mount-plugin "$disk_mount_extract_path" "$disk_mount_remove_path" $SHOW_REPORT
+        check_ut_result $? $UT_TYPE_DOCK_PLUGINS
 fi
 
 # 5. 子项目 dde-file-manager 单元测试与覆盖率测试
@@ -146,6 +157,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANA
 	dde_file_manager_remove_path="*/third-party/* *tests* */build-ut/* */dde-file-manager-lib/interfaces/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
 	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
 	./../../../tests/ut-target-running.sh $BUILD_DIR file-manager $DIR_TEST_DDE_FILE_MANAGER test-file-manager "$dde_file_manager_extract_path" "$dde_file_manager_remove_path" $SHOW_REPORT
+        check_ut_result $? $UT_TYPE_FILE_MANAGER
 fi
 
 # 6. 子项目 dde-file-manager-plugins 单元测试与覆盖率测试
@@ -166,11 +178,22 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANA
 	dde_file_manager_plugins_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_* */dde-file-manager-plugins/plugininterfaces/view/*"
 	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
     ./../../../tests/ut-target-running.sh $BUILD_DIR dde-image-preview-plugin $DIR_TEST_DDE_FILE_MANAGER_PLUGINS/pluginPreview/dde-image-preview-plugin test-dde-image-preview-plugin  "$dde_file_manager_plugins_extract_path" "$dde_file_manager_plugins_remove_path" $SHOW_REPORT
+    check_ut_result $? $UT_TYPE_FILE_MANAGER_PLUGINS
+
     ./../../../tests/ut-target-running.sh $BUILD_DIR dde-music-preview-plugin $DIR_TEST_DDE_FILE_MANAGER_PLUGINS/pluginPreview/dde-music-preview-plugin test-dde-music-preview-plugin  "$dde_file_manager_plugins_extract_path" "$dde_file_manager_plugins_remove_path" $SHOW_REPORT
+    check_ut_result $? $UT_TYPE_FILE_MANAGER_PLUGINS
+
     ./../../../tests/ut-target-running.sh $BUILD_DIR dde-pdf-preview-plugin $DIR_TEST_DDE_FILE_MANAGER_PLUGINS/pluginPreview/dde-pdf-preview-plugin test-dde-pdf-preview-plugin  "$dde_file_manager_plugins_extract_path" "$dde_file_manager_plugins_remove_path" $SHOW_REPORT
+    check_ut_result $? $UT_TYPE_FILE_MANAGER_PLUGINS
+
     ./../../../tests/ut-target-running.sh $BUILD_DIR dde-text-preview-plugin $DIR_TEST_DDE_FILE_MANAGER_PLUGINS/pluginPreview/dde-text-preview-plugin test-dde-text-preview-plugin  "$dde_file_manager_plugins_extract_path" "$dde_file_manager_plugins_remove_path" $SHOW_REPORT
+    check_ut_result $? $UT_TYPE_FILE_MANAGER_PLUGINS
+
     ./../../../tests/ut-target-running.sh $BUILD_DIR dde-video-preview-plugin $DIR_TEST_DDE_FILE_MANAGER_PLUGINS/pluginPreview/dde-video-preview-plugin test-dde-video-preview-plugin  "$dde_file_manager_plugins_extract_path" "$dde_file_manager_plugins_remove_path" $SHOW_REPORT
+    check_ut_result $? $UT_TYPE_FILE_MANAGER_PLUGINS
+
     ./../../../tests/ut-target-running.sh $BUILD_DIR pluginView $DIR_TEST_DDE_FILE_MANAGER_PLUGINS/pluginView test-pluginView  "$dde_file_manager_plugins_extract_path" "$dde_file_manager_plugins_remove_path" $SHOW_REPORT
+    check_ut_result $? $UT_TYPE_FILE_MANAGER_PLUGINS
 fi
 
 # 7. 子项目 dde-file-thumbnail-tool 单元测试与覆盖率测试
@@ -191,6 +214,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_THUM
 	dde_file_thumbnail_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
 	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
 	./../../../tests/ut-target-running.sh $BUILD_DIR dde-file-thumbnail-tool $DIR_TEST_DDE_FILE_THUMBNAIL test-video "$dde_file_thumbnail_extract_path" "$dde_file_thumbnail_remove_path" $SHOW_REPORT
+        check_ut_result $? $UT_TYPE_FILE_THUMBNAIL_TOOL
 fi
 
 # 8. 子项目 deepin-anything-server-plugins 单元测试与覆盖率测试
@@ -211,6 +235,7 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_ANYTHING_
 	deepin_anything_server_plugins_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */build-ut/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
 	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
 	./../../../tests/ut-target-running.sh $BUILD_DIR dde-anythingmonitor $DIR_TEST_DEEPIN_ANYTHING_SERVER_PLUGINS test-dde-anythingmonitor  "$deepin_anything_server_plugins_extract_path"  "$deepin_anything_server_plugins_remove_path" $SHOW_REPORT
+        check_ut_result $? $UT_TYPE_ANYTHING_SERVER_PLUGINS
 fi
 
 echo "end dde-file-manager all UT cases"

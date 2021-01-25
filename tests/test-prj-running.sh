@@ -37,6 +37,14 @@ done
 
 echo "get command: " "--clear "$CLEAR_COMMAND "--ut "$UT_COMMAND "--rebuild "$REBUILD_PTJ "--cppcheck "$CPP_CHECK_COMMAND "--cpu "$CPU_NUMBER "--show "$SHOW_REPORT
 
+check_process_result()
+{
+  if [ $1 != 0 ]; then
+     echo "Error: CI is broken by: " $2  ",end with: " $1
+     exit $1
+  fi
+}
+
 # 定位脚本所在当前目录
 TESTS_FOLDER=$(cd "$(dirname "$0")";pwd)
 echo $TESTS_FOLDER
@@ -69,6 +77,8 @@ elif [ $UT_COMMAND != "no" ] ; then
     echo "ut case type is " $UT_COMMAND
     ./all-ut-prj-running.sh $PROJECT_FOLDER $BUILD_DIR $UT_COMMAND $REBUILD_PTJ $CPU_NUMBER $SHOW_REPORT
 fi
+
+check_process_result $? "UT sub process"
 
 # 下面是cppcheck相关case
 if [ ! -n "$CPP_CHECK_COMMAND" ] || [ "$CPP_CHECK_COMMAND" = "yes" ] ; then
