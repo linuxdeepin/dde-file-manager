@@ -107,9 +107,9 @@ void SelectWork::setInitData(QList<DUrl> lst, DFileSystemModel *model)
     // 修复bug-51429 bug-51039 bug-51503
     // 解决拷贝/剪贴文件到保险箱,文件没有选中问题
     QList<DUrl>::iterator itr = lst.begin();
-    for(; itr != lst.end(); ++itr) {
+    for (; itr != lst.end(); ++itr) {
         QString path = (*itr).toLocalFile();
-        if(VaultController::isVaultFile(path)){
+        if (VaultController::isVaultFile(path)) {
             DUrl url(VaultController::localToVault(path));
             *itr = url;
         }
@@ -140,13 +140,13 @@ void SelectWork::run()
             msleep(WAITTIME);
             // 修复bug-51429 bug-51039 bug-51503
             // 增加一个结束判断,当重复判断一个文件LOOPNUM次都不存在后,不在选中该文件
-            if(loopNum > LOOPNUM) {
+            if (loopNum > LOOPNUM) {
                 itr = m_lstNoValid.erase(itr);
                 continue;
             }
             if (m_bStop)
                 break;
-            if(!m_pModel)
+            if (!m_pModel)
                 break;
             const QModelIndex &index = m_pModel->index(*itr);
             if (index.isValid()) {
@@ -160,7 +160,7 @@ void SelectWork::run()
         }
     }
     // 刷新模型
-    if(m_pModel)
+    if (m_pModel)
         m_pModel->update();
 }
 
@@ -790,7 +790,7 @@ void DFileView::selectAllAfterCutOrCopy(const QList<DUrl> &list)
     for (const DUrl &url : list) {
 
         // 判断url是否为空路径
-        if(!url.isValid())
+        if (!url.isValid())
             continue;
 
         const QModelIndex &index = model()->index(url);
@@ -1106,6 +1106,11 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                         d->isVaultDelSigConnected = true;
                     }
                 }
+
+                // 只支持回收站根目录下的文件执行删除
+                if (rootUrl().isTrashFile() && rootUrl() != DUrl::fromTrashFile("/"))
+                    break;
+
                 qDebug() << "action delete --------------------------------";
                 appController->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
             }
@@ -1194,6 +1199,10 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         if (event->key() == Qt::Key_Delete) {
             if (urls.isEmpty())
                 return;
+
+            // 只支持回收站根目录下的文件执行删除
+            if (rootUrl().isTrashFile() && rootUrl() != DUrl::fromTrashFile("/"))
+                break;
 
             fileService->deleteFiles(this, urls);
 

@@ -97,7 +97,7 @@ public:
         //在靠近边框底部不够显示编辑框时，编辑框的箭头出现在底部
         //appController->showTagEdit(viewHelper->parent()->viewport()->mapToGlobal(edit_pos), menu_event.selectedUrls());
         const QRect &parentRect = viewHelper->parent()->geometry();
-        appController->showTagEdit(parentRect,viewHelper->parent()->viewport()->mapToGlobal(edit_pos), menu_event.selectedUrls());
+        appController->showTagEdit(parentRect, viewHelper->parent()->viewport()->mapToGlobal(edit_pos), menu_event.selectedUrls());
         /****************************************************************************************************************************/
         return true;
     }
@@ -186,6 +186,13 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(cut_action, &QAction::triggered,
     q, [q] {
+        // 只支持回收站根目录下的文件执行剪切
+        if (!q->selectedUrls().isEmpty()) {
+            DUrl url = q->selectedUrls().first();
+            if (url.isTrashFile() && url.parentUrl() != DUrl::fromTrashFile("/"))
+                return;
+        }
+
         fileService->writeFilesToClipboard(q, DFMGlobal::CutAction, q->selectedUrls());
     });
 
@@ -258,7 +265,7 @@ QModelIndex DFileViewHelperPrivate::findIndex(const QByteArray &keys, bool match
         const QString &pinyin_name = q->parent()->model()->data(index, DFileSystemModel::FilePinyinName).toString();
 
         if (matchStart ? pinyin_name.startsWith(keys, Qt::CaseInsensitive)
-                       : pinyin_name.contains(keys, Qt::CaseInsensitive)) {
+                : pinyin_name.contains(keys, Qt::CaseInsensitive)) {
             return index;
         }
     }
@@ -307,8 +314,8 @@ QList<QIcon> DFileViewHelperPrivate::getAdditionalIconByPlugins(const DAbstractF
         QList<QIcon> plugin_list;
 
         bool ok = object->metaObject()->invokeMethod(object, "fileAdditionalIcon",
-                  Q_RETURN_ARG(QList<QIcon>, plugin_list),
-                  Q_ARG(const DAbstractFileInfoPointer &, fileInfo));
+                                                     Q_RETURN_ARG(QList<QIcon>, plugin_list),
+                                                     Q_ARG(const DAbstractFileInfoPointer &, fileInfo));
 
         if (ok) {
             list << plugin_list;
@@ -377,12 +384,12 @@ bool DFileViewHelper::isTransparent(const QModelIndex &index) const
     }
 
     // 解决在保险箱中执行剪切时，图标不灰显的问题
-    if (fileUrl.scheme() == DFMVAULT_SCHEME){
+    if (fileUrl.scheme() == DFMVAULT_SCHEME) {
         fileUrl = VaultController::vaultToLocalUrl(fileUrl);
     }
 
     // 将回收站路径转化成真实路径，解决在回收站中执行剪切时，图标不灰显的问题
-    if (fileUrl.scheme() == TRASH_SCHEME){
+    if (fileUrl.scheme() == TRASH_SCHEME) {
         const QString &path = fileUrl.path();
         fileUrl = DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + path);
     }
@@ -393,7 +400,7 @@ bool DFileViewHelper::isTransparent(const QModelIndex &index) const
         fileUrl = MergedDesktopController::convertToRealPath(fileUrl);
 
     return DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction
-            && DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl);
+           && DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl);
 }
 
 /*!
@@ -527,11 +534,11 @@ void DFileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModel
 
     QPalette appPalette = QGuiApplication::palette();
 
-    auto setcolor1 = [](QPalette& p1, QPalette& p2, QPalette::ColorRole role){
+    auto setcolor1 = [](QPalette & p1, QPalette & p2, QPalette::ColorRole role) {
         p1.setColor(role, p2.color(role));
     };
 
-    auto setcolor2 = [](QPalette& p1, QPalette& p2, QPalette::ColorGroup group, QPalette::ColorRole role){
+    auto setcolor2 = [](QPalette & p1, QPalette & p2, QPalette::ColorGroup group, QPalette::ColorRole role) {
         p1.setColor(group, role, p2.color(group, role));
     };
 
@@ -562,7 +569,7 @@ void DFileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModel
 
 void DFileViewHelper::handleMenu(QMenu *menu)
 {
-    DFileMenu *file_menu = qobject_cast<DFileMenu*>(menu);
+    DFileMenu *file_menu = qobject_cast<DFileMenu *>(menu);
 
     if (Q_UNLIKELY(!file_menu))
         return;
@@ -573,12 +580,12 @@ void DFileViewHelper::handleMenu(QMenu *menu)
     if (!tag_action)
         return;
 
-    QWidgetAction *widget_action = qobject_cast<QWidgetAction*>(tag_action);
+    QWidgetAction *widget_action = qobject_cast<QWidgetAction *>(tag_action);
 
     if (Q_UNLIKELY(!widget_action))
         return;
 
-    DTagActionWidget* tag_widget = qobject_cast<DTagActionWidget*>(widget_action->defaultWidget());
+    DTagActionWidget *tag_widget = qobject_cast<DTagActionWidget *>(widget_action->defaultWidget());
 
     if (Q_UNLIKELY(!tag_widget))
         return;
@@ -600,7 +607,7 @@ void DFileViewHelper::handleMenu(QMenu *menu)
 
     tag_widget->setCheckedColorList(colors);
 
-    connect(tag_widget, &DTagActionWidget::hoverColorChanged, menu, [tag_widget] (const QColor &color) {
+    connect(tag_widget, &DTagActionWidget::hoverColorChanged, menu, [tag_widget](const QColor & color) {
         if (color.isValid()) {
             const QString &tag_name = TagManager::instance()->getTagNameThroughColor(color);
 
@@ -737,7 +744,7 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
 
             //fix bug#23703勾选自动整理，拖拽其他目录文件到桌面做得是复制操作
             //因为自动整理的路径被DStorageInfo::inSameDevice判断为false，这里做转化
-            if (to.scheme() == DFMMD_SCHEME){
+            if (to.scheme() == DFMMD_SCHEME) {
                 to = DUrl(info->absoluteFilePath());
                 to.setScheme(FILE_SCHEME);
             }
@@ -758,16 +765,16 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
         }
 
         // 保险箱时，修改DropAction为Qt::MoveAction
-        if(VaultController::isVaultFile(info->fileUrl().toString())
-                || VaultController::isVaultFile(urls[0].toString())){
+        if (VaultController::isVaultFile(info->fileUrl().toString())
+                || VaultController::isVaultFile(urls[0].toString())) {
             QString strFromPath = urls[0].toLocalFile();
             QString strToPath = info->fileUrl().toLocalFile();
-            if(strFromPath.startsWith("/media") || strToPath.startsWith("/media")){   // 如果是从U盘拖拽文件到保险箱或者是从保险箱拖拽文件到U盘
+            if (strFromPath.startsWith("/media") || strToPath.startsWith("/media")) { // 如果是从U盘拖拽文件到保险箱或者是从保险箱拖拽文件到U盘
                 event->setDropAction(Qt::CopyAction);
-            }else{
-                if(!DFMGlobal::keyCtrlIsPressed()){
+            } else {
+                if (!DFMGlobal::keyCtrlIsPressed()) {
                     event->setDropAction(Qt::MoveAction);
-                }else {
+                } else {
                     event->setDropAction(Qt::CopyAction);
                 }
             }
@@ -834,16 +841,16 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
         }
 
         // 保险箱时，修改DropAction为Qt::MoveAction
-        if(VaultController::isVaultFile(info->fileUrl().toString())
-                || VaultController::isVaultFile(urls[0].toString())){
+        if (VaultController::isVaultFile(info->fileUrl().toString())
+                || VaultController::isVaultFile(urls[0].toString())) {
             QString strFromPath = urls[0].toLocalFile();
             QString strToPath = info->fileUrl().toLocalFile();
-            if(strFromPath.startsWith("/media") || strToPath.startsWith("/media")){   // 如果是从U盘拖拽文件到保险箱或者是从保险箱拖拽文件到U盘
+            if (strFromPath.startsWith("/media") || strToPath.startsWith("/media")) { // 如果是从U盘拖拽文件到保险箱或者是从保险箱拖拽文件到U盘
                 event->setDropAction(Qt::CopyAction);
-            }else{
-                if(!DFMGlobal::keyCtrlIsPressed()){
+            } else {
+                if (!DFMGlobal::keyCtrlIsPressed()) {
                     event->setDropAction(Qt::MoveAction);
-                }else {
+                } else {
                     event->setDropAction(Qt::CopyAction);
                 }
             }
