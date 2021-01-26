@@ -1070,22 +1070,6 @@ bool FileController::isDiscburnJobCase(void *curJob, const DUrl &url) const
 // fix bug 35855修改复制拷贝流程，拷贝线程不去阻塞主线程，拷贝线程自己去处理，主线程直接返回，拷贝线程结束了在去处理以前的后续操作，delete还是走老流程
 DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event, DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient, bool force, bool bold) const
 {
-    qDebug() << "current job thread count = " << m_currentRunThreadCount.load()
-             << m_pasteFileInfoQueue.count();
-    // fix bug 61595,限制当前的拷贝任务只有12个。
-    if (m_currentRunThreadCount.load() > 12) {
-        QSharedPointer<FileController::PasteFileInfo> info(new PasteFileInfo(
-                                                               event,
-                                                               action,
-                                                               list,
-                                                               target,
-                                                               slient,
-                                                               force,
-                                                               bold));
-        const_cast<FileController*>(this)->m_pasteFileInfoQueue.enqueue(info);
-        return list;
-    }
-    const_cast<FileController*>(this)->m_currentRunThreadCount++;
     // fix bug 27109 在某种情况下，存在 FileCopyMoveJob 还没被析构，但其中的成员 StatisticJob 已经被析构，又在 FileCopyMoveJob 的函数中调用了 StatisticJob 的对象，导致崩溃
     // 所以这里将原来的普通指针以 deleteLater 析构的内存管理方式交给智能指针去判定。测试百次左右没有再发生崩溃的现象。
     // 该现象发生于从搜索列表中往光驱中发送文件夹还不被支持的时候。现已可以从搜索列表、最近列表、标签列表中往光驱中发送文件
@@ -1266,12 +1250,6 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
     }
     //fix bug 35855走新流程不去阻塞主线程，拷贝线程自己去运行，主线程返回，当拷贝线程结束了再去处理以前的相应处理
     connect(job.data(), &QThread::finished, dialogManager->taskDialog(), [this, thisJob, error_handle, slient, event] {
-        // fix bug 61595,限制当前的拷贝任务只有12个。执行缓存的拷贝任务
-        const_cast<FileController*>(this)->m_currentRunThreadCount--;
-        if (m_pasteFileInfoQueue.count() >0) {
-            auto info = const_cast<FileController*>(this)->m_pasteFileInfoQueue.dequeue();
-            pasteFilesV2(info->event,info->action,info->list,info->target,info->slient,info->force,info->bold);
-        }
         dialogManager->taskDialog()->removeTaskJob(thisJob);
         DUrlList targetUrlList = thisJob->targetUrlList();
         if (slient)
