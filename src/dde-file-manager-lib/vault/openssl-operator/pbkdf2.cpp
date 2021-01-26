@@ -93,15 +93,17 @@ QString pbkdf2::pbkdf2EncrypyPassword(const QString &password, const QString &ra
     QString strCipherText("");
     uchar *out = reinterpret_cast<uchar *>(malloc(size_t(cipherByteNum / 2 + 1)));
     memset(out, 0, size_t(cipherByteNum / 2 + 1));
-    // 修复wayland-bug-51478
-    const char *pwd = password.toStdString().c_str();
+    // 修复bug-51478
+    // 修复bug-60724
+    std::string strPassword = password.toStdString();
+    const char *pwd = strPassword.c_str();
     if (PKCS5_PBKDF2_HMAC_SHA1(pwd, password.length(),
                                salt_value, randSalt.length(),
                                iteration,
                                nCipherLength,
                                out) != 0) {
         char *pstr = octalToHexadecimal(reinterpret_cast<char *>(out), nCipherLength);
-        // 修复wayland-bug-51478
+        // 修复bug-51478
         strCipherText = QString(pstr);
     } else {
         qDebug() << "PKCS5_PBKDF2_HMAC_SHA1 failed";
