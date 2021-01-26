@@ -1670,6 +1670,14 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
     DUrlList urlList = DUrl::fromQUrlList(data->urls());
 
+    const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, toUrl);
+
+    // 当为拖拽压缩时
+    if (info->canDragCompress()) {
+        qDebug() << "执行拖拽压缩";
+        return FileUtils::appendCompress(toUrl, urlList);
+    }
+
     for (DUrl &u : urlList) {
         // we only do redirection for burn:// urls for the fear of screwing everything up again
         if (u.scheme() == BURN_SCHEME) {
@@ -1678,8 +1686,6 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
             }
         }
     }
-
-    const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, toUrl);
 
     if (info->isSymLink()) {
         toUrl = info->rootSymLinkTarget();

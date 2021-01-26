@@ -67,6 +67,8 @@ public:
     qint64 size() const override;
     bool isDir() const override;
     bool canDrop() const override;
+    // 是否支持拖拽压缩
+    bool canDragCompress() const override;
 
     /**
      * @brief isAncestorsUrl 拆分路径

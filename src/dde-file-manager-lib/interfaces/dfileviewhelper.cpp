@@ -817,9 +817,7 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
     if (event->source() == parent() && !DFMGlobal::keyCtrlIsPressed()) {
         event->setDropAction(Qt::MoveAction);
     } else {
-
         DAbstractFileInfoPointer info = model()->fileInfo(parent()->indexAt(event->pos()));
-
         if (!info)
             info = model()->fileInfo(parent()->rootIndex());
 

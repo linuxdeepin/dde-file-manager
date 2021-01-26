@@ -56,6 +56,7 @@ public:
     bool canRename() const override;
     QSet<MenuAction> disableMenuActionList() const override;
     void refresh(const bool isForce = false) override;
+    bool canDragCompress() const override;
 
     virtual QString subtitleForEmptyFloder() const override;
 

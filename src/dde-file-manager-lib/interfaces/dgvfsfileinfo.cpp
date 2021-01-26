@@ -559,3 +559,9 @@ QList<QIcon> DGvfsFileInfo::additionalIcon() const
 
     return icons;
 }
+
+bool DGvfsFileInfo::canDragCompress() const
+{
+    // 手机支持追加压缩
+    return true;
+}

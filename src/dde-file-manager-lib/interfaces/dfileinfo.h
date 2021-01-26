@@ -73,6 +73,12 @@ public:
     bool isDir() const override;
     bool isSymLink() const override;
 
+    /**
+     * @brief canDragCompress 是否支持拖拽压缩
+     * @return
+     */
+    bool canDragCompress() const override;
+
     QString symlinkTargetPath() const override;
     DUrl symLinkTarget() const override;
 
