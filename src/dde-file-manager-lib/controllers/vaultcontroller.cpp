@@ -886,6 +886,11 @@ QString VaultController::toExternalPath(const QString &internalPath)
 QString VaultController::localPathToVirtualPath(const QString &localPath)
 {
     QString result(localPath);
+    // 如果是目录，并且最后没有"/"，加上"/"
+    DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, DUrl::fromLocalFile(result));
+    if (info && info->isDir()) {
+        result = result.endsWith(QDir::separator()) ? result : result.append(QDir::separator());
+    }
     return result.replace(VaultController::makeVaultLocalPath(), DFMVAULT_ROOT);
 }
 

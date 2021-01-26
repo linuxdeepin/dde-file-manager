@@ -580,7 +580,7 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
 
     menu->addAction(copyIcon, QObject::tr("Copy path"), [ = ]() {
         // 如果为保险箱路径则进行路径转换
-        QString virtualUrl = VaultController::toExternalPath(url.toString());
+        QString virtualUrl = VaultController::localPathToVirtualPath(url.toLocalFile());
         QGuiApplication::clipboard()->setText(virtualUrl);
     });
 
@@ -596,8 +596,8 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
 
     menu->addAction(editIcon, QObject::tr("Edit address"), this, [ = ]() {
 
-        //! 如果为保险箱路径则进行路径转换
-        QString realUrl = VaultController::toExternalPath(wnd->currentUrl().toString());
+        // 如果为保险箱路径则进行路径转换
+        QString realUrl = VaultController::localPathToVirtualPath(wnd->currentUrl().toLocalFile());
 
         showAddressBar(realUrl);
     });
