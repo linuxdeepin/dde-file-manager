@@ -2399,6 +2399,12 @@ bool DFileCopyMoveJobPrivate::copyFile(const DAbstractFileInfoPointer fromInfo, 
             || VaultController::isVaultFile(fromInfo->toLocalFile())
             || VaultController::isVaultFile(toInfo->toLocalFile())) {
          ok = doCopyFile(fromInfo, toInfo, handler, blockSize);
+         //fix bug 62202 不执行优化拷贝结束后直接返回
+         removeCurrentDevice(fromInfo->fileUrl());
+         removeCurrentDevice(toInfo->fileUrl());
+         endJob();
+         qCDebug(fileJob(), "Time spent of copy the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed);
+         return ok;
     }
     //判读目标目录和本地目录是不是同盘，并且是大文件
     if (m_bDestLocal && isFromLocalUrls && fromInfo->size() > 500 * 1024 * 1024) {
