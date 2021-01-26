@@ -196,6 +196,13 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(cut_action, &QAction::triggered,
     q, [q] {
+        // 只支持回收站根目录下的文件执行剪切
+        if (!q->selectedUrls().isEmpty()) {
+            DUrl url = q->selectedUrls().first();
+            if (url.isTrashFile() && url.parentUrl() != DUrl::fromTrashFile("/"))
+                return;
+        }
+
         fileService->writeFilesToClipboard(q, DFMGlobal::CutAction, q->selectedUrls());
     });
 

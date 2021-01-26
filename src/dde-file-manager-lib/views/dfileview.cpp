@@ -1081,6 +1081,10 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             if (urls.isEmpty())
                 return;
 
+            // 只支持回收站根目录下的文件执行删除
+            if (rootUrl().isTrashFile() && rootUrl() != DUrl::fromTrashFile("/"))
+                return;
+
             fileService->deleteFiles(this, urls);
 
             return;
@@ -3347,6 +3351,11 @@ bool DFileView::normalKeyPressEvent(const QKeyEvent *event)
                     d->isVaultDelSigConnected = true;
                 }
             }
+
+            // 只支持回收站根目录下的文件执行删除
+            if (rootUrl().isTrashFile() && rootUrl() != DUrl::fromTrashFile("/"))
+                break;
+
             appController->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
         }
         break;

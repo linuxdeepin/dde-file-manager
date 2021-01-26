@@ -42,8 +42,7 @@
 #include <QSettings>
 #include <QIcon>
 
-namespace FileSortFunction
-{
+namespace FileSortFunction {
 COMPARE_FUN_DEFINE(deletionDate, DeletionDate, TrashFileInfo)
 COMPARE_FUN_DEFINE(sourceFilePath, SourceFilePath, TrashFileInfo)
 }
@@ -178,7 +177,7 @@ bool TrashFileInfo::isDir() const
 QString TrashFileInfo::fileDisplayName() const
 {
     Q_D(const TrashFileInfo);
-    if(isDesktopFile()) {
+    if (isDesktopFile()) {
         QFileInfo f(absoluteFilePath());
         DesktopFileInfo dfi(f);
         return dfi.fileDisplayName();
@@ -261,6 +260,8 @@ QSet<MenuAction> TrashFileInfo::disableMenuActionList() const
 
     if (parentUrl() != DUrl::fromTrashFile("/")) {
         list << MenuAction::Restore;
+        list << MenuAction::CompleteDeletion;
+        list << MenuAction::Cut;
     }
 
     return list;
@@ -275,11 +276,11 @@ QList<int> TrashFileInfo::userColumnRoles() const
 {
     static QList<int> userColumnRoles = QList<int>() /*<< DFileSystemModel::FileUserRole + 1
                                                      << DFileSystemModel::FileUserRole + 2*/
-                                                     << DFileSystemModel::FileDisplayNameRole
-                                                     << DFileSystemModel::FileUserRole + 3 // originalFilePath
-                                                     << DFileSystemModel::FileUserRole + 4 // displayDeletionDate
-                                                     << DFileSystemModel::FileSizeRole
-                                                     << DFileSystemModel::FileMimeTypeRole;
+                                        << DFileSystemModel::FileDisplayNameRole
+                                        << DFileSystemModel::FileUserRole + 3 // originalFilePath
+                                        << DFileSystemModel::FileUserRole + 4 // displayDeletionDate
+                                        << DFileSystemModel::FileSizeRole
+                                        << DFileSystemModel::FileMimeTypeRole;
 
     return userColumnRoles;
 }
@@ -441,7 +442,7 @@ Qt::DropActions TrashFileInfo::supportedDropActions() const
 
 QIcon TrashFileInfo::fileIcon() const
 {
-    if(isDesktopFile()) {
+    if (isDesktopFile()) {
         QFileInfo f(absoluteFilePath());
         DesktopFileInfo dfi(f);
         return dfi.fileIcon();
