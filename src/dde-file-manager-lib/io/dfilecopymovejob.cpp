@@ -2701,7 +2701,7 @@ void DFileCopyMoveJobPrivate::checkTagetNeedSync()
         const QString &fs_type = targetStorageInfo.fileSystemType();
         m_isVfat = fs_type.contains("vfat");
 
-        m_isEveryReadAndWritesSnc = (fs_type == "cifs");
+        m_isEveryReadAndWritesSnc = (fs_type == "cifs" || fs_type == "vfat");
     }
 }
 
