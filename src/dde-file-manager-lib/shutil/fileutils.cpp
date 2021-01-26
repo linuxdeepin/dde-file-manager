@@ -1676,6 +1676,19 @@ bool FileUtils::deviceShouldBeIgnore(const QString &devId)
     return devices.count() > 1;
 }
 
+bool FileUtils::appendCompress(const DUrl &toUrl, const DUrlList &fromUrlList)
+{
+    if (!fromUrlList.isEmpty()) {
+        QStringList arguments {toUrl.toLocalFile()};
+        foreach (const DUrl &url, fromUrlList) {
+            arguments << url.toLocalFile();
+        }
+        arguments << "dragdropadd";
+        return QProcess::startDetached("deepin-compressor", arguments);
+    }
+    return false;
+}
+
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
 bool FileUtils::isDesktopFile(const QString &filePath)
 {

@@ -268,6 +268,12 @@ void MasteredMediaFileInfo::refresh(const bool isForce)
     backupInfo(fileUrl());
 }
 
+bool MasteredMediaFileInfo::canDragCompress() const
+{
+    // 光盘不支持拖拽压缩
+    return false;
+}
+
 QString MasteredMediaFileInfo::subtitleForEmptyFloder() const
 {
     return QObject::tr("Folder is empty");

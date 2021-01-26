@@ -449,6 +449,13 @@ bool DAbstractFileInfo::makeAbsolute()
     return false;
 }
 
+bool DAbstractFileInfo::canDragCompress() const
+{
+    CALL_PROXY(canDragCompress());
+
+    return false;
+}
+
 bool DAbstractFileInfo::canManageAuth() const
 {
     CALL_PROXY(canManageAuth());
@@ -1417,7 +1424,7 @@ bool DAbstractFileInfo::canDrop() const
     }
 
     if (!isSymLink()) {
-        return isDir() || isDesktopFile();
+        return isDir() || isDesktopFile() || canDragCompress();
     }
 
     DAbstractFileInfoPointer info(const_cast<DAbstractFileInfo *>(this));

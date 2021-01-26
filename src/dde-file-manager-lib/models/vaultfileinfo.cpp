@@ -349,6 +349,12 @@ bool VaultFileInfo::canDrop() const
     }
 }
 
+bool VaultFileInfo::canDragCompress() const
+{
+    // 保险箱内文件不支持拖拽压缩
+    return false;
+}
+
 bool VaultFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) const
 {
     Q_UNUSED(url)

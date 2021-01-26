@@ -674,6 +674,13 @@ bool DFileInfo::isSymLink() const
     return d->fileInfo.isSymLink();
 }
 
+bool DFileInfo::canDragCompress() const
+{
+    Q_D(const DFileInfo);
+
+    return d->fileInfo.fileName().endsWith(".zip") && d->fileInfo.isWritable();
+}
+
 QString DFileInfo::symlinkTargetPath() const
 {
     Q_D(const DFileInfo);
