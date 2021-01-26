@@ -27,8 +27,6 @@
 
 #include "dabstractfilecontroller.h"
 
-#include <QQueue>
-
 class FileInfoGatherer;
 class IconProvider;
 class RecentHistoryManager;
@@ -40,37 +38,6 @@ class FileController : public DAbstractFileController
     Q_OBJECT
 
 public:
-    //拷贝任务信息的结构体
-    struct PasteFileInfo{
-        QSharedPointer<DFMPasteEvent> event;
-        DFMGlobal::ClipboardAction action;
-        DUrlList list;
-        DUrl target;
-        bool slient = false;
-        bool force = false;
-        bool bold = false;
-        PasteFileInfo()
-            : event(nullptr)
-            , action(DFMGlobal::UnknowAction)
-        {
-        }
-        PasteFileInfo(const QSharedPointer<DFMPasteEvent> &event,
-                      DFMGlobal::ClipboardAction action,
-                      const DUrlList &list,
-                      const DUrl &target,
-                      bool slient = false,
-                      bool force = false,
-                      bool bold = false)
-            : event(event)
-            , action(action)
-            , list(list)
-            , target(target)
-            , slient(slient)
-            , force(force)
-            , bold(bold)
-        {
-        }
-    };
     explicit FileController(QObject *parent = nullptr);
 
     static bool findExecutable(const QString &executableName, const QStringList &paths = QStringList());
@@ -125,10 +92,6 @@ private:
     bool isExtDeviceJobCase(void *curJob, const DUrl &url) const;
     bool isDiscburnJobCase(void *curJob, const DUrl &url) const;
     bool fileAdded(const DUrl &url) const;
-    //当前执行拷贝任务的数量
-    QAtomicInt m_currentRunThreadCount = 0;
-    //缓存拷贝任务大于12个拷贝任务信息
-    QQueue<QSharedPointer<FileController::PasteFileInfo>> m_pasteFileInfoQueue;
 };
 
 #endif // FILECONTROLLER_H
