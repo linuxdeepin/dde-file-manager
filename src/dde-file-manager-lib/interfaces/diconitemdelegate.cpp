@@ -1236,15 +1236,25 @@ QList<QRectF> DIconItemDelegate::drawText(const QModelIndex &index, QPainter *pa
 
 void DIconItemDelegate::onEditWidgetFocusOut()
 {
-    if (qApp->focusWidget() && qApp->focusWidget() != parent()->parent()) {
-        hideAllIIndexWidget();
-    }
+    //dfm与dde-desktop是两个独立的进程，focusWidget与focusWindow将不可取
+    //当前焦点窗口已经为空表示qApp已经监测不到当前window的焦点
+    if (nullptr == qApp->focusWindow())
+        return hideAllIIndexWidget();
+
+    //同一个程序中不同的窗口焦点
+    if (m_focusWindow != qApp->focusWindow())
+        return hideAllIIndexWidget();
+
+
+    //当前焦点不在parent中(view任意项中)
+    if (qApp->focusWidget() != parent()->parent())
+        return hideAllIIndexWidget();
 }
 
 void DIconItemDelegate::onTriggerEdit(const QModelIndex &index)
 {
     Q_D(DIconItemDelegate);
-
+    m_focusWindow = qApp->focusWindow();
     if (index == d->expandedIndex) {
         parent()->setIndexWidget(index, 0);
         d->expandedItem->hide();
@@ -1253,6 +1263,7 @@ void DIconItemDelegate::onTriggerEdit(const QModelIndex &index)
         parent()->parent()->edit(index);
     }
 }
+
 
 QSize DIconItemDelegate::iconSizeByIconSizeLevel() const
 {

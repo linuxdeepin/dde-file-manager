@@ -103,6 +103,7 @@ private:
     QSize iconSizeByIconSizeLevel() const;
     QIcon m_checkedIcon;
     QMutex m_mutex; //析构和构造索
+    QWindow* m_focusWindow = nullptr;
 
     Q_DECLARE_PRIVATE(DIconItemDelegate)
 
