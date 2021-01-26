@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_TW" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_TW">
 <context>
     <name>AppController</name>
     <message>
@@ -503,7 +505,7 @@
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="385"/>
         <source>Ready to complete</source>
-        <translation>即將完成，請稍候</translation>
+        <translation>請稍候</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="440"/>
@@ -998,7 +1000,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="3861"/>
         <source>Ready to complete</source>
-        <translation>即將完成，請稍候</translation>
+        <translation>請稍候</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1014"/>
@@ -3716,13 +3718,13 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1690"/>
         <source>ftruncate error!</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1716"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1740"/>
         <source>mmap file to memory fialed!</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
