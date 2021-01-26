@@ -2535,8 +2535,8 @@ void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl from, cons
 
     // warning: isFromLocalUrls 对于外部挂载存储设备返回true，如果要修改 isFromLocalUrls 的含义
     //          将会影响到以下判断逻辑
-    qint64 dirSize = (isFromLocalUrls && targetUrl.isValid()) ?  FileUtils::singleDirSize(from) : 4096;
-    completedProgressDataSize += dirSize;
+    qint64 dirSize = (isFromLocalUrls && targetUrl.isValid()) ?  m_currentDirSize : 4096;
+    completedProgressDataSize += (dirSize <= 0 ? 4096 : dirSize);
     ++completedFilesCount;
 
     countrefinesize(dirSize);
@@ -2591,7 +2591,7 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
         qreal realProgress = qreal(dataSize) / totalSize;
         if (realProgress > lastProgress)
             lastProgress = realProgress;
-        qCDebug(fileJob(), "completed data size: %lld, total data size: %lld", dataSize, totalSize);
+        qCDebug(fileJob(), "completed data size: %lld, total data size: %lld,m_refineCopySize = %lld", dataSize, totalSize, completedProgressDataSize);
     } else {
         //预设一个总大小，让前期进度平滑一些（目前阈值取1mb）
         qreal virtualSize = totalSize < 1000000 ? 1000000 : totalSize;
@@ -3236,7 +3236,6 @@ void DFileCopyMoveJobPrivate::cancelReadFileDealWriteThread()
 }
 void DFileCopyMoveJobPrivate::countAllCopyFile()
 {
-//    if (mode ==  DFileCopyMoveJob::CopyMode) {
     qint64 times = QDateTime::currentMSecsSinceEpoch();
     for (auto url : sourceUrlList) {
         char *paths[2] = {nullptr, nullptr};
@@ -3258,6 +3257,10 @@ void DFileCopyMoveJobPrivate::countAllCopyFile()
             if (flag != FTS_DP) {
                 totalsize += ent->fts_statp->st_size <= 0 ? 4096 : ent->fts_statp->st_size;
             }
+            if (m_currentDirSize == 0 && flag == FTS_D) {
+                m_currentDirSize = ent->fts_statp->st_size <= 0 ? 4096 :
+                                                                  static_cast<qint32>(ent->fts_statp->st_size);
+            }
             if (flag == FTS_F) {
                 totalfilecount++;
             }
@@ -3266,11 +3269,11 @@ void DFileCopyMoveJobPrivate::countAllCopyFile()
     }
 
     iscountsizeover = true;
+    m_currentDirSize = m_currentDirSize <= 0 ? 4096 : m_currentDirSize;
 
     emit q_ptr->fileStatisticsFinished();
 
     qDebug() << " dir time " << QDateTime::currentMSecsSinceEpoch() - times << totalsize;
-//    }
 
 }
 

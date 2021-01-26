@@ -313,6 +313,8 @@ public:
     //当前拷贝的device
     QMap<DUrl,QSharedPointer<DFileDevice>> m_currentDevice;
     QMutex m_currentDeviceMutex;
+    //当前本地目录大小
+    qint32 m_currentDirSize = 0;
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
 
