@@ -398,10 +398,13 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
         }
     }
 
+    // swap 是特殊的分区，不能重命名
+    QString &&fs = extraProperties()["fsType"].toString().toLower();
     if (suffix() == SUFFIX_UDISKS && blk && blk->mountPoints().empty()) {
         ret.push_back(MenuAction::Mount);
         if (!blk->readOnly()) {
-            ret.push_back(MenuAction::Rename);
+            if (fs != "swap")
+                ret.push_back(MenuAction::Rename);
             ret.push_back(MenuAction::FormatDevice);
         }
         if (drv->optical() && drv->media().contains(QRegularExpression("_r(w|e)"))) {
@@ -409,7 +412,7 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
         }
     }
 
-    if (!ret.contains(MenuAction::Rename) && canRename()) {
+    if (!ret.contains(MenuAction::Rename) && canRename() && fs != "swap") {
         ret.push_back(MenuAction::Rename);
     }
 
