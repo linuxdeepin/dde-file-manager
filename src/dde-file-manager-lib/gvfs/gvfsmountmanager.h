@@ -161,6 +161,9 @@ public:
 
     void autoMountAllDisks();
 
+private:
+    static bool try_to_get_mounted_point(GVolume *volume);
+
 signals:
     void loadDiskInfoFinished();
     void mount_added(const QDiskInfo& diskInfo);
