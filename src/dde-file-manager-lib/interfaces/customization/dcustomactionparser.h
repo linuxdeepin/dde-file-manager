@@ -34,7 +34,7 @@ class DCustomActionParser : public QObject
 {
     Q_OBJECT
 public:
-    explicit DCustomActionParser(QObject *parent = nullptr);
+    explicit DCustomActionParser(bool onDesktop, QObject *parent = nullptr);
     ~DCustomActionParser();
 
     bool loadDir(const QString &dirPath);
@@ -56,6 +56,7 @@ public:
     void actionNameDynamicArg(DCustomActionData &act);
     void execDynamicArg(DCustomActionData &act);
     bool comboPosForTopAction(QSettings &actionSetting, const QString&group, DCustomActionData &act);
+    static bool isActionShouldShow(const QStringList &notShowInList, bool onDesktop);
 
 signals:
     void customMenuChanged();
@@ -71,6 +72,7 @@ private:
     QHash<QString, DCustomActionDefines::ActionArg> m_actionExecArg;
     int m_hierarchyNum = 0;
     int m_topActionCount = 0;
+    bool m_onDesktop;
 };
 
 #endif // DCUSTOMACTIONPARSER_H

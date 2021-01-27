@@ -95,7 +95,7 @@ static QSet<MenuAction> whitelist;
 static QSet<MenuAction> blacklist;
 static QQueue<MenuAction> availableUserActionQueue;
 static DFMAdditionalMenu *additionalMenu;
-static DCustomActionParser *customMenuParser;
+static DCustomActionParser *customMenuParser = nullptr;
 
 void initData();
 void initActions();
@@ -770,10 +770,15 @@ DFileMenuManager::DFileMenuManager()
 
 DFileMenuManager::~DFileMenuManager()
 {
-    if (DFileMenuData::additionalMenu)
+    if (DFileMenuData::additionalMenu) {
         DFileMenuData::additionalMenu->deleteLater();
-    if (DFileMenuData::customMenuParser)
+        DFileMenuData::additionalMenu = nullptr;
+    }
+
+    if (DFileMenuData::customMenuParser) {
         DFileMenuData::customMenuParser->deleteLater();
+        DFileMenuData::customMenuParser = nullptr;
+    }
 }
 
 void DFileMenuData::initData()
@@ -945,7 +950,6 @@ void DFileMenuData::initActions()
     }
 
     additionalMenu = new DFMAdditionalMenu;
-    customMenuParser = new DCustomActionParser;
 }
 
 DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
@@ -1060,6 +1064,10 @@ QString DFileMenuManager::getActionString(MenuAction type)
 //创建自定义菜单
 void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrl &dir, const DUrl &focusFile, const DUrlList &selected, bool onDesktop)
 {
+    if (!DFileMenuData::customMenuParser) {
+        DFileMenuData::customMenuParser = new DCustomActionParser(onDesktop);
+    }
+
     const QList<DCustomActionEntry> &rootEntry = DFileMenuData::customMenuParser->getActionFiles();
     qDebug() << "extendCustomMenu " << isNormal << dir << focusFile << "files" << selected.size() << "entrys" << rootEntry.size();
 
@@ -1085,7 +1093,7 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
     auto usedEntrys = builder.matchFileCombo(rootEntry, fileCombo);
 
     //匹配类型支持
-    usedEntrys = builder.matchActions(selected, usedEntrys, onDesktop);
+    usedEntrys = builder.matchActions(selected, usedEntrys);
     qDebug() << "selected combo" << fileCombo << "entry count" << usedEntrys.size();
 
     if (usedEntrys.isEmpty())

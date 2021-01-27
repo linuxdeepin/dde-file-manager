@@ -119,13 +119,11 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchFileCombo(const QList<DCust
 }
 
 QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const DUrlList &selects,
-                                        QList<DCustomActionEntry> oriActions,
-                                        bool onDesktop)
+                                        QList<DCustomActionEntry> oriActions)
 {
     //todo：细化功能颗粒度，一个函数尽量专职一件事
     /*
      *根据选中内容、配置项、选中项类型匹配合适的菜单项
-     *是否桌面显示isActionShouldShow
      *是否action支持的协议
      *是否action支持的后缀
      *action不支持类型过滤（不加上父类型过滤，todo: 为何不支持项不考虑?）
@@ -163,10 +161,8 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const DUrlList &sel
         appendAllMimeTypes(fileInfo, fileMimeTypesNoParent, fileMimeTypes);
         for (auto it = oriActions.begin(); it != oriActions.end();) {
             DCustomActionEntry &tempAction = *it;
-            //协议，文管和桌面显示，后缀
-            if (!isSchemeSupport(tempAction, singleUrl)
-                || !isActionShouldShow(tempAction, onDesktop)
-                || !isSuffixSupport(tempAction, singleUrl)) {
+            //协议，后缀
+            if (!isSchemeSupport(tempAction, singleUrl) || !isSuffixSupport(tempAction, singleUrl)) {
                 it = oriActions.erase(it);   //不支持的action移除
                 continue;
             }
@@ -368,20 +364,6 @@ bool DCustomActionBuilder::isMimeTypeMatch(const QStringList &fileMimeTypes, con
         }
     }
     return match;
-}
-
-bool DCustomActionBuilder::isActionShouldShow(const DCustomActionEntry &action, bool onDesktop)
-{
-    // X-DFM-NotShowIn not exist
-    auto notShowInList = action.notShowIn();
-    if (notShowInList.isEmpty())
-        return true;    //未明确指明仅显示在桌面或者文管窗口默认都显示
-    if (notShowInList.contains("*"))
-        return false;   //都不显示： 配置了"X-DFM-NotShowIn=*"或者"X-DFM-NotShowIn=desktop:dde-file-manager"
-
-    // is menu triggered on desktop
-    return (onDesktop && !notShowInList.contains("Desktop", Qt::CaseInsensitive)) ||
-           (!onDesktop && !notShowInList.contains("Filemanager", Qt::CaseInsensitive));
 }
 
 bool DCustomActionBuilder::isSchemeSupport(const DCustomActionEntry &action, const DUrl &url)

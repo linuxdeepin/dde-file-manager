@@ -44,15 +44,13 @@ public:
     static QList<DCustomActionEntry> matchFileCombo(const QList<DCustomActionEntry> &rootActions,
                                                     DCustomActionDefines::ComboTypes type);
     static QList<DCustomActionEntry> matchActions(const DUrlList &selects,
-                             QList<DCustomActionEntry> oriActions,
-                             bool onDesktop = false);
+                             QList<DCustomActionEntry> oriActions);
     static QPair<QString, QStringList> makeCommand(const QString &cmd, DCustomActionDefines::ActionArg arg,
                                const DUrl &dir, const DUrl& foucs, const DUrlList &files);
     static QStringList splitCommand(const QString &cmd);
 private:
     static bool isMimeTypeSupport(const QString &mt, const QStringList &fileMimeTypes);
     static bool isMimeTypeMatch(const QStringList &fileMimeTypes, const QStringList &supportMimeTypes);
-    static bool isActionShouldShow(const DCustomActionEntry &action, bool onDesktop);
     static bool isSchemeSupport(const DCustomActionEntry &action, const DUrl &url);
     static bool isSuffixSupport(const DCustomActionEntry &action, const DUrl &url);
     static void appendAllMimeTypes(const DAbstractFileInfoPointer &fileInfo, QStringList &noParentmimeTypes, QStringList &allMimeTypes);
