@@ -267,7 +267,7 @@ QWidget *ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOpt
     QRegExp regx("[^\\\\/\':\\*\\?\"<>|%&]+"); //屏蔽特殊字符
     QValidator *validator = new QRegExpValidator(regx, le);
     le->setValidator(validator);
-    le->setMaxLength(40);  // 限制最长输入字符为 40
+    le->setMaxLength(index.data(ComputerModel::EditorLengthRole).toInt());
 
     connect(le, &QLineEdit::destroyed, this, [this, le] {
         if (editingEditor == le)
