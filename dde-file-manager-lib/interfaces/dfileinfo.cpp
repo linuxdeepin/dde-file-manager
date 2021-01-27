@@ -423,10 +423,17 @@ QList<QIcon> DFileInfo::additionalIcon() const
 
     QList<QIcon> icons;
 
-    // wayland TASK-38720 修复重命名文件时，文件图标有小锁显示的问题，
-    // 当为快捷方式时，有源文件文件不存在的情况，所以增加特殊判断
-    if (!isSymLink() && !exists()) {
-        return icons;
+    // TASK-38720 修复重命名文件时，文件图标有小锁显示的问题，
+    // 当不为快捷方式时，有源文件文件不存在的情况，所以增加特殊判断
+    if (!isSymLink()) {
+        // 当为gvfs文件时，使用exists()判断文件是否存在
+        if (d->gvfsMountFile) {
+            if (!exists())
+                return icons;
+        } else {
+            if(access(fileUrl().toLocalFile().toStdString().c_str(), F_OK) == -1)
+                return icons;
+        }
     }
 
     if (isSymLink()) {
