@@ -797,7 +797,6 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
         file_name = m_fileNameList.dequeue().split('/').last();
     }
 
-
     // 回收站可能重名文件，因此回收站中的文件实际filename是经过处理的,这里需要取真正需要展示的filename
     if (source_info->filePath().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
         QExplicitlySharedDataPointer<TrashFileInfo> info(new TrashFileInfo(DUrl::fromTrashFile("/" + source_info->fileName())));
