@@ -40,5 +40,7 @@ TEST_F(DEventFilterTest, test_eventfileter)
     bool ret;
     ret = m_eventfilter->eventFilter(view, event1);
     EXPECT_EQ(ret, false);
-
+    delete view;
+    delete event;
+    delete event1;
 }
