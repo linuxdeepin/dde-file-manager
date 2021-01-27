@@ -164,7 +164,7 @@ void DiskMountPlugin::invokedMenuItem(const QString &itemKey, const QString &men
 int DiskMountPlugin::itemSortKey(const QString &itemKey)
 {
     const QString &key = QString("pos_%1_%2").arg(itemKey).arg(displayMode());
-    int ret = m_proxyInter->getValue(this, key, 5).toInt(); // 按照文案挂载设备，放置在第5个位置
+    int ret = m_proxyInter->getValue(this, key, 0).toInt(); // dde-dock默认设置为0
     qDebug() << "itemSortKey [key:" << key << "," << ret << "] for :" << itemKey;
     return ret;
 }
