@@ -7,7 +7,9 @@
 
 using namespace DCustomActionDefines;
 
-DCustomActionParser::DCustomActionParser(QObject *parent) : QObject(parent)
+DCustomActionParser::DCustomActionParser(bool onDesktop, QObject *parent)
+    : QObject(parent)
+    , m_onDesktop(onDesktop)
 {
     m_fileWatcher = new QFileSystemWatcher;
     //监听目录
@@ -250,6 +252,11 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         //comboPos
         if (!comboPosForTopAction(actionSetting, group, actData))
             return false;//有一级菜单项支持的类型，但全无效，自动作为无效废弃项
+
+        //NotShowIn
+        if (!isActionShouldShow(tpEntry.m_notShowIn, m_onDesktop))
+            return false;//一级菜单不在桌面/文管显示则跳过该项
+
         tpEntry.m_package = basicInfos.m_package;
         tpEntry.m_version = basicInfos.m_version;
         tpEntry.m_comment = basicInfos.m_comment;
@@ -424,4 +431,17 @@ void DCustomActionParser::delayRefresh()
         m_refreshTimer = nullptr;
     });
     m_refreshTimer->start(300);
+}
+
+bool DCustomActionParser::isActionShouldShow(const QStringList &notShowInList, bool onDesktop)
+{
+    // X-DFM-NotShowIn not exist
+    if (notShowInList.isEmpty())
+        return true;    //未明确指明仅显示在桌面或者文管窗口默认都显示
+    if (notShowInList.contains("*"))
+        return false;   //都不显示： 配置了"X-DFM-NotShowIn=*"或者"X-DFM-NotShowIn=desktop:filemanager"
+
+    // is menu triggered on desktop
+    return (onDesktop && !notShowInList.contains("Desktop", Qt::CaseInsensitive)) ||
+           (!onDesktop && !notShowInList.contains("Filemanager", Qt::CaseInsensitive));
 }
