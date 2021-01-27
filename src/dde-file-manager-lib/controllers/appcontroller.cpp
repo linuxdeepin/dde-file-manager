@@ -53,6 +53,7 @@
 
 #include "interfaces/dfmstandardpaths.h"
 #include "interfaces/defenderinterface.h"
+#include "interfaces/dumountmanager.h"
 #include "shutil/fileutils.h"
 #include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
@@ -672,13 +673,17 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
     const DUrl &fileUrl = event->url();
     DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
     if (fi) {
-        DUrl url = fi->redirectedFileUrl();
-        if (url.isValid() && m_defenderInterface && m_defenderInterface->isScanning(url)) {
-            popQueryScanningDialog(this, [this, event, url](){
-                if (m_defenderInterface->stopScanning(url))
+        const QString &blkStr = fi->extraProperties()["udisksblk"].toString();
+        if (!blkStr.isNull() && !blkStr.isEmpty() && m_umountManager && m_umountManager->isScanningBlock(blkStr)) {
+            popQueryScanningDialog(this, [this, event, blkStr](){
+                if (!m_umountManager) {
+                    qWarning() << "m_umountManager is null.";
+                    return;
+                }
+                if (m_umountManager->stopScanBlock(blkStr))
                     doActionUnmount(event);
                 else
-                    qWarning() << "stopping scanning timeout.";
+                    qWarning() << m_umountManager->getErrorMsg();
             });
             // 需要用户确认时弹框，提前结束卸载流程
             return;
@@ -816,19 +821,30 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
-    DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
-    if (fi) {
-        DUrl url = fi->redirectedFileUrl();
-        if (url.isValid() && m_defenderInterface && m_defenderInterface->isScanning(url)) {
-            popQueryScanningDialog(this, [this, event, url](){
-                if (m_defenderInterface->stopScanning(url))
-                    doSafelyRemoveDrive(event);
-                else
-                    qWarning() << "stopping scanning timeout.";
-            });
-            // 需要用户确认时弹框，提前结束卸载流程
-            return;
-        }
+
+    QString driveName;
+    if (fileUrl.scheme() == DFMROOT_SCHEME) {
+        DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
+        const QString &blkStr = fi->extraProperties()["udisksblk"].toString();
+        if (m_umountManager)
+            driveName = m_umountManager->getDriveName(blkStr);
+        else
+            qWarning() << "m_umountManager is null!";
+    }
+
+    if (!driveName.isNull() && !driveName.isEmpty() && m_umountManager && m_umountManager->isScanningDrive(driveName)) {
+        popQueryScanningDialog(this, [this, event, driveName](){
+            if (!m_umountManager) {
+                qWarning() << "m_umountManager is null!";
+                return;
+            }
+            if (m_umountManager->stopScanDrive(driveName))
+                doSafelyRemoveDrive(event);
+            else
+                qWarning() << m_umountManager->getErrorMsg();
+        });
+        // 需要用户确认时弹框，提前结束卸载流程
+        return;
     }
     // 其它情况直接走卸载流程
     doSafelyRemoveDrive(event);
@@ -1447,6 +1463,7 @@ void AppController::initConnect()
     m_unmountThread.start();
 
     m_defenderInterface = new DefenderInterface(this);
+    m_umountManager.reset(new DUMountManager(this));
 }
 
 void AppController::createGVfSManager()
@@ -1543,57 +1560,14 @@ StartManagerInterface *AppController::startManagerInterface() const
 
 void UnmountWorker::doUnmount(const QString &blkStr)
 {
-    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(blkStr));
-    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
-    if (blkdev->isEncrypted()) {
-        blkdev.reset(DDiskManager::createBlockDevice(blkdev->cleartextDevice()));
-    }
-    blkdev->unmount({});
-    QDBusError err = blkdev->lastError();
-    if (err.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
-        qDebug() << "action timeout with noreply response";
-        emit unmountResult(tr("Authentication timed out"), "");
-    }
-    // fix bug #27164 用户在操作其他用户挂载上的设备的时候需要进行提权操作，此时需要输入用户密码，如果用户点击了取消，此时返回 QDBusError::Other
-    // 所以暂时这样处理，处理并不友好。这个 errorType 并不能准确的反馈出用户的操作与错误直接的关系。这里笼统的处理成“设备正忙”也不准确。
-    else if ((err.isValid() && err.type() != QDBusError::Other)
-             || (err.isValid() && err.message().contains("target is busy"))) {
-        qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
-        emit unmountResult(tr("The device was not safely unmounted"), tr("Disk is busy, cannot unmount now"));
-    }
+    DUMountManager manager;
+    if (!manager.umountBlock(blkStr))
+        emit unmountResult(tr("The device was not safely unmounted"), manager.getErrorMsg());
 }
 
 void UnmountWorker::doSaveRemove(const QString &blkStr)
 {
-    QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blkStr));
-    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-    QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
-
-    bool err = false;
-    if (!blk->mountPoints().empty()) {
-        blk->unmount({});
-        QDBusError lastError = blk->lastError();
-
-        if (lastError.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
-            qDebug() << "action timeout with noreply response";
-            emit unmountResult(tr("Authentication timed out"), "");
-            return;
-        } else if (lastError.isValid()) {
-            qDebug() << "disc mount error: " << lastError.message() << lastError.name() << lastError.type();
-            emit unmountResult(tr("The device was not safely removed"), tr("Disk is busy, cannot remove now"));
-            return;
-        }
-
-        err |= blk->lastError().isValid();
-    }
-    if (blk->cryptoBackingDevice().length() > 1) {
-        cbblk->lock({});
-        err |= cbblk->lastError().isValid();
-        drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
-    }
-    drv->powerOff({});
-    err |= drv->lastError().isValid();
-    if (err) {
-        emit unmountResult(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time"));
-    }
+    DUMountManager manager;
+    if (!manager.ejectDrive(manager.getDriveName(blkStr)))
+        emit unmountResult(tr("The device was not safely removed"), manager.getErrorMsg());
 }
