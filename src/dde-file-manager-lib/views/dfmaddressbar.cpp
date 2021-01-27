@@ -618,6 +618,18 @@ void DFMAddressBar::updateCompletionState(const QString &text)
 
         // History completion.
         isHistoryInCompleterModel = true;
+        // 修复bug-62117 搜索补全中不显示保险箱全路径
+        QStringList::iterator itr = historyList.begin();
+        while (itr != historyList.end()) {
+            if (VaultController::isVaultFile(*itr)) {
+                (*itr) = VaultController::toExternalPath(*itr);
+                if (VaultController::isVaultFile(*itr)) {
+                    itr = historyList.erase(itr);
+                    continue;
+                }
+            }
+            ++itr;
+        }
         completerModel.setStringList(historyList);
     }
 
