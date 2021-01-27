@@ -895,7 +895,7 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
             g_mount_operation_reply(op, G_MOUNT_OPERATION_HANDLED);
             qCDebug(mountManager()) << "g_mount_operation_reply end";
         }
-        AskingPassword = true;
+        AskingPassword = !anonymous;
         qCDebug(mountManager()) << "AskingPassword" << AskingPassword;
 
     } else {
@@ -1442,7 +1442,7 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
         if (showWarnDlg) {
             DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                          tr("Mounting device error"), QString());
-            qDebug() << "Mounting device error: " << QString(error->message);
+            qInfo() << "Mounting device error: " << QString(error->message);
         } else {
             //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
             if (status == MOUNT_PASSWORD_WRONG && bshow) {
