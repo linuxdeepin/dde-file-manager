@@ -1551,6 +1551,26 @@ void GvfsMountManager::mount_device(const QString &unix_device, bool silent)
     g_object_unref(volume_monitor);
 }
 
+bool GvfsMountManager::try_to_get_mounted_point(GVolume *volume)
+{
+    if(volume == nullptr)
+        return false;
+
+    GMount *mount = nullptr;
+    GFile *root = nullptr;
+    char *mount_path = nullptr;
+    mount = g_volume_get_mount(volume);
+    root = g_mount_get_root(mount);
+    mount_path = g_file_get_path(root);
+    bool ret = (mount_path != nullptr);
+    qCDebug(mountManager()) << "Mounted" << g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE) << "at" << mount_path;
+
+    g_object_unref(mount);
+    g_object_unref(root);
+    g_free(mount_path);
+    return ret;
+}
+
 void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *res, gpointer user_data)
 {
     GVolume *volume;
@@ -1562,7 +1582,8 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
     succeeded = g_volume_mount_finish(volume, res, &error);
     QVolume qVolume = gVolumeToqVolume(volume);
 
-    if (!succeeded) {
+    // 返回false 的情况，如果有挂载点也算成功，此时要看看 gio 相关流程是否存在bug
+    if (!succeeded && !try_to_get_mounted_point(volume)) {
         qCDebug(mountManager()) << "Error mounting: " << g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE)
                                 << error->message << user_data << error->code;
 
@@ -1588,17 +1609,6 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
                 dialogManager->showFormatDialog(qVolume.drive_unix_device());
             }
         }
-    } else {
-        GMount *mount;
-        GFile *root;
-        char *mount_path;
-        mount = g_volume_get_mount(volume);
-        root = g_mount_get_root(mount);
-        mount_path = g_file_get_path(root);
-        qCDebug(mountManager()) << "Mounted" << g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE) << "at" << mount_path;
-        g_object_unref(mount);
-        g_object_unref(root);
-        g_free(mount_path);
     }
     AskedPasswordWhileMountDisk = false;
 }
