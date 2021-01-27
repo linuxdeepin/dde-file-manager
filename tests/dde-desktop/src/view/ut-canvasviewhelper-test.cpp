@@ -4,6 +4,7 @@
 #include <QStandardPaths>
 #include <QScreen>
 #include <QTimer>
+
 #define private public
 #define protected public
 
@@ -13,6 +14,7 @@
 #include "view/canvasviewmanager.h"
 #include "durl.h"
 #include "stub.h"
+#include "stubext.h"
 #include "dfileviewhelper.h"
 #include "dfilesystemmodel.h"
 using namespace testing;
@@ -137,29 +139,18 @@ TEST_F(CanvasViewHelperTest, test_initStyleOption)
     m_view->selectAll();
     qApp->processEvents();
 
-    static bool k = true;
-    bool(*mytransp)(void* obj) = [](void* obj){
-        return !k;
-    };
-    int(*mycount)(void* obj) = [](void* obj){
-        return 5;
-    };
-
-    typedef bool (*fptr)(DFileViewHelper*,bool);
-    fptr transp = (fptr)(&DFileViewHelper::isTransparent);
-    typedef int (*cnt)(CanvasViewHelper*,int);
-    cnt count = (cnt)(&CanvasViewHelper::selectedIndexsCount);
-
-    Stub tub, tub1;
+    stub_ext::StubExt tub;
+    stub_ext::StubExt tub1;
     QStyleOptionViewItem* option = new QStyleOptionViewItem;
-    tub.set(transp, mytransp);
-    tub1.set(count, mycount);
+    tub.set_lamda(VADDR(DFileViewHelper, isTransparent), [](){return false;});
+    tub1.set_lamda(VADDR(CanvasViewHelper, selectedIndexsCount), [](){return 5;});
     option->state = QStyle::State_HasFocus;
     option->showDecorationSelected = true;
     QModelIndex index = m_view->firstIndex();
     m_canvas->initStyleOption(option, index);
 
-    tub.reset(mytransp);
+    tub.reset(VADDR(DFileViewHelper, isTransparent));
+    tub.set_lamda(VADDR(DFileViewHelper, isTransparent), [](){return true;});
     m_canvas->itemDelegate();
     m_canvas->initStyleOption(option, m_view->firstIndex());
 

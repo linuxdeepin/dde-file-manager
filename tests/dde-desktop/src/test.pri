@@ -1,7 +1,7 @@
 SOURCES += \
     $$PWD/util/ut-desktopinfo-test.cpp \
     $$PWD/screen/ut-screenmanager-test.cpp \
-#    $$PWD/util/ut-xcbmisc-test.cpp \
+    $$PWD/util/ut-xcbmisc-test.cpp \
     $$PWD/presenter/ut-presenter-test.cpp \
     $$PWD/view/ut-watermaskframe-test.cpp  \
     $$PWD/view/ut_backgroundmanager_test.cpp \
@@ -25,7 +25,8 @@ SOURCES += \
     $$PWD/dde-wallpaper-chooser/ut-screensavercontrol-test.cpp\
     $$PWD/config/ut-dfmdesktopsettings-test.cpp \
     $$PWD/view/ut-canvasviewhelper-test.cpp \
-    $$PWD/util/ut-util-test.cpp
+    $$PWD/util/ut-util-test.cpp \
+    $$PWD/config/ut-config-test.cpp
 #屏蔽热区
 #    $$PWD/dde-zone/ut-pushbuttonlist-test.cpp \
 #    $$PWD/dde-zone/ut-hotzone-test.cpp \
