@@ -37,7 +37,7 @@ class DFMVfsManager;
 DFM_END_NAMESPACE
 
 class DGioVolumeManager;
-class DefenderInterface;
+class DUMountManager;
 class DiskControlItem;
 
 class DiskControlWidget : public QScrollArea
@@ -84,7 +84,7 @@ private:
     bool m_autoMountAndOpenEnable = false; // 配置项中的挂载并打开
 
     DDiskManager *m_diskManager;
-    DefenderInterface *m_defenderInterface;
+    QScopedPointer<DUMountManager> m_umountManager;
     QScopedPointer<DGioVolumeManager> m_vfsManager;
 };
 

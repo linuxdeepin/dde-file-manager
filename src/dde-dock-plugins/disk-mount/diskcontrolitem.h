@@ -53,6 +53,7 @@ public:
 
     static QString formatDiskSize(const quint64 num);
     void detachDevice();
+    QString driveName();
     QString tagName() const;
     void setTagName(const QString &tagName);
     QUrl mountPointUrl();

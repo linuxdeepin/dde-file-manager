@@ -39,6 +39,7 @@ class FileMonitor;
 class DRenameBar;
 class FileBatchProcess;
 class DefenderInterface;
+class DUMountManager;
 
 /**
  * @brief The UnmountWorker class 卸载操作类 用于在子线程执行卸载操作
@@ -46,9 +47,11 @@ class DefenderInterface;
 class UnmountWorker : public QObject
 {
     Q_OBJECT
+
 public slots:
     void doUnmount(const QString &blkStr);
     void doSaveRemove(const QString &blkStr);
+
 signals:
     void unmountResult(const QString &title, const QString &msg);
 };
@@ -190,6 +193,7 @@ private:
     QThread m_unmountThread;
     UnmountWorker *m_unmountWorker;
     DefenderInterface *m_defenderInterface;
+    QScopedPointer<DUMountManager> m_umountManager;
 
     volatile enum {UnkownIFS,NoneIFS,CreatingIFS,VaildIFS} m_statDBusInterface = UnkownIFS; //dbus接口创建状态
 

@@ -27,7 +27,7 @@
 #include "dattachedudisks2device.h"
 #include "dattachedvfsdevice.h"
 #include "models/dfmrootfileinfo.h"
-#include "interfaces/defenderinterface.h"
+#include "interfaces/dumountmanager.h"
 #include "diskglobal.h"
 
 #include <dgiovolumemanager.h>
@@ -84,7 +84,7 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
     viewport()->setAutoFillBackground(false);
 
     m_diskManager = new DDiskManager(this);
-    m_defenderInterface = new DefenderInterface(this);
+    m_umountManager.reset(new DUMountManager(this));
 
     initConnect();
 }
@@ -234,10 +234,14 @@ void DiskControlWidget::popQueryScanningDialog(QObject *object, std::function<vo
 
 void DiskControlWidget::unmountAll()
 {
-    // 直接停止所有扫描
-    if (m_defenderInterface->isScanning(QUrl::fromLocalFile("/"))) {
+    if (m_umountManager && m_umountManager->isScanningDrive()) {
         popQueryScanningDialog(this, [this]() {
-            if (m_defenderInterface->stopScanning(QUrl::fromLocalFile("/")))
+            if (!m_umountManager) {
+                qWarning() << "m_umountManager is null!";
+                return;
+            }
+
+            if (m_umountManager->stopScanAllDrive())
                 doUnMountAll();
             else
                 NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time") );
@@ -580,10 +584,15 @@ void DiskControlWidget::onItemUmountClicked(DiskControlItem *item)
         return;
     }
 
-    QUrl mountUrl = item->mountPointUrl();
-    if (m_defenderInterface->isScanning(mountUrl)) {
-        popQueryScanningDialog(item, [this, item, mountUrl]() {
-            if (m_defenderInterface->stopScanning(mountUrl))
+    // 弹出某个设备,需要停止该分区对应设备的所有其它分区
+    const QString &driveName = item->driveName();
+    if (m_umountManager && !driveName.isNull() && !driveName.isEmpty() && m_umountManager->isScanningDrive(driveName)) {
+        popQueryScanningDialog(item, [this, driveName, item]() {
+            if (!m_umountManager) {
+                qWarning() << "m_umountManager is null!";
+                return;
+            }
+            if (m_umountManager->stopScanDrive(driveName))
                 item->detachDevice();
             else
                 NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time"));

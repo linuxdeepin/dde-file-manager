@@ -23,6 +23,7 @@
  */
 
 #include "diskcontrolitem.h"
+#include "dattachedudisks2device.h"
 
 #include "dfmglobal.h"
 
@@ -171,6 +172,14 @@ void DiskControlItem::refreshIcon()
 void DiskControlItem::detachDevice()
 {
     attachedDevice->detach();
+}
+
+QString DiskControlItem::driveName()
+{
+    DAttachedUdisks2Device *device = dynamic_cast<DAttachedUdisks2Device*>(attachedDevice.data());
+    if (device && device->blockDevice())
+        return device->blockDevice()->drive();
+    return "";
 }
 
 QString DiskControlItem::tagName() const

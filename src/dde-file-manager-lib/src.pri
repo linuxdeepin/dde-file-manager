@@ -245,6 +245,7 @@ HEADERS += \
     $$PWD/models/dfmrootfileinfo_p.h \
     $$PWD/interfaces/private/dfmcrumbbar_p.h \
     $$PWD/interfaces/defenderinterface.h \
+    $$PWD/interfaces/dumountmanager.h \
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
@@ -453,7 +454,8 @@ SOURCES += \
     $$PWD/interfaces/drootfilemanager.cpp \
     $$PWD/interfaces/dgvfsfileinfo.cpp \
     $$PWD/shutil/checknetwork.cpp \
-    $$PWD/interfaces/defenderinterface.cpp
+    $$PWD/interfaces/defenderinterface.cpp \
+    $$PWD/interfaces/dumountmanager.cpp \
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h

@@ -22,6 +22,7 @@
 #include "dattachedudisks2device.h"
 #include "diskcontrolitem.h"
 #include "diskcontrolwidget.h"
+#include "interfaces/dumountmanager.h"
 
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
@@ -70,38 +71,10 @@ void DAttachedUdisks2Device::detach()
     }
     const QString &path = blkDevice->path();
     QtConcurrent::run([path]() {
-        QScopedPointer<DBlockDevice> blockDevice(DDiskManager::createBlockDevice(path));
-        if (!blockDevice) {
-            qWarning() << "BlockDevice is not valid:" << path;
-            return;
-        }
-        QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice->drive()));
-        if (!diskDev) {
-            qWarning() << "DiskDevice is not valid:" << path;
-            return;
-        }
-        blockDevice->unmount({});
-
-        if (diskDev->optical()) { // is optical
-            if (diskDev->ejectable()) {
-                diskDev->eject({});
-                if (diskDev->lastError().isValid()) {
-                    DiskControlWidget::NotifyMsg(DiskControlWidget::tr("The device is busy, cannot eject now"));
-                }
-                return;
-            }
-        }
-
-        if (diskDev->removable()) {
-            diskDev->eject({});
-            if (diskDev->lastError().isValid()) {
-                DiskControlWidget::NotifyMsg(DiskControlWidget::tr("The device is busy, cannot remove now"));
-            }
-        }
-
-        if (diskDev->canPowerOff()) {
-            diskDev->powerOff({});
-        }
+        DUMountManager umountManager;
+        const QString &drive = umountManager.getDriveName(path);
+        if (!umountManager.ejectDrive(drive))
+            DiskControlWidget::NotifyMsg(umountManager.getErrorMsg());
     });
 }
 
