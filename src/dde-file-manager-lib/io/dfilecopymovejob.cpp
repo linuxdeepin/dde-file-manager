@@ -880,8 +880,12 @@ create_new_file_info:
             skipFileSize += (source_info->isDir() || source_info->isSymLink()) ? 4096 : source_info->size();
             return true;
         case DFileCopyMoveJob::CoexistAction:
-            file_name = handle ? handle->getNonExistsFileName(source_info, target_info)
-                        : getNewFileName(source_info, target_info);
+            // fix bug 62226
+            // 回收站的同名文件是以uuid形式存在的，如果这里使用source_info去构建副本的话，就会造成
+            // file_name的值为uuid（副本）的情况，因此修改为new_file_info，getNonExistsFileName
+            // 接口中只会使用到new_file_info的filename相关属性，因此对非回收站的文件也不会存在影响
+            file_name = handle ? handle->getNonExistsFileName(new_file_info, target_info)
+                        : getNewFileName(new_file_info, target_info);
             goto create_new_file_info;
         default:
             return false;
