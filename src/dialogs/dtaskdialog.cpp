@@ -40,6 +40,7 @@
 #include "dabstractfileinfo.h"
 #include "fileoperations/filejob.h"
 #include "dfmstandardpaths.h"
+#include "models/trashfileinfo.h"
 
 #include "xutil.h"
 #include "app/define.h"
@@ -527,7 +528,13 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
         }
 
         data["sourcePath"] = from.path();
-        data["file"] = from.fileName();
+        // 针对回收站文件，显示fileDisplayName
+        if (from.toLocalFile().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+            QExplicitlySharedDataPointer<TrashFileInfo> info(new TrashFileInfo(DUrl::fromTrashFile("/" + from.fileName())));
+            data["file"] = info->fileDisplayName();
+        } else {
+            data["file"] = from.fileName();
+        }
         data["targetPath"] = to.path();
         data["destination"] = to.isValid() ? to.parentUrl().path() : QString();
         bool ok = false;
