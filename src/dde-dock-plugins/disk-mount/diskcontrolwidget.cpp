@@ -416,6 +416,8 @@ void DiskControlWidget::onDiskListChanged()
             DiskControlItem *item = new DiskControlItem(dad, this);
             m_centralLayout->addWidget(item);
             addSeparateLine(1);
+
+            connect(item, &DiskControlItem::umountClicked, this, &DiskControlWidget::onItemUmountClicked);
         } else {
             delete dad;
             dad = nullptr; //指针指空 防止野指针崩溃不好找
