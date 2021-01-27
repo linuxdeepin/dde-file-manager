@@ -235,31 +235,6 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
             newUrl = fi->redirectedFileUrl();
         }
 
-        DAbstractFileInfoPointer info = fileService->createFileInfo(event->sender(), newUrl);
-        if (newUrl.scheme() == BURN_SCHEME) {
-            Q_ASSERT(newUrl.burnDestDevice().length() > 0);
-            QString devpath = newUrl.burnDestDevice();
-            QString udiskspath = DDiskManager::resolveDeviceNode(devpath, {}).first();
-            QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
-            bool isMounted = blkdev->mountPoints().count() != 0;
-            if (isMounted) {
-                QString  mountPoint = blkdev->mountPoints().first();
-                if (mountPoint.length() > 0) {
-                    QFile file(mountPoint);
-                    if (!(QFile::ExeUser & file.permissions())) {
-                        DThreadUtil::runInMainThread([]{
-                            dialogManager->showErrorDialog(DialogManager::tr("Access denied"), QObject::tr("You do not have permission to access this folder"));
-                        });
-                        return;
-                    }
-                }
-            }
-        } else {
-            QFile file(info->filePath());
-            if (!(QFile::ExeUser & file.permissions()))
-                return;
-        }
-
         const QSharedPointer<DFMUrlListBaseEvent> &e = dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), DUrlList() << newUrl);
         e->setWindowId(event->windowId());
         actionOpen(e);
