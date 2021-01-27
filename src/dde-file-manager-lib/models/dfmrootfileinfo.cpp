@@ -537,16 +537,18 @@ void DFMRootFileInfo::refresh(const bool isForce)
 
 bool DFMRootFileInfo::canSetAlias() const
 {
-    bool ret = false;
-    // 系统盘、数据盘、其他固定分区可以设置别名
-    if (dfm_util::isContains(static_cast<ItemType>(fileType()),
-                             ItemType::UDisksRoot,
-                             ItemType::UDisksData,
-                             ItemType::UDisksFixed)) {
-        // 非本地分区不可设置别名
-        ret = deviceListener->isFromNativeDisk(d_ptr->idUUID);
+    // 系统盘、数据盘均可设置别名
+    auto type = static_cast<ItemType>(fileType());
+    if (dfm_util::isContains(type, ItemType::UDisksRoot, ItemType::UDisksData)) {
+        return true;
     }
-    return ret;
+
+    // 其他数据盘通过 /etc/fstab 判断是否为本地磁盘
+    if (type == ItemType::UDisksFixed) {
+        return deviceListener->isFromNativeDisk(d_ptr->idUUID);
+    }
+
+    return false;
 }
 
 void DFMRootFileInfo::checkCache()
