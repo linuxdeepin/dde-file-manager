@@ -474,6 +474,14 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         return drv->opticalBlank();
     }
 
+    if (role == DataRoles::EditorLengthRole) {
+        if (pitmdata->fi) {
+            // 普通文件系统限制最长输入字符为 40, vfat exfat 由于文件系统的原因，只能输入 11 个字符
+            const QString &fs = pitmdata->fi->extraProperties()["fsType"].toString().toLower();
+            return fs.endsWith("fat") ? 11 : 40;
+        }
+    }
+
     return QVariant();
 }
 

@@ -59,22 +59,23 @@ class ComputerModel : public QAbstractItemModel
 public:
     enum DataRoles
     {
-        SizeTotalRole = Qt::UserRole + 1,   //uint64_t
-        SizeInUseRole = Qt::UserRole + 2,   //uint64_t
-        FileSystemRole = Qt::UserRole + 3,  //QString
-        UsgWidgetRole = Qt::UserRole + 4,   //No longer used
-        ICategoryRole = Qt::UserRole + 5,   //ComputerModelItemData::Category
-        OpenUrlRole = Qt::UserRole + 6,     //DUrl
-        MountOpenUrlRole = Qt::UserRole + 7,//DUrl
-        ActionVectorRole = Qt::UserRole + 8,//QVector<MenuAction>
-        DFMRootUrlRole = Qt::UserRole + 9,  //DUrl
-        VolumeTagRole = Qt::UserRole + 10,  //卷标 sr0
-        IconNameRole = Qt::UserRole + 11,   //图标名称
-        SchemeRole = Qt::UserRole + 12, //QString
-        ProgressRole = Qt::UserRole + 13, // Bool(Progress visible)
-        SizeRole = Qt::UserRole + 14, // Bool(Size visible)
-        DiscUUIDRole = Qt::UserRole + 15,   //设备UUID
-        DiscOpticalRole = Qt::UserRole + 16,//光盘是否是空盘
+        SizeTotalRole = Qt::UserRole + 1,    // uint64_t
+        SizeInUseRole = Qt::UserRole + 2,    // uint64_t
+        FileSystemRole = Qt::UserRole + 3,   // QString
+        UsgWidgetRole = Qt::UserRole + 4,    // No longer used
+        ICategoryRole = Qt::UserRole + 5,    // ComputerModelItemData::Category
+        OpenUrlRole = Qt::UserRole + 6,      // DUrl
+        MountOpenUrlRole = Qt::UserRole + 7, // DUrl
+        ActionVectorRole = Qt::UserRole + 8, // QVector<MenuAction>
+        DFMRootUrlRole = Qt::UserRole + 9,   // DUrl
+        VolumeTagRole = Qt::UserRole + 10,   // 卷标 sr0
+        IconNameRole = Qt::UserRole + 11,    // 图标名称
+        SchemeRole = Qt::UserRole + 12,      // QString
+        ProgressRole = Qt::UserRole + 13,    // Bool(Progress visible)
+        SizeRole = Qt::UserRole + 14,        // Bool(Size visible)
+        DiscUUIDRole = Qt::UserRole + 15,    // 设备UUID
+        DiscOpticalRole = Qt::UserRole + 16, // 光盘是否是空盘
+        EditorLengthRole = Qt::UserRole + 17 // 重命名LineEditor的最大长度
     };
     Q_ENUM(DataRoles)
 

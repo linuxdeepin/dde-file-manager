@@ -96,7 +96,10 @@ QWidget *DFMSideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptio
         QRegExp regx("[^\\\\/\':\\*\\?\"<>|%&]+"); //屏蔽特殊字符
         QValidator *validator = new QRegExpValidator(regx, qle);
         qle->setValidator(validator);
-        qle->setMaxLength(40);  // 限制最长输入字符为 40
+        const QString &fs = sourceInfo->extraProperties()["fsType"].toString();
+        // 普通文件系统限制最长输入字符为 40, vfat exfat 由于文件系统的原因，只能输入 11 个字符
+        int maxLen = fs.toLower().endsWith("fat") ? 11 : 40;
+        qle->setMaxLength(maxLen);
     }
 
     return editor;
