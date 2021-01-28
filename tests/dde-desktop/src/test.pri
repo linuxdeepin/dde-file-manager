@@ -1,7 +1,7 @@
 SOURCES += \
     $$PWD/util/ut-desktopinfo-test.cpp \
     $$PWD/screen/ut-screenmanager-test.cpp \
-    $$PWD/util/ut-xcbmisc-test.cpp \
+#    $$PWD/util/ut-xcbmisc-test.cpp \
     $$PWD/presenter/ut-presenter-test.cpp \
     $$PWD/view/ut-watermaskframe-test.cpp  \
     $$PWD/view/ut_backgroundmanager_test.cpp \
@@ -20,7 +20,7 @@ SOURCES += \
     $$PWD/dde-wallpaper-chooser/ut-wallpaperitem-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-wallpaperlist-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-thumbnailmanager-test.cpp \
-    $$PWD/dde-wallpaper-chooser/ut-frame-test.cpp \
+#    $$PWD/dde-wallpaper-chooser/ut-frame-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-checkbox-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-screensavercontrol-test.cpp\
     $$PWD/config/ut-dfmdesktopsettings-test.cpp \
