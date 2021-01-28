@@ -57,7 +57,6 @@ public:
     quint64 inode() const override;
     QIcon fileIcon() const override;
     QList<QIcon> additionalIcon() const override;
-    bool canDragCompress() const override;
 
     void refreshCachesByStat();
 
