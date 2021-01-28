@@ -45,6 +45,7 @@ public:
     QString getSystemPath(QString key);
     QString getSystemPathDisplayName(QString key) const;
     QString getSystemPathDisplayNameByPath(QString path);
+    QString getSystemPathDisplayAliasByName(const QString &name);
     QString getSystemPathIconName(QString key);
     QString getSystemPathIconNameByPath(QString path);
     QStringList getSystemDiskAndDataDiskPathGroup();

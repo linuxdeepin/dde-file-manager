@@ -644,7 +644,7 @@ QString DFMRootFileInfo::udisksDispalyAlias()
     for (const QVariant &v : list) {
         const QVariantMap &map = v.toMap();
         if (map.value(DISKALIAS_ITEM_UUID).toString() == d->idUUID) {
-            name= map.value(DISKALIAS_ITEM_ALIAS).toString();
+            name = map.value(DISKALIAS_ITEM_ALIAS).toString();
             break;
         }
     }

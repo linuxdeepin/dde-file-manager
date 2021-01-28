@@ -137,11 +137,33 @@ QString PathManager::getSystemPathDisplayNameByPath(QString path)
     if (isSystemPath(path)){
         foreach (QString key, systemPathsMap().keys()) {
             if (systemPathsMap().value(key) == path){
-                 return getSystemPathDisplayName(key);
+                QString displayName;
+                const QString &name = getSystemPathDisplayName(key);
+                // 系统盘如果有别名，就以别名显示
+                displayName = (path == "/" ? getSystemPathDisplayAliasByName(name) : name);
+                if (displayName.isEmpty())
+                    displayName = name;
+                return displayName;
             }
         }
     }
     return QString();
+}
+
+QString PathManager::getSystemPathDisplayAliasByName(const QString &name)
+{
+    const QVariantList &list = DFMApplication::genericSetting()->value(DISKALIAS_GROUP, DISKALIAS_ITEMS).toList();
+    QString alias;
+
+    for (const QVariant &v : list) {
+        const QVariantMap &map = v.toMap();
+        if (map.value(DISKALIAS_ITEM_NAME).toString() == name) {
+            alias = map.value(DISKALIAS_ITEM_ALIAS).toString();
+            break;
+        }
+    }
+
+    return alias;
 }
 
 

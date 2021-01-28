@@ -267,7 +267,7 @@ bool DFMRootController::setLocalDiskAlias(DFMRootFileInfo *fi, const QString &al
 
     QString uuid(fi->getUUID());
     QString dispalyAlias(alias.trimmed());
-
+    QString displayName(fi->udisksDisplayName());
     QVariantList list = DFMApplication::genericSetting()->value(DISKALIAS_GROUP, DISKALIAS_ITEMS).toList();
 
     // [a] empty alias  -> remove from list
@@ -279,7 +279,8 @@ bool DFMRootController::setLocalDiskAlias(DFMRootFileInfo *fi, const QString &al
         if (map.value(DISKALIAS_ITEM_UUID).toString() == uuid) {
             if (dispalyAlias.isEmpty()) {      // [a]
                 list.removeAt(i);
-            } else {                    // [b]
+            } else {                           // [b]
+                map[DISKALIAS_ITEM_NAME] = displayName;
                 map[DISKALIAS_ITEM_ALIAS] = dispalyAlias;
                 list[i] = map;
             }
@@ -292,6 +293,7 @@ bool DFMRootController::setLocalDiskAlias(DFMRootFileInfo *fi, const QString &al
     if (!exists && !dispalyAlias.isEmpty() && !uuid.isEmpty()) {
         QVariantMap map;
         map[DISKALIAS_ITEM_UUID] = uuid;
+        map[DISKALIAS_ITEM_NAME] = displayName;
         map[DISKALIAS_ITEM_ALIAS] = dispalyAlias;
         list.append(map);
         qInfo() << "append setting item: " << map;

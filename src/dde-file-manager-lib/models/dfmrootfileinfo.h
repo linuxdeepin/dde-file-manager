@@ -30,6 +30,7 @@
 #define DISKALIAS_GROUP "LocalDiskAlias"
 #define DISKALIAS_ITEMS "Items"
 #define DISKALIAS_ITEM_UUID "uuid"
+#define DISKALIAS_ITEM_NAME "name"
 #define DISKALIAS_ITEM_ALIAS "alias"
 
 
