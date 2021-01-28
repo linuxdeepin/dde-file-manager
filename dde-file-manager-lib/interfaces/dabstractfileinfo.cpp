@@ -1826,16 +1826,22 @@ bool DAbstractFileInfo::loadFileEmblems(QList<QIcon> &iconList) const
 
     if (g_error != nullptr) {
         //report error
+        g_object_unref(g_file);
+        g_error_free(g_error);
         return false;
     }
 
     //通过gfileinfo获取文件徽标的值
     char **emblemStr = g_file_info_get_attribute_stringv(g_fileInfo, "metadata::emblems");
     if (!emblemStr) {
+        g_object_unref(g_fileInfo);
+        g_object_unref(g_file);
         return false;
     }
 
     QString emStr(*emblemStr);
+    g_object_unref(g_fileInfo);
+    g_object_unref(g_file);
     if (!emStr.isEmpty()) {
         QList<QIcon> newIcons = {QIcon(), QIcon(), QIcon(), QIcon()};
         //设置了多条徽标的情况
