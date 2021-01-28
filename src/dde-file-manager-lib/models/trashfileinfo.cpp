@@ -430,7 +430,7 @@ DUrl TrashFileInfo::mimeDataUrl() const
 
 Qt::DropActions TrashFileInfo::supportedDragActions() const
 {
-    return Qt::CopyAction;
+    return Qt::CopyAction | Qt::MoveAction;
 }
 
 Qt::DropActions TrashFileInfo::supportedDropActions() const
