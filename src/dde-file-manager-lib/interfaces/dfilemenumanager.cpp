@@ -682,12 +682,16 @@ QList<QAction *> DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const D
         files << url.toString();
     }
 
+    // 对menu->actions()增加判空，避免ut崩溃(临时方案，后续需要结合该函数的使用情况完成为空情况的处理)
+    QList<QAction *> actions;
+    if (menu->actions().isEmpty())
+        return actions;
+
     QAction *lastAction = menu->actions().last();
     if (lastAction->isSeparator()) {
         lastAction = menu->actionAt(menu->actions().count() - 2);
     }
 
-    QList<QAction *> actions;
     if (DFileMenuData::additionalMenu) {
         actions = DFileMenuData::additionalMenu->actions(files, currentUrl.toString(), onDesktop);
     }
@@ -702,12 +706,15 @@ QList<QAction *> DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const D
 QList<QAction *> DFileMenuManager::loadEmptyAreaPluginMenu(DFileMenu *menu, const DUrl &currentUrl, bool onDesktop)
 {
     qDebug() << "load empty area plugin menu";
+    QList<QAction *> actions;
+    // 对menu->actions()增加为空判断(临时方案，后续需要结合该函数的使用情况完成为空情况的处理)
+    if (menu->actions().isEmpty())
+        return actions;
     QAction *lastAction = menu->actions().last();
     if (lastAction->isSeparator()) {
         lastAction = menu->actionAt(menu->actions().count() - 2);
     }
 
-    QList<QAction *> actions;
     if (DFileMenuData::additionalMenu) {
         actions = DFileMenuData::additionalMenu->actions({}, currentUrl.toString(), onDesktop);
     }
