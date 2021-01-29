@@ -572,7 +572,7 @@ DUrl DUrl::fromUserTaggedFile(const QString &tag_name, const QString &localFileP
     uri.setQuery("tagname=" + tag_name);
 
     if (!localFilePath.isEmpty()) {
-        uri.setFragment(localFilePath);
+        uri.setFragment(localFilePath, QUrl::DecodedMode);
     }
 
     return uri;
