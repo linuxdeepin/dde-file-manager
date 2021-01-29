@@ -422,7 +422,8 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
         } else if (!ret && !info->exists()) {
             restoreFailedSourceNotExist << info->fileUrl();
         } else {
-            restoreFileOriginUrlList << info->originUrl();
+            //! 存储最终的文件路径
+            restoreFileOriginUrlList << DUrl::fromLocalFile(job->getTargetDir());
         }
 
         ok = ok && ret;
