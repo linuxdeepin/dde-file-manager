@@ -641,31 +641,11 @@ void VaultController::updateFileInfo(const DUrlList &fileUrls)
                 fbi.isDir = fileInfo.isDir();
                 fbi.isFile = fileInfo.isFile();
                 fbi.isSymLink = fileInfo.isSymLink();
-
-                // 使用stat判断文件是否可写，因为QFileInfo获取到的不正确
-                QT_STATBUF statBuffer;
-                if (QT_STAT(QFile::encodeName(url.path()), &statBuffer) == 0) {
-                    if (!(statBuffer.st_mode & S_IWUSR)) {
-                        fbi.isWritable = false;
-                    } else {
-                        fbi.isWritable = true;
-                    }
-                }
-
                 m_mapVaultFileInfo.insert(url, fbi);
             } else {
                 m_mapVaultFileInfo[url].isDir = fileInfo.isDir();
                 m_mapVaultFileInfo[url].isFile = fileInfo.isFile();
                 m_mapVaultFileInfo[url].isSymLink = fileInfo.isSymLink();
-
-                QT_STATBUF statBuffer;
-                if (QT_STAT(QFile::encodeName(url.path()), &statBuffer) == 0) {
-                    if (!(statBuffer.st_mode & S_IWUSR)) {
-                        m_mapVaultFileInfo[url].isWritable = false;
-                    } else {
-                        m_mapVaultFileInfo[url].isWritable = true;
-                    }
-                }
             }
         }
     }
