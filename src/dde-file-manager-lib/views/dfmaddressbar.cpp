@@ -532,7 +532,14 @@ void DFMAddressBar::updateCompletionState(const QString &text)
 {
     int slashIndex = text.lastIndexOf('/');
     bool hasSlash = (slashIndex != -1);
-    DUrl url = DUrl::fromUserInput(hasSlash ? text.left(slashIndex + 1) : text, false);
+    // 修复bug-62112 对保险箱虚拟路径特殊判断，将保险箱虚拟路径转化为本地路径
+    DUrl url;
+    QString strLocalPath(text);
+    if (strLocalPath.startsWith(DFMVAULT_ROOT)) {
+        url = DUrl::fromLocalFile(VaultController::virtualPathToLocalPath(strLocalPath));
+    } else {
+        url = DUrl::fromUserInput(hasSlash ? strLocalPath.left(slashIndex + 1) : strLocalPath, false);
+    }
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
     // Check if the entered text is a string to search or a url to complete.
@@ -555,6 +562,10 @@ void DFMAddressBar::updateCompletionState(const QString &text)
 
         // Set Base String
         this->completerBaseString = text.left(slashIndex + 1);
+
+        // 修复bug-62110 修复bug-62112 设置成保险箱路径虚拟路径根目录
+        if (this->completerBaseString == (DFMVAULT_SCHEME + QString(":/")))
+            this->completerBaseString = DFMVAULT_ROOT;
 
         // start request
         // 由于下方urlCompleter->setCompletionPrefix会触发onCompletionModelCountChanged接口
