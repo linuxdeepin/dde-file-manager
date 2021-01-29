@@ -27,7 +27,6 @@
 #include "../model/dfileselectionmodel.h"
 #include "../dde-desktop/presenter/gridmanager.h"
 #include <private/canvasviewprivate.h>
-#include "util/xcb/xcb.h"
 #include "view/desktopitemdelegate.h"
 #include "../dde-desktop/desktop.h"
 #include "../dde-desktop/desktop.cpp"

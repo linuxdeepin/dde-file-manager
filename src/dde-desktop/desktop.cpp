@@ -15,60 +15,14 @@
 #include <QDir>
 #include <QDBusConnection>
 #include <QScreen>
-
-#include "presenter/apppresenter.h"
-#include "../dde-wallpaper-chooser/frame.h"
-#include "../util/dde/desktopinfo.h"
-#include "backgroundmanager.h"
-#include "canvasviewmanager.h"
+#include "desktopprivate.h"
 #include "screen/screenhelper.h"
 #include "presenter/gridmanager.h"
-
-#ifndef DISABLE_ZONE
-#include "../dde-zone/mainwindow.h"
-#endif
-#include <malloc.h>
-
-using WallpaperSettings = Frame;
-
-#ifndef DISABLE_ZONE
-using ZoneSettings = ZoneMainWindow;
-#endif
-
-class DesktopPrivate
-{
-public:
-    ~DesktopPrivate()
-    {
-        if (m_background) {
-            delete m_background;
-            m_background = nullptr;
-        }
-
-        if (m_canvas) {
-            delete m_canvas;
-            m_canvas = nullptr;
-        }
-
-        if (wallpaperSettings) {
-            delete wallpaperSettings;
-            wallpaperSettings = nullptr;
-        }
-#ifndef DISABLE_ZONE
-        if (zoneSettings) {
-            delete zoneSettings;
-            zoneSettings = nullptr;
-        }
-#endif
-    }
-    BackgroundManager *m_background = nullptr;
-    CanvasViewManager *m_canvas = nullptr;
-    WallpaperSettings *wallpaperSettings{ nullptr };
-
-#ifndef DISABLE_ZONE
-    ZoneSettings *zoneSettings { nullptr };
-#endif
-};
+#include "../util/dde/desktopinfo.h"
+#include "presenter/apppresenter.h"
+#include "canvasviewmanager.h"
+#include "backgroundmanager.h"
+#include "desktopprivate.h"
 
 Desktop::Desktop()
     : d(new DesktopPrivate)

@@ -1,6 +1,5 @@
 #include "backgroundmanager.h"
 #include "screen/screenhelper.h"
-#include "util/xcb/xcb.h"
 #include "util/util.h"
 
 #include <qpa/qplatformwindow.h>

@@ -20,7 +20,6 @@
 #include <QDir>
 #include <QImageReader>
 
-#include "util/xcb/xcb.h"
 #include "accessibility/ac-desktop-define.h"
 
 DCORE_USE_NAMESPACE

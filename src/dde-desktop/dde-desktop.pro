@@ -118,7 +118,8 @@ HEADERS += \
     screen/screenobjectwayland.h \
     view/canvasviewmanager.h \
     accessibility/ac-desktop-define.h \
-    accessibility/acobjectlist.h
+    accessibility/acobjectlist.h \
+    desktopprivate.h
 
 RESOURCES +=
 

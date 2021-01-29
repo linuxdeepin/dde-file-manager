@@ -1,7 +1,6 @@
 #include "screenobject.h"
 #include "dbus/dbusdock.h"
 
-//#include "util/xcb/xcb.h"
 
 #include <qpa/qplatformscreen.h>
 #include <QGuiApplication>
