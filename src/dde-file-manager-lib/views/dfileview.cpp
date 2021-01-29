@@ -1711,13 +1711,10 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 
                 return event->ignore();
             }
-            const QAbstractItemView *pItem = qobject_cast<QAbstractItemView *>(event->source());
-            if (pItem && model()->fileInfo(pItem->indexAt(event->pos()))) {
-                const DAbstractFileInfoPointer info = model()->fileInfo(pItem->indexAt(event->pos()));
-                // 判断是否是压缩文件，是否只读，设置事件状态
-                if (info->canDragCompress() && info->isWritable()) {
-                    event->setDropAction(Qt::CopyAction);
-                }
+
+            // 判断是否是压缩文件，是否只读，设置事件状态
+            if (fileInfo->canDragCompress() && fileInfo->isWritable()) {
+                event->setDropAction(Qt::CopyAction);
             }
 
             if (DFileDragClient::checkMimeData(event->mimeData())) {
