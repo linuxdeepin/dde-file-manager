@@ -114,6 +114,44 @@ void DBusFileManager1::closeTask()
     }
 }
 
+//! 写json文件函数
+void ChangeJson(QString path, QString gourpNamne, QString VauleName, QString vaule)
+{
+    QByteArray byte;
+    QFile file(path);
+    if (file.exists()) {
+        file.open(QIODevice::ReadOnly|QIODevice::Text);
+        byte = file.readAll();
+        file.close();
+    }else{
+        qDebug() <<"openFileError";
+        file.close();
+        return;
+    }
+
+    QJsonParseError json_error;
+    QJsonDocument jsonDoc(QJsonDocument::fromJson(byte, &json_error));
+    if (json_error.error != QJsonParseError::NoError) {
+        qDebug() << " json error ";
+    }
+
+    QJsonObject rootobj = jsonDoc.object();
+    if (rootobj.contains(gourpNamne)) {
+        QJsonObject gourpObject = rootobj.value(gourpNamne).toObject();
+        gourpObject[VauleName] = vaule;
+        rootobj[gourpNamne] = gourpObject;
+
+        if (file.exists()) {
+            file.open(QIODevice::WriteOnly|QIODevice::Text);
+            jsonDoc.setObject(rootobj);
+            file.seek(0);
+            file.write(jsonDoc.toJson());
+            file.flush();
+            file.close();
+        }
+    }
+}
+
 void DBusFileManager1::lockPropertyChanged(const QDBusMessage &msg)
 {
     QList<QVariant> arguments = msg.arguments();
@@ -143,6 +181,11 @@ void DBusFileManager1::lockPropertyChanged(const QDBusMessage &msg)
                 if (pid == 0) {
                     QString umountCmd = "fusermount -zu " + VAULT_BASE_PATH + "/" + VAULT_DECRYPT_DIR_NAME;
                     system(umountCmd.toUtf8().data());
+                    //! 记录保险箱上锁时间
+                    ChangeJson((QDir::homePath() + QString("/.config/deepin/dde-file-manager/") + "vaultTimeConfig.json"),
+                               QString("VaultTime"),
+                               QString("LockTime"),
+                               QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
                 }
 
                 pclose(cmd_pipe);
