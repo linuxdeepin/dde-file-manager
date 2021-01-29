@@ -76,6 +76,9 @@ void DFSearch::searchByKeyWord(const QString &key, void (*callback)(void *, void
     if (app->search == nullptr) return;
 
     load_database(app, pathForSearching.toLocal8Bit().data(), &state);//加载数据库
+    if (!state)
+        return;
+
     db_search_results_clear(app->search);
     Database *db = app->db;
     if (!db_try_lock(db)) {
