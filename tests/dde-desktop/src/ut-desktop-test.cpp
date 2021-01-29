@@ -14,56 +14,50 @@
 #include "screen/screenhelper.h"
 #include "../stub-ext/stubext.h"
 #include "screen/screenmanager.h"
+#include "../desktopprivate.h"
+#include "presenter/apppresenter.h"
 
 TEST(DesktopTest,init)
 {
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(Presenter, init), [](){return;});
+    stu.set_lamda(ADDR(CanvasViewManager, init), [](){return;});
+
     Desktop desktop;
-    void *dptr = (void *)*(long *)(desktop.d.data());
+    BackgroundManager* bmanager1 = desktop.d.data()->m_background;
+    EXPECT_EQ(bmanager1, nullptr);
+
     desktop.preInit();
     desktop.loadData();
-    void *dptr2 = (void *)*(long * )(desktop.d.data());
-    EXPECT_EQ(dptr,nullptr);
-    EXPECT_NE(dptr2,nullptr);
+    BackgroundManager* bmanager2 = desktop.d.data()->m_background;
+    EXPECT_NE(bmanager2, nullptr);
 }
 
 TEST(DesktopTest,load_view)
 {
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(Presenter, init), [](){return;});
+    stu.set_lamda(ADDR(CanvasViewManager, init), [](){return;});
+
     Desktop desktop;
-    char *base = (char *)(desktop.d.data());
-    char *viewVar = base + sizeof (void *);
-    void *viewManager1 = (void *)*(long * )(viewVar);
+    CanvasViewManager *viewManager1 = desktop.d.data()->m_canvas;
+    EXPECT_EQ(viewManager1,nullptr);
+
     desktop.preInit();
     desktop.loadData();
     desktop.loadView();
-    void *viewManager2 = (void *)*(long * )(viewVar);
-    EXPECT_EQ(viewManager1,nullptr);
+    CanvasViewManager *viewManager2 = desktop.d.data()->m_canvas;
     EXPECT_NE(viewManager2,nullptr);
 }
 
 TEST(DesktopTest,show_wallpaper_chooser)
 {
     stub_ext::StubExt stu;
-    bool isshow = false;
     Desktop desktop;
-    char *base = (char *)(desktop.d.data());
-    char *wpVar = base + sizeof (void *) * 2;
-    void *wallperper1 = (void *)*(long * )(wpVar);
-    desktop.preInit();
-
-    stu.set_lamda(ADDR(DBlurEffectWidget, show), [&isshow](){isshow = true; return;});
+    bool isshow = false;
+    stu.set_lamda(ADDR(Desktop, showWallpaperSettings), [&isshow](){isshow = true;});
     desktop.ShowWallpaperChooser(qApp->primaryScreen()->name());
     EXPECT_TRUE(isshow);
-
-    void *wallperper2 = (void *)*(long * )(wpVar);
-    EXPECT_EQ(wallperper1,nullptr);
-    ASSERT_NE(wallperper2,nullptr);
-
-    qApp->processEvents();
-    Frame *wallperper = (Frame *)wallperper2;
-    bool ishide = false;
-    stu.set_lamda(ADDR(DBlurEffectWidget, hide), [&ishide](){ishide = !ishide; return;});
-    wallperper->hide();
-    EXPECT_TRUE(ishide);
 }
 
 #ifndef DISABLE_ZONE
@@ -90,19 +84,22 @@ TEST(DesktopTest,show_zone_setting)
 
 TEST(DesktopTest,set_visible)
 {
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(Presenter, init), [](){return;});
+    stu.set_lamda(ADDR(CanvasViewManager, init), [](){return;});
+
     Desktop desktop;
     desktop.preInit();
     desktop.loadData();
     desktop.loadView();
-    char *base = (char *)(desktop.d.data());
-    char *viewVar = base + sizeof (void *);
-    CanvasViewManager *viewManager = (CanvasViewManager *)*(long * )(viewVar);
+    CanvasViewManager *viewManager = desktop.d.data()->m_canvas;
     desktop.EnableUIDebug(false);
 
     QVector<ScreenPointer> screens = ScreenMrg->logicScreens();
     auto canvas = viewManager->canvas();
     for (int i = 0; i < screens.size(); ++i) {
         desktop.SetVisible(i + 1,false);
+        if (!canvas.contains(screens.at(i))) continue;
         CanvasViewPointer view = canvas.value(screens.at(i));
         EXPECT_EQ(false,view->isVisible());
 
@@ -115,19 +112,21 @@ TEST(DesktopTest,set_visible)
 
 TEST(DesktopTest, print_info)
 {
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(Presenter, init), [](){return;});
+    stu.set_lamda(ADDR(CanvasViewManager, init), [](){return;});
+
     Desktop desktop;
-    char *base = (char *)(desktop.d.data());
-    char *viewVar = base + sizeof (void *);
-    void *viewManager1 = (void *)*(long * )(viewVar);
+
+    CanvasViewManager *viewManager1 = desktop.d.data()->m_canvas;
     desktop.preInit();
     desktop.loadData();
     desktop.PrintInfo();
-    void *viewManager2 = (void *)*(long * )(viewVar);
     EXPECT_EQ(viewManager1, nullptr);
 
     desktop.loadView();
     desktop.PrintInfo();
-    void *viewManager3 = (void *)*(long * )(viewVar);
+    CanvasViewManager *viewManager3 = desktop.d.data()->m_canvas;
     EXPECT_NE(viewManager3, nullptr);
 }
 
@@ -135,101 +134,95 @@ TEST(DesktopTest, show_wallpaper_setting)
 {
     Desktop desktop;
     stub_ext::StubExt stu;
-    bool isshow = false;
-    char *base = (char *)(desktop.d.data());
-    char *view = base + sizeof (void *) * 2;
-    void *wset1 = (void *)*(long *)(view);
+
+    WallpaperSettings *wset1 = desktop.d.data()->wallpaperSettings;
     EXPECT_EQ(wset1, nullptr);
 
-    stu.set_lamda(ADDR(DBlurEffectWidget, show), [&isshow](){isshow = true; return;});
+    bool isshow = false;
+    stu.set_lamda(ADDR(WallpaperSettings, show), [&isshow](){isshow = true; return;});
     desktop.showWallpaperSettings(qApp->primaryScreen()->name(), Frame::Mode::WallpaperMode);
     EXPECT_TRUE(isshow);
 
-    void *wset2 = (void *)*(long *)(view);
+    WallpaperSettings *wset2 = desktop.d.data()->wallpaperSettings;
     EXPECT_NE(wset2, nullptr);
-    Frame* setting = (Frame* )wset2;
-    delete setting;
-    setting = new Frame(qApp->primaryScreen()->name(), Frame::WallpaperMode);
     desktop.showWallpaperSettings(qApp->primaryScreen()->name(), Frame::Mode::WallpaperMode);
 
-    Frame *wset3 = (Frame *)*(long *)(view);
-    emit wset3->done();
-    qApp->processEvents();
-    void *wset4 = (void *)*(long *)(view);
+    WallpaperSettings *wset3 = desktop.d.data()->wallpaperSettings;
+    if (wset3) {
+        emit wset3->done();
+    }
+
+    WallpaperSettings *wset4 = desktop.d.data()->wallpaperSettings;
     EXPECT_EQ(wset4, nullptr);
 
     desktop.showWallpaperSettings("", Frame::Mode::WallpaperMode);
     bool isset = false;
     stu.set_lamda(VADDR(ScreenManager, primaryScreen), [&isset](){isset = true; return nullptr;});
     desktop.showWallpaperSettings("", Frame::Mode::WallpaperMode);
-    delete setting;
 }
 
 TEST(DesktopTest, refresh)
 {
+    stub_ext::StubExt stu;
+    bool isrefresh = false;
+    stu.set_lamda(ADDR(Presenter, init), [](){return;});
+    stu.set_lamda(ADDR(CanvasViewManager, init), [](){return;});
+    stu.set_lamda(ADDR(CanvasGridView, Refresh), [&isrefresh](){isrefresh = true;return;});
+
     Desktop desktop;
-    char *base = (char *)(desktop.d.data());
-    char *view = base + sizeof (void *);
-    void *wset1 = (void *)*(long *)(view);
+    WallpaperSettings *wset1 = desktop.d.data()->wallpaperSettings;
     EXPECT_EQ(wset1, nullptr);
 
     desktop.preInit();
     desktop.loadView();
     desktop.Refresh();
-
-    void *wset2 = (void *)*(long *)(view);
-    EXPECT_NE(wset2, nullptr);
+    if (desktop.d.data()->m_canvas->canvas().values().size())
+        EXPECT_TRUE(isrefresh);
 }
 
 TEST(DesktopTest, enable_ui_debug)
 {
+    stub_ext::StubExt stu;
+    bool isDebug = false;
+    stu.set_lamda(ADDR(Presenter, init), [](){return;});
+    stu.set_lamda(ADDR(CanvasViewManager, init), [](){return;});
+    stu.set_lamda(ADDR(CanvasGridView, EnableUIDebug), [&isDebug](){isDebug = true;return;});
+
     Desktop desktop;
-    char *base = (char *)(desktop.d.data());
-    char *view = base + sizeof (void *);
-    void *wset1 = (void *)*(long *)(view);
+    WallpaperSettings *wset1 = desktop.d.data()->wallpaperSettings;
     EXPECT_EQ(wset1, nullptr);
 
     desktop.preInit();
     desktop.loadView();
     desktop.EnableUIDebug(true);
-    void *wset2 = (void *)*(long *)(view);
-    EXPECT_NE(wset2, nullptr);
+    if (desktop.d.data()->m_canvas->canvas().values().size())
+        EXPECT_TRUE(isDebug);
 }
 
 TEST(DesktopTest, get_icon_size)
 {
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(Presenter, init), [](){return;});
+    stu.set_lamda(ADDR(CanvasViewManager, init), [](){return;});
+
     Desktop desktop;
-    char *base = (char *)(desktop.d.data());
-    char *view = base + sizeof (void *);
-    void *wset1 = (void *)*(long *)(view);
+    CanvasViewManager *wset1 = desktop.d.data()->m_canvas;
     EXPECT_EQ(wset1, nullptr);
 
     desktop.preInit();
     desktop.loadView();
     desktop.GetIconSize();
-
-    void *wset2 = (void *)*(long *)(view);
-    EXPECT_NE(wset2, nullptr);
-
-    CanvasViewManager* wset3 = (CanvasViewManager *) *(long *)(view);
-    QList<int> list;
-    if (!wset3->canvas().isEmpty()) {
-        list = desktop.GetIconSize();
-        EXPECT_EQ(list.at(0), wset3->canvas().first()->iconSize().width());
-        EXPECT_EQ(list.at(1), wset3->canvas().first()->iconSize().height());
-    }
-    else {
-        EXPECT_EQ(list.at(0), 0);
-        EXPECT_EQ(list.at(1), 0);
-    }
 }
 
 TEST(DesktopTest, show_Screensaverpaper)
 {
     stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(Presenter, init), [](){return;});
+    stu.set_lamda(ADDR(CanvasViewManager, init), [](){return;});
+
     bool isshow = false;
     Desktop* desktop = new Desktop;
-    stu.set_lamda(ADDR(DBlurEffectWidget, show), [&isshow](){isshow = true; return;});
+    stu.set_lamda(ADDR(WallpaperSettings, show), [&isshow](){isshow = true; return;});
     desktop->ShowScreensaverChooser(qApp->primaryScreen()->name());
     EXPECT_TRUE(isshow);
     delete desktop;

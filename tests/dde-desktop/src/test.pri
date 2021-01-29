@@ -6,8 +6,8 @@ SOURCES += \
     $$PWD/view/ut-watermaskframe-test.cpp  \
     $$PWD/view/ut_backgroundmanager_test.cpp \
     $$PWD/view/ut_backgroundwidget_test.cpp \
-#    $$PWD/ut-desktop-test.cpp \
-    $$PWD/ut-deventfileter-test.cpp\
+    $$PWD/ut-desktop-test.cpp \
+#    $$PWD/ut-deventfileter-test.cpp\
     $$PWD/global/ut_coorinate_test.cpp \
     $$PWD/global/ut_singleton_test.cpp \
     $$PWD/view/ut_canvasgridview_test.cpp \
@@ -23,10 +23,10 @@ SOURCES += \
 #    $$PWD/dde-wallpaper-chooser/ut-frame-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-checkbox-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-screensavercontrol-test.cpp\
-    $$PWD/config/ut-dfmdesktopsettings-test.cpp \
+#    $$PWD/config/ut-dfmdesktopsettings-test.cpp \
 #    $$PWD/view/ut-canvasviewhelper-test.cpp \
-    $$PWD/util/ut-util-test.cpp \
-    $$PWD/config/ut-config-test.cpp
+#    $$PWD/util/ut-util-test.cpp \
+#    $$PWD/config/ut-config-test.cpp
 #屏蔽热区
 #    $$PWD/dde-zone/ut-pushbuttonlist-test.cpp \
 #    $$PWD/dde-zone/ut-hotzone-test.cpp \

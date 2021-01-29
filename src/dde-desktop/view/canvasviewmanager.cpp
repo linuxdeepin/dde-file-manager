@@ -1,6 +1,5 @@
 #include "canvasviewmanager.h"
 #include "screen/screenhelper.h"
-#include "util/xcb/xcb.h"
 #include "presenter/gridmanager.h"
 #include "desktopitemdelegate.h"
 #include "dfilesystemmodel.h"
