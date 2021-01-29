@@ -14,7 +14,7 @@ TagFileInfo::TagFileInfo(const DUrl &url)
 {
     ///###: if the true url of file is put into fragment field of Uri. Then setup proxy.
     if (!url.taggedLocalFilePath().isEmpty()) {
-        DAbstractFileInfoPointer infoPointer{ DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(url.fragment())) };
+        DAbstractFileInfoPointer infoPointer{ DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(url.fragment(QUrl::FullyDecoded))) };
         this->DAbstractFileInfo::setProxy(infoPointer);
     }
 }
