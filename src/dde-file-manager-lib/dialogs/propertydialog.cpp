@@ -1644,11 +1644,11 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         int otherFlags = otherBox->currentData().toInt();
 
         QFile::Permissions permissions = info->permissions();
-        if (info->isDir()) { //! 文件夹保持原有的执行权限
-            ownerFlags |= (permissions & QFile::ExeOwner);
-            groupFlags |= (permissions & QFile::ExeGroup);
-            otherFlags |= (permissions & QFile::ExeOther);
-        }
+        //点击combobox都需要保持执行权限，否则将失去相关权限位
+        ownerFlags |= (permissions & QFile::ExeOwner);
+        groupFlags |= (permissions & QFile::ExeGroup);
+        otherFlags |= (permissions & QFile::ExeOther);
+
         DFileService::instance()->setPermissions(this, getRealUrl(),
                                                  QFileDevice::Permissions(ownerFlags) |
                                                  /*(info->permissions() & 0x0700) |*/
