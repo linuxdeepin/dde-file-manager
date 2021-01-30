@@ -472,14 +472,15 @@ public:
     {
         if (!initialized) {
             const QString &dir_path = dir.absolutePath();
-
+            //fix bug62654,搜索过程中有的时候无法搜索到东西，需要先清理搜索结果，再进行搜索
+            searchResults.clear();
             if (searchDirList.isEmpty() || searchDirList.first() != dir_path) {
                 searchDirList.prepend(dir_path);
                 dfsearch->searchByKeyWord(keyword, callbackFunc);
                 qDebug() << "*******************************find";
                 mDone = false;
             }
-            searchResults.clear();
+
             initialized = true;
         }
         if (!resultinit) {
@@ -633,7 +634,7 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
     if (pfile->isSymLink()) {
         const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
 
-        if(!linkInfo)  {
+        if (!linkInfo)  {
             dialogManager->showErrorDialog(tr("Unable to find the original file"), QString());
             return false;
         }
@@ -689,7 +690,7 @@ bool FileController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) c
         if (pfile->isSymLink()) {
             const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
 
-            if(!linkInfo)  {
+            if (!linkInfo)  {
                 dialogManager->showErrorDialog(tr("Unable to find the original file"), QString());
                 continue;
             }
@@ -752,7 +753,7 @@ bool FileController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &
     if (pfile->isSymLink()) {
         const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
 
-        if(!linkInfo)  {
+        if (!linkInfo)  {
             dialogManager->showErrorDialog(tr("Unable to find the original file"), QString());
             return false;
         }
@@ -778,7 +779,7 @@ bool FileController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent>
         if (pfile->isSymLink()) {
             const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
 
-            if(!linkInfo)  {
+            if (!linkInfo)  {
                 dialogManager->showErrorDialog(tr("Unable to find the original file"), QString());
                 continue;
             }
