@@ -92,6 +92,7 @@ public:
     };
 
     QQueue<ProduceInfo> produceQueue;
+    QQueue<QString> m_produceAbsoluteFilePathQueue;
     QSet<QPair<QString, DThumbnailProvider::Size>> discardedProduceInfos;
 
     bool running = true;
@@ -649,11 +650,21 @@ void DThumbnailProvider::appendToProduceQueue(const QFileInfo &info, DThumbnailP
 
     if (isRunning()) {
         QWriteLocker locker(&d->dataReadWriteLock);
-        d->produceQueue.append(std::move(produceInfo));
+        // fix bug 62540 这里在没生成缩略图的情况下，（触发刷新，文件大小改变）同一个文件会多次生成缩略图的情况,
+        // 缓存当前队列中生成的缩略图文件的路劲没有就加入队里生成
+        if (!d->m_produceAbsoluteFilePathQueue.contains(info.absoluteFilePath())) {
+            d->produceQueue.append(std::move(produceInfo));
+            d->m_produceAbsoluteFilePathQueue << info.absoluteFilePath();
+        }
         locker.unlock();
         d->waitCondition.wakeAll();
     } else {
-        d->produceQueue.append(std::move(produceInfo));
+        // fix bug 62540 这里在没生成缩略图的情况下，（触发刷新，文件大小改变）同一个文件会多次生成缩略图的情况,
+        // 缓存当前队列中生成的缩略图文件的路劲没有就加入队里生成
+        if (!d->m_produceAbsoluteFilePathQueue.contains(info.absoluteFilePath())) {
+            d->produceQueue.append(std::move(produceInfo));
+            d->m_produceAbsoluteFilePathQueue << info.absoluteFilePath();
+        }
         start();
     }
 }
@@ -740,6 +751,8 @@ void DThumbnailProvider::run()
 
         if (d->discardedProduceInfos.contains(tmpKey)) {
             d->discardedProduceInfos.remove(tmpKey);
+            //fix 62540 去除缓存
+            d->m_produceAbsoluteFilePathQueue.removeOne(task.fileInfo.absoluteFilePath());
             locker.unlock();
             continue;
         }
@@ -747,6 +760,11 @@ void DThumbnailProvider::run()
         locker.unlock();
 
         const QString &thumbnail = createThumbnail(task.fileInfo, task.size);
+
+        locker.relock();
+        //fix 62540 生成结束了去除缓存
+        d->m_produceAbsoluteFilePathQueue.removeOne(task.fileInfo.absoluteFilePath());
+        locker.unlock();
 
         if (task.callback)
             task.callback(thumbnail);
