@@ -13,7 +13,7 @@ include(src/test.pri)
 include(../../3rdparty/cpp-stub/stub.pri)
 include(../../src/dde-desktop/dde-desktop.pri)
 
-QMAKE_CXXFLAGS += -fno-inline
+QMAKE_CXXFLAGS += -fno-inline -fno-access-control
 
 TARGET = test-dde-desktop
 TEMPLATE = app
