@@ -739,6 +739,7 @@ TEST_F(ScreenSignal, sreen_available_geometry_changed)
 
 TEST_F(ScreenSignal, emit_DisplayModeChanged)
 {
+    m_lastMode = -1;
     EXPECT_TRUE(d->m_events.isEmpty());
     emit m_display->DisplayModeChanged();
     qApp->processEvents();

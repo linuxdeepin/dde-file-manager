@@ -7,35 +7,49 @@
 #include <view/backgroundmanager.h>
 #include <presenter/gridmanager.h>
 #include "stub.h"
+#include "../stub-ext/stubext.h"
 #include "desktopitemdelegate.h"
 #include "dfilesystemmodel.h"
 #include "AbstractStringAppender.h"
+#include <QWidget>
 
-TEST(CanvasViewManager_Constructor,Test_CanvasViewManager_Constructor)
-{
-    QScopedPointer<BackgroundManager> p_bkmgr(new BackgroundManager());
-    ASSERT_NE(p_bkmgr, nullptr);
-    QScopedPointer<CanvasViewManager> p_cvmgr(new CanvasViewManager(p_bkmgr.data()));
-    ASSERT_NE(p_cvmgr, nullptr);
-}
-
+namespace  {
 class CanvasViewManagerTest : public testing::Test
 {
 public:
-    CanvasViewManagerTest():Test(){}
+    CanvasViewManagerTest():Test(){
+    }
     virtual void SetUp() override{
+        if (!m_st && !m_bgm && !m_cvmgr) {
+            m_st = new stub_ext::StubExt;
+            m_st->set_lamda(ADDR(CanvasGridView, setCurrentUrl), [](){return false;});
+            m_st->set_lamda(ADDR(GridManager, initGridItemsInfos), [](){;});
+
+            m_bgm = new BackgroundManager;
+            m_cvmgr = new CanvasViewManager(m_bgm);
+        }
     }
     virtual void TearDown()override{
     }
 public:
-    QScopedPointer<CanvasViewManager> m_cvmgr{new CanvasViewManager(new BackgroundManager())};
+    static stub_ext::StubExt *m_st;
+    static BackgroundManager *m_bgm;
+    static CanvasViewManager *m_cvmgr;
 };
 
+stub_ext::StubExt *CanvasViewManagerTest::m_st = nullptr;
+BackgroundManager *CanvasViewManagerTest::m_bgm = nullptr;
+CanvasViewManager *CanvasViewManagerTest::m_cvmgr = nullptr;
+}
+
+TEST_F(CanvasViewManagerTest,Test_CanvasViewManager_Constructor)
+{
+    ASSERT_NE(m_cvmgr, nullptr);
+}
 
 TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_canvas){
     EXPECT_TRUE(m_cvmgr->m_canvasMap == m_cvmgr->canvas())<< "canvas() not equal m_canvasMap";
 }
-
 
 TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onCanvasViewBuild){
 
@@ -58,29 +72,51 @@ TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onCanvasViewBuild){
 
     m_cvmgr->onCanvasViewBuild(3);
     EXPECT_EQ(1, m_cvmgr->m_canvasMap.size());
-}
 
+    m_cvmgr->m_background->m_backgroundMap.clear();
+    m_cvmgr->m_background->m_backgroundEnable = true;
+    m_cvmgr->onCanvasViewBuild(0);
+    EXPECT_TRUE(m_cvmgr->m_canvasMap.isEmpty());
+}
 
 TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onBackgroundEnableChanged){
 
-//    //backgroundEnable这种情况由于不好模拟条件暂时无法覆盖，若需要强行覆盖则需要改动源码
-//    m_cvmgr_enable.data()->onBackgroundEnableChanged();
+    stub_ext::StubExt st;
+    bool isCallInfos = false;
+    st.set_lamda(ADDR(GridManager, initGridItemsInfos), [&isCallInfos](){isCallInfos = true;});
 
-//    for (auto tempSp : m_cvmgr_enable.data()->m_canvasMap.values()) {
-//        EXPECT_EQ(1, Qt::FramelessWindowHint&tempSp->windowFlags()) << Qt::FramelessWindowHint<<"the flags: " << tempSp->windowFlags();
-//    }
-
-    //backgroundAble
+    m_cvmgr->m_background->m_backgroundEnable = true;
     m_cvmgr->onBackgroundEnableChanged();
-
-    for (auto tempSp : m_cvmgr->m_canvasMap.values()) {
-        EXPECT_FALSE(tempSp->testAttribute(Qt::WA_NativeWindow));
+    for (auto tempSp : m_cvmgr->m_canvasMap.keys()) {
+        BackgroundWidgetPointer bw = m_cvmgr->m_background->backgroundWidget(tempSp);
+        if (!bw) {
+            EXPECT_TRUE(m_cvmgr->m_canvasMap.isEmpty());
+            EXPECT_FALSE(isCallInfos);
+            return;
+        }
+        CanvasViewPointer mView = m_cvmgr->m_canvasMap.value(tempSp);
+        ASSERT_NE(mView, nullptr);
+        EXPECT_FALSE(mView->testAttribute(Qt::WA_NativeWindow));
     }
+    EXPECT_TRUE(isCallInfos);
 
+    m_cvmgr->m_background->m_backgroundEnable = false;
+    m_cvmgr->onBackgroundEnableChanged();
+    for (auto tempSp : m_cvmgr->m_canvasMap.keys()) {
+        CanvasViewPointer mView = m_cvmgr->m_canvasMap.value(tempSp);
+        ASSERT_NE(mView, nullptr);
+        EXPECT_TRUE(mView->windowFlags() & (Qt::FramelessWindowHint));
+    }
+    EXPECT_TRUE(isCallInfos);
+
+    st.reset(ADDR(GridManager, initGridItemsInfos));
 }
 
 TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onScreenGeometryChanged){
 
+#ifdef UNUSED_SMARTDOCK
+
+#else
     for (auto tempKey : m_cvmgr->m_canvasMap.keys()) {
         m_cvmgr->m_canvasMap.find(tempKey).value()->setGeometry(QRect(10,10,10,10));
     }
@@ -88,100 +124,154 @@ TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onScreenGeometryChange
     for (auto tempVal : m_cvmgr->m_canvasMap.values()) {
         EXPECT_FALSE(tempVal->geometry() == QRect(10,10,10,10));
     }
+#endif
 }
 
-//select操作设置不成功，可能与事件循环有关，
-//todo
-//TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onSyncSelection){
-//    DUrlList tempDlst;
-//    for (auto tempC : m_cvmgr->m_canvasMap.values()) {
-//        if(1 == tempC->m_screenNum){
-//            //设置主屏地一个图标选中
-//            tempDlst << DUrl(GridManager::instance()->firstItemId(1));
-//            m_cvmgr->onSyncSelection(static_cast<CanvasGridView*>(tempC.data()),tempDlst);
-//            break;
-//        }
-//    }
-//    for (auto tempC : m_cvmgr->m_canvasMap.values()){
-//        if(1 != tempC->m_screenNum){
-//            auto tp1 = tempC->selectedUrls();
-//            bool tempTg = tempDlst == tempC->selectedUrls();
-//            EXPECT_TRUE(tempTg);
-//            break;
-//        }
-//    }
-//}
+TEST_F(CanvasViewManagerTest, test_onSyncOperation)
+{
+    int so;
+    QVariant var;
+
+    stub_ext::StubExt st;
+    bool isAutoMerge = false;
+    bool isCallInfos = false;
+
+    st.set_lamda(ADDR(CanvasGridView, setAutoMerge), [&isAutoMerge](CanvasGridView *obj, bool enable){isAutoMerge = enable;});
+    st.set_lamda(ADDR(GridManager, initGridItemsInfos), [&isCallInfos](){isCallInfos = true;});
+
+    so = GridManager::soAutoMerge;
+    var = true;
+    m_cvmgr->onSyncOperation(so, var);
+    if (!m_cvmgr->m_canvasMap.isEmpty())
+        EXPECT_EQ(isAutoMerge, var);
+    EXPECT_FALSE(isCallInfos);
+
+    var = false;
+    m_cvmgr->onSyncOperation(so, var);
+    EXPECT_TRUE(isCallInfos);
+
+    st.reset(ADDR(CanvasGridView, setAutoMerge));
+    st.reset(ADDR(GridManager, initGridItemsInfos));
+
+    so = GridManager::soRename;
+    var = QString("/test/test.txt");
+    QString path;
+    st.set_lamda(ADDR(CanvasViewManager, arrageEditDeal), [&path](CanvasViewManager *obj, QString file){path = file;});
+    m_cvmgr->onSyncOperation(so, var);
+    EXPECT_EQ(path, var.toString());
+    st.reset(ADDR(CanvasViewManager, arrageEditDeal));
+
+    so = GridManager::soIconSize;
+    var = 1;
+    int level = 0;
+    st.set_lamda(ADDR(CanvasGridView, syncIconLevel), [&level](CanvasGridView *obj, int l){level = l;});
+    m_cvmgr->onSyncOperation(so, var);
+    if (!m_cvmgr->m_canvasMap.isEmpty())
+        EXPECT_EQ(level, var.toInt());
+    else
+        EXPECT_EQ(level, 0);
+    st.reset(ADDR(CanvasGridView, syncIconLevel));
+
+    so = GridManager::soSort;
+    var = QPoint(0, 0);
+    bool isCallUpdate = false;
+    st.set_lamda((void(QWidget::*)())ADDR(QWidget, update), [&isCallUpdate](){isCallUpdate = true;});
+    m_cvmgr->onSyncOperation(so, var);
+    if (!m_cvmgr->m_canvasMap.values().isEmpty())
+        EXPECT_TRUE(isCallUpdate);
+    else
+        EXPECT_FALSE(isCallUpdate);
+
+    so = GridManager::soHideEditing;
+    isCallUpdate = false;
+    m_cvmgr->onSyncOperation(so, var);
+    if (!m_cvmgr->m_canvasMap.values().isEmpty())
+        EXPECT_TRUE(isCallUpdate);
+    else
+        EXPECT_FALSE(isCallUpdate);
+
+    so = GridManager::soUpdate;
+    isCallUpdate = false;
+    m_cvmgr->onSyncOperation(so, var);
+    if (!m_cvmgr->m_canvasMap.values().isEmpty())
+        EXPECT_TRUE(isCallUpdate);
+    else
+        EXPECT_FALSE(isCallUpdate);
+
+    st.reset((void(QWidget::*)())ADDR(QWidget, update));
+
+    so = GridManager::soAutoMergeUpdate;
+    QMap<QString, DUrl> utMap;
+    utMap.insert(QString("screen"), DUrl("/test/test/txt"));
+    var = QVariant::fromValue(utMap);
+    bool isExpandedState = false;
+    st.set_lamda(ADDR(CanvasGridView, updateEntryExpandedState), [&isExpandedState](){isExpandedState = true;});
+    m_cvmgr->onSyncOperation(so, var);
+    if (!m_cvmgr->m_canvasMap.isEmpty())
+        EXPECT_TRUE(isExpandedState);
+    else
+        EXPECT_FALSE(isExpandedState);
+    st.reset(ADDR(CanvasGridView, updateEntryExpandedState));
+
+    so = GridManager::soHidenSwitch;
+    var = 0;
+    bool isHiddenItems = false;
+    st.set_lamda(ADDR(CanvasGridView, updateHiddenItems), [&isHiddenItems](){isHiddenItems = true;});
+    m_cvmgr->onSyncOperation(so, var);
+    if (!m_cvmgr->m_canvasMap.isEmpty())
+        EXPECT_TRUE(isHiddenItems);
+    else
+        EXPECT_FALSE(isHiddenItems);
+    st.reset(ADDR(CanvasGridView, updateHiddenItems));
+
+    so = GridManager::soGsettingUpdate;
+    bool isModelRefresh = false;
+    st.set_lamda(ADDR(CanvasGridView, delayModelRefresh), [&isModelRefresh](){isModelRefresh = true;});
+    m_cvmgr->onSyncOperation(so, var);
+    if (!m_cvmgr->m_canvasMap.isEmpty())
+        EXPECT_TRUE(isModelRefresh);
+    else
+        EXPECT_FALSE(isModelRefresh);
+    st.reset(ADDR(CanvasGridView, delayModelRefresh));
+}
+
+TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onSyncSelection){
+
+    stub_ext::StubExt st;
+    bool isCallSelect = false;
+    st.set_lamda(ADDR(CanvasGridView, select), [&isCallSelect](){isCallSelect = true;});
+    st.set_lamda((void(QWidget::*)())ADDR(QWidget, update), [](){});
+
+    m_cvmgr->onSyncSelection(nullptr, DUrlList());
+    if (!m_cvmgr->m_canvasMap.isEmpty())
+        EXPECT_TRUE(isCallSelect);
+    else
+        EXPECT_FALSE(isCallSelect);
+
+    st.reset(ADDR(CanvasGridView, select));
+    st.reset((void(QWidget::*)())ADDR(QWidget, update));
+}
 
 TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_init){
-
-    //backgroundEnable这种情况由于不好模拟条件,所以暂时无法覆盖，若需要强行覆盖则需要改动源码
+    stub_ext::StubExt st;
+    bool isCallBuild = false;
+    st.set_lamda(ADDR(CanvasViewManager, onCanvasViewBuild), [&isCallBuild](){isCallBuild = true;});
     m_cvmgr->init();
-    auto temp = ScreenMrg->displayMode();
-    if((AbstractScreenManager::Showonly == temp) || (AbstractScreenManager::Duplicate == temp)){
-        EXPECT_EQ(1, m_cvmgr->m_canvasMap.size());
-    }else {
-        EXPECT_EQ(ScreenMrg->screens().size(), m_cvmgr->m_canvasMap.size());
-    }
-
-    //connect onCanvasViewBuild,屏幕增删，模式改变
-    m_cvmgr->m_canvasMap.clear();
-    emit m_cvmgr->m_background->sigBackgroundBuilded(1);
-    EXPECT_EQ(1, m_cvmgr->m_canvasMap.size());
-
-    //connect onScreenGeometryChanged,屏幕大小改变,可用区改变
-    for (auto tempKey : m_cvmgr->m_canvasMap.keys()) {
-        m_cvmgr->m_canvasMap.find(tempKey).value()->setGeometry(QRect(10,10,10,10));
-    }
-    emit ScreenHelper::screenManager()->sigScreenGeometryChanged();
-    for (auto tempVal : m_cvmgr->m_canvasMap.values()) {
-        EXPECT_FALSE(tempVal->geometry() == QRect(10,10,10,10));
-    }
-
-    for (auto tempKey : m_cvmgr->m_canvasMap.keys()) {
-        m_cvmgr->m_canvasMap.find(tempKey).value()->setGeometry(QRect(20,20,20,20));
-    }
-
-    emit ScreenHelper::screenManager()->sigScreenAvailableGeometryChanged();
-    for (auto tempVal : m_cvmgr->m_canvasMap.values()) {
-        EXPECT_FALSE(tempVal->geometry() == QRect(20,20,20,20));
-    }
-    //connect onSyncOperation,grid改变
-
-
-    //connect onSyncSelection,同步选中状态
-    DUrlList tempDlst;
-    for (auto tempC : m_cvmgr->m_canvasMap.values()) {
-        if(1 == tempC->m_screenNum){
-            //设置主屏地一个图标选中
-            tempDlst << DUrl(GridManager::instance()->firstItemId(1));
-            emit GridManager::instance()->sigSyncSelection(static_cast<CanvasGridView*>(tempC.data()),tempDlst);
-            break;
-        }
-    }
-    for (auto tempC : m_cvmgr->m_canvasMap.values()){
-        if(1 != tempC->m_screenNum){
-            auto tp1 = tempC->selectedUrls();
-            EXPECT_TRUE(tempDlst == tempC->selectedUrls());
-            break;
-        }
-    }
+    EXPECT_TRUE(isCallBuild);
+    st.reset(ADDR(CanvasViewManager, onCanvasViewBuild));
 }
-
-//TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_arrageEditDeal){
-
-//    //backgroundEnable这种情况由于不好模拟条件,所以暂时无法覆盖，若需要强行覆盖则需要改动源码
-//    m_cvmgr->arrageEditDeal(QString());
-//}
 
 TEST_F(CanvasViewManagerTest, test_arrageEditDeal)
 {
     QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     path = path + '/' + "test.txt";
     QFile file(path);
-    if (!file.exists()) {
-        file.open(QIODevice::NewOnly | QIODevice::ReadWrite);
-        file.close();
-    }
+    if (file.exists())
+        return;
+
+    file.open(QIODevice::NewOnly | QIODevice::ReadWrite);
+    file.close();
+
     bool (*myfind)() = [](){return true;};
     int (*myscreennum)() =[](){return 0;};
     Stub tub, tub1;
@@ -190,33 +280,21 @@ TEST_F(CanvasViewManagerTest, test_arrageEditDeal)
     m_cvmgr->arrageEditDeal(path);
 }
 
-TEST_F(CanvasViewManagerTest, test_onSyncOperation)
+TEST_F(CanvasViewManagerTest, test_endAndFree)
 {
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    path = path + '/' + "test.txt";
-    QFile file(path);
-    if (!file.exists()) {
-        file.open(QIODevice::NewOnly | QIODevice::ReadWrite);
-        file.close();
+    if (m_bgm) {
+        delete m_bgm;
+        m_bgm = nullptr;
+    }
+    if (m_cvmgr) {
+        delete m_cvmgr;
+        m_cvmgr = nullptr;
+    }
+    if (m_st) {
+        delete m_st;
+        m_st = nullptr;
     }
 
-    m_cvmgr->onSyncOperation(GridManager::soHideEditing, 0);
-    m_cvmgr->onSyncOperation(GridManager::soUpdate, 0);
-    m_cvmgr->onSyncOperation(GridManager::soHidenSwitch, 0);
-    m_cvmgr->onSyncOperation(GridManager::soIconSize, QVariant(2));
-    for (CanvasViewPointer view : m_cvmgr->m_canvasMap.values()){
-        EXPECT_EQ(2, view->itemDelegate()->iconSizeLevel());
-    }
-    m_cvmgr->onSyncOperation(GridManager::soGsettingUpdate, 0);
-    m_cvmgr->onSyncOperation(GridManager::soAutoMerge, 0);
-    m_cvmgr->onSyncOperation(GridManager::soRename, 0);
-    m_cvmgr->onSyncOperation(GridManager::soSort, QPoint(0, 1));
-    for (CanvasViewPointer view : m_cvmgr->m_canvasMap.values()){
-        EXPECT_EQ(0, view->model()->sortRole());
-        EXPECT_EQ(1, view->model()->sortOrder());
-    }
-
-    if (file.exists()) {
-        QProcess::execute("rm" + path);
-    }
+    EXPECT_EQ(m_bgm, nullptr);
+    EXPECT_EQ(m_cvmgr, nullptr);
 }
