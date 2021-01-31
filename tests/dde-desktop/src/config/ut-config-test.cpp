@@ -30,6 +30,7 @@ TEST(configtest, removeConfigList)
     settting.setValue("sex", "man");
     settting.endGroup();
     Config* conf = Config::instance();
+    QSettings* oldsetting = conf->m_settings;
     conf->m_settings = &settting;
     conf->removeConfigList("person", QStringList() << "name" << "sex");
 
@@ -39,4 +40,5 @@ TEST(configtest, removeConfigList)
     file.close();
     QDir dir(desktoppath);
     dir.remove(filename);
+    conf->m_settings = oldsetting;
 }

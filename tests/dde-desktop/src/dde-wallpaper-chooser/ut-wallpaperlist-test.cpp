@@ -10,11 +10,11 @@
 #define private public
 #define protected public
 
+#include <QWidget>
 #include "../dde-wallpaper-chooser/wallpaperitem.h"
 #include "../dde-wallpaper-chooser/frame.h"
 #include "../dde-wallpaper-chooser/wallpaperlist.h"
-
-#include "../stub-ext/stubext.h"
+#include "stubext.h"
 
 using namespace testing;
 
@@ -49,28 +49,25 @@ TEST_F(WallpaperlistTest, test_keypressevent)
     QKeyEvent* eventright = new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier);
     QKeyEvent* eventleft = new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier);
     QKeyEvent* eventdown = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
-    Stub stu;
-    static bool index = false;
-    bool (*myindex)() = [](){ index = true; return true;};
-    stu.set(ADDR(WallpaperList, setCurrentIndex), myindex);
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(WallpaperList, setCurrentIndex), [](){return;});
+    bool index = false;
+    stu.set_lamda(ADDR(WallpaperList, setCurrentIndex), [&index](){ index = true; return;});
     m_list->keyPressEvent(eventright);
     EXPECT_TRUE(index);
 
     m_list->keyPressEvent(eventleft);
     EXPECT_TRUE(index);
 
-    static bool ignore = false;
-    void (*myignore)() = [](){ ignore = true; };
-    stu.set(ADDR(QKeyEvent, ignore), myignore);
+    bool ignore = false;
+    stu.set_lamda(ADDR(QKeyEvent, ignore), [&ignore](){ignore = true;});
     m_list->keyPressEvent(eventdown);
     EXPECT_TRUE(ignore);
 
-    static bool judge = false;
-    void (*myjudge)() = [](){ judge = true; };
-    int (*mystate)() = [](){ return 2;};
-    stu.set(ADDR(QKeyEvent, isAutoRepeat), myindex);
-    stu.set(ADDR(QKeyEvent, accept), myjudge);
-    stu.set(ADDR(QAbstractAnimation, state), mystate);
+    bool judge = false;
+    stu.set_lamda(ADDR(QKeyEvent, isAutoRepeat), [&index](){index = true; return true;});
+    stu.set_lamda(ADDR(QKeyEvent, accept), [&judge](){ judge = true;});
+    stu.set_lamda(ADDR(QAbstractAnimation, state), [](){ return QAbstractAnimation::State::Running;});
     m_list->keyPressEvent(eventleft);
     EXPECT_TRUE(judge);
 
@@ -82,40 +79,39 @@ TEST_F(WallpaperlistTest, test_keypressevent)
 TEST_F(WallpaperlistTest, test_removewallpaper)
 {
    int count = m_list->count();
-   Stub stu;
+   stub_ext::StubExt stu;
    static QString temp("test");
-   QString (*mystring)() = [](){return temp;};
-   void (*mydelete)() = [](){return;};
-   stu.set(ADDR(WallpaperItem, getPath), mystring);
-   stu.set(ADDR(QObject, deleteLater), mydelete);
+   stu.set_lamda(ADDR(QLayout, removeWidget), [](){return;});
+   stu.set_lamda(ADDR(WallpaperItem, getPath), [](){return temp;});
+   stu.set_lamda(ADDR(QObject, deleteLater), [](){return;});
    m_list->removeWallpaper(QString("test"));
    EXPECT_NE(count, m_list->count());
 
-   m_list->prevItem = m_list->m_items[0];
+   if (m_list->m_items.size())
+       m_list->prevItem = m_list->m_items[0];
    m_list->removeWallpaper(QString("test"));
    EXPECT_NE(count, m_list->count());
 
-   m_list->nextItem = m_list->m_items[0];
+   if (m_list->m_items.size())
+       m_list->nextItem = m_list->m_items[0];
    m_list->removeWallpaper(QString("test"));
    EXPECT_NE(count, m_list->count());
 }
 
 TEST_F(WallpaperlistTest, test_wallpaperitempressed)
 {
-   Stub stu;
-   static bool judge = false;
-   void (*myjudge)() = [](){judge = true;};
-   stu.set(ADDR(WallpaperList, setCurrentIndex), myjudge);
+   stub_ext::StubExt stu;
+   bool judge = false;
+   stu.set_lamda(ADDR(WallpaperList, setCurrentIndex), [](){return;});
+   stu.set_lamda(ADDR(WallpaperList, setCurrentIndex), [&judge](){judge = true;return;});
    m_list->wallpaperItemPressed();
-   qApp->processEvents();
    EXPECT_TRUE(judge);
 
    QWheelEvent event(QPointF(), 1, Qt::LeftButton, Qt::NoModifier);
    m_list->wheelEvent(&event);//函数体无代码,直接调用
    m_list->wallpaperItemHoverOut();//函数体无代码
-   static bool visible = false;
-   bool (*myvisible)() = [](){visible = true; return true;};
-   stu.set(ADDR(QWidget, isVisible), myvisible);
+   bool visible = false;
+   stu.set_lamda(ADDR(QWidget, isVisible), [&visible](){visible = true; return true;});
 
    m_list->wallpaperItemHoverIn();
    EXPECT_TRUE(visible);
@@ -148,15 +144,19 @@ TEST_F(WallpaperlistTest, test_scrolllist)
 TEST_F(WallpaperlistTest, test_resizeevent)
 {
     stub_ext::StubExt stu;
+    stu.set_lamda(VADDR(Frame, resizeEvent), [](){return;});
     bool iswidth = false;
     QResizeEvent event(QSize(200, 200), QSize(100, 100));
-    m_list->resizeEvent(&event);
+    if (m_list->m_contentLayout)
+        m_list->resizeEvent(&event);
 
     QSize first = m_list->m_gridSize;
     stu.set_lamda(ADDR(QWidget, width), [&iswidth](){iswidth = true; return 100;});
     m_list->resizeEvent(&event);
-    QSize second = m_list->m_gridSize;
-    EXPECT_NE(first, second);
+    if (m_list->m_contentLayout) {
+        QSize second = m_list->m_gridSize;
+        EXPECT_NE(first, second);
+    }
     EXPECT_TRUE(iswidth);
 }
 
@@ -177,7 +177,6 @@ TEST_F(WallpaperlistTest, test_addwallpaper)
     emit item->hoverIn();
     emit item->hoverOut();
 
-    qApp->processEvents();
     EXPECT_TRUE(ispress);
     EXPECT_TRUE(ishoverin);
     EXPECT_TRUE(ishoverout);
@@ -187,8 +186,10 @@ TEST_F(WallpaperlistTest, test_getCurrentItem)
 {
     m_list->m_index = 0;
     WallpaperItem* item = m_list->m_items.at(0);
-    WallpaperItem* ret = m_list->getCurrentItem();
-    EXPECT_TRUE(item == ret);
+    if (m_list->m_items.size()) {
+        WallpaperItem* ret = m_list->getCurrentItem();
+        EXPECT_TRUE(item == ret);
+    }
 }
 
 TEST_F(WallpaperlistTest, test_nextpage)
@@ -219,8 +220,12 @@ TEST_F(WallpaperlistTest, test_prevPage)
 
 TEST_F(WallpaperlistTest, test_showevent)
 {
+    stub_ext::StubExt stu;
     QShowEvent event;
+    bool isup = false;
+    stu.set_lamda(ADDR(WallpaperList, updateBothEndsItem), [&isup](){isup = true; return;});
     m_list->showEvent(&event);
+    EXPECT_TRUE(isup);
 }
 
 TEST_F(WallpaperlistTest, test_wallpaperlist)
@@ -268,13 +273,11 @@ TEST_F(WallpaperlistTest, test_showDeleteButtonForItem)
     QObject::connect(m_list, &WallpaperList::mouseOverItemChanged, m_list, [&isemitsignal](){isemitsignal = true;});
     m_list->showDeleteButtonForItem(item);
 
-    qApp->processEvents();
     EXPECT_TRUE(isemitsignal);
 
     stu.set_lamda(ADDR(WallpaperItem, getDeletable), [&isdelete](){isdelete = true; return false;});
-
     m_list->showDeleteButtonForItem(item);
-    qApp->processEvents();
+
     EXPECT_TRUE(isemitsignal);
 }
 
@@ -284,4 +287,27 @@ TEST_F(WallpaperlistTest, test_clear)
     EXPECT_TRUE(m_list->m_items.isEmpty());
     EXPECT_TRUE(m_list->prevItem == nullptr);
     EXPECT_TRUE(m_list->nextItem == nullptr);
+}
+
+TEST_F(WallpaperlistTest, test_updateBothEndsItem)
+{
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(QAbstractSlider, value), [](){return 0;});
+    m_list->updateBothEndsItem();
+    EXPECT_EQ(m_list->prevItem, nullptr);
+    EXPECT_EQ(m_list->nextItem, nullptr);
+
+
+    stu.set_lamda(ADDR(WallpaperItem, initUI), [](){return;});
+    stu.set_lamda(ADDR(WallpaperItem, initAnimation), [](){return;});
+    WallpaperItem* item = new WallpaperItem;
+    stu.set_lamda(ADDR(WallpaperList, item), [item](){return item;});
+    stu.set_lamda(ADDR(QAbstractSlider, minimum), [](){return 1;});
+    stu.set_lamda(ADDR(QAbstractSlider, maximum), [](){return 2;});
+    stu.set_lamda(ADDR(QSize, width), [](){return 10;});
+    stu.set_lamda(ADDR(WallpaperItem, setOpacity), [](){return;});
+    m_list->updateBothEndsItem();
+    EXPECT_EQ(m_list->prevItem, item);
+    EXPECT_EQ(m_list->nextItem, item);
+    delete item;
 }

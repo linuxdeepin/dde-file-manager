@@ -7,7 +7,6 @@
  * (at your option) any later version.
  **/
 #include "config.h"
-#include "dfmdesktopsettings.h"
 
 #include <QThread>
 #include <QStandardPaths>

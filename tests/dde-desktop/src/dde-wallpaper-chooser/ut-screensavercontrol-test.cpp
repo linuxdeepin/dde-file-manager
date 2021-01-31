@@ -10,34 +10,27 @@
 #include <QString>
 #include <QProcessEnvironment>
 #include "../dde-wallpaper-chooser/screensavercontrol.h"
-#include "stub.h"
-
+#include "stubext.h"
 using namespace testing;
 using namespace ScreenSaverCtrlFunction;
 
 TEST(ScreenSaverCtrlTest, needShowScreensaver)
 {
-    Stub stu;
-    static QString str("NN");
-    static QStringList strlist;
+    stub_ext::StubExt stu;
+    QString str("NN");
+    QStringList strlist;
     strlist << QString("show-screen-saver");
-    bool (*myjudge)() = [](){return true;};
-    bool (*myfalse)() = [](){return false;};
-    QStringList (*mystrlist)() = [](){return strlist;};
-    stu.set(ADDR(DGioSettings, keys), mystrlist);
-    stu.set(ADDR(DGioSettings, value), myfalse);
+    stu.set_lamda(ADDR(DGioSettings, keys), [&strlist](){return strlist;});
+    stu.set_lamda(ADDR(DGioSettings, value), [](){return false;});
     bool ret = needShowScreensaver();
     EXPECT_FALSE(ret);
 
-    int (*mymessage)() = [](){return 0;};
-    stu.set(ADDR(QDBusMessage, type), mymessage);
+    stu.set_lamda(ADDR(QDBusMessage, type), [](){return QDBusMessage::MessageType::InvalidMessage;});
     ret = needShowScreensaver();
     EXPECT_FALSE(ret);
 
-
-    QString (*mystring)() = [](){return str;};
-    stu.set(ADDR(QProcessEnvironment, contains), myjudge);
-    stu.set(ADDR(QProcessEnvironment, value), mystring);
+    stu.set_lamda(ADDR(QProcessEnvironment, contains),[](){return true;});
+    stu.set_lamda(ADDR(QProcessEnvironment, value), [&str](){return str;});
     ret = needShowScreensaver();
     EXPECT_EQ(ret, false);
 }

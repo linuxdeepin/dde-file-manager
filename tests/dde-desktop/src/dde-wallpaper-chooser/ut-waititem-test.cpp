@@ -26,7 +26,6 @@ namespace  {
            }
 
        private:
-
            WaitItem* m_testitem = nullptr;
        };
 }

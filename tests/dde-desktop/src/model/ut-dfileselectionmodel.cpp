@@ -61,9 +61,7 @@ TEST(DfileSelectionModelTest, selected_indexes)
             break;
         }
     }
-    qApp->processEvents();
     m_canvasGridView->selectAll();
-    qApp->processEvents();
 
     DUrlList ulist = m_canvasGridView->selectedUrls();
     if (ulist.size() < 0) {
@@ -114,9 +112,7 @@ TEST(DfileSelectionModelTest, selected_count)
             break;
         }
     }
-    qApp->processEvents();
     m_canvasGridView->selectAll();
-    qApp->processEvents();
 
     DUrlList ulist = m_canvasGridView->selectedUrls();
     if (ulist.size() < 0) {
@@ -155,11 +151,10 @@ TEST(DfileSelectionModelTest, test_isselected)
             break;
         }
     }
-    qApp->processEvents();
     m_canvasGridView->selectAll();
-    qApp->processEvents();
 
     DUrlList ulist = m_canvasGridView->selectedUrls();
+    DUrl url;
     if (ulist.size() < 0) {
         QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
         path = path + '/' + "test.txt";
@@ -168,7 +163,7 @@ TEST(DfileSelectionModelTest, test_isselected)
             file.open(QIODevice::ReadWrite | QIODevice::NewOnly);
             file.close();
         }
-        DUrl url(path);
+        url.setUrl(path);
         ulist << url;
     }
     QItemSelection selection;
@@ -179,12 +174,10 @@ TEST(DfileSelectionModelTest, test_isselected)
     }
     dfile.m_timer.start(50);
     dfile.select(selection, QItemSelectionModel::Current | QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
-    QEventLoop loop;
-    QTimer::singleShot(100, &loop, [&loop]{
-        loop.exit();
-    });
-    loop.exec();
     dfile.select(selection, QItemSelectionModel::Current | QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
     dfile.m_currentCommand = QItemSelectionModel::SelectionFlags(QItemSelectionModel::Current | QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
-    EXPECT_TRUE(dfile.isSelected(m_canvasGridView->model()->index(ulist[0])));
+    dfile.m_selection = QItemSelection(QModelIndex(), QModelIndex());
+    ulist << url;
+    if (ulist.size())
+        EXPECT_FALSE(dfile.isSelected(m_canvasGridView->model()->index(ulist[0])));
 }
