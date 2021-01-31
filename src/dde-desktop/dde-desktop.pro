@@ -100,7 +100,6 @@ HEADERS += \
     view/desktopitemdelegate.h \
     presenter/gridcore.h \
     deventfilter.h \
-    config/dfmdesktopsettings.h \
     dbus/dbusmonitor.h \
     dbus/licenceInterface.h \
     screen/abstractscreen.h \
