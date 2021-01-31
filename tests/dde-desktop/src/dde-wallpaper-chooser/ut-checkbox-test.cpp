@@ -26,7 +26,7 @@ namespace {
           virtual void SetUp() override
           {
               m_box = new CheckBox;
-              m_box1 = new CheckBox("kkk");
+              m_box1 = new CheckBox("test");
           }
 
           virtual void TearDown() override
@@ -41,7 +41,7 @@ namespace {
 }
 TEST_F(CheckBoxTest, checkbox)
 {
-    EXPECT_EQ(m_box1->text(), "kkk");
+    EXPECT_EQ(m_box1->text(), "test");
     EXPECT_NE(m_box, nullptr);
 }
 

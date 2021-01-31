@@ -44,21 +44,11 @@ TEST_F(ButtonTest, get_buttonsize)
 
 TEST_F(ButtonTest, key_pressevent_of_space)
 {
-    QTimer timer;
-    timer.start(100);
     bool bjudge = false;
     QObject::connect(m_button, &Button::clicked, m_button, [&]{
         bjudge = true;
     });
-    QObject::connect(&timer, &QTimer::timeout, m_button, [&]{
-        timer.stop();
-    });
     QKeyEvent event(QEvent::KeyPress, Qt::Key_Space, Qt::NoModifier);
     m_button->keyPressEvent(&event);
-    QEventLoop loop;
-    QObject::connect(&timer, &QTimer::timeout, &loop, [&loop]{
-        loop.exit();
-    });
-    loop.exec();
     EXPECT_TRUE(bjudge);
 }

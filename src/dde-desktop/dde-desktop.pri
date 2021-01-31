@@ -45,10 +45,8 @@ SOURCES += \
     $$PWD/presenter/dfmsocketinterface.cpp \
     $$PWD/view/watermaskframe.cpp \
     $$PWD/dbus/dbusdock.cpp \
-    $$PWD/config/profile.cpp \
     $$PWD/view/desktopitemdelegate.cpp \
     $$PWD/presenter/gridcore.cpp \
-    $$PWD/config/dfmdesktopsettings.cpp \
     $$PWD/dbus/dbusmonitor.cpp \
     $$PWD/screen/abstractscreen.cpp \
     $$PWD/screen/abstractscreenmanager.cpp \
@@ -79,11 +77,9 @@ HEADERS += \
     $$PWD/presenter/dfmsocketinterface.h \
     $$PWD/view/watermaskframe.h \
     $$PWD/dbus/dbusdock.h \
-    $$PWD/config/profile.h \
     $$PWD/view/desktopitemdelegate.h \
     $$PWD/presenter/gridcore.h \
     $$PWD/deventfilter.h \
-    $$PWD/config/dfmdesktopsettings.h \
     $$PWD/dbus/dbusmonitor.h \
     $$PWD/dbus/licenceInterface.h \
     $$PWD/screen/abstractscreen.h \

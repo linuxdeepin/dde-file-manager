@@ -56,13 +56,16 @@ TEST_F(WallpaperItemTest, test_keyevent)
 
     stu.set_lamda(ADDR(QWidget, hasFocus), [](){return true;});
     m_item->keyPressEvent(eventup);
-    EXPECT_TRUE(m_item->m_buttonLayout->itemAt(0)->widget()->hasFocus());
+    if (m_item->m_buttonLayout->itemAt(0))
+        EXPECT_TRUE(m_item->m_buttonLayout->itemAt(0)->widget()->hasFocus());
 
     m_item->keyPressEvent(eventdown);
-    EXPECT_TRUE(m_item->m_buttonLayout->itemAt(m_item->m_buttonLayout->count() - 1)->widget()->hasFocus());
+    if (m_item->m_buttonLayout->itemAt(m_item->m_buttonLayout->count() - 1))
+        EXPECT_TRUE(m_item->m_buttonLayout->itemAt(m_item->m_buttonLayout->count() - 1)->widget()->hasFocus());
 
     m_item->focusLastButton();
-    EXPECT_TRUE(m_item->m_buttonLayout->itemAt(m_item->m_buttonLayout->count() - 1)->widget()->hasFocus());
+    if (m_item->m_buttonLayout->itemAt(m_item->m_buttonLayout->count() - 1))
+        EXPECT_TRUE(m_item->m_buttonLayout->itemAt(m_item->m_buttonLayout->count() - 1)->widget()->hasFocus());
 
     stu.set_lamda(ADDR(QKeyEvent, ignore), [&judge](){judge = true;});
     m_item->keyPressEvent(eventdefault);
@@ -102,7 +105,6 @@ TEST_F(WallpaperItemTest, test_leaveEvent)
     bool judge = false;
     QObject::connect(m_item, &WallpaperItem::hoverOut, m_item, [&judge](){judge = true;});
     m_item->leaveEvent(&event);
-    qApp->processEvents();
     EXPECT_TRUE(judge);
 }
 
@@ -113,6 +115,7 @@ TEST_F(WallpaperItemTest, test_onFindAborted)
      stub_ext::StubExt stu;
      bool judge = false;
      stu.set_lamda(ADDR(QList<QString>, contains), [&judge](){judge = true; return true;});
+     stu.set_lamda(ADDR(WallpaperItem, refindPixmap), [](){return;});
      m_item->onFindAborted(que);
      EXPECT_TRUE(judge);
 }
@@ -123,7 +126,6 @@ TEST_F(WallpaperItemTest, test_mousePressEvent)
      bool judge = false;
      QObject::connect(m_item, &WallpaperItem::pressed, m_item, [&judge](){judge = true;});
      m_item->mousePressEvent(&event);
-     qApp->processEvents();
      EXPECT_TRUE(judge);
 }
 
@@ -132,7 +134,6 @@ TEST_F(WallpaperItemTest, test_thumbnailFinished)
      stub_ext::StubExt stu;
      stu.set_lamda(ADDR(QFuture<QPixmap>, result), [](){return QPixmap();});
      m_item->thumbnailFinished();
-     qApp->processEvents();
      EXPECT_FALSE(m_item->m_wrapper == nullptr);
 }
 
@@ -141,7 +142,6 @@ TEST_F(WallpaperItemTest, test_setpath)
     m_item->setPath(QString("test"));
     EXPECT_TRUE(m_item->m_path == QString("test"));
 
-    m_item->contentImageGeometry();
     m_item->setUseThumbnailManager(false);
     m_item->useThumbnailManager();
     EXPECT_EQ(m_item->m_useThumbnailManager, false);
@@ -177,11 +177,13 @@ TEST_F(WallpaperItemTest, test_slideup)
     bool isstate = false;
     m_item->addButton("desktop", "test01");
     m_item->slideUp();
-    EXPECT_EQ(m_item->m_buttonLayout->itemAt(0)->widget()->focusPolicy(), Qt::StrongFocus);
+    if (m_item->m_buttonLayout->itemAt(0))
+        EXPECT_EQ(m_item->m_buttonLayout->itemAt(0)->widget()->focusPolicy(), Qt::StrongFocus);
 
     stu.set_lamda(ADDR(QWidget, y), [&isy](){isy = true; return -1;});
     stu.set_lamda(ADDR(QAbstractAnimation, state), [&isstate](){isstate = true; return QAbstractAnimation::Stopped;});
-    m_item->slideUp();
+    if (m_item->m_buttonLayout->count())
+        m_item->slideUp();
     EXPECT_TRUE(isy);
     EXPECT_TRUE(isstate);
 }
@@ -193,7 +195,8 @@ TEST_F(WallpaperItemTest, test_slidedown)
     bool isstate = false;
     m_item->addButton("desktop", "test01");
     m_item->slideDown();
-    EXPECT_EQ(m_item->m_buttonLayout->itemAt(0)->widget()->focusPolicy(), Qt::NoFocus);
+    if (m_item->m_buttonLayout->itemAt(0))
+        EXPECT_EQ(m_item->m_buttonLayout->itemAt(0)->widget()->focusPolicy(), Qt::NoFocus);
 
     stu.set_lamda(ADDR(QWidget, y), [&isy](){isy = true; return 0;});
     stu.set_lamda(ADDR(QAbstractAnimation, state), [&isstate](){isstate = true; return QAbstractAnimation::Stopped;});
@@ -227,8 +230,7 @@ TEST_F(WallpaperItemTest, test_addbutton)
     int count = m_item->m_buttonLayout->count();
     QPushButton* btn = m_item->addButton("desktop", contant);
     int secount = m_item->m_buttonLayout->count();
-    emit btn->click();
-    qApp->processEvents();
+    emit btn->clicked();
     EXPECT_EQ(btn->text(), contant);
     EXPECT_NE(count, secount);
 }

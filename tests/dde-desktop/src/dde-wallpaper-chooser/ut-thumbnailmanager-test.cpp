@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
+#include <QTest>
 #include <QFileInfo>
 #include <QThread>
 #include <QDateTime>
@@ -15,8 +16,7 @@
 #define private public
 
 #include "../dde-wallpaper-chooser/thumbnailmanager.h"
-
-
+#include "stubext.h"
 
 
 using namespace testing;
@@ -76,7 +76,7 @@ TEST_F(ThumbnailManagerTest, remove_byfilepath)
 TEST_F(ThumbnailManagerTest, processnextreq_byfuture)
 {
     ASSERT_TRUE(m_manager->m_futureWatcher.isFinished());
-    m_manager->m_queuedRequests << "jjj";
+    m_manager->m_queuedRequests << "test";
     QFuture<QPixmap> future1 = m_manager->m_futureWatcher.future();
     m_manager->processNextReq();
     QFuture<QPixmap> future2 = m_manager->m_futureWatcher.future();
@@ -85,31 +85,22 @@ TEST_F(ThumbnailManagerTest, processnextreq_byfuture)
 
 TEST_F(ThumbnailManagerTest, find_bysize_singnal)
 {
-    int size = m_manager->m_queuedRequests.size();
     bool bjudge = false;
     QTimer timer;
     QString test("test");
-    m_manager->find("test");
-
-    timer.start(2000);
-    QEventLoop loop;
-    qApp->processEvents();
-    QObject::connect(m_manager, &ThumbnailManager::thumbnailFounded, &loop, [&]{
-        EXPECT_NE(size, m_manager->m_queuedRequests.size());
+    int qsize = m_manager->m_queuedRequests.size();
+    QObject::connect(m_manager, &ThumbnailManager::thumbnailFounded, m_manager, [&]{
         bjudge = true;
-        loop.exit();
     });
-    QObject::connect(&timer, &QTimer::timeout, [&]{
-        timer.stop();
-        loop.exit();
-    });
-    qApp->processEvents();
-    loop.exec();
-    QString file = QDir(m_manager->m_cacheDir).absoluteFilePath("test");
-    const QPixmap pixmap(file);
-    if (!pixmap.isNull()) {
-        EXPECT_TRUE(bjudge);
-    }
+    m_manager->find("test");
+    EXPECT_NE(m_manager->m_queuedRequests.size(), qsize);
+
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(QPixmap, isNull), [](){return true;});
+    stu.set_lamda(ADDR(ThumbnailManager, processNextReq), [](){return;});
+    m_manager->find("test");
+    QTest::qSleep(10);
+    EXPECT_TRUE(bjudge);
 }
 
 

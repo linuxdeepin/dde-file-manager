@@ -4,6 +4,7 @@
 #include <QScreen>
 #include <QTest>
 #include <QTimer>
+#include <QObject>
 
 #define private public
 #define protected public
@@ -125,8 +126,18 @@ TEST(DesktopTest, print_info)
     EXPECT_EQ(viewManager1, nullptr);
 
     desktop.loadView();
+
+    auto currentScreens = ScreenMrg->logicScreens();
+    for (const ScreenPointer &sp : currentScreens){
+        if (desktop.d.data()->m_canvas) {
+            CanvasViewPointer mView = CanvasViewPointer(new CanvasGridView(sp->name()));
+            desktop.d.data()->m_canvas->m_canvasMap.insert(sp, mView);
+        }
+    }
+
     desktop.PrintInfo();
     CanvasViewManager *viewManager3 = desktop.d.data()->m_canvas;
+
     EXPECT_NE(viewManager3, nullptr);
 }
 
@@ -148,12 +159,21 @@ TEST(DesktopTest, show_wallpaper_setting)
     desktop.showWallpaperSettings(qApp->primaryScreen()->name(), Frame::Mode::WallpaperMode);
 
     WallpaperSettings *wset3 = desktop.d.data()->wallpaperSettings;
-    if (wset3) {
-        emit wset3->done();
-    }
+    if (nullptr != wset3)   emit wset3->done();
 
-    WallpaperSettings *wset4 = desktop.d.data()->wallpaperSettings;
-    EXPECT_EQ(wset4, nullptr);
+    desktop.showWallpaperSettings(qApp->primaryScreen()->name(), Frame::Mode::WallpaperMode);
+
+    WallpaperSettings *wset11 = desktop.d.data()->wallpaperSettings;
+    if (nullptr != wset11) {
+        stu.set_lamda(ADDR(Frame, desktopBackground), [](){return QPair<QString, QString>();});
+        stu.set_lamda(ADDR(BackgroundManager, setBackgroundImage), [](){return;});
+        stu.set_lamda(ADDR(Frame, isActiveWindow), [](){return false;});
+        emit wset11->aboutHide();
+        QWindow* win = wset11->windowHandle();
+        if (win)
+            emit  win->activeChanged();
+        QTest::qWait(20);
+    }
 
     desktop.showWallpaperSettings("", Frame::Mode::WallpaperMode);
     bool isset = false;
@@ -194,6 +214,15 @@ TEST(DesktopTest, enable_ui_debug)
 
     desktop.preInit();
     desktop.loadView();
+
+    auto currentScreens = ScreenMrg->logicScreens();
+    for (const ScreenPointer &sp : currentScreens){
+        if (desktop.d.data()->m_canvas) {
+            CanvasViewPointer mView = CanvasViewPointer(new CanvasGridView(sp->name()));
+            desktop.d.data()->m_canvas->m_canvasMap.insert(sp, mView);
+        }
+    }
+    stu.set_lamda(ADDR(CanvasGridView, EnableUIDebug), [](){return;});
     desktop.EnableUIDebug(true);
     if (desktop.d.data()->m_canvas->canvas().values().size())
         EXPECT_TRUE(isDebug);
@@ -226,4 +255,17 @@ TEST(DesktopTest, show_Screensaverpaper)
     desktop->ShowScreensaverChooser(qApp->primaryScreen()->name());
     EXPECT_TRUE(isshow);
     delete desktop;
+}
+
+TEST(DesktopTest, Fix_Geometry)
+{
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(Presenter, init), [](){return;});
+    stu.set_lamda(ADDR(CanvasViewManager, init), [](){return;});
+
+    Desktop desktop;
+    QVector<ScreenPointer> screens = ScreenMrg->logicScreens();
+    if (!screens.size()) return;
+    //此处会发送一个信号
+    desktop.FixGeometry(1);
 }

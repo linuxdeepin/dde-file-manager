@@ -65,10 +65,8 @@ SOURCES += \
     presenter/dfmsocketinterface.cpp \
     view/watermaskframe.cpp \
     dbus/dbusdock.cpp \
-    config/profile.cpp \
     view/desktopitemdelegate.cpp \
     presenter/gridcore.cpp \
-    config/dfmdesktopsettings.cpp \
     dbus/dbusmonitor.cpp \
     screen/abstractscreen.cpp \
     screen/abstractscreenmanager.cpp \
@@ -99,7 +97,6 @@ HEADERS += \
     presenter/dfmsocketinterface.h \
     view/watermaskframe.h \
     dbus/dbusdock.h \
-    config/profile.h \
     view/desktopitemdelegate.h \
     presenter/gridcore.h \
     deventfilter.h \
