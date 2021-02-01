@@ -121,12 +121,11 @@ DFileService::DFileService(QObject *parent)
             return DFMFileControllerFactory::create(key);
         }));
     }
-    //判断当前自己的网络状态
-    d_ptr->m_networkmgr = new QNetworkConfigurationManager(this);
-    d_ptr->m_bonline = d_ptr->m_networkmgr->isOnline();
-    connect(d_ptr->m_networkmgr, &QNetworkConfigurationManager::onlineStateChanged, [this](bool state) {
-        d_ptr->m_bonline = state;
-    });
+    //异步初始化判断本地网络是否断开
+    // fix bug 53684 这里初始化QNetworkConfigurationManager，回去调用dbus，概率出现dbus
+    // 阻塞多次，多个25秒超时，这里是为了判断smb和ftp本地是否断网，所以可以移至异步线程加载，
+    // 判断smb和ftp时，如果本地链接正常，还会去判断对方网络的。
+    asyncInitializeLocalNetworkCheck();
 
     d_ptr->m_tagEditorChangeTimer.setSingleShot(true);
     connect(&d_ptr->m_tagEditorChangeTimer, &QTimer::timeout, this, [ = ] {
@@ -1329,4 +1328,26 @@ void DFileService::printStacktrace(int level)
         printf("%s\n", stacktrace[i]);
     }
     free(stacktrace);
+}
+
+
+void DFileService::asyncInitializeLocalNetworkCheck()
+{
+    Q_D(DFileService);
+    QPointer<DFileService> qptrMe = this;
+    QtConcurrent::run([=](){
+        //初始化判断当前自己的网络状态
+        if (qptrMe) {
+            //这里耗时比较长，当打开文件管理器，立刻关闭，整个文件管理器都退出了
+            d->m_networkmgr = new QNetworkConfigurationManager(this);
+            if (!qptrMe)
+                return;
+            d->m_bonline = d_ptr->m_networkmgr->isOnline();
+            connect(d->m_networkmgr, &QNetworkConfigurationManager::onlineStateChanged, [=](bool state) {
+                if (qptrMe)
+                    d->m_bonline = state;
+            });
+        }
+
+    });
 }
