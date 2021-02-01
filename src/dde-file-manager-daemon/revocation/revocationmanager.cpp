@@ -38,13 +38,15 @@ RevocationManager::~RevocationManager()
 {
 }
 
-void RevocationManager::pushEvent(int event)
+void RevocationManager::pushEvent(int event, const QString & user)
 {
     if (REVOCATION_TIMES == m_eventStack.size()) {
         m_eventStack.pop_front();
     }
-
-    m_eventStack.push(static_cast<RevocationEventType>(event));
+    EventTypeUser evtTypeUser;
+    evtTypeUser.eventType = static_cast<RevocationEventType>(event);
+    evtTypeUser.user = user;
+    m_eventStack.push(evtTypeUser);
 }
 
 int RevocationManager::popEvent()
@@ -52,10 +54,10 @@ int RevocationManager::popEvent()
     if (m_eventStack.isEmpty())
         return DFM_NO_EVENT;
 
-    RevocationEventType event = m_eventStack.pop();
-    switch (event) {
+    EventTypeUser event = m_eventStack.pop();
+    switch (event.eventType) {
     case DFM_FILE_MGR:
-        emit fmgrRevocationAction();
+        emit fmgrRevocationAction(event.user);
         break;
     case DFM_DESKTOP:
         emit deskRevocationAction();
@@ -63,5 +65,5 @@ int RevocationManager::popEvent()
     case DFM_NO_EVENT:
         break;
     }
-    return event;
+    return event.eventType;
 }

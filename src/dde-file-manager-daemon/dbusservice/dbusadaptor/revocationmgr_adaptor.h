@@ -33,10 +33,13 @@ class RevocationMgrAdaptor: public QDBusAbstractAdaptor
     Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.daemon.RevocationManager")
     Q_CLASSINFO("D-Bus Introspection", ""
 "  <interface name=\"com.deepin.filemanager.daemon.RevocationManager\">\n"
-"    <signal name=\"fmgrRevocationAction\"/>\n"
+"    <signal name=\"fmgrRevocationAction\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"user\"/>\n"
+"    </signal>\n"
 "    <signal name=\"deskRevocationAction\"/>\n"
 "    <method name=\"pushEvent\">\n"
 "      <arg direction=\"in\" type=\"i\" name=\"event\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"user\"/>\n"
 "    </method>\n"
 "    <method name=\"popEvent\">\n"
 "      <arg direction=\"out\" type=\"i\"/>\n"
@@ -53,10 +56,10 @@ public:
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
     int popEvent();
-    void pushEvent(int event);
+    void pushEvent(int event, const QString &user);
 Q_SIGNALS: // SIGNALS
     void deskRevocationAction();
-    void fmgrRevocationAction();
+    void fmgrRevocationAction(const QString &user);
 };
 
 #endif

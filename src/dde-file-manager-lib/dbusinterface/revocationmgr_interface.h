@@ -42,16 +42,16 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("popEvent"), argumentList);
     }
 
-    inline QDBusPendingReply<> pushEvent(int event)
+    inline QDBusPendingReply<> pushEvent(int event, const QString &user)
     {
         QList<QVariant> argumentList;
-        argumentList << QVariant::fromValue(event);
+        argumentList << QVariant::fromValue(event) << QVariant::fromValue(user);
         return asyncCallWithArgumentList(QStringLiteral("pushEvent"), argumentList);
     }
 
 Q_SIGNALS: // SIGNALS
     void deskRevocationAction();
-    void fmgrRevocationAction();
+    void fmgrRevocationAction(const QString &user);
 };
 
 namespace com {

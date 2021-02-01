@@ -74,9 +74,11 @@ OperatorRevocation::OperatorRevocation()
 
 }
 
-void OperatorRevocation::slotRevocationEvent()
+void OperatorRevocation::slotRevocationEvent(const QString & user)
 {
-    revocation();
+    if(user == GetSystemUserName()){
+        revocation();
+    }
 }
 
 bool OperatorRevocation::initialize()
@@ -120,7 +122,7 @@ bool OperatorRevocation::initialize()
                 "com.deepin.filemanager.daemon.RevocationManager",
                 sigName,
                 this,
-                SLOT(slotRevocationEvent()));
+                SLOT(slotRevocationEvent(const QString&)));
     if (!bConnected) {
         qDebug() << "connect to daemon failed!";
         return false;
@@ -179,12 +181,14 @@ QString OperatorRevocation::getProcessName()
 
 void OperatorRevocation::pushEvent()
 {
+    QString currentUser = GetSystemUserName();
+    qWarning() << "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-" << currentUser;
     if (m_dbusInterface && m_dbusInterface->isValid()) {
-        m_dbusInterface->pushEvent(m_eventType);
+        m_dbusInterface->pushEvent(m_eventType, currentUser);
     } else {
         bool bSuccess = initialize();
         if (bSuccess) {
-            m_dbusInterface->pushEvent(m_eventType);
+            m_dbusInterface->pushEvent(m_eventType, currentUser);
         }
     }
 }
@@ -201,6 +205,17 @@ void OperatorRevocation::popEvent()
             revocation();
         }
     }
+}
+
+QString OperatorRevocation::GetSystemUserName()
+{
+    QString command = "whoami";
+    QProcess p;
+    p.start(command);
+    p.waitForFinished();
+    QString strTemp = QString::fromLocal8Bit( p.readAllStandardOutput() );
+    QString LoginUser = strTemp.trimmed();
+    return LoginUser;
 }
 
 

@@ -52,7 +52,10 @@ protected:
     OperatorRevocation();
 
 protected slots:
-    void slotRevocationEvent();
+    /**
+    * @brief slotRevocationEvent 根据用户名文管进行对应的撤销动作
+    */
+    void slotRevocationEvent(const QString& user);
 
 private:
     /**
@@ -83,6 +86,12 @@ private:
      */
     void popEvent();
 
+    /**
+     * @brief GetSystemUserName 获取当前程序启动的的系统用户名
+     * @return  当前程序启动的的系统用户名
+     */
+    QString GetSystemUserName();
+private:
     QStack<DFMEvent> operatorStack;
 
     RevocationMgrInterface *m_dbusInterface = nullptr;

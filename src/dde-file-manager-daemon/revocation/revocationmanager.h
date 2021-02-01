@@ -42,6 +42,12 @@ public:
         DFM_DESKTOP = 1
     };
 
+    struct EventTypeUser{
+        RevocationEventType eventType;
+        QString user;
+    };
+
+
     explicit RevocationManager(QObject *parent = nullptr);
     ~RevocationManager();
 
@@ -51,8 +57,9 @@ public slots:
     /**
      * @brief pushEvent 入栈事件
      * @param event 0:filemgr 1:desktop
+     * @param1 user 事件执行用户
      */
-    void pushEvent(int event);
+    void pushEvent(int event, const QString& user);
 
     /**
      * @brief popEvent 弹出最新事件
@@ -61,12 +68,16 @@ public slots:
     int popEvent();
 
 signals:
-    void fmgrRevocationAction();
+    /**
+    * @brief fmgrRevocationAction 发送给文管的撤销动作
+    * @param user 撤销动作的执行者
+    */
+    void fmgrRevocationAction(const QString& user);
     void deskRevocationAction();
 
 private:
     RevocationMgrAdaptor* m_adaptor = nullptr;
-    QStack<RevocationEventType> m_eventStack;
+    QStack<EventTypeUser> m_eventStack;
 };
 
 #endif // REVOCATIONMANAGER_H
