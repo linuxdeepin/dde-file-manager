@@ -434,14 +434,14 @@ public:
     {
         if (!initialized) {
             const QString &dir_path = dir.absolutePath();
-
+            //解决bug62654，有部分情况搜索不到的情况，是因为ARM机器中回掉函数先与dfsearch->searchByKeyWord出来，然后把搜索结果清空了
+            searchResults.clear();
             if (searchDirList.isEmpty() || searchDirList.first() != dir_path) {
                 searchDirList.prepend(dir_path);
                 dfsearch->searchByKeyWord(keyword, callbackFunc);
-                qDebug() << "*******************************find";
+                qDebug() << "DFMAnythingDirIterator->hasNext() callbackFunc find:"<<searchResults;
                 mDone = false;
-            }
-            searchResults.clear();
+            }            
             initialized = true;
         }
         if (!resultinit) {
