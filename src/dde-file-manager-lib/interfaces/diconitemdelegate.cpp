@@ -1236,19 +1236,28 @@ QList<QRectF> DIconItemDelegate::drawText(const QModelIndex &index, QPainter *pa
 
 void DIconItemDelegate::onEditWidgetFocusOut()
 {
+    Q_D(DIconItemDelegate);
     //dfm与dde-desktop是两个独立的进程，focusWidget与focusWindow将不可取
     //当前焦点窗口已经为空表示qApp已经监测不到当前window的焦点
-    if (nullptr == qApp->focusWindow())
+    if (nullptr == qApp->focusWindow()) {
+        if (d->editingIndex.isValid())
+            emit commitData(parent()->indexWidget(d->editingIndex));
         return hideAllIIndexWidget();
+    }
 
     //同一个程序中不同的窗口焦点
-    if (m_focusWindow != qApp->focusWindow())
+    if (m_focusWindow != qApp->focusWindow()) {
+        if (d->editingIndex.isValid())
+            emit commitData(parent()->indexWidget(d->editingIndex));
         return hideAllIIndexWidget();
-
+    }
 
     //当前焦点不在parent中(view任意项中)
-    if (qApp->focusWidget() != parent()->parent())
+    if (qApp->focusWidget() != parent()->parent()) {
+        if (d->editingIndex.isValid())
+            emit commitData(parent()->indexWidget(d->editingIndex));
         return hideAllIIndexWidget();
+    }
 }
 
 void DIconItemDelegate::onTriggerEdit(const QModelIndex &index)
