@@ -631,6 +631,9 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPoint
 
     // only remove
     if (!target_info) {
+        if (source_info->fileUrl().parentUrl() == DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)))
+            convertTrashFile(source_info);
+
         bool ok = false;
 
         qint64 size = source_info->isSymLink() ? 0 : source_info->size();
@@ -1417,6 +1420,10 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(DFileHandler *handler, const DAbstrac
             if (is_file ? handler->remove(fileInfo->fileUrl()) : handler->rmdir(fileInfo->fileUrl())) {
                 return true;
             }
+
+            if (fileInfo->absoluteFilePath().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashExpungedPath)))
+                return true;
+
             if (fileInfo->canRename()) {
                 setError(DFileCopyMoveJob::RemoveError, qApp->translate("DFileCopyMoveJob", "Failed to delete the file, cause: %1").arg(handler->errorString()));
             } else {
@@ -1582,6 +1589,25 @@ bool DFileCopyMoveJobPrivate::linkFile(DFileHandler *handler, const DAbstractFil
     endJob();
 
     return ok;
+}
+
+void DFileCopyMoveJobPrivate::convertTrashFile(DAbstractFileInfoPointer &fileInfo)
+{
+    // 创建一个用于暂存即将被删除文件的目录
+    QDir expungedDir(DFMStandardPaths::location(DFMStandardPaths::TrashExpungedPath));
+    if (!expungedDir.exists())
+        expungedDir.mkdir(DFMStandardPaths::location(DFMStandardPaths::TrashExpungedPath));
+
+    // 获取文件名以及创建文件名
+    const QString srcPath = fileInfo->absoluteFilePath();
+    const QString tmpPath = DFMStandardPaths::location(DFMStandardPaths::TrashExpungedPath) + "/" + QUuid::createUuid().toString();
+
+    // 将文件移动到expunged目录下
+    if (::rename(srcPath.toLocal8Bit().data(), tmpPath.toLocal8Bit().data()) == 0) {
+        DAbstractFileInfoPointer tmpFileInfo = fileService->createFileInfo(nullptr, DUrl::fromLocalFile(tmpPath));
+        if (tmpFileInfo && tmpFileInfo->exists())
+            fileInfo = tmpFileInfo;
+    }
 }
 
 void DFileCopyMoveJobPrivate::beginJob(JobInfo::Type type, const DUrl &from, const DUrl &target)

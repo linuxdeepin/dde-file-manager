@@ -100,6 +100,12 @@ public:
     bool renameFile(DFileHandler *handler, const DAbstractFileInfo *oldInfo, const DAbstractFileInfo *newInfo);
     bool linkFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo, const QString &linkPath);
 
+    /**
+     * @brief convertTrashFile 对回收站根目录下的文件进行转换，将其移动到上级expunged目录下
+     * @param fileInfo 文件信息
+     */
+    void convertTrashFile(DAbstractFileInfoPointer &fileInfo);
+
     void beginJob(JobInfo::Type type, const DUrl &from, const DUrl &target);
     void endJob();
     void enterDirectory(const DUrl &from, const DUrl &to);

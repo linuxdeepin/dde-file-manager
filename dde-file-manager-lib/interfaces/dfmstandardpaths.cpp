@@ -35,6 +35,8 @@ QString DFMStandardPaths::location(DFMStandardPaths::StandardLocation type)
     switch (type) {
     case TrashPath:
         return QDir::homePath() + "/.local/share/Trash";
+    case TrashExpungedPath:
+        return QDir::homePath() + "/.local/share/Trash/expunged";
     case TrashFilesPath:
         return QDir::homePath() + "/.local/share/Trash/files";
     case TrashInfosPath:

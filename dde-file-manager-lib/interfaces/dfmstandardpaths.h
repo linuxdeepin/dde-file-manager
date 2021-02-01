@@ -35,6 +35,7 @@ public:
     enum StandardLocation {
         TrashPath,
         TrashFilesPath,
+        TrashExpungedPath,
         TrashInfosPath,
         TranslationPath,
         TemplatesPath,
