@@ -39,9 +39,9 @@ int RevocationMgrAdaptor::popEvent()
     return parent()->popEvent();
 }
 
-void RevocationMgrAdaptor::pushEvent(int event)
+void RevocationMgrAdaptor::pushEvent(int event, const QString &user)
 {
     // handle method call com.deepin.filemanager.daemon.RevocationManager.pushEvent
-    parent()->pushEvent(event);
+    parent()->pushEvent(event, user);
 }
 

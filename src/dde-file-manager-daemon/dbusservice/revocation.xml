@@ -2,11 +2,13 @@
 <node>
   <interface name="com.deepin.filemanager.daemon.RevocationManager">
     <signal name="fmgrRevocationAction">
+      <arg name="user" type="s" direction="out"/>
     </signal>
     <signal name="deskRevocationAction">
     </signal>
     <method name="pushEvent">
       <arg name="event" type="i" direction="in"/>
+      <arg name="user" type="s" direction="in"/>
     </method>
     <method name="popEvent">
       <arg type="i" direction="out"/>

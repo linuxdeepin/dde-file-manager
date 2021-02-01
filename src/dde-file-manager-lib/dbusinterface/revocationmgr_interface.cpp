@@ -9,7 +9,7 @@
  * before re-generating it.
  */
 
-#include "dbusinterface/revocationmgr_interface.h"
+#include "revocationmgr_interface.h"
 
 /*
  * Implementation of interface class RevocationMgrInterface

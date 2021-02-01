@@ -78,7 +78,7 @@ TEST_F(TestOperatorRevocation, test_slotRevocationEvent)
     Stub stub;
     stub.set(ADDR(DFMSaveOperatorEvent, event), st_event);
 
-    EXPECT_NO_FATAL_FAILURE(m_pController->slotRevocationEvent());
+    EXPECT_NO_FATAL_FAILURE(m_pController->slotRevocationEvent(QString("root")));
 }
 
 DFM_END_NAMESPACE
