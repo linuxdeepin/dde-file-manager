@@ -969,7 +969,6 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
     //找出url的rootfile路径，判断rootfile是否存在
     Q_D(DFileService);
 //    printStacktrace(6);
-    qDebug() << url << showdailog;
     //还原设置鼠标状态
     setCursorBusyState(false);
 

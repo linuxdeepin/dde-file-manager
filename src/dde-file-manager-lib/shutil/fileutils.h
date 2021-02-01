@@ -28,8 +28,8 @@
 #include <QObject>
 #include <QIcon>
 #include <QFileInfo>
-
 #include <QDir>
+
 #include "desktopfile.h"
 #include "properties.h"
 #include "durl.h"
@@ -136,6 +136,8 @@ public:
 
     // 启用deepin-compressor追加压缩
     static bool appendCompress(const DUrl &toUrl, const DUrlList &fromUrlList);
+    //获取内存叶大小
+    static int getMemoryPageSize();
 };
 
 #endif // FILEUTILS_H
