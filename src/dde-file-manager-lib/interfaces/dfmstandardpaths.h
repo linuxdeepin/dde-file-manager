@@ -34,6 +34,7 @@ class DFMStandardPaths
 public:
     enum StandardLocation {
         TrashPath,
+        TrashExpungedPath,
         TrashFilesPath,
         TrashInfosPath,
         TranslationPath,

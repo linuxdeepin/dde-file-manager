@@ -28,12 +28,6 @@
 #include <QDateTime>
 #include <QTemporaryFile>
 
-#undef signals
-extern "C" {
-#include <gio/gio.h>
-}
-#define signals public
-
 #include <unistd.h>
 #include <utime.h>
 #include <cstdio>
@@ -123,9 +117,6 @@ bool DLocalFileHandler::remove(const DUrl &url)
 {
     Q_ASSERT(url.isLocalFile());
 
-    if (url.isTrashFile() || url.path().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)))
-        return removeTrashFile(url);
-
     if (::remove(url.toLocalFile().toLocal8Bit()) == 0)
         return true;
 
@@ -139,9 +130,6 @@ bool DLocalFileHandler::remove(const DUrl &url)
 bool DLocalFileHandler::rmdir(const DUrl &url)
 {
     Q_ASSERT(url.isLocalFile());
-
-    if (url.isTrashFile() || url.path().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)))
-        return removeTrashFile(url);
 
     if (::rmdir(url.toLocalFile().toLocal8Bit()) == 0)
         return true;
@@ -204,17 +192,6 @@ bool DLocalFileHandler::setFileTime(const DUrl &url, const QDateTime &accessDate
     d->setErrorString(QString::fromLocal8Bit(strerror(errno)));
 
     return false;
-}
-
-bool DLocalFileHandler::removeTrashFile(const DUrl &url)
-{
-    const QString &filePath = url.toLocalFile();
-    const QString &trashFile = filePath.right(filePath.length() - DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath).length()).prepend("trash://");
-
-    GFile *file = g_file_new_for_uri(trashFile.toStdString().c_str());
-    g_file_delete(file, nullptr, nullptr);
-    g_object_unref(file);
-    return true;
 }
 
 DFM_END_NAMESPACE
