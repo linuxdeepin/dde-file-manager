@@ -65,6 +65,7 @@
 #include <sys/vfs.h>
 #include <sys/stat.h>
 #include <fts.h>
+#include <unistd.h>
 
 #undef signals
 extern "C" {
@@ -1687,6 +1688,12 @@ bool FileUtils::appendCompress(const DUrl &toUrl, const DUrlList &fromUrlList)
         return QProcess::startDetached("deepin-compressor", arguments);
     }
     return false;
+}
+//获取当前內存页大小
+int FileUtils::getMemoryPageSize()
+{
+    static const int memoryPageSize = getpagesize();
+    return memoryPageSize > 0 ? memoryPageSize : 4096;
 }
 
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率

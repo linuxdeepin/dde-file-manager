@@ -22,6 +22,7 @@
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
 #include "dstorageinfo.h"
+#include "shutil/fileutils.h"
 #include <models/trashfileinfo.h>
 
 #include <QMutex>
@@ -173,7 +174,7 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
             // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
             // fix bug 202007010033【文件管理器】【5.1.2.10-1】【sp2】复制软连接的文件，进度条显示1%
             // 判断文件是否是链接文件
-            totalProgressSize += (size <= 0 || info->isSymLink()) ? 4096 : size;
+            totalProgressSize += (size <= 0 || info->isSymLink()) ? FileUtils::getMemoryPageSize() : size;
         } while (false);
 
         ++filesCount;
@@ -181,7 +182,7 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
         Q_EMIT q_ptr->fileFound(url);
     } else {
         // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
-        totalProgressSize += 4096;
+        totalProgressSize += FileUtils::getMemoryPageSize();
         if (info->isSymLink()) {
             if (!fileHints.testFlag(DFileStatisticsJob::FollowSymlink)) {
                 ++filesCount;

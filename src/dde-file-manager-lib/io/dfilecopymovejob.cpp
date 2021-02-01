@@ -836,7 +836,13 @@ create_new_file_info:
 
             if (action == DFileCopyMoveJob::SkipAction) {
                 //跳过文件大小统计
-                skipFileSize += (source_info->isDir() || source_info->isSymLink()) ? 4096 : source_info->size();
+                if (source_info->isSymLink()) {
+                    skipFileSize += FileUtils::getMemoryPageSize();
+                } else if (source_info->isDir()) {
+                    skipFileSize += m_currentDirSize <= 0 ? FileUtils::getMemoryPageSize() : m_currentDirSize;
+                } else {
+                    skipFileSize += source_info->size();
+                }
                 return true;
             }
 
@@ -876,7 +882,13 @@ create_new_file_info:
             }
         case DFileCopyMoveJob::SkipAction:
             //跳过文件大小统计
-            skipFileSize += (source_info->isDir() || source_info->isSymLink()) ? 4096 : source_info->size();
+            if (source_info->isSymLink()) {
+                skipFileSize += FileUtils::getMemoryPageSize();
+            } else if (source_info->isDir()) {
+                skipFileSize += m_currentDirSize <= 0 ? FileUtils::getMemoryPageSize() : m_currentDirSize;
+            } else {
+                skipFileSize += source_info->size();
+            }
             return true;
         case DFileCopyMoveJob::CoexistAction:
             // fix bug 62226
@@ -923,7 +935,7 @@ create_new_file_info:
             joinToCompletedFileList(from, new_file_info->fileUrl(), 0);
         }
 
-        countrefinesize(4096);
+        countrefinesize(FileUtils::getMemoryPageSize());
 
         return ok;
     }
@@ -1533,7 +1545,7 @@ open_file: {
     delete[] data;
     fromDevice->close();
     toDevice->close();
-    countrefinesize(fromInfo->size() <= 0 ? 4096 : 0);
+    countrefinesize(fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : 0);
     if (state == DFileCopyMoveJob::IOWaitState) {
         setState(DFileCopyMoveJob::RunningState);
     }
@@ -2524,7 +2536,7 @@ void DFileCopyMoveJobPrivate::joinToCompletedFileList(const DUrl from, const DUr
         completedDataSize += dataSize;
     }
 
-    completedProgressDataSize += dataSize <= 0 ? 4096 : 0;
+    completedProgressDataSize += dataSize <= 0 ? FileUtils::getMemoryPageSize() : 0;
 
     ++completedFilesCount;
 
@@ -2544,8 +2556,8 @@ void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl from, cons
 
     // warning: isFromLocalUrls 对于外部挂载存储设备返回true，如果要修改 isFromLocalUrls 的含义
     //          将会影响到以下判断逻辑
-    qint64 dirSize = (isFromLocalUrls && targetUrl.isValid()) ?  m_currentDirSize : 4096;
-    completedProgressDataSize += (dirSize <= 0 ? 4096 : dirSize);
+    qint64 dirSize = (isFromLocalUrls && targetUrl.isValid()) ?  m_currentDirSize : FileUtils::getMemoryPageSize();
+    completedProgressDataSize += (dirSize <= 0 ? FileUtils::getMemoryPageSize() : dirSize);
     ++completedFilesCount;
 
     countrefinesize(dirSize);
@@ -3259,26 +3271,28 @@ void DFileCopyMoveJobPrivate::countAllCopyFile()
         while (1) {
             FTSENT *ent = fts_read(fts);
             if (ent == nullptr) {
-                printf("walk end\n");
                 break;
             }
             unsigned short flag = ent->fts_info;
-            if (flag != FTS_DP) {
-                totalsize += ent->fts_statp->st_size <= 0 ? 4096 : ent->fts_statp->st_size;
+            if (flag != FTS_DP && flag != FTS_SL) {
+                totalsize += ent->fts_statp->st_size <= 0 ?
+                            FileUtils::getMemoryPageSize() : ent->fts_statp->st_size;
             }
             if (m_currentDirSize == 0 && flag == FTS_D) {
-                m_currentDirSize = ent->fts_statp->st_size <= 0 ? 4096 :
-                                                                  static_cast<qint32>(ent->fts_statp->st_size);
-            }
-            if (flag == FTS_F) {
+                m_currentDirSize = ent->fts_statp->st_size <= 0 ?
+                            FileUtils::getMemoryPageSize() :
+                            static_cast<qint32>(ent->fts_statp->st_size);
+            } else if (flag == FTS_F) {
                 totalfilecount++;
+            } else if (flag == FTS_SL) {
+                totalsize += FileUtils::getMemoryPageSize();
             }
         }
         fts_close(fts);
     }
 
     iscountsizeover = true;
-    m_currentDirSize = m_currentDirSize <= 0 ? 4096 : m_currentDirSize;
+    m_currentDirSize = m_currentDirSize <= 0 ? FileUtils::getMemoryPageSize() : m_currentDirSize;
 
     emit q_ptr->fileStatisticsFinished();
 
