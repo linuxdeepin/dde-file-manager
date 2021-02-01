@@ -726,6 +726,10 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
 
     // only remove
     if (!target_info) {
+        auto fileInfo = source_info;
+        if (source_info->fileUrl().parentUrl() == DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)))
+            convertTrashFile(fileInfo);
+
         // BUG 59250 回收站文件夹下删除子文件会受到上级目录的权限管控
         DUrl parentUrl;
         QFile::Permissions parentUrlPermissions;
@@ -734,9 +738,9 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
 
         // 确定当前是从回收站强制删除且没有写权限(trashRemoveFlag 流控只针对回收站)
         if (fileHints.testFlag(DFileCopyMoveJob::ForceDeleteFile)
-                && source_info->path().contains("/.local/share/Trash")) {
+                && fileInfo->path().contains("/.local/share/Trash")) {
             // 获取上级目录路径，获取缓存权限，判断当前是否进行权限更改
-            parentUrl = source_info->fileUrl().parentUrl();
+            parentUrl = fileInfo->fileUrl().parentUrl();
 
             //获取上层目录的Info对象
             DAbstractFileInfoPointer parentInfo = DFileService::instance()->createFileInfo(nullptr, parentUrl);
@@ -761,20 +765,20 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
         bool ok = false;
         //可以显示进度条
         m_isShowProgress = true;
-        qint64 size = source_info->isSymLink() ? 0 : source_info->size();
+        qint64 size = fileInfo->isSymLink() ? 0 : fileInfo->size();
 
-        if (source_info->isFile() || source_info->isSymLink()) {
-            ok = removeFile(handler, source_info);
+        if (fileInfo->isFile() || fileInfo->isSymLink()) {
+            ok = removeFile(handler, fileInfo);
             if (ok) {
                 joinToCompletedFileList(from, DUrl(), size);
             }
         } else {
             // 删除文件夹时先设置其权限
             if (fileHints.testFlag(DFileCopyMoveJob::ForceDeleteFile)) {
-                handler->setPermissions(source_info->fileUrl(), QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
+                handler->setPermissions(fileInfo->fileUrl(), QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
             }
 
-            ok = mergeDirectory(handler, source_info, DAbstractFileInfoPointer(nullptr));
+            ok = mergeDirectory(handler, fileInfo, DAbstractFileInfoPointer(nullptr));
             if (ok) {
                 joinToCompletedDirectoryList(from, DUrl(), size);
             }
@@ -2275,6 +2279,9 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(const QSharedPointer<DFileHandler> &h
                 return true;
             }
 
+            if (fileInfo->absoluteFilePath().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashExpungedPath)))
+                return true;
+
             if (fileInfo->canRename()) {
                 errortype = DFileCopyMoveJob::RemoveError;
                 errorstr = qApp->translate("DFileCopyMoveJob", "Failed to delete the file, cause: %1").arg(handler->errorString());
@@ -2378,6 +2385,25 @@ bool DFileCopyMoveJobPrivate::doLinkFile(const QSharedPointer<DFileHandler> &han
     } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
     return action == DFileCopyMoveJob::SkipAction;
+}
+
+void DFileCopyMoveJobPrivate::convertTrashFile(DAbstractFileInfoPointer &fileInfo)
+{
+    // 创建一个用于暂存即将被删除文件的目录
+    QDir expungedDir(DFMStandardPaths::location(DFMStandardPaths::TrashExpungedPath));
+    if (!expungedDir.exists())
+        expungedDir.mkdir(DFMStandardPaths::location(DFMStandardPaths::TrashExpungedPath));
+
+    // 获取文件名以及创建文件名
+    const QString srcPath = fileInfo->absoluteFilePath();
+    const QString tmpPath = DFMStandardPaths::location(DFMStandardPaths::TrashExpungedPath) + "/" + QUuid::createUuid().toString();
+
+    // 将文件移动到expunged目录下
+    if (::rename(srcPath.toLocal8Bit().data(), tmpPath.toLocal8Bit().data()) == 0) {
+        DAbstractFileInfoPointer tmpFileInfo = fileService->createFileInfo(nullptr, DUrl::fromLocalFile(tmpPath));
+        if (tmpFileInfo && tmpFileInfo->exists())
+            fileInfo = tmpFileInfo;
+    }
 }
 
 bool DFileCopyMoveJobPrivate::process(const DUrl from, const DAbstractFileInfoPointer target_info)

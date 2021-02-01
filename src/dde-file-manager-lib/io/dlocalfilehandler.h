@@ -40,8 +40,6 @@ public:
     bool rename(const DUrl &url, const DUrl &newUrl) override;
     bool setPermissions(const DUrl &url, QFileDevice::Permissions permissions) override;
     bool setFileTime(const DUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime) override;
-    // 采用gio接口删除回收站文件
-    bool removeTrashFile(const DUrl &url);
 };
 
 DFM_END_NAMESPACE
