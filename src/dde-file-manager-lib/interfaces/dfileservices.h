@@ -205,6 +205,8 @@ private:
     static QString getSymlinkFileName(const DUrl &fileUrl, const QDir &targetDir = QDir());
     static void insertToCreatorHash(const HandlerType &type, const HandlerCreatorType &creator);
     static bool checkMultiSelectionFilesCache();
+    //异步初始化判断本地网络是否断开
+    void asyncInitializeLocalNetworkCheck();
 
     QScopedPointer<DFileServicePrivate> d_ptr;
     Q_DECLARE_PRIVATE(DFileService)
