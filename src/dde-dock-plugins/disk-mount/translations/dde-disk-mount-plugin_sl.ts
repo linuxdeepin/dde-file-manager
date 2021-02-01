@@ -85,5 +85,17 @@
         <source>Confirm</source>
         <translation>Potrdi</translation>
     </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Prekini</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 </TS>

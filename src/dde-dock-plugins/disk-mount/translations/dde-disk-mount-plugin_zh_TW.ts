@@ -33,7 +33,7 @@
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>光碟機正忙，無法安全移除</translation>
+        <translation>裝置正忙，無法安全移除</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -84,6 +84,18 @@
     <message>
         <source>Confirm</source>
         <translation>確定</translation>
+    </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>正在掃描目前裝置，是否終止掃描？</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>終止</translation>
     </message>
 </context>
 </TS>

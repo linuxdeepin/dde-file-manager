@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -505,7 +503,7 @@
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="385"/>
         <source>Ready to complete</source>
-        <translation>请稍候</translation>
+        <translation>即将完成，请稍候</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="440"/>
@@ -1000,7 +998,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="3932"/>
         <source>Ready to complete</source>
-        <translation>请稍候</translation>
+        <translation>即将完成，请稍候</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1053"/>
@@ -1464,7 +1462,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="924"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1330"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1429"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
@@ -1659,12 +1656,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1572"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>终止</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1573"/>
         <source>Scanning the device, stop it?</source>
-        <translation type="unfinished"></translation>
+        <translation>正在扫描当前设备，是否终止扫描？</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1630"/>
@@ -3757,24 +3754,20 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="696"/>
         <location filename="../io/dfilecopymovejob.cpp" line="748"/>
-        <source>Failed create file info</source>
+        <source>Failed to create file info</source>
         <translation>文件信息创建失败</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="724"/>
-        <source>Failed create file handler</source>
+        <source>Failed to create file handler</source>
         <translation>文件处理程序创建失败</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1731"/>
-        <source>ftruncate error!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1757"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1781"/>
-        <source>mmap file to memory fialed!</source>
-        <translation type="unfinished"></translation>
+        <source>Execution error</source>
+        <translation>执行错误</translation>
     </message>
 </context>
 <context>

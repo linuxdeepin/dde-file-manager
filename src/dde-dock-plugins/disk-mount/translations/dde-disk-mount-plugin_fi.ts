@@ -85,5 +85,17 @@
         <source>Confirm</source>
         <translation>Vahvista</translation>
     </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>Skannaa laitetta, pysäytä se? </translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Peru</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>Seis</translation>
+    </message>
 </context>
 </TS>

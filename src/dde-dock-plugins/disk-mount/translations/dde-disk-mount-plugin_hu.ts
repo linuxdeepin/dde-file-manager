@@ -85,5 +85,17 @@
         <source>Confirm</source>
         <translation>Megerősítés</translation>
     </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>Az eszköz ellenőrzése, biztos benne hogy leállítja?</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Mégsem</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>Leállítás</translation>
+    </message>
 </context>
 </TS>

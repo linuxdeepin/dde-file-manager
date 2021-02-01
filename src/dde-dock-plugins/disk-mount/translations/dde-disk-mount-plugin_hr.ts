@@ -2,52 +2,100 @@
 <context>
     <name>DeepinStorage</name>
     <message>
-        <location filename="../dattachedudisks2device.cpp" line="100"/>
-        <location filename="../dattachedudisks2device.cpp" line="115"/>
         <source>%1 Volume</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
+    <name>DiskControlItem</name>
+    <message>
+        <source>Unknown</source>
+        <translation>Nepoznato</translation>
+    </message>
+</context>
+<context>
     <name>DiskControlWidget</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="215"/>
-        <location filename="../diskcontrolwidget.cpp" line="223"/>
-        <location filename="../diskcontrolwidget.cpp" line="294"/>
-        <location filename="../diskcontrolwidget.cpp" line="455"/>
-        <source>Disk is busy, cannot eject now</source>
+        <source>dde-file-manager</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="469"/>
-        <source>dde-file-manager</source>
-        <translation type="unfinished"/>
+        <source>The device was not safely removed</source>
+        <translation>Uređaj nije sigurno uklonjen</translation>
+    </message>
+    <message>
+        <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
+        <translation>Klikni &quot;Sigurno ukloni&quot; i odspoji ga slijedeći put</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>Uređaj je zauzet, ne mogu sada izbaciti</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>Uređaj je zauzet, ne mogu sada ukloniti</translation>
+    </message>
+    <message>
+        <source>Cannot unmount the device</source>
+        <translation>Ne mogu odmontirati uređaj</translation>
+    </message>
+    <message>
+        <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
+        <translation>Disk je montirao korisnik &quot;%1&quot;, vi ga ne možete odmontirati.</translation>
+    </message>
+    <message>
+        <source>Cannot find the mounted device</source>
+        <translation>Ne mogu naći montirani uređaj</translation>
+    </message>
+    <message>
+        <source>Disks</source>
+        <translation>Diskovi</translation>
     </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>
     <message>
-        <location filename="../diskmountplugin.cpp" line="49"/>
         <source>Disk</source>
         <translation>Disk</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="104"/>
         <source>Open</source>
         <translation>Otvori</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="111"/>
-        <source>Unmount all</source>
-        <translation>Odmontiraj sve</translation>
+        <source>Eject all</source>
+        <translation>Izbaci sve</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="390"/>
-        <source>Device has been removed</source>
-        <translation>Uređaj je uklonjen</translation>
+        <source>The device has been safely removed</source>
+        <translation>Uređaj je sigurno uklonjen</translation>
+    </message>
+    <message>
+        <source>Access denied</source>
+        <translation>Pristup odbijen</translation>
+    </message>
+    <message>
+        <source>You do not have permission to access this folder</source>
+        <translation>Nemate dozvole za pristup ovoj mapi</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Potvrdi</translation>
+    </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Otkaži</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>Zaustavi</translation>
     </message>
 </context>
 </TS>

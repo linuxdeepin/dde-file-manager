@@ -693,7 +693,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
     if (!source_info) {
 
         return setAndhandleError(DFileCopyMoveJob::UnknowUrlError, source_info, DAbstractFileInfoPointer(nullptr),
-                                 QObject::tr("Failed create file info")) == DFileCopyMoveJob::SkipAction;
+                                 QObject::tr("Failed to create file info")) == DFileCopyMoveJob::SkipAction;
     }
 
     if (!source_info->exists()) {
@@ -721,7 +721,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
     if (!handler) {
 
         return setAndhandleError(DFileCopyMoveJob::UnknowUrlError, source_info,
-                                 DAbstractFileInfoPointer(nullptr), QObject::tr("Failed create file handler")) == DFileCopyMoveJob::SkipAction;
+                                 DAbstractFileInfoPointer(nullptr), QObject::tr("Failed to create file handler")) == DFileCopyMoveJob::SkipAction;
     }
 
     // only remove
@@ -745,7 +745,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
             } else {
                 return setAndhandleError(DFileCopyMoveJob::UnknowUrlError,
                                          parentInfo,DAbstractFileInfoPointer(nullptr),
-                                         QObject::tr("Failed create file info")) == DFileCopyMoveJob::SkipAction;
+                                         QObject::tr("Failed to create file info")) == DFileCopyMoveJob::SkipAction;
             }
 
             //没有写权限则不可操作子目录
@@ -1732,7 +1732,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
             action = DFileCopyMoveJob::NoAction;
         } else {
             action = setAndhandleError(DFileCopyMoveJob::ResizeError, toInfo, DAbstractFileInfoPointer(nullptr),
-                                       QObject::tr("ftruncate error!"));
+                                       QObject::tr("Execution error"));
         }
         //防止卡死
         if (action == DFileCopyMoveJob::RetryAction) {
@@ -1758,7 +1758,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
             action = DFileCopyMoveJob::NoAction;
         } else {
             action = setAndhandleError(DFileCopyMoveJob::MmapError, toInfo, DAbstractFileInfoPointer(nullptr),
-                                       QObject::tr("mmap file to memory fialed!"));
+                                       QObject::tr("Execution error"));
         }
         //防止卡死
         if (action == DFileCopyMoveJob::RetryAction) {
@@ -1782,7 +1782,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
             action = DFileCopyMoveJob::NoAction;
         } else {
             action = setAndhandleError(DFileCopyMoveJob::MmapError, toInfo, DAbstractFileInfoPointer(nullptr),
-                                       QObject::tr("mmap file to memory fialed!"));
+                                       QObject::tr("Execution error"));
         }
         //防止卡死
         if (action == DFileCopyMoveJob::RetryAction) {

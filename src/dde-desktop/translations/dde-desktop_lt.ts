@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3087"/>
+        <location filename="../view/canvasgridview.cpp" line="3106"/>
         <source>Icon size</source>
         <translation>Piktogramų dydis</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3095"/>
+        <location filename="../view/canvasgridview.cpp" line="3114"/>
         <source>Auto merge</source>
         <translation>Automatiškai sulieti</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3107"/>
+        <location filename="../view/canvasgridview.cpp" line="3126"/>
         <source>Auto arrange</source>
         <translation>Automatiškai išdėstyti</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3154"/>
+        <location filename="../view/canvasgridview.cpp" line="3173"/>
         <source>Corner Settings</source>
         <translation>Kampų nustatymai</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3163"/>
-        <location filename="../view/canvasgridview.cpp" line="3168"/>
+        <location filename="../view/canvasgridview.cpp" line="3182"/>
+        <location filename="../view/canvasgridview.cpp" line="3187"/>
         <source>Set Wallpaper</source>
         <translation>Nustatyti darbalaukio foną</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3166"/>
+        <location filename="../view/canvasgridview.cpp" line="3185"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Darbalaukio fonas ir ekrano užsklanda</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3308"/>
+        <location filename="../view/canvasgridview.cpp" line="3363"/>
         <source>Properties</source>
         <translation>Savybės</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3145"/>
+        <location filename="../view/canvasgridview.cpp" line="3164"/>
         <source>Display Settings</source>
         <translation>Ekrano nustatymai</translation>
     </message>
@@ -74,7 +74,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="144"/>
+        <location filename="../main.cpp" line="156"/>
         <source>Desktop</source>
         <translation>Darbalaukis</translation>
     </message>
@@ -87,62 +87,62 @@
         <translation>Darbalaukio fono skaidrių rodymas</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="717"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="718"/>
         <source>When login</source>
         <translation>Prisijungus</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="719"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="720"/>
         <source>When wakeup</source>
         <translation>Pažadinus kompiuterį</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="774"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="772"/>
         <source>Require a password on wakeup</source>
         <translation>Pažadinus, reikalauti slaptažodžio</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="806"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="804"/>
         <source>Never</source>
         <translation>Niekada</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="808"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="806"/>
         <source>Wait:</source>
         <translation>Laukti:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="841"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="839"/>
         <source>Wallpaper</source>
         <translation>Darbalaukio fonas</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="853"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="851"/>
         <source>Screensaver</source>
         <translation>Ekrano užsklanda</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="925"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="916"/>
         <source>Loading wallpapers...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="928"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="918"/>
         <source>Loading screensavers...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="983"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="975"/>
         <source>Only desktop</source>
         <translation>Tik darbalaukiui</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="984"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="976"/>
         <source>Only lock screen</source>
         <translation>Tik užrakto ekranui</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1046"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1042"/>
         <source>Apply</source>
         <translation>Taikyti</translation>
     </message>
@@ -150,12 +150,14 @@
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="253"/>
+        <location filename="../view/watermaskframe.cpp" line="261"/>
+        <location filename="../view/watermaskframe.cpp" line="262"/>
         <source>Not authorized</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="261"/>
+        <location filename="../view/watermaskframe.cpp" line="272"/>
+        <location filename="../view/watermaskframe.cpp" line="273"/>
         <source>In trial period</source>
         <translation type="unfinished"/>
     </message>

@@ -85,5 +85,17 @@
         <source>Confirm</source>
         <translation>Ripohojeni</translation>
     </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>Po skanohet pajisja, të ndalet?</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Anuloje</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>Ndale</translation>
+    </message>
 </context>
 </TS>

@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -1464,7 +1462,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="924"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1330"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1429"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
@@ -1608,7 +1605,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1082"/>
         <source>Unable to find the original file</source>
-        <translation type="unfinished"></translation>
+        <translation>Unable to find the original file</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1154"/>
@@ -1659,12 +1656,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1572"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Stop</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1573"/>
         <source>Scanning the device, stop it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Scanning the device, stop it?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1630"/>
@@ -1755,12 +1752,12 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1099"/>
         <source>Permission denied</source>
-        <translation type="unfinished"></translation>
+        <translation>Permission denied</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1100"/>
         <source>You do not have permission to traverse files in it</source>
-        <translation type="unfinished"></translation>
+        <translation>You do not have permission to traverse files in it</translation>
     </message>
 </context>
 <context>
@@ -1771,7 +1768,7 @@
         <location filename="../controllers/filecontroller.cpp" line="756"/>
         <location filename="../controllers/filecontroller.cpp" line="782"/>
         <source>Unable to find the original file</source>
-        <translation type="unfinished"></translation>
+        <translation>Unable to find the original file</translation>
     </message>
     <message>
         <location filename="../controllers/filecontroller.cpp" line="815"/>
@@ -3417,7 +3414,7 @@
     <message>
         <location filename="../interfaces/dfileinfo.cpp" line="840"/>
         <source>You do not have permission to traverse files in it</source>
-        <translation type="unfinished"></translation>
+        <translation>You do not have permission to traverse files in it</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="251"/>
@@ -3757,24 +3754,20 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="696"/>
         <location filename="../io/dfilecopymovejob.cpp" line="748"/>
-        <source>Failed create file info</source>
-        <translation type="unfinished"></translation>
+        <source>Failed to create file info</source>
+        <translation>Failed to create file info</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="724"/>
-        <source>Failed create file handler</source>
-        <translation type="unfinished"></translation>
+        <source>Failed to create file handler</source>
+        <translation>Failed to create file handler</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1731"/>
-        <source>ftruncate error!</source>
-        <translation>ftruncate error!</translation>
-    </message>
-    <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1757"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1781"/>
-        <source>mmap file to memory fialed!</source>
-        <translation>mmap file to memory fialed!</translation>
+        <source>Execution error</source>
+        <translation>Execution error</translation>
     </message>
 </context>
 <context>

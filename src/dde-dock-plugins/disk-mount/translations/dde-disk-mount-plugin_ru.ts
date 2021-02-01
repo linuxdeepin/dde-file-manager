@@ -85,5 +85,17 @@
         <source>Confirm</source>
         <translation>Подтвердить</translation>
     </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>Сканирование устройства, остановить его?</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>Стоп</translation>
+    </message>
 </context>
 </TS>

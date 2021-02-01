@@ -85,5 +85,17 @@
         <source>Confirm</source>
         <translation>Onayla</translation>
     </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>Cihaz taranıyor, durdurulsun mu?</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>İptal</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>Durdur</translation>
+    </message>
 </context>
 </TS>

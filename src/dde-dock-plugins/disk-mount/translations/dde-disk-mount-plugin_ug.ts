@@ -85,5 +85,17 @@
         <source>Confirm</source>
         <translation>جەزملەشتۈرۈش</translation>
     </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>ئۈسكۈنە سايىلىنىۋاتىدۇ، سايىلەشنى توختىتامسىز؟</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>بىكار قىلىش</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>توختىتىمەن</translation>
+    </message>
 </context>
 </TS>

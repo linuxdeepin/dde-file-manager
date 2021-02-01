@@ -85,5 +85,17 @@
         <source>Confirm</source>
         <translation>Confirmar</translation>
     </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>Verificando o dispositivo, parar?</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Cancelar</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>Parar</translation>
+    </message>
 </context>
 </TS>
