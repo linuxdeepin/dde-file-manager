@@ -33,7 +33,7 @@
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>光驱正忙，无法安全移除</translation>
+        <translation>设备正忙，无法安全移除</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -84,6 +84,18 @@
     <message>
         <source>Confirm</source>
         <translation>确定</translation>
+    </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>正在扫描当前设备，是否终止扫描？</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>终止</translation>
     </message>
 </context>
 </TS>

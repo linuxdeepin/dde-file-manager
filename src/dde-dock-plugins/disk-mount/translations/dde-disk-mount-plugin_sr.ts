@@ -75,7 +75,7 @@
     </message>
     <message>
         <source>Access denied</source>
-        <translation>Приступ забрањен</translation>
+        <translation>Забрањен приступ</translation>
     </message>
     <message>
         <source>You do not have permission to access this folder</source>
@@ -84,6 +84,18 @@
     <message>
         <source>Confirm</source>
         <translation>Потврди</translation>
+    </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>Проверавање уређаја, зауставити?</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Откажи</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>Заустави</translation>
     </message>
 </context>
 </TS>

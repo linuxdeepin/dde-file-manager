@@ -85,5 +85,17 @@
         <source>Confirm</source>
         <translation>Confirmeu-ho</translation>
     </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>S&apos;escaneja el dispositiu. Voleu interrompre-ho?</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Cancel·la</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>Interromp</translation>
+    </message>
 </context>
 </TS>

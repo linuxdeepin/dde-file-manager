@@ -25,7 +25,7 @@
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>Cliquez sur &quot;Supprimer en toute sécurité&quot; et ensuite déconnectez-le </translation>
+        <translation>Cliquer sur &quot;Supprimer en toute sécurité&quot; et ensuite déconnecter-le </translation>
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
@@ -84,6 +84,18 @@
     <message>
         <source>Confirm</source>
         <translation>Confirmer</translation>
+    </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>Scanner l&apos;appareil, l&apos;arrêter ?</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>Arrêter</translation>
     </message>
 </context>
 </TS>

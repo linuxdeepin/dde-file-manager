@@ -85,5 +85,17 @@
         <source>Confirm</source>
         <translation>Oké</translation>
     </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>Wil je het doorzoeken van het apparaat afbreken?</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Annuleren</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>Afbreken</translation>
+    </message>
 </context>
 </TS>
