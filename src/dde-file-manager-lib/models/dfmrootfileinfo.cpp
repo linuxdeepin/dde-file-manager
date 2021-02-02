@@ -196,6 +196,9 @@ bool DFMRootFileInfo::canRename() const
     if (d->blk->readOnly())
         return false;
 
+    if (extraProperties()["fsType"].toString().toLower() == "swap")
+        return false;
+
     if (d->mps.size() > 0)
         return canSetAlias();
 
