@@ -86,9 +86,10 @@ pkexec.files = pkexec/dde-file-manager-pkexec
 propertyDialogShell.path = /usr/bin/
 propertyDialogShell.files = dde-property-dialog
 
+manual.files = $$PWD/../../assets/dde-file-manager
+manual.path = /usr/share/deepin-manual/manual-assets/application
 
-
-INSTALLS += target desktop policy pkexec propertyDialogShell
+INSTALLS += target desktop policy pkexec propertyDialogShell manual
 
 isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) {
     dde-mips-shs.path = $$BINDIR
