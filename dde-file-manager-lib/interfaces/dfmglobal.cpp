@@ -177,7 +177,14 @@ bool DFMGlobal::installTranslator()
 
     return false;
 }
-
+bool DFMGlobal::initTabletOS()
+{
+    // 针对平板单指单击和单指双击效果处理
+    if (DFMGlobal::isTablet()) {
+       DFMApplication::appSetting()->setValue("ApplicationAttribute", "OpenFileMode", QVariant(0));
+    }
+    return true;
+}
 void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::ClipboardAction action, QMimeData *mimeData)
 {
     if (action == UnknowAction)

@@ -261,6 +261,7 @@ public:
     // libdde-file-manager version
     static QString applicationVersion();
     static bool installTranslator();
+    static bool initTabletOS();
 
     static void setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::ClipboardAction action, QMimeData *mimeData = nullptr);
     static const QList<QUrl> fetchUrlsFromClipboard();

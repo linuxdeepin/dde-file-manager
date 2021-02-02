@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
 
     DApplicationSettings setting;
 
-    DFMGlobal::installTranslator();
+    DFMGlobal::installTranslator();    
 
     LogUtil::registerLogger();
 

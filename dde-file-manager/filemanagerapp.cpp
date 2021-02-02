@@ -155,6 +155,9 @@ void FileManagerApp::initApp()
     /*init rootfile manager*/
     DFMGlobal::initRootFileManager();
 
+    //平板初始化
+    DFMGlobal::initTabletOS();
+
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 }
 
