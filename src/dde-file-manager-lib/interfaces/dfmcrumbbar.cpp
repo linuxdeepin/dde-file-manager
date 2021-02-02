@@ -580,7 +580,9 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
 
     menu->addAction(copyIcon, QObject::tr("Copy path"), [ = ]() {
         // 如果为保险箱路径则进行路径转换
-        QString virtualUrl = VaultController::localPathToVirtualPath(url.toLocalFile());
+        QString virtualUrl(url.toString());
+        if (VaultController::isVaultFile(virtualUrl))
+            virtualUrl = VaultController::localPathToVirtualPath(url.toLocalFile());
         QGuiApplication::clipboard()->setText(virtualUrl);
     });
 
@@ -596,9 +598,11 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
 
     menu->addAction(editIcon, QObject::tr("Edit address"), this, [ = ]() {
 
+        DUrl url = wnd->currentUrl();
         // 如果为保险箱路径则进行路径转换
-        QString realUrl = VaultController::localPathToVirtualPath(wnd->currentUrl().toLocalFile());
-
+        QString realUrl(url.toString());
+        if (VaultController::isVaultFile(realUrl))
+            realUrl = VaultController::localPathToVirtualPath(url.toLocalFile());
         showAddressBar(realUrl);
     });
     //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
