@@ -56,20 +56,14 @@ namespace  {
 
 TEST_F(CanvasViewHelperTest, test_onRequestSelectFiles)
 {
-    DUrl url(QUrl::fromLocalFile(path));
     QList<DUrl> list;
-    qApp->processEvents();
-    m_view->selectAll();
-    qApp->processEvents();
-    QEventLoop loop;
-    QTimer::singleShot(100, &loop, [&loop]{
-        loop.exit();
-    });
-    loop.exec();
-    for (auto url : m_view->selectedUrls()) list << url;
-    list << url;
+    stub_ext::StubExt stub;
+    bool isSelected = false;
+    stub.set_lamda(VADDR(CanvasViewHelper, select),[&isSelected](){isSelected = true;});
+
     m_canvas->onRequestSelectFiles(list);
-    EXPECT_TRUE(m_view->isSelected(m_view->firstIndex()));
+
+    EXPECT_TRUE(isSelected);
 }
 
 TEST_F(CanvasViewHelperTest, test_handleSelectEvent)
@@ -125,12 +119,10 @@ TEST_F(CanvasViewHelperTest, test_edit)
 
 TEST_F(CanvasViewHelperTest, test_selecturls)
 {
-    qApp->processEvents();
-    m_view->selectAll();
-    qApp->processEvents();
-
+    stub_ext::StubExt stub;
+    stub.set_lamda(VADDR(CanvasGridView, selectedUrls),[](){return DUrlList{DUrl("test")};});
     DUrlList ulist = m_canvas->selectedUrls();
-    EXPECT_TRUE(ulist.size() > 0);
+    EXPECT_EQ(ulist.size(), 1);
 }
 
 TEST_F(CanvasViewHelperTest, test_initStyleOption)

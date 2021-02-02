@@ -309,9 +309,17 @@ TEST_F(FrameTest, test_onitemispressed)
     StubExt stub;
     stub.set_lamda(ADDR(BackgroundManager, onResetBackgroundImage),
                    [](){});
+    QString path;
+    QString screen;
+    stub.set_lamda(ADDR(BackgroundManager, setBackgroundImage),
+                   [&path,&screen](BackgroundManager *,const QString &sc,const QString &pt) {
+        screen = sc;
+        path = pt;
+    });
     QString data = m_frame->m_wallpaperList->m_items.at(0)->data();
     m_frame->onItemPressed(data);
-    EXPECT_EQ(data, m_frame->m_backgroundManager->m_backgroundImagePath[m_frame->m_screenName]);
+    EXPECT_EQ(data, path);
+    EXPECT_EQ(screen, m_frame->m_screenName);
     EXPECT_EQ(m_frame->m_desktopWallpaper, data);
     EXPECT_EQ(m_frame->m_lockWallpaper, data);
 

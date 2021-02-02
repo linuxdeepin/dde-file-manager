@@ -37,9 +37,12 @@ namespace stub_ext {
 class Wrapper
 {
 public:
-    Wrapper(){}
-    virtual ~Wrapper(){}
+    Wrapper();
+    virtual ~Wrapper();
 };
+
+typedef std::unordered_map<long, Wrapper* > WrapperMap;
+extern WrapperMap stub_wrappers;
 
 template<class Lamda>
 class LamdaWrapper : public Wrapper
@@ -93,9 +96,6 @@ struct LamdaCaller<Ret (Obj::*)() const>
         return wrapper->_func();
     }
 };
-
-
-static std::unordered_map<long, Wrapper* > stub_wrappers;
 
 template<typename Func, class Lamda>
 struct FuncShadow
@@ -164,20 +164,7 @@ typename FuncShadow<Func, Lamda>::Shadow depictShadow(Wrapper **wrapper, Func fu
     return shadow;
 }
 
-static void freeWrapper(Wrapper *wrapper)
-{
-    if (!wrapper)
-        return;
-
-    for (auto iter = stub_wrappers.begin(); iter != stub_wrappers.end();) {
-        if (iter->second == wrapper)
-            iter = stub_wrappers.erase(iter);
-        else
-            ++iter;
-    }
-
-    delete wrapper;
-}
+void freeWrapper(Wrapper *wrapper);
 
 }
 

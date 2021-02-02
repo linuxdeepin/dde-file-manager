@@ -25,7 +25,8 @@ INCLUDEPATH += $$PWD
 #    $$GMOCK_SRCDIR/include
 
 INCLUDEPATH += $$PWD/../stub-ext
-SOURCES += $$PWD/elfio.hpp
+SOURCES += $$PWD/elfio.hpp \
+           $$PWD/../stub-ext/stub-shadow.cpp
 
 HEADERS += $$PWD/addr_any.h \
             $$PWD/addr_pri.h \
