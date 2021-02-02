@@ -78,29 +78,38 @@ TEST_F(ThumbnailManagerTest, processnextreq_byfuture)
     ASSERT_TRUE(m_manager->m_futureWatcher.isFinished());
     m_manager->m_queuedRequests << "test";
     QFuture<QPixmap> future1 = m_manager->m_futureWatcher.future();
+    future1.waitForFinished();
     m_manager->processNextReq();
     QFuture<QPixmap> future2 = m_manager->m_futureWatcher.future();
     EXPECT_NE(future1, future2);
+    future2.waitForFinished();
 }
 
 TEST_F(ThumbnailManagerTest, find_bysize_singnal)
 {
     bool bjudge = false;
-    QTimer timer;
     QString test("test");
-    int qsize = m_manager->m_queuedRequests.size();
-    QObject::connect(m_manager, &ThumbnailManager::thumbnailFounded, m_manager, [&]{
-        bjudge = true;
-    });
-    m_manager->find("test");
-    EXPECT_NE(m_manager->m_queuedRequests.size(), qsize);
+    {
+        m_manager->m_queuedRequests.clear();
+        stub_ext::StubExt stu;
+        stu.set_lamda(ADDR(QPixmap, isNull), [](){return false;});
+        stu.set_lamda(ADDR(ThumbnailManager, thumbnailFounded), [&bjudge](){bjudge = true;});
+        m_manager->find(test);
+        EXPECT_TRUE(bjudge);
+        ASSERT_TRUE(m_manager->m_queuedRequests.isEmpty());
+    }
 
-    stub_ext::StubExt stu;
-    stu.set_lamda(ADDR(QPixmap, isNull), [](){return true;});
-    stu.set_lamda(ADDR(ThumbnailManager, processNextReq), [](){return;});
-    m_manager->find("test");
-    QTest::qSleep(10);
-    EXPECT_TRUE(bjudge);
+    {
+        m_manager->m_queuedRequests.clear();
+        stub_ext::StubExt stu;
+        bjudge = false;
+        stu.set_lamda(ADDR(QPixmap, isNull), [](){return true;});
+        stu.set_lamda(ADDR(ThumbnailManager, processNextReq), [&bjudge](){bjudge = true;});
+        m_manager->find(test);
+        ASSERT_EQ(m_manager->m_queuedRequests.size(), 1);
+        EXPECT_EQ(m_manager->m_queuedRequests.first(), test);
+        EXPECT_TRUE(bjudge);
+    }
 }
 
 

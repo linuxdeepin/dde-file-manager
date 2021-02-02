@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock-matchers.h"
+#include "stubext.h"
 
 #include <DWindowManagerHelper>
 #include <QScopedPointer>
@@ -15,6 +16,7 @@
 #include "screen/abstractscreenmanager.h"
 #include "screen/screenmanager.h"
 #include "util/dde/desktopinfo.h"
+#include "util/util.h"
 
 using namespace testing;
 namespace  {
@@ -29,13 +31,17 @@ namespace  {
         }
 
         virtual void SetUp() override {
+            stub = new stub_ext::StubExt;
+            stub->set_lamda(&DesktopUtil::set_desktop_window,[](){});
+            stub->set_lamda(ADDR(BackgroundWidget,show),[](){});
             m_manager = new BackgroundManager(false, nullptr);
         }
 
         virtual void TearDown() override {
+            delete stub;
             delete m_manager;
         }
-
+        stub_ext::StubExt *stub = nullptr;
         BackgroundManager * m_manager;
         DWindowManagerHelper* windowManagerHelper = nullptr;
         QVector<ScreenPointer> screens;

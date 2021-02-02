@@ -248,6 +248,9 @@ TEST_F(ScreenOperation, availableGeometry_top)
     auto objgeo = (QRect (*)(ScreenObject*))(&ScreenObject::geometry);
     st.set(objgeo,geo_foo);
 
+    auto hldgeo = (QRect (*)(ScreenObject*))(&ScreenObject::handleGeometry);
+    st.set(hldgeo,geo_foo);
+
     auto ratio_foo = (qreal(*)())([](){return 1.0;});
     st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
 
@@ -273,6 +276,9 @@ TEST_F(ScreenOperation, availableGeometry_top_2)
     auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
     auto objgeo = (QRect (*)(ScreenObject*))(&ScreenObject::geometry);
     st.set(objgeo,geo_foo);
+
+    auto hldgeo = (QRect (*)(ScreenObject*))(&ScreenObject::handleGeometry);
+    st.set(hldgeo,geo_foo);
 
     auto ratio_foo = (qreal(*)())([](){return 2.0;});
     st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
@@ -303,6 +309,8 @@ TEST_F(ScreenOperation, availableGeometry_right)
     auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
     auto objgeo = (QRect (*)(ScreenObject*))(&ScreenObject::geometry);
     st.set(objgeo,geo_foo);
+    auto hldgeo = (QRect (*)(ScreenObject*))(&ScreenObject::handleGeometry);
+    st.set(hldgeo,geo_foo);
 
     auto ratio_foo = (qreal(*)())([](){return 1.0;});
     st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
@@ -330,6 +338,8 @@ TEST_F(ScreenOperation, availableGeometry_bottom)
     auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
     auto objgeo = (QRect (*)(ScreenObject*))(&ScreenObject::geometry);
     st.set(objgeo,geo_foo);
+    auto hldgeo = (QRect (*)(ScreenObject*))(&ScreenObject::handleGeometry);
+    st.set(hldgeo,geo_foo);
 
     auto ratio_foo = (qreal(*)())([](){return 1.0;});
     st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
@@ -357,6 +367,8 @@ TEST_F(ScreenOperation, availableGeometry_left)
     auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
     auto objgeo = (QRect (*)(ScreenObject*))(&ScreenObject::geometry);
     st.set(objgeo,geo_foo);
+    auto hldgeo = (QRect (*)(ScreenObject*))(&ScreenObject::handleGeometry);
+    st.set(hldgeo,geo_foo);
 
     auto ratio_foo = (qreal(*)())([](){return 1.0;});
     st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
@@ -472,6 +484,8 @@ TEST_F(ScreenOperationWayland, availableGeometry_top)
     auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
     auto objgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::geometry);
     st.set(objgeo,geo_foo);
+    auto hldgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::handleGeometry);
+    st.set(hldgeo,geo_foo);
 
     auto ratio_foo = (qreal(*)())([](){return 1.0;});
     st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
@@ -498,6 +512,8 @@ TEST_F(ScreenOperationWayland, availableGeometry_top_2)
     auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
     auto objgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::geometry);
     st.set(objgeo,geo_foo);
+    auto hldgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::handleGeometry);
+    st.set(hldgeo,geo_foo);
 
     auto ratio_foo = (qreal(*)())([](){return 2.0;});
     st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
@@ -528,6 +544,8 @@ TEST_F(ScreenOperationWayland, availableGeometry_right)
     auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
     auto objgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::geometry);
     st.set(objgeo,geo_foo);
+    auto hldgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::handleGeometry);
+    st.set(hldgeo,geo_foo);
 
     auto ratio_foo = (qreal(*)())([](){return 1.0;});
     st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
@@ -555,6 +573,8 @@ TEST_F(ScreenOperationWayland, availableGeometry_bottom)
     auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
     auto objgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::geometry);
     st.set(objgeo,geo_foo);
+    auto hldgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::handleGeometry);
+    st.set(hldgeo,geo_foo);
 
     auto ratio_foo = (qreal(*)())([](){return 1.0;});
     st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
@@ -582,6 +602,8 @@ TEST_F(ScreenOperationWayland, availableGeometry_left)
     auto geo_foo = (QRect(*)())([](){return QRect(0,0,1920,1080);});
     auto objgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::geometry);
     st.set(objgeo,geo_foo);
+    auto hldgeo = (QRect (*)(ScreenObjectWayland*))(&ScreenObjectWayland::handleGeometry);
+    st.set(hldgeo,geo_foo);
 
     auto ratio_foo = (qreal(*)())([](){return 1.0;});
     st.set(ADDR(QScreen,devicePixelRatio),ratio_foo);
