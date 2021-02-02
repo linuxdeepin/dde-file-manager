@@ -99,12 +99,9 @@ include(../../src/common/common.pri)
 include(../../3rdparty/googletest/gtest_dependency.pri)
 include(tests/test.pri)
 
-#内存检测标签
-TSAN_TOOL_ENABLE = true
-equals(TSAN_TOOL_ENABLE, true ){
+!CONFIG(DISABLE_TSAN_TOOL) {
     #DEFINES += TSAN_THREAD #互斥
     DEFINES += ENABLE_TSAN_TOOL
-    message("deepin-screen-recorder enabled TSAN function with set: " $$TSAN_TOOL_ENABLE)
     contains(DEFINES, TSAN_THREAD){
        QMAKE_CXXFLAGS+="-fsanitize=thread"
        QMAKE_CFLAGS+="-fsanitize=thread"
