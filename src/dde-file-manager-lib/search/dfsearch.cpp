@@ -79,6 +79,7 @@ void DFSearch::searchByKeyWord(const QString &key, void (*callback)(void *, void
     if (!state)
         return;
 
+    cbFunc = callback;
     db_search_results_clear(app->search);
     Database *db = app->db;
     if (!db_try_lock(db)) {
@@ -99,8 +100,7 @@ void DFSearch::searchByKeyWord(const QString &key, void (*callback)(void *, void
 
         db_perform_search(app->search, fsearch_application_window_update_results, app, this);
     }
-    db_unlock(db);
-    cbFunc = callback;
+    db_unlock(db);    
     return ;
 }
 
