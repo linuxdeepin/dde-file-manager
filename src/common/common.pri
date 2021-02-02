@@ -11,6 +11,9 @@ unix {
     ARCH = $$QMAKE_HOST.arch
     isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
         DEFINES += SPLICE_CP
+
+        #不支持CI内存检测
+        CONFIG += DISABLE_TSAN_TOOL
     }
 
     isEqual(ARCH, x86_64) | isEqual(ARCH, i686) {
