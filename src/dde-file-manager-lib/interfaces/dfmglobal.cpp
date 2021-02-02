@@ -124,14 +124,21 @@ void onClipboardDataChanged()
     } else {
         clipboardAction = DFMGlobal::UnknowAction;
     }
-    clipboardFileUrls = mimeData->urls();
-    for (const QUrl &_url : clipboardFileUrls) {
+
+    for (QUrl &_url : mimeData->urls()) {
+        if (_url.scheme().isEmpty())
+            _url.setScheme("file");
+
+        clipboardFileUrls << _url;
         //链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, DUrl(_url));
+        if (!fileInfo || fileInfo->isSymLink())
+            continue;
+
         struct stat statInfo;
         int fileStat = stat(_url.path().toStdString().c_str(), &statInfo);
-        if (0 == fileStat && !S_ISLNK(statInfo.st_mode)) {
+        if (0 == fileStat)
             clipbordFileinode << statInfo.st_ino;
-        }
     }
 }
 
