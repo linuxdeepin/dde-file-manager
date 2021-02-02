@@ -824,8 +824,9 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
     if (askPasswordDialog) {
         askPasswordDialog->deleteLater();
         askPasswordDialog = nullptr;
-        DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
-                                     tr("Mounting device error"), tr("Wrong username or password"));
+        if (AskingPassword)
+            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
+                                        tr("Mounting device error"), tr("Wrong username or password"));
         return;
     }
 
