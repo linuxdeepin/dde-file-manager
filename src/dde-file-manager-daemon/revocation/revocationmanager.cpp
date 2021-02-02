@@ -43,7 +43,7 @@ void RevocationManager::pushEvent(int event, const QString & user)
     if (REVOCATION_TIMES == m_eventStack.size()) {
         m_eventStack.pop_front();
     }
-    EventTypeUser evtTypeUser;
+    RevocationEvent evtTypeUser;
     evtTypeUser.eventType = static_cast<RevocationEventType>(event);
     evtTypeUser.user = user;
     m_eventStack.push(evtTypeUser);
@@ -54,13 +54,13 @@ int RevocationManager::popEvent()
     if (m_eventStack.isEmpty())
         return DFM_NO_EVENT;
 
-    EventTypeUser event = m_eventStack.pop();
+    RevocationEvent event = m_eventStack.pop();
     switch (event.eventType) {
     case DFM_FILE_MGR:
         emit fmgrRevocationAction(event.user);
         break;
     case DFM_DESKTOP:
-        emit deskRevocationAction();
+        emit deskRevocationAction(event.user);
         break;
     case DFM_NO_EVENT:
         break;

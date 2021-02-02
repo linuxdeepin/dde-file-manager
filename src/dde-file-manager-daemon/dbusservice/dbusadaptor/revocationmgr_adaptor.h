@@ -36,7 +36,9 @@ class RevocationMgrAdaptor: public QDBusAbstractAdaptor
 "    <signal name=\"fmgrRevocationAction\">\n"
 "      <arg direction=\"out\" type=\"s\" name=\"user\"/>\n"
 "    </signal>\n"
-"    <signal name=\"deskRevocationAction\"/>\n"
+"    <signal name=\"deskRevocationAction\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"user\"/>\n"
+"    </signal>\n"
 "    <method name=\"pushEvent\">\n"
 "      <arg direction=\"in\" type=\"i\" name=\"event\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"user\"/>\n"
@@ -58,7 +60,7 @@ public Q_SLOTS: // METHODS
     int popEvent();
     void pushEvent(int event, const QString &user);
 Q_SIGNALS: // SIGNALS
-    void deskRevocationAction();
+    void deskRevocationAction(const QString &user);
     void fmgrRevocationAction(const QString &user);
 };
 

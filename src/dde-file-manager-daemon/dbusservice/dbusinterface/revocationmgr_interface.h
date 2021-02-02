@@ -50,7 +50,7 @@ public Q_SLOTS: // METHODS
     }
 
 Q_SIGNALS: // SIGNALS
-    void deskRevocationAction();
+    void deskRevocationAction(const QString &user);
     void fmgrRevocationAction(const QString &user);
 };
 
