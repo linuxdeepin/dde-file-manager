@@ -87,10 +87,10 @@ private:
     void popEvent();
 
     /**
-     * @brief GetSystemUserName 获取当前程序启动的的系统用户名
+     * @brief getProcessOwner 获取当前程序启动的的系统用户名
      * @return  当前程序启动的的系统用户名
      */
-    QString GetSystemUserName();
+    QString getProcessOwner();
 private:
     QStack<DFMEvent> operatorStack;
 

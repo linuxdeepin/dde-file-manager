@@ -76,9 +76,8 @@ OperatorRevocation::OperatorRevocation()
 
 void OperatorRevocation::slotRevocationEvent(const QString & user)
 {
-    if(user == GetSystemUserName()){
+    if (user == getProcessOwner())
         revocation();
-    }
 }
 
 bool OperatorRevocation::initialize()
@@ -181,8 +180,7 @@ QString OperatorRevocation::getProcessName()
 
 void OperatorRevocation::pushEvent()
 {
-    QString currentUser = GetSystemUserName();
-    qWarning() << "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-" << currentUser;
+    QString currentUser = getProcessOwner();
     if (m_dbusInterface && m_dbusInterface->isValid()) {
         m_dbusInterface->pushEvent(m_eventType, currentUser);
     } else {
@@ -207,7 +205,7 @@ void OperatorRevocation::popEvent()
     }
 }
 
-QString OperatorRevocation::GetSystemUserName()
+QString OperatorRevocation::getProcessOwner()
 {
     QString command = "whoami";
     QProcess p;
