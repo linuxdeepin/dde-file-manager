@@ -430,7 +430,8 @@ public:
 class DFMMoveToTrashEvent : public DFMUrlListBaseEvent
 {
 public:
-    explicit DFMMoveToTrashEvent(const QObject *sender, const DUrlList &list, bool silent = false);
+    //! 新增剪切回收站路径cutList
+    explicit DFMMoveToTrashEvent(const QObject *sender, const DUrlList &list, bool silent = false, const DUrlList &cutList = DUrlList());
 
     bool silent() const;
     static QSharedPointer<DFMMoveToTrashEvent> fromJson(const QJsonObject &json);
@@ -447,9 +448,8 @@ public:
 class DFMPasteEvent : public DFMUrlListBaseEvent
 {
 public:
-    //! 新增剪切回收站路径cutList
     explicit DFMPasteEvent(const QObject *sender, DFMGlobal::ClipboardAction action,
-                           const DUrl &targetUrl, const DUrlList &list, const DUrlList &cutList = DUrlList());
+                           const DUrl &targetUrl, const DUrlList &list);
 
     DFMGlobal::ClipboardAction action() const;
     DUrl targetUrl() const;
