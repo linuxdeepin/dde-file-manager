@@ -150,7 +150,8 @@ void FileUtils::recurseFolder(const QString &path, const QString &parent,
 {
     // Get all files in this path
     QDir dir(path);
-    QStringList files = dir.entryList(QDir::AllEntries | QDir::Files
+    //删出都是系统的链接文件时，这里统计不到，使用QDir::System标志
+    QStringList files = dir.entryList(QDir::AllEntries | QDir::System
                                       | QDir::NoDotAndDotDot | QDir::Hidden);
 
     // Go through all files in current directory

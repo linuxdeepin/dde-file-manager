@@ -1161,6 +1161,8 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             }
 
             DFileCopyMoveJob::Handle *handle = dialogManager->taskDialog()->addTaskJob(job, true);
+            // fix bug 62822 设置当前进度条已显示，来显示进度到100%
+            fileJob->setProgressShow(true);
             emit job->currentJobChanged(sourceInfo ? sourceInfo->fileUrl() : DUrl(), targetInfo ? targetInfo->fileUrl() : DUrl(), true);
 
             if (!handle) {
@@ -1186,6 +1188,8 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             //这里是延时处理，会出现正在执行吃此处代码时，filejob线程完成了
             if (!fileJob->isFinished() && fileJob->isCanShowProgress()) {
                 dialogManager->taskDialog()->addTaskJob(fileJob.data(), true);
+                // fix bug 62822 设置当前进度条已显示，来显示进度到100%
+                fileJob->setProgressShow(true);
                 emit fileJob->currentJobChanged(currentJob.first, currentJob.second, false);
             }
             //在移动到同一个目录时，先不现实进度条，当有其他目录到同一个目录时，才会去显示

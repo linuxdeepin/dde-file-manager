@@ -185,6 +185,8 @@ public:
     void waitRefineThreadFinish();
 
     void setCurTrashData(QVariant fileNameList);
+    //设置当前拷贝显示了进度条
+    void setProgressShow(const bool &isShow);
 
     static Actions supportActions(Error error);
 
