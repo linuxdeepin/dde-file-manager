@@ -75,6 +75,7 @@ void DFSearch::searchByKeyWord(const QString &key, void (*callback)(void *, void
     // 防止在db_search_results_clear中触发断言，导致文管退出，先自行判断一下
     if (app->search == nullptr) return;
 
+    cbFunc = callback;
     load_database(app, pathForSearching.toLocal8Bit().data());//加载数据库
     db_search_results_clear(app->search);
     Database *db = app->db;
@@ -96,8 +97,7 @@ void DFSearch::searchByKeyWord(const QString &key, void (*callback)(void *, void
 
         db_perform_search(app->search, fsearch_application_window_update_results, app, this);
     }
-    db_unlock(db);
-    cbFunc = callback;
+    db_unlock(db);    
     return ;
 }
 
