@@ -186,6 +186,14 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(copy_action, &QAction::triggered,
     q, [q] {
+        // fix bug 62872
+        // 与右键菜单保持一致，如果选中项只有一个且选中项不可读，则复制操作无效
+        if (q->selectedUrls().size() == 1) {
+            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(nullptr, q->selectedUrls().first());
+            if (!fileInfo || !fileInfo->isReadable())
+                return;
+        }
+
         fileService->writeFilesToClipboard(q, DFMGlobal::CopyAction, q->selectedUrls());
     });
 
