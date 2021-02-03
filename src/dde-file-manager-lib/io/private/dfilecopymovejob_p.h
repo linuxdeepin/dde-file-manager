@@ -298,8 +298,8 @@ public:
     qint64 m_refineCopySize = 0;
     QMutex m_refineMutex, m_errorMutex;
     QList<DUrl> m_errorUrlList;
-    //是否可以现实进度条
-    QAtomicInteger<bool> m_isShowProgress = false;
+    //是否需要显示进度条
+    QAtomicInteger<bool> m_isNeedShowProgress = false;
     //是否需要每读写一次同步
     bool m_isEveryReadAndWritesSnc = false;
     bool m_isVfat = false;
@@ -321,6 +321,8 @@ public:
     QMutex m_currentDeviceMutex;
     //当前本地目录大小
     qint32 m_currentDirSize = 0;
+    //当前拷贝进程是否显示了进度条
+    QAtomicInteger<bool> m_isProgressShow = false;
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
 

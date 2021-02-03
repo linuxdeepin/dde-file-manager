@@ -764,7 +764,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
 
         bool ok = false;
         //可以显示进度条
-        m_isShowProgress = true;
+        m_isNeedShowProgress = true;
         qint64 size = fileInfo->isSymLink() ? 0 : fileInfo->size();
 
         if (fileInfo->isFile() || fileInfo->isSymLink()) {
@@ -830,7 +830,7 @@ create_new_file_info:
             return true;
         }
         //可以显示进度条
-        m_isShowProgress = true;
+        m_isNeedShowProgress = true;
 
         // 禁止目录复制/移动到自己里面
         if (new_file_info->isAncestorsUrl(source_info->fileUrl())) {
@@ -907,7 +907,7 @@ create_new_file_info:
         }
     }
 
-    m_isShowProgress = true;
+    m_isNeedShowProgress = true;
 
     if (source_info->isSymLink()) {
         bool ok = false;
@@ -3510,7 +3510,7 @@ QList<QPair<DUrl, DUrl>> DFileCopyMoveJob::completedDirectorys() const
 bool DFileCopyMoveJob::isCanShowProgress() const
 {
     Q_D(const DFileCopyMoveJob);
-    return d->m_isShowProgress;
+    return d->m_isNeedShowProgress;
 }
 
 bool DFileCopyMoveJob::getSysncState()
@@ -3602,6 +3602,12 @@ void DFileCopyMoveJob::setCurTrashData(QVariant fileNameList)
 {
     Q_D(DFileCopyMoveJob);
     d->setCutTrashData(fileNameList);
+}
+
+void DFileCopyMoveJob::setProgressShow(const bool &isShow)
+{
+    Q_D(DFileCopyMoveJob);
+    d->m_isProgressShow.store(isShow);
 }
 
 DFileCopyMoveJob::Actions DFileCopyMoveJob::supportActions(DFileCopyMoveJob::Error error)
@@ -3746,8 +3752,8 @@ void DFileCopyMoveJob::run()
 {
     Q_D(DFileCopyMoveJob);
 
-
-    qCDebug(fileJob()) << "start job, mode:" << d->mode << "file url list:" << d->sourceUrlList << ", target url:" << d->targetUrl;
+    //记录关键信息
+    qInfo() << "start job, mode:" << d->mode << "file url list:" << d->sourceUrlList << ", target url:" << d->targetUrl;
     qint64 timesec = QDateTime::currentMSecsSinceEpoch();
     d->m_sart = timesec;
 
@@ -3773,7 +3779,6 @@ void DFileCopyMoveJob::run()
     DAbstractFileInfoPointer target_info;
     bool mayExecSync = false;
     QPointer<DFileCopyMoveJob> me = this;
-//    QPointer<DFileCopyMoveJobPrivate> dp = d;
 
     if (d->targetUrl.isValid()) {
         target_info = DFileService::instance()->createFileInfo(nullptr, d->targetUrl);
@@ -4014,8 +4019,12 @@ end:
     d->setState(StoppedState);
 
     if (d->error == NoError) {
+        d->updateSpeedTimer->stop();
         Q_EMIT progressChanged(1, d->completedDataSize);
     }
+    // fix bug 62822 如果进度条显示了，才沉睡0.3秒，来显示进度都100%
+    if (d->m_isProgressShow.load())
+        QThread::msleep(300);
 
     qCDebug(fileJob()) << "job finished, error:" << error() << ", message:" << errorString() << QDateTime::currentMSecsSinceEpoch() - timesec;
 }
