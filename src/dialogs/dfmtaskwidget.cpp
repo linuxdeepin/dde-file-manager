@@ -382,7 +382,7 @@ void DFMTaskWidget::setSpeedText(const QString &speed, const QString &rmtime)
     {
         //! 进度条100%后任务对话框中显示数据同步种与即将完成
         d->m_lbSpeed->setText(tr("Syncing data"));
-        d->m_lbRmTime->setText(tr("Ready to complete"));
+        d->m_lbRmTime->setText(tr("Please wait"));
     }
     else {
         d->m_lbSpeed->setText(speed);

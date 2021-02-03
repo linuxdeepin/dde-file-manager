@@ -502,8 +502,8 @@
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="385"/>
-        <source>Ready to complete</source>
-        <translation>即將完成，請稍候</translation>
+        <source>Please wait</source>
+        <translation>請稍候</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="440"/>
@@ -997,8 +997,8 @@
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="3932"/>
-        <source>Ready to complete</source>
-        <translation>即將完成，請稍候</translation>
+        <source>Please wait</source>
+        <translation>請稍候</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1053"/>
