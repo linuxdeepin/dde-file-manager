@@ -245,7 +245,9 @@ void WaterMaskFrame::initUI()
     }
 
     if(isNeedState()){
+        qInfo() << "get active state from com.deepin.license.Info";
         ActiveState stateType = static_cast<ActiveState>(m_licenseInterface->AuthorizationState());
+        qInfo() << "ActiveState:" << stateType;
         switch (stateType) {
         case Unauthorized:
         case AuthorizedLapse:
