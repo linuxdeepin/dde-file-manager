@@ -1295,7 +1295,7 @@ void FileController::dealpasteEnd(const DUrlList &list, const QSharedPointer<DFM
         }
         //! 新增剪切回收站路径event->urlList()
         if (targetDir.startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
-            DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files, event->urlList()), true);
+            DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, valid_files, false, event->urlList()), true);
         } else {
             DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files), true);
         }

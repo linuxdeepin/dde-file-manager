@@ -528,10 +528,11 @@ QSharedPointer<DFMDeleteEvent> DFMDeleteEvent::fromJson(const QJsonObject &json)
     return event;
 }
 
-DFMMoveToTrashEvent::DFMMoveToTrashEvent(const QObject *sender, const DUrlList &list, bool silent)
+DFMMoveToTrashEvent::DFMMoveToTrashEvent(const QObject *sender, const DUrlList &list, bool silent, const DUrlList &cutList)
     : DFMUrlListBaseEvent(MoveToTrash, sender, list)
 {
     setProperty(QT_STRINGIFY(DFMMoveToTrashEvent::silent), silent);
+    setCutData(cutList);
 }
 
 bool DFMMoveToTrashEvent::silent() const
@@ -556,11 +557,10 @@ QSharedPointer<DFMRestoreFromTrashEvent> DFMRestoreFromTrashEvent::fromJson(cons
 }
 
 DFMPasteEvent::DFMPasteEvent(const QObject *sender, DFMGlobal::ClipboardAction action,
-                             const DUrl &targetUrl, const DUrlList &list, const DUrlList &cutList)
+                             const DUrl &targetUrl, const DUrlList &list)
     : DFMUrlListBaseEvent(PasteFile, sender, list)
 {
     setData(list);
-    setCutData(cutList);
     setProperty(QT_STRINGIFY(DFMPasteEvent::action), action);
     setProperty(QT_STRINGIFY(DFMPasteEvent::targetUrl), targetUrl);
 }
