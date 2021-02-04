@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -1000,7 +998,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="3984"/>
         <source>Please wait</source>
-        <translation type="unfinished">请稍候</translation>
+        <translation>请稍候</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1072"/>
@@ -1358,12 +1356,12 @@
     <message>
         <location filename="../interfaces/dumountmanager.cpp" line="193"/>
         <source>The device is busy, cannot eject now</source>
-        <translation></translation>
+        <translation>光驱正忙，无法弹出</translation>
     </message>
     <message>
         <location filename="../interfaces/dumountmanager.cpp" line="202"/>
         <source>The device is busy, cannot remove now</source>
-        <translation></translation>
+        <translation>设备正忙，无法安全移除</translation>
     </message>
 </context>
 <context>
@@ -1603,7 +1601,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="893"/>
         <source>Name: </source>
-        <translation>名字：</translation>
+        <translation>名称：</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="895"/>
@@ -4161,7 +4159,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="64"/>
         <source>Others</source>
-        <translation>其它</translation>
+        <translation>其他</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="65"/>

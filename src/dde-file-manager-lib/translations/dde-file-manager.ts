@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -1000,7 +998,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="3984"/>
         <source>Please wait</source>
-        <translation type>Please wait</translation>
+        <translation>Please wait</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1072"/>
@@ -1342,28 +1340,28 @@
         <location filename="../interfaces/dumountmanager.cpp" line="136"/>
         <location filename="../interfaces/dumountmanager.cpp" line="156"/>
         <source>Authentication timed out</source>
-        <translation type="unfinished">Authentication timed out</translation>
+        <translation>Authentication timed out</translation>
     </message>
     <message>
         <location filename="../interfaces/dumountmanager.cpp" line="139"/>
         <source>Disk is busy, cannot unmount now</source>
-        <translation type="unfinished">Disk is busy, cannot unmount now</translation>
+        <translation>Disk is busy, cannot unmount now</translation>
     </message>
     <message>
         <location filename="../interfaces/dumountmanager.cpp" line="150"/>
         <location filename="../interfaces/dumountmanager.cpp" line="159"/>
         <source>Disk is busy, cannot eject now</source>
-        <translation type="unfinished">Disk is busy, cannot eject now</translation>
+        <translation>Disk is busy, cannot eject now</translation>
     </message>
     <message>
         <location filename="../interfaces/dumountmanager.cpp" line="193"/>
         <source>The device is busy, cannot eject now</source>
-        <translation type="unfinished"></translation>
+        <translation>The device is busy, cannot eject now</translation>
     </message>
     <message>
         <location filename="../interfaces/dumountmanager.cpp" line="202"/>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"></translation>
+        <translation>The device is busy, cannot remove now</translation>
     </message>
 </context>
 <context>
