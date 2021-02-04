@@ -1661,15 +1661,8 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
     for (const auto &url : m_urlsForDragEvent) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));
 
-        // a symlink that points to a non-existing file QFileInfo::isReadAble() returns false
-        if (!fileInfo || (!fileInfo->isSymLink() && !fileInfo->isReadable())) {
-            event->ignore();
-
-            return;
-        }
-
         //部分文件不能复制或剪切，需要在拖拽时忽略
-        if (!fileInfo->canMoveOrCopy()) {
+        if (!fileInfo || !fileInfo->canMoveOrCopy()) {
             event->ignore();
             return;
         }
