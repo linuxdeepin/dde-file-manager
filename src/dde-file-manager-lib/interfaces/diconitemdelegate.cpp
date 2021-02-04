@@ -832,8 +832,10 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
     FileIconItem *item = new FileIconItem(parent);
 
-    connect(item, &FileIconItem::inputFocusOut, this, &DIconItemDelegate::onEditWidgetFocusOut);
+    //此处更改逻辑不再保持焦点离开后依然保持的item编辑态，将会提交相关的编辑框(与桌面保持一致)
+    connect(item, &FileIconItem::inputFocusOut, this, &DIconItemDelegate::commitDataAndCloseActiveEditor);
     connect(item, &FileIconItem::destroyed, this, [this, d] {
+        Q_UNUSED(this)
         d->editingIndex = QModelIndex();
     });
 
@@ -1236,27 +1238,11 @@ QList<QRectF> DIconItemDelegate::drawText(const QModelIndex &index, QPainter *pa
 
 void DIconItemDelegate::onEditWidgetFocusOut()
 {
-    Q_D(DIconItemDelegate);
-    //dfm与dde-desktop是两个独立的进程，focusWidget与focusWindow将不可取
-    //当前焦点窗口已经为空表示qApp已经监测不到当前window的焦点
-    if (nullptr == qApp->focusWindow()) {
-        if (d->editingIndex.isValid())
-            emit commitData(parent()->indexWidget(d->editingIndex));
-        return hideAllIIndexWidget();
-    }
+    //这里判断是为了保持编辑框的状态，使编辑框一直存在。类似setEnable的状态
+    if (qApp->focusWidget() && qApp->focusWidget()->window() == parent()->parent()->window()
+            && qApp->focusWidget() != parent()->parent()) {
 
-    //同一个程序中不同的窗口焦点
-    if (m_focusWindow != qApp->focusWindow()) {
-        if (d->editingIndex.isValid())
-            emit commitData(parent()->indexWidget(d->editingIndex));
-        return hideAllIIndexWidget();
-    }
-
-    //当前焦点不在parent中(view任意项中)
-    if (qApp->focusWidget() != parent()->parent()) {
-        if (d->editingIndex.isValid())
-            emit commitData(parent()->indexWidget(d->editingIndex));
-        return hideAllIIndexWidget();
+        hideAllIIndexWidget();
     }
 }
 
