@@ -1081,7 +1081,6 @@ void DFileManagerWindow::initTitleBar()
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);
     titlebar()->setCustomWidget(d->titleFrame, false);
-    titlebar()->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 
     // fix: titlebar的move事件在自定义的耗时异步事件时会失效，因此自行处理titlebar的事件
     titlebar()->installEventFilter(this);
