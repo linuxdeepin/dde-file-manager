@@ -1,5 +1,28 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="ca" version="2.1">
 <context>
+    <name>DUMountManager</name>
+    <message>
+        <source>Authentication timed out</source>
+        <translation>S&apos;ha esgotat el temps d&apos;espera de l&apos;autenticació.</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot unmount now</source>
+        <translation>El disc està ocupat. No es pot desmuntar ara.</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot eject now</source>
+        <translation>El disc està ocupat. No es pot extreure ara.</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>El dispositiu està ocupat. No es pot extreure ara.</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>El dispositiu està ocupat. No es pot suprimir ara.</translation>
+    </message>
+</context>
+<context>
     <name>DeepinStorage</name>
     <message>
         <source>%1 Volume</source>

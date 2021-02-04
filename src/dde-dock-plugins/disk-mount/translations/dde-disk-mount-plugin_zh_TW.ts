@@ -1,5 +1,28 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_TW" version="2.1">
 <context>
+    <name>DUMountManager</name>
+    <message>
+        <source>Authentication timed out</source>
+        <translation>認證超時</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot unmount now</source>
+        <translation>磁碟忙碌中，現無法卸載</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot eject now</source>
+        <translation>磁碟忙碌，現在無法退出</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>光碟機正忙，無法彈出</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>裝置正忙，無法安全移除</translation>
+    </message>
+</context>
+<context>
     <name>DeepinStorage</name>
     <message>
         <source>%1 Volume</source>
