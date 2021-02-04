@@ -1,5 +1,28 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="bo" version="2.1">
 <context>
+    <name>DUMountManager</name>
+    <message>
+        <source>Authentication timed out</source>
+        <translation>དཔང་དཔྱད་དུས་བརྒལ།</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot unmount now</source>
+        <translation>སྡུད་སྡེར་ཡིག་ཆ་གཞན་གྱིས་བཟུང་ཡོད་པས། བཤིག་འདོན་བྱེད་ཐབས་བྲལ།</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot eject now</source>
+        <translation>སྡུད་སྡེར་ཡིག་ཆ་གཞན་གྱིས་བཟུང་ཡོད་པས། ཕྱིར་དོན་ཐབས་བྲལ།</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>འོད་སྡེར་བྲེལ་བཞིན་འདུག་པས། ཕྱིར་བཏོན་ཐབས་བྲལ། </translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>འོད་སྡེར་བྲེལ་བཞིན་འདུག་པས། བདེ་འཇགས་ངང་ཕྱིར་བཏོན་ཐབས་བྲལ། </translation>
+    </message>
+</context>
+<context>
     <name>DeepinStorage</name>
     <message>
         <source>%1 Volume</source>

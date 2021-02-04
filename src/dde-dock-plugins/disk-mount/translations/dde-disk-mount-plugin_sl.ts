@@ -1,5 +1,28 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="sl" version="2.1">
 <context>
+    <name>DUMountManager</name>
+    <message>
+        <source>Authentication timed out</source>
+        <translation>Čas za overitev je potekel</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot unmount now</source>
+        <translation>Disk je v rabi. Trenutno ga ni mogoče odklopiti</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot eject now</source>
+        <translation>Disk deluje in ga trenutno ni mogoče varno odstraniti</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>Naprava je v rabi in je trenutno ni mogoče izvreči</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>Naprava je v rabi n je trenutno ni mogoče odstraniti</translation>
+    </message>
+</context>
+<context>
     <name>DeepinStorage</name>
     <message>
         <source>%1 Volume</source>

@@ -1,5 +1,28 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="cs" version="2.1">
 <context>
+    <name>DUMountManager</name>
+    <message>
+        <source>Authentication timed out</source>
+        <translation>Překročen časový limit pro ověření se</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot unmount now</source>
+        <translation>Disk je zaneprázdněn, nyní ho proto nelze odpojit</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot eject now</source>
+        <translation>Disk je zaneprázdněn, nyní ho proto nelze vysunout</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>Zařízení je něčím využíváno, proto ho nyní není možné vysunout</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>Zařízení je něčím využíváno, proto ho není možné nyní odebrat</translation>
+    </message>
+</context>
+<context>
     <name>DeepinStorage</name>
     <message>
         <source>%1 Volume</source>

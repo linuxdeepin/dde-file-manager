@@ -1,5 +1,28 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="de" version="2.1">
 <context>
+    <name>DUMountManager</name>
+    <message>
+        <source>Authentication timed out</source>
+        <translation>Zeitüberschreitung bei der Authentifizierung</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot unmount now</source>
+        <translation>Die Festplatte wird verwndet und kann jetzt nicht ausgehängt werden</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot eject now</source>
+        <translation>Festplatte wird verwendet, sie kann jetzt nicht ausgeworfen werden</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>Das Gerät ist beschäftigt, kann jetzt nicht ausgeworfen werden</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>Das Gerät ist beschäftigt, kann jetzt nicht entfernt werden</translation>
+    </message>
+</context>
+<context>
     <name>DeepinStorage</name>
     <message>
         <source>%1 Volume</source>

@@ -1,5 +1,28 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="ro" version="2.1">
 <context>
+    <name>DUMountManager</name>
+    <message>
+        <source>Authentication timed out</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disk is busy, cannot unmount now</source>
+        <translation>Disc ocupat, nu se poate demonta acum</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot eject now</source>
+        <translation>Disc ocupat, nu se poate elimina acum</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>Dispozitivul este ocupat, nu pot scoate acum</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>Dispozitivul este ocupat, nu poate fi eliminat acum</translation>
+    </message>
+</context>
+<context>
     <name>DeepinStorage</name>
     <message>
         <source>%1 Volume</source>
