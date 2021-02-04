@@ -533,13 +533,13 @@ void DFMAddressBar::updateCompletionState(const QString &text)
     int slashIndex = text.lastIndexOf('/');
     bool hasSlash = (slashIndex != -1);
     // 修复bug-62112 对保险箱虚拟路径特殊判断，将保险箱虚拟路径转化为本地路径
-    DUrl url;
     QString strLocalPath(text);
     if (strLocalPath.startsWith(DFMVAULT_ROOT)) {
-        url = DUrl::fromLocalFile(VaultController::virtualPathToLocalPath(strLocalPath));
+        strLocalPath = VaultController::virtualPathToLocalPath(hasSlash ? strLocalPath.left(slashIndex + 1) : strLocalPath);
     } else {
-        url = DUrl::fromUserInput(hasSlash ? strLocalPath.left(slashIndex + 1) : strLocalPath, false);
+        strLocalPath = hasSlash ? strLocalPath.left(slashIndex + 1) : strLocalPath;
     }
+    const DUrl &url = DUrl::fromUserInput(strLocalPath, false);
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
     // Check if the entered text is a string to search or a url to complete.
