@@ -351,6 +351,8 @@ DFMTaskWidget::DFMTaskWidget(QWidget *parent)
     , d_private(new DFMTaskWidgetPrivate(this))
 {
     setMouseTracking(true);
+    //fix bug 63004 不显示操作按钮调整widget的高度
+    showConflictButtons(false);
 }
 
 DFMTaskWidget::~DFMTaskWidget()
