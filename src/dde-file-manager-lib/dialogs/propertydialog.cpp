@@ -428,7 +428,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
 
     } else {
         // tagged file basicinfo not complete??
-        DUrl realUrl = m_url.isTaggedFile() ? DUrl::fromLocalFile(m_url.fragment()) : m_url;
+        DUrl realUrl = m_url.isTaggedFile() ? DUrl::fromLocalFile(m_url.fragment(QUrl::FullyDecoded)) : m_url;
 
         //! bug#40608 解决通过标记访问保险箱，属性菜单显示不正确的问题.
         bool isVaultFile = VaultController::isRootDirectory(realUrl.toLocalFile());

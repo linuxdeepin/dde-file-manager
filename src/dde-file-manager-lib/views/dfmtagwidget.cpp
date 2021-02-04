@@ -87,7 +87,7 @@ DUrl DFMTagWidgetPrivate::redirectUrl(const DUrl &url)
 {
     DUrl durl = url;
     if (url.isTaggedFile()) {
-        durl = DUrl::fromLocalFile(url.fragment());
+        durl = DUrl::fromLocalFile(url.fragment(QUrl::FullyDecoded));
     } else if (url.isSearchFile()) {
         durl = url.searchedFileUrl();
     } else if (url.isVaultFile()) {
