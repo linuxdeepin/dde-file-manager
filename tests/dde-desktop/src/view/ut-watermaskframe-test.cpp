@@ -1,10 +1,13 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+
 #define protected public
 #define private public
+
 #include "view/watermaskframe.h"
-#include "stub.h"
+#include "stubext.h"
 #include "config/config.h"
+#include "dbus/licenceInterface.h"
 
 using namespace testing;
 
@@ -50,20 +53,37 @@ TEST(WaterMaskFrame, test_parseJson)
     ret = wid.parseJson("1");
     EXPECT_TRUE(ret);
 }
-//stub
-QVariant myConfig()
-{
-    return 0;
-}
+
 TEST(WaterMaskFrame, test_initui)
 {
 
     WaterMaskFrame* wid = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
-    Stub tub, tub1;
-    tub.set(ADDR(Config, getConfig), myConfig);
+    stub_ext::StubExt tub;
+    tub.set_lamda(ADDR(Config, getConfig), [](){return 0;});
     wid->initUI();
     QJsonObject object;
     wid->m_configs = object;
     wid->initUI();
     delete wid;
 }
+
+TEST(WaterMaskFrame, test_initui_extend)
+{
+    WaterMaskFrame* wid = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
+    stub_ext::StubExt tub;
+    tub.set_lamda(ADDR(Config, getConfig), [](){return 0;});
+    tub.set_lamda(ADDR(ComDeepinLicenseInterface, AuthorizationState), [](){return ActiveState::Authorized;});
+    wid->initUI();
+    EXPECT_TRUE(wid->m_textLabel->text().isEmpty());
+
+    tub.reset(ADDR(ComDeepinLicenseInterface, AuthorizationState));
+    tub.set_lamda(ADDR(ComDeepinLicenseInterface, AuthorizationState), [](){return ActiveState::TrialAuthorized;});
+    wid->initUI();
+    EXPECT_TRUE(!wid->m_textLabel->text().isEmpty());
+
+    tub.set_lamda(ADDR(WaterMaskFrame, isNeedState), [](){return false;});
+    wid->initUI();
+    EXPECT_TRUE(wid->m_textLabel->text().isEmpty());
+    delete wid;
+}
+

@@ -18,6 +18,7 @@
 #include "durl.h"
 #include "canvasgridview.h"
 #include "canvasviewmanager.h"
+#include "stubext.h"
 
 TEST(DfileSelectionModelTest, dfile_selection_model)
 {
@@ -29,6 +30,12 @@ TEST(DfileSelectionModelTest, dfile_selection_model)
 
 TEST(DfileSelectionModelTest, select)
 {
+    void(*foo_stub1)(void*) = [](void* obj){return;};
+    stub_ext::StubExt stu;
+    typedef int (*fptr)(QItemSelectionModel*, int);
+    fptr A_foo = (fptr)((void(QItemSelectionModel::*)(const QItemSelection&, QItemSelectionModel::SelectionFlags))&QItemSelectionModel::select);
+    Stub stub;
+    stub.set(A_foo, foo_stub1);
     DFileSelectionModel dfile;
     QItemSelection item;
     dfile.select(item, QItemSelectionModel::SelectionFlags(QItemSelectionModel::Clear));
@@ -36,8 +43,9 @@ TEST(DfileSelectionModelTest, select)
     EXPECT_EQ(dfile.m_firstSelectedIndex, QModelIndex());
     EXPECT_EQ(dfile.m_lastSelectedIndex, QModelIndex());
     EXPECT_EQ(dfile.m_currentCommand, QItemSelectionModel::Clear);
-    dfile.m_timer.start(500);
+    dfile.m_timer.start();
     dfile.select(item, QItemSelectionModel::SelectionFlags(QItemSelectionModel::Current | QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect));
+    dfile.select(item, QItemSelectionModel::SelectionFlags(QItemSelectionModel::NoUpdate | QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect));
 }
 
 TEST(DfileSelectionModelTest, selected_indexes)
@@ -180,4 +188,18 @@ TEST(DfileSelectionModelTest, test_isselected)
     ulist << url;
     if (ulist.size())
         EXPECT_FALSE(dfile.isSelected(m_canvasGridView->model()->index(ulist[0])));
+}
+
+TEST(DfileSelectionModelTest, test_updateSelecteds)
+{
+    static bool isupdate = false;
+    void(*foo_stub)(void*) = [](void* obj){isupdate = true; return;};
+    DFileSelectionModel dfile;
+    stub_ext::StubExt stu;
+    typedef int (*fptr)(QItemSelectionModel*, int);
+    fptr A_foo = (fptr)((void(QItemSelectionModel::*)(const QItemSelection&, QItemSelectionModel::SelectionFlags))&QItemSelectionModel::select);
+    Stub stub;
+    stub.set(A_foo, foo_stub);
+    dfile.updateSelecteds();
+    EXPECT_TRUE(isupdate);
 }
