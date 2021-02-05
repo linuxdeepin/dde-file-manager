@@ -1404,8 +1404,6 @@ open_file: {
                 toDevice->closeWriteReadFailed(true);
             }
             return false;
-
-
         }
         //如果写失败了，直接推出
         if (size_write < 0) {
@@ -4021,10 +4019,11 @@ end:
     if (d->error == NoError) {
         d->updateSpeedTimer->stop();
         Q_EMIT progressChanged(1, d->completedDataSize);
+        // fix bug 62822 如果进度条显示了，才沉睡0.3秒，来显示进度都100%
+        if (d->m_isProgressShow.load())
+            QThread::msleep(300);
+
     }
-    // fix bug 62822 如果进度条显示了，才沉睡0.3秒，来显示进度都100%
-    if (d->m_isProgressShow.load())
-        QThread::msleep(300);
 
     qCDebug(fileJob()) << "job finished, error:" << error() << ", message:" << errorString() << QDateTime::currentMSecsSinceEpoch() - timesec;
 }
