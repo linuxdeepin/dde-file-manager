@@ -79,11 +79,16 @@
 
 void handleSIGTERM(int sig)
 {
-    qDebug() << "!SIGTERM!" << sig;
+    qCritical() << "break with !SIGTERM! " << sig;
 
     if (qApp) {
         qApp->quit();
     }
+}
+
+void handleSIGPIPE(int sig)
+{
+    qCritical() << "ignore !SIGPIPE! " << sig;
 }
 
 DWIDGET_USE_NAMESPACE
@@ -203,6 +208,7 @@ int main(int argc, char *argv[])
         }
 
         signal(SIGTERM, handleSIGTERM);
+        signal(SIGPIPE, handleSIGPIPE); // SIGPIPE 引起程序挂死
 //        修复root用户无法接收程序退出信号导致程序异常卡死
 //        signal(SIGBUS, SIG_IGN); // 硬件问题引起coredump
 //        signal(SIGCHLD, SIG_IGN);
