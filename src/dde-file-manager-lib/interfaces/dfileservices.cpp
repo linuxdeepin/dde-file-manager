@@ -1047,7 +1047,6 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
         //文件不存在弹提示框
         d->smbftpmutex.lock();
         bool bbusy = d->m_rootsmbftpurllist.value(rooturl);
-        qDebug() << bbusy;
         d->smbftpmutex.unlock();
         if (bbusy && showdailog) {
             dialogManager->showUnableToLocateDir(rootfilename);

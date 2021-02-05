@@ -121,13 +121,13 @@ void DRootFileManager::changeRootFile(const DUrl &fileurl, const bool bcreate)
             DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, fileurl);
             if (info->exists()) {
                 d_ptr->rootfilelist.insert(fileurl, info);
-                qDebug() << "  insert   " << fileurl;
+                qInfo() << "  insert   " << fileurl;
             }
         }
     } else {
         qDebug() << "  remove   " << d_ptr->rootfilelist;
         if (d_ptr->rootfilelist.contains(fileurl)) {
-            qDebug() << "  remove   " << fileurl;
+            qInfo() << "  remove   " << fileurl;
             d_ptr->rootfilelist.remove(fileurl);
         }
     }
@@ -163,12 +163,12 @@ void DRootFileManager::startQuryRootFile()
     QMutexLocker lk(&d_ptr->rootfileMtx);
 
     if (openAsAdmin && d_ptr->m_jobcontroller && d_ptr->m_jobcontroller->isRunning()) {
-        qDebug() << "startQuryRootFile thread is running" << d_ptr->m_jobcontroller->currentThread();
+        qInfo() << "startQuryRootFile thread is running" << d_ptr->m_jobcontroller->currentThread();
         return;
     }
 
     if (!openAsAdmin && d_ptr->m_jobcontroller) {
-        qDebug() << "startQuryRootFile thread is running" << d_ptr->m_jobcontroller->currentThread();
+        qInfo() << "startQuryRootFile thread is running" << d_ptr->m_jobcontroller->currentThread();
         return;
     }
 
@@ -201,7 +201,7 @@ void DRootFileManager::startQuryRootFile()
     connect(d_ptr->m_jobcontroller, &JobController::finished, this, [this]() {
         QMutexLocker locker(&d_ptr->rootfileMtx);
         d_ptr->m_jobcontroller->deleteLater();
-        qDebug() << "获取 m_jobcontroller  finished  " << QThread::currentThreadId() << d_ptr->rootfilelist.size();
+        qInfo() << "get root file info thread jobcontroller finished " << QThread::currentThreadId() << d_ptr->rootfilelist.size();
         d_ptr->m_jobcontroller = nullptr;
         d_ptr->m_bRootFileInited.store(true);
         locker.unlock();

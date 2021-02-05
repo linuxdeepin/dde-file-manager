@@ -530,7 +530,7 @@ void DFMTaskWidget::showConflictButtons(bool showBtns/*=true*/, bool showConflic
         return;
     }
 
-    qDebug() << d->m_widButton->sizeHint().height() << d->m_widConfict->sizeHint().height();
+    qInfo() << showBtns << d->m_widButton->sizeHint().height() << d->m_widConfict->sizeHint().height();
     int h = 100;
     if (showBtns) {
         h += d->m_widButton->sizeHint().height();

@@ -3398,7 +3398,7 @@ bool DFileView::fetchDragEventUrlsFromSharedMemory()
     buffer.setData(static_cast<char *>(const_cast<void *>(sm.constData())), sm.size());
     buffer.open(QBuffer::ReadOnly);     //设置读取模式
     in >> m_urlsForDragEvent;               //使用数据流从缓冲区获得共享内存的数据，然后输出到字符串中
-    qDebug() << m_urlsForDragEvent;
+    qInfo() << "drop file urls = " << m_urlsForDragEvent << "to current url = " << rootUrl();
     sm.unlock();    //解锁
     sm.detach();//与共享内存空间分离
 
