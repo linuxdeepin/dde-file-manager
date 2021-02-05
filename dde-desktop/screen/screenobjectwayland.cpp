@@ -126,7 +126,7 @@ bool ScreenObjectWayland::enabled() const
 
 void ScreenObjectWayland::init()
 {
-    connect(m_monitor,&DBusMonitor::monitorRectChanged,[this](){
+    connect(m_monitor,&DBusMonitor::monitorRectChanged, this, [this](){
         emit sigGeometryChanged(geometry());
     });
 }

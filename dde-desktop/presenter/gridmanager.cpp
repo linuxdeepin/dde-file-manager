@@ -2606,7 +2606,7 @@ void GridManager::delaySyncAllProfile(int ms)
 
     syncTimer = new QTimer;
     syncTimer->setSingleShot(true);
-    connect(syncTimer,&QTimer::timeout,[=](){
+    connect(syncTimer,&QTimer::timeout,this, [=](){
         syncTimer->stop();
         d->syncAllProfile();
     });

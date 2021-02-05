@@ -26,7 +26,7 @@ void ScreenManager::onScreenAdded(QScreen *screen)
     ScreenObjectPointer psc(new ScreenObject(screen));
     m_screens.insert(screen,psc);
     connectScreen(psc);
-
+    qInfo() << "add screen:" << screen->name();
     emit sigScreenChanged();
 }
 
@@ -35,6 +35,7 @@ void ScreenManager::onScreenRemoved(QScreen *screen)
     auto psc = m_screens.take(screen);
     if (psc.get() != nullptr){
         disconnectScreen(psc);
+        qInfo() << "del screen:" << screen->name();
         emit sigScreenChanged();
     }
 }
