@@ -3116,27 +3116,17 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     autoSort.setData(AutoSort);
     autoSort.setCheckable(true);
     autoSort.setChecked(GridManager::instance()->autoArrange());
-    if (!GridManager::instance()->autoMerge()) {
+    if (!GridManager::instance()->autoMerge())
         menu->insertAction(pasteAction, &autoSort);
 
-#ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
-        //勾选当前使用的排序
-        QAction *sortAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::SortBy));
-        if (sortAction != nullptr && sortAction->menu() != nullptr) {
-            QMenu *roleMenu = sortAction->menu();
-            int datetype = kSortActions.key(model()->sortRole());
-            qDebug() << model()->sortRole() << datetype << model()->sortOrder();
+    //DFileView中会修改排序项的选中属性，需重设状态。
+    if (QAction *sortAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::SortBy))) {
+        if (QMenu *roleMenu = sortAction->menu()) {
             for (QAction *action : roleMenu->actions()) {
-                if (action->data().toInt() == datetype && autoSort.isChecked()) {
-                    action->setCheckable(true);
-                    action->setChecked(true);
-                } else {
-                    action->setCheckable(false);
-                    action->setChecked(false);
-                }
+                action->setCheckable(false);
+                action->setChecked(false);
             }
         }
-#endif
     }
 
     auto *propertyAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Property));
