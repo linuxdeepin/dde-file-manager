@@ -424,6 +424,8 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
             }
 
             emit job->stop();
+            //fix bug 63202,主动停止时，就不去沉睡0.3秒,不显示100%
+            job->setProgressShow(false);
 
             break;
         case DFMTaskWidget::SKIP:
