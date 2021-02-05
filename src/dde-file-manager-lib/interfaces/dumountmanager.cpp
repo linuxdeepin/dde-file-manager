@@ -125,20 +125,24 @@ bool DUMountManager::umountBlock(const QString &blkName)
                 err = cbblk->lastError();
         }
     }
-    setError(!err.isValid() ? DUMountManager::Error::Success : DUMountManager::Error::Failed, checkMountErrorMsg(err));
-    qInfo() << "umount over:" << blkName;
-    return error == DUMountManager::Error::Success;
+
+    // 检查挂载点移除代表卸载成功
+    if (blkdev->mountPoints().empty())
+        return true;
+
+    setError(DUMountManager::Error::Failed, checkMountErrorMsg(err));
+    return false;
 }
 
 QString DUMountManager::checkMountErrorMsg(const QDBusError &dbsError)
 {
+    if (!dbsError.isValid())
+        return QString();
+
     if (dbsError.type() == QDBusError::NoReply)
         return tr("Authentication timed out");
 
-    if (dbsError.type() != QDBusError::Other || dbsError.message().contains("target is busy"))
-        return tr("Disk is busy, cannot unmount now");
-
-    return QString();
+    return tr("Disk is busy, cannot unmount now");
 }
 
 QString DUMountManager::checkEjectErrorMsg(const QDBusError &dbsError)
@@ -146,19 +150,11 @@ QString DUMountManager::checkEjectErrorMsg(const QDBusError &dbsError)
     if (!dbsError.isValid())
         return QString();
 
-    if (dbsError.message().contains("target is busy"))
-        return tr("Disk is busy, cannot eject now");
-
-    if (dbsError.message().contains("No usb device"))
-        return QString();
-
     if (dbsError.type() == QDBusError::NoReply)
         return tr("Authentication timed out");
 
-    if (dbsError.type() != QDBusError::Other)
-        return tr("Disk is busy, cannot eject now");
-
-    return QString();
+    // 其他错误,统一提示,设备繁忙
+    return tr("Disk is busy, cannot eject now");
 }
 
 bool DUMountManager::ejectDrive(const QString &driveName)
@@ -201,13 +197,19 @@ bool DUMountManager::ejectDrive(const QString &driveName)
         qWarning() << drv->lastError() << "id:" << drv->lastError().type();
         errorMsg = tr("The device is busy, cannot remove now");
     }
+    qInfo() << "eject done:" << driveName;
 
-    // 某些错误消息需要忽略
-    QString msg = checkEjectErrorMsg(drv->lastError());
-    error = (msg.isNull() || msg.isEmpty()) ? DUMountManager::Error::Success : DUMountManager::Error::Failed;
+    DDiskManager diskManager;
+    QStringList devices = diskManager.diskDevices();
+    qInfo() << "rest devices:" << devices;
 
-    qWarning() << "eject done:" << driveName;
-    return error == DUMountManager::Error::Success;
+    // 磁盘已经不在磁盘列表, 代表移除成功
+    if (!devices.contains(driveName))
+        return true;
+
+    // 处理错误
+    setError(DUMountManager::Error::Failed, checkEjectErrorMsg(drv->lastError()));
+    return false;
 }
 
 bool DUMountManager::ejectAllDrive()
