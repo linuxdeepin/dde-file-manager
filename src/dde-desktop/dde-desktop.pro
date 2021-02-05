@@ -115,7 +115,8 @@ HEADERS += \
     view/canvasviewmanager.h \
     accessibility/ac-desktop-define.h \
     accessibility/acobjectlist.h \
-    desktopprivate.h
+    desktopprivate.h \
+    presenter/dfmsocketinterface_p.h
 
 RESOURCES +=
 

@@ -7,12 +7,14 @@
 #include <view/backgroundmanager.h>
 #include <presenter/gridmanager.h>
 #include "stub.h"
-#include "../stub-ext/stubext.h"
+#include "stubext.h"
 #include "desktopitemdelegate.h"
 #include "dfilesystemmodel.h"
 #include "AbstractStringAppender.h"
 #include <QWidget>
-
+#include <QVector>
+#include "screen/abstractscreen.h"
+#include "screen/screenmanager.h"
 namespace  {
 class CanvasViewManagerTest : public testing::Test
 {
@@ -51,7 +53,8 @@ TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_canvas){
     EXPECT_TRUE(m_cvmgr->m_canvasMap == m_cvmgr->canvas())<< "canvas() not equal m_canvasMap";
 }
 
-TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onCanvasViewBuild){
+TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onCanvasViewBuild)
+{
 
     //-1,0、2、4会创建对应屏幕个数CanvasGridView
     m_cvmgr->onCanvasViewBuild(-1);
@@ -79,7 +82,8 @@ TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onCanvasViewBuild){
     EXPECT_TRUE(m_cvmgr->m_canvasMap.isEmpty());
 }
 
-TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onBackgroundEnableChanged){
+TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onBackgroundEnableChanged)
+{
 
     stub_ext::StubExt st;
     bool isCallInfos = false;
@@ -112,17 +116,26 @@ TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onBackgroundEnableChan
     st.reset(ADDR(GridManager, initGridItemsInfos));
 }
 
-TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onScreenGeometryChanged){
-
+TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onScreenGeometryChanged)
+{
 #ifdef UNUSED_SMARTDOCK
 
 #else
     for (auto tempKey : m_cvmgr->m_canvasMap.keys()) {
         m_cvmgr->m_canvasMap.find(tempKey).value()->setGeometry(QRect(10,10,10,10));
     }
-    m_cvmgr->onScreenGeometryChanged();
-    for (auto tempVal : m_cvmgr->m_canvasMap.values()) {
-        EXPECT_FALSE(tempVal->geometry() == QRect(10,10,10,10));
+
+    void(*geometry)(void*) = [](void* obj){return;};
+    stub_ext::StubExt stu;
+    typedef void (*fptr)(CanvasGridView*, int);
+    fptr A_foo = (fptr)((void(CanvasGridView::*)(const QRect&))&CanvasGridView::setGeometry);
+    stu.set(A_foo, geometry);
+    m_cvmgr->onCanvasViewBuild(2);
+    if (m_cvmgr->m_canvasMap.size()) {
+        m_cvmgr->onScreenGeometryChanged();
+        for (auto tempVal : m_cvmgr->m_canvasMap.values()) {
+            EXPECT_FALSE(tempVal->geometry() == QRect(10,10,10,10));
+        }
     }
 #endif
 }
@@ -235,7 +248,8 @@ TEST_F(CanvasViewManagerTest, test_onSyncOperation)
     st.reset(ADDR(CanvasGridView, delayModelRefresh));
 }
 
-TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onSyncSelection){
+TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onSyncSelection)
+{
 
     stub_ext::StubExt st;
     bool isCallSelect = false;
@@ -252,7 +266,8 @@ TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_onSyncSelection){
     st.reset((void(QWidget::*)())ADDR(QWidget, update));
 }
 
-TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_init){
+TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_init)
+{
     stub_ext::StubExt st;
     bool isCallBuild = false;
     st.set_lamda(ADDR(CanvasViewManager, onCanvasViewBuild), [&isCallBuild](){isCallBuild = true;});
@@ -261,23 +276,36 @@ TEST_F(CanvasViewManagerTest, Test_CanvasViewManager_Slot_init){
     st.reset(ADDR(CanvasViewManager, onCanvasViewBuild));
 }
 
-TEST_F(CanvasViewManagerTest, test_arrageEditDeal)
+TEST_F(CanvasViewManagerTest, Test_extend_CanvasViewManager_Slot_onCanvasViewBuild)
 {
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    path = path + '/' + "test.txt";
-    QFile file(path);
-    if (file.exists())
-        return;
+    stub_ext::StubExt gstu;
+    //GridManager单例构造，对当前所调用的全部打桩，防止不确定的崩溃
+    gstu.set_lamda(ADDR(CanvasGridView, initUI), [](){return;});
+    gstu.set_lamda(ADDR(CanvasGridView, initConnection), [](){return;});
+    gstu.set_lamda(ADDR(GridManager, restCoord), [](){return;});
+    gstu.set_lamda(ADDR(GridManager, addCoord), [](){return;});
+    gstu.set_lamda(ADDR(GridManager, setDisplayMode), [](){return;});
 
-    file.open(QIODevice::NewOnly | QIODevice::ReadWrite);
-    file.close();
+    {
+        stub_ext::StubExt stu;
+        bool isnullptr = false;
+        stu.set_lamda(VADDR(ScreenManager, primaryScreen), [&isnullptr](){isnullptr = true; return nullptr;});
+        m_cvmgr->onCanvasViewBuild(2);
+        ASSERT_TRUE(isnullptr);
+    }
 
-    bool (*myfind)() = [](){return true;};
-    int (*myscreennum)() =[](){return 0;};
-    Stub tub, tub1;
-    tub.set(ADDR(GridManager, find), myfind);
-    tub1.set(ADDR(CanvasGridView, screenNum), myscreennum);
-    m_cvmgr->arrageEditDeal(path);
+    {
+        stub_ext::StubExt stu;
+        bool islogic = false;
+        stu.set_lamda(VADDR(ScreenManager, screens), [](){return QVector<ScreenPointer>();});
+        stu.set_lamda(ADDR(CanvasViewManager, onBackgroundEnableChanged), [](){return;});
+        m_cvmgr->onCanvasViewBuild(2);
+        ASSERT_FALSE(m_cvmgr->m_canvasMap.isEmpty());
+        stu.set_lamda(VADDR(ScreenManager, logicScreens), [&islogic](){islogic = true; return QVector<ScreenPointer>();});
+        m_cvmgr->onCanvasViewBuild(2);
+        ASSERT_TRUE(islogic);
+    }
+
 }
 
 TEST_F(CanvasViewManagerTest, test_endAndFree)

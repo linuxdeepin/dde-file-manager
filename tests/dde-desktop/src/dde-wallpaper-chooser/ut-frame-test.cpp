@@ -8,6 +8,7 @@
 #include <DIconButton>
 #include <QLabel>
 #include <QDBusAbstractInterface>
+#include <DWindowManagerHelper>
 
 #define private public
 #define protected public
@@ -26,6 +27,7 @@
 #include "appearance_interface.h"
 #include "screensaver_interface.h"
 #include "../dde-wallpaper-chooser/dbus/deepin_wm.h"
+#include "../dde-wallpaper-chooser/thumbnailmanager.h"
 
 using namespace testing;
 using namespace stub_ext;
@@ -198,7 +200,6 @@ TEST_F(FrameTest, test_frame_show)
     StubExt stub;
     stub.set_lamda(ADDR(Frame, refreshList),[&ok](){ok = true;});
     QTest::qWaitFor([&ok]{return ok;});
-
     EXPECT_NE(m_frame->m_backgroundManager, nullptr);
     EXPECT_EQ(m_frame->isVisible(), true);
 }
@@ -309,17 +310,9 @@ TEST_F(FrameTest, test_onitemispressed)
     StubExt stub;
     stub.set_lamda(ADDR(BackgroundManager, onResetBackgroundImage),
                    [](){});
-    QString path;
-    QString screen;
-    stub.set_lamda(ADDR(BackgroundManager, setBackgroundImage),
-                   [&path,&screen](BackgroundManager *,const QString &sc,const QString &pt) {
-        screen = sc;
-        path = pt;
-    });
     QString data = m_frame->m_wallpaperList->m_items.at(0)->data();
     m_frame->onItemPressed(data);
-    EXPECT_EQ(data, path);
-    EXPECT_EQ(screen, m_frame->m_screenName);
+    EXPECT_EQ(data, m_frame->m_backgroundManager->m_backgroundImagePath[m_frame->m_screenName]);
     EXPECT_EQ(m_frame->m_desktopWallpaper, data);
     EXPECT_EQ(m_frame->m_lockWallpaper, data);
 
@@ -442,7 +435,9 @@ TEST_F(FrameTest, test_keypressevent)
     stub.set_lamda(ADDR(Frame, hide),
                    [&hidden](){hidden = true;});
     QTest::keyPress(m_frame, Qt::Key_Escape, Qt::NoModifier);
-//    EXPECT_TRUE(hidden);
+
+    QTest::qWaitFor([&hidden](){return hidden == true;}, 100);
+    EXPECT_TRUE(hidden);
 
     hidden = false;
     QTest::keyPress(m_frame, Qt::Key_Right, Qt::NoModifier);
@@ -457,7 +452,9 @@ TEST_F(FrameTest, test_keypressevent)
     hidden = false;
     m_frame->m_mode = Frame::ScreenSaverMode;
     QTest::keyPress(m_frame, Qt::Key_Escape, Qt::NoModifier);
-//    EXPECT_TRUE(hidden);
+
+    QTest::qWaitFor([&hidden](){return hidden == true;}, 100);
+    EXPECT_TRUE(hidden);
 
     m_frame->m_mode = Frame::WallpaperMode;
 }
@@ -512,4 +509,77 @@ TEST(Frame, test_onrest)
     EXPECT_FALSE(closed);
     delete frame.m_backgroundManager;
     frame.m_backgroundManager = nullptr;
+}
+
+
+
+TEST(Frame, test_show)
+{
+    void(*region)(void*) = [](void* obj){};
+    stub_ext::StubExt stu;
+    stub_ext::StubExt st;
+    stu.set_lamda(ADDR(DBlurEffectWidget, show), [](){return;});
+    stu.set_lamda(ADDR(DWindowManagerHelper, windowManagerName), [](){return DWindowManagerHelper::DeepinWM;});
+    Frame frame(qApp->primaryScreen()->name());
+    ASSERT_EQ(frame.m_backgroundManager, nullptr);
+
+    stu.set_lamda(ADDR(BackgroundManager, init), [](){return;});
+    stu.set_lamda(ADDR(DeepinWM, RequestHideWindows), [](){return QDBusPendingReply<>();});
+    typedef void (*fptr)(DRegionMonitor*, int);
+    fptr A_foo = (fptr)((void(DRegionMonitor::*)())&DRegionMonitor::registerRegion);
+    st.set(A_foo, region);
+    frame.m_backgroundManager = new BackgroundManager;
+    frame.show();
+    ASSERT_TRUE(frame.m_dbusDeepinWM != nullptr);
+
+    stu.reset(ADDR(DWindowManagerHelper, windowManagerName));
+    frame.show();
+    ASSERT_TRUE(frame.m_dbusDeepinWM == nullptr);
+
+    stu.set_lamda(ADDR(DWindowManagerHelper, windowManagerName), [](){return DWindowManagerHelper::DeepinWM;});
+    frame.show();
+    ASSERT_TRUE(frame.m_backgroundManager == nullptr);
+}
+
+TEST(Frame, test_hideEvent)
+{
+    stub_ext::StubExt stu;
+    Frame frame(qApp->primaryScreen()->name());
+    QHideEvent event;
+    stu.set_lamda(ADDR(DRegionMonitor, unregisterRegion), [](){return;});
+    stu.set_lamda(ADDR(ThumbnailManager, instance), [](){return nullptr;});
+    stu.set_lamda(ADDR(ThumbnailManager, stop), [](){return;});
+
+    bool ishide = false;
+    QObject::connect(&frame, &Frame::done, &frame,[&ishide](){ ishide = true;});
+    frame.hideEvent(&event);
+    QTest::qWaitFor([&ishide](){return ishide == true;}, 100);
+    ASSERT_TRUE(ishide);
+}
+
+TEST(Frame, test_keyevent)
+{
+    stub_ext::StubExt stu;
+    Frame frame(qApp->primaryScreen()->name());
+    frame.m_mode = Frame::ScreenSaverMode;
+
+    bool ishide = false;
+    stu.set_lamda(ADDR(Frame, hide), [&ishide](){ishide = true; return;});
+    QTest::keyClick(&frame, Qt::Key_Left);
+    QTest::keyClick(&frame, Qt::Key_0);
+    QTest::keyClick(&frame, Qt::Key_Escape);
+    QTest::qWaitFor([&ishide](){return ishide == true;}, 100);
+    EXPECT_TRUE(ishide);
+}
+
+TEST(Frame, test_setmode)
+{
+    stub_ext::StubExt stu;
+    Frame frame(qApp->primaryScreen()->name());
+    QAbstractButton* btn = new QPushButton;
+
+    stu.set_lamda(ADDR(DButtonBox, buttonList), [btn](){return QList<QAbstractButton*>() << btn;});
+    frame.setMode(btn, true);
+    delete btn;
+    btn = nullptr;
 }
