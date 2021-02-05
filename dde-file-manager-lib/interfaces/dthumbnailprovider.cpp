@@ -280,7 +280,7 @@ static QString generalKey(const QString &key)
     return key;
 }
 
-QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailProvider::Size size, const CallBack &callback)
+QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailProvider::Size size)
 {
     Q_D(DThumbnailProvider);
 
@@ -511,87 +511,45 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
                 return thumbnail;
             }
 
-            //截取视频缩略图的process耗时较多，需要多线程并行处理提高效率
-            QtConcurrent::run([ = ] {
-                QString tThumbnail;
-                QProcess process;
-                process.start(tool, {QString::number(size), absoluteFilePath}, QIODevice::ReadOnly);
+            QProcess process;
+            process.start(tool, {QString::number(size), absoluteFilePath}, QIODevice::ReadOnly);
 
-                QString errorString("");
-                if (!process.waitForFinished())
-                {
-                    errorString = process.errorString();
-                } else if (process.exitCode() != 0)
-                {
-                    const QString &error = process.readAllStandardError();
+            if (!process.waitForFinished()) {
+                d->errorString = process.errorString();
 
-                    if (error.isEmpty()) {
-                        errorString = QString("get thumbnail failed from the \"%1\" application").arg(tool);
-                    } else {
-                        errorString = error;
-                    }
+                goto _return;
+            }
+
+            if (process.exitCode() != 0) {
+                const QString &error = process.readAllStandardError();
+
+                if (error.isEmpty()) {
+                    d->errorString = QString("get thumbnail failed from the \"%1\" application").arg(tool);
+                } else {
+                    d->errorString = error;
                 }
 
-                if (!errorString.isEmpty())
-                {
-                    d->errorString = errorString;
-                    emit createThumbnailFailed(absoluteFilePath);
-                    callback(QString());
-                    return ;
+                goto _return;
+            }
+
+            const QByteArray output = process.readAllStandardOutput();
+            const QByteArray png_data = QByteArray::fromBase64(output);
+            Q_ASSERT(!png_data.isEmpty());
+
+            if (image->loadFromData(png_data, "png")) {
+                d->errorString.clear();
+            } else {
+                //过滤video tool的其他输出信息
+                QString processResult(output);
+                processResult = processResult.split(QRegExp("[\n]"), QString::SkipEmptyParts).last();
+                const QByteArray pngData = QByteArray::fromBase64(processResult.toUtf8());
+                Q_ASSERT(!pngData.isEmpty());
+                if (image->loadFromData(pngData, "png")) {
+                    d->errorString.clear();
+                } else {
+                    d->errorString = QString("load png image failed from the \"%1\" application").arg(tool);
                 }
-
-                const QByteArray output = process.readAllStandardOutput();
-                const QByteArray png_data = QByteArray::fromBase64(output);
-                Q_ASSERT(!png_data.isEmpty());
-
-                QScopedPointer<QImage> tImage(new QImage());
-                if (tImage->loadFromData(png_data, "png"))
-                {
-                    errorString.clear();
-                } else
-                {
-                    //过滤video tool的其他输出信息
-                    QString processResult(output);
-                    processResult = processResult.split(QRegExp("[\n]"), QString::SkipEmptyParts).last();
-                    const QByteArray png_data = QByteArray::fromBase64(processResult.toUtf8());
-                    Q_ASSERT(!png_data.isEmpty());
-                    if (tImage->loadFromData(png_data, "png")) {
-                        errorString.clear();
-                    } else {
-                        errorString = QString("load png image failed from the \"%1\" application").arg(tool);
-                    }
-                }
-
-                if (!errorString.isEmpty())
-                {
-                    d->errorString = errorString;
-                    emit createThumbnailFailed(absoluteFilePath);
-                    callback(QString());
-                } else
-                {
-                    tThumbnail = d->sizeToFilePath(size) + QDir::separator() + thumbnailName;
-                    tImage->setText(QT_STRINGIFY(Thumb::URL), fileUrl);
-                    tImage->setText(QT_STRINGIFY(Thumb::MTime), QString::number(info.lastModified().toTime_t()));
-
-                    // create path
-                    QFileInfo(tThumbnail).absoluteDir().mkpath(".");
-
-                    if (!tImage->save(tThumbnail, Q_NULLPTR, 80)) {
-                        errorString = QStringLiteral("Can not save image to ") + tThumbnail;
-                        d->errorString = errorString;
-                        emit createThumbnailFailed(absoluteFilePath);
-                        callback(QString());
-                    }
-
-                    if (errorString.isEmpty()) {
-                        emit createThumbnailFinished(absoluteFilePath, tThumbnail);
-                        emit thumbnailChanged(absoluteFilePath, tThumbnail);
-                        callback(tThumbnail);
-                    }
-                }
-            });
-
-            return QString(CREATE_VEDIO_THUMB);
+            }
         }
     }
 
@@ -735,12 +693,10 @@ void DThumbnailProvider::run()
 
         locker.unlock();
 
-        const QString &thumbnail = createThumbnail(task.fileInfo, task.size, task.callback);
+        const QString &thumbnail = createThumbnail(task.fileInfo, task.size);
 
-        if (thumbnail != CREATE_VEDIO_THUMB) {
-            if (task.callback)
-                task.callback(thumbnail);
-        }
+        if (task.callback)
+            task.callback(thumbnail);
     }
 }
 

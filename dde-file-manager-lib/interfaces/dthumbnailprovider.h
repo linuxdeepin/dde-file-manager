@@ -58,7 +58,7 @@ public:
     QString thumbnailFilePath(const QFileInfo &info, Size size) const;
 
     typedef std::function<void(const QString &)> CallBack;
-    QString createThumbnail(const QFileInfo &info, Size size, const CallBack &callback);
+    QString createThumbnail(const QFileInfo &info, Size size);
     void appendToProduceQueue(const QFileInfo &info, Size size, CallBack callback = 0);
     void removeInProduceQueue(const QFileInfo &info, Size size);
 
