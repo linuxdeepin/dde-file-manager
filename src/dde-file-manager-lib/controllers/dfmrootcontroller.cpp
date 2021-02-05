@@ -60,6 +60,7 @@ public:
 
     bool start() override;
     bool stop() override;
+    bool handleGhostSignal(const DUrl &target, DAbstractFileWatcher::SignalType1 signal, const DUrl &url) override;
 
 protected:
     void initBlockDevConnections(QSharedPointer<DBlockDevice> blk, const QString &devs);
@@ -532,4 +533,30 @@ bool DFMRootFileWatcherPrivate::stop()
     started = false;
 
     return true;
+}
+
+bool DFMRootFileWatcherPrivate::handleGhostSignal(const DUrl &target, DAbstractFileWatcher::SignalType1 signal, const DUrl &url)
+{
+    Q_UNUSED(target)
+    Q_Q(DFMRootFileWatcher);
+
+    bool ok = true;
+    QString &&path = url.path();
+    if (path.startsWith("/dev/loop")) {
+        if (signal == &DAbstractFileWatcher::fileDeleted) {
+            // 命令 umount loop 设备不会触发 udisks2 和 gio 的信号，因此此处使用 gostSignal 的方式在计算机面移除 loop 设备 (bug-63131)
+            qInfo() << "remove loop device: " << path;
+            DFMRootFileWatcher *wpar = qobject_cast<DFMRootFileWatcher *>(q);
+            Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + path.mid(QString("/dev/").length()) + "." SUFFIX_UDISKS));
+        } else if (signal == &DAbstractFileWatcher::subfileCreated) {
+            // TODO(zhangs): loop 设备手动挂载当前计算机页面并不会及时响应，
+            // 但 loop 设备在未来的需求中, 将不会被显示在计算机页面，因此暂时不实现
+        } else {
+            ok = false;
+        }
+    } else {
+        ok = false;
+    }
+
+    return ok;
 }
