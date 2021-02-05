@@ -184,9 +184,7 @@ DFileCopyMoveJobPrivate::DFileCopyMoveJobPrivate(DFileCopyMoveJob *qq)
 
 DFileCopyMoveJobPrivate::~DFileCopyMoveJobPrivate()
 {
-    qDebug() << "DFileCopyMoveJobPrivate " << QDateTime::currentMSecsSinceEpoch() - m_sart;
     while (!m_writeResult.isFinished()) {
-        qDebug() << "DFileCopyMoveJobPrivate all thread over ooo" << QDateTime::currentMSecsSinceEpoch() - m_sart;
         qApp->processEvents();
         QThread::msleep(50);
     }
@@ -1846,8 +1844,6 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
             m_countVetor[m_count].store(m_countVetor[m_count].load() + 1);
             __off_t srcpoint = ((fromSize) / 10) * m_countVetor[m_count].load(); //获取对应线程的拷贝起始点
             __off_t destpoint = srcpoint;
-            qDebug() << destpoint << srcpoint << m_count\
-                     << m_countVetor[m_count].load() << fromSize << fromSize / 10 << static_cast<size_t>(fromSize / 10) << len;
             mutex.unlock();
             qint64 everySize = (fromSize) / 10;
             qint64 copySize = everySize > blockSize ? blockSize : everySize;
@@ -2064,7 +2060,6 @@ bool DFileCopyMoveJobPrivate::doCopyFileSmall(const DAbstractFileInfoPointer fro
             if (!m_isWriteThreadStart.load()) {
                 m_isWriteThreadStart.store(true);
                 m_writeResult = QtConcurrent::run([this]() {
-                    qDebug() << "write thread start >>>>>>>>>>>>>>";
                     writeRefineThread();
                 });
             }
@@ -2236,7 +2231,6 @@ bool DFileCopyMoveJobPrivate::doCopyFileU(const DAbstractFileInfoPointer fromInf
             if (!m_isWriteThreadStart.load()) {
                 m_isWriteThreadStart.store(true);
                 m_writeResult = QtConcurrent::run([this]() {
-                    qDebug() << "write thread start >>>>>>>>>>>>>>";
                     writeRefineThread();
                 });
             }
@@ -2632,12 +2626,11 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
     if (totalSize == 0)
         return;
 
-//    if (fileStatistics->isFinished()) {
     if ((fromLocal && iscountsizeover) || fileStatistics->isFinished()) {
         qreal realProgress = qreal(dataSize) / totalSize;
         if (realProgress > lastProgress)
             lastProgress = realProgress;
-        qCDebug(fileJob(), "completed data size: %lld, total data size: %lld,m_refineCopySize = %lld", dataSize, totalSize, completedProgressDataSize);
+//        qCDebug(fileJob(), "completed data size: %lld, total data size: %lld,m_refineCopySize = %lld", dataSize, totalSize, completedProgressDataSize);
     } else {
         //预设一个总大小，让前期进度平滑一些（目前阈值取1mb）
         qreal virtualSize = totalSize < 1000000 ? 1000000 : totalSize;
@@ -2735,7 +2728,6 @@ void DFileCopyMoveJobPrivate::checkTagetNeedSync()
         return;
     }
     m_isEveryReadAndWritesSnc = FileUtils::isGvfsMountFile(targetUrl.path());
-    qDebug() << targetUrl.toLocalFile();
     DStorageInfo targetStorageInfo(targetUrl.toLocalFile());
     if (!m_isEveryReadAndWritesSnc && targetStorageInfo.isValid()) {
         const QString &fs_type = targetStorageInfo.fileSystemType();
@@ -2781,14 +2773,12 @@ bool DFileCopyMoveJobPrivate::writeRefineThread()
             break;
         }
     }
-    qDebug() << "write thread over      stat change   ========== " << QDateTime::currentMSecsSinceEpoch() - m_sart;
     if (ok) {
         ok = (isFromLocalUrls && !m_bDestLocal && m_isTagFromBlockDevice.load()) ? writeRefineEx() : writeRefineEx();
     } else {
         q_ptr->stop();
     }
     cancelReadFileDealWriteThread();
-    qWarning() << "write thread over         ========== " << QDateTime::currentMSecsSinceEpoch() - m_sart;
     return true;
 }
 
@@ -2816,7 +2806,6 @@ bool DFileCopyMoveJobPrivate::writeRefine()
         if (!info->todevice->isOpen()) {
             DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
             do {
-                qDebug() << info->todevice->fileUrl();
                 if (info->todevice->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
                     action = DFileCopyMoveJob::NoAction;
                     m_fileRefineFd++;
@@ -2881,9 +2870,7 @@ bool DFileCopyMoveJobPrivate::writeRefine()
 #endif
         }
     write_data: {
-//            qDebug() << " write start   ===== " << curt - m_sart;
             qint64 size_write = info->todevice->write(info->buffer, info->size);
-//            qDebug() << "write runing  " << m_write;
             if (Q_UNLIKELY(!stateCheck())) {
                 return false;
             }
@@ -3095,9 +3082,7 @@ bool DFileCopyMoveJobPrivate::writeRefineEx()
             return false;
         }
     write_data: {
-//            qDebug() << " write start   ===== " << m_sart;
             qint64 size_write = write(info->tofd, info->buffer, static_cast<size_t>(info->size));
-//            qDebug() << "write runing  " << m_write;
             if (Q_UNLIKELY(!stateCheck())) {
                 close(info->tofd);
                 return false;
@@ -3321,8 +3306,6 @@ void DFileCopyMoveJobPrivate::countAllCopyFile()
 
     emit q_ptr->fileStatisticsFinished();
 
-    qDebug() << " dir time " << QDateTime::currentMSecsSinceEpoch() - times << totalsize;
-
 }
 
 void DFileCopyMoveJobPrivate::setRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat)
@@ -3370,9 +3353,10 @@ DFileCopyMoveJob::DFileCopyMoveJob(QObject *parent)
 
 DFileCopyMoveJob::~DFileCopyMoveJob()
 {
-    qDebug() << "release  DFileCopyMoveJob" << this;
+
     stop();
     // ###(zccrs): wait() ?
+    qInfo() << "release  DFileCopyMoveJob" << this;
 }
 
 DFileCopyMoveJob::Handle *DFileCopyMoveJob::errorHandle() const
@@ -3964,19 +3948,15 @@ void DFileCopyMoveJob::run()
 
 end:
     //设置同步线程结束
-    qDebug() << "mian copy preceess over ===" << QDateTime::currentMSecsSinceEpoch() - timesec;
     if (DFileCopyMoveJob::StoppedState == d->state) {
         d->m_syncResult.cancel();
     }
     //设置优化拷贝线程结束
     d->setRefineCopyProccessSate(ReadFileProccessOver);
     //等待线程池结束,等待异步tongbu线程结束
-    qDebug() << "mian copy preceess over ===" << QDateTime::currentMSecsSinceEpoch() - timesec;
     waitRefineThreadFinish();
     setSysncQuitState(true);
-    qDebug() << "all copy refine preceess over ===" << QDateTime::currentMSecsSinceEpoch() - timesec;
     waitSysncEnd();
-    qDebug() << "sync preceess over ===" << QDateTime::currentMSecsSinceEpoch() - timesec;
 
     if (!d->m_bDestLocal && d->targetIsRemovable && mayExecSync &&
             d->state != DFileCopyMoveJob::StoppedState) { //主动取消时state已经被设置为stop了
@@ -3986,7 +3966,7 @@ end:
         d->m_syncResult = QtConcurrent::run([me, &d, &syncRet]() {
             //! 外设或远程设备在同步数据时发送sendDataSyncing信号在拷贝任务对话框中显示数据同步种与即将完成
             Q_EMIT me->sendDataSyncing(tr("Syncing data"), tr("Please wait"));
-            qDebug() << "sync >>>>>>>>>>>>>>";
+            qInfo() << "sync to block disk and target path = " << d->targetRootPath;
             syncRet = QProcess::execute("sync", {"-f", d->targetRootPath});
         });
         // 检测同步时是否被停止，若停止则立即跳出
@@ -4026,7 +4006,7 @@ end:
 
     }
 
-    qCDebug(fileJob()) << "job finished, error:" << error() << ", message:" << errorString() << QDateTime::currentMSecsSinceEpoch() - timesec;
+    qInfo() << "job finished, error:" << error() << ", message:" << errorString() << QDateTime::currentMSecsSinceEpoch() - timesec;
 }
 
 QString DFileCopyMoveJob::Handle::getNewFileName(DFileCopyMoveJob *job, const DAbstractFileInfoPointer sourceInfo)

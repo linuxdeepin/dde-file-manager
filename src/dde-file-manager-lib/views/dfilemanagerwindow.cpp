@@ -274,7 +274,7 @@ bool DFileManagerWindowPrivate::processTitleBarEvent(QMouseEvent *event)
 bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 {
     Q_Q(DFileManagerWindow);
-    qDebug() << "  cd   to " << fileUrl;
+    qInfo() << "  cd   to " << fileUrl;
     DFMBaseView *current_view = tab->fileView();
 
     // fix 6942 取消判断先后请求地址差异判断
@@ -366,6 +366,8 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
                 if (!file_info || !file_info->exists()) {
                     return false;
                 }
+
+                qWarning() << "SearchFile url : " << newUrl;
 
                 return cdForTab(tab, newUrl);
             }

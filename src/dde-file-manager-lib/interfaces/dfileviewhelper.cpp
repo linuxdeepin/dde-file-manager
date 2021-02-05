@@ -193,8 +193,10 @@ void DFileViewHelperPrivate::init()
             if (!fileInfo || !fileInfo->isReadable())
                 return;
         }
-
-        fileService->writeFilesToClipboard(q, DFMGlobal::CopyAction, q->selectedUrls());
+        DUrlList selectedUrls = q->selectedUrls();
+        qInfo() << " ctrl C writeFilesToClipboard and selectedUrls = " << selectedUrls
+                << " currentUrl = " << q->currentUrl();
+        fileService->writeFilesToClipboard(q, DFMGlobal::CopyAction, selectedUrls);
     });
 
     QAction *cut_action = new QAction(q->parent());
@@ -210,8 +212,10 @@ void DFileViewHelperPrivate::init()
             if (url.isTrashFile() && url.parentUrl() != DUrl::fromTrashFile("/"))
                 return;
         }
-
-        fileService->writeFilesToClipboard(q, DFMGlobal::CutAction, q->selectedUrls());
+        DUrlList selectedUrls = q->selectedUrls();
+        qInfo() << " ctrl X writeFilesToClipboard and selectedUrls = " << selectedUrls
+                << " currentUrl = " << q->currentUrl();
+        fileService->writeFilesToClipboard(q, DFMGlobal::CutAction, selectedUrls);
     });
 
     QAction *paste_action = new QAction(q->parent());
@@ -220,6 +224,7 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(paste_action, &QAction::triggered,
     q, [q] {
+        qInfo() << " ctrl V pasteFileByClipboard and currentUrl = " << q->currentUrl();
         fileService->pasteFileByClipboard(q->parent(), q->currentUrl());
     });
 
@@ -229,6 +234,7 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(revocation_action, &QAction::triggered,
     q, [q] {
+        qInfo() << " ctrl Z recovert operation !";
         DFMEventDispatcher::instance()->processEvent<DFMRevocationEvent>(q);
     });
 

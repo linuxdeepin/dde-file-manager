@@ -191,7 +191,7 @@ void WindowManager::showNewWindow(const DUrl &url, const bool &isNewWindow)
     // 析构本窗口，所以去掉属性Qt::WA_DeleteOnClose
     window->show();
 
-    qDebug() << "new window" << window->winId() << url;
+    qInfo() << "new window" << window->winId() << url;
 
     connect(window, &DFileManagerWindow::aboutToClose,
             this, &WindowManager::onWindowClosed);

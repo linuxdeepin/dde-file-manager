@@ -567,8 +567,6 @@ bool UDiskListener::isFromNativeDisk(const QString &uuid)
 
     if (m_uuids.contains(uuid))
         ret = true;
-    else
-        qInfo() << "/etc/fstab not contains" << uuid;
 
     return ret;
 }

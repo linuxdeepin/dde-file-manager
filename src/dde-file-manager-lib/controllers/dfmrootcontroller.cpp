@@ -203,7 +203,7 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
             ret.push_back(fp);
         }
     }
-    qDebug() << "获取mountfile  exists  jieshu" << QThread::currentThreadId();
+    qInfo() << "get rootfileinfo over !";
     return ret;
 }
 

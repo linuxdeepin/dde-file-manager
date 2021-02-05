@@ -1553,7 +1553,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 //            }
 //        }
 //    }
-    qDebug() << " fetchMore +{ " << parentNode->fileInfo->fileUrl() << parentNode->fileInfo->isGvfsMountFile();
+    qInfo() << "fetchMore start traverse all files in current dir = " << parentNode->fileInfo->fileUrl();
     d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters,
                                                    QDirIterator::NoIteratorFlags, false, parentNode->fileInfo->isGvfsMountFile());
 
@@ -2449,7 +2449,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     if (job) {
         //刷新完成标志
         bool finished = job->isUpdatedFinished();
-        qDebug() << "isUpdatedFinished" << finished;
+        qInfo() << " finish update children. isUpdatedFinished = " << finished << "and file count = " << node->childrenCount();
         //若刷新完成通知桌面重新获取文件
         if (finished)
             emit sigJobFinished();
@@ -2725,8 +2725,6 @@ void DFileSystemModel::clear()
         return;
     }
 
-    qDebug() << "enter the clear items process";
-
     isNeedToBreakBusyCase = true; // 清场的时候，必须进口跳出相关流程
 
     QMutexLocker locker(&m_mutex); // bug 26972, while the sort case is ruuning, there should be crashed ASAP, so add locker here!
@@ -2736,7 +2734,6 @@ void DFileSystemModel::clear()
         deleteNode(d->rootNode);
         endRemoveRows();
     }
-    qWarning() << "done the clear items process";
 }
 
 void DFileSystemModel::setState(DFileSystemModel::State state)

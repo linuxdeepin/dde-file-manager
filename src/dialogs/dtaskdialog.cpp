@@ -54,7 +54,6 @@
 
 ErrorHandle::~ErrorHandle()
 {
-    qDebug() << "dtaskdialog    ErrorHandle";
 }
 
 DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCopyMoveJob::Error error,
@@ -558,11 +557,13 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
                     || job->error() == DFileCopyMoveJob::DirectoryExistsError) {
                 data["status"] = "conflict";
                 iserroroc.insert(QString::number(quintptr(job), 16), true);
+                qInfo() << "operators button show !";
             } else if (job->error() != DFileCopyMoveJob::NoError) {
                 data["status"] = "error";
                 bool supprotRetry = job->supportActions(job->error()).testFlag(DFileCopyMoveJob::RetryAction);
                 data["supprotRetry"] = supprotRetry ? "true" : "false";
                 data["errorMsg"] = job->errorString();
+                qInfo() << "dfilecopymovejob error and errorMsg = " << job->errorString();
                 iserroroc.insert(QString::number(quintptr(job), 16), true);
             }
         }
