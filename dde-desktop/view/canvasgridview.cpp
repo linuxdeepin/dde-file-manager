@@ -117,6 +117,12 @@ namespace  {
         DFileSystemModel *model = nullptr;
     };
     //end
+
+    static void setMenuActionsFilter()
+    {
+        DFileMenuManager::setActionWhitelist(QSet<MenuAction>());
+        DFileMenuManager::setActionBlacklist(QSet<MenuAction>());
+    }
 }
 
 CanvasGridView::CanvasGridView(const QString &screen, QWidget *parent)
@@ -1684,8 +1690,7 @@ void CanvasGridView::focusInEvent(QFocusEvent *event)
     itemDelegate()->commitDataAndCloseActiveEditor();
 
     /// set menu actions filter
-    DFileMenuManager::setActionWhitelist(QSet<MenuAction>());
-    DFileMenuManager::setActionBlacklist(QSet<MenuAction>());
+    setMenuActionsFilter();
 }
 
 void CanvasGridView::focusOutEvent(QFocusEvent *event)
@@ -1696,6 +1701,11 @@ void CanvasGridView::focusOutEvent(QFocusEvent *event)
 
 void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
 {
+    if (!DFileMenuManager::actionWhitelist().isEmpty() || !DFileMenuManager::actionBlacklist().isEmpty()) {
+        //! set menu actions filter
+        setMenuActionsFilter();
+    }
+
     if (Q_UNLIKELY(DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool())) {
         return;
     }
