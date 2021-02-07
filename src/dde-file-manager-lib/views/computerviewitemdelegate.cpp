@@ -29,6 +29,24 @@
 #include "computerviewitemdelegate.h"
 #include "dfmapplication.h"
 
+
+//!
+//! \brief 一些特殊的字体和 CESI_*_GB* 的字体在计算机页面重命名时，显示位置偏上
+//! 因此针对这些字体使用 top-margin 调整，确保文字垂直居中
+//! \return top-margin of lineeditor
+//!
+static int editorMarginTop(const QString &family)
+{
+    int margin = 0;
+    if (dfm_util::isContains(family, QString("Unifont"), QString("WenQuanYi Micro Hei")))
+        margin = 4;
+    else if (family.startsWith("CESI")) {
+        if (family.endsWith("GB2312") || family.endsWith("GB13000")|| family.endsWith("GB18030"))
+            margin = 4;
+    }
+    return margin;
+}
+
 ComputerViewItemDelegate::ComputerViewItemDelegate(QObject *parent) : QStyledItemDelegate(parent)
 {
     par = qobject_cast<ComputerView *>(parent);
@@ -253,14 +271,14 @@ QSize ComputerViewItemDelegate::sizeHint(const QStyleOptionViewItem &option, con
 
 QWidget *ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    Q_UNUSED(option)
     Q_UNUSED(index)
     editingIndex = index;
     QLineEdit *le = new QLineEdit(parent);
     editingEditor = le;
 
+    int topMargin = editorMarginTop(option.font.family());
     le->setFrame(false);
-    le->setTextMargins(0, 0, 0, 0);
+    le->setTextMargins(0, topMargin, 0, 0);
     //消除编辑框背后多余的填充色
 //    le->setAutoFillBackground(true);
     le->setAlignment(Qt::AlignTop | Qt::AlignLeft);
