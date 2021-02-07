@@ -133,18 +133,12 @@ void TaggedFileWatcher::setEnabledSubfileWatcher(const DUrl& subfileUrl, bool en
 {
     DUrl currentWatchedDir{ this->fileUrl() };
 
-#ifdef QT_DEBUG
-    qDebug()<< "subfileUrl: " << subfileUrl << "=============" << "fileUrl: " << this->fileUrl();
-#endif
-
-    if(subfileUrl == currentWatchedDir){
+    if (subfileUrl == currentWatchedDir)
         return;
-    }
 
-    if(enabled){
+    if (enabled) {
         this->addWatcher(subfileUrl);
-
-    }else{
+    } else {
         this->removeWatcher(subfileUrl);
     }
 }
@@ -154,23 +148,20 @@ void TaggedFileWatcher::addWatcher(const DUrl& url)noexcept
     TaggedFileWatcherPrivate* d{ d_func() };
     DUrl local_file_url{ DUrl::fromLocalFile(url.taggedLocalFilePath()) };
 
-    if(!local_file_url.isValid() || d->m_watchers.contains(local_file_url)){
+    if (!local_file_url.isValid() || d->m_watchers.contains(url))
         return;
-    }
 
     DAbstractFileWatcher* watcher{ DFileService::instance()->createFileWatcher(this, local_file_url) };
 
-    if(!watcher){
+    if(!watcher)
         return;
-    }
 
-    watcher->setParent(this);
     watcher->moveToThread(this->thread());
+    watcher->setParent(this);
     d->m_watchers[url] = watcher;
 
     auto urlConvert = [this] (const DUrl &localUrl) {
         DUrl new_url = this->fileUrl();
-
         new_url.setTaggedFileUrl(localUrl.toLocalFile());
 
         return new_url;
@@ -188,10 +179,8 @@ void TaggedFileWatcher::addWatcher(const DUrl& url)noexcept
         emit fileDeleted(urlConvert(url));
     });
 
-    if(d->started){
+    if(d->started)
         watcher->startWatcher();
-    }
-
 }
 
 void TaggedFileWatcher::removeWatcher(const DUrl& url)noexcept
