@@ -80,6 +80,10 @@ QList<DAbstractFileInfoPointer> DRootFileManager::getRootFile()
     QMutexLocker lk(&d_ptr->rootfileMtx);
     QList<DAbstractFileInfoPointer> ret = d_ptr->rootfilelist.values();
     lk.unlock();
+    // fix bug 63220 排序算法中，个数低于20个时第一次调用比对函数时，传入a,b分别时是QList的第二个和第一个元素
+    // 当传入元素大于20,采用了二分法，第一次调用比对函数时，传入a,b分别时是QList的第二个和元素个数的一半的元素，
+    // 视频和桌面是同一级别，所以桌面就在最后了。先排一次序。
+    std::sort(ret.begin(), ret.end(), &DFMRootFileInfo::typeCompareByUrl);
 
     if (!ret.isEmpty()) {
         // fix 25778 每次打开文管，"我的目录" 顺序随机排列

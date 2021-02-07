@@ -110,7 +110,6 @@ ComputerModel::ComputerModel(QObject *parent)
         connect(DRootFileManager::instance(),&DRootFileManager::queryRootFileFinsh,this,[this,rootInit](){
             QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
             qDebug() << "DFileService::queryRootFileFinsh computer mode get " << ch.size();
-            std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompareByUrl);
             rootInit(ch);
 
             // 判断是否启用保险箱
@@ -135,7 +134,6 @@ ComputerModel::ComputerModel(QObject *parent)
             addItem(makeSplitterUrl(tr("My Directories")));
             QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
             qDebug() << "DFileService::queryRootFileFinsh computer mode get " << ch.size();
-            std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompareByUrl);
             rootInit(ch);
 
             if ( VaultHelper::isVaultEnabled() ) {
@@ -149,7 +147,6 @@ ComputerModel::ComputerModel(QObject *parent)
 
             QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
             qDebug() << "get root file now" << ch.size();
-            std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompareByUrl);
             rootInit(ch);
 
 #ifdef ENABLE_ASYNCINIT
@@ -660,7 +657,6 @@ void ComputerModel::getRootFile()
     if (ch.isEmpty())
         return;
 
-    std::sort(ch.begin(), ch.end(), &DFMRootFileInfo::typeCompareByUrl);
     bool splt = false;
     m_nitems = 0;
     for (auto chi : ch) {

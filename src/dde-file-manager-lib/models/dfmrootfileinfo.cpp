@@ -831,6 +831,12 @@ bool DFMRootFileInfo::typeCompareByUrl(const DAbstractFileInfoPointer &a, const 
         {ItemType::GvfsSMB,  7},
         {ItemType::GvfsFTP,  7}
     };
+    if (!a || !a->exists()) {
+        return false;
+    }
+    if (!b || !b->exists()) {
+        return true;
+    }
     return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];
 }
 

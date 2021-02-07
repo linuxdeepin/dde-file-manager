@@ -360,7 +360,6 @@ void DFMSideBar::rootFileResult()
     qDebug() << "DFileService::instance()->getRootFile() filist:" << filist.size();
     if (filist.isEmpty())
         return;
-    std::sort(filist.begin(), filist.end(), &DFMRootFileInfo::typeCompare);
 
     for (const DAbstractFileInfoPointer &fi : filist) {
 #ifdef ENABLE_ASYNCINIT
