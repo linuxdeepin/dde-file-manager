@@ -290,8 +290,6 @@ private:
     bool checkUseGvfsFileOperation(const DUrlList &files, const DUrl &destination);
     bool checkUseGvfsFileOperation(const QString &path);
 
-    void handleOpticalJobFailure(int type, const QString &err, const QStringList &details);
-
     static QStorageInfo getStorageInfo(const QString &file);
     static bool canMove(const QString &filePath);
     static QString getXorrisoErrorMsg(const QStringList &msg);
