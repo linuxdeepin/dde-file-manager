@@ -574,7 +574,7 @@ void DListItemDelegate::updateItemSizeHint()
 {
     Q_D(DListItemDelegate);
 
-    d->textLineHeight = parent()->parent()->fontMetrics().height();
+    d->textLineHeight = parent()->parent()->fontMetrics().lineSpacing();
     d->itemSizeHint = QSize(-1, qMax(int(parent()->parent()->iconSize().height() * 1.1), d->textLineHeight));
 }
 

@@ -162,7 +162,7 @@ QList<QRectF> DFMStyledItemDelegate::drawText(const QModelIndex &index, QPainter
     initTextLayout(index, layout);
 
     QList<QRectF> boundingRegion;
-    DFMGlobal::elideText(layout, boundingRect.size(), wordWrap, mode, d_func()->textLineHeight, flags, 0,
+    DFMGlobal::elideText(layout, boundingRect.size(), wordWrap, mode, d_func()->textLineHeight, flags, nullptr,
                          painter, boundingRect.topLeft(), shadowColor, QPointF(0, 1),
                          background, radius, &boundingRegion);
 
@@ -205,7 +205,7 @@ void DFMStyledItemDelegate::initStyleOption(QStyleOptionViewItem *option, const 
 QList<QRectF> DFMStyledItemDelegate::getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const
 {
     QList<QRectF> list;
-    int offset = baseRect.width() / 8;
+    double offset = baseRect.width() / 8;
     const QSizeF &offset_size = cornerSize / 2;
 
     list << QRectF(QPointF(baseRect.right() - offset - offset_size.width(),
@@ -282,16 +282,16 @@ QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &siz
     //约束特殊比例icon的尺寸
     if (isSpecialSize) {
         if (px.width() > size.width() * pixelRatio) {
-            px = px.scaled(size.width() * pixelRatio, px.height(), Qt::IgnoreAspectRatio);
+            px = px.scaled(size.width() * CEIL(pixelRatio), px.height(), Qt::IgnoreAspectRatio);
         } else if (px.height() > size.height() * pixelRatio) {
-            px = px.scaled(px.width(), size.height() * pixelRatio, Qt::IgnoreAspectRatio);
+            px = px.scaled(px.width(), size.height() * CEIL(pixelRatio), Qt::IgnoreAspectRatio);
         }
     }
 
     if (px.width() > icon_size.width() * pixelRatio) {
-        px.setDevicePixelRatio(px.width() / (qreal)icon_size.width());
+        px.setDevicePixelRatio(px.width() / icon_size.width());
     } else if (px.height() > icon_size.height() * pixelRatio) {
-        px.setDevicePixelRatio(px.height() / (qreal)icon_size.height());
+        px.setDevicePixelRatio(px.height() / icon_size.height());
     } else {
         px.setDevicePixelRatio(pixelRatio);
     }
@@ -383,7 +383,7 @@ void DFMStyledItemDelegatePrivate::init()
     q->connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), SLOT(_q_onRowsInserted(QModelIndex, int, int)));
     q->connect(model, SIGNAL(rowsRemoved(QModelIndex, int, int)), SLOT(_q_onRowsRemoved(QModelIndex, int, int)));
 
-    textLineHeight = q->parent()->parent()->fontMetrics().height();
+    textLineHeight = q->parent()->parent()->fontMetrics().lineSpacing();
 }
 
 void DFMStyledItemDelegatePrivate::_q_onRowsInserted(const QModelIndex &parent, int first, int last)

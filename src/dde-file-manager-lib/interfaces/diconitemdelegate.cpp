@@ -32,6 +32,13 @@
 #include "tag/tagmanager.h"
 #include "app/define.h"
 
+#include <dgiosettings.h>
+
+#include <DApplicationHelper>
+#include <DStyleOption>
+#include <DStyle>
+#include <DApplication>
+
 #include <QLabel>
 #include <QPainter>
 #include <QPainterPath>
@@ -43,13 +50,8 @@
 #include <QAbstractItemView>
 #include <QVBoxLayout>
 #include <QPainterPath>
-#include <dgiosettings.h>
 #include <private/qtextengine_p.h>
-#include <DApplicationHelper>
-#include "dstyleoption.h"
-#include <DStyle>
 #include <QToolTip>
-#include <DApplication>
 
 DWIDGET_USE_NAMESPACE
 DFM_USE_NAMESPACE
@@ -249,7 +251,7 @@ QSizeF FileTagObjectInterface::intrinsicSize(QTextDocument *doc, int posInDocume
 
     const TagTextFormat &f = static_cast<const TagTextFormat &>(format);
     const QList<QColor> &colors = f.colors();
-    const int diameter = f.diameter();
+    const double diameter = f.diameter();
 
     if (colors.size() == 1)
         return QSizeF(diameter, diameter);
@@ -332,8 +334,12 @@ public:
             return;
 
         const QMargins &margins = contentsMargins();
+
+        //保持两行字体高度
         QRect label_rect(TEXT_PADDING + margins.left(), margins.top() + iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING,
-                         width() - TEXT_PADDING * 2 - margins.left() - margins.right(), INT_MAX);
+                         width() - TEXT_PADDING * 2 - margins.left() - margins.right(),
+                         option.fontMetrics.lineSpacing() * 2);
+
         const QList<QRectF> &lines = delegate->drawText(index, &pa, option.text, label_rect, ICON_MODE_RECT_RADIUS,
                                                         option.palette.brush(QPalette::Normal, QPalette::Highlight),
                                                         QTextOption::WrapAtWordBoundaryOrAnywhere,
@@ -344,7 +350,7 @@ public:
 
     QSize sizeHint() const override
     {
-        return QSize(width(), textGeometry().bottom() + contentsMargins().bottom());
+        return QSize(width(), FLOOR(textGeometry().bottom() + contentsMargins().bottom()));
     }
 
     int heightForWidth(int width) const override
@@ -353,7 +359,7 @@ public:
             textBounding = QRect();
         }
 
-        return textGeometry(width).bottom() + contentsMargins().bottom();
+        return FLOOR(textGeometry(width).bottom() + contentsMargins().bottom());
     }
 
     void setIconPixmap(const QPixmap &pixmap, int height)
@@ -392,7 +398,12 @@ public:
 
             width -= (margins.left() + margins.right());
 
-            QRect label_rect(TEXT_PADDING + margins.left(), iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING + margins.top(), width - TEXT_PADDING * 2, INT_MAX);
+            //保持两行字体高度
+            QRect label_rect(TEXT_PADDING + margins.left(),
+                             iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING + margins.top(),
+                             width - TEXT_PADDING * 2,
+                             option.fontMetrics.lineSpacing() * 2);
+
             const QList<QRectF> &lines = delegate->drawText(index, nullptr, option.text, label_rect, ICON_MODE_RECT_RADIUS, Qt::NoBrush,
                                                             QTextOption::WrapAtWordBoundaryOrAnywhere, option.textElideMode, Qt::AlignCenter);
 
@@ -622,7 +633,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     QRectF icon_rect = opt.rect;
 
     icon_rect.setSize(parent()->parent()->iconSize());
-    int iconTopOffset = isCanvas ? 0 : (opt.rect.height() - icon_rect.height()) / 3.0;
+    double iconTopOffset = isCanvas ? 0 : (opt.rect.height() - icon_rect.height()) / 3.0;
     icon_rect.moveLeft(opt.rect.left() + (opt.rect.width() - icon_rect.width()) / 2.0);
     icon_rect.moveTop(opt.rect.top() +  iconTopOffset); // move icon down
 
@@ -634,7 +645,7 @@ void DIconItemDelegate::paint(QPainter *painter,
         QPainter p(&pixmap);
 
         p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
-        p.fillRect(QRect(QPoint(0, 0), icon_rect.size().toSize()), QColor(0, 0, 0, 255 * 0.1));
+        p.fillRect(QRect(QPoint(0, 0), icon_rect.size().toSize()), QColor(0, 0, 0, CEIL(255 * 0.1)));
         p.end();
 
         painter->drawPixmap(icon_rect.toRect(), pixmap);
@@ -678,10 +689,12 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     /// init file name geometry
     QRectF label_rect = opt.rect;
-
+    //fix 63087 图片之下直接绘制文本,跟背景绘制的Top起始点保持一致否则最后一排文本绘制将被挤出边界
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
     label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING - 2 * backgroundMargin - ICON_MODE_BACK_RADIUS);
     label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS / 2);
+    //保持两行字体高度
+    label_rect.setHeight(opt.fontMetrics.lineSpacing() * 2);
 
     //文管窗口拖拽时的字体保持白色
     if ((isSelected && isCanvas) || isDragMode) {
@@ -696,11 +709,9 @@ void DIconItemDelegate::paint(QPainter *painter,
     if (isSelected && singleSelected) {
         const_cast<DIconItemDelegate *>(this)->hideNotEditingIndexWidget();
 
-        int height = 0;
-
         /// init file name text
-        const QList<QRectF> &lines = drawText(index, 0, str, label_rect.adjusted(0, 0, 0, 99999), 0, QBrush(Qt::NoBrush));
-        height = boundingRect(lines).height();
+        const QList<QRectF> &lines = drawText(index, nullptr, str, label_rect.adjusted(0, 0, 0, 99999), 0, QBrush(Qt::NoBrush));
+        qreal height = boundingRect(lines).height();
 
         // we don't expend item in dde-fm but expand item on desktop
         bool shouldExpend = isCanvas;
@@ -717,7 +728,7 @@ void DIconItemDelegate::paint(QPainter *painter,
             d->expandedItem->option = opt;
             d->expandedItem->textBounding = QRectF();
             d->expandedItem->setFixedWidth(0);
-            d->expandedItem->setContentsMargins(backgroundMargin, iconTopOffset, backgroundMargin, 0);
+            d->expandedItem->setContentsMargins(backgroundMargin, CEIL(iconTopOffset), backgroundMargin, 0);
 
             if (parent()->indexOfRow(index) == parent()->rowCount() - 1) {
                 d->lastAndExpandedInde = index;
@@ -996,6 +1007,8 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     label_rect.setWidth(label_rect.width() - 2 * TEXT_PADDING - 2 * backgroundMargin - ICON_MODE_BACK_RADIUS);
     label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS / 2);
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
+    //保持两行字体高度
+    label_rect.setHeight(option.fontMetrics.lineSpacing() * 2);
 
     QStyleOptionViewItem opt = option;
 //    initStyleOption(&opt, index);
@@ -1011,7 +1024,7 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
     bool elide = (!isSelected || !singleSelected);
 
-    auto lines = drawText(index, nullptr, str, QRect(label_rect.topLeft(), QSize(label_rect.width(), INT_MAX)),
+    auto lines = drawText(index, nullptr, str, label_rect,
                           ICON_MODE_RECT_RADIUS, isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
                           QTextOption::WrapAtWordBoundaryOrAnywhere, elide ? opt.textElideMode : Qt::ElideNone,
                           Qt::AlignCenter);
@@ -1047,7 +1060,7 @@ void DIconItemDelegate::hideNotEditingIndexWidget()
     Q_D(DIconItemDelegate);
 
     if (d->expandedIndex.isValid()) {
-        parent()->setIndexWidget(d->expandedIndex, 0);
+        parent()->setIndexWidget(d->expandedIndex, nullptr);
         d->expandedItem->hide();
         d->expandedIndex = QModelIndex();
         d->lastAndExpandedInde = QModelIndex();
@@ -1139,7 +1152,7 @@ void DIconItemDelegate::updateItemSizeHint()
 //    d->elideMap.clear();
 //    d->wordWrapMap.clear();
 //    d->textHeightMap.clear();
-    d->textLineHeight = parent()->parent()->fontMetrics().height();
+    d->textLineHeight = parent()->parent()->fontMetrics().lineSpacing();
 
     int width = parent()->parent()->iconSize().width() + 30;
     int height = parent()->parent()->iconSize().height() + 2 * COLUMU_PADDING
@@ -1251,7 +1264,7 @@ void DIconItemDelegate::onTriggerEdit(const QModelIndex &index)
     Q_D(DIconItemDelegate);
     m_focusWindow = qApp->focusWindow();
     if (index == d->expandedIndex) {
-        parent()->setIndexWidget(index, 0);
+        parent()->setIndexWidget(index, nullptr);
         d->expandedItem->hide();
         d->expandedIndex = QModelIndex();
         d->lastAndExpandedInde = QModelIndex();
