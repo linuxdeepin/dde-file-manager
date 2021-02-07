@@ -2861,7 +2861,6 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
             bottomRightGridPos = gridAt(d->selectRect.bottomRight());
 
             QItemSelection rectSelection;
-            QItemSelection toRemoveSelection;
             for (auto x = topLeftGridPos.x(); x <= bottomRightGridPos.x(); ++x) {
                 for (auto y = topLeftGridPos.y(); y <= bottomRightGridPos.y(); ++y) {
                     auto localFile = GridManager::instance()->itemTop(m_screenNum, x, y);
@@ -2891,11 +2890,9 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
                 for (auto &sel : rectSelection) {
                     for (auto &index : sel.indexes())
                         if (!oldSelection.contains(index)) {
-                            oldSelection += rectSelection;
+                            //fixbug63317:在桌面按住ctrl+鼠标左键选择文件后，按住鼠标左键框选文件，按住ctrl的过程中鼠标左键无法取消首次选择的文件
+                            oldSelection.push_back(sel);
                         }
-                }
-                for (auto toRemove : toRemoveSelection) {
-                    oldSelection.removeAll(toRemove);
                 }
                 QAbstractItemView::selectionModel()->select(oldSelection, command);
             } else {
@@ -2907,7 +2904,6 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
 
     if (DFMGlobal::keyShiftIsPressed()) {
         QItemSelection rectSelection;
-        QItemSelection toRemoveSelection;
         //just keyShift
         bool beginSmall = d->beginPos.x() < currentPoint.x() || d->beginPos.y() < currentPoint.y();
         if (beginSmall) {
