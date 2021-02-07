@@ -25,6 +25,8 @@
 #ifndef DFMGLOBAL_H
 #define DFMGLOBAL_H
 
+#include "durl.h"
+
 #include <QObject>
 #include <QFontMetrics>
 #include <QTextOption>
@@ -36,8 +38,11 @@
 #include <QDebug>
 
 #include <functional>
+#include <cmath>
+#include <iostream>
 
-#include "durl.h"
+#define CEIL(x) (static_cast<int>(std::ceil(x)))
+#define FLOOR(x) (static_cast<int>(std::floor(x)))
 
 // begin file item global define
 #define TEXT_LINE_HEIGHT 18
