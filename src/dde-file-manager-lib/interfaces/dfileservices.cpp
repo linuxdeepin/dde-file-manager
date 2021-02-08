@@ -697,6 +697,14 @@ void DFileService::pasteFileByClipboard(const QObject *sender, const DUrl &targe
         DFMGlobal::instance()->clearClipboard();
     }
 
+    // 某些文件剪切到回收站需处理成"永久删除"
+    if (action == DFMGlobal::CutAction && targetUrl.scheme() == TRASH_SCHEME && !list.empty()) {
+        auto fi = DFileService::createFileInfo(this, list[0]);
+        if (fi && fi->needCompleteDelete()) {
+            deleteFiles(sender, list, true, false, true);
+            return;
+        }
+    }
     pasteFile(sender, action, targetUrl, list);
 }
 
