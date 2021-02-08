@@ -2396,7 +2396,10 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
         }
 
         // feature: hide specified dirs of unremovable devices directly under devices' mountpoint
-        if (!filters().testFlag(QDir::Hidden) && fileInfo->isDir() && deviceListener->hiddenDirs().contains(fileInfo->filePath())) {
+        if (!isDesktop      // 桌面不执行隐藏，否则将导致桌面无法实时刷新“发送到”列表：这行语句将导致 gvfsManager 提前在线程中被初始化
+                && !filters().testFlag(QDir::Hidden)
+                && fileInfo->isDir()
+                && deviceListener->hiddenDirs().contains(fileInfo->filePath())) {
             continue;
         }
 
