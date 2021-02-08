@@ -251,6 +251,13 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
     mimeData->setData("x-special/gnome-copied-files", ba);
     mimeData->setData("x-dfm-copied/file-icons", iconBa);
     mimeData->setUrls(list);
+    // fix bug 63441
+    // 如果是剪切操作，则禁止跨用户的粘贴操作
+    if (DFMGlobal::CutAction == action) {
+        QByteArray userId;
+        userId.append(QString::number(getUserId()));
+        mimeData->setData("userId", userId);
+    }
 
     qApp->clipboard()->setMimeData(mimeData);
 }
