@@ -1715,6 +1715,16 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     case Qt::MoveAction:
         // NOTE(zccrs): 为MoveAction时，如果执行成功，QAbstractItemView会调用clearOrRemove移除此item
         //              所以此处必须判断是否粘贴完成，不然会导致此item消失
+        // fix bug 63341 ，开启普通文件删除提示功能后，打开最近使用和回收站两个窗口，拖拽最近使用到回收站，在还没有
+        // 弹出对话框的时候，快速框选最近访问窗口。这时弹窗出现(使用的runinMainThread)使用的exec就会开启一个本地事件循环，将框选事件加入本地循环
+        // 执行，框选事件又在等待drag事件结束（mousemove事件结束），本地事件又阻塞drag事件，相互等待。使用线程去执行
+        // 业务逻辑，让drop事件快速返回。
+        if (toUrl.isTrashFile()) {
+            QtConcurrent::run([=]() {
+                fileService->pasteFile(this, DFMGlobal::CutAction, toUrl, urlList);
+            });
+            break;
+        }
         success = !fileService->pasteFile(this, DFMGlobal::CutAction, toUrl, urlList).isEmpty();
         break;
     default:
