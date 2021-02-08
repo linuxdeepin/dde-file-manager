@@ -344,7 +344,8 @@ DFMUrlListBaseEvent::DFMUrlListBaseEvent(DFMEvent::Type type, const QObject *sen
         //遍历传入的urllist
         for (DUrl url : list) {
             //判断是否是来自数据盘路径
-            if (url.path().startsWith("/data/")) {
+            //fix bug63348 在最近使用文件夹下无法删除/data目录下的文件，因为在删除的时候把/data/home处理成/home
+            if (url.path().startsWith("/data/") && !url.isRecentFile()) {
                 //去掉数据盘路径开头
                 url.setPath(url.path().mid(sizeof("/data") - 1));
             }
