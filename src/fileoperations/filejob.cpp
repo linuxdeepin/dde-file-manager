@@ -604,17 +604,11 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
 
             ok = !result.isEmpty();
         } else if (srcInfo.isDir()) {
-            if (copyDir(srcFilePath, tarDir, true, &_tarFilePath)) {
-                bool delOk = deleteDir(srcFilePath);
-                bool renameOk = QFile::rename(_tarFilePath, tarFilePath);
-                ok = (_tarFilePath == tarFilePath) ? delOk : renameOk;
-            }
+            if (copyDir(srcFilePath, tarDir, true, &_tarFilePath))
+                ok = deleteDir(srcFilePath);
         } else if (srcInfo.isFile() || srcInfo.isSymLink()) {
-            if (copyFile(srcFilePath, tarDir, true, &_tarFilePath) && !getIsSkip()) {
-                bool delOk = deleteFile(srcFilePath);
-                bool renameOk = QFile::rename(_tarFilePath, tarFilePath);
-                ok = (_tarFilePath == tarFilePath) ? delOk : renameOk;
-            }
+            if (copyFile(srcFilePath, tarDir, true, &_tarFilePath) && !getIsSkip())
+                ok = deleteFile(srcFilePath);
         }
     }
 
