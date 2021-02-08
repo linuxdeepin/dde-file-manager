@@ -101,6 +101,7 @@ private:
     void pushUrlToHistoryStack(DUrl url);
     void onBackButtonClicked();
     void onForwardButtonClicked();
+    void setEnterText(QString &text);
 
     bool m_searchState = false;
     QFrame *m_addressToolBar;

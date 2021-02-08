@@ -272,9 +272,7 @@ void DToolBar::searchBarTextEntered(const QString textEntered)
         QDir::setCurrent(currentUrl.toLocalFile());
     }
 
-    //【recent:】后无斜杠、单斜杠、双斜杠、三斜杠均响应跳转只最近使用页面，无视其后输入的文件名是否存在
-    if (text.startsWith("recent:"))
-        text = "recent:///";
+    setEnterText(text);
 
     DUrl inputUrl = DUrl::fromUserInput(text, false); ///###: here, judge whether the text is a local file path.
 
@@ -539,4 +537,16 @@ void DToolBar::onBackButtonClicked()
 void DToolBar::onForwardButtonClicked()
 {
     DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMForwardEvent>(this), qobject_cast<DFileManagerWindow *>(window()));
+}
+
+void DToolBar::setEnterText(QString &text)
+{
+    //【recent:】后无斜杠、单斜杠、双斜杠、三斜杠均响应跳转只最近使用页面，无视其后输入的文件名是否存在
+    if (text.startsWith("recent:")) {
+        text = "recent:///";
+    } else if (text.startsWith("usershare:")) {
+        text = "usershare:///";
+    } else if (text.startsWith("computer:")) {
+        text = "computer:///";
+    }
 }
