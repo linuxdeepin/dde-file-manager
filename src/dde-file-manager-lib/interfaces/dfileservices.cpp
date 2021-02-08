@@ -685,10 +685,17 @@ void DFileService::pasteFileByClipboard(const QObject *sender, const DUrl &targe
     if (targetUrl.scheme() == SEARCH_SCHEME) {
         return;
     }
-    const DUrlList &list = DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList());
+    const DUrlList &list = DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList());    
 
-    if (action == DFMGlobal::CutAction)
+    if (action == DFMGlobal::CutAction) {
+        // fix bug 63441
+        // 如果是剪切操作，则禁止跨用户的粘贴操作
+        QByteArray userId = qApp->clipboard()->mimeData()->data("userId");
+        if (!userId.isEmpty() && (userId.toInt() != DFMGlobal::getUserId()))
+            return;
+
         DFMGlobal::instance()->clearClipboard();
+    }
 
     pasteFile(sender, action, targetUrl, list);
 }
