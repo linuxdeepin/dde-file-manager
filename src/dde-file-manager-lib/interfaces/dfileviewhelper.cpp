@@ -757,26 +757,29 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
             return;
 
         Qt::DropAction default_action = Qt::CopyAction;
-        {
-            const DUrl from = DUrl(urls.first());
-            DUrl to = info->fileUrl();
+        const DUrl from = DUrl(urls.first());
+        DUrl to = info->fileUrl();
 
-            //fix bug#23703勾选自动整理，拖拽其他目录文件到桌面做得是复制操作
-            //因为自动整理的路径被DStorageInfo::inSameDevice判断为false，这里做转化
-            if (to.scheme() == DFMMD_SCHEME) {
-                to = DUrl(info->absoluteFilePath());
-                to.setScheme(FILE_SCHEME);
-            }
-            //end
+        //fix bug#23703勾选自动整理，拖拽其他目录文件到桌面做得是复制操作
+        //因为自动整理的路径被DStorageInfo::inSameDevice判断为false，这里做转化
+        if (to.scheme() == DFMMD_SCHEME) {
+            to = DUrl(info->absoluteFilePath());
+            to.setScheme(FILE_SCHEME);
+        }
+        //end
 
-            if (qApp->keyboardModifiers() == Qt::AltModifier) {
+        if (qApp->keyboardModifiers() == Qt::AltModifier) {
+            default_action = Qt::MoveAction;
+        } else if (!DFMGlobal::keyCtrlIsPressed()) {
+            // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
+            if (DStorageInfo::inSameDevice(from, to) || to.isTrashFile()) {
                 default_action = Qt::MoveAction;
-            } else if (!DFMGlobal::keyCtrlIsPressed()) {
-                // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
-                if (DStorageInfo::inSameDevice(from, to) || to.isTrashFile()) {
-                    default_action = Qt::MoveAction;
-                }
             }
+        }
+
+        //任意来源为回收站的drop操作均为move(统一回收站拖拽标准)
+        if (from.url().contains(".local/share/Trash/")) {
+            default_action = Qt::MoveAction;
         }
 
         if (event->possibleActions().testFlag(default_action)) {
