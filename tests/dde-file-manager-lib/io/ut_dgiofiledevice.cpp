@@ -194,9 +194,9 @@ TEST_F(DGIOFileDeviceTest,start_readData) {
         qDebug() << "00000";
         device->cancelAllOperate();;
     });
-    EXPECT_EQ(-1,device->readData(buf,16));
+    EXPECT_EQ(0,device->readData(buf,16));
     future.waitForFinished();
-    EXPECT_EQ(-1,device->readData(buf,16));
+    EXPECT_EQ(0,device->readData(buf,16));
 }
 
 TEST_F(DGIOFileDeviceTest,start_writeData) {
@@ -222,9 +222,9 @@ TEST_F(DGIOFileDeviceTest,start_writeData) {
         qDebug() << "00000";
         device->cancelAllOperate();;
     });
-    EXPECT_EQ(-1,device->writeData(buf,16));
+    EXPECT_EQ(0,device->writeData(buf,16));
     future.waitForFinished();
-    EXPECT_EQ(-1,device->writeData(buf,16));
+    EXPECT_EQ(0,device->writeData(buf,16));
 }
 
 TEST_F(DGIOFileDeviceTest,start_flush) {

@@ -1335,8 +1335,12 @@ open_file: {
         qint64 current_pos = fromDevice->pos();
     read_data:
         if (Q_UNLIKELY(!stateCheck())) {
-            if (!m_bDestLocal) {
+            // fix bug 63290 只有网络文件断开了网络才使用这个函数
+            if (toInfo->isGvfsMountFile() && DFileService::instance()->checkGvfsMountfileBusy(toInfo->fileUrl(), false)) {
                 toDevice->closeWriteReadFailed(true);
+            }
+            if (fromInfo->isGvfsMountFile() && DFileService::instance()->checkGvfsMountfileBusy(fromInfo->fileUrl(), false)) {
+                fromDevice->closeWriteReadFailed(true);
             }
             delete[] data;
             return false;
@@ -1344,8 +1348,12 @@ open_file: {
 
         qint64 size_read = fromDevice->read(data, block_Size);
         if (Q_UNLIKELY(!stateCheck())) {
-            if (!m_bDestLocal) {
+            // fix bug 63290 只有网络文件断开了网络才使用这个函数
+            if (toInfo->isGvfsMountFile() && DFileService::instance()->checkGvfsMountfileBusy(toInfo->fileUrl(), false)) {
                 toDevice->closeWriteReadFailed(true);
+            }
+            if (fromInfo->isGvfsMountFile() && DFileService::instance()->checkGvfsMountfileBusy(fromInfo->fileUrl(), false)) {
+                fromDevice->closeWriteReadFailed(true);
             }
             delete[] data;
             return false;
@@ -1392,15 +1400,23 @@ open_file: {
         current_pos = toDevice->pos();
     write_data:
         if (Q_UNLIKELY(!stateCheck())) {
-            if (!m_bDestLocal) {
+            // fix bug 63290 只有网络文件断开了网络才使用这个函数
+            if (toInfo->isGvfsMountFile() && DFileService::instance()->checkGvfsMountfileBusy(toInfo->fileUrl(), false)) {
                 toDevice->closeWriteReadFailed(true);
+            }
+            if (fromInfo->isGvfsMountFile() && DFileService::instance()->checkGvfsMountfileBusy(fromInfo->fileUrl(), false)) {
+                fromDevice->closeWriteReadFailed(true);
             }
             return false;
         }
         qint64 size_write = toDevice->write(data, size_read);
         if (Q_UNLIKELY(!stateCheck())) {
-            if (!m_bDestLocal) {
+            // fix bug 63290 只有网络文件断开了网络才使用这个函数
+            if (toInfo->isGvfsMountFile() && DFileService::instance()->checkGvfsMountfileBusy(toInfo->fileUrl(), false)) {
                 toDevice->closeWriteReadFailed(true);
+            }
+            if (fromInfo->isGvfsMountFile() && DFileService::instance()->checkGvfsMountfileBusy(fromInfo->fileUrl(), false)) {
+                fromDevice->closeWriteReadFailed(true);
             }
             return false;
         }
@@ -1410,8 +1426,11 @@ open_file: {
                 //临时处理 fix
                 //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
                 //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
-                if (FileUtils::isGvfsMountFile(toInfo->path())) {
+                if (toInfo->isGvfsMountFile() && DFileService::instance()->checkGvfsMountfileBusy(toInfo->fileUrl(), false)) {
                     toDevice->closeWriteReadFailed(true);
+                }
+                if (fromInfo->isGvfsMountFile() && DFileService::instance()->checkGvfsMountfileBusy(fromInfo->fileUrl(), false)) {
+                    fromDevice->closeWriteReadFailed(true);
                 }
                 delete[] data;
                 fromDevice->close();
