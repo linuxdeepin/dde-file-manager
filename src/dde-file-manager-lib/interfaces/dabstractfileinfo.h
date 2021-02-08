@@ -207,6 +207,7 @@ public:
     virtual bool isSymLink() const;
     virtual bool isDesktopFile() const;
     virtual bool isVirtualEntry() const;
+    virtual bool needCompleteDelete() const;
 
     virtual QString symlinkTargetPath() const;
     virtual DUrl symLinkTarget() const;

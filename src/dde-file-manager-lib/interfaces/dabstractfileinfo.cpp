@@ -513,6 +513,14 @@ bool DAbstractFileInfo::isVirtualEntry() const
     return false;
 }
 
+bool DAbstractFileInfo::needCompleteDelete() const
+{
+    return (isGvfsMountFile()
+            || VaultController::isVaultFile(toLocalFile())
+            || deviceListener->isInRemovableDeviceFolder(absoluteFilePath()))
+            && !isVirtualEntry();
+}
+
 QString DAbstractFileInfo::symlinkTargetPath() const
 {
     CALL_PROXY(symlinkTargetPath());
