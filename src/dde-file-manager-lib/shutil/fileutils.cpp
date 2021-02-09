@@ -125,18 +125,14 @@ bool FileUtils::removeRecurse(const QString &path, const QString &name)
  */
 bool FileUtils::isAncestorUrl(const DUrl &ancestor, const DUrl &url)
 {
-    if (!ancestor.isValid() || !url.isValid()) {
-        return false;
+    DUrl parent = url;
+    while (parent.isValid()) {
+        if (parent == ancestor) {
+            return true;
+        }
+        parent = parent.parentUrl();
     }
-    QString ancestorDir(ancestor.toLocalFile());
-    QString urlDir(url.toLocalFile());
-    if (!ancestorDir.endsWith("/")) {
-        ancestorDir.append('/');
-    }
-    if (!urlDir.endsWith("/")) {
-        urlDir.append('/');
-    }
-    return urlDir.startsWith(ancestorDir);
+    return false;
 }
 
 /**
