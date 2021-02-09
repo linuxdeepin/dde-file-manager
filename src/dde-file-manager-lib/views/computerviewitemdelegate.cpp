@@ -194,7 +194,8 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
     painter->setFont(smallf);
     textrect.setLeft(option.rect.left() + leftmargin + iconsize + spacing);
     textrect.setRight(option.rect.right() - rightmargin);
-    textrect.setTop(option.rect.top() + topmargin + par->fontMetrics().height() + 1);
+    // 修复bug-63543 控制中心修改字体为unifont后，item的格式标签会覆盖住盘符大小标签
+    textrect.setTop(otextrect.bottom() + 3);
     textrect.setHeight(fontpixelsize);
 
     quint64 sizeinuse = index.data(ComputerModel::DataRoles::SizeInUseRole).toULongLong();
