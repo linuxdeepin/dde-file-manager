@@ -611,7 +611,8 @@ void FilePreviewDialog::DoneCurrent()
 void FilePreviewDialog::playCurrentPreviewFile()
 {
     if (m_preview) {
-        if (m_preview->metaObject()->className() == QStringLiteral("dde_file_manager::VideoPreview")) {
+        // 修复bug-63504 bug-63352
+        if (m_preview->metaObject()->className() == QStringLiteral("VideoPreview")) {
             m_playingVideo = true;
             // 1s 后才能重新预览视频，原因是快速切换预览视频会因为视频插件内部的崩溃引起文管崩溃
             QTimer::singleShot(1000, [this]() {
