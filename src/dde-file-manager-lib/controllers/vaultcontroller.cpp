@@ -1143,6 +1143,8 @@ void VaultController::slotLockVault(int state)
 {
     if (state == static_cast<int>(ErrorCode::Success)) {
         m_enVaultState = Encrypted;
+        // 刷新下界面
+        emit fileSignalManager->requestFreshAllFileView();
     }
     emit signalLockVault(state);
 }
