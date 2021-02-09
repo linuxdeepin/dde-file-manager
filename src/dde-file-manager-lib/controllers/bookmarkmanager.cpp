@@ -40,6 +40,7 @@
 #include <QDateTime>
 #include <QUrl>
 #include <QUrlQuery>
+#include <QtConcurrent>
 
 #include <stdlib.h>
 
@@ -81,7 +82,11 @@ public:
 BookMarkManager::BookMarkManager(QObject *parent)
     : DAbstractFileController(parent)
 {
-    update(DFMApplication::genericSetting()->value("BookMark", "Items"));
+    /* 在启动文管时刷新书签的过程中，如果存在指向网络目录的书签，并且网络目录处于无法连接的状态时，
+     * 创建书签对象会卡顿较长时间，这里将构建对象的循环放入子线程，避免主线程卡住 */
+    QtConcurrent::run([=] {
+        update(DFMApplication::genericSetting()->value("BookMark", "Items"));
+    });
 
     fileService->setFileUrlHandler(BOOKMARK_SCHEME, "", this);
 
@@ -154,7 +159,7 @@ bool BookMarkManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
 {
     QVariantList list = DFMApplication::genericSetting()->value("BookMark", "Items").toList();
 
-    for (const DUrl url : event->urlList()) {
+    for (const DUrl &url : event->urlList()) {
         const BookMarkPointer &info = m_bookmarks.take(url.bookmarkTargetUrl());
 
         if (!info)
@@ -245,7 +250,6 @@ void BookMarkManager::update(const QVariant &value)
     const QVariantList &list = value.toList();
 
     DUrlList bookmarkUrlList = m_bookmarks.keys();
-
     for (int i = 0; i < list.count(); ++i) {
         const QVariantMap &item = list.at(i).toMap();
         const QString &name = item.value("name").toString();
