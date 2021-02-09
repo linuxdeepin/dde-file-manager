@@ -63,6 +63,7 @@ public:
     }
 
     DArrowRectangle *tooltip {nullptr};
+    QString validText;
 };
 
 FileIconItem::FileIconItem(QWidget *parent) :
@@ -106,6 +107,9 @@ FileIconItem::FileIconItem(QWidget *parent) :
         QString text = edit->toPlainText();
         const QString old_text = text;
 
+        if (text.toLocal8Bit().size() <= maxCharSize)
+            d_ptr->validText = text; // 只要文件名不超长，就设置为合法字符串供之后使用
+
         int text_length = text.length();
         int text_line_height = fontMetrics().height();
 
@@ -116,17 +120,16 @@ FileIconItem::FileIconItem(QWidget *parent) :
             showAlertMessage(tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
         }
 
-        QVector<uint> list = text.toUcs4();
+        if (text.toLocal8Bit().size() > maxCharSize) {
+            if (d_ptr->validText.isEmpty()) {
+                while (text.toLocal8Bit().size() > maxCharSize)
+                    text.chop(1);
+                d_ptr->validText = text;
+            }
+            text = d_ptr->validText;
+        }
+
         int cursor_pos = edit->textCursor().position() - text_length + text.length();
-
-        //        while (text.toLocal8Bit().size() > maxCharSize)
-        //        {
-        //            list.removeAt(--cursor_pos);
-
-        //            text = QString::fromUcs4(list.data(), list.size());
-        //        }
-        while (text.toLocal8Bit().size() > maxCharSize)
-            text.chop(1);
 
         if (text.count() != old_text.count())
         {
