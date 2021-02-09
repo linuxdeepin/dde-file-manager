@@ -469,6 +469,8 @@ bool VaultController::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
                                                     vaultToLocalUrl(event->toUrl()));
     if (flg) {
         const_cast<VaultController *>(this)->updateFileInfo(DUrlList() << event->fromUrl());
+        // 刷新下界面
+        emit fileSignalManager->requestFreshAllFileView();
     }
     return flg;
 }
