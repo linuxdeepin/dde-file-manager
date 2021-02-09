@@ -1156,6 +1156,24 @@ QString DFMGlobal::preprocessingFileName(QString name)
     return name.remove(QRegularExpression(value));
 }
 
+void DFMGlobal::setMimeDataUserID(QMimeData *mime)
+{
+    QByteArray userId;
+
+    userId.append(QString::number(getUserId()));
+    mime->setData(MIME_USER_ID, userId);
+}
+
+bool DFMGlobal::isMimeDatafromCurrentUser(const QMimeData *mime)
+{
+    QByteArray userId = mime->data(MIME_USER_ID);
+
+    if (!userId.isEmpty() && userId.toInt() != getUserId())
+        return false;
+
+    return true;
+}
+
 QString DFMGlobal::toUnicode(const QByteArray &data, const QString &fileName)
 {
     if (data.isEmpty())

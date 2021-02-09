@@ -739,8 +739,9 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
 
 void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
 {
+    bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
     if (event->source() == parent() && !DFMGlobal::keyCtrlIsPressed()) {
-        event->setDropAction(Qt::MoveAction);
+        event->setDropAction(sameUser ? Qt::MoveAction : Qt::IgnoreAction);
     } else {
         DAbstractFileInfoPointer info = model()->fileInfo(parent()->indexAt(event->pos()));
 
@@ -783,7 +784,7 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
         }
 
         if (event->possibleActions().testFlag(default_action)) {
-            event->setDropAction(default_action);
+            event->setDropAction((default_action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : default_action);
         }
 
         if (!info->supportedDropActions().testFlag(event->dropAction())) {
@@ -795,7 +796,7 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
             for (Qt::DropAction action : actions) {
 
                 if (event->possibleActions().testFlag(action) && info->supportedDropActions().testFlag(action)) {
-                    event->setDropAction(action);
+                    event->setDropAction((action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action);
                     break;
                 }
             }
@@ -825,8 +826,11 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
 
 void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &urls) const
 {
+    bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
+
+    qInfo() << "source " << event->source() << ", parent " << parent();
     if (event->source() == parent() && !DFMGlobal::keyCtrlIsPressed()) {
-        event->setDropAction(Qt::MoveAction);
+        event->setDropAction(sameUser ? Qt::MoveAction : Qt::IgnoreAction);
     } else {
         DAbstractFileInfoPointer info = model()->fileInfo(parent()->indexAt(event->pos()));
         if (!info)
@@ -861,7 +865,7 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
         }
 
         if (event->possibleActions().testFlag(default_action)) {
-            event->setDropAction(default_action);
+            event->setDropAction((default_action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : default_action);
         }
 
         // 保险箱时，修改DropAction为Qt::MoveAction
@@ -873,7 +877,7 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
                 event->setDropAction(Qt::CopyAction);
             } else {
                 if (!DFMGlobal::keyCtrlIsPressed()) {
-                    event->setDropAction(Qt::MoveAction);
+                    event->setDropAction(sameUser ? Qt::MoveAction : Qt::IgnoreAction);
                 } else {
                     event->setDropAction(Qt::CopyAction);
                 }
@@ -889,7 +893,7 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
             for (Qt::DropAction action : actions) {
 
                 if (event->possibleActions().testFlag(action) && info->supportedDropActions().testFlag(action)) {
-                    event->setDropAction(action);
+                    event->setDropAction((action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action);
                     break;
                 }
             }

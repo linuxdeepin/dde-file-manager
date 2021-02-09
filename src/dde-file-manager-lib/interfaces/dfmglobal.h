@@ -46,6 +46,7 @@
 #define DDE_TRASH_ID "dde-trash"
 #define DDE_COMPUTER_ID "dde-computer"
 #define REVOCATION_TIMES 2
+#define MIME_USER_ID "userID_for_MoveAction"
 
 #define ASYN_CALL(Fun, Code, captured...) {\
         QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun);\
@@ -384,6 +385,9 @@ public:
     ///###: this function detect what the charset of str is.
     static QByteArray detectCharset(const QByteArray &data, const QString &fileName = QString{});
     static QString preprocessingFileName(QString name);
+
+    static void setMimeDataUserID(QMimeData *mime);
+    static bool isMimeDatafromCurrentUser(const QMimeData *mime);
 
 signals:
     void clipboardDataChanged();
