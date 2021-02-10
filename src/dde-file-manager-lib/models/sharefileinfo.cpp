@@ -124,7 +124,7 @@ QVector<MenuAction> ShareFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
         actionKeys << MenuAction::Separator
                    << MenuAction::Property;
 
-    }else if (type == MultiFiles){
+    }else if (type == MultiFiles || type == MultiFilesSystemPathIncluded){
         actionKeys << MenuAction::Open
                    << MenuAction::Separator
                    << MenuAction::Property;
