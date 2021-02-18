@@ -199,8 +199,12 @@ defaultConfig.files = configure/default-view-states.json
 readmefile.path = $$PREFIX/share/deepin/$$TARGET/oem-menuextensions
 readmefile.files = plugins/.readme
 
+# readme file for create context-menus directory
+contextmenusfile.path = /usr/share/applications/context-menus
+contextmenusfile.files = plugins/.readme
+
 INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations \
- icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile policy
+ icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile contextmenusfile policy
 
 DISTFILES += \
     mimetypeassociations/mimetypeassociations.json \
