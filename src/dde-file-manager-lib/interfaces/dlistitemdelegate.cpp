@@ -14,6 +14,7 @@
 #include "private/dstyleditemdelegate_p.h"
 #include "dfmapplication.h"
 #include "controllers/vaultcontroller.h"
+#include "dfmglobal.h"
 
 #include <QLabel>
 #include <QPainter>
@@ -392,36 +393,67 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
     edit->setObjectName("DListItemDelegate_Editor");
 
     connect(edit, &QLineEdit::destroyed, this, [this, d] {
+        Q_UNUSED(this);
         d->editingIndex = QModelIndex();
     });
 
-    connect(edit, &QLineEdit::textChanged, this, [edit] {
-        QSignalBlocker blocker(edit);
-        Q_UNUSED(blocker)
+    connect(edit, &QLineEdit::textChanged, this, [this, edit, d] {
+        //在此处处理的逻辑是因为默认QAbstractItemView的QLineEdit重命名会被SelectAll
+        //const 防止被改变
+        const QString srcText = edit->text();
+        //得到处理之后的文件名称
+        QString dstText = DFMGlobal::preprocessingFileName(srcText);
 
-        QString text = edit->text();
-        const QString old_text = text;
+        //超出长度将不再被支持输入获取当前
+        bool donot_show_suffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };
 
-        int text_length = text.length();
-
-        text = DFMGlobal::preprocessingFileName(text);
-
-        QVector<uint> list = text.toUcs4();
-        int cursor_pos = edit->cursorPosition() - text_length + text.length();
-
-        const QString &suffix = edit->property("_d_whether_show_suffix").toString();
-
-        while (text.toLocal8Bit().size() > MAX_FILE_NAME_CHAR_COUNT - suffix.size() - (suffix.isEmpty() ? 0 : 1))
-        {
-            list.removeAt(--cursor_pos);
-
-            text = QString::fromUcs4(list.data(), list.size());
+        //获取当前编辑框支持的最大文字长度
+        int textMaxLen = INT_MAX;
+        if (donot_show_suffix) {
+            const QString &suffix = d->editingIndex.data(DFileSystemModel::FileSuffixOfRenameRole).toString();
+            edit->setProperty("_d_whether_show_suffix", suffix);
+            textMaxLen = MAX_FILE_NAME_CHAR_COUNT - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1);
+        } else {
+            textMaxLen = MAX_FILE_NAME_CHAR_COUNT;
         }
 
-        if (text.count() != old_text.count())
-        {
-            edit->setText(text);
-            edit->setCursorPosition(cursor_pos);
+        int textCurrLen = edit->text().length();
+        int textRangeOutLen = textCurrLen - textMaxLen;
+        //最大输入框字符控制逻辑
+        if (textRangeOutLen > 0) {
+            int currPos = edit->cursorPosition();
+            int inputAfterPos = currPos - textRangeOutLen;
+            QString maxLenText = edit->text().mid(0,inputAfterPos) + edit->text().mid(currPos,edit->text().length());
+            edit->setText(maxLenText);
+            edit->setCursorPosition(inputAfterPos);
+            return;
+        }
+
+        //如果存在非法字符且更改了当前的文本文件
+        if (srcText != dstText) {
+            int currPos = edit->cursorPosition();
+            //气泡提示
+            if (!this->parent()) {
+                return;
+            }
+
+            auto view = this->parent()->parent();
+
+            if(!view)
+                return;
+
+            auto showPoint = view->mapToGlobal( QPoint( edit->pos().x() + edit->width() / 2,
+                                                        edit->pos().y() + edit->height() * 2));
+            //背板主题一致
+            auto color = view->palette().background().color();
+
+            DFMGlobal::showAlertMessage(showPoint,
+                                        color,
+                                        QObject::tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
+
+            currPos += dstText.length() - srcText.length();
+            edit->setText(dstText);
+            edit->setCursorPosition(currPos);
         }
     });
 
@@ -469,7 +501,7 @@ void DListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     }
 
     bool donot_show_suffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };
-    QString text{};
+    QString text;
 
     if (donot_show_suffix) {
         edit->setProperty("_d_whether_show_suffix", index.data(DFileSystemModel::FileSuffixOfRenameRole));
@@ -584,17 +616,43 @@ bool DListItemDelegate::eventFilter(QObject *object, QEvent *event)
 
     if (event->type() == QEvent::Show) {
         QLineEdit *edit = qobject_cast<QLineEdit *>(object);
+        //在此处处理的逻辑是因为默认QAbstractItemView的QLineEdit重命名会被SelectAll
+        //const 防止被改变
+        if (!edit)
+            return false;
 
-        if (edit) {
-            const QString &selectionWhenEditing = parent()->baseName(d->editingIndex);
-            int endPos = selectionWhenEditing.isEmpty() ? -1 : selectionWhenEditing.length();
-
-            if (endPos == -1) {
-                edit->selectAll();
-            } else {
-                edit->setSelection(0, endPos);
-            }
+        bool notShowSuffix = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool();
+        QString srcText;
+        if (notShowSuffix)
+        {
+            srcText = d->editingIndex.data(DFileSystemModel::FileBaseNameOfRenameRole).toString();
+        } else {
+            srcText = d->editingIndex.data(DFileSystemModel::FileNameOfRenameRole).toString();
         }
+
+        //得到处理之后的文件名称
+        QString dstText = DFMGlobal::preprocessingFileName(srcText);
+        //如果存在非法字符且更改了当前的文本文件
+        if (srcText != dstText){
+            //气泡提示
+            DFMGlobal::showAlertMessage(edit->mapToGlobal(edit->pos()),
+                                        parent()->parent()->palette().background().color(),
+                                        QObject::tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
+
+            //移动坐标
+            auto srcBaseNameLength =  d->editingIndex.data(DFileSystemModel::FileBaseNameOfRenameRole).toString().length();
+            edit->setText(dstText);
+            int movePosCount = dstText.length() - srcText.length();
+            edit->setText(dstText);
+            edit->setCursorPosition(srcBaseNameLength + movePosCount);
+            edit->setSelection(0, srcBaseNameLength + movePosCount);
+        } else {
+            int selectLength = d->editingIndex.data(DFileSystemModel::FileBaseNameOfRenameRole).toString().length();
+            edit->setText(srcText);
+            edit->setCursorPosition(selectLength);
+            edit->setSelection(0, selectLength);
+        }
+
     } else if (event->type() == QEvent::KeyPress) {
         QKeyEvent *e = static_cast<QKeyEvent *>(event);
 

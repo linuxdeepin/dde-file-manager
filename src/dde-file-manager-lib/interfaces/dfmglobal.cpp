@@ -55,6 +55,8 @@
 #include "bluetooth/bluetoothmanager.h"
 #include "drootfilemanager.h"
 
+#include <DArrowRectangle>
+
 #include <QGuiApplication>
 #include <QClipboard>
 #include <QMimeData>
@@ -89,6 +91,7 @@
 #include <QMimeType>
 #include <QMimeDatabase>
 
+DWIDGET_USE_NAMESPACE;
 
 #ifdef __cplusplus
 extern "C"
@@ -808,6 +811,32 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::
     }
 
     layout->endLayout();
+}
+
+void DFMGlobal::showAlertMessage(QPoint globalPoint, const QColor &backgroundColor, const QString &text, int duration)
+{
+    static DArrowRectangle* tooltip = nullptr;
+    if (!tooltip) {
+        tooltip = new DArrowRectangle(DArrowRectangle::ArrowTop, nullptr);
+        tooltip->setObjectName("AlertTooltip");
+        QLabel *label = new QLabel(tooltip);
+        label->setWordWrap(true);
+        label->setMaximumWidth(500);
+        tooltip->setContent(label);
+        tooltip->setBackgroundColor(backgroundColor);
+        tooltip->setArrowX(15);
+        tooltip->setArrowHeight(5);
+
+        QTimer::singleShot(duration, DFMGlobal::instance(), [=] {
+            delete tooltip;
+            tooltip = nullptr;
+        });
+
+        label->setText(text);
+        label->adjustSize();
+
+        tooltip->show(static_cast<int>(globalPoint.x()),static_cast<int>(globalPoint.y()));
+    }
 }
 
 QString DFMGlobal::elideText(const QString &text, const QSizeF &size,
