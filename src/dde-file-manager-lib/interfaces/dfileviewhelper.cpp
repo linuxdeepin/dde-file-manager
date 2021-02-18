@@ -409,7 +409,7 @@ bool DFileViewHelper::isTransparent(const QModelIndex &index) const
         fileUrl = MergedDesktopController::convertToRealPath(fileUrl);
 
     //判断该文件是否被剪切
-    if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction) {
+    if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction && fileInfo->canRename()) {
         if (DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl))
             return true;
 
