@@ -1215,6 +1215,7 @@ bool DFileMenuManager::isCustomMenuSupported(const DUrl &viewRootUrl)
 
     DStorageInfo st(path);
     return st.isLocalDevice() //过滤 手机 网络 smb ftp
+            && !viewRootUrl.isUserShareFile() //过滤共享文件
             && !deviceListener->isFileFromDisc(path) //过滤光盘
             && !viewRootUrl.isVaultFile() //过滤保险箱
             && !viewRootUrl.isTrashFile();//过滤回收站
