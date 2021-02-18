@@ -22,6 +22,7 @@
 #include <QTimer>
 #include <QPalette>
 #include <QSvgWidget>
+#include <QUuid>
 
 #define TITLE_BT_TRANS_FILE BluetoothTransDialog::tr("Bluetooth File Transfer")
 #define TITLE_BT_TRANS_SUCC BluetoothTransDialog::tr("File Transfer Successful")
@@ -60,6 +61,7 @@ static const qint64 FILE_TRANSFER_LIMITS = 2147483648; // 2GB = 2 * 1024 * 1024 
 BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, BluetoothTransDialog::TransferMode mode, QString targetDevId, QWidget *parent)
     : DDialog(parent)
     , m_urls(urls)
+    , m_token(QUuid::createUuid().toString())
 {
     initUI();
     initConn();
@@ -288,7 +290,10 @@ void BluetoothTransDialog::initConn()
         }
     });
 
-    connect(bluetoothManager, &BluetoothManager::transferEstablishFinish, this, [this](const QString &sessionPath, const QString &errMsg){
+    connect(bluetoothManager, &BluetoothManager::transferEstablishFinish, this, [this](const QString &sessionPath, const QString &errMsg, const QString &senderToken){
+        if (m_token != senderToken)
+            return;
+
         m_currSessionPath = sessionPath;
         if (!sessionPath.isEmpty())
             return;
@@ -650,7 +655,7 @@ void BluetoothTransDialog::sendFiles()
     m_firstTransSize = 0;
     m_progressBar->setValue(0); // retry 时需要重置进度
 
-    bluetoothManager->sendFiles(m_selectedDeviceId, m_urls);
+    bluetoothManager->sendFiles(m_selectedDeviceId, m_urls, m_token);
 
     m_stack->setCurrentIndex(WaitForRecvPage);
     m_spinner->start();
@@ -684,10 +689,17 @@ void BluetoothTransDialog::onBtnClicked(const int &nIdx)
     case SelectDevicePage:
         if (m_selectedDevice.isEmpty() && nIdx == 1)
             return;
-        if (nIdx == 1)
-            sendFiles();
-        else
+        if (nIdx != 1) { // 点击取消
             close();
+            return;
+        }
+
+        if (canSendFiles()) {
+            sendFiles();
+        } else {
+            dialogManager->showMessageDialog(DialogManager::messageType::msgInfo, DialogManager::tr("Sending files now, please try later"));
+        }
+
         break;
     case FailedPage:
         if (nIdx == 1)

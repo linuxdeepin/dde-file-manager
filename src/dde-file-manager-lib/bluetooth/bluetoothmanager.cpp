@@ -320,12 +320,7 @@ void BluetoothManager::showBluetoothSettings()
     d->m_controlcenterInter->ShowModule(BluetoothPage);
 }
 
-void BluetoothManager::sendFiles(const BluetoothDevice &device, const QStringList &filePath)
-{
-    return sendFiles(device.id(), filePath);
-}
-
-void BluetoothManager::sendFiles(const QString &id, const QStringList &filePath)
+void BluetoothManager::sendFiles(const QString &id, const QStringList &filePath, const QString &senderToken)
 {
     Q_D(BluetoothManager);
 
@@ -333,28 +328,28 @@ void BluetoothManager::sendFiles(const QString &id, const QStringList &filePath)
     QString deviceAddress = id;
     deviceAddress.remove(QRegularExpression("/org/bluez/hci[0-9]*/dev_")).replace("_", ":");
 
-    QFuture<QPair<QString, QString>> future = QtConcurrent::run([this, deviceAddress, filePath]{
-           Q_D(BluetoothManager);
-           QDBusPendingReply<QDBusObjectPath> reply = d->m_bluetoothInter->SendFiles(deviceAddress, filePath);
-           reply.waitForFinished();
-           return qMakePair<QString, QString>(reply.value().path(), reply.error().message());
-       });
+    QFuture<QPair<QString, QString>> future = QtConcurrent::run([this, deviceAddress, filePath] {
+       Q_D(BluetoothManager);
+       QDBusPendingReply<QDBusObjectPath> reply = d->m_bluetoothInter->SendFiles(deviceAddress, filePath);
+       reply.waitForFinished();
+       return qMakePair<QString, QString>(reply.value().path(), reply.error().message());
+    });
 
-       if (d->m_watcher) {
-           if (d->m_watcher->isRunning())
-               d->m_watcher->future().cancel();
-           delete d->m_watcher;
-           d->m_watcher = nullptr;
-       }
+    if (d->m_watcher) {
+        if (d->m_watcher->isRunning())
+            d->m_watcher->future().cancel();
+        delete d->m_watcher;
+        d->m_watcher = nullptr;
+    }
 
-       // 此处 watcher 在 run 完成之后会 delete，但无法在传输对话框关闭后立即 delete
-       d->m_watcher = new QFutureWatcher<QPair<QString, QString>>();
-       d->m_watcher->setFuture(future);
-       connect(d->m_watcher, &QFutureWatcher<QString>::finished, this, [d, this]{
-           emit transferEstablishFinish(d->m_watcher->result().first, d->m_watcher->result().second);
-           delete d->m_watcher;
-           d->m_watcher = nullptr;
-       });
+    // 此处 watcher 在 run 完成之后会 delete，但无法在传输对话框关闭后立即 delete
+    d->m_watcher = new QFutureWatcher<QPair<QString, QString>>();
+    d->m_watcher->setFuture(future);
+    connect(d->m_watcher, &QFutureWatcher<QString>::finished, this, [d, senderToken, this]{
+        emit transferEstablishFinish(d->m_watcher->result().first, d->m_watcher->result().second, senderToken);
+        delete d->m_watcher;
+        d->m_watcher = nullptr;
+   });
 }
 
 bool BluetoothManager::cancelTransfer(const QString &sessionPath)
