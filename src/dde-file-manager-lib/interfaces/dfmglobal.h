@@ -359,6 +359,18 @@ public:
                           qreal backgroundRadius = 4,
                           QList<QRectF> *boundingRegion = nullptr);
 
+    /**
+     * @brief showAlertMessage 显示气泡提示信息
+     * @param globalPoint 气泡框展示的全局坐标
+     * @param backgroundColor 气泡框的背景色
+     * @param text 气泡框展示的文字
+     * @param duration  显示时间，默认3秒
+     */
+    static void showAlertMessage(QPoint globalPoint,
+                                 const QColor &backgroundColor,
+                                 const QString &text,
+                                 int duration = 3000);
+
     static QString toPinyin(const QString &text);
     static bool startWithHanzi(const QString &text);
     template<typename T>

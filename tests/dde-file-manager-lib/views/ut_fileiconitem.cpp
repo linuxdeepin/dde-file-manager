@@ -59,7 +59,7 @@ TEST(FileIconItemTest,set_maxchar_size)
 {
     FileIconItem w;
     w.setMaxCharSize(10);
-    EXPECT_EQ(10, w.maxCharSize);
+    EXPECT_EQ(10, w.maxCharSize());
 }
 
 TEST(FileIconItemTest,edit_textstack_currentitem)

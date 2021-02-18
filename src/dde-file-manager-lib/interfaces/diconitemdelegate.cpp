@@ -27,10 +27,10 @@
 #include "views/fileitem.h"
 #include "private/dstyleditemdelegate_p.h"
 #include "dfmapplication.h"
-
 #include "dfilesystemmodel.h"
 #include "tag/tagmanager.h"
 #include "app/define.h"
+#include "dfmglobal.h"
 
 #include <dgiosettings.h>
 
@@ -850,6 +850,72 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
         d->editingIndex = QModelIndex();
     });
 
+    //编辑框的字符变更处理
+    connect(item->edit, &QTextEdit::textChanged, this, [=](){
+
+        if (!item || !item->edit || item->edit->isReadOnly())
+            return;
+
+        //获取之前的文件名称
+        QString srcText = item->edit->toPlainText();
+
+        if(srcText.isEmpty())
+            return;
+
+        //编辑字符的长度控制
+        int editTextMaxLen = item->maxCharSize();
+        int editTextCurrLen = item->edit->toPlainText().length();
+        int editTextRangeOutLen = editTextCurrLen - editTextMaxLen;
+        if (editTextRangeOutLen > 0 && editTextMaxLen != INT_MAX) {
+            int srcPos = item->edit->textCursor().position();
+            srcText = srcText.mid(0, srcPos - editTextRangeOutLen) + srcText.mid(srcPos, editTextCurrLen);
+            item->edit->setPlainText(srcText);
+            QTextCursor cursor = item->edit->textCursor();
+            cursor.setPosition(srcPos - editTextRangeOutLen);
+            item->edit->setTextCursor(cursor);
+            item->edit->setAlignment(Qt::AlignHCenter);
+        }
+
+        //得到处理之后的文件名称
+        QString dstText = DFMGlobal::preprocessingFileName(srcText);
+
+        //如果存在非法字符且更改了当前的文本文件
+        if (srcText != dstText) {
+
+            // 修改文件的命名规则 弹出提示框(气泡提示)
+            if ( !this->parent() || !this->parent()->parent()) {
+                return;
+            }
+
+            auto view = this->parent()->parent();
+            auto showPoint = view->mapToGlobal( QPoint( item->pos().x() + item->width() / 2,
+                                                        item->pos().y() + item->height() - ICON_MODE_RECT_RADIUS ));
+            //背板主题一致
+            auto color = view->palette().background().color();
+
+            DFMGlobal::showAlertMessage(showPoint,
+                                        color,
+                                        QObject::tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
+            //之前的光标Pos
+            int srcCursorPos = item->edit->textCursor().position();
+            item->edit->setPlainText(dstText);
+            int endPos = srcCursorPos + (dstText.length() - srcText.length());
+            //此处调整光标位置
+            QTextCursor cursor = item->edit->textCursor();
+            cursor.setPosition(endPos);
+            item->edit->setTextCursor(cursor);
+            item->edit->setAlignment(Qt::AlignHCenter);
+        }
+
+        if (item->editTextStackCurrentItem() != item->edit->toPlainText()) {
+            item->pushItemToEditTextStack(item->edit->toPlainText());
+        }
+    });
+
+    item->edit->setAlignment(Qt::AlignHCenter);
+    item->edit->document()->setTextWidth(d->itemSizeHint.width());
+    item->setOpacity(this->parent()->isTransparent(index) ? 0.3 : 1);
+
     return item;
 }
 
@@ -894,10 +960,9 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
     }
 }
 
+//item->edit->setPlainText会触发textChanged连接槽进行相关的字符处理
 void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    Q_D(const DIconItemDelegate);
-
     QStyleOptionViewItem opt;
 
     initStyleOption(&opt, index);
@@ -913,9 +978,10 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 
     FileIconItem *item = qobject_cast<FileIconItem *>(editor);
 
-    if (!item)
+    if (!item || !item->edit)
         return;
 
+    //获取当前是否显示文件后缀
     bool donot_show_suffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };
 
     if (item->edit->isReadOnly()) {
@@ -934,29 +1000,50 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         }
     }
 
-
-
-    item->edit->setAlignment(Qt::AlignHCenter);
-    item->edit->document()->setTextWidth(d->itemSizeHint.width());
-    item->setOpacity(parent()->isTransparent(index) ? 0.3 : 1);
-
-    if (item->edit->isReadOnly())
-        return;
-
-    const QString &selectionWhenEditing = parent()->baseName(index);
-    int endPos = selectionWhenEditing.isEmpty() ? -1 : selectionWhenEditing.length();
-    int totalLength = item->edit->toPlainText().length();
-
-    if (endPos == -1 || donot_show_suffix || endPos >= totalLength) {
-        item->edit->selectAll();
+    //　源文件名称不存在更改,此处会受到textChanged的更改出现光标重新计算(更改此处请慎重)
+    QString srcText;
+    if (donot_show_suffix) {
+        srcText = index.data(DFileSystemModel::FileBaseNameOfRenameRole).toString();
     } else {
+        srcText = index.data(DFileSystemModel::FileNameOfRenameRole).toString();
+    }
+
+    int baseNameLength = index.data(DFileSystemModel::FileBaseNameOfRenameRole).toString().length();
+
+    QString dstText = DFMGlobal::preprocessingFileName(srcText);
+    if (srcText == dstText) {
+            //初始化选中任意文件基本名称
+            QTextCursor cursor = item->edit->textCursor();
+            cursor.setPosition(0);
+            cursor.setPosition(baseNameLength, QTextCursor::KeepAnchor);
+            item->edit->setTextCursor(cursor);
+    } else {
+        // 修改文件的命名规则 弹出提示框(气泡提示)
+        if (!this->parent() || !this->parent()->parent()) {
+            return;
+        }
+
+        auto view = this->parent()->parent();
+        auto showPoint = view->mapToGlobal(QPoint(item->pos().x() + item->width()/2,
+                                                  item->pos().y() + item->height() - ICON_MODE_RECT_RADIUS ));
+        //背板主题一致
+        auto color = view->palette().background().color();
+
+        DFMGlobal::showAlertMessage(showPoint,
+                                    color,
+                                    QObject::tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
+
+        item->edit->setPlainText(dstText);
+
+        int endPos = baseNameLength + (dstText.length() - srcText.length());
+
         QTextCursor cursor = item->edit->textCursor();
-
         cursor.setPosition(0);
-        cursor.setPosition(endPos, QTextCursor::KeepAnchor);
-
+        cursor.setPosition(endPos,QTextCursor::KeepAnchor);
         item->edit->setTextCursor(cursor);
     }
+
+    item->edit->setAlignment(Qt::AlignHCenter);
 }
 
 QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode) const

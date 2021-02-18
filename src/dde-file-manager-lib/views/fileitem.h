@@ -49,6 +49,7 @@ public:
     qreal opacity() const;
     void setOpacity(qreal opacity);
     void setMaxCharSize(int maxSize);
+    int maxCharSize();
 
     QSize sizeHint() const override;
 
@@ -59,6 +60,12 @@ public:
 
 
 public slots:
+    /**
+     * @brief showAlertMessage 显示提示信息
+     * @param text  提示内容
+     * @param duration  显示时间，默认3秒
+     */
+    void showAlertMessage(const QString &text, int duration = 3000);
 
 signals:
     void inputFocusOut();
@@ -67,13 +74,7 @@ private slots:
     void popupEditContentMenu();
     void editUndo();
     void editRedo();
-
-    /**
-     * @brief showAlertMessage 显示提示信息
-     * @param text  提示内容
-     * @param duration  显示时间，默认3秒
-     */
-    void showAlertMessage(const QString &text, int duration = 3000);
+    void doLineEditTextChanged();
 
 protected:
     void updateEditorGeometry();
@@ -95,7 +96,7 @@ private:
     bool disableEditTextStack = false;
     QStack<QString> editTextStack;
     QGraphicsOpacityEffect *opacityEffect = Q_NULLPTR;
-    int maxCharSize = INT_MAX;
+    int m_maxCharSize = INT_MAX;
 
     friend class DIconItemDelegate;
     friend class DFileView;
