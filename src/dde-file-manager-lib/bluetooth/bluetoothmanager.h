@@ -62,18 +62,12 @@ public Q_SLOTS:
     void showBluetoothSettings();
 
     /**
-     * @brief sendFiles      向设备发送文件
-     * @param device         蓝牙设备对象
-     * @param filePath       文件路径列表
-     */
-    void sendFiles(const BluetoothDevice &device, const QStringList &filePath);
-
-    /**
      * @brief sendFiles     向设备发送文件
      * @param id            蓝牙设备 ID
      * @param filePath      文件路径列表
+     * @param senderToken   发起该次传输请求的对话框唯一标识符
      */
-    void sendFiles(const QString &id, const QStringList &filePath);
+    void sendFiles(const QString &id, const QStringList &filePath, const QString &senderToken);
 
     /**
      * @brief cancleTransfer 取消某个传输会话
@@ -103,7 +97,7 @@ Q_SIGNALS:
 
     void fileTransferFinished(const QString &sessionPath, const QString &filePath);
     void transferFailed(const QString &sessionPath, const QString &filePath, const QString &errMsg);
-    void transferEstablishFinish(const QString &sessionPath, const QString &errMsg);
+    void transferEstablishFinish(const QString &sessionPath, const QString &errMsg, const QString &senderToken);
 
 private:
     explicit BluetoothManager(QObject *parent = nullptr);

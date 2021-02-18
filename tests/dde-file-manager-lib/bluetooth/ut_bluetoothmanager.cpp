@@ -79,12 +79,6 @@ TEST_F(TestBluetoothManager, model)
     EXPECT_NO_FATAL_FAILURE(bluetoothManager->model());
 }
 
-TEST_F(TestBluetoothManager, sendFiles)
-{
-    BluetoothDevice device;
-    bluetoothManager->sendFiles(device, QStringList());
-}
-
 TEST_F(TestBluetoothManager, cancleTransfer)
 {
     EXPECT_TRUE(bluetoothManager->cancelTransfer(""));

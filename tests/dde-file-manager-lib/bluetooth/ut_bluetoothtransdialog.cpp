@@ -128,7 +128,7 @@ TEST_F(TestBluetoothTransDialog, tstFindItemByIdRole)
 
 TEST_F(TestBluetoothTransDialog, tstSendFilesToDevice)
 {
-    void (*sendFiles_stub)(void *, QString, QStringList) = [](void *, QString, QStringList) {;};
+    void (*sendFiles_stub)(void *, QString, QStringList, QString) = [](void *, QString, QStringList, QString) {;};
 
     BluetoothAdapter *adapter0 = new BluetoothAdapter;
     adapter0->setId("1");
@@ -145,7 +145,7 @@ TEST_F(TestBluetoothTransDialog, tstSendFilesToDevice)
     stExt.set_lamda(ADDR(BluetoothModel, adapters), [&map]{return map;});
 
     Stub st;
-    st.set(static_cast<void(BluetoothManager::*)(const QString &, const QStringList &)>(&BluetoothManager::sendFiles), sendFiles_stub);
+    st.set(static_cast<void(BluetoothManager::*)(const QString &, const QStringList &, const QString &)>(&BluetoothManager::sendFiles), sendFiles_stub);
 
     dlg->m_finishedUrls << "/usr/bin/dde-file-manager";
     dlg->m_urls << "/usr/bin/dde-file-manager" << "/usr/bin/dde-desktop";

@@ -197,6 +197,8 @@ private:
     qulonglong m_firstTransSize = 0;
 
     QStringList m_connectedAdapter;
+
+    QString m_token; // 用于标识当前对话框ID
 };
 
 #endif // BluetoothTransDialog_H
