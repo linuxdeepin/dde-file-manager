@@ -411,6 +411,9 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
                     && isAvfsMounted()
                     && FileUtils::isArchive(url.toLocalFile())
                     && fileInfo->mimeType().name() != "application/vnd.debian.binary-package") {
+                // 修复bug-63703 设置菜单压缩文件预览，搜索界面打开压缩文件时，没有正常预览压缩文件
+                if (url.isSearchFile())
+                    url = url.searchedFileUrl();
                 const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(Q_NULLPTR, DUrl::fromAVFSFile(url.path()));
 
                 if (info->exists()) {
