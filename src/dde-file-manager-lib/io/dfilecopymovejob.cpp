@@ -995,7 +995,8 @@ process_file:
         } else {
             // 光盘中的文件不能进行写操作，因此复制它
             const QString &sourcePath = source_info->fileUrl().toLocalFile();
-            if (deviceListener->isFileFromDisc(sourcePath)) {
+            if (!source_info->canRename() || deviceListener->isFileFromDisc(sourcePath)) {
+                qInfo() << "canRename : " << source_info->canRename();
                 ok = copyFile(source_info, new_file_info, handler);
             } else {
                 ok = renameFile(handler, source_info, new_file_info);
@@ -1174,8 +1175,8 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(const QSharedPointer<DFileHandler> 
     }
 
     //  光盘中的目录不能被删除
-    if (deviceListener->isFileFromDisc(fromInfo->fileUrl().toLocalFile())) {
-        qInfo() << "remove file from disc, reject.";
+    if (!fromInfo->canRename() || deviceListener->isFileFromDisc(fromInfo->fileUrl().toLocalFile())) {
+        qInfo() << "canReaname : " << fromInfo->canRename();
         return true;
     }
     // 完成操作后删除原目录
