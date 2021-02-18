@@ -143,6 +143,7 @@ public:
     bool move;
     QPoint startPoint;
     QPoint windowPoint;
+    bool isRightDetailFirstShow = true; //! 记录详细信息栏是否首次显示
 
     DFileManagerWindow *q_ptr{ nullptr };
 
@@ -1338,6 +1339,11 @@ void DFileManagerWindow::initConnect()
     QObject::connect(d->toolbar, &DToolBar::detailButtonClicked, this, [d]() {
         if (d->rightDetailViewHolder) {
             d->rightDetailViewHolder->setVisible(!d->rightDetailViewHolder->isVisible());
+            //! 第一次需要手动调整大小，避免文件列表未自适应宽度
+            if (d->isRightDetailFirstShow) {
+                d->centralWidget->adjustSize();
+                d->isRightDetailFirstShow = false;
+            }
             qDebug() << "File information window on the right";
         }
     });
