@@ -1422,15 +1422,23 @@ void DialogManager::showTaskProgressDlgOnActive()
 }
 int DialogManager::showUnableToLocateDir(const QString &dir)
 {
-    DDialog d;
-    d.setTitle(tr("Unable to access %1").arg(dir));
-    d.setMessage(" ");
-    QStringList buttonTexts;
-    buttonTexts << tr("Confirm");
-    d.addButton(buttonTexts[0], true);
-    d.setDefaultButton(0);
-    d.setIcon(QIcon::fromTheme("folder").pixmap(64, 64));
-    int code = d.exec();
+    // Ensure that only one dialog is displayed in the current screen
+    static bool showFlag = true;
+    int code = -1;
+    if (showFlag) {
+        showFlag = false;
+        DDialog d;
+        d.setTitle(tr("Unable to access %1").arg(dir));
+        d.setMessage(" ");
+        QStringList buttonTexts;
+        buttonTexts << tr("Confirm");
+        d.addButton(buttonTexts[0], true);
+        d.setDefaultButton(0);
+        d.setIcon(QIcon::fromTheme("folder").pixmap(64, 64));
+        code = d.exec();
+        showFlag = true;
+    }
+
     return code;
 }
 
