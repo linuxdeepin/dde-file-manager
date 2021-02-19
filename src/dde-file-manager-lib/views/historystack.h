@@ -42,12 +42,28 @@ public:
     int size();
     void removeAt(int i);
     int currentIndex();
+
+    /**
+     * @brief backIsExist back目录是否存在
+     * 该函数只测试计算机中是否包含back目录
+     * @return
+     */
+    bool backIsExist();
+    /**
+     * @brief forwardIsExist forward目录是否存在
+     * 该函数只测试计算机中是否包含forward目录
+     * @return
+     */
+    bool forwardIsExist();
+
 private:
     QList<DUrl> m_list;
     int m_threshold;
     int m_index;
 
     friend QDebug operator<<(QDebug beg, const HistoryStack &stack);
+
+    bool needCheckExist(const DUrl &url);
 };
 
 QT_BEGIN_NAMESPACE

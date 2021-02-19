@@ -28,6 +28,7 @@
 #include "plugins/pluginmanager.h"
 
 #include <QDebug>
+#include <QProcess>
 
 HistoryStack::HistoryStack(int threshold)
 {
@@ -183,6 +184,53 @@ void HistoryStack::removeAt(int i)
 int HistoryStack::currentIndex()
 {
     return m_index;
+}
+
+bool HistoryStack::backIsExist()
+{
+    if (m_index <= 0)
+        return false;
+
+    DUrl backUrl = m_list.at(m_index - 1);
+
+    if (!needCheckExist(backUrl))
+        return true;
+
+    //为了避免获取目录的info对象，采用了test命令，只测试计算机中是否包含该目录
+    //避免获取info对象是因为若目录为网络目录，且该网络已不可达，会导致获取info等待时间不可控
+    if (0 == QProcess::execute(QString("test -e %1").arg(backUrl.path())))
+        return true;
+
+    return false;
+}
+
+bool HistoryStack::forwardIsExist()
+{
+    if (m_index >= m_list.size() - 1)
+        return false;
+
+    DUrl forwardUrl = m_list.at(m_index + 1);
+
+    if (!needCheckExist(forwardUrl))
+        return true;
+
+    //为了避免获取目录的info对象，采用了test命令，只测试计算机中是否包含该目录
+    //避免获取info对象是因为若目录为网络目录，且该网络已不可达，会导致获取info等待时间不可控
+    if (0 == QProcess::execute(QString("test -e %1").arg(forwardUrl.path())))
+        return true;
+
+    return false;
+}
+
+bool HistoryStack::needCheckExist(const DUrl &url)
+{
+    if (url.isComputerFile() || url.isUserShareFile())
+        return false;
+
+    if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme()))
+        return false;
+
+    return true;
 }
 
 QT_BEGIN_NAMESPACE
