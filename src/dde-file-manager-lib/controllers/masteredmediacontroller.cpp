@@ -41,7 +41,7 @@ DFMShadowedDirIterator::DFMShadowedDirIterator(const QUrl &path, const QStringLi
         //blank disc
         iterator.clear();
         stagingiterator = QSharedPointer<QDirIterator>(
-                    new QDirIterator(MasteredMediaController::getStagingFolder(DUrl(path)).path(),
+                    new QDirIterator(MasteredMediaController::getStagingFile(DUrl(path)).path(),
                                      nameFilters, filter, flags)
                     );
         return;
@@ -49,7 +49,7 @@ DFMShadowedDirIterator::DFMShadowedDirIterator(const QUrl &path, const QStringLi
     QString realpath = mntpoint + durl.burnFilePath();
     iterator = QSharedPointer<QDirIterator>(new QDirIterator(realpath, nameFilters, filter, flags));
     stagingiterator = QSharedPointer<QDirIterator>(
-                new QDirIterator(MasteredMediaController::getStagingFolder(DUrl(path)).path(),
+                new QDirIterator(MasteredMediaController::getStagingFile(DUrl(path)).path(),
                                  nameFilters, filter, flags)
                 );
 }
@@ -142,7 +142,7 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
 {
     Q_D(MasteredMediaFileWatcher);
 
-    DUrl url_staging = MasteredMediaController::getStagingFolder(url);
+    DUrl url_staging = MasteredMediaController::getStagingFile(url);
     d->proxyStaging = QPointer<DAbstractFileWatcher>(new DFileProxyWatcher(url_staging,
                                                                            new DFileWatcher(url_staging.path()),
     [](const DUrl & in)->DUrl {
@@ -290,7 +290,7 @@ bool MasteredMediaController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &
     DUrlList lst;
     for (auto &i : event->urlList()) {
         if (!i.burnIsOnDisc()) {
-            lst.push_back(getStagingFolder(i));
+            lst.push_back(getStagingFile(i));
         }
     }
 
@@ -302,7 +302,7 @@ DUrlList MasteredMediaController::moveToTrash(const QSharedPointer<DFMMoveToTras
     DUrlList lst, retlst;
     for (auto &i : event->urlList()) {
         if (!i.burnIsOnDisc()) {
-            lst.push_back(getStagingFolder(i));
+            lst.push_back(getStagingFile(i));
             retlst.push_back(i);
         }
     }
@@ -348,7 +348,7 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
                 return DUrlList();
             is_blank = drv->opticalBlank();
         }
-        QString dstdirpath = getStagingFolder(DUrl::fromBurnFile(dev + "/" BURN_SEG_STAGING)).path();
+        QString dstdirpath = getStagingFile(DUrl::fromBurnFile(dev + "/" BURN_SEG_STAGING)).path();
         QDir dstdir = QDir(dstdirpath);
         dstdir.setFilter(QDir::Filter::AllEntries | QDir::Filter::NoDotAndDotDot);
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), src.front());
@@ -369,7 +369,12 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
         }
     }
 
-    DUrl tmpdst = getStagingFolder(dst);
+    DUrl tmpdst = getStagingFile(dst); // getStagingFile 返回 file的path，叫getStagingfile比较恰当
+    QFileInfo fileInfo(tmpdst.path());
+    if(fileInfo.isFile()) {
+        tmpdst = tmpdst.parentUrl();
+    }
+
     FileUtils::mkpath(tmpdst);
 
     return fileService->pasteFile(event->sender(), event->action(), tmpdst, src);
@@ -385,7 +390,7 @@ const DDirIteratorPointer MasteredMediaController::createDirIterator(const QShar
     //Make sure the staging folder exists. Otherwise the staging watcher won't work.
     if (event->url().burnFilePath().contains(QRegularExpression("^/*$"))) {
         // 不走文管的事件机制创建 staging folter, 不需要撤销处理
-        DUrl &&stagingUrl = getStagingFolder(event->url());
+        DUrl &&stagingUrl = getStagingFile(event->url());
         if (!QDir().mkpath(stagingUrl.toLocalFile())) {
             FileUtils::mkpath(stagingUrl);
         }
@@ -463,7 +468,7 @@ DAbstractFileWatcher *MasteredMediaController::createFileWatcher(const QSharedPo
 }
 
 
-DUrl MasteredMediaController::getStagingFolder(DUrl dst)
+DUrl MasteredMediaController::getStagingFile(DUrl dst)
 {
     Q_ASSERT(dst.burnDestDevice().length() > 0);
     return DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
@@ -472,7 +477,7 @@ DUrl MasteredMediaController::getStagingFolder(DUrl dst)
                                + dst.burnFilePath());
 }
 
-DUrl MasteredMediaController::getStagingFolder(QString dev)
+DUrl MasteredMediaController::getStagingFile(QString dev)
 {
     return DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)   // ~/.cache
                   + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"                           // ~/.cache/deepin/discburn/

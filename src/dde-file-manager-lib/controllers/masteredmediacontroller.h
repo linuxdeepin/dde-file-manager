@@ -53,8 +53,8 @@ public:
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
 public:
-    static DUrl getStagingFolder(DUrl dst);
-    static DUrl getStagingFolder(QString dev/* = "/dev/sr0"*/);
+    static DUrl getStagingFile(DUrl dst);
+    static DUrl getStagingFile(QString dev/* = "/dev/sr0"*/);
     static QFileDevice::Permissions getPermissionsCopyToLocal();
 };
 

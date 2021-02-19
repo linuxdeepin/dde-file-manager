@@ -319,7 +319,7 @@ void MasteredMediaFileInfo::backupInfo(const DUrl &url)
             m_backerUrl = DUrl::fromLocalFile(mntpoint + url.burnFilePath());
         } else m_backerUrl = DUrl();
     } else {
-        m_backerUrl = MasteredMediaController::getStagingFolder(url);
+        m_backerUrl = MasteredMediaController::getStagingFile(url);
     }
     setProxy(DFileService::instance()->createFileInfo(Q_NULLPTR, m_backerUrl));
 }
