@@ -257,7 +257,9 @@ void Desktop::ShowWallpaperChooser(const QString &screen)
 
 void Desktop::ShowScreensaverChooser(const QString &screen)
 {
+#ifndef DISABLE_SCREENSAVER
     showWallpaperSettings(screen, Frame::ScreenSaverMode);
+#endif
 }
 
 QList<int> Desktop::GetIconSize()

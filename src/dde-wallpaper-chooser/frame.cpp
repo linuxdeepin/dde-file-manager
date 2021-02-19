@@ -244,12 +244,15 @@ void Frame::setMode(Frame::Mode mode)
         if (m_backgroundManager) {
             m_backgroundManager->setVisible(true);
         }
-
+#ifndef DISABLE_SCREENSAVER
         m_dbusScreenSaver->Stop();
+#endif
     }
 
+#ifndef DISABLE_SCREENSAVER
     m_mode = mode;
     reLayoutTools();
+#endif
     refreshList();
 }
 
@@ -369,6 +372,7 @@ void Frame::keyPressEvent(QKeyEvent *event)
         }
     }
     //设置屏保模式
+#ifndef DISABLE_SCREENSAVER
     else {
         //闲置时间按钮组
         for (QAbstractButton *button: m_waitControl->buttonList()) {
@@ -377,14 +381,17 @@ void Frame::keyPressEvent(QKeyEvent *event)
         //是否需要密码按钮
         widgetList << m_lockScreenBox;
     }
+#endif
 
     if (!widgetList.contains(focusWidget())) {
         widgetList.clear();
 
         //模式切换按钮组
+#ifndef DISABLE_SCREENSAVER
         for (QAbstractButton *button: m_switchModeControl->buttonList()) {
             widgetList << qobject_cast<QWidget *>(button);
         }
+#endif
     }
 
     switch(event->key())
@@ -447,7 +454,7 @@ bool Frame::eventFilter(QObject *object, QEvent *event)
 
         if (key->key() == Qt::Key_Tab) {
             qDebug() << "Tab";
-
+#ifndef DISABLE_SCREENSAVER
             //第一个区域发出tab信号，则跳转到第二个区域的第一个控件上
             if (object == m_wallpaperCarouselCheckBox
                     || m_wallpaperCarouselControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))
@@ -456,7 +463,6 @@ bool Frame::eventFilter(QObject *object, QEvent *event)
                 m_switchModeControl->buttonList().first()->setFocus();
                 return  true;
             }
-
             //第二个区域tab跳转到第三个区域的当前选项（WallpaperItem）的第一个控件（Button）上
             if (m_switchModeControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
                 if (nullptr == m_wallpaperList->getCurrentItem()) {
@@ -468,12 +474,25 @@ bool Frame::eventFilter(QObject *object, QEvent *event)
                     return true;
                 }
             }
-
             //第三个区域tab跳转到第一个区域：已连接WallpaperItem的tab信号进行处理
+#else
+            //第一个区域发出tab信号，则跳转到第三个区域的当前选项
+            if (object == m_wallpaperCarouselCheckBox
+                    || m_wallpaperCarouselControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+                if (nullptr == m_wallpaperList->getCurrentItem()) {
+                    return false;
+                }
+                QList<Button *> childButtons = m_wallpaperList->getCurrentItem()->findChildren<Button *>();
+                if (!childButtons.isEmpty()) {
+                    childButtons.first()->setFocus();
+                    return true;
+                }
+            }
+#endif
         }
         else if (key->key() == Qt::Key_Backtab) { //BackTab
             qDebug() << "BackTab(Shift Tab)";
-
+#ifndef DISABLE_SCREENSAVER
             //第一个区域发出backtab信号，则跳转到第三个区域的当前选项（WallpaperItem）的第一个控件（Button）上
             if (object == m_wallpaperCarouselCheckBox
                     || m_wallpaperCarouselControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))
@@ -500,7 +519,22 @@ bool Frame::eventFilter(QObject *object, QEvent *event)
                 }
                 return true;
             }
+#else
+            if (object == m_wallpaperCarouselCheckBox
+                    || m_wallpaperCarouselControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+                if (nullptr == m_wallpaperList->getCurrentItem()) {
+                    return false;
+                }
+                QList<Button *> childButtons = m_wallpaperList->getCurrentItem()->findChildren<Button *>();
+                if (!childButtons.isEmpty()) {
+                    childButtons.first()->setFocus();
+                    return true;
+                }
+            }
+#endif
         }
+
+#ifndef DISABLE_SCREENSAVER
         else if (key->key() == Qt::Key_Right || key->key() == Qt::Key_Left) { //[Q]CheckBox会将方向键当作Tab键处理
             //if (QString(object->metaObject()->className()) == "CheckBox") { //其它类型别发送，不然会接收到两次按键事件
             if (object == m_wallpaperCarouselCheckBox || object == m_lockScreenBox){
@@ -511,6 +545,17 @@ bool Frame::eventFilter(QObject *object, QEvent *event)
                 return false;
             }
         }
+#else
+            else if (key->key() == Qt::Key_Right || key->key() == Qt::Key_Left) {
+                if (object == m_wallpaperCarouselCheckBox){
+                    keyPressEvent(key);
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+#endif
         else if (key->key() == Qt::Key_Up || key->key() == Qt::Key_Down) {  //bug#30790屏蔽上下键
             return true;
         }
@@ -563,7 +608,9 @@ void Frame::reLayoutTools()
 void Frame::adjustModeSwitcherPoint()
 {
     // 调整模式切换控件的位置
+#ifndef DISABLE_SCREENSAVER
     m_switchModeControl->adjustSize();
+#endif
 
     // 自己计算宽度，当控件未显示时无法使用layout的sizeHint
     int tools_width = 0;
@@ -597,6 +644,7 @@ void Frame::adjustModeSwitcherPoint()
     }
 #endif
 
+#ifndef DISABLE_SCREENSAVER
     // 防止在低分辨率情况下切换控件和左边的工具栏重叠
     int x = width() / 2 - m_switchModeControl->width() / 2;
     if (x < tools_width) {
@@ -605,6 +653,7 @@ void Frame::adjustModeSwitcherPoint()
     }
 
     m_switchModeControl->move(x, (m_wallpaperList->y() - m_switchModeControl->height()) / 2);
+#endif
 }
 #endif
 
@@ -981,13 +1030,20 @@ void Frame::refreshList()
                         if (m_mode == WallpaperMode) {
                             m_wallpaperCarouselCheckBox->setFocus();
                         }
+#ifndef DISABLE_SCREENSAVER
                         else {
                             m_waitControl->buttonList().first()->setFocus();
                         }
+#endif
                     });
                     connect(item, &WallpaperItem::backtab, this, [=]() {
                         //第三个区域发出backtab信号，则跳转到第二个区域的第一个控件上
+#ifndef DISABLE_SCREENSAVER
                         m_switchModeControl->buttonList().first()->setFocus();
+#else
+                        if (m_wallpaperCarouselCheckBox)
+                            m_wallpaperCarouselCheckBox->setFocus();
+#endif
                     });
 
                     //首次进入时，选中当前设置壁纸
