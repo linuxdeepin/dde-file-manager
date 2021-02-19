@@ -1745,5 +1745,13 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         otherBox->setDisabled(true);
     }
 
+    // smb、ftp、sftp不支持文件权限的修改
+    if (info->isGvfsMountFile()) {
+        ownerBox->setDisabled(true);
+        groupBox->setDisabled(true);
+        otherBox->setDisabled(true);
+        m_executableCheckBox->setDisabled(true);
+    }
+
     return widget;
 }
