@@ -267,6 +267,9 @@ void DToolBar::searchBarTextEntered(const QString textEntered)
         currentUrl = fmWindow->currentUrl();
     else
         qCritical() << "DFileManagerWindow is null";
+    //判断网络文件是否可以到达
+    if (DFileService::instance()->checkGvfsMountfileBusy(currentUrl, true))
+        return;
 
     if (currentUrl.isLocalFile()) {
         QDir::setCurrent(currentUrl.toLocalFile());
