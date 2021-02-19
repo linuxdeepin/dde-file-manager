@@ -1370,6 +1370,7 @@ void DFileManagerWindow::initConnect()
     //! redirect when tab root url changed.
     QObject::connect(fileSignalManager, &FileSignalManager::requestRedirectTabUrl, this, &DFileManagerWindow::onRequestRedirectUrl);
     QObject::connect(fileSignalManager, &FileSignalManager::requestCloseTab, this, &DFileManagerWindow::onRequestCloseTabByUrl);
+    QObject::connect(fileSignalManager, &FileSignalManager::cdFolder, this, &DFileManagerWindow::cd);
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)

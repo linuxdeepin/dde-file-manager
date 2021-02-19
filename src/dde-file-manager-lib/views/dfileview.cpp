@@ -2459,9 +2459,10 @@ bool DFileView::setRootUrl(const DUrl &url)
                     QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
                     diskdev->eject({});
                     qDebug() << "setRootUrl failed:" << blkdev->drive();
-                    if (diskdev->optical())
+                    if (diskdev->optical()){
+                        emit fileSignalManager->cdFolder(DUrl(COMPUTER_ROOT)); // 失败的时候跳转到计算机界面
                         QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("Mounting failed"), QString()), Qt::ConnectionType::QueuedConnection);
-
+                    }
                     return false;
                 }
                 ISOMaster->getDeviceProperty();

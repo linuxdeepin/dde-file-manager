@@ -242,6 +242,8 @@ signals:
     //手动发送文件移动信号 gio专用
     void fileMoved(const QString &from, const QString &fname, const QString &to, const QString &tname);
 
+    // 通过信号进入目录,目前与DFileManagerWindow::cd 关联
+    bool cdFolder(const DUrl &folderUrl);
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString &srcFileName);
