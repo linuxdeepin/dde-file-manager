@@ -42,6 +42,7 @@
 #include "views/dfilemanagerwindow.h"
 #include "views/dfmactionbutton.h"
 #include "models/networkfileinfo.h"
+#include "gvfs/gvfsmountmanager.h"
 #include "accessibility/ac-lib-file-manager.h"
 
 #include <DButtonBox>
@@ -218,6 +219,10 @@ void DToolBar::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlF, this, &DToolBar::handleHotkeyCtrlF);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlL, this, &DToolBar::handleHotkeyCtrlL);
     connect(this, &DToolBar::toolbarUrlChanged, m_crumbWidget, &DFMCrumbBar::updateCurrentUrl);
+    connect(gvfsMountManager, &GvfsMountManager::mount_removed, this, [this](const QDiskInfo& diskInfo) {
+        Q_UNUSED(diskInfo)
+        this->updateBackForwardButtonsState();
+    });
 
     DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(parent());
 
@@ -473,15 +478,19 @@ void DToolBar::updateBackForwardButtonsState()
         m_backButton->setEnabled(false);
         m_forwardButton->setEnabled(false);
     } else {
-        if (m_navStack->isFirst())
+        //前目录不存在时（外设被拔出、网络目录被卸载），回退按钮需要置灰
+        if (m_navStack->isFirst() || !m_navStack->backIsExist()) {
             m_backButton->setEnabled(false);
-        else
+        } else {
             m_backButton->setEnabled(true);
+        }
 
-        if (m_navStack->isLast())
+        //后目录不存在时（外设被拔出、网络目录被卸载），向前按钮需要置灰
+        if (m_navStack->isLast() || !m_navStack->forwardIsExist()) {
             m_forwardButton->setEnabled(false);
-        else
+        } else {
             m_forwardButton->setEnabled(true);
+        }
     }
 }
 
