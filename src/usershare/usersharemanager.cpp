@@ -422,12 +422,12 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
 
             // net usershare add: failed to add share sharename. Error was 文件名过长
             // 共享文件的共享名太长，会报上面这个错误信息，最后居然还是中文
-            QString strErr = "net usershare add: failed to add share %1. Error was";
-            if (err.contains(strErr.arg(_info.shareName()))) {
+            // another fix: 有多种问题会报上面的错误信息，该错误信息最后的错误描述是系统翻译后的文本，所以这里改成直接显示命令返回的错误描述。
+            if (err.contains("net usershare add: failed to add share") && err.contains("Error was ")) {
                 DDialog dialog;
-                QFontMetrics fontMetrics(dialog.font());
-                QString shareName = fontMetrics.elidedText(_info.shareName(), Qt::ElideMiddle, 150);
-                dialogManager->showErrorDialog(tr("Failed to share %1. The share name is too long.").arg(shareName), "");
+                QString errorDisc = err.split("Error was ").last();
+                errorDisc = errorDisc.remove("\n");
+                dialogManager->showErrorDialog(errorDisc, "");
                 return false;
             }
 
