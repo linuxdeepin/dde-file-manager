@@ -173,7 +173,7 @@ void DBusFileManager1::lockPropertyChanged(const QDBusMessage &msg)
                 emit lockEventTriggered(user);
 
                 char buf[512] = {0};
-                FILE *cmd_pipe = popen("pidof -s /usr/bin/dde-file-manager", "r");
+                FILE *cmd_pipe = popen("pidof -s dde-file-manager", "r");
 
                 fgets(buf, 512, cmd_pipe);
                 pid_t pid = static_cast<pid_t>(strtoul(buf, nullptr, 10));
