@@ -43,9 +43,6 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase:
 QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabase::MatchMode mode) const
 {
     // 如果是低速设备，则先从扩展名去获取mime信息；对于本地文件，保持默认的获取策略
-    if (fileInfo.isDir()) {
-        return QMimeDatabase::mimeTypeForFile(QFileInfo("/home"), mode);
-    }
     QMimeType result;
     QString path = fileInfo.path();
     bool isMatchExtension = mode == QMimeDatabase::MatchExtension;
