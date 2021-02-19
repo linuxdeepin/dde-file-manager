@@ -84,11 +84,16 @@
 
 void handleSIGTERM(int sig)
 {
-    qDebug() << "!SIGTERM!" << sig;
+    qCritical() << "break with !SIGTERM! " << sig;
 
     if (qApp) {
         qApp->quit();
     }
+}
+
+void handleSIGPIPE(int sig)
+{
+    qCritical() << "ignore !SIGPIPE! " << sig;
 }
 
 // Within an SSH session, I can use gvfs-mount provided that
@@ -268,6 +273,7 @@ int main(int argc, char *argv[])
         }
 
         signal(SIGTERM, handleSIGTERM);
+        signal(SIGPIPE, handleSIGPIPE); // SIGPIPE 引起程序挂死
 
 #ifdef ENABLE_PPROF
         int request = app.exec();
