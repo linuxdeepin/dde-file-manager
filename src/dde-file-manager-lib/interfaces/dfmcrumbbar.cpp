@@ -407,6 +407,7 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
     DUrl fileUrl = url;
     if (url.toLocalFile().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
         fileUrl = DUrl::fromTrashFile(url.toLocalFile().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
+        d->updateController(fileUrl);
     } else if (VaultController::isVaultFile(url.toLocalFile())) {
         // 修复bug-60781
         // 如果是保险箱文件，转化为保险箱路径，以便创建保险箱的面包屑
@@ -601,8 +602,11 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
         DUrl url = wnd->currentUrl();
         // 如果为保险箱路径则进行路径转换
         QString realUrl(url.toString());
-        if (VaultController::isVaultFile(realUrl))
+        if (VaultController::isVaultFile(realUrl)) {
             realUrl = VaultController::localPathToVirtualPath(url.toLocalFile());
+        } else if (url.toLocalFile().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+            realUrl = url.toLocalFile().replace(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + '/', TRASH_ROOT);
+        }
         showAddressBar(realUrl);
     });
     //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
