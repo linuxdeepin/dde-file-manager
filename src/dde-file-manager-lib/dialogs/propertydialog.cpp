@@ -643,18 +643,20 @@ const DUrl PropertyDialog::getRealUrl()
 bool PropertyDialog::canChmod(const DAbstractFileInfoPointer &info)
 {
     bool ret = true;
-    DUrl parentUrl = info->parentUrl();
-    QString parentScheme = parentUrl.scheme();
 
-    if (parentScheme == BURN_SCHEME) {
+    if (info->scheme() == BURN_SCHEME)
         ret = false;
-    }
 
-    //修改bug 57819 是光驱共享的文件不能修改权限
-    if (info->scheme() == USERSHARE_SCHEME && info->canRedirectionFileUrl()
-            && deviceListener->isFileFromDisc(info->redirectedFileUrl().toLocalFile())) {
+    if (!info->canRename() || !info->canManageAuth())
         ret = false;
-    }
+
+    QString path = info->filePath();
+    static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
+                                     QRegularExpression::DotMatchesEverythingOption
+                                     | QRegularExpression::DontCaptureOption
+                                     | QRegularExpression::OptimizeOnFirstUsageOption);
+    if (regExp.match(path, 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch())
+        ret = false;
 
     return ret;
 }
@@ -1562,7 +1564,6 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     QComboBox *otherBox = new QComboBox;
 
     DUrl parentUrl = info->parentUrl();
-    QString parentScheme = parentUrl.scheme();
     DStorageInfo storageInfo(parentUrl.toLocalFile());
     const QString &fsType = storageInfo.fileSystemType();
     // these are for file or folder, folder will with executable index.
