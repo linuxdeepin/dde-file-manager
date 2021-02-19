@@ -1368,7 +1368,8 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
     case ExtraProperties:
         return indexNode->dataByRole(role);
     case FileIconModelToolTipRole: { // fix bug 202007010029 由于 list 视图处理 tooltip 的代码通用性太弱，所以这里新增一个 role 用来返回 tooltip
-        QString strToolTip = data(index, FileNameRole).toString();
+        /*fix bug 63708 tooltip应该显示的是显示的名字，不是实际的名字*/
+        QString strToolTip = data(index, Qt::DisplayRole).toString();
         QStyleOptionViewItem option;
 
         option.init(parent()->parent());
