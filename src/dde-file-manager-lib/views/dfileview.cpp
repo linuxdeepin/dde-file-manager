@@ -1379,8 +1379,9 @@ void DFileView::delayUpdateStatusBar()
 
     // when QItemSelectionModel::selectionChanged emit we get selectedUrls() were old selecturls
     // so we wait...
-
-    if (m_destroyFlag) {
+    // fix bug 63925 在挂载网络文件后，选中一个文件或者文件夹，卸载挂载的目录，在处理rooturl切换时，
+    // 获取的还是以前的url，所以这里在切换url没有结束就不执行。
+    if (m_destroyFlag || d->m_isSetRootUrl) {
         return;
     }
 
@@ -2361,18 +2362,17 @@ void DFileView::keyboardSearch(const QString &search)
 bool DFileView::setRootUrl(const DUrl &url)
 {
     D_D(DFileView);
-
-    if (url.isEmpty())
+    d->m_isSetRootUrl = true;
+    if (url.isEmpty()) {
+        d->m_isSetRootUrl = false;
         return false;
+    }
 
     itemDelegate()->hideAllIIndexWidget();
-
     clearSelection();
-
     if (!url.isSearchFile()) {
         setFocus();
     }
-
     DUrl fileUrl = url;
     //! 快捷方式打开路径需要转换，把真是路径转换成虚拟路径
 //    if(url.toLocalFile().contains(VaultController::makeVaultLocalPath()))
@@ -2407,9 +2407,9 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     if (!info) {
         qDebug() << "This scheme isn't support, url" << fileUrl;
+        d->m_isSetRootUrl = false;
         return false;
     }
-
     // TODO: drop this special case when we switch away from UDiskListener::addSubscriber in AppController.
     if (fileUrl.scheme() == BURN_SCHEME) {
         Q_ASSERT(fileUrl.burnDestDevice().length() > 0);
@@ -2419,6 +2419,7 @@ bool DFileView::setRootUrl(const DUrl &url)
         QString devpath = fileUrl.burnDestDevice();
         QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(devpath, {});
         if (rootDeviceNode.isEmpty()) {
+            d->m_isSetRootUrl = false;
             return false;
         }
         QString udiskspath = rootDeviceNode.first();
@@ -2485,6 +2486,7 @@ bool DFileView::setRootUrl(const DUrl &url)
 
                 return true;
             }));
+            d->m_isSetRootUrl = false;
             return false;
         } else {
             d->headerOpticalDisc->updateDiscInfo(fileUrl.burnDestDevice());
@@ -2535,7 +2537,7 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
 
     QModelIndex index = model()->setRootUrl(fileUrl);
-
+    d->m_isSetRootUrl = false;
     setRootIndex(index);
 
     if (!model()->canFetchMore(index)) {
