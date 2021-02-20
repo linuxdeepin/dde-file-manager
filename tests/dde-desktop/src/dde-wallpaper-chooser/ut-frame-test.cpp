@@ -342,8 +342,15 @@ TEST_F(FrameTest, test_screenGeometryChanged)
 {
     bool sizeChanged = false;
     StubExt stub;
+    ASSERT_NE(m_frame->m_wallpaperList, nullptr);
+
     stub.set_lamda(ADDR(Frame,initSize),
                    [&sizeChanged](){sizeChanged = true;});
+    stub.set_lamda(ADDR(Frame,activateWindow),
+                   [](){});
+    stub.set_lamda(ADDR(WallpaperList,updateItemThumb),
+                   [](){});
+
     ScreenMrg->sigScreenGeometryChanged();
     EXPECT_TRUE(sizeChanged);
 }

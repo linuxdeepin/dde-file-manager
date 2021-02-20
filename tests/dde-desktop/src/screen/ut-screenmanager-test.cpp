@@ -89,7 +89,7 @@ TEST(ScreenObject,geometry)
     auto screenList = sm.logicScreens();
     ScreenManagerWayland smw;
     auto myScreens = smw.logicScreens();
-    EXPECT_EQ(screenList.size(),myScreens.size());
+    ASSERT_EQ(screenList.size(),myScreens.size());
 
     for (int i = 0; i < myScreens.size(); ++i){
         ScreenPointer obj = myScreens[i];
@@ -103,10 +103,14 @@ TEST(ScreenObject,geometry)
 TEST(ScreenObject,primary_screen)
 {
     ScreenManager sm;
-    EXPECT_EQ(qApp->primaryScreen()->name(),sm.primaryScreen()->name());
+    auto screen = sm.primaryScreen();
+    ASSERT_NE(screen.data(), nullptr);
+    EXPECT_EQ(qApp->primaryScreen()->name(),screen->name());
 
     ScreenManagerWayland smw;
-    EXPECT_EQ(qApp->primaryScreen()->name(),smw.primaryScreen()->name());
+    screen = smw.primaryScreen();
+    ASSERT_NE(screen.data(), nullptr);
+    EXPECT_EQ(qApp->primaryScreen()->name(),screen->name());
 }
 
 TEST(ScreenObject,display_mode)
@@ -201,12 +205,15 @@ TEST_F(ScreenOperation, screen_reset)
 TEST_F(ScreenOperation, primaryScreen)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
     EXPECT_EQ(dynamic_cast<ScreenObject *>(primary.data())->screen(),qApp->primaryScreen());
 }
 
 TEST_F(ScreenOperation, availableGeometry_hide)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     Stub st;
     auto hide_foo = (int(*)())([](){return 1;});
     st.set(ADDR(DBusDock,hideMode),hide_foo);
@@ -216,6 +223,8 @@ TEST_F(ScreenOperation, availableGeometry_hide)
 TEST_F(ScreenOperation, availableGeometry_invaild)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     Stub st;
     auto hide_foo = (int(*)())([](){return 0;});
     st.set(ADDR(DBusDock,hideMode),hide_foo);
@@ -234,6 +243,8 @@ TEST_F(ScreenOperation, availableGeometry_invaild)
 TEST_F(ScreenOperation, availableGeometry_top)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     Stub st;
     auto hide_foo = (int(*)())([](){return 0;});
     st.set(ADDR(DBusDock,hideMode),hide_foo);
@@ -263,6 +274,8 @@ TEST_F(ScreenOperation, availableGeometry_top)
 TEST_F(ScreenOperation, availableGeometry_top_2)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     Stub st;
     auto hide_foo = (int(*)())([](){return 0;});
     st.set(ADDR(DBusDock,hideMode),hide_foo);
@@ -296,6 +309,8 @@ TEST_F(ScreenOperation, availableGeometry_top_2)
 TEST_F(ScreenOperation, availableGeometry_right)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     Stub st;
     auto hide_foo = (int(*)())([](){return 0;});
     st.set(ADDR(DBusDock,hideMode),hide_foo);
@@ -325,6 +340,8 @@ TEST_F(ScreenOperation, availableGeometry_right)
 TEST_F(ScreenOperation, availableGeometry_bottom)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     Stub st;
     auto hide_foo = (int(*)())([](){return 0;});
     st.set(ADDR(DBusDock,hideMode),hide_foo);
@@ -354,6 +371,8 @@ TEST_F(ScreenOperation, availableGeometry_bottom)
 TEST_F(ScreenOperation, availableGeometry_left)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     Stub st;
     auto hide_foo = (int(*)())([](){return 0;});
     st.set(ADDR(DBusDock,hideMode),hide_foo);
@@ -413,6 +432,8 @@ TEST_F(ScreenOperation, screen)
 {
     auto qscreen = qApp->primaryScreen();
     auto screen = this->screen(qscreen->name());
+    ASSERT_NE(screen.data(), nullptr);
+
     EXPECT_EQ(screen->name(), qscreen->name());
 }
 
@@ -436,6 +457,8 @@ public:
 TEST_F(ScreenOperationWayland, primaryScreen)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     DBusMonitor m(dynamic_cast<ScreenObjectWayland *>(primary.data())->path());
     EXPECT_EQ(primary->name(), m.name());
     EXPECT_EQ(primary->handleGeometry(), m.rect());
@@ -444,6 +467,8 @@ TEST_F(ScreenOperationWayland, primaryScreen)
 TEST_F(ScreenOperationWayland, availableGeometry_hide)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     Stub st;
     auto hide_foo = (int(*)())([](){return 1;});
     st.set(ADDR(DBusDock,hideMode),hide_foo);
@@ -453,6 +478,8 @@ TEST_F(ScreenOperationWayland, availableGeometry_hide)
 TEST_F(ScreenOperationWayland, availableGeometry_invaild)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     Stub st;
     auto hide_foo = (int(*)())([](){return 0;});
     st.set(ADDR(DBusDock,hideMode),hide_foo);
@@ -471,6 +498,8 @@ TEST_F(ScreenOperationWayland, availableGeometry_invaild)
 TEST_F(ScreenOperationWayland, availableGeometry_top)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     Stub st;
     auto hide_foo = (int(*)())([](){return 0;});
     st.set(ADDR(DBusDock,hideMode),hide_foo);
@@ -499,6 +528,8 @@ TEST_F(ScreenOperationWayland, availableGeometry_top)
 TEST_F(ScreenOperationWayland, availableGeometry_top_2)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     Stub st;
     auto hide_foo = (int(*)())([](){return 0;});
     st.set(ADDR(DBusDock,hideMode),hide_foo);
@@ -531,6 +562,8 @@ TEST_F(ScreenOperationWayland, availableGeometry_top_2)
 TEST_F(ScreenOperationWayland, availableGeometry_right)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     Stub st;
     auto hide_foo = (int(*)())([](){return 0;});
     st.set(ADDR(DBusDock,hideMode),hide_foo);
@@ -560,6 +593,8 @@ TEST_F(ScreenOperationWayland, availableGeometry_right)
 TEST_F(ScreenOperationWayland, availableGeometry_bottom)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     Stub st;
     auto hide_foo = (int(*)())([](){return 0;});
     st.set(ADDR(DBusDock,hideMode),hide_foo);
@@ -589,6 +624,8 @@ TEST_F(ScreenOperationWayland, availableGeometry_bottom)
 TEST_F(ScreenOperationWayland, availableGeometry_left)
 {
     auto primary = primaryScreen();
+    ASSERT_NE(primary.data(), nullptr);
+
     Stub st;
     auto hide_foo = (int(*)())([](){return 0;});
     st.set(ADDR(DBusDock,hideMode),hide_foo);
@@ -654,7 +691,11 @@ TEST_F(ScreenOperationWayland, lastChangedMode)
 TEST_F(ScreenOperationWayland, screen)
 {
     auto qscreen = m_display->primary();
+    ASSERT_FALSE(qscreen.isEmpty());
+
     auto screen = this->screen(qscreen);
+    ASSERT_NE(screen.data(), nullptr);
+
     EXPECT_EQ(screen->name(), qscreen);
     EXPECT_EQ(this->primaryScreen()->name(), qscreen);
 }
