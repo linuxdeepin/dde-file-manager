@@ -119,6 +119,7 @@ void DFMSideBar::setCurrentUrl(const DUrl &url)
     int index = findItem(url, true);
     if (index != -1) {
         m_sidebarView->setCurrentIndex(m_sidebarModel->index(index, 0));
+        m_sidebarView->updateItemUniqueKey(m_sidebarView->currentIndex());
     } else {
         m_sidebarView->clearSelection();
     }

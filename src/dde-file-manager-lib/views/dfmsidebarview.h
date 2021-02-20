@@ -43,6 +43,7 @@ public:
     QModelIndex getCurrentIndex() const;
     void currentChanged(const QModelIndex &previous);
     DFMSideBarItem *itemAt(const QPoint &pt);
+    void updateItemUniqueKey(const QModelIndex &index);
 
 protected:
     bool onDropData(DUrlList srcUrls, DUrl dstUrl, Qt::DropAction action) const;
