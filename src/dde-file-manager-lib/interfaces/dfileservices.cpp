@@ -74,6 +74,8 @@
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
 
+#include <sys/stat.h>
+
 DWIDGET_USE_NAMESPACE
 
 #define GVFS_ROOT_MATCH "^//run/user/\\d+/gvfs/"
@@ -1270,7 +1272,13 @@ QString DFileService::getSymlinkFileName(const DUrl &fileUrl, const QDir &target
             if (targetDir.exists(linkBaseName)) {
                 ++number;
             } else {
-                return linkBaseName;
+                //链接文件失效后exists会返回false，通过lstat再次判断链接文件本身是否存在
+                auto strLinkPath = targetDir.filePath(linkBaseName).toStdString();
+                struct stat st;
+                if ((lstat(strLinkPath.c_str(), &st) == 0) && S_ISLNK(st.st_mode))
+                    ++number;
+                else
+                    return linkBaseName;
             }
         }
     }
