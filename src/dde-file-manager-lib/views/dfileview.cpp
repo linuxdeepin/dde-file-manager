@@ -668,7 +668,10 @@ void DFileView::select(const QList<DUrl> &list)
     QModelIndex lastIndex;
     const QModelIndex &root = rootIndex();
     clearSelection();
-    for (const DUrl &url : list) {
+    for (DUrl url : list) {
+        // 保险箱路径特殊处理
+        if (VaultController::isVaultFile(url.toString()))
+            url = VaultController::localUrlToVault(url);
         const QModelIndex &index = model()->index(url);
 
         if (!index.isValid() || index == root) {
@@ -700,9 +703,12 @@ void DFileView::selectAllAfterCutOrCopy(const QList<DUrl> &list)
     // 修复wayland TASK-37638 缓存为选中的拷贝或剪贴文件
     QList<DUrl> lstNoValid;
 
-    for (const DUrl &url : list) {
+    for (DUrl url : list) {
+        // 保险箱路径特殊处理
+        if (VaultController::isVaultFile(url.toString()))
+            url = VaultController::localUrlToVault(url);
         const QModelIndex &index = model()->index(url);
-
+        
         // 缓存没有刷新的文件对象
         if (!index.isValid()) {
             lstNoValid.push_back(url);

@@ -108,7 +108,11 @@ void FileViewHelper::select(const QList<DUrl> &list)
         // 修复wayland BUG-38453 拷贝或剪贴过后，调用该函数选择全部对象
         parent()->selectAllAfterCutOrCopy(list);
     } else {
-        parent()->select(list);
+        if (list.count() < FILE_SELECT_THRESHOLD) {
+            parent()->select(list);
+        } else {    // 当选择文件过多时，可能出现文件未被选中，启动线程的方式去选中未被选中的文件
+            parent()->selectAllAfterCutOrCopy(list);
+        }
     }
 
 }
