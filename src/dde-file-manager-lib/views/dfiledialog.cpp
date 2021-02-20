@@ -1084,8 +1084,7 @@ void DFileDialog::handleNewView(DFMBaseView *view)
             setCurrentInputName(fileInfo->fileName());
     });
 
-    connect(fileView, &DFileView::rootUrlChanged,
-    this, [this]() {
+    connect(fileView, &DFileView::rootUrlChanged, this, [this]() {
         Q_D(const DFileDialog);
 
         if (d->acceptMode == QFileDialog::AcceptSave) {
@@ -1411,18 +1410,29 @@ void DFileDialog::updateAcceptButtonState()
     if (!fileInfo) {
         return;
     }
+
     Q_D(const DFileDialog);
     qDebug() << "file mode:" << d->fileMode << "\r\naccept mode:" << d->acceptMode;
     qDebug() << fileInfo->fileUrl() << "isVirtualEntry:" << fileInfo->isVirtualEntry();
 
     bool isDirMode = d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly;
-    bool isOpenMode = d->acceptMode == QFileDialog::AcceptOpen;
-    if (isOpenMode) {
+    bool dialogShowMode = d->acceptMode;
+    if (dialogShowMode == QFileDialog::AcceptOpen) {
         bool isSelectFiles = getFileView()->selectedIndexes().size() > 0;
         // 1.打开目录（非虚拟目录） 2.打开文件（选中文件）
         statusBar()->acceptButton()->setDisabled((isDirMode && fileInfo->isVirtualEntry()) ||
                                                  (!isDirMode && !isSelectFiles));
-    } else { // save mode
-        statusBar()->acceptButton()->setDisabled(fileInfo->isVirtualEntry() || statusBar()->lineEdit()->text().trimmed().isEmpty());
+        return;
+    }
+
+    if (dialogShowMode == QFileDialog::AcceptSave) {
+        statusBar()->acceptButton()->setDisabled(fileInfo->isVirtualEntry()|| statusBar()->lineEdit()->text().trimmed().isEmpty());
+
+        //fix 63653 在此插入目录路径的button管控,相关BUG可直接在此逻辑增加if判断
+        if(url.scheme() == TRASH_SCHEME) {
+            statusBar()->acceptButton()->setDisabled(true);
+        }
+
+        return;
     }
 }
