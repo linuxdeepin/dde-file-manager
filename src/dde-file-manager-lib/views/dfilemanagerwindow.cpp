@@ -1539,6 +1539,14 @@ bool DFileManagerWindow::isAdvanceSearchBarVisible()
     return d->isAdvanceSearchBarVisible();
 }
 
+void DFileManagerWindow::updateAdvanceSearchBarValue(const FileFilter *filter)
+{
+    Q_D(DFileManagerWindow);
+
+    if (d->advanceSearchBar && isAdvanceSearchBarVisible())
+        d->advanceSearchBar->updateFilterValue(filter);
+}
+
 void DFileManagerWindow::toggleAdvanceSearchBar(bool visible, bool resetForm)
 {
     Q_D(DFileManagerWindow);

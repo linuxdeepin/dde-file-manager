@@ -64,6 +64,7 @@ class RecordRenameBarState;
 
 
 class DFMUrlListBaseEvent;
+typedef struct fileFilter FileFilter;
 
 DFM_BEGIN_NAMESPACE
 class DFMSideBar;
@@ -101,6 +102,7 @@ public:
     void hideRenameBar() noexcept;
     void requestToSelectUrls();
     bool isAdvanceSearchBarVisible();
+    void updateAdvanceSearchBarValue(const FileFilter *filter);
     void toggleAdvanceSearchBar(bool visible = true, bool resetForm = true);
     void showFilterButton();
     //获取能否析构
