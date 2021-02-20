@@ -378,7 +378,21 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
         }
         bool isInGVFs = FileUtils::isGvfsMountFile(fileUrl.toLocalFile());
         DUrlList folderList;
-        if (!isInGVFs) {
+        if (isInGVFs) {
+            foreach (const DUrl &url, event.fileUrlList()) {
+                struct stat statInfo;
+                int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
+                if (0 != fileStat) {
+                    continue;
+                }
+                if (S_ISDIR(statInfo.st_mode)) {
+                    m_folderCount += 1;
+                    folderList << url;
+                } else {
+                    m_fileCount += 1;
+                }
+            }
+        } else {
             // 保险箱内，全选文件达到2000个时，文管会很卡顿，以下修改优化该问题
             if (VaultController::isVaultFile(fileUrl.toLocalFile())) {
                 // 将文件个数及大小的计算过程放入异步线程中
@@ -388,27 +402,17 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
                 fileWatcher->setFuture(fileFuture);
             } else {
                 foreach (const DUrl &url, event.fileUrlList()) {
-                    struct stat statInfo;
-                    int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
-                    if (0 != fileStat)
-                        continue;
-                    if (S_ISDIR(statInfo.st_mode)) {
-                        m_folderCount++;
+                    const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, url);
+                    if (info->isDir()) {
+                        m_folderCount += 1;
                         folderList << url;
                     } else {
-                        m_fileCount++;
-                        m_fileSize += statInfo.st_size;
+                        if (!isInGVFs) {
+                            m_fileSize += info->size();
+                        }
+                        m_fileCount += 1;
                     }
                 }
-            }
-        } else {
-            foreach (const DUrl &url, event.fileUrlList()) {
-                const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, url);
-                if (info->isDir()) {
-                    m_folderCount++;
-                    folderList << url;
-                } else
-                    m_fileCount++;
             }
         }
 
