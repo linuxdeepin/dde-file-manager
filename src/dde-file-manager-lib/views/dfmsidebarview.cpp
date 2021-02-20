@@ -70,8 +70,7 @@ void DFMSideBarView::mousePressEvent(QMouseEvent *event)
         return;
 
     // 鼠标按下时记录当前点击item的唯一key
-    if (model())
-        m_strItemUniqueKey = model()->data(indexAt(event->pos()), DFMSideBarItem::ItemUniqueKeyRole).toString();
+    updateItemUniqueKey(indexAt(event->pos()));
 
     if (event->button() == Qt::RightButton) {
 #if 1   //fix bug#33502 鼠标挪动到侧边栏底部右键，滚动条滑动，不能定位到选中的栏目上
@@ -323,6 +322,12 @@ DFMSideBarItem *DFMSideBarView::itemAt(const QPoint &pt)
     Q_ASSERT(item);
 
     return item;
+}
+
+void DFMSideBarView::updateItemUniqueKey(const QModelIndex &index)
+{
+    if (model() && index.isValid())
+        m_strItemUniqueKey = model()->data(index, DFMSideBarItem::ItemUniqueKeyRole).toString();
 }
 
 Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
