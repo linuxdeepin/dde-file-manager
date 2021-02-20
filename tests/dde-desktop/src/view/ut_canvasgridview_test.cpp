@@ -1739,14 +1739,13 @@ TEST_F(CanvasGridViewTest, test_dropEvent)
     static QModelIndexList indexlist;
     indexlist << m_canvasGridView->firstIndex();
     tub.set_lamda(ADDR(DFileSelectionModel, selectedIndexes), [](){return indexlist;});
-    tub.set_lamda(ADDR(QModelIndex, isValid), [](){return true;});
-    tub.set_lamda(ADDR(QModelIndex, isValid), [](){return false;});
+    bool bValid = false;
+    tub.set_lamda(ADDR(QModelIndex, isValid), [&bValid](){return bValid;});
     m_canvasGridView->dropEvent(&event);
-
 
     static DUrl url = DesktopFileInfo::homeDesktopFileUrl();
     tub.set_lamda(VADDR(DAbstractFileInfo, fileUrl), [](){return url;});
-    tub.set_lamda(ADDR(QModelIndex, isValid), [](){return true;});
+    bValid = true;
     m_canvasGridView->m_urlsForDragEvent << url;
     m_canvasGridView->dropEvent(&event);
     EXPECT_EQ(event.dropAction(), Qt::IgnoreAction);
