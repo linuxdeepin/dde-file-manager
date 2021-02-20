@@ -15,7 +15,6 @@ int main(int argc, char *argv[])
     qDebug() << "end disk-mount test cases ..............";
 
     QProcess::execute("killall dde-file-manager");
-    QProcess::execute("killall deepin-editor");
 
     return ret;
 }

@@ -31,7 +31,7 @@ void  g_mount_unmount_with_operation_stub    (GMount              *mount,
                                                GAsyncReadyCallback  callback,
                                                gpointer             user_data)
 {
-    callback((GObject *)giomount_buffer,(GAsyncResult*)giomount_buffer,nullptr);
+    //callback((GObject *)giomount_buffer,(GAsyncResult*)giomount_buffer,nullptr); // crash max-lv
 }
 
 bool exists_qfileinfo_stub()
@@ -87,13 +87,13 @@ QExplicitlySharedDataPointer<DGioFile> getRootFile_stub()
     return rootfile;
 }
 
-QExplicitlySharedDataPointer<DGioFileInfo> createFileSystemInfo_stub(QString attr )
+QExplicitlySharedDataPointer<DGioFileInfo> createFileSystemInfo_stub(QString attr, DGioFileQueryInfoFlags queryInfoFlags, unsigned long timeout_msec )
 {
     QExplicitlySharedDataPointer<DGioFileInfo> fileSystemInfo = QExplicitlySharedDataPointer<DGioFileInfo>( new DGioFileInfo(nullptr));
     return fileSystemInfo;
 }
 
-QExplicitlySharedDataPointer<DGioFileInfo> createFileSystemInfo_return_null_stub(QString attr )
+QExplicitlySharedDataPointer<DGioFileInfo> createFileSystemInfo_return_null_stub(QString attr, DGioFileQueryInfoFlags queryInfoFlags, unsigned long timeout_msec )
 {
     return QExplicitlySharedDataPointer<DGioFileInfo>(nullptr);
 }
