@@ -1693,6 +1693,21 @@ int FileUtils::getMemoryPageSize()
     return memoryPageSize > 0 ? memoryPageSize : 4096;
 }
 
+bool FileUtils::isFtpFile(const DUrl &url)
+{
+    static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
+                                     QRegularExpression::DotMatchesEverythingOption
+                                     | QRegularExpression::DontCaptureOption
+                                     | QRegularExpression::OptimizeOnFirstUsageOption);
+
+    if (!regExp.match(url.path(), 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch()) {
+        return false;
+    }
+    if (url.path().contains("/ftp:host="))
+        return true;
+    return false;
+}
+
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
 bool FileUtils::isDesktopFile(const QString &filePath)
 {

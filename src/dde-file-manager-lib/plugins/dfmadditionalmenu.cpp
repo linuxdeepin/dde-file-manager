@@ -22,6 +22,7 @@
 #include "dfmadditionalmenu.h"
 #include "dfileservices.h"
 #include "controllers/vaultcontroller.h"
+#include "shutil/fileutils.h"
 
 #include <QDir>
 #include <QMenu>
@@ -353,6 +354,12 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
             if (!action || !d->isActionShouldShow(action, onDesktop) ||
                     !d->isSchemeSupport(action, url) ||
                     !d->isSuffixSupport(action, url, bex7z)) {
+                it = actions.erase(it);
+                continue;
+            }
+            //fix bug 63917 ftp上不支持压缩，所以这里去掉压缩
+            if (action->text() == QObject::tr("Compress") &&
+                    FileUtils::isFtpFile(url)){
                 it = actions.erase(it);
                 continue;
             }
