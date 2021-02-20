@@ -356,11 +356,21 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
         if (is_blank && fi && image_types.contains(fi->mimeTypeName()) && dstdir.count() == 0) {
             int r = DThreadUtil::runInMainThread(dialogManager, &DialogManager::showOpticalImageOpSelectionDialog, DFMUrlBaseEvent(event->sender(), dst));
             if (r == 1) {
-                DThreadUtil::runInMainThread([ = ] {
-                    QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(dev));
-                    bd->setISOImage(src.front());
-                    bd->exec();
-                });
+                DAbstractFileInfoPointer srcInfo = DFileService::instance()->createFileInfo(nullptr, src.at(0));
+                qint64 srcSize = srcInfo->size();
+                DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(dst.burnDestDevice());
+                // 光盘容量小于刻录项目，对话框提示：目标磁盘剩余空间不足，无法进行刻录！
+                if (dp.avail == 0 || static_cast<quint64>(srcSize) > dp.avail) {
+                    DThreadUtil::runInMainThread([] {
+                        dialogManager->showMessageDialog(DialogManager::msgWarn, tr("Unable to burn. Not enough free space on the target disk."));
+                    });
+                } else {
+                    DThreadUtil::runInMainThread([src, dev] {
+                        QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(dev));
+                        bd->setISOImage(src.front());
+                        bd->exec();
+                    });
+                }
                 return DUrlList{};
             }
             if (r == 0) {
