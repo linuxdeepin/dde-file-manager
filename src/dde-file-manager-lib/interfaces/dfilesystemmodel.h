@@ -77,6 +77,8 @@ typedef struct fileFilter {
     bool f_comboValid[LABEL_COUNT];
 } FileFilter;
 
+Q_DECLARE_METATYPE(FileFilter)
+
 static QList<QUrl> FOR_DRAGEVENT;
 
 typedef QExplicitlySharedDataPointer<FileSystemNode> FileSystemNodePointer;
@@ -234,6 +236,9 @@ signals:
     void sigJobFinished();
     void requestRedirect(const DUrl &rootUrl, const DUrl &newUrl);
     void showFilterButton();
+    // fix bug 63938
+    // 切换标签时，更新高级选项中的过滤项
+    void updateFilterRule(const FileFilter *filter);
 
 protected:
     bool remove(const DUrl &url);

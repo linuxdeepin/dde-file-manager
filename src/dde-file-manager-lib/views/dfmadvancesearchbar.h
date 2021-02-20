@@ -31,6 +31,7 @@
 #include <dboxwidget.h>
 #include <DCommandLinkButton>
 
+typedef struct fileFilter FileFilter;
 DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
@@ -42,6 +43,8 @@ public:
     explicit DFMAdvanceSearchBar(QWidget *parent = nullptr);
 
     void resetForm(bool updateView = true);
+
+    void updateFilterValue(const FileFilter *filter);
 
 signals:
     void optionChanged(QMap<int, QVariant> formData, bool updateView);
@@ -68,6 +71,10 @@ private:
     DCommandLinkButton *resetBtn;
     bool needSearchAgain = true;
     bool allowUpdateView = true;
+
+    // 记录下拉框选项信息，用于更新下拉框选项
+    QMap<QPair<quint64, quint64>, int> sizeRangeMap;
+    QMap<QVariant, int> dateRangeMap;
 };
 
 DFM_END_NAMESPACE

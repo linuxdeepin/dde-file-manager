@@ -2477,6 +2477,7 @@ void DFileSystemModel::updateChildrenOnNewThread(QList<DAbstractFileInfoPointer>
         QThreadPool::globalInstance()->setMaxThreadCount(QThreadPool::globalInstance()->maxThreadCount() + 10);
     }
 
+    emit updateFilterRule(d->advanceSearchFilter.get());
     d->updateChildrenFuture = QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileSystemModel::updateChildren, list);
 }
 

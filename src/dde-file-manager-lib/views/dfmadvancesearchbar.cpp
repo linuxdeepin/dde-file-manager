@@ -20,6 +20,7 @@
  */
 
 #include "dfmadvancesearchbar.h"
+#include "dfilesystemmodel.h"
 
 #include <QAction>
 #include <QComboBox>
@@ -48,6 +49,61 @@ void DFMAdvanceSearchBar::resetForm(bool updateView)
         asbCombos[i]->setCurrentIndex(0);
     }
     allowUpdateView = true;
+}
+
+void DFMAdvanceSearchBar::updateFilterValue(const FileFilter *filter)
+{
+    // 防止触发信号
+    blockSignals(true);
+    if (filter) {
+        // 搜索范围
+        const auto &searchRange = filter->filterRule[SEARCH_RANGE];
+        asbCombos[SEARCH_RANGE]->setCurrentIndex(searchRange.toBool() ? 0 : 1);
+
+        // 文件类型
+        const auto &fileType = filter->filterRule[FILE_TYPE];
+        if (fileType.isValid()) {
+            asbCombos[FILE_TYPE]->setCurrentText(fileType.toString());
+        } else {
+            asbCombos[FILE_TYPE]->setCurrentIndex(0);
+        }
+
+        // 文件大小
+        const auto &sizeRange = filter->filterRule[SIZE_RANGE];
+        if (sizeRange.isValid() && filter->f_comboValid[SIZE_RANGE]) {
+            asbCombos[SIZE_RANGE]->setCurrentIndex(sizeRangeMap[filter->f_sizeRange]);
+        } else {
+            asbCombos[SIZE_RANGE]->setCurrentIndex(0);
+        }
+
+        // 修改时间
+        const auto &dateRange = filter->filterRule[DATE_RANGE];
+        if (dateRange.isValid()) {
+            asbCombos[DATE_RANGE]->setCurrentIndex(dateRangeMap[dateRange]);
+        } else {
+            asbCombos[DATE_RANGE]->setCurrentIndex(0);
+        }
+
+        // 访问时间
+        const auto &accessDateRange = filter->filterRule[ACCESS_DATE_RANGE];
+        if (accessDateRange.isValid()) {
+            asbCombos[ACCESS_DATE_RANGE]->setCurrentIndex(dateRangeMap[accessDateRange]);
+        } else {
+            asbCombos[ACCESS_DATE_RANGE]->setCurrentIndex(0);
+        }
+
+        // 创建时间
+        const auto &createDateRange = filter->filterRule[CREATE_DATE_RANGE];
+        if (createDateRange.isValid()) {
+            asbCombos[CREATE_DATE_RANGE]->setCurrentIndex(dateRangeMap[createDateRange]);
+        } else {
+            asbCombos[CREATE_DATE_RANGE]->setCurrentIndex(0);
+        }
+
+    } else {
+        resetForm();
+    }
+    blockSignals(false);
 }
 
 void DFMAdvanceSearchBar::onOptionChanged()
@@ -151,6 +207,13 @@ void DFMAdvanceSearchBar::initUI()
     addItemToFileTypeCombo(qApp->translate("MimeTypeDisplayManager", "Executable"));
     addItemToFileTypeCombo(qApp->translate("MimeTypeDisplayManager", "Backup file"));
 
+    sizeRangeMap[QPair<quint64, quint64>(0, 100)] = 1;
+    sizeRangeMap[QPair<quint64, quint64>(100, 1024)] = 2;
+    sizeRangeMap[QPair<quint64, quint64>(1024, 10 * 1024)] = 3;
+    sizeRangeMap[QPair<quint64, quint64>(10 * 1024, 100 * 1024)] = 4;
+    sizeRangeMap[QPair<quint64, quint64>(100 * 1024, 1 << 20)] = 5;
+    sizeRangeMap[QPair<quint64, quint64>(1 << 20, 1 << 30)] = 6;
+
     asbCombos[SIZE_RANGE]->addItem("--", QVariant());
     asbCombos[SIZE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "0 ~ 100 KB"), QVariant::fromValue(QPair<quint64, quint64>(0, 100)));
     asbCombos[SIZE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "100 KB ~ 1 MB"), QVariant::fromValue(QPair<quint64, quint64>(100, 1024)));
@@ -158,6 +221,15 @@ void DFMAdvanceSearchBar::initUI()
     asbCombos[SIZE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "10 MB ~ 100 MB"), QVariant::fromValue(QPair<quint64, quint64>(10 * 1024, 100 * 1024)));
     asbCombos[SIZE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "100 MB ~ 1 GB"), QVariant::fromValue(QPair<quint64, quint64>(100 * 1024, 1 << 20)));
     asbCombos[SIZE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "> 1 GB"), QVariant::fromValue(QPair<quint64, quint64>(1 << 20, 1 << 30))); // here to 1T
+
+    dateRangeMap[QVariant::fromValue(1)] = 1;
+    dateRangeMap[QVariant::fromValue(2)] = 2;
+    dateRangeMap[QVariant::fromValue(7)] = 3;
+    dateRangeMap[QVariant::fromValue(14)] = 4;
+    dateRangeMap[QVariant::fromValue(30)] = 5;
+    dateRangeMap[QVariant::fromValue(60)] = 6;
+    dateRangeMap[QVariant::fromValue(365)] = 7;
+    dateRangeMap[QVariant::fromValue(730)] = 8;
 
     auto createDateCombos = [ = ](const LabelIndex index) {
         asbCombos[index]->addItem("--", QVariant());
