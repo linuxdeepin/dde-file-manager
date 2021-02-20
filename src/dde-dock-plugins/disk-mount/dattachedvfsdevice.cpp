@@ -37,6 +37,7 @@ void unmount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data)
     succeeded = g_mount_unmount_with_operation_finish (G_MOUNT (object), res, &error);
 
     if (!succeeded) {
+        qWarning()<<"can't umount the device for error code:" << error->code << ", error message:" << error->code;
         DiskControlWidget::NotifyMsg(DiskControlWidget::tr("Cannot unmount the device"), DiskControlWidget::tr("") );
     }
     g_object_unref (G_MOUNT (object));
@@ -47,6 +48,7 @@ void unmount_mounted(const QString &mount_path)
     if (mount_path.isEmpty())
         return;
 
+    qInfo()<<"umount the device:" << mount_path ;
     GFile *file = g_file_new_for_path(QFile::encodeName(mount_path));
     if (file == nullptr)
         return;
@@ -89,7 +91,7 @@ void unmount_mounted(const QString &mount_path)
     }
 
     GMountOperation *mount_op = g_mount_operation_new ();
-    GMountUnmountFlags flags = G_MOUNT_UNMOUNT_NONE;
+    GMountUnmountFlags flags = G_MOUNT_UNMOUNT_FORCE;
     GAsyncReadyCallback callback = unmount_done_cb;
     g_mount_unmount_with_operation(mount, flags, mount_op, nullptr, callback, nullptr);
     g_object_unref (mount_op);
@@ -121,7 +123,7 @@ bool DAttachedVfsDevice::detachable()
 void DAttachedVfsDevice::detach()
 {
     //使用dgioMount->unmount()不能提供失败警告，需要替换为一个有状态返回的卸载方式。 BUG 51596
-    //dgioMount->unmount();
+    //m_dgioMount->unmount();
     unmount_mounted(m_mountpointPath);
 }
 
@@ -135,7 +137,7 @@ bool DAttachedVfsDevice::deviceUsageValid()
     if (m_dgioMount.isNull()) return false;
 
     QExplicitlySharedDataPointer<DGioFile> file = m_dgioMount->getRootFile();
-    QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileSystemInfo("filesystem::*");
+    QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileInfo("*", FILE_QUERY_INFO_NONE, 500);
 
     return fsInfo;
 }
@@ -143,7 +145,7 @@ bool DAttachedVfsDevice::deviceUsageValid()
 QPair<quint64, quint64> DAttachedVfsDevice::deviceUsage()
 {
     QExplicitlySharedDataPointer<DGioFile> file = m_dgioMount->getRootFile();
-    QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileSystemInfo("filesystem::*");
+    QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileInfo("*", FILE_QUERY_INFO_NONE, 500);
 
     if (fsInfo) {
         return QPair<quint64, quint64>(fsInfo->fsFreeBytes(), fsInfo->fsTotalBytes());
