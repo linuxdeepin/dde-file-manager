@@ -138,6 +138,8 @@ public:
     static bool appendCompress(const DUrl &toUrl, const DUrlList &fromUrlList);
     //获取内存叶大小
     static int getMemoryPageSize();
+    //判断是否是挂载ftp目录下的文件
+    static bool isFtpFile(const DUrl &url);
 };
 
 #endif // FILEUTILS_H
