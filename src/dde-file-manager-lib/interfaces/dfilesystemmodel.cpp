@@ -1138,6 +1138,9 @@ QModelIndex DFileSystemModel::index(const DUrl &fileUrl, int column)
 {
     Q_D(DFileSystemModel);
 
+    if (!fileUrl.isValid())
+        return QModelIndex();
+
     if (fileUrl == rootUrl()) {
         return createIndex(d->rootNode, column);
     }

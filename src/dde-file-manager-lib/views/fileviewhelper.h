@@ -15,6 +15,8 @@
 
 #include <QPointer>
 
+#define FILE_SELECT_THRESHOLD   6   // 是否启用线程选择文件的阈值
+
 class DFileView;
 class FileViewHelper : public DFileViewHelper
 {
