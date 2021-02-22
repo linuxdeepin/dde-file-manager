@@ -644,7 +644,7 @@ bool PropertyDialog::canChmod(const DAbstractFileInfoPointer &info)
 {
     bool ret = true;
 
-    if (info->scheme() == BURN_SCHEME)
+    if (info->scheme() == BURN_SCHEME || info->isGvfsMountFile())
         ret = false;
 
     if (!info->canRename() || !info->canManageAuth())
@@ -1749,8 +1749,7 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     if (info->isGvfsMountFile()) {
         ownerBox->setDisabled(true);
         groupBox->setDisabled(true);
-        otherBox->setDisabled(true);
-        m_executableCheckBox->setDisabled(true);
+        otherBox->setDisabled(true);        
     }
 
     return widget;
