@@ -262,7 +262,8 @@ void BookMarkManager::update(const QVariant &value)
             ba = item.value("locateUrl").toString().toLocal8Bit();
         }
         const QString &locate_url = QString(ba);
-
+        if (DFileService::instance()->checkGvfsMountfileBusy(url,false))
+            continue;
         BookMark *bm_info = new BookMark(name, url);
 
         bm_info->m_created = create_time;
