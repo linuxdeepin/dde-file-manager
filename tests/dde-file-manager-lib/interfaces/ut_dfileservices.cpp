@@ -684,13 +684,9 @@ TEST_F(DFileSeviceTest, start_otherOperations){
     TestHelper::runInLoop([=](){
         EXPECT_TRUE(service->checkGvfsMountfileBusy(urlvideos,"ftp:host=10.8.70.110",true));
     });
-    bool (*isNetWorkOnline)(void *) = [](void *){return false;};
-    stl.set(ADDR(DFileService,isNetWorkOnline),isNetWorkOnline);
     TestHelper::runInLoop([=](){
-        EXPECT_TRUE(service->checkGvfsMountfileBusy(urlvideos,"ftp:host=10.8.70.110,21",true));
+        EXPECT_FALSE(service->checkGvfsMountfileBusy(urlvideos,"ftp:host=10.8.70.110,21",true));
     });
-    stl.reset(ADDR(DFileService,isNetWorkOnline));
-    EXPECT_TRUE(service->isNetWorkOnline());
     ASSERT_NO_FATAL_FAILURE(service->setDoClearTrashState(true));
     EXPECT_TRUE(service->getDoClearTrashState());
     ASSERT_NO_FATAL_FAILURE(service->setDoClearTrashState(false));
