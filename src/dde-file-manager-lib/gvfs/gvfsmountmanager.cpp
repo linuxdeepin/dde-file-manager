@@ -822,6 +822,10 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
         if (AskingPassword)
             DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                         tr("Mounting device error"), tr("Wrong username or password"));
+        //fix bug 63796,是sftp和ftp时，后面不会弹窗，所以这里要弹提示
+        if (!AskingPassword && MountEvent.fileUrl().scheme() != SMB_SCHEME)
+            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
+                                         tr("Mounting device error"), QString());
         return;
     }
 
