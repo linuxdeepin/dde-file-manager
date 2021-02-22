@@ -1558,7 +1558,9 @@ void DFileManagerWindow::toggleAdvanceSearchBar(bool visible, bool resetForm)
     }
 
     if (d->advanceSearchBar && resetForm) {
-        d->advanceSearchBar->resetForm(false);
+        // fix bug 64066
+        // 隐藏高级搜索时，更新view
+        d->advanceSearchBar->resetForm(!visible);
     }
 }
 
