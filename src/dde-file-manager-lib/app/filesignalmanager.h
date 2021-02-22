@@ -242,6 +242,9 @@ signals:
     //手动发送文件移动信号 gio专用
     void fileMoved(const QString &from, const QString &fname, const QString &to, const QString &tname);
 
+    //移除最近访问中的包含当前路径的文件
+    void requestRemoveRecentFile(const QString &path);
+
     // 通过信号进入目录,目前与DFileManagerWindow::cd 关联
     bool cdFolder(const DUrl &folderUrl);
 #ifdef SW_LABEL
