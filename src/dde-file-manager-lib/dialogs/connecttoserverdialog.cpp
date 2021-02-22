@@ -248,14 +248,17 @@ void ConnectToServerDialog::initUI()
 void ConnectToServerDialog::initConnect()
 {
     //QComboBox clear history
-    connect(m_serverComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, [=](int index) {
-        if (index == m_serverComboBox->count() - 1) {
+    connect(m_serverComboBox, &QComboBox::currentTextChanged, this, [=](const QString &string){
+        if (string == m_serverComboBox->itemText(m_serverComboBox->count() - 1)) {
+            QSignalBlocker blocker(m_serverComboBox);
+            Q_UNUSED(blocker)
+
             m_serverComboBox->clear();
             m_serverComboBox->addItem(tr("Clear History"));
             m_serverComboBox->clearEditText();
             m_serverComboBox->completer()->setModel(new QStringListModel());
 
-            Singleton<SearchHistroyManager>::instance()->clearHistory();                        
+            Singleton<SearchHistroyManager>::instance()->clearHistory();
         }
     });
 
