@@ -92,7 +92,6 @@ public:
     static QMultiHash<const HandlerType, HandlerCreatorType> controllerCreatorHash;
 
     bool m_bcursorbusy = false;
-    bool m_bonline = false;
     bool m_bdoingcleartrash = false;
     QHash<DUrl, bool> m_rootsmbftpurllist;
     QMutex checkgvfsmtx, smbftpmutex, timerMutex;
@@ -123,11 +122,6 @@ DFileService::DFileService(QObject *parent)
             return DFMFileControllerFactory::create(key);
         }));
     }
-    //异步初始化判断本地网络是否断开
-    // fix bug 53684 这里初始化QNetworkConfigurationManager，回去调用dbus，概率出现dbus
-    // 阻塞多次，多个25秒超时，这里是为了判断smb和ftp本地是否断网，所以可以移至异步线程加载，
-    // 判断smb和ftp时，如果本地链接正常，还会去判断对方网络的。
-    asyncInitializeLocalNetworkCheck();
 
     d_ptr->m_tagEditorChangeTimer.setSingleShot(true);
     connect(&d_ptr->m_tagEditorChangeTimer, &QTimer::timeout, this, [ = ] {
@@ -687,7 +681,7 @@ void DFileService::pasteFileByClipboard(const QObject *sender, const DUrl &targe
     if (targetUrl.scheme() == SEARCH_SCHEME) {
         return;
     }
-    const DUrlList &list = DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList());    
+    const DUrlList &list = DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList());
 
     if (action == DFMGlobal::CutAction) {
         // fix bug 63441
@@ -1073,16 +1067,6 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     }
     //设置鼠标状态，查看文件状态是否存在
     setCursorBusyState(true);
-    //check network online
-    bool bonline = isNetWorkOnline();
-    if (!bonline) {
-        setCursorBusyState(false);
-        //文件不存在弹提示框
-        if (bShowDailog) {
-            dialogManager->showUnableToLocateDir(rootFileName);
-        }
-        return true;
-    }
 
     if (rootFileName.startsWith(SMB_SCHEME)) {
         DAbstractFileInfoPointer rootptr = createFileInfo(nullptr, rootUrl);
@@ -1121,12 +1105,6 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     }
     qDebug() << bvist;
     return !bvist;
-}
-
-
-bool DFileService::isNetWorkOnline()
-{
-    return d_ptr->m_bonline;
 }
 
 bool DFileService::getDoClearTrashState() const
@@ -1349,26 +1327,4 @@ void DFileService::printStacktrace(int level)
         printf("%s\n", stacktrace[i]);
     }
     free(stacktrace);
-}
-
-
-void DFileService::asyncInitializeLocalNetworkCheck()
-{
-    Q_D(DFileService);
-    QPointer<DFileService> qptrMe = this;
-    QtConcurrent::run([=](){
-        //初始化判断当前自己的网络状态
-        if (qptrMe) {
-            //这里耗时比较长，当打开文件管理器，立刻关闭，整个文件管理器都退出了
-            d->m_networkmgr = new QNetworkConfigurationManager(this);
-            if (!qptrMe)
-                return;
-            d->m_bonline = d_ptr->m_networkmgr->isOnline();
-            connect(d->m_networkmgr, &QNetworkConfigurationManager::onlineStateChanged, [=](bool state) {
-                if (qptrMe)
-                    d->m_bonline = state;
-            });
-        }
-
-    });
 }

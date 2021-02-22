@@ -174,8 +174,6 @@ public:
     //check networkfile is busy(or network is unline)
     bool checkGvfsMountfileBusy(const DUrl &url, const bool showdailog = true);
     bool checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootFileName, const bool bShowDailog = true);
-    //judge me net work is online
-    bool isNetWorkOnline();
     //获取是否是正在清空回收站 fix bug 31324,
     bool getDoClearTrashState() const;
     //设置当前是否是在清空回收站 fix bug 31324,
@@ -205,8 +203,6 @@ private:
     static QString getSymlinkFileName(const DUrl &fileUrl, const QDir &targetDir = QDir());
     static void insertToCreatorHash(const HandlerType &type, const HandlerCreatorType &creator);
     static bool checkMultiSelectionFilesCache();
-    //异步初始化判断本地网络是否断开
-    void asyncInitializeLocalNetworkCheck();
 
     QScopedPointer<DFileServicePrivate> d_ptr;
     Q_DECLARE_PRIVATE(DFileService)
