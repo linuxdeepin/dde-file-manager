@@ -1713,6 +1713,19 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
                 return event->ignore();
             }
 
+            // fix bug 64049
+            // 文件不可在同目录下进行拖拽操作
+            const DAbstractFileInfoPointer &srcInfo = model()->fileInfo(selectionModel()->currentIndex());
+            if (srcInfo) {
+                const DUrl &parent = srcInfo->parentUrl();
+                if (parent == fileInfo->fileUrl()) {
+                    d->dragMoveHoverIndex = QModelIndex();
+                    update();
+
+                    return event->ignore();
+                }
+            }
+
             // 判断是否是压缩文件，是否只读，设置事件状态
             if (fileInfo->canDragCompress() && fileInfo->isWritable()) {
                 event->setDropAction(Qt::CopyAction);
