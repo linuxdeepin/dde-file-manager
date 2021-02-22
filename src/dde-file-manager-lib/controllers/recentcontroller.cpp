@@ -27,6 +27,8 @@
 #include "shutil/fileutils.h"
 #include "app/define.h"
 #include "vaultcontroller.h"
+#include "singleton.h"
+#include "app/filesignalmanager.h"
 
 #include <QFileSystemWatcher>
 #include <QXmlStreamReader>
@@ -55,6 +57,9 @@ private:
     void onFileDeleted(const DUrl &url);
     void onFileAttributeChanged(const DUrl &url);
     void onFileModified(const DUrl &url);
+
+public slots:
+    void removeRecentFile(const QString &path);
 
     Q_DECLARE_PRIVATE(RecentFileWatcher)
 };
@@ -87,7 +92,8 @@ public:
 RecentFileWatcher::RecentFileWatcher(const DUrl &url, QObject *parent)
     : DAbstractFileWatcher(*new RecentFileWatcherPrivate(this), url, parent)
 {
-
+    if (url == DUrl(RECENT_ROOT))
+        connect(fileSignalManager, &FileSignalManager::requestRemoveRecentFile, this, &RecentFileWatcher::removeRecentFile);
 }
 
 void RecentFileWatcher::setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled)
@@ -172,6 +178,21 @@ void RecentFileWatcher::onFileModified(const DUrl &url)
     newUrl.setScheme(RECENT_SCHEME);
 
     emit fileModified(newUrl);
+}
+//fix bug 63922 移除父目录是path的url
+void RecentFileWatcher::removeRecentFile(const QString &path)
+{
+    Q_D(RecentFileWatcher);
+
+    DUrlList removeUrls;
+    for (auto url : d->urlToWatcherMap.keys()) {
+        if (url.path().startsWith(path))
+            removeUrls << url;
+    }
+
+    for (auto url : removeUrls) {
+        onFileDeleted(url);
+    }
 }
 
 class RecentDirIterator : public DDirIterator
