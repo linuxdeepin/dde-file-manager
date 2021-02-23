@@ -45,6 +45,7 @@ public:
 
 TEST_F(TestShareController, test_test_createFileInfo)
 {
+    TestHelper::runInLoop([](){});
     auto event = dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, tmpFileUrl);
     EXPECT_TRUE(m_controller->createFileInfo(event) != nullptr);
 }

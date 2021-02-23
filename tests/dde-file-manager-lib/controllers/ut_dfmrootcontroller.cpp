@@ -7,6 +7,7 @@
 #include "app/define.h"
 #include "interfaces/drootfilemanager.h"
 #include "models/dfmrootfileinfo.h"
+#include "testhelper.h"
 
 namespace  {
     class DFMRootControllerTest : public testing::Test
@@ -29,6 +30,7 @@ namespace  {
 
 TEST_F(DFMRootControllerTest, rename_file)
 {
+    TestHelper::runInLoop([](){});
     DUrl from;
     from.setScheme(DFMROOT_SCHEME);
     from.setPath("/tmp/file_A");
