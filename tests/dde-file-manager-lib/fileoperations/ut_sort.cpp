@@ -12,6 +12,7 @@ using namespace testing;
 
 TEST(savedirTest,AnyAgruInput){
     Stub stl;
+    TestHelper::runInLoop([](){});
 
     direntry_t stl1,stl2;
     char tt[10] = {'a'};

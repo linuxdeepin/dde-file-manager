@@ -15,6 +15,7 @@
 #include <QWidget>
 #include <QGuiApplication>
 #include "dfmcrumbbar.h"
+#include "testhelper.h"
 DFM_USE_NAMESPACE
 
 namespace {
@@ -53,6 +54,7 @@ public:
 
 TEST_F(TestDFileMenu, tst_makeEvent)
 {
+    TestHelper::runInLoop([](){});
     MenuAction type;
     type = MenuAction::Open;
     const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);

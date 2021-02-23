@@ -8,6 +8,7 @@
 #include "dfileservices.h"
 #include "models/trashfileinfo.h"
 #include "stub.h"
+#include "testhelper.h"
 
 #include <QProcess>
 
@@ -53,6 +54,7 @@ public:
 
 TEST_F(TestTrashManager, createFileInfo)
 {
+    TestHelper::runInLoop([](){});
     auto pfile = m_trash->createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, trashFileUrl));
     EXPECT_TRUE(pfile != nullptr);
 }

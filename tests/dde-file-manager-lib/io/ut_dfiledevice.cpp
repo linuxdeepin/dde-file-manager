@@ -3,6 +3,7 @@
 
 #include "dfiledevice.h"
 #include "dfmglobal.h"
+#include "testhelper.h"
 #include <QThread>
 #include <QProcess>
 
@@ -45,6 +46,7 @@ public:
 };
 
 TEST_F(DFileDeviceTest,can_fileUrl) {
+    TestHelper::runInLoop([](){});
     DUrl url;
     url.fromLocalFile("~/");
     device->setFileUrl(url);

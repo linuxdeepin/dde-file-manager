@@ -8,6 +8,7 @@
 #include "controllers/jobcontroller.h"
 #include "controllers/filecontroller.h"
 #include "dfmevent.h"
+#include "testhelper.h"
 
 using namespace testing;
 
@@ -42,6 +43,7 @@ public:
 };
 
 TEST_F(JobControllerTest,start_JobController){
+    TestHelper::runInLoop([](){});
     DUrl url;
     url.fromLocalFile("~/Videos");
     jobcontroller->timer = new QElapsedTimer();

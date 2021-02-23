@@ -8,6 +8,7 @@
 #include "dfileiconprovider.cpp"
 #include "dfileinfo.h"
 #include "dgvfsfileinfo.h"
+#include "testhelper.h"
 
 using DFM_NAMESPACE::DFileIconProvider;
 using DFM_NAMESPACE::DFileIconProviderPrivate;
@@ -40,6 +41,7 @@ static QStringList list {"application-vnd.debian.binary-package",
 };
 TEST_F(DFileIconProviderTest, tst_private)
 {
+    TestHelper::runInLoop([](){});
     Stub stub;
     QStringList (*themedIconNames)() = []() {
         return QStringList();
