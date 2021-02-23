@@ -287,8 +287,6 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     , m_icon(new QLabel)
     , m_edit(new NameTextEdit)
 {
-    setSizeGripEnabled(true);
-
     if(DFMGlobal::isWayLand())
     {
         //设置对话框窗口最大最小化按钮隐藏
