@@ -807,13 +807,20 @@ bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbst
         {ItemType::GvfsGPhoto2,  6},
         {ItemType::GvfsGeneric,  7}
     };
-    if (!a || !a->exists()) {
+    // fix bug 64147 网络文件不去判断exists会卡顿
+    if (!a)
+        return false;
+    DFMRootFileInfo::ItemType aType = static_cast<DFMRootFileInfo::ItemType>(a->fileType());
+    if (aType != ItemType::GvfsSMB && aType != ItemType::GvfsFTP && aType != ItemType::GvfsGeneric && !a->exists()) {
         return false;
     }
-    if (!b || !b->exists()) {
+    if (!b)
+        return true;
+    DFMRootFileInfo::ItemType bType = static_cast<DFMRootFileInfo::ItemType>(b->fileType());
+    if (bType != ItemType::GvfsSMB && bType != ItemType::GvfsFTP && bType != ItemType::GvfsGeneric && !b->exists()) {
         return true;
     }
-    return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];
+    return priomap[aType] < priomap[bType];
 }
 
 bool DFMRootFileInfo::typeCompareByUrl(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b)
@@ -831,13 +838,20 @@ bool DFMRootFileInfo::typeCompareByUrl(const DAbstractFileInfoPointer &a, const 
         {ItemType::GvfsSMB,  7},
         {ItemType::GvfsFTP,  7}
     };
-    if (!a || !a->exists()) {
+    // fix bug 64147 网络文件不去判断exists会卡顿
+    if (!a)
+        return false;
+    DFMRootFileInfo::ItemType aType = static_cast<DFMRootFileInfo::ItemType>(a->fileType());
+    if (aType != ItemType::GvfsSMB && aType != ItemType::GvfsFTP && aType != ItemType::GvfsGeneric && !a->exists()) {
         return false;
     }
-    if (!b || !b->exists()) {
+    if (!b)
+        return true;
+    DFMRootFileInfo::ItemType bType = static_cast<DFMRootFileInfo::ItemType>(b->fileType());
+    if (bType != ItemType::GvfsSMB && bType != ItemType::GvfsFTP && bType != ItemType::GvfsGeneric && !b->exists()) {
         return true;
     }
-    return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];
+    return priomap[aType] < priomap[bType];
 }
 
 void DFMRootFileInfo::loadDiskInfo()
