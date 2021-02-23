@@ -44,7 +44,7 @@
 
 DFM_BEGIN_NAMESPACE
 
-static FileEventProcessor *eventProcessor = new FileEventProcessor();
+static FileEventProcessor eventProcessor;
 
 FileEventProcessor::FileEventProcessor()
 {
