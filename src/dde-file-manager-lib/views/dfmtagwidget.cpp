@@ -298,6 +298,8 @@ DCrumbEdit *DFMTagWidget::tagCrumbEdit()
 
 bool DFMTagWidget::shouldShow(const DUrl &url)
 {
+    if (DFileService::instance()->checkGvfsMountfileBusy(url,false))
+        return false;
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, url);
     //如果是网络挂载（gvfs）文件就返回
     if (!fileInfo || fileInfo->isVirtualEntry() || fileInfo->isGvfsMountFile() || DStorageInfo::isLowSpeedDevice(url.toAbsolutePathUrl().path()))

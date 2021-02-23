@@ -110,6 +110,9 @@ void RecentFileWatcher::addWatcher(const DUrl &url)
         return;
     }
 
+    if (DFileService::instance()->checkGvfsMountfileBusy(url,false))
+        return;
+
     DUrl real_url = url;
     real_url.setScheme(FILE_SCHEME);
 
@@ -205,7 +208,8 @@ RecentDirIterator::RecentDirIterator(const DUrl &url, const QStringList &nameFil
     Q_UNUSED(flags)
 
     for (DUrl url : parent->recentNodes.keys()) {
-        urlList << url;
+        if (!DFileService::instance()->checkGvfsMountfileBusy(url,false))
+            urlList << url;
     }
 }
 
