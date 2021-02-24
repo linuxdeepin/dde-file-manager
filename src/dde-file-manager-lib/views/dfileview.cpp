@@ -2529,15 +2529,20 @@ bool DFileView::setRootUrl(const DUrl &url)
 //        return true;
 //    对于相同路径也要走同样的流程
 
-    const DUrl &defaultSelectUrl = DUrl(QUrlQuery(fileUrl.query()).queryItemValue("selectUrl", QUrl::FullyEncoded));
+    // fix bug 63275
+    // 默认情况下，QUrlQuery使用等号("=")来分隔key和value，符号("&")分割彼此的key-value对
+    // 因此当传递过来的文件名中带有&符号，就会导致获取selectUrl失败
+    // 对query字段内容进行编码处理，解析的时候再进行解码
+    QUrlQuery urlQuery;
+    QByteArray encode = QUrl::toPercentEncoding(fileUrl.query(), "=");
+    urlQuery.setQuery(encode);
+    const DUrl &defaultSelectUrl = DUrl(urlQuery.queryItemValue("selectUrl", QUrl::FullyDecoded));
 
     if (defaultSelectUrl.isValid()) {
         d->preSelectionUrls << defaultSelectUrl;
 
-        QUrlQuery qq(fileUrl.query());
-
-        qq.removeQueryItem("selectUrl");
-        fileUrl.setQuery(qq);
+        urlQuery.removeQueryItem("selectUrl");
+        fileUrl.setQuery(urlQuery);
     } else {
         //判断网络文件是否可以到达
         if (!DFileService::instance()->checkGvfsMountfileBusy(rootUrl, false)) {
