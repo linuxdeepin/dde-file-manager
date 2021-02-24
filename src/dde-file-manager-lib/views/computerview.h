@@ -62,6 +62,10 @@ public:
     DUrl rootUrl() const override;
     bool setRootUrl(const DUrl &url) override;
     QListView *view();
+    // 当前view是否在忙碌中
+    bool isEventProcessing() const;
+    // 设置当前需要析构
+    void setNeedRelease();
 
 public Q_SLOTS:
     void contextMenu(const QPoint &pos);
@@ -75,6 +79,9 @@ private:
     ComputerListView *m_view;
     ComputerModel *m_model;
     DStatusBar *m_statusbar;
+    //是否是在事件处理中
+    QAtomicInteger<bool> m_eventProcessing = false;
+    QAtomicInteger<bool> m_needRelease = false;
     static const QList<int> iconsizes;
 };
 
