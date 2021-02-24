@@ -194,6 +194,10 @@ void DFMAddressBar::stopAnimation()
     if (!animationSpinner)
         return;
 
+    //fix 64394 输入框状态组件没有stop会一直start
+    animationSpinner->stop();
+    animationSpinner->close();
+    update();
     animationSpinner->deleteLater();
     animationSpinner = nullptr;
 }
