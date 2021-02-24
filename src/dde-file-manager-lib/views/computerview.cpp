@@ -188,7 +188,18 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
         if (!url.isValid())
             return;
         //判断网络文件是否可以到达
-        if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
+        // fix bug 63803 这里是鼠标事件进入后，checkGvfsMountfileBusy需要很长时间，所以鼠标事件没有结束
+        // 切换到其他界面，就析构了自己，当这个checkGvfsMountfileBusy退出，qt处理鼠标事件就崩溃了。
+        m_eventProcessing = true;
+        if (DFileService::instance()->checkGvfsMountfileBusy(url,true)) {
+            m_eventProcessing = false;
+            if (m_needRelease.load())
+                DFMBaseView::deleteLater();
+            return;
+        }
+        m_eventProcessing = false;
+        if (m_needRelease.load()) {
+            DFMBaseView::deleteLater();
             return;
         }
         if (url.path().endsWith(SUFFIX_USRDIR)) {
@@ -291,6 +302,16 @@ bool ComputerView::setRootUrl(const DUrl &url)
 QListView *ComputerView::view()
 {
     return m_view;
+}
+
+bool ComputerView::isEventProcessing() const
+{
+    return m_eventProcessing.load();
+}
+
+void ComputerView::setNeedRelease()
+{
+    m_needRelease.store(true);
 }
 
 void ComputerView::contextMenu(const QPoint &pos)

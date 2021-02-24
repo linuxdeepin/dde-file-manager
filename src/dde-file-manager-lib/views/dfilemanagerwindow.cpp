@@ -374,9 +374,13 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 
             return false;
         }
-
         if (current_view) {
-            current_view->deleteLater();
+            // fix bug 63803
+            ComputerView *computerView = dynamic_cast<ComputerView*>(current_view);
+            if (computerView && computerView->isEventProcessing())
+                computerView->setNeedRelease();
+            else
+                current_view->deleteLater();
         }
         tab->setFileView(view);
         if (tab == tabBar->currentTab())
