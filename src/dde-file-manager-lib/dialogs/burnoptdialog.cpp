@@ -209,6 +209,7 @@ void BurnOptDialogPrivate::setupUi()
     f12.setPixelSize(12);
     f12.setWeight(QFont::Normal);
     f12.setFamily("SourceHanSansSC");
+    advanceBtn->setFont(f12);
 
     QHBoxLayout *advanceBtnLay = new QHBoxLayout(w_content);
     advanceBtnLay->setMargin(0);
