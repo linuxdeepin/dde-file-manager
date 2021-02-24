@@ -373,7 +373,7 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
                 }
                 return DUrlList{};
             }
-            if (r == 0) {
+            if (r == 0 || r == -1) {
                 return DUrlList{};
             }
         }
