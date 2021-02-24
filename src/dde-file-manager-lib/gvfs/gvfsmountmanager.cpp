@@ -387,7 +387,7 @@ QDiskInfo GvfsMountManager::qVolumeToqDiskInfo(const QVolume &volume)
     return diskInfo;
 }
 
-QDiskInfo GvfsMountManager::qMountToqDiskinfo(const QMount &mount)
+QDiskInfo GvfsMountManager::qMountToqDiskinfo(const QMount &mount, bool updateUsage)
 {
     QDiskInfo diskInfo;
     diskInfo.setId(mount.mounted_root_uri());
@@ -412,7 +412,8 @@ QDiskInfo GvfsMountManager::qMountToqDiskinfo(const QMount &mount)
     } else {
         diskInfo.setType("network");
     }
-    diskInfo.updateGvfsFileSystemInfo();
+    if (updateUsage) // 该函数的具体作用是通过 Gio 获取文件系统的用量信息，获取该用量信息在一些场景下非常迟滞例如当移除 iPhone 设备时；但在移除设备时，用量信息是无需有的，因此这里添加参数控制是否需要更新用量。默认更新
+        diskInfo.updateGvfsFileSystemInfo();
     return diskInfo;
 }
 
@@ -459,7 +460,7 @@ void GvfsMountManager::monitor_mount_removed_root(GVolumeMonitor *volume_monitor
     QMount qMount = gMountToqMount(mount);
     qCDebug(mountManager()) << qMount;
 
-    QDiskInfo diskInfo = qMountToqDiskinfo(qMount);
+    QDiskInfo diskInfo = qMountToqDiskinfo(qMount, false);
     DiskInfos.remove(diskInfo.id());
     emit gvfsMountManager->volume_removed(diskInfo);
 }
@@ -547,7 +548,7 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
             diskInfo.setHas_volume(true);
             emit gvfsMountManager->mount_removed(diskInfo);
         } else {
-            QDiskInfo diskInfo = qMountToqDiskinfo(qMount);
+            QDiskInfo diskInfo = qMountToqDiskinfo(qMount, false); // 在卸载设备的时候无需关心设备的用量信息
             bool diskInfoRemoved = DiskInfos.remove(diskInfo.id());
             if (diskInfoRemoved) {
                 diskInfo.setHas_volume(false);
