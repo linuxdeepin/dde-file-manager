@@ -93,7 +93,7 @@ public:
     static QMount gMountToqMount(GMount *mount);
 
     static QDiskInfo qVolumeToqDiskInfo(const QVolume&  volume);
-    static QDiskInfo qMountToqDiskinfo(const QMount& mount);
+    static QDiskInfo qMountToqDiskinfo(const QMount& mount, bool updateUsage = true);
 
     static QVolume getVolumeByMountedRootUri(const QString& mounted_root_uri);
     static QVolume getVolumeByUnixDevice(const QString& unix_device);

@@ -204,12 +204,18 @@ void QDiskInfo::updateGvfsFileSystemInfo(int retryTimes/*=3*/)
         return;
     }
     error = nullptr;
-    systemInfo = g_file_query_filesystem_info(file, "*", nullptr, &error);
+    // 根据 API 文档，需要什么属性就去获取什么属性，全部拿可能影响性能。
+    systemInfo = g_file_query_filesystem_info(file,
+                                              G_FILE_ATTRIBUTE_FILESYSTEM_SIZE ","
+                                              G_FILE_ATTRIBUTE_FILESYSTEM_FREE ","
+                                              G_FILE_ATTRIBUTE_FILESYSTEM_USED ","
+                                              G_FILE_ATTRIBUTE_FILESYSTEM_READONLY,
+                                              nullptr, &error);
     if (error) {
         g_error_free(error);
         error = nullptr;
     }
-    info = g_file_query_info(file, "*", G_FILE_QUERY_INFO_NONE, nullptr, &error);
+    info = g_file_query_info(file, G_FILE_ATTRIBUTE_ID_FILESYSTEM, G_FILE_QUERY_INFO_NONE, nullptr, &error);
     if (info == nullptr && error) {
         g_object_unref(systemInfo);
         g_object_unref(file);
