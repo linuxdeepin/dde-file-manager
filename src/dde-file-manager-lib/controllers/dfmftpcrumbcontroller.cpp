@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2017 ~ 2018 Deepin Technology Co., Ltd.
  *
- * Author:     Gary Wang <wzc782970009@gmail.com>
+ * Author:     Li yigang <liyigang@uniontech.com>
  *
- * Maintainer: Gary Wang <wangzichong@deepin.com>
+ * Maintainer: Li yigang <liyigang@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMSMBCRUMBCONTROLLER_H
-#define DFMSMBCRUMBCONTROLLER_H
-
-#include "interfaces/dfmcrumbinterface.h"
-
-#include "dfmglobal.h"
+#include "dfmftpcrumbcontroller.h"
+#include "dfileservices.h"
 
 DFM_BEGIN_NAMESPACE
 
-class DFMSmbCrumbController : public DFMCrumbInterface
+DFMFtpCrumbController::DFMFtpCrumbController(QObject *parent)
+    : DFMCrumbInterface(parent)
 {
-public:
-    explicit DFMSmbCrumbController(QObject *parent = nullptr);
-    ~DFMSmbCrumbController() override;
 
-    bool supportedUrl(DUrl url) override;
-};
+}
+
+DFMFtpCrumbController::~DFMFtpCrumbController()
+{
+
+}
+
+bool DFMFtpCrumbController::supportedUrl(DUrl url)
+{
+    return (url.scheme() == FTP_SCHEME);
+}
 
 DFM_END_NAMESPACE
-
-#endif // DFMSMBCRUMBCONTROLLER_H

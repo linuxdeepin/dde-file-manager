@@ -246,6 +246,8 @@ HEADERS += \
     $$PWD/interfaces/private/dfmcrumbbar_p.h \
     $$PWD/interfaces/defenderinterface.h \
     $$PWD/interfaces/dumountmanager.h \
+    $$PWD/controllers/dfmftpcrumbcontroller.h \
+    $$PWD/controllers/dfmsftpcrumbcontroller.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
@@ -456,6 +458,8 @@ SOURCES += \
     $$PWD/shutil/checknetwork.cpp \
     $$PWD/interfaces/defenderinterface.cpp \
     $$PWD/interfaces/dumountmanager.cpp \
+    $$PWD/controllers/dfmftpcrumbcontroller.cpp \
+    $$PWD/controllers/dfmsftpcrumbcontroller.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h

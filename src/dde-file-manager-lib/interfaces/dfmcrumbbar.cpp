@@ -371,7 +371,7 @@ static QString getIconName(const CrumbData &c)
     QString iconName = c.iconName;
     if (c.url == DUrl(TRASH_ROOT)) {
         iconName = systemPathManager->getSystemPathIconName("Trash");
-    } else if (c.url.isNetWorkFile() || c.url.isSMBFile()) {
+    } else if (c.url.isNetWorkFile() || c.url.isSMBFile() || c.url.isFTPFile() || c.url.isSFTPFile()) {
         iconName = systemPathManager->getSystemPathIconName("Network");
     }
 
