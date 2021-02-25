@@ -110,7 +110,7 @@
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
-        <translation>A analisar o dispositivo, pará-lo?</translation>
+        <translation>A analisar o dispositivo, interromper?</translation>
     </message>
     <message>
         <source>Cancel</source>
