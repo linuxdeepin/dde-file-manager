@@ -2,39 +2,49 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="484"/>
+        <location filename="../controllers/appcontroller.cpp" line="476"/>
         <source>New Folder</source>
         <translation>Naujas aplankas</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="576"/>
+        <location filename="../controllers/appcontroller.cpp" line="568"/>
         <source>Mounting device error</source>
         <translation>Įrenginio prijungimo klaida</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="609"/>
+        <location filename="../controllers/appcontroller.cpp" line="607"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="651"/>
+        <location filename="../controllers/appcontroller.cpp" line="649"/>
         <source>Mount error: unsupported image format</source>
         <translation>Prijungimo klaida: nepalaikomas atvaizdžio formatas</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="729"/>
-        <location filename="../controllers/appcontroller.cpp" line="765"/>
+        <location filename="../controllers/appcontroller.cpp" line="771"/>
+        <location filename="../controllers/appcontroller.cpp" line="811"/>
         <source>The device was not safely removed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="729"/>
-        <location filename="../controllers/appcontroller.cpp" line="765"/>
+        <location filename="../controllers/appcontroller.cpp" line="771"/>
+        <location filename="../controllers/appcontroller.cpp" line="811"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="746"/>
+        <location filename="../controllers/appcontroller.cpp" line="781"/>
+        <source>The device was not ejected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../controllers/appcontroller.cpp" line="781"/>
+        <source>Disk is busy, cannot eject now</source>
+        <translation>Diskas yra užimtas, dabar negalima išstumti</translation>
+    </message>
+    <message>
+        <location filename="../controllers/appcontroller.cpp" line="792"/>
         <source>Authentication timed out</source>
         <translation type="unfinished"/>
     </message>
@@ -42,115 +52,163 @@
 <context>
     <name>BluetoothTransDialog</name>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="26"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="27"/>
         <source>Bluetooth File Transfer</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="27"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="28"/>
         <source>File Transfer Successful</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="28"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="29"/>
         <source>File Transfer Failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="30"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="31"/>
         <source>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="31"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="32"/>
         <source>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="32"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="33"/>
         <source>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="33"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="34"/>
         <source>Select a Bluetooth device to receive files</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="34"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="35"/>
         <source>Cannot find the connected Bluetooth device</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="35"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="36"/>
         <source>Waiting to be received...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="36"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="37"/>
         <source>Go to Bluetooth Settings</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="37"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="38"/>
         <source>%1/%2 Sent</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="38"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="39"/>
         <source>Error: the Bluetooth device is disconnected</source>
-        <translation type="unfinished"/>
+        <translation>Klaida: Bluetooth įrenginys yra atsijungęs</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="39"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="40"/>
         <source>Unable to send the file more than 2 GB</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="40"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="41"/>
         <source>Unable to send 0 KB files</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="41"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="42"/>
         <source>File doesn&apos;t exist</source>
-        <translation type="unfinished"/>
+        <translation>Failo nėra</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="43"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="44"/>
         <source>Next</source>
         <translation>Kitas</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="44"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="45"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="45"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="46"/>
         <source>Done</source>
         <translation>Atlikta</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="46"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="47"/>
         <source>Retry</source>
         <translation>Bandyti dar kartą</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="47"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="48"/>
         <source>OK</source>
         <translation>Gerai</translation>
+    </message>
+    <message>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="131"/>
+        <source>File sending request timed out</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="133"/>
+        <source>The service is busy and unable to process the request</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>BurnOptDialog</name>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="46"/>
+        <source>Device error</source>
+        <translation>Įrenginio klaida</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="46"/>
+        <source>Optical device %1 doesn&apos;t exist</source>
+        <translation>Optinio įrenginio %1 nėra</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="207"/>
+        <source>Advanced settings</source>
+        <translation>Išplėstiniai nustatymai</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="231"/>
+        <source>File system: </source>
+        <translation>Failų sistema: </translation>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="233"/>
+        <source>ISO9660/Joliet (For Windows)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="233"/>
+        <source>ISO9660/Rock Ridge (For Unix)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="233"/>
+        <source>ISO9660 Only</source>
+        <translation>Tik ISO9660</translation>
     </message>
 </context>
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
-        <location filename="../dialogs/closealldialogindicator.cpp" line="57"/>
+        <location filename="../dialogs/closealldialogindicator.cpp" line="59"/>
         <source>Close all</source>
         <translation>Užverti visus</translation>
     </message>
     <message>
-        <location filename="../dialogs/closealldialogindicator.cpp" line="77"/>
+        <location filename="../dialogs/closealldialogindicator.cpp" line="80"/>
         <source>Total size: %1, %2 files</source>
         <translation>Bendras dydis: %1, %2 failų</translation>
     </message>
@@ -159,19 +217,20 @@
     <name>ComputerModel</name>
     <message>
         <location filename="../models/computermodel.cpp" line="61"/>
-        <location filename="../models/computermodel.cpp" line="135"/>
+        <location filename="../models/computermodel.cpp" line="133"/>
         <source>My Directories</source>
         <translation>Mano katalogai</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="79"/>
-        <location filename="../models/computermodel.cpp" line="83"/>
-        <location filename="../models/computermodel.cpp" line="187"/>
-        <location filename="../models/computermodel.cpp" line="198"/>
-        <location filename="../models/computermodel.cpp" line="611"/>
-        <location filename="../models/computermodel.cpp" line="615"/>
-        <location filename="../models/computermodel.cpp" line="652"/>
-        <location filename="../models/computermodel.cpp" line="656"/>
+        <location filename="../models/computermodel.cpp" line="78"/>
+        <location filename="../models/computermodel.cpp" line="82"/>
+        <location filename="../models/computermodel.cpp" line="183"/>
+        <location filename="../models/computermodel.cpp" line="194"/>
+        <location filename="../models/computermodel.cpp" line="196"/>
+        <location filename="../models/computermodel.cpp" line="626"/>
+        <location filename="../models/computermodel.cpp" line="630"/>
+        <location filename="../models/computermodel.cpp" line="663"/>
+        <location filename="../models/computermodel.cpp" line="667"/>
         <source>Disks</source>
         <translation>Diskai</translation>
     </message>
@@ -254,6 +313,7 @@
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="215"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="257"/>
         <source>Clear History</source>
         <translation>Išvalyti istoriją</translation>
     </message>
@@ -261,7 +321,7 @@
 <context>
     <name>DFMAddressBar</name>
     <message>
-        <location filename="../views/dfmaddressbar.cpp" line="399"/>
+        <location filename="../views/dfmaddressbar.cpp" line="407"/>
         <source>Search or enter address</source>
         <translation>Ieškokite arba įrašykite adresą</translation>
     </message>
@@ -269,117 +329,117 @@
 <context>
     <name>DFMAdvanceSearchBar</name>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="108"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="167"/>
         <source>Search:</source>
         <translation>Ieškoti:</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="109"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="168"/>
         <source>File Type:</source>
         <translation>Failo tipas:</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="110"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="169"/>
         <source>File Size:</source>
         <translation>Failo dydis:</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="111"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="170"/>
         <source>Time Modified:</source>
         <translation>Modifikavimo laikas:</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="112"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="171"/>
         <source>Time Accessed:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="113"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="172"/>
         <source>Time Created:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="115"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="174"/>
         <source>Reset</source>
         <translation>Atstatyti</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="131"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="193"/>
         <source>All subdirectories</source>
         <translation>Visuose pakatalogiuose</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="132"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="194"/>
         <source>Current directory</source>
         <translation>Dabartiniame kataloge</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="149"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="218"/>
         <source>0 ~ 100 KB</source>
         <translation>0 ~ 100 KB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="150"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="219"/>
         <source>100 KB ~ 1 MB</source>
         <translation>100 KB ~ 1 MB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="151"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="220"/>
         <source>1 MB ~ 10 MB</source>
         <translation>1 MB ~ 10 MB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="152"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="221"/>
         <source>10 MB ~ 100 MB</source>
         <translation>10 MB ~ 100 MB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="153"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="222"/>
         <source>100 MB ~ 1 GB</source>
         <translation>100 MB ~ 1 GB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="154"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="223"/>
         <source>&gt; 1 GB</source>
         <translation>&gt; 1 GB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="158"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="236"/>
         <source>Today</source>
         <translation>Šiandien</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="159"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="237"/>
         <source>Yesterday</source>
         <translation>Vakar</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="160"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="238"/>
         <source>This week</source>
         <translation>Šią savaitę</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="161"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="239"/>
         <source>Last week</source>
         <translation>Praeitą savaitę</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="162"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="240"/>
         <source>This month</source>
         <translation>Šį mėnesį</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="163"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="241"/>
         <source>Last month</source>
         <translation>Praeitą mėnesį</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="164"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="242"/>
         <source>This year</source>
         <translation>Šiais metais</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="165"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="243"/>
         <source>Last year</source>
         <translation>Praeitais metais</translation>
     </message>
@@ -387,13 +447,13 @@
 <context>
     <name>DFMOpticalMediaWidget</name>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="117"/>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="142"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="120"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="145"/>
         <source>No files to burn</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="163"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="166"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation type="unfinished"/>
     </message>
@@ -409,7 +469,7 @@
 <context>
     <name>DFMTagWidget</name>
     <message>
-        <location filename="../views/dfmtagwidget.cpp" line="133"/>
+        <location filename="../views/dfmtagwidget.cpp" line="136"/>
         <source>Tag</source>
         <translation>Žymė</translation>
     </message>
@@ -437,45 +497,55 @@
         <translation>Daugiau nebeklausti</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="432"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="386"/>
+        <source>Syncing data</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="387"/>
+        <source>Please wait</source>
+        <translation>Palaukite</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="442"/>
         <source>Retry</source>
         <translation>Bandyti dar kartą</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="445"/>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="455"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="465"/>
         <source>Time modified: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="448"/>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="459"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="458"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="469"/>
         <source>Contains: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="451"/>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="462"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="461"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="472"/>
         <source>Size: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="447"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="457"/>
         <source>Original folder</source>
         <translation>Pradinis aplankas</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="450"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="460"/>
         <source>Original file</source>
         <translation>Pradinis failas</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="458"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="468"/>
         <source>Target folder</source>
         <translation>Paskirties aplankas</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="461"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="471"/>
         <source>Target file</source>
         <translation>Paskirties failas</translation>
     </message>
@@ -483,39 +553,39 @@
 <context>
     <name>DFMVaultActiveFinishedView</name>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="27"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="53"/>
         <source>Encrypt File Vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="34"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="61"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="47"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="77"/>
         <source>Encrypting...</source>
-        <translation type="unfinished"/>
+        <translation>Šifruojama...</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="59"/>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="113"/>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="142"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="92"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="147"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="176"/>
         <source>Encrypt</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="131"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="165"/>
         <source>Failed to create file vault: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="177"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="215"/>
         <source>OK</source>
         <translation>Gerai</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="55"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="87"/>
         <source>The setup is complete</source>
         <translation type="unfinished"/>
     </message>
@@ -523,125 +593,125 @@
 <context>
     <name>DFMVaultActiveSaveKeyView</name>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="22"/>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="47"/>
         <source>Recovery Key</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="29"/>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="55"/>
         <source>Generate a recovery key in case that you forgot the password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="35"/>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="62"/>
         <source>Key</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="45"/>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="74"/>
         <source>QR code</source>
-        <translation type="unfinished"/>
+        <translation>QR kodas</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="59"/>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="90"/>
         <source>Scan QR code and save the key to another device</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="66"/>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="98"/>
         <source>Next</source>
         <translation>Kitas</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="100"/>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="133"/>
         <source>Recovery Key:</source>
-        <translation type="unfinished"/>
+        <translation>Atkūrimo raktas:</translation>
     </message>
 </context>
 <context>
     <name>DFMVaultActiveSetUnlockMethodView</name>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="30"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="55"/>
         <source>Set Vault Password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="37"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="63"/>
         <source>Method</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="40"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="68"/>
         <source>Manual</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="51"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="79"/>
         <source>Password</source>
         <translation>Slaptažodis</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="54"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="191"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="84"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="226"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="67"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="97"/>
         <source>Repeat password</source>
         <translation>Pakartokite slaptažodį</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="70"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="102"/>
         <source>Input the password again</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="82"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="114"/>
         <source>Password hint</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="85"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="119"/>
         <source>Optional</source>
         <translation>Nebūtina</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="90"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="124"/>
         <source>Next</source>
         <translation>Kitas</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="214"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="230"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="249"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="265"/>
         <source>Passwords do not match</source>
-        <translation type="unfinished"/>
+        <translation>Slaptažodžiai nesutampa</translation>
     </message>
 </context>
 <context>
     <name>DFMVaultActiveStartView</name>
     <message>
-        <location filename="../views/dfmvaultactivestartview.cpp" line="17"/>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="43"/>
         <source>File Vault</source>
         <translation>Failų slėptuvė</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivestartview.cpp" line="23"/>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="50"/>
         <source>Create your secure private space</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivestartview.cpp" line="24"/>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="51"/>
         <source>Advanced encryption technology</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivestartview.cpp" line="25"/>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="52"/>
         <source>Convenient and easy to use</source>
         <translation>Patogi ir lengva naudoti</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivestartview.cpp" line="32"/>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="61"/>
         <source>Create</source>
         <translation type="unfinished"/>
     </message>
@@ -649,37 +719,37 @@
 <context>
     <name>DFMVaultRecoveryKeyPages</name>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="56"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="61"/>
         <source>Unlock by Key</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="79"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="86"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="79"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="86"/>
         <source>Unlock</source>
         <translation>Atrakinti</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="261"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="272"/>
         <source>Failed to unlock file vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="265"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="276"/>
         <source>OK</source>
         <translation>Gerai</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="64"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="71"/>
         <source>Input the 32-digit recovery key</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="151"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="163"/>
         <source>Wrong recovery key</source>
         <translation type="unfinished"/>
     </message>
@@ -687,12 +757,12 @@
 <context>
     <name>DFMVaultRemoveByPasswordView</name>
     <message>
-        <location filename="../views/dfmvaultremovebypasswordview.cpp" line="36"/>
+        <location filename="../views/dfmvaultremovebypasswordview.cpp" line="39"/>
         <source>Password</source>
         <translation>Slaptažodis</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovebypasswordview.cpp" line="53"/>
+        <location filename="../views/dfmvaultremovebypasswordview.cpp" line="58"/>
         <source>Password hint: %1</source>
         <translation type="unfinished"/>
     </message>
@@ -700,7 +770,7 @@
 <context>
     <name>DFMVaultRemoveByRecoverykeyView</name>
     <message>
-        <location filename="../views/dfmvaultremovebyrecoverykeyview.cpp" line="58"/>
+        <location filename="../views/dfmvaultremovebyrecoverykeyview.cpp" line="61"/>
         <source>Input the 32-digit recovery key</source>
         <translation type="unfinished"/>
     </message>
@@ -708,267 +778,287 @@
 <context>
     <name>DFMVaultRemovePages</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="33"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="61"/>
         <source>Delete File Vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="81"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="111"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="85"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="115"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="85"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="157"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="115"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="191"/>
         <source>Use Key</source>
-        <translation type="unfinished"/>
+        <translation>Naudoti raktą</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="85"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="115"/>
         <source>Delete</source>
         <translation>Ištrinti</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="109"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="214"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="143"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="253"/>
         <source>OK</source>
         <translation>Gerai</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="154"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="188"/>
         <source>Use Password</source>
-        <translation type="unfinished"/>
+        <translation>Naudoti slaptažodį</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="169"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="203"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>Neteisingas slaptažodis</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="179"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="213"/>
         <source>Wrong recovery key</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="210"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="249"/>
         <source>Failed to delete file vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="224"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="263"/>
         <source>Deleted successfully</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="226"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="265"/>
         <source>Failed to delete</source>
-        <translation type="unfinished"/>
+        <translation>Nepavyko ištrinti failo</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="105"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="139"/>
         <source>Removing...</source>
-        <translation type="unfinished"/>
+        <translation>Šalinama...</translation>
     </message>
 </context>
 <context>
     <name>DFMVaultUnlockPages</name>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="45"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="48"/>
         <source>Unlock File Vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="52"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="56"/>
         <source>Verify your password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="86"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="93"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="86"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="93"/>
         <source>Unlock</source>
         <translation>Atrakinti</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="97"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="108"/>
         <source>Password hint: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="233"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="244"/>
         <source>Failed to unlock file vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="237"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="248"/>
         <source>OK</source>
         <translation>Gerai</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="57"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="63"/>
         <source>Password</source>
         <translation>Slaptažodis</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="184"/>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="228"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="195"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="239"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>Neteisingas slaptažodis</translation>
     </message>
 </context>
 <context>
     <name>DFileCopyMoveJob</name>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="210"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="211"/>
         <source>Permission error</source>
         <translation>Leidimų klaida</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="212"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="213"/>
         <source>The action is denied</source>
         <translation>Veiksmas atmestas</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="218"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="219"/>
         <source>Failed to open the file</source>
         <translation>Nepavyko atverti failo</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="220"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="221"/>
         <source>Failed to read the file</source>
         <translation>Nepavyko perskaityti failą</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="222"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="223"/>
         <source>Failed to write the file</source>
         <translation>Nepavyko įrašyti failo</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="224"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="225"/>
         <source>Failed to create the directory</source>
         <translation>Nepavyko sukurti katalogą</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="226"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="227"/>
         <source>Failed to delete the file</source>
         <translation>Nepavyko ištrinti failo</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="228"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="229"/>
         <source>Failed to move the file</source>
         <translation>Nepavyko perkelti failo</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="230"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="231"/>
         <source>Original file does not exist</source>
         <translation>Pradinio failo nėra</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="232"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="233"/>
         <source>Failed, file size must be less than 4GB</source>
         <translation>Nepavyko, failo dydis privalo būti mažesnis nei 4GB</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="234"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="235"/>
         <source>Not enough free space on the target disk</source>
         <translation>Paskirties diske nepakanka laisvos vietos</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="236"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="237"/>
         <source>File integrity was damaged</source>
         <translation>Failo vientisumas buvo pažeistas</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="238"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="239"/>
         <source>The target device is read only</source>
         <translation>Paskirties įrenginys yra skirtas tik skaitymui</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="240"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="241"/>
         <source>Target folder is inside the source folder</source>
         <translation>Paskirties aplankas yra šaltinio aplanko viduje</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="654"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="656"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>kopija</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1004"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2068"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1061"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1152"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2560"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2699"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3172"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1219"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1698"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1968"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2113"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1014"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2078"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3118"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3194"/>
+        <source>Failed to write the file, cause:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="3987"/>
+        <source>Syncing data</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="3987"/>
+        <source>Please wait</source>
+        <translation>Palaukite</translation>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="1071"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>Nepavyko sukurti katalogą, priežastis: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1164"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1195"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2573"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2712"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2738"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3186"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3515"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1231"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1262"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1710"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1742"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1981"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2837"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Nepavyko atverti failą, priežastis: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1191"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1258"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1738"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1297"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2627"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2816"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3312"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1372"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2045"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>Nepavyko perskaityti failą, priežastis: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1354"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1432"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2869"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2939"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3582"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3661"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1440"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1515"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2912"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3003"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>Nepavyko rašyti failą, priežastis: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1566"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3042"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1637"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>Failo vientisumas buvo pažeistas, priežastis: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1640"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2126"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2145"/>
+        <source>Failed to open the file, cause: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="2215"/>
+        <source>Failed to read the file, cause: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="2299"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>Nepavyko ištrinti failą, priežastis: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1734"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2393"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>Nepavyko sukurti simbolinę nuorodą, priežastis: %1</translation>
     </message>
@@ -976,39 +1066,39 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1108"/>
-        <location filename="../views/dfiledialog.cpp" line="1393"/>
+        <location filename="../views/dfiledialog.cpp" line="1091"/>
+        <location filename="../views/dfiledialog.cpp" line="1376"/>
         <source>Save</source>
         <translation>Įrašyti</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1298"/>
+        <location filename="../views/dfiledialog.cpp" line="1281"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 jau yra, ar norite jį pakeisti?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1258"/>
-        <location filename="../views/dfiledialog.cpp" line="1299"/>
+        <location filename="../views/dfiledialog.cpp" line="1241"/>
+        <location filename="../views/dfiledialog.cpp" line="1282"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1257"/>
+        <location filename="../views/dfiledialog.cpp" line="1240"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1259"/>
+        <location filename="../views/dfiledialog.cpp" line="1242"/>
         <source>Confirm</source>
         <translation>Patvirtinti</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1300"/>
+        <location filename="../views/dfiledialog.cpp" line="1283"/>
         <source>Replace</source>
         <translation>Pakeisti</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1390"/>
+        <location filename="../views/dfiledialog.cpp" line="1373"/>
         <source>Open</source>
         <translation>Atverti</translation>
     </message>
@@ -1016,12 +1106,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1160"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1150"/>
         <source>Trash</source>
         <translation>Šiukšlinė</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1168"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1159"/>
         <source>Empty</source>
         <translation>Išvalyti</translation>
     </message>
@@ -1029,41 +1119,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1653"/>
-        <location filename="../models/trashfileinfo.cpp" line="339"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1445"/>
+        <location filename="../models/trashfileinfo.cpp" line="322"/>
         <source>Name</source>
         <translation>Pavadinimas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1105"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1655"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1112"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1447"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
         <translation>Modifikavimo laikas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1657"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
         <source>Size</source>
         <translation>Dydis</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1659"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
         <source>Type</source>
         <translation>Tipas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1661"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
         <source>Time created</source>
         <translation>Sukūrimo laikas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="820"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1663"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1455"/>
         <source>Last access</source>
         <translation>Paskiausia prieiga</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1665"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1457"/>
         <location filename="../models/recentfileinfo.cpp" line="200"/>
         <location filename="../models/searchfileinfo.cpp" line="129"/>
         <location filename="../models/searchfileinfo.cpp" line="134"/>
@@ -1074,12 +1164,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2525"/>
-        <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
+        <location filename="../views/dfileview.cpp" line="2492"/>
+        <source>Mounting failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3183"/>
+        <location filename="../views/dfileview.cpp" line="3189"/>
         <source>(Reverse)</source>
         <translation>(Atvirkščiai)</translation>
     </message>
@@ -1087,7 +1177,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="614"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="640"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>Pridėti žymę &quot;%1&quot;</translation>
     </message>
@@ -1095,62 +1185,62 @@
 <context>
     <name>DStatusBar</name>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="67"/>
+        <location filename="../views/dstatusbar.cpp" line="69"/>
         <source>%1 item</source>
         <translation>%1 elementas</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="68"/>
+        <location filename="../views/dstatusbar.cpp" line="70"/>
         <source>%1 items</source>
         <translation>%1 elementai</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="69"/>
+        <location filename="../views/dstatusbar.cpp" line="71"/>
         <source>%1 item selected</source>
         <translation>Pažymėtas %1 elementas</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="70"/>
+        <location filename="../views/dstatusbar.cpp" line="72"/>
         <source>%1 items selected</source>
         <translation>Pažymėti %1 elementai</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="71"/>
+        <location filename="../views/dstatusbar.cpp" line="73"/>
         <source>%1 folder selected (contains %2)</source>
         <translation>Pažymėtas %1 aplankas (kuriame yra %2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="72"/>
+        <location filename="../views/dstatusbar.cpp" line="74"/>
         <source>%1 folders selected (contains %2)</source>
         <translation>Pažymėta %1 aplankų (kuriuose yra %2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="73"/>
+        <location filename="../views/dstatusbar.cpp" line="75"/>
         <source>%1 file selected (%2)</source>
         <translation>Pažymėtas %1 failas (%2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="74"/>
+        <location filename="../views/dstatusbar.cpp" line="76"/>
         <source>%1 files selected (%2)</source>
         <translation>Pažymėta %1 failų (%2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="75"/>
+        <location filename="../views/dstatusbar.cpp" line="77"/>
         <source>%1 folder selected</source>
         <translation>Pažymėtas %1 aplankas</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="169"/>
+        <location filename="../views/dstatusbar.cpp" line="175"/>
         <source>Filter</source>
         <translation>Filtras</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="179"/>
+        <location filename="../views/dstatusbar.cpp" line="189"/>
         <source>Save as:</source>
         <translation>Įrašyti kaip:</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="519"/>
+        <location filename="../views/dstatusbar.cpp" line="590"/>
         <source>Loading...</source>
         <translation>Įkeliama...</translation>
     </message>
@@ -1163,86 +1253,115 @@
         <translation>Šis veiksmas yra nepalaikomas</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="717"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="740"/>
         <source>Erasing disc %1, please wait...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="718"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="741"/>
         <source>Burning disc %1, please wait...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="723"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="746"/>
         <source>Writing data...</source>
         <translation>Rašomi duomenys...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="724"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="747"/>
         <source>Verifying data...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="774"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="797"/>
         <source>Copying %1</source>
         <translation>Kopijuojama %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="775"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="779"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="782"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="798"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="802"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="805"/>
         <source>to %2</source>
         <translation>į %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="798"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="821"/>
         <source>%1 already exists in target folder</source>
         <translation>%1 paskirties aplanke jau yra</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="799"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="822"/>
         <source>Original path %1 Target path %2</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="778"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="801"/>
         <source>Moving %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="352"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="356"/>
         <source>Removing file vault, please try later</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="781"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="804"/>
         <source>Restoring %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="784"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="807"/>
         <source>Deleting %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="787"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="810"/>
         <source>Trashing %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="795"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="818"/>
         <source>Calculating space, please wait</source>
         <translation>Apskaičiuojama vieta, palaukite</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="810"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="833"/>
         <source>Merge</source>
         <translation>Sulieti</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="813"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="836"/>
         <source>Replace</source>
         <translation>Pakeisti</translation>
+    </message>
+</context>
+<context>
+    <name>DUMountManager</name>
+    <message>
+        <location filename="../interfaces/dumountmanager.cpp" line="143"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="154"/>
+        <source>Authentication timed out</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../interfaces/dumountmanager.cpp" line="145"/>
+        <source>Disk is busy, cannot unmount now</source>
+        <translation>Diskas yra užimtas, dabar negalima atjungti</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dumountmanager.cpp" line="157"/>
+        <source>Disk is busy, cannot eject now</source>
+        <translation>Diskas yra užimtas, dabar negalima išstumti</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dumountmanager.cpp" line="189"/>
+        <source>The device is busy, cannot eject now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../interfaces/dumountmanager.cpp" line="198"/>
+        <source>The device is busy, cannot remove now</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1250,7 +1369,7 @@
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="114"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="129"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="727"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="763"/>
         <source>%1 Volume</source>
         <translation>%1 tomas</translation>
     </message>
@@ -1261,17 +1380,17 @@
         <translation>Duomenų diskas</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="722"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="758"/>
         <source>%1 Drive</source>
         <translation>%1 diskas</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="706"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="742"/>
         <source>Blank %1 Disc</source>
         <translation>Tuščias %1 diskas</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="725"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="761"/>
         <source>%1 Encrypted</source>
         <translation>Šifruotas %1</translation>
     </message>
@@ -1279,379 +1398,427 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="414"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1073"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1088"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1098"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="409"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1138"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1153"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1163"/>
         <source>Operation failed!</source>
         <translation>Operacija nepavyko!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="415"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="410"/>
         <source>Target folder is inside the source folder!</source>
         <translation>Paskirties aplankas yra šaltinio aplanko viduje!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="417"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="634"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="977"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="990"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="999"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1017"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1080"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1091"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1105"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1171"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1540"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="412"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="627"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1008"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1021"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1030"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1048"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1145"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1156"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1170"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1236"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1640"/>
         <source>OK</source>
         <translation>Gerai</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="440"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="435"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>Jūs norite vykdyti %1 ar rodyti jo turinį?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="441"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="436"/>
         <source>It is an executable text file.</source>
         <translation>Tai yra vykdomasis tekstinis failas.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="444"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="468"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="484"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="530"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="556"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="651"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="702"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="864"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="893"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1241"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1486"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="439"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="462"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="478"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="524"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="550"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="644"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="717"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="733"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="895"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="924"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1306"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1561"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1579"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="444"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="470"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="485"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="439"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="464"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="479"/>
         <source>Run</source>
         <translation>Vykdyti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="444"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="469"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="439"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="463"/>
         <source>Run in terminal</source>
         <translation>Vykdyti terminale</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="444"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="439"/>
         <source>Display</source>
         <translation>Rodyti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="467"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="461"/>
         <source>It is an executable file.</source>
         <translation>Tai yra vykdomasis failas.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="483"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="477"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>Šis failas nėra vykdomasis, ar norite pridėti vykdymo leidimą ir paleisti šį failą?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="497"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="491"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot; jau yra, prašome naudoti kitą pavadinimą.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="499"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="514"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="622"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="893"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1265"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1362"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="493"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="508"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="616"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="924"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1330"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1434"/>
+        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <translation>Patvirtinti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="525"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="506"/>
+        <source>The file name must not contain two dots (..)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="519"/>
         <source>Are you sure you want to erase all data on the disc?</source>
         <translation>Ar tikrai norite ištrinti visus diske esančius duomenis?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="530"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="524"/>
         <source>Erase</source>
         <translation>Ištrinti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="552"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="546"/>
         <source>How do you want to use this disc?</source>
         <translation>Kaip norite naudoti diską?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="556"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="550"/>
         <source>Burn image</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="556"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="550"/>
         <source>Burn files</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="584"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="578"/>
         <source>Disc erase failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="588"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="582"/>
         <source>Burn process failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="594"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="588"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="611"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="621"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="605"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="615"/>
         <source>Show details</source>
         <translation>Rodyti išsamesnę informaciją</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="615"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="609"/>
         <source>Hide details</source>
         <translation>Slėpti išsamesnę informaciją</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="616"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="610"/>
         <source>Error</source>
         <translation>Klaida</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="644"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="637"/>
         <source>Permanently delete %1?</source>
         <translation>Ištrinti %1 visiems laikams?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="645"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="638"/>
         <source>Permanently delete %1 items?</source>
         <translation>Ištrinti %1 elementus visiems laikams?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="651"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="644"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="717"/>
         <source>Delete</source>
         <translation>Ištrinti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="662"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="655"/>
         <source>Empty</source>
         <translation>Išvalyti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="699"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="700"/>
+        <source>Do you want to delete %1?</source>
+        <translation>Ar norite ištrinti %1?</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="701"/>
+        <source>Do you want to delete the selected %1 items?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="730"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>Atleiskite, nepavyko nustatyti jūsų žymelės katalogo vietą, pašalinti žymelę?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="702"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="733"/>
         <source>Remove</source>
         <translation>Šalinti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="862"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="893"/>
         <source>Name: </source>
         <translation>Pavadinimas: </translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="864"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="895"/>
         <source>Force unmount</source>
         <translation>Priverstinai atjungti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="887"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="918"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1, į kurį nurodo šis šaukinys, buvo pakeistas arba perkeltas</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="891"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="922"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Ar norite ištrinti šį šaukinį?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="988"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1019"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>Nepavyko, failo dydis privalo būti mažesnis nei 4GB.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="997"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1028"/>
         <source>Fail to create symlink, cause:</source>
         <translation>Nepavyko sukurti simbolinės nuorodos, kadangi:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1015"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1046"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Pažymėtuose failuose yra sisteminiai failai/katalogai ir jie negali būti ištrinti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1089"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1125"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1082"/>
+        <source>Unable to find the original file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="1154"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1190"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Jūs neturite leidimo dirbti su failu/aplanku!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1100"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1165"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1142"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1207"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Atleiskite, jūs neturite leidimo dirbti su šiuo %1 failu(-ais)/aplanku(-ais)!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1224"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1289"/>
         <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
         <translation>2. Išjungimo nustatymuose nuimkite žymėjimą nuo &quot;Įjungti sparčiąją paleistį&quot; (angl. Turn on fast startup) ir &quot;Užmigdyti&quot; (angl. Hibernate) ir paleiskite kompiuterį iš naujo</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1225"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1290"/>
         <source>3. Reboot and enter %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1359"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1431"/>
         <source>Unable to access %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1439"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="700"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1514"/>
         <source>Sending files now, please try later</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1487"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1562"/>
         <source>Format</source>
         <translation>Formatuoti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1488"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1563"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1538"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1580"/>
+        <source>Stop</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="1581"/>
+        <source>Scanning the device, stop it?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="1638"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Bendrinamas aplankas negali būti pavadintas esamo naudotojo vardu</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="466"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="460"/>
         <source>Do you want to run %1?</source>
         <translation>Ar norite vykdyti %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="642"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="635"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Ar tikrai norite išvalyti %1 elementą?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="643"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="636"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Ar tikrai norite išvalyti %1 elementus(-ų)?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="539"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="686"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="533"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="679"/>
         <source>This action cannot be undone</source>
         <translation>Šio veiksmo negalima bus atšaukti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="512"/>
-        <source>The file name must not contain two dots(..)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="591"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="585"/>
         <source>Data verification failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="861"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="892"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Diskas yra užimtas, dabar negalima atjungti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="976"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1007"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
         <translation>Nepavyko nukopijuoti. Paskirties diske nepakanka laisvos vietos.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1075"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1140"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>Nepavyko atkurti %1 failo, paskirties aplankas yra tik skaitymui</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1077"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1142"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>Nepavyko atkurti %1 failų, paskirties aplankas yra tik skaitymui</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1102"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1209"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1274"/>
         <source>Mount partition%1 to be read only</source>
         <translation>Prijungti skaidinį %1 kaip skirtą tik skaitymui</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1213"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1278"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
         <translation>Jeigu išjungimo nustatymuose yra pažymėta &quot;Įjungti sparčiąją paleistį (rekomenduojama)&quot; (angl. Turn on fast startup (recommended)), tuomet Diskai Windows sistemoje negalės normaliai skaityti ir rašyti į diską</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1217"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1282"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
         <translation>Norėdami atkurti normalią prieigą prie Windows disko, sekite šiais žingsniais</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1223"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1288"/>
         <source>1. Reboot to enter Windows</source>
         <translation>1. Paleiskite kompiuterį iš naujo, kad įeitumėte į Windows</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1242"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1307"/>
         <source>Reboot</source>
         <translation>Paleisti iš naujo</translation>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="1117"/>
+        <source>Permission denied</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="1118"/>
+        <source>You do not have permission to traverse files in it</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FileController</name>
     <message>
+        <location filename="../controllers/filecontroller.cpp" line="638"/>
+        <location filename="../controllers/filecontroller.cpp" line="694"/>
+        <location filename="../controllers/filecontroller.cpp" line="757"/>
         <location filename="../controllers/filecontroller.cpp" line="783"/>
-        <location filename="../controllers/filecontroller.cpp" line="802"/>
-        <location filename="../controllers/filecontroller.cpp" line="821"/>
+        <source>Unable to find the original file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../controllers/filecontroller.cpp" line="816"/>
+        <location filename="../controllers/filecontroller.cpp" line="835"/>
+        <location filename="../controllers/filecontroller.cpp" line="854"/>
         <source>Kindly Reminder</source>
         <translation>Draugiškas priminimas</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="783"/>
-        <location filename="../controllers/filecontroller.cpp" line="802"/>
-        <location filename="../controllers/filecontroller.cpp" line="821"/>
+        <location filename="../controllers/filecontroller.cpp" line="816"/>
+        <location filename="../controllers/filecontroller.cpp" line="835"/>
+        <location filename="../controllers/filecontroller.cpp" line="854"/>
         <source>Please install File Roller first and then continue</source>
         <translation>Iš pradžių, įsidiekite Failų presą, o tuomet tęskite</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1417"/>
-        <location filename="../controllers/filecontroller.cpp" line="1440"/>
+        <location filename="../controllers/filecontroller.cpp" line="1499"/>
+        <location filename="../controllers/filecontroller.cpp" line="1519"/>
         <source>Unable to create files here: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1419"/>
+        <location filename="../controllers/filecontroller.cpp" line="1501"/>
         <source>Confirm</source>
         <translation>Patvirtinti</translation>
     </message>
@@ -1659,37 +1826,39 @@
 <context>
     <name>FileDialogStatusBar</name>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="30"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="36"/>
         <source>File Name</source>
         <translation>Failo pavadinimas</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="31"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="37"/>
         <source>Format</source>
         <translation>Formatuoti</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="44"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="59"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="61"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="62"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="66"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="84"/>
         <source>Save</source>
         <translation>Įrašyti</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="66"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="84"/>
         <source>Open</source>
         <translation>Atverti</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="71"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="92"/>
         <source>Save File</source>
         <translation>Įrašyti failą</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="71"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="92"/>
         <source>Open File</source>
         <translation>Atverti failą</translation>
     </message>
@@ -1697,7 +1866,7 @@
 <context>
     <name>FileIconItem</name>
     <message>
-        <location filename="../views/fileitem.cpp" line="116"/>
+        <location filename="../views/fileitem.cpp" line="203"/>
         <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
         <translation type="unfinished"/>
     </message>
@@ -1705,86 +1874,76 @@
 <context>
     <name>FileJob</name>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="173"/>
+        <location filename="../../fileoperations/filejob.cpp" line="174"/>
         <source>copy</source>
         <translation>kopija</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="757"/>
-        <location filename="../../fileoperations/filejob.cpp" line="984"/>
-        <location filename="../../fileoperations/filejob.cpp" line="993"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1068"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1292"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1301"/>
+        <location filename="../../fileoperations/filejob.cpp" line="911"/>
+        <location filename="../../fileoperations/filejob.cpp" line="920"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1156"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1165"/>
         <source>Data verification successful.</source>
         <translation>Duomenys sėkmingai patikrinti.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="757"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1068"/>
-        <source>Data verification failed.</source>
-        <translation>Nepavyko patikrinti duomenų.</translation>
-    </message>
-    <message>
-        <location filename="../../fileoperations/filejob.cpp" line="761"/>
-        <location filename="../../fileoperations/filejob.cpp" line="997"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1072"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1305"/>
+        <location filename="../../fileoperations/filejob.cpp" line="924"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1169"/>
         <source>Burn process completed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1469"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1321"/>
         <source>%1 s</source>
         <translation>%1 sek.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1473"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1325"/>
         <source>%1 m %2 s</source>
         <translation>%1 min. %2 sek.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1478"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1330"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 val. %2 min. %3 sek.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1485"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1337"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 d. %2 val. %3 min. %4 sek.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3200"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3046"/>
         <source>%1 is a duplicate file.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3203"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3049"/>
         <source>Insufficient disc space.</source>
         <translation>Trūksta vietos diske.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3206"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3052"/>
         <source>Lost connection to drive.</source>
         <translation>Prarastas ryšys su disku.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3209"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3055"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3212"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3058"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3219"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3065"/>
         <source>Unknown error</source>
         <translation>Nežinoma klaida</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.h" line="300"/>
+        <location filename="../../fileoperations/filejob.h" line="297"/>
         <source>Device disconnected</source>
         <translation type="unfinished"/>
     </message>
@@ -2075,18 +2234,32 @@
         <translation>Naudoti failų tvarkytuvės failų parinkiklio dialogą</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="265"/>
-        <location filename="../configure/global-setting-template-pro.js" line="265"/>
-        <location filename="../configure/global-setting-template.js" line="264"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="263"/>
+        <location filename="../configure/global-setting-template-pro.js" line="263"/>
+        <location filename="../configure/global-setting-template.js" line="262"/>
+        <source>Ask for my confirmation when deleting files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="271"/>
+        <location filename="../configure/global-setting-template-pro.js" line="271"/>
+        <location filename="../configure/global-setting-template.js" line="270"/>
         <source>Other</source>
         <translation>Kita</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="269"/>
-        <location filename="../configure/global-setting-template-pro.js" line="269"/>
-        <location filename="../configure/global-setting-template.js" line="268"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="275"/>
+        <location filename="../configure/global-setting-template-pro.js" line="275"/>
+        <location filename="../configure/global-setting-template.js" line="274"/>
         <source>Hide system disk</source>
         <translation>Slėpti sistemos diską</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="288"/>
+        <location filename="../configure/global-setting-template-pro.js" line="288"/>
+        <location filename="../configure/global-setting-template.js" line="287"/>
+        <source>Show file system on disk icon</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="188"/>
@@ -2180,104 +2353,119 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="796"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="773"/>
         <source>Can’t verify the identity of %1.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="797"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="774"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="798"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="775"/>
         <source>The identity sent by the remote computer is</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="800"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="777"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="846"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1487"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1495"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1500"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="824"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="828"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1444"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1450"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1453"/>
         <source>Mounting device error</source>
         <translation>Įrenginio prijungimo klaida</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1625"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="824"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1450"/>
+        <source>Wrong username or password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1681"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1850"/>
+        <source>Cannot find the mounted device</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1595"/>
         <source>No key available to unlock device</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1713"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1672"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>Diską prijungė naudotojas &quot;%1&quot;, jūs negalite jo atjungti.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1716"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1726"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1754"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1875"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1906"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1675"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1684"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1710"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1829"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1853"/>
         <source>Confirm</source>
         <translation>Patvirtinti</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1723"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1903"/>
-        <source>Cannot find the mounting device</source>
-        <translation>Nepavyksta rasti prijungiamo įrenginio</translation>
-    </message>
-    <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1751"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1707"/>
         <source>Cannot unmount the device</source>
         <translation>Nepavyksta atjungti įrenginio</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1871"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1825"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>Nepavyksta išimti įrenginio &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
+    <name>MasteredMediaController</name>
+    <message>
+        <location filename="../controllers/masteredmediacontroller.cpp" line="365"/>
+        <source>Unable to burn. Not enough free space on the target disk.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>MergedDesktopController</name>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="424"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="444"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="381"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="401"/>
         <source>Pictures</source>
         <translation>Paveikslai</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="426"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="446"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="383"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="403"/>
         <source>Music</source>
         <translation>Muzika</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="428"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="448"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="385"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="405"/>
         <source>Applications</source>
         <translation>Programos</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="430"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="450"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="387"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="407"/>
         <source>Videos</source>
         <translation>Vaizdo įrašai</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="432"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="452"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="389"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="409"/>
         <source>Documents</source>
         <translation>Dokumentai</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="434"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="454"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="391"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="411"/>
         <source>Others</source>
         <translation>Kita</translation>
     </message>
@@ -2285,66 +2473,66 @@
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="488"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="445"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="53"/>
         <source>Directory</source>
         <translation>Katalogas</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="478"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="435"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="139"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="201"/>
         <source>Application</source>
         <translation>Programa</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="484"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="441"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="55"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="140"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="202"/>
         <source>Video</source>
         <translation>Vaizdo įrašas</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="482"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="439"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="56"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="141"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="203"/>
         <source>Audio</source>
         <translation>Garso įrašas</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="480"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="437"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="57"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="142"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="204"/>
         <source>Image</source>
         <translation>Paveikslas</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="58"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="143"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="205"/>
         <source>Archive</source>
         <translation>Archyvas</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="486"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="443"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="59"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="144"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="206"/>
         <source>Text</source>
         <translation>Tekstas</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="60"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="145"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="207"/>
         <source>Executable</source>
         <translation>Vykdomasis</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="61"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="146"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="208"/>
         <source>Backup file</source>
         <translation>Atsarginės kopijos failas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="677"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="690"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="62"/>
         <source>Unknown</source>
         <translation>Nežinoma</translation>
@@ -2452,37 +2640,37 @@
 <context>
     <name>OpenWithDialog</name>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="234"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="210"/>
         <source>Open with</source>
         <translation>Atverti naudojant</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="256"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="232"/>
         <source>Add other programs</source>
         <translation>Pridėti kitas programas</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="257"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="233"/>
         <source>Set as default</source>
         <translation>Nustatyti kaip numatytąją</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="259"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="235"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="260"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="236"/>
         <source>Confirm</source>
         <translation>Patvirtinti</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="264"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="240"/>
         <source>Recommended Applications</source>
         <translation>Rekomenduojamos programos</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="266"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="242"/>
         <source>Other Applications</source>
         <translation>Kitos programos</translation>
     </message>
@@ -2526,14 +2714,14 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="66"/>
-        <location filename="../models/trashfileinfo.cpp" line="105"/>
+        <location filename="../models/trashfileinfo.cpp" line="86"/>
         <source>Trash</source>
         <translation>Šiukšlinė</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="67"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="671"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="699"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="707"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="735"/>
         <source>System Disk</source>
         <translation>Sistemos diskas</translation>
     </message>
@@ -2566,52 +2754,52 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="310"/>
+        <location filename="../dialogs/propertydialog.cpp" line="316"/>
         <source>Basic info</source>
         <translation>Pagrindinė informacija</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="311"/>
+        <location filename="../dialogs/propertydialog.cpp" line="317"/>
         <source>Open with</source>
         <translation>Atverti naudojant</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="312"/>
+        <location filename="../dialogs/propertydialog.cpp" line="318"/>
         <source>Sharing</source>
         <translation>Bendrinimas</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="313"/>
+        <location filename="../dialogs/propertydialog.cpp" line="319"/>
         <source>Permissions</source>
         <translation>Leidimai</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="387"/>
+        <location filename="../dialogs/propertydialog.cpp" line="396"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="387"/>
+        <location filename="../dialogs/propertydialog.cpp" line="396"/>
         <source>%1</source>
         <translation>%1</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="397"/>
+        <location filename="../dialogs/propertydialog.cpp" line="406"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1267"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1316"/>
         <source>Hide this folder</source>
         <translation>Slėpti šį aplanką</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1267"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1316"/>
         <source>Hide this file</source>
         <translation>Slėpti šį failą</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1632"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1685"/>
         <source>Allow to execute as program</source>
         <translation>Leisti vykdyti kaip programą</translation>
     </message>
@@ -2619,147 +2807,154 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1165"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="816"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="223"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1196"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="225"/>
         <source>Size</source>
         <translation>Dydis</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1185"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1401"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="232"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1234"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1450"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="234"/>
         <source>Contains</source>
         <translation>Turi</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1166"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="817"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="224"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1197"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="843"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="226"/>
         <source>Type</source>
         <translation>Tipas</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1169"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="340"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1200"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1221"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="355"/>
         <source>Time modified</source>
         <translation>Modifikavimo laikas</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1404"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1453"/>
         <source>Free space</source>
         <translation>Laisva vieta</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1397"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1446"/>
         <source>Total space</source>
         <translation>Bendra vieta</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1532"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1210"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="346"/>
+        <source>Time locked</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="1580"/>
         <source>Access denied</source>
         <translation>Prieiga atmesta</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1533"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1545"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1581"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1593"/>
         <source>Executable</source>
         <translation>Vykdomasis</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1534"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1535"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1582"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1583"/>
         <source>Write only</source>
         <translation>Tik rašyti</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1536"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1537"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1584"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1585"/>
         <source>Read only</source>
         <translation>Tik skaityti</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1538"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1539"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1586"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1587"/>
         <source>Read-write</source>
         <translation>Skaityti, rašyti</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1628"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1681"/>
         <source>Others</source>
         <translation>Kita</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1626"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1679"/>
         <source>Owner</source>
         <translation>Savininkas</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1381"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1430"/>
         <source>Device type</source>
         <translation>Įrenginio tipas</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1399"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1448"/>
         <source>File system</source>
         <translation>Failų sistema</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1627"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1680"/>
         <source>Group</source>
         <translation>Grupė</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="83"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="767"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="770"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="793"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <source>Open</source>
         <translation>Atverti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
         <source>Lock</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
         <source>Auto lock</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
         <source>Never</source>
         <translation>Niekada</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
         <source>5 minutes</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
         <source>10 minutes</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
         <source>20 minutes</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
         <source>Delete File Vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="885"/>
         <source>Unlock</source>
         <translation>Atrakinti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="886"/>
         <source>Unlock by key</source>
         <translation type="unfinished"/>
     </message>
@@ -2785,485 +2980,492 @@
         <translation>Elementai: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="91"/>
-        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="85"/>
-        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="65"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="768"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="771"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="601"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="93"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="86"/>
+        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="67"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="794"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="590"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="56"/>
         <source>Open in new window</source>
         <translation>Atverti naujame lange</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="95"/>
-        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="89"/>
-        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="69"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="769"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="772"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="605"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="97"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="90"/>
+        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="71"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="594"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="60"/>
         <source>Open in new tab</source>
         <translation>Atverti naujoje kortelėje</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="774"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
         <source>Open with</source>
         <translation>Atverti naudojant</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="777"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="803"/>
+        <location filename="../plugins/dfmadditionalmenu.cpp" line="361"/>
         <source>Compress</source>
         <translation>Glaudinti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="778"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
         <source>Extract</source>
         <translation>Išskleisti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="779"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="805"/>
         <source>Extract here</source>
         <translation>Išskleisti čia</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="780"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
         <source>Cut</source>
         <translation>Iškirpti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="781"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="807"/>
         <source>Copy</source>
         <translation>Kopijuoti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="782"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
         <source>Paste</source>
         <translation>Įdėti</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="101"/>
-        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="75"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="362"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="783"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="784"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
-        <location filename="../views/drenamebar.cpp" line="290"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="103"/>
+        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="77"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="312"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="809"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="810"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="870"/>
+        <location filename="../views/drenamebar.cpp" line="298"/>
         <source>Rename</source>
         <translation>Pervadinti</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="108"/>
-        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="82"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="110"/>
+        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="84"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
         <source>Remove</source>
         <translation>Šalinti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="786"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
         <source>Create link</source>
         <translation>Sukurti nuorodą</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="787"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
         <source>Send to desktop</source>
         <translation>Siųsti į darbalaukį</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="788"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
         <source>Send to</source>
         <translation>Siųsti į</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="789"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="815"/>
         <source>Send to Bluetooth</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="790"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="816"/>
         <source>Add to bookmark</source>
         <translation>Pridėti į žymeles</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="114"/>
-        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="118"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="793"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="116"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="119"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="66"/>
         <source>Properties</source>
         <translation>Savybės</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="821"/>
         <source>New folder</source>
         <translation>Naujas aplankas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
         <source>New window</source>
         <translation>Naujas langas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="823"/>
         <source>Select all</source>
         <translation>Žymėti visus</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="96"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="97"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="824"/>
         <source>Clear recent history</source>
         <translation>Išvalyti paskiausią istoriją</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="106"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1169"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="107"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1160"/>
         <source>Empty Trash</source>
         <translation>Išvalyti šiukšlinę</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
         <source>Display as</source>
         <translation>Rodyti kaip</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="827"/>
         <source>Sort by</source>
         <translation>Rikiuoti pagal</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="828"/>
         <source>New document</source>
         <translation>Naujas dokumentas</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1167"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="818"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1198"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
         <source>Time created</source>
         <translation>Sukūrimo laikas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="827"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
         <source>Log out and unmount</source>
         <translation>Atsijungti ir atjungti</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1170"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="829"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="354"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1201"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="370"/>
         <source>Source path</source>
         <translation>Šaltinio kelias</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="831"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
         <source>Share folder</source>
         <translation>Bendrinti aplanką</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="832"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
         <source>Cancel sharing</source>
         <translation>Nustoti bendrinti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="834"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
         <source>Connect to Server</source>
         <translation>Prisijungti prie serverio</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="835"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
         <source>Set share password</source>
         <translation>Nustatyti bendrinimo slaptažodį</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="836"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
         <source>Format</source>
         <translation>Formatuoti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
         <source>Tag information</source>
         <translation>Žymės informacija</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <source>Open in new window as admin</source>
         <translation>Atverti naujame lange administratoriaus teisėmis</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="775"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
         <source>Select default program</source>
         <translation>Pasirinkti numatytąją programą</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="776"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
         <source>Open file location</source>
         <translation>Atverti failo vietą</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="785"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="811"/>
         <source>Remove bookmark</source>
         <translation>Šalinti žymelę</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="791"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="792"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="817"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="818"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="868"/>
         <source>Delete</source>
         <translation>Ištrinti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="803"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="829"/>
         <source>Office Text</source>
         <translation>Raštinės tekstas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="830"/>
         <source>Spreadsheets</source>
         <translation>Skaičiuoklės</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="832"/>
         <source>Plain Text</source>
         <translation>Grynasis tekstas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="807"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="833"/>
         <source>Open in terminal</source>
         <translation>Atverti terminale</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="834"/>
         <source>Restore</source>
         <translation>Atkurti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="809"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="835"/>
         <source>Restore all</source>
         <translation>Atkurti visus</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="833"/>
-        <location filename="../models/computermodel.cpp" line="119"/>
-        <location filename="../models/computermodel.cpp" line="143"/>
-        <location filename="../models/computermodel.cpp" line="163"/>
-        <location filename="../models/computermodel.cpp" line="182"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
+        <location filename="../models/computermodel.cpp" line="117"/>
+        <location filename="../models/computermodel.cpp" line="140"/>
+        <location filename="../models/computermodel.cpp" line="159"/>
+        <location filename="../models/computermodel.cpp" line="178"/>
         <source>File Vault</source>
         <translation>Failų slėptuvė</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
         <source>Add to disc</source>
         <translation>Pridėti į diską</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="443"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="344"/>
         <source>Auto mount</source>
         <translation>Automatiškai prijungti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="481"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="382"/>
         <source>Open after auto mount</source>
         <translation>Automatiškai prijungus, atverti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="810"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="836"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
         <source>Mount</source>
         <translation>Prijungti</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="47"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="811"/>
+        <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="48"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="837"/>
         <source>Unmount</source>
         <translation>Atjungti</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="180"/>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="328"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="169"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="332"/>
         <source>Burn</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="187"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="180"/>
         <source>Disc name:</source>
         <translation>Disko pavadinimas:</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="206"/>
-        <location filename="../dialogs/burnoptdialog.cpp" line="208"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="248"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="250"/>
         <source>Maximum</source>
         <translation>Didžiausias</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="219"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="263"/>
         <source>Allow files to be added later</source>
         <translation>Leisti pridėti failus vėliau</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="228"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="273"/>
         <source>Verify data</source>
         <translation>Patikrinti duomenis</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="202"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="245"/>
         <source>Write speed:</source>
         <translation>Rašymo greitis:</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="231"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="277"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
         <source>Eject</source>
         <translation>Išstumti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="839"/>
         <source>Safely Remove</source>
         <translation>Saugiai pašalinti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="815"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="213"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="841"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="215"/>
         <source>Name</source>
         <translation>Pavadinimas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="821"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
         <source>Settings</source>
         <translation>Nustatymai</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
         <source>Exit</source>
         <translation>Išeiti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="823"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
         <source>Icon</source>
         <translation>Piktogramos</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="824"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
         <source>List</source>
         <translation>Sąrašas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
         <source>Extend</source>
         <translation>Išplėsti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
         <source>Set as wallpaper</source>
         <translation>Nustatyti kaip darbalaukio foną</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="295"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1354"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1355"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1356"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="306"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1403"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1404"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1405"/>
         <source>Local disk</source>
         <translation>Vietinis diskas</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="297"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1357"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="308"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1406"/>
         <source>Removable disk</source>
         <translation>Keičiamasis diskas</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="299"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1359"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1360"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="310"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1408"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1409"/>
         <source>Network shared directory</source>
         <translation>Bendrinamas tinklo katalogas</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="301"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1361"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="312"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1410"/>
         <source>Android mobile device</source>
         <translation>Android mobilusis įrenginys</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="303"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1362"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="314"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1411"/>
         <source>Apple mobile device</source>
         <translation>Apple mobilusis įrenginys</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="305"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1363"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="316"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1412"/>
         <source>Camera</source>
         <translation>Fotoaparatas</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="307"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1358"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="318"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1407"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="309"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1381"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="320"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1430"/>
         <source>Unknown device</source>
         <translation>Nežinomas įrenginys</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="316"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1401"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="697"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="327"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1450"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="710"/>
         <source>%1 item</source>
         <translation>%1 elementas</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="318"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1401"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="699"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="329"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1450"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="712"/>
         <source>%1 items</source>
         <translation>%1 elementai</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1275"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1214"/>
         <source>Shortcut</source>
         <translation>Šaukinys</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="775"/>
+        <location filename="../interfaces/dfileservices.cpp" line="754"/>
         <source>Create symlink</source>
         <translation>Sukurti simbolinę nuorodą</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="830"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
         <source>Path</source>
         <translation>Kelias</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="828"/>
-        <location filename="../models/trashfileinfo.cpp" line="343"/>
-        <location filename="../models/trashfileinfo.cpp" line="351"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
+        <location filename="../models/trashfileinfo.cpp" line="326"/>
+        <location filename="../models/trashfileinfo.cpp" line="334"/>
         <source>Time deleted</source>
         <translation>Ištrynimo laikas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1314"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1321"/>
         <source>Loading...</source>
         <translation>Įkeliama...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="835"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="841"/>
         <source>File has been moved or deleted</source>
         <translation>Failas buvo perkeltas arba ištrintas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="837"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="845"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="851"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="847"/>
+        <source>You do not have permission to traverse files in it</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../interfaces/dfileinfo.cpp" line="843"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="856"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="862"/>
         <source>You do not have permission to access this folder</source>
         <translation>Jūs neturite leidimų gauti prieigą prie šio aplanko</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="855"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="867"/>
+        <location filename="../models/masteredmediafileinfo.cpp" line="279"/>
         <location filename="../models/recentfileinfo.cpp" line="253"/>
-        <location filename="../models/trashfileinfo.cpp" line="384"/>
-        <location filename="../models/vaultfileinfo.cpp" line="138"/>
+        <location filename="../models/trashfileinfo.cpp" line="367"/>
+        <location filename="../models/vaultfileinfo.cpp" line="139"/>
         <source>Folder is empty</source>
         <translation>Aplankas tuščias</translation>
     </message>
@@ -3278,181 +3480,181 @@
         <translation>Rezultatų nėra</translation>
     </message>
     <message>
-        <location filename="../models/trashfileinfo.cpp" line="347"/>
+        <location filename="../models/trashfileinfo.cpp" line="330"/>
         <source>Source Path</source>
         <comment>TrashFileInfo</comment>
         <translation>Šaltinio kelias</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="528"/>
+        <location filename="../controllers/appcontroller.cpp" line="520"/>
         <source>Document</source>
         <translation>Dokumentas</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="537"/>
+        <location filename="../controllers/appcontroller.cpp" line="529"/>
         <source>Spreadsheet</source>
         <translation>Skaičiuoklė</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="546"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="805"/>
+        <location filename="../controllers/appcontroller.cpp" line="538"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="831"/>
         <source>Presentation</source>
         <translation>Pateiktis</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="553"/>
+        <location filename="../controllers/appcontroller.cpp" line="545"/>
         <source>Text</source>
         <translation>Tekstas</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="211"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="214"/>
         <source>1 task in progress</source>
         <translation>1 užduotis eigoje</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="213"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="216"/>
         <source>%1 tasks in progress</source>
         <translation>%1 užduotys eigoje</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="135"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="85"/>
         <source>Mode:</source>
         <translation>Veiksena:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="137"/>
-        <location filename="../views/drenamebar.cpp" line="236"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="87"/>
+        <location filename="../views/drenamebar.cpp" line="244"/>
         <source>Replace Text</source>
         <translation>Pakeisti tekstą</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="137"/>
-        <location filename="../views/drenamebar.cpp" line="236"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="87"/>
+        <location filename="../views/drenamebar.cpp" line="244"/>
         <source>Add Text</source>
         <translation>Pridėti tekstą</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="137"/>
-        <location filename="../views/drenamebar.cpp" line="236"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="87"/>
+        <location filename="../views/drenamebar.cpp" line="244"/>
         <source>Custom Text</source>
         <translation>Tinkintas tekstas</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="142"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="92"/>
         <source>Find:</source>
         <translation>Rasti:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="149"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="99"/>
         <source>Replace:</source>
         <translation>Pakeisti:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="151"/>
-        <location filename="../views/drenamebar.cpp" line="251"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="101"/>
+        <location filename="../views/drenamebar.cpp" line="259"/>
         <source>Optional</source>
         <translation>Nebūtina</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="156"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="106"/>
         <source>Add:</source>
         <translation>Pridėti:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="163"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="113"/>
         <source>Location:</source>
         <translation>Vieta:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="170"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="120"/>
         <source>File name:</source>
         <translation>Failo pavadinimas:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="176"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="126"/>
         <source>Start at:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="145"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="158"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="172"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="178"/>
-        <location filename="../views/drenamebar.cpp" line="244"/>
-        <location filename="../views/drenamebar.cpp" line="258"/>
-        <location filename="../views/drenamebar.cpp" line="272"/>
-        <location filename="../views/drenamebar.cpp" line="279"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="95"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="108"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="122"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="128"/>
+        <location filename="../views/drenamebar.cpp" line="252"/>
+        <location filename="../views/drenamebar.cpp" line="266"/>
+        <location filename="../views/drenamebar.cpp" line="280"/>
+        <location filename="../views/drenamebar.cpp" line="287"/>
         <source>Required</source>
         <translation>Būtina</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="165"/>
-        <location filename="../views/drenamebar.cpp" line="265"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="115"/>
+        <location filename="../views/drenamebar.cpp" line="273"/>
         <source>Before file name</source>
         <translation>Prieš failo pavadinimą</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="165"/>
-        <location filename="../views/drenamebar.cpp" line="265"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="115"/>
+        <location filename="../views/drenamebar.cpp" line="273"/>
         <source>After file name</source>
         <translation>Po failo pavadinimo</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="242"/>
+        <location filename="../views/drenamebar.cpp" line="250"/>
         <source>Find</source>
         <translation>Rasti</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="250"/>
+        <location filename="../views/drenamebar.cpp" line="258"/>
         <source>Replace</source>
         <translation>Pakeisti</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="257"/>
+        <location filename="../views/drenamebar.cpp" line="265"/>
         <source>Add</source>
         <translation>Pridėti</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="278"/>
+        <location filename="../views/drenamebar.cpp" line="286"/>
         <source>Start at</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1196"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="325"/>
-        <location filename="../views/drenamebar.cpp" line="264"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1245"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="327"/>
+        <location filename="../views/drenamebar.cpp" line="272"/>
         <source>Location</source>
         <translation>Vieta</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="271"/>
+        <location filename="../views/drenamebar.cpp" line="279"/>
         <source>File name</source>
         <translation>Failo pavadinimas</translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="306"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="308"/>
         <source>Dimension</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="294"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="296"/>
         <source>Duration</source>
         <translation>Trukmė</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="285"/>
+        <location filename="../views/drenamebar.cpp" line="293"/>
         <source>Tips: Sort by selected file order</source>
         <translation>Patarimai: Rikiuoti pagal pasirinktą failų tvarką</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="179"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="361"/>
-        <location filename="../views/drenamebar.cpp" line="288"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="168"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="311"/>
+        <location filename="../views/drenamebar.cpp" line="296"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1504"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1605"/>
         <source>Rename %1 Files</source>
         <translation>Pervadinti %1 failų(-us)</translation>
     </message>
@@ -3483,8 +3685,8 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1168"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="339"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1199"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="341"/>
         <source>Time accessed</source>
         <translation>Prieigos laikas</translation>
     </message>
@@ -3539,46 +3741,77 @@
         <translation>Žymelės</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="837"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
         <source>Erase</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="597"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="582"/>
         <source>Copy path</source>
         <translation>Kopijuoti kelią</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="611"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="600"/>
         <source>Edit address</source>
         <translation>Taisyti adresą</translation>
     </message>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="357"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="330"/>
+        <source>It does not support burning UDF discs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="360"/>
         <source>Free Space %1</source>
         <translation>Laisva vieta %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="279"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="282"/>
         <source>Files are being processed</source>
         <translation>Failai yra apdorojami</translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="478"/>
+        <location filename="../shutil/fileutils.cpp" line="526"/>
         <source>Unknown</source>
         <translation>Nežinoma</translation>
     </message>
     <message>
-        <location filename="../models/vaultfileinfo.cpp" line="264"/>
+        <location filename="../models/vaultfileinfo.cpp" line="272"/>
         <source>My Vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="185"/>
-        <location filename="../models/computermodel.cpp" line="196"/>
-        <location filename="../models/computermodel.cpp" line="587"/>
+        <location filename="../models/computermodel.cpp" line="181"/>
+        <location filename="../models/computermodel.cpp" line="192"/>
+        <location filename="../models/computermodel.cpp" line="600"/>
         <source>Disks</source>
         <translation>Diskai</translation>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="694"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="750"/>
+        <source>Failed to create file info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="722"/>
+        <source>Failed to create file handler</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="1766"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1792"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1816"/>
+        <source>Execution error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="898"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1034"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="452"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="640"/>
+        <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3624,32 +3857,32 @@
         <translation>Leisti</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="267"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="272"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="283"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="288"/>
         <source>The share name is used by another user.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="284"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="289"/>
         <source>OK</source>
         <translation>Gerai</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="286"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="291"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="287"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="292"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="288"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="293"/>
         <source>Replace</source>
         <translation>Pakeisti</translation>
     </message>
@@ -4068,7 +4301,7 @@
 <context>
     <name>UDiskListener</name>
     <message>
-        <location filename="../deviceinfo/udisklistener.cpp" line="273"/>
+        <location filename="../deviceinfo/udisklistener.cpp" line="231"/>
         <source>Failed to rename the label</source>
         <translation>Nepavyko pervadinti etiketę</translation>
     </message>
@@ -4076,66 +4309,36 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1464"/>
-        <location filename="../controllers/appcontroller.cpp" line="1485"/>
-        <source>Disk is busy, cannot unmount now</source>
-        <translation>Diskas yra užimtas, dabar negalima atjungti</translation>
-    </message>
-    <message>
-        <location filename="../controllers/appcontroller.cpp" line="1457"/>
-        <location filename="../controllers/appcontroller.cpp" line="1481"/>
-        <source>Authentication timed out</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../controllers/appcontroller.cpp" line="1464"/>
+        <location filename="../controllers/appcontroller.cpp" line="1565"/>
         <source>The device was not safely unmounted</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1485"/>
-        <location filename="../controllers/appcontroller.cpp" line="1499"/>
+        <location filename="../controllers/appcontroller.cpp" line="1572"/>
         <source>The device was not safely removed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../controllers/appcontroller.cpp" line="1499"/>
-        <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>UserShareManager</name>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="410"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="376"/>
         <source>Kindly Reminder</source>
         <translation>Draugiškas priminimas</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="410"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="376"/>
         <source>Please firstly install samba to continue</source>
         <translation>Norėdami tęsti, iš pradžių įdiekite samba</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="454"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="413"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="455"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="470"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="488"/>
-        <source>OK</source>
-        <translation>Gerai</translation>
-    </message>
-    <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="469"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="419"/>
         <source>The share name must not contain %&lt;&gt;*?|/\+=;:,&quot;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="487"/>
-        <source>Failed to share %1. The share name is too long.</source>
         <translation type="unfinished"/>
     </message>
 </context>

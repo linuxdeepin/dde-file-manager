@@ -52,112 +52,112 @@
 <context>
     <name>BluetoothTransDialog</name>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="26"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="27"/>
         <source>Bluetooth File Transfer</source>
         <translation>藍牙檔案傳輸</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="27"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="28"/>
         <source>File Transfer Successful</source>
         <translation>檔案傳送成功</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="28"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="29"/>
         <source>File Transfer Failed</source>
         <translation>檔案傳送失敗</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="30"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="31"/>
         <source>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
         <translation>正在向“&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;”傳送文件</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="31"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="32"/>
         <source>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
         <translation>向“&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;”傳送文件失敗</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="32"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="33"/>
         <source>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</source>
         <translation>向“&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;”傳送文件成功</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="33"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="34"/>
         <source>Select a Bluetooth device to receive files</source>
         <translation>選擇接收此文件的藍牙設備</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="34"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="35"/>
         <source>Cannot find the connected Bluetooth device</source>
         <translation>未找到已連接的藍牙設備</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="35"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="36"/>
         <source>Waiting to be received...</source>
         <translation>等待接收，請稍候...</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="36"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="37"/>
         <source>Go to Bluetooth Settings</source>
         <translation>轉到藍牙設定</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="37"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="38"/>
         <source>%1/%2 Sent</source>
         <translation>已傳送 %1/%2</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="38"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="39"/>
         <source>Error: the Bluetooth device is disconnected</source>
         <translation>原因：藍牙設備連接中斷</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="39"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="40"/>
         <source>Unable to send the file more than 2 GB</source>
         <translation>無法發送超過2GB的文件</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="40"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="41"/>
         <source>Unable to send 0 KB files</source>
         <translation>無法發送0KB的文件</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="41"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="42"/>
         <source>File doesn&apos;t exist</source>
         <translation>檔案不存在</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="43"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="44"/>
         <source>Next</source>
         <translation>下一步</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="44"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="45"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="45"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="46"/>
         <source>Done</source>
         <translation>完成</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="46"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="47"/>
         <source>Retry</source>
         <translation>重試</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="47"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="48"/>
         <source>OK</source>
         <translation>確定</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="129"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="131"/>
         <source>File sending request timed out</source>
         <translation>文件發送超時</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="131"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="133"/>
         <source>The service is busy and unable to process the request</source>
         <translation>設備超時，無法處理該請求</translation>
     </message>
@@ -180,22 +180,22 @@
         <translation>高級設置</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="230"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="231"/>
         <source>File system: </source>
         <translation>文件系統：</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="232"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="233"/>
         <source>ISO9660/Joliet (For Windows)</source>
         <translation>ISO9660/Joliet (可用於Windows)</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="232"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="233"/>
         <source>ISO9660/Rock Ridge (For Unix)</source>
         <translation>ISO9660/Rock Ridge (可用於Unix)</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="232"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="233"/>
         <source>ISO9660 Only</source>
         <translation>僅ISO9660</translation>
     </message>
@@ -217,20 +217,20 @@
     <name>ComputerModel</name>
     <message>
         <location filename="../models/computermodel.cpp" line="61"/>
-        <location filename="../models/computermodel.cpp" line="135"/>
+        <location filename="../models/computermodel.cpp" line="133"/>
         <source>My Directories</source>
         <translation>我的目錄</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="79"/>
-        <location filename="../models/computermodel.cpp" line="83"/>
-        <location filename="../models/computermodel.cpp" line="187"/>
-        <location filename="../models/computermodel.cpp" line="198"/>
-        <location filename="../models/computermodel.cpp" line="200"/>
+        <location filename="../models/computermodel.cpp" line="78"/>
+        <location filename="../models/computermodel.cpp" line="82"/>
+        <location filename="../models/computermodel.cpp" line="183"/>
+        <location filename="../models/computermodel.cpp" line="194"/>
+        <location filename="../models/computermodel.cpp" line="196"/>
+        <location filename="../models/computermodel.cpp" line="626"/>
         <location filename="../models/computermodel.cpp" line="630"/>
-        <location filename="../models/computermodel.cpp" line="634"/>
-        <location filename="../models/computermodel.cpp" line="668"/>
-        <location filename="../models/computermodel.cpp" line="672"/>
+        <location filename="../models/computermodel.cpp" line="663"/>
+        <location filename="../models/computermodel.cpp" line="667"/>
         <source>Disks</source>
         <translation>磁盤</translation>
     </message>
@@ -313,6 +313,7 @@
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="215"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="257"/>
         <source>Clear History</source>
         <translation>清除最近使用的伺服器</translation>
     </message>
@@ -320,7 +321,7 @@
 <context>
     <name>DFMAddressBar</name>
     <message>
-        <location filename="../views/dfmaddressbar.cpp" line="403"/>
+        <location filename="../views/dfmaddressbar.cpp" line="407"/>
         <source>Search or enter address</source>
         <translation>搜索或輸入地址</translation>
     </message>
@@ -328,117 +329,117 @@
 <context>
     <name>DFMAdvanceSearchBar</name>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="111"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="167"/>
         <source>Search:</source>
         <translation>搜索範圍：</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="112"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="168"/>
         <source>File Type:</source>
         <translation>文件類型：</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="113"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="169"/>
         <source>File Size:</source>
         <translation>文件大小：</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="114"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="170"/>
         <source>Time Modified:</source>
         <translation>修改時間：</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="115"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="171"/>
         <source>Time Accessed:</source>
         <translation>訪問時間：</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="116"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="172"/>
         <source>Time Created:</source>
         <translation>創建時間：</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="118"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="174"/>
         <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="137"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="193"/>
         <source>All subdirectories</source>
         <translation>所有子文件夾</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="138"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="194"/>
         <source>Current directory</source>
         <translation>當前文件夾</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="155"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="218"/>
         <source>0 ~ 100 KB</source>
         <translation>0 ~ 100 KB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="156"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="219"/>
         <source>100 KB ~ 1 MB</source>
         <translation>100 KB ~ 1 MB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="157"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="220"/>
         <source>1 MB ~ 10 MB</source>
         <translation>1 MB ~ 10 MB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="158"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="221"/>
         <source>10 MB ~ 100 MB</source>
         <translation>10 MB ~ 100 MB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="159"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="222"/>
         <source>100 MB ~ 1 GB</source>
         <translation>100 MB ~ 1 GB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="160"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="223"/>
         <source>&gt; 1 GB</source>
         <translation>&gt; 1 GB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="164"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="236"/>
         <source>Today</source>
         <translation>今天</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="165"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="237"/>
         <source>Yesterday</source>
         <translation>昨天</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="166"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="238"/>
         <source>This week</source>
         <translation>本週</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="167"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="239"/>
         <source>Last week</source>
         <translation>上週</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="168"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="240"/>
         <source>This month</source>
         <translation>本月</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="169"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="241"/>
         <source>Last month</source>
         <translation>上月</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="170"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="242"/>
         <source>This year</source>
         <translation>今年</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="171"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="243"/>
         <source>Last year</source>
         <translation>去年</translation>
     </message>
@@ -496,55 +497,55 @@
         <translation>不再詢問</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="384"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="386"/>
         <source>Syncing data</source>
         <translation>數據同步中</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="385"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="387"/>
         <source>Please wait</source>
         <translation>請稍候</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="440"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="442"/>
         <source>Retry</source>
         <translation>重試</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="453"/>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="463"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="455"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="465"/>
         <source>Time modified: %1</source>
         <translation>修改時間：%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="456"/>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="467"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="458"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="469"/>
         <source>Contains: %1</source>
         <translation>個數：%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="459"/>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="470"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="461"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="472"/>
         <source>Size: %1</source>
         <translation>大小：%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="455"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="457"/>
         <source>Original folder</source>
         <translation>原始文件夹</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="458"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="460"/>
         <source>Original file</source>
         <translation>原始文件</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="466"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="468"/>
         <source>Target folder</source>
         <translation>目標文件夾</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="469"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="471"/>
         <source>Target file</source>
         <translation>目標文件</translation>
     </message>
@@ -896,168 +897,168 @@
 <context>
     <name>DFileCopyMoveJob</name>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="213"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="211"/>
         <source>Permission error</source>
         <translation>文件權限錯誤</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="215"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="213"/>
         <source>The action is denied</source>
         <translation>文件不支持此操作</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="221"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="219"/>
         <source>Failed to open the file</source>
         <translation>文件打開失敗</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="223"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="221"/>
         <source>Failed to read the file</source>
         <translation>文件內容讀取失敗</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="225"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="223"/>
         <source>Failed to write the file</source>
         <translation>文件內容寫入失敗</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="227"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="225"/>
         <source>Failed to create the directory</source>
         <translation>目錄創建失敗</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="229"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="227"/>
         <source>Failed to delete the file</source>
         <translation>文件刪除失敗</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="231"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="229"/>
         <source>Failed to move the file</source>
         <translation>文件移動失敗</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="233"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="231"/>
         <source>Original file does not exist</source>
         <translation>源文件不存在</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="235"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="233"/>
         <source>Failed, file size must be less than 4GB</source>
         <translation>操作失敗，文件大小已超出上限值4GB！</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="237"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="235"/>
         <source>Not enough free space on the target disk</source>
         <translation>目標磁盤剩餘空間不足</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="239"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="237"/>
         <source>File integrity was damaged</source>
         <translation>文件完整性檢查失敗</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="241"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="239"/>
         <source>The target device is read only</source>
         <translation>目標設備為只讀</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="243"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="241"/>
         <source>Target folder is inside the source folder</source>
         <translation>目標文件夾位於源文件夾內</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="658"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="656"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1062"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1061"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation>目錄打開失敗，原因：文件名過長</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1220"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1682"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1954"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2100"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1219"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1698"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1968"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2113"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation>文件打開失敗，原因：文件名過長</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3115"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3191"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3118"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3194"/>
         <source>Failed to write the file, cause:</source>
         <translation>文件內容寫入失敗，原因：</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3984"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3987"/>
         <source>Syncing data</source>
         <translation>數據同步中</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3984"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3987"/>
         <source>Please wait</source>
         <translation>請稍候</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1072"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1071"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>目錄創建失敗，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1232"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1263"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1694"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1726"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1967"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2830"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1231"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1262"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1710"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1742"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1981"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2837"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>文件打開失敗，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1259"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1722"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1258"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1738"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>文件打開失敗，原因：權限不足</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1365"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2031"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1372"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2045"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>文件內容讀取失敗，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1424"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1499"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2907"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2998"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1440"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1515"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2912"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3003"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>文件內容寫入失敗，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1621"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1637"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>文件完整性檢查失敗，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2113"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2132"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2126"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2145"/>
         <source>Failed to open the file, cause: </source>
         <translation>文件打開失敗，原因：</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2202"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2215"/>
         <source>Failed to read the file, cause: </source>
         <translation>文件內容讀取失敗，原因：</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2287"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2299"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>文件刪除失敗，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2381"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2393"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>創建鏈接失敗，原因：%1</translation>
     </message>
@@ -1065,39 +1066,39 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1092"/>
-        <location filename="../views/dfiledialog.cpp" line="1377"/>
+        <location filename="../views/dfiledialog.cpp" line="1091"/>
+        <location filename="../views/dfiledialog.cpp" line="1376"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1282"/>
+        <location filename="../views/dfiledialog.cpp" line="1281"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>“%1”已存在，您是否要替換？</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1242"/>
-        <location filename="../views/dfiledialog.cpp" line="1283"/>
+        <location filename="../views/dfiledialog.cpp" line="1241"/>
+        <location filename="../views/dfiledialog.cpp" line="1282"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1241"/>
+        <location filename="../views/dfiledialog.cpp" line="1240"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation>文件名以“.”開始將會隱藏此文件，請確認是否繼續?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1243"/>
+        <location filename="../views/dfiledialog.cpp" line="1242"/>
         <source>Confirm</source>
         <translation>確定</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1284"/>
+        <location filename="../views/dfiledialog.cpp" line="1283"/>
         <source>Replace</source>
         <translation>替換</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1374"/>
+        <location filename="../views/dfiledialog.cpp" line="1373"/>
         <source>Open</source>
         <translation>打開</translation>
     </message>
@@ -1105,12 +1106,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1149"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1150"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1158"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1159"/>
         <source>Empty</source>
         <translation>清空</translation>
     </message>
@@ -1118,41 +1119,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1441"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1445"/>
         <location filename="../models/trashfileinfo.cpp" line="322"/>
         <source>Name</source>
         <translation>名稱</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1104"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1443"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1112"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1447"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
         <translation>修改時間</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1445"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1447"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
         <source>Type</source>
         <translation>類型</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
         <source>Time created</source>
         <translation>創建時間</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1455"/>
         <source>Last access</source>
         <translation>最近訪問時間</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1457"/>
         <location filename="../models/recentfileinfo.cpp" line="200"/>
         <location filename="../models/searchfileinfo.cpp" line="129"/>
         <location filename="../models/searchfileinfo.cpp" line="134"/>
@@ -1163,12 +1164,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2469"/>
+        <location filename="../views/dfileview.cpp" line="2492"/>
         <source>Mounting failed</source>
         <translation>掛載失敗</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3164"/>
+        <location filename="../views/dfileview.cpp" line="3189"/>
         <source>(Reverse)</source>
         <translation>（反序）</translation>
     </message>
@@ -1176,7 +1177,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="626"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="640"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>添加標記“%1”</translation>
     </message>
@@ -1239,7 +1240,7 @@
         <translation>保存為：</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="586"/>
+        <location filename="../views/dstatusbar.cpp" line="590"/>
         <source>Loading...</source>
         <translation>正在加載......</translation>
     </message>
@@ -1247,89 +1248,89 @@
 <context>
     <name>DTaskDialog</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="85"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="84"/>
         <source>This action is not supported</source>
         <translation>不支持此操作</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="737"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="740"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>正在擦除%1，請稍候...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="738"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="741"/>
         <source>Burning disc %1, please wait...</source>
         <translation>正在刻錄到%1，請稍候...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="743"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="746"/>
         <source>Writing data...</source>
         <translation>正在寫入數據...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="744"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="747"/>
         <source>Verifying data...</source>
         <translation>正在校驗數據...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="794"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="797"/>
         <source>Copying %1</source>
         <translation>正在複製%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="795"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="799"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="798"/>
         <location filename="../../dialogs/dtaskdialog.cpp" line="802"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="805"/>
         <source>to %2</source>
         <translation>到%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="818"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="821"/>
         <source>%1 already exists in target folder</source>
         <translation>目標文件夾中已存在名為%1的文件</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="819"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="822"/>
         <source>Original path %1 Target path %2</source>
         <translation>原路徑%1 目標路徑%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="798"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="801"/>
         <source>Moving %1</source>
         <translation>正在移動%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="357"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="356"/>
         <source>Removing file vault, please try later</source>
         <translation>正在刪除保險箱，請稍候...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="801"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="804"/>
         <source>Restoring %1</source>
         <translation>正在恢復%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="804"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="807"/>
         <source>Deleting %1</source>
         <translation>正在刪除%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="807"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="810"/>
         <source>Trashing %1</source>
         <translation>正在移動 %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="815"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="818"/>
         <source>Calculating space, please wait</source>
         <translation>正在計算大小，請稍候</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="830"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="833"/>
         <source>Merge</source>
         <translation>合併</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="833"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="836"/>
         <source>Replace</source>
         <translation>替換</translation>
     </message>
@@ -1337,29 +1338,28 @@
 <context>
     <name>DUMountManager</name>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="136"/>
-        <location filename="../interfaces/dumountmanager.cpp" line="156"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="143"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="154"/>
         <source>Authentication timed out</source>
         <translation>認證超時</translation>
     </message>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="139"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="145"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>磁盤文件被佔用，無法卸載</translation>
     </message>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="150"/>
-        <location filename="../interfaces/dumountmanager.cpp" line="159"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="157"/>
         <source>Disk is busy, cannot eject now</source>
         <translation>磁盤文件被佔用，無法彈出</translation>
     </message>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="193"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="189"/>
         <source>The device is busy, cannot eject now</source>
         <translation>光驅正忙，無法彈出</translation>
     </message>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="202"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="198"/>
         <source>The device is busy, cannot remove now</source>
         <translation>設備正忙，無法安全移除</translation>
     </message>
@@ -1421,7 +1421,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1156"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1170"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1236"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1632"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1640"/>
         <source>OK</source>
         <translation>確定</translation>
     </message>
@@ -1447,8 +1447,8 @@
         <location filename="../dialogs/dialogmanager.cpp" line="895"/>
         <location filename="../dialogs/dialogmanager.cpp" line="924"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1306"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1553"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1571"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1561"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1579"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -1491,7 +1491,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="616"/>
         <location filename="../dialogs/dialogmanager.cpp" line="924"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1330"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1429"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1434"/>
         <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <translation>確定</translation>
@@ -1665,37 +1665,38 @@
         <translation>3. 重啟時選擇%1</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1426"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1431"/>
         <source>Unable to access %1</source>
         <translation>訪問%1失敗</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1506"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="700"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1514"/>
         <source>Sending files now, please try later</source>
         <translation>當前已有發送中的文件，請稍後再試</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1554"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1562"/>
         <source>Format</source>
         <translation>格式化</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1555"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1563"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>需要格式化磁盤才能訪問此設備，是否繼續？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1572"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1580"/>
         <source>Stop</source>
         <translation>終止</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1573"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1581"/>
         <source>Scanning the device, stop it?</source>
         <translation>正在掃描當前設備，是否終止掃描？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1630"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1638"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>共享文件夾不能和當前用戶名重名</translation>
     </message>
@@ -1776,12 +1777,12 @@
         <translation>重啟</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1118"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1117"/>
         <source>Permission denied</source>
         <translation>權限不足</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1119"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1118"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>您沒有權限遍歷子文件</translation>
     </message>
@@ -1811,13 +1812,13 @@
         <translation>請先安裝歸檔管理器然後繼續</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1496"/>
-        <location filename="../controllers/filecontroller.cpp" line="1516"/>
+        <location filename="../controllers/filecontroller.cpp" line="1499"/>
+        <location filename="../controllers/filecontroller.cpp" line="1519"/>
         <source>Unable to create files here: %1</source>
         <translation>不能在此創建文件：%1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1498"/>
+        <location filename="../controllers/filecontroller.cpp" line="1501"/>
         <source>Confirm</source>
         <translation>確定</translation>
     </message>
@@ -1865,7 +1866,7 @@
 <context>
     <name>FileIconItem</name>
     <message>
-        <location filename="../views/fileitem.cpp" line="116"/>
+        <location filename="../views/fileitem.cpp" line="203"/>
         <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
         <translation>不得含有&quot;&apos;/\[]:|&lt;&gt;+=;,?*</translation>
     </message>
@@ -1878,71 +1879,71 @@
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="921"/>
-        <location filename="../../fileoperations/filejob.cpp" line="930"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1166"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1175"/>
+        <location filename="../../fileoperations/filejob.cpp" line="911"/>
+        <location filename="../../fileoperations/filejob.cpp" line="920"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1156"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1165"/>
         <source>Data verification successful.</source>
         <translation>數據驗證成功。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="934"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1179"/>
+        <location filename="../../fileoperations/filejob.cpp" line="924"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1169"/>
         <source>Burn process completed</source>
         <translation>刻錄完成</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1342"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1321"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1346"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1325"/>
         <source>%1 m %2 s</source>
         <translation>%1 分 %2 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1351"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1330"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 時 %2 分 %3 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1358"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1337"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 天 %2 時 %3 分 %4 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3067"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3046"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1為重複文件。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3070"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3049"/>
         <source>Insufficient disc space.</source>
         <translation>光盤空間不足。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3073"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3052"/>
         <source>Lost connection to drive.</source>
         <translation>與光驅的連接斷開。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3076"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3055"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>光驅未準備好，您可以換一張光盤再試。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3079"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3058"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>光驅被佔用，您可以嘗試關掉正在使用光驅的程序後重新插入光驅。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3086"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3065"/>
         <source>Unknown error</source>
         <translation>未知錯誤</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.h" line="299"/>
+        <location filename="../../fileoperations/filejob.h" line="297"/>
         <source>Device disconnected</source>
         <translation>光驅設備未連接</translation>
     </message>
@@ -2352,26 +2353,27 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="778"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="773"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>無法確認%1的身份。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="779"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="774"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>當您首次登錄時會看到這個提示。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="780"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="775"/>
         <source>The identity sent by the remote computer is</source>
         <translation>遠程電腦發送的身份訊息為</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="782"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="777"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>若想確認繼續操作是否安全，請聯繫系統管理員。</translation>
     </message>
     <message>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="824"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="828"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1444"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1450"/>
@@ -2380,7 +2382,7 @@
         <translation>掛載設備出錯</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="828"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="824"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1450"/>
         <source>Wrong username or password</source>
         <translation>用戶名或密碼錯誤</translation>
@@ -2419,6 +2421,14 @@
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1825"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>無法彈出設備 &quot;%1&quot;</translation>
+    </message>
+</context>
+<context>
+    <name>MasteredMediaController</name>
+    <message>
+        <location filename="../controllers/masteredmediacontroller.cpp" line="365"/>
+        <source>Unable to burn. Not enough free space on the target disk.</source>
+        <translation>目標磁盤剩餘空間不足，無法進行刻錄！</translation>
     </message>
 </context>
 <context>
@@ -2471,58 +2481,58 @@
     <message>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="435"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="145"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="201"/>
         <source>Application</source>
         <translation>應用程序</translation>
     </message>
     <message>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="441"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="55"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="146"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="202"/>
         <source>Video</source>
         <translation>影片</translation>
     </message>
     <message>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="439"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="56"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="147"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="203"/>
         <source>Audio</source>
         <translation>音頻</translation>
     </message>
     <message>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="437"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="57"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="148"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="204"/>
         <source>Image</source>
         <translation>圖片</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="58"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="149"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="205"/>
         <source>Archive</source>
         <translation>壓縮文件</translation>
     </message>
     <message>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="443"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="59"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="150"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="206"/>
         <source>Text</source>
         <translation>文檔</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="60"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="151"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="207"/>
         <source>Executable</source>
         <translation>可進程</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="61"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="152"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="208"/>
         <source>Backup file</source>
         <translation>備份文件</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="682"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="690"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="62"/>
         <source>Unknown</source>
         <translation>未知</translation>
@@ -2779,17 +2789,17 @@
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1314"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1316"/>
         <source>Hide this folder</source>
         <translation>隱藏此文件夾</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1314"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1316"/>
         <source>Hide this file</source>
         <translation>隱藏此文件</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1684"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1685"/>
         <source>Allow to execute as program</source>
         <translation>允許以程序執行</translation>
     </message>
@@ -2797,21 +2807,21 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1194"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1196"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="225"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1232"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1448"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1234"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1450"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="234"/>
         <source>Contains</source>
         <translation>文件個數</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1195"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1197"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="843"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="226"/>
         <source>Type</source>
@@ -2819,80 +2829,80 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1198"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1219"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1200"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1221"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="355"/>
         <source>Time modified</source>
         <translation>修改時間</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1451"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1453"/>
         <source>Free space</source>
         <translation>可用空間</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1444"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1446"/>
         <source>Total space</source>
         <translation>總容量</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1208"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1210"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="346"/>
         <source>Time locked</source>
         <translation>上鎖時間</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1579"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1580"/>
         <source>Access denied</source>
         <translation>不可讀不可寫</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1580"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1592"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1581"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1593"/>
         <source>Executable</source>
         <translation>可進程</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1581"/>
         <location filename="../dialogs/propertydialog.cpp" line="1582"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1583"/>
         <source>Write only</source>
         <translation>可寫不可讀</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1583"/>
         <location filename="../dialogs/propertydialog.cpp" line="1584"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1585"/>
         <source>Read only</source>
         <translation>只讀</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1585"/>
         <location filename="../dialogs/propertydialog.cpp" line="1586"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1587"/>
         <source>Read-write</source>
         <translation>讀寫</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1680"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1681"/>
         <source>Others</source>
         <translation>其他</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1678"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1679"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1428"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1430"/>
         <source>Device type</source>
         <translation>設備類型</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1446"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1448"/>
         <source>File system</source>
         <translation>文件系統</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1679"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1680"/>
         <source>Group</source>
         <translation>群組</translation>
     </message>
@@ -2975,7 +2985,7 @@
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="67"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="794"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="589"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="590"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="56"/>
         <source>Open in new window</source>
         <translation>在新窗口打開</translation>
@@ -2986,7 +2996,7 @@
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="71"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="593"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="594"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="60"/>
         <source>Open in new tab</source>
         <translation>在新標籤中打開</translation>
@@ -2998,6 +3008,7 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="803"/>
+        <location filename="../plugins/dfmadditionalmenu.cpp" line="361"/>
         <source>Compress</source>
         <translation>壓縮</translation>
     </message>
@@ -3101,7 +3112,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="107"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1159"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1160"/>
         <source>Empty Trash</source>
         <translation>清空回收站</translation>
     </message>
@@ -3121,7 +3132,7 @@
         <translation>新建文檔</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1196"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1198"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
         <source>Time created</source>
         <translation>創建時間</translation>
@@ -3132,7 +3143,7 @@
         <translation>退出登錄並卸載</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1199"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1201"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="370"/>
         <source>Source path</source>
@@ -3227,10 +3238,10 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
-        <location filename="../models/computermodel.cpp" line="119"/>
-        <location filename="../models/computermodel.cpp" line="143"/>
-        <location filename="../models/computermodel.cpp" line="163"/>
-        <location filename="../models/computermodel.cpp" line="182"/>
+        <location filename="../models/computermodel.cpp" line="117"/>
+        <location filename="../models/computermodel.cpp" line="140"/>
+        <location filename="../models/computermodel.cpp" line="159"/>
+        <location filename="../models/computermodel.cpp" line="178"/>
         <source>File Vault</source>
         <translation>保險箱</translation>
     </message>
@@ -3273,28 +3284,28 @@
         <translation>光盤名稱：</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="247"/>
-        <location filename="../dialogs/burnoptdialog.cpp" line="249"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="248"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="250"/>
         <source>Maximum</source>
         <translation>最大速度</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="262"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="263"/>
         <source>Allow files to be added later</source>
         <translation>允許追加數據</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="272"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="273"/>
         <source>Verify data</source>
         <translation>校驗數據</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="244"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="245"/>
         <source>Write speed:</source>
         <translation>寫入速度：</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="276"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="277"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
         <source>Eject</source>
         <translation>彈出</translation>
@@ -3342,76 +3353,76 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="306"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1401"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1402"/>
         <location filename="../dialogs/propertydialog.cpp" line="1403"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1404"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1405"/>
         <source>Local disk</source>
         <translation>本地磁盤</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="308"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1404"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1406"/>
         <source>Removable disk</source>
         <translation>可移動磁盤</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="310"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1406"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1407"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1408"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1409"/>
         <source>Network shared directory</source>
         <translation>網絡共享目錄</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="312"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1408"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1410"/>
         <source>Android mobile device</source>
         <translation>安卓移動設備</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="314"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1409"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1411"/>
         <source>Apple mobile device</source>
         <translation>蘋果移動設備</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="316"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1410"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1412"/>
         <source>Camera</source>
         <translation>相機</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="318"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1405"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1407"/>
         <source>DVD</source>
         <translation>光驅設備</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="320"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1428"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1430"/>
         <source>Unknown device</source>
         <translation>未知設備</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="327"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1448"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="702"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1450"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="710"/>
         <source>%1 item</source>
         <translation>%1 項</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="329"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1448"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="704"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1450"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="712"/>
         <source>%1 items</source>
         <translation>%1 項</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1220"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1214"/>
         <source>Shortcut</source>
         <translation>快捷方式</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="743"/>
+        <location filename="../interfaces/dfileservices.cpp" line="754"/>
         <source>Create symlink</source>
         <translation>創建鏈接</translation>
     </message>
@@ -3428,7 +3439,7 @@
         <translation>刪除時間</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1313"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1321"/>
         <source>Loading...</source>
         <translation>正在加載......</translation>
     </message>
@@ -3496,12 +3507,12 @@
         <translation>文檔</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="215"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="214"/>
         <source>1 task in progress</source>
         <translation>有1個任務正在進行</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="217"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="216"/>
         <source>%1 tasks in progress</source>
         <translation>有%1個任務正在進行</translation>
     </message>
@@ -3609,7 +3620,7 @@
         <translation>+序列</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1243"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1245"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="327"/>
         <location filename="../views/drenamebar.cpp" line="272"/>
         <source>Location</source>
@@ -3643,7 +3654,7 @@
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1597"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1605"/>
         <source>Rename %1 Files</source>
         <translation>給%1個文件重命名</translation>
     </message>
@@ -3674,7 +3685,7 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1197"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1199"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="341"/>
         <source>Time accessed</source>
         <translation>訪問時間</translation>
@@ -3735,12 +3746,12 @@
         <translation>擦除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="581"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="582"/>
         <source>Copy path</source>
         <translation>複製路徑</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="599"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="600"/>
         <source>Edit address</source>
         <translation>編輯地址</translation>
     </message>
@@ -3755,12 +3766,12 @@
         <translation>可用空間 %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="283"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="282"/>
         <source>Files are being processed</source>
         <translation>正在處理文件</translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="529"/>
+        <location filename="../shutil/fileutils.cpp" line="526"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
@@ -3770,29 +3781,37 @@
         <translation>我的保險箱</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="185"/>
-        <location filename="../models/computermodel.cpp" line="196"/>
-        <location filename="../models/computermodel.cpp" line="604"/>
+        <location filename="../models/computermodel.cpp" line="181"/>
+        <location filename="../models/computermodel.cpp" line="192"/>
+        <location filename="../models/computermodel.cpp" line="600"/>
         <source>Disks</source>
         <translation>磁盤</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="696"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="752"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="694"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="750"/>
         <source>Failed to create file info</source>
         <translation>文件訊息創建失敗</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="724"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="722"/>
         <source>Failed to create file handler</source>
         <translation>文件進程創建失敗</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1750"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1776"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1800"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1766"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1792"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1816"/>
         <source>Execution error</source>
         <translation>執行錯誤</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="898"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1034"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="452"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="640"/>
+        <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
+        <translation>不得含有&quot;&apos;/\[]:|&lt;&gt;+=;,?*</translation>
     </message>
 </context>
 <context>
@@ -4321,11 +4340,6 @@
         <location filename="../../usershare/usersharemanager.cpp" line="419"/>
         <source>The share name must not contain %&lt;&gt;*?|/\+=;:,&quot;</source>
         <translation>共享名不得包含%&lt;&gt;*?|/\+=;:,&quot;</translation>
-    </message>
-    <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="430"/>
-        <source>Failed to share %1. The share name is too long.</source>
-        <translation>共享%1失敗，共享名過長。</translation>
     </message>
 </context>
 <context>

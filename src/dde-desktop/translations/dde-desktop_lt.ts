@@ -124,12 +124,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="916"/>
         <source>Loading wallpapers...</source>
-        <translation type="unfinished"/>
+        <translation>Įkeliami darbalaukio fonai...</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="918"/>
         <source>Loading screensavers...</source>
-        <translation type="unfinished"/>
+        <translation>Įkeliamos ekrano užsklandos...</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="975"/>

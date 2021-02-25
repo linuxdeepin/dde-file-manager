@@ -134,7 +134,7 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="975"/>
         <source>Only desktop</source>
-        <translation>Apenas ambiente de trabalho</translation>
+        <translation>Apenas no ambiente</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="976"/>
