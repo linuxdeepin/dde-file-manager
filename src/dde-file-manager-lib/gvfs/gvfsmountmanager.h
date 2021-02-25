@@ -68,7 +68,6 @@ public:
 
     static GvfsMountManager* instance();
     static MountSecretDiskAskPasswordDialog* mountSecretDiskAskPasswordDialog;
-    static MountAskPasswordDialog *askPasswordDialog;
 
     static QMap<QString, QDrive> Drives;
     static QMap<QString, QVolume> Volumes;
@@ -82,10 +81,15 @@ public:
     static QStringList NoVolumes_Mounts_Keys;
     static QStringList Lsblk_Keys;
 
-    static bool AskingPassword;
     static bool AskedPasswordWhileMountDisk;
-    static QJsonObject SMBLoginObj;
-    static DFMUrlBaseEvent MountEvent;
+
+    static QHash<GMountOperation *,DFMUrlBaseEvent *> MountEventHash;
+    static QHash<GMountOperation *,QSharedPointer<QTimer>> MountTimerHash;
+    static QHash<GMountOperation *,GCancellable *> CancellHash;
+    static QHash<GMountOperation *,QSharedPointer<QEventLoop>> eventLoopHash;
+    static QHash<GMountOperation *,bool> AskingPasswordHash;
+    static QHash<GMountOperation *,MountAskPasswordDialog *> askPasswordDialogHash;
+    static QHash<GMountOperation *,QJsonObject *> SMBLoginObjHash;
 
     static QStringList getIconNames(GThemedIcon *icon);
     static QDrive gDriveToqDrive(GDrive *drive);
@@ -158,6 +162,8 @@ public:
 
     static QString getVolTag(GMount *m);
     static QString getVolTag(GVolume *v);
+    //cancell mount_sync
+    static void cancellMountSync(GMountOperation *op);
 
     void autoMountAllDisks();
 
@@ -183,7 +189,6 @@ public slots:
 
 private:
     GVolumeMonitor* m_gVolumeMonitor = nullptr;
-    static QPointer<QEventLoop> eventLoop;
     static bool errorCodeNeedSilent(int errorCode);
 };
 

@@ -41,6 +41,8 @@
 #include "controllers/dfmmdcrumbcontrooler.h"
 #include "controllers/dfmmasteredmediacrumbcontroller.h"
 #include "controllers/dfmvaultcrumbcontroller.h"
+#include "controllers/dfmftpcrumbcontroller.h"
+#include "controllers/dfmsftpcrumbcontroller.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -141,6 +143,8 @@ DFMCrumbManager::DFMCrumbManager(QObject *parent)
     dRegisterCrumbCreator<DFMUserShareCrumbController>(QStringLiteral(USERSHARE_SCHEME));
     dRegisterCrumbCreator<DFMAvfsCrumbController>(QStringLiteral(AVFS_SCHEME));
     dRegisterCrumbCreator<DFMSmbCrumbController>(QStringLiteral(SMB_SCHEME));
+    dRegisterCrumbCreator<DFMFtpCrumbController>(QStringLiteral(FTP_SCHEME));
+    dRegisterCrumbCreator<DFMSftpCrumbController>(QStringLiteral(SFTP_SCHEME));
     dRegisterCrumbCreator<DFMMtpCrumbController>(QStringLiteral(MTP_SCHEME));
     dRegisterCrumbCreator<DFMSearchCrumbController>(QStringLiteral(SEARCH_SCHEME));
     dRegisterCrumbCreator<DFMRecentCrumbController>(QStringLiteral(RECENT_SCHEME));
