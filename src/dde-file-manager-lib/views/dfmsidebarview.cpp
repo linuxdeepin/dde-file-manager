@@ -421,7 +421,7 @@ void DFMSideBarView::onRowCountChanged()
         QModelIndex currIdx = pModel->index(i, 0);
         if (pModel->data(currIdx, DFMSideBarItem::ItemUniqueKeyRole).toString() == m_strItemUniqueKey) {
             setCurrentIndex(currIdx);
-            QTimer::singleShot(50, nullptr, [this] { m_strItemUniqueKey.clear(); }); // 发生拖拽排序的时候该函数会在短时间内触发两次，第二次才是准确数据，触发间隔时间 << 50ms，因此这里设置50ms后清空记录的key
+            QTimer::singleShot(50, this, [this] { m_strItemUniqueKey.clear(); }); // 发生拖拽排序的时候该函数会在短时间内触发两次，第二次才是准确数据，触发间隔时间 << 50ms，因此这里设置50ms后清空记录的key
             return;
         }
     }
