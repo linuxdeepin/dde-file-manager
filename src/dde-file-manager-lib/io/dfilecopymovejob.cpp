@@ -239,6 +239,8 @@ QString DFileCopyMoveJobPrivate::errorToString(DFileCopyMoveJob::Error error)
         return qApp->translate("DFileCopyMoveJob", "The target device is read only");
     case DFileCopyMoveJob::TargetIsSelfError:
         return qApp->translate("DFileCopyMoveJob", "Target folder is inside the source folder");
+    case DFileCopyMoveJob::NotSupportedError:
+        return qApp->translate("DFileCopyMoveJob", "The action is not supported");
     default:
         break;
     }
@@ -697,6 +699,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
     if (!source_info->exists()) {
         DFileCopyMoveJob::Error errortype = (source_info->path().startsWith("/root/") && !target_info->path().startsWith("/root/")) ?
                                             DFileCopyMoveJob::PermissionError : DFileCopyMoveJob::NonexistenceError;
+        errortype = source_info->path().startsWith(MOBILE_ROOT_PATH) ? DFileCopyMoveJob::NotSupportedError : errortype;
         return setAndhandleError(errortype, source_info,
                                  DAbstractFileInfoPointer(nullptr)) == DFileCopyMoveJob::SkipAction;
     }

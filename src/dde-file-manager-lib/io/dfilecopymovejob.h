@@ -99,6 +99,7 @@ public:
         NotEnoughSpaceError,
         TargetReadOnlyError,
         TargetIsSelfError,
+        NotSupportedError,
         UnknowError,
     };
 
