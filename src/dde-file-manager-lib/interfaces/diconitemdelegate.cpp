@@ -335,10 +335,13 @@ public:
 
         const QMargins &margins = contentsMargins();
 
-        //保持两行字体高度
-        QRect label_rect(TEXT_PADDING + margins.left(), margins.top() + iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING,
+        bool isCanvas = delegate->parent()->property("isCanvasViewHelper").toBool();
+
+        //桌面点击后截断展示全部,其它两行字体高度
+        QRect label_rect(TEXT_PADDING + margins.left(),
+                         margins.top() + iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING,
                          width() - TEXT_PADDING * 2 - margins.left() - margins.right(),
-                         option.fontMetrics.lineSpacing() * 2);
+                         isCanvas ? INT_MAX : option.fontMetrics.lineSpacing() * 2);
 
         const QList<QRectF> &lines = delegate->drawText(index, &pa, option.text, label_rect, ICON_MODE_RECT_RADIUS,
                                                         option.palette.brush(QPalette::Normal, QPalette::Highlight),
@@ -398,11 +401,13 @@ public:
 
             width -= (margins.left() + margins.right());
 
-            //保持两行字体高度
+            bool isCanvas = delegate->parent()->property("isCanvasViewHelper").toBool();
+
+            //桌面点击后截断展示全部,其它两行字体高度
             QRect label_rect(TEXT_PADDING + margins.left(),
                              iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING + margins.top(),
                              width - TEXT_PADDING * 2,
-                             option.fontMetrics.lineSpacing() * 2);
+                             isCanvas ? INT_MAX : option.fontMetrics.lineSpacing() * 2);
 
             const QList<QRectF> &lines = delegate->drawText(index, nullptr, option.text, label_rect, ICON_MODE_RECT_RADIUS, Qt::NoBrush,
                                                             QTextOption::WrapAtWordBoundaryOrAnywhere, option.textElideMode, Qt::AlignCenter);
@@ -693,8 +698,10 @@ void DIconItemDelegate::paint(QPainter *painter,
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
     label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING - 2 * backgroundMargin - ICON_MODE_BACK_RADIUS);
     label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS / 2);
-    //保持两行字体高度
-    label_rect.setHeight(opt.fontMetrics.lineSpacing() * 2);
+    if (!isCanvas) {
+        //保持两行字体高度
+        label_rect.setHeight(opt.fontMetrics.lineSpacing() * 2);
+    }
 
     //文管窗口拖拽时的字体保持白色
     if ((isSelected && isCanvas) || isDragMode) {
@@ -1094,8 +1101,10 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     label_rect.setWidth(label_rect.width() - 2 * TEXT_PADDING - 2 * backgroundMargin - ICON_MODE_BACK_RADIUS);
     label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS / 2);
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
-    //保持两行字体高度
-    label_rect.setHeight(option.fontMetrics.lineSpacing() * 2);
+    if (!isCanvas) {
+        //其它保持两行字体高度
+        label_rect.setHeight(option.fontMetrics.lineSpacing() * 2);
+    }
 
     QStyleOptionViewItem opt = option;
 //    initStyleOption(&opt, index);
