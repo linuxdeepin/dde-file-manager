@@ -3023,6 +3023,8 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         //! create vault menu.
         menu = DFileMenuManager::createVaultMenu(this->topLevelWidget());
     } else {
+        if (DFileService::instance()->checkGvfsMountfileBusy(info->fileUrl()))
+            return;
         menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, static_cast<int>(windowId()), false);
         menu->setAccessibleInfo(AC_FILE_MENU_FILEVIEW);
     }

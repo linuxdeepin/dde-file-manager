@@ -42,6 +42,7 @@ RecentFileInfo::RecentFileInfo(const DUrl &url)
         setProxy(DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(url.path())));
     }
     updateInfo();
+    checkMountFile();
 }
 
 RecentFileInfo::~RecentFileInfo()
@@ -74,6 +75,12 @@ bool RecentFileInfo::isReadable() const
 
 bool RecentFileInfo::isWritable() const
 {
+    if (isGvfsMountFile()) {
+        if (m_isWriteAble == -1)
+            const_cast<RecentFileInfo*>(this)->m_isWriteAble =
+                permissions().testFlag(QFile::Permission::WriteUser);
+        return m_isWriteAble > 0;
+    }
     return permissions().testFlag(QFile::Permission::WriteUser);
 }
 
