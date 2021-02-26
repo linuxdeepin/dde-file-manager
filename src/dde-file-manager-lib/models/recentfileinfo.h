@@ -76,6 +76,7 @@ private:
     QDateTime m_lastReadTime;
     QString m_lastReadTimeStr;
     QMutex m_mutex;
+    qint8 m_isWriteAble = -1;
 };
 
 #endif // RECENTFILEINFO_H
