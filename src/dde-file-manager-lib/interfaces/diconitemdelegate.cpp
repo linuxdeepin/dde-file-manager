@@ -939,15 +939,12 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
     initStyleOption(&opt, index);
 
     if (editor == d->expandedItem) {
-        if (editor->width() != option.rect.width()) {
-            //重置textBounding，使其在adjustSize重新计算，否则在调整图标大小时使用旧的textBounding计算导致显示不全
-            d->expandedItem->textBounding = QRect();
+        //重置textBounding，使其在adjustSize重新计算，否则在调整图标大小时使用旧的textBounding计算导致显示不全
+        d->expandedItem->textBounding = QRect();
 
-            editor->setFixedWidth(option.rect.width());
-            d->expandedItem->iconHeight = icon_size.height();
-            editor->adjustSize();
-        }
-
+        editor->setFixedWidth(option.rect.width());
+        d->expandedItem->iconHeight = icon_size.height();
+        editor->adjustSize();
         return;
     }
 
