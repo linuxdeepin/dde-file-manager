@@ -332,7 +332,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                 && !url.isTrashFile()
                 && !url.isRecentFile()
                 && url.scheme() != BURN_SCHEME
-                && !VaultController::isVaultFile(url.toLocalFile())) {
+                && !VaultController::isVaultFile(url.toLocalFile())
+                && !url.isUserShareFile()) {
 
             if (DThreadUtil::runInMainThread(
                         dialogManager,

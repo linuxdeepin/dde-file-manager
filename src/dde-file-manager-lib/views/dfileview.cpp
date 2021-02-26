@@ -1091,7 +1091,12 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             if (rootUrl().isTrashFile() && rootUrl() != DUrl::fromTrashFile("/"))
                 return;
 
-            fileService->deleteFiles(this, urls);
+            //! 共享文件夹不用弹出彻底删除对话框
+            bool bSlient = false;
+            if (urls.size() > 0 && urls.first().isUserShareFile())
+                bSlient = true;
+
+            fileService->deleteFiles(this, urls, true, bSlient);
 
             return;
         } else if (event->key() == Qt::Key_T) {
