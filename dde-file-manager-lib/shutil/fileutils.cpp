@@ -581,12 +581,14 @@ QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, co
     return QString();
 }
 
-bool FileUtils::cpTemplateFileToTargetDir(const QString &targetdir, const QString &baseName, const QString &suffix, WId windowId)
+bool FileUtils::cpTemplateFileToTargetDir(const QString &targetdir, const QString &baseName, const QString &defaultSuffix, WId windowId)
 {
     QString templateFile;
+    const QString &suffix = templateFileSuffix(defaultSuffix.toLower());
     QDirIterator it(DFMStandardPaths::location(DFMStandardPaths::TemplatesPath), QDir::Files);
     while (it.hasNext()) {
         it.next();
+        qDebug() << it.filePath();
         if (it.fileInfo().suffix() == suffix) {
             templateFile = it.filePath();
             break;
@@ -596,13 +598,56 @@ bool FileUtils::cpTemplateFileToTargetDir(const QString &targetdir, const QStrin
     if (templateFile.isEmpty())
         return false;
 
-//    QString targetFile = FileUtils::newDocmentName(targetdir, baseName, suffix);
-
-//    if (targetFile.isEmpty())
-//        return false;
-
-//    return QFile::copy(templateFile, targetFile);
     return !AppController::createFile(templateFile, targetdir, baseName, windowId).isEmpty();
+}
+
+// bug-57196 的临时解决方案，通过环境变量 $DFM_NEW_DOC_TYPE 的值/CachePath 中的值来决定新建文件的类型
+// $DFM_NEW_DOC_TYPE == "wps"    : "wps", "et", "dps"
+// $DFM_NEW_DOC_TYPE == "office" : "doc", "xls", "ppt"
+// 目前仅支持 office 和 wps, 待产品重新优化此功能后可能会采取配置文件的方式实现
+QString FileUtils::templateFileSuffix(const QString &defaultSuffix)
+{
+    using SuffixMap = QMap<QString, QString>;
+    static const QStringList wpsGroup {"wps", "et", "dps"};
+    static const QStringList officeGroup {"doc", "xls", "ppt"};
+    static const SuffixMap wps2office({{"wps", "doc"}, {"et", "xls"}, {"dps", "ppt"}});
+    static const SuffixMap office2wps({{"doc", "wps"}, {"xls", "et"}, {"ppt", "dps"}});
+
+    QString suffix(defaultSuffix);
+    // 'txt' direct return
+    if (!wpsGroup.contains(defaultSuffix) && !officeGroup.contains(defaultSuffix))
+        return suffix;
+
+    QString templateType = QString::fromLocal8Bit(getenv("DFM_NEW_DOC_TYPE")).toLower();
+    qInfo() << "tempalte type is " << templateType;
+    if (templateType == QString("wps") && !wpsGroup.contains(defaultSuffix)) {
+        // office to wps
+        suffix = office2wps.value(defaultSuffix, defaultSuffix);
+    } else if (templateType == QString("office") && !officeGroup.contains(defaultSuffix)) {
+        // wps to office
+        suffix = wps2office.value(defaultSuffix, defaultSuffix);
+    } else {
+        // default
+        // if not var of system env $DFM_NEW_DOC_TYPE,
+        // using 'flag file' as conditionco
+        QString path = DFMStandardPaths::location(DFMStandardPaths::CachePath);
+        QString officePath = path + "/office"; // flag file for offfice
+        QString wpsPath = path + "/wps";       // flag file for wps
+        if (QFile(officePath).exists() && !officeGroup.contains(defaultSuffix)) {
+            qInfo() << "office flag file:" << officePath;
+            // wps to office
+            suffix = wps2office.value(defaultSuffix, defaultSuffix);
+            return suffix;
+        }
+        if (QFile(wpsPath).exists() && !wpsGroup.contains(defaultSuffix)) {
+            qInfo() << "wps flag file:" << wpsPath;
+            // office to wps
+            suffix = office2wps.value(defaultSuffix, defaultSuffix);
+            return suffix;
+        }
+    }
+
+    return suffix;
 }
 
 bool FileUtils::openFile(const QString &filePath)

@@ -68,7 +68,8 @@ public:
     static QString defaultOpticalSize(const QString &tagName, quint64 &usedSize, quint64 &totalSize);
     static DUrl newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, const QString& baseName, const QString& suffix);
     static QString newDocmentName(QString targetdir, const QString& baseName, const QString& suffix);
-    static bool cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix, WId windowId);
+    static bool cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& defaultSuffix, WId windowId);
+    static QString templateFileSuffix(const QString &defaultSuffix);
 
     static bool openFile(const QString& filePath);
     static bool openFiles(const QStringList& filePaths);
