@@ -746,6 +746,12 @@ bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tr
             return false;
     }
 #endif
+    //! 63430 bug 备注里提出的弹出文件对话框中选择文件并修改文件名时点击打开会出现文件路径不正确的问题
+    //! 判断文件当前是否处于编辑状态,如果是就发送fileDialogRename信号
+    if (trigger == EditKeyPressed || trigger == AllEditTriggers) {
+        emit fileDialogRename();
+    }
+
     return DListView::edit(index, trigger, event);
 }
 
