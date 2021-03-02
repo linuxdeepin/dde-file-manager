@@ -678,7 +678,8 @@ bool DFileInfo::canDragCompress() const
 {
     Q_D(const DFileInfo);
 
-    return d->fileInfo.fileName().endsWith(".zip") && d->fileInfo.isWritable();
+    return (d->fileInfo.fileName().endsWith(".zip") || d->fileInfo.fileName().endsWith(".7z"))
+            && d->fileInfo.isWritable();
 }
 
 QString DFileInfo::symlinkTargetPath() const
