@@ -265,6 +265,48 @@ qint64 FileUtils::totalSize(const DUrlList &files)
     }
     return total;
 }
+/**
+ * @brief Returns size of all given files/dirs (including local) by ftd,so fast in local
+ * @param files
+ * @param dirSize outputparam,dir size.
+ * @param fileCount outputparam,all file count
+ * @return total size
+ */
+qint64 FileUtils::totalSize(const DUrlList &files, qint32 &dirSize, qint32 &fileCount)
+{
+    qint64 total = 0;
+    dirSize = 0;
+    fileCount = 0;
+    for (auto url : files) {
+        char *paths[2] = {nullptr, nullptr};
+        paths[0] = strdup(url.path().toUtf8().toStdString().data());
+        FTS *fts = fts_open(paths, 0, nullptr);
+        if (paths[0])
+            free(paths[0]);
+        if (nullptr == fts) {
+            perror("fts_open");
+            continue;
+        }
+        while (1) {
+            FTSENT *ent = fts_read(fts);
+            if (ent == nullptr) {
+                break;
+            }
+            unsigned short flag = ent->fts_info;
+            if (flag != FTS_DP)
+                total += ent->fts_statp->st_size <= 0 ? getMemoryPageSize() : ent->fts_statp->st_size;
+            if (dirSize == 0 && flag == FTS_D)
+                dirSize = ent->fts_statp->st_size <= 0 ? getMemoryPageSize() :
+                                                                  static_cast<qint32>(ent->fts_statp->st_size);
+            if (flag == FTS_F)
+                fileCount++;
+        }
+        fts_close(fts);
+    }
+
+    dirSize = dirSize <= 0 ? getMemoryPageSize() : dirSize;
+    return total;
+}
 
 qint64 FileUtils::totalSize(const DUrlList &files, const qint64 &maxLimit, bool &isInLimit)
 {
@@ -1712,6 +1754,24 @@ bool FileUtils::isFtpFile(const DUrl &url)
     if (url.path().contains("/ftp:host="))
         return true;
     return false;
+}
+/**
+ * @brief jugment file is local file(in system disk file)(使用gio判断挂载点是否可以卸载)
+ * @param url file url
+ */
+bool FileUtils::isFileOnDisk(const QString &path)
+{
+    if (path.isEmpty())
+        return false;
+    bool isLocal = true;
+    GFile *dest_dir_file = g_file_new_for_path(path.toUtf8().constData());
+    GMount *dest_dir_mount = g_file_find_enclosing_mount(dest_dir_file, nullptr, nullptr);
+    if (dest_dir_mount) {
+        isLocal = !g_mount_can_unmount(dest_dir_mount);
+        g_object_unref(dest_dir_mount);
+    }
+    g_object_unref(dest_dir_file);
+    return isLocal;
 }
 
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率

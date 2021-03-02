@@ -56,6 +56,8 @@ public:
     static qint64 singleDirSize(const DUrl &url);
     static qint64 totalSize(const QString &targetFile);
     static qint64 totalSize(const DUrlList &files);
+    //计算本地文件的大小
+    static qint64 totalSize(const DUrlList &files, qint32 &dirSize,qint32 &fileCount);
     static qint64 totalSize(const DUrlList &files, const qint64 &maxLimit, bool &isInLimit);
     static bool isArchive(const QString &path);
     static bool canFastReadArchive(const QString &path);
@@ -139,6 +141,8 @@ public:
     static int getMemoryPageSize();
     //判断是否是挂载ftp目录下的文件
     static bool isFtpFile(const DUrl &url);
+    //判断是否是操作系统同盘的本地文件
+    static bool isFileOnDisk(const QString &path);
 };
 
 #endif // FILEUTILS_H

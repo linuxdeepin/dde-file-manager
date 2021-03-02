@@ -147,7 +147,8 @@ public:
     bool doProcess(const DUrl &from, const DAbstractFileInfoPointer source_info, const DAbstractFileInfoPointer target_info, const bool isNew = false);
     bool mergeDirectory(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo);
     bool doCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
-    bool doCopyFileBig(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
+    bool doCopyLargeFilesOnDisk(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
+    bool doCopyLargeFilesOnDiskOnly(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
     //线程池中拷贝大量小文件
     bool doThreadPoolCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
     bool doCopyFileU(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
@@ -187,7 +188,6 @@ public:
     bool writeRefineEx();
     bool skipReadFileDealWriteThread(const QSharedPointer<FileCopyInfo> copyinfo);
     void cancelReadFileDealWriteThread();
-    void countAllCopyFile();
     void setRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
     bool checkRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
     void checkTagetNeedSync();//检测目标目录是网络文件就每次拷贝去同步，否则网络很卡时会因为同步卡死
@@ -213,6 +213,7 @@ public:
     DFileCopyMoveJob *q_ptr;
 
     QWaitCondition waitCondition;
+    QWaitCondition m_waitConditionCopyLargeFileOnDisk;
 
     DFileCopyMoveJob::Handle *handle = nullptr;
     DFileCopyMoveJob::Mode mode = DFileCopyMoveJob::CopyMode;
@@ -228,10 +229,10 @@ public:
 
 
     qint64 totalsize = 0;
-    QAtomicInt totalfilecount = 0;
-    QAtomicInteger<bool> iscountsizeover = false;
+    qint32 totalfilecount = 0;
+    QAtomicInteger<bool> m_isCountSizeOver = false;
     QAtomicInteger<bool> cansetnoerror = true;
-    QAtomicInteger<bool> isFromLocalUrls = false;
+    QAtomicInteger<bool> m_isFileOnDiskUrls = false;
 
     qint64 m_tatol = 0;
     qint64 m_sart = 0;
@@ -287,8 +288,7 @@ public:
 
     QAtomicInteger<bool> m_bTaskDailogClose = false;
 
-
-    QAtomicInt m_refineStat = DFileCopyMoveJob::NoRefine;
+    QAtomicInt m_refineStat = DFileCopyMoveJob::Refine;
     //优化盘内拷贝，启用的线程池
     QThreadPool m_pool;
     //优化拷贝时异步线程状态
@@ -305,7 +305,7 @@ public:
     bool m_isEveryReadAndWritesSnc = false;
     bool m_isVfat = false;
     //分断拷贝的线程数量
-    QAtomicInt m_count = 0;
+    QAtomicInt m_bigFileThreadCount = 0;
     QAtomicInteger<bool> m_isWriteThreadStart = false;
     //目标目录是否是来自块设备
     QAtomicInteger<bool> m_isTagFromBlockDevice = false;
@@ -323,7 +323,16 @@ public:
     qint32 m_currentDirSize = 0;
     //当前拷贝进程是否显示了进度条
     QAtomicInteger<bool> m_isProgressShow = false;
+
     QMutex m_checkStatMutex;
+
+    //拷贝本地大文件中
+    QAtomicInteger<bool> m_isCopyLargeFileOnDiskWait = false;
+    static QQueue<DFileCopyMoveJob*> CopyLargeFileOnDiskQueue;
+    static QMutex CopyLargeFileOnDiskMutex;
+
+    QMutex m_stopMutex;
+
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
 
