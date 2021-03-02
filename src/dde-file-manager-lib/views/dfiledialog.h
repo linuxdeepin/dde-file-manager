@@ -119,6 +119,12 @@ public Q_SLOTS:
     void open();
     void reject();
 
+    /**
+     * @brief  disableOpenBtn
+     * 设置打开按钮的是否可用   bug 63430
+     */
+    void disableOpenBtn();
+
 protected:
     void showEvent(QShowEvent *event) override;
     void closeEvent(QCloseEvent *event) override;

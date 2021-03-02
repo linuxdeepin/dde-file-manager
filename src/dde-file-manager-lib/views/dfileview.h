@@ -218,6 +218,12 @@ signals:
     //drop或者mousemove结束请求关闭当前窗口
     void requestWindowDestruct();
 
+    /**
+     * @brief fileDialogRename
+     * 在弹出对话框中修改重名时发送次信号 bug 63430
+     */
+    void fileDialogRename();
+
 private slots:
     void dislpayAsActionTriggered(QAction *action);
     void sortByActionTriggered(QAction *action);
