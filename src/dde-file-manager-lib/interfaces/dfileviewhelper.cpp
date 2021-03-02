@@ -833,8 +833,6 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
 void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &urls) const
 {
     bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
-
-    qInfo() << "source " << event->source() << ", parent " << parent();
     if (event->source() == parent() && !DFMGlobal::keyCtrlIsPressed()) {
         event->setDropAction(sameUser ? Qt::MoveAction : Qt::IgnoreAction);
     } else {
