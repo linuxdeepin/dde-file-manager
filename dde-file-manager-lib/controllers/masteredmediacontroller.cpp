@@ -82,9 +82,10 @@ public:
 
     const DAbstractFileInfoPointer fileInfo() const override
     {
-        DUrl url = fileUrl();
-
-        return DAbstractFileInfoPointer(new MasteredMediaFileInfo(url));
+        DAbstractFileInfoPointer fileinfo = DAbstractFileInfoPointer(new MasteredMediaFileInfo(fileUrl()));
+        if (fileinfo->exists()) //bug 64941, DVD+RW因为只擦除文件系统部分信息，而未擦除全部，有垃圾数据，所以需要判断文件的有效性
+            return fileinfo;
+        return DAbstractFileInfoPointer();
     }
 
     DUrl url() const override

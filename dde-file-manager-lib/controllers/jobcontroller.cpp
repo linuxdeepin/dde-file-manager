@@ -187,9 +187,12 @@ void JobController::run()
         if (boptimise) {
             fileinfo = m_iterator->optimiseFileInfo();
         }
-        if(!boptimise || !fileinfo) {
+        if (!boptimise || !fileinfo) {
             fileinfo = m_iterator->fileInfo();
         }
+        if (!fileinfo)
+            continue;
+
         if (update_children) {
             fileInfoQueue.enqueue(fileinfo);
 
