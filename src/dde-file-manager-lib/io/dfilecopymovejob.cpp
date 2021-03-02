@@ -85,6 +85,8 @@ Q_LOGGING_CATEGORY(fileJob, "file.job", QtInfoMsg)
 #define MAX_BUFFER_LEN 1024 * 1024 * 1
 #define BIG_FILE_SIZE 500 * 1024 * 1024
 #define THREAD_SLEEP_TIME 200
+QQueue<DFileCopyMoveJob*> DFileCopyMoveJobPrivate::CopyLargeFileOnDiskQueue;
+QMutex DFileCopyMoveJobPrivate::CopyLargeFileOnDiskMutex;
 
 static long qt_gettid()
 {
@@ -1160,7 +1162,7 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(const QSharedPointer<DFileHandler> 
         }
         // 修复bug-59124
         // 判断是否为拷贝到U盘
-        if ((m_refineStat == DFileCopyMoveJob::Refine) && (isFromLocalUrls && !m_bDestLocal && m_isTagFromBlockDevice.load())) {
+        if ((m_refineStat == DFileCopyMoveJob::Refine) && (m_isFileOnDiskUrls && !m_bDestLocal && m_isTagFromBlockDevice.load())) {
             FileCopyInfoPointer copyinfo(new FileCopyInfo());
             copyinfo->isdir = true;
             copyinfo->permission = permissions;
@@ -1690,25 +1692,16 @@ open_file: {
     return true;
 }
 
-bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize)
+//执行本地大文件拷贝
+bool DFileCopyMoveJobPrivate::doCopyLargeFilesOnDisk(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize)
 {
+    if (!stateCheck())
+        return false;
     int fromFd = -1;
     int toFd = -1;
     DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
 
     do {
-        // 如果打开文件在保险箱内
-        QString strPath = toInfo->fileUrl().toString();
-        if (VaultController::isVaultFile(strPath)) {
-            QString strFileName = strPath.section("/", -1, -1);
-            if (strFileName.toUtf8().length() > 255) {
-                qCDebug(fileJob()) << "open error:" << fromInfo->fileUrl();
-                action = setAndhandleError(DFileCopyMoveJob::OpenError, fromInfo,
-                                           DAbstractFileInfoPointer(nullptr),
-                                           qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: file name too long"));
-                break;
-            }
-        }
         fromFd = open(fromInfo->fileUrl().path().toUtf8().toStdString().data(), O_RDONLY);
         if (-1 != fromFd) {
             action = DFileCopyMoveJob::NoAction;
@@ -1791,11 +1784,13 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
         close(toFd);
         return false;
     }
+
     char *fromPoint = nullptr;
     char *toPoint = nullptr;
     action = DFileCopyMoveJob::NoAction;
     do {
-        fromPoint = static_cast<char *>(mmap(nullptr, static_cast<size_t>(fromInfo->size()), PROT_READ, MAP_SHARED, fromFd, 0));
+        fromPoint = static_cast<char *>(mmap(nullptr, static_cast<size_t>(fromInfo->size()),
+                                             PROT_READ, MAP_SHARED, fromFd, 0));
         if (MAP_FAILED != fromPoint) {
             action = DFileCopyMoveJob::NoAction;
         } else {
@@ -1819,7 +1814,8 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
     }
 
     do {
-        toPoint = static_cast<char *>(mmap(nullptr, static_cast<size_t>(fromInfo->size()), PROT_WRITE, MAP_SHARED, toFd, 0));
+        toPoint = static_cast<char *>(mmap(nullptr, static_cast<size_t>(fromInfo->size()),
+                                           PROT_WRITE, MAP_SHARED, toFd, 0));
         if (MAP_FAILED != toPoint) {
             action = DFileCopyMoveJob::NoAction;
         } else {
@@ -1846,7 +1842,6 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
 
 #ifdef Q_OS_LINUX
     // 开启读取优化，告诉内核，我们将顺序读取此文件
-
     if (fromFd > 0) {
         posix_fadvise(fromFd, 0, 0, POSIX_FADV_SEQUENTIAL);
     }
@@ -1859,21 +1854,20 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
     QFuture<void> futrueArray[10];
     QMutex mutex;
     qint64 fromSize = fromInfo->size();
+    qint64 oneSize = fromSize / 10 -  (fromSize / 10) % FileUtils::getMemoryPageSize();
 
     for (int i = 0; i < 10; ++i) {
-        futrueArray[i] = QtConcurrent::run([&mutex, &fromSize, &fromPoint, &toPoint, &blockSize, this]() {
+        futrueArray[i] = QtConcurrent::run([&mutex, &fromSize, &fromPoint, &oneSize, &toPoint, &blockSize, this]() {
             mutex.lock();
-            int curThreadCount = m_count;
-            __off_t srcpoint = ((fromSize) / 10) * curThreadCount; //获取对应线程的拷贝起始点
+            __off_t srcpoint = oneSize * m_bigFileThreadCount.load(); //获取对应线程的拷贝起始点
             __off_t destpoint = srcpoint;
-            m_count++;
+            m_bigFileThreadCount++;
             mutex.unlock();
-            qint64 everySize = curThreadCount < 9 ? (fromSize) / 10 : fromSize - srcpoint;
+            qint64 everySize = m_bigFileThreadCount <= 9 ? oneSize : fromSize - oneSize * 9 ;
             qint64 copySize = everySize > blockSize ? blockSize : everySize;
             qint64 lastSize = 0;
-
             while (everySize > 0) {
-                if (!stateCheck()) {
+                if (Q_UNLIKELY(!stateCheck())) {
                     break;
                 }
                 memcpy(toPoint + destpoint + lastSize, fromPoint + srcpoint + lastSize, static_cast<size_t>(copySize));
@@ -1902,8 +1896,8 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
     } else if (deviceListener->isFileFromDisc(fromInfo->path())) { // fix bug 52610: 从光盘中复制出来的文件权限为只读，与 ubuntu 策略保持一致，拷贝出来权限为 rw-rw-r--
         permissions |= MasteredMediaController::getPermissionsCopyToLocal();
     }
-
-    handler->setPermissions(toInfo->fileUrl(), /*source_info->permissions()*/permissions);
+    if (permissions != 0)
+        handler->setPermissions(toInfo->fileUrl(), permissions);
 
 
     if (Q_UNLIKELY(!stateCheck())) {
@@ -1916,6 +1910,33 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
 //    qCDebug(fileJob(), "adler value: 0x%lx", source_checksum);
 
     return true;
+}
+
+//处理本地大文件拷贝，只能同时执行一个逻辑处理
+bool DFileCopyMoveJobPrivate::doCopyLargeFilesOnDiskOnly(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize)
+{
+    {
+        QMutexLocker lk(&CopyLargeFileOnDiskMutex);
+        if (CopyLargeFileOnDiskQueue.count() > 0)
+            q_ptr->copyBigFileOnDiskJobWait();
+        CopyLargeFileOnDiskQueue.enqueue(q_ptr);
+    }
+    //条件变量线程等待
+    if (m_isCopyLargeFileOnDiskWait.load()) {
+        QMutex lock;
+        lock.lock();
+        m_waitConditionCopyLargeFileOnDisk.wait(&lock);
+        lock.unlock();
+    }
+    m_bigFileThreadCount = 0;
+    bool ok = doCopyLargeFilesOnDisk(fromInfo, toInfo, handler, blockSize);
+    {
+        QMutexLocker lk(&CopyLargeFileOnDiskMutex);
+        CopyLargeFileOnDiskQueue.removeOne(q_ptr);
+        if (CopyLargeFileOnDiskQueue.count() > 0)
+            CopyLargeFileOnDiskQueue.at(0)->copyBigFileOnDiskJobRun();
+    }
+    return ok;
 }
 
 bool DFileCopyMoveJobPrivate::doThreadPoolCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize)
@@ -2296,10 +2317,7 @@ bool DFileCopyMoveJobPrivate::copyFile(const DAbstractFileInfoPointer fromInfo, 
     }
     beginJob(JobInfo::Copy, fromInfo->fileUrl(), toInfo->fileUrl());
     bool ok = true;
-    if (m_refineStat != DFileCopyMoveJob::Refine
-            //! 为避免卡顿，保险箱用之前的拷贝方式
-            || VaultController::isVaultFile(fromInfo->toLocalFile())
-            || VaultController::isVaultFile(toInfo->toLocalFile())) {
+    if (m_refineStat != DFileCopyMoveJob::Refine) {
          ok = doCopyFile(fromInfo, toInfo, handler, blockSize);
          //fix bug 62202 不执行优化拷贝结束后直接返回
          removeCurrentDevice(fromInfo->fileUrl());
@@ -2309,21 +2327,21 @@ bool DFileCopyMoveJobPrivate::copyFile(const DAbstractFileInfoPointer fromInfo, 
          return ok;
     }
     //判读目标目录和本地目录是不是同盘，并且是大文件
-    if (m_bDestLocal && isFromLocalUrls && fromInfo->size() > 500 * 1024 * 1024) {
-        m_count = 0;
-        ok = doCopyFileBig(fromInfo, toInfo, handler, blockSize);
+    if (m_bDestLocal && m_isFileOnDiskUrls && fromInfo->size() > 500 * 1024 * 1024) {
+        ok = doCopyFile(fromInfo,toInfo,handler,blockSize);
     }
     //1.判断源文件是本地，目标文件也是本地执行读写线程分离处理
     //2.判断源文件是本地，目标文件是（除光盘外的）块设备，
-    else if (m_bDestLocal && isFromLocalUrls) {
-        QtConcurrent::run(&m_pool, this, static_cast<bool(DFileCopyMoveJobPrivate::*)
-                          (const DAbstractFileInfoPointer, const DAbstractFileInfoPointer, const QSharedPointer<DFileHandler> &, int)>
-                          (&DFileCopyMoveJobPrivate::doThreadPoolCopyFile), fromInfo, toInfo, handler, blockSize);
-        endJob();
-        qCDebug(fileJob(), "Time spent of copy the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed);
-        return ok;
-    } else if ((isFromLocalUrls && !m_bDestLocal && m_isTagFromBlockDevice.load())) {
-        ok = doCopyFileU(fromInfo, toInfo, handler, blockSize);
+    else if (m_bDestLocal && m_isFileOnDiskUrls) {
+//        QtConcurrent::run(&m_pool, this, static_cast<bool(DFileCopyMoveJobPrivate::*)
+//                          (const DAbstractFileInfoPointer, const DAbstractFileInfoPointer, const QSharedPointer<DFileHandler> &, int)>
+//                          (&DFileCopyMoveJobPrivate::doThreadPoolCopyFile), fromInfo, toInfo, handler, blockSize);
+//        endJob();
+//        qCDebug(fileJob(), "Time spent of copy the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed);
+//        return ok;
+        ok = doCopyFile(fromInfo,toInfo,handler,blockSize);
+    } else if ((m_isFileOnDiskUrls && !m_bDestLocal && m_isTagFromBlockDevice.load())) {
+        ok = doCopyFile(fromInfo, toInfo, handler, blockSize);
     } else {
         ok = doCopyFile(fromInfo, toInfo, handler, blockSize);
     }
@@ -2443,7 +2461,7 @@ void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl from, cons
 
     // warning: isFromLocalUrls 对于外部挂载存储设备返回true，如果要修改 isFromLocalUrls 的含义
     //          将会影响到以下判断逻辑
-    qint64 dirSize = (isFromLocalUrls && targetUrl.isValid()) ?  m_currentDirSize : FileUtils::getMemoryPageSize();
+    qint64 dirSize = (m_isFileOnDiskUrls && targetUrl.isValid()) ?  m_currentDirSize : FileUtils::getMemoryPageSize();
     completedProgressDataSize += (dirSize <= 0 ? FileUtils::getMemoryPageSize() : dirSize);
     ++completedFilesCount;
 
@@ -2475,7 +2493,7 @@ void DFileCopyMoveJobPrivate::updateProgress()
 void DFileCopyMoveJobPrivate::updateCopyProgress()
 {
     // 网络文件使用统计线程的值获取总大小. 非网络文件使用 fts_* 系统 API 统计函数同步统计总大小
-    bool fromLocal = (isFromLocalUrls && targetUrl.isValid());
+    bool fromLocal = (m_isFileOnDiskUrls && targetUrl.isValid());
     const qint64 totalSize = fromLocal ? totalsize : fileStatistics->totalProgressSize();
     //通过getCompletedDataSize取出的已传输的数据大小后期会远超实际数据大小，这种情况下直接使用completedDataSize
     qint64 dataSize(getCompletedDataSize());
@@ -2494,7 +2512,7 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
     if (totalSize == 0)
         return;
 
-    if ((fromLocal && iscountsizeover) || fileStatistics->isFinished()) {
+    if ((fromLocal && m_isCountSizeOver) || fileStatistics->isFinished()) {
         qreal realProgress = qreal(dataSize) / totalSize;
         if (realProgress > lastProgress)
             lastProgress = realProgress;
@@ -2636,13 +2654,13 @@ bool DFileCopyMoveJobPrivate::writeRefineThread()
 {
     bool ok = true;
     while (checkRefineCopyProccessSate(DFileCopyMoveJob::ReadFileProccessOver)) {
-        ok = (isFromLocalUrls && !m_bDestLocal && m_isTagFromBlockDevice.load()) ? writeRefineEx() : writeRefineEx();
+        ok = (m_isFileOnDiskUrls && !m_bDestLocal && m_isTagFromBlockDevice.load()) ? writeRefineEx() : writeRefineEx();
         if (!ok) {
             break;
         }
     }
     if (ok) {
-        ok = (isFromLocalUrls && !m_bDestLocal && m_isTagFromBlockDevice.load()) ? writeRefineEx() : writeRefineEx();
+        ok = (m_isFileOnDiskUrls && !m_bDestLocal && m_isTagFromBlockDevice.load()) ? writeRefineEx() : writeRefineEx();
     } else {
         q_ptr->stop();
     }
@@ -3133,48 +3151,6 @@ void DFileCopyMoveJobPrivate::cancelReadFileDealWriteThread()
         delete[] info->buffer;
     }
 }
-void DFileCopyMoveJobPrivate::countAllCopyFile()
-{
-    qint64 times = QDateTime::currentMSecsSinceEpoch();
-    for (auto url : sourceUrlList) {
-        char *paths[2] = {nullptr, nullptr};
-        paths[0] = strdup(url.path().toUtf8().toStdString().data());
-        FTS *fts = fts_open(paths, 0, nullptr);
-        if (paths[0])
-            free(paths[0]);
-        if (nullptr == fts) {
-            perror("fts_open");
-            continue;
-        }
-        while (1) {
-            FTSENT *ent = fts_read(fts);
-            if (ent == nullptr) {
-                break;
-            }
-            unsigned short flag = ent->fts_info;
-            if (flag != FTS_DP && flag != FTS_SL) {
-                totalsize += ent->fts_statp->st_size <= 0 ?
-                            FileUtils::getMemoryPageSize() : ent->fts_statp->st_size;
-            }
-            if (m_currentDirSize == 0 && flag == FTS_D) {
-                m_currentDirSize = ent->fts_statp->st_size <= 0 ?
-                            FileUtils::getMemoryPageSize() :
-                            static_cast<qint32>(ent->fts_statp->st_size);
-            } else if (flag == FTS_F) {
-                totalfilecount++;
-            } else if (flag == FTS_SL) {
-                totalsize += FileUtils::getMemoryPageSize();
-            }
-        }
-        fts_close(fts);
-    }
-
-    iscountsizeover = true;
-    m_currentDirSize = m_currentDirSize <= 0 ? FileUtils::getMemoryPageSize() : m_currentDirSize;
-
-    emit q_ptr->fileStatisticsFinished();
-
-}
 
 void DFileCopyMoveJobPrivate::setRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat)
 {
@@ -3316,8 +3292,8 @@ qint64 DFileCopyMoveJob::totalDataSize() const
 {
     Q_D(const DFileCopyMoveJob);
 
-    if (d->isFromLocalUrls) {
-        if (!d->iscountsizeover) {
+    if (d->m_isFileOnDiskUrls) {
+        if (!d->m_isCountSizeOver) {
             return -1;
         }
         return d->totalsize;
@@ -3391,30 +3367,6 @@ void DFileCopyMoveJob::setSysncQuitState(const bool &quitstate)
     d->m_bSyncQuitState = quitstate;
 }
 
-bool DFileCopyMoveJob::isLocalFile(const QString &rootpath)
-{
-    bool isLocal = true;
-    GFile *dest_dir_file = g_file_new_for_path(rootpath.toUtf8().constData());
-    GMount *dest_dir_mount = g_file_find_enclosing_mount(dest_dir_file, nullptr, nullptr);
-    if (dest_dir_mount) {
-        isLocal = !g_mount_can_unmount(dest_dir_mount);
-        g_object_unref(dest_dir_mount);
-    }
-    g_object_unref(dest_dir_file);
-    return isLocal;
-}
-
-bool DFileCopyMoveJob::isFromLocalFile(const DUrlList &urls)
-{
-    if (urls.isEmpty())
-        return true;
-
-    // 一个 job 的原 urllist 目前未发现有同时来自本地和网络的情况
-    // 因此只取首个 url 就可判断是否为本地文件, 不必遍历所有文件
-    const DUrl &url(urls.at(0));
-    return !FileUtils::isGvfsMountFile(url.path());
-}
-
 void DFileCopyMoveJob::setRefine(const RefineState &refinestat)
 {
     Q_D(DFileCopyMoveJob);
@@ -3460,6 +3412,21 @@ void DFileCopyMoveJob::setProgressShow(const bool &isShow)
     d->m_isProgressShow.store(isShow);
 }
 
+void DFileCopyMoveJob::copyBigFileOnDiskJobWait()
+{
+    Q_D(DFileCopyMoveJob);
+
+    d->m_isCopyLargeFileOnDiskWait = true;
+}
+
+void DFileCopyMoveJob::copyBigFileOnDiskJobRun()
+{
+    Q_D(DFileCopyMoveJob);
+
+    d->m_isCopyLargeFileOnDiskWait = false;
+    d->m_waitConditionCopyLargeFileOnDisk.wakeAll();
+}
+
 DFileCopyMoveJob::Actions DFileCopyMoveJob::supportActions(DFileCopyMoveJob::Error error)
 {
     switch (error) {
@@ -3502,8 +3469,9 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
 
     d->sourceUrlList = sourceUrls;
     d->targetUrl = targetUrl;
-    d->isFromLocalUrls = isFromLocalFile(d->sourceUrlList);
-    if (!d->isFromLocalUrls) {
+    d->m_isFileOnDiskUrls = sourceUrls.isEmpty() ? true :
+                                                   FileUtils::isFileOnDisk(sourceUrls.first().path());
+    if (!d->m_isFileOnDiskUrls) {
         if (d->fileStatistics->isRunning()) {
             d->fileStatistics->stop();
             d->fileStatistics->wait();
@@ -3529,7 +3497,10 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
 
 void DFileCopyMoveJob::stop()
 {
+
     Q_D(DFileCopyMoveJob);
+
+    QMutexLocker lk(&d->m_stopMutex);
 
     if (d->state == StoppedState) {
         return;
@@ -3541,6 +3512,8 @@ void DFileCopyMoveJob::stop()
 
     d->setState(StoppedState);
     d->waitCondition.wakeAll();
+    //停止清理掉自己的大文件拷贝
+    copyBigFileOnDiskJobRun();
 
     d->stopAllDeviceOperation();
 }
@@ -3611,8 +3584,10 @@ void DFileCopyMoveJob::run()
 
     // 本地文件使用 countAllCopyFile 统计大小非常快, 因此不必开辟线程去统计大小. 同步等待文件大小统计完成
     // 网络文件使用以下方式反而会更慢, 因此使用线程统计类
-    if (d->targetUrl.isValid() && d->isFromLocalUrls) {
-        d->countAllCopyFile();
+    if (d->targetUrl.isValid() && d->m_isFileOnDiskUrls) {
+        d->totalsize = FileUtils::totalSize(d->sourceUrlList,d->m_currentDirSize,d->totalfilecount);
+        d->m_isCountSizeOver = true;
+        emit fileStatisticsFinished();
     }
 
     d->unsetError();
@@ -3666,7 +3641,7 @@ void DFileCopyMoveJob::run()
         if (targetStorageInfo) {
             d->targetRootPath = targetStorageInfo->rootPath();
             QString rootpath = d->targetRootPath;
-            d->m_bDestLocal = isLocalFile(rootpath);
+            d->m_bDestLocal = FileUtils::isFileOnDisk(rootpath);
             if (!d->m_bDestLocal) {
 
                 //优化等待1秒后启动异步“同文件”
@@ -3748,6 +3723,10 @@ void DFileCopyMoveJob::run()
         // remove mode
         qCDebug(fileJob(), "remove mode");
     }
+    if ((d->mode == CopyMode && d->m_refineStat == Refine && !d->sourceUrlList.isEmpty()) &&
+            (VaultController::isVaultFile(d->targetUrl.path()) ||
+             VaultController::isVaultFile(d->sourceUrlList.first().path())))
+        d->m_refineStat = NoRefine;
     for (DUrl &source : d->sourceUrlList) {
         if (!d->stateCheck()) {
             goto end;

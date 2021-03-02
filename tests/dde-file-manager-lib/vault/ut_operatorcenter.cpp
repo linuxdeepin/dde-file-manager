@@ -35,6 +35,10 @@
 #include <QtTest/QTest>
 #include <QTextStream>
 
+#include "controllers/vaultcontroller.h"
+#include "testhelper.h"
+#include "stub.h"
+
 #define private public
 #include "operatorcenter.h"
 #undef private

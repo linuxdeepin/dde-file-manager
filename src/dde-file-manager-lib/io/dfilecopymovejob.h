@@ -180,9 +180,6 @@ public:
     bool getSysncQuitState();
     void setSysncState(const bool &state);
     void setSysncQuitState(const bool &quitstate);
-    //判断当前盘是否是可以卸载的u盘，手机，光驱或者gvfs
-    bool isLocalFile(const QString &rootpath);
-    bool isFromLocalFile(const DUrlList &urls);
     void setRefine(const RefineState &refinestat);
     void waitSysncEnd();
     void waitRefineThreadFinish();
@@ -190,6 +187,8 @@ public:
     void setCurTrashData(QVariant fileNameList);
     //设置当前拷贝显示了进度条
     void setProgressShow(const bool &isShow);
+    void copyBigFileOnDiskJobWait();
+    void copyBigFileOnDiskJobRun();
 
     static Actions supportActions(Error error);
 

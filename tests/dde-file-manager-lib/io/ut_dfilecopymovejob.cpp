@@ -16,6 +16,7 @@
 #include "dgiofiledevice.h"
 #include "dabstractfilewatcher.h"
 #include "dlocalfiledevice.h"
+#include "testhelper.h"
 
 #include <QDateTime>
 #include <QThread>
@@ -786,9 +787,6 @@ TEST_F(DFileCopyMoveJobTest,start_run_moveMOde) {
     from.setPath(TestHelper::createTmpDir());
     QProcess::execute("touch " + from.toLocalFile() + "/z_ut_iuuuuuu");
     job->setMode(DFileCopyMoveJob::MoveMode);
-    Stub st;
-    bool (*isFromLocalFile)(const DUrlList &) = [](const DUrlList &){return false;};
-    st.set(ADDR(DFileCopyMoveJob,isFromLocalFile),isFromLocalFile);
     job->start(DUrlList() << from,DUrl());
     while(!job->isFinished()) {
         QThread::msleep(100);
@@ -1346,7 +1344,7 @@ void *mmapExTest (void *, size_t,int ,int, int, __off_t){
     return MAP_FAILED;
 }
 
-TEST_F(DFileCopyMoveJobTest,start_doCopyFileBig) {
+TEST_F(DFileCopyMoveJobTest,start_doCopyLargeFilesOnDisk) {
     DFileCopyMoveJobPrivate * jobd = job->d_func();
     ASSERT_TRUE(jobd);
     DUrl from,to;
@@ -1360,28 +1358,23 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFileBig) {
     }
     StubExt stl;
     to = from;
-    QString longname = QString("_jksfjdflsadjflasdjfalsdjflksdjkflasdjkflsjdkflsdjflksdjflskdjfjj\
-        gjdlkfgjsldfjgklsdjfgklsjdfklgjsdkfjgklsdfjgklsdjfglkdsjfgjksdfg\
-        gjskdfjgsdfjglsdmvskdlfjgkdsjfgksdjfgksdfjgkdjfgkdkfgsldgjkdfjgk\
-        gkdfslgjdfkkgjskldfjgklsdjfgklsdfjgklsdjfgklsdjfgklsdjfkgsjdfkgjdk\
-        jsdfkljgssssssssssgsjdklfjgklsdjfgklsjdfgklsjdfkgjsdlfjgklsdfjkdfjg");
-    to.setPath("/tmp/zut_test_file_device"+longname);
+    to.setPath("/tmp/zut_test_file_device");
     QSharedPointer<DFileHandler>  handler(DFileService::instance()->createFileHandler(nullptr,from));
     DAbstractFileInfoPointer frominfo = DFileService::instance()->createFileInfo(nullptr,from);
     DAbstractFileInfoPointer toinfo = DFileService::instance()->createFileInfo(nullptr,to);
 
     stl.set_lamda(&DFileCopyMoveJobPrivate::stateCheck,
                   [](){return true;});
-    stl.set_lamda(&VaultController::isVaultFile,[](){return true;});
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::SkipAction;});
-    jobd->m_count.store(0);
-    EXPECT_TRUE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+
+    jobd->m_bigFileThreadCount.store(0);
+    EXPECT_TRUE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
 
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::CancelAction;});
-    jobd->m_count.store(0);
-    EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+    jobd->m_bigFileThreadCount.store(0);
+    EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
 
     stl.reset(&VaultController::isVaultFile);
     to.setPath("/tmp/zut_test_file_device");
@@ -1390,22 +1383,26 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFileBig) {
     stl.set(ADDR(DFileCopyMoveJobPrivate,setAndhandleError),&setAndhandleErrorEx);
     setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
                 setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
-    jobd->m_count.store(0);
-    EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+    jobd->m_bigFileThreadCount.store(0);
+    EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
 
     setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
                 setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
     stl.set(open,openExTest);
     stl.set_lamda(::close,[](){return 0;});
-    jobd->m_count.store(0);
-    EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+
+    jobd->m_bigFileThreadCount.store(0);
+    EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
+
 
     setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
                 setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::CancelAction;});
-    jobd->m_count.store(0);
-    EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+
+    jobd->m_bigFileThreadCount.store(0);
+    EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
+
 
     stl.reset(open);
     stl.reset(close);
@@ -1414,66 +1411,76 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFileBig) {
                 setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
     stl.set_lamda(ftruncate,[](){return -1;});
     stl.set(&DFileCopyMoveJobPrivate::setAndhandleError,&setAndhandleErrorEx);
-    jobd->m_count.store(0);
-    EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+
+    jobd->m_bigFileThreadCount.store(0);
+    EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
 
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::CancelAction;});
-    jobd->m_count.store(0);
-    EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+    jobd->m_bigFileThreadCount.store(0);
+    EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
 
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::SkipAction;});
-    jobd->m_count.store(0);
-    EXPECT_TRUE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+    jobd->m_bigFileThreadCount.store(0);
+    EXPECT_TRUE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
 
     stl.reset(ftruncate);
     stl.set_lamda(mmap,[](){return MAP_FAILED;});
     stl.set(&DFileCopyMoveJobPrivate::setAndhandleError,&setAndhandleErrorEx);
-    jobd->m_count.store(0);
-    EXPECT_TRUE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+    jobd->m_bigFileThreadCount.store(0);
+    EXPECT_TRUE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
 
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::CancelAction;});
-    jobd->m_count.store(0);
-    EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+    jobd->m_bigFileThreadCount.store(0);
+    EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
 
     setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
                 setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
     stl.set_lamda(munmap,[](){return 1;});
     stl.set(mmap,&mmapExTest);
     stl.set(&DFileCopyMoveJobPrivate::setAndhandleError,&setAndhandleErrorEx);
-    jobd->m_count.store(0);
-    EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+
+    jobd->m_bigFileThreadCount.store(0);
+    EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
 
     setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
                 setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::CancelAction;});
-    jobd->m_count.store(0);
-    EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+
+    jobd->m_bigFileThreadCount.store(0);
+    EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
+
 
     stl.reset(mmap);
     stl.reset(munmap);
     stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
+    jobd->m_bigFileThreadCount.store(0);
+    EXPECT_TRUE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
 
+    jobd->m_bigFileThreadCount.store(0);
     jobd->fileHints = DFileCopyMoveJob::DontIntegrityChecking;
     stl.set_lamda(&VaultController::isVaultFile,[](){return true;});
-    jobd->m_count.store(0);
-    EXPECT_TRUE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+    EXPECT_TRUE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
 
+    jobd->m_bigFileThreadCount.store(0);
     jobd->fileHints = DFileCopyMoveJob::NoHint;
     stl.reset(&VaultController::isVaultFile);
     stl.set_lamda(&UDiskListener::isFileFromDisc,[](){return true;});
-    jobd->m_count.store(0);
-    std::cout << "end DFileCopyMoveJobTest15" << std::endl;
-    EXPECT_TRUE(jobd->doCopyFileBig(frominfo,toinfo,handler));
-    jobd->m_count.store(0);
+    EXPECT_TRUE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
+
+    jobd->m_bigFileThreadCount.store(0);
+
     jobd->fileHints = DFileCopyMoveJob::NoHint;
     stl.reset(&VaultController::isVaultFile);
     stl.reset(&DFileCopyMoveJobPrivate::stateCheck);
     stl.reset(&UDiskListener::isFileFromDisc);
+
     job->stop();
+
+    EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo,toinfo,handler));
     TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() << to.toLocalFile());
 }
 
