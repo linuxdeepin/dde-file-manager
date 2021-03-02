@@ -130,6 +130,7 @@ DFileDialog::DFileDialog(QWidget *parent)
 
     connect(statusBar()->acceptButton(), &QPushButton::clicked, this, &DFileDialog::onAcceptButtonClicked);
     connect(statusBar()->rejectButton(), &QPushButton::clicked, this, &DFileDialog::onRejectButtonClicked);
+    connect(getFileView(), &DFileView::fileDialogRename, this, &DFileDialog::disableOpenBtn);
     connect(statusBar()->comboBox(),
             static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
             this, &DFileDialog::selectNameFilter);
@@ -823,6 +824,11 @@ void DFileDialog::open()
 void DFileDialog::reject()
 {
     done(QDialog::Rejected);
+}
+
+void DFileDialog::disableOpenBtn()
+{
+    statusBar()->acceptButton()->setEnabled(false);
 }
 
 void DFileDialog::showEvent(QShowEvent *event)

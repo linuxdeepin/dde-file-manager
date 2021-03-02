@@ -636,7 +636,7 @@ bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tr
     if (trigger == SelectedClicked && !isIconViewMode()) {
         QStyleOptionViewItem option = viewOptions();
 
-        option.rect = visualRect(index);
+        option.rect = visualRect(index);;
 
         const QRect &file_name_rect = itemDelegate()->fileNameRect(option, index);
 
@@ -659,6 +659,10 @@ bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tr
             return false;
     }
 #endif
+    if (trigger == EditKeyPressed || trigger == AllEditTriggers) {
+        emit fileDialogRename();
+    }
+
     return DListView::edit(index, trigger, event);
 }
 
