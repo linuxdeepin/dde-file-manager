@@ -1092,7 +1092,9 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(const QSharedPointer<DFileHandler> 
             permissions |= MasteredMediaController::getPermissionsCopyToLocal();
         }
 
-        handler->setPermissions(toInfo->fileUrl(), permissions);
+        //权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
+        if (permissions != 0000)
+            handler->setPermissions(toInfo->fileUrl(), permissions);
         return true;
     }
 
@@ -1163,7 +1165,9 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(const QSharedPointer<DFileHandler> 
             copyinfo->toinfo = toInfo;
             writeQueueEnqueue(copyinfo);
         } else {
-            handler->setPermissions(toInfo->fileUrl(), permissions);
+            //权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
+            if (permissions != 0000)
+                handler->setPermissions(toInfo->fileUrl(), permissions);
         }
     }
 
