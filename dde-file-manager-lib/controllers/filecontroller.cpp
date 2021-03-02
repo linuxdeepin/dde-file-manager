@@ -408,23 +408,19 @@ public:
             dfsearch = nullptr;
         }
     }
+
     static void callbackFunc(void *back, void *self)
     {
         if (!self || !back) {
             return;
         }
         DFMFSearchDirIterator *it = static_cast<DFMFSearchDirIterator *>(self);
-        uint32_t num_folders;
-        uint32_t num_files;
-        uint32_t num_results = 0;
         DatabaseSearch *result = static_cast<DatabaseSearch *>(back);
         if (!result)
             return;
         GPtrArray *results = result->results;
         if (results && results->len > 0) {
-            num_folders = result->num_folders;;
-            num_files = result->num_files;
-            num_results = results->len;
+            uint32_t num_results = results->len;
             for (uint32_t j = 0; j < num_results; j++) {
                 if (results->len > 0 && results->pdata) {
                     DatabaseSearchEntry *entry = static_cast<DatabaseSearchEntry *>(g_ptr_array_index(results, j));
@@ -435,9 +431,9 @@ public:
 
                     if (!strResult.isEmpty()) {
                         /*fix task 30348 针对搜索不能搜索部分目录，可以将根目录加入索引库，搜索结果出来以后进行当前目录过滤就可以*/
-                        QFileInfo fileInfo(strResult);
-                        QString fullPath = fileInfo.absoluteFilePath();
-                        QString filePath = fileInfo.absolutePath();
+                        QFileInfo info(strResult);
+                        QString fullPath = info.absoluteFilePath();
+                        QString filePath = info.absolutePath();
                         if (filePath.startsWith(it->dir.absolutePath()) && !it->searchResults.contains(fullPath)) {
                             // 修复wayland-bug-51754
                             // 刷选出保险箱内的文件,使其不被检索出来
@@ -448,10 +444,11 @@ public:
                     }
                 }
             }
-            it->mDone = true;
             qDebug() << "-------callback:" << num_results;
         }
+        it->mDone = true;
     }
+
     DUrl next() override
     {
         currentFileInfo.setFile(searchResults.takeFirst());
@@ -463,20 +460,21 @@ public:
     {
         if (!initialized) {
             const QString &dir_path = dir.absolutePath();
-
+            //fix bug62654,搜索过程中有的时候无法搜索到东西，需要先清理搜索结果，再进行搜索
+            searchResults.clear();
             if (searchDirList.isEmpty() || searchDirList.first() != dir_path) {
+                mDone = false;
                 searchDirList.prepend(dir_path);
                 dfsearch->searchByKeyWord(keyword, callbackFunc);
                 qDebug() << "*******************************find";
-                mDone = false;
             }
-            searchResults.clear();
+
             initialized = true;
         }
         if (!resultinit) {
             int i = 0;
-            while (1) {
-                std::this_thread::sleep_for(std::chrono::seconds(2));
+            while (!closed) {
+                std::this_thread::sleep_for(std::chrono::seconds(1));
                 if (mDone || i++ > 10) {
                     break;
                 }
@@ -507,14 +505,23 @@ public:
     {
         return DUrl::fromLocalFile(dir.absolutePath());
     }
+
+    void close() override
+    {
+        closed = true;
+        if (dfsearch)
+            dfsearch->stop();
+    }
 private:
     QString keyword;
     mutable bool resultinit = false;
     mutable bool initialized = false;
     mutable QStringList searchDirList;
+    mutable quint32 searchStartOffset = 0, searchEndOffset = 0;
     mutable QStringList searchResults;
 
     mutable bool mDone = false;
+    bool closed = false;
     DFSearch *dfsearch = nullptr;
     QDir dir;
     QFileInfo currentFileInfo;

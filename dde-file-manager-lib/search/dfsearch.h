@@ -36,7 +36,12 @@ public:
 
     ~DFSearch();
 
+    DFSearch(DFSearch &) = delete;
+    DFSearch &operator=(DFSearch &) = delete;
+
     void searchByKeyWord(const QString &key, void (*callback)(void *, void *));
+
+    void stop();
 
 private:
     static void fsearch_application_window_update_results(void *data, void *sender);
@@ -44,10 +49,15 @@ private:
     static gboolean update_model_cb(gpointer user_data, gpointer sender);
 private:
     FsearchApplication *app = nullptr;
-    callbackFunc cbFunc;
-    GPtrArray *results;
+    callbackFunc cbFunc = nullptr;
+    GPtrArray *results = nullptr;
     uint  num_results = 0;
     void *caller = nullptr;
+    /**
+     * @brief state 搜索状态值，用于打断后续遍历文件夹
+     */
+    bool state = true;
+    QString pathForSearching;
 };
 
 #endif

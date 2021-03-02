@@ -65,7 +65,7 @@ static DatabaseLocation *
 db_location_get_for_path (Database *db, const char *path);
 
 static DatabaseLocation *
-db_location_build_tree (const char *dname, FsearchConfig *cfg, void (*callback)(const char *));
+db_location_build_tree (const char *dname, FsearchConfig *cfg, bool *state, void (*callback)(const char *));
 
 static DatabaseLocation *
 db_location_new (void);
@@ -386,8 +386,12 @@ db_location_walk_tree_recursive (DatabaseLocation *location,
                                  GTimer *timer,
                                  void (*callback)(const char *),
                                  BTreeNode *parent,
-                                 int spec)
+                                 int spec,
+                                 bool *state)
 {
+    if (!(*state))
+        return WALK_OK;
+
     int len = strlen (dname);
     if (len >= FILENAME_MAX - 1) {
         //trace ("filename too long: %s\n", dname);
@@ -417,12 +421,8 @@ db_location_walk_tree_recursive (DatabaseLocation *location,
     }
 
     struct dirent *dent = NULL;
-    while ((dent = readdir (dir))) {
-        if (!(spec & WS_DOTFILES) && dent->d_name[0] == '.') {
-            // file is dotfile, skip
-            continue;
-        }
-        if (!strcmp (dent->d_name, ".") || !strcmp (dent->d_name, "..")) {
+    while ((*state) && (dent = readdir (dir))) {
+        if (!strcmp (dent->d_name, ".") || !strcmp (dent->d_name, "..") || dent->d_name[0] == '.') {
             continue;
         }
         if (file_is_excluded (dent->d_name, exclude_files)) {
@@ -458,7 +458,8 @@ db_location_walk_tree_recursive (DatabaseLocation *location,
                                              timer,
                                              callback,
                                              node,
-                                             spec);
+                                             spec,
+                                             state);
 
         }
     }
@@ -470,7 +471,7 @@ db_location_walk_tree_recursive (DatabaseLocation *location,
 }
 
 static DatabaseLocation *
-db_location_build_tree (const char *dname, FsearchConfig *cfg, void (*callback)(const char *))
+db_location_build_tree (const char *dname, FsearchConfig *cfg, bool *state, void (*callback)(const char *))
 {
     const char *root_name = NULL;
     if (!strcmp (dname, "/")) {
@@ -497,7 +498,8 @@ db_location_build_tree (const char *dname, FsearchConfig *cfg, void (*callback)(
                                                     timer,
                                                     callback,
                                                     root,
-                                                    spec);
+                                                    spec,
+                                                    state);
     g_timer_destroy (timer);
     if (res == WALK_OK) {
         return location;
@@ -740,13 +742,14 @@ bool
 db_location_add (Database *db,
                  const char *location_name,
                  FsearchConfig *config,
+                 bool *state,
                  void (*callback)(const char *))
 {
     assert (db != NULL);
     db_lock (db);
 //    trace ("load location: %s\n", location_name);
 
-    DatabaseLocation *location = db_location_build_tree (location_name, config, callback);
+    DatabaseLocation *location = db_location_build_tree (location_name, config, state, callback);
 
     if (location) {
 //        trace ("location num entries: %d\n", location->num_items);
