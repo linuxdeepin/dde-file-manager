@@ -380,6 +380,7 @@ Metadata EMLParser::metaData()
 	std::string sender = header.sender().str();
 	if (!sender.empty())
 		metadata.addField("Sender", sender);
+	return metadata;
 }
 
 bool EMLParser::error()

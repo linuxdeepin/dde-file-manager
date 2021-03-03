@@ -898,6 +898,7 @@ struct IWorkParser::Implementation
 				m_text_body += (*it)->m_text;
 				++it;
 			}
+			return true;
 		}
 
 		//Functions responsible for parsing xml elements:
