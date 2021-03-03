@@ -77,7 +77,8 @@ DUrl DFMShadowedDirIterator::fileUrl() const
 
 const DAbstractFileInfoPointer DFMShadowedDirIterator::fileInfo() const
 {
-    return DAbstractFileInfoPointer(new MasteredMediaFileInfo(fileUrl()));
+    DAbstractFileInfoPointer fileinfo = DAbstractFileInfoPointer(new MasteredMediaFileInfo(fileUrl()));
+    return fileinfo->exists() ? fileinfo : DAbstractFileInfoPointer(); //bug 64941, DVD+RW 只擦除文件系统部分信息，而未擦除全部，有垃圾数据，所以需要判断文件的有效性
 }
 
 DUrl DFMShadowedDirIterator::url() const
