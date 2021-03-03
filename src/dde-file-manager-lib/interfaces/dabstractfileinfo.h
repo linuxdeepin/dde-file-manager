@@ -207,7 +207,6 @@ public:
     virtual bool isSymLink() const;
     virtual bool isDesktopFile() const;
     virtual bool isVirtualEntry() const;
-    virtual bool needCompleteDelete() const;
 
     virtual QString symlinkTargetPath() const;
     virtual DUrl symLinkTarget() const;
@@ -340,6 +339,8 @@ public:
     virtual void checkMountFile();
 
     virtual quint64 inode() const;
+
+    virtual bool needCompleteDelete() const;
 
 protected:
     explicit DAbstractFileInfo(DAbstractFileInfoPrivate &dd);
