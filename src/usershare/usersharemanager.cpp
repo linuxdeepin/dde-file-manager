@@ -140,6 +140,12 @@ QString UserShareManager::getShareNameByPath(const QString &path) const
     return shareName;
 }
 
+uint UserShareManager::getCreatorUidByShareName(const QString &shareName) const
+{
+    QFileInfo info(UserSharePath() + "/" + shareName);
+    return info.ownerId();
+}
+
 void UserShareManager::loadUserShareInfoPathNames()
 {
     QString cache = readCacheFromFile(getCacehPath());

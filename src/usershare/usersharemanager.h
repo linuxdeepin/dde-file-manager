@@ -60,6 +60,7 @@ public:
     ShareInfo getShareInfoByPath(const QString& path) const;
     ShareInfo getsShareInfoByShareName(const QString& shareName) const;
     QString getShareNameByPath(const QString& path) const;
+    uint getCreatorUidByShareName(const QString& shareName) const;
     ShareInfoList shareInfoList() const;
     int validShareInfoCount() const ;
     bool hasValidShareFolders() const;
