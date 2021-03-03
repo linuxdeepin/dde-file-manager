@@ -1283,6 +1283,8 @@ DFileSystemModel::~DFileSystemModel()
         d->jobController->stopAndDeleteLater();
     }
 
+    QMutexLocker locker(&m_mutex); // 必须等待其他 资源性线程结束，否则 要崩溃
+
     if (d->updateChildrenFuture.isRunning()) {
         d->updateChildrenFuture.cancel();
         d->updateChildrenFuture.waitForFinished();
@@ -1296,7 +1298,6 @@ DFileSystemModel::~DFileSystemModel()
         d->rootNodeManager->stop();
     }
 
-    QMutexLocker locker(&m_mutex); // 必须等待其他 资源性线程结束，否则 要崩溃
     QMutexLocker lk(&d_ptr->mutexFlags);
 
     qDebug() << "DFileSystemModel is released soon!";
@@ -2610,8 +2611,9 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 void DFileSystemModel::updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list)
 {
     Q_D(DFileSystemModel);
-    QPointer<DFileSystemModel> me = this;
+
     QMutexLocker locker(&m_mutex);
+    QPointer<DFileSystemModel> me = this;
     if (!me) {
         return;
     }
