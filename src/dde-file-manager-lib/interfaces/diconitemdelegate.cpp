@@ -683,10 +683,17 @@ void DIconItemDelegate::paint(QPainter *painter,
         DApplication::style()->drawPrimitive(DStyle::PE_IndicatorItemViewItemCheck, &check, painter);
     }
 
-    if ((index == d->expandedIndex || index == d->editingIndex) && !isDragMode) {
-        if (d->expandedItem && d->expandedItem->index == index) {
-            d->expandedItem->option = opt;
-        }
+    if (index == d->editingIndex && !isDragMode) {
+        // 正在编辑的item，不重绘text
+        return;
+    }
+
+    if (index == d->expandedIndex && !isDragMode
+        && d->expandedItem && d->expandedItem->index == index
+        && d->expandedItem->option.rect == opt.rect) {
+        // fixbug65053 屏幕数据变化后，桌面展开图标的文本位置错误
+        // 被展开的item，且rect未改变时，不重绘text
+        d->expandedItem->option = opt;
         return;
     }
 
