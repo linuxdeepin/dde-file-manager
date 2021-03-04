@@ -55,7 +55,8 @@ Build-Depends:
  libtag1-dev,
  libicu-dev,
  libcue-dev,
- libxcursor-dev
+ libxcursor-dev,
+ libcryptsetup-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 

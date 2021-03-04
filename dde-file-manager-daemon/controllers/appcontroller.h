@@ -35,6 +35,7 @@ class DeviceInfoManager;
 class TagManagerDaemon;
 class AccessControlManager;
 class VaultManager;
+class DiskManager;
 
 class AppController : public QObject
 {
@@ -55,6 +56,7 @@ private:
     TagManagerDaemon *m_tagManagerDaemon = nullptr;
     AccessControlManager *m_accessController = nullptr;
     VaultManager *m_vaultManager = nullptr;
+    DiskManager *m_diskManager = nullptr;
 };
 
 #endif // APPCONTROLLER_H

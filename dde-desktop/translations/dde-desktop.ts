@@ -4,51 +4,51 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3113"/>
-        <location filename="../view/canvasgridview.cpp" line="3290"/>
+        <location filename="../view/canvasgridview.cpp" line="3129"/>
+        <location filename="../view/canvasgridview.cpp" line="3306"/>
         <source>Icon size</source>
         <translation>Icon size</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3119"/>
-        <location filename="../view/canvasgridview.cpp" line="3298"/>
+        <location filename="../view/canvasgridview.cpp" line="3135"/>
+        <location filename="../view/canvasgridview.cpp" line="3314"/>
         <source>Auto merge</source>
         <translation>Auto merge</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3134"/>
-        <location filename="../view/canvasgridview.cpp" line="3310"/>
+        <location filename="../view/canvasgridview.cpp" line="3150"/>
+        <location filename="../view/canvasgridview.cpp" line="3326"/>
         <source>Auto arrange</source>
         <translation>Auto arrange</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3191"/>
-        <location filename="../view/canvasgridview.cpp" line="3195"/>
-        <location filename="../view/canvasgridview.cpp" line="3365"/>
-        <location filename="../view/canvasgridview.cpp" line="3370"/>
+        <location filename="../view/canvasgridview.cpp" line="3207"/>
+        <location filename="../view/canvasgridview.cpp" line="3211"/>
+        <location filename="../view/canvasgridview.cpp" line="3381"/>
+        <location filename="../view/canvasgridview.cpp" line="3386"/>
         <source>Set Wallpaper</source>
         <translation>Set Wallpaper</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3197"/>
-        <location filename="../view/canvasgridview.cpp" line="3368"/>
+        <location filename="../view/canvasgridview.cpp" line="3213"/>
+        <location filename="../view/canvasgridview.cpp" line="3384"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Wallpaper and Screensaver</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3512"/>
+        <location filename="../view/canvasgridview.cpp" line="3528"/>
         <source>Properties</source>
         <translation>Properties</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3174"/>
-        <location filename="../view/canvasgridview.cpp" line="3347"/>
+        <location filename="../view/canvasgridview.cpp" line="3190"/>
+        <location filename="../view/canvasgridview.cpp" line="3363"/>
         <source>Display Settings</source>
         <translation>Display Settings</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3183"/>
-        <location filename="../view/canvasgridview.cpp" line="3356"/>
+        <location filename="../view/canvasgridview.cpp" line="3199"/>
+        <location filename="../view/canvasgridview.cpp" line="3372"/>
         <source>Corner Settings</source>
         <translation>Corner Settings</translation>
     </message>
@@ -84,7 +84,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="149"/>
+        <location filename="../main.cpp" line="161"/>
         <source>Desktop</source>
         <translation>Desktop</translation>
     </message>
@@ -150,12 +150,12 @@
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="253"/>
+        <location filename="../view/watermaskframe.cpp" line="255"/>
         <source>Not authorized</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="261"/>
+        <location filename="../view/watermaskframe.cpp" line="263"/>
         <source>In trial period</source>
         <translation type="unfinished"></translation>
     </message>

@@ -121,6 +121,7 @@ public slots:
     void actionUnShare(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionConnectToServer(quint64 winId);
     void actionSetUserSharePassword(quint64 winId);
+    void actionChangeDiskPassword(quint64 winId);
     void actionSettings(quint64 winId);
     void actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &event);
