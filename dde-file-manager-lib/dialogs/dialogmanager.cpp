@@ -39,6 +39,7 @@
 #include "filepreviewdialog.h"
 #include "dfmsettingdialog.h"
 #include "connecttoserverdialog.h"
+#include "changediskpassworddialog.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -911,6 +912,22 @@ void DialogManager::showUserSharePasswordSettingDialog(quint64 winId)
     w->setProperty("UserSharePwdSettingDialogShown", true);
     connect(dialog, &UserSharePasswordSettingDialog::closed, [ = ] {
         w->setProperty("UserSharePwdSettingDialogShown", false);
+    });
+}
+
+void DialogManager::showChangeDiskPasswordDialog(quint64 winId)
+{
+    QWidget *w = WindowManager::getWindowById(winId);
+    if (!w || w->property("ChangeDiskPasswordDialog").toBool()) {
+        return;
+    }
+
+    ChangeDiskPasswordDialog *dialog = new ChangeDiskPasswordDialog(w);
+    dialog->show();
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    w->setProperty("ChangeDiskPasswordDialog", true);
+    connect(dialog, &ChangeDiskPasswordDialog::closed, [ = ] {
+        w->setProperty("ChangeDiskPasswordDialog", false);
     });
 }
 

@@ -352,6 +352,9 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
     case DFMGlobal::SetUserSharePassword:
         AppController::instance()->actionSetUserSharePassword(event->windowId());
         break;
+    case DFMGlobal::ChangeDiskPassword:
+            AppController::instance()->actionChangeDiskPassword(event->windowId());
+            break;
     case DFMGlobal::FormatDevice:
         AppController::instance()->actionFormatDevice(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
         break;

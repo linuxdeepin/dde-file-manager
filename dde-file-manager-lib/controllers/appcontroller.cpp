@@ -902,6 +902,11 @@ void AppController::actionSetUserSharePassword(quint64 winId)
     dialogManager->showUserSharePasswordSettingDialog(winId);
 }
 
+void AppController::actionChangeDiskPassword(quint64 winId)
+{
+    dialogManager->showChangeDiskPasswordDialog(winId);
+}
+
 void AppController::actionSettings(quint64 winId)
 {
     dialogManager->showGlobalSettingsDialog(winId);

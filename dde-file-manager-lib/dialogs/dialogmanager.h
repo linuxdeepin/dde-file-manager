@@ -111,6 +111,7 @@ public slots:
     void showBreakSymlinkDialog(const QString &targetName, const DUrl &linkfile);
     void showConnectToServerDialog(quint64 winId);
     void showUserSharePasswordSettingDialog(quint64 winId);
+    void showChangeDiskPasswordDialog(quint64 winId);
     void showGlobalSettingsDialog(quint64 winId);
     void showDiskSpaceOutOfUsedDialogLater();
     void showDiskSpaceOutOfUsedDialog();

@@ -12,7 +12,7 @@ TARGET = dde-file-manager-daemon
 CONFIG   += console
 CONFIG   -= app_bundle
 
-PKGCONFIG += x11 polkit-agent-1 polkit-qt5-1 udisks2-qt5
+PKGCONFIG += x11 polkit-agent-1 polkit-qt5-1 udisks2-qt5 libcryptsetup
 CONFIG(release, release|debug) {
     PKGCONFIG += dtkwidget
 } else {
@@ -81,7 +81,10 @@ SOURCES += main.cpp \
     vault/vaultmanager.cpp \
     dbusservice/dbusadaptor/vault_adaptor.cpp \
     dbusservice/dbusinterface/vault_interface.cpp \
-    vault/vaultclock.cpp
+    vault/vaultclock.cpp \
+    disk/diskmanager.cpp \
+    dbusservice/dbusadaptor/disk_adaptor.cpp \
+    dbusservice/dbusinterface/disk_interface.cpp
 
 HEADERS += \
     app/filemanagerdaemon.h \
@@ -124,7 +127,10 @@ HEADERS += \
     vault/vaultmanager.h \
     dbusservice/dbusadaptor/vault_adaptor.h \
     dbusservice/dbusinterface/vault_interface.h \
-    vault/vaultclock.h
+    vault/vaultclock.h \
+    disk/diskmanager.h \
+    dbusservice/dbusadaptor/disk_adaptor.h \
+    dbusservice/dbusinterface/disk_interface.h
 
 target.path = /usr/bin
 
