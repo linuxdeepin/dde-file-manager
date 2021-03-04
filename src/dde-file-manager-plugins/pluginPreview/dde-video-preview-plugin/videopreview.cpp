@@ -170,7 +170,8 @@ VideoPreview::VideoPreview(QObject *parent)
     setlocale(LC_NUMERIC, "C");
 
     // 强制不使用嵌入mpv窗口的模式
-    dmr::CompositingManager::get().overrideCompositeMode(true);
+    // 经确认，该函数已废弃，屏蔽后不影响使用
+ //   dmr::CompositingManager::get().overrideCompositeMode(true);
 
     playerWidget = new VideoWidget(this);
     statusBar = new VideoStatusBar(this);
