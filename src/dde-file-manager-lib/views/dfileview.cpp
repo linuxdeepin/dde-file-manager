@@ -2565,7 +2565,7 @@ bool DFileView::setRootUrl(const DUrl &url)
     // 因此当传递过来的文件名中带有&符号，就会导致获取selectUrl失败
     // 对query字段内容进行编码处理，解析的时候再进行解码
     QUrlQuery urlQuery;
-    QByteArray encode = QUrl::toPercentEncoding(fileUrl.query(), "=");
+    QByteArray encode = QUrl::toPercentEncoding(fileUrl.query(QUrl::FullyEncoded), "=");
     urlQuery.setQuery(encode);
     const DUrl &defaultSelectUrl = DUrl(urlQuery.queryItemValue("selectUrl", QUrl::FullyDecoded));
 
