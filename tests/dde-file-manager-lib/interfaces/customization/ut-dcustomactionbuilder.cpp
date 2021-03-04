@@ -116,7 +116,7 @@ TEST(DCustomActionBuilder, set_foucus_file_one)
     DUrl url("file://usr/bin/dde-desktop.run");
     builder.setFocusFile(url);
     EXPECT_EQ(builder.m_fileFullName, "dde-desktop.run");
-    EXPECT_EQ(builder.m_fileBaseName, "dde-desktop");
+    EXPECT_EQ(builder.m_fileBaseName, "dde-desktop.run");
     EXPECT_EQ(builder.m_filePath, url);
 }
 
@@ -124,11 +124,86 @@ TEST(DCustomActionBuilder, set_foucus_file_two)
 {
     DCustomActionBuilder builder;
 
-    DUrl url("file://usr/bin/dde-desktop.tar.gz");
+    DUrl url("file:///usr/bin/dde-desktop.tar.gz");
     builder.setFocusFile(url);
     EXPECT_EQ(builder.m_fileFullName, "dde-desktop.tar.gz");
-    EXPECT_EQ(builder.m_fileBaseName, "dde-desktop.tar");
+    EXPECT_EQ(builder.m_fileBaseName, "dde-desktop");
     EXPECT_EQ(builder.m_filePath, url);
+
+    url = DUrl("file:///usr/bin/.dde-desktop.tar.gz");
+    builder.setFocusFile(url);
+    EXPECT_EQ(builder.m_fileFullName, ".dde-desktop.tar.gz");
+    EXPECT_EQ(builder.m_fileBaseName, ".dde-desktop");
+    EXPECT_EQ(builder.m_filePath, url);
+
+    url = DUrl("file:///usr/bin");
+    builder.setFocusFile(url);
+    EXPECT_EQ(builder.m_fileFullName, "bin");
+    EXPECT_EQ(builder.m_fileBaseName, "bin");
+    EXPECT_EQ(builder.m_filePath, url);
+
+    url = DUrl("file:///usr/.bin");
+    builder.setFocusFile(url);
+    EXPECT_EQ(builder.m_fileFullName, ".bin");
+    EXPECT_EQ(builder.m_fileBaseName, ".bin");
+    EXPECT_EQ(builder.m_filePath, url);
+
+    url = DUrl("file:///ut_test.7z.001");
+    builder.setFocusFile(url);
+    EXPECT_EQ(builder.m_fileFullName, "ut_test.7z.001");
+    EXPECT_EQ(builder.m_fileBaseName, "ut_test");
+    EXPECT_EQ(builder.m_filePath, url);
+
+    url = DUrl("file:///.ut_test.7z.001");
+    builder.setFocusFile(url);
+    EXPECT_EQ(builder.m_fileFullName, ".ut_test.7z.001");
+    EXPECT_EQ(builder.m_fileBaseName, ".ut_test");
+    EXPECT_EQ(builder.m_filePath, url);
+
+    url = DUrl("file:///ut_test.txt");
+    builder.setFocusFile(url);
+    EXPECT_EQ(builder.m_fileFullName, "ut_test.txt");
+    EXPECT_EQ(builder.m_fileBaseName, "ut_test");
+    EXPECT_EQ(builder.m_filePath, url);
+
+    url = DUrl("file:///.ut_test.txt");
+    builder.setFocusFile(url);
+    EXPECT_EQ(builder.m_fileFullName, ".ut_test.txt");
+    EXPECT_EQ(builder.m_fileBaseName, ".ut_test");
+    EXPECT_EQ(builder.m_filePath, url);
+
+    url = DUrl("file:///ut_test.tar.gz");
+    builder.setFocusFile(url);
+    EXPECT_EQ(builder.m_fileFullName, "ut_test.tar.gz");
+    EXPECT_EQ(builder.m_fileBaseName, "ut_test");
+    EXPECT_EQ(builder.m_filePath, url);
+
+    url = DUrl("file:///.ut_test.tar.gz");
+    builder.setFocusFile(url);
+    EXPECT_EQ(builder.m_fileFullName, ".ut_test.tar.gz");
+    EXPECT_EQ(builder.m_fileBaseName, ".ut_test");
+    EXPECT_EQ(builder.m_filePath, url);
+
+    //底层返回的是rar,不应该做特殊处理所以这是ut_test.part1
+    url = DUrl("file:///ut_test.part1.rar");
+    builder.setFocusFile(url);
+    EXPECT_EQ(builder.m_fileFullName, "ut_test.part1.rar");
+    EXPECT_EQ(builder.m_fileBaseName, "ut_test.part1");
+    EXPECT_EQ(builder.m_filePath, url);
+}
+
+TEST(DCustomActionBuilder, get_Complete_Suffix)
+{
+    DCustomActionBuilder builder;
+
+    EXPECT_EQ(builder.getCompleteSuffix("test.7z.001", "7z.*"), "7z.001");
+    EXPECT_EQ(builder.getCompleteSuffix(".test.7z.001", "7z.*"), "7z.001");
+    EXPECT_EQ(builder.getCompleteSuffix("test.tar.gz", "tar.gz"), "tar.gz");
+    EXPECT_EQ(builder.getCompleteSuffix(".test.tar.gz", "tar.gz"), "tar.gz");
+    EXPECT_EQ(builder.getCompleteSuffix("test.txt", "txt"), "txt");
+    EXPECT_EQ(builder.getCompleteSuffix(".test.txt", "txt"), "txt");
+    EXPECT_EQ(builder.getCompleteSuffix("test", ""), "");
+    EXPECT_EQ(builder.getCompleteSuffix(".test", ""), "");
 }
 
 TEST(DCustomActionBuilder, make_name_none)
@@ -325,28 +400,28 @@ TEST(DCustomActionBuilder, make_name_basename_one)
     builder.setFocusFile(url2);
 
     QString name = "name %b";
-    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "name dde-desktop");
+    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "name dde-desktop.run");
 
     name = "name%b";
-    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "namedde-desktop");
+    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "namedde-desktop.run");
 
     name = "%bname";
-    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "dde-desktopname");
+    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "dde-desktop.runname");
 
     name = "na%bme";
-    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "nadde-desktopme");
+    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "nadde-desktop.runme");
 
     name = "na%bm%be";
-    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "nadde-desktopm%be");
+    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "nadde-desktop.runm%be");
 
     name = "%bname %b";
-    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "dde-desktopname %b");
+    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "dde-desktop.runname %b");
 
     name = "%bname %b%a";
-    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "dde-desktopname %b%a");
+    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "dde-desktop.runname %b%a");
 
     name = "%dname %a%b";
-    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "%dname %adde-desktop");
+    EXPECT_EQ(builder.makeName(name, DCustomActionDefines::BaseName), "%dname %adde-desktop.run");
 }
 
 TEST(DCustomActionBuilder, split_cmd_empty)

@@ -194,14 +194,14 @@ TEST_F(CommandLineManagerTest, test_processCommand_show_item)
     EXPECT_GT(newWindows.count(), windows.count());
 }
 
-TEST_F(CommandLineManagerTest, test_processCommand_empty_arguments)
-{
-    QWindowList windows =  qApp->topLevelWindows();
-    CommandLineManager::instance()->process();
-    TestHelper::runInLoop([]{
-        CommandLineManager::instance()->processCommand();
-    }, 500);
-    QWindowList newWindows =  qApp->topLevelWindows();
-    EXPECT_GT(newWindows.count(), windows.count());
-}
+//TEST_F(CommandLineManagerTest, test_processCommand_empty_arguments)
+//{
+//    QWindowList windows =  qApp->topLevelWindows();
+//    CommandLineManager::instance()->process();
+//    TestHelper::runInLoop([]{
+//        CommandLineManager::instance()->processCommand();
+//    }, 500);
+//    QWindowList newWindows =  qApp->topLevelWindows();
+//    EXPECT_GT(newWindows.count(), windows.count());
+//}
 
