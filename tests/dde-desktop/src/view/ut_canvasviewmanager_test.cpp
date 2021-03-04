@@ -290,6 +290,7 @@ TEST_F(CanvasViewManagerTest, Test_extend_CanvasViewManager_Slot_onCanvasViewBui
         stub_ext::StubExt stu;
         bool isnullptr = false;
         stu.set_lamda(VADDR(ScreenManager, primaryScreen), [&isnullptr](){isnullptr = true; return nullptr;});
+        stu.set_lamda(ADDR(CanvasViewManager, onBackgroundEnableChanged), [](){});
         m_cvmgr->onCanvasViewBuild(2);
         ASSERT_TRUE(isnullptr);
     }
@@ -298,7 +299,7 @@ TEST_F(CanvasViewManagerTest, Test_extend_CanvasViewManager_Slot_onCanvasViewBui
         stub_ext::StubExt stu;
         bool islogic = false;
         stu.set_lamda(VADDR(ScreenManager, screens), [](){return QVector<ScreenPointer>();});
-        stu.set_lamda(ADDR(CanvasViewManager, onBackgroundEnableChanged), [](){return;});
+        stu.set_lamda(ADDR(CanvasViewManager, onBackgroundEnableChanged), [](){});
         m_cvmgr->onCanvasViewBuild(2);
         ASSERT_FALSE(m_cvmgr->m_canvasMap.isEmpty());
         stu.set_lamda(VADDR(ScreenManager, logicScreens), [&islogic](){islogic = true; return QVector<ScreenPointer>();});
