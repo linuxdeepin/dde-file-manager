@@ -183,11 +183,7 @@ public:
     virtual bool isAllowGuestShared() const;
     virtual bool makeAbsolute();
 
-    /**
-     * @brief canDragCompress 是否支持拖拽压缩
-     * @return
-     */
-    virtual bool canDragCompress() const;
+
 
     /**
      * @brief canManageAuth 是否可以管理权限
@@ -339,6 +335,13 @@ public:
     virtual void checkMountFile();
 
     virtual quint64 inode() const;
+
+
+    /**
+     * @brief canDragCompress 是否支持拖拽压缩
+     * @return
+     */
+    virtual bool canDragCompress() const;
 
     virtual bool needCompleteDelete() const;
 
