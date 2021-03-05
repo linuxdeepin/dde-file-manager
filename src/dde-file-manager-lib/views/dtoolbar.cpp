@@ -324,12 +324,6 @@ void DToolBar::currentUrlChanged(const DFMEvent &event)
     pushUrlToHistoryStack(event.fileUrl());
 }
 
-void DToolBar::showFilterButton()
-{
-    if (m_searchButton->isHidden())
-        m_searchButton->setHidden(false);
-}
-
 void DToolBar::back()
 {
     DUrl url = m_navStack->back();
@@ -360,7 +354,9 @@ void DToolBar::handleHotkeyCtrlF(quint64 winId)
 {
     // fix bug 65436
     // 仅当搜索/过滤按钮可见时才响应Ctrl+F
-    if (winId == WindowManager::getWindowId(this) && m_searchButton->isVisible()) {
+    if (winId == WindowManager::getWindowId(this) &&
+            m_searchButton->isVisible() &&
+            WindowManager::getUrlByWindowId(winId).isSupportSearch()) {
         onSearchButtonClicked();
     }
 }
@@ -424,7 +420,7 @@ void DToolBar::toggleSearchButtonState(bool asb)
         m_searchButton->setFlat(true);
         m_searchButtonAsbState = true;
     } else {
-        m_searchButton->setHidden(false);
+        m_searchButton->setHidden(!m_searchVisible);
         m_searchButton->style()->unpolish(m_searchButton);
         m_searchButton->style()->polish(m_searchButton);
         m_searchButton->setIcon(QIcon::fromTheme("search"));
@@ -532,6 +528,12 @@ void DToolBar::triggerActionByIndex(int index)
             action->trigger();
         }
     }
+}
+
+void DToolBar::setSearchButtonVisible(bool visble)
+{
+    m_searchVisible = visble;
+    m_searchButton->setVisible(visble);
 }
 
 void DToolBar::onBackButtonClicked()

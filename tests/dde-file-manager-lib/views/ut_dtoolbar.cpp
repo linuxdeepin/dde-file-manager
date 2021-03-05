@@ -140,11 +140,11 @@ TEST(DToolBarTest,showFilterButton)
     DToolBar w;
     w.show();
     w.m_searchButton->setVisible(false);
-    w.showFilterButton();
+    w.setSearchButtonVisible(true);
     EXPECT_TRUE(w.m_searchButton->isVisible());
 
     w.m_searchButton->setVisible(true);
-    w.showFilterButton();
+    w.setSearchButtonVisible(true);
     EXPECT_TRUE(w.m_searchButton->isVisible());
 }
 
