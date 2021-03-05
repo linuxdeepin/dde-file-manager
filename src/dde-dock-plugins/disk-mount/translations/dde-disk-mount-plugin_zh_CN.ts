@@ -52,11 +52,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>光驱正忙，无法弹出</translation>
+        <translation type="vanished">光驱正忙，无法弹出</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>设备正忙，无法安全移除</translation>
+        <translation type="vanished">设备正忙，无法安全移除</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

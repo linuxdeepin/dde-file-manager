@@ -2,12 +2,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../main.cpp" line="162"/>
+        <location filename="../main.cpp" line="167"/>
         <source>File Manager</source>
         <translation>Файловый Менеджер</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="166"/>
+        <location filename="../main.cpp" line="171"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>Диспетчер Файлов - это мощный и простой в использовании инструмент управления файлами, включающий поиск, копирование, удаление, сжатие / распаковку, свойства файла и другие полезные функции.</translation>
     </message>

@@ -52,11 +52,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Cihaz məşğuldur, indi çıxarıla bilməz</translation>
+        <translation type="vanished">Cihaz məşğuldur, indi çıxarıla bilməz</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>Cihaz məşğuldur, indi ayrıla bilməz</translation>
+        <translation type="vanished">Cihaz məşğuldur, indi ayrıla bilməz</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

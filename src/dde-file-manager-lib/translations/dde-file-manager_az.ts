@@ -227,10 +227,10 @@
         <location filename="../models/computermodel.cpp" line="183"/>
         <location filename="../models/computermodel.cpp" line="194"/>
         <location filename="../models/computermodel.cpp" line="196"/>
-        <location filename="../models/computermodel.cpp" line="626"/>
-        <location filename="../models/computermodel.cpp" line="630"/>
-        <location filename="../models/computermodel.cpp" line="663"/>
-        <location filename="../models/computermodel.cpp" line="667"/>
+        <location filename="../models/computermodel.cpp" line="625"/>
+        <location filename="../models/computermodel.cpp" line="629"/>
+        <location filename="../models/computermodel.cpp" line="662"/>
+        <location filename="../models/computermodel.cpp" line="666"/>
         <source>Disks</source>
         <translation>Disklər</translation>
     </message>
@@ -967,98 +967,103 @@
         <translation>Hədəf qovluq mənbə qovluğunun daxilindədir</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="656"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="243"/>
+        <source>The action is not supported</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="658"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>kopyalamaq</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1061"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1064"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation>Qovluq açıla bilmədi, səbəb: fayl adı çox uzundur</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1219"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1698"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1968"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2113"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1226"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1705"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1975"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2120"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation>Fayl açıla bilmədi, səbəb: fayl adı çox uzundur</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3118"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3194"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3125"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3201"/>
         <source>Failed to write the file, cause:</source>
         <translation>Fayl yazıla bilmədi, səbəb:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3987"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3994"/>
         <source>Syncing data</source>
         <translation>Verilərin eyniləşdirilməsi</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3987"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3994"/>
         <source>Please wait</source>
         <translation>Lütfən gözləyin</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1071"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1074"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>Qovluq yaradıla bilmədi, səbəb: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1231"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1262"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1710"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1742"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1981"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2837"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1238"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1269"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1717"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1749"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1988"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2844"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Fayl açıla bilmıdi, səbəb: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1258"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1738"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1265"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1745"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>Fayl açıla bilmədi, səbəb: İcazə verilmədi</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1372"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2045"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1379"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2052"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>Fayl oxuna bilmədi, səbəbi: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1440"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1515"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2912"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3003"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1447"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1522"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2919"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3010"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>Fayl yazıla bilmədi, səbəbi: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1637"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1644"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>Faylın bütövlüyü pozulub, səbəbi: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2126"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2145"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2133"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2152"/>
         <source>Failed to open the file, cause: </source>
         <translation>Fayl açıla bilmədi, səbəbi: </translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2215"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2222"/>
         <source>Failed to read the file, cause: </source>
         <translation>Fayl oxuna bilmədi, səbəbi: </translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2299"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2306"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>Fayl silinə bilmədi, səbəbi: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2393"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2400"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>Simvolik keçid yaradıla bilmədi, səbəbi: %1</translation>
     </message>
@@ -1066,39 +1071,39 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1091"/>
-        <location filename="../views/dfiledialog.cpp" line="1376"/>
+        <location filename="../views/dfiledialog.cpp" line="1097"/>
+        <location filename="../views/dfiledialog.cpp" line="1382"/>
         <source>Save</source>
         <translation>Saxlamaq</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1281"/>
+        <location filename="../views/dfiledialog.cpp" line="1287"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 artıq var, onu əvəzləmək istəyirsiniz?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1241"/>
-        <location filename="../views/dfiledialog.cpp" line="1282"/>
+        <location filename="../views/dfiledialog.cpp" line="1247"/>
+        <location filename="../views/dfiledialog.cpp" line="1288"/>
         <source>Cancel</source>
         <translation>İmtina</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1240"/>
+        <location filename="../views/dfiledialog.cpp" line="1246"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation>Adı nöqtə (.) ilə başlayan fayl gizlədiləcəkdir. Gizlətmək istəyirsiniz?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1242"/>
+        <location filename="../views/dfiledialog.cpp" line="1248"/>
         <source>Confirm</source>
         <translation>Tədiqləmək</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1283"/>
+        <location filename="../views/dfiledialog.cpp" line="1289"/>
         <source>Replace</source>
         <translation>Əvəzləmək</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1373"/>
+        <location filename="../views/dfiledialog.cpp" line="1379"/>
         <source>Open</source>
         <translation>Açmaq</translation>
     </message>
@@ -1106,12 +1111,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1150"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1154"/>
         <source>Trash</source>
         <translation>Səbət</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1159"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1163"/>
         <source>Empty</source>
         <translation>Boş</translation>
     </message>
@@ -1164,12 +1169,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2492"/>
+        <location filename="../views/dfileview.cpp" line="2501"/>
         <source>Mounting failed</source>
         <translation>Qoşulma alınmadı</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3189"/>
+        <location filename="../views/dfileview.cpp" line="3203"/>
         <source>(Reverse)</source>
         <translation>(Əksinə)</translation>
     </message>
@@ -1492,7 +1497,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="924"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1330"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1434"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <translation>Tədiqləmək</translation>
     </message>
@@ -1777,12 +1781,12 @@
         <translation>Yenidən başlatmaq</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1117"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1122"/>
         <source>Permission denied</source>
         <translation>İcazə verilmədi</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1118"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1123"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>Onun daxilindəki fayllara keçid etməyə icazəniz yoxdur</translation>
     </message>
@@ -2353,72 +2357,72 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="773"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="774"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>%1 kimliyi doğrulana bilmir.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="774"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="775"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Bu, siz kompyuterə ilk dəfə daxil olduğunuz zaman baş verir</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="775"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="776"/>
         <source>The identity sent by the remote computer is</source>
         <translation>Uzaq kompyuter tərəfindən göndərilən kimlik</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="777"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="778"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Davam etmənin təhlükəsiz olduğundan tamamilə əmin olmaq istəyirsinizsə, sistem administratoru ilə əlaqə saxlayın.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="824"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="828"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1444"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1450"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1453"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="825"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="829"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1445"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1451"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1454"/>
         <source>Mounting device error</source>
         <translation>Cihazın qoşulması xətası</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="824"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1450"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="825"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1451"/>
         <source>Wrong username or password</source>
         <translation>Səhv istifadəçi adı və şifrəsi</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1681"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1850"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1682"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1851"/>
         <source>Cannot find the mounted device</source>
         <translation>Qoşulmuş cihazı tapmaq olmur</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1595"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1596"/>
         <source>No key available to unlock device</source>
         <translation>Cihazı kiliddən çıxarmaq üçün mövcud açar yoxdur</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1672"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1673"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>Disk &quot;%1&quot; istifadəçisi tərəfindən qoşulub, siz onu ayıra bilməzsiniz.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1675"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1684"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1710"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1829"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1853"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1676"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1685"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1711"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1830"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1854"/>
         <source>Confirm</source>
         <translation>Tədiqləmək</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1707"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1708"/>
         <source>Cannot unmount the device</source>
         <translation>Cihazı ayırmaq mümkün deyil</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1825"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1826"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>&quot;%1&quot; cihazı çıxarıla bilmir</translation>
     </message>
@@ -2426,7 +2430,7 @@
 <context>
     <name>MasteredMediaController</name>
     <message>
-        <location filename="../controllers/masteredmediacontroller.cpp" line="365"/>
+        <location filename="../controllers/masteredmediacontroller.cpp" line="366"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>Yazmaq mümkün olmadı. Hədəf diskində kifayət qədər boş yer yoxdur.</translation>
     </message>
@@ -3112,7 +3116,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="107"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1160"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1164"/>
         <source>Empty Trash</source>
         <translation>Səbəti boşaltmaq</translation>
     </message>
@@ -3417,12 +3421,12 @@
         <translation>%1 element</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1214"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1215"/>
         <source>Shortcut</source>
         <translation>Qısayol</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="754"/>
+        <location filename="../interfaces/dfileservices.cpp" line="755"/>
         <source>Create symlink</source>
         <translation>Simvolik keçid yaratmaq</translation>
     </message>
@@ -3444,24 +3448,24 @@
         <translation>Yüklənir...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="841"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="842"/>
         <source>File has been moved or deleted</source>
         <translation>Fayl silinib və ya köçürülüb</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="847"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="848"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>Onun daxilindəki fayllara keçid etməyə icazəniz yoxdur</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="843"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="856"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="862"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="844"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="857"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="863"/>
         <source>You do not have permission to access this folder</source>
         <translation>Bu qovluğa girməniz üçün icazəniz yoxdur</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="867"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="868"/>
         <location filename="../models/masteredmediafileinfo.cpp" line="279"/>
         <location filename="../models/recentfileinfo.cpp" line="253"/>
         <location filename="../models/trashfileinfo.cpp" line="367"/>
@@ -3783,31 +3787,31 @@
     <message>
         <location filename="../models/computermodel.cpp" line="181"/>
         <location filename="../models/computermodel.cpp" line="192"/>
-        <location filename="../models/computermodel.cpp" line="600"/>
+        <location filename="../models/computermodel.cpp" line="599"/>
         <source>Disks</source>
         <translation>Disklər</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="694"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="750"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="696"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="753"/>
         <source>Failed to create file info</source>
         <translation>Fayl haqqında məlumat yaradıla bilmədi</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="722"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="725"/>
         <source>Failed to create file handler</source>
         <translation>Fayl işlədicisi yaradıla bilmədi</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1766"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1792"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1816"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1773"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1799"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1823"/>
         <source>Execution error</source>
         <translation>İcra xətası</translation>
     </message>
     <message>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="898"/>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="1034"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="912"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1045"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="452"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="640"/>
         <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>

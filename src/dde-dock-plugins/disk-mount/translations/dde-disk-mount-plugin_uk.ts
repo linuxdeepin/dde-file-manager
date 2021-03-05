@@ -52,11 +52,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Пристрій зайнято, його не можна виштовхнути зараз</translation>
+        <translation type="vanished">Пристрій зайнято, його не можна виштовхнути зараз</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>Пристрій зайнято, зараз вилучення неможливе</translation>
+        <translation type="vanished">Пристрій зайнято, зараз вилучення неможливе</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

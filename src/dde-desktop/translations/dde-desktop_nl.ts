@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3106"/>
+        <location filename="../view/canvasgridview.cpp" line="3091"/>
         <source>Icon size</source>
         <translation>Pictogramgrootte</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3114"/>
+        <location filename="../view/canvasgridview.cpp" line="3099"/>
         <source>Auto merge</source>
         <translation>Automatisch samenvoegen</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3126"/>
+        <location filename="../view/canvasgridview.cpp" line="3111"/>
         <source>Auto arrange</source>
         <translation>Automatisch schikken</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3173"/>
+        <location filename="../view/canvasgridview.cpp" line="3148"/>
         <source>Corner Settings</source>
         <translation>Hoekinstellingen</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3182"/>
-        <location filename="../view/canvasgridview.cpp" line="3187"/>
+        <location filename="../view/canvasgridview.cpp" line="3157"/>
+        <location filename="../view/canvasgridview.cpp" line="3162"/>
         <source>Set Wallpaper</source>
         <translation>Achtergrond instellen</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3185"/>
+        <location filename="../view/canvasgridview.cpp" line="3160"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Achtergrond en schermbeveiliging</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3363"/>
+        <location filename="../view/canvasgridview.cpp" line="3338"/>
         <source>Properties</source>
         <translation>Eigenschappen</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3164"/>
+        <location filename="../view/canvasgridview.cpp" line="3139"/>
         <source>Display Settings</source>
         <translation>Beeldscherminstellingen</translation>
     </message>
@@ -74,7 +74,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="156"/>
+        <location filename="../main.cpp" line="150"/>
         <source>Desktop</source>
         <translation>Bureaublad</translation>
     </message>
@@ -82,67 +82,67 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="672"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="721"/>
         <source>Wallpaper Slideshow</source>
         <translation>Diavoorstelling</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="718"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="767"/>
         <source>When login</source>
         <translation>Bij inloggen</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="720"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="769"/>
         <source>When wakeup</source>
         <translation>Bij ontwaken</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="772"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="821"/>
         <source>Require a password on wakeup</source>
         <translation>Wachtwoord vereisen bij ontwaken</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="804"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="853"/>
         <source>Never</source>
         <translation>Nooit</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="806"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="855"/>
         <source>Wait:</source>
         <translation>Wachten:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="839"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="888"/>
         <source>Wallpaper</source>
         <translation>Bureaubladachtergrond</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="851"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="900"/>
         <source>Screensaver</source>
         <translation>Schermbeveiliging</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="916"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="965"/>
         <source>Loading wallpapers...</source>
         <translation>Bezig met laden van achtergronden...</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="918"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="967"/>
         <source>Loading screensavers...</source>
         <translation>Bezig met laden van schermbeveiligingen...</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="975"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1024"/>
         <source>Only desktop</source>
         <translation>Alleen op bureaublad</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="976"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1025"/>
         <source>Only lock screen</source>
         <translation>Alleen op vergrendelscherm</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1042"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1098"/>
         <source>Apply</source>
         <translation>Instellen</translation>
     </message>

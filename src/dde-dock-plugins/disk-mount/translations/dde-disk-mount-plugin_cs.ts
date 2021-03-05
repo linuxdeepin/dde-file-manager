@@ -52,11 +52,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Zařízení je něčím využíváno, proto ho nyní není možné vysunout</translation>
+        <translation type="vanished">Zařízení je něčím využíváno, proto ho nyní není možné vysunout</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>Zařízení je něčím využíváno, proto ho není možné nyní odebrat</translation>
+        <translation type="vanished">Zařízení je něčím využíváno, proto ho není možné nyní odebrat</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

@@ -52,11 +52,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Uređaj je zauzet, ne mogu sada izbaciti</translation>
+        <translation type="vanished">Uređaj je zauzet, ne mogu sada izbaciti</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>Uređaj je zauzet, ne mogu sada ukloniti</translation>
+        <translation type="vanished">Uređaj je zauzet, ne mogu sada ukloniti</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
