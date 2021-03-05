@@ -283,7 +283,7 @@ QWidget *ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOpt
     //消除编辑框背后多余的填充色
 //    le->setAutoFillBackground(true);
     le->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-    QRegExp regx("^[^\\.\\\\/\':\\*\\?\"<>|%&][^\\\\/\':\\*\\?\"<>|%&]+"); //屏蔽特殊字符
+    QRegExp regx("^[^\\.\\\\/\':\\*\\?\"<>|%&][^\\\\/\':\\*\\?\"<>|%&]*"); //屏蔽特殊字符
     QValidator *validator = new QRegExpValidator(regx, le);
     le->setValidator(validator);
     le->setMaxLength(index.data(ComputerModel::EditorLengthRole).toInt());
