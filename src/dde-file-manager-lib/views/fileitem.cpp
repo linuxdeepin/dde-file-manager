@@ -244,6 +244,13 @@ void FileIconItem::doLineEditTextChanged()
     }
 }
 
+//提供外部调用的槽函数
+void FileIconItem::resizeFromEditTextChanged()
+{
+    //根据字符串的长度调整大小调整(之前的逻辑)
+    updateEditorGeometry();
+}
+
 void FileIconItem::showAlertMessage(const QString &text, int duration)
 {
     Q_D(FileIconItem);

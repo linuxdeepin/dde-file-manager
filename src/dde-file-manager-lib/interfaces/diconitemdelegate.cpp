@@ -440,9 +440,9 @@ public:
 
     QPointer<ExpandedItem> expandedItem;
 
-//    mutable QHash<QString, QString> elideMap;
-//    mutable QHash<QString, QString> wordWrapMap;
-//    mutable QHash<QString, int> textHeightMap;
+    //    mutable QHash<QString, QString> elideMap;
+    //    mutable QHash<QString, QString> wordWrapMap;
+    //    mutable QHash<QString, int> textHeightMap;
     mutable QModelIndex expandedIndex;
     mutable QModelIndex lastAndExpandedInde;
 
@@ -580,7 +580,7 @@ void DIconItemDelegate::paint(QPainter *painter,
             editing_widget->setFont(opt.font);
 
         const_cast<DIconItemDelegate *>(this)->updateItemSizeHint();
-//        parent()->parent()->updateEditorGeometries();
+        //        parent()->parent()->updateEditorGeometries();
     }
 
     old_font = opt.font;
@@ -689,8 +689,8 @@ void DIconItemDelegate::paint(QPainter *painter,
     }
 
     if (index == d->expandedIndex && !isDragMode
-        && d->expandedItem && d->expandedItem->index == index
-        && d->expandedItem->option.rect == opt.rect) {
+            && d->expandedItem && d->expandedItem->index == index
+            && d->expandedItem->option.rect == opt.rect) {
         // fixbug65053 屏幕数据变化后，桌面展开图标的文本位置错误
         // 被展开的item，且rect未改变时，不重绘text
         d->expandedItem->option = opt;
@@ -858,7 +858,10 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
     FileIconItem *item = new FileIconItem(parent);
 
     //此处更改逻辑不再保持焦点离开后依然保持的item编辑态，将会提交相关的编辑框(与桌面保持一致)
-    connect(item, &FileIconItem::inputFocusOut, this, &DIconItemDelegate::commitDataAndCloseActiveEditor);
+    connect(item, &FileIconItem::inputFocusOut,
+            this, &DIconItemDelegate::commitDataAndCloseActiveEditor,
+            Qt::UniqueConnection);
+
     connect(item, &FileIconItem::destroyed, this, [this, d] {
         Q_UNUSED(this)
         d->editingIndex = QModelIndex();
@@ -867,14 +870,21 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
     //编辑框的字符变更处理
     connect(item->edit, &QTextEdit::textChanged, this, [=](){
 
+        //阻塞信号等待当前函数
+        const QSignalBlocker blocker(sender());
+
         if (!item || !item->edit || item->edit->isReadOnly())
             return;
 
         //获取之前的文件名称
         QString srcText = item->edit->toPlainText();
 
-        if(srcText.isEmpty())
+        //清空了当前所有文本
+        if (srcText.isEmpty()) {
+            //根据文本调整edit高度
+            item->resizeFromEditTextChanged();
             return;
+        }
 
         //编辑字符的长度控制
         int editTextMaxLen = item->maxCharSize();
@@ -882,7 +892,8 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
         int editTextRangeOutLen = editTextCurrLen - editTextMaxLen;
         if (editTextRangeOutLen > 0 && editTextMaxLen != INT_MAX) {
             int srcPos = item->edit->textCursor().position();
-            srcText = srcText.mid(0, srcPos - editTextRangeOutLen) + srcText.mid(srcPos, editTextCurrLen);
+            srcText = srcText.mid(0, srcPos - editTextRangeOutLen)
+                    + srcText.mid(srcPos, editTextCurrLen);
             item->edit->setPlainText(srcText);
             QTextCursor cursor = item->edit->textCursor();
             cursor.setPosition(srcPos - editTextRangeOutLen);
@@ -898,6 +909,7 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
             // 修改文件的命名规则 弹出提示框(气泡提示)
             if ( !this->parent() || !this->parent()->parent()) {
+                qInfo() << "parent is nullptr";
                 return;
             }
 
@@ -921,11 +933,18 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
             item->edit->setAlignment(Qt::AlignHCenter);
         }
 
+        //根据文本调整edit高度
+        item->resizeFromEditTextChanged();
+
+        //添加到stack中
         if (item->editTextStackCurrentItem() != item->edit->toPlainText()) {
             item->pushItemToEditTextStack(item->edit->toPlainText());
         }
-    });
+    }, Qt::UniqueConnection);
 
+    //设置字体居中
+    //注: 此处经过查阅发现FileItem中editUndo中没有相关设置
+    //触发撤销将不会产生字体对其,这里稍微提及,方便以后更改
     item->edit->setAlignment(Qt::AlignHCenter);
     item->edit->document()->setTextWidth(d->itemSizeHint.width());
     item->setOpacity(this->parent()->isTransparent(index) ? 0.3 : 1);
@@ -1023,11 +1042,11 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 
     QString dstText = DFMGlobal::preprocessingFileName(srcText);
     if (srcText == dstText) {
-            //初始化选中任意文件基本名称
-            QTextCursor cursor = item->edit->textCursor();
-            cursor.setPosition(0);
-            cursor.setPosition(baseNameLength, QTextCursor::KeepAnchor);
-            item->edit->setTextCursor(cursor);
+        //初始化选中任意文件基本名称
+        QTextCursor cursor = item->edit->textCursor();
+        cursor.setPosition(0);
+        cursor.setPosition(baseNameLength, QTextCursor::KeepAnchor);
+        item->edit->setTextCursor(cursor);
     } else {
         // 修改文件的命名规则 弹出提示框(气泡提示)
         if (!this->parent() || !this->parent()->parent()) {
@@ -1111,7 +1130,7 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     }
 
     QStyleOptionViewItem opt = option;
-//    initStyleOption(&opt, index);
+    //    initStyleOption(&opt, index);
 
     bool isSelected = parent()->isSelected(index) && opt.showDecorationSelected;
     /// if has selected show all file name else show elide file name.
@@ -1124,7 +1143,8 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
     bool elide = (!isSelected || !singleSelected);
 
-    auto lines = drawText(index, nullptr, str, label_rect,
+    //此处慎重更改 auto lines会同步document属性,更改后导致行数的计算错误影响绘制
+    auto lines = drawText(index, nullptr, str, QRect(label_rect.topLeft(), QSize(label_rect.width(), INT_MAX)),
                           ICON_MODE_RECT_RADIUS, isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
                           QTextOption::WrapAtWordBoundaryOrAnywhere, elide ? opt.textElideMode : Qt::ElideNone,
                           Qt::AlignCenter);
@@ -1249,14 +1269,14 @@ void DIconItemDelegate::updateItemSizeHint()
 {
     Q_D(DIconItemDelegate);
 
-//    d->elideMap.clear();
-//    d->wordWrapMap.clear();
-//    d->textHeightMap.clear();
+    //    d->elideMap.clear();
+    //    d->wordWrapMap.clear();
+    //    d->textHeightMap.clear();
     d->textLineHeight = parent()->parent()->fontMetrics().lineSpacing();
 
     int width = parent()->parent()->iconSize().width() + 30;
     int height = parent()->parent()->iconSize().height() + 2 * COLUMU_PADDING
-                 + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * d->textLineHeight;
+            + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * d->textLineHeight;
     int size = qMax(width, height);
     d->itemSizeHint = QSize(size, size);
     //d->itemSizeHint = QSize(width, parent()->parent()->iconSize().height() + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * d->textLineHeight);
@@ -1282,7 +1302,7 @@ void DIconItemDelegate::setFocusTextBackgroundBorderColor(QColor focusTextBackgr
 
     d->focusTextBackgroundBorderColor = focusTextBackgroundBorderColor;
 
-//    if (d->expandedItem)
+    //    if (d->expandedItem)
     //        d->expandedItem->setBorderColor(focusTextBackgroundBorderColor);
 }
 
