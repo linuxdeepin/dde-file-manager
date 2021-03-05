@@ -93,7 +93,7 @@ QWidget *DFMSideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptio
     QWidget *editor = DStyledItemDelegate::createEditor(parent, option, index);
     QLineEdit *qle = nullptr;
     if ((qle = dynamic_cast<QLineEdit *>(editor))) {
-        QRegExp regx("^[^\\.\\\\/\':\\*\\?\"<>|%&][^\\\\/\':\\*\\?\"<>|%&]+"); //屏蔽特殊字符
+        QRegExp regx("^[^\\.\\\\/\':\\*\\?\"<>|%&][^\\\\/\':\\*\\?\"<>|%&]*"); //屏蔽特殊字符
         QValidator *validator = new QRegExpValidator(regx, qle);
         qle->setValidator(validator);
         const QString &fs = sourceInfo->extraProperties()["fsType"].toString();
