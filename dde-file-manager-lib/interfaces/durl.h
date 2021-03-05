@@ -122,6 +122,7 @@ public:
     bool isSFTPFile() const;
     bool isTaggedFile() const;
     bool isVaultFile() const;
+    bool isSupportSearch() const;
 
     QString toString(FormattingOptions options = FormattingOptions(PrettyDecoded)) const;
 
