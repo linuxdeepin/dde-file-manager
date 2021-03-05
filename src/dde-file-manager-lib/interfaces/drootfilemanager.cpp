@@ -197,6 +197,7 @@ void DRootFileManager::startQuryRootFile()
                 emit rootFileChange(chi); // 其实中间结果没有必要,直接拿最终结果就行了,但保留接口，以后便于扩展
             }
         }
+        d_ptr->m_bRootFileInited.store(true);
     }, Qt::DirectConnection);
     connect(d_ptr->m_jobcontroller, &JobController::finished, this, [this]() {
         QMutexLocker locker(&d_ptr->rootfileMtx);
