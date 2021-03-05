@@ -52,11 +52,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Das Gerät ist beschäftigt, kann jetzt nicht ausgeworfen werden</translation>
+        <translation type="vanished">Das Gerät ist beschäftigt, kann jetzt nicht ausgeworfen werden</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>Das Gerät ist beschäftigt, kann jetzt nicht entfernt werden</translation>
+        <translation type="vanished">Das Gerät ist beschäftigt, kann jetzt nicht entfernt werden</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

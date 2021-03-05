@@ -52,11 +52,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>འོད་སྡེར་བྲེལ་བཞིན་འདུག་པས། ཕྱིར་བཏོན་ཐབས་བྲལ། </translation>
+        <translation type="vanished">འོད་སྡེར་བྲེལ་བཞིན་འདུག་པས། ཕྱིར་བཏོན་ཐབས་བྲལ། </translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>འོད་སྡེར་བྲེལ་བཞིན་འདུག་པས། བདེ་འཇགས་ངང་ཕྱིར་བཏོན་ཐབས་བྲལ། </translation>
+        <translation type="vanished">འོད་སྡེར་བྲེལ་བཞིན་འདུག་པས། བདེ་འཇགས་ངང་ཕྱིར་བཏོན་ཐབས་བྲལ། </translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

@@ -52,11 +52,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>دىسكا ئالدىراش ، ھازىر چىقىرىۋېتەلمەيدۇ</translation>
+        <translation type="vanished">دىسكا ئالدىراش ، ھازىر چىقىرىۋېتەلمەيدۇ</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>دىسكا ئالدىراش ، ھازىر بىخەتەر چىقىرىۋېتەلمەيدۇ</translation>
+        <translation type="vanished">دىسكا ئالدىراش ، ھازىر بىخەتەر چىقىرىۋېتەلمەيدۇ</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

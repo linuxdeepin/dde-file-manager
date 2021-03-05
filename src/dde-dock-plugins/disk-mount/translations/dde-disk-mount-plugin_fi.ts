@@ -52,11 +52,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Laite on varattu, eikä sitä voi avata</translation>
+        <translation type="vanished">Laite on varattu, eikä sitä voi avata</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>Laite on varattu, eikä sitä voi poistaa</translation>
+        <translation type="vanished">Laite on varattu, eikä sitä voi poistaa</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

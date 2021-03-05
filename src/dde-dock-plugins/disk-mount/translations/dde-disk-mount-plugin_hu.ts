@@ -52,11 +52,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Az eszköz használatban van, jelenleg nem választható le</translation>
+        <translation type="vanished">Az eszköz használatban van, jelenleg nem választható le</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>Az eszköz használatban van, jelenleg nem távolítható el</translation>
+        <translation type="vanished">Az eszköz használatban van, jelenleg nem távolítható el</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

@@ -52,11 +52,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Pajisja është e zënë, s’mund të nxirret tani</translation>
+        <translation type="vanished">Pajisja është e zënë, s’mund të nxirret tani</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>Pajisja është e zënë, s’mund të hiqet tani</translation>
+        <translation type="vanished">Pajisja është e zënë, s’mund të hiqet tani</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

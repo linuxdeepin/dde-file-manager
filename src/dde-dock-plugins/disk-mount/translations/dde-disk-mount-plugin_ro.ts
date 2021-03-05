@@ -52,11 +52,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Dispozitivul este ocupat, nu pot scoate acum</translation>
+        <translation type="vanished">Dispozitivul este ocupat, nu pot scoate acum</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>Dispozitivul este ocupat, nu poate fi eliminat acum</translation>
+        <translation type="vanished">Dispozitivul este ocupat, nu poate fi eliminat acum</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

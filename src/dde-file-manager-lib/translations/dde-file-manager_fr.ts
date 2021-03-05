@@ -227,10 +227,10 @@
         <location filename="../models/computermodel.cpp" line="183"/>
         <location filename="../models/computermodel.cpp" line="194"/>
         <location filename="../models/computermodel.cpp" line="196"/>
-        <location filename="../models/computermodel.cpp" line="626"/>
-        <location filename="../models/computermodel.cpp" line="630"/>
-        <location filename="../models/computermodel.cpp" line="663"/>
-        <location filename="../models/computermodel.cpp" line="667"/>
+        <location filename="../models/computermodel.cpp" line="625"/>
+        <location filename="../models/computermodel.cpp" line="629"/>
+        <location filename="../models/computermodel.cpp" line="662"/>
+        <location filename="../models/computermodel.cpp" line="666"/>
         <source>Disks</source>
         <translation>Disques</translation>
     </message>
@@ -967,98 +967,103 @@
         <translation>Le dossier cible se trouve dans le dossier source</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="656"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="243"/>
+        <source>The action is not supported</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="658"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>copier</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1061"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1064"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation>Impossible d&apos;ouvrir le répertoire, cause : nom de fichier trop long</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1219"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1698"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1968"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2113"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1226"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1705"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1975"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2120"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation>Impossible d&apos;ouvrir le fichier, cause : nom de fichier trop long</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3118"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3194"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3125"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3201"/>
         <source>Failed to write the file, cause:</source>
         <translation>Échec de l&apos;écriture du fichier, cause :</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3987"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3994"/>
         <source>Syncing data</source>
         <translation>Synchronisation des données</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3987"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3994"/>
         <source>Please wait</source>
         <translation>Attendez, s&apos;il vous plaît</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1071"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1074"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>Impossible de créer le répertoire, cause : %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1231"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1262"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1710"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1742"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1981"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2837"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1238"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1269"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1717"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1749"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1988"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2844"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Impossible d&apos;ouvrir le fichier, cause : %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1258"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1738"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1265"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1745"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>Échec de l&apos;ouverture du fichier, cause : Autorisation refusée</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1372"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2045"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1379"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2052"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>Impossible de lire le fichier, cause : %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1440"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1515"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2912"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3003"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1447"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1522"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2919"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3010"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>Impossible d&apos;écrire le fichier, cause : %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1637"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1644"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>L&apos;intégrité du fichier a été endommagée, cause : %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2126"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2145"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2133"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2152"/>
         <source>Failed to open the file, cause: </source>
         <translation>Échec de l&apos;ouverture du fichier, cause :</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2215"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2222"/>
         <source>Failed to read the file, cause: </source>
         <translation>Échec de la lecture du fichier, cause :</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2299"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2306"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>Impossible de supprimer le fichier, cause : %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2393"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2400"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>Impossible de créer un lien symbolique, cause : %1</translation>
     </message>
@@ -1066,39 +1071,39 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1091"/>
-        <location filename="../views/dfiledialog.cpp" line="1376"/>
+        <location filename="../views/dfiledialog.cpp" line="1097"/>
+        <location filename="../views/dfiledialog.cpp" line="1382"/>
         <source>Save</source>
         <translation>Enregistrer</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1281"/>
+        <location filename="../views/dfiledialog.cpp" line="1287"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 existe déjà, voulez-vous le remplacer ?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1241"/>
-        <location filename="../views/dfiledialog.cpp" line="1282"/>
+        <location filename="../views/dfiledialog.cpp" line="1247"/>
+        <location filename="../views/dfiledialog.cpp" line="1288"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1240"/>
+        <location filename="../views/dfiledialog.cpp" line="1246"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation>Ce fichier sera masqué si le nom du fichier commence par un point (.). Voulez-vous le masquer ?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1242"/>
+        <location filename="../views/dfiledialog.cpp" line="1248"/>
         <source>Confirm</source>
         <translation>Confirmer</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1283"/>
+        <location filename="../views/dfiledialog.cpp" line="1289"/>
         <source>Replace</source>
         <translation>Remplacer</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1373"/>
+        <location filename="../views/dfiledialog.cpp" line="1379"/>
         <source>Open</source>
         <translation>Ouvrir</translation>
     </message>
@@ -1106,12 +1111,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1150"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1154"/>
         <source>Trash</source>
         <translation>Corbeille</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1159"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1163"/>
         <source>Empty</source>
         <translation>Vide</translation>
     </message>
@@ -1164,12 +1169,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2492"/>
+        <location filename="../views/dfileview.cpp" line="2501"/>
         <source>Mounting failed</source>
         <translation>Le montage a échoué</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3189"/>
+        <location filename="../views/dfileview.cpp" line="3203"/>
         <source>(Reverse)</source>
         <translation>(Inverse)</translation>
     </message>
@@ -1492,7 +1497,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="924"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1330"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1434"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <translation>Confirmer</translation>
     </message>
@@ -1777,12 +1781,12 @@
         <translation>Redémarrer</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1117"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1122"/>
         <source>Permission denied</source>
         <translation>Permission refusée</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1118"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1123"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>Vous n&apos;êtes pas autorisé à parcourir les fichiers qu&apos;il contient</translation>
     </message>
@@ -2353,72 +2357,72 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="773"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="774"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>Impossible de vérifier l&apos;identité de %1.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="774"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="775"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Cela se produit lorsque vous vous connectez à un ordinateur pour la première fois.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="775"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="776"/>
         <source>The identity sent by the remote computer is</source>
         <translation>L&apos;identité envoyée par l&apos;ordinateur distant est</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="777"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="778"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Si vous voulez être absolument sûr de pouvoir continuer en toute sécurité, contacter l&apos;administrateur système.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="824"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="828"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1444"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1450"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1453"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="825"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="829"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1445"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1451"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1454"/>
         <source>Mounting device error</source>
         <translation>Erreur de montage de l&apos;appareil</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="824"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1450"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="825"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1451"/>
         <source>Wrong username or password</source>
         <translation>Nom d&apos;utilisateur ou mot de passe incorrect</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1681"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1850"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1682"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1851"/>
         <source>Cannot find the mounted device</source>
         <translation>Impossible de trouver le périphérique monté</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1595"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1596"/>
         <source>No key available to unlock device</source>
         <translation>Aucune clé disponible pour déverrouiller l&apos;appareil</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1672"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1673"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>Le disque est monté par l&apos;utilisateur &quot;% 1&quot;, vous ne pouvez pas le démonter.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1675"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1684"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1710"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1829"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1853"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1676"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1685"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1711"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1830"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1854"/>
         <source>Confirm</source>
         <translation>Confirmer</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1707"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1708"/>
         <source>Cannot unmount the device</source>
         <translation>Impossible de démonter l&apos;appareil</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1825"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1826"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>Impossible d&apos;éjecter le périphérique &quot;%1&quot;</translation>
     </message>
@@ -2426,7 +2430,7 @@
 <context>
     <name>MasteredMediaController</name>
     <message>
-        <location filename="../controllers/masteredmediacontroller.cpp" line="365"/>
+        <location filename="../controllers/masteredmediacontroller.cpp" line="366"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>Impossible de graver. Espace libre insuffisant sur le disque cible.</translation>
     </message>
@@ -3112,7 +3116,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="107"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1160"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1164"/>
         <source>Empty Trash</source>
         <translation>Vider la corbeille</translation>
     </message>
@@ -3417,12 +3421,12 @@
         <translation>%1 éléments</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1214"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1215"/>
         <source>Shortcut</source>
         <translation>Raccourci</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="754"/>
+        <location filename="../interfaces/dfileservices.cpp" line="755"/>
         <source>Create symlink</source>
         <translation>Créer un lien symbolique</translation>
     </message>
@@ -3444,24 +3448,24 @@
         <translation>Chargement...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="841"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="842"/>
         <source>File has been moved or deleted</source>
         <translation>Le fichier a été déplacé ou supprimé</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="847"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="848"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>Vous n&apos;êtes pas autorisé à parcourir les fichiers qu&apos;il contient</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="843"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="856"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="862"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="844"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="857"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="863"/>
         <source>You do not have permission to access this folder</source>
         <translation>Vous n&apos;êtes pas autorisé à accéder à ce dossier</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="867"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="868"/>
         <location filename="../models/masteredmediafileinfo.cpp" line="279"/>
         <location filename="../models/recentfileinfo.cpp" line="253"/>
         <location filename="../models/trashfileinfo.cpp" line="367"/>
@@ -3783,31 +3787,31 @@
     <message>
         <location filename="../models/computermodel.cpp" line="181"/>
         <location filename="../models/computermodel.cpp" line="192"/>
-        <location filename="../models/computermodel.cpp" line="600"/>
+        <location filename="../models/computermodel.cpp" line="599"/>
         <source>Disks</source>
         <translation>Disques</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="694"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="750"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="696"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="753"/>
         <source>Failed to create file info</source>
         <translation>Échec de la création des informations du fichier</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="722"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="725"/>
         <source>Failed to create file handler</source>
         <translation>Échec de la création du gestionnaire de fichiers</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1766"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1792"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1816"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1773"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1799"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1823"/>
         <source>Execution error</source>
         <translation>Erreur d&apos;exécution</translation>
     </message>
     <message>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="898"/>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="1034"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="912"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1045"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="452"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="640"/>
         <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>

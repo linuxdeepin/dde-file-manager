@@ -52,11 +52,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Schijf is in gebruik; je kunt nu niet uitwerpen</translation>
+        <translation type="vanished">Schijf is in gebruik; je kunt nu niet uitwerpen</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>Schijf is in gebruik; je kunt nu niet afkoppelen</translation>
+        <translation type="vanished">Schijf is in gebruik; je kunt nu niet afkoppelen</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

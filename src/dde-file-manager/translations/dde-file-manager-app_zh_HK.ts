@@ -2,12 +2,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../main.cpp" line="162"/>
+        <location filename="../main.cpp" line="167"/>
         <source>File Manager</source>
         <translation>檔案管理員</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="166"/>
+        <location filename="../main.cpp" line="171"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>檔案管理員是一款功能強大的文件管理工具， 它包括搜索、複製、回收站、壓縮/解壓縮， 文件屬性等管理功能。</translation>
     </message>

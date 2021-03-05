@@ -227,10 +227,10 @@
         <location filename="../models/computermodel.cpp" line="183"/>
         <location filename="../models/computermodel.cpp" line="194"/>
         <location filename="../models/computermodel.cpp" line="196"/>
-        <location filename="../models/computermodel.cpp" line="626"/>
-        <location filename="../models/computermodel.cpp" line="630"/>
-        <location filename="../models/computermodel.cpp" line="663"/>
-        <location filename="../models/computermodel.cpp" line="667"/>
+        <location filename="../models/computermodel.cpp" line="625"/>
+        <location filename="../models/computermodel.cpp" line="629"/>
+        <location filename="../models/computermodel.cpp" line="662"/>
+        <location filename="../models/computermodel.cpp" line="666"/>
         <source>Disks</source>
         <translation>磁盘</translation>
     </message>
@@ -967,98 +967,103 @@
         <translation>目标文件夹位于源文件夹内</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="656"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="243"/>
+        <source>The action is not supported</source>
+        <translation>不支持该操作</translation>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="658"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1061"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1064"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation>目录打开失败，原因：文件名过长</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1219"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1698"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1968"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2113"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1226"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1705"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1975"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2120"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation>文件打开失败，原因：文件名过长</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3118"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3194"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3125"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3201"/>
         <source>Failed to write the file, cause:</source>
         <translation>文件内容写入失败，原因：</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3987"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3994"/>
         <source>Syncing data</source>
         <translation>数据同步中</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3987"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3994"/>
         <source>Please wait</source>
         <translation>请稍候</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1071"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1074"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>目录创建失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1231"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1262"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1710"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1742"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1981"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2837"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1238"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1269"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1717"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1749"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1988"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2844"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>文件打开失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1258"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1738"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1265"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1745"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>文件打开失败，原因：权限不足</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1372"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2045"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1379"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2052"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>文件内容读取失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1440"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1515"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2912"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3003"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1447"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1522"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2919"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3010"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>文件内容写入失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1637"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1644"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>文件完整性检查失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2126"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2145"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2133"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2152"/>
         <source>Failed to open the file, cause: </source>
         <translation>文件打开失败，原因：</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2215"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2222"/>
         <source>Failed to read the file, cause: </source>
         <translation>文件内容读取失败，原因：</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2299"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2306"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>文件删除失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2393"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2400"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>创建链接失败，原因：%1</translation>
     </message>
@@ -1066,39 +1071,39 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1091"/>
-        <location filename="../views/dfiledialog.cpp" line="1376"/>
+        <location filename="../views/dfiledialog.cpp" line="1097"/>
+        <location filename="../views/dfiledialog.cpp" line="1382"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1281"/>
+        <location filename="../views/dfiledialog.cpp" line="1287"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>“%1”已存在，您是否要替换？</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1241"/>
-        <location filename="../views/dfiledialog.cpp" line="1282"/>
+        <location filename="../views/dfiledialog.cpp" line="1247"/>
+        <location filename="../views/dfiledialog.cpp" line="1288"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1240"/>
+        <location filename="../views/dfiledialog.cpp" line="1246"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation>文件名以“.”开始将会隐藏此文件，请确认是否继续?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1242"/>
+        <location filename="../views/dfiledialog.cpp" line="1248"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1283"/>
+        <location filename="../views/dfiledialog.cpp" line="1289"/>
         <source>Replace</source>
         <translation>替换</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1373"/>
+        <location filename="../views/dfiledialog.cpp" line="1379"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
@@ -1106,12 +1111,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1150"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1154"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1159"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1163"/>
         <source>Empty</source>
         <translation>清空</translation>
     </message>
@@ -1164,12 +1169,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2492"/>
+        <location filename="../views/dfileview.cpp" line="2501"/>
         <source>Mounting failed</source>
         <translation>挂载失败</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3189"/>
+        <location filename="../views/dfileview.cpp" line="3203"/>
         <source>(Reverse)</source>
         <translation>（反序）</translation>
     </message>
@@ -1492,7 +1497,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="924"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1330"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1434"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
@@ -1777,12 +1781,12 @@
         <translation>重启</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1117"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1122"/>
         <source>Permission denied</source>
         <translation>权限不足</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1118"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1123"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>您没有权限遍历子文件</translation>
     </message>
@@ -2353,72 +2357,72 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="773"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="774"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>无法确认%1的身份。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="774"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="775"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>当您首次登录时会看到这个提示。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="775"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="776"/>
         <source>The identity sent by the remote computer is</source>
         <translation>远程电脑发送的身份信息为</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="777"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="778"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>若想确认继续操作是否安全，请联系系统管理员。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="824"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="828"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1444"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1450"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1453"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="825"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="829"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1445"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1451"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1454"/>
         <source>Mounting device error</source>
         <translation>挂载设备出错</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="824"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1450"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="825"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1451"/>
         <source>Wrong username or password</source>
         <translation>用户名或密码错误</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1681"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1850"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1682"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1851"/>
         <source>Cannot find the mounted device</source>
         <translation>找不到对应的挂载设备</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1595"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1596"/>
         <source>No key available to unlock device</source>
         <translation>没有密钥解锁设备</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1672"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1673"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>磁盘由用户“%1”挂载，您没有卸载权限。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1675"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1684"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1710"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1829"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1853"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1676"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1685"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1711"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1830"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1854"/>
         <source>Confirm</source>
         <translation>确认</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1707"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1708"/>
         <source>Cannot unmount the device</source>
         <translation>无法卸载设备</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1825"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1826"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>无法弹出设备 &quot;%1&quot;</translation>
     </message>
@@ -2426,7 +2430,7 @@
 <context>
     <name>MasteredMediaController</name>
     <message>
-        <location filename="../controllers/masteredmediacontroller.cpp" line="365"/>
+        <location filename="../controllers/masteredmediacontroller.cpp" line="366"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>目标磁盘剩余空间不足，无法进行刻录！</translation>
     </message>
@@ -3112,7 +3116,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="107"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1160"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1164"/>
         <source>Empty Trash</source>
         <translation>清空回收站</translation>
     </message>
@@ -3417,12 +3421,12 @@
         <translation>%1 项</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1214"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1215"/>
         <source>Shortcut</source>
         <translation>快捷方式</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="754"/>
+        <location filename="../interfaces/dfileservices.cpp" line="755"/>
         <source>Create symlink</source>
         <translation>创建链接</translation>
     </message>
@@ -3444,24 +3448,24 @@
         <translation>正在加载...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="841"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="842"/>
         <source>File has been moved or deleted</source>
         <translation>文件已被移动或删除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="847"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="848"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>您没有权限遍历子文件</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="843"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="856"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="862"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="844"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="857"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="863"/>
         <source>You do not have permission to access this folder</source>
         <translation>您没有权限访问该文件夹</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="867"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="868"/>
         <location filename="../models/masteredmediafileinfo.cpp" line="279"/>
         <location filename="../models/recentfileinfo.cpp" line="253"/>
         <location filename="../models/trashfileinfo.cpp" line="367"/>
@@ -3783,31 +3787,31 @@
     <message>
         <location filename="../models/computermodel.cpp" line="181"/>
         <location filename="../models/computermodel.cpp" line="192"/>
-        <location filename="../models/computermodel.cpp" line="600"/>
+        <location filename="../models/computermodel.cpp" line="599"/>
         <source>Disks</source>
         <translation>磁盘</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="694"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="750"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="696"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="753"/>
         <source>Failed to create file info</source>
         <translation>文件信息创建失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="722"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="725"/>
         <source>Failed to create file handler</source>
         <translation>文件处理程序创建失败</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1766"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1792"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1816"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1773"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1799"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1823"/>
         <source>Execution error</source>
         <translation>执行错误</translation>
     </message>
     <message>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="898"/>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="1034"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="912"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1045"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="452"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="640"/>
         <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
