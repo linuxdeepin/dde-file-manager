@@ -345,6 +345,12 @@ public:
 
     virtual bool needCompleteDelete() const;
 
+    /**
+    * @brief isDragCompressFile 判断是否是支持拖拽压缩的文件格式
+    * @return
+    */
+    virtual bool isDragCompressFileFormat() const;
+
 protected:
     explicit DAbstractFileInfo(DAbstractFileInfoPrivate &dd);
     void setProxy(const DAbstractFileInfoPointer &proxy);

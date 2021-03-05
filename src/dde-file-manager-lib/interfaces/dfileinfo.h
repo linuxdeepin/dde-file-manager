@@ -125,6 +125,12 @@ public:
     // 此函数高频调用，使用 DFileInfo 会降低性能
     static bool fileIsWritable(const QString &path, uint ownerId);
 
+    /**
+    * @brief isDragCompressFile 判断是否是支持拖拽压缩的文件
+    * @return
+    */
+    bool isDragCompressFileFormat() const override;
+
 protected:
     explicit DFileInfo(DFileInfoPrivate &dd);
 

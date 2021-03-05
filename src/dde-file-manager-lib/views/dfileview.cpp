@@ -1735,16 +1735,38 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
                 }
             }
 
-            // 判断是否是压缩文件，是否只读，设置事件状态
-            if (fileInfo->canDragCompress() && fileInfo->isWritable()) {
-                event->setDropAction(Qt::CopyAction);
-            }
-
             if (DFileDragClient::checkMimeData(event->mimeData())) {
                 event->acceptProposedAction();
                 setTargetUrlToApp(event->mimeData(), fileInfo->fileUrl());
             } else {
                 event->accept();
+            }
+
+            // 判断是否是压缩文件，是否只读，设置事件状态
+            if (fileInfo->canDrop() && fileInfo->canDragCompress()) {
+                // 设置当拖拽gvfs文件时，不支持追加压缩
+                if (!m_urlsForDragEvent.isEmpty()) {
+                    const DAbstractFileInfoPointer &dragfileInfo = DFileService::instance()->createFileInfo(this, DUrl(m_urlsForDragEvent.first()));
+                    if (dragfileInfo->isGvfsMountFile()) {
+                        event->setDropAction(Qt::MoveAction);
+                        return event->ignore();
+                    }
+                }
+
+                // 搜索界面中，除去回收站和最近使用的搜索界面,其余支持拖拽压缩
+                const DUrl &toUrl = model()->getUrlByIndex(d->dragMoveHoverIndex);
+                if (toUrl.isSearchFile()) {
+                    if (!(toUrl.fragment().startsWith(RECENT_ROOT) || toUrl.fragment().startsWith(TRASH_ROOT))) {
+                        return event->setDropAction(Qt::CopyAction);
+                    }
+                }
+
+                // 父目录为只读文件时，不支持追加压缩
+                const DAbstractFileInfoPointer &parentInfo = model()->fileInfo(d->dragMoveHoverIndex.parent());
+                if (parentInfo && parentInfo->isWritable()) {
+                    return event->setDropAction(Qt::CopyAction);
+                }
+                return event->ignore();
             }
         }
     }
