@@ -1727,7 +1727,7 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
             const DAbstractFileInfoPointer &srcInfo = model()->fileInfo(selectionModel()->currentIndex());
             if (srcInfo) {
                 const DUrl &parent = srcInfo->parentUrl();
-                if (parent == fileInfo->fileUrl()) {
+                if (parent == fileInfo->fileUrl() && event->source() == d->fileViewHelper->parent()) {
                     d->dragMoveHoverIndex = QModelIndex();
                     update();
 
