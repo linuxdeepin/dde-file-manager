@@ -358,7 +358,9 @@ void DToolBar::forward()
 
 void DToolBar::handleHotkeyCtrlF(quint64 winId)
 {
-    if (winId == WindowManager::getWindowId(this)) {
+    // fix bug 65436
+    // 仅当搜索/过滤按钮可见时才响应Ctrl+F
+    if (winId == WindowManager::getWindowId(this) && m_searchButton->isVisible()) {
         onSearchButtonClicked();
     }
 }
