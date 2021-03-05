@@ -497,6 +497,13 @@ void UserShareManager::deleteUserShareByShareName(const QString &shareName)
         qDebug() << "closeSmbShareByShareName:" << reply.error();
         QMap<QString, ShareInfo> shareInfoCache = m_shareInfos;
         if (shareInfoCache.contains(shareName)) {
+            /*fix 64070 root用户共享的文件，普通用户去取消该共享的时候需要做弹窗处理*/
+            QString filename = shareName.toLower(); //文件名小写
+            auto getShareUid = getCreatorUidByShareName("/var/lib/samba/usershares/" + filename);
+            if (DFMGlobal::getUserId() != getShareUid) { //对比文件属主与共享属主
+                if (!DFMGlobal::isRootUser())
+                    dialogManager->showErrorDialog(tr("You do not have permission to operate file/folder!"), QString());
+            }
             const QString &filePath = shareInfoCache.value(shareName).path();
             emit userShareDeletedFailed(filePath);
         }
