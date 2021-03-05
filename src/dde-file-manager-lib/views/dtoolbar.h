@@ -72,7 +72,7 @@ public:
 
     void setCustomActionList(const QList<QAction *> &list);
     void triggerActionByIndex(int index);
-    void showFilterButton();
+    void setSearchButtonVisible(bool visble);
 
 signals:
     void refreshButtonClicked();
@@ -103,7 +103,7 @@ private:
     void onForwardButtonClicked();
     void setEnterText(QString &text);
 
-    bool m_searchState = false;
+    bool m_searchVisible = false;
     QFrame *m_addressToolBar;
     DButtonBoxButton *m_backButton = nullptr;
     DButtonBoxButton *m_forwardButton = nullptr;
