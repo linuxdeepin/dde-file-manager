@@ -1067,7 +1067,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     //设置鼠标状态，查看文件状态是否存在
     setCursorBusyState(true);
 
-    if (rootFileName.startsWith(SMB_SCHEME)) {
+    if (rootFileName.startsWith(SMB_SCHEME) || rootFileName.startsWith(SFTP_SCHEME)) {
         DAbstractFileInfoPointer rootptr = createFileInfo(nullptr, rootUrl);
         bool fileexit = rootptr->exists();
         setCursorBusyState(false);
