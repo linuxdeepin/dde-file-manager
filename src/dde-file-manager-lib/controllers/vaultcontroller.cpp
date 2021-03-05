@@ -428,8 +428,6 @@ bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
     bool bDeletedSuccess = DFileService::instance()->deleteFiles(event->sender(), urlList);
     if (bDeletedSuccess) {
         const_cast<VaultController *>(this)->updateFileInfo(urlList);
-        // 修复bug-60748 保险箱搜索界面，删除文件后，刷新下界面
-        emit fileSignalManager->requestFreshAllFileView();
     }
     m_isBigFileDeleting = false;
     return true;
@@ -441,8 +439,6 @@ DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> 
     bool bDeletedSuccess = DFileService::instance()->deleteFiles(event->sender(), urlList);
     if (bDeletedSuccess) {
         const_cast<VaultController *>(this)->updateFileInfo(urlList);
-        // 修复bug-60748 保险箱搜索界面，删除文件后，刷新下界面
-        emit fileSignalManager->requestFreshAllFileView();
     }
     m_isBigFileDeleting = false;
     return urlList;
@@ -469,8 +465,6 @@ bool VaultController::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
                                                     vaultToLocalUrl(event->toUrl()));
     if (flg) {
         const_cast<VaultController *>(this)->updateFileInfo(DUrlList() << event->fromUrl());
-        // 刷新下界面
-        emit fileSignalManager->requestFreshAllFileView();
     }
     return flg;
 }

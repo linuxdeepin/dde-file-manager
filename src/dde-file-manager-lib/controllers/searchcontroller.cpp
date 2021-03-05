@@ -685,12 +685,6 @@ const DAbstractFileInfoPointer SearchController::createFileInfo(const QSharedPoi
         url = event->url();
     }
 
-    // 修复bug-59006
-    // 当搜索到的文件在保险箱内时，创建保险箱对象
-    if (url.searchedFileUrl().isValid() && VaultController::isVaultFile(url.searchedFileUrl().toLocalFile())) {
-        return DAbstractFileInfoPointer(new VaultFileInfo(url.searchedFileUrl()));
-    }
-
     return DAbstractFileInfoPointer(new SearchFileInfo(url));
 }
 
