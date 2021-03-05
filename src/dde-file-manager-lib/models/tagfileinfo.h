@@ -50,6 +50,12 @@ public:
      * @return
      */
     QString sizeDisplayName() const override;
+
+    /**
+     * @brief canDragCompress 是否支持拖拽压缩
+     * @return
+     */
+    bool canDragCompress() const override;
 };
 
 
