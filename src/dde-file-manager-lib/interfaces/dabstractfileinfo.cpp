@@ -521,6 +521,13 @@ bool DAbstractFileInfo::needCompleteDelete() const
             && !isVirtualEntry();
 }
 
+bool DAbstractFileInfo::isDragCompressFileFormat() const
+{
+    CALL_PROXY(isDragCompressFileFormat());
+
+    return false;
+}
+
 QString DAbstractFileInfo::symlinkTargetPath() const
 {
     CALL_PROXY(symlinkTargetPath());
@@ -1432,7 +1439,7 @@ bool DAbstractFileInfo::canDrop() const
     }
 
     if (!isSymLink()) {
-        return isDir() || isDesktopFile() || canDragCompress();
+        return isDir() || isDesktopFile() || (canDragCompress() && isDragCompressFileFormat());
     }
 
     DAbstractFileInfoPointer info(const_cast<DAbstractFileInfo *>(this));

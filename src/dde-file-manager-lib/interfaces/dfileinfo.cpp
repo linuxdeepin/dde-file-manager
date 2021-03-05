@@ -473,6 +473,13 @@ bool DFileInfo::fileIsWritable(const QString &path, uint ownerId)
     return false;
 }
 
+bool DFileInfo::isDragCompressFileFormat() const
+{
+    Q_D(const DFileInfo);
+
+    return d->fileInfo.fileName().endsWith(".zip") || d->fileInfo.fileName().endsWith(".7z");
+}
+
 bool DFileInfo::canRename() const
 {
     if (systemPathManager->isSystemPath(absoluteFilePath()))
@@ -678,8 +685,7 @@ bool DFileInfo::canDragCompress() const
 {
     Q_D(const DFileInfo);
 
-    return (d->fileInfo.fileName().endsWith(".zip") || d->fileInfo.fileName().endsWith(".7z"))
-            && d->fileInfo.isWritable();
+    return isDragCompressFileFormat() && d->fileInfo.isWritable();
 }
 
 QString DFileInfo::symlinkTargetPath() const
