@@ -351,6 +351,7 @@ void DFMStyledItemDelegate::paintCircleList(QPainter *painter, QRectF boundingRe
 {
     bool antialiasing = painter->testRenderHint(QPainter::Antialiasing);
     const QPen pen = painter->pen();
+    const QBrush brush = painter->brush();
 
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(QPen(borderColor, 1));
@@ -367,6 +368,7 @@ void DFMStyledItemDelegate::paintCircleList(QPainter *painter, QRectF boundingRe
     }
 
     painter->setPen(pen);
+    painter->setBrush(brush);
     painter->setRenderHint(QPainter::Antialiasing, antialiasing);
 }
 
