@@ -75,6 +75,7 @@ private slots:
     void editUndo();
     void editRedo();
     void doLineEditTextChanged();
+    void resizeFromEditTextChanged();
 
 protected:
     void updateEditorGeometry();
