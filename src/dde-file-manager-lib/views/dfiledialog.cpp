@@ -1209,32 +1209,38 @@ void DFileDialog::onAcceptButtonClicked()
             }
         }
         //无符合扩展名，补扩展名
-        if (!suffixCheck) { //文件名、扩展名匹配？
+        if (!suffixCheck && !nameFilters.isEmpty()) { //文件名、扩展名匹配？
             QMimeDatabase mdb;
-            QString nameFilter = modelCurrentNameFilter(); //当前设置扩展名
-            QString suffix = mdb.suffixForFileName(nameFilter);
-            if (suffix.isEmpty()) { //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
-                QRegExp  regExp(nameFilter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
-                qDebug() << "未通过QMimeDataBase::suffixForFileName查询到匹配的扩展名，尝试使用正则表达式" << nameFilter;
-                for (QMimeType m : mdb.allMimeTypes()) {
-                    for (QString suffixe : m.suffixes()) {
-                        if (regExp.exactMatch(suffixe)) {
-                            suffix = suffixe;
-                            qDebug() << "正则表达式查询到扩展名" << suffixe;
-                            break; //查询到后跳出循环
+            QString nameFilter = nameFilters[statusBar()->comboBox()->currentIndex()]; //当前设置扩展名
+            QStringList newNameFilters = QPlatformFileDialogHelper::cleanFilterList(nameFilter);
+            if (!newNameFilters.isEmpty()) {
+                for (const QString &filter : newNameFilters) {
+                    QString suffix = mdb.suffixForFileName(filter);
+                    if (suffix.isEmpty()) { //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
+                        QRegExp  regExp(filter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
+                        qDebug() << "未通过QMimeDataBase::suffixForFileName查询到匹配的扩展名，尝试使用正则表达式" << filter;
+                        mdb.allMimeTypes().first().suffixes().first();
+                        for (QMimeType m : mdb.allMimeTypes()) {
+                            for (QString suffixe : m.suffixes()) {
+                                if (regExp.exactMatch(suffixe)) {
+                                    suffix = suffixe;
+                                    qDebug() << "正则表达式查询到扩展名" << suffixe;
+                                    break; //查询到后跳出循环
+                                }
+                            }
+                            if (!suffix.isEmpty()) {
+                                break; //查询到后跳出循环
+                            }
                         }
                     }
                     if (!suffix.isEmpty()) {
-                        break; //查询到后跳出循环
+                        qDebug() << "扩展名补全" << suffix;
+                        file_name.append('.' + suffix);
+                        setCurrentInputName(file_name);
                     }
+                    qDebug() << file_name;
                 }
             }
-            if (!suffix.isEmpty()) {
-                qDebug() << "扩展名补全" << suffix;
-                file_name.append('.' + suffix);
-                setCurrentInputName(file_name);
-            }
-            qDebug() << file_name;
         }
 
         if (!file_name.isEmpty()) {
