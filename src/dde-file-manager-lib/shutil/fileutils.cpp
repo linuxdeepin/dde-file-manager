@@ -41,6 +41,7 @@
 #include "dbusinterface/startmanager_interface.h"
 #include "views/dfmopticalmediawidget.h"
 #include "controllers/vaultcontroller.h"
+#include "models/avfsfileinfo.h"
 
 #include <dstorageinfo.h>
 
@@ -1679,7 +1680,12 @@ bool FileUtils::appendCompress(const DUrl &toUrl, const DUrlList &fromUrlList)
     if (!fromUrlList.isEmpty()) {
         QStringList arguments {toUrl.toLocalFile()};
         foreach (const DUrl &url, fromUrlList) {
-            arguments << url.toLocalFile();
+            // 如果是avfs文件，将路径转换为真实路径
+            if (url.isAVFSFile()) {
+                arguments << AVFSFileInfo::realFileUrl(url).toLocalFile();
+            } else {
+                arguments << url.toLocalFile();
+            }
         }
         arguments << "dragdropadd";
         return QProcess::startDetached("deepin-compressor", arguments);
