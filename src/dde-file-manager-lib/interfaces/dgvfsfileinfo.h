@@ -60,6 +60,13 @@ public:
 
     void refreshCachesByStat();
 
+    /**
+     * @brief canDragCompress 是否支持拖拽压缩
+     * @return
+     */
+    bool canDragCompress() const override;
+
+
 protected:
     explicit DGvfsFileInfo(DGvfsFileInfoPrivate &dd);
 

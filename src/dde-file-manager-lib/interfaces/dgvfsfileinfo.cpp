@@ -417,6 +417,12 @@ void DGvfsFileInfo::refreshCachesByStat()
     d->cacheReadTime = statinfo.st_atim.tv_sec;
 }
 
+bool DGvfsFileInfo::canDragCompress() const
+{
+    // gvfs（smb/ftp/sftp/手机）文件不支持拖拽压缩
+    return false;
+}
+
 DGvfsFileInfo::DGvfsFileInfo(DGvfsFileInfoPrivate &dd)
     : DFileInfo(dd)
 {
