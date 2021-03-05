@@ -239,12 +239,7 @@ Qt::DropActions TagFileInfo::supportedDropActions() const
 
 bool TagFileInfo::canDrop() const
 {
-    Q_D(const DAbstractFileInfo);
-
-    if (d->proxy)
-        return d->proxy->canDrop();
-
-    return !fileUrl().tagName().isEmpty();
+    return DAbstractFileInfo::canDrop();
 }
 
 bool TagFileInfo::isVirtualEntry() const
@@ -262,6 +257,12 @@ QString TagFileInfo::sizeDisplayName() const
     }
 
     return FileUtils::formatSize(size());
+}
+
+bool TagFileInfo::canDragCompress() const
+{
+    // 标记文件不支持追加压缩
+    return false;
 }
 
 DUrl TagFileInfo::parentUrl() const
