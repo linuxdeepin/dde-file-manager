@@ -168,6 +168,10 @@ bool WindowManager::enableAutoQuit() const
 
 void WindowManager::showNewWindow(const DUrl &url, const bool &isNewWindow)
 {
+    if (!DFMGlobal::isInitAppOver()) {
+        qInfo() << "window app not init over! " << isNewWindow;
+        return;
+    }
     if (!isNewWindow) {
         for (int i = 0; i < m_windows.count(); i++) {
             QWidget *window = const_cast<QWidget *>(m_windows.keys().at(i));

@@ -60,6 +60,7 @@ ComputerModel::ComputerModel(QObject *parent)
 #endif
         addItem(makeSplitterUrl(tr("My Directories")));
         auto rootInit = [=](const QList<DAbstractFileInfoPointer> &ch){
+            QMutexLocker lx(&m_initItemMutex);
             bool splt = false;
             bool opticalchanged = false;
             for (auto chi : ch) {

@@ -112,6 +112,7 @@ private:
     QList<ComputerModelItemData> m_items;
     DAbstractFileWatcher* m_watcher;
     int m_nitems;
+    QMutex m_initItemMutex;
     static bool m_isQueryRootFileFinshed; // 查询跟目录是否完成
 
 #ifdef ENABLE_ASYNCINIT
