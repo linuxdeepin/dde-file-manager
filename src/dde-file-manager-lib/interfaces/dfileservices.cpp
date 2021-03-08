@@ -980,9 +980,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
 {
     //找出url的rootfile路径，判断rootfile是否存在
     Q_D(DFileService);
-//    printStacktrace(6);
-    //还原设置鼠标状态
-    setCursorBusyState(false);
+//    printStacktrace(6);    
 
     DUrl rooturl;
     QString urlpath = url.path();
@@ -1089,6 +1087,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
         host = ipInfoList[0].mid((spliteIndex >= 0 && spliteIndex < ipInfoList[0].length() - 1)
                 ? spliteIndex + 1 : 0);
     } else {
+        setCursorBusyState(false);
         return true;
     }
 
