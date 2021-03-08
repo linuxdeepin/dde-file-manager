@@ -1665,6 +1665,11 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 void DFileView::dragEnterEvent(QDragEnterEvent *event)
 {
     Q_D(DFileView);
+    // 修复bug-65773 拖拽事件进入前，需要将当前拖拽缓存清空，
+    // 使得程序执行DFileDragClient::setTargetUrl(data, url);
+    // 方便压缩软件获得目的地址，这种方案会导致“系统关闭窗口特效时，拖拽压缩软件中的文件
+    // 反复进出文管时，产生残影”(此方案为临时修复方案)
+    m_currentTargetUrl.clear();
     if (DFileDragClient::checkMimeData(event->mimeData())) {
         event->acceptProposedAction();
         setTargetUrlToApp(event->mimeData(), rootUrl());

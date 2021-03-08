@@ -1184,6 +1184,8 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
 
 void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
 {
+    // 修复bug-65773
+    m_currentTargetUrl.clear();
     if (DFileDragClient::checkMimeData(event->mimeData())) {
         event->acceptProposedAction();
         setTargetUrlToApp(event->mimeData(), currentUrl());
