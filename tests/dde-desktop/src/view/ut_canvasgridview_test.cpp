@@ -9,11 +9,12 @@
 #include <QAbstractScrollArea>
 #include <QEvent>
 #include <QWidget>
+#include <QMouseEvent>
 
 #include <dfilemenu.h>
 #include <DFileDragClient>
 #include "../stub-ext/stubext.h"
-
+#include "../dde-file-manager-lib/testhelper.h"
 
 #define private public
 #define protected public
@@ -22,6 +23,7 @@
 #include <view/canvasviewmanager.h>
 #include <view/backgroundmanager.h>
 #include <view/canvasgridview.h>
+#include <view/private/canvasviewprivate.h>
 #include <presenter/gridmanager.h>
 #include <dfilesystemmodel.h>
 #include "../model/dfileselectionmodel.h"
@@ -52,38 +54,66 @@ class CanvasGridViewTest : public testing::Test
 public:
     CanvasGridViewTest():Test(){
     }
+
     virtual void SetUp() override{
         //以防桌面没文件
         path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-        QFile file(path + '/' + tstFile);
-        file.open(QIODevice::ReadWrite | QIODevice::NewOnly);
-        file.write("test");
-        file.close();
-
-        QDir dir;
-        dir.mkpath(path + '/' + tstDir);
-
         m_cvmgr.reset(new CanvasViewManager(new BackgroundManager()));
         for(auto tpCanvas : m_cvmgr->m_canvasMap.values()){
             if(1 == tpCanvas->screenNum()){
                 m_canvasGridView = tpCanvas.data();
-                break;
             }
+            tpCanvas->hide();
         }
     }
 
     virtual void TearDown()override{
-        QDir dir(path);
-        dir.remove(tstFile);
-        dir.rmpath(dir.filePath(tstDir));
+
     }
 public:
     QScopedPointer<CanvasViewManager> m_cvmgr;
     CanvasGridView *m_canvasGridView{nullptr};
-    QString tstFile = "testutxxxxxxxxxxx.txt";
-    QString tstDir = "test-dir-utxxxxxxxxxx";
+    static QString tstFile;
+    static QString tstDir;
     QString path;
 };
+
+QString CanvasGridViewTest::tstFile = "testutxxxxxxxxxxx.txt";
+QString CanvasGridViewTest::tstDir = "test-dir-utxxxxxxxxxx";
+
+void waitDataEvent(CanvasGridView *view)
+{
+    if (!view)
+        return;
+
+    auto model = view->model();
+    if (!model)
+        return;
+
+    QEventLoop loop;
+    QObject::connect(model, &DFileSystemModel::sigJobFinished, &loop,&QEventLoop::quit,Qt::QueuedConnection);
+    QTimer::singleShot(2000, &loop, &QEventLoop::quit);
+    loop.exec();
+    view->delayCustom(0);
+}
+
+#define waitData(view) waitDataEvent(view); \
+ASSERT_EQ(m_canvasGridView->model()->rowCount(), GridManager::instance()->allItems().size());
+
+TEST(CanvasGridViewTest_begin, beginTest)
+{
+    auto path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QFile file(path + '/' + CanvasGridViewTest::tstFile);
+    file.open(QIODevice::ReadWrite | QIODevice::NewOnly);
+    file.write("test");
+    file.close();
+
+    QDir dir;
+    dir.mkpath(path + '/' + CanvasGridViewTest::tstDir);
+
+    ASSERT_TRUE(QFileInfo::exists(path + '/' + CanvasGridViewTest::tstFile));
+    ASSERT_TRUE(QFileInfo::exists(path + '/' + CanvasGridViewTest::tstDir));
+}
 
 TEST_F(CanvasGridViewTest, TEST_CanvasGridViewTest_indexAt){
     ASSERT_NE(m_canvasGridView, nullptr);
@@ -266,52 +296,33 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setAutoMerge){
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_mouseMoveEvent){
     ASSERT_NE(m_canvasGridView, nullptr);
-    m_canvasGridView->d->_debug_show_grid = true;
-    auto current1 = m_canvasGridView->mapToGlobal(m_canvasGridView->cursor().pos());
-//    QTest::mouseMove(m_canvasGridView,QPoint(0,0));
-    m_canvasGridView->cursor().setPos(QPoint(0,0));
-//    QMouseEvent me(QEvent::User, QPoint(), Qt::LeftButton, Qt::LeftButton, Qt::KeyboardModifiers());
-    QMouseEvent me(QEvent::MouseMove, QPoint(0, 0), m_canvasGridView->mapToGlobal(QPoint(0, 0)), Qt::NoButton, Qt::NoButton, Qt::KeyboardModifiers());
-    m_canvasGridView->mouseMoveEvent(&me);
-    auto current2 = m_canvasGridView->mapToGlobal(m_canvasGridView->cursor().pos());
-    EXPECT_FALSE(current1 == current2);
+
+    QMouseEvent mv(QEvent::MouseMove,QPointF(0,0), Qt::RightButton, Qt::RightButton, Qt::NoModifier);
+    m_canvasGridView->mouseMoveEvent(&mv);
 
     m_canvasGridView->d->showSelectRect = true;
-    QMouseEvent me2(QEvent::MouseMove, QPoint(500, 600), m_canvasGridView->mapToGlobal(QPoint(500, 600)), Qt::NoButton, Qt::NoButton, Qt::KeyboardModifiers());
-    m_canvasGridView->mouseMoveEvent(&me2);
+    QMouseEvent mv2(QEvent::MouseMove,QPointF(500,600), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    m_canvasGridView->mouseMoveEvent(&mv2);
 }
 
-TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayModelRefresh){
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_paintEvent)
+{
     ASSERT_NE(m_canvasGridView, nullptr);
-    auto temp = m_canvasGridView->model()->rowCount();
-    if(temp){
-        m_canvasGridView->delayModelRefresh(0);
-        auto temp2 = m_canvasGridView->model()->rowCount();
-        EXPECT_FALSE(0 != temp2);
-    }
-    //增加覆盖
-    if (m_canvasGridView->m_refreshTimer == nullptr) {
-        m_canvasGridView->m_refreshTimer = new QTimer;
-        m_canvasGridView->m_refreshTimer->start(300);
-    }
+    waitData(m_canvasGridView);
 
-    m_canvasGridView->delayModelRefresh(10);//will reset timer
-    int interval = m_canvasGridView->m_refreshTimer->interval();
-    EXPECT_EQ(interval, 10);
-    stub_ext::StubExt stu;
-    stu.set_lamda(ADDR(GridManager, delaySyncAllProfile), [](){return;});
-    stu.set_lamda(ADDR(CanvasViewManager, onSyncOperation), [](){return;});
-    m_canvasGridView->m_refreshTimer->start(1);
-    qApp->processEvents();
+    CanvasViewPrivate *vp = m_canvasGridView->d.data();
+    vp->dodgeAnimationing = true;
+    vp->_debug_show_grid = true;
+
+    vp->dodgeItems.append(path + '/' + CanvasGridViewTest::tstFile);
+    vp->dodgeTargetGrid = GridManager::instance()->core();
+
+    QPaintEvent event(QRect(0,0,200,200));
+    m_canvasGridView->paintEvent(&event);
+
+    delete vp->dodgeTargetGrid;
+    vp->dodgeTargetGrid = nullptr;
 }
-
-
-//TEST_F(CanvasGridViewTest, CanvasGridViewTest_paintEvent){
-//    m_canvasGridView->show();
-//    QTimer::singleShot(1000,[=](){
-//        m_canvasGridView->hide();
-//    });
-//}
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_mousePressEvent){
     ASSERT_NE(m_canvasGridView, nullptr);
@@ -909,15 +920,17 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_moveCursorGrid)
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_dragMoveEvent)
 {
     ASSERT_NE(m_canvasGridView, nullptr);
-    //但是会有一个问题。需要桌面对应这两个点位必须有图标才行
+    waitData(m_canvasGridView);
+
     //先设置选中
     QList<DUrl> lst;
-    QString urlPath = GridManager::instance()->firstItemId(m_canvasGridView->m_screenNum);
+    QString urlPath = "file://" + path + '/' + CanvasGridViewTest::tstFile;
     lst << DUrl(urlPath);
     m_canvasGridView->select(lst);
-    qApp->processEvents();
+
     //模拟拖拽数据
     auto tgIndex = m_canvasGridView->model()->index(DUrl(urlPath));
+    ASSERT_TRUE(tgIndex.isValid());
     QModelIndexList tpIndexes;
     tpIndexes.append(tgIndex);
     QMimeData *tgData = m_canvasGridView->model()->mimeData(tpIndexes);
@@ -933,12 +946,17 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_dragMoveEvent)
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_dropEvent)
 {
     ASSERT_NE(m_canvasGridView, nullptr);
+    waitData(m_canvasGridView);
+    ASSERT_GT(m_canvasGridView->model()->rowCount(), 1);
 
     QString urlPath = "file://" + path + "/" + tstFile;
     DUrl urlFile(urlPath);
     DUrl urlDir("file://" + path + "/" + tstDir);
+
     //模拟拖拽数据
     auto tgIndex = m_canvasGridView->model()->index(urlFile);
+    ASSERT_TRUE(tgIndex.isValid());
+
     QModelIndexList tpIndexes;
     tpIndexes.append(tgIndex);
     QMimeData *tgData = m_canvasGridView->model()->mimeData(tpIndexes);
@@ -946,6 +964,8 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_dropEvent)
     //回收站,计算机等
     {
         auto dropIndex = m_canvasGridView->model()->index(urlDir);
+        ASSERT_TRUE(dropIndex.isValid());
+
         StubExt stu;
         QDropEvent dropevent(QPoint(64, 150), Qt::DropAction::CopyAction, tgData, Qt::MouseButton::LeftButton, Qt::NoModifier);
         stu.set_lamda(ADDR(DFileSelectionModel,selectedIndexes),[=](){return tpIndexes;});
@@ -1086,11 +1106,9 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection){
 TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_selectedIndexCount){
     ASSERT_NE(m_canvasGridView, nullptr);
 
-    qApp->processEvents();
+    TestHelper::runInLoop([](){}, 200);
     m_canvasGridView->selectAll();
-    qApp->processEvents();
     auto tempCnt1 = m_canvasGridView->selectionModel()->selectedIndexes().size();
-    qApp->processEvents();
     auto tempCnt2= GridManager::instance()->allItems().size();
     auto expectValue = tempCnt1 == tempCnt2;
     EXPECT_TRUE(expectValue);
@@ -1107,7 +1125,7 @@ TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_selectedUrls){
     qApp->processEvents();
     auto count2 = m_canvasGridView->selectedUrls().size();
     if(GridManager::instance()->allItems().size() != 0)
-        EXPECT_TRUE( count2 != count1);
+        EXPECT_NE(count2, count1);
 }
 
 
@@ -1156,40 +1174,82 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayArrage)
 {
     ASSERT_NE(m_canvasGridView, nullptr);
     m_canvasGridView->setAutoMerge(false);
-    EXPECT_TRUE(!GridManager().instance()->autoMerge());
+    ASSERT_FALSE(GridManager::instance()->autoMerge());
 
-    //why twice?
-    m_canvasGridView->delayArrage(5);//第一次内部创建Static Qtimer
+    stub_ext::StubExt st;
+    bool ok = false;
+    st.set_lamda(ADDR(GridManager,initArrage),[](){});
+    st.set_lamda(ADDR(GridManager,delaySyncAllProfile),[&ok](){ok = true;});
 
-    m_canvasGridView->delayArrage(0);//实现覆盖
+    //立即保存
+    m_canvasGridView->delayArrage(0);
+    EXPECT_TRUE(ok);
+
+    //延迟保存
+    ok = false;
+    m_canvasGridView->delayArrage(1);
     QEventLoop loop;
-    QTimer::singleShot(50, &loop, [&loop]{
-        loop.exit();
-    });
+    QTimer::singleShot(50, &loop, &QEventLoop::quit);
     loop.exec();
+    EXPECT_TRUE(ok);
+}
+
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge)
+{
+    ASSERT_NE(m_canvasGridView, nullptr);
+    waitData(m_canvasGridView);
+    EXPECT_GT(m_canvasGridView->model()->rowCount(), 0);
+
+    stub_ext::StubExt st;
+    bool ok = false;
+    st.set_lamda(ADDR(GridManager,initArrage),[&ok](){ok = true;});
+
+    //return
+    GridManager::instance()->setAutoMerge(false);
+    m_canvasGridView->delayAutoMerge(0);
+    EXPECT_FALSE(ok);
+    ok = false;
+
+    GridManager::instance()->setAutoMerge(true);
+    ASSERT_TRUE(GridManager::instance()->autoMerge());
+
+    m_canvasGridView->delayAutoMerge(0);
+    EXPECT_TRUE(ok);
+
+    ok = false;
+    m_canvasGridView->delayAutoMerge(1);
+    QEventLoop loop;
+    QTimer::singleShot(50, &loop, &QEventLoop::quit);
+    loop.exec();
+    EXPECT_TRUE(ok);
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge_refresh)
 {
     ASSERT_NE(m_canvasGridView, nullptr);
-    m_canvasGridView->setAutoMerge(true);
-    EXPECT_TRUE(GridManager().instance()->autoMerge());
+    waitData(m_canvasGridView);
 
-    //why twice?
-    m_canvasGridView->delayAutoMerge(0);
-    m_canvasGridView->delayAutoMerge(0);
-    EXPECT_EQ(nullptr, m_canvasGridView->m_refreshTimer);
-    //why twice?
+    m_canvasGridView->setAutoMerge(true);
+    ASSERT_TRUE(GridManager::instance()->autoMerge());
+    ASSERT_EQ(m_canvasGridView->m_refreshTimer, nullptr);
+
+    stub_ext::StubExt st;
+    bool ok = false;
+    st.set_lamda(ADDR(DFileSystemModel, refresh), [&ok](){ok = true;});
+
     m_canvasGridView->m_refreshTimer = new QTimer();
     m_canvasGridView->delayModelRefresh(0);
-    m_canvasGridView->delayModelRefresh(0);
-    EXPECT_EQ(nullptr, m_canvasGridView->m_refreshTimer);
-    m_canvasGridView->delayModelRefresh(50);
+    EXPECT_EQ(m_canvasGridView->m_refreshTimer, nullptr);
+    EXPECT_TRUE(ok);
+
+    ok = false;
+    ASSERT_EQ(m_canvasGridView->m_refreshTimer, nullptr);
+    m_canvasGridView->delayModelRefresh(1);
+    EXPECT_NE(m_canvasGridView->m_refreshTimer, nullptr);
     QEventLoop loop;
-    QTimer::singleShot(100, &loop, [&loop]{
-        loop.exit();
-    });
+    QTimer::singleShot(50, &loop, &QEventLoop::quit);
     loop.exec();
+    EXPECT_TRUE(ok);
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge_autoMergeSelectedUrls)
@@ -1242,18 +1302,36 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_fetchDragEventUrlsFromSharedMemory
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_delayCustom)
 {
+    waitData(m_canvasGridView);
     GridManager::instance()->setAutoMerge(false);
-    m_canvasGridView->delayCustom(0);
-    m_canvasGridView->delayCustom(50);
-    QEventLoop loop;
-    QTimer::singleShot(100, &loop, [&loop]{
-        loop.exit();
-    });
-    loop.exec();
+    ASSERT_FALSE(GridManager::instance()->autoMerge());
 
-    stub_ext::StubExt stu;
-    bool ismerge = false;
-    stu.set_lamda(ADDR(GridManager, autoMerge), [&ismerge](){ismerge = true; return true;});
+    auto initCustom = (void (GridManager::*)(QStringList &))&GridManager::initCustom;
+    {
+        stub_ext::StubExt st;
+        bool ok = true;
+        st.set_lamda(ADDR(GridManager,autoArrange), [](){return false;});
+        st.set_lamda(initCustom, [](){});
+        st.set_lamda(ADDR(CanvasGridView, delayArrage), [&ok](){ok = false;});
+        m_canvasGridView->delayCustom(0);
+        EXPECT_TRUE(ok);
+    }
+
+    stub_ext::StubExt st;
+    bool ok = false;
+    st.set_lamda(ADDR(GridManager,autoArrange), [](){return true;});
+    st.set_lamda(initCustom, [&ok](){ok = true;});
+    st.set_lamda(ADDR(CanvasGridView, delayArrage), [](){});
+
+    m_canvasGridView->delayCustom(0);
+    EXPECT_TRUE(ok);
+
+    ok = false;
+    m_canvasGridView->delayCustom(1);
+    QEventLoop loop;
+    QTimer::singleShot(50, &loop, &QEventLoop::quit);
+    loop.exec();
+    EXPECT_TRUE(ok);
 }
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_handleContextMenuAction)
@@ -1287,16 +1365,6 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_handleContextMenuAction)
     m_canvasGridView->handleContextMenuAction(CanvasGridView::IconSize4);
     int level = m_canvasGridView->itemDelegate()->iconSizeLevel();
     EXPECT_EQ(level, CanvasGridView::IconSize4 - CanvasGridView::IconSize0);
-}
-
-TEST_F(CanvasGridViewTest, canvasGridViewTest_paintEvent)
-{
-    m_canvasGridView->d->startDodge = true;
-    m_canvasGridView->d->dodgeAnimationing = false;
-    m_canvasGridView->d->colCount = 2;
-    m_canvasGridView->d->rowCount = 2;
-    QPaintEvent event(QRect(0,0,200,200));
-    m_canvasGridView->paintEvent(&event);
 }
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_autoMergeSelectedUrls)
@@ -1767,3 +1835,10 @@ TEST_F(CanvasGridViewTest, test_isIndexHidden)
     EXPECT_FALSE(m_canvasGridView->isIndexHidden(QModelIndex()));
 }
 
+TEST(CanvasGridViewTest_end, endTest)
+{
+    auto path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QDir dir(path);
+    dir.remove(CanvasGridViewTest::tstFile);
+    dir.rmpath(dir.filePath(CanvasGridViewTest::tstDir));
+}
