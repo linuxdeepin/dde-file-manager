@@ -311,16 +311,18 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
 
     DFMUrlBaseEvent* event = static_cast<DFMUrlBaseEvent*>(user_data);
     DUrl neturl = event->fileUrl();
-    if (neturl.toString().startsWith("smb://") || neturl.toString().startsWith("smb-share://")) {
-        QString smbUri = neturl.toString();
-        if (smbUri.endsWith("/")) {
-            smbUri = smbUri.left(smbUri.length() - 1);
-        }
-        QString filenameprev = smbUri.left(smbUri.lastIndexOf("/") + 1);
-        QString filename = smbUri.right(smbUri.length() - smbUri.lastIndexOf("/") - 1);
-        qDebug() << filenameprev << filename;
-        QString newfilename = filename.toLower();
-        neturl = DUrl(filenameprev+newfilename);
+    static QRegularExpression regExp("^(smb|smb-share)://((?!/).*)/(?<name>((?!/).*))",
+                                     QRegularExpression::DotMatchesEverythingOption
+                                     | QRegularExpression::DontCaptureOption
+                                     | QRegularExpression::OptimizeOnFirstUsageOption);
+    QString urlString = neturl.toString();
+    const QRegularExpressionMatch &match = regExp.match(urlString, 0, QRegularExpression::NormalMatch,
+                                                        QRegularExpression::DontCheckSubjectStringMatchOption);
+    if (match.hasMatch()) {
+        QString filename = match.captured("name");
+        if (!filename.isEmpty())
+            neturl = DUrl(urlString.replace(filename,filename.toLower()));
+        qInfo() << "current net url = " << neturl.toString();
     }
     NetworkNodes.remove(neturl);
     NetworkNodes.insert(neturl, nodeList);
