@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2019 Deepin Technology Co., Ltd.
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     Mike Chen <kegechen@gmail.com>
+ * Author:     yanghao<yanghao@uniontech.com>
  *
- * Maintainer: Mike Chen <chenke_cm@deepin.com>
+ * Maintainer: zhengyouge<zhengyouge@uniontech.com>
+ *             yanghao<yanghao@uniontech.com>
+ *             hujianzhong<hujianzhong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "dfmcrumblistviewmodel.h"
 #include "dtkwidget_global.h"
 
