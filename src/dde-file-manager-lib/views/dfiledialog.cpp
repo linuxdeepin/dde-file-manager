@@ -144,6 +144,11 @@ DFileDialog::DFileDialog(QWidget *parent)
         {
             statusBar()->lineEdit()->setText(statusBar()->lineEdit()->text().chopped(1));
         }
+
+        // fix bug 65861
+        // 输入框中禁止输入某些特殊字符
+        QString dstText = DFMGlobal::preprocessingFileName(statusBar()->lineEdit()->text());
+        statusBar()->lineEdit()->setText(dstText);
     });
 }
 
