@@ -120,7 +120,13 @@ void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
 void DFMSideBarView::dragEnterEvent(QDragEnterEvent *event)
 {
     previousRowCount = model()->rowCount();
-    fetchDragEventUrlsFromSharedMemory();
+    //从view本身拖拽的item不需要从共享内存取url数据
+    if (event->source() == this) {
+        //防止误判之前的url数据，这里清空缓存
+        m_urlsForDragEvent.clear();
+    } else {
+        fetchDragEventUrlsFromSharedMemory();
+    }
 
     if (isAccepteDragEvent(event)) {
         return;
