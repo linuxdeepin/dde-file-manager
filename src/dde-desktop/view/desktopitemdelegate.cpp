@@ -1,12 +1,9 @@
 /*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
+ * Author:     wangchunlin<wangchunlin@uniontech.com>
  *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
+ * Maintainer: wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
