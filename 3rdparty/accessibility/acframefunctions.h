@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2011 ~ 2018 Deepin Technology Co., Ltd.
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     fpc_diesel <fanpengcheng@uniontech.com>
+ * Author:     lvwujun <lvwujun@uniontech.com>
  *
- * Maintainer: fpc_diesel <fanpengcheng@uniontech.com>
+ * Maintainer: lvwujun <lvwujun@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #ifndef ACCESSIBLE_FUNCTIONS_H
 #define ACCESSIBLE_FUNCTIONS_H
 
