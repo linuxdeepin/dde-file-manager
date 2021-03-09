@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2020 UOS Technology Co., Ltd.
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     max-lv <lvwujun@uniontech.com>
+ * Author:     lvwujun <lvwujun@uniontech.com>
  *
- * Maintainer: max-lv <lvwujun@uniontech.com>
+ * Maintainer: lvwujun <lvwujun@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
