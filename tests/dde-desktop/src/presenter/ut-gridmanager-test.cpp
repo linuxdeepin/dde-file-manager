@@ -49,11 +49,6 @@ TEST_F(GridManagerTest, test_remove)
 {
     m_canvasGridView->selectAll();
     QString filepath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    QEventLoop loop;
-    QTimer::singleShot(1000, &loop, [&loop]{
-        loop.exit();
-    });
-    loop.exec();
 
     bool ret;
     DUrlList ulist = m_canvasGridView->selectedUrls();
@@ -95,12 +90,6 @@ TEST_F(GridManagerTest, test_remove)
 TEST_F(GridManagerTest, test_rangeitems)
 {
     m_canvasGridView->selectAll();
-
-    QEventLoop loop;
-    QTimer::singleShot(1000, &loop, [&loop]{
-        loop.exit();
-    });
-    loop.exec();
 
     DUrlList urllist = m_canvasGridView->selectedUrls();
     QStringList strlist;
@@ -144,30 +133,14 @@ TEST_F(GridManagerTest, test_currentscreenmove)
 
     m_canvasGridView->selectAll();
 
-    QEventLoop loop;
-    QTimer::singleShot(1000, &loop, [&loop]{
-        loop.exit();
-    });
-    loop.exec();
-
     DUrlList urllist = m_canvasGridView->selectedUrls();
     QStringList strlist;
     for (auto str : urllist) strlist << str.toString();
     movestatus = m_grid->move(m_canvasGridView->m_screenNum, strlist, url, fpoint.x() + 1, fpoint.y() + 1);
 
-    QEventLoop loop1;
     QPoint secpoint;
-    QTimer::singleShot(1000, &loop1, [&loop1, &secpoint, this, url]{
-        loop1.exit();
-    });
-    loop1.exec();
 
     emit m_grid->d->m_desktopSettings->valueChanged("desktop-computer", "1");
-    QEventLoop loop2;
-    QTimer::singleShot(100, &loop2, [&loop2]{
-        loop2.exit();
-    });
-    loop2.exec();
 
     m_grid->d->reAutoArrage();
     EXPECT_TRUE(movestatus);
@@ -235,11 +208,6 @@ TEST_F(GridManagerTest, test_add)
 
     m_canvasGridView->selectAll();
     m_grid->d->updateProfiles();
-    QEventLoop loop;
-    QTimer::singleShot(100, &loop, [&loop]{
-       loop.exit();
-    });
-    loop.exec();
 
     DUrlList ulist =  m_canvasGridView->selectedUrls();
     QStringList strlist;
@@ -291,11 +259,7 @@ TEST_F(GridManagerTest, test_addtooverlap)
 TEST_F(GridManagerTest, test_popoverlap)
 {
     m_canvasGridView->selectAll();
-    QEventLoop loop;
-    QTimer::singleShot(100, &loop, [&loop]{
-       loop.exit();
-    });
-    loop.exec();
+
     DUrlList ulist = m_canvasGridView->selectedUrls();
     for (auto str : ulist) m_grid->d->m_overlapItems.push_back(str.toString());
     m_grid->popOverlap();
@@ -322,22 +286,12 @@ TEST_F(GridManagerTest, test_differentscreenmove)
     list << temp;
     m_canvasGridView->selectAll();
     QPoint point = m_grid->position(m_canvasGridView->m_screenNum, url);
-    QEventLoop loop;
-    QTimer::singleShot(1000, &loop, [&loop]{
-        loop.exit();
-    });
-    loop.exec();
 
     DUrlList urllist = m_canvasGridView->selectedUrls();
     QStringList strlist;
     for (auto str : urllist) strlist << str.toString();
     movestatus = m_grid->move(m_canvasGridView->m_screenNum,m_canvasGridView->m_screenNum, strlist, url, point.x() + 1, point.y() + 1);
 
-    QEventLoop loop1;
-    QTimer::singleShot(1000, &loop1, [&loop1]{
-        loop1.exit();
-    });
-    loop1.exec();
 
     EXPECT_TRUE(movestatus);
     m_grid->move(m_canvasGridView->m_screenNum,m_canvasGridView->m_screenNum, strlist, url, point.x(), point.y());
