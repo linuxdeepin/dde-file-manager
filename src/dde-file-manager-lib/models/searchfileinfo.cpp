@@ -391,3 +391,11 @@ QIcon SearchFileInfo::fileIcon() const
 
     return QIcon::fromTheme("search");
 }
+
+bool SearchFileInfo::canRename() const
+{
+    Q_D(const DAbstractFileInfo);
+    if (d->proxy)
+        return d->proxy->canRename();
+    return DAbstractFileInfo::canRename();
+}
