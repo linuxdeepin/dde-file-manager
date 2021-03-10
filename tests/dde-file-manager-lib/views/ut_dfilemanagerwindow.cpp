@@ -276,16 +276,16 @@ TEST_F(TestFileManagerWindow, can_show_hide_emptyTrashButton)
     EXPECT_NO_FATAL_FAILURE(m_fileManagerWindow->hideEmptyTrashButton());
 }
 
-TEST_F(TestFileManagerWindow, tst_onNewTabButtonClicked)
-{
-    Stub stub;
-    bool (*ut_isValid)() = [](){return false;};
-    stub.set(ADDR(DUrl, isValid), ut_isValid);
+//TEST_F(TestFileManagerWindow, tst_onNewTabButtonClicked)
+//{
+//    Stub stub;
+//    bool (*ut_isValid)() = [](){return false;};
+//    stub.set(ADDR(DUrl, isValid), ut_isValid);
 
-    DUrl url(COMPUTER_ROOT);
-    DFMApplication::instance()->setAppAttribute(DFMApplication::AA_UrlOfNewTab, url);
-    m_fileManagerWindow->onNewTabButtonClicked();
-}
+//    DUrl url(COMPUTER_ROOT);
+//    DFMApplication::instance()->setAppAttribute(DFMApplication::AA_UrlOfNewTab, url);
+//    m_fileManagerWindow->onNewTabButtonClicked();
+//}
 
 TEST_F(TestFileManagerWindow, tst_requestEmptyTrashFiles)
 {
