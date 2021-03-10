@@ -78,6 +78,8 @@ public:
     QString toLocalFile() const override;
     virtual QIcon fileIcon() const override;
 
+    virtual bool canRename() const;
+
 private:
     DUrl m_parentUrl;
 };

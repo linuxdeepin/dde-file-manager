@@ -1760,6 +1760,11 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
                 // 搜索界面中，除去回收站和最近使用的搜索界面,其余支持拖拽压缩
                 const DUrl &toUrl = model()->getUrlByIndex(d->dragMoveHoverIndex);
                 if (toUrl.isSearchFile()) {
+                    // 判断搜索出来的文件的父目录是否可读
+                    if (!fileInfo->canRename()) {
+                        return event->ignore();
+                    }
+                    // 判断是否是拖拽到最近使用或回收站的搜索目录
                     if (!(toUrl.fragment().startsWith(RECENT_ROOT) || toUrl.fragment().startsWith(TRASH_ROOT))) {
                         return event->setDropAction(Qt::CopyAction);
                     }
