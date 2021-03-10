@@ -2,7 +2,7 @@
  * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
  *               2016 ~ 2018 dragondjf
 /*
- * Copyright (C) 2016 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     gongheng<gongheng@uniontech.com>
  *
