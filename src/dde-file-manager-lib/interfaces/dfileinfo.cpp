@@ -474,7 +474,10 @@ bool DFileInfo::isDragCompressFileFormat() const
 {
     Q_D(const DFileInfo);
 
-    return d->fileInfo.fileName().endsWith(".zip") || d->fileInfo.fileName().endsWith(".7z");
+    // 支持".zip"结尾的，支持".7z"结尾的但不支持".tar.7z"结尾的
+    return d->fileInfo.fileName().endsWith(".zip")
+            || (d->fileInfo.fileName().endsWith(".7z")
+                && !d->fileInfo.fileName().endsWith(".tar.7z"));
 }
 
 bool DFileInfo::canRename() const
