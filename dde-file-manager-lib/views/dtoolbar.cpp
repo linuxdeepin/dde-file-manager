@@ -312,8 +312,8 @@ void DToolBar::currentUrlChanged(const DFMEvent &event)
 
 void DToolBar::setSearchButtonVisible(bool visble)
 {
-    m_searchVisible = visble;
-    m_searchButton->setVisible(visble);
+    if (visble != m_searchButton->isVisible())
+        m_searchButton->setVisible(visble);
 }
 
 void DToolBar::back()
@@ -344,7 +344,7 @@ void DToolBar::forward()
 
 void DToolBar::handleHotkeyCtrlF(quint64 winId)
 {
-    if (winId == WindowManager::getWindowId(this) && WindowManager::getUrlByWindowId(winId).isSupportSearch()) {
+    if (winId == WindowManager::getWindowId(this) && m_searchButton->isVisible()) {
         onSearchButtonClicked();
     }
 }
@@ -408,7 +408,7 @@ void DToolBar::toggleSearchButtonState(bool asb)
         m_searchButton->setFlat(true);
         m_searchButtonAsbState = true;
     } else {
-        m_searchButton->setHidden(!m_searchVisible);
+        m_searchButton->setHidden(false);
         m_searchButton->style()->unpolish(m_searchButton);
         m_searchButton->style()->polish(m_searchButton);
         m_searchButton->setIcon(QIcon::fromTheme("search"));

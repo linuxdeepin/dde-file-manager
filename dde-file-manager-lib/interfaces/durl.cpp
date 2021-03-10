@@ -242,11 +242,6 @@ bool DUrl::isVaultFile() const
     return (this->scheme() == DFMVAULT_SCHEME);
 }
 
-bool DUrl::isSupportSearch() const
-{
-    return !(scheme() == NETWORK_SCHEME || scheme() == USERSHARE_SCHEME || scheme() == SMB_SCHEME);
-}
-
 QString DUrl::toString(QUrl::FormattingOptions options) const
 {
     if (!isValid()) {

@@ -102,7 +102,6 @@ private:
     void onBackButtonClicked();
     void onForwardButtonClicked();
 
-    bool m_searchVisible = true;
     QFrame *m_addressToolBar;
     DButtonBoxButton *m_backButton = nullptr;
     DButtonBoxButton *m_forwardButton = nullptr;

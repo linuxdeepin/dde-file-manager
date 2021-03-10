@@ -546,6 +546,8 @@ public:
     const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
     DUrl url() const Q_DECL_OVERRIDE;
 
+    void close() Q_DECL_OVERRIDE;
+
     bool enableIteratorByKeyword(const QString &keyword) Q_DECL_OVERRIDE;
 
     ///
@@ -1789,6 +1791,12 @@ const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
 DUrl FileDirIterator::url() const
 {
     return iterator->url();
+}
+
+void FileDirIterator::close()
+{
+    if (iterator)
+        iterator->close();
 }
 
 bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
