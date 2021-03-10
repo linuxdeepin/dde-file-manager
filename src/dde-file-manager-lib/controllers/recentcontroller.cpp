@@ -50,7 +50,7 @@ class RecentFileWatcherPrivate;
 class RecentFileWatcher : public DAbstractFileWatcher
 {
 public:
-    explicit RecentFileWatcher(const DUrl &url, QObject *parent = nullptr);
+    explicit RecentFileWatcher(const DUrl &url, DAbstractFileWatcher *proxy, QObject *parent = nullptr);
 
     void setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled = true) override;
 
@@ -61,6 +61,7 @@ private:
     void onFileDeleted(const DUrl &url);
     void onFileAttributeChanged(const DUrl &url);
     void onFileModified(const DUrl &url);
+    void onFileMoved(const DUrl &from, const DUrl &to);
 
 public slots:
     void removeRecentFile(const QString &path);
@@ -78,26 +79,39 @@ public:
     {
         started = true;
 
-        return true;
+        return proxy && proxy->startWatcher();;
     }
 
     bool stop() override
     {
         started = false;
 
-        return true;
+        return proxy && proxy->stopWatcher();
     }
 
     QMap<DUrl, DAbstractFileWatcher *> urlToWatcherMap;
+    QPointer<DAbstractFileWatcher> proxy;
 
     Q_DECLARE_PUBLIC(RecentFileWatcher)
 };
 
-RecentFileWatcher::RecentFileWatcher(const DUrl &url, QObject *parent)
+RecentFileWatcher::RecentFileWatcher(const DUrl &url, DAbstractFileWatcher *proxy, QObject *parent)
     : DAbstractFileWatcher(*new RecentFileWatcherPrivate(this), url, parent)
 {
+    Q_ASSERT(proxy);
+    Q_ASSERT(!proxy->parent());
+
     if (url == DUrl(RECENT_ROOT))
         connect(fileSignalManager, &FileSignalManager::requestRemoveRecentFile, this, &RecentFileWatcher::removeRecentFile);
+
+    proxy->moveToThread(thread());
+    proxy->setParent(this);
+
+    d_func()->proxy = proxy;
+    connect(proxy, &DAbstractFileWatcher::fileAttributeChanged, this, &RecentFileWatcher::onFileAttributeChanged);
+    connect(proxy, &DAbstractFileWatcher::fileDeleted, this, &RecentFileWatcher::onFileDeleted);
+    connect(proxy, &DAbstractFileWatcher::fileMoved, this, &RecentFileWatcher::onFileMoved);
+    connect(proxy, &DAbstractFileWatcher::fileModified, this, &RecentFileWatcher::onFileModified);
 }
 
 void RecentFileWatcher::setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled)
@@ -137,6 +151,7 @@ void RecentFileWatcher::addWatcher(const DUrl &url)
     connect(watcher, &DAbstractFileWatcher::fileAttributeChanged, this, &RecentFileWatcher::onFileAttributeChanged);
     connect(watcher, &DAbstractFileWatcher::fileDeleted, this, &RecentFileWatcher::onFileDeleted);
     connect(watcher, &DAbstractFileWatcher::fileModified, this, &RecentFileWatcher::onFileModified);
+    connect(watcher, &DAbstractFileWatcher::fileMoved, this, &RecentFileWatcher::onFileMoved);
 
     d->urlToWatcherMap[url] = watcher;
 
@@ -159,11 +174,10 @@ void RecentFileWatcher::removeWatcher(const DUrl &url)
 }
 
 void RecentFileWatcher::onFileDeleted(const DUrl &url)
-{
-    removeWatcher(url);
-
+{    
     DUrl newUrl = url;
     newUrl.setScheme(RECENT_SCHEME);
+    removeWatcher(newUrl);
 
     emit fileDeleted(newUrl);
 }
@@ -182,6 +196,15 @@ void RecentFileWatcher::onFileModified(const DUrl &url)
     newUrl.setScheme(RECENT_SCHEME);
 
     emit fileModified(newUrl);
+}
+
+void RecentFileWatcher::onFileMoved(const DUrl &from, const DUrl &to)
+{
+    DUrl newFromUrl = from;
+    newFromUrl.setScheme(RECENT_SCHEME);
+    removeWatcher(newFromUrl);
+
+    emit fileMoved(newFromUrl, to);
 }
 //fix bug 63922 移除父目录是path的url
 void RecentFileWatcher::removeRecentFile(const QString &path)
@@ -485,7 +508,8 @@ const DAbstractFileInfoPointer RecentController::createFileInfo(const QSharedPoi
 
 DAbstractFileWatcher *RecentController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
-    return new RecentFileWatcher(event->url());
+    DAbstractFileWatcher *base_watcher = DFileService::instance()->createFileWatcher(event->sender(), DUrl::fromLocalFile(event->url().path()));
+    return new RecentFileWatcher(event->url(), base_watcher);
 }
 
 DUrlList RecentController::realUrlList(const DUrlList &recentUrls)
