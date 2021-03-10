@@ -194,54 +194,54 @@ TEST_F(ComputerViewTest, mode_view_single_simple)
     emit m_computerView->m_view->selectionModel()->selectionChanged(selected, deselected);
 }
 
-TEST_F(ComputerViewTest, mode_view_single_click)
-{
-    ASSERT_NE(nullptr, m_computerView);
+//TEST_F(ComputerViewTest, mode_view_single_click)
+//{
+//    ASSERT_NE(nullptr, m_computerView);
 
-    QModelIndex index;
-    emit m_computerView->m_view->clicked(index);
+//    QModelIndex index;
+//    emit m_computerView->m_view->clicked(index);
 
-    Stub stub;
-    static bool myValid = true;
-    bool (*ut_isValid)() = [](){return myValid;};
-    stub.set(ADDR(DUrl, isValid), ut_isValid);
+//    Stub stub;
+//    static bool myValid = true;
+//    bool (*ut_isValid)() = [](){return myValid;};
+//    stub.set(ADDR(DUrl, isValid), ut_isValid);
 
-    static bool myCheckGvfsMountfileBusy = false;
-    bool (*ut_checkGvfsMountfileBusy)() = [](){return myCheckGvfsMountfileBusy;};
-    stub.set((bool(DFileService::*)(const DUrl &, const bool))ADDR(DFileService, checkGvfsMountfileBusy), ut_checkGvfsMountfileBusy);
+//    static bool myCheckGvfsMountfileBusy = false;
+//    bool (*ut_checkGvfsMountfileBusy)() = [](){return myCheckGvfsMountfileBusy;};
+//    stub.set((bool(DFileService::*)(const DUrl &, const bool))ADDR(DFileService, checkGvfsMountfileBusy), ut_checkGvfsMountfileBusy);
 
-    static QString myPath = QString("file:/userdir");
-    QString (*ut_path)() = [](){return myPath;};
-    stub.set(ADDR(QUrl, path), ut_path);
+//    static QString myPath = QString("file:/userdir");
+//    QString (*ut_path)() = [](){return myPath;};
+//    stub.set(ADDR(QUrl, path), ut_path);
 
-    static bool myActinOpen = false;
-    void (*ut_actionOpen)() = [](){myActinOpen = true;};
-    stub.set(ADDR(AppController, actionOpen), ut_actionOpen);
+//    static bool myActinOpen = false;
+//    void (*ut_actionOpen)() = [](){myActinOpen = true;};
+//    stub.set(ADDR(AppController, actionOpen), ut_actionOpen);
 
-    static bool myActionOpenDisk = false;
-    void (*ut_actionOpenDisk)() = [](){myActionOpenDisk = true;};
-    stub.set(ADDR(AppController, actionOpenDisk), ut_actionOpenDisk);
+//    static bool myActionOpenDisk = false;
+//    void (*ut_actionOpenDisk)() = [](){myActionOpenDisk = true;};
+//    stub.set(ADDR(AppController, actionOpenDisk), ut_actionOpenDisk);
 
-    emit m_computerView->m_view->doubleClicked(index);
+//    emit m_computerView->m_view->doubleClicked(index);
 
-    myPath = QString("file:/home");
-    static QString myScheme = DFMVAULT_SCHEME;
-    QString (*ut_scheme)() = [](){return myScheme;};
-    stub.set(ADDR(QUrl, scheme), ut_scheme);
-    emit m_computerView->m_view->doubleClicked(index);
+//    myPath = QString("file:/home");
+//    static QString myScheme = DFMVAULT_SCHEME;
+//    QString (*ut_scheme)() = [](){return myScheme;};
+//    stub.set(ADDR(QUrl, scheme), ut_scheme);
+//    emit m_computerView->m_view->doubleClicked(index);
 
-    myScheme = "file";
-    emit m_computerView->m_view->doubleClicked(index);
+//    myScheme = "file";
+//    emit m_computerView->m_view->doubleClicked(index);
 
-    EXPECT_TRUE(myActinOpen);
-    EXPECT_TRUE(myActionOpenDisk);
+//    EXPECT_TRUE(myActinOpen);
+//    EXPECT_TRUE(myActionOpenDisk);
 
-    myCheckGvfsMountfileBusy = true;
-    emit m_computerView->m_view->doubleClicked(index);
+//    myCheckGvfsMountfileBusy = true;
+//    emit m_computerView->m_view->doubleClicked(index);
 
-    myValid = false;
-    emit m_computerView->m_view->doubleClicked(index);
-}
+//    myValid = false;
+//    emit m_computerView->m_view->doubleClicked(index);
+//}
 
 TEST_F(ComputerViewTest, mode_view_single_triggered)
 {
