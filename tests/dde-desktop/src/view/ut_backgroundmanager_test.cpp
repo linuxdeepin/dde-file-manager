@@ -106,23 +106,22 @@ TEST_F(BackgroundManagerTest, allbackgroundWidgets)
 
 TEST_F(BackgroundManagerTest, setBackgroundImage)
 {
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(BackgroundManager, onResetBackgroundImage), [](){return;});
     QString path;
-    m_manager->setBackgroundImage(primaryScreen->name(), path);
+    QString screenname = "HDMI";
+    m_manager->setBackgroundImage(screenname, path);
 
     path = "imagePathTest";
-    m_manager->setBackgroundImage(primaryScreen->name(), path);
+    m_manager->setBackgroundImage(screenname, path);
 
     QMap<QString,QString> images = m_manager->backgroundImages();
 
     EXPECT_FALSE(images.isEmpty());
     if(!images.isEmpty()) {
-        EXPECT_TRUE(images.keys().contains(primaryScreen->name()));
-        EXPECT_EQ(images.value(primaryScreen->name()), path);
+        EXPECT_TRUE(images.keys().contains(screenname));
+        EXPECT_EQ(images.value(screenname), path);
     }
-
-    m_manager->setBackgroundImage(QString("testName"), path);
-    images = m_manager->backgroundImages();
-    EXPECT_FALSE(images.keys().contains(QString("testName")));
 }
 
 TEST_F(BackgroundManagerTest, onBackgroundBuild)
@@ -259,12 +258,33 @@ TEST_F(BackgroundManagerTest, pullImageSettings)
 
 TEST_F(BackgroundManagerTest, getBackgroundFromWm)
 {
-    EXPECT_FALSE(m_manager->getBackgroundFromWm(primaryScreen->name()).isEmpty());
+    ASSERT_TRUE(m_manager->wmInter != nullptr);
+    stub_ext::StubExt stu;
+    QString defaultpath("file:///usr/share/backgrounds/default_background.jpg");
+    QDBusMessage message;
+    message.setArguments(QList<QVariant>() << defaultpath);
+    stu.set_lamda(ADDR(WMInter, GetCurrentWorkspaceBackground), [message](){ return QDBusPendingReply<QString>(message);});
+    QString ret = m_manager->getBackgroundFromWm("test_screen");
+
+    stu.reset(ADDR(WMInter, GetCurrentWorkspaceBackground));
+    stu.set_lamda(ADDR(WMInter, GetCurrentWorkspaceBackground), [message](){ return QDBusPendingReply<QString>();});
+    stu.set_lamda(ADDR(BackgroundManager, getBackgroundFromWmConfig), [](){return "";});
+    ret = m_manager->getBackgroundFromWm("test_screen");
+    EXPECT_FALSE(ret.isEmpty());
+
+    stu.reset(ADDR(WMInter, GetCurrentWorkspaceBackground));
+    stu.set_lamda(ADDR(WMInter, GetCurrentWorkspaceBackground), [message](){ return QDBusPendingReply<QString>();});
+    stu.reset(ADDR(BackgroundManager, getBackgroundFromWmConfig));
+    stu.set_lamda(ADDR(BackgroundManager, getBackgroundFromWmConfig), [defaultpath](){return defaultpath;});
+    ret = m_manager->getBackgroundFromWm("test_screen");
+    EXPECT_EQ(ret.toStdString(), defaultpath.toStdString());
 }
 
 TEST_F(BackgroundManagerTest, getBackgroundFromWmConfig)
 {
-    EXPECT_FALSE(m_manager->getBackgroundFromWmConfig(primaryScreen->name()).isEmpty());
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(QString, mid), [](){return "";});
+    EXPECT_TRUE(m_manager->getBackgroundFromWmConfig("test_screen").trimmed().isEmpty());
 }
 
 TEST_F(BackgroundManagerTest, getDefaultBackground)
