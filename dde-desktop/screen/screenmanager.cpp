@@ -41,6 +41,19 @@ void ScreenManager::onScreenRemoved(QScreen *screen)
     }
 }
 
+void ScreenManager::onPrimaryChanged()
+{
+    /*!
+      fix bug65195 处理只有一个屏幕时，主屏发生改变的情况
+      拔掉VGA连接线后不会触发该槽函数，通过dbus获取到的主屏名字仍然是VGA，但是Qt会创建虚拟屏幕，名字会是 :0.0 等。
+      插上HDMI连接线会触发该槽函数，通过dbus获取到主屏的名字是HDMI，通过Qt获取到的也是HDMI，
+      说明Qt已经从虚拟屏幕转换为真实屏幕，再配合屏幕数量只有1个，来发出屏幕改变事件
+      */
+    if (qApp->screens().count() == 1) {
+        appendEvent(Screen);
+    }
+}
+
 void ScreenManager::onScreenGeometryChanged(const QRect &rect)
 {
     Q_UNUSED(rect)
@@ -86,6 +99,15 @@ void ScreenManager::init()
 {
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenManager::onScreenAdded);
     connect(qApp, &QGuiApplication::screenRemoved, this, &ScreenManager::onScreenRemoved);
+
+    /*!
+     fix bug65195 临时方案。当Qt提供了屏幕名字改变信号后，应该删除该逻辑，改为监听该信号来同步屏幕名称
+     根因：当只存在一个屏幕时，拔插连接线（VGA和HDMI）时，不会收到Qt的屏幕添加删除信号（Qt会创建虚拟屏幕），桌面不会进行重建。
+     但是屏幕对象返回的名字已经发生了变化，而Qt暂时没有提供屏幕名字改变的信号，导致程序中通过屏幕名字判断的逻辑都会出现问题。
+     该bug就是由于画布中保存的名字没有更新，调用显示壁纸屏保设置界面后，找不到对应的屏幕，从而导致位置校正错误。
+     */
+    connect(m_display, &DBusDisplay::PrimaryChanged, this, &ScreenManager::onPrimaryChanged);
+
     //connect(qApp, &QGuiApplication::primaryScreenChanged, this, &AbstractScreenManager::sigScreenChanged);
     connect(qApp, &QGuiApplication::primaryScreenChanged, this, [this](){
         this->appendEvent(Screen);
