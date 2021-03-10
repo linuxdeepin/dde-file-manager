@@ -1,12 +1,10 @@
 /*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
+ * Copyright (C) 2016 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
+ * Author:     gongheng<gongheng@uniontech.com>
  *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
+ * Maintainer: zhengyouge<zhengyouge@uniontech.com>
+ *             gongheng<gongheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 
 //fix:一旦刻录失败，必须清楚磁盘临时缓存的数据文件，否则下次刻录操作等就会报一些错误，不能正常进行操作流程
 #include "qfile.h"

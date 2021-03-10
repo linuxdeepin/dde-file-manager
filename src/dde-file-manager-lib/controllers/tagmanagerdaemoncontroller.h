@@ -1,11 +1,10 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2016 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     yanghao<yanghao@uniontech.com>
+ * Author:     lixiang<lixianga@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
+ *             lixiang<lixianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 
 #ifndef TAGMANAGERDAEMONCONTROLLER_H
 #define TAGMANAGERDAEMONCONTROLLER_H
