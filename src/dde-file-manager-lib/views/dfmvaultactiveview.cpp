@@ -69,7 +69,6 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
     m_pStackedWidget->addWidget(m_ActiveVaultFinishedWidget);
 
     this->addContent(m_pStackedWidget);
-    setFixedSize(472, 346);
 
     connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
 }

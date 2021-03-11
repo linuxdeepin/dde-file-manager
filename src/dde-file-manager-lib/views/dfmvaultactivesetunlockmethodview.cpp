@@ -123,7 +123,6 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     // 下一步按钮
     m_pNext = new QPushButton(tr("Next"), this);
     AC_SET_ACCESSIBLE_NAME(m_pNext, AC_VAULT_ACTIVE_SET_PASSWORD_NEXT_BUTTON);
-    m_pNext->setFixedSize(452, 30);
     m_pNext->setEnabled(false);
     connect(m_pNext, &QPushButton::clicked,
             this, &DFMVaultActiveSetUnlockMethodView::slotNextBtnClicked);
@@ -186,7 +185,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     play->addSpacing(15);
     play->addLayout(play1);
     play->addStretch();
-    play->addWidget(m_pNext, 0, Qt::AlignCenter);
+    play->addWidget(m_pNext);
 
     // 创建文件夹与目录
     if (!OperatorCenter::getInstance()->createDirAndFile()) return;
