@@ -77,11 +77,13 @@ public:
 
     QString toLocalFile() const override;
     virtual QIcon fileIcon() const override;
+    virtual bool canDrop() const override;
 
-    virtual bool canRename() const;
+    virtual bool canRename() const override;
 
 private:
     DUrl m_parentUrl;
+
 };
 
 #endif // SEARCHFILEINFO_H
