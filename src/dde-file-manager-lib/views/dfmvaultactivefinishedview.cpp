@@ -91,7 +91,6 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     // 加密保险箱按钮
     m_pFinishedBtn = new QPushButton(tr("Encrypt"), this);
     AC_SET_ACCESSIBLE_NAME(m_pFinishedBtn, AC_VAULT_ACTIVE_ENCRYPT_BUTTON);
-    m_pFinishedBtn->setFixedSize(452, 30);
     connect(m_pFinishedBtn, &QPushButton::clicked,
             this, &DFMVaultActiveFinishedView::slotEncryptVault);
 
@@ -125,7 +124,7 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     m_pLay->addWidget(m_pWidget2, 0, Qt::AlignHCenter);
     m_pLay->addWidget(m_pWidget3);
     m_pLay->addStretch();
-    m_pLay->addWidget(m_pFinishedBtn, 0, Qt::AlignCenter);
+    m_pLay->addWidget(m_pFinishedBtn);
 
     m_pWidget2->setVisible(false);
     m_pWidget3->setVisible(false);

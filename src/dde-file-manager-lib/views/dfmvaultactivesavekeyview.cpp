@@ -56,7 +56,6 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
     AC_SET_ACCESSIBLE_NAME(m_pTipsLabel, AC_VAULT_ACTIVE_KEY_CONTENT);
 
     DButtonBox *m_pButtonBox = new DButtonBox(this);
-    m_pButtonBox->setFixedSize(200, 36);
 
     // 密钥
     m_pKeyBtn = new DButtonBoxButton(tr("Key"), this);
@@ -97,7 +96,6 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
     // 下一步按钮
     m_pNext = new QPushButton(tr("Next"), this);
     AC_SET_ACCESSIBLE_NAME(m_pNext, AC_VAULT_ACTIVE_KEY_NEXT_BUTTON);
-    m_pNext->setFixedSize(452, 30);
     connect(m_pNext, &QPushButton::clicked,
             this, &DFMVaultActiveSaveKeyView::slotNextBtnClicked);
 
@@ -106,7 +104,7 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
     play1->setMargin(0);
     play1->addWidget(m_pTipsLabel, 0, 0, 1, 4, Qt::AlignCenter);
     play1->addWidget(m_pButtonBox, 1, 0, 1, 4, Qt::AlignHCenter);
-    play1->addWidget(m_pKeyText, 2, 0, 2, 4, Qt::AlignHCenter);
+    play1->addWidget(m_pKeyText, 2, 0, 2, 4, Qt::AlignCenter);
 
 
     QVBoxLayout *play = new QVBoxLayout(this);
@@ -114,7 +112,7 @@ DFMVaultActiveSaveKeyView::DFMVaultActiveSaveKeyView(QWidget *parent)
     play->addWidget(pLabelTitle);
     play->addLayout(play1);
     play->addStretch();
-    play->addWidget(m_pNext, 0, Qt::AlignCenter);
+    play->addWidget(m_pNext);
 }
 
 void DFMVaultActiveSaveKeyView::showEvent(QShowEvent *event)
@@ -151,7 +149,7 @@ void DFMVaultActiveSaveKeyView::slotKeyBtnClicked()
     play1->removeWidget(m_pScanTipsLabel);
     m_pScanTipsLabel->setVisible(false);
 
-    play1->addWidget(m_pKeyText, 2, 0, 2, 4);
+    play1->addWidget(m_pKeyText, 2, 0, 2, 4, Qt::AlignCenter);
     m_pKeyText->setVisible(true);
 }
 

@@ -43,7 +43,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_PASSWORD_UNLOCK_WIDGET);
 
     setIcon(QIcon::fromTheme("dfm_vault"));
-    setFixedSize(396, 218);
+    setFixedWidth(396);
 
     // 标题
     QLabel *pTitle = new QLabel(tr("Unlock File Vault"), this);

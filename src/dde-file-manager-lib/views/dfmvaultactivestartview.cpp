@@ -60,7 +60,6 @@ DFMVaultActiveStartView::DFMVaultActiveStartView(QWidget *parent)
 
     m_pStartBtn = new QPushButton(tr("Create"), this);
     AC_SET_ACCESSIBLE_NAME(m_pStartBtn, AC_VAULT_ACTIVE_START_BUTTON);
-    m_pStartBtn->setFixedSize(452, 30);
     connect(m_pStartBtn, &QPushButton::clicked,
             this, &DFMVaultActiveStartView::slotStartBtnClicked);
 
