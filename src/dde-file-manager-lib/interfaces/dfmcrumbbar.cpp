@@ -405,8 +405,11 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
 
     // 回收站预览打开文件夹时传过来的是真实路径，所以将其转换为虚拟路径
     DUrl fileUrl = url;
-    if (url.toLocalFile().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
-        fileUrl = DUrl::fromTrashFile(url.toLocalFile().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
+    if (url.path().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+        QString trashFilePath = url.path();
+        if (trashFilePath == DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))
+            trashFilePath = trashFilePath + "/";
+        fileUrl = DUrl::fromTrashFile(trashFilePath.remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
         d->updateController(fileUrl);
     } else if (VaultController::isVaultFile(url.toLocalFile())) {
         // 修复bug-60781
@@ -604,8 +607,11 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
         QString realUrl(url.toString());
         if (VaultController::isVaultFile(realUrl)) {
             realUrl = VaultController::localPathToVirtualPath(url.toLocalFile());
-        } else if (url.toLocalFile().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
-            realUrl = url.toLocalFile().replace(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + '/', TRASH_ROOT);
+        } else if (url.path().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+            QString trashFilePath = url.path();
+            if (trashFilePath == DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))
+                trashFilePath = trashFilePath + "/";
+            realUrl = trashFilePath.replace(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + "/", TRASH_ROOT);
         }
         showAddressBar(realUrl);
     });
