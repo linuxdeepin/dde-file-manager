@@ -23,6 +23,7 @@
 
 #include "dabstractfilecontroller.h"
 #include "dfmevent.h"
+#include "dfmstandardpaths.h"
 
 #include <DDesktopServices>
 #include <QProcess>
@@ -219,7 +220,15 @@ bool DAbstractFileController::openFileLocation(const QSharedPointer<DFMOpenFileL
 
         return QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" <<  urls << "--raw");
     }
-    return DDesktopServices::showFileItem(durl);
+
+    DUrl realUrl = durl;
+    if (durl.path().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+        QString trashFilePath = durl.path();
+        if (trashFilePath == DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))
+            trashFilePath = trashFilePath + "/";
+        realUrl = trashFilePath.replace(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + "/", TRASH_ROOT);
+    }
+    return DDesktopServices::showFileItem(realUrl);
 }
 
 const QList<DAbstractFileInfoPointer> DAbstractFileController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
