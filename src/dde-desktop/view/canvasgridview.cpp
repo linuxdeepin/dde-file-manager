@@ -1290,6 +1290,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
                 if (fileInfo->canDrop() && fileInfo->canDragCompress()) {
                     // 设置当拖拽gvfs文件时，不支持追加压缩
                     if (!m_urlsForDragEvent.isEmpty()) {
+                        event->setDropAction(Qt::CopyAction);
                         const DAbstractFileInfoPointer &dragfileInfo = DFileService::instance()->createFileInfo(this, DUrl(m_urlsForDragEvent.first()));
                         if (dragfileInfo->isGvfsMountFile()) {
                             event->setDropAction(Qt::MoveAction);
