@@ -418,7 +418,9 @@ bool DFileViewHelper::isTransparent(const QModelIndex &index) const
     }
 
     // 将回收站路径转化成真实路径，解决在回收站中执行剪切时，图标不灰显的问题
+    bool isTrashFile = false;
     if (fileUrl.scheme() == TRASH_SCHEME) {
+        isTrashFile = true;
         const QString &path = fileUrl.path();
         fileUrl = DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + path);
     }
@@ -429,7 +431,7 @@ bool DFileViewHelper::isTransparent(const QModelIndex &index) const
         fileUrl = MergedDesktopController::convertToRealPath(fileUrl);
 
     //判断该文件是否被剪切
-    if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction && fileInfo->canRename()) {
+    if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction && (isTrashFile || fileInfo->canRename())) {
         if (DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl))
             return true;
 
