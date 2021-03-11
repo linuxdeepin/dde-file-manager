@@ -399,3 +399,12 @@ bool SearchFileInfo::canRename() const
         return d->proxy->canRename();
     return DAbstractFileInfo::canRename();
 }
+
+bool SearchFileInfo::canDrop() const
+{
+    Q_D(const DAbstractFileInfo);
+    //tag的虚拟目录不能drop
+    if (d->proxy && d->proxy->fileUrl().isTaggedFile() && isVirtualEntry())
+        return false;
+    return DAbstractFileInfo::canDrop();
+}
