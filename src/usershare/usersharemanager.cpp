@@ -437,6 +437,12 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
                 return false;
             }
 
+            //计算机名称过长会报错
+            if (err.contains("gethostname failed") && err.contains("net usershare add: cannot convert name")) {
+                dialogManager->showErrorDialog(tr("Sharing failed"), tr("The computer name is too long"));
+                return false;
+            }
+
             qWarning() << err << "err code = " << QString::number(process.exitCode());
             dialogManager->showErrorDialog(QString(), err);
             return false;
