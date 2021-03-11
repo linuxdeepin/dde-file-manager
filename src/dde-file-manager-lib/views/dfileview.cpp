@@ -1726,10 +1726,19 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
                 return event->ignore();
             }
 
+            // 如果是回收站里面搜索，不让拖拽
+            const DUrl &toUrl = model()->getUrlByIndex(d->dragMoveHoverIndex);
+            if (toUrl.isSearchFile() && toUrl.fragment().startsWith(TRASH_ROOT)) {
+                d->dragMoveHoverIndex = QModelIndex();
+                update();
+
+                return event->ignore();
+            }
+
             // fix bug 64049
             // 文件不可在同目录下进行拖拽操作
             const DAbstractFileInfoPointer &srcInfo = model()->fileInfo(selectionModel()->currentIndex());
-            if (srcInfo) {
+            if (event->dropAction() == Qt::MoveAction && srcInfo) {
                 const DUrl &parent = srcInfo->parentUrl();
                 if (parent == fileInfo->fileUrl() && event->source() == d->fileViewHelper->parent()) {
                     d->dragMoveHoverIndex = QModelIndex();
