@@ -1676,8 +1676,14 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
         return;
     }
 
-    if (!fetchDragEventUrlsFromSharedMemory())
-        return;
+    //由于普通用户无法访问root用户的共享内存，跨用户的情况使用从mimedata中取url的方式
+    bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
+    if (sameUser) {
+        if (!fetchDragEventUrlsFromSharedMemory())
+            return;
+    } else {
+        m_urlsForDragEvent = event->mimeData()->urls();
+    }
 
     for (const auto &url : m_urlsForDragEvent) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));
@@ -3465,7 +3471,7 @@ void DFileView::refresh()
 }
 
 bool DFileView::fetchDragEventUrlsFromSharedMemory()
-{
+{      
     QSharedMemory sm;
     sm.setKey(DRAG_EVENT_URLS);
 

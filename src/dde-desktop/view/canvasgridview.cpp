@@ -1219,7 +1219,13 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
         itemDelegate()->hideNotEditingIndexWidget();
     }
 
-    fetchDragEventUrlsFromSharedMemory();
+    //由于普通用户无法访问root用户的共享内存，跨用户的情况使用从mimedata中取url的方式
+    bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
+    if (sameUser) {
+        fetchDragEventUrlsFromSharedMemory();
+    } else {
+        m_urlsForDragEvent = event->mimeData()->urls();
+    }
 
     d->fileViewHelper->preproccessDropEvent(event, m_urlsForDragEvent);
 
