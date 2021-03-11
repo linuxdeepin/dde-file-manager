@@ -162,7 +162,7 @@ void DiskMountPlugin::invokedMenuItem(const QString &itemKey, const QString &men
 
 int DiskMountPlugin::itemSortKey(const QString &itemKey)
 {
-    const QString &key = QString("pos_%1_%2").arg(itemKey).arg(displayMode());
+    const QString &key = QString("pos_%1_%2").arg(itemKey).arg(Dock::Efficient);
     int ret = m_proxyInter->getValue(this, key, 0).toInt(); // dde-dock默认设置为0
     qDebug() << "itemSortKey [key:" << key << "," << ret << "] for :" << itemKey;
     return ret;
@@ -170,7 +170,7 @@ int DiskMountPlugin::itemSortKey(const QString &itemKey)
 
 void DiskMountPlugin::setSortKey(const QString &itemKey, const int order)
 {
-    const QString &key = QString("pos_%1_%2").arg(itemKey).arg(displayMode());
+    const QString &key = QString("pos_%1_%2").arg(itemKey).arg(Dock::Efficient);
     m_proxyInter->saveValue(this, key, order);
     qDebug() << "setSortKey [key:" << key << "," << order << "] for :" << itemKey;
 }
