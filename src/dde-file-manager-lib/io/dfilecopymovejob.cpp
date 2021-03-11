@@ -3966,7 +3966,8 @@ void DFileCopyMoveJob::run()
             }
         }
 
-        d->targetUrlList << target_url;
+        if (target_url.isValid())
+            d->targetUrlList << target_url;
 
         Q_EMIT finished(source, target_url);
 
