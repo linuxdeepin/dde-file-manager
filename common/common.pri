@@ -9,7 +9,7 @@ unix {
     }
 
     ARCH = $$QMAKE_HOST.arch
-    isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
+    isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, loongarch64){
         DEFINES += SPLICE_CP
     }
     isEqual(ARCH, loongarch64){
@@ -34,7 +34,7 @@ unix {
         DEFINES += ENABLE_ASYNCINIT
     }
 
-    isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
+    isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, loongarch64){
         DEFINES += ARCH_MIPSEL ARCH_SW
 
         #use classical file section mode

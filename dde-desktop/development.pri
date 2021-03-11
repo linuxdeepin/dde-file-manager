@@ -5,7 +5,7 @@ isEmpty(PREFIX){
 target.path = $${PREFIX}/bin/
 
 desktop_files.path = /usr/share/applications/
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
+isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, loongarch64){
     desktop_files.files = $$PWD/data/applications/mips/dde-home.desktop \
                     $$PWD/data/applications/dde-computer.desktop \
                     $$PWD/data/applications/dde-trash.desktop
