@@ -144,8 +144,17 @@ DFileDialog::DFileDialog(QWidget *parent)
 
         // fix bug 65861
         // 输入框中禁止输入某些特殊字符
-        QString dstText = DFMGlobal::preprocessingFileName(statusBar()->lineEdit()->text());
-        statusBar()->lineEdit()->setText(dstText);
+        QString srcText = statusBar()->lineEdit()->text();
+        QString dstText = DFMGlobal::preprocessingFileName(srcText);
+        //如果存在非法字符且更改了当前的文本文件
+        if (srcText != dstText) {
+            //之前的光标Pos
+            int srcCursorPos = statusBar()->lineEdit()->cursorPosition();
+            statusBar()->lineEdit()->setText(dstText);
+            int endPos = srcCursorPos + (dstText.length() - srcText.length());
+            //调整光标位置
+            statusBar()->lineEdit()->setCursorPosition(endPos);
+        }
     });
 }
 
