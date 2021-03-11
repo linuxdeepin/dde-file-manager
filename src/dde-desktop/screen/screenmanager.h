@@ -47,6 +47,7 @@ public:
 protected slots:
     void onScreenAdded(QScreen *screen);
     void onScreenRemoved(QScreen *screen);
+    void onPrimaryChanged();
     void onScreenGeometryChanged(const QRect &);
     void onScreenAvailableGeometryChanged(const QRect &);
     void onDockChanged();
