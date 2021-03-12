@@ -1,8 +1,11 @@
 /*
- * Copyright (C) 2019 ~ 2019 Deepin Technology Co., Ltd.
- *               2019 ~ 2019 Chris Xiong
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     Chris Xiong<chirs241097@gmail.com>
+ * Author:     dengkeyun<dengkeyun@uniontech.com>
+ *
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
