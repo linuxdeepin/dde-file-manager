@@ -39,28 +39,28 @@ public:
 };
 }
 
-TEST_F(TestMountAskPasswordDialog, show)
-{
-    m_dlg->show();
-    m_dlg->handleButtonClicked(1, "");
-    EXPECT_TRUE(m_dlg->close());
-}
+//TEST_F(TestMountAskPasswordDialog, show)
+//{
+//    m_dlg->show();
+//    m_dlg->handleButtonClicked(1, "");
+//    EXPECT_TRUE(m_dlg->close());
+//}
 
-TEST_F(TestMountAskPasswordDialog, domainLineVisible)
-{
-    m_dlg->show();
-    m_dlg->setDomainLineVisible(true);
-    EXPECT_TRUE(m_dlg->getDomainLineVisible());
-    m_dlg->close();
-}
+//TEST_F(TestMountAskPasswordDialog, domainLineVisible)
+//{
+//    m_dlg->show();
+//    m_dlg->setDomainLineVisible(true);
+//    EXPECT_TRUE(m_dlg->getDomainLineVisible());
+//    m_dlg->close();
+//}
 
-TEST_F(TestMountAskPasswordDialog, loginData)
-{
-    QJsonObject obj;
-    obj["key"] = "admin";
-    obj["password"] = "123456";
-    m_dlg->setLoginData(obj);
-    const QJsonObject &loginData = m_dlg->getLoginData();
-    EXPECT_STREQ(obj["key"].toString().toStdString().c_str(), loginData["key"].toString().toStdString().c_str());
-    EXPECT_STREQ(obj["password"].toString().toStdString().c_str(), loginData["password"].toString().toStdString().c_str());
-}
+//TEST_F(TestMountAskPasswordDialog, loginData)
+//{
+//    QJsonObject obj;
+//    obj["key"] = "admin";
+//    obj["password"] = "123456";
+//    m_dlg->setLoginData(obj);
+//    const QJsonObject &loginData = m_dlg->getLoginData();
+//    EXPECT_STREQ(obj["key"].toString().toStdString().c_str(), loginData["key"].toString().toStdString().c_str());
+//    EXPECT_STREQ(obj["password"].toString().toStdString().c_str(), loginData["password"].toString().toStdString().c_str());
+//}
