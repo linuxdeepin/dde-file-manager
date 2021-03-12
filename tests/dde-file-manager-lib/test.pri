@@ -183,12 +183,12 @@ SOURCES += \
 # fptr const     $$PWD/gvfs/ut_gvfsmountmanager.cpp \
     $$PWD/gvfs/ut_networkmanager.cpp \
     $$PWD/gvfs/ut_secretmanager.cpp \
-    $$PWD/interfaces/ut_dmimedatabase.cpp \
+#    $$PWD/interfaces/ut_dmimedatabase.cpp \
     $$PWD/usershare/ut_shareinfo.cpp \
 # fptr const     $$PWD/usershare/ut_usersharemanager.cpp \
     $$PWD/controllers/ut_dfmusersharecrumbcontroller.cpp \
     $$PWD/interfaces/ut_dfmsidebarmanager.cpp \
-    $$PWD/interfaces/ut_dthumbnailprovider.cpp \
+ #   $$PWD/interfaces/ut_dthumbnailprovider.cpp \
     $$PWD/interfaces/ut_dfmcrumbmanager.cpp \
     $$PWD/interfaces/ut_dfmevent.cpp \
     $$PWD/interfaces/ut_dfmstandardpaths.cpp \

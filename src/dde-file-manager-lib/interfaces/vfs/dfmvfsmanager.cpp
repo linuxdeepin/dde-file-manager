@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2017 ~ 2018 Deepin Technology Co., Ltd.
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     Gary Wang <wzc782970009@gmail.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: Gary Wang <wangzichong@deepin.com>
+ * Maintainer: dengkeyun<dengkeyun@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
+ *             max-lv<lvwujun@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 
 #include "private/dfmvfsmanager_p.h"
 

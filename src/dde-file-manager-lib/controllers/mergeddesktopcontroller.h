@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2017 ~ 2019 Deepin Technology Co., Ltd.
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     Gary Wang <wzc782970009@gmail.com>
+ * Author:     xushitong<xushitong@uniontech.com>
  *
- * Maintainer: Gary Wang <wangzichong@deepin.com>
+ * Maintainer: dengkeyun<dengkeyun@uniontech.com>
+ *             max-lv<lvwujun@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

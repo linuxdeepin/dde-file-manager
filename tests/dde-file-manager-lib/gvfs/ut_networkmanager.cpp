@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2019 ~ 2020 Deepin Technology Co., Ltd.
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     oucaijun <oucaijun@uniontech.com>
+ * Author:     xushitong<xushitong@uniontech.com>
  *
- * Maintainer: oucaijun <oucaijun@uniontech.com>
+ * Maintainer: dengkeyun<dengkeyun@uniontech.com>
+ *             max-lv<lvwujun@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include <gio/gio.h>
 #include <gtest/gtest.h>
 #define private public
