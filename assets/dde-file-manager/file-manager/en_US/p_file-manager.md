@@ -1,4 +1,4 @@
-# File Manager|../common/deepin_file_manager_96.svg|
+# File Manager|dde-file-manager|
 
 ## Overview
 
@@ -18,6 +18,8 @@ You can run, close and create a shortcut for File Manager by the following ways.
  - Click **Send to desktop** to create a desktop shortcut.
  - Click **Send to dock** to fix the application on dock.
  - Click **Add to startup** to add the application to startup, it will automatically run when the system starts up.
+
+   >![tips](../common/tips.svg)Tips: You can also press **Super** + **E** to start File Manager.
 
 ### Exit File Manager
 
@@ -181,10 +183,16 @@ In Properties of files, you can view the basic info, open with list, and permiss
 
 ### Virus scan
 
-1. On File Manager interface, right-click a file. 
-2. Select **Virus scan**, the **Virus Scan** interface of Security Center pops up, so you can scan the file for virus.
+1. On File Manager interface, right-click a file(folder). 
+2. Select **Virus scan**, the **Virus Scan** interface of Security Center pops up, so you can scan the file(folder) for virus. Refer to [Virus Scan](dman:///security-center#Virus Scan) for detailed operations.
 
->![notes](../common/notes.svg)Notes: If Security Center is executing virus scanning currently, you can click **View** in the pop-up window to enter the **Virus Scan** interface of Security Center.
+   >![notes](../common/notes.svg)Notes: 
+   >
+   >- If there is a scanning task in Security Center currently, click **View** in the pop-up dialog box to enter the virus scanning interface of Security Center.
+   
+   >- **Add "Virus scan" to the context menu** is enabled by default in Security Center. You can also enter Security Center setting interface and uncheck this function. After unchecking, "Virus Scan" will not be displayed in the context menu.
+
+
 
 ## Common Operations
 
@@ -343,7 +351,7 @@ You can share folders in File Manager, if there are some folders shared, the sha
 
 1. On File Manager interface, right-click a folder, select **Share folder**.
 2. In the properties window, check **Share this folder**.
-3. Input **Share name**, and choose **Permission** and **Anonymous ** according to actual needs before closing the window.
+3. Input **Share name**, and choose **Permission** and **Anonymous** according to actual needs before closing the window.
 5. To set share password, click ![menu](../common/icon_menu.svg) and select **Set share password**.
 5. Input password and click **Confirm**.
 
@@ -384,6 +392,32 @@ Prerequisite: Please enable **Developer Mode** from Control Center > General Set
 
 ![0|openinterminal](fig/p_openinterminal.png)
 
+### Burn CD
+
+You can copy music, video, pictures, or mirror files to a CD or DVD through the burning feature. Please prepare an imprint drive, a blank CD, or DVD disc in advance.
+
+1. Insert the disc into the recording drive.
+
+2. Open File Manager and click the CD Icon in the left panel to enter the burning interface.
+
+![cd](fig/cd_interface.png)
+
+3. Right click the file (folder) and select **Add to disc** or drag the file (folder) directly to the burning interface.
+
+4. In the burning interface, click **Burn** in the upper right corner.
+
+>![notes](../common/notes.svg)Notes: if you want to delete a file/folder from the burning list, right-click it and select **Delete** to remove it from the list.
+
+5. A dialog box pops up. Input the disc name. You can also enter the **Advanced settings** interface, set the file system and write speed, or check "Allow files to be added later", "Verify data" and so on, and click **Burn**.
+
+![cd](fig/cd_rename.png)
+
+6. After burning, a prompt box will pop up in the interface, and click **OK**.
+
+>![notes](../common/notes.svg)Notes:
+>- You can directly copy the files in the CD to the computer.
+>- If you need to erase the disc data, you can right-click the disc icon in the left panel and select **Unmount**, right-click the disc icon again and select **Erase**.
+
 ### Create Link
 
 1. On File Manager interface, right-click the item to create a link for.
@@ -407,18 +441,19 @@ If your computer is equipped with Bluetooth module, you can transfer files in sh
 
 Prerequisite: The Bluetooth devices of sender and receiver have been paired and connected successfully. Refer to [Connect to a Bluetooth Device](dman:///dde#Connect to a Bluetooth Device) for details.
 
-1. On File Manager interface, right-click the file to be sent.
+1. On File Manager interface, right-click the file or package to be sent.
 2. Select **Send to** > **Send to Bluetooth**.
 3. Select the receiver in the pop-up dialog box, and click **Next**.  
 4. A file receiving request will pop up on the receiving device. After the receiver agrees the request, the sender starts to transfer the file.
->![tips](../common/tips.svg)Tips: If you need to transfer a folder, you can compress it in advance and send it through Bluetooth.
+
+
 
 ## Add Corner Marker to Files/Folders
 
 You can assign an icon file to a file or folder icon through the command line and display it as a corner marker.
 >![notes](../common/notes.svg)Notes: 
->   - The corner marker files support formats such as svg, jpg, png, bmp, and gif, but not bigger than 100KB.
->   - The corner marker could not be added to files in USB disks and CD-ROM disks.
+>- The corner marker files support formats such as svg, jpg, png, bmp, and gif, but not bigger than 100KB.
+>- The corner marker could not be added to files in USB disks and CD-ROM disks.
 
 ### Add single corner marker
 
