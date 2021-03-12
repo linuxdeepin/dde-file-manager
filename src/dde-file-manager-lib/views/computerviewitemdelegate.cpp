@@ -216,7 +216,7 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
         }
     }
 
-    QRect usgplrect(option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * fontpixelsize), QSize(text_max_width, 6));
+    QRect usgplrect(QPoint(option.rect.left() + iconsize + leftmargin + spacing, textrect.bottom() + 8), QSize(text_max_width, 6));
     QStyle *sty = option.widget && option.widget->style() ? option.widget->style() : qApp->style();
     QStyleOptionProgressBar plopt;
     plopt.textVisible = false;
