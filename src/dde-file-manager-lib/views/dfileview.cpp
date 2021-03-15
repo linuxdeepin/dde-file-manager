@@ -1095,8 +1095,9 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                 return;
 
             //! 共享文件夹不用弹出彻底删除对话框
+            //! 网络邻居目录不用弹出彻底删除对话框
             bool bSlient = false;
-            if (urls.size() > 0 && urls.first().isUserShareFile())
+            if (urls.size() > 0 && (urls.first().isUserShareFile() || urls.first().isSMBFile()))
                 bSlient = true;
 
             fileService->deleteFiles(this, urls, true, bSlient);
