@@ -103,7 +103,6 @@ private:
     void onForwardButtonClicked();
     void setEnterText(QString &text);
 
-    bool m_searchVisible = false;
     QFrame *m_addressToolBar;
     DButtonBoxButton *m_backButton = nullptr;
     DButtonBoxButton *m_forwardButton = nullptr;

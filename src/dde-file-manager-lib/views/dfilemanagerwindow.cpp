@@ -1118,12 +1118,6 @@ void DFileManagerWindow::initLeftSideBar()
 
     // connections
     connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d]() {
-        if (currentUrl().isSupportSearch()) {
-            d->toolbar->setSearchButtonVisible(true);
-        } else {
-            d->toolbar->setSearchButtonVisible(false);
-        }
-
         d->sideBar->setCurrentUrl(currentUrl());
     });
 }
