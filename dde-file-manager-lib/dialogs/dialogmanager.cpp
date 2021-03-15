@@ -276,6 +276,9 @@ DTaskDialog *DialogManager::taskDialog() const
 
 void DialogManager::addJob(FileJob *job)
 {
+    QMutexLocker locker(&m_mutexJob);
+    qInfo() << "add job: " << job->jobTypeToString() << "," << job->getJobId();
+
     m_jobs.insert(job->getJobId(), job);
     emit fileSignalManager->requestStartUpdateJobTimer();
 
@@ -294,29 +297,22 @@ void DialogManager::addJob(FileJob *job)
 }
 
 
-void DialogManager::removeJob(const QString &jobId, bool clearAllbuffer)
+void DialogManager::removeJob(const QString &jobId, bool isRemoveOpticalJob)
 {
-    if (clearAllbuffer && m_Opticaljobs.contains(jobId)) { // 最后的时候需要删除所有buffer的数据，否则形成脏数据
-        m_Opticaljobs.remove(jobId);
-        qDebug() << "remove job " << jobId << "from m_Opticaljobs";
-    }
-
+    QMutexLocker locker(&m_mutexJob);
     if (m_jobs.contains(jobId)) {
         FileJob *job = m_jobs.value(jobId);
-        if (!clearAllbuffer && job->getIsOpticalJob() && !job->getIsFinished()) {// 最后的时候需要删除所有buffer的数据，就不能再插入了
-            m_Opticaljobs.insert(jobId, job); // 备份刻录、擦除任务以便再次点击光驱的时候可以激活当前进度
-            qDebug() << "insert job " << jobId << "to m_Opticaljobs";
+        if (job->getIsOpticalJob() && !job->getIsFinished()) {
+            if(!isRemoveOpticalJob) { // 光盘刻录完成后，需要流程主动删除,否则无视
+                qDebug() << "ignore to remove job: " << job->jobTypeToString() << "," << job->getJobId();
+                return;
+            }
         }
+        qInfo() << "remove job: " << job->jobTypeToString() << "," << job->getJobId();
         job->setIsAborted(true);
         job->setApplyToAll(true);
         job->cancelled();
         m_jobs.remove(jobId);
-
-//        if (job->getIsGvfsFileOperationUsed()){
-//            if (job->getIsFinished()){
-//                emit fileSignalManager->requestFreshFileView(job->getWindowId());
-//            }
-//        }
     }
     if (m_jobs.count() == 0) {
         emit fileSignalManager->requestStopUpdateJobTimer();
@@ -1299,13 +1295,14 @@ void DialogManager::showTaskProgressDlgOnActive()
     m_taskDialog->raise();
     m_taskDialog->activateWindow();
 
-    QMapIterator<QString, FileJob *> iter(m_Opticaljobs);
+    QMapIterator<QString, FileJob *> iter(m_jobs);
     while (iter.hasNext()) {
         iter.next();
         if (iter.value()->getIsFinished())
             continue;
-        addJob(iter.value());
-        emit iter.value()->requestJobAdded(iter.value()->jobDetail());
+
+        if(iter.value()->getIsOpticalJob())
+            emit iter.value()->requestJobAdded(iter.value()->jobDetail());
     }
 }
 int DialogManager::showUnableToLocateDir(const QString &dir)

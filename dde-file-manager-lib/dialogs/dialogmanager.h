@@ -30,6 +30,7 @@
 #include <QObject>
 #include <QMap>
 #include <QIcon>
+#include <QMutex>
 
 #include "durl.h"
 #include "dfmglobal.h"
@@ -77,7 +78,7 @@ public:
 public slots:
     void handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
     void addJob(FileJob *job);
-    void removeJob(const QString &jobId,bool clearAllbuffer = false);
+    void removeJob(const QString &jobId,bool isRemoveOpticalJob = false);
     QString getJobIdByUrl(const DUrl &url);
     void removeAllJobs();
     void updateJob();
@@ -147,12 +148,12 @@ private:
     QIcon m_dialogInfoIcon;
     QIcon m_dialogWarningIcon;
     QIcon m_dialogErrorIcon;
+    QMutex m_mutexJob;
     DTaskDialog *m_taskDialog {nullptr};
     CloseAllDialogIndicator *m_closeIndicatorDialog {nullptr};
     TrashPropertyDialog *m_trashDialog {nullptr};
     ComputerPropertyDialog *m_computerDialog {nullptr};
     QMap<QString, FileJob *> m_jobs {};
-    QMap<QString, FileJob *> m_Opticaljobs {};
     QMap<DUrl, PropertyDialog *> m_propertyDialogs {};
     QTimer *m_closeIndicatorTimer {nullptr};
     QTimer *m_updateJobTaskTimer {nullptr};

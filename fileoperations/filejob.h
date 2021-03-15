@@ -84,6 +84,7 @@ public:
     explicit FileJob(JobType jobType, QObject *parent = 0);
     ~FileJob();
     JobType jobType();
+    QString jobTypeToString();
     void setStatus(Status status);
     void setJobId(const QString &id);
     QString getJobId();

@@ -148,6 +148,11 @@ FileJob::JobType FileJob::jobType()
     return m_jobType;
 }
 
+QString FileJob::jobTypeToString()
+{
+    return QMetaEnum::fromType<FileJob::JobType>().valueToKey(m_jobType);
+}
+
 void FileJob::setStatus(FileJob::Status status)
 {
     m_status = status;
