@@ -271,6 +271,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                 }
                 break;
             }
+
             const DAbstractFileInfoPointer &f = createFileInfo(this, durl);
             if (f && f->exists()) {
                 static bool lock = false;
@@ -332,7 +333,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                 && !url.isRecentFile()
                 && url.scheme() != BURN_SCHEME
                 && !VaultController::isVaultFile(url.toLocalFile())
-                && !url.isUserShareFile()) {
+                && !url.isUserShareFile()
+                && !url.isSMBFile()) {
 
             if (DThreadUtil::runInMainThread(
                         dialogManager,
