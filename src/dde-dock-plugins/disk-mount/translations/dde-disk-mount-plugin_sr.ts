@@ -48,7 +48,7 @@
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>Следећи пут кликните на &quot;Безбедно уклони&quot;, затим уклоните уређај</translation>
+        <translation>Следећи пут, кликните на &quot;Безбедно уклони&quot;, затим уклоните уређај</translation>
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>

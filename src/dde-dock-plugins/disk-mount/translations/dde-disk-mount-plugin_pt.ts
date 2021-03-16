@@ -102,7 +102,7 @@
     </message>
     <message>
         <source>You do not have permission to access this folder</source>
-        <translation>Não possui permissões para aceder a esta pasta</translation>
+        <translation>Não tem autorização para aceder a esta pasta</translation>
     </message>
     <message>
         <source>Confirm</source>
