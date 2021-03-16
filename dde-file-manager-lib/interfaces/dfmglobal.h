@@ -255,6 +255,8 @@ public:
 
     static QStringList PluginLibraryPaths;
     static bool IsFileManagerDiloagProcess;
+    static QAtomicInteger<bool> IsAppQuiting;
+    static QAtomicInteger<bool> IsInitAppOver;
 
     static QString organizationName();
     static QString applicationName();
@@ -378,6 +380,10 @@ public:
     ///###: this function detect what the charset of str is.
     static QByteArray detectCharset(const QByteArray &data, const QString &fileName = QString{});
     static QString preprocessingFileName(QString name);
+    static void setAppQuiting();
+    static bool isAppQuiting();
+    static void setInitAppOver();
+    static bool isInitAppOver();
 
 signals:
     void clipboardDataChanged();

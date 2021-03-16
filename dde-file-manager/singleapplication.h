@@ -42,7 +42,7 @@ class SingleApplication : public DApplication
     Q_OBJECT
 public:
     explicit SingleApplication(int &argc, char **argv, int = ApplicationFlags);
-    ~SingleApplication();
+    ~SingleApplication() override;
     void initConnect();
 
     static void initSources();

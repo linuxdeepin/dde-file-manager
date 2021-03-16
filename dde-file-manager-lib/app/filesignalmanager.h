@@ -236,9 +236,11 @@ signals:
     // 请求关闭tab页
     void requestCloseTab(const DUrl &tabRootUrl);
 
-    //隐藏系统盘状态发生改变消息
+    // 隐藏系统盘状态发生改变消息
     void requestHideSystemPartition(bool ishide);
 
+    // 请求关闭本地监听端口
+    void requestCloseListen();
 
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */

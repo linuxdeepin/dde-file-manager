@@ -250,6 +250,7 @@ int main(int argc, char *argv[])
         // init app
         Q_UNUSED(FileManagerApp::instance())
 
+        DFMGlobal::setInitAppOver();
         //!开始扫描文件，提升启动速度.
         DRootFileManager::instance()->startQuryRootFile();
 

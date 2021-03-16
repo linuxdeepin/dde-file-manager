@@ -60,6 +60,7 @@ SingleApplication::~SingleApplication()
 void SingleApplication::initConnect()
 {
     connect(m_localServer, &QLocalServer::newConnection, this, &SingleApplication::handleConnection);
+    connect(fileSignalManager,&FileSignalManager::requestCloseListen,this,&SingleApplication::closeServer);
 }
 
 void SingleApplication::initSources()
@@ -218,6 +219,7 @@ void SingleApplication::readData()
 void SingleApplication::closeServer()
 {
     if (m_localServer){
+        disconnect(m_localServer, &QLocalServer::newConnection, this, &SingleApplication::handleConnection);
         m_localServer->removeServer(m_localServer->serverName());
         m_localServer->close();
     }

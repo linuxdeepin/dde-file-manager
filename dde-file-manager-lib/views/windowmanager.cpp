@@ -171,6 +171,10 @@ bool WindowManager::enableAutoQuit() const
 
 void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
 {
+    if (!DFMGlobal::isInitAppOver() || DFMGlobal::isAppQuiting()) {
+        qInfo() << "app is Quitting and do not new windows!";
+        return;
+    }
     if (!isNewWindow){
         for(int i=0; i< m_windows.count(); i++){
             QWidget* window = const_cast<QWidget *>(m_windows.keys().at(i));
@@ -190,10 +194,10 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
     QX11Info::setAppTime(QX11Info::appUserTime());
     DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewWindow) : url);
     loadWindowState(window);
-    window->setAttribute(Qt::WA_DeleteOnClose);
+//    window->setAttribute(Qt::WA_DeleteOnClose);
     window->show();
 
-    qDebug() << "new window" << window->winId() << url;
+    qInfo() << "new window" << window->winId() << url;
 
     connect(window, &DFileManagerWindow::aboutToClose,
             this, &WindowManager::onWindowClosed);
@@ -296,10 +300,24 @@ void WindowManager::setEnableAutoQuit(bool enableAutoQuit)
 
 void WindowManager::onWindowClosed()
 {
+    static QMutex mutex;
+    QMutexLocker lk(&mutex);
+    if (m_windows.count()  <= 0){
+        qInfo() << "quit current ok!"<< DFMGlobal::isAppQuiting() << DFMGlobal::isInitAppOver();
+        return;
+    }
+    DFileManagerWindow* window = static_cast<DFileManagerWindow*>(sender());
     if (m_windows.count() == 1){
-        DFileManagerWindow* window = static_cast<DFileManagerWindow*>(sender());
+        fileSignalManager->requestCloseListen();
+        DFMGlobal::setAppQuiting();
         saveWindowState(window);
         dialogManager->closeAllPropertyDialog();
+    }
+    else {
+        QTimer::singleShot(1000,this,[=](){
+            window->deleteLater();
+            qInfo() << "window deletelater !";
+        });
     }
     m_windows.remove(static_cast<const QWidget*>(sender()));
 }
