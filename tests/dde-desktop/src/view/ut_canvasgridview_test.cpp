@@ -1756,7 +1756,7 @@ TEST_F(CanvasGridViewTest, test_indexAt)
     static QWidget* widget = nullptr;
     mlist << index;
     QString myf = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    myf += '/' + "new.txt";
+    myf = myf + '/' + "new.txt";
     QFile file(myf);
     if (!file.exists()) {
         file.open(QIODevice::ReadWrite | QIODevice::NewOnly);

@@ -42,6 +42,7 @@ Desktop::Desktop()
 
 Desktop::~Desktop()
 {
+
 }
 
 void Desktop::preInit()
@@ -91,7 +92,7 @@ void Desktop::showWallpaperSettings(QString name, int mode)
 
     connect(d->wallpaperSettings, &Frame::aboutHide, this, [this] {
         WallpaperSettings *setting = dynamic_cast<WallpaperSettings *>(sender());
-        if (setting) {
+        if (setting && d->m_background) {
             QPair<QString, QString> screenImage = setting->desktopBackground();
             d->m_background->setBackgroundImage(screenImage.first, screenImage.second);
         }

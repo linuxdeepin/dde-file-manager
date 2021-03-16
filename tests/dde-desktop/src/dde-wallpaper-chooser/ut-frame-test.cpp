@@ -229,6 +229,7 @@ TEST_F(FrameTest, test_frame_show)
 
 TEST_F(FrameTest, test_frame_hide)
 {
+    ASSERT_NE(m_frame, nullptr);
     ASSERT_TRUE(m_frame->isVisible());
 
     m_frame->hide();
