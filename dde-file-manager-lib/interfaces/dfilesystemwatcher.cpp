@@ -139,7 +139,7 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
 
     int buffSize = 0;
     //! 读取信息失败则返回，避免程序卡顿
-    if (ioctl(inotifyFd, FIONREAD, (char *) &buffSize) < 0)
+    if ((ioctl(inotifyFd, FIONREAD, (char *) &buffSize) < 0) || (buffSize == 0))
         return;
 
 
