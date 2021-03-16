@@ -4,7 +4,7 @@
 %endif
 
 Name:           dde-file-manager
-Version:        5.2.8.2
+Version:        5.2.8.3
 Release:        %{specrelease}
 Summary:        Deepin File Manager
 License:        GPLv3
@@ -55,6 +55,8 @@ BuildRequires:  kf5-kcodecs-devel
 BuildRequires:  lucene++-devel
 BuildRequires:  htmlcxx-devel
 BuildRequires:  libgsf-devel
+BuildRequires:  mimetic-devel
+BuildRequires:  boost-devel
 
 # run command by QProcess
 #Requires:       deepin-shortcut-viewer
@@ -146,9 +148,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/dde-home.desktop ||:
 %{_bindir}/%{name}
 %{_bindir}/%{name}-daemon
 %{_bindir}/%{name}-pkexec
+%{_bindir}/*.sh
 %{_bindir}/dde-property-dialog
 /usr/lib/systemd/system/dde-filemanager-daemon.service
 
+%{_sysconfdir}/xdg/autostart/dde-file-manager-autostart.desktop
 %{_datadir}/applications/dde-open.desktop
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/dbus-1/interfaces/com.deepin.filemanager.filedialog.xml
@@ -158,6 +162,8 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/dde-home.desktop ||:
 %{_datadir}/dbus-1/system-services/com.deepin.filemanager.daemon.service
 %{_polkit_qt_policydir}/com.deepin.filemanager.daemon.policy
 %{_polkit_qt_policydir}/com.deepin.pkexec.dde-file-manager.policy
+%{_datadir}/deepin-manual/manual-assets/application/dde-file-manager
+%{_datadir}/applications/context-menus/.readme
 
 %files -n libdde-file-manager
 %{_libdir}/dde-file-manager/plugins/previews/libdde-image-preview-plugin.so
