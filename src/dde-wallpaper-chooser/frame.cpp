@@ -331,8 +331,8 @@ void Frame::hideEvent(QHideEvent *event)
         if (!m_lockWallpaper.isEmpty())
             m_dbusAppearance->Set("greeterbackground", m_lockWallpaper);
 
-        ThumbnailManager *manager = ThumbnailManager::instance(devicePixelRatioF());
-        manager->stop();
+        if (ThumbnailManager *manager = ThumbnailManager::instance(devicePixelRatioF()))
+            manager->stop();
     }
 #ifndef DISABLE_SCREENSAVER
     else if (m_mode == ScreenSaverMode) {

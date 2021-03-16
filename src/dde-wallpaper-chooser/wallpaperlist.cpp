@@ -382,7 +382,7 @@ void WallpaperList::wallpaperItemHoverIn()
 {
     WallpaperItem *item = qobject_cast<WallpaperItem *>(sender());
 
-    if (item->isVisible())
+    if (item && item->isVisible())
         showDeleteButtonForItem(item);
 }
 
