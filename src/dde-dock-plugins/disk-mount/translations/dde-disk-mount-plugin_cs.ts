@@ -48,7 +48,7 @@
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>Příště klepněte na „Bezpečně odebrat“, a až pak odpojte</translation>
+        <translation>Příště klepněte na „Bezpečně odebrat“ a až pak odpojte</translation>
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>

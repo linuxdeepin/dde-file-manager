@@ -110,7 +110,7 @@
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
-        <translation type="unfinished"/>
+        <translation>Disco bajo escaneo, ¿desea detenerlo?</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -118,7 +118,7 @@
     </message>
     <message>
         <source>Stop</source>
-        <translation type="unfinished"/>
+        <translation>Detener</translation>
     </message>
 </context>
 </TS>

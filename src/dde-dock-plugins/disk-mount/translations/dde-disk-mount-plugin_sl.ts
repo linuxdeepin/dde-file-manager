@@ -68,7 +68,7 @@
     </message>
     <message>
         <source>Cannot find the mounted device</source>
-        <translation>Ne morem najti priklopljene naprave</translation>
+        <translation>Priklopljene naprave ni mogoče najti</translation>
     </message>
     <message>
         <source>Disks</source>

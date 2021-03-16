@@ -4,22 +4,22 @@
 <context>
     <name>MusicMessageView</name>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="62"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="59"/>
         <source>Artist:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="68"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="65"/>
         <source>Album:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="156"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="153"/>
         <source>unknown artist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="160"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="157"/>
         <source>unknown album</source>
         <translation type="unfinished"></translation>
     </message>
@@ -27,7 +27,7 @@
 <context>
     <name>PdfWidget</name>
     <message>
-        <location filename="../pluginPreview/dde-pdf-preview-plugin/pdfwidget.cpp" line="173"/>
+        <location filename="../pluginPreview/dde-pdf-preview-plugin/pdfwidget.cpp" line="170"/>
         <source>Cannot preview this file!</source>
         <translation type="unfinished"></translation>
     </message>
