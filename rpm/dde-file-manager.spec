@@ -4,7 +4,7 @@
 %endif
 
 Name:           dde-file-manager
-Version:        5.2.0.56
+Version:        5.2.8.2
 Release:        %{specrelease}
 Summary:        Deepin File Manager
 License:        GPLv3
@@ -52,6 +52,9 @@ BuildRequires:  libqtxdg-devel
 BuildRequires:  libmediainfo-devel
 BuildRequires:  kf5-kcodecs-devel
 #BuildRequires:  libudisks2-qt5-devel
+BuildRequires:  lucene++-devel
+BuildRequires:  htmlcxx-devel
+BuildRequires:  libgsf-devel
 
 # run command by QProcess
 #Requires:       deepin-shortcut-viewer
@@ -122,7 +125,7 @@ sed -i 's|/lib/dde-dock/plugins|/lib64/dde-dock/plugins|' src/dde-dock-plugins/d
 
 %build
 export PATH=%{_qt5_bindir}:$PATH
-%qmake_qt5 PREFIX=%{_prefix} QMAKE_CFLAGS_ISYSTEM= CONFIG+="DISABLE_FFMPEG DISABLE_ANYTHING"
+%qmake_qt5 PREFIX=%{_prefix} QMAKE_CFLAGS_ISYSTEM= CONFIG+="DISABLE_FFMPEG DISABLE_ANYTHING" filemanager.pro
 %make_build
 
 %install
