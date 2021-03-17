@@ -1461,7 +1461,6 @@ void AppController::initConnect()
 
     m_unmountThread.start();
 
-    m_defenderInterface = new DefenderInterface(this);
     m_umountManager.reset(new DUMountManager(this));
 }
 

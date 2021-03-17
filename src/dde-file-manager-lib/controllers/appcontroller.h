@@ -37,7 +37,6 @@ class FileController;
 class FileMonitor;
 class DRenameBar;
 class FileBatchProcess;
-class DefenderInterface;
 class DUMountManager;
 
 /**
@@ -191,7 +190,6 @@ private:
     IntrospectableInterface *m_introspectableInterface = nullptr;
     QThread m_unmountThread;
     UnmountWorker *m_unmountWorker;
-    DefenderInterface *m_defenderInterface;
     QScopedPointer<DUMountManager> m_umountManager;
 
     volatile enum {UnkownIFS,NoneIFS,CreatingIFS,VaildIFS} m_statDBusInterface = UnkownIFS; //dbus接口创建状态
