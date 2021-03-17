@@ -1,44 +1,46 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3100"/>
+        <location filename="../view/canvasgridview.cpp" line="3104"/>
         <source>Icon size</source>
         <translation>图标大小</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3108"/>
+        <location filename="../view/canvasgridview.cpp" line="3112"/>
         <source>Auto merge</source>
         <translation>自动整理</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3120"/>
+        <location filename="../view/canvasgridview.cpp" line="3124"/>
         <source>Auto arrange</source>
         <translation>自动排列</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3168"/>
+        <location filename="../view/canvasgridview.cpp" line="3172"/>
         <source>Corner Settings</source>
         <translation>热区设置</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3177"/>
-        <location filename="../view/canvasgridview.cpp" line="3182"/>
+        <location filename="../view/canvasgridview.cpp" line="3181"/>
+        <location filename="../view/canvasgridview.cpp" line="3186"/>
         <source>Set Wallpaper</source>
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3180"/>
+        <location filename="../view/canvasgridview.cpp" line="3184"/>
         <source>Wallpaper and Screensaver</source>
         <translation>壁纸与屏保</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3324"/>
+        <location filename="../view/canvasgridview.cpp" line="3329"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3159"/>
+        <location filename="../view/canvasgridview.cpp" line="3163"/>
         <source>Display Settings</source>
         <translation>显示设置</translation>
     </message>
@@ -74,7 +76,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="135"/>
+        <location filename="../main.cpp" line="140"/>
         <source>Desktop</source>
         <translation>桌面</translation>
     </message>
@@ -150,12 +152,14 @@
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="253"/>
+        <location filename="../view/watermaskframe.cpp" line="260"/>
+        <location filename="../view/watermaskframe.cpp" line="261"/>
         <source>Not authorized</source>
         <translation>未授权</translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="261"/>
+        <location filename="../view/watermaskframe.cpp" line="271"/>
+        <location filename="../view/watermaskframe.cpp" line="272"/>
         <source>In trial period</source>
         <translation>试用期</translation>
     </message>
