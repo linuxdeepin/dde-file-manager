@@ -4,7 +4,7 @@
 %endif
 
 Name:           dde-file-manager
-Version:        5.2.8.3
+Version:        5.2.8.4
 Release:        %{specrelease}
 Summary:        Deepin File Manager
 License:        GPLv3
@@ -127,7 +127,7 @@ sed -i 's|/lib/dde-dock/plugins|/lib64/dde-dock/plugins|' src/dde-dock-plugins/d
 
 %build
 export PATH=%{_qt5_bindir}:$PATH
-%qmake_qt5 PREFIX=%{_prefix} QMAKE_CFLAGS_ISYSTEM= CONFIG+="DISABLE_FFMPEG DISABLE_ANYTHING" filemanager.pro
+%qmake_qt5 PREFIX=%{_prefix} QMAKE_CFLAGS_ISYSTEM= CONFIG+="DISABLE_FFMPEG" filemanager.pro
 %make_build
 
 %install
