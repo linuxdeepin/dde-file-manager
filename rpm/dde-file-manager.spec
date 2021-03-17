@@ -4,7 +4,7 @@
 %endif
 
 Name:           dde-file-manager
-Version:        5.2.8.4
+Version:        5.2.8.1
 Release:        %{specrelease}
 Summary:        Deepin File Manager
 License:        GPLv3
@@ -57,6 +57,7 @@ BuildRequires:  htmlcxx-devel
 BuildRequires:  libgsf-devel
 BuildRequires:  mimetic-devel
 BuildRequires:  boost-devel
+BuildRequires:	deepin-anything-devel deepin-anything-server
 
 # run command by QProcess
 #Requires:       deepin-shortcut-viewer
@@ -66,6 +67,7 @@ Requires:       dde-desktop
 Requires:       jemalloc
 Requires:       libglvnd-glx
 Requires:       libdde-file-manager
+Requires:		deepin-anything-dkms deepin-anything-server
 #Requires:       gvfs-client
 #Requires:       samba
 #Requires:       xdg-user-dirs
@@ -93,6 +95,8 @@ Requires:       libzen
 Requires:       udisks2-qt5
 Requires:       taglib
 Requires:       libgio-qt
+Requires:		deepin-anything-libs
+
 
 %description -n libdde-file-manager
 DDE File Manager library.
@@ -148,11 +152,13 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/dde-home.desktop ||:
 %{_bindir}/%{name}
 %{_bindir}/%{name}-daemon
 %{_bindir}/%{name}-pkexec
+%ifnarch x86_64
 %{_bindir}/*.sh
+%{_sysconfdir}/xdg/autostart/dde-file-manager-autostart.desktop
+%endif
 %{_bindir}/dde-property-dialog
 /usr/lib/systemd/system/dde-filemanager-daemon.service
 
-%{_sysconfdir}/xdg/autostart/dde-file-manager-autostart.desktop
 %{_datadir}/applications/dde-open.desktop
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/dbus-1/interfaces/com.deepin.filemanager.filedialog.xml
@@ -192,14 +198,14 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/dde-home.desktop ||:
 %{_datadir}/icons/hicolor/scalable/apps/dde-file-manager.svg
 %{_libdir}/libdde-file-manager.so.1
 %{_libdir}/libdde-file-manager.so.1.8
+%ifarch x86_64
+%{_libdir}/deepin-anything-server-lib/plugins/handlers/libdde-anythingmonitor.so
+%endif
 
 %files -n dde-disk-mount-plugin
 %{_libdir}/dde-dock/plugins/system-trays/libdde-disk-mount-plugin.so
 %{_datadir}/dde-disk-mount-plugin/translations
 %{_datadir}/glib-2.0/schemas/com.deepin.dde.dock.module.disk-mount.gschema.xml
-
-
-
 
 %files devel
 %{_includedir}/%{name}/*.h
