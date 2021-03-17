@@ -246,6 +246,9 @@ signals:
 
     // 通过信号进入目录,目前与DFileManagerWindow::cd 关联
     bool cdFolder(const DUrl &folderUrl);
+
+    // 请求关闭本地监听端口
+    void requestCloseListen();
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString &srcFileName);

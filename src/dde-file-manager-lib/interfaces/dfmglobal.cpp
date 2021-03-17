@@ -151,6 +151,7 @@ Q_GLOBAL_STATIC(DFMGlobalPrivate, dfmGlobal)
 QStringList DFMGlobal::PluginLibraryPaths;
 bool DFMGlobal::IsFileManagerDiloagProcess = false;
 QAtomicInteger<bool> DFMGlobal::IsInitAppOver = false;
+QAtomicInteger<bool> DFMGlobal::IsAppQuiting = false;
 
 DFMGlobal *DFMGlobal::instance()
 {
@@ -1210,6 +1211,16 @@ void DFMGlobal::setInitAppOver()
 bool DFMGlobal::isInitAppOver()
 {
     return IsInitAppOver.load();
+}
+
+void DFMGlobal::setAppQuiting()
+{
+    IsAppQuiting.store(true);
+}
+
+bool DFMGlobal::isAppQuiting()
+{
+    return IsAppQuiting.load();
 }
 
 QString DFMGlobal::toUnicode(const QByteArray &data, const QString &fileName)
