@@ -58,12 +58,10 @@ FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
 
 void FileDialogStatusBar::setMode(FileDialogStatusBar::Mode mode)
 {
-    if (m_mode == mode)
-        return;
-
     m_mode = mode;
 
     m_acceptButton->setText(mode == Save ? tr("Save") : tr("Open"));
+    m_rejectButton->setText(tr("Cancel"));
 
     updateLayout();
 
