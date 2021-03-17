@@ -261,6 +261,7 @@ public:
     static QStringList PluginLibraryPaths;
     static bool IsFileManagerDiloagProcess;
     static QAtomicInteger<bool> IsInitAppOver;
+    static QAtomicInteger<bool> IsAppQuiting;
 
     static QString organizationName();
     static QString applicationName();
@@ -407,6 +408,8 @@ public:
     static bool isMimeDatafromCurrentUser(const QMimeData *mime);
     static void setInitAppOver();
     static bool isInitAppOver();
+    static void setAppQuiting();
+    static bool isAppQuiting();
 signals:
     void clipboardDataChanged();
 

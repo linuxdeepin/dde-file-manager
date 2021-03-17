@@ -168,8 +168,8 @@ bool WindowManager::enableAutoQuit() const
 
 void WindowManager::showNewWindow(const DUrl &url, const bool &isNewWindow)
 {
-    if (!DFMGlobal::isInitAppOver()) {
-        qInfo() << "window app not init over! " << isNewWindow;
+    if (!DFMGlobal::isInitAppOver() || DFMGlobal::isAppQuiting()) {
+        qInfo() << "window app not init over or app quit! " << isNewWindow << url;
         return;
     }
     if (!isNewWindow) {
@@ -298,17 +298,32 @@ void WindowManager::setEnableAutoQuit(bool enableAutoQuit)
 
 void WindowManager::onWindowClosed()
 {
+    static QMutex mutex;
+    QMutexLocker lk(&mutex);
+    if (m_windows.count()  <= 0){
+        qInfo() << "quit current ok!"<< DFMGlobal::isAppQuiting() << DFMGlobal::isInitAppOver();
+        return;
+    }
     DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(sender());
-    if (m_windows.count() == 1) { 
+    if (m_windows.count() == 1) {
+        fileSignalManager->requestCloseListen();
+        DFMGlobal::setAppQuiting();
         saveWindowState(window);
         dialogManager->closeAllPropertyDialog();
+    } else {
+        QPointer<DFileManagerWindow> ptrwindow = window;
+        // fix bug 59239 drag事件的接受者的drop事件和发起drag事件的发起者的mousemove事件处理完成才能
+        // 析构本窗口，检查当前窗口是否可以析构
+        if (window && window->getCanDestruct()) {
+            QTimer::singleShot(1000, this, [=](){
+                if (ptrwindow)
+                    ptrwindow->deleteLater();
+                qInfo() << "window deletelater !";
+            });
+        }
     }
     m_windows.remove(static_cast<const QWidget *>(sender()));
 
-    // fix bug 59239 drag事件的接受者的drop事件和发起drag事件的发起者的mousemove事件处理完成才能
-    // 析构本窗口，检查当前窗口是否可以析构
-    if (window && window->getCanDestruct())
-        window->deleteLater();
 }
 
 void WindowManager::onLastActivedWindowClosed(quint64 winId)
