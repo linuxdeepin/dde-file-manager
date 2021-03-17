@@ -69,33 +69,34 @@ DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
     DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
     //fix 60959 如果是smb,sftp,ftp的共享文件，本来是显示的，但是断网了以后，新开窗口就创建了新的dfmrootfileinfo判断文件就不存在，
     //到DRootFileManager中去获取缓存，如果缓存不存在就返回
+    const QString urlString = url.toString();
     if(!infoPointer->exists() && infoPointer->suffix() == SUFFIX_GVFSMP &&
-            ((url.toString().contains("smb-share") && url.toString().contains("server")) ||
-             (url.toString().contains("ftp") && url.toString().contains("host")))) {
+            ((urlString.contains("smb-share") && urlString.contains("server")) ||
+             (urlString.contains("ftp") && urlString.contains("host")))) {
         infoPointer = DRootFileManager::getFileInfo(url);
     }
     if(!infoPointer  || (!infoPointer->exists() && infoPointer->suffix() != SUFFIX_GVFSMP &&
-                         !((url.toString().contains("smb-share") && url.toString().contains("server")) ||
-                           (url.toString().contains("ftp") && url.toString().contains("host"))))) {
+                         !((urlString.contains("smb-share") && urlString.contains("server")) ||
+                           (urlString.contains("ftp") && urlString.contains("host"))))) {
         return nullptr;
     }
-    QVariantHash info = infoPointer->extraProperties();
+    //QVariantHash info = infoPointer->extraProperties();
     QString displayName = infoPointer->fileDisplayName();
     QString iconName = infoPointer->iconName() + "-symbolic";
 
     DFMSideBarItem * item = new DFMSideBarItem(QIcon::fromTheme(iconName), displayName, url);
 
     Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
-    if (infoPointer->menuActionList().contains(MenuAction::Rename))
+
+    auto actionlist = infoPointer->menuActionList();
+    if (actionlist.contains(MenuAction::Rename))
         flags |= Qt::ItemIsEditable;
     item->setFlags(flags);
-
     item->setData(SIDEBAR_ID_DEVICE, DFMSideBarItem::ItemUseRegisteredHandlerRole);
 
     DViewItemActionList lst;
     DViewItemAction * act = createUnmountOrEjectAction(url, false);
     act->setIcon(QIcon::fromTheme("media-eject-symbolic"));
-    auto actionlist = infoPointer->menuActionList();
     act->setVisible(actionlist.contains(MenuAction::Eject) ||
                     actionlist.contains(MenuAction::Unmount) ||
                     actionlist.contains(MenuAction::SafelyRemoveDrive));

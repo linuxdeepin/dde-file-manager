@@ -52,10 +52,12 @@ public Q_SLOTS:
 private:
     // 从当前扫描路径选取url的子目录，若url本身也被扫描，也会在返回列表中
     QList<QUrl> getScanningPaths(const QUrl &url = QUrl("/"));
+    void start();
 
 private:
     QScopedPointer<QDBusInterface> interface;
     QList<QUrl> scanningPaths;
+    bool m_started;
 };
 
 #endif // DEFENDER_INTERFACE_H

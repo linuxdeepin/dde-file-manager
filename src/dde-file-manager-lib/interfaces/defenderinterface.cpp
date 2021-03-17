@@ -32,12 +32,26 @@
 #define DBUS_INTERFACE_NAME "com.deepin.defender.daemonservice"
 
 DefenderInterface::DefenderInterface(QObject *parent)
-    :QObject(parent)
+    : QObject(parent)
+    , m_started(false)
 {
+
+}
+
+void DefenderInterface::start()
+{
+    if (m_started)
+        return;
+
+    m_started = true;
+
+    qInfo() << "create dbus interface:" << DBUS_SERVICE_NAME;
     interface.reset(new QDBusInterface(DBUS_SERVICE_NAME,
                          DBUS_SERVICE_PATH,
                          DBUS_INTERFACE_NAME,
                          QDBusConnection::sessionBus()));
+
+    qInfo() << "create dbus interface done";
 
     QDBusConnection::sessionBus().connect(
         DBUS_SERVICE_NAME,
@@ -47,9 +61,12 @@ DefenderInterface::DefenderInterface(QObject *parent)
         this,
         SLOT(scanningUsbPathsChanged(QStringList)));
 
+    qInfo() << "start get usb scanning path";
     QStringList list = interface->property("ScanningUsbPaths").toStringList();
     foreach (const QString &p, list)
         scanningPaths << QUrl::fromLocalFile(p);
+
+    qInfo() << "get usb scanning path done:" << scanningPaths;
 }
 
 void DefenderInterface::scanningUsbPathsChanged(QStringList list)
@@ -90,6 +107,9 @@ bool DefenderInterface::stopScanning(const QList<QUrl> &urls)
     qInfo() << "stopScanning:" << urls;
     qInfo() << "current scanning:" << scanningPaths;
 
+    // 确保DBus监听
+    start();
+
     QList<QUrl> paths;
     foreach(const QUrl &url, urls)
         paths << getScanningPaths(url);
@@ -119,6 +139,9 @@ bool DefenderInterface::stopScanning(const QList<QUrl> &urls)
  */
 bool DefenderInterface::isScanning(const QUrl &url)
 {
+    // 确保DBus监听
+    start();
+
     QList<QUrl> paths = getScanningPaths(url);
     return !paths.empty();
 }

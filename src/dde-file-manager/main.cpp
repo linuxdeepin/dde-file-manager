@@ -201,11 +201,12 @@ int main(int argc, char *argv[])
             return;
         }
         QWidget *w = new QWidget;
+        w->setWindowIcon(QIcon::fromTheme("dde-file-manager"));
         w->winId();
+        delete w;
         winId_mtx.second.unlock();
         /* 针对bug47144音乐预览加载缓慢的问题，在初始化的时候调用QMediaPlayer::hasSupport，下次调用就快很多*/
         QMediaPlayer::hasSupport("application/octet-stream");
-        w->deleteLater();
     });
     // init application object
     DFMApplication fmApp;
