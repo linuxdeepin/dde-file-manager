@@ -78,6 +78,11 @@
 #define BURN_SEG_ONDISC "disc_files"
 #define BURN_SEG_STAGING "staging_files"
 
+#define GVFS_ROOT_MATCH "(^//run/user/\\d+/gvfs/|^//root/.gvfs/)"
+#define GVFS_MATCH "(^/run/user/\\d+/gvfs/|^/root/.gvfs/)"
+#define FTP_HOST "ftp:host="
+#define GVFS_MATCH_EX "(^/run/user/\\d+/gvfs/.+$|^/root/.gvfs/.+$)"
+
 class DUrl;
 
 QT_BEGIN_NAMESPACE

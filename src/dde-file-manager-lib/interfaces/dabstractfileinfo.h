@@ -37,6 +37,10 @@
 #include "durl.h"
 #include "dfmglobal.h"
 
+#define SUFFIX_USRDIR "userdir"
+#define SUFFIX_GVFSMP "gvfsmp"
+#define SUFFIX_UDISKS "localdisk"
+
 #define COMPARE_FUN_DEFINE(Value, Name, Type) \
     bool compareFileListBy##Name(const DAbstractFileInfoPointer &info1, const DAbstractFileInfoPointer &info2, Qt::SortOrder order)\
     {\
