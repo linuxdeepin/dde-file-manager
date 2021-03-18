@@ -141,9 +141,11 @@ DFileDialog::DFileDialog(QWidget *parent)
     setAcceptMode(QFileDialog::AcceptOpen);
     handleNewView(DFileManagerWindow::getFileView());
 
-    getLeftSideBar()->setDisableUrlSchemes(QSet<QString>() << "trash" << "network");
-    getLeftSideBar()->setContextMenuEnabled(false);
-    getLeftSideBar()->setAcceptDrops(false);
+    if (getLeftSideBar()) {
+        getLeftSideBar()->setDisableUrlSchemes(QSet<QString>() << "trash" << "network");
+        getLeftSideBar()->setContextMenuEnabled(false);
+        getLeftSideBar()->setAcceptDrops(false);
+    }
 
     DFMEventDispatcher::instance()->installEventFilter(this);
 
@@ -312,6 +314,9 @@ QList<QUrl> DFileDialog::selectedUrls() const
 
 void DFileDialog::addDisableUrlScheme(const QString &scheme)
 {
+    if (!getLeftSideBar())
+        return;
+
     QSet<QString> schemes = getLeftSideBar()->disableUrlSchemes();
 
     schemes << scheme;
@@ -869,6 +874,16 @@ void DFileDialog::showEvent(QShowEvent *event)
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, currentUrl());
     if (info) {
         setWindowTitle(info->fileDisplayName());
+    }
+
+    if (DFMGlobal::isTablet()) {
+        setMinimumSize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
+        setMaximumSize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
+        resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
+
+        const QList<QScreen *> screens = qApp->screens();
+        if (screens.length() > 0)
+            moveCenterByRect(screens.first()->virtualGeometry());
     }
 
     return DFileManagerWindow::showEvent(event);

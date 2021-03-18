@@ -902,8 +902,8 @@ bool DFileManagerWindow::openNewTab(DUrl fileUrl)
     }
 
     if (fileUrl.isEmpty()) {
-        fileUrl = DFMGlobal::isTablet() ? DUrl::fromUserInput(DFMStandardPaths::location(DFMStandardPaths::ComputerRootPath))
-                                        : DUrl::fromLocalFile(QDir::homePath());
+        fileUrl = DFMGlobal::isTablet() ? DUrl::fromLocalFile(QDir::homePath())
+                                        : DUrl::fromUserInput(DFMStandardPaths::location(DFMStandardPaths::ComputerRootPath));
     }
 
     d->toolbar->addHistoryStack();
@@ -1078,8 +1078,20 @@ void DFileManagerWindow::initUI()
 {
     D_DC(DFileManagerWindow);
 
-    resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
-    setMinimumSize(680, 420);
+    if (DFMGlobal::isTablet()) {
+        const QList<QScreen *> screens = qApp->screens();
+        if (screens.length() > 0) {
+            const QSize &screenSize = screens.first()->virtualSize();
+
+            setMinimumSize(screenSize.width(), screenSize.height());
+            resize(screenSize.width(), screenSize.height());
+            moveCenterByRect(screens.first()->virtualGeometry());
+        }
+    } else {
+        setMinimumSize(680, 420);
+        resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
+    }
+
     initTitleBar();
     initCentralWidget();
     setCentralWidget(d->centralWidget);
