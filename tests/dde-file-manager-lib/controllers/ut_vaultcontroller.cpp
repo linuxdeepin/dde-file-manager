@@ -391,11 +391,6 @@ TEST_F(TestVaultController, tst_deleteFiles)
     Stub stub;
     stub.set(ADDR(DFileService, deleteFiles), st_deleteFiles);
 
-    void (*st_signalFileDeleted)() = [](){
-        // do nothing.
-    };
-    stub.set(ADDR(VaultController, signalFileDeleted), st_signalFileDeleted);
-
     EXPECT_TRUE(m_controller->deleteFiles(event));
     QProcess::execute(cmdRm);
 }
@@ -418,11 +413,6 @@ TEST_F(TestVaultController, tst_moveToTrash)
     };
     Stub stub;
     stub.set(ADDR(DFileService, deleteFiles), st_deleteFiles);
-
-    void (*st_signalFileDeleted)() = [](){
-        // do nothing.
-    };
-    stub.set(ADDR(VaultController, signalFileDeleted), st_signalFileDeleted);
 
     m_controller->moveToTrash(event);
     QProcess::execute(cmdRm);
