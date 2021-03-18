@@ -1439,6 +1439,13 @@ void DFileView::updateStatusBar()
     if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
         return;
     }
+
+    // fix bug 67301
+    if (rootUrl().isSearchFile() && !corectUrls.isEmpty()) {
+        if (DFileService::instance()->checkGvfsMountfileBusy(corectUrls.first()))
+            return;
+    }
+
     if (!me) {
         qDebug() << "DFileView is null,so exit";
         return;
@@ -1641,6 +1648,14 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
         if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
             return;
         }
+
+        // fix bug 67301
+        if (rootUrl().isSearchFile() && !selectedUrls().isEmpty()) {
+            DUrl fileUrl = selectedUrls().first().searchedFileUrl();
+            if (DFileService::instance()->checkGvfsMountfileBusy(fileUrl))
+                return;
+        }
+
         flags = model()->flags(index);
         if (!flags.testFlag(Qt::ItemIsEnabled)) {
             isEmptyArea = true;
