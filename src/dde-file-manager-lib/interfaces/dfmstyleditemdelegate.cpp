@@ -222,11 +222,11 @@ QList<QRectF> DFMStyledItemDelegate::getCornerGeometryList(const QRectF &baseRec
     double offset = baseRect.width() / 8;
     const QSizeF &offset_size = cornerSize / 2;
 
-    list << QRectF(QPointF(baseRect.right() - offset - offset_size.width(),
-                           baseRect.bottom() - offset - offset_size.height()), cornerSize);
-    list << QRectF(QPointF(baseRect.left() + offset - offset_size.width(), list.first().top()), cornerSize);
-    list << QRectF(QPointF(list.at(1).left(), baseRect.top() + offset - offset_size.height()), cornerSize);
-    list << QRectF(QPointF(list.first().left(), list.at(2).top()), cornerSize);
+    list.append(QRectF(QPointF(baseRect.right() - offset - offset_size.width(),
+                           baseRect.bottom() - offset - offset_size.height()), cornerSize));
+    list.append(QRectF(QPointF(baseRect.left() + offset - offset_size.width(), list.first().top()), cornerSize));
+    list.append(QRectF(QPointF(list.at(1).left(), baseRect.top() + offset - offset_size.height()), cornerSize));
+    list.append(QRectF(QPointF(list.first().left(), list.at(2).top()), cornerSize));
 
     return list;
 }

@@ -113,7 +113,7 @@ void DBusFileManager1::closeTask()
 }
 
 //! 写json文件函数
-void ChangeJson(QString path, QString gourpNamne, QString VauleName, QString vaule)
+void ChangeJson(const QString & path, const QString & gourpNamne, const QString & VauleName, const QString & vaule)
 {
     QByteArray byte;
     QFile file(path);
