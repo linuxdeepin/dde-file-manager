@@ -119,6 +119,11 @@ m_fm_setting{ dde_file_manager::DFMApplication::genericSetting() }
 bool DAnythingMonitorFilterPrivate::whetherFilterThePath(const QByteArray &local_path)
 {
     QString local_file{ QString::fromLocal8Bit(local_path) };
+
+    //从数据盘进入主目录的路径在判断之前需要先处理成/home路径
+    if (local_file.startsWith("/data/home/"))
+        local_file.remove(0, sizeof("/data") - 1);
+
     bool result{ false };
 
     for (const QString &path : *m_white_list) {
