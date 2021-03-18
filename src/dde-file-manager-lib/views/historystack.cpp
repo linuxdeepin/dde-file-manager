@@ -26,6 +26,7 @@
 
 #include "dfileservices.h"
 #include "plugins/pluginmanager.h"
+#include "drootfilemanager.h"
 
 #include <QDebug>
 #include <QProcess>
@@ -198,10 +199,7 @@ bool HistoryStack::backIsExist()
 
     //为了避免获取目录的info对象，采用了test命令，只测试计算机中是否包含该目录
     //避免获取info对象是因为若目录为网络目录，且该网络已不可达，会导致获取info等待时间不可控
-    if (0 == QProcess::execute(QString("test -e %1").arg(backUrl.path())))
-        return true;
-
-    return false;
+    return checkPathIsExist(backUrl);
 }
 
 bool HistoryStack::forwardIsExist()
@@ -216,10 +214,7 @@ bool HistoryStack::forwardIsExist()
 
     //为了避免获取目录的info对象，采用了test命令，只测试计算机中是否包含该目录
     //避免获取info对象是因为若目录为网络目录，且该网络已不可达，会导致获取info等待时间不可控
-    if (0 == QProcess::execute(QString("test -e %1").arg(forwardUrl.path())))
-        return true;
-
-    return false;
+    return checkPathIsExist(forwardUrl);
 }
 
 bool HistoryStack::needCheckExist(const DUrl &url)
@@ -231,6 +226,60 @@ bool HistoryStack::needCheckExist(const DUrl &url)
         return false;
 
     return true;
+}
+
+bool HistoryStack::checkPathIsExist(const DUrl &url)
+{
+    //判断是否是协议设备的挂载路径
+    static QRegularExpression regExp(GVFS_MATCH_EX,
+                                     QRegularExpression::DotMatchesEverythingOption
+                                     | QRegularExpression::DontCaptureOption
+                                     | QRegularExpression::OptimizeOnFirstUsageOption);
+
+    QString urlPath = url.path();
+    if (regExp.match(urlPath, 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch()) {
+        //协议设备需要考虑断网问题，通过查询挂载点是否存在来判断是否存在
+        DUrl rootUrl;
+        QString rootFileName;
+        int qi = 0;
+        QStringList urlPathList = urlPath.split(QRegularExpression(GVFS_MATCH));
+        QString urlStr;
+        QString urlLast;
+        if (urlPathList.size() >= 2) {
+            urlLast = urlPathList[1];
+            urlStr = urlPath.left(urlPath.indexOf(urlLast));
+        }
+
+        qi = urlLast.indexOf("/");
+        QString path;
+        if (0 >= qi) {
+            path = urlPath;
+            QStringList rootStrList = path.split(QRegularExpression(GVFS_MATCH));
+            if (rootStrList.size() >= 2) {
+                rootFileName = rootStrList.at(1);
+                rootFileName = rootFileName.replace(QString(".") + QString(SUFFIX_GVFSMP), "");
+            }
+        } else {
+            rootFileName = urlLast.left(qi);
+            path = urlStr + urlLast.left(qi);
+        }
+        if (path.isNull() || path.isEmpty() ||
+                !(rootFileName.startsWith(SMB_SCHEME) || rootFileName.startsWith(FTP_SCHEME)
+                  || rootFileName.startsWith(SFTP_SCHEME))) {
+            return false;
+        }
+        rootUrl.setScheme(DFMROOT_SCHEME);
+        rootUrl.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
+
+        return DRootFileManager::instance()->isRootFileContain(rootUrl);
+    } else {
+        //非协议设备挂载不用考虑断网问题，可以直接取fileinfo来判断是否存在
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
+        if (fileInfo)
+            return fileInfo->exists();
+    }
+
+    return false;
 }
 
 QT_BEGIN_NAMESPACE
