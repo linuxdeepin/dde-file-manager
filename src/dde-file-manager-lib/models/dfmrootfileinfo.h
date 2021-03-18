@@ -26,10 +26,6 @@
 
 #include "dfileinfo.h"
 
-#define SUFFIX_USRDIR "userdir"
-#define SUFFIX_GVFSMP "gvfsmp"
-#define SUFFIX_UDISKS "localdisk"
-
 #define DISKALIAS_GROUP "LocalDiskAlias"
 #define DISKALIAS_ITEMS "Items"
 #define DISKALIAS_ITEM_UUID "uuid"

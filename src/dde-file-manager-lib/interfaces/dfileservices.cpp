@@ -77,11 +77,6 @@
 
 DWIDGET_USE_NAMESPACE
 
-#define GVFS_ROOT_MATCH "(^//run/user/\\d+/gvfs/|^//root/.gvfs/)"
-#define GVFS_MATCH "(^/run/user/\\d+/gvfs/|^/root/.gvfs/)"
-#define FTP_HOST "ftp:host="
-#define GVFS_MATCH_EX "(^/run/user/\\d+/gvfs/.+$|^/root/.gvfs/.+$)"
-
 class DFileServicePrivate
 {
 public:

@@ -56,6 +56,7 @@ public:
      */
     bool forwardIsExist();
 
+
 private:
     QList<DUrl> m_list;
     int m_threshold;
@@ -64,6 +65,7 @@ private:
     friend QDebug operator<<(QDebug beg, const HistoryStack &stack);
 
     bool needCheckExist(const DUrl &url);
+    bool checkPathIsExist(const DUrl &url);
 };
 
 QT_BEGIN_NAMESPACE
