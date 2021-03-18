@@ -1632,7 +1632,7 @@ void DialogManager::showAddUserShareFailedDialog(const QString &sharePath)
     (void)sharePath;
 
     DDialog d;
-    d.setTitle(tr("Share folder can't be named after the current username"));
+    d.setTitle(tr("The share name should be different from valid system usernames"));
     d.setIcon(m_dialogWarningIcon);
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();

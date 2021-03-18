@@ -4,43 +4,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3093"/>
+        <location filename="../view/canvasgridview.cpp" line="3116"/>
         <source>Icon size</source>
         <translation>图标大小</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3101"/>
+        <location filename="../view/canvasgridview.cpp" line="3124"/>
         <source>Auto merge</source>
         <translation>自动整理</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3113"/>
+        <location filename="../view/canvasgridview.cpp" line="3136"/>
         <source>Auto arrange</source>
         <translation>自动排列</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3150"/>
+        <location filename="../view/canvasgridview.cpp" line="3173"/>
         <source>Corner Settings</source>
         <translation>热区设置</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3159"/>
-        <location filename="../view/canvasgridview.cpp" line="3164"/>
+        <location filename="../view/canvasgridview.cpp" line="3182"/>
+        <location filename="../view/canvasgridview.cpp" line="3187"/>
         <source>Set Wallpaper</source>
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3162"/>
+        <location filename="../view/canvasgridview.cpp" line="3185"/>
         <source>Wallpaper and Screensaver</source>
         <translation>壁纸与屏保</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3340"/>
+        <location filename="../view/canvasgridview.cpp" line="3363"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3141"/>
+        <location filename="../view/canvasgridview.cpp" line="3164"/>
         <source>Display Settings</source>
         <translation>显示设置</translation>
     </message>
@@ -48,27 +48,27 @@
 <context>
     <name>DesktopItemDelegate</name>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="40"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="37"/>
         <source>Tiny</source>
         <translation>极小</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="41"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="38"/>
         <source>Small</source>
         <translation>小</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="42"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="39"/>
         <source>Medium</source>
         <translation>中</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="43"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Large</source>
         <translation>大</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="44"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="41"/>
         <source>Super large</source>
         <translation>极大</translation>
     </message>
@@ -152,14 +152,14 @@
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="261"/>
-        <location filename="../view/watermaskframe.cpp" line="262"/>
+        <location filename="../view/watermaskframe.cpp" line="274"/>
+        <location filename="../view/watermaskframe.cpp" line="275"/>
         <source>Not authorized</source>
         <translation>未授权</translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="272"/>
-        <location filename="../view/watermaskframe.cpp" line="273"/>
+        <location filename="../view/watermaskframe.cpp" line="285"/>
+        <location filename="../view/watermaskframe.cpp" line="286"/>
         <source>In trial period</source>
         <translation>试用期</translation>
     </message>

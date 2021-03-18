@@ -4,43 +4,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3093"/>
+        <location filename="../view/canvasgridview.cpp" line="3116"/>
         <source>Icon size</source>
         <translation>Icon size</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3101"/>
+        <location filename="../view/canvasgridview.cpp" line="3124"/>
         <source>Auto merge</source>
         <translation>Auto merge</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3113"/>
+        <location filename="../view/canvasgridview.cpp" line="3136"/>
         <source>Auto arrange</source>
         <translation>Auto arrange</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3150"/>
+        <location filename="../view/canvasgridview.cpp" line="3173"/>
         <source>Corner Settings</source>
         <translation>Corner Settings</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3159"/>
-        <location filename="../view/canvasgridview.cpp" line="3164"/>
+        <location filename="../view/canvasgridview.cpp" line="3182"/>
+        <location filename="../view/canvasgridview.cpp" line="3187"/>
         <source>Set Wallpaper</source>
         <translation>Set Wallpaper</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3162"/>
+        <location filename="../view/canvasgridview.cpp" line="3185"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Wallpaper and Screensaver</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3340"/>
+        <location filename="../view/canvasgridview.cpp" line="3363"/>
         <source>Properties</source>
         <translation>Properties</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3141"/>
+        <location filename="../view/canvasgridview.cpp" line="3164"/>
         <source>Display Settings</source>
         <translation>Display Settings</translation>
     </message>
@@ -48,27 +48,27 @@
 <context>
     <name>DesktopItemDelegate</name>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="40"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="37"/>
         <source>Tiny</source>
         <translation>Tiny</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="41"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="38"/>
         <source>Small</source>
         <translation>Small</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="42"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="39"/>
         <source>Medium</source>
         <translation>Medium</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="43"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Large</source>
         <translation>Large</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="44"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="41"/>
         <source>Super large</source>
         <translation>Super large</translation>
     </message>
@@ -152,14 +152,14 @@
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="261"/>
-        <location filename="../view/watermaskframe.cpp" line="262"/>
+        <location filename="../view/watermaskframe.cpp" line="274"/>
+        <location filename="../view/watermaskframe.cpp" line="275"/>
         <source>Not authorized</source>
         <translation>Not authorized</translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="272"/>
-        <location filename="../view/watermaskframe.cpp" line="273"/>
+        <location filename="../view/watermaskframe.cpp" line="285"/>
+        <location filename="../view/watermaskframe.cpp" line="286"/>
         <source>In trial period</source>
         <translation>In trial period</translation>
     </message>
