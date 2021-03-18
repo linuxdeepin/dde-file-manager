@@ -177,6 +177,15 @@ void CommandLineManager::processCommand()
             url = VaultController::localUrlToVault(url);
         }
 
+        // fix bug 67294
+        QString filePath = url.path();
+        QString trashFilesPath = DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath);
+        if (filePath.startsWith(trashFilesPath)) {
+            if (filePath == trashFilesPath)
+                filePath += "/";
+            url = filePath.replace(trashFilesPath + "/", TRASH_ROOT);
+        }
+
         if (CommandLineManager::instance()->isSet("show-item")) {
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
             if (!fileInfo)
