@@ -149,9 +149,9 @@ SOURCES += \
     # $$PWD/views/ut_dfmvaultremovebyrecoverykeyview.cpp \
     # $$PWD/views/ut_dfmvaultremovepages.cpp \
     # $$PWD/views/ut_dfmvaultremoveprogressview.cpp \
-    # $$PWD/views/ut_dfmvaultunlockpages.cpp \
+    $$PWD/views/ut_dfmvaultunlockpages.cpp \
     # $$PWD/controllers/ut_vaulthandle.cpp \
-    # $$PWD/controllers/ut_vaultcontroller.cpp \
+    $$PWD/controllers/ut_vaultcontroller.cpp \
     # $$PWD/controllers/ut_dfmsidebarvaultitemhandler.cpp \
     # $$PWD/controllers/ut_dfmvaultcrumbcontroller.cpp \
     # $$PWD/controllers/ut_dfmsmbcrumbcontroller.cpp \
