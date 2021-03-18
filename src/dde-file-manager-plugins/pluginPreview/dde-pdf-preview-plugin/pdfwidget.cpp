@@ -75,6 +75,7 @@ PdfWidget::~PdfWidget()
     disconnect(d->pdfInitWorker, &PdfInitWorker::thumbAdded, this, &PdfWidget::onThumbAdded);
     disconnect(d->pdfInitWorker, &PdfInitWorker::pageAdded, this, &PdfWidget::onpageAdded);
 
+    d->pdfInitWorker->deleteLater();
 }
 
 void PdfWidget::initDoc(const QString& file)
@@ -162,7 +163,7 @@ void PdfWidget::initConnections()
 
 void PdfWidget::showBadPage()
 {
-    QVBoxLayout* layout = new QVBoxLayout;
+    QVBoxLayout* layout = new QVBoxLayout(this);
     QLabel* badLabel = new QLabel(this);
     badLabel->setStyleSheet("QLabel{"
                                 "font-size: 20px;"

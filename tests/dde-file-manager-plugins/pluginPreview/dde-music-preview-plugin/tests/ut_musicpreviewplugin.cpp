@@ -44,5 +44,10 @@ public:
 
 TEST_F(TestMusicPreviewPlugin, use_create)
 {
-    EXPECT_TRUE(m_musicPreviewPlugin->create("dde-file-manager") != nullptr);
+    auto *ptr = m_musicPreviewPlugin->create("dde-file-manager");
+    EXPECT_TRUE(ptr != nullptr);
+    if (ptr) {
+        delete ptr;
+        ptr = nullptr;
+    }
 }

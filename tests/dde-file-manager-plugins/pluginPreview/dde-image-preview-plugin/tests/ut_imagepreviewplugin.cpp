@@ -44,5 +44,10 @@ public:
 
 TEST_F(TestImagePreviewPlugin, use_create)
 {
-    EXPECT_TRUE(m_imagePreviewPlugin->create("dde-file-manager") != nullptr);
+    auto *ptr = m_imagePreviewPlugin->create("dde-file-manager");
+    EXPECT_TRUE(ptr != nullptr);
+    if (ptr) {
+        delete ptr;
+        ptr = nullptr;
+    }
 }

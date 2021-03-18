@@ -27,6 +27,7 @@
 
 #include <QByteArray>
 #include <QBuffer>
+#include <QTimer>
 
 DFM_USE_NAMESPACE
 
@@ -51,6 +52,12 @@ namespace  {
             m_imagePreview = nullptr;
             QFile image(QString("./123.png"));
             image.remove();
+
+            QEventLoop loop;
+            QTimer::singleShot(10, &loop, [&loop]{
+                loop.exit();
+            });
+            loop.exec();
         }
 
     public:
@@ -74,7 +81,7 @@ TEST_F(TestImagePerview, can_preview){
     format.clear();
     Stub stub;
     stub.set(&QByteArray::isEmpty, st_isEmpty);
-    EXPECT_TRUE(m_imagePreview->canPreview(m_url, &format));
+    EXPECT_FALSE(m_imagePreview->canPreview(m_url, &format));
     EXPECT_FALSE(format.isEmpty());
 }
 
