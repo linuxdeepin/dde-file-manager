@@ -34,6 +34,8 @@
 #include "addr_pri.h"
 
 #include <QDebug>
+#include <QEventLoop>
+#include <QTimer>
 
 namespace  {
 class TestPdfWidget : public testing::Test
@@ -61,6 +63,12 @@ public:
 
         QFile file("./test.pdf");
         file.remove();
+
+        QEventLoop loop;
+        QTimer::singleShot(10, &loop, [&loop]{
+            loop.exit();
+        });
+        loop.exec();
     }
 
 public:

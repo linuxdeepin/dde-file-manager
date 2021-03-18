@@ -30,6 +30,10 @@ TEST(TestToBase64, testCommonVault)
     int options = 1;
     char *str = toBase64(data, size, options);
     EXPECT_STREQ("EjJWeJCr", str);
+    if (str) {
+        delete[] str;
+        str = nullptr;
+    }
 }
 
 TEST(TestToBase64, testCommonVault2)
@@ -39,4 +43,8 @@ TEST(TestToBase64, testCommonVault2)
     int options = 2;
     char *str = toBase64(data, size, options);
     EXPECT_STRNE("EjJWeJCr", str);
+    if (str) {
+        delete[] str;
+        str = nullptr;
+    }
 }
