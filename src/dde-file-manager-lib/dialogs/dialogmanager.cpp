@@ -406,7 +406,7 @@ void DialogManager::showCopyMoveToSelfDialog(const QMap<QString, QString> &jobDe
     d.setTitle(tr("Operation failed!"));
     d.setMessage(tr("Target folder is inside the source folder!"));
     QStringList buttonTexts;
-    buttonTexts << tr("OK");
+    buttonTexts.append(tr("OK"));
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.setIcon(m_dialogWarningIcon);
@@ -432,8 +432,14 @@ int DialogManager::showRunExcutableScriptDialog(const DUrl &url, quint64 winId)
     QString message = tr("Do you want to run %1 or display its content?").arg(fileDisplayName);
     QString tipMessage = tr("It is an executable text file.");
     QStringList buttonKeys, buttonTexts;
-    buttonKeys << "OptionCancel" << "OptionRun" << "OptionRunInTerminal" << "OptionDisplay";
-    buttonTexts << tr("Cancel") << tr("Run") << tr("Run in terminal") << tr("Display");
+    buttonKeys.append("OptionCancel");
+    buttonKeys.append("OptionRun");
+    buttonKeys.append("OptionRunInTerminal");
+    buttonKeys.append("OptionDisplay");
+    buttonTexts.append(tr("Cancel"));
+    buttonTexts.append(tr("Run"));
+    buttonTexts.append(tr("Run in terminal"));
+    buttonTexts.append(tr("Display"));
     d.setIcon(QIcon::fromTheme("application-x-shellscript"));
     d.setTitle(message);
     d.setMessage(tipMessage);
@@ -487,7 +493,7 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
     QFontMetrics fm(d.font());
     d.setTitle(tr("\"%1\" already exists, please use another name.").arg(fm.elidedText(name, Qt::ElideMiddle, 150)));
     QStringList buttonTexts;
-    buttonTexts << tr("Confirm");
+    buttonTexts.append(tr("Confirm"));
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.setIcon(m_dialogWarningIcon);
@@ -502,7 +508,7 @@ int DialogManager::showRenameNameDotDotErrorDialog(const DFMEvent &event)
     QFontMetrics fm(d.font());
     d.setTitle(tr("The file name must not contain two dots (..)"));
     QStringList buttonTexts;
-    buttonTexts << tr("Confirm");
+    buttonTexts.append(tr("Confirm"));
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     // 设置对话框icon
@@ -518,7 +524,8 @@ int DialogManager::showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &eve
     DUrl url = event.url();
     qDebug() << url;
     QStringList buttonTexts;
-    buttonTexts << tr("Cancel") << tr("Erase");
+    buttonTexts.append(tr("Cancel"));
+    buttonTexts.append(tr("Erase"));
 
     DDialog d;
 
@@ -544,7 +551,9 @@ int DialogManager::showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &even
 
     DUrl url = event.url();
     QStringList buttonTexts;
-    buttonTexts << tr("Cancel") << tr("Burn image") << tr("Burn files");
+    buttonTexts.append(tr("Cancel"));
+    buttonTexts.append(tr("Burn image"));
+    buttonTexts.append(tr("Burn files"));
 
     DDialog d;
 
@@ -638,7 +647,8 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &ev
 
     DUrlList urlList = event.urlList();
     QStringList buttonTexts;
-    buttonTexts << tr("Cancel") << tr("Delete");
+    buttonTexts.append(tr("Cancel"));
+    buttonTexts.append(tr("Delete"));
 
     DDialog d;
 
@@ -711,7 +721,8 @@ int DialogManager::showNormalDeleteConfirmDialog(const DFMUrlListBaseEvent &even
     }
 
     QStringList buttonTexts;
-    buttonTexts << tr("Cancel") << tr("Delete");
+    buttonTexts.append(tr("Cancel"));
+    buttonTexts.append(tr("Delete"));
     d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
     d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
     d.setDefaultButton(1);
@@ -727,7 +738,8 @@ int DialogManager::showRemoveBookMarkDialog(const DFMEvent &event)
     d.setTitle(tr("Sorry, unable to locate your bookmark directory, remove it?"));
     d.setMessage(" ");
     QStringList buttonTexts;
-    buttonTexts << tr("Cancel") << tr("Remove");
+    buttonTexts.append(tr("Cancel"));
+    buttonTexts.append(tr("Remove"));
     d.addButton(buttonTexts[0], true);
     d.addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
@@ -889,7 +901,8 @@ void DialogManager::showDiskErrorDialog(const QString &id, const QString &errorT
         d.setTitle(tr("Disk is busy, cannot unmount now"));
         d.setMessage(tr("Name: ") + info->fileDisplayName()/* + ", " + tr("Path: ") + info->getPath()*/);
         QStringList buttonTexts;
-        buttonTexts << tr("Cancel") << tr("Force unmount");
+        buttonTexts.append(tr("Cancel"));
+        buttonTexts.append(tr("Force unmount"));
         d.addButton(buttonTexts[0], true);
         d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
         d.setDefaultButton(0);
@@ -918,7 +931,8 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
     d.setTitle(warnText.arg(_targetName));
     d.setMessage(tr("Do you want to delete this shortcut？"));
     QStringList buttonTexts;
-    buttonTexts << tr("Cancel") << tr("Confirm");
+    buttonTexts.append(tr("Cancel"));
+    buttonTexts.append(tr("Confirm"));
     d.addButton(buttonTexts[0], true);
     d.addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
@@ -1428,7 +1442,7 @@ int DialogManager::showUnableToLocateDir(const QString &dir)
         d.setTitle(tr("Unable to access %1").arg(dir));
         d.setMessage(" ");
         QStringList buttonTexts;
-        buttonTexts << tr("Confirm");
+        buttonTexts.append(tr("Confirm"));
         d.addButton(buttonTexts[0], true);
         d.setDefaultButton(0);
         d.setIcon(QIcon::fromTheme("folder").pixmap(64, 64));
@@ -1488,7 +1502,7 @@ int DialogManager::showMessageDialog(messageType messageLevel, const QString &ti
     DDialog d(title, message);
     d.moveToCenter();
     QStringList buttonTexts;
-    buttonTexts << btnTxt;
+    buttonTexts.append(btnTxt);
     d.addButtons(buttonTexts);
     d.setDefaultButton(0);
     if (messageLevel == msgInfo) {

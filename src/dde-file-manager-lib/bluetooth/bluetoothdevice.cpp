@@ -23,7 +23,7 @@
 
 #include "bluetoothdevice.h"
 
-BluetoothDevice::BluetoothDevice(QObject *parent) : QObject(parent)
+BluetoothDevice::BluetoothDevice(QObject *parent) : QObject(parent),m_paired(false),m_trusted(false),m_state(StateUnavailable)
 {
 
 }

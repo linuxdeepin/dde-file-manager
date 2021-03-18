@@ -38,7 +38,7 @@ HistoryStack::HistoryStack(int threshold)
 
 void HistoryStack::append(DUrl url)
 {
-    if(m_index<=m_list.count()-1&&m_index>=0){
+    if ((m_index < m_list.count()) && (m_index >= 0)) {
         if(m_list.at(m_index) == url)
             return;
     }
