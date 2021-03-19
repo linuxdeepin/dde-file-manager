@@ -38,12 +38,23 @@ namespace  {
     public:
         void SetUp() override
         {
+            QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+            QFile file(strPath);
+            if(!file.exists()){
+                if(file.open(QIODevice::ReadWrite | QIODevice::Text))
+                    file.close();
+            }
             DAbstractFileInfoPointer fi(new DFMRootFileInfo(DUrl("file:///test1")));;
             m_pTester = new ShareInfoFrame(fi);
             std::cout << "start TestShareInfoFrame";
         }
         void TearDown() override
         {
+            QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+            QFile file(strPath);
+            if(file.exists()){
+                file.remove();
+            }
             delete m_pTester;
             m_pTester = nullptr;
             std::cout << "end TestShareInfoFrame";
