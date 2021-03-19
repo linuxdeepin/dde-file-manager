@@ -17,8 +17,18 @@ using namespace stub_ext;
 DFM_USE_NAMESPACE
 
 namespace  {
+static RecentController *m_controller;
 class TestRecentController : public testing::Test
 {
+public:
+
+    static void SetUpTestCase() {
+        m_controller = new RecentController;
+    }
+    static void TearDownTestCase() {
+        if (m_controller)
+            m_controller->deleteLater();
+    }
     void SetUp() override
     {
         std::cout << "start TestRecntController" << std::endl;
@@ -39,7 +49,6 @@ class TestRecentController : public testing::Test
     }
 
 public:
-    RecentController m_controller;
     DUrl tmpFileUrl;
     DUrl tmpFileUrl2;
     DUrl tmpDirUrl;
@@ -48,73 +57,80 @@ public:
 
 TEST_F(TestRecentController, openFileLocation)
 {
-    TestHelper::runInLoop([ = ] {
-        auto event = dMakeEventPointer<DFMOpenFileLocation>(nullptr, tmpFileUrl);
-        EXPECT_TRUE(m_controller.openFileLocation(event));
-        QProcess::execute("killall dde-file-manager");
-    });
+    TestHelper::runInLoop([ = ] {});
+    auto event = dMakeEventPointer<DFMOpenFileLocation>(nullptr, tmpFileUrl);
+    bool (*stub_openFileLocation)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) {
+        return true;
+    };
+
+    Stub stub;
+    stub.set(ADDR(DFileService, openFileLocation), stub_openFileLocation);
+
+    EXPECT_TRUE(m_controller->openFileLocation(event));
+
 }
 
 TEST_F(TestRecentController, test_openFile)
 {
-    TestHelper::runInLoop([ = ] {
-        auto event = dMakeEventPointer<DFMOpenFileEvent>(nullptr, tmpFileUrl);
-        EXPECT_TRUE(m_controller.openFile(event));
-        QProcess::execute("killall deepin-editor");
-    });
+    auto event = dMakeEventPointer<DFMOpenFileEvent>(nullptr, tmpFileUrl);
+
+    bool (*stub_openFile)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) {
+        return true;
+    };
+
+    Stub stub;
+    stub.set(ADDR(DFileService, openFile), stub_openFile);
+
+    EXPECT_TRUE(m_controller->openFile(event));
+
 }
 
 TEST_F(TestRecentController, test_openFiles)
 {
-    TestHelper::runInLoop([ = ] {
-        auto event = dMakeEventPointer<DFMOpenFilesEvent>(nullptr, DUrlList() <<  DUrl::fromRecentFile("/"));
-        StubExt st;
-        st.set_lamda(&FileUtils::openFiles, []() { return true; });
-        EXPECT_TRUE(m_controller.openFiles(event));
-    });
+    auto event = dMakeEventPointer<DFMOpenFilesEvent>(nullptr, DUrlList() <<  DUrl::fromRecentFile("/"));
+    StubExt st;
+    st.set_lamda(&FileUtils::openFiles, []() { return true; });
+    EXPECT_TRUE(m_controller->openFiles(event));
 }
 
 TEST_F(TestRecentController, test_openFileByApp)
 {
-    TestHelper::runInLoop([ = ] {
-        auto event = dMakeEventPointer<DFMOpenFileByAppEvent>(nullptr, "/usr/share/applications/deepin-editor.desktop", tmpFileUrl);
-        EXPECT_TRUE(m_controller.openFileByApp(event));
-        QProcess::execute("killall deepin-editor");
-    });
+    auto event = dMakeEventPointer<DFMOpenFileByAppEvent>(nullptr, "/usr/share/applications/deepin-editor.desktop",tmpFileUrl);
+    StubExt st;
+    st.set_lamda(&DFileService::openFileByApp, []() { return true; });
+    EXPECT_TRUE(m_controller->openFileByApp(event));
 }
 
 TEST_F(TestRecentController, test_openFilesByApp)
 {
-    TestHelper::runInLoop([ = ] {
-        auto event = dMakeEventPointer<DFMOpenFilesByAppEvent>(nullptr, "/usr/share/applications/deepin-editor.desktop", DUrlList() << tmpFileUrl << tmpFileUrl2);
-        EXPECT_TRUE(m_controller.openFilesByApp(event));
-        QProcess::execute("killall deepin-editor");
-    });
+    auto event = dMakeEventPointer<DFMOpenFilesByAppEvent>(nullptr, "/usr/share/applications/deepin-editor.desktop", DUrlList() << tmpFileUrl << tmpFileUrl2);
+    StubExt st;
+    st.set_lamda(&DFileService::openFilesByApp, []() { return true; });
+    EXPECT_TRUE(m_controller->openFilesByApp(event));
 }
 
 TEST_F(TestRecentController, test_writeFilesToClipboard)
 {
-    TestHelper::runInLoop([ = ] {
-        auto event = dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(nullptr, DFMGlobal::CopyAction, DUrlList() << tmpFileUrl << tmpFileUrl2);
-        EXPECT_TRUE(m_controller.writeFilesToClipboard(event));
-    });
+    auto event = dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(nullptr, DFMGlobal::CopyAction, DUrlList() << tmpFileUrl << tmpFileUrl2);
+    StubExt st;
+    st.set_lamda(&DFileService::writeFilesToClipboard, []() { return true; });
+    EXPECT_TRUE(m_controller->writeFilesToClipboard(event));
 }
 
 TEST_F(TestRecentController, test_moveToTrash)
 {
-    TestHelper::runInLoop([ = ] {
-        auto event = dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, DUrlList() << tmpFileUrl, true);
-        DUrlList resList = m_controller.moveToTrash(event);
-        EXPECT_TRUE(resList.isEmpty());
-    });
+    auto event = dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, DUrlList() << tmpFileUrl, true);
+    StubExt st;
+    st.set_lamda(&DFileService::deleteFiles, []() { return true; });
+    EXPECT_TRUE(m_controller->moveToTrash(event).isEmpty());
 }
 
 TEST_F(TestRecentController, test_deleteFiles)
 {
-    TestHelper::runInLoop([ = ] {
-        auto event = dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << tmpFileUrl);
-        EXPECT_TRUE(m_controller.deleteFiles(event));
-    });
+    auto event = dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << tmpFileUrl);
+    StubExt st;
+    st.set_lamda(&DRecentManager::removeItems, []() { return; });
+    EXPECT_TRUE(m_controller->deleteFiles(event));
 }
 
 TEST_F(TestRecentController, test_renameFile)
@@ -130,47 +146,54 @@ TEST_F(TestRecentController, test_renameFile)
     Stub stub;
     stub.set(ADDR(DFileService, renameFile), stub_renameFile);
 
-    EXPECT_TRUE(m_controller.renameFile(event));
+    EXPECT_TRUE(m_controller->renameFile(event));
 }
 
 TEST_F(TestRecentController, test_setFileTags)
 {
-    TestHelper::runInLoop([ = ] {
-        auto event = dMakeEventPointer<DFMSetFileTagsEvent>(nullptr, tmpFileUrl, QList<QString>({"红色"}));
-        EXPECT_TRUE(m_controller.setFileTags(event));
-    });
+
+    auto event = dMakeEventPointer<DFMSetFileTagsEvent>(nullptr, tmpFileUrl, QList<QString>({"红色"}));
+    StubExt st;
+    st.set_lamda(&DFileService::setFileTags, []() { return true; });
+    EXPECT_TRUE(m_controller->setFileTags(event));
 }
 
 TEST_F(TestRecentController,  test_removeTagsOfFile)
 {
-    TestHelper::runInLoop([ = ] {
-        auto event = dMakeEventPointer<DFMSetFileTagsEvent>(nullptr, tmpFileUrl, QList<QString>({"红色"}));
-        EXPECT_TRUE(m_controller.setFileTags(event));
-        auto removeEvent = dMakeEventPointer<DFMRemoveTagsOfFileEvent>(nullptr, tmpFileUrl, QList<QString>({"红色"}));
-        EXPECT_TRUE(m_controller.removeTagsOfFile(removeEvent));
-    });
+
+    auto removeEvent = dMakeEventPointer<DFMRemoveTagsOfFileEvent>(nullptr, tmpFileUrl, QList<QString>({"红色"}));
+    StubExt st;
+    st.set_lamda(&DFileService::removeTagsOfFile, []() { return true; });
+    EXPECT_TRUE(m_controller->removeTagsOfFile(removeEvent));
+
 }
 
 TEST_F(TestRecentController, test_getTagsThroughFiles)
 {
-    TestHelper::runInLoop([ = ] {
-        auto event = dMakeEventPointer<DFMSetFileTagsEvent>(nullptr, tmpFileUrl, QList<QString>({"红色"}));
-        m_controller.setFileTags(event);
-        auto getTagsEvent = dMakeEventPointer<DFMGetTagsThroughFilesEvent>(nullptr, QList<DUrl>({tmpFileUrl}));
-        EXPECT_TRUE(!m_controller.getTagsThroughFiles(getTagsEvent).isEmpty());
-        auto removeEvent = dMakeEventPointer<DFMRemoveTagsOfFileEvent>(nullptr, tmpFileUrl, QList<QString>({"红色"}));
-        EXPECT_TRUE(m_controller.removeTagsOfFile(removeEvent));
-    });
+
+    auto event = dMakeEventPointer<DFMGetTagsThroughFilesEvent>(nullptr, QList<DUrl>({tmpFileUrl}));
+    QList<QString> (*stub_getTagsThroughFiles)(const QObject *, const QList<DUrl> &, const bool) = [](const QObject *, const QList<DUrl> &, const bool) {
+        return QList<QString>();
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, getTagsThroughFiles), stub_getTagsThroughFiles);
+
+    EXPECT_TRUE(m_controller->getTagsThroughFiles(event).isEmpty());
 }
 
 TEST_F(TestRecentController, test_createSymlink)
 {
-    TestHelper::runInLoop([ = ] {
-        QString symlinkPath = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first() + "/3.txt";
-        auto event = dMakeEventPointer<DFMCreateSymlinkEvent>(nullptr, tmpFileUrl, DUrl::fromLocalFile(symlinkPath));
-        EXPECT_TRUE(m_controller.createSymlink(event));
-        TestHelper::deleteTmpFile(symlinkPath);
-    });
+
+    QString symlinkPath = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first() + "/3.txt";
+    auto event = dMakeEventPointer<DFMCreateSymlinkEvent>(nullptr, tmpFileUrl, DUrl::fromLocalFile(symlinkPath));
+    bool (*stub_createSymlink)(const QObject *, const DUrl &, const DUrl &, bool)
+    = [](const QObject *, const DUrl &, const DUrl &, bool) {
+        return true;
+    };
+    Stub stub;
+    stub.set((bool(DFileService::*)(const QObject *, const DUrl &, const DUrl &, bool) const)ADDR(DFileService, createSymlink), stub_createSymlink);
+
+    EXPECT_TRUE(m_controller->createSymlink(event));
 }
 
 
@@ -179,7 +202,7 @@ TEST_F(TestRecentController, test_createFileInfo)
     TestHelper::runInLoop([ = ] {
         DUrl fileUrl = DUrl::fromRecentFile("/");
         const QSharedPointer<DFMCreateFileInfoEvent> &&event = dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, fileUrl);
-        const auto &&pt = m_controller.createFileInfo(event);
+        const auto &&pt = m_controller->createFileInfo(event);
         EXPECT_NE(nullptr, pt.data());
     });
 }
@@ -188,7 +211,7 @@ TEST_F(TestRecentController, createDirIterator)
 {
     TestHelper::runInLoop([ = ] {
         auto event = dMakeEventPointer<DFMCreateDiriterator>(nullptr, tmpDirUrl, QStringList(), QDir::AllEntries);
-        auto iter = m_controller.createDirIterator(event);
+        auto iter = m_controller->createDirIterator(event);
         if (iter)
         {
             iter->hasNext();
@@ -210,7 +233,7 @@ TEST_F(TestRecentController, tst_createFileWatcher)
 {
     TestHelper::runInLoop([ = ] {
         auto event = dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, DUrl::fromRecentFile("/"));
-        auto ret = m_controller.createFileWatcher(event);
+        auto ret = m_controller->createFileWatcher(event);
         ret->startWatcher();
         ret->stopWatcher();
         EXPECT_NE(nullptr, ret);
@@ -223,7 +246,7 @@ TEST_F(TestRecentController, tst_onFileModified)
 {
     TestHelper::runInLoop([ = ] {
         auto event = dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, DUrl::fromRecentFile("/"));
-        RecentFileWatcher *watcher = static_cast<RecentFileWatcher *>(m_controller.createFileWatcher(event));
+        RecentFileWatcher *watcher = static_cast<RecentFileWatcher *>(m_controller->createFileWatcher(event));
         QSignalSpy spy(watcher, SIGNAL(fileModified(const DUrl &)));
         DUrl url = DUrl::fromRecentFile("/");
         watcher->onFileModified(url);
@@ -241,7 +264,7 @@ TEST_F(TestRecentController, tst_onFileDeleted)
 {
     TestHelper::runInLoop([ = ] {
         auto event = dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, DUrl::fromRecentFile("/"));
-        RecentFileWatcher *watcher = static_cast<RecentFileWatcher *>(m_controller.createFileWatcher(event));
+        RecentFileWatcher *watcher = static_cast<RecentFileWatcher *>(m_controller->createFileWatcher(event));
         QSignalSpy spy(watcher, SIGNAL(fileDeleted(const DUrl &)));
         DUrl url = DUrl::fromRecentFile("/");
         watcher->onFileDeleted(url);
@@ -259,7 +282,7 @@ TEST_F(TestRecentController, tst_onFileAttributeChanged)
 {
     TestHelper::runInLoop([ = ] {
         auto event = dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, DUrl::fromRecentFile("/"));
-        RecentFileWatcher *watcher = static_cast<RecentFileWatcher *>(m_controller.createFileWatcher(event));
+        RecentFileWatcher *watcher = static_cast<RecentFileWatcher *>(m_controller->createFileWatcher(event));
         QSignalSpy spy(watcher, SIGNAL(fileAttributeChanged(const DUrl &)));
         DUrl url = DUrl::fromRecentFile("/");
         watcher->onFileAttributeChanged(url);
@@ -277,7 +300,7 @@ TEST_F(TestRecentController, tst_setEnabledSubfileWatcher_noRecentFile)
 {
     TestHelper::runInLoop([ = ] {
         auto event = dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, DUrl::fromRecentFile("/"));
-        RecentFileWatcher *watcher = static_cast<RecentFileWatcher *>(m_controller.createFileWatcher(event));
+        RecentFileWatcher *watcher = static_cast<RecentFileWatcher *>(m_controller->createFileWatcher(event));
         DUrl url = DUrl::fromSMBFile("/");
         const auto originUrlToWatcherMap = watcher->d_func()->urlToWatcherMap;
         watcher->setEnabledSubfileWatcher(url);
@@ -292,7 +315,7 @@ TEST_F(TestRecentController, tst_setEnabledSubfileWatcher)
 {
     TestHelper::runInLoop([ = ] {
         auto event = dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, DUrl::fromRecentFile("/"));
-        RecentFileWatcher *watcher = static_cast<RecentFileWatcher *>(m_controller.createFileWatcher(event));
+        RecentFileWatcher *watcher = static_cast<RecentFileWatcher *>(m_controller->createFileWatcher(event));
         QString tmpDir = TestHelper::createTmpDir();
         DUrl tmpUrl = DUrl::fromLocalFile(tmpDir);
         tmpUrl.setScheme(RECENT_SCHEME);
@@ -301,34 +324,28 @@ TEST_F(TestRecentController, tst_setEnabledSubfileWatcher)
         EXPECT_TRUE(urlToWatcherMap.contains(tmpUrl));
         delete watcher;
         watcher = nullptr;
+        TestHelper::deleteTmpFile(tmpDir);
     }, 1500);
 }
 
 TEST_F(TestRecentController, tst_compressFiles)
 {
-    TestHelper::runInLoop([ = ] {
-        DUrlList urlList;
-        urlList << DUrl::fromRecentFile("/");
-        auto event = dMakeEventPointer<DFMCompressEvent>(nullptr, urlList);
-        StubExt st;
-        st.set_lamda(&DFileService::compressFiles, []() { return true; });
-        EXPECT_TRUE(m_controller.compressFiles(event));
-    }, 1500);
+    DUrlList urlList;
+    urlList << DUrl::fromRecentFile("/");
+    auto event = dMakeEventPointer<DFMCompressEvent>(nullptr, urlList);
+    StubExt st;
+    st.set_lamda(&DFileService::compressFiles, []() { return true; });
+    EXPECT_TRUE(m_controller->compressFiles(event));
 }
 
 TEST_F(TestRecentController, tst_decompressFile)
 {
-    TestHelper::runInLoop([ = ] {
-        DUrlList urlList;
-        urlList << DUrl::fromRecentFile("/");
-        auto event = dMakeEventPointer<DFMDecompressEvent>(nullptr, urlList);
-        StubExt st;
-        st.set_lamda(&DFileService::decompressFile, []()
-        {
-            return true;
-        });
-        EXPECT_TRUE(m_controller.decompressFile(event));
-    }, 1500);
+    DUrlList urlList;
+    urlList << DUrl::fromRecentFile("/");
+    auto event = dMakeEventPointer<DFMDecompressEvent>(nullptr, urlList);
+    StubExt st;
+    st.set_lamda(&DFileService::decompressFile, []() { return true; });
+    EXPECT_TRUE(m_controller->decompressFile(event));
 }
 }
 
