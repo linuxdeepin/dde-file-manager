@@ -46,13 +46,14 @@ TEST_F(TestDFMVaultRemovePages, tst_getPassword)
     m_view->onButtonClicked(3);
 }
 
+void st_removeVault(const QString &, const QString &)
+{
+    // do nothing.
+};
+
 TEST_F(TestDFMVaultRemovePages, tst_onLockVault)
 {
     m_view->m_bRemoveVault = true;
-
-    void (*st_removeVault)(const QString &, const QString &) = [](const QString &, const QString &){
-        // do nothing.
-    };
 
     Stub stub;
     stub.set(&DFMVaultRemoveProgressView::removeVault, st_removeVault);
