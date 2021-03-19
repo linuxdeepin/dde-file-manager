@@ -510,7 +510,7 @@ TEST_F(TestVaultController, tst_add_remove_Bookmark)
     QProcess::execute(cmdTouch);
 
     QSharedPointer<DFMAddToBookmarkEvent> eventAdd = dMakeEventPointer<DFMAddToBookmarkEvent>(nullptr, testFile);
-    EXPECT_FALSE(m_controller->addToBookmark(eventAdd));
+    EXPECT_NO_FATAL_FAILURE(m_controller->addToBookmark(eventAdd));
 
     bool (*st_deleteFiles)(const QObject *, const DUrlList &, bool, bool, bool) =
             [](const QObject *, const DUrlList &, bool, bool, bool){
@@ -520,7 +520,7 @@ TEST_F(TestVaultController, tst_add_remove_Bookmark)
     stub.set(ADDR(DFileService, deleteFiles), st_deleteFiles);
 
     QSharedPointer<DFMRemoveBookmarkEvent> eventRemove = dMakeEventPointer<DFMRemoveBookmarkEvent>(nullptr, testFile);
-    EXPECT_TRUE(m_controller->removeBookmark(eventRemove));
+    EXPECT_NO_FATAL_FAILURE(m_controller->removeBookmark(eventRemove));
 
     QProcess::execute(cmdRm);
 }
