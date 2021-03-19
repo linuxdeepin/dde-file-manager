@@ -124,11 +124,11 @@ Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view
 2. In the context menu, select **Open with**>**Select default program**.
 3. Select the application you want to open the file in the list.
 
-> ![notes](../common/notes.svg)Notes: It will use the default application to open the file when you double-click it. You can right-click the file, select **Properties** and choose a default application in **Open with ** list. You can also set the options in the [Default Applications](dman:///dde#Default Application Settings) of the Control Center to change the global default applications of the specified file types.
+> ![notes](../common/notes.svg)Notes: It will use the default application to open the file when you double-click it. You can right-click multiple files of the same type, and select **Open with** to open them at a time.
 
 ![0|open_with](fig/p_open.png)
 
-> ![tips](../common/tips.svg)Tips: You can right-click multiple files of the same type, and select **Open with** to open them at a time.
+
 
 ### Hide files
 
@@ -377,12 +377,12 @@ You can find sharing folders of other users in the same LAN in **Computers in LA
 
 
 
-### Open in new window as admin
+### Open as admin
 
 Prerequisite: Please enable **Developer Mode** from Control Center > General Settings.
 
 1. Right-click in the blank area on File Manager. 
-2. Select **Open in new window as admin**, input your login password in the pop-up window and click **Confirm**.
+2. Select **Open as admin**, input your login password in the pop-up window and click **Confirm**.
 3. The file will be opened in a new window, in which you can operate with admin permissions. And you will exit admin permissions when you close this window.
 
 ### Open in terminal
