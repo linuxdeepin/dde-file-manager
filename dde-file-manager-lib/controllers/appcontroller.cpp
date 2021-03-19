@@ -953,7 +953,7 @@ void AppController::actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &ev
 {
     if (DThreadUtil::runInMainThread(dialogManager, &DialogManager::showOpticalBlankConfirmationDialog, DFMUrlBaseEvent(event->sender(), event->url())) == DDialog::Accepted) {
         QtConcurrent::run([=] {
-            FileJob *job = new FileJob(FileJob::OpticalBlank);
+            QSharedPointer<FileJob> job(new FileJob(FileJob::OpticalBlank));
             job->moveToThread(qApp->thread());
             job->setWindowId(event->windowId());
             dialogManager->addJob(job);
@@ -962,7 +962,7 @@ void AppController::actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &ev
 
             job->doOpticalBlank(dev);
             dialogManager->removeJob(job->getJobId());
-            job->deleteLater();
+            //job->deleteLater();
         });
     }
 }

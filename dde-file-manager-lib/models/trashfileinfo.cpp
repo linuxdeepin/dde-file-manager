@@ -501,7 +501,7 @@ DAbstractFileInfo::CompareFunction TrashFileInfo::compareFunByColumn(int columnR
     }
 }
 
-bool TrashFileInfo::restore(FileJob *job/*=nullptr*/) const
+bool TrashFileInfo::restore(QSharedPointer<FileJob> job) const
 {
     Q_D(const TrashFileInfo);
 
@@ -519,21 +519,9 @@ bool TrashFileInfo::restore(FileJob *job/*=nullptr*/) const
         return false;
     }
 
-    FileJob *filejob = job;
-    FileJob fjob(FileJob::Restore);
-
-    if (!filejob) {
-        job = &fjob;
-        dialogManager->addJob(job);
-    }
-
     bool ok = job->doTrashRestore(absoluteFilePath(), d->originalFilePath);
     bool isAbortedOrSkipped = job->isAborted() || job->getIsSkip();
     ok = ok || isAbortedOrSkipped; // ok==false will show error dialog
-
-    if (!filejob) {
-        dialogManager->removeJob(job->getJobId());
-    }
 
     // restore the file tag infos
     if (ok && !isAbortedOrSkipped && !d->tagNameList.isEmpty()) {

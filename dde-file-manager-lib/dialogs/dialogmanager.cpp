@@ -274,7 +274,7 @@ DTaskDialog *DialogManager::taskDialog() const
     return m_taskDialog;
 }
 
-void DialogManager::addJob(FileJob *job)
+void DialogManager::addJob(QSharedPointer<FileJob> job)
 {
     QMutexLocker locker(&m_mutexJob);
     qInfo() << "add job: " << job->jobTypeToString() << "," << job->getJobId();
@@ -284,16 +284,16 @@ void DialogManager::addJob(FileJob *job)
 
     job->disconnect(m_taskDialog); // 对于光盘刻录、擦除的 job，可能会因为进度框的关闭打开而多次被添加导致多次连接槽，所以这里在连接前先断开这部分的信号槽
     job->disconnect(this);
-    connect(job, &FileJob::requestJobAdded, m_taskDialog, &DTaskDialog::addTask);
-    connect(job, &FileJob::requestJobRemoved, m_taskDialog, &DTaskDialog::delayRemoveTask);
-    connect(job, &FileJob::requestJobRemovedImmediately, m_taskDialog, &DTaskDialog::removeTaskImmediately);
-    connect(job, &FileJob::requestJobDataUpdated, m_taskDialog, &DTaskDialog::handleUpdateTaskWidget);
-    connect(job, &FileJob::requestAbortTask, m_taskDialog, &DTaskDialog::handleTaskClose);
-    connect(job, &FileJob::requestCopyMoveToSelfDialogShowed, this, &DialogManager::showCopyMoveToSelfDialog);
-    connect(job, &FileJob::requestNoEnoughSpaceDialogShowed, this, &DialogManager::showDiskSpaceOutOfUsedDialogLater);
-    connect(job, &FileJob::requestCanNotMoveToTrashDialogShowed, this, &DialogManager::showMoveToTrashConflictDialog);
-    connect(job, &FileJob::requestOpticalJobFailureDialog, this, &DialogManager::showOpticalJobFailureDialog);
-    connect(job, &FileJob::requestOpticalJobCompletionDialog, this, &DialogManager::showOpticalJobCompletionDialog);
+    connect(job.data(), &FileJob::requestJobAdded, m_taskDialog, &DTaskDialog::addTask);
+    connect(job.data(), &FileJob::requestJobRemoved, m_taskDialog, &DTaskDialog::delayRemoveTask);
+    connect(job.data(), &FileJob::requestJobRemovedImmediately, m_taskDialog, &DTaskDialog::removeTaskImmediately);
+    connect(job.data(), &FileJob::requestJobDataUpdated, m_taskDialog, &DTaskDialog::handleUpdateTaskWidget);
+    connect(job.data(), &FileJob::requestAbortTask, m_taskDialog, &DTaskDialog::handleTaskClose);
+    connect(job.data(), &FileJob::requestCopyMoveToSelfDialogShowed, this, &DialogManager::showCopyMoveToSelfDialog);
+    connect(job.data(), &FileJob::requestNoEnoughSpaceDialogShowed, this, &DialogManager::showDiskSpaceOutOfUsedDialogLater);
+    connect(job.data(), &FileJob::requestCanNotMoveToTrashDialogShowed, this, &DialogManager::showMoveToTrashConflictDialog);
+    connect(job.data(), &FileJob::requestOpticalJobFailureDialog, this, &DialogManager::showOpticalJobFailureDialog);
+    connect(job.data(), &FileJob::requestOpticalJobCompletionDialog, this, &DialogManager::showOpticalJobCompletionDialog);
 }
 
 
@@ -301,7 +301,7 @@ void DialogManager::removeJob(const QString &jobId, bool isRemoveOpticalJob)
 {
     QMutexLocker locker(&m_mutexJob);
     if (m_jobs.contains(jobId)) {
-        FileJob *job = m_jobs.value(jobId);
+        QSharedPointer<FileJob> job = m_jobs.value(jobId);
         if (job->getIsOpticalJob() && !job->getIsFinished()) {
             if(!isRemoveOpticalJob) { // 光盘刻录完成后，需要流程主动删除,否则无视
                 qDebug() << "ignore to remove job: " << job->jobTypeToString() << "," << job->getJobId();
@@ -322,7 +322,7 @@ void DialogManager::removeJob(const QString &jobId, bool isRemoveOpticalJob)
 QString DialogManager::getJobIdByUrl(const DUrl &url)
 {
     foreach (const QString &jobId, m_jobs.keys()) {
-        FileJob *job = m_jobs.value(jobId);
+        QSharedPointer<FileJob> job = m_jobs.value(jobId);
         bool ret = false;
         QStringList pathlist = job->property("pathlist").toStringList();
         for (const QString &path : pathlist) {
@@ -349,7 +349,7 @@ void DialogManager::removeAllJobs()
 void DialogManager::updateJob()
 {
     foreach (QString jobId, m_jobs.keys()) {
-        FileJob *job = m_jobs.value(jobId);
+        QSharedPointer<FileJob> job = m_jobs.value(jobId);
         if (job) {
             if (job->currentMsec() - job->lastMsec() > FileJob::Msec_For_Display) {
                 if (!job->isJobAdded()) {
@@ -389,7 +389,7 @@ void DialogManager::abortJobByDestinationUrl(const DUrl &url)
 {
     qDebug() << url;
     foreach (QString jobId, m_jobs.keys()) {
-        FileJob *job = m_jobs.value(jobId);
+        QSharedPointer<FileJob> job = m_jobs.value(jobId);
         qDebug() << jobId << job->getTargetDir();
         if (!QFile(job->getTargetDir()).exists()) {
             job->jobAborted();
@@ -1295,7 +1295,7 @@ void DialogManager::showTaskProgressDlgOnActive()
     m_taskDialog->raise();
     m_taskDialog->activateWindow();
 
-    QMapIterator<QString, FileJob *> iter(m_jobs);
+    QMapIterator<QString, QSharedPointer<FileJob> > iter(m_jobs);
     while (iter.hasNext()) {
         iter.next();
         if (iter.value()->getIsFinished())
@@ -1332,7 +1332,7 @@ void DialogManager::refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUr
 void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response)
 {
     QString jobId = jobDetail.value("jobId");
-    FileJob *job = m_jobs.value(jobId);
+    QSharedPointer<FileJob> job = m_jobs.value(jobId);
     if (job != NULL) {
         bool applyToAll = response.value("applyToAll").toBool();
         int code = response.value("code").toInt();

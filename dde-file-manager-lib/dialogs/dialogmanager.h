@@ -31,6 +31,7 @@
 #include <QMap>
 #include <QIcon>
 #include <QMutex>
+#include <QSharedPointer>
 
 #include "durl.h"
 #include "dfmglobal.h"
@@ -77,7 +78,7 @@ public:
 
 public slots:
     void handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
-    void addJob(FileJob *job);
+    void addJob(QSharedPointer<FileJob> job);
     void removeJob(const QString &jobId,bool isRemoveOpticalJob = false);
     QString getJobIdByUrl(const DUrl &url);
     void removeAllJobs();
@@ -153,7 +154,7 @@ private:
     CloseAllDialogIndicator *m_closeIndicatorDialog {nullptr};
     TrashPropertyDialog *m_trashDialog {nullptr};
     ComputerPropertyDialog *m_computerDialog {nullptr};
-    QMap<QString, FileJob *> m_jobs {};
+    QMap<QString, QSharedPointer<FileJob>> m_jobs {};
     QMap<DUrl, PropertyDialog *> m_propertyDialogs {};
     QTimer *m_closeIndicatorTimer {nullptr};
     QTimer *m_updateJobTaskTimer {nullptr};

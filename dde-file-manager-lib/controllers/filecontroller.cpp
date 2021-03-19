@@ -1186,11 +1186,11 @@ bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) co
  */
 DUrlList FileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
-    FileJob job(FileJob::Trash);
-    job.setWindowId(event->windowId());
-    dialogManager->addJob(&job);
-    DUrlList list = job.doMoveToTrash(event->urlList());
-    dialogManager->removeJob(job.getJobId());
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Trash));
+    job->setWindowId(event->windowId());
+    dialogManager->addJob(job);
+    DUrlList list = job->doMoveToTrash(event->urlList());
+    dialogManager->removeJob(job->getJobId());
 
     // save event
     const QVariant &result = DFMEventDispatcher::instance()->processEvent<DFMGetChildrensEvent>(event->sender(), DUrl::fromTrashFile("/"),
@@ -1253,23 +1253,22 @@ static DUrlList pasteFilesV1(const QSharedPointer<DFMPasteEvent> &event)
         DUrl parentUrl = DUrl::parentUrl(urlList.first());
 
         if (parentUrl != event->targetUrl()) {
-            FileJob job(FileJob::Move);
-            job.setWindowId(event->windowId());
-            dialogManager->addJob(&job);
+            QSharedPointer<FileJob> job(new FileJob(FileJob::Move));
+            job->setWindowId(event->windowId());
+            dialogManager->addJob(job);
 
-            list = job.doMove(urlList, event->targetUrl());
-            dialogManager->removeJob(job.getJobId());
+            list = job->doMove(urlList, event->targetUrl());
+            dialogManager->removeJob(job->getJobId());
         }
 
         DFMGlobal::clearClipboard();
     } else {
+        QSharedPointer<FileJob> job(new FileJob(FileJob::Copy));
+        job->setWindowId(event->windowId());
+        dialogManager->addJob(job);
 
-        FileJob job(FileJob::Copy);
-        job.setWindowId(event->windowId());
-        dialogManager->addJob(&job);
-
-        list = job.doCopy(urlList, event->targetUrl());
-        dialogManager->removeJob(job.getJobId());
+        list = job->doCopy(urlList, event->targetUrl());
+        dialogManager->removeJob(job->getJobId());
     }
 
     return list;

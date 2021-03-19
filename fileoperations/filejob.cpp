@@ -141,6 +141,7 @@ FileJob::~FileJob()
     qDebug() << "close pipe";
 #endif
     free(m_buffer);
+    qInfo() << "job is released: " << jobTypeToString() << "," << getJobId();
 }
 
 FileJob::JobType FileJob::jobType()
