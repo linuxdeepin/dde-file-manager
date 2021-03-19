@@ -82,6 +82,9 @@ public:
     void preproccessDropEvent(QDropEvent *event) const;
     void preproccessDropEvent(QDropEvent *event, const QList<QUrl> &urls) const;
 
+    // 拖拽文件进文管时，记录是否是同一个用户
+    void setSameUserValue(bool b);
+
 public slots:
     void handleCommitData(QWidget *editor) const;
 

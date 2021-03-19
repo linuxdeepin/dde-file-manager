@@ -154,6 +154,9 @@ public:
     QTimer keyboardSearchTimer;
     MenuActionEventHandler *menuEventHandler;
 
+    // drop时，记录drag文件的用户是否等于drop文件的用户
+    bool isSameUser {false};
+
     static QObjectList pluginObjectList;
     static QList<QIcon> getAdditionalIconByPlugins(const DAbstractFileInfoPointer &fileInfo);
 
@@ -761,9 +764,10 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
 
 void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
 {
-    bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
+    Q_D(const DFileViewHelper);
+
     if (event->source() == parent() && !DFMGlobal::keyCtrlIsPressed()) {
-        event->setDropAction(sameUser ? Qt::MoveAction : Qt::IgnoreAction);
+        event->setDropAction(d->isSameUser ? Qt::MoveAction : Qt::IgnoreAction);
     } else {
         DAbstractFileInfoPointer info = model()->fileInfo(parent()->indexAt(event->pos()));
 
@@ -806,7 +810,7 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
         }
 
         if (event->possibleActions().testFlag(default_action)) {
-            event->setDropAction((default_action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : default_action);
+            event->setDropAction((default_action == Qt::MoveAction && !d->isSameUser) ? Qt::IgnoreAction : default_action);
         }
 
         if (!info->supportedDropActions().testFlag(event->dropAction())) {
@@ -818,7 +822,7 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
             for (Qt::DropAction action : actions) {
 
                 if (event->possibleActions().testFlag(action) && info->supportedDropActions().testFlag(action)) {
-                    event->setDropAction((action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action);
+                    event->setDropAction((action == Qt::MoveAction && !d->isSameUser) ? Qt::IgnoreAction : action);
                     break;
                 }
             }
@@ -848,9 +852,10 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
 
 void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &urls) const
 {
-    bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
+    Q_D(const DFileViewHelper);
+
     if (event->source() == parent() && !DFMGlobal::keyCtrlIsPressed()) {
-        event->setDropAction(sameUser ? Qt::MoveAction : Qt::IgnoreAction);
+        event->setDropAction(d->isSameUser ? Qt::MoveAction : Qt::IgnoreAction);
     } else {
         DAbstractFileInfoPointer info = model()->fileInfo(parent()->indexAt(event->pos()));
         if (!info)
@@ -885,7 +890,7 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
         }
 
         if (event->possibleActions().testFlag(default_action)) {
-            event->setDropAction((default_action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : default_action);
+            event->setDropAction((default_action == Qt::MoveAction && !d->isSameUser) ? Qt::IgnoreAction : default_action);
         }
 
         // 保险箱时，修改DropAction为Qt::MoveAction
@@ -897,7 +902,7 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
                 event->setDropAction(Qt::CopyAction);
             } else {
                 if (!DFMGlobal::keyCtrlIsPressed()) {
-                    event->setDropAction(sameUser ? Qt::MoveAction : Qt::IgnoreAction);
+                    event->setDropAction(d->isSameUser ? Qt::MoveAction : Qt::IgnoreAction);
                 } else {
                     event->setDropAction(Qt::CopyAction);
                 }
@@ -913,12 +918,18 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
             for (Qt::DropAction action : actions) {
 
                 if (event->possibleActions().testFlag(action) && info->supportedDropActions().testFlag(action)) {
-                    event->setDropAction((action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action);
+                    event->setDropAction((action == Qt::MoveAction && !d->isSameUser) ? Qt::IgnoreAction : action);
                     break;
                 }
             }
         }
     }
+}
+
+void DFileViewHelper::setSameUserValue(bool b)
+{
+    Q_D(DFileViewHelper);
+    d->isSameUser = b;
 }
 
 void DFileViewHelper::handleCommitData(QWidget *editor) const

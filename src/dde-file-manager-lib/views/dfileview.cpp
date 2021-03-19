@@ -1679,6 +1679,13 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 void DFileView::dragEnterEvent(QDragEnterEvent *event)
 {
     Q_D(DFileView);
+    // 临时修复bug-67282
+    // 鼠标拖拽文件进文管时，必须拿到是否是跨用户拖拽，方便改变鼠标样式，
+    // 但是此操作比较耗时，会导致残影，所以此处为临时方案。
+    // 已经和qt组沟通了，一旦qt升级为5.15后，此操作不再耗时，残影问题就不再出现了
+    bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
+    d->fileViewHelper->setSameUserValue(sameUser);
+
     // 修复bug-65773 拖拽事件进入前，需要将当前拖拽缓存清空，
     // 使得程序执行DFileDragClient::setTargetUrl(data, url);
     // 方便压缩软件获得目的地址，这种方案会导致“系统关闭窗口特效时，拖拽压缩软件中的文件
