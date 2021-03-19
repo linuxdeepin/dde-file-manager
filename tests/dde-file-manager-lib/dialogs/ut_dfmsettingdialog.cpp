@@ -35,12 +35,12 @@ namespace  {
     public:
         void SetUp() override
         {
-            QObject*(*stu_instance)() = []()->QObject*{
-                QObject * obj = new QObject();
-                return obj;
-            };
-            Stub stu2;
-            stu2.set(ADDR(DFMApplication, instance), stu_instance);
+//            QObject*(*stu_instance)() = []()->QObject*{
+//                QObject * obj = new QObject();
+//                return obj;
+//            };
+//            Stub stu2;
+//            stu2.set(ADDR(DFMApplication, instance), stu_instance);
             m_pTesting = new DFMSettingDialog();
             std::cout << "start TestDFMSettingDialog";
         }
@@ -147,12 +147,13 @@ namespace  {
     public:
         void SetUp() override
         {
-            QObject*(*stu_instance)() = []()->QObject*{
-                QObject * obj = new QObject();
-                return obj;
-            };
-            Stub stu2;
-            stu2.set(ADDR(DFMApplication, instance), stu_instance);
+//            QObject*(*stu_instance)() = []()->QObject*{
+//                QObject * obj = new QObject();
+//                return obj;
+//            };
+//            Stub stu2;
+//            stu2.set(ADDR(DFMApplication, instance), stu_instance);
+
 
             m_pTesting = new SettingBackend();
             std::cout << "start TestSettingBackend";
@@ -165,11 +166,24 @@ namespace  {
         }
     public:
         SettingBackend *m_pTesting;
+
     };
 }
 
 TEST_F(TestSettingBackend, testDoSetOption)
 {
+    void(*stu_setAppAttribute)(DFMApplication::ApplicationAttribute aa, const QVariant &value) = [](DFMApplication::ApplicationAttribute aa, const QVariant &value)->void{
+        int a = 0;
+    };
+    Stub stu2;
+    stu2.set(ADDR(DFMApplication, setAppAttribute), stu_setAppAttribute);
+
+    void(*stu_setGenericAttribute)(DFMApplication::GenericAttribute ga, const QVariant &value) = [](DFMApplication::GenericAttribute ga, const QVariant &value)->void{
+        int a = 0;
+    };
+    Stub stu3;
+    stu3.set(ADDR(DFMApplication, setGenericAttribute), stu_setGenericAttribute);
+
     QString key("base.open_action.open_file_action");
     QVariant value("");
     EXPECT_NO_FATAL_FAILURE(m_pTesting->doSetOption(key, value));
@@ -177,6 +191,19 @@ TEST_F(TestSettingBackend, testDoSetOption)
 
 TEST_F(TestSettingBackend, testDoSetOption2)
 {
+    void(*stu_setAppAttribute)(DFMApplication::ApplicationAttribute aa, const QVariant &value) = [](DFMApplication::ApplicationAttribute aa, const QVariant &value)->void{
+        int a = 0;
+    };
+    Stub stu2;
+    stu2.set(ADDR(DFMApplication, setAppAttribute), stu_setAppAttribute);
+
+
+    void(*stu_setGenericAttribute)(DFMApplication::GenericAttribute ga, const QVariant &value) = [](DFMApplication::GenericAttribute ga, const QVariant &value)->void{
+        int a = 0;
+    };
+    Stub stu3;
+    stu3.set(ADDR(DFMApplication, setGenericAttribute), stu_setGenericAttribute);
+
     QString key("base.hidden_files.hide_suffix");
     QVariant value("");
     EXPECT_NO_FATAL_FAILURE(m_pTesting->doSetOption(key, value));
@@ -184,6 +211,18 @@ TEST_F(TestSettingBackend, testDoSetOption2)
 
 TEST_F(TestSettingBackend, testDoSetOption3)
 {
+    void(*stu_setAppAttribute)(DFMApplication::ApplicationAttribute aa, const QVariant &value) = [](DFMApplication::ApplicationAttribute aa, const QVariant &value)->void{
+        int a = 0;
+    };
+    Stub stu2;
+    stu2.set(ADDR(DFMApplication, setAppAttribute), stu_setAppAttribute);
+
+    void(*stu_setGenericAttribute)(DFMApplication::GenericAttribute ga, const QVariant &value) = [](DFMApplication::GenericAttribute ga, const QVariant &value)->void{
+        int a = 0;
+    };
+    Stub stu3;
+    stu3.set(ADDR(DFMApplication, setGenericAttribute), stu_setGenericAttribute);
+
     QString key("advance.other.hide_system_partition");
     QVariant value("");
     EXPECT_NO_FATAL_FAILURE(m_pTesting->doSetOption(key, value));

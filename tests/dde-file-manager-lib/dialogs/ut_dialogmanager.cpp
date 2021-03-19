@@ -1031,10 +1031,10 @@ TEST_F(TestDialogManager, testShowDiskSpaceOutOfUsedDialogLater)
     };
     stub_ext::StubExt stub;
     stub.set(VADDR(QDialog, exec), stub_exec);
-    EXPECT_NO_FATAL_FAILURE(m_pTester->showDiskSpaceOutOfUsedDialogLater());
-    QEventLoop loop;
-    QTimer::singleShot(300, nullptr, [&loop](){loop.exit();});
-    loop.exec();
+    EXPECT_NO_FATAL_FAILURE(m_pTester->showDiskSpaceOutOfUsedDialog());
+//    QEventLoop loop;
+//    QTimer::singleShot(300, nullptr, [&loop](){loop.exit();});
+//    loop.exec();
 }
 
 TEST_F(TestDialogManager, testShowDiskSpaceOutOfUsedDialog)
@@ -1746,6 +1746,13 @@ TEST_F(TestDialogManager, testShowBluetoothTransferDlg2)
     };
     Stub stu;
     stu.set(ADDR(BluetoothTransDialog, canSendFiles), stub_canSendFiles);
+
+    int(*stub2_exec)() = []()->int{
+        return 1;
+    };
+    stub_ext::StubExt stub2;
+    stub2.set(VADDR(QDialog, exec), stub2_exec);
+    stub2.set_lamda(ADDR(QWidget, show), []{});
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showBluetoothTransferDlg(files));
 }

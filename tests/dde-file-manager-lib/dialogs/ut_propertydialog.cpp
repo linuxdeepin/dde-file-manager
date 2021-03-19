@@ -276,6 +276,11 @@ namespace  {
         }
         void TearDown() override
         {
+            QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt.txt";
+            QFile file(strPath);
+            if(file.exists()){
+                file.remove();
+            }
             m_pTester = nullptr;
             if(m_pWidget){
                 delete m_pWidget;

@@ -46,10 +46,15 @@ namespace  {
     public:
         void SetUp() override
         {
-            m_pTester = new DFMFactoryLoader("com.deepin.filemanager.DFMFileControllerFactoryInterface_iid",
+            void(*stub1_update)() = []()->void{
+                int a = 0;
+            };
+            Stub stub1;
+            stub1.set(ADDR(DFMFactoryLoader ,update), stub1_update);
+            m_pTester = new DFMFactoryLoader("com.deepin.filemanager.DFMFileControllerFactoryInterface_iid"/*,
                                              "/controllers",
                                              Qt::CaseInsensitive,
-                                             false);
+                                             false*/);
             std::cout << "start TestDFMFactoryLoader";
         }
         void TearDown() override
@@ -225,17 +230,34 @@ TEST_F(TestDFMFactoryLoader, testUpdate2)
     Stub stu;
     stu.set(ADDR(DFMGlobal, isRootUser), stub_isRootUser);
 
+    int(*stub3_count)() = []()->int{
+        return 0;
+    };
+    Stub stub3;
+    stub3.set((int(QStringList::*)()const)ADDR(QStringList, count), stub3_count);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->update());
 }
 
 TEST_F(TestDFMFactoryLoader, testUpdate3)
 {
-    bool(*stub2_contains)(const QString &, Qt::CaseSensitivity) = [](const QString &, Qt::CaseSensitivity)->bool{
-        return true;
+    void(*stub1_update)() = []()->void{
+        int a = 0;
     };
+    Stub stub1;
+    stub1.set(ADDR(DFMFactoryLoader ,update), stub1_update);
 
+    bool(*stub2_contains)(const QString &, Qt::CaseSensitivity) = [](const QString &, Qt::CaseSensitivity)->bool{
+        return false;
+    };
     Stub stub2;
     stub2.set((bool(QStringList::*)(const QString &str, Qt::CaseSensitivity cs)const)ADDR(QStringList, contains), stub2_contains);
+
+    int(*stub3_count)() = []()->int{
+        return 0;
+    };
+    Stub stub3;
+    stub3.set((int(QStringList::*)()const)ADDR(QStringList, count), stub3_count);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->update());
 }
@@ -293,19 +315,32 @@ TEST_F(TestDFMFactoryLoader, testUpdate4)
 TEST_F(TestDFMFactoryLoader, testRefreshAll)
 {
     void(*stub_update)() = [](){
-
+        int a = 0;
     };
     Stub stu;
     stu.set(ADDR(DFMFactoryLoader, update), stub_update);
+
+    bool(*stub2_isRootUser)() = []()->bool{
+        return true;
+    };
+    Stub stu2;
+    stu2.set(ADDR(DFMGlobal, isRootUser), stub2_isRootUser);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->refreshAll());
 }
 
 TEST_F(TestDFMFactoryLoader, testDLoadPlugin)
 {
-    DFMFactoryLoader* ploader = new DFMFactoryLoader("com.deepin.filemanager.DFMFileControllerFactoryInterface_iid",
+    void(*stub2_update)() = []()->void{
+        int a= 0;
+    };
+    Stub stub2;
+    stub2.set(ADDR(DFMFactoryLoader, update), stub2_update);
+
+    DFMFactoryLoader* ploader = new DFMFactoryLoader("com.deepin.filemanager.DFMFileControllerFactoryInterface_iid"/*,
                                                     "/controllers",
                                                     Qt::CaseInsensitive,
-                                                    false);
+                                                    false*/);
     QList<QPluginLoader *> lst;
     QPluginLoader* pload = new QPluginLoader("video/*");
     lst << pload;
@@ -328,10 +363,16 @@ TEST_F(TestDFMFactoryLoader, testDLoadPlugin)
 
 TEST_F(TestDFMFactoryLoader, testDLoadPluginList)
 {
-    DFMFactoryLoader* ploader = new DFMFactoryLoader("com.deepin.filemanager.DFMFileControllerFactoryInterface_iid",
+    void(*stub1_update)() = []()->void{
+        int a = 0;
+    };
+    Stub stub1;
+    stub1.set(ADDR(DFMFactoryLoader ,update), stub1_update);
+
+    DFMFactoryLoader* ploader = new DFMFactoryLoader("com.deepin.filemanager.DFMFileControllerFactoryInterface_iid"/*,
                                                     "/controllers",
                                                     Qt::CaseInsensitive,
-                                                    false);
+                                                    false*/);
 
     QList<QPluginLoader *> lst;
     QPluginLoader* pload = new QPluginLoader("video/*");
