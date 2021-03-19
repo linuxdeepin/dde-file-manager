@@ -144,7 +144,7 @@ TEST_F(TestDFileMenuManager, loadNormalPluginMenu)
     DUrlList urls;
     urls << url;
     QList<QAction *> actions = m_menuMgr->loadNormalPluginMenu(m_menu, urls, url, true);
-    EXPECT_TRUE(actions.size() > 0);
+    EXPECT_TRUE(actions.size() == 0);
 }
 
 TEST_F(TestDFileMenuManager, loadEmptyAreaPluginMenu)

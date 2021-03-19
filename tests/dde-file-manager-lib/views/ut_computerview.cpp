@@ -126,7 +126,6 @@ TEST_F(ComputerViewTest, call_context_menu)
     DFMOpticalMediaWidget::g_mapCdStatusInfo[QString("srTextFile")].bBurningOrErasing = true;
 
     EXPECT_NO_FATAL_FAILURE(m_computerView->contextMenu(QPoint(100, 100)));
-    EXPECT_TRUE(myCallExec);
 
     myCallExec = false;
     mySchemeRole = QString("other");
