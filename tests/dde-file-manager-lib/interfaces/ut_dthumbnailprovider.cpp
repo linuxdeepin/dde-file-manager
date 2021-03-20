@@ -40,9 +40,34 @@
 DFM_USE_NAMESPACE
 
 namespace  {
+    static bool previewImageImage;
+    static bool previewTxtImage;
+    static bool previewDocumentImage;
+    static bool previewVideoImage;
     class DThumbnailProviderTest: public testing::Test
     {
     public:
+
+
+
+        static void SetUpTestCase()
+        {
+            previewImageImage = DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewImage).toBool();
+            previewTxtImage = DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewTextFile).toBool();
+            previewDocumentImage = DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewDocumentFile).toBool();
+            previewVideoImage = DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewVideo).toBool();
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_PreviewImage, true);
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_PreviewTextFile, true);
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_PreviewDocumentFile, true);
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_PreviewVideo, true);
+        }
+
+        static void TearDownTestCase() {
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_PreviewImage, previewImageImage);
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_PreviewTextFile, previewTxtImage);
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_PreviewDocumentFile, previewDocumentImage);
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_PreviewVideo, previewVideoImage);
+        }
         void SetUp() override
         {
             std::cout << "start DThumbnailProviderTest";
@@ -70,7 +95,7 @@ namespace  {
             thumbnailProvide->createThumbnail(info, DThumbnailProvider::Normal);
             QString saveImage = calculateThumbnailPath(info);
             QFile file(saveImage);
-            ASSERT_TRUE(file.exists());
+            EXPECT_TRUE(file.exists());
             if (file.exists()) {
                 file.remove();
             }
@@ -123,13 +148,12 @@ TEST_F(DThumbnailProviderTest, createThumbnailWithTxt)
 
 TEST_F(DThumbnailProviderTest, createThumbnailWithPdf)
 {
-      createThumbnail("test.pdf");
+    createThumbnail("test.pdf");
 }
 
 TEST_F(DThumbnailProviderTest, createThumbnailWithMp4)
 {
     createThumbnail("introduction.mp4");
-
 }
 
 TEST_F(DThumbnailProviderTest, createThumbnailWithDjuv)

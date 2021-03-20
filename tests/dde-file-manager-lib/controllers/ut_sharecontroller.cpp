@@ -19,21 +19,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtest/gtest.h>
-#include <gmock/gmock-matchers.h>
+#include "dfmevent.h"
+#include "controllers/sharecontroler.h"
+#include "dabstractfilewatcher.h"
+#include "dfmglobal.h"
+#include "testhelper.h"
+#include "dfileservices.h"
+#include "stub.h"
 
 #include <QProcess>
 #include <QStandardPaths>
 #include <QDateTime>
 #include <QUrl>
 #include <QFile>
-#include "dfmevent.h"
 
-#include "controllers/sharecontroler.h"
-#include "dabstractfilewatcher.h"
-#include "dfmglobal.h"
-
-#include "testhelper.h"
+#include <gtest/gtest.h>
+#include <gmock/gmock-matchers.h>
 
 namespace  {
 class TestShareController : public testing::Test
@@ -84,8 +85,12 @@ TEST_F(TestShareController, test_createFileWatcher)
 TEST_F(TestShareController, test_openFile)
 {
     auto event = dMakeEventPointer<DFMOpenFileEvent>(nullptr, tmpFileUrl);
+    bool (*stub_openFile)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, openFile), stub_openFile);
     EXPECT_TRUE(m_controller->openFile(event));
-    QProcess::execute("killall deepin-editor");
 }
 
 TEST_F(TestShareController, test_setPermissions)
@@ -96,16 +101,28 @@ TEST_F(TestShareController, test_setPermissions)
 
 TEST_F(TestShareController, test_shareFolder)
 {
-    // 阻塞CI
-    // auto event = dMakeEventPointer<DFMFileShareEvent>(nullptr, tmpDirUrl, "testShare");
-    // EXPECT_TRUE(m_controller->shareFolder(event));
+
+    auto event = dMakeEventPointer<DFMFileShareEvent>(nullptr, tmpDirUrl, "hello");
+    bool (*stub_shareFolder)(const QObject *, const DUrl &, const QString &, bool, bool)
+    = [](const QObject *, const DUrl &, const QString &, bool, bool) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, shareFolder), stub_shareFolder);
+
+    EXPECT_TRUE(m_controller->shareFolder(event));
 }
 
 TEST_F(TestShareController, test_unShareFolder)
 {
-    // 阻塞CI
-    // auto event = dMakeEventPointer<DFMCancelFileShareEvent>(nullptr, tmpDirUrl);
-    // EXPECT_TRUE(m_controller->unShareFolder(event));
+    auto unShareFolderEvent = dMakeEventPointer<DFMCancelFileShareEvent>(nullptr, tmpDirUrl);
+    bool (*stub_unShareFolder)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, unShareFolder), stub_unShareFolder);
+
+    EXPECT_TRUE(m_controller->unShareFolder(unShareFolderEvent));
 }
 
 TEST_F(TestShareController, test_getChildren)
@@ -125,12 +142,24 @@ TEST_F(TestShareController, test_getChildren)
 TEST_F(TestShareController, test_addToBookmark)
 {
     auto event = dMakeEventPointer<DFMAddToBookmarkEvent>(nullptr, tmpDirUrl);
-    EXPECT_TRUE(!m_controller->addToBookmark(event));
+    bool (*stub_addToBookmark)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, addToBookmark), stub_addToBookmark);
+
+    EXPECT_TRUE(m_controller->addToBookmark(event));
 }
 
 TEST_F(TestShareController, test_removeBookmark)
 {
     auto event = dMakeEventPointer<DFMRemoveBookmarkEvent>(nullptr, tmpDirUrl);
-    EXPECT_TRUE(!m_controller->removeBookmark(event));
+    bool (*stub_removeBookmark)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &) {
+        return true;
+    };
+    Stub stub;
+    stub.set(ADDR(DFileService, removeBookmark), stub_removeBookmark);
+
+    EXPECT_TRUE(m_controller->removeBookmark(event));
 }
 }
