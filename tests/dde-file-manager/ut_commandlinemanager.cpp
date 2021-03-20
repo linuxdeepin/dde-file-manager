@@ -21,18 +21,27 @@
 
 #include <gtest/gtest.h>
 
+#include "dialogs/openwithdialog.h"
+#include "testhelper.h"
+#define private public
+#include "commandlinemanager.h"
+#undef private
+#include "stub.h"
+#include "stubext.h"
+
+#include "dfmeventdispatcher.h"
+#include "filemanagerapp.h"
+#include "dabstractfileinfo.h"
+#include "dfileservices.h"
+#include "dfmapplication.h"
+#include "dfmstandardpaths.h"
+
 #include <QApplication>
 #include <QtDebug>
 #include <QTimer>
 #include <QWindow>
 #include <QJsonDocument>
 #include <QCommandLineParser>
-
-#include "dialogs/openwithdialog.h"
-#include "testhelper.h"
-#define private public
-#include "commandlinemanager.h"
-#undef private
 
 using namespace testing;
 namespace  {
@@ -50,8 +59,10 @@ namespace  {
 
 }
 
+static bool judge = false;
 TEST_F(CommandLineManagerTest, test_isSet)
 {
+    TestHelper::runInLoop([]{});
     QStringList arguments;
     arguments << "dde-file-manager" << "-n";
     CommandLineManager::instance()->process(arguments);
@@ -102,14 +113,17 @@ TEST_F(CommandLineManagerTest, test_processCommand_set_p)
     QStringList arguments;
     QString tmpDir = TestHelper::createTmpDir();
     arguments << "dde-file-manager" << "-p" << tmpDir;
-    QWindowList windows =  qApp->topLevelWindows();
     CommandLineManager::instance()->process(arguments);
-    TestHelper::runInLoop([]{
-        CommandLineManager::instance()->processCommand();
-    }, 500);
-    QWindowList newWindows =  qApp->topLevelWindows();
-    EXPECT_GT(newWindows.count(), windows.count());
+
+    stub_ext::StubExt stu;
+    bool judge = false;
+    stu.set_lamda(ADDR(FileManagerApp, showPropertyDialog), [&judge](){
+        judge = true;
+        return
+    ;});
+    CommandLineManager::instance()->processCommand();
     TestHelper::deleteTmpFile(tmpDir);
+    EXPECT_TRUE(judge);
 }
 
 TEST_F(CommandLineManagerTest, test_processCommand_set_o)
@@ -119,38 +133,26 @@ TEST_F(CommandLineManagerTest, test_processCommand_set_o)
     arguments << "dde-file-manager" << "-o" << tmpFile;
     QWindowList windows =  qApp->topLevelWindows();
     CommandLineManager::instance()->process(arguments);
-    TestHelper::runInLoop([]{
-        CommandLineManager::instance()->processCommand();
-    }, 500);
-    QWindowList newWindows =  qApp->topLevelWindows();
-    EXPECT_GT(newWindows.count(), windows.count());
+    stub_ext::StubExt stu;
+    bool judge = false;
+    stu.set_lamda(ADDR(FileManagerApp, openWithDialog), [&judge](){judge = true;return;});
+    CommandLineManager::instance()->processCommand();
     TestHelper::deleteTmpFile(tmpFile);
+    EXPECT_TRUE(judge);
 }
 
-TEST_F(CommandLineManagerTest, test_processCommand_show_computer)
+TEST_F(CommandLineManagerTest, test_process)
 {
-    QStringList arguments;
-    arguments << "dde-file-manager" << "-p" << "computer:///";
-    QWindowList windows =  qApp->topLevelWindows();
-    CommandLineManager::instance()->process(arguments);
-    TestHelper::runInLoop([]{
-        CommandLineManager::instance()->processCommand();
-    }, 500);
-    QWindowList newWindows =  qApp->topLevelWindows();
-    EXPECT_GT(newWindows.count(), windows.count());
-}
+    void(*stub_process)(const QStringList &) = [](const QStringList &) {
+        judge = true;
+        return;
+    };
 
-TEST_F(CommandLineManagerTest, test_processCommand_show_trash)
-{
-    QStringList arguments;
-    arguments << "dde-file-manager" << "-p" << "trash:///";
-    QWindowList windows =  qApp->topLevelWindows();
-    CommandLineManager::instance()->process(arguments);
-    TestHelper::runInLoop([]{
-        CommandLineManager::instance()->processCommand();
-    }, 500);
-    QWindowList newWindows =  qApp->topLevelWindows();
-    EXPECT_GT(newWindows.count(), windows.count());
+    Stub stub;
+    auto addr = (void(QCommandLineParser::*)(const QStringList &))ADDR(QCommandLineParser, process);
+    stub.set(addr, stub_process);
+    CommandLineManager::instance()->process();
+    EXPECT_TRUE(judge);
 }
 
 TEST_F(CommandLineManagerTest, test_processCommand_set_e)
@@ -163,12 +165,21 @@ TEST_F(CommandLineManagerTest, test_processCommand_set_e)
     QString jsonStr = QString(QJsonDocument(object).toJson());
     arguments << "dde-file-manager" << "-e" << jsonStr;
     CommandLineManager::instance()->process(arguments);
-    TestHelper::runInLoop([]{
-        CommandLineManager::instance()->processCommand();
-    }, 500);
-    QFile file(filePath);
-    ASSERT_TRUE(file.exists());
-    file.remove();
+
+    judge = false;
+
+    QVariant(*stub_processEvent)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) = [](const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) {
+        judge = true;
+        return QVariant();
+    };
+
+    Stub stub;
+    stub.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))ADDR(DFMEventDispatcher, processEvent), stub_processEvent);
+
+    CommandLineManager::instance()->processCommand();
+
+    EXPECT_TRUE(judge);
+
 }
 
 TEST_F(CommandLineManagerTest, test_processCommand_set_O)
@@ -177,27 +188,22 @@ TEST_F(CommandLineManagerTest, test_processCommand_set_O)
     QStringList arguments;
     arguments << "dde-file-manager" << "-O";
     CommandLineManager::instance()->process(arguments);
-    TestHelper::runInLoop([]{
-        CommandLineManager::instance()->processCommand();
-    }, 500);
-    QWindowList newWindows =  qApp->topLevelWindows();
-    EXPECT_GT(newWindows.count(), windows.count());
-}
 
-TEST_F(CommandLineManagerTest, test_processCommand)
-{
-    QWindowList windows =  qApp->topLevelWindows();
-    QStringList arguments;
-    QString dirPath = TestHelper::createTmpDir("111@");
-    DUrl::fromLocalFile(dirPath);
-    arguments << "dde-file-manager" <<  DUrl::fromLocalFile(dirPath).toString();
-    CommandLineManager::instance()->process(arguments);
-    TestHelper::runInLoop([]{
-        CommandLineManager::instance()->processCommand();
-    }, 500);
-    TestHelper::deleteTmpFile(dirPath);
-    QWindowList newWindows =  qApp->topLevelWindows();
-    EXPECT_GT(newWindows.count(), windows.count());
+    stub_ext::StubExt stu;
+
+    judge = false;
+
+    QVariant(*stub_processEvent)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) = [](const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) {
+        judge = true;
+        return QVariant();
+    };
+
+    Stub stub;
+    stub.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))ADDR(DFMEventDispatcher, processEvent), stub_processEvent);
+
+    CommandLineManager::instance()->processCommand();
+
+    EXPECT_TRUE(judge);
 }
 
 TEST_F(CommandLineManagerTest, test_processCommand_show_item)
@@ -207,22 +213,19 @@ TEST_F(CommandLineManagerTest, test_processCommand_show_item)
     QString dirPath = TestHelper::createTmpDir();
     arguments << "dde-file-manager" << "--show-item" << dirPath;
     CommandLineManager::instance()->process(arguments);
-    TestHelper::runInLoop([]{
-        CommandLineManager::instance()->processCommand();
-    }, 500);
-    TestHelper::deleteTmpFile(dirPath);
-    QWindowList newWindows =  qApp->topLevelWindows();
-    EXPECT_GT(newWindows.count(), windows.count());
+    judge = false;
+
+    QVariant(*stub_processEvent)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) = [](const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) {
+        judge = true;
+        return QVariant();
+    };
+
+    Stub stub;
+    stub.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))ADDR(DFMEventDispatcher, processEvent), stub_processEvent);
+
+    CommandLineManager::instance()->processCommand();
+
+    EXPECT_TRUE(judge);
 }
 
-//TEST_F(CommandLineManagerTest, test_processCommand_empty_arguments)
-//{
-//    QWindowList windows =  qApp->topLevelWindows();
-//    CommandLineManager::instance()->process();
-//    TestHelper::runInLoop([]{
-//        CommandLineManager::instance()->processCommand();
-//    }, 500);
-//    QWindowList newWindows =  qApp->topLevelWindows();
-//    EXPECT_GT(newWindows.count(), windows.count());
-//}
 

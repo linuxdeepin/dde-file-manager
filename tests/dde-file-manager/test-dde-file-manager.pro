@@ -77,5 +77,6 @@ QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
 QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
 include(../../3rdparty/googletest/gtest_dependency.pri)
+include(../../3rdparty/cpp-stub/stub.pri)
 include(test.pri)
 
