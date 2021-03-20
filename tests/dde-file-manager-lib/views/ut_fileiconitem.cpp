@@ -113,13 +113,10 @@ TEST(FileIconItemTest,edit_undo_redo)
 {
     FileIconItem w;
     QString str("test");
-    w.show();
-    QTest::keyClicks(w.edit, str);
-    QEventLoop loop;
-    QTimer::singleShot(100,&w,[&loop](){
-        loop.exit();
-    });
-    loop.exec();
+    w.edit->setPlainText(str);
+    for (int i = 1; i <= str.size(); ++i)
+        w.pushItemToEditTextStack(str.left(i));
+
     EXPECT_EQ(str,w.edit->toPlainText());
     w.editUndo();
     QString undoStr = str.left(str.size() - 1);

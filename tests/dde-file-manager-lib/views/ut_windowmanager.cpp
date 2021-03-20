@@ -21,7 +21,7 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
-#include <stub.h>
+#include <stubext.h>
 
 #include "views/dfilemanagerwindow.h"
 #define private public
@@ -67,17 +67,60 @@ TEST_F(WindowManagerTest,load_window_state)
     EXPECT_EQ(win.size(),win2.size());
 }
 
-TEST_F(WindowManagerTest,show_new_window)
+TEST_F(WindowManagerTest,show_new_window_with_initappover)
 {
-    EXPECT_EQ(0,wm.m_windows.size());
+    ASSERT_EQ(0, wm.m_windows.size());
+
+    stub_ext::StubExt st;
+    bool initOver = false;
+    st.set_lamda(ADDR(DFMGlobal,isInitAppOver), [&initOver](){return initOver;});
+    st.set_lamda(ADDR(DFMGlobal,isAppQuiting), [](){return false;});
 
     wm.showNewWindow(DUrl("file:///home"),true);
-    EXPECT_EQ(1,wm.m_windows.size());
+    EXPECT_EQ(0, wm.m_windows.size());
+
+    initOver = true;
+    wm.showNewWindow(DUrl("file:///home"),true);
+    EXPECT_EQ(1, wm.m_windows.size());
+}
+
+TEST_F(WindowManagerTest,show_new_window_with_appquiting)
+{
+    ASSERT_EQ(0, wm.m_windows.size());
+
+    stub_ext::StubExt st;
+    bool appQuiting = true;
+    st.set_lamda(ADDR(DFMGlobal,isInitAppOver), [](){return true;});
+    st.set_lamda(ADDR(DFMGlobal,isAppQuiting), [&appQuiting](){return appQuiting;});
+
+    wm.showNewWindow(DUrl("file:///home"),true);
+    EXPECT_EQ(0, wm.m_windows.size());
+
+    appQuiting = false;
+    wm.showNewWindow(DUrl("file:///home"),true);
+    EXPECT_EQ(1, wm.m_windows.size());
+}
+
+TEST_F(WindowManagerTest,show_new_window)
+{
+    ASSERT_EQ(0,wm.m_windows.size());
+    ASSERT_FALSE(DFMGlobal::isAppQuiting());
+
+    stub_ext::StubExt st;
+    st.set_lamda(ADDR(DFMGlobal,isInitAppOver),[](){return true;});
+
+    wm.showNewWindow(DUrl("file:///home"),true);
+    EXPECT_EQ(1, wm.m_windows.size());
 }
 
 TEST_F(WindowManagerTest,show_new_window_repate_true)
 {
-    EXPECT_EQ(0,wm.m_windows.size());
+    ASSERT_EQ(0,wm.m_windows.size());
+    ASSERT_FALSE(DFMGlobal::isAppQuiting());
+
+    stub_ext::StubExt st;
+    bool initOver = true;
+    st.set_lamda(ADDR(DFMGlobal,isInitAppOver),[&initOver](){return initOver;});
 
     wm.showNewWindow(DUrl("file:///home"),true);
     EXPECT_EQ(1,wm.m_windows.size());
@@ -88,7 +131,12 @@ TEST_F(WindowManagerTest,show_new_window_repate_true)
 
 TEST_F(WindowManagerTest,show_new_window_repate_false)
 {
-    EXPECT_EQ(0,wm.m_windows.size());
+    ASSERT_EQ(0,wm.m_windows.size());
+    ASSERT_FALSE(DFMGlobal::isAppQuiting());
+
+    stub_ext::StubExt st;
+    bool initOver = true;
+    st.set_lamda(ADDR(DFMGlobal,isInitAppOver),[&initOver](){return initOver;});
 
     wm.showNewWindow(DUrl("file:///home"),true);
     EXPECT_EQ(1,wm.m_windows.size());
@@ -99,6 +147,13 @@ TEST_F(WindowManagerTest,show_new_window_repate_false)
 
 TEST_F(WindowManagerTest,get_windowid)
 {
+    ASSERT_EQ(0,wm.m_windows.size());
+    ASSERT_FALSE(DFMGlobal::isAppQuiting());
+
+    stub_ext::StubExt st;
+    bool initOver = true;
+    st.set_lamda(ADDR(DFMGlobal,isInitAppOver),[&initOver](){return initOver;});
+
     wm.showNewWindow(DUrl("file:///home"),true);
     ASSERT_EQ(1,wm.m_windows.size());
     EXPECT_EQ(wm.m_windows.begin().key()->winId(),wm.getWindowId(wm.m_windows.begin().key()));
@@ -106,6 +161,13 @@ TEST_F(WindowManagerTest,get_windowid)
 
 TEST_F(WindowManagerTest,get_window_by_id)
 {
+    ASSERT_EQ(0,wm.m_windows.size());
+    ASSERT_FALSE(DFMGlobal::isAppQuiting());
+
+    stub_ext::StubExt st;
+    bool initOver = true;
+    st.set_lamda(ADDR(DFMGlobal,isInitAppOver),[&initOver](){return initOver;});
+
     wm.showNewWindow(DUrl("file:///home"),true);
     ASSERT_EQ(1,wm.m_windows.size());
     EXPECT_EQ(wm.m_windows.begin().key(),wm.getWindowById(wm.m_windows.begin().key()->winId()));
@@ -118,6 +180,13 @@ TEST_F(WindowManagerTest,tab_addable_by_winId_null)
 
 TEST_F(WindowManagerTest,tab_addable_by_winId)
 {
+    ASSERT_EQ(0,wm.m_windows.size());
+    ASSERT_FALSE(DFMGlobal::isAppQuiting());
+
+    stub_ext::StubExt st;
+    bool initOver = true;
+    st.set_lamda(ADDR(DFMGlobal,isInitAppOver),[&initOver](){return initOver;});
+
     wm.showNewWindow(DUrl("file:///home"),true);
     ASSERT_EQ(1,wm.m_windows.size());
     EXPECT_EQ(((DFileManagerWindow*)wm.m_windows.begin().key())->tabAddable(),

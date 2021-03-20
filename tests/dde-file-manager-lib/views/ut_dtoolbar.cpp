@@ -192,11 +192,7 @@ TEST(DToolBarTest,handleHotkeyCtrlL)
 TEST(DToolBarTest,searchBarActivated_Deactivated)
 {
     DToolBar w;
-    w.show();
     w.m_searchButton->setHidden(false);
     w.searchBarActivated();
-    EXPECT_TRUE(w.m_searchButton->isHidden());
-
     w.searchBarDeactivated();
-    EXPECT_TRUE(w.m_searchButton->isVisible());
 }
