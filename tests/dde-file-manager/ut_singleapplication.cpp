@@ -23,11 +23,14 @@
 #define private public
 #include "singleapplication.h"
 #undef private
-#include <QtConcurrent>
+
 #include "commandlinemanager.h"
-#include <QLocalSocket>
+
 #include "testhelper.h"
 #include "dfilewatcher.h"
+
+#include <QLocalSocket>
+#include <QtConcurrent>
 #include <QStandardPaths>
 
 using namespace testing;
@@ -53,6 +56,7 @@ public:
 
 TEST_F(SingleApplicationTest, test_loadTranslator)
 {
+    TestHelper::runInLoop([]{});
     ASSERT_NE(app, nullptr);
     QString appName = app->applicationName();
     ASSERT_FALSE(app->loadTranslator());
@@ -79,33 +83,33 @@ TEST_F(SingleApplicationTest, test_getUserID)
     ASSERT_EQ(app->getUserID(), SingleApplication::UserID);
 }
 
-//TEST_F(SingleApplicationTest, test_newClientProcess_get_monitor_files)
-//{
-//    ASSERT_NE(app, nullptr);
-//    app->initConnect();
-//    QString userKey = "SingleApplicationTest1";
-//    QString tepPath = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first();
-//    DFileWatcher *watcher = new DFileWatcher(tepPath);
-//    watcher->startWatcher();
-//    TestHelper::runInLoop([&]{
-//        app->setSingleInstance(userKey);
-//        QtConcurrent::run([&](){
-//            QByteArray data;
-//            data.append(QString("dde-file-manager").toLocal8Bit().toBase64());
-//            data.append(' ');
-//            data.append(QString("--get-monitor-files").toLocal8Bit().toBase64());
-//            QLocalSocket *socket = SingleApplication::newClientProcess(userKey, data);
-//            ASSERT_EQ(socket->error(), QLocalSocket::UnknownSocketError);
-//            ASSERT_TRUE(socket->waitForReadyRead());
-//            QStringList result;
-//            for (const QByteArray &i : socket->readAll().split(' ')){
-//                QString s = QString::fromLocal8Bit(QByteArray::fromBase64(i));
-//                result << QString::fromLocal8Bit(QByteArray::fromBase64(i));
-//            }
-//            ASSERT_TRUE(result.contains(tepPath));
-//        });
-//    }, 1000);
-//    watcher->stopWatcher();
-//    delete watcher;
-//}
+TEST_F(SingleApplicationTest, test_newClientProcess_get_monitor_files)
+{
+    ASSERT_NE(app, nullptr);
+    app->initConnect();
+    QString userKey = "SingleApplicationTest1";
+    QString tepPath = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first();
+    DFileWatcher *watcher = new DFileWatcher(tepPath);
+    watcher->startWatcher();
+    TestHelper::runInLoop([&]{
+        app->setSingleInstance(userKey);
+        QtConcurrent::run([&](){
+            QByteArray data;
+            data.append(QString("dde-file-manager").toLocal8Bit().toBase64());
+            data.append(' ');
+            data.append(QString("--get-monitor-files").toLocal8Bit().toBase64());
+            QLocalSocket *socket = SingleApplication::newClientProcess(userKey, data);
+            ASSERT_EQ(socket->error(), QLocalSocket::UnknownSocketError);
+            ASSERT_TRUE(socket->waitForReadyRead());
+            QStringList result;
+            for (const QByteArray &i : socket->readAll().split(' ')){
+                QString s = QString::fromLocal8Bit(QByteArray::fromBase64(i));
+                result << QString::fromLocal8Bit(QByteArray::fromBase64(i));
+            }
+            ASSERT_TRUE(result.contains(tepPath));
+        });
+    }, 1000);
+    watcher->stopWatcher();
+    delete watcher;
+}
 
