@@ -24,6 +24,7 @@
 #include "interfaces/dfmsidebaritem.h"
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
 #include "views/dfilemanagerwindow.h"
+#include "singleton.h"
 #include <dfmevent.h>
 
 #include <QProcess>
@@ -44,7 +45,7 @@ namespace  {
     public:
         void SetUp() override
         {
-            m_pTester = new BookMarkManager();
+            m_pTester = Singleton<BookMarkManager>::instance();
             m_pHandler = new DFMSideBarBookmarkItemHandler();
             std::cout << "start TestBookMarkManager";
             tempDirPath =  QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first() + "/" + BOOKMARK_STR;
@@ -59,7 +60,6 @@ namespace  {
             delete m_pHandler;
             m_pHandler = nullptr;
 
-            delete m_pTester;
             m_pTester = nullptr;
             std::cout << "end TestBookMarkManager";
         }
