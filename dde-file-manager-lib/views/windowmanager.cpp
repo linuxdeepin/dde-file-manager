@@ -306,14 +306,19 @@ void WindowManager::onWindowClosed()
         qInfo() << "quit current ok!"<< DFMGlobal::isAppQuiting() << DFMGlobal::isInitAppOver();
         return;
     }
+    bool shouldRelease = true;
     DFileManagerWindow* window = static_cast<DFileManagerWindow*>(sender());
     if (m_windows.count() == 1){
-        fileSignalManager->requestCloseListen();
-        DFMGlobal::setAppQuiting();
+        if (qApp->quitOnLastWindowClosed()) {
+            fileSignalManager->requestCloseListen();
+            DFMGlobal::setAppQuiting();
+            shouldRelease = false;
+            qInfo() << "dde-file-manager app need quit!";
+        }
         saveWindowState(window);
         dialogManager->closeAllPropertyDialog();
     }
-    else {
+    if (shouldRelease) {
         QTimer::singleShot(1000,this,[=](){
             window->deleteLater();
             qInfo() << "window deletelater !";
