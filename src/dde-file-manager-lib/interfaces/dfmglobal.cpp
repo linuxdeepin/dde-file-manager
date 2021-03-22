@@ -1187,19 +1187,27 @@ QString DFMGlobal::preprocessingFileName(QString name)
 void DFMGlobal::setMimeDataUserID(QMimeData *mime)
 {
     QByteArray userId;
-
-    userId.append(QString::number(getUserId()));
+    QString strUserID = QString::number(getUserId());
+    userId.append(strUserID);
     mime->setData(MIME_USER_ID, userId);
+    // 组装用户ID的Key值
+    QString strKey = QString(MIME_USER_ID) + "_" + strUserID;
+    mime->setData(strKey, userId);
 }
 
 bool DFMGlobal::isMimeDatafromCurrentUser(const QMimeData *mime)
 {
-    QByteArray userId = mime->data(MIME_USER_ID);
+//    QByteArray userId = mime->data(MIME_USER_ID);
 
-    if (!userId.isEmpty() && userId.toInt() != getUserId())
-        return false;
+//    if (!userId.isEmpty() && userId.toInt() != getUserId())
+//        return false;
 
-    return true;
+//    return true;
+    // 组装用户ID的Key值
+    QString strKey = QString(MIME_USER_ID) + "_" + QString::number(getUserId());
+    if (mime->hasFormat(strKey))
+        return true;
+    return false;
 }
 
 void DFMGlobal::setInitAppOver()
