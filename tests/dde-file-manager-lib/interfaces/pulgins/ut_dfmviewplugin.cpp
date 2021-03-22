@@ -4,7 +4,6 @@
  * Author:     gongheng<gongheng@uniontech.com>
  *
  * Maintainer: gongheng<gongheng@uniontech.com>
->>>>>>> chore: 更新license的时间和作者
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

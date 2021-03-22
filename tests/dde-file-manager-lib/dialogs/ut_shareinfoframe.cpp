@@ -23,6 +23,7 @@
 #include "stub.h"
 #include "app/define.h"
 #include "dfileservices.h"
+#include "testhelper.h"
 
 #include <gtest/gtest.h>
 #include <QLineEdit>
@@ -121,11 +122,11 @@ TEST_F(TestShareInfoFrame, testHandleShareNameChanged)
 
 TEST_F(TestShareInfoFrame, testHandleShareNameChanged2)
 {
-    QLineEdit shareNamelineEdit;
-    m_pTester->m_shareNamelineEdit = &shareNamelineEdit;
-    shareNamelineEdit.setFocus();
-    QComboBox permissoComBox;
-    m_pTester->m_permissoComBox = &permissoComBox;
+    QLineEdit *pShareNamelineEdit = new QLineEdit();
+    m_pTester->m_shareNamelineEdit = pShareNamelineEdit;
+    pShareNamelineEdit->setFocus();
+    QComboBox *pPermissoComBox = new QComboBox();
+    m_pTester->m_permissoComBox = pPermissoComBox;
 
     bool(*stub_hasFocus)() = []()->bool{
             return  true;
@@ -133,7 +134,13 @@ TEST_F(TestShareInfoFrame, testHandleShareNameChanged2)
     Stub stu;
     stu.set(ADDR(QWidget, hasFocus), stub_hasFocus);
 
-    EXPECT_NO_FATAL_FAILURE(m_pTester->handleShareNameChanged());
+    EXPECT_NO_FATAL_FAILURE(m_pTester->handleShareNameChanged());\
+
+    if (pShareNamelineEdit)
+        pShareNamelineEdit->deleteLater();
+    if (pPermissoComBox)
+        pPermissoComBox->deleteLater();
+
 }
 
 TEST_F(TestShareInfoFrame, testHandlePermissionComboxChanged)
@@ -169,6 +176,8 @@ TEST_F(TestShareInfoFrame, testDoShareInfoSetting)
 
 TEST_F(TestShareInfoFrame, testUpdateShareInfo)
 {
+    TestHelper::runInLoop([](){});
+
     DAbstractFileInfoPointer fileinfo = fileService->createFileInfo(nullptr, DUrl("file:///home"));
     m_pTester->m_fileinfo = fileinfo;
 

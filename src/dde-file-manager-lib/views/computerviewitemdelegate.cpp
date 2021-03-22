@@ -311,7 +311,7 @@ void ComputerViewItemDelegate::setModelData(QWidget *editor, QAbstractItemModel 
 void ComputerViewItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(index);
-    if (index.data(ComputerModel::DataRoles::ICategoryRole) == ComputerModelItemData::Category::cat_widget) {
+    if (index.model() && index.data(ComputerModel::DataRoles::ICategoryRole) == ComputerModelItemData::Category::cat_widget) {
         editor->setGeometry(option.rect);
         return;
     }

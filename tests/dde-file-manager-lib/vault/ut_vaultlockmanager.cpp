@@ -31,6 +31,7 @@
 #define private public
 #define protected public
 #include "vault/vaultlockmanager.h"
+#include "testhelper.h"
 
 namespace  {
     class TestVaultLockManager : public testing::Test
@@ -55,6 +56,7 @@ namespace  {
  */
 TEST_F(TestVaultLockManager, autoLockState)
 {
+    TestHelper::runInLoop([](){});
     EXPECT_NO_FATAL_FAILURE(m_vaultLockManager->autoLockState());
 }
 
@@ -63,6 +65,7 @@ TEST_F(TestVaultLockManager, autoLockState)
  */
 TEST_F(TestVaultLockManager, autoLock)
 {
+    TestHelper::runInLoop([](){});
     VaultLockManager::AutoLockState oldState = m_vaultLockManager->autoLockState();
     EXPECT_NO_FATAL_FAILURE(m_vaultLockManager->autoLock(VaultLockManager::Never));
     m_vaultLockManager->autoLock(oldState);

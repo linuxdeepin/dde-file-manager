@@ -364,13 +364,10 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
             QTimer::singleShot(0, this, [path, main_window] {
                 const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, DUrl(path));
 
-                if (!info->canRedirectionFileUrl())
-                {
-                    return;
-                }
+                if (info && info->canRedirectionFileUrl())
+                                    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(nullptr, info->redirectedFileUrl(), main_window);
 
-                DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(nullptr, info->redirectedFileUrl(), main_window);
-            });
+                 });
         }
     }
 }

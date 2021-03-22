@@ -783,8 +783,12 @@ void GvfsMountManager::ask_question_cb(GMountOperation *op, const char *message,
         qDebug() << newmsg;
     }
 
-    choice = DThreadUtil::runInMainThread(requestAnswerDialog, MountEventHash.value(op)->windowId(), newmsg, choiceList);
-    qCDebug(mountManager()) << "ask_question_cb() user choice(start at 0): " << choice;
+    if (MountEventHash.contains(op)) {
+            choice = DThreadUtil::runInMainThread(requestAnswerDialog, MountEventHash.value(op)->windowId(), newmsg, choiceList);
+        } else {
+            choice = -1;
+            qWarning() << "MountEventHash: bad choice.";
+        }    qCDebug(mountManager()) << "ask_question_cb() user choice(start at 0): " << choice;
 
     // check if choose is invalid
     if (choice < 0 || choice >= choiceList.count()) {
@@ -855,9 +859,12 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
     obj.insert("password", default_password);
     obj.insert("GAskPasswordFlags", flags);
     obj.insert("passwordSave", passwordSave);
-    QJsonObject loginObj = DThreadUtil::runInMainThread(requestPasswordDialog,
-                                                        MountEventHash.value(op)->windowId(),
-                                                        MountEventHash.value(op)->fileUrl().isSMBFile(), obj, op);
+    QJsonObject loginObj;
+    if (MountTimerHash.contains(op)) {
+        loginObj = DThreadUtil::runInMainThread(requestPasswordDialog,
+                                                MountEventHash.value(op)->windowId(),
+                                                MountEventHash.value(op)->fileUrl().isSMBFile(), obj, op);
+    }
 
     if (!loginObj.isEmpty()) {
         anonymous = loginObj.value("anonymous").toBool();

@@ -140,6 +140,7 @@ public:
 
 
 TEST_F(DFileCopyMoveJobTest,can_job_running) {
+    TestHelper::runInLoop([](){});
     job->setMode(DFileCopyMoveJob::CopyMode);
     DUrl urlsour,target;
     urlsour.setScheme(FILE_SCHEME);
@@ -173,6 +174,7 @@ TEST_F(DFileCopyMoveJobTest,can_job_running) {
         QThread::msleep(100);
     }
     job->togglePause();
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,can_job_running_cut) {
@@ -204,6 +206,7 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_cut) {
     while(!job->isFinished()) {
         QThread::msleep(100);
     }
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,can_job_running_refine) {
@@ -226,6 +229,7 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_refine) {
 
     target.setPath("~/test_copy_all");
     QProcess::execute("rm -rf " + target.toLocalFile());
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,can_job_running_remove) {
@@ -248,6 +252,7 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_remove) {
     while(!job->isFinished()) {
         QThread::msleep(100);
     }
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,can_job_running_error) {
@@ -265,6 +270,7 @@ TEST_F(DFileCopyMoveJobTest,can_job_running_error) {
     while(!job->isFinished()) {
         QThread::msleep(100);
     }
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,get_errorToString) {
@@ -286,6 +292,7 @@ TEST_F(DFileCopyMoveJobTest,get_errorToString) {
     EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::TargetReadOnlyError).isEmpty());
     EXPECT_FALSE(jobd->errorToString(DFileCopyMoveJob::TargetIsSelfError).isEmpty());
     EXPECT_TRUE(jobd->errorToString(DFileCopyMoveJob::UnknowError).isEmpty());
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_setState) {
@@ -306,6 +313,7 @@ TEST_F(DFileCopyMoveJobTest,start_setState) {
     job->stop();
     jobd->setState(DFileCopyMoveJob::StoppedState);
     EXPECT_FALSE(jobd->stateCheck());
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_setError) {
@@ -315,6 +323,7 @@ TEST_F(DFileCopyMoveJobTest,start_setError) {
     jobd->setError(DFileCopyMoveJob::NoError);
     jobd->setError(DFileCopyMoveJob::PermissionError);
     jobd->setError(DFileCopyMoveJob::PermissionError);
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_handleError) {
@@ -368,6 +377,7 @@ TEST_F(DFileCopyMoveJobTest,start_handleError) {
     job->taskDailogClose();
     jobd->setError(DFileCopyMoveJob::SpecialFileError);
     EXPECT_EQ(DFileCopyMoveJob::CancelAction,jobd->handleError(source, source));
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_setAndhandleError) {
@@ -383,12 +393,14 @@ TEST_F(DFileCopyMoveJobTest,start_setAndhandleError) {
                   DFileCopyMoveJob::NoError,DAbstractFileInfoPointer(nullptr), DAbstractFileInfoPointer(nullptr)));
     EXPECT_EQ(DFileCopyMoveJob::CancelAction,jobd->setAndhandleError(
                   DFileCopyMoveJob::CancelError,DAbstractFileInfoPointer(nullptr), DAbstractFileInfoPointer(nullptr)));
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_isRunning) {
     DFileCopyMoveJobPrivate * jobd = job->d_func();
     ASSERT_TRUE(jobd);
     EXPECT_FALSE(jobd->isRunning());
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_formatFileName) {
@@ -410,6 +422,7 @@ TEST_F(DFileCopyMoveJobTest,start_formatFileName) {
     QByteArray (*ss)(void *) = [](void *){return QByteArray("vfat");};
     st.set(ADDR(DStorageInfo,fileSystemType),ss);
     EXPECT_EQ(jobd->formatFileName("hello"),QString("hello"));
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_checkFileSize) {
@@ -429,6 +442,7 @@ TEST_F(DFileCopyMoveJobTest,start_checkFileSize) {
     st.set(ADDR(DStorageInfo,fileSystemType),ss);
     qint64 size = 5l*1024*1024*1024;
     EXPECT_FALSE(jobd->checkFileSize(size));
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_getNewFileName) {
@@ -444,6 +458,7 @@ TEST_F(DFileCopyMoveJobTest,start_getNewFileName) {
     std::cout << from.toLocalFile().toStdString() << std::endl;
     std::cout << jobd->getNewFileName(source,toinfo).toStdString() << std::endl;
     EXPECT_FALSE(jobd->getNewFileName(source,toinfo).isEmpty());
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_doProcess) {
@@ -689,6 +704,7 @@ TEST_F(DFileCopyMoveJobTest,start_doProcess) {
     jobd->leaveDirectory();
     TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() <<
                                to.toLocalFile()+from.fileName());
+    job->stop();
 //    Stub st;
 //    DAbstractFileInfo::FileType (*sss)(void *) = [](void *){return DAbstractFileInfo::CharDevice;};
 //    typedef DAbstractFileInfo::FileType (DFileInfo::*fptr)(void*);
@@ -749,6 +765,7 @@ TEST_F(DFileCopyMoveJobTest,start_mergeDirectory) {
     st.set(ADDR(DFileCopyMoveJobPrivate,stateCheck),stateCheck);
     EXPECT_FALSE(jobd->mergeDirectory(handler,frominfo,toinfo));
     TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile());
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_run_moveMOde) {
@@ -777,7 +794,7 @@ TEST_F(DFileCopyMoveJobTest,start_run_moveMOde) {
     job->setSysncQuitState(true);
     EXPECT_TRUE(job->getSysncState());
     job->waitSysncEnd();
-
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_getWriteBytes) {
@@ -798,6 +815,7 @@ TEST_F(DFileCopyMoveJobTest,start_getWriteBytes) {
     }
     EXPECT_TRUE(0 == jobd->getWriteBytes(9018765463));
     TestHelper::deleteTmpFile("/proc/self/task/9018765463");
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_supportActions) {
@@ -838,6 +856,7 @@ TEST_F(DFileCopyMoveJobTest,start_supportActions) {
               job->supportActions(DFileCopyMoveJob::TargetIsSelfError));
     EXPECT_EQ(DFileCopyMoveJob::CancelAction,
               job->supportActions(DFileCopyMoveJob::UnknowError));
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_process) {
@@ -851,6 +870,7 @@ TEST_F(DFileCopyMoveJobTest,start_process) {
     DAbstractFileInfoPointer toinfo = DFileService::instance()->createFileInfo(nullptr,to);
     EXPECT_FALSE(jobd->process(from,toinfo));
     TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() << to.toLocalFile() + from.fileName());
+    job->stop();
 }
 TEST_F(DFileCopyMoveJobTest,start_doRemoveFile) {
     DFileCopyMoveJobPrivate * jobd = job->d_func();
@@ -877,6 +897,7 @@ TEST_F(DFileCopyMoveJobTest,start_doRemoveFile) {
     st.set(ADDR(VaultController,getFileInfo),getFileInfo);
     EXPECT_TRUE(jobd->doRemoveFile(handler,frominfo));
     TestHelper::deleteTmpFiles(QStringList() << path);
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_doRenameFile) {
@@ -907,6 +928,7 @@ TEST_F(DFileCopyMoveJobTest,start_doRenameFile) {
     EXPECT_TRUE(jobd->doRenameFile(handler,oldinfo,newinfo));
     jobd->leaveDirectory();
     TestHelper::deleteTmpFiles(QStringList() << linkurlnew.toLocalFile() << linkurl.toLocalFile() << from.toLocalFile() << to.toLocalFile());
+    job->stop();
 }
 
 TEST_F(DFileCopyMoveJobTest,start_doLinkFile) {
@@ -922,6 +944,7 @@ TEST_F(DFileCopyMoveJobTest,start_doLinkFile) {
     from.setPath("/tmp/zut_syslink_tset");
     EXPECT_FALSE(jobd->doLinkFile(handler,fileinfo,linkpath));
     TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() << linkpath);
+    job->stop();
 }
 class devicetest : public  DFileDevice
 {
@@ -933,6 +956,8 @@ class devicetest : public  DFileDevice
         Q_UNUSED(size);
         return false;
     }
+public:
+    ~devicetest() override{}
 protected:
     qint64 readData(char *data, qint64 maxlen) override{
         Q_UNUSED(data);
@@ -955,6 +980,8 @@ class devicetest1 : public  DFileDevice
         Q_UNUSED(size);
         return false;
     }
+public:
+    ~devicetest1() override{}
 protected:
     qint64 readData(char *data, qint64 maxlen) override{
         Q_UNUSED(data);
@@ -969,7 +996,8 @@ protected:
 };
 class devicetest2 : public  DFileDevice
 {
-
+public:
+    ~devicetest2() override{}
 protected:
     qint64 readData(char *data, qint64 maxlen) override{
         Q_UNUSED(data);
@@ -989,6 +1017,8 @@ class devicetest3 : public  DFileDevice
     bool seek(qint64 pos) override{
         return false;
     }
+public:
+    ~devicetest3() override{}
 protected:
     qint64 readData(char *data, qint64 maxlen) override{
         Q_UNUSED(data);
@@ -1015,9 +1045,13 @@ protected:
         QThread::msleep(200);
         return 0;
     }
+public:
+    ~devicetest4() override{}
 };
 class devicetest5 : public  DFileDevice
 {
+public:
+    ~devicetest5() override{}
 protected:
     qint64 readData(char *data, qint64 maxlen) override{
         Q_UNUSED(data);
@@ -1259,9 +1293,10 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFile) {
     stl.set(ADDR(DFileService, createFileDevice),createFileDevice11);
     stl.set(ADDR(DFileCopyMoveJobPrivate,setAndhandleError),ssse3);
     EXPECT_TRUE(jobd->doCopyFile(frominfo,toinfo,handler));
+    job->stop();
 
     TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() << to.toLocalFile());
-    QProcess::execute("killall dde-file-manager");
+//    QProcess::execute("pidof dde-file-manager | xargs kill -9");
 }
 
 static int setAndhandleErrorExNew = 0;
@@ -1326,10 +1361,12 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFileBig) {
     stl.set_lamda(&VaultController::isVaultFile,[](){return true;});
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::SkipAction;});
+    jobd->m_count.store(0);
     EXPECT_TRUE(jobd->doCopyFileBig(frominfo,toinfo,handler));
 
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::CancelAction;});
+    jobd->m_count.store(0);
     EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
 
     stl.reset(&VaultController::isVaultFile);
@@ -1339,18 +1376,21 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFileBig) {
     stl.set(ADDR(DFileCopyMoveJobPrivate,setAndhandleError),&setAndhandleErrorEx);
     setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
                 setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
+    jobd->m_count.store(0);
     EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
 
     setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
                 setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
     stl.set(open,openExTest);
     stl.set_lamda(::close,[](){return 0;});
+    jobd->m_count.store(0);
     EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
 
     setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
                 setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::CancelAction;});
+    jobd->m_count.store(0);
     EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
 
     stl.reset(open);
@@ -1360,23 +1400,28 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFileBig) {
                 setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
     stl.set_lamda(ftruncate,[](){return -1;});
     stl.set(&DFileCopyMoveJobPrivate::setAndhandleError,&setAndhandleErrorEx);
+    jobd->m_count.store(0);
     EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
 
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::CancelAction;});
+    jobd->m_count.store(0);
     EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
 
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::SkipAction;});
+    jobd->m_count.store(0);
     EXPECT_TRUE(jobd->doCopyFileBig(frominfo,toinfo,handler));
 
     stl.reset(ftruncate);
     stl.set_lamda(mmap,[](){return MAP_FAILED;});
     stl.set(&DFileCopyMoveJobPrivate::setAndhandleError,&setAndhandleErrorEx);
+    jobd->m_count.store(0);
     EXPECT_TRUE(jobd->doCopyFileBig(frominfo,toinfo,handler));
 
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::CancelAction;});
+    jobd->m_count.store(0);
     EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
 
     setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
@@ -1384,40 +1429,37 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFileBig) {
     stl.set_lamda(munmap,[](){return 1;});
     stl.set(mmap,&mmapExTest);
     stl.set(&DFileCopyMoveJobPrivate::setAndhandleError,&setAndhandleErrorEx);
+    jobd->m_count.store(0);
     EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
 
     setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
                 setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::CancelAction;});
+    jobd->m_count.store(0);
     EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
 
     stl.reset(mmap);
     stl.reset(munmap);
     stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
-    jobd->m_count.store(10);
-    EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
 
-    jobd->m_count.store(0);
-    jobd->m_countVetor.clear();
     jobd->fileHints = DFileCopyMoveJob::DontIntegrityChecking;
     stl.set_lamda(&VaultController::isVaultFile,[](){return true;});
+    jobd->m_count.store(0);
     EXPECT_TRUE(jobd->doCopyFileBig(frominfo,toinfo,handler));
 
-    jobd->m_count.store(0);
-    jobd->m_countVetor.clear();
     jobd->fileHints = DFileCopyMoveJob::NoHint;
     stl.reset(&VaultController::isVaultFile);
     stl.set_lamda(&UDiskListener::isFileFromDisc,[](){return true;});
-    EXPECT_TRUE(jobd->doCopyFileBig(frominfo,toinfo,handler));
-
     jobd->m_count.store(0);
-    jobd->m_countVetor.clear();
+    std::cout << "end DFileCopyMoveJobTest15" << std::endl;
+    EXPECT_TRUE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+    jobd->m_count.store(0);
     jobd->fileHints = DFileCopyMoveJob::NoHint;
     stl.reset(&VaultController::isVaultFile);
     stl.reset(&DFileCopyMoveJobPrivate::stateCheck);
     stl.reset(&UDiskListener::isFileFromDisc);
-    EXPECT_FALSE(jobd->doCopyFileBig(frominfo,toinfo,handler));
+    job->stop();
     TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() << to.toLocalFile());
 }
 
@@ -1431,6 +1473,8 @@ class devicetest6 : public  DFileDevice
         Q_UNUSED(size);
         return false;
     }
+public:
+    ~devicetest6() override{}
 protected:
     qint64 readData(char *data, qint64 maxlen) override{
         Q_UNUSED(data);
@@ -1458,6 +1502,8 @@ class devicetest7 : public  DFileDevice
         Q_UNUSED(pos);
         return false;
     }
+public:
+    ~devicetest7() override{}
 protected:
     qint64 readData(char *data, qint64 maxlen) override{
         Q_UNUSED(data);
@@ -1471,6 +1517,20 @@ protected:
     }
 };
 
+DFileDevice* createFileDevicelamda(const QObject *, const DUrl &){
+    DFileDevice * device = nullptr;
+    return device;
+};
+DFileDevice* createFileDevicelamda1(void *, const QObject *, const DUrl &url){
+    DFileDevice * device = nullptr;
+    if (url.toLocalFile() == "/tmp/zut_test_file_device") {
+        return device;
+    }
+    device = new DLocalFileDevice();
+    device->setFileUrl(url);
+    return device;
+};
+
 TEST_F(DFileCopyMoveJobTest,start_doCopyFileSmall) {
     DFileCopyMoveJobPrivate * jobd = job->d_func();
     ASSERT_TRUE(jobd);
@@ -1482,33 +1542,30 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFileSmall) {
         filefrom.write("fneninfuefuen",10240);
         filefrom.close();
     }
-    StubExt stl;
+
     to = from;
     DFileDevice* (*createFileDevice)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &){
         DFileDevice * device = nullptr;
         return device;
     };
-    stl.set(ADDR(DFileService, createFileDevice),createFileDevice);
+
     QSharedPointer<DFileHandler>  handler(DFileService::instance()->createFileHandler(nullptr,from));
     DAbstractFileInfoPointer frominfo = DFileService::instance()->createFileInfo(nullptr,from);
     to = from;
     to.setPath("/tmp/zut_test_file_device");
     DAbstractFileInfoPointer toinfo = DFileService::instance()->createFileInfo(nullptr,to);
-    EXPECT_FALSE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
+    {
+        StubExt stl;
+        stl.set(ADDR(DFileService, createFileDevice),createFileDevicelamda);
+        EXPECT_FALSE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
+    }
 
-    DFileDevice* (*createFileDevice1)(void *,const QObject *, const DUrl &url) = [](void *, const QObject *, const DUrl &url){
-        DFileDevice * device = nullptr;
-        if (url.toLocalFile() == "/tmp/zut_test_file_device") {
-            return device;
-        }
-        device = new DLocalFileDevice();
-        device->setFileUrl(url);
-        return device;
-    };
-    stl.set(ADDR(DFileService, createFileDevice),createFileDevice1);
-    EXPECT_FALSE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
+    {
+        StubExt stl;
+        stl.set(ADDR(DFileService, createFileDevice),createFileDevicelamda1);
+        EXPECT_FALSE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
+    }
 
-    stl.reset(ADDR(DFileService, createFileDevice));
     QString longname = QString("_jksfjdflsadjflasdjfalsdjflksdjkflasdjkflsjdkflsdjflksdjflskdjfjj\
         gjdlkfgjsldfjgklsdjfgklsjdfklgjsdkfjgklsdfjgklsdjfglkdsjfgjksdfg\
         gjskdfjgsdfjglsdmvskdlfjgkdsjfgksdjfgksdfjgkdjfgkdkfgsldgjkdfjgk\
@@ -1516,66 +1573,100 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFileSmall) {
         jsdfkljgssssssssssgsjdklfjgklsdjfgklsjdfgklsjdfkgjsdlfjgklsdfjkdfjg");
     to.setPath("/tmp/zut_test_file_device"+longname);
     toinfo = DFileService::instance()->createFileInfo(nullptr,to);
-    stl.set_lamda(&DFileCopyMoveJobPrivate::stateCheck,
-                  [](){return true;});
-    stl.set_lamda(&VaultController::isVaultFile,[](){return true;});
-    stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
-                  [](){return DFileCopyMoveJob::SkipAction;});
-    EXPECT_TRUE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
+    {
+        StubExt stl;
+        stl.set_lamda(&DFileCopyMoveJobPrivate::stateCheck,
+                      [](){return true;});
+        stl.set_lamda(&VaultController::isVaultFile,[](){return true;});
+        stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
+                      [](){return DFileCopyMoveJob::SkipAction;});
+        EXPECT_TRUE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
+    }
 
-    stl.reset(&VaultController::isVaultFile);
     to.setPath("/tmp/zut_test_file_device");
     toinfo = DFileService::instance()->createFileInfo(nullptr,to);
-    stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
-                  [](){return DFileCopyMoveJob::RetryAction;});
 
     DFileDevice* (*createFileDevice2)(void *,const QObject *, const DUrl &) = [](void *,const QObject *, const DUrl & url){
+        Q_UNUSED(url);
         DFileDevice * device = nullptr;
         device = new devicetest6();
         return device;
     };
-    stl.set(ADDR(DFileService, createFileDevice),createFileDevice2);
-    EXPECT_FALSE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
+    {
+        StubExt stl;
+        stl.set_lamda(&DFileCopyMoveJobPrivate::stateCheck,
+                      [](){return true;});
+        stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
+                      [](){return DFileCopyMoveJob::RetryAction;});
+        stl.set(ADDR(DFileService, createFileDevice),createFileDevice2);
+        EXPECT_FALSE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
+    }
+    {
+        StubExt stl;
+        stl.set_lamda(&DFileCopyMoveJobPrivate::stateCheck,
+                      [](){return true;});
+        stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
+                      [](){return DFileCopyMoveJob::RetryAction;});
+        EXPECT_TRUE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
+    }
+    {
+        StubExt stl;
+        stl.set_lamda(&DFileCopyMoveJobPrivate::stateCheck,[](){return true;});
+        stl.set_lamda(&DFileCopyMoveJobPrivate::writeRefineThread,[](){return false;});
+        EXPECT_TRUE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
+        jobd->m_writeResult.waitForFinished();
+        EXPECT_NO_FATAL_FAILURE(jobd->cancelReadFileDealWriteThread());
+    }
 
-    stl.reset(ADDR(DFileService, createFileDevice));
-    EXPECT_TRUE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
 
-    stl.set_lamda(&DFileCopyMoveJobPrivate::stateCheck,[](){return true;});
-    stl.set_lamda(&DFileCopyMoveJobPrivate::writeRefineThread,[](){return false;});
-    EXPECT_TRUE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
-    jobd->m_writeResult.waitForFinished();
-    EXPECT_NO_FATAL_FAILURE(jobd->cancelReadFileDealWriteThread());
-
-
-    DFileDevice* (*createFileDevice3)(void *,const QObject *, const DUrl &) = [](void *,const QObject *, const DUrl & url){
+    DFileDevice* (*createFileDevice3)(void *,const QObject *, const DUrl &) = [](void *,const QObject *,
+            const DUrl & url){
+        Q_UNUSED(url);
         DFileDevice * device = nullptr;
         device = new devicetest7();
         return device;
     };
-    stl.set(ADDR(DFileService, createFileDevice),createFileDevice3);
-    stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
-                  [](){return DFileCopyMoveJob::RetryAction;});
-    EXPECT_FALSE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
-
-    stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
+    {
+        StubExt stl;
+        stl.set_lamda(&DFileCopyMoveJobPrivate::stateCheck,[](){return true;});
+        stl.set(ADDR(DFileService, createFileDevice),createFileDevice3);
+        stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
+                      [](){return DFileCopyMoveJob::RetryAction;});
+        EXPECT_FALSE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
+    }
+    {
+        StubExt stl;
+        stl.set_lamda(&DFileCopyMoveJobPrivate::stateCheck,[](){return true;});
+        stl.set(ADDR(DFileService, createFileDevice),createFileDevice3);
+        stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::SkipAction;});
-    EXPECT_TRUE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
-
-    stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
+        EXPECT_TRUE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
+    }
+    {
+        StubExt stl;
+        stl.set_lamda(&DFileCopyMoveJobPrivate::stateCheck,[](){return true;});
+        stl.set(ADDR(DFileService, createFileDevice),createFileDevice3);
+        stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
                   [](){return DFileCopyMoveJob::CancelAction;});
-    EXPECT_FALSE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
+        EXPECT_FALSE(jobd->doCopyFileSmall(frominfo,toinfo,handler));
+    }
 
     DUrl urltmp(from);
     urltmp.setPath(TestHelper::createTmpFile());
-    stl.set_lamda(&DFileCopyMoveJobPrivate::stateCheck,
-                  [](){return true;});
-    stl.reset(ADDR(DFileService, createFileDevice));
+
     handler.reset(DFileService::instance()->createFileHandler(nullptr,from));
     frominfo = DFileService::instance()->createFileInfo(nullptr,urltmp);
-    EXPECT_TRUE(jobd->doCopyFileU(frominfo,toinfo,handler));
-    jobd->m_writeResult.waitForFinished();
-    EXPECT_NO_FATAL_FAILURE(jobd->cancelReadFileDealWriteThread());
-
+    {
+        StubExt stl;
+        stl.set_lamda(&DFileCopyMoveJobPrivate::stateCheck,[](){return true;});
+        stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
+                [](){return DFileCopyMoveJob::CancelAction;});
+        EXPECT_TRUE(jobd->doCopyFileU(frominfo,toinfo,handler));
+        jobd->m_writeResult.waitForFinished();
+        EXPECT_NO_FATAL_FAILURE(jobd->cancelReadFileDealWriteThread());
+    }
+    std::cout << "opn       fjke!" << std::endl;
+    job->stop();
     TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() << to.toLocalFile()
                                << urltmp.toLocalFile());
 }
@@ -1679,7 +1770,7 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFileU) {
     jobd->m_writeResult.waitForFinished();
     EXPECT_NO_FATAL_FAILURE(jobd->cancelReadFileDealWriteThread());
     TestHelper::deleteTmpFile(to.toLocalFile());
-
+    job->stop();
     TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() << to.toLocalFile()
                                << urltmp.toLocalFile());
 }
@@ -1697,6 +1788,7 @@ TEST_F(DFileCopyMoveJobTest,start_writeRefineThread) {
         jobd->setRefineCopyProccessSate(DFileCopyMoveJob::ReadFileProccessOver);
     });
     EXPECT_TRUE(jobd->writeRefineThread());
+    job->stop();
 }
 
 static int writecount = 0;
@@ -2037,7 +2129,7 @@ TEST_F(DFileCopyMoveJobTest,start_writeRefine) {
     copyinfo->todevice = toDevice;
     jobd->writeQueueEnqueue(copyinfo);
     EXPECT_FALSE(jobd->writeRefine());
-
+    job->stop();
     TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() << to.toLocalFile()
                                << dirurl.toLocalFile());
 }
@@ -2194,7 +2286,9 @@ TEST_F(DFileCopyMoveJobTest,start_writeRefineEx) {
                 O_CREAT | O_WRONLY, 0x666);
     jobd->writeQueueEnqueue(copyinfo);
     EXPECT_FALSE(jobd->writeRefineEx());
-
+    close(copyinfo->tofd);
+    job->stop();
     TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() << to.toLocalFile()
                                << dirurl.toLocalFile());
+    job->stop();
 }

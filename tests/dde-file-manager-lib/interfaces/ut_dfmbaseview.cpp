@@ -74,11 +74,11 @@ public:
         if (!testbaseviewptr) {
             testbaseviewptr = new DFileManagerWindow();
         }
-        std::cout << "start DFileSeviceTest" << std::endl;
+        std::cout << "start DfmBaseViewTest" << std::endl;
     }
 
     virtual void TearDown() override{
-        std::cout << "end DFileSeviceTest" << std::endl;
+        std::cout << "end DfmBaseViewTest" << std::endl;
     }
 
     QSharedPointer<TestDfmBaseView> baseview = nullptr;
@@ -140,5 +140,4 @@ TEST_F(DfmBaseViewTest,start_other) {
     if (testbaseviewptr) {
         delete testbaseviewptr;
     }
-    QProcess::execute("killall dde-file-manager");
 }

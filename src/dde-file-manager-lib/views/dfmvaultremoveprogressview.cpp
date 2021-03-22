@@ -61,7 +61,6 @@ void DFMVaultRemoveProgressView::removeVault(const QString &vaultLockPath, const
 {
     if (vaultLockPath.isEmpty() || vaultUnlockPath.isEmpty())
         return;
-
     m_vaultRmProgressBar->start();
     // 开启线程进行文件删除
     std::thread thread(

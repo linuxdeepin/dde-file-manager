@@ -14,7 +14,7 @@
 #define private public
 #define protected public
 #include "views/dfileview.h"
-#include "interfaces/diconitemdelegate.cpp"
+#include "interfaces/diconitemdelegate.h"
 
 namespace {
 
@@ -45,41 +45,6 @@ public:
 
 } // namespace
 
-TEST_F(TestDIconItemDelegate, test_boundingrect)
-{
-    QList<QRectF> rects;
-    rects.append(QRectF { QPointF { 0, 0 }, QPointF { 100, 100 } });
-    rects.append(QRectF { QPointF { 100, 100 }, QPointF { 200, 200 } });
-
-    boundingRect(rects);
-
-    rects.clear();
-
-    rects.append(QRectF { QPointF { 100, 100 }, QPointF { 200, 200 } });
-    rects.append(QRectF { QPointF { 0, 0 }, QPointF { 300, 300 } });
-
-    boundingRect({});
-    boundingRect(rects);
-
-    rects.clear();
-}
-
-TEST_F(TestDIconItemDelegate, test_boundPath)
-{
-    QList<QRectF> rects;
-    rects.append(QRectF { QPointF { 0, 0 }, QPointF { 100, 100 } });
-    rects.append(QRectF { QPointF { 100, 100 }, QPointF { 200, 200 } });
-
-    boundingPath(rects, 1.0, 1);
-
-    rects.clear();
-
-    rects.append(QRectF { QPointF { 100, 100 }, QPointF { 200, 200 } });
-    rects.append(QRectF { QPointF { 0, 0 }, QPointF { 300, 300 } });
-
-    boundingPath(rects, 1.0, 1);
-}
-
 class DFileViewHelperInh : public DFileViewHelper
 {
 public:
@@ -105,66 +70,6 @@ public:
         return;
     }
 };
-
-TEST_F(TestDIconItemDelegate, test_textFormat)
-{
-    TagTextFormat noObjFormat(0, { QColor("red"), QColor("blue") }, QColor("green"));
-
-    noObjFormat.colors();
-    noObjFormat.borderColor();
-    noObjFormat.diameter();
-
-    TagTextFormat imgFormat(1, { QColor("red"), QColor("blue") }, QColor("green"));
-    imgFormat.colors();
-    imgFormat.borderColor();
-    imgFormat.diameter();
-
-    FileTagObjectInterface interface;
-    interface.intrinsicSize(nullptr, 0, noObjFormat);
-
-    QPainter *painter = new QPainter;
-    interface.drawObject(painter, { 0, 0, 0, 0 }, nullptr, 0, imgFormat);
-
-    QListView fileView;
-    DFileViewHelperInh *helper = new DFileViewHelperInh(&fileView);
-    DFileSystemModel *model = new DFileSystemModel(helper);
-    fileView.setModel(model);
-    DIconItemDelegate *delegate = new DIconItemDelegate(helper);
-    ExpandedItem *item = new ExpandedItem(delegate);
-    DIconItemDelegatePrivate *delegatePrivate = new DIconItemDelegatePrivate(delegate);
-
-    item->opacity();
-
-    item->setOpacity(0.0);
-    item->setOpacity(3.0);
-
-    auto event = new QPaintEvent(QRect(0, 0, 0, 0));
-
-    item->paintEvent(event);
-
-    item->option.text = "testString";
-
-    item->iconPixmap = QIcon::fromTheme("edit-undo").pixmap(QSize(16, 16));
-
-    item->sizeHint();
-
-    item->heightForWidth(10);
-
-    item->heightForWidth(item->width());
-
-    item->paintEvent(event);
-
-    item->textGeometry();
-
-    qApp->processEvents();
-
-    delegatePrivate->textSize("testString", QFontMetrics(QFont()), 20);
-
-    QModelIndex modelIndex;
-    delegatePrivate->getFileIconPixmap(modelIndex,
-                                       QIcon::fromTheme("edit-undo").pixmap(QSize(16, 16)),
-                                       QSize(16, 16), QIcon::Mode::Normal, 0.0);
-}
 
 TEST_F(TestDIconItemDelegate, test_paint)
 {

@@ -452,7 +452,7 @@ TEST_F(TestDAbstractFileInfo, menuActionList)
             stub.set((bool (*)())ADDR(DAbstractFileInfo, isDir), stub_isDir);
             stub.set((bool (*)())ADDR(DAbstractFileInfo, canShare), stub_canShare);
 
-            DAbstractFileInfo fileInfo(DUrl::fromRecentFile("/"));
+            DAbstractFileInfo fileInfo(DUrl::fromLocalFile("/"));
             auto list = fileInfo.menuActionList(DAbstractFileInfo::SingleFile);
             EXPECT_TRUE(!list.isEmpty());
         }
@@ -466,14 +466,14 @@ TEST_F(TestDAbstractFileInfo, menuActionList)
             Stub stub;
             stub.set((bool (*)())ADDR(DAbstractFileInfo, isDir), stub_isDir);
 
-            DAbstractFileInfo fileInfo(DUrl::fromRecentFile("/"));
+            DAbstractFileInfo fileInfo(DUrl::fromLocalFile("/"));
             auto list = fileInfo.menuActionList(DAbstractFileInfo::SingleFile);
             EXPECT_TRUE(!list.isEmpty());
         }
 
         // other
         {
-            DAbstractFileInfo fileInfo(DUrl::fromRecentFile("/"));
+            DAbstractFileInfo fileInfo(DUrl::fromLocalFile("/"));
             auto list = fileInfo.menuActionList(DAbstractFileInfo::SingleFile);
             EXPECT_TRUE(!list.isEmpty());
         }
@@ -763,9 +763,7 @@ TEST_F(TestDAbstractFileInfo, supportedDropActions)
 {
     // isWritable
     {
-        bool (*stub_isWritable)() = []() {
-            return true;
-        };
+        bool (*stub_isWritable)() = []() {return true;};
 
         Stub stub;
         stub.set((bool(*)())ADDR(DAbstractFileInfo, isWritable), stub_isWritable);
@@ -775,11 +773,11 @@ TEST_F(TestDAbstractFileInfo, supportedDropActions)
 
     // canDrop
     {
-        bool (*stub_canDrop)() = []() {
-            return true;
-        };
+        bool (*stub_isWritable)() = []() {return false;};
+        bool (*stub_canDrop)() = []() {return true;};
 
         Stub stub;
+        stub.set((bool(*)())ADDR(DAbstractFileInfo, isWritable), stub_isWritable);
         stub.set((bool(*)())ADDR(DAbstractFileInfo, canDrop), stub_canDrop);
 
         EXPECT_TRUE(info->supportedDropActions() == (Qt::CopyAction | Qt::MoveAction));
@@ -787,6 +785,13 @@ TEST_F(TestDAbstractFileInfo, supportedDropActions)
 
     // other
     {
+        bool (*stub_isWritable)() = []() {return false;};
+        bool (*stub_canDrop)() = []() {return false;};
+
+        Stub stub;
+        stub.set((bool(*)())ADDR(DAbstractFileInfo, isWritable), stub_isWritable);
+        stub.set((bool(*)())ADDR(DAbstractFileInfo, canDrop), stub_canDrop);
+
         EXPECT_TRUE(info->supportedDropActions() == Qt::IgnoreAction);
     }
 }

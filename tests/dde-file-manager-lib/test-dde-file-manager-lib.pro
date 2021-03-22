@@ -84,6 +84,9 @@ include($$LIB_DFM_SRC_FOLDER/interfaces/vfs/vfs.pri)
 include($$LIB_DFM_SRC_FOLDER/interfaces/customization/customization.pri)
 include($$LIB_DFM_SRC_FOLDER/src.pri)
 
+isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64){
+    include($$LIB_DFM_SRC_FOLDER/search/dfsearch.pri)
+}
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
 DEFINES += APPSHAREDIR=\\\"$$APPSHAREDIR\\\"

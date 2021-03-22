@@ -374,7 +374,7 @@ void ComputerView::onRenameRequested(const DFMUrlBaseEvent &event)
         return;
     }
     const QModelIndex &idx = m_model->findIndex(event.url());
-    if (idx.isValid()) {
+    if (idx.model() && idx.isValid()) {
         m_view->edit(idx);
     }
 }
