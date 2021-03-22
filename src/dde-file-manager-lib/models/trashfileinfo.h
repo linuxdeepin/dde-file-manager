@@ -78,7 +78,7 @@ public:
 
     DUrl goToUrlWhenDeleted() const override;
 
-    bool restore(FileJob *job = nullptr) const;
+    bool restore(QSharedPointer<FileJob> job) const;
     QDateTime deletionDate() const;
     QString sourceFilePath() const;
 

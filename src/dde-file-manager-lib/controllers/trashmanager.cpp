@@ -387,18 +387,10 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
         return true; // job already existed
     }
 
-    struct ScopedPointerCustomDeleter {
-        static inline void cleanup(FileJob *job)
-        {
-            job->jobRemoved();
-            dialogManager->removeJob(job->getJobId());
-            job->deleteLater();
-        }
-    };
-    QScopedPointer<FileJob, ScopedPointerCustomDeleter> job(new FileJob(FileJob::Restore));
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Restore));
     job->setProperty("pathlist", pathlist);
     job->setManualRemoveJob(true);
-    dialogManager->addJob(job.data());
+    dialogManager->addJob(job);
     job->jobPrepared();
 
     int i = 0;
@@ -411,7 +403,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
         //            如果直接定义一个TrashFileInfo对象，就可能存在对象被重复释放
         QExplicitlySharedDataPointer<TrashFileInfo> info(new TrashFileInfo(url));
 
-        bool ret = info->restore(job.data());
+        bool ret = info->restore(job);
         if (!job->getIsApplyToAll()) {
             job->resetCustomChoice(); // if not apply to all we should reset button state
         }
@@ -441,6 +433,9 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
     if (restoreOriginUrls)
         *restoreOriginUrls = restoreFileOriginUrlList;
 
+    job->jobRemoved();
+    dialogManager->removeJob(job->getJobId());
+    //job->deleteLater();
     return ok;
 }
 
