@@ -304,13 +304,19 @@ void WindowManager::onWindowClosed()
         qInfo() << "quit current ok!"<< DFMGlobal::isAppQuiting() << DFMGlobal::isInitAppOver();
         return;
     }
+    bool shouldRelease = true;
     DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(sender());
     if (m_windows.count() == 1) {
-        fileSignalManager->requestCloseListen();
-        DFMGlobal::setAppQuiting();
+        if (qApp->quitOnLastWindowClosed()) {
+            fileSignalManager->requestCloseListen();
+            DFMGlobal::setAppQuiting();
+            shouldRelease = false;
+            qInfo() << "dde-file-manager app need quit!";
+        }
         saveWindowState(window);
         dialogManager->closeAllPropertyDialog();
-    } else {
+    }
+    if (shouldRelease){
         QPointer<DFileManagerWindow> ptrwindow = window;
         // fix bug 59239 drag事件的接受者的drop事件和发起drag事件的发起者的mousemove事件处理完成才能
         // 析构本窗口，检查当前窗口是否可以析构
