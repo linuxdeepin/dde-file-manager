@@ -18,6 +18,8 @@
 #include "util/dde/desktopinfo.h"
 #include "util/util.h"
 
+#include <private/qdbusmessage_p.h>
+
 using namespace testing;
 namespace  {
     class BackgroundManagerTest : public Test
@@ -258,22 +260,33 @@ TEST_F(BackgroundManagerTest, pullImageSettings)
 
 TEST_F(BackgroundManagerTest, getBackgroundFromWm)
 {
-    ASSERT_TRUE(m_manager->wmInter != nullptr);
+    ASSERT_NE(m_manager->wmInter, nullptr);
     stub_ext::StubExt stu;
     QString defaultpath("file:///usr/share/backgrounds/default_background.jpg");
-    QDBusMessage message;
-    message.setArguments(QList<QVariant>() << defaultpath);
-    stu.set_lamda(ADDR(WMInter, GetCurrentWorkspaceBackground), [message](){ return QDBusPendingReply<QString>(message);});
-    QString ret = m_manager->getBackgroundFromWm("test_screen");
+    QDBusPendingReply<QString> reply;
+    {
+        //构造dbus返回
+        QDBusMessage message;
+        message = message.createReply(QList<QVariant> {defaultpath});
+        message.d_ptr->signature = "s";
+        reply = QDBusPendingCall::fromCompletedCall(message);
+    }
 
-    stu.reset(ADDR(WMInter, GetCurrentWorkspaceBackground));
-    stu.set_lamda(ADDR(WMInter, GetCurrentWorkspaceBackground), [message](){ return QDBusPendingReply<QString>();});
-    stu.set_lamda(ADDR(BackgroundManager, getBackgroundFromWmConfig), [](){return "";});
+    //kwin正常
+    stu.set_lamda(ADDR(WMInter, GetCurrentWorkspaceBackgroundForMonitor), [reply]() {return reply;});
+    QString ret = m_manager->getBackgroundFromWm("test_screen");
+    EXPECT_EQ(ret.toStdString(), defaultpath.toStdString());
+
+    //kwin空，配置文件空
+    stu.reset(ADDR(WMInter, GetCurrentWorkspaceBackgroundForMonitor));
+    stu.set_lamda(ADDR(WMInter, GetCurrentWorkspaceBackgroundForMonitor), [](){ return QDBusPendingReply<QString>();});
+    stu.set_lamda(ADDR(BackgroundManager, getBackgroundFromWmConfig), [](){return QString();});
     ret = m_manager->getBackgroundFromWm("test_screen");
     EXPECT_FALSE(ret.isEmpty());
 
-    stu.reset(ADDR(WMInter, GetCurrentWorkspaceBackground));
-    stu.set_lamda(ADDR(WMInter, GetCurrentWorkspaceBackground), [message](){ return QDBusPendingReply<QString>();});
+    //kwin空，配置文件有
+    stu.reset(ADDR(WMInter, GetCurrentWorkspaceBackgroundForMonitor));
+    stu.set_lamda(ADDR(WMInter, GetCurrentWorkspaceBackgroundForMonitor), [](){ return QDBusPendingReply<QString>();});
     stu.reset(ADDR(BackgroundManager, getBackgroundFromWmConfig));
     stu.set_lamda(ADDR(BackgroundManager, getBackgroundFromWmConfig), [defaultpath](){return defaultpath;});
     ret = m_manager->getBackgroundFromWm("test_screen");

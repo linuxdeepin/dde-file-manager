@@ -123,7 +123,6 @@ TEST_F(WallpaperlistTest, test_wallpaperitempressed)
 {
    stub_ext::StubExt stu;
    bool judge = false;
-   stu.set_lamda(ADDR(WallpaperList, setCurrentIndex), [](){return;});
    stu.set_lamda(ADDR(WallpaperList, setCurrentIndex), [&judge](){judge = true;return;});
    m_list->wallpaperItemPressed();
    EXPECT_TRUE(judge);
@@ -131,11 +130,18 @@ TEST_F(WallpaperlistTest, test_wallpaperitempressed)
    QWheelEvent event(QPointF(), 1, Qt::LeftButton, Qt::NoModifier);
    m_list->wheelEvent(&event);//函数体无代码,直接调用
    m_list->wallpaperItemHoverOut();//函数体无代码
-   bool visible = false;
-   stu.set_lamda(ADDR(QWidget, isVisible), [&visible](){visible = true; return true;});
+
+   bool deleteButton = false;
+   stu.set_lamda(ADDR(WallpaperList, showDeleteButtonForItem), [&deleteButton](){deleteButton = true;});
+
+   auto item = qobject_cast<WallpaperItem *>(m_list->item(0));
+   ASSERT_NE(item, nullptr);
+
+   stu.set_lamda(ADDR(WallpaperItem, isVisible), [](){return true;});
+   stu.set_lamda(ADDR(WallpaperList, sender), [item]()->QObject *{return item;});
 
    m_list->wallpaperItemHoverIn();
-   EXPECT_TRUE(visible);
+   EXPECT_TRUE(deleteButton);
 }
 
 TEST_F(WallpaperlistTest, test_scrolllist)

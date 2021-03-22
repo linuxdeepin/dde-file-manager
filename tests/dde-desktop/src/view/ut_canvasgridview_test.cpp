@@ -1116,13 +1116,13 @@ TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_selectedIndexCount){
 
 TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_selectedUrls){
     ASSERT_NE(m_canvasGridView, nullptr);
+    waitData(m_canvasGridView);
+    ASSERT_GT(m_canvasGridView->model()->rowCount(), 1);
+
     m_canvasGridView->selectionModel()->clearSelection();
     auto count1 = m_canvasGridView->selectionModel()->selectedCount();
-    EXPECT_TRUE( count1 == 0);
-    qApp->processEvents();
+    EXPECT_EQ(count1, 0);
     m_canvasGridView->selectAll();
-
-    qApp->processEvents();
     auto count2 = m_canvasGridView->selectedUrls().size();
     if(GridManager::instance()->allItems().size() != 0)
         EXPECT_NE(count2, count1);
@@ -1783,7 +1783,7 @@ TEST_F(CanvasGridViewTest, test_indexAt)
         QRect rect(QPoint(0,0), QPoint(1000, 800));
         return rect;
     };
-    Stub tub, tub1;
+    Stub tub;
     typedef int (*fplist)(DIconItemDelegate*, QModelIndexList);
     fplist list = (fplist)(&DIconItemDelegate::hasWidgetIndexs);
 
@@ -1794,7 +1794,7 @@ TEST_F(CanvasGridViewTest, test_indexAt)
     tub.set(ADDR(QWidget, isVisible), visible);
     m_canvasGridView->indexAt(pos);
 
-    tub1.set(ADDR(DIconItemDelegate, editingIndex), myindex);
+    tub.set(ADDR(DIconItemDelegate, editingIndex), myindex);
     QModelIndex ret = m_canvasGridView->indexAt(pos);
     EXPECT_TRUE(index == index);
 }
@@ -1804,15 +1804,15 @@ TEST_F(CanvasGridViewTest, test_dropEvent)
     QMimeData data;
     QDropEvent event(QPointF(), Qt::DropAction::MoveAction, &data, Qt::LeftButton, Qt::NoModifier);
     stub_ext::StubExt tub;
-    static QModelIndexList indexlist;
+    QModelIndexList indexlist;
     indexlist << m_canvasGridView->firstIndex();
-    tub.set_lamda(ADDR(DFileSelectionModel, selectedIndexes), [](){return indexlist;});
+    tub.set_lamda(ADDR(DFileSelectionModel, selectedIndexes), [indexlist](){return indexlist;});
     bool bValid = false;
     tub.set_lamda(ADDR(QModelIndex, isValid), [&bValid](){return bValid;});
     m_canvasGridView->dropEvent(&event);
 
-    static DUrl url = DesktopFileInfo::homeDesktopFileUrl();
-    tub.set_lamda(VADDR(DAbstractFileInfo, fileUrl), [](){return url;});
+    DUrl url = DesktopFileInfo::homeDesktopFileUrl();
+    tub.set_lamda(VADDR(DAbstractFileInfo, fileUrl), [url](){return url;});
     bValid = true;
     m_canvasGridView->m_urlsForDragEvent << url;
     m_canvasGridView->dropEvent(&event);
