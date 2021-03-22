@@ -279,39 +279,43 @@ DTaskDialog *DialogManager::taskDialog() const
     return m_taskDialog;
 }
 
-void DialogManager::addJob(FileJob *job)
+void DialogManager::addJob(QSharedPointer<FileJob> job)
 {
+    QMutexLocker locker(&m_mutexJob);
+    qInfo() << "add job: " << job->jobTypeToString() << "," << job->getJobId();
+
     m_jobs.insert(job->getJobId(), job);
     emit fileSignalManager->requestStartUpdateJobTimer();
 
     job->disconnect(m_taskDialog); // 对于光盘刻录、擦除的 job，可能会因为进度框的关闭打开而多次被添加导致多次连接槽，所以这里在连接前先断开这部分的信号槽
     job->disconnect(this);
-    connect(job, &FileJob::requestJobAdded, m_taskDialog, &DTaskDialog::addTask);
-    connect(job, &FileJob::requestJobRemoved, m_taskDialog, &DTaskDialog::delayRemoveTask);
-    connect(job, &FileJob::requestJobRemovedImmediately, m_taskDialog, &DTaskDialog::removeTaskImmediately);
-    connect(job, &FileJob::requestJobDataUpdated, m_taskDialog, &DTaskDialog::handleUpdateTaskWidget);
-    connect(job, &FileJob::requestAbortTask, m_taskDialog, &DTaskDialog::handleTaskClose);
-    connect(job, &FileJob::requestCopyMoveToSelfDialogShowed, this, &DialogManager::showCopyMoveToSelfDialog);
-    connect(job, &FileJob::requestNoEnoughSpaceDialogShowed, this, &DialogManager::showDiskSpaceOutOfUsedDialogLater);
-    connect(job, &FileJob::requestCanNotMoveToTrashDialogShowed, this, &DialogManager::showMoveToTrashConflictDialog);
-    connect(job, &FileJob::requestOpticalJobFailureDialog, this, &DialogManager::showOpticalJobFailureDialog);
-    connect(job, &FileJob::requestOpticalJobCompletionDialog, this, &DialogManager::showOpticalJobCompletionDialog);
+    connect(job.data(), &FileJob::requestJobAdded, m_taskDialog, &DTaskDialog::addTask);
+    connect(job.data(), &FileJob::requestJobRemoved, m_taskDialog, &DTaskDialog::delayRemoveTask);
+    connect(job.data(), &FileJob::requestJobRemovedImmediately, m_taskDialog, &DTaskDialog::removeTaskImmediately);
+    connect(job.data(), &FileJob::requestJobDataUpdated, m_taskDialog, &DTaskDialog::handleUpdateTaskWidget);
+    connect(job.data(), &FileJob::requestAbortTask, m_taskDialog, &DTaskDialog::handleTaskClose);
+    connect(job.data(), &FileJob::requestCopyMoveToSelfDialogShowed, this, &DialogManager::showCopyMoveToSelfDialog);
+    connect(job.data(), &FileJob::requestNoEnoughSpaceDialogShowed, this, &DialogManager::showDiskSpaceOutOfUsedDialogLater);
+    connect(job.data(), &FileJob::requestCanNotMoveToTrashDialogShowed, this, &DialogManager::showMoveToTrashConflictDialog);
+    connect(job.data(), &FileJob::requestOpticalJobFailureDialog, this, &DialogManager::showOpticalJobFailureDialog);
+    connect(job.data(), &FileJob::requestOpticalJobCompletionDialog, this, &DialogManager::showOpticalJobCompletionDialog);
 }
 
 
-void DialogManager::removeJob(const QString &jobId, bool clearAllbuffer)
+void DialogManager::removeJob(const QString &jobId, bool isRemoveOpticalJob)
 {
-    if (clearAllbuffer && m_Opticaljobs.contains(jobId)) { // 最后的时候需要删除所有buffer的数据，否则形成脏数据
-        m_Opticaljobs.remove(jobId);
-        qDebug() << "remove job " << jobId << "from m_Opticaljobs";
-    }
+    QMutexLocker locker(&m_mutexJob);
 
     if (m_jobs.contains(jobId)) {
-        FileJob *job = m_jobs.value(jobId);
-        if (!clearAllbuffer && job->getIsOpticalJob() && !job->getIsFinished()) {// 最后的时候需要删除所有buffer的数据，就不能再插入了
-            m_Opticaljobs.insert(jobId, job); // 备份刻录、擦除任务以便再次点击光驱的时候可以激活当前进度
-            qDebug() << "insert job " << jobId << "to m_Opticaljobs";
+        QSharedPointer<FileJob> job = m_jobs.value(jobId);
+        if (job->getIsOpticalJob() && !job->getIsFinished()) {
+            if(!isRemoveOpticalJob) {
+                qDebug() << "ignore to remove job: " << job->jobTypeToString() << "," << job->getJobId();
+                return;
+            }
         }
+        qInfo() << "remove job: " << job->jobTypeToString() << "," << job->getJobId();
+
         job->setIsAborted(true);
         job->setApplyToAll(true);
         job->cancelled();
@@ -325,7 +329,7 @@ void DialogManager::removeJob(const QString &jobId, bool clearAllbuffer)
 QString DialogManager::getJobIdByUrl(const DUrl &url)
 {
     foreach (const QString &jobId, m_jobs.keys()) {
-        FileJob *job = m_jobs.value(jobId);
+        QSharedPointer<FileJob> job = m_jobs.value(jobId);
         bool ret = false;
         QStringList pathlist = job->property("pathlist").toStringList();
 
@@ -355,7 +359,7 @@ void DialogManager::removeAllJobs()
 void DialogManager::updateJob()
 {
     foreach (QString jobId, m_jobs.keys()) {
-        FileJob *job = m_jobs.value(jobId);
+        QSharedPointer<FileJob> job = m_jobs.value(jobId);
         if (job) {
             if (!job->isCanShowProgress())
                 return;
@@ -392,7 +396,7 @@ void DialogManager::abortJobByDestinationUrl(const DUrl &url)
 {
     qDebug() << url;
     foreach (QString jobId, m_jobs.keys()) {
-        FileJob *job = m_jobs.value(jobId);
+        QSharedPointer<FileJob> job = m_jobs.value(jobId);
         qDebug() << jobId << job->getTargetDir();
         if (!QFile(job->getTargetDir()).exists()) {
             job->jobAborted();
@@ -1420,17 +1424,16 @@ void DialogManager::showTaskProgressDlgOnActive()
     m_taskDialog->raise();
     m_taskDialog->activateWindow();
 
-    QMapIterator<QString, QPointer<FileJob>> iter(m_Opticaljobs);
+    QMapIterator<QString, QSharedPointer<FileJob> > iter(m_jobs);
     while (iter.hasNext()) {
         iter.next();
-        if (iter.value().isNull())
-            continue;
         if (iter.value()->getIsFinished())
             continue;
-        addJob(iter.value());
-        emit iter.value()->requestJobAdded(iter.value()->jobDetail());
+        if (iter.value()->getIsOpticalJob()) // 目前业务只针对光盘业务
+            emit iter.value()->requestJobAdded(iter.value()->jobDetail());
     }
 }
+
 int DialogManager::showUnableToLocateDir(const QString &dir)
 {
     // Ensure that only one dialog is displayed in the current screen
@@ -1466,7 +1469,7 @@ void DialogManager::refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUr
 void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response)
 {
     QString jobId = jobDetail.value("jobId");
-    FileJob *job = m_jobs.value(jobId);
+    QSharedPointer<FileJob> job = m_jobs.value(jobId);
     if (job != nullptr) {
         bool applyToAll = response.value("applyToAll").toBool();
         int code = response.value("code").toInt();
