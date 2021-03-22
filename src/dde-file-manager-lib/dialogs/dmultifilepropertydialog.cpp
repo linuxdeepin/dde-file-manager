@@ -308,9 +308,12 @@ std::pair<std::size_t, std::size_t> DMultiFilePropertyDialog::getTheQuantityOfFi
     }
 
     for(const auto& url : urlList){
-        QFileInfo info{ url.toLocalFile() };
+        DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
 
-        if(info.isFile() == true){
+        if (!info || !info->exists())
+            continue;
+
+        if(info->isFile() == true){
             ++quantityOfFilesAndFolders.first;
 
         }else{
