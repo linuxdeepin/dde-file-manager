@@ -556,6 +556,7 @@ bool DFileCopyMoveJobPrivate::stateCheck()
             return false;
         }
     } else if (state == DFileCopyMoveJob::StoppedState) {
+        QMutexLocker lk(&m_checkStatMutex);
         cansetnoerror = true;
         setError(DFileCopyMoveJob::CancelError);
         qCDebug(fileJob()) << "Will be abort";
@@ -1767,6 +1768,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
         close(fromFd);
         return false;
     }
+
     do {
         if (-1 != ftruncate(toFd, fromInfo->size())) {
             action = DFileCopyMoveJob::NoAction;
@@ -1792,8 +1794,8 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
     char *fromPoint = nullptr;
     char *toPoint = nullptr;
     action = DFileCopyMoveJob::NoAction;
-    fromPoint = static_cast<char *>(mmap(nullptr, static_cast<size_t>(fromInfo->size()), PROT_READ, MAP_SHARED, fromFd, 0));
     do {
+        fromPoint = static_cast<char *>(mmap(nullptr, static_cast<size_t>(fromInfo->size()), PROT_READ, MAP_SHARED, fromFd, 0));
         if (MAP_FAILED != fromPoint) {
             action = DFileCopyMoveJob::NoAction;
         } else {
@@ -1816,8 +1818,8 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
         return false;
     }
 
-    toPoint = static_cast<char *>(mmap(nullptr, static_cast<size_t>(fromInfo->size()), PROT_WRITE, MAP_SHARED, toFd, 0));
     do {
+        toPoint = static_cast<char *>(mmap(nullptr, static_cast<size_t>(fromInfo->size()), PROT_WRITE, MAP_SHARED, toFd, 0));
         if (MAP_FAILED != toPoint) {
             action = DFileCopyMoveJob::NoAction;
         } else {
@@ -1857,50 +1859,28 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
     QFuture<void> futrueArray[10];
     QMutex mutex;
     qint64 fromSize = fromInfo->size();
-    __off_t len = lseek(fromFd, 0, SEEK_END);
-    m_countVetor.push_back(QAtomicInt(-1));
-    if (m_countVetor.count() <= 0 || m_countVetor.count() <= m_count.load()) {
-        munmap(fromPoint, static_cast<size_t>(fromInfo->size()));
-        munmap(toPoint, static_cast<size_t>(fromInfo->size()));
-        close(fromFd);
-        close(toFd);
-        return false;
-    }
+
     for (int i = 0; i < 10; ++i) {
-        futrueArray[i] = QtConcurrent::run([&mutex, &fromSize, &fromPoint, &toPoint, &len, &blockSize, this]() {
+        futrueArray[i] = QtConcurrent::run([&mutex, &fromSize, &fromPoint, &toPoint, &blockSize, this]() {
             mutex.lock();
-            m_countVetor[m_count].store(m_countVetor[m_count].load() + 1);
-            __off_t srcpoint = ((fromSize) / 10) * m_countVetor[m_count].load(); //获取对应线程的拷贝起始点
+            int curThreadCount = m_count;
+            __off_t srcpoint = ((fromSize) / 10) * curThreadCount; //获取对应线程的拷贝起始点
             __off_t destpoint = srcpoint;
+            m_count++;
             mutex.unlock();
-            qint64 everySize = (fromSize) / 10;
+            qint64 everySize = curThreadCount < 9 ? (fromSize) / 10 : fromSize - srcpoint;
             qint64 copySize = everySize > blockSize ? blockSize : everySize;
             qint64 lastSize = 0;
-            if (m_countVetor[m_count].load() != 9) {
-                while (everySize > 0) {
-                    if (Q_UNLIKELY(!stateCheck())) {
-                        break;
-                    }
-                    memcpy(toPoint + destpoint + lastSize, fromPoint + srcpoint + lastSize, static_cast<size_t>(copySize));
-                    everySize -= copySize;
-                    lastSize += copySize;
-                    countrefinesize(copySize);
-                    copySize = everySize > blockSize ? blockSize : everySize;
+
+            while (everySize > 0) {
+                if (!stateCheck()) {
+                    break;
                 }
-            } else {
-                //考虑最后一个线程拷贝的可能不足一块
-                everySize = fromSize - srcpoint;
+                memcpy(toPoint + destpoint + lastSize, fromPoint + srcpoint + lastSize, static_cast<size_t>(copySize));
+                everySize -= copySize;
+                lastSize += copySize;
+                countrefinesize(copySize);
                 copySize = everySize > blockSize ? blockSize : everySize;
-                while (everySize > 0) {
-                    if (Q_UNLIKELY(!stateCheck())) {
-                        break;
-                    }
-                    memcpy(toPoint + destpoint + lastSize, fromPoint + srcpoint + lastSize, static_cast<size_t>(copySize));
-                    everySize -= copySize;
-                    lastSize += copySize;
-                    countrefinesize(copySize);
-                    copySize = everySize > blockSize ? blockSize : everySize;
-                }
             }
         });
     }
@@ -1929,8 +1909,6 @@ bool DFileCopyMoveJobPrivate::doCopyFileBig(const DAbstractFileInfoPointer fromI
     if (Q_UNLIKELY(!stateCheck())) {
         return false;
     }
-
-    q_ptr->disconnect(q_ptr, &DFileCopyMoveJob::stopAllGioDervic, q_ptr, nullptr);
 
     if (fileHints.testFlag(DFileCopyMoveJob::DontIntegrityChecking)) {
         return true;
@@ -2142,6 +2120,19 @@ bool DFileCopyMoveJobPrivate::doCopyFileU(const DAbstractFileInfoPointer fromInf
                 QThread::msleep(THREAD_SLEEP_TIME);
             }
         }
+    } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
+
+    if (action == DFileCopyMoveJob::SkipAction) {
+        return true;
+    } else if (action != DFileCopyMoveJob::NoAction) {
+        //出错就停止
+        q_ptr->stop();
+        return false;
+    }
+
+    action = DFileCopyMoveJob::NoAction;
+
+    do {
         tofd = open(toInfo->fileUrl().toLocalFile().toUtf8().toStdString().data(), O_CREAT | O_WRONLY, 0x666);
         if (-1 != tofd) {
             action = DFileCopyMoveJob::NoAction;
@@ -2164,8 +2155,10 @@ bool DFileCopyMoveJobPrivate::doCopyFileU(const DAbstractFileInfoPointer fromInf
     } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());  // bug: 26333, while set the stop status shoule break the process!
 
     if (action == DFileCopyMoveJob::SkipAction) {
+        close(fromfd);
         return true;
     } else if (action != DFileCopyMoveJob::NoAction) {
+        close(fromfd);
         //出错就停止
         q_ptr->stop();
         return false;
@@ -2470,8 +2463,8 @@ bool DFileCopyMoveJobPrivate::copyFile(const DAbstractFileInfoPointer fromInfo, 
     }
     //判读目标目录和本地目录是不是同盘，并且是大文件
     if (m_bDestLocal && isFromLocalUrls && fromInfo->size() > 500 * 1024 * 1024) {
+        m_count = 0;
         ok = doCopyFileBig(fromInfo, toInfo, handler, blockSize);
-        m_count.store(m_count.load() + 1);
     }
     //1.判断源文件是本地，目标文件也是本地执行读写线程分离处理
     //2.判断源文件是本地，目标文件是（除光盘外的）块设备，
@@ -3381,10 +3374,9 @@ DFileCopyMoveJob::DFileCopyMoveJob(QObject *parent)
 
 DFileCopyMoveJob::~DFileCopyMoveJob()
 {
-
     stop();
     // ###(zccrs): wait() ?
-    qInfo() << "release  DFileCopyMoveJob" << this;
+    qInfo() << "release  DFileCopyMoveJob!" << this;
 }
 
 DFileCopyMoveJob::Handle *DFileCopyMoveJob::errorHandle() const
@@ -3697,6 +3689,8 @@ void DFileCopyMoveJob::stop()
     }
 
     d->fileStatistics->stop();
+
+    d->updateSpeedTimer->stop();
 
     d->setState(StoppedState);
     d->waitCondition.wakeAll();

@@ -2022,7 +2022,7 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
         }
 
         // rekols: Loop to find the next file item that can be selected.
-        while (!(index.flags() & Qt::ItemIsSelectable) && index.isValid()) {
+        while (index.model() && !(index.flags() & Qt::ItemIsSelectable) && index.isValid()) {
             index = index.sibling(index.row() - 1, index.column());
         }
 
@@ -2039,7 +2039,7 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
             index = current.sibling(current.row() + 1, current.column());
         }
 
-        while (!(index.flags() & Qt::ItemIsSelectable) && index.isValid()) {
+        while (index.model() && !(index.flags() & Qt::ItemIsSelectable) && index.isValid()) {
             index = index.sibling(index.row() + 1, index.column());
         }
 

@@ -36,7 +36,6 @@ public:
     }
 
     virtual void TearDown() override{
-        TestHelper::deleteTmpFile("/tmp/ut_share_manager");
         std::cout << "end UserShareManagerTest" << std::endl;
     }
 };
@@ -380,4 +379,5 @@ TEST_F(UserShareManagerTest,can_readCacheFromFile){
     url.setPath(TestHelper::createTmpFile());
     EXPECT_TRUE(sharemanager->readCacheFromFile(url.toLocalFile()).isEmpty());
     TestHelper::deleteTmpFile(url.toLocalFile());
+    TestHelper::deleteTmpFile("/tmp/ut_share_manager");
 }

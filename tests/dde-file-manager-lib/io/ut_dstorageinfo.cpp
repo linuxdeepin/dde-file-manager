@@ -250,10 +250,16 @@ TEST_F(DStorageInfoTest,can_inSameDevice) {
     EXPECT_TRUE(DStorageInfo::inSameDevice("/sys/bin/aconnect", "/sys/bin/aconnect"));
     EXPECT_TRUE(DStorageInfo::inSameDevice("/sys/bin/aconnect", "/sys/bin/aconnec"));
     EXPECT_TRUE(DStorageInfo::inSameDevice("/sys/bin/aconnect", "/sys/bin/aclocal"));
-    stl.set_lamda(&DStorageInfo::fileSystemType,[](){return QByteArray("avfsd");});
+    QByteArray(*fileSystemTypelamda)(void *) = [](void *){
+        return QByteArray("avfsd");
+    };
+    stl.set(ADDR(DStorageInfo,fileSystemType),fileSystemTypelamda);
     EXPECT_TRUE(DStorageInfo::inSameDevice("/sys/bin/aconnect", "/sys/bin/aclocal"));
     EXPECT_TRUE(DStorageInfo::inSameDevice("/sys/bin/aconnect", "/sys/bin/aconnect"));
-    stl.set_lamda(&DStorageInfo::fileSystemType,[](){return QByteArray("gvfsd-fuse");});
+    QByteArray(*fileSystemTypelamda1)(void *) = [](void *){
+        return QByteArray("gvfsd-fuse");
+    };
+    stl.set(ADDR(DStorageInfo,fileSystemType),fileSystemTypelamda1);
     EXPECT_TRUE(DStorageInfo::inSameDevice("/sys/bin/aconnect", "/sys/bin/aclocal"));
     EXPECT_TRUE(DStorageInfo::inSameDevice("/sys/bin/aconnect", "/sys/bin/aconnect"));
 }
@@ -271,13 +277,14 @@ TEST_F(DStorageInfoTest,can_inSameDevice_url) {
     url1.setPath("/sys/bin/aconnect");
     url2.setPath("/sys/bin/aclocal");
     EXPECT_TRUE(DStorageInfo::inSameDevice(url1, url2));
-    DUrl url3,url4;
+    DUrl url3,url4,url5;
     url3.setScheme(FILE_SCHEME);
     url4.setScheme(FILE_ROOT);
+    url5.setScheme(FILE_SCHEME);
     EXPECT_FALSE(DStorageInfo::inSameDevice(url3, url4));
-    stl.set_lamda(&QUrl::isLocalFile,[](){return false;});
-    url4.setScheme(FILE_SCHEME);
-    EXPECT_TRUE(DStorageInfo::inSameDevice(url3, url4));
+//    bool (*isLocalFilelamda)(void *) = [](void *){return false;};
+//    stl.set(ADDR(DUrl,isLocalFile),isLocalFilelamda);
+    EXPECT_TRUE(DStorageInfo::inSameDevice(url3, url5));
 }
 
 TEST_F(DStorageInfoTest,can_static_isLocalDevice) {

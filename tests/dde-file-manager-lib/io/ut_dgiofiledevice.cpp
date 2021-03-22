@@ -60,6 +60,7 @@ public:
 };
 
 TEST_F(DGIOFileDeviceTest,can_setFileUrl) {
+    TestHelper::runInLoop([](){});
     EXPECT_EQ(true,device->setFileUrl(url));
     url.setScheme(FILE_SCHEME);
     url.setPath("~/test.log");
@@ -290,6 +291,8 @@ TEST_F(DGIOFileDeviceTest,start_open) {
     stl.set(g_file_read,g_file_read1);
     EXPECT_FALSE(device->open(QIODevice::ReadOnly));
     stl.reset(g_file_read);
+    qInfo() << QFile::exists(url.path());
+    device->close();
     EXPECT_TRUE(device->open(QIODevice::ReadOnly));
     EXPECT_EQ(0,device->pos());
     device->close();
@@ -395,6 +398,8 @@ TEST_F(DGIOFileDeviceTest,start_seek) {
     EXPECT_TRUE(device->open(QIODevice::WriteOnly));
     EXPECT_FALSE(device->seek(0));
     stl.reset(g_seekable_seek);
+    device->close();
+    EXPECT_TRUE(device->open(QIODevice::WriteOnly));
     EXPECT_TRUE(device->seek(0));
 
     EXPECT_TRUE(device->resize(0));

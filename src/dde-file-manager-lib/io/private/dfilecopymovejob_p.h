@@ -307,7 +307,6 @@ public:
     bool m_isVfat = false;
     //分断拷贝的线程数量
     QAtomicInt m_count = 0;
-    QVector<QAtomicInt> m_countVetor;
     QAtomicInteger<bool> m_isWriteThreadStart = false;
     //目标目录是否是来自块设备
     QAtomicInteger<bool> m_isTagFromBlockDevice = false;
@@ -325,6 +324,7 @@ public:
     qint32 m_currentDirSize = 0;
     //当前拷贝进程是否显示了进度条
     QAtomicInteger<bool> m_isProgressShow = false;
+    QMutex m_checkStatMutex;
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
 
