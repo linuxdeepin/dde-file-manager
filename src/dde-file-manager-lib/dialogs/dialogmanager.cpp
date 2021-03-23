@@ -238,16 +238,12 @@ QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int coun
     int SpaceWidth = 20;
     int SpaceHeight = 70;
     int row, x, y;
-
     int numberPerRow =  desktopWidth / (dialogWidth + SpaceWidth);
-
-
+    Q_ASSERT(numberPerRow != 0);
     if (count % numberPerRow == 0) {
         row = count / numberPerRow;
-
     } else {
         row = count / numberPerRow + 1;
-
     }
     Q_UNUSED(row)
     int dialogsWidth;
@@ -262,7 +258,6 @@ QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int coun
     x = (desktopWidth - dialogsWidth) / 2 + (dialogWidth + SpaceWidth) * (index % numberPerRow);
 
     y = 5 + (index / numberPerRow) * SpaceHeight;
-
     return QPoint(x, y) + cursor_screen->geometry().topLeft();
 }
 
@@ -1400,7 +1395,8 @@ void DialogManager::raiseAllPropertyDialog()
         d->raise();
         qDebug() << d->getUrl() << d->isVisible() << d->windowState();
     }
-    m_closeIndicatorDialog->raise();
+    if (m_closeIndicatorDialog)
+        m_closeIndicatorDialog->raise();
 }
 
 void DialogManager::handleFocusChanged(QWidget *old, QWidget *now)

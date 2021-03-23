@@ -126,7 +126,7 @@ TEST_F(TestOpenWithDialog, testInit2)
     QList<DUrl> urllist;
     urllist << DUrl("file:///test1") << DUrl("file:///test2");
     OpenWithDialog dlg(urllist);
-    dlg.show();
+//    dlg.show();
     int count = dlg.m_urllist.count();
     EXPECT_EQ(count, 2);
 }
