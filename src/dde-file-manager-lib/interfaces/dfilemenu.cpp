@@ -26,7 +26,6 @@
 #include "accessibility/acintelfunctions.h"
 #include <QTimer>
 #include <QApplication>
-#include <private/qmenu_p.h>
 
 DFileMenu::DFileMenu(QWidget *parent)
     : QMenu(parent)
@@ -111,13 +110,6 @@ void DFileMenu::mouseMoveEvent(QMouseEvent * event)
 {
     QMenu::mouseMoveEvent(event);
     update();
-}
-
-void DFileMenu::leaveEvent(QEvent *event)
-{
-    Q_UNUSED(event)
-    QMenuPrivate *d = reinterpret_cast<QMenuPrivate *>(qGetPtrHelper(d_ptr));
-    d->hasReceievedEnter = false;
 }
 
 void DFileMenu::setAccessibleInfo(const QString& name)
