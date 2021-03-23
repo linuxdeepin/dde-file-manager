@@ -1354,7 +1354,7 @@ void DFileDialog::onAcceptButtonClicked()
         break;
     }
     default: {
-        if(urls.isEmpty()) return;
+        //if(urls.isEmpty()) return;
 
         for (const DUrl &url : urls) {
             const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
