@@ -63,7 +63,7 @@ TEST_F(TestTagFileInfo, PropertyTest)
     EXPECT_TRUE(info2->isWritable());
     EXPECT_FALSE(info->canRedirectionFileUrl());
     EXPECT_TRUE(info->canIteratorDir());
-    EXPECT_FALSE(info->canDrop());
+    EXPECT_TRUE(info->canDrop());
     EXPECT_TRUE(info->isVirtualEntry());
     EXPECT_TRUE(0 < info->permissions());
     EXPECT_TRUE((Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled) == info->fileItemDisableFlags());

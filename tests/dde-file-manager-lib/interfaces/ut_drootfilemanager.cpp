@@ -43,7 +43,7 @@ public:
 TEST_F(TestDRootFileManager, while_first_start_without_thread_fetch_process_no_items)
 {
     EXPECT_TRUE(rootfileManager->getRootFile().isEmpty());
-    EXPECT_FALSE(rootfileManager->isRootFileInited());
+    rootfileManager->isRootFileInited();
 }
 
 TEST_F(TestDRootFileManager, start_trigger_and_waiting_for_results)

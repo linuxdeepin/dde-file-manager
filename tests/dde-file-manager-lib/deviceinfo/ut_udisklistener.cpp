@@ -27,6 +27,7 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "ddiskmanager.h"
+#include "dblockdevice.h"
 #include "deviceinfo/udiskdeviceinfo.h"
 
 #include "addr_pri.h"
@@ -208,7 +209,12 @@ TEST_F(TestUDiskListener, getDeviceByPath)
 
 TEST_F(TestUDiskListener, getDeviceByFilePath)
 {
-    EXPECT_TRUE(m_listener->getDeviceByFilePath("/"));
+    StubExt st;
+    st.set_lamda(ADDR(UDiskDeviceInfo, getMountPointUrl), []() {
+        return DUrl::fromLocalFile("/media/");
+    });
+
+    EXPECT_TRUE(m_listener->getDeviceByFilePath("/media/abc"));
 }
 
 TEST_F(TestUDiskListener, getDeviceByDeviceID)
@@ -256,7 +262,12 @@ TEST_F(TestUDiskListener, eject)
 TEST_F(TestUDiskListener, mountByUDisks)
 {
     EXPECT_FALSE(m_listener->mountByUDisks(""));
-    EXPECT_FALSE(m_listener->mountByUDisks("/dev/sda1"));
+
+    StubExt stubex;
+    stubex.set_lamda(ADDR(DBlockDevice, mount), []() {
+        return "/media/sda1";
+    });
+    EXPECT_TRUE(m_listener->mountByUDisks("/dev/sda1"));
 }
 
 TEST_F(TestUDiskListener, unmount)
@@ -407,6 +418,10 @@ TEST_F(TestUDiskListener, isBlockFile)
         UDiskDeviceInfoPointer p(new UDiskDeviceInfo);
         infos["test"] = p;
         return infos;
+    });
+
+    st.set_lamda(ADDR(UDiskDeviceInfo, getMountPointUrl), []() {
+        return DUrl("/test/");
     });
     EXPECT_TRUE(m_listener->isBlockFile("/test/_test_/_test_path_"));
 }

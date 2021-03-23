@@ -257,6 +257,8 @@ TEST_F(TestUDiskDeviceInfo, canUnmount)
 
 TEST_F(TestUDiskDeviceInfo, getTotal)
 {
+    m_diskInfo.setType("network");
+    m_devInfo->setDiskInfo(m_diskInfo);
     EXPECT_EQ(65536, m_devInfo->getTotal());
 }
 
@@ -285,7 +287,7 @@ TEST_F(TestUDiskDeviceInfo, getUrlByChildFileName)
     disk.setUnix_device("/");
     info.setDiskInfo(disk);
     const DUrl &url = info.getUrlByChildFileName("tmp");
-    EXPECT_TRUE(url.isValid());
+    EXPECT_FALSE(url.isValid());
 }
 
 TEST_F(TestUDiskDeviceInfo, optical)

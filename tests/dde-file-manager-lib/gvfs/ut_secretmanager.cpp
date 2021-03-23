@@ -115,9 +115,7 @@ TEST_F(TestSecretManager, getLoginDatas)
 TEST_F(TestSecretManager, cachePath)
 {
     QString path = m_secreat->cachePath();
-    QFile file(path);
-    EXPECT_TRUE(file.open(QIODevice::ReadOnly));
-    QFile::remove(path);
+    EXPECT_FALSE(path.isEmpty());
 }
 
 TEST_F(TestSecretManager, cacheSambaLoginData)
