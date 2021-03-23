@@ -31,7 +31,7 @@ public:
     }
     void SetUp() override
     {
-        std::cout << "start TestRecntController" << std::endl;
+        std::cout << "start TestRecentController" << std::endl;
         QString tempFilePath = TestHelper::createTmpFile(".txt");
         QString tmpDirPath = TestHelper::createTmpDir();
         tmpFileUrl = DUrl::fromUserShareFile(tempFilePath);
@@ -42,7 +42,7 @@ public:
 
     void TearDown() override
     {
-        std::cout << "end TestRecntController" << std::endl;
+        std::cout << "end TestRecentController" << std::endl;
         QStringList tmpPaths;
         tmpPaths << tmpFileUrl.path() << tmpDirUrl.path() << tmpFileUrl2.path();
         TestHelper::deleteTmpFiles(tmpPaths);
