@@ -48,13 +48,13 @@ namespace  {
         void SetUp() override
         {
             m_pTester = new DialogManager();
-            std::cout << "start TestDialogManager";
+            std::cout << "start TestDialogManager" << std::endl;
         }
         void TearDown() override
         {
             delete m_pTester;
             m_pTester = nullptr;
-            std::cout << "end TestDialogManager";
+            std::cout << "end TestDialogManager" << std::endl;
         }
     public:
         DialogManager *m_pTester;
@@ -63,64 +63,64 @@ namespace  {
 
 TEST_F(TestDialogManager, testInit)
 {
-    TestHelper::runInLoop([](){});
     EXPECT_NE(nullptr, m_pTester);
 }
 
 TEST_F(TestDialogManager, testGetPropertyPos)
 {
-    int dialogWidth = 800;
-    int dialogHeight = 500;
+    int dialogWidth = 10;
+    int dialogHeight = 20;
     QPoint result = m_pTester->getPropertyPos(dialogWidth, dialogHeight);
-    EXPECT_GT(result.x(), 0);
-    EXPECT_GT(result.y(), 0);
+    EXPECT_GE(result.x(), 0);
+    EXPECT_GE(result.y(), 0);
 }
 
 TEST_F(TestDialogManager, testGetPropertyPos2)
 {
-//    QList<QScreen*>(*stub_screens)() = []()->QList<QScreen*>{
-//        QList<QScreen*> lst;
-//        lst.clear();
-//        return lst;
-//    };
-//    Stub stu;
-//    stu.set(ADDR(QGuiApplication, screens), stub_screens);
+    QList<QScreen*>(*stub_screens)() = []()->QList<QScreen*>{
+        QList<QScreen*> lst;
+        lst.clear();
+        return lst;
+    };
+    Stub stu;
+    stu.set(ADDR(QGuiApplication, screens), stub_screens);
 
-//    int dialogWidth = 800;
-//    int dialogHeight = 500;
-//    QPoint result = m_pTester->getPropertyPos(dialogWidth, dialogHeight);
-//    EXPECT_GT(result.x(), 0);
-//    EXPECT_GT(result.y(), 0);
+    int dialogWidth = 10;
+    int dialogHeight = 20;
+    QPoint result = m_pTester->getPropertyPos(dialogWidth, dialogHeight);
+    EXPECT_GE(result.x(), 0);
+    EXPECT_GE(result.y(), 0);
 }
 
 TEST_F(TestDialogManager, testGetPerportyPos)
 {
-//    int dialogWidth = 800;
-//    int dialogHeight = 500;
-//    int count = 10;
-//    int index = 5;
-//    QPoint result = m_pTester->getPerportyPos(dialogWidth, dialogHeight, count, index);
-//    EXPECT_GT(result.x(), 0);
-//    EXPECT_GT(result.y(), 0);
+    int dialogWidth = 10;
+    int dialogHeight = 20;
+    int count = 10;
+    int index = 5;
+    auto screens = qApp->screens();
+    QPoint result = m_pTester->getPerportyPos(dialogWidth, dialogHeight, count, index);
+    EXPECT_GE(result.x(), 0);
+    EXPECT_GE(result.y(), 0);
 }
 
 TEST_F(TestDialogManager, testGetPerportyPos2)
 {
-//    QList<QScreen*>(*stub_screens)() = []()->QList<QScreen*>{
-//        QList<QScreen*> lst;
-//        lst.clear();
-//        return lst;
-//    };
-//    Stub stu;
-//    stu.set(ADDR(QGuiApplication, screens), stub_screens);
+    QList<QScreen*>(*stub_screens)() = []()->QList<QScreen*>{
+        QList<QScreen*> lst;
+        lst.clear();
+        return lst;
+    };
+    Stub stu;
+    stu.set(ADDR(QGuiApplication, screens), stub_screens);
 
-//    int dialogWidth = 800;
-//    int dialogHeight = 500;
-//    int count = 10;
-//    int index = 5;
-//    QPoint result = m_pTester->getPerportyPos(dialogWidth, dialogHeight, count, index);
-//    EXPECT_GT(result.x(), 0);
-//    EXPECT_GT(result.y(), 0);
+    int dialogWidth = 10;
+    int dialogHeight = 20;
+    int count = 10;
+    int index = 5;
+    QPoint result = m_pTester->getPerportyPos(dialogWidth, dialogHeight, count, index);
+    EXPECT_GE(result.x(), 0);
+    EXPECT_GE(result.y(), 0);
 }
 
 TEST_F(TestDialogManager, testIsTaskDialogEmpty)
@@ -147,9 +147,9 @@ TEST_F(TestDialogManager, testTaskDialog)
 
 TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed0)
 {
-    FileJob job(FileJob::OpticalCheck);
-    job.setJobId("10000");
-    m_pTester->addJob(&job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::OpticalCheck));
+    job->setJobId("10000");
+    m_pTester->addJob(job);
 
     QMap<QString, QString> jobDetail;
     jobDetail.insert("jobId", "10000");
@@ -157,14 +157,14 @@ TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed0)
     response.insert("applyToAll", QVariant(false));
     response.insert("code", QVariant(0));
     m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
-    EXPECT_EQ(true, job.m_isCoExisted);
+    EXPECT_EQ(true, job->m_isCoExisted);
 }
 
 TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed1)
 {
-    FileJob job(FileJob::OpticalImageBurn);
-    job.setJobId("10000");
-    m_pTester->addJob(&job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::OpticalImageBurn));
+    job->setJobId("10000");
+    m_pTester->addJob(job);
 
     QMap<QString, QString> jobDetail;
     jobDetail.insert("jobId", "10000");
@@ -172,14 +172,14 @@ TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed1)
     response.insert("applyToAll", QVariant(false));
     response.insert("code", QVariant(1));
     m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
-    EXPECT_EQ(true, job.m_isReplaced);
+    EXPECT_EQ(true, job->m_isReplaced);
 }
 
 TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed2)
 {
-    FileJob job(FileJob::OpticalBlank);
-    job.setJobId("10000");
-    m_pTester->addJob(&job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::OpticalBlank));
+    job->setJobId("10000");
+    m_pTester->addJob(job);
 
     QMap<QString, QString> jobDetail;
     jobDetail.insert("jobId", "10000");
@@ -187,14 +187,14 @@ TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed2)
     response.insert("applyToAll", QVariant(false));
     response.insert("code", QVariant(2));
     m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
-    EXPECT_EQ(true, job.m_isSkip);
+    EXPECT_EQ(true, job->m_isSkip);
 }
 
 TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed3)
 {
-    FileJob job(FileJob::OpticalBurn);
-    job.setJobId("10000");
-    m_pTester->addJob(&job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::OpticalBurn));
+    job->setJobId("10000");
+    m_pTester->addJob(job);
 
     QMap<QString, QString> jobDetail;
     jobDetail.insert("jobId", "10000");
@@ -202,14 +202,14 @@ TEST_F(TestDialogManager, testHandleConflictRepsonseConfirmed3)
     response.insert("applyToAll", QVariant(false));
     response.insert("code", QVariant(3));
     m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
-    EXPECT_EQ(true, job.m_isCoExisted);
+    EXPECT_EQ(true, job->m_isCoExisted);
 }
 
 TEST_F(TestDialogManager, testRemoveJob)
 {
-    FileJob job(FileJob::Restore);
-    job.setJobId("10000");
-    m_pTester->addJob(&job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Restore));
+    job->setJobId("10000");
+    m_pTester->addJob(job);
 
     m_pTester->removeJob("10000", true);
     bool b = m_pTester->m_jobs.contains("10000");
@@ -218,27 +218,23 @@ TEST_F(TestDialogManager, testRemoveJob)
 
 TEST_F(TestDialogManager, testRemoveJob2)
 {
-    FileJob job(FileJob::Restore);
-    job.setJobId("10000");
-    m_pTester->addJob(&job);
-
-    m_pTester->m_Opticaljobs.insert("10000", &job);
-
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Restore));
+    job->setJobId("10000");
+    m_pTester->addJob(job);
     m_pTester->removeJob("10000", true);
-    bool b = m_pTester->m_Opticaljobs.contains("10000");
+    bool b = m_pTester->m_jobs.contains("10000");
     EXPECT_EQ(b, false);
 }
 
 TEST_F(TestDialogManager, testRemoveJob3)
 {
-    FileJob job(FileJob::Restore);
-    job.setJobId("10000");
-    job.m_isOpticalJob = true;
-    job.m_isFinished = false;
-    m_pTester->addJob(&job);
-
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Restore));
+    job->setJobId("10000");
+    job->m_isOpticalJob = true;
+    job->m_isFinished = false;
+    m_pTester->addJob(job);
     m_pTester->removeJob("10000", false);
-    bool b = m_pTester->m_Opticaljobs.contains("10000");
+    bool b = m_pTester->m_jobs.contains("10000");
     EXPECT_EQ(b, true);
 }
 
@@ -247,10 +243,10 @@ TEST_F(TestDialogManager, testGetJobIdByUrl)
     QString jobId = "10000";
     DUrl url("file:///home");
 
-    FileJob job(FileJob::Delete);
-    job.setJobId(jobId);
-    job.setProperty("pathlist", QVariant(url.toLocalFile()));
-    m_pTester->addJob(&job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Delete));
+    job->setJobId(jobId);
+    job->setProperty("pathlist", QVariant(url.toLocalFile()));
+    m_pTester->addJob(job);
     QString result = m_pTester->getJobIdByUrl(url);
 
     EXPECT_STREQ(jobId.toStdString().c_str(), result.toStdString().c_str());
@@ -261,10 +257,10 @@ TEST_F(TestDialogManager, testGetJobIdByUrl2)
     QString jobId = "10000";
     DUrl url("file:///home");
 
-    FileJob job(FileJob::Delete);
-    job.setJobId(jobId);
-    job.setProperty("pathlist1", QVariant(url.toLocalFile()));
-    m_pTester->addJob(&job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Delete));
+    job->setJobId(jobId);
+    job->setProperty("pathlist1", QVariant(url.toLocalFile()));
+    m_pTester->addJob(job);
     QString result = m_pTester->getJobIdByUrl(url);
 
     EXPECT_STRNE(jobId.toStdString().c_str(), result.toStdString().c_str());
@@ -272,9 +268,9 @@ TEST_F(TestDialogManager, testGetJobIdByUrl2)
 
 TEST_F(TestDialogManager, testRemoveAllJobs)
 {
-    FileJob job(FileJob::Trash);
-    job.setJobId("10000");
-    m_pTester->addJob(&job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Trash));
+    job->setJobId("10000");
+    m_pTester->addJob(job);
 
     m_pTester->removeAllJobs();
     int count = m_pTester->m_jobs.count();
@@ -283,10 +279,10 @@ TEST_F(TestDialogManager, testRemoveAllJobs)
 
 TEST_F(TestDialogManager, testUpdateJob)
 {
-    FileJob job(FileJob::Move);
-    job.setJobId("10000");
-    job.m_isCanShowProgress = false;
-    m_pTester->addJob(&job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Move));
+    job->setJobId("10000");
+    job->m_isCanShowProgress = false;
+    m_pTester->addJob(job);
 
     m_pTester->updateJob();
     bool b = m_pTester->m_jobs.contains("10000");
@@ -295,10 +291,10 @@ TEST_F(TestDialogManager, testUpdateJob)
 
 TEST_F(TestDialogManager, testUpdateJob2)
 {
-    FileJob job(FileJob::Move);
-    job.setJobId("10000");
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Move));
+    job->setJobId("10000");
     FileJob::Msec_For_Display = -1;
-    m_pTester->addJob(&job);
+    m_pTester->addJob(job);
 
     qint64(*stub_currentMesec)() = []()->qint64{
         return 0;
@@ -313,11 +309,11 @@ TEST_F(TestDialogManager, testUpdateJob2)
 
 TEST_F(TestDialogManager, testUpdateJob3)
 {
-    FileJob job(FileJob::Move);
-    job.setJobId("10000");
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Move));
+    job->setJobId("10000");
     FileJob::Msec_For_Display = -1;
-    job.m_isJobAdded = true;
-    m_pTester->addJob(&job);
+    job->m_isJobAdded = true;
+    m_pTester->addJob(job);
 
     qint64(*stub_currentMesec)() = []()->qint64{
         return 0;
@@ -338,9 +334,9 @@ TEST_F(TestDialogManager, testStartAndStopUpdateJobTimer)
 
 TEST_F(TestDialogManager, testAbortJob)
 {
-    FileJob job(FileJob::Copy);
-    job.setJobId("10000");
-    m_pTester->addJob(&job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Copy));
+    job->setJobId("10000");
+    m_pTester->addJob(job);
 
     QMap<QString, QString> jobDetail;
     jobDetail.insert("job1", "10000");
@@ -355,10 +351,10 @@ TEST_F(TestDialogManager, testAbortJobByDestinationUrl)
     QString jobId = "10000";
     DUrl url("file:///home");
 
-    FileJob job(FileJob::Delete);
-    job.setJobId(jobId);
-    job.setProperty("pathlist", QVariant(url.toLocalFile()));
-    m_pTester->addJob(&job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Delete));
+    job->setJobId(jobId);
+    job->setProperty("pathlist", QVariant(url.toLocalFile()));
+    m_pTester->addJob(job);
 
     m_pTester->abortJobByDestinationUrl(url);
     bool b = m_pTester->m_jobs.contains("10000");
@@ -502,6 +498,10 @@ TEST_F(TestDialogManager, testShowOpticalJobFailureDialog)
     stub_ext::StubExt stu;
     stu.set(VADDR(Dtk::Widget::DDialog, exec), stub_exec);
 
+    void(*stub2_show)() = []()->void{};
+    stub_ext::StubExt stu2;
+    stu2.set(ADDR(QWidget, show), stub2_show);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showOpticalJobFailureDialog(type, err, details));
 }
 
@@ -518,6 +518,10 @@ TEST_F(TestDialogManager, testShowOpticalJobFailureDialog2)
     stub_ext::StubExt stu;
     stu.set(VADDR(Dtk::Widget::DDialog, exec), stub_exec);
 
+    void(*stub2_show)() = []()->void{};
+    stub_ext::StubExt stu2;
+    stu2.set(ADDR(QWidget, show), stub2_show);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showOpticalJobFailureDialog(type, err, details));
 }
 
@@ -533,6 +537,10 @@ TEST_F(TestDialogManager, testShowOpticalJobFailureDialog3)
     };
     stub_ext::StubExt stu;
     stu.set(VADDR(Dtk::Widget::DDialog, exec), stub_exec);
+
+    void(*stub2_show)() = []()->void{};
+    stub_ext::StubExt stu2;
+    stu2.set(ADDR(QWidget, show), stub2_show);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showOpticalJobFailureDialog(type, err, details));
 }
@@ -725,6 +733,10 @@ TEST_F(TestDialogManager, testShowPropertyDialog)
     Stub stu2;
     stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
 
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showPropertyDialog(event));
 
     QEventLoop loop;
@@ -742,6 +754,10 @@ TEST_F(TestDialogManager, testShowPropertyDialog2)
     Stub stu2;
     stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
 
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showPropertyDialog(event));
 
     QEventLoop loop;
@@ -758,6 +774,10 @@ TEST_F(TestDialogManager, testShowPropertyDialog3)
     void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
     Stub stu2;
     stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showPropertyDialog(event));
 
@@ -780,6 +800,9 @@ TEST_F(TestDialogManager, testShowPropertyDialog4)
     PropertyDialog dlg(e, DUrl("file:///home"));
     m_pTester->m_propertyDialogs.insert(DUrl("file:///home"), &dlg);
 
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showPropertyDialog(event));
 
@@ -807,6 +830,10 @@ TEST_F(TestDialogManager, testShowPropertyDialog5)
     Stub stu2;
     stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
 
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showPropertyDialog(event));
 
     QEventLoop loop;
@@ -832,6 +859,11 @@ TEST_F(TestDialogManager, testShowTrashPropertyDialog)
     void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
     Stub stu2;
     stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showTrashPropertyDialog(event));
     QEventLoop loop;
     QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
@@ -847,6 +879,10 @@ TEST_F(TestDialogManager, testShowTrashPropertyDialog2)
     TrashPropertyDialog* pdlg = new TrashPropertyDialog(DUrl::fromTrashFile("/"));
     m_pTester->m_trashDialog = pdlg;
     DFMEvent event;
+
+    void(*stub4_show)() = []()->void{};
+    stub_ext::StubExt stu4;
+    stu4.set(ADDR(QWidget, show), stub4_show);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showTrashPropertyDialog(event));
     QEventLoop loop;
@@ -868,6 +904,10 @@ TEST_F(TestDialogManager, testShowTrashPropertyDialog3)
     Stub stu2;
     stu2.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
 
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showTrashPropertyDialog(event));
     QEventLoop loop;
     QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
@@ -876,6 +916,14 @@ TEST_F(TestDialogManager, testShowTrashPropertyDialog3)
 
 TEST_F(TestDialogManager, testShowComputerPropertyDialog)
 {
+    void(*stub4_show)() = []()->void{};
+    stub_ext::StubExt stu4;
+    stu4.set(ADDR(QWidget, show), stub4_show);
+
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showComputerPropertyDialog());
     QEventLoop loop;
     QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
@@ -886,6 +934,14 @@ TEST_F(TestDialogManager, testShowComputerPropertyDialog2)
 {
     ComputerPropertyDialog dlg;
     m_pTester->m_computerDialog = &dlg;
+
+    void(*stub4_show)() = []()->void{};
+    stub_ext::StubExt stu4;
+    stu4.set(ADDR(QWidget, show), stub4_show);
+
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showComputerPropertyDialog());
     QEventLoop loop;
@@ -903,6 +959,10 @@ TEST_F(TestDialogManager, testShowDevicePropertyDialog)
     };
     Stub stub;
     stub.set(ADDR(WindowManager, getWindowById), stub_getWindowById);
+
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showDevicePropertyDialog(event));
 }
@@ -958,6 +1018,10 @@ TEST_F(TestDialogManager, testShowBreakSymlinkDialog2)
 
 TEST_F(TestDialogManager, testShowConnectToServerDialog)
 {
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
+
     quint64 winId(12345678);
     EXPECT_NO_FATAL_FAILURE(m_pTester->showConnectToServerDialog(winId));
 }
@@ -973,6 +1037,10 @@ TEST_F(TestDialogManager, testShowConnectToServerDialog2)
     Stub stub;
     stub.set(ADDR(WindowManager, getWindowById), stub_getWindowById);
 
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showConnectToServerDialog(winId));
 }
 
@@ -986,6 +1054,10 @@ TEST_F(TestDialogManager, testShowUserSharePasswordSettingDialog)
     };
     Stub stub;
     stub.set(ADDR(WindowManager, getWindowById), stub_getWindowById);
+
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showUserSharePasswordSettingDialog(winId));
 }
@@ -1008,6 +1080,10 @@ TEST_F(TestDialogManager, testShowGlobalSettingsDialog)
     Stub stu2;
     stu2.set(ADDR(DFMApplication, instance), stu_instance);
 
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showGlobalSettingsDialog(winId));
 }
 
@@ -1022,6 +1098,10 @@ TEST_F(TestDialogManager, testShowGlobalSettingsDialog2)
     };
     Stub stub;
     stub.set(ADDR(WindowManager, getWindowById), stub_getWindowById);
+
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showGlobalSettingsDialog(winId));
 }
@@ -1102,6 +1182,10 @@ TEST_F(TestDialogManager, testShowDeleteSystemPathWarnDialog)
 
 TEST_F(TestDialogManager, testShowFilePreviewDialog)
 {
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
+
     DUrlList selectUrls;
     selectUrls << DUrl("file:///testfile2");
     DUrlList entryUrls;
@@ -1111,6 +1195,10 @@ TEST_F(TestDialogManager, testShowFilePreviewDialog)
 
 TEST_F(TestDialogManager, testShowFilePreviewDialog2)
 {
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
+
     DUrlList selectUrls;
     selectUrls.clear();
     DUrlList entryUrls;
@@ -1130,6 +1218,10 @@ TEST_F(TestDialogManager, testShowFilePreviewDialog3)
     };
     Stub stu;
     stu.set(ADDR(DFMGlobal, isWayLand), stub_isWayLand);
+
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
 
     DUrlList previewUrllist;
     previewUrllist << DUrl("file:///testfile2") << DUrl("file:///home2");
@@ -1159,6 +1251,10 @@ TEST_F(TestDialogManager, testShowFilePreviewDialog4)
     };
     Stub stu2;
     stu2.set(ADDR(DialogManager, DUrlListCompare), stub_DUrlListCompare);
+
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
 
     DUrlList previewUrllist;
     previewUrllist << DUrl("file:///testfile2") << DUrl("file:///home2");
@@ -1495,19 +1591,28 @@ TEST_F(TestDialogManager, testUpdateCloseIndicator)
 
 TEST_F(TestDialogManager, testRaiseAllPropertyDialog)
 {
-//    DUrlList list;
-//    list << DUrl("file:///home") << DUrl("file:///jerry2");
-//    DFMUrlListBaseEvent event(nullptr, list);
+    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
+    Stub stu;
+    stu.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
 //    DFMEvent e;
+//    PropertyDialog *pDlg = new PropertyDialog(e, DUrl("file://~/Videos"));
+//    m_pTester->m_propertyDialogs.insert(DUrl("file://~/Videos"), pDlg);
 
-//    void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
-//    Stub stu;
-//    stu.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
 
-//    PropertyDialog dlg(e, DUrl("file:///home"));
-//    m_pTester->m_propertyDialogs.insert(DUrl("file:///home"), &dlg);
+    void(*stub4_raise)() = []()->void{
+            int a = 0;
+    };
+    stub_ext::StubExt stu4;
+    stu4.set(ADDR(QWidget, raise), stub4_raise);
 
-//    EXPECT_NO_FATAL_FAILURE(m_pTester->raiseAllPropertyDialog());
+    EXPECT_NO_FATAL_FAILURE(m_pTester->raiseAllPropertyDialog());
+
+//    if (pDlg)
+//        pDlg->deleteLater();
 }
 
 TEST_F(TestDialogManager, testHandleFocusChanged)
@@ -1522,6 +1627,10 @@ TEST_F(TestDialogManager, testHandleFocusChanged)
     };
     Stub stu;
     stu.set(ADDR(DialogManager, raiseAllPropertyDialog), stub_raiseAllPropertyDialog);
+
+    void(*stub3_show)() = []()->void{};
+    stub_ext::StubExt stu3;
+    stu3.set(ADDR(QWidget, show), stub3_show);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->handleFocusChanged(&old, &now));
 }
@@ -1555,17 +1664,17 @@ TEST_F(TestDialogManager, testShowTaskProgressDlgOnActive3)
 {
     QString jobId = "10000";
     DUrl url("file:///home");
-    FileJob job(FileJob::Delete);
-    job.setJobId(jobId);
-    job.setProperty("pathlist", QVariant(url.toLocalFile()));
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Delete));
+    job->setJobId(jobId);
+    job->setProperty("pathlist", QVariant(url.toLocalFile()));
     QString jobId2 = "10001";
     DUrl url2("file:///home");
-    FileJob job2(FileJob::Delete);
-    job2.setJobId(jobId2);
-    job2.setProperty("pathlist", QVariant(url.toLocalFile()));
-    job2.m_isFinished = true;
-    m_pTester->m_Opticaljobs.insert(jobId, &job);
-    m_pTester->m_Opticaljobs.insert(jobId2, &job2);
+    QSharedPointer<FileJob> job2(new FileJob(FileJob::Delete));
+    job2->setJobId(jobId2);
+    job2->setProperty("pathlist", QVariant(url.toLocalFile()));
+    job2->m_isFinished = true;
+    m_pTester->m_jobs.insert(jobId, job);
+    m_pTester->m_jobs.insert(jobId2, job2);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showTaskProgressDlgOnActive());
 }
@@ -1612,13 +1721,13 @@ TEST_F(TestDialogManager, testhandleConflictRepsonseConfirmed)
 
     QString jobId = "10000";
     DUrl url("file:///home1");
-    FileJob job(FileJob::Delete);
-    job.setJobId(jobId);
-    job.setProperty("pathlist", QVariant(url.toLocalFile()));
-    m_pTester->m_jobs.insert(jobId, &job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Delete));
+    job->setJobId(jobId);
+    job->setProperty("pathlist", QVariant(url.toLocalFile()));
+    m_pTester->m_jobs.insert(jobId, job);
 
     m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
-    EXPECT_EQ(job.m_isCoExisted, true);
+    EXPECT_EQ(job->m_isCoExisted, true);
 }
 
 TEST_F(TestDialogManager, testhandleConflictRepsonseConfirmed2)
@@ -1630,13 +1739,13 @@ TEST_F(TestDialogManager, testhandleConflictRepsonseConfirmed2)
 
     QString jobId = "10000";
     DUrl url("file:///home1");
-    FileJob job(FileJob::Delete);
-    job.setJobId(jobId);
-    job.setProperty("pathlist", QVariant(url.toLocalFile()));
-    m_pTester->m_jobs.insert(jobId, &job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Delete));
+    job->setJobId(jobId);
+    job->setProperty("pathlist", QVariant(url.toLocalFile()));
+    m_pTester->m_jobs.insert(jobId, job);
 
     m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
-    EXPECT_EQ(job.m_isReplaced, true);
+    EXPECT_EQ(job->m_isReplaced, true);
 }
 
 TEST_F(TestDialogManager, testhandleConflictRepsonseConfirmed3)
@@ -1648,13 +1757,13 @@ TEST_F(TestDialogManager, testhandleConflictRepsonseConfirmed3)
 
     QString jobId = "10000";
     DUrl url("file:///home1");
-    FileJob job(FileJob::Delete);
-    job.setJobId(jobId);
-    job.setProperty("pathlist", QVariant(url.toLocalFile()));
-    m_pTester->m_jobs.insert(jobId, &job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Delete));
+    job->setJobId(jobId);
+    job->setProperty("pathlist", QVariant(url.toLocalFile()));
+    m_pTester->m_jobs.insert(jobId, job);
 
     m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
-    EXPECT_EQ(job.m_isSkip, true);
+    EXPECT_EQ(job->m_isSkip, true);
 }
 
 TEST_F(TestDialogManager, testhandleConflictRepsonseConfirmed4)
@@ -1666,13 +1775,13 @@ TEST_F(TestDialogManager, testhandleConflictRepsonseConfirmed4)
 
     QString jobId = "10000";
     DUrl url("file:///home1");
-    FileJob job(FileJob::Delete);
-    job.setJobId(jobId);
-    job.setProperty("pathlist", QVariant(url.toLocalFile()));
-    m_pTester->m_jobs.insert(jobId, &job);
+    QSharedPointer<FileJob> job(new FileJob(FileJob::Delete));
+    job->setJobId(jobId);
+    job->setProperty("pathlist", QVariant(url.toLocalFile()));
+    m_pTester->m_jobs.insert(jobId, job);
 
     m_pTester->handleConflictRepsonseConfirmed(jobDetail, response);
-    EXPECT_EQ(job.m_isSkip, false);
+    EXPECT_EQ(job->m_isSkip, false);
 }
 
 TEST_F(TestDialogManager, testShowMessageDialog)
