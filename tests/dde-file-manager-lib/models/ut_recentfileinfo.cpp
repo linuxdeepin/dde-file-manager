@@ -71,7 +71,7 @@ TEST_F(TestRecentFileInfo, fileIsDir)
 
 TEST_F(TestRecentFileInfo, fileIsReadable)
 {
-    EXPECT_TRUE(info->isReadable());
+    EXPECT_FALSE(info->isReadable());
 }
 
 TEST_F(TestRecentFileInfo, fileIsWritable)

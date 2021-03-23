@@ -66,8 +66,8 @@ TEST_F(TestTrashFileInfo, BoolPropertyTest)
     EXPECT_TRUE(info->canIteratorDir());
     EXPECT_TRUE(info->makeAbsolute());
     info->setColumnCompact(true);
-    EXPECT_TRUE(Qt::CopyAction == info->supportedDragActions());
-    EXPECT_TRUE((Qt::MoveAction == info->supportedDropActions() || Qt::IgnoreAction == info->supportedDropActions()));
+    EXPECT_TRUE(info->supportedDragActions() | Qt::CopyAction);
+    EXPECT_TRUE((Qt::MoveAction | info->supportedDropActions() || Qt::IgnoreAction | info->supportedDropActions()));
     TrashFileInfo newTrash(DUrl("file:///test"));
 }
 

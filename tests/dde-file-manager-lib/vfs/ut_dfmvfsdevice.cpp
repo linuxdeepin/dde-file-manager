@@ -36,10 +36,21 @@ public:
     DFMVfsDevice *m_service {nullptr};
     DFMVfsDevicePrivate *d {nullptr};
 
+    static void SetUpTestCase()
+    {
+        // 反复调用 gio mount 可能导致 org.gtk.vfs.UDisks2VolumeMonitor 无发正常提供服务，所以尽可能少调用
+        system("gio mount -a ftp://ftp.freebsd.org 1>/dev/null 2>&1");
+    }
+
+    static void TearDownTestCase()
+    {
+    }
+
     void SetUp() override
     {
-        DUrl url = DUrl::fromLocalFile("smb://127.0.0.1:445/");
-        url.setScheme(SMB_SCHEME);
+        DUrl url;
+        url.setScheme(FTP_SCHEME);
+        url.setUrl("ftp://ftp.freebsd.org/");
         m_service = dde_file_manager::DFMVfsDevice::createUnsafe(url);
 
         d = new DFMVfsDevicePrivate(url, m_service);
@@ -54,11 +65,12 @@ public:
 
 TEST_F(TestDFMVfsDevice, create)
 {
-    QUrl url = QUrl::fromLocalFile("smb://127.0.0.1:445/");
-    url.setScheme(SMB_SCHEME);
+    DUrl url;
+    url.setScheme(FTP_SCHEME);
+    url.setUrl("ftp://ftp.freebsd.org/");
     auto p = m_service->create(url, nullptr);
 
-    EXPECT_EQ(p, nullptr);
+    EXPECT_NE(p, nullptr);
 
     if (p)
         p->deleteLater();
@@ -72,6 +84,7 @@ TEST_F(TestDFMVfsDevice, attach)
 TEST_F(TestDFMVfsDevice, detachAsync)
 {
     EXPECT_TRUE(m_service->detachAsync());
+    system("gio mount -a ftp://ftp.freebsd.org 1>/dev/null 2>&1");
 }
 
 TEST_F(TestDFMVfsDevice, eventHandler)
@@ -82,7 +95,7 @@ TEST_F(TestDFMVfsDevice, eventHandler)
 
 TEST_F(TestDFMVfsDevice, isReadOnly)
 {
-    EXPECT_TRUE(m_service->isReadOnly());
+    EXPECT_FALSE(m_service->isReadOnly());
 }
 
 TEST_F(TestDFMVfsDevice, canDetach)
@@ -119,25 +132,25 @@ TEST_F(TestDFMVfsDevice, symbolicIconList)
 TEST_F(TestDFMVfsDevice, defaultUri)
 {
     const QUrl &url = m_service->defaultUri();
-    EXPECT_FALSE(url.isValid());
+    EXPECT_TRUE(url.isValid());
 }
 
 TEST_F(TestDFMVfsDevice, rootPath)
 {
     const QString &path = m_service->rootPath();
-    EXPECT_TRUE(path.isEmpty());
+    EXPECT_FALSE(path.isEmpty());
 }
 
 TEST_F(TestDFMVfsDevice, defaultPath)
 {
     const QString &path = m_service->defaultPath();
-    EXPECT_TRUE(path.isEmpty());
+    EXPECT_FALSE(path.isEmpty());
 }
 
 TEST_F(TestDFMVfsDevice, name)
 {
     const QString &name = m_service->name();
-    EXPECT_TRUE(name.isEmpty());
+    EXPECT_FALSE(name.isEmpty());
 }
 
 

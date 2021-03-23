@@ -69,6 +69,14 @@ public:
 
 TEST_F(TestComputerModel, tstConstructors)
 {
+    Stub stl;
+    typedef int(*fptr)(QDialog*);
+    fptr pQDialogExec = (fptr)(&QDialog::exec);
+    fptr pDDialogExec = (fptr)(&DDialog::exec);
+    int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Accepted;};
+    stl.set(pQDialogExec, stub_DDialog_exec);
+    stl.set(pDDialogExec, stub_DDialog_exec);
+
     QEventLoop loop;
     QTimer t;
     t.setInterval(2000);

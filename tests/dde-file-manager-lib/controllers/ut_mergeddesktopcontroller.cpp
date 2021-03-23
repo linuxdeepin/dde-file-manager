@@ -184,6 +184,7 @@ TEST_F(TestMergedDesktopController, tstFuncsWithEvents)
 
     stub_ext::StubExt stext;
     stext.set_lamda(VADDR(QDialog, exec), []{ return QDialog::Rejected; });
+    stext.set_lamda(VADDR(DFileService, compressFiles), []() { return true; });
     auto e17 = dMakeEventPointer<DFMCompressEvent>(nullptr, DUrlList() << DUrl("file:///tmp/dde-file-manager-unit-test.txt"));
     EXPECT_TRUE(ctrl->compressFiles(e17));
 

@@ -26,18 +26,28 @@
 
 #define private public
 #include "controllers/dfmrootcontroller.h"
+#include "ddialog.h"
 #include "dfmevent.h"
 #include "app/define.h"
+#include "stub.h"
 #include "interfaces/drootfilemanager.h"
 #include "models/dfmrootfileinfo.h"
+#include "dfileservices.h"
 #include "testhelper.h"
 
 namespace  {
     class DFMRootControllerTest : public testing::Test
     {
     public:
+        typedef int(*fptr)(Dtk::Widget::DDialog*);
+        fptr pDDialogExec = (fptr)(&Dtk::Widget::DDialog::exec);
+        Stub stub;
+
         virtual void SetUp() override
         {
+            int (*stub_DDialog_exec)(void) = [](void)->int{return Dtk::Widget::DDialog::Accepted;};
+            stub.set(pDDialogExec, stub_DDialog_exec);
+
             controller = new DFMRootController();
         }
 
@@ -51,24 +61,20 @@ namespace  {
     };
 }
 
-//TEST_F(DFMRootControllerTest, rename_file)
-//{
-//    TestHelper::runInLoop([](){});
-//    DUrl from;
-//    from.setScheme(DFMROOT_SCHEME);
-//    from.setPath("/tmp/file_A");
+TEST_F(DFMRootControllerTest, rename_file)
+{
+    TestHelper::runInLoop([](){});
+    DUrl from;
+    from.setScheme(DFMROOT_SCHEME);
+    from.setPath("/downloads.userdir");
 
-//    DUrl to;
-//    from.setPath("/tmp/file_B");
-//    to.setScheme(DFMROOT_SCHEME);
+    DUrl to;
+    to.setScheme(DFMROOT_SCHEME);
+    to.setPath("/downloads.tst_userdir");
 
-//    system("touch /tmp/file_A");
-//    bool success = controller->renameFile(dMakeEventPointer<DFMRenameEvent>(nullptr, from, to));
-//    // 创建的文件都尝试删除, 不依赖重命名的结果
-//    system("rm /tmp/file_B");
-//    system("rm /tmp/file_A");
-//    EXPECT_TRUE(success);
-//}
+    bool success = controller->renameFile(dMakeEventPointer<DFMRenameEvent>(nullptr, from, to));
+    EXPECT_FALSE(success);
+}
 
 TEST_F(DFMRootControllerTest, get_children)
 {

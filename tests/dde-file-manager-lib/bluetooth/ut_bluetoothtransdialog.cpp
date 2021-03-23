@@ -94,52 +94,51 @@ TEST_F(TestBluetoothTransDialog, tstCanSendFiles)
 
 TEST_F(TestBluetoothTransDialog, tstLambdaSlots)
 {
-    //阻塞CI流程
-    // stub_ext::StubExt st;
-    // st.set_lamda(VADDR(DDialog, exec), []{return 1;});
-    // dlg->m_currSessionPath = "123";
-    // BluetoothManager::instance()->transferProgressUpdated("1234", 123, 1234, 0);
+     stub_ext::StubExt st;
+     st.set_lamda(VADDR(DDialog, exec), []{return 1;});
+     dlg->m_currSessionPath = "123";
+     BluetoothManager::instance()->transferProgressUpdated("1234", 123, 1234, 0);
 
-    // BluetoothManager::instance()->transferProgressUpdated("123", 12, 1234, 0);
+     BluetoothManager::instance()->transferProgressUpdated("123", 12, 1234, 0);
 
-    // dlg->m_progressUpdateShouldBeIgnore = true;
-    // BluetoothManager::instance()->transferProgressUpdated("123", 123, 12, 0);
-    // dlg->m_progressUpdateShouldBeIgnore = false;
+     dlg->m_progressUpdateShouldBeIgnore = true;
+     BluetoothManager::instance()->transferProgressUpdated("123", 123, 12, 0);
+     dlg->m_progressUpdateShouldBeIgnore = false;
 
-    // dlg->m_firstTransSize = 123;
-    // BluetoothManager::instance()->transferProgressUpdated("123", 1234, 123, 0);
+     dlg->m_firstTransSize = 123;
+     BluetoothManager::instance()->transferProgressUpdated("123", 1234, 123, 0);
 
-    // dlg->m_stack->setCurrentIndex(BluetoothTransDialog::SuccessPage);
-    // BluetoothManager::instance()->transferProgressUpdated("123", 1234, 1234, 0);
+     dlg->m_stack->setCurrentIndex(BluetoothTransDialog::SuccessPage);
+     BluetoothManager::instance()->transferProgressUpdated("123", 1234, 1234, 0);
 
-    // QEventLoop loop;
-    // QTimer::singleShot(1500, nullptr, [&loop]{
-    //     loop.exit();
-    // });
-    // loop.exec();
+     QEventLoop loop;
+     QTimer::singleShot(1500, nullptr, [&loop]{
+         loop.exit();
+     });
+     loop.exec();
 
-    // dlg->m_currSessionPath = "123";
-    // BluetoothManager::instance()->transferCancledByRemote("123");
-    // dlg->m_currSessionPath = "123";
-    // BluetoothManager::instance()->transferCancledByRemote("1234");
+     dlg->m_currSessionPath = "123";
+     BluetoothManager::instance()->transferCancledByRemote("123");
+     dlg->m_currSessionPath = "123";
+     BluetoothManager::instance()->transferCancledByRemote("1234");
 
-    // dlg->m_currSessionPath = "123";
-    // BluetoothManager::instance()->transferFailed("123", "123", "123");
-    // dlg->m_currSessionPath = "123";
-    // BluetoothManager::instance()->transferFailed("1234", "123", "123");
+     dlg->m_currSessionPath = "123";
+     BluetoothManager::instance()->transferFailed("123", "123", "123");
+     dlg->m_currSessionPath = "123";
+     BluetoothManager::instance()->transferFailed("1234", "123", "123");
 
-    // dlg->m_urls << "test";
-    // dlg->m_finishedUrls.clear();
-    // dlg->m_currSessionPath = "123";
-    // BluetoothManager::instance()->fileTransferFinished("123", "123");
-    // dlg->m_currSessionPath = "123";
-    // BluetoothManager::instance()->fileTransferFinished("1234", "123");
+     dlg->m_urls << "test";
+     dlg->m_finishedUrls.clear();
+     dlg->m_currSessionPath = "123";
+     BluetoothManager::instance()->fileTransferFinished("123", "123");
+     dlg->m_currSessionPath = "123";
+     BluetoothManager::instance()->fileTransferFinished("1234", "123");
 
-    // BluetoothManager::instance()->transferEstablishFinish("123", "11234");
-    // BluetoothManager::instance()->transferEstablishFinish("", "11234");
+     BluetoothManager::instance()->fileTransferFinished("123", "11234");
+     BluetoothManager::instance()->fileTransferFinished("", "11234");
 
-    // DGuiApplicationHelper::instance()->themeTypeChanged(DGuiApplicationHelper::ColorType::UnknownType);
-    // DGuiApplicationHelper::instance()->themeTypeChanged(DGuiApplicationHelper::ColorType::DarkType);
+     DGuiApplicationHelper::instance()->themeTypeChanged(DGuiApplicationHelper::ColorType::UnknownType);
+     DGuiApplicationHelper::instance()->themeTypeChanged(DGuiApplicationHelper::ColorType::DarkType);
 }
 
 TEST_F(TestBluetoothTransDialog, tstFindItemByIdRole)
@@ -169,6 +168,10 @@ TEST_F(TestBluetoothTransDialog, tstSendFilesToDevice)
 
     Stub st;
     st.set(static_cast<void(BluetoothManager::*)(const QString &, const QStringList &, const QString &)>(&BluetoothManager::sendFiles), sendFiles_stub);
+    typedef int(*fptr)(QDialog*);
+    fptr pQDialogExec = (fptr)(&QDialog::exec);
+    int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Rejected;};
+    st.set(pQDialogExec, stub_DDialog_exec);
 
     dlg->m_finishedUrls << "/usr/bin/dde-file-manager";
     dlg->m_urls << "/usr/bin/dde-file-manager" << "/usr/bin/dde-desktop";

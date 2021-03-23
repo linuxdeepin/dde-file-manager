@@ -144,12 +144,11 @@ TEST_F(FileEventProcessorTest, tst_menu_event_tag_files_use_color)
 TEST_F(FileEventProcessorTest, tst_menu_delete_tag)
 {
     stub_ext::StubExt stext;
-    stext.set_lamda(VADDR(DFileService, deleteFiles), [](){ return true; });
+    stext.set_lamda(&DFileService::deleteFiles, [](){ return true; });
 
     auto menuEvent = makeTestMenuAction(DFMGlobal::MenuAction::DeleteTags);
-    QVariant data;
     bool ret = processMenuEvent(menuEvent);
-    EXPECT_FALSE(ret);
+    EXPECT_TRUE(ret);
 }
 
 TEST_F(FileEventProcessorTest, tst_menu_open_functions)

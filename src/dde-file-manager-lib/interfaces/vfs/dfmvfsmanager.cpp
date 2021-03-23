@@ -49,9 +49,13 @@ DFMVfsManagerPrivate::DFMVfsManagerPrivate(DFMVfsManager *qq)
 
 DFMVfsManagerPrivate::~DFMVfsManagerPrivate()
 {
+    Q_Q(DFMVfsManager);
+
     if (m_handler) {
         delete m_handler;
     }
+
+    g_signal_handlers_disconnect_by_data(m_GVolumeMonitor.data(), q);
 }
 
 void DFMVfsManagerPrivate::GVolumeMonitorMountAddedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer)

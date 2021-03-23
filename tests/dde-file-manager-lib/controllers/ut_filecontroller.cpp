@@ -391,12 +391,16 @@ TEST_F(FileControllerTest, tst_open_in_terminal)
 
 TEST_F(FileControllerTest, tst_book_mark)
 {
+    stub_ext::StubExt stubext;
+    stubext.set_lamda(&DFileService::touchFile, [](){ return true; });
+    stubext.set_lamda(&DFileService::deleteFiles, [](){ return true; });
+
     DUrl url = DUrl::fromLocalFile(fileName);
     bool result = controller->addToBookmark(dMakeEventPointer<DFMAddToBookmarkEvent>(nullptr, url));
-    EXPECT_TRUE(!result);
+    EXPECT_TRUE(result);
 
     result = controller->removeBookmark(dMakeEventPointer<DFMRemoveBookmarkEvent>(nullptr, url));
-    EXPECT_TRUE(!result);
+    EXPECT_TRUE(result);
 }
 
 TEST_F(FileControllerTest, tst_create_symlink)
