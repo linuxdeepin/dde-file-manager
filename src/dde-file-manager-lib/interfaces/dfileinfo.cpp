@@ -437,7 +437,7 @@ QList<QIcon> DFileInfo::additionalIcon() const
     //部分文件和目录不显示徽标
     if (needEmblem &&
             fileUrl().parentUrl().path() != "/" &&
-            fileUrl().parentUrl().path() != "/data" &&
+            fileUrl().parentUrl().path() != DFMGlobal::DataMountRootPath &&
             !fileUrl().path().startsWith("/media"))
         loadFileEmblems(icons);
 

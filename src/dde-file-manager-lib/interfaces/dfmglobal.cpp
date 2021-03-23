@@ -151,6 +151,8 @@ Q_GLOBAL_STATIC(DFMGlobalPrivate, dfmGlobal)
 QStringList DFMGlobal::PluginLibraryPaths;
 bool DFMGlobal::IsFileManagerDiloagProcess = false;
 QAtomicInteger<bool> DFMGlobal::IsInitAppOver = false;
+//此处默认值为防止startwith判断空直接true从而导致条件判断失效
+QString DFMGlobal::DataMountRootPath = "/deepin/userdata";
 
 DFMGlobal *DFMGlobal::instance()
 {
@@ -178,10 +180,10 @@ bool DFMGlobal::installTranslator()
     QTranslator *translatorMusic = new QTranslator(QGuiApplication::instance());
 
     QString transLatorPath = DFMStandardPaths::location(DFMStandardPaths::TranslationPath) +
-                             QDir::separator() + DFMGlobal::applicationName() + "_" + QLocale::system().name();
+            QDir::separator() + DFMGlobal::applicationName() + "_" + QLocale::system().name();
 
     QString transLatorPathMusic = DFMStandardPaths::location(DFMStandardPaths::TranslationPath) +
-                                  QDir::separator() + "dde-file-manager-plugins" + "_" + QLocale::system().name();
+            QDir::separator() + "dde-file-manager-plugins" + "_" + QLocale::system().name();
     qDebug() << "transLatorPath1" << transLatorPathMusic;
 
     translatorMusic->load(transLatorPathMusic);
@@ -232,7 +234,7 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
             // 多文件时只显示文件图标, 一个文件时显示缩略图(如果有的话)
             DFileInfo *fi = dynamic_cast<DFileInfo *>(info.data());
             QIcon icon = fi ? DFileIconProvider::globalProvider()->icon(*fi) :
-                         DFileIconProvider::globalProvider()->icon(info->toQFileInfo());
+                              DFileIconProvider::globalProvider()->icon(info->toQFileInfo());
             DAbstractFileInfo::FileType fileType = mimeTypeDisplayManager->displayNameToEnum(info->mimeTypeName());
             if (list.size() == 1 && fileType == DAbstractFileInfo::FileType::Images) {
                 QIcon thumb(DThumbnailProvider::instance()->thumbnailFilePath(info->toQFileInfo(), DThumbnailProvider::Large));
@@ -414,7 +416,7 @@ void DFMGlobal::initOperatorRevocation()
 void DFMGlobal::initTagManagerConnect()
 {
     connect(TagManager::instance(), static_cast<void(TagManager::*)(const QMap<QString, QString>&)>(&TagManager::changeTagColor),
-    [](const QMap<QString, QString> &tag_and_new_color) {
+            [](const QMap<QString, QString> &tag_and_new_color) {
         for (auto i = tag_and_new_color.constBegin(); i != tag_and_new_color.constEnd(); ++i) {
             const QString &tag_name = i.key();
             const QStringList &files = TagManager::instance()->getFilesThroughTag(tag_name);
@@ -475,7 +477,7 @@ void DFMGlobal::initTagManagerConnect()
         }
     });
     connect(TagManager::instance(), static_cast<void(TagManager::*)(const QMap<QString, QString>&)>(&TagManager::changeTagName),
-    [](const QMap<QString, QString> &old_and_new_name) {
+            [](const QMap<QString, QString> &old_and_new_name) {
         for (auto i = old_and_new_name.constBegin(); i != old_and_new_name.constEnd(); ++i) {
             const DUrl &old_url = DUrl::fromUserTaggedFile(i.key(), QString());
             const DUrl &new_url = DUrl::fromUserTaggedFile(i.value(), QString());
@@ -755,12 +757,12 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::
                         path.lineTo(lastLineRect.right() + backgroundRadius, lastLineRect.bottom() - backgroundRadius * 2);
                         path.arcTo(lastLineRect.right() + backgroundRadius, lastLineRect.bottom() - backgroundRadius * 2, backgroundRadius * 2, backgroundRadius * 2, 180, 90);
 
-//                        path.arcTo(lastLineRect.x() - backgroundReaius, lastLineRect.bottom() - backgroundReaius * 2, backgroundReaius * 2, backgroundReaius * 2, 180, 90);
-//                        path.lineTo(lastLineRect.x() - backgroundReaius * 3, lastLineRect.bottom());
-//                        path.moveTo(lastLineRect.right(), lastLineRect.bottom());
-//                        path.arcTo(lastLineRect.right() - backgroundReaius, lastLineRect.bottom() - backgroundReaius * 2, backgroundReaius * 2, backgroundReaius * 2, 270, 90);
-//                        path.arcTo(lastLineRect.right() + backgroundReaius, lastLineRect.bottom() - backgroundReaius * 2, backgroundReaius * 2, backgroundReaius * 2, 180, 90);
-//                        path.lineTo(lastLineRect.right(), lastLineRect.bottom());
+                        //                        path.arcTo(lastLineRect.x() - backgroundReaius, lastLineRect.bottom() - backgroundReaius * 2, backgroundReaius * 2, backgroundReaius * 2, 180, 90);
+                        //                        path.lineTo(lastLineRect.x() - backgroundReaius * 3, lastLineRect.bottom());
+                        //                        path.moveTo(lastLineRect.right(), lastLineRect.bottom());
+                        //                        path.arcTo(lastLineRect.right() - backgroundReaius, lastLineRect.bottom() - backgroundReaius * 2, backgroundReaius * 2, backgroundReaius * 2, 270, 90);
+                        //                        path.arcTo(lastLineRect.right() + backgroundReaius, lastLineRect.bottom() - backgroundReaius * 2, backgroundReaius * 2, backgroundReaius * 2, 180, 90);
+                        //                        path.lineTo(lastLineRect.right(), lastLineRect.bottom());
 
                         path.addRoundedRect(backBounding, backgroundRadius, backgroundRadius);
                         lastLineRect = rect;
@@ -793,12 +795,12 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::
 
         offset.setY(offset.y() + lineHeight);
 
-//        // find '\n'
-//        int text_length_line = line.textLength();
-//        for (int start = line.textStart(); start < line.textStart() + text_length_line; ++start) {
-//            if (text.at(start) == '\n')
-//                height += lineHeight;
-//        }
+        //        // find '\n'
+        //        int text_length_line = line.textLength();
+        //        for (int start = line.textStart(); start < line.textStart() + text_length_line; ++start) {
+        //            if (text.at(start) == '\n')
+        //                height += lineHeight;
+        //        }
 
         if (lines) {
             lines->append(text.mid(line.textStart(), line.textLength()));
@@ -1010,7 +1012,7 @@ QByteArray DFMGlobal::detectCharset(const QByteArray &data, const QString &fileN
             prober_encoding = pre_encoding;
         }
 
-    confidence:
+confidence:
         if (QTextCodec *codec = QTextCodec::codecForName(prober_encoding)) {
             if (def_codec == codec)
                 def_codec = nullptr;

@@ -1386,7 +1386,10 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
             const QString filePath = data(index, FilePathRole).toString();
             const QString stdDocPath = QStandardPaths::writableLocation(QStandardPaths::StandardLocation::DocumentsLocation);
             const QString stdDownPath = QStandardPaths::writableLocation(QStandardPaths::StandardLocation::DownloadLocation);
-            if (filePath == stdDocPath || filePath == stdDownPath || filePath == "/data" + stdDocPath || filePath == "/data" + stdDownPath)
+            if (filePath == stdDocPath
+                    || filePath == stdDownPath
+                    || filePath == DFMGlobal::DataMountRootPath + stdDocPath
+                    || filePath == DFMGlobal::DataMountRootPath + stdDownPath)
                 return QString();
 
             return strToolTip;

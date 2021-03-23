@@ -261,6 +261,7 @@ public:
     static QStringList PluginLibraryPaths;
     static bool IsFileManagerDiloagProcess;
     static QAtomicInteger<bool> IsInitAppOver;
+    static QString DataMountRootPath;
 
     static QString organizationName();
     static QString applicationName();

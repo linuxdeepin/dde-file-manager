@@ -162,7 +162,7 @@ QList<QIcon> VaultFileInfo::additionalIcon() const
 //    }
 
     //部分文件和目录不显示徽标
-    if (needEmblem && fileUrl().parentUrl().path() != "/" && fileUrl().parentUrl().path() != "/data")
+    if (needEmblem && fileUrl().parentUrl().path() != "/" && fileUrl().parentUrl().path() != DFMGlobal::DataMountRootPath)
         loadFileEmblems(icons);
 
     return icons;

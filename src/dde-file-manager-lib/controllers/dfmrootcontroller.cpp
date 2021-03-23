@@ -127,6 +127,17 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
     for (auto blks : blkds) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+
+        //检查挂载目录下是否存在diskinfo文件
+        QByteArrayList mps = blk->mountPoints();
+
+        //缓存数据盘挂载点,应对数据盘的默认挂载点以更改/date到/deepin/userdata
+        if (blk.data()->idLabel() == "_dde_data"
+                && !mps.empty()
+                && !mps.first().isEmpty()) {
+            DFMGlobal::DataMountRootPath = mps.first();
+        }
+
         if (DFMGlobal::isWayLand() && blks.contains(QRegularExpression("/sd[a-c][1-9]*$"))) {
             qDebug()  << " blDev->drive()"  << blks << blk->drive();
             continue;
@@ -140,8 +151,6 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
                 continue;
         }
 
-        //检查挂载目录下是否存在diskinfo文件
-        QByteArrayList mps = blk->mountPoints();
         if (!mps.empty()) {
             QString mpPath(mps.front());
             if (mpPath.lastIndexOf("/") != (mpPath.length() - 1))
