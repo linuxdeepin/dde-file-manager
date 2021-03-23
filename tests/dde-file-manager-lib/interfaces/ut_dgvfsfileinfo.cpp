@@ -152,20 +152,25 @@ TEST_F(DGvfsFileInfoTest, test_fileinfo_fileIcon)
     TestHelper::runInLoop([](){});
 
     parent->d_func()->needThumbnail = true;
+    {
     stub_ext::StubExt st;
     st.set_lamda(&QIcon::isNull, []{ return false; });
     EXPECT_FALSE(m_fileinfo->fileIcon().isNull());
     TestHelper::runInLoop([](){});
-    st.reset(&QIcon::isNull);
+    }
 
+    {
+    stub_ext::StubExt st;
     st.set_lamda(&DAbstractFileInfo::isActive, []{ return true; });
     parent->d_func()->needThumbnail = true;
     EXPECT_FALSE(m_fileinfo->fileIcon().isNull());
     TestHelper::runInLoop([](){});
-    st.reset(&DAbstractFileInfo::isActive);
+    }
 
     DGvfsFileInfo *info = new DGvfsFileInfo("/tmp/");
     parent->d_func()->needThumbnail = false;
+    {
+    stub_ext::StubExt st;
     st.set_lamda(&QIcon::isNull, []{ return true; });
     st.set_lamda(VADDR(DGvfsFileInfo, isSymLink), []{ return true; });
     st.set_lamda(VADDR(DGvfsFileInfo, symLinkTarget), []{ return DUrl("file:///home"); });
@@ -176,11 +181,10 @@ TEST_F(DGvfsFileInfoTest, test_fileinfo_fileIcon)
     info = new DGvfsFileInfo("file:///home");
     EXPECT_TRUE(info->fileIcon().isNull());
     TestHelper::runInLoop([](){});
-    st.reset(&QIcon::isNull);
-    st.reset(VADDR(DGvfsFileInfo, isSymLink));
-    st.reset(VADDR(DGvfsFileInfo, symLinkTarget));
     delete info;
+    }
 
+    stub_ext::StubExt st;
     st.set_lamda(VADDR(DGvfsFileInfo, isShared), []{ return true; });
     info = new DGvfsFileInfo("/tmp");
     EXPECT_TRUE(info->additionalIcon().isEmpty());
@@ -192,6 +196,4 @@ TEST_F(DGvfsFileInfoTest, test_fileinfo_fileIcon)
     EXPECT_FALSE(info->additionalIcon().isEmpty());
     TestHelper::runInLoop([](){});
     delete info;
-    st.reset(VADDR(DGvfsFileInfo, isShared));
-    st.reset(VADDR(DGvfsFileInfo, isSymLink));
 }

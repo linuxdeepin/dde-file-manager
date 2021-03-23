@@ -208,20 +208,20 @@ TEST_F(TestGvfsMountManager, qVolumeToqDiskInfo)
 
 TEST_F(TestGvfsMountManager, qMountToqDiskinfo)
 {
-//    QMount mount;
-//    mount.setMounted_root_uri("123");
-//    QDiskInfo info = GvfsMountManager::qMountToqDiskinfo(mount);
-//    EXPECT_STREQ(info.id().toStdString().c_str(), mount.mounted_root_uri().toStdString().c_str());
+    QMount mount;
+    mount.setMounted_root_uri("123");
+    QDiskInfo info = GvfsMountManager::qMountToqDiskinfo(mount);
+    EXPECT_STREQ(info.id().toStdString().c_str(), mount.mounted_root_uri().toStdString().c_str());
 
-//    QString(*stub_mounted_root_uri)(void*) = [](void*)->QString{return "smb://";};
-//    stub.set(&QDiskInfo::mounted_root_uri, stub_mounted_root_uri);
-//    info = GvfsMountManager::qMountToqDiskinfo(mount);
-//    stub.reset(&QDiskInfo::mounted_root_uri);
+    QString(*stub_mounted_root_uri)(void*) = [](void*)->QString{return "smb://";};
+    stub.set(&QDiskInfo::mounted_root_uri, stub_mounted_root_uri);
+    info = GvfsMountManager::qMountToqDiskinfo(mount);
+    stub.reset(&QDiskInfo::mounted_root_uri);
 
-//    QString(*stub_iconName)(void*) = [](void*)->QString{return "drive-optical";};
-//    stub.set(&QDiskInfo::iconName, stub_iconName);
-//    info = GvfsMountManager::qMountToqDiskinfo(mount);
-//    stub.reset(&QDiskInfo::iconName);
+    QString(*stub_iconName)(void*) = [](void*)->QString{return "drive-optical";};
+    stub.set(&QDiskInfo::iconName, stub_iconName);
+    info = GvfsMountManager::qMountToqDiskinfo(mount);
+    stub.reset(&QDiskInfo::iconName);
 }
 
 GMount *getMounofDevSr0()
