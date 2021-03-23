@@ -30,6 +30,7 @@
 #include <QApplication>
 #include <ddiskdevice.h>
 #include <QTimer>
+#include <QLabel>
 
 
 using namespace stub_ext;
@@ -1420,6 +1421,10 @@ TEST_F(TestDialogManager, testShowNoPermissionDialog)
     stub_ext::StubExt stub;
     stub.set(VADDR(QDialog, exec), stub_exec);
 
+    void(*stub2_setPixmap)(const QPixmap &) = [](const QPixmap &)->void{};
+    stub_ext::StubExt stub2;
+    stub2.set(VADDR(QLabel, setPixmap), stub2_setPixmap);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showNoPermissionDialog(event));
 }
 
@@ -1436,6 +1441,10 @@ TEST_F(TestDialogManager, testShowNoPermissionDialog2)
     stub_ext::StubExt stub;
     stub.set(VADDR(QDialog, exec), stub_exec);
 
+    void(*stub2_setPixmap)(const QPixmap &) = [](const QPixmap &)->void{};
+    stub_ext::StubExt stub2;
+    stub2.set(VADDR(QLabel, setPixmap), stub2_setPixmap);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showNoPermissionDialog(event));
 }
 
@@ -1450,6 +1459,10 @@ TEST_F(TestDialogManager, testShowNoPermissionDialog3)
     };
     stub_ext::StubExt stub;
     stub.set(VADDR(QDialog, exec), stub_exec);
+
+    void(*stub2_setPixmap)(const QPixmap &) = [](const QPixmap &)->void{};
+    stub_ext::StubExt stub2;
+    stub2.set(VADDR(QLabel, setPixmap), stub2_setPixmap);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showNoPermissionDialog(event));
 }

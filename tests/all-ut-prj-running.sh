@@ -217,8 +217,11 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_THUM
         check_ut_result $? $UT_TYPE_FILE_THUMBNAIL_TOOL
 fi
 
+# aarch64 sw_64 mips64 mips32不支持deepin-anything
+hw_arrch=$(uname -m)
 # 8. 子项目 deepin-anything-server-plugins 单元测试与覆盖率测试
-if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_ANYTHING_SERVER_PLUGINS" ] ; then
+if ([ "$hw_arrch" != "aarch64" ] && [ "$hw_arrch" != "sw_64" ] && [ "$hw_arrch" != "mips64" ] && [ "$hw_arrch" != "mips32" ]) &&
+    ([ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_ANYTHING_SERVER_PLUGINS" ]); then
 	echo $UT_TYPE_ANYTHING_SERVER_PLUGINS "test case is running"
 
         DIR_TEST_DEEPIN_ANYTHING_SERVER_PLUGINS=$UT_TESTS_FOLDER/deepin-anything-server-plugins
