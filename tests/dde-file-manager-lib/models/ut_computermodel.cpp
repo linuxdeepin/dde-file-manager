@@ -47,6 +47,12 @@ public:
     {
         std::cout << "start TestComputerModel\n";
         model = new ComputerModel;
+        typedef int(*fptr)(QDialog*);
+        fptr pQDialogExec = (fptr)(&QDialog::exec);
+        fptr pDDialogExec = (fptr)(&DDialog::exec);
+        int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Accepted;};
+        stl.set(pQDialogExec, stub_DDialog_exec);
+        stl.set(pDDialogExec, stub_DDialog_exec);
     }
 
     void TearDown() override
@@ -57,6 +63,7 @@ public:
 
 public:
     ComputerModel *model;
+    Stub stl;
 };
 } // namespace
 
@@ -109,13 +116,6 @@ TEST_F(TestComputerModel, tstIndex)
 
 TEST_F(TestComputerModel, tstData)
 {
-    Stub stl;
-    typedef int(*fptr)(QDialog*);
-    fptr pQDialogExec = (fptr)(&QDialog::exec);
-    fptr pDDialogExec = (fptr)(&DDialog::exec);
-    int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Accepted;};
-    stl.set(pQDialogExec, stub_DDialog_exec);
-    stl.set(pDDialogExec, stub_DDialog_exec);
     QEventLoop loop;
     QTimer t;
     t.setInterval(2000);
