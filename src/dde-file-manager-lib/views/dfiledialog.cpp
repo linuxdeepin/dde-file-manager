@@ -28,6 +28,7 @@
 #include "dfmeventdispatcher.h"
 #include "dfmsidebar.h"
 #include "dfmaddressbar.h"
+#include "models/masteredmediafileinfo.h"
 #include "views/dstatusbar.h"
 #include "views/filedialogstatusbar.h"
 #include "controllers/vaultcontroller.h"
@@ -201,7 +202,7 @@ QUrl DFileDialog::directoryUrl() const
     }
 
     // 保险箱QUrl->转换为文件QUrl
-    QUrl url = getFileView()->rootUrl();
+    DUrl url = getFileView()->rootUrl();
     QString strPath = url.path();
     QString strScheme = url.scheme();
     if (strScheme == DFMVAULT_SCHEME) {
@@ -210,7 +211,12 @@ QUrl DFileDialog::directoryUrl() const
         urlVault.setPath(strPath);
         return urlVault;
     }
-
+    else if (strScheme == BURN_SCHEME) { // 光盘转文件QUrl
+        MasteredMediaFileInfo mediafileInfo(url);
+        QUrl urlBurn(mediafileInfo.toLocalFile());
+        urlBurn.setScheme(FILE_SCHEME);
+        return urlBurn;
+    }
     return url;
 }
 
