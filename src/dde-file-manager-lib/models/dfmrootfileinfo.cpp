@@ -464,12 +464,12 @@ DUrl DFMRootFileInfo::redirectedFileUrl() const
             DUrl rootUrl = DUrl::fromLocalFile(d->mps.first());
 
             //点击数据盘直接跳转到主目录
-            if (rootUrl == DUrl::fromLocalFile("/data")) {
+            if (rootUrl == DUrl::fromLocalFile(DFMGlobal::DataMountRootPath)) {
                 QString userPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
                 //确认/data目录下是否挂载了home目录
-                QDir dir("/data" + userPath);
+                QDir dir(DFMGlobal::DataMountRootPath + userPath);
                 if (dir.exists())
-                    rootUrl = DUrl::fromLocalFile("/data" + userPath);
+                    rootUrl = DUrl::fromLocalFile(DFMGlobal::DataMountRootPath + userPath);
             }
             return rootUrl;
         }

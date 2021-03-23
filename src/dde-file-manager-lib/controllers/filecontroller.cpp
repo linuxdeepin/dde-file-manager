@@ -136,7 +136,7 @@ public:
         bool currentisgvfs = isgvfs ? true : FileUtils::isGvfsMountFile(path, true);
         QMimeType mimetype;
         bool isdesktop = currentisgvfs ? FileUtils::isDesktopFile(info, mimetype) :
-                         FileUtils::isDesktopFile(info);
+                                         FileUtils::isDesktopFile(info);
         if (isnotsyslink && isdesktop) {
             return DAbstractFileInfoPointer(new DesktopFileInfo(info));
         }
@@ -245,8 +245,8 @@ public:
     DFMAnythingDirIterator(ComDeepinAnythingInterface *u,
                            const QString &path, const QString &k)
         : interface(u)
-            , keyword(k)
-            , dir(path)
+        , keyword(k)
+        , dir(path)
     {
         keyword = DFMRegularExpression::checkWildcardAndToRegularExpression(keyword);
     }
@@ -601,7 +601,7 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPoint
 
     QMimeType mimetype;
     bool isdesktop = currentisgvfs ? FileUtils::isDesktopFile(localFile, mimetype) :
-                     FileUtils::isDesktopFile(localFile);
+                                     FileUtils::isDesktopFile(localFile);
 
     if (isdesktop) {
         QFileInfo info(localFile); // time cost is about 100 ms
@@ -1592,7 +1592,7 @@ bool FileController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &
 
         QUrlQuery query;
         query.addQueryItem("mount_point", devStr);
-//        query.addQueryItem("locate_url", locateUrl);
+        //        query.addQueryItem("locate_url", locateUrl);
         //为防止locateUrl传入QUrl被转码，locateUrl统一保存为base64
         QByteArray ba = locateUrl.toLocal8Bit().toBase64();
         query.addQueryItem("locate_url", ba);
@@ -1784,7 +1784,7 @@ QString FileController::checkDuplicateName(const QString &name) const
     while (file.exists()) {
         num++;
         destUrl = QString("%1/%2 %3").arg(startInfo.absolutePath()).
-                  arg(startInfo.fileName()).arg(num);
+                arg(startInfo.fileName()).arg(num);
         file.setFileName(destUrl);
     }
 
@@ -1888,10 +1888,10 @@ DUrl FileDirIterator::fileUrl() const
 const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
 {
     DAbstractFileInfoPointer newinfo = const_cast<FileDirIterator *>\
-                                       (this)->nextInofCached.value(iterator->fileUrl());
+            (this)->nextInofCached.value(iterator->fileUrl());
     if (newinfo) {
         const_cast<FileDirIterator *>\
-        (this)->nextInofCached.remove(iterator->fileUrl());
+                (this)->nextInofCached.remove(iterator->fileUrl());
         return newinfo;
     }
     return iterator->fileInfo();
@@ -1912,7 +1912,7 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 {
 #ifdef DISABLE_QUICK_SEARCH
     Q_UNUSED(keyword);
-//    return false;
+    //    return false;
 #else // !DISABLE_QUICK_SEARCH
     QString pathForSearching = iterator->url().toLocalFile();
 
@@ -1959,9 +1959,11 @@ bool FileDirIterator::hasSymLinkDir(const QString &path)
         oldPrefix = path;
         newPrefix = info.symLinkTarget();
         realSearchPath.prepend(newPrefix);
-        if (oldPrefix.startsWith("/data") && newPrefix.startsWith("/home")) {
-            realSearchPath.prepend("/data");
-            newPrefix.prepend("/data");
+
+        if (oldPrefix.startsWith(DFMGlobal::DataMountRootPath)
+                && newPrefix.startsWith("/home")) {
+            realSearchPath.prepend(DFMGlobal::DataMountRootPath);
+            newPrefix.prepend(DFMGlobal::DataMountRootPath);
         }
         return true;
     } else {

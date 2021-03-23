@@ -97,8 +97,8 @@ QString PathManager::getSystemPath(QString key)
     }
     QString path = m_systemPathsMap.value(key);
     if(key == "Desktop" || key == "Videos" || key == "Music" ||
-       key == "Pictures" || key == "Documents" || key == "Downloads" ||
-       key == "Trash"){
+            key == "Pictures" || key == "Documents" || key == "Downloads" ||
+            key == "Trash"){
 
         if (!QDir(path).exists()){
             bool flag = QDir::home().mkpath(path);
@@ -119,9 +119,9 @@ QString PathManager::getSystemPathDisplayName(QString key) const
 void cleanPath(QString &path)
 {
     //这里去掉/data的目的 是让通过数据盘路径进入的用户目录下的Docunment,Vedios等文件也可以被翻译
-    if (path.startsWith("/data"))
+    if (path.startsWith(DFMGlobal::DataMountRootPath))
     {
-        path.remove(0, sizeof("/data") - 1);
+        path.remove(0, DFMGlobal::DataMountRootPath.length());
     }
 
     if (path.size() > 1 && path.at(0) == '/' && path.endsWith("/")) {
@@ -180,7 +180,7 @@ QString PathManager::getSystemPathIconNameByPath(QString path)
     if (isSystemPath(path)){
         foreach (QString key, systemPathsMap().keys()) {
             if (systemPathsMap().value(key) == path){
-                 return getSystemPathIconName(key);
+                return getSystemPathIconName(key);
             }
         }
     }
@@ -194,7 +194,12 @@ QString PathManager::getSystemPathIconNameByPath(QString path)
 QStringList PathManager::getSystemDiskAndDataDiskPathGroup()
 {
     const QString &userName = UserShareManager::getCurrentUserName();
-    QStringList group {"/", "/data", QString("/home/%1").arg(userName), QString("/data/home/%1").arg(userName)};
+    QStringList group {
+        QString("/"),
+                DFMGlobal::DataMountRootPath ,
+                QString("/home/%1").arg(userName),
+                DFMGlobal::DataMountRootPath + QString("/home/%1").arg(userName)
+    };
     return group;
 }
 
@@ -207,9 +212,9 @@ QStringList PathManager::getMountRangePathGroup()
     const QString &userName = UserShareManager::getCurrentUserName();
     QStringList ranges {
         QString("/mnt"),
-        QString("/home/%1").arg(userName),
-        QString("/media/%1").arg(userName),
-        QString("/data/home/%1").arg(userName),
+                QString("/home/%1").arg(userName),
+                QString("/media/%1").arg(userName),
+                DFMGlobal::DataMountRootPath + QString("/home/%1").arg(userName),
     };
     return ranges;
 }
@@ -240,8 +245,8 @@ void PathManager::loadSystemPaths()
             m_systemPathsSet << path;
 
         if(key == "Desktop" || key == "Videos" || key == "Music" ||
-           key == "Pictures" || key == "Documents" || key == "Downloads" ||
-           key == "Trash"){
+                key == "Pictures" || key == "Documents" || key == "Downloads" ||
+                key == "Trash"){
             mkPath(path);
         }
     }

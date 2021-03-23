@@ -121,8 +121,8 @@ bool DAnythingMonitorFilterPrivate::whetherFilterThePath(const QByteArray &local
     QString local_file{ QString::fromLocal8Bit(local_path) };
 
     //从数据盘进入主目录的路径在判断之前需要先处理成/home路径
-    if (local_file.startsWith("/data/home/"))
-        local_file.remove(0, sizeof("/data") - 1);
+    if (local_file.startsWith(DFMGlobal::DataMountRootPath + "/home/"))
+        local_file.remove(0, DFMGlobal::DataMountRootPath.length());
 
     bool result{ false };
 
