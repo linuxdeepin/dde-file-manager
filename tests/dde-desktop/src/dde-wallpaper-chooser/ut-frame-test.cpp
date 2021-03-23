@@ -580,7 +580,6 @@ TEST(Frame, test_hideEvent)
     stub_ext::StubExt stu;
     Frame frame(qApp->primaryScreen()->name());
     QHideEvent event;
-    stu.set_lamda(ADDR(DRegionMonitor, unregisterRegion), [](){return;});
     stu.set_lamda(ADDR(ThumbnailManager, instance), [](){return nullptr;});
     stu.set_lamda(ADDR(ThumbnailManager, stop), [](){return;});
 

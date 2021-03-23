@@ -229,6 +229,10 @@ DUrl getMountPointUrllamda(){
     getMountPointUrlnew++;
     return DUrl();
 }
+UDiskDeviceInfoPointer getDeviceByFilePathlamda(const QString &, const bool)
+{
+    return UDiskDeviceInfoPointer(new UDiskDeviceInfo());
+};
 TEST_F(FileJobTest,start_doMoveCopyJob) {
     source.setPath(TestHelper::createTmpFile());
     dst.setPath(TestHelper::createTmpDir());
@@ -259,8 +263,6 @@ TEST_F(FileJobTest,start_doMoveCopyJob) {
 
     bool (*isGvfsMountFilelamda)(const QString &, const bool &) = []
             (const QString &, const bool &){return true;};
-    UDiskDeviceInfoPointer (*getDeviceByFilePathlamda)(const QString &, const bool) = []
-            (const QString &, const bool){return UDiskDeviceInfoPointer(new UDiskDeviceInfo());};
     {
         Stub stl;
         stl.set(ADDR(DialogManager,showDiskSpaceOutOfUsedDialogLater),showDiskSpaceOutOfUsedDialogLaterlamda);
@@ -1538,6 +1540,8 @@ TEST_F(FileJobTest, start_checkDiskSpaceAvailable) {
     dst.setPath(TestHelper::createTmpDir());
     bool (*isGvfsMountFilelamda)(void *,const QString &, const bool &) =
             [](void *,const QString &, const bool &){return true;};
+    bool (*isGvfsMountFilelamda1)(void *,const QString &, const bool &) =
+            [](void *,const QString &, const bool &){return false;};
     {
         StubExt stl;
         stl.set(ADDR(FileUtils,isGvfsMountFile),isGvfsMountFilelamda);
@@ -1545,6 +1549,7 @@ TEST_F(FileJobTest, start_checkDiskSpaceAvailable) {
     } 
     {
         Stub stl;
+        stl.set(ADDR(FileUtils,isGvfsMountFile),isGvfsMountFilelamda1);
         stl.set((qint64 (*)(const DUrlList &, const qint64 &, bool &))(&FileUtils::totalSize),totalSizelamda);
         EXPECT_FALSE(job->checkDiskSpaceAvailable(DUrlList() << source,dst));
     }
@@ -1637,6 +1642,10 @@ TEST_F(FileJobTest, start_canMove_one){
         __uid_t tid = 0;
         return tid;
     };
+    __uid_t (*getuidtmpnomal) (void*) = [](void*){
+        __uid_t tid = 10;
+        return tid;
+    };
     {
         Stub stl;
         stl.set(getuid,getuidtmp);
@@ -1648,6 +1657,7 @@ TEST_F(FileJobTest, start_canMove_one){
     };
     {
         Stub stl;
+        stl.set(getuid,getuidtmpnomal);
         stl.set(ADDR(QFileInfo,ownerId),ownerIdlamda);
         EXPECT_FALSE(job->canMove(source.toLocalFile()));
     }

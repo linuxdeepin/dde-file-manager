@@ -32,12 +32,13 @@
 #include "stub.h"
 #include "stubext.h"
 #include "testhelper.h"
+#include "ddialog.h"
 
 #define private public
 #define protected public
 #include "models/computermodel.h"
 
-
+DWIDGET_USE_NAMESPACE
 namespace {
 class TestComputerModel : public testing::Test
 {
@@ -108,6 +109,13 @@ TEST_F(TestComputerModel, tstIndex)
 
 TEST_F(TestComputerModel, tstData)
 {
+    Stub stl;
+    typedef int(*fptr)(QDialog*);
+    fptr pQDialogExec = (fptr)(&QDialog::exec);
+    fptr pDDialogExec = (fptr)(&DDialog::exec);
+    int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Accepted;};
+    stl.set(pQDialogExec, stub_DDialog_exec);
+    stl.set(pDDialogExec, stub_DDialog_exec);
     QEventLoop loop;
     QTimer t;
     t.setInterval(2000);

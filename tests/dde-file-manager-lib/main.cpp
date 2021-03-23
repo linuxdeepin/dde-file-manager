@@ -33,5 +33,6 @@ int main(int argc, char *argv[])
     ::testing::InitGoogleTest(&argc, argv);
     int ret = RUN_ALL_TESTS();
     qDebug() << "end test cases ..............";
+    QProcess::execute("killall dde-file-manager");
     return ret;
 }

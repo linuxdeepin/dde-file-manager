@@ -313,13 +313,14 @@ TEST_F(TestFilePreviewDialog, testPreviousPage2)
     EXPECT_EQ(m_pTester->m_firstEnterSwitchToPage, true);
 }
 
+void stub_switchToPage(int){
+
+};
+
 TEST_F(TestFilePreviewDialog, testnextPage)
 {
     m_pTester->m_currentPageIndex = -2;
 
-    void(*stub_switchToPage)(int) = [](int){
-
-    };
     Stub stu;
     stu.set(ADDR(FilePreviewDialog, switchToPage), stub_switchToPage);
 
