@@ -1003,7 +1003,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         if (!q->isDesktop)  //紧急修复，由于修复bug#33209添加了一次事件循环的处理，导致桌面的自动排列在删除，恢复文件时显示异常
             qApp->processEvents();
 
-        if (!me) { // 当前窗口被关闭以后，me 指针指向的窗口会马上被析构，后面的流程不需要再走了
+        if (me.isNull()) { // 当前窗口被关闭以后，me 指针指向的窗口会马上被析构，后面的流程不需要再走了
             return;
         }
         mutex.lock();
@@ -1062,7 +1062,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             // todo: 此处引起效率变低，暂时注释
             q->remove(fileUrl);
         }
-        if (!me) {
+        if (me.isNull()) {
             return;
         }
     }

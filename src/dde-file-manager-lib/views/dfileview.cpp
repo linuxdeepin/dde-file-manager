@@ -953,7 +953,7 @@ void DFileView::onRowCountChanged()
 {
     //所有的槽函数必须跑完才能析构
     QPointer<DFileView> me = this;
-    if (!me) {
+    if (me.isNull()) {
         return;
     }
 
@@ -962,15 +962,15 @@ void DFileView::onRowCountChanged()
 #endif
 
     delayUpdateStatusBar();
-    if (!me) {
+    if (me.isNull()) {
         return;
     }
     updateContentLabel();
-    if (!me) {
+    if (me.isNull()) {
         return;
     }
     updateModelActiveIndex();
-    if (!me) {
+    if (me.isNull()) {
         return;
     }
 }

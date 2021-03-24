@@ -863,7 +863,7 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
         //阻塞信号等待当前函数
         const QSignalBlocker blocker(sender());
 
-        if (!item || !item->edit || item->edit->isReadOnly())
+        if (!item->edit || item->edit->isReadOnly())
             return;
 
         //获取之前的文件名称
