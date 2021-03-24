@@ -272,7 +272,11 @@ TEST_F(TestDFileMenuManager, whetherShowTagActions)
     DUrlList urls;
     urls << url;
     bool bShow = m_menuMgr->whetherShowTagActions(urls);
+#ifdef DISABLE_TAG_SUPPORT
+    EXPECT_FALSE(bShow);
+#else
     EXPECT_TRUE(bShow);
+#endif
 }
 
 TEST_F(TestDFileMenuManager, actionTriggered)
