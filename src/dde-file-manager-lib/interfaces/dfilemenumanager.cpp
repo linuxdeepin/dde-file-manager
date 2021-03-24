@@ -494,8 +494,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
 
         }
     }
-    if (menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning))) {
-        QAction *stageAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning));
+    if (QAction *stageAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning))) {
 
         QMap<QString, DUrl> diskUrlsMap;
         QStringList odrv;
@@ -522,14 +521,12 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
             stageAction->setProperty("dest_drive", odrv.front());
             stageAction->setProperty("urlList", DUrl::toStringList(urls));
             connect(stageAction, &QAction::triggered, appController, &AppController::actionStageFileForBurning, Qt::UniqueConnection);
-            DFileMenu *stageMenu = stageAction ? qobject_cast<DFileMenu *>(stageAction->menu()) : Q_NULLPTR;
-            if (stageMenu) {
+            if (DFileMenu *stageMenu = qobject_cast<DFileMenu *>(stageAction->menu())) {
                 stageAction->setMenu(nullptr);
                 delete stageMenu;
             }
         } else {
-            DFileMenu *stageMenu = stageAction ? qobject_cast<DFileMenu *>(stageAction->menu()) : Q_NULLPTR;
-            if (stageMenu) {
+            if (DFileMenu *stageMenu = qobject_cast<DFileMenu *>(stageAction->menu())) {
                 for (auto &devs : odrv) {
                     QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(devs));
                     //右键菜单 发送文件到光驱 选项需要展示光驱目录的displayName

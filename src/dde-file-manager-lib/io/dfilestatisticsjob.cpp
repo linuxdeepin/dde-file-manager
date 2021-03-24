@@ -65,6 +65,7 @@ public:
 
 DFileStatisticsJobPrivate::DFileStatisticsJobPrivate(DFileStatisticsJob *qq)
     : q_ptr(qq)
+    , notifyDataTimer(nullptr)
 {
 
 }
