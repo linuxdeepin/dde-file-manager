@@ -68,6 +68,7 @@
 #include "../dde-wallpaper-chooser/screensavercontrol.h"
 
 #define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
+#define SET_TARGET_URL_FLAG "NOT_NEED_SET_TARGET_IN_DRAG"
 
 std::atomic<bool> CanvasGridView::m_flag{ false };
 QMap<DMD_TYPES, bool> CanvasGridView::virtualEntryExpandState;
@@ -1182,7 +1183,8 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
 {
     if (DFileDragClient::checkMimeData(event->mimeData())) {
         event->acceptProposedAction();
-        setTargetUrlToApp(event->mimeData(), currentUrl());
+        if (!event->mimeData()->hasFormat(SET_TARGET_URL_FLAG))
+            setTargetUrlToApp(event->mimeData(), currentUrl());
         return;
     }
 #ifdef USE_SP2_AUTOARRAGE   //sp3需求改动
@@ -1237,7 +1239,8 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         if (!hoverIndex.isValid()) {
             if (DFileDragClient::checkMimeData(event->mimeData())) {
                 event->acceptProposedAction();
-                setTargetUrlToApp(event->mimeData(), currentUrl());
+                if (!event->mimeData()->hasFormat(SET_TARGET_URL_FLAG))
+                    setTargetUrlToApp(event->mimeData(), currentUrl());
             } else {
                 event->accept();
             }
@@ -1264,7 +1267,8 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
             } else {
                 if (DFileDragClient::checkMimeData(event->mimeData())) {
                     event->acceptProposedAction();
-                    setTargetUrlToApp(event->mimeData(), fileInfo->fileUrl());
+                    if (!event->mimeData()->hasFormat(SET_TARGET_URL_FLAG))
+                        setTargetUrlToApp(event->mimeData(), fileInfo->fileUrl());
                 } else {
                     event->accept();
                 }
@@ -1309,7 +1313,8 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         if (!hoverIndex.isValid()) {
             if (DFileDragClient::checkMimeData(event->mimeData())) {
                 event->acceptProposedAction();
-                setTargetUrlToApp(event->mimeData(), currentUrl());
+                if (!event->mimeData()->hasFormat(SET_TARGET_URL_FLAG))
+                    setTargetUrlToApp(event->mimeData(), currentUrl());
             } else {
                 event->accept();
             }

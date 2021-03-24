@@ -91,6 +91,7 @@ DWIDGET_USE_NAMESPACE
 #define LIST_VIEW_MINIMUM_WIDTH 80
 
 #define DEFAULT_HEADER_SECTION_WIDTH 140
+#define SET_TARGET_URL_FLAG "NOT_NEED_SET_TARGET_IN_DRAG"
 
 class DFileViewPrivate
 {
@@ -1595,8 +1596,13 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 void DFileView::dragEnterEvent(QDragEnterEvent *event)
 {
     if (DFileDragClient::checkMimeData(event->mimeData())) {
+        m_currentTargetUrl.clear();
         event->acceptProposedAction();
-        setTargetUrlToApp(event->mimeData(), rootUrl());
+        //临时解决方案，setTargetUrl只应该在dropEvent中调用，这里检查值是否存在是为了兼容老版本的归档管理器。
+        //新版归档管理器会在mimeData中新增字段用以验证是否是新归档管理器。
+        //来自新版归档管理器的拖拽事件不需要再在drag过程中调用setTargetUrl接口
+        if (!event->mimeData()->hasFormat(SET_TARGET_URL_FLAG))
+            setTargetUrlToApp(event->mimeData(), rootUrl());
         return;
     }
 
@@ -1662,7 +1668,11 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 
             if (DFileDragClient::checkMimeData(event->mimeData())) {
                 event->acceptProposedAction();
-                setTargetUrlToApp(event->mimeData(), fileInfo->fileUrl());
+                //临时解决方案，setTargetUrl只应该在dropEvent中调用，这里检查值是否存在是为了兼容老版本的归档管理器。
+                //新版归档管理器会在mimeData中新增字段用以验证是否是新归档管理器。
+                //来自新版归档管理器的拖拽事件不需要再在drag过程中调用setTargetUrl接口
+                if (!event->mimeData()->hasFormat(SET_TARGET_URL_FLAG))
+                    setTargetUrlToApp(event->mimeData(), fileInfo->fileUrl());
             } else {
                 event->accept();
             }
