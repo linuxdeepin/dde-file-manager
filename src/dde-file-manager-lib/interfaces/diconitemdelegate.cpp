@@ -717,8 +717,8 @@ void DIconItemDelegate::paint(QPainter *painter,
         const QList<QRectF> &lines = drawText(index, nullptr, str, label_rect.adjusted(0, 0, 0, 99999), 0, QBrush(Qt::NoBrush));
         qreal height = boundingRect(lines).height();
 
-        // we don't expend item in dde-fm but expand item on desktop
-        bool shouldExpend = isCanvas;
+        // we don't expend item in dde-fm but expand item on desktop && manager
+        bool shouldExpend = true;
 
         if (shouldExpend && height > label_rect.height()) {
             /// use widget(FileIconItem) show file icon and file name label.
