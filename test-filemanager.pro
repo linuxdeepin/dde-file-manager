@@ -4,10 +4,7 @@ include(./src/common/common.pri)
 
 CONFIG += ordered
 
-isEqual(ARCH, x86_64) | isEqual(ARCH, i686){
-    SUBDIRS += \
-    tests/deepin-anything-server-plugins/test-deepin-anything-server-plugins.pro
-}
+
 SUBDIRS += \
     src/dde-file-manager-lib/dde-file-manager-lib.pro\
     tests/dde-desktop/test-dde-desktop.pro \
@@ -17,3 +14,8 @@ SUBDIRS += \
     tests/dde-file-manager-plugins/test-dde-file-manager-plugins.pro \
     tests/dde-file-manager-lib/test-dde-file-manager-lib.pro \
     tests/dde-file-thumbnail-tool/test-dde-file-thumbnail-tool.pro
+
+isEqual(ARCH, x86_64) | isEqual(ARCH, i686){
+    SUBDIRS += \
+    tests/deepin-anything-server-plugins/test-deepin-anything-server-plugins.pro
+}
