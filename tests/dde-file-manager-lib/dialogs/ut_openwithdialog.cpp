@@ -148,8 +148,7 @@ TEST_F(TestOpenWithDialog, testInit3)
 
 TEST_F(TestOpenWithDialog, testOpenFileByApp)
 {
-    m_pTester->openFileByApp();
-    EXPECT_NE(m_pTester->m_checkedItem, nullptr);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->openFileByApp());
 }
 
 TEST_F(TestOpenWithDialog, testOpenFileByApp2)
