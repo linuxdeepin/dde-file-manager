@@ -1182,6 +1182,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
 void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
 {
     if (DFileDragClient::checkMimeData(event->mimeData())) {
+        m_currentTargetUrl.clear();
         event->acceptProposedAction();
         if (!event->mimeData()->hasFormat(SET_TARGET_URL_FLAG))
             setTargetUrlToApp(event->mimeData(), currentUrl());
