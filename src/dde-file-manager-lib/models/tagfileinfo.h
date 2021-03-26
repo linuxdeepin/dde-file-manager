@@ -44,6 +44,7 @@ public:
     virtual bool canRedirectionFileUrl() const override;
 //    virtual bool columnDefaultVisibleForRole(int role) const override;
 
+    virtual int filesCount() const override;
     QFileDevice::Permissions permissions() const override;
 
     virtual DUrl parentUrl() const override;
