@@ -102,6 +102,25 @@ bool TagFileInfo::canRedirectionFileUrl() const
     return static_cast<bool>(d->proxy);
 }
 
+int TagFileInfo::filesCount() const
+{
+    //Tag数据查询会返回很多无效的Path,需要在计算数量时判断Path是否存在
+    //TODO: 这种做法不是最优解，在文管重构时需要重写Tag数据库相关的读写逻辑，保证返回有效Path
+    QList<QString> files(TagManager::instance()->getFilesThroughTag(fileUrl().tagName()));
+
+    int fileCount = 0;
+    for(const QString& localFilePath : files){
+        DUrl url{ fileUrl() };
+        url.setTaggedFileUrl(localFilePath);
+        DAbstractFileInfoPointer fileInfo{ new TagFileInfo(url) };
+
+        if (fileInfo->exists())
+            ++fileCount;
+    }
+
+    return fileCount;
+}
+
 QFileDevice::Permissions TagFileInfo::permissions() const
 {
     Q_D(const DAbstractFileInfo);
