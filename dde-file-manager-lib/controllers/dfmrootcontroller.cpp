@@ -115,6 +115,10 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
             continue;
         }
 
+        if (blk->hintIgnore()) {
+            qInfo()  << " block device is ignored:"  << blk->path();
+            continue;
+        }
         if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
             continue;
         }
@@ -130,7 +134,7 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
                 loadDiskInfo(jsonPath);
             }
         }
-        if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
+        if (blk->cryptoBackingDevice().length() > 1) {
             continue;
         }
         using namespace DFM_NAMESPACE;
@@ -397,10 +401,15 @@ bool DFMRootFileWatcherPrivate::start()
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 
+        if (blk->hintIgnore()) {
+            qInfo()  << " block device is ignored:"  << blk->path();
+            return ;
+        }
+
         if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
             return;
         }
-        if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
+        if (blk->cryptoBackingDevice().length() > 1) {
             return;
         }
         using namespace DFM_NAMESPACE;
@@ -420,10 +429,15 @@ bool DFMRootFileWatcherPrivate::start()
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(devs));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 
+        if (blk->hintIgnore()) {
+            qInfo()  << " block device is ignored:"  << blk->path();
+            continue;
+        }
+
         if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
             continue;
         }
-        if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
+        if (blk->cryptoBackingDevice().length() > 1) {
             continue;
         }
 
