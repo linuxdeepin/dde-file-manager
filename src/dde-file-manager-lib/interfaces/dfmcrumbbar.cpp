@@ -580,8 +580,10 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
     }
 
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(window());
-    bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
+    if (!wnd)
+        return;
 
+    bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
     menu->addAction(copyIcon, QObject::tr("Copy path"), [ = ]() {
         // 如果为保险箱路径则进行路径转换
         QString virtualUrl(url.toString());

@@ -40,7 +40,7 @@ public:
 
     }
     QWidget *widget() const override{
-        return nullptr;
+        return new QWidget();
     }
     DUrl rootUrl() const override{
         return DUrl();

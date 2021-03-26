@@ -51,11 +51,7 @@ TEST_F(TestTagUtil, test_actualAndFakerName)
 
 TEST_F(TestTagUtil, test_en_skim)
 {
-    char skim_char{'\''};
-    QString baseStr(&skim_char);
-    baseStr += "aaaa";
-    baseStr += baseStr;
-
+    QString baseStr("\'aaaa\'aaaa");
     QString testStr = escaping_en_skim(baseStr);
     EXPECT_NE(testStr, baseStr);
     EXPECT_NE(restore_escaped_en_skim(testStr), testStr);

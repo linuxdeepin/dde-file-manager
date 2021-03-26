@@ -124,7 +124,7 @@ void DStorageInfo::setPath(const QString &path, PathHints hints)
 //            qWarning() << QString::fromLocal8Bit(error->message);
 
             g_error_free(error);
-        } else {
+        } else if (mount) {
             GFile *root_file = g_mount_get_root(mount);
             char *root_path = g_file_get_path(root_file);
 

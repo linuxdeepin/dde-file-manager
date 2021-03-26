@@ -310,7 +310,7 @@ TEST_F(TestFileManagerWindow, tst_onShowRenameBar)
 {
     DUrlList urls;
     urls << DUrl(COMPUTER_ROOT);
-    const DFMUrlListBaseEvent *event = dMakeEventPointer<DFMUrlListBaseEvent>(m_fileManagerWindow, urls).data();
+    auto event = dMakeEventPointer<DFMUrlListBaseEvent>(m_fileManagerWindow, urls);
     m_fileManagerWindow->onShowRenameBar(*event);
 }
 

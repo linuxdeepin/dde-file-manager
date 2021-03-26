@@ -226,7 +226,7 @@ TEST_F(TestDIconItemDelegate, test_initTextLayout)
 TEST_F(TestDIconItemDelegate, test_eventFilter)
 {
     QObject *object = new QObject();
-    QEvent *event = new QEvent(QEvent::KeyPress);
+    QEvent *event = new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
     iconItemDelegate->eventFilter(object, event);
 }
 
