@@ -106,9 +106,9 @@ DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     m_pWidget2 = new QWidget(this);
     QVBoxLayout *play2 = new QVBoxLayout(m_pWidget2);
     play2->setContentsMargins(0, 22, 0, 0);
-    play2->addWidget(m_pWaterProgress);
+    play2->addWidget(m_pWaterProgress, 0, Qt::AlignCenter);
     play2->addSpacing(22);
-    play2->addWidget(m_pTips3);
+    play2->addWidget(m_pTips3, 0, Qt::AlignCenter);
 
     m_pWidget3 = new QWidget(this);
     QVBoxLayout *play3 = new QVBoxLayout(m_pWidget3);

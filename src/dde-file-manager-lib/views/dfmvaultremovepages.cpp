@@ -71,13 +71,12 @@ DFMVaultRemovePages::DFMVaultRemovePages(QWidget *parent)
     m_pInfo->setAlignment(Qt::AlignCenter);
     // 修复bug-41001 提示信息显示不全
     m_pInfo->setWordWrap(true);
-    m_pInfo->setFixedHeight(60);
 
     // 主界面
     QFrame *mainFrame = new QFrame(this);
 
     // 修复bug-41001 提示信息显示不全
-    m_stackedWidget->setFixedHeight(72);
+    m_stackedWidget->setFixedHeight(95);
     m_stackedWidget->addWidget(m_passwordView);
     m_stackedWidget->addWidget(m_recoverykeyView);
     m_stackedWidget->addWidget(m_progressView);
