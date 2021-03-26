@@ -1,0 +1,7 @@
+package-name-doesnt-match-sonames
+package-must-activate-ldconfig-trigger
+shlib-without-versioned-soname
+script-not-executable
+file-without-copyright-information
+no-manual-page
+link-to-shared-library-in-wrong-package
