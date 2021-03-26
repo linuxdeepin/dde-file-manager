@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
     }
 
     // fix "Error mounting location: volume doesn't implement mount” when ope as admin (bug-42653)
-    if (DFMGlobal::isOpenAsAdmin()) {
+    if (DFMGlobal::isRootUser()) {
         handleEnvOfOpenAsAdmin();
     }
 
