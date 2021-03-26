@@ -136,11 +136,11 @@ TEST_F(UserShareManagerTest,can_updateUserShareInfo){
     QFile file1(fileurl.toLocalFile()),file2(fileurl1.toLocalFile());
     QProcess::execute("mkdir /tmp/ut_sharemange_1 /tmp/ut_sharemange_2");
     if(file1.open(QIODevice::WriteOnly )) {
-        file1.write("#VERSION 2\npath=/tmp/ut_sharemange_1\ncomment= \nusershare_acl=S-1-1-0:f\nguest_ok=y\nsharename=ut_share_manager_1",112);
+        file1.write("#VERSION 2\npath=/tmp/ut_sharemange_1\ncomment= \nusershare_acl=S-1-1-0:f\nguest_ok=y\nsharename=ut_share_manager_1");
         file1.close();
     }
     if(file2.open(QIODevice::WriteOnly )) {
-        file2.write("#VERSION 2\npath=/tmp/ut_sharemange_2\ncomment= \nusershare_acl=S-1-1-0:r\nguest_ok=y\nsharename=ut_share_manager_2",112);
+        file2.write("#VERSION 2\npath=/tmp/ut_sharemange_2\ncomment= \nusershare_acl=S-1-1-0:r\nguest_ok=y\nsharename=ut_share_manager_2");
         file2.close();
     }
     sharemanager->m_sharePathToNames.insert("/tmp/ut_sharemange_2",QStringList());

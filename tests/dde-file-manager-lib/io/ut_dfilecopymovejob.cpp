@@ -1085,7 +1085,8 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFile) {
     from.setPath(TestHelper::createTmpFile());
     QFile filefrom(from.toLocalFile());
     if(filefrom.open(QIODevice::WriteOnly)) {
-        filefrom.write("fneninfuefuen",64);
+        QByteArray data(64, 'f');
+        filefrom.write(data);
         filefrom.close();
     }
     Stub stl;
@@ -1353,7 +1354,8 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFileBig) {
     from.setPath(TestHelper::createTmpFile());
     QFile filefrom(from.toLocalFile());
     if(filefrom.open(QIODevice::WriteOnly)) {
-        filefrom.write("fneninfuefuen",10240);
+        QByteArray data(10240, 'f');
+        filefrom.write(data);
         filefrom.close();
     }
     StubExt stl;
@@ -1549,7 +1551,8 @@ TEST_F(DFileCopyMoveJobTest,start_doCopyFileU) {
     DUrl from(DUrl::fromLocalFile(TestHelper::createTmpFile())),to;
     QFile filefrom(from.toLocalFile());
     if(filefrom.open(QIODevice::WriteOnly)) {
-        filefrom.write("fneninfuefuen",10240);
+        QByteArray data(10240, 'f');
+        filefrom.write(data);
         filefrom.close();
     }
     StubExt stl;

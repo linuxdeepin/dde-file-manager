@@ -245,10 +245,9 @@ TEST_F(TestLinkSectionValueLabel, testInit)
 TEST_F(TestLinkSectionValueLabel, testSetOrGetLinkTargetUrl)
 {
     DUrl url("file:///home");
-    const char *strSrc = url.toString().toStdString().c_str();
     m_pTester->setLinkTargetUrl(url);
     DUrl result = m_pTester->linkTargetUrl();
-    EXPECT_STREQ(strSrc, result.toString().toStdString().c_str());
+    EXPECT_EQ(url, result);
 }
 
 TEST_F(TestLinkSectionValueLabel, testMouseReleaseEvent)

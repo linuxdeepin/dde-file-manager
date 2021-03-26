@@ -48,10 +48,7 @@ DFMFactoryLoaderPrivate::DFMFactoryLoaderPrivate()
 
 DFMFactoryLoaderPrivate::~DFMFactoryLoaderPrivate()
 {
-    for (int i = 0; i < pluginLoaderList.count(); ++i) {
-        QPluginLoader *loader = pluginLoaderList.at(i);
-        loader->unload();
-    }
+
 }
 
 DFMFactoryLoader::DFMFactoryLoader(const char *iid,
@@ -212,8 +209,15 @@ void DFMFactoryLoader::update()
 
 DFMFactoryLoader::~DFMFactoryLoader()
 {
+    Q_D(DFMFactoryLoader);
+
     QMutexLocker locker(qt_factoryloader_mutex());
     qt_factory_loaders()->removeAll(this);
+
+    for (int i = 0; i < d->pluginLoaderList.count(); ++i) {
+        QPluginLoader *loader = d->pluginLoaderList.at(i);
+        loader->unload();
+    }
 }
 
 QList<QJsonObject> DFMFactoryLoader::metaData() const

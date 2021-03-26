@@ -114,7 +114,7 @@ TEST_F(TestDListItemDelegate, test_updateItemSizeHint)
 TEST_F(TestDListItemDelegate, test_eventFilter)
 {
     QObject *object = new QObject();
-    QEvent *event = new QEvent(QEvent::KeyPress);
+    QEvent *event = new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
     dlistIdl->eventFilter(object, event);
 }
 
