@@ -19,11 +19,12 @@ public:
     {
         m_dirPathStr = TestHelper::createTmpDir();
         m_filePathStr = TestHelper::createTmpFile(".txt");
+        m_filePathStr2 = TestHelper::createTmpFile("2.txt");
         m_symlinkPathStr = TestHelper::createTmpSymlinkFile(m_filePathStr);
         m_pDirInfo = new DGvfsFileInfo(m_dirPathStr);
         m_pFileInfo = new DGvfsFileInfo(QFileInfo(m_filePathStr));
         m_pSymLinkInfo = new DGvfsFileInfo(QFileInfo(m_symlinkPathStr));
-        m_fileinfo.reset(new DGvfsFileInfo(m_filePathStr));
+        m_fileinfo.reset(new DGvfsFileInfo(m_filePathStr2));
     }
 
     void TearDown() override
@@ -48,6 +49,7 @@ public:
 
 public:
     QString m_filePathStr;
+    QString m_filePathStr2;
     QString m_dirPathStr;
     QString m_symlinkPathStr;
 

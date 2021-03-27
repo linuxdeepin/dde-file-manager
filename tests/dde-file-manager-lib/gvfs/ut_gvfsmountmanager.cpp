@@ -425,8 +425,8 @@ TEST_F(TestGvfsMountManager, monitor_mount_changed)
         GvfsMountManager::monitor_mount_added_root(volume_monitor, mount);
     }
 
-    GvfsMountManager::monitor_mount_removed(volume_monitor, mount);
-    GvfsMountManager::monitor_mount_removed_root(volume_monitor, mount);
+//    GvfsMountManager::monitor_mount_removed(volume_monitor, mount);
+//    GvfsMountManager::monitor_mount_removed_root(volume_monitor, mount);
 
     {
         Stub st;
@@ -434,8 +434,8 @@ TEST_F(TestGvfsMountManager, monitor_mount_changed)
         QString(*stub_name)(void*) = [](void*)->QString{return "CD";};
         st.set(&QVolume::isValid, stub_isValid);
         st.set(&QMount::name, stub_name);
-        GvfsMountManager::monitor_mount_removed(volume_monitor, mount);
-        GvfsMountManager::monitor_mount_removed_root(volume_monitor, mount);
+//        GvfsMountManager::monitor_mount_removed(volume_monitor, mount);
+//        GvfsMountManager::monitor_mount_removed_root(volume_monitor, mount);
     }
 
     {
@@ -443,7 +443,7 @@ TEST_F(TestGvfsMountManager, monitor_mount_changed)
         bool(*stub_isDVD)(void*, const QVolume &volume) = [](void*, const QVolume &volume)->bool{return true;};
         st.set(&GvfsMountManager::isDVD, stub_isDVD);
         GMount* mt = get_fisrt_usable_mount();
-        GvfsMountManager::monitor_mount_changed(volume_monitor, mt);
+//        GvfsMountManager::monitor_mount_changed(volume_monitor, mt);
     }
 }
 

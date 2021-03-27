@@ -47,7 +47,7 @@ TEST_F(TestDFMVaultRemoveProgressView, tst_clear)
 
 TEST_F(TestDFMVaultRemoveProgressView, tst_statisticsFiles)
 {
-    QString homePath = DFMStandardPaths::location(DFMStandardPaths::HomePath);
+    QString homePath = QDir::currentPath();//DFMStandardPaths::location(DFMStandardPaths::HomePath);
     QString path = homePath + "/TestDFMVaultRemoveProgressView/";
     QProcess::execute("mkdir " + path);
 

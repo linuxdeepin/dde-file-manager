@@ -29,10 +29,10 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc,argv);
-    qDebug() << "start test cases ..............";
+    qInfo() << "start test cases ..............";
     ::testing::InitGoogleTest(&argc, argv);
     int ret = RUN_ALL_TESTS();
-    qDebug() << "end test cases ..............";
+    qInfo() << "end test cases ..............";
     QProcess::execute("killall dde-file-manager");
     return ret;
 }

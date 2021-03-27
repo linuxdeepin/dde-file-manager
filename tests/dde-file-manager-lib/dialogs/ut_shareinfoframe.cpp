@@ -39,7 +39,7 @@ namespace  {
     public:
         void SetUp() override
         {
-            QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+            QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
             QFile file(strPath);
             if(!file.exists()){
                 if(file.open(QIODevice::ReadWrite | QIODevice::Text))
@@ -51,10 +51,15 @@ namespace  {
         }
         void TearDown() override
         {
-            QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+            QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
             QFile file(strPath);
             if(file.exists()){
                 file.remove();
+            }
+            QString strPath2 = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt.txt";
+            QFile file2(strPath2);
+            if(file2.exists()){
+                file2.remove();
             }
             delete m_pTester;
             m_pTester = nullptr;
