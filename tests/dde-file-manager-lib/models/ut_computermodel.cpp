@@ -119,7 +119,7 @@ TEST_F(TestComputerModel, tstIndex)
 {
     int row = model->rowCount() - 1;
     auto idx = model->index(row, 0);
-    EXPECT_FALSE(idx.isValid());
+    EXPECT_TRUE(idx.isValid());
 }
 
 TEST_F(TestComputerModel, tstData)

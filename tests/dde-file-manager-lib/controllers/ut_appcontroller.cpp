@@ -36,7 +36,7 @@
 #include "views/dtoolbar.h"
 #include "gvfs/secretmanager.h"
 #include "controllers/appcontroller.h"
-
+#include "interfaces/dumountmanager.h"
 
 DFM_USE_NAMESPACE
 
@@ -121,14 +121,21 @@ namespace  {
             stl.set(ADDR(UDiskListener,mount),mountlamda);
             void (*unmountlamda)(const QString &) = [](const QString &){};
             stl.set(ADDR(UDiskListener,unmount),unmountlamda);
+            void (*unmountlamda2)(const QString &) = [](const QString &){};
+            stl.set(ADDR(DUMountManager, umountBlock), unmountlamda2);
+            void (*unmountlamda3)(const QVariantMap &) = [](const QVariantMap &){};
+            stl.set(ADDR(DBlockDevice, unmount), unmountlamda3);
 
             controller = AppController::instance();
             QString fileName = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
             tempFilePath =  QStandardPaths::standardLocations(QStandardPaths::TempLocation).first() + "/" + fileName;
         }
+
         void TearDown()
         {
             QProcess::execute("rm -f " + tempFilePath);
+            TestHelper::runInLoop([=](){
+            }, 200);
         }
     };
 }

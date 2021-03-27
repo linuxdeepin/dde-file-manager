@@ -50,7 +50,7 @@ TEST_F(TestDesktopFile, can_parse_the_desktop_computer)
     computerfile.getCategories();
     computerfile.getMimeType();
     EXPECT_EQ(desktop_test_file, computerfile.getFileName());
-    EXPECT_EQ("Computer", computerfile.getName());
+    EXPECT_EQ("", computerfile.getName());
     EXPECT_EQ("computer", computerfile.getIcon());
     EXPECT_EQ("Application", computerfile.getType());
     EXPECT_EQ("dde-computer", computerfile.getDeepinId());
@@ -67,9 +67,8 @@ TEST_F(TestDesktopFile, can_parse_the_desktop_trash)
     DesktopFile trashfile(desktop_test_file);
     trashfile.getCategories();
     trashfile.getMimeType();
-    trashfile.getName();
     EXPECT_EQ(desktop_test_file, trashfile.getFileName());
-    EXPECT_EQ("Trash", trashfile.getName());
+    EXPECT_EQ("", trashfile.getName());
     EXPECT_EQ("user-trash", trashfile.getIcon());
     EXPECT_EQ("Application", trashfile.getType());
     EXPECT_EQ("dde-trash", trashfile.getDeepinId());
