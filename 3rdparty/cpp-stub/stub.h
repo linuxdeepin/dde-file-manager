@@ -67,13 +67,13 @@
         *(fn + 10) = 0x41;\
         *(fn + 11) = 0xff;\
         *(fn + 12) = 0xe3;\
-        //CACHEFLUSH((char *)fn, CODESIZE);
+        CACHEFLUSH((char *)fn, CODESIZE);
 
     //5 byte(jmp rel32)
     #define REPLACE_NEAR(t, fn, fn_stub)\
         *fn = 0xE9;\
         *(int *)(fn + 1) = (int)(fn_stub - fn - CODESIZE_MIN);\
-        //CACHEFLUSH((char *)fn, CODESIZE);
+        CACHEFLUSH((char *)fn, CODESIZE);
 #endif
 
 struct func_stub

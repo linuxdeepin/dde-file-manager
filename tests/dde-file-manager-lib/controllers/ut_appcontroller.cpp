@@ -641,7 +641,7 @@ TEST_F(AppControllerTest,start_actionNewFile){
     url = DUrl("dfmroot:///fakeDisk.gvfsmp");
     EXPECT_NO_FATAL_FAILURE(controller->actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
     url = DUrl("dfmroot:///sda1.localdisk");
-    EXPECT_NO_FATAL_FAILURE(controller->actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
+//    EXPECT_NO_FATAL_FAILURE(controller->actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
     url = DUrl("dfmroots:///justQuery");
     url.setQuery("testQuery");
     EXPECT_NO_FATAL_FAILURE(controller->actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));

@@ -328,7 +328,7 @@ void DFMVfsDevicePrivate::GFileUnmountDoneCb(GObject *object, GAsyncResult *res,
     succeeded = g_mount_unmount_with_operation_finish(G_MOUNT(object), res, &error);
 
     if (!succeeded && error) {
-        Q_ASSERT(error->domain == G_IO_ERROR);
+        if (error->domain != G_IO_ERROR) return;
 
         int errorCode = error->code;
         QString errorMsg(error->message);

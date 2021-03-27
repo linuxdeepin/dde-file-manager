@@ -35,6 +35,8 @@
 #include <QFlags>
 #include <QFlag>
 #include <dfiledragclient.h>
+#include <QDialog>
+#include <DDialog>
 #include "stub.h"
 #include "../stub-ext/stubext.h"
 #include "interfaces/diconitemdelegate.h"
@@ -1245,6 +1247,14 @@ TEST_F(DFileViewTest,tst_keyPress_event)
 
 TEST_F(DFileViewTest,tst_show_event)
 {
+    Stub stl;
+    typedef int(*fptr)(QDialog*);
+    fptr pQDialogExec = (fptr)(&QDialog::exec);
+    fptr pDDialogExec = (fptr)(&DDialog::exec);
+    int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Accepted;};
+    stl.set(pQDialogExec, stub_DDialog_exec);
+    stl.set(pDDialogExec, stub_DDialog_exec);
+
     ASSERT_NE(nullptr,m_view);
 
     m_view->show();

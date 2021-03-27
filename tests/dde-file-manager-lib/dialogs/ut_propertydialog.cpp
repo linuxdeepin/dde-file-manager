@@ -264,7 +264,7 @@ namespace  {
         {
             m_pWidget = new QWidget();
             DFMEvent event(DFMEvent::OpenFile, m_pWidget);
-            QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+            QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
             QFile file(strPath);
             if(!file.exists()){
                 if(file.open(QIODevice::ReadWrite | QIODevice::Text))
@@ -276,7 +276,7 @@ namespace  {
         }
         void TearDown() override
         {
-            QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt.txt";
+            QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt.txt";
             QFile file(strPath);
             if(file.exists()){
                 file.remove();
@@ -320,7 +320,7 @@ TEST_F(TestPropertyDialog, testInit2)
 
 TEST_F(TestPropertyDialog, testStartComputerFolderSize)
 {
-    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
 
     void(*stub_start)(const DUrlList &) = [](const DUrlList &){
@@ -345,7 +345,7 @@ TEST_F(TestPropertyDialog, testToggleFileExecutable2)
 TEST_F(TestPropertyDialog, testUpdateInfo)
 {
     m_pTester->updateInfo();
-    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
     QString str = m_pTester->m_url.toString();
     EXPECT_TRUE(str == url.toString());
@@ -377,6 +377,14 @@ TEST_F(TestPropertyDialog, testRenameFile2)
 
 TEST_F(TestPropertyDialog, testShowTextShowFrame)
 {
+    Stub stl;
+    typedef int(*fptr)(QDialog*);
+    fptr pQDialogExec = (fptr)(&QDialog::exec);
+    fptr pDDialogExec = (fptr)(&DDialog::exec);
+    int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Accepted;};
+    stl.set(pQDialogExec, stub_DDialog_exec);
+    stl.set(pDDialogExec, stub_DDialog_exec);
+
     m_pTester->showTextShowFrame();
     QString str = m_pTester->m_edit->toPlainText();
     EXPECT_TRUE(str == "TestPropertyDialog.txt");
@@ -384,6 +392,14 @@ TEST_F(TestPropertyDialog, testShowTextShowFrame)
 
 TEST_F(TestPropertyDialog, testShowTextShowFrame2)
 {
+    Stub stl;
+    typedef int(*fptr)(QDialog*);
+    fptr pQDialogExec = (fptr)(&QDialog::exec);
+    fptr pDDialogExec = (fptr)(&DDialog::exec);
+    int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Accepted;};
+    stl.set(pQDialogExec, stub_DDialog_exec);
+    stl.set(pDDialogExec, stub_DDialog_exec);
+
     m_pTester->m_edit->setPlainText("");
     m_pTester->showTextShowFrame();
     QString str = m_pTester->m_edit->toPlainText();
@@ -392,6 +408,14 @@ TEST_F(TestPropertyDialog, testShowTextShowFrame2)
 
 TEST_F(TestPropertyDialog, testShowTextShowFrame3)
 {
+    Stub stl;
+    typedef int(*fptr)(QDialog*);
+    fptr pQDialogExec = (fptr)(&QDialog::exec);
+    fptr pDDialogExec = (fptr)(&DDialog::exec);
+    int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Accepted;};
+    stl.set(pQDialogExec, stub_DDialog_exec);
+    stl.set(pDDialogExec, stub_DDialog_exec);
+
     m_pTester->m_url = DUrl("file:///home");
     m_pTester->showTextShowFrame();
     QString str = m_pTester->m_edit->toPlainText();
@@ -400,6 +424,14 @@ TEST_F(TestPropertyDialog, testShowTextShowFrame3)
 
 TEST_F(TestPropertyDialog, testShowTextShowFrame4)
 {
+    Stub stl;
+    typedef int(*fptr)(QDialog*);
+    fptr pQDialogExec = (fptr)(&QDialog::exec);
+    fptr pDDialogExec = (fptr)(&DDialog::exec);
+    int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Accepted;};
+    stl.set(pQDialogExec, stub_DDialog_exec);
+    stl.set(pDDialogExec, stub_DDialog_exec);
+
     m_pTester->m_url = DUrl("file:///home");
 
     bool(*stu_renameFile)(const QObject *, const DUrl &, const DUrl &, const bool) = [](const QObject *, const DUrl &, const DUrl &, const bool)->bool{
@@ -415,14 +447,14 @@ TEST_F(TestPropertyDialog, testShowTextShowFrame4)
 
 TEST_F(TestPropertyDialog, testOnChildrenRemoved)
 {
-    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
     m_pTester->onChildrenRemoved(url);
 }
 
 TEST_F(TestPropertyDialog, testOnChildrenRemoved2)
 {
-    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
     m_pTester->m_url = DUrl("usershare:///test1");
     EXPECT_NO_FATAL_FAILURE(m_pTester->onChildrenRemoved(url));
@@ -430,14 +462,14 @@ TEST_F(TestPropertyDialog, testOnChildrenRemoved2)
 
 TEST_F(TestPropertyDialog, testFlickFolderToSidebar)
 {
-    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
     EXPECT_NO_FATAL_FAILURE(m_pTester->flickFolderToSidebar(url));
 }
 
 TEST_F(TestPropertyDialog, testFlickFolderToSidebar2)
 {
-    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
 
     QWidget*(*stub_getWindowById)(quint64) = [](quint64)->QWidget*{
@@ -546,7 +578,7 @@ TEST_F(TestPropertyDialog, testGetDialogHeight)
 
 TEST_F(TestPropertyDialog, testCreateShareInfoFrame)
 {
-    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
     ShareInfoFrame * pframe = m_pTester->createShareInfoFrame(info);
@@ -555,7 +587,7 @@ TEST_F(TestPropertyDialog, testCreateShareInfoFrame)
 
 TEST_F(TestPropertyDialog, testCreateLocalDeviceInfoWidget)
 {
-    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
     QList<QPair<QString, QString> > lst = m_pTester->createLocalDeviceInfoWidget(info);
@@ -571,7 +603,7 @@ TEST_F(TestPropertyDialog, testCreateLocalDeviceInfoWidget2)
 
 TEST_F(TestPropertyDialog, testCreateLocalDeviceInfoWidget3)
 {
-    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
     QList<QPair<QString, QString> > lst = m_pTester->createLocalDeviceInfoWidget(info);
@@ -662,7 +694,7 @@ TEST_F(TestPropertyDialog, testCreateBasicInfoWidget3)
 
 TEST_F(TestPropertyDialog, testCreateAuthorityManagementWidget)
 {
-    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
     QFrame *pframe = m_pTester->createAuthorityManagementWidget(info);
@@ -671,7 +703,7 @@ TEST_F(TestPropertyDialog, testCreateAuthorityManagementWidget)
 
 TEST_F(TestPropertyDialog, testCreateAuthorityManagementWidget2)
 {
-    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
 
@@ -687,7 +719,7 @@ TEST_F(TestPropertyDialog, testCreateAuthorityManagementWidget2)
 
 TEST_F(TestPropertyDialog, testCreateAuthorityManagementWidget3)
 {
-    QString strPath = QDir::homePath() + QDir::separator() + "TestPropertyDialog.txt";
+    QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
 
