@@ -155,7 +155,7 @@ public:
     MenuActionEventHandler *menuEventHandler;
 
     // drop时，记录drag文件的用户是否等于drop文件的用户
-    bool isSameUser {false};
+    bool isSameUser {true};
 
     static QObjectList pluginObjectList;
     static QList<QIcon> getAdditionalIconByPlugins(const DAbstractFileInfoPointer &fileInfo);
