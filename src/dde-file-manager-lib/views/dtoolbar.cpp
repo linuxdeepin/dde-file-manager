@@ -472,7 +472,7 @@ int DToolBar::navStackCount() const
 
 void DToolBar::updateBackForwardButtonsState()
 {
-    if (m_navStack->size() <= 1) {
+    if (!m_navStack || m_navStack->size() <= 1) {
         m_backButton->setEnabled(false);
         m_forwardButton->setEnabled(false);
     } else {
