@@ -53,5 +53,5 @@ TEST_F(DFMUserShareCrumbControllerTest,can_supportedUrl){
 TEST_F(DFMUserShareCrumbControllerTest,can_seprateUrl){
     DUrl url;
     url.setScheme(USERSHARE_SCHEME);
-    EXPECT_TRUE(controller.seprateUrl(url).isEmpty());
+    EXPECT_TRUE(!controller.seprateUrl(url).isEmpty());
 }

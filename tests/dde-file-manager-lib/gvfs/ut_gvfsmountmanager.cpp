@@ -627,6 +627,14 @@ TEST_F(TestGvfsMountManager, eject_mounted)
         return mt;
     });
 
+    stubx.set_lamda(g_mount_unmount_with_operation, [](GMount              *mount,
+                    GMountUnmountFlags   flags,
+                    GMountOperation     *mount_operation,
+                    GCancellable        *cancellable,
+                    GAsyncReadyCallback  callback,
+                    gpointer             user_data){
+           });
+
     stubx.set_lamda(g_mount_eject_with_operation, [](GMount              *mount,
                     GMountUnmountFlags   flags,
                     GMountOperation     *mount_operation,
@@ -875,7 +883,7 @@ TEST_F(TestGvfsMountManager, unmount_done_cb)
     stub.reset(g_mount_unmount_with_operation_finish);
 
     stub_ext::StubExt stubx;
-    user_data = g_malloc(1);
+    user_data = strdup("/test/");
     stubx.set_lamda(g_mount_unmount_with_operation_finish, [](GMount          *mount,
                     GAsyncResult        *result,
                     GError             **error)->bool{return true;});

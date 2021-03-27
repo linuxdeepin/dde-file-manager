@@ -138,9 +138,11 @@ TEST_F(TestMasteredMediaController, tstEventsFuncs)
     e12 = dMakeEventPointer<DFMCreateSymlinkEvent>(nullptr, testUrl, testUrl);
     EXPECT_FALSE(ctrl->createSymlink(e12));
 
+    stext.set_lamda(VADDR(DFileService, touchFile), [](){ return true; });
     auto e13 = dMakeEventPointer<DFMAddToBookmarkEvent>(nullptr, testUrl);
     EXPECT_TRUE(ctrl->addToBookmark(e13));
 
+    stext.set_lamda(VADDR(DFileService, deleteFiles), [](){ return true; });
     auto e14 = dMakeEventPointer<DFMRemoveBookmarkEvent>(nullptr, testUrl);
     EXPECT_TRUE(ctrl->removeBookmark(e14));
 
@@ -232,7 +234,7 @@ TEST_F(TestDFMShadowedDirIterator, tstFuncs)
     EXPECT_FALSE(iter->hasNext());
     EXPECT_TRUE(iter->fileName().isEmpty());
     EXPECT_FALSE(!iter->fileUrl().isValid());
-    EXPECT_FALSE(!iter->fileInfo());
+    EXPECT_FALSE(iter->fileInfo());
     EXPECT_TRUE(!iter->url().isVaultFile());
 
 
