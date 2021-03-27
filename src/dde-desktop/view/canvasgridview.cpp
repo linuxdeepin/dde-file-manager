@@ -1196,6 +1196,13 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
 
 void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
 {
+    // 临时修复bug-67282
+    // 鼠标拖拽文件进文管时，必须拿到是否是跨用户拖拽，方便改变鼠标样式，
+    // 但是此操作比较耗时，会导致残影，所以此处为临时方案。
+    // 已经和qt组沟通了，一旦qt升级为5.15后，此操作不再耗时，残影问题就不再出现了
+    bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
+    d->fileViewHelper->setSameUserValue(sameUser);
+
     // 修复bug-65773
     m_currentTargetUrl.clear();
     if (DFileDragClient::checkMimeData(event->mimeData())) {
