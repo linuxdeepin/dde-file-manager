@@ -1773,6 +1773,13 @@ bool FileUtils::isFileOnDisk(const QString &path)
     g_object_unref(dest_dir_file);
     return isLocal;
 }
+//获取cpu的核个数
+qint32 FileUtils::getCpuProcessCount()
+{
+    static const int cpuProcessCount = sysconf(_SC_NPROCESSORS_CONF) < 4 ?
+                4 : static_cast<int>(sysconf(_SC_NPROCESSORS_CONF));
+    return cpuProcessCount;
+}
 
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
 bool FileUtils::isDesktopFile(const QString &filePath)

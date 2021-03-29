@@ -143,6 +143,8 @@ public:
     static bool isFtpFile(const DUrl &url);
     //判断是否是操作系统同盘的本地文件
     static bool isFileOnDisk(const QString &path);
+    //获取线程cpu核个数
+    static qint32 getCpuProcessCount();
 };
 
 #endif // FILEUTILS_H
