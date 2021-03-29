@@ -195,6 +195,10 @@ public:
     bool checkWritQueueEmpty();
     QSharedPointer<FileCopyInfo> writeQueueDequeue();
     void writeQueueEnqueue(const QSharedPointer<FileCopyInfo> &copyinfo);
+    //错误队列处理
+    void errorQueueHandling();
+    //当前错误队列处理完成
+    void errorQueueHandled();
     /**
      * @brief setCutTrashData    保存剪切回收站文件路径
      * @param fileNameList       文件路径
@@ -207,6 +211,8 @@ public:
     void removeCurrentDevice(const DUrl &url);
     //线程安全移出当前工作的device
     void stopAllDeviceOperation();
+    //清理线程池资源
+    void clearThreadPool();
     //! 剪切回收站文件路径
     QQueue<QString> m_fileNameList;
 
@@ -297,7 +303,7 @@ public:
     QAtomicInteger<bool> m_bSyncQuitState = false;
     QAtomicInteger<bool> m_bDestLocal = false;
     qint64 m_refineCopySize = 0;
-    QMutex m_refineMutex, m_errorMutex;
+    QMutex m_refineMutex;
     QList<DUrl> m_errorUrlList;
     //是否需要显示进度条
     QAtomicInteger<bool> m_isNeedShowProgress = false;
@@ -331,7 +337,12 @@ public:
     static QQueue<DFileCopyMoveJob*> CopyLargeFileOnDiskQueue;
     static QMutex CopyLargeFileOnDiskMutex;
 
+    //多线程拷贝小文件错误处理变量
+    QQueue<Qt::HANDLE> m_errorQueue;
+    QWaitCondition m_errorCondition;
+    QMutex m_errorQueueMutex;
     QMutex m_stopMutex;
+    QMutex m_clearThreadPoolMutex;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
