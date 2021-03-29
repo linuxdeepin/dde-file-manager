@@ -257,7 +257,7 @@ TEST_F(TestTagController, can_removeBookmark)
 
 TEST_F(TestTagController, can_createSymlink)
 {
-    QString symlinkPath = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first() + "/tag_symlink.txt";
+    QString symlinkPath = QDir::currentPath() + "/tag_symlink.txt";
     auto event = dMakeEventPointer<DFMCreateSymlinkEvent>(nullptr, m_tagFileUrl, DUrl::fromLocalFile(symlinkPath));
     EXPECT_TRUE(m_pController->createSymlink(event));
     QProcess::execute("rm -f " + symlinkPath);

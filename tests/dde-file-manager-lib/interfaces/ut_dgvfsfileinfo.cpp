@@ -17,10 +17,15 @@ class DGvfsFileInfoTest : public testing::Test
 public:
     void SetUp() override
     {
-        m_dirPathStr = TestHelper::createTmpDir();
-        m_filePathStr = TestHelper::createTmpFile(".txt");
-        m_filePathStr2 = TestHelper::createTmpFile("2.txt");
-        m_symlinkPathStr = TestHelper::createTmpSymlinkFile(m_filePathStr);
+        QProcess::execute("mkdir " + QDir::currentPath()+"/123");
+        QProcess::execute("touch " + QDir::currentPath()+"/123/1.txt");
+        QProcess::execute("touch " + QDir::currentPath()+"/123/2.txt");
+        QProcess::execute("ln -s "+QDir::currentPath()+"/123/2.txt " +QDir::currentPath()+"/123/22.txt");
+        m_dirPathStr = QDir::currentPath()+"/123";
+        m_filePathStr = QDir::currentPath()+"/123/1.txt";
+        m_filePathStr2 = QDir::currentPath()+"/123/2.txt";
+        m_symlinkPathStr = QDir::currentPath()+"/123/22.txt";
+
         m_pDirInfo = new DGvfsFileInfo(m_dirPathStr);
         m_pFileInfo = new DGvfsFileInfo(QFileInfo(m_filePathStr));
         m_pSymLinkInfo = new DGvfsFileInfo(QFileInfo(m_symlinkPathStr));
@@ -43,8 +48,7 @@ public:
             delete m_pFileInfo;
             m_pFileInfo = nullptr;
         }
-
-        TestHelper::deleteTmpFiles({m_symlinkPathStr, m_filePathStr, m_dirPathStr});
+        QProcess::execute("rm -rf  " + m_dirPathStr);
     }
 
 public:
@@ -151,14 +155,12 @@ TEST_F(DGvfsFileInfoTest, test_fileinfo_fileIcon)
 {
     DFileInfo *parent = static_cast<DFileInfo *>(m_fileinfo.data());
     EXPECT_FALSE(m_fileinfo->fileIcon().isNull());
-    TestHelper::runInLoop([](){});
 
     parent->d_func()->needThumbnail = true;
     {
     stub_ext::StubExt st;
     st.set_lamda(&QIcon::isNull, []{ return false; });
     EXPECT_FALSE(m_fileinfo->fileIcon().isNull());
-    TestHelper::runInLoop([](){});
     }
 
     {
@@ -166,7 +168,6 @@ TEST_F(DGvfsFileInfoTest, test_fileinfo_fileIcon)
     st.set_lamda(&DAbstractFileInfo::isActive, []{ return true; });
     parent->d_func()->needThumbnail = true;
     EXPECT_FALSE(m_fileinfo->fileIcon().isNull());
-    TestHelper::runInLoop([](){});
     }
 
     DGvfsFileInfo *info = new DGvfsFileInfo("/tmp/");
@@ -178,20 +179,19 @@ TEST_F(DGvfsFileInfoTest, test_fileinfo_fileIcon)
     st.set_lamda(VADDR(DGvfsFileInfo, isSymLink), []{ return true; });
     st.set_lamda(VADDR(DGvfsFileInfo, symLinkTarget), []{ return DUrl("file:///home"); });
     EXPECT_TRUE(info->fileIcon().isNull());
-    TestHelper::runInLoop([](){});
 
     EXPECT_TRUE(info_home->fileIcon().isNull());
-    TestHelper::runInLoop([](){});
     }
-
-    stub_ext::StubExt st;
-    st.set_lamda(VADDR(DGvfsFileInfo, isShared), []{ return true; });
-    EXPECT_TRUE(info->additionalIcon().isEmpty());
-    TestHelper::runInLoop([](){});
-
-    st.set_lamda(VADDR(DGvfsFileInfo, isSymLink), []{ return true; });
-    EXPECT_FALSE(info->additionalIcon().isEmpty());
-    TestHelper::runInLoop([](){},5000);
+    {
+        stub_ext::StubExt st;
+        st.set_lamda(VADDR(DGvfsFileInfo, isShared), []{ return true; });
+        EXPECT_TRUE(info->additionalIcon().isEmpty());
+    }
+    {
+        stub_ext::StubExt st;
+        st.set_lamda(VADDR(DGvfsFileInfo, isSymLink), []{ return true; });
+        EXPECT_FALSE(info->additionalIcon().isEmpty());
+    }
     delete info;
     delete info_home;
 }

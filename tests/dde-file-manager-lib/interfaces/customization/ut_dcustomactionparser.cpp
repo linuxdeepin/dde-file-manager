@@ -267,7 +267,9 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser->m_actionEntry.clear();
     m_parser->m_topActionCount = 0;
     m_parser->parseFile(childrenActions, actionSetting5_1, "Menu Action Groupzero", basicInfos, needSort, true);
-    auto expectValue5_1 = (1 == m_parser->m_actionEntry.size()) && ("应用1级" == m_parser->m_actionEntry.first().m_data.m_name);
+    bool expectValue5_1=false;
+    if(!m_parser->m_actionEntry.isEmpty())
+        expectValue5_1 = (1 == m_parser->m_actionEntry.size()) && ("应用1级" == m_parser->m_actionEntry.first().m_data.m_name);
 
     //产品变更，icon暂不考虑
 #if 0
@@ -289,7 +291,9 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
         stub_ext::StubExt stu;
         stu.set_lamda(ADDR(QLocale, name), [](){return "zh_CN";});
         m_parser->parseFile(childrenActions, actionSetting5_1, "Menu Action GroupzeroT", basicInfos, needSort, true);
-        auto expectValue = ("应用1级二" == m_parser->m_actionEntry.first().m_data.m_name);
+        bool expectValue = false;
+        if(!m_parser->m_actionEntry.isEmpty())
+            expectValue=("应用1级二" == m_parser->m_actionEntry.first().m_data.m_name);
         EXPECT_TRUE(expectValue);
 
     }
@@ -303,7 +307,9 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
         stub_ext::StubExt stu;
         stu.set_lamda(ADDR(QLocale, name), [](){return "ko_KR";});
         m_parser->parseFile(childrenActions, actionSetting5_1, "Menu Action GroupzeroT", basicInfos, needSort, true);
-        auto expectValue = ("韩语" == m_parser->m_actionEntry.first().m_data.m_name);
+        bool expectValue = false;
+        if(!m_parser->m_actionEntry.isEmpty())
+            expectValue=("韩语" == m_parser->m_actionEntry.first().m_data.m_name);
         EXPECT_TRUE(expectValue);
 
     }
@@ -317,7 +323,9 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
         stub_ext::StubExt stu;
         stu.set_lamda(ADDR(QLocale, name), [](){return "am_ET";});
         m_parser->parseFile(childrenActions, actionSetting5_1, "Menu Action GroupzeroT", basicInfos, needSort, true);
-        auto expectValue = ("一种语言" == m_parser->m_actionEntry.first().m_data.m_name);
+        bool expectValue = false;
+        if(!m_parser->m_actionEntry.isEmpty())
+            expectValue = ("一种语言" == m_parser->m_actionEntry.first().m_data.m_name);
         EXPECT_TRUE(expectValue);
 
     }
@@ -329,7 +337,9 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser->m_topActionCount = 0;
     //    m_parser->parseFile(childrenActions, actionSetting5_2, "Menu Action Groupzero", basicInfos, true);
     m_parser->parseFile(actionSetting5_2);
-    auto expectValue5_2= 2 == m_parser->m_actionEntry.size();
+    bool expectValue5_2 = false;
+    if(!m_parser->m_actionEntry.isEmpty())
+        expectValue5_2= 2 == m_parser->m_actionEntry.size();
     EXPECT_TRUE(expectValue5_2);
 
 
@@ -343,7 +353,9 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser->m_actionEntry.clear();
     m_parser->m_topActionCount = 0;
     m_parser->parseFile(actionSetting6);
-    auto expectValue6= (1 == m_parser->m_actionEntry.size()) && ("应用1级" == m_parser->m_actionEntry.first().m_data.m_name);
+    bool expectValue6 = false;
+    if(!m_parser->m_actionEntry.isEmpty())
+        expectValue6= (1 == m_parser->m_actionEntry.size()) && ("应用1级" == m_parser->m_actionEntry.first().m_data.m_name);
     EXPECT_TRUE(expectValue6);
 
     //有子级,但是全部子级无动作，连带一级也忽略
@@ -362,7 +374,9 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser->m_actionEntry.clear();
     m_parser->m_topActionCount = 0;
     m_parser->parseFile(actionSetting6_1);
-    auto expectValue6_1 = (1 == m_parser->m_actionEntry.size()) && ("应用1级" == m_parser->m_actionEntry.first().m_data.m_name);
+    bool expectValue6_1 = false;
+    if(!m_parser->m_actionEntry.isEmpty())
+        expectValue6_1 = (1 == m_parser->m_actionEntry.size()) && ("应用1级" == m_parser->m_actionEntry.first().m_data.m_name);
     EXPECT_TRUE(expectValue6_1);
 
     //部分子级有效，一级有效，但是仅有有效子级
@@ -383,7 +397,9 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser->m_actionEntry.clear();
     m_parser->m_topActionCount = 0;
     m_parser->parseFile(actionSetting6_2);
-    auto expectValue6_2 = (2 == m_parser->m_actionEntry.size())
+    bool expectValue6_2 = false;
+    if(!m_parser->m_actionEntry.isEmpty())
+        expectValue6_2 = (2 == m_parser->m_actionEntry.size())
             && ("应用1级二" == m_parser->m_actionEntry.last().m_data.m_name
                 && "应用2级菜单项一" == m_parser->m_actionEntry.last().m_data.m_childrenActions.first().name()
                 && 1 == m_parser->m_actionEntry.last().m_data.m_childrenActions.size());
@@ -399,7 +415,9 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser->m_actionEntry.clear();
     m_parser->m_topActionCount = 0;
     m_parser->parseFile(actionSetting6_3);
-    auto expectValue6_3 = (2 == m_parser->m_actionEntry.size())
+    bool expectValue6_3 = false;
+    if(!m_parser->m_actionEntry.isEmpty())
+        expectValue6_3 = (2 == m_parser->m_actionEntry.size())
             && ("应用1级二" == m_parser->m_actionEntry.last().m_data.m_name
                 && "应用2级菜单项一" == m_parser->m_actionEntry.last().m_data.m_childrenActions.first().name()
                 && "应用2级菜单项二" == m_parser->m_actionEntry.last().m_data.m_childrenActions.last().name());
@@ -414,7 +432,9 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser->m_actionEntry.clear();
     m_parser->m_topActionCount = 0;
     m_parser->parseFile(actionSetting6_4);
-    auto expectValue6_4 = (2 == m_parser->m_actionEntry.size())
+    bool expectValue6_4 = false;
+    if(!m_parser->m_actionEntry.isEmpty())
+        expectValue6_4 = (2 == m_parser->m_actionEntry.size())
             && ("应用1级二" == m_parser->m_actionEntry.last().m_data.m_name
                 && "应用2级菜单项二" == m_parser->m_actionEntry.last().m_data.m_childrenActions.first().name()
                 && "应用2级菜单项一" == m_parser->m_actionEntry.last().m_data.m_childrenActions.last().name());
@@ -439,7 +459,9 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser->m_actionEntry.clear();
     m_parser->m_topActionCount = 0;
     m_parser->parseFile(actionSetting7);
-    auto expectValue7 = (2 == m_parser->m_actionEntry.size())
+    bool expectValue7 = false;
+    if(!m_parser->m_actionEntry.isEmpty())
+        expectValue7 = (2 == m_parser->m_actionEntry.size())
             && ("应用1级二" == m_parser->m_actionEntry.last().m_data.m_name
                 && "应用2级菜单项二" == m_parser->m_actionEntry.last().m_data.m_childrenActions.first().name()
                 && "应用2级菜单项一" == m_parser->m_actionEntry.last().m_data.m_childrenActions.last().name())
@@ -465,7 +487,9 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
     m_parser->m_actionEntry.clear();
     m_parser->m_topActionCount = 0;
     m_parser->parseFile(actionSetting7);
-    auto expectValue8 = (2 == m_parser->m_actionEntry.size())
+    bool expectValue8 = false;
+    if(!m_parser->m_actionEntry.isEmpty())
+        expectValue8 = (2 == m_parser->m_actionEntry.size())
             && ("应用1级二" == m_parser->m_actionEntry.last().m_data.m_name
                 && "应用2级菜单项一" == m_parser->m_actionEntry.last().m_data.m_childrenActions.last().name());
     EXPECT_TRUE(expectValue8);
