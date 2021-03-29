@@ -35,6 +35,7 @@ class CryFsHandle : public QObject
     Q_OBJECT
 public:
     explicit CryFsHandle(QObject *parent = nullptr);
+    ~CryFsHandle();
 
     /**
      * @brief createVault       创建保险箱

@@ -24,15 +24,16 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+#include "stub.h"
+
+#include "dfmstandardpaths.h"
+#include "controllers/vaultcontroller.h"
+#include "vault/vaultconfig.h"
 
 #include <QPixmap>
 #include <QStandardPaths>
-#include "QtTest/QTest"
+#include <QtTest/QTest>
 #include <QTextStream>
-
-#include "controllers/vaultcontroller.h"
-
-#include "stub.h"
 
 #define private public
 #include "operatorcenter.h"
@@ -65,16 +66,16 @@ TEST_F(TestOperatorCenter, createDirAndFile)
 {
     EXPECT_TRUE(m_opCenter->createDirAndFile());
 
-
-    QString(*stubFun)(const QString & before, const QString & behind) = [](const QString & before, const QString & behind)->QString{
-        Q_UNUSED(before)
-        Q_UNUSED(behind)
-        //do nothing.
-        return "";
-    };
-
     Stub stub;
-    stub.set(ADDR(OperatorCenter, makeVaultLocalPath), stubFun);
+    QString (*st_makeVaultLocalPath)(const QString &before, const QString &behind) =
+            [](const QString &before, const QString &behind)->QString {
+        Q_UNUSED(behind)
+        Q_UNUSED(before)
+
+        return DFMStandardPaths::location(DFMStandardPaths::CachePath);
+    };
+    stub.set(ADDR(OperatorCenter, makeVaultLocalPath), st_makeVaultLocalPath);
+
     EXPECT_FALSE(m_opCenter->createDirAndFile());
 }
 
@@ -86,14 +87,22 @@ TEST_F(TestOperatorCenter, saveSaltAndClipher)
     QString pswd("123456");
     QString hint("unit test.");
 
-    void (*st_operator)(void *obj, const QString & str) = [](void *obj, const QString & str) {
-        Q_UNUSED(obj)
-        Q_UNUSED(str)
-        //do nothing.
-    };
-
     Stub stub;
-    stub.set((QTextStream & (QTextStream::*)(const QString &)) ADDR(QTextStream, operator<<), st_operator);
+    QString (*st_makeVaultLocalPath)(const QString &before, const QString &behind) =
+            [](const QString &before, const QString &behind)->QString {
+        Q_UNUSED(behind)
+        Q_UNUSED(before)
+
+        return DFMStandardPaths::location(DFMStandardPaths::CachePath) + "/" + RSA_PUB_KEY_FILE_NAME;
+    };
+    stub.set(ADDR(OperatorCenter, makeVaultLocalPath), st_makeVaultLocalPath);
+
+    void (*st_set)(const QString &, const QString &, QVariant) =
+            [](const QString &, const QString &, QVariant){
+        // do nothing.
+    };
+    stub.set(ADDR(VaultConfig, set), st_set);
+
     EXPECT_TRUE(m_opCenter->saveSaltAndCiphertext(pswd, hint));
 }
 
@@ -105,14 +114,17 @@ TEST_F(TestOperatorCenter, createKey)
     QString pswd("123456");
     QString hint("unit test.");
 
-    void (*st_operator)(void *obj, const QString & str) = [](void *obj, const QString & str) {
-        Q_UNUSED(obj)
-        Q_UNUSED(str)
-        //do nothing.
+    QString (*st_makeVaultLocalPath)(const QString &before, const QString &behind) =
+            [](const QString &before, const QString &behind)->QString {
+        Q_UNUSED(behind)
+        Q_UNUSED(before)
+
+        return DFMStandardPaths::location(DFMStandardPaths::CachePath) + "/" + RSA_PUB_KEY_FILE_NAME;
     };
 
     Stub stub;
-    stub.set((QTextStream & (QTextStream::*)(const QString &)) ADDR(QTextStream, operator<<), st_operator);
+    stub.set(ADDR(OperatorCenter, makeVaultLocalPath), st_makeVaultLocalPath);
+
     EXPECT_TRUE(m_opCenter->createKey(pswd, 0));
     EXPECT_FALSE(m_opCenter->createKey(pswd, 2048));
 }
@@ -136,22 +148,35 @@ TEST_F(TestOperatorCenter, checkUserKey)
     QString cliper("");
     EXPECT_FALSE(m_opCenter->checkUserKey(userKey, cliper));
 
-    userKey.resize(USER_KEY_LENGTH);
-    EXPECT_FALSE(m_opCenter->checkUserKey(userKey, cliper));
-
-    QString(*st_makeVaultLocalPath)(const QString & before, const QString & behind) =
-    [](const QString & before, const QString & behind)->QString{
-        Q_UNUSED(before)
-        Q_UNUSED(behind)
-        //do nothing.
-        return "";
+    QByteArray (*st_readAll)() = []()->QByteArray {
+            static int readOrder = 0;
+            QString ret = "-----BEGIN RSA PUBLIC KEY-----\n"
+                          "MIGJAoGBAMKc0HfUY+s+bygbQqp7Lqjf\n"
+                          "9Ad6rhYD69reQiBAlGPCcR6A6oEUkpLYBDU3OpX25iAcFmni89+92eOfdYvneY9M\n"
+                          "pimc5a1TQwMtRN4Ky7RXZQfm975Uuo8fJrhTxR8esNCw5nXodSS/AgMBAAE=\n"
+                          "-----END RSA PUBLIC KEY-----";
+            if (readOrder) {
+                ret = "rrbe9m+V5241rCMniVcBFsCIC6Nlros8XWbslzpYQPFCTrOuF4ycxmE0QN0jqXtqBSr/7Xuh7"
+                      "LCeOqn7pTQfJUubEUesjtEmfp0rQCvsYeO5JYU0ps4RNDerpA07qvNeEB87PCLOo3g7dkVVdU0XGMyktzadPVJt2RCR/fcZBrs=";
+            }
+            readOrder = 1 - readOrder;
+            std::string str = ret.toStdString();
+            return str.c_str();
     };
-
     Stub stub;
+    stub.set(ADDR(QFile, readAll), st_readAll);
+
+    QString (*st_makeVaultLocalPath)(const QString &before, const QString &behind) =
+            [](const QString &before, const QString &behind)->QString {
+        Q_UNUSED(behind)
+        Q_UNUSED(before)
+
+        return DFMStandardPaths::location(DFMStandardPaths::CachePath) + "/" + RSA_PUB_KEY_FILE_NAME;
+    };
     stub.set(ADDR(OperatorCenter, makeVaultLocalPath), st_makeVaultLocalPath);
-    EXPECT_FALSE(m_opCenter->checkUserKey(userKey, cliper));
 
-
+    userKey = "dHabNHW8QoOrttmsIlVSYq7OiDuuqarL";
+    EXPECT_NO_FATAL_FAILURE(m_opCenter->checkUserKey(userKey, cliper));
 }
 
 /**
