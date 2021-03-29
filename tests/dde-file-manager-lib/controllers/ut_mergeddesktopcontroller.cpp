@@ -130,8 +130,8 @@ TEST_F(TestMergedDesktopController, tstFuncsWithEvents)
     };
     Stub st;
     st.set(ADDR(DFileService, moveToTrash), moveToTrash_stub);
-    QProcess::execute("touch", QStringList() << "/tmp/dde-file-manager-unit-test.txt");
-    auto e7 = dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, DUrlList() << DUrl("file:///tmp/dde-file-manager-unit-test.txt"), true);
+    QProcess::execute("touch", QStringList() << QDir::currentPath()+"/dde-file-manager-unit-test.txt");
+    auto e7 = dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, DUrlList() << DUrl("file://"+QDir::currentPath()+"/dde-file-manager-unit-test.txt"), true);
     EXPECT_FALSE(!ctrl->moveToTrash(e7).isEmpty());
     st.reset(ADDR(DFileService, moveToTrash));
 
@@ -156,10 +156,10 @@ TEST_F(TestMergedDesktopController, tstFuncsWithEvents)
     ctrl->deleteFiles(e10);
     st.reset(ADDR(DFileService, deleteFiles));
 
-    QProcess::execute("touch", QStringList() << "/tmp/dde-file-manager-unit-test.txt");
-    auto e11 = dMakeEventPointer<DFMRenameEvent>(nullptr, DUrl("file:///tmp/dde-file-manager-unit-test.txt"), DUrl("file:///tmp/dde-file-manager-unit-test_new_name.txt"), true);
+    QProcess::execute("touch", QStringList() << QDir::currentPath()+"/dde-file-manager-unit-test.txt");
+    auto e11 = dMakeEventPointer<DFMRenameEvent>(nullptr, DUrl("file://"+QDir::currentPath()+"/dde-file-manager-unit-test.txt"), DUrl("file://"+QDir::currentPath()+"/dde-file-manager-unit-test_new_name.txt"), true);
     EXPECT_TRUE(ctrl->renameFile(e11));
-    QProcess::execute("rm", QStringList() << "/tmp/dde-file-manager-unit-test_new_name.txt");
+    QProcess::execute("rm", QStringList() << QDir::currentPath()+"/dde-file-manager-unit-test_new_name.txt");
 
     auto e13 = dMakeEventPointer<DFMOpenInTerminalEvent>(nullptr, DUrl("file:///home"));
     EXPECT_TRUE(ctrl->openInTerminal(e13));

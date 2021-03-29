@@ -84,7 +84,8 @@ TEST_F(FileJobTest,can_JobIdOperation) {
 }
 
 TEST_F(FileJobTest,start_checkDuplicateName) {
-    source.setPath(TestHelper::createTmpDir());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_checkDuplicateName");
+    source.setPath(QDir::currentPath()+"/start_checkDuplicateName");
     DUrl urldir,urlfile,urlfilecopy;
     urldir = source;
     urlfile = source;
@@ -92,20 +93,18 @@ TEST_F(FileJobTest,start_checkDuplicateName) {
     urldir.setPath(source.toLocalFile()+"(copy)");
     QProcess::execute("mkdir "+urldir.toLocalFile());
     EXPECT_FALSE(job->checkDuplicateName(source.toLocalFile()).isEmpty());
-    urlfile.setPath(TestHelper::createTmpFile());
+    urlfile.setPath(QDir::currentPath()+"/start_checkDuplicateName");
     urlfilecopy.setPath(urlfile.toLocalFile()+"(copy)");
     QProcess::execute("touch "+urlfilecopy.toLocalFile());
     EXPECT_FALSE(job->checkDuplicateName(urlfile.toLocalFile()).isEmpty());
     DUrl urlfiletxt,urlfiletxtcopy;
     urlfiletxt = source;
-    urlfiletxt.setPath("/tmp/zut_filejob_check_oo.txt");
+    urlfiletxt.setPath(QDir::currentPath()+"/start_checkDuplicateName/zut_filejob_check_oo.txt");
     urlfiletxtcopy = source;
-    urlfiletxtcopy.setPath("/tmp/zut_filejob_check_oo(copy).txt");
+    urlfiletxtcopy.setPath(QDir::currentPath()+"/start_checkDuplicateName/zut_filejob_check_oo(copy).txt");
     QProcess::execute(QString("touch "+urlfiletxt.toLocalFile() + QString(" ") + urlfiletxtcopy.toLocalFile()));
     EXPECT_FALSE(job->checkDuplicateName(urlfiletxt.toLocalFile()).isEmpty());
-    TestHelper::deleteTmpFiles(QStringList() << source.toLocalFile() << urldir.toLocalFile()
-                               << urlfile.toLocalFile() << urlfilecopy.toLocalFile()
-                               << urlfiletxt.toLocalFile() << urlfiletxtcopy.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_checkDuplicateName");
 }
 
 TEST_F(FileJobTest,start_ApplyToAllOp) {
@@ -206,17 +205,19 @@ TEST_F(FileJobTest,start_doCopy) {
 }
 
 TEST_F(FileJobTest,start_doMove) {
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_doMove");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_doMove/11.txt");
     source.setPath("/bin");
     DUrl url(source);
-    url.setPath(TestHelper::createTmpFile());
-    dst.setPath(TestHelper::createTmpDir());
+    url.setPath(QDir::currentPath()+"/start_doMove/11.txt");
+    dst.setPath(QDir::currentPath()+"/start_doMove/");
     void (*showNoPermissionDialoglamda)(const DFMUrlListBaseEvent &) = [](const DFMUrlListBaseEvent &){};
     stl.set(ADDR(DialogManager,showNoPermissionDialog),showNoPermissionDialoglamda);
     DUrlList (*doMoveCopyJoblamda)(const DUrlList &, const DUrl &) = []
             (const DUrlList &, const DUrl &){return DUrlList();};
     stl.set(ADDR(FileJob,doMoveCopyJob),doMoveCopyJoblamda);
     EXPECT_TRUE(job->doMove(DUrlList() << source << url, dst).isEmpty());
-    TestHelper::deleteTmpFiles(QStringList() << url.toLocalFile() << dst.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_doMove");
 }
 QString rootPathlamda(){
     return QString("www");
@@ -234,10 +235,12 @@ UDiskDeviceInfoPointer getDeviceByFilePathlamda(const QString &, const bool)
     return UDiskDeviceInfoPointer(new UDiskDeviceInfo());
 };
 TEST_F(FileJobTest,start_doMoveCopyJob) {
-    source.setPath(TestHelper::createTmpFile());
-    dst.setPath(TestHelper::createTmpDir());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_doMoveCopyJob");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_doMoveCopyJob/11.txt");
+    source.setPath(QDir::currentPath()+"/start_doMoveCopyJob/11.txt");
+    dst.setPath(QDir::currentPath()+"/start_doMoveCopyJob");
     DUrl tmpdst(dst),linkurl(source),copydir(dst);
-    tmpdst.setPath("/tmp/unexits_filejob");
+    tmpdst.setPath(QDir::currentPath()+"/start_doMoveCopyJob/unexits_filejob");
     bool (*checkDiskSpaceAvailablelamda)(const DUrlList &, const DUrl &) = []
             (const DUrlList &, const DUrl &){
         return false;
@@ -379,14 +382,14 @@ TEST_F(FileJobTest,start_doMoveCopyJob) {
         EXPECT_FALSE(job->doMoveCopyJob(DUrlList() << DUrl() << source << copydir, dst).isEmpty());
     }
 
-    TestHelper::deleteTmpFiles(QStringList() << linkurl.toLocalFile() << source.toLocalFile() << dst.toLocalFile() <<
-                                dstfileurl.toLocalFile() << copydir.toLocalFile() <<
-                               dstdirurl.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_doMoveCopyJob");
 }
 
 TEST_F(FileJobTest,start_doDelete) {
-    source.setPath(TestHelper::createTmpFile());
-    dst.setPath(TestHelper::createTmpDir());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_doDelete");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_doDelete/11.txt");
+    source.setPath(QDir::currentPath()+"/start_doDelete/11.txt");
+    dst.setPath(QDir::currentPath()+"/start_doDelete");
     job->jobAdded();
     void (*clearlamda)(void*) = [](void *){};
 
@@ -404,7 +407,7 @@ TEST_F(FileJobTest,start_doDelete) {
     stl.set(ADDR(FileJob,deleteDir),deleteDirlamda);
     EXPECT_NO_FATAL_FAILURE(job->doDelete(DUrlList() << DUrl() << source << dst));
 
-    TestHelper::deleteTmpFiles(QStringList() << source.toLocalFile() << dst.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_doDelete");
 }
 
 TEST_F(FileJobTest,start_doMoveToTrash) {
@@ -443,7 +446,9 @@ TEST_F(FileJobTest,start_doMoveToTrash) {
 
 }
 TEST_F(FileJobTest, start_doTrashRestore){
-    source.setPath(TestHelper::createTmpFile());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_doTrashRestore");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_doTrashRestore/11.txt");
+    source.setPath(QDir::currentPath()+"/start_doTrashRestore/11.txt");
     bool (*restoreTrashFilelamda)(const QString &, const QString &) = []
             (const QString &, const QString &){return true;};
     stl.set(ADDR(FileJob,restoreTrashFile),restoreTrashFilelamda);
@@ -733,12 +738,14 @@ qint64 read3lamda(char *, qint64){
 
 TEST_F(FileJobTest, start_copyFile) {
     job->m_isGvfsFileOperationUsed = true;
-    source.setPath(TestHelper::createTmpFile());
-    dst.setPath(TestHelper::createTmpDir());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_copyFile");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_copyFile/11.txt");
+    source.setPath(QDir::currentPath()+"/start_copyFile/11.txt");
+    dst.setPath(QDir::currentPath()+"/start_copyFile");
     QString dstdirpath = dst.toLocalFile();
-    DUrl linkfile(source),fileurl(source);
+    DUrl linkfile(source),fileurl(source),dirurl(source),targetdirurl(dst),targetfile(source);
     linkfile.setPath(source.toLocalFile() + "sys_link");
-    fileurl.setPath(TestHelper::createTmpFile());
+    fileurl.setPath(QDir::currentPath()+"/start_copyFile");
     QProcess::execute("ln -s " + source.toLocalFile() + " " + linkfile.toLocalFile());
     bool (*copyFileByGiolamda)(void *,const QString &, const QString &, bool, QString *) = []
             (void *,const QString &, const QString &, bool, QString *targetFile){
@@ -753,15 +760,18 @@ TEST_F(FileJobTest, start_copyFile) {
             (const QString &, const QString &){return true;};
     stl.set(ADDR(FileJob,checkFat32FileOutof4G),checkFat32FileOutof4Glamda);
     EXPECT_FALSE(job->copyFile(source.toLocalFile(),dst.toLocalFile()));
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_copyFile");
 }
 TEST_F(FileJobTest, start_copyFile_1) {
     job->m_isGvfsFileOperationUsed = true;
-    source.setPath(TestHelper::createTmpFile());
-    dst.setPath(TestHelper::createTmpDir());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_copyFile_1");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_copyFile_1/11.txt");
+    source.setPath(QDir::currentPath()+"/start_copyFile_1/11.txt");
+    dst.setPath(QDir::currentPath()+"/start_copyFile_1");
     QString dstdirpath = dst.toLocalFile();
-    DUrl linkfile(source),fileurl(source);
+    DUrl linkfile(source),fileurl(source),dirurl(source),targetdirurl(dst),targetfile(source);
     linkfile.setPath(source.toLocalFile() + "sys_link");
-    fileurl.setPath(TestHelper::createTmpFile());
+    fileurl.setPath(QDir::currentPath()+"/start_copyFile_1");
     QProcess::execute("ln -s " + source.toLocalFile() + " " + linkfile.toLocalFile());
     bool (*copyFileByGiolamda)(void *,const QString &, const QString &, bool, QString *) = []
             (void *,const QString &, const QString &, bool, QString *targetFile){
@@ -867,8 +877,7 @@ TEST_F(FileJobTest, start_copyFile_1) {
     qDebug() << "copyFile 1" << read2new;
     future.waitForFinished();
 
-    TestHelper::deleteTmpFiles(QStringList() << linkfile.toLocalFile() << dst.toLocalFile()
-                               << source.toLocalFile() << fileurl.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_copyFile_1");
 
 }
 
@@ -891,12 +900,14 @@ TEST_F(FileJobTest, start_showProgress) {
 }
 
 TEST_F(FileJobTest, start_copyFileByGio) {
-    source.setPath(TestHelper::createTmpFile());
-    dst.setPath(TestHelper::createTmpDir());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_copyFileByGio");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_copyFileByGio/11.txt");
+    source.setPath(QDir::currentPath()+"/start_copyFileByGio/11.txt");
+    dst.setPath(QDir::currentPath()+"/start_copyFileByGio");
     QString dstdirpath = dst.toLocalFile();
-    DUrl linkfile(source),fileurl(source);
+    DUrl linkfile(source),fileurl(source),dirurl(source),targetdirurl(dst),targetfile(source);
     linkfile.setPath(source.toLocalFile() + "sys_link");
-    fileurl.setPath(TestHelper::createTmpFile());
+    fileurl.setPath(QDir::currentPath()+"/start_copyFileByGio");
     QProcess::execute("ln -s " + source.toLocalFile() + " " + linkfile.toLocalFile());
 
     bool (*ghostSignallamda)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
@@ -917,17 +928,18 @@ TEST_F(FileJobTest, start_copyFileByGio) {
     stl.set(ADDR(FileJob,checkFat32FileOutof4G),checkFat32FileOutof4Glamda);
     EXPECT_FALSE(job->copyFileByGio(source.toLocalFile(),dstdirpath));
 
-    TestHelper::deleteTmpFiles(QStringList() << linkfile.toLocalFile() << dst.toLocalFile()
-                               << source.toLocalFile() << fileurl.toLocalFile());
+     QProcess::execute("rm -rf " + QDir::currentPath()+"/start_copyFileByGio");
 }
 
 TEST_F(FileJobTest, start_copyFileByGio_1) {
-    source.setPath(TestHelper::createTmpFile());
-    dst.setPath(TestHelper::createTmpDir());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_copyFileByGio_1");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_copyFileByGio_1/11.txt");
+    source.setPath(QDir::currentPath()+"/start_copyFileByGio_1/11.txt");
+    dst.setPath(QDir::currentPath()+"/start_copyFileByGio_1");
     QString dstdirpath = dst.toLocalFile();
-    DUrl linkfile(source),fileurl(source);
+    DUrl linkfile(source),fileurl(source),dirurl(source),targetdirurl(dst),targetfile(source);
     linkfile.setPath(source.toLocalFile() + "sys_link");
-    fileurl.setPath(TestHelper::createTmpFile());
+    fileurl.setPath(QDir::currentPath()+"/start_copyFileByGio_1");
     QProcess::execute("ln -s " + source.toLocalFile() + " " + linkfile.toLocalFile());
 
     bool (*ghostSignallamda)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
@@ -1053,17 +1065,21 @@ TEST_F(FileJobTest, start_copyFileByGio_1) {
     future.waitForFinished();
     future1.waitForFinished();
 
-    TestHelper::deleteTmpFiles(QStringList() << linkfile.toLocalFile() << dst.toLocalFile()
-                               << source.toLocalFile() << fileurl.toLocalFile());
+   QProcess::execute("rm -rf " + QDir::currentPath()+"/start_copyFileByGio_1");
 }
 
 TEST_F(FileJobTest, start_copyDir) {
-    source.setPath(TestHelper::createTmpFile());
-    dst.setPath(TestHelper::createTmpDir());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_copyDir");
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_copyDir/2");
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_copyDir/11");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_copyDir/11/11.txt");
+    DUrl copyurl = DUrl::fromLocalFile(QDir::currentPath()+"/start_copyDir/11");
+    source.setPath(QDir::currentPath()+"/start_copyDir/11/11.txt");
+    dst.setPath(QDir::currentPath()+"/start_copyDir/2");
     QString dstdirpath = dst.toLocalFile();
-    DUrl linkfile(source),fileurl(source);
+    DUrl linkfile(source),fileurl(source),dirurl(source),targetdirurl(dst),targetfile(source);
     linkfile.setPath(source.toLocalFile() + "sys_link");
-    fileurl.setPath(TestHelper::createTmpFile());
+    fileurl.setPath(QDir::currentPath()+"/start_copyDir");
     QProcess::execute("ln -s " + source.toLocalFile() + " " + linkfile.toLocalFile());
 
     bool (*copyFilelamda)(const QString &, const QString &,bool, QString *) = []
@@ -1083,16 +1099,16 @@ TEST_F(FileJobTest, start_copyDir) {
     {
         Stub stl;
         stl.set(ADDR(DUrl,childrenList),childrenList);
-        EXPECT_FALSE(job->copyDir(source.toLocalFile(),"/tmp",false,&targetpaht));
+        EXPECT_FALSE(job->copyDir(dst.toLocalFile(),QDir::currentPath()+"/start_copyDir",false,&targetpaht));
     }
 
     job->m_isAborted = true;
-    EXPECT_FALSE(job->copyDir(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+    EXPECT_FALSE(job->copyDir(copyurl.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
 
     job->m_isAborted = false;
     job->m_applyToAll = true;
     job->m_status = FileJob::Cancelled;
-    EXPECT_FALSE(job->copyDir(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+    EXPECT_FALSE(job->copyDir(copyurl.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
 
     job->m_applyToAll = false;
     job->m_skipandApplyToAll = false;
@@ -1100,7 +1116,7 @@ TEST_F(FileJobTest, start_copyDir) {
     void (*jobConflictedlamda)(void *) = [](void *){};
     stl.set(ADDR(FileJob,jobConflicted),jobConflictedlamda);
     job->m_isSkip = true;
-    EXPECT_TRUE(job->copyDir(source.toLocalFile(),dst.toLocalFile()));
+    EXPECT_TRUE(job->copyDir(copyurl.toLocalFile(),dst.toLocalFile()));
 
     job->m_isSkip = false;
     job->m_isCoExisted = true;
@@ -1115,7 +1131,7 @@ TEST_F(FileJobTest, start_copyDir) {
     {
         Stub stl;
         stl.set(ADDR(FileJob,checkDuplicateName),checkDuplicateNamelamda);
-        EXPECT_FALSE(job->copyDir(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+        EXPECT_FALSE(job->copyDir(copyurl.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
     }
 
     job->m_isCoExisted = false;
@@ -1123,7 +1139,7 @@ TEST_F(FileJobTest, start_copyDir) {
     {
         Stub stl;
         stl.set(ADDR(FileJob,checkDuplicateName),checkDuplicateNamelamda);
-        EXPECT_FALSE(job->copyDir(source.toLocalFile(),linkfile.toLocalFile(),false,&targetpaht));
+        EXPECT_FALSE(job->copyDir(copyurl.toLocalFile(),linkfile.toLocalFile(),false,&targetpaht));
     }
 
     job->m_isCoExisted = false;
@@ -1132,7 +1148,7 @@ TEST_F(FileJobTest, start_copyDir) {
     {
         Stub stl;
         stl.set(ADDR(FileJob,checkDuplicateName),checkDuplicateNamelamda);
-        EXPECT_FALSE(job->copyDir(source.toLocalFile(),fileurl.toLocalFile(),false,&targetpaht));
+        EXPECT_FALSE(job->copyDir(copyurl.toLocalFile(),fileurl.toLocalFile(),false,&targetpaht));
     }
 
     job->m_isCoExisted = false;
@@ -1143,7 +1159,7 @@ TEST_F(FileJobTest, start_copyDir) {
         Stub stl;
         stl.set(ADDR(FileJob,checkDuplicateName),checkDuplicateNamelamda);
         stl.set(ADDR(QDir,mkdir),mkdirlamda);
-        EXPECT_FALSE(job->copyDir(source.toLocalFile(),"/tmp/ut_copydir_filejob",false,&targetpaht));
+        EXPECT_FALSE(job->copyDir(copyurl.toLocalFile(),QDir::currentPath()+"/start_copyDir/ut_copydir_filejob",false,&targetpaht));
     }
 
     char *(*savedir1lamda)(char const *) = [](char const *){
@@ -1152,18 +1168,16 @@ TEST_F(FileJobTest, start_copyDir) {
     {
         Stub stl;
         stl.set(savedir,savedir1lamda);
-        EXPECT_FALSE(job->copyDir(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+        EXPECT_FALSE(job->copyDir(copyurl.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
     }
-    EXPECT_FALSE(job->copyDir(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+    EXPECT_FALSE(job->copyDir(copyurl.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
 
     bool (*handleSymlinkFilelamda)(const QString &, const QString &, QString *) = []
             (const QString &, const QString &, QString *){return false;};
     stl.set(ADDR(FileJob,handleSymlinkFile),handleSymlinkFilelamda);
     EXPECT_FALSE(job->copyDir(linkfile.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
 
-    TestHelper::deleteTmpFiles(QStringList() << linkfile.toLocalFile() << dst.toLocalFile()
-                               << source.toLocalFile() << fileurl.toLocalFile() <<
-                               dst.toLocalFile()+"(copy)" << source.toLocalFile()+"(copy)");
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_copyDir");
 }
 
 TEST_F(FileJobTest, start_moveFile) {
@@ -1173,18 +1187,20 @@ TEST_F(FileJobTest, start_moveFile) {
     EXPECT_FALSE(job->moveFile("",""));
 }
 TEST_F(FileJobTest, start_moveFileByGio) {
-    source.setPath(TestHelper::createTmpFile());
-    dst.setPath(TestHelper::createTmpDir());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_moveFileByGio");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_moveFileByGio/11.txt");
+    source.setPath(QDir::currentPath()+"/start_moveFileByGio/11.txt");
+    dst.setPath(QDir::currentPath()+"/start_moveFileByGio");
     QString dstdirpath = dst.toLocalFile();
-    DUrl linkfile(source),fileurl(source),dirurl(source),targetdirurl(dst);
+    DUrl linkfile(source),fileurl(source),dirurl(source),targetdirurl(dst),targetfile(source);
     linkfile.setPath(source.toLocalFile() + "sys_link");
-    fileurl.setPath(TestHelper::createTmpFile());
-    dirurl.setPath("/tmp/ut_jobfile_moveFileByGio");
+    fileurl.setPath(QDir::currentPath()+"/start_moveFileByGio");
+    dirurl.setPath(QDir::currentPath()+"/ut_jobfile_moveFileByGio");
     targetdirurl.setPath(dst.toLocalFile() + "/" + dst.fileName());
     QProcess::execute("mkdir " + dirurl.toLocalFile() + " " + targetdirurl.toLocalFile());
     QProcess::execute("ln -s " + source.toLocalFile() + " " + linkfile.toLocalFile());
     DUrlList (*childrenListlamda)(const DUrl &) = [](const DUrl &){
-        return DUrlList() << DUrl("file:///tmp/ut_jobfile_moveFileByGio");
+        return DUrlList() << DUrl("file://"+QDir::currentPath()+"/ut_jobfile_moveFileByGio");
     };
     stl.set(ADDR(DUrl,childrenList),childrenListlamda);
     bool (*ghostSignallamda)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
@@ -1211,7 +1227,7 @@ TEST_F(FileJobTest, start_moveFileByGio) {
     void (*showCopyMoveToSelfDialoglamda)(const QMap<QString, QString> &) = []
             (const QMap<QString, QString> &){};
     stl.set(ADDR(DialogManager,showCopyMoveToSelfDialog),showCopyMoveToSelfDialoglamda);
-    EXPECT_TRUE(job->moveFileByGio(dst.toLocalFile(),"/tmp/ut_jobfile_moveFileByGio"));
+    EXPECT_TRUE(job->moveFileByGio(dst.toLocalFile(),"file://"+QDir::currentPath()+"/ut_jobfile_moveFileByGio"));
 
     job->m_isAborted = true;
     EXPECT_FALSE(job->moveFileByGio(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
@@ -1289,9 +1305,7 @@ TEST_F(FileJobTest, start_moveFileByGio) {
     stl.set(g_file_move,g_file_move3lamda);
     EXPECT_TRUE(job->moveFileByGio(source.toLocalFile(),dst.toLocalFile(),&targetpath));
 
-    TestHelper::deleteTmpFiles(QStringList() << linkfile.toLocalFile() << dst.toLocalFile()
-                               << source.toLocalFile() << fileurl.toLocalFile() <<
-                               dirurl.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_moveFileByGio");
 }
 
 TEST_F(FileJobTest, start_moveDir) {
@@ -1302,20 +1316,22 @@ TEST_F(FileJobTest, start_moveDir) {
 }
 
 TEST_F(FileJobTest, start_handleMoveJob) {
-    source.setPath(TestHelper::createTmpFile());
-    dst.setPath(TestHelper::createTmpDir());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_handleMoveJob");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_handleMoveJob/11.txt");
+    source.setPath(QDir::currentPath()+"/start_handleMoveJob/11.txt");
+    dst.setPath(QDir::currentPath()+"/start_handleMoveJob");
     QString dstdirpath = dst.toLocalFile();
     DUrl linkfile(source),fileurl(source),dirurl(source),targetdirurl(dst),targetfile(source);
     linkfile.setPath(source.toLocalFile() + "sys_link");
-    fileurl.setPath(TestHelper::createTmpFile());
-    dirurl.setPath("/tmp/ut_jobfile_moveFileByGio");
+    fileurl.setPath(QDir::currentPath()+"/start_handleMoveJob");
+    dirurl.setPath( QDir::currentPath()+"/start_handleMoveJob/ut_jobfile_moveFileByGio");
     targetfile.setPath(dst.toLocalFile() + "/jfieit.txt");
     targetdirurl.setPath(dst.toLocalFile() + "/" + dst.fileName());
     QProcess::execute("touch " + targetfile.toLocalFile());
     QProcess::execute("mkdir " + dirurl.toLocalFile() + " " + targetdirurl.toLocalFile());
     QProcess::execute("ln -s " + source.toLocalFile() + " " + linkfile.toLocalFile());
     DUrlList (*childrenListlamda)(const DUrl &) = [](const DUrl &){
-        return DUrlList() << DUrl("file:///tmp/ut_jobfile_moveFileByGio");
+        return DUrlList() << DUrl("file://"+QDir::currentPath()+"/start_handleMoveJob/ut_jobfile_moveFileByGio");
     };
 
     bool (*ghostSignallamda)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
@@ -1344,7 +1360,7 @@ TEST_F(FileJobTest, start_handleMoveJob) {
     {
         Stub stl;
         stl.set(ADDR(DUrl,childrenList),childrenListlamda);
-        EXPECT_TRUE(job->handleMoveJob(dst.toLocalFile(),"/tmp/ut_jobfile_moveFileByGio"));
+        EXPECT_TRUE(job->handleMoveJob(dst.toLocalFile(),QDir::currentPath()+"/start_handleMoveJob/ut_jobfile_moveFileByGio"));
     }
 
     job->m_isAborted = true;
@@ -1420,15 +1436,15 @@ TEST_F(FileJobTest, start_handleMoveJob) {
 
     EXPECT_FALSE(job->handleMoveJob(dst.toLocalFile(),dst.toLocalFile(),&targetpath));
 
-    TestHelper::deleteTmpFiles(QStringList() << linkfile.toLocalFile() << dst.toLocalFile()
-                               << source.toLocalFile() << fileurl.toLocalFile() <<
-                               dirurl.toLocalFile() << tmpfile.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_handleMoveJob");
 }
 
 TEST_F(FileJobTest, start_handleSymlinkFile) {
     job->m_isAborted = true;
     EXPECT_FALSE(job->handleSymlinkFile("",""));
-    source.setPath(TestHelper::createTmpFile());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_handleSymlinkFile");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_handleSymlinkFile/11.txt");
+    source.setPath(QDir::currentPath()+"/start_handleSymlinkFile");
     job->m_isAborted = false;
     dst.setPath(source.toLocalFile()+"_sys_link");
     job->m_applyToAll = false;
@@ -1471,15 +1487,16 @@ TEST_F(FileJobTest, start_handleSymlinkFile) {
     EXPECT_FALSE(job->handleSymlinkFile(source.toLocalFile(),tmplink.toLocalFile(),&target));
     future.waitForFinished();
 
-    TestHelper::deleteTmpFiles(QStringList() << dst.toLocalFile() << tmplink.toLocalFile()
-                               << source.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_handleSymlinkFile");
 }
 
 TEST_F(FileJobTest, start_restoreTrashFile) {
     void (*jobConflictedlamda)(void *) = [](void *){};
     stl.set(ADDR(FileJob,jobConflicted),jobConflictedlamda);
-    source.setPath(TestHelper::createTmpFile());
-    dst.setPath(TestHelper::createTmpFile());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_restoreTrashFile");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_restoreTrashFile/11.txt");
+    source.setPath(QDir::currentPath()+"/start_restoreTrashFile/11.txt");
+    dst.setPath(QDir::currentPath()+"/start_restoreTrashFile/11.txt");
 
     job->m_isAborted = true;
     job->m_isSkip = true;
@@ -1503,22 +1520,25 @@ TEST_F(FileJobTest, start_restoreTrashFile) {
 
     EXPECT_FALSE(job->restoreTrashFile("/tmp/ut_testtttt_rest",dst.toLocalFile()));
 
-    TestHelper::deleteTmpFiles(QStringList() << "/tmp/ut_testtttt_rest" << dst.toLocalFile()
-                               << source.toLocalFile() << tmpdir );
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_restoreTrashFile");
 }
 TEST_F(FileJobTest, start_deleteFile) {
-    source.setPath(TestHelper::createTmpFile());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_deleteFile");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_deleteFile/11.txt");
+    source.setPath(QDir::currentPath()+"/start_deleteFile/11.txt");
     TestHelper::deleteTmpFiles(QStringList() << source.toLocalFile() );
     EXPECT_FALSE(job->deleteFile(source.toLocalFile()));
     EXPECT_FALSE(job->deleteFile(source.toLocalFile()));
-    TestHelper::deleteTmpFile(source.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_deleteFile");
 }
 
 TEST_F(FileJobTest, start_deleteFileByGio) {
-    source.setPath(TestHelper::createTmpFile());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_deleteFileByGio");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_deleteFileByGio/11.txt");
+    source.setPath(QDir::currentPath()+"/start_deleteFileByGio/11.txt");
     EXPECT_TRUE(job->deleteFileByGio(source.toLocalFile()));
     EXPECT_FALSE(job->deleteFileByGio(source.toLocalFile()));
-    TestHelper::deleteTmpFile(source.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_deleteFileByGio");
 }
 
 TEST_F(FileJobTest, start_) {
@@ -1536,8 +1556,10 @@ qint64 totalSizelamda(const DUrlList &, const qint64 &, bool &isInLimit){
     return oo;
 };
 TEST_F(FileJobTest, start_checkDiskSpaceAvailable) {
-    source.setPath(TestHelper::createTmpFile());
-    dst.setPath(TestHelper::createTmpDir());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_checkDiskSpaceAvailable");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_checkDiskSpaceAvailable/11.txt");
+    source.setPath(QDir::currentPath()+"/start_checkDiskSpaceAvailable/11.txt");
+    dst.setPath(QDir::currentPath()+"/start_checkDiskSpaceAvailable");
     bool (*isGvfsMountFilelamda)(void *,const QString &, const bool &) =
             [](void *,const QString &, const bool &){return true;};
     bool (*isGvfsMountFilelamda1)(void *,const QString &, const bool &) =
@@ -1546,23 +1568,25 @@ TEST_F(FileJobTest, start_checkDiskSpaceAvailable) {
         StubExt stl;
         stl.set(ADDR(FileUtils,isGvfsMountFile),isGvfsMountFilelamda);
         EXPECT_TRUE(job->checkDiskSpaceAvailable(DUrlList() << source,dst));
-    } 
+    }
     {
         Stub stl;
         stl.set(ADDR(FileUtils,isGvfsMountFile),isGvfsMountFilelamda1);
         stl.set((qint64 (*)(const DUrlList &, const qint64 &, bool &))(&FileUtils::totalSize),totalSizelamda);
         EXPECT_FALSE(job->checkDiskSpaceAvailable(DUrlList() << source,dst));
     }
-    TestHelper::deleteTmpFiles(QStringList() << source.toLocalFile() << dst.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_checkDiskSpaceAvailable");
 }
 
 TEST_F(FileJobTest, start_checkTrashFileOutOf1GB) {
-    source.setPath(TestHelper::createTmpFile());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_checkTrashFileOutOf1GB");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_checkTrashFileOutOf1GB/11.txt");
+    source.setPath(QDir::currentPath()+"/start_checkTrashFileOutOf1GB/11.txt");
     dst.setPath(source.parentUrl().toLocalFile()+"/syslink_tmp");
     QProcess::execute("ln -s " + source.toLocalFile() + " " + dst.toLocalFile());
     EXPECT_TRUE(job->checkTrashFileOutOf1GB(dst));
     EXPECT_TRUE(job->checkTrashFileOutOf1GB(source));
-    TestHelper::deleteTmpFiles(QStringList() << dst.toLocalFile() << source.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_checkTrashFileOutOf1GB");
 }
 
 UDiskDeviceInfoPointer getDeviceByPathlamda(void *,const QString &){
@@ -1570,8 +1594,10 @@ UDiskDeviceInfoPointer getDeviceByPathlamda(void *,const QString &){
 };
 
 TEST_F(FileJobTest, start_checkFat32FileOutof4G) {
-    source.setPath(TestHelper::createTmpFile());
-    dst.setPath(TestHelper::createTmpDir());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_checkFat32FileOutof4G");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_checkFat32FileOutof4G/11.txt");
+    source.setPath(QDir::currentPath()+"/start_checkFat32FileOutof4G/11.txt");
+    dst.setPath(QDir::currentPath()+"/start_checkFat32FileOutof4G");
 
     void (*show4gFat32Dialoglamda)(void *) = [](void *){};
     qint64 (*sizelamda)(void*) = [](void *){
@@ -1603,7 +1629,7 @@ TEST_F(FileJobTest, start_checkFat32FileOutof4G) {
         stl.set(ADDR(DBlockDevice,idType),idTypelamda);
         EXPECT_TRUE(job->checkFat32FileOutof4G(source.toLocalFile(),dst.toLocalFile()));
     }
-    TestHelper::deleteTmpFiles(QStringList() << dst.toLocalFile() << source.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_checkFat32FileOutof4G");
 }
 
 TEST_F(FileJobTest, start_getXorrisoErrorMsg){
@@ -1625,7 +1651,9 @@ TEST_F(FileJobTest, start_getXorrisoErrorMsg){
 }
 
 TEST_F(FileJobTest, start_canMove){
-    source.setPath(TestHelper::createTmpFile());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_canMove");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_canMove/11.txt");
+    source.setPath(QDir::currentPath()+"/start_canMove/11.txt");
     bool (*isVaultFilelamda)(QString) = [](QString){return true;};
     stl.set(ADDR(VaultController,isVaultFile),isVaultFilelamda);
     QFileDevice::Permissions (*getPermissionslamda)(QString) = [](QString){
@@ -1634,10 +1662,12 @@ TEST_F(FileJobTest, start_canMove){
     };
     stl.set(ADDR(VaultController,getPermissions),getPermissionslamda);
     EXPECT_FALSE(job->canMove(source.toLocalFile()));
-    TestHelper::deleteTmpFiles(QStringList() << dst.toLocalFile() << source.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_canMove");
 }
 TEST_F(FileJobTest, start_canMove_one){
-    source.setPath(TestHelper::createTmpFile());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_canMove_one");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_canMove_one/11.txt");
+    source.setPath(QDir::currentPath()+"/start_canMove_one/11.txt");
     __uid_t (*getuidtmp) (void*) = [](void*){
         __uid_t tid = 0;
         return tid;
@@ -1661,7 +1691,7 @@ TEST_F(FileJobTest, start_canMove_one){
         stl.set(ADDR(QFileInfo,ownerId),ownerIdlamda);
         EXPECT_FALSE(job->canMove(source.toLocalFile()));
     }
-    TestHelper::deleteTmpFiles(QStringList() << dst.toLocalFile() << source.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_canMove_one");
 }
 
 TEST_F(FileJobTest, start_writeTrashInfo){
@@ -1717,17 +1747,19 @@ TEST_F(FileJobTest, start_moveDirToTrash){
 }
 
 TEST_F(FileJobTest, start_deleteEmptyDir){
-    source.setPath(TestHelper::createTmpDir());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_deleteEmptyDir");
+    source.setPath(QDir::currentPath()+"/start_deleteEmptyDir");
     QProcess::execute("mkdir "+ source.toLocalFile() + "/temp1");
     QProcess::execute("mkdir "+ source.toLocalFile() + "/temp2");
     QProcess::execute("touch "+ source.toLocalFile() + "/temp1/teste");
     EXPECT_NO_FATAL_FAILURE(job->deleteEmptyDir(source.toLocalFile()));
-    TestHelper::deleteTmpFile(source.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_deleteEmptyDir");
 }
 
 
 TEST_F(FileJobTest, start_deleteDir){
-    source.setPath(TestHelper::createTmpDir());
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_deleteDir");
+    source.setPath(QDir::currentPath()+"/start_deleteDir");
     QProcess::execute("mkdir "+ source.toLocalFile() + "/temp1");
     QProcess::execute("mkdir "+ source.toLocalFile() + "/temp2");
     QProcess::execute("touch "+ source.toLocalFile() + "/temp1/teste");
@@ -1759,17 +1791,21 @@ TEST_F(FileJobTest, start_deleteDir){
         QProcess::execute("mkdir "+source.toLocalFile());
         EXPECT_FALSE(job->deleteDir(source.toLocalFile()));
     }
-    TestHelper::deleteTmpFile(source.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_deleteDir");
 }
 
 TEST_F(FileJobTest, start_getNotExistsTrashFileName){
-    source.setPath(TestHelper::createTmpFile(".txt"));
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_getNotExistsTrashFileName");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_getNotExistsTrashFileName/11.txt");
+    source.setPath(QDir::currentPath()+"/start_getNotExistsTrashFileName/11.txt");
     EXPECT_FALSE(job->getNotExistsTrashFileName(source.toLocalFile()).isEmpty());
-    TestHelper::deleteTmpFile(source.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_getNotExistsTrashFileName");
 }
 
 TEST_F(FileJobTest, start_getStorageInfo){
-    source.setPath(TestHelper::createTmpFile(".txt"));
+    QProcess::execute("mkdir " + QDir::currentPath()+"/start_getStorageInfo");
+    QProcess::execute("touch " + QDir::currentPath()+"/start_getStorageInfo/11.txt");
+    source.setPath(QDir::currentPath()+"/start_getStorageInfo/11.txt");
     EXPECT_TRUE(job->getStorageInfo(source.toLocalFile()).isValid());
-    TestHelper::deleteTmpFile(source.toLocalFile());
+    QProcess::execute("rm -rf " + QDir::currentPath()+"/start_getStorageInfo");
 }
