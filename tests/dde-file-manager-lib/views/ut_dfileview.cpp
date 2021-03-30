@@ -1954,10 +1954,16 @@ TEST_F(DFileViewTest,update_toolbar_actions)
     m_view->updateToolBarActions(m_view, QString());
     EXPECT_FALSE(actions.actions().isEmpty());
 
-    actions.addAction(new QAction);
-    actions.addAction(new QAction);
+    QAction *actionA = new QAction;
+    QAction *actionB = new QAction;
+    actions.addAction(actionA);
+    actions.addAction(actionB);
     m_view->updateToolBarActions(m_view, QString());
     EXPECT_FALSE(actions.actions().isEmpty());
+    actions.removeAction(actionA);
+    actions.removeAction(actionB);
+    actionA->deleteLater();
+    actionB->deleteLater();
 }
 
 TEST_F(DFileViewTest,re_fresh_mode)
