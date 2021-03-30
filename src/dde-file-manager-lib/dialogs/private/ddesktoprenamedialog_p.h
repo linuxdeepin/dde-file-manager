@@ -54,7 +54,7 @@ public:
 
     QLabel *m_titleLabel{ nullptr };
 
-    std::tuple<QLabel *, QComboBox *, QHBoxLayout *, QFrame *> m_itemsForSelecting{};
+    std::tuple<QLabel *, QComboBox *, QHBoxLayout *> m_itemsForSelecting{};
     QStackedLayout *m_stackedLayout{ nullptr };
 
     std::tuple<QLabel *, QLineEdit *, QHBoxLayout *> m_modeOneItemsForFinding{};

@@ -542,10 +542,10 @@ QMap<DMD_TYPES, QList<DUrl> > MergedDesktopController::initData(QDir::Filters ft
 
     //解决自动整理时的文件隐藏显示问题
     bool showHidden = ftrs.testFlag(QDir::Hidden);
-    DFMFileListFile *hiddenFiles = new DFMFileListFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
+    DFMFileListFile hiddenFiles(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
 
     for (const QString &oneFile : fileList) {
-        if (!showHidden && hiddenFiles->contains(oneFile)){
+        if (!showHidden && hiddenFiles.contains(oneFile)){
             continue;
         }
         DUrl oneUrl = DUrl::fromLocalFile(desktopDir.filePath(oneFile));
