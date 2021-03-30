@@ -560,7 +560,7 @@
     <message>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="61"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
-        <translation>Klikoni mbi “Fshehtëzi” dhe jepni fjalëkalimin e përdoruesit.</translation>
+        <translation>Klikoni mbi “Fshehtëzoje” dhe jepni fjalëkalimin e përdoruesit.</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="77"/>
@@ -969,7 +969,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="245"/>
         <source>The action is not supported</source>
-        <translation type="unfinished"/>
+        <translation>Veprimi nuk mbulohet</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="660"/>
@@ -3190,7 +3190,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <source>Open as administrator</source>
-        <translation type="unfinished"/>
+        <translation>Hapeni si përgjegjës</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>

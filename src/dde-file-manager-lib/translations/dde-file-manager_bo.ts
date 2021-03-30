@@ -260,7 +260,7 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="103"/>
         <source>Version</source>
-        <translation>པར་གཞི།</translation>
+        <translation>པར་མའི་རྟགས།</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="104"/>
@@ -3190,7 +3190,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <source>Open as administrator</source>
-        <translation type="unfinished"/>
+        <translation>དོ་དམ་པའི་ཐོབ་ཐང་གིས་ཁ་ཕྱེ་བ།</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>

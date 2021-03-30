@@ -25,13 +25,13 @@
         <location filename="../controllers/appcontroller.cpp" line="770"/>
         <location filename="../controllers/appcontroller.cpp" line="810"/>
         <source>The device was not safely removed</source>
-        <translation>O dispositivo não foi removido com segurança</translation>
+        <translation>O dispositivo não foi removido em segurança</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="770"/>
         <location filename="../controllers/appcontroller.cpp" line="810"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>Clique em &quot;Remover com segurança&quot; e retire-o da próxima vez</translation>
+        <translation>Clique em &quot;Remover em segurança&quot; e retire-o da próxima vez</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="780"/>
@@ -3190,7 +3190,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <source>Open as administrator</source>
-        <translation type="unfinished"/>
+        <translation>Abrir como administrador</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
@@ -3321,7 +3321,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="839"/>
         <source>Safely Remove</source>
-        <translation>Remover com Segurança</translation>
+        <translation>Remover em segurança</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="841"/>
@@ -4319,12 +4319,12 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="1564"/>
         <source>The device was not safely unmounted</source>
-        <translation>O dispositivo não foi desmontado com segurança</translation>
+        <translation>O dispositivo não foi desmontado em segurança</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="1571"/>
         <source>The device was not safely removed</source>
-        <translation>O dispositivo não foi removido com segurança</translation>
+        <translation>O dispositivo não foi removido em segurança</translation>
     </message>
 </context>
 <context>

@@ -3190,7 +3190,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <source>Open as administrator</source>
-        <translation type="unfinished"/>
+        <translation>Obre com a administrador</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>

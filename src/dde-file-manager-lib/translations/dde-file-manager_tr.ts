@@ -3190,7 +3190,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <source>Open as administrator</source>
-        <translation type="unfinished"/>
+        <translation>Yönetici olarak aç</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>

@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -1113,12 +1111,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1154"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1160"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1163"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1169"/>
         <source>Empty</source>
         <translation>清空</translation>
     </message>
@@ -1171,12 +1169,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2542"/>
+        <location filename="../views/dfileview.cpp" line="2541"/>
         <source>Mounting failed</source>
         <translation>挂载失败</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3246"/>
+        <location filename="../views/dfileview.cpp" line="3245"/>
         <source>(Reverse)</source>
         <translation>（反序）</translation>
     </message>
@@ -1499,7 +1497,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="921"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1327"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1431"/>
-        <location filename="../dialogs/dialogmanager.h" line="150"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
@@ -3119,7 +3116,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="107"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1164"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1170"/>
         <source>Empty Trash</source>
         <translation>清空回收站</translation>
     </message>
@@ -3185,6 +3182,10 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
         <source>Tag information</source>
         <translation>标记信息</translation>
+    </message>
+    <message>
+        <source>Open in new window as admin</source>
+        <translation type="vanished">以管理员身份打开</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
@@ -3424,12 +3425,12 @@
         <translation>%1 项</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1215"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1213"/>
         <source>Shortcut</source>
         <translation>快捷方式</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="756"/>
+        <location filename="../interfaces/dfileservices.cpp" line="754"/>
         <source>Create symlink</source>
         <translation>创建链接</translation>
     </message>
@@ -4349,17 +4350,7 @@
         <translation>共享名不得包含%&lt;&gt;*?|/\+=;:,&quot;</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="442"/>
-        <source>Sharing failed</source>
-        <translation>共享失败</translation>
-    </message>
-    <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="442"/>
-        <source>The computer name is too long</source>
-        <translation>计算机名过长</translation>
-    </message>
-    <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="511"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="505"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>您没有权限操作文件/文件夹！</translation>
     </message>
