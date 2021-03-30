@@ -394,12 +394,6 @@ void DToolBar::switchHistoryStack(const int index)
     updateBackForwardButtonsState();
 }
 
-namespace DEEPIN_QT_THEME {
-extern QThreadStorage<QString> colorScheme;
-extern void(*setFollowColorScheme)(bool);
-extern bool(*followColorScheme)();
-}
-
 /*!
  * \brief Switch Search Button State
  *
@@ -407,13 +401,6 @@ extern bool(*followColorScheme)();
  */
 void DToolBar::toggleSearchButtonState(bool asb)
 {
-    if (DEEPIN_QT_THEME::followColorScheme
-            && (*DEEPIN_QT_THEME::followColorScheme)() ) {
-        const QWidget *widget = m_searchButton;
-        const QPalette &pal = widget->palette();
-        DEEPIN_QT_THEME::colorScheme.setLocalData(pal.windowText().color().name());
-    }
-
     if (asb) {
         m_searchButton->setHidden(true);
         m_searchButton->setObjectName("filterButton");

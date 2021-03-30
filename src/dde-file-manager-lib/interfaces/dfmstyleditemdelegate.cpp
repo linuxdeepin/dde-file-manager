@@ -325,22 +325,8 @@ static inline Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::A
     return alignment;
 }
 
-namespace DEEPIN_QT_THEME {
-QThreadStorage<QString> colorScheme;
-void(*setFollowColorScheme)(bool) = nullptr;
-bool(*followColorScheme)() = nullptr;
-}
-
 void DFMStyledItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment, QIcon::Mode mode, QIcon::State state)
 {
-    if (DEEPIN_QT_THEME::followColorScheme
-            && (*DEEPIN_QT_THEME::followColorScheme)()
-            && painter->device()->devType() == QInternal::Widget) {
-        const QWidget *widget = dynamic_cast<QWidget *>(painter->device());
-        const QPalette &pal = widget->palette();
-        DEEPIN_QT_THEME::colorScheme.setLocalData(mode == QIcon::Selected ? pal.highlightedText().color().name() : pal.windowText().color().name());
-    }
-
     // Copy of QStyle::alignedRect
     alignment = visualAlignment(painter->layoutDirection(), alignment);
     const qreal pixel_ratio = painter->device()->devicePixelRatioF();
