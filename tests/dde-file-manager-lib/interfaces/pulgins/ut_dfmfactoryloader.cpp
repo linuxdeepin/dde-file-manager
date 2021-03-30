@@ -60,8 +60,10 @@ namespace  {
         }
         void TearDown() override
         {
-            if(m_pTester)
+            if(m_pTester) {
                 delete  m_pTester;
+                m_pTester = nullptr;
+            }
             std::cout << "end TestDFMFactoryLoader";
         }
     public:
@@ -77,12 +79,11 @@ TEST_F(TestDFMFactoryLoader, testInit)
 TEST_F(TestDFMFactoryLoader, testMetaData)
 {
     QList<QPluginLoader *> lst;
-    QPluginLoader* pload = new QPluginLoader("/file1");
+    QPluginLoader* pload = new QPluginLoader("/file1", m_pTester);
     lst << pload;
     m_pTester->d_func()->pluginLoaderList = lst;
     QList<QJsonObject> lst1 = m_pTester->metaData();
     EXPECT_EQ(lst1.count(), 1);
-
 }
 
 TEST_F(TestDFMFactoryLoader, testInstance)
@@ -100,18 +101,25 @@ TEST_F(TestDFMFactoryLoader, testInstance2)
 TEST_F(TestDFMFactoryLoader, testInstance3)
 {
     QList<QPluginLoader *> lst;
-    QPluginLoader* pload = new QPluginLoader("/file1");
+    QPluginLoader* pload = new QPluginLoader("/file1", m_pTester);
     lst << pload;
     m_pTester->d_func()->pluginLoaderList = lst;
 
+    static QObject *p = nullptr;
     QObject*(*stub_instance)() = []()->QObject*{
-        return (new QObject());
+        p = new QObject();
+        return p;
     };
     Stub stu;
     stu.set(ADDR(QPluginLoader, instance), stub_instance);
 
     QObject* pobject = m_pTester->instance(0);
     EXPECT_NE(pobject, nullptr);
+
+    if (p) {
+        delete p;
+        p = nullptr;
+    }
 }
 
 #if defined(Q_OS_UNIX) && !defined (Q_OS_MAC)
@@ -131,7 +139,7 @@ TEST_F(TestDFMFactoryLoader, testPluginLoaderList)
 TEST_F(TestDFMFactoryLoader, testKeyMap)
 {
     QList<QPluginLoader *> lst;
-    QPluginLoader* pload = new QPluginLoader("/file1");
+    QPluginLoader* pload = new QPluginLoader("/file1", m_pTester);
     lst << pload;
     m_pTester->d_func()->pluginLoaderList = lst;
 
@@ -152,7 +160,7 @@ TEST_F(TestDFMFactoryLoader, testKeyMap)
 TEST_F(TestDFMFactoryLoader, testIndexOf)
 {
     QList<QPluginLoader *> lst;
-    QPluginLoader* pload = new QPluginLoader("video/*");
+    QPluginLoader* pload = new QPluginLoader("video/*", m_pTester);
     lst << pload;
     m_pTester->d_func()->pluginLoaderList = lst;
 
@@ -173,7 +181,7 @@ TEST_F(TestDFMFactoryLoader, testIndexOf)
 TEST_F(TestDFMFactoryLoader, testGetAllIndexByKey)
 {
     QList<QPluginLoader *> lst;
-    QPluginLoader* pload = new QPluginLoader("video/*");
+    QPluginLoader* pload = new QPluginLoader("video/*", m_pTester);
     lst << pload;
     m_pTester->d_func()->pluginLoaderList = lst;
 
@@ -343,7 +351,7 @@ TEST_F(TestDFMFactoryLoader, testDLoadPlugin)
                                                     Qt::CaseInsensitive,
                                                     false*/);
     QList<QPluginLoader *> lst;
-    QPluginLoader* pload = new QPluginLoader("video/*");
+    QPluginLoader* pload = new QPluginLoader("video/*", m_pTester);
     lst << pload;
     ploader->d_func()->pluginLoaderList = lst;
 
@@ -360,6 +368,11 @@ TEST_F(TestDFMFactoryLoader, testDLoadPlugin)
     QString key("video/*");
     DFMBaseView* pview = dLoadPlugin<DFMBaseView, DFMViewPlugin>(ploader, key);
     EXPECT_EQ(pview, nullptr);
+
+    if (ploader) {
+        delete ploader;
+        ploader = nullptr;
+    }
 }
 
 TEST_F(TestDFMFactoryLoader, testDLoadPluginList)
@@ -376,7 +389,7 @@ TEST_F(TestDFMFactoryLoader, testDLoadPluginList)
                                                     false*/);
 
     QList<QPluginLoader *> lst;
-    QPluginLoader* pload = new QPluginLoader("video/*");
+    QPluginLoader* pload = new QPluginLoader("video/*", m_pTester);
     lst << pload;
     ploader->d_func()->pluginLoaderList = lst;
 
@@ -392,4 +405,9 @@ TEST_F(TestDFMFactoryLoader, testDLoadPluginList)
 
     QList<DFMBaseView*> lst2 = dLoadPluginList<DFMBaseView, DFMViewPlugin>(ploader, "video/*");
     EXPECT_EQ(lst.count(), 1);
+
+    if (ploader) {
+        delete ploader;
+        ploader = nullptr;
+    }
 }

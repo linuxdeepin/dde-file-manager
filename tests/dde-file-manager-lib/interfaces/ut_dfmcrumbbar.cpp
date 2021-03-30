@@ -73,8 +73,14 @@ public:
     }
     void TearDown() override
     {
-        delete m_pTester;
-        m_pTester = nullptr;
+        if (m_pTester) {
+            delete m_pTester;
+            m_pTester = nullptr;
+        }
+        if (m_pWidget) {
+            delete m_pWidget;
+            m_pWidget = nullptr;
+        }
         std::cout << "end TestDFMCrumbBar";
     }
 public:

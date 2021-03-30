@@ -40,6 +40,10 @@ namespace  {
         }
         void TearDown() override
         {
+            if (m_pTester) {
+                delete m_pTester;
+                m_pTester = nullptr;
+            }
             std::cout << "end TestDDesktopRenameDialog";
         }
     public:
@@ -245,6 +249,10 @@ namespace  {
         }
         void TearDown() override
         {
+            if (m_pTester) {
+                delete m_pTester;
+                m_pTester = nullptr;
+            }
             std::cout << "end TestDDesktopRenameDialogPrivate";
         }
     public:

@@ -91,4 +91,9 @@ TEST_F(TestDFMFilePreviewFactory, testIsSuitedWithKey2)
     QString index("");
     bool b = DFMFilePreviewFactory::isSuitedWithKey(view1, index);
     EXPECT_EQ(b, false);
+    if (view1) {
+        delete view1;
+        view1 = nullptr;
+    }
+
 }

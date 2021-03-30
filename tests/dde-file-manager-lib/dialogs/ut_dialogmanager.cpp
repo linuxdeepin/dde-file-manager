@@ -708,14 +708,21 @@ TEST_F(TestDialogManager, testShowOpenWithDialog)
     stub_ext::StubExt stu;
     stu.set(VADDR(QDialog, exec), stub_exec);
 
-    QWidget*(*stub_getWindowById)(quint64) = [](quint64)->QWidget*{
-        QWidget* w = new QWidget();
+    static QWidget* w = nullptr;
+    QWidget * (*stub_getWindowById)(quint64) = [](quint64){
+        w = new QWidget();
         return w;
     };
+
     Stub stub;
     stub.set(ADDR(WindowManager, getWindowById), stub_getWindowById);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showOpenWithDialog(event));
+
+    if (w) {
+        delete w;
+        w = nullptr;
+    }
 }
 
 TEST_F(TestDialogManager, testShowOpenFilesWithDialog)
@@ -954,8 +961,9 @@ TEST_F(TestDialogManager, testShowDevicePropertyDialog)
 {
     DFMEvent event;
 
+    static QWidget * w = nullptr;
     QWidget*(*stub_getWindowById)(quint64) = [](quint64)->QWidget*{
-        QWidget* w = new QWidget();
+        w = new QWidget();
         return w;
     };
     Stub stub;
@@ -966,6 +974,11 @@ TEST_F(TestDialogManager, testShowDevicePropertyDialog)
     stu3.set(ADDR(QWidget, show), stub3_show);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showDevicePropertyDialog(event));
+
+    if (w) {
+        delete w;
+        w = nullptr;
+    }
 }
 
 TEST_F(TestDialogManager, testShowDiskErrorDialog)
@@ -1031,8 +1044,9 @@ TEST_F(TestDialogManager, testShowConnectToServerDialog2)
 {
     quint64 winId(12345678);
 
+    static QWidget* w = nullptr;
     QWidget*(*stub_getWindowById)(quint64) = [](quint64)->QWidget*{
-        QWidget* w = new QWidget();
+        w = new QWidget();
         return w;
     };
     Stub stub;
@@ -1043,14 +1057,20 @@ TEST_F(TestDialogManager, testShowConnectToServerDialog2)
     stu3.set(ADDR(QWidget, show), stub3_show);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showConnectToServerDialog(winId));
+
+    if (w) {
+        delete w;
+        w = nullptr;
+    }
 }
 
 TEST_F(TestDialogManager, testShowUserSharePasswordSettingDialog)
 {
     quint64 winId(12345678);
 
+    static QWidget* w = nullptr;
     QWidget*(*stub_getWindowById)(quint64) = [](quint64)->QWidget*{
-        QWidget* w = new QWidget();
+        w = new QWidget();
         return w;
     };
     Stub stub;
@@ -1061,39 +1081,51 @@ TEST_F(TestDialogManager, testShowUserSharePasswordSettingDialog)
     stu3.set(ADDR(QWidget, show), stub3_show);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showUserSharePasswordSettingDialog(winId));
+
+    if (w) {
+        delete w;
+        w = nullptr;
+    }
 }
 
 TEST_F(TestDialogManager, testShowGlobalSettingsDialog)
 {
     quint64 winId(12345678);
 
+    static QWidget* w = nullptr;
     QWidget*(*stub_getWindowById)(quint64) = [](quint64)->QWidget*{
-        QWidget* w = new QWidget();
+        w = new QWidget();
         return w;
     };
     Stub stub;
     stub.set(ADDR(WindowManager, getWindowById), stub_getWindowById);
 
-    QObject*(*stu_instance)() = []()->QObject*{
-        QObject * obj = new QObject();
-        return obj;
-    };
-    Stub stu2;
-    stu2.set(ADDR(DFMApplication, instance), stu_instance);
+//    QObject*(*stu_instance)() = []()->QObject*{
+//        QObject * obj = new QObject();
+//        return obj;
+//    };
+//    Stub stu2;
+//    stu2.set(ADDR(DFMApplication, instance), stu_instance);
 
     void(*stub3_show)() = []()->void{};
     stub_ext::StubExt stu3;
     stu3.set(ADDR(QWidget, show), stub3_show);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showGlobalSettingsDialog(winId));
+
+    if (w) {
+        delete w;
+        w = nullptr;
+    }
 }
 
 TEST_F(TestDialogManager, testShowGlobalSettingsDialog2)
 {
     quint64 winId(12345678);
 
+    static QWidget* w = nullptr;
     QWidget*(*stub_getWindowById)(quint64) = [](quint64)->QWidget*{
-        QWidget* w = new QWidget();
+        w = new QWidget();
         w->setProperty("isSettingDialogShown", QVariant(true));
         return w;
     };
@@ -1105,6 +1137,11 @@ TEST_F(TestDialogManager, testShowGlobalSettingsDialog2)
     stu3.set(ADDR(QWidget, show), stub3_show);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showGlobalSettingsDialog(winId));
+
+    if (w) {
+        delete w;
+        w = nullptr;
+    }
 }
 
 TEST_F(TestDialogManager, testShowDiskSpaceOutOfUsedDialogLater)

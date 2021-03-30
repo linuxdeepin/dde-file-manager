@@ -69,7 +69,7 @@ public:
             m_manager->startMonitor();
             inited = true;
         }
-        gioError.message = errBuffer;
+        gioError.message = strdup("123");
 
     }
 

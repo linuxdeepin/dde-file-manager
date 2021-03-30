@@ -68,12 +68,12 @@ TEST_F(TestDFMSettingDialog, testInit2)
     Stub stu;
     stu.set(ADDR(DFMGlobal, isWayLand), stub_isWayLand);
 
-    QObject*(*stu_instance)() = []()->QObject*{
-        QObject * obj = new QObject();
-        return obj;
-    };
-    Stub stu2;
-    stu2.set(ADDR(DFMApplication, instance), stu_instance);
+//    QObject*(*stu_instance)() = []()->QObject*{
+//        QObject * obj = new QObject();
+//        return obj;
+//    };
+//    Stub stu2;
+//    stu2.set(ADDR(DFMApplication, instance), stu_instance);
 
     DFMSettingDialog dlg;
     EXPECT_EQ(dlg.width(), 700);
