@@ -463,7 +463,7 @@
     <message>
         <location filename="../controllers/dfmtagcrumbcontroller.cpp" line="54"/>
         <source>Tag information</source>
-        <translation>標籤內容</translation>
+        <translation>標記內容</translation>
     </message>
 </context>
 <context>
@@ -1184,7 +1184,7 @@
     <message>
         <location filename="../interfaces/dfileviewhelper.cpp" line="656"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation>新增「%1」標籤</translation>
+        <translation>新增「%1」標記</translation>
     </message>
 </context>
 <context>
@@ -3181,7 +3181,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
         <source>Tag information</source>
-        <translation>標籤內容</translation>
+        <translation>標記內容</translation>
     </message>
     <message>
         <source>Open in new window as admin</source>
@@ -3741,7 +3741,7 @@
     <message>
         <location filename="../views/dtagedit.cpp" line="92"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation>輸入標籤資訊，例如工作、家庭。兩個標籤之間請使用逗號 (,) 分割</translation>
+        <translation>輸入標記資訊，例如工作、家庭。兩個標記之間請使用逗號 (,) 分割</translation>
     </message>
     <message>
         <location filename="../controllers/dfmbookmarkcrumbcontroller.cpp" line="47"/>

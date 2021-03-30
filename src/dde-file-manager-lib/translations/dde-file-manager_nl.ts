@@ -3185,12 +3185,12 @@
     </message>
     <message>
         <source>Open in new window as admin</source>
-        <translation type="vanished">Openen in nieuw venster als administrator</translation>
+        <translation type="vanished">Openen in nieuw venster met beheerdersbevoegdheid</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <source>Open as administrator</source>
-        <translation type="unfinished"/>
+        <translation>Openen met beheerdersbevoegdheid</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>

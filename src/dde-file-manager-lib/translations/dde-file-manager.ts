@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -1113,12 +1111,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1154"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1160"/>
         <source>Trash</source>
         <translation>Trash</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1163"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1169"/>
         <source>Empty</source>
         <translation>Empty</translation>
     </message>
@@ -1171,12 +1169,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2542"/>
+        <location filename="../views/dfileview.cpp" line="2541"/>
         <source>Mounting failed</source>
         <translation>Mounting failed</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3246"/>
+        <location filename="../views/dfileview.cpp" line="3245"/>
         <source>(Reverse)</source>
         <translation>(Reverse)</translation>
     </message>
@@ -1499,7 +1497,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="921"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1327"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1431"/>
-        <location filename="../dialogs/dialogmanager.h" line="150"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
@@ -3119,7 +3116,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="107"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1164"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1170"/>
         <source>Empty Trash</source>
         <translation>Empty Trash</translation>
     </message>
@@ -3185,6 +3182,10 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
         <source>Tag information</source>
         <translation>Tag information</translation>
+    </message>
+    <message>
+        <source>Open in new window as admin</source>
+        <translation type="vanished">Open in new window as admin</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
@@ -3424,12 +3425,12 @@
         <translation>%1 items</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1215"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1213"/>
         <source>Shortcut</source>
         <translation>Shortcut</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="756"/>
+        <location filename="../interfaces/dfileservices.cpp" line="754"/>
         <source>Create symlink</source>
         <translation>Create symlink</translation>
     </message>
@@ -4349,17 +4350,7 @@
         <translation>The share name must not contain %&lt;&gt;*?|/\+=;:,&quot;</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="442"/>
-        <source>Sharing failed</source>
-        <translation>Sharing failed</translation>
-    </message>
-    <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="442"/>
-        <source>The computer name is too long</source>
-        <translation>The computer name is too long</translation>
-    </message>
-    <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="511"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="505"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>You do not have permission to operate file/folder!</translation>
     </message>
