@@ -19,10 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtest/gtest.h>
-
 #include "interfaces/dfmstyleditemdelegate.h"
 #include "interfaces/dfileviewhelper.h"
+
+#include <gtest/gtest.h>
+#include <testhelper.h>
 
 #include <QAbstractItemView>
 #include <QListView>
@@ -30,6 +31,12 @@
 #include <QStyleOptionViewItem>
 #include <QStandardItemModel>
 #include <QRectF>
+#include <QIcon>
+#include <QLabel>
+#include <QColor>
+#include <QPainter>
+#include <QtGlobal>
+
 
 //DFM_USE_NAMESPACE
 
@@ -64,8 +71,11 @@ class DFMStyledItemDelegateInherit :public DFMStyledItemDelegate
 public:
     DFMStyledItemDelegateInherit(DFileViewHelper *parent):DFMStyledItemDelegate(parent)
     {
-        this->initTextLayout(QModelIndex(), new QTextLayout());
-        this->initStyleOption(new QStyleOptionViewItem(), QModelIndex());
+        QTextLayout testlayout;
+        this->initTextLayout(QModelIndex(), &testlayout);
+
+        QStyleOptionViewItem styleOptionViewItem;
+        this->initStyleOption(&styleOptionViewItem, QModelIndex());
         this->getCornerGeometryList(QRectF(), QSizeF());
     }
 
@@ -247,28 +257,24 @@ TEST_F(DFMStyledItemDelegateTest,updateItemSizeHint)
     delegate->updateItemSizeHint();
 }
 
-#include <QPainter>
-#include <QtGlobal>
-
 TEST_F(DFMStyledItemDelegateTest,drawText)
 {
-    EXPECT_TRUE(1 == delegate->drawText(QModelIndex(),new QPainter(), new QTextLayout(),QRectF(),0.0,QBrush()).size());
+    QPainter painter(this);
+    QTextLayout testLayout;
+    EXPECT_TRUE(1 == delegate->drawText(QModelIndex(), &painter, &testLayout,QRectF(),0.0,QBrush()).size());
 }
 
 TEST_F(DFMStyledItemDelegateTest,drawTest2)
 {
-    EXPECT_TRUE(1 == delegate->drawText(QModelIndex(),new QPainter(),QString("testString"),QRectF(),0.0,QBrush()).size());
+    QPainter painter(this);
+    EXPECT_TRUE(1 == delegate->drawText(QModelIndex(), &painter, QString("testString"),QRectF(),0.0,QBrush()).size());
 }
 
-#include <QColor>
 TEST_F(DFMStyledItemDelegateTest,paintCircleList)
 {
-    delegate->paintCircleList(new QPainter,QRect(),0.0,{QColor()},QColor());
+    QPainter painter(this);
+    delegate->paintCircleList(&painter,QRect(),0.0,{QColor()},QColor());
 }
-
-#include <QIcon>
-#include <QLabel>
-#include <testhelper.h>
 
 TEST_F(DFMStyledItemDelegateTest,getIconPixmap)
 {

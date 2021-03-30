@@ -34,7 +34,7 @@ class DFileProxyWatcher : public DAbstractFileWatcher
 public:
     explicit DFileProxyWatcher(const DUrl &url, DAbstractFileWatcher *proxy,
                                std::function<DUrl (const DUrl &)> urlConvertFun,
-                               QObject *parent = 0);
+                               QObject *parent = nullptr);
 
 private slots:
     void onFileDeleted(const DUrl &url);

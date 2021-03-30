@@ -17,32 +17,24 @@
 #include "interfaces/diconitemdelegate.h"
 #include "testhelper.h"
 
-#define FreePtr(x) if(x){delete x;x=nullptr;}
-
 namespace {
 
 class TestDIconItemDelegate : public testing::Test
 {
 public:
-    DIconItemDelegate *iconItemDelegate;
-    DFileView *fileview;
+    DIconItemDelegate *iconItemDelegate = nullptr;
+    DFileView fileview;
     void SetUp() override
     {
-        fileview = new DFileView();
-        fileview->initDelegate();
-        fileview->increaseIcon();
-        fileview->decreaseIcon();
-        fileview->setIconSizeBySizeIndex(0);
-
-        iconItemDelegate = qobject_cast<DIconItemDelegate *>(fileview->itemDelegate());
+        fileview.initDelegate();
+        fileview.increaseIcon();
+        fileview.decreaseIcon();
+        fileview.setIconSizeBySizeIndex(0);
+        iconItemDelegate = qobject_cast<DIconItemDelegate *>(fileview.itemDelegate());
     }
 
     void TearDown() override
     {
-        delete iconItemDelegate;
-        iconItemDelegate = nullptr;
-        delete fileview;
-        fileview = nullptr;
         TestHelper::runInLoop([](){}, 10);
     }
 };
@@ -229,18 +221,16 @@ TEST_F(TestDIconItemDelegate, test_initTextLayout)
 
 TEST_F(TestDIconItemDelegate, test_eventFilter)
 {
-    QObject *object = new QObject();
-    QEvent *event = new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
-    iconItemDelegate->eventFilter(object, event);
-    FreePtr(object);
-    FreePtr(event);
+    QObject object;
+    QKeyEvent event(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
+    iconItemDelegate->eventFilter(&object, &event);
 }
 
 TEST_F(TestDIconItemDelegate, test_drawText)
 {
     QModelIndex index = iconItemDelegate->expandedIndex();
-    QPainter *painter = new QPainter();
-    QTextLayout *layout = new QTextLayout();
+    QPainter painter;
+    QTextLayout layout;
     QRectF boundingRect(0, 0, 100, 100);
     qreal radius = 1.1;
     const QBrush background(QColor(0xFFFFAE00));
@@ -248,20 +238,17 @@ TEST_F(TestDIconItemDelegate, test_drawText)
     QColor shadowColor(QColor(0xFFFFAE00));
     QTextOption::WrapMode wordWrap = QTextOption::WrapMode::WordWrap;
     Qt::TextElideMode mode = Qt::TextElideMode::ElideLeft;
-    iconItemDelegate->drawText(index, painter, layout, boundingRect, radius, background, wordWrap,
+    iconItemDelegate->drawText(index, &painter, &layout, boundingRect, radius, background, wordWrap,
                                mode, flag, shadowColor);
-    FreePtr(painter);
-    FreePtr(layout);
 }
 
 TEST_F(TestDIconItemDelegate, test_helpEvent)
 {
-    QHelpEvent *event = new QHelpEvent(QEvent::ToolTip, QPoint(10, 10), QPoint(10, 10));
+    QHelpEvent event(QEvent::ToolTip, QPoint(10, 10), QPoint(10, 10));
     QAbstractItemView *view = nullptr;
     QStyleOptionViewItem option;
     QModelIndex index = iconItemDelegate->expandedIndex();
-    iconItemDelegate->helpEvent(event, view, option, index);
-    FreePtr(event);
+    iconItemDelegate->helpEvent(&event, view, option, index);
 }
 
 TEST_F(TestDIconItemDelegate, test_iconSizeByIconSizeLevel)
