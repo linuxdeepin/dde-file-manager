@@ -1102,7 +1102,11 @@ bool DFMGlobal::isTablet()
     if (tablet >= 0) {
         return tablet > 0;
     } else {
-        tablet = true; //Dtk::Gui::DGuiApplicationHelper::isTabletEnvironment();
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 5, 0, 0))
+        tablet = Dtk::Gui::DGuiApplicationHelper::isTabletEnvironment();
+#else
+        tablet = false;
+#endif
     }
     return tablet > 0;
 
