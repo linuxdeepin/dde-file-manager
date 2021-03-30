@@ -47,7 +47,7 @@ void DDesktopRenameDialogPrivate::initUi()
 
     m_titleLabel = new QLabel{};
 
-    m_itemsForSelecting = std::make_tuple(new QLabel{}, new QComboBox{}, new QHBoxLayout{}, new QFrame{});
+    m_itemsForSelecting = std::make_tuple(new QLabel{}, new QComboBox{}, new QHBoxLayout{});
 
     m_modeOneItemsForFinding = std::make_tuple(new QLabel{}, new QLineEdit{}, new QHBoxLayout{});
     m_modeOneItemsForReplacing = std::make_tuple(new QLabel{}, new QLineEdit{}, new QHBoxLayout{});
@@ -64,7 +64,7 @@ void DDesktopRenameDialogPrivate::initUi()
     m_modeThreeLayout = QPair<QVBoxLayout *, QFrame *> {new QVBoxLayout{}, new QFrame{}};
 
     QRegExp regStr{ QString{"[0-9]+"} };
-    m_validator = new QRegExpValidator{ regStr };
+    m_validator = new QRegExpValidator{ regStr, this->q_ptr };
 
     m_mainFrame = new QFrame(this->q_ptr);
     m_mainLayout = new QVBoxLayout(m_mainFrame);

@@ -57,5 +57,11 @@ TEST_F(TestDFMCrumbManager, createControllerByUrl)
     DFMCrumbBar *p_tr = new DFMCrumbBar(qframe);
     crumbController = DFMCrumbManager::instance()->createControllerByUrl(newurl, p_tr);
     EXPECT_TRUE(crumbController != nullptr);
+
+    delete qframe;
+    qframe = nullptr;
+
+    delete crumbController;
+    crumbController = nullptr;
 }
 

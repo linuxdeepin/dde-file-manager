@@ -307,7 +307,7 @@ DUrl RecentDirIterator::url() const
 RecentController::RecentController(QObject *parent)
     : DAbstractFileController(parent),
       m_xbelPath(QDir::homePath() + "/.local/share/recently-used.xbel"),
-      m_watcher(new DFileWatcher(m_xbelPath))
+      m_watcher(new DFileWatcher(m_xbelPath, this))
 {
     asyncHandleFileChanged();
 

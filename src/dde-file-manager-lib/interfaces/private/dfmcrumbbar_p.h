@@ -41,6 +41,7 @@ class DFMCrumbBarPrivate
 
 public:
     explicit DFMCrumbBarPrivate(DFMCrumbBar *qq);
+    ~DFMCrumbBarPrivate();
 
     // UI
     QPushButton leftArrow;

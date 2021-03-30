@@ -64,6 +64,14 @@ DFMCrumbBarPrivate::DFMCrumbBarPrivate(DFMCrumbBar *qq)
     initConnections();
 }
 
+DFMCrumbBarPrivate::~DFMCrumbBarPrivate()
+{
+    if (crumbController) {
+        crumbController->deleteLater();
+        crumbController = nullptr;
+    }
+}
+
 /*!
  * \brief Remove all crumbs List items inside crumb listView.
  */
@@ -179,7 +187,7 @@ void DFMCrumbBarPrivate::initUI()
     crumbListView.setEditTriggers(QAbstractItemView::NoEditTriggers);
     crumbListView.setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
 
-    crumbListviewModel = new DFMCrumbListviewModel;
+    crumbListviewModel = new DFMCrumbListviewModel(q);
     crumbListView.setModel(crumbListviewModel);
     crumbListView.setContextMenuPolicy(Qt::CustomContextMenu);
 

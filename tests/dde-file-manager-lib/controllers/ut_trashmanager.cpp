@@ -29,6 +29,7 @@
 #include "models/trashfileinfo.h"
 #include "stub.h"
 #include "testhelper.h"
+#include "dfileproxywatcher.h"
 
 #include <QProcess>
 
@@ -256,8 +257,10 @@ TEST_F(TestTrashManager, createDirIterator)
 
 TEST_F(TestTrashManager, createFileWatcher)
 {
-    auto res = m_trash->createFileWatcher(dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, DUrl::fromTrashFile("/")));
+    QPointer<DFileProxyWatcher> res = static_cast<DFileProxyWatcher *>(m_trash->createFileWatcher(dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, DUrl::fromTrashFile("/"))));
     EXPECT_TRUE(res != nullptr);
+    if (res)
+        delete res;
 }
 
 TEST_F(TestTrashManager, isEmpty)
