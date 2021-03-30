@@ -44,16 +44,17 @@ public:
     explicit DFMRightDetailViewPrivate(DFMRightDetailView *qq, const DUrl& url);
     virtual ~DFMRightDetailViewPrivate();
 
-    DUrl    m_url;
-    QVBoxLayout *mainLayout  {nullptr};
-    QLabel      *iconLabel  {nullptr};
-    QFrame      *baseInfoWidget {nullptr};
-    QFrame      *separatorLine2 {nullptr};
-    DFMTagWidget *tagInfoWidget{ nullptr };
+    DUrl m_url;
+    QVBoxLayout *mainLayout = nullptr;
+    QLabel *iconLabel = nullptr;
+    QFrame *baseInfoWidget = nullptr;
+    QFrame *separatorLine1 = nullptr;
+    QFrame *separatorLine2 = nullptr;
+    DFMTagWidget *tagInfoWidget = nullptr;
 
-    QScrollArea *scrollArea{ nullptr };
+    QScrollArea *scrollArea = nullptr;
 
-    DFMRightDetailView *q_ptr{ nullptr };
+    DFMRightDetailView *q_ptr = nullptr;
     D_DECLARE_PUBLIC(DFMRightDetailView)
 };
 
@@ -128,8 +129,10 @@ void DFMRightDetailView::initUI()
     d->iconLabel->setFixedHeight(160);
     d->mainLayout->addWidget(d->iconLabel, 1, Qt::AlignHCenter);
 
-    d->mainLayout->addWidget(createLine());
+    d->mainLayout->addWidget(d->separatorLine1 = createLine());
     d->mainLayout->addWidget(d->separatorLine2 = createLine());
+    d->separatorLine1->setVisible(false);
+    d->separatorLine2->setVisible(false);
 
     initTagWidget();
 
@@ -148,6 +151,7 @@ void DFMRightDetailView::initTagWidget()
     d->tagInfoWidget->tagLeftTitle()->setHidden(false);
     d->tagInfoWidget->setMaximumHeight(100);
     d->mainLayout->addWidget(d->tagInfoWidget);
+    d->tagInfoWidget->setVisible(false);
 }
 
 void DFMRightDetailView::setUrl(const DUrl &url)
@@ -161,6 +165,8 @@ void DFMRightDetailView::setUrl(const DUrl &url)
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, d->m_url);
     if (d->scrollArea)
         d->scrollArea->setVisible(fileInfo);
+    if (d->separatorLine1)
+        d->separatorLine1->setVisible(fileInfo);
     if (!fileInfo)
         return;
     bool shouldShowTags = fileInfo->canTag();
