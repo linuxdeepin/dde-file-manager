@@ -106,6 +106,8 @@ QString pbkdf2::pbkdf2EncrypyPassword(const QString &password, const QString &ra
         char *pstr = octalToHexadecimal(reinterpret_cast<char *>(out), nCipherLength);
         // 修复bug-51478
         strCipherText = QString(pstr);
+        if (pstr)
+            free(pstr);
     } else {
         qDebug() << "PKCS5_PBKDF2_HMAC_SHA1 failed";
     }

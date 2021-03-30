@@ -281,11 +281,14 @@ namespace  {
             if(file.exists()){
                 file.remove();
             }
-            m_pTester = nullptr;
+            if (m_pTester) {
+                delete m_pTester;
+                m_pTester = nullptr;
+            }
             if(m_pWidget){
                 delete m_pWidget;
+                m_pWidget = nullptr;
             }
-            m_pWidget = nullptr;
             std::cout << "end TestPropertyDialog";
         }
     public:
@@ -638,11 +641,14 @@ TEST_F(TestPropertyDialog, testCanChmod)
 
 TEST_F(TestPropertyDialog, testLoadPluginExpandWidgets)
 {
+    static PropertyDialogExpandInfoInterface* p1 = nullptr;
+    static PropertyDialogExpandInfoInterface* p2 = nullptr;
+    static PropertyDialogExpandInfoInterface* p3 = nullptr;
     QList<PropertyDialogExpandInfoInterface*>(*stub_getExpandInfoInterfaces)() = []()->QList<PropertyDialogExpandInfoInterface*>{
         QList<PropertyDialogExpandInfoInterface*> lst;
-            PropertyDialogExpandInfoInterface* p1 = new PropertyDialogExpandInfoInterface();
-            PropertyDialogExpandInfoInterface* p2 = new PropertyDialogExpandInfoInterface();
-            PropertyDialogExpandInfoInterface* p3 = new PropertyDialogExpandInfoInterface();
+            p1 = new PropertyDialogExpandInfoInterface();
+            p2 = new PropertyDialogExpandInfoInterface();
+            p3 = new PropertyDialogExpandInfoInterface();
             lst << p1 << p2 << p3;
             return lst;
     };
@@ -650,6 +656,19 @@ TEST_F(TestPropertyDialog, testLoadPluginExpandWidgets)
     stu.set(ADDR(PluginManager, getExpandInfoInterfaces), stub_getExpandInfoInterfaces);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->loadPluginExpandWidgets());
+
+    if (p1) {
+        delete p1;
+        p1 = nullptr;
+    }
+    if (p2) {
+        delete p2;
+        p2 = nullptr;
+    }
+    if (p3) {
+        delete p3;
+        p3 = nullptr;
+    }
 }
 
 //TEST_F(TestPropertyDialog, testCreateBasicInfoWidget)

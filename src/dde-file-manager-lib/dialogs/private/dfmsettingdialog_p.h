@@ -84,6 +84,7 @@ private:
 
 class SettingBackend : public DSettingsBackend
 {
+    Q_OBJECT
 public:
     explicit SettingBackend(QObject *parent = nullptr);
 
