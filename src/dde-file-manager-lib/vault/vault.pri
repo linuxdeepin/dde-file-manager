@@ -1,4 +1,3 @@
-INCLUDEPATH += $$PWD
 DEFINES += HAVE_CONFIG_H
 
 3rd_srcdir = $$PWD/../../../3rdparty
@@ -45,4 +44,7 @@ HEADERS += \
 PKGCONFIG += libcrypto
 
 RESOURCES +=
+
+INCLUDEPATH += $$PWD \
+               $$3rd_srcdir
 
