@@ -315,6 +315,10 @@ TEST_F(TestSearchController, createFileWatcher)
         watcher->onFileAttributeChanged(fileUrl_1);
     }
     EXPECT_TRUE(watcher != nullptr);
+    if (watcher) {
+        delete watcher;
+        watcher = nullptr;
+    }
 }
 
 TEST_F(TestSearchController, setFileTags)

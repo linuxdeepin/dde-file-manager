@@ -34,6 +34,8 @@
 #include "interfaces/dlistitemdelegate.h"
 #include "views/dfileview.h"
 
+#define FreePtr(x) if(x){delete x;x=nullptr;}
+
 namespace  {
 class TestDListItemDelegate : public testing::Test
 {
@@ -116,6 +118,8 @@ TEST_F(TestDListItemDelegate, test_eventFilter)
     QObject *object = new QObject();
     QEvent *event = new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
     dlistIdl->eventFilter(object, event);
+    FreePtr(object);
+    FreePtr(event);
 }
 
 
@@ -126,5 +130,6 @@ TEST_F(TestDListItemDelegate, test_helpEvent)
     QStyleOptionViewItem option;
     QModelIndex index = QModelIndex();
     dlistIdl->helpEvent(event, view, option, index);
+    FreePtr(event);
 }
 

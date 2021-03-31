@@ -40,7 +40,9 @@ public:
 
     }
     QWidget *widget() const override{
-        return new QWidget();
+        QWidget *pWidget = new QWidget();
+        pWidget->deleteLater();
+        return pWidget;
     }
     DUrl rootUrl() const override{
         return DUrl();

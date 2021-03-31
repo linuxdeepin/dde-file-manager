@@ -16,6 +16,8 @@
 #include "views/dfileview.h"
 #include "interfaces/diconitemdelegate.h"
 
+#define FreePtr(x) if(x){delete x;x=nullptr;}
+
 namespace {
 
 class TestDIconItemDelegate : public testing::Test
@@ -228,6 +230,8 @@ TEST_F(TestDIconItemDelegate, test_eventFilter)
     QObject *object = new QObject();
     QEvent *event = new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
     iconItemDelegate->eventFilter(object, event);
+    FreePtr(object);
+    FreePtr(event);
 }
 
 TEST_F(TestDIconItemDelegate, test_drawText)
@@ -244,6 +248,8 @@ TEST_F(TestDIconItemDelegate, test_drawText)
     Qt::TextElideMode mode = Qt::TextElideMode::ElideLeft;
     iconItemDelegate->drawText(index, painter, layout, boundingRect, radius, background, wordWrap,
                                mode, flag, shadowColor);
+    FreePtr(painter);
+    FreePtr(layout);
 }
 
 TEST_F(TestDIconItemDelegate, test_helpEvent)
@@ -253,6 +259,7 @@ TEST_F(TestDIconItemDelegate, test_helpEvent)
     QStyleOptionViewItem option;
     QModelIndex index = iconItemDelegate->expandedIndex();
     iconItemDelegate->helpEvent(event, view, option, index);
+    FreePtr(event);
 }
 
 TEST_F(TestDIconItemDelegate, test_iconSizeByIconSizeLevel)
