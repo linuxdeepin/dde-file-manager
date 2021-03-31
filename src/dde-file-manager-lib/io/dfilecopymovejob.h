@@ -175,14 +175,8 @@ public:
     QList<QPair<DUrl, DUrl> > completedDirectorys() const;
     //获取当前是否可以显示进度条
     bool isCanShowProgress() const;
-    //优化拷贝时，异步线程去同步的一些状态使用
-    bool getSysncState();
-    bool getSysncQuitState();
-    void setSysncState(const bool &state);
-    void setSysncQuitState(const bool &quitstate);
+
     void setRefine(const RefineState &refinestat);
-    void waitSysncEnd();
-    void waitRefineThreadFinish();
 
     void setCurTrashData(QVariant fileNameList);
     //设置当前拷贝显示了进度条

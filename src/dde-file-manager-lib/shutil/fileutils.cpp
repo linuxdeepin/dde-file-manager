@@ -66,6 +66,7 @@
 #include <sys/stat.h>
 #include <fts.h>
 #include <unistd.h>
+#include <sys/utsname.h>
 
 #undef signals
 extern "C" {

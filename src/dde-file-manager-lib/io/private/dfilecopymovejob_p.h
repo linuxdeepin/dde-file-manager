@@ -71,9 +71,6 @@ public:
     struct FileCopyInfo {
         bool closeflag;
         bool isdir;
-        int tofd;
-        QSharedPointer<DFileDevice> fromdevice;
-        QSharedPointer<DFileDevice> todevice;
         QSharedPointer<DFileHandler> handler;
         DAbstractFileInfoPointer frominfo;
         DAbstractFileInfoPointer toinfo;
@@ -83,9 +80,6 @@ public:
         QFileDevice::Permissions permission;
         FileCopyInfo() : closeflag(true)
             , isdir(false)
-            , tofd(-1)
-            , fromdevice(nullptr)
-            , todevice(nullptr)
             , handler(nullptr)
             , frominfo(nullptr)
             , toinfo(nullptr)
@@ -98,9 +92,6 @@ public:
         }
         FileCopyInfo(const FileCopyInfo &other) : closeflag(other.closeflag)
             , isdir(other.isdir)
-            , tofd(other.tofd)
-            , fromdevice(other.fromdevice)
-            , todevice(other.todevice)
             , handler(other.handler)
             , frominfo(other.frominfo)
             , toinfo(other.toinfo)
@@ -151,7 +142,8 @@ public:
     bool doCopyLargeFilesOnDiskOnly(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
     //线程池中拷贝大量小文件
     bool doThreadPoolCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
-    bool doCopyFileU(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
+    //拷贝文件到块设备（除光驱和系统所在的磁盘）
+    bool doCopyFileOnBlock(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
     bool doRemoveFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fileInfo);
     bool doRenameFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer oldInfo, const DAbstractFileInfoPointer newInfo);
     bool doLinkFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fileInfo, const QString &linkPath);
@@ -184,21 +176,23 @@ public:
 
     //第二版优化
     bool writeRefineThread();
-    bool writeRefine();
-    bool writeRefineEx();
-    bool skipReadFileDealWriteThread(const QSharedPointer<FileCopyInfo> copyinfo);
+    bool writeToFileByQueue();
+    bool skipReadFileDealWriteThread(const DUrl &url);
     void cancelReadFileDealWriteThread();
     void setRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
     bool checkRefineCopyProccessSate(const DFileCopyMoveJob::RefineCopyProccessSate &stat);
     void checkTagetNeedSync();//检测目标目录是网络文件就每次拷贝去同步，否则网络很卡时会因为同步卡死
     void checkTagetIsFromBlockDevice();//检查目标文件是否是块设备
     bool checkWritQueueEmpty();
+    bool checkWritQueueCount();
     QSharedPointer<FileCopyInfo> writeQueueDequeue();
     void writeQueueEnqueue(const QSharedPointer<FileCopyInfo> &copyinfo);
     //错误队列处理
     void errorQueueHandling();
     //当前错误队列处理完成
     void errorQueueHandled();
+    //清理当前拷贝信息
+    void releaseCopyInfo(const FileCopyInfoPointer &info);
     /**
      * @brief setCutTrashData    保存剪切回收站文件路径
      * @param fileNameList       文件路径
@@ -213,6 +207,15 @@ public:
     void stopAllDeviceOperation();
     //清理线程池资源
     void clearThreadPool();
+    //在异步线程执行同步
+    void syncInOtherThread();
+    //优化拷贝时，异步线程去同步的一些状态使用
+    bool getSysncState();
+    bool getSysncQuitState();
+    void setSysncState(const bool &state);
+    void setSysncQuitState(const bool &quitstate);
+    void waitSysncEnd();
+    void waitRefineThreadFinish();
     //! 剪切回收站文件路径
     QQueue<QString> m_fileNameList;
 
@@ -310,13 +313,14 @@ public:
     //是否需要每读写一次同步
     bool m_isEveryReadAndWritesSnc = false;
     bool m_isVfat = false;
+    QAtomicInteger<bool> m_targetIsNTFS = false;
     //分断拷贝的线程数量
     QAtomicInt m_bigFileThreadCount = 0;
     QAtomicInteger<bool> m_isWriteThreadStart = false;
     //目标目录是否是来自块设备
     QAtomicInteger<bool> m_isTagFromBlockDevice = false;
     //读线程跳过的文件
-    QQueue<QSharedPointer<DFileDevice>> m_skipFileQueue;
+    QQueue<DUrl> m_skipFileQueue;
     //目标文件是否是gvfs目录
     QAtomicInteger<bool> m_isTagGvfsFile = false;
     //拷贝信息的队列锁
@@ -343,6 +347,9 @@ public:
     QMutex m_errorQueueMutex;
     QMutex m_stopMutex;
     QMutex m_clearThreadPoolMutex;
+
+    //打开写入文件的fd
+    QMap<DUrl,int> m_writeOpenFd;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
