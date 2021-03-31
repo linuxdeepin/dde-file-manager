@@ -405,6 +405,9 @@ bool OperatorCenter::createQRCode(const QString &srcStr, int width, int height, 
 
     pix = QPixmap::fromImage(mainimg);
 
+
+    if (qrcode)
+        QRcode_free(qrcode);
     return true;
 }
 

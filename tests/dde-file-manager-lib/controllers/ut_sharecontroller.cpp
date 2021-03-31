@@ -80,6 +80,10 @@ TEST_F(TestShareController, test_createFileWatcher)
     EXPECT_TRUE(ret->startWatcher());
     EXPECT_TRUE(ret->stopWatcher());
     EXPECT_NE(nullptr, ret);
+    if (ret) {
+        delete ret;
+        ret = nullptr;
+    }
 }
 
 TEST_F(TestShareController, test_openFile)

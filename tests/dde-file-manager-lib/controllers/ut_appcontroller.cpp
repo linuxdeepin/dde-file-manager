@@ -838,7 +838,9 @@ TEST_F(AppControllerTest, start_actionctrlF){
                                                     (QDateTime::currentDateTime().toMSecsSinceEpoch())));
 }
 QWidget *getWindowByIdlamda(quint64 winId) {
-    return new QWidget();
+    QWidget *pWidget = new QWidget();
+    pWidget->deleteLater();
+    return pWidget;
 }
 TEST_F(AppControllerTest, start_actionExitCurrentWindow){
     stl.set(ADDR(WindowManager,getWindowById),&getWindowByIdlamda);

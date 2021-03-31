@@ -47,7 +47,7 @@ public:
 
     virtual void TearDown() override
     {
-        fsm->destroyed();
+        fsm->deleteLater();
     }
 };
 }

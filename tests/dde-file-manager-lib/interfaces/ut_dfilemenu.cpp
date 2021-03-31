@@ -38,6 +38,8 @@
 #include "testhelper.h"
 DFM_USE_NAMESPACE
 
+#define FreePtr(x) if(x){delete x;x=nullptr;}
+
 namespace {
 class TestDFileMenu : public testing::Test
 {
@@ -58,7 +60,7 @@ public:
         DUrlList urllist;
         urllist.append(DUrl("file:///home"));
         urllist.append(DUrl("file:///tmp"));
-        QObject *sender = new QObject();
+        QObject *sender = new QObject(menu);
         QModelIndex index;
         menu->setEventData(url, urllist, eventId, sender, index);
         std::cout << "start TestDFileMenu";
@@ -146,4 +148,5 @@ TEST_F(TestDFileMenu, mouseMoveEvent)
                                          Qt::NoButton,
                                          Qt::NoModifier);
     menu->mouseMoveEvent(event);
+    FreePtr(event);
 }
