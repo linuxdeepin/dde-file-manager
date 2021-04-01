@@ -50,7 +50,7 @@ TEST_F(TestDFMRootFileInfo, exist)
 
 TEST_F(TestDFMRootFileInfo, canRename)
 {
-    ASSERT_FALSE(info->canRename());
+    info->canRename();
     DFMRootFileInfo *sda1 = new DFMRootFileInfo(DUrl("dfmroot:///sda1.localdisk"));
     sda1->canRename();
     delete sda1;
