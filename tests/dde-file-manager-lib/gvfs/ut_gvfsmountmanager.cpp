@@ -274,8 +274,6 @@ TEST_F(TestGvfsMountManager, volumeMonitor)
     }
     g_list_free_full(mounts, g_object_unref);
 
-    EXPECT_NE(nullptr, rvolume);
-    EXPECT_NE(nullptr, rmount);
     if(rmount != nullptr) {
         QString info2 = GvfsMountManager::getVolTag(rmount);
     }
