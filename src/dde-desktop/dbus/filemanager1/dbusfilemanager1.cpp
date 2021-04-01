@@ -178,7 +178,8 @@ void DBusFileManager1::lockPropertyChanged(const QDBusMessage &msg)
 
                 if (pid == 0) {
                     QString umountCmd = "fusermount -zu " + VAULT_BASE_PATH + "/" + VAULT_DECRYPT_DIR_NAME;
-                    system(umountCmd.toUtf8().data());
+                    QByteArray umountCmdBytes = umountCmd.toUtf8();
+                    system(umountCmdBytes.data());
                     //! 记录保险箱上锁时间
                     ChangeJson((QDir::homePath() + QString("/.config/deepin/dde-file-manager/") + "vaultTimeConfig.json"),
                                QString("VaultTime"),

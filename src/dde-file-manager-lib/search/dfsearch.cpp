@@ -75,7 +75,8 @@ void DFSearch::searchByKeyWord(const QString &key, void (*callback)(void *, void
     // 防止在db_search_results_clear中触发断言，导致文管退出，先自行判断一下
     if (app->search == nullptr) return;
 
-    load_database(app, pathForSearching.toLocal8Bit().data(), &state);//加载数据库
+    QByteArray pathBytes(pathForSearching.toLocal8Bit());
+    load_database(app, pathBytes.data(), &state);//加载数据库
     if (!state)
         return;
 

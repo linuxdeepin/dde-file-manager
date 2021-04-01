@@ -809,10 +809,12 @@ void DSqliteHandle::connectToSqlite(const QString &path, const QString &db_name)
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
             if (blk->idType() == "ntfs") {
                 QString db_path(path + QString("/") + db_name);
-                const char *db_path_cs(db_path.toUtf8().data());
+                QByteArray pathBytes(db_path.toUtf8());
+                const char *db_path_cs(pathBytes.data());
                 Q_UNUSED(db_path_cs)
                 quint32 attr;
-                getxattr(db_path.toUtf8().data(), "system.ntfs_attrib_be", static_cast<void *>(&attr), 4);
+                pathBytes = db_path.toUtf8();
+                getxattr(pathBytes.data(), "system.ntfs_attrib_be", static_cast<void *>(&attr), 4);
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
                 attr = __builtin_bswap32(attr);
 #endif
@@ -820,7 +822,8 @@ void DSqliteHandle::connectToSqlite(const QString &path, const QString &db_name)
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
                 attr = __builtin_bswap32(attr);
 #endif
-                setxattr(db_path.toUtf8().data(), "system.ntfs_attrib_be", static_cast<void *>(&attr), 4, 0);
+                pathBytes = db_path.toUtf8();
+                setxattr(pathBytes.data(), "system.ntfs_attrib_be", static_cast<void *>(&attr), 4, 0);
             }
 
         } else {

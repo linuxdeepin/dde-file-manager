@@ -1635,7 +1635,8 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
             return;
 
         struct stat fileStat;
-        stat(info->toLocalFile().toUtf8().data(), &fileStat);
+        QByteArray infoBytes(info->toLocalFile().toUtf8());
+        stat(infoBytes.data(), &fileStat);
         auto preMode = fileStat.st_mode;
 
         int ownerFlags = ownerBox->currentData().toInt();
@@ -1653,7 +1654,8 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
                                                  /*(info->permissions() & 0x0700) |*/
                                                  QFileDevice::Permissions(groupFlags) |
                                                  QFileDevice::Permissions(otherFlags));
-        stat(info->toLocalFile().toUtf8().data(), &fileStat);
+        infoBytes = info->toLocalFile().toUtf8();
+        stat(infoBytes.data(), &fileStat);
         auto afterMode = fileStat.st_mode;
         // 修改权限失败
         // todo 回滚权限

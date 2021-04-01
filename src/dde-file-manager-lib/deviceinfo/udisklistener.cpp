@@ -838,7 +838,8 @@ void UDiskListener::loopCheckCD()
              * to make a difference for root and can have negative side-effects
              */
             if (geteuid()) {
-                int t_cdromfd = open(t_device.toLatin1().data(), O_RDWR | O_NONBLOCK);
+                QByteArray devBytes(t_device.toLatin1());
+                int t_cdromfd = open(devBytes.data(), O_RDWR | O_NONBLOCK);
                 if (t_cdromfd != -1) {
                     close(t_cdromfd);
                 }

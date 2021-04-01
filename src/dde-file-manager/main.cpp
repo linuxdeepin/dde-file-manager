@@ -119,7 +119,9 @@ void handleEnvOfOpenAsAdmin()
             int mid = env.indexOf("=");
             if (env.startsWith(envName) && mid >= envName.size()) {
                 QString v(env.mid(mid + 1));
-                int ret = setenv(envName.toLocal8Bit().data(), v.toLocal8Bit().data(), 1);
+                QByteArray nameBytes(envName.toLocal8Bit());
+                QByteArray vBytes(v.toLocal8Bit());
+                int ret = setenv(nameBytes.data(), vBytes.data(), 1);
                 qDebug() << "set " << env << "=" << v << "ret=" << ret;
                 return;
             }
