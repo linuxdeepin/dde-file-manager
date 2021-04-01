@@ -275,7 +275,8 @@ void BurnOptDialogPrivate::setupUi()
     for (auto i : dp.writespeed) {
         float speed;
         int speedk;
-        sscanf(i.toUtf8().data(), "%d%*c\t%f", &speedk, &speed);
+        QByteArray iBytes(i.toUtf8());
+        sscanf(iBytes.data(), "%d%*c\t%f", &speedk, &speed);
         speedmap[QString::number(speed, 'f', 1) + 'x'] = speedk;
         cb_writespeed->addItem(QString::number(speed, 'f', 1) + 'x');
     }

@@ -124,8 +124,9 @@ void AcessControlManager::onFileCreated(const QString &path, const QString &name
             if (QDir().mkpath(mountBaseName)) {
                 qInfo() << "create" << mountBaseName << "success";
                 struct stat fileStat;
-                stat(mountBaseName.toUtf8().data(), &fileStat);
-                chmod(mountBaseName.toUtf8().data(), (fileStat.st_mode | S_IRUSR | S_IRGRP | S_IROTH));
+                QByteArray nameBytes(mountBaseName.toUtf8());
+                stat(nameBytes.data(), &fileStat);
+                chmod(nameBytes.data(), (fileStat.st_mode | S_IRUSR | S_IRGRP | S_IROTH));
             }
         }
         // ACL

@@ -198,7 +198,8 @@ qint64 FileUtils::singleDirSize(const DUrl &url)
 {
     qint64 size = 0;
     char *paths[2] = {nullptr, nullptr};
-    paths[0] = strdup(url.path().toUtf8().data());
+    QByteArray urlBytes = url.path().toUtf8();
+    paths[0] = strdup(urlBytes.data());
     FTS *fts = fts_open(paths, 0, nullptr);
 
     if (fts) {

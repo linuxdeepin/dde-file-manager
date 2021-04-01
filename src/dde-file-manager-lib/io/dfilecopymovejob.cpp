@@ -2258,7 +2258,9 @@ void DFileCopyMoveJobPrivate::convertTrashFile(DAbstractFileInfoPointer &fileInf
     const QString tmpPath = DFMStandardPaths::location(DFMStandardPaths::TrashExpungedPath) + "/" + QUuid::createUuid().toString();
 
     // 将文件移动到expunged目录下
-    if (::rename(srcPath.toLocal8Bit().data(), tmpPath.toLocal8Bit().data()) == 0) {
+    QByteArray srcPathBytes(srcPath.toLocal8Bit());
+    QByteArray tmpPathBytes(tmpPath.toLocal8Bit());
+    if (::rename(srcPathBytes.data(), tmpPathBytes.data()) == 0) {
         DAbstractFileInfoPointer tmpFileInfo = fileService->createFileInfo(nullptr, DUrl::fromLocalFile(tmpPath));
         if (tmpFileInfo && tmpFileInfo->exists())
             fileInfo = tmpFileInfo;
