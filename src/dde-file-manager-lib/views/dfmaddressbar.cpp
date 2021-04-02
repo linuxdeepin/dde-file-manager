@@ -206,6 +206,8 @@ void DFMAddressBar::hide()
 {
     QLineEdit::hide();
     completerView->hideMe();
+    // fix bug 69679
+    stopAnimation();
 }
 
 void DFMAddressBar::focusInEvent(QFocusEvent *e)
