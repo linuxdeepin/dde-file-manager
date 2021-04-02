@@ -59,6 +59,7 @@ SingleApplication::~SingleApplication()
 void SingleApplication::initConnect()
 {
     connect(m_localServer, &QLocalServer::newConnection, this, &SingleApplication::handleConnection);
+    connect(fileSignalManager, &FileSignalManager::requestCloseListen, this, &SingleApplication::closeServer);
 }
 
 void SingleApplication::initSources()

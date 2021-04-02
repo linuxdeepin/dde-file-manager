@@ -99,6 +99,11 @@ void WindowManager::initConnect()
 {
     connect(fileSignalManager, &FileSignalManager::requestOpenNewWindowByUrl, this, &WindowManager::showNewWindow);
     connect(fileSignalManager, &FileSignalManager::aboutToCloseLastActivedWindow, this, &WindowManager::onLastActivedWindowClosed);
+    connect(qApp, &QApplication::aboutToQuit, this, [=](){
+        fileSignalManager->requestCloseListen();
+        DFMGlobal::setAppQuiting();
+        qInfo() << "app quiting !";
+    });
 
 #ifdef AUTO_RESTART_DEAMON
     connect(m_restartProcessTimer, &QTimer::timeout, this, &WindowManager::reastartAppProcess);
@@ -298,38 +303,28 @@ void WindowManager::setEnableAutoQuit(bool enableAutoQuit)
 
 void WindowManager::onWindowClosed()
 {
-    static QMutex mutex;
-    QMutexLocker lk(&mutex);
-    if (m_windows.count()  <= 0){
-        qInfo() << "quit current ok!"<< DFMGlobal::isAppQuiting() << DFMGlobal::isInitAppOver();
+    if (m_windows.count() <= 0)
         return;
-    }
-    bool shouldRelease = true;
     DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(sender());
     if (m_windows.count() == 1) {
-        if (qApp->quitOnLastWindowClosed()) {
-            fileSignalManager->requestCloseListen();
-            DFMGlobal::setAppQuiting();
-            shouldRelease = false;
-            qInfo() << "dde-file-manager app need quit!";
+        if (window && window->getCanDestruct()) {
+            if (!m_lastWindow && window != m_lastWindow)
+                m_lastWindow->deleteLater();
+            m_lastWindow = window;
         }
         saveWindowState(window);
         dialogManager->closeAllPropertyDialog();
-    }
-    if (shouldRelease){
-        QPointer<DFileManagerWindow> ptrwindow = window;
+    } else if (window && window->getCanDestruct()) {
         // fix bug 59239 drag事件的接受者的drop事件和发起drag事件的发起者的mousemove事件处理完成才能
         // 析构本窗口，检查当前窗口是否可以析构
-        if (window && window->getCanDestruct()) {
-            QTimer::singleShot(1000, this, [=](){
-                if (ptrwindow)
-                    ptrwindow->deleteLater();
-                qInfo() << "window deletelater !";
-            });
-        }
+        QPointer<DFileManagerWindow> pwindow = window;
+        QTimer::singleShot(1000, this, [=](){
+            if (pwindow)
+                pwindow->deleteLater();
+        });
+        qInfo() << "window deletelater !";
     }
     m_windows.remove(static_cast<const QWidget *>(sender()));
-
 }
 
 void WindowManager::onLastActivedWindowClosed(quint64 winId)
