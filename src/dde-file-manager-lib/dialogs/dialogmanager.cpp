@@ -1576,10 +1576,7 @@ void DialogManager::showFormatDialog(const QString &devId)
     if (code == 1) {
         qDebug() << "start format " << devId;
         // 显示格式化窗口
-        QProcess *p = new QProcess;
-        connect(p, static_cast<void (QProcess::*)(int)>(&QProcess::finished), p, &QProcess::deleteLater);
-        connect(p, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), p, &QProcess::deleteLater);
-        p->startDetached("dde-device-formatter", QStringList {devId});
+        QProcess::startDetached("dde-device-formatter", QStringList {devId});
     }
 }
 
