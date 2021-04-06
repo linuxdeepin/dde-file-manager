@@ -272,6 +272,21 @@ protected:
     void initModel();
     void initConnects();
 
+    /**
+     * @brief contextMenuEventShowCheck contextMenuEvent之前执行的检查函数
+     * 显示右键菜单之前执行的事件之前所执行的检查函数。
+     * 该函数可以做一些特殊处理，其返回结果将用作是否执行contextMenuEvent后续执行的判断条件。
+     * 可继承dfileview重载实现该函数。
+     * ctrl and show url context menu process method.
+     * @param event 上下文菜单事件
+     * @return bool
+     * 如果返回true，则执行contextMenuEvent事件，
+     * 返回false，将不会执行contextMenuEvent事件。
+     * if return true, can show menu and execute contextMenuEvent method,
+     * return false ,can't execute contextMenuEvent method.
+     */
+    virtual bool canShowContextMenu(QContextMenuEvent *event);
+
 private:
     void increaseIcon();
     void decreaseIcon();
