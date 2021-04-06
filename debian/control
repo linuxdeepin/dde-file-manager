@@ -81,11 +81,12 @@ Depends:
  cryfs,
  deepin-anything-dkms[i386 amd64],
  deepin-anything-server[i386 amd64],
+ avfs[i386 amd64 arm64],
  libblockdev-crypto2,
  dde-device-formatter
 Conflicts: dde-file-manager-oem
 Replaces: dde-file-manager-oem
-Recommends: dde-qt5integration, avfs, samba
+Recommends: dde-qt5integration, samba
 Description: File manager front end
  File manager front-end of Deepin OS
 
