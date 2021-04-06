@@ -3834,7 +3834,7 @@ end:
         int syncRet = 0;
         d->m_syncResult = QtConcurrent::run([me, &d, &syncRet]() {
             //! 外设或远程设备在同步数据时发送sendDataSyncing信号在拷贝任务对话框中显示数据同步种与即将完成
-            Q_EMIT me->sendDataSyncing(tr("Syncing data"), tr("Please wait"));
+            Q_EMIT me->sendDataSyncing(qApp->translate("DFileCopyMoveJob", "Syncing data"), qApp->translate("DFileCopyMoveJob", "Please wait"));
             qInfo() << "sync to block disk and target path = " << d->targetRootPath;
             syncRet = QProcess::execute("sync", {"-f", d->targetRootPath});
         });
