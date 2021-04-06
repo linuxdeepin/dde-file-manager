@@ -29,9 +29,8 @@
 
 using namespace DCustomActionDefines;
 
-DCustomActionParser::DCustomActionParser(bool onDesktop, QObject *parent)
+DCustomActionParser::DCustomActionParser(QObject *parent)
     : QObject(parent)
-    , m_onDesktop(onDesktop)
 {
     m_fileWatcher = new QFileSystemWatcher;
     //监听目录
@@ -84,9 +83,16 @@ bool DCustomActionParser::loadDir(const QString &dirPath)
 /*!
     返回值QList<DCustomActionEntry>，返回加载解析的菜单项
 */
-QList<DCustomActionEntry> DCustomActionParser::getActionFiles()
+QList<DCustomActionEntry> DCustomActionParser::getActionFiles(bool onDesktop)
 {
-    return m_actionEntry;
+    QList<DCustomActionEntry> ret;
+        foreach (const DCustomActionEntry &entry, m_actionEntry) {
+            //NotShowIn
+            if (isActionShouldShow(entry.m_notShowIn, onDesktop))
+                ret << entry;//一级菜单不在桌面/文管显示则跳过该项
+        }
+
+        return ret;
 }
 
 /*!
@@ -274,10 +280,6 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         //comboPos
         if (!comboPosForTopAction(actionSetting, group, actData))
             return false;//有一级菜单项支持的类型，但全无效，自动作为无效废弃项
-
-        //NotShowIn
-        if (!isActionShouldShow(tpEntry.m_notShowIn, m_onDesktop))
-            return false;//一级菜单不在桌面/文管显示则跳过该项
 
         tpEntry.m_package = basicInfos.m_package;
         tpEntry.m_version = basicInfos.m_version;
