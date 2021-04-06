@@ -303,22 +303,24 @@ std::pair<std::size_t, std::size_t> DMultiFilePropertyDialog::getTheQuantityOfFi
 {
     std::pair<std::size_t, std::size_t> quantityOfFilesAndFolders{0, 0};
 
-    if(urlList.empty() == true){
+    if (urlList.empty())
         return quantityOfFilesAndFolders;
-    }
 
-    for(const auto& url : urlList){
-        DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+    for (const auto& url : urlList) {
 
-        if (!info || !info->exists())
-            continue;
+        DAbstractFileInfoPointer fileInfoPointer = DFileService::instance()->createFileInfo(nullptr, url);
 
-        if(info->isFile() == true){
+        DUrl fileUrl = url;
+
+        if (fileInfoPointer && fileInfoPointer->canRedirectionFileUrl())
+            fileUrl = fileInfoPointer->redirectedFileUrl();
+
+        QFileInfo info{ fileUrl.toLocalFile() };
+
+        if (info.isFile()) {
             ++quantityOfFilesAndFolders.first;
-
-        }else{
+        } else {
             ++quantityOfFilesAndFolders.second;
-
         }
 
     }
