@@ -1069,10 +1069,10 @@ QString DFileMenuManager::getActionString(MenuAction type)
 void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrl &dir, const DUrl &focusFile, const DUrlList &selected, bool onDesktop)
 {
     if (!DFileMenuData::customMenuParser) {
-        DFileMenuData::customMenuParser = new DCustomActionParser(onDesktop);
+        DFileMenuData::customMenuParser = new DCustomActionParser;
     }
 
-    const QList<DCustomActionEntry> &rootEntry = DFileMenuData::customMenuParser->getActionFiles();
+    const QList<DCustomActionEntry> &rootEntry = DFileMenuData::customMenuParser->getActionFiles(onDesktop);
     qDebug() << "extendCustomMenu " << isNormal << dir << focusFile << "files" << selected.size() << "entrys" << rootEntry.size();
 
     if (menu == nullptr || rootEntry.isEmpty())

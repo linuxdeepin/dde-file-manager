@@ -35,11 +35,11 @@ class DCustomActionParser : public QObject
 {
     Q_OBJECT
 public:
-    explicit DCustomActionParser(bool onDesktop, QObject *parent = nullptr);
+    explicit DCustomActionParser(QObject *parent = nullptr);
     ~DCustomActionParser();
 
     bool loadDir(const QString &dirPath);
-    QList<DCustomActionEntry> getActionFiles();
+    QList<DCustomActionEntry> getActionFiles(bool onDesktop);
 
     bool parseFile(QSettings &actionSetting);
     bool parseFile(QList<DCustomActionData> &childrenActions
@@ -73,7 +73,6 @@ private:
     QHash<QString, DCustomActionDefines::ActionArg> m_actionExecArg;
     int m_hierarchyNum = 0;
     int m_topActionCount = 0;
-    bool m_onDesktop;
 };
 
 #endif // DCUSTOMACTIONPARSER_H
