@@ -68,6 +68,7 @@ class VaultControllerPrivate
 {
 public:
     explicit VaultControllerPrivate(VaultController *CryFs);
+    ~VaultControllerPrivate();
 
     CryFsHandle *m_cryFsHandle = nullptr;
 
@@ -79,6 +80,14 @@ private:
 VaultControllerPrivate::VaultControllerPrivate(VaultController *CryFs): q_ptr(CryFs)
 {
 
+}
+
+VaultControllerPrivate::~VaultControllerPrivate()
+{
+    if (m_cryFsHandle) {
+        delete m_cryFsHandle;
+        m_cryFsHandle = nullptr;
+    }
 }
 
 class VaultDirIterator : public DDirIterator
@@ -1146,4 +1155,12 @@ void VaultController::slotLockVault(int state)
         emit fileSignalManager->requestFreshAllFileView();
     }
     emit signalLockVault(state);
+}
+
+VaultController::~VaultController()
+{
+    if (d_ptr) {
+        delete d_ptr;
+        d_ptr = nullptr;
+    }
 }

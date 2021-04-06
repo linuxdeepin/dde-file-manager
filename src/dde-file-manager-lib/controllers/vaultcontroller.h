@@ -374,6 +374,7 @@ signals:
     void sigLockVault(QString unlockFileDir);
 
 private:
+    ~VaultController() override;
     QMap<DUrl, FileBaseInfo> m_mapVaultFileInfo;
 
     VaultControllerPrivate *d_ptr;

@@ -47,6 +47,7 @@ public:
     const QLatin1String SUPPORT_SUFFIX_KEY {"X-DFM-SupportSuffix"}; // for deepin-compress *.7z.001,*.7z.002,*.7z.003...
 
     explicit DFMAdditionalMenuPrivate(DFMAdditionalMenu *qq);
+    ~DFMAdditionalMenuPrivate();
 
     QStringList getValues(XdgDesktopFile &file, const QLatin1String &key, const QStringList &whiteList = {});
     bool isMimeTypeSupport(const QString &mt, const QStringList &fileMimeTypes);

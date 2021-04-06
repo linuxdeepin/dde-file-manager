@@ -4,6 +4,7 @@
 #include <QSharedPointer>
 #include <controllers/vaulterrorcode.h>
 #include <QProcess>
+#include <QThread>
 
 #include "stub.h"
 
@@ -19,6 +20,12 @@ namespace  {
 
         virtual void SetUp() override
         {
+            void (*st_threadStart)(QThread::Priority) = [](QThread::Priority){
+                //do nothing.
+            };
+            Stub stub;
+            stub.set(ADDR(QThread, start), st_threadStart);
+
             m_controller = QSharedPointer<CryFsHandle>(new CryFsHandle());
             std::cout << "start TestCryFsHandle" << std::endl;
         }

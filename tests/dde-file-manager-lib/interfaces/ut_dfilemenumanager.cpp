@@ -30,6 +30,10 @@
 #include "dfmglobal.h"
 #include "dfmeventdispatcher.h"
 #include "shutil/fileutils.h"
+#define protected public
+#include "plugins/dfmadditionalmenu.h"
+
+#include <QFutureInterfaceBase>
 
 #include "stub.h"
 DFM_USE_NAMESPACE
@@ -54,7 +58,18 @@ namespace  {
             delete m_menuMgr;
             m_menuMgr = nullptr;
 
+            eventloop();
+
             std::cout << "end DFileMenuManager" << std::endl;
+        }
+
+        void eventloop()
+        {
+            QEventLoop loop;
+            QTimer::singleShot(100, nullptr, [&loop]() {
+                loop.exit();
+            });
+            loop.exec();
         }
 
         void releaseMenu()
@@ -63,7 +78,6 @@ namespace  {
                 delete m_menu;
                 m_menu = nullptr;
             }
-
         }
     };
 }
@@ -88,6 +102,13 @@ TEST_F(TestDFileMenuManager, createToolBarSettingsMenu)
 
 TEST_F(TestDFileMenuManager, createNormalMenu)
 {
+    void (*st_loadDesktopFile)() = [](){
+        //do nothing.
+    };
+
+    Stub stub;
+    stub.set(ADDR(DFMAdditionalMenu, loadDesktopFile), st_loadDesktopFile);
+
     m_menu = m_menuMgr->createNormalMenu(DUrl(), DUrlList(), QSet<MenuAction>(), QSet<MenuAction>(), 0, true);
     EXPECT_EQ(m_menu, nullptr);
     releaseMenu();
@@ -110,11 +131,24 @@ TEST_F(TestDFileMenuManager, createNormalMenu)
     releaseMenu();
 }
 
+
 TEST_F(TestDFileMenuManager, createVaultMenu)
 {
+    void (*st_threadStart)(QThread::Priority) = [](QThread::Priority){
+        // do nothing.
+    };
+    Stub stub;
+    stub.set(ADDR(QThread, start), st_threadStart);
+
+    bool (*st_openNewTab)(DUrl) = [](DUrl)->bool{
+        return true;
+    };
+    stub.set(ADDR(DFileManagerWindow, openNewTab), st_openNewTab);
+
     DFileManagerWindow menuMgr;
     m_menu = m_menuMgr->createVaultMenu(&menuMgr);
     EXPECT_NE(m_menu, nullptr);
+    releaseMenu();
 
     VaultController::VaultState (*st_state_unlock)(QString) = [](QString)->VaultController::VaultState {
         return VaultController::Unlocked;
@@ -124,10 +158,10 @@ TEST_F(TestDFileMenuManager, createVaultMenu)
         return VaultController::Encrypted;
     };
 
-    Stub stub;
     stub.set(ADDR(VaultController, state), st_state_unlock);
     m_menu = m_menuMgr->createVaultMenu(&menuMgr);
     EXPECT_NE(m_menu, nullptr);
+    releaseMenu();
 
     stub.set(ADDR(VaultController, state), st_state_encrypt);
     m_menu = m_menuMgr->createVaultMenu(&menuMgr);
@@ -146,6 +180,7 @@ TEST_F(TestDFileMenuManager, loadNormalPluginMenu)
     QList<QAction *> actions = m_menuMgr->loadNormalPluginMenu(m_menu, urls, url, true);
     EXPECT_TRUE(actions.size() == 0);
 }
+
 
 TEST_F(TestDFileMenuManager, loadEmptyAreaPluginMenu)
 {
@@ -262,7 +297,7 @@ TEST_F(TestDFileMenuManager, registerMenuActionType)
 {
     QAction *action = m_menuMgr->getAction(DFMGlobal::Copy);
     MenuAction type = m_menuMgr->registerMenuActionType(action);
-    EXPECT_EQ(type, DFMGlobal::UserMenuAction);
+    EXPECT_NE(type, DFMGlobal::Unknow);
 }
 
 TEST_F(TestDFileMenuManager, whetherShowTagActions)
