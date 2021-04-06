@@ -213,6 +213,14 @@ QList<QAction *>DFMAdditionalMenuPrivate::emptyAreaActoins(const QString &curren
     return actions;
 }
 
+DFMAdditionalMenuPrivate::~DFMAdditionalMenuPrivate()
+{
+    for (DFileMenu *menu : menuList) {
+        delete menu;
+        menu = nullptr;
+    }
+}
+
 void DFMAdditionalMenu::loadDesktopFile()
 {
     Q_D(DFMAdditionalMenu);

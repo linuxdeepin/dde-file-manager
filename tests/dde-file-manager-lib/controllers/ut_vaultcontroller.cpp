@@ -1,27 +1,25 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
-
 #define private public
-
-#include <QSharedPointer>
-#include <dfmevent.h>
 #include <controllers/vaultcontroller.h>
+#include <controllers/vaulterrorcode.h>
 #include <interfaces/dfmstandardpaths.h>
-#include <io/dfilestatisticsjob.h>
-#include <QTimer>
-#include "shutil/fileutils.h"
-#include "dialogs/dialogmanager.h"
-
-#include "controllers/vaultcontroller.h"
-#include "vault/vaultglobaldefine.h"
-#include "controllers/vaulterrorcode.h"
-#include <QDirIterator>
-#include "dfmstandardpaths.h"
 #include <interfaces/dfileservices.h>
-#include "dfmevent.h"
-#include "models/vaultfileinfo.h"
+#include <io/dfilestatisticsjob.h>
+#include <vault/vaultglobaldefine.h>
+#include <shutil/fileutils.h>
+#include <models/vaultfileinfo.h>
+
+#include <dialogs/dialogmanager.h>
+#include <dfileproxywatcher.h>
+#include <dfmstandardpaths.h>
+#include <dfmevent.h>
+
 #include <QProcess>
+#include <QSharedPointer>
+#include <QTimer>
+#include <QDirIterator>
 
 #include "stub.h"
 #include "../stub-ext/stubext.h"
@@ -43,6 +41,11 @@ namespace  {
             };
             Stub stub;
             stub.set((void(QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), st_start);
+
+            void (*st_threadStart)(QThread::Priority) = [](QThread::Priority){
+                //do nothing.
+            };
+            stub.set(ADDR(QThread, start), st_threadStart);
 
             QString home = DFMStandardPaths::location(DFMStandardPaths::HomePath);
             m_controller = QSharedPointer<VaultController>(new VaultController());
@@ -78,11 +81,11 @@ TEST_F(TestVaultController, tst_createFileInfo)
 #endif
 }
 
+
 TEST_F(TestVaultController, tst_createDirIterator)
 {
     QStringList nameFilters;
     nameFilters << "filter";
-
 
     const DDirIteratorPointer &iterator = m_controller->createDirIterator(
                 dMakeEventPointer<DFMCreateDiriterator>(nullptr,
@@ -90,7 +93,7 @@ TEST_F(TestVaultController, tst_createDirIterator)
                                                         nameFilters,
                                                         QDir::NoFilter,
                                                         QDirIterator::NoIteratorFlags));
-    iterator->next();
+
     iterator->hasNext();
     iterator->fileName();
     iterator->fileUrl();
@@ -98,21 +101,32 @@ TEST_F(TestVaultController, tst_createDirIterator)
     iterator->url();
 }
 
+
 TEST_F(TestVaultController, tst_createFileWatcher)
 {
     QSharedPointer<DFMCreateFileWatcherEvent> event = dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, DUrl::fromVaultFile("/"));
-    auto ret = m_controller->createFileWatcher(event);
+    DFileProxyWatcher *ret = dynamic_cast<DFileProxyWatcher*>(m_controller->createFileWatcher(event));
     EXPECT_NE(nullptr, ret);
+    if (ret) {
+        delete ret;
+        ret = nullptr;
+    }
 }
 
 TEST_F(TestVaultController, tst_open_file_files)
 {
+    void (*st_threadStart)(QThread::Priority) = [](QThread::Priority){
+        //do nothing.
+    };
+    Stub stub;
+    stub.set(ADDR(QThread, start), st_threadStart);
+
     QSharedPointer<DFMOpenFileEvent> event = dMakeEventPointer<DFMOpenFileEvent>(nullptr, DUrl::fromVaultFile("/"));
 
     bool (*st_openFile)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &){
         return true;
     };
-    Stub stub;
+
     stub.set(ADDR(DFileService, openFile), st_openFile);
     EXPECT_TRUE(m_controller->openFile(event));
 

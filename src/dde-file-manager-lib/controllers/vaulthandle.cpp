@@ -39,7 +39,7 @@ CryFsHandle::CryFsHandle(QObject *parent) : QObject(parent)
 {
     m_process = new QProcess(this);
     m_mutex = new QMutex;
-    m_thread = new QThread;
+    m_thread = new QThread(this);
     this->moveToThread(m_thread);
     connect(m_process , &QProcess::readyReadStandardError, this, &CryFsHandle::slotReadError);
     connect(m_process , &QProcess::readyReadStandardOutput, this, &CryFsHandle::slotReadOutput);
@@ -50,6 +50,11 @@ CryFsHandle::~CryFsHandle()
 {
     disconnect(m_process, &QProcess::readyReadStandardError, this, &CryFsHandle::slotReadError);
     disconnect(m_process, &QProcess::readyReadStandardOutput, this, &CryFsHandle::slotReadOutput);
+
+    if (m_mutex) {
+        delete m_mutex;
+        m_mutex = nullptr;
+    }
 }
 
 void CryFsHandle::createVault(QString lockBaseDir, QString unlockFileDir, QString passWord)
