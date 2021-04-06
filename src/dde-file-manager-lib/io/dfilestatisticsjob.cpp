@@ -137,7 +137,7 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
     if (info->isFile()) {
         do {
             // ###(zccrs): skip the file,os file
-            if (info->fileUrl() == DUrl::fromLocalFile("/proc/kcore")) {
+            if (info->fileUrl() == DUrl::fromLocalFile("/proc/kcore") || info->fileUrl() == DUrl::fromLocalFile("/dev/core")) {
                 break;
             }
             //skip os file Shortcut
