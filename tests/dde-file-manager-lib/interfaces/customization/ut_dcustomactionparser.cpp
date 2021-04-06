@@ -40,9 +40,6 @@ namespace  {
     QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     QString utDirPath = QString("%1/utTestDir").arg(path);
 
-
-
-
     class TestDCustomActionParser : public testing::Test
     {
     public:
@@ -71,7 +68,7 @@ namespace  {
             }
         }
     public:
-        DCustomActionParser* m_parser = new DCustomActionParser(true);
+        DCustomActionParser* m_parser = new DCustomActionParser;
 
     };
 }
@@ -101,8 +98,22 @@ TEST_F(TestDCustomActionParser, test_loadDir)
 
 TEST_F(TestDCustomActionParser, test_get_action_files)
 {
-    auto expectValue = m_parser->m_actionEntry.size() == m_parser->getActionFiles().size();
-    EXPECT_TRUE(expectValue);
+    m_parser->m_actionEntry.clear();
+    DCustomActionEntry entry;
+    m_parser->m_actionEntry << entry; //无限制
+
+    entry.m_notShowIn.append("Desktop"); //不在桌面
+    m_parser->m_actionEntry << entry;
+
+    entry.m_notShowIn.append("Filemanager"); //不在桌面和文管
+    m_parser->m_actionEntry << entry;
+
+    entry.m_notShowIn.clear();
+    entry.m_notShowIn.append("Filemanager"); //不在文管
+    m_parser->m_actionEntry << entry;
+
+    EXPECT_EQ(m_parser->getActionFiles(true).size(), 2);
+    EXPECT_EQ(m_parser->getActionFiles(false).size(), 2);
 }
 
 TEST_F(TestDCustomActionParser, test_parse_file_only_settings_arg)
@@ -474,7 +485,6 @@ TEST_F(TestDCustomActionParser, test_parse_file_more_arg)
 
 TEST_F(TestDCustomActionParser, test_parse_Level_one_action_args)
 {
-    m_parser->m_onDesktop = false;
     auto invalidFilePath = QString("%1/%2").arg(utDirPath).arg("test.conf");
     QFile testFile(invalidFilePath);
     testFile.open(QIODevice::WriteOnly | QIODevice::Append | QFile::Text);
@@ -667,7 +677,7 @@ TEST_F(TestDCustomActionParser, test_action_file_infos)
 
 TEST(DCustomActionParser, action_name_dynamic_arg_empty)
 {
-    DCustomActionParser parser(true);
+    DCustomActionParser parser;
     DCustomActionData actData;
 
     actData.m_name = "n";
@@ -714,7 +724,7 @@ TEST(DCustomActionParser, action_name_dynamic_arg_empty)
 
 TEST(DCustomActionParser, action_name_dynamic_arg_not_empty)
 {
-    DCustomActionParser parser(true);
+    DCustomActionParser parser;
     DCustomActionData actData;
 
     actData.m_name = "%a";
@@ -820,7 +830,7 @@ TEST(DCustomActionParser, action_name_dynamic_arg_not_empty)
 
 TEST(DCustomActionParser, exec_dynamic_arg_empty)
 {
-    DCustomActionParser parser(true);
+    DCustomActionParser parser;
     DCustomActionData actData;
 
     actData.m_name = "n";
@@ -899,7 +909,7 @@ TEST(DCustomActionParser, exec_dynamic_arg_empty)
 
 TEST(DCustomActionParser, exec_dynamic_arg_not_empty)
 {
-    DCustomActionParser parser(true);
+    DCustomActionParser parser;
     DCustomActionData actData;
 
     actData.m_command = "%f";
