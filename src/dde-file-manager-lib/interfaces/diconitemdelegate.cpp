@@ -878,15 +878,19 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
         //编辑字符的长度控制
         int editTextMaxLen = item->maxCharSize();
-        int editTextCurrLen = item->edit->toPlainText().length();
+        int editTextCurrLen = item->edit->toPlainText().toLocal8Bit().size();
         int editTextRangeOutLen = editTextCurrLen - editTextMaxLen;
         if (editTextRangeOutLen > 0 && editTextMaxLen != INT_MAX) {
-            int srcPos = item->edit->textCursor().position();
-            srcText = srcText.mid(0, srcPos - editTextRangeOutLen)
-                    + srcText.mid(srcPos, editTextCurrLen);
+            // fix bug 69627
+            QVector<uint> list = srcText.toUcs4();
+            int cursor_pos = item->edit->textCursor().position();
+            while (srcText.toLocal8Bit().size() > editTextMaxLen && cursor_pos > 0) {
+                list.removeAt(--cursor_pos);
+                srcText = QString::fromUcs4(list.data(), list.size());
+            }
             item->edit->setPlainText(srcText);
             QTextCursor cursor = item->edit->textCursor();
-            cursor.setPosition(srcPos - editTextRangeOutLen);
+            cursor.setPosition(cursor_pos);
             item->edit->setTextCursor(cursor);
             item->edit->setAlignment(Qt::AlignHCenter);
         }
