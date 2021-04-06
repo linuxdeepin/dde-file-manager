@@ -566,9 +566,8 @@ void DiskControlWidget::onBlockDeviceAdded(const QString &path)
     qInfo() << "auto mount drive[ " << blkDev->drive() << " ] with path[" << path << " ] on point:" << mountPoint;
 
     if (m_autoMountAndOpenEnable) {
-        // 不太明白为什么要保留这段代码
         if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
-            QString mountUrlStr = DFMROOT_ROOT + path.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS;
+            QString mountUrlStr = DFMROOT_ROOT + QFileInfo(blkDev->device()).fileName() + "." SUFFIX_UDISKS;
             QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
             qDebug() << "open by dde-file-manager: " << mountUrlStr;
             return;
