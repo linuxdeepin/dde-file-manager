@@ -1031,13 +1031,9 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
         rooturl.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
     }
     if (isSmbFtpContain(rooturl)) {
-        //文件不存在弹提示框
         d->smbftpmutex.lock();
         bool bbusy = d->m_rootsmbftpurllist.value(rooturl);
         d->smbftpmutex.unlock();
-        if (bbusy && showdailog) {
-            dialogManager->showUnableToLocateDir(rootfilename);
-        }
         return bbusy;
     }
     bool isbusy = checkGvfsMountfileBusy(rooturl, rootfilename, showdailog);
