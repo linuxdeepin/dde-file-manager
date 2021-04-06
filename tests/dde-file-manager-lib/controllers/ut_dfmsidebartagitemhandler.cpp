@@ -57,7 +57,12 @@ TEST_F(TestDFMSideBarTagItemHandler, tst_createItem)
     stub.set((QString(TagManager::*)(const QString &)const)ADDR(TagManager, getTagIconName), st_getTagIconName);
 
     DUrl url(testFile);
-    EXPECT_NO_FATAL_FAILURE(m_handler->createItem(url));
+    auto item = m_handler->createItem(url);
+    EXPECT_NE(nullptr, item);
+    if (item) {
+        delete item;
+        item = nullptr;
+    }
 }
 
 TEST_F(TestDFMSideBarTagItemHandler, tst_contextMenu)
