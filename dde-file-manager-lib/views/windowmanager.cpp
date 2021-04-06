@@ -99,6 +99,11 @@ void WindowManager::initConnect()
 {
     connect(fileSignalManager, &FileSignalManager::requestOpenNewWindowByUrl, this, &WindowManager::showNewWindow);
     connect(fileSignalManager, &FileSignalManager::aboutToCloseLastActivedWindow, this, &WindowManager::onLastActivedWindowClosed);
+    connect(qApp, &QApplication::aboutToQuit, this, [=](){
+            fileSignalManager->requestCloseListen();
+            DFMGlobal::setAppQuiting();
+            qInfo() << "app quiting !";
+        });
 
 #ifdef AUTO_RESTART_DEAMON
     connect(m_restartProcessTimer, &QTimer::timeout, this, &WindowManager::reastartAppProcess);
@@ -302,27 +307,27 @@ void WindowManager::setEnableAutoQuit(bool enableAutoQuit)
 
 void WindowManager::onWindowClosed()
 {
-    static QMutex mutex;
-    QMutexLocker lk(&mutex);
     if (m_windows.count()  <= 0){
         qInfo() << "quit current ok!"<< DFMGlobal::isAppQuiting() << DFMGlobal::isInitAppOver();
         return;
     }
-    bool shouldRelease = true;
     DFileManagerWindow* window = static_cast<DFileManagerWindow*>(sender());
     if (m_windows.count() == 1){
-        if (qApp->quitOnLastWindowClosed()) {
-            fileSignalManager->requestCloseListen();
-            DFMGlobal::setAppQuiting();
-            shouldRelease = false;
-            qInfo() << "dde-file-manager app need quit!";
-        }
+        if (window && !m_lastWindow && window != m_lastWindow)
+            m_lastWindow->deleteLater();
+        m_lastWindow = window;
+
         saveWindowState(window);
         dialogManager->closeAllPropertyDialog();
-    }
-    if (shouldRelease) {
+    } else if (window) {
+        QPointer<DFileManagerWindow> pwindow = window;
+        if (!m_lastWindow && window != m_lastWindow) {
+            m_lastWindow->deleteLater();
+            m_lastWindow = nullptr;
+        }
         QTimer::singleShot(1000,this,[=](){
-            window->deleteLater();
+            if (pwindow)
+                pwindow->deleteLater();
             qInfo() << "window deletelater !";
         });
     }

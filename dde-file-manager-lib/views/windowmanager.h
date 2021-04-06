@@ -71,11 +71,12 @@ private slots:
     void onLastActivedWindowClosed(quint64 winId);
 
 protected:
-    explicit WindowManager(QObject *parent = 0);
+    explicit WindowManager(QObject *parent = nullptr);
 
 private:
     static QHash<const QWidget*, quint64> m_windows;
     static int m_count;
+    DFileManagerWindow *m_lastWindow = nullptr;
 
 #ifdef AUTO_RESTART_DEAMON
     QTimer* m_restartProcessTimer = NULL;
