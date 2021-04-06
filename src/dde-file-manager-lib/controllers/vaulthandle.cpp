@@ -39,7 +39,7 @@ CryFsHandle::CryFsHandle(QObject *parent) : QObject(parent)
 {
     m_process = new QProcess(this);
     m_mutex = new QMutex;
-    m_thread = new QThread(this);
+    m_thread = new QThread;
     this->moveToThread(m_thread);
     connect(m_process , &QProcess::readyReadStandardError, this, &CryFsHandle::slotReadError);
     connect(m_process , &QProcess::readyReadStandardOutput, this, &CryFsHandle::slotReadOutput);
@@ -54,6 +54,11 @@ CryFsHandle::~CryFsHandle()
     if (m_mutex) {
         delete m_mutex;
         m_mutex = nullptr;
+    }
+
+    if (m_thread) {
+        m_thread->quit();
+        m_thread->deleteLater();
     }
 }
 

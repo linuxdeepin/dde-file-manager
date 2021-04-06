@@ -16,7 +16,7 @@ namespace  {
     class TestCryFsHandle : public testing::Test
     {
     public:
-        QSharedPointer<CryFsHandle> m_controller;
+        CryFsHandle* m_controller;
 
         virtual void SetUp() override
         {
@@ -26,12 +26,17 @@ namespace  {
             Stub stub;
             stub.set(ADDR(QThread, start), st_threadStart);
 
-            m_controller = QSharedPointer<CryFsHandle>(new CryFsHandle());
+            m_controller = new CryFsHandle();
             std::cout << "start TestCryFsHandle" << std::endl;
         }
 
         virtual void TearDown() override
         {
+            if (m_controller) {
+                delete m_controller;
+                m_controller = nullptr;
+            }
+
             std::cout << "end TestCryFsHandle" << std::endl;
         }
     };
