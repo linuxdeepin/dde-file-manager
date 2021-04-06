@@ -251,4 +251,6 @@ SOURCES += \
     $$PWD/interfaces/ut_dfileservices.cpp \
     $$PWD/interfaces/ut_dabstractfileinfo.cpp \
     $$PWD/interfaces/ut_dfilemenumanager.cpp \
-    $$PWD/interfaces/ut_dgvfsfileinfo.cpp
+    $$PWD/interfaces/ut_dgvfsfileinfo.cpp \
+    $$PWD/controllers/ut_dfmftpcrumbcontroller.cpp \
+    $$PWD/controllers/ut_dfmsftpcrumbcontroller.cpp
