@@ -28,9 +28,22 @@
 #include <QObject>
 #include <QHash>
 #include <QTimer>
+#include <QIODevice>
+#include <QSettings>
 
-class QSettings;
 class QFileSystemWatcher;
+class RegisterCustomFormat
+{
+public:
+    static RegisterCustomFormat& instance();
+    QSettings::Format customFormat();
+private:
+    RegisterCustomFormat();
+    static bool readConf(QIODevice &device, QSettings::SettingsMap &settingsMap);
+    static bool writeConf(QIODevice &device, const QSettings::SettingsMap &settingsMap);
+private:
+    QSettings::Format m_customFormat;
+};
 class DCustomActionParser : public QObject
 {
     Q_OBJECT
@@ -67,6 +80,7 @@ private:
     QTimer *m_refreshTimer = nullptr;
     QFileSystemWatcher  *m_fileWatcher  = nullptr;
     QList<DCustomActionEntry> m_actionEntry;
+    QSettings::Format m_customFormat;
     QHash<QString, DCustomActionDefines::ComboType> m_combos;
     QHash<QString, DCustomActionDefines::Separator> m_separtor;
     QHash<QString, DCustomActionDefines::ActionArg> m_actionNameArg;
