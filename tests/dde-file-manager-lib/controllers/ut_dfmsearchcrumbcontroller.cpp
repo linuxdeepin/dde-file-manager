@@ -32,36 +32,31 @@ public:
     virtual void SetUp() override
     {
         std::cout << "start TestDFMSearchCrumbController" << std::endl;
-        controller = new DFMSearchCrumbController();
-        controller->setCrumbBar(new DFMCrumbBar());
+        controller.setCrumbBar(new DFMCrumbBar());
     }
 
     virtual void TearDown() override
     {
         std::cout << "end TestDFMSearchCrumbController"  << std::endl;
-        if (controller) {
-            delete controller;
-            controller = nullptr;
-        }
     }
 
 public:
-    DFMSearchCrumbController *controller;
+    DFMSearchCrumbController controller;
 };
 }
 
 TEST_F(TestDFMSearchCrumbController, processAction)
 {
-    controller->processAction(DFMCrumbInterface::EscKeyPressed);
-    controller->processAction(DFMCrumbInterface::AddressBarLostFocus);
+    controller.processAction(DFMCrumbInterface::EscKeyPressed);
+    controller.processAction(DFMCrumbInterface::AddressBarLostFocus);
 }
 
 TEST_F(TestDFMSearchCrumbController, crumbUrlChangedBehavior)
 {
-    controller->crumbUrlChangedBehavior(DUrl("file:///tmp"));
+    controller.crumbUrlChangedBehavior(DUrl("file:///tmp"));
 }
 
 TEST_F(TestDFMSearchCrumbController, supportedUrl)
 {
-    EXPECT_TRUE(controller->supportedUrl(DUrl::fromSearchFile("/tmp")));
+    EXPECT_TRUE(controller.supportedUrl(DUrl::fromSearchFile("/tmp")));
 }

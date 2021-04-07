@@ -14,16 +14,13 @@ namespace  {
 class TestDfmavfscrumbcontroller : public testing::Test
 {
 public:
-    DFMAvfsCrumbController *dfmAvsCtl;
+    DFMAvfsCrumbController dfmAvsCtl;
     virtual void SetUp() override
     {
-        dfmAvsCtl = new DFMAvfsCrumbController();
     }
 
     virtual void TearDown() override
     {
-        delete dfmAvsCtl;
-        dfmAvsCtl = nullptr;
     }
 };
 
@@ -32,5 +29,5 @@ public:
 TEST_F(TestDfmavfscrumbcontroller, tst_supportedUrl)
 {
     DUrl url("file:///home");
-    EXPECT_FALSE(dfmAvsCtl->supportedUrl(url));
+    EXPECT_FALSE(dfmAvsCtl.supportedUrl(url));
 }
