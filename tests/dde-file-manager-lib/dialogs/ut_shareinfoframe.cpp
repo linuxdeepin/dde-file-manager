@@ -120,12 +120,12 @@ TEST_F(TestShareInfoFrame, testHandleCheckBoxChanged3)
     EXPECT_EQ(b, false);
 }
 
-TEST_F(TestShareInfoFrame, testHandleShareNameChanged)
+TEST_F(TestShareInfoFrame, testHandleShareNameFinished)
 {
-    EXPECT_NO_FATAL_FAILURE(m_pTester->handleShareNameChanged());
+    EXPECT_NO_FATAL_FAILURE(m_pTester->handleShareNameFinished());
 }
 
-TEST_F(TestShareInfoFrame, testHandleShareNameChanged2)
+TEST_F(TestShareInfoFrame, testHandleShareNameFinished2)
 {
     QLineEdit *pShareNamelineEdit = new QLineEdit();
     m_pTester->m_shareNamelineEdit = pShareNamelineEdit;
@@ -139,13 +139,20 @@ TEST_F(TestShareInfoFrame, testHandleShareNameChanged2)
     Stub stu;
     stu.set(ADDR(QWidget, hasFocus), stub_hasFocus);
 
-    EXPECT_NO_FATAL_FAILURE(m_pTester->handleShareNameChanged());\
+    EXPECT_NO_FATAL_FAILURE(m_pTester->handleShareNameFinished());
 
     if (pShareNamelineEdit)
         pShareNamelineEdit->deleteLater();
     if (pPermissoComBox)
         pPermissoComBox->deleteLater();
 
+}
+
+TEST_F(TestShareInfoFrame, testHandleShareNameChinged)
+{
+    QLineEdit shareNamelineEdit;
+    m_pTester->m_shareNamelineEdit = &shareNamelineEdit;
+    EXPECT_NO_FATAL_FAILURE(m_pTester->handleShareNameChanged(" 123"));
 }
 
 TEST_F(TestShareInfoFrame, testHandlePermissionComboxChanged)
