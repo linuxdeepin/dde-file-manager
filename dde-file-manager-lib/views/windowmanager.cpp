@@ -302,6 +302,12 @@ void WindowManager::onWindowClosed()
         dialogManager->closeAllPropertyDialog();
     }
     m_windows.remove(static_cast<const QWidget*>(sender()));
+
+    DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(sender());
+    if(window->currentUrl().scheme() == "phone"){
+        qInfo() << "delete phone window ok";
+        window->getFileView()->deleteLater();
+    }
 }
 
 void WindowManager::onLastActivedWindowClosed(quint64 winId)

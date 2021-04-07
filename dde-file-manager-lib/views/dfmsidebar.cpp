@@ -62,6 +62,8 @@
 
 #include <algorithm>
 
+#include "plugins/schemepluginmanager.h"
+
 #define SIDEBAR_ITEMORDER_KEY "SideBar/ItemOrder"
 
 DFM_BEGIN_NAMESPACE
@@ -88,7 +90,8 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initUserShareItem();
     initRecentItem();
 
-    //   DFMSideBarManager::instance();
+    //NOTE [XIAO] 从Plugin中导入SideBarItem
+    initItemFromPlugin();
 }
 
 DFMSideBar::~DFMSideBar()
@@ -488,7 +491,7 @@ void DFMSideBar::initModelData()
     qRegisterMetaTypeStreamOperators<DUrl>("DUrl");
 
     static QList<DFMSideBar::GroupName> groups = {
-        GroupName::Common, GroupName::Device, GroupName::Bookmark, GroupName::Network, GroupName::Tag
+        GroupName::Common, GroupName::Device, GroupName::Bookmark, GroupName::Network, GroupName::Tag, GroupName::Phone//Add by ut001000 renfeixiang 2021-03-22 添加我的手机类型，实现排序
     };
 
     //bool hasSeparator = false;
@@ -808,6 +811,20 @@ void DFMSideBar::initTagsConnection()
     //        DFMSideBarItem *item = group->findItem(url);
     //        item->setIconFromThemeConfig("BookmarkItem." + TagManager::instance()->getTagColorName(url.tagName()));
     //    });
+}
+
+//NOTE [XIAO] 从Plugin中导入SideBarItem
+void DFMSideBar::initItemFromPlugin()
+{
+    qWarning() << "[PLUGIN]" << "try to load plugin of sidebar item";
+    auto plugins = SchemePluginManager::instance()->schemePlugins();
+    for (auto plugin : plugins) {
+        qWarning() << "[PLUGIN]" << "load sidebar item from plugin:" << plugin.first;
+        DFMSideBarItem *item = plugin.second->createSideBarItem();
+        // NOTE [XIAO] 插件中的GroupName与文管版本中一致。
+        //this->addItem(item, item->groupName());
+        this->appendItem(item, item->groupName());
+    }
 }
 
 void DFMSideBar::applySidebarColor()

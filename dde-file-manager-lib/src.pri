@@ -229,7 +229,10 @@ HEADERS += \
     $$PWD/interfaces/private/dgvfsfileinfo_p.h \
     $$PWD/shutil/checknetwork.h \
     $$PWD/accessibility/ac-lib-file-manager.h \
-    $$PWD/accessibility/acintelfunctions.h
+    $$PWD/accessibility/acintelfunctions.h \
+    $$PWD/interfaces/dfmbaseview_copy.h \
+    $$PWD/plugins/schemepluginmanager.h \
+    $$PWD/plugins/SchemePluginInterface.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
@@ -438,7 +441,8 @@ SOURCES += \
     $$PWD/bluetooth/bluetoothtransdialog.cpp \
     $$PWD/interfaces/drootfilemanager.cpp \
     $$PWD/interfaces/dgvfsfileinfo.cpp \
-    $$PWD/shutil/checknetwork.cpp
+    $$PWD/shutil/checknetwork.cpp \
+    $$PWD/plugins/schemepluginmanager.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h

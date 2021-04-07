@@ -25,6 +25,7 @@
 #include "dfmopticalmediawidget.h"
 #include "controllers/vaultcontroller.h"
 #include "accessibility/ac-lib-file-manager.h"
+#include "plugins/schemepluginmanager.h"
 
 #include <QDebug>
 #include <dstorageinfo.h>
@@ -94,8 +95,8 @@ void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
         const QModelIndex &idx = indexAt(event->pos());
         QString voltag = idx.data(DFMSideBarItem::ItemVolTagRole).toString();
         if (!voltag.isEmpty() && voltag.startsWith("sr")
-            && DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(voltag)
-            && DFMOpticalMediaWidget::g_mapCdStatusInfo[voltag].bLoading) {
+                && DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(voltag)
+                && DFMOpticalMediaWidget::g_mapCdStatusInfo[voltag].bLoading) {
             // 设置光标为繁忙状态
             DFileService::instance()->setCursorBusyState(true);
         } else {
@@ -207,12 +208,34 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
             action = canDropMimeData(item, event->mimeData(), event->possibleActions());
         }
 
+        if (item->url() == DUrl(PHONE_ROOT)) { // 对我的手机目录执行的单独拖拽动作，拖拽目录固定 add by CL
+            for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
+                if (plugin.second->queryloadPluginMenuStatus()) {
+                    if (urls.size() > 0 && plugin.second->dropFileToPhone(urls, item->url())) {
+                        event->setDropAction(action);
+                        isActionDone = true;
+                    }
+                }
+            }
+        }
+
         if (urls.size() > 0 && onDropData(urls, item->url(), action)) {
             event->setDropAction(action);
             isActionDone = true;
         }
     }
     if (!copyUrls.isEmpty()) {
+        if (item->url() == DUrl(PHONE_ROOT)) { // 对我的手机目录执行的单独拖拽动作，拖拽目录固定 add by CL
+            for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
+                if (plugin.second->queryloadPluginMenuStatus()) {
+                    if (urls.size() > 0 && plugin.second->dropFileToPhone(copyUrls, item->url())) {
+                        event->setDropAction(Qt::CopyAction);
+                        isActionDone = true;
+                    }
+                }
+            }
+        }
+
         if (onDropData(copyUrls, item->url(), Qt::CopyAction)) {  // 对于只读权限的，只能进行 copy动作
             event->setDropAction(Qt::CopyAction);
             isActionDone = true;
@@ -350,6 +373,14 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
     const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, item->url());
 
     if (!info || !info->canDrop()) {
+        // add by CL
+        for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
+            // 对我的手机item做临时处理，连接成功时允许向item拖拽
+            if (item->url() == DUrl(PHONE_ROOT) && plugin.second->queryloadPluginMenuStatus()) {
+                return Qt::CopyAction;
+            }
+        }
+
         return Qt::IgnoreAction;
     }
     Qt::DropAction action = Qt::IgnoreAction;

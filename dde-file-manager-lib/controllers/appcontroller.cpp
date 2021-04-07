@@ -150,6 +150,7 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<NetworkController>(SFTP_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(FTP_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(DAV_SCHEME, "");
+
     DFileService::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
     DFileService::dRegisterUrlHandler<AVFSFileController>(AVFS_SCHEME, "");
     DFileService::dRegisterUrlHandler<MountController>(MOUNT_SCHEME, "");

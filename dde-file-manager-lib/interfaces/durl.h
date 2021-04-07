@@ -50,6 +50,8 @@
 #define DEVICE_SCHEME "device"
 #define MOUNT_SCHEME "mount"
 #define BURN_SCHEME "burn"
+//NOTE [XIAO] #define PHONE_SCHEME "phone"
+#define PHONE_SCHEME "phone"
 
 #define TRASH_ROOT "trash:///"
 #define RECENT_ROOT "recent:///"
@@ -64,6 +66,8 @@
 #define DEVICE_ROOT "device:///"
 #define MOUNT_ROOT "mount:///"
 #define BURN_ROOT "burn:///"
+//NOTE [XIAO] #define PLUGIN_ROOT "phone:///"
+#define PHONE_ROOT "phone:///"
 
 // internal scheme, don't rely on this scheme outside the file manager app.
 #define DFMMD_SCHEME "dfmmd"
@@ -122,6 +126,8 @@ public:
     bool isSFTPFile() const;
     bool isTaggedFile() const;
     bool isVaultFile() const;
+    //NOTE [XIAO] bool isPhoneFile() const;
+    bool isPhoneFile() const;
 
     QString toString(FormattingOptions options = FormattingOptions(PrettyDecoded)) const;
 

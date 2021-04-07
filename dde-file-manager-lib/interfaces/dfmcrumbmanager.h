@@ -67,6 +67,9 @@ private:
 
     QScopedPointer<DFMCrumbManagerPrivate> d_ptr;
 
+    //NOTE [XIAO] 从PLUGIN中加载面包屑插件
+    void initCrumbControllerFromPlugin();
+
     Q_DECLARE_PRIVATE(DFMCrumbManager)
 
 };

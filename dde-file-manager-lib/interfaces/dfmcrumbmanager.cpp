@@ -38,6 +38,7 @@
 #include "controllers/dfmmdcrumbcontrooler.h"
 #include "controllers/dfmmasteredmediacrumbcontroller.h"
 #include "controllers/dfmvaultcrumbcontroller.h"
+#include "plugins/schemepluginmanager.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -153,6 +154,9 @@ DFMCrumbManager::DFMCrumbManager(QObject *parent)
             return DFMCrumbFactory::create(key);
         }));
     }
+
+    //NOTE [XIAO] 从PLUGIN中加载面包屑插件
+    initCrumbControllerFromPlugin();
 }
 
 DFMCrumbManager::~DFMCrumbManager()
@@ -165,6 +169,17 @@ void DFMCrumbManager::insertToCreatorHash(const DFMCrumbManager::KeyType &type, 
     Q_D(DFMCrumbManager);
 
     d->controllerCreatorHash.insertMulti(type, creator);
+}
+
+//NOTE [XIAO] 从PLUGIN中加载面包屑插件
+void DFMCrumbManager::initCrumbControllerFromPlugin()
+{
+    qWarning() << "[PLUGIN]" << "try to load plugin of crumb controller";
+    auto plugins = SchemePluginManager::instance()->schemePlugins();
+    for (auto plugin : plugins) {
+        qWarning() << "[PLUGIN]" << "load crumb controller from plugin:" << plugin.first;
+        insertToCreatorHash(plugin.first, plugin.second->createCrumbCreaterTypeFunc());
+    }
 }
 
 DFM_END_NAMESPACE

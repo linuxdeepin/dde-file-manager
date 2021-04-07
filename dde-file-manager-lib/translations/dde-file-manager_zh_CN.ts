@@ -1,50 +1,52 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="490"/>
+        <location filename="../controllers/appcontroller.cpp" line="493"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="576"/>
+        <location filename="../controllers/appcontroller.cpp" line="579"/>
         <source>Mounting device error</source>
         <translation>挂载设备出错</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="609"/>
+        <location filename="../controllers/appcontroller.cpp" line="612"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>此光盘中的镜像已损坏，无法挂载，请擦除后使用</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="651"/>
+        <location filename="../controllers/appcontroller.cpp" line="654"/>
         <source>Mount error: unsupported image format</source>
         <translation>挂载错误，镜像文件格式不支持</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="729"/>
-        <location filename="../controllers/appcontroller.cpp" line="770"/>
+        <location filename="../controllers/appcontroller.cpp" line="732"/>
+        <location filename="../controllers/appcontroller.cpp" line="773"/>
         <source>The device was not safely removed</source>
         <translation>设备没有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="729"/>
-        <location filename="../controllers/appcontroller.cpp" line="770"/>
+        <location filename="../controllers/appcontroller.cpp" line="732"/>
+        <location filename="../controllers/appcontroller.cpp" line="773"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>请点击“安全移除”后，再断开连接</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="740"/>
+        <location filename="../controllers/appcontroller.cpp" line="743"/>
         <source>The device was not ejected</source>
         <translation>设备未弹出</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="740"/>
+        <location filename="../controllers/appcontroller.cpp" line="743"/>
         <source>Disk is busy, cannot eject now</source>
         <translation>磁盘文件被占用，无法弹出</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="751"/>
+        <location filename="../controllers/appcontroller.cpp" line="754"/>
         <source>Authentication timed out</source>
         <translation>认证超时</translation>
     </message>
@@ -1075,12 +1077,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1181"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1183"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1190"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1192"/>
         <source>Empty</source>
         <translation>清空</translation>
     </message>
@@ -1688,7 +1690,7 @@
         <translation>重启</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="249"/>
+        <location filename="../controllers/appcontroller.cpp" line="252"/>
         <source>Access denied</source>
         <translation>禁止访问</translation>
     </message>
@@ -1777,71 +1779,71 @@
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="913"/>
-        <location filename="../../fileoperations/filejob.cpp" line="922"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1145"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1154"/>
+        <location filename="../../fileoperations/filejob.cpp" line="909"/>
+        <location filename="../../fileoperations/filejob.cpp" line="918"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1141"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1150"/>
         <source>Data verification successful.</source>
         <translation>数据验证成功。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="926"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1158"/>
+        <location filename="../../fileoperations/filejob.cpp" line="922"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1154"/>
         <source>Burn process completed</source>
         <translation>刻录完成</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1322"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1307"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1326"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1311"/>
         <source>%1 m %2 s</source>
         <translation>%1 分 %2 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1331"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1316"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 时 %2 分 %3 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1338"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1323"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 天 %2 时 %3 分 %4 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3053"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3038"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1为重复文件。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3056"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3041"/>
         <source>Insufficient disc space.</source>
         <translation>光盘空间不足。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3059"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3044"/>
         <source>Lost connection to drive.</source>
         <translation>与光驱的连接断开。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3062"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3047"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>光驱未准备好，您可以换一张光盘再试。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3065"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3050"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>光驱被占用，您可以尝试关掉正在使用光驱的程序后重新插入光驱。</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3072"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3057"/>
         <source>Unknown error</source>
         <translation>未知错误</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.h" line="299"/>
+        <location filename="../../fileoperations/filejob.h" line="297"/>
         <source>Device disconnected</source>
         <translation>光驱设备未连接</translation>
     </message>
@@ -2237,71 +2239,71 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="804"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="799"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>无法确认%1的身份。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="805"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="800"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>当您首次登录时会看到这个提示。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="806"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="801"/>
         <source>The identity sent by the remote computer is</source>
         <translation>远程电脑发送的身份信息为</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="808"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="803"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>若想确认继续操作是否安全，请联系系统管理员。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="854"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1486"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1492"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1495"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="849"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1481"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1487"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1490"/>
         <source>Mounting device error</source>
         <translation>挂载设备出错</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="854"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1492"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="849"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1487"/>
         <source>Wrong username or password</source>
         <translation>用户名或密码错误</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1616"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1611"/>
         <source>No key available to unlock device</source>
         <translation>没有密钥解锁设备</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1704"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1699"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>磁盘由用户“%1”挂载，您没有卸载权限。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1707"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1717"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1745"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1864"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1895"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1702"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1712"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1740"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1859"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1890"/>
         <source>Confirm</source>
         <translation>确认</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1714"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1892"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1709"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1887"/>
         <source>Cannot find the mounted device</source>
         <translation>找不到对应的挂载设备</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1742"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1737"/>
         <source>Cannot unmount the device</source>
         <translation>无法卸载设备</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1860"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1855"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>无法弹出设备 &quot;%1&quot;</translation>
     </message>
@@ -2629,52 +2631,52 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="298"/>
+        <location filename="../dialogs/propertydialog.cpp" line="299"/>
         <source>Basic info</source>
         <translation>基本信息</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="299"/>
+        <location filename="../dialogs/propertydialog.cpp" line="300"/>
         <source>Open with</source>
         <translation>打开方式</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="300"/>
+        <location filename="../dialogs/propertydialog.cpp" line="301"/>
         <source>Sharing</source>
         <translation>共享管理</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="301"/>
+        <location filename="../dialogs/propertydialog.cpp" line="302"/>
         <source>Permissions</source>
         <translation>权限管理</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="375"/>
+        <location filename="../dialogs/propertydialog.cpp" line="376"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="375"/>
+        <location filename="../dialogs/propertydialog.cpp" line="376"/>
         <source>%1</source>
         <translation>%1</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="385"/>
+        <location filename="../dialogs/propertydialog.cpp" line="386"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1229"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1230"/>
         <source>Hide this folder</source>
         <translation>隐藏此文件夹</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1229"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1230"/>
         <source>Hide this file</source>
         <translation>隐藏此文件</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1581"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1582"/>
         <source>Allow to execute as program</source>
         <translation>允许以程序执行</translation>
     </message>
@@ -2682,21 +2684,21 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1140"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1141"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="817"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="223"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1160"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1350"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1161"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1351"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="232"/>
         <source>Contains</source>
         <translation>文件个数</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1141"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1142"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="818"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="224"/>
         <source>Type</source>
@@ -2704,73 +2706,73 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1144"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1145"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="820"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="340"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1353"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1354"/>
         <source>Free space</source>
         <translation>可用空间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1346"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1347"/>
         <source>Total space</source>
         <translation>总容量</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1481"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1482"/>
         <source>Access denied</source>
         <translation>不可读不可写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1482"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1494"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1483"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1495"/>
         <source>Executable</source>
         <translation>可执行</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1483"/>
         <location filename="../dialogs/propertydialog.cpp" line="1484"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1485"/>
         <source>Write only</source>
         <translation>可写不可读</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1485"/>
         <location filename="../dialogs/propertydialog.cpp" line="1486"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1487"/>
         <source>Read only</source>
         <translation>只读</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1487"/>
         <location filename="../dialogs/propertydialog.cpp" line="1488"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1489"/>
         <source>Read-write</source>
         <translation>读写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1577"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1578"/>
         <source>Others</source>
         <translation>其他</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1575"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1576"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1330"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1331"/>
         <source>Device type</source>
         <translation>设备类型</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1348"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1349"/>
         <source>File system</source>
         <translation>文件系统</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1576"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1577"/>
         <source>Group</source>
         <translation>群组</translation>
     </message>
@@ -2979,7 +2981,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="107"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1191"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1193"/>
         <source>Empty Trash</source>
         <translation>清空回收站</translation>
     </message>
@@ -2999,7 +3001,7 @@
         <translation>新建文档</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1142"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1143"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
         <source>Time created</source>
         <translation>创建时间</translation>
@@ -3010,7 +3012,7 @@
         <translation>退出登录并卸载</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1145"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1146"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="830"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="354"/>
         <source>Source path</source>
@@ -3220,65 +3222,65 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="302"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1303"/>
         <location filename="../dialogs/propertydialog.cpp" line="1304"/>
         <location filename="../dialogs/propertydialog.cpp" line="1305"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1306"/>
         <source>Local disk</source>
         <translation>本地磁盘</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="304"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1306"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1307"/>
         <source>Removable disk</source>
         <translation>可移动磁盘</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="306"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1308"/>
         <location filename="../dialogs/propertydialog.cpp" line="1309"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1310"/>
         <source>Network shared directory</source>
         <translation>网络共享目录</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="308"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1310"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1311"/>
         <source>Android mobile device</source>
         <translation>安卓移动设备</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="310"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1311"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1312"/>
         <source>Apple mobile device</source>
         <translation>苹果移动设备</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="312"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1312"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1313"/>
         <source>Camera</source>
         <translation>相机</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="314"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1307"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1308"/>
         <source>DVD</source>
         <translation>光驱设备</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="316"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1330"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1331"/>
         <source>Unknown device</source>
         <translation>未知设备</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="323"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1350"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1351"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="694"/>
         <source>%1 item</source>
         <translation>%1 项</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="325"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1350"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1351"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="696"/>
         <source>%1 items</source>
         <translation>%1 项</translation>
@@ -3316,7 +3318,7 @@
         <translation>文件已被移动或删除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="249"/>
+        <location filename="../controllers/appcontroller.cpp" line="252"/>
         <location filename="../interfaces/dfileinfo.cpp" line="830"/>
         <location filename="../interfaces/dfileinfo.cpp" line="838"/>
         <location filename="../interfaces/dfileinfo.cpp" line="844"/>
@@ -3349,23 +3351,23 @@
         <translation>原始路径</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="532"/>
+        <location filename="../controllers/appcontroller.cpp" line="535"/>
         <source>Document</source>
         <translation>新建Word文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="539"/>
+        <location filename="../controllers/appcontroller.cpp" line="542"/>
         <source>Spreadsheet</source>
         <translation>新建Excel文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="546"/>
+        <location filename="../controllers/appcontroller.cpp" line="549"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
         <source>Presentation</source>
         <translation>演示文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="553"/>
+        <location filename="../controllers/appcontroller.cpp" line="556"/>
         <source>Text</source>
         <translation>新建文本</translation>
     </message>
@@ -3483,7 +3485,7 @@
         <translation>+序列</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1171"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1172"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="325"/>
         <location filename="../views/drenamebar.cpp" line="272"/>
         <source>Location</source>
@@ -3548,7 +3550,7 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1143"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1144"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="339"/>
         <source>Time accessed</source>
         <translation>访问时间</translation>
@@ -4141,34 +4143,34 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1493"/>
+        <location filename="../controllers/appcontroller.cpp" line="1496"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>磁盘文件被占用，无法卸载</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1486"/>
-        <location filename="../controllers/appcontroller.cpp" line="1510"/>
+        <location filename="../controllers/appcontroller.cpp" line="1489"/>
+        <location filename="../controllers/appcontroller.cpp" line="1513"/>
         <source>Authentication timed out</source>
         <translation>认证超时</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1493"/>
+        <location filename="../controllers/appcontroller.cpp" line="1496"/>
         <source>The device was not safely unmounted</source>
         <translation>设备没有正常卸载</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1514"/>
-        <location filename="../controllers/appcontroller.cpp" line="1528"/>
+        <location filename="../controllers/appcontroller.cpp" line="1517"/>
+        <location filename="../controllers/appcontroller.cpp" line="1531"/>
         <source>The device was not safely removed</source>
         <translation>设备没有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1514"/>
+        <location filename="../controllers/appcontroller.cpp" line="1517"/>
         <source>Disk is busy, cannot remove now</source>
         <translation>磁盘文件被占用，无法安全移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1528"/>
+        <location filename="../controllers/appcontroller.cpp" line="1531"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>请点击“安全移除”后，再断开连接</translation>
     </message>

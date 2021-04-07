@@ -35,6 +35,7 @@ public:
 
     // files.size() == 0 is emptyArea
     QList<QAction *> actions(const QStringList &files, const QString &currentDir = QString(), bool onDesktop = false);
+
 protected:
     void appendParentMineType(const QStringList &parentmimeTypes,  QStringList& mimeTypes);
 

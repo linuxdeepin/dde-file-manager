@@ -28,6 +28,8 @@
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
 #include "controllers/dfmsidebarvaultitemhandler.h"
 
+#include "plugins/schemepluginmanager.h"
+
 DFM_BEGIN_NAMESPACE
 
 class DFMSideBarManagerPrivate
@@ -94,6 +96,9 @@ DFMSideBarManager::DFMSideBarManager(QObject *parent)
     dRegisterSideBarInterface<DFMSideBarTagItemHandler>(QStringLiteral(SIDEBAR_ID_TAG));
     dRegisterSideBarInterface<DFMSideBarBookmarkItemHandler>(QStringLiteral(SIDEBAR_ID_BOOKMARK));
     dRegisterSideBarInterface<DFMSideBarVaultItemHandler>(QStringLiteral(SIDEBAR_ID_VAULT));
+
+    //NOTE [XIAO] 从PLGUIN中加载SideBarItemHandler
+    initSideBarItemHandlerFromPlugin();
 }
 
 DFMSideBarManager::~DFMSideBarManager()
@@ -106,6 +111,16 @@ void DFMSideBarManager::insertToCreatorHash(const DFMSideBarManager::KeyType &ty
     Q_D(DFMSideBarManager);
 
     d->controllerCreatorHash.insertMulti(type, creator);
+}
+
+//NOTE [XIAO] 从PLGUIN中加载SideBarItemHandler
+void DFMSideBarManager::initSideBarItemHandlerFromPlugin()
+{
+    qWarning() << "[PLUGIN]" << "try to load plugin of sidebar item handler";
+     for (auto plugin : SchemePluginManager::instance()->schemePlugins()){
+         qWarning() << "[PLUGIN]" << "load sidebar item handler from plugin:" << plugin.first;
+         insertToCreatorHash(QString("__%1").arg(plugin.first), plugin.second->createSideBarInterfaceTypeFunc());
+     }
 }
 
 DFM_END_NAMESPACE
