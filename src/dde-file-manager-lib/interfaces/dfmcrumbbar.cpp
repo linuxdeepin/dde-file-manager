@@ -205,7 +205,7 @@ void DFMCrumbBarPrivate::initUI()
     crumbListView.setItemDelegateForRow(0, new IconItemDelegate(&crumbListView));
 
     // Crumb Bar Layout
-    crumbBarLayout = new QHBoxLayout;
+    crumbBarLayout = new QHBoxLayout(q);
     crumbBarLayout->addWidget(&leftArrow);
     crumbBarLayout->addWidget(&crumbListView);
     crumbBarLayout->addWidget(&rightArrow);
