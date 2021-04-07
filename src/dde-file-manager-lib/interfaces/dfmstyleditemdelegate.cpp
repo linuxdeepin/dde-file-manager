@@ -302,10 +302,11 @@ QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &siz
         }
     }
 
+    //类型限定符的更改会导致缩放小数点丢失，从而引发缩放因子的bug
     if (px.width() > icon_size.width() * pixelRatio) {
-        px.setDevicePixelRatio(px.width() / icon_size.width());
+        px.setDevicePixelRatio(px.width() / qreal(icon_size.width()));
     } else if (px.height() > icon_size.height() * pixelRatio) {
-        px.setDevicePixelRatio(px.height() / icon_size.height());
+        px.setDevicePixelRatio(px.height() / qreal(icon_size.height()));
     } else {
         px.setDevicePixelRatio(pixelRatio);
     }
