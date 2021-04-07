@@ -417,7 +417,7 @@ void FilePreviewDialog::initUI()
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
-    QHBoxLayout *separator_layout = new QHBoxLayout();
+    QHBoxLayout *separator_layout = new QHBoxLayout(this);
 
     separator_layout->addSpacing(10);
     separator_layout->addWidget(m_separator);
