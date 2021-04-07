@@ -1048,3 +1048,240 @@ TEST(DCustomActionParser, test_is_Action_ShouldShow)
     ret = DCustomActionParser::isActionShouldShow(QStringList() << "Desktop" << "Filemanager", false);
     EXPECT_FALSE(ret);
 }
+
+TEST_F(TestDCustomActionParser, test_read_Conf_One){
+    //bug69342对应字段测试
+    auto invalidFilePath = QString("%1/%2").arg(utDirPath).arg("invalid.conf");
+
+    QFile invalidFile(invalidFilePath);
+    invalidFile.open(QIODevice::WriteOnly | QIODevice::Append | QFile::Text);
+    QTextStream tsm(&invalidFile);
+    tsm.setCodec("UTF-8");
+    tsm << QString("[Menu Entry]").toUtf8() << endl;
+    tsm << QString("Comment=This is a test file of compress!!!").toUtf8() <<endl;
+    tsm << QString("Comment[zh_CN]=这是一个s测试文件").toUtf8() <<endl;
+    tsm << QString("Version=Uos1.0").toUtf8() <<endl;
+    tsm << QString("Actions=Zero:decompress").toUtf8() <<endl;
+    tsm << QString("[Menu Action Zero]").toUtf8() <<endl;
+    tsm << QString("Exec=/usr/bin/deepin-compressor %U compress").toUtf8() <<endl;
+    tsm << QString("Name=Compressor").toUtf8() <<endl;
+    tsm << QString("Name[zh_CN]=New压缩-压缩到\"%d\"").toUtf8() <<endl;
+    tsm << QString("Name[en]=Compress").toUtf8() <<endl;
+    tsm << QString("X-DFM-MenuTypes=MultiFiles:MultiDirs:SingleFile:SingleDir").toUtf8() <<endl;
+    tsm << QString("X-DFM-SupportSchemes=file").toUtf8() <<endl;
+    tsm << QString("PosNum=1").toUtf8() <<endl;
+    tsm << QString("Separator=Top").toUtf8() <<endl;
+    tsm << QString("MimeType=*").toUtf8() <<endl;
+
+    tsm.flush();
+    invalidFile.flush();
+
+    auto expectValue2 = m_parser->loadDir(utDirPath);
+    EXPECT_TRUE(expectValue2);
+
+    if (0 < m_parser->m_actionEntry.size())
+        EXPECT_TRUE(m_parser->m_actionEntry.at(0).data().name() == QString("New压缩-压缩到\"%d\""));
+
+    invalidFile.close();
+}
+
+TEST_F(TestDCustomActionParser, test_read_Conf_Two){
+    //入口测试
+    auto invalidFilePath = QString("%1/%2").arg(utDirPath).arg("invalid.conf");
+
+    QFile invalidFile(invalidFilePath);
+    invalidFile.open(QIODevice::WriteOnly | QIODevice::Append | QFile::Text);
+    QTextStream tsm(&invalidFile);
+    tsm.setCodec("UTF-8");
+    //入口分组不正确，预期拿不到数据
+    tsm << QString("[Menu E]n[try～·。、\"’”！@#￥%……&*（）()-+*./{}【】|\\?<>）]").toUtf8() << endl;
+    tsm << QString("Comment=This is a test file of compress!!!").toUtf8() <<endl;
+    tsm << QString("Comment[zh_CN]=这是一个s测试文件").toUtf8() <<endl;
+    tsm << QString("Version=Uos1.0").toUtf8() <<endl;
+    tsm << QString("Actions=Zero:decompress").toUtf8() <<endl;
+    tsm << QString("[Menu Action Zero]").toUtf8() <<endl;
+    tsm << QString("Exec=/usr/bin/deepin-compressor %U compress").toUtf8() <<endl;
+    tsm << QString("Name=Compressor").toUtf8() <<endl;
+    tsm << QString("Name[zh_CN]=New压缩-压缩到\"%d\"").toUtf8() <<endl;
+    tsm << QString("Name[en]=Compress").toUtf8() <<endl;
+    tsm << QString("X-DFM-MenuTypes=MultiFiles:MultiDirs:SingleFile:SingleDir").toUtf8() <<endl;
+    tsm << QString("X-DFM-SupportSchemes=file").toUtf8() <<endl;
+    tsm << QString("PosNum=1").toUtf8() <<endl;
+    tsm << QString("Separator=Top").toUtf8() <<endl;
+    tsm << QString("MimeType=*").toUtf8() <<endl;
+
+    tsm.flush();
+    invalidFile.flush();
+
+    auto expectValue2 = m_parser->loadDir(utDirPath);
+    EXPECT_TRUE(expectValue2);
+    EXPECT_TRUE(0 == m_parser->m_actionEntry.size());
+    invalidFile.close();
+
+}
+
+TEST_F(TestDCustomActionParser, test_read_Conf_Three){
+    //分组信息测试
+    auto invalidFilePath = QString("%1/%2").arg(utDirPath).arg("invalid.conf");
+
+    QFile invalidFile(invalidFilePath);
+    invalidFile.open(QIODevice::WriteOnly | QIODevice::Append | QFile::Text);
+    QTextStream tsm(&invalidFile);
+    tsm.setCodec("UTF-8");
+    //分组正确，预期正确获取到数据
+    tsm << QString("[Menu Entry]").toUtf8() << endl;
+    tsm << QString("Comment=This is a test file of compress!!!").toUtf8() <<endl;
+    tsm << QString("Comment[zh_CN]=这是一个s测试文件").toUtf8() <<endl;
+    tsm << QString("Version=Uos1.0").toUtf8() <<endl;
+    tsm << QString("Actions=～·。、\"’”！@#￥%……&*（）()-+*./{}【】[]|\\?<>）").toUtf8() <<endl;
+    tsm << QString("[Menu Action ～·。、\"’”！@#￥%……&*（）()-+*./{}【】[]|\\?<>）]").toUtf8() <<endl;
+    tsm << QString("Exec=/usr/bin/deepin-compressor %U compress").toUtf8() <<endl;
+    tsm << QString("Name=Compressor").toUtf8() <<endl;
+    tsm << QString("Name[zh_CN]=压缩").toUtf8() <<endl;
+    tsm << QString("Name[en]=Compress").toUtf8() <<endl;
+    tsm << QString("X-DFM-MenuTypes=MultiFiles:MultiDirs:SingleFile:SingleDir").toUtf8() <<endl;
+    tsm << QString("X-DFM-SupportSchemes=file").toUtf8() <<endl;
+    tsm << QString("PosNum=1").toUtf8() <<endl;
+    tsm << QString("Separator=Top").toUtf8() <<endl;
+    tsm << QString("MimeType=*").toUtf8() <<endl;
+
+    tsm.flush();
+    invalidFile.flush();
+
+    auto expectValue2 = m_parser->loadDir(utDirPath);
+    EXPECT_TRUE(expectValue2);
+
+    if (0 < m_parser->m_actionEntry.size())
+        EXPECT_TRUE(m_parser->m_actionEntry.at(0).data().name() == QString("压缩"));
+    invalidFile.close();
+}
+
+TEST_F(TestDCustomActionParser, test_read_Conf_Four){
+    //字段信息测试
+    auto invalidFilePath = QString("%1/%2").arg(utDirPath).arg("invalid.conf");
+
+    QFile invalidFile(invalidFilePath);
+    invalidFile.open(QIODevice::WriteOnly | QIODevice::Append | QFile::Text);
+    QTextStream tsm(&invalidFile);
+    tsm.setCodec("UTF-8");
+    //分组正确，但是找不到name对应语言区域字段信息，预期只能拿到name:Compressor
+    tsm << QString("[Menu Entry]").toUtf8() << endl;
+    tsm << QString("Comment=This is a test file of compress!!").toUtf8() <<endl;
+    tsm << QString("Comment[zh_CN]=这是一个s测试文件").toUtf8() <<endl;
+    tsm << QString("Version=Uos1.0").toUtf8() <<endl;
+    tsm << QString("Actions=～·。、\"’”！@#￥%……&*（）()-+*./{}【】[]|\\?<>）").toUtf8() <<endl;
+    tsm << QString("[Menu Action ～·。、\"’”！@#￥%……&*（）()-+*./{}【】[]|\\?<>）]").toUtf8() <<endl;
+    tsm << QString("Exec=/usr/bin/deepin-compressor %U compress").toUtf8() <<endl;
+    tsm << QString("Name=Compressor").toUtf8() <<endl;
+    tsm << QString("Name[zh_CN]～·。、\"’”！@#￥%……&*（）()-+*./{}【】[]|\\?<>）=压缩").toUtf8() <<endl;
+    tsm << QString("Name[en]=Compress").toUtf8() <<endl;
+    tsm << QString("X-DFM-MenuTypes=MultiFiles:MultiDirs:SingleFile:SingleDir").toUtf8() <<endl;
+    tsm << QString("X-DFM-SupportSchemes=file").toUtf8() <<endl;
+    tsm << QString("PosNum=1").toUtf8() <<endl;
+    tsm << QString("Separator=Top").toUtf8() <<endl;
+    tsm << QString("MimeType=*").toUtf8() <<endl;
+
+    tsm.flush();
+    invalidFile.flush();
+    invalidFile.close();
+
+    auto expectValue2 = m_parser->loadDir(utDirPath);
+    EXPECT_TRUE(expectValue2);
+
+    if (0 < m_parser->m_actionEntry.size())
+        EXPECT_TRUE(m_parser->m_actionEntry.at(0).data().name() == QString("Compressor"));
+    invalidFile.close();
+}
+
+TEST_F(TestDCustomActionParser, test_read_Conf_Five){
+    //字段信息测试
+    auto invalidFilePath = QString("%1/%2").arg(utDirPath).arg("invalid.conf");
+
+    QFile invalidFile(invalidFilePath);
+    invalidFile.open(QIODevice::WriteOnly | QIODevice::Append | QFile::Text);
+    QTextStream tsm(&invalidFile);
+    tsm.setCodec("UTF-8");
+    //分组正确，语言区域正确，预期拿到信息
+    tsm << QString("[Menu Entry]").toUtf8() << endl;
+    tsm << QString("Comment=This is a test file of compress!!").toUtf8() <<endl;
+    tsm << QString("Comment[zh_CN]=这是一个s测试文件").toUtf8() <<endl;
+    tsm << QString("Version=Uos1.0").toUtf8() <<endl;
+    tsm << QString("Actions=～·。、\"’”！@#￥%……&*（）()-+*./{}【】[]|\\?<>）").toUtf8() <<endl;
+    tsm << QString("[Menu Action ～·。、\"’”！@#￥%……&*（）()-+*./{}【】[]|\\?<>）]").toUtf8() <<endl;
+    tsm << QString("Exec=/usr/bin/deepin-compressor %U compress").toUtf8() <<endl;
+    tsm << QString("Name=Compressor").toUtf8() <<endl;
+    tsm << QString("Name[zh_CN]=～·。、\"’”！@#￥%……&*（）()-+*./{}【】[]|\\?<>）压缩").toUtf8() <<endl;
+    tsm << QString("Name[en]=Compress").toUtf8() <<endl;
+    tsm << QString("X-DFM-MenuTypes=MultiFiles:MultiDirs:SingleFile:SingleDir").toUtf8() <<endl;
+    tsm << QString("X-DFM-SupportSchemes=file").toUtf8() <<endl;
+    tsm << QString("PosNum=1").toUtf8() <<endl;
+    tsm << QString("Separator=Top").toUtf8() <<endl;
+    tsm << QString("MimeType=*").toUtf8() <<endl;
+
+    tsm.flush();
+    invalidFile.flush();
+
+    auto expectValue2 = m_parser->loadDir(utDirPath);
+    EXPECT_TRUE(expectValue2);
+
+    if (0 < m_parser->m_actionEntry.size())
+        EXPECT_TRUE(m_parser->m_actionEntry.at(0).data().name() == QString("～·。、\"’”！@#￥%……&*（）()-+*./{}【】[]|\\?<>）压缩"));
+    invalidFile.close();
+}
+
+TEST_F(TestDCustomActionParser, test_read_Conf_Six){
+    //字段信息测试
+    auto invalidFilePath = QString("%1/%2").arg(utDirPath).arg("invalid.conf");
+
+    QFile invalidFile(invalidFilePath);
+    invalidFile.open(QIODevice::WriteOnly | QIODevice::Append | QFile::Text);
+    QTextStream tsm(&invalidFile);
+    tsm.setCodec("UTF-8");
+    tsm << QString("[Menu Entry]").toUtf8() << endl;
+    tsm << QString("Comment=This is a test file of compress!!").toUtf8() <<endl;
+    tsm << QString("Comment[zh_CN]=这是一个s测试文件").toUtf8() <<endl;
+    tsm << QString("Version=Uos1.0").toUtf8() <<endl;
+    tsm << QString("Actions=～·。、\"’”！@#￥%……&*（）()-+*./{}【】[]|\\?<>）a测试：:\"Test\"").toUtf8() <<endl;
+    tsm << QString("[Menu Action ～·。、\"’”！@#￥%……&*（）()-+*./{}【】[]|\\?<>）a测试：]").toUtf8() <<endl;
+    tsm << QString("Exec=/usr/bin/deepin-compressor %U compress").toUtf8() <<endl;
+    tsm << QString("Name=Compressor").toUtf8() <<endl;
+    tsm << QString("Name[zh_CN]=～·。、\"’”！@#￥%……&*（）()-+*./{}【】[]|\\?<>）压缩").toUtf8() <<endl;
+    tsm << QString("Name[en]=Compress").toUtf8() <<endl;
+    tsm << QString("X-DFM-MenuTypes=MultiFiles:MultiDirs:SingleFile:SingleDir").toUtf8() <<endl;
+    tsm << QString("X-DFM-SupportSchemes=file").toUtf8() <<endl;
+    tsm << QString("PosNum=1.1").toUtf8() <<endl;
+    tsm << QString("Separator=Top").toUtf8() <<endl;
+    tsm << QString("MimeType=*").toUtf8() <<endl;
+
+    tsm << QString("[Menu Action \"Test\"]").toUtf8() <<endl;
+    tsm << QString("Exec=/usr/bin/deepin-compressor %U compress").toUtf8() <<endl;
+    tsm << QString("Name=Compressor").toUtf8() <<endl;
+    tsm << QString("Name[zh_CN]=压缩2").toUtf8() <<endl;
+    tsm << QString("Name[en]=Compress").toUtf8() <<endl;
+    tsm << QString("X-DFM-MenuTypes=MultiFiles:MultiDirs:SingleFile:SingleDir").toUtf8() <<endl;
+    tsm << QString("X-DFM-SupportSchemes=file").toUtf8() <<endl;
+    tsm << QString("PosNum=4/2").toUtf8() <<endl;
+    tsm << QString("Separator=Top").toUtf8() <<endl;
+    tsm << QString("MimeType=*").toUtf8() <<endl;
+
+    tsm.flush();
+    invalidFile.flush();
+
+    auto expectValue1 = m_parser->loadDir(utDirPath);
+    EXPECT_TRUE(expectValue1);
+
+    if (2 == m_parser->m_actionEntry.size()) {
+        //不按照规范配置位置信息预期获取位置都为0
+        EXPECT_TRUE(m_parser->m_actionEntry.at(0).data().name() == QString("～·。、\"’”！@#￥%……&*（）()-+*./{}【】[]|\\?<>）压缩"));
+        EXPECT_TRUE(0 == m_parser->m_actionEntry.at(0).data().position());
+        EXPECT_TRUE(m_parser->m_actionEntry.at(1).data().name() == QString("压缩2"));
+        EXPECT_TRUE(0 == m_parser->m_actionEntry.at(1).data().position());
+    }
+
+    invalidFile.close();
+}
+
+TEST(TestRegisterCustomFormat, test_write_Conf){
+    QSettings::SettingsMap tempMap;
+    EXPECT_TRUE(RegisterCustomFormat::instance().customFormat() != QSettings::defaultFormat());
+}

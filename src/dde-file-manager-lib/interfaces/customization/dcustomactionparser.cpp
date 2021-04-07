@@ -29,9 +29,79 @@
 
 using namespace DCustomActionDefines;
 
+/*!
+ * \brief 自定义配置文件读规则
+ * \param device 读取io
+ * \param settingsMap 保存读取结果
+ * \return
+ */
+bool RegisterCustomFormat::readConf(QIODevice &device, QSettings::SettingsMap &settingsMap)
+{
+    QString section;
+    QTextStream stream(&device);
+    bool prefixExists = false;
+    while (!stream.atEnd()) {
+        QString line = stream.readLine().trimmed();
+
+        // 跳过备注
+        if (line.startsWith(QLatin1Char('#')))
+            continue;
+        // 分组
+        if (line.startsWith(QLatin1Char('[')) && line.endsWith(QLatin1Char(']'))) {
+            section = line.mid(1, line.length()-2);
+            if (section == kMenuPrefix)
+                prefixExists = true;
+            continue;
+        }
+
+        QString key = line.section(QLatin1Char('='), 0, 0).trimmed();
+        QString value = line.section(QLatin1Char('='), 1).trimmed();
+
+        if (key.isEmpty())
+            continue;
+        settingsMap[section + QLatin1Char('/') + key] = QVariant(value);
+    }
+    return prefixExists;
+}
+
+/*!
+ * \brief 自定义配置文件写规则
+ * \param device
+ * \param settingsMap
+ * \return
+ */
+bool RegisterCustomFormat::writeConf(QIODevice &device, const QSettings::SettingsMap &settingsMap)
+{
+    Q_UNUSED(device)
+    Q_UNUSED(settingsMap)
+    return true;
+}
+
+/*!
+ * \brief 注册自定义qsettings读取规则
+ */
+RegisterCustomFormat &RegisterCustomFormat::instance()
+{
+    static RegisterCustomFormat instance;
+    return instance;
+}
+
+QSettings::Format RegisterCustomFormat::customFormat()
+{
+    return m_customFormat;
+}
+
+RegisterCustomFormat::RegisterCustomFormat()
+{
+    //注册读写规则
+    m_customFormat = QSettings::registerFormat("conf", &RegisterCustomFormat::readConf, &RegisterCustomFormat::writeConf);
+}
+
 DCustomActionParser::DCustomActionParser(QObject *parent)
     : QObject(parent)
 {
+    //获取注册的自定义方式
+    m_customFormat = RegisterCustomFormat::instance().customFormat();
     m_fileWatcher = new QFileSystemWatcher;
     //监听目录
     m_fileWatcher->addPath(kCustomMenuPath);
@@ -73,7 +143,7 @@ bool DCustomActionParser::loadDir(const QString &dirPath)
         m_fileWatcher->addPath(actionFileInfo.absoluteFilePath());
 
         //解析文件字段
-        QSettings actionSetting(actionFileInfo.filePath(), QSettings::IniFormat);
+        QSettings actionSetting(actionFileInfo.filePath(), m_customFormat);
         actionSetting.setIniCodec("UTF-8");
         parseFile(actionSetting);
     }
