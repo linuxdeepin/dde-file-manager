@@ -128,8 +128,8 @@ void ShareInfoFrame::initUI()
 void ShareInfoFrame::initConnect()
 {
     connect(m_shareCheckBox, &QCheckBox::clicked, this, &ShareInfoFrame::handleCheckBoxChanged);
-    //connect(m_shareNamelineEdit, &QLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
-    connect(m_shareNamelineEdit, &QLineEdit::editingFinished, this, &ShareInfoFrame::handleShareNameChanged);
+    connect(m_shareNamelineEdit, &QLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
+    connect(m_shareNamelineEdit, &QLineEdit::editingFinished, this, &ShareInfoFrame::handleShareNameFinished);
     //connect(m_shareNamelineEdit, &QLineEdit::returnPressed, this, [ = ]() {qDebug() << "回车按下";}); //不知为何没有发送returnPressed信号
     connect(m_permissoComBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handlePermissionComboxChanged(int)));
     connect(m_anonymityCombox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleAnonymityComboxChanged(int)));
@@ -157,7 +157,7 @@ void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
     }
 }
 
-void ShareInfoFrame::handleShareNameChanged()
+void ShareInfoFrame::handleShareNameFinished()
 {
     // 修复bug-54080
     // 当失去焦点时，判断文件名是否符合规则
@@ -166,6 +166,21 @@ void ShareInfoFrame::handleShareNameChanged()
     else    // 如果焦点存在，将焦点设置到下一个控件
         m_permissoComBox->setFocus();
     //handShareInfoChanged();
+}
+
+void ShareInfoFrame::handleShareNameChanged(const QString &str)
+{
+    // fix bug 69970 与文件名规则保持一致
+    QString dstText = DFMGlobal::preprocessingFileName(str);
+    if (str != dstText) {
+        QSignalBlocker blocker(m_shareNamelineEdit);
+
+        int currPos = m_shareNamelineEdit->cursorPosition();
+        m_shareNamelineEdit->setText(dstText);
+        currPos += dstText.length() - str.length();
+        m_shareNamelineEdit->setText(dstText);
+        m_shareNamelineEdit->setCursorPosition(currPos);
+    }
 }
 
 void ShareInfoFrame::handlePermissionComboxChanged(const int &index)
