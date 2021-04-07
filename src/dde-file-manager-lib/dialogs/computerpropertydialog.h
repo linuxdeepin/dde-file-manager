@@ -35,7 +35,7 @@ class ComputerPropertyDialog : public DDialog
 {
     Q_OBJECT
 public:
-    explicit ComputerPropertyDialog(QWidget *parent = 0);
+    explicit ComputerPropertyDialog(QWidget *parent = nullptr);
     void initUI();
     QHash<QString, QString> getMessage(const QStringList& data);
 

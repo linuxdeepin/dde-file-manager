@@ -139,7 +139,7 @@ void ComputerPropertyDialog::initUI()
         //! 使内存显示不换行
         if (key == tr("Memory"))
             valLabel->setWordWrap(false);
-        gridLayout->setRowMinimumHeight(row, valLabel->heightForWidth(gridLayout->columnMinimumWidth(1)));
+        gridLayout->setRowMinimumHeight(row, QFontMetrics(font).lineSpacing());
         row++;
     }
 
@@ -254,7 +254,8 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     datas.insert(data.at(2), version);
     datas.insert(data.at(3), systemType);
     datas.insert(data.at(4), processor);
-    datas.insert(data.at(5), memoryInstallStr + "(" +  memoryStr + ' ' + tr("Available") + ")");
-
+    datas.insert(data.at(5), memoryInstallStr
+                 + "(" +  memoryStr
+                 + ' ' + tr("Available") + ")");
     return datas;
 }
