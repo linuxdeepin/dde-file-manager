@@ -50,6 +50,7 @@
 
 #include "shutil/fileutils.h"
 #include "shutil/filebatchprocess.h"
+#include "shutil/checknetwork.h"
 
 #include "dialogs/dialogmanager.h"
 
@@ -99,6 +100,7 @@ public:
     QEventLoop *m_loop = nullptr;
     QMutex checkgvfsmtx,smbftpmutex,m_mutexrootfilechange;
 	QTimer m_tagEditorChangeTimer;
+    CheckNetwork m_checknetwork;
 };
 
 QMultiHash<const HandlerType, DAbstractFileController *> DFileServicePrivate::controllerHash;
@@ -1070,14 +1072,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
 {
     //找出url的rootfile路径，判断rootfile是否存在
     Q_D(DFileService);
-    if (!url.isValid()) {
-        return false;
-    }
-    if (d_ptr->m_loop) {
-        d_ptr->m_loop->exit();
-    }
-    //还原设置鼠标状态
-    setCursorBusyState(false);
+    //    printStacktrace(6);
 
     DUrl rooturl;
     QString urlpath = url.path();
@@ -1089,7 +1084,8 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
             rootfilename = rootstrlist.at(1);
             rootfilename = rootfilename.replace(QString(".") + QString(SUFFIX_GVFSMP), "");
         }
-        if (!(rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(FTP_SCHEME))) {
+        if (!(rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(FTP_SCHEME)
+              || rootfilename.startsWith(SFTP_SCHEME))) {
             return false;
         }
         rooturl = url;
@@ -1125,48 +1121,43 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
             path = urlstr + urllast.left(qi);
         }
         if (path.isNull() || path.isEmpty() ||
-                !(rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(FTP_SCHEME))) {
+                !(rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(FTP_SCHEME)
+                  || rootfilename.startsWith(SFTP_SCHEME))) {
             return false;
         }
         rooturl.setScheme(DFMROOT_SCHEME);
         rooturl.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
     }
     if (isSmbFtpContain(rooturl)) {
-        return d->m_rootsmbftpurllist.value(rooturl);
+        d->smbftpmutex.lock();
+        bool bbusy = d->m_rootsmbftpurllist.value(rooturl);
+        d->smbftpmutex.unlock();
+        return bbusy;
     }
     bool isbusy = checkGvfsMountfileBusy(rooturl, rootfilename, showdailog);
-    d->m_rootsmbftpurllist.insert(rooturl,isbusy);
-    QTimer::singleShot(500,this,[rooturl,d](){
+    d->smbftpmutex.lock();
+    d->m_rootsmbftpurllist.insert(rooturl, isbusy);
+    d->smbftpmutex.unlock();
+    QTimer::singleShot(500, this, [rooturl, d]() {
         QMutexLocker lk(&d->smbftpmutex);
         d->m_rootsmbftpurllist.remove(rooturl);
     });
-
     return isbusy;
-
 }
 
 bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootfilename, const bool showdailog)
 {
+    Q_D(DFileService);
+
     if (!rootUrl.isValid()) {
         return false;
     }
     //设置鼠标状态，查看文件状态是否存在
     setCursorBusyState(true);
-    //check network online
-    bool bonline = isNetWorkOnline();
-    bool fileexit = false;
-    if (!bonline) {
-        setCursorBusyState(false);
-        //文件不存在弹提示框
-        if (showdailog) {
-            dialogManager->showUnableToLocateDir(rootfilename);
-        }
-        return true;
-    }
 
-    if (rootfilename.startsWith(SMB_SCHEME)) {
+    if (rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(SFTP_SCHEME)) {
         DAbstractFileInfoPointer rootptr = createFileInfo(nullptr, rootUrl);
-        fileexit = rootptr->exists();
+        bool fileexit = rootptr->exists();
         setCursorBusyState(false);
         //文件不存在弹提示框
         if (!fileexit && showdailog) {
@@ -1177,59 +1168,30 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
 
     //是网络文件，就去确定host和port端口号
     bool bvist = true;
-    QString host,port;
-    QStringList ipinfolist = rootfilename.split(",");
-    if (ipinfolist.count() >= 1) {
-        host = ipinfolist[0].replace(FTP_HOST,"");
-    }
-    else {
-        return true;
-    }
-
-    if (ipinfolist.count() >=2 && -1 != ipinfolist[1].indexOf("port=")) {
-        port = ipinfolist[1].replace("port=","");
-    }
-
-
-    QNetworkAccessManager manager;//QNetworkAccessManager 允许发送网络请求和接收回复
-    qDebug() << "loop sart ===========";
-
-    connect(&manager, &QNetworkAccessManager::finished, this, [&](QNetworkReply * reply) {
-        qDebug() << reply->error() << reply->errorString();
-        bvist = QNetworkReply::UnknownNetworkError < reply->error() ||  QNetworkReply::NoError >= reply->error();
-        if (d_ptr->m_loop) {
-            d_ptr->m_loop->exit();
-        }
-    });
-
-    connect(&manager, &QNetworkAccessManager::sslErrors, this, [&](QNetworkReply * reply,const QList<QSslError> &errors) {
-        qDebug() << reply->error() << reply->errorString();
-        qDebug() << errors;
-        bvist = QNetworkReply::UnknownNetworkError < reply->error() ||  QNetworkReply::NoError >= reply->error();
-        if (d_ptr->m_loop) {
-            d_ptr->m_loop->exit();
-        }
-    });
-    manager.connectToHost(host,port.toUShort() == 0 ? 21 : port.toUShort());
-    if (d_ptr->m_loop && !d_ptr->m_loop->isRunning()) {
-        d_ptr->m_loop->exec();
-    }
-
-    bonline = isNetWorkOnline();
-    if (!bonline) {
+    QString host, port;
+    QStringList ipInfoList = rootfilename.split(",");
+    if (!ipInfoList.isEmpty()) {
+        int spliteIndex = ipInfoList[0].indexOf("=");
+        host = ipInfoList[0].mid((spliteIndex >= 0 && spliteIndex < ipInfoList[0].length() - 1)
+                ? spliteIndex + 1 : 0);
+    } else {
         setCursorBusyState(false);
-        //文件不存在弹提示框
-        if (showdailog) {
-            dialogManager->showUnableToLocateDir(rootfilename);
-        }
         return true;
     }
+
+    if (ipInfoList.count() >= 2 && -1 != ipInfoList[1].indexOf("port=")) {
+        port = ipInfoList[1].replace("port=", "");
+    }
+
+    bvist = d->m_checknetwork.isHostAndPortConnect(host, port);
 
     setCursorBusyState(false);
+
     //文件不存在弹提示框
     if (!bvist && showdailog) {
         dialogManager->showUnableToLocateDir(rootfilename);
     }
+    qDebug() << bvist;
     return !bvist;
 }
 

@@ -291,7 +291,8 @@ HEADERS += \
     views/dfmvaultremoveprogressview.h \
     views/dfmvaultremovebypasswordview.h \
     views/dfmvaultremovebyrecoverykeyview.h \
-    views/dfmvaultpagebase.h
+    views/dfmvaultpagebase.h \
+    shutil/checknetwork.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -492,7 +493,8 @@ SOURCES += \
     views/dfmvaultremoveprogressview.cpp \
     views/dfmvaultremovebypasswordview.cpp \
     views/dfmvaultremovebyrecoverykeyview.cpp \
-    views/dfmvaultpagebase.cpp
+    views/dfmvaultpagebase.cpp \
+    shutil/checknetwork.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h
