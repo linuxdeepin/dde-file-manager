@@ -57,7 +57,8 @@ void PathManager::initPaths()
 {
     loadSystemPaths();
     m_systemPathDisplayNamesMap["Home"] = tr("Home");
-    m_systemPathDisplayNamesMap["Desktop"] = tr("Desktop");
+    if (!DFMGlobal::isTablet())
+        m_systemPathDisplayNamesMap["Desktop"] = tr("Desktop");
     m_systemPathDisplayNamesMap["Videos"] = tr("Videos");
     m_systemPathDisplayNamesMap["Music"] = tr("Music");
     m_systemPathDisplayNamesMap["Pictures"] = tr("Pictures");
@@ -77,7 +78,8 @@ void PathManager::initPaths()
 
     m_systemPathIconNamesMap["Recent"] = "document-open-recent";
     m_systemPathIconNamesMap["Home"] = "user-home";
-    m_systemPathIconNamesMap["Desktop"] = "user-desktop";
+    if (!DFMGlobal::isTablet())
+        m_systemPathIconNamesMap["Desktop"] = "user-desktop";
     m_systemPathIconNamesMap["Videos"] = "folder-videos";
     m_systemPathIconNamesMap["Music"] = "folder-music";
     m_systemPathIconNamesMap["Pictures"] = "folder-pictures";
@@ -97,7 +99,7 @@ QString PathManager::getSystemPath(QString key)
         initPaths();
     }
     QString path = m_systemPathsMap.value(key);
-    if(key == "Desktop" || key == "Videos" || key == "Music" ||
+    if((!DFMGlobal::isTablet() && key == "Desktop") || key == "Videos" || key == "Music" ||
        key == "Pictures" || key == "Documents" || key == "Downloads" ||
        key == "Trash"){
 
@@ -196,7 +198,8 @@ QStringList PathManager::getMountRangePathGroup()
 void PathManager::loadSystemPaths()
 {
     m_systemPathsMap["Home"] = DFMStandardPaths::location(DFMStandardPaths::HomePath);
-    m_systemPathsMap["Desktop"] = DFMStandardPaths::location(DFMStandardPaths::DesktopPath);
+    if (!DFMGlobal::isTablet())
+        m_systemPathsMap["Desktop"] = DFMStandardPaths::location(DFMStandardPaths::DesktopPath);
     m_systemPathsMap["Videos"] = DFMStandardPaths::location(DFMStandardPaths::VideosPath);
     m_systemPathsMap["Music"] = DFMStandardPaths::location(DFMStandardPaths::MusicPath);
     m_systemPathsMap["Pictures"] = DFMStandardPaths::location(DFMStandardPaths::PicturesPath);
@@ -218,7 +221,7 @@ void PathManager::loadSystemPaths()
         if (key != "Trash")
             m_systemPathsSet << path;
 
-        if(key == "Desktop" || key == "Videos" || key == "Music" ||
+        if((!DFMGlobal::isTablet() && key == "Desktop") || key == "Videos" || key == "Music" ||
            key == "Pictures" || key == "Documents" || key == "Downloads" ||
            key == "Trash"){
             mkPath(path);

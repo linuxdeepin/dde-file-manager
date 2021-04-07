@@ -541,7 +541,8 @@ void DFileDialog::setFileMode(QFileDialog::FileMode mode)
     case QFileDialog::Directory:
         // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
         getFileView()->setNameFilters(QStringList("/"));
-        getLeftSideBar()->setDisableUrlSchemes({"recent"}); // 打开目录时禁用recent
+        if (!DFMGlobal::isTablet())
+            getLeftSideBar()->setDisableUrlSchemes({"recent"}); // 打开目录时禁用recent
     // fall through
     default:
         getFileView()->setEnabledSelectionModes(QSet<DFileView::SelectionMode>() << QAbstractItemView::SingleSelection);
@@ -576,7 +577,8 @@ void DFileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
     } else {
         statusBar()->setMode(FileDialogStatusBar::Save);
         getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
-        getLeftSideBar()->setDisableUrlSchemes({"recent"}); // save mode disable recent
+        if (!DFMGlobal::isTablet())
+            getLeftSideBar()->setDisableUrlSchemes({"recent"}); // save mode disable recent
         setFileMode(QFileDialog::DirectoryOnly);
 
         connect(statusBar()->lineEdit(), &QLineEdit::textChanged,
