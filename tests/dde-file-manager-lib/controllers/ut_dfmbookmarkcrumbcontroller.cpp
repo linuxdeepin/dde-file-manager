@@ -35,16 +35,13 @@ namespace  {
 class TestDfmbookmarkcrumbcontroller : public testing::Test
 {
 public:
-    DFMBookmarkCrumbController *dfmBookmarkCrubCtl;
+    DFMBookmarkCrumbController dfmBookmarkCrubCtl;
     virtual void SetUp() override
     {
-        dfmBookmarkCrubCtl = new DFMBookmarkCrumbController();
     }
 
     virtual void TearDown() override
     {
-        delete dfmBookmarkCrubCtl;
-        dfmBookmarkCrubCtl = nullptr;
     }
 };
 
@@ -53,12 +50,12 @@ public:
 TEST_F(TestDfmbookmarkcrumbcontroller, tst_supportedUrl)
 {
     DUrl url("file:///home");
-    EXPECT_FALSE(dfmBookmarkCrubCtl->supportedUrl(url));
+    EXPECT_FALSE(dfmBookmarkCrubCtl.supportedUrl(url));
 }
 
 TEST_F(TestDfmbookmarkcrumbcontroller, tst_seprateUrl)
 {
     DUrl url("file:///home");
-    QList<CrumbData> crumbDataList = dfmBookmarkCrubCtl->seprateUrl(url);
+    QList<CrumbData> crumbDataList = dfmBookmarkCrubCtl.seprateUrl(url);
     EXPECT_TRUE(!crumbDataList.isEmpty());
 }

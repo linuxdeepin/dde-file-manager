@@ -30,16 +30,13 @@ namespace  {
     public:
         virtual void SetUp() override
         {
-            controller = new DFMMtpCrumbController;
         }
 
         virtual void TearDown() override
         {
-            delete controller;
-            controller = nullptr;
         }
 
-        DFMMtpCrumbController *controller;
+        DFMMtpCrumbController controller;
     };
 }
 
@@ -47,7 +44,7 @@ TEST_F(DFMMtpCrumbControllerTest, supportedUrl)
 {
     DUrl url;
     url.setScheme(MTP_SCHEME);
-    EXPECT_TRUE(controller->supportedUrl(url));
+    EXPECT_TRUE(controller.supportedUrl(url));
     url.setScheme(FILE_SCHEME);
-    EXPECT_FALSE(controller->supportedUrl(url));
+    EXPECT_FALSE(controller.supportedUrl(url));
 }

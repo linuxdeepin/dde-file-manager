@@ -31,16 +31,13 @@ namespace  {
     public:
         virtual void SetUp() override
         {
-            controller = new DFMRecentCrumbController;
         }
 
         virtual void TearDown() override
         {
-            delete controller;
-            controller = nullptr;
         }
 
-        DFMRecentCrumbController *controller;
+        DFMRecentCrumbController controller;
     };
 }
 
@@ -48,14 +45,14 @@ TEST_F(DFMRecentCrumbControllerTest, supportedUrl)
 {
     DUrl url;
     url.setScheme(RECENT_SCHEME);
-    EXPECT_TRUE(controller->supportedUrl(url));
+    EXPECT_TRUE(controller.supportedUrl(url));
     url.setScheme(FILE_SCHEME);
-    EXPECT_FALSE(controller->supportedUrl(url));
+    EXPECT_FALSE(controller.supportedUrl(url));
 }
 
 TEST_F(DFMRecentCrumbControllerTest, seprateUrl){
      DUrl url;
      url.setScheme(RECENT_SCHEME);
-     QList<CrumbData> list = controller->seprateUrl(url);
+     QList<CrumbData> list = controller.seprateUrl(url);
      EXPECT_TRUE(!list.empty());
 }

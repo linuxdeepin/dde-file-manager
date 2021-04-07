@@ -117,13 +117,13 @@ TEST_F(TestUDiskListener, device)
 TEST_F(TestUDiskListener, renameFile)
 {
     // create test file
-    QString path1(QDir::homePath() + "/udisklistener_test1.txt");
+    QString path1(QDir::currentPath() + "/udisklistener_test1.txt");
     if (!QFile::exists(path1)) {
         QFile file1(path1);
         file1.open(QIODevice::WriteOnly | QIODevice::Text);
         file1.close();
 
-        QString path2(QDir::homePath() + "~/udisklistener_test2.txt");
+        QString path2(QDir::currentPath() + "~/udisklistener_test2.txt");
 
         if (!QFile::exists(path2)) {
             DUrl from = DUrl::fromLocalFile(path1);

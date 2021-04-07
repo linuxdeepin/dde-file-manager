@@ -14,16 +14,13 @@ namespace  {
 class TestDFMMasteredMediaCrumbController : public testing::Test
 {
 public:
-    DFMMasteredMediaCrumbController *dfmMasteredMediaCrumbCtl;
+    DFMMasteredMediaCrumbController dfmMasteredMediaCrumbCtl;
     virtual void SetUp() override
     {
-        dfmMasteredMediaCrumbCtl = new DFMMasteredMediaCrumbController();
     }
 
     virtual void TearDown() override
     {
-        delete dfmMasteredMediaCrumbCtl;
-        dfmMasteredMediaCrumbCtl = nullptr;
     }
 };
 
@@ -32,19 +29,19 @@ public:
 TEST_F(TestDFMMasteredMediaCrumbController, tst_supportedUrl)
 {
     DUrl url("file:///home");
-    EXPECT_FALSE(dfmMasteredMediaCrumbCtl->supportedUrl(url));
+    EXPECT_FALSE(dfmMasteredMediaCrumbCtl.supportedUrl(url));
 }
 
 TEST_F(TestDFMMasteredMediaCrumbController, tst_seprateUrl)
 {
     DUrl url("file:///home");
-    QList<CrumbData> crumbDataList = dfmMasteredMediaCrumbCtl->seprateUrl(url);
+    QList<CrumbData> crumbDataList = dfmMasteredMediaCrumbCtl.seprateUrl(url);
     EXPECT_TRUE(!crumbDataList.isEmpty());
 }
 
 TEST_F(TestDFMMasteredMediaCrumbController, tst_seprateUrl2)
 {
     DUrl url("file:///tmp");
-    QList<CrumbData> crumbDataList = dfmMasteredMediaCrumbCtl->seprateUrl(url);
+    QList<CrumbData> crumbDataList = dfmMasteredMediaCrumbCtl.seprateUrl(url);
     EXPECT_TRUE(!crumbDataList.isEmpty());
 }
