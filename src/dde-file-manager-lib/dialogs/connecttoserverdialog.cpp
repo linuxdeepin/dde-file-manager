@@ -240,7 +240,7 @@ void ConnectToServerDialog::initUI()
         dataList << data.toString();
     }
 
-    QStringListModel *listModel = new QStringListModel();
+    QStringListModel *listModel = new QStringListModel(this);
     m_collectionServerView->setModel(listModel);
     listModel->setStringList(dataList);
 

@@ -280,17 +280,6 @@ TEST_F(TestFilePreviewDialog, testResizeEvent)
     // EXPECT_NE(m_pTester->width(), 100);
 }
 
-TEST_F(TestFilePreviewDialog, testInitUI)
-{
-    bool(*stub_isWayLand)() = []()->bool{
-        return true;
-    };
-    Stub stu;
-    stu.set(ADDR(DFMGlobal, isWayLand), stub_isWayLand);
-
-    EXPECT_NO_FATAL_FAILURE(m_pTester->initUI());
-}
-
 TEST_F(TestFilePreviewDialog, testPreviousPage)
 {
     m_pTester->m_currentPageIndex = 2;
