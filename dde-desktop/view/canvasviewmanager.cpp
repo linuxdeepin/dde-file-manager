@@ -310,6 +310,12 @@ void CanvasViewManager::onSyncOperation(int so,QVariant var)
         }
         break;
     }
+    case GridManager::soExpandItemUpdate: {
+        for (CanvasViewPointer view : m_canvasMap.values()) {
+            view->updateExpandItemGeometry();
+        }
+        break;
+    }
     default:
         break;
     }

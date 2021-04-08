@@ -700,8 +700,24 @@ void DIconItemDelegate::paint(QPainter *painter,
         m_checkedIcon.paint(painter, rc);
     }
 
-    if ((index == d->expandedIndex || index == d->editingIndex) && !isDragMode) {
-        return;
+    if (isCanvas) {
+        //根据文管要求，独立桌面逻辑
+        if (index == d->editingIndex && !isDragMode) {
+            // 正在编辑的item，不重绘text
+            return;
+        }
+
+        if (index == d->expandedIndex && !isDragMode
+                && d->expandedItem && d->expandedItem->index == index
+                && d->expandedItem->option.rect == opt.rect) {
+            // fixbug70013 屏幕数据变化后，桌面展开显示的图标文本位置错误
+            // 被展开显示的item，且rect未改变时，不重绘text
+            d->expandedItem->option = opt;
+            return;
+        }
+    } else {
+        if ((index == d->expandedIndex || index == d->editingIndex) && !isDragMode)
+            return;
     }
 
     QString str = opt.text;

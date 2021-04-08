@@ -91,7 +91,7 @@ class GridManager: public QObject, public Singleton<GridManager>
 public:
     enum SyncOperation{soAutoMerge,soRename,soIconSize,soSort
                        ,soHideEditing,soUpdate,soAutoMergeUpdate
-                       ,soHidenSwitch};
+                       ,soHidenSwitch,soExpandItemUpdate};
     DUrl getInitRootUrl();
     void initGridItemsInfos();
     void initAutoMerge(const QList<DAbstractFileInfoPointer> &items);

@@ -385,6 +385,11 @@ void CanvasGridView::updateHiddenItems()
 #endif
 }
 
+void CanvasGridView::updateExpandItemGeometry()
+{
+    updateEditorGeometries();
+}
+
 void CanvasGridView::setGeometry(const QRect &rect)
 {
 #if 0 //old
