@@ -1724,7 +1724,7 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         // 业务逻辑，让drop事件快速返回。
         if (toUrl.isTrashFile()) {
             QtConcurrent::run([=]() {
-                fileService->pasteFile(this, DFMGlobal::CutAction, toUrl, urlList);
+                fileService->moveToTrash(this, urlList);
             });
             break;
         }
