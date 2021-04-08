@@ -1320,9 +1320,9 @@ bool DFileMenuManager::whetherShowTagActions(const QList<DUrl> &urls)
         if (!info)
             return false;
 
-        bool temp{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(info->toLocalFile().toLocal8Bit()) };
+//        bool temp{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(info->toLocalFile().toLocal8Bit()) };
 
-        if (!temp) {
+        if (!info->canTag()) {
             return false;
         }
 
