@@ -30,6 +30,8 @@
 #include "interfaces/plugins/dfmfilepreviewfactory.h"
 #include "interfaces/plugins/private/dfmfilepreviewfactory_p.h"
 
+#include <QTimer>
+
 DFM_USE_NAMESPACE
 
 namespace  {
@@ -42,6 +44,12 @@ namespace  {
         }
         void TearDown() override
         {
+            QEventLoop loop;
+            QTimer::singleShot(100, nullptr, [&loop]() {
+                loop.exit();
+            });
+            loop.exec();
+
             std::cout << "end TestDFMFilePreviewFactory";
         }
     public:
