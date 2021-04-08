@@ -27,6 +27,8 @@
 #include "bluetooth/bluetoothmanager_p.h"
 
 #include <stub.h>
+#include <stubext.h>
+#include "testhelper.h"
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
@@ -56,9 +58,11 @@ public:
 
 TEST_F(TestBluetoothManager, connect)
 {
-    Stub *st = new Stub;
-    BluetoothAdapter *(*adapterById_r)(void *, const QString &) = [] (void *, const QString &) { return  new BluetoothAdapter;};
-    st->set(ADDR(BluetoothModel, adapterById), adapterById_r);
+    stub_ext::StubExt *st = new stub_ext::StubExt;
+    BluetoothAdapter *adapter = new BluetoothAdapter;
+    st->set_lamda(ADDR(BluetoothModel, adapterById), [adapter] (void *, const QString &) {
+        return adapter;
+    });
 
     EXPECT_NO_FATAL_FAILURE(
         emit d->m_bluetoothInter->AdapterAdded("");
@@ -75,6 +79,11 @@ TEST_F(TestBluetoothManager, connect)
         emit d->m_bluetoothInter->ObexSessionProgress(QDBusObjectPath(), 0, 0, 0);
         emit d->m_bluetoothInter->TransferFailed("", QDBusObjectPath(), "");
     );
+
+    TestHelper::runInLoop([](){
+    }, 500);
+
+    delete st;
 }
 
 TEST_F(TestBluetoothManager, model)
@@ -115,6 +124,12 @@ TEST_F(TestBluetoothManager, p_inflateAdapter)
     BluetoothAdapter *adapter = new BluetoothAdapter;
     QJsonObject obj;
     EXPECT_NO_FATAL_FAILURE(d->inflateAdapter(adapter, obj));
+
+    TestHelper::runInLoop([](){
+    }, 500);
+
+    delete st;
+    delete adapter;
 }
 
 TEST_F(TestBluetoothManager, p_inflateDevice)

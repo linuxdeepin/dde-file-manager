@@ -102,4 +102,5 @@ TEST_F(TestDFMSideBarModel, tstCanDropMimeData)
     EXPECT_FALSE(model->canDropMimeData(nullptr, act, 0, 0, parent));
     EXPECT_FALSE(model->canDropMimeData(data, act, -1, 0, parent));
     EXPECT_FALSE(model->canDropMimeData(data, act, 0, 0, parent));
+    delete data;
 }

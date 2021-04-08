@@ -352,7 +352,6 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
         } else {
             qWarning() << p1->getMountPointUrl() << "can't get data";
         }
-        delete e;
     } else {
         std::string stdPath = path.toStdString();
         gchar *url = const_cast<gchar *>(stdPath.c_str());
@@ -370,6 +369,7 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
                  });
         }
     }
+    delete e;
 }
 
 void NetworkManager::cancelFeatchNetworks()

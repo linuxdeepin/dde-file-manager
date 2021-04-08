@@ -133,6 +133,7 @@ TEST_F(TestDesktopFileInfo, tstConstructWithQFileInfo)
 {
     DesktopFileInfo *p = new DesktopFileInfo(QFileInfo("/usr/bin/dde-file-manager"));
     EXPECT_FALSE(p->getName() == "dde-file-manager");
+    delete p;
 }
 
 TEST_F(TestDesktopFileInfo, tstFileIcon)

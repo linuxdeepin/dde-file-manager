@@ -108,6 +108,8 @@ TEST_F(DFMRootControllerTest, create_file_watcher)
     url.setPath("/");
     DAbstractFileWatcher *watcher = controller->createFileWatcher(dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, url));
     EXPECT_TRUE(watcher != nullptr);
+    if (watcher)
+        delete watcher;
 
 //    这段代码目前会阻塞CI原因未细查, 暂时先屏蔽
 //    watcher->startWatcher();

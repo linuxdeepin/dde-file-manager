@@ -18,6 +18,7 @@ public:
     void TearDown() override
     {
         std::cout << "end TestAVFSFileInfo";
+        delete info;
     }
 
 public:

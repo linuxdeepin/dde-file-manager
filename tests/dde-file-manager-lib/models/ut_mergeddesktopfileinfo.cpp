@@ -44,6 +44,8 @@ public:
     void TearDown() override
     {
         std::cout << "end TestMergedDesktopFileInfo";
+
+        delete info;
     }
 
 public:

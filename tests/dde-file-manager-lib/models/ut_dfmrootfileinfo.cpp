@@ -141,12 +141,16 @@ TEST_F(TestDFMRootFileInfo, fileType)
     EXPECT_EQ(257, info->fileType());
     DFMRootFileInfo *ftp = new DFMRootFileInfo(DUrl("ftp:///testfile.gvfsmp"));
     ftp->fileType();
+    delete ftp;
     DFMRootFileInfo *smb = new DFMRootFileInfo(DUrl("smb:///testfile.gvfsmp"));
     smb->fileType();
+    delete smb;
     DFMRootFileInfo *mtp = new DFMRootFileInfo(DUrl("mtp:///testfile.gvfsmp"));
     mtp->fileType();
+    delete mtp;
     DFMRootFileInfo *gphoto = new DFMRootFileInfo(DUrl("gphoto2:///testfile.gvfsmp"));
     gphoto->fileType();
+    delete gphoto;
 }
 
 TEST_F(TestDFMRootFileInfo, filesCount)
@@ -210,6 +214,7 @@ TEST_F(TestDFMRootFileInfo, tstMenuActionList)
     EXPECT_TRUE(info->menuActionList().count() > 0);
     DFMRootFileInfo *gvfs = new DFMRootFileInfo(DUrl("dfmroot:///fakeDisk.gvfsmp"));
     gvfs->menuActionList();
+    delete gvfs;
 
     stub_ext::StubExt st;
     st.set_lamda(ADDR(QVariant, toBool), []{ return true; });
@@ -238,18 +243,21 @@ TEST_F(TestDFMRootFileInfo, tstConstructor)
     localDisk->fileName();
     localDisk->redirectedFileUrl();
     localDisk->extraProperties();
+    delete localDisk;
 
     DFMRootFileInfo *gvfs = new DFMRootFileInfo(DUrl("dfmroot:///fakeFile.gvfsmp"));
     gvfs->fileDisplayName();
     gvfs->iconName();
     gvfs->redirectedFileUrl();
     gvfs->extraProperties();
+    delete gvfs;
 
     DFMRootFileInfo *fake = new DFMRootFileInfo(DUrl("dfmroot:///fakeFile.fakeSuffix"));
     fake->fileDisplayName();
     fake->iconName();
     fake->redirectedFileUrl();
     fake->extraProperties();
+    delete fake;
 }
 
 TEST_F(TestDFMRootFileInfo, tstCheckCache)
@@ -259,6 +267,7 @@ TEST_F(TestDFMRootFileInfo, tstCheckCache)
     st.set(ADDR(DBlockDevice, symlinks), symlinks_stub);
     DFMRootFileInfo *fat32 = new DFMRootFileInfo(DUrl("dfmroot:///sda.localdisk"));
     fat32->checkCache();
+    delete fat32;
 }
 
 TEST_F(TestDFMRootFileInfo, tstCanSetAlias)

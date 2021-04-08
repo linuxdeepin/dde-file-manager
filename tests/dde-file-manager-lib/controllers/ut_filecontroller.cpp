@@ -425,6 +425,8 @@ TEST_F(FileControllerTest, tst_create_file_watcher)
     DUrl url = DUrl::fromLocalFile("/tmp/");
     DAbstractFileWatcher *watcher = controller->createFileWatcher(dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, url));
     EXPECT_TRUE(watcher != nullptr);
+    if (watcher)
+        delete watcher;
 }
 
 TEST_F(FileControllerTest, tst_create_file_device)
@@ -432,6 +434,8 @@ TEST_F(FileControllerTest, tst_create_file_device)
     DUrl url = DUrl::fromLocalFile("/dev/urandom");
     auto *device = controller->createFileDevice(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
     EXPECT_TRUE(device != nullptr);
+    if (device)
+        delete device;
 }
 
 TEST_F(FileControllerTest, tst_create_file_handler)
@@ -439,13 +443,17 @@ TEST_F(FileControllerTest, tst_create_file_handler)
     DUrl url = DUrl::fromLocalFile(fileName);
     auto *handler = controller->createFileHandler(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
     EXPECT_TRUE(handler != nullptr);
+    if (handler)
+        delete handler;
 }
 
 TEST_F(FileControllerTest, tst_create_storage_info)
 {
     DUrl url = DUrl::fromLocalFile("/dev/urandom");
-    auto *info = controller->createStorageInfo(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
+    DStorageInfo *info = controller->createStorageInfo(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
     EXPECT_TRUE(info != nullptr);
+    if (info)
+        delete info;
 }
 
 TEST_F(FileControllerTest, tst_custom_hideen_file_match)
