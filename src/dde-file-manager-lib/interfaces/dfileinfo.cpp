@@ -533,7 +533,7 @@ bool DFileInfo::canTag() const
     return false;
 #endif // DISABLE_TAG_SUPPORT
 
-    bool isFiltered = DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(toLocalFile().toLocal8Bit());
+    bool isFiltered = DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(parentUrl().toLocalFile().toLocal8Bit());
     if (!isFiltered)
         return false;
 
@@ -541,6 +541,20 @@ bool DFileInfo::canTag() const
     QString compressPath = QDir::homePath() + "/.avfs/";
     if (filePath().startsWith(compressPath))
         return false;
+
+    //主目录不允许添加标记
+    QString parentPath = parentUrl().path();
+    if (parentPath == "/home" || parentPath == "/data/home")
+        return false;
+
+    //判断所有用户的固定文件夹
+    QString rootPath = parentUrl().parentUrl().path();
+    QString path = filePath();
+    if (rootPath == "/home" || rootPath == "/data/home") {
+        if (path.endsWith("/Desktop") || path.endsWith("/Videos") || path.endsWith("/Music") ||
+                path.endsWith("/Pictures") || path.endsWith("/Documents") || path.endsWith("/Downloads"))
+            return false;
+    }
 
     return !systemPathManager->isSystemPath(filePath());
 }
