@@ -181,7 +181,11 @@ static QString formatCap(qulonglong cap, const int size = 1024, quint8 precision
     for (size_t p = 0; p < sizeof(type); ++p) {
         if (cap < pow(size, p + 1) || p == sizeof(type) - 1) {
             if (!precision) {
+#ifdef __sw_64__
+                return QString::number(ceil(lc / pow(size, p))) + type[p];
+#else
                 return QString::number(round(lc / pow(size, p))) + type[p];
+#endif
             }
 
             return QString::number(dc / pow(ds, p), 'f', precision) + type[p];
