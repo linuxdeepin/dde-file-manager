@@ -113,6 +113,7 @@ TEST_F(TestMergedDesktopController, tstFuncsWithEvents)
     if (watcher) {
         watcher->setEnabledSubfileWatcher(DUrl("dfmmd:///"), true);
         watcher->setEnabledSubfileWatcher(DUrl("dfmmd:///"), false);
+        delete watcher;
     }
 
     auto e4 = dMakeEventPointer<DFMOpenFileEvent>(nullptr, DUrl("file:///"));

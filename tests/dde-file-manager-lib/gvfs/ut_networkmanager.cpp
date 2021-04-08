@@ -122,10 +122,11 @@ TEST_F(TestNetworkManager, fetchNetworks)
     GFileInfo *info = new_g_file_info();
     GList *detected_networks = g_list_alloc();
     detected_networks->data = info;
-    user_data = new DFMUrlBaseEvent(nullptr, DUrl("smb:///"));
-    Singleton<NetworkManager>::instance()->populate_networks(enumerator, detected_networks, user_data);
+    DFMUrlBaseEvent *event = new DFMUrlBaseEvent(nullptr, DUrl("smb:///"));
+    Singleton<NetworkManager>::instance()->populate_networks(enumerator, detected_networks, gpointer(event));
     Singleton<NetworkManager>::instance()->eventLoop = &event_loop;
     Singleton<NetworkManager>::instance()->cancelFeatchNetworks();
+    delete event;
 }
 
 

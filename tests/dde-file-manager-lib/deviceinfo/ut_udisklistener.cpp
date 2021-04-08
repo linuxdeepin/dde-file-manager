@@ -29,6 +29,8 @@
 #include "ddiskmanager.h"
 #include "dblockdevice.h"
 #include "deviceinfo/udiskdeviceinfo.h"
+#include "interfaces/dfileservices.h"
+#include "dabstractfilewatcher.h"
 
 #include "addr_pri.h"
 #include "stubext.h"
@@ -79,7 +81,11 @@ public:
     }
     void TearDown() override
     {
+        // 构造 UDiskListener 时，会自动注册，先取消注册，再删除，避免被重复析构
+        // 在 UDiskLister 析构函数实现更好
+        DFileService::unsetFileUrlHandler(m_listener);
         delete m_listener;
+        m_listener = nullptr;
     }
 };
 
@@ -172,17 +178,21 @@ TEST_F(TestUDiskListener, getChildren)
 
 TEST_F(TestUDiskListener, createFileInfo)
 {
-    EXPECT_FALSE(m_listener->createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, DUrl())));
+    DAbstractFileInfoPointer info = m_listener->createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, DUrl()));
+    EXPECT_FALSE(info);
     DUrl url;
     url.setPath("/etc/apt/sources.list");
-    EXPECT_FALSE(m_listener->createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, url)));
+    info = m_listener->createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, url));
+    EXPECT_FALSE(info);
 }
 
 TEST_F(TestUDiskListener, createFileWatcher)
 {
     DUrl url;
     url.setPath("/etc/apt/");
-    EXPECT_TRUE(m_listener->createFileWatcher(dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, url)));
+    QScopedPointer<DAbstractFileWatcher> watcher;
+    watcher.reset(m_listener->createFileWatcher(dMakeEventPointer<DFMCreateFileWatcherEvent>(nullptr, url)));
+    EXPECT_TRUE(watcher != nullptr);
 }
 
 TEST_F(TestUDiskListener, getDeviceByDevicePath)
@@ -362,7 +372,8 @@ TEST_F(TestUDiskListener, addMountDiskInfo)
     info.setDefault_location("/");
     info.setDrive_unix_device("0");
 
-    listener.m_subscribers.append(new TestSubscriber);
+    TestSubscriber *subscriber = new TestSubscriber;
+    listener.m_subscribers.append(subscriber);
 
     EXPECT_NO_FATAL_FAILURE(listener.addMountDiskInfo(info));
 
@@ -372,6 +383,8 @@ TEST_F(TestUDiskListener, addMountDiskInfo)
     });
 
     EXPECT_NO_FATAL_FAILURE(listener.addMountDiskInfo(info));
+    delete subscriber;
+    DFileService::unsetFileUrlHandler(&listener);
 }
 
 TEST_F(TestUDiskListener, mount)

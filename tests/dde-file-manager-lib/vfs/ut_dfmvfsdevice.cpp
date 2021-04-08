@@ -59,6 +59,7 @@ public:
     void TearDown() override
     {
         delete m_service;
+        delete d;
     }
 };
 }

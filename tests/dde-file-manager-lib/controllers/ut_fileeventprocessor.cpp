@@ -60,6 +60,15 @@ namespace  {
             return event;
         }
 
+        static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
+        {
+            bool ret = dde_file_manager::processMenuEvent(event);
+            if (event->menu())
+                delete event->menu();
+
+            return ret;
+        }
+
         FileEventProcessor *processer;
     };
 }
@@ -82,12 +91,12 @@ TEST_F(FileEventProcessorTest, tst_menu_event_change_tag_color)
     DFMGlobal::MenuAction action = DFMGlobal::MenuAction::ChangeTagColor;
     const QObject *sender = nullptr;
 
-    DTagActionWidget* tagWidget = new DTagActionWidget;
-    QWidgetAction* tagAction = new QWidgetAction(nullptr);
+    DFileMenu *menu = new DFileMenu(nullptr);
+    DTagActionWidget *tagWidget = new DTagActionWidget;
+    QWidgetAction *tagAction = new QWidgetAction(menu);
     tagAction->setDefaultWidget(tagWidget);
     tagAction->setText("Change color of present tag");
 
-    DFileMenu *menu = new DFileMenu(nullptr);
     menu->addAction(tagAction);
 
     tagWidget->setCheckedColorList({Qt::red});
@@ -116,12 +125,12 @@ TEST_F(FileEventProcessorTest, tst_menu_event_tag_files_use_color)
     DFMGlobal::MenuAction action = DFMGlobal::MenuAction::TagFilesUseColor;
     const QObject *sender = nullptr;
 
-    DTagActionWidget* tagWidget = new DTagActionWidget;
-    QWidgetAction* tagAction = new QWidgetAction(nullptr);
+    DFileMenu *menu = new DFileMenu(nullptr);
+    DTagActionWidget *tagWidget = new DTagActionWidget;
+    QWidgetAction *tagAction = new QWidgetAction(menu);
     tagAction->setDefaultWidget(tagWidget);
     tagAction->setText("Add color tags");
 
-    DFileMenu *menu = new DFileMenu(nullptr);
     menu->addAction(tagAction);
 
     tagWidget->setCheckedColorList({Qt::red});

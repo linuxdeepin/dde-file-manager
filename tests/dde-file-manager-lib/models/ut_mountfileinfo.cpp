@@ -38,6 +38,7 @@ public:
     void TearDown() override
     {
         std::cout << "end TestMountFileInfo";
+        delete info;
     }
 
 public:

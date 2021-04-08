@@ -150,4 +150,5 @@ TEST_F(TestTrashFileInfo, tstUpdateInfo)
     trash->d_func()->updateInfo();
     trash->d_func()->inheritParentTrashInfo();
     trash->deletionDate();
+    delete trash;
 }

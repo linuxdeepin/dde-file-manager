@@ -40,6 +40,7 @@ public:
     void TearDown() override
     {
         std::cout << "end TestShareFileInfo";
+        delete info;
     }
 
 public:
