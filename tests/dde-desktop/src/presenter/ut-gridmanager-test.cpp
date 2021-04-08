@@ -1,4 +1,4 @@
-﻿#include <gtest/gtest.h>
+#include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 #include <QTest>
 #include <QScopedPointer>
@@ -122,8 +122,32 @@ TEST_F(GridManagerTest, test_rangeitems)
     EXPECT_TRUE(issort);
 }
 
+namespace {
+
+void waitDataEvent(CanvasGridView *view)
+{
+    if (!view)
+        return;
+
+    auto model = view->model();
+    if (!model)
+        return;
+
+    QEventLoop loop;
+    QObject::connect(model, &DFileSystemModel::sigJobFinished, &loop,&QEventLoop::quit,Qt::QueuedConnection);
+    QTimer::singleShot(2000, &loop, &QEventLoop::quit);
+    loop.exec();
+    view->delayCustom(0);
+}
+}
+#define waitData(view) waitDataEvent(view); \
+ASSERT_EQ(m_canvasGridView->model()->rowCount(), GridManager::instance()->allItems().size());
+
 TEST_F(GridManagerTest, test_currentscreenmove)
 {
+    waitData(m_canvasGridView);
+    m_canvasGridView->setIconByLevel(1);
+
     QList<DUrl> list;
     bool movestatus;
     QString url = m_grid->firstItemId(m_canvasGridView->m_screenNum);
@@ -134,18 +158,19 @@ TEST_F(GridManagerTest, test_currentscreenmove)
     m_canvasGridView->selectAll();
 
     DUrlList urllist = m_canvasGridView->selectedUrls();
+    ASSERT_FALSE(urllist.isEmpty());
     QStringList strlist;
-    for (auto str : urllist) strlist << str.toString();
+    int emptyCount = m_grid->emptyPostionCount(m_canvasGridView->m_screenNum);
+    ASSERT_GT(emptyCount, 0);
+    for (int i = 0; i < emptyCount && i < urllist.size(); ++i)
+        strlist << urllist[i].toString();
+
     movestatus = m_grid->move(m_canvasGridView->m_screenNum, strlist, url, fpoint.x() + 1, fpoint.y() + 1);
-
-    QPoint secpoint;
-
     emit m_grid->d->m_desktopSettings->valueChanged("desktop-computer", "1");
 
     m_grid->d->reAutoArrage();
     EXPECT_TRUE(movestatus);
     m_grid->move(m_canvasGridView->m_screenNum, strlist, url, fpoint.x(), fpoint.y());
-
 }
 
 TEST_F(GridManagerTest, test_forwardfindempty)
