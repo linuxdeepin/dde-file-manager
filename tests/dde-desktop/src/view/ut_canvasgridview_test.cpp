@@ -81,6 +81,7 @@ public:
 QString CanvasGridViewTest::tstFile = "testutxxxxxxxxxxx.txt";
 QString CanvasGridViewTest::tstDir = "test-dir-utxxxxxxxxxx";
 
+namespace {
 void waitDataEvent(CanvasGridView *view)
 {
     if (!view)
@@ -95,6 +96,7 @@ void waitDataEvent(CanvasGridView *view)
     QTimer::singleShot(2000, &loop, &QEventLoop::quit);
     loop.exec();
     view->delayCustom(0);
+}
 }
 
 #define waitData(view) waitDataEvent(view); \
