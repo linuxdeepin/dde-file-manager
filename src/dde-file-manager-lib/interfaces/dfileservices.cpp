@@ -318,24 +318,6 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
             }
         }
 
-        //! 显示删除确认对话框
-        bool bShowConfimDlg = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowDeleteConfirmDialog).toBool();
-        DUrl url = event->fileUrlList().first();
-        if (bShowConfimDlg
-                && d_ptr->m_isMoveToTrashOver
-                && !url.isTrashFile()
-                && !url.isRecentFile()
-                && url.scheme() != BURN_SCHEME
-                && !VaultController::isVaultFile(url.toLocalFile())
-                && !url.isUserShareFile()) {
-
-            if (DThreadUtil::runInMainThread(
-                        dialogManager,
-                        &DialogManager::showNormalDeleteConfirmDialog,
-                        DFMUrlListBaseEvent(nullptr, event->fileUrlList())) != DDialog::Accepted)
-                break;
-        }
-
         d_ptr->m_isMoveToTrashOver = false;
         result = CALL_CONTROLLER(moveToTrash);
         d_ptr->m_isMoveToTrashOver = true;
@@ -659,6 +641,25 @@ DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) 
     if (FileUtils::isGvfsMountFile(list.first().toLocalFile())) {
         deleteFiles(sender, list);
         return list;
+    }
+
+    //! 显示删除确认对话框
+    bool bShowConfimDlg = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowDeleteConfirmDialog).toBool();
+    DUrl url = list.first();
+    if (bShowConfimDlg
+            && d_ptr->m_isMoveToTrashOver
+            && !url.isTrashFile()
+            && !url.isRecentFile()
+            && url.scheme() != BURN_SCHEME
+            && !VaultController::isVaultFile(url.toLocalFile())
+            && !url.isUserShareFile()
+            && !url.isSMBFile()) {
+
+        if (DThreadUtil::runInMainThread(
+                    dialogManager,
+                    &DialogManager::showNormalDeleteConfirmDialog,
+                    DFMUrlListBaseEvent(nullptr, list)) != DDialog::Accepted)
+            return DUrlList();
     }
 
     const DUrlList &result = qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMMoveToTrashEvent>(sender, list)));
