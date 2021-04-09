@@ -218,7 +218,7 @@ VaultController::VaultController(QObject *parent)
     //! 屏蔽保险箱内的文件信息写入到日志文件
     DFMLogManager::getFilterAppender()->addFilter(VAULT_DECRYPT_DIR_NAME);
 
-    d->m_cryFsHandle = new CryFsHandle(this);
+    d->m_cryFsHandle = new CryFsHandle();
 
     connect(this, &VaultController::sigCreateVault, d->m_cryFsHandle, &CryFsHandle::createVault);
     connect(this, &VaultController::sigUnlockVault, d->m_cryFsHandle, &CryFsHandle::unlockVault);

@@ -356,6 +356,9 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
             timeCreatedLabel = new SectionValueLabel(info->lastReadDisplayName());
             timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
         }
+        DFMGlobal::setToolTip(TimeCreatedSectionLabel);
+        DFMGlobal::setToolTip(TimeModifiedSectionLabel);
+
         layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
         layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
     }

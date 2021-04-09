@@ -35,6 +35,7 @@
 #include <QThread>
 #include <QUrl>
 #include <QDebug>
+#include <QtWidgets/QLabel>
 
 #include <functional>
 #include <cmath>
@@ -359,6 +360,14 @@ public:
                           const QBrush &background = QBrush(Qt::NoBrush),
                           qreal backgroundRadius = 4,
                           QList<QRectF> *boundingRegion = nullptr);
+
+
+    /**
+     * @brief setToolTip 设置tooltip显示
+     * @param label 需要显示的控件
+     * @param bAlwaysShow 是否总是显示
+     */
+    static void setToolTip(QLabel* label, bool bAlwaysShow = false);
 
     /**
      * @brief showAlertMessage 显示气泡提示信息
