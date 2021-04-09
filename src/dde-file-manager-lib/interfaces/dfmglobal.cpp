@@ -438,6 +438,12 @@ void DFMGlobal::initTagManagerConnect()
                 return;
 
             DUrl durl = DUrl::fromLocalFile(i.key());
+            //主目录文件被标记同时要通知数据盘的home目录
+            if (durl.path().startsWith("/home")) {
+                DUrl dataUrl(durl);
+                dataUrl.setPath("/data" + durl.path());
+                DAbstractFileWatcher::ghostSignal(dataUrl.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, dataUrl);
+            }
             DAbstractFileWatcher::ghostSignal(durl.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, durl);
 
             // for tag watcher
@@ -452,6 +458,13 @@ void DFMGlobal::initTagManagerConnect()
     connect(TagManager::instance(), &TagManager::untagFiles, [](const QMap<QString, QList<QString>> &tag_be_removed_files) {
         for (auto i = tag_be_removed_files.constBegin(); i != tag_be_removed_files.constEnd(); ++i) {
             DUrl durl = DUrl::fromLocalFile(i.key());
+            //主目录文件被取消标记同时要通知数据盘的home目录
+            if (durl.path().startsWith("/home")) {
+                DUrl dataUrl(durl);
+                dataUrl.setPath("/data" + durl.path());
+                DAbstractFileWatcher::ghostSignal(dataUrl.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, dataUrl);
+            }
+
             DAbstractFileWatcher::ghostSignal(durl.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, durl);
 
             // for tag watcher

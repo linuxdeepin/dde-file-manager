@@ -91,6 +91,8 @@ private:
     bool isExtDeviceJobCase(void *curJob, const DUrl &url) const;
     bool isDiscburnJobCase(void *curJob, const DUrl &url) const;
     bool fileAdded(const DUrl &url) const;
+
+    DUrl handleTagFileUrl(const DUrl &url) const;
 };
 
 #endif // FILECONTROLLER_H
