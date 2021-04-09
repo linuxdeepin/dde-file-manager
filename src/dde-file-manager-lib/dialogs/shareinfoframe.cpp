@@ -95,6 +95,10 @@ void ShareInfoFrame::initUI()
 
     QFormLayout *mainLayoyt = new QFormLayout(this);
 
+    DFMGlobal::setToolTip(shareNameLabel);
+    DFMGlobal::setToolTip(permissionLabel);
+    DFMGlobal::setToolTip(anonymityLabel);
+
     mainLayoyt->addRow(centerAlignContainer);
     mainLayoyt->addRow(shareNameLabel, m_shareNamelineEdit);
     mainLayoyt->addRow(permissionLabel, m_permissoComBox);

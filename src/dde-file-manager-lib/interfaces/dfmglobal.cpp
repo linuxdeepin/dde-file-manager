@@ -827,6 +827,20 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::
     layout->endLayout();
 }
 
+void DFMGlobal::setToolTip(QLabel *label, bool bAlwaysShow)
+{
+    if (!label)
+        return;
+
+    QString fullText = label->text();
+
+    QString elideText = label->fontMetrics().elidedText(fullText, Qt::ElideMiddle, label->width());
+    label->setText(elideText);
+
+    if (bAlwaysShow || fullText != elideText)
+        label->setToolTip(fullText);
+}
+
 void DFMGlobal::showAlertMessage(QPoint globalPoint, const QColor &backgroundColor, const QString &text, int duration)
 {
     static DArrowRectangle* tooltip = nullptr;

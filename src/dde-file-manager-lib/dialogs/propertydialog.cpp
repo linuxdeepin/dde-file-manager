@@ -1222,6 +1222,10 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
     }
 
+    DFMGlobal::setToolTip(TimeCreatedSectionLabel);
+    DFMGlobal::setToolTip(TimeReadSectionLabel);
+    DFMGlobal::setToolTip(TimeModifiedSectionLabel);
+    DFMGlobal::setToolTip(sourcePathSectionLabel);
 
     QFormLayout *layout = new QFormLayout;
     layout->setHorizontalSpacing(12);
