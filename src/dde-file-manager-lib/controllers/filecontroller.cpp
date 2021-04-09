@@ -1749,10 +1749,11 @@ bool FileController::privateFileMatch(const QString &absolutePath, const QString
 
 bool FileController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const
 {
+    DUrl url = handleTagFileUrl(event->url());
     if (event->tags().isEmpty()) {
-        const QStringList &tags = TagManager::instance()->getTagsThroughFiles({event->url()});
+        const QStringList &tags = TagManager::instance()->getTagsThroughFiles({url});
 
-        return tags.isEmpty() || TagManager::instance()->removeTagsOfFiles(tags, {event->url()});
+        return tags.isEmpty() || TagManager::instance()->removeTagsOfFiles(tags, {url});
     }
 
     // 修复bug-59180
@@ -1760,17 +1761,22 @@ bool FileController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &even
     if (VaultController::isVaultFile(event->url().toLocalFile()))
         return true;
 
-    return TagManager::instance()->makeFilesTags(event->tags(), {event->url()});
+    return TagManager::instance()->makeFilesTags(event->tags(), {url});
 }
 
 bool FileController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const
 {
-    return TagManager::instance()->removeTagsOfFiles(event->tags(), {event->url()});
+    DUrl url = handleTagFileUrl(event->url());
+    return TagManager::instance()->removeTagsOfFiles(event->tags(), {url});
 }
 
 QList<QString> FileController::getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const
 {
-    return TagManager::instance()->getTagsThroughFiles(event->urlList());
+    DUrlList urlList;
+    for (auto url : event->urlList())
+        urlList << handleTagFileUrl(url);
+
+    return TagManager::instance()->getTagsThroughFiles(urlList);
 }
 
 QString FileController::checkDuplicateName(const QString &name) const
@@ -1798,6 +1804,15 @@ bool FileController::fileAdded(const DUrl &url) const
         return DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::subfileCreated, url);
     }
     return true;
+}
+
+DUrl FileController::handleTagFileUrl(const DUrl &url) const
+{
+    DUrl newUrl(url);
+    if (newUrl.path().startsWith("/data/home/"))
+        newUrl.setPath(url.path().remove(0, sizeof("/data") - 1));
+
+    return newUrl;
 }
 
 FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFilters,
