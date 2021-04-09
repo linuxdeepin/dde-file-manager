@@ -114,28 +114,28 @@ TEST_F(TestUDiskListener, device)
     m_listener->addDevice(m_devInfo);
 }
 
-TEST_F(TestUDiskListener, renameFile)
-{
-    // create test file
-    QString path1(QDir::currentPath() + "/udisklistener_test1.txt");
-    if (!QFile::exists(path1)) {
-        QFile file1(path1);
-        file1.open(QIODevice::WriteOnly | QIODevice::Text);
-        file1.close();
+//TEST_F(TestUDiskListener, renameFile)
+//{
+//    // create test file
+//    QString path1(QDir::currentPath() + "/udisklistener_test1.txt");
+//    if (!QFile::exists(path1)) {
+//        QFile file1(path1);
+//        file1.open(QIODevice::WriteOnly | QIODevice::Text);
+//        file1.close();
 
-        QString path2(QDir::currentPath() + "~/udisklistener_test2.txt");
+//        QString path2(QDir::currentPath() + "~/udisklistener_test2.txt");
 
-        if (!QFile::exists(path2)) {
-            DUrl from = DUrl::fromLocalFile(path1);
-            DUrl to = DUrl::fromLocalFile(path2);
-            QSharedPointer<DFMRenameEvent> event(new DFMRenameEvent(nullptr, from, to));
+//        if (!QFile::exists(path2)) {
+//            DUrl from = DUrl::fromLocalFile(path1);
+//            DUrl to = DUrl::fromLocalFile(path2);
+//            QSharedPointer<DFMRenameEvent> event(new DFMRenameEvent(nullptr, from, to));
 
-            EXPECT_TRUE(m_listener->renameFile(event));
-            QFile::remove(path2);
-        }
-        QFile::remove(path1);
-    }
-}
+//            EXPECT_TRUE(m_listener->renameFile(event));
+//            QFile::remove(path2);
+//        }
+//        QFile::remove(path1);
+//    }
+//}
 
 TEST_F(TestUDiskListener, lastPart)
 {
