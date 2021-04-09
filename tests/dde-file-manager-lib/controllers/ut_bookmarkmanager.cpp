@@ -100,18 +100,18 @@ TEST_F(TestBookMarkManager, can_create_bookmark_sidebar_item)
     EXPECT_EQ(m_pItem->url(), url);
 }
 
-TEST_F(TestBookMarkManager, can_call_cd_action)
-{
-    ASSERT_NE(m_pHandler, nullptr);
+//TEST_F(TestBookMarkManager, can_call_cd_action)
+//{
+//    ASSERT_NE(m_pHandler, nullptr);
 
-    DFileManagerWindow window;
-    const DFMSideBar *bar = window.getLeftSideBar();
-    DUrl url = DUrl::fromBookMarkFile(DUrl("file://" + tempDirPath), BOOKMARK_STR);
-    m_pItem = m_pHandler->createItem(url);
-    ASSERT_NE(m_pItem, nullptr);
+//    DFileManagerWindow window;
+//    const DFMSideBar *bar = window.getLeftSideBar();
+//    DUrl url = DUrl::fromBookMarkFile(DUrl("file://" + tempDirPath), BOOKMARK_STR);
+//    m_pItem = m_pHandler->createItem(url);
+//    ASSERT_NE(m_pItem, nullptr);
 
-    m_pHandler->cdAction(bar, m_pItem);
-}
+//    m_pHandler->cdAction(bar, m_pItem);
+//}
 
 TEST_F(TestBookMarkManager, can_call_context_menu)
 {
