@@ -148,7 +148,8 @@ bool VaultHelper::isVaultEnabled()
     if (!DSysInfo::isCommunityEdition()) {  // 如果不是社区版
         DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
         // 如果是专业版
-        if (DSysInfo::DeepinType::DeepinProfessional == deepinType) {
+        if (DSysInfo::DeepinType::DeepinProfessional == deepinType
+                || DSysInfo::DeepinType::DeepinServer == deepinType) {
             return true;
         }
     }
