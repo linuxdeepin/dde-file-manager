@@ -1,11 +1,20 @@
-/**
- * Copyright (C) 2017 Uniontech Technology Co., Ltd.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- **/
+/*
+   FSearch - A fast file search utility
+   Copyright © 2020 Christian Boxdörfer
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, see <http://www.gnu.org/licenses/>.
+*/
 #pragma once
 
 #include <glib.h>
@@ -21,68 +30,69 @@ typedef struct _DatabaseLocation DatabaseLocation;
 typedef struct _FsearchConfig FsearchConfig;
 
 void
-db_location_free (DatabaseLocation *location);
+db_location_free(DatabaseLocation *location);
 
 bool
-db_location_load (Database *db, const char *location_name);
+db_location_load(Database *db, const char *location_name);
 
 bool
-db_location_add (Database *db,
-                 const char *location_name,
-                 FsearchConfig *config,
-                 void (*callback)(const char *));
+db_location_add(Database *db,
+                const char *location_name,
+                FsearchConfig *config,
+                bool *state,
+                void (*callback)(const char *));
 
 bool
-db_location_remove (Database *db, const char *path);
+db_location_remove(Database *db, const char *path);
 
 bool
-db_location_write_to_file (DatabaseLocation *location, const char *fname);
+db_location_write_to_file(DatabaseLocation *location, const char *fname);
 
 BTreeNode *
-db_location_get_entries (DatabaseLocation *location);
+db_location_get_entries(DatabaseLocation *location);
 
 void
-db_free (Database *db);
+db_free(Database *db);
 
 Database *
-db_new ();
+db_new();
 
 gboolean
-db_list_append_node (BTreeNode *node,
-                     gpointer data);
+db_list_append_node(BTreeNode *node,
+                    gpointer data);
 
 void
-db_update_sort_index (Database *db);
+db_update_sort_index(Database *db);
 
 bool
-db_save_locations (Database *db);
+db_save_locations(Database *db);
 
 void
-db_update_entries_list (Database *db);
+db_update_entries_list(Database *db);
 
 void
-db_build_initial_entries_list (Database *db);
+db_build_initial_entries_list(Database *db);
 
 time_t
-db_get_timestamp (Database *db);
+db_get_timestamp(Database *db);
 
 uint32_t
-db_get_num_entries (Database *db);
+db_get_num_entries(Database *db);
 
 void
-db_unlock (Database *db);
+db_unlock(Database *db);
 
 void
-db_lock (Database *db);
+db_lock(Database *db);
 
 bool
-db_try_lock (Database *db);
+db_try_lock(Database *db);
 
 DynamicArray *
-db_get_entries (Database *db);
+db_get_entries(Database *db);
 
 void
-db_sort (Database *db);
+db_sort(Database *db);
 
 bool
-db_clear (Database *db);
+db_clear(Database *db);

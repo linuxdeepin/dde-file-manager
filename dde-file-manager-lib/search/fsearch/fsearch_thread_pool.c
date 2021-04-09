@@ -1,11 +1,20 @@
-/**
- * Copyright (C) 2017 Uniontech Technology Co., Ltd.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- **/
+/*
+   FSearch - A fast file search utility
+   Copyright © 2020 Christian Boxdörfer
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, see <http://www.gnu.org/licenses/>.
+*/
 #include <stdio.h>
 
 #include "fsearch_thread_pool.h"
@@ -24,6 +33,7 @@ typedef struct thread_context_s {
     GMutex mutex;
     GCond start_cond;
     GCond finished_cond;
+    bool thread_waited;
     FsearchThreadStatus status;
     bool terminate;
 } thread_context_t;
@@ -48,6 +58,8 @@ fsearch_thread_pool_thread (gpointer user_data)
 
     g_mutex_lock (&ctx->mutex);
     while (!ctx->terminate) {
+        // 线程已开启
+        ctx->thread_waited = true;
         g_cond_wait (&ctx->start_cond, &ctx->mutex);
         ctx->status = THREAD_BUSY;
         if (ctx->thread_data) {
@@ -101,6 +113,7 @@ thread_context_new (void)
     g_mutex_init (&ctx->mutex);
     g_cond_init (&ctx->start_cond);
     g_cond_init (&ctx->finished_cond);
+    ctx->thread_waited = false;
 
     ctx->thread = g_thread_new("thread pool", fsearch_thread_pool_thread, ctx);
     return ctx;
@@ -119,6 +132,11 @@ fsearch_thread_pool_init (void)
         if (ctx) {
             pool->threads = g_list_prepend (pool->threads, ctx);
             pool->num_threads++;
+
+            // 等待线程开启
+            while (!ctx->thread_waited) {
+                usleep(100);
+            }
         }
     }
 
@@ -241,7 +259,6 @@ fsearch_thread_pool_push_data (FsearchThreadPool *pool,
     ctx->status = THREAD_BUSY;
 
     g_cond_signal (&ctx->start_cond);
-    usleep(100);
     g_mutex_unlock (&ctx->mutex);
     return true;
 }

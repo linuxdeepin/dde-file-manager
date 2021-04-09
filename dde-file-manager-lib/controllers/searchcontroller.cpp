@@ -394,28 +394,38 @@ void SearchDiriterator::fullTextSearch(const QString &searchPath) const
 
 bool SearchDiriterator::searchFileIsHidden(const QString &fileName) const
 {
+    if (!targetUrl.isLocalFile())
+        return false;
+
+    auto searchPath = targetUrl.toLocalFile();
+    if (!fileName.startsWith(searchPath) || fileName == searchPath)
+        return false;
+
     QFileInfo fileInfo(fileName);
+    if (fileInfo.isHidden())
+        return true;
+
     QString fileParentPath = fileInfo.absolutePath();
     DFMFileListFile flf(fileParentPath);
 
     // 判断.hidden文件是否存在，不存在说明该路径下没有隐藏文件
     QFileInfo localHiddenFileInfo(flf.filePath());
-    if (!localHiddenFileInfo.exists()) {
-        return false;
-    }
+    if (!localHiddenFileInfo.exists())
+        return searchFileIsHidden(fileParentPath);
 
     if (hiddenFileMap[fileParentPath].isEmpty()) {
         // 判断.hidden文件中的内容是否为空，空则表示该路径下没有隐藏文件
         auto hiddenFiles = flf.getHiddenFiles();
         if (!hiddenFiles.isEmpty()) {
             hiddenFileMap[fileParentPath] = hiddenFiles;
-            return hiddenFiles.contains(fileInfo.fileName());
+        } else {
+            return searchFileIsHidden(fileParentPath);
         }
-
-        return false;
     }
 
-    return hiddenFileMap[fileParentPath].contains(fileInfo.fileName());
+    return hiddenFileMap[fileParentPath].contains(fileInfo.fileName())
+           ? true
+           : searchFileIsHidden(fileParentPath);
 }
 
 bool SearchDiriterator::hasNext() const
@@ -497,7 +507,7 @@ bool SearchDiriterator::hasNext() const
 
             DAbstractFileInfoPointer fileInfo = it->fileInfo();
             // fix bug58348 搜索结果中存在本地不存在的文件
-            if (!fileInfo->exists()) {
+            if (!fileInfo || !fileInfo->exists()) {
                 continue;
             }
 
@@ -601,6 +611,8 @@ DUrl SearchDiriterator::url() const
 void SearchDiriterator::close()
 {
     closed = true;
+    if (it)
+        it->close();
 }
 
 SearchController::SearchController(QObject *parent)

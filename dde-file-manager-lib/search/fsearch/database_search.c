@@ -1,11 +1,20 @@
-/**
- * Copyright (C) 2017 Uniontech Technology Co., Ltd.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- **/
+/*
+   FSearch - A fast file search utility
+   Copyright © 2020 Christian Boxdörfer
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, see <http://www.gnu.org/licenses/>.
+*/
 #define _GNU_SOURCE
 #include <sys/time.h>
 #include <stdio.h>
@@ -66,6 +75,7 @@ fsearch_search_thread (gpointer user_data)
 
     g_mutex_lock (&search->query_mutex);
     while (true) {
+        search->search_thread_started = true;
         g_cond_wait (&search->search_thread_start_cond, &search->query_mutex);
         printf("---------------------------g_cond_wait (&search->search_thread_start_cond)\n");
         if (search->search_thread_terminate) {
@@ -93,7 +103,6 @@ fsearch_search_thread (gpointer user_data)
             }            
             result->cb_data = query->callback_data;
             query->callback (result, query->sender);
-            usleep(100);
             printf("+++++++++++++++++++++++++++++++++++++++++++query->callback\n");
             fsearch_query_free (query);
             g_mutex_lock (&search->query_mutex);
@@ -638,6 +647,7 @@ db_search_new (FsearchThreadPool *pool)
     assert (db_search != NULL);
 
     db_search->pool = pool;
+    db_search->search_thread_started = false;
     g_mutex_init (&db_search->query_mutex);
     g_cond_init (&db_search->search_thread_start_cond);
     db_search->search_thread = g_thread_new("fsearch_search_thread", fsearch_search_thread, db_search);
@@ -753,7 +763,10 @@ db_search_queue (DatabaseSearch *search, FsearchQuery *query)
     search->query_ctx = query;
 
     g_mutex_unlock (&search->query_mutex);
-    usleep(1000);
+    // 确保search线程处于wait状态，否则会照成流程阻塞
+    while (!search->search_thread_started) {
+        usleep(100);
+    }
     g_cond_signal (&search->search_thread_start_cond);
 
     printf("---------------------------g_cond_signal (&search->search_thread_start_cond)\n");
