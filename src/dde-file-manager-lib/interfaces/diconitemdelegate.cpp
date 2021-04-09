@@ -854,7 +854,12 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
     connect(item, &FileIconItem::destroyed, this, [this, d] {
         Q_UNUSED(this)
-        d->editingIndex = QModelIndex();
+        QWidget *editor = this->parent()->indexWidget(d->editingIndex);
+        if (!editor || editor == sender()) {
+            d->editingIndex = QModelIndex();
+        } else {
+            qInfo() << d->editingIndex << "new edit create so not set d->editingIndex!";
+        }
     });
 
     //编辑框的字符变更处理
