@@ -383,6 +383,11 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
                 DAbstractFileInfoPointer srcInfo = DFileService::instance()->createFileInfo(nullptr, src.at(0));
                 qint64 srcSize = srcInfo->size();
                 DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(dst.burnDestDevice());
+                if (dp.devid.isEmpty()) {
+                    ISOMaster->acquireDevice(dev);
+                    dp = ISOMaster->getDeviceProperty();
+                    qInfo() << "No cache for " << dev << ", acquire device again. after acquire the capacity is: " << dp.avail;
+                }
                 // 光盘容量小于刻录项目，对话框提示：目标磁盘剩余空间不足，无法进行刻录！
                 if (dp.avail == 0 || static_cast<quint64>(srcSize) > dp.avail) {
                     DThreadUtil::runInMainThread([] {
