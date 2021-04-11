@@ -64,7 +64,8 @@ public:
 
     enum RefineState {
         NoRefine,
-        Refine
+        RefineLocal,
+        RefineBlock
     };
 
     Q_ENUM(RefineState)
