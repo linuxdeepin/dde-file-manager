@@ -103,6 +103,13 @@ public:
 
         }
     };
+
+    struct DirSetPermissonInfo {
+        QSharedPointer<DFileHandler> handler = nullptr;
+        QFileDevice::Permissions permission;
+        DUrl target;
+    };
+
     typedef QSharedPointer<FileCopyInfo> FileCopyInfoPointer;
 
     explicit DFileCopyMoveJobPrivate(DFileCopyMoveJob *qq);
@@ -216,6 +223,9 @@ public:
     void setSysncQuitState(const bool &quitstate);
     void waitSysncEnd();
     void waitRefineThreadFinish();
+
+    // 初始化优化状态
+    void initRefineState();
     //! 剪切回收站文件路径
     QQueue<QString> m_fileNameList;
 
@@ -248,7 +258,6 @@ public:
 
     QQueue<FileCopyInfoPointer> m_writeFileQueue;
     QAtomicInt m_copyRefineFlag = DFileCopyMoveJob::NoProccess;
-    QAtomicInt m_fileRefineFd = 0;
     QFuture<void> m_writeResult, m_syncResult;
 
 
@@ -297,7 +306,7 @@ public:
 
     QAtomicInteger<bool> m_bTaskDailogClose = false;
 
-    QAtomicInt m_refineStat = DFileCopyMoveJob::Refine;
+    QAtomicInt m_refineStat = DFileCopyMoveJob::RefineLocal;
     //优化盘内拷贝，启用的线程池
     QThreadPool m_pool;
     //优化拷贝时异步线程状态
@@ -307,13 +316,11 @@ public:
     QAtomicInteger<bool> m_bDestLocal = false;
     qint64 m_refineCopySize = 0;
     QMutex m_refineMutex;
-    QList<DUrl> m_errorUrlList;
     //是否需要显示进度条
     QAtomicInteger<bool> m_isNeedShowProgress = false;
     //是否需要每读写一次同步
     bool m_isEveryReadAndWritesSnc = false;
-    bool m_isVfat = false;
-    QAtomicInteger<bool> m_targetIsNTFS = false;
+    QAtomicInteger<bool> m_isVfat = false;
     //分断拷贝的线程数量
     QAtomicInt m_bigFileThreadCount = 0;
     QAtomicInteger<bool> m_isWriteThreadStart = false;
@@ -350,6 +357,7 @@ public:
 
     //打开写入文件的fd
     QMap<DUrl,int> m_writeOpenFd;
+    QList<QSharedPointer<DirSetPermissonInfo>> m_dirPermissonList;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
