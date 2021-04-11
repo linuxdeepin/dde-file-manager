@@ -911,6 +911,10 @@ bool VaultController::isVaultFile(QString path)
 {
     bool bVaultFile = false;
     QString rootPath = makeVaultLocalPath();
+
+    if (rootPath.isEmpty())
+        return false;
+
     if (rootPath.back() == "/") {
         rootPath.chop(1);
     }

@@ -28,6 +28,7 @@
 #include "dfmglobal.h"
 
 #include <QRegularExpression>
+#include <QMutex>
 
 DFM_BEGIN_NAMESPACE
 
@@ -69,13 +70,13 @@ DStorageInfo::DStorageInfo(const QString &path, PathHints hints)
 {
     //! 如果是保险箱就不进行setpath处理,增加访问速度
     if(!VaultController::isVaultFile(path))
-        setPath(preprocessPath(path, hints));
+        setPath(path, hints);
 }
 
 DStorageInfo::DStorageInfo(const QDir &dir, PathHints hints)
     : DStorageInfo()
 {
-    setPath(preprocessPath(dir.path(), hints));
+    setPath(dir.path(), hints);
 }
 
 DStorageInfo::DStorageInfo(const DStorageInfo &other)
@@ -99,6 +100,8 @@ DStorageInfo &DStorageInfo::operator=(const DStorageInfo &other)
 
 void DStorageInfo::setPath(const QString &path, PathHints hints)
 {
+    static QMutex mutex;
+    QMutexLocker lk(&mutex);
 
     QStorageInfo::setPath(preprocessPath(path, hints));
 
@@ -329,6 +332,8 @@ bool DStorageInfo::isLocalDevice(const QString &path, const bool &isEx)
 
 bool DStorageInfo::isLowSpeedDevice(const QString &path)
 {
+    static QMutex mutex;
+    QMutexLocker lk(&mutex);
     static QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
                                      QRegularExpression::DotMatchesEverythingOption
                                      | QRegularExpression::DontCaptureOption

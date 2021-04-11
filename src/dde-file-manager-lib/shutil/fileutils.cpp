@@ -1568,28 +1568,13 @@ DFMGlobal::MenuExtension FileUtils::getMenuExtension(const DUrlList &urlList)
 
 bool FileUtils::isGvfsMountFile(const QString &filePath, const bool &isEx)
 {
+    static QMutex mutex;
+    QMutexLocker lk(&mutex);
     if (filePath.isEmpty())
         return false;
-    //在获取是否是gvfs文件时，先缓存这个filepath，多线程访问时，判断线程是否访问的同一个文件
-    static QMutex mutex;
-    mutex.lock();
-    bool iscontains = CURRENT_ISGVFSFILE_PATH.contains(filePath);
-    mutex.unlock();
-    while (iscontains) {
-        QThread::msleep(10);
-        mutex.lock();
-        iscontains = CURRENT_ISGVFSFILE_PATH.contains(filePath);
-        mutex.unlock();
-    }
-    mutex.lock();
-    CURRENT_ISGVFSFILE_PATH.push_back(filePath);
-    mutex.unlock();
 
     bool isgvfsfile = !DStorageInfo::isLocalDevice(filePath, isEx);
-    //移除缓存
-    mutex.lock();
-    CURRENT_ISGVFSFILE_PATH.removeOne(filePath);
-    mutex.unlock();
+
     return isgvfsfile;
 }
 

@@ -154,9 +154,9 @@ private:
     QHash<QString, bool> iserroroc;
 
     //! 记录当前是否完成一个文件的删除或拷贝工作
-    QMap<DUrl, bool> m_flagMap;
+    QAtomicInteger<bool> m_flagMap;
     //! 是否点击关闭按钮
-    bool m_flag;
+    QAtomicInteger<bool> m_flag;
 };
 
 #endif // DTASKDIALOG_H

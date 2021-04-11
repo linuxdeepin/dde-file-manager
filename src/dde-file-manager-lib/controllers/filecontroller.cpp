@@ -1162,7 +1162,9 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             DFileCopyMoveJob::Handle *handle = dialogManager->taskDialog()->addTaskJob(job, true);
             // fix bug 62822 设置当前进度条已显示，来显示进度到100%
             fileJob->setProgressShow(true);
-            emit job->currentJobChanged(sourceInfo ? sourceInfo->fileUrl() : DUrl(), targetInfo ? targetInfo->fileUrl() : DUrl(), true);
+            DUrl fromUrl = sourceInfo ? sourceInfo->fileUrl() : DUrl();
+            DUrl toUrl = targetInfo ? targetInfo->fileUrl() : DUrl();
+            emit job->currentJobChanged(fromUrl, toUrl, true);
 
             if (!handle) {
                 qWarning() << "addTaskJob create handle failed!!";
@@ -1646,13 +1648,14 @@ DAbstractFileWatcher *FileController::createFileWatcher(const QSharedPointer<DFM
 
 DFileDevice *FileController::createFileDevice(const QSharedPointer<DFMUrlBaseEvent> &event) const
 {
-    if (FileUtils::isGvfsMountFile(event->fileUrl().toLocalFile())) {
-        return new DGIOFileDevice(event->fileUrl());
+    const DUrl url =  event->fileUrl();
+    if (FileUtils::isGvfsMountFile(url.toLocalFile())) {
+        return new DGIOFileDevice(url);
     }
 
     DLocalFileDevice *device = new DLocalFileDevice();
 
-    device->setFileUrl(event->fileUrl());
+    device->setFileUrl(url);
 
     return device;
 }

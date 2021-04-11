@@ -1310,8 +1310,11 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(const QSharedPointer<DFileHandler> 
 bool DFileCopyMoveJobPrivate::doCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize)
 {
     //多线程拷贝时发送当前拷贝信息
-    if (m_refineStat == DFileCopyMoveJob::Refine && mode == DFileCopyMoveJob::CopyMode)
-        Q_EMIT q_ptr->currentJobChanged(fromInfo->fileUrl(), toInfo->fileUrl(), false);
+    if (m_refineStat == DFileCopyMoveJob::Refine && mode == DFileCopyMoveJob::CopyMode) {
+        DUrl fromurl = fromInfo->fileUrl();
+        DUrl tourl = toInfo->fileUrl();
+        Q_EMIT q_ptr->currentJobChanged(fromurl, tourl, false);
+    }
     //预先读取
     {
         int fromfd = open(fromInfo->fileUrl().path().toUtf8().toStdString().data(), O_RDONLY);
@@ -1320,13 +1323,29 @@ bool DFileCopyMoveJobPrivate::doCopyFile(const DAbstractFileInfoPointer fromInfo
             close(fromfd);
         }
     }
-    QSharedPointer<DFileDevice> fromDevice(DFileService::instance()->createFileDevice(nullptr, fromInfo->fileUrl()));
+    QSharedPointer<DFileDevice> fromDevice = nullptr;
+    if (fromInfo->isGvfsMountFile()) {
+        fromDevice.reset(new DGIOFileDevice(fromInfo->fileUrl()));
+    } else {
+        DLocalFileDevice *localDevice = new DLocalFileDevice();
+        localDevice->setFileUrl(fromInfo->fileUrl());
+        fromDevice.reset(localDevice);
+    }
+
     if (!fromDevice) {
         setError(DFileCopyMoveJob::UnknowUrlError, "Failed on create file device");
 
         return false;
     }
-    QSharedPointer<DFileDevice> toDevice(DFileService::instance()->createFileDevice(nullptr, toInfo->fileUrl()));
+
+    QSharedPointer<DFileDevice> toDevice = nullptr;
+    if (toInfo->exists() && !toInfo->isGvfsMountFile()) {
+        DLocalFileDevice *localDevice = new DLocalFileDevice();
+        localDevice->setFileUrl(toInfo->fileUrl());
+        toDevice.reset(localDevice);
+    } else {
+        toDevice.reset(new DGIOFileDevice(toInfo->fileUrl()));
+    }
 
     if (!toDevice) {
         setError(DFileCopyMoveJob::UnknowUrlError, "Failed on create file device");
@@ -2997,7 +3016,9 @@ bool DFileCopyMoveJobPrivate::writeToFileByQueue()
         bool isErrorOccur = false;
         //获取目标文件描述符
         if (!m_writeOpenFd.contains(info->toinfo->fileUrl())) {
-            Q_EMIT q_ptr->currentJobChanged(info->frominfo->fileUrl(), info->toinfo->fileUrl(), false);
+            DUrl fromUrl = info->frominfo->fileUrl();
+            DUrl toUrl = info->toinfo->fileUrl();
+            Q_EMIT q_ptr->currentJobChanged(fromUrl, toUrl, false);
             DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
             do {
                 std::string path = info->toinfo->fileUrl().path().toStdString();
@@ -3993,6 +4014,9 @@ end:
 QString DFileCopyMoveJob::Handle::getNewFileName(DFileCopyMoveJob *job, const DAbstractFileInfoPointer sourceInfo)
 {
     Q_UNUSED(job)
+
+    static QMutex mutex;
+    QMutexLocker lk(&mutex);
 
     return job->d_func()->formatFileName(sourceInfo->fileName());
 }
