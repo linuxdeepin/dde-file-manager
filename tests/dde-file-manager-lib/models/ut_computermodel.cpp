@@ -247,6 +247,7 @@ TEST_F(TestComputerModel, tstOnOpticalChanged)
 
 TEST_F(TestComputerModel, tstLambdaSlots)
 {
+    TestHelper::runInLoop([]{}, 200);
     model->m_watcher->fileAttributeChanged(DUrl("file:///home"));
     QEventLoop loop;
     QTimer::singleShot(200, nullptr, [&loop]{
