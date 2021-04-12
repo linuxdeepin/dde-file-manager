@@ -1,11 +1,21 @@
-/**
- * Copyright (C) 2017 Uniontech Technology Co., Ltd.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- **/
+/*
+   FSearch - A fast file search utility
+   Copyright © 2020 Christian Boxdörfer
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, see <http://www.gnu.org/licenses/>.
+   */
+
 #pragma once
 
 #include <stdbool.h>
@@ -14,8 +24,7 @@
 
 typedef struct _FsearchConfig FsearchConfig;
 
-struct _FsearchConfig
-{
+struct _FsearchConfig {
     // Search
     bool limit_results;
     bool hide_results_on_empty_search;
@@ -84,19 +93,19 @@ struct _FsearchConfig
 
 
 bool
-config_make_dir (void);
+config_make_dir(void);
 
 bool
-config_load (FsearchConfig *config);
+config_load(FsearchConfig *config);
 
 bool
-config_load_default (FsearchConfig *config);
+config_load_default(FsearchConfig *config);
 
 bool
-config_save (FsearchConfig *config);
+config_save(FsearchConfig *config);
 
 void
-config_build_dir (char *path, size_t len);
+config_build_dir(char *path, size_t len);
 
 void
-config_free (FsearchConfig *config);
+config_free(FsearchConfig *config);
