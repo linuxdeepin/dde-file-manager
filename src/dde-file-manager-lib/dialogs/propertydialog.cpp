@@ -1473,7 +1473,8 @@ QFrame *PropertyDialog::createInfoFrame(const QList<QPair<QString, QString> > &p
     }
 
     widget->setLayout(layout);
-    widget->setFixedHeight(EXTEND_FRAME_MAXHEIGHT);
+    //widget是最小高度时，藏语会发生截断，layout自适应，设置最小展示高度
+    widget->setMinimumHeight(EXTEND_FRAME_MAXHEIGHT);
     return widget;
 }
 
