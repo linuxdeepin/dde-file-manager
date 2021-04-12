@@ -1050,6 +1050,10 @@ void Frame::refreshList()
                         return;
                     } else if (path.remove("file://") == currentPath.remove("file://")) { //均有机会出现头部为file:///概率
                         item->pressed();
+
+                        //清除item pressed设置的数据
+                        m_desktopWallpaper.clear();
+                        m_lockWallpaper.clear();
                     }
                 }
 
