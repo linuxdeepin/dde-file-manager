@@ -103,6 +103,7 @@ public:
         TargetReadOnlyError,
         TargetIsSelfError,
         NotSupportedError,
+        PermissionDeniedError,
         UnknowError,
     };
 

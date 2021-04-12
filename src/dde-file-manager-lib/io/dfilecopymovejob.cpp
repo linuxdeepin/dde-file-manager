@@ -241,6 +241,8 @@ QString DFileCopyMoveJobPrivate::errorToString(DFileCopyMoveJob::Error error)
         return qApp->translate("DFileCopyMoveJob", "Target folder is inside the source folder");
     case DFileCopyMoveJob::NotSupportedError:
         return qApp->translate("DFileCopyMoveJob", "The action is not supported");
+    case DFileCopyMoveJob::PermissionDeniedError:
+        return qApp->translate("DFileCopyMoveJob", "You do not have permission to traverse files in it");
     default:
         break;
     }
@@ -1237,9 +1239,12 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(const QSharedPointer<DFileHandler> 
     //目录没有执行权限时不能正确的遍历到子文件的信息，后续删除或剪切复制逻辑无法成立
     //弹出错误弹窗，提示无权限
     if (!fromInfo->isExecutable() && iterator->hasNext()) {
-        DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog, DialogManager::tr("Permission denied")
-                                     , DialogManager::tr("You do not have permission to traverse files in it"));
-        return false;
+        //错误队列处理
+        errorQueueHandling();
+        bool ok = setAndhandleError(DFileCopyMoveJob::PermissionDeniedError, fromInfo, DAbstractFileInfoPointer(nullptr)) == DFileCopyMoveJob::SkipAction;
+        //当前错误处理完成
+        errorQueueHandled();
+        return ok;
     }
 
     while (iterator->hasNext()) {
