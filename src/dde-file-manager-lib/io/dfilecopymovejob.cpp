@@ -3029,7 +3029,7 @@ bool DFileCopyMoveJobPrivate::writeToFileByQueue()
             DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
             do {
                 std::string path = info->toinfo->fileUrl().path().toStdString();
-                toFd = open(path.c_str(), O_CREAT | O_WRONLY | O_DIRECT, 0777);
+                toFd = open(path.c_str(), O_CREAT | O_WRONLY, 0777);
                 if (toFd > -1) {
                     m_writeOpenFd.insert(info->toinfo->fileUrl(), toFd);
                     action = DFileCopyMoveJob::NoAction;
