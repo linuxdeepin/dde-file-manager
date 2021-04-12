@@ -1294,6 +1294,7 @@ TEST_F(FileJobTest, start_moveFileByGio) {
         job->m_status = FileJob::Conflicted;
     });
     EXPECT_TRUE(job->moveFileByGio(source.toLocalFile(),dst.toLocalFile(),&targetpath));
+    future.waitForFinished();
 
     gboolean (*g_file_move3lamda)(GFile *,GFile *,GFileCopyFlags ,GCancellable *,
                              GFileProgressCallback,gpointer,GError **) = []
@@ -1304,7 +1305,7 @@ TEST_F(FileJobTest, start_moveFileByGio) {
     };
     stl.set(g_file_move,g_file_move3lamda);
     EXPECT_TRUE(job->moveFileByGio(source.toLocalFile(),dst.toLocalFile(),&targetpath));
-
+    future1.waitForFinished();
     QProcess::execute("rm -rf " + QDir::currentPath()+"/start_moveFileByGio");
 }
 
