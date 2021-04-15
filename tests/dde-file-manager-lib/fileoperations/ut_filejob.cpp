@@ -811,7 +811,7 @@ TEST_F(FileJobTest, start_copyFile_1) {
     {
         Stub stl;
         stl.set(ADDR(FileJob,checkDuplicateName),checkDuplicateNamelamda);
-        EXPECT_TRUE(job->copyFile(source.toLocalFile(),dst.toLocalFile()));
+        EXPECT_FALSE(job->copyFile(source.toLocalFile(),dst.toLocalFile()));
     }
 
     job->m_isCoExisted = false;
@@ -836,9 +836,8 @@ TEST_F(FileJobTest, start_copyFile_1) {
     stl.set(ADDR(QFileDevice,error),error1lamda);
     EXPECT_FALSE(job->copyFile(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
 
-
     stl.set((qint64 (QIODevice::*)(char *, qint64))ADDR(QIODevice,read),&read2lamda);
-    EXPECT_TRUE(job->copyFile(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+    EXPECT_FALSE(job->copyFile(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
 
     stl.set((qint64 (QIODevice::*)(char *, qint64))ADDR(QIODevice,read),&read3lamda);
     read2new = read2new%2 == 0 ? read2new : read2new + 1;
@@ -848,7 +847,7 @@ TEST_F(FileJobTest, start_copyFile_1) {
         job->m_status = FileJob::Cancelled;
         job->m_isSkip = true;
     });
-    EXPECT_TRUE(job->copyFile(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+    EXPECT_FALSE(job->copyFile(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
     qDebug() << "copyFile 0" << read2new;
     read2new = read2new%2 == 0 ? read2new : read2new + 1;
     job->m_isSkip = false;
@@ -964,7 +963,7 @@ TEST_F(FileJobTest, start_copyFileByGio_1) {
     job->m_applyToAll = true;
     job->m_status = FileJob::Cancelled;
     QProcess::execute("touch " + dst.toLocalFile() + "/" + source.fileName());
-    EXPECT_FALSE(job->copyFileByGio(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+    EXPECT_TRUE(job->copyFileByGio(source.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
 
     job->m_applyToAll = false;
     job->m_skipandApplyToAll = false;
@@ -1099,7 +1098,7 @@ TEST_F(FileJobTest, start_copyDir) {
     {
         Stub stl;
         stl.set(ADDR(DUrl,childrenList),childrenList);
-        EXPECT_FALSE(job->copyDir(dst.toLocalFile(),QDir::currentPath()+"/start_copyDir",false,&targetpaht));
+        EXPECT_TRUE(job->copyDir(dst.toLocalFile(),QDir::currentPath()+"/start_copyDir",false,&targetpaht));
     }
 
     job->m_isAborted = true;
@@ -1108,7 +1107,7 @@ TEST_F(FileJobTest, start_copyDir) {
     job->m_isAborted = false;
     job->m_applyToAll = true;
     job->m_status = FileJob::Cancelled;
-    EXPECT_FALSE(job->copyDir(copyurl.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+    EXPECT_TRUE(job->copyDir(copyurl.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
 
     job->m_applyToAll = false;
     job->m_skipandApplyToAll = false;
@@ -1131,7 +1130,7 @@ TEST_F(FileJobTest, start_copyDir) {
     {
         Stub stl;
         stl.set(ADDR(FileJob,checkDuplicateName),checkDuplicateNamelamda);
-        EXPECT_FALSE(job->copyDir(copyurl.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+        EXPECT_TRUE(job->copyDir(copyurl.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
     }
 
     job->m_isCoExisted = false;
@@ -1148,7 +1147,7 @@ TEST_F(FileJobTest, start_copyDir) {
     {
         Stub stl;
         stl.set(ADDR(FileJob,checkDuplicateName),checkDuplicateNamelamda);
-        EXPECT_FALSE(job->copyDir(copyurl.toLocalFile(),fileurl.toLocalFile(),false,&targetpaht));
+        EXPECT_TRUE(job->copyDir(copyurl.toLocalFile(),fileurl.toLocalFile(),false,&targetpaht));
     }
 
     job->m_isCoExisted = false;
@@ -1170,7 +1169,7 @@ TEST_F(FileJobTest, start_copyDir) {
         stl.set(savedir,savedir1lamda);
         EXPECT_FALSE(job->copyDir(copyurl.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
     }
-    EXPECT_FALSE(job->copyDir(copyurl.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
+    EXPECT_TRUE(job->copyDir(copyurl.toLocalFile(),dst.toLocalFile(),false,&targetpaht));
 
     bool (*handleSymlinkFilelamda)(const QString &, const QString &, QString *) = []
             (const QString &, const QString &, QString *){return false;};
@@ -1361,7 +1360,7 @@ TEST_F(FileJobTest, start_handleMoveJob) {
     {
         Stub stl;
         stl.set(ADDR(DUrl,childrenList),childrenListlamda);
-        EXPECT_TRUE(job->handleMoveJob(dst.toLocalFile(),QDir::currentPath()+"/start_handleMoveJob/ut_jobfile_moveFileByGio"));
+        EXPECT_FALSE(job->handleMoveJob(dst.toLocalFile(),QDir::currentPath()+"/start_handleMoveJob/ut_jobfile_moveFileByGio"));
     }
 
     job->m_isAborted = true;
@@ -1370,30 +1369,30 @@ TEST_F(FileJobTest, start_handleMoveJob) {
     job->m_isAborted = false;
     job->m_applyToAll = true;
     job->m_status = FileJob::Cancelled;
-    EXPECT_FALSE(job->handleMoveJob(dst.toLocalFile(),dst.toLocalFile(),&targetpath));
+    EXPECT_TRUE(job->handleMoveJob(dst.toLocalFile(),dst.toLocalFile(),&targetpath));
 
     job->m_isAborted = false;
     job->m_applyToAll = true;
     job->m_status = FileJob::Cancelled;
-    EXPECT_FALSE(job->handleMoveJob(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
+    EXPECT_TRUE(job->handleMoveJob(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
 
     job->m_applyToAll = false;
     void (*jobConflictedlamda)(void *) = [](void *){};
     stl.set(ADDR(FileJob,jobConflicted),jobConflictedlamda);
     job->m_status = FileJob::Cancelled;
-    EXPECT_FALSE(job->handleMoveJob(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
+    EXPECT_TRUE(job->handleMoveJob(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
 
     job->m_applyToAll = false;
     job->m_status = FileJob::Cancelled;
     job->m_isCoExisted = true;
     job->m_isReplaced = false;
-    EXPECT_FALSE(job->handleMoveJob(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
+    EXPECT_TRUE(job->handleMoveJob(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
 
     job->m_applyToAll = false;
     job->m_status = FileJob::Cancelled;
     job->m_isCoExisted = false;
     job->m_isReplaced = true;
-    EXPECT_FALSE(job->handleMoveJob(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
+    EXPECT_TRUE(job->handleMoveJob(targetdirurl.toLocalFile(),dst.toLocalFile(),&targetpath));
 
     job->m_applyToAll = false;
     job->m_status = FileJob::Cancelled;
@@ -1403,9 +1402,9 @@ TEST_F(FileJobTest, start_handleMoveJob) {
 
     DUrl tmpfile(source);
     tmpfile.setPath(TestHelper::createTmpFile());
-    EXPECT_FALSE(job->handleMoveJob(source.toLocalFile(),dst.toLocalFile(),&targetpath));
+    EXPECT_TRUE(job->handleMoveJob(source.toLocalFile(),dst.toLocalFile(),&targetpath));
 
-    EXPECT_FALSE(job->handleMoveJob(linkfile.toLocalFile(),dst.toLocalFile(),&targetpath));
+    EXPECT_TRUE(job->handleMoveJob(linkfile.toLocalFile(),dst.toLocalFile(),&targetpath));
     bool (*handleSymlinkFile1lamda)(const QString &, const QString &, QString *) = []
             (const QString &, const QString &, QString *){
         QThread::msleep(400);
@@ -1422,7 +1421,7 @@ TEST_F(FileJobTest, start_handleMoveJob) {
         qDebug() << "000002" << job->m_status;
         job->m_status = FileJob::Conflicted;
     });
-    EXPECT_FALSE(job->handleMoveJob(linkfile.toLocalFile(),dst.toLocalFile(),&targetpath));
+    EXPECT_TRUE(job->handleMoveJob(linkfile.toLocalFile(),dst.toLocalFile(),&targetpath));
     future1.waitForFinished();
 
     QFuture<void> future = QtConcurrent::run([=]() {
@@ -1430,12 +1429,12 @@ TEST_F(FileJobTest, start_handleMoveJob) {
         qDebug() << "000000" << job->m_status;
         job->m_status = FileJob::Cancelled;
     });
-    EXPECT_FALSE(job->handleMoveJob(linkfile.toLocalFile(),dst.toLocalFile(),&targetpath));
+    EXPECT_TRUE(job->handleMoveJob(linkfile.toLocalFile(),dst.toLocalFile(),&targetpath));
     future.waitForFinished();
 
     EXPECT_FALSE(job->handleMoveJob(linkfile.toLocalFile(),dst.toLocalFile() + "/ut_dir",&targetpath));
 
-    EXPECT_FALSE(job->handleMoveJob(dst.toLocalFile(),dst.toLocalFile(),&targetpath));
+    EXPECT_TRUE(job->handleMoveJob(dst.toLocalFile(),dst.toLocalFile(),&targetpath));
 
     QProcess::execute("rm -rf " + QDir::currentPath()+"/start_handleMoveJob");
 }
@@ -1690,7 +1689,7 @@ TEST_F(FileJobTest, start_canMove_one){
         Stub stl;
         stl.set(getuid,getuidtmpnomal);
         stl.set(ADDR(QFileInfo,ownerId),ownerIdlamda);
-        EXPECT_FALSE(job->canMove(source.toLocalFile()));
+        EXPECT_TRUE(job->canMove(source.toLocalFile()));
     }
     QProcess::execute("rm -rf " + QDir::currentPath()+"/start_canMove_one");
 }

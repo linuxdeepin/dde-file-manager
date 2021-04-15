@@ -762,7 +762,7 @@ TEST_F(DFileSeviceTest, start_otherOperations){
         EXPECT_TRUE(service->checkGvfsMountfileBusy(urlvideos,"ftp:host=10.8.70.110",true));
     });
     TestHelper::runInLoop([=](){
-        EXPECT_FALSE(service->checkGvfsMountfileBusy(urlvideos,"ftp:host=10.8.70.110,21",true));
+        EXPECT_TRUE(service->checkGvfsMountfileBusy(urlvideos,"ftp:host=10.8.70.110,21",true));
     });
     ASSERT_NO_FATAL_FAILURE(service->setDoClearTrashState(true));
     EXPECT_TRUE(service->getDoClearTrashState());
