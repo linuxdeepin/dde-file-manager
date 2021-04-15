@@ -338,6 +338,11 @@ bool DFMRootFileWatcherPrivate::start()
 
     DFMRootFileWatcher *wpar = qobject_cast<DFMRootFileWatcher *>(q);
 
+    if (DFMGlobal::isTablet()) {
+        started = true;
+        return true;
+    }
+
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountAdded, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
         if (mnt->getVolume() && mnt->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
             return;

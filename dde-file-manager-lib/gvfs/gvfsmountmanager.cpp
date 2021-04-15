@@ -1383,6 +1383,9 @@ void GvfsMountManager::autoMountAllDisks()
         return;
     }
 
+    if (DFMGlobal::isTablet())
+        return;
+
     if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMount).toBool()) {
         foreach (const QDiskInfo &diskInfo, DiskInfos.values()) {
             if (diskInfo.can_mount()) {
