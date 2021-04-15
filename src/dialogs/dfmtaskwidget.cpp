@@ -113,6 +113,7 @@ private:
     QTimer *m_timer;
     bool m_isSettingValue;
     bool m_isEnableHover;
+    QAtomicInteger<bool> m_handlingError = false;
     QAtomicInteger<bool> m_isPauseState = false;
 
     DFMTaskWidget *q_ptr;
@@ -505,6 +506,19 @@ void DFMTaskWidget::hideButton(DFMTaskWidget::BUTTON bt, bool hidden/*=true*/)
     if (btn) {
         btn->setHidden(hidden);
     }
+}
+
+void DFMTaskWidget::setHandleingError(const bool &handleing)
+{
+    Q_D(DFMTaskWidget);
+
+    d->m_handlingError = handleing;
+}
+
+bool DFMTaskWidget::isHandleingError() const
+{
+    Q_D(const DFMTaskWidget);
+    return d->m_handlingError.load();
 }
 
 void DFMTaskWidget::onMouseHover(bool hover)

@@ -142,12 +142,6 @@ public:
         }
 
         if (currentisgvfs) {
-            DUrl fileurl = DUrl::fromLocalFile(info.absoluteFilePath());
-            const DAbstractFileInfoPointer &cacheInfo = DAbstractFileInfo::getFileInfo(fileurl);
-            if (cacheInfo) {
-                cacheInfo->refresh(true);
-                return cacheInfo;
-            }
             return DAbstractFileInfoPointer(new DGvfsFileInfo(info, mimetype, false));
         }
         return DAbstractFileInfoPointer(new DFileInfo(info));

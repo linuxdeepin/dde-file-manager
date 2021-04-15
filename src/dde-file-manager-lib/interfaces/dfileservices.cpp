@@ -881,13 +881,15 @@ QList<QString> DFileService::getTagsThroughFiles(const QObject *sender, const QL
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMGetTagsThroughFilesEvent>(sender, urls)).value<QList<QString>>();
 }
 
-const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sender, const DUrl &fileUrl) const
+const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sender, const DUrl &fileUrl, const bool isFromCache) const
 {
-    const DAbstractFileInfoPointer &info = DAbstractFileInfo::getFileInfo(fileUrl);
+    if (isFromCache) {
+        const DAbstractFileInfoPointer &info = DAbstractFileInfo::getFileInfo(fileUrl);
 
-    if (info) {
-        info->refresh();
-        return info;
+        if (info) {
+            info->refresh();
+            return info;
+        }
     }
     const auto &&event = dMakeEventPointer<DFMCreateFileInfoEvent>(sender, fileUrl);
 
@@ -897,8 +899,6 @@ const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sende
 const DDirIteratorPointer DFileService::createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
                                                           QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent, bool isgvfs) const
 {
-
-
     const auto &&event = dMakeEventPointer<DFMCreateDiriterator>(sender, fileUrl, nameFilters, filters, flags, silent, isgvfs);
     return qvariant_cast<DDirIteratorPointer>(DFMEventDispatcher::instance()->processEvent(event));
 }

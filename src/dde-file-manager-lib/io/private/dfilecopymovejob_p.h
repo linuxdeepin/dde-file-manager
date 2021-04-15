@@ -104,6 +104,15 @@ public:
         }
     };
 
+    struct ThreadCopyInfo {
+        QSharedPointer<DFileHandler> handler = nullptr;
+        DAbstractFileInfoPointer fromInfo;
+        DAbstractFileInfoPointer toInfo;
+        QSharedPointer<DFileDevice> fromDevice = nullptr;
+        QSharedPointer<DFileDevice> toDevice = nullptr;
+        int blockSize = 0;
+    };
+
     struct DirSetPermissonInfo {
         QSharedPointer<DFileHandler> handler = nullptr;
         QFileDevice::Permissions permission;
@@ -145,10 +154,13 @@ public:
     bool doProcess(const DUrl &from, const DAbstractFileInfoPointer source_info, const DAbstractFileInfoPointer target_info, const bool isNew = false);
     bool mergeDirectory(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo);
     bool doCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
+    bool doCopySmallFilesOnDisk(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo,
+                                const QSharedPointer<DFileDevice> &fromDevice, const QSharedPointer<DFileDevice> &toDevice,
+                                const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
     bool doCopyLargeFilesOnDisk(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
     bool doCopyLargeFilesOnDiskOnly(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
     //线程池中拷贝大量小文件
-    bool doThreadPoolCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
+    bool doThreadPoolCopyFile();
     //拷贝文件到块设备（除光驱和系统所在的磁盘）
     bool doCopyFileOnBlock(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
     bool doRemoveFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fileInfo);
@@ -354,6 +366,10 @@ public:
     QMutex m_errorQueueMutex;
     QMutex m_stopMutex;
     QMutex m_clearThreadPoolMutex;
+    QQueue<ThreadCopyInfo> m_threadInfo;
+    QMutex m_threadMutex;
+    QMap<DUrl,DUrl> m_emitUrl;
+    QMutex m_emitUrlMutex;
 
     //打开写入文件的fd
     QMap<DUrl,int> m_writeOpenFd;
