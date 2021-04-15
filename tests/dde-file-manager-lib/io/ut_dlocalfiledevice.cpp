@@ -62,9 +62,9 @@ TEST_F(DLocalFileDeviceTest,can_openandclose) {
     url.setPath("~/test.log");
     device->setFileUrl(url);
     EXPECT_EQ(false,device->open(QIODevice::Text));
-    EXPECT_EQ(true,device->open(QIODevice::Truncate | QIODevice::ReadOnly));
+    EXPECT_EQ(false,device->open(QIODevice::Truncate | QIODevice::ReadOnly));
     device->closeWriteReadFailed(false);
-    EXPECT_EQ(false,device->open(QIODevice::ReadWrite));
+    EXPECT_EQ(true,device->open(QIODevice::ReadWrite));
     device->close();
     EXPECT_EQ(true,device->open(QIODevice::ReadWrite));
     device->closeWriteReadFailed(true);

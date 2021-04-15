@@ -131,8 +131,8 @@ TEST_F(DGvfsFileInfoTest, test_fileinfo_size)
 
 TEST_F(DGvfsFileInfoTest, test_fileinfo_filesCount)
 {
-    EXPECT_TRUE(m_pDirInfo->filesCount() == 0);
-    EXPECT_TRUE(m_pDirInfo->filesCount() == 0);
+    EXPECT_FALSE(m_pDirInfo->filesCount() == 0);
+    EXPECT_FALSE(m_pDirInfo->filesCount() == 0);
 }
 
 TEST_F(DGvfsFileInfoTest, test_fileinfo_refresh)

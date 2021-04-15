@@ -91,7 +91,7 @@ TEST_F(DfmBaseViewTest,start_deleteLater) {
 }
 
 TEST_F(DfmBaseViewTest,start_widget) {
-    EXPECT_FALSE(baseview->widget());
+    EXPECT_TRUE(baseview->widget());
 }
 
 TEST_F(DfmBaseViewTest,start_rootUrl) {
