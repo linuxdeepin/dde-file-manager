@@ -150,11 +150,10 @@ private:
 
     // 记录当前未完成的保险箱任务
     QSet<DFileCopyMoveJob *> mapNotCompleteVaultTask;
-    QMutex adjustmutex, addtaskmutex, removetaskmutex, currentjobchangemutex, errorocmutex;
-    QHash<QString, bool> iserroroc;
+    QMutex adjustmutex, addtaskmutex, removetaskmutex;
 
     //! 记录当前是否完成一个文件的删除或拷贝工作
-    QAtomicInteger<bool> m_flagMap;
+    QMap<DUrl, bool> m_flagMap;
     //! 是否点击关闭按钮
     QAtomicInteger<bool> m_flag;
 };

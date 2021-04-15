@@ -59,6 +59,8 @@ public:
     void setButtonText(BUTTON bt, const QString &text);
     void setHoverEnable(bool enable);
     void hideButton(BUTTON bt, bool hidden = true);
+    void setHandleingError(const bool &handleing);
+    bool isHandleingError() const;
     QAbstractButton *getButton(BUTTON bt);
 
     void progressStart();

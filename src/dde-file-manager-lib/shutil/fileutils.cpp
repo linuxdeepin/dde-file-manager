@@ -168,6 +168,8 @@ void FileUtils::recurseFolder(const QString &path, const QString &parent,
 
 int FileUtils::filesCount(const QString &dir)
 {
+    static QMutex mutex;
+    QMutexLocker lk(&mutex);
     QDir d(dir);
     QStringList entryList = d.entryList(QDir::AllEntries | QDir::System
                                         | QDir::NoDotAndDotDot | QDir::Hidden);

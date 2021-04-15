@@ -149,7 +149,7 @@ public:
     bool removeTagsOfFile(const QObject *sender, const DUrl &url, const QList<QString> &tags) const;
     QList<QString> getTagsThroughFiles(const QObject *sender, const QList<DUrl> &urls, const bool loopEvent = false) const;
 
-    const DAbstractFileInfoPointer createFileInfo(const QObject *sender, const DUrl &fileUrl) const;
+    const DAbstractFileInfoPointer createFileInfo(const QObject *sender, const DUrl &fileUrl, const bool isFromCache = true) const;
     const DDirIteratorPointer createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
                                                 QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false, bool isgvfs = false) const;
 
