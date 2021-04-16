@@ -126,7 +126,9 @@ DFileDialog::DFileDialog(QWidget *parent)
 {
     d_ptr->view = qobject_cast<DFileView *>(DFileManagerWindow::getFileView()->widget());
 
+
     setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::Dialog);
+
 
     if (titlebar()) {
         titlebar()->setDisableFlags(Qt::WindowSystemMenuHint);
@@ -167,7 +169,7 @@ DFileDialog::DFileDialog(QWidget *parent)
     });
     //平板上另存为对话框要关闭
     if (DFMGlobal::isTablet()) {
-        setWindowFlags(windowFlags() | Qt::WindowCloseButtonHint);
+        setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
     }
 }
 
