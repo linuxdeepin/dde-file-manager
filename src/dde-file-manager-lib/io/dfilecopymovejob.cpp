@@ -3336,7 +3336,7 @@ void DFileCopyMoveJobPrivate::syncInOtherThread()
     //优化等待1秒后启动异步“同文件”
 
     m_syncResult = QtConcurrent::run([me, this]() {
-        if (!me) {
+        if (me.isNull()) {
             return;
         }
         QString rootpath = targetRootPath;
@@ -3348,7 +3348,7 @@ void DFileCopyMoveJobPrivate::syncInOtherThread()
             if (!getSysncQuitState())
                 QThread::msleep(200);
         }
-        if (!me) {
+        if (me.isNull()) {
             return;
         }
         setSysncState(false);
