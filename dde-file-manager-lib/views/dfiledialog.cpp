@@ -170,6 +170,8 @@ DFileDialog::DFileDialog(QWidget *parent)
     //平板上另存为对话框要关闭
     if (DFMGlobal::isTablet()) {
         setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
+
+        getFileView()->setContextMenuPolicy(Qt::NoContextMenu);     //屏蔽view右键菜单
     }
 }
 
