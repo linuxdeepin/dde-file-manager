@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 #endif
 
     bool preload = false;
-    bool fileDialogOnly = false;
+    bool fileDialogOnly = DFMGlobal::isTablet();
 
     for (const QString &arg : app.arguments()) {
         if (arg == "--preload") {
