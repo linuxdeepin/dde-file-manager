@@ -997,6 +997,10 @@ void DFileView::keyPressEvent(QKeyEvent *event)
     case Qt::ControlModifier:
         switch (event->key()) {
         case Qt::Key_N: {
+            //平板为单例模式，不支持新建窗口
+            if (DFMGlobal::isTablet())
+                return;
+
             DUrlList list;
 
             for (const DUrl &url : urls) {
