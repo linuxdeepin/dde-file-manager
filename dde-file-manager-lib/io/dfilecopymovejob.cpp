@@ -844,8 +844,8 @@ create_new_file_info:
             skipFileSize += (source_info->isDir() || source_info->isSymLink()) ? 4096 : source_info->size();
             return true;
         case DFileCopyMoveJob::CoexistAction:
-            file_name = handle ? handle->getNonExistsFileName(source_info, target_info)
-                        : getNewFileName(source_info, target_info);
+            file_name = handle ? handle->getNonExistsFileName(new_file_info, target_info)
+                                    : getNewFileName(new_file_info, target_info);
             goto create_new_file_info;
         default:
             return false;
