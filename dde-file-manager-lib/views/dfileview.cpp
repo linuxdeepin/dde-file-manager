@@ -2872,7 +2872,10 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
                    << MenuAction::TagInfo
                    << MenuAction::TagFilesUseColor
                    << MenuAction::SetAsWallpaper
-                   << MenuAction::AddToBookMark;
+                   << MenuAction::AddToBookMark
+                   << MenuAction::MountImage
+                   << MenuAction::Mount
+                   << MenuAction::Unmount;
         if (info->isDir()) {
             unusedList << MenuAction::OpenWith;
             // 回收站文件夹去除打开菜单
