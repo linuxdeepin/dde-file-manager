@@ -253,7 +253,8 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
         break;
     case Qt::ControlModifier | Qt::ShiftModifier:
         if (event->key() == Qt::Key_Question) {
-            appController->actionShowHotkeyHelp(q->windowId());
+            if (!DFMGlobal::isTablet())
+                appController->actionShowHotkeyHelp(q->windowId());
             return true;
         } else if (event->key() == Qt::Key_Backtab) {
             tabBar->activatePreviousTab();
