@@ -556,6 +556,8 @@ void DFMAddressBar::updateCompletionState(const QString &text)
         // Set Base String
         this->completerBaseString = text.left(slashIndex + 1);
 
+        // fix bug 72304 清除model中的数据
+        clearCompleterModel();
         // set completion prefix.
         urlCompleter->setCompletionPrefix(text.mid(slashIndex + 1));
 
@@ -591,13 +593,15 @@ void DFMAddressBar::updateCompletionState(const QString &text)
             });
         }
         // start request
-        clearCompleterModel();
         //fix 33750 在匹配到smb:/，就创建url地址smb：///,去拉取url的目录，目前不知道什么原因造成gio mount smb：///失败就会出现提示框
         if (text.endsWith("smb:/")) {
             return;
         }
         crumbController->requestCompletionList(url);
     } else {
+        // fix bug 72304 清除model中的数据
+        clearCompleterModel();
+
         // set completion prefix.
         urlCompleter->setCompletionPrefix(text);
 
