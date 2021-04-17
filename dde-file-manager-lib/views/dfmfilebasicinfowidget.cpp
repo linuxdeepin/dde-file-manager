@@ -113,6 +113,9 @@ protected:
     void initUI();
     void startCalcFolderSize();
     void update();
+    // fix bug 71908
+    // 当文件名过长时，对tooltip显示内容做换行处理
+    void setFileNameToolTip(QWidget *w, const QString &tip);
 
 private:
     DUrl        m_url;
@@ -171,6 +174,32 @@ void DFMFileBasicInfoWidgetPrivate::startCalcFolderSize()
     m_sizeWorker->start(urls);
 }
 
+void DFMFileBasicInfoWidgetPrivate::setFileNameToolTip(QWidget *w, const QString &tip)
+{
+    if (tip.isEmpty() || !w)
+        return;
+
+    static float maxToolTipWidth = 300;
+    QFontMetrics fm(w->font());
+    int tipWidth = fm.width(tip);
+
+    if (tipWidth <= maxToolTipWidth) {
+        w->setToolTip(tip);
+    } else {
+        QString tmpTip = tip;
+        int lineBreakIndex = static_cast<int>(maxToolTipWidth / tipWidth * tip.size());
+        int totalIndex = lineBreakIndex;
+        do{
+            tmpTip.insert(totalIndex, '\n');
+            QString str = tip.mid(totalIndex);
+            tipWidth = fm.width(str);
+            totalIndex += lineBreakIndex + 1;
+        } while(tipWidth > maxToolTipWidth);
+
+        w->setToolTip(tmpTip);
+    }
+}
+
 void DFMFileBasicInfoWidgetPrivate::initUI()
 {
     Q_Q(DFMFileBasicInfoWidget);
@@ -213,9 +242,8 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
         QLabel *fileNameKeyLabel = new SectionKeyLabel(QObject::tr("Name"));
         QLabel *fileNameLabel = new SectionValueLabel(info->fileDisplayName());
         QString text = info->fileDisplayName();
-        fileNameLabel->setText(fileNameLabel->fontMetrics().elidedText(text, Qt::ElideMiddle, fileNameLabel->width()));
-        fileNameLabel->setToolTip(text);
-
+        fileNameLabel->setText(fileNameLabel->fontMetrics().elidedText(text, Qt::ElideMiddle, fileNameLabel->width()));        
+        setFileNameToolTip(fileNameLabel, text);
         frameHeight += 30;
         layout->addRow(fileNameKeyLabel, fileNameLabel);
     }
