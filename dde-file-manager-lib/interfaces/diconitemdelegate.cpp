@@ -878,7 +878,8 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
     FileIconItem *item = new FileIconItem(parent);
 
-    connect(item, &FileIconItem::inputFocusOut, this, &DIconItemDelegate::onEditWidgetFocusOut);
+    //此处更改逻辑不再保持焦点离开后依然保持的item编辑态，将会提交相关的编辑框(与桌面保持一致)
+    connect(item, &FileIconItem::inputFocusOut, this, &DIconItemDelegate::commitDataAndCloseActiveEditor);
     connect(item, &FileIconItem::destroyed, this, [this, d] {
         d->editingIndex = QModelIndex();
     });
