@@ -118,7 +118,7 @@ void DFMRightDetailView::initUI()
     AC_SET_OBJECT_NAME(d->iconLabel, AC_DM_RIGHT_VIEW_MAIN_FRAME_ICON_LABEL);
     AC_SET_ACCESSIBLE_NAME(d->iconLabel, AC_DM_RIGHT_VIEW_MAIN_FRAME_ICON_LABEL);
 
-    d->iconLabel->setFixedHeight(160);
+    d->iconLabel->setFixedSize(160, 160);
     d->mainLayout->addWidget(d->iconLabel, 1, Qt::AlignHCenter);
 
     d->mainLayout->addWidget(createLine());
@@ -176,7 +176,21 @@ void DFMRightDetailView::setUrl(const DUrl &url)
             iconName = systemPathManager->getSystemPathIconName("Vault");
         }
         QIcon fileIcon = iconName.isEmpty() ? fileInfo->fileIcon() : QIcon::fromTheme(iconName);
-        d->iconLabel->setPixmap(fileIcon.pixmap(256, 160));
+        QList<QSize> iconSizeList = fileIcon.availableSizes();
+        //缩放处理的图标,系统图标都是成队出现
+        if (iconSizeList.size() == 1
+                && iconSizeList.first().width() != iconSizeList.first().height()) {
+            QSize avaliSize = iconSizeList.first();
+            QSize targetSize = avaliSize.scaled(d->iconLabel->height(),
+                                                d->iconLabel->height(),
+                                                Qt::KeepAspectRatio);
+            d->iconLabel->setPixmap(fileIcon.pixmap(targetSize));
+            //自适应layout居中
+            d->iconLabel->setFixedWidth(targetSize.width());
+        } else {
+            d->iconLabel->setFixedSize(d->iconLabel->height(),d->iconLabel->height());
+            d->iconLabel->setPixmap(fileIcon.pixmap(d->iconLabel->size()));
+        }
     }
     if (d->baseInfoWidget) {
         d->mainLayout->removeWidget(d->baseInfoWidget);
