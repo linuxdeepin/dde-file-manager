@@ -235,6 +235,8 @@ public:
 
     DAnchors<QLabel> contentLabel = nullptr;
 
+    bool canSetContentLabelText = true;
+
     DUrl oldCurrentUrl;
 
     /// menu actions filter
@@ -2562,6 +2564,17 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     QModelIndex index = model()->setRootUrl(fileUrl);
 
+    if (info->isExecutable()) {
+        //label提示控制
+        d->canSetContentLabelText = true;
+    } else {
+        //设置没有遍历权限的label
+        setContentLabel(info->subtitleForEmptyFloder());
+        //屏蔽来自rowCount的信号槽的Label信息更新
+        d->canSetContentLabelText = false;
+        return true;
+    }
+
     setRootIndex(index);
 
     if (!model()->canFetchMore(index)) {
@@ -2673,7 +2686,8 @@ void DFileView::setContentLabel(const QString &text)
         d->contentLabel->show();
     }
 
-    d->contentLabel->setText(text);
+    if (d->canSetContentLabelText)
+        d->contentLabel->setText(text);
     d->contentLabel->adjustSize();
 }
 
