@@ -302,7 +302,7 @@ TEST_F(TestDFileMenuManager, registerMenuActionType)
 
 TEST_F(TestDFileMenuManager, whetherShowTagActions)
 {
-    QString musicPath = DFMStandardPaths::location(DFMStandardPaths::MusicPath);
+    QString musicPath = DFMStandardPaths::location(DFMStandardPaths::TrashPath);
     DUrl url = DUrl::fromLocalFile(musicPath);
     DUrlList urls;
     urls << url;
