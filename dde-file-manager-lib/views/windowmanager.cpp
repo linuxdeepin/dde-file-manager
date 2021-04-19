@@ -219,6 +219,9 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
         window->moveCenter(currentScreenGeometry.center());
     }
 
+    //fix bug71721 先移动到对应位置再show防止出现卡其他位置画面的问题
+    window->show();
+
     // 修复bug-45226 文管弹出一个模态窗后，再次弹出文管框，
     // 该模态框将失去焦点，无法正常显示
     if(!VaultHelper::isModel)
