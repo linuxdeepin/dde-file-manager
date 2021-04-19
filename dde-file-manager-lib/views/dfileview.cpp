@@ -1627,7 +1627,7 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
         return;
     }
 
-    if (!fetchDragEventUrlsFromSharedMemory())
+    if (!DFMGlobal::isTablet() && !fetchDragEventUrlsFromSharedMemory())
         return;
 
     for (const auto &url : m_urlsForDragEvent) {
