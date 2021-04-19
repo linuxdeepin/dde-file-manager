@@ -164,7 +164,8 @@ FileIconItem::FileIconItem(QWidget *parent) :
 
 FileIconItem::~FileIconItem()
 {
-
+    if (DFMGlobal::isTablet())
+        DFMGlobal::setEditorValid(false);
 }
 
 qreal FileIconItem::opacity() const
@@ -345,9 +346,16 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
     }
     case QEvent::FocusOut:
         if (obj == edit && qApp->focusWidget() != edit) {
+            if (DFMGlobal::isTablet())
+                DFMGlobal::setEditorValid(false);
             emit inputFocusOut();
         }
-
+        break;
+    case QEvent::FocusIn:
+        if (DFMGlobal::isTablet() && obj == edit) {
+            DFMGlobal::setCurrentEditPos(mapToGlobal(edit->pos()));
+            DFMGlobal::setEditorValid(true);
+        }
         break;
     case QEvent::Show:
         updateEditorGeometry();

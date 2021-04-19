@@ -67,6 +67,7 @@
 
 #include "singleton.h"
 #include "interfaces/dfilemenumanager.h"
+#include <DApplication>
 
 #include <QApplication>
 #include <DFileDragClient>
@@ -2326,6 +2327,9 @@ void DFileView::initConnects()
             w->showFilterButton();
         }
     });
+
+    if (DFMGlobal::isTablet())
+        connect(DApplication::inputMethod(), &QInputMethod::visibleChanged, this, &DFileView::onInputMethodVisibleChanged);
 }
 
 void DFileView::increaseIcon()
@@ -2596,6 +2600,18 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
 
     return true;
+}
+
+void DFileView::onInputMethodVisibleChanged()
+{
+    if (DApplication::inputMethod()->isVisible() && DFMGlobal::isEditorValid()) {
+        QRectF keyboard = DApplication::inputMethod()->keyboardRectangle();
+        QPoint pos = DFMGlobal::currentEditPos();
+        if (pos.y() - keyboard.y() > -100)
+            move(0, -qMin(pos.y() - static_cast<int>(keyboard.y()) + 200, static_cast<int>(keyboard.height())));
+    } else {
+        move(0, 0);
+    }
 }
 
 void DFileView::clearHeardView()

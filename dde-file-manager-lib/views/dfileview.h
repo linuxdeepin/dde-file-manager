@@ -198,6 +198,11 @@ public slots:
 
     bool setRootUrl(const DUrl &url) override;
 
+    /**
+     * @brief onInputMethodVisibleChanged 虚拟键盘调用的信号
+     */
+    void onInputMethodVisibleChanged();
+
 #ifdef SW_LABEL
     bool checkRenamePrivilege_sw(DUrl fileUrl);
 #endif

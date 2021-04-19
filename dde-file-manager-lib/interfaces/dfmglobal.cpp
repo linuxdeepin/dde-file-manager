@@ -135,6 +135,8 @@ Q_GLOBAL_STATIC(DFMGlobalPrivate, dfmGlobal)
 
 QStringList DFMGlobal::PluginLibraryPaths;
 bool DFMGlobal::IsFileManagerDiloagProcess = false;
+QPoint DFMGlobal::m_currentEditorPos = QPoint();
+bool DFMGlobal::m_isEditorValid = false;
 
 DFMGlobal *DFMGlobal::instance()
 {
@@ -1109,6 +1111,27 @@ bool DFMGlobal::isTablet()
 #endif
     }
     return tablet > 0;
+}
+
+void DFMGlobal::setCurrentEditPos(const QPoint &pos)
+{
+    m_currentEditorPos.setX(pos.x());
+    m_currentEditorPos.setY(pos.y());
+}
+
+const QPoint &DFMGlobal::currentEditPos()
+{
+    return m_currentEditorPos;
+}
+
+void DFMGlobal::setEditorValid(const bool &valid)
+{
+    m_isEditorValid = valid;
+}
+
+bool DFMGlobal::isEditorValid()
+{
+    return m_isEditorValid;
 }
 
 void DFMGlobal::showMultiFilesRenameDialog(const QList<DUrl> &selectedFiles)

@@ -382,6 +382,7 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
     connect(edit, &QLineEdit::destroyed, this, [this, d] {
         d->editingIndex = QModelIndex();
+        DFMGlobal::setEditorValid(false);
     });
 
     connect(edit, &QLineEdit::textChanged, this, [edit] {
@@ -417,6 +418,15 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
     edit->setFrame(false);
     edit->setAttribute(Qt::WA_TranslucentBackground);
     edit->setContentsMargins(0, 0, 0, 0);
+
+    if (DFMGlobal::isTablet() && dynamic_cast<QAbstractItemView*>(parent->parent())) {
+        QAbstractItemView *view = dynamic_cast<QAbstractItemView*>(parent->parent());
+        QRect rect = view->visualRect(index);
+        DFMGlobal::setEditorValid(true);
+        QPoint editorPos(0, rect.y());
+
+        DFMGlobal::setCurrentEditPos(view->mapToGlobal(editorPos));
+    }
 
     return edit;
 }

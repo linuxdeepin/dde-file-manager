@@ -320,6 +320,27 @@ public:
      */
     static bool isTablet();
 
+    /**
+     * @brief setCurrentEditPos 设置view中editor的全局位置
+     * @param pos
+     */
+    static void setCurrentEditPos(const QPoint &pos);
+    /**
+     * @brief currentEditPos view中editor的全局位置
+     * @return
+     */
+    static const QPoint& currentEditPos();
+    /**
+     * @brief setEditorValid 设置view中editor是否有效
+     * @param valid
+     */
+    static void setEditorValid(const bool &valid);
+    /**
+     * @brief isEditorValid view中editor是否有效
+     * @return
+     */
+    static bool isEditorValid();
+
     QList<QUrl> clipboardFileUrlList() const;
     QList<quint64> clipboardFileInodeList() const;
     ClipboardAction clipboardAction() const;
@@ -395,6 +416,9 @@ protected:
 private:
     void onClipboardDataChanged();
     static void refreshPlugins();
+
+    static QPoint m_currentEditorPos;
+    static bool m_isEditorValid;
 };
 
 Q_DECLARE_METATYPE(DFMGlobal::ClipboardAction)
