@@ -1962,6 +1962,7 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
 #endif
     }
     DListView::setSelection(rect, flags);
+    update(); //防止select时绘制边线残影
 }
 
 QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
