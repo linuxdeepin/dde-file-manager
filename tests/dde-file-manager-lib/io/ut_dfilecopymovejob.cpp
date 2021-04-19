@@ -930,11 +930,12 @@ TEST_F(DFileCopyMoveJobTest,start_doLinkFile) {
     ASSERT_TRUE(jobd);
     DUrl from,to;
     from.setScheme(FILE_SCHEME);
-    from.setPath("/bin");
+    from.setPath("./bin");
+    QProcess::execute("mkdir " + from.path());
     QString linkpath = QDir::currentPath() + "/zut_syslink_tset";
     QSharedPointer<DFileHandler>  handler(DFileService::instance()->createFileHandler(nullptr,from));
     DAbstractFileInfoPointer fileinfo = DFileService::instance()->createFileInfo(nullptr,from);
-    EXPECT_FALSE(jobd->doLinkFile(handler,fileinfo,linkpath));
+    EXPECT_TRUE(jobd->doLinkFile(handler,fileinfo,linkpath));
     from.setPath(QDir::currentPath() + "/zut_syslink_tset");
     EXPECT_FALSE(jobd->doLinkFile(handler,fileinfo,linkpath));
     TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() << linkpath);
