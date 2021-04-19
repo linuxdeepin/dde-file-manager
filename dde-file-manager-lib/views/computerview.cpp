@@ -155,9 +155,10 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     connect(m_model, &ComputerModel::itemCountChanged, this, [this](int count) {
         DFMEvent event(this);
         event.setWindowId(this->window()->internalWinId());
-        if (this->m_view->selectionModel()->currentIndex().isValid()) {
+        if (!DFMGlobal::isTablet() && this->m_view->selectionModel()->currentIndex().isValid()) {
             return;
         }
+
         this->m_statusbar->itemCounted(event, count);
     });
     connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this] {
