@@ -254,6 +254,15 @@ TEST_F(WallpaperItemTest, test_addbutton)
     emit btn->clicked();
     EXPECT_EQ(btn->text(), contant);
     EXPECT_NE(count, secount);
+
+    QString contant2("test02000000000000000000000000000000000000000000000000000");
+    int count2 = m_item->m_buttonLayout->count();
+    QPushButton* btn2 = m_item->addButton("desktop", contant2);
+    int secount2 = m_item->m_buttonLayout->count();
+
+    emit btn2->clicked();
+    EXPECT_NE(btn2->text(), contant2);
+    EXPECT_NE(count2, secount2);
 }
 
 TEST_F(WallpaperItemTest, test_eventfilter)

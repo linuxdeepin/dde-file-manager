@@ -139,7 +139,13 @@ bool WallpaperItem::useThumbnailManager() const
 QPushButton *WallpaperItem::addButton(const QString &id, const QString &text)
 {
     Button *button = new Button(this);
-    button->setText(text);
+    //bug73116: 藏语环境屏保和壁纸选择按钮字体显示不全被截断问题
+    auto fts = button->fontMetrics();
+    //button的具体圆角半径参考"我的电脑"以及"回收站"
+    auto elidedText = fts.elidedText(text, Qt::ElideMiddle, button->width() - 16);
+    if (elidedText != text)
+        button->setToolTip(text);
+    button->setText(elidedText);
     button->setAttract(false);
     button->installEventFilter(this);
     button->setFocusPolicy(Qt::NoFocus);
