@@ -51,6 +51,7 @@
 #include <DHorizontalLine>
 #include <DStyle>
 #include <DIconButton>
+#include <QPainterPath>
 
 class OpenWithDialogListItem : public QWidget
 {

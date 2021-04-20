@@ -12,6 +12,8 @@ QT       += core gui svg dbus x11extras concurrent multimedia dbus xml KCodecs n
 #private
 QT       += gui-private
 
+LIBS     += -lKF5Codecs
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 QT += widgets-private
