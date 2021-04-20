@@ -49,17 +49,19 @@ TEST_F(TestBluetoothModel, addAdapter)
     adapter.setId("123");
     m_model->addAdapter(&adapter);
    // EXPECT_STREQ("123", m_model->adapters()["123"]->id().toStdString().c_str());
-    EXPECT_STRNE("123", m_model->adapterById("123")->id().toStdString().c_str());
+    EXPECT_TRUE(m_model->adapterById("123")->id().contains("123"));
 }
 
 TEST_F(TestBluetoothModel, removeDevice)
 {
+    auto adapter_size = m_model->adapters().size();
     BluetoothAdapter adapter;
     adapter.setId("123");
     m_model->addAdapter(&adapter);
-    EXPECT_NE(m_model->adapters().size(), 1);
+    EXPECT_EQ(m_model->adapters().size(), adapter_size + 1);
+
     m_model->removeAdapater("123");
-    EXPECT_EQ(m_model->adapters().size(), 0);
+    EXPECT_EQ(m_model->adapters().size(), adapter_size);
 }
 
 
