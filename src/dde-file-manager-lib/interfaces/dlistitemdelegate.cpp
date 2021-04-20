@@ -431,15 +431,19 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
             textMaxLen = MAX_FILE_NAME_CHAR_COUNT;
         }
 
-        int textCurrLen = edit->text().length();
+        int textCurrLen = dstText.toLocal8Bit().size();
         int textRangeOutLen = textCurrLen - textMaxLen;
         //最大输入框字符控制逻辑
         if (textRangeOutLen > 0) {
-            int currPos = edit->cursorPosition();
-            int inputAfterPos = currPos - textRangeOutLen;
-            QString maxLenText = edit->text().mid(0,inputAfterPos) + edit->text().mid(currPos,edit->text().length());
-            edit->setText(maxLenText);
-            edit->setCursorPosition(inputAfterPos);
+            // fix bug 74427
+            QVector<uint> list = dstText.toUcs4();
+            int cursor_pos = edit->cursorPosition();
+            while (dstText.toLocal8Bit().size() > textMaxLen && cursor_pos > 0) {
+                list.removeAt(--cursor_pos);
+                dstText = QString::fromUcs4(list.data(), list.size());
+            }
+            edit->setText(dstText);
+            edit->setCursorPosition(cursor_pos);
             return;
         }
 
