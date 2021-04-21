@@ -2617,8 +2617,11 @@ void DFileView::onInputMethodVisibleChanged()
     if (DApplication::inputMethod()->isVisible() && DFMGlobal::isEditorValid()) {
         QRectF keyboard = DApplication::inputMethod()->keyboardRectangle();
         QPoint pos = DFMGlobal::currentEditPos();
-        if (pos.y() - keyboard.y() > -100)
-            move(0, -qMin(pos.y() - static_cast<int>(keyboard.y()) + 200, static_cast<int>(keyboard.height())));
+        if (pos.y() - keyboard.y() > -100) {
+            int statusHeight = statusBar()->scalingSlider()->isVisible() ?
+                        statusBar()->scalingSlider()->height() : statusBar()->height();
+            move(0, -(static_cast<int>(keyboard.height()) - statusHeight));
+        }
     } else {
         move(0, 0);
     }
