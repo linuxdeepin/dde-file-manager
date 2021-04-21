@@ -209,7 +209,7 @@ public:
     //错误队列处理
     void errorQueueHandling();
     //当前错误队列处理完成
-    void errorQueueHandled();
+    void errorQueueHandled(const bool &isNotCancel = true);
     //清理当前拷贝信息
     void releaseCopyInfo(const FileCopyInfoPointer &info);
     /**
@@ -235,6 +235,8 @@ public:
     void setSysncQuitState(const bool &quitstate);
     void waitSysncEnd();
     void waitRefineThreadFinish();
+    void setLastErrorAction(const DFileCopyMoveJob::Action &action);
+    DFileCopyMoveJob::Action getLastErrorAction();
 
     // 初始化优化状态
     void initRefineState();
@@ -252,7 +254,8 @@ public:
     DFileCopyMoveJob::FileHints fileHints = DFileCopyMoveJob::NoHint;
     QString errorString;
     QAtomicInt state = DFileCopyMoveJob::StoppedState;
-    DFileCopyMoveJob::Action lastErrorHandleAction = DFileCopyMoveJob::NoAction;
+    QMap<QThread *, DFileCopyMoveJob::Action> m_lastErrorHandleAction;
+    QMutex m_lastErrorHandleActionMutex;
 
     DUrlList sourceUrlList;
     DUrlList targetUrlList;

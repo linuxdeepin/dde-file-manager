@@ -198,6 +198,7 @@ DFileCopyMoveJobPrivate::~DFileCopyMoveJobPrivate()
     }
     m_pool.clear();
     if (updateSpeedTimer) {
+        QMetaObject::invokeMethod(updateSpeedTimer, "stop");
         updateSpeedTimer->deleteLater();
         updateSpeedTimer = nullptr;
     }
@@ -397,8 +398,8 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
                                                                const DAbstractFileInfoPointer targetInfo)
 {
     //当任务对话框结束返回cancel
+    auto lastErrorHandleAction = DFileCopyMoveJob::NoAction;
     if (error == DFileCopyMoveJob::NoError) {
-        lastErrorHandleAction = DFileCopyMoveJob::NoAction;
         cansetnoerror = true;
         emit q_ptr->errorCanClear();
         return lastErrorHandleAction;
@@ -417,7 +418,7 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
         // not update speed onerror
         if (updateSpeedTimer->isActive()) {
             //updateSpeedTimer->stop();
-            QMetaObject::invokeMethod(updateSpeedTimer, "stop");
+//            QMetaObject::invokeMethod(updateSpeedTimer, "stop");
         }
         updateProgress();
 
@@ -497,20 +498,27 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::setAndhandleError(DFileCopyMov
                                                                     const DAbstractFileInfoPointer targetInfo,
                                                                     const QString &es)
 {
-    if (!stateCheck())
+    if (!stateCheck()) {
+        setLastErrorAction(DFileCopyMoveJob::CancelAction);
         return DFileCopyMoveJob::CancelAction;
+    }
     if ((DFileCopyMoveJob::FileExistsError == e || DFileCopyMoveJob::DirectoryExistsError == e)
             && (sourceInfo->fileUrl() == targetInfo->fileUrl() || DStorageInfo::isSameFile(sourceInfo->fileUrl().path(), targetInfo->fileUrl().path()))) {
+        setLastErrorAction(DFileCopyMoveJob::CoexistAction);
         return DFileCopyMoveJob::CoexistAction;
     }
     setError(e, es);
     if (DFileCopyMoveJob::NoError == e) {
+        setLastErrorAction(DFileCopyMoveJob::NoAction);
         return DFileCopyMoveJob::NoAction;
     }
     if (DFileCopyMoveJob::CancelError == e) {
+        setLastErrorAction(DFileCopyMoveJob::CancelAction);
         return DFileCopyMoveJob::CancelAction;
     }
-    return handleError(sourceInfo, targetInfo);
+    auto action = handleError(sourceInfo, targetInfo);
+    setLastErrorAction(action);
+    return action;
 }
 
 #define TASK_RUNNING_MAX_COUNT 5
@@ -702,7 +710,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
                                     QObject::tr("Failed to create file info")) == DFileCopyMoveJob::SkipAction;
         //当前错误处理完成
         if (isErrorOccur) {
-            errorQueueHandled();
+            errorQueueHandled(ok);
             isErrorOccur = false;
         }
         return ok;
@@ -719,7 +727,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
                                     DAbstractFileInfoPointer(nullptr)) == DFileCopyMoveJob::SkipAction;
         //当前错误处理完成
         if (isErrorOccur) {
-            errorQueueHandled();
+            errorQueueHandled(ok);
             isErrorOccur = false;
         }
         return ok;
@@ -737,7 +745,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
                                     DAbstractFileInfoPointer(nullptr)) == DFileCopyMoveJob::SkipAction;
         //当前错误处理完成
         if (isErrorOccur) {
-            errorQueueHandled();
+            errorQueueHandled(ok);
             isErrorOccur = false;
         }
         return ok;
@@ -756,7 +764,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
                                     DAbstractFileInfoPointer(nullptr), QObject::tr("Failed to create file handler")) == DFileCopyMoveJob::SkipAction;
         //当前错误处理完成
         if (isErrorOccur) {
-            errorQueueHandled();
+            errorQueueHandled(ok);
             isErrorOccur = false;
         }
         return ok;
@@ -793,7 +801,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
                                             QObject::tr("Failed to create file info")) == DFileCopyMoveJob::SkipAction;
                 //当前错误处理完成
                 if (isErrorOccur) {
-                    errorQueueHandled();
+                    errorQueueHandled(ok);
                     isErrorOccur = false;
                 }
                 return ok;
@@ -888,7 +896,8 @@ create_new_file_info:
                                                                 source_info, new_file_info);
             //当前错误处理完成
             if (isErrorOccur) {
-                errorQueueHandled();
+                errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                                  action == DFileCopyMoveJob::EnforceAction);
                 isErrorOccur = false;
             }
             if (action == DFileCopyMoveJob::SkipAction) {
@@ -938,7 +947,7 @@ create_new_file_info:
             } else {
                 //当前错误处理完成
                 if (isErrorOccur) {
-                    errorQueueHandled();
+                    errorQueueHandled(false);
                     isErrorOccur = false;
                 }
                 return false;
@@ -949,7 +958,7 @@ create_new_file_info:
             } else {
                 //当前错误处理完成
                 if (isErrorOccur) {
-                    errorQueueHandled();
+                    errorQueueHandled(false);
                     isErrorOccur = false;
                 }
                 return false;
@@ -980,7 +989,7 @@ create_new_file_info:
         default:
             //当前错误处理完成
             if (isErrorOccur) {
-                errorQueueHandled();
+                errorQueueHandled(false);
                 isErrorOccur = false;
             }
             return false;
@@ -1051,7 +1060,8 @@ process_file:
             }
             //当前错误处理完成
             if (isErrorOccur) {
-                errorQueueHandled();
+                errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                                  action == DFileCopyMoveJob::EnforceAction);
                 isErrorOccur = false;
             }
             if (action == DFileCopyMoveJob::SkipAction) {
@@ -1073,7 +1083,8 @@ process_file:
                                                                 source_info, new_file_info);
             //当前错误处理完成
             if (isErrorOccur) {
-                errorQueueHandled();
+                errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                                  action == DFileCopyMoveJob::EnforceAction);
                 isErrorOccur = false;
             }
             if (action == DFileCopyMoveJob::SkipAction) {
@@ -1122,7 +1133,8 @@ process_file:
                                                                 source_info, new_file_info);
             //当前错误处理完成
             if (isErrorOccur) {
-                errorQueueHandled();
+                errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                                  action == DFileCopyMoveJob::EnforceAction);
                 isErrorOccur = false;
             }
             if (action == DFileCopyMoveJob::SkipAction) {
@@ -1195,7 +1207,8 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(const QSharedPointer<DFileHandler> 
         } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
         //当前错误处理完成
         if (isErrorOccur) {
-            errorQueueHandled();
+            errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                              action == DFileCopyMoveJob::NoAction);
             isErrorOccur = false;
         }
         if (action != DFileCopyMoveJob::NoAction) {
@@ -1243,7 +1256,7 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(const QSharedPointer<DFileHandler> 
         errorQueueHandling();
         bool ok = setAndhandleError(DFileCopyMoveJob::PermissionDeniedError, fromInfo, DAbstractFileInfoPointer(nullptr)) == DFileCopyMoveJob::SkipAction;
         //当前错误处理完成
-        errorQueueHandled();
+        errorQueueHandled(ok);
         return ok;
     }
 
@@ -1259,7 +1272,7 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(const QSharedPointer<DFileHandler> 
             return false;
         }
 
-        if (lastErrorHandleAction == DFileCopyMoveJob::SkipAction) {
+        if (getLastErrorAction() == DFileCopyMoveJob::SkipAction) {
             existsSkipFile = true;
         }
     }
@@ -1406,7 +1419,8 @@ open_file: {
         } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());  // bug: 26333, while set the stop status shoule break the process!
         //当前错误处理完成
         if (isErrorOccur) {
-            errorQueueHandled();
+            errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                              action == DFileCopyMoveJob::NoAction);
             isErrorOccur = false;
         }
 
@@ -1446,7 +1460,8 @@ open_file: {
 
         //当前错误处理完成
         if (isErrorOccur) {
-            errorQueueHandled();
+            errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                              action == DFileCopyMoveJob::NoAction);
             isErrorOccur = false;
         }
         if (action == DFileCopyMoveJob::SkipAction) {
@@ -1473,7 +1488,8 @@ open_file: {
             } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
             //当前错误处理完成
             if (isErrorOccur) {
-                errorQueueHandled();
+                errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                                  action == DFileCopyMoveJob::NoAction);
                 isErrorOccur = false;
             }
             if (action == DFileCopyMoveJob::SkipAction) {
@@ -1592,7 +1608,7 @@ open_file: {
                 toDevice->close();
                 //当前错误处理完成
                 if (isErrorOccur) {
-                    errorQueueHandled();
+                    errorQueueHandled(false);
                     isErrorOccur = false;
                 }
                 return false;
@@ -1656,7 +1672,7 @@ open_file: {
                     delete[] data;
                     //当前错误处理完成
                     if (isErrorOccur) {
-                        errorQueueHandled();
+                        errorQueueHandled(false);
                         isErrorOccur = false;
                     }
                     return false;
@@ -1690,7 +1706,7 @@ open_file: {
                 delete[] data;
                 //当前错误处理完成
                 if (isErrorOccur) {
-                    errorQueueHandled();
+                    errorQueueHandled(false);
                     isErrorOccur = false;
                 }
                 return false;
@@ -1745,7 +1761,7 @@ open_file: {
                     if (!toDevice->seek(current_pos)) {
                         //当前错误处理完成
                         if (isErrorOccur) {
-                            errorQueueHandled();
+                            errorQueueHandled(false);
                             isErrorOccur = false;
                         }
                         setError(DFileCopyMoveJob::UnknowError, toDevice->errorString());
@@ -1774,7 +1790,7 @@ open_file: {
                 default:
                     //当前错误处理完成
                     if (isErrorOccur) {
-                        errorQueueHandled();
+                        errorQueueHandled(false);
                         isErrorOccur = false;
                     }
                     delete[] data;
@@ -1850,7 +1866,8 @@ open_file: {
     } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
     //当前错误处理完成
     if (isErrorOccur) {
-        errorQueueHandled();
+        errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                          action == DFileCopyMoveJob::NoAction);
         isErrorOccur = false;
     }
     if (action == DFileCopyMoveJob::SkipAction) {
@@ -1898,7 +1915,7 @@ open_file: {
             default:
                 //当前错误处理完成
                 if (isErrorOccur) {
-                    errorQueueHandled();
+                    errorQueueHandled(false);
                     isErrorOccur = false;
                 }
                 delete [] data1;
@@ -1930,7 +1947,7 @@ open_file: {
 
         //当前错误处理完成
         if (isErrorOccur) {
-            errorQueueHandled();
+            errorQueueHandled(action == DFileCopyMoveJob::SkipAction);
             isErrorOccur = false;
         }
 
@@ -2025,7 +2042,8 @@ open_file: {
         } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());  // bug: 26333, while set the stop status shoule break the process!
         //当前错误处理完成
         if (isErrorOccur) {
-            errorQueueHandled();
+            errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                              action == DFileCopyMoveJob::NoAction);
             isErrorOccur = false;
         }
 
@@ -2065,7 +2083,8 @@ open_file: {
 
         //当前错误处理完成
         if (isErrorOccur) {
-            errorQueueHandled();
+            errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                              action == DFileCopyMoveJob::NoAction);
             isErrorOccur = false;
         }
         if (action == DFileCopyMoveJob::SkipAction) {
@@ -2092,7 +2111,8 @@ open_file: {
             } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
             //当前错误处理完成
             if (isErrorOccur) {
-                errorQueueHandled();
+                errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                                  action == DFileCopyMoveJob::NoAction);
                 isErrorOccur = false;
             }
             if (action == DFileCopyMoveJob::SkipAction) {
@@ -2187,7 +2207,7 @@ open_file: {
                     toDevice->close();
                     //当前错误处理完成
                     if (isErrorOccur) {
-                        errorQueueHandled();
+                        errorQueueHandled(false);
                         isErrorOccur = false;
                     }
                     return false;
@@ -2211,7 +2231,7 @@ open_file: {
                 toDevice->close();
                 //当前错误处理完成
                 if (isErrorOccur) {
-                    errorQueueHandled();
+                    errorQueueHandled(false);
                     isErrorOccur = false;
                 }
                 return false;
@@ -2275,7 +2295,7 @@ open_file: {
                     delete[] data;
                     //当前错误处理完成
                     if (isErrorOccur) {
-                        errorQueueHandled();
+                        errorQueueHandled(false);
                         isErrorOccur = false;
                     }
                     return false;
@@ -2309,7 +2329,7 @@ open_file: {
                 delete[] data;
                 //当前错误处理完成
                 if (isErrorOccur) {
-                    errorQueueHandled();
+                    errorQueueHandled(false);
                     isErrorOccur = false;
                 }
                 return false;
@@ -2364,7 +2384,7 @@ open_file: {
                     if (!toDevice->seek(current_pos)) {
                         //当前错误处理完成
                         if (isErrorOccur) {
-                            errorQueueHandled();
+                            errorQueueHandled(false);
                             isErrorOccur = false;
                         }
                         setError(DFileCopyMoveJob::UnknowError, toDevice->errorString());
@@ -2393,7 +2413,7 @@ open_file: {
                 default:
                     //当前错误处理完成
                     if (isErrorOccur) {
-                        errorQueueHandled();
+                        errorQueueHandled(false);
                         isErrorOccur = false;
                     }
                     delete[] data;
@@ -2463,7 +2483,7 @@ open_file: {
     } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
     //当前错误处理完成
     if (isErrorOccur) {
-        errorQueueHandled();
+        errorQueueHandled(action == DFileCopyMoveJob::SkipAction);
         isErrorOccur = false;
     }
     if (action == DFileCopyMoveJob::SkipAction) {
@@ -2511,7 +2531,7 @@ open_file: {
             default:
                 //当前错误处理完成
                 if (isErrorOccur) {
-                    errorQueueHandled();
+                    errorQueueHandled(false);
                     isErrorOccur = false;
                 }
                 delete [] data1;
@@ -2543,7 +2563,7 @@ open_file: {
 
         //当前错误处理完成
         if (isErrorOccur) {
-            errorQueueHandled();
+            errorQueueHandled(action == DFileCopyMoveJob::SkipAction);
             isErrorOccur = false;
         }
 
@@ -2599,7 +2619,8 @@ bool DFileCopyMoveJobPrivate::doCopyLargeFilesOnDisk(const DAbstractFileInfoPoin
     } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());  // bug: 26333, while set the stop status shoule break the process!
     //当前错误处理完成
     if (isErrorOccur) {
-        errorQueueHandled();
+        errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                          action == DFileCopyMoveJob::NoAction);
         isErrorOccur = false;
     }
     if (action == DFileCopyMoveJob::SkipAction) {
@@ -2639,7 +2660,8 @@ bool DFileCopyMoveJobPrivate::doCopyLargeFilesOnDisk(const DAbstractFileInfoPoin
     } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
     //当前错误处理完成
     if (isErrorOccur) {
-        errorQueueHandled();
+        errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                          action == DFileCopyMoveJob::NoAction);
         isErrorOccur = false;
     }
     if (action == DFileCopyMoveJob::SkipAction) {
@@ -2667,7 +2689,8 @@ bool DFileCopyMoveJobPrivate::doCopyLargeFilesOnDisk(const DAbstractFileInfoPoin
     } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
     //当前错误处理完成
     if (isErrorOccur) {
-        errorQueueHandled();
+        errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                          action == DFileCopyMoveJob::NoAction);
         isErrorOccur = false;
     }
     if (action == DFileCopyMoveJob::SkipAction) {
@@ -2702,7 +2725,8 @@ bool DFileCopyMoveJobPrivate::doCopyLargeFilesOnDisk(const DAbstractFileInfoPoin
     } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
     //当前错误处理完成
     if (isErrorOccur) {
-        errorQueueHandled();
+        errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                          action == DFileCopyMoveJob::NoAction);
         isErrorOccur = false;
     }
     if (action == DFileCopyMoveJob::SkipAction) {
@@ -2734,7 +2758,8 @@ bool DFileCopyMoveJobPrivate::doCopyLargeFilesOnDisk(const DAbstractFileInfoPoin
     } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
     //当前错误处理完成
     if (isErrorOccur) {
-        errorQueueHandled();
+        errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                          action == DFileCopyMoveJob::NoAction);
         isErrorOccur = false;
     }
     if (action == DFileCopyMoveJob::SkipAction) {
@@ -2846,14 +2871,15 @@ bool DFileCopyMoveJobPrivate::doCopyLargeFilesOnDiskOnly(const DAbstractFileInfo
             CopyLargeFileOnDiskQueue.at(0)->copyBigFileOnDiskJobRun();
     }
     if (!ok)
-        clearThreadPool();
+        q_ptr->stop();
     return ok;
 }
 
 bool DFileCopyMoveJobPrivate::doThreadPoolCopyFile()
 {
+    setLastErrorAction(DFileCopyMoveJob::NoAction);
     if (!stateCheck()) {
-        clearThreadPool();
+        q_ptr->stop();
         return false;
     }
 
@@ -2861,6 +2887,7 @@ bool DFileCopyMoveJobPrivate::doThreadPoolCopyFile()
     {
         QMutexLocker lk(&m_threadMutex);
         if (m_threadInfo.count() <= 0) {
+            q_ptr->stop();
             return false;
         }
         threadInfo = m_threadInfo.dequeue();
@@ -3133,7 +3160,7 @@ bool DFileCopyMoveJobPrivate::doRenameFile(const QSharedPointer<DFileHandler> &h
         return false;
     }
 
-    if (lastErrorHandleAction == DFileCopyMoveJob::SkipAction) {
+    if (getLastErrorAction() == DFileCopyMoveJob::SkipAction) {
         // 说明复制文件过程被跳过
         return true;
     }
@@ -3205,8 +3232,8 @@ bool DFileCopyMoveJobPrivate::process(const DUrl from, const DAbstractFileInfoPo
     // reset error and action
     if (m_refineStat == DFileCopyMoveJob::NoRefine) {
         unsetError();
-        lastErrorHandleAction = DFileCopyMoveJob::NoAction;
     }
+    setLastErrorAction(DFileCopyMoveJob::NoAction);
 
     beginJob(JobInfo::Preprocess, from, (source_info && target_info) ? target_info->getUrlByChildFileName(source_info->fileName()) : DUrl(), source_info->isDir());
     bool ok = doProcess(from, source_info, target_info, isNew);
@@ -3366,7 +3393,7 @@ void DFileCopyMoveJobPrivate::joinToCompletedFileList(const DUrl from, const DUr
 
     Q_EMIT q_ptr->completedFilesCountChanged(completedFilesCount);
 
-    if (lastErrorHandleAction == DFileCopyMoveJob::SkipAction) {
+    if (getLastErrorAction() == DFileCopyMoveJob::SkipAction) {
         return;
     }
 
@@ -3388,7 +3415,7 @@ void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl from, cons
 
     Q_EMIT q_ptr->completedFilesCountChanged(completedFilesCount);
 
-    if (lastErrorHandleAction == DFileCopyMoveJob::SkipAction) {
+    if (getLastErrorAction() == DFileCopyMoveJob::SkipAction) {
         return;
     }
 
@@ -3583,13 +3610,13 @@ void DFileCopyMoveJobPrivate::errorQueueHandling()
         QMutexLocker lk(&m_errorQueueMutex);
         if (!stateCheck())
             return;
-        if (m_errorQueue.count() <= 0 || m_errorQueue.first() != QThread::currentThreadId())
+        if ((m_errorQueue.count() <= 0 || m_errorQueue.first() != QThread::currentThreadId()) && stateCheck())
             m_errorQueue.enqueue(QThread::currentThreadId());
 
         isLoop = m_errorQueue.count() > 1 && m_errorQueue.first() != QThread::currentThreadId();
         qDebug() << "new error comming  " << m_errorQueue << isLoop << QThread::currentThreadId();
     }
-    while (isLoop) {
+    while (isLoop && stateCheck()) {
         QMutex mutex;
         mutex.lock();
         m_errorCondition.wait(&mutex);
@@ -3601,14 +3628,15 @@ void DFileCopyMoveJobPrivate::errorQueueHandling()
     }
 }
 
-void DFileCopyMoveJobPrivate::errorQueueHandled()
+void DFileCopyMoveJobPrivate::errorQueueHandled(const bool &isNotCancel)
 {
+    if (!isNotCancel)
+        q_ptr->stop();
     QMutexLocker lk(&m_errorQueueMutex);
     if (!m_errorQueue.isEmpty()) {
         m_errorQueue.removeAll(QThread::currentThreadId());
         qDebug() << "error handler over === " << QThread::currentThreadId() << m_errorQueue;
     }
-    lastErrorHandleAction = DFileCopyMoveJob::NoAction;
     if (m_errorQueue.count() > 0)
         m_errorCondition.wakeAll();
 }
@@ -3707,7 +3735,8 @@ bool DFileCopyMoveJobPrivate::writeToFileByQueue()
 
             //当前错误处理完成
             if (isErrorOccur) {
-                errorQueueHandled();
+                errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                                  action == DFileCopyMoveJob::NoAction);
                 isErrorOccur = false;
             }
             if (action == DFileCopyMoveJob::SkipAction) {
@@ -3751,7 +3780,7 @@ write_data: {
                         setError(DFileCopyMoveJob::UnknowError, "");
                         //当前错误处理完成
                         if (isErrorOccur) {
-                            errorQueueHandled();
+                            errorQueueHandled(false);
                             isErrorOccur = false;
                         }
                         releaseCopyInfo(info);
@@ -3779,7 +3808,7 @@ write_data: {
                 default:
                     //当前错误处理完成
                     if (isErrorOccur) {
-                        errorQueueHandled();
+                        errorQueueHandled(false);
                         isErrorOccur = false;
                     }
                     releaseCopyInfo(info);
@@ -3836,7 +3865,7 @@ write_data: {
                             releaseCopyInfo(info);
                             //当前错误处理完成
                             if (isErrorOccur) {
-                                errorQueueHandled();
+                                errorQueueHandled(false);
                                 isErrorOccur = false;
                             }
 
@@ -3861,6 +3890,10 @@ write_data: {
                     default:
                         //当前错误处理完成
                         releaseCopyInfo(info);
+                        if (isErrorOccur) {
+                            errorQueueHandled(false);
+                            isErrorOccur = false;
+                        }
                         return false;
                     }
                 } while (false);
@@ -3965,9 +3998,16 @@ void DFileCopyMoveJobPrivate::stopAllDeviceOperation()
 
 void DFileCopyMoveJobPrivate::clearThreadPool()
 {
+    //清理所有的拷贝小文件的错误队列
+    {
+        QMutexLocker lk(&m_errorQueueMutex);
+        m_errorQueue.clear();
+        m_errorCondition.wakeAll();
+    }
     QMutexLocker lk(&m_clearThreadPoolMutex);
 
     m_pool.clear();
+    qInfo() << "active thread in pool count = " << m_pool.activeThreadCount();
     m_pool.releaseThread();
 }
 
@@ -3990,9 +4030,8 @@ void DFileCopyMoveJobPrivate::syncInOtherThread()
         setSysncState(true);
         while (me.isNull() && !getSysncQuitState()) {
             QProcess::execute("sync", {"-f", rootpath});
-            if (me.isNull()) {
+            if (me.isNull())
                 return;
-            }
             if (state == DFileCopyMoveJob::StoppedState)
                 break;
             if (!getSysncQuitState())
@@ -4014,7 +4053,26 @@ DFileCopyMoveJob::~DFileCopyMoveJob()
 {
     stop();
     // ###(zccrs): wait() ?
-    qInfo() << "release  DFileCopyMoveJob!" << this;
+    Q_D(DFileCopyMoveJob);
+    //停止清理掉自己的大文件拷贝
+    copyBigFileOnDiskJobRun();
+
+    //清理所有的拷贝小文件的错误队列
+    {
+        QMutexLocker lk(&d->m_errorQueueMutex);
+        qInfo() << "stop m_errorQueue count = " << d->m_errorQueue.count() << FileUtils::getCpuProcessCount();
+        d->m_errorQueue.clear();
+        d->m_errorCondition.wakeAll();
+    }
+
+    d->m_pool.waitForDone();
+
+    d->stopAllDeviceOperation();
+
+    d->clearThreadPool();
+
+    d->cancelReadFileDealWriteThread();
+    qInfo() << "release  DFileCopyMoveJob!" << this << QThread::currentThread();
 }
 
 DFileCopyMoveJob::Handle *DFileCopyMoveJob::errorHandle() const
@@ -4221,6 +4279,21 @@ void DFileCopyMoveJobPrivate::waitRefineThreadFinish()
     }
 }
 
+void DFileCopyMoveJobPrivate::setLastErrorAction(const DFileCopyMoveJob::Action &action)
+{
+    QMutexLocker lk(&m_lastErrorHandleActionMutex);
+    m_lastErrorHandleAction.insert(QThread::currentThread(), action);
+}
+
+DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::getLastErrorAction()
+{
+    QMutexLocker lk(&m_lastErrorHandleActionMutex);
+    QThread *current = QThread::currentThread();
+    if (m_lastErrorHandleAction.contains(current) )
+        return m_lastErrorHandleAction.value(current);
+    return DFileCopyMoveJob::NoAction;
+}
+
 void DFileCopyMoveJobPrivate::initRefineState()
 {
     // 不是优化就直接退出
@@ -4357,7 +4430,7 @@ void DFileCopyMoveJob::stop()
 
     d->fileStatistics->stop();
 
-    d->updateSpeedTimer->stop();
+    QMetaObject::invokeMethod(d->updateSpeedTimer, "stop");
 
     d->setState(StoppedState);
     d->waitCondition.wakeAll();
@@ -4608,8 +4681,8 @@ void DFileCopyMoveJob::run()
         }
 
         // 只要有一个不是skip或者cancel就执行一下sync
-        if (!mayExecSync && d->lastErrorHandleAction != SkipAction &&
-                d->lastErrorHandleAction != CancelAction) {
+        if (!mayExecSync && d->getLastErrorAction() != SkipAction &&
+                d->getLastErrorAction() != CancelAction) {
             mayExecSync = true;
         }
 
