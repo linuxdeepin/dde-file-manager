@@ -33,7 +33,7 @@ class UsbFormatter;
 class CommandManager;
 class DeviceInfoManager;
 class TagManagerDaemon;
-class AcessControlManager;
+class AccessControlManager;
 class VaultManager;
 class RevocationManager;
 
@@ -54,7 +54,7 @@ public slots:
 private:
     UserShareManager *m_userShareManager = nullptr;
     TagManagerDaemon *m_tagManagerDaemon = nullptr;
-    AcessControlManager *m_acessController = nullptr;
+    AccessControlManager *m_accessController = nullptr;
     VaultManager *m_vaultManager = nullptr;
     RevocationManager *m_revocationManager = nullptr;
 };

@@ -13,7 +13,7 @@ SOURCES += \
     $$PWD/main.cpp \
     $$PWD/vault/ut_vaultmanager.cpp \
     $$PWD/vault/ut_vaultclock.cpp \
-    $$PWD/acesscontrol/ut_acesscontrolmanager.cpp \
+    $$PWD/accesscontrol/ut_accesscontrolmanager.cpp \
     $$PWD/app/ut_filemanagerdaemon.cpp \
     $$PWD/app/ut_policykithelper.cpp \
     $$PWD/client/ut_filemanagerclient.cpp \
