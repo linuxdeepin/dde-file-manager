@@ -1283,6 +1283,8 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
 //            d->updateEnableSelectionByMouseTimer->start();
 //        }
+        if (DFMGlobal::isTablet())
+            d->lastTouchBeginPos = event->pos();
 
         bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
 
@@ -1370,6 +1372,13 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
 //            return;
 //        }
 //    }
+
+    //平板需忽略小范围的手指划动，因为小范围的划动与长按右键的手势有重叠
+    if (DFMGlobal::isTablet()) {
+        int diff = qAbs(event->pos().x() - d->lastTouchBeginPos.x()) + qAbs(event->y() - d->lastTouchBeginPos.y());
+        if (diff < 100)
+            return;
+    }
 
     return DListView::mouseMoveEvent(event);
 }
