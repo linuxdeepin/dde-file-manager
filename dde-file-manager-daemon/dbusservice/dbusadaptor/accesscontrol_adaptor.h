@@ -9,12 +9,12 @@
  * before re-generating it.
  */
 
-#ifndef ACESSCONTROL_ADAPTOR_H
-#define ACESSCONTROL_ADAPTOR_H
+#ifndef ACCESSCONTROL_ADAPTOR_H
+#define ACCESSCONTROL_ADAPTOR_H
 
 #include <QtCore/QObject>
 #include <QtDBus/QtDBus>
-#include "acesscontrol/acesscontrolmanager.h"
+#include "accesscontrol/accesscontrolmanager.h"
 QT_BEGIN_NAMESPACE
 class QByteArray;
 template<class T> class QList;

@@ -1,4 +1,4 @@
-#include "acesscontrolmanager.h"
+#include "accesscontrolmanager.h"
 #include <QDBusConnection>
 #include <QDBusVariant>
 #include <QProcess>
@@ -16,43 +16,43 @@
 #include "dfilesystemwatcher.h"
 
 #include "app/policykithelper.h"
-#include "dbusservice/dbusadaptor/acesscontrol_adaptor.h"
+#include "dbusservice/dbusadaptor/accesscontrol_adaptor.h"
 
-QString AcessControlManager::ObjectPath = "/com/deepin/filemanager/daemon/AcessControlManager";
-QString AcessControlManager::PolicyKitActionId = "com.deepin.filemanager.daemon.AcessControlManager";
+QString AccessControlManager::ObjectPath = "/com/deepin/filemanager/daemon/AccessControlManager";
+QString AccessControlManager::PolicyKitActionId = "com.deepin.filemanager.daemon.AccessControlManager";
 
-AcessControlManager::AcessControlManager(QObject *parent)
+AccessControlManager::AccessControlManager(QObject *parent)
     : QObject(parent)
     , QDBusContext(),
       m_watcher(new DFileSystemWatcher(this))
 {
     qDebug() << "register:" << ObjectPath;
     if (!QDBusConnection::systemBus().registerObject(ObjectPath, this)) {
-        qFatal("=======AcessControlManager Register Object Failed.");
+        qFatal("=======AccessControlManager Register Object Failed.");
     }
     m_diskMnanager = new DDiskManager(this);
     m_diskMnanager->setWatchChanges(true);
-    qDebug() << "=======AcessControlManager() ";
+    qDebug() << "=======AccessControlManager() ";
 
     m_watcher->addPath("/home");
     onFileCreated("/home", "root");
     initConnect();
 }
 
-AcessControlManager::~AcessControlManager()
+AccessControlManager::~AccessControlManager()
 {
-    qDebug() << "~AcessControlManager()";
+    qDebug() << "~AccessControlManager()";
 }
 
 
-void AcessControlManager::initConnect()
+void AccessControlManager::initConnect()
 {
-    qDebug() << "AcessControlManager::initConnect()";
-    connect(m_diskMnanager, &DDiskManager::mountAdded, this, &AcessControlManager::chmodMountpoints);
-    connect(m_watcher, &DFileSystemWatcher::fileCreated, this, &AcessControlManager::onFileCreated);
+    qDebug() << "AccessControlManager::initConnect()";
+    connect(m_diskMnanager, &DDiskManager::mountAdded, this, &AccessControlManager::chmodMountpoints);
+    connect(m_watcher, &DFileSystemWatcher::fileCreated, this, &AccessControlManager::onFileCreated);
 }
 
-bool AcessControlManager::checkAuthentication()
+bool AccessControlManager::checkAuthentication()
 {
     bool ret = false;
     qint64 pid = 0;
@@ -74,7 +74,7 @@ bool AcessControlManager::checkAuthentication()
 }
 
 
-void AcessControlManager::chmodMountpoints(const QString &blockDevicePath, const QByteArray &mountPoint)
+void AccessControlManager::chmodMountpoints(const QString &blockDevicePath, const QByteArray &mountPoint)
 {
     Q_UNUSED(blockDevicePath);
     qDebug() << "chmod ==>" << mountPoint;
@@ -110,7 +110,7 @@ void AcessControlManager::chmodMountpoints(const QString &blockDevicePath, const
 }
 
 
-void AcessControlManager::onFileCreated(const QString &path, const QString &name)
+void AccessControlManager::onFileCreated(const QString &path, const QString &name)
 {
     Q_UNUSED(path)
     Q_UNUSED(name)

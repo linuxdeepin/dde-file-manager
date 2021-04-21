@@ -9,5 +9,5 @@
  * before re-generating it.
  */
 
-#include "dbusinterface/acesscontrol_interface.h"
+#include "dbusinterface/accesscontrol_interface.h"
 

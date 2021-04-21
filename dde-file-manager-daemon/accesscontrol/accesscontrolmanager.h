@@ -1,21 +1,21 @@
-#ifndef ACESSCONTROLMANAGER_H
-#define ACESSCONTROLMANAGER_H
+#ifndef ACCESSCONTROLMANAGER_H
+#define ACCESSCONTROLMANAGER_H
 
 #include <QDBusContext>
 #include <QObject>
 
-class AcessControlAdaptor;
+class AccessControlAdaptor;
 class DDiskManager;
 class DFileSystemWatcher;
 
-class AcessControlManager : public QObject, public QDBusContext
+class AccessControlManager : public QObject, public QDBusContext
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface","com.deepin.filemanager.daemon.AcessControlManager")
+    Q_CLASSINFO("D-Bus Interface","com.deepin.filemanager.daemon.AccessControlManager")
 
 public:
-    explicit AcessControlManager(QObject *parent = nullptr);
-    ~AcessControlManager();
+    explicit AccessControlManager(QObject *parent = nullptr);
+    ~AccessControlManager();
 
     void initConnect();
 
@@ -32,9 +32,9 @@ private slots:
     void chmodMountpoints(const QString &blockDevicePath, const QByteArray &mountPoint);
 
 private:
-    AcessControlAdaptor *m_acessControlAdaptor = nullptr;
+    AccessControlAdaptor *m_accessControlAdaptor = nullptr;
     DDiskManager *m_diskMnanager = nullptr;
     DFileSystemWatcher *m_watcher = nullptr;
 };
 
-#endif // ACESSCONTROLMANAGER_H
+#endif // ACCESSCONTROLMANAGER_H
