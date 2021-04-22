@@ -28,6 +28,7 @@
 #include <QPointer>
 #include <QStack>
 #include <QElapsedTimer>
+#include <QMutex>
 
 typedef QExplicitlySharedDataPointer<DAbstractFileInfo> DAbstractFileInfoPointer;
 
@@ -35,6 +36,7 @@ DFM_BEGIN_NAMESPACE
 
 class DFileHandler;
 class DFileStatisticsJob;
+class DFileDevice;
 class ElapsedTimer;
 class DFileCopyMoveJobPrivate
 {
@@ -118,6 +120,12 @@ public:
     void updateSpeed();
     void _q_updateProgress();
     void checkTagetNeedSync();//检测目标目录是网络文件就每次拷贝去同步，否则网络很卡时会因为同步卡死
+    //线程安全保存当前工作的device
+    void saveCurrentDevice(const DUrl &url,const QSharedPointer<DFileDevice> device);
+    //线程安全移出当前工作的device
+    void removeCurrentDevice(const DUrl &url);
+    //线程安全移出当前工作的device
+    void stopAllDeviceOperation();
 
     DFileCopyMoveJob *q_ptr;
 
@@ -181,6 +189,9 @@ public:
     bool btaskdailogclose = false;
 
     bool m_isVfat = false;
+    //当前拷贝的device
+    QMap<DUrl,QSharedPointer<DFileDevice>> m_currentDevice;
+    QMutex m_currentDeviceMutex;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };

@@ -175,7 +175,6 @@ Q_SIGNALS:
     void progressChanged(qreal progress, qint64 writeData);
     void currentFileProgressChanged(qreal progress, qint64 writeData);
     void speedUpdated(qint64 speed);
-    void stopAllGioDervic();
 
 protected:
     DFileCopyMoveJob(DFileCopyMoveJobPrivate &dd, QObject *parent);
