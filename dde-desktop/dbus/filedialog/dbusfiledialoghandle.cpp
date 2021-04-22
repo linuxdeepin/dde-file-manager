@@ -195,5 +195,9 @@ void DBusFileDialogHandle::setHeartbeatInterval(int heartbeatInterval)
 
 void DBusFileDialogHandle::setWindowFlags(quint32 windowFlags)
 {
+    //平板文件选择对话框不显示右上角关闭按钮
+    if (DFMGlobal::isTablet())
+        windowFlags = windowFlags & ~ Qt::WindowCloseButtonHint;
+
     widget()->setWindowFlags(static_cast<Qt::WindowFlags>(windowFlags));
 }
