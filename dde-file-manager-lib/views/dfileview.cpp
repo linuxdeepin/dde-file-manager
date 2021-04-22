@@ -1049,7 +1049,8 @@ void DFileView::keyPressEvent(QKeyEvent *event)
     case Qt::NoModifier:
         switch (event->key()) {
         case Qt::Key_Space:
-            emit fileSignalManager->requestShowFilePreviewDialog(selectedUrls(), model()->sortedUrls());
+            if (!DFMGlobal::isTablet())
+                emit fileSignalManager->requestShowFilePreviewDialog(selectedUrls(), model()->sortedUrls());
             return;
         default:
             break;
