@@ -1060,6 +1060,9 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
         actionKeys << MenuAction::Property;
     }
 
+    if (isGvfsMountFile())
+        actionKeys.removeAll(MenuAction::OpenAsAdmin);
+
     return actionKeys;
 }
 
