@@ -78,7 +78,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
     // https://codereview.qt-project.org/c/qt/qtbase/+/244887
     // `file` command works but libmagic didn't even comes with any pkg-config support..
     static QStringList officeSuffixList {
-        "docx", "xlsx", "pptx", "doc", "ppt", "xls"
+        "docx", "xlsx", "pptx", "doc", "ppt", "xls", "wps"
     };
     static QStringList wrongMimeTypeNames {
         "application/x-ole-storage", "application/zip"
