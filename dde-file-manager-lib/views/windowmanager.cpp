@@ -36,6 +36,7 @@
 #include "fileoperations/filejob.h"
 
 #include "dialogs/dialogmanager.h"
+#include "dialogs/dtaskdialog.h"
 
 #include "qobjecthelper.h"
 
@@ -198,6 +199,10 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
     window->show();
 
     qDebug() << "new window" << window->winId() << url;
+
+    if (DFMGlobal::isTablet() && dialogManager->taskDialog()) {
+        dialogManager->taskDialog()->setParent(window);
+    }
 
     connect(window, &DFileManagerWindow::aboutToClose,
             this, &WindowManager::onWindowClosed);
