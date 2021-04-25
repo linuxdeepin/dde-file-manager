@@ -1428,7 +1428,8 @@ MountStatus GvfsMountManager::mount_sync(const DFMUrlBaseEvent &event)
     MountEventHash.remove(op);
     MountTimerHash.remove(op);
     if (CancellHash.value(op)) {
-        g_cancellable_release_fd(CancellHash.value(op));
+        //74659 g_cancellable_get_fd或g_cancellable_make_pollfd 后才能调用g_cancellable_release_fd
+        //g_cancellable_release_fd(CancellHash.value(op));
         g_object_unref(CancellHash.value(op));
     }
     CancellHash.remove(op);
@@ -1467,9 +1468,18 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
     succeeded = g_file_mount_enclosing_volume_finish(G_FILE(object), res, &error);
 
     if (!succeeded) {
-        Q_ASSERT(error->domain == G_IO_ERROR);
+        //采用断言可能导致在error非G_IO_ERROR获取的错误码时崩溃
+        //Q_ASSERT(error->domain == G_IO_ERROR);
 
         bool showWarnDlg = false;
+
+        //gio的错误捕获，dns校验等而非G_IO_ERROR
+        if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_FAILED_HANDLED)) {
+            qInfo() << "Failed dde-file-manager use "
+                       "gio mount device error not’s "
+                       "G_IO_ERROR";
+            showWarnDlg = true;
+        }
 
         switch (error->code) {
         case G_IO_ERROR_FAILED:
@@ -1526,6 +1536,9 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
 
         status = MOUNT_SUCCESS;
     }
+
+    if (error)
+        g_error_free (error); //释放error
 
     AskingPasswordHash.remove(op);
 
