@@ -191,10 +191,12 @@ QDir DFileDialog::directory() const
 
 void DFileDialog::setDirectoryUrl(const DUrl &directory)
 {
-    if (!getFileView()) {
+    //! 重复设置的地址直接返回
+    DFileView *fileView = getFileView();
+    if (!fileView || fileView->rootUrl() == directory) {
         return;
     }
-    getFileView()->cd(directory);
+    fileView->cd(directory);
 }
 
 QUrl DFileDialog::directoryUrl() const
