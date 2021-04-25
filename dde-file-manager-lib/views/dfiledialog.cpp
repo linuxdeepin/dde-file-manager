@@ -37,6 +37,7 @@
 #include <DTitlebar>
 #include <DDialog>
 #include <DPlatformWindowHandle>
+#include <DApplication>
 
 #include <QEventLoop>
 #include <QPointer>
@@ -172,6 +173,26 @@ DFileDialog::DFileDialog(QWidget *parent)
         setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
         getFileView()->setViewMode(DFileView::IconMode);        //首次启动会是ListView
         getFileView()->setContextMenuPolicy(Qt::NoContextMenu);     //屏蔽view右键菜单
+
+        //虚拟键盘弹出时需要上移窗口
+        connect(DApplication::inputMethod(), &QInputMethod::visibleChanged, this, [=]{
+            const QList<QScreen *> screens = qApp->screens();
+            if (screens.length() > 0) {
+                if (DApplication::inputMethod()->isVisible()) {
+                    QRectF keyboard = DApplication::inputMethod()->keyboardRectangle();
+                    QPoint newPos = pos();
+                    newPos.setY(screens.first()->virtualSize().height() - height() - static_cast<int>(keyboard.height()));
+                    move(newPos);
+                } else {
+                    moveCenterByRect(screens.first()->virtualGeometry());
+                    //恢复原位时需要确认将下拉选择框也设置到正确的位置
+                    QFrame *popup = statusBar()->m_filtersComboBox->findChild<QFrame*>();
+                    if (popup && popup->isVisible()) {
+                        popup->move(statusBar()->mapToGlobal(statusBar()->m_filtersComboBox->pos()));
+                    }
+                }
+            }
+        });
     }
 }
 
