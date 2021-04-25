@@ -426,8 +426,10 @@ void DFMAddressBar::initConnections()
 
         if (!DUrl::fromUserInput(str).isLocalFile()) {
             if (!historyList.contains(str)) {
-                historyList.append(str);
+                historyList.clear();
                 Singleton<SearchHistroyManager>::instance()->writeIntoSearchHistory(str);
+                historyList.append(Singleton<SearchHistroyManager>::instance()->toStringList());
+                completerModel.setStringList(historyList);
             }
         }
     });
