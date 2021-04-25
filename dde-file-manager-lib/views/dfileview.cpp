@@ -2564,15 +2564,17 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     QModelIndex index = model()->setRootUrl(fileUrl);
 
-    if (info->isExecutable()) {
+    //只针对真实的本地文件没有执行权限的进行管控
+    if (!info->isExecutable()
+            && fileUrl.isLocalFile()) {
         //label提示控制
-        d->canSetContentLabelText = true;
-    } else {
-        //设置没有遍历权限的label
         setContentLabel(info->subtitleForEmptyFloder());
         //屏蔽来自rowCount的信号槽的Label信息更新
         d->canSetContentLabelText = false;
         return true;
+    } else {
+        //打开label的设置功能
+        d->canSetContentLabelText = true;
     }
 
     setRootIndex(index);
