@@ -1008,6 +1008,7 @@ void Frame::refreshList()
         }
 
         const QStringList &saver_name_list = m_dbusScreenSaver->allScreenSaver();
+        const QString &current_screensaver = m_dbusScreenSaver->GetScreenSaverCover(m_dbusScreenSaver->currentScreenSaver());
         //remove itemwait and delete itemwait
         m_wallpaperList->m_contentLayout->removeWidget(m_itemwait);
 
@@ -1016,6 +1017,7 @@ void Frame::refreshList()
             m_itemwait = nullptr;
         }
 
+        bool isPressed = false; //记录当前设置的屏保是否已被选中
         for (const QString &name : saver_name_list) {
             if("flurry" == name){
                 continue;//临时屏蔽名字为flurry的屏保
@@ -1042,10 +1044,14 @@ void Frame::refreshList()
             });
             connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
             //首次进入时，选中当前设置屏保
-            if(cover_path == m_dbusScreenSaver->GetScreenSaverCover(m_dbusScreenSaver->currentScreenSaver()))
-            {
+            if(!isPressed && cover_path == current_screensaver) {
                 item->pressed();
+                isPressed = true;
             }
+        }
+        if (!isPressed && m_wallpaperList->count() > 0) {
+            qWarning() << "no screen saver item selected,and select default 0.";
+            m_wallpaperList->setCurrentIndex(0);
         }
 
         m_wallpaperList->setFixedWidth(width());
