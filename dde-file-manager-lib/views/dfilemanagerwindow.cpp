@@ -139,6 +139,7 @@ public:
     DHorizontalLine *emptyTrashSplitLine { nullptr };
     DRenameBar *renameBar{ nullptr };
     DFMAdvanceSearchBar *advanceSearchBar = nullptr;
+    DIconButton *windowIconButton = nullptr;
 
     QMap<DUrl, QWidget *> views;
 
@@ -1103,7 +1104,6 @@ void DFileManagerWindow::initTitleFrame()
     D_D(DFileManagerWindow);
 
     initToolBar();
-    titlebar()->setIcon(QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager")));
     d->titleFrame = new QFrame;
     d->titleFrame->setObjectName("TitleBar");
     AC_SET_OBJECT_NAME(d->titleFrame, AC_COMPUTER_CUSTOM_TITLE_BAR);
@@ -1111,6 +1111,18 @@ void DFileManagerWindow::initTitleFrame()
     QHBoxLayout *titleLayout = new QHBoxLayout;
     titleLayout->setMargin(0);
     titleLayout->setSpacing(0);
+
+    if (DFMGlobal::isTablet()) {
+        d->windowIconButton = new DIconButton(this);
+        d->windowIconButton->setIconSize(QSize(32, 32));
+        d->windowIconButton->setWindowFlags(Qt::WindowTransparentForInput);
+        d->windowIconButton->setFocusPolicy(Qt::NoFocus);
+        d->windowIconButton->setFlat(true);
+        d->windowIconButton->setIcon(QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager")));
+        titleLayout->addWidget(d->windowIconButton);
+    } else {
+        titlebar()->setIcon(QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager")));
+    }
 
     titleLayout->addWidget(d->toolbar);
     titleLayout->setSpacing(0);
@@ -1426,6 +1438,12 @@ void DFileManagerWindow::initConnect()
     //! redirect when tab root url changed.
     QObject::connect(fileSignalManager, &FileSignalManager::requestRedirectTabUrl, this, &DFileManagerWindow::onRequestRedirectUrl);
     QObject::connect(fileSignalManager, &FileSignalManager::requestCloseTab, this, &DFileManagerWindow::onRequestCloseTabByUrl);
+
+    if (DFMGlobal::isTablet() && d->windowIconButton) {
+        QObject::connect(d->windowIconButton, &DIconButton::clicked, this, [this](){
+            this->cd(DUrl::fromComputerFile("/"));
+        });
+    }
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)
