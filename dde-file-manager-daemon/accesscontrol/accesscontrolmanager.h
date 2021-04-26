@@ -83,6 +83,9 @@ private slots:
     void changeMountedOptical(int mode, const QString &device);
     void changeMountedProtocol(int mode, const QString &device);
 
+    // 在启动系统的时候对已挂载的设备执行一次策略变更（设备的接入先于 daemon 的启动）
+    void changeMountedOnInit();
+
     int accessMode(const QString &mps); // 获取挂载点访问权限
 
     void savePolicy(const QVariantMap &policy);

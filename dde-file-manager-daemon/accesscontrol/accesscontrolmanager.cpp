@@ -84,9 +84,10 @@ AccessControlManager::AccessControlManager(QObject *parent)
     m_diskMnanager->setWatchChanges(true);
     qDebug() << "=======AccessControlManager() ";
 
-    m_whiteProcess << "/usr/bin/python3";
+    m_whiteProcess << "/usr/bin/python3.7";
     m_configPath = "/etc/deepin/devAccessConfig.json";
     loadPolicy();
+    changeMountedOnInit();
 
     m_errMsg.insert(NoError, "");
     m_errMsg.insert(InvalidArgs, tr("Invalid args"));
@@ -144,7 +145,7 @@ QString AccessControlManager::SetAccessPolicy(const QVariantMap &policy)
         emit AccessPolicySetFinished(sigInfo);
 
         qDebug() << invokerPath << " is not allowed to invoke this function";
-//        return invokerPath + " is not allowed";
+        return invokerPath + " is not allowed";
     }
 
     // 1. 校验策略有效性
@@ -185,7 +186,7 @@ QString AccessControlManager::SetAccessPolicy(const QVariantMap &policy)
 
     // 3. 改变已挂载设备的访问权限；现阶段不接入此功能；
 //    changeMountedPolicy(policy);
-    return "";
+    return "OK";
 }
 
 QVariantList AccessControlManager::QueryAccessPolicy()
@@ -496,6 +497,18 @@ void AccessControlManager::changeMountedProtocol(int mode, const QString &device
 {
     Q_UNUSED(mode)
     Q_UNUSED(device)
+}
+
+void AccessControlManager::changeMountedOnInit()
+{
+    qDebug() << "start change access on init...";
+    if (m_globalPolicies.contains(TYPE_BLOCK))
+        changeMountedBlock(m_globalPolicies.value(TYPE_BLOCK).second, "");
+    if (m_globalPolicies.contains(TYPE_OPTICAL))
+        changeMountedOptical(m_globalPolicies.value(TYPE_OPTICAL).second, "");
+    if (m_globalPolicies.contains(TYPE_PROTOCOL))
+        changeMountedProtocol(m_globalPolicies.value(TYPE_PROTOCOL).second, "");
+    qDebug() << "end change access on init...";
 }
 
 int AccessControlManager::accessMode(const QString &mps)
