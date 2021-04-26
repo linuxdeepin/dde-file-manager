@@ -82,7 +82,9 @@ BookMarkManager::BookMarkManager(QObject *parent)
     : DAbstractFileController(parent)
 {
     /* 在启动文管时刷新书签的过程中，如果存在指向网络目录的书签，并且网络目录处于无法连接的状态时，
-     * 创建书签对象会卡顿较长时间，这里将构建对象的循环放入子线程，避免主线程卡住 */
+     * 创建书签对象会卡顿较长时间，这里将构建对象的循环放入子线程，避免主线程卡住 先调用genericSetting
+     * 在主线程初始化dfilesystemwatcher */
+    DFMApplication::genericSetting();
     QtConcurrent::run([=] {
         update(DFMApplication::genericSetting()->value("BookMark", "Items"));
     });
