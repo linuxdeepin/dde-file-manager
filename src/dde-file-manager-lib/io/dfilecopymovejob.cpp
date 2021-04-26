@@ -3634,7 +3634,7 @@ bool DFileCopyMoveJobPrivate::writeRefineThread()
             break;
         }
     }
-    if (ok) {
+    if (ok && stateCheck()) {
         ok = writeToFileByQueue();
     } else {
         q_ptr->stop();
@@ -3988,8 +3988,11 @@ void DFileCopyMoveJobPrivate::syncInOtherThread()
         }
         QString rootpath = targetRootPath;
         setSysncState(true);
-        while (me && !getSysncQuitState()) {
+        while (me.isNull() && !getSysncQuitState()) {
             QProcess::execute("sync", {"-f", rootpath});
+            if (me.isNull()) {
+                return;
+            }
             if (state == DFileCopyMoveJob::StoppedState)
                 break;
             if (!getSysncQuitState())
@@ -4196,17 +4199,18 @@ void DFileCopyMoveJobPrivate::waitRefineThreadFinish()
 {
     qInfo() << "wait thread pool finished!";
     while (m_pool.activeThreadCount() > 0) {
-        if (state == DFileCopyMoveJob::StoppedState) {
-            m_pool.clear();
-            break;
-        }
+        if (state == DFileCopyMoveJob::StoppedState)
+            q_ptr->stop();
         QThread::msleep(50);
     }
     qInfo() << "wait write thread finished!";
     if (m_isWriteThreadStart.load()) {
         while (!m_writeResult.isFinished()) {
-            if (state == DFileCopyMoveJob::StoppedState)
+            if (state == DFileCopyMoveJob::StoppedState) {
+                cancelReadFileDealWriteThread();
+                m_writeResult.waitForFinished();
                 return;
+            }
             QThread::msleep(50);
         }
     }
