@@ -68,7 +68,7 @@ bool DUMountManager::stopScanBlock(const QString &blkName)
 {
     const QUrl &url = getMountPathForBlock(blkName);
     if (!m_defenderInterface->stopScanning(url)) {
-        setError(DUMountManager::Error::Timeout, "stop scanning timeout.");
+        errorMsg = "stop scanning timeout.";
         return false;
     }
 
@@ -80,7 +80,7 @@ bool DUMountManager::stopScanDrive(const QString &driveName)
 {
     const QList<QUrl> &urls = getMountPathForDrive(driveName);
     if (!m_defenderInterface->stopScanning(urls)) {
-        setError(DUMountManager::Error::Timeout, "stop scanning timeout.");
+        errorMsg = "stop scanning timeout.";
         return false;
     }
 
@@ -92,7 +92,7 @@ bool DUMountManager::stopScanAllDrive()
 {
     const QList<QUrl> &urls = getMountPathForAllDrive();
     if (!m_defenderInterface->stopScanning(urls)) {
-        setError(DUMountManager::Error::Timeout, "stop scanning timeout.");
+        errorMsg = "stop scanning timeout.";
         return false;
     }
 
@@ -104,7 +104,7 @@ bool DUMountManager::umountBlock(const QString &blkName)
 {
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(blkName));
     if (!blkdev) {
-        setError(DUMountManager::Error::Failed, "invalid blk device");
+        errorMsg = "invalid blk device";
         qWarning() << "invalid blk device:" << blkName;
         return false;
     }
@@ -132,7 +132,7 @@ bool DUMountManager::umountBlock(const QString &blkName)
     if (blkdev->mountPoints().empty())
         return true;
 
-    setError(DUMountManager::Error::Failed, checkMountErrorMsg(err));
+    errorMsg = checkMountErrorMsg(err);
     return false;
 }
 
@@ -140,7 +140,7 @@ bool DUMountManager::umountBlocksOnDrive(const QString &driveName)
 {
     if (driveName.isNull() || driveName.isEmpty()) {
         qWarning() << "invalid drive name:" << driveName;
-        setError(DUMountManager::Error::Failed, "invalid drive name:");
+        errorMsg = "invalid drive name" ;
         return false;
     }
 
@@ -150,7 +150,7 @@ bool DUMountManager::umountBlocksOnDrive(const QString &driveName)
         if (blkd && blkd->drive() == driveName) {
             if (!umountBlock(blkStr)) {
                 qWarning() << "umountBlock failed: drive = " << driveName << ", block str = " << blkStr;
-                setError(DUMountManager::Error::Failed, "umount block failed");
+                errorMsg = "umount block failed";
                 return false;
             }
         }
@@ -185,7 +185,7 @@ bool DUMountManager::removeDrive(const QString &driveName)
 {
     QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(driveName));
     if (!drv) {
-        setError(DUMountManager::Error::Failed, "invalid drive.");
+        errorMsg = "invalid drive.";
         return false;
     }
 
@@ -211,7 +211,7 @@ bool DUMountManager::removeDrive(const QString &driveName)
         return true;
 
     // 处理错误
-    setError(DUMountManager::Error::Failed, checkEjectErrorMsg(drv->lastError()));
+    errorMsg = checkEjectErrorMsg(drv->lastError());
     return false;
 }
 
@@ -219,7 +219,7 @@ bool DUMountManager::ejectDrive(const QString &driveName)
 {
     QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(driveName));
     if (!drv) {
-        setError(DUMountManager::Error::Failed, "invalid drive.");
+        errorMsg = "invalid drive.";
         return false;
     }
 
@@ -335,20 +335,9 @@ QList<QUrl> DUMountManager::getMountPathForAllDrive()
     return urls;
 }
 
-void DUMountManager::setError(DUMountManager::Error error, const QString &errorMsg)
-{
-    this->error = error;
-    this->errorMsg = errorMsg;
-}
-
 void DUMountManager::clearError()
 {
-    setError(DUMountManager::Error::Success, QString());
-}
-
-DUMountManager::Error DUMountManager::getError()
-{
-    return error;
+    errorMsg = QString();
 }
 
 QString DUMountManager::getErrorMsg()

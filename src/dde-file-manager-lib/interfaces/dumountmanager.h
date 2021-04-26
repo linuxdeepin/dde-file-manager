@@ -34,14 +34,6 @@ class DUMountManager : public QObject
     Q_OBJECT
 
 public:
-
-    enum Error {
-        Success = 0,        // 成功
-        Failed = 1,         // 不明原因失败
-        Timeout = 2,        // 超时
-        IsScanning = 3,     // 正在扫描
-    };
-
     DUMountManager(QObject *parent = nullptr);
     ~DUMountManager();
 
@@ -59,7 +51,6 @@ public:
     bool ejectDrive(const QString &driveName);
     bool ejectAllDrive();
 
-    Error getError();
     QString getErrorMsg();
 
 private:
@@ -68,12 +59,10 @@ private:
     QUrl getMountPathForBlock(const QString &blkName);
     QList<QUrl> getMountPathForDrive(const QString &driveName);
     QList<QUrl> getMountPathForAllDrive();
-    void setError(DUMountManager::Error error, const QString &errorMsg);
     void clearError();
 
 private:
     QScopedPointer<DefenderInterface> m_defenderInterface;
-    Error error;        //因为不同流程 error 和 errorMsg会不一致, 所以使用两个变量处理
     QString errorMsg;
 };
 
