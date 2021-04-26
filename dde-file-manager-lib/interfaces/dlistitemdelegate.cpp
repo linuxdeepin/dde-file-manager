@@ -381,8 +381,14 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
     edit->setObjectName("DListItemDelegate_Editor");
 
     connect(edit, &QLineEdit::destroyed, this, [this, d] {
-        d->editingIndex = QModelIndex();
-        DFMGlobal::setEditorValid(false);
+        QWidget *editor = this->parent()->indexWidget(d->editingIndex);
+        if (!editor || editor == sender()) {
+            DFMGlobal::setEditorValid(false);
+            d->editingIndex = QModelIndex();
+        } else {
+            DFMGlobal::setEditorValid(true);
+            qInfo() << d->editingIndex << "new edit create so not set d->editingIndex!";
+        }
     });
 
     connect(edit, &QLineEdit::textChanged, this, [edit] {

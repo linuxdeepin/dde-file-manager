@@ -881,7 +881,13 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
     //此处更改逻辑不再保持焦点离开后依然保持的item编辑态，将会提交相关的编辑框(与桌面保持一致)
     connect(item, &FileIconItem::inputFocusOut, this, &DIconItemDelegate::commitDataAndCloseActiveEditor);
     connect(item, &FileIconItem::destroyed, this, [this, d] {
-        d->editingIndex = QModelIndex();
+        QWidget *editor = this->parent()->indexWidget(d->editingIndex);
+        if (!editor || editor == sender()) {
+            d->editingIndex = QModelIndex();
+        } else {
+            DFMGlobal::setEditorValid(true);
+            qInfo() << d->editingIndex << "new edit create so not set d->editingIndex!";
+        }
     });
 
     return item;
@@ -1092,7 +1098,7 @@ void DIconItemDelegate::hideNotEditingIndexWidget()
     Q_D(DIconItemDelegate);
 
     if (d->expandedIndex.isValid()) {
-        parent()->setIndexWidget(d->expandedIndex, 0);
+        parent()->setIndexWidget(d->expandedIndex, nullptr);
         d->expandedItem->hide();
         d->expandedIndex = QModelIndex();
         d->lastAndExpandedInde = QModelIndex();
@@ -1295,7 +1301,7 @@ void DIconItemDelegate::onTriggerEdit(const QModelIndex &index)
     Q_D(DIconItemDelegate);
 
     if (index == d->expandedIndex) {
-        parent()->setIndexWidget(index, 0);
+        parent()->setIndexWidget(index, nullptr);
         d->expandedItem->hide();
         d->expandedIndex = QModelIndex();
         d->lastAndExpandedInde = QModelIndex();
