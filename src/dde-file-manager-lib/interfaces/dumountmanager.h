@@ -54,6 +54,8 @@ public:
     bool stopScanAllDrive();
 
     bool umountBlock(const QString &blkName);
+    bool umountBlocksOnDrive(const QString &driveName);
+    bool removeDrive(const QString &driveName);
     bool ejectDrive(const QString &driveName);
     bool ejectAllDrive();
 

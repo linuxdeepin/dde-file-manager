@@ -136,6 +136,28 @@ bool DUMountManager::umountBlock(const QString &blkName)
     return false;
 }
 
+bool DUMountManager::umountBlocksOnDrive(const QString &driveName)
+{
+    if (driveName.isNull() || driveName.isEmpty()) {
+        qWarning() << "invalid drive name:" << driveName;
+        setError(DUMountManager::Error::Failed, "invalid drive name:");
+        return false;
+    }
+
+    qInfo() << "start umount blocks on drive:" << driveName;
+    for (const QString &blkStr : DDiskManager::blockDevices({})) {
+        QScopedPointer<DBlockDevice> blkd(DDiskManager::createBlockDevice(blkStr));
+        if (blkd && blkd->drive() == driveName) {
+            if (!umountBlock(blkStr)) {
+                qWarning() << "umountBlock failed: drive = " << driveName << ", block str = " << blkStr;
+                setError(DUMountManager::Error::Failed, "umount block failed");
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 QString DUMountManager::checkMountErrorMsg(const QDBusError &dbsError)
 {
     if (!dbsError.isValid())
@@ -159,47 +181,26 @@ QString DUMountManager::checkEjectErrorMsg(const QDBusError &dbsError)
     return tr("Disk is busy, cannot eject now");
 }
 
-bool DUMountManager::ejectDrive(const QString &driveName)
+bool DUMountManager::removeDrive(const QString &driveName)
 {
-    if (driveName.isNull() || driveName.isEmpty()) {
-        qWarning() << "invalid drive name:" << driveName;
-        setError(DUMountManager::Error::Failed, "invalid drive name:");
-        return false;
-    }
-
-    qWarning() << "start eject:" << driveName;
-    for (const QString &blkStr : DDiskManager::blockDevices({})) {
-        QScopedPointer<DBlockDevice> blkd(DDiskManager::createBlockDevice(blkStr));
-        // 仅报告错误,尽可能将该盘符下可卸载的分区都卸载
-        if (blkd && blkd->drive() == driveName && !umountBlock(blkStr)) {
-            qWarning() << "umountBlock failed:drive = " << driveName << ", block str = " << blkStr;
-            continue;
-        }
-    }
-
     QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(driveName));
     if (!drv) {
         setError(DUMountManager::Error::Failed, "invalid drive.");
         return false;
     }
 
-    if (drv->removable() || (drv->optical() && drv->ejectable()))
-        drv->eject({});
+    // 尝试性卸载, 错误处理依赖后续流程
+    umountBlocksOnDrive(driveName);
 
-    if (drv->lastError().isValid()) {
-        qWarning() << drv->lastError() << "id:" << drv->lastError().type();
-        errorMsg = tr("The device is busy, cannot eject now");
-    }
-
+    qInfo() << "start remove drive:" << driveName;
     if (drv->canPowerOff()) {
         drv->powerOff({});
-    }
 
-    if (drv->lastError().isValid()) {
-        qWarning() << drv->lastError() << "id:" << drv->lastError().type();
-        errorMsg = tr("The device is busy, cannot remove now");
+        if (drv->lastError().isValid()) {
+            qWarning() << drv->lastError() << "id:" << drv->lastError().type();
+            errorMsg = tr("The device is busy, cannot remove now");
+        }
     }
-    qInfo() << "eject done:" << driveName;
 
     DDiskManager diskManager;
     QStringList devices = diskManager.diskDevices();
@@ -212,6 +213,56 @@ bool DUMountManager::ejectDrive(const QString &driveName)
     // 处理错误
     setError(DUMountManager::Error::Failed, checkEjectErrorMsg(drv->lastError()));
     return false;
+}
+
+bool DUMountManager::ejectDrive(const QString &driveName)
+{
+    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(driveName));
+    if (!drv) {
+        setError(DUMountManager::Error::Failed, "invalid drive.");
+        return false;
+    }
+
+    // 尝试性卸载, 错误处理依赖后续流程
+    umountBlocksOnDrive(driveName);
+
+    qInfo() << "start eject drive:" << driveName;
+    if (drv->optical()) {
+        if (drv->ejectable()) {
+            drv->eject({});
+
+            if (drv->lastError().isValid()) {
+                qWarning() << drv->lastError() << "id:" << drv->lastError().type();
+                errorMsg = tr("The device is busy, cannot eject now");
+                return false;
+            }
+
+            qInfo() << "eject done:" << driveName;
+            return true;
+        }
+    }
+
+    if (drv->removable()) {
+        drv->eject({});
+
+        if (drv->lastError().isValid()) {
+            qWarning() << drv->lastError() << "id:" << drv->lastError().type();
+            errorMsg = tr("The device is busy, cannot remove now");
+            return false;
+        }
+    }
+
+    if (drv->canPowerOff()) {
+        drv->powerOff({});
+
+        if (drv->lastError().isValid()) {
+            qWarning() << drv->lastError() << "id:" << drv->lastError().type();
+            errorMsg = tr("The device is busy, cannot remove now");
+            return false;
+        }
+    }
+
+    return true;
 }
 
 bool DUMountManager::ejectAllDrive()
