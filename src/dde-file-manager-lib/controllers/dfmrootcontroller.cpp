@@ -98,7 +98,12 @@ bool DFMRootController::renameFile(const QSharedPointer<DFMRenameEvent> &event) 
     QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
     Q_ASSERT(blk && blk->path().length() > 0);
 
-    blk->setLabel(event->toUrl().path(), {});
+    const QString &curName = rootFi->udisksDisplayName();
+    const QString &destName = event->toUrl().path();
+    if (curName == destName)
+        return true;
+
+    blk->setLabel(destName, {});
     if (blk->lastError().type() != QDBusError::NoError) {
         qDebug() << blk->lastError() << blk->lastError().name();
     }
