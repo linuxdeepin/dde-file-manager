@@ -235,7 +235,8 @@ void AccessControlManager::chmodMountpoints(const QString &blockDevicePath, cons
                 });
             }
         }
-        return;
+        if (policy != POLICY_RW) // 当格式化后，挂载点属组变为了 root 且权限变为了 755，其他用户变得无权限访问设备，因此这里在控制权限为 RW 的时候，继续执行后续变更挂载点权限的代码；
+            return;
     }
 
     qDebug() << "chmod ==>" << mountPoint;
