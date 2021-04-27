@@ -3106,7 +3106,13 @@ bool DFileCopyMoveJobPrivate::doRenameFile(const QSharedPointer<DFileHandler> &h
 
                 // 新建链接文件
                 if (!handler->link(oldInfo->symlinkTargetPath(), newInfo->fileUrl())) {
-                    return false;
+                    //错误队列处理
+                    errorQueueHandling();
+                    bool ok = setAndhandleError(DFileCopyMoveJob::SymlinkToGvfsError, oldInfo, newInfo,
+                                                handler->errorString()) == DFileCopyMoveJob::SkipAction;
+                    //当前错误处理完成
+                    errorQueueHandled();
+                    return ok;
                 }
 
                 // 删除旧的链接文件
@@ -4292,6 +4298,8 @@ DFileCopyMoveJob::Actions DFileCopyMoveJob::supportActions(DFileCopyMoveJob::Err
         return SkipAction | EnforceAction;
     case TargetIsSelfError:
         return SkipAction | EnforceAction;
+    case SymlinkToGvfsError:
+        return SkipAction | CancelAction;
     default:
         break;
     }

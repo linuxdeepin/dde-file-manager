@@ -95,6 +95,7 @@ public:
         MmapError,
         RemoveError,
         RenameError,
+        SymlinkToGvfsError,
         UnknowUrlError,
         NonexistenceError,
         IntegrityCheckingError,
