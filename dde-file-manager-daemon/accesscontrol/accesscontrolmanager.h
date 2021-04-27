@@ -79,9 +79,9 @@ private slots:
     bool isValidInvoker(uint pid, QString &invokerPath);
 
     void changeMountedPolicy(const QVariantMap &policy);
-    void changeMountedBlock(int mode, const QString &device);
-    void changeMountedOptical(int mode, const QString &device);
-    void changeMountedProtocol(int mode, const QString &device);
+    void changeMountedBlock(int mode, const QString &device = "");
+    void changeMountedOptical(int mode, const QString &device = "");
+    void changeMountedProtocol(int mode, const QString &device = "");
 
     // 在启动系统的时候对已挂载的设备执行一次策略变更（设备的接入先于 daemon 的启动）
     void changeMountedOnInit();

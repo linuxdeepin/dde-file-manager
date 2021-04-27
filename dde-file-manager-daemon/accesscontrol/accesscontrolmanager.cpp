@@ -67,6 +67,8 @@
 #define POLICY_RONLY      1
 #define POLICY_RW         2
 
+#define MAX_RETRY       5
+
 QString AccessControlManager::ObjectPath = "/com/deepin/filemanager/daemon/AccessControlManager";
 QString AccessControlManager::PolicyKitActionId = "com.deepin.filemanager.daemon.AccessControlManager";
 
@@ -285,8 +287,17 @@ void AccessControlManager::disconnOpticalDev(const QString &drivePath)
     qDebug() << drv << drv->optical() << m_globalPolicies.contains(TYPE_OPTICAL) << policy;
     if (policy == POLICY_DISABLE) {
         QtConcurrent::run([drv](){
-            drv->powerOff({});
-            qDebug() << "poweroff device: " << drv->lastError().message();
+            int retry = 0;
+            do {
+                retry++;
+                drv->powerOff({});
+                QDBusError err = drv->lastError();
+                if (err.type() == QDBusError::NoError || retry == MAX_RETRY)
+                    break;
+                else
+                    qDebug() << "poweroff device: " << drv->lastError().message();
+                QThread::msleep(500);
+            } while (1);
         });
     }
 }
@@ -426,7 +437,7 @@ void AccessControlManager::changeMountedBlock(int mode, const QString &device)
         waitToHandle.append(args);
     }
 
-//    qDebug() << waitToHandle;
+    // 4. 开启线程处理重载/卸载任务
     if (waitToHandle.count() > 0) {
         QtConcurrent::run([waitToHandle, mode](){
             foreach(auto dev, waitToHandle) {
@@ -438,8 +449,8 @@ void AccessControlManager::changeMountedBlock(int mode, const QString &device)
                                     dev.fileSystem.toLocal8Bit().data(),
                                     MS_REMOUNT | (mode == POLICY_RONLY ? MS_RDONLY : 0),
                                     nullptr);
-//                    if (ret < 0)
-//                        qDebug() << "remount " << dev.devDesc << " failed: " << errno << ": " << strerror(errno);
+                    if (ret < 0)
+                        qDebug() << "remount " << dev.devDesc << " failed: " << errno << ": " << strerror(errno);
                 }
             }
         });
@@ -479,15 +490,21 @@ void AccessControlManager::changeMountedOptical(int mode, const QString &device)
                     continue;
                 }
             }
-            sleep(1);
+            QThread::msleep(500);
             // poweroff it
             QSharedPointer<DDiskDevice> drv = opticalDrv.value(blk->drive());
             if (drv) {
-                drv->powerOff({});
-                if (drv->lastError().type() != QDBusError::NoError) {
-                    qDebug() << "Error occured while poweroff optical device: " << drv->lastError().message();
-                    continue;
-                }
+                int retry = 0;
+                do {
+                    retry++;
+                    drv->powerOff({});
+                    QDBusError err = drv->lastError();
+                    if (err.type() == QDBusError::NoError || retry == MAX_RETRY)
+                        break;
+                    else
+                        qDebug() << "Error occured while poweroff optical device: " << drv->lastError().message();
+                    QThread::msleep(500);
+                } while (1);
             }
         }
     });
