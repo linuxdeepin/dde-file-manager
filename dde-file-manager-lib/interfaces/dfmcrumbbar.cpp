@@ -454,6 +454,7 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
                 listitem = new QStandardItem(c.displayText);
             }
 
+            listitem->setTextAlignment(Qt::AlignCenter);
             listitem->setCheckable(false);
             listitem->setData(c.url, DFMCrumbListviewModel::FileUrlRole);
             d->crumbListviewModel->appendRow(listitem);
