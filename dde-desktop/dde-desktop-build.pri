@@ -13,9 +13,9 @@ isEqual(EDITION, RACCOON) {
 DEFINES += DDE_DBUS_DISPLAY
 
 CONFIG(release, release|debug) {
-    PKGCONFIG += dtkwidget dtkgui dtkcore
+    PKGCONFIG += dtkwidget5.5 dtkgui5.5 dtkcore5.5
 } else {
-    PKGCONFIG += dtkwidget dtkgui dtkcore
+    PKGCONFIG += dtkwidget5.5 dtkgui5.5 dtkcore5.5
 }
 
 load(dtk_qmake)

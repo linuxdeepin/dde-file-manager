@@ -9,7 +9,7 @@ QT       += core gui widgets
 TARGET = dde-video-preview-plugin
 TEMPLATE = lib
 
-PKGCONFIG += libdmr dtkgui
+PKGCONFIG += libdmr dtkgui5.5
 CONFIG += plugin link_pkgconfig c++11
 
 include(../../../common/common.pri)

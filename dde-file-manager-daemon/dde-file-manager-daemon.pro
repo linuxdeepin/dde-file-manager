@@ -14,9 +14,9 @@ CONFIG   -= app_bundle
 
 PKGCONFIG += x11 polkit-agent-1 polkit-qt5-1 udisks2-qt5
 CONFIG(release, release|debug) {
-    PKGCONFIG += dtkwidget
+    PKGCONFIG += dtkwidget5.5
 } else {
-    PKGCONFIG += dtkwidget
+    PKGCONFIG += dtkwidget5.5
 }
 CONFIG += c++11 link_pkgconfig
 

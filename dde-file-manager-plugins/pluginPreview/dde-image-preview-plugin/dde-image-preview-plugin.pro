@@ -10,7 +10,7 @@ TARGET = dde-image-preview-plugin
 TEMPLATE = lib
 
 CONFIG += plugin c++11 link_pkgconfig
-PKGCONFIG += dtkwidget dtkgui
+PKGCONFIG += dtkwidget5.5 dtkgui5.5
 
 include(../../../common/common.pri)
 include(dde-image-preview-plugin.pri)
