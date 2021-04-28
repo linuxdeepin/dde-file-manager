@@ -86,7 +86,7 @@ AccessControlManager::AccessControlManager(QObject *parent)
     m_diskMnanager->setWatchChanges(true);
     qDebug() << "=======AccessControlManager() ";
 
-    m_whiteProcess << "/usr/bin/python3.7";
+    m_whiteProcess << "/usr/bin/dmcg";
     m_configPath = "/etc/deepin/devAccessConfig.json";
     loadPolicy();
     changeMountedOnInit();
@@ -151,7 +151,7 @@ QString AccessControlManager::SetAccessPolicy(const QVariantMap &policy)
     }
 
     // 1. 校验策略有效性
-    if (!isValidPolicy(policy)) {
+    if (!isValidPolicy(policy, invokerPath)) {
         sigInfo = policy;
         sigInfo.insert(KEY_ERRNO, InvalidArgs);
         sigInfo.insert(KEY_ERRSTR, m_errMsg.value(InvalidArgs));
@@ -303,15 +303,16 @@ void AccessControlManager::disconnOpticalDev(const QString &drivePath)
     }
 }
 
-bool AccessControlManager::isValidPolicy(const QVariantMap &policy)
+bool AccessControlManager::isValidPolicy(const QVariantMap &policy, const QString &realInvoker)
 {
     // invoker must not be empty
-    // type must in (0, 8)
+    // type must in (0, 7]
     // policy must in [0, 2]
     // device is optional
     return policy.contains(KEY_INVOKER) && !policy.value(KEY_INVOKER).toString().isEmpty()
-          && policy.contains(KEY_TYPE) && policy.value(KEY_TYPE).toInt() > TYPE_INVALID && policy.value(KEY_TYPE).toInt() < (TYPE_BLOCK | TYPE_OPTICAL | TYPE_PROTOCOL)
-          && policy.contains(KEY_POLICY) && policy.value(KEY_POLICY).toInt() >= POLICY_DISABLE && policy.value(KEY_POLICY).toInt() <= POLICY_RW;
+            && policy.contains(KEY_TYPE) && policy.value(KEY_TYPE).toInt() > TYPE_INVALID && policy.value(KEY_TYPE).toInt() <= (TYPE_BLOCK | TYPE_OPTICAL | TYPE_PROTOCOL)
+            && policy.contains(KEY_POLICY) && policy.value(KEY_POLICY).toInt() >= POLICY_DISABLE && policy.value(KEY_POLICY).toInt() <= POLICY_RW
+            && policy.value(KEY_INVOKER).toString() == realInvoker;
 }
 
 void AccessControlManager::savePolicy(const QVariantMap &policy)

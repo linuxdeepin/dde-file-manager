@@ -75,7 +75,7 @@ private slots:
     void chmodMountpoints(const QString &blockDevicePath, const QByteArray &mountPoint);
     void disconnOpticalDev(const QString &drivePath);
 
-    bool isValidPolicy(const QVariantMap &policy);
+    bool isValidPolicy(const QVariantMap &policy, const QString &realInvoker);
     bool isValidInvoker(uint pid, QString &invokerPath);
 
     void changeMountedPolicy(const QVariantMap &policy);
