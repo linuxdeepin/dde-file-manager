@@ -54,6 +54,7 @@
 #include <QJsonArray>
 #include <QProcess>
 #include <QStandardPaths>
+#include <QStorageInfo>
 #include <QRegularExpression>
 
 #include <views/windowmanager.h>
@@ -481,6 +482,17 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
         DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bVolFlag = true;
         //fix: 设置光盘容量属性
         //DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusAddMount);
+        QString mpt = qMount.mounted_root_uri();
+        mpt.remove(FILE_ROOT);
+        if (!mpt.startsWith("/"))
+            mpt = "/" + mpt;
+
+        QStorageInfo info(mpt);
+        if (info.isValid()) {
+            quint64 total = static_cast<quint64>(info.bytesTotal());
+            DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].nTotal = total;
+            DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].nUsage = total;
+        }
     }
 
     qCDebug(mountManager()) << "===================" << qMount.mounted_root_uri() << volume << "=======================";

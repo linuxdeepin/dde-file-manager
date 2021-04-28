@@ -377,8 +377,12 @@ void DFMOpticalMediaWidgetPrivate::setCurrentDevice(const QString &dev)
 
     QString strKey = getVolTag();
     //fixed:CD display size error
-    DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nTotal = dp.data + dp.avail;
-    DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nUsage = dp.data;
+    if (dp.avail != 0 || DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nTotal == 0) {
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nTotal = dp.data + dp.avail;
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nUsage = dp.data;
+    } else {
+        pb_burn->setEnabled(false);
+    }
 
     QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
