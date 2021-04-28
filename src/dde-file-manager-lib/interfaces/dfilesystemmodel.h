@@ -238,6 +238,7 @@ signals:
     // fix bug 63938
     // 切换标签时，更新高级选项中的过滤项
     void updateFilterRule(const FileFilter *filter);
+    void sortFinished();
 
 protected:
     bool remove(const DUrl &url);

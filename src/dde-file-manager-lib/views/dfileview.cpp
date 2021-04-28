@@ -2346,6 +2346,7 @@ void DFileView::initConnects()
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::delayUpdateStatusBar);
     connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
     connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
+    connect(model(), &DFileSystemModel::sortFinished, this, &DFileView::delayUpdateStatusBar);
     connect(model(), &DFileSystemModel::rootUrlDeleted, this, &DFileView::onRootUrlDeleted);
 
     connect(this, &DFileView::iconSizeChanged, this, &DFileView::updateHorizontalOffset, Qt::QueuedConnection);

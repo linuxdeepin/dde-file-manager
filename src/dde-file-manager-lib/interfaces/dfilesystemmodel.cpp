@@ -2221,6 +2221,7 @@ bool DFileSystemModel::doSortBusiness(bool emitDataChange)
     }
 
 //    qDebug() << "end the sort business";
+    emit sortFinished();
     return ok;
 }
 
