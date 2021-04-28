@@ -1397,8 +1397,10 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
     }
 
     // 避免滚动视图导致文件选中状态被取消
-    if (!QScroller::hasScroller(this))
-        return DListView::mouseReleaseEvent(event);
+    if (!QScroller::hasScroller(this)) {
+        DListView::mouseReleaseEvent(event);
+        update();
+    }
 }
 
 void DFileView::updateModelActiveIndex()
