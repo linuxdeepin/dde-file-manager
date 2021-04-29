@@ -57,8 +57,7 @@ void ComputerPropertyDialog::initUI()
 {
     QLabel *iconLabel = new QLabel(this);
 
-    if(DFMGlobal::isWayLand())
-    {
+    if (DFMGlobal::isWayLand()) {
         //设置对话框窗口最大最小化按钮隐藏
         this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
         this->setAttribute(Qt::WA_NativeWindow);
@@ -231,7 +230,7 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
 
     if (DSysInfo::isDeepin()) {
         //! 获取系统版本名
-        Edition = DSysInfo::uosEditionName();
+        Edition = DSysInfo::minorVersion() + "e";
         //! 获取系统版本号
         version = DSysInfo::majorVersion();
         if (!deepin_systemInfo->isValid()) {
