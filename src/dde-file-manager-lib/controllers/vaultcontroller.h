@@ -173,7 +173,7 @@ public:
     static QFileDevice::Permissions getPermissions(QString filePath);
 
     /**
-     * @brief state         获取当前保险箱状态
+     * @brief state         获取当前保险箱状态,并记录到成员变量中（m_enVaultState）
      * @param lockBaseDir   保险箱加密文件夹
      * @return              返回VaultState枚举值
      */

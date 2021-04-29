@@ -731,6 +731,8 @@ VaultController::VaultState VaultController::state(QString lockBaseDir)
 {
     QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
     if (cryfsBinary.isEmpty()) {
+        // 记录保险箱状态
+        m_enVaultState = NotAvailable;
         return NotAvailable;
     }
 
@@ -746,11 +748,13 @@ VaultController::VaultState VaultController::state(QString lockBaseDir)
         QStorageInfo info(makeVaultLocalPath(""));
         QString temp = info.fileSystemType();
         if (info.isValid() && temp == "fuse.cryfs") {
+            m_enVaultState = Unlocked;
             return Unlocked;
         }
-
+        m_enVaultState = Encrypted;
         return Encrypted;
     } else {
+        m_enVaultState = NotExisted;
         return NotExisted;
     }
 }
