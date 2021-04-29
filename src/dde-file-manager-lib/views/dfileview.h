@@ -230,7 +230,6 @@ private slots:
     void onRowCountChanged();
     void updateModelActiveIndex();
     void handleDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles = QVector<int>());
-    void onRootUrlDeleted(const DUrl &rootUrl);
     void freshView();
     void loadViewState(const DUrl &url);
     void saveViewState();
@@ -238,6 +237,9 @@ private slots:
     void onDriveOpticalChanged(const QString &path);
     void reset() override;
     void setRootIndex(const QModelIndex &index) override;
+
+protected slots:
+    virtual void onRootUrlDeleted(const DUrl &rootUrl);
 
 protected:
     void wheelEvent(QWheelEvent *event) override;

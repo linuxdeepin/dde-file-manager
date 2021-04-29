@@ -58,4 +58,8 @@ protected:
      * @return
      */
     bool eventFilter(QObject *obj, QEvent *event) override;
+
+protected slots:
+    // 保险箱单独实现父目录删除后，目录跳转方法
+    void onRootUrlDeleted(const DUrl &rootUrl) override;
 };

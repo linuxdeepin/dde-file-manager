@@ -111,3 +111,12 @@ bool DFMVaultFileView::eventFilter(QObject *obj, QEvent *event)
 
     return DFileView::eventFilter(obj, event);
 }
+
+void DFMVaultFileView::onRootUrlDeleted(const DUrl &rootUrl)
+{
+    // 修复bug-77747 保险箱上锁情况下会跳转到计算机页面，所以这里不用执行跳转
+    if (VaultController::ins()->state() == VaultController::Encrypted)
+        return;
+
+    DFileView::onRootUrlDeleted(rootUrl);
+}
