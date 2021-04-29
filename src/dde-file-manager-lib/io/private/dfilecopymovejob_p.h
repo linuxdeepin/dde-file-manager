@@ -37,6 +37,8 @@
 #include <QQueue>
 #include <QFileDevice>
 
+#include <fcntl.h>
+
 #include "dfiledevice.h"
 
 typedef QExplicitlySharedDataPointer<DAbstractFileInfo> DAbstractFileInfoPointer;
@@ -226,14 +228,7 @@ public:
     void stopAllDeviceOperation();
     //清理线程池资源
     void clearThreadPool();
-    //在异步线程执行同步
-    void syncInOtherThread();
-    //优化拷贝时，异步线程去同步的一些状态使用
-    bool getSysncState();
-    bool getSysncQuitState();
-    void setSysncState(const bool &state);
-    void setSysncQuitState(const bool &quitstate);
-    void waitSysncEnd();
+
     void waitRefineThreadFinish();
     void setLastErrorAction(const DFileCopyMoveJob::Action &action);
     DFileCopyMoveJob::Action getLastErrorAction();
@@ -324,11 +319,8 @@ public:
     QAtomicInt m_refineStat = DFileCopyMoveJob::RefineLocal;
     //优化盘内拷贝，启用的线程池
     QThreadPool m_pool;
-    //优化拷贝时异步线程状态
-    QAtomicInteger<bool> m_bSyncState = false;
-    //异步线程是否可以退出状体
-    QAtomicInteger<bool> m_bSyncQuitState = false;
     QAtomicInteger<bool> m_bDestLocal = false;
+    QAtomicInteger<bool> m_bCountMyself = false;
     qint64 m_refineCopySize = 0;
     QMutex m_refineMutex;
     //是否需要显示进度条
@@ -336,6 +328,7 @@ public:
     //是否需要每读写一次同步
     bool m_isEveryReadAndWritesSnc = false;
     QAtomicInteger<bool> m_isVfat = false;
+    QAtomicInt m_openFlag = O_CREAT | O_WRONLY;
     //分断拷贝的线程数量
     QAtomicInt m_bigFileThreadCount = 0;
     QAtomicInteger<bool> m_isWriteThreadStart = false;

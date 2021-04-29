@@ -784,10 +784,6 @@ TEST_F(DFileCopyMoveJobTest,start_run_moveMOde) {
     EXPECT_FALSE(job->fileStatisticsIsFinished());
     EXPECT_FALSE(job->completedDirectorys().empty());
     EXPECT_TRUE(job->isCanShowProgress());
-    jobd->setSysncState(true);
-    jobd->setSysncQuitState(true);
-    EXPECT_TRUE(jobd->getSysncState());
-    jobd->waitSysncEnd();
     job->stop();
 }
 

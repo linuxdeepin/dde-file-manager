@@ -2941,6 +2941,8 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
     } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
 
     if (action == DFileCopyMoveJob::SkipAction) {
+        completedProgressDataSize += fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : fromInfo->size();
+        countrefinesize(fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : fromInfo->size());
         return true;
     } else if (action != DFileCopyMoveJob::NoAction) {
         //出错就停止
@@ -2957,7 +2959,6 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
 #endif
     qint64 size_block = fromInfo->size() > MAX_BUFFER_LEN ? MAX_BUFFER_LEN : fromInfo->size();
     size_block = blockSize;
-
     FileCopyInfoPointer copyinfo(new FileCopyInfo());
     copyinfo->handler = handler;
     copyinfo->frominfo = fromInfo;
@@ -2966,7 +2967,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
     qint64 current_pos = 0;
     while (true) {
         while(checkWritQueueCount()) {
-            QThread::msleep(200);
+            QThread::msleep(1);
         }
         copyinfo->currentpos = current_pos;
         char *buffer = new char[size_block + 1];
@@ -2979,6 +2980,10 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
 
         if (skipReadFileDealWriteThread(fromInfo->fileUrl()))
         {
+            completedProgressDataSize += fromInfo->size() <= 0
+                    ? FileUtils::getMemoryPageSize() : fromInfo->size() - current_pos;
+            countrefinesize(fromInfo->size() <= 0
+                            ? FileUtils::getMemoryPageSize() : fromInfo->size() - current_pos);
             delete[]  buffer;
             close(fromfd);
             return true;
@@ -3020,6 +3025,10 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
                 m_skipFileQueueMutex.lock();
                 m_skipFileQueue.push_back(fromInfo->fileUrl());
                 m_skipFileQueueMutex.unlock();
+                completedProgressDataSize += fromInfo->size() <= 0
+                        ? FileUtils::getMemoryPageSize() : fromInfo->size() - current_pos;
+                countrefinesize(fromInfo->size() <= 0
+                                ? FileUtils::getMemoryPageSize() : fromInfo->size() - current_pos);
                 return true;
             default:
                 close(fromfd);
@@ -3451,7 +3460,7 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
     dataSize += completedProgressDataSize;
 
     //优化
-    dataSize = m_bDestLocal ? m_refineCopySize : dataSize;
+    dataSize = (m_bDestLocal || m_bCountMyself) ? m_refineCopySize : dataSize;
 
     dataSize += skipFileSize;
 
@@ -3516,7 +3525,7 @@ void DFileCopyMoveJobPrivate::updateMoveProgress()
 void DFileCopyMoveJobPrivate::updateSpeed()
 {
     const qint64 time = updateSpeedElapsedTimer->elapsed();
-    const qint64 total_size = m_bDestLocal ? m_refineCopySize : getCompletedDataSize();
+    const qint64 total_size = (m_bDestLocal || m_bCountMyself) ? m_refineCopySize : getCompletedDataSize();
     if (time == 0)
         return;
 
@@ -3696,6 +3705,8 @@ bool DFileCopyMoveJobPrivate::writeToFileByQueue()
             continue;
         }
         if (skipReadFileDealWriteThread(info->frominfo->fileUrl())) {
+            completedProgressDataSize += info->size;
+            countrefinesize(info->size);
             releaseCopyInfo(info);
             continue;
         }
@@ -3709,7 +3720,7 @@ bool DFileCopyMoveJobPrivate::writeToFileByQueue()
             DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
             do {
                 std::string path = info->toinfo->fileUrl().path().toStdString();
-                toFd = open(path.c_str(), O_CREAT | O_WRONLY, 0777);
+                toFd = open(path.c_str(), m_openFlag, 0777);
                 if (toFd > -1) {
                     m_writeOpenFd.insert(info->toinfo->fileUrl(), toFd);
                     action = DFileCopyMoveJob::NoAction;
@@ -3740,6 +3751,8 @@ bool DFileCopyMoveJobPrivate::writeToFileByQueue()
                 isErrorOccur = false;
             }
             if (action == DFileCopyMoveJob::SkipAction) {
+                countrefinesize(info->size);
+                completedProgressDataSize += info->size;
                 releaseCopyInfo(info);
                 QMutexLocker lk(&m_skipFileQueueMutex);
                 m_skipFileQueue.enqueue(info->frominfo->fileUrl());
@@ -3792,6 +3805,8 @@ write_data: {
                     //临时处理 fix
                     //判断是否是网络文件，是，就去调用closeWriteReadFailed，不去调用g_output_stream_close(d->output_stream, nullptr, nullptr);
                     //在失去网络，网络文件调用gio 的 g_output_stream_close 关闭 output_stream，会卡很久
+                    completedProgressDataSize += info->size;
+                    countrefinesize(info->size);
                     releaseCopyInfo(info);
 
                     //当前错误处理完成
@@ -4011,39 +4026,6 @@ void DFileCopyMoveJobPrivate::clearThreadPool()
     m_pool.releaseThread();
 }
 
-void DFileCopyMoveJobPrivate::syncInOtherThread()
-{
-    if (!m_isVfat)
-        return;
-    qInfo() << "sync in other thread start !";
-    QPointer<DFileCopyMoveJob> me = q_ptr;
-    QString rootpath = targetRootPath;
-    if (rootpath.isEmpty() || !me)
-        return;
-    //优化等待1秒后启动异步“同文件”
-
-    m_syncResult = QtConcurrent::run([me, this]() {
-        if (me.isNull()) {
-            return;
-        }
-        QString rootpath = targetRootPath;
-        setSysncState(true);
-        while (me.isNull() && !getSysncQuitState()) {
-            QProcess::execute("sync", {"-f", rootpath});
-            if (me.isNull())
-                return;
-            if (state == DFileCopyMoveJob::StoppedState)
-                break;
-            if (!getSysncQuitState())
-                QThread::msleep(200);
-        }
-        if (me.isNull()) {
-            return;
-        }
-        setSysncState(false);
-    });
-}
-
 DFileCopyMoveJob::DFileCopyMoveJob(QObject *parent)
     : DFileCopyMoveJob(*new DFileCopyMoveJobPrivate(this), parent)
 {
@@ -4212,45 +4194,11 @@ bool DFileCopyMoveJob::isCanShowProgress() const
     return d->m_isNeedShowProgress;
 }
 
-bool DFileCopyMoveJobPrivate::getSysncState()
-{
-    return m_bSyncState;
-}
-
-bool DFileCopyMoveJobPrivate::getSysncQuitState()
-{
-
-    return m_bSyncQuitState;
-}
-
-void DFileCopyMoveJobPrivate::setSysncState(const bool &state)
-{
-    m_bSyncState = state;
-}
-
-void DFileCopyMoveJobPrivate::setSysncQuitState(const bool &quitstate)
-{
-    m_bSyncQuitState = quitstate;
-}
-
 void DFileCopyMoveJob::setRefine(const RefineState &refinestat)
 {
     Q_D(DFileCopyMoveJob);
 
     d->m_refineStat = refinestat;
-}
-
-void DFileCopyMoveJobPrivate::waitSysncEnd()
-{
-    qInfo() << "wait sync finished !";
-    while (getSysncState() || !m_syncResult.isFinished()) {
-        if (DFileCopyMoveJob::StoppedState == state) {
-            m_pool.clear();
-            m_syncResult.cancel();
-            break;
-        }
-        QThread::msleep(50);
-    }
 }
 
 void DFileCopyMoveJobPrivate::waitRefineThreadFinish()
@@ -4534,8 +4482,6 @@ void DFileCopyMoveJob::run()
     d->completedFilesCount = 0;
     d->tid = qt_gettid();
 
-
-
     DAbstractFileInfoPointer target_info;
     bool mayExecSync = false;
     QPointer<DFileCopyMoveJob> me = this;
@@ -4579,17 +4525,19 @@ void DFileCopyMoveJob::run()
             d->targetRootPath = targetStorageInfo->rootPath();
             QString rootpath = d->targetRootPath;
             d->m_bDestLocal = FileUtils::isFileOnDisk(rootpath);
-            if (!d->m_bDestLocal) {
-                d->syncInOtherThread();
-            }
 
             qCDebug(fileJob(), "Target block device: \"%s\", Root Path: \"%s\"",
                     targetStorageInfo->device().constData(), qPrintable(d->targetRootPath));
 
             if (targetStorageInfo->isLocalDevice()) {
                 d->canUseWriteBytes = targetStorageInfo->fileSystemType().startsWith("ext");
+                if (targetStorageInfo->fileSystemType().startsWith("vfat")
+                        || targetStorageInfo->fileSystemType().startsWith("ntfs")
+                        || targetStorageInfo->fileSystemType().startsWith("btrfs"))
+                    d->m_openFlag = d->m_openFlag | O_DIRECT;
 
                 if (!d->canUseWriteBytes) {
+                    d->m_bCountMyself = true;
                     const QByteArray dev_path = targetStorageInfo->device();
 
                     QProcess process;
@@ -4713,16 +4661,10 @@ void DFileCopyMoveJob::run()
         d->setError(NoError);
 
 end:
-    //设置同步线程结束
-    if (DFileCopyMoveJob::StoppedState == d->state) {
-        d->m_syncResult.cancel();
-    }
     //设置优化拷贝线程结束
     d->setRefineCopyProccessSate(ReadFileProccessOver);
     //等待线程池结束,等待异步写线程结束
     d->waitRefineThreadFinish();
-    d->setSysncQuitState(true);
-    d->waitSysncEnd();
 
     if (!d->m_bDestLocal && d->targetIsRemovable && mayExecSync &&
             d->state != DFileCopyMoveJob::StoppedState) { //主动取消时state已经被设置为stop了
