@@ -4339,12 +4339,12 @@
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="442"/>
         <source>Sharing failed</source>
-        <translation type="unfinished"></translation>
+        <translation>共享失败</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="442"/>
         <source>The computer name is too long</source>
-        <translation type="unfinished"></translation>
+        <translation>计算机名过长</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="511"/>
