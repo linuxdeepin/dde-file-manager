@@ -708,7 +708,7 @@ TEST_F(DFileCopyMoveJobTest,start_doProcess) {
     TestHelper::deleteTmpFiles(QStringList() << to.toLocalFile()+from.fileName());
     EXPECT_TRUE(jobd->doProcess(from,source,taginfo));
     st.set(ADDR(DFileCopyMoveJobPrivate,setAndhandleError),sss7);
-    EXPECT_TRUE(jobd->doProcess(from,source,taginfo));
+    EXPECT_FALSE(jobd->doProcess(from,source,taginfo));
     TestHelper::deleteTmpFiles(QStringList() << to.toLocalFile()+from.fileName());
     st.set(ADDR(DFileCopyMoveJobPrivate,setAndhandleError),sss8);
     EXPECT_FALSE(jobd->doProcess(from,source,taginfo));
@@ -862,7 +862,7 @@ TEST_F(DFileCopyMoveJobTest,start_process) {
     to = from;
     to.setPath("./");
     DAbstractFileInfoPointer toinfo = DFileService::instance()->createFileInfo(nullptr,to);
-    EXPECT_TRUE(jobd->process(from,toinfo));
+    EXPECT_FALSE(jobd->process(from,toinfo));
     TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() << to.toLocalFile() + from.fileName());
     job->stop();
 }
@@ -931,14 +931,16 @@ TEST_F(DFileCopyMoveJobTest,start_doLinkFile) {
     DUrl from,to;
     from.setScheme(FILE_SCHEME);
     from.setPath("./bin");
+    QString fromPath = from.path();
     QProcess::execute("mkdir " + from.path());
     QString linkpath = QDir::currentPath() + "/zut_syslink_tset";
     QSharedPointer<DFileHandler>  handler(DFileService::instance()->createFileHandler(nullptr,from));
     DAbstractFileInfoPointer fileinfo = DFileService::instance()->createFileInfo(nullptr,from);
     EXPECT_TRUE(jobd->doLinkFile(handler,fileinfo,linkpath));
     from.setPath(QDir::currentPath() + "/zut_syslink_tset");
-    EXPECT_FALSE(jobd->doLinkFile(handler,fileinfo,linkpath));
-    TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() << linkpath);
+    fileinfo->refresh();
+    EXPECT_TRUE(jobd->doLinkFile(handler,fileinfo,linkpath));
+    TestHelper::deleteTmpFiles(QStringList() << from.toLocalFile() << linkpath << fromPath);
     job->stop();
 }
 class devicetest : public  DFileDevice

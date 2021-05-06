@@ -542,9 +542,9 @@ TEST_F(AppControllerTest,start_actionBookmarkandother){
     EXPECT_NO_FATAL_FAILURE(controller->actionSendToBluetooth());
     QAction action;
     action.connect(&action,&QAction::triggered,controller,&AppController::actionSendToBluetooth);
-    emit action.triggered();
     void (*sendToBluetoothlamda)(const DUrlList &) = [](const DUrlList &){};
     stl.set(ADDR(DFileService,sendToBluetooth),sendToBluetoothlamda);
+    emit action.triggered();
     EXPECT_NO_FATAL_FAILURE(controller->actionSendToBluetooth());
     bool (*deleteFileslamda)(const QObject *, const DUrlList &, bool, bool, bool) = []
             (const QObject *, const DUrlList &, bool, bool, bool){
