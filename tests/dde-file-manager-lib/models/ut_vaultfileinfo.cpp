@@ -26,6 +26,7 @@
 #define private public
 
 #include "models/vaultfileinfo.h"
+#include "controllers/vaultcontroller.h"
 
 namespace  {
 class TestVaultFileInfo : public testing::Test
@@ -171,7 +172,12 @@ TEST_F(TestVaultFileInfo, get_is_dir)
 
 TEST_F(TestVaultFileInfo, can_drop)
 {
-    EXPECT_FALSE(m_vaultFileInfo->canDrop());
+    if (VaultController::VaultState::Unlocked == VaultController::ins()->getVaultState()
+            && m_vaultFileInfo->isDir() && m_vaultFileInfo->isWritable()) {
+        EXPECT_TRUE(m_vaultFileInfo->canDrop());
+    } else {
+        EXPECT_FALSE(m_vaultFileInfo->canDrop());
+    }
 }
 
 TEST_F(TestVaultFileInfo, get_is_ancestors_url)
