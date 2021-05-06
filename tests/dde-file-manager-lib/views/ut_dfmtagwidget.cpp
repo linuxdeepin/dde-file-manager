@@ -108,6 +108,11 @@ TEST_F(DFMTagWidgetTest, shouldShow){
     auto tempp = m_utDirUrl;
     DUrl temppp(m_utDirUrl);
     DUrl url = m_dw->d_func()->redirectUrl(temppp);
+
+    Stub stub;
+    bool (*ut_whetherShowTagActions)() = [](){return true;};
+    stub.set(ADDR(DFileMenuManager,whetherShowTagActions), ut_whetherShowTagActions);
+
     auto expectValue = m_dw->shouldShow(url);
     EXPECT_TRUE(expectValue);
 }

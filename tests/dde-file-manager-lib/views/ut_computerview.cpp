@@ -128,6 +128,9 @@ TEST_F(ComputerViewTest, call_context_menu)
 
     EXPECT_NO_FATAL_FAILURE(m_computerView->contextMenu(QPoint(100, 100)));
 
+    bool (*ut_isEmpty)() = [](){return false;};
+    stub.set(ADDR(QList<QAction*>, isEmpty), ut_isEmpty);
+
     myCallExec = false;
     mySchemeRole = QString("other");
     EXPECT_NO_FATAL_FAILURE(m_computerView->contextMenu(QPoint(100, 100)));

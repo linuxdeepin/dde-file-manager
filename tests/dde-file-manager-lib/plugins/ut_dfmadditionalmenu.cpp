@@ -88,7 +88,9 @@ TEST_F(DFMAdditionalMenuTest, testActions_TwoSize)
     QStringList files;
     files << "file:///test1" << "file:///test2";
     QList<QAction *> result = p_menu->actions(files);
-    EXPECT_FALSE(result.isEmpty());
+    if (p_menu->d_func()->actionListByType["MultiFileDirs"].isEmpty()) {
+        EXPECT_TRUE(result.isEmpty());
+    }
 }
 
 TEST_F(DFMAdditionalMenuTest, load_desktop_file)
