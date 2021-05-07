@@ -249,6 +249,9 @@ signals:
 
     // 请求关闭本地监听端口
     void requestCloseListen();
+
+    // 请求停止mediainfo的获取
+    void requestCloseMediaInfo(const QString path);
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString &srcFileName);

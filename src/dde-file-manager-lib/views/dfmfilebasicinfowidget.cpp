@@ -26,6 +26,7 @@
 #include "dfilestatisticsjob.h"
 #include "shutil/fileutils.h"
 #include "app/define.h"
+#include "app/filesignalmanager.h"
 #include "singleton.h"
 #include "shutil/mimetypedisplaymanager.h"
 #include "controllers/vaultcontroller.h"
@@ -277,6 +278,13 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
                 mediaInfo = new DFMMediaInfo(filePath, layoutWidget);
                 mediaInfo->startReadInfo();
             }
+            QPointer<DFMMediaInfo> ptrMediaInfo = mediaInfo;
+            QObject::connect(fileSignalManager, &FileSignalManager::requestCloseMediaInfo, layout, [ptrMediaInfo, this](const QString path){
+                if (m_url.path() == path && ptrMediaInfo) {
+                    ptrMediaInfo->stopReadInfo();
+                }
+            }, Qt::DirectConnection);
+
             QObject::connect(mediaInfo, &DFMMediaInfo::Finished, layout, [ = ]() {
                 int frame_height = q->height();
                 QString duration = mediaInfo->Value("Duration", mediaType);

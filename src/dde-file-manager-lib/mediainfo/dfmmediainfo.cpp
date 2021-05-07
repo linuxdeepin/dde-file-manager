@@ -37,6 +37,7 @@ class DFMMediaInfoPrivate : public QSharedData
 {
 public:
     DFMMediaInfoPrivate(DFMMediaInfo *qq, const QString &file) : q_ptr(qq)
+        , m_isStopStat(false)
     {
         m_isWorking.store(false);
         m_file = file;
@@ -83,7 +84,8 @@ public:
      */
     void start()
     {
-
+        if (m_isStopStat.load())
+            return;
         Q_Q(DFMMediaInfo);
         if (m_isWorking.load())
             return;
@@ -128,6 +130,8 @@ public:
 
 private:
     std::atomic<bool>    m_isWorking;
+    std::atomic<bool>    m_isStopStat;
+    QMutex m_mutex;
     QString m_file;
     MediaInfo     *m_mediaInfo {nullptr};
     QTimer        *m_timer {nullptr};
@@ -156,7 +160,19 @@ QString DFMMediaInfo::Value(const QString &key, MeidiaType meidiaType/* = Genera
 void DFMMediaInfo::startReadInfo()
 {
     Q_D(DFMMediaInfo);
+    QMutexLocker lk(&d->m_mutex);
     d->start();
+}
+
+void DFMMediaInfo::stopReadInfo()
+{
+    Q_D(DFMMediaInfo);
+    QMutexLocker lk(&d->m_mutex);
+    d->m_isStopStat.store(true);
+    if (d->m_timer)
+        d->m_timer->stop();
+    if (d->m_mediaInfo)
+        d->m_mediaInfo->Close();
 }
 
 DFM_END_NAMESPACE

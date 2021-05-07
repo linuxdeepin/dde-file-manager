@@ -82,4 +82,6 @@ QMutex *getOpticalDriveMutex();
 #define IPHONE_STAGING   "Apple_Inc"
 #define MOBILE_ROOT_PATH "/run/user"
 
+#define MTP_STAGING   "/gvfs/mtp:host="
+
 #endif // GLOBAL_H

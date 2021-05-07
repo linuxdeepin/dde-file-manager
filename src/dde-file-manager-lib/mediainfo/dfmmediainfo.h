@@ -46,6 +46,7 @@ public:
     ~DFMMediaInfo();
     QString Value(const QString &key, MeidiaType meidiaType = General);
     void startReadInfo();
+    void stopReadInfo();
 signals:
     void Finished();
 

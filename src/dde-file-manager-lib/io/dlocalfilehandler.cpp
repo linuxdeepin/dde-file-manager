@@ -24,6 +24,9 @@
 #include "private/dfilehandler_p.h"
 #include "../controllers/vaultcontroller.h"
 #include "dfmstandardpaths.h"
+#include "app/define.h"
+#include "app/filesignalmanager.h"
+#include "utils/singleton.h"
 
 #include <QObject>
 #include <QDir>
@@ -118,6 +121,9 @@ bool DLocalFileHandler::link(const QString &path, const DUrl &linkUrl)
 bool DLocalFileHandler::remove(const DUrl &url)
 {
     Q_ASSERT(url.isLocalFile());
+
+    if (url.path().contains(MTP_STAGING) && url.path().startsWith(MOBILE_ROOT_PATH))
+        fileSignalManager->requestCloseMediaInfo(url.path());
 
     if (::remove(url.toLocalFile().toLocal8Bit()) == 0)
         return true;
