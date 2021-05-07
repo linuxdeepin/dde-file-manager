@@ -1771,6 +1771,14 @@ TEST_F(DFileViewTest,show_emptyare_menu)
     DUrl url(path);
     m_view->setRootUrl(url);
 
+    QMap<MenuAction, QVector<MenuAction> > (*ut_subMenuActionList)() = [](){
+        QMap<MenuAction, QVector<MenuAction> > map;
+        return map;
+    };
+    typedef QMap<MenuAction, QVector<MenuAction> > (*fptr)(DAbstractFileInfo*);
+    fptr DAbstractFileInof_subMenuActionList = (fptr)(&DAbstractFileInfo::subMenuActionList);
+    stub.set(DAbstractFileInof_subMenuActionList, ut_subMenuActionList);
+
     Qt::ItemFlags indexFlags = Qt::NoItemFlags;
     m_view->showEmptyAreaMenu(indexFlags);
     EXPECT_TRUE(myCall);
