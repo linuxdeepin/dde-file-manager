@@ -39,11 +39,11 @@ namespace  {
 class TestDFMVaultFileView : public testing::Test
 {
 public:
-    QSharedPointer<DFMVaultFileView> m_view;
+    DFMVaultFileView* m_view;
 
     virtual void SetUp() override
     {
-        m_view = QSharedPointer<DFMVaultFileView>(new DFMVaultFileView());
+        m_view = new DFMVaultFileView();
         m_view->show();
         std::cout << "start TestDFMVaultFileView" << std::endl;
     }
@@ -51,6 +51,8 @@ public:
     virtual void TearDown() override
     {
         m_view->close();
+        delete m_view;
+        m_view = nullptr;
         std::cout << "end TestDFMVaultFileView" << std::endl;
     }
 };

@@ -68,6 +68,7 @@ bool rsam::createPublicAndPrivateKey(QString &publicKey, QString &privateKey)
 
     // 销毁对象
     RSA_free(pRsa);
+    BN_free(pNum);
     BIO_free_all(pPrivateBio);
     BIO_free_all(pPublicBio);
     delete[] pPrivateKey;

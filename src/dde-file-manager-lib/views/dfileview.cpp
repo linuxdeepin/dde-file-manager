@@ -206,7 +206,7 @@ DFileView::DFileView(QWidget *parent)
             this, &DFileView::slotSetSelect);
 
     setIconSizeBySizeIndex(DFMApplication::instance()->appAttribute(DFMApplication::AA_IconSizeLevel).toInt());
-    d->updateStatusBarTimer = new QTimer;
+    d->updateStatusBarTimer = new QTimer(this);
     d->updateStatusBarTimer->setInterval(100);
     d->updateStatusBarTimer->setSingleShot(true);
     connect(d->updateStatusBarTimer, &QTimer::timeout, this, &DFileView::updateStatusBar);
@@ -221,6 +221,13 @@ DFileView::~DFileView()
 {
     disconnect(this, &DFileView::rowCountChanged, this, &DFileView::onRowCountChanged);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::delayUpdateStatusBar);
+
+    if (m_pSelectWork) {
+        m_pSelectWork->stopWork();
+        m_pSelectWork->wait();
+        m_pSelectWork->deleteLater();
+        m_pSelectWork = nullptr;
+    }
 
     //所有的槽函数必须跑完才能析构
     QMutexLocker lkUpdateStatusBar(&d_ptr->m_mutexUpdateStatusBar);

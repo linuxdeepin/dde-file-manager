@@ -20,11 +20,11 @@ namespace  {
     class TestDFileDialog : public testing::Test
     {
     public:
-        QSharedPointer<DFileDialog> m_fileDialog;
+        DFileDialog* m_fileDialog;
 
         virtual void SetUp() override
         {
-            m_fileDialog = QSharedPointer<DFileDialog>(new DFileDialog());
+            m_fileDialog = new DFileDialog();
             m_fileDialog->setDirectory(DUrl::fromLocalFile("/usr").toLocalFile());
             m_fileDialog->openNewTab(DUrl::fromLocalFile("/usr"));
 
@@ -33,7 +33,21 @@ namespace  {
 
         virtual void TearDown() override
         {
+            delete m_fileDialog;
+            m_fileDialog = nullptr;
+
+            eventloop();
+
             std::cout << "end TestDFileDialog" << std::endl;
+        }
+
+        void eventloop()
+        {
+            QEventLoop loop;
+            QTimer::singleShot(10, nullptr, [&loop]() {
+                loop.exit();
+            });
+            loop.exec();
         }
     };
 }
