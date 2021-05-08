@@ -431,22 +431,6 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
             textMaxLen = MAX_FILE_NAME_CHAR_COUNT;
         }
 
-        int textCurrLen = dstText.toLocal8Bit().size();
-        int textRangeOutLen = textCurrLen - textMaxLen;
-        //最大输入框字符控制逻辑
-        if (textRangeOutLen > 0) {
-            // fix bug 69627
-            QVector<uint> list = dstText.toUcs4();
-            int cursor_pos = edit->cursorPosition();
-            while (dstText.toLocal8Bit().size() > textMaxLen && cursor_pos > 0) {
-                list.removeAt(--cursor_pos);
-                dstText = QString::fromUcs4(list.data(), list.size());
-            }
-            edit->setText(dstText);
-            edit->setCursorPosition(cursor_pos);
-            return;
-        }
-
         //如果存在非法字符且更改了当前的文本文件
         if (srcText != dstText) {
             int currPos = edit->cursorPosition();
@@ -470,8 +454,25 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
                                         QObject::tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
 
             currPos += dstText.length() - srcText.length();
+            QSignalBlocker blocker(edit);
             edit->setText(dstText);
             edit->setCursorPosition(currPos);
+        }
+
+        int textCurrLen = dstText.toLocal8Bit().size();
+        int textRangeOutLen = textCurrLen - textMaxLen;
+        //最大输入框字符控制逻辑
+        if (textRangeOutLen > 0) {
+            // fix bug 69627
+            QVector<uint> list = dstText.toUcs4();
+            int cursor_pos = edit->cursorPosition();
+            while (dstText.toLocal8Bit().size() > textMaxLen && cursor_pos > 0) {
+                list.removeAt(--cursor_pos);
+                dstText = QString::fromUcs4(list.data(), list.size());
+            }
+            QSignalBlocker blocker(edit);
+            edit->setText(dstText);
+            edit->setCursorPosition(cursor_pos);
         }
     });
 
