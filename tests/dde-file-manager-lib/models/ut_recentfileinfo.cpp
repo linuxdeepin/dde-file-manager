@@ -27,6 +27,7 @@
 
 #include <gtest/gtest.h>
 #include <QTimer>
+#include <QProcess>
 
 namespace {
 class TestRecentFileInfo : public testing::Test
@@ -119,9 +120,15 @@ TEST_F(TestRecentFileInfo, subtitleForEmptyFolder)
     EXPECT_STREQ("Folder is empty", info->subtitleForEmptyFloder().toStdString().c_str());
 }
 
-//TEST_F(TestRecentFileInfo, gotoUrlWhenDeleted) {
-//    EXPECT_STREQ("/home/xust", info->goToUrlWhenDeleted().path().toStdString().c_str());
-//}
+TEST_F(TestRecentFileInfo, gotoUrlWhenDeleted) {
+    // 这个用例意义不大
+    QProcess process;
+    process.start("whoami", QStringList());
+    process.waitForFinished();
+    const QString &user_name = QString::fromLocal8Bit(process.readAllStandardOutput()).trimmed();
+
+    EXPECT_STREQ(QString("/home/%1").arg(user_name).toStdString().c_str(), info->goToUrlWhenDeleted().path().toStdString().c_str());
+}
 
 TEST_F(TestRecentFileInfo, fileDisplayName)
 {
