@@ -174,10 +174,6 @@ public:
     //check networkfile is busy(or network is unline)
     bool checkGvfsMountfileBusy(const DUrl &url, const bool showdailog = true);
     bool checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootFileName, const bool bShowDailog = true);
-    //judge me net work is online
-    bool isNetWorkOnline();
-    //judge network can visit host
-    bool checkNetWorkToVistHost(const QString &host);
     //获取是否是正在清空回收站 fix bug 31324,
     bool getDoClearTrashState() const;
     //设置当前是否是在清空回收站 fix bug 31324,

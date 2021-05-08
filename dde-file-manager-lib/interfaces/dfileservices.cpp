@@ -93,11 +93,9 @@ public:
     static QMultiHash<const HandlerType, HandlerCreatorType> controllerCreatorHash;
 
     bool m_bcursorbusy = false;
-    bool m_bonline = false;
     bool m_bdoingcleartrash = false;
     QHash<DUrl, bool> m_rootsmbftpurllist;
     QMutex checkgvfsmtx, smbftpmutex, timerMutex;
-    QNetworkConfigurationManager *m_networkmgr = nullptr;
 
     QTimer m_tagEditorChangeTimer;
     CheckNetwork m_checknetwork;
@@ -123,12 +121,6 @@ DFileService::DFileService(QObject *parent)
             return DFMFileControllerFactory::create(key);
         }));
     }
-    //判断当前自己的网络状态
-    d_ptr->m_networkmgr = new QNetworkConfigurationManager(this);
-    d_ptr->m_bonline = d_ptr->m_networkmgr->isOnline();
-    connect(d_ptr->m_networkmgr, &QNetworkConfigurationManager::onlineStateChanged, [this](bool state) {
-        d_ptr->m_bonline = state;
-    });
 
     d_ptr->m_tagEditorChangeTimer.setSingleShot(true);
     connect(&d_ptr->m_tagEditorChangeTimer, &QTimer::timeout, this, [ = ] {
@@ -1014,7 +1006,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
     Q_D(DFileService);
 //    printStacktrace(6);
     //还原设置鼠标状态
-    setCursorBusyState(false);
+//    setCursorBusyState(false);
 
     DUrl rooturl;
     QString urlpath = url.path();
@@ -1026,7 +1018,8 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
             rootfilename = rootstrlist.at(1);
             rootfilename = rootfilename.replace(QString(".") + QString(SUFFIX_GVFSMP), "");
         }
-        if (!(rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(FTP_SCHEME))) {
+        if (!(rootfilename.startsWith(SMB_SCHEME) || rootfilename.startsWith(FTP_SCHEME)
+              || rootfilename.startsWith(SFTP_SCHEME))) {
             return false;
         }
         rooturl = url;
@@ -1074,9 +1067,6 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
         bool bbusy = d->m_rootsmbftpurllist.value(rooturl);
         qDebug() << bbusy;
         d->smbftpmutex.unlock();
-        if (bbusy && showdailog) {
-            dialogManager->showUnableToLocateDir(rootfilename);
-        }
         return bbusy;
     }
     bool isbusy = checkGvfsMountfileBusy(rooturl, rootfilename, showdailog);
@@ -1099,21 +1089,10 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     }
     //设置鼠标状态，查看文件状态是否存在
     setCursorBusyState(true);
-    //check network online
-    bool bonline = isNetWorkOnline();
-    bool fileexit = false;
-    if (!bonline) {
-        setCursorBusyState(false);
-        //文件不存在弹提示框
-        if (bShowDailog) {
-            dialogManager->showUnableToLocateDir(rootFileName);
-        }
-        return true;
-    }
 
-    if (rootFileName.startsWith(SMB_SCHEME)) {
+    if (rootFileName.startsWith(SMB_SCHEME) || rootFileName.startsWith(SFTP_SCHEME)) {
         DAbstractFileInfoPointer rootptr = createFileInfo(nullptr, rootUrl);
-        fileexit = rootptr->exists();
+        bool fileexit = rootptr->exists();
         setCursorBusyState(false);
         //文件不存在弹提示框
         if (!fileexit && bShowDailog) {
@@ -1131,6 +1110,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
         host = ipInfoList[0].mid((spliteIndex >= 0 && spliteIndex < ipInfoList[0].length() - 1)
                 ? spliteIndex + 1 : 0);
     } else {
+        setCursorBusyState(false);
         return true;
     }
 
@@ -1140,16 +1120,6 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
 
     bvist = d->m_checknetwork.isHostAndPortConnect(host, port);
 
-    bonline = isNetWorkOnline();
-    if (!bonline) {
-        setCursorBusyState(false);
-        //文件不存在弹提示框
-        if (bShowDailog) {
-            dialogManager->showUnableToLocateDir(rootFileName);
-        }
-        return true;
-    }
-
     setCursorBusyState(false);
 
     //文件不存在弹提示框
@@ -1158,29 +1128,6 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     }
     qDebug() << bvist;
     return !bvist;
-}
-
-
-bool DFileService::isNetWorkOnline()
-{
-    return d_ptr->m_bonline;
-}
-
-bool DFileService::checkNetWorkToVistHost(const QString &host)
-{
-    if (host.isNull()) {
-        return false;
-    }
-    bool bvisit = false;
-    QEventLoop eventLoop;
-    QHostInfo::lookupHost(host, this, [&](QHostInfo & info) {
-        qDebug() << " -----       " << info.errorString() << info.hostName();
-        bvisit = info.error() == QHostInfo::NoError;
-        eventLoop.exit();
-    });
-    eventLoop.exec();
-
-    return bvisit;
 }
 
 bool DFileService::getDoClearTrashState() const
