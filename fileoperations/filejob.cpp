@@ -694,7 +694,12 @@ void FileJob::doOpticalBlank(const DUrl &device)
 void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int flag)
 {
     m_tarPath = device.path();
-    QString udiskspath = DDiskManager::resolveDeviceNode(device.path(), {}).first();
+    const QStringList &nodes = DDiskManager::resolveDeviceNode(device.path(), {});
+    if (nodes.isEmpty()) {
+        qWarning() << "can't get the node list from: " << device.path();
+        return;
+    }
+    QString udiskspath = nodes.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->opticalBlank()) {
@@ -1004,7 +1009,12 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
 void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int speed, int flag)
 {
     m_tarPath = device.path();
-    QString udiskspath = DDiskManager::resolveDeviceNode(device.path(), {}).first();
+    const QStringList &nodes = DDiskManager::resolveDeviceNode(device.path(), {});
+    if (nodes.isEmpty()) {
+        qWarning() << "can't get the node list from: " << device.path();
+        return;
+    }
+    QString udiskspath = nodes.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->opticalBlank()) {

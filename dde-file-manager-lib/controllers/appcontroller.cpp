@@ -231,7 +231,9 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
         if (newUrl.scheme() == BURN_SCHEME) {
             Q_ASSERT(newUrl.burnDestDevice().length() > 0);
             QString devpath = newUrl.burnDestDevice();
-            QString udiskspath = DDiskManager::resolveDeviceNode(devpath, {}).first();
+            const QStringList &nodes = DDiskManager::resolveDeviceNode(devpath, {});
+            if(nodes.isEmpty()) return;
+            QString udiskspath = nodes.first();
             QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
             bool mounted = blkdev->mountPoints().count() != 0;
             if (mounted) {
@@ -571,7 +573,9 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
         return;
     }
 
-    QString udiskspath = DDiskManager::resolveDeviceNode(fileUrl.query(), {}).first();
+    const QStringList &nodes = DDiskManager::resolveDeviceNode(fileUrl.query(), {});
+    if(nodes.isEmpty()) return;
+    QString udiskspath = nodes.first();
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QSharedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {

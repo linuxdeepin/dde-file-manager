@@ -357,7 +357,9 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
         QString dev(dst.burnDestDevice());
         bool is_blank = ISOMaster->getDevicePropertyCached(dev).formatted;
         if (!ISOMaster->getDevicePropertyCached(dev).devid.length()) {
-            QString udiskspath = DDiskManager::resolveDeviceNode(dev, {}).first();
+            const QStringList &nodes = DDiskManager::resolveDeviceNode(dev, {});
+            if(nodes.isEmpty()) return DUrlList{};
+            QString udiskspath = nodes.first();
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
             QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
             is_blank = drv->opticalBlank();
