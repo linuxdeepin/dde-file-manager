@@ -135,7 +135,12 @@ TEST_F(TestTagController, can_creatFileWatcher)
         watcher->addWatcher(m_tagUrl);
         watcher->removeWatcher(m_tagUrl);
     }
-    EXPECT_TRUE(m_pController->createFileWatcher(event) != nullptr);
+    EXPECT_TRUE(watcher != nullptr);
+
+    if (watcher) {
+        delete watcher;
+        watcher = nullptr;
+    }
 }
 
 TEST_F(TestTagController, can_open_file)
