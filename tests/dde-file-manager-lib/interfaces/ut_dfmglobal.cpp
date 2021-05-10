@@ -125,7 +125,7 @@ TEST_F(TestDFMGlobal, test_pluginLibrary)
     DFMGlobal::addPluginLibraryPaths({ PluginManager::PluginDir() });
     EXPECT_EQ(DFMGlobal::PluginLibraryPaths.count(), 3);
 }
-
+#ifndef __arm__
 TEST_F(TestDFMGlobal, test_initManagers)
 {
     EXPECT_NO_FATAL_FAILURE(DFMGlobal::initSearchHistoryManager());
@@ -145,7 +145,7 @@ TEST_F(TestDFMGlobal, test_initManagers)
     EXPECT_NO_FATAL_FAILURE(DFMGlobal::initBluetoothManager());
     EXPECT_NO_FATAL_FAILURE(DFMGlobal::initRootFileManager());
 }
-
+#endif
 TEST_F(TestDFMGlobal, test_initMimesAppsManager)
 {
     TestHelper::runInLoop([&]{

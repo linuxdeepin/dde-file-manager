@@ -49,7 +49,7 @@ namespace  {
         DBusSystemInfo * p_info;
     };
 }
-
+#ifndef __arm__
 TEST_F(DBusSystemInfoTest, get_system_type)
 {
     qint64 type = p_info->systemType();
@@ -156,3 +156,4 @@ TEST_F(DBusSystemInfoTest, tst_property_changed)
 
     p_info->__propertyChanged__(msg);
 }
+#endif

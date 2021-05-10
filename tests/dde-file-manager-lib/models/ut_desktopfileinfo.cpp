@@ -142,7 +142,7 @@ TEST_F(TestDesktopFileInfo, tstFileIcon)
     auto p = info->fileIcon();
     EXPECT_FALSE(p.isNull());
 }
-
+#ifndef __arm__
 TEST_F(TestDesktopFileInfo, tstMenuActionList)
 {
     info->menuActionList();
@@ -150,7 +150,7 @@ TEST_F(TestDesktopFileInfo, tstMenuActionList)
     f.menuActionList();
     f.disableMenuActionList();
 }
-
+#endif
 TEST_F(TestDesktopFileInfo, tstAdditionalIcon)
 {
     EXPECT_TRUE(0 == info->additionalIcon().count());

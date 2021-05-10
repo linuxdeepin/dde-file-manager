@@ -50,7 +50,7 @@ namespace  {
         ComputerPropertyDialog *m_pTester;
     };
 }
-
+#ifndef __arm__
 TEST_F(TestComputerPropertyDialog, testInit)
 {
     EXPECT_NE(nullptr, m_pTester);
@@ -123,3 +123,4 @@ TEST_F(TestComputerPropertyDialog, testGetMessage3)
     datas = m_pTester->getMessage(data);
     EXPECT_GT(datas.size(), 0);
 }
+#endif

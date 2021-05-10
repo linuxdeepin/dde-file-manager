@@ -1757,7 +1757,7 @@ TEST_F(DFileViewTest,update_listheader_viewproperty)
     m_view->switchViewMode(DFileView::ListMode);
     m_view->updateListHeaderViewProperty();
 }
-
+#ifndef __arm__
 TEST_F(DFileViewTest,show_emptyare_menu)
 {
     ASSERT_NE(nullptr,m_view);
@@ -1783,7 +1783,7 @@ TEST_F(DFileViewTest,show_emptyare_menu)
     m_view->showEmptyAreaMenu(indexFlags);
     EXPECT_TRUE(myCall);
 }
-
+#endif
 TEST_F(DFileViewTest,show_normal_menu)
 {
     ASSERT_NE(nullptr,m_view);

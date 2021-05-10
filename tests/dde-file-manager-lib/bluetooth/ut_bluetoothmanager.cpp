@@ -55,7 +55,7 @@ public:
     }
 };
 }
-
+#ifndef __arm__
 TEST_F(TestBluetoothManager, connect)
 {
     stub_ext::StubExt *st = new stub_ext::StubExt;
@@ -139,3 +139,4 @@ TEST_F(TestBluetoothManager, p_inflateDevice)
 
     EXPECT_NO_FATAL_FAILURE(d->inflateDevice(&dev, obj));
 }
+#endif

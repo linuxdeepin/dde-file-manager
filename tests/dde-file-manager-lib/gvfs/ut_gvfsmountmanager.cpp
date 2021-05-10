@@ -908,7 +908,7 @@ TEST_F(TestGvfsMountManager, stop_with_device_file_cb)
     GvfsMountManager::stop_with_device_file_cb(object, res, user_data);
     stub.reset(g_mount_unmount_with_operation_finish);
 }
-
+#ifndef __arm__
 TEST_F(TestGvfsMountManager, initConnect)
 {
     stub_ext::StubExt stu;
@@ -916,3 +916,4 @@ TEST_F(TestGvfsMountManager, initConnect)
     m_manager->initConnect();
     stu.reset(&DFMGlobal::isRootUser);
 }
+#endif

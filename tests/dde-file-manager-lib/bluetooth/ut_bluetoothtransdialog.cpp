@@ -63,13 +63,13 @@ public:
     BluetoothTransDialog *dlg = nullptr;
 };
 } // namespace
-
-TEST_F(TestBluetoothTransDialog, ShowDialog)
-{
-    //阻塞CI流程
-    // dlg->show();
-    // dlg->hide();
-}
+#ifndef __arm__
+//TEST_F(TestBluetoothTransDialog, ShowDialog)
+//{
+//    //阻塞CI流程
+//    // dlg->show();
+//    // dlg->hide();
+//}
 
 TEST_F(TestBluetoothTransDialog, tstHumanizedStrOfObexErrMsg)
 {
@@ -208,3 +208,4 @@ TEST_F(TestBluetoothTransDialog, tstSendFilesToDevice)
 
     dlg->close();
 }
+#endif

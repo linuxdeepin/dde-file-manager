@@ -75,7 +75,7 @@ TEST_F(TestBluetoothAdapter, addDevice)
     EXPECT_STREQ(m_adapter->deviceById("abc")->name().toStdString().c_str(), "123");
     delete device;
 }
-
+#ifndef __arm__
 TEST_F(TestBluetoothAdapter, removeDevice)
 {
     BluetoothDevice *device = new BluetoothDevice;
@@ -88,5 +88,6 @@ TEST_F(TestBluetoothAdapter, removeDevice)
     EXPECT_EQ(devices.size(), 0);
     delete device;
 }
+#endif
 
 }

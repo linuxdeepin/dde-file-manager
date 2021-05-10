@@ -724,13 +724,13 @@ TEST_F(TestDialogManager, testShowOpenWithDialog)
         w = nullptr;
     }
 }
-
+#ifndef __arm__
 TEST_F(TestDialogManager, testShowOpenFilesWithDialog)
 {
     DFMEvent event;
     EXPECT_NO_FATAL_FAILURE(m_pTester->showOpenFilesWithDialog(event));
 }
-
+#endif
 TEST_F(TestDialogManager, testShowPropertyDialog)
 {
     DUrlList list;
@@ -751,7 +751,7 @@ TEST_F(TestDialogManager, testShowPropertyDialog)
     QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
     loop.exec();
 }
-
+#ifndef __arm__
 TEST_F(TestDialogManager, testShowPropertyDialog2)
 {
     DUrlList list;
@@ -772,7 +772,7 @@ TEST_F(TestDialogManager, testShowPropertyDialog2)
     QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
     loop.exec();
 }
-
+#endif
 TEST_F(TestDialogManager, testShowPropertyDialog3)
 {
     DUrlList list;
@@ -921,7 +921,7 @@ TEST_F(TestDialogManager, testShowTrashPropertyDialog3)
     QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
     loop.exec();
 }
-
+#ifndef __arm__
 TEST_F(TestDialogManager, testShowComputerPropertyDialog)
 {
     void(*stub4_show)() = []()->void{};
@@ -956,7 +956,7 @@ TEST_F(TestDialogManager, testShowComputerPropertyDialog2)
     QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
     loop.exec();
 }
-
+#endif
 TEST_F(TestDialogManager, testShowDevicePropertyDialog)
 {
     DFMEvent event;
@@ -1596,7 +1596,7 @@ TEST_F(TestDialogManager, testRemovePropertyDialog)
     bool b = m_pTester->m_propertyDialogs.contains(url);
     EXPECT_EQ(b, false);
 }
-
+#ifndef __arm__
 TEST_F(TestDialogManager, testCloseAllPropertyDialog)
 {
 
@@ -1620,7 +1620,7 @@ TEST_F(TestDialogManager, testCloseAllPropertyDialog)
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->closeAllPropertyDialog());
 }
-
+#endif
 TEST_F(TestDialogManager, testUpdateCloseIndicator)
 {
     DUrlList list;
@@ -1878,7 +1878,7 @@ TEST_F(TestDialogManager, testShowMessageDialog3)
     int code = m_pTester->showMessageDialog(messageLevel, title);
     EXPECT_EQ(code, 1);
 }
-
+#ifndef __arm__
 TEST_F(TestDialogManager, testShowBluetoothTransferDlg)
 {
     DUrlList files;
@@ -1917,7 +1917,7 @@ TEST_F(TestDialogManager, testShowBluetoothTransferDlg2)
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showBluetoothTransferDlg(files));
 }
-
+#endif
 TEST_F(TestDialogManager, testShowFormatDialog)
 {
     QString devId("/dev/UTest");

@@ -160,13 +160,13 @@ TEST_F(TestRecentFileInfo, increaseCovrage)
 //    RecentFileInfo f(DUrl("file:///usr/bin/dde-file-manager"));
 //    EXPECT_FALSE(f.permissions() == (QFileDevice::ReadGroup | QFileDevice::ReadOwner | QFileDevice::ReadOther));
 //}
-
+#ifndef __arm__
 TEST_F(TestRecentFileInfo, tstMenuActionList)
 {
     EXPECT_TRUE(info->menuActionList(DAbstractFileInfo::MenuType::SpaceArea).count() == 3);
     EXPECT_TRUE(info->menuActionList(DAbstractFileInfo::MenuType::SingleFile).count() > 3);
 }
-
+#endif
 TEST_F(TestRecentFileInfo, tstDisableMenuActionList)
 {
     EXPECT_FALSE(info->disableMenuActionList().count() == 0);

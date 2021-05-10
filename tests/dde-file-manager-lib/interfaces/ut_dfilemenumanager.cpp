@@ -99,7 +99,7 @@ TEST_F(TestDFileMenuManager, createToolBarSettingsMenu)
     m_menu = m_menuMgr->createToolBarSettingsMenu();
     EXPECT_NE(m_menu, nullptr);
 }
-
+#ifndef __arm__
 TEST_F(TestDFileMenuManager, createNormalMenu)
 {
     void (*st_loadDesktopFile)() = [](){
@@ -130,7 +130,7 @@ TEST_F(TestDFileMenuManager, createNormalMenu)
     EXPECT_NE(m_menu, nullptr);
     releaseMenu();
 }
-
+#endif
 
 TEST_F(TestDFileMenuManager, createVaultMenu)
 {

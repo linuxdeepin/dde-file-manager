@@ -140,13 +140,13 @@ TEST_F(TestSearchFileInfo, canIteratorDir)
 {
     EXPECT_FALSE(info->canIteratorDir());
 }
-
+#ifndef __arm__
 TEST_F(TestSearchFileInfo, menuActionList)
 {
     EXPECT_TRUE(info->menuActionList().count() > 0);
     EXPECT_TRUE(info->menuActionList(DAbstractFileInfo::MenuType::SpaceArea).count() > 0);
 }
-
+#endif
 TEST_F(TestSearchFileInfo, disableMenuActionList)
 {
     EXPECT_TRUE(info->disableMenuActionList().count() > 0);

@@ -59,7 +59,7 @@ namespace  {
         DFileManagerWindow* m_pMainwindow;
     };
 }
-
+#ifndef __arm__
 TEST_F(TestConnectToServerDialog, testInit)
 {
     EXPECT_NE(nullptr, m_pTester);
@@ -169,3 +169,4 @@ TEST_F(TestConnectToServerDialog, testOnDelButtonClicked3)
     QString str = m_pTester->m_serverComboBox->currentText();
     EXPECT_TRUE(str == "");
 }
+#endif

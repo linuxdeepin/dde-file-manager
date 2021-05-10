@@ -428,7 +428,7 @@ TEST_F(TestDAbstractFileInfo, isAncestorsUrl)
     DUrlList urlList;
     EXPECT_FALSE(info->isAncestorsUrl(DUrl("file:///tmp/2.txt"), &urlList));
 }
-
+#ifndef __arm__
 TEST_F(TestDAbstractFileInfo, menuActionList)
 {
     // SpaceArea
@@ -491,7 +491,7 @@ TEST_F(TestDAbstractFileInfo, menuActionList)
         EXPECT_TRUE(!list.isEmpty());
     }
 }
-
+#endif
 TEST_F(TestDAbstractFileInfo, supportViewMode)
 {
     EXPECT_TRUE(info->supportViewMode() == DFileView::AllViewMode);
@@ -907,12 +907,12 @@ TEST_F(TestDAbstractFileInfo, refresh)
 {
     EXPECT_NO_FATAL_FAILURE(info->refresh(true));
 }
-
+#ifndef __arm__
 TEST_F(TestDAbstractFileInfo, subMenuActionList)
 {
     EXPECT_TRUE(!info->subMenuActionList().isEmpty());
 }
-
+#endif
 TEST_F(TestDAbstractFileInfo, disableMenuActionList)
 {
     EXPECT_TRUE(!info->disableMenuActionList().isEmpty());

@@ -54,7 +54,7 @@ public:
     DUrl tmpDirUrl;
 };
 
-
+#ifndef __arm__
 TEST_F(TestRecentController, openFileLocation)
 {
     TestHelper::runInLoop([ = ] {});
@@ -69,7 +69,7 @@ TEST_F(TestRecentController, openFileLocation)
     EXPECT_TRUE(m_controller->openFileLocation(event));
 
 }
-
+#endif
 TEST_F(TestRecentController, test_openFile)
 {
     auto event = dMakeEventPointer<DFMOpenFileEvent>(nullptr, tmpFileUrl);
