@@ -207,7 +207,7 @@ void ConnectToServerDialog::initUI()
 
     const QStringList &stringList = Singleton<SearchHistroyManager>::instance()->toStringList();
 
-    QCompleter *completer = new QCompleter(stringList);
+    QCompleter *completer = new QCompleter(stringList, this);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     completer->setCompletionMode(QCompleter::PopupCompletion);
     completer->setMaxVisibleItems(10);

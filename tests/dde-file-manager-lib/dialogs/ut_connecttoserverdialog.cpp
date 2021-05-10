@@ -25,10 +25,11 @@
 
 #include "dfilestatisticsjob.h"
 #include "stub.h"
-#include "views/dfilemanagerwindow.h"
 #include <dlistview.h>
 
 #define private public
+#define protected public
+#include "views/dfilemanagerwindow.h"
 #include "dialogs/connecttoserverdialog.h"
 
 namespace  {
@@ -40,6 +41,18 @@ namespace  {
             void(*stu_start)(const DUrlList &) = [](const DUrlList &){};
             Stub stu;
             stu.set((void(DFileStatisticsJob::*)(const DUrlList &))ADDR(DFileStatisticsJob, start), stu_start);
+
+            bool(*stu_openNewTab)(DUrl fileUrl) = [](DUrl fileUrl)->bool{
+                Q_UNUSED(fileUrl);
+                return true;
+            };
+            Stub stu2;
+            stu2.set(ADDR(DFileManagerWindow, openNewTab), stu_openNewTab);
+
+            void(*stu_initTitleBar)() = [](){};
+            Stub stu3;
+            stu3.set(ADDR(DFileManagerWindow, initTitleBar), stu_initTitleBar);
+
             m_pMainwindow = new DFileManagerWindow();
             m_pTester = new ConnectToServerDialog(m_pMainwindow);
             std::cout << "start TestConnectToServerDialog";
@@ -91,9 +104,14 @@ TEST_F(TestConnectToServerDialog, testOnButtonClicked2)
     QString(*stub_currentText)() = []()->QString{
         return "GTest";
     };
-
     Stub stu;
     stu.set(ADDR(QComboBox, currentText), stub_currentText);
+
+    bool(*stu_cd)() = []()->bool{
+            return false;
+    };
+    Stub stu2;
+    stu2.set(ADDR(DFileManagerWindow, cd), stu_cd);
 
     int index = 1;
     m_pTester->onButtonClicked(index);

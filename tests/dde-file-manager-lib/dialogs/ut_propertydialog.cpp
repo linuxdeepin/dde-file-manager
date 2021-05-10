@@ -29,7 +29,6 @@
 #include "dfmglobal.h"
 #include "io/dfilestatisticsjob.h"
 #include "views/windowmanager.h"
-#include "views/dfilemanagerwindow.h"
 #include "plugins/pluginmanager.h"
 #include "../plugininterfaces/menu/menuinterface.h"
 #include "interfaces/dabstractfileinfo.h"
@@ -43,6 +42,7 @@
 #define private public
 #include "dialogs/propertydialog.h"
 #include "dfileservices.h"
+#include "views/dfilemanagerwindow.h"
 
 namespace  {
     class TestDFMRoundBackground : public testing::Test
@@ -281,10 +281,6 @@ namespace  {
             if(file.exists()){
                 file.remove();
             }
-            if (m_pTester) {
-                delete m_pTester;
-                m_pTester = nullptr;
-            }
             if(m_pWidget){
                 delete m_pWidget;
                 m_pWidget = nullptr;
@@ -475,14 +471,29 @@ TEST_F(TestPropertyDialog, testFlickFolderToSidebar2)
     QString strPath = QDir::currentPath() + QDir::separator() + "TestPropertyDialog.txt";
     DUrl url("file://" + strPath);
 
+    bool(*stu_openNewTab)(DUrl fileUrl) = [](DUrl fileUrl)->bool{
+        Q_UNUSED(fileUrl);
+        return true;
+    };
+    Stub stu2;
+    stu2.set(ADDR(DFileManagerWindow, openNewTab), stu_openNewTab);
+    void(*stu_initTitleBar)() = [](){};
+    Stub stu3;
+    stu3.set(ADDR(DFileManagerWindow, initTitleBar), stu_initTitleBar);
+    static DFileManagerWindow * w = nullptr;
     QWidget*(*stub_getWindowById)(quint64) = [](quint64)->QWidget*{
-        DFileManagerWindow * w = new DFileManagerWindow();
+        w = new DFileManagerWindow();
         return w;
     };
+
     Stub stub;
     stub.set(ADDR(WindowManager, getWindowById), stub_getWindowById);
-
     EXPECT_NO_FATAL_FAILURE(m_pTester->flickFolderToSidebar(url));
+
+    if (w) {
+        w->deleteLater();
+        w = nullptr;
+    }
 }
 
 TEST_F(TestPropertyDialog, testOnOpenWithBntsChecked)

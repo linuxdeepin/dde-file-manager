@@ -672,7 +672,7 @@ void PropertyDialog::initConnect()
         }
     });
 
-    DAbstractFileWatcher *fileWatcher = DFileService::instance()->createFileWatcher(this, m_url);
+    DAbstractFileWatcher *fileWatcher = DFileService::instance()->createFileWatcher(this, m_url, this);
 
     connect(fileWatcher, &DAbstractFileWatcher::fileDeleted, this, &PropertyDialog::onChildrenRemoved);
     connect(fileWatcher, &DAbstractFileWatcher::fileMoved, this, [this](const DUrl & from, const DUrl & to) {

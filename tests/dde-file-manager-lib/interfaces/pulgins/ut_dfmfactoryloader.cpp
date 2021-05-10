@@ -105,9 +105,9 @@ TEST_F(TestDFMFactoryLoader, testInstance3)
     lst << pload;
     m_pTester->d_func()->pluginLoaderList = lst;
 
-    static QObject *p = nullptr;
     QObject*(*stub_instance)() = []()->QObject*{
-        p = new QObject();
+        QObject* p = new QObject();
+        p->deleteLater();
         return p;
     };
     Stub stu;
@@ -116,10 +116,6 @@ TEST_F(TestDFMFactoryLoader, testInstance3)
     QObject* pobject = m_pTester->instance(0);
     EXPECT_NE(pobject, nullptr);
 
-    if (p) {
-        delete p;
-        p = nullptr;
-    }
 }
 
 #if defined(Q_OS_UNIX) && !defined (Q_OS_MAC)

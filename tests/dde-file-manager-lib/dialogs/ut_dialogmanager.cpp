@@ -1132,8 +1132,10 @@ TEST_F(TestDialogManager, testShowGlobalSettingsDialog)
     Stub stub;
     stub.set(ADDR(WindowManager, getWindowById), stub_getWindowById);
 
+    // 此段代码用于调试
 //    QObject*(*stu_instance)() = []()->QObject*{
 //        QObject * obj = new QObject();
+//        obj->deleteLater();
 //        return obj;
 //    };
 //    Stub stu2;
@@ -1653,6 +1655,11 @@ TEST_F(TestDialogManager, testCloseAllPropertyDialog)
 #endif
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->closeAllPropertyDialog());
+
+    if (pdlg) {
+        pdlg->deleteLater();
+        pdlg = nullptr;
+    }
 }
 #endif
 TEST_F(TestDialogManager, testUpdateCloseIndicator)
