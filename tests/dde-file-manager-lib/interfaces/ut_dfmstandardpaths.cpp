@@ -101,9 +101,13 @@ TEST_F(DFMStandardPathsTest, test_fromStandardUrl)
 {
     QString homeStandardPath = DFMStandardPaths::fromStandardUrl(DUrl("standard://home"));
     QString homePath = QDir::homePath();
+
     ASSERT_EQ(homeStandardPath, homePath);
+
     QString videosStandardPath = DFMStandardPaths::fromStandardUrl(DUrl("standard://videos"));
-    ASSERT_EQ(videosStandardPath, homePath + "/Videos");
+    QString videoPath =  DFMStandardPaths::location(DFMStandardPaths::VideosPath);
+
+    ASSERT_EQ(videosStandardPath, videoPath);
 }
 
 TEST_F(DFMStandardPathsTest, test_fromStandardUrl_no_standard)
@@ -116,8 +120,12 @@ TEST_F(DFMStandardPathsTest, test_toStandardUrl)
 {
     QString homePath = QDir::homePath();
     DUrl homeStandardUrl = DFMStandardPaths::toStandardUrl(homePath);
+
     ASSERT_EQ(homeStandardUrl, DUrl("standard://home"));
-    DUrl videosStandardUrl = DFMStandardPaths::toStandardUrl(homePath + "/Videos");
+
+    QString videoPath =  DFMStandardPaths::location(DFMStandardPaths::VideosPath);
+    DUrl videosStandardUrl = DFMStandardPaths::toStandardUrl(videoPath);
+
     ASSERT_EQ(videosStandardUrl, DUrl("standard://videos"));
 }
 
