@@ -16,3 +16,17 @@ SOURCES += \
     $$PWD/test-main.cpp \
     $$PWD/ut_videopreview.cpp \
     $$PWD/ut_videopreviewplugin.cpp
+
+!CONFIG(DISABLE_TSAN_TOOL) {
+    #DEFINES += TSAN_THREAD #互斥
+    DEFINES += ENABLE_TSAN_TOOL
+    contains(DEFINES, TSAN_THREAD){
+       QMAKE_CXXFLAGS+="-fsanitize=thread"
+       QMAKE_CFLAGS+="-fsanitize=thread"
+       QMAKE_LFLAGS+="-fsanitize=thread"
+    } else {
+       QMAKE_CXXFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+       QMAKE_CFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+       QMAKE_LFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+    }
+}

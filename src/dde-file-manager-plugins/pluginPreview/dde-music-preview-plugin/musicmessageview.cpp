@@ -197,16 +197,19 @@ QList<QByteArray> MusicMessageView::detectEncodings(const QByteArray &rawData)
 
     csd = ucsdet_open(&status);
     if (status != U_ZERO_ERROR) {
+        ucsdet_close(csd);
         return charsets;
     }
 
     ucsdet_setText(csd, data, len, &status);
     if (status != U_ZERO_ERROR) {
+        ucsdet_close(csd);
         return charsets;
     }
 
     csm = ucsdet_detectAll(csd, &matchCount, &status);
     if (status != U_ZERO_ERROR) {
+        ucsdet_close(csd);
         return charsets;
     }
 

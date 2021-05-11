@@ -164,7 +164,8 @@ void PdfWidget::initConnections()
 
 void PdfWidget::showBadPage()
 {
-    QVBoxLayout* layout = new QVBoxLayout(this);
+    QVBoxLayout* layout = new QVBoxLayout();
+    layout->setParent(this);
     QLabel* badLabel = new QLabel(this);
     badLabel->setStyleSheet("QLabel{"
                                 "font-size: 20px;"
