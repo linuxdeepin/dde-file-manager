@@ -19,38 +19,41 @@
 #include "dfilesystemmodel.h"
 using namespace testing;
 namespace  {
-        class CanvasViewHelperTest : public Test{
-        public:
-            CanvasViewHelperTest() : Test() {
-                for(auto tpCanvas : m_cvmgr->m_canvasMap.values()){
-                    if(1 == tpCanvas->screenNum()){
-                        m_view = tpCanvas.data();
-                        break;
-                    }
-                }
-                //在桌面创建文件
-                path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-                path = path + '/' + "test.txt";
-                QFile file(path);
-                if (!file.exists())
-                {
-                    file.open(QIODevice::ReadWrite | QIODevice::NewOnly);
-                    file.close();
-                }
+class CanvasViewHelperTest : public Test
+{
+public:
+    CanvasViewHelperTest() : Test()
+    {
+        for (auto tpCanvas : m_cvmgr->m_canvasMap.values()) {
+            if (1 == tpCanvas->screenNum()) {
+                m_view = tpCanvas.data();
+                break;
             }
-            void SetUp() override {
-                m_canvas = new CanvasViewHelper(m_view);
-            }
+        }
+        //在桌面创建文件
+        path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+        path = path + '/' + "test.txt";
+        QFile file(path);
+        if (!file.exists()) {
+            file.open(QIODevice::ReadWrite | QIODevice::NewOnly);
+            file.close();
+        }
+    }
+    void SetUp() override
+    {
+        m_canvas = new CanvasViewHelper(m_view);
+    }
 
-            void TearDown() override {
-                delete m_canvas;
-                delete m_view;
-            }
-            QString path;
-            CanvasViewHelper* m_canvas = nullptr;
-            CanvasGridView* m_view = nullptr;
-            QScopedPointer<CanvasViewManager> m_cvmgr{new CanvasViewManager(new BackgroundManager())};
-        };
+    void TearDown() override
+    {
+        delete m_canvas;
+        delete m_view;
+    }
+    QString path;
+    CanvasViewHelper *m_canvas = nullptr;
+    CanvasGridView *m_view = nullptr;
+    QScopedPointer<CanvasViewManager> m_cvmgr{new CanvasViewManager(new BackgroundManager())};
+};
 }
 
 
@@ -59,7 +62,7 @@ TEST_F(CanvasViewHelperTest, test_onRequestSelectFiles)
     QList<DUrl> list;
     stub_ext::StubExt stub;
     bool isSelected = false;
-    stub.set_lamda(VADDR(CanvasViewHelper, select),[&isSelected](){isSelected = true;});
+    stub.set_lamda(VADDR(CanvasViewHelper, select), [&isSelected]() {isSelected = true;});
 
     m_canvas->onRequestSelectFiles(list);
 
@@ -77,12 +80,12 @@ TEST_F(CanvasViewHelperTest, test_handleSelectEvent)
     QModelIndex index;
     for (auto url : ulist) {
         index = m_view->model()->index(url, 0);
-        if( index.isValid()) {
+        if (index.isValid()) {
             EXPECT_TRUE(m_view->isSelected(index));
         }
     }
 }
-
+#ifndef __arm__
 //test
 TEST_F(CanvasViewHelperTest, test_edit)
 {
@@ -92,7 +95,7 @@ TEST_F(CanvasViewHelperTest, test_edit)
     static bool judge = false;
     m_canvas->edit(event);
 
-    DUrlList(*mylist)() = [](){
+    DUrlList(*mylist)() = []() {
         DUrlList ulist;
         ulist << DUrl(QUrl::fromLocalFile(mypath));
         judge = true;
@@ -101,7 +104,7 @@ TEST_F(CanvasViewHelperTest, test_edit)
     stu.set(ADDR(DFMEvent, fileUrlList), mylist);
     m_canvas->edit(event);
 
-    DUrlList(*mylist1)() = [](){
+    DUrlList(*mylist1)() = []() {
         DUrlList ulist;
         ulist << DUrl::fromLocalFile("");
         return ulist;
@@ -109,18 +112,18 @@ TEST_F(CanvasViewHelperTest, test_edit)
     stu.reset(mylist1);
     m_canvas->edit(event);
 
-    bool(*myjudge)() = [](){
+    bool(*myjudge)() = []() {
         return true;
     };
     stu1.set(ADDR(DUrl, isEmpty), myjudge);
     m_canvas->edit(event);
     EXPECT_TRUE(judge);
 }
-
+#endif
 TEST_F(CanvasViewHelperTest, test_selecturls)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(VADDR(CanvasGridView, selectedUrls),[](){return DUrlList{DUrl("test")};});
+    stub.set_lamda(VADDR(CanvasGridView, selectedUrls), []() {return DUrlList{DUrl("test")};});
     DUrlList ulist = m_canvas->selectedUrls();
     EXPECT_EQ(ulist.size(), 1);
 }
@@ -133,16 +136,16 @@ TEST_F(CanvasViewHelperTest, test_initStyleOption)
 
     stub_ext::StubExt tub;
     stub_ext::StubExt tub1;
-    QStyleOptionViewItem* option = new QStyleOptionViewItem;
-    tub.set_lamda(VADDR(DFileViewHelper, isTransparent), [](){return false;});
-    tub1.set_lamda(VADDR(CanvasViewHelper, selectedIndexsCount), [](){return 5;});
+    QStyleOptionViewItem *option = new QStyleOptionViewItem;
+    tub.set_lamda(VADDR(DFileViewHelper, isTransparent), []() {return false;});
+    tub1.set_lamda(VADDR(CanvasViewHelper, selectedIndexsCount), []() {return 5;});
     option->state = QStyle::State_HasFocus;
     option->showDecorationSelected = true;
     QModelIndex index = m_view->firstIndex();
     m_canvas->initStyleOption(option, index);
 
     tub.reset(VADDR(DFileViewHelper, isTransparent));
-    tub.set_lamda(VADDR(DFileViewHelper, isTransparent), [](){return true;});
+    tub.set_lamda(VADDR(DFileViewHelper, isTransparent), []() {return true;});
     m_canvas->itemDelegate();
     m_canvas->initStyleOption(option, m_view->firstIndex());
 
