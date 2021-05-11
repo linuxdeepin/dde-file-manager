@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-
+#include <sanitizer/asan_interface.h>
 #define private public
 #include "singleapplication.h"
 #undef private
@@ -22,5 +22,10 @@ int main(int argc, char *argv[])
         app.handleQuitAction();
     });
     app.closeServer();
+
+#ifdef ENABLE_TSAN_TOOL
+    __sanitizer_set_report_path("../../asan_dde-file-manager.log");
+#endif
+
     return ret;
 }

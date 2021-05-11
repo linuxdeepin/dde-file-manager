@@ -107,6 +107,7 @@ TEST_F(SingleApplicationTest, test_newClientProcess_get_monitor_files)
                 result << QString::fromLocal8Bit(QByteArray::fromBase64(i));
             }
             ASSERT_TRUE(result.contains(tepPath));
+            FreePointer(socket);
         });
     }, 1000);
     watcher->stopWatcher();

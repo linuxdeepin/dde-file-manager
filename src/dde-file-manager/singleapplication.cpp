@@ -220,6 +220,8 @@ void SingleApplication::closeServer()
     if (m_localServer){
         m_localServer->removeServer(m_localServer->serverName());
         m_localServer->close();
+        delete m_localServer;
+        m_localServer = nullptr;
     }
 }
 
