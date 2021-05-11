@@ -44,9 +44,11 @@ TEST_F(TestDRootFileManager, while_first_start_without_thread_fetch_process_no_i
 {
     if(rootfileManager->isRootFileInited()) {
         EXPECT_TRUE(!rootfileManager->getRootFile().isEmpty());
-    } else {
-        EXPECT_TRUE(rootfileManager->getRootFile().isEmpty());
     }
+    // 非isRootFileInited情况下 会有其他函数调用到插入RootFile, 所以这里不做else检查
+    /*else {
+        EXPECT_TRUE(rootfileManager->getRootFile().isEmpty());
+    }*/
 }
 
 TEST_F(TestDRootFileManager, start_trigger_and_waiting_for_results)

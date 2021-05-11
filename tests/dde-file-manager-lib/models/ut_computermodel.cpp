@@ -107,7 +107,7 @@ TEST_F(TestComputerModel, tstParent)
 TEST_F(TestComputerModel, tstRowNColCount)
 {
     auto num = model->rowCount();
-    EXPECT_FALSE(num > 0);
+    EXPECT_TRUE(num >= 0);
     num = model->columnCount();
     EXPECT_TRUE(num > 0);
 }

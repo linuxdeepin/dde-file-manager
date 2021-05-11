@@ -128,6 +128,10 @@ TEST_F(TestMasteredMediaController, tstEventsFuncs)
     auto e10 = dMakeEventPointer<DFMCancelFileShareEvent>(nullptr, testUrl);
     EXPECT_FALSE(ctrl->unShareFolder(e10));
 
+    bool (*stub_burnIsOnDisc)()=[](){
+        return false;
+    };
+    st.set(&DUrl::burnIsOnDisc, stub_burnIsOnDisc);
     auto e11 = dMakeEventPointer<DFMOpenInTerminalEvent>(nullptr, testUrl);
     EXPECT_FALSE(ctrl->openInTerminal(e11));
 

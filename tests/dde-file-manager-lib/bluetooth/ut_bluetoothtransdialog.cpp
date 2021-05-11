@@ -89,6 +89,11 @@ TEST_F(TestBluetoothTransDialog, tstSetObjTextStyle)
 
 TEST_F(TestBluetoothTransDialog, tstCanSendFiles)
 {
+    bool(*stub_canSendBluetoothRequest)() = []()->bool{
+        return true;
+    };
+    Stub stu;
+    stu.set(ADDR(BluetoothManager, canSendBluetoothRequest), stub_canSendBluetoothRequest);
     EXPECT_TRUE(dlg->canSendFiles());
 }
 

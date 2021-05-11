@@ -601,25 +601,30 @@ TEST_F(TestFileUtils, can_read_write_json_file)
 
 TEST_F(TestFileUtils, can_get_folder_totalSize)
 {
-    QString folderPath = getTestFolder();
-    QStringList fileList = FileUtils::filesList(folderPath);
+    const QString &folderPath = getTestFolder();
+    const QStringList &fileList = FileUtils::filesList(folderPath);
 
     EXPECT_TRUE(!fileList.isEmpty());
 
     DUrlList urlFileList, urlFolderList;
     urlFolderList << folderPath;
 
-    foreach (QString file, fileList) {
+    for (const auto &file : fileList) {
         urlFileList << file;
     }
 
-    EXPECT_TRUE (FileUtils::totalSize(urlFileList) != FileUtils::totalSize(urlFolderList) );
+    EXPECT_TRUE (FileUtils::totalSize(urlFileList) != FileUtils::totalSize(urlFolderList));
 
     bool isInLimitFiles = false;
-    bool isInLimitFolder = false;
-    EXPECT_TRUE (FileUtils::totalSize(urlFileList, 1024,isInLimitFiles) != FileUtils::totalSize(urlFolderList, 1024,isInLimitFiles) );
 
-    EXPECT_EQ (FileUtils::totalSize(urlFileList), FileUtils::totalSize(urlFileList, 1024,isInLimitFiles));
+    EXPECT_TRUE (FileUtils::totalSize(urlFileList, 1024, isInLimitFiles) != FileUtils::totalSize(urlFolderList, 1024, isInLimitFiles));
 
-    EXPECT_TRUE( FileUtils::totalSize(urlFolderList) != FileUtils::totalSize(urlFolderList, 1024,isInLimitFiles) );
+    EXPECT_EQ (FileUtils::totalSize(urlFileList), FileUtils::totalSize(urlFileList, 1024, isInLimitFiles));
+
+    // 这里无法复现 先打印两个size用于后面分析
+    const auto &size1 = FileUtils::totalSize(urlFolderList);
+    const auto &size2 = FileUtils::totalSize(urlFolderList, 1024, isInLimitFiles);
+    std::cout << "size1: " << size1 << std::endl;
+    std::cout << "size2: " << size2 << std::endl;
+    EXPECT_TRUE(size1 != size2);
 }
