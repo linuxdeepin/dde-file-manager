@@ -124,17 +124,17 @@ TEST_F(TestVaultFileInfo, get_disable_menu_action_list)
 {
     EXPECT_FALSE(!m_vaultFileInfo->disableMenuActionList().isEmpty());
 }
-#ifndef __arm__
+
 TEST_F(TestVaultFileInfo, get_menu_action_list)
 {
-    EXPECT_TRUE(!m_vaultFileInfo->menuActionList(DAbstractFileInfo::SingleFile).isEmpty());
+    EXPECT_NO_FATAL_FAILURE(m_vaultFileInfo->menuActionList(DAbstractFileInfo::SingleFile));
 }
 
 TEST_F(TestVaultFileInfo, get_sub_menu_action_list)
 {
-    EXPECT_TRUE(!m_vaultFileInfo->subMenuActionList().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(m_vaultFileInfo->subMenuActionList());
 }
-#endif
+
 TEST_F(TestVaultFileInfo, get_file_display_name)
 {
     EXPECT_TRUE(!m_vaultFileInfo->fileDisplayName().isEmpty());

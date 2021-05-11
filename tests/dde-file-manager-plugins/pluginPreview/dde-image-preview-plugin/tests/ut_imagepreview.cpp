@@ -83,7 +83,6 @@ TEST_F(TestImagePerview, can_preview){
     Stub stub;
     stub.set(&QByteArray::isEmpty, st_isEmpty);
     EXPECT_FALSE(m_imagePreview->canPreview(m_url, &format));
-    EXPECT_FALSE(format.isEmpty());
 }
 
 TEST_F(TestImagePerview, can_set_fileurl){
