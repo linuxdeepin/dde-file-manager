@@ -56,6 +56,7 @@ class UDiskListener : public DAbstractFileController
 
 public:
     explicit UDiskListener(QObject *parent = nullptr);
+    ~UDiskListener();
     UDiskDeviceInfoPointer getDevice(const QString &id);
     void addDevice(UDiskDeviceInfoPointer device);
     void removeDevice(UDiskDeviceInfoPointer device);

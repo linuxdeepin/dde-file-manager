@@ -745,6 +745,11 @@ TEST_F(TestDialogManager, testShowPropertyDialog)
     stub_ext::StubExt stu3;
     stu3.set(ADDR(QWidget, show), stub3_show);
 
+#ifdef __arm__
+    void(*stub_showComputerPropertyDialog)()=[](){};
+    stu2.set(ADDR(DialogManager, showComputerPropertyDialog), stub_showComputerPropertyDialog);
+#endif
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showPropertyDialog(event));
 
     QEventLoop loop;
@@ -787,6 +792,11 @@ TEST_F(TestDialogManager, testShowPropertyDialog3)
     stub_ext::StubExt stu3;
     stu3.set(ADDR(QWidget, show), stub3_show);
 
+#ifdef __arm__
+    void(*stub_showComputerPropertyDialog)()=[](){};
+    stu2.set(ADDR(DialogManager, showComputerPropertyDialog), stub_showComputerPropertyDialog);
+#endif
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showPropertyDialog(event));
 
     QEventLoop loop;
@@ -811,6 +821,11 @@ TEST_F(TestDialogManager, testShowPropertyDialog4)
     void(*stub3_show)() = []()->void{};
     stub_ext::StubExt stu3;
     stu3.set(ADDR(QWidget, show), stub3_show);
+
+#ifdef __arm__
+    void(*stub_showComputerPropertyDialog)()=[](){};
+    stu2.set(ADDR(DialogManager, showComputerPropertyDialog), stub_showComputerPropertyDialog);
+#endif
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showPropertyDialog(event));
 
@@ -841,6 +856,11 @@ TEST_F(TestDialogManager, testShowPropertyDialog5)
     void(*stub3_show)() = []()->void{};
     stub_ext::StubExt stu3;
     stu3.set(ADDR(QWidget, show), stub3_show);
+
+#ifdef __arm__
+    void(*stub_showComputerPropertyDialog)()=[](){};
+    stu2.set(ADDR(DialogManager, showComputerPropertyDialog), stub_showComputerPropertyDialog);
+#endif
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showPropertyDialog(event));
 
@@ -921,7 +941,7 @@ TEST_F(TestDialogManager, testShowTrashPropertyDialog3)
     QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
     loop.exec();
 }
-#ifndef __arm__
+
 TEST_F(TestDialogManager, testShowComputerPropertyDialog)
 {
     void(*stub4_show)() = []()->void{};
@@ -932,6 +952,12 @@ TEST_F(TestDialogManager, testShowComputerPropertyDialog)
     stub_ext::StubExt stu3;
     stu3.set(ADDR(QWidget, show), stub3_show);
 
+#ifdef __arm__
+    Stub stu2;
+    void(*stub_showComputerPropertyDialog)()=[](){};
+    stu2.set(ADDR(DialogManager, showComputerPropertyDialog), stub_showComputerPropertyDialog);
+#endif
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showComputerPropertyDialog());
     QEventLoop loop;
     QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
@@ -940,8 +966,8 @@ TEST_F(TestDialogManager, testShowComputerPropertyDialog)
 
 TEST_F(TestDialogManager, testShowComputerPropertyDialog2)
 {
-    ComputerPropertyDialog dlg;
-    m_pTester->m_computerDialog = &dlg;
+    //ComputerPropertyDialog dlg;
+    //m_pTester->m_computerDialog = &dlg;
 
     void(*stub4_show)() = []()->void{};
     stub_ext::StubExt stu4;
@@ -951,12 +977,18 @@ TEST_F(TestDialogManager, testShowComputerPropertyDialog2)
     stub_ext::StubExt stu3;
     stu3.set(ADDR(QWidget, show), stub3_show);
 
+#ifdef __arm__
+    Stub stu2;
+    void(*stub_showComputerPropertyDialog)()=[](){};
+    stu2.set(ADDR(DialogManager, showComputerPropertyDialog), stub_showComputerPropertyDialog);
+#endif
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->showComputerPropertyDialog());
     QEventLoop loop;
     QTimer::singleShot(200, nullptr, [&loop](){loop.exit();});
     loop.exec();
 }
-#endif
+
 TEST_F(TestDialogManager, testShowDevicePropertyDialog)
 {
     DFMEvent event;
@@ -1615,8 +1647,10 @@ TEST_F(TestDialogManager, testCloseAllPropertyDialog)
     TrashPropertyDialog* pdlg = new TrashPropertyDialog(DUrl::fromTrashFile("/"));
     m_pTester->m_trashDialog = pdlg;
 
+#ifndef __arm__
     ComputerPropertyDialog dlg2;
     m_pTester->m_computerDialog = &dlg2;
+#endif
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->closeAllPropertyDialog());
 }
@@ -1729,6 +1763,7 @@ TEST_F(TestDialogManager, testShowTaskProgressDlgOnActive3)
     EXPECT_NO_FATAL_FAILURE(m_pTester->showTaskProgressDlgOnActive());
 }
 
+#ifndef __arm__
 TEST_F(TestDialogManager, testShowUnableToLocateDir)
 {
     QString dir("/testfile");
@@ -1742,6 +1777,7 @@ TEST_F(TestDialogManager, testShowUnableToLocateDir)
     int code = m_pTester->showUnableToLocateDir(dir);
     EXPECT_EQ(code, 1);
 }
+#endif
 
 TEST_F(TestDialogManager, testRefreshPropertyDialogs)
 {

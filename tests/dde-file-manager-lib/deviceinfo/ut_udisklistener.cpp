@@ -83,7 +83,8 @@ public:
     {
         // 构造 UDiskListener 时，会自动注册，先取消注册，再删除，避免被重复析构
         // 在 UDiskLister 析构函数实现更好
-        DFileService::unsetFileUrlHandler(m_listener);
+        // 改为在析构的时候自动解注册 2021 05 10 lanxs
+        //DFileService::unsetFileUrlHandler(m_listener);
         delete m_listener;
         m_listener = nullptr;
     }
@@ -295,7 +296,7 @@ TEST_F(TestUDiskListener, forceUnmount)
     UDiskListener listener;
     listener.m_map["a"] = new UDiskDeviceInfo;
     EXPECT_NO_FATAL_FAILURE(listener.forceUnmount("a"));
-    DFileService::unsetFileUrlHandler(&listener);
+    //DFileService::unsetFileUrlHandler(&listener);
 }
 
 TEST_F(TestUDiskListener, fileSystemDeviceIdLabelChanged)
@@ -385,7 +386,7 @@ TEST_F(TestUDiskListener, addMountDiskInfo)
 
     EXPECT_NO_FATAL_FAILURE(listener.addMountDiskInfo(info));
     delete subscriber;
-    DFileService::unsetFileUrlHandler(&listener);
+    //DFileService::unsetFileUrlHandler(&listener);
 }
 
 TEST_F(TestUDiskListener, mount)
@@ -407,7 +408,7 @@ TEST_F(TestUDiskListener, removeVolumeDiskInfo)
     listener.m_map.clear();
 
     EXPECT_NO_FATAL_FAILURE(listener.removeVolumeDiskInfo(info));
-    DFileService::unsetFileUrlHandler(&listener);
+    //DFileService::unsetFileUrlHandler(&listener);
 }
 
 TEST_F(TestUDiskListener, changeVolumeDiskInfo)
@@ -423,7 +424,7 @@ TEST_F(TestUDiskListener, changeVolumeDiskInfo)
 
     listener.m_map.clear();
     EXPECT_NO_FATAL_FAILURE(listener.changeVolumeDiskInfo(info));
-    DFileService::unsetFileUrlHandler(&listener);
+    //DFileService::unsetFileUrlHandler(&listener);
 }
 
 TEST_F(TestUDiskListener, isBlockFile)

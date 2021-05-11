@@ -95,6 +95,11 @@ UDiskListener::UDiskListener(QObject *parent):
     fileService->setFileUrlHandler(DEVICE_SCHEME, "", this);
 }
 
+UDiskListener::~UDiskListener()
+{
+    DFileService::unsetFileUrlHandler(this);
+}
+
 void UDiskListener::initDiskManager()
 {
     m_diskMgr = new DDiskManager(this);

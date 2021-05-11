@@ -322,8 +322,8 @@ TEST_F(DFileSeviceTest, start_HandlerOp){
     auto *tempTrashMgr = new TrashManager();
     tempTrashMgr->setObjectName("trashMgr");
     DFileService::setFileUrlHandler(TRASH_SCHEME, "", tempTrashMgr);
-    DFileService::unsetFileUrlHandler(tempTrashMgr);
-    DFileService::unsetFileUrlHandler(tempTrashMgr);
+    //DFileService::unsetFileUrlHandler(tempTrashMgr);
+    //DFileService::unsetFileUrlHandler(tempTrashMgr);
     delete tempTrashMgr;
     AppController::instance()->registerUrlHandle();
     EXPECT_FALSE( DFileService::getHandlerTypeByUrl(urlvideos).isEmpty());

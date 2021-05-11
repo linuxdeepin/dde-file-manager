@@ -80,14 +80,22 @@ SOURCES += \
     $$PWD/io/ut_dlocalfiledevice.cpp \
     $$PWD/io/ut_dfilestatisticsjob.cpp \
     $$PWD/io/ut_dstorageinfo.cpp \
-    $$PWD/io/ut_dfileiodeviceproxy.cpp \
+    $$PWD/io/ut_dfileiodeviceproxy.cpp
+
+isEqual(ARCH, x86_64) {
+SOURCES += \
+    $$PWD/bluetooth/ut_bluetoothmanager.cpp \
+    $$PWD/bluetooth/ut_bluetoothtransdialog.cpp \
+    $$PWD/dbus/ut_dbussystemInfo_test.cpp \
+    $$PWD/dialogs/ut_computerpropertydialog.cpp
+}
+
+SOURCES += \
     $$PWD/bluetooth/ut_bluetoothdevice.cpp \
     $$PWD/bluetooth/ut_bluetoothadapter.cpp \
-    $$PWD/bluetooth/ut_bluetoothmanager.cpp \
     $$PWD/bluetooth/ut_bluetoothmodel.cpp \
     $$PWD/deviceinfo/ut_udisklistener.cpp \
     $$PWD/deviceinfo/ut_udiskdeviceinfo.cpp \
-    $$PWD/bluetooth/ut_bluetoothtransdialog.cpp \
     ####
     $$PWD/interfaces/ut_dfileinfo.cpp \
     $$PWD/interfaces/pulgins/ut_dfmcrumbfactory.cpp \
@@ -104,7 +112,6 @@ SOURCES += \
     $$PWD/dialogs/ut_basedialog.cpp \
     $$PWD/dialogs/ut_burnoptdialog.cpp \
     $$PWD/dialogs/ut_closealldialogindicator.cpp \
-    $$PWD/dialogs/ut_computerpropertydialog.cpp \
     $$PWD/dialogs/ut_connecttoserverdialog.cpp \
     $$PWD/dialogs/ut_ddeskprenamedialog.cpp \
     $$PWD/dialogs/ut_dfmsettingdialog.cpp \
@@ -123,7 +130,6 @@ SOURCES += \
     $$PWD/plugins/ut_pluginmanager.cpp \
     $$PWD/fulltextsearch/ut_fulltextsearch.cpp \
     $$PWD/controllers/ut_searchcontroller.cpp \
-    $$PWD/dbus/ut_dbussystemInfo_test.cpp \
     $$PWD/sw_label/ut_llsdeepinlabellibrary_test.cpp \
     $$PWD/sw_label/ut_filemanagerlibrary_test.cpp \
     $$PWD/dbusinterface/ut_dbustype.cpp \
