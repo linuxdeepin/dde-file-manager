@@ -148,7 +148,7 @@ public:
     QSharedPointer<DFileCopyMoveJob> fileJob;
 };
 
-
+#ifndef __arm__
 TEST_F(DFileCopyMoveJobTest,can_job_running) {
     TestHelper::runInLoop([](){});
     job->setMode(DFileCopyMoveJob::CopyMode);
@@ -187,7 +187,7 @@ TEST_F(DFileCopyMoveJobTest,can_job_running) {
     job->togglePause();
     job->stop();
 }
-
+#endif
 TEST_F(DFileCopyMoveJobTest,can_job_running_cut) {
     job->setMode(DFileCopyMoveJob::CutMode);
     DUrl urlsour,target;

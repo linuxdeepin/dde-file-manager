@@ -483,7 +483,7 @@ TEST_F(TestVaultController, tst_renameFile)
 
     QProcess::execute(cmdRm);
 }
-
+#ifndef __arm__
 TEST_F(TestVaultController, tst_share_unshare_Folder)
 {
     QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
@@ -501,7 +501,7 @@ TEST_F(TestVaultController, tst_share_unshare_Folder)
 
     QProcess::execute(cmdRm);
 }
-
+#endif
 TEST_F(TestVaultController, tst_openTerminal)
 {
     QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";

@@ -176,7 +176,7 @@ TEST_F(TestShareInfoFrame, testDisactivateWidgets)
     bool b = m_pTester->m_permissoComBox->isEditable();
     EXPECT_EQ(b, false);
 }
-
+#ifndef __arm__
 TEST_F(TestShareInfoFrame, testDoShareInfoSetting)
 {
     m_pTester->m_shareCheckBox->setChecked(true);
@@ -185,7 +185,7 @@ TEST_F(TestShareInfoFrame, testDoShareInfoSetting)
     bool b = m_pTester->doShareInfoSetting();
     EXPECT_EQ(b, false);
 }
-
+#endif
 TEST_F(TestShareInfoFrame, testUpdateShareInfo)
 {
     TestHelper::runInLoop([](){});

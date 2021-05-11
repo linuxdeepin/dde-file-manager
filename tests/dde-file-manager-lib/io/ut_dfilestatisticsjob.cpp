@@ -61,7 +61,7 @@ TEST_F(DFileStatisticsJobTest,can_propty) {
     EXPECT_TRUE(job->directorysCount() == 0);
     EXPECT_TRUE(job->directorysCount(false) == 0);
 }
-
+#ifndef __arm__
 TEST_F(DFileStatisticsJobTest,can_running) {
 
     job->stop();
@@ -91,7 +91,7 @@ TEST_F(DFileStatisticsJobTest,can_running) {
     job->stop();
 
 }
-
+#endif
 TEST_F(DFileStatisticsJobTest,can_running_single) {
     job->setFileHints(DFileStatisticsJob::ExcludeSourceFile |
                       DFileStatisticsJob::SingleDepth);
