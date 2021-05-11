@@ -117,10 +117,10 @@ TEST_F(TestVaultHelper, isVaultEnabled)
 {
     if (!DSysInfo::isCommunityEdition()) {
         DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-        if (DSysInfo::DeepinType::DeepinPersonal != deepinType && DSysInfo::DeepinType::UnknownDeepin != deepinType) {
+        if (DSysInfo::DeepinType::DeepinProfessional == deepinType) {
             EXPECT_TRUE(m_vaultHelper->isVaultEnabled());
-        } else {
-            EXPECT_FALSE(m_vaultHelper->isVaultEnabled());
+            return;
         }
     }
+    EXPECT_FALSE(m_vaultHelper->isVaultEnabled());
 }
