@@ -9,6 +9,8 @@
 #include <QEventLoop>
 #include <QTimer>
 
+#define FreePointer(x) if(x){delete x;x = nullptr;}
+
 class TestHelper
 {
 public:

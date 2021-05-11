@@ -50,6 +50,10 @@
 #include "controllers/filecontroller.h"
 #include "interfaces/dfileservices.h"
 #include "ddialog.h"
+#include "dfiledevice.h"
+#include "dfilehandler.h"
+#include "controllers/jobcontroller.h"
+#include "dstorageinfo.h"
 
 using namespace testing;
 using namespace stub_ext;
@@ -262,19 +266,42 @@ TEST_F(DFileSeviceTest, sart_fmevent){
                                   QDirIterator::NoIteratorFlags, false, false),nullptr));
     const auto &&event =dMakeEventPointer<DFMCreateGetChildrensJob>(nullptr, url, QStringList(), QDir::Dirs | QDir::Hidden | QDir::NoDotAndDotDot,
                                                                     QDirIterator::NoIteratorFlags, true, false);
-    EXPECT_TRUE(service->fmEvent(event,nullptr));
+    QVariant getChildrensJob;
+    EXPECT_TRUE(service->fmEvent(event, &getChildrensJob));
+    auto *job1 = getChildrensJob.value<JobController*>();
+    FreePointer(job1);
+
     event->setAccepted(false);
-    EXPECT_TRUE(service->fmEvent(event,nullptr));
+    EXPECT_TRUE(service->fmEvent(event, &getChildrensJob));
+    auto *job2 = getChildrensJob.value<JobController*>();
+    FreePointer(job2);
+
+    QVariant fileWatcher;
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMCreateFileWatcherEvent>
-                                 (nullptr, url),nullptr));
+                                 (nullptr, url), &fileWatcher));
+    auto *watcher = fileWatcher.value<DAbstractFileWatcher *>();
+    FreePointer(watcher);
+
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMSetFileExtraProperties>
                                  (nullptr, url, QVariantHash()),nullptr));
+    QVariant fileDevice;
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMUrlBaseEvent>
-                                 (DFMEvent::CreateFileDevice, nullptr, url),nullptr));
+                                 (DFMEvent::CreateFileDevice, nullptr, url), &fileDevice));
+    DFileDevice *device = fileDevice.value<DFileDevice*>();
+    FreePointer(device);
+
+    QVariant fileHandle;
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMUrlBaseEvent>
-                                 (DFMEvent::CreateFileHandler, nullptr, url),nullptr));
+                                 (DFMEvent::CreateFileHandler, nullptr, url), &fileHandle));
+    DFileHandler *handle = fileHandle.value<DFileHandler*>();
+    FreePointer(handle);
+
+    QVariant storageInfo;
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMUrlBaseEvent>
-                                 (DFMEvent::CreateStorageInfo, nullptr, url),nullptr));
+                                 (DFMEvent::CreateStorageInfo, nullptr, url), &storageInfo));
+    auto *info = storageInfo.value<DStorageInfo *>();
+    FreePointer(info);
+
     bool (*removeTagsOfFileslamda)(const QList<QString> &, const QList<DUrl> &) = []
             (const QList<QString> &, const QList<DUrl> &){
         return true;
@@ -322,8 +349,8 @@ TEST_F(DFileSeviceTest, start_HandlerOp){
     auto *tempTrashMgr = new TrashManager();
     tempTrashMgr->setObjectName("trashMgr");
     DFileService::setFileUrlHandler(TRASH_SCHEME, "", tempTrashMgr);
-    //DFileService::unsetFileUrlHandler(tempTrashMgr);
-    //DFileService::unsetFileUrlHandler(tempTrashMgr);
+//    DFileService::unsetFileUrlHandler(tempTrashMgr);
+//    DFileService::unsetFileUrlHandler(tempTrashMgr);
     delete tempTrashMgr;
     AppController::instance()->registerUrlHandle();
     EXPECT_FALSE( DFileService::getHandlerTypeByUrl(urlvideos).isEmpty());
