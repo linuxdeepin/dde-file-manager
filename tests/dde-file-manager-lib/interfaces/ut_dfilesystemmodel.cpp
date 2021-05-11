@@ -38,6 +38,7 @@ namespace  {
             delete  m_helper;
             delete  m_view;
             TestHelper::deleteTmpFile(tmpDirUrl.path());
+            TestHelper::runInLoop([](){}, 10);
         }
 
     public:
