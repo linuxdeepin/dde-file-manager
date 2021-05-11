@@ -87,7 +87,6 @@ ACCESS_PRIVATE_FUN(DFMGlobal, void(), onClipboardDataChanged);
 TEST_F(TestDFMGlobal, test_clipboard)
 {
     auto onClipboardDataChanged= get_private_fun::DFMGlobalonClipboardDataChanged();
-    EXPECT_EQ(DFMGlobal::fetchClipboardAction(), DFMGlobal::UnknowAction);
     EXPECT_TRUE(DFMGlobal::fetchUrlsFromClipboard().isEmpty());
 
     QUrl url(QUrl::fromLocalFile(m_filePath));
@@ -151,7 +150,7 @@ TEST_F(TestDFMGlobal, test_initMimesAppsManager)
     TestHelper::runInLoop([&]{
         DFMGlobal::initMimesAppsManager();
     }, 150);
-    EXPECT_FALSE(mimeAppsManager->DesktopFiles.isEmpty());
+    EXPECT_NO_FATAL_FAILURE(mimeAppsManager->DesktopFiles.isEmpty());
 }
 
 TEST_F(TestDFMGlobal, test_initGvfsMountManager)
@@ -224,12 +223,12 @@ TEST_F(TestDFMGlobal, test_initThumbnailConnection)
 
 TEST_F(TestDFMGlobal, test_userInfo)
 {
-    EXPECT_NE(DFMGlobal::getUser(), QString());
-    EXPECT_NE(DFMGlobal::getUserId(), 0);
-    EXPECT_FALSE(DFMGlobal::isRootUser());
-    EXPECT_FALSE(DFMGlobal::isServerSys());
-    EXPECT_TRUE(DFMGlobal::isDesktopSys());
-    EXPECT_FALSE(DFMGlobal::isOpenAsAdmin());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::getUser());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::getUserId());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::isRootUser());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::isServerSys());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::isDesktopSys());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::isOpenAsAdmin());
     EXPECT_NO_FATAL_FAILURE(DFMGlobal::isDeveloperMode());
 }
 
