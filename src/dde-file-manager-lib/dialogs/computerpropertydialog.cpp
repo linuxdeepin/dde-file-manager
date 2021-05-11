@@ -110,6 +110,10 @@ void ComputerPropertyDialog::initUI()
     QHash<QString, QString> datas = getMessage(msgsTitle);
 
     foreach (const QString &key, msgsTitle) {
+
+        if (DSysInfo::isCommunityEdition() && key == tr("Version"))
+            continue;
+
         QLabel *keyLabel = new QLabel(key, this);
         QLabel *valLabel = new QLabel(datas.value(key), this);
 
