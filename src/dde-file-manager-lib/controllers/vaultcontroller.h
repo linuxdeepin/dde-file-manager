@@ -71,19 +71,6 @@ public:
     DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const override;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
-    /**
-     * @brief shareFolder 设置文件夹共享
-     * @param event       共享的信息事件
-     * @return            是否共享成功
-     */
-    bool shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const override;
-
-    /**
-     * @brief unShareFolder 取消文件夹共享
-     * @param event         关闭共享信息事件
-     * @return              是否取消成功
-     */
-    bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const override;
 
     /**
      * @brief openInTerminal  右键菜单打开当前路径终端

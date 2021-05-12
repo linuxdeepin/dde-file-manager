@@ -483,25 +483,7 @@ TEST_F(TestVaultController, tst_renameFile)
 
     QProcess::execute(cmdRm);
 }
-#ifndef __arm__
-TEST_F(TestVaultController, tst_share_unshare_Folder)
-{
-    QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
 
-    QString cmdTouch = QString("touch ") + testFile;
-    QString cmdRm = QString("rm ") + testFile;
-
-    QProcess::execute(cmdTouch);
-
-    QSharedPointer<DFMFileShareEvent> event = dMakeEventPointer<DFMFileShareEvent>(nullptr, testFile, "utFile");
-    EXPECT_FALSE(m_controller->shareFolder(event));
-
-    QSharedPointer<DFMCancelFileShareEvent> cancelEvent = dMakeEventPointer<DFMCancelFileShareEvent>(nullptr, testFile);
-    EXPECT_TRUE(m_controller->unShareFolder(cancelEvent));
-
-    QProcess::execute(cmdRm);
-}
-#endif
 TEST_F(TestVaultController, tst_openTerminal)
 {
     QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";

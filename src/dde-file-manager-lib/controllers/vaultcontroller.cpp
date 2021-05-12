@@ -481,28 +481,6 @@ bool VaultController::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
     return flg;
 }
 
-bool VaultController::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const
-{
-    ShareInfo info;
-    info.setPath(makeVaultLocalPath(event->name()));
-
-    info.setShareName(event->name());
-    info.setIsGuestOk(event->allowGuest());
-    info.setIsWritable(event->isWritable());
-
-    bool ret = userShareManager->addUserShare(info);
-
-    return ret;
-}
-
-bool VaultController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
-{
-    QString path = vaultToLocalUrl(event->fileUrl()).path();
-    userShareManager->deleteUserShareByPath(path);
-
-    return true;
-}
-
 bool VaultController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
 {
     const QString &current_dir = QDir::currentPath();
