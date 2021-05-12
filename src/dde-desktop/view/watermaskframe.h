@@ -39,6 +39,7 @@ enum ActiveState {
     TrialExpired //试用期已过期
 };
 
+class QHBoxLayout;
 class WaterMaskFrame : public QFrame
 {
     Q_OBJECT
@@ -62,6 +63,7 @@ private:
     QJsonObject m_configs;
     QLabel* m_logoLabel = nullptr;
     QLabel* m_textLabel = nullptr;
+    QHBoxLayout *m_mainLayout = nullptr;
     bool m_isMaskAlwaysOn = false;
     int m_xRightBottom;
     int m_yRightBottom;

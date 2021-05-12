@@ -713,6 +713,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
         m_canvasGridView->keyPressEvent(&keyPressEvt_Key_AltM);
         EXPECT_TRUE(isgset);
 
+        stu.reset(&QVariant::isValid);
         stu.set_lamda(ADDR(QVariant, isValid), [](){return false;});
         m_canvasGridView->keyPressEvent(&keyPressEvt_Key_AltM);
     }
@@ -841,6 +842,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_moveCursorGrid)
             return Coordinate(newCoord.d.x + 1, newCoord.d.y);
         });
         conut = 1;
+        stub.reset(&Coordinate::position);
         stub.set_lamda(ADDR(Coordinate, position), [&colCount, &conut]{
             conut++;
             if (conut >= 3)
@@ -887,6 +889,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_moveCursorGrid)
     tpModifiers = Qt::ShiftModifier;
     inThere = false;
     tpCursorActon = QAbstractItemView::CursorAction::MovePageUp;
+    stub.reset(&Coordinate::position);
     stub.set_lamda(ADDR(Coordinate, position), []{
         return QPoint(-1, -1);
     });
@@ -897,6 +900,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_moveCursorGrid)
 
     inThere = false;
     conut = 1;
+    stub.reset(&Coordinate::moveDown);
     stub.set_lamda(ADDR(Coordinate, moveDown), [&inThere, &newCoord, &conut]{
         inThere = true;
         conut++;
@@ -905,6 +909,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_moveCursorGrid)
         return Coordinate(newCoord.d.x, newCoord.d.y + 1);
     });
 
+    stub.reset(&Coordinate::position);
     stub.set_lamda(ADDR(Coordinate, position), [&row, &colCount, &conut]{
         conut++;
         if (conut >= 3)
@@ -943,6 +948,8 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_dragMoveEvent)
     m_canvasGridView->dragMoveEvent(&devent1);
     QDragMoveEvent devent2(QPoint(66, 200), Qt::DropAction::MoveAction, tgData, Qt::MouseButton::LeftButton, Qt::NoModifier);
     m_canvasGridView->dragMoveEvent(&devent2);
+    delete tgData;
+    tgData = nullptr;
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_dropEvent)
@@ -1032,6 +1039,8 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_dropEvent)
         EXPECT_TRUE(move);
         EXPECT_FALSE(checkMimeData);
     }
+    delete tgData;
+    tgData = nullptr;
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_toggleEntryExpandedState)
@@ -1266,6 +1275,9 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge_autoMergeSelectedUr
     stu.set_lamda(ADDR(CanvasGridView, selectionModel), [model](){return model;});
     auto tpLst = m_canvasGridView->autoMergeSelectedUrls();
     qApp->processEvents();
+
+    delete model;
+    model = nullptr;
 }
 
 //new
@@ -1659,11 +1671,12 @@ TEST_F(CanvasGridViewTest, test_itemIconGeomerty)
         QRect  aaa(10, 10, 10, 10);
         return aaa;
     };
-    stu.set(ADDR(QRect, marginsRemoved),temppp);
+    stu.set(ADDR(QRect, marginsRemoved), temppp);
 
     QRect rect = m_canvasGridView->itemIconGeomerty(index);
     EXPECT_TRUE(QRect(10, 10, 10, 10) == rect);
 
+    stub.reset(myPaintGeomertys);
     stub.set_lamda(myPaintGeomertys, []()->QList<QRect>{return {QRect(9, 9, 9, 9)};});
     QRect rect2 = m_canvasGridView->itemIconGeomerty(index);
     EXPECT_TRUE(QRect(9, 9, 9, 9) == rect2);

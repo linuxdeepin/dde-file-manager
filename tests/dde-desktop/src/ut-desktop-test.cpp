@@ -244,7 +244,6 @@ TEST(DesktopTest, enable_ui_debug)
             desktop.d.data()->m_canvas->m_canvasMap.insert(sp, mView);
         }
     }
-    stu.set_lamda(ADDR(CanvasGridView, EnableUIDebug), [](){return;});
     desktop.EnableUIDebug(true);
     if (desktop.d.data()->m_canvas->canvas().values().size())
         EXPECT_TRUE(isDebug);

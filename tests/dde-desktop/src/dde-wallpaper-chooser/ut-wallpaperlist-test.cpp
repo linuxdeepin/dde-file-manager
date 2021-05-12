@@ -73,6 +73,7 @@ TEST_F(WallpaperlistTest, test_keypressevent)
     stub_ext::StubExt stu;
     stu.set_lamda(ADDR(WallpaperList, setCurrentIndex), [](){return;});
     bool index = false;
+    stu.reset(&WallpaperList::setCurrentIndex);
     stu.set_lamda(ADDR(WallpaperList, setCurrentIndex), [&index](){ index = true; return;});
     m_list->keyPressEvent(eventright);
     EXPECT_TRUE(index);
@@ -152,20 +153,27 @@ TEST_F(WallpaperlistTest, test_scrolllist)
     bool ismini = false;
     stu.set_lamda(ADDR(QAbstractAnimation, state), [&isstate](){isstate = true; return QAbstractAnimation::Stopped;});
     stu.set_lamda(ADDR(QAbstractSlider, minimum), [&ismini](){ismini = true; return -1;});
+    auto itemOne = new WallpaperItem;
+    auto itemTwo = new WallpaperItem;
     if (m_list->prevItem == nullptr) {
-        m_list->prevItem = new WallpaperItem;
+        m_list->prevItem = itemOne;
     }
     if(m_list->nextItem == nullptr) {
-        m_list->nextItem = new WallpaperItem;
+        m_list->nextItem = itemTwo;
     }
     m_list->scrollList(2, 200);
     EXPECT_TRUE(isstate);
     EXPECT_TRUE(ismini);
     bool isrun = false;
+    stu.reset(&QAbstractAnimation::state);
     stu.set_lamda(ADDR(QAbstractAnimation, state), [&isrun](){isrun = true; return QAbstractAnimation::Running;});
     m_list->scrollList(2, 200);
     EXPECT_TRUE(isrun);
 
+    delete itemOne;
+    delete itemTwo;
+    itemOne = nullptr;
+    itemTwo = nullptr;
 }
 
 TEST_F(WallpaperlistTest, test_resizeevent)
@@ -302,10 +310,14 @@ TEST_F(WallpaperlistTest, test_showDeleteButtonForItem)
 
     EXPECT_TRUE(isemitsignal);
 
+    stu.reset(&WallpaperItem::getDeletable);
     stu.set_lamda(ADDR(WallpaperItem, getDeletable), [&isdelete](){isdelete = true; return false;});
     m_list->showDeleteButtonForItem(item);
 
     EXPECT_TRUE(isemitsignal);
+
+    delete item;
+    item = nullptr;
 }
 
 TEST_F(WallpaperlistTest, test_clear)

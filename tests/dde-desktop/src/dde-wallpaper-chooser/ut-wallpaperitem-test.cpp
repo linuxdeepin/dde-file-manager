@@ -91,6 +91,13 @@ TEST_F(WallpaperItemTest, test_keyevent)
     stu.set_lamda(ADDR(QKeyEvent, ignore), [&judge](){judge = true;});
     m_item->keyPressEvent(eventdefault);
     EXPECT_TRUE(judge == true);
+
+    delete eventup;
+    eventup = nullptr;
+    delete eventdown;
+    eventdown = nullptr;
+    delete eventdefault;
+    eventdefault = nullptr;
 }
 
 TEST_F(WallpaperItemTest, test_setdata)

@@ -188,6 +188,16 @@ Frame::~Frame()
         delete m_itemwait;
         m_itemwait = nullptr;
     }
+
+    if (m_toolLayout) {
+        delete m_toolLayout;
+        m_toolLayout = nullptr;
+    }
+
+    if (m_wallpaperCarouselLayout) {
+        delete m_wallpaperCarouselLayout;
+        m_wallpaperCarouselLayout = nullptr;
+    }
 }
 
 void Frame::show()

@@ -8,6 +8,7 @@
 #define private public
 #define protected public
 
+#include <view/private/canvasviewprivate.h>
 #include "view/canvasviewhelper.h"
 #include "view/canvasgridview.h"
 #include "view/backgroundmanager.h"
@@ -19,14 +20,14 @@
 #include "dfilesystemmodel.h"
 using namespace testing;
 namespace  {
-class CanvasViewHelperTest : public Test
-{
+class CanvasViewHelperTest : public Test {
 public:
     CanvasViewHelperTest() : Test()
     {
         for (auto tpCanvas : m_cvmgr->m_canvasMap.values()) {
             if (1 == tpCanvas->screenNum()) {
                 m_view = tpCanvas.data();
+                m_canvas = tpCanvas.data()->d->fileViewHelper;
                 break;
             }
         }
@@ -39,15 +40,10 @@ public:
             file.close();
         }
     }
-    void SetUp() override
-    {
-        m_canvas = new CanvasViewHelper(m_view);
+    void SetUp() override {
     }
 
-    void TearDown() override
-    {
-        delete m_canvas;
-        delete m_view;
+    void TearDown() override {
     }
     QString path;
     CanvasViewHelper *m_canvas = nullptr;

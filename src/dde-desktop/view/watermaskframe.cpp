@@ -82,6 +82,11 @@ WaterMaskFrame::~WaterMaskFrame()
         m_textLabel->deleteLater();
         m_textLabel = nullptr;
     }
+
+    if (m_mainLayout) {
+        m_mainLayout->deleteLater();
+        m_mainLayout = nullptr;
+    }
 }
 
 bool WaterMaskFrame::checkConfigFile(const QString &fileName)
@@ -302,34 +307,43 @@ void WaterMaskFrame::initUI()
         m_textLabel->setAlignment(Qt::AlignCenter);
     }
 
-    QHBoxLayout *mainLayout = new QHBoxLayout;
-    mainLayout->setSpacing(0);
-    mainLayout->addStretch();
+    m_mainLayout = new QHBoxLayout();
+    m_mainLayout->setSpacing(0);
+    m_mainLayout->addStretch();
 
     if (maskLogoUri.length() != 0) {
         if (maskLogoLayoutAlign == "left") {
-            mainLayout->addWidget(m_logoLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
+            m_mainLayout->addWidget(m_logoLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
         } else if (maskLogoLayoutAlign == "right") {
-            mainLayout->addWidget(m_logoLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
+            m_mainLayout->addWidget(m_logoLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
         } else if (maskLogoLayoutAlign == "center") {
-            mainLayout->addWidget(m_logoLabel, 0, Qt::AlignCenter);
+            m_mainLayout->addWidget(m_logoLabel, 0, Qt::AlignCenter);
         }
     }
 
-    mainLayout->addSpacing(maskLogoTextSpacing);
+    m_mainLayout->addSpacing(maskLogoTextSpacing);
 
     if (isNeedState()) {
         if (maskTextLayoutAlign == "left") {
-            mainLayout->addWidget(m_textLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
+            m_mainLayout->addWidget(m_textLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
         } else if (maskTextLayoutAlign == "right") {
-            mainLayout->addWidget(m_textLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
+            m_mainLayout->addWidget(m_textLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
         } else if (maskTextLayoutAlign == "center") {
-            mainLayout->addWidget(m_textLabel, 0, Qt::AlignCenter);
+            m_mainLayout->addWidget(m_textLabel, 0, Qt::AlignCenter);
         }
     }
-    mainLayout->addStretch();
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    setLayout(mainLayout);
+    m_mainLayout->addStretch();
+    m_mainLayout->setContentsMargins(0, 0, 0, 0);
+
+    /*initUI会new一个QHBoxLayout，WaterMaskFrame构造时已经调用了一次，
+     * 后续多次同一对象调用initUI会导致泄露，由于updateAuthorizationState会间接调用到initUI,
+     * 因此需要删掉之前的布局之后再调用*/
+    auto tempLayout = this->layout();
+    setLayout(m_mainLayout);
+    if (tempLayout) {
+        delete tempLayout;
+        tempLayout = nullptr;
+    }
 
     setFixedSize(m_maskWidth, m_maskHeight);
     QString color(maskTextColor);

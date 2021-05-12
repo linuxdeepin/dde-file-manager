@@ -104,10 +104,10 @@ void WallpaperItem::initUI()
 
 void WallpaperItem::initAnimation()
 {
-    m_upAnim = new QPropertyAnimation(m_wrapper, "pos");
+    m_upAnim = new QPropertyAnimation(m_wrapper, "pos", this);
     m_upAnim->setDuration(300);
 
-    m_downAnim = new QPropertyAnimation(m_wrapper, "pos");
+    m_downAnim = new QPropertyAnimation(m_wrapper, "pos", this);
     m_downAnim->setDuration(300);
 }
 

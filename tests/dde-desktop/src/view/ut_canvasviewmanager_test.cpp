@@ -291,7 +291,7 @@ TEST_F(CanvasViewManagerTest, Test_extend_CanvasViewManager_Slot_onCanvasViewBui
         bool isnullptr = false;
         stu.set_lamda(VADDR(ScreenManager, primaryScreen), [&isnullptr](){isnullptr = true; return nullptr;});
         stu.set_lamda(ADDR(CanvasViewManager, onBackgroundEnableChanged), [](){});
-        m_cvmgr->onCanvasViewBuild(2);
+        m_cvmgr->onCanvasViewBuild(3);
         ASSERT_TRUE(isnullptr);
     }
 

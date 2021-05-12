@@ -8,6 +8,7 @@
 #include "stubext.h"
 #include "config/config.h"
 #include "dbus/licenceInterface.h"
+#include <QLayout>
 
 using namespace testing;
 
@@ -61,10 +62,12 @@ TEST(WaterMaskFrame, test_initui)
     stub_ext::StubExt tub;
     tub.set_lamda(ADDR(Config, getConfig), [](){return 0;});
     wid->initUI();
+
     QJsonObject object;
     wid->m_configs = object;
     wid->initUI();
     delete wid;
+    wid = nullptr;
 }
 
 TEST(WaterMaskFrame, test_initui_extend)
@@ -75,15 +78,22 @@ TEST(WaterMaskFrame, test_initui_extend)
     tub.set_lamda(ADDR(ComDeepinLicenseInterface, AuthorizationState), [](){return ActiveState::Authorized;});
     wid->initUI();
     EXPECT_TRUE(wid->m_textLabel->text().isEmpty());
+    delete wid;
+    wid = nullptr;
 
+    wid = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
     tub.reset(ADDR(ComDeepinLicenseInterface, AuthorizationState));
     tub.set_lamda(ADDR(ComDeepinLicenseInterface, AuthorizationState), [](){return ActiveState::TrialAuthorized;});
     wid->initUI();
     EXPECT_TRUE(!wid->m_textLabel->text().isEmpty());
+    delete wid;
+    wid = nullptr;
 
+    wid = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
     tub.set_lamda(ADDR(WaterMaskFrame, isNeedState), [](){return false;});
     wid->initUI();
     EXPECT_TRUE(wid->m_textLabel->text().isEmpty());
     delete wid;
+    wid = nullptr;
 }
 

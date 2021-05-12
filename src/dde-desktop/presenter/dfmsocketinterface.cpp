@@ -35,6 +35,13 @@ class DFMSocketInterfacePrivate
 {
 public:
     explicit DFMSocketInterfacePrivate(DFMSocketInterface *parent) : q_ptr(parent) {}
+    ~DFMSocketInterfacePrivate() {
+        if (socket) {
+            delete socket;
+            socket = nullptr;
+        }
+
+    }
 
     QLocalSocket *socket = nullptr;
 

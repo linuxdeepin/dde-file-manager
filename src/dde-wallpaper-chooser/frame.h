@@ -106,8 +106,7 @@ private:
     QString m_desktopWallpaper;
     QStringList m_needDeleteList;
     QString m_lockWallpaper;
-    DIconButton * m_closeButton = nullptr;
-
+    DIconButton *m_closeButton = nullptr;
 #ifndef DISABLE_WALLPAPER_CAROUSEL
     QHBoxLayout *m_wallpaperCarouselLayout;
     CheckBox *m_wallpaperCarouselCheckBox;
