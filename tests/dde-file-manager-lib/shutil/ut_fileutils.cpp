@@ -621,10 +621,6 @@ TEST_F(TestFileUtils, can_get_folder_totalSize)
 
     EXPECT_EQ (FileUtils::totalSize(urlFileList), FileUtils::totalSize(urlFileList, 1024, isInLimitFiles));
 
-    // 这里无法复现 先打印两个size用于后面分析
-    const auto &size1 = FileUtils::totalSize(urlFolderList);
-    const auto &size2 = FileUtils::totalSize(urlFolderList, 1024, isInLimitFiles);
-    std::cout << "size1: " << size1 << std::endl;
-    std::cout << "size2: " << size2 << std::endl;
-    EXPECT_TRUE(size1 != size2);
+    // 有的文件系统空文件夹返回size为64B, 所以这里limit设置小一些
+    EXPECT_TRUE(FileUtils::totalSize(urlFolderList) != FileUtils::totalSize(urlFolderList, 128, isInLimitFiles));
 }

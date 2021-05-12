@@ -194,6 +194,7 @@ QStringList FileUtils::filesList(const QString &dir)
  *
  * 通常情况下，一个空目录文件的大小是 4k （有文件的目录的大小随文件数量的增加而增加）
  * 但是不同的文件系统下，目录的大小是不同的 （如 exfat 是 32k，vfat 是 8k）
+ * 跑CI时发现, 空文件夹size返回了64B
  *
  * @return fts_* 函数获取的结果，默认为 4096
  */

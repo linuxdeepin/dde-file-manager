@@ -116,15 +116,22 @@ TEST_F(TestMasteredMediaController, tstEventsFuncs)
 
     stub_ext::StubExt stext;
     stext.set_lamda(VADDR(QDialog, exec), []{ return 1; }); // 避免某些机器没有 file-roller 而弹框阻塞ut运行
+
+    bool (*stub_compressFiles)()=[](){return false;};
+    st.set(ADDR(DFileService, compressFiles), stub_compressFiles);
     auto e7 = dMakeEventPointer<DFMCompressEvent>(nullptr, DUrlList() << testUrl);
     EXPECT_FALSE(ctrl->compressFiles(e7));
 
+    bool (*stub_decompressFile)()=[](){return false;};
+    st.set(ADDR(DFileService, decompressFile), stub_decompressFile);
     auto e8 = dMakeEventPointer<DFMDecompressEvent>(nullptr, DUrlList() << testUrl);
     EXPECT_FALSE(ctrl->decompressFile(e8));
 
     auto e9 = dMakeEventPointer<DFMFileShareEvent>(nullptr, testUrl, "test");
     EXPECT_FALSE(ctrl->shareFolder(e9));
 
+    bool (*stub_unShareFolder)()=[](){return false;};
+    st.set(ADDR(DFileService, unShareFolder), stub_unShareFolder);
     auto e10 = dMakeEventPointer<DFMCancelFileShareEvent>(nullptr, testUrl);
     EXPECT_FALSE(ctrl->unShareFolder(e10));
 
