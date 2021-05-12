@@ -16,10 +16,11 @@ isEmpty(TARGET) {
 TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
 PKGCONFIG += gio-unix-2.0
-CONFIG(release, release|debug) {
+
+CONFIG(TABLET_ENV) {
     PKGCONFIG += dtkwidget5.5
 } else {
-    PKGCONFIG += dtkwidget5.5
+    PKGCONFIG += dtkwidget
 }
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"

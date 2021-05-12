@@ -1,8 +1,16 @@
+include(../../common/common.pri)
+
 PREFIX = /usr
 QT              += core widgets concurrent dbus
 TEMPLATE         = lib
 CONFIG          += plugin c++11 link_pkgconfig
-PKGCONFIG       += dtkwidget5.5 gio-qt udisks2-qt5
+
+CONFIG(TABLET_ENV) {
+    PKGCONFIG += dtkwidget5.5
+} else {
+    PKGCONFIG += dtkwidget
+}
+PKGCONFIG       += gio-qt udisks2-qt5
 
 INCLUDEPATH += /usr/include/dde-dock
 INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces \

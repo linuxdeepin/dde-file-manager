@@ -10,10 +10,15 @@ TARGET = dde-image-preview-plugin
 TEMPLATE = lib
 
 CONFIG += plugin c++11 link_pkgconfig
-PKGCONFIG += dtkwidget5.5 dtkgui5.5
 
 include(../../../common/common.pri)
 include(dde-image-preview-plugin.pri)
+
+CONFIG(TABLET_ENV) {
+    PKGCONFIG += dtkwidget5.5 dtkgui5.5
+} else {
+    PKGCONFIG += dtkwidget dtkgui
+}
 
 DISTFILES += dde-image-preview-plugin.json
 

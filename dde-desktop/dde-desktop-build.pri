@@ -1,3 +1,5 @@
+include(../common/common.pri)
+
 DEFINES += QT_MESSAGELOGCONTEXT
 
 EDITION=COMMUNITY
@@ -12,10 +14,10 @@ isEqual(EDITION, RACCOON) {
 
 DEFINES += DDE_DBUS_DISPLAY
 
-CONFIG(release, release|debug) {
+CONFIG(TABLET_ENV) {
     PKGCONFIG += dtkwidget5.5 dtkgui5.5 dtkcore5.5
 } else {
-    PKGCONFIG += dtkwidget5.5 dtkgui5.5 dtkcore5.5
+    PKGCONFIG += dtkwidget dtkgui dtkcore
 }
 
 load(dtk_qmake)

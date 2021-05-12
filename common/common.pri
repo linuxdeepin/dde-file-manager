@@ -4,6 +4,8 @@ unix {
     APPSHAREDIR = $$PREFIX/share/$$ProjectName
     top_srcdir = $$PWD/../
 
+    CONFIG += TABLET_ENV
+
     CONFIG(release, debug|release) {
         LIB_INSTALL_DIR = $$[QT_INSTALL_LIBS]
     }

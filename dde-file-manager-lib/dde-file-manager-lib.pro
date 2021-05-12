@@ -35,7 +35,12 @@ isEmpty(PREFIX){
 }
 
 CONFIG += c++11 link_pkgconfig
-PKGCONFIG += libsecret-1 gio-unix-2.0 poppler-cpp dtkwidget5.5 dtkgui5.5 udisks2-qt5 disomaster gio-qt libcrypto Qt5Xdg dframeworkdbus
+PKGCONFIG += libsecret-1 gio-unix-2.0 poppler-cpp udisks2-qt5 disomaster gio-qt libcrypto Qt5Xdg dframeworkdbus
+CONFIG(TABLET_ENV) {
+    PKGCONFIG += dtkwidget5.5 dtkgui5.5
+} else {
+    PKGCONFIG += dtkwidget dtkgui
+}
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
 

@@ -9,11 +9,17 @@ QT       += core gui widgets
 TARGET = dde-video-preview-plugin
 TEMPLATE = lib
 
-PKGCONFIG += libdmr dtkgui5.5
+PKGCONFIG += libdmr
 CONFIG += plugin link_pkgconfig c++11
 
 include(../../../common/common.pri)
 include(dde-video-preview-plugin.pri)
+
+CONFIG(TABLET_ENV) {
+    PKGCONFIG += dtkgui5.5
+} else {
+    PKGCONFIG += dtkgui
+}
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings

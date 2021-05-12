@@ -3,6 +3,7 @@
 # Project created by QtCreator 2016-08-02T13:45:46
 #
 #-------------------------------------------------
+include(../common/common.pri)
 
 QT       += core dbus concurrent
 
@@ -13,10 +14,11 @@ CONFIG   += console
 CONFIG   -= app_bundle
 
 PKGCONFIG += x11 polkit-agent-1 polkit-qt5-1 udisks2-qt5
-CONFIG(release, release|debug) {
+
+CONFIG(TABLET_ENV) {
     PKGCONFIG += dtkwidget5.5
 } else {
-    PKGCONFIG += dtkwidget5.5
+    PKGCONFIG += dtkwidget
 }
 CONFIG += c++11 link_pkgconfig
 
