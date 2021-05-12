@@ -26,6 +26,7 @@
 #include "QtTest/QTest"
 
 #include "log/dfmLogManager.h"
+#include "dfmstandardpaths.h"
 
 DFM_USE_NAMESPACE
 namespace  {
@@ -47,7 +48,7 @@ namespace  {
 
 TEST_F(TestDFMLogManager, set_log_path)
 {
-    QString strLogPath = "/home/";
+    QString strLogPath = DFMStandardPaths::location(DFMStandardPaths::CachePath) + "/ut.log";
     DFMLogManager::setlogFilePath(strLogPath);
     EXPECT_EQ(DFMLogManager::getlogFilePath(), strLogPath);
 }
