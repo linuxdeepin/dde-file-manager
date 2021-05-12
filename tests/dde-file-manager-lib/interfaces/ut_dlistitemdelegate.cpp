@@ -33,6 +33,7 @@
 #define private public
 #include "interfaces/dlistitemdelegate.h"
 #include "views/dfileview.h"
+#include "testhelper.h"
 
 #define FreePtr(x) if(x){delete x;x=nullptr;}
 
@@ -59,6 +60,7 @@ public:
         dlistIdl = nullptr;
         delete dfileview;
         dfileview = nullptr;
+        TestHelper::runInLoop([](){}, 10);
         std::cout << "end TestDListItemDelegate";
     }
 };
@@ -99,6 +101,7 @@ TEST_F(TestDListItemDelegate, test_updateEditorGeometry)
     QStyleOptionViewItem option;
     QModelIndex index = QModelIndex();
     dlistIdl->updateEditorGeometry(editor, option, index);
+    editor->deleteLater();
 }
 
 TEST_F(TestDListItemDelegate, test_setEditorData)
@@ -106,6 +109,7 @@ TEST_F(TestDListItemDelegate, test_setEditorData)
     QWidget *editor = new QWidget();
     QModelIndex index = QModelIndex();
     dlistIdl->setEditorData(editor,  index);
+    editor->deleteLater();
 }
 
 TEST_F(TestDListItemDelegate, test_updateItemSizeHint)

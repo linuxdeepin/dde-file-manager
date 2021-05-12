@@ -15,6 +15,7 @@
 #define protected public
 #include "views/dfileview.h"
 #include "interfaces/diconitemdelegate.h"
+#include "testhelper.h"
 
 #define FreePtr(x) if(x){delete x;x=nullptr;}
 
@@ -42,6 +43,7 @@ public:
         iconItemDelegate = nullptr;
         delete fileview;
         fileview = nullptr;
+        TestHelper::runInLoop([](){}, 10);
     }
 };
 

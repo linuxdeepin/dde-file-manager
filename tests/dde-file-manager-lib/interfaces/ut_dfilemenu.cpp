@@ -50,25 +50,28 @@ public:
     quint64 eventId = 123456;
     void SetUp() override
     {
-        menu = new DFileMenu;
+        menu = new DFileMenu();
+        menu->setAccessibleInfo("test");
         QObject::connect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
-        myAction = new QAction(actionName);
+        myAction = new QAction();
         menu->addAction(myAction);
 
 
         DUrl url("file:///home");
         DUrlList urllist;
-        urllist.append(DUrl("file:///home"));
-        urllist.append(DUrl("file:///tmp"));
+        urllist.append(DUrl::fromLocalFile("file:///home"));
+        urllist.append(DUrl::fromLocalFile("file:///tmp"));
         QObject *sender = new QObject(menu);
         QModelIndex index;
         menu->setEventData(url, urllist, eventId, sender, index);
+        sender->deleteLater();
         std::cout << "start TestDFileMenu";
     }
 
     void TearDown() override
     {
         menu->deleteLater();
+        myAction->deleteLater();
         std::cout << "end TestDFileMenu";
     }
 };
@@ -86,11 +89,15 @@ TEST_F(TestDFileMenu, setEventData)
 {
     DUrl url("file:///home");
     DUrlList urllist;
-    urllist.append(DUrl("file:///home"));
-    urllist.append(DUrl("file:///tmp"));
-    QObject *sender = new QObject();
-    QModelIndex index;
-    menu->setEventData(url, urllist, eventId, sender, index);
+    urllist.append(DUrl::fromLocalFile("file:///home"));
+    urllist.append(DUrl::fromLocalFile("file:///tmp"));
+    DFileMenu *menu = new DFileMenu;
+    QWidget *w=new QWidget();
+    menu->setProperty("DFileManagerWindow", (quintptr)this);
+    menu->setProperty("ToolBarSettingsMenu", true);
+    menu->setEventData(DUrl(), DUrlList() << DUrl(), w->winId(), w);
+    delete  w;
+    delete menu;
 }
 TEST_F(TestDFileMenu, actionAt)
 {

@@ -28,7 +28,7 @@
 #include "controllers/dfmmdcrumbcontrooler.h"
 #include "controllers/dfmfilecrumbcontroller.h"
 #include "dfmcrumbbar.h"
-
+#include "testhelper.h"
 
 DFM_USE_NAMESPACE
 namespace  {
@@ -36,11 +36,13 @@ class TestDFMCrumbInterface : public testing::Test
 {
 public:
     DFMCrumbInterface *crumbController = nullptr;
+    DFMCrumbBar *p_tr=nullptr;
+     QWidget *qframe=nullptr;
     void SetUp() override
     {
         DUrl newurl(DUrl::fromLocalFile("/home"));
-        QWidget *qframe = new QWidget();
-        DFMCrumbBar *p_tr = new DFMCrumbBar(qframe);
+        qframe = new QWidget();
+        p_tr = new DFMCrumbBar(qframe);
         crumbController = DFMCrumbManager::instance()->createControllerByUrl(newurl, p_tr);
         if (!crumbController) {
             qDebug() << "Unsupported url / scheme: " << newurl;
@@ -51,8 +53,9 @@ public:
     {
         crumbController->disconnect();
         crumbController->deleteLater();
-        delete  crumbController;
-        crumbController = nullptr;
+        p_tr->deleteLater();
+        qframe->deleteLater();
+        TestHelper::runInLoop([](){}, 50);
         std::cout << "end TestDFMCrumbInterface";
     }
 };
