@@ -175,7 +175,7 @@ TEST_F(TestDFileDialog, tst_set_get_filter)
     m_fileDialog->setFilter(filter);
     EXPECT_EQ(filter, m_fileDialog->filter());
 }
-
+#if 0
 TEST_F(TestDFileDialog, tst_set_get_viewMode)
 {
 #if 0 // may cause crash
@@ -192,7 +192,7 @@ TEST_F(TestDFileDialog, tst_set_setFileMode)
     EXPECT_NO_FATAL_FAILURE(m_fileDialog->setFileMode(QFileDialog::ExistingFiles));
 #endif
 }
-
+#endif
 TEST_F(TestDFileDialog, tst_setAllowMixedSelection)
 {
     m_fileDialog->setAllowMixedSelection(true);

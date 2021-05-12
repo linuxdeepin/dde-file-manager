@@ -1800,7 +1800,7 @@ TEST_F(CanvasGridViewTest, test_indexAt)
     QModelIndex ret = m_canvasGridView->indexAt(pos);
     EXPECT_TRUE(index == index);
 }
-
+#ifndef __arm__
 TEST_F(CanvasGridViewTest, test_dropEvent)
 {
     QMimeData data;
@@ -1820,7 +1820,7 @@ TEST_F(CanvasGridViewTest, test_dropEvent)
     m_canvasGridView->dropEvent(&event);
     EXPECT_EQ(event.dropAction(), Qt::IgnoreAction);
 }
-
+#endif
 TEST_F(CanvasGridViewTest, test_EnableUIDebug)
 {
     m_canvasGridView->EnableUIDebug(true);

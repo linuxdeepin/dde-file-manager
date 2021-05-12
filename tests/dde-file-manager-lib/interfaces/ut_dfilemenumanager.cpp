@@ -131,7 +131,7 @@ TEST_F(TestDFileMenuManager, createNormalMenu)
     releaseMenu();
 }
 #endif
-
+#ifndef __arm__
 TEST_F(TestDFileMenuManager, createVaultMenu)
 {
     void (*st_threadStart)(QThread::Priority) = [](QThread::Priority){
@@ -167,7 +167,7 @@ TEST_F(TestDFileMenuManager, createVaultMenu)
     m_menu = m_menuMgr->createVaultMenu(&menuMgr);
     EXPECT_NE(m_menu, nullptr);
 }
-
+#endif
 TEST_F(TestDFileMenuManager, loadNormalPluginMenu)
 {
     m_menu = m_menuMgr->createDefaultBookMarkMenu();
