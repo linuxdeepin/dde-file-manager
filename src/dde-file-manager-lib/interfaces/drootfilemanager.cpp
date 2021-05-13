@@ -140,6 +140,10 @@ void DRootFileManager::startQuryRootFile()
 
         DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
         Q_CHECK_PTR(devicesWatcher);
+        if (d_ptr->m_rootFileWatcher) {
+            delete d_ptr->m_rootFileWatcher;
+            d_ptr->m_rootFileWatcher = nullptr;
+        }
         d_ptr->m_rootFileWatcher = devicesWatcher;
         if (qApp->thread() != devicesWatcher->thread()) {
             devicesWatcher->moveToThread(qApp->thread());

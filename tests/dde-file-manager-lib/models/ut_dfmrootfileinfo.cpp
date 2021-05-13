@@ -35,7 +35,7 @@ public:
     void TearDown() override
     {
         std::cout << "end TestDFMRootFileInfo";
-//        delete info;
+        delete info;
     }
 
 public:

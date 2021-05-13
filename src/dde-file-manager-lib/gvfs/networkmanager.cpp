@@ -171,10 +171,9 @@ bool NetworkManager::fetch_networks(gchar *url, DFMEvent *e)
 
 void NetworkManager::network_enumeration_finished(GObject *source_object, GAsyncResult *res, gpointer user_data)
 {
-    GFileEnumerator *enumerator;
-    GError *error;
+    GFileEnumerator *enumerator = nullptr;
+    GError *error = nullptr;
 
-    error = NULL;
     enumerator = g_file_enumerate_children_finish(G_FILE(source_object), res, &error);
 
     qDebug() << "network_enumeration_finished";

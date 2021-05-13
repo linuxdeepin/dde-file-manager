@@ -69,7 +69,6 @@ public:
             m_manager->startMonitor();
             inited = true;
         }
-        gioError.message = strdup("123");
 
     }
 
@@ -77,7 +76,6 @@ public:
     {
     }
 
-    GError gioError;
     char errBuffer[2];
 };
 }
@@ -558,7 +556,9 @@ TEST_F(TestGvfsMountManager, mount_device)
                     GError                    **error)->GMount*{
 
         GMount* mt = get_fisrt_usable_mount();
-        *error = &(this->gioError);
+        GError *gerror = g_slice_new(GError);
+        gerror->message = g_strdup("123");
+        *error = gerror;
         return mt;
     });
 
@@ -621,7 +621,9 @@ TEST_F(TestGvfsMountManager, eject_mounted)
 
         GMount* mt = get_fisrt_usable_mount();
 
-        *error = &(this->gioError);
+        GError *gerror = g_slice_new(GError);
+        gerror->message = g_strdup("123");
+        *error = gerror;
         return mt;
     });
 

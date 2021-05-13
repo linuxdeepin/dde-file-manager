@@ -87,6 +87,7 @@ TEST_F(TestNetworkManager, fetchNetworks)
         return 0;
     });
 
+    stubx.set_lamda(g_file_enumerate_children_async, [](){});
 
     Singleton<NetworkManager>::instance()->fetchNetworks(DFMUrlBaseEvent(nullptr, DUrl("smb:///")));
 
@@ -127,6 +128,7 @@ TEST_F(TestNetworkManager, fetchNetworks)
     Singleton<NetworkManager>::instance()->eventLoop = &event_loop;
     Singleton<NetworkManager>::instance()->cancelFeatchNetworks();
     delete event;
+    event = nullptr;
 }
 
 
