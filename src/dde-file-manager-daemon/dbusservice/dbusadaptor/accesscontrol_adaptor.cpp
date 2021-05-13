@@ -17,3 +17,31 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
+/*
+ * Implementation of adaptor class AccessControlAdaptor
+ */
+
+AccessControlAdaptor::AccessControlAdaptor(AccessControlManager *parent)
+    : QDBusAbstractAdaptor(parent)
+{
+    // constructor
+    setAutoRelaySignals(true);
+}
+
+AccessControlAdaptor::~AccessControlAdaptor()
+{
+    // destructor
+}
+
+QVariantList AccessControlAdaptor::QueryAccessPolicy()
+{
+    // handle method call com.deepin.filemanager.daemon.AccessControlManager.QueryAccessPolicy
+    return parent()->QueryAccessPolicy();
+}
+
+QString AccessControlAdaptor::SetAccessPolicy(const QVariantMap &policy)
+{
+    // handle method call com.deepin.filemanager.daemon.AccessControlManager.SetAccessPolicy
+    return parent()->SetAccessPolicy(policy);
+}
+

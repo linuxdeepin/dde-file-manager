@@ -20,4 +20,47 @@
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
 
+/*
+ * Proxy class for interface com.deepin.filemanager.daemon.AccessControlManager
+ */
+class AccessControlInterface: public QDBusAbstractInterface
+{
+    Q_OBJECT
+public:
+    static inline const char *staticInterfaceName()
+    { return "com.deepin.filemanager.daemon.AccessControlManager"; }
+
+public:
+    AccessControlInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
+
+    ~AccessControlInterface();
+
+public Q_SLOTS: // METHODS
+    inline QDBusPendingReply<QVariantList> QueryAccessPolicy()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("QueryAccessPolicy"), argumentList);
+    }
+
+    inline QDBusPendingReply<QString> SetAccessPolicy(const QVariantMap &policy)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(policy);
+        return asyncCallWithArgumentList(QStringLiteral("SetAccessPolicy"), argumentList);
+    }
+
+Q_SIGNALS: // SIGNALS
+    void AccessPolicySetFinished(const QVariantMap &policy);
+    void DeviceAccessPolicyChanged(const QVariantList &policy);
+};
+
+namespace com {
+  namespace deepin {
+    namespace filemanager {
+      namespace daemon {
+        typedef ::AccessControlInterface AccessControlManager;
+      }
+    }
+  }
+}
 #endif
