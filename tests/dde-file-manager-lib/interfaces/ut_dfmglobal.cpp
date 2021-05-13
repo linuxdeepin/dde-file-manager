@@ -45,20 +45,21 @@
 using namespace stub_ext;
 
 namespace  {
-    class TestDFMGlobal : public testing::Test {
-    public:
-        void SetUp() override
-        {
-           m_filePath = TestHelper::createTmpFile(".txt");
-        }
-        void TearDown() override
-        {
-            TestHelper::deleteTmpFile(m_filePath);
-        }
+class TestDFMGlobal : public testing::Test
+{
+public:
+    void SetUp() override
+    {
+        m_filePath = TestHelper::createTmpFile(".txt");
+    }
+    void TearDown() override
+    {
+        TestHelper::deleteTmpFile(m_filePath);
+    }
 
-    public:
-        QString m_filePath;
-    };
+public:
+    QString m_filePath;
+};
 }
 
 //！ 测试文件名的命名规范
@@ -86,25 +87,25 @@ ACCESS_PRIVATE_FUN(DFMGlobal, void(), onClipboardDataChanged);
 
 TEST_F(TestDFMGlobal, test_clipboard)
 {
-    auto onClipboardDataChanged= get_private_fun::DFMGlobalonClipboardDataChanged();
-    EXPECT_TRUE(DFMGlobal::fetchUrlsFromClipboard().isEmpty());
+    auto onClipboardDataChanged = get_private_fun::DFMGlobalonClipboardDataChanged();
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::fetchUrlsFromClipboard().isEmpty());
 
     QUrl url(QUrl::fromLocalFile(m_filePath));
     DFMGlobal::setUrlsToClipboard({ url }, DFMGlobal::CopyAction);
     EXPECT_EQ(DFMGlobal::fetchClipboardAction(), DFMGlobal::CopyAction);
     onClipboardDataChanged;
-    EXPECT_FALSE(DFMGlobal::instance()->clipboardFileUrlList().isEmpty());
-    EXPECT_FALSE(DFMGlobal::instance()->clipboardFileInodeList().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::instance()->clipboardFileUrlList().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::instance()->clipboardFileInodeList().isEmpty());
     EXPECT_EQ(DFMGlobal::instance()->clipboardAction(), DFMGlobal::CopyAction);
 
     DFMGlobal::setUrlsToClipboard({ url }, DFMGlobal::CutAction);
     EXPECT_EQ(DFMGlobal::fetchClipboardAction(), DFMGlobal::CutAction);
     onClipboardDataChanged;
-    EXPECT_FALSE(DFMGlobal::instance()->clipboardFileUrlList().isEmpty());
-    EXPECT_FALSE(DFMGlobal::instance()->clipboardFileInodeList().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::instance()->clipboardFileUrlList().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::instance()->clipboardFileInodeList().isEmpty());
     EXPECT_EQ(DFMGlobal::instance()->clipboardAction(), DFMGlobal::CutAction);
 
-    EXPECT_FALSE(DFMGlobal::fetchUrlsFromClipboard().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::fetchUrlsFromClipboard().isEmpty());
 
     DFMGlobal::clearClipboard();
 
@@ -147,7 +148,7 @@ TEST_F(TestDFMGlobal, test_initManagers)
 }
 TEST_F(TestDFMGlobal, test_initMimesAppsManager)
 {
-    TestHelper::runInLoop([&]{
+    TestHelper::runInLoop([&] {
         DFMGlobal::initMimesAppsManager();
     }, 150);
     EXPECT_NO_FATAL_FAILURE(mimeAppsManager->DesktopFiles.isEmpty());
@@ -155,7 +156,7 @@ TEST_F(TestDFMGlobal, test_initMimesAppsManager)
 
 TEST_F(TestDFMGlobal, test_initGvfsMountManager)
 {
-    TestHelper::runInLoop([&]{
+    TestHelper::runInLoop([&] {
         EXPECT_NO_FATAL_FAILURE(DFMGlobal::initGvfsMountManager());
     }, 200);
 }
@@ -165,7 +166,7 @@ TEST_F(TestDFMGlobal, test_initTagManagerConnect)
 {
     StubExt stExt;
     TagManager *tagManager = new TagManager();
-    stExt.set_lamda(&TagManager::instance, [&](){return tagManager;});
+    stExt.set_lamda(&TagManager::instance, [&]() {return tagManager;});
 
     TagManager::instance()->makeFilesTagThroughColor("Red", {DUrl::fromLocalFile(m_filePath)});
     DFMGlobal::initTagManagerConnect();
@@ -173,7 +174,7 @@ TEST_F(TestDFMGlobal, test_initTagManagerConnect)
     Stub st;
 
     called = false;
-    DUrl (*fromUserTaggedFile)(const QString&, const QString&) = [](const QString&, const QString&){called = true; return DUrl();};
+    DUrl(*fromUserTaggedFile)(const QString &, const QString &) = [](const QString &, const QString &) {called = true; return DUrl();};
     st.set(ADDR(DUrl, fromUserTaggedFile), fromUserTaggedFile);
     QMap<QString, QString> old_and_new_color;
     old_and_new_color.insert("Red", "Orange");
@@ -193,7 +194,7 @@ TEST_F(TestDFMGlobal, test_initTagManagerConnect)
     EXPECT_TRUE(called);
 
     called = false;
-    DUrl (*fromLocalFile)(const QString&) = [](const QString&){called = true; return DUrl();};
+    DUrl(*fromLocalFile)(const QString &) = [](const QString &) {called = true; return DUrl();};
     st.set(ADDR(DUrl, fromLocalFile), fromLocalFile);
     TagManager::instance()->filesWereTagged({{m_filePath, {"Blue"}}});
     EXPECT_TRUE(called);
@@ -215,7 +216,7 @@ TEST_F(TestDFMGlobal, test_initThumbnailConnection)
     Stub st;
 
     called = false;
-    DUrl (*fromLocalFile)(const QString&) = [](const QString&){called = true; return DUrl();};
+    DUrl(*fromLocalFile)(const QString &) = [](const QString &) {called = true; return DUrl();};
     st.set(ADDR(DUrl, fromLocalFile), fromLocalFile);
     DThumbnailProvider::instance()->createThumbnailFinished(m_filePath, QString());
     EXPECT_TRUE(called);
@@ -333,14 +334,14 @@ TEST_F(TestDFMGlobal, test_isWayLand)
 TEST_F(TestDFMGlobal, test_showMultiFilesRenameDialog)
 {
     StubExt st;
-    st.set_lamda(&DialogManager::showMultiFilesRenameDialog, [](){});
+    st.set_lamda(&DialogManager::showMultiFilesRenameDialog, []() {});
     EXPECT_NO_FATAL_FAILURE(DFMGlobal::showMultiFilesRenameDialog(QList<DUrl>()));
 }
 
 TEST_F(TestDFMGlobal, test_showPropertyDialog)
 {
     StubExt st;
-    st.set_lamda(&DialogManager::showPropertyDialog, [](){});
+    st.set_lamda(&DialogManager::showPropertyDialog, []() {});
     EXPECT_NO_FATAL_FAILURE(DFMGlobal::showPropertyDialog(nullptr, QList<DUrl>()));
 }
 

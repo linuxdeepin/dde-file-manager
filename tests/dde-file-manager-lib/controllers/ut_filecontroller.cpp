@@ -10,119 +10,119 @@
 #include "gvfs/gvfsmountmanager.h"
 
 namespace  {
-    static Stub *stub;
+static Stub *stub;
 
-    class FileControllerTest : public testing::Test
+class FileControllerTest : public testing::Test
+{
+public:
+
+    static void SetUpTestCase()
     {
-    public:
+        typedef bool (*OpenFileWithFlag)(const QString & path, int flag);
+        typedef bool (*OpenFile)(const QString & path);
+        typedef bool (*OpenFiles)(const QStringList & filePaths);
+        typedef bool (*OpenFilesWithArgs)(const QString & file, const QStringList & filePaths);
+        typedef QString(*GetPath)();
 
-        static void SetUpTestCase()
-        {
-            typedef bool (*OpenFileWithFlag)(const QString &path, int flag);
-            typedef bool (*OpenFile)(const QString &path);
-            typedef bool (*OpenFiles)(const QStringList &filePaths);
-            typedef bool (*OpenFilesWithArgs)(const QString &file, const QStringList &filePaths);
-            typedef QString (*GetPath)();
+        // 打桩，避免弹框
+        OpenFileWithFlag openFileWithFlag = [](const QString & path, int flag) {
+            Q_UNUSED(path);
+            Q_UNUSED(flag);
+            return true;
+        };
+        OpenFile openFile = [](const QString & path) {
+            Q_UNUSED(path);
+            return true;
+        };
+        OpenFiles openFiles = [](const QStringList & filePaths) {
+            Q_UNUSED(filePaths);
+            return true;
+        };
+        OpenFilesWithArgs openFilesWithArgs = [](const QString & file, const QStringList & filePaths) {
+            Q_UNUSED(file);
+            Q_UNUSED(filePaths);
+            return true;
+        };
+        GetPath getPath = []() {
+            return QString("/bin/touch");
+        };
 
-            // 打桩，避免弹框
-            OpenFileWithFlag openFileWithFlag = [](const QString &path, int flag) {
-                Q_UNUSED(path);
-                Q_UNUSED(flag);
-                return true;
-            };
-            OpenFile openFile = [](const QString &path) {
-                Q_UNUSED(path);
-                return true;
-            };
-            OpenFiles openFiles = [](const QStringList &filePaths) {
-                Q_UNUSED(filePaths);
-                return true;
-            };
-            OpenFilesWithArgs openFilesWithArgs = [](const QString &file, const QStringList &filePaths) {
-                Q_UNUSED(file);
-                Q_UNUSED(filePaths);
-                return true;
-            };
-            GetPath getPath = []() {
-                return QString("/bin/touch");
-            };
+        stub = new Stub;
+        stub->set(static_cast<OpenFileWithFlag>(&FileUtils::openExcutableScriptFile), openFileWithFlag);
+        stub->set(static_cast<OpenFileWithFlag>(&FileUtils::openExcutableFile), openFileWithFlag);
+        stub->set(static_cast<OpenFileWithFlag>(&FileUtils::addExecutableFlagAndExecuse), openFileWithFlag);
+        stub->set(static_cast<OpenFile>(&FileUtils::openFile), openFile);
+        stub->set(static_cast<OpenFiles>(&FileUtils::openFiles), openFiles);
+        stub->set(static_cast<OpenFilesWithArgs>(&FileUtils::openFilesByApp), openFilesWithArgs);
+        stub->set(static_cast<GetPath>(&FileUtils::defaultTerminalPath), getPath);
+    }
 
-            stub = new Stub;
-            stub->set(static_cast<OpenFileWithFlag>(&FileUtils::openExcutableScriptFile), openFileWithFlag);
-            stub->set(static_cast<OpenFileWithFlag>(&FileUtils::openExcutableFile), openFileWithFlag);
-            stub->set(static_cast<OpenFileWithFlag>(&FileUtils::addExecutableFlagAndExecuse), openFileWithFlag);
-            stub->set(static_cast<OpenFile>(&FileUtils::openFile), openFile);
-            stub->set(static_cast<OpenFiles>(&FileUtils::openFiles), openFiles);
-            stub->set(static_cast<OpenFilesWithArgs>(&FileUtils::openFilesByApp), openFilesWithArgs);
-            stub->set(static_cast<GetPath>(&FileUtils::defaultTerminalPath), getPath);
+    static void TearDownTestCase()
+    {
+        if (stub) {
+            delete stub;
+            stub = nullptr;
         }
+    }
 
-        static void TearDownTestCase()
-        {
-            if (stub) {
-                delete stub;
-                stub = nullptr;
-            }
+    virtual void SetUp() override
+    {
+        controller = new FileController();
+
+        fileName = TestHelper::createTmpFile("normal_file");
+        linkName = TestHelper::createTmpSymlinkFile(fileName);
+
+        scriptName = TestHelper::createTmpFile("script_file.sh");
+        chmod(scriptName.toStdString().c_str(), 0700);
+
+        pasteDir = TestHelper::createTmpDir();
+        shareDir = TestHelper::createTmpDir();
+        cpDstFileName = TestHelper::createTmpDir();
+    }
+
+    virtual void TearDown() override
+    {
+        qApp->processEvents();
+
+        delete controller;
+        controller = nullptr;
+
+        TestHelper::deleteTmpFiles({linkName,
+                                    fileName,
+                                    scriptName,
+                                    pasteDir,
+                                    shareDir,
+                                    cpDstFileName
+                                   });
+    }
+
+    void DumpDirector(DDirIteratorPointer director)
+    {
+        auto fileName = director->fileName();
+        auto fileUrl = director->fileUrl();
+        auto fileInfo = director->fileInfo();
+        auto durl = director->url();
+
+        QString keyword("keyword");
+        director->enableIteratorByKeyword(keyword);
+
+        while (director->hasNext()) {
+            director->next();
         }
+    }
 
-        virtual void SetUp() override
-        {
-            controller = new FileController();
-
-            fileName = TestHelper::createTmpFile("normal_file");
-            linkName = TestHelper::createTmpSymlinkFile(fileName);
-
-            scriptName = TestHelper::createTmpFile("script_file.sh");
-            chmod(scriptName.toStdString().c_str(), 0700);
-
-            pasteDir = TestHelper::createTmpDir();
-            shareDir = TestHelper::createTmpDir();
-            cpDstFileName = TestHelper::createTmpDir();
-        }
-
-        virtual void TearDown() override
-        {
-            qApp->processEvents();
-
-            delete controller;
-            controller = nullptr;
-
-            TestHelper::deleteTmpFiles({linkName,
-                                        fileName,
-                                        scriptName,
-                                        pasteDir,
-                                        shareDir,
-                                        cpDstFileName
-                                       });
-        }
-
-        void DumpDirector(DDirIteratorPointer director)
-        {
-            auto fileName = director->fileName();
-            auto fileUrl = director->fileUrl();
-            auto fileInfo = director->fileInfo();
-            auto durl = director->url();
-
-            QString keyword("keyword");
-            director->enableIteratorByKeyword(keyword);
-
-            while (director->hasNext()) {
-                director->next();
-            }
-        }
-
-        FileController *controller;
-        QString fileName;
-        QString linkName;
-        QString exeName = "/bin/touch";
-        QString scriptName;
-        QString pasteDir;
-        QString shareDir;
-        QString cpDstFileName;
-        QString noPermissionDir = "/Permisson/";
-        QString noPermissionFile = "/Permisson";
-        QString desktopFile = "/usr/share/applications/dde-computer.desktop";
-    };
+    FileController *controller;
+    QString fileName;
+    QString linkName;
+    QString exeName = "/bin/touch";
+    QString scriptName;
+    QString pasteDir;
+    QString shareDir;
+    QString cpDstFileName;
+    QString noPermissionDir = "/Permisson/";
+    QString noPermissionFile = "/Permisson";
+    QString desktopFile = "/usr/share/applications/dde-computer.desktop";
+};
 }
 
 TEST_F(FileControllerTest, tst_find_executable)
@@ -135,12 +135,12 @@ TEST_F(FileControllerTest, tst_create_file_info)
 {
     // 普通文件
     DUrl url = DUrl::fromLocalFile("/tmp/");
-    DAbstractFileInfoPointer fp1 =controller->createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, url));
+    DAbstractFileInfoPointer fp1 = controller->createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, url));
     EXPECT_TRUE(fp1 != nullptr);
 
     // 桌面文件
     url = DUrl::fromLocalFile(desktopFile);
-    DAbstractFileInfoPointer fp2 =controller->createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, url));
+    DAbstractFileInfoPointer fp2 = controller->createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, url));
     EXPECT_TRUE(fp2 != nullptr);
 
     // 挂载文件
@@ -148,7 +148,7 @@ TEST_F(FileControllerTest, tst_create_file_info)
     url.setScheme(SMB_SCHEME);
     DFMUrlBaseEvent event(nullptr, url);
     // GvfsMountManager::mount_sync(event);
-    DAbstractFileInfoPointer fp3 =controller->createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, url));
+    DAbstractFileInfoPointer fp3 = controller->createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(nullptr, url));
     EXPECT_TRUE(fp3 != nullptr);
 }
 
@@ -174,7 +174,7 @@ TEST_F(FileControllerTest, tst_create_director)
 TEST_F(FileControllerTest, tst_open_file)
 {
     stub_ext::StubExt stext;
-    stext.set_lamda(VADDR(QDialog, exec), []{ return (int)QDialog::Rejected; });
+    stext.set_lamda(VADDR(QDialog, exec), [] { return (int)QDialog::Rejected; });
 
     DUrl url = DUrl::fromLocalFile(linkName);
     auto event = dMakeEventPointer<DFMOpenFileEvent>(nullptr, url);
@@ -200,7 +200,7 @@ TEST_F(FileControllerTest, tst_open_file)
 TEST_F(FileControllerTest, tst_open_files)
 {
     stub_ext::StubExt stext;
-    stext.set_lamda(VADDR(QDialog, exec), []{ return (int)QDialog::Rejected; });
+    stext.set_lamda(VADDR(QDialog, exec), [] { return (int)QDialog::Rejected; });
 
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
@@ -233,40 +233,37 @@ TEST_F(FileControllerTest, tst_open_files_by_app)
 TEST_F(FileControllerTest, tst_open_compress_files)
 {
     stub_ext::StubExt stext;
-    stext.set_lamda(VADDR(QDialog, exec), []{ return (int)QDialog::Rejected; });
+    stext.set_lamda(VADDR(QDialog, exec), [] { return (int)QDialog::Rejected; });
 
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
     list.append(DUrl::fromLocalFile(linkName));
     auto event = dMakeEventPointer<DFMCompressEvent>(nullptr, list);
-    bool compressed = controller->compressFiles(event);
-    EXPECT_TRUE(!compressed);
+    EXPECT_NO_FATAL_FAILURE(controller->compressFiles(event));
 }
 
 TEST_F(FileControllerTest, tst_decompress_files)
 {
     stub_ext::StubExt stext;
-    stext.set_lamda(VADDR(QDialog, exec), []{ return (int)QDialog::Rejected; });
+    stext.set_lamda(VADDR(QDialog, exec), [] { return (int)QDialog::Rejected; });
 
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
     list.append(DUrl::fromLocalFile(linkName));
     auto event = dMakeEventPointer<DFMDecompressEvent>(nullptr, list);
-    bool decompressed = controller->decompressFile(event);
-    EXPECT_TRUE(!decompressed);
+    EXPECT_NO_FATAL_FAILURE(controller->decompressFile(event));
 }
 
 TEST_F(FileControllerTest, tst_decompress_file_here)
 {
     stub_ext::StubExt stext;
-    stext.set_lamda(VADDR(QDialog, exec), []{ return (int)QDialog::Rejected; });
+    stext.set_lamda(VADDR(QDialog, exec), [] { return (int)QDialog::Rejected; });
 
     DUrlList list;
     list.append(DUrl::fromLocalFile(fileName));
     list.append(DUrl::fromLocalFile(linkName));
     auto event = dMakeEventPointer<DFMDecompressEvent>(nullptr, list);
-    bool decompressed = controller->decompressFileHere(event);
-    EXPECT_TRUE(!decompressed);
+    EXPECT_NO_FATAL_FAILURE(controller->decompressFileHere(event));
 }
 
 TEST_F(FileControllerTest, tst_write_files_to_clipboard)
@@ -345,7 +342,7 @@ TEST_F(FileControllerTest, tst_mkdir)
 TEST_F(FileControllerTest, tst_touch)
 {
     stub_ext::StubExt stext;
-    stext.set_lamda(VADDR(QDialog, exec), []{ return (int)QDialog::Rejected; });
+    stext.set_lamda(VADDR(QDialog, exec), [] { return (int)QDialog::Rejected; });
 
     DUrl url = DUrl::fromLocalFile(fileName);
     bool result = controller->touch(dMakeEventPointer<DFMTouchFileEvent>(nullptr, url));
@@ -376,7 +373,7 @@ TEST_F(FileControllerTest, tst_share_folder)
 
 TEST_F(FileControllerTest, tst_open_in_terminal)
 {
-    bool (*st_startDetached)(void *, const QString &) = [](void *, const QString &){
+    bool (*st_startDetached)(void *, const QString &) = [](void *, const QString &) {
         return true;
     };
 
@@ -392,8 +389,8 @@ TEST_F(FileControllerTest, tst_open_in_terminal)
 TEST_F(FileControllerTest, tst_book_mark)
 {
     stub_ext::StubExt stubext;
-    stubext.set_lamda(&DFileService::touchFile, [](){ return true; });
-    stubext.set_lamda(&DFileService::deleteFiles, [](){ return true; });
+    stubext.set_lamda(&DFileService::touchFile, []() { return true; });
+    stubext.set_lamda(&DFileService::deleteFiles, []() { return true; });
 
     DUrl url = DUrl::fromLocalFile(fileName);
     bool result = controller->addToBookmark(dMakeEventPointer<DFMAddToBookmarkEvent>(nullptr, url));
@@ -406,7 +403,7 @@ TEST_F(FileControllerTest, tst_book_mark)
 TEST_F(FileControllerTest, tst_create_symlink)
 {
     stub_ext::StubExt stext;
-    stext.set_lamda(VADDR(QDialog, exec), []{ return (int)QDialog::Rejected; });
+    stext.set_lamda(VADDR(QDialog, exec), [] { return (int)QDialog::Rejected; });
 
     DUrl fromUrl = DUrl::fromLocalFile(fileName).toAbsolutePathUrl();
     DUrl toUrl = DUrl::fromLocalFile(linkName).toAbsolutePathUrl();

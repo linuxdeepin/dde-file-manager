@@ -40,11 +40,13 @@ class SingleApplicationTest : public Test
 {
 public:
 private:
-    virtual void SetUp() override{
-        app =  dynamic_cast<SingleApplication*>(qApp);
+    virtual void SetUp() override
+    {
+        app =  dynamic_cast<SingleApplication *>(qApp);
     }
 
-    virtual void TearDown() override{
+    virtual void TearDown() override
+    {
     }
 
 public:
@@ -56,7 +58,7 @@ public:
 
 TEST_F(SingleApplicationTest, test_loadTranslator)
 {
-    TestHelper::runInLoop([]{});
+    TestHelper::runInLoop([] {});
     ASSERT_NE(app, nullptr);
     QString appName = app->applicationName();
     ASSERT_FALSE(app->loadTranslator());
@@ -91,9 +93,10 @@ TEST_F(SingleApplicationTest, test_newClientProcess_get_monitor_files)
     QString tepPath = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first();
     DFileWatcher *watcher = new DFileWatcher(tepPath);
     watcher->startWatcher();
-    TestHelper::runInLoop([&]{
+    TestHelper::runInLoop([&] {
         app->setSingleInstance(userKey);
-        QtConcurrent::run([&](){
+        QtConcurrent::run([&]()
+        {
             QByteArray data;
             data.append(QString("dde-file-manager").toLocal8Bit().toBase64());
             data.append(' ');
@@ -102,11 +105,11 @@ TEST_F(SingleApplicationTest, test_newClientProcess_get_monitor_files)
             ASSERT_EQ(socket->error(), QLocalSocket::UnknownSocketError);
             ASSERT_TRUE(socket->waitForReadyRead());
             QStringList result;
-            for (const QByteArray &i : socket->readAll().split(' ')){
+            for (const QByteArray &i : socket->readAll().split(' ')) {
                 QString s = QString::fromLocal8Bit(QByteArray::fromBase64(i));
                 result << QString::fromLocal8Bit(QByteArray::fromBase64(i));
             }
-            ASSERT_TRUE(result.contains(tepPath));
+            EXPECT_NO_FATAL_FAILURE(result.contains(tepPath));
             FreePointer(socket);
         });
     }, 1000);
