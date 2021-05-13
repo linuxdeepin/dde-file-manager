@@ -222,9 +222,11 @@ void DFMCrumbInterface::requestCompletionList(const DUrl &url)
     if (d->folderCompleterJobPointer) {
         d->folderCompleterJobPointer->disconnect();
         d->folderCompleterJobPointer->stopAndDeleteLater();
+        d->folderCompleterJobPointer->setParent(nullptr);
     }
 
     d->folderCompleterJobPointer = DFileService::instance()->getChildrenJob(this, url, QStringList(), QDir::Dirs | QDir::Hidden | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags, true, false);
+    d->folderCompleterJobPointer->setParent(this);
     if (!d->folderCompleterJobPointer) {
         return;
     }
@@ -257,7 +259,7 @@ void DFMCrumbInterface::cancelCompletionListTransmission()
     Q_D(DFMCrumbInterface);
 
     if (d->folderCompleterJobPointer) {
-        d->folderCompleterJobPointer->stopAndDeleteLater();
+        d->folderCompleterJobPointer->stop();
     }
 }
 

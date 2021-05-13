@@ -39,6 +39,7 @@ class DFileStatisticsJobPrivate
 {
 public:
     DFileStatisticsJobPrivate(DFileStatisticsJob *qq);
+    ~DFileStatisticsJobPrivate();
 
     void setState(DFileStatisticsJob::State s);
 
@@ -68,6 +69,14 @@ DFileStatisticsJobPrivate::DFileStatisticsJobPrivate(DFileStatisticsJob *qq)
     , notifyDataTimer(nullptr)
 {
 
+}
+
+DFileStatisticsJobPrivate::~DFileStatisticsJobPrivate()
+{
+    if (notifyDataTimer) {
+        notifyDataTimer->stop();
+        notifyDataTimer->deleteLater();
+    }
 }
 
 void DFileStatisticsJobPrivate::setState(DFileStatisticsJob::State s)

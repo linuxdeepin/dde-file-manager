@@ -52,7 +52,7 @@ class DFileCopyMoveJobTest: public testing::Test
 
 public:
 
-    QSharedPointer<DFileCopyMoveJob> job;
+    QSharedPointer<DFileCopyMoveJob> job = nullptr;
     virtual void SetUp() override
     {
         job.reset(new DFileCopyMoveJob());
@@ -74,6 +74,7 @@ public:
     virtual void TearDown() override
     {
         std::cout << "end DFileCopyMoveJobTest" << std::endl;
+        job.reset();
     }
 };
 
@@ -89,6 +90,7 @@ public:
     ~ErrorHandleMe() override
     {
         fileJob->disconnect();
+        fileJob.reset();
         qDebug() << " ErrorHandle() ";
     }
 
@@ -114,18 +116,19 @@ public:
     QSharedPointer<DFileCopyMoveJob> fileJob;
 };
 
-class ErrorHandle : public QObject, public DFileCopyMoveJob::Handle
+class ErrorHandleTest : public QObject, public DFileCopyMoveJob::Handle
 {
 public:
-    ErrorHandle(QSharedPointer<DFileCopyMoveJob> job)
+    ErrorHandleTest(QSharedPointer<DFileCopyMoveJob> job)
         : QObject(nullptr)
         , fileJob(job)
     {
     }
 
-    ~ErrorHandle() override
+    ~ErrorHandleTest() override
     {
         fileJob->disconnect();
+        fileJob.reset();
         qDebug() << " ErrorHandle() ";
     }
 
@@ -384,9 +387,9 @@ TEST_F(DFileCopyMoveJobTest, start_handleError)
         EXPECT_EQ(DFileCopyMoveJob::CancelAction, jobd->handleError(source, source));
     }, 200);
 
-    ErrorHandle hanlee(job);
-    job->setErrorHandle(&hanlee, hanlee.thread());
-    TestHelper::runInLoop([ = ]() {
+    ErrorHandleTest *hanlee = new ErrorHandleTest(job);
+    job->setErrorHandle(hanlee, hanlee->thread());
+    TestHelper::runInLoop([=](){
         jobd->setError(DFileCopyMoveJob::DirectoryExistsError);
         jobd->handleError(source, source);
     }, 200);
@@ -395,6 +398,7 @@ TEST_F(DFileCopyMoveJobTest, start_handleError)
     jobd->setError(DFileCopyMoveJob::SpecialFileError);
     EXPECT_EQ(DFileCopyMoveJob::CancelAction, jobd->handleError(source, source));
     job->stop();
+    delete hanlee;
 }
 
 TEST_F(DFileCopyMoveJobTest, start_setAndhandleError)
@@ -1392,6 +1396,7 @@ TEST_F(DFileCopyMoveJobTest, start_doCopyLargeFilesOnDisk)
     jobd->m_bigFileThreadCount.store(0);
     EXPECT_TRUE(jobd->doCopyLargeFilesOnDisk(frominfo, toinfo, handler));
 
+    stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::CancelAction;});
     jobd->m_bigFileThreadCount.store(0);
@@ -1415,9 +1420,9 @@ TEST_F(DFileCopyMoveJobTest, start_doCopyLargeFilesOnDisk)
     jobd->m_bigFileThreadCount.store(0);
     EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo, toinfo, handler));
 
-
-    setAndhandleErrorExNew = setAndhandleErrorExNew % 2 == 0 ?
-                             setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
+    setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
+                setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
+    stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::CancelAction;});
 
@@ -1441,6 +1446,7 @@ TEST_F(DFileCopyMoveJobTest, start_doCopyLargeFilesOnDisk)
     jobd->m_bigFileThreadCount.store(0);
     EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo, toinfo, handler));
 
+    stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::SkipAction;});
     jobd->m_bigFileThreadCount.store(0);
@@ -1452,6 +1458,7 @@ TEST_F(DFileCopyMoveJobTest, start_doCopyLargeFilesOnDisk)
     jobd->m_bigFileThreadCount.store(0);
     EXPECT_TRUE(jobd->doCopyLargeFilesOnDisk(frominfo, toinfo, handler));
 
+    stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::CancelAction;});
     jobd->m_bigFileThreadCount.store(0);
@@ -1466,8 +1473,9 @@ TEST_F(DFileCopyMoveJobTest, start_doCopyLargeFilesOnDisk)
     jobd->m_bigFileThreadCount.store(0);
     EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo, toinfo, handler));
 
-    setAndhandleErrorExNew = setAndhandleErrorExNew % 2 == 0 ?
-                             setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
+    setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
+                setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
+    stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::CancelAction;});
 
@@ -1614,27 +1622,31 @@ TEST_F(DFileCopyMoveJobTest, start_doCopyFileU)
 
     stl.reset(&VaultController::isVaultFile);
     to.setPath(QDir::currentPath() + "/zut_test_file_device");
-    toinfo = DFileService::instance()->createFileInfo(nullptr, to);
-    stl.set(open, openTest);
+    toinfo = DFileService::instance()->createFileInfo(nullptr,to);
+    stl.set(open,openTest);
+    stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::RetryAction;});
     EXPECT_FALSE(jobd->doCopyFileOnBlock(frominfo, toinfo, handler));
 
+    stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::SkipAction;});
     EXPECT_TRUE(jobd->doCopyFileOnBlock(frominfo, toinfo, handler));
     TestHelper::deleteTmpFile(to.toLocalFile());
 
-    setAndhandleErrorExNew = setAndhandleErrorExNew % 2 == 0 ?
-                             setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
-    stl.set(open, openExTest);
-    stl.set_lamda(::close, []() {return 0;});
+    setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
+                setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
+    stl.set(open,openExTest);
+    stl.set_lamda(::close,[](){return 0;});
+    stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::RetryAction;});
     EXPECT_FALSE(jobd->doCopyFileOnBlock(frominfo, toinfo, handler));
 
-    setAndhandleErrorExNew = setAndhandleErrorExNew % 2 == 0 ?
-                             setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
+    setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
+                setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
+    stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::SkipAction;});
     EXPECT_FALSE(jobd->doCopyFileOnBlock(frominfo, toinfo, handler));
@@ -1655,11 +1667,13 @@ TEST_F(DFileCopyMoveJobTest, start_doCopyFileU)
     QProcess::execute("chmod 0777 " + to.toLocalFile());
     TestHelper::deleteTmpFile(to.toLocalFile());
 
+    stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::SkipAction;});
     EXPECT_TRUE(jobd->doCopyFileOnBlock(frominfo, toinfo, handler));
     QProcess::execute("chmod 0777 " + to.toLocalFile());
 
+    stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::CancelAction;});
     EXPECT_TRUE(jobd->doCopyFileOnBlock(frominfo, toinfo, handler));
@@ -1696,8 +1710,9 @@ TEST_F(DFileCopyMoveJobTest, start_writeRefineThread)
     stl.set_lamda(&DFileCopyMoveJobPrivate::writeToFileByQueue, []() {return false;});
     EXPECT_TRUE(jobd->writeRefineThread());
 
-    stl.set_lamda(&DFileCopyMoveJobPrivate::writeToFileByQueue, []() {return true;});
-    QFuture<void> future = QtConcurrent::run([ = ]() {
+    stl.reset(&DFileCopyMoveJobPrivate::writeToFileByQueue);
+    stl.set_lamda(&DFileCopyMoveJobPrivate::writeToFileByQueue,[](){return true;});
+    QFuture<void> future = QtConcurrent::run([=]() {
         jobd->setRefineCopyProccessSate(DFileCopyMoveJob::ReadFileProccessOver);
     });
     EXPECT_TRUE(jobd->writeRefineThread());

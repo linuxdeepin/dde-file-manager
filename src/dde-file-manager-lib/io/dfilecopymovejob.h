@@ -218,7 +218,7 @@ Q_SIGNALS:
     void sendDataSyncing(QString syncTip, QString over);
 
 protected:
-    DFileCopyMoveJob(DFileCopyMoveJobPrivate &dd, QObject *parent);
+    DFileCopyMoveJob(DFileCopyMoveJobPrivate *dd, QObject *parent);
 
     void run() override;
 

@@ -32,6 +32,7 @@
 #include "interfaces/dfmcrumbbar.h"
 #include "controllers/searchhistroymanager.h"
 #include "stub.h"
+#include "testhelper.h"
 
 #define private public
 #define protected public
@@ -50,9 +51,12 @@ namespace  {
 
         virtual void TearDown() override
         {
-            delete m_bar;
+            if (m_bar) {
+                delete m_bar;
+                m_bar = nullptr;
+            }
         }
-        DFMAddressBar *m_bar;
+        DFMAddressBar *m_bar = nullptr;
     };
 }
 
@@ -194,12 +198,15 @@ TEST_F(DFMAddressBarTest,update_completion_state)
     void (*ut_setStringList)() = [](){};
     stub.set(ADDR(QStringListModel, setStringList), ut_setStringList);
 
+    void (*ut_doComplete)() = [](){};
+    stub.set(ADDR(DFMAddressBar, doComplete), ut_doComplete);
+
     DFMCrumbBar bar;
     m_bar->setParent(&bar);
 
     m_bar->updateCompletionState(QString(""));
     m_bar->updateCompletionState(QString("/home"));
-    m_bar->setParent(nullptr);
+    m_bar = nullptr;
 }
 
 TEST_F(DFMAddressBarTest,append_complete_model)

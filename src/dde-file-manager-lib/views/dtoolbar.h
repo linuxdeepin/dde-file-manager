@@ -115,8 +115,8 @@ private:
     bool m_switchState = false;
     bool m_searchButtonAsbState = false;
     DFMCrumbBar *m_crumbWidget = nullptr;
-    HistoryStack *m_navStack = nullptr;
-    QList<HistoryStack *> m_navStacks;
+    std::shared_ptr<HistoryStack> m_navStack = nullptr;
+    QList<std::shared_ptr<HistoryStack>> m_navStacks;
 };
 
 #endif // DTOOLBAR_H

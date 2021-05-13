@@ -190,6 +190,7 @@ DFileCopyMoveJobPrivate::~DFileCopyMoveJobPrivate()
 {
     if (updateSpeedElapsedTimer) {
         delete updateSpeedElapsedTimer;
+        updateSpeedElapsedTimer = nullptr;
     }
     if (fileStatistics) {
         fileStatistics->stop();
@@ -3015,6 +3016,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
             case DFileCopyMoveJob::RetryAction: {
                 if (!lseek(fromfd, current_pos, SEEK_SET)) {
                     setError(DFileCopyMoveJob::UnknowError, "");
+                    delete[]  buffer;
                     close(fromfd);
                     q_ptr->stop();
                     return false;
@@ -3029,10 +3031,12 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
                         ? FileUtils::getMemoryPageSize() : fromInfo->size() - current_pos;
                 countrefinesize(fromInfo->size() <= 0
                                 ? FileUtils::getMemoryPageSize() : fromInfo->size() - current_pos);
+                delete[]  buffer;
                 return true;
             default:
                 close(fromfd);
                 q_ptr->stop();
+                delete[]  buffer;
                 return false;
             }
         } else {
@@ -4027,7 +4031,7 @@ void DFileCopyMoveJobPrivate::clearThreadPool()
 }
 
 DFileCopyMoveJob::DFileCopyMoveJob(QObject *parent)
-    : DFileCopyMoveJob(*new DFileCopyMoveJobPrivate(this), parent)
+    : DFileCopyMoveJob(new DFileCopyMoveJobPrivate(this), parent)
 {
 }
 
@@ -4444,15 +4448,15 @@ void DFileCopyMoveJob::taskDailogClose()
     d->m_bTaskDailogClose = true;
 }
 
-DFileCopyMoveJob::DFileCopyMoveJob(DFileCopyMoveJobPrivate &dd, QObject *parent)
+DFileCopyMoveJob::DFileCopyMoveJob(DFileCopyMoveJobPrivate *dd, QObject *parent)
     : QThread(parent)
-    , d_d_ptr(&dd)
+    , d_d_ptr(dd)
 {
-    dd.fileStatistics = new DFileStatisticsJob();
-    dd.updateSpeedTimer = new QTimer(this);
+    dd->fileStatistics = new DFileStatisticsJob(this);
+    dd->updateSpeedTimer = new QTimer(this);
 
-    connect(dd.fileStatistics, &DFileStatisticsJob::finished, this, &DFileCopyMoveJob::fileStatisticsFinished, Qt::DirectConnection);
-    connect(dd.updateSpeedTimer, SIGNAL(timeout()), this, SLOT(_q_updateProgress()), Qt::DirectConnection);
+    connect(dd->fileStatistics, &DFileStatisticsJob::finished, this, &DFileCopyMoveJob::fileStatisticsFinished, Qt::DirectConnection);
+    connect(dd->updateSpeedTimer, SIGNAL(timeout()), this, SLOT(_q_updateProgress()), Qt::DirectConnection);
 }
 
 void DFileCopyMoveJob::run()

@@ -55,6 +55,8 @@ JobController::JobController(const DUrl &fileUrl, const QStringList &nameFilters
 
 JobController::~JobController()
 {
+    stop();
+    wait();
     if (timer)
         delete timer;
 }

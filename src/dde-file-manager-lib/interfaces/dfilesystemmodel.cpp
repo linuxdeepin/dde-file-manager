@@ -1874,6 +1874,9 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
     d->watcher = DFileService::instance()->createFileWatcher(this, fileUrl);
     d->columnActiveRole.clear();
 
+    if (d->watcher)
+        d->watcher->setParent(this);
+
     if (d->watcher && !d->rootNode->fileInfo->isPrivate()) {
         connect(d->watcher, SIGNAL(fileAttributeChanged(DUrl, int)),
                 this, SLOT(_q_onFileUpdated(DUrl, int)));

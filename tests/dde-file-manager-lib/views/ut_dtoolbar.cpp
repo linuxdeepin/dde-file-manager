@@ -139,20 +139,20 @@ TEST(DToolBarTest,moveNavStacks)
     DToolBar w;
     w.m_navStacks.clear();
     w.m_navStacks.append(0);
-    HistoryStack h1(0);
-    w.m_navStacks.append(&h1);
+    std::shared_ptr<HistoryStack> h1(new HistoryStack(0));
+    w.m_navStacks.append(h1);
     EXPECT_EQ(2, w.navStackCount());
 
     w.moveNavStacks(0,1);
-    EXPECT_EQ(w.m_navStacks[0], &h1);
+    EXPECT_EQ(w.m_navStacks[0], h1);
     EXPECT_EQ(w.m_navStacks[1], nullptr);
 
     w.moveNavStacks(1,0);
-    EXPECT_EQ(w.m_navStacks[1], &h1);
+    EXPECT_EQ(w.m_navStacks[1], h1);
     EXPECT_EQ(w.m_navStacks[0], nullptr);
 
     w.moveNavStacks(0,0);
-    EXPECT_EQ(w.m_navStacks[1], &h1);
+    EXPECT_EQ(w.m_navStacks[1], h1);
     EXPECT_EQ(w.m_navStacks[0], nullptr);
 }
 

@@ -49,7 +49,6 @@ public:
     explicit DFileWatcherPrivate(DFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
-
     bool start() override;
     bool stop() override;
     bool handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType1 signal, const DUrl &arg1) override;

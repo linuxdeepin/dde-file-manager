@@ -32,7 +32,7 @@ class DFileWatcher : public DAbstractFileWatcher
     Q_OBJECT
 
 public:
-    explicit DFileWatcher(const QString &filePath, QObject *parent = 0);
+    explicit DFileWatcher(const QString &filePath, QObject *parent = nullptr);
 
     //debug function
     static QStringList getMonitorFiles();

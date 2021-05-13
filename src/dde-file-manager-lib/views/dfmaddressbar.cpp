@@ -597,6 +597,7 @@ void DFMAddressBar::updateCompletionState(const QString &text)
                 qDebug() << "Unsupported url / scheme for completion: " << url;
                 return;
             }
+            crumbController->setParent(this);
             // connections
             connect(crumbController, &DFMCrumbInterface::completionFound, this, [this](const QStringList & list) {
                 // append list to completion list.

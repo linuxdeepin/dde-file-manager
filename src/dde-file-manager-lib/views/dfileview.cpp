@@ -201,9 +201,9 @@ DFileView::DFileView(QWidget *parent)
 
     // 修复wayland TASK-37638
     // 初始化子线程
-    m_pSelectWork = new SelectWork();
-    QObject::connect(m_pSelectWork, &SelectWork::sigSetSelect,
-                     this, &DFileView::slotSetSelect);
+    m_pSelectWork = new SelectWork(this);
+    connect(m_pSelectWork, &SelectWork::sigSetSelect,
+            this, &DFileView::slotSetSelect);
 
     setIconSizeBySizeIndex(DFMApplication::instance()->appAttribute(DFMApplication::AA_IconSizeLevel).toInt());
     d->updateStatusBarTimer = new QTimer(this);

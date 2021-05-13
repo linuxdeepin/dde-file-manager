@@ -173,11 +173,12 @@ public:
         }
 
 
+
 #ifdef _WIN32
         DWORD lpflOldProtect;
         if(0 == VirtualProtect(pageof(pstub->fn), m_pagesize * 2, PAGE_EXECUTE_READWRITE, &lpflOldProtect))
 #else
-        if (-1 == mprotect(pageof(pstub->fn), m_pagesize * 2, PROT_READ | PROT_WRITE | PROT_EXEC))
+        if (-1 == mprotect(pageof(pstub->fn), static_cast<size_t>(m_pagesize * 2), PROT_READ | PROT_WRITE | PROT_EXEC))
 #endif
         {
             throw("stub set memory protect to w+r+x faild");

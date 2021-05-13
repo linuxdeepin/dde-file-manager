@@ -123,7 +123,8 @@ void DFMCrumbBarPrivate::updateController(const DUrl &url)
         // Not found? Then nothing here...
         if (!crumbController) {
             qDebug() << "Unsupported url / scheme: " << newurl;
-        }
+        } else
+            crumbController->setParent(q_ptr);
     }
 }
 

@@ -81,7 +81,7 @@ DToolBar::DToolBar(QWidget *parent) : QFrame(parent)
 
 DToolBar::~DToolBar()
 {
-    delete m_navStack;
+//    delete m_navStack;
 }
 
 void DToolBar::initData()
@@ -383,7 +383,7 @@ void DToolBar::pushUrlToHistoryStack(DUrl url)
 
 void DToolBar::addHistoryStack()
 {
-    m_navStacks.append(new HistoryStack(65536));
+    m_navStacks.append(std::shared_ptr<HistoryStack>(new HistoryStack(65536)));
 }
 
 void DToolBar::switchHistoryStack(const int index)
