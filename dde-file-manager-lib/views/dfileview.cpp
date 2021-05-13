@@ -2342,9 +2342,6 @@ void DFileView::initConnects()
             w->showFilterButton();
         }
     });
-
-    if (DFMGlobal::isTablet())
-        connect(DApplication::inputMethod(), &QInputMethod::visibleChanged, this, &DFileView::onInputMethodVisibleChanged);
 }
 
 void DFileView::increaseIcon()
@@ -2628,21 +2625,6 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
 
     return true;
-}
-
-void DFileView::onInputMethodVisibleChanged()
-{
-    if (DApplication::inputMethod()->isVisible() && DFMGlobal::isEditorValid()) {
-        QRectF keyboard = DApplication::inputMethod()->keyboardRectangle();
-        QPoint pos = DFMGlobal::currentEditPos();
-        if (pos.y() - keyboard.y() > -100) {
-            int statusHeight = statusBar()->scalingSlider()->isVisible() ?
-                        statusBar()->scalingSlider()->height() : statusBar()->height();
-            move(0, -(static_cast<int>(keyboard.height()) - statusHeight));
-        }
-    } else {
-        move(0, 0);
-    }
 }
 
 void DFileView::clearHeardView()
