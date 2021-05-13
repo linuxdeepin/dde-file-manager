@@ -368,19 +368,6 @@ TEST_F(TestFileUtils, can_format_Udisk_Size)
     EXPECT_EQ( "0M", FileUtils::defaultOpticalSize("dev/sr0",usedSize, totalSize));
 }
 
-TEST_F(TestFileUtils, can_handle_disk_string)
-{
-    Stub stub;
-    stub.set(g_app_info_launch, g_app_info_launch_stub);
-    stub.set(ADDR(StartManagerInterface,LaunchApp), LaunchApp_stub);
-
-    EXPECT_FALSE(FileUtils::deviceShouldBeIgnore("/dev"));
-    EXPECT_FALSE(FileUtils::deviceShouldBeIgnore("/dev/sdbfff0"));
-
-    FileUtils::mountAVFS();
-    FileUtils::umountAVFS();
-}
-
 
 TEST_F(TestFileUtils, can_new_name_docment)
 {

@@ -40,14 +40,11 @@
 #include <dgiovolume.h>
 #include <dgiovolumemanager.h>
 #include <ddiskmanager.h>
-#include <dblockdevice.h>
 #include <ddiskdevice.h>
-
+#include <dblockpartition.h>
 #include "dialogs/dialogmanager.h"
 #include "deviceinfo/udisklistener.h"
-
 #include <gvfs/networkmanager.h>
-
 #include <QProcessEnvironment>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -77,6 +74,65 @@ private:
 
     Q_DECLARE_PUBLIC(DFMRootFileWatcher)
 };
+
+static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice> blk, QSharedPointer<DDiskDevice> drv)
+{
+    if (blk->hintIgnore()) {
+        qWarning()  << "block device is ignored by hintIgnore:"  << blkPath;
+        return true;
+    }
+
+    //wayland 情况下sda/sdb/sdc做特殊用处
+    if (DFMGlobal::isWayLand() && blkPath.contains(QRegularExpression("/sd[a-c][1-9]*$"))) {
+        qWarning()  << "block device is ignored by wayland set:"  << blkPath;
+        return true;
+    }
+
+    if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
+        if (!drv->removable()){ // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
+            qWarning()  << "block device is ignored by wrong removeable set for system disk:"  << blkPath;
+            return true;
+        }
+    }
+
+    if (blk->cryptoBackingDevice().length() > 1) {
+        qWarning()  << "block device is ignored by crypted back device:"  << blkPath;
+        return true;
+    }
+
+    // 是否是设备根节点，设备根节点无须记录
+    if(blk->hasPartitionTable()){ // 替换 FileUtils::deviceShouldBeIgnore
+        qDebug()  << "block device is ignored by parent node:"  << blkPath;
+        return true;
+    }
+
+    // 过滤snap产生的loop设备
+    if(blk->isLoopDevice()){
+        qDebug()  << "block device is ignored by loop device:"  << blkPath;
+        return true;
+    }
+
+    if(blk->hasPartition()){
+        QSharedPointer<DBlockPartition> partition(DDiskManager::createBlockPartition(blkPath));
+        if(!partition.isNull()){
+            DBlockPartition::Type type = partition->eType();
+            switch (type) {
+            //Extended partition with CHS addressing. It must reside within the first physical 8 GB of disk, else use 0Fh instead (see 0Fh, 85h, C5h, D5h)
+            case DBlockPartition::Win95_Extended_LBA:
+            case DBlockPartition::Linux_extended:
+            case DBlockPartition::DRDOS_sec_extend:
+            case DBlockPartition::Multiuser_DOS_extend:
+            case DBlockPartition::Extended:{
+                    qWarning()  << "block device is ignored by partion type:"  << partition->type() <<","<< blkPath;
+                    return true;
+                }
+            default:
+                break;
+            }
+        }
+    }
+    return false;
+}
 
 DFMRootController::DFMRootController(QObject *parent) : DAbstractFileController(parent)
 {
@@ -111,6 +167,24 @@ bool DFMRootController::renameFile(const QSharedPointer<DFMRenameEvent> &event) 
     return blk->lastError().type() == QDBusError::NoError;
 }
 
+void DFMRootController::reloadBlkName(const QString& blkPath, QSharedPointer<DBlockDevice> blk) const
+{
+    //检查挂载目录下是否存在diskinfo文件
+    QByteArrayList mps = blk->mountPoints();
+    if (mps.empty()) {
+        qWarning()  << "failed to reload block device name for:"  << blkPath;
+        return;
+    }
+    QString mpPath(mps.front());
+    if (mpPath.lastIndexOf("/") != (mpPath.length() - 1))
+        mpPath += "/";
+    QDir kidDir(mpPath + "UOSICON");
+    if (kidDir.exists()) {
+        QString jsonPath = kidDir.absolutePath();
+        loadDiskInfo(jsonPath);
+    }
+}
+
 const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
     QList<DAbstractFileInfoPointer> ret;
@@ -127,41 +201,19 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         }
     }
 
-    DDiskManager dummy;
-    QStringList blkds = dummy.blockDevices({});
+    QStringList blkds = DDiskManager::blockDevices({});
     for (auto blks : blkds) {
-        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-        if (DFMGlobal::isWayLand() && blks.contains(QRegularExpression("/sd[a-c][1-9]*$"))) {
-            qDebug()  << " blDev->drive()"  << blks << blk->drive();
+        QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
+        QSharedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+        if(ignoreBlkDevice(blks, blk, drv)){
             continue;
         }
 
-        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
-            if (!drv->removable()) // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
-                continue;
+        reloadBlkName(blks, blk);
 
-            if (FileUtils::deviceShouldBeIgnore(blk->device())) // 对于可移动设备，根据设备描述符选择过滤（sp3 需求，异常设备需要显示，以提供格式化入口）
-                continue;
-        }
-
-        //检查挂载目录下是否存在diskinfo文件
-        QByteArrayList mps = blk->mountPoints();
-        if (!mps.empty()) {
-            QString mpPath(mps.front());
-            if (mpPath.lastIndexOf("/") != (mpPath.length() - 1))
-                mpPath += "/";
-            QDir kidDir(mpPath + "UOSICON");
-            if (kidDir.exists()) {
-                QString jsonPath = kidDir.absolutePath();
-                loadDiskInfo(jsonPath);
-            }
-        }
-        if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
-            continue;
-        }
         using namespace DFM_NAMESPACE;
         if (DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()) {
+            qDebug()  << "block device is ignored by hintSystem&HiddenSystemPartition:"  << blks;
             continue;
         }
 
@@ -473,24 +525,10 @@ bool DFMRootFileWatcherPrivate::start()
     }));
     connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::blockDeviceAdded, [wpar, this](const QString & blks) {
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+        QSharedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 
-        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
-            if (!drv->removable()) // 对于本地磁盘，直接按照以前的方式，满足外围条件直接 return
-                return;
-
-            if (FileUtils::deviceShouldBeIgnore(blk->device())) // 设备需要被滤去，比如 /dev/sda 下还包含 /dev/sda1 时，需要滤去 sda
-                return;
-
-//            dialogManager->showFormatDialog(blk->device()); // 暂时取消监听设备接入时的格式化提示，只在用户进入不可读取的磁盘时提示格式化
-        }
-
-        if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
-            return;
-        }
-        using namespace DFM_NAMESPACE;
-        if (DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()) {
-            return;
+        if(ignoreBlkDevice(blks, blk, drv)) {
+            return ;
         }
 
         initBlockDevConnections(blk, blks);
@@ -503,7 +541,7 @@ bool DFMRootFileWatcherPrivate::start()
 
     for (auto devs : udisksmgr->blockDevices({})) {
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(devs));
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+        QSharedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 
         auto mountPoints = blk->mountPoints();
         if (!drv->removable() && !mountPoints.isEmpty()) { // feature: hide the specified dir of unremovable devices
@@ -515,10 +553,7 @@ bool DFMRootFileWatcherPrivate::start()
             deviceListener->appendHiddenDirs(mountPoint + "lost+found");
         }
 
-        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
-            continue;
-        }
-        if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
+        if(ignoreBlkDevice(devs, blk, drv)){
             continue;
         }
 

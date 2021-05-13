@@ -133,8 +133,6 @@ public:
     static bool isDesktopFile(const QFileInfo &fileInfo, QMimeType &mimetyp);
     static void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
 
-    static bool deviceShouldBeIgnore(const QString &devId); // devId = /dev/sdb(N)
-
     // 启用deepin-compressor追加压缩
     static bool appendCompress(const DUrl &toUrl, const DUrlList &fromUrlList);
     //获取内存叶大小
