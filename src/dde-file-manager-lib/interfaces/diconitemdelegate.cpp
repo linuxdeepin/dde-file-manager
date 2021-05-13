@@ -885,21 +885,6 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
             return;
         }
 
-        //编辑字符的长度控制
-        int editTextMaxLen = item->maxCharSize();
-        int editTextCurrLen = item->edit->toPlainText().length();
-        int editTextRangeOutLen = editTextCurrLen - editTextMaxLen;
-        if (editTextRangeOutLen > 0 && editTextMaxLen != INT_MAX) {
-            int srcPos = item->edit->textCursor().position();
-            srcText = srcText.mid(0, srcPos - editTextRangeOutLen)
-                    + srcText.mid(srcPos, editTextCurrLen);
-            item->edit->setPlainText(srcText);
-            QTextCursor cursor = item->edit->textCursor();
-            cursor.setPosition(srcPos - editTextRangeOutLen);
-            item->edit->setTextCursor(cursor);
-            item->edit->setAlignment(Qt::AlignHCenter);
-        }
-
         //得到处理之后的文件名称
         QString dstText = DFMGlobal::preprocessingFileName(srcText);
 
@@ -923,11 +908,32 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
                                         QObject::tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
             //之前的光标Pos
             int srcCursorPos = item->edit->textCursor().position();
+            QSignalBlocker blocker(item->edit);
             item->edit->setPlainText(dstText);
             int endPos = srcCursorPos + (dstText.length() - srcText.length());
             //此处调整光标位置
             QTextCursor cursor = item->edit->textCursor();
             cursor.setPosition(endPos);
+            item->edit->setTextCursor(cursor);
+            item->edit->setAlignment(Qt::AlignHCenter);
+        }
+
+        //编辑字符的长度控制
+        int editTextMaxLen = item->maxCharSize();
+        int editTextCurrLen = dstText.toLocal8Bit().size();
+        int editTextRangeOutLen = editTextCurrLen - editTextMaxLen;
+        if (editTextRangeOutLen > 0 && editTextMaxLen != INT_MAX) {
+            // fix bug 69627
+            QVector<uint> list = dstText.toUcs4();
+            int cursor_pos = item->edit->textCursor().position();
+            while (dstText.toLocal8Bit().size() > editTextMaxLen && cursor_pos > 0) {
+                list.removeAt(--cursor_pos);
+                dstText = QString::fromUcs4(list.data(), list.size());
+            }
+            QSignalBlocker blocker(item->edit);
+            item->edit->setPlainText(dstText);
+            QTextCursor cursor = item->edit->textCursor();
+            cursor.setPosition(cursor_pos);
             item->edit->setTextCursor(cursor);
             item->edit->setAlignment(Qt::AlignHCenter);
         }
