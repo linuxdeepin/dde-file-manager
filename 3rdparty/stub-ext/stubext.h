@@ -42,18 +42,21 @@ public:
     StubExt() : Stub() {}
 
     template<typename T, class Lamda>
-    void set_lamda(T addr, Lamda lamda)
+    bool set_lamda(T addr, Lamda lamda)
     {
+        char *fn = addrof(addr);
+        if (m_result.find(fn) != m_result.end())
+            reset(addr);
+
         Wrapper *wrapper = nullptr;
         auto addr_stub = depictShadow(&wrapper,addr,lamda);
-        set(addr, addr_stub);
-        char *fn = addrof(addr);
-        auto iter = m_result.find(fn);
-        if (iter != m_result.end()) {
-            m_wrappers.insert(std::make_pair(fn,wrapper));
+        if (set(addr, addr_stub)) {
+            m_wrappers.insert(std::make_pair(fn, wrapper));
+            return true;
         } else {
             freeWrapper(wrapper);
         }
+        return false;
     }
 
     template<typename T>
