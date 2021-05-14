@@ -878,6 +878,10 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
     FileIconItem *item = new FileIconItem(parent);
 
+    //默认布局导致上传递DListView::CreateEdit逻辑中光标不能更新，
+    //在默认的构造与初始化时Edit的坐标应当与最终目标，所以此处更新一次Edit布局
+    item->updateEditorGeometry();
+
     //此处更改逻辑不再保持焦点离开后依然保持的item编辑态，将会提交相关的编辑框(与桌面保持一致)
     connect(item, &FileIconItem::inputFocusOut, this, &DIconItemDelegate::commitDataAndCloseActiveEditor);
     connect(item, &FileIconItem::destroyed, this, [this, d] {
