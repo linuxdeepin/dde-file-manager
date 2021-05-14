@@ -76,7 +76,7 @@ public:
     }
 };
 }
-
+#ifndef __arm__
 TEST_F(TestDFileMenu, tst_makeEvent)
 {
     TestHelper::runInLoop([](){});
@@ -85,6 +85,7 @@ TEST_F(TestDFileMenu, tst_makeEvent)
     const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);
 
 }
+#endif
 TEST_F(TestDFileMenu, setEventData)
 {
     DUrl url("file:///home");

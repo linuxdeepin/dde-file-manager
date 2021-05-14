@@ -86,7 +86,7 @@ TEST_F(TestDFileSystemModel, test_sortedUrls)
     DUrlList list = m_model->sortedUrls();
     ASSERT_EQ(list.count(), 2);
 }
-
+#ifndef __arm__
 TEST_F(TestDFileSystemModel, test_data)
 {
     QModelIndex rootIndex = m_model->setRootUrl(tmpDirUrl);
@@ -121,7 +121,7 @@ TEST_F(TestDFileSystemModel, test_data)
     ASSERT_TRUE(m_model->data(index, DFileSystemModel::UnknowRole).isNull());
     //FileIconModelToolTipRole
 }
-
+#endif
 TEST_F(TestDFileSystemModel, test_fileInfo)
 {
     QModelIndex rootIndex = m_model->setRootUrl(tmpDirUrl);

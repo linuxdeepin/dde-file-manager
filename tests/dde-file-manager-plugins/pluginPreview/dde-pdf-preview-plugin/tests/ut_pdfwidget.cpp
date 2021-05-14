@@ -37,7 +37,6 @@
 #include <QDebug>
 #include <QEventLoop>
 #include <QTimer>
-
 namespace  {
 class TestPdfWidget : public testing::Test
 {
@@ -57,9 +56,8 @@ public:
 
     void TearDown() override
     {
-        QThread::sleep(2);
-
-        delete m_pdfWidget;
+	QThread::sleep(5);	
+	delete m_pdfWidget;
         m_pdfWidget = nullptr;
 
         QFile file("./test.pdf");
@@ -77,12 +75,12 @@ public:
     DUrl m_url;
 };
 }
-
+#ifndef __arm__
 TEST_F(TestPdfWidget, use_showBadPage)
 {
     EXPECT_NO_FATAL_FAILURE(m_pdfWidget->showBadPage());
 }
-
+#endif
 TEST_F(TestPdfWidget, slot_onThumbScrollBarValueChanged)
 {
     EXPECT_NO_FATAL_FAILURE(m_pdfWidget->onThumbScrollBarValueChanged(10));

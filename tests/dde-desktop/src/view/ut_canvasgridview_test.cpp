@@ -1820,7 +1820,7 @@ TEST_F(CanvasGridViewTest, test_dropEvent)
     m_canvasGridView->dropEvent(&event);
     EXPECT_EQ(event.dropAction(), Qt::IgnoreAction);
 }
-#endif
+
 TEST_F(CanvasGridViewTest, test_EnableUIDebug)
 {
     m_canvasGridView->EnableUIDebug(true);
@@ -1831,6 +1831,7 @@ TEST_F(CanvasGridViewTest, test_EnableUIDebug)
     EXPECT_FALSE(m_canvasGridView->d->_debug_log);
     EXPECT_FALSE(m_canvasGridView->d->_debug_show_grid);
 }
+#endif
 
 TEST_F(CanvasGridViewTest, test_isIndexHidden)
 {
