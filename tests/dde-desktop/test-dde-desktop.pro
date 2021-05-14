@@ -26,6 +26,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 DEFINES += UT_DDE_DESKTOP_UNIONTECH
 
+isEqual(ARCH, aarch64){
+    DEFINES += __arm__
+}
+
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.

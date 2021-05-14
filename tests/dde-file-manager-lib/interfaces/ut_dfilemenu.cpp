@@ -76,10 +76,10 @@ public:
     }
 };
 }
-#ifndef __arm__
+#if 0
 TEST_F(TestDFileMenu, tst_makeEvent)
 {
-    TestHelper::runInLoop([](){});
+    TestHelper::runInLoop([]() {});
     MenuAction type;
     type = MenuAction::Open;
     const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);
@@ -93,7 +93,7 @@ TEST_F(TestDFileMenu, setEventData)
     urllist.append(DUrl::fromLocalFile("file:///home"));
     urllist.append(DUrl::fromLocalFile("file:///tmp"));
     DFileMenu *menu = new DFileMenu;
-    QWidget *w=new QWidget();
+    QWidget *w = new QWidget();
     menu->setProperty("DFileManagerWindow", (quintptr)this);
     menu->setProperty("ToolBarSettingsMenu", true);
     menu->setEventData(DUrl(), DUrlList() << DUrl(), w->winId(), w);
