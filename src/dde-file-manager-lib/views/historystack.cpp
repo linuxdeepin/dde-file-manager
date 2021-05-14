@@ -265,7 +265,8 @@ bool HistoryStack::checkPathIsExist(const DUrl &url)
         }
         if (path.isNull() || path.isEmpty() ||
                 !(rootFileName.startsWith(SMB_SCHEME) || rootFileName.startsWith(FTP_SCHEME)
-                  || rootFileName.startsWith(SFTP_SCHEME))) {
+                  || rootFileName.startsWith(SFTP_SCHEME) || rootFileName.startsWith(MTP_SCHEME)
+                  || rootFileName.startsWith(GPHOTO2_SCHEME) || rootFileName.startsWith(AFC_SCHEME))) {
             return false;
         }
         rootUrl.setScheme(DFMROOT_SCHEME);
