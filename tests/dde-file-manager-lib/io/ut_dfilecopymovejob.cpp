@@ -505,6 +505,7 @@ DFileCopyMoveJob::Action stub_setAndhandleErrorEnforce(DFileCopyMoveJob::Error, 
 {
     return DFileCopyMoveJob::EnforceAction;
 };
+#ifndef __arm__
 TEST_F(DFileCopyMoveJobTest, start_doProcess)
 {
     DFileCopyMoveJobPrivate *jobd = job->d_func();
@@ -736,7 +737,7 @@ TEST_F(DFileCopyMoveJobTest, start_doProcess)
                                to.toLocalFile() + from.fileName());
     job->stop();
 }
-
+#endif
 TEST_F(DFileCopyMoveJobTest, start_mergeDirectory)
 {
     DFileCopyMoveJobPrivate *jobd = job->d_func();
