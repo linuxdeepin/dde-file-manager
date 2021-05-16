@@ -50,7 +50,7 @@ public:
 protected:
     QString dirPath;
     QSet<QString> fileListSet;
-    mutable DFMFileListFile::Status status;
+    mutable DFMFileListFile::Status status = DFMFileListFile::NoError;
 
 private:
     char __padding[4] = {0};

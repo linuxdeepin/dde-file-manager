@@ -1576,6 +1576,13 @@ bool FileUtils::isGvfsMountFile(const QString &filePath, const bool &isEx)
     if (filePath.isEmpty())
         return false;
 
+    static const QString gvfsPath = QString("/run/user/") + QString::number(getuid()) + QString("/gvfs");
+
+    if (filePath.startsWith(gvfsPath) && filePath != gvfsPath)
+        return true;
+    if (filePath == gvfsPath)
+        return false;
+
     bool isgvfsfile = !DStorageInfo::isLocalDevice(filePath, isEx);
 
     return isgvfsfile;

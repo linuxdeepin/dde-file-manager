@@ -247,13 +247,13 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
             if (paths.isEmpty())
                 continue;
         }
-        const QString &name = QString::fromUtf8(event.name);
+        const QString &name = QString::fromUtf8(event.name, static_cast<int>(event.len));
 
         for (auto &path : paths) {
 //            qDebug() << "event for path" << path;
 
             /// TODO: Existence of invalid utf8 characters QFile can not read the file information
-            if (event.name != QString::fromLocal8Bit(event.name).toLocal8Bit()) {
+            if (event.name != QString::fromLocal8Bit(event.name, static_cast<int>(event.len)).toLocal8Bit()) {
                 if (event.mask & (IN_CREATE | IN_MOVED_TO)) {
                     DFMGlobal::fileNameCorrection(path);
                 }

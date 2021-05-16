@@ -448,7 +448,7 @@ QIcon DGvfsFileInfo::fileIcon() const
     if (fileUrl.toString().contains(VaultController::makeVaultLocalPath())) {
         d->hasThumbnail = DThumbnailProvider::instance()->hasThumbnail(d->fileInfo) && !DStorageInfo::isCdRomDevice(absoluteFilePath());
     } else {
-        d->hasThumbnail = DStorageInfo::isLocalDevice(absoluteFilePath()) && DThumbnailProvider::instance()->hasThumbnail(d->fileInfo) && !DStorageInfo::isCdRomDevice(absoluteFilePath());
+        d->hasThumbnail = false;
     }
 #endif
     if (d->needThumbnail || d->hasThumbnail > 0) {
