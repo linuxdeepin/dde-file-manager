@@ -68,8 +68,8 @@ TEST_F(TestDFMSideBarBookmarkItemHandler, test_cdAction)
     StubExt st;
     st.set_lamda(&DFileManagerWindow::openNewTab, [](){return true;});
 
-    DFileManagerWindow window;
-    const DFMSideBar *bar = window.getLeftSideBar();
+    DFileManagerWindow *window = new DFileManagerWindow();
+    const DFMSideBar *bar = window->getLeftSideBar();
     DUrl dirUrl = DUrl::fromLocalFile(m_dirPath);
     QScopedPointer<DFMSideBarItem> pItem_1(m_handler->createItem(dirUrl));
 
@@ -84,6 +84,8 @@ TEST_F(TestDFMSideBarBookmarkItemHandler, test_cdAction)
     st.set_lamda(&DFileService::deleteFiles, [&](){called = true; return true;});
     m_handler->cdAction(bar, pItem_2.data());
     EXPECT_TRUE(called);
+
+    FreePointer(window);
 }
 
 TEST_F(TestDFMSideBarBookmarkItemHandler, test_contextMenu)
@@ -100,8 +102,8 @@ TEST_F(TestDFMSideBarBookmarkItemHandler, test_contextMenu)
 
     st.set_lamda(VADDR(DDialog, exec), [&]{++calledActionCount; return 0;});
 
-    DFileManagerWindow window;
-    const DFMSideBar *bar = window.getLeftSideBar();
+    DFileManagerWindow *window = new DFileManagerWindow();
+    const DFMSideBar *bar = window->getLeftSideBar();
     DUrl dirUrl = DUrl::fromBookMarkFile(DUrl(m_dirPath), "Test_Bookmark");
 
     BookMarkPointer pBM(new BookMark(dirUrl));
@@ -122,6 +124,8 @@ TEST_F(TestDFMSideBarBookmarkItemHandler, test_contextMenu)
         action->trigger();
     }
     EXPECT_GE(calledActionCount, 5);
+
+    FreePointer(window);
 }
 
 TEST_F(TestDFMSideBarBookmarkItemHandler, test_rename)

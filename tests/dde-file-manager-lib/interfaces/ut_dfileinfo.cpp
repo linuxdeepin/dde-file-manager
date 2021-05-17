@@ -189,7 +189,10 @@ TEST_F(TestDFileInfo, test_createIODevice)
 {
     ASSERT_NE(m_pFileInfo, nullptr);
 
-    EXPECT_NE(m_pFileInfo->createIODevice(), nullptr);
+    QIODevice *device = m_pFileInfo->createIODevice();
+    EXPECT_NE(device, nullptr);
+
+    FreePointer(device);
 }
 
 TEST_F(TestDFileInfo, test_active)

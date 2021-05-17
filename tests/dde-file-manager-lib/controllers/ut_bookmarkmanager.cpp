@@ -26,6 +26,7 @@
 #include "views/dfilemanagerwindow.h"
 #include "singleton.h"
 #include <dfmevent.h>
+#include "testhelper.h"
 
 #include <QProcess>
 #include <QStandardPaths>
@@ -117,8 +118,8 @@ TEST_F(TestBookMarkManager, can_call_context_menu)
 {
     ASSERT_NE(m_pHandler, nullptr);
 
-    DFileManagerWindow window;
-    const DFMSideBar *bar = window.getLeftSideBar();
+    DFileManagerWindow *window = new DFileManagerWindow();
+    const DFMSideBar *bar = window->getLeftSideBar();
     DUrl url = DUrl::fromBookMarkFile(DUrl("file://" + tempDirPath), BOOKMARK_STR);
     m_pItem = m_pHandler->createItem(url);
     ASSERT_NE(m_pItem, nullptr);
@@ -127,6 +128,8 @@ TEST_F(TestBookMarkManager, can_call_context_menu)
 
     EXPECT_NE(menu, nullptr);
     delete menu;
+
+    FreePointer(window);
 }
 
 TEST_F(TestBookMarkManager, can_rename_bookmark_sidebar_item)
