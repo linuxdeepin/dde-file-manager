@@ -434,6 +434,8 @@ void DiskControlWidget::onBlockDeviceAdded(const QString &path)
     // 以下皆是以前的逻辑
     if (isProtectedDevice(blkDev.data())) return;
     if (blkDev->isEncrypted()) return;
+    // 加密盘解锁后 dock先挂载 会触发文管挂载时提示重复挂载 bugid: 77010
+    if (blkDev->cryptoBackingDevice().length() > 1) return;
     if (blkDev->hintIgnore()) return;
     if (!blkDev->hasFileSystem()) return;
 
