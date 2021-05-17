@@ -81,8 +81,11 @@ const QList<QExplicitlySharedDataPointer<DGioMount> > getMounts_stub()
 {
     QList<QExplicitlySharedDataPointer<DGioMount> > listGioMount;
 
-    QExplicitlySharedDataPointer<DGioMount> mntPtr(DGioMount::createFromPath(dgio_devpath_stub()));
-    listGioMount.append(mntPtr);
+    DGioMount *gioMount = DGioMount::createFromPath(dgio_devpath_stub());
+    if (gioMount) {
+        QExplicitlySharedDataPointer<DGioMount> mntPtr(gioMount);
+        listGioMount.append(mntPtr);
+    }
     return listGioMount;
 }
 
@@ -93,8 +96,11 @@ const QList<QExplicitlySharedDataPointer<DGioMount> > get_gvfs_Mounts_stub()
 {
     QList<QExplicitlySharedDataPointer<DGioMount> > listGioMount;
 
-    QExplicitlySharedDataPointer<DGioMount> mntPtr(DGioMount::createFromPath(BLK_DEVICE_MOUNT_POINT));
-    listGioMount.append(mntPtr);
+    DGioMount *gioMount = DGioMount::createFromPath(BLK_DEVICE_MOUNT_POINT);
+    if (gioMount) {
+        QExplicitlySharedDataPointer<DGioMount> mntPtr(gioMount);
+        listGioMount.append(mntPtr);
+    }
     return listGioMount;
 }
 
