@@ -276,6 +276,22 @@ TEST_F(FrameTest, test_refreshlist_screensaver)
     EXPECT_FALSE(m_frame->m_loadTimer.isActive());
     EXPECT_EQ(m_frame->m_itemwait, nullptr);
     EXPECT_TRUE(m_frame->m_wallpaperList->count() > 0);
+
+    //test select default item
+    int currentIndex = -1;
+    stub.set_lamda(ADDR(WallpaperList, setCurrentIndex), [&currentIndex](WallpaperList *obj, int index){
+        Q_UNUSED(obj)
+        currentIndex = index;
+    });
+    QString currentScreenSaver = m_frame->m_dbusScreenSaver->currentScreenSaver();
+    m_frame->m_dbusScreenSaver->setCurrentScreenSaver(QString("noneexistitem"));
+    QString tstScreenSaver = m_frame->m_dbusScreenSaver->currentScreenSaver();
+    ASSERT_NE(currentScreenSaver, tstScreenSaver);
+
+    m_frame->refreshList();
+    EXPECT_EQ(currentIndex, 0);
+
+    m_frame->m_dbusScreenSaver->setCurrentScreenSaver(currentScreenSaver);
 }
 
 TEST_F(FrameTest, test_setmode_wallpaper)
