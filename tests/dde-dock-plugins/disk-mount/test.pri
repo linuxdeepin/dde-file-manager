@@ -26,3 +26,17 @@ HEADERS += \
     $$PWD/cases/ut_mock_stub_diskdevice.h \
     $$PWD/cases/ut_mock_stub_disk_gio.h \
     $$PWD/cases/ut_mock_stub_common_define.h
+
+!CONFIG(DISABLE_TSAN_TOOL) {
+    #DEFINES += TSAN_THREAD #互斥
+    DEFINES += ENABLE_TSAN_TOOL
+    contains(DEFINES, TSAN_THREAD){
+       QMAKE_CXXFLAGS+="-fsanitize=thread"
+       QMAKE_CFLAGS+="-fsanitize=thread"
+       QMAKE_LFLAGS+="-fsanitize=thread"
+    } else {
+       QMAKE_CXXFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+       QMAKE_CFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+       QMAKE_LFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+    }
+}
