@@ -31,6 +31,7 @@
 #include "utils.h"
 #include "dmimedatabase.h"
 #include "interfaces/dfmglobal.h"
+#include "app/define.h"
 
 
 DFM_USE_NAMESPACE
@@ -258,4 +259,34 @@ bool isAvfsMounted()
 
     }
     return false;
+}
+
+/**
+ * @brief clearStageDir 清理光盘缓存路径下的所有空路径
+ * @param stagingRoot
+ */
+void clearStageDir(const QString &stagingRoot)
+{
+    QFileInfo f(stagingRoot);
+    if (!f.exists() || !f.isDir())
+        return;
+
+    const static QString stagePrefix = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/"
+            + qApp->organizationName() + "/" DISCBURN_STAGING + "/_dev_sr";
+
+    QString absPath = f.canonicalFilePath();
+    if (!absPath.startsWith(stagePrefix))
+        return;
+
+    QDir d(absPath);
+    if (d.isEmpty(QDir::AllEntries | QDir::Hidden | QDir::NoDotAndDotDot | QDir::NoSymLinks)) {
+        qDebug() << absPath << " is removed";
+        d.removeRecursively();
+        d.cdUp();
+        clearStageDir(d.canonicalPath());
+        return;
+    }
+    QStringList dirs = d.entryList(QDir::Dirs | QDir::Hidden | QDir::NoDotAndDotDot);
+    foreach (auto dir, dirs)
+        clearStageDir(absPath + "/" + dir);
 }

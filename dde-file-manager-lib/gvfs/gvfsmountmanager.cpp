@@ -39,6 +39,7 @@
 #include "mountsecretdiskaskpassworddialog.h"
 #include "app/filesignalmanager.h"
 #include "shutil/fileutils.h"
+#include "utils.h"
 
 #include "networkmanager.h"
 #include "dfmapplication.h"
@@ -691,6 +692,10 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
         DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].nUsage = 0;;
         DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct, getVolTag(volume));
         emit fileSignalManager->requestUpdateComputerView();
+
+        const static QString stagePrefix = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/"
+                + qApp->organizationName() + "/" DISCBURN_STAGING "/";
+        clearStageDir(stagePrefix + qVolume.unix_device().replace("/", "_"));
     }
 
     GDrive *drive = g_volume_get_drive(volume);
