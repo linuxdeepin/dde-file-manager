@@ -27,15 +27,18 @@
 #define private public
 #define protected public
 #include "views/windowmanager.h"
+#include "stubext.h"
+#include "dfilemenumanager.h"
+#include "dfilemenu.h"
 
 namespace  {
     class WindowManagerTest : public testing::Test
     {
     public:
         WindowManager wm;
-        virtual void SetUp() override
+        WindowManagerTest()
         {
-
+            stu.set_lamda(ADDR(DFileMenuManager, genereteMenuByKeys), [](){return new DFileMenu;});
         }
 
         virtual void TearDown() override
@@ -46,6 +49,8 @@ namespace  {
             }
             WindowManager::m_windows.clear();
         }
+
+        stub_ext::StubExt stu;
     };
 }
 

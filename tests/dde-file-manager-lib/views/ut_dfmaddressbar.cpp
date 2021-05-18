@@ -32,6 +32,9 @@
 #include "interfaces/dfmcrumbbar.h"
 #include "controllers/searchhistroymanager.h"
 #include "stub.h"
+#include "stubext.h"
+#include <dfmcrumbinterface.h>
+#include <dfmcrumbmanager.h>
 #include "testhelper.h"
 
 #define private public
@@ -47,6 +50,8 @@ namespace  {
         virtual void SetUp() override
         {
             m_bar = new DFMAddressBar;
+            m_stuext.set_lamda(VADDR(DFMCrumbInterface, requestCompletionList), [](){return;});
+            m_stuext.set_lamda(ADDR(DFMCrumbManager, createControllerByUrl), [](){return nullptr;});
         }
 
         virtual void TearDown() override
@@ -55,8 +60,11 @@ namespace  {
                 delete m_bar;
                 m_bar = nullptr;
             }
+            m_stuext.reset(VADDR(DFMCrumbInterface, requestCompletionList));
+            m_stuext.reset(ADDR(DFMCrumbManager, createControllerByUrl));
         }
         DFMAddressBar *m_bar = nullptr;
+        stub_ext::StubExt m_stuext;
     };
 }
 
@@ -253,14 +261,17 @@ TEST_F(DFMAddressBarTest,tst_completion_modelCount_changed)
 
 TEST_F(DFMAddressBarTest,tst_text_edited)
 {
+    stub_ext::StubExt stu;
     ASSERT_NE(nullptr,m_bar);
 
     DFMCrumbBar bar;
     m_bar->setParent(&bar);
-
+    stu.set_lamda(ADDR(DFMAddressBar, updateCompletionState), [](){return;});
     m_bar->onTextEdited(QString(""));
     m_bar->onTextEdited(QString("/"));
+
     m_bar->setParent(nullptr);
+    stu.reset(ADDR(DFMAddressBar, updateCompletionState));
 }
 
 TEST_F(DFMAddressBarTest,focus_InOut_event)

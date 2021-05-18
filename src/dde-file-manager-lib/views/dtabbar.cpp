@@ -623,12 +623,12 @@ void TabBar::removeTab(const int index, const bool &remainState)
         m_lastAddTabState = false;
         // handle tab close button display position
         if (remainState) {
-            QMouseEvent *event = new QMouseEvent(QMouseEvent::MouseMove,
-                                                 mapFromGlobal(QCursor::pos()),
-                                                 Qt::NoButton,
-                                                 Qt::NoButton,
-                                                 Qt::NoModifier);
-            mouseMoveEvent(event);
+            QMouseEvent event(QMouseEvent::MouseMove,
+                              mapFromGlobal(QCursor::pos()),
+                              Qt::NoButton,
+                              Qt::NoButton,
+                              Qt::NoModifier);
+            mouseMoveEvent(&event);
         }
     }
 
@@ -929,7 +929,7 @@ void TabBar::updateScreen()
             continue;
         }
         if (!m_lastAddTabState) {
-            QPropertyAnimation *animation = new QPropertyAnimation(tab, "geometry");
+            QPropertyAnimation *animation = new QPropertyAnimation(tab, "geometry", this);
             animation->setDuration(100);
             animation->setStartValue(tab->geometry());
             animation->setEndValue(rect);

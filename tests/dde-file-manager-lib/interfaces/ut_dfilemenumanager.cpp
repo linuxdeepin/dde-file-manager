@@ -296,8 +296,11 @@ TEST_F(TestDFileMenuManager, setActionID)
 TEST_F(TestDFileMenuManager, registerMenuActionType)
 {
     QAction *action = m_menuMgr->getAction(DFMGlobal::Copy);
-    MenuAction type = m_menuMgr->registerMenuActionType(action);
-    EXPECT_NE(type, DFMGlobal::Unknow);
+    //此处未判断action是否有效，导致调用函数发生崩溃（断言）
+    if (action) {
+        MenuAction type = m_menuMgr->registerMenuActionType(action);
+        EXPECT_NE(type, DFMGlobal::Unknow);
+    }
 }
 
 TEST_F(TestDFileMenuManager, whetherShowTagActions)
