@@ -682,8 +682,8 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
         DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct, getVolTag(volume));
         emit fileSignalManager->requestUpdateComputerView();
 
-        static auto stagePrefix = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first()
-                + "/.cache/deepin/discburn/";
+        const static QString stagePrefix = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/"
+                + qApp->organizationName() + "/" DISCBURN_STAGING "/";
         clearStageDir(stagePrefix + qVolume.unix_device().replace("/", "_"));
     }
 

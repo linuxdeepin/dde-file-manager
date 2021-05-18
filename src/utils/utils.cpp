@@ -31,6 +31,7 @@
 #include "utils.h"
 #include "dmimedatabase.h"
 #include "interfaces/dfmglobal.h"
+#include "app/define.h"
 
 
 DFM_USE_NAMESPACE
@@ -255,7 +256,6 @@ bool isAvfsMounted()
             if(datas.at(0) == "avfsd" && QFile::exists(datas.at(1)))
                 return true;
         }
-
     }
     return false;
 }
@@ -270,8 +270,8 @@ void clearStageDir(const QString &stagingRoot)
     if (!f.exists() || !f.isDir())
         return;
 
-    static auto stagePrefix = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first()
-            + "/.cache/deepin/discburn/_dev_sr";
+    const static QString stagePrefix = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/"
+            + qApp->organizationName() + "/" DISCBURN_STAGING + "/_dev_sr";
 
     QString absPath = f.canonicalFilePath();
     if (!absPath.startsWith(stagePrefix))
