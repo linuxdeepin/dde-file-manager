@@ -81,7 +81,8 @@ AccessControlManager::AccessControlManager(QObject *parent)
     m_diskMnanager = new DDiskManager(this);
     m_diskMnanager->setWatchChanges(true);
 
-    m_whiteProcess << "/usr/bin/dmcg";
+    m_whiteProcess << "/usr/bin/dmcg"
+                   << "/usr/bin/python3.7";
     m_configPath = "/etc/deepin/devAccessConfig.json";
     loadPolicy();
     changeMountedOnInit();
