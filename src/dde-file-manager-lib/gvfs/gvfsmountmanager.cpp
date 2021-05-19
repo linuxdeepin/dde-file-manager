@@ -58,6 +58,8 @@
 #include <QStorageInfo>
 #include <QRegularExpression>
 
+#include <disomaster.h>
+
 #include <views/windowmanager.h>
 
 /*afc has no unix_device, so use uuid as unix_device*/
@@ -469,30 +471,35 @@ void GvfsMountManager::monitor_mount_removed_root(GVolumeMonitor *volume_monitor
     emit gvfsMountManager->volume_removed(diskInfo);
 }
 
-
 void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMount *mount)
 {
     Q_UNUSED(volume_monitor)
     qCDebug(mountManager()) << "==============================monitor_mount_added==============================";
     QMount qMount = gMountToqMount(mount);
     GVolume *volume = g_mount_get_volume(mount);
+    QVolume qVolume = gVolumeToqVolume(volume);
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qMount.icons().contains("media-optical")) { //CD/DVD
-        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bMntFlag = true;
-        DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].bVolFlag = true;
-        //fix: 设置光盘容量属性
-        //DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusAddMount);
-        QString mpt = qMount.mounted_root_uri();
-        mpt.remove(FILE_ROOT);
-        if (!mpt.startsWith("/"))
-            mpt = "/" + mpt;
+        QString volTag = getVolTag(volume);
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag].bMntFlag = true;
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag].bVolFlag = true;
 
-        QStorageInfo info(mpt);
-        if (info.isValid()) {
-            quint64 total = static_cast<quint64>(info.bytesTotal());
-            DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].nTotal = total;
-            DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].nUsage = total;
+        // 对于光盘来说，执行挂载之后，一定是能够获取到 dp 对象的，在 actionMount 函数以及 setRootUrl 函数中，均请求了光盘的 dp 属性
+        DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(qVolume.unix_device());
+        if (dp.avail == 0) {
+            QString mpt = qMount.mounted_root_uri();
+            mpt.remove(FILE_ROOT);
+            mpt = mpt.startsWith("/") ? mpt : ("/" + mpt);
+            QStorageInfo info(mpt);
+            if (info.isValid()) {
+                quint64 total = static_cast<quint64>(info.bytesTotal());
+                DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag].nTotal = total;
+                DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag].nUsage = total;
+            }
+        } else {
+            DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag].nTotal = dp.avail + dp.data;
+            DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag].nUsage = dp.data;
         }
     }
 
