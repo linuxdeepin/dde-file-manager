@@ -276,13 +276,13 @@ DFileInfoPrivate::DFileInfoPrivate(const DUrl &fileUrl, DFileInfo *qq, bool hasC
 DFileInfoPrivate::~DFileInfoPrivate()
 {
     if (getIconTimer) {
-        //getIconTimer->disconnect(SIGNAL(timeout())); // 导致指针析构问题
+        getIconTimer->disconnect(SIGNAL(timeout())); // 导致指针析构问题,UT注意
         getIconTimer->stop();
         getIconTimer->deleteLater();
     }
 
     if (getEPTimer) {
-        //getEPTimer->disconnect(SIGNAL(timeout())); // 导致指针析构问题
+        getEPTimer->disconnect(SIGNAL(timeout())); // 导致指针析构问题，UT注意
         getEPTimer->stop();
         getEPTimer->deleteLater();
     }

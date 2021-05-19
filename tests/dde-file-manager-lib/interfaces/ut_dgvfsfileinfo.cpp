@@ -163,12 +163,12 @@ TEST_F(DGvfsFileInfoTest, test_fileinfo_fileIcon)
     EXPECT_FALSE(m_fileinfo->fileIcon().isNull());
     }
 
-    {
-    stub_ext::StubExt st;
-    st.set_lamda(&DAbstractFileInfo::isActive, []{ return true; });
-    parent->d_func()->needThumbnail = true;
-    EXPECT_FALSE(m_fileinfo->fileIcon().isNull());
-    }
+//    {
+//    stub_ext::StubExt st;
+//    st.set_lamda(&DAbstractFileInfo::isActive, []{ return true; });
+//    parent->d_func()->needThumbnail = true;
+//    EXPECT_FALSE(m_fileinfo->fileIcon().isNull());
+//    }
 
     DGvfsFileInfo *info = new DGvfsFileInfo("/tmp/");
     DGvfsFileInfo *info_home = new DGvfsFileInfo("file:///home");
