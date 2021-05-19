@@ -59,8 +59,7 @@ DFMSideBarItem *DFMSideBarBookmarkItemHandler::createItem(const DUrl &url)
     return item;
 }
 
-DFMSideBarBookmarkItemHandler::DFMSideBarBookmarkItemHandler(QObject *parent)
-    :DFMSideBarItemInterface(parent)
+DFMSideBarBookmarkItemHandler::DFMSideBarBookmarkItemHandler()
 {
 
 }

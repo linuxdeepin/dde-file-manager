@@ -201,7 +201,7 @@ DFileView::DFileView(QWidget *parent)
 
     // 修复wayland TASK-37638
     // 初始化子线程
-    m_pSelectWork = new SelectWork(this);
+    m_pSelectWork = new SelectWork();
     connect(m_pSelectWork, &SelectWork::sigSetSelect,
             this, &DFileView::slotSetSelect);
 
@@ -219,8 +219,6 @@ DFileView::DFileView(QWidget *parent)
 
 DFileView::~DFileView()
 {
-    Q_D(DFileView);
-
     disconnect(this, &DFileView::rowCountChanged, this, &DFileView::onRowCountChanged);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::delayUpdateStatusBar);
 
@@ -234,12 +232,6 @@ DFileView::~DFileView()
     //所有的槽函数必须跑完才能析构
     QMutexLocker lkUpdateStatusBar(&d_ptr->m_mutexUpdateStatusBar);
 
-    if (d->updateStatusBarTimer->isActive())
-        d->updateStatusBarTimer->stop();
-
-    if (d->updateStatusBarTimer) {
-        d->updateStatusBarTimer = nullptr;
-    }
 }
 
 DFileSystemModel *DFileView::model() const

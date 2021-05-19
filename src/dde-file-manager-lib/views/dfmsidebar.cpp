@@ -451,13 +451,6 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
             }
         }
         DFileService::instance()->setCursorBusyState(false);
-
-        //函数中new menu使用完成时释放,
-        //前提是他没有parent，否则会导致释放崩溃
-        if (menu && menu->parent() != nullptr) {
-            delete menu;
-            menu = nullptr;
-        }
     }
     DFileService::instance()->setCursorBusyState(false);
     return;

@@ -36,7 +36,7 @@ class DFMSideBarBookmarkItemHandler : public DFMSideBarItemInterface
 public:
     static DFMSideBarItem * createItem(const DUrl &url);
 
-    explicit DFMSideBarBookmarkItemHandler(QObject *parent = nullptr);
+    DFMSideBarBookmarkItemHandler();
 
     void cdAction(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
     QMenu * contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
