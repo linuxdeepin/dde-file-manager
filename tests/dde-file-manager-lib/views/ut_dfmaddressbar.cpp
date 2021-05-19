@@ -30,6 +30,8 @@
 #include <dspinner.h>
 #include "views/dcompleterlistview.h"
 #include "interfaces/dfmcrumbbar.h"
+#include "interfaces/dfileinfo.h"
+#include "interfaces/dfileservices.h"
 #include "controllers/searchhistroymanager.h"
 #include "stub.h"
 #include "stubext.h"
@@ -209,9 +211,27 @@ TEST_F(DFMAddressBarTest,update_completion_state)
     void (*ut_doComplete)() = [](){};
     stub.set(ADDR(DFMAddressBar, doComplete), ut_doComplete);
 
+    DAbstractFileInfoPointer (*createFileInfolamda)(const QObject *, const DUrl &) = [](const QObject *, const DUrl &){
+        return DAbstractFileInfoPointer();
+    };
+    stub.set(ADDR(DFileService,createFileInfo),createFileInfolamda);
+
+    void (*ut_setIndicator)() = [](){};
+    stub.set(ADDR(DFMAddressBar, setIndicator), ut_setIndicator);
+
+    void (*ut_completionModelCountChanged)() = [](){};
+    stub.set(ADDR(DFMAddressBar, onCompletionModelCountChanged), ut_completionModelCountChanged);
+
+    void (*ut_clearCompleterModel)() = [](){};
+    stub.set(ADDR(DFMAddressBar, clearCompleterModel), ut_clearCompleterModel);
+
+    void (*ut_setCompletionPrefix)() = [](){};
+    stub.set(ADDR(QCompleter, setCompletionPrefix), ut_setCompletionPrefix);
+
+    m_bar->historyList.clear();
+
     DFMCrumbBar bar;
     m_bar->setParent(&bar);
-
     m_bar->updateCompletionState(QString(""));
     m_bar->updateCompletionState(QString("/home"));
     m_bar = nullptr;
