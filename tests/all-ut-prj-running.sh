@@ -27,6 +27,7 @@ UT_TYPE_DOCK_PLUGINS="dde-dock-plugins"
 UT_TYPE_FILE_MANAGER_PLUGINS="dde-file-manager-plugins"
 UT_TYPE_FILE_THUMBNAIL_TOOL="dde-file-thumbnail-tool"
 UT_TYPE_ANYTHING_SERVER_PLUGINS="deepin-anything-server-plugins"
+UT_TYPE_FILE_MANAGER_DAEMON="dde-file-manager-daemon"
 
 REBUILD_PRJ=${4}
 REBUILD_TYPE_YES="yes"
@@ -217,9 +218,30 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_THUM
         check_ut_result $? $UT_TYPE_FILE_THUMBNAIL_TOOL
 fi
 
+# 8. 子项目 dde-file-manager-daemon中的accesscontrol 单元测试与覆盖率测试
+if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANAGER_DAEMON" ] ; then
+        echo $UT_TYPE_FILE_MANAGER_DAEMON "test case is running"
+
+        DIR_TEST_DDE_FILE_MANAGER_DAEMON=$UT_TESTS_FOLDER/dde-file-manager-daemon
+        mkdir -p $DIR_TEST_DDE_FILE_MANAGER_DAEMON
+        cd $DIR_TEST_DDE_FILE_MANAGER_DAEMON
+
+        if [ "$REBUILD_PRJ" = "$REBUILD_TYPE_YES" ] ; then
+                echo $UT_TYPE_FILE_MANAGER_DAEMON "is making"
+                qmake $TESTS_FOLDER/dde-file-manager-daemon/test-dde-file-manager-daemon.pro $QMAKE_ARGS
+                make -j$CPU_NUMBER
+        fi
+
+        dde_file_manager_daemon_extract_path="*/src/dde-file-manager-daemon/accesscontrol/*"
+        dde_file_manager_daemon_remove_path="*/third-party/* *tests* */dde-file-manager-lib/vault/openssl/* */dde-file-manager-lib/vault/qrencode/* */dde-desktop/dbus/* */dde-wallpaper-chooser/dbus/* *moc_* *qrc_*"
+        # report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
+        ./../../../tests/ut-target-running.sh $BUILD_DIR dde-file-manager-daemon $DIR_TEST_DDE_FILE_MANAGER_DAEMON test-dde-file-manager-daemon "$dde_file_manager_daemon_extract_path" "$dde_file_manager_daemon_remove_path" $SHOW_REPORT
+        check_ut_result $? $UT_TYPE_FILE_MANAGER_DAEMON
+fi
+
 # aarch64 sw_64 mips64 mips32不支持deepin-anything
 hw_arrch=$(uname -m)
-# 8. 子项目 deepin-anything-server-plugins 单元测试与覆盖率测试
+# 9. 子项目 deepin-anything-server-plugins 单元测试与覆盖率测试
 if ([ "$hw_arrch" != "aarch64" ] && [ "$hw_arrch" != "sw_64" ] && [ "$hw_arrch" != "mips64" ] && [ "$hw_arrch" != "mips32" ]) &&
     ([ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_ANYTHING_SERVER_PLUGINS" ]); then
 	echo $UT_TYPE_ANYTHING_SERVER_PLUGINS "test case is running"

@@ -6,25 +6,27 @@
 #system($$PWD/../vendor/prebuild)
 #include($$PWD/../vendor/vendor.pri)
 
-INCLUDEPATH += $$PWD
+INCLUDEPATH +=  $$PWD \
+                $$PWD/../../3rdparty/cpp-stub \
+                $$PWD/../../3rdparty/stub-ext
 
 
 SOURCES += \
     $$PWD/main.cpp \
-    $$PWD/vault/ut_vaultmanager.cpp \
-    $$PWD/vault/ut_vaultclock.cpp \
+#    $$PWD/vault/ut_vaultmanager.cpp \
+#    $$PWD/vault/ut_vaultclock.cpp \
     $$PWD/accesscontrol/ut_accesscontrolmanager.cpp \
-    $$PWD/app/ut_filemanagerdaemon.cpp \
-    $$PWD/app/ut_policykithelper.cpp \
-    $$PWD/client/ut_filemanagerclient.cpp \
-    $$PWD/controllers/ut_appcontroller.cpp \
-    $$PWD/controllers/ut_fileoperation.cpp \
-    $$PWD/fileoperationjob/ut_basejob.cpp \
-    $$PWD/fileoperationjob/ut_copyjob.cpp \
-    $$PWD/fileoperationjob/ut_createfolderjob.cpp \
-    $$PWD/fileoperationjob/ut_createtemplatefilejob.cpp \
-    $$PWD/fileoperationjob/ut_deletejob.cpp \
-    $$PWD/fileoperationjob/ut_movejob.cpp \
-    $$PWD/fileoperationjob/ut_renamejob.cpp \
-    $$PWD/tag/ut_tagmanagerdaemon.cpp \
-    $$PWD/usershare/ut_usersharemanager.cpp
+#    $$PWD/app/ut_filemanagerdaemon.cpp \
+#    $$PWD/app/ut_policykithelper.cpp \
+#    $$PWD/client/ut_filemanagerclient.cpp \
+#    $$PWD/controllers/ut_appcontroller.cpp \
+#    $$PWD/controllers/ut_fileoperation.cpp \
+#    $$PWD/fileoperationjob/ut_basejob.cpp \
+#    $$PWD/fileoperationjob/ut_copyjob.cpp \
+#    $$PWD/fileoperationjob/ut_createfolderjob.cpp \
+#    $$PWD/fileoperationjob/ut_createtemplatefilejob.cpp \
+#    $$PWD/fileoperationjob/ut_deletejob.cpp \
+#    $$PWD/fileoperationjob/ut_movejob.cpp \
+#    $$PWD/fileoperationjob/ut_renamejob.cpp \
+#    $$PWD/tag/ut_tagmanagerdaemon.cpp \
+#    $$PWD/usershare/ut_usersharemanager.cpp
