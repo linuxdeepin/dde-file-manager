@@ -209,8 +209,6 @@ TEST_F(DFMSideBarItemDelegateTest, updateEditorGeometryTest)
     EXPECT_TRUE(inThere);
 
     utDirTest->remove(utDirUrl);
-    delete utDirTest;
-    utDirTest = nullptr;
 
 }
 

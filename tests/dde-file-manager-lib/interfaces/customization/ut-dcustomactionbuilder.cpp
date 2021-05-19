@@ -638,8 +638,7 @@ TEST(DCustomActionBuilder, buildAciton)
 
     EXPECT_EQ(ac, (QAction *)1);
 
-    DCustomActionData af;
-    ad.m_childrenActions.append(af);
+    ad.m_childrenActions.append(ad);
     ac = builder.buildAciton(ad, nullptr);
     EXPECT_EQ(ac, (QAction *)2);
 }

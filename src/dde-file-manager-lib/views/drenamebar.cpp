@@ -212,9 +212,9 @@ DRenameBarPrivate::DRenameBarPrivate(DRenameBar *const qPtr)
 void DRenameBarPrivate::initUi()
 {
     m_mainLayout = new QHBoxLayout{ q_ptr };
-    m_comboBox = new QComboBox(q_ptr);
-    m_frame = new QFrame(q_ptr);
-    m_stackWidget = new QStackedWidget(q_ptr);
+    m_comboBox = new QComboBox;
+    m_frame = new QFrame;
+    m_stackWidget = new QStackedWidget;
 
     AC_SET_OBJECT_NAME(m_comboBox, AC_COMPUTER_RENAME_BAR_SELECT_TYPE);
     AC_SET_ACCESSIBLE_NAME(m_comboBox, AC_COMPUTER_RENAME_BAR_SELECT_TYPE);
@@ -223,19 +223,19 @@ void DRenameBarPrivate::initUi()
     AC_SET_OBJECT_NAME(m_stackWidget, AC_COMPUTER_RENAME_BAR_STACK_WIDGET);
     AC_SET_ACCESSIBLE_NAME(m_stackWidget, AC_COMPUTER_RENAME_BAR_STACK_WIDGET);
 
-    m_replaceOperatorItems = std::make_tuple(new QLabel(q_ptr), new QLineEdit(q_ptr), new QLabel(q_ptr), new QLineEdit(q_ptr));
-    m_frameForLayoutReplaceArea = QPair<QHBoxLayout *, QFrame *> { new QHBoxLayout(q_ptr), new QFrame(q_ptr) };
+    m_replaceOperatorItems = std::make_tuple(new QLabel, new QLineEdit, new QLabel, new QLineEdit);
+    m_frameForLayoutReplaceArea = QPair<QHBoxLayout *, QFrame *> { new QHBoxLayout, new QFrame };
 
-    m_addOperatorItems = std::make_tuple(new QLabel(q_ptr), new QLineEdit(q_ptr), new QLabel(q_ptr), new QComboBox(q_ptr));
-    m_frameForLayoutAddArea = QPair<QHBoxLayout *, QFrame *> { new QHBoxLayout(q_ptr), new QFrame(q_ptr) };
+    m_addOperatorItems = std::make_tuple(new QLabel, new QLineEdit, new QLabel, new QComboBox);
+    m_frameForLayoutAddArea = QPair<QHBoxLayout *, QFrame *> { new QHBoxLayout, new QFrame };
 
-    m_customOPeratorItems = std::make_tuple(new QLabel(q_ptr), new QLineEdit(q_ptr), new QLabel(q_ptr), new QLineEdit(q_ptr), new QLabel(q_ptr));
-    m_frameForLayoutCustomArea = QPair<QHBoxLayout *, QFrame *> { new QHBoxLayout(q_ptr), new QFrame(q_ptr) };
+    m_customOPeratorItems = std::make_tuple(new QLabel, new QLineEdit, new QLabel, new QLineEdit, new QLabel);
+    m_frameForLayoutCustomArea = QPair<QHBoxLayout *, QFrame *> { new QHBoxLayout, new QFrame };
 
     QRegExp regStr{ QString{"[0-9]+"} };
-    m_validator = new QRegExpValidator{ regStr, q_ptr };
+    m_validator = new QRegExpValidator{ regStr };
 
-    m_buttonsArea = std::make_tuple(new QPushButton(q_ptr), new QPushButton(q_ptr), new QHBoxLayout(q_ptr), new QFrame(q_ptr));
+    m_buttonsArea = std::make_tuple(new QPushButton, new QPushButton, new QHBoxLayout, new QFrame);
 }
 
 

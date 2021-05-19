@@ -433,8 +433,8 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
             openWithMenu->addAction(action);
             connect(action, &QAction::triggered, appController, &AppController::actionOpenFileByApp);
         }
-        //此处设置父对象，清理缓存时会导致崩溃
-        QAction *action = new QAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), nullptr);
+
+        QAction *action = new QAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), openWithMenu);
         action->setData((int)MenuAction::OpenWithCustom);
         openWithMenu->addAction(action);
         DFileMenuData::actions[MenuAction::OpenWithCustom] = action;
@@ -783,16 +783,6 @@ DFileMenuManager::~DFileMenuManager()
         DFileMenuData::customMenuParser->deleteLater();
         DFileMenuData::customMenuParser = nullptr;
     }
-
-    for (auto action : DFileMenuData::actions) {
-        if (auto amenu = action->menu()) {
-            action->setParent(amenu);
-        } else {
-            action->deleteLater();
-        }
-    }
-      DFileMenuData::actions.clear();
-      DFileMenuData::actionToMenuAction.clear();
 }
 
 void DFileMenuData::initData()
@@ -985,11 +975,6 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
 
             if (action) {
                 DFileMenuData::actionToMenuAction.remove(action);
-                if (auto currentMenu = action->menu()) {
-                    action->setParent(currentMenu);
-                } else {
-                    action->deleteLater();
-                }
             }
         }
     }
