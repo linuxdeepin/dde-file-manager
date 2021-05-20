@@ -51,7 +51,7 @@ void TrashFileInfoPrivate::updateInfo()
 {
     const QString &filePath = proxy->absoluteFilePath();
     const QString &basePath = DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath);
-    const QString &fileBaseName = QDir::separator() + proxy->fileName();
+    const QString &fileBaseName = filePath.mid(basePath.size());
 
     QString location(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo");
     if (QFile::exists(location)) {
