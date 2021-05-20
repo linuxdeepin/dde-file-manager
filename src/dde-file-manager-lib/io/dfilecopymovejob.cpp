@@ -704,16 +704,12 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
     bool isErrorOccur = false;
 
     if (!source_info) {
-        isErrorOccur = true;
         //错误队列处理
         errorQueueHandling();
         bool ok = setAndhandleError(DFileCopyMoveJob::UnknowUrlError, source_info, DAbstractFileInfoPointer(nullptr),
                                     QObject::tr("Failed to create file info")) == DFileCopyMoveJob::SkipAction;
         //当前错误处理完成
-        if (isErrorOccur) {
-            errorQueueHandled(ok);
-            isErrorOccur = false;
-        }
+        errorQueueHandled(ok);
         return ok;
     }
 
@@ -721,16 +717,12 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
         DFileCopyMoveJob::Error errortype = (source_info->path().startsWith("/root/") && !target_info->path().startsWith("/root/")) ?
                                             DFileCopyMoveJob::PermissionError : DFileCopyMoveJob::NonexistenceError;
         errortype = source_info->path().startsWith(MOBILE_ROOT_PATH) ? DFileCopyMoveJob::NotSupportedError : errortype;
-        isErrorOccur = true;
         //错误队列处理
         errorQueueHandling();
         bool ok = setAndhandleError(errortype, source_info,
                                     DAbstractFileInfoPointer(nullptr)) == DFileCopyMoveJob::SkipAction;
         //当前错误处理完成
-        if (isErrorOccur) {
-            errorQueueHandled(ok);
-            isErrorOccur = false;
-        }
+        errorQueueHandled(ok);
         return ok;
     }
 
@@ -749,6 +741,16 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
             errorQueueHandled(ok);
             isErrorOccur = false;
         }
+        if (ok) {
+            //跳过文件大小统计
+            if (source_info->isSymLink()) {
+                skipFileSize += FileUtils::getMemoryPageSize();
+            } else if (source_info->isDir()) {
+                skipFileSize += m_currentDirSize <= 0 ? FileUtils::getMemoryPageSize() : m_currentDirSize;
+            } else {
+                skipFileSize += source_info->size() <= 0 ? FileUtils::getMemoryPageSize() : source_info->size();
+            }
+        }
         return ok;
     }
     default:
@@ -758,15 +760,21 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
     QSharedPointer<DFileHandler> handler(DFileService::instance()->createFileHandler(nullptr, from));
 
     if (!handler) {
-        isErrorOccur = true;
         //错误队列处理
         errorQueueHandling();
         bool ok = setAndhandleError(DFileCopyMoveJob::UnknowUrlError, source_info,
                                     DAbstractFileInfoPointer(nullptr), QObject::tr("Failed to create file handler")) == DFileCopyMoveJob::SkipAction;
         //当前错误处理完成
-        if (isErrorOccur) {
-            errorQueueHandled(ok);
-            isErrorOccur = false;
+        errorQueueHandled(ok);
+        if (ok) {
+            //跳过文件大小统计
+            if (source_info->isSymLink()) {
+                skipFileSize += FileUtils::getMemoryPageSize();
+            } else if (source_info->isDir()) {
+                skipFileSize += m_currentDirSize <= 0 ? FileUtils::getMemoryPageSize() : m_currentDirSize;
+            } else {
+                skipFileSize += source_info->size() <= 0 ? FileUtils::getMemoryPageSize() : source_info->size();
+            }
         }
         return ok;
     }
@@ -883,6 +891,14 @@ create_new_file_info:
         if ((mode == DFileCopyMoveJob::MoveMode || mode == DFileCopyMoveJob::CutMode) &&
                 (new_file_info->fileUrl() == from || (DStorageInfo::isSameFile(from.path(), new_file_info->fileUrl().path()) && !new_file_info->isSymLink()))) {
             // 不用再进行后面的操作
+            //跳过文件大小统计
+            if (source_info->isSymLink()) {
+                skipFileSize += FileUtils::getMemoryPageSize();
+            } else if (source_info->isDir()) {
+                skipFileSize += m_currentDirSize <= 0 ? FileUtils::getMemoryPageSize() : m_currentDirSize;
+            } else {
+                skipFileSize += source_info->size() <= 0 ? FileUtils::getMemoryPageSize() : source_info->size();
+            }
             return true;
         }
         //可以显示进度条
@@ -908,7 +924,7 @@ create_new_file_info:
                 } else if (source_info->isDir()) {
                     skipFileSize += m_currentDirSize <= 0 ? FileUtils::getMemoryPageSize() : m_currentDirSize;
                 } else {
-                    skipFileSize += source_info->size();
+                    skipFileSize += source_info->size() <= 0 ? FileUtils::getMemoryPageSize() : source_info->size();
                 }
                 return true;
             }
@@ -976,7 +992,7 @@ create_new_file_info:
             } else if (source_info->isDir()) {
                 skipFileSize += m_currentDirSize <= 0 ? FileUtils::getMemoryPageSize() : m_currentDirSize;
             } else {
-                skipFileSize += source_info->size();
+                skipFileSize += source_info->size() <= 0 ? FileUtils::getMemoryPageSize() : source_info->size();
             }
             return true;
         case DFileCopyMoveJob::CoexistAction:
@@ -1066,6 +1082,14 @@ process_file:
                 isErrorOccur = false;
             }
             if (action == DFileCopyMoveJob::SkipAction) {
+                //跳过文件大小统计
+                if (source_info->isSymLink()) {
+                    skipFileSize += FileUtils::getMemoryPageSize();
+                } else if (source_info->isDir()) {
+                    skipFileSize += m_currentDirSize <= 0 ? FileUtils::getMemoryPageSize() : m_currentDirSize;
+                } else {
+                    skipFileSize += source_info->size() <= 0 ? FileUtils::getMemoryPageSize() : source_info->size();
+                }
                 return true;
             }
 
@@ -1089,6 +1113,14 @@ process_file:
                 isErrorOccur = false;
             }
             if (action == DFileCopyMoveJob::SkipAction) {
+                //跳过文件大小统计
+                if (source_info->isSymLink()) {
+                    skipFileSize += FileUtils::getMemoryPageSize();
+                } else if (source_info->isDir()) {
+                    skipFileSize += m_currentDirSize <= 0 ? FileUtils::getMemoryPageSize() : m_currentDirSize;
+                } else {
+                    skipFileSize += source_info->size() <= 0 ? FileUtils::getMemoryPageSize() : source_info->size();
+                }
                 return true;
             }
 
@@ -1139,6 +1171,7 @@ process_file:
                 isErrorOccur = false;
             }
             if (action == DFileCopyMoveJob::SkipAction) {
+                skipFileSize += m_currentDirSize <= 0 ? FileUtils::getMemoryPageSize() : m_currentDirSize;
                 return true;
             }
 
@@ -1213,6 +1246,8 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(const QSharedPointer<DFileHandler> 
             isErrorOccur = false;
         }
         if (action != DFileCopyMoveJob::NoAction) {
+            if (action == DFileCopyMoveJob::SkipAction)
+                skipFileSize += m_currentDirSize <= 0 ? FileUtils::getMemoryPageSize() : m_currentDirSize;
             return action == DFileCopyMoveJob::SkipAction;
         }
     }
@@ -3059,6 +3094,11 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
         }
     }
 
+    if (fromInfo->size() <= 0) {
+        completedProgressDataSize += FileUtils::getMemoryPageSize();
+        countrefinesize(FileUtils::getMemoryPageSize());
+    }
+
     writeQueueEnqueue(copyinfo);
     if (!m_isWriteThreadStart.load()) {
         m_isWriteThreadStart.store(true);
@@ -4496,16 +4536,19 @@ void DFileCopyMoveJob::run()
 
         if (!target_info) {
             d->setError(UnknowUrlError);
+            stop();
             goto end;
         }
 
         if (!target_info->exists()) {
             d->setError(NonexistenceError, "The target directory non-exists or not permission");
+            stop();
             goto end;
         }
 
         if (!target_info->isDir()) {
             d->setError(UnknowError, "The target url is not directory");
+            stop();
             goto end;
         }
 
@@ -4540,6 +4583,9 @@ void DFileCopyMoveJob::run()
                         || targetStorageInfo->fileSystemType().startsWith("ntfs")
                         || targetStorageInfo->fileSystemType().startsWith("btrfs"))
                     d->m_openFlag = d->m_openFlag | O_DIRECT;
+
+                if (d->canUseWriteBytes)
+                    d->m_refineStat = NoRefine;
 
                 if (!d->canUseWriteBytes) {
                     d->m_bCountMyself = true;
