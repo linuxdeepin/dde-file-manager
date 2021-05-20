@@ -1087,7 +1087,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
         port = ipInfoList[1].replace("port=", "");
     }
 
-    bvist = d->m_checknetwork.isHostAndPortConnect(host, port);
+    bvist = d->m_checknetwork.isHostAndPortConnect(host, port.toUShort() <= 0 ? QString("21") : port);
 
     setCursorBusyState(false);
 
