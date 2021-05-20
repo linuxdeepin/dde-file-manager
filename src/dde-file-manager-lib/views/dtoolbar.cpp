@@ -54,8 +54,8 @@
 #include <QPushButton>
 #include <QtGlobal>
 
-const int DToolBar::ButtonWidth = 24;
-const int DToolBar::ButtonHeight = 24;
+const int DToolBar::ButtonWidth = 36;
+const int DToolBar::ButtonHeight = 36;
 static const QSize iconSize(16, 16);
 
 /*!
@@ -108,14 +108,14 @@ void DToolBar::initUI()
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_addressToolBar);
-    mainLayout->addSpacing(22);
+    //    mainLayout->addSpacing(22);
     mainLayout->addWidget(m_contollerToolBar);
 
-    mainLayout->addSpacing(22);
+    //    mainLayout->addSpacing(22);
     mainLayout->addWidget(m_detailButton);
 
     mainLayout->addSpacing(0);
-    mainLayout->setContentsMargins(14, 0, 14, 0);
+    mainLayout->setContentsMargins(14, 0, 4, 0);
     setLayout(mainLayout);
 }
 
@@ -173,8 +173,9 @@ void DToolBar::initAddressToolBar()
     QHBoxLayout *comboLayout = new QHBoxLayout;
     comboLayout->addWidget(m_crumbWidget);
     comboLayout->addWidget(m_searchButton);
-    comboLayout->setSpacing(10);
+    //    comboLayout->setSpacing(10);
     comboLayout->setContentsMargins(0, 0, 0, 0);
+
 
     crumbAndSearch->setLayout(comboLayout);
 
@@ -182,8 +183,9 @@ void DToolBar::initAddressToolBar()
     mainLayout->addLayout(backForwardLayout);
     mainLayout->addWidget(crumbAndSearch);
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->setSpacing(10);
+    //    mainLayout->setSpacing(10);
     m_addressToolBar->setLayout(mainLayout);
+
 }
 
 void DToolBar::initContollerToolBar()
@@ -191,13 +193,11 @@ void DToolBar::initContollerToolBar()
     m_contollerToolBar = new QFrame;
     m_contollerToolBar->setObjectName("ContollerToolBar");
     AC_SET_ACCESSIBLE_NAME( m_contollerToolBar, AC_COMPUTER_TITLE_BAR_CONTOLLER_TOOL_BAR);
-
     m_contollerToolBar->setFrameShape(QFrame::NoFrame);
     m_contollerToolBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
     m_contollerToolBarContentLayout = new QHBoxLayout(m_contollerToolBar);
-    m_contollerToolBarContentLayout->setContentsMargins(1, 1, 1, 1);
-    m_contollerToolBarContentLayout->setSpacing(24);
+    m_contollerToolBarContentLayout->setContentsMargins(14, 1, 14, 1);
+    m_contollerToolBarContentLayout->setSpacing(20);
 }
 
 void DToolBar::initConnect()
