@@ -372,6 +372,22 @@ bool TagController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &e
     return DFileService::instance()->openFileByApp(event->sender(), event->appName(), local_file);
 }
 
+bool TagController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent> &event) const
+{
+    QList<DUrl> fileUrls;
+
+    for (DUrl url: event->urlList()) {
+        const DUrl &localFile = toLocalFile(url);
+
+        if (!localFile.isValid())
+            continue;
+
+        fileUrls << localFile;
+    }
+
+    return DFileService::instance()->openFilesByApp(event->sender(), event->appName(), fileUrls);
+}
+
 bool TagController::compressFiles(const QSharedPointer<DFMCompressEvent> &event) const
 {
     const DUrlList &list = toLocalFileList(event->fileUrlList());
