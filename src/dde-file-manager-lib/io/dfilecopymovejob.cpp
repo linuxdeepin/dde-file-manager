@@ -1111,7 +1111,7 @@ process_file:
         } else {
             // 光盘中的文件不能进行写操作，因此复制它
             const QString &sourcePath = source_info->fileUrl().toLocalFile();
-            if (!source_info->canRename() || deviceListener->isFileFromDisc(sourcePath)) {
+            if (deviceListener->isFileFromDisc(sourcePath)) {
                 qInfo() << "canRename : " << source_info->canRename();
                 ok = copyFile(source_info, new_file_info, handler);
             } else {
