@@ -2585,8 +2585,10 @@ bool DFileView::setRootUrl(const DUrl &url)
                 QDBusError err = blkdev->lastError();
                 if (err.isValid() && !err.name().toLower().contains("notmounted"))   // 如果未挂载，Error 返回 Other，错误信息 org.freedesktop.UDisks2.Error.NotMounted
                 {
-
                     qDebug() << "disc mount error: " << err.message() << err.name() << err.type();
+                    DThreadUtil::runInMainThread([]{
+                        dialogManager->showErrorDialog(tr("Disc mount error"), tr("The disc is in use, please end the running process and remount the disc."));
+                    });
                     return false;
                 }
                 if (!ISOMaster->acquireDevice(devpath))
