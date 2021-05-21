@@ -613,6 +613,8 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
         }
     }
 
+    showDialogOnTop();
+
     return handle;
 }
 void DTaskDialog::adjustSize()
@@ -858,6 +860,7 @@ bool DTaskDialog::haveNotCompletedVaultTask()
 
 void DTaskDialog::showDialogOnTop()
 {
+    this->show();
     this->activateWindow();
     dialogManager->taskDialog()->showNormal();
 }
