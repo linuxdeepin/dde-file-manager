@@ -1323,6 +1323,7 @@ void DIconItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *la
                 const_cast<DIconItemDelegatePrivate *>(d)->document = new QTextDocument(const_cast<DIconItemDelegate *>(this));
 
             d->document->setPlainText(layout->text());
+            d->document->setDefaultFont(layout->font());
             layout->engine()->block = d->document->firstBlock();
         }
 
