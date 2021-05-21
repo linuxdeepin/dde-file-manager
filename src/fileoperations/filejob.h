@@ -188,6 +188,8 @@ public slots:
     void opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress);
     void opticalJobUpdatedByParentProcess(int status, int progress, const QString &speed, const QStringList &msgs);
 
+    void getRestoreTargetPath(QString &tarPath);
+
     void paused();
     void started();
     void cancelled();
@@ -229,6 +231,7 @@ private:
     QString m_tarDirName;
     QString m_srcPath;
     QString m_tarPath;
+    bool m_restoreWithNewName = false;
     QElapsedTimer m_timer;
     qint64 m_lastMsec = 0;
     bool m_applyToAll  = false;

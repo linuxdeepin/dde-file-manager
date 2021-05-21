@@ -506,7 +506,10 @@ bool TrashFileInfo::restore(QSharedPointer<FileJob> job) const
 
     // restore the file tag infos
     if (ok && !isAbortedOrSkipped && !d->tagNameList.isEmpty()) {
-        DFileService::instance()->setFileTags(nullptr, DUrl::fromLocalFile(d->originalFilePath), d->tagNameList);
+        //若还原后文件名被改变，则使用改变后的路径作为还原标记数据的文件路径
+        QString tarFilePath = d->originalFilePath;
+        job->getRestoreTargetPath(tarFilePath);
+        DFileService::instance()->setFileTags(nullptr, DUrl::fromLocalFile(tarFilePath), d->tagNameList);
     }
 
     return ok;

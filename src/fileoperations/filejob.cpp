@@ -1241,6 +1241,12 @@ void FileJob::opticalJobUpdatedByParentProcess(int status, int progress, const Q
     }
 }
 
+void FileJob::getRestoreTargetPath(QString &tarPath)
+{
+    if (m_restoreWithNewName)
+        tarPath = m_tarPath;
+}
+
 void FileJob::paused()
 {
     m_status = FileJob::Paused;
@@ -2525,6 +2531,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
 {
     QFile from(srcFile);
     QFile to(tarFile);
+    m_restoreWithNewName = false;
 
     QFileInfo toInfo(tarFile);
     m_restoreFileName = toInfo.fileName();
@@ -2547,6 +2554,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
 
             if (m_isCoExisted && !m_isReplaced) {
                 m_tarPath = checkDuplicateName(m_tarPath);
+                m_restoreWithNewName = true;
             }
 
             if (m_isReplaced) {
