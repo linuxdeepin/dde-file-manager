@@ -328,7 +328,7 @@ public:
     //是否需要每读写一次同步
     bool m_isEveryReadAndWritesSnc = false;
     QAtomicInteger<bool> m_isVfat = false;
-    QAtomicInt m_openFlag = O_CREAT | O_WRONLY;
+    QAtomicInt m_openFlag = O_CREAT | O_WRONLY | O_TRUNC;
     //分断拷贝的线程数量
     QAtomicInt m_bigFileThreadCount = 0;
     QAtomicInteger<bool> m_isWriteThreadStart = false;

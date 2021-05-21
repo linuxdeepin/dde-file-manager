@@ -3774,6 +3774,7 @@ bool DFileCopyMoveJobPrivate::writeToFileByQueue()
 
 write_data: {
             qint64 size_write = write(toFd, info->buffer, static_cast<size_t>(info->size));
+            QString errorstr = strerror(errno);
             if (Q_UNLIKELY(!stateCheck())) {
                 releaseCopyInfo(info);
                 return false;
@@ -3791,7 +3792,7 @@ write_data: {
                 isErrorOccur = true;
                 switch (setAndhandleError(DFileCopyMoveJob::WriteError, info->frominfo, info->toinfo,
                                           qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause:").
-                                          arg(strerror(errno)))) {
+                                          arg(errorstr))) {
                 case DFileCopyMoveJob::RetryAction: {
                     if (!lseek(toFd, info->currentpos, SEEK_SET)) {
                         setError(DFileCopyMoveJob::UnknowError, "");
