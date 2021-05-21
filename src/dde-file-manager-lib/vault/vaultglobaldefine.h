@@ -41,7 +41,7 @@
 #define RANDOM_SALT_LENGTH              10              // 随机盐的字节数
 #define ITERATION                       1024            // pbkdf2迭代次数
 #define ITERATION_TWO                   10000           // pbkdf2迭代次数
-#define PASSWORD_CIPHER_LENGTH         50              // 密码密文长度
+#define PASSWORD_CIPHER_LENGTH          50              // 密码密文长度
 #define USER_KEY_LENGTH                 32              // 用户密钥长度
 #define USER_KEY_INTERCEPT_INDEX        50              // 用户密钥从公钥中截取的起始点索引
 
@@ -52,6 +52,9 @@
 #define VAULT_BASE_PATH (QDir::homePath() + QString("/.local/share/applications"))  //! 获取保险箱创建的目录地址
 
 #define GET_COMPRESSOR_PID_SHELL(x)     QString("ps -xo pid,cmd | grep /usr/bin/deepin-compressor | grep ")+x+QString(" | grep -v grep | awk '{print $1}'")
+
+//! 保险箱时间配置文件
+#define VAULT_TIME_CONFIG_FILE          QString("/../dde-file-manager/vaultTimeConfig.json")
 
 enum EN_VaultState {
     NotExisted = 0,

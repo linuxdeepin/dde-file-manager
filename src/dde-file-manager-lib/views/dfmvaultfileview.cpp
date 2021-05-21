@@ -30,6 +30,7 @@
 #include "views/dfmvaultactiveview.h"
 #include "views/dfilemanagerwindow.h"
 #include "dfilesystemmodel.h"
+#include "vaultglobaldefine.h"
 
 
 DFMVaultFileView::DFMVaultFileView(QWidget *parent)
@@ -72,7 +73,7 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
 
         //! 记录访问保险箱时间
         if (VaultController::isRootDirectory(url.toLocalFile())) {
-            DFM_NAMESPACE::DFMSettings setting(QString("vaultTimeConfig"));
+            DFM_NAMESPACE::DFMSettings setting(VAULT_TIME_CONFIG_FILE);
             setting.setValue(QString("VaultTime"), QString("InterviewTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
         }
     }

@@ -79,7 +79,7 @@ void DFMVaultRemoveProgressView::removeVault(const QString &vaultLockPath, const
 
                 emit removeFinished(true);
                 //! 清除保险箱所有时间
-                DFM_NAMESPACE::DFMSettings setting(QString("vaultTimeConfig"));
+                DFM_NAMESPACE::DFMSettings setting(VAULT_TIME_CONFIG_FILE);
                 setting.removeGroup(QString("VaultTime"));
             } else {
                 emit removeFinished(false);

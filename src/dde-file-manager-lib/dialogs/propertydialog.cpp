@@ -44,6 +44,7 @@
 #include "deviceinfo/udisklistener.h"
 
 #include "controllers/vaultcontroller.h"
+#include "vaultglobaldefine.h"
 
 #include "utils.h"
 
@@ -1207,7 +1208,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     if(VaultController::isRootDirectory(info->fileUrl().toLocalFile())){
         TimeModifiedSectionLabel->setText(QObject::tr("Time locked"));
         //! 保险箱根目录创建、访问、修改时间的读取
-        DFM_NAMESPACE::DFMSettings setting(QString("vaultTimeConfig"));
+        DFM_NAMESPACE::DFMSettings setting(VAULT_TIME_CONFIG_FILE);
         timeCreatedLabel = new SectionValueLabel(setting.value(QString("VaultTime"), QString("CreateTime")).toString());
         timeReadLabel = new SectionValueLabel(setting.value(QString("VaultTime"), QString("InterviewTime")).toString());
         if(setting.value(QString("VaultTime"), QString("LockTime")).toString().isEmpty())

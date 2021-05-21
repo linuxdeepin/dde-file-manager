@@ -181,7 +181,7 @@ void DBusFileManager1::lockPropertyChanged(const QDBusMessage &msg)
                     QByteArray umountCmdBytes = umountCmd.toUtf8();
                     system(umountCmdBytes.data());
                     //! 记录保险箱上锁时间
-                    ChangeJson((QDir::homePath() + QString("/.config/deepin/dde-file-manager/") + "vaultTimeConfig.json"),
+                    ChangeJson(VAULT_TIME_CONFIG_FILE,
                                QString("VaultTime"),
                                QString("LockTime"),
                                QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));

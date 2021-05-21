@@ -24,6 +24,7 @@
 #include "vaulthandle.h"
 #include "vaulterrorcode.h"
 #include "dfmsettings.h"
+#include "vaultglobaldefine.h"
 
 #include <QStandardPaths>
 #include <QProcess>
@@ -71,8 +72,8 @@ void CryFsHandle::createVault(QString lockBaseDir, QString unlockFileDir, QStrin
         emit signalCreateVault(m_activeState.value(1));
     else{
         emit signalCreateVault(flg);
-        //! 记录保险箱创建时间
-        DFM_NAMESPACE::DFMSettings setting(QString("vaultTimeConfig"));
+        //! 记录保险箱创建时间.
+        DFM_NAMESPACE::DFMSettings setting(VAULT_TIME_CONFIG_FILE);
         setting.setValue(QString("VaultTime"), QString("CreateTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
     }
     m_activeState.clear();
