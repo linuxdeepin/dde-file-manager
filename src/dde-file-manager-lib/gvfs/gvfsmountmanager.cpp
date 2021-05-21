@@ -57,6 +57,8 @@
 #include <QStandardPaths>
 #include <QStorageInfo>
 #include <QRegularExpression>
+#include <QWaitCondition>
+#include <QMutex>
 
 #include <disomaster.h>
 
@@ -87,6 +89,9 @@ QHash<GMountOperation *,QSharedPointer<QEventLoop>> GvfsMountManager::eventLoopH
 QHash<GMountOperation *,bool> GvfsMountManager::AskingPasswordHash;
 QHash<GMountOperation *,MountAskPasswordDialog *> GvfsMountManager::askPasswordDialogHash;
 QHash<GMountOperation *,QJsonObject *> GvfsMountManager::SMBLoginObjHash;
+
+static QWaitCondition mount_condition;
+static QMutex mount_mutex;
 
 //fix: 每次弹出光驱时需要删除临时缓存数据文件
 QString GvfsMountManager::g_qVolumeId = "sr0";
@@ -536,6 +541,8 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
     }
 
     Mounts.insert(qMount.mounted_root_uri(), qMount);
+
+    mount_condition.notify_one();
 }
 
 void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMount *mount)
@@ -1558,6 +1565,14 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
     }
 
     AskingPasswordHash.remove(op);
+
+    {
+        // fix bug 80613
+        // 这里需要等待gvfs mount_added回调, 否则会造成界面加载流程先于挂载回调
+        mount_mutex.lock();
+        mount_condition.wait(&mount_mutex, 100);
+        mount_mutex.unlock();
+    }
 
     if (eventLoopHash.value(op)) {
         eventLoopHash.value(op)->exit(status);
