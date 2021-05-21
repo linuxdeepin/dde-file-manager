@@ -22,13 +22,6 @@
 #define protected public
 #include "accesscontrol/accesscontrolmanager.h"
 
-class Ut_QDBusConnectionInterface : public QDBusConnectionInterface
-{
-public:
-    Ut_QDBusConnectionInterface();
-    ~Ut_QDBusConnectionInterface();
-};
-
 namespace {
 class TestAccessControlManager : public testing::Test
 {
@@ -822,4 +815,3 @@ TEST_F(TestAccessControlManager, testEncodeConfig)
 {
     EXPECT_NO_FATAL_FAILURE(mng->encodeConfig());
 }
-
