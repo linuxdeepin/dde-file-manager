@@ -1134,10 +1134,10 @@ quint64 DFileInfo::inode() const
     }
 
     struct stat statinfo;
-    int filestat = stat(d->fileInfo.absoluteFilePath().toStdString().c_str(), &statinfo);
-    if (filestat != 0) {
+    QByteArray pathArry = d->fileInfo.absoluteFilePath().toUtf8();
+    std::string pathStd = pathArry.toStdString();
+    if (stat(pathStd.c_str(), &statinfo) != 0)
         return 0;
-    }
     d->inode = statinfo.st_ino;
 
     return d->inode;

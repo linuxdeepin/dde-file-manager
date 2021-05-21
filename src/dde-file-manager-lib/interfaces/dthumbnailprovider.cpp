@@ -53,6 +53,7 @@
 #include <poppler-image.h>
 #include <poppler-page.h>
 #include <poppler-page-renderer.h>
+#include <sys/stat.h>
 
 #include <DThumbnailProvider>
 
@@ -241,8 +242,15 @@ QString DThumbnailProvider::thumbnailFilePath(const QFileInfo &info, Size size) 
             || absolutePath == DFMStandardPaths::location(DFMStandardPaths::ThumbnailFailPath)) {
         return absoluteFilePath;
     }
+    struct stat st;
+    ulong inode = 0;
+    QByteArray pathArry = absoluteFilePath.toUtf8();
+    std::string pathStd = pathArry.toStdString();
+    if (stat(pathStd.c_str(), &st) == 0)
+        inode = st.st_ino;
 
-    const QString thumbnailName = dataToMd5Hex(QUrl::fromLocalFile(absoluteFilePath).toString(QUrl::FullyEncoded).toLocal8Bit()) + FORMAT;
+    const QString thumbnailName = dataToMd5Hex((QUrl::fromLocalFile(absoluteFilePath).
+                                                toString(QUrl::FullyEncoded) + QString::number(inode)).toLocal8Bit()) + FORMAT;
     QString thumbnail = d->sizeToFilePath(size) + QDir::separator() + thumbnailName;
 
     if (!QFile::exists(thumbnail)) {
@@ -304,7 +312,13 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
     }
 
     const QString fileUrl = QUrl::fromLocalFile(absoluteFilePath).toString(QUrl::FullyEncoded);
-    const QString thumbnailName = dataToMd5Hex(fileUrl.toLocal8Bit()) + FORMAT;
+    struct stat st;
+    ulong inode = 0;
+    QByteArray pathArry = absoluteFilePath.toUtf8();
+    std::string pathStd = pathArry.toStdString();
+    if (stat(pathStd.c_str(), &st) == 0)
+        inode = st.st_ino;
+    const QString thumbnailName = dataToMd5Hex((fileUrl + QString::number(inode)).toLocal8Bit()) + FORMAT;
 
     // the file is in fail path
     QString thumbnail = DFMStandardPaths::location(DFMStandardPaths::ThumbnailFailPath) + QDir::separator() + thumbnailName;
