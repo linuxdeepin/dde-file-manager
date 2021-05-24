@@ -75,6 +75,7 @@ PdfWidget::~PdfWidget()
 
     disconnect(d->pdfInitWorker, &PdfInitWorker::thumbAdded, this, &PdfWidget::onThumbAdded);
     disconnect(d->pdfInitWorker, &PdfInitWorker::pageAdded, this, &PdfWidget::onpageAdded);
+    this->hide();
 
     d->pdfInitWorker->deleteLater();
 }
@@ -178,6 +179,20 @@ void PdfWidget::showBadPage()
     setLayout(layout);
 }
 
+bool PdfWidget::getCanRelease()
+{
+    Q_D(PdfWidget);
+
+    return d->m_threadRunningCount <= 0;
+}
+
+void PdfWidget::setNeedRelease(const bool &need)
+{
+    Q_D(PdfWidget);
+
+    d->m_needRelease = need;
+}
+
 void PdfWidget::onThumbAdded(int index, QImage img)
 {
     Q_D(PdfWidget);
@@ -276,7 +291,7 @@ void PdfWidget::onPageScrollBarvalueChanged(const int &val)
     resizeCurrentPage();
 
     QListWidgetItem* item = d->pageListWidget->itemAt(d->pageListWidget->width() /2 , 20);
-    if(!item){
+    if(!item) {
         return;
     }
 
@@ -388,8 +403,16 @@ void PdfWidget::loadPageSync(const int &index)
 {
     Q_D(PdfWidget);
 
+    QPointer<PdfWidget> mePtr = this;
+
     QtConcurrent::run([=]{
-       d->pdfInitWorker->startGetPageImage(index);
+        if (mePtr.isNull() || d->m_needRelease)
+            return;
+        d->m_threadRunningCount++;
+        d->pdfInitWorker->startGetPageImage(index);
+        d->m_threadRunningCount--;
+        if (d->m_needRelease && d->m_threadRunningCount <= 0)
+            this->deleteLater();
     });
 }
 
@@ -397,8 +420,16 @@ void PdfWidget::loadThumbSync(const int &index)
 {
     Q_D(PdfWidget);
 
+    QPointer<PdfWidget> mePtr = this;
+
     QtConcurrent::run([=]{
+        if (mePtr.isNull() || d->m_needRelease)
+            return;
+        d->m_threadRunningCount++;
         d->pdfInitWorker->startGetPageThumb(index);
+        d->m_threadRunningCount--;
+        if (d->m_needRelease && d->m_threadRunningCount <= 0)
+            this->deleteLater();
     });
 }
 

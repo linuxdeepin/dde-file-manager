@@ -39,8 +39,12 @@ PDFPreview::PDFPreview(QObject *parent)
 
 PDFPreview::~PDFPreview()
 {
-    if (m_pdfWidget)
-        m_pdfWidget->deleteLater();
+    if (m_pdfWidget) {
+        m_pdfWidget->setNeedRelease(true);
+        if (m_pdfWidget->getCanRelease())
+            m_pdfWidget->deleteLater();
+    }
+
 }
 
 bool PDFPreview::setFileUrl(const DUrl &url)

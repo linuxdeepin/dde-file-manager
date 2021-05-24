@@ -48,6 +48,10 @@ public:
 
     PdfInitWorker* pdfInitWorker = nullptr;
     QMap<int, QImage> pageMap;
+    //! 正在执行的线程数量
+    QAtomicInt m_threadRunningCount = 0;
+    //! 对象是否要被删除
+    QAtomicInteger<bool> m_needRelease = false;
 
     PdfWidget* q_ptr = nullptr;
     Q_DECLARE_PUBLIC(PdfWidget)

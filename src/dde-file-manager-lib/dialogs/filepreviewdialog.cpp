@@ -537,12 +537,13 @@ void FilePreviewDialog::switchToPage(int index)
 
     connect(preview, &DFMFilePreview::titleChanged, this, &FilePreviewDialog::updateTitle);
 
-    if (m_preview)
-        m_preview->deleteLater();
 
     if (m_preview) {
+        m_preview->contentWidget()->setVisible(false);
+        m_preview->deleteLater();
         static_cast<QVBoxLayout *>(layout())->removeWidget(m_preview->contentWidget());
     }
+
 
     static_cast<QVBoxLayout *>(layout())->insertWidget(0, preview->contentWidget());
 
