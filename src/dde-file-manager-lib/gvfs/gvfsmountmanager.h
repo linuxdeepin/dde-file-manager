@@ -24,6 +24,9 @@
 #ifndef GVFSMOUNTMANAGER_H
 #define GVFSMOUNTMANAGER_H
 
+#include <condition_variable>
+#include <mutex>
+#include <atomic>
 #include <QObject>
 #include <QStringList>
 #include "dfmevent.h"
@@ -89,6 +92,11 @@ public:
     static QHash<GMountOperation *,bool> AskingPasswordHash;
     static QHash<GMountOperation *,MountAskPasswordDialog *> askPasswordDialogHash;
     static QHash<GMountOperation *,QJsonObject *> SMBLoginObjHash;
+
+    static std::condition_variable mount_condition;
+    static std::mutex mount_mutex;
+    static std::atomic_bool mounted_gvfs;
+    static QTimer mountTimer;
 
     static QStringList getIconNames(GThemedIcon *icon);
     static QDrive gDriveToqDrive(GDrive *drive);
@@ -163,6 +171,8 @@ public:
     static QString getVolTag(GVolume *v);
     //cancell mount_sync
     static void cancellMountSync(GMountOperation *op);
+    // init mount wait
+    static void initMount();
 
     void autoMountAllDisks();
 

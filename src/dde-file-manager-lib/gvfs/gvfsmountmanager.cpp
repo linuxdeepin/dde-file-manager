@@ -57,8 +57,6 @@
 #include <QStandardPaths>
 #include <QStorageInfo>
 #include <QRegularExpression>
-#include <QWaitCondition>
-#include <QMutex>
 
 #include <disomaster.h>
 
@@ -90,8 +88,10 @@ QHash<GMountOperation *,bool> GvfsMountManager::AskingPasswordHash;
 QHash<GMountOperation *,MountAskPasswordDialog *> GvfsMountManager::askPasswordDialogHash;
 QHash<GMountOperation *,QJsonObject *> GvfsMountManager::SMBLoginObjHash;
 
-static QWaitCondition mount_condition;
-static QMutex mount_mutex;
+std::condition_variable GvfsMountManager::mount_condition;
+std::mutex GvfsMountManager::mount_mutex;
+std::atomic_bool GvfsMountManager::mounted_gvfs;
+QTimer GvfsMountManager::mountTimer;
 
 //fix: 每次弹出光驱时需要删除临时缓存数据文件
 QString GvfsMountManager::g_qVolumeId = "sr0";
@@ -542,7 +542,14 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
 
     Mounts.insert(qMount.mounted_root_uri(), qMount);
 
-    mount_condition.notify_one();
+    if (!mountTimer.interval())
+        initMount();
+    if (!mounted_gvfs.load()) {
+        mounted_gvfs.store(true);
+        if (mountTimer.isActive())
+            mountTimer.stop();
+        mount_condition.notify_one();
+    }
 }
 
 void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMount *mount)
@@ -1390,6 +1397,17 @@ void GvfsMountManager::cancellMountSync(GMountOperation *op)
     }
 }
 
+void GvfsMountManager::initMount()
+{
+    mounted_gvfs.store(false);
+    mountTimer.setSingleShot(true);
+    mountTimer.setInterval(2000);
+    connect(&mountTimer, &QTimer::timeout, [](){
+        if (!mounted_gvfs.load())
+            mounted_gvfs.store(true);
+    });
+}
+
 void GvfsMountManager::autoMountAllDisks()
 {
     // check if we are in live system, don't do auto mount if we are in live system.
@@ -1569,10 +1587,17 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
     {
         // fix bug 80613
         // 这里需要等待gvfs mount_added回调, 否则会造成界面加载流程先于挂载回调
-        mount_mutex.lock();
-        mount_condition.wait(&mount_mutex, 100);
-        mount_mutex.unlock();
+        // 这里增加判断逻辑, 2000ms内仍然没有等到gvfs mounted, 就超时退出等待
+        if (!mountTimer.interval())
+            initMount();
+        mountTimer.start();
+        std::unique_lock<std::mutex> lock(mount_mutex);
+        mount_condition.wait(lock, [](){return mounted_gvfs.load();});
     }
+    mounted_gvfs.store(false);
+    // 可能gvfs先到 mounted_gvfs直接被设置成true了, 此流程根本没有阻塞, 然而timer还在等待 所以这里也需要停止一下
+    if (mountTimer.isActive())
+        mountTimer.stop();
 
     if (eventLoopHash.value(op)) {
         eventLoopHash.value(op)->exit(status);
