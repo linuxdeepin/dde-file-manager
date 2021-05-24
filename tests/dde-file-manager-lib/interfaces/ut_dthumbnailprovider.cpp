@@ -83,7 +83,14 @@ namespace  {
             QString thumbnailPath;
             const QString &absoluteFilePath = info.absoluteFilePath();
             const QString fileUrl = QUrl::fromLocalFile(absoluteFilePath).toString(QUrl::FullyEncoded);
-            const QString thumbnailName = QCryptographicHash::hash(fileUrl.toLocal8Bit(), QCryptographicHash::Md5).toHex() + ".png";
+            struct stat st;
+            ulong inode = 0;
+            QByteArray pathArry = absoluteFilePath.toUtf8();
+            std::string pathStd = pathArry.toStdString();
+            if (stat(pathStd.c_str(), &st) == 0)
+                inode = st.st_ino;
+
+            const QString thumbnailName = QCryptographicHash::hash((fileUrl + QString::number(inode)).toLocal8Bit(), QCryptographicHash::Md5).toHex() + ".png";
             QString normalPath = DFMStandardPaths::location(DFMStandardPaths::ThumbnailNormalPath);
             thumbnailPath = normalPath + QDir::separator() + thumbnailName;
             return thumbnailPath;
