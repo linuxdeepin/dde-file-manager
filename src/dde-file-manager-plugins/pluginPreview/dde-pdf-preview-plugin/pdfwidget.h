@@ -26,6 +26,7 @@
 #include <QSharedPointer>
 #include <QListWidget>
 #include <QLabel>
+#include <QFuture>
 
 #include "poppler-document.h"
 #include "poppler-page.h"
@@ -52,6 +53,18 @@ public:
     void initConnections();
 
     void showBadPage();
+
+    /**
+     * @brief getCanRelease 对象是否可以被删除
+     * @return 如果返回true对象可删除，反之亦然
+     */
+    bool getCanRelease();
+
+    /**
+     * @brief setNeedRelease 设置对象是否要被删除
+     * @param need true对象要被删除，反之亦然
+     */
+    void setNeedRelease(const bool & need);
 
 public slots:
     void onThumbAdded(int index, QImage img);
