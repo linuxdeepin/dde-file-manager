@@ -104,6 +104,11 @@ public:
     }
     ~Stub()
     {
+        clear();
+    }
+
+    virtual void clear()
+    {
         std::map<char*,func_stub*>::iterator iter;
         struct func_stub *pstub;
         for(iter=m_result.begin(); iter != m_result.end(); iter++)
@@ -138,6 +143,7 @@ public:
             delete pstub;
         }
 
+        m_result.clear();
         return;
     }
     template<typename T,typename S>

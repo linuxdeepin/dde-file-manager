@@ -73,6 +73,7 @@ public:
 
     ~StubExt()
     {
+        clear();
         for (auto iter = m_wrappers.begin(); iter != m_wrappers.end(); ++iter) {
             freeWrapper(iter->second);
         }
