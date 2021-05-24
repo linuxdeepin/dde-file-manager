@@ -42,6 +42,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
+#else
+#include "fulltextsearch/fulltextsearch.h"
 #endif
 
 #include "dfmglobal.h"
@@ -111,7 +113,11 @@ void SettingBackend::doSetOption(const QString &key, const QVariant &value)
         fileSignalManager->requestHideSystemPartition(value.toBool());
     }
 
-
+    // fix bug 81014
+#ifdef FULLTEXTSEARCH_ENABLE
+    if (key == QString("advance.index.index_search") && value.toBool())
+        DFMFullTextSearchManager::getInstance()->fulltextIndex("/");/*全文搜索建立索引*/
+#endif
 }
 
 void SettingBackend::onValueChanged(int attribute, const QVariant &value)
