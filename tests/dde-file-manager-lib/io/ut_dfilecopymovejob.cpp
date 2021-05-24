@@ -200,6 +200,7 @@ TEST_F(DFileCopyMoveJobTest, can_job_running_cut)
     target.setScheme(FILE_SCHEME);
     urlsour.setPath("/etc/apt");
     target.setPath(QDir::currentPath() + "/test_copy_all/etc");
+    QProcess::execute("mkdir " + target.parentUrl().toLocalFile());
     QProcess::execute("mkdir " + target.toLocalFile());
     if (QThread::currentThread()->loopLevel() <= 0) {
         // 确保对象所在线程有事件循环
@@ -389,7 +390,7 @@ TEST_F(DFileCopyMoveJobTest, start_handleError)
 
     ErrorHandleTest *hanlee = new ErrorHandleTest(job);
     job->setErrorHandle(hanlee, hanlee->thread());
-    TestHelper::runInLoop([=](){
+    TestHelper::runInLoop([ = ]() {
         jobd->setError(DFileCopyMoveJob::DirectoryExistsError);
         jobd->handleError(source, source);
     }, 200);
@@ -1420,8 +1421,8 @@ TEST_F(DFileCopyMoveJobTest, start_doCopyLargeFilesOnDisk)
     jobd->m_bigFileThreadCount.store(0);
     EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo, toinfo, handler));
 
-    setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
-                setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
+    setAndhandleErrorExNew = setAndhandleErrorExNew % 2 == 0 ?
+                             setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
     stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::CancelAction;});
@@ -1473,8 +1474,8 @@ TEST_F(DFileCopyMoveJobTest, start_doCopyLargeFilesOnDisk)
     jobd->m_bigFileThreadCount.store(0);
     EXPECT_FALSE(jobd->doCopyLargeFilesOnDisk(frominfo, toinfo, handler));
 
-    setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
-                setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
+    setAndhandleErrorExNew = setAndhandleErrorExNew % 2 == 0 ?
+                             setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
     stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::CancelAction;});
@@ -1622,8 +1623,8 @@ TEST_F(DFileCopyMoveJobTest, start_doCopyFileU)
 
     stl.reset(&VaultController::isVaultFile);
     to.setPath(QDir::currentPath() + "/zut_test_file_device");
-    toinfo = DFileService::instance()->createFileInfo(nullptr,to);
-    stl.set(open,openTest);
+    toinfo = DFileService::instance()->createFileInfo(nullptr, to);
+    stl.set(open, openTest);
     stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::RetryAction;});
@@ -1635,17 +1636,17 @@ TEST_F(DFileCopyMoveJobTest, start_doCopyFileU)
     EXPECT_TRUE(jobd->doCopyFileOnBlock(frominfo, toinfo, handler));
     TestHelper::deleteTmpFile(to.toLocalFile());
 
-    setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
-                setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
-    stl.set(open,openExTest);
-    stl.set_lamda(::close,[](){return 0;});
+    setAndhandleErrorExNew = setAndhandleErrorExNew % 2 == 0 ?
+                             setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
+    stl.set(open, openExTest);
+    stl.set_lamda(::close, []() {return 0;});
     stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::RetryAction;});
     EXPECT_FALSE(jobd->doCopyFileOnBlock(frominfo, toinfo, handler));
 
-    setAndhandleErrorExNew = setAndhandleErrorExNew%2 == 0 ?
-                setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
+    setAndhandleErrorExNew = setAndhandleErrorExNew % 2 == 0 ?
+                             setAndhandleErrorExNew : setAndhandleErrorExNew + 1;
     stl.reset(&DFileCopyMoveJobPrivate::setAndhandleError);
     stl.set_lamda(&DFileCopyMoveJobPrivate::setAndhandleError,
     []() {return DFileCopyMoveJob::SkipAction;});
@@ -1711,8 +1712,8 @@ TEST_F(DFileCopyMoveJobTest, start_writeRefineThread)
     EXPECT_TRUE(jobd->writeRefineThread());
 
     stl.reset(&DFileCopyMoveJobPrivate::writeToFileByQueue);
-    stl.set_lamda(&DFileCopyMoveJobPrivate::writeToFileByQueue,[](){return true;});
-    QFuture<void> future = QtConcurrent::run([=]() {
+    stl.set_lamda(&DFileCopyMoveJobPrivate::writeToFileByQueue, []() {return true;});
+    QFuture<void> future = QtConcurrent::run([ = ]() {
         jobd->setRefineCopyProccessSate(DFileCopyMoveJob::ReadFileProccessOver);
     });
     EXPECT_TRUE(jobd->writeRefineThread());

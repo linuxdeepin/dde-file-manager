@@ -245,7 +245,7 @@ TEST_F(TestDFMGlobal, test_standardIcon)
 TEST_F(TestDFMGlobal, test_wordWrapText)
 {
     qreal height = 1;
-    EXPECT_EQ(QString(DFMGlobal::wordWrapText(QString("dde-file-manager"), 117, QTextOption::WrapAtWordBoundaryOrAnywhere, QFont(), 28, &height)), QString("dde-file-manager"));
+    EXPECT_EQ(QString(DFMGlobal::wordWrapText(QString("file"), 117, QTextOption::WrapAtWordBoundaryOrAnywhere, QFont(), 28, &height)), QString("file"));
     EXPECT_EQ(height, 28);
 
     QStringList lines;
