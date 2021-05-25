@@ -143,7 +143,11 @@ void ComputerPropertyDialog::initUI()
         //! 使内存显示不换行
         if (key == tr("Memory"))
             valLabel->setWordWrap(false);
-        gridLayout->setRowMinimumHeight(row, QFontMetrics(font).lineSpacing());
+        //CPU字符匹配，因为CPU长度不定长在计算中gridLayout会产生错误
+        if (key == tr("Processor")) {
+            auto boundingRect = valLabel->fontMetrics().boundingRect(valLabel->text());
+            gridLayout->setRowMinimumHeight(row, boundingRect.height() - boundingRect.y());
+        }
         row++;
     }
 
