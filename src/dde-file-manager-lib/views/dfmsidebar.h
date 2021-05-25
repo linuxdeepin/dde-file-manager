@@ -56,7 +56,7 @@ public:
     QRect groupGeometry(const QString &groupName);
     void scrollToGroup(const QString &groupName);
 
-    void setCurrentUrl(const DUrl &url);
+    void setCurrentUrl(const DUrl &url, bool changeUrl = true);
 
     int addItem(DFMSideBarItem *item, const QString &group);
     bool removeItem(const DUrl &url, const QString &group);
@@ -120,6 +120,8 @@ private:
 
     QDateTime m_lastToggleTime;
     DFMSideBarItem *m_pLastToggleItem = nullptr;
+    DUrl m_currentUrl;
+    QMutex m_currentUrlMutex;
 
 #ifdef ENABLE_ASYNCINIT
     QPair<bool,QFuture<void>> m_initDevThread; //初始化initDeviceConnection线程，first为是否强制结束线程
