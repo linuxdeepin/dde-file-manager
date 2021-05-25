@@ -88,7 +88,7 @@
 DWIDGET_USE_NAMESPACE
 
 #define ICON_VIEW_SPACING 5
-#define LIST_VIEW_SPACING 1
+#define LIST_VIEW_SPACING 0
 #define LIST_VIEW_MINIMUM_WIDTH 80
 
 #define DEFAULT_HEADER_SECTION_WIDTH 140
@@ -2844,7 +2844,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         setItemDelegate(new DListItemDelegate(d->fileViewHelper));
         setUniformItemSizes(true);
         setResizeMode(Fixed);
-        setAlternatingRowColors(true);
+        setAlternatingRowColors(false);
 
         if (!d->headerView) {
             if (d->allowedAdjustColumnSize) {
