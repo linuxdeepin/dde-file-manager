@@ -71,6 +71,7 @@
 #include <QDBusObjectPath>
 #include <QRegularExpression>
 #include <QPainterPath>
+#include <QApplication>
 
 #include <private/qtextengine_p.h>
 
@@ -1036,17 +1037,8 @@ bool DFMGlobal::isWayLand()
 {
     if(wayland > 0){
         return isWland;
-    }
-    else {
-        auto e = QProcessEnvironment::systemEnvironment();
-        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
-        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
-
-        //在wayland平台下设置固定大小，解决属性框最大化问题
-        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-            isWland = true;
-        }
+    } else {
+        isWland = (QApplication::platformName() == "wayland");
         wayland = 1;
     }
     return isWland;

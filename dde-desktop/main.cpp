@@ -107,7 +107,6 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
     if (DesktopInfo().waylandDectected()) {
-        qputenv("QT_WAYLAND_SHELL_INTEGRATION","kwayland-shell"); //wayland shell
         tmp += QString(" end load kwayland-shell %0").arg(gTime.elapsed());
 
         //! 以下代码用于视频预览使用
@@ -116,7 +115,6 @@ int main(int argc, char *argv[])
         format.setRenderableType(QSurfaceFormat::OpenGLES);
         format.setDefaultFormat(format);
     } else {
-        DApplication::loadDXcbPlugin();//wayland下不加载xcb
         tmp += QString(" end loadDXcbPlugin %0").arg(gTime.elapsed());
     }
 

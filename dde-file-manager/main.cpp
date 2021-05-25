@@ -96,7 +96,6 @@ DWIDGET_USE_NAMESPACE
 int main(int argc, char *argv[])
 {
     if (DFMGlobal::isWayLand()) {
-        qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
         //! 解决文管崩溃在defalte的问题，加上该环境变量，就不对图片进行压缩处理
         qputenv("QT_NO_COMPRESS", "true");
         //以下代码用于视频预览使用
@@ -117,10 +116,11 @@ int main(int argc, char *argv[])
         DApplication::customQtThemeConfigPathByUserHome(getpwuid(pkexecUID)->pw_dir);
     }
 
-    if (!DFMGlobal::isWayLand()){
-        //wayland下不加载xcb
-        SingleApplication::loadDXcbPlugin();
-    }
+//    if (!DFMGlobal::isWayLand()){
+//        //wayland下不加载xcb
+//        SingleApplication::loadDXcbPlugin();
+//    }
+
     SingleApplication::initSources();
     SingleApplication app(argc, argv);
 

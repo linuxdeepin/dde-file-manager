@@ -1,6 +1,7 @@
 #include "desktopinfo.h"
 
 #include <QProcessEnvironment>
+#include <QApplication>
 
 DesktopInfo::DesktopInfo()
 {
@@ -15,8 +16,7 @@ DesktopInfo::DesktopInfo()
 
 bool DesktopInfo::waylandDectected()
 {
-    return XDG_SESSION_TYPE == QLatin1String("wayland") ||
-           WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive);
+    return QApplication::platformName() == "wayland";
 }
 
 DesktopInfo::WM DesktopInfo::windowManager()
