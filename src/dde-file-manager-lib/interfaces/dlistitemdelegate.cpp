@@ -39,13 +39,17 @@
 #include <QToolTip>
 #include <QPainterPath>
 
+#include <DPalette>
+#include <DApplicationHelper>
+
 #define ICON_SPACING 16
-#define LIST_MODE_RECT_RADIUS 2
+#define LIST_MODE_RECT_RADIUS 8
 #define LIST_EDITER_HEIGHT 22
 #define LIST_MODE_EDITOR_LEFT_PADDING -3
 #define LIST_VIEW_ICON_SIZE 24
 
 DFM_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
 class DListItemDelegatePrivate : public DFMStyledItemDelegatePrivate
 {
@@ -65,6 +69,48 @@ void DListItemDelegate::paint(QPainter *painter,
                               const QModelIndex &index) const
 {
     Q_D(const DListItemDelegate);
+    //根据UI要求 交替亮度为深色主题
+
+    painter->save();//保存之前的绘制样式
+
+    //反走样抗锯齿
+    painter->setRenderHints(QPainter::Antialiasing
+                           |QPainter::TextAntialiasing
+                           |QPainter::SmoothPixmapTransform);
+    //绘制新的背景交替
+    DPalette pl(DApplicationHelper::instance()->palette(option.widget));
+    QColor baseColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+    //默认调整色保持背板颜色
+    QColor adjustItemAlterColor = baseColor;//交替色
+    if (option.widget) {
+        DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(baseColor);
+        if (ct == DGuiApplicationHelper::DarkType) {
+            adjustItemAlterColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +5);
+        }
+
+        if (ct == DGuiApplicationHelper::LightType) {
+            adjustItemAlterColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +5);
+        }
+    }
+
+    //获取item范围
+    auto itemRect = parent()->parent()->visualRect(index);
+    //左右间隔10 px UI设计要求 选中与交替渐变背景
+    QRect dstRect(itemRect.x() + LIST_MODE_LEFT_MARGIN,
+                  itemRect.y(),
+                  itemRect.width() - (LIST_MODE_LEFT_MARGIN + LIST_MODE_RIGHT_MARGIN),
+                  itemRect.height());
+
+    //取模设置当前的交替变化
+    if (index.row() % 2 == 1) {
+        auto blockColorBrush = parent()->parent()->palette().background();
+        QPainterPath path;
+        path.addRoundedRect(dstRect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);//圆角8 UI要求
+        painter->fillPath(path, adjustItemAlterColor);
+    } else {
+        painter->setBrush(baseColor);
+    }
+    painter->restore(); //恢复之前的绘制，防止在此逻辑前的绘制丢失
 
     /// judgment way of the whether drag model(another way is: painter.devType() != 1)
     bool isDragMode = ((QPaintDevice *)parent()->parent()->viewport() != painter->device());

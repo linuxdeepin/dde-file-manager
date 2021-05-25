@@ -66,8 +66,8 @@ QMutex *getOpticalDriveMutex();
 // end
 
 // begin file view global define
-#define LIST_MODE_LEFT_MARGIN 20
-#define LIST_MODE_RIGHT_MARGIN 20
+#define LIST_MODE_LEFT_MARGIN 10
+#define LIST_MODE_RIGHT_MARGIN 10
 // end
 
 
