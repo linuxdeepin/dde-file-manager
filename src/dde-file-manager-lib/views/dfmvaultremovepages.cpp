@@ -34,7 +34,6 @@
 #include "vaulthelper.h"
 
 #include <DLabel>
-
 #include <QFrame>
 #include <QRegExpValidator>
 #include <QStackedWidget>
@@ -42,6 +41,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
+using namespace PolkitQt1;
 
 DWIDGET_USE_NAMESPACE
 
@@ -215,8 +215,30 @@ void DFMVaultRemovePages::onButtonClicked(int index)
             }
         }
 
-        // 管理员权限认证
-        if (VaultLockManager::getInstance().checkAuthentication(VAULT_REMOVE)) {
+        // 用户权限认证(异步授权)
+        auto ins = Authority::instance();
+        ins->checkAuthorization(VAULT_CREATE,
+                                UnixProcessSubject(getpid()),
+                                Authority::AllowUserInteraction);
+        connect(ins, &Authority::checkAuthorizationFinished,
+                this, &DFMVaultRemovePages::slotCheckAuthorizationFinished);
+        // 按钮置灰，防止用户胡乱操作
+        auto btn = getButton(2);
+        if (btn)
+            btn->setEnabled(false);
+    }
+    break;
+    default:
+        break;
+    }
+}
+
+void DFMVaultRemovePages::slotCheckAuthorizationFinished(Authority::Result result)
+{
+    disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
+            this, &DFMVaultRemovePages::slotCheckAuthorizationFinished);
+    if (isVisible()) {
+        if (result == Authority::Yes) {
             m_bRemoveVault = true;
             // 删除前，先置顶保险箱内拷贝、剪贴、压缩任务
             if (DFM_NAMESPACE::VaultHelper::topVaultTasks()) {
@@ -226,11 +248,12 @@ void DFMVaultRemovePages::onButtonClicked(int index)
                 VaultController::ins()->lockVault();
             }
         }
+        // 按钮置亮，防止用户胡乱操作
+        auto btn = getButton(2);
+        if (btn)
+            btn->setEnabled(true);
     }
-    break;
-    default:
-        break;
-    }
+
 }
 
 void DFMVaultRemovePages::onLockVault(int state)

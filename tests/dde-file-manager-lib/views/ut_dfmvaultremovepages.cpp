@@ -15,6 +15,8 @@
 #define private public
 #include "views/dfmvaultremovepages.h"
 
+using namespace PolkitQt1;
+
 DWIDGET_USE_NAMESPACE
 namespace  {
     class TestDFMVaultRemovePages: public testing::Test
@@ -40,6 +42,9 @@ namespace  {
 
 TEST_F(TestDFMVaultRemovePages, tst_getPassword)
 {
+    void(*st_checkAuthentication)(const QString&, const Subject&, Authority::AuthorizationFlags) = [](const QString&, const Subject&, Authority::AuthorizationFlags){};
+    Stub stub;
+    stub.set(ADDR(Authority, checkAuthorization), st_checkAuthentication);
     m_view->onButtonClicked(0);
     m_view->onButtonClicked(1);
     m_view->onButtonClicked(2);

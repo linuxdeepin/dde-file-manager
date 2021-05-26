@@ -76,8 +76,8 @@ QMutex *getOpticalDriveMutex();
 #define DISCBURN_STAGING "discburn"
 #define DISCBURN_CACHE_MID_PATH "/.cache/deepin/discburn/_dev_"
 
-#define VAULT_CREATE "Create"
-#define VAULT_REMOVE "Remove"
+#define VAULT_CREATE "com.deepin.filemanager.daemon.VaultManager.Create"
+#define VAULT_REMOVE "com.deepin.filemanager.daemon.VaultManager.Remove"
 
 #define IPHONE_STAGING   "Apple_Inc"
 #define MOBILE_ROOT_PATH "/run/user"

@@ -14,6 +14,7 @@
 #define private public
 #include "views/dfmvaultactivefinishedview.h"
 
+using namespace PolkitQt1;
 
 namespace  {
     class TestDFMVaultActiveFinishedView : public testing::Test
@@ -68,12 +69,9 @@ TEST_F(TestDFMVaultActiveFinishedView, tst_slotTimeout)
 
 TEST_F(TestDFMVaultActiveFinishedView, tst_slotEncryptVault)
 {
-    bool (*st_checkAuthentication)(QString) = [](QString)->bool {
-        return true;
-    };
-
+    void(*st_checkAuthentication)(const QString&, const Subject&, Authority::AuthorizationFlags) = [](const QString&, const Subject&, Authority::AuthorizationFlags){};
     Stub stub;
-    stub.set(ADDR(VaultLockManager, checkAuthentication), st_checkAuthentication);
+    stub.set(ADDR(Authority, checkAuthorization), st_checkAuthentication);
 
     DDialog *parent = new DDialog();
     m_view->setParent(parent);

@@ -25,6 +25,8 @@
 
 #include "dfmvaultpagebase.h"
 
+#include <polkit-qt5-1/PolkitQt1/Authority>
+
 class QStackedWidget;
 
 class DFMVaultRemoveProgressView;
@@ -50,6 +52,10 @@ public slots:
     void onLockVault(int state);
 
     void onVualtRemoveFinish(bool result);
+
+private slots:
+    // 异步授权时，此函数接收授权完成的结果
+    void slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result);
 
 private:
     explicit DFMVaultRemovePages(QWidget *parent = nullptr);

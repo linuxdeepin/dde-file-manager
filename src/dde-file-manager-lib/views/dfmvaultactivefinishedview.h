@@ -25,6 +25,8 @@
 
 #include <dtkwidget_global.h>
 
+#include <polkit-qt5-1/PolkitQt1/Authority>
+
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -60,6 +62,8 @@ public slots:
 private slots:
     void slotEncryptVault();
     void slotTimeout();
+    // 异步授权时，此函数接收授权完成的结果
+    void slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result);
 
 private:
     QWidget             *m_pWidget1;
