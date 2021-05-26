@@ -118,11 +118,10 @@ void DFMSideBar::setCurrentUrl(const DUrl &url, bool changeUrl)
 {
     QMutexLocker lk(&m_currentUrlMutex);
     m_currentUrl = changeUrl ? url : m_currentUrl;
-    int index = findItem(url, true);
+    int index = findItem(m_currentUrl, true);
     if (index != -1) {
         m_sidebarView->setCurrentIndex(m_sidebarModel->index(index, 0));
         m_sidebarView->updateItemUniqueKey(m_sidebarView->currentIndex());
-        m_sidebarView->currentIndex().row();
     } else {
         m_sidebarView->clearSelection();
     }
