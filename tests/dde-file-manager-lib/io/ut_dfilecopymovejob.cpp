@@ -554,8 +554,6 @@ TEST_F(DFileCopyMoveJobTest, start_doProcess)
     DUrl trashurl, desktopurl;
     trashurl.setScheme(FILE_SCHEME);
     trashurl.setPath("~/.local/share/Trash/files/zut_7ztest.7z.2");
-    QProcess::execute("touch " + from.toLocalFile());
-    DFileService::instance()->moveToTrash(nullptr, DUrlList() << from);
     job->setMode(DFileCopyMoveJob::CutMode);
     desktopurl.setScheme(FILE_SCHEME);
     desktopurl.setPath("~/Desktop");

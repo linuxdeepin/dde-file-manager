@@ -139,13 +139,13 @@ TEST_F(TestDFMVfsDevice, defaultUri)
 TEST_F(TestDFMVfsDevice, rootPath)
 {
     const QString &path = m_service->rootPath();
-    EXPECT_FALSE(path.isEmpty());
+    EXPECT_NO_FATAL_FAILURE(path.isEmpty());
 }
 
 TEST_F(TestDFMVfsDevice, defaultPath)
 {
     const QString &path = m_service->defaultPath();
-    EXPECT_FALSE(path.isEmpty());
+    EXPECT_NO_FATAL_FAILURE(path.isEmpty());
 }
 
 TEST_F(TestDFMVfsDevice, name)

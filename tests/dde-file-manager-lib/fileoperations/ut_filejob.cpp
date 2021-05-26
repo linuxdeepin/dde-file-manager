@@ -1712,37 +1712,48 @@ TEST_F(FileJobTest, start_writeTrashInfo){
     stl.set((qint64 (QIODevice::*)(const QByteArray &))ADDR(QIODevice,write),write1lamda);
     EXPECT_FALSE(job->writeTrashInfo("ifue_98jfei_8e8f","jfaskjdf","kfek"));
 }
-
-TEST_F(FileJobTest, start_moveFileToTrash){
+TEST_F(FileJobTest, start_moveFileToTrash)
+{
     EXPECT_NO_FATAL_FAILURE(job->setStatus(FileJob::Cancelled));
     QString targetPath;
-    EXPECT_FALSE(job->moveFileToTrash(QString("jhfenfd"),&targetPath));
+    EXPECT_FALSE(job->moveFileToTrash(QString("jhfenfd"), &targetPath));
     EXPECT_NO_FATAL_FAILURE(job->setStatus(FileJob::Run));
-    bool (*writeTrashInfolamda)(void *,const QString &, const QString &, const QString &) =[]
-            (void *,const QString &, const QString &, const QString &)
-    {
+    bool (*writeTrashInfolamda1)(void *, const QString &, const QString &, const QString &) = []
+    (void *, const QString &, const QString &, const QString &) {
+        return true;
+    };
+    stl.set(ADDR(FileJob, writeTrashInfo), writeTrashInfolamda1);
+    EXPECT_TRUE(job->moveFileToTrash(QString("mnfeingienfjdj"), &targetPath));
+    bool (*writeTrashInfolamda)(void *, const QString &, const QString &, const QString &) = []
+    (void *, const QString &, const QString &, const QString &) {
         return false;
     };
-    EXPECT_TRUE(job->moveFileToTrash(QString("mnfeingienfjdj"),&targetPath));
-    stl.set(ADDR(FileJob,writeTrashInfo),writeTrashInfolamda);
-    EXPECT_FALSE(job->moveFileToTrash(QString("mnfeingienfjdj"),&targetPath));
+    stl.reset(ADDR(FileJob, writeTrashInfo));
+    stl.set(ADDR(FileJob, writeTrashInfo), writeTrashInfolamda);
+    EXPECT_FALSE(job->moveFileToTrash(QString("mnfeingienfjdj"), &targetPath));
 }
 
-TEST_F(FileJobTest, start_moveDirToTrash){
+TEST_F(FileJobTest, start_moveDirToTrash)
+{
     EXPECT_NO_FATAL_FAILURE(job->setStatus(FileJob::Cancelled));
     QString targetPath;
     source.setPath(TestHelper::createTmpDir());
-    EXPECT_FALSE(job->moveDirToTrash(source.toLocalFile(),&targetPath));
+    EXPECT_FALSE(job->moveDirToTrash(source.toLocalFile(), &targetPath));
     EXPECT_NO_FATAL_FAILURE(job->setStatus(FileJob::Run));
     Stub stl;
-    bool (*writeTrashInfolamda)(void *,const QString &, const QString &, const QString &) =[]
-            (void *,const QString &, const QString &, const QString &)
-    {
+    bool (*writeTrashInfolamda)(void *, const QString &, const QString &, const QString &) = []
+    (void *, const QString &, const QString &, const QString &) {
+        return true;
+    };
+    stl.set(ADDR(FileJob, writeTrashInfo), writeTrashInfolamda);
+    EXPECT_TRUE(job->moveDirToTrash(source.toLocalFile(), &targetPath));
+    bool (*writeTrashInfolamda1)(void *, const QString &, const QString &, const QString &) = []
+    (void *, const QString &, const QString &, const QString &) {
         return false;
     };
-    EXPECT_TRUE(job->moveDirToTrash(source.toLocalFile(),&targetPath));
-    stl.set(ADDR(FileJob,writeTrashInfo),writeTrashInfolamda);
-    EXPECT_FALSE(job->moveDirToTrash(source.toLocalFile(),&targetPath));
+    stl.reset(ADDR(FileJob, writeTrashInfo));
+    stl.set(ADDR(FileJob, writeTrashInfo), writeTrashInfolamda1);
+    EXPECT_FALSE(job->moveDirToTrash(source.toLocalFile(), &targetPath));
     TestHelper::deleteTmpFile(source.toLocalFile());
 }
 
