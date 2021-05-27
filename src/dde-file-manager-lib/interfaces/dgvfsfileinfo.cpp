@@ -145,6 +145,7 @@ DGvfsFileInfo::DGvfsFileInfo(const DUrl &fileUrl, const QMimeType &mimetype, boo
     canRename();
     isWritable();
     isSymLink();
+    exists();
     //必须在isWritable之后
     if (!mimetype.isValid()) {
         mimeType();
@@ -332,8 +333,9 @@ int DGvfsFileInfo::filesCount() const
 QMimeType DGvfsFileInfo::mimeType(QMimeDatabase::MatchMode mode) const
 {
     Q_D(const DGvfsFileInfo);
+    Q_UNUSED(mode)
 
-    if (!d->mimeType.isValid() || d->mimeTypeMode != mode) {
+    if (!d->mimeType.isValid()) {
         //优化是苹果的就用新的minetype
         DUrl url = fileUrl();
         //这里必须先缓存inod
@@ -342,9 +344,9 @@ QMimeType DGvfsFileInfo::mimeType(QMimeDatabase::MatchMode mode) const
             d->mimeType = DFileInfo::mimeType(fileUrl().path(), QMimeDatabase::MatchExtension, inode);
         }
         else {
-            d->mimeType = DFileInfo::mimeType(fileUrl().path(), mode);
+            d->mimeType = DFileInfo::mimeType(fileUrl().path(), QMimeDatabase::MatchExtension);
         }
-        d->mimeTypeMode = mode;
+        d->mimeTypeMode = QMimeDatabase::MatchExtension;
     }
 
     return d->mimeType;

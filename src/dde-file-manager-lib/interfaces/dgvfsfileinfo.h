@@ -50,7 +50,7 @@ public:
     uint ownerId() const override;
     qint64 size() const override;
     int filesCount() const override;
-    QMimeType mimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchExtension) const override;
+    QMimeType mimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const override;
 
     void refresh(const bool isForce = false) override;
     void makeToActive() override;
