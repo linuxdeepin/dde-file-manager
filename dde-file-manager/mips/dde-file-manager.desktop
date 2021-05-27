@@ -1,5 +1,4 @@
 [Desktop Entry]
-#Actions=new-window;
 Categories=Utility;
 Comment=Browse the file system
 Exec=/usr/bin/file-manager.sh -n %u
@@ -178,11 +177,6 @@ Name[vi]=Trình quản lý tệp tin
 Name[zh_CN]=深度文件管理器
 Name[zh_HK]=深度檔案管理員
 Name[zh_TW]=Deepin 檔案管理器
-
-#[Desktop Action new-window]
-#Exec=/usr/bin/file-manager.sh --new-window
-#Name=New Window
-#Name[sr@latin]=Novi prozor
 
 # Translations:
 # Do not manually modify!
