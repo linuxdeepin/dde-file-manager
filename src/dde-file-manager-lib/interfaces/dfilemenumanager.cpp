@@ -1413,7 +1413,16 @@ void DFileMenuManager::actionTriggered(QAction *action)
                 //批量标记操作耗时较长，同步事件处理会使menu.exec结束等待时间过长，频繁操作下会引起崩溃
                 //右键菜单本身对标记操作没有同步等待结果的需求，所以直接采用异步事件处理标记操作
                 if (type == MenuAction::TagFilesUseColor) {
-                    DFMEventDispatcher::instance()->processEventAsync(event);
+                    //异步事件处理存在menu对象先被析构的情况，这里将标记所需的数据先取出来放在event中
+                    //fileeventprocessor中直接从event中取数据
+                    QAction *action{ menu->actionAt("Add color tags") };
+                    if (QWidgetAction *widgetAction = qobject_cast<QWidgetAction *>(action)) {
+                        if (DTagActionWidget *tagWidget = qobject_cast<DTagActionWidget *>(widgetAction->defaultWidget())) {
+                            QList<QColor> colors{ tagWidget->checkedColorList() };
+                            event->setTagColors(colors);
+                            DFMEventDispatcher::instance()->processEventAsync(event);
+                        }
+                    }
                 } else {
                     DFMEventDispatcher::instance()->processEvent(event);
                 }

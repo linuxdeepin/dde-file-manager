@@ -147,36 +147,24 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
         break;
     }
     case DFMGlobal::TagFilesUseColor: {
-        QAction *action{ event->menu()->actionAt("Add color tags") };
+        QStringList new_tagNames;
 
-        if (QWidgetAction *widgetAction = qobject_cast<QWidgetAction *>(action)) {
-            if (DTagActionWidget *tagWidget = qobject_cast<DTagActionWidget *>(widgetAction->defaultWidget())) {
-                QList<QColor> colors{ tagWidget->checkedColorList() };
-                QStringList new_tagNames;
+        //filemenumanager已从menu中取了标记数据，这里直接从event取出来使用
+        for (const QColor &color : event->tagColors()) {
+            const QString &tag_name = TagManager::instance()->getTagNameThroughColor(color);
 
-                for (const QColor &color : colors) {
-                    const QString &tag_name = TagManager::instance()->getTagNameThroughColor(color);
-
-                    if (tag_name.isEmpty()) {
-                        continue;
-                    }
-
-                    new_tagNames << tag_name;
-                }
-
-                DFileService::instance()->makeTagsOfFiles(nullptr, event->selectedUrls(), new_tagNames, TagManager::instance()->allTagOfDefaultColors());
-
-                break;
+            if (tag_name.isEmpty()) {
+                continue;
             }
+
+            new_tagNames << tag_name;
         }
 
-        qFatal("Some errors occured was chosing DFMGlobal::TagColor.");
+        DFileService::instance()->makeTagsOfFiles(nullptr, event->selectedUrls(), new_tagNames, TagManager::instance()->allTagOfDefaultColors());
         break;
     }
     case DFMGlobal::DeleteTags: {
         return DFileService::instance()->deleteFiles(nullptr, event->selectedUrls(), false);
-        // this break seems no sense.. anyway leave it here.
-        break;
     }
     case DFMGlobal::Open:
         //判断网络文件是否可以到达

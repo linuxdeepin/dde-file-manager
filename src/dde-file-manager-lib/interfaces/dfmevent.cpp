@@ -950,6 +950,16 @@ const QModelIndex DFMMenuActionEvent::clickedIndex() const
     return property(QT_STRINGIFY(DFMMenuActionEvent::clickedIndex), QModelIndex());
 }
 
+const QList<QColor> DFMMenuActionEvent::tagColors() const
+{
+    return m_tagColorsList;
+}
+
+void DFMMenuActionEvent::setTagColors(const QList<QColor> &list)
+{
+    m_tagColorsList = list;
+}
+
 QSharedPointer<DFMMenuActionEvent> DFMMenuActionEvent::fromJson(const QJsonObject &json)
 {
     const QSharedPointer<DFMMenuActionEvent> &event = DFMUrlListBaseEvent::fromJson(MenuAction, json).staticCast<DFMMenuActionEvent>();
