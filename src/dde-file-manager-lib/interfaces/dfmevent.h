@@ -664,8 +664,13 @@ public:
     const DUrlList selectedUrls() const;
     DFMGlobal::MenuAction action() const;
     const QModelIndex clickedIndex() const; //当前右键点击的index
+    const QList<QColor> tagColors() const;
+    void setTagColors(const QList<QColor> &list);
 
     static QSharedPointer<DFMMenuActionEvent> fromJson(const QJsonObject &json);
+
+protected:
+    QList<QColor> m_tagColorsList;
 };
 
 class DFMBackEvent : public DFMEvent
