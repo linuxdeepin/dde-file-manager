@@ -108,7 +108,7 @@
     </message>
     <message>
         <source>Confirm</source>
-        <translation>确定</translation>
+        <translation type="vanished">确定</translation>
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
@@ -116,11 +116,26 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation type="vanished">取消</translation>
     </message>
     <message>
         <source>Stop</source>
-        <translation>终止</translation>
+        <translation type="vanished">终止</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation type="unfinished">确定</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <comment>button</comment>
+        <translation type="unfinished">终止</translation>
     </message>
 </context>
 </TS>

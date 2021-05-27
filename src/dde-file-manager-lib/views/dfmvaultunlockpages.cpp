@@ -92,7 +92,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     // 防止点击按钮后界面隐藏
     setOnButtonClickedClose(false);
 
-    QStringList btnList({tr("Cancel"), tr("Unlock")});
+    QStringList btnList({tr("Cancel","button"), tr("Unlock","button")});
     addButton(btnList[0], false);
     addButton(btnList[1], true, ButtonType::ButtonRecommend);
     getButton(1)->setEnabled(false);
@@ -247,7 +247,7 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"));
             dialog.setTitle(errMsg);
-            dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+            dialog.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
             dialog.exec();
         }
 

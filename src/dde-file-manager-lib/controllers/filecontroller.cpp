@@ -1495,7 +1495,7 @@ bool FileController::mkdir(const QSharedPointer<DFMMkdirEvent> &event) const
         // 创建文件夹失败，提示错误信息
         QString strErr = tr("Unable to create files here: %1").arg(strerror(errno));
         DThreadUtil::runInMainThread(dialogManager, &DialogManager::showMessageDialog,
-                                     DialogManager::msgWarn, strErr, "", tr("Confirm"));
+                                     DialogManager::msgWarn, strErr, "", tr("Confirm","button"));
     }
 
     return ok;

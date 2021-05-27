@@ -251,7 +251,7 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
             Qt::WindowFlags flags = d->windowFlags();
             d->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
             d->setIcon(QIcon::fromTheme("dialog-error"));
-            d->addButton(QObject::tr("Confirm"), true, DDialog::ButtonRecommend);
+            d->addButton(QObject::tr("Confirm","button"), true, DDialog::ButtonRecommend);
             d->setMaximumWidth(640);
             d->show();
             return;

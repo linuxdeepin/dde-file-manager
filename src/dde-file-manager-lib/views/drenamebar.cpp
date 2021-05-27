@@ -293,9 +293,9 @@ void DRenameBarPrivate::setUiParameters()
     label->setText(QObject::tr("Tips: Sort by selected file order"));
 
     QPushButton *button{ std::get<0>(m_buttonsArea) };
-    button->setText(QObject::tr("Cancel"));
+    button->setText(QObject::tr("Cancel","button"));
     button = std::get<1>(m_buttonsArea);
-    button->setText(QObject::tr("Rename"));
+    button->setText(QObject::tr("Rename","button"));
 
     button->setEnabled(false);
 }

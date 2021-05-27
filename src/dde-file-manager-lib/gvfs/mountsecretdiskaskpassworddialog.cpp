@@ -44,7 +44,7 @@ void MountSecretDiskAskPasswordDialog::initUI()
 {
 
     QStringList buttonTexts;
-    buttonTexts << tr("Cancel") << tr("Unlock");
+    buttonTexts << tr("Cancel","button") << tr("Unlock","button");
 
     QFrame* content = new QFrame;
 

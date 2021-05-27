@@ -315,11 +315,11 @@ bool ShareInfoFrame::checkShareName() //返回值表示是否继续
 
             if (!info.isWritable()) { //不可则无法替换
                 dialog.setTitle(tr("The share name is used by another user."));
-                dialog.addButton(tr("OK"), true);
+                dialog.addButton(tr("OK","button"), true);
             } else { //可写则添加替换按钮
                 dialog.setTitle(tr("The share name already exists. Do you want to replace the shared folder?"));
-                dialog.addButton(tr("Cancel"), true);
-                dialog.addButton(tr("Replace"), false, DDialog::ButtonWarning);
+                dialog.addButton(tr("Cancel","button"), true);
+                dialog.addButton(tr("Replace","button"), false, DDialog::ButtonWarning);
             }
 
             if (dialog.exec() != DDialog::Accepted) {

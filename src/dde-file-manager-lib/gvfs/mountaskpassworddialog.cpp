@@ -44,7 +44,7 @@ void MountAskPasswordDialog::initUI()
     layout()->setSizeConstraint(QLayout::SetFixedSize);
 
     QStringList buttonTexts;
-    buttonTexts << tr("Cancel") << tr("Connect");
+    buttonTexts << tr("Cancel","button") << tr("Connect","button");
 
     QFrame* content = new QFrame;
 

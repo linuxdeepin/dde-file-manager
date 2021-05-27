@@ -64,11 +64,11 @@
 #define TXT_FILE_ZEROSIZ BluetoothTransDialog::tr("Unable to send 0 KB files")
 #define TXT_FILE_NOEXIST BluetoothTransDialog::tr("File doesn't exist")
 
-#define TXT_NEXT BluetoothTransDialog::tr("Next")
-#define TXT_CANC BluetoothTransDialog::tr("Cancel")
-#define TXT_DONE BluetoothTransDialog::tr("Done")
-#define TXT_RTRY BluetoothTransDialog::tr("Retry")
-#define TXT_OKAY BluetoothTransDialog::tr("OK")
+#define TXT_NEXT BluetoothTransDialog::tr("Next","button")
+#define TXT_CANC BluetoothTransDialog::tr("Cancel","button")
+#define TXT_DONE BluetoothTransDialog::tr("Done","button")
+#define TXT_RTRY BluetoothTransDialog::tr("Retry","button")
+#define TXT_OKAY BluetoothTransDialog::tr("OK","button")
 
 static const QString ICON_CONNECT = "notification-bluetooth-connected";
 static const QString ICON_DISCONN = "notification-bluetooth-disconnected";

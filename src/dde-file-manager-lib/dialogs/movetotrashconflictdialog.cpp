@@ -71,6 +71,6 @@ MoveToTrashConflictDialog::MoveToTrashConflictDialog(QWidget *parent, const DUrl
 
     addContent(label);
 
-    addButton(tr("Cancel"), false);
-    addButton(tr("Delete"), true, DDialog::ButtonWarning);
+    addButton(tr("Cancel","button"), false);
+    addButton(tr("Delete","button"), true, DDialog::ButtonWarning);
 }

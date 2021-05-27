@@ -1268,8 +1268,8 @@ void DFileDialog::onAcceptButtonClicked()
 
                 dialog.setIcon(QIcon::fromTheme("dialog-warning"));
                 dialog.setTitle(tr("This file will be hidden if the file name starts with a dot (.). Do you want to hide it?"));
-                dialog.addButton(tr("Cancel"), true);
-                dialog.addButton(tr("Confirm"), false, DDialog::ButtonWarning);
+                dialog.addButton(tr("Cancel","button"), true);
+                dialog.addButton(tr("Confirm","button"), false, DDialog::ButtonWarning);
 
                 if (dialog.exec() != DDialog::Accepted) {
                     return;
@@ -1285,7 +1285,7 @@ void DFileDialog::onAcceptButtonClicked()
 
 //                dialog.setIcon(QIcon::fromTheme("dialog-warning"));
 //                dialog.setTitle(tr("The file name length is too long!"));
-//                dialog.addButton(tr("Confirm"), true);
+//                dialog.addButton(tr("Confirm","button"), true);
 
 //                dialog.exec();
 
@@ -1309,8 +1309,8 @@ void DFileDialog::onAcceptButtonClicked()
 
                     dialog.setIcon(QIcon::fromTheme("dialog-warning"));
                     dialog.setTitle(tr("%1 already exists, do you want to replace it?").arg(file_name));
-                    dialog.addButton(tr("Cancel"), true);
-                    dialog.addButton(tr("Replace"), false, DDialog::ButtonWarning);
+                    dialog.addButton(tr("Cancel","button"), true);
+                    dialog.addButton(tr("Replace","button"), false, DDialog::ButtonWarning);
 
                     if (dialog.exec() != DDialog::Accepted) {
                         return;

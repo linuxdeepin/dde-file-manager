@@ -213,8 +213,8 @@ void DiskControlWidget::popQueryScanningDialog(QObject *object, std::function<vo
     Qt::WindowFlags flags = d->windowFlags();
     d->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
     d->setIcon(QIcon::fromTheme("dialog-warning"));
-    d->addButton(QObject::tr("Cancel"));
-    d->addButton(QObject::tr("Stop"), true, DDialog::ButtonWarning); // 终止
+    d->addButton(QObject::tr("Cancel","button"));
+    d->addButton(QObject::tr("Stop","button"), true, DDialog::ButtonWarning); // 终止
     d->setMaximumWidth(640);
     d->show();
 
