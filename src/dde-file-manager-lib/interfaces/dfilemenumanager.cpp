@@ -809,7 +809,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::CreateSymlink] = QObject::tr("Create link");
     actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
     actionKeys[MenuAction::SendToRemovableDisk] = QObject::tr("Send to");
-    actionKeys[MenuAction::SendToBluetooth] = QObject::tr("Send to Bluetooth");
+    actionKeys[MenuAction::SendToBluetooth] = QObject::tr("Bluetooth");
     actionKeys[MenuAction::AddToBookMark] = QObject::tr("Add to bookmark");
     actionKeys[MenuAction::Delete] = QObject::tr("Delete");
     actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Delete");

@@ -3089,8 +3089,8 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
-        <source>Send to Bluetooth</source>
-        <translation>发送到蓝牙</translation>
+        <source>Bluetooth</source>
+        <translation>蓝牙</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
