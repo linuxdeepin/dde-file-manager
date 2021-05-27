@@ -82,14 +82,17 @@ void DListItemDelegate::paint(QPainter *painter,
     QColor baseColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
     //默认调整色保持背板颜色
     QColor adjustItemAlterColor = baseColor;//交替色
+    QColor adjustHoverItemColor = baseColor;//hover色
     if (option.widget) {
         DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(baseColor);
         if (ct == DGuiApplicationHelper::DarkType) {
             adjustItemAlterColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +5);
+            adjustHoverItemColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
         }
 
         if (ct == DGuiApplicationHelper::LightType) {
             adjustItemAlterColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +5);
+            adjustHoverItemColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
         }
     }
 
@@ -110,6 +113,14 @@ void DListItemDelegate::paint(QPainter *painter,
     } else {
         painter->setBrush(baseColor);
     }
+
+    //设置hover高亮
+    if (option.state & QStyle::StateFlag::State_MouseOver) {
+        QPainterPath path;
+        path.addRoundedRect(dstRect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
+        painter->fillPath(path, adjustHoverItemColor);
+    }
+
     painter->restore(); //恢复之前的绘制，防止在此逻辑前的绘制丢失
 
     /// judgment way of the whether drag model(another way is: painter.devType() != 1)
