@@ -406,7 +406,7 @@ void DialogManager::showCopyMoveToSelfDialog(const QMap<QString, QString> &jobDe
     d.setTitle(tr("Operation failed!"));
     d.setMessage(tr("Target folder is inside the source folder!"));
     QStringList buttonTexts;
-    buttonTexts.append(tr("OK"));
+    buttonTexts.append(tr("OK","button"));
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.setIcon(m_dialogWarningIcon);
@@ -436,10 +436,10 @@ int DialogManager::showRunExcutableScriptDialog(const DUrl &url, quint64 winId)
     buttonKeys.append("OptionRun");
     buttonKeys.append("OptionRunInTerminal");
     buttonKeys.append("OptionDisplay");
-    buttonTexts.append(tr("Cancel"));
-    buttonTexts.append(tr("Run"));
-    buttonTexts.append(tr("Run in terminal"));
-    buttonTexts.append(tr("Display"));
+    buttonTexts.append(tr("Cancel","button"));
+    buttonTexts.append(tr("Run","button"));
+    buttonTexts.append(tr("Run in terminal","button"));
+    buttonTexts.append(tr("Display","button"));
     d.setIcon(QIcon::fromTheme("application-x-shellscript"));
     d.setTitle(message);
     d.setMessage(tipMessage);
@@ -462,9 +462,9 @@ int DialogManager::showRunExcutableFileDialog(const DUrl &url, quint64 winId)
     QString fileDisplayName = d.fontMetrics().elidedText(_fileDisplayName, Qt::ElideRight, maxDisplayNameLength);
     QString message = tr("Do you want to run %1?").arg(fileDisplayName);
     QString tipMessage = tr("It is an executable file.");
-    d.addButton(tr("Cancel"));
-    d.addButton(tr("Run in terminal"));
-    d.addButton(tr("Run"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("Cancel","button"));
+    d.addButton(tr("Run in terminal","button"));
+    d.addButton(tr("Run","button"), true, DDialog::ButtonRecommend);
     d.setTitle(message);
     d.setMessage(tipMessage);
     d.setIcon(pfileInfo->fileIcon());
@@ -478,8 +478,8 @@ int DialogManager::showAskIfAddExcutableFlagAndRunDialog(const DUrl &url, quint6
     const DAbstractFileInfoPointer &pfileInfo = fileService->createFileInfo(this, url);
     // i18n text from: https://github.com/linuxdeepin/internal-discussion/issues/456 , seems a little weird..
     QString message = tr("This file is not executable, do you want to add the execute permission and run?");
-    d.addButton(tr("Cancel"));
-    d.addButton(tr("Run"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("Cancel","button"));
+    d.addButton(tr("Run","button"), true, DDialog::ButtonRecommend);
     d.setTitle(message);
     d.setIcon(pfileInfo->fileIcon());
     int code = d.exec();
@@ -493,7 +493,7 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
     QFontMetrics fm(d.font());
     d.setTitle(tr("\"%1\" already exists, please use another name.").arg(fm.elidedText(name, Qt::ElideMiddle, 150)));
     QStringList buttonTexts;
-    buttonTexts.append(tr("Confirm"));
+    buttonTexts.append(tr("Confirm","button"));
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.setIcon(m_dialogWarningIcon);
@@ -508,7 +508,7 @@ int DialogManager::showRenameNameDotDotErrorDialog(const DFMEvent &event)
     QFontMetrics fm(d.font());
     d.setTitle(tr("The file name must not contain two dots (..)"));
     QStringList buttonTexts;
-    buttonTexts.append(tr("Confirm"));
+    buttonTexts.append(tr("Confirm","button"));
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     // 设置对话框icon
@@ -524,8 +524,8 @@ int DialogManager::showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &eve
     DUrl url = event.url();
     qDebug() << url;
     QStringList buttonTexts;
-    buttonTexts.append(tr("Cancel"));
-    buttonTexts.append(tr("Erase"));
+    buttonTexts.append(tr("Cancel","button"));
+    buttonTexts.append(tr("Erase","button"));
 
     DDialog d;
 
@@ -551,9 +551,9 @@ int DialogManager::showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &even
 
     DUrl url = event.url();
     QStringList buttonTexts;
-    buttonTexts.append(tr("Cancel"));
-    buttonTexts.append(tr("Burn image"));
-    buttonTexts.append(tr("Burn files"));
+    buttonTexts.append(tr("Cancel","button"));
+    buttonTexts.append(tr("Burn image","button"));
+    buttonTexts.append(tr("Burn files","button"));
 
     DDialog d;
 
@@ -620,8 +620,8 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
 
     d.addContent(detailsw);
     d.setOnButtonClickedClose(false);
-    d.addButton(tr("Show details"));
-    d.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("Show details","button"));
+    d.addButton(tr("Confirm","button"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
     d.getButton(1)->setFocus();
     d.exec();
@@ -632,7 +632,7 @@ void DialogManager::showOpticalJobCompletionDialog(const QString &msg, const QSt
     DDialog d;
     d.setIcon(QIcon::fromTheme(icon));
     d.setTitle(msg);
-    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.getButton(0)->setFocus();
     d.exec();
@@ -649,8 +649,8 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &ev
 
     DUrlList urlList = event.urlList();
     QStringList buttonTexts;
-    buttonTexts.append(tr("Cancel"));
-    buttonTexts.append(tr("Delete"));
+    buttonTexts.append(tr("Cancel","button"));
+    buttonTexts.append(tr("Delete","button"));
 
     DDialog d;
 
@@ -723,8 +723,8 @@ int DialogManager::showNormalDeleteConfirmDialog(const DFMUrlListBaseEvent &even
     }
 
     QStringList buttonTexts;
-    buttonTexts.append(tr("Cancel"));
-    buttonTexts.append(tr("Delete"));
+    buttonTexts.append(tr("Cancel","button"));
+    buttonTexts.append(tr("Delete","button"));
     d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
     d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
     d.setDefaultButton(1);
@@ -740,8 +740,8 @@ int DialogManager::showRemoveBookMarkDialog(const DFMEvent &event)
     d.setTitle(tr("Sorry, unable to locate your bookmark directory, remove it?"));
     d.setMessage(" ");
     QStringList buttonTexts;
-    buttonTexts.append(tr("Cancel"));
-    buttonTexts.append(tr("Remove"));
+    buttonTexts.append(tr("Cancel","button"));
+    buttonTexts.append(tr("Remove","button"));
     d.addButton(buttonTexts[0], true);
     d.addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
@@ -903,8 +903,8 @@ void DialogManager::showDiskErrorDialog(const QString &id, const QString &errorT
         d.setTitle(tr("Disk is busy, cannot unmount now"));
         d.setMessage(tr("Name: ") + info->fileDisplayName()/* + ", " + tr("Path: ") + info->getPath()*/);
         QStringList buttonTexts;
-        buttonTexts.append(tr("Cancel"));
-        buttonTexts.append(tr("Force unmount"));
+        buttonTexts.append(tr("Cancel","button"));
+        buttonTexts.append(tr("Force unmount","button"));
         d.addButton(buttonTexts[0], true);
         d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
         d.setDefaultButton(0);
@@ -933,8 +933,8 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
     d.setTitle(warnText.arg(_targetName));
     d.setMessage(tr("Do you want to delete this shortcut？"));
     QStringList buttonTexts;
-    buttonTexts.append(tr("Cancel"));
-    buttonTexts.append(tr("Confirm"));
+    buttonTexts.append(tr("Cancel","button"));
+    buttonTexts.append(tr("Confirm","button"));
     d.addButton(buttonTexts[0], true);
     d.addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
@@ -1018,7 +1018,7 @@ void DialogManager::showDiskSpaceOutOfUsedDialog()
     DDialog d;
     d.setIcon(m_dialogWarningIcon);
     d.setTitle(tr("Unable to copy. Not enough free space on the target disk."));
-    d.addButton(tr("OK"));
+    d.addButton(tr("OK","button"));
 
     QRect rect = d.geometry();
     rect.moveCenter(qApp->desktop()->geometry().center());
@@ -1031,7 +1031,7 @@ void DialogManager::show4gFat32Dialog()
     DDialog d;
     d.setTitle(tr("Failed, file size must be less than 4GB."));
     d.setIcon(m_dialogWarningIcon);
-    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
     d.exec();
 }
 
@@ -1040,7 +1040,7 @@ void DialogManager::showFailToCreateSymlinkDialog(const QString &errorString)
     DDialog d;
     d.setTitle(tr("Fail to create symlink, cause:") + errorString);
     d.setIcon(m_dialogWarningIcon);
-    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
     d.exec();
 }
 
@@ -1058,7 +1058,7 @@ void DialogManager::showDeleteSystemPathWarnDialog(quint64 winId)
     DDialog d(WindowManager::getWindowById(winId));
     d.setTitle(tr("The selected files contain system file/directory, and it cannot be deleted"));
     d.setIcon(m_dialogWarningIcon);
-    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
     d.exec();
 }
 
@@ -1155,7 +1155,7 @@ void DialogManager::showRestoreFailedDialog(const DUrlList &urlList)
         d.setMessage(tr("Failed to restore %1 files, the target folder is read-only").arg(QString::number(urlList.count())));
     }
     d.setIcon(m_dialogWarningIcon);
-    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
     d.exec();
 }
 
@@ -1166,7 +1166,7 @@ void DialogManager::showRestoreFailedPerssionDialog(const QString &srcPath, cons
     d.setTitle(tr("Operation failed!"));
     d.setMessage(tr("You do not have permission to operate file/folder!"));
     d.setIcon(m_dialogWarningIcon);
-    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
     d.exec();
 }
 
@@ -1180,7 +1180,7 @@ void DialogManager::showRestoreFailedSourceNotExists(const DUrlList &urlList)
         d.setMessage(tr("Failed to restore %1 files, the source files do not exist").arg(QString::number(urlList.count())));
     }
     d.setIcon(m_dialogWarningIcon);
-    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
     d.exec();
 }
 
@@ -1246,7 +1246,7 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
         d.addContent(contentFrame, Qt::AlignCenter);
     }
 
-    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
     d.exec();
 }
 
@@ -1316,8 +1316,8 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
                     contentFrame->setLayout(contentLayout);
 
                     d.addContent(contentFrame, Qt::AlignCenter);
-                    d.addButton(tr("Cancel"), false, DDialog::ButtonNormal);
-                    d.addButton(tr("Reboot"), true, DDialog::ButtonRecommend);
+                    d.addButton(tr("Cancel","button"), false, DDialog::ButtonNormal);
+                    d.addButton(tr("Reboot","button"), true, DDialog::ButtonRecommend);
                     int ret = d.exec();
                     if (ret == 1) {
                         qDebug() << "===================Reboot system=====================";
@@ -1340,7 +1340,7 @@ void DialogManager::showErrorDialog(const QString &title, const QString &message
     // dialog show top
     d.setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
     d.setIcon(QIcon::fromTheme("dialog-error"));
-    d.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("Confirm","button"), true, DDialog::ButtonRecommend);
     d.setMaximumWidth(640);
     d.exec();
 }
@@ -1444,7 +1444,7 @@ int DialogManager::showUnableToLocateDir(const QString &dir)
         d.setTitle(tr("Unable to access %1").arg(dir));
         d.setMessage(" ");
         QStringList buttonTexts;
-        buttonTexts.append(tr("Confirm"));
+        buttonTexts.append(tr("Confirm","button"));
         d.addButton(buttonTexts[0], true);
         d.setDefaultButton(0);
         d.setIcon(QIcon::fromTheme("folder").pixmap(64, 64));
@@ -1571,8 +1571,8 @@ void DialogManager::showFormatDialog(const QString &devId)
     qDebug() << "device formatter has shown: " << devId;
     DDialog dlg;
     dlg.setIcon(m_dialogWarningIcon);
-    dlg.addButton(tr("Cancel"));
-    dlg.addButton(tr("Format"), true, DDialog::ButtonRecommend);
+    dlg.addButton(tr("Cancel","button"));
+    dlg.addButton(tr("Format","button"), true, DDialog::ButtonRecommend);
     dlg.setTitle(tr("To access the device, you must format the disk first. Are you sure you want to format it now?"));
     int code = dlg.exec();
     if (code == 1) {
@@ -1586,8 +1586,8 @@ int DialogManager::showStopScanningDialog()
 {
     DDialog dlg;
     dlg.setIcon(m_dialogWarningIcon);
-    dlg.addButton(tr("Cancel"));
-    dlg.addButton(tr("Stop"), true, DDialog::ButtonWarning); // 终止
+    dlg.addButton(tr("Cancel","button"));
+    dlg.addButton(tr("Stop","button"), true, DDialog::ButtonWarning); // 终止
     dlg.setTitle(tr("Scanning the device, stop it?")); // 正在扫描当前设备，是否终止扫描？
     return dlg.exec();
 }
@@ -1647,7 +1647,7 @@ void DialogManager::showAddUserShareFailedDialog(const QString &sharePath)
     DDialog d;
     d.setTitle(tr("Share folder can't be named after the current username"));
     d.setIcon(m_dialogWarningIcon);
-    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
     d.exec();
 }
 

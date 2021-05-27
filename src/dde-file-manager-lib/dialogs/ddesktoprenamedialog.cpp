@@ -306,8 +306,8 @@ void DDesktopRenameDialog::initUi()
 
     Q_D(const DDesktopRenameDialog);
     this->addContent(d->m_mainFrame, Qt::AlignCenter);
-    this->addButton(QObject::tr("Cancel"));
-    this->addButton(QObject::tr("Rename"), true, ButtonRecommend);
+    this->addButton(QObject::tr("Cancel","button"));
+    this->addButton(QObject::tr("Rename","button"), true, ButtonRecommend);
 }
 
 void DDesktopRenameDialog::initConnect()

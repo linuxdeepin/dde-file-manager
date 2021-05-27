@@ -230,8 +230,8 @@ void OpenWithDialog::initUI()
     m_openFileChooseButton = new QCommandLinkButton(tr("Add other programs"));
     m_setToDefaultCheckBox = new QCheckBox(tr("Set as default"));
     m_setToDefaultCheckBox->setChecked(true);
-    m_cancelButton = new QPushButton(tr("Cancel"));
-    m_chooseButton = new QPushButton(tr("Confirm"));
+    m_cancelButton = new QPushButton(tr("Cancel","button"));
+    m_chooseButton = new QPushButton(tr("Confirm","button"));
 
     QVBoxLayout *content_layout = new QVBoxLayout;
     content_layout->setContentsMargins(10, 0, 10, 0);

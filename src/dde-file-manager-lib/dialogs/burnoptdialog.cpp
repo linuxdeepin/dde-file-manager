@@ -239,8 +239,8 @@ void BurnOptDialogPrivate::setupUi()
     q->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     q->setIcon(QIcon::fromTheme("media-optical").pixmap(96, 96));
 
-    q->addButton(QObject::tr("Cancel"));
-    q->addButton(QObject::tr("Burn"), true, DDialog::ButtonType::ButtonRecommend);
+    q->addButton(QObject::tr("Cancel","button"));
+    q->addButton(QObject::tr("Burn","button"), true, DDialog::ButtonType::ButtonRecommend);
 
     q->layout()->setContentsMargins(0, 0, 0, 0);
     w_content = new QWidget(q);

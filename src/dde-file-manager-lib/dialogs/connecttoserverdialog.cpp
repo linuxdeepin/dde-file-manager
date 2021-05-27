@@ -163,8 +163,8 @@ void ConnectToServerDialog::initUI()
     setFixedSize(476, 380);
 
     QStringList buttonTexts;
-    buttonTexts.append(tr("Cancel"));
-    buttonTexts.append(tr("Connect"));
+    buttonTexts.append(tr("Cancel","button"));
+    buttonTexts.append(tr("Connect","button"));
     addButton(buttonTexts[CannelButton], false);
     addButton(buttonTexts[ConnectButton], true, DDialog::ButtonRecommend);
 

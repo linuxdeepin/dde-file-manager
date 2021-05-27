@@ -85,7 +85,7 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     mainFrame->setLayout(mainLayout);
     addContent(mainFrame);
 
-    QStringList btnList({tr("Cancel"), tr("Unlock")});
+    QStringList btnList({tr("Cancel","button"), tr("Unlock","button")});
     addButton(btnList[0], false);
     addButton(btnList[1], true, ButtonType::ButtonRecommend);
     getButton(1)->setEnabled(false);

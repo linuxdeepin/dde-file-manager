@@ -150,7 +150,7 @@ public slots:
 
     void refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUrl);
 
-    int showMessageDialog(messageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm"));
+    int showMessageDialog(messageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm","button"));
     void showBluetoothTransferDlg(const DUrlList &files);
 
     void showFormatDialog(const QString &devId); // sp3 feat 接入usb设备不能读取文件系统、存储信息、或是无法解锁的加密设备时，提示用户格式化

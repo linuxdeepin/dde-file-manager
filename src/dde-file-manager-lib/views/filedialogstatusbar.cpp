@@ -56,10 +56,10 @@ FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
     m_filtersComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     m_acceptButton = new QPushButton(this);
-    m_rejectButton = new QPushButton(tr("Cancel"), this);
+    m_rejectButton = new QPushButton(tr("Cancel","button"), this);
 
-    m_rejectButton->setObjectName(tr("Cancel"));
-    AC_SET_ACCESSIBLE_NAME(m_rejectButton, tr("Cancel"));
+    m_rejectButton->setObjectName(tr("Cancel","button"));
+    AC_SET_ACCESSIBLE_NAME(m_rejectButton, tr("Cancel","button"));
 
     m_acceptButton->setMinimumWidth(130);
     m_rejectButton->setMinimumWidth(130);

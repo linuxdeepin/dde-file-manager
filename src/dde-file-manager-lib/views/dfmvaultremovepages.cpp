@@ -112,7 +112,7 @@ void DFMVaultRemovePages::showVerifyWidget()
 
     setCloseButtonVisible(true);
     clearButtons();
-    QStringList buttonTexts({tr("Cancel"), tr("Use Key"), tr("Delete")});
+    QStringList buttonTexts({tr("Cancel","button"), tr("Use Key","button"), tr("Delete","button")});
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], false);
     addButton(buttonTexts[2], true, DDialog::ButtonWarning);
@@ -140,7 +140,7 @@ void DFMVaultRemovePages::showRemoveWidget()
 
     setCloseButtonVisible(false);
     clearButtons();
-    addButton(tr("OK"), true, ButtonType::ButtonRecommend);
+    addButton(tr("OK","button"), true, ButtonType::ButtonRecommend);
     getButton(0)->setEnabled(false);
     m_stackedWidget->setCurrentIndex(2);
 }
@@ -272,7 +272,7 @@ void DFMVaultRemovePages::onLockVault(int state)
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"));
             dialog.setTitle(errMsg);
-            dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+            dialog.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
             dialog.exec();
         }
         m_bRemoveVault = false;

@@ -1760,7 +1760,7 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
             DDialog error_dilaog(tr("The disk is mounted by user \"%1\", you cannot unmount it.").arg(user_name), QString(" "));
 
             error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
-            error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
+            error_dilaog.addButton(tr("Confirm","button"), true, DDialog::ButtonRecommend);
             error_dilaog.setModal(true);
             error_dilaog.exec();
             return;
@@ -1771,7 +1771,7 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
         g_error_free(error);
 
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
-        error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
+        error_dilaog.addButton(tr("Confirm","button"), true, DDialog::ButtonRecommend);
         error_dilaog.setModal(true);
         error_dilaog.exec();
         return;
@@ -1798,7 +1798,7 @@ void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpoin
         DDialog error_dilaog(tr("Cannot unmount the device"), QString(error->message));
 
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
-        error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
+        error_dilaog.addButton(tr("Confirm","button"), true, DDialog::ButtonRecommend);
         error_dilaog.setModal(true);
         error_dilaog.exec();
     } else {
@@ -1917,7 +1917,7 @@ void GvfsMountManager::eject_with_device_file_cb(GObject *object, GAsyncResult *
                              QString(error->message));
 
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
-        error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
+        error_dilaog.addButton(tr("Confirm","button"), true, DDialog::ButtonRecommend);
         error_dilaog.setModal(true);
         error_dilaog.exec();
     } else {
@@ -1941,7 +1941,7 @@ void GvfsMountManager::eject_mounted(const QString &mounted_root_uri)
         DDialog error_dilaog(tr("Cannot find the mounted device"), QString(error->message));
         g_error_free(error);
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
-        error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
+        error_dilaog.addButton(tr("Confirm","button"), true, DDialog::ButtonRecommend);
         error_dilaog.setModal(true);
         error_dilaog.exec();
         return;

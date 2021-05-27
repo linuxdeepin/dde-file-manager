@@ -1028,8 +1028,8 @@ void Frame::refreshList()
                     WallpaperItem *item = m_wallpaperList->addWallpaper(path);
                     item->setData(item->getPath());
                     item->setDeletable(m_deletableInfo.value(path));
-                    item->addButton(DESKTOP_BUTTON_ID, tr("Only desktop"));
-                    item->addButton(LOCK_SCREEN_BUTTON_ID, tr("Only lock screen"));
+                    item->addButton(DESKTOP_BUTTON_ID, tr("Only desktop","button"));
+                    item->addButton(LOCK_SCREEN_BUTTON_ID, tr("Only lock screen","button"));
                     item->show();
                     connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
                     connect(item, &WallpaperItem::tab, this, [=](){
@@ -1108,7 +1108,7 @@ void Frame::refreshList()
             item->setData(name);
             item->setUseThumbnailManager(false);
             item->setDeletable(false);
-            item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply"));
+            item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply","button"));
             item->show();
             connect(item, &WallpaperItem::tab, this, [=]() {
                 if (m_mode == WallpaperMode) {
