@@ -66,6 +66,9 @@ private:
     explicit DFMSideBarManager(QObject *parent = nullptr);
     ~DFMSideBarManager();
 
+    //NOTE [XIAO] 从PLGUIN中加载SideBarItemHandler
+    void initSideBarItemHandlerFromPlugin();
+
     void insertToCreatorHash(const KeyType &type, const SideBarInterfaceCreaterType &creator);
 
     QScopedPointer<DFMSideBarManagerPrivate> d_private;

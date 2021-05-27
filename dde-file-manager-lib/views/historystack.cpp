@@ -73,6 +73,13 @@ DUrl HistoryStack::back()
         if(url.isComputerFile())
             break;
 
+        //TODO [XIAO] 此处可以用插件的方式写
+        /******** Add by ut001000 renfeixiang 2021-03-19:增加 Begin***************/
+        //如果是我的手机界面返回,为了我的手机界面前进，回退功能
+        if(url.isPhoneFile())
+            break;
+        /******** Add by ut001000 renfeixiang 2021-03-19:增加 End***************/
+
         if(url.isUserShareFile())
             break;
 
@@ -116,6 +123,13 @@ DUrl HistoryStack::forward()
 
         if(url.isComputerFile())
             break;
+
+        //TODO [XIAO] 此处可以用插件的方式写
+        /******** Add by ut001000 renfeixiang 2021-03-19:增加 Begin***************/
+        //如果是我的手机界面返回,为了我的手机界面前进，回退功能
+        if(url.isPhoneFile())
+            break;
+        /******** Add by ut001000 renfeixiang 2021-03-19:增加 End***************/
 
         if(url.isUserShareFile())
             break;

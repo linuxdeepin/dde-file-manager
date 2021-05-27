@@ -277,6 +277,8 @@ public:
 
     /* Global instance initialization */
     static void initPluginManager();
+    // NOTE [XIAO] static void initSchemePluginManager();
+    static void initSchemePluginManager();
     static void initSearchHistoryManager();
     static void initBookmarkManager();
     static void initFileMenuManager();

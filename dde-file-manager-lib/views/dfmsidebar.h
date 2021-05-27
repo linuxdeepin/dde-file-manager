@@ -46,6 +46,7 @@ public:
         Network,
         Tag,
         Other,
+        Phone,//Add by ut001000 renfeixiang 2021-03-22 添加我的手机类型，实现QWidget添加
         Unknow
     };
 
@@ -100,6 +101,8 @@ private:
     void initBookmarkConnection();
     void initDeviceConnection();
     void initTagsConnection();
+    //NOTE [XIAO] 从Plugin中导入SideBarItem
+    void initItemFromPlugin();
     void applySidebarColor();
     void updateSeparatorVisibleState();
     void addGroupItems(GroupName groupType);

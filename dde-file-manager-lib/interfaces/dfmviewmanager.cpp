@@ -15,7 +15,7 @@
 #include "views/dfileview.h"
 #include "views/computerview.h"
 #include "views/dfmvaultfileview.h"
-
+#include "plugins/schemepluginmanager.h"
 #include <QHash>
 
 DFM_BEGIN_NAMESPACE
@@ -65,7 +65,7 @@ void DFMViewManager::clearUrlView(const QString &scheme, const QString &host)
 
     d->controllerCreatorHash.remove(handler);
 }
-
+//NOTE [XIAO] 添加手机的DFileView
 DFMBaseView *DFMViewManager::createViewByUrl(const DUrl &fileUrl) const
 {
     Q_D(const DFMViewManager);
@@ -140,12 +140,26 @@ DFMViewManager::DFMViewManager(QObject *parent)
     dRegisterUrlView<DFMVaultFileView>(DFMVAULT_SCHEME, "certificate");
 
     // register plugins
+    // NOTE [XIAO] 注册手机的View
     for (const QString &key : DFMViewFactory::keys()) {
         const DUrl url(key);
 
         insertToCreatorHash(KeyType(url.scheme(), url.host()), ViewCreatorType(typeid(DFMViewFactory).name(), [key] {
             return DFMViewFactory::create(key);
         }));
+    }
+
+    //NOTE [XIAO] 从PLGUIN中加载View
+    initViewFromPlugin();
+}
+
+//NOTE [XIAO] 从PLGUIN中加载View
+void DFMViewManager::initViewFromPlugin()
+{
+   qWarning() << "[PLUGIN]" << "try to load plugin of view";
+    for (auto plugin : SchemePluginManager::instance()->schemePlugins()){
+        qWarning() << "[PLUGIN]" << "load view from plugin:" << plugin.first;
+        insertToCreatorHash(KeyType(plugin.first, QString()), plugin.second->createViewTypeFunc());
     }
 }
 
