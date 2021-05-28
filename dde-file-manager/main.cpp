@@ -95,16 +95,6 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    if (DFMGlobal::isWayLand()) {
-        //! 解决文管崩溃在defalte的问题，加上该环境变量，就不对图片进行压缩处理
-        qputenv("QT_NO_COMPRESS", "true");
-        //以下代码用于视频预览使用
-        setenv("PULSE_PROP_media.role", "video", 1);
-        QSurfaceFormat format;
-        format.setRenderableType(QSurfaceFormat::OpenGLES);
-        format.setDefaultFormat(format);
-    }
-
 #ifdef ENABLE_PPROF
     ProfilerStart("pprof.prof");
 #endif
@@ -116,13 +106,19 @@ int main(int argc, char *argv[])
         DApplication::customQtThemeConfigPathByUserHome(getpwuid(pkexecUID)->pw_dir);
     }
 
-//    if (!DFMGlobal::isWayLand()){
-//        //wayland下不加载xcb
-//        SingleApplication::loadDXcbPlugin();
-//    }
-
     SingleApplication::initSources();
     SingleApplication app(argc, argv);
+
+    if (DFMGlobal::isWayLand()) {
+        //! 解决文管崩溃在defalte的问题，加上该环境变量，就不对图片进行压缩处理
+        qputenv("QT_NO_COMPRESS", "true");
+
+        //以下代码用于视频预览使用
+        setenv("PULSE_PROP_media.role", "video", 1);
+        QSurfaceFormat format;
+        format.setRenderableType(QSurfaceFormat::OpenGLES);
+        format.setDefaultFormat(format);
+    }
 
     app.setOrganizationName(QMAKE_ORGANIZATION_NAME);
     app.setApplicationName(QMAKE_TARGET);

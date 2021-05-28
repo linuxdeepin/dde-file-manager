@@ -1029,19 +1029,17 @@ bool DFMGlobal::isComputerDesktopFileUrl(const DUrl &url)
     return false;
 }
 
-//! 限制wayland判断次数
-static int wayland = 0;
-//! 保存是否是wayland平台
-static bool isWland = false;
 bool DFMGlobal::isWayLand()
 {
-    if(wayland > 0){
-        return isWland;
-    } else {
-        isWland = (QApplication::platformName() == "wayland");
-        wayland = 1;
+    //! 该函数只能在QApplication之后调用才能返回有效的值，在此之前会返回空值
+    Q_ASSERT(qApp);
+
+    //! 限制wayland判断
+    static char wayland = 0;
+    if (wayland == 0) {
+        wayland = (QApplication::platformName() == "wayland") ? 1 : -1;
     }
-    return isWland;
+    return wayland > 0;
 }
 
 void DFMGlobal::showMultiFilesRenameDialog(const QList<DUrl> &selectedFiles)

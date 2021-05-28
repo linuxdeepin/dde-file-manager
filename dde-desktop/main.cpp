@@ -106,20 +106,21 @@ int main(int argc, char *argv[])
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
-    if (DesktopInfo().waylandDectected()) {
-        tmp += QString(" end load kwayland-shell %0").arg(gTime.elapsed());
+    DApplication app(argc, argv);
 
+    tmp += QString(" end DApplication %0").arg(gTime.elapsed());
+
+    if (DesktopInfo().waylandDectected()) {
         //! 以下代码用于视频预览使用
         setenv("PULSE_PROP_media.role", "video", 1);
         QSurfaceFormat format;
         format.setRenderableType(QSurfaceFormat::OpenGLES);
         format.setDefaultFormat(format);
-    } else {
-        tmp += QString(" end loadDXcbPlugin %0").arg(gTime.elapsed());
-    }
 
-    DApplication app(argc, argv);
-    tmp += QString(" end DApplication %0").arg(gTime.elapsed());
+        tmp += QString("platform wayland %d").arg(gTime.elapsed());
+    } else {
+        tmp += QString("platform xcb %0").arg(gTime.elapsed());
+    }
 
 //    AppController::instance();
 //    tmp += QString(" end AppController::instance %0").arg(gTime.elapsed());
