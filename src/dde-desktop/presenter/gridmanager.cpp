@@ -782,6 +782,8 @@ void GridManager::initGridItemsInfos()
 #endif
         delaySyncAllProfile();
     }
+    //fixbug81490 栅格数据更新完成后，需要更新扩展显示图标的区域
+    emit sigSyncOperation(soExpandItemUpdate);
 }
 
 void GridManager::initAutoMerge(const QList<DAbstractFileInfoPointer> &items)
