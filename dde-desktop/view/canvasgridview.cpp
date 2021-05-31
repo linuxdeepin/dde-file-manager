@@ -353,6 +353,11 @@ void CanvasGridView::updateHiddenItems()
     return;
 }
 
+void CanvasGridView::updateExpandItemGeometry()
+{
+    updateEditorGeometries();
+}
+
 void CanvasGridView::setGeometry(const QRect &rect)
 {
     //!防止获取到的屏幕区域是0x0的时候崩溃

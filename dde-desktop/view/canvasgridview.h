@@ -137,6 +137,7 @@ public:
     inline int screenNum() const {return m_screenNum;}
     void syncIconLevel(int level);
     void updateHiddenItems();
+    void updateExpandItemGeometry();
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
