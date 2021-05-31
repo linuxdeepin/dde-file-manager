@@ -324,6 +324,13 @@ int DFileView::columnWidth(int column) const
     return d->headerView ? d->headerView->sectionSize(column) : 100;
 }
 
+int DFileView::headerViewHeight() const
+{
+    D_DC(DFileView);
+
+    return d->headerView ? d->headerView->height() : 0;
+}
+
 void DFileView::setColumnWidth(int column, int width)
 {
     D_D(DFileView);
