@@ -107,6 +107,7 @@ public:
     bool isIconViewMode() const;
 
     int columnWidth(int column) const;
+    int headerViewHeight() const;
     void setColumnWidth(int column, int width);
     int columnCount() const;
 

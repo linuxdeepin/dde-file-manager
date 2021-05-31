@@ -23,6 +23,7 @@
 
 #include "dlistitemdelegate.h"
 #include "dfileviewhelper.h"
+#include "views/dfileview.h"
 #include "app/define.h"
 #include "dfilesystemmodel.h"
 #include "private/dstyleditemdelegate_p.h"
@@ -832,7 +833,22 @@ bool DListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, co
                 strtooltip.append("\n");
             }
             strtooltip.chop(1);
-            QToolTip::showText(event->globalPos(), strtooltip, view);
+
+            // fix bug 81894
+            const QList<QRect> &geometries = paintGeomertys(option, index);
+            const QList<int> colRoles = parent()->columnRoleList();
+            const QPoint &curPos = parent()->parent()->mapFromGlobal(event->globalPos());
+            for (int i = 1; i < geometries.length() && i <= colRoles.length(); ++i) {
+                auto curRect = geometries.at(i);
+
+                if (curRect.left() <= curPos.x() && curRect.right() >= curPos.x()) {
+                    // 真实的rect位置需要下移表头高度的距离
+                    int headerViewHeight = qobject_cast<DFileView *>(parent()->parent())->headerViewHeight();
+                    const QRect realRect(curRect.left(), curRect.top() + headerViewHeight, curRect.width(), curRect.height());
+                    QToolTip::showText(event->globalPos(), strtooltip, view, realRect);
+                    break;
+                }
+            }
         }
 
         return true;
