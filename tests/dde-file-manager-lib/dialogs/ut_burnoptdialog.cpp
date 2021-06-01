@@ -110,8 +110,8 @@ TEST_F(TestBurnOptDialog, tstInnerSlot) {
     dlg->buttonClicked(0, "tst");
     TestHelper::runInLoop([]{;}, 300);
 
-    stext.set_lamda(ADDR(FileJob, doOpticalBurnByChildProcess), []{ return; });
-    stext.set_lamda(ADDR(FileJob, doOpticalImageBurnByChildProcess), []{ return; });
+    stext.set_lamda(ADDR(FileJob, doISOBurn), []{ return; });
+    stext.set_lamda(ADDR(FileJob, doISOImageBurn), []{ return; });
     dlg->buttonClicked(1, "tst");
     TestHelper::runInLoop([]{;}, 300);
 

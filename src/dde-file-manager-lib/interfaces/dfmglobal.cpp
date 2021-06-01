@@ -577,6 +577,11 @@ bool DFMGlobal::isDeveloperMode()
     return developerModel;
 }
 
+bool DFMGlobal::isProfessional()
+{
+    return DSysInfo::deepinType() == DSysInfo::DeepinProfessional;
+}
+
 QList<QUrl> DFMGlobal::clipboardFileUrlList() const
 {
     return GlobalData::clipboardFileUrls;
