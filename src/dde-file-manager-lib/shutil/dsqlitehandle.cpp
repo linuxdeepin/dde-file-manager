@@ -447,6 +447,7 @@ std::map<QString, std::multimap<QString, QString>>  DSqliteHandle::queryPartions
             std::match_results<std::basic_string<char>::const_iterator> matchedResult{};
             std::basic_string<char> partionNameStd{ partionName.toStdString() };
 
+            //匹配device路径中函数字的挂载点，如：/dev/sda1、/dev/nvme0n1p5
             if (std::regex_search(partionNameStd, matchedResult, matchNumber)) {
                 deviceName = QString::fromStdString(matchedResult.prefix());
 
@@ -458,6 +459,12 @@ std::map<QString, std::multimap<QString, QString>>  DSqliteHandle::queryPartions
 
                     partionsAndMountpoints[deviceName].emplace(std::move(partionName), mountpoint);
                 }
+            } else if (partionName.startsWith("/dev/mapper/")) {
+                //匹配device为映射路径的挂载点（在/dev/mapper/下的挂载点）
+                deviceName = "/dev/mapper";
+                mountpoint = DSqliteHandle::restoreEscapedChar(mountpoint);
+
+                partionsAndMountpoints[deviceName].emplace(std::move(partionName), mountpoint);
             }
         }
     }
