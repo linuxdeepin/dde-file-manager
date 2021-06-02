@@ -159,7 +159,7 @@ void DFMViewManager::initViewFromPlugin()
    qWarning() << "[PLUGIN]" << "try to load plugin of view";
     for (auto plugin : SchemePluginManager::instance()->schemePlugins()){
         qWarning() << "[PLUGIN]" << "load view from plugin:" << plugin.first;
-        insertToCreatorHash(KeyType(plugin.first, QString()), plugin.second->createViewTypeFunc());
+        insertToCreatorHash(KeyType(PLUGIN_SCHEME, plugin.first), plugin.second->createViewTypeFunc());
     }
 }
 

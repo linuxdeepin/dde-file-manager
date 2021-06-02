@@ -49,22 +49,14 @@ public:
     // 初始化面包屑控制器CrumbControl
     virtual CrumbCreaterFunc createCrumbCreaterTypeFunc() = 0;
 
-    // 返回插件的Scheme名称，用于判断插件的类型，与SideBarItem、DFMBaseView、CrumbControl关联起来
-    // 注意，与DUrl.h中定义的SCHEME类型一致
-    virtual QString schemeName() = 0;
+    // 返回插件的名称，用于判断插件的类型，与SideBarItem、DFMBaseView、CrumbControl关联起来
+    // [protocol]://[host]:[port]/[path]?[query]#[hash] 对应于QUrl::host()返回的Url
+    virtual QString pluginName() = 0;
 
-    // 注册SideBarItem在文管中的资源信息，参考文管中PathManager类
-    virtual QPair<QString, QString> systemPath() = 0;
-    virtual QPair<QString, QString> systemPathDisplayName() = 0;
-    virtual QPair<QString, QString> systemPathIconName() = 0;
-
-    // 查询是否需要重新加载插件的右键菜单
-    virtual bool queryloadPluginMenuStatus() = 0;
-    // 设置插件的右键菜单是否需要加载
-    virtual void setloadPluginMenuStatus(bool status) = 0;
-
-    // 向item拖拽文件调用DBus接口 add by CL
-    virtual bool dropFileToPhone(QList<DUrl> srcUrls, DUrl DesUrl) = 0;
+    // 查询插件SideBarItem是否支持拖拽
+    virtual bool isSideBarItemSupportedDrop() = 0;
+    // 向SideBarItem拖拽文件调用DBus接口
+    virtual bool dropFileToPlugin(QList<DUrl> srcUrls, DUrl desUrl) = 0;
 };
 
 Q_DECLARE_INTERFACE(SchemePluginInterface, DFMFileSchemePluginInterface_iid);

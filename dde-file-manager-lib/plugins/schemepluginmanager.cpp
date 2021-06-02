@@ -20,6 +20,7 @@
 
 #include "schemepluginmanager.h"
 #include "schemeplugininterface.h"
+#include "interfaces/dfmstandardpaths.h"
 
 #include <QPluginLoader>
 #include <QDir>
@@ -50,16 +51,17 @@ void SchemePluginManager::loadSchemePlugin()
     for (auto pluginFile : pluginDir.entryList(QDir::Files)) {
         QPluginLoader pluginLoader(pluginDir.absoluteFilePath(pluginFile));
         QObject *plugin = pluginLoader.instance();
-        qWarning() << pluginLoader.errorString();
         if (plugin) {
             SchemePluginInterface *schemePlugin = qobject_cast<SchemePluginInterface *>(plugin);
             if (schemePlugin) {
-                QString pluginName = schemePlugin->schemeName();
+                QString pluginName = schemePlugin->pluginName();
                 schemePluginList << qMakePair<QString, SchemePluginInterface *>(pluginName, schemePlugin);
                 schemePluginPahtList << qMakePair<QString, QString>(pluginName, pluginDir.absoluteFilePath(pluginFile));
-                qWarning() << "Scheme plugin name:" << pluginName;
-                qWarning() << "Scheme plugin path:" << pluginDir.absoluteFilePath(pluginFile);
+                qInfo() << "Scheme plugin name:" << pluginName;
+                qInfo() << "Scheme plugin path:" << pluginDir.absoluteFilePath(pluginFile);
             }
+        } else {
+          qInfo() << pluginLoader.errorString();
         }
     }
 }

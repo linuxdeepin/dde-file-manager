@@ -111,6 +111,10 @@ DFMCrumbInterface *DFMCrumbManager::createControllerByUrl(const DUrl &fileUrl, D
     Q_D(const DFMCrumbManager);
 
     KeyType theType = fileUrl.scheme();
+    //NOTE [HMOE REN] 插件(plugin)中注册的CrumbController(面包屑)对应的hash索引为url的host
+    if(theType == PLUGIN_SCHEME){
+        theType = fileUrl.host();
+    }
 
     const QList<CrumbCreaterType> creatorList = d->controllerCreatorHash.values(theType);
 

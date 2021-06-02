@@ -59,6 +59,7 @@
 #include "vault/vaulthelper.h"
 #include "app/filesignalmanager.h"
 #include "views/dfilemanagerwindow.h"
+#include "plugins/schemepluginmanager.h"
 
 #include <DSysInfo>
 

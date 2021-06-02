@@ -58,7 +58,7 @@ QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                            << QString(TAG_SCHEME)
                            << QString(DFMVAULT_SCHEME) // 文件保险柜
                            << QString(BURN_SCHEME)
-			   << QString(PHONE_SCHEME); // NOTE [XIAO]
+                           << QString(PLUGIN_SCHEME); // NOTE [XIAO]
 
 DUrl::DUrl()
     : QUrl()
@@ -243,9 +243,9 @@ bool DUrl::isVaultFile() const
     return (this->scheme() == DFMVAULT_SCHEME);
 }
 
-bool DUrl::isPhoneFile() const
+bool DUrl::isPluginFile() const
 {
-    return this->scheme() == PHONE_SCHEME;
+    return this->scheme() == PLUGIN_SCHEME;
 }
 
 QString DUrl::toString(QUrl::FormattingOptions options) const

@@ -325,6 +325,12 @@ void WindowManager::onWindowClosed()
         });
     }
     m_windows.remove(static_cast<const QWidget*>(sender()));
+
+    if(window->currentUrl().scheme() == PLUGIN_SCHEME){
+        qInfo() << "delete plugin view:" << window->currentUrl().host();
+        // NOTE [REN] 防止插件窗口关闭后，后台将信号发送到该窗口导致崩溃
+        window->getFileView()->deleteLater();
+    }
 }
 
 void WindowManager::onLastActivedWindowClosed(quint64 winId)

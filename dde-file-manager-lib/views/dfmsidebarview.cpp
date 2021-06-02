@@ -95,8 +95,8 @@ void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
         const QModelIndex &idx = indexAt(event->pos());
         QString voltag = idx.data(DFMSideBarItem::ItemVolTagRole).toString();
         if (!voltag.isEmpty() && voltag.startsWith("sr")
-            && DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(voltag)
-            && DFMOpticalMediaWidget::g_mapCdStatusInfo[voltag].bLoading) {
+                && DFMOpticalMediaWidget::g_mapCdStatusInfo.contains(voltag)
+                && DFMOpticalMediaWidget::g_mapCdStatusInfo[voltag].bLoading) {
             // 设置光标为繁忙状态
             DFileService::instance()->setCursorBusyState(true);
         } else {
@@ -208,13 +208,14 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
             action = canDropMimeData(item, event->mimeData(), event->possibleActions());
         }
 
-        if (item->url() == DUrl(PHONE_ROOT)) { // 对我的手机目录执行的单独拖拽动作，拖拽目录固定 add by CL
+        if (item->url().scheme() == PLUGIN_SCHEME) { // 对我的手机目录执行的单独拖拽动作，拖拽目录固定 add by CL
             for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
-                if (plugin.second->queryloadPluginMenuStatus()) {
-                    if (urls.size() > 0 && plugin.second->dropFileToPhone(urls, item->url())) {
+                if((item->url().host() == plugin.first) && plugin.second->isSideBarItemSupportedDrop()) {
+                    if (urls.size() > 0 && plugin.second->dropFileToPlugin(urls, item->url())) {
                         event->setDropAction(action);
                         isActionDone = true;
                     }
+                    break;
                 }
             }
         }
@@ -225,13 +226,14 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
         }
     }
     if (!copyUrls.isEmpty()) {
-        if (item->url() == DUrl(PHONE_ROOT)) { // 对我的手机目录执行的单独拖拽动作，拖拽目录固定 add by CL
+        if (item->url().scheme() == PLUGIN_SCHEME) { // 对我的手机目录执行的单独拖拽动作，拖拽目录固定 add by CL
             for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
-                if (plugin.second->queryloadPluginMenuStatus()) {
-                    if (urls.size() > 0 && plugin.second->dropFileToPhone(copyUrls, item->url())) {
+                if((item->url().host() == plugin.first) && plugin.second->isSideBarItemSupportedDrop()) {
+                    if (urls.size() > 0 && plugin.second->dropFileToPlugin(copyUrls, item->url())) {
                         event->setDropAction(Qt::CopyAction);
                         isActionDone = true;
                     }
+                    break;
                 }
             }
         }
@@ -246,8 +248,7 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
         //fix bug 24478,在drop事件完成时，设置当前窗口为激活窗口，crtl+z就能找到正确的回退
         QWidget *parentptr = parentWidget();
         QWidget *curwindow = nullptr;
-        while(parentptr)
-        {
+        while(parentptr) {
             curwindow = parentptr;
             parentptr = parentptr->parentWidget();
         }
@@ -376,7 +377,7 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
         // add by CL
         for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
             // 对我的手机item做临时处理，连接成功时允许向item拖拽
-            if (item->url() == DUrl(PHONE_ROOT) && plugin.second->queryloadPluginMenuStatus()) {
+            if((item->url().scheme() == PLUGIN_SCHEME) && (item->url().host() == plugin.first) && plugin.second->isSideBarItemSupportedDrop()) {
                 return Qt::CopyAction;
             }
         }

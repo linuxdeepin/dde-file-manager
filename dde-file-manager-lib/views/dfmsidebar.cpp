@@ -492,8 +492,9 @@ void DFMSideBar::initModelData()
     // register meta type for DUrl, since we use it in item view DnD operation.
     qRegisterMetaTypeStreamOperators<DUrl>("DUrl");
 
+    //NOTE [REN] 添加Plugin类型，实现插件组的分割线
     static QList<DFMSideBar::GroupName> groups = {
-        GroupName::Common, GroupName::Device, GroupName::Bookmark, GroupName::Network, GroupName::Tag, GroupName::Phone//Add by ut001000 renfeixiang 2021-03-22 添加我的手机类型，实现排序
+      	GroupName::Common, GroupName::Device, GroupName::Bookmark, GroupName::Network, GroupName::Tag, GroupName::Plugin
     };
 
     //bool hasSeparator = false;
