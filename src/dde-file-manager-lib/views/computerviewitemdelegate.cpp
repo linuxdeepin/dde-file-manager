@@ -90,7 +90,13 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
         // c = pl.color(DPalette::ColorGroup::Active, QPalette::ColorRole::Highlight);
         c.setAlpha(c.alpha() + 30);
     } else if (option.state & QStyle::StateFlag::State_MouseOver) {
-        c = c.lighter();
+        DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
+        if (ct == DGuiApplicationHelper::DarkType) {
+            base_color = DGuiApplicationHelper::adjustColor(base_color, 0, 0, +5, 0, 0, 0, 0);
+            c = base_color;
+        }
+        else
+            c = c.lighter();
     } else {
         c = base_color;
     }
