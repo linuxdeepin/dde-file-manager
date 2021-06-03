@@ -40,6 +40,7 @@
 #include <QMessageBox>
 #include <QTimer>
 
+using namespace PolkitQt1;
 
 DFMVaultActiveFinishedView::DFMVaultActiveFinishedView(QWidget *parent)
     : QWidget(parent)
@@ -168,42 +169,61 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
 
 void DFMVaultActiveFinishedView::slotEncryptVault()
 {
-    if (!VaultLockManager::getInstance().checkAuthentication(VAULT_CREATE)) {
-        m_pFinishedBtn->setEnabled(true);
-        return;
-    }
-
     if (m_pFinishedBtn->text() == tr("Encrypt")) {
-        // 完成按钮灰化
-        m_pFinishedBtn->setEnabled(false);
-        // 隐藏右上角关闭按钮
-        if (parentWidget()) {
-            DDialog *pParent = qobject_cast<DDialog *>(parentWidget()->parentWidget());
-            if (pParent) {
-                pParent->setCloseButtonVisible(false);
+           // 异步授权
+           auto ins = Authority::instance();
+           ins->checkAuthorization(VAULT_CREATE,
+                                   UnixProcessSubject(getpid()),
+                                   Authority::AllowUserInteraction);
+           connect(ins, &Authority::checkAuthorizationFinished,
+                   this, &DFMVaultActiveFinishedView::slotCheckAuthorizationFinished);
+           // 灰化按钮，避免异步时用户再次点击按钮
+           m_pFinishedBtn->setEnabled(false);
+       } else {
+           // 切换到保险箱主页面
+           emit sigAccepted();
+       }
+}
+
+void DFMVaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result)
+{
+    disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
+            this, &DFMVaultActiveFinishedView::slotCheckAuthorizationFinished);
+    if (isVisible()) {
+        if (result == Authority::Yes) {
+            if (m_pFinishedBtn->text() == tr("Encrypt")) {
+                // 完成按钮灰化
+                m_pFinishedBtn->setEnabled(false);
+                // 隐藏右上角关闭按钮
+                if (parentWidget()) {
+                    DDialog *pParent = qobject_cast<DDialog *>(parentWidget()->parentWidget());
+                    if (pParent) {
+                        pParent->setCloseButtonVisible(false);
+                    }
+                }
+
+                // 进度条
+                m_pWaterProgress->start();
+                m_pWidget1->setVisible(false);
+                m_pWidget2->setVisible(true);
+                m_pWidget3->setVisible(false);
+
+                std::thread t([]() {
+                    // 调用创建保险箱接口
+                    // 拿到密码
+                    QString strPassword = OperatorCenter::getInstance()->getSaltAndPasswordCipher();
+                    if (!strPassword.isEmpty()) {
+                        VaultController::ins()->createVault(strPassword);
+                        OperatorCenter::getInstance()->clearSaltAndPasswordCipher();
+                    } else
+                        qDebug() << "获取cryfs密码为空，创建保险箱失败！";
+                });
+                t.detach();
             }
         }
-
-        // 进度条
-        m_pWaterProgress->start();
-        m_pWidget1->setVisible(false);
-        m_pWidget2->setVisible(true);
-        m_pWidget3->setVisible(false);
-
-        std::thread t([]() {
-            // 调用创建保险箱接口
-            // 拿到密码
-            QString strPassword = OperatorCenter::getInstance()->getSaltAndPasswordCipher();
-            if (!strPassword.isEmpty()) {
-                VaultController::ins()->createVault(strPassword);
-                OperatorCenter::getInstance()->clearSaltAndPasswordCipher();
-            } else
-                qDebug() << "获取cryfs密码为空，创建保险箱失败！";
-        });
-        t.detach();
-    } else {
-        // 切换到保险箱主页面
-        emit sigAccepted();
+        else {
+            m_pFinishedBtn->setEnabled(true);
+        }
     }
 }
 

@@ -56,6 +56,9 @@ TEST_F(TestUserSharePasswordSettingDialog, testInit)
 
 TEST_F(TestUserSharePasswordSettingDialog, testOnButtonClicked)
 {
+    void(*stub_setSambaPassword)(const QString&, const QString&) = [](const QString&, const QString&){};
+        Stub stu;
+        stu.set(ADDR(UserShareManager, setSambaPassword), stub_setSambaPassword);
     EXPECT_NO_FATAL_FAILURE(m_pTester->onButtonClicked(1));
 }
 
