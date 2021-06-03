@@ -73,8 +73,8 @@ void DListItemDelegate::paint(QPainter *painter,
 
     //反走样抗锯齿
     painter->setRenderHints(QPainter::Antialiasing
-                           |QPainter::TextAntialiasing
-                           |QPainter::SmoothPixmapTransform);
+                            |QPainter::TextAntialiasing
+                            |QPainter::SmoothPixmapTransform);
     //绘制新的背景交替
     if(option.widget){
         //调色板获取
@@ -100,6 +100,16 @@ void DListItemDelegate::paint(QPainter *painter,
             painter->fillPath(path, adjustItemAlterColor);
         } else {
             painter->setBrush(baseColor);
+        }
+
+        //设置hover高亮
+        if (option.state & QStyle::StateFlag::State_MouseOver) {
+            QPainterPath path;
+            QColor adjustHoverItemColor = baseColor;//hover色
+            path.addRoundedRect(dstRect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
+            //hover色保持背板%10
+            adjustHoverItemColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
+            painter->fillPath(path, adjustHoverItemColor);
         }
     }
     painter->restore(); //恢复之前的绘制，防止在此逻辑前的绘制丢失
