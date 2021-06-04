@@ -575,7 +575,6 @@ int DialogManager::showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &even
 
 void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details)
 {
-    Q_UNUSED(details)
     DDialog d;
     d.setIcon(QIcon::fromTheme("dialog-error"));
     QString failure_type;
@@ -596,8 +595,7 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     QWidget *detailsw = new QWidget(&d);
     detailsw->setLayout(new QVBoxLayout());
     QTextEdit *te = new QTextEdit();
-    // tmp: 暂时不要详细信息
-    // te->setPlainText(details.join('\n'));
+    te->setPlainText(details.join('\n'));
     te->setReadOnly(true);
     te->hide();
     detailsw->layout()->addWidget(te);
@@ -616,6 +614,10 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
             d.setTitle(tr("Error"));
         }
     });
+
+    detailsw->setFixedWidth(360);
+    d.layout()->setSizeConstraint(QLayout::SetFixedSize); // make sure dialog can shrank after expanded for more info.
+
     d.addContent(detailsw);
     d.setOnButtonClickedClose(false);
     d.addButton(tr("Show details"));
