@@ -1066,7 +1066,7 @@ void AppController::actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &ev
 
             DUrl dev(event->url());
 
-            job->doDiscBlank(dev);
+            job->doOpticalBlank(dev);
             dialogManager->removeJob(job->getJobId());
             //job->deleteLater();
         });

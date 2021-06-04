@@ -18,7 +18,6 @@
 #include <DPushButton>
 
 #include <QHBoxLayout>
-#include <QSvgWidget>
 //fix: 根据光盘选择文件状态实时更新状态
 #include <QTimer>
 //fix: 设置光盘容量属性
@@ -64,14 +63,11 @@ private:
 
     QLabel *lb_mediatype = nullptr;
     QLabel *lb_available = nullptr;
-    QLabel *lb_udsupport = nullptr;
+    QLabel *lb_udfsupport = nullptr;
     DPushButton *pb_burn = nullptr;
-    QSvgWidget *icon_caution = nullptr;
-
     QHBoxLayout *layout = nullptr;
     DFMOpticalMediaWidget *q_ptr;
     QString curFS;
-    QString curFSVersion;
     QString curdev;
     QString strMntPath;
     QString defaultDiscName;
@@ -175,7 +171,6 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
         QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(d->getCurrentDevice(), this));
         bd->setJobWindowId(static_cast<int>(this->window()->winId()));
         bd->setDefaultVolName(d->defaultDiscName);
-        bd->setDiscAndFsInfo(dp.media, d->curFS, d->curFSVersion);
         bd->exec();
         statusInfo.bReadyToBurn = false;
     });
@@ -332,13 +327,10 @@ void DFMOpticalMediaWidgetPrivate::setupUi()
     q->setLayout(layout);
     layout->addWidget(lb_mediatype = new QLabel("<Media Type>"));
     layout->addWidget(lb_available = new QLabel("<Space Available>"));
-    layout->addWidget(lb_udsupport = new QLabel(QObject::tr("It does not support burning %1 discs").arg(QString("U/D/F").remove("/"))));
+    layout->addWidget(lb_udfsupport = new QLabel(QObject::tr("It does not support burning UDF discs")));
     layout->addWidget(pb_burn = new DPushButton());
-    layout->addWidget(icon_caution = new QSvgWidget());
     pb_burn->setText(QObject::tr("Burn"));
-    lb_udsupport->setVisible(false);
-    icon_caution->setVisible(false);
-
+    lb_udfsupport->setVisible(false);
 
     pb_burn->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     lb_available->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -368,27 +360,11 @@ void DFMOpticalMediaWidgetPrivate::setDeviceProperty(DeviceProperty dp)
     lb_available->setText(QObject::tr("Free Space %1").arg(FileUtils::formatSize(dp.avail)));
     lb_mediatype->setText(rtypemap[dp.media]);
 
-    auto isSupportedUD = [this, &dp]{
-        if (!DFMGlobal::isProfessional())
-            return false;
-        if (!BurnOptDialog::isSupportedUDVersion(curFSVersion))
-            return false;
-        if (dp.media == DVD_R || dp.media == DVD_PLUS_R)
-            return true;
-        return false;
-    };
-    if (curFS == QString("u/d/f").remove("/") && !isSupportedUD()) {
-        if (DFMGlobal::isProfessional()) { // for other version, show normal unsupported writtings
-            lb_udsupport->setText(DFMOpticalMediaWidget::tr("Current disc is not supported for %1 burning").arg("U/D/F").remove("/"));
-            icon_caution->setVisible(true);
-            icon_caution->load(QString(":/dark/icons/caution.svg"));
-            icon_caution->setFixedSize(14, 14);
-            icon_caution->setToolTip(DFMOpticalMediaWidget::tr("1. Disc is neither DVD+R nor DVD-R\n2. Current filesystem version is not supported for appending yet."));
-        }
-        lb_udsupport->setVisible(true);
+    if (curFS == "udf") {
+        lb_udfsupport->setVisible(true);
         pb_burn->setEnabled(false);
     } else {
-        lb_udsupport->setVisible(false);
+        lb_udfsupport->setVisible(false);
         pb_burn->setEnabled(true);
     }
 }
@@ -404,9 +380,9 @@ void DFMOpticalMediaWidgetPrivate::setCurrentDevice(const QString &dev)
     if (dp.avail != 0 || DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nTotal == 0) {
         DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nTotal = dp.data + dp.avail;
         DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nUsage = dp.data;
-    }
-    if (dp.avail == 0) // fix while available is zero, the button is still enable
+    } else {
         pb_burn->setEnabled(false);
+    }
 
     QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
@@ -421,7 +397,6 @@ void DFMOpticalMediaWidgetPrivate::setCurrentFSByDev(const QString &dev)
 {
     DAbstractFileInfoPointer fi(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + dev.mid(QString("/dev/").length()) + "." SUFFIX_UDISKS)));
     curFS = fi->extraProperties()["fsType"].toString().toLower();
-    curFSVersion = fi->extraProperties()["fsVersion"].toString().toLower();
 }
 
 QString DFMOpticalMediaWidgetPrivate::getCurrentDevice() const

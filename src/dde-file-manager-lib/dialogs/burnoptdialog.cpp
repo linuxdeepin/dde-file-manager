@@ -29,7 +29,6 @@
 #include <QDebug>
 #include <QWindow>
 #include <DCommandLinkButton>
-#include <QPushButton>
 
 #include <unistd.h>
 #include <sys/wait.h>
@@ -93,8 +92,6 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                                  ? d->lastVolName
                                  : d->le_volname->text().trimmed();
 
-        bool isUDBurn = d->cb_fs->currentIndex() == 3;
-
         if (index == 1) {
             emit fileSignalManager->stopCdScanTimer(device);
             if (d->image_file.path().length() == 0) {
@@ -108,10 +105,8 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
 
                     // fix: use fork() burn files
                     qDebug() << "start burn files";
-                    if (isUDBurn && DFMGlobal::isProfessional())
-                        job->doUDBurn(dev, volName, nSpeeds, opts);
-                    else
-                        job->doISOBurn(dev, volName, nSpeeds, opts);
+
+                    job->doOpticalBurnByChildProcess(dev, volName, nSpeeds, opts);
                     dialogManager->removeJob(job->getJobId(), true);  // 清除所有数据，防止脏数据出现
                     //job->deleteLater();
                 });
@@ -129,7 +124,7 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                     // fix: use fork() burn image
                     qDebug() << "start burn image";
 
-                    job->doISOImageBurn(dev, img, nSpeeds, opts);
+                    job->doOpticalImageBurnByChildProcess(dev, img, nSpeeds, opts);
                     dialogManager->removeJob(job->getJobId(), true); // 清除所有数据，防止脏数据出现
                    // job->deleteLater();
                 });
@@ -171,52 +166,6 @@ void BurnOptDialog::setDefaultVolName(const QString &volName)
     d->le_volname->setSelection(0, volName.length());
     d->le_volname->setFocus();
     d->lastVolName = volName;
-}
-
-void BurnOptDialog::setDiscAndFsInfo(int type, const QString &filesystem, const QString &version)
-{
-    Q_D(BurnOptDialog);
-
-    if (!DFMGlobal::isProfessional())
-        return;
-
-    if (filesystem.isEmpty()) // all filesystem for empty disc
-        return;
-
-    auto *model = d->cb_fs->model();
-    if (!model)
-        return;
-    if (model->rowCount() < 4)
-        return;
-
-    if (filesystem != QString("u/d/f").remove("/")) { // disable ud selection
-        model->setData(model->index(3, 0), 0, Qt::UserRole - 1);
-    } else {
-        // select ud if DVD+-R and 1.02 only in this condition
-        if ((type == DISOMasterNS::DVD_R || type == DISOMasterNS::DVD_PLUS_R)
-                && isSupportedUDVersion(version)) {
-            model->setData(model->index(0, 0), 0, Qt::UserRole - 1);
-            model->setData(model->index(1, 0), 0, Qt::UserRole - 1);
-            model->setData(model->index(2, 0), 0, Qt::UserRole - 1);
-            d->cb_fs->setCurrentIndex(3); // set default selection
-        } else {
-            // otherwise disable ud selection, infact you will never get into this codeblock if the condition above is not satisfied outside
-            // and if this real happened, should never execute burn
-            QPushButton *btn = dynamic_cast<QPushButton *>(this->getButton(1));
-            if (btn)
-                btn->setEnabled(false);
-
-            qCritical() << "fs: " << filesystem << ", version: " << version << ", type: " << type;
-        }
-    }
-}
-
-bool BurnOptDialog::isSupportedUDVersion(const QString &version)
-{
-    static const QStringList && supported = {
-        "1.02"
-    };
-    return supported.contains(version);
 }
 
 BurnOptDialog::~BurnOptDialog()
@@ -304,22 +253,13 @@ void BurnOptDialogPrivate::setupUi()
     // 文件系统
     lb_fs = new QLabel(BurnOptDialog::tr("File system: "));
     vLay->addWidget(lb_fs);
-    static const QStringList fsTypes {
-        BurnOptDialog::tr("ISO9660 Only"),
-        BurnOptDialog::tr("ISO9660/Joliet (For Windows)"),
-        BurnOptDialog::tr("ISO9660/Rock Ridge (For Unix)")
-    };
-
+    static QStringList fsTypes{BurnOptDialog::tr("ISO9660 Only"), BurnOptDialog::tr("ISO9660/Joliet (For Windows)"), BurnOptDialog::tr("ISO9660/Rock Ridge (For Unix)")};
     cb_fs = new QComboBox;
     cb_fs->addItems(fsTypes);
     cb_fs->setCurrentIndex(1); // 默认使用 i + j 的方式刻录
     vLay->addWidget(cb_fs);
     lb_fs->setFont(f13);
     cb_fs->setFont(f14);
-
-    static const QString &udItem =  BurnOptDialog::tr("%1 (Compatible with Windows CD/DVD mode)").arg(QString("U/D/F").remove("/"));
-    if (cb_fs->count() == fsTypes.count() && DFMGlobal::isProfessional())
-        cb_fs->addItem(udItem);
 
     // 控制间距
     vLay->addItem(new QSpacerItem(1, 20));
@@ -369,21 +309,6 @@ void BurnOptDialogPrivate::setupUi()
 
     QObject::connect(advanceBtn, &DCommandLinkButton::clicked, q, [ = ] {
         advancedSettings->setHidden(!advancedSettings->isHidden());
-    });
-
-    QObject::connect(cb_fs, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), q, [this](int idx){
-        if (idx == 3) {
-            cb_checkdisc->setChecked(false);
-            cb_checkdisc->setEnabled(false);
-            cb_donotclose->setChecked(true);
-            cb_donotclose->setEnabled(false);
-            cb_writespeed->setCurrentIndex(0);
-            cb_writespeed->setEnabled(false);
-        } else {
-            cb_checkdisc->setEnabled(true);
-            cb_donotclose->setEnabled(true);
-            cb_writespeed->setEnabled(true);
-        }
     });
 
 //    q->setStyleSheet("border: 1px solid blue;");
