@@ -29,6 +29,16 @@
 #include "computerviewitemdelegate.h"
 #include "dfmapplication.h"
 
+//LABEL间的间隔
+#define LABEL_TOTAL_SPACING 6
+#define TOTAL_PROBAR_SPACING 4
+#define ICON_LABEL_SPACING 10
+
+//上下左右间隔
+#define ICON_TOP_MARGIN 20
+#define ICON_BOTTOM_MARGIN 20
+#define ICON_LEFT_MARGIN 10
+#define LABEL_RIGHT_MARGIN 20
 
 //!
 //! \brief 一些特殊的字体和 CESI_*_GB* 的字体在计算机页面重命名时，显示位置偏上
@@ -107,6 +117,7 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
 
     const QIcon icon = index.data(Qt::ItemDataRole::DecorationRole).value<QIcon>();
 
+    //目录绘制
     if (cat == ComputerModelItemData::Category::cat_user_directory) {
         const int iconsize = par->view()->iconSize().width() * 4 / 3;
         const int topmargin = iconsize / 8 + 3;
@@ -123,18 +134,20 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
         return;
     }
 
-    QRect textrect = option.rect;
-    QRect otextrect;
+    //设备绘制
+    QRect nameLabelRect = option.rect;
     const int iconsize = par->view()->iconSize().width();
-    const int topmargin = iconsize / 2 + 2;
-    const int leftmargin = iconsize / 3 + 3;
-    const int text_max_width = int(iconsize * 3.75);
-    const int spacing = iconsize / 3 + 1;
-    const int rightmargin = iconsize / 3 + 9;
+
+    const int text_max_width = sizeHint(option,index).width()
+            - ICON_LEFT_MARGIN
+            - iconsize
+            - ICON_LABEL_SPACING
+            - LABEL_RIGHT_MARGIN;
+
     const int fontpixelsize = par->fontInfo().pixelSize();
-    textrect.setLeft(option.rect.left() + leftmargin + iconsize + spacing + 1);
-    textrect.setTop(option.rect.top() + topmargin);
-    textrect.setHeight(fontpixelsize * 2);
+    nameLabelRect.setLeft(option.rect.left() + ICON_LEFT_MARGIN + iconsize + ICON_LABEL_SPACING);
+    nameLabelRect.setTop(option.rect.top() + ICON_TOP_MARGIN);
+    nameLabelRect.setHeight(par->fontMetrics().height());
     QFont font = par->font();
     font.setWeight(66);
     painter->setFont(font);
@@ -149,7 +162,8 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
         text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width - 5);
     }
 
-    painter->drawText(textrect, Qt::TextWrapAnywhere, text, &otextrect);
+    QRect nameTextDarwRect; //此处真实的字符绘制Rect非labelRect
+    painter->drawText(nameLabelRect, Qt::TextWrapAnywhere, text, &nameTextDarwRect);
 
     // 添加对文件系统格式的显示
     if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowFileSystemTagOnDiskIcon).toBool() && !fileSysType.isEmpty()) {
@@ -157,12 +171,16 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
         // 使用细线进行绘制
         font.setWeight(12);
         painter->setFont(font);
+        QRect fsTypeLabelrect = nameTextDarwRect;
 
-        otextrect.moveLeft(otextrect.right() + 12);
-        otextrect.moveBottom(otextrect.bottom() + 2);
-        otextrect.setWidth(fstw);
-        otextrect.setHeight(fontpixelsize + 4);
-        otextrect.adjust(-5, 0, 5, 0);
+        fsTypeLabelrect.setWidth(fstw);
+        fsTypeLabelrect.setHeight(fontpixelsize + 4);
+        //与真实字符绘制Rect保持左侧12的间距
+        fsTypeLabelrect.moveLeft(nameTextDarwRect.right() + 12);
+        //与真实字符绘制Rect保持 居中
+        fsTypeLabelrect.moveBottom(nameTextDarwRect.bottom() - (nameTextDarwRect.height() - fsTypeLabelrect.height())/2);
+        //微调类型绘制范围
+        fsTypeLabelrect.adjust(-5, 0, 5, 0);
 
         QColor brushColor(0xD2D2D2);
         QColor penColor(0x5D5D5D);
@@ -189,26 +207,25 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
 
         painter->setBrush(brushColor);
         painter->setPen(borderColor);
-        painter->drawRoundedRect(otextrect, 7.5, 7.5);
+        painter->drawRoundedRect(fsTypeLabelrect, 7.5, 7.5);
         painter->setPen(penColor);
-        painter->drawText(otextrect, Qt::AlignCenter, fileSysType);
+        painter->drawText(fsTypeLabelrect, Qt::AlignCenter, fileSysType);
     }
 
     QFont smallf(par->font());
     smallf.setPixelSize(int(fontpixelsize * 0.85));
-    // smallf.setPixelSize(int(fontpixelsize * 0.85));
     painter->setFont(smallf);
-    textrect.setLeft(option.rect.left() + leftmargin + iconsize + spacing);
-    textrect.setRight(option.rect.right() - rightmargin);
+
+    QRect totalLabelRect = nameLabelRect;
+
     // 修复bug-63543 控制中心修改字体为unifont后，item的格式标签会覆盖住盘符大小标签
-    textrect.setTop(otextrect.bottom() + 3);
-    textrect.setHeight(fontpixelsize);
+    totalLabelRect.setTop(nameTextDarwRect.bottom() + LABEL_TOTAL_SPACING); //添加与真实绘制的盘符名称间隔
+    totalLabelRect.setHeight(QFontMetrics(smallf).height()); //字符高度
 
     quint64 sizeinuse = index.data(ComputerModel::DataRoles::SizeInUseRole).toULongLong();
     quint64 sizetotal = index.data(ComputerModel::DataRoles::SizeTotalRole).toULongLong();
     QString strVolTag = index.data(ComputerModel::DataRoles::VolumeTagRole).toString();
     painter->setPen(pl.color(DPalette::TextTips));
-
 
     // Paint size.
     bool bSizeVisible = index.data(ComputerModel::DataRoles::SizeRole).toBool();
@@ -216,13 +233,15 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
         QString scheme = index.data(ComputerModel::DataRoles::SchemeRole).toString();
         if (scheme == DFMVAULT_SCHEME) {
             // vault only show size.
-            painter->drawText(textrect, Qt::AlignLeft, FileUtils::formatSize(static_cast<qint64>(sizeinuse)));
+            painter->drawText(totalLabelRect, Qt::AlignLeft, FileUtils::formatSize(static_cast<qint64>(sizeinuse)));
         } else {
-            painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal, strVolTag));
+            painter->drawText(totalLabelRect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal, strVolTag));
         }
     }
 
-    QRect usgplrect(QPoint(option.rect.left() + iconsize + leftmargin + spacing, textrect.bottom() + 8), QSize(text_max_width, 6));
+    QRect usgplrect(QPoint(totalLabelRect.x(),
+                           totalLabelRect.bottom() + TOTAL_PROBAR_SPACING),
+                    QSize(text_max_width, 6));
     QStyle *sty = option.widget && option.widget->style() ? option.widget->style() : qApp->style();
     QStyleOptionProgressBar plopt;
     plopt.textVisible = false;
@@ -247,17 +266,19 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
 
     // Paint progress
     bool bProgressVisible = index.data(ComputerModel::DataRoles::ProgressRole).toBool();
+
     if (bProgressVisible) {
         sty->drawControl(QStyle::ControlElement::CE_ProgressBarGroove, &plopt, painter, option.widget);
         sty->drawControl(QStyle::ControlElement::CE_ProgressBarContents, &plopt, painter, option.widget);
     }
 
-    painter->drawPixmap(option.rect.x() + leftmargin, option.rect.y() + topmargin, icon.pixmap(iconsize));
+    //设备盘符图标高度居中
+    int deviceIconAligmentY = option.rect.y() + (sizeHint(option,index).height() - iconsize)/2;
+    painter->drawPixmap(option.rect.x() + ICON_LEFT_MARGIN, deviceIconAligmentY, icon.pixmap(iconsize));
 }
 
 QSize ComputerViewItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    Q_UNUSED(option)
     ComputerModelItemData::Category cat = ComputerModelItemData::Category(index.data(ComputerModel::DataRoles::ICategoryRole).toInt());
     if (cat == ComputerModelItemData::Category::cat_widget) {
         return static_cast<ComputerModelItemData *>(index.internalPointer())->widget->size();
@@ -267,13 +288,27 @@ QSize ComputerViewItemDelegate::sizeHint(const QStyleOptionViewItem &option, con
         int sz = par->view()->iconSize().width() * 2 + 24;
         return QSize(sz, sz);
     }
-    const int iconsize = par->view()->iconSize().width();
-    const int topmargin = iconsize / 2 + 2;
-    const int leftmargin = iconsize / 3 + 3;
-    const int text_max_width = int(iconsize * 3.75);
-    const int spacing = iconsize / 3 + 1;
-    const int rightmargin = iconsize / 3 + 9;
-    return QSize(leftmargin + iconsize + spacing + text_max_width + rightmargin, topmargin + iconsize + topmargin);
+
+    const int iconSize = par->view()->iconSize().width();
+    const int textMaxWidth = int(iconSize * 3.75);
+
+    //右侧真实大小
+    int processBarHeight = 6;
+    QFont smallf(par->font());
+    smallf.setPixelSize(int(par->fontInfo().pixelSize() * 0.85));
+    int capacityLabelHeight = QFontMetrics(smallf).height();
+    int nameTextLabelHeight = QFontMetrics(option.fontMetrics).height();
+
+    int colLabelsHeight = processBarHeight
+            + capacityLabelHeight
+            + nameTextLabelHeight
+            + LABEL_TOTAL_SPACING
+            + TOTAL_PROBAR_SPACING
+            + ICON_TOP_MARGIN
+            + ICON_BOTTOM_MARGIN;
+
+    return QSize(ICON_LEFT_MARGIN + iconSize + ICON_LABEL_SPACING + textMaxWidth + LABEL_RIGHT_MARGIN,
+                 qMax(ICON_TOP_MARGIN + iconSize + ICON_BOTTOM_MARGIN, colLabelsHeight));
 }
 
 QWidget *ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -282,7 +317,6 @@ QWidget *ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOpt
     editingIndex = index;
     QLineEdit *le = new QLineEdit(parent);
     editingEditor = le;
-
     int topMargin = editorMarginTop(option.font.family());
     le->setFrame(false);
     le->setTextMargins(0, topMargin, 0, 0);
@@ -323,13 +357,10 @@ void ComputerViewItemDelegate::updateEditorGeometry(QWidget *editor, const QStyl
     }
     QRect textrect = option.rect;
     const int iconsize = par->view()->iconSize().width();
-    const int topmargin = iconsize / 2 + 2;
-    const int leftmargin = iconsize / 3 + 3;
     const int text_max_width = int(iconsize * 3.75);
-    const int spacing = iconsize / 3 + 1;
-    textrect.setLeft(option.rect.left() + leftmargin + iconsize + spacing + 1);
+    textrect.setLeft(option.rect.left() + ICON_LEFT_MARGIN + iconsize + ICON_LABEL_SPACING + 1);
     textrect.setWidth(text_max_width);
-    textrect.setTop(option.rect.top() + topmargin - 2);
+    textrect.setTop(option.rect.top() + ICON_TOP_MARGIN - 2);
     textrect.setHeight(par->fontInfo().pixelSize() * 2);
     editor->setGeometry(textrect);
 }
