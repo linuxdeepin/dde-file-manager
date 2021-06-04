@@ -307,10 +307,7 @@ int DFileStatisticsJob::directorysCount(bool includeSelf) const
 
 void DFileStatisticsJob::start(const DUrlList &sourceUrls)
 {
-    if (isRunning()) {
-        qDebug() << "current thread is running... reject to start.";
-        return;
-    }
+    Q_ASSERT(!isRunning());
     Q_D(DFileStatisticsJob);
     d->sourceUrlList = sourceUrls;
 

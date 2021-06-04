@@ -41,8 +41,6 @@ public:
     void setISOImage(DUrl image);
     void setJobWindowId(int wid);
     void setDefaultVolName(const QString &volName);
-    void setDiscAndFsInfo(int type, QString filesystem, QString version);
-    static bool isSupportedUDVersion(const QString &version);
 
 private:
     QScopedPointer<BurnOptDialogPrivate> d_ptr;

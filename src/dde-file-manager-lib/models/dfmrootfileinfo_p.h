@@ -42,7 +42,6 @@ public:
     qulonglong size;
     QString label;
     QString fs;
-    QString fsVersion;
     QString udispname;
     QString idUUID;
     QString currentUUID;
