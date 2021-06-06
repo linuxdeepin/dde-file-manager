@@ -267,21 +267,31 @@ bool isAvfsMounted()
  */
 void clearStageDir(const QString &stagingRoot)
 {
-    QFileInfo f(stagingRoot);
-    if (!f.exists() || !f.isDir())
+    QFileInfo info(stagingRoot);
+    if (!info.exists() || !info.isDir())
         return;
+
+    QFile f(stagingRoot);
+    f.setPermissions(f.permissions()
+                     | QFile::ReadUser | QFile::WriteUser
+                     | QFile::ReadGroup | QFile::WriteGroup
+                     | QFile::ReadOther | QFile:: WriteOther);
 
     const static QString stagePrefix = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/"
             + qApp->organizationName() + "/" DISCBURN_STAGING + "/_dev_sr";
 
-    QString absPath = f.canonicalFilePath();
+    QString absPath = info.canonicalFilePath();
     if (!absPath.startsWith(stagePrefix))
         return;
 
     QDir d(absPath);
     if (d.isEmpty(QDir::AllEntries | QDir::Hidden | QDir::NoDotAndDotDot | QDir::NoSymLinks)) {
         qDebug() << absPath << " is removed";
-        d.removeRecursively();
+        bool removed = d.removeRecursively();
+        if (!removed) {
+            qDebug() << absPath << "cannot be removed recurisively...";
+            return;
+        }
         d.cdUp();
         clearStageDir(d.canonicalPath());
         return;
