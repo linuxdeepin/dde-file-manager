@@ -43,7 +43,7 @@
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
-#include "../dde-file-manager-daemon/dbusservice/dbusinterface/acesscontrol_interface.h"
+#include "../dde-file-manager-daemon/dbusservice/dbusinterface/accesscontrol_interface.h"
 
 #include "interfaces/dfmglobal.h"
 #include "interfaces/diconitemdelegate.h"

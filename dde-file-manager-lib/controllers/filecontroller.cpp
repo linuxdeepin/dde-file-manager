@@ -1067,7 +1067,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
     // fix：原来本来没有 movemode，当前彻底删除文件时要转换 mode 为 movemode，
     //     原来剪切和删除都是用的 cutmode 来表示，这会导致进度条无法区分剪切和删除
     //     为了区分剪切和删除，这里使用 traget 是否为空来判断当前的操作是剪切还是删除
-    if (target.isEmpty())
+    if (target.isEmpty() && action != DFMGlobal::CopyAction)
         action = DFMGlobal::UnknowAction;
     job->setMode(action == DFMGlobal::CopyAction
                  ? DFileCopyMoveJob::CopyMode

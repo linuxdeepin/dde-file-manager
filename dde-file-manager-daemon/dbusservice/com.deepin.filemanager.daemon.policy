@@ -16,7 +16,7 @@
       <allow_active>auth_admin_keep</allow_active>
     </defaults>
   </action>
-  <action id="com.deepin.filemanager.daemon.AcessControlManager">
+  <action id="com.deepin.filemanager.daemon.AccessControlManager">
     <description>access control manager</description>
     <message>Authentication is required to get admin permission</message>
     <message xml:lang="zh_CN">获取文件管理权限需要认证</message>
