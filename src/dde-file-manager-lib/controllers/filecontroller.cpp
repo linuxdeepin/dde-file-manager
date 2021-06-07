@@ -954,17 +954,6 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
     } else {
         if (newFilePath.contains("gvfs/mtp")) {
             result = renameFileByGio(oldUrl, newUrl);
-
-            // mtp 目录无法删除，因此采用复制再删除的模式
-            if (!result && QFileInfo(file).isDir()) {
-                result = QProcess::execute("cp -r \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
-
-                if (result) {
-                    QProcess::execute("rm -r \"" + file.fileName().toUtf8() + "\"");
-                } else {
-                    QProcess::execute("rm -r \"" + newFilePath.toUtf8() + "\"");
-                }
-            }
         }
 
         if (!result) {
@@ -973,6 +962,17 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
 
         if (!result) {
             result = QProcess::execute("mv \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
+        }
+
+        // mtp ftp(和ftp搭建的配置有关系) 目录无法删除，因此采用复制再删除的模式
+        if (!result && (FileUtils::isFtpFile(oldUrl) || newFilePath.contains("gvfs/mtp")) && QFileInfo(file).isDir()) {
+            result = QProcess::execute("cp -r \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
+
+            if (result) {
+                QProcess::execute("rm -r \"" + file.fileName().toUtf8() + "\"");
+            } else {
+                QProcess::execute("rm -r \"" + newFilePath.toUtf8() + "\"");
+            }
         }
 
         if (result) {
