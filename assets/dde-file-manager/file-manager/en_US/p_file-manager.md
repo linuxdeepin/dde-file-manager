@@ -394,7 +394,38 @@ Prerequisite: Please enable **Developer Mode** from Control Center > General Set
 
 ### Burn CD
 
-You can copy music, video, pictures, or mirror files to a CD or DVD through the burning feature. Please prepare an imprint drive, a blank CD, or DVD disc in advance.
+You can copy music, video, pictures, or mirror files to a CD or DVD through the burning feature. The ISO9660 file system supports all CD and DVD formats, while the UDF file system only supports some CD formats. 
+
+<table class="block1">
+<tr>
+<td>Type</td>
+<td>Format</td>
+<td>ISO9660</td>
+<td>UDF</td></tr>
+<tr>
+<td rowspan="2">Blank disks</td>
+<td>DVD-R/DVD+R</td>
+<td>Supported</td>
+<td>Supported</td></tr>
+<tr>
+<td>Non DVD-R/DVD+R</td>
+<td>Supported</td>
+<td>Not Supported</td></tr>
+<tr>
+<td rowspan="2">Non blank disks</td>
+<td>DVD-R/DVD+R</td>
+<td>Adding files afterwards is supported.</td>
+<td>Only formats burned by primitive tools of Windows are supported.</td></tr>
+<tr>
+<!--<td>4.1</td>-->
+<td>Non DVD-R/DVD+R</td>
+<td>Adding files afterwards is supported.</td>
+<td>Adding files afterwards is not supported</td></tr>   
+</table>
+
+
+
+
 
 1. Insert the disc into the recording drive.
 
@@ -414,9 +445,7 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 
 6. After burning, a prompt box will pop up in the interface, and click **OK**.
 
->![notes](../common/notes.svg)Notes:
->- You can directly copy the files in the CD to the computer.
->- If you need to erase the disc data, you can right-click the disc icon in the left panel and select **Unmount**, right-click the disc icon again and select **Erase**.
+>![notes](../common/notes.svg)Notes: If you need to erase the disc data, you can right-click the disc icon in the left panel and select **Unmount**, right-click the disc icon again and select **Erase**.
 
 ### Create Link
 
@@ -606,12 +635,12 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
 
    ![0|disk](fig/disk2.png)
 
-> ![notes](../common/notes.svg)Notes: If you check **Quick Format**, the disk can be formated quickly in a few seconds, but the data could be restored by file recovery tools. If you don't want these data to be restored, you can uncheck this option box and format the disk.
+> ![notes](../common/notes.svg)Notes: If you check **Quick Format**, the disk can be formatted quickly in a few seconds, but the data could be restored by file recovery tools. If you don't want these data to be restored, you can uncheck this option box and format the disk.
 
 
 ## Main Menu
 
-You can create new window, switch themes, connect to server, [set share password](#Share Local Files), make settings, view manual and version information in Main Menu.
+You can create new window, switch themes, connect to server, set share password (see [Share Local Files](#Share Local Files)), make settings, view manual and version information in Main Menu.
 
 
 ### New Window
