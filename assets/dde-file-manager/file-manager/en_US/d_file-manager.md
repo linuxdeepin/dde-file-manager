@@ -381,7 +381,7 @@ You can find sharing folders of other users in the same LAN in **Computers in LA
 
 ### Burn CD
 
-You can copy music, video, pictures, or mirror files to a CD or DVD through the burning feature. Please prepare an imprint drive, a blank CD, or DVD disc in advance.
+You can copy music, video, pictures, or mirror files to a CD or DVD through the burning feature. Please prepare an imprint drive, a CD, or DVD disc in advance.
 
 1. Insert the disc into the recording drive.
 
@@ -402,7 +402,7 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 6. After burning, a prompt box will pop up in the interface, and click **OK**.
 
 >![notes](../common/notes.svg)Notes:
->- You can directly copy the files in the CD to the computer.
+>- For now, as for ISO9660 files, the system supports reading and burning; but, as for UDF files, it supports reading instead of burning.
 >- If you need to erase the disc data, you can right-click the disc icon in the left panel and select **Unmount**, right-click the disc icon again and select **Erase**.
 
 ### Create Link
@@ -453,7 +453,7 @@ You can assign an icon file to a file or folder icon through the command line an
 2. You can add position codes into the above command to add a corner marker to the upper left corner(lu), lower left corner(ld), upper right corner(ru) or lower right corner(rd).
 For example, to add a corner marker to the upper left corner, you have to input:
 **gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path);lu"**
-![mark](fig/d_single.png)
+![mark](fig/single.png)
 
 ### Add multiple corner markers
 To add 2~4 corner markers to a file/folder, you can input "|" in the command to separate multiple paths of the corner marker files. Only one corner marker can be added to the same corner, but you can replace it.
@@ -461,7 +461,7 @@ To add 2~4 corner markers to a file/folder, you can input "|" in the command to 
 For example, to add 4 corner markers to a file/folder icon, you can input:
 **gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path);lu|xxx(icon path);ld|xxx(icon path);ru|xxx(icon path);rd"**
 
-![mark](fig/d_multi.png)
+![mark](fig/multi.png)
 
 ### Cancel corner markers
 Open Terminal, input **gio set xxx(file path) -t stringv metadata::emblems ""** to cancel all corner markers on the file/folder icon. 
@@ -539,12 +539,12 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
 
    ![0|disk](fig/disk2.png)
 
-> ![notes](../common/notes.svg)Notes: If you check **Quick Format**, the disk can be formated quickly in a few seconds, but the data could be restored by file recovery tools. If you don't want these data to be restored, you can uncheck this option box and format the disk.
+> ![notes](../common/notes.svg)Notes: If you check **Quick Format**, the disk can be formatted quickly in a few seconds, but the data could be restored by file recovery tools. If you don't want these data to be restored, you can uncheck this option box and format the disk.
 
 
 ## Main Menu
 
-You can create new window, switch themes, connect to server, [set share password](#Share Local Files), make settings, view manual and version information in Main Menu.
+You can create new window, switch themes, connect to server, set share password (see [Share Local Files](#Share Local Files)), make settings, view manual and version information in Main Menu.
 
 
 ### New Window
