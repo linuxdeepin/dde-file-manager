@@ -381,11 +381,11 @@ void DFMOpticalMediaWidgetPrivate::setDeviceProperty(DeviceProperty dp)
     };
     if (curFS == QString("u/d/f").remove("/") && !isSupportedUD()) {
         if (DFMGlobal::isProfessional()) { // for other version, show normal unsupported writtings
-            lb_udsupport->setText(DFMOpticalMediaWidget::tr("Current disc is not supported for %1 burning").arg("U/D/F").remove("/"));
+            lb_udsupport->setText(DFMOpticalMediaWidget::tr("%1 burning is not supported").arg("U/D/F").remove("/"));
             icon_caution->setVisible(true);
             icon_caution->load(QString(":/dark/icons/caution.svg"));
             icon_caution->setFixedSize(14, 14);
-            icon_caution->setToolTip(DFMOpticalMediaWidget::tr("1. Disc is neither DVD+R nor DVD-R\n2. Current filesystem version is not supported for appending yet."));
+            icon_caution->setToolTip(DFMOpticalMediaWidget::tr("1. It is not a DVD-R or DVD+R disc;\n2. The version of this file system does not support adding files yet."));
         }
         lb_udsupport->setVisible(true);
         pb_burn->setEnabled(false);

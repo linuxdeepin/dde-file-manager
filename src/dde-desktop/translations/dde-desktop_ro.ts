@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3117"/>
+        <location filename="../view/canvasgridview.cpp" line="3123"/>
         <source>Icon size</source>
         <translation>Dimensiune pictogramă</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3125"/>
+        <location filename="../view/canvasgridview.cpp" line="3131"/>
         <source>Auto merge</source>
         <translation>Îmbinare automată</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3137"/>
+        <location filename="../view/canvasgridview.cpp" line="3143"/>
         <source>Auto arrange</source>
         <translation>Aranjare automată</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3174"/>
+        <location filename="../view/canvasgridview.cpp" line="3180"/>
         <source>Corner Settings</source>
         <translation>Setări Colţuri</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3183"/>
-        <location filename="../view/canvasgridview.cpp" line="3188"/>
+        <location filename="../view/canvasgridview.cpp" line="3189"/>
+        <location filename="../view/canvasgridview.cpp" line="3194"/>
         <source>Set Wallpaper</source>
-        <translation>Setează Tapet</translation>
+        <translation>Setează Imagine de fundal</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3186"/>
+        <location filename="../view/canvasgridview.cpp" line="3192"/>
         <source>Wallpaper and Screensaver</source>
-        <translation>Tapet şi Screensaver</translation>
+        <translation>Imagine de fundal şi economisitor de ecran</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3364"/>
+        <location filename="../view/canvasgridview.cpp" line="3370"/>
         <source>Properties</source>
         <translation>Proprietăți</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3165"/>
+        <location filename="../view/canvasgridview.cpp" line="3171"/>
         <source>Display Settings</source>
         <translation>Setări Afișare</translation>
     </message>
@@ -82,67 +82,67 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="718"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="728"/>
         <source>Wallpaper Slideshow</source>
-        <translation>Tapet Diapozitiv</translation>
+        <translation> Diapozitiv Imagini de fundal</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="764"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="774"/>
         <source>When login</source>
         <translation>La logare</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="766"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="776"/>
         <source>When wakeup</source>
         <translation>La trezire</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="818"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="828"/>
         <source>Require a password on wakeup</source>
         <translation>Solicită parola la trezire</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="850"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="860"/>
         <source>Never</source>
         <translation>Niciodată</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="852"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="862"/>
         <source>Wait:</source>
         <translation>Aşteaptă:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="885"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="895"/>
         <source>Wallpaper</source>
-        <translation>Tapet</translation>
+        <translation>Imagine de fundal</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="897"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="907"/>
         <source>Screensaver</source>
-        <translation>Screensaver</translation>
+        <translation>Economisitor de ecran</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="962"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="972"/>
         <source>Loading wallpapers...</source>
-        <translation type="unfinished"/>
+        <translation>Încărcare imagini de fundal...</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="964"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="974"/>
         <source>Loading screensavers...</source>
-        <translation type="unfinished"/>
+        <translation>Încărcare economisitori de ecran...</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1021"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1031"/>
         <source>Only desktop</source>
         <translation>Numai spaţiu de lucru</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1022"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1032"/>
         <source>Only lock screen</source>
         <translation>Numai ecran blocare</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1095"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1111"/>
         <source>Apply</source>
         <translation>Aplică</translation>
     </message>
@@ -150,16 +150,16 @@
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="274"/>
-        <location filename="../view/watermaskframe.cpp" line="275"/>
+        <location filename="../view/watermaskframe.cpp" line="279"/>
+        <location filename="../view/watermaskframe.cpp" line="280"/>
         <source>Not authorized</source>
-        <translation type="unfinished"/>
+        <translation>Nu este autorizat</translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="285"/>
-        <location filename="../view/watermaskframe.cpp" line="286"/>
+        <location filename="../view/watermaskframe.cpp" line="290"/>
+        <location filename="../view/watermaskframe.cpp" line="291"/>
         <source>In trial period</source>
-        <translation type="unfinished"/>
+        <translation>Perioada de grație</translation>
     </message>
 </context>
 </TS>

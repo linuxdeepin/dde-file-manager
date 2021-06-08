@@ -7,7 +7,7 @@
     </message>
     <message>
         <source>Disk is busy, cannot unmount now</source>
-        <translation type="unfinished"/>
+        <translation>Disk je zauzet, ne mogu sada odmontirati</translation>
     </message>
     <message>
         <source>Disk is busy, cannot eject now</source>
@@ -40,7 +40,7 @@
     <name>DiskControlWidget</name>
     <message>
         <source>dde-file-manager</source>
-        <translation type="unfinished"/>
+        <translation>dde-upravitelj-datotekama</translation>
     </message>
     <message>
         <source>The device was not safely removed</source>

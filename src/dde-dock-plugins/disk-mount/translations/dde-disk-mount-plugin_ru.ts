@@ -19,7 +19,7 @@
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>Устройство занято, сейчас удалить нельзя</translation>
+        <translation>Устройство занято, сейчас извлечь нельзя</translation>
     </message>
 </context>
 <context>
@@ -44,7 +44,7 @@
     </message>
     <message>
         <source>The device was not safely removed</source>
-        <translation>Устройство не было безопасно удалено</translation>
+        <translation>Устройство не было безопасно извлечено</translation>
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
@@ -56,11 +56,11 @@
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Устройство занято, сейчас удалить нельзя</translation>
+        <translation type="vanished">Устройство занято, сейчас извлечь нельзя</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
-        <translation>Не могу отключить устройство</translation>
+        <translation>Невозможно отключить устройство</translation>
     </message>
     <message>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
@@ -94,15 +94,15 @@
     <name>QObject</name>
     <message>
         <source>The device has been safely removed</source>
-        <translation>Устройство было безопасно удалено</translation>
+        <translation>Устройство было безопасно извлечено</translation>
     </message>
     <message>
         <source>Access denied</source>
-        <translation>Доступ закрыт</translation>
+        <translation>Доступ запрещен</translation>
     </message>
     <message>
         <source>You do not have permission to access this folder</source>
-        <translation>У вас нет разрешения на доступ к этой папке</translation>
+        <translation>У вас нет права доступа к этой папке</translation>
     </message>
     <message>
         <source>Confirm</source>
