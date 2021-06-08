@@ -311,6 +311,7 @@ public:
     static bool isDesktopSys();
     static bool isOpenAsAdmin();
     static bool isDeveloperMode();
+    static bool isProfessional();
 
     //check if is trash/computer desktop file containing Deepin_id of dde-trash/dde-computer
     static bool isDesktopFile(const DUrl &url);

@@ -66,6 +66,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QLibrary>
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -631,7 +632,289 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
     return ok;
 }
 
-void FileJob::doOpticalBlank(const DUrl &device)
+namespace  {
+typedef struct {
+    long total_size;
+    long wrote_size;
+    double progress;
+} ProgressInfo;
+
+// this is defined for callback register
+std::function<void (const ProgressInfo *)> udProgressCbBinder;
+extern "C" void udProgressCbProxy(const ProgressInfo *info) {
+    udProgressCbBinder(info);
+}
+
+std::function<void ()> closePipeAtExitBinder;
+extern "C" void closePipeAtExitProxy(int sig) {
+    closePipeAtExitBinder();
+    qDebug() << ":::::::::::::::::::::::::::::::::::" << sig;
+}
+
+extern "C" {
+typedef void (*progress_cb)(const ProgressInfo *);
+typedef void (*uburn_init)();
+typedef int (*uburn_do_burn)(const char *dev, const char *file, const char *lable);
+typedef void (*uburn_regi_cb)(progress_cb cb);
+typedef char **(*uburn_get_errors)(int *);
+typedef void (*uburn_show_verbose)();
+typedef void (*uburn_redirect_output)(int redir_stdout, int redir_stderr);
+
+static uburn_init               ub_init         = nullptr;
+static uburn_do_burn            ub_do_burn      = nullptr;
+static uburn_regi_cb            ub_regi_cb      = nullptr;
+static uburn_get_errors         ub_get_errors   = nullptr;
+static uburn_show_verbose       ub_show_verbose = nullptr;
+static uburn_redirect_output    ub_redirect_output = nullptr;
+}
+
+class LibHelper {
+private:
+    QLibrary lib;
+    bool libLoaded = false;
+    bool funcsLoaded = true;
+public:
+    LibHelper() {
+        lib.setFileName(QString("u/d/fburn").remove("/"));
+        libLoaded = lib.load();
+        if (!libLoaded)
+            return;
+
+        ub_init = reinterpret_cast<uburn_init>(lib.resolve("burn_init"));
+        funcsLoaded &= (ub_init != nullptr);
+
+        ub_do_burn = reinterpret_cast<uburn_do_burn>(lib.resolve("burn_burn_to_disc"));
+        funcsLoaded &= (ub_do_burn != nullptr);
+
+        ub_regi_cb = reinterpret_cast<uburn_regi_cb>(lib.resolve("burn_register_progress_callback"));
+        funcsLoaded &= (ub_regi_cb != nullptr);
+
+        ub_show_verbose = reinterpret_cast<uburn_show_verbose>(lib.resolve("burn_show_verbose_information"));
+        funcsLoaded &= (ub_show_verbose != nullptr);
+
+        ub_redirect_output = reinterpret_cast<uburn_redirect_output>(lib.resolve("burn_redirect_output"));
+        funcsLoaded &= (ub_redirect_output != nullptr);
+
+        ub_get_errors = reinterpret_cast<uburn_get_errors>(lib.resolve("burn_get_last_errors"));
+        funcsLoaded &= (ub_get_errors != nullptr);
+
+        qDebug() << "load lib " << (libLoaded ? "success" : "failed");
+        qDebug() << "load func " << (funcsLoaded ? "success" : "failed");
+    }
+    ~LibHelper() {
+        if (libLoaded)
+            lib.unload();
+        ub_init = nullptr;
+        ub_do_burn = nullptr;
+        ub_regi_cb = nullptr;
+        ub_show_verbose = nullptr;
+        ub_get_errors = nullptr;
+        ub_redirect_output = nullptr;
+        qInfo() << "lib unloaded";
+    }
+    inline bool canSafeUse() {
+        return libLoaded && funcsLoaded;
+    }
+};
+
+}
+
+void FileJob::doUDBurn(const DUrl &device, const QString &volname, int speed, const DISOMasterNS::BurnOptions &opts)
+{
+    Q_UNUSED(speed)
+    Q_UNUSED(opts)
+    LibHelper helper;
+    if (!helper.canSafeUse()) {
+        qCritical() << "lib cannot be used safely";
+        return;
+    }
+
+    qDebug() << "=======start burn umage...";
+    if (device.path().isEmpty()) {
+        qDebug() << "devpath is empty";
+        return;
+    }
+    m_tarPath = device.path();
+    QStringList devicePaths = DDiskManager::resolveDeviceNode(device.path(), {});
+    if (devicePaths.isEmpty()) {
+        qDebug() << "devicePaths is empty";
+        return;
+    }
+    QString udiskspath = devicePaths.first();
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    if (drive->opticalBlank()) {
+        QString filePath = device.path() + "/" BURN_SEG_STAGING;
+        qDebug() << "ghostSignal path" << filePath;
+        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(filePath), &DAbstractFileWatcher::fileDeleted, DUrl());
+    } else {
+        if (blkdev->mountPoints().count() > 0) {
+            blkdev->unmount({});
+            QDBusError err = blkdev->lastError();
+            if (err.type() != QDBusError::NoError) {
+                qWarning() << "device unmount failed before burning: " << err.message();
+                DThreadUtil::runInMainThread([]{
+                    dialogManager->showErrorDialog(qApp->translate("UnmountWorker", "The device was not safely unmounted"),
+                                                   qApp->translate("DUMountManager", "Disk is busy, cannot unmount now"));
+                });
+                return;
+            }
+        }
+    }
+
+    m_opticalJobPhase = 0;
+    m_opticalOpSpeed.clear();
+    m_isOpticalJob = true;
+    jobPrepared();
+    QUrl stagingurl(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
+                    + "/" DISCBURN_STAGING "/" + device.path().replace('/', '_') + "/");
+
+    m_opticalJobProgress = 0;
+    QString strDevice = device.path().mid(5);
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[strDevice].bBurningOrErasing = true;
+
+/////////////////////////////
+    constexpr int BUFFERSIZE = 4096;
+    int progressPipefd[2];
+    if (pipe(progressPipefd) < 0)
+        return;
+
+    int badPipefd[2];
+    if (pipe(badPipefd) < 0)
+        return;
+/////////////////////////////
+
+    pid_t pid = fork();
+    if (pid == 0) { // child process, do real burn here
+        close(badPipefd[0]);
+        close(progressPipefd[0]);
+
+        // make sure if the sub-process was aborted, the pip can be closed correctly
+        closePipeAtExitBinder = std::bind([ & ]{ close(badPipefd[1]); close(progressPipefd[1]); });
+        signal(SIGABRT, closePipeAtExitProxy);
+
+        int lastProgress = -1;
+        auto executor_cb = [&progressPipefd, &lastProgress](const ProgressInfo *info, FileJob *job) {
+            if (int(info->progress) == lastProgress)
+                return;
+            lastProgress = int(info->progress);
+
+            QJsonObject obj;
+            obj["phase"] = job->m_opticalJobPhase;
+            obj["status"] = DISOMasterNS::DISOMaster::JobStatus::Running;
+            obj["progress"] = lastProgress;
+            obj["speed"] = "";
+            obj["msg"] = "";
+            QByteArray bytes = QJsonDocument(obj).toJson();
+            if (bytes.size() < BUFFERSIZE)
+            {
+                char progressBuf[BUFFERSIZE + 1] = {0};
+                strncpy(progressBuf, bytes.data(), BUFFERSIZE);
+                write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
+            }
+        };
+        udProgressCbBinder = std::bind(executor_cb, std::placeholders::_1, this);
+        ub_init();
+        ub_regi_cb(udProgressCbProxy);
+        ub_show_verbose();
+        ub_redirect_output(1, 0);
+        int ret = ub_do_burn(m_tarPath.toStdString().c_str(),
+                             stagingurl.path().toStdString().c_str(),
+                             volname.toStdString().c_str());
+
+        char buf[BUFFERSIZE + 1] = { 0 };
+        buf[0] = ret == 0 ? '0' : '1';
+        if (ret != 0) {
+            int err_count = 0;
+            char **errors = ub_get_errors(&err_count);
+            if (errors != nullptr && err_count > 0) {
+                QByteArray ba;
+                for(int i = err_count - 1; i >= 0; i--) {
+                    ba.append(errors[i]);
+                    ba.append(";");
+                }
+                strncpy(buf + 1, ba.data(), BUFFERSIZE);
+            }
+        }
+        write(badPipefd[1], buf, strlen(buf) + 1);
+
+        close(progressPipefd[1]);
+        close(badPipefd[1]);
+        _exit(0);
+    } else if (pid > 0) {    // main process, receive datas and show progress
+        close(badPipefd[1]);
+        close(progressPipefd[1]);
+
+        // read progress
+        while (true) {
+            if (!drive->mediaChangeDetected()) {
+                m_lastError = TR_CONN_ERROR;
+                m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Failed;
+                qWarning() << "device disconnected...";
+                break;
+            }
+
+            char buf[BUFFERSIZE] = {0};
+            if (read(progressPipefd[0], buf, BUFFERSIZE) <= 0) {
+                qDebug() << "progressPipefd[0] break";
+                break;
+            } else {
+                QByteArray bufByes(buf);
+                qDebug() << "burn files, read bytes json:" << bufByes;
+                QJsonParseError jsonError;
+                QJsonObject obj = QJsonDocument::fromJson(bufByes, &jsonError).object();
+                if (jsonError.error == QJsonParseError::NoError) {
+                    m_opticalJobPhase = obj["phase"].toInt();
+                    int stat = obj["status"].toInt();
+                    int progress = obj["progress"].toInt();
+                    QString speed = obj["speed"].toString();
+                    QJsonArray jsonArray = obj["msg"].toArray();
+                    QStringList msgList;
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                        msgList.append(jsonArray[i].toString());
+                    }
+                    opticalJobUpdatedByParentProcess(stat, progress, speed, msgList);
+                }
+            }
+        }
+
+        // read burn result
+        char result[BUFFERSIZE] = { 0 };
+        read(badPipefd[0], result, sizeof(result));
+        QByteArray ba(result + 1);
+
+        bool ok = result[0] == '0';
+        if (ok) { // burn success
+            for (int i = 0; i < 20; i++) { // must show 100%
+                opticalJobUpdatedByParentProcess(DISOMasterNS::DISOMaster::JobStatus::Running, 100, m_opticalOpSpeed, m_lastSrcError);
+                QThread::msleep(100);
+            }
+            emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
+            QStringList &&stagings = QDir(stagingurl.path()).entryList();
+            qInfo() << "the staging files are deleted, cause burning succeed. Files: \n" << stagings;
+            doDelete({DUrl::fromLocalFile(stagingurl.path())});
+        } else { // burn failed
+            QString err(result + 1);
+            auto err_list = ba.split(';');
+            for (int i = 0; i < err_list.count(); i++) {
+                m_lastSrcError << err_list[i];
+            }
+            emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
+            if (m_isJobAdded)
+                jobRemoved();
+        }
+        close(badPipefd[0]);
+        close(progressPipefd[0]);
+    } else {
+        perror("fork()");
+        return;
+    }
+
+    m_isOpticalJob = false;
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[strDevice].bBurningOrErasing = false;
+}
+
+void FileJob::doDiscBlank(const DUrl &device)
 {
     m_isOpticalJob = true;
     QString dev = device.path();
@@ -701,7 +984,7 @@ void FileJob::doOpticalBlank(const DUrl &device)
     m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
 }
 
-void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, int speed, DISOMasterNS::BurnOptions opts)
+void FileJob::doISOBurn(const DUrl &device, QString volname, int speed, DISOMasterNS::BurnOptions opts)
 {
     qDebug() << "doOpticalBurnByChildProcess";
     if (device.path().isEmpty()) {
@@ -724,15 +1007,17 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
         qDebug() << "ghostSignal path" << filePath;
         DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(filePath), &DAbstractFileWatcher::fileDeleted, DUrl());
     } else {
-        blkdev->unmount({});
-        QDBusError err = blkdev->lastError();
-        if (err.type() != QDBusError::NoError) {
-            qWarning() << "device unmount failed before burning: " << err.message();
-            DThreadUtil::runInMainThread([]{
-                dialogManager->showErrorDialog(qApp->translate("UnmountWorker", "The device was not safely unmounted"),
-                                               qApp->translate("DUMountManager", "Disk is busy, cannot unmount now"));
-            });
-            return;
+        if (blkdev->mountPoints().count() > 0) {
+            blkdev->unmount({});
+            QDBusError err = blkdev->lastError();
+            if (err.type() != QDBusError::NoError) {
+                qWarning() << "device unmount failed before burning: " << err.message();
+                DThreadUtil::runInMainThread([]{
+                    dialogManager->showErrorDialog(qApp->translate("UnmountWorker", "The device was not safely unmounted"),
+                                                   qApp->translate("DUMountManager", "Disk is busy, cannot unmount now"));
+                });
+                return;
+            }
         }
     }
     m_opticalJobPhase = 0;
@@ -742,7 +1027,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
     QUrl stagingurl(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
                     + "/" DISCBURN_STAGING "/" + device.path().replace('/', '_') + "/");
 
-    /////////////////////////////
+/////////////////////////////
     constexpr int BUFFERSIZE = 4096;
     int progressPipefd[2];
     if (pipe(progressPipefd) < 0)
@@ -954,8 +1239,7 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
     }
 }
 
-
-void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &image, int speed, DISOMasterNS::BurnOptions opts)
+void FileJob::doISOImageBurn(const DUrl &device, const DUrl &image, int speed, DISOMasterNS::BurnOptions opts)
 {
     if (device.path().isEmpty()) {
         qDebug() << "devpath is empty";

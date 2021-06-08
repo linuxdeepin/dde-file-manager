@@ -84,5 +84,6 @@
         <file>dark/icons/search.svg</file>
         <file>dark/icons/glowing.svg</file>
         <file>light/icons/glowing.svg</file>
+        <file>dark/icons/caution.svg</file>
     </qresource>
 </RCC>

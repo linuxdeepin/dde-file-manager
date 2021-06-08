@@ -710,7 +710,7 @@ void DTaskDialog::removeTaskImmediately(const QMap<QString, QString> &jobDetail)
 
 void DTaskDialog::delayRemoveTask(const QMap<QString, QString> &jobDetail)
 {
-    QTimer::singleShot(2000, this, [ = ]() {
+    QTimer::singleShot(1500, this, [ = ]() {
         removeTask(jobDetail);
     });
 }
