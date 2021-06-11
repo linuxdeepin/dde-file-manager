@@ -1,4 +1,4 @@
-/*
+    /*
  * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     yanghao<yanghao@uniontech.com>
@@ -700,7 +700,6 @@ QString DFileCopyMoveJobPrivate::getNewFileName(const DAbstractFileInfoPointer s
 bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInfoPointer source_info, const DAbstractFileInfoPointer target_info, const bool isNew)
 {
 //    Q_Q(DFileCopyMoveJob);
-
     bool isErrorOccur = false;
 
     if (!source_info) {
@@ -4640,7 +4639,7 @@ void DFileCopyMoveJob::run()
                 qCDebug(fileJob(), "canUseWriteBytes = %d, targetIsRemovable = %d", bool(d->canUseWriteBytes), bool(d->targetIsRemovable));
             }
         }
-    } else if (d->mode == CopyMode) {
+    } else if (d->mode == CopyMode || d->mode == CutMode) {
         d->setError(UnknowError, "Invalid target url");
         goto end;
     } else {
