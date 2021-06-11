@@ -124,6 +124,7 @@ public:
     enum ClipboardAction {
         CutAction,
         CopyAction,
+        DeleteAction,
         UnknowAction
     };
 
