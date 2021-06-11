@@ -2856,6 +2856,9 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
 
     const QModelIndex &index = rootIndex();
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
+    if (!info)
+        return;
+
     QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SpaceArea);
 
     // 针对平板，对空白区域右键菜单进行特殊处理
