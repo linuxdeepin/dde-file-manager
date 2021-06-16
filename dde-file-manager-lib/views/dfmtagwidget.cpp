@@ -216,7 +216,7 @@ void DFMTagWidget::loadTags(const DUrl &durl)
 {
     Q_D(DFMTagWidget);
     DUrl url = d->redirectUrl(durl);
-    if (!d->m_tagCrumbEdit || !d->m_tagActionWidget || !shouldShow(url))
+    if (!d->m_tagCrumbEdit || !d->m_tagActionWidget || (!shouldShow(url) && !DFMGlobal::isTablet()))
         return;
     const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({url});
     QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});

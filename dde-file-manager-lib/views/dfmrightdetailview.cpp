@@ -124,8 +124,7 @@ void DFMRightDetailView::initUI()
     d->mainLayout->addWidget(createLine());
     d->mainLayout->addWidget(d->separatorLine2 = createLine());
 
-    if (!DFMGlobal::isTablet())
-        initTagWidget();
+    initTagWidget();
 
     d->mainLayout->addStretch();
 
@@ -138,10 +137,12 @@ void DFMRightDetailView::initTagWidget()
 {
     Q_D(DFMRightDetailView);
     d->tagInfoWidget = new DFMTagWidget(d->m_url, this);
-    d->tagInfoWidget->tagTitle()->setHidden(true);
-    d->tagInfoWidget->tagLeftTitle()->setHidden(false);
-    d->tagInfoWidget->setMaximumHeight(100);
-    d->mainLayout->addWidget(d->tagInfoWidget);
+    if (!DFMGlobal::isTablet()) {
+        d->tagInfoWidget->tagTitle()->setHidden(true);
+        d->tagInfoWidget->tagLeftTitle()->setHidden(false);
+        d->tagInfoWidget->setMaximumHeight(100);
+        d->mainLayout->addWidget(d->tagInfoWidget);
+    }
 }
 
 void DFMRightDetailView::setUrl(const DUrl &url)
