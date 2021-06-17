@@ -265,6 +265,8 @@ By adding tags on file/folder, you can classify and manage your files better.
 
 #### Add Tags
 
+You can add tag to multiple files/folders at a time, or add multiple tags to a single file/folder; you can also add tags in Properties of the file/folder. The tag appears in the left panel.
+
 ##### By Tag information
 
 1. Right-click a file/folder, select **Tag information**.
@@ -289,9 +291,9 @@ Select a file/folder, click ![fileinfo](../common/fileinfo.svg), and add tags in
 
 ![1|infotag](fig/d_infotag.png)
 
-> ![notes](../common/notes.svg)Notes: You can add tag to multiple files/folders at a time, or add multiple tags to a single file/folder; you can also add tags in Properties of the file/folder. The tag appears in the left panel.
 
-> ![attention](../common/attention.svg)Attention: If a file has a tag, copy or cut and then paste it, the new file still has the same tag.
+
+> ![notes](../common/notes.svg)Notes: If a file has a tag, copy or cut and then paste it, the new file still has the same tag.
 
 #### Rename Tag
 
@@ -375,7 +377,7 @@ You can find sharing folders of other users in the same LAN in **Computers in LA
 
 ### Burn CD
 
-You can copy music, video, pictures, or mirror files to a CD or DVD through the burning feature. Please prepare an imprint drive, a blank CD, or DVD disc in advance.
+You can copy music, video, pictures, or mirror files to a CD or DVD through the burning feature. Please prepare an imprint drive, a CD, or DVD disc in advance.
 
 1. Insert the disc into the recording drive.
 
