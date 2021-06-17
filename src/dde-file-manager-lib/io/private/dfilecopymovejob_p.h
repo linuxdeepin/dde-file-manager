@@ -320,7 +320,6 @@ public:
     //优化盘内拷贝，启用的线程池
     QThreadPool m_pool;
     QAtomicInteger<bool> m_bDestLocal = false;
-    QAtomicInteger<bool> m_bCountMyself = false;
     qint64 m_refineCopySize = 0;
     QMutex m_refineMutex;
     //是否需要显示进度条

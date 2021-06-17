@@ -3504,7 +3504,7 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
     dataSize += completedProgressDataSize;
 
     //优化
-    dataSize = (m_bDestLocal || m_bCountMyself) ? m_refineCopySize : dataSize;
+    dataSize = m_bDestLocal ? m_refineCopySize : dataSize;
 
     dataSize += skipFileSize;
 
@@ -3569,7 +3569,7 @@ void DFileCopyMoveJobPrivate::updateMoveProgress()
 void DFileCopyMoveJobPrivate::updateSpeed()
 {
     const qint64 time = updateSpeedElapsedTimer->elapsed();
-    const qint64 total_size = (m_bDestLocal || m_bCountMyself) ? m_refineCopySize : getCompletedDataSize();
+    const qint64 total_size = m_bDestLocal ? m_refineCopySize : getCompletedDataSize();
     if (time == 0)
         return;
 
@@ -4588,7 +4588,6 @@ void DFileCopyMoveJob::run()
                     d->m_refineStat = NoRefine;
 
                 if (!d->canUseWriteBytes) {
-                    d->m_bCountMyself = true;
                     const QByteArray dev_path = targetStorageInfo->device();
 
                     QProcess process;
