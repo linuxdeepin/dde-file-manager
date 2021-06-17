@@ -142,7 +142,8 @@ void SearchFileWatcher::addWatcher(const DUrl &url)
     connect(watcher, &DAbstractFileWatcher::fileAttributeChanged, this, &SearchFileWatcher::onFileAttributeChanged);
     connect(watcher, &DAbstractFileWatcher::fileDeleted, this, &SearchFileWatcher::onFileDeleted);
     connect(watcher, &DAbstractFileWatcher::fileModified, this, &SearchFileWatcher::onFileModified);
-    connect(watcher, &DAbstractFileWatcher::fileMoved, this, &SearchFileWatcher::onFileMoved);
+//    connect(watcher, &DAbstractFileWatcher::fileMoved, this, &SearchFileWatcher::onFileMoved);
+    connect(DFileService::instance(), &DFileService::fileRenamed, this, &SearchFileWatcher::onFileMoved);
 
     if (d->started) {
         watcher->startWatcher();
@@ -182,6 +183,9 @@ void SearchFileWatcher::onFileAttributeChanged(const DUrl &url)
 
 void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
 {
+    if (fromUrl.isSearchFile() || toUrl.isSearchFile())
+        return;
+
     DUrl newFromUrl = fileUrl();
     newFromUrl.setSearchedFileUrl(fromUrl);
 
