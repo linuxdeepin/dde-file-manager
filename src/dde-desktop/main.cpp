@@ -109,6 +109,11 @@ static bool registerFileManager1DBus()
 
 int main(int argc, char *argv[])
 {
+    //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
+    if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")){
+        qputenv("XDG_CURRENT_DESKTOP", "Deepin");
+    }
+
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 

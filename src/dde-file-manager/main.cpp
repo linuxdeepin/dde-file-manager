@@ -133,6 +133,11 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
+    //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
+    if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")){
+        qputenv("XDG_CURRENT_DESKTOP", "Deepin");
+    }
+
     if (DFMGlobal::isWayLand()) {
         qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
         //以下代码用于视频预览使用
