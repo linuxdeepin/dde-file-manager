@@ -111,8 +111,8 @@ int main(int argc, char *argv[])
 {
 
     //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
-    if (!QString(qgetenv("XDG_CURRENT_DESKTOP")).toLower().startsWith("deepin")){
-        setenv("XDG_CURRENT_DESKTOP", "Deepin", 1);
+    if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")){
+        qputenv("XDG_CURRENT_DESKTOP", "Deepin");
     }
 
     // Fixed the locale codec to utf-8
