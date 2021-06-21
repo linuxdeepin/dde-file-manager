@@ -161,7 +161,10 @@ void DTaskDialog::initUI()
     f.setPixelSize(14); // 固定字体大小不随系统字体大小改变。。label显示不全
     setFont(f);
 
-    setWindowFlags((windowFlags() & ~ Qt::WindowSystemMenuHint & ~Qt::Dialog) | Qt::Window | Qt::WindowMinMaxButtonsHint);
+    if (DFMGlobal::isTablet())
+        setWindowFlags((windowFlags() & ~ Qt::WindowSystemMenuHint) | Qt::WindowMinMaxButtonsHint);
+    else
+        setWindowFlags((windowFlags() & ~ Qt::WindowSystemMenuHint & ~Qt::Dialog) | Qt::Window | Qt::WindowMinMaxButtonsHint);
     setFixedWidth(m_defaultWidth);
     AC_SET_OBJECT_NAME( this, AC_TASK_DLG);
     AC_SET_ACCESSIBLE_NAME( this, AC_TASK_DLG);
@@ -313,8 +316,12 @@ void DTaskDialog::addTaskWidget(DFMTaskWidget *wid)
     AC_SET_OBJECT_NAME( wid, acMark);
     AC_SET_ACCESSIBLE_NAME( wid, acMark);
 
-    // 显示最小化按钮、关闭按钮
-    setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
+    // 只有非平板设备才显示最小化按钮
+    if (DFMGlobal::isTablet())
+        setWindowFlags(windowFlags() & ~Qt::WindowMinimizeButtonHint);
+    else
+        setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
+
     setTitle(m_taskListWidget->count());
     adjustSize();
     setModal(false);
@@ -354,7 +361,7 @@ void DTaskDialog::showVaultDeleteDialog(DFMTaskWidget *wid)
     AC_SET_ACCESSIBLE_NAME( wid, acMark);
 
     // 因为对话框为模态对话框，点击最小化按钮窗口并不能最小化，故隐藏最小化按钮
-    setWindowFlags(Qt::WindowCloseButtonHint);
+    setWindowFlags(windowFlags() & ~Qt::WindowMinimizeButtonHint);
     adjustSize();
     setModal(true);
     show();

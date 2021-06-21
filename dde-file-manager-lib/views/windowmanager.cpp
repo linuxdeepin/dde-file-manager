@@ -204,7 +204,9 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
     qDebug() << "new window" << window->winId() << url;
 
     if (DFMGlobal::isTablet() && dialogManager->taskDialog()) {
-        dialogManager->taskDialog()->setParent(window);
+        auto *taskDialog = dialogManager->taskDialog();
+        const auto &flags = taskDialog->windowFlags();
+        taskDialog->setParent(window, flags);
     }
 
     connect(window, &DFileManagerWindow::aboutToClose,
