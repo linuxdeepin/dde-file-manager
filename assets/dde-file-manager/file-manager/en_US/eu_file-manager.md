@@ -537,7 +537,7 @@ You can create new window, switch themes, connect to server, set share password 
 You can [visit sharing folders](#Visit Sharing Folders) by connecting to server.
 
 1. Click ![icon_menu](../common/icon_menu.svg)on the interface.
-2. Select **Connect to Server**, input server's IP address in the editing box.
+2. Select **Connect to Server**, input server's IP address (XX.XX.XX.XX) in the editing box.
    - Click ![+](../common/+.svg) to add the address into **My Favorites**.
    - Select an address from **My Favorites** and click ![-](../common/-.svg) to delete in from **My Favorites**.
 3. Click **Connect**.
