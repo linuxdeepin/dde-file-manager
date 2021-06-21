@@ -35,7 +35,8 @@ DFMSideBarItem::DFMSideBarItem(const QIcon &icon, const QString &text, const DUr
     this->setData(SidebarItem, ItemTypeRole);
     this->setData("none", ItemUseRegisteredHandlerRole);
     // setToolTip(text);
-    this->setData(QUuid::createUuid().toString(), ItemUniqueKeyRole);
+    if (url.scheme() == TAG_SCHEME || url.scheme() == BOOKMARK_SCHEME) // uniqueKey 用于记录拖动的 Item，除标记和书签外，其他item都不能拖动，因此对其他item不设置此字段
+        this->setData(QUuid::createUuid().toString(), ItemUniqueKeyRole);
     this->setData(url.path().remove("/").remove(".localdisk"), ItemVolTagRole);
 }
 

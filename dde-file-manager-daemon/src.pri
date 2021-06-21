@@ -41,9 +41,9 @@ HEADERS += \
     $$PWD/dbusservice/dbusinterface/usbformatter_interface.h \
     $$PWD/tag/tagmanagerdaemon.h \
     $$PWD/dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.h \
-    $$PWD/acesscontrol/acesscontrolmanager.h \
-    $$PWD/dbusservice/dbusadaptor/acesscontrol_adaptor.h \
-    $$PWD/dbusservice/dbusinterface/acesscontrol_interface.h \
+    $$PWD/accesscontrol/accesscontrolmanager.h \
+    $$PWD/dbusservice/dbusadaptor/accesscontrol_adaptor.h \
+    $$PWD/dbusservice/dbusinterface/accesscontrol_interface.h \
     $$PWD/vault/vaultmanager.h \
     $$PWD/dbusservice/dbusadaptor/vault_adaptor.h \
     $$PWD/dbusservice/dbusinterface/vault_interface.h \
@@ -83,9 +83,9 @@ SOURCES += \
     $$PWD/dbusservice/dbusinterface/usbformatter_interface.cpp \
     $$PWD/tag/tagmanagerdaemon.cpp \
     $$PWD/dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.cpp \
-    $$PWD/acesscontrol/acesscontrolmanager.cpp \
-    $$PWD/dbusservice/dbusadaptor/acesscontrol_adaptor.cpp \
-    $$PWD/dbusservice/dbusinterface/acesscontrol_interface.cpp \
+    $$PWD/accesscontrol/accesscontrolmanager.cpp \
+    $$PWD/dbusservice/dbusadaptor/accesscontrol_adaptor.cpp \
+    $$PWD/dbusservice/dbusinterface/accesscontrol_interface.cpp \
     $$PWD/vault/vaultmanager.cpp \
     $$PWD/dbusservice/dbusadaptor/vault_adaptor.cpp \
     $$PWD/dbusservice/dbusinterface/vault_interface.cpp \

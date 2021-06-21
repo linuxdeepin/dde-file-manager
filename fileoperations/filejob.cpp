@@ -44,6 +44,7 @@
 #include "views/dfmopticalmediawidget.h"
 #include "controllers/vaultcontroller.h"
 #include "controllers/masteredmediacontroller.h"
+#include "dialogs/dialogmanager.h"
 
 #include "tag/tagmanager.h"
 
@@ -718,6 +719,15 @@ void FileJob::doOpticalBurnByChildProcess(const DUrl &device, QString volname, i
         DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(device.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
     }
     blkdev->unmount({});
+    QDBusError err = blkdev->lastError();
+    if (err.type() != QDBusError::NoError) {
+        qWarning() << "device unmount failed before burning: " << err.message();
+        DThreadUtil::runInMainThread([]{
+            dialogManager->showErrorDialog(qApp->translate("UnmountWorker", "The device was not safely unmounted"),
+                                           qApp->translate("DUMountManager", "Disk is busy, cannot unmount now"));
+        });
+        return;
+    }
     m_opticalJobPhase = 0;
     m_opticalOpSpeed.clear();
     jobPrepared();

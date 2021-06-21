@@ -1135,12 +1135,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2385"/>
+        <location filename="../views/dfileview.cpp" line="2373"/>
+        <source>Disc mount error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfileview.cpp" line="2373"/>
+        <source>The disc is in use, please end the running process and remount the disc.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfileview.cpp" line="2386"/>
         <source>Mounting failed</source>
         <translation>Mounting failed</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3041"/>
+        <location filename="../views/dfileview.cpp" line="3042"/>
         <source>(Reverse)</source>
         <translation>(Reverse)</translation>
     </message>
@@ -1307,6 +1317,14 @@
     </message>
 </context>
 <context>
+    <name>DUMountManager</name>
+    <message>
+        <location filename="../../fileoperations/filejob.cpp" line="727"/>
+        <source>Disk is busy, cannot unmount now</source>
+        <translation type="unfinished">Disk is busy, cannot unmount now</translation>
+    </message>
+</context>
+<context>
     <name>DeepinStorage</name>
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="114"/>
@@ -1432,6 +1450,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="891"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1246"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
+        <location filename="../dialogs/dialogmanager.h" line="150"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
@@ -1773,71 +1792,71 @@
 <context>
     <name>FileJob</name>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="174"/>
+        <location filename="../../fileoperations/filejob.cpp" line="175"/>
         <source>copy</source>
         <translation>copy</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="909"/>
-        <location filename="../../fileoperations/filejob.cpp" line="918"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1147"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1156"/>
+        <location filename="../../fileoperations/filejob.cpp" line="919"/>
+        <location filename="../../fileoperations/filejob.cpp" line="928"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1157"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1166"/>
         <source>Data verification successful.</source>
         <translation>Data verification successful.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="922"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1160"/>
+        <location filename="../../fileoperations/filejob.cpp" line="932"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1170"/>
         <source>Burn process completed</source>
         <translation>Burn process completed</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1313"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1323"/>
         <source>%1 s</source>
         <translation>%1 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1317"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1327"/>
         <source>%1 m %2 s</source>
         <translation>%1 m %2 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1322"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1332"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 h %2 m %3 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1329"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1339"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 d %2 h %3 m %4 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3044"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3054"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1 is a duplicate file.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3047"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3057"/>
         <source>Insufficient disc space.</source>
         <translation>Insufficient disc space.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3050"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3060"/>
         <source>Lost connection to drive.</source>
         <translation>Lost connection to drive.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3053"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3063"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>The CD/DVD drive is not ready. Try another disc.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3056"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3066"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3063"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3073"/>
         <source>Unknown error</source>
         <translation>Unknown error</translation>
     </message>
@@ -2238,71 +2257,71 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="799"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="804"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>Can’t verify the identity of %1.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="800"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="805"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>This happens when you log in to a computer the first time.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="801"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="806"/>
         <source>The identity sent by the remote computer is</source>
         <translation>The identity sent by the remote computer is</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="803"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="808"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>If you want to be absolutely sure it is safe to continue, contact the system administrator.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="849"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1481"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1487"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1490"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="854"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1486"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1492"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1495"/>
         <source>Mounting device error</source>
         <translation>Mounting device error</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="849"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1487"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="854"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1492"/>
         <source>Wrong username or password</source>
         <translation>Wrong username or password</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1611"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1616"/>
         <source>No key available to unlock device</source>
         <translation>No key available to unlock device</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1699"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1704"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1702"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1712"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1740"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1859"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1890"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1707"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1717"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1745"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1864"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1895"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1709"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1887"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1714"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1892"/>
         <source>Cannot find the mounted device</source>
         <translation>Cannot find the mounted device</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1737"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1742"/>
         <source>Cannot unmount the device</source>
         <translation>Cannot unmount the device</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1855"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1860"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>Cannot eject the device &quot;%1&quot;</translation>
     </message>
@@ -4159,6 +4178,7 @@
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="1493"/>
+        <location filename="../../fileoperations/filejob.cpp" line="726"/>
         <source>The device was not safely unmounted</source>
         <translation>The device was not safely unmounted</translation>
     </message>
