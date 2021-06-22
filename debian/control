@@ -67,7 +67,8 @@ Build-Depends:
  libboost-regex-dev,
  libboost-system-dev,
  libboost-test-dev,
- libboost-thread-dev
+ libboost-thread-dev,
+ deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
@@ -109,6 +110,7 @@ Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
+ ${dist:Depends},
  libpoppler-cpp0v5 (>= 0.48.0),
  gvfs-backends(>=1.27.3),
  cryptsetup,
