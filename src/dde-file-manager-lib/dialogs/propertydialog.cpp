@@ -1377,6 +1377,15 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
     quint64 fsUsed = info->extraProperties()["fsUsed"].toULongLong();
     quint64 fsFreeSize = info->extraProperties()["fsFreeSize"].toULongLong();
     quint64 fsSize = info->extraProperties()["fsSize"].toULongLong();
+    //fixed:CD display size error
+    if (static_cast<DFMRootFileInfo::ItemType>(info->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
+        DFMRootFileInfo *pFileInfo = dynamic_cast<DFMRootFileInfo *>(info.data());
+        QString strVolTag;
+        if (pFileInfo)
+            strVolTag = pFileInfo->getVolTag();
+        fsSize = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nTotal;
+        fsFreeSize = fsSize - DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nUsage;
+    }
     quint64 fileCount = 0;
     DUrl redirectedFileUrl = info->redirectedFileUrl();
     if (!redirectedFileUrl.isEmpty()) {

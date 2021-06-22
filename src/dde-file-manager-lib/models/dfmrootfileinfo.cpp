@@ -518,6 +518,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         }
         ret["fsSize"] = quint64(d->size);
         ret["fsType"] = d->fs;
+        ret["fsVersion"] = d->fsVersion;
         ret["encrypted"] = d->encrypted;
         ret["unlocked"] = !d->encrypted || d->ctblk;
         if (d->ctblk) {
@@ -631,6 +632,7 @@ void DFMRootFileInfo::checkCache()
     }
     loadDiskInfo();
     d->fs = blk->idType();
+    d->fsVersion = blk->idVersion();
     d->idUUID = blk->idUUID();
     d->udispname = canSetAlias() ? udisksDispalyAlias() : udisksDisplayName();
 
