@@ -5,7 +5,7 @@ data="ZGRlLWZpbGUtbWFuYWdlcg=="
 
 for i in "$@"
 do
-        arg_base64=`echo -n $i|base64 -w 0`
+        arg_base64=`echo -e "$i\c"|base64 -w 0`
         data=$data" "$arg_base64
 done
 
