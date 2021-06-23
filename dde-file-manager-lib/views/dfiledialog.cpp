@@ -167,6 +167,19 @@ DFileDialog::DFileDialog(QWidget *parent)
         {
             statusBar()->lineEdit()->setText(statusBar()->lineEdit()->text().chopped(1));
         }
+
+        // 输入框中禁止输入某些特殊字符
+        QString srcText = statusBar()->lineEdit()->text();
+        QString dstText = DFMGlobal::preprocessingFileName(srcText);
+        //如果存在非法字符且更改了当前的文本文件
+        if (srcText != dstText) {
+            //之前的光标Pos
+            int srcCursorPos = statusBar()->lineEdit()->cursorPosition();
+            statusBar()->lineEdit()->setText(dstText);
+            int endPos = srcCursorPos + (dstText.length() - srcText.length());
+            //调整光标位置
+            statusBar()->lineEdit()->setCursorPosition(endPos);
+        }
     });
     //平板上另存为对话框要关闭
     if (DFMGlobal::isTablet()) {
