@@ -487,7 +487,7 @@ bool mediaChangeDetected1lamda(void *)
     }
     return false;
 }
-TEST_F(FileJobTest, start_doOpticalBlank)
+TEST_F(FileJobTest, start_doDiscBlank)
 {
     DUrl url = DUrl::fromLocalFile("/dev/sr*");
     void (*unmountlamda)(const QVariantMap &) = [](const QVariantMap &){};
@@ -501,14 +501,14 @@ TEST_F(FileJobTest, start_doOpticalBlank)
     bool (*mediaChangeDetectedlamda)(void *) = [](void *){return false;};
     stl.set(ADDR(DDiskDevice,mediaChangeDetected),mediaChangeDetectedlamda);
     job->m_isJobAdded = true;
-    EXPECT_NO_FATAL_FAILURE(job->doOpticalBlank(url));
+    EXPECT_NO_FATAL_FAILURE(job->doDiscBlank(url));
 
 
     stl.set(ADDR(DDiskDevice,mediaChangeDetected),&mediaChangeDetected1lamda);
     void (*opticalJobUpdatedByParentProcesslamda)(int, int,const QString &,const QStringList &) = []
             (int , int , const QString &,const QStringList &){};
     stl.set(ADDR(FileJob,opticalJobUpdatedByParentProcess),opticalJobUpdatedByParentProcesslamda);
-    EXPECT_NO_FATAL_FAILURE(job->doOpticalBlank(url));
+    EXPECT_NO_FATAL_FAILURE(job->doDiscBlank(url));
 }
 
 static int pipe2new = 0;
@@ -519,18 +519,18 @@ int pipe3lamda(int[]){
     }
     return -1;
 }
-TEST_F(FileJobTest, start_doOpticalBurnByChildProcess)
+TEST_F(FileJobTest, start_doISOBurn)
 {
     DUrl url = DUrl::fromLocalFile("/dev/sr*");
     DISOMasterNS::BurnOptions opts;
     opts |= DISOMasterNS::BurnOption::VerifyDatas;
-    EXPECT_NO_FATAL_FAILURE(job->doOpticalBurnByChildProcess(DUrl(), "test", 10, opts));
+    EXPECT_NO_FATAL_FAILURE(job->doISOBurn(DUrl(), "test", 10, opts));
 
     QStringList (*resolveDeviceNodelamda)(QString, QVariantMap) = [](QString, QVariantMap){return QStringList();};
     {
         Stub stl;
         stl.set(ADDR(DDiskManager,resolveDeviceNode),resolveDeviceNodelamda);
-        EXPECT_NO_FATAL_FAILURE(job->doOpticalBurnByChildProcess(url, "test", 10, opts));
+        EXPECT_NO_FATAL_FAILURE(job->doISOBurn(url, "test", 10, opts));
     }
     bool (*opticalBlanklamda)(void *) = [](void *){return false;};
     stl.set(ADDR(DDiskDevice,opticalBlank),opticalBlanklamda);
@@ -544,34 +544,34 @@ TEST_F(FileJobTest, start_doOpticalBurnByChildProcess)
         return QStringList() << QString("test");
     };
     stl.set(ADDR(DDiskManager,resolveDeviceNode),resolveDeviceNode1lamda);
-    EXPECT_NO_FATAL_FAILURE(job->doOpticalBurnByChildProcess(url, "test", 10, opts));
+    EXPECT_NO_FATAL_FAILURE(job->doISOBurn(url, "test", 10, opts));
 
     void (*unmountlamda)(const QVariantMap &) = [](const QVariantMap &){};
     stl.set(ADDR(DBlockDevice,unmount),unmountlamda);
     bool (*opticalBlank1lamda)(void *) = [](void *){return true;};
     stl.set(ADDR(DDiskDevice,opticalBlank),opticalBlank1lamda);
     stl.set(pipe,&pipe3lamda);
-    EXPECT_NO_FATAL_FAILURE(job->doOpticalBurnByChildProcess(url, "test", 10, opts));
+    EXPECT_NO_FATAL_FAILURE(job->doISOBurn(url, "test", 10, opts));
 
     stl.reset(pipe);
     TestHelper::runInLoop([=](){
-        EXPECT_NO_FATAL_FAILURE(job->doOpticalBurnByChildProcess(url, "test", 10, opts));
+        EXPECT_NO_FATAL_FAILURE(job->doISOBurn(url, "test", 10, opts));
     },5000);
 }
 
-TEST_F(FileJobTest, doOpticalImageBurnByChildProcess)
+TEST_F(FileJobTest, doISOImageBurn)
 {
     DUrl url = DUrl::fromLocalFile("/dev/sr*");
     DUrl image;
     DISOMasterNS::BurnOptions opts;
     opts |= DISOMasterNS::BurnOption::VerifyDatas;
-    EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(DUrl(), image, 10, opts));
+    EXPECT_NO_FATAL_FAILURE(job->doISOImageBurn(DUrl(), image, 10, opts));
 
     QStringList (*resolveDeviceNodelamda)(QString, QVariantMap) = [](QString, QVariantMap){return QStringList();};
     {
         Stub stl;
         stl.set(ADDR(DDiskManager,resolveDeviceNode),resolveDeviceNodelamda);
-        EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(url, image, 10, opts));
+        EXPECT_NO_FATAL_FAILURE(job->doISOImageBurn(url, image, 10, opts));
     }
     bool (*opticalBlanklamda)(void *) = [](void *){return false;};
     stl.set(ADDR(DDiskDevice,opticalBlank),opticalBlanklamda);
@@ -585,18 +585,18 @@ TEST_F(FileJobTest, doOpticalImageBurnByChildProcess)
     return QStringList() << QString("test");
     };
     stl.set(ADDR(DDiskManager,resolveDeviceNode),resolveDeviceNode1lamda);
-    EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(url, image, 10, opts));
+    EXPECT_NO_FATAL_FAILURE(job->doISOImageBurn(url, image, 10, opts));
 
     void (*unmountlamda)(const QVariantMap &) = [](const QVariantMap &){};
     stl.set(ADDR(DBlockDevice,unmount),unmountlamda);
     bool (*opticalBlank1lamda)(void *) = [](void *){return true;};
     stl.set(ADDR(DDiskDevice,opticalBlank),opticalBlank1lamda);
     stl.set(pipe,&pipe3lamda);
-    EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(url, image, 10, opts));
+    EXPECT_NO_FATAL_FAILURE(job->doISOImageBurn(url, image, 10, opts));
 
     stl.reset(pipe);
     TestHelper::runInLoop([=](){
-    EXPECT_NO_FATAL_FAILURE(job->doOpticalImageBurnByChildProcess(url, image, 10, opts));
+    EXPECT_NO_FATAL_FAILURE(job->doISOImageBurn(url, image, 10, opts));
     },5000);
 }
 
