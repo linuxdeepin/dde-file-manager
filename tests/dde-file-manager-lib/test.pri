@@ -260,3 +260,17 @@ SOURCES += \
     $$PWD/interfaces/ut_dgvfsfileinfo.cpp \
     $$PWD/controllers/ut_dfmftpcrumbcontroller.cpp \
     $$PWD/controllers/ut_dfmsftpcrumbcontroller.cpp
+
+!CONFIG(DISABLE_TSAN_TOOL) {
+    #DEFINES += TSAN_THREAD #互斥
+    DEFINES += ENABLE_TSAN_TOOL
+    contains(DEFINES, TSAN_THREAD){
+       QMAKE_CXXFLAGS+="-fsanitize=thread"
+       QMAKE_CFLAGS+="-fsanitize=thread"
+       QMAKE_LFLAGS+="-fsanitize=thread"
+    } else {
+       QMAKE_CXXFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+       QMAKE_CFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+       QMAKE_LFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+    }
+}

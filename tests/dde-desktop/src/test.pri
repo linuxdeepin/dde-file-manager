@@ -35,4 +35,16 @@ SOURCES += \
 #    $$PWD/dbus/filemanager1/ut_dbusfilemanager_test.cpp \
 #    $$PWD/dde-wallpaper-chooser/ut-deepin_wm-test.cpp   \
 
-
+!CONFIG(DISABLE_TSAN_TOOL) {
+    #DEFINES += TSAN_THREAD #互斥
+    DEFINES += ENABLE_TSAN_TOOL
+    contains(DEFINES, TSAN_THREAD){
+       QMAKE_CXXFLAGS+="-fsanitize=thread"
+       QMAKE_CFLAGS+="-fsanitize=thread"
+       QMAKE_LFLAGS+="-fsanitize=thread"
+    } else {
+       QMAKE_CXXFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+       QMAKE_CFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+       QMAKE_LFLAGS+="-fsanitize=undefined,address,leak -fno-omit-frame-pointer"
+    }
+}

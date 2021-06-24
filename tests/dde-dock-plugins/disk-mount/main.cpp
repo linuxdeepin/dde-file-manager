@@ -22,6 +22,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <sanitizer/asan_interface.h>
 #include <QDebug>
 #include <QApplication>
 #include <QProcess>
@@ -38,6 +39,10 @@ int main(int argc, char *argv[])
     qDebug() << "end disk-mount test cases ..............";
 
     QProcess::execute("killall dde-file-manager");
+
+#ifdef ENABLE_TSAN_TOOL
+    __sanitizer_set_report_path("../../asan_dde-disk-mount.log");
+#endif
 
     return ret;
 }

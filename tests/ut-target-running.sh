@@ -29,7 +29,7 @@ COVERAGE_INFO=$BUILD_DIR/covinfo_$REPORT_NAME.info
 
 RESULT_UT_REPORT_FILE=$REPORT_DIR/report/report_$REPORT_NAME.xml
 
-$BUILD_DIR/$APP_NAME --gtest_output=xml:$RESULT_UT_REPORT_FILE
+ASAN_OPTIONS="new_delete_type_mismatch=0" $BUILD_DIR/$APP_NAME --gtest_output=xml:$RESULT_UT_REPORT_FILE
 
 if [ ! -f "$RESULT_UT_REPORT_FILE" ]; then
 　　echo "Error: UT process is broken by: " $RESULT_UT_REPORT_FILE
@@ -61,5 +61,13 @@ if [ ! -n "$SHOW_REPORT" ] || [ "$SHOW_REPORT" = "yes" ] ; then
 fi
 
 lcov -d $BUILD_DIR –z
+
+# 对内存检测日志重命名，去掉pid
+asan_files=`echo ${REPORT_DIR}/asan_*.log.*`
+for i in $asan_files
+do
+   new_file_name=`echo ${i/log.*/log}`
+   mv $i $new_file_name
+done
 
 exit 0
