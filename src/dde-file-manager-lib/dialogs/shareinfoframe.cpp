@@ -111,7 +111,7 @@ void ShareInfoFrame::initUI()
 
     //当前文件夹已被共享
     if (userShareManager->isShareFile(m_fileinfo->filePath())) {
-        auto creatorShareUid = userShareManager->getCreatorUidByShareName(m_shareNamelineEdit->text());
+        auto creatorShareUid = userShareManager->getCreatorUidByShareName(m_shareNamelineEdit->text().toLower());
         //文件共享创建者不是当前process的打开者或者不是文件所有者 排除root用户
         if ((creatorShareUid != getuid() || creatorShareUid != m_fileinfo->ownerId())
                 && getuid() != 0) {
