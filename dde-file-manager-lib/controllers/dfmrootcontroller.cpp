@@ -110,10 +110,6 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
     for (auto blks : blkds) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-        if (DFMGlobal::isWayLand() && blks.contains(QRegularExpression("/sd[a-c][1-9]*$"))) {
-            qDebug()  << " blDev->drive()"  << blks << blk->drive();
-            continue;
-        }
 
         if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
             continue;

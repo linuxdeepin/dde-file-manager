@@ -150,9 +150,6 @@ void DiskControlWidget::doStartupAutoMount()
     for (const QString &blDevStr : blDevList) {
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
 
-        if (DiskGlobal::isWayLand() && blDevStr.contains(QRegularExpression("/sd[a-c][1-9]*$"))) {
-            continue;
-        }
         if (blDev->isEncrypted()) continue;
         if (blDev->hintIgnore()) continue;
 
