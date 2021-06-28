@@ -83,7 +83,7 @@ AccessControlManager::AccessControlManager(QObject *parent)
     m_diskMnanager->setWatchChanges(true);
 
     m_whiteProcess << "/usr/bin/dmcg"
-                   << "/usr/bin/pyton3.7";
+                   << "/usr/bin/python3.7";
     m_configPath = "/etc/deepin/devAccessConfig.json";
     loadPolicy();
     changeMountedOnInit();
