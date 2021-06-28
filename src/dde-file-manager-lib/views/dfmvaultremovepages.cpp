@@ -217,7 +217,7 @@ void DFMVaultRemovePages::onButtonClicked(int index)
 
         // 用户权限认证(异步授权)
         auto ins = Authority::instance();
-        ins->checkAuthorization(VAULT_CREATE,
+        ins->checkAuthorization(VAULT_REMOVE,
                                 UnixProcessSubject(getpid()),
                                 Authority::AllowUserInteraction);
         connect(ins, &Authority::checkAuthorizationFinished,
