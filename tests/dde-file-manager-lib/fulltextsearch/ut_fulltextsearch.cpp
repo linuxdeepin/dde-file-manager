@@ -43,6 +43,7 @@ TEST_F(TestFullTextSearch, fulltextIndex)
 {
     EXPECT_EQ(1, filetextSearch->fulltextIndex(searchPath));
     EXPECT_EQ(0, filetextSearch->fulltextIndex(searchPath));
+    QThread::sleep(2);
 }
 
 TEST_F(TestFullTextSearch, createFileIndex)
@@ -63,8 +64,7 @@ TEST_F(TestFullTextSearch, createFileIndex)
 
 TEST_F(TestFullTextSearch, fullTextSearch)
 {
-    filetextSearch->fulltextIndex(searchPath);
-    QThread::sleep(2);
+    filetextSearch->createFileIndex(searchPath);
     QStringList searchResult = filetextSearch->fullTextSearch("你好謝謝hello123", searchPath);
     EXPECT_TRUE(searchResult.contains(filePath));
 }
