@@ -43,6 +43,7 @@ TEST_F(TestFullTextSearch, fulltextIndex)
 {
     EXPECT_EQ(1, filetextSearch->fulltextIndex(searchPath));
     EXPECT_EQ(0, filetextSearch->fulltextIndex(searchPath));
+    QThread::sleep(2);
 }
 
 TEST_F(TestFullTextSearch, createFileIndex)
