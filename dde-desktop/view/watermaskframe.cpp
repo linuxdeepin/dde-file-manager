@@ -32,6 +32,8 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent) :
     AC_SET_OBJECT_NAME( this, AC_WATER_MASK_FRAME);
     AC_SET_ACCESSIBLE_NAME( this, AC_WATER_MASK_FRAME);
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
+
+    qInfo() << "create deepin license interface";
     m_licenseInterface = std::unique_ptr<ComDeepinLicenseInterface> { new ComDeepinLicenseInterface {
             "com.deepin.license",
             "/com/deepin/license/Info",
@@ -42,6 +44,7 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent) :
     if (m_licenseInterface) {
         QObject::connect(m_licenseInterface.get(), &ComDeepinLicenseInterface::LicenseStateChange, this, &WaterMaskFrame::updateAuthorizationState);
     }
+    qInfo() << "deepin license interface connected.";
 
     m_logoLabel = new QLabel(this);
     m_textLabel = new QLabel(this);
@@ -86,7 +89,7 @@ void WaterMaskFrame::loadConfig(const QString &fileName)
 {
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly)) {
-        qDebug() << "WaterMask config file doesn't exist!";
+        qWarning() << "WaterMask config file doesn't exist!";
     }
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
@@ -94,7 +97,7 @@ void WaterMaskFrame::loadConfig(const QString &fileName)
         m_configs = QJsonObject::fromVariantMap(doc.toVariant().toMap());
         initUI();
     } else {
-        qDebug() << error.errorString();
+        qCritical() << error.errorString();
     }
 
 }
@@ -252,7 +255,9 @@ void WaterMaskFrame::initUI()
     }
 
     if(isNeedState()){
+        qInfo() << "get active state from com.deepin.license.Info";
         ActiveState stateType = static_cast<ActiveState>(m_licenseInterface->AuthorizationState());
+        qInfo() << "get active state from com.deepin.license.Info property AuthorizationState and value:"<<stateType;
         switch (stateType) {
         case Unauthorized:
         case AuthorizedLapse:
@@ -353,7 +358,9 @@ void WaterMaskFrame::updatePosition()
 
 void WaterMaskFrame::updateAuthorizationState()
 {
+    qInfo() << "received com.deepin.license.Info::LicenseStateChange.";
     bool isConfigFileExist = checkConfigFile(m_configFile);
+    qInfo() << "isConfigFileExist:" << isConfigFileExist << "   configFile:" << m_configFile;
     if (isConfigFileExist) {
         loadConfig(m_configFile);
     }
