@@ -58,6 +58,8 @@ ScreenPointer ScreenManagerWayland::primaryScreen()
             break;
         }
     }
+    if (ret.isNull())
+            qWarning() << "get primary from dbus:" <<primaryName << ".save monitors:" << m_screens.keys();
     return ret;
 }
 
@@ -73,6 +75,8 @@ QVector<ScreenPointer> ScreenManagerWayland::screens() const
                     order.append(sp);
             } else
                 order.append(sp);
+        } else {
+            qWarning() << "unknow monitor:" << path.path() << ".save monitors:" << m_screens.keys();
         }
     }
     return order;
@@ -180,25 +184,31 @@ void ScreenManagerWayland::onMonitorChanged()
     //检查新增的屏幕
     for (auto objectPath : m_display->monitors()) {
         QString path = objectPath.path();
-        if (path.isEmpty())
+        if (path.isEmpty()) {
+            qWarning() << "get monitor path is empty from display";
             continue;
+        }
 
         //新增的
         if (!m_screens.contains(path)) {
             ScreenPointer sp(new ScreenObjectWayland(new DBusMonitor(path)));
             m_screens.insert(path, sp);
             connectScreen(sp);
+            qInfo() << "add monitor:" << path;
         }
         monitors << path;
     }
+    qDebug() << "get monitors:" << monitors;
 
     //检查移除的屏幕
     for (const QString &path : m_screens.keys()) {
         if (!monitors.contains(path)) {
             ScreenPointer sp = m_screens.take(path);
             disconnectScreen(sp);
+            qInfo() << "del monitor:" << path;
         }
     }
+    qDebug() << "save monitors:" << m_screens.keys();
     //emit sigScreenChanged();
     appendEvent(Screen);
 }

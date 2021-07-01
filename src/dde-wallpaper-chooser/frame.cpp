@@ -116,7 +116,7 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
     initUI();
     initSize();
 
-    connect(m_mouseArea, &DRegionMonitor::buttonPress, [this](const QPoint & p, const int button) {
+    connect(m_mouseArea, &DRegionMonitor::buttonPress, this, [this](const QPoint & p, const int button) {
         if (button == 4) {
             m_wallpaperList->prevPage();
         } else if (button == 5) {
