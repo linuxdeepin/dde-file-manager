@@ -2063,7 +2063,34 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
 #endif
             } else {
                 //在多屏情况下，该信号会导致文件改名后被移动位置（原因是每个画布对象都有一个watcher，文件改名时每个画布都会处理，从而非文件所在的画布就会发送该信号）
-                //Q_EMIT itemCreated(dstUrl);
+                //同步，查找old文件名所在屏和所在位置，仅在old名图标所在的屏处理，避免重命名时被非old名图标所在屏处理
+                QPair<int, QPoint> pos;
+                bool isFound = GridManager::instance()->find(oriUrl.toString(), pos);
+                if (isFound && pos.first != m_screenNum) {
+                    qDebug() << QString("item: %1 is found, but it doesn't belong to %2 %3, it's belong %4").
+                               arg(oriUrl.toString()).
+                               arg(m_screenNum).
+                               arg(m_screenName).
+                               arg(pos.first)
+                            << pos.second;
+                    return ;
+                } else {
+                    auto screenNumbers = GridManager::instance()->allScreenNum();
+                    for (auto num : screenNumbers) {
+                        if (num < m_screenNum && !GridManager::instance()->getCanvasFullStatus(num)) {
+                            qDebug() << QString("The previous Canvas(%1)is not full!!! so, current Canvas(%2) don't emit itemCreated signal !").
+                                        arg(num).
+                                        arg(m_screenNum);
+                            return;
+                        }
+                    }
+                }
+                Q_EMIT itemCreated(dstUrl);
+                qDebug() << QString("%1 isFound = %2 ,findOldPos = %3, findNewPos = %4, emit itemCreated signal!").
+                            arg(oriUrl.toString()).
+                            arg(isFound).
+                            arg(findOldPos).
+                            arg(findNewPos);
             }
         }
 
