@@ -1374,6 +1374,11 @@ QPair<int, QPoint> GridManager::forwardFindEmpty(int screenNum, QPoint start) co
     return d->takeEmptyPos();
 }
 
+QList<int> GridManager::allScreenNum()
+{
+    return d->screensCoordInfo.keys();
+}
+
 QSize GridManager::gridSize(int screenNum) const
 {
     auto coordInfo = d->screensCoordInfo.value(screenNum);

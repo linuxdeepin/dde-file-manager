@@ -93,6 +93,7 @@ public:
     int gridCount() const;
     int gridCount(int screenNum) const;
     QPair<int, QPoint> forwardFindEmpty(int screenNum, QPoint start) const;
+    QList<int> allScreenNum();
     QSize gridSize(int screenNum) const;
     void updateGridSize(int screenNum, int w, int h);
 
