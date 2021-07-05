@@ -15,7 +15,7 @@ isEqual(EDITION, RACCOON) {
 DEFINES += DDE_DBUS_DISPLAY
 
 CONFIG(TABLET_ENV) {
-    PKGCONFIG += dtkwidget5.5 dtkgui5.5 dtkcore5.5
+    PKGCONFIG += dtkwidget5.5 dtkgui5.5 dtkcore
 } else {
     PKGCONFIG += dtkwidget dtkgui dtkcore
 }
