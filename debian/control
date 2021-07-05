@@ -40,7 +40,7 @@ Build-Depends:
  dh-systemd,
  deepin-anything-dev[i386 amd64],
  deepin-anything-server-dev[i386 amd64],
- libudisks2-qt5-dev(>=5.0.6),
+ libudisks2-qt5-dev,
  libxrender-dev,
  libmtdev-dev,
  libfontconfig1-dev,
