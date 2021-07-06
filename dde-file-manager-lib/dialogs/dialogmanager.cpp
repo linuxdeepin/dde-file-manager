@@ -176,11 +176,6 @@ void DialogManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestShowErrorDialog, this, &DialogManager::showErrorDialog);
     connect(fileSignalManager, &FileSignalManager::activeTaskDlg, this, &DialogManager::showTaskProgressDlgOnActive);
 
-    if (getGvfsMountManager(false)) {
-        connect(gvfsMountManager, &GvfsMountManager::mount_added, this, &DialogManager::showNtfsWarningDialog);
-    }
-
-
 #ifdef SW_LABEL
     connect(fileSignalManager, &FileSignalManager::jobFailed, this, &DialogManager::onJobFailed_SW);
 #endif
@@ -1151,89 +1146,6 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
-}
-
-void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
-{
-    QTimer::singleShot(1000, [ = ] {
-        if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess)
-        {
-            QStringList &&udiskspaths = DDiskManager::resolveDeviceNode(diskInfo.unix_device(), {});
-            if (udiskspaths.isEmpty())
-                return;
-            QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspaths.first()));
-            QString fstype = blk->idType();
-            if (fstype == "ntfs") {
-                // blumia: the ntfs partition will be read-only if user mount the ntfs device by the kernel driver.
-                //         the fstype (from `df -T` or `mount`) will be "ntfs" rather than "fuseblk" if user use the kernel driver
-                //         to mount the block device, so we use `df -t ntfs /dev/xxxxx` to check if the fstype is "ntfs".
-                QProcess checkFsDrv;
-                checkFsDrv.start("df", {"--output=fstype", diskInfo.unix_device()});
-                checkFsDrv.waitForFinished(-1);
-                QString dfStdOut = checkFsDrv.readAllStandardOutput().split('\n').value(1);
-                if (dfStdOut == QStringLiteral("ntfs"))
-                    return;
-
-                bool isReadOnly = false;
-                DUrl mountUrl = DUrl(diskInfo.mounted_root_uri());
-                QFileInfo mountFileInfo(mountUrl.toLocalFile());
-                isReadOnly = mountFileInfo.isReadable() && !QFileInfo(DUrl(diskInfo.mounted_root_uri()).toLocalFile()).isWritable();
-                qDebug() << DUrl(diskInfo.mounted_root_uri()).toLocalFile() << fstype << "isReadOnly:" << isReadOnly;
-                if (isReadOnly) {
-                    DDialog d;
-                    QFrame *contentFrame = new QFrame;
-
-                    QLabel *iconLabel = new QLabel;
-                    iconLabel->setPixmap(m_dialogWarningIcon.pixmap(64, 64));
-
-                    QLabel *titleLabel = new QLabel;
-                    titleLabel->setText(tr("Mount partition%1 to be read only").arg(diskInfo.unix_device()));
-
-                    QLabel *discriptionLabel = new QLabel;
-                    discriptionLabel->setScaledContents(true);
-                    discriptionLabel->setText(tr("Disks in Windows will be unable to read and write normally if check \"Turn on fast startup (recommended)\" in Shutdown settings"));
-
-                    QLabel *messageTitleLabel = new QLabel;
-                    messageTitleLabel->setScaledContents(true);
-                    QString messageTitleMessage = tr("Please restore by the following steps to normally access Windows disk");
-                    messageTitleLabel->setText(messageTitleMessage);
-
-                    QLabel *messageLabel = new QLabel;
-                    messageLabel->setScaledContents(true);
-
-                    QString message1 = tr("1. Reboot to enter Windows");
-                    QString message2 = tr("2. Uncheck \"Turn on fast startup\" and \"Hibernate\" in shutdown settings and reboot");
-                    QString message3 = tr("3. Reboot and enter %1").arg(DSysInfo::distributionOrgName());
-
-                    messageLabel->setText(QString("%1\n%2\n%3").arg(message1, message2, message3));
-
-                    QVBoxLayout *contentLayout = new QVBoxLayout;
-                    contentLayout->addWidget(iconLabel, 0, Qt::AlignCenter);
-                    contentLayout->addWidget(titleLabel, 0, Qt::AlignCenter);
-                    contentLayout->addWidget(discriptionLabel, 0, Qt::AlignLeft);
-                    contentLayout->addSpacing(10);
-                    contentLayout->addWidget(messageTitleLabel, 0, Qt::AlignLeft);
-                    contentLayout->addWidget(messageLabel, 0, Qt::AlignLeft);
-                    contentLayout->setContentsMargins(100, 0, 100, 0);
-                    contentLayout->setSpacing(10);
-                    contentFrame->setLayout(contentLayout);
-
-                    d.addContent(contentFrame, Qt::AlignCenter);
-                    d.addButton(tr("Cancel"), false, DDialog::ButtonNormal);
-                    d.addButton(tr("Reboot"), true, DDialog::ButtonRecommend);
-                    int ret = d.exec();
-                    if (ret == 1) {
-                        qDebug() << "===================Reboot system=====================";
-                        QDBusInterface sessionManagerIface("com.deepin.SessionManager",
-                                                           "/com/deepin/SessionManager",
-                                                           "com.deepin.SessionManager",
-                                                           QDBusConnection::sessionBus());
-                        sessionManagerIface.asyncCall("Reboot");
-                    }
-                }
-            }
-        }
-    });
 }
 
 void DialogManager::showErrorDialog(const QString &title, const QString &message)
