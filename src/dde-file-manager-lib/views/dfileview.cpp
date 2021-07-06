@@ -1972,6 +1972,42 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         //修改远程时，文件选择框内容选中后被取消问题
         if (tmp_rect.width() < 5 && tmp_rect.width() > -5 && tmp_rect.height() < 5 && tmp_rect.height() > -5)
             return;
+
+        // sp4-task:文管框选内容不正确问题
+        // 判断是否是图标模式
+        if (isIconViewMode()) {
+            DFileSystemModel *pModel = model();
+            if (pModel) {
+                // ListView中的文件摆放逻辑是一列多行，所以行的数量就是文件的数量
+                int nRowNum = pModel->rowCount();
+
+                QPoint offset(-horizontalOffset() + ICON_X_OFFSET, ICON_Y_OFFSET);
+                // 判断文件是否在鼠标框选区域内(注意：rect只是view的框选位置，并不是画布的框选位置，所以加上滚动偏移)
+                QRect actualRect(MIN(rect.left(), rect.right()), MIN(rect.top(), rect.bottom()) + verticalOffset(), abs(rect.width()), abs(rect.height()));
+                // 用来存放鼠标框选中的文件项
+                QVector<QModelIndex> selectItems;
+                for (int i = 0; i < nRowNum; ++i) {
+                    const QModelIndex& index = pModel->index(i, 0);
+                    const QRect& itemRect = rectForIndex(index);
+                    QRect realItemRect((itemRect.topLeft() + offset), itemRect.bottomRight() + offset + QPoint(ICON_HEIGHT_OFFSET, ICON_WIDTH_OFFSET));
+                    if (!(actualRect.left() > realItemRect.right() - 3
+                          || actualRect.top() > realItemRect.bottom() - 3
+                          || realItemRect.left() + 3 > actualRect.right()
+                          || realItemRect.top() + 3 > actualRect.bottom()))
+                        selectItems.push_back(index);
+                }
+                // 取消上一次选中项的选中状态
+                clearSelection();
+                // 将当前选中项设置成选中状态
+                QVector<QModelIndex>::const_iterator itr = selectItems.begin();
+                for (; itr != selectItems.end(); ++itr) {
+                    // 将文件设置选中状态
+                    selectionModel()->select(*itr, QItemSelectionModel::Select);
+                }
+            }
+            return;
+        }
+
         tmp_rect.translate(horizontalOffset(), verticalOffset());
         tmp_rect.setCoords(qMin(tmp_rect.left(), tmp_rect.right()), qMin(tmp_rect.top(), tmp_rect.bottom()),
                            qMax(tmp_rect.left(), tmp_rect.right()), qMax(tmp_rect.top(), tmp_rect.bottom()));
@@ -1985,42 +2021,8 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         }
 
 #ifndef CLASSICAL_SECTION
-        // sp4-task:文管框选内容不正确问题
-        // 判断是否是图标模式
-        if (isIconViewMode()) {
-            DFileSystemModel *pModel = model();
-            if (pModel) {
-                // ListView中的文件摆放逻辑是一列多行，所以行的数量就是文件的数量
-                int nRowNum = pModel->rowCount();
-                // 用来存放鼠标框选中的文件项
-                QVector<QModelIndex> selectItems;
-                for (int i = 0; i < nRowNum; ++i) {
-                    QModelIndex index = pModel->index(i, 0);
-                    QRect itemRect = rectForIndex(index);
-                    QPoint offset(-horizontalOffset() + ICON_X_OFFSET, ICON_Y_OFFSET);
-                    // 判断文件是否在鼠标框选区域内(注意：rect只是view的框选位置，并不是画布的框选位置，所以加上滚动偏移)
-                    QRect actualRect(rect.left(), rect.top() + verticalOffset(), rect.width(), rect.height());
-                    if (actualRect.contains((itemRect.topLeft() + offset))
-                            || actualRect.contains(itemRect.topRight() + offset + QPoint(ICON_HEIGHT_OFFSET, 0))
-                            || actualRect.contains(itemRect.bottomLeft() + offset + QPoint(0, ICON_WIDTH_OFFSET))
-                            || actualRect.contains(itemRect.bottomRight() + offset + QPoint(ICON_HEIGHT_OFFSET, ICON_WIDTH_OFFSET))) {
-                        selectItems.push_back(index);
-                    }
-                }
-                // 取消上一次选中项的选中状态
-                clearSelection();
-                // 将当前选中项设置成选中状态
-                QVector<QModelIndex>::const_iterator itr = selectItems.begin();
-                for (; itr != selectItems.end(); ++itr) {
-                    // 将文件设置选中状态
-                    selectionModel()->select(*itr, QItemSelectionModel::Select);
-                }
-            }
-            return;
-        } else {
-            return selectionModel()->select(QItemSelection(rootIndex().child(list.first().first, 0),
-                                                           rootIndex().child(list.last().second, 0)), flags);
-        }
+        return selectionModel()->select(QItemSelection(rootIndex().child(list.first().first, 0),
+                                                       rootIndex().child(list.last().second, 0)), flags);
 #else
         QItemSelection selection;
 
