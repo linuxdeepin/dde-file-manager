@@ -1114,6 +1114,107 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection){
     m_canvasGridView->setSelection(QRect(QPoint(2, 3),QPoint(6, 8)), QItemSelectionModel::Select);
 }
 
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_two){
+    ASSERT_NE(m_canvasGridView, nullptr);
+
+    QString desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
+    DUrl desktopUrl = DUrl::fromLocalFile(desktopPath);
+    if (desktopUrl.isEmpty())
+        return;
+    if(m_canvasGridView->setRootUrl(desktopUrl)){
+        EXPECT_TRUE(desktopUrl == m_canvasGridView->model()->rootUrl());
+    }
+
+    //获取一个item
+    auto itemUrls = GridManager::instance()->itemIds(m_canvasGridView->m_screenNum);
+    auto tgIndex = m_canvasGridView->model()->index(DUrl(itemUrls.first()));
+    if (!tgIndex.isValid())
+        return;
+    auto itemRect = m_canvasGridView->visualRect(tgIndex);
+    m_canvasGridView->d->mousePressed = true;
+    m_canvasGridView->d->showSelectRect = true;
+
+    //模拟其左上角框选
+    auto itemTopLeft = itemRect.topLeft();
+    QRect topLeftRect(itemTopLeft, QPoint(itemTopLeft.x() + 5, itemTopLeft.y() + 5));
+    auto topLeftBeforeSelects = m_canvasGridView->selectedUrls();
+
+    m_canvasGridView->setSelection(topLeftRect, QItemSelectionModel::Select);
+    auto topLeftAfterSelects = m_canvasGridView->selectedUrls();
+    bool expectValue = topLeftBeforeSelects == topLeftAfterSelects && 0 == topLeftBeforeSelects.size() && 0 == topLeftAfterSelects.size();
+    EXPECT_TRUE(expectValue);
+
+
+    QRect topleftRectTwo(itemTopLeft, QPoint(itemTopLeft.x() + 15, itemTopLeft.y() + 15));
+    topLeftBeforeSelects = m_canvasGridView->selectedUrls();
+    m_canvasGridView->setSelection(topleftRectTwo, QItemSelectionModel::Select);
+    topLeftAfterSelects = m_canvasGridView->selectedUrls();
+    bool expectValueTwo = topLeftBeforeSelects != topLeftAfterSelects && 0 == topLeftBeforeSelects.size() && 1 == topLeftAfterSelects.size();
+    EXPECT_TRUE(expectValueTwo);
+    m_canvasGridView->selectionModel()->clearSelection();
+
+
+    //模拟其右上角框选
+    auto itemTopRight = itemRect.topRight();
+    QRect topRightRect(QPoint(itemTopRight.x() - 5, itemTopRight.y()), QPoint(itemTopRight.x(), itemTopRight.y() + 5));
+    auto topRightBeforeSelects = m_canvasGridView->selectedUrls();
+    m_canvasGridView->setSelection(topRightRect, QItemSelectionModel::Select);
+    auto topRightAfterSelects = m_canvasGridView->selectedUrls();
+    bool expectValueTr = topRightBeforeSelects == topRightAfterSelects && 0 == topRightBeforeSelects.size() && 0 == topRightAfterSelects.size();
+    EXPECT_TRUE(expectValueTr);
+
+
+    QRect topRightRectTwo(QPoint(itemTopRight.x() - 15, itemTopRight.y()), QPoint(itemTopRight.x(), itemTopRight.y() + 15));
+    topRightBeforeSelects = m_canvasGridView->selectedUrls();
+    m_canvasGridView->setSelection(topRightRectTwo, QItemSelectionModel::Select);
+    topRightAfterSelects = m_canvasGridView->selectedUrls();
+    bool expectValueTrTwo = topRightBeforeSelects != topRightAfterSelects && 0 == topRightBeforeSelects.size() && 1 == topRightAfterSelects.size();
+    EXPECT_TRUE(expectValueTrTwo);
+    m_canvasGridView->selectionModel()->clearSelection();
+
+    //模拟其右下角框选
+    auto itemBottomRight = itemRect.bottomRight();
+    QRect bottomRightRect(QPoint(itemBottomRight.x() - 5, itemBottomRight.y() - 5), itemBottomRight);
+    auto bottomRightBeforeSelects = m_canvasGridView->selectedUrls();
+    m_canvasGridView->d->mousePressed = true;
+    m_canvasGridView->d->showSelectRect = true;
+    m_canvasGridView->setSelection(bottomRightRect, QItemSelectionModel::Select);
+    auto bottomRightAfterSelects = m_canvasGridView->selectedUrls();
+    bool expectValueBr = bottomRightBeforeSelects == bottomRightAfterSelects && 0 == bottomRightBeforeSelects.size() && 0 == bottomRightAfterSelects.size();
+    EXPECT_TRUE(expectValueBr);
+
+
+    QRect bottomRightRectTwo(QPoint(itemBottomRight.x() - 15, itemBottomRight.y() - 15), itemBottomRight);
+    bottomRightBeforeSelects = m_canvasGridView->selectedUrls();
+    m_canvasGridView->d->mousePressed = true;
+    m_canvasGridView->d->showSelectRect = true;
+    m_canvasGridView->setSelection(bottomRightRectTwo, QItemSelectionModel::Select);
+    bottomRightAfterSelects = m_canvasGridView->selectedUrls();
+    bool expectValueBrTwo = bottomRightBeforeSelects != bottomRightAfterSelects && 0 == bottomRightBeforeSelects.size() && 1 == bottomRightAfterSelects.size();
+    EXPECT_TRUE(expectValueBrTwo);
+    m_canvasGridView->selectionModel()->clearSelection();
+
+    //模拟其左下角框选
+    auto itemBottomLeft = itemRect.bottomLeft();
+    QRect bottomLeftRect(QPoint(itemBottomLeft.x(), itemBottomLeft.y() - 5), QPoint(itemBottomLeft.x() + 5, itemBottomLeft.y()));
+    auto bottomLeftBeforeSelects = m_canvasGridView->selectedUrls();
+    m_canvasGridView->d->mousePressed = true;
+    m_canvasGridView->d->showSelectRect = true;
+    m_canvasGridView->setSelection(bottomLeftRect, QItemSelectionModel::Select);
+    auto bottomLeftAfterSelects = m_canvasGridView->selectedUrls();
+    bool expectValueBl = bottomLeftBeforeSelects == bottomLeftAfterSelects && 0 == bottomLeftBeforeSelects.size() && 0 == bottomLeftAfterSelects.size();
+    EXPECT_TRUE(expectValueBl);
+
+
+    QRect bottomLeftRectTwo(QPoint(itemBottomLeft.x(), itemBottomLeft.y() - 15), QPoint(itemBottomLeft.x() + 15, itemBottomLeft.y()));
+    bottomLeftBeforeSelects = m_canvasGridView->selectedUrls();
+    m_canvasGridView->d->mousePressed = true;
+    m_canvasGridView->d->showSelectRect = true;
+    m_canvasGridView->setSelection(bottomLeftRectTwo, QItemSelectionModel::Select);
+    bottomLeftAfterSelects = m_canvasGridView->selectedUrls();
+    bool expectValueBlTwo = bottomLeftBeforeSelects != bottomLeftAfterSelects && 0 == bottomLeftBeforeSelects.size() && 1 == bottomLeftAfterSelects.size();
+    EXPECT_TRUE(expectValueBlTwo);
+}
 
 TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_selectedIndexCount){
     ASSERT_NE(m_canvasGridView, nullptr);

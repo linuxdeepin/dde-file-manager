@@ -2925,6 +2925,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
             bottomRightGridPos = gridAt(d->selectRect.bottomRight());
 
             QItemSelection rectSelection;
+            QMargins margins(10, 10, 10, 10);
             for (auto x = topLeftGridPos.x(); x <= bottomRightGridPos.x(); ++x) {
                 for (auto y = topLeftGridPos.y(); y <= bottomRightGridPos.y(); ++y) {
                     auto localFile = GridManager::instance()->itemTop(m_screenNum, x, y);
@@ -2934,17 +2935,13 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
                     }
                     auto index = model()->index(DUrl(localFile));
 
-                    auto list = QList<QRect>() << itemPaintGeomertys(index);
-                    for (const QRect &r : list) {
-                        if (selectRect.intersects(r)) {
-                            QItemSelectionRange selectionRange(index);
-                            if (!rectSelection.contains(index)) {
-                                rectSelection.push_back(selectionRange);
-                            }
-                            break;
-                        }
-                        if (byIconRect) {
-                            break;
+                    //1041需求，桌面图标向内收缩10个像素为框选触发范围
+                    auto tempVr = visualRect(index);
+                    tempVr = tempVr.marginsRemoved(margins);
+                    if (tempVr.intersects(selectRect)) {
+                        QItemSelectionRange selectionRange(index);
+                        if (!rectSelection.contains(index)) {
+                            rectSelection.push_back(selectionRange);
                         }
                     }
                 }
