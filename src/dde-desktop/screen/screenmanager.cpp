@@ -22,8 +22,10 @@
 
 #include "screenmanager.h"
 #include "screenobject.h"
+#include "abstractscreenmanager_p.h"
 #include "dbus/dbusdisplay.h"
 #include "dbus/dbusdock.h"
+
 
 #include <QGuiApplication>
 
@@ -79,20 +81,12 @@ void ScreenManager::onPrimaryChanged()
 void ScreenManager::onScreenGeometryChanged(const QRect &rect)
 {
     Q_UNUSED(rect)
-//    ScreenObject *sc = SCREENOBJECT(sender());
-//    if (sc != nullptr && m_screens.contains(sc->screen())) {
-//        emit sigScreenGeometryChanged(m_screens.value(sc->screen()), rect);
-//    }
     appendEvent(AbstractScreenManager::Geometry);
 }
 
 void ScreenManager::onScreenAvailableGeometryChanged(const QRect &rect)
 {
     Q_UNUSED(rect)
-//    ScreenObject *sc = SCREENOBJECT(sender());
-//    if (sc != nullptr && m_screens.contains(sc->screen())) {
-//        emit sigScreenAvailableGeometryChanged(m_screens.value(sc->screen()), rect);
-//    }
     appendEvent(AbstractScreenManager::AvailableGeometry);
 }
 
@@ -111,7 +105,6 @@ void ScreenManager::onDockChanged()
     }
 #else
     //新增动态dock区功能，dock区不再只是在主屏幕,随鼠标移动
-    //emit sigScreenAvailableGeometryChanged(nullptr, QRect());
     appendEvent(AbstractScreenManager::AvailableGeometry);
 #endif
 }
@@ -128,38 +121,9 @@ void ScreenManager::init()
      * 该bug就是由于画布中保存的名字没有更新，调用显示壁纸屏保设置界面后，找不到对应的屏幕，从而导致位置校正错误。
     */
     connect(m_display, &DBusDisplay::PrimaryChanged, this, &ScreenManager::onPrimaryChanged);
-
-    //connect(qApp, &QGuiApplication::primaryScreenChanged, this, &AbstractScreenManager::sigScreenChanged);
     connect(qApp, &QGuiApplication::primaryScreenChanged, this, [this]() {
         this->appendEvent(Screen);
     });
-#ifdef UNUSE_TEMP
-    connect(m_display, &DBusDisplay::DisplayModeChanged, this, &AbstractScreenManager::sigDisplayModeChanged);
-#else
-    //临时方案，
-    connect(m_display, &DBusDisplay::DisplayModeChanged, this, [this]() {
-        //emit sigDisplayModeChanged();
-        int mode = m_display->GetRealDisplayMode();
-        qInfo() << "deal display mode changed " << mode;
-        if (m_lastMode == mode)
-            return;
-        m_lastMode = mode;
-        this->appendEvent(Mode);
-    });
-
-    //临时方案，使用PrimaryRectChanged信号作为拆分/合并信号
-    connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [this]() {
-        int mode = m_display->GetRealDisplayMode();
-        qInfo() << "deal merge and split" << mode << m_lastMode;
-        if (m_lastMode == mode)
-            return;
-        m_lastMode = mode;
-        //emit sigDisplayModeChanged();
-        this->appendEvent(Mode);
-    });
-
-    m_lastMode = m_display->GetRealDisplayMode();
-#endif
 
     //dock区处理
     connect(DockInfoIns, &DBusDock::FrontendWindowRectChanged, this, &ScreenManager::onDockChanged);
@@ -172,6 +136,9 @@ void ScreenManager::init()
         m_screens.insert(sc, psc);
         connectScreen(psc);
     }
+
+    //依赖现有屏幕数据，必须在屏幕对象初始化后调用
+    m_lastMode = displayMode();
 }
 
 void ScreenManager::connectScreen(ScreenPointer psc)
@@ -256,25 +223,24 @@ qreal ScreenManager::devicePixelRatio() const
 
 AbstractScreenManager::DisplayMode ScreenManager::displayMode() const
 {
-    auto pending = m_display->GetRealDisplayMode();
-    pending.waitForFinished();
-    if (pending.isError()) {
-        qWarning() << "Display GetRealDisplayMode Error:" << pending.error().name() << pending.error().message();
-        AbstractScreenManager::DisplayMode ret = AbstractScreenManager::DisplayMode(m_display->displayMode());
-        return ret;
+    QVector<ScreenPointer> allScreen = screens();
+    if (allScreen.isEmpty())
+        return AbstractScreenManager::Custom;
+
+    if (allScreen.size() == 1) {
+        return AbstractScreenManager::Showonly;
     } else {
-        /*
-        DisplayModeMirror: 1
-        DisplayModeExtend: 2
-        DisplayModeOnlyOne: 3
-        DisplayModeUnknow: 4
-        */
-        int mode = pending.argumentAt(0).toInt();
-        qInfo() << "GetRealDisplayMode resulet" << mode;
-        if (mode > 0 && mode < 4)
-            return static_cast<AbstractScreenManager::DisplayMode>(mode);
-        else
-            return AbstractScreenManager::Custom;
+        //存在两个屏幕坐标不一样则视为扩展，只有所有屏幕坐标相等发生重叠时才视为复制
+        const ScreenPointer &screen = allScreen.at(0);
+        for (int i = 1; i < allScreen.size(); ++i) {
+            const ScreenPointer &screen2 = allScreen.at(i);
+            if (screen->geometry().topLeft() != screen2->geometry().topLeft()) {
+                return AbstractScreenManager::Extend;
+            }
+        }
+
+        //所有屏幕的都重叠，则视为复制
+        return AbstractScreenManager::Duplicate;
     }
 }
 
@@ -292,4 +258,31 @@ void ScreenManager::reset()
 
     m_display = new DBusDisplay(this);
     init();
+}
+
+void ScreenManager::processEvent()
+{
+    //x11下通过屏幕数据计算显示模式
+    //因此需要在每次屏幕变化时计算当前的显示模式
+    int mode = displayMode();
+    qInfo() << "current mode" << mode << "lastmode" << m_lastMode;
+
+    if (mode != m_lastMode) {
+        m_lastMode = mode;
+        d->m_events.insert(AbstractScreenManager::Mode, 0);
+    }
+
+    //事件优先级。由上往下，背景和画布模块在处理上层的事件已经处理过下层事件的涉及的改变，因此直接忽略
+    if (d->m_events.contains(AbstractScreenManager::Mode)) {
+        emit sigDisplayModeChanged();
+    }
+    else if (d->m_events.contains(AbstractScreenManager::Screen)) {
+        emit sigScreenChanged();
+    }
+    else if (d->m_events.contains(AbstractScreenManager::Geometry)) {
+        emit sigScreenGeometryChanged();
+    }
+    else if (d->m_events.contains(AbstractScreenManager::AvailableGeometry)) {
+        emit sigScreenAvailableGeometryChanged();
+    }
 }
