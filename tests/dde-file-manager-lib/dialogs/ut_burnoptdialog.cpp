@@ -125,3 +125,10 @@ TEST_F(TestBurnOptDialog, tstInnerSlot) {
     dlg->setDefaultVolName("hello iso");
 }
 
+TEST_F(TestBurnOptDialog, tstUDVersion) {
+    EXPECT_TRUE(BurnOptDialog::isSupportedUDVersion("1.02"));
+}
+
+TEST_F(TestBurnOptDialog, tstUDMedia) {
+    EXPECT_TRUE(BurnOptDialog::isSupportedUDMedium(5));
+}
