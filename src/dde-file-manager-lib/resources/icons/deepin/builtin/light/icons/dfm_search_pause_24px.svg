@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>button/stop</title>
+    <defs>
+        <circle id="path-1" cx="11" cy="11" r="11"></circle>
+        <filter x="-50.0%" y="-31.8%" width="200.0%" height="200.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="4" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.05 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="button/stop" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="清除" transform="translate(0.000001, 0.000001)">
+            <g>
+                <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+            </g>
+            <rect id="Rectangle" fill-opacity="0.5" fill="#000000" x="12.9999987" y="6.99999873" width="1" height="8" rx="0.5"></rect>
+            <rect id="Rectangle" fill-opacity="0.5" fill="#000000" x="7.99999873" y="6.99999873" width="1" height="8" rx="0.5"></rect>
+        </g>
+    </g>
+</svg>

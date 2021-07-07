@@ -213,6 +213,7 @@ public:
 
     void setColumnActiveRole(int column, int role);
     int columnActiveRole(int column) const;
+    void stopCurrentJob();
 
 //    static QList<QUrl> m_urlForDragEvent;
 
