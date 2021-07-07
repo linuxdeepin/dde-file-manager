@@ -53,7 +53,8 @@ public:
     enum ActionType {
         EscKeyPressed,
         ClearButtonPressed,
-        AddressBarLostFocus
+        AddressBarLostFocus,
+        PauseButtonClicked
     };
 
     virtual void processAction(ActionType type);

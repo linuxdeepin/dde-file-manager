@@ -27,6 +27,8 @@
 #include "dfmeventdispatcher.h"
 
 #include "views/dfilemanagerwindow.h"
+#include "views/dfileview.h"
+#include "dfilesystemmodel.h"
 
 #include <QDebug>
 
@@ -58,6 +60,18 @@ void DFMSearchCrumbController::processAction(DFMCrumbInterface::ActionType type)
         const DUrl &current_url = window->currentUrl();
         auto event = dMakeEventPointer<DFMChangeCurrentUrlEvent>(crumbBar(), current_url.searchTargetUrl(), window);
         DFMEventDispatcher::instance()->processEvent(event);
+        break;
+    }
+    case PauseButtonClicked: {
+        DFileManagerWindow *window = qobject_cast<DFileManagerWindow*>(crumbBar()->window());
+        if (!window)
+            break;
+
+        DFileView *fileView = dynamic_cast<DFileView *>(window->getFileView());
+        if (!fileView)
+            break;
+
+        fileView->model()->stopCurrentJob();
         break;
     }
     case AddressBarLostFocus:

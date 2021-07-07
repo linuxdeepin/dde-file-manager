@@ -32,6 +32,10 @@
 #include "singleton.h"
 #include "dfileservices.h"
 
+#include <DSpinner>
+#include <DAnchors>
+#include <DIconButton>
+
 #include <QAction>
 #include <QCompleter>
 #include <QAbstractItemView>
@@ -40,9 +44,6 @@
 #include <QScrollBar>
 #include <QWidgetAction>
 #include <QDebug>
-
-#include <DSpinner>
-#include <DAnchors>
 
 DWIDGET_USE_NAMESPACE
 
@@ -191,6 +192,7 @@ void DFMAddressBar::playAnimation()
 
 void DFMAddressBar::stopAnimation()
 {
+    pauseButton->setVisible(false);
     if (!animationSpinner)
         return;
 
@@ -376,8 +378,42 @@ void DFMAddressBar::inputMethodEvent(QInputMethodEvent *e)
     QLineEdit::inputMethodEvent(e);
 }
 
+void DFMAddressBar::enterEvent(QEvent *e)
+{
+    if (animationSpinner && animationSpinner->isPlaying()) {
+        animationSpinner->hide();
+        pauseButton->setVisible(true);
+    }
+
+    QLineEdit::enterEvent(e);
+}
+
+void DFMAddressBar::leaveEvent(QEvent *e)
+{
+    if (animationSpinner && animationSpinner->isPlaying()) {
+        pauseButton->setVisible(false);
+        animationSpinner->show();
+    }
+
+    QLineEdit::leaveEvent(e);
+}
+
 void DFMAddressBar::initUI()
 {
+    // pause button
+    pauseButton = new DIconButton(this);
+    pauseButton->setIcon(QIcon::fromTheme("dfm_search_pause"));
+    pauseButton->setFocusPolicy(Qt::NoFocus);
+    pauseButton->setCursor({Qt::ArrowCursor});
+    pauseButton->setFixedSize(24, 24);
+    pauseButton->setIconSize({24, 24});
+    pauseButton->setFlat(true);
+    pauseButton->setVisible(false);
+
+    DAnchorsBase::setAnchor(pauseButton, Qt::AnchorVerticalCenter, this, Qt::AnchorVerticalCenter);
+    DAnchorsBase::setAnchor(pauseButton, Qt::AnchorRight, this, Qt::AnchorRight);
+    DAnchorsBase::getAnchorBaseByWidget(pauseButton)->setRightMargin(height() + 15);
+
     // Left indicator (clickable! did u know that?)
     indicator = new QAction(this);
     addAction(indicator, QLineEdit::LeadingPosition);
@@ -452,6 +488,8 @@ void DFMAddressBar::initConnections()
         selectPosStart = posStart < posEnd ? posStart : posEnd;
         selectLength = selectionLength();
     });
+
+    connect(pauseButton, &DIconButton::clicked, this, &DFMAddressBar::pauseButtonClicked);
 }
 
 void DFMAddressBar::initData()

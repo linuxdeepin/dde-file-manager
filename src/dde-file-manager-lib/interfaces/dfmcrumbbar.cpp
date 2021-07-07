@@ -282,6 +282,11 @@ void DFMCrumbBarPrivate::initConnections()
         }
     });
 
+    q->connect(addressBar, &DFMAddressBar::pauseButtonClicked, q, [this]() {
+        if (crumbController)
+            crumbController->processAction(DFMCrumbInterface::PauseButtonClicked);
+    });
+
     q->connect(DFMApplication::instance(), &DFMApplication::csdClickableAreaAttributeChanged, q, [this](bool enabled) {
         setClickableAreaEnabled(enabled);
     });

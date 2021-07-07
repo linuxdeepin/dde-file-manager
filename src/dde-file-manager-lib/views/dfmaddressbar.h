@@ -34,6 +34,7 @@
 
 DWIDGET_BEGIN_NAMESPACE
 class DSpinner;
+class DIconButton;
 DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
@@ -80,6 +81,7 @@ signals:
     void lostFocus();
     void clearButtonPressed();
     void escKeyPressed();
+    void pauseButtonClicked();
 
 protected:
     void focusInEvent(QFocusEvent *e) override;
@@ -88,6 +90,8 @@ protected:
     void paintEvent(QPaintEvent *e) override;
     void showEvent(QShowEvent *event) override;
     void inputMethodEvent(QInputMethodEvent *e) override;
+    void enterEvent(QEvent *e) override;
+    void leaveEvent(QEvent *e) override;
 
 private:
     void initUI();
@@ -123,6 +127,8 @@ private:
 
     DSpinner *animationSpinner = nullptr;
     bool isKeyPressed = false;
+
+    DIconButton *pauseButton = nullptr;
 
 private slots:
     void insertCompletion(const QString &completion);
