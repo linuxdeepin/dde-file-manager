@@ -69,6 +69,7 @@
 #include "models/desktopfileinfo.h"
 #include "dfmstandardpaths.h"
 
+#include <QDrag>
 #include <QApplication>
 #include <DFileDragClient>
 #include <DAnchors>
@@ -100,6 +101,13 @@ DWIDGET_USE_NAMESPACE
 #define ICON_Y_OFFSET 10
 #define ICON_WIDTH_OFFSET -20
 #define ICON_HEIGHT_OFFSET -20
+
+#define DRAGICON_SIZE 128       //拖拽聚合默认icon边长
+#define DRAGICON_OUTLINE 30     //增加外圈范围，防止旋转后部分图片的角绘制不到
+#define DRAGICON_MAX 4          //拖拽聚合最多绘制icon数量
+#define DRAGICON_ROTATE 10.0    //拖拽聚合旋转角度
+#define DRAGICON_OPACITY 0.1    //拖拽聚合透明度梯度
+#define DRAGICON_MAX_COUNT 99   //最大显示计数
 
 SelectWork::SelectWork(QObject *parent)
     : QThread(parent)
@@ -1222,6 +1230,8 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
         const QModelIndex &index = indexAt(event->pos());
 
+        d->m_currentPressedIndex = isEmptyArea ? QModelIndex(): index;
+
         itemDelegate()->commitDataAndCloseActiveEditor();
 
         if (isEmptyArea) {
@@ -2271,6 +2281,39 @@ bool DFileView::eventFilter(QObject *obj, QEvent *event)
 
     return DListView::eventFilter(obj, event);
 }
+
+#if QT_CONFIG(draganddrop)
+void DFileView::startDrag(Qt::DropActions supportedActions)
+{
+    Q_D(DFileView);
+    QModelIndexList indexes = d->selectedDraggableIndexes();
+    if (!indexes.isEmpty()) {
+        if (indexes.count() == 1) {
+            DListView::startDrag(supportedActions);
+            return;
+        }
+
+        QMimeData *data = model()->mimeData(indexes);
+        if (!data)
+            return;
+
+        QPixmap pixmap = d->renderToPixmap(indexes);
+        QDrag *drag = new QDrag(this);
+        drag->setPixmap(pixmap);
+        drag->setMimeData(data);
+        drag->setHotSpot(QPoint(static_cast<int>(pixmap.size().width() / (2 * pixmap.devicePixelRatio())),
+                                static_cast<int>(pixmap.size().height() / (2 * pixmap.devicePixelRatio()))));
+        Qt::DropAction dropAction = Qt::IgnoreAction;
+        Qt::DropAction defaultDropAction = QAbstractItemView::defaultDropAction();
+        if (defaultDropAction != Qt::IgnoreAction && (supportedActions & defaultDropAction))
+            dropAction = defaultDropAction;
+        else if (supportedActions & Qt::CopyAction && dragDropMode() != QAbstractItemView::InternalMove)
+            dropAction = Qt::CopyAction;
+
+        drag->exec(supportedActions, dropAction);
+    }
+}
+#endif // QT_CONFIG(draganddrop)
 
 void DFileView::onShowHiddenFileChanged()
 {
@@ -3708,6 +3751,98 @@ void DFileViewPrivate::_q_onSectionHandleDoubleClicked(int logicalIndex)
     }
 
     headerView->resizeSection(logicalIndex, column_max_width);
+}
+
+QModelIndexList DFileViewPrivate::selectedDraggableIndexes() const
+{
+    Q_Q(const DFileView);
+
+    QModelIndexList indexes = q->selectedIndexes();
+    auto isNotDragEnabled = [=](const QModelIndex &index) {
+        return !(q->model()->flags(index) & Qt::ItemIsDragEnabled);
+    };
+
+    indexes.erase(std::remove_if(indexes.begin(), indexes.end(), isNotDragEnabled),
+                  indexes.end());
+
+    return indexes;
+}
+
+QPixmap DFileViewPrivate::renderToPixmap(const QModelIndexList &indexes) const
+{
+    Q_Q(const DFileView);
+
+    qreal scale = 1;
+    QWidget *window = q->window();
+    if (window) {
+        QWindow *windowHandle = window->windowHandle();
+        if (windowHandle)
+            scale = windowHandle->devicePixelRatio();
+    }
+
+    //将当前按住的index剔除
+    QModelIndexList indexesWithoutPressed = indexes;
+    auto needRemove = [=](const QModelIndex &index) {
+        return index.row() == m_currentPressedIndex.row();
+    };
+    indexesWithoutPressed.erase(std::remove_if(indexesWithoutPressed.begin(), indexesWithoutPressed.end(), needRemove),
+                  indexesWithoutPressed.end());
+
+    QRect pixRect(0, 0, DRAGICON_SIZE + DRAGICON_OUTLINE * 2, DRAGICON_SIZE + DRAGICON_OUTLINE * 2);
+    QPixmap pixmap(pixRect.size() * scale);
+    pixmap.setDevicePixelRatio(scale);
+    pixmap.fill(Qt::transparent);
+    QPainter painter(&pixmap);
+    QStyleOptionViewItem option = q->viewOptions();
+    option.state |= QStyle::State_Selected;
+    option.rect = option.rect.translated(DRAGICON_OUTLINE, DRAGICON_OUTLINE);
+
+    qreal offsetX = pixRect.width() / 2;
+    qreal offsetY = pixRect.height() / 2;
+    for (int i = qMin(DRAGICON_MAX - 1, indexesWithoutPressed.length() - 1); i >= 0 ; --i) {
+        //计算旋转角度
+        qreal rotate = DRAGICON_ROTATE * (ceil((i + 1.0) / 2.0) / 2.0 + 1.0) * (i % 2 == 1 ? -1 : 1);
+        //设置透明度
+        painter.setOpacity(1.0 - (i + 5) * DRAGICON_OPACITY);
+
+        //旋转
+        painter.translate(offsetX, offsetY); //让图片的中心作为旋转的中心
+        painter.rotate(rotate);
+        painter.translate(-offsetX, -offsetY); //使原点复原
+
+        //绘制icon
+        q->itemDelegate()->paintDragIcon(&painter, option, indexesWithoutPressed.at(i), QSize(DRAGICON_SIZE, DRAGICON_SIZE));
+
+        //旋转回原角度
+        painter.translate(offsetX, offsetY);
+        painter.rotate(-rotate);
+        painter.translate(-offsetX, -offsetY);
+    }
+
+    //绘制当前按住的icon
+    painter.setOpacity(0.8);
+    q->itemDelegate()->paintDragIcon(&painter, option, m_currentPressedIndex, QSize(DRAGICON_SIZE, DRAGICON_SIZE));
+    QSize iconSize = q->itemDelegate()->getIndexIconSize(option, m_currentPressedIndex, QSize(DRAGICON_SIZE, DRAGICON_SIZE));
+
+    //绘制数量提示原点，大于99个文件显示为99+
+    int length = indexes.length() > DRAGICON_MAX_COUNT ? 28 : 24; //原点直径：1到2个字符直径为24，3个字符直径为28
+    int x = DRAGICON_OUTLINE + (DRAGICON_SIZE + iconSize.width() - length) / 2;
+    int y = DRAGICON_OUTLINE + (DRAGICON_SIZE + iconSize.height() - length) / 2;
+
+    QColor pointColor(244, 74, 74);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setOpacity(1);
+    painter.setPen(pointColor);
+    painter.setBrush(pointColor);
+    painter.drawEllipse(x, y, length, length);
+
+    painter.setPen(Qt::white);
+    painter.setFont(QFont("Arial", 10));
+    QString countStr = indexes.length() > DRAGICON_MAX_COUNT ? QString::number(DRAGICON_MAX_COUNT).append("+") : QString::number(indexes.length());
+    painter.drawText(QRect(x, y, length, length), Qt::AlignCenter, countStr);
+
+
+    return pixmap;
 }
 
 #include "moc_dfileview.cpp"

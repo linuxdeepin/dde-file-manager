@@ -314,6 +314,34 @@ QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &siz
     return px;
 }
 
+void DFMStyledItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QSize &size) const
+{
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
+
+    QRectF icon_rect = opt.rect;
+    icon_rect.setSize(size);
+
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+    paintIcon(painter, opt.icon, icon_rect, Qt::AlignCenter, QIcon::Normal);
+}
+
+QSize DFMStyledItemDelegate::getIndexIconSize(const QStyleOptionViewItem &option, const QModelIndex &index, const QSize &size) const
+{
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
+
+    QRectF icon_rect = opt.rect;
+    icon_rect.setSize(size);
+
+    QSize iconSize = opt.icon.actualSize(icon_rect.size().toSize(), QIcon::Normal, QIcon::Off);
+    if (iconSize.width() > size.width() || iconSize.height() > size.height())
+        iconSize.scale(size, Qt::KeepAspectRatio);
+
+    return iconSize;
+}
+
 static inline Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment)
 {
     if (!(alignment & Qt::AlignHorizontal_Mask))
