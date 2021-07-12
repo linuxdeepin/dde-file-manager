@@ -136,31 +136,47 @@ bool OperatorCenter::createDirAndFile()
         }
     }
 
-    // 创建存放rsa公钥的文件
+    // 创建配置文件,并设置文件权限
+    QString strConfigFilePath = strConfigDir + QDir::separator() + VAULT_CONFIG_FILE_NAME;
+    QFile configFile(strConfigFilePath);
+    if (!configFile.exists()) {
+        // 如果文件不存在，则创建文件，并设置权限
+        if (configFile.open(QFileDevice::WriteOnly | QFileDevice::Text)) {
+            configFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
+            configFile.close();
+        } else {
+            qInfo() << "保险箱：创建配置文件失败！";
+        }
+    }
+
+    // 创建存放rsa公钥的文件,并设置文件权限
     QString strPriKeyFile = makeVaultLocalPath(RSA_PUB_KEY_FILE_NAME);
     QFile prikeyFile(strPriKeyFile);
     if (!prikeyFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
         qDebug() << "create rsa private key file failure!";
         return false;
     }
+    prikeyFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
     prikeyFile.close();
 
-    // 创建存放rsa公钥加密后密文的文件
+    // 创建存放rsa公钥加密后密文的文件,并设置文件权限
     QString strRsaCiphertext = makeVaultLocalPath(RSA_CIPHERTEXT_FILE_NAME);
     QFile rsaCiphertextFile(strRsaCiphertext);
     if (!rsaCiphertextFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
         qDebug() << "create rsa ciphertext file failure!";
         return false;
     }
+    rsaCiphertextFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
     rsaCiphertextFile.close();
 
-    // 创建密码提示信息文件
+    // 创建密码提示信息文件,并设置文件权限
     QString strPasswordHintFilePath = makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
     QFile passwordHintFile(strPasswordHintFilePath);
     if (!passwordHintFile.open(QIODevice::WriteOnly | QIODevice:: Append)) {
         qDebug() << "create password hint file failure!";
         return false;
     }
+    passwordHintFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
     passwordHintFile.close();
 
     return true;
