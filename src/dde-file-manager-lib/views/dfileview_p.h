@@ -57,6 +57,10 @@ public:
     void doFileNameColResize();
     void toggleHeaderViewSnap(bool on);
     void _q_onSectionHandleDoubleClicked(int logicalIndex);
+    QModelIndexList selectedDraggableIndexes() const;
+    QPixmap renderToPixmap(const QModelIndexList &indexes) const;
+    void paintDragIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment = Qt::AlignCenter,
+                       QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off) const;
 
 public:
     DFileView *q_ptr;
@@ -98,6 +102,9 @@ public:
     QModelIndex lastCursorIndex;
 
     QModelIndex mouseLastPressedIndex;
+
+    //记录当前mousePressEvent中按下的Index
+    QModelIndex m_currentPressedIndex;
 
     /// drag drop
     QModelIndex dragMoveHoverIndex;

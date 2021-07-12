@@ -266,6 +266,10 @@ protected:
     void updateGeometries() override;
     bool eventFilter(QObject *obj, QEvent *event) override;
 
+#if QT_CONFIG(draganddrop)
+    void startDrag(Qt::DropActions supportedActions) override;
+#endif
+
     void onShowHiddenFileChanged();
 
     void initDelegate();
