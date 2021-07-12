@@ -51,6 +51,54 @@
         ((uint32_t*)fn)[1] = (uint32_t)fn_stub;\
         CACHEFLUSH((char *)fn, CODESIZE);
     #define REPLACE_NEAR(t, fn, fn_stub) REPLACE_FAR(t, fn, fn_stub)
+#elif defined(__mips64)
+    #define CACHEFLUSH(addr, size) __builtin___clear_cache(addr, addr + size)
+    #define CODESIZE 80U
+    #define CODESIZE_MIN 80U
+    #define CODESIZE_MAX CODESIZE
+    //mips没有PC指针，所以需要手动入栈出栈
+    //120000ce0:  67bdffe0    daddiu  sp, sp, -32  //入栈
+    //120000ce4:  ffbf0018    sd  ra, 24(sp)
+    //120000ce8:  ffbe0010    sd  s8, 16(sp)
+    //120000cec:  ffbc0008    sd  gp, 8(sp)
+    //120000cf0:  03a0f025    move    s8, sp
+
+    //120000d2c:  03c0e825    move    sp, s8  //出栈
+    //120000d30:  dfbf0018    ld  ra, 24(sp)
+    //120000d34:  dfbe0010    ld  s8, 16(sp)
+    //120000d38:  dfbc0008    ld  gp, 8(sp)
+    //120000d3c:  67bd0020    daddiu  sp, sp, 32
+    //120000d40:  03e00008    jr  ra
+
+    #define REPLACE_FAR(t, fn, fn_stub)\
+        ((uint32_t *)fn)[0] = 0x67bdffe0;\
+        ((uint32_t *)fn)[1] = 0xffbf0018;\
+        ((uint32_t *)fn)[2] = 0xffbe0010;\
+        ((uint32_t *)fn)[3] = 0xffbc0008;\
+        ((uint32_t *)fn)[4] = 0x03a0f025;\
+        *(uint16_t *)(fn + 20) = (long long)fn_stub >> 32;\
+        *(fn + 22) = 0x19;\
+        *(fn + 23) = 0x24;\
+        ((uint32_t *)fn)[6] = 0x0019cc38;\
+        *(uint16_t *)(fn + 28) = (long long)fn_stub >> 16;\
+        *(fn + 30) = 0x39;\
+        *(fn + 31) = 0x37;\
+        ((uint32_t *)fn)[8] = 0x0019cc38;\
+        *(uint16_t *)(fn + 36) = (long long)fn_stub;\
+        *(fn + 38) = 0x39;\
+        *(fn + 39) = 0x37;\
+        ((uint32_t *)fn)[10] = 0x0320f809;\
+        ((uint32_t *)fn)[11] = 0x00000000;\
+        ((uint32_t *)fn)[12] = 0x00000000;\
+        ((uint32_t *)fn)[13] = 0x03c0e825;\
+        ((uint32_t *)fn)[14] = 0xdfbf0018;\
+        ((uint32_t *)fn)[15] = 0xdfbe0010;\
+        ((uint32_t *)fn)[16] = 0xdfbc0008;\
+        ((uint32_t *)fn)[17] = 0x67bd0020;\
+        ((uint32_t *)fn)[18] = 0x03e00008;\
+        ((uint32_t *)fn)[19] = 0x00000000;\
+        CACHEFLUSH((char *)fn, CODESIZE);
+    #define REPLACE_NEAR(t, fn, fn_stub) REPLACE_FAR(t, fn, fn_stub)
 #elif defined(__thumb__) || defined(_M_THUMB)
     #error "Thumb is not supported"
 #else //__i386__ _x86_64__
