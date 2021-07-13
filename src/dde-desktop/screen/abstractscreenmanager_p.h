@@ -30,13 +30,13 @@
 class ScreenManagerPrivate
 {
 public:
-    explicit ScreenManagerPrivate(AbstractScreenManager *p) : q(p){}
+    explicit ScreenManagerPrivate(AbstractScreenManager *p);
     ~ScreenManagerPrivate();
     void readyShot(int wait = 50);
 public:
-    QTimer *m_eventShot = nullptr;      //延迟处理定时器
+    QTimer m_eventShot;      //延迟处理定时器
     QMultiMap<AbstractScreenManager::Event,qint64> m_events;    //事件池
-    AbstractScreenManager *q;
+    AbstractScreenManager *q;    
 };
 
 #endif // SCREENMANAGER_P_H

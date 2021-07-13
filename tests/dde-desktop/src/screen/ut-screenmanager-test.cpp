@@ -143,8 +143,39 @@ TEST(ScreenObject, primary_screen)
 TEST(ScreenObject, display_mode)
 {
     ScreenManager sm;
+    auto getDisplayMode = []() -> AbstractScreenManager::DisplayMode{
+        auto allScreen = qApp->screens();
+        if (allScreen.isEmpty())
+            return AbstractScreenManager::Custom;
+
+        if (allScreen.size() == 1) {
+            return AbstractScreenManager::Showonly;
+        } else {
+            //存在两个屏幕坐标不一样则视为扩展，只有所有屏幕坐标相等发生重叠时才视为复制
+            QScreen *screen = allScreen.at(0);
+            for (int i = 1; i < allScreen.size(); ++i) {
+                QScreen *screen2 = allScreen.at(i);
+                if (screen->geometry().topLeft() != screen2->geometry().topLeft()) {
+                    return AbstractScreenManager::Extend;
+                }
+            }
+
+            //所有屏幕的都重叠，则视为复制
+            return AbstractScreenManager::Duplicate;
+        }
+    };
+
+    EXPECT_EQ(getDisplayMode(), sm.displayMode());
+}
+
+TEST(ScreenObject, display_mode_wayland)
+{
     ScreenManagerWayland smw;
-    EXPECT_EQ(sm.displayMode(),smw.displayMode());
+    QDBusInterface inf("com.deepin.daemon.Display", "/com/deepin/daemon/Display", "com.deepin.daemon.Display");
+    QList<QVariant> var = inf.call(QStringLiteral("GetRealDisplayMode")).arguments();
+    auto value = qvariant_cast<uchar>(var.at(0));
+    AbstractScreenManager::DisplayMode mode = static_cast<AbstractScreenManager::DisplayMode>(value);
+    EXPECT_EQ(mode, smw.displayMode());
 }
 
 TEST(ScreenObject, device_pixel_ratio)
@@ -827,29 +858,25 @@ TEST_F(ScreenSignal, sreen_available_geometry_changed)
     EXPECT_EQ(true,sreenAvailableGeometryChanged);
 }
 
-TEST_F(ScreenSignal, emit_DisplayModeChanged)
+TEST_F(ScreenSignal, process_displayModeChanged)
 {
     m_lastMode = -1;
     EXPECT_TRUE(d->m_events.isEmpty());
-    emit m_display->DisplayModeChanged();
-    qApp->processEvents();
+    this->onScreenGeometryChanged({});
+    this->processEvent();
     ASSERT_FALSE(d->m_events.isEmpty());
     EXPECT_EQ(d->m_events.begin().key(),AbstractScreenManager::Mode);
 }
 
-TEST_F(ScreenSignal, emit_PrimaryRectChanged)
+TEST_F(ScreenSignal, emit_PrimaryChanged)
 {
-    EXPECT_TRUE(d->m_events.isEmpty());
-    m_lastMode = m_display->GetRealDisplayMode();
-    emit m_display->PrimaryRectChanged();
-    qApp->processEvents();
     ASSERT_TRUE(d->m_events.isEmpty());
-
-    m_lastMode = -1;
-    emit m_display->PrimaryRectChanged();
+    m_lastMode = displayMode();
+    emit m_display->PrimaryChanged();
     qApp->processEvents();
-    ASSERT_FALSE(d->m_events.isEmpty());
-    EXPECT_EQ(d->m_events.begin().key(),AbstractScreenManager::Mode);
+    ASSERT_TRUE(!d->m_events.isEmpty());
+
+    EXPECT_EQ(d->m_events.begin().key(),AbstractScreenManager::Screen);
 }
 
 namespace  {

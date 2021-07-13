@@ -22,6 +22,7 @@
 
 #include "screenmanagerwayland.h"
 #include "screenobjectwayland.h"
+#include "abstractscreenmanager_p.h"
 #include "dbus/dbusdisplay.h"
 #include "dbus/dbusdock.h"
 #include "dbus/dbusmonitor.h"
@@ -178,6 +179,23 @@ void ScreenManagerWayland::reset()
     init();
 }
 
+void ScreenManagerWayland::processEvent()
+{
+    //事件优先级。由上往下，背景和画布模块在处理上层的事件已经处理过下层事件的涉及的改变，因此直接忽略
+    if (d->m_events.contains(AbstractScreenManager::Mode)) {
+        emit sigDisplayModeChanged();
+    }
+    else if (d->m_events.contains(AbstractScreenManager::Screen)) {
+        emit sigScreenChanged();
+    }
+    else if (d->m_events.contains(AbstractScreenManager::Geometry)) {
+        emit sigScreenGeometryChanged();
+    }
+    else if (d->m_events.contains(AbstractScreenManager::AvailableGeometry)) {
+        emit sigScreenAvailableGeometryChanged();
+    }
+}
+
 void ScreenManagerWayland::onMonitorChanged()
 {
     QStringList monitors;
@@ -209,7 +227,6 @@ void ScreenManagerWayland::onMonitorChanged()
         }
     }
     qDebug() << "save monitors:" << m_screens.keys();
-    //emit sigScreenChanged();
     appendEvent(Screen);
 }
 
@@ -232,11 +249,6 @@ void ScreenManagerWayland::onDockChanged()
 void ScreenManagerWayland::onScreenGeometryChanged(const QRect &rect)
 {
     Q_UNUSED(rect)
-//    ScreenObjectWayland *sc = SCREENOBJECT(sender());
-//    if (sc != nullptr && m_screens.contains(sc->path())) {
-//        ScreenPointer sp = m_screens.value(sc->path());
-//        emit sigScreenGeometryChanged(sp, rect);
-//    }
     appendEvent(Geometry);
 
     //fix wayland下切换合并/拆分，当主屏的geometry在合并拆分前后没有改变时，不会发送PrimaryRectChanged，而在主线能发送出来。
@@ -251,7 +263,6 @@ void ScreenManagerWayland::init()
     //先尝试使用Qt信号，若有问题再使用DBUS的信号
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenManagerWayland::onMonitorChanged);
     connect(m_display, &DBusDisplay::MonitorsChanged, this, &ScreenManagerWayland::onMonitorChanged);
-    //connect(m_display, &DBusDisplay::PrimaryChanged, this, &AbstractScreenManager::sigScreenChanged);
     connect(m_display, &DBusDisplay::PrimaryChanged, this, [this]() {
         this->appendEvent(Screen);
     });
