@@ -11,6 +11,12 @@ class DFileStatisticsJob;
 DFM_END_NAMESPACE
 DFM_USE_NAMESPACE
 
+#define BURN_CAPACITY_ATTRIBUTE     "BurnCapacityAttribute" // 光盘容量属性信息
+
+#define BURN_CAPACITY_TOTAL_SIZE    "BurnCapacityTotalSize" // 光盘容量总大小字节
+#define BURN_CAPACITY_USED_SIZE     "BurnCapacityUsedSize"  // 光盘容量已使用大小字节
+#define BURN_CAPACITY_STATUS        "BurnCapacityStatus"    // 光盘容量状态（DFMOpticalMediaWidget::BurnCapacityStatusAttribute）
+
 struct CdStatusInfo {
     bool bVolFlag = false;
     bool bMntFlag = false;

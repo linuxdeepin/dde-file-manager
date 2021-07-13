@@ -297,7 +297,7 @@ void DiskControlItem::showEvent(QShowEvent *e)
             quint64 burnCapacityUsedSize =  0;
             int burnStatus = 0;//光盘容量状态：0,光驱弹出状态 1,光驱弹入处于添加未挂载状态 2,光驱弹入处于添加后并挂载的状态
             int burnExt = 0;
-            QFile burnCapacityFile(QString("%1/.config/deepin/dde-file-manager/dde-file-manager.json").arg(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)));
+            QFile burnCapacityFile(QString("%1/.config/deepin/dde-file-manager.json").arg(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)));
             if (!burnCapacityFile.open(QIODevice::ReadOnly)) {
                 qDebug() << "Couldn't open dde-file-manager.json burnCapacityFile!";
                 return;

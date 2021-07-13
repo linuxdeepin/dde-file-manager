@@ -41,6 +41,8 @@
 #include "views/dfmopticalmediawidget.h"
 #include "controllers/vaultcontroller.h"
 #include "models/avfsfileinfo.h"
+#include "dfmapplication.h"
+#include "dfmsettings.h"
 
 #include <dstorageinfo.h>
 
@@ -596,38 +598,16 @@ QString FileUtils::diskUsageString(quint64 &usedSize, quint64 &totalSize, QStrin
 QString FileUtils::defaultOpticalSize(const QString &tagName, quint64 &usedSize, quint64 &totalSize)
 {
     QString size{"0M"};
+    int burnStatus{DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct};
+    quint64 curTotalSize{0}; // 光盘总大小
+    quint64 curUsedSize{0};  // 光盘已使用的大小
 
-    // todo: should be beautify, copy from `diskcontrolitem.cpp`
-    // 解析配置文件，获取光驱数据暂存的内容（包含挂载状态，大小）
-    QFile burnCapacityFile(QString("%1/dde-file-manager.json").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath)));
-    if (burnCapacityFile.open(QIODevice::ReadOnly)) {
-        QByteArray burnCapacityData = burnCapacityFile.readAll();
-        burnCapacityFile.close();
+    if (DFMApplication::genericSetting()->keys(BURN_CAPACITY_ATTRIBUTE).contains(tagName)) {
+        const QMap<QString, QVariant> &info = DFMApplication::genericSetting()->value(BURN_CAPACITY_ATTRIBUTE, tagName).toMap();
+        burnStatus = info.value(BURN_CAPACITY_STATUS).toInt();
+        curTotalSize = static_cast<quint64>(info.value(BURN_CAPACITY_TOTAL_SIZE).toDouble());
+        curUsedSize = static_cast<quint64>(info.value(BURN_CAPACITY_USED_SIZE).toDouble());
 
-        QJsonParseError parseJsonErr;
-        QJsonDocument jsonDoc(QJsonDocument::fromJson(burnCapacityData, &parseJsonErr));
-        if (!(parseJsonErr.error == QJsonParseError::NoError)) {
-            qDebug() << "decode json file error！";
-            return size;
-        }
-
-        int burnStatus{DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct};
-        quint64 curTotalSize{0}; // 光盘总大小
-        quint64 curUsedSize{0};  // 光盘已使用的大小
-        QJsonObject tempBurnObjs = jsonDoc.object();
-        if (tempBurnObjs.contains(QStringLiteral("BurnCapacityAttribute"))) {
-            QJsonValue jsonBurnValueList = tempBurnObjs.value(QStringLiteral("BurnCapacityAttribute"));
-            QJsonObject tagItem = jsonBurnValueList.toObject();
-            // 从配置文件读取光盘信息
-            if (tagItem.contains(tagName)) {
-                QJsonObject burnItem = tagItem[tagName].toObject();
-                curTotalSize = static_cast<quint64>(burnItem["BurnCapacityTotalSize"].toDouble());
-                curUsedSize = static_cast<quint64>(burnItem["BurnCapacityUsedSize"].toDouble());
-                burnStatus = burnItem["BurnCapacityStatus"].toInt();
-            }
-        }
-
-        // 光盘已挂载状态
         if (burnStatus == DFMOpticalMediaWidget::BCSA_BurnCapacityStatusAddMount && curUsedSize > 0 && curTotalSize > 8) {
             const qint64 kb = 1024;
             const qint64 mb = 1024 * kb;
@@ -637,6 +617,7 @@ QString FileUtils::defaultOpticalSize(const QString &tagName, quint64 &usedSize,
             totalSize = curTotalSize;
             size = QString("%1/%2").arg(FileUtils::formatSize(static_cast<qint64>(usedSize), true, 1, usedSize < mb ? 2 : -1, unitDisplayText),
                                         FileUtils::formatSize(static_cast<qint64>(totalSize), true, 1, totalSize < mb ? 2 : -1, unitDisplayText));
+
         }
     }
 
