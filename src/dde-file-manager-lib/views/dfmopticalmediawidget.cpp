@@ -13,6 +13,8 @@
 #include "app/filesignalmanager.h"
 #include "singleton.h"
 #include "models/dfmrootfileinfo.h"
+#include "dfmapplication.h"
+#include "dfmsettings.h"
 
 #include <QLabel>
 #include <DPushButton>
@@ -194,49 +196,18 @@ DFMOpticalMediaWidget::~DFMOpticalMediaWidget()
 }
 
 //fix: 设置光盘容量属性
+// TODO(zhangs): 此函数的逻辑不应该在此类中，重构后需要移除，将此逻辑改为服务进程中，通过 dbus 接口调用
 void DFMOpticalMediaWidget::setBurnCapacity(int status, QString strVolTag)
 {
-    QFile burnCapacityFile(QString("%1/dde-file-manager.json").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath)));
-    if (!burnCapacityFile.open(QIODevice::ReadOnly)) {
-        qDebug() << "Couldn't open dde-file-manager.json burnCapacityFile!";
-        return;
-    }
-    QByteArray burnCapacityData = burnCapacityFile.readAll();
-    burnCapacityFile.close();
-
+    QMap<QString, QVariant> capacityInfo;
     double burnTotalSize = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nTotal;
     double burnUsedSize = DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].nUsage;
 
-    QJsonObject rootObj;
-    QJsonObject tagItem;
-    QJsonObject burnItem;
-    burnItem.insert("BurnCapacityTotalSize", burnTotalSize); //光盘容量总大小字节
-    burnItem.insert("BurnCapacityUsedSize", burnUsedSize); //光盘容量已使用大小字节
-    burnItem.insert("BurnCapacityStatus", status); //光盘容量状态：0,光驱弹出状态 1,光驱弹入处于添加未挂载状态 2,光驱弹入处于添加后并挂载的状态
-    burnItem.insert("BurnCapacityExt", 0); //光盘容量扩展预留属性
+    capacityInfo[BURN_CAPACITY_TOTAL_SIZE] = burnTotalSize;
+    capacityInfo[BURN_CAPACITY_USED_SIZE] = burnUsedSize;
+    capacityInfo[BURN_CAPACITY_STATUS] = status;
 
-    QJsonParseError parseJsonErr;
-    QJsonDocument jsonDoc(QJsonDocument::fromJson(burnCapacityData, &parseJsonErr));
-    if (!(parseJsonErr.error == QJsonParseError::NoError)) {
-        qDebug() << "decode json file error, create new json data！";
-        //第一次如果没有这个属性需要创建
-        tagItem[strVolTag] = burnItem;
-    } else {
-        rootObj = jsonDoc.object();
-        if (rootObj.contains("BurnCapacityAttribute")) {
-            tagItem = rootObj["BurnCapacityAttribute"].toObject();
-        }
-        tagItem[strVolTag] = burnItem;
-    }
-    rootObj["BurnCapacityAttribute"] = tagItem;
-    jsonDoc.setObject(rootObj);
-    QFile burnCapacityFile2(QString("%1/dde-file-manager.json").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath)));
-    if (!burnCapacityFile2.open(QIODevice::WriteOnly)) {
-        qDebug() << "Couldn't open dde-file-manager.json burnCapacityFile2!";
-        return;
-    }
-    burnCapacityFile2.write(jsonDoc.toJson());
-    burnCapacityFile2.close();
+    DFMApplication::genericSetting()->setValue(BURN_CAPACITY_ATTRIBUTE, strVolTag, capacityInfo);
 }
 
 void DFMOpticalMediaWidget::updateDiscInfo(QString dev)
