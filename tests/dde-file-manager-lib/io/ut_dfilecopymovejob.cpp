@@ -1921,7 +1921,7 @@ TEST_F(DFileCopyMoveJobTest, start_writeToFileByQueue)
 
     jobd->m_skipFileQueue.push_back(frominfo->fileUrl());
     copyinfo->isdir = false;
-    jobd->m_writeOpenFd.insert(frominfo->fileUrl(), 10);
+    jobd->m_writeOpenFd.insert(frominfo->fileUrl(), -1);
     jobd->writeQueueEnqueue(copyinfo);
     EXPECT_TRUE(jobd->writeToFileByQueue());
 
