@@ -110,16 +110,6 @@ void ShareInfoFrame::initUI()
     mainLayoyt->setContentsMargins(10, 10, 10, 10);
     setLayout(mainLayoyt);
 
-    //当前文件夹已被共享
-    if (userShareManager->isShareFile(m_fileinfo->filePath())) {
-        auto creatorShareUid = userShareManager->getCreatorUidByShareName(m_shareNamelineEdit->text().toLower());
-        //文件共享创建者不是当前process的打开者或者不是文件所有者 排除root用户
-        if ((creatorShareUid != getuid() || creatorShareUid != m_fileinfo->ownerId())
-                && getuid() != 0) {
-            this->setEnabled(false);
-        }
-    }
-
     //判断文件属主与进程属主是否相同，排除进程属主为根用户情况
     if (m_fileinfo->ownerId() != getuid() && getuid() != 0) {
         this->setEnabled(false);
@@ -280,6 +270,16 @@ void ShareInfoFrame::updateShareInfo(const QString &filePath)
         m_shareNamelineEdit->setText(share_name);
 
         disactivateWidgets();
+    }
+
+    //当前文件夹已被共享
+    if (userShareManager->isShareFile(m_fileinfo->filePath())) {
+        auto creatorShareUid = userShareManager->getCreatorUidByShareName(m_shareNamelineEdit->text().toLower());
+        //文件共享创建者不是当前process的打开者或者不是文件所有者 排除root用户
+        if ((creatorShareUid != getuid() || creatorShareUid != m_fileinfo->ownerId())
+                && getuid() != 0) {
+            this->setEnabled(false);
+        }
     }
 }
 
