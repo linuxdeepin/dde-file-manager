@@ -513,8 +513,8 @@ QVariantHash DFMRootFileInfo::extraProperties() const
             ret["fsUsed"] = ~0ULL;
         } else {
             QStorageInfo si(d->mps.front());
-            ret["fsUsed"] = quint64(si.bytesTotal() - si.bytesFree());
-            ret["fsFreeSize"] = quint64(si.bytesFree());
+            ret["fsUsed"] = quint64(d->size) - quint64(si.bytesAvailable());
+            ret["fsFreeSize"] = quint64(si.bytesAvailable());
         }
         ret["fsSize"] = quint64(d->size);
         ret["fsType"] = d->fs;
