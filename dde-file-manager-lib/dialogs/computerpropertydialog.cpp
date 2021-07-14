@@ -183,7 +183,13 @@ static QString formatCap(qulonglong cap, const int size = 1024, quint8 precision
     for (size_t p = 0; p < sizeof(type); ++p) {
         if (cap < pow(size, p + 1) || p == sizeof(type) - 1) {
             if (!precision) {
-                return QString::number(round(lc / pow(size, p))) + type[p];
+                //! 内存总大小只能是整数所以当内存大小有小数时，就需要向上取整
+                int mem = ceil(lc / pow(size, p));
+                //! 如果向上取整后内存大小不为偶数，就向下取整
+                if(mem % 2 > 0) {
+                    mem = floor(lc / pow(size, p));
+                }
+                return QString::number(mem) + type[p];
             }
 
             return QString::number(dc / pow(ds, p), 'f', precision) + type[p];
