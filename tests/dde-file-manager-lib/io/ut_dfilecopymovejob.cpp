@@ -74,6 +74,8 @@ public:
     virtual void TearDown() override
     {
         std::cout << "end DFileCopyMoveJobTest" << std::endl;
+        // CI 进度较快，这里休眠 500 ms 来等待线程退出，如果超时了还未退出线程，job 内部自有机制保证安全退出，只不过那样的话有些测试可能达不到效果。
+        QThread::msleep(500);
         job.reset();
     }
 };
@@ -266,10 +268,11 @@ TEST_F(DFileCopyMoveJobTest, can_job_running_remove)
     while (!job->isFinished()) {
         QThread::msleep(100);
     }
-    job->start(DUrlList() << urlsour, DUrl());
+    // repeat?
+    /*job->start(DUrlList() << urlsour, DUrl());
     while (!job->isFinished()) {
         QThread::msleep(100);
-    }
+    }*/
     job->stop();
 }
 

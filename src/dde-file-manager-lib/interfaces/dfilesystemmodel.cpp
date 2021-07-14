@@ -762,7 +762,8 @@ DFileSystemModelPrivate::DFileSystemModelPrivate(DFileSystemModel *qq)
         //当遍历文件的耗时超过JobController::m_timeCeiling时，
         //onJobFinished函数中拿到的文件不足，因为rootNodeManager还要处理剩余文件
         //因此在这里rootNodeManager处理完后，再次发送信号 关联bug#24863
-        emit qq->sigJobFinished();
+        if (!needQuitUpdateChildren)
+            emit qq->sigJobFinished();
     });
 }
 
@@ -1089,8 +1090,9 @@ DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
 
 DFileSystemModel::~DFileSystemModel()
 {
-
     Q_D(DFileSystemModel);
+
+    d->needQuitUpdateChildren = true;
 
     isNeedToBreakBusyCase = true; // 清场的时候，必须让其他资源线程跳出相关流程
 
@@ -1113,6 +1115,7 @@ DFileSystemModel::~DFileSystemModel()
         d->updateChildrenFuture.cancel();
         d->updateChildrenFuture.waitForFinished();
     }
+    d->needQuitUpdateChildren = false;
 
     if (d->watcher) {
         d->watcher->deleteLater();
@@ -1519,42 +1522,6 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     if (!releaseJobController()) {
         return;
     }
-//    if (d->jobController) {
-//        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
-//        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
-//        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
-
-//        if (d->jobController->isFinished()) {
-//            d->jobController->deleteLater();
-//        } else {
-//            QEventLoop eventLoop;
-//            QPointer<DFileSystemModel> me = this;
-//            d->eventLoop = &eventLoop;
-
-//            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
-
-//            d->jobController->stopAndDeleteLater();
-
-//            int code = eventLoop.exec();
-
-//            d->eventLoop = Q_NULLPTR;
-
-//            if (code != 0) {
-//                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
-//                    //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
-//                    //此时d->jobController有可能已经在析构了，不能调用terminate
-////                    d->jobController->terminate();
-//                    d->jobController->quit();
-//                    d->jobController.clear();
-//                }
-//                return;
-//            }
-
-//            if (!me) {
-//                return;
-//            }
-//        }
-//    }
     qInfo() << "fetchMore start traverse all files in current dir = " << parentNode->fileInfo->fileUrl();
     d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters,
                                                    QDirIterator::NoIteratorFlags, false, parentNode->fileInfo->isGvfsMountFile());
@@ -1845,6 +1812,7 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
     if (d->updateChildrenFuture.isRunning()) {
         // 使用QFuture::cancel() 函数无效，定义个变量控制线程的退出
         d->needQuitUpdateChildren = true;
+        d->updateChildrenFuture.cancel();
         d->updateChildrenFuture.waitForFinished();
         d->needQuitUpdateChildren = false;
     }
@@ -2442,7 +2410,9 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     node->setChildrenList(fileList);
     endInsertRows();
 
-    if (!d->jobController || d->jobController->isFinished()) {
+    if (d->needQuitUpdateChildren)
+        return;
+    if (!job || job->isFinished()) {
         setState(Idle);
     } else {
         d->childrenUpdated = true;
@@ -2458,10 +2428,11 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
         bool finished = job->isUpdatedFinished();
         qInfo() << " finish update children. isUpdatedFinished = " << finished << "and file count = " << node->childrenCount();
         //若刷新完成通知桌面重新获取文件
-        if (finished)
+        if (finished && !d->needQuitUpdateChildren)
             emit sigJobFinished();
-    } else
+    } else if (!d->needQuitUpdateChildren) {
         emit sigJobFinished();
+    }
 }
 
 void DFileSystemModel::updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list)
@@ -2791,12 +2762,6 @@ void DFileSystemModel::onJobFinished()
 
     if (d->childrenUpdated && !d->rootNodeManager->isRunning()) {
         setState(Idle);
-    }
-
-    JobController *job = qobject_cast<JobController *>(sender());
-
-    if (job) {
-        job->deleteLater();
     }
 }
 
