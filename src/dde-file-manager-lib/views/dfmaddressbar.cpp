@@ -380,7 +380,7 @@ void DFMAddressBar::inputMethodEvent(QInputMethodEvent *e)
 
 void DFMAddressBar::enterEvent(QEvent *e)
 {
-    if (animationSpinner && animationSpinner->isPlaying()) {
+    if (indicatorType == Search && animationSpinner && animationSpinner->isPlaying()) {
         animationSpinner->hide();
         pauseButton->setVisible(true);
     }
@@ -390,7 +390,7 @@ void DFMAddressBar::enterEvent(QEvent *e)
 
 void DFMAddressBar::leaveEvent(QEvent *e)
 {
-    if (animationSpinner && animationSpinner->isPlaying()) {
+    if (indicatorType == Search && animationSpinner && animationSpinner->isPlaying()) {
         pauseButton->setVisible(false);
         animationSpinner->show();
     }

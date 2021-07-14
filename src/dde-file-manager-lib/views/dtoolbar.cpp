@@ -228,10 +228,13 @@ void DToolBar::initConnect()
 
     if (window) {
         connect(window, &DFileManagerWindow::currentViewStateChanged, this, [this, window] {
-            if (window->currentViewState() == DFMBaseView::ViewBusy)
-                m_crumbWidget->playAddressBarAnimation();
-            else
-                m_crumbWidget->stopAddressBarAnimation();
+            // fix bug 87535 搜索栏只有搜索状态才显示加载动画
+            if (window->currentUrl().isSearchFile()) {
+                if (window->currentViewState() == DFMBaseView::ViewBusy)
+                    m_crumbWidget->playAddressBarAnimation();
+                else
+                    m_crumbWidget->stopAddressBarAnimation();
+            }
         });
     }
 }
