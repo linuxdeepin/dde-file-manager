@@ -147,8 +147,10 @@ bool VaultHelper::isVaultEnabled()
 {
     if (!DSysInfo::isCommunityEdition()) {  // 如果不是社区版
         DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-        // 如果是专业版
-        if (DSysInfo::DeepinType::DeepinProfessional == deepinType) {
+        //! 获取版本类型
+        DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
+        // 如果是专业版或是euler版本
+        if (DSysInfo::DeepinType::DeepinProfessional == deepinType || DSysInfo::UosEdition::UosEuler == uosEdition) {
             return true;
         }
     }
