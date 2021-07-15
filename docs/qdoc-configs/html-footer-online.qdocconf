@@ -1,9 +1,0 @@
-# HTML footer for qt.io
-
-HTML.footer += \
-    "</div>\n" \
-    "</div>\n" \
-    "</div>\n" \
-    "</div>\n" \
-    "</div>\n"
-
