@@ -575,57 +575,6 @@ void DFMRootFileInfo::checkCache()
     d->size = blk->size();
     d->label = blk->idLabel();
 
-    //FAT32的卷标编码为ascii，idLabel中取不到中文，这里需要从symlink中取出label
-    //symlink中的label编码有问题，这里做进一步处理
-    QString idVersion = blk->idVersion().toUpper();
-    if (idVersion == "FAT32") {
-        for (QByteArray ba : blk->symlinks()) {
-            QString link(ba);
-            if (link.contains("/by-label/") && link.contains("\\x")) {
-                QByteArray t_destByteArray;
-                QByteArray t_tmpByteArray;
-                for (int i = 0; i < ba.size(); i++) {
-                    if (92 == ba.at(i)) {
-                        if (4 == t_tmpByteArray.size()) {
-                            t_destByteArray.append(QByteArray::fromHex(t_tmpByteArray));
-                        } else {
-                            if (t_tmpByteArray.size() > 4) {
-                                t_destByteArray.append(QByteArray::fromHex(t_tmpByteArray.left(4)));
-                                t_destByteArray.append(t_tmpByteArray.mid(4));
-                            } else {
-                                t_destByteArray.append(t_tmpByteArray);
-                            }
-                        }
-                        t_tmpByteArray.clear();
-                        t_tmpByteArray.append(ba.at(i));
-                        continue;
-                    } else if (t_tmpByteArray.size() > 0) {
-                        t_tmpByteArray.append(ba.at(i));
-                        continue;
-                    } else {
-                        t_destByteArray.append(ba.at(i));
-                    }
-                }
-
-                if (4 == t_tmpByteArray.size()) {
-                    t_destByteArray.append(QByteArray::fromHex(t_tmpByteArray));
-                } else {
-                    if (t_tmpByteArray.size() > 4) {
-                        t_destByteArray.append(QByteArray::fromHex(t_tmpByteArray.left(4)));
-                        t_destByteArray.append(t_tmpByteArray.mid(4));
-                    } else {
-                        t_destByteArray.append(t_tmpByteArray);
-                    }
-                }
-
-                link = QTextCodec::codecForName("GBK")->toUnicode(t_destByteArray);
-
-                int idx = link.lastIndexOf("/", link.length() - 1);
-                d->label = link.mid(idx + 1);
-                break;
-            }
-        }
-    }
     loadDiskInfo();
     d->fs = blk->idType();
     d->idUUID = blk->idUUID();
