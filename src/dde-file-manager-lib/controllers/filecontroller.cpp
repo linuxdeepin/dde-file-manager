@@ -283,12 +283,19 @@ public:
                 searchStartOffset = searchEndOffset = 0;
                 searchDirList.removeAt(0);
             }
-        }
 
-        // 如果路径中存在链接，需要将其还原，用于展示
-        if (m_hasSymLink) {
-            for (auto &path : searchResults) {
-                path.replace(m_newPrefix, m_oldPrefix);
+            // 如果路径中存在链接，需要将其还原，用于展示
+            if (m_hasSymLink) {
+                for (auto &path : searchResults) {
+                    path.replace(m_newPrefix, m_oldPrefix);
+                    if (m_isAddDataPrefix && path.startsWith("/data"))
+                        path.remove(0, 5);
+                }
+            } else if (m_isAddDataPrefix) {
+                for (auto &path : searchResults) {
+                    if (path.startsWith("/data"))
+                        path.remove(0, 5);
+                }
             }
         }
 
@@ -320,16 +327,18 @@ public:
     }
 
     ///
-    /// \brief setSymLink 如果搜索路径中存在链接目录，记录一些参数用于搜索结果还原
+    /// \brief setPathPropertity 设置路径属性
     /// \param hasSymLink 是否存在链接目录
     /// \param oldPrefix 原始前缀
     /// \param newPrefix 修改后的前缀
+    /// \param isAddDataPrefix 是否添加了data目录前缀
     ///
-    void setSymLink(bool hasSymLink, const QString &oldPrefix, const QString &newPrefix)
+    void setPathPropertity(bool hasSymLink, const QString &oldPrefix, const QString &newPrefix, const bool isAddDataPrefix)
     {
         m_hasSymLink = hasSymLink;
         m_oldPrefix = oldPrefix;
         m_newPrefix = newPrefix;
+        m_isAddDataPrefix = isAddDataPrefix;
     }
 
 private:
@@ -342,6 +351,7 @@ private:
     mutable QStringList searchResults;
 
     bool m_hasSymLink = false;
+    bool m_isAddDataPrefix = false;
     QString m_oldPrefix;
     QString m_newPrefix;
 
@@ -1930,8 +1940,16 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
     static ComDeepinAnythingInterface anything("com.deepin.anything", "/com/deepin/anything",
                                                QDBusConnection::systemBus());
 
+    bool isAddDataPrefix = false;
     if (!anything.hasLFT(pathForSearching)) {
-        return false;
+        if (pathForSearching.startsWith("/home") && QDir("/data/home").exists()) {
+            pathForSearching.prepend("/data");
+            if (!anything.hasLFT(pathForSearching))
+                return false;
+            isAddDataPrefix = true;
+        } else {
+            return false;
+        }
     } else {
         qDebug() << "support quick search for: " << pathForSearching;
     }
@@ -1947,7 +1965,7 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
         delete iterator;
 
     iterator = new DFMAnythingDirIterator(&anything, pathForSearching, keyword);
-    static_cast<DFMAnythingDirIterator *>(iterator)->setSymLink(hasLink, oldPrefix, newPrefix);
+    static_cast<DFMAnythingDirIterator *>(iterator)->setPathPropertity(hasLink, oldPrefix, newPrefix, isAddDataPrefix);
 
     return true;
 #endif // DISABLE_QUICK_SEARCH
