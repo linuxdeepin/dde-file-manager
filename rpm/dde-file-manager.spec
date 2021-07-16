@@ -67,6 +67,7 @@ Requires:       dde-desktop
 Requires:       jemalloc
 Requires:       libglvnd-glx
 Requires:       libdde-file-manager
+Requires:       cryfs
 Requires:		deepin-anything-dkms deepin-anything-server
 #Requires:       gvfs-client
 #Requires:       samba
