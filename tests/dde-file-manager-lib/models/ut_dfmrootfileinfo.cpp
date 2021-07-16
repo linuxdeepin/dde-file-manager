@@ -264,7 +264,6 @@ TEST_F(TestDFMRootFileInfo, tstCheckCache)
 {
     Stub st;
     st.set(ADDR(DBlockDevice, idVersion), idVersion_stub);
-    st.set(ADDR(DBlockDevice, symlinks), symlinks_stub);
     DFMRootFileInfo *fat32 = new DFMRootFileInfo(DUrl("dfmroot:///sda.localdisk"));
     fat32->checkCache();
     delete fat32;
