@@ -197,6 +197,20 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
     }
     QX11Info::setAppTime(QX11Info::appUserTime());
     DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewWindow) : url);
+    if (DFMGlobal::isTablet() && window) {
+        QWidget *centralWidget = window->centralWidget();
+        // 开启以下属性虚拟键盘弹起时控件不会变形
+        centralWidget->setAttribute(Qt::WA_LayoutOnEntireRect, false);
+        centralWidget->setAttribute(Qt::WA_ContentsMarginsRespectsSafeArea, false);
+
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 5, 17, 17))
+        centralWidget->setProperty("_dtk_NoTopLevelEnabled", true);
+#endif
+
+        // 对该容器内的输入控件做自适应虚拟键盘操作
+        qApp->acclimatizeVirtualKeyboard(centralWidget);
+    }
+
     loadWindowState(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
     window->show();

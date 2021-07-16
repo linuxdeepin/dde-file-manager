@@ -604,17 +604,6 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
 
         // 将不会为虚拟键盘做任何自适应操作
         qApp->ignoreVirtualKeyboard(this);
-
-        // 开启以下属性虚拟键盘弹起时控件不会变形
-        d_ptr->centralWidget->setAttribute(Qt::WA_LayoutOnEntireRect, false);
-        d_ptr->centralWidget->setAttribute(Qt::WA_ContentsMarginsRespectsSafeArea, false);
-
-#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 5, 17, 17))
-        d_ptr->centralWidget->setProperty("_dtk_NoTopLevelEnabled", true);
-#endif
-
-        // 对该容器内的输入控件做自适应虚拟键盘操作
-        qApp->acclimatizeVirtualKeyboard(d_ptr->centralWidget);
     }
     openNewTab(newurl);
 }
