@@ -184,7 +184,7 @@ In Properties of files, you can view the basic info, open with list, and permiss
 ### Virus scan
 
 1. On File Manager interface, right-click a file(folder). 
-2. Select **Virus scan**, the **Virus Scan** interface of Security Center pops up, so you can scan the file(folder) for virus. Refer to [Virus Scan](dman:///security-center#Virus Scan) for detailed operations.
+2. Select **Virus scan**, the **Virus Scan** interface of Security Center pops up, so you can scan the file(folder) for virus. Refer to [Virus Scan](dman:///deepin-defender#Virus Scan) of Security Center for detailed operations.
 
    >![notes](../common/notes.svg)Notes: 
    >
@@ -276,6 +276,8 @@ By adding tags on file/folder, you can classify and manage your files better.
 
 #### Add Tags
 
+You can add tag to multiple files/folders at a time, or add multiple tags to a single file/folder; you can also add tags in Properties of the file/folder. The tag appears in the left panel.
+
 ##### By Tag information
 
 1. Right-click a file/folder, select **Tag information**.
@@ -300,9 +302,9 @@ Select a file/folder, click ![fileinfo](../common/fileinfo.svg), and add tags in
 
 ![1|infotag](fig/p_infotag.png)
 
-> ![notes](../common/notes.svg)Notes: You can add tag to multiple files/folders at a time, or add multiple tags to a single file/folder; you can also add tags in Properties of the file/folder. The tag appears in the left panel.
 
-> ![attention](../common/attention.svg)Attention: If a file has a tag, copy or cut and then paste it, the new file still has the same tag.
+
+> ![notes](../common/notes.svg)Notes: If a file has a tag, copy or cut and then paste it, the new file still has the same tag.
 
 #### Rename Tag
 
@@ -351,7 +353,7 @@ You can share folders in File Manager, if there are some folders shared, the sha
 
 1. On File Manager interface, right-click a folder, select **Share folder**.
 2. In the properties window, check **Share this folder**.
-3. Input **Share name**, and choose **Permission** and **Anonymous** according to actual needs before closing the window.
+3. Input **Share name**, and choose **Permission**, and **Anonymous** according to actual needs before closing the window.
 5. To set share password, click ![menu](../common/icon_menu.svg) and select **Set share password**.
 5. Input password and click **Confirm**.
 
@@ -366,7 +368,7 @@ You can find sharing folders of other users in the same LAN in **Computers in LA
 
 
 1. On File Manager interface, click ![icon_menu](../common/icon_menu.svg) > **Connect to Server**, input the sharing address of the LAN user, e.g. smb://xx.x.xx.xxx (usually it should be an IP address), click **Connect**.  Or, input the server's address in the address bar directly and press **Enter**.
-2. Double-click the shared document you need to visit, input the username and password or visit by anonymous access in the pop-up dialogue box.
+2. Double-click the shared document you need to visit, input the username and password in the pop-up dialogue box.
    - Unencrypted folders can be visited by anonymous access without inputting username and password.
    - When you visit encrypted folders, a window pops up and you will have to input user name and password before visiting. If you check **Remember password**, you don't have to input password when you visit the folder next time.
       - Username: i.e. the name used by the sharer when logging in the system.
@@ -653,7 +655,7 @@ You can create new window, switch themes, connect to server, set share password 
 You can [visit sharing folders](#Visit Sharing Folders) by connecting to server.
 
 1. Click ![icon_menu](../common/icon_menu.svg)on the interface.
-2. Select **Connect to Server**, input server's IP address in the editing box.
+2. Select **Connect to Server**, input server's IP address (XX.XX.XX.XX) in the editing box.
    - Click ![+](../common/+.svg) to add the address into **My Favorites**.
    - Select an address from **My Favorites** and click ![-](../common/-.svg) to delete in from **My Favorites**.
 3. Click **Connect**.
