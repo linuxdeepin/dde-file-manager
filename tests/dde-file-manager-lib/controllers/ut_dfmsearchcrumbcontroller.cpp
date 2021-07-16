@@ -49,6 +49,7 @@ TEST_F(TestDFMSearchCrumbController, processAction)
 {
     controller.processAction(DFMCrumbInterface::EscKeyPressed);
     controller.processAction(DFMCrumbInterface::AddressBarLostFocus);
+    controller.processAction(DFMCrumbInterface::PauseButtonClicked);
 }
 
 TEST_F(TestDFMSearchCrumbController, crumbUrlChangedBehavior)
