@@ -266,10 +266,6 @@ TEST_F(DFileCopyMoveJobTest, can_job_running_remove)
     while (!job->isFinished()) {
         QThread::msleep(100);
     }
-    job->start(DUrlList() << urlsour, DUrl());
-    while (!job->isFinished()) {
-        QThread::msleep(100);
-    }
     job->stop();
 }
 

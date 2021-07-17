@@ -57,8 +57,10 @@ JobController::~JobController()
 {
     stop();
     wait();
-    if (timer)
+    if (timer) {
         delete timer;
+        timer = nullptr;
+    }
 }
 
 JobController::State JobController::state() const
@@ -115,14 +117,14 @@ void JobController::stop()
 
 void JobController::stopAndDeleteLater()
 {
+    stop();
+
     if (!isRunning()) {
         deleteLater();
     } else {
         disconnect(this, &JobController::finished, this, &JobController::deleteLater);
         connect(this, &JobController::finished, this, &JobController::deleteLater);
     }
-
-    stop();
 }
 
 void JobController::setTimeCeiling(int timeCeiling)

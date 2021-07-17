@@ -138,6 +138,7 @@ public:
     ~DFileViewHelperPrivate()
     {
         delete menuEventHandler;
+        menuEventHandler = nullptr;
     }
 
     DFileViewHelperPrivate(DFileViewHelperPrivate &) = delete;
