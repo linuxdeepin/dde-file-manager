@@ -33,7 +33,8 @@ unix {
 
         DEFINES += ENABLE_ASYNCINIT
     }
-
+    # oeler禁用jemalloc库，启用该库，会存在严重的内存泄露（系统总内存越大，文管占用内存越多）
+    DISABLE_JEMALLOC = 1
     isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
         DEFINES += ARCH_MIPSEL ARCH_SW
 
