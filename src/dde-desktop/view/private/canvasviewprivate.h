@@ -166,6 +166,9 @@ public:
 
     // currentCursorIndex is not the mouse, it's the position move by keybord
     QModelIndex         currentCursorIndex;
+    //当前鼠标按下的index,currentCursorIndex是键盘移动选中的index
+    //currentCursorIndex在使用上已经被多次误用了，所以这里使用新的变量，区分减小影响
+    QModelIndex         m_currentMousePressIndex;
 
     QPoint              lastMenuPos;
     QString             lastMenuNewFilepath;

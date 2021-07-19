@@ -109,6 +109,7 @@ public:
 #if QT_CONFIG(draganddrop)
     virtual void startDrag(Qt::DropActions supportedActions) override;
 #endif
+    QPixmap renderToPixmap(const QModelIndexList &indexes) const;
     QString canvansScreenName() const;
     QRect rectForIndex(const QModelIndex &index) const;
     DUrl currentUrl() const;
