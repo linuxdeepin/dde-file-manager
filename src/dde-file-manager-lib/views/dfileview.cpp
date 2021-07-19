@@ -3844,7 +3844,11 @@ QPixmap DFileViewPrivate::renderToPixmap(const QModelIndexList &indexes) const
     painter.drawEllipse(x, y, length, length);
 
     painter.setPen(Qt::white);
-    painter.setFont(QFont("Arial", 10));
+    //按照设计的要求设置字体：Arial，12大小,粗体
+    QFont ft("Arial");
+    ft.setPixelSize(12);
+    ft.setBold(true);
+    painter.setFont(ft);
     QString countStr = indexes.length() > DRAGICON_MAX_COUNT ? QString::number(DRAGICON_MAX_COUNT).append("+") : QString::number(indexes.length());
     painter.drawText(QRect(x, y, length, length), Qt::AlignCenter, countStr);
 
