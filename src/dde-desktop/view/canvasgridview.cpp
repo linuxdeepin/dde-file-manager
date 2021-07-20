@@ -1259,7 +1259,8 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
     d->dragTargetGrid = QPoint(-1, -1);
 
     auto pos = event->pos();
-    auto hoverIndex = indexAt(event->pos());
+    // fix:bug88232,在拖拽过程中，index是否有效应该对应的是一整个单个栅格范围，
+    auto hoverIndex = indexAt(gridRectAt(event->pos()).center());
 
     auto startDodgeAnimation = [ = ]() {
         d->dragTargetGrid.setX((pos.x() - d->viewMargins.left()) / d->cellWidth);
