@@ -87,7 +87,9 @@ public:
 };
 
 TEST_F(DfmBaseViewTest,start_deleteLater) {
-    EXPECT_NO_FATAL_FAILURE(baseview->deleteLater());
+    TestDfmBaseView *viewptr = new TestDfmBaseView();
+    EXPECT_NO_FATAL_FAILURE(viewptr->deleteLater());
+    TestHelper::runInLoop([](){});
 }
 
 TEST_F(DfmBaseViewTest,start_widget) {
