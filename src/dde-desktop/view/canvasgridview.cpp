@@ -1659,12 +1659,15 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
 //    int drawCount = 0;
     for (auto &localFile : repaintLocalFiles) {
         auto url = DUrl(localFile);
+
+        /* 按照产品要求，拖拽时，展示拖拽源位置图片
         // hide selected if draw animation
         //拖拽复制时，原图标保持
         if ((d->dodgeAnimationing || d->startDodge) && selecteds.contains(url) && !DFMGlobal::keyCtrlIsPressed()) {
 //            qDebug() << "skip drag select" << url;
             continue;
         }
+        */
 
 
         if (d->dodgeAnimationing && d->dodgeItems.contains(localFile)) {
@@ -1957,7 +1960,7 @@ QPixmap CanvasGridView::renderToPixmap(const QModelIndexList &indexes) const
     painter.drawEllipse(x, y, length, length);
 
     painter.setPen(Qt::white);
-    //字体：Arial，12大小,粗体
+    //按照设计的要求设置字体：Arial，12大小,粗体
     QFont ft("Arial");
     ft.setPixelSize(12);
     ft.setBold(true);
@@ -3028,7 +3031,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
                     }
                     auto index = model()->index(DUrl(localFile));
 
-                    //1041需求，桌面图标向内收缩10个像素为框选触发范围
+                    //需求，桌面图标向内收缩10个像素为框选触发范围
                     auto tempVr = visualRect(index);
                     tempVr = tempVr.marginsRemoved(margins);
                     if (tempVr.intersects(selectRect)) {
