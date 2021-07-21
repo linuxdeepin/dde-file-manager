@@ -20,6 +20,7 @@
 
 //fixed:CD display size error
 #include "views/dfmopticalmediawidget.h"
+#include "views/dfilemanagerwindow.h"
 #include "gvfs/gvfsmountmanager.h"
 
 #include "singleton.h"
@@ -519,6 +520,17 @@ int ComputerModel::itemCount() const
 void ComputerModel::addItem(const DUrl &url, QWidget* w)
 {
     if (findItem(url) != -1) {
+        return;
+    }
+
+    // do not show optical item when the hideOptical is true, this value is setted in dfmsidebar,
+    // when computer view is opened in Save-File-Dialog, do not show it so that we can avoid to save to a non-exist dir "burn:///"
+    bool hideOptical = false;
+    auto *window = dynamic_cast<DFileManagerWindow *>(par->window());
+    if (window)
+        hideOptical = window->needHideOpticalItem();
+    if (hideOptical && url.path().contains(QRegExp("/sr[0-9]*.localdisk"))) {
+        qInfo() << "Optical item is hided";
         return;
     }
 

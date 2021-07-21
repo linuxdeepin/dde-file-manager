@@ -261,6 +261,28 @@ void DFMSideBar::setDisableUrlSchemes(const QSet<QString> &schemes)
     emit disableUrlSchemesChanged();
 }
 
+void DFMSideBar::hideOpticalItem()
+{
+    // do not show optical item when the hideOptical is true, this value is setted in dfmsidebar,
+    // and optical item is not expected to show if FileDialog is Save Mode
+    forever {
+        int index = findItem([&](const DFMSideBarItem * item) -> bool {
+            return item->url().path().contains(QRegExp("/sr[0-9]*.localdisk"));
+        });
+
+        if (index >= 0) {
+            qInfo() << "optical item is hided in save mode";
+            m_sidebarModel->removeRow(index);
+        } else {
+            break;
+        }
+    }
+
+    DFileManagerWindow *window = dynamic_cast<DFileManagerWindow *>(this->window());
+    if (window)
+        window->setHideOpticalItem(true);
+}
+
 DUrlList DFMSideBar::savedItemOrder(const QString &groupName) const
 {
     DUrlList list;

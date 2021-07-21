@@ -142,12 +142,15 @@ public:
 
     QMap<DUrl, QWidget *> views;
 
-    bool move;
     QPoint startPoint;
     QPoint windowPoint;
 
     DFileManagerWindow *q_ptr{ nullptr };
 
+    // decide whether to show Optical Item in both sidebar and computer view, if views is showed
+    // in Save-File-Dialog, then the optical item should not be showed.
+    bool needHideOpticalItem = false;
+    bool move;
     D_DECLARE_PUBLIC(DFileManagerWindow)
 };
 
@@ -1582,4 +1585,16 @@ void DFileManagerWindow::showFilterButton()
     Q_D(DFileManagerWindow);
 
     d->toolbar->setSearchButtonVisible(true);
+}
+
+bool DFileManagerWindow::needHideOpticalItem() const
+{
+    Q_D(const DFileManagerWindow);
+    return d->needHideOpticalItem;
+}
+
+void DFileManagerWindow::setHideOpticalItem(bool hide)
+{
+    Q_D(DFileManagerWindow);
+    d->needHideOpticalItem = hide;
 }

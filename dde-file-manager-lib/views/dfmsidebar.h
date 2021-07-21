@@ -71,6 +71,8 @@ public:
     void setContextMenuEnabled(bool enabled);
     void setDisableUrlSchemes(const QSet<QString> &schemes);
 
+    void hideOpticalItem();
+
     DUrlList savedItemOrder(const QString &groupName) const;
     void saveItemOrder(const QString &groupName) const;
 

@@ -102,6 +102,9 @@ public:
     void toggleAdvanceSearchBar(bool visible = true, bool resetForm = true);
     void showFilterButton();
 
+    bool needHideOpticalItem() const;
+    void setHideOpticalItem(bool hide);
+
 signals:
     void aboutToClose();
     void positionChanged(const QPoint &pos);

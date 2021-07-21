@@ -569,6 +569,7 @@ void DFileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
         getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
         getLeftSideBar()->setDisableUrlSchemes({"recent"}); // save mode disable recent
         setFileMode(QFileDialog::DirectoryOnly);
+        getLeftSideBar()->hideOpticalItem();
 
         connect(statusBar()->lineEdit(), &QLineEdit::textChanged,
                 this, &DFileDialog::onCurrentInputNameChanged);
