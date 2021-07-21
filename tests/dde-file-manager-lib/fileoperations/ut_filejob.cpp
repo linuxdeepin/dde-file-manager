@@ -561,6 +561,8 @@ TEST_F(FileJobTest, start_doISOBurn)
 
 TEST_F(FileJobTest, doISOImageBurn)
 {
+    StubExt readStb;
+    readStb.set(read, [](int, void *, size_t){return -1;});
     DUrl url = DUrl::fromLocalFile("/dev/sr*");
     DUrl image;
     DISOMasterNS::BurnOptions opts;
