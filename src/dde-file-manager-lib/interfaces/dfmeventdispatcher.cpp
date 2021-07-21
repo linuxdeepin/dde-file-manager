@@ -155,7 +155,7 @@ QVariant DFMEventDispatcher::processEvent(const QSharedPointer<DFMEvent> &event,
     QVariant result;
 
     for (DFMAbstractEventHandler *handler : DFMEventDispatcherData::eventFilter) {
-        if (!handler || !target)
+        if (!handler)
             continue;
         if (handler->fmEventFilter(event, target, &result))
             return result;
