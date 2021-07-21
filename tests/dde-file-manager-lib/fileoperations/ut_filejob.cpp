@@ -559,15 +559,19 @@ TEST_F(FileJobTest, start_doISOBurn)
     },5000);
 }
 
+static ssize_t fakeRead(int, void *, size_t)
+{
+    return -1;
+}
+
 TEST_F(FileJobTest, doISOImageBurn)
 {
-    StubExt readStb;
-    readStb.set(read, [](int, void *, size_t){return -1;});
     DUrl url = DUrl::fromLocalFile("/dev/sr*");
     DUrl image;
     DISOMasterNS::BurnOptions opts;
     opts |= DISOMasterNS::BurnOption::VerifyDatas;
     EXPECT_NO_FATAL_FAILURE(job->doISOImageBurn(DUrl(), image, 10, opts));
+    stl.set(read, fakeRead);
 
     QStringList (*resolveDeviceNodelamda)(QString, QVariantMap) = [](QString, QVariantMap){return QStringList();};
     {
@@ -600,6 +604,7 @@ TEST_F(FileJobTest, doISOImageBurn)
     TestHelper::runInLoop([=](){
     EXPECT_NO_FATAL_FAILURE(job->doISOImageBurn(url, image, 10, opts));
     },5000);
+    stl.reset(read);
 }
 
 TEST_F(FileJobTest, opticalJobUpdated)
