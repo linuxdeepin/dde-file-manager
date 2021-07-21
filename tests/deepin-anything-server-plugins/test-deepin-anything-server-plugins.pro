@@ -96,8 +96,12 @@ QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
 QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
 include(../../src/common/common.pri)
-include(../../3rdparty/googletest/gtest_dependency.pri)
+#include(../../3rdparty/googletest/gtest_dependency.pri)
 include(tests/test.pri)
+
+unix {
+    LIBS += -lgtest -lgmock
+}
 
 !CONFIG(DISABLE_TSAN_TOOL) {
     #DEFINES += TSAN_THREAD #互斥

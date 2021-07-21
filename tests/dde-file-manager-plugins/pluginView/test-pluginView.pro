@@ -28,9 +28,13 @@ HEADERS += \
 RESOURCES += \
     $$PWD/../../../src/dde-file-manager-plugins/pluginView/pluginview.qrc
 
-include(../../../3rdparty/googletest/gtest_dependency.pri)
+#include(../../../3rdparty/googletest/gtest_dependency.pri)
 include(../../../3rdparty/cpp-stub/stub.pri)
 include(tests/test.pri)
+
+unix {
+    LIBS += -lgtest -lgmock
+}
 
 !CONFIG(DISABLE_TSAN_TOOL) {
     #DEFINES += TSAN_THREAD #互斥

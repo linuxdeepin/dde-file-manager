@@ -8,10 +8,14 @@ QT       += core gui testlib dbus-private
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-include(../../3rdparty/googletest/gtest_dependency.pri)
+#include(../../3rdparty/googletest/gtest_dependency.pri)
 include(src/test.pri)
 include(../../3rdparty/cpp-stub/stub.pri)
 include(../../src/dde-desktop/dde-desktop.pri)
+
+unix {
+    LIBS += -lgtest -lgmock
+}
 
 QMAKE_CXXFLAGS += -fno-inline -fno-access-control
 

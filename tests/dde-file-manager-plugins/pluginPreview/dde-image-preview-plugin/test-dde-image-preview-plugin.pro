@@ -31,7 +31,11 @@ HEADERS += \
     $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-image-preview-plugin/imagepreview.h \
     $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-image-preview-plugin/imagepreviewplugin.h
 
-include(../../../../3rdparty/googletest/gtest_dependency.pri)
+#include(../../../../3rdparty/googletest/gtest_dependency.pri)
 include(../../../../3rdparty/cpp-stub/stub.pri)
 include(tests/test.pri)
+
+unix {
+    LIBS += -lgtest -lgmock
+}
 
