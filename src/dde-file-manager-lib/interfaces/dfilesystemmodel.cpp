@@ -1115,7 +1115,6 @@ DFileSystemModel::~DFileSystemModel()
         d->updateChildrenFuture.cancel();
         d->updateChildrenFuture.waitForFinished();
     }
-    d->needQuitUpdateChildren = false;
 
     if (d->watcher) {
         d->watcher->deleteLater();
@@ -1129,6 +1128,7 @@ DFileSystemModel::~DFileSystemModel()
     QMutexLocker lk(&d_ptr->mutexFlags);
 
     qDebug() << "DFileSystemModel is released soon!";
+    d->needQuitUpdateChildren = false;
 }
 
 DFileViewHelper *DFileSystemModel::parent() const
@@ -2418,9 +2418,14 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
         d->childrenUpdated = true;
     }
 
+    QPointer<DFileSystemModel> dp = this;
+
     if (job && job->state() == JobController::Paused) {
         job->start();
     }
+
+    if (!dp)
+        return;
 
 //    qDebug() << "finish update children. file count = " << node->childrenCount() << (job ? job->state() : -1);
     if (job) {
