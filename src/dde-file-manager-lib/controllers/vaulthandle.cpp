@@ -25,6 +25,9 @@
 #include "vaulterrorcode.h"
 #include "dfmsettings.h"
 #include "vaultglobaldefine.h"
+#include "app/define.h"
+#include "app/filesignalmanager.h"
+#include "singleton.h"
 
 #include <QStandardPaths>
 #include <QProcess>
@@ -96,6 +99,12 @@ void CryFsHandle::unlockVault(QString lockBaseDir, QString unlockFileDir, QStrin
 
 void CryFsHandle::lockVault(QString unlockFileDir)
 {
+    // 修复bug-88630
+    // 由于保险箱上锁时，保险箱内文件物理地址已不存在，此时未完成的拖拽事件已经毫无意义，
+    // 并且此时拖拽移动还会导致崩溃问题
+    // 所以，发送请求忽略当前保险箱的拖拽事件，避免崩溃问题
+    emit fileSignalManager->requestIgnoreDragEvent();
+
     m_mutex->lock();
     m_activeState.insert(7, static_cast<int>(ErrorCode::Success));
     int flg = lockVaultProcess(unlockFileDir);

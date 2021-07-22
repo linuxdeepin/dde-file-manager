@@ -50,6 +50,11 @@ public slots:
      */
     void onLeaveVault(int state);
 
+    /**
+    * @brief IgnoreDragEvent 忽略拖拽事件
+    */
+    void IgnoreDragEvent();
+
 protected:
     /**
      * @brief eventFilter 事件过滤器，用于获取保险箱操作事件

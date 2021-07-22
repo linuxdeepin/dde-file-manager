@@ -252,6 +252,9 @@ signals:
 
     // 请求停止mediainfo的获取
     void requestCloseMediaInfo(const QString path);
+
+    // 请求忽略当前鼠标拖拽事件
+    void requestIgnoreDragEvent();
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString &srcFileName);

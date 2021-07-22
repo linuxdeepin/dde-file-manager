@@ -31,12 +31,17 @@
 #include "views/dfilemanagerwindow.h"
 #include "dfilesystemmodel.h"
 #include "vaultglobaldefine.h"
+#include "app/define.h"
+#include "app/filesignalmanager.h"
+#include "singleton.h"
 
+#include <QDrag>
 
 DFMVaultFileView::DFMVaultFileView(QWidget *parent)
     : DFileView(parent)
 {
     connect(VaultController::ins(), &VaultController::signalLockVault, this, &DFMVaultFileView::onLeaveVault);
+    connect(fileSignalManager, &FileSignalManager::requestIgnoreDragEvent, this, &DFMVaultFileView::IgnoreDragEvent);
 }
 
 bool DFMVaultFileView::setRootUrl(const DUrl &url)
@@ -96,6 +101,11 @@ void DFMVaultFileView::onLeaveVault(int state)
     if (state == 0) {
         this->cd(DUrl(COMPUTER_ROOT));
     }
+}
+
+void DFMVaultFileView::IgnoreDragEvent()
+{
+    QDrag::cancel();
 }
 
 bool DFMVaultFileView::eventFilter(QObject *obj, QEvent *event)
