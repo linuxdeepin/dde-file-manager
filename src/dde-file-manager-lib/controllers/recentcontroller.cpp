@@ -626,9 +626,14 @@ void RecentController::handleFileChanged()
                                                   url);
             });
         } else {
-            iter.value()->updateInfo();
+            RecentPointer node = iter.value();
+            if (node) {
+                iter.value()->updateInfo();
+                ++iter;
+            } else {
+                iter = recentNodes.erase(iter);
+            }
 
-            ++iter;
         }
     }
 

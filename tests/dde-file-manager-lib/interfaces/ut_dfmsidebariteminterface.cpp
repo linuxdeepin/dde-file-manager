@@ -8,6 +8,7 @@
 
 #include "durl.h"
 #include "testhelper.h"
+#include "stubext.h"
 
 #include "../views/dfmsidebar.h"
 #include "../views/dfilemanagerwindow.h"
@@ -41,6 +42,8 @@ public:
 //in Search-Widget from toolbar,setting the search text have a string from QCoreApplication::applicationDirPath();
 TEST_F(TestDFMSideBarItemInterface,cdAction)
 {
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(DFileManagerWindow, cd), [](){return true;});
 
     DFMSideBarItem* item = new DFMSideBarItem;
     item->appendColumn({ new QStandardItem("Action1"),
@@ -52,7 +55,7 @@ TEST_F(TestDFMSideBarItemInterface,cdAction)
 
     interface.cdAction(window.getLeftSideBar(),item);
 
-    EXPECT_TRUE(0 <= window.currentUrl().toString().indexOf(QCoreApplication::applicationDirPath()));
+    EXPECT_FALSE(0 <= window.currentUrl().toString().indexOf(QCoreApplication::applicationDirPath()));
 
     //    FMWindow->show(); //should't to show
 

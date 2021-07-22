@@ -137,6 +137,7 @@ public:
 
     ~DFileViewHelperPrivate()
     {
+        DFMEventDispatcher::instance()->removeEventFilter(menuEventHandler);
         delete menuEventHandler;
         menuEventHandler = nullptr;
     }
