@@ -1783,7 +1783,15 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 {
     D_D(DFileView);
 
-    d->dragMoveHoverIndex = d->fileViewHelper->isEmptyArea(event->pos()) ? rootIndex() : indexAt(event->pos());
+    if (isIconViewMode()) {
+        d->dragMoveHoverIndex = d->fileViewHelper->isEmptyArea(event->pos()) ? rootIndex() : indexAt(event->pos());
+    } else { // fix 88616 在列表模式下，拖拽文件到文件夹的名称后面空出，无法拖拽文件到文件夹中
+        d->dragMoveHoverIndex = indexAt(event->pos());
+        //保持index为空时，rootIndex判断
+        if (!d->dragMoveHoverIndex.isValid()) {
+            d->dragMoveHoverIndex = rootIndex() ;
+        }
+    }
 
     if (d->dragMoveHoverIndex.isValid()) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(d->dragMoveHoverIndex);
@@ -1798,7 +1806,6 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 
                 return event->ignore();
             }
-
             // 如果是回收站里面搜索，不让拖拽
             const DUrl &toUrl = model()->getUrlByIndex(d->dragMoveHoverIndex);
             if (toUrl.isSearchFile() && toUrl.fragment().startsWith(TRASH_ROOT)) {
@@ -1905,7 +1912,13 @@ void DFileView::dropEvent(QDropEvent *event)
 
         event->accept(); // yeah! we've done with XDS so stop Qt from further event propagation.
     } else {
-        QModelIndex index = d->fileViewHelper->isEmptyArea(event->pos()) ? QModelIndex() : indexAt(event->pos());
+
+        QModelIndex index;
+        if (isIconViewMode()) {
+          index = d->fileViewHelper->isEmptyArea(event->pos()) ? QModelIndex() : indexAt(event->pos());
+        } else {// fix 88616 在列表模式下，拖拽文件到文件夹的名称后面空出，无法拖拽文件到文件夹中
+          index = indexAt(event->pos());
+        }
 
         if (!index.isValid())
             index = rootIndex();
@@ -1938,7 +1951,13 @@ void DFileView::dropEvent(QDropEvent *event)
     }
 
     if (DFileDragClient::checkMimeData(event->mimeData())) {
-        QModelIndex index = d->fileViewHelper->isEmptyArea(event->pos()) ? QModelIndex() : indexAt(event->pos());
+
+        QModelIndex index;
+        if (isIconViewMode()) {
+            index = d->fileViewHelper->isEmptyArea(event->pos()) ? QModelIndex() : indexAt(event->pos());
+        } else {// fix 88616 在列表模式下，拖拽文件到文件夹的名称后面空出，无法拖拽文件到文件夹中
+            index = indexAt(event->pos());
+        }
 
         if (!index.isValid())
             index = rootIndex();
@@ -3850,7 +3869,7 @@ QPixmap DFileViewPrivate::renderToPixmap(const QModelIndexList &indexes) const
         return index.row() == m_currentPressedIndex.row();
     };
     indexesWithoutPressed.erase(std::remove_if(indexesWithoutPressed.begin(), indexesWithoutPressed.end(), needRemove),
-                  indexesWithoutPressed.end());
+                indexesWithoutPressed.end());
 
     QRect pixRect(0, 0, DRAGICON_SIZE + DRAGICON_OUTLINE * 2, DRAGICON_SIZE + DRAGICON_OUTLINE * 2);
     QPixmap pixmap(pixRect.size() * scale);
