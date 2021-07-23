@@ -118,6 +118,7 @@ public:
     bool setRootUrl(const DUrl &url);
     const DUrlList autoMergeSelectedUrls() const;
     const DUrlList selectedUrls() const;
+    void viewSelectedUrls(DUrlList &validSel, QModelIndexList &validIndexes);
     void setScreenNum(int num);
     void setScreenName(const QString &name);
     inline QString screenName() const {return m_screenName;}
