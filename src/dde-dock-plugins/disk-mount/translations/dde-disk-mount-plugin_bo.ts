@@ -106,7 +106,7 @@
     </message>
     <message>
         <source>Confirm</source>
-        <translation>ཆོག</translation>
+        <translation type="vanished">ཆོག</translation>
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
@@ -114,10 +114,25 @@
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="vanished">འདོར་བ།</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation type="vanished">མཚམས་འཇོགས།</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation>ཆོག</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <comment>button</comment>
         <translation>འདོར་བ།</translation>
     </message>
     <message>
         <source>Stop</source>
+        <comment>button</comment>
         <translation>མཚམས་འཇོགས།</translation>
     </message>
 </context>

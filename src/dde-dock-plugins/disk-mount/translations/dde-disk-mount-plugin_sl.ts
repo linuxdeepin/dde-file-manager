@@ -106,7 +106,7 @@
     </message>
     <message>
         <source>Confirm</source>
-        <translation>Potrdi</translation>
+        <translation type="vanished">Potrdi</translation>
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
@@ -114,10 +114,25 @@
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="vanished">Prekini</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation type="vanished">Zaustavi</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation>Potrdi</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <comment>button</comment>
         <translation>Prekini</translation>
     </message>
     <message>
         <source>Stop</source>
+        <comment>button</comment>
         <translation>Zaustavi</translation>
     </message>
 </context>

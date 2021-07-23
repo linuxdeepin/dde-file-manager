@@ -106,7 +106,7 @@
     </message>
     <message>
         <source>Confirm</source>
-        <translation>Tədiqləmək</translation>
+        <translation type="vanished">Tədiqləmək</translation>
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
@@ -114,10 +114,25 @@
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="vanished">İmtina</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation type="vanished">Dayandırmaq</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation>Tədiqləmək</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <comment>button</comment>
         <translation>İmtina</translation>
     </message>
     <message>
         <source>Stop</source>
+        <comment>button</comment>
         <translation>Dayandırmaq</translation>
     </message>
 </context>

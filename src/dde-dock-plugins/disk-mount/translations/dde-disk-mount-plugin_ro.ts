@@ -106,7 +106,7 @@
     </message>
     <message>
         <source>Confirm</source>
-        <translation>Confirmare</translation>
+        <translation type="vanished">Confirmare</translation>
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
@@ -114,10 +114,25 @@
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="vanished">Anulare</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation type="vanished">Oprire</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation>Confirmare</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <comment>button</comment>
         <translation>Anulare</translation>
     </message>
     <message>
         <source>Stop</source>
+        <comment>button</comment>
         <translation>Oprire</translation>
     </message>
 </context>

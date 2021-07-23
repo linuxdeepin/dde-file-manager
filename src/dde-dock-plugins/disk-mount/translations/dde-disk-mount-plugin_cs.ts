@@ -106,19 +106,34 @@
     </message>
     <message>
         <source>Confirm</source>
-        <translation>Potvrdit</translation>
+        <translation type="vanished">Potvrdit</translation>
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
-        <translation type="unfinished"/>
+        <translation>Prohledává se zařízení. Zastavit?</translation>
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="vanished">Zrušit</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation type="vanished">Zastavit</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation>Potvrdit</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <comment>button</comment>
         <translation>Zrušit</translation>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="unfinished"/>
+        <comment>button</comment>
+        <translation>Zastavit</translation>
     </message>
 </context>
 </TS>

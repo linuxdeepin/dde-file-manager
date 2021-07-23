@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3123"/>
+        <location filename="../view/canvasgridview.cpp" line="3155"/>
         <source>Icon size</source>
         <translation>Μέγεθος εικονιδίων</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3131"/>
+        <location filename="../view/canvasgridview.cpp" line="3163"/>
         <source>Auto merge</source>
         <translation>Αυτόματη συγχώνευση</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3143"/>
+        <location filename="../view/canvasgridview.cpp" line="3175"/>
         <source>Auto arrange</source>
         <translation>Αυτόματη στοίχιση</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3180"/>
+        <location filename="../view/canvasgridview.cpp" line="3212"/>
         <source>Corner Settings</source>
         <translation>Ρυθμίσεις Γωνίας</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3189"/>
-        <location filename="../view/canvasgridview.cpp" line="3194"/>
+        <location filename="../view/canvasgridview.cpp" line="3221"/>
+        <location filename="../view/canvasgridview.cpp" line="3226"/>
         <source>Set Wallpaper</source>
         <translation>Ορισμός Ταπετσαρίας</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3192"/>
+        <location filename="../view/canvasgridview.cpp" line="3224"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Wallpaper και Screensaver</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3370"/>
+        <location filename="../view/canvasgridview.cpp" line="3402"/>
         <source>Properties</source>
         <translation>Ιδιότητες</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3171"/>
+        <location filename="../view/canvasgridview.cpp" line="3203"/>
         <source>Display Settings</source>
         <translation>Ρυθμίσεις Εμφάνισης</translation>
     </message>
@@ -134,17 +134,32 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1031"/>
         <source>Only desktop</source>
+        <comment>button</comment>
         <translation>Μόνο η επιφάνεια εργασίας</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1032"/>
         <source>Only lock screen</source>
+        <comment>button</comment>
         <translation>Μόνο το κλείδωμα οθόνης</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1111"/>
         <source>Apply</source>
+        <comment>button</comment>
         <translation>Εφαρμογή</translation>
+    </message>
+    <message>
+        <source>Only desktop</source>
+        <translation type="vanished">Μόνο η επιφάνεια εργασίας</translation>
+    </message>
+    <message>
+        <source>Only lock screen</source>
+        <translation type="vanished">Μόνο το κλείδωμα οθόνης</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="vanished">Εφαρμογή</translation>
     </message>
 </context>
 <context>

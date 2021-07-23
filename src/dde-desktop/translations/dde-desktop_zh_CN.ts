@@ -135,19 +135,19 @@
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1031"/>
         <source>Only desktop</source>
         <comment>button</comment>
-        <translation type="unfinished">仅设置桌面</translation>
+        <translation>仅设置桌面</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1032"/>
         <source>Only lock screen</source>
         <comment>button</comment>
-        <translation type="unfinished">仅设置锁屏</translation>
+        <translation>仅设置锁屏</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1111"/>
         <source>Apply</source>
         <comment>button</comment>
-        <translation type="unfinished">设置屏保</translation>
+        <translation>设置屏保</translation>
     </message>
     <message>
         <source>Only desktop</source>

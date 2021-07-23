@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3123"/>
+        <location filename="../view/canvasgridview.cpp" line="3155"/>
         <source>Icon size</source>
         <translation>རྟགས་རིས་ཆེ་ཆུང་།</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3131"/>
+        <location filename="../view/canvasgridview.cpp" line="3163"/>
         <source>Auto merge</source>
         <translation>རང་འགུལ་ལེགས་སྒྲིག</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3143"/>
+        <location filename="../view/canvasgridview.cpp" line="3175"/>
         <source>Auto arrange</source>
         <translation>སྟར་རང་སྒྲིག</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3180"/>
+        <location filename="../view/canvasgridview.cpp" line="3212"/>
         <source>Corner Settings</source>
         <translation>ཚ་གནས་སྒྲིག་འགོད།</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3189"/>
-        <location filename="../view/canvasgridview.cpp" line="3194"/>
+        <location filename="../view/canvasgridview.cpp" line="3221"/>
+        <location filename="../view/canvasgridview.cpp" line="3226"/>
         <source>Set Wallpaper</source>
         <translation>རྒྱབ་ཤོག་སྒྲིག་འགོད།</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3192"/>
+        <location filename="../view/canvasgridview.cpp" line="3224"/>
         <source>Wallpaper and Screensaver</source>
         <translation>རྒྱབ་ཤོག་དང་འཆར་སྲུང་།</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3370"/>
+        <location filename="../view/canvasgridview.cpp" line="3402"/>
         <source>Properties</source>
         <translation>ངོ་བོ།</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3171"/>
+        <location filename="../view/canvasgridview.cpp" line="3203"/>
         <source>Display Settings</source>
         <translation>སྒྲིག་འགོད་མངོན་སྟོན།</translation>
     </message>
@@ -134,17 +134,32 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1031"/>
         <source>Only desktop</source>
+        <comment>button</comment>
         <translation>ཅོག་ངོས་ཁོ་ན་སྒྲིག་འགོད་བྱེད་པ།</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1032"/>
         <source>Only lock screen</source>
+        <comment>button</comment>
         <translation>བརྙན་ཡོལ་སྒོ་ལྕགས་ཁོ་ན་སྒྲིག་འགོད་བྱེད་པ།</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1111"/>
         <source>Apply</source>
+        <comment>button</comment>
         <translation>འཆར་སྲུང་སྒྲིག་འགོད།</translation>
+    </message>
+    <message>
+        <source>Only desktop</source>
+        <translation type="vanished">ཅོག་ངོས་ཁོ་ན་སྒྲིག་འགོད་བྱེད་པ།</translation>
+    </message>
+    <message>
+        <source>Only lock screen</source>
+        <translation type="vanished">བརྙན་ཡོལ་སྒོ་ལྕགས་ཁོ་ན་སྒྲིག་འགོད་བྱེད་པ།</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="vanished">འཆར་སྲུང་སྒྲིག་འགོད།</translation>
     </message>
 </context>
 <context>
