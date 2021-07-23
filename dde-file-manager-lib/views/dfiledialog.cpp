@@ -187,12 +187,12 @@ DFileDialog::DFileDialog(QWidget *parent)
         getFileView()->setViewMode(DFileView::IconMode);        //首次启动会是ListView
         getFileView()->setContextMenuPolicy(Qt::NoContextMenu);     //屏蔽view右键菜单
 
-        //虚拟键盘弹出时需要上移窗口
-        connect(DApplication::inputMethod(), &QInputMethod::visibleChanged, this, [=]{
-            const QList<QScreen *> screens = qApp->screens();
-            // 记录当前虚拟键盘状态，防止信号多次触发后，move操作出问题
-            static bool virtualKeyboardIsVisible = false;
-            if (!screens.isEmpty()) {
+        const QList<QScreen *> screens = qApp->screens();
+        if (!screens.isEmpty()) {
+            //虚拟键盘弹出时需要上移窗口
+            connect(DApplication::inputMethod(), &QInputMethod::visibleChanged, this, [=]{
+                // 记录当前虚拟键盘状态，防止信号多次触发后，move操作出问题
+                static bool virtualKeyboardIsVisible = false;
                 if (DApplication::inputMethod()->isVisible() && !virtualKeyboardIsVisible) {
                     virtualKeyboardIsVisible = true;
                     QRectF keyboard = DApplication::inputMethod()->keyboardRectangle();
@@ -203,13 +203,24 @@ DFileDialog::DFileDialog(QWidget *parent)
                     virtualKeyboardIsVisible = false;
                     moveCenterByRect(screens.first()->virtualGeometry());
                     //恢复原位时需要确认将下拉选择框也设置到正确的位置
-                    QFrame *popup = statusBar()->m_filtersComboBox->findChild<QFrame*>();
-                    if (popup && popup->isVisible()) {
-                        popup->move(statusBar()->mapToGlobal(statusBar()->m_filtersComboBox->pos()));
-                    }
+                    this->resetPopupFramePosition();
                 }
-            }
-        });
+            });
+
+            //适配屏幕旋转后分辨率变更
+            connect(qApp->desktop(), &QDesktopWidget::workAreaResized, this, [=]{
+                if (DApplication::inputMethod()->isVisible()) {
+                    QRectF keyboard = DApplication::inputMethod()->keyboardRectangle();
+                    int newX = (screens.first()->size().width() - width()) / 2;
+                    int newY = screens.first()->virtualSize().height() - height() - static_cast<int>(keyboard.height());
+                    move(newX, newY);
+                } else {
+                    moveCenterByRect(screens.first()->virtualGeometry());
+                    //恢复原位时需要确认将下拉选择框也设置到正确的位置
+                    this->resetPopupFramePosition();
+                }
+            });
+        }
     }
 }
 
@@ -1505,5 +1516,13 @@ void DFileDialog::updateAcceptButtonState()
                                                  (!isDirMode && !isSelectFiles));
     } else { // save mode
         statusBar()->acceptButton()->setDisabled(fileInfo->isVirtualEntry() || statusBar()->lineEdit()->text().trimmed().isEmpty());
+    }
+}
+
+void DFileDialog::resetPopupFramePosition()
+{
+    QFrame *popup = statusBar()->m_filtersComboBox->findChild<QFrame*>();
+    if (popup && popup->isVisible()) {
+        popup->move(statusBar()->mapToGlobal(statusBar()->m_filtersComboBox->pos()));
     }
 }

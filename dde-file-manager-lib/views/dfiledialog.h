@@ -136,6 +136,7 @@ private:
     void onCurrentInputNameChanged();
     void handleEnterPressed();
     void updateAcceptButtonState();
+    void resetPopupFramePosition();
 
     QScopedPointer<DFileDialogPrivate> d_ptr;
 
