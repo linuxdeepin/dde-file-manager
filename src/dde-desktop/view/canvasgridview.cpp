@@ -2275,6 +2275,18 @@ const DUrlList CanvasGridView::selectedUrls() const
     return urls;
 }
 
+void CanvasGridView::viewSelectedUrls(DUrlList &validSel, QModelIndexList &validIndexes)
+{
+    auto selects = selectionModel()->selectedIndexes();
+    for (auto index : selects) {
+        auto info = model()->fileInfo(index);
+        if (info && !info->isVirtualEntry() && GridManager::instance()->contains(m_screenNum, info->fileUrl().toString())) {
+            validSel << info->fileUrl();
+            validIndexes << index;
+        }
+    }
+}
+
 void CanvasGridView::setScreenNum(int num)
 {
     m_screenNum = num;
@@ -3624,13 +3636,24 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 
 void CanvasGridView::startDrag(Qt::DropActions supportedActions)
 {
-    QModelIndexList indexes = selectionModel()->selectedIndexes();
-    if (indexes.count() > 1) {
-        QMimeData *data = model()->mimeData(indexes);
+    // 在定时器期间收到鼠标move事件低于配置时间，不触发drag
+    if (d->touchTimer.isActive())
+        return;
+
+    //drag优化，只抓起本屏幕上的图标
+    DUrlList validSel;
+    QModelIndexList validIndexes;
+    viewSelectedUrls(validSel, validIndexes);
+    select(validSel);
+    itemDelegate()->hideAllIIndexWidget();
+
+    //数量大于1, 聚合图标
+    if (validIndexes.count() > 1) {
+        QMimeData *data = model()->mimeData(validIndexes);
         if (!data)
             return;
 
-        QPixmap pixmap = this->renderToPixmap(indexes);
+        QPixmap pixmap = this->renderToPixmap(validIndexes);
         QDrag *drag = new QDrag(this);
         drag->setPixmap(pixmap);
         drag->setMimeData(data);
@@ -3644,16 +3667,6 @@ void CanvasGridView::startDrag(Qt::DropActions supportedActions)
             dropAction = Qt::CopyAction;
         drag->exec(supportedActions, dropAction);
     } else {
-        // 在定时器期间收到鼠标move事件低于配置时间，不触发drag
-        if (d->touchTimer.isActive())
-            return;
-
-        itemDelegate()->hideAllIIndexWidget();
-        //drag优化，只抓起本屏幕上的图标
-        DUrlList selected = selectedUrls();
-        select(selected);
-
         QAbstractItemView::startDrag(supportedActions);
-        return;
     }
 }
