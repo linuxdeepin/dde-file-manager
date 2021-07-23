@@ -1366,7 +1366,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
             }
         }
     }
-    update();
+//    update();
 }
 
 void CanvasGridView::dragLeaveEvent(QDragLeaveEvent *event)
