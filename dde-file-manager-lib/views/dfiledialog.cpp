@@ -622,6 +622,12 @@ void DFileDialog::setOptions(QFileDialog::Options options)
 
     Q_D(DFileDialog);
 
+    // （此处修改比较特殊，临时方案）与产品沟通后，使用uos文管保存框保存文件时，如果当前目录下有同名文件，
+    // 必须要弹出提示框 “是否覆盖重名文件”。
+    // 所以options中的QFileDialog::DontConfirmOverwrite标志位将失去意义，
+    // 所以此处直接将该标志位赋值为0。
+    options &= ~QFileDialog::DontConfirmOverwrite;
+
     d->options = options;
 
     getFileView()->model()->setReadOnly(options.testFlag(QFileDialog::ReadOnly));
