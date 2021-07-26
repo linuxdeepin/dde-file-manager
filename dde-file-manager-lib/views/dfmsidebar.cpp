@@ -940,6 +940,21 @@ void DFMSideBar::insertItem(int index, DFMSideBarItem *item, const QString &grou
     if (!item) {
         return;
     }
+
+    /*  in some low performance device, the disks is loaded after hideOpticalItem invoked,
+     *  so cannot hide them when this situation occured.
+     *  so hide the optical item when it is added.
+     */
+    static int needHideOptical = -1; // means that this field is not calculate yet, only calculate once.
+    if (needHideOptical == -1) {
+        DFileManagerWindow *window = dynamic_cast<DFileManagerWindow *>(this->window());
+        if (window && window->needHideOpticalItem())
+            needHideOptical = 1;
+        else
+            needHideOptical = 0;
+    }
+    if (needHideOptical == 1 && item->url().path().contains(QRegExp("/sr[0-9]*.localdisk")))
+        return;
     item->setGroupName(groupName);
     m_sidebarModel->insertRow(index, item);
 }
@@ -953,6 +968,23 @@ void DFMSideBar::insertItem(int index, DFMSideBarItem *item, const QString &grou
  */
 void DFMSideBar::appendItem(DFMSideBarItem *item, const QString &groupName)
 {
+    if (!item)
+        return;
+
+    /*  in some low performance device, the disks is loaded after hideOpticalItem invoked,
+     *  so cannot hide them when this situation occured.
+     *  so hide the optical item when it is added.
+     */
+    static int needHideOptical = -1; // means that this field is not calculate yet, only calculate once.
+    if (needHideOptical == -1) {
+        DFileManagerWindow *window = dynamic_cast<DFileManagerWindow *>(this->window());
+        if (window && window->needHideOpticalItem())
+            needHideOptical = 1;
+        else
+            needHideOptical = 0;
+    }
+    if (needHideOptical == 1 && item->url().path().contains(QRegExp("/sr[0-9]*.localdisk")))
+        return;
     item->setGroupName(groupName);
     m_sidebarModel->appendRow(item);
 }
