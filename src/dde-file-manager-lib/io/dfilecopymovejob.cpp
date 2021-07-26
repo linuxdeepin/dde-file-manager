@@ -3699,6 +3699,7 @@ void DFileCopyMoveJobPrivate::releaseCopyInfo(const DFileCopyMoveJobPrivate::Fil
         delete [] info->buffer;
         info->buffer = nullptr;
     }
+    QMutexLocker lk(&m_writeOpenFdMutex);
     for (auto fd : m_writeOpenFd) {
         close(fd);
     }
@@ -3755,8 +3756,13 @@ bool DFileCopyMoveJobPrivate::writeToFileByQueue()
         }
         int toFd = -1;
         bool isErrorOccur = false;
+        bool isWriteOpenFdContains = false;
         //获取目标文件描述符
-        if (!m_writeOpenFd.contains(info->toinfo->fileUrl())) {
+        {
+            QMutexLocker lk(&m_writeOpenFdMutex);
+            isWriteOpenFdContains = m_writeOpenFd.contains(info->toinfo->fileUrl());
+        }
+        if (!isWriteOpenFdContains) {
             DUrl fromUrl = info->frominfo->fileUrl();
             DUrl toUrl = info->toinfo->fileUrl();
             Q_EMIT q_ptr->currentJobChanged(fromUrl, toUrl, false);
@@ -3765,6 +3771,7 @@ bool DFileCopyMoveJobPrivate::writeToFileByQueue()
                 std::string path = info->toinfo->fileUrl().path().toStdString();
                 toFd = open(path.c_str(), m_openFlag, 0777);
                 if (toFd > -1) {
+                    QMutexLocker lk(&m_writeOpenFdMutex);
                     m_writeOpenFd.insert(info->toinfo->fileUrl(), toFd);
                     action = DFileCopyMoveJob::NoAction;
                 } else {
@@ -3806,6 +3813,7 @@ bool DFileCopyMoveJobPrivate::writeToFileByQueue()
             }
         }
         else {
+            QMutexLocker lk(&m_writeOpenFdMutex);
             toFd = m_writeOpenFd.value(info->toinfo->fileUrl());
         }
 
@@ -3974,7 +3982,10 @@ write_data: {
         //关闭文件并加权
         if (info->closeflag) {
             close(toFd);
-            m_writeOpenFd.remove(info->toinfo->fileUrl());
+            {
+                QMutexLocker lk(&m_writeOpenFdMutex);
+                m_writeOpenFd.remove(info->toinfo->fileUrl());
+            }
             QSharedPointer<DFileHandler> handler = info->handler ? info->handler :
                                                    QSharedPointer<DFileHandler>(DFileService::instance()->createFileHandler(nullptr, info->frominfo->fileUrl()));
             handler->setFileTime(info->toinfo->fileUrl(), info->frominfo->lastRead(), info->frominfo->lastModified());
@@ -4005,11 +4016,15 @@ bool DFileCopyMoveJobPrivate::skipReadFileDealWriteThread(const DUrl &url)
 
 void DFileCopyMoveJobPrivate::cancelReadFileDealWriteThread()
 {
-    QMutexLocker lk(&m_copyInfoQueueMutex);
-    for (auto fd : m_writeOpenFd) {
-        close(fd);
+    {
+        QMutexLocker lk(&m_writeOpenFdMutex);
+        for (auto fd : m_writeOpenFd) {
+            close(fd);
+        }
+        m_writeOpenFd.clear();
     }
-    m_writeOpenFd.clear();
+    QMutexLocker lk(&m_copyInfoQueueMutex);
+    
     while (!m_writeFileQueue.isEmpty()) {
         auto info = m_writeFileQueue.dequeue();
         if (info->buffer)

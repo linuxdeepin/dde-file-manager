@@ -368,6 +368,7 @@ public:
 
     //打开写入文件的fd
     QMap<DUrl,int> m_writeOpenFd;
+    QMutex m_writeOpenFdMutex;
     QList<QSharedPointer<DirSetPermissonInfo>> m_dirPermissonList;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
