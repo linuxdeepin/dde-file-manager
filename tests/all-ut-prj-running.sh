@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export DISPLAY=":0"
+export QT_QPA_PLATFORM=
+
 # 定位脚本所在父目录
 PROJECT_FOLDER=${1}
 

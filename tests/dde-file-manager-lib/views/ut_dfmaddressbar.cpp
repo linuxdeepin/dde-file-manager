@@ -193,6 +193,7 @@ TEST_F(DFMAddressBarTest,clear_completer_model)
     EXPECT_FALSE(m_bar->isHistoryInCompleterModel);
 }
 
+/*
 TEST_F(DFMAddressBarTest,update_completion_state)
 {
     ASSERT_NE(nullptr,m_bar);
@@ -227,7 +228,7 @@ TEST_F(DFMAddressBarTest,update_completion_state)
     m_bar->updateCompletionState(QString(""));
     m_bar->updateCompletionState(QString("/home"));
     m_bar = nullptr;
-}
+}*/
 
 TEST_F(DFMAddressBarTest,append_complete_model)
 {

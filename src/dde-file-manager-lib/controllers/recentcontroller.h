@@ -41,6 +41,7 @@ class RecentController : public DAbstractFileController
 
 public:
     explicit RecentController(QObject *parent = nullptr);
+    ~RecentController();
 
     bool openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const override;
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;

@@ -882,7 +882,7 @@ bool FileController::renameFileByGio(const DUrl &oldUrl, const DUrl &newUrl) con
     }
 
     //获取当前目录
-    QString curd = QDir::current().path();
+    const QString curd = QDir::currentPath();
 
     GError *error = nullptr;
     if (!QDir::setCurrent(to)) {
@@ -1556,7 +1556,7 @@ bool FileController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent>
 
 bool FileController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
 {
-    const QString &current_dir = QDir::currentPath();
+    const QString current_dir = QDir::currentPath();
 
     QDir::setCurrent(event->url().toLocalFile());
 

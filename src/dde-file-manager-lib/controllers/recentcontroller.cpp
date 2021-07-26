@@ -319,6 +319,16 @@ RecentController::RecentController(QObject *parent)
     m_watcher->startWatcher();
 }
 
+RecentController::~RecentController()
+{
+    m_watcher->stopWatcher();
+    disconnect(m_watcher, &DFileWatcher::subfileCreated, this, &RecentController::asyncHandleFileChanged);
+    disconnect(m_watcher, &DFileWatcher::fileModified, this, &RecentController::asyncHandleFileChanged);
+
+    QMutexLocker locker(&m_xbelFileLock);
+    recentNodes.clear();
+}
+
 bool RecentController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
     return DFileService::instance()->openFileLocation(event->sender(), DUrl::fromLocalFile(event->url().path()));
@@ -626,9 +636,13 @@ void RecentController::handleFileChanged()
                                                   url);
             });
         } else {
-            iter.value()->updateInfo();
-
-            ++iter;
+            auto info = iter.value();
+            if (info) {
+                iter.value()->updateInfo();
+                ++iter;
+            } else {
+                iter = recentNodes.erase(iter);
+            }
         }
     }
 

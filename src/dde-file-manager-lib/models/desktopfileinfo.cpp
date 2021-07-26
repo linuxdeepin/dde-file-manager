@@ -156,7 +156,7 @@ QIcon DesktopFileInfo::fileIcon() const
             }
         }
     } else {
-        const QString &currentDir = QDir::currentPath();
+        const QString currentDir = QDir::currentPath();
 
         QDir::setCurrent(absolutePath());
 

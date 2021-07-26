@@ -63,6 +63,7 @@ public:
     }
 };
 
+#ifndef __arm__
 TEST_F(JobControllerTest,start_JobController){
     TestHelper::runInLoop([](){});
     DUrl url;
@@ -76,6 +77,7 @@ TEST_F(JobControllerTest,start_JobController){
     EXPECT_EQ(100,jobcontroller->countCeiling());
     jobcontroller->stopAndDeleteLater();
 }
+#endif
 
 TEST_F(JobControllerTest,start_start){
     jobcontroller->setState(JobController::Started);

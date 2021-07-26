@@ -69,7 +69,10 @@ class MenuActionEventHandler : public DFMAbstractEventHandler
 public:
     explicit MenuActionEventHandler(DFileViewHelper *helper)
         : DFMAbstractEventHandler(false)
-        , viewHelper(helper) {}
+        , viewHelper(helper)
+    {
+
+    }
 
     bool fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target, QVariant *resultData) override
     {
@@ -122,7 +125,7 @@ public:
     }
 
 private:
-    DFileViewHelper *viewHelper;
+    DFileViewHelper *viewHelper = nullptr;
 };
 
 class DFileViewHelperPrivate
@@ -137,7 +140,6 @@ public:
 
     ~DFileViewHelperPrivate()
     {
-        DFMEventDispatcher::instance()->removeEventFilter(menuEventHandler);
         delete menuEventHandler;
         menuEventHandler = nullptr;
     }

@@ -31,7 +31,7 @@
 
 using namespace testing;
 
-
+#ifndef __arm__
 TEST(savedirTest,AnyAgruInput){
     Stub stl;
     TestHelper::runInLoop([](){});
@@ -70,3 +70,4 @@ TEST(savedirTest,AnyAgruInput){
     QProcess::execute("chmode 0700 /tmp/test_temp_sourt");
     QProcess::execute("rm -r /tmp/test_temp_sourt");
 }
+#endif

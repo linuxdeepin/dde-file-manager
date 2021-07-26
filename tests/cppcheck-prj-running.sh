@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export DISPLAY=":0"
+export QT_QPA_PLATFORM=
+
 # cppcheck检测目录
 SRC_DIR=${1}/src
 echo $SRC_DIR

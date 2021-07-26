@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export DISPLAY=":0"
+export QT_QPA_PLATFORM=
 
 #报告生成的地方
 REPORT_DIR=${1}

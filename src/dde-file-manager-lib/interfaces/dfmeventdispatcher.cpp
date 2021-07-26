@@ -204,7 +204,7 @@ void DFMEventDispatcher::installEventFilter(DFMAbstractEventHandler *handler)
 
 void DFMEventDispatcher::removeEventFilter(DFMAbstractEventHandler *handler)
 {
-    DFMEventDispatcherData::eventFilter.removeOne(handler);
+    DFMEventDispatcherData::eventFilter.removeAll(handler);
 }
 
 DFMEventDispatcher::State DFMEventDispatcher::state() const
