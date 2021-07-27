@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>DUMountManager</name>
     <message>
@@ -125,17 +123,17 @@
     <message>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished">Confirm</translation>
+        <translation>Confirm</translation>
     </message>
     <message>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <source>Stop</source>
         <comment>button</comment>
-        <translation type="unfinished">Stop</translation>
+        <translation>Stop</translation>
     </message>
 </context>
 </TS>

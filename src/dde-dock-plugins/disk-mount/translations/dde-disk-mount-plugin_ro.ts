@@ -3,19 +3,19 @@
     <name>DUMountManager</name>
     <message>
         <source>Authentication timed out</source>
-        <translation type="unfinished"/>
+        <translation>Timpul de autentificare a expirat</translation>
     </message>
     <message>
         <source>Disk is busy, cannot unmount now</source>
-        <translation>Disc ocupat, nu se poate demonta acum</translation>
+        <translation>Disc ocupat, nu poate fi demontat  la moment</translation>
     </message>
     <message>
         <source>Disk is busy, cannot eject now</source>
-        <translation>Disc ocupat, nu se poate elimina acum</translation>
+        <translation>Disc ocupat, nu  poate fi eliminat acum</translation>
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Dispozitivul este ocupat, nu pot scoate acum</translation>
+        <translation>Dispozitivul este ocupat, nu pot fi scos acum</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
@@ -33,7 +33,7 @@
     <name>DiskControlItem</name>
     <message>
         <source>Unknown</source>
-        <translation>Necunoascut</translation>
+        <translation>Necunoscut</translation>
     </message>
 </context>
 <context>
@@ -44,7 +44,7 @@
     </message>
     <message>
         <source>The device was not safely removed</source>
-        <translation>Dispozitivul nu a fost îndepărtat în siguranță</translation>
+        <translation>Dispozitivul nu a fost deconectat în mod sigur</translation>
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
@@ -52,7 +52,7 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Dispozitivul este ocupat, nu pot scoate acum</translation>
+        <translation type="vanished">Dispozitivul este ocupat, nu poate  fi scos acum</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
@@ -60,11 +60,11 @@
     </message>
     <message>
         <source>Cannot unmount the device</source>
-        <translation>Nu se poate demonta dispozitivul</translation>
+        <translation>Dispozitivul nu poate fi deconectat</translation>
     </message>
     <message>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation>Discul este montat de către utilizatorul „%1”, nu îl puteți demonta.</translation>
+        <translation>Discul este montat de către utilizatorul „%1”, dvs. nu îl puteți demonta.</translation>
     </message>
     <message>
         <source>Cannot find the mounted device</source>
@@ -94,7 +94,7 @@
     <name>QObject</name>
     <message>
         <source>The device has been safely removed</source>
-        <translation>Dispozitivul a fost îndepărtat în siguranță</translation>
+        <translation>Dispozitivul a fost îndepărtat în  mod sigur</translation>
     </message>
     <message>
         <source>Access denied</source>
@@ -102,23 +102,38 @@
     </message>
     <message>
         <source>You do not have permission to access this folder</source>
-        <translation>Nu aveți permisiunea de a accesa acest folder</translation>
+        <translation>Nu aveți permisiunea de a accesa acest directoriu</translation>
     </message>
     <message>
         <source>Confirm</source>
-        <translation>Confirm</translation>
+        <translation type="vanished">Confirmare</translation>
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
-        <translation type="unfinished"/>
+        <translation>Scanarea dispozitivului, oprire?</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation type="vanished">Anulare</translation>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="unfinished"/>
+        <translation type="vanished">Oprire</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation>Confirmare</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>Anulare</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <comment>button</comment>
+        <translation>Oprire</translation>
     </message>
 </context>
 </TS>

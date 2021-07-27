@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>CanvasGridView</name>
     <message>
@@ -137,19 +135,19 @@
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1031"/>
         <source>Only desktop</source>
         <comment>button</comment>
-        <translation type="unfinished">Only desktop</translation>
+        <translation>Only desktop</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1032"/>
         <source>Only lock screen</source>
         <comment>button</comment>
-        <translation type="unfinished">Only lock screen</translation>
+        <translation>Only lock screen</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1111"/>
         <source>Apply</source>
         <comment>button</comment>
-        <translation type="unfinished">Apply</translation>
+        <translation>Apply</translation>
     </message>
     <message>
         <source>Only desktop</source>

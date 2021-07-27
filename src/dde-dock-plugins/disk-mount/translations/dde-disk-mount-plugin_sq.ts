@@ -106,7 +106,7 @@
     </message>
     <message>
         <source>Confirm</source>
-        <translation>Ripohojeni</translation>
+        <translation type="vanished">Ripohojeni</translation>
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
@@ -114,10 +114,25 @@
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="vanished">Anuloje</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation type="vanished">Ndale</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation>Ripohojeni</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
         <source>Stop</source>
+        <comment>button</comment>
         <translation>Ndale</translation>
     </message>
 </context>

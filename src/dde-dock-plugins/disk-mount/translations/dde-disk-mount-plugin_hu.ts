@@ -106,7 +106,7 @@
     </message>
     <message>
         <source>Confirm</source>
-        <translation>Megerősítés</translation>
+        <translation type="vanished">Megerősítés</translation>
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
@@ -114,10 +114,25 @@
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="vanished">Mégsem</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation type="vanished">Leállítás</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation>Megerősítés</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <comment>button</comment>
         <translation>Mégsem</translation>
     </message>
     <message>
         <source>Stop</source>
+        <comment>button</comment>
         <translation>Leállítás</translation>
     </message>
 </context>

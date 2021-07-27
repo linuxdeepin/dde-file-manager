@@ -106,7 +106,7 @@
     </message>
     <message>
         <source>Confirm</source>
-        <translation>Потврди</translation>
+        <translation type="vanished">Потврди</translation>
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
@@ -114,10 +114,25 @@
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="vanished">Откажи</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation type="vanished">Заустави</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation>Потврди</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <comment>button</comment>
         <translation>Откажи</translation>
     </message>
     <message>
         <source>Stop</source>
+        <comment>button</comment>
         <translation>Заустави</translation>
     </message>
 </context>

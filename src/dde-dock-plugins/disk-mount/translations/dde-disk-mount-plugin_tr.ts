@@ -106,7 +106,7 @@
     </message>
     <message>
         <source>Confirm</source>
-        <translation>Onayla</translation>
+        <translation type="vanished">Onayla</translation>
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
@@ -114,10 +114,25 @@
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="vanished">İptal</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation type="vanished">Durdur</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation>Onayla</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <comment>button</comment>
         <translation>İptal</translation>
     </message>
     <message>
         <source>Stop</source>
+        <comment>button</comment>
         <translation>Durdur</translation>
     </message>
 </context>

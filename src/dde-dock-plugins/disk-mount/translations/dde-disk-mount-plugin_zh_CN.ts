@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>DUMountManager</name>
     <message>
@@ -125,17 +123,17 @@
     <message>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished">确定</translation>
+        <translation>确 定</translation>
     </message>
     <message>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">取消</translation>
+        <translation>取 消</translation>
     </message>
     <message>
         <source>Stop</source>
         <comment>button</comment>
-        <translation type="unfinished">终止</translation>
+        <translation>终 止</translation>
     </message>
 </context>
 </TS>

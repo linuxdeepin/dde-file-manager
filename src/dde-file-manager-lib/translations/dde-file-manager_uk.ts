@@ -129,27 +129,52 @@
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="67"/>
         <source>Next</source>
+        <comment>button</comment>
         <translation>Наступний</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="68"/>
         <source>Cancel</source>
+        <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="69"/>
         <source>Done</source>
+        <comment>button</comment>
         <translation>Готово</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="70"/>
         <source>Retry</source>
+        <comment>button</comment>
         <translation>Повторити</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="71"/>
         <source>OK</source>
+        <comment>button</comment>
         <translation>Гаразд</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation type="vanished">Наступний</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="vanished">Скасувати</translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation type="vanished">Готово</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation type="vanished">Повторити</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="vanished">Гаразд</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="154"/>
@@ -203,12 +228,12 @@
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
-        <location filename="../dialogs/closealldialogindicator.cpp" line="56"/>
+        <location filename="../dialogs/closealldialogindicator.cpp" line="57"/>
         <source>Close all</source>
         <translation>Закрити все</translation>
     </message>
     <message>
-        <location filename="../dialogs/closealldialogindicator.cpp" line="77"/>
+        <location filename="../dialogs/closealldialogindicator.cpp" line="78"/>
         <source>Total size: %1, %2 files</source>
         <translation>Загальний розмір %1, %2 файли</translation>
     </message>
@@ -238,53 +263,54 @@
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="81"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="82"/>
         <source>Computer</source>
         <translation>Комп&apos;ютер</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="90"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="91"/>
         <source>Basic Info</source>
         <translation>Базова інформація</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="101"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="102"/>
         <source>Computer Name</source>
         <translation>Назва комп’ютера</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="102"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="103"/>
         <source>Edition</source>
         <translation>Редагування</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="103"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="104"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="114"/>
         <source>Version</source>
         <translation>Версія</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="104"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="105"/>
         <source>Type</source>
         <translation>Тип</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="105"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="106"/>
         <source>Processor</source>
         <translation>Процесор</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="106"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="139"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="107"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="144"/>
         <source>Memory</source>
         <translation>Памʼять</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="218"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="227"/>
         <source>Bit</source>
         <translation>Біт</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="252"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="263"/>
         <source>Available</source>
         <translation>Доступна</translation>
     </message>
@@ -292,28 +318,38 @@
 <context>
     <name>ConnectToServerDialog</name>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="49"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="50"/>
         <source>Connect to Server</source>
         <translation>Підключення до сервера</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="165"/>
         <source>Cancel</source>
+        <translation type="vanished">Скасувати</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation type="vanished">Під&apos;єднатися</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="166"/>
+        <source>Cancel</source>
+        <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="165"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="167"/>
         <source>Connect</source>
+        <comment>button</comment>
         <translation>Під&apos;єднатися</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="173"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="175"/>
         <source>My Favorites:</source>
         <translation>Мої улюблені:</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="215"/>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="257"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="217"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="259"/>
         <source>Clear History</source>
         <translation>Очистити історію</translation>
     </message>
@@ -321,7 +357,7 @@
 <context>
     <name>DFMAddressBar</name>
     <message>
-        <location filename="../views/dfmaddressbar.cpp" line="407"/>
+        <location filename="../views/dfmaddressbar.cpp" line="409"/>
         <source>Search or enter address</source>
         <translation>Знайдіть або введіть адресу</translation>
     </message>
@@ -459,6 +495,15 @@
     </message>
 </context>
 <context>
+    <name>DFMSideBarBookmarkItemHandler</name>
+    <message>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="147"/>
+        <source>Gotcha</source>
+        <comment>button</comment>
+        <translation>Зрозуміло</translation>
+    </message>
+</context>
+<context>
     <name>DFMTagCrumbController</name>
     <message>
         <location filename="../controllers/dfmtagcrumbcontroller.cpp" line="54"/>
@@ -477,75 +522,75 @@
 <context>
     <name>DFMTaskWidget</name>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="189"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="190"/>
         <source>Keep both</source>
         <translation>Залишити два</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="190"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="191"/>
         <source>Skip</source>
         <translation>Пропустити</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="191"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="192"/>
         <source>Replace</source>
         <translation>Замінити</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="209"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="210"/>
         <source>Do not ask again</source>
         <translation>Не запитувати знову</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="386"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="387"/>
         <source>Syncing data</source>
         <translation>Синхронізація даних</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="387"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="388"/>
         <source>Please wait</source>
         <translation>Будь ласка, зачекайте</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="442"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="443"/>
         <source>Retry</source>
         <translation>Повторити</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="455"/>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="465"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="456"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="466"/>
         <source>Time modified: %1</source>
         <translation>Час зміни: %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="458"/>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="469"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="459"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="470"/>
         <source>Contains: %1</source>
         <translation>Вміщує: %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="461"/>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="472"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="462"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="473"/>
         <source>Size: %1</source>
         <translation>Розмір: %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="457"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="458"/>
         <source>Original folder</source>
         <translation>Початкова тека</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="460"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="461"/>
         <source>Original file</source>
         <translation>Початковий файл</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="468"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="469"/>
         <source>Target folder</source>
         <translation>Тека призначення</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="471"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="472"/>
         <source>Target file</source>
         <translation>Файл призначення</translation>
     </message>
@@ -553,39 +598,39 @@
 <context>
     <name>DFMVaultActiveFinishedView</name>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="53"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="54"/>
         <source>Encrypt File Vault</source>
         <translation>Зашифрувати сховище файлів</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="61"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="62"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
         <translation>Натисніть «Зашифрувати» і введіть пароль користувача.</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="77"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="78"/>
         <source>Encrypting...</source>
         <translation>Шифрування…</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="92"/>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="146"/>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="175"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="93"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="147"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="176"/>
         <source>Encrypt</source>
         <translation>Зашифрувати</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="164"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="165"/>
         <source>Failed to create file vault: %1</source>
         <translation>Не вдалося створити сховище файлів: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="214"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="215"/>
         <source>OK</source>
         <translation>Гаразд</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="87"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="88"/>
         <source>The setup is complete</source>
         <translation>Налаштовування завершено</translation>
     </message>
@@ -593,37 +638,37 @@
 <context>
     <name>DFMVaultActiveSaveKeyView</name>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="47"/>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="48"/>
         <source>Recovery Key</source>
         <translation>Ключ відновлення</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="55"/>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="56"/>
         <source>Generate a recovery key in case that you forgot the password</source>
         <translation>Створіть ключ відновлення на випадок, якщо ви забудете пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="61"/>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="62"/>
         <source>Key</source>
         <translation>Ключ</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="73"/>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="74"/>
         <source>QR code</source>
         <translation>QR-код</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="89"/>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="90"/>
         <source>Scan QR code and save the key to another device</source>
         <translation>Заскануйте QR-код і збережіть ключ на іншому пристрої</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="97"/>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="98"/>
         <source>Next</source>
         <translation>Наступний</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="131"/>
+        <location filename="../views/dfmvaultactivesavekeyview.cpp" line="132"/>
         <source>Recovery Key:</source>
         <translation>Ключ відновлення:</translation>
     </message>
@@ -631,59 +676,59 @@
 <context>
     <name>DFMVaultActiveSetUnlockMethodView</name>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="55"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="56"/>
         <source>Set Vault Password</source>
         <translation>Встановлення пароля сховища</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="63"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="64"/>
         <source>Method</source>
         <translation>Метод</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="68"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="69"/>
         <source>Manual</source>
         <translation>Вручну</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="79"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="80"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="84"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="225"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="85"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="226"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>≥ 8 символів, може містити A-Z, a-z, 0-9 та символи пунктуації</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="97"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="98"/>
         <source>Repeat password</source>
         <translation>Повторити пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="102"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="103"/>
         <source>Input the password again</source>
         <translation>Введіть ваш пароль ще раз</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="114"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="115"/>
         <source>Password hint</source>
         <translation>Підказка пароля</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="119"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="120"/>
         <source>Optional</source>
         <translation>Необов&apos;язково</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="124"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="125"/>
         <source>Next</source>
         <translation>Наступний</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="248"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="264"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="249"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="265"/>
         <source>Passwords do not match</source>
         <translation>Паролі не збігаються</translation>
     </message>
@@ -691,27 +736,27 @@
 <context>
     <name>DFMVaultActiveStartView</name>
     <message>
-        <location filename="../views/dfmvaultactivestartview.cpp" line="43"/>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="44"/>
         <source>File Vault</source>
         <translation>Файлове сховище</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivestartview.cpp" line="50"/>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="51"/>
         <source>Create your secure private space</source>
         <translation>Створіть ваш безпечний приватний простір</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivestartview.cpp" line="51"/>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="52"/>
         <source>Advanced encryption technology</source>
         <translation>Додаткові технології шифрування</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivestartview.cpp" line="52"/>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="53"/>
         <source>Convenient and easy to use</source>
         <translation>Зручний і простий у використанні</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivestartview.cpp" line="61"/>
+        <location filename="../views/dfmvaultactivestartview.cpp" line="62"/>
         <source>Create</source>
         <translation>Створити</translation>
     </message>
@@ -719,37 +764,47 @@
 <context>
     <name>DFMVaultRecoveryKeyPages</name>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="62"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="63"/>
         <source>Unlock by Key</source>
         <translation>Розблокувати ключем</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="87"/>
         <source>Cancel</source>
-        <translation>Скасувати</translation>
+        <translation type="vanished">Скасувати</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="87"/>
         <source>Unlock</source>
-        <translation>Розблокувати</translation>
+        <translation type="vanished">Розблокувати</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="273"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="274"/>
         <source>Failed to unlock file vault</source>
         <translation>Не вдалося розблокувати сховище файлів</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="277"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="278"/>
         <source>OK</source>
         <translation>Гаразд</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="72"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="73"/>
         <source>Input the 32-digit recovery key</source>
         <translation>Введіть 32-цифровий ключ відновлення</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="164"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="88"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="88"/>
+        <source>Unlock</source>
+        <comment>button</comment>
+        <translation>Розблокувати</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="165"/>
         <source>Wrong recovery key</source>
         <translation>Помилковий ключ відновлення</translation>
     </message>
@@ -757,12 +812,12 @@
 <context>
     <name>DFMVaultRemoveByPasswordView</name>
     <message>
-        <location filename="../views/dfmvaultremovebypasswordview.cpp" line="40"/>
+        <location filename="../views/dfmvaultremovebypasswordview.cpp" line="41"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovebypasswordview.cpp" line="59"/>
+        <location filename="../views/dfmvaultremovebypasswordview.cpp" line="60"/>
         <source>Password hint: %1</source>
         <translation>Підказка пароля: %1</translation>
     </message>
@@ -770,7 +825,7 @@
 <context>
     <name>DFMVaultRemoveByRecoverykeyView</name>
     <message>
-        <location filename="../views/dfmvaultremovebyrecoverykeyview.cpp" line="62"/>
+        <location filename="../views/dfmvaultremovebyrecoverykeyview.cpp" line="63"/>
         <source>Input the 32-digit recovery key</source>
         <translation>Введіть 32-цифровий ключ відновлення</translation>
     </message>
@@ -778,7 +833,7 @@
 <context>
     <name>DFMVaultRemovePages</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="61"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="62"/>
         <source>Delete File Vault</source>
         <translation>Вилучити сховище файлів</translation>
     </message>
@@ -788,25 +843,45 @@
         <translation>У результаті вилучення сховища файли буде остаточно вилучено</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="115"/>
         <source>Cancel</source>
-        <translation>Скасувати</translation>
+        <translation type="vanished">Скасувати</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="115"/>
         <location filename="../views/dfmvaultremovepages.cpp" line="191"/>
         <source>Use Key</source>
         <translation>Використати ключ</translation>
     </message>
     <message>
+        <source>Delete</source>
+        <translation type="vanished">Видалити</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="vanished">Гаразд</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="115"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultremovepages.cpp" line="115"/>
+        <source>Use Key</source>
+        <comment>button</comment>
+        <translation>Використати ключ</translation>
+    </message>
+    <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="115"/>
         <source>Delete</source>
+        <comment>button</comment>
         <translation>Видалити</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="143"/>
         <location filename="../views/dfmvaultremovepages.cpp" line="253"/>
         <source>OK</source>
+        <comment>button</comment>
         <translation>Гаразд</translation>
     </message>
     <message>
@@ -848,50 +923,65 @@
 <context>
     <name>DFMVaultUnlockPages</name>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="49"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="50"/>
         <source>Unlock File Vault</source>
         <translation>Не вдалося розблокувати файлове сховище</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="57"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="58"/>
         <source>Verify your password</source>
         <translation>Перевірте ваш пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="94"/>
         <source>Cancel</source>
-        <translation>Скасувати</translation>
+        <translation type="vanished">Скасувати</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="94"/>
         <source>Unlock</source>
-        <translation>Розблокувати</translation>
+        <translation type="vanished">Розблокувати</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="109"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="110"/>
         <source>Password hint: %1</source>
         <translation>Підказка пароля: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="245"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="246"/>
         <source>Failed to unlock file vault</source>
         <translation>Не вдалося розблокувати сховище файлів</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="249"/>
         <source>OK</source>
-        <translation>Гаразд</translation>
+        <translation type="vanished">Гаразд</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="64"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="65"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="196"/>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="240"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="95"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="95"/>
+        <source>Unlock</source>
+        <comment>button</comment>
+        <translation>Розблокувати</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="197"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="241"/>
         <source>Wrong password</source>
         <translation>Помилковий пароль</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="250"/>
+        <source>OK</source>
+        <comment>button</comment>
+        <translation>Гаразд</translation>
     </message>
 </context>
 <context>
@@ -972,98 +1062,104 @@
         <translation>Підтримки виконання дії не передбачено</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="660"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="247"/>
+        <source>You do not have permission to traverse files in it</source>
+        <translation>Ви не маєте права пересувати тут файли</translation>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="669"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>копія</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1066"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1224"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation>Не вдалося відкрити каталог. Причина: надто довга назва файла</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1228"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1707"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1977"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2122"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1432"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2055"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2955"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation>Не вдалося відкрити файл. Причина: надто довга назва файла</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3127"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3203"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3834"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3918"/>
         <source>Failed to write the file, cause:</source>
         <translation>Не вдалося записати файл. Причина:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3997"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4728"/>
         <source>Syncing data</source>
         <translation>Синхронізація даних</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3997"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4728"/>
         <source>Please wait</source>
         <translation>Будь ласка, зачекайте</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1076"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1234"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>Не вдалося створити каталог. Причина: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1240"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1271"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1719"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1751"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1990"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2846"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1444"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1484"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2067"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2107"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2644"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2684"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Не вдалося відкрити файл. Причина: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1267"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1747"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1480"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2103"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2680"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3779"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>Не вдалося відкрити файл. Причина: доступ заборонено</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1381"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2054"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1609"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2232"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>Не вдалося прочитати файл. Причина: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1449"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1524"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2921"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3012"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1697"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1787"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2320"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2410"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>Не вдалося виконати запис до файла. Причина: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1646"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1935"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2551"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>Файл не є цілісним. Причина: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2135"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2154"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2967"/>
         <source>Failed to open the file, cause: </source>
         <translation>Не вдалося відкрити файл. Причина:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2224"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3048"/>
         <source>Failed to read the file, cause: </source>
         <translation>Не вдалося прочитати файл. Причина:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2308"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3146"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>Не вдалося вилучити файл. Причина: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2402"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3246"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>Не вдалося створити символічне посилання. Причина: %1</translation>
     </message>
@@ -1071,39 +1167,54 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1108"/>
-        <location filename="../views/dfiledialog.cpp" line="1399"/>
+        <location filename="../views/dfiledialog.cpp" line="1115"/>
+        <location filename="../views/dfiledialog.cpp" line="1409"/>
         <source>Save</source>
         <translation>Зберегти</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1304"/>
+        <location filename="../views/dfiledialog.cpp" line="1271"/>
+        <location filename="../views/dfiledialog.cpp" line="1312"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <location filename="../views/dfiledialog.cpp" line="1272"/>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation>Підтвердити</translation>
+    </message>
+    <message>
+        <location filename="../views/dfiledialog.cpp" line="1311"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>1% вже існує, ви хочете його перезаписати?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1264"/>
-        <location filename="../views/dfiledialog.cpp" line="1305"/>
-        <source>Cancel</source>
-        <translation>Відмінити</translation>
+        <location filename="../views/dfiledialog.cpp" line="1313"/>
+        <source>Replace</source>
+        <comment>button</comment>
+        <translation>Замінити</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1263"/>
+        <source>Cancel</source>
+        <translation type="vanished">Відмінити</translation>
+    </message>
+    <message>
+        <location filename="../views/dfiledialog.cpp" line="1270"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation>Цей файл буде приховано, якщо його назва починатиметься з крапки («.»). Хочете приховати файл?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1265"/>
         <source>Confirm</source>
-        <translation>Підтвердити</translation>
+        <translation type="vanished">Підтвердити</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1306"/>
         <source>Replace</source>
-        <translation>Замінити</translation>
+        <translation type="vanished">Замінити</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1396"/>
+        <location filename="../views/dfiledialog.cpp" line="1406"/>
         <source>Open</source>
         <translation>Відкрити</translation>
     </message>
@@ -1111,12 +1222,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1160"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1154"/>
         <source>Trash</source>
         <translation>Смітник</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1169"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1163"/>
         <source>Empty</source>
         <translation>Порожньо</translation>
     </message>
@@ -1130,7 +1241,7 @@
         <translation>Назва</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1118"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1121"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1446"/>
         <location filename="../models/searchfileinfo.cpp" line="130"/>
         <source>Time modified</source>
@@ -1152,7 +1263,7 @@
         <translation>Час створення</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="843"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1454"/>
         <source>Last access</source>
         <translation>Останній доступ</translation>
@@ -1169,12 +1280,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2541"/>
+        <location filename="../views/dfileview.cpp" line="2582"/>
+        <source>Disc mount error</source>
+        <translation>Помилка під час монтування диска</translation>
+    </message>
+    <message>
+        <location filename="../views/dfileview.cpp" line="2582"/>
+        <source>The disc is in use, please end the running process and remount the disc.</source>
+        <translation>Диск використовують інші програми. Будь ласка, завершіть роботу відповідного процесу і повторно змонтуйте диск.</translation>
+    </message>
+    <message>
+        <location filename="../views/dfileview.cpp" line="2596"/>
         <source>Mounting failed</source>
         <translation>Не вдалося змонтувати</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3245"/>
+        <location filename="../views/dfileview.cpp" line="3300"/>
         <source>(Reverse)</source>
         <translation>(Зворотний)</translation>
     </message>
@@ -1253,89 +1374,89 @@
 <context>
     <name>DTaskDialog</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="84"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="85"/>
         <source>This action is not supported</source>
         <translation>Підтримки виконання цієї дії не передбачено</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="740"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="733"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>Стирання диска %1, будь ласка, зачекайте...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="741"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="734"/>
         <source>Burning disc %1, please wait...</source>
         <translation>Записуємо диск %1. Будь ласка, зачекайте…</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="746"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="739"/>
         <source>Writing data...</source>
         <translation>Запис даних...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="747"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="740"/>
         <source>Verifying data...</source>
         <translation>Перевірка даних...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="797"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="790"/>
         <source>Copying %1</source>
         <translation>Копіювання %1</translation>
     </message>
     <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="791"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="795"/>
         <location filename="../../dialogs/dtaskdialog.cpp" line="798"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="802"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="805"/>
         <source>to %2</source>
         <translation>до %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="821"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="814"/>
         <source>%1 already exists in target folder</source>
         <translation>%1 вже існує в цільовій теці</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="822"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="815"/>
         <source>Original path %1 Target path %2</source>
         <translation>Оригінальний шлях %1 цільовий шлях %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="801"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="794"/>
         <source>Moving %1</source>
         <translation>Переміщення %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="356"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="359"/>
         <source>Removing file vault, please try later</source>
         <translation>Вилучаємо сховище файлів. Будь ласка, повторіть спробу пізніше</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="804"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="797"/>
         <source>Restoring %1</source>
         <translation>Відновлення %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="807"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="800"/>
         <source>Deleting %1</source>
         <translation>Видалення %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="810"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="803"/>
         <source>Trashing %1</source>
         <translation>Переміщення до смітнику %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="818"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="811"/>
         <source>Calculating space, please wait</source>
         <translation>Розрахунок простору, будь ласка, зачекайте</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="833"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="826"/>
         <source>Merge</source>
         <translation>Об&apos;єднати</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="836"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="829"/>
         <source>Replace</source>
         <translation>Замінити</translation>
     </message>
@@ -1343,28 +1464,31 @@
 <context>
     <name>DUMountManager</name>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="145"/>
-        <location filename="../interfaces/dumountmanager.cpp" line="156"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="167"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="178"/>
         <source>Authentication timed out</source>
         <translation>Перевищено час очікування на розпізнавання</translation>
     </message>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="147"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="169"/>
+        <location filename="../../fileoperations/filejob.cpp" line="733"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Диск зайнятий, його неможливо розмонтувати зараз</translation>
     </message>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="159"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="181"/>
         <source>Disk is busy, cannot eject now</source>
         <translation>Диск зайнятий, зараз його неможливо вийняти</translation>
     </message>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="191"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="236"/>
         <source>The device is busy, cannot eject now</source>
         <translation>Пристрій зайнято, його не можна виштовхнути зараз</translation>
     </message>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="200"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="201"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="250"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="260"/>
         <source>The device is busy, cannot remove now</source>
         <translation>Пристрій зайнято, зараз вилучення неможливе</translation>
     </message>
@@ -1404,9 +1528,9 @@
     <name>DialogManager</name>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="406"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1135"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1150"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1160"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1149"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1164"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1174"/>
         <source>Operation failed!</source>
         <translation>Помилка операції!</translation>
     </message>
@@ -1416,19 +1540,8 @@
         <translation>Цільова тека знаходиться всередині вихідної теки!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="409"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="624"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1005"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1018"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1027"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1045"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1142"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1153"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1233"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1637"/>
         <source>OK</source>
-        <translation>Гаразд</translation>
+        <translation type="vanished">Гаразд</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="432"/>
@@ -1441,390 +1554,474 @@
         <translation>Це є виконуваний текстовий файл</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="436"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="459"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="475"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="521"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="547"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="641"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="714"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="730"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="892"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="921"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1303"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1558"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1576"/>
         <source>Cancel</source>
-        <translation>Скасувати</translation>
+        <translation type="vanished">Скасувати</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="436"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="461"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="476"/>
         <source>Run</source>
-        <translation>Запустити</translation>
+        <translation type="vanished">Запустити</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="436"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="460"/>
         <source>Run in terminal</source>
-        <translation>Запустити в терміналі</translation>
+        <translation type="vanished">Запустити в терміналі</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="436"/>
         <source>Display</source>
-        <translation>Відобразити</translation>
+        <translation type="vanished">Відобразити</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="458"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="464"/>
         <source>It is an executable file.</source>
         <translation>Це є виконуваний файл</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="474"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="480"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>Цей файл не є виконуваним. Хочете додати права на виконання і запустити його?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="488"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="494"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot; вже використовується, будь ласка введіть інше ім&apos;я</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="490"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="505"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="613"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="921"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1327"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1431"/>
         <source>Confirm</source>
-        <translation>Підтвердити</translation>
+        <translation type="vanished">Підтвердити</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="503"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="509"/>
         <source>The file name must not contain two dots (..)</source>
         <translation>У назві файла не повинно міститися двох крапок («..»)</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="516"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="522"/>
         <source>Are you sure you want to erase all data on the disc?</source>
         <translation>Ви справді хочете витерти усі дані на диску?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="521"/>
         <source>Erase</source>
-        <translation>Витерти</translation>
+        <translation type="vanished">Витерти</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="543"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="550"/>
         <source>How do you want to use this disc?</source>
         <translation>Як ви хочете скористатися цим диском?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="547"/>
         <source>Burn image</source>
-        <translation>Записати образ</translation>
+        <translation type="vanished">Записати образ</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="547"/>
         <source>Burn files</source>
-        <translation>Записати файли</translation>
+        <translation type="vanished">Записати файли</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="575"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="584"/>
         <source>Disc erase failed</source>
         <translation>Не вдалося витерти диск</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="579"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="588"/>
         <source>Burn process failed</source>
         <translation>Не вдалося записати диск</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="585"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="594"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="602"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="612"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="611"/>
         <source>Show details</source>
         <translation>Показати подробиці</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="606"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="615"/>
         <source>Hide details</source>
         <translation>Приховати подробиці</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="607"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="616"/>
         <source>Error</source>
         <translation>Помилка</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="634"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="643"/>
         <source>Permanently delete %1?</source>
         <translation>Назавжди видалити %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="635"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="644"/>
         <source>Permanently delete %1 items?</source>
         <translation>Видалити назавжди %1 об&apos;єктів?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="641"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="714"/>
         <source>Delete</source>
-        <translation>Видалити</translation>
+        <translation type="vanished">Видалити</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="652"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="662"/>
         <source>Empty</source>
         <translation>Очистити</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="697"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="707"/>
         <source>Do you want to delete %1?</source>
         <translation>Хочете вилучити %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="698"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="708"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>Хочете вилучити позначені %1 записів?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="727"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="738"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>Вибачте, неможливо знайти ваш каталог закладок, вилучити її?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="730"/>
         <source>Remove</source>
-        <translation>Вилучити</translation>
+        <translation type="vanished">Вилучити</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="890"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="902"/>
         <source>Name: </source>
         <translation>Ім&apos;я: </translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="892"/>
         <source>Force unmount</source>
-        <translation>Примусово розмонтувати</translation>
+        <translation type="vanished">Примусово розмонтувати</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="915"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="928"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1 на що цей ярлик посилається, було змінено або переміщено</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="919"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="932"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Ви хочете видалити це ярлик?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1016"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1030"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>Не вдалося, розмір файлу має становити менше 4 ГБ.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1025"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1039"/>
         <source>Fail to create symlink, cause:</source>
         <translation>Не вдалося створити символічне посилання, тому що:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1043"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1057"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Вибрані файли містять системний файл/директорію, і його не можливо видалити</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1079"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1093"/>
         <source>Unable to find the original file</source>
         <translation>Не вдалося знайти початковий файл</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1151"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1187"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1165"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1201"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Ви не маєте права керувати файлами/теками!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1162"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1176"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
         <translation>Не вдалося відновити файл %1 — не існує початкового файла</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1204"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1218"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Вибачте, ви не маєте дозволу керувати наступним %1 файлом/текою(и)!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1286"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1300"/>
         <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
         <translation>2. Зніміть позначку з пунктів «Увімкнути швидкий запуск» та «Приспати» у параметрах вимикання і перезавантажте систему.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1287"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1301"/>
         <source>3. Reboot and enter %1</source>
         <translation>3. Перезавантажити і увійти в %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1428"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1318"/>
+        <source>Reboot</source>
+        <comment>button</comment>
+        <translation>Перезавантажити</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="1442"/>
         <source>Unable to access %1</source>
         <translation>Не вдалося отримати доступ до %1</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="723"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1511"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1525"/>
         <source>Sending files now, please try later</source>
         <translation>Надсилаємо файли. Будь ласка, повторіть спробу пізніше</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1559"/>
         <source>Format</source>
-        <translation>Форматувати</translation>
+        <translation type="vanished">Форматувати</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1560"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1574"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>Щоб отримати доступ до пристрою, вам слід спочатку виконати форматування диска. Ви справді хочете форматувати диск зараз?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1577"/>
         <source>Stop</source>
-        <translation>Припинити</translation>
+        <translation type="vanished">Припинити</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1578"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1589"/>
         <source>Scanning the device, stop it?</source>
         <translation>Скануємо пристрій. Припинити?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1635"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1646"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Тека загального доступу не може бути названа після поточного імені користувача</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="457"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="463"/>
         <source>Do you want to run %1?</source>
         <translation>Ви дійсно хочете запустити %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="632"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="641"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Ви впевнені, що бажаєте очистити %1 об&apos;єкт?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="633"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="642"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Ви впевнені, що бажаєте очистити %1 об&apos;єкти?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="530"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="676"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="537"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="686"/>
         <source>This action cannot be undone</source>
         <translation>Цю дію не можна скасувати</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="582"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="409"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="633"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1019"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1032"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1041"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1059"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1156"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1181"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1247"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1648"/>
+        <source>OK</source>
+        <comment>button</comment>
+        <translation>Гаразд</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="439"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="465"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="481"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="527"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="554"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="650"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="724"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="741"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="904"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="934"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1317"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1572"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1587"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="440"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="467"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="482"/>
+        <source>Run</source>
+        <comment>button</comment>
+        <translation>Запустити</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="441"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="466"/>
+        <source>Run in terminal</source>
+        <comment>button</comment>
+        <translation>Запустити в терміналі</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
+        <source>Display</source>
+        <comment>button</comment>
+        <translation>Відобразити</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="496"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="511"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="622"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="935"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1341"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1445"/>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation>Підтвердити</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="528"/>
+        <source>Erase</source>
+        <comment>button</comment>
+        <translation>Витерти</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="555"/>
+        <source>Burn image,</source>
+        <translation>Записати образ,</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="556"/>
+        <source>Burn files,</source>
+        <translation>Записати файли,</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="591"/>
         <source>Data verification failed</source>
         <translation>Не вдалося виконати процедуру перевірки</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="889"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="621"/>
+        <source>Show details</source>
+        <comment>button</comment>
+        <translation>Показати подробиці</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="651"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="725"/>
+        <source>Delete</source>
+        <comment>button</comment>
+        <translation>Видалити</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="742"/>
+        <source>Remove</source>
+        <comment>button</comment>
+        <translation>Вилучити</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="901"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Диск зайнятий, його неможливо розмонтувати зараз</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1004"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="905"/>
+        <source>Force unmount</source>
+        <comment>button</comment>
+        <translation>Примусово розмонтувати</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="1018"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
         <translation>Неможливо скопіювати. Не вистачає вільного місця на диску призначення.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1137"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1151"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>Не вдалося відновити файл %1, цільова тека доступна лише для читання</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1139"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1153"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>Не вдалося відновити файли %1, цільова тека доступна лише для читання</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1164"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1178"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
         <translation>Не вдалося відновити %1 файлів — не існує початкових файлів</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1271"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1285"/>
         <source>Mount partition%1 to be read only</source>
         <translation>Змотувати розділ%1 тільки для читання</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1275"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1289"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
         <translation>Диски в Windows будуть нездатні нормально читати і писати, якщо ви встановите прапорець «Включити швидкий запуск (рекомендується)» в настройках виключення</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1279"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1293"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
         <translation>Для нормального доступу до диска Windows виконайте наступні дії</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1285"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1299"/>
         <source>1. Reboot to enter Windows</source>
         <translation>1. Перезавантажети, щоб увійти до Windows</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1304"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1573"/>
+        <source>Format</source>
+        <comment>button</comment>
+        <translation>Форматувати</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="1588"/>
+        <source>Stop</source>
+        <comment>button</comment>
+        <translation>Припинити</translation>
+    </message>
+    <message>
         <source>Reboot</source>
-        <translation>Перезавантажити</translation>
-    </message>
-    <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1124"/>
-        <source>Permission denied</source>
-        <translation>Доступ заборонено</translation>
-    </message>
-    <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1125"/>
-        <source>You do not have permission to traverse files in it</source>
-        <translation>Ви не маєте права пересувати тут файли</translation>
+        <translation type="vanished">Перезавантажити</translation>
     </message>
 </context>
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="637"/>
-        <location filename="../controllers/filecontroller.cpp" line="693"/>
-        <location filename="../controllers/filecontroller.cpp" line="756"/>
-        <location filename="../controllers/filecontroller.cpp" line="782"/>
+        <location filename="../controllers/filecontroller.cpp" line="631"/>
+        <location filename="../controllers/filecontroller.cpp" line="687"/>
+        <location filename="../controllers/filecontroller.cpp" line="750"/>
+        <location filename="../controllers/filecontroller.cpp" line="776"/>
         <source>Unable to find the original file</source>
         <translation>Не вдалося знайти початковий файл</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="815"/>
-        <location filename="../controllers/filecontroller.cpp" line="834"/>
-        <location filename="../controllers/filecontroller.cpp" line="853"/>
+        <location filename="../controllers/filecontroller.cpp" line="809"/>
+        <location filename="../controllers/filecontroller.cpp" line="828"/>
+        <location filename="../controllers/filecontroller.cpp" line="847"/>
         <source>Kindly Reminder</source>
         <translation>Увічливе нагадування</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="815"/>
-        <location filename="../controllers/filecontroller.cpp" line="834"/>
-        <location filename="../controllers/filecontroller.cpp" line="853"/>
+        <location filename="../controllers/filecontroller.cpp" line="809"/>
+        <location filename="../controllers/filecontroller.cpp" line="828"/>
+        <location filename="../controllers/filecontroller.cpp" line="847"/>
         <source>Please install File Roller first and then continue</source>
         <translation>Будь ласка, спочатку встановіть File Roller, а потім продовжуйте</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1498"/>
-        <location filename="../controllers/filecontroller.cpp" line="1518"/>
+        <location filename="../controllers/filecontroller.cpp" line="1496"/>
+        <location filename="../controllers/filecontroller.cpp" line="1516"/>
         <source>Unable to create files here: %1</source>
         <translation>Не вдалося створити файли тут: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1500"/>
+        <location filename="../controllers/filecontroller.cpp" line="1498"/>
         <source>Confirm</source>
+        <comment>button</comment>
         <translation>Підтвердити</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation type="vanished">Підтвердити</translation>
     </message>
 </context>
 <context>
@@ -1840,10 +2037,15 @@
         <translation>Формат</translation>
     </message>
     <message>
+        <source>Cancel</source>
+        <translation type="vanished">Скасувати</translation>
+    </message>
+    <message>
         <location filename="../views/filedialogstatusbar.cpp" line="59"/>
         <location filename="../views/filedialogstatusbar.cpp" line="61"/>
         <location filename="../views/filedialogstatusbar.cpp" line="62"/>
         <source>Cancel</source>
+        <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
@@ -1878,76 +2080,76 @@
 <context>
     <name>FileJob</name>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="173"/>
+        <location filename="../../fileoperations/filejob.cpp" line="180"/>
         <source>copy</source>
         <translation>копіювати</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="910"/>
-        <location filename="../../fileoperations/filejob.cpp" line="919"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1155"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1164"/>
+        <location filename="../../fileoperations/filejob.cpp" line="926"/>
+        <location filename="../../fileoperations/filejob.cpp" line="935"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1171"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1180"/>
         <source>Data verification successful.</source>
         <translation>Дані успішно перевірено.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="923"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1168"/>
+        <location filename="../../fileoperations/filejob.cpp" line="939"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1184"/>
         <source>Burn process completed</source>
         <translation>Процедуру запису завершено</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1320"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1342"/>
         <source>%1 s</source>
         <translation>%1 с</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1324"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1346"/>
         <source>%1 m %2 s</source>
         <translation>%1 хв %2 с</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1329"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1351"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 г %2 хв %3 с</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1336"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1358"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 дн %2 г %3 хв %4 с</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3045"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3069"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1 є файлом-дублікатом.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3048"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3072"/>
         <source>Insufficient disc space.</source>
         <translation>Недостатньо місця на диску.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3051"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3075"/>
         <source>Lost connection to drive.</source>
         <translation>Втрачено зв&apos;язок із диском.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3054"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3078"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>Пристрій для записування CD/DVD є неготовим. Спробуйте інший диск.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3057"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3081"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>Пристрій для записування CD/DVD зайнято. Завершіть роботу програми, яка працює із пристроєм, і повторіть спробу.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3064"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3088"/>
         <source>Unknown error</source>
         <translation>Невідома помилка</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.h" line="296"/>
+        <location filename="../../fileoperations/filejob.h" line="300"/>
         <source>Device disconnected</source>
         <translation>Пристрій від&apos;єднано</translation>
     </message>
@@ -2357,72 +2559,77 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="776"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="807"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>Не вдалося переконатися у ідентичності %1.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="777"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="808"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Таке трапляється, якщо ви входите до системи уперше.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="778"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="809"/>
         <source>The identity sent by the remote computer is</source>
         <translation>Профіль, який надіслано віддаленим комп&apos;ютером, —</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="780"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="811"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Якщо ви хочете бути абсолютно певні, що виконання дії є безпечним, проконсультуйтеся в адміністратора вашої системи.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="829"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="833"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1497"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1503"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1506"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="864"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="868"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1535"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1541"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1544"/>
         <source>Mounting device error</source>
         <translation>Помилка під час монтування пристрою</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="829"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1503"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="864"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1541"/>
         <source>Wrong username or password</source>
         <translation>Помилкове ім&apos;я користувача або пароль</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1737"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1906"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1777"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1788"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1815"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1934"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1958"/>
+        <source>Confirm</source>
+        <comment>button</comment>
+        <translation>Підтвердити</translation>
+    </message>
+    <message>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1783"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1955"/>
         <source>Cannot find the mounted device</source>
         <translation>Не вдалося знайти змонтований пристрій</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1651"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1697"/>
         <source>No key available to unlock device</source>
         <translation>Немає ключа для розблокування пристрою</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1728"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1774"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>Диск змонтовано користувачем %1, ви не можете розмонтувати його.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1731"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1740"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1766"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1885"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1909"/>
         <source>Confirm</source>
-        <translation>Підтвердити</translation>
+        <translation type="vanished">Підтвердити</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1763"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1812"/>
         <source>Cannot unmount the device</source>
         <translation>Не вдалося демонтувати пристрій</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1881"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1930"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>Не вдалося виштовхнути носій з пристрою «%1»</translation>
     </message>
@@ -2430,7 +2637,7 @@
 <context>
     <name>MasteredMediaController</name>
     <message>
-        <location filename="../controllers/masteredmediacontroller.cpp" line="389"/>
+        <location filename="../controllers/masteredmediacontroller.cpp" line="394"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>Не вдалося записати. Недостатньо вільного місця на диску призначення.</translation>
     </message>
@@ -2545,13 +2752,23 @@
 <context>
     <name>MountAskPasswordDialog</name>
     <message>
+        <source>Cancel</source>
+        <translation type="vanished">Скасувати</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation type="vanished">Під&apos;єднатися</translation>
+    </message>
+    <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="47"/>
         <source>Cancel</source>
+        <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="47"/>
         <source>Connect</source>
+        <comment>button</comment>
         <translation>Під&apos;єднатися</translation>
     </message>
     <message>
@@ -2593,13 +2810,23 @@
 <context>
     <name>MountSecretDiskAskPasswordDialog</name>
     <message>
+        <source>Cancel</source>
+        <translation type="vanished">Скасувати</translation>
+    </message>
+    <message>
+        <source>Unlock</source>
+        <translation type="vanished">Розблокувати</translation>
+    </message>
+    <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="47"/>
         <source>Cancel</source>
+        <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="47"/>
         <source>Unlock</source>
+        <comment>button</comment>
         <translation>Розблокувати</translation>
     </message>
     <message>
@@ -2611,70 +2838,90 @@
 <context>
     <name>MoveToTrashConflictDialog</name>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="49"/>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="50"/>
         <source>Are you sure you want to permanently delete %1?</source>
         <translation>Ви впевнені, що хочете остаточно видалити %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="48"/>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="49"/>
         <source>This file is too big for the trash</source>
         <translation>Цей файл завеликий для переміщення до смітнику</translation>
     </message>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="52"/>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="53"/>
         <source>The files are too big for the trash</source>
         <translation>Файли завеликий для переміщення до смітнику</translation>
     </message>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="53"/>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="54"/>
         <source>Are you sure you want to permanently delete %1 files?</source>
         <translation>Ви впевнені, що хочете остаточно видалити %1 файли?</translation>
     </message>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="73"/>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="74"/>
         <source>Cancel</source>
+        <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="74"/>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="75"/>
         <source>Delete</source>
+        <comment>button</comment>
         <translation>Видалити</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="vanished">Скасувати</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="vanished">Видалити</translation>
     </message>
 </context>
 <context>
     <name>OpenWithDialog</name>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="207"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="208"/>
         <source>Open with</source>
         <translation>Відкрити з</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="229"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="230"/>
         <source>Add other programs</source>
         <translation>Додати інші програми</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="230"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="231"/>
         <source>Set as default</source>
         <translation>Встановити за замовчуванням</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="232"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="233"/>
         <source>Cancel</source>
+        <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="233"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="234"/>
         <source>Confirm</source>
+        <comment>button</comment>
         <translation>Підтвердити</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="237"/>
+        <source>Cancel</source>
+        <translation type="vanished">Скасувати</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation type="vanished">Підтвердити</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/openwithdialog.cpp" line="238"/>
         <source>Recommended Applications</source>
         <translation>Рекомендовані програми</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="239"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="240"/>
         <source>Other Applications</source>
         <translation>Інші програми</translation>
     </message>
@@ -2758,52 +3005,52 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="313"/>
+        <location filename="../dialogs/propertydialog.cpp" line="315"/>
         <source>Basic info</source>
         <translation>Базова інформація</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="314"/>
+        <location filename="../dialogs/propertydialog.cpp" line="316"/>
         <source>Open with</source>
         <translation>Відкрити з</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="315"/>
+        <location filename="../dialogs/propertydialog.cpp" line="317"/>
         <source>Sharing</source>
         <translation>Поділитись</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="316"/>
+        <location filename="../dialogs/propertydialog.cpp" line="318"/>
         <source>Permissions</source>
         <translation>Дозволи</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="393"/>
+        <location filename="../dialogs/propertydialog.cpp" line="395"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="393"/>
+        <location filename="../dialogs/propertydialog.cpp" line="395"/>
         <source>%1</source>
         <translation>%1</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="403"/>
+        <location filename="../dialogs/propertydialog.cpp" line="405"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1313"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1319"/>
         <source>Hide this folder</source>
         <translation>Приховати цю теку</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1313"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1319"/>
         <source>Hide this file</source>
         <translation>Приховати цей файл</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1682"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1691"/>
         <source>Allow to execute as program</source>
         <translation>Дозволити виконати як програму</translation>
     </message>
@@ -2811,441 +3058,435 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1193"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="225"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1195"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="839"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="227"/>
         <source>Size</source>
         <translation>Розмір</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1231"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1447"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="234"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1237"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1453"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="236"/>
         <source>Contains</source>
         <translation>Вміщує</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1194"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="843"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="226"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1196"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="228"/>
         <source>Type</source>
         <translation>Тип</translation>
     </message>
     <message>
-        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1197"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1218"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="355"/>
+        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="175"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1199"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1220"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="364"/>
         <source>Time modified</source>
         <translation>Час зміни</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1450"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1456"/>
         <source>Free space</source>
         <translation>Вільний простір</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1443"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1449"/>
         <source>Total space</source>
         <translation>Загальний розмір</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1207"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="346"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1209"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="355"/>
         <source>Time locked</source>
         <translation>Час блокування</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1577"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1584"/>
         <source>Access denied</source>
         <translation>Доступ заборонено</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1578"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1590"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1585"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1597"/>
         <source>Executable</source>
         <translation>Виконуваний</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1579"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1580"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1586"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1587"/>
         <source>Write only</source>
         <translation>Лише для запису</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1581"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1582"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1588"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1589"/>
         <source>Read only</source>
         <translation>Лише для читання</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1583"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1584"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1590"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1591"/>
         <source>Read-write</source>
         <translation>Читання-запис</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1678"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1687"/>
         <source>Others</source>
         <translation>Інші</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1676"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1685"/>
         <source>Owner</source>
         <translation>Власник</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1427"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1433"/>
         <source>Device type</source>
         <translation>Тип пристрою</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1445"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1451"/>
         <source>File system</source>
         <translation>Файлова система</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1677"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1686"/>
         <source>Group</source>
         <translation>Група</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="96"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="97"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="790"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="793"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <source>Open</source>
         <translation>Відкрити</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
         <source>Lock</source>
         <translation>Заблокувати</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="876"/>
         <source>Auto lock</source>
         <translation>Автоблокування</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="877"/>
         <source>Never</source>
         <translation>Ніколи</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
         <source>5 minutes</source>
         <translation>5 хвилин</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
         <source>10 minutes</source>
         <translation>10 хвилин</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
         <source>20 minutes</source>
         <translation>20 хвилин</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
         <source>Delete File Vault</source>
         <translation>Вилучити сховище файлів</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="885"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
         <source>Unlock</source>
         <translation>Розблокувати</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="886"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
         <source>Unlock by key</source>
         <translation>Розблокувати ключем</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="232"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="213"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="233"/>
         <source>Size: %1</source>
         <translation>Розмір: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="213"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="214"/>
         <source>Type: %1</source>
         <translation>Тип: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="225"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="226"/>
         <source>Size: 0</source>
         <translation>Розмір: 0</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="231"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="232"/>
         <source>Items: %1</source>
         <translation>Об&apos;єкти: %1</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="95"/>
-        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="86"/>
-        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="67"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="87"/>
+        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="68"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="791"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="794"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="593"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="604"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="58"/>
         <source>Open in new window</source>
         <translation>Відкрити у новому вікні</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="99"/>
-        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="90"/>
-        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="71"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="91"/>
+        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="72"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="792"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="597"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="608"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="62"/>
         <source>Open in new tab</source>
         <translation>Відкрити у новій вкладці</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
         <source>Open with</source>
         <translation>Відкрити з</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="803"/>
-        <location filename="../plugins/dfmadditionalmenu.cpp" line="361"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
+        <location filename="../plugins/dfmadditionalmenu.cpp" line="369"/>
         <source>Compress</source>
         <translation>Стиснути</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
         <source>Extract</source>
         <translation>Видобути</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="805"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
         <source>Extract here</source>
         <translation>Видобути сюди</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="803"/>
         <source>Cut</source>
         <translation>Вирізати</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="807"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
         <source>Copy</source>
         <translation>Копіювати</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="805"/>
         <source>Paste</source>
         <translation>Вставити</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="105"/>
-        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="77"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="309"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="809"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="810"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="870"/>
-        <location filename="../views/drenamebar.cpp" line="298"/>
+        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="78"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="807"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="867"/>
         <source>Rename</source>
         <translation>Перейменувати</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="112"/>
-        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="84"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
+        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="85"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="837"/>
         <source>Remove</source>
         <translation>Вилучити</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="809"/>
         <source>Create link</source>
         <translation>Створити посилання</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="810"/>
         <source>Send to desktop</source>
         <translation>Надіслати на стільницю</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="811"/>
         <source>Send to</source>
         <translation>Надіслати до</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="815"/>
-        <source>Send to Bluetooth</source>
-        <translation>Надіслати на Bluetooth</translation>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
+        <source>Bluetooth</source>
+        <translation>Bluetooth</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="816"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
         <source>Add to bookmark</source>
         <translation>Додати до закладок</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="118"/>
-        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="119"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="120"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="816"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="68"/>
         <source>Properties</source>
         <translation>Властивості</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="821"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="818"/>
         <source>New folder</source>
         <translation>Нова тека</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
         <source>New window</source>
         <translation>Нове вікно</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="823"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="820"/>
         <source>Select all</source>
         <translation>Вибрати все</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="97"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="824"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="98"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="821"/>
         <source>Clear recent history</source>
         <translation>Очистити нещодавню історію</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="107"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1170"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1164"/>
         <source>Empty Trash</source>
         <translation>Спорожнити смітник</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="823"/>
         <source>Display as</source>
         <translation>Відобразити як</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="827"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="824"/>
         <source>Sort by</source>
         <translation>Сортувати за</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="828"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
         <source>New document</source>
         <translation>Новий документ</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1195"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1197"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="841"/>
         <source>Time created</source>
         <translation>Час створення</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
         <source>Log out and unmount</source>
         <translation>Вийти й розмонтувати</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1198"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="370"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1200"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="382"/>
         <source>Source path</source>
         <translation>Шлях до джерела</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
         <source>Share folder</source>
         <translation>Поділитися текою</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
         <source>Cancel sharing</source>
         <translation>Скасувати обмін</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
         <source>Connect to Server</source>
         <translation>Підключення до сервера</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
         <source>Set share password</source>
         <translation>Встановити загальний пароль</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
         <source>Format</source>
         <translation>Форматувати</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
         <source>Tag information</source>
         <translation>Дані щодо мітки</translation>
     </message>
     <message>
-        <source>Open in new window as admin</source>
-        <translation type="vanished">Відкрити в новому вікні як адміністратор</translation>
-    </message>
-    <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <source>Open as administrator</source>
         <translation>Відкрити від імені адміністратора</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
         <source>Select default program</source>
         <translation>Вибрати програму за замовчуванням</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <source>Open file location</source>
         <translation>Відкрити розташування файлу</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="811"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
         <source>Remove bookmark</source>
         <translation>Вилучити закладку</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="817"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="818"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="868"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="815"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="865"/>
         <source>Delete</source>
         <translation>Видалити</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="829"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
         <source>Office Text</source>
         <translation>Офісний текстовий документ</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="830"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="827"/>
         <source>Spreadsheets</source>
         <translation>Електронні таблиці</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="832"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="829"/>
         <source>Plain Text</source>
         <translation>Звичайний текстовий документ</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="833"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="830"/>
         <source>Open in terminal</source>
         <translation>Відкрити в терміналі</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="834"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="831"/>
         <source>Restore</source>
         <translation>Відновити</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="835"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="832"/>
         <source>Restore all</source>
         <translation>Відновити все</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
         <location filename="../models/computermodel.cpp" line="121"/>
         <location filename="../models/computermodel.cpp" line="144"/>
         <location filename="../models/computermodel.cpp" line="163"/>
@@ -3254,34 +3495,33 @@
         <translation>Файлове сховище</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
         <source>Add to disc</source>
         <translation>Додати на диск</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="341"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="342"/>
         <source>Auto mount</source>
         <translation>Авто-монтування</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="379"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="380"/>
         <source>Open after auto mount</source>
         <translation>Відкрити після автоматичного монтування</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="836"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="833"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="869"/>
         <source>Mount</source>
         <translation>Змонтувати</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="48"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="837"/>
+        <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="49"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="834"/>
         <source>Unmount</source>
         <translation>Відмонтувати</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="192"/>
         <location filename="../views/dfmopticalmediawidget.cpp" line="332"/>
         <source>Burn</source>
         <translation>Записати</translation>
@@ -3298,12 +3538,12 @@
         <translation>Максимальна</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="286"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="287"/>
         <source>Allow files to be added later</source>
         <translation>Уможливити наступне додавання файлів</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="296"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="297"/>
         <source>Verify data</source>
         <translation>Перевірити дані</translation>
     </message>
@@ -3313,163 +3553,177 @@
         <translation>Швидкість запису:</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="300"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="191"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="309"/>
+        <location filename="../views/drenamebar.cpp" line="296"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="192"/>
+        <source>Burn</source>
+        <comment>button</comment>
+        <translation>Записати</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/burnoptdialog.cpp" line="301"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="835"/>
         <source>Eject</source>
         <translation>Відʼєднати</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="839"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="836"/>
         <source>Safely Remove</source>
         <translation>Безпечне Вилучення</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="841"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="215"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="217"/>
         <source>Name</source>
         <translation>Назва</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
         <source>Settings</source>
         <translation>Налаштування</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
         <source>Exit</source>
         <translation>Вихід</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
         <source>Icon</source>
         <translation>Іконка</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
         <source>List</source>
         <translation>Список</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
         <source>Extend</source>
         <translation>Продовжити</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
         <source>Set as wallpaper</source>
         <translation>Встановити як шпалери</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="305"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1400"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1401"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1402"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1406"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1407"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1408"/>
         <source>Local disk</source>
         <translation>Локальний накопичувач</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="307"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1403"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1409"/>
         <source>Removable disk</source>
         <translation>Знімний накопичувач</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="309"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1405"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1406"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1411"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1412"/>
         <source>Network shared directory</source>
         <translation>Мережева спільна директорія</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="311"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1407"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1413"/>
         <source>Android mobile device</source>
         <translation>Мобільний пристрій Android</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="313"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1408"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1414"/>
         <source>Apple mobile device</source>
         <translation>Мобільний пристрій Apple</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="315"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1409"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1415"/>
         <source>Camera</source>
         <translation>Камера</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="317"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1404"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1410"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="319"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1427"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1433"/>
         <source>Unknown device</source>
         <translation>Невідомий пристрій</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="326"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1447"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1453"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="716"/>
         <source>%1 item</source>
         <translation>%1 об&apos;єкт</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="328"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1447"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1453"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="718"/>
         <source>%1 items</source>
         <translation>%1 об&apos;єктів</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1213"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1206"/>
         <source>Shortcut</source>
         <translation>Ярлик</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="754"/>
+        <location filename="../interfaces/dfileservices.cpp" line="751"/>
         <source>Create symlink</source>
         <translation>Створити посилання</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
         <source>Path</source>
         <translation>Шлях</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
         <location filename="../models/trashfileinfo.cpp" line="325"/>
         <location filename="../models/trashfileinfo.cpp" line="333"/>
         <source>Time deleted</source>
         <translation>Час видалення</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1327"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1330"/>
         <source>Loading...</source>
         <translation>Завантаження...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="850"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="865"/>
         <source>File has been moved or deleted</source>
         <translation>Файл був переміщений чи видалений</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="856"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="871"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>Ви не маєте права пересувати тут файли</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="852"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="865"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="871"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="867"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="880"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="886"/>
         <source>You do not have permission to access this folder</source>
         <translation>У вас немає дозволу на доступ до цієї теки</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="876"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="891"/>
         <location filename="../models/masteredmediafileinfo.cpp" line="279"/>
         <location filename="../models/recentfileinfo.cpp" line="264"/>
         <location filename="../models/trashfileinfo.cpp" line="366"/>
@@ -3505,7 +3759,7 @@
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="537"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="831"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="828"/>
         <source>Presentation</source>
         <translation>Презентація</translation>
     </message>
@@ -3515,79 +3769,86 @@
         <translation>Текст</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="214"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="217"/>
         <source>1 task in progress</source>
         <translation>1 завдання в процесі</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="216"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="219"/>
         <source>%1 tasks in progress</source>
         <translation>%1 завдань в процесі</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="82"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="83"/>
         <source>Mode:</source>
         <translation>Режим:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="84"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="85"/>
         <location filename="../views/drenamebar.cpp" line="244"/>
         <source>Replace Text</source>
         <translation>Замінити текст</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="84"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="85"/>
         <location filename="../views/drenamebar.cpp" line="244"/>
         <source>Add Text</source>
         <translation>Додати текст</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="84"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="85"/>
         <location filename="../views/drenamebar.cpp" line="244"/>
         <source>Custom Text</source>
         <translation>Користувацький текст</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="89"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="90"/>
         <source>Find:</source>
         <translation>Знайти:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="96"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="97"/>
         <source>Replace:</source>
         <translation>Замінити:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="98"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="99"/>
         <location filename="../views/drenamebar.cpp" line="259"/>
         <source>Optional</source>
         <translation>Необов&apos;язково</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="103"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="104"/>
         <source>Add:</source>
         <translation>Додати:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="110"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="111"/>
         <source>Location:</source>
         <translation>Місцезнаходження:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="117"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="118"/>
         <source>File name:</source>
         <translation>Ім&apos;я файлу:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="123"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="124"/>
         <source>Start at:</source>
         <translation>Почати з:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="92"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="105"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="119"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="125"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="310"/>
+        <location filename="../views/drenamebar.cpp" line="298"/>
+        <source>Rename</source>
+        <comment>button</comment>
+        <translation>Перейменувати</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="93"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="106"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="120"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="126"/>
         <location filename="../views/drenamebar.cpp" line="252"/>
         <location filename="../views/drenamebar.cpp" line="266"/>
         <location filename="../views/drenamebar.cpp" line="280"/>
@@ -3596,13 +3857,13 @@
         <translation>Вимагається</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="112"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="113"/>
         <location filename="../views/drenamebar.cpp" line="273"/>
         <source>Before file name</source>
         <translation>Перед ім&apos;ям файлу</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="112"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="113"/>
         <location filename="../views/drenamebar.cpp" line="273"/>
         <source>After file name</source>
         <translation>Після імені файлу</translation>
@@ -3628,8 +3889,8 @@
         <translation>Почати з</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1242"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="327"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1248"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="336"/>
         <location filename="../views/drenamebar.cpp" line="272"/>
         <source>Location</source>
         <translation>Місцезнаходження</translation>
@@ -3640,12 +3901,12 @@
         <translation>Ім&apos;я файлу</translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="308"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="317"/>
         <source>Dimension</source>
         <translation>Розмір </translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="296"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="305"/>
         <source>Duration</source>
         <translation>Тривалість</translation>
     </message>
@@ -3655,46 +3916,43 @@
         <translation>Поради: сортувати за вибраним порядком файлів</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="191"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="308"/>
-        <location filename="../views/drenamebar.cpp" line="296"/>
         <source>Cancel</source>
-        <translation>Скасувати</translation>
+        <translation type="vanished">Скасувати</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1602"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1613"/>
         <source>Rename %1 Files</source>
         <translation>Перейменувати %1 файли</translation>
     </message>
     <message>
-        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="150"/>
+        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="151"/>
         <source>Multiple Files</source>
         <translation>Декілька файлів</translation>
     </message>
     <message>
-        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="159"/>
+        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="160"/>
         <source>Basic info</source>
         <translation>Основна інформація</translation>
     </message>
     <message>
-        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="167"/>
+        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="168"/>
         <source>Total size</source>
         <translation>Загальний розмір</translation>
     </message>
     <message>
-        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="168"/>
+        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="169"/>
         <source>Number of files</source>
         <translation>Кількість файлів</translation>
     </message>
     <message>
-        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="168"/>
+        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="169"/>
         <source>%1 file(s), %2 folder(s)</source>
         <translation>%1 файл(и), %2 тека(и)</translation>
     </message>
     <message>
-        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1196"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="341"/>
+        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1198"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="350"/>
         <source>Time accessed</source>
         <translation>Час доступу</translation>
     </message>
@@ -3749,17 +4007,17 @@
         <translation>Закладки</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
         <source>Erase</source>
         <translation>Витерти</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="585"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="596"/>
         <source>Copy path</source>
         <translation>Копіювати шлях</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="603"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="614"/>
         <source>Edit address</source>
         <translation>Редагувати адресу</translation>
     </message>
@@ -3774,12 +4032,12 @@
         <translation>Вільне місце %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="282"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="285"/>
         <source>Files are being processed</source>
         <translation>Файли обробляються</translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="526"/>
+        <location filename="../shutil/fileutils.cpp" line="573"/>
         <source>Unknown</source>
         <translation>Невідомо</translation>
     </message>
@@ -3796,103 +4054,138 @@
         <translation>Диски</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="698"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="755"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="710"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="810"/>
         <source>Failed to create file info</source>
         <translation>Не вдалося створити відомості щодо файла</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="727"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="766"/>
         <source>Failed to create file handler</source>
         <translation>Не вдалося створити обробник файла</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1775"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1801"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1825"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2719"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2755"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2788"/>
         <source>Execution error</source>
         <translation>Помилка виконання</translation>
     </message>
     <message>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="923"/>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="1063"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="466"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="654"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="904"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1065"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="511"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="716"/>
         <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
         <translation>Не можна використовувати символи &quot;&apos;/\[]:|&lt;&gt;+=;,?*</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="332"/>
+        <source>Failed to open the file, cause: %1</source>
+        <translation>Не вдалося відкрити файл. Причина: %1</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="333"/>
+        <source>Original file does not exist</source>
+        <translation>Початкового файла не існує</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="334"/>
+        <source>Do you want to delete %1?</source>
+        <translation>Хочете вилучити %1?</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="341"/>
+        <source>Confirm</source>
+        <translation>Підтвердити</translation>
     </message>
 </context>
 <context>
     <name>ShareInfoFrame</name>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="57"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="58"/>
         <source>Share this folder</source>
         <translation>Поділитися цією текою</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="66"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="67"/>
         <source>Share name:</source>
         <translation>Поділитися ім&apos;ям:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="79"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="80"/>
         <source>Permission:</source>
         <translation>Дозвіл:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="84"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="85"/>
         <source>Read and write</source>
         <translation>Читання та запис</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="84"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="85"/>
         <source>Read only</source>
         <translation>Тільки читання</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="87"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="88"/>
         <source>Anonymous:</source>
         <translation>Анонімно:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="92"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="93"/>
         <source>Not allow</source>
         <translation>Не дозволяти</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="92"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="93"/>
         <source>Allow</source>
         <translation>Дозволити</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="281"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="301"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Назвою спільного ресурсу не може дві крапки (..) або одна крапка (.)</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="297"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="317"/>
         <source>The share name is used by another user.</source>
         <translation>Назву спільного ресурсу вже використано іншим користувачем.</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="298"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="318"/>
         <source>OK</source>
+        <comment>button</comment>
         <translation>Гаразд</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="300"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="321"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/shareinfoframe.cpp" line="322"/>
+        <source>Replace</source>
+        <comment>button</comment>
+        <translation>Замінити</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="vanished">Гаразд</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/shareinfoframe.cpp" line="320"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>Спільний ресурс із такою назвою вже існує. Хочете замінити теку спільного використання?</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="301"/>
         <source>Cancel</source>
-        <translation>Скасувати</translation>
+        <translation type="vanished">Скасувати</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="302"/>
         <source>Replace</source>
-        <translation>Замінити</translation>
+        <translation type="vanished">Замінити</translation>
     </message>
 </context>
 <context>
@@ -4286,22 +4579,22 @@
 <context>
     <name>TrashPropertyDialog</name>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="62"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="63"/>
         <source>Trash</source>
         <translation>Смітник</translation>
     </message>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="78"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="79"/>
         <source>item</source>
         <translation>об&apos;єкт</translation>
     </message>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="80"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="81"/>
         <source>items</source>
         <translation>об&apos;єктів</translation>
     </message>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="83"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="84"/>
         <source>Contains %1 %2</source>
         <translation>Вміщує %1 %2</translation>
     </message>
@@ -4309,7 +4602,7 @@
 <context>
     <name>UDiskListener</name>
     <message>
-        <location filename="../deviceinfo/udisklistener.cpp" line="230"/>
+        <location filename="../deviceinfo/udisklistener.cpp" line="235"/>
         <source>Failed to rename the label</source>
         <translation>Не вдалося перейменувати мітку</translation>
     </message>
@@ -4317,12 +4610,13 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1564"/>
+        <location filename="../controllers/appcontroller.cpp" line="1563"/>
+        <location filename="../../fileoperations/filejob.cpp" line="732"/>
         <source>The device was not safely unmounted</source>
         <translation>Пристрій не було безпечно вилучено</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1571"/>
+        <location filename="../controllers/appcontroller.cpp" line="1570"/>
         <source>The device was not safely removed</source>
         <translation>Пристрій не було безпечно вилучено</translation>
     </message>
@@ -4350,7 +4644,17 @@
         <translation>Назва спільного ресурсу не може містити символів %&lt;&gt;*?|/\+=;:,&quot;</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="505"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="442"/>
+        <source>Sharing failed</source>
+        <translation>Невдала спроба оприлюднення</translation>
+    </message>
+    <message>
+        <location filename="../../usershare/usersharemanager.cpp" line="442"/>
+        <source>The computer name is too long</source>
+        <translation>Надто довга назва комп&apos;ютера</translation>
+    </message>
+    <message>
+        <location filename="../../usershare/usersharemanager.cpp" line="511"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Ви не маєте права керувати файлами/теками!</translation>
     </message>
@@ -4358,19 +4662,29 @@
 <context>
     <name>UserSharePasswordSettingDialog</name>
     <message>
-        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="36"/>
+        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="37"/>
         <source>Enter a password to protect shared folders</source>
         <translation>Введіть пароль для захисту спільних тек</translation>
     </message>
     <message>
-        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="44"/>
+        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="45"/>
         <source>Cancel</source>
+        <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="44"/>
+        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="46"/>
         <source>Confirm</source>
+        <comment>button</comment>
         <translation>Підтвердити</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="vanished">Скасувати</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation type="vanished">Підтвердити</translation>
     </message>
 </context>
 </TS>

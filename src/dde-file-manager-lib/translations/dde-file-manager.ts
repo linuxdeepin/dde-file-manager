@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -132,31 +130,31 @@
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="67"/>
         <source>Next</source>
         <comment>button</comment>
-        <translation type="unfinished">Next</translation>
+        <translation>Next</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="68"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="69"/>
         <source>Done</source>
         <comment>button</comment>
-        <translation type="unfinished">Done</translation>
+        <translation>Done</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="70"/>
         <source>Retry</source>
         <comment>button</comment>
-        <translation type="unfinished">Retry</translation>
+        <translation>Retry</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="71"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Next</source>
@@ -336,13 +334,13 @@
         <location filename="../dialogs/connecttoserverdialog.cpp" line="166"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="167"/>
         <source>Connect</source>
         <comment>button</comment>
-        <translation type="unfinished">Connect</translation>
+        <translation>Connect</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="175"/>
@@ -502,7 +500,7 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="147"/>
         <source>Gotcha</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>Gotcha</translation>
     </message>
 </context>
 <context>
@@ -797,13 +795,13 @@
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="88"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="88"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation type="unfinished">Unlock</translation>
+        <translation>Unlock</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="165"/>
@@ -865,26 +863,26 @@
         <location filename="../views/dfmvaultremovepages.cpp" line="115"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="115"/>
         <source>Use Key</source>
         <comment>button</comment>
-        <translation type="unfinished">Use Key</translation>
+        <translation>Use Key</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="115"/>
         <source>Delete</source>
         <comment>button</comment>
-        <translation type="unfinished">Delete</translation>
+        <translation>Delete</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="143"/>
         <location filename="../views/dfmvaultremovepages.cpp" line="253"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="188"/>
@@ -965,13 +963,13 @@
         <location filename="../views/dfmvaultunlockpages.cpp" line="95"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="95"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation type="unfinished">Unlock</translation>
+        <translation>Unlock</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="197"/>
@@ -983,7 +981,7 @@
         <location filename="../views/dfmvaultunlockpages.cpp" line="250"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -1066,7 +1064,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="247"/>
         <source>You do not have permission to traverse files in it</source>
-        <translation type="unfinished">You do not have permission to traverse files in it</translation>
+        <translation>You do not have permission to traverse files in it</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="669"/>
@@ -1179,13 +1177,13 @@
         <location filename="../views/dfiledialog.cpp" line="1312"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="1272"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished">Confirm</translation>
+        <translation>Confirm</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="1311"/>
@@ -1196,7 +1194,7 @@
         <location filename="../views/dfiledialog.cpp" line="1313"/>
         <source>Replace</source>
         <comment>button</comment>
-        <translation type="unfinished">Replace</translation>
+        <translation>Replace</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -1284,12 +1282,12 @@
     <message>
         <location filename="../views/dfileview.cpp" line="2582"/>
         <source>Disc mount error</source>
-        <translation type="unfinished"></translation>
+        <translation>Disc mount error</translation>
     </message>
     <message>
         <location filename="../views/dfileview.cpp" line="2582"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
-        <translation type="unfinished"></translation>
+        <translation>The disc is in use, please end the running process and remount the disc.</translation>
     </message>
     <message>
         <location filename="../views/dfileview.cpp" line="2596"/>
@@ -1754,7 +1752,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1318"/>
         <source>Reboot</source>
         <comment>button</comment>
-        <translation type="unfinished">Reboot</translation>
+        <translation>Reboot</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1442"/>
@@ -1825,7 +1823,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1648"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="439"/>
@@ -1843,7 +1841,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1587"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="440"/>
@@ -1851,20 +1849,20 @@
         <location filename="../dialogs/dialogmanager.cpp" line="482"/>
         <source>Run</source>
         <comment>button</comment>
-        <translation type="unfinished">Run</translation>
+        <translation>Run</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="441"/>
         <location filename="../dialogs/dialogmanager.cpp" line="466"/>
         <source>Run in terminal</source>
         <comment>button</comment>
-        <translation type="unfinished">Run in terminal</translation>
+        <translation>Run in terminal</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="442"/>
         <source>Display</source>
         <comment>button</comment>
-        <translation type="unfinished">Display</translation>
+        <translation>Display</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="496"/>
@@ -1875,23 +1873,23 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1445"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished">Confirm</translation>
+        <translation>Confirm</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="528"/>
         <source>Erase</source>
         <comment>button</comment>
-        <translation type="unfinished">Erase</translation>
+        <translation>Erase</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="555"/>
         <source>Burn image,</source>
-        <translation type="unfinished"></translation>
+        <translation>Burn image,</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="556"/>
         <source>Burn files,</source>
-        <translation type="unfinished"></translation>
+        <translation>Burn files,</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="591"/>
@@ -1902,20 +1900,20 @@
         <location filename="../dialogs/dialogmanager.cpp" line="621"/>
         <source>Show details</source>
         <comment>button</comment>
-        <translation type="unfinished">Show details</translation>
+        <translation>Show details</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="651"/>
         <location filename="../dialogs/dialogmanager.cpp" line="725"/>
         <source>Delete</source>
         <comment>button</comment>
-        <translation type="unfinished">Delete</translation>
+        <translation>Delete</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="742"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation type="unfinished">Remove</translation>
+        <translation>Remove</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="901"/>
@@ -1926,7 +1924,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="905"/>
         <source>Force unmount</source>
         <comment>button</comment>
-        <translation type="unfinished">Force unmount</translation>
+        <translation>Force unmount</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1018"/>
@@ -1972,13 +1970,13 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1573"/>
         <source>Format</source>
         <comment>button</comment>
-        <translation type="unfinished">Format</translation>
+        <translation>Format</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1588"/>
         <source>Stop</source>
         <comment>button</comment>
-        <translation type="unfinished">Stop</translation>
+        <translation>Stop</translation>
     </message>
     <message>
         <source>Reboot</source>
@@ -2019,7 +2017,7 @@
         <location filename="../controllers/filecontroller.cpp" line="1498"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished">Confirm</translation>
+        <translation>Confirm</translation>
     </message>
     <message>
         <source>Confirm</source>
@@ -2048,7 +2046,7 @@
         <location filename="../views/filedialogstatusbar.cpp" line="62"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="84"/>
@@ -2603,7 +2601,7 @@
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1958"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished">Confirm</translation>
+        <translation>Confirm</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1783"/>
@@ -2765,13 +2763,13 @@
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="47"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="47"/>
         <source>Connect</source>
         <comment>button</comment>
-        <translation type="unfinished">Connect</translation>
+        <translation>Connect</translation>
     </message>
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="51"/>
@@ -2823,13 +2821,13 @@
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="47"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="47"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation type="unfinished">Unlock</translation>
+        <translation>Unlock</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="51"/>
@@ -2863,13 +2861,13 @@
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="74"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="75"/>
         <source>Delete</source>
         <comment>button</comment>
-        <translation type="unfinished">Delete</translation>
+        <translation>Delete</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -2901,13 +2899,13 @@
         <location filename="../dialogs/openwithdialog.cpp" line="233"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="234"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished">Confirm</translation>
+        <translation>Confirm</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -3560,13 +3558,13 @@
         <location filename="../views/drenamebar.cpp" line="296"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="192"/>
         <source>Burn</source>
         <comment>button</comment>
-        <translation type="unfinished">Burn</translation>
+        <translation>Burn</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="301"/>
@@ -3844,7 +3842,7 @@
         <location filename="../views/drenamebar.cpp" line="298"/>
         <source>Rename</source>
         <comment>button</comment>
-        <translation type="unfinished">Rename</translation>
+        <translation>Rename</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="93"/>
@@ -4158,19 +4156,19 @@
         <location filename="../dialogs/shareinfoframe.cpp" line="318"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="321"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="322"/>
         <source>Replace</source>
         <comment>button</comment>
-        <translation type="unfinished">Replace</translation>
+        <translation>Replace</translation>
     </message>
     <message>
         <source>OK</source>
@@ -4672,13 +4670,13 @@
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="45"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="46"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation type="unfinished">Confirm</translation>
+        <translation>Confirm</translation>
     </message>
     <message>
         <source>Cancel</source>
