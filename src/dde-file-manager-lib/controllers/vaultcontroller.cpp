@@ -274,16 +274,6 @@ const DAbstractFileInfoPointer VaultController::createFileInfo(const QSharedPoin
         return DAbstractFileInfoPointer(new VaultFileInfo(makeVaultUrl(makeVaultLocalPath())));
     }
 
-    //! 在保险箱中判断是否有桌面专属文件
-    url = event->url();
-    QString localFile = url.toLocalFile();
-    QFileInfo info(localFile);
-
-    if (!info.isSymLink() && FileUtils::isDesktopFile(localFile)) {
-        //! 创建桌面文件信息
-        return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
-    }
-
     const_cast<VaultController *>(this)->updateFileInfo(DUrlList() << event->url());
     return DAbstractFileInfoPointer(new VaultFileInfo(event->url()));
 }
