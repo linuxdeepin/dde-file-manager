@@ -215,6 +215,9 @@ QUrl DFileDialog::directoryUrl() const
         urlVault.setScheme(FILE_SCHEME);
         urlVault.setPath(strPath);
         return urlVault;
+    } else if (strScheme == BURN_SCHEME) {
+        DAbstractFileInfoPointer fi = DFileService::instance()->createFileInfo(nullptr, url);
+        return fi->redirectedFileUrl();
     }
 
     return url;
@@ -1315,6 +1318,8 @@ void DFileDialog::onAcceptButtonClicked()
     }
 
     const DUrlList &urls = getFileView()->selectedUrls();
+    if (selectedUrls().isEmpty())
+        return;
 
     switch (d->fileMode) {
     case QFileDialog::AnyFile:
