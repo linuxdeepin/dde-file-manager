@@ -319,16 +319,6 @@ RecentController::RecentController(QObject *parent)
     m_watcher->startWatcher();
 }
 
-RecentController::~RecentController()
-{
-    m_watcher->stopWatcher();
-    disconnect(m_watcher, &DFileWatcher::subfileCreated, this, &RecentController::asyncHandleFileChanged);
-    disconnect(m_watcher, &DFileWatcher::fileModified, this, &RecentController::asyncHandleFileChanged);
-
-    QMutexLocker locker(&m_xbelFileLock);
-    recentNodes.clear();
-}
-
 bool RecentController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
     return DFileService::instance()->openFileLocation(event->sender(), DUrl::fromLocalFile(event->url().path()));
@@ -568,6 +558,8 @@ void RecentController::handleFileChanged()
         return;
     }
 
+    QPointer<RecentController> dp = this;
+
     if (m_condition.wait(&m_xbelFileLock, 1000)) {
         // if the parser is interrupted.
         // we need a timeout long enough so that
@@ -599,7 +591,8 @@ void RecentController::handleFileChanged()
                     urlList << recentUrl;
 
                     DThreadUtil::runInMainThread([ = ]() {
-//                        RecentPointer fileInfo();
+                        if (dp.isNull())
+                            return;
                         // 保险箱内文件不显示到最近使用页面
                         if(!VaultController::isVaultFile(location.toString())) {
                             if (!recentNodes.contains(recentUrl)) {
@@ -623,10 +616,13 @@ void RecentController::handleFileChanged()
         }
     }
 
+    if (dp.isNull())
+        return;
     // delete does not exist url.
     for (auto iter = recentNodes.begin(); iter != recentNodes.end();) {
-        DUrl url = iter.key();
-
+        if (dp.isNull())
+            return;
+        const DUrl &url = iter.key();
         if (!urlList.contains(url)) {
             DThreadUtil::runInMainThread([this, &iter, url]() {
                 iter = recentNodes.erase(iter);
@@ -644,6 +640,8 @@ void RecentController::handleFileChanged()
                 iter = recentNodes.erase(iter);
             }
         }
+        if (dp.isNull())
+            return;
     }
 
     m_xbelFileLock.unlock();

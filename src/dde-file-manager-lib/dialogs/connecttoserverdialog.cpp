@@ -64,7 +64,7 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
 
         QWidget *fileWindow = qobject_cast<QWidget *>(parent());
 
-        const QString currentDir = QDir::currentPath();
+        const QString &currentDir = QDir::currentPath();
         const DUrl &currentUrl = qobject_cast<DFileManagerWindow*>(fileWindow->topLevelWidget())->currentUrl();
 
         if (currentUrl.isLocalFile()) {

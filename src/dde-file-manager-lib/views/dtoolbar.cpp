@@ -266,7 +266,7 @@ void DToolBar::searchBarTextEntered(const QString textEntered)
         return;
     }
 
-    const QString currentDir = QDir::currentPath();
+    const QString &currentDir = QDir::currentPath();
     DUrl currentUrl;
     if (auto fmWindow = qobject_cast<DFileManagerWindow *>(topLevelWidget()))
         currentUrl = fmWindow->currentUrl();

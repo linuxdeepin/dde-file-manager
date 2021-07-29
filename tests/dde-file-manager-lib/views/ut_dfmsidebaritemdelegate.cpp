@@ -171,9 +171,9 @@ TEST_F(DFMSideBarItemDelegateTest, updateEditorGeometryTest)
     QString desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
     //创建一个文件夹用于测试
     QString utDirUrl = desktopPath + "/testForUtTest";
-    QDir *utDirTest = new QDir(utDirUrl);
-    if(!utDirTest->exists())
-        EXPECT_TRUE(utDirTest->mkdir(utDirUrl));
+    QDir utDirTest(utDirUrl);
+    if(!utDirTest.exists())
+        EXPECT_TRUE(utDirTest.mkdir(utDirUrl));
 
     QStyleOptionViewItem option;
     option.rect = QRect(200, 200, 200, 100);
@@ -208,7 +208,7 @@ TEST_F(DFMSideBarItemDelegateTest, updateEditorGeometryTest)
     m_sideBarItemDelegate->updateEditorGeometry(widget, option, index);
     EXPECT_TRUE(inThere);
 
-    utDirTest->remove(utDirUrl);
+    utDirTest.remove(utDirUrl);
 
 }
 

@@ -457,7 +457,7 @@ bool MasteredMediaController::openInTerminal(const QSharedPointer<DFMOpenInTermi
         return false;
     }
 
-    const QString current_dir = QDir::currentPath();
+    const QString &current_dir = QDir::currentPath();
 
     QString backer = MasteredMediaFileInfo(event->url()).extraProperties()["mm_backer"].toString();
     if (!backer.length()) {

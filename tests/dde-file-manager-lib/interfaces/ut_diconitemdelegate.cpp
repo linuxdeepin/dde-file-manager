@@ -67,6 +67,7 @@ public:
     }
 };
 
+#ifndef __arm__
 TEST_F(TestDIconItemDelegate, test_paint)
 {
     QPainter *painter = new QPainter();
@@ -80,6 +81,7 @@ TEST_F(TestDIconItemDelegate, test_paint)
 
     delete option.widget;
 }
+#endif
 
 TEST_F(TestDIconItemDelegate, test_sizeHint)
 {

@@ -151,6 +151,7 @@ TEST_F(DGvfsFileInfoTest, test_fileinfo_inode)
     EXPECT_TRUE(m_fileinfo->inode() != 0);
 }
 
+#ifndef __arm__
 TEST_F(DGvfsFileInfoTest, test_fileinfo_fileIcon)
 {
     DFileInfo *parent = static_cast<DFileInfo *>(m_fileinfo.data());
@@ -195,3 +196,4 @@ TEST_F(DGvfsFileInfoTest, test_fileinfo_fileIcon)
     delete info;
     delete info_home;
 }
+#endif

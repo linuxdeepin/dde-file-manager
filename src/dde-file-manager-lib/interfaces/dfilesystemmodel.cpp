@@ -762,8 +762,7 @@ DFileSystemModelPrivate::DFileSystemModelPrivate(DFileSystemModel *qq)
         //当遍历文件的耗时超过JobController::m_timeCeiling时，
         //onJobFinished函数中拿到的文件不足，因为rootNodeManager还要处理剩余文件
         //因此在这里rootNodeManager处理完后，再次发送信号 关联bug#24863
-        if (!needQuitUpdateChildren)
-            emit qq->sigJobFinished();
+        emit qq->sigJobFinished();
     });
 }
 
@@ -1124,11 +1123,11 @@ DFileSystemModel::~DFileSystemModel()
         d->rootNodeManager->stop();
     }
 
+    d->needQuitUpdateChildren = false;
     QMutexLocker locker(&m_mutex); // 必须等待其他 资源性线程结束，否则 要崩溃
     QMutexLocker lk(&d_ptr->mutexFlags);
 
     qDebug() << "DFileSystemModel is released soon!";
-    d->needQuitUpdateChildren = false;
 }
 
 DFileViewHelper *DFileSystemModel::parent() const
@@ -2359,8 +2358,9 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     }
 
     QPointer<JobController> job = d->jobController;
+    QPointer<DFileSystemModel> dp = this;
 
-    if (job) {
+    if (!job.isNull()) {
         job->pause();
     }
     node->clearChildren();
@@ -2370,14 +2370,15 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 
     fileHash.reserve(list.size());
     fileList.reserve(list.size());
+
+    if (dp.isNull())
+        return;
+
     for (const DAbstractFileInfoPointer &fileInfo : list) {
         if (d->needQuitUpdateChildren) {
             break;
         }
 
-//        if (fileHash.contains(fileInfo->fileUrl())) {
-//            continue;
-//        }
         if (!fileInfo) {
             continue;
         }
@@ -2406,9 +2407,13 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
                 emit showFilterButton();
         }
     }
-
+    if (dp.isNull())
+        return;
     if (enabledSort())
         sort(node->fileInfo, fileList);
+
+    if (dp.isNull())
+        return;
 //    qDebug() << "begin insert rows count = " << QString::number(list.count());
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
@@ -2416,32 +2421,33 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     node->setChildrenList(fileList);
     endInsertRows();
 
+    if (dp.isNull())
+        return;
+
     if (d->needQuitUpdateChildren)
         return;
-    if (!job || job->isFinished()) {
+    if (job.isNull() || job->isFinished()) {
         setState(Idle);
     } else {
         d->childrenUpdated = true;
     }
 
-    QPointer<DFileSystemModel> dp = this;
-
-    if (job && job->state() == JobController::Paused) {
+    if (!job.isNull() && job->state() == JobController::Paused) {
         job->start();
     }
 
-    if (!dp)
+    if (dp.isNull())
         return;
 
 //    qDebug() << "finish update children. file count = " << node->childrenCount() << (job ? job->state() : -1);
-    if (job) {
+    if (!job.isNull()) {
         //刷新完成标志
         bool finished = job->isUpdatedFinished();
         qInfo() << " finish update children. isUpdatedFinished = " << finished << "and file count = " << node->childrenCount();
         //若刷新完成通知桌面重新获取文件
-        if (finished && !d->needQuitUpdateChildren)
+        if (finished && !dp.isNull())
             emit sigJobFinished();
-    } else if (!d->needQuitUpdateChildren) {
+    } else if (!dp.isNull()) {
         emit sigJobFinished();
     }
 }

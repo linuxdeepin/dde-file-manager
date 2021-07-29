@@ -99,6 +99,7 @@ TEST_F(TestDFileMenuManager, createToolBarSettingsMenu)
     m_menu = m_menuMgr->createToolBarSettingsMenu();
     EXPECT_NE(m_menu, nullptr);
 }
+
 #ifndef __arm__
 TEST_F(TestDFileMenuManager, createNormalMenu)
 {
@@ -131,6 +132,7 @@ TEST_F(TestDFileMenuManager, createNormalMenu)
     releaseMenu();
 }
 #endif
+
 #ifndef __arm__
 TEST_F(TestDFileMenuManager, createVaultMenu)
 {
@@ -168,6 +170,7 @@ TEST_F(TestDFileMenuManager, createVaultMenu)
     EXPECT_NE(m_menu, nullptr);
 }
 #endif
+
 TEST_F(TestDFileMenuManager, loadNormalPluginMenu)
 {
     m_menu = m_menuMgr->createDefaultBookMarkMenu();

@@ -228,7 +228,7 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
     SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
 
     m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
-    m_folderSizeLabel = new SectionValueLabel;
+    m_folderSizeLabel = new SectionValueLabel("", layoutWidget);
     SectionValueLabel *typeLabel = new SectionValueLabel(info->mimeTypeDisplayName().split(" (")[0]);
 
     if (info->isDir()) {

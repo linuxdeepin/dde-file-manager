@@ -70,6 +70,7 @@ TEST_F(TestRecentController, openFileLocation)
 
 }
 #endif
+
 TEST_F(TestRecentController, test_openFile)
 {
     auto event = dMakeEventPointer<DFMOpenFileEvent>(nullptr, tmpFileUrl);
@@ -82,7 +83,6 @@ TEST_F(TestRecentController, test_openFile)
     stub.set(ADDR(DFileService, openFile), stub_openFile);
 
     EXPECT_TRUE(m_controller->openFile(event));
-
 }
 
 TEST_F(TestRecentController, test_openFiles)
@@ -196,7 +196,7 @@ TEST_F(TestRecentController, test_createSymlink)
     EXPECT_TRUE(m_controller->createSymlink(event));
 }
 
-
+#ifndef __arm__
 TEST_F(TestRecentController, test_createFileInfo)
 {
     TestHelper::runInLoop([ = ] {
@@ -226,7 +226,6 @@ TEST_F(TestRecentController, createDirIterator)
         // 处理消息队列，否则其余位置直[间]接调用会导致事件处理顺序问题而 crash
         qApp->processEvents();
     });
-
 }
 
 TEST_F(TestRecentController, tst_createFileWatcher)
@@ -327,6 +326,7 @@ TEST_F(TestRecentController, tst_setEnabledSubfileWatcher)
         TestHelper::deleteTmpFile(tmpDir);
     }, 1500);
 }
+#endif
 
 TEST_F(TestRecentController, tst_compressFiles)
 {

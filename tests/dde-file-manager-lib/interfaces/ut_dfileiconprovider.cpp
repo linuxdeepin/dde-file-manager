@@ -39,6 +39,8 @@ static QStringList list {"application-vnd.debian.binary-package",
                     "application-vnd.ms-htmlhelp",
                     "Zoom.png"
 };
+
+/*
 TEST_F(DFileIconProviderTest, tst_private)
 {
     TestHelper::runInLoop([](){});
@@ -67,7 +69,7 @@ TEST_F(DFileIconProviderTest, tst_private)
         QIcon themeIcon = pri.fromTheme(var);
         EXPECT_FALSE(themeIcon.isNull());
     }
-}
+}*/
 
 TEST_F(DFileIconProviderTest, tst_global_instance)
 {
@@ -75,6 +77,7 @@ TEST_F(DFileIconProviderTest, tst_global_instance)
     EXPECT_TRUE(instance != nullptr);
 }
 
+/*
 TEST_F(DFileIconProviderTest, tst_qicon)
 {
     QFileInfo fileinfo;
@@ -99,8 +102,9 @@ TEST_F(DFileIconProviderTest, tst_qicon)
     fileinfo.setFile(invalidFileName);
     icon = provider->icon(fileinfo);
     EXPECT_TRUE(icon.isNull());
-}
+}*/
 
+#ifndef __arm__
 TEST_F(DFileIconProviderTest, tst_dicon)
 {
     DFileInfo fileinfo("/home/");
@@ -146,3 +150,4 @@ TEST_F(DFileIconProviderTest, tst_gvfsicon)
     icon = provider->icon(fileinfo2, QIcon::fromTheme("dialog-warning"));
     EXPECT_FALSE(icon.isNull());
 }
+#endif

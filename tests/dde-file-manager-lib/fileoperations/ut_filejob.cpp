@@ -559,7 +559,7 @@ TEST_F(FileJobTest, start_doOpticalBurnByChildProcess)
     TestHelper::runInLoop([=](){
         EXPECT_NO_FATAL_FAILURE(job->doISOBurn(url, "test", 10, opts));
     },5000);
-}*/
+}
 
 static ssize_t fakeRead(int, void *, size_t)
 {
@@ -607,7 +607,7 @@ TEST_F(FileJobTest, doISOImageBurn)
     EXPECT_NO_FATAL_FAILURE(job->doISOImageBurn(url, image, 10, opts));
     },5000);
     stl.reset(read);
-}
+}*/
 
 TEST_F(FileJobTest, opticalJobUpdated)
 {

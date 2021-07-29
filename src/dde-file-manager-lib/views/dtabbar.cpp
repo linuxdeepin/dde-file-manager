@@ -933,11 +933,9 @@ void TabBar::updateScreen()
             animation->setDuration(100);
             animation->setStartValue(tab->geometry());
             animation->setEndValue(rect);
-            animation->start();
+            animation->start(QAbstractAnimation::DeleteWhenStopped);
 
             connect(animation, &QPropertyAnimation::finished, tab, [ = ] {
-                animation->deleteLater();
-
                 if (m_TabCloseButton->closingIndex() == counter)
                 {
                     m_TabCloseButton->setPos(tab->x() + tab->width() - 30, 6);

@@ -10,6 +10,7 @@
 #include <QEvent>
 #include <QWidget>
 #include <QMouseEvent>
+#include <QDrag>
 
 #include <dfilemenu.h>
 #include <DFileDragClient>
@@ -1296,9 +1297,16 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_startDrag)
         QTest::mouseRelease(m_canvasGridView, Qt::LeftButton);
     });
     timer.start(200);
-    bool judge = false;
+    static bool judge = false;
     stub_ext::StubExt stu;
-    stu.set_lamda(VADDR(QAbstractItemView, startDrag), [&judge](){judge = !judge; return;});
+    stu.set_lamda(VADDR(QAbstractItemView, startDrag), [](){judge = !judge; return;});
+
+    Qt::DropAction (*qDrag_exec)() = [](){
+        judge = !judge;
+        return Qt::DropAction::MoveAction;
+    };
+    stu.set((Qt::DropAction(QDrag::*)(Qt::DropActions, Qt::DropAction))ADDR(QDrag, exec), qDrag_exec);
+
     m_canvasGridView->startDrag(Qt::MoveAction);
     EXPECT_TRUE(judge);
 }

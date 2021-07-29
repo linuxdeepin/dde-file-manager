@@ -882,7 +882,7 @@ bool FileController::renameFileByGio(const DUrl &oldUrl, const DUrl &newUrl) con
     }
 
     //获取当前目录
-    const QString curd = QDir::currentPath();
+    const QString &curd = QDir::currentPath();
 
     GError *error = nullptr;
     if (!QDir::setCurrent(to)) {
@@ -1556,7 +1556,7 @@ bool FileController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent>
 
 bool FileController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
 {
-    const QString current_dir = QDir::currentPath();
+    const QString &current_dir = QDir::currentPath();
 
     QDir::setCurrent(event->url().toLocalFile());
 
@@ -1694,7 +1694,9 @@ public:
 
     bool match(const QString &path, const QString &name)
     {
-        for (auto pattern : patternList) {
+        // 这里可能会析构 先复制一份再循环
+        const QList<QPair<QString, QString>> patternListNew = patternList;
+        for (auto pattern : patternListNew) {
             QRegularExpression re(QString(), QRegularExpression::MultilineOption);
 
             if (!pattern.first.isEmpty()) {

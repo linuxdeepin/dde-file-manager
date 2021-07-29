@@ -276,6 +276,7 @@ TEST_F(DFMStyledItemDelegateTest,paintCircleList)
     delegate->paintCircleList(&painter,QRect(),0.0,{QColor()},QColor());
 }
 
+#ifndef __arm__
 TEST_F(DFMStyledItemDelegateTest,getIconPixmap)
 {
     //program return empty pixmap
@@ -311,7 +312,6 @@ TEST_F(DFMStyledItemDelegateTest,getIconPixmap)
     QIcon icon = QIcon::fromTheme("edit-undo");
     auto pixmap = delegate->getIconPixmap(icon,QSize(16,16),1.0);
     EXPECT_FALSE(pixmap.isNull());
-
 }
-
+#endif
 

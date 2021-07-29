@@ -265,10 +265,11 @@ TEST_F(TestUDiskListener, volumeInfos)
     EXPECT_FALSE(m_listener->getAllDeviceInfos().contains("000"));
 }
 
+/*
 TEST_F(TestUDiskListener, eject)
 {
     EXPECT_NO_FATAL_FAILURE(m_listener->eject("/dev/sr0"));
-}
+}*/
 
 TEST_F(TestUDiskListener, mountByUDisks)
 {
@@ -281,23 +282,25 @@ TEST_F(TestUDiskListener, mountByUDisks)
     EXPECT_TRUE(m_listener->mountByUDisks("/dev/sda1"));
 }
 
+/* unmount sdb1 is dangerous
 TEST_F(TestUDiskListener, unmount)
 {
     EXPECT_NO_FATAL_FAILURE(m_listener->unmount("/dev/sdb1"));
-}
+}*/
 
 TEST_F(TestUDiskListener, stopDrive)
 {
     EXPECT_NO_FATAL_FAILURE(m_listener->stopDrive(""));
 }
 
+/*
 TEST_F(TestUDiskListener, forceUnmount)
 {
     UDiskListener listener;
     listener.m_map["a"] = new UDiskDeviceInfo;
     EXPECT_NO_FATAL_FAILURE(listener.forceUnmount("a"));
     //DFileService::unsetFileUrlHandler(&listener);
-}
+}*/
 
 TEST_F(TestUDiskListener, fileSystemDeviceIdLabelChanged)
 {

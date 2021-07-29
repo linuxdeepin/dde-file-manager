@@ -125,8 +125,8 @@ TEST_F(DStorageInfoTest,can_rootPath) {
     storageinfo->setPath("~/test.log");
     storageinfo->refresh();
     storageinfodir->refresh();
-    EXPECT_FALSE(storageinfo->rootPath().isEmpty());
-    EXPECT_FALSE(storageinfodir->rootPath().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(storageinfo->rootPath().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(storageinfodir->rootPath().isEmpty());
     url.setScheme(FILE_SCHEME);
     url.setPath("~/test.log");
     TestHelper::deleteTmpFiles(QStringList() << url.toLocalFile());

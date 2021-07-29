@@ -73,7 +73,7 @@ TEST_F(TestDFMSideBarItemInterface,contextMenu)
 {
     DFMSideBarItem* item = new DFMSideBarItem;
     item->setUrl(DUrl(QApplication::applicationDirPath()));
-    interface.contextMenu(window.getLeftSideBar(),item);
+    //interface.contextMenu(window.getLeftSideBar(),item);
     auto menu = interface.contextMenu(window.getLeftSideBar(),item);
     EXPECT_TRUE(menu->actions().size() > 0);
 
@@ -86,8 +86,9 @@ TEST_F(TestDFMSideBarItemInterface,contextMenu)
         delete item;
         item = nullptr;
     }
+    delete menu;
+    menu = nullptr;
 }
-#endif
 
 //if can't carsh, nothing to do.
 TEST_F(TestDFMSideBarItemInterface,rename)
@@ -103,3 +104,4 @@ TEST_F(TestDFMSideBarItemInterface,rename)
         item = nullptr;
     }
 }
+#endif

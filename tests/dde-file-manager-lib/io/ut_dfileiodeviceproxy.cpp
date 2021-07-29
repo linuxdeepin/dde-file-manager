@@ -60,6 +60,7 @@ TEST_F(DFileIODeviceProxyTest,can_setDevice_device) {
     EXPECT_TRUE(device->device() != nullptr);
 }
 
+#ifndef __arm__
 TEST_F(DFileIODeviceProxyTest,can_read_write) {
     EXPECT_TRUE(device->device() == nullptr);
     device->setDevice(file);
@@ -89,6 +90,4 @@ TEST_F(DFileIODeviceProxyTest,can_read_write) {
     EXPECT_TRUE(device->bytesAvailable() != 0);
     device->close();
 }
-
-
-
+#endif

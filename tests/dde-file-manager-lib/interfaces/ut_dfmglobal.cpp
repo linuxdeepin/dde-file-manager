@@ -233,6 +233,7 @@ TEST_F(TestDFMGlobal, test_userInfo)
     EXPECT_NO_FATAL_FAILURE(DFMGlobal::isDeveloperMode());
 }
 
+#ifndef __arm__
 TEST_F(TestDFMGlobal, test_standardIcon)
 {
     EXPECT_FALSE(DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon).isNull());
@@ -278,6 +279,7 @@ TEST_F(TestDFMGlobal, test_wordWrapText)
 
     EXPECT_NE(DFMGlobal::elideText(QString("dde-file-manager"), QSizeF(100, 100), QTextOption::WrapAtWordBoundaryOrAnywhere, QFont(), Qt::ElideNone, 25), QString("dde-file-manager"));
 }
+#endif
 
 TEST_F(TestDFMGlobal, test_chineseToPinyin)
 {

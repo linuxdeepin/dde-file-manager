@@ -75,9 +75,15 @@ SOURCES += \
     $$PWD/models/ut_sharefileinfo.cpp \
     $$PWD/models/ut_tagfileinfo.cpp \
     $$PWD/models/ut_trashfileinfo.cpp \
-    $$PWD/mediainfo/ut_dfmmediainfo.cpp \
+    $$PWD/mediainfo/ut_dfmmediainfo.cpp
+
+isEqual(ARCH, x86_64) {
+SOURCES += \
     $$PWD/io/ut_dgiofiledevice.cpp \
-    $$PWD/io/ut_dlocalfiledevice.cpp \
+    $$PWD/io/ut_dlocalfiledevice.cpp
+}
+
+SOURCES += \
     $$PWD/io/ut_dfilestatisticsjob.cpp \
     $$PWD/io/ut_dstorageinfo.cpp \
     $$PWD/io/ut_dfileiodeviceproxy.cpp
@@ -125,7 +131,7 @@ SOURCES += \
     $$PWD/dialogs/ut_trashpropertydialog.cpp \
     $$PWD/dialogs/ut_usersharepasswordsettingdialog.cpp \
     $$PWD/interfaces/ut_dfmcrumbbar.cpp \
-    ####
+    ###
     $$PWD/plugins/ut_dfmadditionalmenu.cpp \
     $$PWD/plugins/ut_pluginmanager.cpp \
     $$PWD/fulltextsearch/ut_fulltextsearch.cpp \
@@ -227,24 +233,48 @@ SOURCES += \
     $$PWD/interfaces/ut_dfmsidebariteminterface.cpp \
     $$PWD/interfaces/ut_dfmstyleditemdelegate.cpp\
     $$PWD/controllers/ut_recentcontroller.cpp \
-    $$PWD/interfaces/ut_dfmapplication.cpp\
+    $$PWD/interfaces/ut_dfmapplication.cpp
+
+isEqual(ARCH, x86_64) {
+SOURCES += \
     $$PWD/interfaces/ut_diconitemdelegate.cpp \
-    $$PWD/interfaces/ut_dlistitemdelegate.cpp \
-    $$PWD/interfaces/ut_dfmfilepreview.cpp\
+    $$PWD/interfaces/ut_dlistitemdelegate.cpp
+}
+
+SOURCES += \
+    $$PWD/interfaces/ut_dfmfilepreview.cpp
+
+isEqual(ARCH, x86_64) {
+SOURCES += \
     $$PWD/controllers/ut_tagcontroller.cpp \
     $$PWD/tag/ut_tagmanager.cpp \
     $$PWD/tag/ut_tagutil.cpp \
     $$PWD/controllers/ut_dfmtagcrumbcontroller.cpp \
-    $$PWD/controllers/ut_operatorrevocation.cpp \
+    $$PWD/controllers/ut_operatorrevocation.cpp
+}
+
+SOURCES += \
     $$PWD/interfaces/ut_dfmabstracteventhandler.cpp \
     $$PWD/interfaces/ut_dabstractfilewatcher.cpp \
     $$PWD/controllers/ut_searchhistroymanager.cpp \
-    $$PWD/controllers/ut_dfmsearchcrumbcontroller.cpp \
-    $$PWD/interfaces/ut_dfmcrumbinterface.cpp \
+    $$PWD/controllers/ut_dfmsearchcrumbcontroller.cpp
+
+isEqual(ARCH, x86_64) {
+SOURCES += \
+    $$PWD/interfaces/ut_dfmcrumbinterface.cpp
+}
+
+SOURCES += \
     $$PWD/interfaces/ut_dfmcrumblistviewmodel.cpp \
     $$PWD/gvfs/ut_qmount.cpp \
-    $$PWD/gvfs/ut_qvolume.cpp \
-    $$PWD/interfaces/ut_dfilesystemmodel.cpp \
+    $$PWD/gvfs/ut_qvolume.cpp
+
+isEqual(ARCH, x86_64) {
+SOURCES += \
+    $$PWD/interfaces/ut_dfilesystemmodel.cpp
+}
+
+SOURCES += \
     $$PWD/controllers/ut_pathmanager.cpp \
     # custom
     $$PWD/interfaces/customization/ut_customaction_sort.cpp \
@@ -253,10 +283,21 @@ SOURCES += \
     $$PWD/interfaces/customization/ut_dcustomactiondata.cpp \
     $$PWD/interfaces/ut_drootfilemanager.cpp \
     #log
-    $$PWD/log/ut_filterappender.cpp \
-    $$PWD/interfaces/ut_dfileservices.cpp \
-    $$PWD/interfaces/ut_dabstractfileinfo.cpp \
-    $$PWD/interfaces/ut_dfilemenumanager.cpp \
+    $$PWD/log/ut_filterappender.cpp
+
+isEqual(ARCH, x86_64) {
+SOURCES += \
+    $$PWD/interfaces/ut_dfileservices.cpp
+}
+
+SOURCES += \
+    $$PWD/interfaces/ut_dabstractfileinfo.cpp
+
+isEqual(ARCH, x86_64) {
+#SOURCES += $$PWD/interfaces/ut_dfilemenumanager.cpp # 由于设计原因，保险箱内部使用了大量静态action，所以疯狂报内存泄露，暂时注释，后期整改
+}
+
+SOURCES += \
     $$PWD/interfaces/ut_dgvfsfileinfo.cpp \
     $$PWD/controllers/ut_dfmftpcrumbcontroller.cpp \
     $$PWD/controllers/ut_dfmsftpcrumbcontroller.cpp

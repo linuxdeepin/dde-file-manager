@@ -483,7 +483,7 @@ bool VaultController::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
 
 bool VaultController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
 {
-    const QString current_dir = QDir::currentPath();
+    const QString &current_dir = QDir::currentPath();
 
     QDir::setCurrent(vaultToLocalUrl(event->url()).toLocalFile());
 

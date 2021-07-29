@@ -106,7 +106,6 @@ DialogManager::DialogManager(QObject *parent) : QObject(parent)
 
 DialogManager::~DialogManager()
 {
-
 }
 
 void DialogManager::initData()
