@@ -198,8 +198,14 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
                 QFileInfo folderinfo(folderPath); // 判断上层文件是否是只读，有可能上层是只读，而里面子文件或文件夾又是可以写
                 QFileInfo fileinfo(filePath);
 
-                isFolderWritable = fileinfo.isWritable();
-                isFileWritable = folderinfo.isWritable();
+                 isFileWritable = fileinfo.isWritable();
+                 isFolderWritable = folderinfo.isWritable();
+
+                 //fix 89245 选择Root权限的链接文件，拖拽到侧边栏回收站中，无法拖拽文件到回收站
+                 if (isFolderWritable && fileinfo.isSymLink() && item->url().toString() == TRASH_ROOT) {
+                    urls << DUrl(url);
+                    continue;
+                 }
             }
 
             if (!isFolderWritable || !isFileWritable) {
