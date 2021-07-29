@@ -1511,6 +1511,9 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 #endif
                 emit GridManager::instance()->sigSyncOperation(GridManager::soUpdate);
                 return;
+            } else if (sourceView && !targetIndex.isValid()) { //桌面窗口上互相拖动到有文件的格子上，drop到的targetIndex无效时直接返回
+                qInfo() << "drop on invaild target, skip. drop:" << dropIndex.row() << dropIndex.column();
+                return;
             }
         }
 

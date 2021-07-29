@@ -1040,6 +1040,42 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_dropEvent)
         EXPECT_TRUE(move);
         EXPECT_FALSE(checkMimeData);
     }
+
+    //内部拖动到无效区域
+    if (m_canvasGridView->model()->rowCount() >= 2) {
+        QModelIndex vaildIndex;
+        for (int i = 0; i < m_canvasGridView->model()->rowCount(); ++i) {
+            auto idx = m_canvasGridView->model()->index(i, 0);
+            if (idx != tgIndex) {
+                vaildIndex = idx;
+                break;
+            }
+        }
+
+        if (!vaildIndex.isValid())
+            return;
+
+        QDropEvent dropevent(QPoint(64, 200), Qt::MoveAction, tgData, Qt::MouseButton::LeftButton, Qt::NoModifier);
+        StubExt stu;
+        stu.set_lamda(&QDropEvent::source,[this](){return m_canvasGridView;});
+        QPoint droppos = m_canvasGridView->gridRectAt(dropevent.pos()).center();
+        stu.set_lamda(VADDR(CanvasGridView,indexAt),[=](CanvasGridView *,const QPoint &pos){
+            if (pos == droppos)
+                return vaildIndex;
+            return QModelIndex();
+        });
+        stu.set_lamda(ADDR(DFileSelectionModel,selectedIndexes),[=](){return tpIndexes;});
+
+        bool move = false;
+        stu.set_lamda(ADDR(GridManager,sigSyncOperation),[&move](){move = false;});
+
+        bool checkMimeData = false;
+        stu.set_lamda(&DFileDragClient::checkMimeData,[&checkMimeData](){checkMimeData = true;return true;});
+
+        m_canvasGridView->dropEvent(&dropevent);
+        EXPECT_FALSE(move);
+        EXPECT_FALSE(checkMimeData);
+    }
     delete tgData;
     tgData = nullptr;
 }
@@ -1398,15 +1434,29 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_startDrag)
         QTest::mouseRelease(m_canvasGridView, Qt::LeftButton);
     });
     timer.start(200);
-    static bool judge = false;
-    stub_ext::StubExt stu;
-    stu.set_lamda(VADDR(QAbstractItemView, startDrag), [](){judge = !judge; return;});
 
-    Qt::DropAction (*qDrag_exec)() = [](){
-        judge = !judge;
-        return Qt::DropAction::MoveAction;
-    };
-    stu.set((Qt::DropAction(QDrag::*)(Qt::DropActions, Qt::DropAction))ADDR(QDrag, exec), qDrag_exec);
+    bool judge = false;
+    stub_ext::StubExt stu;
+    DUrlList validSel;
+    QModelIndexList validIndexes;
+    m_canvasGridView->viewSelectedUrls(validSel, validIndexes);
+
+    if (validIndexes.count() > 1) {
+        auto execFoo = (Qt::DropAction(QDrag::*)(Qt::DropActions, Qt::DropAction))ADDR(QDrag, exec);
+        stu.set_lamda(execFoo, [&judge](){
+            judge = true;
+            return Qt::DropAction::MoveAction;
+        });
+        stu.set_lamda(VADDR(QAbstractItemView, startDrag), [&judge](){judge = false; return;});
+    } else {
+        auto execFoo = (Qt::DropAction(QDrag::*)(Qt::DropActions, Qt::DropAction))ADDR(QDrag, exec);
+        stu.set_lamda(execFoo, [&judge](){
+            judge = false;
+            return Qt::DropAction::MoveAction;
+        });
+
+        stu.set_lamda(VADDR(QAbstractItemView, startDrag), [&judge](){judge = true; return;});
+    }
 
     m_canvasGridView->startDrag(Qt::MoveAction);
     EXPECT_TRUE(judge);
@@ -1927,16 +1977,19 @@ TEST_F(CanvasGridViewTest, test_dropEvent)
 {
     QMimeData data;
     QDropEvent event(QPointF(), Qt::DropAction::MoveAction, &data, Qt::LeftButton, Qt::NoModifier);
-    stub_ext::StubExt tub;
+    stub_ext::StubExt stub;
+    stub.set_lamda(&DFileDragClient::checkMimeData,[](){return true;});
+    stub.set_lamda(VADDR(DFileSystemModel,dropMimeData),[](){return false;});
+
     QModelIndexList indexlist;
     indexlist << m_canvasGridView->firstIndex();
-    tub.set_lamda(ADDR(DFileSelectionModel, selectedIndexes), [indexlist](){return indexlist;});
+    stub.set_lamda(ADDR(DFileSelectionModel, selectedIndexes), [indexlist](){return indexlist;});
     bool bValid = false;
-    tub.set_lamda(ADDR(QModelIndex, isValid), [&bValid](){return bValid;});
+    stub.set_lamda(ADDR(QModelIndex, isValid), [&bValid](){return bValid;});
     m_canvasGridView->dropEvent(&event);
 
     DUrl url = DesktopFileInfo::homeDesktopFileUrl();
-    tub.set_lamda(VADDR(DAbstractFileInfo, fileUrl), [url](){return url;});
+    stub.set_lamda(VADDR(DAbstractFileInfo, fileUrl), [url](){return url;});
     bValid = true;
     m_canvasGridView->m_urlsForDragEvent << url;
     m_canvasGridView->dropEvent(&event);
