@@ -890,6 +890,7 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
             Qt::UniqueConnection);
 
     connect(item, &FileIconItem::destroyed, this, [this, d] {
+        Q_UNUSED(this)
         d->editingIndex = QModelIndex();
     });
 
