@@ -27,6 +27,8 @@
 #include "dfmglobal.h"
 #include "dbus/dbussysteminfo.h"
 
+#define private public
+#define protected public
 #include "dialogs/computerpropertydialog.h"
 
 DCORE_USE_NAMESPACE
@@ -123,4 +125,34 @@ TEST_F(TestComputerPropertyDialog, testGetMessage3)
     datas = m_pTester->getMessage(data);
     EXPECT_GT(datas.size(), 0);
 }
+
+TEST_F(TestComputerPropertyDialog, testUpdateComputerInfo)
+{
+    EXPECT_NO_FATAL_FAILURE(m_pTester->updateComputerInfo());
+    if (m_pTester->m_getInfoWork && m_pTester->m_getInfoWork->isRunning()) {
+        m_pTester->m_getInfoWork->stopWork();
+        m_pTester->m_getInfoWork->wait();
+    }
+}
+
+TEST_F(TestComputerPropertyDialog, testSlotSetInfo)
+{
+    QMap<QString, QString> mapNewDatas;
+    mapNewDatas.insert("计算机名：", "uos");
+    EXPECT_NO_FATAL_FAILURE(m_pTester->slotSetInfo(mapNewDatas));
+}
+
+TEST_F(TestComputerPropertyDialog, testThread)
+{
+    if (!m_pTester->m_getInfoWork) {
+        if (m_pTester->m_mapItems.isEmpty())
+            m_pTester->m_mapItems.insert("计算机名：", nullptr);
+        EXPECT_NO_FATAL_FAILURE(m_pTester->updateComputerInfo());
+        if (m_pTester->m_getInfoWork && m_pTester->m_getInfoWork->isRunning()) {
+            m_pTester->m_getInfoWork->stopWork();
+            m_pTester->m_getInfoWork->wait();
+        }
+    }
+}
+
 #endif
