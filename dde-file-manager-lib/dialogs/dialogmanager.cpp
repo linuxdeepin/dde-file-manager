@@ -813,6 +813,7 @@ void DialogManager::showTrashPropertyDialog(const DFMEvent &event)
 void DialogManager::showComputerPropertyDialog()
 {
     if (m_computerDialog) {
+        m_computerDialog->updateComputerInfo();
         m_computerDialog->show();
         m_computerDialog->raise();
         return;

@@ -4,43 +4,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3105"/>
+        <location filename="../view/canvasgridview.cpp" line="3137"/>
         <source>Icon size</source>
         <translation>Icon size</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3113"/>
+        <location filename="../view/canvasgridview.cpp" line="3145"/>
         <source>Auto merge</source>
         <translation>Auto merge</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3125"/>
+        <location filename="../view/canvasgridview.cpp" line="3157"/>
         <source>Auto arrange</source>
         <translation>Auto arrange</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3173"/>
+        <location filename="../view/canvasgridview.cpp" line="3205"/>
         <source>Corner Settings</source>
         <translation>Corner Settings</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3182"/>
-        <location filename="../view/canvasgridview.cpp" line="3187"/>
+        <location filename="../view/canvasgridview.cpp" line="3214"/>
+        <location filename="../view/canvasgridview.cpp" line="3219"/>
         <source>Set Wallpaper</source>
         <translation>Set Wallpaper</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3185"/>
+        <location filename="../view/canvasgridview.cpp" line="3217"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Wallpaper and Screensaver</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3330"/>
+        <location filename="../view/canvasgridview.cpp" line="3362"/>
         <source>Properties</source>
         <translation>Properties</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3164"/>
+        <location filename="../view/canvasgridview.cpp" line="3196"/>
         <source>Display Settings</source>
         <translation>Display Settings</translation>
     </message>
@@ -144,7 +144,7 @@
         <translation>Only lock screen</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1030"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1032"/>
         <source>Apply</source>
         <translation>Apply</translation>
     </message>
@@ -152,14 +152,14 @@
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="260"/>
-        <location filename="../view/watermaskframe.cpp" line="261"/>
+        <location filename="../view/watermaskframe.cpp" line="265"/>
+        <location filename="../view/watermaskframe.cpp" line="266"/>
         <source>Not authorized</source>
         <translation>Not authorized</translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="271"/>
-        <location filename="../view/watermaskframe.cpp" line="272"/>
+        <location filename="../view/watermaskframe.cpp" line="276"/>
+        <location filename="../view/watermaskframe.cpp" line="277"/>
         <source>In trial period</source>
         <translation>In trial period</translation>
     </message>
