@@ -3,7 +3,19 @@
 ## 基本原则
 
 - C++ 类设计的代码风格主要依据  [Qt Coding Style](https://wiki.qt.io/Qt_Coding_Style)
+
 - 以 [google C++ style](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/contents/)  作为补充说明
+
+## 线程安全
+
+准则如下：
+
+  -  默认自定义任何函数、类、容器、变量等都不属于没有线程安全保障，需要在类注释中标识当前函数、类容器、变量等【线程安全】才能确认其线程安全。否则一律按照没有线程安全处理。
+  -  线程外部变量在线程内使用时需要加锁。
+  -  Qt默认规则，界面类不可在主线程外执行构造与析构。
+  -  容器批量操作可采用QConcurrent::map进行操作（此函数线程安全）。
+  -  禁用UT线程，与程序内部线程冲突是未定义行为，如果测试类函数等为线程安全，则可使用多线程使能UT。
+
 
 ## 头文件
 
@@ -220,6 +232,24 @@
 
 - 私有类能良好的保证 ABI，请参考 Qt 私有类的实现方式
 
+### 模板类
+
+- 避免使用模板类的多次继承套用，因为其会是代码可阅读性变低。
+- 顶层模板类应当存在功能性标识，如Factory
+- 类传递模板参数可用T，返回值RT，变参模板 ...Args 如非必要，避免使用
+- 函数传递模板参数应当与传递结构关联，如Functor
+- 正确做法如下：
+```cpp
+template<class T> // 禁用typename区别于标准库
+class SchemeFacotry{};
+
+class DFMFileInfo{};
+
+// 最终构造结果应与非模板类看齐
+// 此处特化为类避免模板代码纠缠，同时保持类的普通性
+class DFMFileInfoSchemeFacotry : public SchemeFacotry<DFMFileInfo>{};
+```
+
 ## 函数
 
 ### 参数顺序
@@ -378,7 +408,6 @@
   ```
 
 - 如果你使用的是 QtCreator，将 License 保存为文件，在<u>“工具 -> 选项 ->C++“</u>中的 <u>License_template</u> 进行添加
-
 ### 类注释
 
 - 类注释在类定义文件（cpp）中，位于它的第一个成员函数之前
