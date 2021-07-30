@@ -1195,6 +1195,9 @@ void DFileDialog::onAcceptButtonClicked()
         return;
     }
 
+    if (selectedUrls().isEmpty())
+        return;
+
     if (d->acceptMode == QFileDialog::AcceptSave) {
         if (m_acceptCanOpenOnSave) {
             getFileView()->cd(getFileView()->selectedUrls().first());
