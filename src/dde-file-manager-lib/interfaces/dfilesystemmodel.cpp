@@ -2039,7 +2039,10 @@ void DFileSystemModel::applyAdvanceSearchFilter()
         return;
     setState(Busy);
     d->rootNode->applyFileFilter(advanceSearchFilter());
-    setState(Idle);
+    // fix bug 89757
+    if (!d->jobController || !d->jobController->isRunning())
+        setState(Idle);
+
     sort();
 }
 
