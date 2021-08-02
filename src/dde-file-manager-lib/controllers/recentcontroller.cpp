@@ -566,6 +566,8 @@ void RecentController::handleFileChanged()
         return;
     }
 
+    QPointer<RecentController> dp = this;
+
     if (file.open(QIODevice::ReadOnly)) {
         QXmlStreamReader reader(&file);
 
@@ -589,7 +591,8 @@ void RecentController::handleFileChanged()
                     urlList << recentUrl;
 
                     DThreadUtil::runInMainThread([ = ]() {
-//                        RecentPointer fileInfo();
+                        if (!dp)
+                            return;
                         // 保险箱内文件不显示到最近使用页面
                         if(!VaultController::isVaultFile(location.toString())) {
                             if (!recentNodes.contains(recentUrl)) {
@@ -613,14 +616,16 @@ void RecentController::handleFileChanged()
         }
     }
 
+    if (dp)
+        return;
     // delete does not exist url.
     for (auto iter = recentNodes.begin(); iter != recentNodes.end();) {
-        DUrl url = iter.key();
-
+        if (dp)
+            return;
+        const DUrl &url = iter.key();
         if (!urlList.contains(url)) {
             DThreadUtil::runInMainThread([this, &iter, url]() {
                 iter = recentNodes.erase(iter);
-
                 DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
                                                   &DAbstractFileWatcher::fileDeleted,
                                                   url);
@@ -633,8 +638,9 @@ void RecentController::handleFileChanged()
             } else {
                 iter = recentNodes.erase(iter);
             }
-
         }
+        if (dp)
+            return;
     }
 
     m_xbelFileLock.unlock();
