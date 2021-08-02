@@ -81,12 +81,13 @@ include(log/log.pri)
 isEqual(ARCH, sw_64){
     DEFINES += SW_LABEL
     include(./sw_label/sw_label.pri)
-}else{
-    include(fulltextsearch/fulltextsearch.pri)
-    DEFINES += FULLTEXTSEARCH_ENABLE
-    TR_EXCLUDE += /usr/include/boost/ \
-              $$PWD/fulltextsearch/*
 }
+
+include(fulltextsearch/fulltextsearch.pri)
+DEFINES += FULLTEXTSEARCH_ENABLE
+TR_EXCLUDE += /usr/include/boost/ \
+          $$PWD/fulltextsearch/*
+
 include(io/io.pri)
 include(interfaces/vfs/vfs.pri)
 include(interfaces/customization/customization.pri)
