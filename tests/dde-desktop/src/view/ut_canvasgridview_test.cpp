@@ -11,6 +11,7 @@
 #include <QWidget>
 #include <QMouseEvent>
 #include <QDrag>
+#include <QPainter>
 
 #include <dfilemenu.h>
 #include <DFileDragClient>
@@ -2012,6 +2013,49 @@ TEST_F(CanvasGridViewTest, test_isIndexHidden)
 {
     EXPECT_FALSE(m_canvasGridView->isIndexHidden(QModelIndex()));
 }
+
+TEST_F(CanvasGridViewTest, test_viewSelectedUrls)
+{
+    qApp->processEvents();
+    m_canvasGridView->selectAll();
+    qApp->processEvents();
+
+    auto selects = m_canvasGridView->selectionModel()->selectedIndexes();
+    QModelIndexList vIndexes;
+
+    for (auto index : selects) {
+
+        auto info =  m_canvasGridView->model()->fileInfo(index);
+        if (info && !info->isVirtualEntry() && GridManager::instance()->contains(m_canvasGridView->screenNum(), info->fileUrl().toString())) {
+            vIndexes << index;
+        }
+    }
+    DUrlList validSel;
+    QModelIndexList validIndexes;
+    m_canvasGridView->viewSelectedUrls(validSel, validIndexes);
+    EXPECT_TRUE(validIndexes.size() == validSel.size());
+}
+
+TEST_F(CanvasGridViewTest, test_renderToPixmap)
+{
+    qApp->processEvents();
+    m_canvasGridView->selectAll();
+    qApp->processEvents();
+
+    auto selects = m_canvasGridView->selectionModel()->selectedIndexes();
+    auto pixMap = m_canvasGridView->renderToPixmap(selects);
+
+    bool judge = false;
+    stub_ext::StubExt stub;
+    auto drawTextFoo = (void(QPainter::*)(const QRect &, int, const QString &, QRect *))ADDR(QPainter, drawText);
+    stub.set_lamda(drawTextFoo, [&judge]() {
+        judge = true;
+    });
+
+    m_canvasGridView->renderToPixmap(selects);
+    EXPECT_TRUE(judge);
+}
+
 
 TEST(CanvasGridViewTest_end, endTest)
 {
