@@ -1200,7 +1200,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     SectionKeyLabel *sourcePathSectionLabel = new SectionKeyLabel(QObject::tr("Source path"));
 
     m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
-    m_folderSizeLabel = new SectionValueLabel;
+    m_folderSizeLabel = new SectionValueLabel("", widget);
     SectionValueLabel *typeLabel = new SectionValueLabel(info->mimeTypeDisplayName());
     SectionValueLabel *timeCreatedLabel = nullptr;
     SectionValueLabel *timeReadLabel = nullptr;

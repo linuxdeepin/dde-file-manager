@@ -150,8 +150,10 @@ void DFMVaultRemoveProgressView::removeFileInDir(const QString &vaultPath)
             //删除文件
             file.remove();
             m_iRmFiles++;
-            int value = 100 * (m_iRmFiles + m_iRmDir - 1) / m_iFiles;
-            emit fileRemoved(value);
+            if (m_iFiles > 0) {
+                int value = 100 * (m_iRmFiles + m_iRmDir - 1) / m_iFiles;
+                emit fileRemoved(value);
+            }
         }
     }
 
@@ -159,8 +161,10 @@ void DFMVaultRemoveProgressView::removeFileInDir(const QString &vaultPath)
     //删除文件夹
     temp_dir.rmdir(vaultPath);
     m_iRmDir++;
-    int value = 100 * (m_iRmFiles + m_iRmDir - 1) / m_iFiles;
-    emit fileRemoved(value);
+    if (m_iFiles > 0) {
+        int value = 100 * (m_iRmFiles + m_iRmDir - 1) / m_iFiles;
+        emit fileRemoved(value);
+    }
 }
 
 void DFMVaultRemoveProgressView::onFileRemove(int value)

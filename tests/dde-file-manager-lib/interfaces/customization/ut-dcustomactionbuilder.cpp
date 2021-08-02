@@ -629,18 +629,29 @@ TEST(DCustomActionBuilder, buildAciton)
 {
     DCustomActionBuilder builder;
     DCustomActionData ad;
+
     Stub st;
-    QAction *(*createAciton)() = [](){return (QAction* )1;};
-    QAction *(*createMenu)() = [](){return (QAction* )2;};
+    QAction *(*createAciton)() = [](){return new QAction();};
+    QAction *(*createMenu)() = [](){return new QAction();};
     st.set(&DCustomActionBuilder::createAciton,createAciton);
     st.set(&DCustomActionBuilder::createMenu,createMenu);
+
     QAction *ac = builder.buildAciton(ad, nullptr);
 
-    EXPECT_EQ(ac, (QAction *)1);
+    EXPECT_TRUE(ac != nullptr);
 
-    ad.m_childrenActions.append(ad);
+    delete ac;
+    ac = nullptr;
+
+    bool (*stub_isAction)() = [](){return true;};
+    st.set(&DCustomActionData::isAction, stub_isAction);
+
     ac = builder.buildAciton(ad, nullptr);
-    EXPECT_EQ(ac, (QAction *)2);
+
+    EXPECT_TRUE(ac != nullptr);
+
+    delete ac;
+    ac = nullptr;
 }
 
 TEST(DCustomActionBuilder, checkFileCombo_empty)

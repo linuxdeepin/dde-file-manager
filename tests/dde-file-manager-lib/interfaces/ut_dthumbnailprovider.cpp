@@ -163,10 +163,11 @@ TEST_F(DThumbnailProviderTest, createThumbnailWithMp4)
     createThumbnail("introduction.mp4");
 }
 
+/*
 TEST_F(DThumbnailProviderTest, createThumbnailWithDjuv)
 {
     createThumbnail("test.djvu");
-}
+}*/
 
 TEST_F(DThumbnailProviderTest, test_thumbnailFilePath)
 {

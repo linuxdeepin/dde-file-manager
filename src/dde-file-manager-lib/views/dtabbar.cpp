@@ -623,6 +623,7 @@ void TabBar::removeTab(const int index, const bool &remainState)
         m_lastAddTabState = false;
         // handle tab close button display position
         if (remainState) {
+            // 这里不能为了解决内存泄露而使用普通变量 会造成异步调用崩溃
             QMouseEvent *event = new QMouseEvent(QMouseEvent::MouseMove,
                                                  mapFromGlobal(QCursor::pos()),
                                                  Qt::NoButton,
@@ -933,11 +934,9 @@ void TabBar::updateScreen()
             animation->setDuration(100);
             animation->setStartValue(tab->geometry());
             animation->setEndValue(rect);
-            animation->start();
+            animation->start(QAbstractAnimation::DeleteWhenStopped);
 
             connect(animation, &QPropertyAnimation::finished, tab, [ = ] {
-                animation->deleteLater();
-
                 if (m_TabCloseButton->closingIndex() == counter)
                 {
                     m_TabCloseButton->setPos(tab->x() + tab->width() - 30, 6);

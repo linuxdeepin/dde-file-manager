@@ -209,6 +209,15 @@ DRenameBarPrivate::DRenameBarPrivate(DRenameBar *const qPtr)
     this->layoutItems();
 }
 
+// 有风险 暂时注释
+/*DRenameBarPrivate::~DRenameBarPrivate()
+{
+    if (m_validator) {
+        delete m_validator;
+        m_validator = nullptr;
+    }
+}*/
+
 void DRenameBarPrivate::initUi()
 {
     m_mainLayout = new QHBoxLayout{ q_ptr };
@@ -371,8 +380,6 @@ void DRenameBarPrivate::layoutItems()noexcept
     m_mainLayout->addWidget(m_stackWidget);
     m_mainLayout->addStretch(0);
     m_mainLayout->addWidget(frame);//###: !!!
-//    m_mainLayout->setContentsMargins(0,0,0,0); //do not open this.
-//    m_mainLayout->setSpacing(0);
     m_stackWidget->setCurrentIndex(0);
 
     q_ptr->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));

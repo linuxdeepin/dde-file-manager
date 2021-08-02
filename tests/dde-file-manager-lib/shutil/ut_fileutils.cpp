@@ -369,7 +369,7 @@ TEST_F(TestFileUtils, can_format_Udisk_Size)
     EXPECT_EQ( "0M", FileUtils::defaultOpticalSize("dev/sr0",usedSize, totalSize));
 }
 
-
+#ifndef __arm__
 TEST_F(TestFileUtils, can_new_name_docment)
 {
     Stub stub;
@@ -402,6 +402,7 @@ TEST_F(TestFileUtils, can_new_name_docment)
     FileUtils::cpTemplateFileToTargetDir(subfolderPath, "fileutil_file_new2", "txt", wid);
     EXPECT_EQ( "txt", FileUtils::getRealSuffix(filePath));
 }
+#endif
 
 TEST_F(TestFileUtils, can_encode_string)
 {

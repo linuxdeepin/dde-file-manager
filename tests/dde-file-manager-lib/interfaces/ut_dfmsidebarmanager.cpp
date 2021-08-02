@@ -91,14 +91,64 @@ TEST_F(TestDFMSideBaManager,dRegisterSideBarInterface)
     manager->dRegisterSideBarInterface<TestInterfacePrivate>("");
     EXPECT_TRUE(manager->isRegisted<TestInterfacePrivate>(""));
 
-    EXPECT_TRUE(nullptr != manager->createByIdentifier(QStringLiteral(SIDEBAR_ID_INTERNAL_FALLBACK)));
-    EXPECT_TRUE(nullptr != manager->createByIdentifier(QStringLiteral(SIDEBAR_ID_DEFAULT)));
-    EXPECT_TRUE(nullptr != manager->createByIdentifier(QStringLiteral(SIDEBAR_ID_DEVICE)));
-    EXPECT_TRUE(nullptr != manager->createByIdentifier(QStringLiteral(SIDEBAR_ID_TAG)));
-    EXPECT_TRUE(nullptr != manager->createByIdentifier(QStringLiteral(SIDEBAR_ID_BOOKMARK)));
-    EXPECT_TRUE(nullptr != manager->createByIdentifier(QStringLiteral(SIDEBAR_ID_VAULT)));
-    EXPECT_TRUE(nullptr != manager->createByIdentifier(QStringLiteral("tInterface_first")));
-    EXPECT_TRUE(nullptr != manager->createByIdentifier(QStringLiteral("tInterface_secoed")));
-    EXPECT_TRUE(nullptr != manager->createByIdentifier(QStringLiteral("")));
-    EXPECT_TRUE(nullptr == manager->createByIdentifier(QStringLiteral("error-code")));
+    {
+        auto interface = manager->createByIdentifier(QStringLiteral(SIDEBAR_ID_INTERNAL_FALLBACK));
+        EXPECT_TRUE(nullptr != interface);
+        delete interface;
+        interface = nullptr;
+    }
+    {
+        auto interface = manager->createByIdentifier(QStringLiteral(SIDEBAR_ID_DEFAULT));
+        EXPECT_TRUE(nullptr != interface);
+        delete interface;
+        interface = nullptr;
+    }
+    {
+        auto interface = manager->createByIdentifier(QStringLiteral(SIDEBAR_ID_DEVICE));
+        EXPECT_TRUE(nullptr != interface);
+        delete interface;
+        interface = nullptr;
+    }
+    {
+        auto interface = manager->createByIdentifier(QStringLiteral(SIDEBAR_ID_TAG));
+        EXPECT_TRUE(nullptr != interface);
+        delete interface;
+        interface = nullptr;
+    }
+    {
+        auto interface = manager->createByIdentifier(QStringLiteral(SIDEBAR_ID_BOOKMARK));
+        EXPECT_TRUE(nullptr != interface);
+        delete interface;
+        interface = nullptr;
+    }
+    {
+        auto interface = manager->createByIdentifier(QStringLiteral(SIDEBAR_ID_VAULT));
+        EXPECT_TRUE(nullptr != interface);
+        delete interface;
+        interface = nullptr;
+    }
+    {
+        auto interface = manager->createByIdentifier(QStringLiteral("tInterface_first"));
+        EXPECT_TRUE(nullptr != interface);
+        delete interface;
+        interface = nullptr;
+    }
+    {
+        auto interface = manager->createByIdentifier(QStringLiteral("tInterface_secoed"));
+        EXPECT_TRUE(nullptr != interface);
+        delete interface;
+        interface = nullptr;
+    }
+    {
+        auto interface = manager->createByIdentifier(QStringLiteral(""));
+        EXPECT_TRUE(nullptr != interface);
+        delete interface;
+        interface = nullptr;
+    }
+    {
+        auto interface = manager->createByIdentifier(QStringLiteral("error-code"));
+        EXPECT_TRUE(nullptr == interface);
+        delete interface;
+        interface = nullptr;
+    }
 }

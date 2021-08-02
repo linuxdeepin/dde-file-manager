@@ -69,4 +69,6 @@ TEST(savedirTest,AnyAgruInput){
     EXPECT_TRUE(QString(name_space).isNull());
     QProcess::execute("chmode 0700 /tmp/test_temp_sourt");
     QProcess::execute("rm -r /tmp/test_temp_sourt");
+
+    Free(name_space);
 }

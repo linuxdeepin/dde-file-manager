@@ -123,6 +123,10 @@ void recycleUserActionType(MenuAction type)
 
     if (action) {
         actionToMenuAction.remove(action);
+
+        // 这里直接delete会造成其它地方崩溃
+        /*action->deleteLater();
+        action = nullptr;*/
     }
 }
 }
@@ -975,6 +979,10 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
 
             if (action) {
                 DFileMenuData::actionToMenuAction.remove(action);
+
+                // 这里直接delete会造成其它地方崩溃
+                /*action->deleteLater();
+                action = nullptr;*/
             }
         }
     }

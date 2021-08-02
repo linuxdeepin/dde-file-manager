@@ -179,11 +179,12 @@ TEST_F(TestDFMCrumbBar, testOnListViewContextMenu)
     Stub stu4;
     stu4.set(ADDR(DFileManagerWindow, windowId), stu_windowId);
 
-    QAction*(*stu_exec)(const QPoint &, QAction *) = [](const QPoint &, QAction *)->QAction* {
+    QAction*(*stu_exec)(const QPoint &, QAction *) = [](const QPoint &, QAction *ac = nullptr)->QAction* {
+        Q_UNUSED(ac);
         return nullptr;
     };
     Stub stu5;
-    stu5.set((QAction * (DFileMenu::*)(const QPoint &, QAction *))ADDR(DFileMenu, exec), stu_exec);
+    stu5.set((QAction * (QMenu::*)(const QPoint &, QAction *))ADDR(QMenu, exec), stu_exec);
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->onListViewContextMenu(point));
 }

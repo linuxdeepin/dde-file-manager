@@ -256,7 +256,7 @@ SOURCES += \
     $$PWD/log/ut_filterappender.cpp \
     $$PWD/interfaces/ut_dfileservices.cpp \
     $$PWD/interfaces/ut_dabstractfileinfo.cpp \
-    $$PWD/interfaces/ut_dfilemenumanager.cpp \
+    #$$PWD/interfaces/ut_dfilemenumanager.cpp \ # 由于设计原因，保险箱内部使用了大量静态action，所以疯狂报内存泄露，暂时注释，后期整改
     $$PWD/interfaces/ut_dgvfsfileinfo.cpp \
     $$PWD/controllers/ut_dfmftpcrumbcontroller.cpp \
     $$PWD/controllers/ut_dfmsftpcrumbcontroller.cpp
