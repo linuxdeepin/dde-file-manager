@@ -529,6 +529,24 @@ void AccessControlManager::changeMountedOnInit()
     if (m_globalPolicies.contains(TYPE_PROTOCOL))
         changeMountedProtocol(m_globalPolicies.value(TYPE_PROTOCOL).second, "");
     qDebug() << "end change access on init...";
+    // share the mountpoint for all users if device is not removable.
+    // and this is only valid for unremovable devices, so the share doesn't affect field management
+    {
+        auto blks = DDiskManager::blockDevices({});
+        foreach (auto blk, blks) {
+            QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(blk));
+            if (!blkdev || !blkdev->hintSystem()) // only consider system disk/partition.
+                continue;
+            auto mpts = blkdev->mountPoints();
+            if (mpts.count() > 0) {
+                auto mpt = mpts.first();
+                if (!QString(mpt).startsWith("/media/")) continue;
+
+                chmod(mpt.data(), (S_IRWXU | S_IRWXG | S_IRWXO));
+                qInfo() << blkdev->path() << "mountpoint: " << mpt << "access policy is changed.";
+            }
+        }
+    }
 }
 
 int AccessControlManager::accessMode(const QString &mps)
