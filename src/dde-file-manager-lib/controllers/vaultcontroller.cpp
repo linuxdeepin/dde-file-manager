@@ -441,6 +441,11 @@ bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
     if (bDeletedSuccess) {
         const_cast<VaultController *>(this)->updateFileInfo(urlList);
     }
+    // 修复bug-89733 保险箱删除2个及以上的大文件时，删除完成后，界面不刷新
+    // 删除两个及以上的大文件时，刷新操作非常卡顿，所以不在刷新，并且模态弹框（与产品沟通后的做法）
+    // 这就导致了上述bug的产生，此处修改，增加判断，如果是此种情况，删除完成后，刷新一次界面
+    if (m_isBigFileDeleting)
+        emit fileSignalManager->requestFreshAllFileView();
     m_isBigFileDeleting = false;
     return true;
 }
@@ -452,6 +457,11 @@ DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> 
     if (bDeletedSuccess) {
         const_cast<VaultController *>(this)->updateFileInfo(urlList);
     }
+    // 修复bug-89733 保险箱删除2个及以上的大文件时，删除完成后，界面不刷新
+    // 删除两个及以上的大文件时，刷新操作非常卡顿，所以不在刷新，并且模态弹框（与产品沟通后的做法）
+    // 这就导致了上述bug的产生，此处修改，增加判断，如果是此种情况，删除完成后，刷新一次界面
+    if (m_isBigFileDeleting)
+        emit fileSignalManager->requestFreshAllFileView();
     m_isBigFileDeleting = false;
     return urlList;
 }
