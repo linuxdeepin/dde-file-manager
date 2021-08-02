@@ -153,9 +153,9 @@ void GetInfoWork::run()
             if (m_datas.contains(keyName)) {
                 computerName = DSysInfo::computerName();
             }
-            // 获取系统版本名（由于当前为euler分支，所以添加了“e”）
+            // 获取系统版本名
             if (m_datas.contains(keyEditon))
-                Edition = DSysInfo::minorVersion() + "e";
+                Edition = DSysInfo::uosEditionName();
             // 获取系统版本号
             if (m_datas.contains(keyVersion))
                 version = DSysInfo::majorVersion();
