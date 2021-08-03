@@ -821,12 +821,17 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
                 wid->setConflictMsg(DUrl::fromLocalFile(srcPath), DUrl::fromLocalFile(targetPath));
             }
 
-            if (QFileInfo(srcPath).isDir() &&
-                    QFileInfo(targetPath).isDir()) {
+            bool isSrcDir = QFileInfo(srcPath).isDir();
+            bool isTargetDir = QFileInfo(targetPath).isDir();
+
+            if (isSrcDir && isTargetDir) {
                 wid->setButtonText(DFMTaskWidget::REPLACE, tr("Merge"));
 
-            } else {
+            } else if (!isSrcDir && !isTargetDir){
                 wid->setButtonText(DFMTaskWidget::REPLACE, tr("Replace"));
+            }
+            else {
+                wid->hideButton(DFMTaskWidget::REPLACE);
             }
         } else if (status == "error") {
             QString supprotRetry = data.value("supprotRetry"); // 这个需要新加字段
