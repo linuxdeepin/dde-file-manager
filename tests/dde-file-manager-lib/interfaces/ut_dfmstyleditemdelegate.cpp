@@ -276,6 +276,7 @@ TEST_F(DFMStyledItemDelegateTest,paintCircleList)
     delegate->paintCircleList(&painter,QRect(),0.0,{QColor()},QColor());
 }
 
+#ifndef __arm__
 TEST_F(DFMStyledItemDelegateTest,getIconPixmap)
 {
     //program return empty pixmap
@@ -313,5 +314,5 @@ TEST_F(DFMStyledItemDelegateTest,getIconPixmap)
     EXPECT_FALSE(pixmap.isNull());
 
 }
-
+#endif
 

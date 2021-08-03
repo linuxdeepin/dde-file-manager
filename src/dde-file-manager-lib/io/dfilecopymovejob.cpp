@@ -4404,19 +4404,21 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
 
     // DFileStatisticsJob 统计数量很慢，自行统计
     QPointer<DFileCopyMoveJob> dp = this;
-    QtConcurrent::run([sourceUrls, dp]() {
-        if (dp->d_d_ptr->mode == MoveMode || dp->d_d_ptr->mode == CutMode) {
-            dp->d_d_ptr->countStatisticsFinished = false;
+    QtConcurrent::run([sourceUrls, dp, d]() {
+        if (dp.isNull())
+            return;
+        if (d->mode == MoveMode || d->mode == CutMode) {
+            d->countStatisticsFinished = false;
             for (const auto &url : sourceUrls) {
                 QStringList list;
                 FileUtils::recurseFolder(url.toLocalFile(), "", &list);
-                if (dp)
-                    dp->d_d_ptr->totalMoveFilesCount += (list.size() + 1); // +1 的目的是当前选中的目录要统计到
+                if (!dp.isNull())
+                    d->totalMoveFilesCount += (list.size() + 1); // +1 的目的是当前选中的目录要统计到
                 else
                     break;
             }
-            if (dp)
-                dp->d_d_ptr->countStatisticsFinished = true;
+            if (!dp.isNull())
+                d->countStatisticsFinished = true;
         }
     });
 

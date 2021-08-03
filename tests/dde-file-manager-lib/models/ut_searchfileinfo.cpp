@@ -224,7 +224,9 @@ TEST_F(TestSearchFileInfo, tstCompareFunByColumn)
     EXPECT_FALSE(info->compareFunByColumn(Qt::UserRole));
 }
 
+#ifndef __arm__
 TEST_F(TestSearchFileInfo, tstFileIcon)
 {
     EXPECT_FALSE(info->fileIcon().isNull());
 }
+#endif

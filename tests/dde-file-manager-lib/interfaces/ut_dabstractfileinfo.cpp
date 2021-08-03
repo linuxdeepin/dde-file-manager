@@ -384,10 +384,12 @@ TEST_F(TestDAbstractFileInfo, fileUrl)
     EXPECT_EQ(info->fileUrl(), DUrl("file:///tmp/1.txt"));
 }
 
+#ifndef __arm__
 TEST_F(TestDAbstractFileInfo, fileIcon)
 {
     EXPECT_TRUE(info->fileIcon().name() == "application-default-icon");
 }
+#endif
 
 TEST_F(TestDAbstractFileInfo, additionalIcon)
 {

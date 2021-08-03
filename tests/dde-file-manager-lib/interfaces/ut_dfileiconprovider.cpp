@@ -75,6 +75,7 @@ TEST_F(DFileIconProviderTest, tst_global_instance)
     EXPECT_TRUE(instance != nullptr);
 }
 
+#ifndef __arm__
 TEST_F(DFileIconProviderTest, tst_qicon)
 {
     QFileInfo fileinfo;
@@ -146,3 +147,4 @@ TEST_F(DFileIconProviderTest, tst_gvfsicon)
     icon = provider->icon(fileinfo2, QIcon::fromTheme("dialog-warning"));
     EXPECT_FALSE(icon.isNull());
 }
+#endif

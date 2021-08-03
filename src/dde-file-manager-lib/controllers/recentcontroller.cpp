@@ -591,7 +591,7 @@ void RecentController::handleFileChanged()
                     urlList << recentUrl;
 
                     DThreadUtil::runInMainThread([ = ]() {
-                        if (!dp)
+                        if (dp.isNull())
                             return;
                         // 保险箱内文件不显示到最近使用页面
                         if(!VaultController::isVaultFile(location.toString())) {
@@ -616,11 +616,11 @@ void RecentController::handleFileChanged()
         }
     }
 
-    if (dp)
+    if (dp.isNull())
         return;
     // delete does not exist url.
     for (auto iter = recentNodes.begin(); iter != recentNodes.end();) {
-        if (dp)
+        if (dp.isNull())
             return;
         const DUrl &url = iter.key();
         if (!urlList.contains(url)) {
@@ -639,7 +639,7 @@ void RecentController::handleFileChanged()
                 iter = recentNodes.erase(iter);
             }
         }
-        if (dp)
+        if (dp.isNull())
             return;
     }
 

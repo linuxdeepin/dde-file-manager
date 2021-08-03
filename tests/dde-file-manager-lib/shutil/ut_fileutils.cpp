@@ -190,6 +190,7 @@ TEST_F(TestFileUtils, can_remove_file)
     EXPECT_FALSE( FileUtils::isFileExists(filePath));
 }
 
+#ifndef __arm__
 TEST_F(TestFileUtils, can_get_txt_files_info)
 {
     Stub stub;
@@ -343,7 +344,7 @@ TEST_F(TestFileUtils, can_get_app_file_details)
 
     EXPECT_FALSE( FileUtils::shouldAskUserToAddExecutableFlag(desktopfilePath));
 }
-
+#endif
 
 TEST_F(TestFileUtils, can_format_Udisk_Size)
 {
