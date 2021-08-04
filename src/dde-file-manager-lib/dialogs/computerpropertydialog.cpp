@@ -155,6 +155,13 @@ void GetInfoWork::run()
             // 获取计算机名称
             if (m_datas.contains(keyName)) {
                 computerName = DSysInfo::computerName();
+                // 因为用户可以修改计算机名称，所以检测到名称变化后，立刻发送出去
+                if (!computerName.isEmpty()) {
+                    mapDatas.insert(keyName, computerName);
+                    emit sigSendInfo(mapDatas);
+                    m_datas.removeAll(keyName);
+                    mapDatas.clear();
+                }
             }
             // 获取系统版本名
             if (m_datas.contains(keyEditon))
@@ -188,10 +195,6 @@ void GetInfoWork::run()
 
         // 对外发送属性更新信号
         mapDatas.clear();
-        if (m_datas.contains(keyName) && !computerName.isEmpty()) {
-            mapDatas.insert(keyName, computerName);
-            m_datas.removeAll(keyName);
-        }
         if (m_datas.contains(keyEditon) && !Edition.isEmpty()) {
             mapDatas.insert(keyEditon, Edition);
             m_datas.removeAll(keyEditon);
