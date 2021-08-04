@@ -91,9 +91,11 @@ TEST_F(JobControllerTest,start_start){
     while (jobcontroller->isRunning()) {
         jobcontroller->setTimeCeiling(10);
         jobcontroller->setCountCeiling(10);
-        jobcontroller->stopAndDeleteLater();
+        jobcontroller->stop();
         QThread::msleep(100);
     }
+    jobcontroller->wait(3000);
+    jobcontroller->stop();
 }
 
 TEST_F(JobControllerTest,start_run){
@@ -111,5 +113,7 @@ TEST_F(JobControllerTest,start_run){
         QThread::msleep(100);
     }
     jobcontroller->run();
+    jobcontroller->wait(3000);
+    jobcontroller->stop();
 
 }

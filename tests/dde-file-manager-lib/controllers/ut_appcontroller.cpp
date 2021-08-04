@@ -572,9 +572,17 @@ TEST_F(AppControllerTest,start_actionNewFolder){
     EXPECT_NO_FATAL_FAILURE(controller->actionSelectAll(29489851231423));
     EXPECT_NO_FATAL_FAILURE(controller->actionClearRecent(dMakeEventPointer<DFMMenuActionEvent>
                                                           (nullptr,nullptr,DUrl(),DUrlList(),DFMGlobal::ClearRecent,QModelIndex())));
-    QProcess::execute("cp "+ QDir::homePath() + "/.local/share/recently-used.xbel " + QDir::homePath() + "/.local/share/recently-used.xbel.bak");
+    QString recentlyUsedFilePath = QDir::homePath() + "/.local/share/recently-used.xbel";
+    QString recentlyUsedBackFilePath = recentlyUsedFilePath + ".bak";
+    QFile file(recentlyUsedFilePath);
+    bool isRecentlyUsedFile = file.exists();
+    if (isRecentlyUsedFile) {
+        QProcess::execute("cp "+ recentlyUsedFilePath  + " " + recentlyUsedBackFilePath);
+    }
     EXPECT_NO_FATAL_FAILURE(controller->actionClearRecent());
-    QProcess::execute("mv "+ QDir::homePath() + "/.local/share/recently-used.xbel.bak " + QDir::homePath() + "/.local/share/recently-used.xbel");
+    if (isRecentlyUsedFile) {
+        QProcess::execute("mv "+ recentlyUsedBackFilePath + " " + recentlyUsedFilePath);
+    }
     QProcess::execute("rm -rf " + url.toLocalFile());
     DFileService::instance()->setDoClearTrashState(true);
     bool (*deleteFileslamda)(const QObject *, const DUrlList &, bool, bool, bool) = []
