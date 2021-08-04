@@ -73,7 +73,8 @@ public:
 private:
     explicit DFMViewManager(QObject *parent = 0);
     ~DFMViewManager();
-
+    //NOTE [XIAO] 从PLGUIN中加载View
+    void initViewFromPlugin();
     void insertToCreatorHash(const KeyType &type, const ViewCreatorType &creator);
 
     QScopedPointer<DFMViewManagerPrivate> d_ptr;

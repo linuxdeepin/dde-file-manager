@@ -50,6 +50,7 @@
 #include "accessible/accessiblelist.h"
 #include "dfmapplication.h"
 #include "views/dfilemanagerwindow.h"
+#include "plugins/schemepluginmanager.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -180,6 +181,9 @@ int main(int argc, char *argv[])
                                                 "trash, compression/decompression, file property "
                                                 "and other useful functions."));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+
+    //NOTE [XIAO] 加载插件
+    SchemePluginManager::instance()->loadSchemePlugin();
 
     // 集成测试标签
 #ifdef ENABLE_ACCESSIBILITY

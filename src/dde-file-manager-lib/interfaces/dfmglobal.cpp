@@ -53,6 +53,7 @@
 #include "dfmsettings.h"
 #include "bluetooth/bluetoothmanager.h"
 #include "drootfilemanager.h"
+#include "plugins/schemepluginmanager.h"
 
 #include <DArrowRectangle>
 
@@ -329,6 +330,12 @@ void DFMGlobal::autoLoadDefaultPlugins()
 void DFMGlobal::initPluginManager()
 {
     refreshPlugins();
+}
+
+//NOTE [XIAO] DFMGlobal::initSchemePluginManager
+void DFMGlobal::initSchemePluginManager()
+{
+    SchemePluginManager::instance()->loadSchemePlugin();
 }
 
 void DFMGlobal::initSearchHistoryManager()

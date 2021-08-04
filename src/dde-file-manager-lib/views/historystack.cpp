@@ -75,7 +75,12 @@ DUrl HistoryStack::back()
         if(url.isComputerFile())
             break;
 
-        if(url.isUserShareFile())
+        //TODO [XIAO] 此处可以用插件的方式写
+        //如果是我的手机界面返回,为了我的手机界面前进，回退功能
+        if (url.isPluginFile())
+            break;
+
+        if (url.isUserShareFile())
             break;
 
         if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme()))
@@ -119,7 +124,12 @@ DUrl HistoryStack::forward()
         if(url.isComputerFile())
             break;
 
-        if(url.isUserShareFile())
+        //TODO [XIAO] 此处可以用插件的方式写
+        //如果是我的手机界面返回,为了我的手机界面前进，回退功能
+        if (url.isPluginFile())
+            break;
+
+        if (url.isUserShareFile())
             break;
 
         if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme()))

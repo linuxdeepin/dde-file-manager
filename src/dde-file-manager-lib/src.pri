@@ -247,7 +247,10 @@ HEADERS += \
     $$PWD/interfaces/defenderinterface.h \
     $$PWD/interfaces/dumountmanager.h \
     $$PWD/controllers/dfmftpcrumbcontroller.h \
-    $$PWD/controllers/dfmsftpcrumbcontroller.h
+    $$PWD/controllers/dfmsftpcrumbcontroller.h \
+    $$PWD/interfaces/dfmbaseview_copy.h \
+    $$PWD/plugins/schemepluginmanager.h \
+    $$PWD/plugins/schemeplugininterface.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
@@ -459,7 +462,8 @@ SOURCES += \
     $$PWD/interfaces/defenderinterface.cpp \
     $$PWD/interfaces/dumountmanager.cpp \
     $$PWD/controllers/dfmftpcrumbcontroller.cpp \
-    $$PWD/controllers/dfmsftpcrumbcontroller.cpp
+    $$PWD/controllers/dfmsftpcrumbcontroller.cpp \
+    $$PWD/plugins/schemepluginmanager.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h

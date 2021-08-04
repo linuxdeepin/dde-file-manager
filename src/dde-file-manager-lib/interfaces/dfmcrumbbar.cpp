@@ -426,6 +426,7 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
         fileUrl = VaultController::localToVault(url.toLocalFile());
     }
 
+    //NOTE [HMOE REN] 已注册的CrumbController(面包屑)创建的面包屑值
     QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(fileUrl);
     for (const CrumbData &c : crumbDataList) {
         if (d->crumbListviewModel) {
