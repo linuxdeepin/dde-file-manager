@@ -73,7 +73,8 @@ QString pbkdf2::pbkdf2EncrypyPassword(const QString &password, const QString &ra
     uchar *out = reinterpret_cast<uchar*>(malloc(size_t(clipherByteNum/2 + 1)));
     memset(out, 0, size_t(clipherByteNum/2 + 1));
     // 修复klu-bug-51478
-    const char *pwd = password.toStdString().c_str();
+    std::string strpwd = password.toStdString();
+    const char *pwd = strpwd.c_str();
     if(PKCS5_PBKDF2_HMAC_SHA1(pwd, password.length(),
                               salt_value, randSalt.length(),
                               iteration,
