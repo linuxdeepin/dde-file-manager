@@ -4452,7 +4452,7 @@ void DFileCopyMoveJob::run()
                 qCDebug(fileJob(), "canUseWriteBytes = %d, targetIsRemovable = %d", bool(d->canUseWriteBytes), bool(d->targetIsRemovable));
             }
         }
-    } else if (d->mode == CopyMode) {
+    } else if (d->mode == CopyMode || d->mode == CutMode) {
         d->setError(UnknowError, "Invalid target url");
         goto end;
     } else {

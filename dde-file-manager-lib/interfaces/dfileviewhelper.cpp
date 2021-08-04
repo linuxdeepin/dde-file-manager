@@ -182,6 +182,8 @@ void DFileViewHelperPrivate::init()
     QObject::connect(copy_action, &QAction::triggered,
     q, [q] {
         fileService->writeFilesToClipboard(q, DFMGlobal::CopyAction, q->selectedUrls());
+        qInfo() << "Ctrl + C: " << q->selectedUrls()
+                << "Current: " << q->currentUrl();
     });
 
     QAction *cut_action = new QAction(q->parent());
@@ -192,6 +194,8 @@ void DFileViewHelperPrivate::init()
     QObject::connect(cut_action, &QAction::triggered,
     q, [q] {
         fileService->writeFilesToClipboard(q, DFMGlobal::CutAction, q->selectedUrls());
+        qInfo() << "Ctrl + X: " << q->selectedUrls()
+                << "Current: " << q->currentUrl();
     });
 
     QAction *paste_action = new QAction(q->parent());
@@ -201,6 +205,7 @@ void DFileViewHelperPrivate::init()
     QObject::connect(paste_action, &QAction::triggered,
     q, [q] {
         fileService->pasteFileByClipboard(q->parent(), q->currentUrl());
+        qInfo() << "Ctrl + V: " << q->currentUrl();
     });
 
     QAction *revocation_action = new QAction(q->parent());
@@ -210,6 +215,7 @@ void DFileViewHelperPrivate::init()
     QObject::connect(revocation_action, &QAction::triggered,
     q, [q] {
         DFMEventDispatcher::instance()->processEvent<DFMRevocationEvent>(q);
+        qInfo() << "Ctrl + Z: " << q->currentUrl();
     });
 
     q->parent()->addAction(copy_action);

@@ -993,7 +993,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
     // 当前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
     // fix bug 31324,判断当前操作是否是清空回收站，是就在结束时改变清空回收站状态
     bool bdoingcleartrash = DFileService::instance()->getDoClearTrashState();
-    if (action == DFMGlobal::CutAction && bdoingcleartrash && list.count() == 1 &&
+    if (action == DFMGlobal::DeleteAction && bdoingcleartrash && list.count() == 1 &&
             list.first().toString().endsWith(".local/share/Trash/files")) {
         connect(job.data(), &QThread::finished, this, [ = ]() {
             DFileService::instance()->setDoClearTrashState(false);
@@ -1006,7 +1006,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
 
     // sp3 feature： 复制时不进行校验，后面调整为独立的功能
     job->setFileHints(job->fileHints() | DFileCopyMoveJob::DontIntegrityChecking);
-    if (action == DFMGlobal::CutAction && !target.isValid()) {
+    if (action == DFMGlobal::DeleteAction) {
         // for remove mode
         job->setActionOfErrorType(DFileCopyMoveJob::NonexistenceError, DFileCopyMoveJob::SkipAction);
     }
@@ -1130,11 +1130,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
     });
 
     job->setErrorHandle(error_handle, slient ? nullptr : error_handle->thread());
-    // fix：原来本来没有 movemode，当前彻底删除文件时要转换 mode 为 movemode，
-    //     原来剪切和删除都是用的 cutmode 来表示，这会导致进度条无法区分剪切和删除
-    //     为了区分剪切和删除，这里使用 traget 是否为空来判断当前的操作是剪切还是删除
-    if (target.isEmpty() && action != DFMGlobal::CopyAction)
-        action = DFMGlobal::UnknowAction;
+
     job->setMode(action == DFMGlobal::CopyAction
                  ? DFileCopyMoveJob::CopyMode
                  : (action == DFMGlobal::CutAction ? DFileCopyMoveJob::CutMode : DFileCopyMoveJob::MoveMode));
@@ -1232,7 +1228,7 @@ bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) co
     //    }
 
 
-    bool ok = !pasteFilesV2(nullptr, DFMGlobal::CutAction, event->fileUrlList(), DUrl(), event->silent(), event->force(), true).isEmpty();
+    bool ok = !pasteFilesV2(nullptr, DFMGlobal::DeleteAction, event->fileUrlList(), DUrl(), event->silent(), event->force(), true).isEmpty();
     return ok;
 }
 
