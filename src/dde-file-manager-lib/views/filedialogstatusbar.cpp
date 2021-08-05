@@ -81,7 +81,7 @@ void FileDialogStatusBar::setMode(FileDialogStatusBar::Mode mode)
 
     m_mode = mode;
 
-    QString acButton = mode == Save ? tr("Save") : tr("Open");
+    QString acButton = mode == Save ? tr("Save","button") : tr("Open","button");
     m_acceptButton->setText(acButton);
     m_acceptButton->setObjectName(acButton);
     AC_SET_ACCESSIBLE_NAME(m_acceptButton, acButton);
@@ -89,7 +89,7 @@ void FileDialogStatusBar::setMode(FileDialogStatusBar::Mode mode)
     updateLayout();
 
     if (m_titleLabel->text().isEmpty()) {
-        QString titleLabel = mode == Save ? tr("Save File") : tr("Open File");
+        QString titleLabel = mode == Save ? tr("Save File","button") : tr("Open File","button");
         m_titleLabel->setText(titleLabel);
 
         m_titleLabel->setObjectName(titleLabel);

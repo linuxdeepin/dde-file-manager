@@ -338,8 +338,8 @@ bool RecentController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) c
         // dialog show top
         d.setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
         d.setIcon(QIcon::fromTheme("dialog-error"));
-        d.addButton(QObject::tr("Confirm"), true, DDialog::ButtonRecommend);
-        d.addButton(QObject::tr("Cancel"), false, DDialog::ButtonRecommend);
+        d.addButton(QObject::tr("Confirm","button"), true, DDialog::ButtonRecommend);
+        d.addButton(QObject::tr("Cancel","button"), false, DDialog::ButtonRecommend);
         d.setMaximumWidth(640);
         if(d.exec() == 0)
             DRecentManager::removeItem(event->url().path()); //删除当前最近使用项

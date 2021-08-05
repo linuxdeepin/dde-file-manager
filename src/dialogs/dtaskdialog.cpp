@@ -825,10 +825,10 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
             bool isTargetDir = QFileInfo(targetPath).isDir();
 
             if (isSrcDir && isTargetDir) {
-                wid->setButtonText(DFMTaskWidget::REPLACE, tr("Merge"));
+                wid->setButtonText(DFMTaskWidget::REPLACE, tr("Merge","button"));
 
             } else if (!isSrcDir && !isTargetDir){
-                wid->setButtonText(DFMTaskWidget::REPLACE, tr("Replace"));
+                wid->setButtonText(DFMTaskWidget::REPLACE, tr("Replace","button"));
             }
             else {
                 wid->hideButton(DFMTaskWidget::REPLACE);
