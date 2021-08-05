@@ -143,8 +143,7 @@ void FileSystemNode::applyFileFilter(std::shared_ptr<FileFilter> filter)
 
     // fix bug 54887 【专业版1030】【文管5.2.0.82】搜索结果页多次筛选后，再重置筛选结果，重置搜索界面页面，出现重复搜索界面
     // 点击重置按钮，会触发所有combox的change信号，都会访问visibleChildren资源，因此加锁限制
-    static QMutex locker;
-    locker.lock();
+    rwLock->lockForWrite();
     visibleChildren.clear();
 
     for (auto node : children) {
@@ -152,7 +151,7 @@ void FileSystemNode::applyFileFilter(std::shared_ptr<FileFilter> filter)
             visibleChildren.append(node);
         }
     }
-    locker.unlock();
+    rwLock->unlock();
 }
 
 bool FileSystemNode::shouldHideByFilterRule(std::shared_ptr<FileFilter> filter)
