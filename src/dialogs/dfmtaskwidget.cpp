@@ -187,9 +187,9 @@ QWidget *DFMTaskWidgetPrivate::createBtnWidget()
     QWidget *buttonWidget = new QWidget;
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     buttonLayout->setSpacing(12);
-    m_btnCoexist = new QPushButton(DFMTaskWidget::tr("Keep both"));
-    m_btnSkip = new QPushButton(DFMTaskWidget::tr("Skip"));
-    m_btnReplace = new QPushButton(DFMTaskWidget::tr("Replace"));
+    m_btnCoexist = new QPushButton(DFMTaskWidget::tr("Keep both","button"));
+    m_btnSkip = new QPushButton(DFMTaskWidget::tr("Skip","button"));
+    m_btnReplace = new QPushButton(DFMTaskWidget::tr("Replace","button"));
     m_btnSkip->setFocusPolicy(Qt::NoFocus);
     m_btnReplace->setFocusPolicy(Qt::NoFocus);
 
@@ -440,7 +440,7 @@ void DFMTaskWidget::setErrorMsg(const QString &err)
     if (!err.isEmpty()) {
         d->m_widConfict->hide();
         hideButton(COEXIST);
-        setButtonText(REPLACE, tr("Retry"));
+        setButtonText(REPLACE, tr("Retry","button"));
         showConflictButtons(true, false);
     }
 }

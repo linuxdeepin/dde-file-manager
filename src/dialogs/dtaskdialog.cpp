@@ -823,10 +823,10 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
 
             if (QFileInfo(srcPath).isDir() &&
                     QFileInfo(targetPath).isDir()) {
-                wid->setButtonText(DFMTaskWidget::REPLACE, tr("Merge"));
+                wid->setButtonText(DFMTaskWidget::REPLACE, tr("Merge","button"));
 
             } else {
-                wid->setButtonText(DFMTaskWidget::REPLACE, tr("Replace"));
+                wid->setButtonText(DFMTaskWidget::REPLACE, tr("Replace","button"));
             }
         } else if (status == "error") {
             QString supprotRetry = data.value("supprotRetry"); // 这个需要新加字段

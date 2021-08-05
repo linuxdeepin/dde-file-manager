@@ -94,7 +94,7 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
     m_title->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_title->hide();
 
-    m_openButton = new QPushButton(QObject::tr("Open"), this);
+    m_openButton = new QPushButton(QObject::tr("Open","button"), this);
     m_openButton->setObjectName("OpenButton");
     QFont font = m_openButton->font();
     font.setPixelSize(12);
