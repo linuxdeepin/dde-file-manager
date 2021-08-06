@@ -187,7 +187,7 @@ void CanvasViewManager::onBackgroundEnableChanged()
     GridManager::instance()->initGridItemsInfos();
 }
 
-void CanvasViewManager::onScreenGeometryChanged(ScreenPointer)
+void CanvasViewManager::onScreenGeometryChanged()
 {
 #ifdef UNUSED_SMARTDOCK
     CanvasViewPointer mView = m_canvasMap.value(sp);

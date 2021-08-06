@@ -100,6 +100,7 @@ HEADERS += \
     dbus/dbusmonitor.h \
     dbus/licenceInterface.h \
     screen/abstractscreen.h \
+    screen/abstractscreenmanager_p.h \
     screen/abstractscreenmanager.h \
     screen/screenmanager.h \
     screen/screenobject.h \
