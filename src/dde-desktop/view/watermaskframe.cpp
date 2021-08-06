@@ -356,7 +356,7 @@ bool WaterMaskFrame::isNeedState()
 {
     DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
     DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
-    qDebug() << "deepinType" << deepinType << "uosEditionType" << uosEdition;
+    qInfo() << "deepinType" << deepinType << "uosEditionType" << uosEdition;
 
     bool ret = (DSysInfo::DeepinType::DeepinProfessional == deepinType
                 || DSysInfo::DeepinType::DeepinPersonal == deepinType
@@ -364,8 +364,8 @@ bool WaterMaskFrame::isNeedState()
 
 #if (DTK_VERSION >= DTK_VERSION_CHECK(5, 4, 7, 0))
     // 教育版不需要水印
-    ret = ret || DSysInfo::UosEdition::UosEducation != uosEdition;
-    qDebug() << "check uos Edition" << ret;
+    ret = ret || DSysInfo::UosEdition::UosEducation == uosEdition;
+    qInfo() << "check uos Edition" << ret;
 #endif
 
     return ret;
