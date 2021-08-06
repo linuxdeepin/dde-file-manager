@@ -36,6 +36,8 @@
 #include <QFlag>
 #include <dfiledragclient.h>
 #include <QDialog>
+#include <QPainter>
+#include <QDrag>
 #include <DDialog>
 #include "stub.h"
 #include "../stub-ext/stubext.h"
@@ -1996,6 +1998,38 @@ TEST_F(DFileViewTest,fetch_drag_memory)
     myAttach = true;
     result = m_view->fetchDragEventUrlsFromSharedMemory();
     EXPECT_TRUE(result);
+}
+
+TEST_F(DFileViewTest, test_start_drag)
+{
+    ASSERT_NE(nullptr, m_view);
+
+    stub_ext::StubExt stub;
+    auto dragExecFoo = (Qt::DropAction(QDrag::*)(Qt::DropActions, Qt::DropAction))ADDR(QDrag, exec);
+
+    EXPECT_NO_FATAL_FAILURE(m_view->startDrag(Qt::CopyAction | Qt::MoveAction));
+}
+
+TEST_F(DFileViewTest, test_renderToPixmap)
+{
+    ASSERT_NE(nullptr, m_view);
+
+    qApp->processEvents();
+    m_view->selectAll();
+    qApp->processEvents();
+
+    auto selects = m_view->selectionModel()->selectedIndexes();
+    auto pixMap = m_view->d_func()->renderToPixmap(selects);
+
+    bool judge = false;
+    stub_ext::StubExt stub;
+    auto drawTextFoo = (void(QPainter::*)(const QRect &, int, const QString &, QRect *))ADDR(QPainter, drawText);
+    stub.set_lamda(drawTextFoo, [&judge]() {
+        judge = true;
+    });
+
+    m_view->d_func()->renderToPixmap(selects);
+    EXPECT_TRUE(judge);
 }
 
 TEST_F(SelectWorkTest,set_init_data)
