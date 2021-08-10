@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.1.0)
 set(BIN_NAME dde-file-manager)
 
 set(SRCS
+    uttestclass.cpp
     main.cpp
     )
 
