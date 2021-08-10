@@ -4,6 +4,7 @@
 *.o
 *.obj
 .qmake.stash
+CMakeLists.txt.user*
 
 # Compiled Dynamic libraries
 *.so
