@@ -29,6 +29,7 @@
 
 #include "subscriber.h"
 #include "dfmevent.h"
+
 #include "dbusinterface/startmanager_interface.h"
 #include "dbusinterface/introspectable_interface.h"
 
