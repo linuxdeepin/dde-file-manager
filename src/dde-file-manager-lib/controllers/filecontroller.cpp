@@ -1701,7 +1701,9 @@ public:
 
     bool match(const QString &path, const QString &name)
     {
-        for (auto pattern : patternList) {
+        // 这里可能会析构 先复制一份再循环
+        const QList<QPair<QString, QString>> patternListNew = patternList;
+        for (auto pattern : patternListNew) {
             QRegularExpression re(QString(), QRegularExpression::MultilineOption);
 
             if (!pattern.first.isEmpty()) {
