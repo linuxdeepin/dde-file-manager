@@ -346,7 +346,7 @@ void DFMOpticalMediaWidgetPrivate::setDeviceProperty(DeviceProperty dp)
             return false;
         if (!BurnOptDialog::isSupportedUDVersion(curFSVersion))
             return false;
-        if (dp.media == DVD_R || dp.media == DVD_PLUS_R)
+        if (BurnOptDialog::isSupportedUDMedium(dp.media)) // DVD+-R, CD-R, CD-RW is supported for now
             return true;
         return false;
     };
@@ -356,7 +356,8 @@ void DFMOpticalMediaWidgetPrivate::setDeviceProperty(DeviceProperty dp)
             icon_caution->setVisible(true);
             icon_caution->load(QString(":/dark/icons/caution.svg"));
             icon_caution->setFixedSize(14, 14);
-            icon_caution->setToolTip(DFMOpticalMediaWidget::tr("1. It is not a DVD-R or DVD+R disc;\n2. The version of this file system does not support adding files yet."));
+            icon_caution->setToolTip(DFMOpticalMediaWidget::tr("1. It is not %1 disc;\n2. The version of this file system does not support adding files yet.")
+                                     .arg("DVD+R, DVD-R, CD-R, CD-RW"));
         }
         lb_udsupport->setVisible(true);
         pb_burn->setEnabled(false);

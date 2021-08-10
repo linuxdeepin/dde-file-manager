@@ -187,7 +187,7 @@ void BurnOptDialog::setDiscAndFsInfo(int type, QString filesystem, QString versi
 
     bool disableISOOpts = false;
     auto supportUD = [ & ]{
-        if (type != DISOMasterNS::DVD_R && type != DISOMasterNS::DVD_PLUS_R) // non dvd+-r is obviously not supported yet
+        if (!isSupportedUDMedium(type)) // DVD+-R, CD-R, CD-RW is supported
             return false;
         if (filesystem.isEmpty()) // empty dvd+-r is supported
             return true;
@@ -217,6 +217,17 @@ bool BurnOptDialog::isSupportedUDVersion(const QString &version)
         "1.02"
     };
     return supported.contains(version);
+}
+
+bool BurnOptDialog::isSupportedUDMedium(int type)
+{
+    static const QList<DISOMasterNS::MediaType> &&supportedMedium = {
+        DISOMasterNS::DVD_R,
+        DISOMasterNS::DVD_PLUS_R,
+        DISOMasterNS::CD_R,
+        DISOMasterNS::CD_RW
+    };
+    return supportedMedium.contains(DISOMasterNS::MediaType(type));
 }
 
 BurnOptDialog::~BurnOptDialog()
