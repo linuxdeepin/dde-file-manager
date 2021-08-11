@@ -47,7 +47,9 @@ public:
     enum Mode {
         CopyMode,
         MoveMode,
-        CutMode
+        CutMode,
+        RemoteMode,
+        UnknowMode = 255
     };
 
     Q_ENUM(Mode)

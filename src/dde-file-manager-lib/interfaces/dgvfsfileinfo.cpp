@@ -76,7 +76,7 @@ int countFileCount(const char *name, bool isloop = false)
 
     while ((entry = readdir(dir))) {
         //文件路径加名称最长支持为4k
-        char path[1024 * 4 + 1];
+        char path[FILENAME_MAX + 1];
         int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
         path[len] = 0;
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)

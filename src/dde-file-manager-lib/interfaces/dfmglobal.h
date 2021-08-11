@@ -126,7 +126,8 @@ public:
         CutAction,
         CopyAction,
         DeleteAction,
-        UnknowAction
+        RemoteAction,
+        UnknowAction = 255
     };
 
     enum Icon {
@@ -421,6 +422,10 @@ public:
     static bool isInitAppOver();
     static void setAppQuiting();
     static bool isAppQuiting();
+    //download remote files
+    static QList<QUrl> getUrlsByX11();
+    static QList<QUrl> getUrlsByQt();
+    static QList<QUrl> getRemoteUrls();
 signals:
     void clipboardDataChanged();
 

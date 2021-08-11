@@ -74,6 +74,9 @@
 #include <QDBusObjectPath>
 #include <QRegularExpression>
 #include <QPainterPath>
+#include <QMutex>
+#include <QMimeType>
+#include <QMimeDatabase>
 
 #include <private/qtextengine_p.h>
 
@@ -87,8 +90,7 @@
 #include <KEncodingProber>
 #include <DSysInfo>
 
-#include <QMimeType>
-#include <QMimeDatabase>
+#include <X11/Xlib.h>
 
 DWIDGET_USE_NAMESPACE;
 
@@ -105,16 +107,27 @@ extern "C"
 
 namespace GlobalData {
 static QList<QUrl> clipboardFileUrls;
+static QMutex clipboardFileUrlsMutex;
 static QList<quint64> clipbordFileinode;
+static QAtomicInt remoteCurrentCount = 0;
 static DFMGlobal::ClipboardAction clipboardAction = DFMGlobal::UnknowAction;
 
 void onClipboardDataChanged()
 {
-    clipboardFileUrls.clear();
+    {
+        QMutexLocker lk(&clipboardFileUrlsMutex);
+        clipboardFileUrls.clear();
+    }
     clipbordFileinode.clear();
     const QMimeData *mimeData = qApp->clipboard()->mimeData();
-    if (!mimeData) {
-        qWarning() << "get null mimeData from QClipBoard!";
+    if (!mimeData || mimeData->formats().isEmpty()) {
+        qWarning() << "get null mimeData from QClipBoard or remote formats is null!";
+        return;
+    }
+    if (mimeData->hasFormat("uos/remote-copy")) {
+        qInfo() << "clipboard use other !";
+        clipboardAction = DFMGlobal::RemoteAction;
+        remoteCurrentCount++;
         return;
     }
     const QByteArray &data = mimeData->data("x-special/gnome-copied-files");
@@ -130,8 +143,10 @@ void onClipboardDataChanged()
     for (QUrl &_url : mimeData->urls()) {
         if (_url.scheme().isEmpty())
             _url.setScheme("file");
-
-        clipboardFileUrls << _url;
+        {
+            QMutexLocker lk(&clipboardFileUrlsMutex);
+            clipboardFileUrls << _url;
+        }
         //链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, DUrl(_url));
         if (!fileInfo || fileInfo->isSymLink())
@@ -1253,6 +1268,158 @@ void DFMGlobal::setAppQuiting()
 bool DFMGlobal::isAppQuiting()
 {
     return IsAppQuiting.load();
+}
+
+
+QList<QUrl> DFMGlobal::getUrlsByX11()
+{
+    QAtomicInt currentCount = GlobalData::remoteCurrentCount;
+    const QMimeData *mimedata = qApp->clipboard()->mimeData();
+    if (!mimedata) {
+        qWarning() << "the clipboard mimedata is invalid!";
+        return QList<QUrl>();
+    }
+    if (GlobalData::clipboardAction != RemoteAction) {
+        qWarning() << "current action is not RemoteAction ,error action " << GlobalData::clipboardAction;
+        return QList<QUrl>();
+    }
+    //使用x11创建一个窗口去阻塞获取URl
+    Display *display = XOpenDisplay(nullptr);
+    unsigned long color = BlackPixel(display, DefaultScreen(display));
+    Window window = XCreateSimpleWindow(display, DefaultRootWindow(display), 0,0, 1,1, 0, color, color);
+
+    char *result = nullptr;
+    unsigned long ressize = 0, restail = 0;
+    int resbits;
+    Atom bufid = XInternAtom(display, "CLIPBOARD", False),
+         fmtid = XInternAtom(display, "text/uri-list", False),
+         propid = XInternAtom(display, "XSEL_DATA", False),
+         incrid = XInternAtom(display, "INCR", False);
+    XEvent event;
+
+    QList<QUrl> urls;
+    QString results;
+    QAtomicInteger<bool> isCanceled = false;
+
+    XSelectInput (display, window, PropertyChangeMask);
+    XConvertSelection(display, bufid, fmtid, propid, window, CurrentTime);
+    do {
+      XNextEvent(display, &event);
+    } while (event.type != SelectionNotify || event.xselection.selection != bufid);
+    if (event.xselection.property) {
+        XGetWindowProperty(display, window, propid, 0, LONG_MAX/4, True, AnyPropertyType,
+                           &fmtid, &resbits, &ressize, &restail, (unsigned char**)&result);
+        if (fmtid != incrid) {
+           qInfo() << QString(result);
+           urls += QUrl::fromStringList(QString(result).split("\n"));
+        }
+
+        XFree(result);
+
+        if (fmtid == incrid) {
+            do {
+                do {
+                    XNextEvent(display, &event);
+                    if (event.type == SelectionNotify) {
+                        isCanceled = true;
+                        break;
+                    }
+                } while (event.type != PropertyNotify || event.xproperty.atom != propid || event.xproperty.state != PropertyNewValue);
+                if (isCanceled)
+                    break;
+                XGetWindowProperty(display, window, propid, 0, LONG_MAX/4, True, AnyPropertyType, &fmtid, &resbits, &ressize, &restail, (unsigned char**)&result);
+                if (QString(result) != "/")
+                    results += QString(result);
+                XFree(result);
+            } while (ressize > 0);
+        }
+    }
+    XDestroyWindow(display, window);
+    XCloseDisplay(display);
+
+    if (isCanceled) {
+        qWarning() << "user cancel remote download !";
+        return QList<QUrl>();
+    }
+    urls += QUrl::fromStringList(results.split("\n"));
+
+    QList<QUrl> clipboardFileUrls;
+    for (QUrl url : urls) {
+        //链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
+        if (url.toString() == "copy")
+            continue;
+
+        QString path = url.path();
+        path = path.replace(QRegExp("/*/"),"/");
+        if (path.isEmpty() || path == "/")
+            continue;
+        QUrl temp;
+        temp.setScheme("file");
+        temp.setPath(path);
+        clipboardFileUrls << temp;
+    }
+    qInfo() << results << urls << clipboardFileUrls;
+
+    if (GlobalData::clipboardAction == RemoteAction && currentCount == GlobalData::remoteCurrentCount) {
+        QMutexLocker lk(&GlobalData::clipboardFileUrlsMutex);
+        GlobalData::clipboardFileUrls.clear();
+        GlobalData::clipboardFileUrls = clipboardFileUrls;
+        GlobalData::clipboardAction = CopyAction;
+        GlobalData::remoteCurrentCount = 0;
+    }
+
+    return clipboardFileUrls;
+}
+
+QList<QUrl> DFMGlobal::getUrlsByQt()
+{
+    QAtomicInt currentCount = GlobalData::remoteCurrentCount;
+    const QMimeData *mimedata = qApp->clipboard()->mimeData();
+    if (!mimedata) {
+        qWarning() << "the clipboard mimedata is invalid!";
+        return QList<QUrl>();
+    }
+    if (GlobalData::clipboardAction != RemoteAction) {
+        qWarning() << "current action is not RemoteAction ,error action " << GlobalData::clipboardAction;
+        return QList<QUrl>();
+    }
+
+    QList<QUrl> urls = mimedata->urls();
+
+    QList<QUrl> clipboardFileUrls;
+    for (QUrl url : urls) {
+        //链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
+        if (url.toString() == "copy")
+            continue;
+
+        QString path = url.path();
+        path = path.replace(QRegExp("/*/"),"/");
+        if (path.isEmpty() || path == "/")
+            continue;
+        QUrl temp;
+        temp.setScheme("file");
+        temp.setPath(path);
+        clipboardFileUrls << temp;
+    }
+
+    qInfo() << urls << clipboardFileUrls;
+
+    if (GlobalData::clipboardAction == RemoteAction && currentCount == GlobalData::remoteCurrentCount) {
+        QMutexLocker lk(&GlobalData::clipboardFileUrlsMutex);
+        GlobalData::clipboardFileUrls.clear();
+        GlobalData::clipboardFileUrls = clipboardFileUrls;
+        GlobalData::clipboardAction = CopyAction;
+        GlobalData::remoteCurrentCount = 0;
+    }
+
+    return clipboardFileUrls;
+}
+
+QList<QUrl> DFMGlobal::getRemoteUrls()
+{
+    if (isWayLand())
+        return getUrlsByQt();
+    return getUrlsByX11();
 }
 
 QString DFMGlobal::toUnicode(const QByteArray &data, const QString &fileName)
