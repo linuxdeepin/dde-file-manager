@@ -1220,9 +1220,25 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
 
     job->setErrorHandle(error_handle, slient ? nullptr : error_handle->thread());
 
-    job->setMode(action == DFMGlobal::CopyAction
-                 ? DFileCopyMoveJob::CopyMode
-                 : (action == DFMGlobal::CutAction ? DFileCopyMoveJob::CutMode : DFileCopyMoveJob::MoveMode));
+    DFileCopyMoveJob::Mode mode = DFileCopyMoveJob::CopyMode;
+    switch (action) {
+    case DFMGlobal::CopyAction:
+        mode = DFileCopyMoveJob::CopyMode;
+        break;
+    case DFMGlobal::CutAction:
+        mode = DFileCopyMoveJob::CutMode;
+        break;
+    case DFMGlobal::DeleteAction:
+        mode = DFileCopyMoveJob::MoveMode;
+        break;
+    case DFMGlobal::RemoteAction:
+        mode = DFileCopyMoveJob::RemoteMode;
+        break;
+    default:
+        mode = DFileCopyMoveJob::UnknowMode;
+    }
+    job->setMode(mode);
+
     job->start(list, target);
     //走以前的老流程，阻塞主线去拷贝或者删除
     if (bold) {
@@ -1275,7 +1291,7 @@ void FileController::dealpasteEnd(const DUrlList &list, const QSharedPointer<DFM
         return;
     }
 
-    if (event->action() == DFMGlobal::CopyAction) {
+    if (event->action() == DFMGlobal::CopyAction || event->action() == DFMGlobal::RemoteAction) {
         DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, valid_files, true), true);
     } else {
         const QString targetDir(QFileInfo(event->urlList().first().toLocalFile()).absolutePath());
