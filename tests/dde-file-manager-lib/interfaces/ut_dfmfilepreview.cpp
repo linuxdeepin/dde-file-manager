@@ -68,7 +68,7 @@ namespace  {
 
     };
 
-
+/*
 TEST_F(TestDFMFilePreview, test_filePreview)
 {
     m_preview->initialize(nullptr, nullptr);
@@ -87,5 +87,5 @@ TEST_F(TestDFMFilePreview, test_filePreview)
     QList<QUrl> clipUrls = DFMGlobal::fetchUrlsFromClipboard();
     EXPECT_EQ(clipUrls.first().toString(), tmpUrl.toString());
     EXPECT_EQ(m_preview->contentWidget(), nullptr);
-}
+}*/
 }
