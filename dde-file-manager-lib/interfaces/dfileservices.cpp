@@ -722,6 +722,11 @@ void DFileService::pasteFileByClipboard(const QObject *sender, const DUrl &targe
     if (targetUrl.scheme() == SEARCH_SCHEME) {
         return;
     }
+    if (action == DFMGlobal::RemoteAction) {
+        qInfo() << "RemoteAction download remote files";
+        pasteFile(sender, action, targetUrl, DUrlList());
+        return;
+    }
     const DUrlList &list = DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList());
 
     if (action == DFMGlobal::CutAction)

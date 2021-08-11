@@ -36,6 +36,8 @@
 #include "dgiofiledevice.h"
 #include "deviceinfo/udisklistener.h"
 #include "app/define.h"
+#include "app/filesignalmanager.h"
+#include "utils/singleton.h"
 
 #include <QMutex>
 #include <QTimer>
@@ -54,6 +56,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fts.h>
+
+#include <QGuiApplication>
+#include <QClipboard>
+#include <QMimeData>
 
 #undef signals
 extern "C" {
@@ -4204,6 +4210,10 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
     Q_ASSERT(!isRunning());
     Q_D(DFileCopyMoveJob);
 
+    if (d->mode == UnknowMode) {
+        qInfo() << "error mode UnknowMode!";
+        return;
+    }
     d->sourceUrlList = sourceUrls;
     d->targetUrl = targetUrl;
     d->isFromLocalUrls = isFromLocalFile(d->sourceUrlList);
@@ -4311,9 +4321,17 @@ void DFileCopyMoveJob::run()
 //    }
 
 //    qCDebug(fileJob()) << "start job, mode:" << d->mode << "file url list:" << d->sourceUrlList << ", target url:" << d->targetUrl;
-    qCDebug(fileJob()) << "start job, mode:" << d->mode << "file url list:" << ", target url:" << d->targetUrl;
+    qInfo() << "start job, mode:" << d->mode << "file url list:" << ", target url:" << d->targetUrl;
     qint64 timesec = QDateTime::currentMSecsSinceEpoch();
     d->m_sart = timesec;
+    d->unsetError();
+    d->setState(RunningState);
+    //远程下载
+    if (d->mode == RemoteMode) {
+        d->sourceUrlList = DUrl::fromQUrlList(DFMGlobal::instance()->getUrlsByX11());
+        qInfo() << "remote copy source urls list:" << d->sourceUrlList;
+        d->mode = CopyMode;
+    }
 
     // 本地文件使用 countAllCopyFile 统计大小非常快, 因此不必开辟线程去统计大小. 同步等待文件大小统计完成
     // 网络文件使用以下方式反而会更慢, 因此使用线程统计类
@@ -4324,8 +4342,6 @@ void DFileCopyMoveJob::run()
     //启动优化线程
     d->runRefineThread();
 
-    d->unsetError();
-    d->setState(RunningState);
     d->completedDirectoryList.clear();
     d->completedFileList.clear();
     d->targetUrlList.clear();
