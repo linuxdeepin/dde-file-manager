@@ -27,6 +27,8 @@
 #include <QDir>
 #include <QMimeDatabase>
 #include <QSemaphore>
+#include <QWaitCondition>
+#include <QMutex>
 
 #define private public
 #include "fileoperations/filejob.h"
@@ -109,7 +111,8 @@ namespace  {
         }
     public:
         DThumbnailProvider *thumbnailProvide;
-
+        QWaitCondition condition;
+        QMutex mutex;
     };
 }
 
@@ -265,7 +268,11 @@ TEST_F(DThumbnailProviderTest, test_removeInProduceQueue)
     thumbnailProvide->appendToProduceQueue(pngInfo, DThumbnailProvider::Normal, [&](const QString & path) {
         thumbnailPngPath = path;
         sem.release();
+        QMutexLocker locker(&mutex);
+        condition.notify_one();
     });
+    QMutexLocker locker(&mutex);
+    condition.wait(&mutex, 2000); // 需要等appendToProduceQueue执行完成才能进行移除
     thumbnailProvide->removeInProduceQueue(pngInfo, DThumbnailProvider::Normal);
     const QPair<QString, DThumbnailProvider::Size> &tmpKey = qMakePair(pngInfo.absoluteFilePath(), DThumbnailProvider::Normal);
     auto discardedProduceInfos = thumbnailProvide->d_func()->discardedProduceInfos;
