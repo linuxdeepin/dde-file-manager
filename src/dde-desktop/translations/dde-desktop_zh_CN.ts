@@ -76,7 +76,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="163"/>
+        <location filename="../main.cpp" line="168"/>
         <source>Desktop</source>
         <translation>桌面</translation>
     </message>
@@ -150,18 +150,6 @@
         <source>Apply</source>
         <comment>button</comment>
         <translation>设置屏保</translation>
-    </message>
-    <message>
-        <source>Only desktop</source>
-        <translation type="vanished">仅设置桌面</translation>
-    </message>
-    <message>
-        <source>Only lock screen</source>
-        <translation type="vanished">仅设置锁屏</translation>
-    </message>
-    <message>
-        <source>Apply</source>
-        <translation type="vanished">设置屏保</translation>
     </message>
 </context>
 <context>

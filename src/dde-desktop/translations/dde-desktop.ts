@@ -76,7 +76,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="163"/>
+        <location filename="../main.cpp" line="168"/>
         <source>Desktop</source>
         <translation>Desktop</translation>
     </message>
@@ -150,18 +150,6 @@
         <source>Apply</source>
         <comment>button</comment>
         <translation>Apply</translation>
-    </message>
-    <message>
-        <source>Only desktop</source>
-        <translation type="vanished">Only desktop</translation>
-    </message>
-    <message>
-        <source>Only lock screen</source>
-        <translation type="vanished">Only lock screen</translation>
-    </message>
-    <message>
-        <source>Apply</source>
-        <translation type="vanished">Apply</translation>
     </message>
 </context>
 <context>
