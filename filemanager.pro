@@ -9,6 +9,8 @@ SUBDIRS  += \
     dde-file-manager-plugins \
     dde-dock-plugins\
     dde-desktop \
+    dde-select-dialog-x11 \
+    dde-select-dialog-wayland \
     dde-file-thumbnail-tool \
     gschema
 
@@ -22,4 +24,6 @@ dde-dock-plugins.depends = dde-file-manager-lib
 dde-desktop.depends = dde-file-manager-lib
 dde-file-manager-daemon.depends = dde-file-manager-lib
 deepin-anything-server-plugins.depends = dde-file-manager-lib
+dde-select-dialog-x11.depends = dde-file-manager-lib
+dde-select-dialog-wayland.depends = dde-file-manager-lib
 #dde-sharefiles.depends = dde-file-manager-lib
