@@ -173,7 +173,6 @@ public:
     DRenameBar *q_ptr{ nullptr };
     QHBoxLayout *m_mainLayout{ nullptr };
     QComboBox *m_comboBox{ nullptr };
-    QFrame *m_frame{ nullptr };
     QStackedWidget *m_stackWidget{ nullptr };
     QArray<3> m_renameButtonStates{{false}};  //###: this is a array for recording the state of rename button in current pattern.
     std::size_t m_currentPattern{0};               //###: this number record current pattern.
@@ -211,15 +210,12 @@ DRenameBarPrivate::DRenameBarPrivate(DRenameBar *const qPtr)
 
 void DRenameBarPrivate::initUi()
 {
-    m_mainLayout = new QHBoxLayout{ q_ptr };
+    m_mainLayout = new QHBoxLayout(q_ptr);
     m_comboBox = new QComboBox;
-    m_frame = new QFrame;
     m_stackWidget = new QStackedWidget;
 
     AC_SET_OBJECT_NAME(m_comboBox, AC_COMPUTER_RENAME_BAR_SELECT_TYPE);
     AC_SET_ACCESSIBLE_NAME(m_comboBox, AC_COMPUTER_RENAME_BAR_SELECT_TYPE);
-    AC_SET_OBJECT_NAME(m_frame, AC_COMPUTER_RENAME_BAR_SELECT_TYPE);
-    AC_SET_ACCESSIBLE_NAME(m_frame, AC_COMPUTER_RENAME_BAR_SELECT_TYPE);
     AC_SET_OBJECT_NAME(m_stackWidget, AC_COMPUTER_RENAME_BAR_STACK_WIDGET);
     AC_SET_ACCESSIBLE_NAME(m_stackWidget, AC_COMPUTER_RENAME_BAR_STACK_WIDGET);
 
@@ -231,9 +227,6 @@ void DRenameBarPrivate::initUi()
 
     m_customOPeratorItems = std::make_tuple(new QLabel, new QLineEdit, new QLabel, new QLineEdit, new QLabel);
     m_frameForLayoutCustomArea = QPair<QHBoxLayout *, QFrame *> { new QHBoxLayout, new QFrame };
-
-    QRegExp regStr{ QString{"[0-9]+"} };
-    m_validator = new QRegExpValidator{ regStr };
 
     m_buttonsArea = std::make_tuple(new QPushButton, new QPushButton, new QHBoxLayout, new QFrame);
 }
@@ -286,6 +279,10 @@ void DRenameBarPrivate::setUiParameters()
     label->setText(QObject::tr("Start at"));
     lineEdit->setPlaceholderText(QObject::tr("Required"));
     lineEdit->setText(QString{"1"});
+
+    QRegExp regStr{ QString{"[0-9]+"} };
+    m_validator = new QRegExpValidator{ regStr, lineEdit };
+
     lineEdit->setValidator(m_validator);
     label->setBuddy(lineEdit);
     label = std::get<4>(m_customOPeratorItems);

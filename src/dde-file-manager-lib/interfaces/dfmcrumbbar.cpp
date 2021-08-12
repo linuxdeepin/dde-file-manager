@@ -594,8 +594,11 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
     }
 
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(window());
-    if (!wnd)
+    if (!wnd) {
+        menu->deleteLater();
+        menu = nullptr;
         return;
+    }
 
     bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
     menu->addAction(copyIcon, QObject::tr("Copy path"), [ = ]() {
