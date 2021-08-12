@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=com.deepin.filemanager.filedialog_wayland
+Exec=/usr/bin/dde-select-dialog-wayland
