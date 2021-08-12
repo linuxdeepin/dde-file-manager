@@ -177,7 +177,7 @@ void ConnectToServerDialog::initUI()
 
     m_addButton->setFixedSize(44, 44);
     m_delButton->setFixedSize(44, 44);
-    collectionLabel->setFixedSize(98, 20);
+    //collectionLabel->setFixedSize(98, 20);
 
     m_addButton->setIcon(QIcon::fromTheme("dfm_add_server"));
     m_addButton->setIconSize({44, 44});
