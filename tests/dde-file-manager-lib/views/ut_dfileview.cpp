@@ -59,23 +59,31 @@
 #include "dfmapplication.h"
 #include "dfmsettings.h"
 
-namespace  {
+namespace {
+    static DFileView *m_view;
+    static FileViewHelper *m_fileViewHelper;
     class DFileViewTest : public testing::Test
     {
-    public:        
-        virtual void SetUp() override
+    public:
+        static void SetUpTestCase()
         {
             m_view = new DFileView;
             m_fileViewHelper = m_view->fileViewHelper();
         }
-
-        virtual void TearDown() override
+        static void TearDownTestCase()
         {
             delete m_view;
             m_view = nullptr;
         }
-        DFileView *m_view;
-        FileViewHelper *m_fileViewHelper;
+        virtual void SetUp() override
+        {
+
+        }
+
+        virtual void TearDown() override
+        {
+
+        }
     };
     class SelectWorkTest : public testing::Test
     {
@@ -88,6 +96,7 @@ namespace  {
         virtual void TearDown() override
         {
             delete m_selectWork;
+            m_selectWork = nullptr;
         }
         SelectWork *m_selectWork;
     };
@@ -113,10 +122,14 @@ TEST_F(DFileViewTest,set_item_delegate)
 {
     ASSERT_NE(nullptr,m_view);
 
+    auto delegateOld = m_view->itemDelegate();
+
     DListItemDelegate delegate(m_fileViewHelper);
     m_view->setItemDelegate(&delegate);
     DFMStyledItemDelegate *result = m_view->itemDelegate();
     EXPECT_EQ(&delegate, result);
+
+    m_view->setItemDelegate(delegateOld);
 }
 
 TEST_F(DFileViewTest,get_status_bar)
@@ -171,6 +184,7 @@ TEST_F(DFileViewTest,get_selected_urls)
     m_view->select({});
     QList<DUrl> result = m_view->selectedUrls();
     EXPECT_FALSE(result.isEmpty());
+    stub.reset(DFileView_selectedIndexs);
 }
 
 TEST_F(DFileViewTest,get_icon_mode)
@@ -210,6 +224,7 @@ TEST_F(DFileViewTest,set_column_width)
     m_view->d_func()->headerView = nullptr;
     m_view->setColumnWidth(0, 100);
     EXPECT_FALSE(isCalled);
+    st.reset(ADDR(QHeaderView, resizeSection));
 }
 
 TEST_F(DFileViewTest,get_column_count)
@@ -383,6 +398,9 @@ TEST_F(DFileViewTest,get_index_at)
         stub.set(ADDR(QListView, spacing), ut_spacing);
         result = m_view->indexAt(point);
         EXPECT_FALSE(result.isValid());
+
+        stub.reset(DIconItemDelegate_hasWidgetIndexs);
+        stub.reset(ADDR(QListView, spacing));
     }
 
 //    point = QPoint(1, 1);
@@ -396,6 +414,8 @@ TEST_F(DFileViewTest,get_index_at)
         point = QPoint(100, 100);
         result = m_view->indexAt(point);
         EXPECT_FALSE(result.isValid());
+
+        stub.reset(ADDR(DFileViewPrivate, iconModeColumnCount));
     }
 
     {
@@ -404,6 +424,8 @@ TEST_F(DFileViewTest,get_index_at)
         stub.set((bool(QRect::*)(const QPoint &,bool )const )ADDR(QRect, contains), ut_contains);
         result = m_view->indexAt(point);
         EXPECT_FALSE(result.isValid());
+
+        stub.reset((bool(QRect::*)(const QPoint &,bool )const )ADDR(QRect, contains));
     }
 }
 
@@ -438,6 +460,10 @@ TEST_F(DFileViewTest,get_visual_rect)
     myColumnCount = 10;
     rect = m_view->visualRect(index);
     EXPECT_TRUE(rect.isValid());
+
+    stub.reset(ADDR(QModelIndex, column));
+    stub.reset(ADDR(QSize, width));
+    stub.reset(ADDR(DFileViewPrivate, iconModeColumnCount));
 }
 
 TEST_F(DFileViewTest,get_visible_indexes)
@@ -457,19 +483,23 @@ TEST_F(DFileViewTest,get_visible_indexes)
     static int myColumnCount = 0;
     int (*ut_iconModeColumnCount)() = [](){return myColumnCount;};
     stub.set(ADDR(DFileViewPrivate, iconModeColumnCount), ut_iconModeColumnCount);
-    result = m_view->visibleIndexes(rect);
-    EXPECT_TRUE(result.isEmpty());
+    DFileView::RandeIndexList result2 = m_view->visibleIndexes(rect);
+    EXPECT_TRUE(result2.isEmpty());
 
     myColumnCount = 10;
     static int myCount = 0;
     int (*ut_count)() = [](){return myCount;};
     stub.set(ADDR(DFileView, count), ut_count);
-    result = m_view->visibleIndexes(rect);
-    EXPECT_TRUE(result.isEmpty());
+    DFileView::RandeIndexList result3 = m_view->visibleIndexes(rect);
+    EXPECT_TRUE(result3.isEmpty());
 
     myCount = 100;
-    result = m_view->visibleIndexes(rect);
-    EXPECT_FALSE(result.isEmpty());
+    DFileView::RandeIndexList result4 = m_view->visibleIndexes(rect);
+    EXPECT_TRUE(result4.isEmpty());
+
+    stub.reset(ADDR(QSize, width));
+    stub.reset(ADDR(DFileViewPrivate, iconModeColumnCount));
+    stub.reset(ADDR(DFileView, count));
 }
 
 TEST_F(DFileViewTest,get_item_size)
@@ -598,21 +628,27 @@ TEST_F(DFileViewTest,tst_edit)
 
     m_view->switchViewMode(DFileView::IconMode);
     resutl = m_view->edit(index, trigger, &keyPressEvt_Tab);
+
+    stub.reset(ADDR(QUrl, isEmpty));
+    stub.reset(ADDR(DFileView, selectedIndexCount));
+    stub.reset(DFMStyledItemDelegate_fileNameRect);
 }
 
 TEST_F(DFileViewTest,get_select)
 {
     ASSERT_NE(nullptr,m_view);
 
-    stub_ext::StubExt st;
+    stub_ext::StubExt stub;
     bool isCalled = false;
-    st.set_lamda(ADDR(DFileView, clearSelection), [&isCalled](){isCalled = true;});
+    stub.set_lamda(ADDR(DFileView, clearSelection), [&isCalled](){isCalled = true;});
 
     DUrl url(QString("/test"));
     QList<DUrl> list;
     list << url;
     m_view->select(list);
     EXPECT_TRUE(isCalled);
+
+    stub.reset(ADDR(DFileView, clearSelection));
 }
 
 TEST_F(DFileViewTest,select_cut_copy)
@@ -632,6 +668,9 @@ TEST_F(DFileViewTest,select_cut_copy)
     list << url;
     m_view->selectAllAfterCutOrCopy(list);
     EXPECT_TRUE(isCalled);
+
+    stub.reset(ADDR(SelectWork, startWork));
+    stub.reset(ADDR(DFileView, clearSelection));
 }
 
 TEST_F(DFileViewTest,slot_set_select)
@@ -690,6 +729,9 @@ TEST_F(DFileViewTest,set_default_viewMode)
     myVariant = QVariant("test");
     m_view->setDefaultViewMode(mode);
     EXPECT_EQ(mode, m_view->d_func()->defaultViewMode);
+
+    stub.reset(ADDR(QUrl, isValid));
+    stub.reset(ADDR(DFileViewPrivate, fileViewStateValue));
 }
 
 TEST_F(DFileViewTest,set_view_mode)
@@ -717,6 +759,8 @@ TEST_F(DFileViewTest,sort_by_role)
     isCalled = false;
     m_view->sortByRole(1, Qt::DescendingOrder);
     EXPECT_TRUE(isCalled);
+
+    stub.reset((bool(DFileSystemModel::*)())ADDR(DFileSystemModel, sort));
 }
 
 TEST_F(DFileViewTest,set_name_filters)
@@ -754,6 +798,8 @@ TEST_F(DFileViewTest,set_advance_search_filter)
     bool turnOn = true;
     m_view->setAdvanceSearchFilter(formData, turnOn);
     EXPECT_TRUE(mySet);
+
+    stub.reset(ADDR(DFileSystemModel, setAdvanceSearchFilter));
 }
 
 TEST_F(DFileViewTest,clear_heard_view)
@@ -769,12 +815,14 @@ TEST_F(DFileViewTest,clear_selection)
 {
     ASSERT_NE(nullptr,m_view);
 
-    stub_ext::StubExt st;
+    stub_ext::StubExt stub;
     bool isCalled = false;
-    st.set_lamda(ADDR(QListView, clearSelection), [&isCalled](){isCalled = true;});
+    stub.set_lamda(ADDR(QListView, clearSelection), [&isCalled](){isCalled = true;});
 
     m_view->clearSelection();
     EXPECT_TRUE(isCalled);
+
+    stub.reset(ADDR(QListView, clearSelection));
 }
 
 TEST_F(DFileViewTest,set_content_label)
@@ -803,6 +851,9 @@ TEST_F(DFileViewTest,set_menuAction_whitelist)
     m_view->setMenuActionWhitelist(actionList);
     EXPECT_TRUE(m_view->d_func()->menuWhitelist.isEmpty());
     EXPECT_TRUE(mySet);
+
+    stub.reset(ADDR(QWidget, focusWidget));
+    stub.reset(ADDR(DFileMenuManager, setActionWhitelist));
 }
 TEST_F(DFileViewTest,set_menuAction_blacklist)
 {
@@ -820,6 +871,9 @@ TEST_F(DFileViewTest,set_menuAction_blacklist)
     QSet<MenuAction> actionList;
     m_view->setMenuActionBlacklist(actionList);
     EXPECT_TRUE(m_view->d_func()->menuWhitelist.isEmpty());
+
+    stub.reset(ADDR(QWidget, focusWidget));
+    stub.reset(ADDR(DFileMenuManager, setActionBlacklist));
 }
 
 TEST_F(DFileViewTest,delay_update_statusbar)
@@ -842,6 +896,8 @@ TEST_F(DFileViewTest,delay_update_statusbar)
     isBusy = false;
     m_view->delayUpdateStatusBar();
     EXPECT_TRUE(m_view->d_func()->updateStatusBarTimer->isActive());
+
+    stub.reset((bool(DFileService::*)(const DUrl&, const bool))ADDR(DFileService, checkGvfsMountfileBusy));
 }
 
 TEST_F(DFileViewTest,update_status_bar)
@@ -896,6 +952,13 @@ TEST_F(DFileViewTest,update_status_bar)
     myCount = 1;
     m_view->updateStatusBar();
     EXPECT_TRUE(isNotifyChanged);
+
+    stub.reset(ADDR(DFileView, notifySelectUrlChanged));
+    stub.reset(ADDR(DFileSystemModel, state));
+    stub.reset(ADDR(QScroller, hasScroller));
+    stub.reset(ADDR(DFileView, selectedUrls));
+    stub.reset((bool(DFileService::*)(const DUrl&, const bool))ADDR(DFileService, checkGvfsMountfileBusy));
+    stub.reset(ADDR(DFileView, selectedIndexCount));
 }
 
 TEST_F(DFileViewTest,open_index_openAction)
@@ -909,6 +972,9 @@ TEST_F(DFileViewTest,open_index_openAction)
     int action = 0;
     QModelIndex index;
     m_view->openIndexByOpenAction(action, index);
+
+
+    stub.reset(ADDR(DFMApplication, appAttribute));
 }
 
 TEST_F(DFileViewTest,set_icon_size_index)
@@ -953,6 +1019,12 @@ TEST_F(DFileViewTest,set_root_url)
     m_view->switchViewMode(DFileView::ListMode);
     result = m_view->setRootUrl(url);
     EXPECT_FALSE(result);
+
+
+    stub.reset(ADDR(QUrl, scheme));
+    stub.reset(ADDR(QStringList, isEmpty));
+    stub.reset(MasteredMediaFileInfo_canRedirectionFileUrl);
+    stub.reset(ADDR(DUrl, burnDestDevice));
 }
 
 TEST_F(DFileViewTest,display_action_triggered)
@@ -1000,31 +1072,39 @@ TEST_F(DFileViewTest,sort_action_triggerred)
 
     m_view->sortByActionTriggered(&action);
     EXPECT_TRUE(mySort);
+
+
+    stub.reset(ADDR(QActionGroup, actions));
+    stub.reset(ADDR(DFileView, sortByRole));
 }
 
 TEST_F(DFileViewTest,open_action_triggered)
 {
     ASSERT_NE(nullptr,m_view);
 
-    stub_ext::StubExt st;
+    stub_ext::StubExt stub;
     bool isCallOpen = false;
-    st.set_lamda(ADDR(DFileService, openFileByApp), [&isCallOpen](){return isCallOpen=true;});
+    stub.set_lamda(ADDR(DFileService, openFileByApp), [&isCallOpen](){return isCallOpen=true;});
 
     QAction action;
     m_view->openWithActionTriggered(&action);
     EXPECT_TRUE(isCallOpen);
+
+    stub.reset(ADDR(DFileService, openFileByApp));
 }
 
 TEST_F(DFileViewTest,row_count_changed)
 {
     ASSERT_NE(nullptr,m_view);
 
-    stub_ext::StubExt st;
+    stub_ext::StubExt stub;
     bool isCallUpdate = false;
-    st.set_lamda(ADDR(DFileView, updateModelActiveIndex), [&isCallUpdate](){isCallUpdate = true;});
+    stub.set_lamda(ADDR(DFileView, updateModelActiveIndex), [&isCallUpdate](){isCallUpdate = true;});
 
     m_view->onRowCountChanged();
     EXPECT_TRUE(isCallUpdate);
+
+    stub.reset(ADDR(DFileView, updateModelActiveIndex));
 }
 
 TEST_F(DFileViewTest,update_model_index)
@@ -1051,31 +1131,37 @@ TEST_F(DFileViewTest,handle_data_changed)
     QModelIndex topLeft,bottomRight;
     m_view->handleDataChanged(topLeft, bottomRight);
     EXPECT_TRUE(isCalledChanged);
+
+    stub.reset(QListView_dataChanged);
 }
 
 TEST_F(DFileViewTest,root_url_deleted)
 {
     ASSERT_NE(nullptr,m_view);
 
-    stub_ext::StubExt st;
+    stub_ext::StubExt stub;
     bool isCalledCdTo = false;
-    st.set_lamda(ADDR(DFMBaseView, requestCdTo), [&isCalledCdTo](){isCalledCdTo = true;});
+    stub.set_lamda(ADDR(DFMBaseView, requestCdTo), [&isCalledCdTo](){isCalledCdTo = true;});
 
     DUrl url;
     m_view->onRootUrlDeleted(url);
     EXPECT_TRUE(isCalledCdTo);
+
+    stub.reset(ADDR(DFMBaseView, requestCdTo));
 }
 
 TEST_F(DFileViewTest,fresh_view)
 {
     ASSERT_NE(nullptr,m_view);
 
-    stub_ext::StubExt st;
+    stub_ext::StubExt stub;
     bool isCalledRefresh = false;
-    st.set_lamda(ADDR(DFileSystemModel, refresh), [&isCalledRefresh](){isCalledRefresh = true;});
+    stub.set_lamda(ADDR(DFileSystemModel, refresh), [&isCalledRefresh](){isCalledRefresh = true;});
 
     m_view->freshView();
     EXPECT_TRUE(isCalledRefresh);
+
+    stub.reset(ADDR(DFileSystemModel, refresh));
 }
 
 TEST_F(DFileViewTest,load_view_state)
@@ -1087,12 +1173,14 @@ TEST_F(DFileViewTest,load_view_state)
     DUrl url(path);
     m_view->setRootUrl(url);
 
-    stub_ext::StubExt st;
+    stub_ext::StubExt stub;
     bool isCalledSwitchMode = false;
-    st.set_lamda(ADDR(DFileView, switchViewMode), [&isCalledSwitchMode](){isCalledSwitchMode = true;});
+    stub.set_lamda(ADDR(DFileView, switchViewMode), [&isCalledSwitchMode](){isCalledSwitchMode = true;});
 
     m_view->loadViewState(url);
     EXPECT_TRUE(isCalledSwitchMode);
+
+    stub.reset(ADDR(DFileView, switchViewMode));
 }
 
 TEST_F(DFileViewTest,save_view_state)
@@ -1115,6 +1203,8 @@ TEST_F(DFileViewTest,sort_indicator_changed)
     Qt::SortOrder order = Qt::DescendingOrder;
     m_view->onSortIndicatorChanged(logicalIndex, order);
     EXPECT_TRUE(isCalled);
+
+    stub.reset((bool(DFileSystemModel::*)())ADDR(DFileSystemModel, sort));
 }
 
 TEST_F(DFileViewTest,drive_optical_changed)
@@ -1129,33 +1219,37 @@ TEST_F(DFileViewTest,re_set)
 {
     ASSERT_NE(nullptr,m_view);
 
-    stub_ext::StubExt st;
+    stub_ext::StubExt stub;
     bool isCalledReset = false;
 
     typedef void (*fptr)(QListView*);
     fptr QListView_reset = (fptr)(&QListView::reset);
 
-    st.set_lamda(QListView_reset, [&isCalledReset](){isCalledReset = true;});
+    stub.set_lamda(QListView_reset, [&isCalledReset](){isCalledReset = true;});
 
     m_view->reset();
     EXPECT_TRUE(isCalledReset);
+
+    stub.reset(QListView_reset);
 }
 
 TEST_F(DFileViewTest,set_root_index)
 {
     ASSERT_NE(nullptr,m_view);
 
-    stub_ext::StubExt st;
+    stub_ext::StubExt stub;
     bool isCalledSet = false;
 
     typedef void (*fptr)(QListView*, const QModelIndex&);
     fptr QListView_setRootIndex = (fptr)(&QListView::setRootIndex);
 
-    st.set_lamda(QListView_setRootIndex, [&isCalledSet](){isCalledSet = true;});
+    stub.set_lamda(QListView_setRootIndex, [&isCalledSet](){isCalledSet = true;});
 
     QModelIndex index;
     m_view->setRootIndex(index);
     EXPECT_TRUE(isCalledSet);
+
+    stub.reset(QListView_setRootIndex);
 }
 
 TEST_F(DFileViewTest,tst_wheel_event)
@@ -1181,6 +1275,8 @@ TEST_F(DFileViewTest,tst_wheel_event)
 
     QWheelEvent event4(QPointF(0,0), 1, Qt::MiddleButton, Qt::NoModifier);
     m_view->wheelEvent(&event4);
+
+    stub.reset(ADDR(DFMGlobal, keyCtrlIsPressed));
 }
 
 TEST_F(DFileViewTest,tst_keyPress_event)
@@ -1243,17 +1339,19 @@ TEST_F(DFileViewTest,tst_keyPress_event)
     m_view->keyPressEvent(&keyPressEvt_AHome);
     QKeyEvent keyPressEvt_AA(QEvent::KeyPress, Qt::Key_A, Qt::AltModifier);
     m_view->keyPressEvent(&keyPressEvt_AA);
+
+    stub.reset(ADDR(AppController, actionNewFolder));
 }
 
 TEST_F(DFileViewTest,tst_show_event)
 {
-    Stub stl;
+    Stub stub;
     typedef int(*fptr)(QDialog*);
     fptr pQDialogExec = (fptr)(&QDialog::exec);
     fptr pDDialogExec = (fptr)(&DDialog::exec);
     int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Accepted;};
-    stl.set(pQDialogExec, stub_DDialog_exec);
-    stl.set(pDDialogExec, stub_DDialog_exec);
+    stub.set(pQDialogExec, stub_DDialog_exec);
+    stub.set(pDDialogExec, stub_DDialog_exec);
 
     ASSERT_NE(nullptr,m_view);
 
@@ -1261,6 +1359,9 @@ TEST_F(DFileViewTest,tst_show_event)
     ASSERT_TRUE(QTest::qWaitForWindowExposed(m_view));
     EXPECT_FALSE(m_view->isHidden());
     m_view->hide();
+
+    stub.reset(pQDialogExec);
+    stub.reset(pDDialogExec);
 }
 
 TEST_F(DFileViewTest,mouse_press_event)
@@ -1309,6 +1410,11 @@ TEST_F(DFileViewTest,mouse_press_event)
 
     QMouseEvent event7(QEvent::MouseButtonPress, pos, Qt::MidButton, Qt::MidButton, Qt::NoModifier);
     m_view->mousePressEvent(&event7);
+
+    stub.reset(ADDR(DFileViewHelper, isEmptyArea));
+    stub.reset(ADDR(DFMGlobal, keyCtrlIsPressed));
+    stub.reset(ADDR(QItemSelectionModel, isSelected));
+    stub.reset(ADDR(DFMGlobal, keyShiftIsPressed));
 }
 
 TEST_F(DFileViewTest,mouse_move_event)
@@ -1341,6 +1447,9 @@ TEST_F(DFileViewTest,mouse_release_event)
     m_view->mouseReleaseEvent(&event);
 
     EXPECT_TRUE(m_view->d_func()->dragMoveHoverIndex.isValid());
+
+    stub.reset(ADDR(QModelIndex, isValid));
+    stub.reset(ADDR(DFMGlobal, keyCtrlIsPressed));
 }
 
 TEST_F(DFileViewTest,focus_in_event)
@@ -1399,6 +1508,12 @@ TEST_F(DFileViewTest,context_menu_event)
 
     myBusy = false;
     m_view->contextMenuEvent(&event);
+
+    stub.reset(ADDR(QModelIndex, isValid));
+    stub.reset(ADDR(DFileViewHelper, isEmptyArea));
+    stub.reset(ADDR(DFileView, showEmptyAreaMenu));
+    stub.reset(ADDR(DFileView, showNormalMenu));
+    stub.reset((bool(DFileService::*)(const DUrl&, const bool))ADDR(DFileService, checkGvfsMountfileBusy));
 }
 
 TEST_F(DFileViewTest,drag_enter_event)
@@ -1428,6 +1543,9 @@ TEST_F(DFileViewTest,drag_enter_event)
 
     m_view->m_urlsForDragEvent.clear();
     m_view->dragEnterEvent(&event);
+
+    stub.reset(ADDR(DFileDragClient, checkMimeData));
+    stub.reset(ADDR(DFileView, fetchDragEventUrlsFromSharedMemory));
 }
 
 TEST_F(DFileViewTest,drag_move_event)
@@ -1443,6 +1561,8 @@ TEST_F(DFileViewTest,drag_move_event)
     QMimeData data;
     QDragMoveEvent event(pos, Qt::CopyAction, &data, Qt::LeftButton, Qt::NoModifier);
     m_view->dragMoveEvent(&event);
+
+    stub.reset(ADDR(QModelIndex, isValid));
 }
 
 TEST_F(DFileViewTest,drag_leave_event)
@@ -1474,6 +1594,8 @@ TEST_F(DFileViewTest,tst_drop_event)
     data.setProperty("IsDirectSaveMode", true);
     QDropEvent event2(pos, Qt::CopyAction, &data, Qt::LeftButton, Qt::NoModifier);
     m_view->dropEvent(&event2);
+
+    stub.reset(ADDR(DFileDragClient, checkMimeData));
 }
 
 TEST_F(DFileViewTest,set_selection)
@@ -1503,6 +1625,9 @@ TEST_F(DFileViewTest,set_selection)
 
     m_view->switchViewMode(DFileView::ListMode);
     m_view->setSelection(rect, flags);
+
+    stub.reset(ADDR(DFMGlobal, keyShiftIsPressed));
+    stub.reset(ADDR(QModelIndex, isValid));
 }
 
 TEST_F(DFileViewTest,move_cursor)
@@ -1560,6 +1685,11 @@ TEST_F(DFileViewTest,move_cursor)
     cursorAction = QAbstractItemView::MoveUp;
     index = m_view->moveCursor(cursorAction, modifiers);
     EXPECT_TRUE(index.isValid());
+
+    stub.reset(ADDR(QModelIndex, isValid));
+    stub.reset(ADDR(QRect, isEmpty));
+    stub.reset(ADDR(QModelIndex, flags));
+    stub.reset(ADDR(DFMGlobal, keyShiftIsPressed));
 }
 
 TEST_F(DFileViewTest,rows_about_removed)
@@ -1782,6 +1912,9 @@ TEST_F(DFileViewTest,show_emptyare_menu)
     Qt::ItemFlags indexFlags = Qt::NoItemFlags;
     m_view->showEmptyAreaMenu(indexFlags);
     EXPECT_TRUE(myCall);
+
+    stub.reset((QAction*(DFileMenu::*)())ADDR(DFileMenu, exec));
+    stub.reset(DAbstractFileInof_subMenuActionList);
 }
 #endif
 TEST_F(DFileViewTest,show_normal_menu)
@@ -1806,6 +1939,9 @@ TEST_F(DFileViewTest,show_normal_menu)
     stub.set(ADDR(QModelIndex, isValid), ut_isValid);
 
     m_view->showNormalMenu(index, indexFlags);
+
+    stub.reset((QAction*(DFileMenu::*)())ADDR(DFileMenu, exec));
+    stub.reset(ADDR(QModelIndex, isValid));
 }
 
 TEST_F(DFileViewTest,update_extenheader_viewproperty)
@@ -1825,6 +1961,8 @@ TEST_F(DFileViewTest,update_extenheader_viewproperty)
     m_view->d_func()->allowedAdjustColumnSize = false;
     m_view->updateExtendHeaderViewProperty();
     EXPECT_TRUE(myCall);
+
+    stub.reset((void(QHeaderView::*)(int, QHeaderView::ResizeMode))ADDR(QHeaderView, setSectionResizeMode));
 }
 
 TEST_F(DFileViewTest,update_column_width)
@@ -1860,6 +1998,11 @@ TEST_F(DFileViewTest,update_column_width)
     myHidden = false;
     m_view->updateColumnWidth();
     EXPECT_TRUE(mySection);
+
+    stub.reset(ADDR(QHeaderView, count));
+    stub.reset(ADDR(QHeaderView, isSectionHidden));
+    stub.reset(ADDR(QHeaderView, resizeSection));
+    stub.reset(ADDR(DFileSystemModel, columnWidthByRole));
 }
 
 TEST_F(DFileViewTest,popup_header_view_contextmenu)
@@ -1913,6 +2056,12 @@ TEST_F(DFileViewTest,popup_header_view_contextmenu)
     myList.clear();
     m_view->popupHeaderViewContextMenu(pos);
     EXPECT_TRUE(myCallExec);
+
+    stub.reset((QAction*(DFileMenu::*)(const QPoint&, QAction*))ADDR(DFileMenu, exec));
+    stub.reset(ADDR(DAbstractFileInfo, columnIsCompact));
+    stub.reset(DAbstractFileInfo_userColumnChildRoles);
+    stub.reset(ADDR(QHeaderView, isSectionHidden));
+    stub.reset(ADDR(DFileSystemModel, sortRole));
 }
 
 TEST_F(DFileViewTest,on_model_statechanged)
@@ -1938,6 +2087,8 @@ TEST_F(DFileViewTest,on_model_statechanged)
     m_view->d_func()->preSelectionUrls.append(DUrl("/home"));
     m_view->onModelStateChanged(state);
     EXPECT_TRUE(myCallChanged);
+
+    stub.reset(ADDR(DFMBaseView, notifyStateChanged));
 }
 
 TEST_F(DFileViewTest,update_content_label)
@@ -1996,6 +2147,9 @@ TEST_F(DFileViewTest,fetch_drag_memory)
     myAttach = true;
     result = m_view->fetchDragEventUrlsFromSharedMemory();
     EXPECT_TRUE(result);
+
+    stub.reset(ADDR(QSharedMemory, isAttached));
+    stub.reset(ADDR(QSharedMemory, attach));
 }
 
 TEST_F(SelectWorkTest,set_init_data)
@@ -2015,6 +2169,9 @@ TEST_F(SelectWorkTest,set_init_data)
     m_selectWork->setInitData(lst, nullptr);
     EXPECT_EQ(m_selectWork->m_lstNoValid, lst);
     EXPECT_EQ(m_selectWork->m_pModel, nullptr);
+
+    stub.reset(ADDR(VaultController, isVaultFile));
+    stub.reset(ADDR(VaultController, localToVault));
 }
 
 TEST_F(SelectWorkTest,start_work)
@@ -2029,6 +2186,8 @@ TEST_F(SelectWorkTest,start_work)
     m_selectWork->startWork();
     EXPECT_TRUE(myCallStart);
     EXPECT_FALSE(m_selectWork->m_bStop);
+
+    stub.reset(ADDR(QThread, start));
 }
 
 TEST_F(SelectWorkTest,stop_work)
@@ -2069,4 +2228,7 @@ TEST_F(SelectWorkTest,tst_run)
     myUpdate = false;
     m_selectWork->run();
     EXPECT_FALSE(myUpdate);
+
+    stub.reset(ADDR(DFileSystemModel, update));
+    stub.reset(ADDR(QModelIndex, isValid));
 }
