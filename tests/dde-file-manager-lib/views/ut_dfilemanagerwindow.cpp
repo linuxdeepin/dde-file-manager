@@ -36,24 +36,30 @@
 #include <QDesktopWidget>
 #include "stub.h"
 
-DFM_USE_NAMESPACE
-DCORE_USE_NAMESPACE
+DFM_USE_NAMESPACE DCORE_USE_NAMESPACE
+
 
 namespace  {
+    static DFileManagerWindow *m_fileManagerWindow;
     class TestFileManagerWindow : public testing::Test
     {
     public:
-        DFileManagerWindow *m_fileManagerWindow;
-        virtual void SetUp() override
+        static void SetUpTestCase()
         {
             m_fileManagerWindow = new DFileManagerWindow(DUrl(COMPUTER_ROOT));
             m_fileManagerWindow->openNewTab(DUrl(DFMMD_ROOT));
         }
-
-        virtual void TearDown() override
+        static void TearDownTestCase()
         {
             delete m_fileManagerWindow;
             m_fileManagerWindow = nullptr;
+        }
+        virtual void SetUp() override
+        {
+        }
+
+        virtual void TearDown() override
+        {
         }
     };
 }
