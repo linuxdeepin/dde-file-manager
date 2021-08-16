@@ -110,6 +110,15 @@ void DFSearch::stop()
     state = false;
 }
 
+bool DFSearch::isSupportFSearch(const QString &path)
+{
+    if (path.isEmpty())
+        return false;
+
+    QByteArray searchPath = path.toLocal8Bit();
+    return db_support(searchPath.data(), path.startsWith("/data"));
+}
+
 void DFSearch::fsearch_application_window_update_results(void *data, void *sender)
 {
 //    g_idle_add (update_model_cb, data);

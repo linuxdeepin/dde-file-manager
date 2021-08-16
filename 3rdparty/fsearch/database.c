@@ -32,6 +32,7 @@
 #include <assert.h>
 #include <glib/gstdio.h>
 #include <fnmatch.h>
+#include <regex.h>
 
 #include "database.h"
 #include "fsearch_config.h"
@@ -397,10 +398,15 @@ db_location_walk_tree_recursive (DatabaseLocation *location,
                                  void (*callback)(const char *),
                                  BTreeNode *parent,
                                  int spec,
-                                 bool *state)
+                                 bool *state,
+                                 bool is_data_prefix)
 {
     if (!(*state))
         return WALK_OK;
+
+    if (!db_support(dname, is_data_prefix)) {
+        return WALK_BADPATTERN;
+    }
 
     int len = strlen (dname);
     if (len >= FILENAME_MAX - 1) {
@@ -442,6 +448,7 @@ db_location_walk_tree_recursive (DatabaseLocation *location,
 
         struct stat st;
         strncpy (fn + len, dent->d_name, FILENAME_MAX - len);
+
         if (lstat (fn, &st) == -1) {
             //warn("Can't stat %s", fn);
             continue;
@@ -469,7 +476,8 @@ db_location_walk_tree_recursive (DatabaseLocation *location,
                                              callback,
                                              node,
                                              spec,
-                                             state);
+                                             state,
+                                             is_data_prefix);
 
         }
     }
@@ -501,6 +509,7 @@ db_location_build_tree (const char *dname, FsearchConfig *cfg, bool *state, void
     }
     GTimer *timer = g_timer_new ();
     g_timer_start (timer);
+    bool is_data_prefix = strncmp("/data", dname, strlen("/data")) == 0;
     uint32_t res = db_location_walk_tree_recursive (location,
                                                     config->exclude_locations,
                                                     config->exclude_files,
@@ -509,7 +518,8 @@ db_location_build_tree (const char *dname, FsearchConfig *cfg, bool *state, void
                                                     callback,
                                                     root,
                                                     spec,
-                                                    state);
+                                                    state,
+                                                    is_data_prefix);
     g_timer_destroy (timer);
     if (res == WALK_OK) {
         return location;
@@ -987,3 +997,22 @@ db_clear (Database *db)
     return true;
 }
 
+bool
+db_support(const char *search_path, bool is_data_prefix)
+{
+    if (is_data_prefix)
+        return true;
+
+    regex_t reg;
+    regmatch_t pmatch[1];
+    const char *pattern = "^((/boot)|(/dev)|(/proc)|(/sys)|(/root)|(/run)|(/data)).*$";
+
+    regcomp(&reg, pattern, REG_EXTENDED);
+    if (regexec(&reg, search_path, 1, pmatch, 0) == 0) {
+        regfree(&reg);
+        return false;
+    }
+
+    regfree(&reg);
+    return true;
+}
