@@ -391,18 +391,6 @@ QString printList(BTreeNode *pNode)
         }
     }
 
-    // 防止后续pathList越界，先判断
-    QStringList pathList = fullPath.split('/');
-    if (pathList.isEmpty() || pathList.size() < 2) {
-        return "";
-    }
-    QString t_prefix = pathList.at(1);
-
-    if (t_prefix == "boot" || t_prefix == "dev" || t_prefix == "proc" || t_prefix == "sys"
-            || t_prefix == "root" || t_prefix == "run") {
-        return "";
-    }
-
     return fullPath;
 }
 
@@ -1975,6 +1963,9 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 
 #ifdef DISABLE_QUICK_SEARCH
     const QString pathForSearching = iterator->url().toLocalFile();
+    if (!DFSearch::isSupportFSearch(pathForSearching))
+        return false;
+
     if (iterator)
         delete iterator;
 

@@ -526,29 +526,9 @@ bool SearchDiriterator::hasNext() const
                     m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(m_fileUrl.searchKeyword());
             } else
 #endif
-#ifdef DISABLE_QUICK_SEARCH
-                if (url.isLocalFile()) { // 针对本地文件, 先判断此目录是否是索引数据的子目录, 可以依此过滤掉很多目录, 减少对anything dbus接口的调用
-                    const QString &file = url.toLocalFile().append("/");
-
-                    for (const QString &path : hasLFTSubdirectories) {
-                        if (path == "/") {
-                            m_hasIteratorByKeywordOfCurrentIt = true;
-                            break;
-                        }
-
-                        if (file.startsWith(path + "/")) {
-                            m_hasIteratorByKeywordOfCurrentIt = true;
-                            break;
-                        }
-                    }
-
-                    if (m_hasIteratorByKeywordOfCurrentIt)
-                        m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(m_fileUrl.searchKeyword());
-                } else
-#endif
-                {
-                    m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(m_fileUrl.searchKeyword());
-                }
+            {
+                m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(m_fileUrl.searchKeyword());
+            }
         }
 
         while (it->hasNext()) {

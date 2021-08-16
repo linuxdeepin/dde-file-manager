@@ -97,3 +97,6 @@ db_sort(Database *db);
 
 bool
 db_clear(Database *db);
+
+bool
+db_support(const char *search_path, bool is_data_prefix);

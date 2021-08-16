@@ -43,6 +43,8 @@ public:
 
     void stop();
 
+    static bool isSupportFSearch(const QString &path);
+
 private:
     static void fsearch_application_window_update_results(void *data, void *sender);
 
