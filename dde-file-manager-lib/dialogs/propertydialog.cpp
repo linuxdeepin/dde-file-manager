@@ -969,6 +969,16 @@ void PropertyDialog::resizeEvent(QResizeEvent *event)
     DDialog::resizeEvent(event);
 }
 
+void PropertyDialog::showEvent(QShowEvent *event)
+{
+    DDialog::showEvent(event);
+
+    //展示时须设置弹窗尺寸，防止最小化后再次展示时窗口大小异常
+    QRect rc = geometry();
+    rc.setHeight(contentHeight() + ArrowLineExpand_SPACING * 2);
+    setGeometry(rc);
+}
+
 const QList<DDrawer *> &PropertyDialog::expandGroup() const
 {
     return m_expandGroup;
