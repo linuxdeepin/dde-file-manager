@@ -117,8 +117,8 @@ void onClipboardDataChanged()
     clipbordFileinode.clear();
 
     const QMimeData *mimedata = qApp->clipboard()->mimeData();
-    if (!mimedata) {
-        qWarning() << "the clipboard mimedata is invalid!";
+    if (!mimedata || mimedata->formats().isEmpty()) {
+        qWarning() << "the clipboard mimedata is invalid or formates is NULL!";
         return;
     }
 
