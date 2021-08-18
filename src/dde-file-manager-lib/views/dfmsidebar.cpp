@@ -114,9 +114,11 @@ void DFMSideBar::scrollToGroup(const QString &groupName)
     m_sidebarView->scrollTo(groupModelIndex(groupName));
 }
 
-void DFMSideBar::setCurrentUrl(const DUrl &url)
+void DFMSideBar::setCurrentUrl(const DUrl &url, bool changeUrl)
 {
-    int index = findItem(url, true);
+    QMutexLocker lk(&m_currentUrlMutex);
+    m_currentUrl = changeUrl ? url : m_currentUrl;
+    int index = findItem(m_currentUrl, true);
     if (index != -1) {
         m_sidebarView->setCurrentIndex(m_sidebarModel->index(index, 0));
         m_sidebarView->updateItemUniqueKey(m_sidebarView->currentIndex());
@@ -718,6 +720,9 @@ void DFMSideBar::initDeviceConnection()
                 this->insertItem(this->findLastItem(this->groupName(Device)) - (devitems.end() - r) + 1, DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
                 devitems.insert(r, url);
             }
+            //还原url
+            if (m_currentUrl == fi->redirectedFileUrl())
+                setCurrentUrl(m_currentUrl, false);
         }
     });
     connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [this](const DUrl & url) {
