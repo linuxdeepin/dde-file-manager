@@ -7,8 +7,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-need -fPIE")
 
-# 定义可执行程序名称
-set(BIN_NAME test-file-manager)
+# 工程名称
+project(test-file-manager)
 
 # 依赖包
 find_package(PkgConfig REQUIRED)
@@ -50,14 +50,15 @@ set(SRCS
     ${CPP_STUB_SRC}
 )
 
-add_executable(${BIN_NAME} ${SRCS})
-target_include_directories(${BIN_NAME} PUBLIC
+add_executable(${PROJECT_NAME} ${SRCS})
+
+target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_SOURCE_DIR}/include
     ${DtkWidget_INCLUDE_DIRS}
     ${DtkGUI_INCLUDE_DIRS}
 )
 
-target_link_libraries(${BIN_NAME} PRIVATE
+target_link_libraries(${PROJECT_NAME} PRIVATE
     ${Qt_LIBS}
     ${DtkWidget_LIBRARIES}
     ${DtkGUI_LIBRARIES}

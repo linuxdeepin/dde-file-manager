@@ -1,4 +1,125 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-# 定义可执行程序名称
-set(BIN_NAME test-dfm-framework)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-need -fPIE")
+
+# 工程名称
+project(test-dfm-framework)
+
+# 依赖包
+find_package(PkgConfig REQUIRED)
+find_package(DtkWidget REQUIRED)
+find_package(DtkGui REQUIRED)
+find_package(DtkCMake REQUIRED)
+find_package(Qt5 COMPONENTS
+    Core
+    Gui
+    Widgets
+    Concurrent
+    DBus
+    Network
+    REQUIRED)
+
+set(Qt_LIBS
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+    Qt5::DBus
+    Qt5::Concurrent
+    Qt5::Network
+    )
+
+set(PROJECT_SRC_PATH "${PROJECT_SOURCE_PATH}/apps/dde-file-manager")
+include_directories(${PROJECT_SRC_PATH})
+
+# UT文件
+file(GLOB_RECURSE UT_CXX_FILE
+    FILES_MATCHING PATTERN "*.cpp") #public dir
+
+# 源工程文件
+set(SRC_DIR ${CMAKE_SOURCE_DIR}/../src/dfm-framework)
+include_directories(${SRC_DIR}) #include source dir
+
+# 源文件
+set(definitions ${SRC_DIR}/definitions)
+set(lifecycle ${SRC_DIR}/lifecycle)
+set(listener ${SRC_DIR}/listener)
+set(service ${SRC_DIR}/service)
+set(event ${SRC_DIR}/event)
+set(abus ${SRC_DIR}/abus)
+set(log ${SRC_DIR}/log)
+
+set(${PROJECT_NAME}_cxx_private_h
+    ${lifecycle}/private/pluginmanager_p.h
+    ${abus}/private/appbus_p.h
+    ${event}/private/event_p.h
+    )
+
+set(${PROJECT_NAME}_cxx_private_cpp
+    ${lifecycle}/private/pluginmanager_p.cpp
+    ${abus}/private/appbus_p.cpp
+    ${event}/private/event_p.h
+    )
+
+set(${PROJECT_NAME}_cxx_public_h
+    ${definitions}/globaldefinitions.h
+    ${event}/event.h
+    ${event}/eventcallproxy.h
+    ${log}/frameworklog.h
+    ${service}/pluginserviceglobal.h
+    ${service}/pluginservice.h
+    ${lifecycle}/pluginsetting.h
+    ${lifecycle}/pluginmetaobject.h
+    ${lifecycle}/plugincontext.h
+    ${lifecycle}/plugin.h
+    ${lifecycle}/pluginmanager.h
+    ${abus}/appbus.h
+    )
+
+set(${PROJECT_NAME}_cxx_public_cpp
+    ${event}/event.cpp
+    ${event}/eventcallproxy.cpp
+    ${service}/pluginserviceglobal.cpp
+    ${log}/frameworklog.cpp
+    ${lifecycle}/pluginsetting.cpp
+    ${lifecycle}/pluginmetaobject.cpp
+    ${lifecycle}/plugincontext.cpp
+    ${lifecycle}/plugin.cpp
+    ${lifecycle}/pluginmanager.cpp
+    ${abus}/appbus.cpp
+    )
+
+
+set(SRC_CXX_FILE
+    ${${PROJECT_NAME}_cxx_private_h}
+    ${${PROJECT_NAME}_cxx_private_cpp}
+    ${${PROJECT_NAME}_cxx_public_h}
+    ${${PROJECT_NAME}_cxx_public_cpp}
+    )
+
+message(SRC_CXX_FILE ${SRC_CXX_FILE})
+
+add_executable(${PROJECT_NAME}
+    ${UT_CXX_FILE}
+    ${SRC_CXX_FILE}
+    ${SRC_CXX_PRI_FILE}
+    ${CPP_STUB_SRC})
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${CMAKE_SOURCE_DIR}/include
+    ${DtkWidget_INCLUDE_DIRS}
+    ${DtkGUI_INCLUDE_DIRS}
+    )
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    ${Qt_LIBS}
+    ${DtkWidget_LIBRARIES}
+    ${DtkGUI_LIBRARIES}
+    ${GTEST_LIBRARIES}
+    ${Qt5Test_LIBRARIES}
+    pthread
+    stdc++fs
+    )

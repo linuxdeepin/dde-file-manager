@@ -2,6 +2,27 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(filemanager)
 
+# Setup install paths
+#   /usr/bin/dde-file-manager
+#       execute bin file
+#   /usr/lib/x86_64-linux-gnu/dde-file-manager
+#       dir plugins && dir tools abv thumbnail
+#   /usr/include/dde-file-manager
+#       public *.h && private dir *.h
+#   /usr/share/dde-file-manager
+#       subdir"database  mimetypeassociations  mimetypes  templates  translations"
+set(LIBRARY_INSTALL_PREFIX "/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}")
+#set(ARCHIVE_INSTALL_RPEFIX "") undefined the static lib archive
+set(RUNTIME_INSTALL_RPEFIX "/usr/bin")
+set(SOURCES_INSTALL_RPEFIX "/usr/share/dde-file-manager")
+set(INCLUDE_INSTALL_RPEFIX "/usr/include")
+
+set(DFM_PLUGIN_PATH ${LIBRARY_INSTALL_PREFIX}/plugins/dfm-framework)
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE})
+
 # Setup the environment
 SET(CMAKE_CXX_STANDARD 17)
 if(CMAKE_VERSION VERSION_LESS "3.7.0")
@@ -11,7 +32,6 @@ SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-need -fPIE")
-
 
 # Use Qt modules
 set(QtFindModules Core Gui Widgets Concurrent Svg Network Sql X11Extras)
@@ -43,6 +63,10 @@ foreach(PkgConfigModule ${PkgConfigFindModules})
 endforeach(PkgConfigModule)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
+
+message(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+message(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH})
+
 # sub directories
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/apps)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/dde-dock-plugins)

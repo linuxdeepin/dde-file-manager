@@ -1,21 +1,26 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-# 定义可执行程序名称
-set(BIN_NAME dde-file-manager)
+project(dde-file-manager)
+
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/config.h.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/config.h"
+    )
 
 set(SRCS
     uttestclass.cpp
     main.cpp
     )
 
-add_executable(${BIN_NAME} ${SRCS})
+add_executable(${PROJECT_NAME} ${SRCS})
 
 target_link_libraries(
-    ${BIN_NAME}
+    ${PROJECT_NAME}
+    dfm-framework
     ${QtUseModules}
     ${PkgUseModules}
     )
 
-# TODO(zhangs): install
+install(TARGETS ${PROJECT_NAME} DESTINATION ${RUNTIME_INSTALL_RPEFIX})
 
 # TODO(zhangs): translation
