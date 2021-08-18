@@ -317,8 +317,14 @@ void DTaskDialog::addTaskWidget(DFMTaskWidget *wid)
     setTitle(m_taskListWidget->count());
     adjustSize();
     setModal(false);
-    show();
-    QTimer::singleShot(100, this, &DTaskDialog::activateWindow);
+    QPointer<DTaskDialog> ptr = this;
+    QTimer::singleShot(350, this, [ptr](){
+        if (!ptr)
+            return;
+        ptr->show();
+        ptr->activateWindow();
+        ptr->raise();
+    });
 }
 
 bool DTaskDialog::isHaveVaultTask(const DUrlList &sourceUrls, const DUrl &targetUrl)
@@ -356,9 +362,14 @@ void DTaskDialog::showVaultDeleteDialog(DFMTaskWidget *wid)
     setWindowFlags(Qt::WindowCloseButtonHint);
     adjustSize();
     setModal(true);
-    show();
-    // 直接raise
-    raise();
+    QPointer<DTaskDialog> ptr = this;
+    QTimer::singleShot(350, this, [ptr](){
+        if (!ptr)
+            return;
+        ptr->show();
+        ptr->activateWindow();
+        ptr->raise();
+    });
 }
 
 DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const bool ischecksamejob)
