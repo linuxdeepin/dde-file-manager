@@ -284,6 +284,10 @@ bool HistoryStack::checkPathIsExist(const DUrl &url)
 
         return DRootFileManager::instance()->isRootFileContain(rootUrl);
     } else {
+	// 对我的手机目录进行单独处理，直接返回true，否则涉及我的手机相关目录前进后退会失效 add by CL
+	if (url.scheme() == PLUGIN_SCHEME) {
+            return true;
+        }
         //非协议设备挂载不用考虑断网问题，可以直接取fileinfo来判断是否存在
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
         if (fileInfo)
