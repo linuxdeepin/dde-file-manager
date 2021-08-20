@@ -136,7 +136,6 @@ public:
     QSharedPointer<Plugin> plugin();
     QString loaderErrorString();
 
-
 private:
     QString m_iid;
     QString m_name;

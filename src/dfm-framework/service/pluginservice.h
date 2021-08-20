@@ -36,25 +36,25 @@ public:
 
 /// @brief PLUGIN_SERVICE 服务类声明宏，与Q_DISABLE_COPY类似
 #define PLUGIN_SERVICE(x) \
-public: \
-explicit x(QObject *parent = nullptr) : PluginService(parent) \
+    public: \
+    explicit x(QObject *parent = nullptr) : PluginService(parent) \
 {\
     GlobalPrivate::PluginServiceGlobal::importService<x>(this); \
     qCCritical(FrameworkLog) << "IMPORT_SERVICE: " \
-                             << #x ;\
+    << #x ;\
     if (parent != nullptr) { \
-        qCCritical(FrameworkLog) << "Importer class: " \
-                                 << parent->metaObject()->className(); \
+    qCCritical(FrameworkLog) << "Importer class: " \
+    << parent->metaObject()->className(); \
     }\
     QObject::connect(this, &QObject::destroyed, this, [=]() \
-    { \
-        qCCritical(FrameworkLog) << "EXPORT_SERVICE: " << #x ;\
-        if (parent != nullptr) { \
-            qCCritical(FrameworkLog) << "Exporter class: " \
-                                     << parent->metaObject()->className(); \
-        }\
+{ \
+    qCCritical(FrameworkLog) << "EXPORT_SERVICE: " << #x ;\
+    if (parent != nullptr) { \
+    qCCritical(FrameworkLog) << "Exporter class: " \
+    << parent->metaObject()->className(); \
+    }\
     });\
-}
+    }
 
 /// @brief IMPORT_SERVICE 服务导入接口宏
 #define IMPORT_SERVICE(x)\

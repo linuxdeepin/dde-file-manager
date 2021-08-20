@@ -25,6 +25,8 @@
 
 #include "dfm-framework/lifecycle/lifecycle.h"
 #include "dfm-framework/log/frameworklog.h"
+#include "dfm-framework/log/logutils.h"
+#include "dfm-framework/log/codetimecheck.h"
 #include "dfm-framework/definitions/globaldefinitions.h"
 
 #include <DApplication>
@@ -47,6 +49,8 @@ DWIDGET_USE_NAMESPACE
 
 int pluginsLoad()
 {
+    dpfCheckTimeBegin();
+
     // set plugin iid from qt style
     dpf::LifeCycle::setPluginIID(PLUGIN_INTERFACE);
 
@@ -75,13 +79,18 @@ int pluginsLoad()
     // load plugins without core
     dpf::LifeCycle::loadPlugins();
 
+    dpfCheckTimeEnd();
+
     return 0;
 }
 
 int main(int argc, char *argv[])
 {
-    qCCritical(TimeCheck) << dpf::localDateTime() << "main start";
     DApplication a(argc, argv);
+
+    dpf::FrameworkLog::initialize();
+
     pluginsLoad();
+
     return a.exec();
 }

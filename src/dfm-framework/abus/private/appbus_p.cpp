@@ -47,19 +47,19 @@ AppBusPrivate::AppBusPrivate(AppBus *dd)
                      this, &AppBusPrivate::procNewConnection,
                      Qt::ConnectionType::DirectConnection);
 
-    qCCritical(FrameworkLog()) << "now online servers: "
-                               << onlineServers.keys();
+    dpfCritical() << "now online servers: "
+                  << onlineServers.keys();
 
     if (!server.isListening())
-        qCCritical(FrameworkLog) << server.errorString();
+        dpfCritical() << server.errorString();
     else
-        qCCritical(FrameworkLog) << server.serverName()
-                                 << "Master listening..." ;
+        dpfCritical() << server.serverName()
+                      << "Master listening..." ;
 }
 
 void AppBusPrivate::procNewConnection()
 {
-    qCCritical(FrameworkLog) << "new connect socket";
+    dpfCritical() << "new connect socket";
     QLocalSocket *newSocket = server.nextPendingConnection();
     newSocket->waitForReadyRead();
     QByteArray array = newSocket->readAll();
@@ -85,19 +85,19 @@ void AppBusPrivate::procNewConnection()
             //新增项直接保存
             if (onlineServers[val] == nullptr) {
                 onlineServers[val] = newSocket;
-                qCCritical(FrameworkLog) << "insert new server"
-                                         << val << onlineServers[val];
+                dpfCritical() << "insert new server"
+                              << val << onlineServers[val];
                 q_ptr->newCreateAppBus(val);
             }
         }
-        qCDebug(FrameworkLog) << "now onlineServers: "
-                                 << onlineServers;
+        dpfDebug() << "now onlineServers: "
+                   << onlineServers;
 
-        qCCritical(FrameworkLog) << "now online servers:"
-                                 << onlineServers.keys();
+        dpfCritical() << "now online servers:"
+                      << onlineServers.keys();
 
-        qCCritical(FrameworkLog) << "now online servers count: "
-                                 << onlineServers.count();
+        dpfCritical() << "now online servers count: "
+                      << onlineServers.count();
         return;
     }
 
@@ -124,7 +124,7 @@ QStringList AppBusPrivate::scanfUseBusApp()
 
             if (fileName == appServerName)
             {
-                qCCritical(FrameworkLog) << "mime: " << fileName;
+                dpfCritical() << "mime: " << fileName;
                 continue;
             }
 
@@ -142,7 +142,7 @@ QStringList AppBusPrivate::scanfUseBusApp()
 
 bool AppBusPrivate::tryPing(const QString &serverName)
 {
-    qCCritical(FrameworkLog) << "try ping: " << serverName;
+    dpfCritical() << "try ping: " << serverName;
     QLocalSocket socket;
     socket.connectToServer(serverName);
     if (socket.isOpen()) {
@@ -150,7 +150,7 @@ bool AppBusPrivate::tryPing(const QString &serverName)
         socket.waitForBytesWritten(); //等待数据发送完毕
         if (socket.waitForReadyRead(10)) { //等待数据接收
             QByteArray readArray = socket.readAll();
-            qCCritical(FrameworkLog) << readArray;
+            dpfCritical() << readArray;
             if (tryPingString == readArray) { //数据认证成功
                 return true;
             }

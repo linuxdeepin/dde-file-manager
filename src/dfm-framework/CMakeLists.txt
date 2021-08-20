@@ -12,6 +12,7 @@ set(service ${CMAKE_CURRENT_SOURCE_DIR}/service)
 set(event ${CMAKE_CURRENT_SOURCE_DIR}/event)
 set(abus ${CMAKE_CURRENT_SOURCE_DIR}/abus)
 set(log ${CMAKE_CURRENT_SOURCE_DIR}/log)
+set(listener ${CMAKE_CURRENT_SOURCE_DIR}/listener)
 
 set(${PROJECT_NAME}_cxx_private_h
     ${lifecycle}/private/pluginmanager_p.h
@@ -30,6 +31,8 @@ set(${PROJECT_NAME}_cxx_public_h
     ${event}/event.h
     ${event}/eventcallproxy.h
     ${log}/frameworklog.h
+    ${log}/codetimecheck.h
+    ${log}/logutils.h
     ${service}/pluginserviceglobal.h
     ${service}/pluginservice.h
     ${lifecycle}/pluginsetting.h
@@ -39,6 +42,7 @@ set(${PROJECT_NAME}_cxx_public_h
     ${lifecycle}/pluginmanager.h
     ${lifecycle}/lifecycle.h
     ${abus}/appbus.h
+    ${listener}/listener.h
     )
 
 set(${PROJECT_NAME}_cxx_public_cpp
@@ -46,6 +50,8 @@ set(${PROJECT_NAME}_cxx_public_cpp
     ${event}/eventcallproxy.cpp
     ${service}/pluginserviceglobal.cpp
     ${log}/frameworklog.cpp
+    ${log}/codetimecheck.cpp
+    ${log}/logutils.cpp
     ${lifecycle}/pluginsetting.cpp
     ${lifecycle}/pluginmetaobject.cpp
     ${lifecycle}/plugincontext.cpp
@@ -53,6 +59,7 @@ set(${PROJECT_NAME}_cxx_public_cpp
     ${lifecycle}/pluginmanager.cpp
     ${lifecycle}/lifecycle.cpp
     ${abus}/appbus.cpp
+    ${listener}/listener.cpp
     )
 
 add_library(${PROJECT_NAME} SHARED

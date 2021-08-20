@@ -16,7 +16,7 @@ DPF_BEGIN_NAMESPACE
     void func(const Event& event) \
     { \
         if (event.topic().isEmpty()) { \
-            qCCritical(Framework) << "can't send topic empty event"; \
+            dpfCritical() << "can't send topic empty event"; \
             return; \
         }\
         if (event.topic() != topic) return; \
