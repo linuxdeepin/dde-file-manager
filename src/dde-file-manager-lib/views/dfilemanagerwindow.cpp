@@ -74,6 +74,7 @@
 #include "controllers/vaultcontroller.h"
 #include "dfmsplitter.h"
 #include "views/dfmvaultactiveview.h"
+#include "vault/vaultglobaldefine.h"
 #include "accessibility/ac-lib-file-manager.h"
 
 #include <DPlatformWindowHandle>
@@ -99,6 +100,7 @@ DWIDGET_USE_NAMESPACE
 
 std::unique_ptr<RecordRenameBarState>  DFileManagerWindow::renameBarState{ nullptr };
 std::atomic<bool> DFileManagerWindow::flagForNewWindowFromTab{ false };
+bool vaultMoveState = true;
 
 void DFileManagerWindowPrivate::setCurrentView(DFMBaseView *view)
 {
@@ -128,6 +130,21 @@ void DFileManagerWindowPrivate::setCurrentView(DFMBaseView *view)
         tabBar->createTab(view);
     } else {
         tabBar->currentTab()->setFileView(view);
+    }
+
+    //! 检测保险箱是否上锁，是否是已经移动保险箱了
+    if (vaultMoveState && VaultController::Unlocked != VaultController::ins()->state()) {
+        vaultRemove flg = moveVaultPath();
+        if(vaultRemove::SUCCESS == flg) {
+            qInfo() << "移动到新存储位置成功";
+        }
+        else if (vaultRemove::NOTEXIST == flg){
+            qInfo() << "文件不存在";
+        }
+        else {
+            qInfo() << "移动到新存储位置失败";
+        }
+        vaultMoveState = false;
     }
 }
 
@@ -506,6 +523,50 @@ void DFileManagerWindowPrivate::resetRenameBar()
     if (!renameBar) return;
 
     renameBar->resetRenameBar();
+}
+
+DFileManagerWindowPrivate::vaultRemove DFileManagerWindowPrivate::moveVaultPath()
+{
+    QStringList vaultfilelist;
+    vaultfilelist << VAULT_BASE_PATH_OLD + "/" + VAULT_ENCRYPY_DIR_NAME
+                  << VAULT_BASE_PATH_OLD + "/" + VAULT_DECRYPT_DIR_NAME
+                  << VAULT_BASE_PATH_OLD + "/" + PASSWORD_FILE_NAME
+                  << VAULT_BASE_PATH_OLD + "/" + RSA_PUB_KEY_FILE_NAME
+                  << VAULT_BASE_PATH_OLD + "/" + RSA_CIPHERTEXT_FILE_NAME
+                  << VAULT_BASE_PATH_OLD + "/" + PASSWORD_HINT_FILE_NAME
+                  << VAULT_BASE_PATH_OLD + "/" + VAULT_CONFIG_FILE_NAME;
+
+    QString mvBinary = QStandardPaths::findExecutable("mv");
+    if (mvBinary.isEmpty()) return NOTEXIST;
+    QString vaultNewPath = VAULT_BASE_PATH;
+    QDir dir;
+    if(!dir.exists(vaultNewPath)) {
+        dir.mkdir(vaultNewPath);
+    }
+
+    DFileManagerWindowPrivate::vaultRemove flg = NOTEXIST;
+
+    for (QString & filepath : vaultfilelist) {
+        QFile file(filepath);
+        if(file.exists()) {
+            QStringList argments;
+            argments << filepath << vaultNewPath;
+            QProcess process;
+            process.start(mvBinary, argments);
+            process.waitForStarted();
+            process.waitForFinished();
+            process.terminate();
+
+            if(process.exitStatus() == QProcess::NormalExit && process.exitCode() == 0) {
+                flg = SUCCESS;
+            }
+            else {
+                flg = FAILED;
+            }
+        }
+    }
+
+    return flg;
 }
 
 void DFileManagerWindowPrivate::storeUrlListToRenameBar(const QList<DUrl> &list) noexcept

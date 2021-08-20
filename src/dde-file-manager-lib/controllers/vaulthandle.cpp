@@ -104,7 +104,7 @@ void CryFsHandle::lockVault(QString unlockFileDir)
     else{
         emit signalLockVault(flg);
         //! 记录保险箱上锁时间
-        DFM_NAMESPACE::DFMSettings setting(QString("vaultTimeConfig"));
+        DFM_NAMESPACE::DFMSettings setting(VAULT_TIME_CONFIG_FILE);
         setting.setValue(QString("VaultTime"), QString("LockTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
     }
     m_activeState.clear();
