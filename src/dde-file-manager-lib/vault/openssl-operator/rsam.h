@@ -24,7 +24,7 @@
 
 #include <QString>
 
-#define KEY_LENGTH              1024  // 密钥的长度
+#define KEY_LENGTH              2048  // 密钥的长度
 #define KEY_BEGIN               "BEGIN RSA PUBLIC KEY" // 代码生成key
 
 class rsam
