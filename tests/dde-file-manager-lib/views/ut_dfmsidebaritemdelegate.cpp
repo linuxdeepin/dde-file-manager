@@ -103,13 +103,13 @@ TEST_F(DFMSideBarItemDelegateTest, paintIndexValidTest){
 //    EXPECT_TRUE(inThere);
 //}
 
-TEST_F(DFMSideBarItemDelegateTest, sizeHintTest){
+/*TEST_F(DFMSideBarItemDelegateTest, sizeHintTest){
     QStyleOptionViewItem option;
     QModelIndex index;
     auto size = m_sideBarItemDelegate->sizeHint(option, index);
     EXPECT_NE(0, size.width());
     EXPECT_NE(0, size.height());
-}
+}*/
 
 TEST_F(DFMSideBarItemDelegateTest, sizeHintForTypeTest){
     auto expectValueSeparator = QSize(200, 5) == m_sideBarItemDelegate->sizeHintForType(DFMSideBarItem::Separator);
