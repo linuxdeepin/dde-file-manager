@@ -46,6 +46,12 @@ class DFileManagerWindow;
 class DFileManagerWindowPrivate
 {
 public:
+    enum vaultRemove{
+        SUCCESS, //! 移动成功
+        FAILED, //! 移动失败
+        NOTEXIST     //! 文件不存在
+    };
+
     explicit DFileManagerWindowPrivate(DFileManagerWindow *qq)
         : q_ptr(qq) {}
 
@@ -61,6 +67,11 @@ public:
     void setRenameBarVisible(bool visible);
     void resetRenameBar();
     void storeUrlListToRenameBar(const QList<DUrl> &list) noexcept;
+    /**
+     * @brief moveVaultPath 移动保险箱存储路径
+     * @return 返回REMOVEOK移动成功，REMOVENO失败，EXIST文件不存在
+     */
+    DFileManagerWindowPrivate::vaultRemove moveVaultPath();
 
     QFrame *centralWidget{ nullptr };//中央区域（所有的除顶部区域）
     DFMSideBar *sideBar{ nullptr };
