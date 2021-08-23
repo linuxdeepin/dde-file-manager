@@ -22,6 +22,9 @@
  */
 
 #include "dfmfilelistfile.h"
+#include "dfmapplication.h"
+
+#include "gvfs/gvfsmountmanager.h"
 
 #include <QDir>
 #include <QFile>
@@ -44,6 +47,8 @@ public:
     QString filePath() const;
 
     bool loadFile();
+    bool loadFileWithoutCreateHidden(const QString &path);
+    bool loadFileWithCreateHidden(const QString &path);
     bool parseData(const QByteArray &data);
     void setStatus(const DFMFileListFile::Status &newStatus) const;
 
@@ -119,33 +124,87 @@ QString DFMFileListFilePrivate::filePath() const
 
 bool DFMFileListFilePrivate::loadFile()
 {
-    QFile file(filePath());
+    bool autoCreate = false;
+    const QString &path = filePath();
 
-    if (!file.exists()) {
-        setStatus(DFMFileListFile::NotExisted);
-        return false;
+    // mtp 文件夹是否显示底部统计信息
+    const auto showInfo = dde_file_manager::DFMApplication::instance()->genericAttribute(dde_file_manager::DFMApplication::GA_MTPShowBottomInfo).toBool();
+    if (!showInfo) {
+        static const QString &mtpType = "/gvfs/mtp:host";
+        autoCreate = path.contains(mtpType);
+    }
+
+    // 采用直接访问是否存在方式
+    if (!autoCreate) {
+        return loadFileWithoutCreateHidden(path);
     } else {
-        //
+        // mtp 采用自动创建.hidden文件
+        return loadFileWithCreateHidden(path);
     }
+}
 
-    if (!file.open(QFile::ReadOnly)) {
-        setStatus(DFMFileListFile::AccessError);
-        return false;
+bool DFMFileListFilePrivate::loadFileWithoutCreateHidden(const QString &path)
+{
+    bool ret = false;
+
+    GFile *gfile = g_file_new_for_path(path.toLocal8Bit().data());
+    const bool exist = g_file_query_exists(gfile, nullptr);
+    if (exist) {
+        // exist, read content
+        char *contents = nullptr;
+        GError *error = nullptr;
+        uint64_t len = 0;
+        const bool succ = g_file_load_contents(gfile, nullptr, &contents, &len, nullptr, &error);
+        if (succ) {
+            if (contents && len > 0) {
+                parseData(contents);
+            }
+            ret = true;
+        } else {
+            if (error)
+                g_error_free(error);
+            setStatus(DFMFileListFile::AccessError);
+        }
+    } else {
+        setStatus(DFMFileListFile::NotExisted);
     }
+    g_object_unref(gfile);
 
-    if (file.isReadable() && file.size() != 0) {
-        bool ok = false;
-        QByteArray data = file.readAll();
+    return ret;
+}
 
-        ok = parseData(data);
+bool DFMFileListFilePrivate::loadFileWithCreateHidden(const QString &path)
+{
+    bool ret = false;
 
-        if (!ok) {
-            setStatus(DFMFileListFile::FormatError);
-            return false;
+    GError *error = nullptr;
+    GFile *gfile = g_file_new_for_path(path.toLocal8Bit().data());
+    GFileOutputStream *outputStream = g_file_create(gfile, G_FILE_CREATE_NONE, nullptr, &error);
+    if (outputStream) {
+        // 创建成功了 就表示原来没有 直接析构stream就行
+        g_object_unref(outputStream);
+    } else {
+        // 否则表示创建失败 代表原来文件夹下有hidden文件 准备进行读取
+        if (error)
+            g_error_free(error);
+        // exist, read content
+        char *contents = nullptr;
+        GError *error = nullptr;
+        uint64_t len = 0;
+        bool succ = g_file_load_contents(gfile, nullptr, &contents, &len, nullptr, &error);
+        if (succ) {
+            if (contents && len > 0) {
+                parseData(contents);
+            }
+            ret = true;
+        } else {
+            g_error_free(error);
+            setStatus(DFMFileListFile::AccessError);
         }
     }
+    g_object_unref(gfile);
 
-    return true;
+    return ret;
 }
 
 bool DFMFileListFilePrivate::parseData(const QByteArray &data)

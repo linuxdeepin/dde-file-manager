@@ -27,6 +27,7 @@
 
 #include "dstatusbar.h"
 #include "windowmanager.h"
+#include "dfmapplication.h"
 
 #include "dfmevent.h"
 #include "app/filesignalmanager.h"
@@ -344,6 +345,20 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
 {
     if (!m_label || event.windowId() != WindowManager::getWindowId(this))
         return;
+
+    { // mtp挂载时 暂时不显示下方状态栏数据 能大幅提升访问性能
+        // 首先判断配置
+        const bool showInfo = DFMApplication::instance()->genericAttribute(DFMApplication::GA_MTPShowBottomInfo).toBool();
+        if (!showInfo) { // mtp 不显示底部状态的设置下 再进行 mtp 判断
+            static const QString &mtpType = "/gvfs/mtp:host";
+            const QString &path = event.fileUrlList().count() > 0 ? event.fileUrlList().first().toLocalFile()
+                                                                  : event.fileUrl().toLocalFile();
+            if (path.contains(mtpType)) {
+                return;
+            }
+        }
+    }
+
     /* remark 190412:
      * This function is triggered by multiple different events when
      * using keyboard navigation, causing DFileStatisticsJob to be
