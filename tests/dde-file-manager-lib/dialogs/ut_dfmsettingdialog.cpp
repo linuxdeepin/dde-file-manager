@@ -230,7 +230,7 @@ TEST_F(TestSettingBackend, testDoSetOption3)
 
 TEST_F(TestSettingBackend, testOnValueChanged)
 {
-    int attribute(15);
+    int attribute(dde_file_manager::DFMApplication::GenericAttribute::GA_HiddenSystemPartition);
     QVariant value;
     EXPECT_NO_FATAL_FAILURE(m_pTesting->onValueChanged(attribute, value));
 }

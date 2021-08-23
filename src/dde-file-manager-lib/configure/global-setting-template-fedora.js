@@ -245,6 +245,12 @@
                             "text": qsTranslate("GenerateSettingTranslate", "Open after auto mount"),
                             "type": "openCheckBox",
                             "default": false
+                        },
+                        {
+                            "key": "mtp_show_bottom_info",
+                            "text": qsTranslate("GenerateSettingTranslate", "Show item counts and sizes in the path of mounted MTP devices"),
+                            "type": "checkbox",
+                            "default": false
                         }
                     ]
                 },

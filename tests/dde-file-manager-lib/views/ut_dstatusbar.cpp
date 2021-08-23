@@ -23,8 +23,10 @@
 #include <gmock/gmock-matchers.h>
 
 #include "dfmevent.h"
+#include "dfmapplication.h"
 #include "shutil/fileutils.h"
 #include "stub.h"
+#include "stub-ext/stubext.h"
 #include <QComboBox>
 
 #define private public
@@ -220,6 +222,49 @@ TEST(DstatusbarTest, itemSelected_with_one)
     w.itemSelected(event, 1);
 
     EXPECT_NE(nullptr,w.m_fileStatisticsJob);
+}
+
+TEST(DstatusbarTest, itemSelected_get_attribute)
+{
+    DStatusBar w;
+    DFMEvent event(&w);
+    event.setWindowId(0);
+    event.setData({});
+
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(DFMApplication,genericAttribute),[](DFMApplication::GenericAttribute ga){
+        Q_UNUSED(ga);
+        return true;
+    });
+
+    w.itemSelected(event, 1);
+
+    EXPECT_NE(nullptr,w.m_fileStatisticsJob);
+}
+
+TEST(DstatusbarTest, itemSelected_with_mtp_access)
+{
+    DStatusBar w;
+    DFMEvent event(&w);
+    event.setWindowId(0);
+    event.setData({});
+
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(DFMApplication,genericAttribute),[](DFMApplication::GenericAttribute ga){
+        Q_UNUSED(ga);
+        return false;
+    });
+
+    Stub stub2;
+    bool (*contains_ut)(const QString&, Qt::CaseSensitivity) = [](const QString&, Qt::CaseSensitivity){
+        return true;
+    };
+    using ut_over = bool(QString::*)(const QString&, Qt::CaseSensitivity)const;
+    stub2.set((ut_over)&QString::contains, contains_ut);
+
+    w.itemSelected(event, 1);
+
+    EXPECT_EQ(nullptr,w.m_fileStatisticsJob);
 }
 
 static bool inThere = false;

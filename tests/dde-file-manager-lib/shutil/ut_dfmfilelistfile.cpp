@@ -20,7 +20,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "dfmapplication.h"
 
+#include "stub-ext/stubext.h"
 #include "shutil/dfmfilelistfile.h"
 
 #include <gtest/gtest.h>
@@ -85,5 +87,42 @@ TEST_F(TestDFMFileListFile, cant_relode_the_notexisted_file)
     QString not_file = QDir::homePath() + "/.local/share/applications/not_existed_file.so";
 
     DFMFileListFile nofile(not_file);
+    EXPECT_FALSE(nofile.reload());
+}
+
+TEST_F(TestDFMFileListFile, load_file_get_attribute)
+{
+    QString not_file = QDir::homePath() + "/.local/share/applications/not_existed_file.so";
+
+    DFMFileListFile nofile(not_file);
+
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(dde_file_manager::DFMApplication,genericAttribute),[](dde_file_manager::DFMApplication::GenericAttribute ga){
+        Q_UNUSED(ga);
+        return true;
+    });
+
+    EXPECT_FALSE(nofile.reload());
+}
+
+TEST_F(TestDFMFileListFile, load_file_with_mtp)
+{
+    QString not_file = QDir::homePath() + "/.local/share/applications/not_existed_file.so";
+
+    DFMFileListFile nofile(not_file);
+
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(dde_file_manager::DFMApplication,genericAttribute),[](dde_file_manager::DFMApplication::GenericAttribute ga){
+        Q_UNUSED(ga);
+        return false;
+    });
+
+    Stub stub2;
+    bool (*contains_ut)(const QString&, Qt::CaseSensitivity) = [](const QString&, Qt::CaseSensitivity){
+        return true;
+    };
+    using ut_over = bool(QString::*)(const QString&, Qt::CaseSensitivity)const;
+    stub2.set((ut_over)&QString::contains, contains_ut);
+
     EXPECT_FALSE(nofile.reload());
 }

@@ -216,7 +216,8 @@ void QDiskInfo::updateGvfsFileSystemInfo(int retryTimes/*=3*/)
     }
     info = g_file_query_info(file, G_FILE_ATTRIBUTE_ID_FILESYSTEM, G_FILE_QUERY_INFO_NONE, nullptr, &error);
     if (info == nullptr && error) {
-        g_object_unref(systemInfo);
+        if (systemInfo)
+            g_object_unref(systemInfo);
         g_object_unref(file);
         qWarning() << "g_file_query_filesystem_info" << error->message << error->code;
         if (error->code == 0 && retryTimes > 0) {
