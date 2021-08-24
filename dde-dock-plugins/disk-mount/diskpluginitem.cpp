@@ -64,6 +64,18 @@ void DiskPluginItem::resizeEvent(QResizeEvent *e)
 {
     QWidget::resizeEvent(e);
 
+    // 修复bug-89675 切换模式时，diskpluginitem大小会变化，导致了绘制位置不对
+    // 于是出现了切换模式时，图标不见了。
+    // 保持diskpluginitem横纵比
+    const Dock::Position position = qApp->property(PROP_POSITION).value<Dock::Position>();
+    if (position == Dock::Bottom || position == Dock::Top) {
+        setMaximumWidth(height());
+        setMaximumHeight(QWIDGETSIZE_MAX);
+    } else {
+        setMaximumHeight(width());
+        setMaximumWidth(QWIDGETSIZE_MAX);
+    }
+
     updateIcon();
 }
 
