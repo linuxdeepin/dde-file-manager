@@ -98,10 +98,13 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
 
         if (index == 1) {
             emit fileSignalManager->stopCdScanTimer(device);
+            QPointer<BurnOptDialog> dp = this;
             if (d->image_file.path().length() == 0) {
-                QtConcurrent::run([ = ] {
+                QtConcurrent::run([ = , &dp] {
                     QSharedPointer<FileJob> job(new FileJob(FileJob::OpticalBurn));
                     job->moveToThread(qApp->thread());
+                    if (dp.isNull())
+                        return;
                     job->setWindowId(d->window_id);
                     dialogManager->addJob(job);
 
@@ -120,11 +123,15 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                 QtConcurrent::run([ = ] {
                     QSharedPointer<FileJob> job(new FileJob(FileJob::OpticalImageBurn));
                     job->moveToThread(qApp->thread());
+                    if (dp.isNull())
+                        return;
                     job->setWindowId(d->window_id);
                     dialogManager->addJob(job);
 
                     DUrl dev(device);
                     //just to ensure we still have access to the image url even after 'this' is deleted
+                    if (dp.isNull())
+                        return;
                     DUrl img(d->image_file);
 
                     // fix: use fork() burn image

@@ -67,6 +67,7 @@ TEST_F(DGIOFileDeviceTest,can_setFileUrl) {
     EXPECT_EQ(true,device->setFileUrl(url));
 }
 
+#ifndef __arm__
 TEST_F(DGIOFileDeviceTest,can_openandclose) {
     EXPECT_EQ(true,device->setFileUrl(url));
     device->close();
@@ -84,9 +85,8 @@ TEST_F(DGIOFileDeviceTest,can_openandclose) {
     EXPECT_EQ(true,device->open(QIODevice::WriteOnly));
     device->closeWriteReadFailed(true);
     device->close();
-
-
 }
+#endif
 
 TEST_F(DGIOFileDeviceTest,can_handle) {
     device->close();
@@ -101,6 +101,7 @@ TEST_F(DGIOFileDeviceTest,can_size) {
     EXPECT_EQ(0,device->size());
 }
 
+#ifndef __arm__
 TEST_F(DGIOFileDeviceTest,can_resize) {
     EXPECT_EQ(false,device->resize(64));
     url.setScheme(FILE_SCHEME);
@@ -418,5 +419,4 @@ TEST_F(DGIOFileDeviceTest,start_seek) {
     tmpurl.setPath("~/test.log");
     TestHelper::deleteTmpFiles(QStringList() << url.toLocalFile() << tmpurl.toLocalFile());
 }
-
-
+#endif
