@@ -18,18 +18,19 @@ set(${PROJECT_NAME}_cxx_private_h
     ${lifecycle}/private/pluginmanager_p.h
     ${abus}/private/appbus_p.h
     ${event}/private/event_p.h
+    ${event}/private/eventhandler_p.h
     )
 
 set(${PROJECT_NAME}_cxx_private_cpp
     ${lifecycle}/private/pluginmanager_p.cpp
     ${abus}/private/appbus_p.cpp
-    ${event}/private/event_p.h
     )
 
 set(${PROJECT_NAME}_cxx_public_h
     ${definitions}/globaldefinitions.h
     ${event}/event.h
     ${event}/eventcallproxy.h
+    ${event}/eventhandler.h
     ${log}/frameworklog.h
     ${log}/codetimecheck.h
     ${log}/logutils.h
@@ -48,6 +49,7 @@ set(${PROJECT_NAME}_cxx_public_h
 set(${PROJECT_NAME}_cxx_public_cpp
     ${event}/event.cpp
     ${event}/eventcallproxy.cpp
+    ${event}/eventhandler.cpp
     ${service}/pluginserviceglobal.cpp
     ${log}/frameworklog.cpp
     ${log}/codetimecheck.cpp

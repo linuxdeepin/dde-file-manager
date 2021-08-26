@@ -12,8 +12,6 @@ DPF_BEGIN_NAMESPACE
 
 namespace GlobalPrivate
 {
-    static uint logCacheDayCount = 7;
-
     const QString cachePath = QStandardPaths::locate(QStandardPaths::CacheLocation,
                                                      "",
                                                      QStandardPaths::LocateDirectory);
@@ -41,7 +39,7 @@ QString LogUtils::appCacheLogPath()
 
 QString LogUtils::localDateTime()
 {
-    return QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss,zzz");
+    return QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
 }
 
 QString LogUtils::localDate()

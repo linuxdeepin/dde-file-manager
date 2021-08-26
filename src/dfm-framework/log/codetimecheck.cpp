@@ -21,7 +21,7 @@ DPF_BEGIN_NAMESPACE
 namespace GlobalPrivate {
 
     static QFile file;
-    static uint dayCount;
+    static uint dayCount = 7;
 
 #ifdef QT_NO_DEBUG
     const QString tcDirName = "codeTimeCheck";

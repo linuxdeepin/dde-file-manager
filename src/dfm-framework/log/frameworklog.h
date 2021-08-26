@@ -12,7 +12,7 @@
  * @brief Framework 可进行相关调用，如下
  * @code
  * qCDebug(Framework) << "hello";    //调试信息打印
- * qCDInfo(Framework) << "hello";    //信息打印
+ * qCInfo(Framework) << "hello";    //信息打印
  * qCDWarning(Framework) << "hello";     //警告打印
  * qCCritical(Framework) << "hello";     //关键日志打印
  * @endcode
@@ -29,7 +29,7 @@ Q_DECLARE_LOGGING_CATEGORY(Framework)
  * @endcode
  */
 #define dpfDebug() qCDebug(Framework)
-#define dpfInfo() qCDInfo(Framework)
+#define dpfInfo() qCInfo(Framework)
 #define dpfWarning() qCDWarning(Framework)
 #define dpfCritical() qCCritical(Framework)
 

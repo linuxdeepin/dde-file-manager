@@ -28,6 +28,7 @@
 #include "dfm-framework/log/logutils.h"
 #include "dfm-framework/log/codetimecheck.h"
 #include "dfm-framework/definitions/globaldefinitions.h"
+#include "dfm-framework/event/eventcallproxy.h"
 
 #include <DApplication>
 #include <DMainWindow>
@@ -42,7 +43,6 @@
 
 #include <iostream>
 #include <algorithm>
-#include <QFlags>
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE

@@ -8,16 +8,14 @@
 
 DPF_BEGIN_NAMESPACE
 
-static QString EVENT_TOPIC_KEY{"EVENT_TOPIC_KEY"};
-static QString EVENT_DATA_KEY{"EVENT_DATA_KEY"};
-
 class EventPrivate
 {
-    QHash<QString,QVariant> sourceHash;
-    Event * const q_ptr;
     friend class Event;
-
+    Event * const q_ptr;
+    QHash<QString,QVariant> sourceHash;
+    friend Q_CORE_EXPORT QDebug operator <<(QDebug, const Event &);
 public:
+
     explicit EventPrivate(Event *qq)
         : q_ptr(qq)
     {

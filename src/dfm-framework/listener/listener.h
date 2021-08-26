@@ -12,8 +12,8 @@ public:
 signals:
 
 public slots:
-    QStringList plugins(){}
-    QStringList services(){}
+    QStringList plugins(){ return {};}
+    QStringList services(){ return {};}
 };
 
 #endif // LISTENER_H
