@@ -3059,14 +3059,24 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
             }
             if (command != QItemSelectionModel::Deselect) {
                 // Remove dump select
+                QItemSelection lastAllSelection;
+                auto tempNewSelection = rectSelection;
+                auto tempOldSelection = oldSelection;
                 for (auto &sel : rectSelection) {
                     for (auto &index : sel.indexes())
-                        if (!oldSelection.contains(index)) {
+                        if (oldSelection.contains(index)) {
                             //fixbug63317:在桌面按住ctrl+鼠标左键选择文件后，按住鼠标左键框选文件，按住ctrl的过程中鼠标左键无法取消首次选择的文件
-                            oldSelection.push_back(sel);
+                            //oldSelection.push_back(sel);
+
+                            //bug87509，产品要求按住ctrl鼠标框选效果与文管保持一直
+                            tempNewSelection.removeOne(sel);
+                            tempOldSelection.removeOne(sel);
                         }
                 }
-                QAbstractItemView::selectionModel()->select(oldSelection, command);
+                // merge
+                lastAllSelection.merge(tempNewSelection, QItemSelectionModel::Select);
+                lastAllSelection.merge(tempOldSelection, QItemSelectionModel::Select);
+                QAbstractItemView::selectionModel()->select(lastAllSelection, command);
             } else {
                 QAbstractItemView::selectionModel()->select(rectSelection, command);
             }
