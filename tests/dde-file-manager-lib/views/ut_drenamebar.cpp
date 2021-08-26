@@ -167,38 +167,35 @@ TEST_F(RecordRenameBarStateTest, getVisibleValue){
 TEST(DRenameBarPrivate, set_rename_btn_status)
 {
     DRenameBar drb;
-    DRenameBarPrivate drbP(&drb);
 
-    QPushButton *button{ std::get<1>(drbP.m_buttonsArea) };
+    QPushButton *button{ std::get<1>(drb.d_func()->m_buttonsArea) };
     button->setEnabled(false);
-    drbP.setRenameBtnStatus(true);
+    drb.d_func()->setRenameBtnStatus(true);
     EXPECT_TRUE(button->isEnabled());
 }
 
 TEST(DRenameBarPrivate, filtering_text)
 {
     DRenameBar drb;
-    DRenameBarPrivate drbP(&drb);
 
-    auto tempEmpty = drbP.filteringText("");
+    auto tempEmpty = drb.d_func()->filteringText("");
     EXPECT_TRUE(tempEmpty.isEmpty());
 
-    auto temp = drbP.filteringText("\\\\:test\\\\");
+    auto temp = drb.d_func()->filteringText("\\\\:test\\\\");
     EXPECT_TRUE("test" == temp);
 }
 
 TEST(DRenameBarPrivate, update_line_edit_text)
 {
     DRenameBar drb;
-    DRenameBarPrivate drbP(&drb);
 
-    QLineEdit *lineEdit{ std::get<1>(drbP.m_replaceOperatorItems) };
-    drbP.updateLineEditText(lineEdit);
+    QLineEdit *lineEdit{ std::get<1>(drb.d_func()->m_replaceOperatorItems) };
+    drb.d_func()->updateLineEditText(lineEdit);
     EXPECT_TRUE(lineEdit->text().isEmpty());
 
-    auto temp = drbP.filteringText("\\\\:test\\\\");
+    auto temp = drb.d_func()->filteringText("\\\\:test\\\\");
     lineEdit->setText(temp);
-    drbP.updateLineEditText(lineEdit);
+    drb.d_func()->updateLineEditText(lineEdit);
     EXPECT_TRUE("test" == temp);
 }
 
