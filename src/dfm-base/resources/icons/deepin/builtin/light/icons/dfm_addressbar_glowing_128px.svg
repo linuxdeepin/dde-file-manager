@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="114px" height="26px" viewBox="0 0 114 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>glowing_light</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="20.836197%" x2="95.1234351%" y2="24.8434529%" id="linearGradient-1">
+            <stop stop-color="#2CA7F8" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#2CA7F8" stop-opacity="0.2" offset="66.6463591%"></stop>
+            <stop stop-color="#2CA7F8" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="2" transform="translate(-298.000000, -57.000000)" fill="url(#linearGradient-1)">
+            <rect id="glowing_light" x="298" y="57" width="120" height="26"></rect>
+        </g>
+    </g>
+</svg>

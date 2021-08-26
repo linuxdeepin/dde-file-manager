@@ -3,9 +3,9 @@
 
 #include "pluginserviceglobal.h"
 
-#include "log/frameworklog.h"
+#include "dfm-framework/log/frameworklog.h"
 
-#include "definitions/globaldefinitions.h"
+#include "dfm-framework/definitions/globaldefinitions.h"
 
 #include <QObject>
 #include <QMetaObject>
@@ -39,18 +39,18 @@ public:
     public: \
     explicit x(QObject *parent = nullptr) : PluginService(parent) \
 {\
-    GlobalPrivate::PluginServiceGlobal::importService<x>(this); \
-    qCCritical(FrameworkLog) << "IMPORT_SERVICE: " \
+    dpf::GlobalPrivate::PluginServiceGlobal::importService<x>(this); \
+    dpfCritical() << "IMPORT_SERVICE: " \
     << #x ;\
     if (parent != nullptr) { \
-    qCCritical(FrameworkLog) << "Importer class: " \
+    dpfCritical() << "Importer class: " \
     << parent->metaObject()->className(); \
     }\
     QObject::connect(this, &QObject::destroyed, this, [=]() \
 { \
-    qCCritical(FrameworkLog) << "EXPORT_SERVICE: " << #x ;\
+    dpfCritical() << "EXPORT_SERVICE: " << #x ;\
     if (parent != nullptr) { \
-    qCCritical(FrameworkLog) << "Exporter class: " \
+    dpfCritical() << "Exporter class: " \
     << parent->metaObject()->className(); \
     }\
     });\
@@ -58,15 +58,15 @@ public:
 
 /// @brief IMPORT_SERVICE 服务导入接口宏
 #define IMPORT_SERVICE(x)\
-    nullptr == GlobalPrivate::PluginServiceGlobal::findService<x>(#x) ? \
-    new x : GlobalPrivate::PluginServiceGlobal::findService<x>(#x); \
-    GlobalPrivate::PluginServiceGlobal::addImportInfo(#x,this->metaObject()->className());
+    nullptr == DPF_NAMESPACE::GlobalPrivate::PluginServiceGlobal::findService<x>(#x) ? \
+    new x : DPF_NAMESPACE::GlobalPrivate::PluginServiceGlobal::findService<x>(#x); \
+    DPF_NAMESPACE::GlobalPrivate::PluginServiceGlobal::addImportInfo(#x,this->metaObject()->className());
 
 /// @brief IMPORT_SERVICE 服务导出接口宏
 #define EXPORT_SERVICE(x)\
-    nullptr == GlobalPrivate::PluginServiceGlobal::findService<x>(#x) ? \
-    false : GlobalPrivate::PluginServiceGlobal::exportService<x>(#x); \
-    GlobalPrivate::PluginServiceGlobal::delImportInfo(#x);
+    nullptr == DPF_NAMESPACE::GlobalPrivate::PluginServiceGlobal::findService<x>(#x) ? \
+    false : DPF_NAMESPACE::GlobalPrivate::PluginServiceGlobal::exportService<x>(#x); \
+    DPF_NAMESPACE::GlobalPrivate::PluginServiceGlobal::delImportInfo(#x);
 
 DPF_END_NAMESPACE
 

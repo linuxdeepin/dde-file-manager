@@ -50,6 +50,21 @@ foreach(QtModule ${QtFindModules})
     message("QtModule found ${QtModule} OK!")
 endforeach()
 
+#other not found libs kde from input for Qt
+set(KdeFindPackage KF5Codecs)
+
+foreach(KdeConfigModule ${KdeFindPackage})
+    find_package(${KdeConfigModule} REQUIRED)
+    if(${KdeConfigModule}_FOUND)
+        #can use target_link_libraries(xxx ${QtUseModules})
+        list(APPEND QtUseModules "${KdeConfigModule}")
+        include_directories(${${KdeConfigModule}_INCLUDE_DIRS})
+        include_directories(/usr/include/KF5/KCodecs/)
+    else()
+        message(FATAL_ERROR "NotFound ${KdeConfigModule}")
+    endif(${CMakeConfigModule}_FOUND)
+endforeach(KdeConfigModule)
+
 # Use PkgConfig modules
 # You can setting mini version for "glib-2.0>=2.10 gtk+-2.0" in the list
 set(PkgConfigFindModules dtkcore dtkwidget dtkgui gio-unix-2.0)

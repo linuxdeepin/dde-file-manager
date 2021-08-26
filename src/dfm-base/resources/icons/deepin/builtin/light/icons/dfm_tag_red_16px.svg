@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.1 (47250) - http://www.bohemiancoding.com/sketch -->
+    <title>tag_red_normal</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="199" cy="20" r="4"></circle>
+    </defs>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-191.000000, -12.000000)">
+        <g id="tag_red_normal">
+            <use fill="#FF1C49" fill-rule="evenodd" xlink:href="#path-1"></use>
+            <circle stroke="#EC1640" stroke-width="1" cx="199" cy="20" r="3.5"></circle>
+        </g>
+    </g>
+</svg>

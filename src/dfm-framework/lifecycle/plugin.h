@@ -7,7 +7,6 @@
 #include <QObject>
 #include <QSharedData>
 
-
 DPF_BEGIN_NAMESPACE
 
 /// @brief PLUGIN_INTERFACE 默认插件iid
