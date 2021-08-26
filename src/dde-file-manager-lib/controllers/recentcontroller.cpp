@@ -43,8 +43,10 @@
 #include <QDebug>
 
 #include <DRecentManager>
+#include <DDialog>
 
 DCORE_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
 class RecentFileWatcherPrivate;
 class RecentFileWatcher : public DAbstractFileWatcher
@@ -301,8 +303,29 @@ bool RecentController::openFileLocation(const QSharedPointer<DFMOpenFileLocation
 
 bool RecentController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
 {
+    //在smb/ftp更改文件名称后最近使用里面打开文件，使用createFileInfo不能判断源文件是否存在为真
+    //这里直接获取真实路径进行判断源文件是否存在
+    if (!QFile(event->url().path()).exists()) {
+        DDialog d(QObject::tr("Failed to open the file, cause: %1")
+                  .arg(QObject::tr("Original file does not exist")),
+                  QObject::tr("Do you want to delete %1?")
+                  .arg(event->url().fileName()));
+
+        Qt::WindowFlags flags = d.windowFlags();
+        // dialog show top
+        d.setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
+        d.setIcon(QIcon::fromTheme("dialog-error"));
+        d.addButton(QObject::tr("Confirm"), true, DDialog::ButtonRecommend);
+        d.addButton(QObject::tr("Cancel"), false, DDialog::ButtonRecommend);
+        d.setMaximumWidth(640);
+        if(d.exec() == 0)
+            DRecentManager::removeItem(event->url().path()); //删除当前最近使用项
+        return true;
+    }
+
     return DFileService::instance()->openFile(event->sender(), DUrl::fromLocalFile(event->url().path()));
 }
+
 bool RecentController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const
 {
     DUrlList fileUrls = event->urlList();

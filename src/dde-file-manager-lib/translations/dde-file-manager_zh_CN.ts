@@ -281,12 +281,12 @@
         <translation>内存</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="218"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="222"/>
         <source>Bit</source>
         <translation>位</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="252"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="256"/>
         <source>Available</source>
         <translation>可用</translation>
     </message>
@@ -999,12 +999,12 @@
         <translation>文件内容写入失败，原因：</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3997"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3996"/>
         <source>Syncing data</source>
         <translation>数据同步中</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3997"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3996"/>
         <source>Please wait</source>
         <translation>请稍候</translation>
     </message>
@@ -1113,12 +1113,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1160"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1154"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1169"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1163"/>
         <source>Empty</source>
         <translation>清空</translation>
     </message>
@@ -1126,41 +1126,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1444"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1447"/>
         <location filename="../models/trashfileinfo.cpp" line="322"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1118"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1446"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
         <location filename="../models/searchfileinfo.cpp" line="130"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1448"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1450"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1452"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1455"/>
         <source>Time created</source>
         <translation>创建时间</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1454"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1457"/>
         <source>Last access</source>
         <translation>最近访问时间</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1456"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1459"/>
         <location filename="../models/recentfileinfo.cpp" line="207"/>
         <location filename="../models/searchfileinfo.cpp" line="128"/>
         <location filename="../models/searchfileinfo.cpp" line="133"/>
@@ -1171,12 +1171,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2541"/>
+        <location filename="../views/dfileview.cpp" line="2565"/>
         <source>Mounting failed</source>
         <translation>挂载失败</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3245"/>
+        <location filename="../views/dfileview.cpp" line="3269"/>
         <source>(Reverse)</source>
         <translation>（反序）</translation>
     </message>
@@ -1184,7 +1184,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="656"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="659"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>添加标记“%1”</translation>
     </message>
@@ -3122,7 +3122,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="107"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1170"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1164"/>
         <source>Empty Trash</source>
         <translation>清空回收站</translation>
     </message>
@@ -3427,12 +3427,12 @@
         <translation>%1 项</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1213"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1205"/>
         <source>Shortcut</source>
         <translation>快捷方式</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="754"/>
+        <location filename="../interfaces/dfileservices.cpp" line="750"/>
         <source>Create symlink</source>
         <translation>创建链接</translation>
     </message>
@@ -3657,6 +3657,27 @@
         <translation>提示：根据选择文件的顺序先后排序</translation>
     </message>
     <message>
+        <location filename="../controllers/recentcontroller.cpp" line="309"/>
+        <source>Failed to open the file, cause: %1</source>
+        <translation>文件打开失败，原因：%1</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="310"/>
+        <source>Original file does not exist</source>
+        <translation>源文件不存在</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="311"/>
+        <source>Do you want to delete %1?</source>
+        <translation>是否删除 %1？</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="318"/>
+        <source>Confirm</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="319"/>
         <location filename="../dialogs/burnoptdialog.cpp" line="189"/>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="308"/>
         <location filename="../views/drenamebar.cpp" line="296"/>
@@ -3816,10 +3837,10 @@
         <translation>执行错误</translation>
     </message>
     <message>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="923"/>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="1063"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="466"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="654"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="908"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1069"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="454"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="659"/>
         <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
         <translation>不得含有&quot;&apos;/\[]:|&lt;&gt;+=;,?*</translation>
     </message>
