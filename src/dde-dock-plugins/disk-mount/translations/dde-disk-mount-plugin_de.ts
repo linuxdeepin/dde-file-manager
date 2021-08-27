@@ -118,7 +118,7 @@
     </message>
     <message>
         <source>Stop</source>
-        <translation type="unfinished"/>
+        <translation type="vanished">Stopp</translation>
     </message>
     <message>
         <source>Confirm</source>
@@ -133,7 +133,7 @@
     <message>
         <source>Stop</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Stopp</translation>
     </message>
 </context>
 </TS>

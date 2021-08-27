@@ -144,7 +144,7 @@ QMenu *DFMSideBarBookmarkItemHandler::contextMenu(const DFMSideBar *sidebar, con
         messageLines.append("(i) Bookmark Locate Url: " + QString(QByteArray::fromBase64(bookmarkInfo->locateUrl.toLocal8Bit())) + "\n");
         messageLines.append("(i) Bookmark Redirected Url: " + bookmarkInfo->redirectedFileUrl().toString() + "\n");
         d.setMessage(messageLines);
-        d.addButton(tr("Gotcha","button"), true, DDialog::ButtonNormal);
+        d.addButton("Gotcha", true, DDialog::ButtonNormal);
         d.exec();
     });
 #endif
