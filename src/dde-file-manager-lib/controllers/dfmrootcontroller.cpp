@@ -42,6 +42,7 @@
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
 #include <ddiskdevice.h>
+#include <dblockpartition.h>
 
 #include "dialogs/dialogmanager.h"
 #include "deviceinfo/udisklistener.h"
@@ -78,6 +79,65 @@ private:
     Q_DECLARE_PUBLIC(DFMRootFileWatcher)
 };
 
+static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice> blk, QSharedPointer<DDiskDevice> drv)
+{
+    if (blk->hintIgnore()) {
+        qWarning()  << "block device is ignored by hintIgnore:"  << blkPath;
+        return true;
+    }
+
+    //wayland 情况下sda/sdb/sdc做特殊用处
+    if (DFMGlobal::isWayLand() && blkPath.contains(QRegularExpression("/sd[a-c][1-9]*$"))) {
+        qWarning()  << "block device is ignored by wayland set:"  << blkPath;
+        return true;
+    }
+
+    if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
+        if (!drv->removable()){ // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
+            qWarning()  << "block device is ignored by wrong removeable set for system disk:"  << blkPath;
+            return true;
+        }
+    }
+
+    if (blk->cryptoBackingDevice().length() > 1) {
+        qWarning()  << "block device is ignored by crypted back device:"  << blkPath;
+        return true;
+    }
+
+    // 是否是设备根节点，设备根节点无须记录
+    if(blk->hasPartitionTable()){ // 替换 FileUtils::deviceShouldBeIgnore
+        qDebug()  << "block device is ignored by parent node:"  << blkPath;
+        return true;
+    }
+
+    // 过滤snap产生的loop设备
+    if(blk->isLoopDevice()){
+        qDebug()  << "block device is ignored by loop device:"  << blkPath;
+        return true;
+    }
+
+    if(blk->hasPartition()){
+        QSharedPointer<DBlockPartition> partition(DDiskManager::createBlockPartition(blkPath));
+        if(!partition.isNull()){
+            DBlockPartition::Type type = partition->eType();
+            switch (type) {
+            //Extended partition with CHS addressing. It must reside within the first physical 8 GB of disk, else use 0Fh instead (see 0Fh, 85h, C5h, D5h)
+            case DBlockPartition::Win95_Extended_LBA:
+            case DBlockPartition::Linux_extended:
+            case DBlockPartition::DRDOS_sec_extend:
+            case DBlockPartition::Multiuser_DOS_extend:
+            case DBlockPartition::Extended:{
+                qWarning()  << "block device is ignored by partion type:"  << partition->type() <<","<< blkPath;
+                return true;
+            }
+            default:
+                break;
+            }
+        }
+    }
+    return false;
+}
+
 DFMRootController::DFMRootController(QObject *parent) : DAbstractFileController(parent)
 {
 
@@ -106,6 +166,24 @@ bool DFMRootController::renameFile(const QSharedPointer<DFMRenameEvent> &event) 
     return blk->lastError().type() == QDBusError::NoError;
 }
 
+void DFMRootController::reloadBlkName(const QString& blkPath, QSharedPointer<DBlockDevice> blk) const
+{
+    //检查挂载目录下是否存在diskinfo文件
+    QByteArrayList mps = blk->mountPoints();
+    if (mps.empty()) {
+        qWarning()  << "failed to reload block device name for:"  << blkPath;
+        return;
+    }
+    QString mpPath(mps.front());
+    if (mpPath.lastIndexOf("/") != (mpPath.length() - 1))
+        mpPath += "/";
+    QDir kidDir(mpPath + "UOSICON");
+    if (kidDir.exists()) {
+        QString jsonPath = kidDir.absolutePath();
+        loadDiskInfo(jsonPath);
+    }
+}
+
 const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
     QList<DAbstractFileInfoPointer> ret;
@@ -122,46 +200,19 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         }
     }
 
-    DDiskManager dummy;
-    QStringList blkds = dummy.blockDevices({});
+    QStringList blkds = DDiskManager::blockDevices({});
     for (auto blks : blkds) {
-        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-
-        //检查挂载目录下是否存在diskinfo文件
-        QByteArrayList mps = blk->mountPoints();
-
-        //缓存数据盘挂载点,应对数据盘的默认挂载点以更改/date到/deepin/userdata
-        if (blk.data()->idLabel() == "_dde_data"
-                && !mps.empty()
-                && !mps.first().isEmpty()) {
-            DFMGlobal::DataMountRootPath = mps.first();
-        }
-
-        if (DFMGlobal::isWayLand() && blks.contains(QRegularExpression("/sd[a-c][1-9]*$"))) {
-            qDebug()  << " blDev->drive()"  << blks << blk->drive();
+        QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
+        QSharedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+        if(ignoreBlkDevice(blks, blk, drv)){
             continue;
         }
 
-        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
-            if (!drv->removable()) // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
-                continue;
+        reloadBlkName(blks, blk);
 
-            if (FileUtils::deviceShouldBeIgnore(blk->device())) // 对于可移动设备，根据设备描述符选择过滤（sp3 需求，异常设备需要显示，以提供格式化入口）
-                continue;
-        }
-
-        if (!mps.empty()) {
-            QString mpPath(mps.front());
-            if (mpPath.lastIndexOf("/") != (mpPath.length() - 1))
-                mpPath += "/";
-            QDir kidDir(mpPath + "UOSICON");
-            if (kidDir.exists()) {
-                QString jsonPath = kidDir.absolutePath();
-                loadDiskInfo(jsonPath);
-            }
-        }
-        if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
+        using namespace DFM_NAMESPACE;
+        if (DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()) {
+            qDebug()  << "block device is ignored by hintSystem&HiddenSystemPartition:"  << blks;
             continue;
         }
         using namespace DFM_NAMESPACE;
@@ -397,96 +448,82 @@ bool DFMRootFileWatcherPrivate::start()
     DFMRootFileWatcher *wpar = qobject_cast<DFMRootFileWatcher *>(q);
 
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountAdded, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
-        if (mnt->getVolume() && mnt->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
-            return;
-        }
-        if (DUrl(mnt->getRootFile()->uri()).scheme() == BURN_SCHEME) {
-            return;
-        }
-        if (mnt->mountClass() == "GUnixMount") {
-            return;
-        }
-        if (mnt->getRootFile()->path().length() == 0) {
-            return;
-        }
-        DUrl url;
-        url.setScheme(DFMROOT_SCHEME);
-        url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
-        Q_EMIT wpar->subfileCreated(url);
-    }));
+                              if (mnt->getVolume() && mnt->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
+                                  return;
+                              }
+                              if (DUrl(mnt->getRootFile()->uri()).scheme() == BURN_SCHEME) {
+                                  return;
+                              }
+                              if (mnt->mountClass() == "GUnixMount") {
+                                  return;
+                              }
+                              if (mnt->getRootFile()->path().length() == 0) {
+                                  return;
+                              }
+                              DUrl url;
+                              url.setScheme(DFMROOT_SCHEME);
+                              url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
+                              Q_EMIT wpar->subfileCreated(url);
+                          }));
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountRemoved, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
-        if (mnt->getVolume() && mnt->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
-            return;
-        }
+                              if (mnt->getVolume() && mnt->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
+                                  return;
+                              }
 
-        DUrl url;
-        url.setScheme(DFMROOT_SCHEME);
-        QString path = mnt->getRootFile()->path();
-        // 此处 Gio Wrapper 或许有 bug， 有时可以获取 uri，但无法获取 path, 因此有了以下略丑的代码
-        // 目的是将已知的 uri 拼装成 path，相关 bug：46021
-        if (path.isNull() || path.isEmpty()) {
-            QStringList qq = mnt->getRootFile()->uri().replace("/", "").split(":");
-            if (qq.size() >= 3) {
-                path = QString("/run/user/") + QString::number(getuid()) +
-                       QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1) + QString(",port=") + qq.at(2));
-            } else if (qq.size() == 2) {
-                //修复bug55778,在mips合arm上这里切分出来就是2个
-                if (qq.at(0).startsWith("smb")) {
-                    QStringList smblist = mnt->getRootFile()->uri().replace(":/", "").split("/");
-                    path = smblist.count() >= 3 ? QString("/run/user/")+ QString::number(getuid()) + QString("/gvfs/") +
-                                        smblist.at(0) + QString("-share:server=" + smblist.at(1) + QString(",share=") + smblist.at(2)) : QString();
-                }
-                else {
-                    path = QString("/run/user/")+ QString::number(getuid()) +
-                                                                QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1));
-                }
-            }
-        }
-        qDebug() << path;
-        url.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
-        Q_EMIT wpar->fileDeleted(url);
-        QString uri = mnt->getRootFile()->uri();
-        fileSignalManager->requestRemoveRecentFile(path);
-        qDebug() << uri << "mount removed";
-        if (uri.contains("smb-share://") || uri.contains("smb://") || uri.contains("ftp://") || uri.contains("sftp://")) {
-            // remove NetworkNodes cache, so next time cd uri will fetchNetworks
-            QString smbUri = uri;
-            if (smbUri.endsWith("/")) {
-                smbUri = smbUri.left(smbUri.length() - 1);
-            }
-            DUrl smbUrl(smbUri);
-            NetworkManager::NetworkNodes.remove(smbUrl);
-            smbUrl.setPath("");
-            NetworkManager::NetworkNodes.remove(smbUrl);
+                              DUrl url;
+                              url.setScheme(DFMROOT_SCHEME);
+                              QString path = mnt->getRootFile()->path();
+                              // 此处 Gio Wrapper 或许有 bug， 有时可以获取 uri，但无法获取 path, 因此有了以下略丑的代码
+                              // 目的是将已知的 uri 拼装成 path，相关 bug：46021
+                              if (path.isNull() || path.isEmpty()) {
+                                  QStringList qq = mnt->getRootFile()->uri().replace("/", "").split(":");
+                                  if (qq.size() >= 3) {
+                                      path = QString("/run/user/") + QString::number(getuid()) +
+                                      QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1) + QString(",port=") + qq.at(2));
+                                  } else if (qq.size() == 2) {
+                                      //修复bug55778,在mips合arm上这里切分出来就是2个
+                                      if (qq.at(0).startsWith("smb")) {
+                                          QStringList smblist = mnt->getRootFile()->uri().replace(":/", "").split("/");
+                                          path = smblist.count() >= 3 ? QString("/run/user/")+ QString::number(getuid()) + QString("/gvfs/") +
+                                          smblist.at(0) + QString("-share:server=" + smblist.at(1) + QString(",share=") + smblist.at(2)) : QString();
+                                      }
+                                      else {
+                                          path = QString("/run/user/")+ QString::number(getuid()) +
+                                          QString("/gvfs/") + qq.at(0) + QString(":host=" + qq.at(1));
+                                      }
+                                  }
+                              }
+                              qDebug() << path;
+                              url.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
+                              Q_EMIT wpar->fileDeleted(url);
+                              QString uri = mnt->getRootFile()->uri();
+                              fileSignalManager->requestRemoveRecentFile(path);
+                              qDebug() << uri << "mount removed";
+                              if (uri.contains("smb-share://") || uri.contains("smb://") || uri.contains("ftp://") || uri.contains("sftp://")) {
+                                  // remove NetworkNodes cache, so next time cd uri will fetchNetworks
+                                  QString smbUri = uri;
+                                  if (smbUri.endsWith("/")) {
+                                      smbUri = smbUri.left(smbUri.length() - 1);
+                                  }
+                                  DUrl smbUrl(smbUri);
+                                  NetworkManager::NetworkNodes.remove(smbUrl);
+                                  smbUrl.setPath("");
+                                  NetworkManager::NetworkNodes.remove(smbUrl);
 
-            mnt->unmount(); // yes, we need do it again...otherwise we will goto an removed path like /run/user/1000/gvfs/smb-sharexxxx
-        }
-    }));
+                                  mnt->unmount(); // yes, we need do it again...otherwise we will goto an removed path like /run/user/1000/gvfs/smb-sharexxxx
+                              }
+                          }));
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::volumeAdded, [](QExplicitlySharedDataPointer<DGioVolume> vol) {
-        if (vol->volumeMonitorName().contains(QRegularExpression("(MTP|GPhoto2|Afc)$"))) {
-            vol->mount();
-        }
-    }));
+                              if (vol->volumeMonitorName().contains(QRegularExpression("(MTP|GPhoto2|Afc)$"))) {
+                                  vol->mount();
+                              }
+                          }));
     connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::blockDeviceAdded, [wpar, this](const QString & blks) {
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+        QSharedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 
-        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
-            if (!drv->removable()) // 对于本地磁盘，直接按照以前的方式，满足外围条件直接 return
-                return;
-
-            if (FileUtils::deviceShouldBeIgnore(blk->device())) // 设备需要被滤去，比如 /dev/sda 下还包含 /dev/sda1 时，需要滤去 sda
-                return;
-
-//            dialogManager->showFormatDialog(blk->device()); // 暂时取消监听设备接入时的格式化提示，只在用户进入不可读取的磁盘时提示格式化
-        }
-
-        if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
-            return;
-        }
-        using namespace DFM_NAMESPACE;
-        if (DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()) {
-            return;
+        if(ignoreBlkDevice(blks, blk, drv)) {
+            return ;
         }
 
         initBlockDevConnections(blk, blks);
@@ -499,7 +536,7 @@ bool DFMRootFileWatcherPrivate::start()
 
     for (auto devs : udisksmgr->blockDevices({})) {
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(devs));
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+        QSharedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 
         auto mountPoints = blk->mountPoints();
         if (!drv->removable() && !mountPoints.isEmpty()) { // feature: hide the specified dir of unremovable devices
@@ -514,7 +551,7 @@ bool DFMRootFileWatcherPrivate::start()
         if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
             continue;
         }
-        if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
+        if(ignoreBlkDevice(devs, blk, drv)){
             continue;
         }
 

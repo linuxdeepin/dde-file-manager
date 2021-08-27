@@ -28,6 +28,7 @@
 #include "dabstractfilewatcher.h"
 #include "durl.h"
 #include <dgiomount.h>
+#include <dblockdevice.h>
 
 class DFMRootFileInfo;
 class DFMRootFileWatcherPrivate;
@@ -55,6 +56,8 @@ public:
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
 private:
+    void reloadBlkName(const QString& blkPath, QSharedPointer<DBlockDevice> blk) const;
+
     /**
      * @brief loadDiskInfo 加载磁盘信息
      * @param jsonPath 磁盘信息文件路径
