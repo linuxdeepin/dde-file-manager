@@ -9,7 +9,9 @@
 #ifndef DFMFILECONTROLLERFACTORY_H
 #define DFMFILECONTROLLERFACTORY_H
 
-#include "base/dfmglobal.h"
+#include "dfm-base/dfm_base_global.h"
+
+#include <QStringList>
 
 class DAbstractFileController;
 

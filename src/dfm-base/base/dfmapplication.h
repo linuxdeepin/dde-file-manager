@@ -21,9 +21,9 @@
 #ifndef DFMAPPLICATION_H
 #define DFMAPPLICATION_H
 
-#include <QObject>
+#include "dfm-base/dfm_base_global.h"
 
-#include "dfm-base/base/dfmglobal.h"
+#include <QObject>
 
 class DFMSettings;
 class DFMApplicationPrivate;

@@ -3,9 +3,10 @@
 
 #include "event.h"
 
-#include "dfm-framework/definitions/globaldefinitions.h"
 #include "dfm-framework/log/frameworklog.h"
 #include "dfm-framework/log/codetimecheck.h"
+
+#include "dfm-framework/dfm_framework_global.h"
 
 #include <QObject>
 #include <QtConcurrent>

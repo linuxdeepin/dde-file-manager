@@ -24,12 +24,11 @@
 
 #include "dfmlocalfileinfo.h"
 #include "private/dfmlocalfileinfo_p.h"
-#include "base/define.h"
+
 #include "base/dfmurlroute.h"
 #include "shutil/fileutils.h"
 #include "localfile/filecontroller.h"
-#include "base/define.h"
-#include "base/singleton.h"
+#include "base/singleton.hpp"
 #include "dthumbnailprovider.h"
 #include "dfileiconprovider.h"
 #include "shutil/dmimedatabase.h"

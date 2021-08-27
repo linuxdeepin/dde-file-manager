@@ -1,5 +1,5 @@
 #include "abus/appbus.h"
-#include "definitions/globaldefinitions.h"
+#include "dfm-framework/dfm_framework_global.h"
 
 #include <QCoreApplication>
 #include <QMetaObject>

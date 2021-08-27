@@ -22,14 +22,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "utils/utils.h"
+#include "shutil/dmimedatabase.h"
+#include "dfm-base/dfm_base_global.h"
+
 #include <QStandardPaths>
 #include <QSvgRenderer>
 #include <QPainter>
 #include <QProcess>
 #include <QGuiApplication>
-#include "utils/utils.h"
-#include "shutil/dmimedatabase.h"
-#include "base/dfmglobal.h"
 
 QString getThumbnailsPath(){
     QString cachePath = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).at(0);

@@ -25,20 +25,22 @@
 //fixed:CD display size error
 
 #include "fileutils.h"
-
-#include "base/define.h"
-#include "base/singleton.h"
-#include "base/dfmstandardpaths.h"
 //#include "localfile/dfileservices.h"
-#include "localfile/dfmlocalfileinfo.h"
-#include "shutil/dmimedatabase.h"
-//#include "mimesappsmanager.h"
+
+#include "base/singleton.hpp"
 #include "base/dfmstandardpaths.h"
-#include "base/appcontroller.h"
+#include "base/dfmstandardpaths.h"
 //#include "base/dabstractfilewatcher.h"
 #include "base/dfmurlroute.h"
 #include "base/dabstractfileinfo.h"
 
+#include "localfile/dfmlocalfileinfo.h"
+#include "shutil/dmimedatabase.h"
+//#include "mimesappsmanager.h"
+
+#include <DRecentManager>
+
+#include <QDir>
 #include <QDirIterator>
 #include <QUrl>
 #include <QProcess>
@@ -54,9 +56,7 @@
 #include <QX11Info>
 #include <QApplication>
 #include <QScreen>
-#include <DRecentManager>
 #include <QMutex>
-#include <QtMath>
 
 #include <sys/vfs.h>
 #include <sys/stat.h>
@@ -70,8 +70,7 @@ extern "C" {
 }
 #define signals public
 
-
-DCORE_USE_NAMESPACE
+//DCORE_USE_NAMESPACE
 
 QString FileUtils::XDG_RUNTIME_DIR = "";
 QStringList FileUtils::CURRENT_ISGVFSFILE_PATH;
@@ -98,7 +97,9 @@ bool FileUtils::removeRecurse(const QString &path, const QString &name)
 
     // If given file is a directory, collect all children of given directory
     if (file.isDir()) {
-        QDirIterator it(url, QDir::AllEntries | QDir::System | QDir::NoDotAndDotDot | QDir::Hidden, QDirIterator::Subdirectories);
+        QDirIterator it(url, QDir::AllEntries | QDir::System |
+                        QDir::NoDotAndDotDot | QDir::Hidden,
+                        QDirIterator::Subdirectories);
         while (it.hasNext()) {
             files.prepend(it.next());
         }
@@ -172,9 +173,7 @@ int FileUtils::filesCount(const QString &dir)
 QStringList FileUtils::filesList(const QString &dir)
 {
     QStringList appNames;
-    QDirIterator it(dir,
-                    QDir::Files | QDir::NoDotAndDotDot,
-                    QDirIterator::Subdirectories);
+    QDirIterator it(dir, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     while (it.hasNext()) {
         it.next();
         appNames.append(it.filePath());
@@ -1526,34 +1525,34 @@ QMap<QString, QString> FileUtils::getKernelParameters()
     return result;
 }
 
-DFMGlobal::MenuExtension FileUtils::getMenuExtension(const QList<QUrl> &urlList)
-{
-    int fileCount = 0;
-    int dirCount = 0;
-    Q_FOREACH (QUrl url, urlList) {
-        QFileInfo info(url.toLocalFile());
-        if (info.isDir()) {
-            dirCount += 1;
-        } else if (info.isFile()) {
-            fileCount += 1;
-        }
-    }
-    if (urlList.count() == 0) {
-        return DFMGlobal::MenuExtension::EmptyArea;
-    } else if (fileCount == 1 && dirCount == 0 && fileCount == urlList.count()) {
-        return DFMGlobal::MenuExtension::SingleFile;
-    } else if (fileCount > 1 && dirCount == 0 && fileCount == urlList.count()) {
-        return DFMGlobal::MenuExtension::MultiFiles;
-    } else if (fileCount == 0 && dirCount == 1 && dirCount == urlList.count()) {
-        return DFMGlobal::MenuExtension::SingleDir;
-    } else if (fileCount == 0 && dirCount > 1 && dirCount == urlList.count()) {
-        return DFMGlobal::MenuExtension::MultiDirs;
-    } else if (urlList.count() > 1) {
-        return DFMGlobal::MenuExtension::MultiFileDirs;
-    } else {
-        return DFMGlobal::MenuExtension::UnknowMenuExtension;
-    }
-}
+//DFMGlobal::MenuExtension FileUtils::getMenuExtension(const QList<QUrl> &urlList)
+//{
+//    int fileCount = 0;
+//    int dirCount = 0;
+//    Q_FOREACH (QUrl url, urlList) {
+//        QFileInfo info(url.toLocalFile());
+//        if (info.isDir()) {
+//            dirCount += 1;
+//        } else if (info.isFile()) {
+//            fileCount += 1;
+//        }
+//    }
+//    if (urlList.count() == 0) {
+//        return DFMGlobal::MenuExtension::EmptyArea;
+//    } else if (fileCount == 1 && dirCount == 0 && fileCount == urlList.count()) {
+//        return DFMGlobal::MenuExtension::SingleFile;
+//    } else if (fileCount > 1 && dirCount == 0 && fileCount == urlList.count()) {
+//        return DFMGlobal::MenuExtension::MultiFiles;
+//    } else if (fileCount == 0 && dirCount == 1 && dirCount == urlList.count()) {
+//        return DFMGlobal::MenuExtension::SingleDir;
+//    } else if (fileCount == 0 && dirCount > 1 && dirCount == urlList.count()) {
+//        return DFMGlobal::MenuExtension::MultiDirs;
+//    } else if (urlList.count() > 1) {
+//        return DFMGlobal::MenuExtension::MultiFileDirs;
+//    } else {
+//        return DFMGlobal::MenuExtension::UnknowMenuExtension;
+//    }
+//}
 
 //bool FileUtils::isGvfsMountFile(const QString &filePath, const bool &isEx)
 //{

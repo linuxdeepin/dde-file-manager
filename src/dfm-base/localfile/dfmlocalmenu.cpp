@@ -22,8 +22,7 @@
 #include "private/dfmlocalmenu_p.h"
 #include "shutil/fileutils.h"
 #include "base/dfmschemefactory.h"
-#include "base/define.h"
-#include "base/singleton.h"
+#include "base/singleton.hpp"
 
 DFMLocalMenuPrivate::DFMLocalMenuPrivate(const QString &filePath, DFMLocalMenu *qq)
     :m_fileInfo(DFMInfoFactory::instance().create<DFMLocalFileInfo>(filePath)),
@@ -43,7 +42,7 @@ DFMLocalMenu::DFMLocalMenu(const QString &filePath)
 
 }
 
-QVector<MenuAction> DFMLocalMenu::menuActionList(MenuType type) const
+QVector<DFMLocalMenu::MenuAction> DFMLocalMenu::menuActionList(MenuType type) const
 {
     Q_D(const DFMLocalMenu);
     QVector<MenuAction> actionKeys;
@@ -291,7 +290,7 @@ QVector<MenuAction> DFMLocalMenu::menuActionList(MenuType type) const
     return actionKeys;
 }
 
-QMap<DFMGlobal::MenuAction, QVector<DFMGlobal::MenuAction> > DFMLocalMenu::subMenuActionList(DFMLocalMenu::MenuType type) const
+QMap<DFMLocalMenu::MenuAction, QVector<DFMLocalMenu::MenuAction> > DFMLocalMenu::subMenuActionList(DFMLocalMenu::MenuType type) const
 {
     Q_UNUSED(type)
     /*
@@ -391,7 +390,7 @@ QMap<DFMGlobal::MenuAction, QVector<DFMGlobal::MenuAction> > DFMLocalMenu::subMe
     return actions;
 }
 
-QSet<DFMGlobal::MenuAction> DFMLocalMenu::disableMenuActionList() const
+QSet<DFMLocalMenu::MenuAction> DFMLocalMenu::disableMenuActionList() const
 {
     Q_D(const DFMLocalMenu);
 
@@ -414,7 +413,7 @@ QSet<DFMGlobal::MenuAction> DFMLocalMenu::disableMenuActionList() const
     return list;
 }
 
-DFMGlobal::MenuAction DFMLocalMenu::menuActionByColumnRole(int role) const
+DFMLocalMenu::MenuAction DFMLocalMenu::menuActionByColumnRole(int role) const
 {
 
     /*todo:待接口完善

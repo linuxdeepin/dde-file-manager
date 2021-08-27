@@ -3,7 +3,8 @@
 
 #include "dfm-framework/abus/appbus.h"
 #include "dfm-framework/service/pluginservice.h"
-#include "dfm-framework/definitions/globaldefinitions.h"
+
+#include "dfm-framework/dfm_framework_global.h"
 
 #include <QObject>
 #include <QLocalServer>

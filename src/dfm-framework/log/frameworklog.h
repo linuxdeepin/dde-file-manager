@@ -1,9 +1,9 @@
 #ifndef FRAMEWORKLOG_H
 #define FRAMEWORKLOG_H
 
-#include "dfm-framework/definitions/globaldefinitions.h"
-
 #include "dfm-framework/log/codetimecheck.h"
+
+#include "dfm-framework/dfm_framework_global.h"
 
 #include <QDebug>
 #include <QLoggingCategory>
@@ -39,34 +39,13 @@ DPF_BEGIN_NAMESPACE
  * @brief The FrameworkLog class
  *  框架日志打印模块，内部封装输出重定向与日志格式化
  */
-class FrameworkLog
+class FrameworkLog final
 {
-
 public:
     explicit FrameworkLog() = delete;
-
-    /**
-     * @brief enableFrameworkLog 开启框架日志打印
-     * @param enabled true为开启,false则关闭
-     */
     static void enableFrameworkLog(bool enabled = true);
-
-    /**
-     * @brief setLogCacheDayCount 设置日志缓存时间，
-     *  需要在调用其他函数之前调用
-     * @param uint 缓存的天数
-     */
     static void setLogCacheDayCount(uint dayCount);
-
-    /**
-     * @brief logCacheDayCount 获取设置的日志缓存时间
-     * @return uint 缓存的天数,默认缓存7天
-     */
     static uint logCacheDayCount();
-
-    /**
-     * @brief initialize 初始化框架日志打印模块
-     */
     static void initialize();
 };
 

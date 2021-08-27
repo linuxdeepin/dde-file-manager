@@ -21,8 +21,10 @@
 #ifndef DABSTRACTFILEDEVICE_P_H
 #define DABSTRACTFILEDEVICE_P_H
 
-#include "base/dfmglobal.h"
 #include "base/dabstractfiledevice.h"
+#include "dfm-base/dfm_base_global.h"
+
+#include <QUrl>
 
 class DAbstractFileDevicePrivate
 {

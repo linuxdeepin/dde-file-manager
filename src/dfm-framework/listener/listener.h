@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-class Listener : public QObject
+class Listener final : public QObject
 {
     Q_OBJECT
 public:

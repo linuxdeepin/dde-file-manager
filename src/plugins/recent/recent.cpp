@@ -1,20 +1,20 @@
 //new lib
-#include "widgets/dfmsidebar/dfmsidebar.h"
-#include "widgets/dfmsidebar/dfmsidebaritem.h"
-#include "widgets/dfmsidebar/dfmsidebarview.h"
-#include "widgets/dfmsidebar/dfmsidebarmodel.h"
+#include "dfm-base/widgets/dfmsidebar/sidebar.h"
+#include "dfm-base/widgets/dfmsidebar/sidebaritem.h"
+#include "dfm-base/widgets/dfmsidebar/sidebarview.h"
+#include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
 
-#include "widgets/dfmfileview/dfmfileview.h"
+#include "dfm-base/widgets/dfmfileview/fileview.h"
 //#include "widgets/dfmfileview/dfilesystemmodel.h"
 
-#include "base/dfmstandardpaths.h"
-#include "base/dfmapplication.h"
-#include "base/dfmschemefactory.h"
+#include "dfm-base/base/dfmstandardpaths.h"
+#include "dfm-base/base/dfmapplication.h"
+#include "dfm-base/base/dfmschemefactory.h"
 
-#include "localfile/dfmlocalfileinfo.h"
-#include "localfile/dfmlocaldiriterator.h"
-#include "localfile/dfmlocalfiledevice.h"
-#include "base/dabstractfilewatcher.h"
+#include "dfm-base/localfile/dfmlocalfileinfo.h"
+#include "dfm-base/localfile/dfmlocaldiriterator.h"
+#include "dfm-base/localfile/dfmlocalfiledevice.h"
+#include "dfm-base/base/dabstractfilewatcher.h"
 
 //old lib
 //#include "interfaces/dfmapplication.h"
@@ -27,22 +27,16 @@
 //#include "views/dfilemanagerwindow.h"
 //#include "views/dtoolbar.h"
 
+//self files
 #include "recent.h"
-#include "dfmrecentutil.h"
+#include "recentutil.h"
 
-#include "dfmplugincontext.h"
+//dfm-framework
+#include "dfm-framework/lifecycle/plugincontext.h"
 
 //services
-#include "previewservice/dfmoldpreviewservice.h"
-#include "windowservice/dfmwindowservice.h"
-#include "windowservice/dfmbrowseview.h"
-
-//plugin base
-#include "previewservice/oldpluginbase/dfmfilepreviewplugin.h"
-#include "previewservice/oldpluginbase/dfmfilepreview.h"
-
-#include "event/dfmglobaleventdispatcher.h"
-#include "event/handler/dfmwindoweventhandler.h"
+#include "windowservice/windowservice.h"
+#include "windowservice/browseview.h"
 
 #include <QListWidget>
 #include <QListView>
@@ -66,22 +60,20 @@
 
 //DFM_USE_NAMESPACE
 
-static DFMApplication* dfmApp = nullptr;
-
-Q_GLOBAL_STATIC(DFMWindowEventHandler,_RecentWindowEventHandler)
-
 void Recent::initialize()
 {
-    qCDebug(FrameworkLog) << Q_FUNC_INFO;
+    qInfo() << Q_FUNC_INFO;
 }
 
-bool Recent::start(QSharedPointer<DFMPluginContext> context)
+bool Recent::start(QSharedPointer<dpf::PluginContext> context)
 {
-    qCDebug(FrameworkLog) << Q_FUNC_INFO;
-    qInfo() << DFMRecentUtil::instance().loadRecentFile();
+    Q_UNUSED(context)
+    qInfo() << Q_FUNC_INFO;
+    qInfo() << RecentUtil::instance().loadRecentFile();
+
     return true;
 }
 
-DFMPlugin::ShutdownFlag Recent::stop() {
+dpf::Plugin::ShutdownFlag Recent::stop() {
     return Synch;
 }

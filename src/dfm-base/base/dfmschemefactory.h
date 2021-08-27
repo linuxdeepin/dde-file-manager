@@ -30,16 +30,17 @@
 #include "dfm-base/base/dabstractdiriterator.h"
 #include "dfm-base/base/dabstractfiledevice.h"
 
-#include "dfm-base/base/private/dfminfocachesmanager.h"
-#include "dfm-base/base/private/dfmwatchercachesmanager.h"
+#include "dfm-base/base/private/dfminfocache.h"
+#include "dfm-base/base/private/dfmwatchercache.h"
 
 #include <QSharedPointer>
 #include <QDirIterator>
 
 #include <functional>
 
-/* @class DFMSchemeFactory
- * @brief 根据Scheme注册Class的工厂类，
+/**
+ * @brief The class DFMSchemeFactory
+ *  根据Scheme注册Class的工厂类，
  *  可使用Scheme进行类构造，前提是当前类需要满足参数
  *  const QUrl &url的构造函数，否则该类将不适用于场景
  * @tparam T 顶层基类
@@ -115,7 +116,7 @@ public:
 };
 
 
-class DFMInfoFactory: public DFMSchemeFactory<DAbstractFileInfo>
+class DFMInfoFactory final : public DFMSchemeFactory<DAbstractFileInfo>
 {
     Q_DISABLE_COPY(DFMInfoFactory)
 
@@ -129,10 +130,10 @@ public:
     QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
     {
 
-        QSharedPointer<DAbstractFileInfo> info = DFMInfoCachesManager::instance().getCacheInfo(url);
+        QSharedPointer<DAbstractFileInfo> info = DFMInfoCache::instance().getCacheInfo(url);
         if (!info) {
             info = DFMSchemeFactory<DAbstractFileInfo>::create(url, errorString);
-            DFMInfoCachesManager::instance().cacheInfo(url, info);
+            DFMInfoCache::instance().cacheInfo(url, info);
         }
         return qSharedPointerDynamicCast<T>(info);
     }
@@ -141,7 +142,7 @@ public:
     static DFMInfoFactory& instance();
 };
 
-class DFMWacherFactory: public DFMSchemeFactory<DAbstractFileWatcher>
+class DFMWacherFactory final : public DFMSchemeFactory<DAbstractFileWatcher>
 {
     Q_DISABLE_COPY(DFMWacherFactory)
 public:
@@ -153,10 +154,10 @@ public:
     template<class T>
     QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
     {
-        QSharedPointer<DAbstractFileWatcher> watcher = DFMWatcherCachesManager::instance().getCacheWatcher(url);
+        QSharedPointer<DAbstractFileWatcher> watcher = DFMWatcherCache::instance().getCacheWatcher(url);
         if (!watcher) {
             watcher = DFMSchemeFactory<DAbstractFileWatcher>::create(url, errorString);
-            DFMWatcherCachesManager::instance().cacheWatcher(url, watcher);
+            DFMWatcherCache::instance().cacheWatcher(url, watcher);
         }
         return qSharedPointerDynamicCast<T>(watcher);
     }
@@ -268,7 +269,7 @@ public:
     }
 };
 
-class DFMDirIteratorFactory:public DFMDirIteratorFactoryT1<DAbstractDirIterator>
+class DFMDirIteratorFactory final : public DFMDirIteratorFactoryT1<DAbstractDirIterator>
 {
     Q_DISABLE_COPY(DFMDirIteratorFactory)
 public:
@@ -279,7 +280,7 @@ public:
     static DFMDirIteratorFactory &instance();
 };
 
-class DFMFileDeviceFactory:public DFMSchemeFactory<DAbstractFileDevice>
+class DFMFileDeviceFactory final : public DFMSchemeFactory<DAbstractFileDevice>
 {
     Q_DISABLE_COPY(DFMFileDeviceFactory)
 

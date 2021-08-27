@@ -21,10 +21,11 @@
 #ifndef DFMSETTINGS_H
 #define DFMSETTINGS_H
 
-#include <QObject>
-#include <QVariantHash>
+#include "dfm-base/dfm_base_global.h"
 
-#include "dfm-base/base/dfmglobal.h"
+#include <QObject>
+#include <QUrl>
+#include <QVariantHash>
 
 class DFMSettingsPrivate;
 class DFMSettings : public QObject

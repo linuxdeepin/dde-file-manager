@@ -25,18 +25,18 @@
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
 
+//#include "desktopfile.h"
+#include "properties.h"
+#include "base/dabstractfileinfo.h"
+#include "utils/desktopinfo.h"
+#include "dfm-base/dfm_base_global.h"
+
 #include <QObject>
 #include <QIcon>
 #include <QFileInfo>
 #include <QDir>
 #include <QMimeType>
-
-//#include "desktopfile.h"
-#include "properties.h"
 #include <QUrl>
-#include "base/dfmglobal.h"
-#include "base/dabstractfileinfo.h"
-#include "utils/desktopinfo.h"
 
 class DFMLocalFileInfo;
 
@@ -120,7 +120,7 @@ public:
     static void migrateConfigFileFromCache(const QString &key);
     static QMap<QString, QString> getKernelParameters();
 
-    static DFMGlobal::MenuExtension getMenuExtension(const QList<QUrl> &urlList);
+//    static DFMGlobal::MenuExtension getMenuExtension(const QList<QUrl> &urlList);
 //    static bool isGvfsMountFile(const QString &filePath, const bool &isEx = false);
     static bool isFileExists(const QString &filePath);
 

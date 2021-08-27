@@ -1,7 +1,8 @@
 #ifndef PLUGINMETAOBJECT_H
 #define PLUGINMETAOBJECT_H
 
-#include "dfm-framework/definitions/globaldefinitions.h"
+#include "dfm-framework/dfm_framework_global.h"
+#include "dfm-framework/lifecycle/plugindepend.h"
 
 #include <QSharedData>
 #include <QPluginLoader>
@@ -43,62 +44,21 @@ public:
  * }
  * @endcode
  */
-/// @brief PLUGIN_NAME 插件名称Key
-const char PLUGIN_NAME[] = "Name";
-/// @brief PLUGIN_VERSION 插件版本Key
-const char PLUGIN_VERSION[] = "Version";
-/// @brief PLUGIN_VERSION 插件兼容版本Key
-const char PLUGIN_COMPATVERSION[] = "CompatVersion";
-/// @brief PLUGIN_VERSION 插件类型Key
-const char PLUGIN_CATEGORY[] = "Category";
-/// @nrief PLUGIN_VENDOR 插件作者
-const char PLUGIN_VENDOR[] = "Vendor";
-/// @nrief PLUGIN_VENDOR 插件所持有的公司
-const char PLUGIN_COPYRIGHT[] = "Copyright";
-/// @nrief PLUGIN_VENDOR 插件描述
-const char PLUGIN_DESCRIPTION[] = "Description";
-/// @nrief PLUGIN_VENDOR 插件开源协议
-const char PLUGIN_LICENSE[] = "License";
-/// @nrief PLUGIN_VENDOR 插件主页链接地址
-const char PLUGIN_URLLINK[] = "UrlLink";
-/// @nrief PLUGIN_VENDOR 插件依赖
-const char PLUGIN_DEPENDS[] = "Depends";
 
 class Plugin;
 class PluginContext;
 class PluginService;
 
 /**
- * @brief The PluginDepend class
- * 插件依赖项类
- */
-class PluginDepend
-{
-    friend class PluginManager;
-    friend class PluginManagerPrivate;
-    friend class PluginMetaObject;
-    friend Q_CORE_EXPORT QDebug operator<< (QDebug, const PluginDepend &);
-
-    QString m_name;
-    QString m_version;
-
-public:
-    PluginDepend(const PluginDepend &depend);
-    PluginDepend& operator = (const PluginDepend &depend);
-    QString name() const {return m_name;}
-    QString version() const {return m_version;}
-
-private:
-    PluginDepend();
-};
-
-/**
  * @brief The PluginMetaObject class
  *  插件元数据对象
  * @details 该类与SharedPointer配套使用时是线程安全的
  */
-class PluginMetaObject : public PluginMetaT1<Plugin>
+class PluginMetaObjectPrivate;
+class PluginMetaObject final : public PluginMetaT1<Plugin>
 {
+    QSharedPointer<PluginMetaObjectPrivate> d_ptr;
+
     friend class PluginManager;
     friend class PluginManagerPrivate;
     friend Q_CORE_EXPORT QDebug operator<< (QDebug, const PluginMetaObject &);
@@ -134,31 +94,13 @@ public:
     QList<PluginDepend> depends() const;
     State pluginState() const;
     QSharedPointer<Plugin> plugin();
-    QString loaderErrorString();
-
-private:
-    QString m_iid;
-    QString m_name;
-    QString m_version;
-    QString m_compatVersion;
-    QString m_vendor;
-    QString m_copyright;
-    QStringList m_license;
-    QString m_description;
-    QString m_urlLink;
-    QString m_category;
-    State m_state;
-    QList<PluginDepend> m_depends;
-    QSharedPointer<Plugin> m_plugin;
-    QSharedPointer<QPluginLoader> m_loader;
-    QSharedPointer<PluginContext> m_context;
+    QString errorString();
 };
 
 typedef QSharedPointer<DPF_NAMESPACE::PluginMetaObject> PluginMetaObjectPointer;
 
 QT_BEGIN_NAMESPACE
 #ifndef QT_NO_DEBUG_STREAM
-Q_CORE_EXPORT QDebug operator<< (QDebug, const DPF_NAMESPACE::PluginDepend &);
 Q_CORE_EXPORT QDebug operator<< (QDebug, const DPF_NAMESPACE::PluginMetaObject &);
 Q_CORE_EXPORT QDebug operator<< (QDebug, const DPF_NAMESPACE::PluginMetaObjectPointer &);
 #endif //QT_NO_DEBUG_STREAM

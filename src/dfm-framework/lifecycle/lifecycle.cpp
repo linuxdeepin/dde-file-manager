@@ -4,7 +4,7 @@
 
 DPF_BEGIN_NAMESPACE
 
-Q_GLOBAL_STATIC(PluginManager,_pluginManager)
+Q_GLOBAL_STATIC(PluginManager,pluginManager);
 
 /** @brief 设置插件身份标识，与Qt插件的IID标识接口保持一致
  * 你可以在任何的代码块中使用，如下
@@ -16,7 +16,7 @@ Q_GLOBAL_STATIC(PluginManager,_pluginManager)
  */
 void LifeCycle::setPluginIID(const QString &pluginIID)
 {
-    return _pluginManager->setPluginIID(pluginIID);
+    return pluginManager->setPluginIID(pluginIID);
 }
 
 /** @brief 获取插件身份标识
@@ -29,7 +29,7 @@ void LifeCycle::setPluginIID(const QString &pluginIID)
  */
 QString LifeCycle::pluginIID()
 {
-    return _pluginManager->pluginIID();
+    return pluginManager->pluginIID();
 }
 
 /** @brief 获取设置的插件路径
@@ -37,7 +37,7 @@ QString LifeCycle::pluginIID()
  */
 QStringList LifeCycle::pluginPaths()
 {
-    return _pluginManager->pluginPaths();
+    return pluginManager->pluginPaths();
 }
 
 /** @brief 设置的插件路径
@@ -46,7 +46,7 @@ QStringList LifeCycle::pluginPaths()
  */
 void LifeCycle::setPluginPaths(const QStringList &pluginPaths)
 {
-    return _pluginManager->setPluginPaths(pluginPaths);
+    return pluginManager->setPluginPaths(pluginPaths);
 }
 
 /** @brief 获取插件服务的路径
@@ -54,7 +54,7 @@ void LifeCycle::setPluginPaths(const QStringList &pluginPaths)
  */
 QStringList LifeCycle::servicePaths()
 {
-    return _pluginManager->servicePaths();
+    return pluginManager->servicePaths();
 }
 
 /** @brief 设置服务的路径列表路径
@@ -63,13 +63,13 @@ QStringList LifeCycle::servicePaths()
  */
 void LifeCycle::setServicePaths(const QStringList &servicePaths)
 {
-    return _pluginManager->setServicePaths(servicePaths);
+    return pluginManager->setServicePaths(servicePaths);
 }
 
 PluginMetaObjectPointer LifeCycle::pluginMetaObj(const QString &pluginName,
                                                                  const QString version)
 {
-    return _pluginManager->pluginMetaObj(pluginName,version);
+    return pluginManager->pluginMetaObj(pluginName,version);
 }
 
 /** @brief 读取所有的插件的元数据
@@ -84,7 +84,7 @@ PluginMetaObjectPointer LifeCycle::pluginMetaObj(const QString &pluginName,
  */
 void LifeCycle::readPlugins()
 {
-    _pluginManager->readPlugins();
+    pluginManager->readPlugins();
 }
 
 /** @brief 加载所有插件
@@ -102,9 +102,9 @@ void LifeCycle::readPlugins()
  */
 void LifeCycle::loadPlugins()
 {
-    _pluginManager->loadPlugins();
-    _pluginManager->initPlugins();
-    _pluginManager->startPlugins();
+    pluginManager->loadPlugins();
+    pluginManager->initPlugins();
+    pluginManager->startPlugins();
 }
 
 /** @brief 卸载所有插件
@@ -117,19 +117,19 @@ void LifeCycle::loadPlugins()
  */
 void LifeCycle::shutdownPlugins()
 {
-    _pluginManager->stopPlugins();
+    pluginManager->stopPlugins();
 }
 
 void LifeCycle::loadPlugin(PluginMetaObjectPointer &pointer)
 {
-    _pluginManager->loadPlugin(pointer);
-    _pluginManager->initPlugin(pointer);
-    _pluginManager->startPlugin(pointer);
+    pluginManager->loadPlugin(pointer);
+    pluginManager->initPlugin(pointer);
+    pluginManager->startPlugin(pointer);
 }
 
 void LifeCycle::shutdownPlugin(PluginMetaObjectPointer &pointer)
 {
-    _pluginManager->stopPlugin(pointer);
+    pluginManager->stopPlugin(pointer);
 }
 
 DPF_END_NAMESPACE

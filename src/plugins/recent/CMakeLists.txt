@@ -4,18 +4,22 @@ project(recent)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+include_directories(
+    ${CMAKE_SOURCE_DIR}/src/services/dfm-business-services/dfm-filemanager-service
+    )
+
 set(recent_cxx_source
-    dfmbookmarknode.cpp
-    dfmrecentutil.cpp
-    dfmrecentfileinfo.cpp
+    bookmarknode.cpp
+    recentutil.cpp
+    recentfileinfo.cpp
     recent.cpp
     recent.json
     )
 
 set(recent_cxx_include
-    dfmbookmarknode.h
-    dfmrecentutil.h
-    dfmrecentfileinfo.h
+    bookmarknode.h
+    recentutil.h
+    recentfileinfo.h
     recent.h
     )
 
@@ -26,8 +30,9 @@ add_library(${PROJECT_NAME}
     )
 
 target_link_libraries(${PROJECT_NAME}
-    dfmbundleservice
-    dfmlifecycle
+    dfm-base
+    dfm-framework
+    dfm-filemanager-service
     ${QtUseModules}
     ${PkgUserModules}
     )

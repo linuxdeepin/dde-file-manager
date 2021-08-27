@@ -9,11 +9,13 @@ include_directories(
     )
 
 set(core_cxx_source
+    corelog.cpp
     core.cpp
     core.json
     )
 
 set(core_cxx_include
+    corelog.h
     core.h
     )
 

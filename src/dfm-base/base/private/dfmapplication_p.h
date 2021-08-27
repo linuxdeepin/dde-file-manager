@@ -21,7 +21,10 @@
 #ifndef DFMAPPLICATION_P_H
 #define DFMAPPLICATION_P_H
 
-#include "base/dfmglobal.h"
+#include "dfm-base/dfm_base_global.h"
+
+#include <QString>
+#include <QVariant>
 
 class DFMApplication;
 class DFMApplicationPrivate

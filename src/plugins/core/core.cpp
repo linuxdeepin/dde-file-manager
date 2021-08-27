@@ -21,12 +21,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //new lib
-#include "dfm-base/widgets/dfmsidebar/dfmsidebar.h"
-#include "dfm-base/widgets/dfmsidebar/dfmsidebaritem.h"
-#include "dfm-base/widgets/dfmsidebar/dfmsidebarview.h"
-#include "dfm-base/widgets/dfmsidebar/dfmsidebarmodel.h"
+#include "dfm-base/widgets/dfmsidebar/sidebar.h"
+#include "dfm-base/widgets/dfmsidebar/sidebaritem.h"
+#include "dfm-base/widgets/dfmsidebar/sidebarview.h"
+#include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
 
-#include "dfm-base/widgets/dfmfileview/dfmfileview.h"
+#include "dfm-base/widgets/dfmfileview/fileview.h"
 //#include "widgets/dfmfileview/dfilesystemmodel.h"
 
 #include "dfm-base/base/dfmstandardpaths.h"
@@ -50,6 +50,7 @@
 //#include "views/dtoolbar.h"
 
 #include "core.h"
+#include "corelog.h"
 #include "dfm-framework/lifecycle/plugin.h"
 
 ////services
@@ -58,11 +59,8 @@
 //#include "previewservice/oldpluginbase/dfmfilepreviewplugin.h"
 //#include "previewservice/oldpluginbase/dfmfilepreview.h"
 
-#include "windowservice/dfmwindowservice.h"
-#include "windowservice/dfmbrowseview.h"
-
-#include "dfm-base/event/dfmglobaleventdispatcher.h"
-#include "dfm-base/event/handler/dfmwindoweventhandler.h"
+#include "windowservice/windowservice.h"
+#include "windowservice/browseview.h"
 
 #include <QListWidget>
 #include <QListView>
@@ -82,24 +80,15 @@
 #include <QCoreApplication>
 #include <QToolButton>
 
-#define DEFAULT_WINDOW_WIDTH 760
-#define DEFAULT_WINDOW_HEIGHT 420
+DSB_DM_USE_NAMESPACE
+
+namespace GlobalPrivate {
+    const int DEFAULT_WINDOW_WIDTH = 760;
+    const int DEFAULT_WINDOW_HEIGHT = 420;
+    static DFMApplication* dfmApp = nullptr;
+}
 
 //DFM_USE_NAMESPACE
-
-static DFMApplication* dfmApp = nullptr;
-
-Q_GLOBAL_STATIC(DFMWindowEventHandler,_coreWindowEventHandler)
-
-//send the OpenNewWindow event
-static void sendEventToBundlesNewWindow(int winIdx, const QUrl &url)
-{
-    DFMWindowEventPointer event(new DFMWindowEvent(DFMWindowEvent::OpenNewWindow));
-    QList<DFMWindowEventData> data;
-    data << DFMWindowEventData(winIdx,url);
-    event->setData(data);
-    DFMEventProxy::sendEvent(event);
-}
 
 void initSidebar(DFMSideBar* sidebar)
 {
@@ -239,8 +228,8 @@ void Core::initialize()
     dpfCritical() << __PRETTY_FUNCTION__;
     qInfo() << Q_FUNC_INFO;
 
-    IMPORT_SERVICE(DFMWindowService);
-//    IMPORT_SERVICE(DFMOldPreviewService);
+    IMPORT_SERVICE(WindowService);
+    //    IMPORT_SERVICE(DFMOldPreviewService);
 
     //注册路由
     DFMUrlRoute::schemeMapRoot("file","/");
@@ -252,28 +241,32 @@ void Core::initialize()
     DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("file");
 
     regStandardPathClass();
-
-    DFMEventProxy::installHandler(_coreWindowEventHandler);
 }
 
 bool Core::start(QSharedPointer<dpf::PluginContext> context)
 {
-    dfmApp = new DFMApplication();
+    GlobalPrivate::dfmApp = new DFMApplication;
     dpfCritical() << __PRETTY_FUNCTION__;
     qInfo() << "import service list" << context->services();
-//    auto previewService = context->service<DFMOldPreviewService>("DFMOldPreviewService");
-//    if (previewService) {
-//        auto viewInterfaces = previewService->getViewInterfaces();
-//        qInfo() << "viewInterfaces.size()" << viewInterfaces.size();
-//        auto previewInterfaces = previewService->getPreviewInterfaces();
-//        qInfo() << "previewInterfaces.size()" << previewInterfaces.size();
-//        auto expandInfoInterfaces = previewService->getExpandInfoInterfaces();
-//        qInfo() << "expandInfoInterfaces.size()" << expandInfoInterfaces.size();
-//        auto dfmfilePreviewInterface = previewService->getDFMFilePreviewInterface();
-//        qInfo() << "dfmfilePreviewInterface.size()" << dfmfilePreviewInterface.size();
-//    }
+    //    auto previewService = context->service<DFMOldPreviewService>("DFMOldPreviewService");
+    //    if (previewService) {
+    //        auto viewInterfaces = previewService->getViewInterfaces();
+    //        qInfo() << "viewInterfaces.size()" << viewInterfaces.size();
+    //        auto previewInterfaces = previewService->getPreviewInterfaces();
+    //        qInfo() << "previewInterfaces.size()" << previewInterfaces.size();
+    //        auto expandInfoInterfaces = previewService->getExpandInfoInterfaces();
+    //        qInfo() << "expandInfoInterfaces.size()" << expandInfoInterfaces.size();
+    //        auto dfmfilePreviewInterface = previewService->getDFMFilePreviewInterface();
+    //        qInfo() << "dfmfilePreviewInterface.size()" << dfmfilePreviewInterface.size();
+    //    }
 
-    auto windowService = context->service<DFMWindowService>("DFMWindowService");
+    auto windowService = context->service<WindowService>("WindowService");
+
+    if (!windowService) {
+        qCCritical(CorePlugin) << "Failed, init window \"windowService\" is empty";
+        return false;
+    }
+
     if (windowService) {
         QUrl defaultUrl = DFMUrlRoute::pathToUrl(DFMStandardPaths::location(DFMStandardPaths::HomePath));
         DFMBrowseWindow* newWindow = windowService->newWindow();
@@ -281,13 +274,14 @@ bool Core::start(QSharedPointer<dpf::PluginContext> context)
         if (newWindow){
             int winIdx = windowService->m_windowlist.indexOf(newWindow);
             //send new window event to bundles
-            sendEventToBundlesNewWindow(winIdx, defaultUrl);
+
             //初始化sidebar
             initSidebar(newWindow->sidebar());;
             newWindow->show();
-            newWindow->setMinimumSize(DEFAULT_WINDOW_WIDTH,DEFAULT_WINDOW_HEIGHT);
-            //綁定sidebaritem的點擊邏輯
+            newWindow->setMinimumSize(GlobalPrivate::DEFAULT_WINDOW_WIDTH,
+                                      GlobalPrivate::DEFAULT_WINDOW_HEIGHT);
 
+            //綁定sidebaritem的點擊邏輯
             QObject::connect(newWindow->sidebar(), &DFMSideBar::activatedItemUrl,
                              newWindow, [=](const QUrl &url)
             {
@@ -304,8 +298,8 @@ bool Core::start(QSharedPointer<dpf::PluginContext> context)
 
 dpf::Plugin::ShutdownFlag Core::stop() {
 
-    EXPORT_SERVICE(DFMWindowService);
-//    EXPORT_SERVICE(DFMOldPreviewService);
+    EXPORT_SERVICE(WindowService);
+    //    EXPORT_SERVICE(DFMOldPreviewService);
 
     return Synch;
 }

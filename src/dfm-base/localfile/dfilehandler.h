@@ -21,7 +21,10 @@
 #ifndef DFILEHANDLER_H
 #define DFILEHANDLER_H
 
-#include "base/dfmglobal.h"
+#include "dfm-base/dfm_base_global.h"
+
+#include <QUrl>
+#include <QFileDevice>
 
 class DFileHandlerPrivate;
 class DFileHandler

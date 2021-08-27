@@ -1,7 +1,7 @@
 #ifndef APPBUS_H
 #define APPBUS_H
 
-#include "dfm-framework/definitions/globaldefinitions.h"
+#include "dfm-framework/dfm_framework_global.h"
 
 #include <QObject>
 

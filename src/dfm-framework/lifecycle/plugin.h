@@ -2,7 +2,7 @@
 #define PLUGIN_H
 
 #include "dfm-framework/lifecycle/plugincontext.h"
-#include "dfm-framework/definitions/globaldefinitions.h"
+#include "dfm-framework/dfm_framework_global.h"
 
 #include <QObject>
 #include <QSharedData>
@@ -31,7 +31,7 @@ class PluginContext;
  * Q_PLUGIN_METADATA 可参阅Qt宏定义
  * PLUGIN_INTERFACE
  */
-class Plugin: public QObject
+class Plugin : public QObject
 {
     Q_OBJECT
 public:
@@ -40,16 +40,8 @@ public:
         Asynch, /// 异步释放标识
     };
 
-
     explicit Plugin();
-
     virtual ~Plugin() override;
-
-    /**
-     * @brief Plugin::initialized 插件初始化接口
-     * @details 此函数是多线程执行，内部可用于一些线程安全的函数、类操作
-     * @return void
-     */
     virtual void initialize();
 
     /**
@@ -58,17 +50,6 @@ public:
      * false则代表当前内部执行存在问题
      */
     virtual bool start(QSharedPointer<PluginContext> context) = 0;
-
-    /**
-     * @brief Plugin::stop
-     * @return PluginMetaObject::ShutDownFlag 释放的方式
-     * 目前支持Synch(同步)与Asynch(异步)
-     * 如果使用Asynch，那么插件的构建者应当发送信号
-     * @code
-     * emit asyncStopFinished
-     * @endcode
-     * 否则将导致内存泄露，或者无法卸载插件。
-     */
     virtual ShutdownFlag stop();
 
 signals:

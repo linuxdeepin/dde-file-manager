@@ -22,9 +22,6 @@
 #ifndef DSQLITEHANDLE_H
 #define DSQLITEHANDLE_H
 
-
-#include "base/define.h"
-
 #include <mutex>
 #include <regex>
 #include <memory>

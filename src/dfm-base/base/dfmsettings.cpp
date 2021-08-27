@@ -32,6 +32,7 @@
 #include <QFile>
 #include <QDir>
 #include <QTimer>
+#include <QThread>
 
 class DFMSettingsPrivate
 {

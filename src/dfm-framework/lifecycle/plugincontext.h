@@ -24,7 +24,7 @@
 #define PLUGINCONTEXT_H
 
 #include "dfm-framework/service/pluginserviceglobal.h"
-#include "dfm-framework/definitions/globaldefinitions.h"
+#include "dfm-framework/dfm_framework_global.h"
 
 #include <QMetaType>
 #include <QMetaObject>
@@ -34,7 +34,7 @@
 
 DPF_BEGIN_NAMESPACE
 
-class PluginContext : public QSharedData
+class PluginContext final : public QSharedData
 {
 
 public:
@@ -42,15 +42,16 @@ public:
 
     virtual ~PluginContext(){}
 
-    template<class T>
-    T *service(const QString &serviceName)
+    template<class CT>
+    CT *service(const QString &serviceName)
     {
-        return GlobalPrivate::PluginServiceGlobal::findService<T>(serviceName);
+        auto val = GlobalPrivate::PluginServiceGlobal::instance().value(serviceName);
+        return qobject_cast<CT*>(val);
     }
 
     QStringList services()
     {
-        return GlobalPrivate::PluginServiceGlobal::getServices();
+        return GlobalPrivate::PluginServiceGlobal::instance().keys();
     }
 };
 

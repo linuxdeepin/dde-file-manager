@@ -23,7 +23,7 @@
 #ifndef DABSTRACTFILEDEVICE_H
 #define DABSTRACTFILEDEVICE_H
 
-#include "dfm-base/base/dfmglobal.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include <QIODevice>
 

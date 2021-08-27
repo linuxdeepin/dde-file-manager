@@ -10,7 +10,7 @@
 #endif
 
 #ifndef DFM_BUILD_OUT_PLGUN_DIR
-#define DFM_BUILD_OUT_PLGUN_DIR "/home/workspace/recode/dde-file-manager/build/Release"
+#define DFM_BUILD_OUT_PLGUN_DIR "/home/workspace/recode/dde-file-manager/build/Debug"
 #elif
     #warning "cmake unseting definition DFM_BUILD_OUT_PLGUN_DIR"
 #endif

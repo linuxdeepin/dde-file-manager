@@ -46,7 +46,6 @@ include_directories(${SRC_DIR}) #include source dir
 #set Module subdir
 #   The module pattern cannot be broken,
 #   so the installation header file cannot be found
-set(definitions ${SRC_DIR}/definitions)
 set(lifecycle ${SRC_DIR}/lifecycle)
 set(listener ${SRC_DIR}/listener)
 set(service ${SRC_DIR}/service)
@@ -68,7 +67,7 @@ set(${PROJECT_NAME}_cxx_private_cpp
     )
 
 set(${PROJECT_NAME}_cxx_public_h
-    ${definitions}/globaldefinitions.h
+    ${SRC_DIR}/dfm_framework_global.h
     ${event}/event.h
     ${event}/eventcallproxy.h
     ${event}/eventhandler.h

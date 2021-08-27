@@ -26,6 +26,12 @@
 
 #include "dfm-framework/lifecycle/plugin.h"
 
+DPF_BEGIN_NAMESPACE
+namespace GlobalPrivate{
+    class PluginServiceGlobal;
+};
+DPF_END_NAMESPACE
+
 class DFMWindowManagerService;
 class Core : public dpf::Plugin
 {

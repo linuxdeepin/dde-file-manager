@@ -10,9 +10,7 @@
 #include "base/dabstractfilewatcher.h"
 #include "base/private/dabstractfilewatcher_p.h"
 #include "base/private/dfilesystemwatcher.h"
-#include "localfile/filesignalmanager.h"
-#include "base/singleton.h"
-#include "base/define.h"
+#include "base/singleton.hpp"
 #include "base/dfmurlroute.h"
 
 #include <QEvent>

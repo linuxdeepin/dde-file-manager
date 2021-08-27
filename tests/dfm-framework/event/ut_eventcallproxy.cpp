@@ -1,6 +1,5 @@
 #include "event/event.h"
 #include "event/eventcallproxy.h"
-#include "definitions/globaldefinitions.h"
 
 #include <QCoreApplication>
 #include <QMetaObject>

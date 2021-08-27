@@ -10,8 +10,9 @@
 #ifndef DABSTRACTFILEWATCHER_P_H
 #define DABSTRACTFILEWATCHER_P_H
 
-#include <QUrl>
 #include "base/dabstractfilewatcher.h"
+
+#include <QUrl>
 
 class DAbstractFileWatcherPrivate
 {

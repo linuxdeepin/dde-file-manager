@@ -1,7 +1,5 @@
 #include "event/event.h"
 
-#include "definitions/globaldefinitions.h"
-
 #include <QCoreApplication>
 #include <QMetaObject>
 #include <QUrl>

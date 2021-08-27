@@ -5,7 +5,7 @@
 
 #include "dfm-framework/log/frameworklog.h"
 
-#include "dfm-framework/definitions/globaldefinitions.h"
+#include "dfm-framework/dfm_framework_global.h"
 
 #include <QObject>
 #include <QMetaObject>
@@ -17,56 +17,38 @@ DPF_BEGIN_NAMESPACE
 /**
  * @brief The PluginService class
  * 插件服务接口类
+ * @code
+ * class PluginService : public QObject
+ * {
+ *      Q_OBJECT
+ *      Q_DISABLE_COPY(PluginService)
+ *      friend class PluginServiceGlobal;
+ * public:
+ *      explicit PluginService(){}
+ *      virtual ~PluginService(){}
+ * };
+ * @endcode
  */
 
-class PluginService : public QObject
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(PluginService)
-    friend class PluginServiceGlobal;
+class PluginService;
 
-public:
-
-    explicit PluginService(QObject * parent = nullptr): QObject(parent)
-    {
-
-    }
-
-};
-
-/// @brief PLUGIN_SERVICE 服务类声明宏，与Q_DISABLE_COPY类似
 #define PLUGIN_SERVICE(x) \
-    public: \
-    explicit x(QObject *parent = nullptr) : PluginService(parent) \
-{\
-    dpf::GlobalPrivate::PluginServiceGlobal::importService<x>(this); \
-    dpfCritical() << "IMPORT_SERVICE: " \
-    << #x ;\
-    if (parent != nullptr) { \
-    dpfCritical() << "Importer class: " \
-    << parent->metaObject()->className(); \
-    }\
-    QObject::connect(this, &QObject::destroyed, this, [=]() \
-{ \
-    dpfCritical() << "EXPORT_SERVICE: " << #x ;\
-    if (parent != nullptr) { \
-    dpfCritical() << "Exporter class: " \
-    << parent->metaObject()->className(); \
-    }\
-    });\
+   static bool x##_regResult = dpf::GlobalPrivate::PluginServiceGlobal::instance().regClass<x>(#x);
+
+#define IMPORT_SERVICE(x) \
+    QString errorString; \
+    auto x##_ins = dpf::GlobalPrivate::PluginServiceGlobal::instance().create(#x,&errorString); \
+    if (!x##_ins) \
+        dpfCritical() << errorString; \
+    else { \
+        dpfCritical() << "IMPORT_SERVICE:" << #x;\
+        auto appendRes = dpf::GlobalPrivate::PluginServiceGlobal::instance().append(#x, x##_ins, &errorString);\
+        if (!appendRes) dpfCritical()<< errorString;\
     }
 
-/// @brief IMPORT_SERVICE 服务导入接口宏
-#define IMPORT_SERVICE(x)\
-    nullptr == DPF_NAMESPACE::GlobalPrivate::PluginServiceGlobal::findService<x>(#x) ? \
-    new x : DPF_NAMESPACE::GlobalPrivate::PluginServiceGlobal::findService<x>(#x); \
-    DPF_NAMESPACE::GlobalPrivate::PluginServiceGlobal::addImportInfo(#x,this->metaObject()->className());
-
-/// @brief IMPORT_SERVICE 服务导出接口宏
-#define EXPORT_SERVICE(x)\
-    nullptr == DPF_NAMESPACE::GlobalPrivate::PluginServiceGlobal::findService<x>(#x) ? \
-    false : DPF_NAMESPACE::GlobalPrivate::PluginServiceGlobal::exportService<x>(#x); \
-    DPF_NAMESPACE::GlobalPrivate::PluginServiceGlobal::delImportInfo(#x);
+#define EXPORT_SERVICE(x) \
+    dpf::GlobalPrivate::PluginServiceGlobal::instance().remove(#x);\
+    dpfCritical() << "EXPORT_SERVICE:" << #x;
 
 DPF_END_NAMESPACE
 

@@ -3,42 +3,48 @@ cmake_minimum_required(VERSION 3.1.0)
 project(dfm-filemanager-service)
 
 # window service sources
+
+set(${PROJECT_NAME}_global_h
+    dfm_filemanager_service_global.h
+    )
+
 set(windowservice_cpp
-    windowservice/dfmwindowservice.cpp
-    windowservice/dfmdisplayviewlogic.cpp
-    windowservice/dfmdisplaydefaultview.cpp
-    windowservice/dfmnavwidget.cpp
-    windowservice/dfmaddressbar.cpp
-    windowservice/dfmcompleterview.cpp
-    windowservice/dfmoptionbuttonbox.cpp
-    windowservice/dfmcrumbbar.cpp
-    windowservice/private/dfmbrowsewindow_p.cpp
-    windowservice/dfmbrowseview.cpp
-    windowservice/dfmbrowsewindow.cpp
-    windowservice/dfmcrumbmodel.cpp
+    windowservice/windowservice.cpp
+    windowservice/displayviewlogic.cpp
+    windowservice/displaydefaultview.cpp
+    windowservice/navwidget.cpp
+    windowservice/addressbar.cpp
+    windowservice/completerview.cpp
+    windowservice/optionbuttonbox.cpp
+    windowservice/crumbbar.cpp
+    windowservice/private/browsewindow_p.cpp
+    windowservice/browseview.cpp
+    windowservice/browsewindow.cpp
+    windowservice/crumbmodel.cpp
     )
 
 set(windowservice_h
-    windowservice/dfmwindowservice.h
-    windowservice/dfmdisplayviewlogic.h
-    windowservice/dfmdisplaydefaultview.h
-    windowservice/private/dfmbrowsewindow_p.h
-    windowservice/dfmnavwidget.h
-    windowservice/private/dfmaddressbar_p.h
-    windowservice/dfmaddressbar.h
-    windowservice/dfmcompleterview.h
-    windowservice/dfmoptionbuttonbox.h
-    windowservice/private/dfmcrumbbar_p.h
-    windowservice/dfmcrumbbar.h
-    windowservice/private/dfmbrowseview_p.h
-    windowservice/dfmbrowseview.h
-    windowservice/dfmbrowsewindow.h
-    windowservice/dfmcrumbmodel.h
+    windowservice/windowservice.h
+    windowservice/displayviewlogic.h
+    windowservice/displaydefaultview.h
+    windowservice/private/browsewindow_p.h
+    windowservice/navwidget.h
+    windowservice/private/addressbar_p.h
+    windowservice/addressbar.h
+    windowservice/completerview.h
+    windowservice/optionbuttonbox.h
+    windowservice/private/crumbbar_p.h
+    windowservice/crumbbar.h
+    windowservice/private/browseview_p.h
+    windowservice/browseview.h
+    windowservice/browsewindow.h
+    windowservice/crumbmodel.h
     )
 
 add_library(
     ${PROJECT_NAME}
     SHARED
+    ${${PROJECT_NAME}_global_h}
     ${windowservice_h}
     ${windowservice_cpp}
     )

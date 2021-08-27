@@ -1,4 +1,6 @@
 #include "pluginmetaobject.h"
+#include "private/pluginmetaobject_p.h"
+
 #include <QDebug>
 
 DPF_BEGIN_NAMESPACE
@@ -10,7 +12,7 @@ DPF_BEGIN_NAMESPACE
  */
 QString PluginMetaObject::version() const
 {
-    return m_version;
+    return d_ptr->version;
 }
 
 /**
@@ -20,7 +22,7 @@ QString PluginMetaObject::version() const
  */
 QString PluginMetaObject::compatVersion() const
 {
-    return m_compatVersion;
+    return d_ptr->compatVersion;
 }
 
 /**
@@ -30,7 +32,7 @@ QString PluginMetaObject::compatVersion() const
  */
 QString PluginMetaObject::vendor() const
 {
-    return m_vendor;
+    return d_ptr->vendor;
 }
 
 /**
@@ -40,7 +42,7 @@ QString PluginMetaObject::vendor() const
  */
 QString PluginMetaObject::copyright() const
 {
-    return m_copyright;
+    return d_ptr->copyright;
 }
 
 /**
@@ -50,7 +52,7 @@ QString PluginMetaObject::copyright() const
  */
 QStringList PluginMetaObject::license() const
 {
-    return m_license;
+    return d_ptr->license;
 }
 
 /**
@@ -60,7 +62,7 @@ QStringList PluginMetaObject::license() const
  */
 QString PluginMetaObject::description() const
 {
-    return m_description;
+    return d_ptr->description;
 }
 
 /**
@@ -70,7 +72,7 @@ QString PluginMetaObject::description() const
  */
 QString PluginMetaObject::category() const
 {
-    return m_category;
+    return d_ptr->category;
 }
 
 /**
@@ -80,7 +82,7 @@ QString PluginMetaObject::category() const
  */
 QString PluginMetaObject::urlLink() const
 {
-    return m_urlLink;
+    return d_ptr->urlLink;
 }
 
 /**
@@ -90,7 +92,7 @@ QString PluginMetaObject::urlLink() const
  */
 QList<PluginDepend> PluginMetaObject::depends() const
 {
-    return m_depends;
+    return d_ptr->depends;
 }
 
 /**
@@ -100,7 +102,7 @@ QList<PluginDepend> PluginMetaObject::depends() const
  */
 PluginMetaObject::State PluginMetaObject::pluginState() const
 {
-    return m_state;
+    return d_ptr->state;
 }
 
 /**
@@ -110,24 +112,24 @@ PluginMetaObject::State PluginMetaObject::pluginState() const
  */
 QSharedPointer<Plugin> PluginMetaObject::plugin()
 {
-    return m_plugin;
+    return d_ptr->plugin;
 }
 
 /**
- * @brief PluginMetaObject::loaderErrorString
+ * @brief PluginMetaObject::errorString
  * 获取插件加载错误信息
  * @return
  */
-QString PluginMetaObject::loaderErrorString()
+QString PluginMetaObject::errorString()
 {
-    return m_loader->errorString();
+    return d_ptr->error;
 }
 
 /**
  * @brief 默认构造函数
  */
 PluginMetaObject::PluginMetaObject()
-    : m_loader(new QPluginLoader(nullptr))
+    : d_ptr(new PluginMetaObjectPrivate(this))
 {
 
 }
@@ -137,36 +139,36 @@ PluginMetaObject::PluginMetaObject()
  */
 PluginMetaObject::PluginMetaObject(const PluginMetaObject &meta)
 {
-    m_iid = meta.iid();
-    m_name = meta.name();
-    m_version = meta.version();
-    m_compatVersion = meta.compatVersion();
-    m_category = meta.category();
-    m_license = meta.license();
-    m_description = meta.description();
-    m_urlLink = meta.urlLink();
-    m_depends = meta.depends();
-    m_state = pluginState();
-    m_plugin = plugin();
-    m_loader = meta.m_loader;
+    d_ptr->iid = meta.iid();
+    d_ptr->name = meta.name();
+    d_ptr->version = meta.version();
+    d_ptr->compatVersion = meta.compatVersion();
+    d_ptr->category = meta.category();
+    d_ptr->license = meta.license();
+    d_ptr->description = meta.description();
+    d_ptr->urlLink = meta.urlLink();
+    d_ptr->depends = meta.depends();
+    d_ptr->state = pluginState();
+    d_ptr->plugin = plugin();
+    d_ptr->loader = meta.d_ptr->loader;
 }
 /**
   * @brief 赋值拷贝
   */
 PluginMetaObject &PluginMetaObject::operator =(const PluginMetaObject &meta)
 {
-    m_iid = meta.iid();
-    m_name = meta.name();
-    m_version = meta.version();
-    m_compatVersion = meta.compatVersion();
-    m_category = meta.category();
-    m_license = meta.license();
-    m_description = meta.description();
-    m_urlLink = meta.urlLink();
-    m_depends = meta.depends();
-    m_state = pluginState();
-    m_plugin = plugin();
-    m_loader = meta.m_loader;
+    d_ptr->iid = meta.iid();
+    d_ptr->name = meta.name();
+    d_ptr->version = meta.version();
+    d_ptr->compatVersion = meta.compatVersion();
+    d_ptr->category = meta.category();
+    d_ptr->license = meta.license();
+    d_ptr->description = meta.description();
+    d_ptr->urlLink = meta.urlLink();
+    d_ptr->depends = meta.depends();
+    d_ptr->state = pluginState();
+    d_ptr->plugin = plugin();
+    d_ptr->loader = meta.d_ptr->loader;
     return *this;
 }
 
@@ -177,7 +179,7 @@ PluginMetaObject &PluginMetaObject::operator =(const PluginMetaObject &meta)
  */
 QString PluginMetaObject::fileName() const
 {
-    return m_loader->fileName();
+    return d_ptr->loader->fileName();
 }
 
 /**
@@ -187,7 +189,7 @@ QString PluginMetaObject::fileName() const
  */
 QString PluginMetaObject::iid() const
 {
-    return m_iid;
+    return d_ptr->iid;
 }
 
 /**
@@ -197,7 +199,7 @@ QString PluginMetaObject::iid() const
  */
 QString PluginMetaObject::name() const
 {
-    return m_name;
+    return d_ptr->name;
 }
 
 /**
@@ -216,8 +218,8 @@ PluginDepend::PluginDepend()
  */
 PluginDepend::PluginDepend(const PluginDepend &depend)
 {
-    m_name = depend.name();
-    m_version = depend.version();
+    pluginName = depend.name();
+    pluginVersion = depend.version();
 }
 
 /**
@@ -228,8 +230,8 @@ PluginDepend::PluginDepend(const PluginDepend &depend)
  */
 PluginDepend &PluginDepend::operator =(const PluginDepend &depend)
 {
-    m_name = depend.name();
-    m_version = depend.version();
+    pluginName = depend.name();
+    pluginVersion = depend.version();
     return *this;
 }
 

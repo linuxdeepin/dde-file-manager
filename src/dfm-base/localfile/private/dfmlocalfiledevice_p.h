@@ -25,6 +25,7 @@
 #include "localfile/dfmlocalfiledevice.h"
 
 #include <QPointer>
+#include <QFile>
 
 class DFMLocalFileDevicePrivate : public DAbstractFileDevicePrivate
 {

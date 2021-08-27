@@ -3,16 +3,14 @@
 
 #include "dfm-framework/lifecycle/pluginmetaobject.h"
 #include "dfm-framework/lifecycle/plugin.h"
-
-#include "dfm-framework/definitions/globaldefinitions.h"
+#include "dfm-framework/dfm_framework_global.h"
 
 #include <QString>
-
 #include <QObject>
 
 DPF_BEGIN_NAMESPACE
 
-class LifeCycle : public QObject
+class LifeCycle final : public QObject
 {
     Q_OBJECT
 public:

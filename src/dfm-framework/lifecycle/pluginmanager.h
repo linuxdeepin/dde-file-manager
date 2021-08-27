@@ -3,8 +3,7 @@
 
 #include "dfm-framework/lifecycle/plugin.h"
 #include "dfm-framework/lifecycle/pluginsetting.h"
-
-#include "dfm-framework/definitions/globaldefinitions.h"
+#include "dfm-framework/dfm_framework_global.h"
 
 #include <QPluginLoader>
 #include <QSettings>
@@ -41,7 +40,6 @@ public:
     void setServicePaths(const QStringList &servicePaths);
 
     void readPlugins();
-
     void loadPlugins();
     void initPlugins();
     void startPlugins();
@@ -54,17 +52,6 @@ public:
     void initPlugin(PluginMetaObjectPointer &pointer);
     void startPlugin(PluginMetaObjectPointer &pointer);
     void stopPlugin(PluginMetaObjectPointer &pointer);
-};
-
-/*
- * @class PluginManagerGlobal
- * @details 全局静态的插件管理器接口，提供一个可以访问Plugin的插件接口静态类
- * 内部使用Q_GLOBAL_STATIC创建静态PluginManager对象
- */
-class PluginManagerGlobal
-{
-public:
-
 };
 
 DPF_END_NAMESPACE

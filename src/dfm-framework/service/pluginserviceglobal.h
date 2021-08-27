@@ -1,97 +1,142 @@
 #ifndef PLUGINSERVICEGLOBAL_H
 #define PLUGINSERVICEGLOBAL_H
 
-#include "dfm-framework/definitions/globaldefinitions.h"
+#include "dfm-framework/dfm_framework_global.h"
 
 #include <QString>
 #include <QObject>
 #include <QHash>
 #include <QtConcurrent>
 
+//全局私有，对内使用
+
 DPF_BEGIN_NAMESPACE
 
-//全局私有，对内使用
-class PluginService;
+class PluginService : public QObject
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(PluginService)
+public:
+    explicit PluginService(){}
+    virtual ~PluginService(){}
+};
 
 namespace GlobalPrivate {
 
-typedef QString ServiceName,BundleName;
+template<class CT>
+class QtClassFactory
+{
+    //定义创建函数类型
+    typedef std::function<CT*()> CreateFunc;
+public:
+    template<class T>
+    bool regClass(const QString& name, QString * errorString = nullptr)
+    {
+        if (constructList[name]) {
+            if (errorString)
+                *errorString = QObject::tr("The current class name has registered "
+                                           "the associated construction class");
+            return false;
+        }
 
-/**
- * @brief The PluginServiceGlobal class
- * 插件服务的全局注册表
- */
-class PluginServiceGlobal : public QObject
+        CreateFunc foo = [=](){
+            return dynamic_cast<CT*>(new T());
+        };
+        constructList.insert(name,foo);
+        return true;
+    }
+
+    virtual CT* create(const QString& name, QString *errorString = nullptr)
+    {
+        CreateFunc constantFunc = constructList.value(name);
+        if (constantFunc) {
+            return constantFunc();
+        } else {
+            if (errorString)
+                *errorString = QObject::tr("Should be call registered 'regClass()' function "
+                                           "before create function");
+            return nullptr;
+        }
+    }
+
+protected:
+    QHash<QString, CreateFunc> constructList;
+};
+
+template<class CT>
+class QtClassManager
+{
+public:
+
+    virtual ~QtClassManager()
+    {
+        qDeleteAll(classList);
+    }
+
+    virtual bool append(const QString& name, CT * obj, QString *errorString = nullptr)
+    {
+        if (!obj){
+            if (errorString)
+                *errorString = QObject::tr("Failed, Can't append the empty class pointer");
+            return false;
+        }
+
+        auto castPointer = qobject_cast<QObject*>(obj);
+        if (castPointer)
+            castPointer->setParent(nullptr);
+
+        if (classList[name]) {
+             if (errorString)
+                 *errorString = QObject::tr("Failed, Objects cannot be added repeatedly");
+             return false;
+        }
+        classList.insert(name,obj);
+        return true;
+    }
+
+    virtual CT * value(const QString &name) const
+    {
+        auto res = classList[name];
+        return res;
+    }
+
+    virtual QStringList keys() const
+    {
+        return classList.keys();
+    }
+
+    virtual bool remove(const QString& name)
+    {
+        auto pointer = classList.take(name);
+        if (pointer) delete pointer;
+        classList.remove(name);
+        return true;
+    }
+
+protected:
+    QHash<QString, CT*> classList;
+};
+
+class PluginServiceGlobal final : public QObject,
+        public QtClassFactory<PluginService>,
+        public QtClassManager<PluginService>
 {
     Q_OBJECT
-    Q_DISABLE_COPY(PluginServiceGlobal)
 
-    static QHash<ServiceName, PluginService*> services;/// 服务注册列表，1:1关联
-    static QHash<ServiceName, BundleName> importers; ///服务导入者列表，1:1关联
+    inline static PluginServiceGlobal* This = nullptr;
 
 public:
 
-    PluginServiceGlobal() = delete;
-
-    static void addImportInfo(const ServiceName &serviceName,
-                              const BundleName &bundleName)
+    static PluginServiceGlobal &instance()
     {
-        importers.insert(serviceName,bundleName);
+        if (!This)
+            This  = new PluginServiceGlobal;
+        return *This;
     }
 
-    static void delImportInfo(const BundleName &bundleName)
-    {
-        QFuture<void> removeController = QtConcurrent::run([=]()
-        {
-            QHash<ServiceName, BundleName>::iterator itera = importers.begin();
-            while (itera != importers.end()) {
-                if (itera.value() == bundleName) {
-                    importers.remove(itera.key());
-                }
-                itera++;
-            }
-        });
-
-        removeController.waitForFinished();
-    }
-
-    template<class T = PluginService>
-    static T* findService(const QString &serviceName)
-    {
-        return qobject_cast<T*>(services.value(serviceName));
-    }
-
-    template<class T = PluginService>
-    static bool importService(T * const serviceIns)
-    {
-        auto serviceName = serviceIns->metaObject()->className();
-        auto service = findService(serviceName);
-        if (nullptr == service) {
-            services.insert(serviceName, serviceIns);
-            return true;
-        } else {
-            return false;
-        }
-        return false;
-    }
-
-    template<class T = PluginService>
-    static bool exportService(const QString &serverName)
-    {
-        if (qobject_cast<T*>(services.value(serverName))->parent() == nullptr) {
-            delete services.take(serverName);
-        }
-
-        return services.remove(serverName);
-    }
-
-    static QStringList getServices()
-    {
-        QStringList retServices = services.keys();
-        return retServices;
-    }
-
-}; //class PluginServiceGlobal
+private:
+    explicit PluginServiceGlobal(){}
+};
 
 } //namespace GlobalPrivate
 

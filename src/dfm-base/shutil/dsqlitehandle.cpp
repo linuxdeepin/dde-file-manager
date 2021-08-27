@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "base/singleton.h"
+#include "base/singleton.hpp"
 
 #include "dsqlitehandle.h"
 
@@ -36,6 +36,8 @@
 #include <QJsonParseError>
 #include <QStandardPaths>
 #include <QSqlDatabase>
+#include <QVariant>
+#include <QDebug>
 
 #include <string>
 #include <fstream>

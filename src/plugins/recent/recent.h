@@ -1,17 +1,17 @@
 #ifndef COREPLUGIN_H
 #define COREPLUGIN_H
 
-#include "dfmplugin.h"
+#include "dfm-framework/lifecycle/plugin.h"
 
 class DFMWindowManagerService;
-class Recent : public DFMPlugin
+class Recent : public dpf::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID DFMPLUGIN_INTERFACE FILE "recent.json")
+    Q_PLUGIN_METADATA(IID PLUGIN_INTERFACE FILE "recent.json")
 
 public:
     virtual void initialize() override;
-    virtual bool start(QSharedPointer<DFMPluginContext> context) override;
+    virtual bool start(QSharedPointer<dpf::PluginContext> context) override;
     virtual ShutdownFlag stop() override;
 
     DFMWindowManagerService *windowManagerService;

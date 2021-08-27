@@ -23,8 +23,8 @@
  */
 
 #include "base/dfmstandardpaths.h"
-#include <QUrl>
 
+#include <QUrl>
 #include <QDir>
 #include <QCoreApplication>
 #include <QStandardPaths>

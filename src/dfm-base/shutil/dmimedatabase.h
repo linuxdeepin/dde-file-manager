@@ -25,7 +25,7 @@
 #ifndef DMIMEDATABASE_H
 #define DMIMEDATABASE_H
 
-#include "dfm-base/base/dfmglobal.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include <QMimeDatabase>
 

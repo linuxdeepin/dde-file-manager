@@ -1,7 +1,7 @@
 #ifndef CODETIMECHECK_H
 #define CODETIMECHECK_H
 
-#include "dfm-framework/definitions/globaldefinitions.h"
+#include "dfm-framework/dfm_framework_global.h"
 
 #ifndef DPF_NO_CHECK_TIME //make use
 
@@ -13,34 +13,13 @@ DPF_BEGIN_NAMESPACE
  *  代码埋点时间检查模块，可加编译参数进行屏蔽
  *  DPF_NO_CHECK_TIME (cmake -DDPF_NO_CHECK_TIME)
  */
-class CodeCheckTime
+class CodeCheckTime final
 {
 public:
     explicit CodeCheckTime() = delete;
-
-    /**
-     * @brief setLogCacheDayCount 设置日志缓存时间
-     *  需要在调用其他函数之前调用
-     * @param dayCount 日志缓存时间
-     */
     static void setLogCacheDayCount(uint dayCount);
-
-    /**
-     * @brief logCacheDayCount 获取设置的日志缓存时间
-     * @return uint 日志缓存时间，默认7天
-     */
     static uint logCacheDayCount();
-
-    /**
-     * @brief begin 检查点-开始
-     * @param context 日志打印上下文，可参照QMessageLogContext
-     */
     static void begin(const QMessageLogContext &context);
-
-    /**
-     * @brief end 检查点-结束
-     * @param context 日志打印上下文，可参照QMessageLogContext
-     */
     static void end(const QMessageLogContext &context);
 };
 
