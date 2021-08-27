@@ -257,11 +257,8 @@ TEST_F(TestDFMVfsDevice, p_createRootFileInfo)
                                                   const char                 *,
                                                   GCancellable               *,
                                                   GError                    **error) {
-        GError *e = (GError *)malloc(sizeof (GError));
-        gchar  *m = (gchar *)malloc(256);
-        memset(m, 0, 256);
-        strcpy(m, "test");
-        e->message = m;
+        GError *e = g_slice_new(GError);
+        e->message = g_strdup("test");;
         *error = e;
         return nullptr;
     });
