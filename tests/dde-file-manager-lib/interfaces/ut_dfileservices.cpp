@@ -204,6 +204,7 @@ TEST_F(DFileSeviceTest, sart_fmevent)
     stl.set(ADDR(PathManager, isSystemPath), isSystemPathlamda);
     void (*showDeleteSystemPathWarnDialoglamda)(quint64) = [](quint64) {};
     stl.set(ADDR(DialogManager, showDeleteSystemPathWarnDialog), showDeleteSystemPathWarnDialoglamda);
+
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMMoveToTrashEvent>
                                  (nullptr, DUrlList() << url), nullptr));
     stl.reset(ADDR(PathManager, isSystemPath));
@@ -222,6 +223,9 @@ TEST_F(DFileSeviceTest, sart_fmevent)
     stl.set(ADDR(QDir, mkpath), mkpathlamda);
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMMkdirEvent>
                                  (nullptr, url), nullptr));
+    QFile file (url.toLocalFile());
+    if (file.exists())
+        file.remove();
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMTouchFileEvent>
                                  (nullptr, url), nullptr));
     bool (*showFileItemlamda)(QUrl, const QString &) = [](QUrl, const QString &) {return true;};
