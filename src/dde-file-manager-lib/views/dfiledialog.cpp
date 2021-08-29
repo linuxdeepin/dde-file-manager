@@ -1317,13 +1317,21 @@ void DFileDialog::onAcceptButtonClicked()
                     }
 
                     dialog.setIcon(QIcon::fromTheme("dialog-warning"));
-                    dialog.setTitle(tr("%1 already exists, do you want to replace it?").arg(file_name));
+
+                    QLabel *titleLabel = dialog.findChild<QLabel *>("TitleLabel");
+                    if (titleLabel)
+                        file_name = titleLabel->fontMetrics().elidedText(file_name, Qt::ElideMiddle, 380);
+
+                    QString title = tr("%1 already exists, do you want to replace it?").arg(file_name);
+                    dialog.setTitle(title);
                     dialog.addButton(tr("Cancel","button"), true);
                     dialog.addButton(tr("Replace","button"), false, DDialog::ButtonWarning);
 
                     if (dialog.exec() != DDialog::Accepted) {
                         return;
                     }
+
+
                 }
             }
 
