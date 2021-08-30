@@ -98,9 +98,9 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
 
         if (index == 1) {
             emit fileSignalManager->stopCdScanTimer(device);
-            QPointer<BurnOptDialog> dp = this;
             if (d->image_file.path().length() == 0) {
-                QtConcurrent::run([ = , &dp] {
+                QtConcurrent::run([ = ] {
+                    QPointer<BurnOptDialog> dp = this;
                     QSharedPointer<FileJob> job(new FileJob(FileJob::OpticalBurn));
                     job->moveToThread(qApp->thread());
                     if (dp.isNull())
@@ -121,6 +121,8 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                 });
             } else {
                 QtConcurrent::run([ = ] {
+                    QPointer<BurnOptDialog> dp = this;
+
                     QSharedPointer<FileJob> job(new FileJob(FileJob::OpticalImageBurn));
                     job->moveToThread(qApp->thread());
                     if (dp.isNull())
