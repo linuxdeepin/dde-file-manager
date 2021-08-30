@@ -394,13 +394,6 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
         }
         //防止不可添加tag的文件被拖进tag目录从而获取tag属性
         if (item->url().isTaggedFile() && !fileInfo->canTag()) {
-            for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
-                // 对我的手机item做临时处理，连接成功时允许向item拖拽
-                if ((item->url().scheme() == PLUGIN_SCHEME) && (item->url().host() == plugin.first) && plugin.second->isSideBarItemSupportedDrop()) {
-                    return Qt::CopyAction;
-                }
-            }
-
             return Qt::IgnoreAction;
         }
     }
@@ -408,6 +401,13 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
     const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, item->url());
 
     if (!info || !info->canDrop()) {
+        for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
+            // 对我的手机item做临时处理，连接成功时允许向item拖拽
+            if ((item->url().scheme() == PLUGIN_SCHEME) && (item->url().host() == plugin.first) && plugin.second->isSideBarItemSupportedDrop()) {
+                return Qt::CopyAction;
+            }
+        }
+
         return Qt::IgnoreAction;
     }
     Qt::DropAction action = Qt::IgnoreAction;
