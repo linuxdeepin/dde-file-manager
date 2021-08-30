@@ -53,14 +53,6 @@
         <translation>Click &quot;Safely Remove&quot; and then disconnect it next time</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">The device is busy, cannot eject now</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">The device is busy, cannot remove now</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Cannot unmount the device</translation>
     </message>
