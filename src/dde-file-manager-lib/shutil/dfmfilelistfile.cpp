@@ -153,7 +153,7 @@ bool DFMFileListFilePrivate::loadFileWithoutCreateHidden(const QString &path)
         // exist, read content
         char *contents = nullptr;
         GError *error = nullptr;
-        uint64_t len = 0;
+        gsize len = 0;
         const bool succ = g_file_load_contents(gfile, nullptr, &contents, &len, nullptr, &error);
         if (succ) {
             if (contents && len > 0) {
@@ -190,7 +190,7 @@ bool DFMFileListFilePrivate::loadFileWithCreateHidden(const QString &path)
         // exist, read content
         char *contents = nullptr;
         GError *error = nullptr;
-        uint64_t len = 0;
+        gsize len = 0;
         bool succ = g_file_load_contents(gfile, nullptr, &contents, &len, nullptr, &error);
         if (succ) {
             if (contents && len > 0) {
