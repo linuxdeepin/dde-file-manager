@@ -40,8 +40,8 @@ SOURCES += \
     $$PWD/views/ut_ddetailview.cpp \
     $$PWD/views/ut_dfiledialog.cpp \
     $$PWD/views/ut_computerview.cpp \
-    $$PWD/views/ut_dfilemanagerwindow.cpp \
-    $$PWD/views/ut_dfileview.cpp \
+    #$$PWD/views/ut_dfilemanagerwindow.cpp \ # 该用例内部使用了大量线程，大概率造成随机崩溃，暂时注释
+    #$$PWD/views/ut_dfileview.cpp \ # 该用例内部使用了大量线程，大概率造成随机崩溃，暂时注释
     $$PWD/views/ut_dfmactionbutton.cpp \
     $$PWD/views/ut_dfmaddressbar.cpp \
     $$PWD/views/ut_dfmadvancesearchbar.cpp \
@@ -140,7 +140,7 @@ SOURCES += \
     $$PWD/sw_label/ut_filemanagerlibrary_test.cpp \
     $$PWD/dbusinterface/ut_dbustype.cpp \
     $$PWD/vfs/ut_dfmvfsmanager.cpp \
-    $$PWD/vfs/ut_dfmvfsdevice.cpp \
+    #$$PWD/vfs/ut_dfmvfsdevice.cpp \ # 该用例会造成实际ftp挂载，有较大隐患，暂时注释掉
     $$PWD/views/ut_dtabbar.cpp \
     $$PWD/views/ut_dstatusbar.cpp \
     $$PWD/views/ut_droundbutton.cpp \
