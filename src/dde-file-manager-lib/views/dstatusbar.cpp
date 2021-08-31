@@ -341,6 +341,71 @@ void DStatusBar::initJobConnection()
     connect(m_fileStatisticsJob, &DFileStatisticsJob::directoryFound, this, onFoundFile);
 }
 
+void DStatusBar::showMtpStatus(const DFMEvent &event, int number)
+{
+    //  重置统计状态
+    m_fileCount = 0;
+    m_fileSize = 0;
+    m_folderCount = 0;
+    m_folderContains = 0;
+
+    // number 大于 1 时, 显示不一样, 需要拼接文本
+    if (number > 1) {
+        DUrl fileUrl;
+        if (event.fileUrlList().count() > 0) {
+            fileUrl = event.fileUrlList().first();
+        } else {
+            fileUrl = event.fileUrl();
+        }
+        foreach (const DUrl &url, event.fileUrlList()) {
+            struct stat statInfo;
+            int fileStat = stat(url.path().toStdString().c_str(), &statInfo);
+            if (0 != fileStat) {
+                continue;
+            }
+            if (S_ISDIR(statInfo.st_mode)) {
+                m_folderCount += 1; // 文件夹数量
+            } else {
+                m_fileCount += 1; // 文件数量
+            }
+        }
+        QString selectItems;
+
+        if (m_folderCount > 0 && m_fileCount > 0) // 同时有文件夹和文件时, 统一显示成项
+            selectItems = m_OnlyOneItemSelected.arg(QString::number(m_folderCount+m_fileCount));
+        else if (m_folderCount > 0)
+            selectItems = m_selectedNetworkOnlyOneFolder.arg(QString::number(m_folderCount));
+        else if (m_fileCount > 0)
+            selectItems = m_OnlyOneItemSelected.arg(QString::number(m_fileCount));
+        else
+            selectItems = "";
+
+        m_label->setText(QString("%1").arg(selectItems));
+    } else {
+        if (number == 1) { // 选中数量为1, 要么是文件夹, 要么是文件
+            if (event.fileUrlList().count() == 1) {
+                DUrl durl = event.fileUrlList().first();
+                const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, durl);
+                //check network folder at first
+                QStringList networkSchemeList = {SMB_SCHEME, FTP_SCHEME, SFTP_SCHEME, MTP_SCHEME, DAV_SCHEME};
+                if (networkSchemeList.contains(event.fileUrlList().first().scheme())) {
+                    m_label->setText(m_selectedNetworkOnlyOneFolder.arg(QString::number(number)));
+                } else if (info) {
+                    if (info->isDir()) {
+                        m_folderCount = 1;
+                        m_label->setText(m_selectedNetworkOnlyOneFolder.arg(QString::number(number)));
+                    } else {
+                        m_fileCount = 1;
+                        m_label->setText(m_OnlyOneItemSelected.arg(QString::number(1)));
+                    }
+                }
+            } else {
+                m_label->setText(m_OnlyOneItemSelected.arg(QString::number(1)));
+            }
+        }
+    }
+}
+
 void DStatusBar::itemSelected(const DFMEvent &event, int number)
 {
     if (!m_label || event.windowId() != WindowManager::getWindowId(this))
@@ -348,12 +413,13 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
 
     { // mtp挂载时 暂时不显示下方状态栏数据 能大幅提升访问性能
         // 首先判断配置
-        const bool showInfo = DFMApplication::instance()->genericAttribute(DFMApplication::GA_MTPShowBottomInfo).toBool();
+        const bool showInfo = DFMApplication::genericAttribute(DFMApplication::GA_MTPShowBottomInfo).toBool();
         if (!showInfo) { // mtp 不显示底部状态的设置下 再进行 mtp 判断
-            static const QString &mtpType = "/gvfs/mtp:host";
+            static const QString &mtpType = "gvfs/mtp:host";
             const QString &path = event.fileUrlList().count() > 0 ? event.fileUrlList().first().toLocalFile()
                                                                   : event.fileUrl().toLocalFile();
             if (path.contains(mtpType)) {
+                showMtpStatus(event, number);
                 return;
             }
         }

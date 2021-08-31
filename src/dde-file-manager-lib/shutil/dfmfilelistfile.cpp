@@ -128,9 +128,9 @@ bool DFMFileListFilePrivate::loadFile()
     const QString &path = filePath();
 
     // mtp 文件夹是否显示底部统计信息
-    const auto showInfo = dde_file_manager::DFMApplication::instance()->genericAttribute(dde_file_manager::DFMApplication::GA_MTPShowBottomInfo).toBool();
+    const auto showInfo = dde_file_manager::DFMApplication::genericAttribute(dde_file_manager::DFMApplication::GA_MTPShowBottomInfo).toBool();
     if (!showInfo) {
-        static const QString &mtpType = "/gvfs/mtp:host";
+        static const QString &mtpType = "gvfs/mtp:host";
         autoCreate = path.contains(mtpType);
     }
 
