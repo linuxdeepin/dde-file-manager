@@ -36,13 +36,7 @@ class DFMSocketInterfacePrivate
 public:
     explicit DFMSocketInterfacePrivate(DFMSocketInterface *parent) : q_ptr(parent) {}
     ~DFMSocketInterfacePrivate() {
-        if (socket) {
-            delete socket;
-            socket = nullptr;
-        }
-
     }
-
     QLocalSocket *socket = nullptr;
 
     DFMSocketInterface *q_ptr;
@@ -58,10 +52,11 @@ DFMSocketInterface::DFMSocketInterface(QObject *parent) : QObject(parent), d_ptr
     qInfo() << "connect to socket" << socketPath;
     connect(d->socket, static_cast<void(QLocalSocket::*)(QLocalSocket::LocalSocketError)>(&QLocalSocket::error),
     this, [ = ](QLocalSocket::LocalSocketError socketError) {
+        //连接出错可能造成死循环，屏蔽之
         d->socket->close();
         d->socket->deleteLater();
-        d->socket = new QLocalSocket();
-        d->socket->connectToServer(socketPath);
+//        d->socket = new QLocalSocket();
+//        d->socket->connectToServer(socketPath);
         qCritical() << "Connect error" << socketError << d->socket->errorString();
     });
 
@@ -70,7 +65,12 @@ DFMSocketInterface::DFMSocketInterface(QObject *parent) : QObject(parent), d_ptr
 
 DFMSocketInterface::~DFMSocketInterface()
 {
-
+    Q_D(DFMSocketInterface);
+    if (d->socket) {
+        d->socket->close();
+        d->socket->deleteLater();
+        d->socket = nullptr;
+    }
 }
 
 //json="{\"paths\":[$paths],\"isShowPropertyDialogRequest\":true}";

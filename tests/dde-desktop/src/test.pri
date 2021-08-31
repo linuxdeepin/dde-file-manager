@@ -24,7 +24,7 @@ SOURCES += \
     $$PWD/presenter/ut-gridcore-test.cpp \
     $$PWD/model/ut-dfileselectionmodel.cpp \
     $$PWD/screen/ut-screenmanager-test.cpp \
-    $$PWD/presenter/ut-dfmsocketinterface-test.cpp
+#    $$PWD/presenter/ut-dfmsocketinterface-test.cpp
 
 #屏蔽热区
 #    $$PWD/dde-zone/ut-pushbuttonlist-test.cpp \
