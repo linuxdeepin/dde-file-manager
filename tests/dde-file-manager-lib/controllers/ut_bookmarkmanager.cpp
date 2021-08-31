@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <controllers/bookmarkmanager.h>
+
 #include "views/dfmsidebar.h"
 #include "interfaces/dfmsidebaritem.h"
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
@@ -34,8 +34,11 @@
 #include <QStandardPaths>
 #include <QStorageInfo>
 #include <QUrlQuery>
-
 #include <gtest/gtest.h>
+
+#define private public
+#include "controllers/bookmarkmanager.h"
+
 
 #define BOOKMARK_STR "TestBookMark"
 #define BOOKMARK_NEW_STR "TestNewBookMark"
@@ -166,6 +169,23 @@ TEST_F(TestBookMarkManager, can_rename_bookmark_file)
     DUrl toUrl = DUrl::fromLocalFile(tempDirPath.replace(BOOKMARK_STR, BOOKMARK_NEW_STR));
 
     EXPECT_TRUE(m_pTester->onFileRenamed(fromUrl, toUrl));
+}
+
+TEST_F(TestBookMarkManager, can_find_bookmark_data)
+{
+    DUrl url = DUrl::fromLocalFile(tempDirPath.replace(BOOKMARK_STR, BOOKMARK_NEW_STR));
+
+    EXPECT_NO_FATAL_FAILURE(m_pTester->findBookmarkData(url));
+}
+
+TEST_F(TestBookMarkManager, can_refresh_bookmark)
+{
+    EXPECT_NO_FATAL_FAILURE(m_pTester->refreshBookmark());
+}
+
+TEST_F(TestBookMarkManager, can_get_bookmark_urls)
+{
+    EXPECT_NO_FATAL_FAILURE(m_pTester->getBookmarkUrls());
 }
 
 TEST_F(TestBookMarkManager, can_remove_bookmark)
