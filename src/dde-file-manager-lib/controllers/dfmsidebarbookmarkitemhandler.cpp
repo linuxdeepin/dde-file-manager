@@ -43,12 +43,7 @@ DFM_BEGIN_NAMESPACE
 DFMSideBarItem *DFMSideBarBookmarkItemHandler::createItem(const DUrl &url)
 {
     // leave url a default display name.
-    DAbstractFileInfoPointer fileInfo = DFileService::instance()->createFileInfo(nullptr, url);
-    QString displayName;
-
-    if (fileInfo) {
-        displayName = fileInfo->fileDisplayName();
-    }
+    QString displayName = url.bookmarkName();
 
     QIcon icon = QIcon::fromTheme("folder-bookmark-symbolic");
     DFMSideBarItem * item = new DFMSideBarItem(icon, displayName, url);
@@ -69,7 +64,7 @@ void DFMSideBarBookmarkItemHandler::cdAction(const DFMSideBar *sidebar, const DF
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, item->url());
     if (info->exists()) {
         DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
-        wnd->cd(item->url()/*.bookmarkTargetUrl()*/);
+        wnd->cd(info->fileUrl());
     } else {
         int ret = dialogManager->showRemoveBookMarkDialog(DFMEvent(this));
         if (ret == QDialog::Accepted) {

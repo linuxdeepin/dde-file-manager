@@ -50,6 +50,7 @@
 #include "accessibility/ac-lib-file-manager.h"
 #include "dtoolbar.h"
 #include "utils.h"
+#include "controllers/bookmarkmanager.h"
 
 #include <DApplicationHelper>
 #include <QScrollBar>
@@ -693,6 +694,8 @@ void DFMSideBar::initBookmarkConnection()
             }
         }
     });
+
+    bookmarkManager->refreshBookmark();
 }
 
 void DFMSideBar::initDeviceConnection()
@@ -936,12 +939,13 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
             break;
         }
 
-        QList<DAbstractFileInfoPointer> bookmarkInfos = DFileService::instance()->getChildren(this, DUrl(BOOKMARK_ROOT),                                                         QStringList(), QDir::AllEntries);
+        const DUrlList urlList = bookmarkManager->getBookmarkUrls();
         QList<DFMSideBarItem *> unsortedList;
-        for (const DAbstractFileInfoPointer &info : bookmarkInfos) {
-            unsortedList << DFMSideBarBookmarkItemHandler::createItem(info->fileUrl());
+        for (const DUrl &url : urlList) {
+            unsortedList << DFMSideBarBookmarkItemHandler::createItem(url);
         }
         appendItemWithOrder(unsortedList, savedItemOrder(groupNameStr), groupNameStr);
+
         break;
     }
     case GroupName::Network:

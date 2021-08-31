@@ -35,6 +35,16 @@
 class DAbstractFileInfo;
 class DBookmarkItem;
 
+struct BookmarkData {
+    DUrl m_url = DUrl();
+    QDateTime m_created = QDateTime();
+    QDateTime m_lastModified = QDateTime();
+    QString mountPoint = QString();
+    QString locateUrl = QString();
+    QString udisksDBusPath = QString();
+    QString udisksMountPoint = QString();
+};
+
 class BookMarkManager : public DAbstractFileController
 {
     Q_OBJECT
@@ -56,10 +66,14 @@ public:
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
     bool onFileRenamed(const DUrl &from, const DUrl &to);
+    void refreshBookmark();
+    const DUrlList getBookmarkUrls();
 
 private:
     BookMarkPointer findBookmark(const DUrl &url) const;
+    BookmarkData findBookmarkData(const DUrl &url) const;
     mutable QMap<DUrl, BookMarkPointer> m_bookmarks;
+    mutable QMap<DUrl, BookmarkData> m_bookmarkDataMap;
 
     void update(const QVariant &value);
     void onFileEdited(const QString &group, const QString &key, const QVariant &value);

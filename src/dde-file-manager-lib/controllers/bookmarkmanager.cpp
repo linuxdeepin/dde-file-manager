@@ -81,14 +81,6 @@ public:
 BookMarkManager::BookMarkManager(QObject *parent)
     : DAbstractFileController(parent)
 {
-    /* 在启动文管时刷新书签的过程中，如果存在指向网络目录的书签，并且网络目录处于无法连接的状态时，
-     * 创建书签对象会卡顿较长时间，这里将构建对象的循环放入子线程，避免主线程卡住 先调用genericSetting
-     * 在主线程初始化dfilesystemwatcher */
-    DFMApplication::genericSetting();
-    QtConcurrent::run([=] {
-        update(DFMApplication::genericSetting()->value("BookMark", "Items"));
-    });
-
     fileService->setFileUrlHandler(BOOKMARK_SCHEME, "", this);
 
     connect(DFMApplication::genericSetting(), &DFMSettings::valueEdited, this, &BookMarkManager::onFileEdited);
@@ -112,8 +104,7 @@ BookMarkManager::~BookMarkManager()
  */
 bool BookMarkManager::checkExist(const DUrl &url)
 {
-    BookMarkPointer p = m_bookmarks.value(url.bookmarkTargetUrl());
-    return p;
+    return m_bookmarkDataMap.contains(url.bookmarkTargetUrl());
 }
 
 bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
@@ -122,9 +113,9 @@ bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
     DUrl new_from = from.bookmarkTargetUrl();
     DUrl to = event->toUrl();
 
-    BookMarkPointer item = findBookmark(event->fromUrl());
+    BookmarkData data = findBookmarkData(event->fromUrl());
 
-    if (!item) {
+    if (!data.m_url.isValid()) {
         return false;
     }
 
@@ -133,20 +124,28 @@ bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
     for (int i = 0; i < list.count(); ++i) {
         QVariantMap map = list.at(i).toMap();
 
-        if (map.value("name").toString() == item->getName()) {
+        if (map.value("name").toString() == data.m_url.bookmarkName()) {
             map["name"] = event->toUrl().bookmarkName();
             list[i] = map;
 
             DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
-            BookMark *new_item = new BookMark(event->toUrl());
-            QUrlQuery query(event->toUrl());
 
-            new_item->m_created = item->m_created;
-            new_item->m_lastModified = QDateTime::currentDateTime();
-            new_item->mountPoint = item->getMountPoint();//query.queryItemValue("mount_point");
-            new_item->locateUrl = map.value("locateUrl").toString();//query.queryItemValue("locate_url");
+            data.m_url = event->toUrl();
+            data.m_lastModified = QDateTime::currentDateTime();
+            m_bookmarkDataMap[event->toUrl().bookmarkTargetUrl()] = data;
 
-            m_bookmarks[event->toUrl().bookmarkTargetUrl()] = new_item;
+            BookMarkPointer item = findBookmark(event->fromUrl());
+            if (item) {
+                BookMark *new_item = new BookMark(event->toUrl());
+                QUrlQuery query(event->toUrl());
+
+                new_item->m_created = data.m_created;
+                new_item->m_lastModified = data.m_lastModified;
+                new_item->mountPoint = data.mountPoint;//query.queryItemValue("mount_point");
+                new_item->locateUrl = map.value("locateUrl").toString();//query.queryItemValue("locate_url");
+
+                m_bookmarks[event->toUrl().bookmarkTargetUrl()] = new_item;
+            }
             break;
         }
     }
@@ -161,21 +160,22 @@ bool BookMarkManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
     QVariantList list = DFMApplication::genericSetting()->value("BookMark", "Items").toList();
 
     for (const DUrl &url : event->urlList()) {
-        const BookMarkPointer &info = m_bookmarks.take(url.bookmarkTargetUrl());
-
-        if (!info)
+        if (!m_bookmarkDataMap.contains(url.bookmarkTargetUrl()))
             continue;
+
+        m_bookmarks.remove(url.bookmarkTargetUrl());
+        const BookmarkData &data = m_bookmarkDataMap.take(url.bookmarkTargetUrl());
 
         for (int i = 0; i < list.count(); ++i) {
             const QVariantMap &map = list.at(i).toMap();
 
-            if (map.value("name").toString() == info->getName()) {
+            if (map.value("name").toString() == data.m_url.bookmarkName()) {
                 list.removeAt(i);
                 break;
             }
         }
 
-        DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileDeleted, info->fileUrl());
+        DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileDeleted, data.m_url);
     }
 
     DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
@@ -188,29 +188,30 @@ bool BookMarkManager::touch(const QSharedPointer<DFMTouchFileEvent> &event) cons
     //与其他书签储存逻辑保持一致，去掉url中的Query字符串
     DUrl newUrl = event->url();
     newUrl.setQuery("");
-    BookMarkPointer item(new BookMark(newUrl));
     QUrlQuery query(event->url());
 
-    item->m_created = QDateTime::currentDateTime();
-    item->m_lastModified = item->m_created;
-    item->mountPoint = query.queryItemValue("mount_point");
-    item->locateUrl = query.queryItemValue("locate_url");
-    m_bookmarks[item->sourceUrl()] = item;
+    BookmarkData bookmarkData;
+    bookmarkData.m_created = QDateTime::currentDateTime();
+    bookmarkData.m_lastModified = bookmarkData.m_created;
+    bookmarkData.mountPoint = query.queryItemValue("mount_point");
+    bookmarkData.locateUrl = query.queryItemValue("locate_url");
+    bookmarkData.m_url = newUrl;
 
+    m_bookmarkDataMap[newUrl.bookmarkTargetUrl()] = bookmarkData;
+    m_bookmarks[newUrl.bookmarkTargetUrl()] = nullptr;
 
     QVariantList list = DFMApplication::genericSetting()->value("BookMark", "Items").toList();
-
     list << QVariantMap {
-        {"name", item->getName()},
-        {"url", item->sourceUrl()},
-        {"created", item->m_created.toString(Qt::ISODate)},
-        {"lastModified", item->m_lastModified.toString(Qt::ISODate)},
-        {"mountPoint", item->mountPoint},
-        {"locateUrl", item->locateUrl}
+        {"name", bookmarkData.m_url.bookmarkName()},
+        {"url", bookmarkData.m_url.bookmarkTargetUrl()},
+        {"created", bookmarkData.m_created.toString(Qt::ISODate)},
+        {"lastModified", bookmarkData.m_lastModified.toString(Qt::ISODate)},
+        {"mountPoint", bookmarkData.mountPoint},
+        {"locateUrl", bookmarkData.locateUrl}
     };
 
     DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
-    DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::subfileCreated, item->fileUrl());
+    DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::subfileCreated, bookmarkData.m_url);
 
     return true;
 }
@@ -236,6 +237,11 @@ BookMarkPointer BookMarkManager::findBookmark(const DUrl &url) const
     return m_bookmarks.value(url.bookmarkTargetUrl());
 }
 
+BookmarkData BookMarkManager::findBookmarkData(const DUrl &url) const
+{
+    return m_bookmarkDataMap.value(url.bookmarkTargetUrl());
+}
+
 /*!
  * \brief Update bookmark items by the given \a value
  *
@@ -250,7 +256,7 @@ void BookMarkManager::update(const QVariant &value)
 {
     const QVariantList &list = value.toList();
 
-    DUrlList bookmarkUrlList = m_bookmarks.keys();
+    DUrlList bookmarkUrlList = m_bookmarkDataMap.keys();
     for (int i = 0; i < list.count(); ++i) {
         const QVariantMap &item = list.at(i).toMap();
         const QString &name = item.value("name").toString();
@@ -262,41 +268,39 @@ void BookMarkManager::update(const QVariant &value)
         QByteArray ba;
         if (item.value("locateUrl").toString().startsWith("/")) {   //转base64的路径不会以'/'开头
             ba = item.value("locateUrl").toString().toLocal8Bit().toBase64();
-        }
-        else {
+        } else {
             ba = item.value("locateUrl").toString().toLocal8Bit();
         }
         const QString &locate_url = QString(ba);
-        if (DFileService::instance()->checkGvfsMountfileBusy(url,false))
-            continue;
-        BookMark *bm_info = new BookMark(name, url);
 
-        bm_info->m_created = create_time;
-        bm_info->m_lastModified = last_modified_time;
-        bm_info->mountPoint = mount_point;
-        bm_info->locateUrl = locate_url;
+        BookmarkData data;
+        data.m_url = DUrl::fromBookMarkFile(url, name);
+        data.m_created = create_time;
+        data.m_lastModified = last_modified_time;
+        data.mountPoint = mount_point;
+        data.locateUrl = locate_url;
 
-        if (m_bookmarks.contains(url)) {
-            const BookMarkPointer old_info = m_bookmarks.value(url);
+        if (m_bookmarkDataMap.contains(url)) {
+            const BookmarkData oldData = m_bookmarkDataMap.value(url);
+            m_bookmarkDataMap[url] = data;
 
-            m_bookmarks[url] = BookMarkPointer(bm_info);
+            if (oldData.m_url.fragment() != name) {
+                DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileMoved, oldData.m_url, data.m_url);
 
-            if (old_info->getName() != name) {
-                DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileMoved, old_info->fileUrl(), bm_info->fileUrl());
             }
         } else {
-            m_bookmarks[url] = BookMarkPointer(bm_info);
-
-            DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::subfileCreated, bm_info->fileUrl());
+            m_bookmarkDataMap[url] = data;
+            DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::subfileCreated, data.m_url);
         }
 
         bookmarkUrlList.removeOne(url);
     }
 
     for (const DUrl &url : bookmarkUrlList) {
-        const BookMarkPointer &info = m_bookmarks.take(url);
+        const BookmarkData data = m_bookmarkDataMap.value(url);
+        m_bookmarks[url] = nullptr;
 
-        DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileDeleted, info->fileUrl());
+        DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileDeleted, data.m_url);
     }
 }
 
@@ -310,23 +314,13 @@ void BookMarkManager::onFileEdited(const QString &group, const QString &key, con
 
 bool BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
 {
-    //make bookMarkDUrl
-//    QString fromPath = from.scheme() + "://" + from.path();
-//    DUrl bookMarkFrom(from);
-//    bookMarkFrom.setScheme(BOOKMARK_SCHEME);
-//    bookMarkFrom.setPath(fromPath);
     //采用durl标准的转bookmarkurl接口,否则转出的URL可能isValid = false
     DUrl bookMarkFrom = DUrl::fromBookMarkFile(from, from.fileName());
-
-//    QString toPath = to.scheme() + "://" + to.path();
-//    DUrl bookMarkTo(to);
-//    bookMarkTo.setScheme(BOOKMARK_SCHEME);
-//    bookMarkTo.setPath(toPath);
-    //采用durl标准的转bookmarkurl接口,否则转出的URL可能isValid = false
     DUrl bookMarkTo = DUrl::fromBookMarkFile(to, to.fileName());
 
+    BookmarkData data = findBookmarkData(bookMarkFrom);
     BookMarkPointer item = findBookmark(bookMarkFrom);
-    if (!item) {
+    if (!item || !data.m_url.isValid()) {
         return false;
     }
 
@@ -335,11 +329,8 @@ bool BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
         QVariantMap map = list.at(i).toMap();
 
         if (map.value("name").toString() == item->getName()) {
-//            QString fromQueryStr = "mount_point=" + map.value("mountPoint").toString() + "&locate_url=" + map.value("locateUrl").toString();
-//            bookMarkFrom.setQuery(fromQueryStr);
             bookMarkFrom.setFragment(map.value("name").toString());
 
-//            QString locateUrl = bookMarkTo.bookmarkTargetUrl().toLocalFile();
             QString locateUrl = to.path();
             int indexOfFirstDir = 0;
             //挂载的设备目录特殊处理
@@ -350,8 +341,6 @@ bool BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
             }
             locateUrl = locateUrl.mid(indexOfFirstDir);
 
-//            QString toQueryStr = "mount_point=" + map.value("mountPoint").toString() + "&locate_url=" + locateUrl;
-//            bookMarkTo.setQuery(toQueryStr);
             bookMarkTo.setFragment(map.value("name").toString());
 
             //为防止locateUrl传入QUrl被转码，locateUrl统一保存为base64
@@ -361,12 +350,21 @@ bool BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
             list[i] = map;
             DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
 
+            BookmarkData newData;
+            newData.m_url = bookMarkTo;
+            newData.m_created = item->m_created;
+            newData.m_lastModified = QDateTime::currentDateTime();
+            newData.mountPoint = map.value("mountPoint").toString();
+            newData.locateUrl = QString(ba);
+
             BookMarkPointer new_item(new BookMark(bookMarkTo));
             new_item->m_created = item->m_created;
             new_item->m_lastModified = QDateTime::currentDateTime();
             new_item->mountPoint = map.value("mountPoint").toString();
             new_item->locateUrl = QString(ba);
 
+            m_bookmarkDataMap.remove(bookMarkFrom.bookmarkTargetUrl());
+            m_bookmarkDataMap[bookMarkTo.bookmarkTargetUrl()] = newData;
             m_bookmarks.remove(bookMarkFrom.bookmarkTargetUrl());
             m_bookmarks[bookMarkTo.bookmarkTargetUrl()] = new_item;
 
@@ -378,8 +376,24 @@ bool BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
     return false;
 }
 
+void BookMarkManager::refreshBookmark()
+{
+    update(DFMApplication::genericSetting()->value("BookMark", "Items"));
+}
+
+const DUrlList BookMarkManager::getBookmarkUrls()
+{
+    DUrlList list;
+    for (const BookmarkData &data : m_bookmarkDataMap) {
+        list.append(data.m_url);
+    }
+
+    return list;
+}
+
 const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
+    ///这个函数目前不会被调用了
     Q_UNUSED(event);
     QList<DAbstractFileInfoPointer> infolist;
 
@@ -396,13 +410,25 @@ const DAbstractFileInfoPointer BookMarkManager::createFileInfo(const QSharedPoin
         return DAbstractFileInfoPointer(new BookMark(DUrl(BOOKMARK_ROOT)));
     }
 
-    BookMarkPointer bp = findBookmark(event->url());
-    if (!bp) {
+    DUrl bookmarkUrl = event->url().bookmarkTargetUrl();
+    if (!m_bookmarkDataMap.contains(bookmarkUrl)) {
         DUrl targetUrl = event->url().bookmarkTargetUrl();
         if (targetUrl.scheme().isEmpty()) {
             targetUrl.setScheme(FILE_SCHEME);
         }
         return DFileService::instance()->createFileInfo(event->sender(), targetUrl);
+    }
+
+    BookMarkPointer bp = findBookmark(event->url());
+    if (!bp) {
+        BookmarkData data = m_bookmarkDataMap[bookmarkUrl];
+        BookMarkPointer item(new BookMark(event->url()));
+        item->m_created = data.m_created;
+        item->m_lastModified = data.m_lastModified;
+        item->mountPoint = data.mountPoint;
+        item->locateUrl = data.locateUrl;
+        m_bookmarks[item->sourceUrl()] = item;
+        return item;
     }
 
     return bp;
