@@ -131,6 +131,12 @@ protected:
 private:
     void clearLayoutAndAnchors();
     void initJobConnection();
+    /**
+     * @brief mtp挂载时, 更新底部统计信息显示
+     * @param DFMEvent int
+     * @return void
+     */
+    void showMtpStatus(const DFMEvent &event, int number);
 
     QString m_OnlyOneItemCounted;
     QString m_counted;
