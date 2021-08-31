@@ -87,6 +87,9 @@ QDBusObjectPath DBusFileDialogManager::createDialog(QString key)
         /*init userShareManager */
         DFMGlobal::initUserShareManager();
 
+        /*init initDialogManager */
+        DFMGlobal::initDialogManager();
+
         /*init controllers for different scheme*/
         fileService->initHandlersByCreators();
 
