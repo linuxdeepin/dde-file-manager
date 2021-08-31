@@ -53,17 +53,17 @@ public:
 }
 
 
-TEST_F(CanvasViewHelperTest, test_onRequestSelectFiles)
-{
-    QList<DUrl> list;
-    stub_ext::StubExt stub;
-    bool isSelected = false;
-    stub.set_lamda(VADDR(CanvasViewHelper, select), [&isSelected]() {isSelected = true;});
+//TEST_F(CanvasViewHelperTest, test_onRequestSelectFiles)
+//{
+//    QList<DUrl> list;
+//    stub_ext::StubExt stub;
+//    bool isSelected = false;
+//    stub.set_lamda(VADDR(CanvasViewHelper, select), [&isSelected]() {isSelected = true;});
 
-    m_canvas->onRequestSelectFiles(list);
+//    m_canvas->onRequestSelectFiles(list);
 
-    EXPECT_TRUE(isSelected);
-}
+//    EXPECT_TRUE(isSelected);
+//}
 
 TEST_F(CanvasViewHelperTest, test_handleSelectEvent)
 {

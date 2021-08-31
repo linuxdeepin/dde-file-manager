@@ -339,12 +339,11 @@ void WaterMaskFrame::initUI()
      * 后续多次同一对象调用initUI会导致泄露，由于updateAuthorizationState会间接调用到initUI,
      * 因此需要删掉之前的布局之后再调用*/
     auto tempLayout = this->layout();
-    setLayout(m_mainLayout);
     if (tempLayout) {
         delete tempLayout;
         tempLayout = nullptr;
     }
-
+    setLayout(m_mainLayout);
     setFixedSize(m_maskWidth, m_maskHeight);
     QString color(maskTextColor);
     QString fontsize(maskTextFontSize);

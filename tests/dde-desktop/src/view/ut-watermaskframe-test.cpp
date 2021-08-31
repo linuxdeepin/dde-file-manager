@@ -57,17 +57,12 @@ TEST(WaterMaskFrame, test_parseJson)
 
 TEST(WaterMaskFrame, test_initui)
 {
-
-    WaterMaskFrame* wid = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
-    stub_ext::StubExt tub;
-    tub.set_lamda(ADDR(Config, getConfig), [](){return 0;});
-    wid->initUI();
-
-    QJsonObject object;
-    wid->m_configs = object;
-    wid->initUI();
-    delete wid;
-    wid = nullptr;
+    WaterMaskFrame* wid1 = new WaterMaskFrame("/home/xxxxxxx");
+    ASSERT_EQ(wid1->m_mainLayout, nullptr);
+    delete wid1;
+    WaterMaskFrame* wid2 = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
+    ASSERT_NE(wid2->m_mainLayout, nullptr);
+    delete wid2;
 }
 
 TEST(WaterMaskFrame, test_initui_extend)
