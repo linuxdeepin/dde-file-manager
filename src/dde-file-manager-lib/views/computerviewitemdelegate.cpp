@@ -326,7 +326,18 @@ QWidget *ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOpt
     QRegExp regx("^[^\\.\\\\/\':\\*\\?\"<>|%&][^\\\\/\':\\*\\?\"<>|%&]*"); //屏蔽特殊字符
     QValidator *validator = new QRegExpValidator(regx, le);
     le->setValidator(validator);
-    le->setMaxLength(index.data(ComputerModel::EditorLengthRole).toInt());
+
+    int maxLenInBytes = index.data(ComputerModel::EditorLengthRole).toInt();
+    connect(le, &QLineEdit::textChanged, this, [le, maxLenInBytes](const QString &txt) {
+        if (!le)
+            return;
+        if (txt.toUtf8().length() > maxLenInBytes) {
+            const QSignalBlocker blocker(le);
+            QString newLabel = txt;
+            newLabel.chop(1);
+            le->setText(newLabel);
+        }
+    });
 
     connect(le, &QLineEdit::destroyed, this, [this, le] {
         if (editingEditor == le)
