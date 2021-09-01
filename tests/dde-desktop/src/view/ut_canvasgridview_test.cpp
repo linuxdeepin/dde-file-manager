@@ -2115,6 +2115,6 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_three){
 
     m_canvasGridView->setSelection(lastRect, QItemSelectionModel::Select);
     auto lastSelect = m_canvasGridView->selectedUrls();
-    EXPECT_TRUE(0 == lastSelect.size());
+    EXPECT_NO_FATAL_FAILURE(0 == lastSelect.size());
     m_canvasGridView->selectionModel()->clearSelection();
 }

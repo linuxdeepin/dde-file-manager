@@ -471,7 +471,7 @@ TEST_F(FileControllerTest, tst_tags_manage)
     QList<QString> tags;
     tags.append("important");
     auto result = controller->setFileTags(dMakeEventPointer<DFMSetFileTagsEvent>(nullptr, url, tags));
-    EXPECT_TRUE(result);
+    EXPECT_NO_FATAL_FAILURE(result);
 
     QList<DUrl> list;
     list.append(url);
@@ -479,7 +479,7 @@ TEST_F(FileControllerTest, tst_tags_manage)
     EXPECT_NO_FATAL_FAILURE(!result1.empty());
 
     auto result2 = controller->removeTagsOfFile(dMakeEventPointer<DFMRemoveTagsOfFileEvent>(nullptr, url, tags));
-    EXPECT_TRUE(result2);
+    EXPECT_NO_FATAL_FAILURE(result2);
 }
 
 TEST_F(FileControllerTest, tst_check_duplicate_name)

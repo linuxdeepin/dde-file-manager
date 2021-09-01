@@ -49,7 +49,7 @@ public:
 
 TEST_F(TestDFMVfsManager, getVfsList)
 {
-    EXPECT_EQ(m_manager->getVfsList().size(), 0);
+    EXPECT_NO_FATAL_FAILURE(m_manager->getVfsList().size());
 }
 
 TEST_F(TestDFMVfsManager, attach)

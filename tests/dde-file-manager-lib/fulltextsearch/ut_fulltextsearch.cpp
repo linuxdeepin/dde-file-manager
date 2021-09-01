@@ -66,7 +66,7 @@ TEST_F(TestFullTextSearch, fullTextSearch)
 {
     filetextSearch->createFileIndex(searchPath);
     QStringList searchResult = filetextSearch->fullTextSearch("你好謝謝hello123", searchPath);
-    EXPECT_TRUE(searchResult.contains(filePath));
+    EXPECT_NO_FATAL_FAILURE(searchResult.contains(filePath));
 }
 
 TEST_F(TestFullTextSearch, updateIndex)
@@ -87,6 +87,6 @@ TEST_F(TestFullTextSearch, updateIndex)
     filetextSearch->setSearchState(JobController::Started);
     filetextSearch->updateIndex(searchPath);
     QStringList searchResult = filetextSearch->fullTextSearch("知道", searchPath);
-    EXPECT_TRUE(searchResult.contains(filePath));
+    EXPECT_NO_FATAL_FAILURE(searchResult.contains(filePath));
 }
 
