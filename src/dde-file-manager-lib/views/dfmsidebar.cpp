@@ -726,8 +726,14 @@ void DFMSideBar::initDeviceConnection()
         }
     });
     connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [this](const DUrl & url) {
+        bool curUrlCanAccess = true; // 初始化为true 避免影响原有逻辑
+        auto fi = fileService->createFileInfo(nullptr, m_currentUrl);
+        if (fi)
+            curUrlCanAccess = fi->exists();
         int index = findItem(url, groupName(Device));
-        if (m_sidebarView->currentIndex().row() == index && index != -1) {
+        int curIndex = m_sidebarView->currentIndex().row();
+        if ((curIndex == index && index != -1)
+                || (!curUrlCanAccess)) {
             index = findItem(DUrl::fromLocalFile(QDir::homePath()), groupName(Common));
             DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
             if (item) {
