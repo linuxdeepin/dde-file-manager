@@ -98,8 +98,17 @@ QWidget *DFMSideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptio
         qle->setValidator(validator);
         const QString &fs = sourceInfo->extraProperties()["fsType"].toString();
         // 普通文件系统限制最长输入字符为 40, vfat exfat 由于文件系统的原因，只能输入 11 个字符
-        int maxLen = fs.toLower().endsWith("fat") ? 11 : 40;
-        qle->setMaxLength(maxLen);
+        int maxLenInBytes = fs.toLower().endsWith("fat") ? 11 : 40;
+        connect(qle, &QLineEdit::textChanged, this, [qle, maxLenInBytes](const QString &txt) {
+            if (!qle)
+                return;
+            if (txt.toUtf8().length() > maxLenInBytes) {
+                const QSignalBlocker blocker(qle);
+                QString newLabel = txt;
+                newLabel.chop(1);
+                qle->setText(newLabel);
+            }
+        });
     }
 
     return editor;

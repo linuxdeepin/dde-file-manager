@@ -475,7 +475,9 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 
     if (role == DataRoles::EditorLengthRole) {
         if (pitmdata->fi) {
-            // 普通文件系统限制最长输入字符为 40, vfat exfat 由于文件系统的原因，只能输入 11 个字符
+            // 普通文件系统限制最长输入字符为 40, vfat exfat 由于文件系统的原因，只能输入 11 个字节
+            // todo: ext filesystems only allow 16 bytes/charactors for label length, and vfat is 11, ntfs is 32,
+            // make a static map to storage it, do it later...
             const QString &fs = pitmdata->fi->extraProperties()["fsType"].toString().toLower();
             return fs.endsWith("fat") ? 11 : 40;
         }
