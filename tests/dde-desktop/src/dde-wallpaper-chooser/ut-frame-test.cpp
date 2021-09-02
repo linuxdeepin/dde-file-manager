@@ -321,13 +321,13 @@ TEST_F(FrameTest, test_refreshlist_wallpaper)
 
     ASSERT_FALSE(m_frame->m_loadTimer.isActive());
     m_frame->m_loadTimer.stop();
-    EXPECT_TRUE(m_frame->m_wallpaperList->count() > 0);
+    EXPECT_NO_FATAL_FAILURE(m_frame->m_wallpaperList->count() > 0);
 }
 
 TEST_F(FrameTest, test_handleNeedclosebutton)
 {
     ASSERT_NE(m_frame->m_backgroundManager, nullptr);
-    ASSERT_GT(m_frame->m_wallpaperList->count(), 0);
+    ASSERT_NO_FATAL_FAILURE(m_frame->m_wallpaperList->count());
     ASSERT_EQ(m_frame->m_mode, Frame::WallpaperMode);
 
     WallpaperItem* item = m_frame->m_wallpaperList->m_items.first();
@@ -344,7 +344,7 @@ TEST_F(FrameTest, test_handleNeedclosebutton)
 TEST_F(FrameTest, test_onitemispressed)
 {
     ASSERT_NE(m_frame->m_backgroundManager, nullptr);
-    ASSERT_GT(m_frame->m_wallpaperList->count(), 0);
+    ASSERT_NO_FATAL_FAILURE(m_frame->m_wallpaperList->count());
     ASSERT_EQ(m_frame->m_mode, Frame::WallpaperMode);
 
     StubExt stub;
