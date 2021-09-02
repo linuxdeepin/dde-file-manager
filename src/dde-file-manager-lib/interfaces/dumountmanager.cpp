@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2019 ~ 2019 Deepin Technology Co., Ltd.
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     dengkeyun <dengkeyun@uniontech.com>
+ * Author:     dengkeyun<dengkeyun@uniontech.com>
  *
- * Maintainer: dengkeyun <dengkeyun@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +68,7 @@ bool DUMountManager::stopScanBlock(const QString &blkName)
 {
     const QUrl &url = getMountPathForBlock(blkName);
     if (!m_defenderInterface->stopScanning(url)) {
-        setError(DUMountManager::Error::Timeout, "stop scanning timeout.");
+        errorMsg = "stop scanning timeout.";
         return false;
     }
 
@@ -78,7 +80,7 @@ bool DUMountManager::stopScanDrive(const QString &driveName)
 {
     const QList<QUrl> &urls = getMountPathForDrive(driveName);
     if (!m_defenderInterface->stopScanning(urls)) {
-        setError(DUMountManager::Error::Timeout, "stop scanning timeout.");
+        errorMsg = "stop scanning timeout.";
         return false;
     }
 
@@ -90,7 +92,7 @@ bool DUMountManager::stopScanAllDrive()
 {
     const QList<QUrl> &urls = getMountPathForAllDrive();
     if (!m_defenderInterface->stopScanning(urls)) {
-        setError(DUMountManager::Error::Timeout, "stop scanning timeout.");
+        errorMsg = "stop scanning timeout.";
         return false;
     }
 
@@ -102,7 +104,7 @@ bool DUMountManager::umountBlock(const QString &blkName)
 {
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(blkName));
     if (!blkdev) {
-        setError(DUMountManager::Error::Failed, "invalid blk device");
+        errorMsg = "invalid blk device";
         qWarning() << "invalid blk device:" << blkName;
         return false;
     }
@@ -125,20 +127,46 @@ bool DUMountManager::umountBlock(const QString &blkName)
                 err = cbblk->lastError();
         }
     }
-    setError(!err.isValid() ? DUMountManager::Error::Success : DUMountManager::Error::Failed, checkMountErrorMsg(err));
-    qInfo() << "umount over:" << blkName;
-    return error == DUMountManager::Error::Success;
+
+    // 检查挂载点移除代表卸载成功
+    if (blkdev->mountPoints().empty())
+        return true;
+
+    errorMsg = checkMountErrorMsg(err);
+    return false;
+}
+
+bool DUMountManager::umountBlocksOnDrive(const QString &driveName)
+{
+    if (driveName.isNull() || driveName.isEmpty()) {
+        qWarning() << "invalid drive name:" << driveName;
+        errorMsg = "invalid drive name" ;
+        return false;
+    }
+
+    qInfo() << "start umount blocks on drive:" << driveName;
+    for (const QString &blkStr : DDiskManager::blockDevices({})) {
+        QScopedPointer<DBlockDevice> blkd(DDiskManager::createBlockDevice(blkStr));
+        if (blkd && blkd->drive() == driveName) {
+            if (!umountBlock(blkStr)) {
+                qWarning() << "umountBlock failed: drive = " << driveName << ", block str = " << blkStr;
+                errorMsg = "umount block failed";
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 QString DUMountManager::checkMountErrorMsg(const QDBusError &dbsError)
 {
+    if (!dbsError.isValid())
+        return QString();
+
     if (dbsError.type() == QDBusError::NoReply)
         return tr("Authentication timed out");
 
-    if (dbsError.type() != QDBusError::Other || dbsError.message().contains("target is busy"))
-        return tr("Disk is busy, cannot unmount now");
-
-    return QString();
+    return tr("Disk is busy, cannot unmount now");
 }
 
 QString DUMountManager::checkEjectErrorMsg(const QDBusError &dbsError)
@@ -146,68 +174,95 @@ QString DUMountManager::checkEjectErrorMsg(const QDBusError &dbsError)
     if (!dbsError.isValid())
         return QString();
 
-    if (dbsError.message().contains("target is busy"))
-        return tr("Disk is busy, cannot eject now");
-
-    if (dbsError.message().contains("No usb device"))
-        return QString();
-
     if (dbsError.type() == QDBusError::NoReply)
         return tr("Authentication timed out");
 
-    if (dbsError.type() != QDBusError::Other)
-        return tr("Disk is busy, cannot eject now");
+    // 其他错误,统一提示,设备繁忙
+    return tr("Disk is busy, cannot eject now");
+}
 
-    return QString();
+bool DUMountManager::removeDrive(const QString &driveName)
+{
+    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(driveName));
+    if (!drv) {
+        errorMsg = "invalid drive.";
+        return false;
+    }
+
+    // 尝试性卸载, 错误处理依赖后续流程
+    umountBlocksOnDrive(driveName);
+
+    qInfo() << "start remove drive:" << driveName;
+    if (drv->canPowerOff()) {
+        drv->powerOff({});
+
+        if (drv->lastError().isValid()) {
+            qWarning() << drv->lastError() << "id:" << drv->lastError().type();
+            errorMsg = tr("The device is busy, cannot remove now");
+        }
+    }
+
+    DDiskManager diskManager;
+    QStringList devices = diskManager.diskDevices();
+    qInfo() << "rest devices:" << devices;
+
+    // 磁盘已经不在磁盘列表, 代表移除成功
+    if (!devices.contains(driveName))
+        return true;
+
+    // 处理错误
+    errorMsg = checkEjectErrorMsg(drv->lastError());
+    return false;
 }
 
 bool DUMountManager::ejectDrive(const QString &driveName)
 {
-    if (driveName.isNull() || driveName.isEmpty()) {
-        qWarning() << "invalid drive name:" << driveName;
-        setError(DUMountManager::Error::Failed, "invalid drive name:");
+    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(driveName));
+    if (!drv) {
+        errorMsg = "invalid drive.";
         return false;
     }
 
-    qWarning() << "start eject:" << driveName;
-    for (const QString &blkStr : DDiskManager::blockDevices({})) {
-        QScopedPointer<DBlockDevice> blkd(DDiskManager::createBlockDevice(blkStr));
-        // 仅报告错误,尽可能将该盘符下可卸载的分区都卸载
-        if (blkd && blkd->drive() == driveName && !umountBlock(blkStr)) {
-            qWarning() << "umountBlock failed:drive = " << driveName << ", block str = " << blkStr;
-            continue;
+    // 尝试性卸载, 错误处理依赖后续流程
+    umountBlocksOnDrive(driveName);
+
+    qInfo() << "start eject drive:" << driveName;
+    if (drv->optical()) {
+        if (drv->ejectable()) {
+            drv->eject({});
+
+            if (drv->lastError().isValid()) {
+                qWarning() << drv->lastError() << "id:" << drv->lastError().type();
+                errorMsg = tr("The device is busy, cannot eject now");
+                return false;
+            }
+
+            qInfo() << "eject done:" << driveName;
+            return true;
         }
     }
 
-    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(driveName));
-    if (!drv) {
-        setError(DUMountManager::Error::Failed, "invalid drive.");
-        return false;
-    }
-
-    if (drv->removable() || (drv->optical() && drv->ejectable()))
+    if (drv->removable()) {
         drv->eject({});
 
-    if (drv->lastError().isValid()) {
-        qWarning() << drv->lastError() << "id:" << drv->lastError().type();
-        errorMsg = tr("The device is busy, cannot eject now");
+        if (drv->lastError().isValid()) {
+            qWarning() << drv->lastError() << "id:" << drv->lastError().type();
+            errorMsg = tr("The device is busy, cannot remove now");
+            return false;
+        }
     }
 
     if (drv->canPowerOff()) {
         drv->powerOff({});
+
+        if (drv->lastError().isValid()) {
+            qWarning() << drv->lastError() << "id:" << drv->lastError().type();
+            errorMsg = tr("The device is busy, cannot remove now");
+            return false;
+        }
     }
 
-    if (drv->lastError().isValid()) {
-        qWarning() << drv->lastError() << "id:" << drv->lastError().type();
-        errorMsg = tr("The device is busy, cannot remove now");
-    }
-
-    // 某些错误消息需要忽略
-    QString msg = checkEjectErrorMsg(drv->lastError());
-    error = (msg.isNull() || msg.isEmpty()) ? DUMountManager::Error::Success : DUMountManager::Error::Failed;
-
-    qWarning() << "eject done:" << driveName;
-    return error == DUMountManager::Error::Success;
+    return true;
 }
 
 bool DUMountManager::ejectAllDrive()
@@ -280,20 +335,9 @@ QList<QUrl> DUMountManager::getMountPathForAllDrive()
     return urls;
 }
 
-void DUMountManager::setError(DUMountManager::Error error, const QString &errorMsg)
-{
-    this->error = error;
-    this->errorMsg = errorMsg;
-}
-
 void DUMountManager::clearError()
 {
-    setError(DUMountManager::Error::Success, QString());
-}
-
-DUMountManager::Error DUMountManager::getError()
-{
-    return error;
+    errorMsg = QString();
 }
 
 QString DUMountManager::getErrorMsg()

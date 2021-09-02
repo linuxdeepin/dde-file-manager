@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2019 ~ 2019 Deepin Technology Co., Ltd.
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     dengkeyun <dengkeyun@uniontech.com>
+ * Author:     dengkeyun<dengkeyun@uniontech.com>
  *
- * Maintainer: dengkeyun <dengkeyun@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +34,6 @@ class DUMountManager : public QObject
     Q_OBJECT
 
 public:
-
-    enum Error {
-        Success = 0,        // 成功
-        Failed = 1,         // 不明原因失败
-        Timeout = 2,        // 超时
-        IsScanning = 3,     // 正在扫描
-    };
-
     DUMountManager(QObject *parent = nullptr);
     ~DUMountManager();
 
@@ -52,10 +46,11 @@ public:
     bool stopScanAllDrive();
 
     bool umountBlock(const QString &blkName);
+    bool umountBlocksOnDrive(const QString &driveName);
+    bool removeDrive(const QString &driveName);
     bool ejectDrive(const QString &driveName);
     bool ejectAllDrive();
 
-    Error getError();
     QString getErrorMsg();
 
 private:
@@ -64,12 +59,10 @@ private:
     QUrl getMountPathForBlock(const QString &blkName);
     QList<QUrl> getMountPathForDrive(const QString &driveName);
     QList<QUrl> getMountPathForAllDrive();
-    void setError(DUMountManager::Error error, const QString &errorMsg);
     void clearError();
 
 private:
     QScopedPointer<DefenderInterface> m_defenderInterface;
-    Error error;        //因为不同流程 error 和 errorMsg会不一致, 所以使用两个变量处理
     QString errorMsg;
 };
 

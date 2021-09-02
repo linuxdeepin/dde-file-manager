@@ -1568,6 +1568,6 @@ void UnmountWorker::doUnmount(const QString &blkStr)
 void UnmountWorker::doSaveRemove(const QString &blkStr)
 {
     DUMountManager manager;
-    if (!manager.ejectDrive(manager.getDriveName(blkStr)))
+    if (!manager.removeDrive(manager.getDriveName(blkStr)))
         emit unmountResult(tr("The device was not safely removed"), manager.getErrorMsg());
 }
