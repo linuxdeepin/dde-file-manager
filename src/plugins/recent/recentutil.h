@@ -3,8 +3,8 @@
 
 #include "bookmarknode.h"
 
-#include "dfm-base/base/dfmstandardpaths.h"
-#include "dfm-base/base/dfmurlroute.h"
+#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/urlroute.h"
 
 #include <QXmlStreamReader>
 #include <QFile>

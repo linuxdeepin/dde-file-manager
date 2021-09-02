@@ -22,7 +22,7 @@
 #ifndef DFMTRAVERSALDIRTHREAD_H
 #define DFMTRAVERSALDIRTHREAD_H
 
-#include "localfile/dfmlocaldiriterator.h"
+#include "localfile/localdiriterator.h"
 #include "widgets/dfmfileview/fileviewitem.h"
 #include "dfm-base/utils/threadcontainer.hpp"
 
@@ -51,7 +51,7 @@ private:
     //遍历的目录的url
     QUrl m_dirUrl;
     //当前遍历目录的diriterator
-    QSharedPointer<DFMLocalDirIterator> m_dirIterator;
+    QSharedPointer<LocalDirIterator> m_dirIterator;
     //当前遍历出来的所有文件
     DThreadList<QSharedPointer<DFMFileViewItem>> m_childrenList;
 };

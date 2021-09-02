@@ -82,7 +82,7 @@ public:
     T* create(const QUrl &url, QString *errorString = nullptr)
     {
         QString scheme = url.scheme();
-        if(!DFMUrlRoute::hasScheme(scheme)) {
+        if(!UrlRoute::hasScheme(scheme)) {
             if (errorString)
                 *errorString = QObject::tr("No scheme found for "
                                            "URL registration");

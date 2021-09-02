@@ -33,7 +33,7 @@ DFMFileView::DFMFileView(QWidget *parent)
     , d_ptr(new DFMFileViewPrivate(this))
 {
     Q_D(DFMFileView);
-    auto model = new DFMFileViewModel;
+    auto model = new FileViewModel;
     setModel(model);
     d_ptr->updateViewDelegate(viewMode());
     this->setCornerWidget(d->m_headview);
@@ -48,12 +48,12 @@ void DFMFileView::setViewMode(QListView::ViewMode mode)
 
 void DFMFileView::setRootUrl(const QUrl &url)
 {
-    qobject_cast<DFMFileViewModel *>(model())->setRootUrl(url);
+    qobject_cast<FileViewModel *>(model())->setRootUrl(url);
 }
 
 QUrl DFMFileView::rootUrl()
 {
-    return qobject_cast<DFMFileViewModel *>(model())->rootUrl();
+    return qobject_cast<FileViewModel *>(model())->rootUrl();
 }
 
 void DFMFileView::resizeEvent(QResizeEvent *event)

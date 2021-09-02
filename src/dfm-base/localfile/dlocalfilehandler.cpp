@@ -20,7 +20,7 @@
  */
 #include "localfile/dlocalfilehandler.h"
 #include "private/dfilehandler_p.h"
-#include "base/dfmstandardpaths.h"
+#include "base/standardpaths.h"
 
 #include <QObject>
 #include <QDir>

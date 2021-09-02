@@ -23,7 +23,7 @@
 #include "windowservice.h"
 #include "browseview.h"
 
-#include "dfm-base/base/dfmurlroute.h"
+#include "dfm-base/base/urlroute.h"
 
 #include <QEvent>
 #include <QDebug>
@@ -73,7 +73,7 @@ bool WindowService::setWindowRootUrl(DFMBrowseWindow *newWindow, const QUrl &url
         return false;
     }
 
-    if (!DFMUrlRoute::hasScheme(url.scheme())) {
+    if (!UrlRoute::hasScheme(url.scheme())) {
         if (errorString) {
             * errorString = QObject::tr("No related scheme is registered "
                                         "in the route form %0").arg(url.scheme());

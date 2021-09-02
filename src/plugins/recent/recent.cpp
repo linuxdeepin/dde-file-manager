@@ -5,27 +5,14 @@
 #include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
 
 #include "dfm-base/widgets/dfmfileview/fileview.h"
-//#include "widgets/dfmfileview/dfilesystemmodel.h"
 
-#include "dfm-base/base/dfmstandardpaths.h"
-#include "dfm-base/base/dfmapplication.h"
-#include "dfm-base/base/dfmschemefactory.h"
+#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/application.h"
+#include "dfm-base/base/schemefactory.h"
 
-#include "dfm-base/localfile/dfmlocalfileinfo.h"
-#include "dfm-base/localfile/dfmlocaldiriterator.h"
-#include "dfm-base/localfile/dfmlocalfiledevice.h"
-#include "dfm-base/base/dabstractfilewatcher.h"
-
-//old lib
-//#include "interfaces/dfmapplication.h"
-//#include "views/dfmsidebar.h"
-//#include "views/dfileview.h"
-//#include "views/dfmsidebarview.h"
-//#include "models/dfmsidebarmodel.h"
-//#include "interfaces/dfmsidebaritem.h"
-//#include "interfaces/dfilesystemmodel.h"
-//#include "views/dfilemanagerwindow.h"
-//#include "views/dtoolbar.h"
+#include "dfm-base/localfile/localfileinfo.h"
+#include "dfm-base/localfile/localdiriterator.h"
+#include "dfm-base/base/abstractfilewatcher.h"
 
 //self files
 #include "recent.h"

@@ -27,7 +27,7 @@
 
 //#include "desktopfile.h"
 #include "properties.h"
-#include "base/dabstractfileinfo.h"
+#include "base/abstractfileinfo.h"
 #include "utils/desktopinfo.h"
 #include "dfm-base/dfm_base_global.h"
 
@@ -38,7 +38,7 @@
 #include <QMimeType>
 #include <QUrl>
 
-class DFMLocalFileInfo;
+class LocalFileInfo;
 
 /**
  * @class FileUtils
@@ -72,12 +72,12 @@ public:
                                    const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
     static QIcon searchMimeIcon(QString mime,
                                 const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
-    static QIcon searchAppIcon(const DFMLocalFileInfo &app,
+    static QIcon searchAppIcon(const LocalFileInfo &app,
                                const QIcon &defaultIcon = QIcon::fromTheme("application-x-executable"));
     static QString formatSize(qint64 num, bool withUnitVisible = true, int precision = 1, int forceUnit = -1, QStringList unitList = QStringList());
 //    static QString diskUsageString(quint64 &usedSize, quint64 &totalSize, QString strVolTag = "");
 //    static QString defaultOpticalSize(const QString &tagName, quint64 &usedSize, quint64 &totalSize);
-    static QUrl newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, const QString &baseName, const QString &suffix);
+    static QUrl newDocumentUrl(const AbstractFileInfoPointer targetDirInfo, const QString &baseName, const QString &suffix);
     static QString newDocmentName(QString targetdir, const QString &baseName, const QString &suffix);
     static bool cpTemplateFileToTargetDir(const QString &targetdir, const QString &baseName, const QString &suffix, WId windowId);
 

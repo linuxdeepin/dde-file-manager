@@ -22,7 +22,7 @@
 #ifndef DFM_NO_FILE_WATCHER
 //#include "base/dabstractfilewatcher.h"
 #endif
-#include "base/dfmstandardpaths.h"
+#include "base/standardpaths.h"
 
 #include <QCoreApplication>
 #include <QStandardPaths>
@@ -120,7 +120,7 @@ public:
     QString urlToKey(const QUrl &url) const
     {
         if (url.isLocalFile()) {
-            const QUrl &new_url = DFMStandardPaths::toStandardUrl(url.toLocalFile());
+            const QUrl &new_url = StandardPaths::toStandardUrl(url.toLocalFile());
 
             if (new_url.isValid()) {
                 return new_url.toString();
@@ -452,7 +452,7 @@ QUrl DFMSettings::toUrlValue(const QVariant &url)
         return QUrl();
     }
 
-    const QString &path = DFMStandardPaths::fromStandardUrl(QUrl(url_string));
+    const QString &path = StandardPaths::fromStandardUrl(QUrl(url_string));
 
     if (!path.isEmpty()) {
         return QUrl::fromLocalFile(path);

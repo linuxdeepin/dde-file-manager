@@ -5,6 +5,7 @@
 *.obj
 .qmake.stash
 CMakeLists.txt.user*
+src/apps/dde-file-manager/config.h
 
 # Compiled Dynamic libraries
 *.so

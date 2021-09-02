@@ -20,7 +20,7 @@
  */
 #pragma once
 
-#include "dfm-base/base/dabstractfileinfo.h"
+#include "dfm-base/base/abstractfileinfo.h"
 #include "dfm-base/dfm_base_global.h"
 
 #include <QObject>

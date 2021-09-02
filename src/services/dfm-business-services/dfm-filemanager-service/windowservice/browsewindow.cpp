@@ -23,7 +23,7 @@
 #include "private/browsewindow_p.h"
 #include "browsewindow.h"
 
-#include "dfm-base/base/dfmurlroute.h"
+#include "dfm-base/base/urlroute.h"
 #include "dfm-base/widgets/dfmsplitter/splitter.h"
 
 #include <DSplitter>

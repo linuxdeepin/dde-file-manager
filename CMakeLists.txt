@@ -71,7 +71,7 @@ endforeach(KdeConfigModule)
 
 # Use PkgConfig modules
 # You can setting mini version for "glib-2.0>=2.10 gtk+-2.0" in the list
-set(PkgConfigFindModules dtkcore dtkwidget dtkgui gio-unix-2.0)
+set(PkgConfigFindModules dtkcore dtkwidget dtkgui gio-unix-2.0 dfm-io)
 
 include(FindPkgConfig)
 

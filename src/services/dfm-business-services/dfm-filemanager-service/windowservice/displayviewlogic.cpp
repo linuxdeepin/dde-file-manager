@@ -36,7 +36,7 @@ DFMDisplayViewLogic::~DFMDisplayViewLogic()
 
 bool DFMDisplayViewLogic::checkViewUrl(const QUrl &url, QString *errorString)
 {
-    if(url.scheme().isEmpty() || !DFMUrlRoute::hasScheme(url.scheme()))
+    if(url.scheme().isEmpty() || !UrlRoute::hasScheme(url.scheme()))
     {
         if(errorString)
             *errorString = QObject::tr("Url is not supported, scheme is %0").arg(url.scheme());

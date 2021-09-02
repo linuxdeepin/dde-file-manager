@@ -29,14 +29,13 @@
 #include "dfm-base/widgets/dfmfileview/fileview.h"
 //#include "widgets/dfmfileview/dfilesystemmodel.h"
 
-#include "dfm-base/base/dfmstandardpaths.h"
-#include "dfm-base/base/dfmapplication.h"
-#include "dfm-base/base/dfmschemefactory.h"
+#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/application.h"
+#include "dfm-base/base/schemefactory.h"
 
-#include "dfm-base/localfile/dfmlocalfileinfo.h"
-#include "dfm-base/localfile/dfmlocaldiriterator.h"
-#include "dfm-base/localfile/dfmlocalfiledevice.h"
-#include "dfm-base/base/dabstractfilewatcher.h"
+#include "dfm-base/localfile/localfileinfo.h"
+#include "dfm-base/localfile/localdiriterator.h"
+#include "dfm-base/base/abstractfilewatcher.h"
 
 //old lib
 //#include "interfaces/dfmapplication.h"
@@ -85,7 +84,7 @@ DSB_DM_USE_NAMESPACE
 namespace GlobalPrivate {
     const int DEFAULT_WINDOW_WIDTH = 760;
     const int DEFAULT_WINDOW_HEIGHT = 420;
-    static DFMApplication* dfmApp = nullptr;
+    static Application* dfmApp = nullptr;
 }
 
 //DFM_USE_NAMESPACE
@@ -94,21 +93,21 @@ void initSidebar(DFMSideBar* sidebar)
 {
     if (!sidebar) return ;
 
-    QUrl homeUrl = DFMUrlRoute::pathToUrl(DFMStandardPaths::location(DFMStandardPaths::HomePath));
-    QUrl desktopUrl = DFMUrlRoute::pathToUrl(DFMStandardPaths::location(DFMStandardPaths::DesktopPath));
-    QUrl videosUrl = DFMUrlRoute::pathToUrl(DFMStandardPaths::location(DFMStandardPaths::VideosPath));
-    QUrl musicUrl = DFMUrlRoute::pathToUrl(DFMStandardPaths::location(DFMStandardPaths::MusicPath));
-    QUrl picturesUrl = DFMUrlRoute::pathToUrl(DFMStandardPaths::location(DFMStandardPaths::PicturesPath));
-    QUrl documentsUrl = DFMUrlRoute::pathToUrl(DFMStandardPaths::location(DFMStandardPaths::DocumentsPath));
-    QUrl downloadsUrl = DFMUrlRoute::pathToUrl(DFMStandardPaths::location(DFMStandardPaths::DownloadsPath));
+    QUrl homeUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::HomePath));
+    QUrl desktopUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::DesktopPath));
+    QUrl videosUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::VideosPath));
+    QUrl musicUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::MusicPath));
+    QUrl picturesUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::PicturesPath));
+    QUrl documentsUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::DocumentsPath));
+    QUrl downloadsUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::DownloadsPath));
 
-    QIcon homeIcon = QIcon::fromTheme(DFMStandardPaths::iconName(DFMStandardPaths::HomePath));
-    QIcon desktopIcon = QIcon::fromTheme(DFMStandardPaths::iconName(DFMStandardPaths::DesktopPath));
-    QIcon videosIcon = QIcon::fromTheme(DFMStandardPaths::iconName(DFMStandardPaths::VideosPath));
-    QIcon musicIcon = QIcon::fromTheme(DFMStandardPaths::iconName(DFMStandardPaths::MusicPath));
-    QIcon picturesIcon = QIcon::fromTheme(DFMStandardPaths::iconName(DFMStandardPaths::PicturesPath));
-    QIcon documentsIcon = QIcon::fromTheme(DFMStandardPaths::iconName(DFMStandardPaths::DocumentsPath));
-    QIcon downloadsIcon = QIcon::fromTheme(DFMStandardPaths::iconName(DFMStandardPaths::DownloadsPath));
+    QIcon homeIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::HomePath));
+    QIcon desktopIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DesktopPath));
+    QIcon videosIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::VideosPath));
+    QIcon musicIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::MusicPath));
+    QIcon picturesIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::PicturesPath));
+    QIcon documentsIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DocumentsPath));
+    QIcon downloadsIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DownloadsPath));
 
     auto homeItem = new DFMSideBarItem(homeIcon,QObject::tr("Home"),"core",homeUrl);
     homeItem->setFlags(homeItem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
@@ -145,81 +144,74 @@ void initSidebar(DFMSideBar* sidebar)
 
 static void regStandardPathClass()
 {
-    DFMUrlRoute::schemeMapRoot("home",
-                               DFMStandardPaths::location(DFMStandardPaths::HomePath),
-                               QIcon::fromTheme(DFMStandardPaths::iconName(DFMStandardPaths::HomePath)),
+    UrlRoute::schemeMapRoot("home",
+                               StandardPaths::location(StandardPaths::HomePath),
+                               QIcon::fromTheme(StandardPaths::iconName(StandardPaths::HomePath)),
                                false);
 
-    DFMUrlRoute::schemeMapRoot("desktop",
-                               DFMStandardPaths::location(DFMStandardPaths::DesktopPath),
-                               QIcon::fromTheme(DFMStandardPaths::iconName(DFMStandardPaths::DesktopPath)),
+    UrlRoute::schemeMapRoot("desktop",
+                               StandardPaths::location(StandardPaths::DesktopPath),
+                               QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DesktopPath)),
                                false);
 
-    DFMUrlRoute::schemeMapRoot("videos",
-                               DFMStandardPaths::location(DFMStandardPaths::VideosPath),
-                               QIcon::fromTheme(DFMStandardPaths::iconName(DFMStandardPaths::VideosPath)),
+    UrlRoute::schemeMapRoot("videos",
+                               StandardPaths::location(StandardPaths::VideosPath),
+                               QIcon::fromTheme(StandardPaths::iconName(StandardPaths::VideosPath)),
                                false);
 
-    DFMUrlRoute::schemeMapRoot("music",
-                               DFMStandardPaths::location(DFMStandardPaths::MusicPath),
-                               QIcon::fromTheme(DFMStandardPaths::iconName(DFMStandardPaths::MusicPath)),
+    UrlRoute::schemeMapRoot("music",
+                               StandardPaths::location(StandardPaths::MusicPath),
+                               QIcon::fromTheme(StandardPaths::iconName(StandardPaths::MusicPath)),
                                false);
 
-    DFMUrlRoute::schemeMapRoot("pictures",
-                               DFMStandardPaths::location(DFMStandardPaths::PicturesPath),
-                               QIcon::fromTheme(DFMStandardPaths::iconName(DFMStandardPaths::PicturesPath)),
+    UrlRoute::schemeMapRoot("pictures",
+                               StandardPaths::location(StandardPaths::PicturesPath),
+                               QIcon::fromTheme(StandardPaths::iconName(StandardPaths::PicturesPath)),
                                false);
 
-    DFMUrlRoute::schemeMapRoot("documents",
-                               DFMStandardPaths::location(DFMStandardPaths::DocumentsPath),
-                               QIcon::fromTheme(DFMStandardPaths::iconName(DFMStandardPaths::DocumentsPath)),
+    UrlRoute::schemeMapRoot("documents",
+                               StandardPaths::location(StandardPaths::DocumentsPath),
+                               QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DocumentsPath)),
                                false);
 
-    DFMUrlRoute::schemeMapRoot("downloads",
-                               DFMStandardPaths::location(DFMStandardPaths::DownloadsPath),
-                               QIcon::fromTheme(DFMStandardPaths::iconName(DFMStandardPaths::DownloadsPath)),
+    UrlRoute::schemeMapRoot("downloads",
+                               StandardPaths::location(StandardPaths::DownloadsPath),
+                               QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DownloadsPath)),
                                false);
 
-    DFMInfoFactory::instance().regClass<DFMLocalFileInfo>("home");
-    DFMFileDeviceFactory::instance().regClass<DFMLocalFileDevice>("home");
-    DFMDirIteratorFactory::instance().regClass<DFMLocalDirIterator>("home");
-    DFMWacherFactory::instance().regClass<DAbstractFileWatcher>("home");
+    InfoFactory::instance().regClass<LocalFileInfo>("home");
+    DirIteratorFactory::instance().regClass<LocalDirIterator>("home");
+    WacherFactory::instance().regClass<AbstractFileWatcher>("home");
     DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("home");
 
-    DFMInfoFactory::instance().regClass<DFMLocalFileInfo>("desktop");
-    DFMFileDeviceFactory::instance().regClass<DFMLocalFileDevice>("desktop");
-    DFMDirIteratorFactory::instance().regClass<DFMLocalDirIterator>("desktop");
-    DFMWacherFactory::instance().regClass<DAbstractFileWatcher>("desktop");
+    InfoFactory::instance().regClass<LocalFileInfo>("desktop");
+    DirIteratorFactory::instance().regClass<LocalDirIterator>("desktop");
+    WacherFactory::instance().regClass<AbstractFileWatcher>("desktop");
     DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("desktop");
 
-    DFMInfoFactory::instance().regClass<DFMLocalFileInfo>("videos");
-    DFMFileDeviceFactory::instance().regClass<DFMLocalFileDevice>("videos");
-    DFMDirIteratorFactory::instance().regClass<DFMLocalDirIterator>("videos");
-    DFMWacherFactory::instance().regClass<DAbstractFileWatcher>("videos");
+    InfoFactory::instance().regClass<LocalFileInfo>("videos");
+    DirIteratorFactory::instance().regClass<LocalDirIterator>("videos");
+    WacherFactory::instance().regClass<AbstractFileWatcher>("videos");
     DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("videos");
 
-    DFMInfoFactory::instance().regClass<DFMLocalFileInfo>("music");
-    DFMFileDeviceFactory::instance().regClass<DFMLocalFileDevice>("music");
-    DFMDirIteratorFactory::instance().regClass<DFMLocalDirIterator>("music");
-    DFMWacherFactory::instance().regClass<DAbstractFileWatcher>("music");
+    InfoFactory::instance().regClass<LocalFileInfo>("music");
+    DirIteratorFactory::instance().regClass<LocalDirIterator>("music");
+    WacherFactory::instance().regClass<AbstractFileWatcher>("music");
     DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("music");
 
-    DFMInfoFactory::instance().regClass<DFMLocalFileInfo>("pictures");
-    DFMFileDeviceFactory::instance().regClass<DFMLocalFileDevice>("pictures");
-    DFMDirIteratorFactory::instance().regClass<DFMLocalDirIterator>("pictures");
-    DFMWacherFactory::instance().regClass<DAbstractFileWatcher>("pictures");
+    InfoFactory::instance().regClass<LocalFileInfo>("pictures");
+    DirIteratorFactory::instance().regClass<LocalDirIterator>("pictures");
+    WacherFactory::instance().regClass<AbstractFileWatcher>("pictures");
     DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("pictures");
 
-    DFMInfoFactory::instance().regClass<DFMLocalFileInfo>("documents");
-    DFMFileDeviceFactory::instance().regClass<DFMLocalFileDevice>("documents");
-    DFMDirIteratorFactory::instance().regClass<DFMLocalDirIterator>("documents");
-    DFMWacherFactory::instance().regClass<DAbstractFileWatcher>("documents");
+    InfoFactory::instance().regClass<LocalFileInfo>("documents");
+    DirIteratorFactory::instance().regClass<LocalDirIterator>("documents");
+    WacherFactory::instance().regClass<AbstractFileWatcher>("documents");
     DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("documents");
 
-    DFMInfoFactory::instance().regClass<DFMLocalFileInfo>("downloads");
-    DFMFileDeviceFactory::instance().regClass<DFMLocalFileDevice>("downloads");
-    DFMDirIteratorFactory::instance().regClass<DFMLocalDirIterator>("downloads");
-    DFMWacherFactory::instance().regClass<DAbstractFileWatcher>("downloads");
+    InfoFactory::instance().regClass<LocalFileInfo>("downloads");
+    DirIteratorFactory::instance().regClass<LocalDirIterator>("downloads");
+    WacherFactory::instance().regClass<AbstractFileWatcher>("downloads");
     DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("downloads");
 }
 
@@ -232,12 +224,11 @@ void Core::initialize()
     //    IMPORT_SERVICE(DFMOldPreviewService);
 
     //注册路由
-    DFMUrlRoute::schemeMapRoot("file","/");
+    UrlRoute::schemeMapRoot("file","/");
     //注册Scheme为"file"的扩展的文件信息 本地默认文件的
-    DFMInfoFactory::instance().regClass<DFMLocalFileInfo>("file");
-    DFMFileDeviceFactory::instance().regClass<DFMLocalFileDevice>("file");
-    DFMDirIteratorFactory::instance().regClass<DFMLocalDirIterator>("file");
-    DFMWacherFactory::instance().regClass<DAbstractFileWatcher>("file");
+    InfoFactory::instance().regClass<LocalFileInfo>("file");
+    DirIteratorFactory::instance().regClass<LocalDirIterator>("file");
+    WacherFactory::instance().regClass<AbstractFileWatcher>("file");
     DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("file");
 
     regStandardPathClass();
@@ -245,7 +236,7 @@ void Core::initialize()
 
 bool Core::start(QSharedPointer<dpf::PluginContext> context)
 {
-    GlobalPrivate::dfmApp = new DFMApplication;
+    GlobalPrivate::dfmApp = new Application;
     dpfCritical() << __PRETTY_FUNCTION__;
     qInfo() << "import service list" << context->services();
     //    auto previewService = context->service<DFMOldPreviewService>("DFMOldPreviewService");
@@ -268,7 +259,7 @@ bool Core::start(QSharedPointer<dpf::PluginContext> context)
     }
 
     if (windowService) {
-        QUrl defaultUrl = DFMUrlRoute::pathToUrl(DFMStandardPaths::location(DFMStandardPaths::HomePath));
+        QUrl defaultUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::HomePath));
         DFMBrowseWindow* newWindow = windowService->newWindow();
 
         if (newWindow){

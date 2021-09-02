@@ -25,12 +25,9 @@
 #include "sidebaritemdelegate.h"
 #include "sidebaritem.h"
 
-#include "base/dfmapplication.h"
+#include "base/application.h"
 #include "base/dfmsettings.h"
 #include "base/singleton.hpp"
-
-//#include "localfile/dfileservices.h"
-//#include "localfile/filesignalmanager.h"
 
 #include <DApplicationHelper>
 #include <QScrollBar>
@@ -229,7 +226,7 @@ QList<QUrl> DFMSideBar::savedItemOrder(const QString &groupName) const
 {
     QList<QUrl> list;
 
-    QStringList savedList = DFMApplication::genericSetting()->value(SIDEBAR_ITEMORDER_KEY, groupName).toStringList();
+    QStringList savedList = Application::genericSetting()->value(SIDEBAR_ITEMORDER_KEY, groupName).toStringList();
     for (const QString &item : savedList) {
         list << QUrl(item);
     }
@@ -249,7 +246,7 @@ void DFMSideBar::saveItemOrder(const QString &groupName) const
         }
     }
 
-    DFMApplication::genericSetting()->setValue(SIDEBAR_ITEMORDER_KEY, groupName, list);
+    Application::genericSetting()->setValue(SIDEBAR_ITEMORDER_KEY, groupName, list);
 }
 
 QString DFMSideBar::groupName(DFMSideBar::GroupName group)

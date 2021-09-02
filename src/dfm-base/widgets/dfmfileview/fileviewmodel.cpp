@@ -22,143 +22,141 @@
 #include "fileviewmodel.h"
 #include "private/fileviewmodel_p.h"
 
-DFMFileViewModelPrivate::DFMFileViewModelPrivate(DFMFileViewModel *qq)
+FileViewModelPrivate::FileViewModelPrivate(FileViewModel *qq)
     :q_ptr(qq)
 {
 
 }
 
-DFMFileViewModelPrivate::~DFMFileViewModelPrivate()
+FileViewModelPrivate::~FileViewModelPrivate()
 {
 
 }
 
-DFMFileViewModel::DFMFileViewModel(QAbstractItemView *parent)
+FileViewModel::FileViewModel(QAbstractItemView *parent)
     : QAbstractItemModel (parent)
-    , d_ptr(new DFMFileViewModelPrivate(this))
+    , d_ptr(new FileViewModelPrivate(this))
 {
 
 }
 
-QModelIndex DFMFileViewModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    Q_D(const DFMFileViewModel);
+    Q_D(const FileViewModel);
 
-    if(row < 0 || column < 0 || d->m_childers.size() <= row)
+    if(row < 0 || column < 0 || d->childers.size() <= row)
         return  QModelIndex();
 
-    return createIndex(row,column,const_cast<DFMFileViewItem*>(d->m_childers.at(row).data()));
+    return createIndex(row,column,const_cast<DFMFileViewItem*>(d->childers.at(row).data()));
 }
 
-QModelIndex DFMFileViewModel::setRootUrl(const QUrl &url)
+QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 {
-    Q_D(DFMFileViewModel);
-    if (!d->m_root.isNull() && d->m_root->url() == url)
-        return createIndex(-1, 0, &d->m_root);
+    Q_D(FileViewModel);
+    if (!d->root.isNull() && d->root->url() == url)
+        return createIndex(-1, 0, &d->root);
 
-    d->m_root.reset(new DFMFileViewItem(url));
-    QModelIndex root = createIndex(-1, 0, &d->m_root);
+    d->root.reset(new DFMFileViewItem(url));
+    QModelIndex root = createIndex(-1, 0, &d->root);
 
     if(!url.isValid())
         return root;
 
-    d->m_childers.clear();
+    d->childers.clear();
 
-    if (d->m_column == 0)
-        d->m_column = 4;
+    if (d->column == 0)
+        d->column = 4;
 
-    if (!d->m_watcher.isNull()) {
-        disconnect(d->m_watcher.data());
+    if (!d->watcher.isNull()) {
+        disconnect(d->watcher.data());
     }
-    d->m_watcher = DFMWacherFactory::instance().create<DAbstractFileWatcher>(url);
-    if (d->m_watcher.isNull()) {
-        connect(d->m_watcher.data(), &DAbstractFileWatcher::fileMoved, this, &DFMFileViewModel::dofileMoved);
-        connect(d->m_watcher.data(), &DAbstractFileWatcher::fileDeleted, this, &DFMFileViewModel::doFileDeleted);
-        connect(d->m_watcher.data(), &DAbstractFileWatcher::subfileCreated, this, &DFMFileViewModel::dofileCreated);
-        connect(d->m_watcher.data(), &DAbstractFileWatcher::fileModified, this, &DFMFileViewModel::dofileModified);
-        connect(d->m_watcher.data(), &DAbstractFileWatcher::fileAttributeChanged, this, &DFMFileViewModel::dofileModified);
+    d->watcher = WacherFactory::instance().create<AbstractFileWatcher>(url);
+    if (d->watcher.isNull()) {
+        connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted, this, &FileViewModel::doFileDeleted);
+        connect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, this, &FileViewModel::dofileCreated);
+        connect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &FileViewModel::dofileModified);
     }
 
     return root;
 }
 
-QUrl DFMFileViewModel::rootUrl()
+QUrl FileViewModel::rootUrl()
 {
-    Q_D(DFMFileViewModel);
-    return d->m_root->fileinfo<DAbstractFileInfo>()->url();
+    Q_D(FileViewModel);
+    return d->root->fileinfo<AbstractFileInfo>()->url();
 }
 
-DAbstractFileInfoPointer DFMFileViewModel::fileInfo(const QModelIndex &index)
+AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index)
 {
-    Q_D(DFMFileViewModel);
+    Q_D(FileViewModel);
     if (!index.isValid())
         return nullptr;
-    if(index.row() < 0  || d->m_childers.size() <= index.row())
+    if(index.row() < 0  || d->childers.size() <= index.row())
         return  nullptr;
-    return d->m_childers.at(index.row())->fileinfo<DAbstractFileInfo>();
+    return d->childers.at(index.row())->fileinfo<AbstractFileInfo>();
 }
 
-QModelIndex DFMFileViewModel::parent(const QModelIndex &child) const
+QModelIndex FileViewModel::parent(const QModelIndex &child) const
 {
     Q_UNUSED(child)
     return QModelIndex();
     //    return createIndex(-1, 0, const_cast<DFMFileViewItem*>(&m_root));
 }
 
-int DFMFileViewModel::rowCount(const QModelIndex &parent) const
+int FileViewModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    Q_D(const DFMFileViewModel);
-    return d->m_childers.size();
+    Q_D(const FileViewModel);
+    return d->childers.size();
 }
 
-int DFMFileViewModel::columnCount(const QModelIndex &parent) const
+int FileViewModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    Q_D(const DFMFileViewModel);
-    return d->m_column;
+    Q_D(const FileViewModel);
+    return d->column;
 }
 
-QVariant DFMFileViewModel::data(const QModelIndex &index, int role) const
+QVariant FileViewModel::data(const QModelIndex &index, int role) const
 {
-    Q_D(const DFMFileViewModel);
-    return d->m_childers.at(index.row())->data(role);
+    Q_D(const FileViewModel);
+    return d->childers.at(index.row())->data(role);
 }
 
-void DFMFileViewModel::doUpdateChildren(const QList<QSharedPointer<DFMFileViewItem> > &children)
+void FileViewModel::doUpdateChildren(const QList<QSharedPointer<DFMFileViewItem> > &children)
 {
-    Q_D(DFMFileViewModel);
+    Q_D(FileViewModel);
 
     beginResetModel();
-    d->m_childers.setList(children);
+    d->childers.setList(children);
     endResetModel();
 }
 
 
-void DFMFileViewModel::fetchMore(const QModelIndex &parent)
+void FileViewModel::fetchMore(const QModelIndex &parent)
 {
     Q_UNUSED(parent)
-    Q_D(DFMFileViewModel);
+    Q_D(FileViewModel);
 
-    if (!d->m_traversalThread.isNull()) {
-        d->m_traversalThread->quit();
-        d->m_traversalThread->wait();
-        disconnect(d->m_traversalThread.data());
+    if (!d->traversalThread.isNull()) {
+        d->traversalThread->quit();
+        d->traversalThread->wait();
+        disconnect(d->traversalThread.data());
     }
-    d->m_traversalThread.reset(new DFMTraversalDirThread(
-                                   d->m_root->url(),QStringList(),
+    d->traversalThread.reset(new DFMTraversalDirThread(
+                                   d->root->url(),QStringList(),
                                    QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System,
                                    QDirIterator::NoIteratorFlags));
-    if (d->m_traversalThread.isNull())
+    if (d->traversalThread.isNull())
         return;
-    connect(d->m_traversalThread.data(),&DFMTraversalDirThread::updateChildren, this, &DFMFileViewModel::doUpdateChildren,
+    connect(d->traversalThread.data(),&DFMTraversalDirThread::updateChildren, this, &FileViewModel::doUpdateChildren,
             Qt::QueuedConnection);
-    d->m_traversalThread->start();
+    d->traversalThread->start();
 }
 
 
-bool DFMFileViewModel::canFetchMore(const QModelIndex &parent) const
+bool FileViewModel::canFetchMore(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return true;

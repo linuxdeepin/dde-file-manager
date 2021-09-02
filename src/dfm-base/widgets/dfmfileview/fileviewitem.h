@@ -19,13 +19,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMFILEVIEWITEM_H
-#define DFMFILEVIEWITEM_H
+#ifndef FILEVIEWITEM_H
+#define FILEVIEWITEM_H
 
-#include "localfile/dfmlocalfileinfo.h"
+#include "localfile/localfileinfo.h"
 #include "shutil/dmimedatabase.h"
-
-#include "base/dfmschemefactory.h"
+#include "base/schemefactory.h"
 
 #include <QStandardItem>
 #include <QMetaType>
@@ -101,7 +100,7 @@ public:
     QMimeType mimeType() const;
 
 private:
-    DAbstractFileInfoPointer m_fileinfo;
+    AbstractFileInfoPointer m_fileinfo;
     QMimeType m_mimeType;
 
     // QStandardItem interface

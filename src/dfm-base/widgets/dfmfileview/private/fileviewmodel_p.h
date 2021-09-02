@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMFileViewModel_P_H
-#define DFMFileViewModel_P_H
+#ifndef FILEVIEWMODEL_P_H
+#define FILEVIEWMODEL_P_H
 
 #include "shutil/fileutils.h"
 #include "shutil/dfmfilelistfile.h"
@@ -31,27 +31,27 @@
 #include <QReadWriteLock>
 #include <QQueue>
 
-class DFMFileViewModelPrivate
+class FileViewModelPrivate
 {
-    DFMFileViewModel * q_ptr;
+    FileViewModel * q_ptr;
 
 public:
     enum EventType {
         AddFile,
         RmFile
     };
-    explicit DFMFileViewModelPrivate(DFMFileViewModel *qq);
-    ~DFMFileViewModelPrivate();
+    explicit FileViewModelPrivate(FileViewModel *qq);
+    ~FileViewModelPrivate();
 
 private:
-    DThreadList<QSharedPointer<DFMFileViewItem>> m_childers;
-    QSharedPointer<DFMFileViewItem> m_root;
-    int m_column = 0;
+    DThreadList<QSharedPointer<DFMFileViewItem>> childers;
+    QSharedPointer<DFMFileViewItem> root;
+    int column = 0;
 
-    DAbstractFileWatcherPointer m_watcher;
-    QSharedPointer<DFMTraversalDirThread> m_traversalThread;
+    AbstractFileWatcherPointer watcher;
+    QSharedPointer<DFMTraversalDirThread> traversalThread;
 
-    Q_DECLARE_PUBLIC(DFMFileViewModel)
+    Q_DECLARE_PUBLIC(FileViewModel)
 };
 
-#endif // DFMFileViewModel_P_H
+#endif // FILEVIEWMODEL_P_H

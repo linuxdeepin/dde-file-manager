@@ -29,7 +29,7 @@
 //#include "localfile/dfileservices.h"
 /*********************************************************/
 
-#include "localfile/dfmlocalfileinfo.h"
+#include "localfile/localfileinfo.h"
 
 #include <QPainter>
 #include <QDebug>
@@ -87,7 +87,7 @@ QWidget *DFMSideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptio
     DFMSideBarModel *sidebarModel = dynamic_cast<DFMSideBarModel*>(sidebarView->model());
     DFMSideBarItem *tgItem = sidebarModel->itemFromIndex(index);
 
-    const DFMLocalFileInfo sourceInfo(tgItem->url()) ;
+    const LocalFileInfo sourceInfo(tgItem->url()) ;
     if(!sourceInfo.exists())
         return nullptr;
     /***************************************************************************************************************/

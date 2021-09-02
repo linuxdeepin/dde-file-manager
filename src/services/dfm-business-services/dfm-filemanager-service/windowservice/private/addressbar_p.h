@@ -27,7 +27,7 @@
 #include "windowservice/completerview.h"
 #include "dfm_filemanager_service_global.h"
 
-#include "dfm-base/base/dfmurlroute.h"
+#include "dfm-base/base/urlroute.h"
 
 #include <QFileInfo>
 #include <QDir>
@@ -90,7 +90,7 @@ public:
             }
 
             if (indicatorAction.icon().name() == "go-right") {
-                QUrl url = DFMUrlRoute::pathToUrl(q_ptr->text());
+                QUrl url = UrlRoute::pathToUrl(q_ptr->text());
                 if (url.isValid())
                     Q_EMIT q_ptr->editingFinishedUrl(url);
             }
@@ -159,10 +159,10 @@ public Q_SLOTS:
             return;
         }
 
-        if (DFMUrlRoute::hasScheme(string)) {
+        if (UrlRoute::hasScheme(string)) {
             QStringList rootUrls;
-            QString localPath = DFMUrlRoute::schemeRoot(string);
-            if (QFileInfo::exists(localPath) && !DFMUrlRoute::schemeIsVirtual(string)) {
+            QString localPath = UrlRoute::schemeRoot(string);
+            if (QFileInfo::exists(localPath) && !UrlRoute::schemeIsVirtual(string)) {
 
                 QDirIterator itera(localPath,
                                    QDir::Dirs | QDir::NoDotAndDotDot | QDir::System,
@@ -171,7 +171,7 @@ public Q_SLOTS:
                 while(itera.hasNext())
                 {
                     itera.next();
-                    rootUrls << DFMUrlRoute::pathToUrl(itera.filePath()).toString();
+                    rootUrls << UrlRoute::pathToUrl(itera.filePath()).toString();
                 }
             }
 
@@ -212,8 +212,8 @@ public Q_SLOTS:
     void procReturnPressed()
     {
         QUrl url(q_ptr->text());
-        if (!DFMUrlRoute::isVirtualUrl(url)) {
-            QString localPath = DFMUrlRoute::urlToPath(url);
+        if (!UrlRoute::isVirtualUrl(url)) {
+            QString localPath = UrlRoute::urlToPath(url);
             if (QDir(localPath).exists()) {
                 qInfo() << "sig editingFinishedUrl :" << url;
                 Q_EMIT q_ptr->editingFinishedUrl(url);
@@ -223,7 +223,7 @@ public Q_SLOTS:
         }
 
         if (QDir(q_ptr->text()).exists()) {
-            QUrl url = DFMUrlRoute::pathToUrl(q_ptr->text());
+            QUrl url = UrlRoute::pathToUrl(q_ptr->text());
             if (!url.isValid()) {
                 qInfo() << "sig editingFinishedUrl :" << url;
                 Q_EMIT q_ptr->editingFinishedUrl(url);

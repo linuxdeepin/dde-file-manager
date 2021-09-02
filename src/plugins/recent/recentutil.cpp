@@ -3,7 +3,7 @@
 Q_GLOBAL_STATIC(RecentUtil, _recentUntil)
 
 RecentUtil::RecentUtil()
-    : m_recentFilePath(DFMStandardPaths::location(DFMStandardPaths::HomePath)
+    : m_recentFilePath(StandardPaths::location(StandardPaths::HomePath)
                        + "/.local/share/recently-used.xbel")
 {
 

@@ -23,9 +23,9 @@
 #include "sidebarmodel.h"
 
 //#include "localfile/dfileservices.h"
-#include "localfile/dfmlocalfileinfo.h"
+#include "localfile/localfileinfo.h"
 
-#include "base/dfmurlroute.h"
+#include "base/urlroute.h"
 
 #include <QtConcurrent>
 #include <QDebug>
@@ -156,10 +156,10 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
     // 主要有4种场景：1.都是可读写的场景; 2.文件夹是只读属性，子集是可读写的; 3.文件夹或文件是可读写的; 4.拖动的包含 可读写的和只读的
     QList<QUrl> urls, copyUrls;
     for (const QUrl &url : event->mimeData()->urls()) {
-        if (DFMUrlRoute::isSchemeRoot(url)) {
+        if (UrlRoute::isSchemeRoot(url)) {
             qDebug() << "skip the same dir file..." << url;
         } else {
-            QString folderPath = DFMUrlRoute::urlToPath(DFMUrlRoute::urlParent(url));
+            QString folderPath = UrlRoute::urlToPath(UrlRoute::urlParent(url));
             QString filePath = url.path();
 
             bool isFolderWritable = false;
@@ -240,7 +240,7 @@ void DFMSideBarView::currentChanged(const QModelIndex &previous)
 
 bool DFMSideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction action) const
 {
-    const DFMLocalFileInfo dstInfo(dstUrl);
+    const LocalFileInfo dstInfo(dstUrl);
 
     // convert destnation url to real path if it's a symbol link.
     if (dstInfo.isSymLink()) {
@@ -293,7 +293,7 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
     }
 
     for (const QUrl &url : urls) {
-        const DFMLocalFileInfo fileInfo(url);
+        const LocalFileInfo fileInfo(url);
         if (!fileInfo.isReadable()) {
             return Qt::IgnoreAction;
         }
@@ -303,7 +303,7 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
 //        }
     }
 
-    const DFMLocalFileInfo info(item->url());
+    const LocalFileInfo info(item->url());
 
 //    if (!info/* || !info->canDrop()*/) {
 //        return Qt::IgnoreAction;

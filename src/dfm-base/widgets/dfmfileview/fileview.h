@@ -26,7 +26,7 @@
 
 DWIDGET_USE_NAMESPACE
 
-class DFMFileViewModel;
+class FileViewModel;
 class DFMFileViewPrivate;
 class DFMFileView : public DListView
 {

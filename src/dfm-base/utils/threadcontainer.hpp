@@ -19,286 +19,341 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DTHREADCONTAINER_H
-#define DTHREADCONTAINER_H
+#ifndef THREADCONTAINER_H
+#define THREADCONTAINER_H
 
 #include <QList>
 #include <QMap>
 #include <QMutex>
-
+/*!
+ * \class DThreadList 线程安全的List
+ *
+ * \brief 对QList进行了封装，加锁对每一个list的操作
+ */
 template<class T>
 
 class DThreadList {
 public:
-    DThreadList<T>():m_list(new QList<T>){}
+    DThreadList<T>():myList(new QList<T>){}
     ~DThreadList() {
-        m_list->clear();
-        delete m_list;
-        m_list = nullptr;
+        myList->clear();
+        delete myList;
+        myList = nullptr;
     }
-    /**
-     * @brief push_back 从链表的最后插入模板类型
-     * @param T 模板类引用
-     * @return
+    /*!
+     * \brief push_back 从链表的最后插入模板类型
+     *
+     * \param T 模板类引用
+     *
+     * \return
      */
     inline void push_back(const T &t){
-        QMutexLocker lk(&m_mutex);
-        m_list->push_back(t);
+        QMutexLocker lk(&mutex);
+        myList->push_back(t);
     }
-    /**
-     * @brief insert 插入一个模板类型到链表
-     * @param T 模板类引用
-     * @return
+    /*!
+     * \brief insert 插入一个模板类型到链表
+     *
+     * \param T 模板类引用
+     *
+     * \return
      */
     inline void insert(const T &t){
-        QMutexLocker lk(&m_mutex);
-        m_list->insert(t);
+        QMutexLocker lk(&mutex);
+        myList->insert(t);
     }
-    /**
-     * @brief setList 设置一个链表
-     * @param QList<T> 模板类链表
-     * @return
+    /*!
+     * \brief setList 设置一个链表
+     *
+     * \param QList<T> 模板类链表
+     *
+     * \return
      */
     inline void setList(const QList<T> &t){
-        QMutexLocker lk(&m_mutex);
-        *m_list = t;
+        QMutexLocker lk(&mutex);
+        *myList = t;
     }
-    /**
-     * @brief setList 设置一个链表
-     * @param QList<T> 模板类链表
-     * @return const QList<T> &获取链表
+    /*!
+     * \brief setList 设置一个链表
+     *
+     * \param QList<T> 模板类链表
+     *
+     * \return const QList<T> &获取链表
      */
     inline const QList<T> &list(){
-        QMutexLocker lk(&m_mutex);
-        return *m_list;
+        QMutexLocker lk(&mutex);
+        return *myList;
     }
-    /**
-     * @brief removeAll 从链表中移除所有的模板类型
-     * @param T 模板类引用
-     * @return
+    /*!
+     * \brief removeAll 从链表中移除所有的模板类型
+     *
+     * \param T 模板类引用
+     *
+     * \return
      */
     inline void removeAll(const T &t)
     {
-        QMutexLocker lk(&m_mutex);
-        m_list->removeAll(t);
+        QMutexLocker lk(&mutex);
+        myList->removeAll(t);
     }
-    /**
-     * @brief removeOne 从链表中移除一个的模板类型
-     * @param T 模板类引用
-     * @return
+    /*!
+     * \brief removeOne 从链表中移除一个的模板类型
+     *
+     * \param T 模板类引用
+     *
+     * \return
      */
     inline void removeOne(const T &t)
     {
-        QMutexLocker lk(&m_mutex);
-        m_list->removeOne(t);
+        QMutexLocker lk(&mutex);
+        myList->removeOne(t);
     }
 
-    /**
-     * @brief contains 链表中是否包含模板
-     * @param T 模板类引用
-     * @return bool 是否包含模板
+    /*!
+     * \brief contains 链表中是否包含模板
+     *
+     * \param T 模板类引用
+     *
+     * \return bool 是否包含模板
      */
     inline bool contains(const T &t)
     {
-        QMutexLocker lk(&m_mutex);
-        return m_list->contains(t);
+        QMutexLocker lk(&mutex);
+        return myList->contains(t);
     }
-    /**
-     * @brief clear 链表中是否包含模板
-     * @param T 模板类引用
-     * @return bool 是否包含模板
+    /*!
+     * \brief clear 链表中是否包含模板
+     *
+     * \param T 模板类引用
+     *
+     * \return bool 是否包含模板
      */
     inline void clear()
     {
-        QMutexLocker lk(&m_mutex);
-        return m_list->clear();
+        QMutexLocker lk(&mutex);
+        return myList->clear();
     }
-    /**
-     * @brief append 增加一个元素
-     * @param T 模板类引用
-     * @return bool 是否包含模板
+    /*!
+     * \brief append 增加一个元素
+     *
+     * \param T 模板类引用
+     *
+     * \return bool 是否包含模板
      */
     inline void append(const T &t)
     {
-        QMutexLocker lk(&m_mutex);
-        return m_list->append(t);
+        QMutexLocker lk(&mutex);
+        return myList->append(t);
     }
-//    /**
-//     * @brief push_back 增加一个元素到最后
-//     * @param T 模板类引用
-//     * @return
-//     */
-//    inline void push_back(const T &t)
-//    {
-//        return append(t);
-//    }
-    /**
-     * @brief size 链表的总长度
-     * @return int 链表的总长度
+    /*!
+     * \brief size 链表的总长度
+     *
+     * \return int 链表的总长度
      */
     inline int size() const
     {
-        return m_list->size();
+        return myList->size();
     }
-    /**
-     * @brief at 链表的总长度
-     * @param int 当前第i个位置
-     * @return T& 链表的总长度
+    /*!
+     * \brief at 链表的总长度
+     *
+     * \param int 当前第i个位置
+     *
+     * \return T& 链表的总长度
      */
     inline const T& at(int i) const
     {
-        return m_list->at(i);
+        return myList->at(i);
     }
-    /**
-     * @brief begin 当前链表的开始迭代器
-     * @param null
-     * @return QList<T>::iterator 当前链表的开始迭代器
+    /*!
+     * \brief begin 当前链表的开始迭代器
+     *
+     * \param null
+     *
+     * \return QList<T>::iterator 当前链表的开始迭代器
      */
     inline typename QList<T>::iterator begin() {
-        QMutexLocker lk(&m_mutex);
-        return m_list->begin();
+        QMutexLocker lk(&mutex);
+        return myList->begin();
     }
-    /**
-     * @brief begin 当前链表的结束迭代器
-     * @param null
-     * @return QList<T>::iterator 当前链表的结束迭代器
+    /*!
+     * \brief begin 当前链表的结束迭代器
+     *
+     * \param null
+     *
+     * \return QList<T>::iterator 当前链表的结束迭代器
      */
     inline typename QList<T>::iterator end() {
-        QMutexLocker lk(&m_mutex);
-        return m_list->end();
+        QMutexLocker lk(&mutex);
+        return myList->end();
     }
-    /**
-     * @brief erase 去掉链表中当前的迭代器
-     * @param QList<T>::iterator 链表的迭代器
-     * @return QList<T>::iterator 当前迭代器的下一个迭代器
+    /*!
+     * \brief erase 去掉链表中当前的迭代器
+     *
+     * \param QList<T>::iterator 链表的迭代器
+     *
+     * \return QList<T>::iterator 当前迭代器的下一个迭代器
      */
     inline typename QList<T>::iterator erase(typename QList<T>::iterator it) {
-        QMutexLocker lk(&m_mutex);
-        return m_list->erase(it);
+        QMutexLocker lk(&mutex);
+        return myList->erase(it);
     }
-    /**
-     * @brief first 如果链表为空，返回一个nullptr，否则返回第一个的地址
-     * @param
-     * @return T * 返回第一个地址
+    /*!
+     * \brief first 如果链表为空，返回一个nullptr，否则返回第一个的地址
+     *
+     * \param
+     *
+     * \return T * 返回第一个地址
      */
     inline T *first() {
-        QMutexLocker lk(&m_mutex);
-        if (m_list->isEmpty())
+        QMutexLocker lk(&mutex);
+        if (myList->isEmpty())
             return nullptr;
-        return &(m_list->first());
+        return &(myList->first());
     }
-    /**
-     * @brief count 链表的总个数
-     * @return int 链表的总个数
+    /*!
+     * \brief count 链表的总个数
+     *
+     * \return int 链表的总个数
      */
     inline int count() {
-        QMutexLocker lk(&m_mutex);
-        return m_list->count();
+        QMutexLocker lk(&mutex);
+        return myList->count();
     }
 
     DThreadList<T> &operator=(const DThreadList<T> &l) {
-        QMutexLocker lk(&m_mutex);
-        *m_list = *l.m_list;
+        QMutexLocker lk(&mutex);
+        *myList = *l.myList;
     }
 
 private:
-    QList<T> *m_list;
-    QMutex m_mutex;
+    QList<T> *myList; // 当前的QList
+    QMutex mutex; // 当前的锁
 };
-
+/*!
+ * \class DThreadMap 线程安全的Map
+ *
+ * \brief 对QMap进行了封装，加锁对每一个QMap的操作
+ */
 template<class DKey, class DValue>
 
 class DThreadMap {
 public:
-    DThreadMap<DKey, DValue>():m_map(new QMap<DKey,DValue>)
+    DThreadMap<DKey, DValue>():myMap(new QMap<DKey,DValue>)
     {
     }
     ~DThreadMap() {
-        if (m_map) {
+        if (myMap) {
             {
-                QMutexLocker lk(&m_mutex);
-                m_map->clear();
+                QMutexLocker lk(&mutex);
+                myMap->clear();
             }
-            delete m_map;
-            m_map = nullptr;
+            delete myMap;
+            myMap = nullptr;
         }
     }
-    /**
-     * @brief insert 插入一个模板类型到map
-     * @param Key 模板类引用key
-     * @param Value 模板类引用value
-     * @return
+    /*!
+     * \brief insert 插入一个模板类型到map
+     *
+     * \param Key 模板类引用key
+     *
+     * \param Value 模板类引用value
+     *
+     * \return
      */
     inline void insert(const DKey &key, const DValue &value){
-        QMutexLocker lk(&m_mutex);
-        m_map->insert(key, value);
+        QMutexLocker lk(&mutex);
+        myMap->insert(key, value);
     }
-    /**
-     * @brief remove 从map中移除所有的模板类型
-     * @param Key 模板类引用key
-     * @return
+    /*!
+     * \brief remove 从map中移除所有的模板类型
+     *
+     * \param Key 模板类引用key
+     *
+     * \return
      */
     inline void remove(const DKey &key){
-        QMutexLocker lk(&m_mutex);
-        m_map->remove(key);
+        QMutexLocker lk(&mutex);
+        myMap->remove(key);
     }
-    /**
-     * @brief contains map中是否包含key对应的键值对
+    /*!
+     * \brief contains map中是否包含key对应的键值对
+     *
      * Key 模板类引用key
-     * @return bool 是否包含key对应的键值对
+     *
+     * \return bool 是否包含key对应的键值对
      */
     inline DValue value(const DKey &key){
-        QMutexLocker lk(&m_mutex);
-        return m_map->value(key);
+        QMutexLocker lk(&mutex);
+        return myMap->value(key);
     }
-    /**
-     * @brief contains map中是否包含key对应的键值对
+    /*!
+     * \brief contains map中是否包含key对应的键值对
+     *
      * Key 模板类引用key
-     * @return bool 是否包含key对应的键值对
+     *
+     * \return bool 是否包含key对应的键值对
      */
     inline bool contains(const DKey &key){
-        QMutexLocker lk(&m_mutex);
-        return m_map->contains(key);
+        QMutexLocker lk(&mutex);
+        return myMap->contains(key);
     }
-    /**
-     * @brief begin 当前map的开始迭代器
-     * @param null
-     * @return QMap<Key, Value>::iterator 当前map的开始迭代器
+    /*!
+     * \brief begin 当前map的开始迭代器
+     *
+     * \param null
+     *
+     * \return QMap<Key, Value>::iterator 当前map的开始迭代器
      */
     inline typename QMap<DKey, DValue>::iterator begin() {
-        QMutexLocker lk(&m_mutex);
-        return m_map->begin();
+        QMutexLocker lk(&mutex);
+        return myMap->begin();
     }
-    /**
-     * @brief begin 当前map的结束迭代器
-     * @param null
-     * @return QMap<Key, Value>::iterator 当前map的结束迭代器
+    /*!
+     * \brief begin 当前map的结束迭代器
+     *
+     * \param null
+     *
+     * \return QMap<Key, Value>::iterator 当前map的结束迭代器
      */
     inline typename QMap<DKey, DValue>::iterator end() {
-        QMutexLocker lk(&m_mutex);
-        return m_map->end();
+        QMutexLocker lk(&mutex);
+        return myMap->end();
     }
-    /**
-     * @brief erase 去掉map中当前的迭代器
-     * @param QMap<Key, Value>::iterator map的迭代器
-     * @return QMap<Key, Value>::iterator 当前迭代器的下一个迭代器
+    /*!
+     * \brief erase 去掉map中当前的迭代器
+     *
+     * \param QMap<Key, Value>::iterator map的迭代器
+     *
+     * \return QMap<Key, Value>::iterator 当前迭代器的下一个迭代器
      */
     inline typename QMap<DKey, DValue>::iterator erase(typename QMap<DKey, DValue>::iterator it) {
-        QMutexLocker lk(&m_mutex);
-        return m_map->erase(it);
+        QMutexLocker lk(&mutex);
+        return myMap->erase(it);
     }
-    /**
-     * @brief count map的总个数
-     * @return int map的总个数
+    /*!
+     * \brief count map的总个数
+     *
+     * \return int map的总个数
      */
     inline int count() {
-        QMutexLocker lk(&m_mutex);
-        return m_map->count();
+        QMutexLocker lk(&mutex);
+        return myMap->count();
+    }
+    /*!
+     * \brief clear 清理整个map
+     *
+     * \return
+     */
+    inline void clear() {
+        QMutexLocker lk(&mutex);
+        return myMap->clear();
     }
 
+
 private:
-    QMap<DKey, DValue> *m_map;
-    QMutex m_mutex;
+    QMap<DKey, DValue> *myMap; // 当前的QMap
+    QMutex mutex; // 当前的锁
 };
 
-#endif // DTHREADCONTAINER_H
+#endif // THREADCONTAINER_H

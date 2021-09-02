@@ -25,8 +25,8 @@
 #include "crumbmodel.h"
 
 #include "dfm-base/base/singleton.hpp"
-#include "dfm-base/base/dfmstandardpaths.h"
-#include "dfm-base/base/dfmapplication.h"
+#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/application.h"
 #include "dfm-base/base/dfmsettings.h"
 
 #include <DListView>
@@ -179,8 +179,8 @@ void DFMCrumbBarPrivate::initUI()
 
 void DFMCrumbBarPrivate::initData()
 {
-    m_clickableAreaEnabled = DFMApplication::instance()->
-            genericAttribute(DFMApplication::GA_ShowCsdCrumbBarClickableArea)
+    m_clickableAreaEnabled = Application::instance()->
+            genericAttribute(Application::GA_ShowCsdCrumbBarClickableArea)
             .toBool();
 }
 
@@ -218,9 +218,9 @@ void DFMCrumbBarPrivate::initConnections()
         checkArrowVisiable();
     });
 
-    if (DFMApplication::instance()) {
-        q->connect(DFMApplication::instance(),
-                   &DFMApplication::csdClickableAreaAttributeChanged,
+    if (Application::instance()) {
+        q->connect(Application::instance(),
+                   &Application::csdClickableAreaAttributeChanged,
                    q, [=](bool enabled)
         {
             setClickableAreaEnabled(enabled);
@@ -259,7 +259,7 @@ void DFMCrumbBar::setRootUrl(const QUrl &url)
 
     d->clearCrumbs();
 
-    const QIcon firstIcon = DFMUrlRoute::schemeIcon(url.scheme());
+    const QIcon firstIcon = UrlRoute::schemeIcon(url.scheme());
 
     QString scheme = url.scheme();
     QString path = url.path();
@@ -278,7 +278,7 @@ void DFMCrumbBar::setRootUrl(const QUrl &url)
         {
             currNodeList.append(pathList.at(index));
         }
-        auto currNodeUrl = DFMUrlRoute::pathToUrl(currNodeList.join("/"));
+        auto currNodeUrl = UrlRoute::pathToUrl(currNodeList.join("/"));
         currNodeItem->setData(currNodeUrl,DFMCrumbModel::Roles::FileUrlRole);
 
         d->m_crumbModel->insertRow(0, currNodeItem);

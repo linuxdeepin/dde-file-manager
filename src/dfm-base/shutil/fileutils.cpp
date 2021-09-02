@@ -28,13 +28,11 @@
 //#include "localfile/dfileservices.h"
 
 #include "base/singleton.hpp"
-#include "base/dfmstandardpaths.h"
-#include "base/dfmstandardpaths.h"
-//#include "base/dabstractfilewatcher.h"
-#include "base/dfmurlroute.h"
-#include "base/dabstractfileinfo.h"
+#include "base/standardpaths.h"
+#include "base/urlroute.h"
+#include "base/abstractfileinfo.h"
 
-#include "localfile/dfmlocalfileinfo.h"
+#include "localfile/localfileinfo.h"
 #include "shutil/dmimedatabase.h"
 //#include "mimesappsmanager.h"
 
@@ -127,7 +125,7 @@ bool FileUtils::isAncestorUrl(const QUrl &ancestor, const QUrl &url)
         if (parent == ancestor) {
             return true;
         }
-        parent = DFMUrlRoute::urlParent(parent);
+        parent = UrlRoute::urlParent(parent);
     }
     return false;
 }
@@ -417,7 +415,7 @@ QIcon FileUtils::searchGenericIcon(const QString &category,
  * @param defaultIcon
  * @return icon
  */
-QIcon FileUtils::searchAppIcon(const DFMLocalFileInfo &app,
+QIcon FileUtils::searchAppIcon(const LocalFileInfo &app,
                                const QIcon &defaultIcon)
 {
     //    // Resulting icon
@@ -641,7 +639,7 @@ qreal dRound64(qreal num, int count = 1)
 //    return size;
 //}
 
-QUrl FileUtils::newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, const QString &baseName, const QString &suffix)
+QUrl FileUtils::newDocumentUrl(const AbstractFileInfoPointer targetDirInfo, const QString &baseName, const QString &suffix)
 {
     //    int i = 0;
     //    QString fileName = suffix.isEmpty() ? QString("%1").arg(baseName) : QString("%1.%2").arg(baseName, suffix);
@@ -685,7 +683,7 @@ QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, co
 bool FileUtils::cpTemplateFileToTargetDir(const QString &targetdir, const QString &baseName, const QString &suffix, WId windowId)
 {
     QString templateFile;
-    QDirIterator it(DFMStandardPaths::location(DFMStandardPaths::TemplatesPath), QDir::Files);
+    QDirIterator it(StandardPaths::location(StandardPaths::TemplatesPath), QDir::Files);
     while (it.hasNext()) {
         it.next();
         if (it.fileInfo().suffix() == suffix) {
@@ -1391,10 +1389,10 @@ bool FileUtils::runCommand(const QString &cmd, const QStringList &args, const QS
 
 void FileUtils::mkpath(const QUrl &path)
 {
-    if (DFMUrlRoute::isSchemeRoot(path)) {
+    if (UrlRoute::isSchemeRoot(path)) {
         return;
     }
-    if (DFMLocalFileInfo(path).isDir()) {
+    if (LocalFileInfo(path).isDir()) {
         return;
     }
 //    if (DFileService::instance()->mkdir(nullptr, path)) {
@@ -1469,7 +1467,7 @@ void FileUtils::migrateConfigFileFromCache(const QString &key)
 {
     bool ret = false;
     QString oldPath = QString("%1/%2/%3.%4").arg(QDir().homePath(), ".cache/dde-file-manager", key, "json");
-    QString newPath = QString("%1/%2.%3").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath), key.toLower(), "json");
+    QString newPath = QString("%1/%2.%3").arg(StandardPaths::location(StandardPaths::ApplicationConfigPath), key.toLower(), "json");
     QFile srcFile(oldPath);
     ret = srcFile.open(QIODevice::ReadOnly);
     if (ret) {

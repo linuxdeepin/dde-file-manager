@@ -20,7 +20,7 @@
  */
 #include "sidebaritem.h"
 #include "sidebarmanager.h"
-#include "base/dfmstandardpaths.h"
+#include "base/standardpaths.h"
 
 #include <QObject>
 #include <QVariant>

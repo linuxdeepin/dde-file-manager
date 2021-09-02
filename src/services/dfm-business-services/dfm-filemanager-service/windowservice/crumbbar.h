@@ -21,9 +21,9 @@
 #ifndef DFMCRUMBBAR_H
 #define DFMCRUMBBAR_H
 
-#include "dfm-base/base/dfmurlroute.h"
-#include "dfm-base/base/dfmstandardpaths.h"
-#include "dfm-base/base/dfmschemefactory.h"
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/schemefactory.h"
 #include "dfm_filemanager_service_global.h"
 
 #include <QFrame>

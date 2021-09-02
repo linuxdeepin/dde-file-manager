@@ -27,11 +27,11 @@
 
 #include <QObject>
 
-class DFMLocalFileInfo;
+class LocalFileInfo;
 class DFMEvent;
 class DFMUrlBaseEvent;
 class DFMUrlListBaseEvent;
-class DAbstractFileInfo;
+class AbstractFileInfo;
 class DeviceInfo;
 class QUrl;
 

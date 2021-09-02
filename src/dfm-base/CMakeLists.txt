@@ -40,46 +40,42 @@ set(${PROJECT_NAME}_shutil_cpp
     )
 
 set(${PROJECT_NAME}_base_h
-    base/private/dfilesystemwatcher_p.h
-    base/private/dabstractfilewatcher_p.h
-    base/private/dabstractfiledevice_p.h
-    base/private/dabstractfileinfo_p.h
-    base/private/dfmapplication_p.h
+    base/private/abstractfilewatcher_p.h
+    base/private/abstractfiledevice_p.h
+    base/private/abstractfileinfo_p.h
+    base/private/application_p.h
     base/private/subscriber.h
-    base/private/dfminfocache.h
-    base/private/dfminfocache_p.h
-    base/private/dfmwatchercache.h
-    base/private/dfmwatchercache_p.h
-    base/dabstractfilecontroller.h
-    base/dabstractfileinfo.h
-    base/dfmapplication.h
+    base/private/infocache.h
+    base/private/infocache_p.h
+    base/private/watchercache.h
+    base/private/watchercache_p.h
+    base/abstractfileinfo.h
+    base/application.h
     base/dfmsettings.h
-    base/dfmstandardpaths.h
+    base/standardpaths.h
     base/singleton.hpp
-    base/dfmurlroute.h
-    base/dfmschemefactory.h
-    base/dabstractdiriterator.h
-    base/dfmschemefactory.h
-    base/dabstractfilewatcher.h
-    base/dabstractfiledevice.h
+    base/urlroute.h
+    base/schemefactory.h
+    base/abstractdiriterator.h
+    base/schemefactory.h
+    base/abstractfilewatcher.h
+    base/abstractfiledevice.h
     base/sort.h
     )
 
 set(${PROJECT_NAME}_base_cpp
     base/private/subscriber.cpp
-    base/private/dfilesystemwatcher.cpp
-    base/private/dfminfocache.cpp
-    base/private/dfmwatchercache.cpp
-    base/dabstractfilecontroller.cpp
-    base/dabstractfileinfo.cpp
-    base/dfmapplication.cpp
+    base/private/infocache.cpp
+    base/private/watchercache.cpp
+    base/abstractfileinfo.cpp
+    base/application.cpp
     base/dfmsettings.cpp
-    base/dfmurlroute.cpp
-    base/dfmstandardpaths.cpp
+    base/urlroute.cpp
+    base/standardpaths.cpp
     base/sort.cpp
-    base/dfmschemefactory.cpp
-    base/dabstractfilewatcher.cpp
-    base/dabstractfiledevice.cpp
+    base/schemefactory.cpp
+    base/abstractfilewatcher.cpp
+    base/abstractfiledevice.cpp
     )
 
 
@@ -110,16 +106,12 @@ set(${PROJECT_NAME}_localfile_h
     localfile/dfilehandler.h
     localfile/private/dfilehandler_p.h
     localfile/dfmfilecontrollerfactory.h
-    localfile/dfmlocalfileinfo.h
-    localfile/dfmlocalmenu.h
-    localfile/private/dfmlocalmenu_p.h
-    localfile/private/dfmlocalfileinfo_p.h
-    localfile/private/dfmlocaldiriterator_p.h
-    localfile/dfmlocaldiriterator.h
-    localfile/dfmlocalfileinfo.h
-    localfile/private/dfmlocalfileinfo_p.h
-    localfile/dfmlocalfiledevice.h
-    localfile/private/dfmlocalfiledevice_p.h
+    localfile/localmenu.h
+    localfile/private/localmenu_p.h
+    localfile/private/localdiriterator_p.h
+    localfile/localdiriterator.h
+    localfile/localfileinfo.h
+    localfile/private/localfileinfo_p.h
     )
 
 set(${PROJECT_NAME}_localfile_cpp
@@ -129,10 +121,9 @@ set(${PROJECT_NAME}_localfile_cpp
     localfile/dfmfilecontrollerfactory.cpp
     #    localfile/dfileservices.cpp
     localfile/dfilehandler.cpp
-    localfile/dfmlocalfileinfo.cpp
-    localfile/dfmlocalmenu.cpp
-    localfile/dfmlocaldiriterator.cpp
-    localfile/dfmlocalfiledevice.cpp
+    localfile/localfileinfo.cpp
+    localfile/localmenu.cpp
+    localfile/localdiriterator.cpp
     localfile/dlocalfilehandler.cpp
     )
 

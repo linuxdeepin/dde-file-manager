@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "traversaldirthread.h"
-#include "base/dfmschemefactory.h"
+#include "base/schemefactory.h"
 
 DFMTraversalDirThread::DFMTraversalDirThread(const QUrl &url,
                                              const QStringList &nameFilters,
@@ -31,7 +31,7 @@ DFMTraversalDirThread::DFMTraversalDirThread(const QUrl &url,
     , m_dirUrl(url)
 {
     if (m_dirUrl.isValid()) {
-        m_dirIterator = DFMDirIteratorFactory::instance().create<DFMLocalDirIterator>
+        m_dirIterator = DirIteratorFactory::instance().create<LocalDirIterator>
                             (url, nameFilters, filters,flags);
     }
     qRegisterMetaType<QList<QSharedPointer<DFMFileViewItem>>>("QList<QSharedPointer<DFMFileViewItem>>");

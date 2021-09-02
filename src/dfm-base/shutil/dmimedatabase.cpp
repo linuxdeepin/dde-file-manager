@@ -25,7 +25,7 @@
 #include "shutil/dmimedatabase.h"
 #include "shutil/fileutils.h"
 
-#include "base/dfmstandardpaths.h"
+#include "base/standardpaths.h"
 
 #include <QFileInfo>
 #include <QRegularExpression>
@@ -73,13 +73,13 @@ QStringList readlines(const QString &path)
 
 bool loadSupportMimeTypes()
 {
-    QString textPath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::MimeTypePath), "text.mimetype");
-    QString archivePath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::MimeTypePath), "archive.mimetype");
-    QString videoPath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::MimeTypePath), "video.mimetype");
-    QString audioPath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::MimeTypePath), "audio.mimetype");
-    QString imagePath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::MimeTypePath), "image.mimetype");
-    QString executablePath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::MimeTypePath), "executable.mimetype");
-    QString backupPath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::MimeTypePath), "backup.mimetype");
+    QString textPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::MimeTypePath), "text.mimetype");
+    QString archivePath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::MimeTypePath), "archive.mimetype");
+    QString videoPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::MimeTypePath), "video.mimetype");
+    QString audioPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::MimeTypePath), "audio.mimetype");
+    QString imagePath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::MimeTypePath), "image.mimetype");
+    QString executablePath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::MimeTypePath), "executable.mimetype");
+    QString backupPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::MimeTypePath), "backup.mimetype");
     *mimeTextTypes = readlines(textPath);
     *mimeArchiveTypes = readlines(archivePath);
     *mimeVideoTypes = readlines(videoPath);
@@ -244,7 +244,7 @@ QMimeType DMimeDatabase::mimeTypeForUrl(const QUrl &url)
     if(url.isLocalFile())
         return mimedb->mimeTypeForUrl(url);
     else
-        return mimedb->mimeTypeForFile(DFMUrlRoute::urlToPath(url));
+        return mimedb->mimeTypeForFile(UrlRoute::urlToPath(url));
 }
 
 QMimeType DMimeDatabase::mimeTypeForFileNameAndData(const QString &fileName, QIODevice *device)

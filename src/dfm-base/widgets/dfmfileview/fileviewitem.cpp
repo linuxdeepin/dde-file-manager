@@ -46,7 +46,7 @@ QUrl DFMFileViewItem::url() const
 void DFMFileViewItem::setUrl(const QUrl url)
 {
     setData(QVariant(url),Roles::ItemUrlRole);
-    m_fileinfo = DFMInfoFactory::instance().create<DAbstractFileInfo>(url);
+    m_fileinfo = InfoFactory::instance().create<AbstractFileInfo>(url);
     m_mimeType = DMimeDatabase::mimeTypeForUrl(url);
 
     setData(QVariant(QIcon::fromTheme(m_mimeType.iconName())),ItemIconRole);
@@ -71,7 +71,7 @@ QVariant DFMFileViewItem::data(int role) const
         return QStandardItem::data(Roles::ItemIconRole);
     case ItemFileSizeRole:
         if (m_fileinfo->isDir()) {
-            int size = qSharedPointerDynamicCast<DFMLocalFileInfo>(m_fileinfo)->countChildFile();
+            int size = qSharedPointerDynamicCast<LocalFileInfo>(m_fileinfo)->countChildFile();
             if (size <= 1) {
                 return QObject::tr("%1 item").arg(size);
             } else {

@@ -21,12 +21,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DFMFILEVIEWMODEL_H
-#define DFMFILEVIEWMODEL_H
+#ifndef FILEVIEWMODEL_H
+#define FILEVIEWMODEL_H
 
 #include "fileviewitem.h"
-#include "localfile/dfmlocalfileinfo.h"
-#include "base/dfmschemefactory.h"
+#include "localfile/localfileinfo.h"
+#include "base/schemefactory.h"
 
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
@@ -40,16 +40,16 @@
 
 #include <unistd.h>
 
-class DFMFileViewModelPrivate;
-class DFMFileViewModel : public QAbstractItemModel
+class FileViewModelPrivate;
+class FileViewModel : public QAbstractItemModel
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFMFileViewModel)
+    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), FileViewModel)
 public:
 
-    explicit DFMFileViewModel(QAbstractItemView *parent = nullptr);
+    explicit FileViewModel(QAbstractItemView *parent = nullptr);
 
-    virtual ~DFMFileViewModel() override {
+    virtual ~FileViewModel() override {
 
     }
 
@@ -59,7 +59,7 @@ public:
 
     QUrl rootUrl();
 
-    DAbstractFileInfoPointer fileInfo(const QModelIndex &index);
+    AbstractFileInfoPointer fileInfo(const QModelIndex &index);
 
     virtual QModelIndex parent(const QModelIndex &child) const override;
 
@@ -68,6 +68,10 @@ public:
     virtual int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+    virtual void fetchMore(const QModelIndex &parent) override;
+
+    virtual bool canFetchMore(const QModelIndex &parent) const override;
 
 private Q_SLOTS:
     void doFileDeleted(const QUrl &url){}
@@ -79,15 +83,8 @@ private Q_SLOTS:
     void doUpdateChildren(const QList<QSharedPointer<DFMFileViewItem>> &children);
 
 private:
-    QSharedPointer<DFMFileViewModelPrivate> d_ptr;
+    QSharedPointer<FileViewModelPrivate> d_ptr;
 
-    // QAbstractItemModel interface
-public:
-    virtual void fetchMore(const QModelIndex &parent) override;
-
-    // QAbstractItemModel interface
-public:
-    virtual bool canFetchMore(const QModelIndex &parent) const override;
 };
 
 #endif // DFMFILEVIEWMODEL_H

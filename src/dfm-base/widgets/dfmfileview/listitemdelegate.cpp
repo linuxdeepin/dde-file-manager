@@ -22,7 +22,7 @@
  */
 
 #include "listitemdelegate.h"
-#include "base/dfmapplication.h"
+#include "base/application.h"
 #include "base/dfmsettings.h"
 
 #include "fileviewmodel.h"
@@ -261,7 +261,7 @@ QString elideText(const QString &text, const QSizeF &size,
 QString preprocessingFileName(QString name)
 {
     // eg: [\\:*\"?<>|\r\n]
-    const QString &value = DFMApplication::genericObtuselySetting()->value("FileName",
+    const QString &value = Application::genericObtuselySetting()->value("FileName",
                                                                            "non-allowableCharacters").toString();
 
     if (value.isEmpty())
@@ -582,7 +582,7 @@ void DFMListItemDelegate::paint(QPainter *painter,
         return;
     }
 
-    const DFMFileViewModel *model = qobject_cast<const DFMFileViewModel *>(index.model());
+    const FileViewModel *model = qobject_cast<const FileViewModel *>(index.model());
     if (isSelected)
         painter->setPen(opt.palette.color(QPalette::Active, QPalette::HighlightedText));
     else
@@ -654,8 +654,8 @@ void DFMListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int
                                             bool drawBackground, QPainter *painter, const int &column) const
 {
 
-    const DFMFileViewModel *model = qobject_cast<const DFMFileViewModel *>(parent()->model());
-    const DAbstractFileInfoPointer &fileInfo = DFMInfoFactory::instance().create<DFMLocalFileInfo>(const_cast<DFMFileViewModel *>(model)->rootUrl());
+    const FileViewModel *model = qobject_cast<const FileViewModel *>(parent()->model());
+    const AbstractFileInfoPointer &fileInfo = InfoFactory::instance().create<LocalFileInfo>(const_cast<FileViewModel *>(model)->rootUrl());
 
     //    int sortRole = model->sortRole();
     static QList<int> userColumnRoles {
@@ -741,7 +741,7 @@ QWidget *DFMListItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
 
     QLineEdit *edit = new QLineEdit(parent);
 
-    const DAbstractFileInfoPointer &file_info = qobject_cast<DFMFileViewModel*>(this->parent())->fileInfo(index);
+    const AbstractFileInfoPointer &file_info = qobject_cast<FileViewModel*>(this->parent())->fileInfo(index);
     if (file_info->url().scheme() == "search") {
         edit->setFixedHeight(GlobalPrivate::LIST_EDITER_HEIGHT * 2 - 10);
     } else {

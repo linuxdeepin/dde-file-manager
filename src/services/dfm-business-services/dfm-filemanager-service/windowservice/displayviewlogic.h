@@ -23,7 +23,7 @@
 #ifndef DFMDISPLAYVIEW_H
 #define DFMDISPLAYVIEW_H
 
-#include "dfm-base/base/dfmurlroute.h"
+#include "dfm-base/base/urlroute.h"
 #include "dfm_filemanager_service_global.h"
 
 #include <QUrl>

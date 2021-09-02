@@ -23,7 +23,7 @@
 
 #include "iconitemdelegate.h"
 #include "styleditemdelegate_p.h"
-#include "base/dfmapplication.h"
+#include "base/application.h"
 #include "dfm-base/dfm_base_global.h"
 
 #include <DApplicationHelper>
