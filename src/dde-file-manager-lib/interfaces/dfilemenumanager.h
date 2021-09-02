@@ -99,6 +99,8 @@ public:
 
     static bool whetherShowTagActions(const QList<DUrl> &urls);
 
+    static void clearActions();
+
 public slots:
     void actionTriggered(QAction *action);
 };

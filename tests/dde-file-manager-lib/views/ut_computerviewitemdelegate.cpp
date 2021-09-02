@@ -58,6 +58,7 @@ namespace  {
 
         virtual void TearDown() override
         {
+            m_window->clearActions();
         }
     };
 }

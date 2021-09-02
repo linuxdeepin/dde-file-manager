@@ -44,6 +44,8 @@ TEST_F(TestDFMSideBarVaultItemHandler, tst_contextMenu)
     DFileManagerWindow window;
 
     EXPECT_NE(nullptr, m_controller->contextMenu(window.getLeftSideBar(), &item));
+
+    window.clearActions();
 }
 
 TEST_F(TestDFMSideBarVaultItemHandler, tst_lockNow)
@@ -55,6 +57,7 @@ TEST_F(TestDFMSideBarVaultItemHandler, tst_lockNow)
     DFileManagerWindow window;
 
     m_controller->lockNow(&window);
+    window.clearActions();
 }
 
 TEST_F(TestDFMSideBarVaultItemHandler, tst_autoLock)
@@ -83,4 +86,6 @@ TEST_F(TestDFMSideBarVaultItemHandler, tst_showView)
     stub.set(ADDR(DFileManagerWindow, cd), st_cd);
 
     m_controller->showView(&window, "");
+
+    window.clearActions();
 }

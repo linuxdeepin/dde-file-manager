@@ -214,8 +214,8 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
 
     int frameHeight = 160;
     if (m_showFileName) {
-        QLabel *fileNameKeyLabel = new SectionKeyLabel(QObject::tr("Name"));
-        QLabel *fileNameLabel = new SectionValueLabel(info->fileDisplayName());
+        QLabel *fileNameKeyLabel = new SectionKeyLabel(QObject::tr("Name"), layoutWidget);
+        QLabel *fileNameLabel = new SectionValueLabel(info->fileDisplayName(), layoutWidget);
         QString text = info->fileDisplayName();
         fileNameLabel->setText(fileNameLabel->fontMetrics().elidedText(text, Qt::ElideMiddle, fileNameLabel->width()));
         fileNameLabel->setToolTip(text);
@@ -224,16 +224,16 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
         layout->addRow(fileNameKeyLabel, fileNameLabel);
     }
 
-    SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
-    SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
+    SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"), layoutWidget);
+    SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"), layoutWidget);
 
-    m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
+    m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName(), layoutWidget);
     m_folderSizeLabel = new SectionValueLabel("", layoutWidget);
     SectionValueLabel *typeLabel = new SectionValueLabel(info->mimeTypeDisplayName().split(" (")[0]);
 
     if (info->isDir()) {
         if (!m_showSummaryOnly) {
-            SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
+            SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"), layoutWidget);
             layout->addRow(sizeSectionLabel, m_folderSizeLabel);
             layout->addRow(fileAmountSectionLabel, m_containSizeLabel);
             frameHeight += 30;

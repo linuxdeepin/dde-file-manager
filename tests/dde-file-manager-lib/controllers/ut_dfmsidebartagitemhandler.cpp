@@ -118,5 +118,7 @@ TEST_F(TestDFMSideBarTagItemHandler, tst_rename)
 
     EXPECT_NO_FATAL_FAILURE(m_handler->rename(item, "newName"));
 
+    window.clearActions();
+
     delete item;
 }

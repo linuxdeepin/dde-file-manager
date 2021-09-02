@@ -1145,6 +1145,7 @@ void DFileManagerWindow::initTitleBar()
     menu->setProperty("ToolBarSettingsMenu", true);
     menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
 
+    menu->setParent(titlebar());
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);
     titlebar()->setCustomWidget(d->titleFrame, false);
@@ -1643,5 +1644,10 @@ bool DFileManagerWindow::getCanDestruct() const
     if (fv)
         return fv->getCanDestruct();
     return true;
+}
+
+void DFileManagerWindow::clearActions()
+{
+    fileMenuManger->clearActions();
 }
 

@@ -34,7 +34,7 @@ public:
 
     virtual void TearDown() override
     {
-
+        window.clearActions();
     }
 };
 

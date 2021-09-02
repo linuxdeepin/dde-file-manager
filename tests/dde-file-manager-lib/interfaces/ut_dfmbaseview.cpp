@@ -23,6 +23,7 @@
 #include <QProcess>
 
 #include "stub.h"
+#include "stub-ext/stubext.h"
 #include "views/dfilemanagerwindow.h"
 #include "testhelper.h"
 #include "durl.h"
@@ -32,7 +33,6 @@ using namespace testing;
 DFM_USE_NAMESPACE
 
 #include <QObject>
-static DFileManagerWindow * testbaseviewptr = nullptr;
 class TestDfmBaseView: public DFMBaseView,public QObject
 {
 public:
@@ -73,9 +73,6 @@ class DfmBaseViewTest:public testing::Test{
 public:
     virtual void SetUp() override{
         baseview.reset(new TestDfmBaseView());
-        if (!testbaseviewptr) {
-            testbaseviewptr = new DFileManagerWindow();
-        }
         std::cout << "start DfmBaseViewTest" << std::endl;
     }
 
@@ -116,32 +113,36 @@ TEST_F(DfmBaseViewTest,start_reflesh) {
     EXPECT_NO_FATAL_FAILURE(baseview->refresh());
 }
 
-QWidget * window(){
-    return qobject_cast<QWidget*>(testbaseviewptr);
-}
-
 TEST_F(DfmBaseViewTest,start_other) {
-    Stub stl;
-    stl.set(ADDR(QWidget,window),window);
+
+    DFileManagerWindow testbaseview;
+
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(QWidget, window), [&testbaseview](){ return qobject_cast<QWidget*>(&testbaseview);});
 
     bool (*cd)(const DUrl &) = [](const DUrl &){return true;};
     bool (*cdForTab)(int , const DUrl &) = [](int ,const DUrl &){return true;};
     bool (*cdForTabByView)(DFMBaseView *, const DUrl &) = [](DFMBaseView *, const DUrl &){return true;};
-    stl.set(ADDR(DFileManagerWindow,cd),cd);
-    stl.set(ADDR(DFileManagerWindow,cdForTab),cdForTab);
-    stl.set(ADDR(DFileManagerWindow,cdForTabByView),cdForTabByView);
+    stu.set(ADDR(DFileManagerWindow,cd),cd);
+    stu.set(ADDR(DFileManagerWindow,cdForTab),cdForTab);
+    stu.set(ADDR(DFileManagerWindow,cdForTabByView),cdForTabByView);
     TestHelper::runInLoop([=]{
         ASSERT_NO_FATAL_FAILURE(baseview->notifyUrlChanged());
     });
+    testbaseview.clearActions();
     TestHelper::runInLoop([=]{
         EXPECT_NO_FATAL_FAILURE(baseview->notifyStateChanged());
     });
-    EXPECT_NO_FATAL_FAILURE(baseview->requestCdTo(DUrl()));
-
+    testbaseview.clearActions();
+    /*EXPECT_NO_FATAL_FAILURE(baseview->requestCdTo(DUrl()));
+    testbaseview.clearActions();
     TestHelper::runInLoop([=]{
         EXPECT_NO_FATAL_FAILURE(baseview->notifySelectUrlChanged(DUrlList()));
-    });
-    if (testbaseviewptr) {
+    });*/
+    stu.reset(ADDR(QWidget, window));
+    testbaseview.clearActions();
+    /*if (testbaseviewptr) {
+        testbaseviewptr->clearActions();
         delete testbaseviewptr;
-    }
+    }*/
 }

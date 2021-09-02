@@ -1192,12 +1192,12 @@ void PropertyDialog::initTextShowFrame(const QString &text)
 QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &info)
 {
     QFrame *widget = new QFrame(this);
-    SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
-    SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
-    SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time created"));
-    SectionKeyLabel *TimeReadSectionLabel = new SectionKeyLabel(QObject::tr("Time accessed"));
-    SectionKeyLabel *TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
-    SectionKeyLabel *sourcePathSectionLabel = new SectionKeyLabel(QObject::tr("Source path"));
+    SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"), widget);
+    SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"), widget);
+    SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time created"), widget);
+    SectionKeyLabel *TimeReadSectionLabel = new SectionKeyLabel(QObject::tr("Time accessed"), widget);
+    SectionKeyLabel *TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"), widget);
+    SectionKeyLabel *sourcePathSectionLabel = new SectionKeyLabel(QObject::tr("Source path"), widget);
 
     m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
     m_folderSizeLabel = new SectionValueLabel("", widget);

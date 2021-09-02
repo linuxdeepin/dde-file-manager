@@ -171,6 +171,16 @@ bool WindowManager::enableAutoQuit() const
 #endif
 }
 
+void WindowManager::clearWindowActions()
+{
+    for (auto win : m_windows.keys()) {
+        QWidget *window = const_cast<QWidget *>(win);
+        DFileManagerWindow *fmWin = qobject_cast<DFileManagerWindow*>(window);
+        if (fmWin)
+            fmWin->clearActions();
+    }
+}
+
 void WindowManager::showNewWindow(const DUrl &url, const bool &isNewWindow)
 {
     if (!DFMGlobal::isInitAppOver() || DFMGlobal::isAppQuiting()) {

@@ -99,6 +99,7 @@ static DCustomActionParser *customMenuParser = nullptr;
 
 void initData();
 void initActions();
+void clearActions();
 
 MenuAction takeAvailableUserActionType()
 {
@@ -960,6 +961,22 @@ void DFileMenuData::initActions()
     additionalMenu = new DFMAdditionalMenu;
 }
 
+/**
+ * @brief 谨慎调用!!! 该函数用于ut清理action用, 其它地方调用后果自负
+ * @param
+ * @return
+ */
+void DFileMenuData::clearActions()
+{
+    for (const auto &menu : actions.keys()) {
+        QAction *action = actions.take(menu);
+        actionToMenuAction.remove(action);
+        delete action;
+    }
+    actions.clear();
+    actionToMenuAction.clear();
+}
+
 DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
                                                 const QSet<MenuAction> &disableList,
                                                 bool checkable,
@@ -987,7 +1004,7 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
         }
     }
 
-    DFileMenu *menu = new DFileMenu;
+    DFileMenu *menu = new DFileMenu();
 
     if (!isRecursiveCall) {
         connect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
@@ -1343,6 +1360,11 @@ bool DFileMenuManager::whetherShowTagActions(const QList<DUrl> &urls)
     }
 
     return true;
+}
+
+void DFileMenuManager::clearActions()
+{
+    DFileMenuData::clearActions();
 }
 
 void DFileMenuManager::actionTriggered(QAction *action)

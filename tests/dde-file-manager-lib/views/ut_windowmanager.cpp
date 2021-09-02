@@ -40,6 +40,7 @@ namespace  {
 
         virtual void TearDown() override
         {
+            wm.clearWindowActions();
             WindowManager::m_count = 0;
             for (const QWidget *w : WindowManager::m_windows.keys()){
                     delete w;
@@ -124,6 +125,7 @@ TEST_F(WindowManagerTest,show_new_window_repate_true)
 
     wm.showNewWindow(DUrl("file:///home"),true);
     EXPECT_EQ(1,wm.m_windows.size());
+    wm.clearWindowActions();
 
     wm.showNewWindow(DUrl("file:///home"),true);
     EXPECT_EQ(2,wm.m_windows.size());
