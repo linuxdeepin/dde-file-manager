@@ -4,6 +4,7 @@ export QT_SELECT=5
 include /usr/share/dpkg/default.mk
 
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
+DEB_BUILD_OPTIONS=parallel=4
 
 %:
 	dh $@ --parallel
