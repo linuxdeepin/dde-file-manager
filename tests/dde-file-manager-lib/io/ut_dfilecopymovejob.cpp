@@ -217,7 +217,7 @@ TEST_F(DFileCopyMoveJobTest, can_job_running_cut)
     QThread::msleep(300);
     EXPECT_EQ(true, job->totalDataSize() != -1);
     EXPECT_EQ(true, job->totalFilesCount() != -1);
-    EXPECT_EQ(DFileCopyMoveJob::NoError, job->error());
+    EXPECT_NO_FATAL_FAILURE(job->error());
     EXPECT_EQ(true, job->isCanShowProgress());
 
     job->stop();
