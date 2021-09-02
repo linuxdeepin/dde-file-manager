@@ -729,6 +729,8 @@ TEST_F(TestPropertyDialog, testCreateAuthorityManagementWidget)
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
     QFrame *pframe = m_pTester->createAuthorityManagementWidget(info);
     EXPECT_NE(pframe, nullptr);
+
+    delete pframe;
 }
 
 TEST_F(TestPropertyDialog, testCreateAuthorityManagementWidget2)
@@ -745,6 +747,8 @@ TEST_F(TestPropertyDialog, testCreateAuthorityManagementWidget2)
 
     QFrame *pframe = m_pTester->createAuthorityManagementWidget(info);
     EXPECT_NE(pframe, nullptr);
+
+    delete pframe;
 }
 
 TEST_F(TestPropertyDialog, testCreateAuthorityManagementWidget3)
@@ -761,4 +765,6 @@ TEST_F(TestPropertyDialog, testCreateAuthorityManagementWidget3)
 
     QFrame *pframe = m_pTester->createAuthorityManagementWidget(info);
     EXPECT_NE(pframe, nullptr);
+
+    delete pframe;
 }

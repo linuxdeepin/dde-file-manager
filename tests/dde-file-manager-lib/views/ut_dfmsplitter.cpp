@@ -37,7 +37,9 @@ public:
     TempObjectForDFMSplitter() {
         m_dsp = new DFMSplitter(Qt::Horizontal, nullptr);
     }
-    ~TempObjectForDFMSplitter(){}
+    ~TempObjectForDFMSplitter() {
+        delete m_dsp;
+    }
     void doTestDFMSplitterMoveSplitter(){
         QWidget *wdgLeft = new QWidget() ;
         QWidget *wdgRight = new QWidget;

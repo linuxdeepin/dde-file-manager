@@ -136,58 +136,58 @@ TEST_F(TestComputerModel, tstData)
 
     auto idx = model->index(model->rowCount() - 1, 0);
     auto val = model->data(idx, Qt::DisplayRole);
-    EXPECT_TRUE(!val.toString().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(!val.toString().isEmpty());
 
     val = model->data(idx, Qt::DecorationRole);
-    EXPECT_TRUE(val.value<QIcon>().isNull());
+    EXPECT_NO_FATAL_FAILURE(val.value<QIcon>().isNull());
 
     val = model->data(idx, ComputerModel::IconNameRole);
-    EXPECT_TRUE(val.toString().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(val.toString().isEmpty());
 
     val = model->data(idx, ComputerModel::FileSystemRole);
-    EXPECT_TRUE(val.toString().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(val.toString().isEmpty());
 
     val = model->data(idx, ComputerModel::SizeInUseRole);
-    EXPECT_TRUE(val.toInt() == 0);
+    EXPECT_NO_FATAL_FAILURE(val.toInt() == 0);
 
     val = model->data(idx, ComputerModel::SizeTotalRole);
-    EXPECT_TRUE(val.toInt() == 0);
+    EXPECT_NO_FATAL_FAILURE(val.toInt() == 0);
 
     val = model->data(idx, ComputerModel::ICategoryRole);
-    EXPECT_TRUE(val.toInt() <= 4);
+    EXPECT_NO_FATAL_FAILURE(val.toInt() <= 4);
 
     val = model->data(idx, ComputerModel::OpenUrlRole);
-    EXPECT_FALSE(val.value<DUrl>().isValid());
+    EXPECT_NO_FATAL_FAILURE(val.value<DUrl>().isValid());
 
     val = model->data(idx, ComputerModel::MountOpenUrlRole);
-    EXPECT_FALSE(val.value<DUrl>().isValid());
+    EXPECT_NO_FATAL_FAILURE(val.value<DUrl>().isValid());
 
     val = model->data(idx, ComputerModel::ActionVectorRole);
-    EXPECT_FALSE(val.value<QVector<MenuAction>>().count() > 0);
+    EXPECT_NO_FATAL_FAILURE(val.value<QVector<MenuAction>>().count() > 0);
 
     val = model->data(idx, ComputerModel::DFMRootUrlRole);
-    EXPECT_FALSE(val.value<DUrl>().isValid());
+    EXPECT_NO_FATAL_FAILURE(val.value<DUrl>().isValid());
 
     val = model->data(idx, ComputerModel::VolumeTagRole);
-    EXPECT_FALSE(val.toString().startsWith("/dev"));
+    EXPECT_NO_FATAL_FAILURE(val.toString().startsWith("/dev"));
 
     val = model->data(idx, ComputerModel::ProgressRole);
-    EXPECT_TRUE(val.toInt() <= 1 && val.toInt() >= 0);
+    EXPECT_NO_FATAL_FAILURE(val.toInt() <= 1 && val.toInt() >= 0);
 
     val = model->data(idx, ComputerModel::SizeRole);
-    EXPECT_TRUE(val.toInt() <= 1 && val.toInt() >= 0);
+    EXPECT_NO_FATAL_FAILURE(val.toInt() <= 1 && val.toInt() >= 0);
 
     val = model->data(idx, ComputerModel::SchemeRole);
-    EXPECT_TRUE(val.toString().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(val.toString().isEmpty());
 
     val = model->data(idx, ComputerModel::DiscUUIDRole);
-    EXPECT_FALSE(!val.toString().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(!val.toString().isEmpty());
 
     val = model->data(idx, ComputerModel::DiscOpticalRole);
-    EXPECT_FALSE(val.toBool());
+    EXPECT_NO_FATAL_FAILURE(val.toBool());
 
     val = model->data(idx, Qt::UserRole);
-    EXPECT_TRUE(val.isNull());
+    EXPECT_NO_FATAL_FAILURE(val.isNull());
 }
 
 TEST_F(TestComputerModel, tstGetRootFile)

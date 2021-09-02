@@ -129,6 +129,7 @@ TEST_F(TestBookMarkManager, can_call_context_menu)
     EXPECT_NE(menu, nullptr);
     delete menu;
 
+    window->clearActions();
     FreePointer(window);
 }
 

@@ -85,6 +85,7 @@ TEST_F(TestDFMSideBarBookmarkItemHandler, test_cdAction)
     m_handler->cdAction(bar, pItem_2.data());
     EXPECT_TRUE(called);
 
+    window->clearActions();
     FreePointer(window);
 }
 
@@ -125,6 +126,7 @@ TEST_F(TestDFMSideBarBookmarkItemHandler, test_contextMenu)
     }
     EXPECT_GE(calledActionCount, 5);
 
+    window->clearActions();
     FreePointer(window);
 }
 

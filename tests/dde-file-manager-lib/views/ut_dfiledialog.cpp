@@ -33,6 +33,8 @@ namespace  {
 
         virtual void TearDown() override
         {
+            m_fileDialog->clearActions();
+
             delete m_fileDialog;
             m_fileDialog = nullptr;
 

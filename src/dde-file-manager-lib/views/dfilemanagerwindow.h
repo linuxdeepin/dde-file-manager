@@ -107,6 +107,12 @@ public:
     void showFilterButton();
     //获取能否析构
     bool getCanDestruct() const;
+    /**
+     * @brief 主动释放静态action
+     * @param
+     * @return
+     */
+    void clearActions();
 
 signals:
     void aboutToClose();

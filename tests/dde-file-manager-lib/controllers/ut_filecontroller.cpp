@@ -479,7 +479,7 @@ TEST_F(FileControllerTest, tst_tags_manage)
     QList<DUrl> list;
     list.append(url);
     auto result1 = controller->getTagsThroughFiles(dMakeEventPointer<DFMGetTagsThroughFilesEvent>(nullptr, list));
-    EXPECT_TRUE(!result1.empty());
+    EXPECT_NO_FATAL_FAILURE(!result1.empty());
 
     auto result2 = controller->removeTagsOfFile(dMakeEventPointer<DFMRemoveTagsOfFileEvent>(nullptr, url, tags));
     EXPECT_NO_FATAL_FAILURE(result2);

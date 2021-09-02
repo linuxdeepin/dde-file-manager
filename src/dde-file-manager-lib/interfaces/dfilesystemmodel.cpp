@@ -2442,8 +2442,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     if (!job.isNull()) {
         //刷新完成标志
         bool finished = job->isUpdatedFinished();
-        if (node)
-            qInfo() << " finish update children. isUpdatedFinished = " << finished << "and file count = " << node->childrenCount();
+        qInfo() << " finish update children. isUpdatedFinished = " << finished;
         //若刷新完成通知桌面重新获取文件
         if (finished && !dp.isNull())
             emit sigJobFinished();

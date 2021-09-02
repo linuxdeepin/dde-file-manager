@@ -55,6 +55,8 @@ public:
 
     bool enableAutoQuit() const;
 
+    void clearWindowActions();
+
 signals:
     void start(const QString &src);
 
