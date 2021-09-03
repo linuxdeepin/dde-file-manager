@@ -22,8 +22,8 @@
  */
 
 #include "iconitemdelegate.h"
-#include "styleditemdelegate_p.h"
-#include "base/application.h"
+#include "private/styleditemdelegate_p.h"
+#include "services/dfm-business-services/dfm-filemanager-service/applicationservice/application.h"
 #include "dfm-base/dfm_base_global.h"
 
 #include <DApplicationHelper>
@@ -47,7 +47,7 @@
 #include <QtMath>
 
 DWIDGET_USE_NAMESPACE
-
+DFMBASE_BEGIN_NAMESPACE
 namespace GlobalPrivate {
 
 const int ICON_SPACING = 16;
@@ -195,241 +195,11 @@ QPainterPath boundingPath(QList<QRectF> rects, qreal radius, qreal padding)
 
 }
 
-
-//class TagTextFormat : public QTextCharFormat
-//{
-//public:
-//    TagTextFormat(int objectType, const QList<QColor> &colors, const QColor &borderColor);
-
-//    QList<QColor> colors() const;
-//    QColor borderColor() const;
-//    qreal diameter() const;
-//};
-
-//TagTextFormat::TagTextFormat(int objectType, const QList<QColor> &colors, const QColor &borderColor)
-//{
-//    setObjectType(objectType);
-//    setProperty(QTextFormat::UserProperty + 1, QVariant::fromValue(colors));
-//    setProperty(QTextFormat::UserProperty + 2, borderColor);
-//}
-
-//QList<QColor> TagTextFormat::colors() const
-//{
-//    return qvariant_cast<QList<QColor>>(property(QTextFormat::UserProperty + 1));
-//}
-
-//QColor TagTextFormat::borderColor() const
-//{
-//    return colorProperty(QTextFormat::UserProperty + 2);
-//}
-
-//qreal TagTextFormat::diameter() const
-//{
-//    return 12;
-//}
-
-//class FileTagObjectInterface : public QObject, public QTextObjectInterface
-//{
-//    Q_OBJECT
-//    Q_INTERFACES(QTextObjectInterface)
-
-//public:
-//    explicit FileTagObjectInterface()
-//        : QObject()
-//    {
-
-//    }
-
-//    QSizeF intrinsicSize(QTextDocument *doc, int posInDocument,
-//                         const QTextFormat &format) override;
-
-//    void drawObject(QPainter *painter, const QRectF &rect, QTextDocument *doc,
-//                    int posInDocument, const QTextFormat &format) override;
-//};
-
-//QSizeF FileTagObjectInterface::intrinsicSize(QTextDocument *doc, int posInDocument, const QTextFormat &format)
-//{
-//    Q_UNUSED(posInDocument)
-//    Q_UNUSED(doc)
-
-//    const TagTextFormat &f = static_cast<const TagTextFormat &>(format);
-//    const QList<QColor> &colors = f.colors();
-//    const double diameter = f.diameter();
-
-//    if (colors.size() == 1)
-//        return QSizeF(diameter, diameter);
-
-//    return QSizeF(diameter + (colors.size() - 1) * diameter / 2.0, diameter);
-//}
-
-//void FileTagObjectInterface::drawObject(QPainter *painter, const QRectF &rect, QTextDocument *doc, int posInDocument, const QTextFormat &format)
-//{
-//    Q_UNUSED(posInDocument)
-//    Q_UNUSED(doc)
-
-//    const TagTextFormat &f = static_cast<const TagTextFormat &>(format);
-//    const QList<QColor> &colors = f.colors();
-//    const QColor borderColor = f.borderColor();
-//    qreal diameter = f.diameter();
-//    const qreal padding = diameter / 10.0;
-//    QRectF bounding_rect = rect.marginsRemoved(QMarginsF(padding, padding, padding, padding));
-
-//    diameter -= padding * 2;
-
-//    DFMStyledItemDelegate::paintCircleList(painter, bounding_rect, diameter, colors, borderColor);
-//}
-
-//class ExpandedItem : public QWidget
-//{
-//    Q_OBJECT
-
-//    Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
-
-//public:
-//    explicit ExpandedItem(DFMIconItemDelegate *d, QWidget *parent = nullptr)
-//        : QWidget(parent)
-//        , delegate(d)
-//    {
-
-//    }
-
-//    bool event(QEvent *ee) override
-//    {
-//        if (ee->type() == QEvent::DeferredDelete) {
-//            if (!canDeferredDelete) {
-//                ee->accept();
-
-//                return true;
-//            }
-//        }
-
-//        return QWidget::event(ee);
-//    }
-
-//    qreal opacity() const
-//    {
-//        return m_opactity;
-//    }
-
-//    void setOpacity(qreal opacity)
-//    {
-//        if (qFuzzyCompare(opacity, m_opactity))
-//            return;
-
-//        m_opactity = opacity;
-
-//        update();
-//    }
-
-//    void paintEvent(QPaintEvent *) override
-//    {
-//        QPainter pa(this);
-
-//        pa.setOpacity(m_opactity);
-//        pa.setPen(option.palette.color(QPalette::BrightText));
-//        pa.setFont(option.font);
-
-//        if (!iconPixmap.isNull()) {
-//            pa.drawPixmap(iconGeometry().topLeft().toPoint(), iconPixmap);
-//        }
-
-//        if (option.text.isEmpty())
-//            return;
-
-//        const QMargins &margins = contentsMargins();
-
-//        QRect label_rect(TEXT_PADDING + margins.left(),
-//                         margins.top() + iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING,
-//                         width() - TEXT_PADDING * 2 - margins.left() - margins.right(),
-//                         INT_MAX);
-
-//        const QList<QRectF> &lines = delegate->drawText(index, &pa, option.text, label_rect, ICON_MODE_RECT_RADIUS,
-//                                                        option.palette.brush(QPalette::Normal, QPalette::Highlight),
-//                                                        QTextOption::WrapAtWordBoundaryOrAnywhere,
-//                                                        option.textElideMode, Qt::AlignCenter);
-
-//        textBounding = boundingRect(lines).toRect();
-//    }
-
-//    QSize sizeHint() const override
-//    {
-//        return QSize(width(), FLOOR(textGeometry().bottom() + contentsMargins().bottom()));
-//    }
-
-//    int heightForWidth(int width) const override
-//    {
-//        if (width != this->width()) {
-//            textBounding = QRect();
-//        }
-
-//        return FLOOR(textGeometry(width).bottom() + contentsMargins().bottom());
-//    }
-
-//    void setIconPixmap(const QPixmap &pixmap, int height)
-//    {
-//        iconPixmap = pixmap;
-//        iconHeight = height;
-//        update();
-//    }
-
-//    QRectF iconGeometry() const
-//    {
-//        const QRect &content_rect = contentsRect();
-
-//        if (iconPixmap.isNull()) {
-//            QRectF rect(content_rect);
-
-//            rect.setHeight(iconHeight);
-
-//            return rect;
-//        }
-
-//        QRectF icon_rect(QPointF((content_rect.width() - iconPixmap.width() / iconPixmap.devicePixelRatio()) / 2.0,
-//                                 (iconHeight - iconPixmap.height() / iconPixmap.devicePixelRatio()) / 2.0 + content_rect.top()),
-//                         iconPixmap.size() / iconPixmap.devicePixelRatio());
-
-//        return icon_rect;
-//    }
-
-//    QRectF textGeometry(int width = -1) const
-//    {
-//        if (textBounding.isEmpty() && !option.text.isEmpty()) {
-//            const QMargins &margins = contentsMargins();
-
-//            if (width < 0)
-//                width = this->width();
-
-//            width -= (margins.left() + margins.right());
-
-//            QRect label_rect(TEXT_PADDING + margins.left(),
-//                             iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING + margins.top(),
-//                             width - TEXT_PADDING * 2,
-//                             INT_MAX);
-
-//            const QList<QRectF> &lines = delegate->drawText(index, nullptr, option.text, label_rect, ICON_MODE_RECT_RADIUS, Qt::NoBrush,
-//                                                            QTextOption::WrapAtWordBoundaryOrAnywhere, option.textElideMode, Qt::AlignCenter);
-
-//            textBounding = boundingRect(lines);
-//        }
-
-//        return textBounding;;
-//    }
-
-//    QPixmap iconPixmap;
-//    int iconHeight = 0;
-//    mutable QRectF textBounding;
-//    QModelIndex index;
-//    QStyleOptionViewItem option;
-//    qreal m_opactity = 1;
-//    bool canDeferredDelete = true;
-//    DFMIconItemDelegate *delegate;
-//};
-
-class DFMIconItemDelegatePrivate : public DFMStyledItemDelegatePrivate
+class IconItemDelegatePrivate : public StyledItemDelegatePrivate
 {
 public:
-    explicit DFMIconItemDelegatePrivate(DFMIconItemDelegate *qq)
-        : DFMStyledItemDelegatePrivate(qq)
+    explicit IconItemDelegatePrivate(IconItemDelegate *qq)
+        : StyledItemDelegatePrivate(qq)
     {}
 
     QSize textSize(const QString &text, const QFontMetrics &metrics, int lineHeight = -1) const;
@@ -457,13 +227,13 @@ public:
     static int textObjectType;
 //    static FileTagObjectInterface *textObjectInterface;
 
-    Q_DECLARE_PUBLIC(DFMIconItemDelegate)
+    Q_DECLARE_PUBLIC(IconItemDelegate)
 };
 
-int DFMIconItemDelegatePrivate::textObjectType = QTextFormat::UserObject + 1;
+int IconItemDelegatePrivate::textObjectType = QTextFormat::UserObject + 1;
 //FileTagObjectInterface *DFMIconItemDelegatePrivate::textObjectInterface = new FileTagObjectInterface();
 
-QSize DFMIconItemDelegatePrivate::textSize(const QString &text, const QFontMetrics &metrics, int lineHeight) const
+QSize IconItemDelegatePrivate::textSize(const QString &text, const QFontMetrics &metrics, int lineHeight) const
 {
     QString str = text;
 
@@ -484,9 +254,9 @@ QSize DFMIconItemDelegatePrivate::textSize(const QString &text, const QFontMetri
 
     return QSize(max_width, height);
 }
-QPixmap DFMIconItemDelegatePrivate::getFileIconPixmap(const QModelIndex &index, const QIcon &icon, const QSize &icon_size, QIcon::Mode mode, qreal devicePixelRatio) const
+QPixmap IconItemDelegatePrivate::getFileIconPixmap(const QModelIndex &index, const QIcon &icon, const QSize &icon_size, QIcon::Mode mode, qreal devicePixelRatio) const
 {
-    Q_Q(const DFMIconItemDelegate);
+    Q_Q(const IconItemDelegate);
 
     QPixmap pixmap = q->getIconPixmap(icon, icon_size, devicePixelRatio, mode);
     QPainter painter(&pixmap);
@@ -506,12 +276,12 @@ QPixmap DFMIconItemDelegatePrivate::getFileIconPixmap(const QModelIndex &index, 
     return pixmap;
 }
 
-DFMIconItemDelegate::DFMIconItemDelegate(DListView *parent)
-    : DFMStyledItemDelegate(*new DFMIconItemDelegatePrivate(this), parent)
+IconItemDelegate::IconItemDelegate(DListView *parent)
+    : StyledItemDelegate(*new IconItemDelegatePrivate(this), parent)
     , m_checkedIcon(QIcon::fromTheme("emblem-checked"))
 {
     QMutexLocker lk(&m_mutex);
-    Q_D(DFMIconItemDelegate);
+    Q_D(IconItemDelegate);
 
 //    d->expandedItem = new ExpandedItem(this, parent->parent()->viewport());
 //    d->expandedItem->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -527,46 +297,46 @@ DFMIconItemDelegate::DFMIconItemDelegate(DListView *parent)
     parent->setIconSize(iconSizeByIconSizeLevel());
 }
 
-DFMIconItemDelegate::~DFMIconItemDelegate()
+IconItemDelegate::~IconItemDelegate()
 {
     QMutexLocker lk(&m_mutex);
-    Q_D(DFMIconItemDelegate);
+    Q_D(IconItemDelegate);
 }
 
 QT_BEGIN_NAMESPACE
 Q_WIDGETS_EXPORT void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed = 0);
 QT_END_NAMESPACE
 
-void DFMIconItemDelegate::paint(QPainter *painter,
+void IconItemDelegate::paint(QPainter *painter,
                               const QStyleOptionViewItem &option,
                               const QModelIndex &index) const
 {
-    return DFMStyledItemDelegate::paint(painter,option,index);
+    return StyledItemDelegate::paint(painter,option,index);
 }
 
-bool DFMIconItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
+bool IconItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
 
-    return DFMStyledItemDelegate::helpEvent(event, view, option, index);
+    return StyledItemDelegate::helpEvent(event, view, option, index);
 }
 
-QSize DFMIconItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(option);
     Q_UNUSED(index);
-    Q_D(const DFMIconItemDelegate);
+    Q_D(const IconItemDelegate);
 
     const QSize &size = d->itemSizeHint;
 
     return size;
 }
 
-QWidget *DFMIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget *IconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     return QStyledItemDelegate::createEditor(parent,option,index);
 }
 
-void DFMIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     editor->move(option.rect.topLeft());
     editor->setMinimumHeight(option.rect.height());
@@ -576,46 +346,46 @@ void DFMIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpti
 }
 
 //item->edit->setPlainText会触发textChanged连接槽进行相关的字符处理
-void DFMIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+void IconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     QStyledItemDelegate::setEditorData(editor,index);
 }
 
-QList<QRect> DFMIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode) const
+QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode) const
 {
     return {};
 }
 
-QModelIndexList DFMIconItemDelegate::hasWidgetIndexs() const
+QModelIndexList IconItemDelegate::hasWidgetIndexs() const
 {
     QModelIndex index;
 
     if (!index.isValid())
-        return DFMStyledItemDelegate::hasWidgetIndexs();
+        return StyledItemDelegate::hasWidgetIndexs();
 
-    return DFMStyledItemDelegate::hasWidgetIndexs() << index;
+    return StyledItemDelegate::hasWidgetIndexs() << index;
 }
 
-void DFMIconItemDelegate::hideNotEditingIndexWidget()
+void IconItemDelegate::hideNotEditingIndexWidget()
 {
-    DFMStyledItemDelegate::hideNotEditingIndexWidget();
+    StyledItemDelegate::hideNotEditingIndexWidget();
 }
 
-int DFMIconItemDelegate::iconSizeLevel() const
+int IconItemDelegate::iconSizeLevel() const
 {
-    Q_D(const DFMIconItemDelegate);
+    Q_D(const IconItemDelegate);
 
     return d->currentIconSizeIndex;
 }
 
-int DFMIconItemDelegate::minimumIconSizeLevel() const
+int IconItemDelegate::minimumIconSizeLevel() const
 {
     return 0;
 }
 
-int DFMIconItemDelegate::maximumIconSizeLevel() const
+int IconItemDelegate::maximumIconSizeLevel() const
 {
-    Q_D(const DFMIconItemDelegate);
+    Q_D(const IconItemDelegate);
 
     return d->iconSizes.count() - 1;
 }
@@ -624,9 +394,9 @@ int DFMIconItemDelegate::maximumIconSizeLevel() const
  * \brief Return current icon level if icon can increase; otherwise return -1.
  * \return
  */
-int DFMIconItemDelegate::increaseIcon()
+int IconItemDelegate::increaseIcon()
 {
-    Q_D(const DFMIconItemDelegate);
+    Q_D(const IconItemDelegate);
 
     return setIconSizeByIconSizeLevel(d->currentIconSizeIndex + 1);
 }
@@ -635,9 +405,9 @@ int DFMIconItemDelegate::increaseIcon()
  * \brief Return current icon level if icon can decrease; otherwise return -1.
  * \return
  */
-int DFMIconItemDelegate::decreaseIcon()
+int IconItemDelegate::decreaseIcon()
 {
-    Q_D(const DFMIconItemDelegate);
+    Q_D(const IconItemDelegate);
 
     return setIconSizeByIconSizeLevel(d->currentIconSizeIndex - 1);
 }
@@ -647,9 +417,9 @@ int DFMIconItemDelegate::decreaseIcon()
  * \param level
  * \return
  */
-int DFMIconItemDelegate::setIconSizeByIconSizeLevel(int level)
+int IconItemDelegate::setIconSizeByIconSizeLevel(int level)
 {
-    Q_D(DFMIconItemDelegate);
+    Q_D(IconItemDelegate);
 
     if (level == d->currentIconSizeIndex)
         return level;
@@ -663,50 +433,50 @@ int DFMIconItemDelegate::setIconSizeByIconSizeLevel(int level)
     return -1;
 }
 
-void DFMIconItemDelegate::updateItemSizeHint()
+void IconItemDelegate::updateItemSizeHint()
 {
-    Q_D(DFMIconItemDelegate);
+    Q_D(IconItemDelegate);
 }
 
-QColor DFMIconItemDelegate::focusTextBackgroundBorderColor() const
+QColor IconItemDelegate::focusTextBackgroundBorderColor() const
 {
-    Q_D(const DFMIconItemDelegate);
+    Q_D(const IconItemDelegate);
 
     return d->focusTextBackgroundBorderColor;
 }
 
-bool DFMIconItemDelegate::enabledTextShadow() const
+bool IconItemDelegate::enabledTextShadow() const
 {
-    Q_D(const DFMIconItemDelegate);
+    Q_D(const IconItemDelegate);
 
     return d->enabledTextShadow;
 }
 
-void DFMIconItemDelegate::setFocusTextBackgroundBorderColor(QColor focusTextBackgroundBorderColor)
+void IconItemDelegate::setFocusTextBackgroundBorderColor(QColor focusTextBackgroundBorderColor)
 {
-    Q_D(DFMIconItemDelegate);
+    Q_D(IconItemDelegate);
 
     d->focusTextBackgroundBorderColor = focusTextBackgroundBorderColor;
 }
 
-void DFMIconItemDelegate::setEnabledTextShadow(bool enabledTextShadow)
+void IconItemDelegate::setEnabledTextShadow(bool enabledTextShadow)
 {
-    Q_D(DFMIconItemDelegate);
+    Q_D(IconItemDelegate);
 
     d->enabledTextShadow = enabledTextShadow;
 }
 
-void DFMIconItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
+void IconItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
 {
     Q_UNUSED(index);
-    Q_D(const DFMIconItemDelegate);
+    Q_D(const IconItemDelegate);
 
     QList<QColor> colors;
 
     if (!colors.isEmpty()) {
         if (!layout->engine()->block.docHandle()) {
             if (!d->document)
-                const_cast<DFMIconItemDelegatePrivate *>(d)->document = new QTextDocument(const_cast<DFMIconItemDelegate *>(this));
+                const_cast<IconItemDelegatePrivate *>(d)->document = new QTextDocument(const_cast<IconItemDelegate *>(this));
 
             d->document->setPlainText(layout->text());
             d->document->setDefaultFont(layout->font());
@@ -719,7 +489,7 @@ void DFMIconItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *
     }
 }
 
-bool DFMIconItemDelegate::eventFilter(QObject *object, QEvent *event)
+bool IconItemDelegate::eventFilter(QObject *object, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *e = static_cast<QKeyEvent *>(event);
@@ -738,7 +508,7 @@ bool DFMIconItemDelegate::eventFilter(QObject *object, QEvent *event)
     return QStyledItemDelegate::eventFilter(object, event);
 }
 
-void DFMIconItemDelegate::onEditWidgetFocusOut()
+void IconItemDelegate::onEditWidgetFocusOut()
 {
     //这里判断是为了保持编辑框的状态，使编辑框一直存在。类似setEnable的状态
 //    if (qApp->focusWidget() && qApp->focusWidget()->window() == parent()->parent()->window()
@@ -748,9 +518,9 @@ void DFMIconItemDelegate::onEditWidgetFocusOut()
 //    }
 }
 
-void DFMIconItemDelegate::onTriggerEdit(const QModelIndex &index)
+void IconItemDelegate::onTriggerEdit(const QModelIndex &index)
 {
-    Q_D(DFMIconItemDelegate);
+    Q_D(IconItemDelegate);
 //    m_focusWindow = qApp->focusWindow();
 //    if (index == d->expandedIndex) {
 //        parent()->setIndexWidget(index, nullptr);
@@ -762,13 +532,14 @@ void DFMIconItemDelegate::onTriggerEdit(const QModelIndex &index)
 }
 
 
-QSize DFMIconItemDelegate::iconSizeByIconSizeLevel() const
+QSize IconItemDelegate::iconSizeByIconSizeLevel() const
 {
-    Q_D(const DFMIconItemDelegate);
+    Q_D(const IconItemDelegate);
 
     int size = d->iconSizes.at(d->currentIconSizeIndex);
 
     return QSize(size, size);
 }
+DFMBASE_END_NAMESPACE
 
 //#include "dfmconitemdelegate.moc"

@@ -23,6 +23,7 @@
 
 #include "schemefactory.h"
 
+DFMBASE_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(DirIteratorFactory,_dirIteratorFactory)
 Q_GLOBAL_STATIC(WacherFactory,_watcherFactory)
 Q_GLOBAL_STATIC(InfoFactory,_infoFactory)
@@ -47,3 +48,4 @@ DirIteratorFactory &DirIteratorFactory::instance()
 {
     return *_dirIteratorFactory;
 }
+DFMBASE_END_NAMESPACE

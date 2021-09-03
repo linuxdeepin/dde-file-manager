@@ -7,7 +7,7 @@
 #include "dfm-base/widgets/dfmfileview/fileview.h"
 
 #include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/application.h"
+#include "services/dfm-business-services/dfm-filemanager-service/applicationservice/application.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include "dfm-base/localfile/localfileinfo.h"

@@ -25,6 +25,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include "dfm-base/dfm_base_global.h"
+
 #include <QtCore>
 #include <QPixmap>
 
@@ -36,6 +38,7 @@
 #define TrashUrl "trash://"
 #define FilePrefix "file://"
 
+DFMBASE_BEGIN_NAMESPACE
 const QSet<QString> SupportMimeTypes{"image/png" ,"image/jpeg" , "image/gif"
                                       , "image/bmp", "image/tiff" , "image/svg+xml"
                                       , "application/pdf"
@@ -68,6 +71,6 @@ QByteArray joinPath(const QByteArray &path, const QByteArray& fileName);
 QPixmap svgToPixmap(const QString& path, int w, int h);
 QPixmap svgToHDPIPixmap(const QString& path);
 QPixmap svgToHDPIPixmap(const QString& path, int w, int h);
-
+DFMBASE_END_NAMESPACE
 #endif // UTILS_H
 

@@ -25,6 +25,7 @@
 #include "base/urlroute.h"
 #include "base/schemefactory.h"
 
+DFMBASE_BEGIN_NAMESPACE
 /*!
  * @class LocalDirIterator 本地（即和系统盘在同一个磁盘的目录）文件迭代器类
  *
@@ -121,3 +122,5 @@ QUrl LocalDirIterator::url() const
     Q_D(const LocalDirIterator);
     return d->url;
 }
+
+DFMBASE_END_NAMESPACE

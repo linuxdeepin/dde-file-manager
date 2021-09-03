@@ -15,10 +15,10 @@
 
 #include <dfm-io/core/dwatcher.h>
 
-USING_IO_NAMESPACE
-
 #include <QUrl>
 
+USING_IO_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 class AbstractFileWatcherPrivate
 {
 public:
@@ -39,5 +39,6 @@ public:
 
     Q_DECLARE_PUBLIC(AbstractFileWatcher)
 };
+DFMBASE_END_NAMESPACE
 
 #endif // DABSTRACTFILEWATCHER_P_H

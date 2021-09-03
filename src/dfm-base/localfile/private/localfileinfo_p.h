@@ -12,7 +12,7 @@
 
 #include "base/private/abstractfileinfo_p.h"
 #include "localfile/localfileinfo.h"
-#include "shutil/dmimedatabase.h"
+#include "shutil/mimedatabase.h"
 
 #include <QFileInfo>
 #include <QIcon>
@@ -22,6 +22,7 @@
 #include <QMimeType>
 #include <QReadWriteLock>
 
+DFMBASE_BEGIN_NAMESPACE
 class LocalFileInfoPrivate : public AbstractFileInfoPrivate
 {
     Q_DECLARE_PUBLIC(LocalFileInfo)
@@ -66,7 +67,7 @@ private:
     mutable QVariantHash extraProperties; // 扩展属性列表
     mutable QPointer<QTimer> getEPTimer; // 获取扩展属性的计时器
     mutable QPointer<QTimer> getIconTimer; // 获取icon的计时器
-    mutable DMimeDatabase::FileType m_cacheFileType = DMimeDatabase::FileType::Unknown; // 缓存文件的FileType
+    mutable MimeDatabase::FileType m_cacheFileType = MimeDatabase::FileType::Unknown; // 缓存文件的FileType
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(LocalFileInfo *qq)
@@ -132,12 +133,12 @@ QMimeType LocalFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) cons
 
     QUrl url = q->url();
     if (url.isLocalFile())
-        return DMimeDatabase::mimeTypeForUrl(url);
+        return MimeDatabase::mimeTypeForUrl(url);
     else
-        return DMimeDatabase::mimeTypeForFile(UrlRoute::urlToPath(url),
+        return MimeDatabase::mimeTypeForFile(UrlRoute::urlToPath(url),
                                               mode);
 }
-
-Q_DECLARE_METATYPE(LocalFileInfoPrivate*)
+DFMBASE_END_NAMESPACE
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::LocalFileInfoPrivate*)
 
 #endif // LOCALFILEINFO_P_H

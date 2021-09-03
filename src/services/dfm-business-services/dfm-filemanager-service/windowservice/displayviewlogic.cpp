@@ -23,7 +23,7 @@
 #include "displayviewlogic.h"
 
 DSB_FM_BEGIN_NAMESPACE
-
+DFMBASE_USE_NAMESPACE
 DFMDisplayViewLogic::DFMDisplayViewLogic()
 {
 

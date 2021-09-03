@@ -22,9 +22,12 @@
 #ifndef DFMSPLITTER_H
 #define DFMSPLITTER_H
 
+#include "dfm-base/dfm_base_global.h"
+
 #include <QSplitter>
 #include <QSplitterHandle>
 
+DFMBASE_BEGIN_NAMESPACE
 class DFMSplitterHandle: public QSplitterHandle
 {
     Q_OBJECT
@@ -50,5 +53,6 @@ public:
 protected:
     QSplitterHandle* createHandle() override;
 };
+DFMBASE_END_NAMESPACE
 
 #endif // DFMSPLITTER_H

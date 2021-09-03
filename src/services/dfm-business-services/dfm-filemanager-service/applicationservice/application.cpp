@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "base/application.h"
+#include "applicationservice/application.h"
 #include "private/application_p.h"
 #if QT_HAS_INCLUDE("anything_interface.h")
 #include "anything_interface.h"
@@ -28,7 +28,7 @@
 #endif
 #endif
 
-#include "base/dfmsettings.h"
+#include "applicationservice/settings.h"
 #ifdef FULLTEXTSEARCH_ENABLE
 #include "fulltextsearch/fulltextsearch.h"
 #endif
@@ -37,18 +37,18 @@
 #include <QMetaEnum>
 #include <QtConcurrent>
 
-//////
+DSB_FM_BEGIN_NAMESPACE
 
-Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, gsGlobal, ("deepin/dde-file-manager", DFMSettings::GenericConfig))
-Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, asGlobal, ("deepin/dde-file-manager/dde-file-manager", DFMSettings::GenericConfig))
-//Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, asGlobal, ("dde-file-manager", DFMSettings::AppConfig))
+Q_GLOBAL_STATIC_WITH_ARGS(Settings, gsGlobal, ("deepin/dde-file-manager", Settings::GenericConfig))
+Q_GLOBAL_STATIC_WITH_ARGS(Settings, asGlobal, ("deepin/dde-file-manager/dde-file-manager", Settings::GenericConfig))
 
-Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, gosGlobal, ("deepin/dde-file-manager.obtusely", DFMSettings::GenericConfig))
-Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, aosGlobal, ("deepin/dde-file-manager/dde-file-manager.obtusely", DFMSettings::GenericConfig))
-//Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, aosGlobal, ("dde-file-manager.obtusely", DFMSettings::AppConfig))
+Q_GLOBAL_STATIC_WITH_ARGS(Settings, gosGlobal, ("deepin/dde-file-manager.obtusely", Settings::GenericConfig))
+Q_GLOBAL_STATIC_WITH_ARGS(Settings, aosGlobal, ("deepin/dde-file-manager/dde-file-manager.obtusely", Settings::GenericConfig))
 
 // blumia: since dde-desktop now also do show file selection dialog job, thus dde-desktop should share the same config file
 //         with dde-file-manager, so we use GenericConfig with specify path to simulate AppConfig.
+
+
 
 Application *ApplicationPrivate::self = nullptr;
 
@@ -237,14 +237,14 @@ Application *Application::instance()
     return ApplicationPrivate::self;
 }
 
-DFMSettings *Application::genericSetting()
+Settings *Application::genericSetting()
 {
     if (!gsGlobal.exists()) {
         if (instance()) {
             gsGlobal->moveToThread(instance()->thread());
-            connect(gsGlobal, &DFMSettings::valueChanged,
+            connect(gsGlobal, &Settings::valueChanged,
                     instance(), &Application::onSettingsValueChanged);
-            connect(gsGlobal, &DFMSettings::valueEdited,
+            connect(gsGlobal, &Settings::valueEdited,
                     instance(), &Application::onSettingsValueEdited);
         }
 
@@ -260,14 +260,14 @@ DFMSettings *Application::genericSetting()
     return gsGlobal;
 }
 
-DFMSettings *Application::appSetting()
+Settings *Application::appSetting()
 {
     if (!asGlobal.exists()) {
         if (instance()) {
             asGlobal->moveToThread(instance()->thread());
-            connect(asGlobal, &DFMSettings::valueChanged,
+            connect(asGlobal, &Settings::valueChanged,
                     instance(), &Application::onSettingsValueChanged);
-            connect(asGlobal, &DFMSettings::valueEdited,
+            connect(asGlobal, &Settings::valueEdited,
                     instance(), &Application::onSettingsValueEdited);
         }
 
@@ -283,7 +283,7 @@ DFMSettings *Application::appSetting()
     return asGlobal;
 }
 
-DFMSettings *Application::genericObtuselySetting()
+Settings *Application::genericObtuselySetting()
 {
     if (!gosGlobal.exists()) {
         gosGlobal->setAutoSync(false);
@@ -295,7 +295,7 @@ DFMSettings *Application::genericObtuselySetting()
     return gosGlobal;
 }
 
-DFMSettings *Application::appObtuselySetting()
+Settings *Application::appObtuselySetting()
 {
     if (!aosGlobal.exists()) {
         aosGlobal->setAutoSync(false);
@@ -313,13 +313,13 @@ Application::Application(ApplicationPrivate *dd, QObject *parent)
 {
     if (gsGlobal.exists()) {
         gsGlobal->moveToThread(thread());
-        connect(gsGlobal, &DFMSettings::valueChanged,
+        connect(gsGlobal, &Settings::valueChanged,
                 this, &Application::onSettingsValueChanged);
     }
 
     if (asGlobal.exists()) {
         asGlobal->moveToThread(thread());
-        connect(asGlobal, &DFMSettings::valueChanged,
+        connect(asGlobal, &Settings::valueChanged,
                 this, &Application::onSettingsValueChanged);
     }
 }
@@ -333,3 +333,5 @@ void Application::onSettingsValueEdited(const QString &group, const QString &key
 {
     d_func()->_q_onSettingsValueEdited(group, key, value);
 }
+
+DSB_FM_END_NAMESPACE

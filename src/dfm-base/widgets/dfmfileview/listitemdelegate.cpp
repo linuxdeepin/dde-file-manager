@@ -22,18 +22,18 @@
  */
 
 #include "listitemdelegate.h"
-#include "base/application.h"
-#include "base/dfmsettings.h"
-
+#include "services/dfm-business-services/dfm-filemanager-service/applicationservice/application.h"
+#include "services/dfm-business-services/dfm-filemanager-service/applicationservice/settings.h"
 #include "fileviewmodel.h"
-#include "styleditemdelegate_p.h"
+#include "private/styleditemdelegate_p.h"
 #include "widgets/dfmfileview/fileviewitem.h"
 #include "widgets/dfmfileview/fileview.h"
-
 #include "dfm-base/dfm_base_global.h"
 
 #include <DListView>
 #include <DArrowRectangle>
+#include <DPalette>
+#include <DApplicationHelper>
 
 #include <QLabel>
 #include <QPainter>
@@ -45,11 +45,10 @@
 #include <QPainterPath>
 #include <private/qtextengine_p.h>
 
-#include <DPalette>
-#include <DApplicationHelper>
 
 #include <linux/limits.h>
 
+DFMBASE_BEGIN_NAMESPACE
 namespace GlobalPrivate {
 
 const int ICON_SPACING = 16;
@@ -261,7 +260,7 @@ QString elideText(const QString &text, const QSizeF &size,
 QString preprocessingFileName(QString name)
 {
     // eg: [\\:*\"?<>|\r\n]
-    const QString &value = Application::genericObtuselySetting()->value("FileName",
+    const QString &value = DSB_FM_NAMESPACE::Application::genericObtuselySetting()->value("FileName",
                                                                            "non-allowableCharacters").toString();
 
     if (value.isEmpty())
@@ -301,25 +300,25 @@ void showAlertMessage(QPoint globalPoint, const QColor &backgroundColor, const Q
 
 DWIDGET_USE_NAMESPACE
 
-class DFMListItemDelegatePrivate : public DFMStyledItemDelegatePrivate
+class ListItemDelegatePrivate : public StyledItemDelegatePrivate
 {
 public:
-    explicit DFMListItemDelegatePrivate(DFMListItemDelegate *qq)
-        : DFMStyledItemDelegatePrivate(qq) {}
+    explicit ListItemDelegatePrivate(ListItemDelegate *qq)
+        : StyledItemDelegatePrivate(qq) {}
 };
 
-DFMListItemDelegate::DFMListItemDelegate(DListView *parent) :
-    DFMStyledItemDelegate(parent)
+ListItemDelegate::ListItemDelegate(DListView *parent) :
+    StyledItemDelegate(parent)
 {
     parent->setIconSize(QSize(GlobalPrivate::LIST_VIEW_ICON_SIZE,
                               GlobalPrivate::LIST_VIEW_ICON_SIZE));
 }
 
-void DFMListItemDelegate::paint(QPainter *painter,
+void ListItemDelegate::paint(QPainter *painter,
                                 const QStyleOptionViewItem &option,
                                 const QModelIndex &index) const
 {
-    Q_D(const DFMListItemDelegate);
+    Q_D(const ListItemDelegate);
     //根据UI要求 交替亮度为深色主题
 
     painter->save();//保存之前的绘制样式
@@ -490,10 +489,10 @@ void DFMListItemDelegate::paint(QPainter *painter,
 
     qint32 totalWidth = opt.rect.width() - column_x;
     //动态计算每个列的大小
-    const QList<int> &columnRoleList = index.data(DFMFileViewItem::ItemColumListRole).value<QList<int>>();
+    const QList<int> &columnRoleList = index.data(FileViewItem::ItemColumListRole).value<QList<int>>();
     if (columnRoleList.isEmpty())
         return;
-    QList<int> widthScaleList = index.data(DFMFileViewItem::ItemColumWidthScaleListRole).value<QList<int>>();
+    QList<int> widthScaleList = index.data(FileViewItem::ItemColumWidthScaleListRole).value<QList<int>>();
     while (widthScaleList.size() < columnRoleList.size()) {
         widthScaleList << 1;
     }
@@ -552,7 +551,7 @@ void DFMListItemDelegate::paint(QPainter *painter,
                 //                    }
                 //                }
 
-                const QString &suffix = "." + index.data(DFMFileViewItem::ItemFileSuffixRole).toString();
+                const QString &suffix = "." + index.data(FileViewItem::ItemFileSuffixRole).toString();
                 //                qInfo() << suffix << QSize(rect.width() - opt.fontMetrics.width(suffix), rect.height());
                 if (suffix == ".") {
                     break;
@@ -616,7 +615,7 @@ void DFMListItemDelegate::paint(QPainter *painter,
         if (data.canConvert<QString>()) {
             QString strInfo(index.data(rol).toString());
             // 如果是文件路径项
-            if(rol == DFMFileViewItem::ItemFilePathRole) {
+            if(rol == FileViewItem::ItemFilePathRole) {
                 //                // 如果是保险箱路径,则不显示真实路径
                 //                if(VaultController::isVaultFile(strInfo))
                 //                    strInfo = VaultController::localPathToVirtualPath(index.data(rol).toString());
@@ -650,7 +649,7 @@ void DFMListItemDelegate::paint(QPainter *painter,
 }
 
 
-void DFMListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int lineHeight, const QRect &rect, const QVariant &data,
+void ListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int lineHeight, const QRect &rect, const QVariant &data,
                                             bool drawBackground, QPainter *painter, const int &column) const
 {
 
@@ -659,9 +658,9 @@ void DFMListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int
 
     //    int sortRole = model->sortRole();
     static QList<int> userColumnRoles {
-        DFMFileViewItem::ItemFileLastModifiedRole,
-                DFMFileViewItem::ItemFileSizeRole,
-                DFMFileViewItem::ItemFileMimeTypeRole
+        FileViewItem::ItemFileLastModifiedRole,
+                FileViewItem::ItemFileSizeRole,
+                FileViewItem::ItemFileMimeTypeRole
     };
     int sortRoleIndexByColumnChildren = 0;/*userColumnRoles.indexOf(sortRole);*/
 
@@ -715,7 +714,7 @@ void DFMListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int
 }
 
 
-QSize DFMListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize ListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     return QStyledItemDelegate::sizeHint(option, index);
     //    if (!parent()) {
@@ -732,10 +731,10 @@ QSize DFMListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QM
     //    return QSize(d->itemSizeHint.width(), qMax(option.fontMetrics.height() * 2 + 10, d->itemSizeHint.height()));
 }
 
-QWidget *DFMListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(option);
-    Q_D(const DFMListItemDelegate);
+    Q_D(const ListItemDelegate);
 
     d->editingIndex = index;
 
@@ -767,7 +766,7 @@ QWidget *DFMListItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
         //获取当前编辑框支持的最大文字长度
         int textMaxLen = INT_MAX;
         if (donot_show_suffix) {
-            const QString &suffix = d->editingIndex.data(DFMFileViewItem::ItemFileSuffixRole).toString();
+            const QString &suffix = d->editingIndex.data(FileViewItem::ItemFileSuffixRole).toString();
             edit->setProperty("_d_whether_show_suffix", suffix);
             textMaxLen = NAME_MAX - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1);
         } else {
@@ -826,36 +825,12 @@ QWidget *DFMListItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
     return edit;
 }
 
-void DFMListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void ListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     return QStyledItemDelegate::updateEditorGeometry(editor,option,index);
-    //    Q_UNUSED(index);
-    //    const QSize &icon_size = /*parent()->*/parent()->iconSize();
-    //    int column_x = 0;
-
-    //    /// draw icon
-
-    //    const QRect &opt_rect = option.rect + QMargins(-LIST_MODE_LEFT_MARGIN - LEFT_PADDING, 0, -LIST_MODE_RIGHT_MARGIN - RIGHT_PADDING, 0);
-
-    //    QRect icon_rect = opt_rect;
-
-    //    icon_rect.setSize(icon_size);
-
-    //    column_x = icon_rect.right() + ICON_SPACING + 1;
-
-    //    QRect rect = opt_rect;
-
-    //    rect.setLeft(column_x + LIST_MODE_EDITOR_LEFT_PADDING);
-
-    //    column_x = 1000/*parent()->columnWidth(0) - 1 - parent()->fileViewViewportMargins().left()*/;
-
-    //    rect.setRight(qMin(column_x, opt_rect.right()));
-    //    rect.setTop(opt_rect.y() + (opt_rect.height() - editor->height()) / 2);
-
-    //    editor->setGeometry(rect);
 }
 
-void DFMListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+void ListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     QLineEdit *edit = qobject_cast<QLineEdit *>(editor);
 
@@ -867,10 +842,10 @@ void DFMListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &inde
     QString text;
 
     if (donot_show_suffix) {
-        edit->setProperty("_d_whether_show_suffix", index.data(DFMFileViewItem::ItemFileSuffixRole));
-        text = index.data(DFMFileViewItem::ItemNameRole).toString();
+        edit->setProperty("_d_whether_show_suffix", index.data(FileViewItem::ItemFileSuffixRole));
+        text = index.data(FileViewItem::ItemNameRole).toString();
     } else {
-        text = index.data(DFMFileViewItem::ItemNameRole).toString();
+        text = index.data(FileViewItem::ItemNameRole).toString();
     }
 
     edit->setText(text);
@@ -901,15 +876,15 @@ static int dataWidth(const QStyleOptionViewItem &option, const QModelIndex &inde
 }
 
 // sizeHintMode为true时，计算列的宽度时计算的为此列真实需要的宽度，而不受实际列宽所限制
-QList<QRect> DFMListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode) const
+QList<QRect> ListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode) const
 {
     //    return DFMStyledItemDelegate::paintGeomertys(option,index,sizeHintMode);
     QList<QRect> geomertys;
     //    const QList<int> &columnRoleList = parent()->columnRoleList();
     static QList<int> columnRoleList {
-        DFMFileViewItem::ItemFileLastModifiedRole,
-                DFMFileViewItem::ItemFileSizeRole,
-                DFMFileViewItem::ItemFileMimeTypeRole
+        FileViewItem::ItemFileLastModifiedRole,
+                FileViewItem::ItemFileSizeRole,
+                FileViewItem::ItemFileMimeTypeRole
     };
     int column_x = 0;
 
@@ -972,111 +947,26 @@ QList<QRect> DFMListItemDelegate::paintGeomertys(const QStyleOptionViewItem &opt
     return geomertys;
 }
 
-void DFMListItemDelegate::updateItemSizeHint()
+void ListItemDelegate::updateItemSizeHint()
 {
-    Q_D(DFMListItemDelegate);
+    Q_D(ListItemDelegate);
 
-    //    return DFMStyledItemDelegate::updateItemSizeHint();
     d->textLineHeight = /*parent()->*/parent()->fontMetrics().lineSpacing();
     d->itemSizeHint = QSize(-1, qMax(int(/*parent()->*/parent()->iconSize().height() * 1.1), d->textLineHeight));
 }
 
-bool DFMListItemDelegate::eventFilter(QObject *object, QEvent *event)
+bool ListItemDelegate::eventFilter(QObject *object, QEvent *event)
 {
-    Q_D(DFMListItemDelegate);
+    Q_D(ListItemDelegate);
 
-    //    if (event->type() == QEvent::Show) {
-    //        QLineEdit *edit = qobject_cast<QLineEdit *>(object);
-    //        //在此处处理的逻辑是因为默认QAbstractItemView的QLineEdit重命名会被SelectAll
-    //        //const 防止被改变
-    //        if (!edit)
-    //            return false;
-
-    //        bool notShowSuffix =false/* DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool()*/;
-    //        QString srcText;
-    //        if (notShowSuffix)
-    //        {
-    //            srcText = d->editingIndex.data(DFMFileViewItem::ItemNameRole).toString();
-    //        } else {
-    //            srcText = d->editingIndex.data(DFMFileViewItem::ItemNameRole).toString();
-    //        }
-
-    //        //得到处理之后的文件名称
-    //        QString dstText = DFMGlobal::preprocessingFileName(srcText);
-    //        //如果存在非法字符且更改了当前的文本文件
-    //        if (srcText != dstText){
-    //            //气泡提示
-    //            DFMGlobal::showAlertMessage(edit->mapToGlobal(edit->pos()),
-    //                                        /*parent()->*/parent()->palette().background().color(),
-    //                                        QObject::tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
-
-    //            //移动坐标
-    //            auto srcBaseNameLength =  d->editingIndex.data(DFMFileViewItem::ItemNameRole).toString().length();
-    //            edit->setText(dstText);
-    //            int movePosCount = dstText.length() - srcText.length();
-    //            edit->setText(dstText);
-    //            edit->setCursorPosition(srcBaseNameLength + movePosCount);
-    //            edit->setSelection(0, srcBaseNameLength + movePosCount);
-    //        } else {
-    //            int selectLength = d->editingIndex.data(DFMFileViewItem::ItemNameRole).toString().length();
-    //            edit->setText(srcText);
-    //            edit->setCursorPosition(selectLength);
-    //            edit->setSelection(0, selectLength);
-    //        }
-
-    //    } else if (event->type() == QEvent::KeyPress) {
-    //        QKeyEvent *e = static_cast<QKeyEvent *>(event);
-
-    //        if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) {
-    //            e->accept();
-
-    //            QLineEdit *edit = qobject_cast<QLineEdit *>(object);
-
-    //            if (edit) {
-    //                edit->close();
-    //                edit->parentWidget()->setFocus();
-    //            }
-
-    //            return true;
-    //        }
-    //    }
 
     return QStyledItemDelegate::eventFilter(object, event);
 }
 
-//static void hideTooltipImmediately()
-//{
-//    QWidgetList qwl = QApplication::topLevelWidgets();
-//    for (QWidget *qw : qwl) {
-//        if (QStringLiteral("QTipLabel") == qw->metaObject()->className()) {
-//            qw->close();
-//        }
-//    }
-//}
 
-bool DFMListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
+bool ListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
-    //    if (event->type() == QEvent::ToolTip) {
-    //        const QString tooltip = index.data(Qt::ToolTipRole).toString();
 
-    //        if (tooltip.isEmpty()) {
-    ////            QToolTip::hideText();
-    //            hideTooltipImmediately();
-    //        } else {
-    //            int tooltipsize = tooltip.size();
-    //            const int nlong = 32;
-    //            int lines = tooltipsize / nlong + 1;
-    //            QString strtooltip;
-    //            for (int i = 0; i < lines; ++i) {
-    //                strtooltip.append(tooltip.mid(i * nlong, nlong));
-    //                strtooltip.append("\n");
-    //            }
-    //            strtooltip.chop(1);
-    //            QToolTip::showText(event->globalPos(), strtooltip, view);
-    //        }
-
-    //        return true;
-    //    }
-
-    return DFMStyledItemDelegate::helpEvent(event, view, option, index);
+    return StyledItemDelegate::helpEvent(event, view, option, index);
 }
+DFMBASE_END_NAMESPACE

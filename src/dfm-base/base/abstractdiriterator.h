@@ -25,6 +25,7 @@
 #ifndef ABSTRACTDIRITERATOR_H
 #define ABSTRACTDIRITERATOR_H
 
+#include "dfm-base/dfm_base_global.h"
 #include "dfm-base/base/abstractfileinfo.h"
 
 /*!
@@ -33,11 +34,11 @@
  * \brief 定义了文件迭代器的通用接口
  *
  */
-
+DFMBASE_BEGIN_NAMESPACE
 class AbstractDirIterator
 {
 public:
-    virtual ~AbstractDirIterator() = 0;
+    virtual ~AbstractDirIterator() {}
     /*!
      * \brief next 下一个文件，迭代器指向下一个文件
      *
@@ -103,8 +104,8 @@ public:
      */
     virtual bool enableIteratorByKeyword(const QString &keyword) {Q_UNUSED(keyword); return false;}
 };
-
-typedef QSharedPointer<AbstractDirIterator> AbstractDirIteratorPointer;
+DFMBASE_END_NAMESPACE
+typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator> AbstractDirIteratorPointer;
 
 Q_DECLARE_METATYPE(AbstractDirIteratorPointer)
 

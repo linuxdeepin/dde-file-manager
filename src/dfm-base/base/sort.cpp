@@ -23,6 +23,7 @@
  */
 #include "sort.h"
 
+DFMBASE_BEGIN_NAMESPACE
 void *
 x2nrealloc (void *p, size_t *pn, size_t s)
 {
@@ -210,3 +211,5 @@ char *savedir (char const *dir)
       return name_space;
     }
 }
+
+DFMBASE_END_NAMESPACE

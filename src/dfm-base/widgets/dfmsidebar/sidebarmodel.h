@@ -23,22 +23,22 @@
 #include "dfm-base/dfm_base_global.h"
 
 #include <QStandardItemModel>
-
-class DFMSideBarItem;
-class DFMSideBarModel : public QStandardItemModel
+DFMBASE_BEGIN_NAMESPACE
+class SideBarItem;
+class SideBarModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
-    explicit DFMSideBarModel(QObject *parent = nullptr);
+    explicit SideBarModel(QObject *parent = nullptr);
 
     bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
     QMimeData *mimeData(const QModelIndexList &indexes) const override;
-    QModelIndex indexFromItem(const DFMSideBarItem * item) const;
-    DFMSideBarItem *itemFromIndex(const QModelIndex &index) const;
-    DFMSideBarItem *itemFromIndex(int index) const;
+    QModelIndex indexFromItem(const SideBarItem * item) const;
+    SideBarItem *itemFromIndex(const QModelIndex &index) const;
+    SideBarItem *itemFromIndex(int index) const;
 
 private:
     QByteArray generateMimeData(const QModelIndexList &indexes) const;
     int getRowIndexFromMimeData(const QByteArray &data) const;
 };
-
+DFMBASE_END_NAMESPACE

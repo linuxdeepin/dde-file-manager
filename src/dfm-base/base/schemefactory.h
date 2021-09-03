@@ -24,12 +24,12 @@
 #ifndef SCHEMEFACTORY_H
 #define SCHEMEFACTORY_H
 
+#include "dfm-base/dfm_base_global.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/abstractfileinfo.h"
 #include "dfm-base/base/abstractfilewatcher.h"
 #include "dfm-base/base/abstractdiriterator.h"
 #include "dfm-base/base/abstractfiledevice.h"
-
 #include "dfm-base/base/private/infocache.h"
 #include "dfm-base/base/private/watchercache.h"
 
@@ -38,6 +38,7 @@
 
 #include <functional>
 
+DFMBASE_BEGIN_NAMESPACE
 /**
  * @brief The class SchemeFactory
  *  根据Scheme注册Class的工厂类，
@@ -123,13 +124,11 @@ class InfoFactory final : public SchemeFactory<AbstractFileInfo>
 public:
 
     InfoFactory(){}
-
     //提供任意子类的转换方法模板，仅限DAbstractFileInfo树族，
     //与qSharedPointerDynamicCast保持一致
     template<class T>
     QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
     {
-
         QSharedPointer<AbstractFileInfo> info = InfoCache::instance().getCacheInfo(url);
         if (!info) {
             info = SchemeFactory<AbstractFileInfo>::create(url, errorString);
@@ -299,5 +298,7 @@ public:
     //获取FileDevice的全局实例
     static FileDeviceFactory& instance();
 };
+
+DFMBASE_END_NAMESPACE
 
 #endif // SCHEMEFACTORY_H

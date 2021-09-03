@@ -35,6 +35,7 @@
 #include <dfm-io/core/diofactory_p.h>
 
 USING_IO_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 class LocalDirIteratorPrivate
 {
     Q_DECLARE_PUBLIC(LocalDirIterator)
@@ -68,5 +69,5 @@ private:
     QSharedPointer<dfmio::DEnumerator> dfmioDirIterator = nullptr; // dfmio的文件迭代器
     QUrl url; // 当前的url
 };
-
+DFMBASE_END_NAMESPACE
 #endif // ABSTRACTDIRITERATOR_P_H

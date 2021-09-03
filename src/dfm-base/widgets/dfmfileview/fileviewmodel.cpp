@@ -22,6 +22,7 @@
 #include "fileviewmodel.h"
 #include "private/fileviewmodel_p.h"
 
+DFMBASE_BEGIN_NAMESPACE
 FileViewModelPrivate::FileViewModelPrivate(FileViewModel *qq)
     :q_ptr(qq)
 {
@@ -48,7 +49,7 @@ QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent)
     if(row < 0 || column < 0 || d->childers.size() <= row)
         return  QModelIndex();
 
-    return createIndex(row,column,const_cast<DFMFileViewItem*>(d->childers.at(row).data()));
+    return createIndex(row,column,const_cast<FileViewItem*>(d->childers.at(row).data()));
 }
 
 QModelIndex FileViewModel::setRootUrl(const QUrl &url)
@@ -57,7 +58,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     if (!d->root.isNull() && d->root->url() == url)
         return createIndex(-1, 0, &d->root);
 
-    d->root.reset(new DFMFileViewItem(url));
+    d->root.reset(new FileViewItem(url));
     QModelIndex root = createIndex(-1, 0, &d->root);
 
     if(!url.isValid())
@@ -124,7 +125,7 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
     return d->childers.at(index.row())->data(role);
 }
 
-void FileViewModel::doUpdateChildren(const QList<QSharedPointer<DFMFileViewItem> > &children)
+void FileViewModel::doUpdateChildren(const QList<QSharedPointer<FileViewItem> > &children)
 {
     Q_D(FileViewModel);
 
@@ -144,13 +145,13 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
         d->traversalThread->wait();
         disconnect(d->traversalThread.data());
     }
-    d->traversalThread.reset(new DFMTraversalDirThread(
+    d->traversalThread.reset(new TraversalDirThread(
                                    d->root->url(),QStringList(),
                                    QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System,
                                    QDirIterator::NoIteratorFlags));
     if (d->traversalThread.isNull())
         return;
-    connect(d->traversalThread.data(),&DFMTraversalDirThread::updateChildren, this, &FileViewModel::doUpdateChildren,
+    connect(d->traversalThread.data(),&TraversalDirThread::updateChildren, this, &FileViewModel::doUpdateChildren,
             Qt::QueuedConnection);
     d->traversalThread->start();
 }
@@ -161,3 +162,4 @@ bool FileViewModel::canFetchMore(const QModelIndex &parent) const
     Q_UNUSED(parent);
     return true;
 }
+DFMBASE_END_NAMESPACE

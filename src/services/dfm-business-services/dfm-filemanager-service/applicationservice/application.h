@@ -21,11 +21,13 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "dfm-base/dfm_base_global.h"
+#include "services/dfm-business-services/dfm-filemanager-service/dfm_filemanager_service_global.h"
 
 #include <QObject>
 
-class DFMSettings;
+DSB_FM_BEGIN_NAMESPACE
+
+class Settings;
 class ApplicationPrivate;
 class Application : public QObject
 {
@@ -89,11 +91,11 @@ public:
 
     static Application *instance();
 
-    static DFMSettings *genericSetting();
-    static DFMSettings *appSetting();
+    static Settings *genericSetting();
+    static Settings *appSetting();
 
-    static DFMSettings *genericObtuselySetting();
-    static DFMSettings *appObtuselySetting();
+    static Settings *genericObtuselySetting();
+    static Settings *appObtuselySetting();
 
 Q_SIGNALS:
     void appAttributeChanged(ApplicationAttribute aa, const QVariant &value);
@@ -107,10 +109,9 @@ Q_SIGNALS:
     void showedHiddenFilesChanged(bool enable);
     void recentDisplayChanged(bool enable);
     void csdClickableAreaAttributeChanged(bool enabled);
-//    void fullTextSearchChanged(bool enable);
 
-    void genericSettingCreated(DFMSettings *settings);
-    void appSettingCreated(DFMSettings *settings);
+    void genericSettingCreated(Settings *settings);
+    void appSettingCreated(Settings *settings);
 
 protected:
     Application(ApplicationPrivate *dd, QObject *parent = nullptr);
@@ -121,5 +122,7 @@ private:
 
     QScopedPointer<ApplicationPrivate> d_ptr;
 };
+
+DSB_FM_END_NAMESPACE
 
 #endif // APPLICATION_H

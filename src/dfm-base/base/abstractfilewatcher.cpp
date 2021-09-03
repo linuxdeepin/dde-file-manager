@@ -20,9 +20,10 @@
 #include <dfm-io/core/dwatcher.h>
 #include <dfmio_global.h>
 #include <dfmio_register.h>
-#include <core/diofactory.h>
-#include <core/diofactory_p.h>
+#include <dfm-io/core/diofactory.h>
+#include <dfm-io/core/diofactory_p.h>
 
+DFMBASE_BEGIN_NAMESPACE
 DThreadList<QString> AbstractFileWatcherPrivate::WatcherPath;
 /*!
  * \class AbstractFileWatcherPrivate 文件监视器私有类
@@ -212,3 +213,4 @@ AbstractFileWatcher::AbstractFileWatcher(AbstractFileWatcherPrivate &dd,
 
     d_ptr->url = url;
 }
+DFMBASE_END_NAMESPACE

@@ -22,7 +22,7 @@
  */
 
 #include "styleditemdelegate.h"
-#include "styleditemdelegate_p.h"
+#include "private/styleditemdelegate_p.h"
 #include "dfm-base/dfm_base_global.h"
 
 #include <QDebug>
@@ -35,39 +35,40 @@
 #include <QTextLayout>
 #include <QtMath>
 
-DFMStyledItemDelegate::DFMStyledItemDelegate(DListView *parent)
-    : DFMStyledItemDelegate(*new DFMStyledItemDelegatePrivate(this), parent)
+DFMBASE_BEGIN_NAMESPACE
+StyledItemDelegate::StyledItemDelegate(DListView *parent)
+    : StyledItemDelegate(*new StyledItemDelegatePrivate(this), parent)
 {
 
 }
 
-DFMStyledItemDelegate::~DFMStyledItemDelegate()
+StyledItemDelegate::~StyledItemDelegate()
 {
 
 }
 
-DListView *DFMStyledItemDelegate::parent() const
+DListView *StyledItemDelegate::parent() const
 {
     return dynamic_cast<DListView *>(QStyledItemDelegate::parent());
 }
 
-QSize DFMStyledItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
+QSize StyledItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
 {
-    Q_D(const DFMStyledItemDelegate);
+    Q_D(const StyledItemDelegate);
 
     return d->itemSizeHint;
 }
 
-void DFMStyledItemDelegate::destroyEditor(QWidget *editor, const QModelIndex &index) const
+void StyledItemDelegate::destroyEditor(QWidget *editor, const QModelIndex &index) const
 {
-    Q_D(const DFMStyledItemDelegate);
+    Q_D(const StyledItemDelegate);
 
     QStyledItemDelegate::destroyEditor(editor, index);
 
     d->editingIndex = QModelIndex();
 }
 
-QString DFMStyledItemDelegate::displayText(const QVariant &value, const QLocale &locale) const
+QString StyledItemDelegate::displayText(const QVariant &value, const QLocale &locale) const
 {
     if (value.type() == QVariant::String)
         return value.toString();
@@ -75,9 +76,9 @@ QString DFMStyledItemDelegate::displayText(const QVariant &value, const QLocale 
     return QStyledItemDelegate::displayText(value, locale);
 }
 
-QModelIndexList DFMStyledItemDelegate::hasWidgetIndexs() const
+QModelIndexList StyledItemDelegate::hasWidgetIndexs() const
 {
-    Q_D(const DFMStyledItemDelegate);
+    Q_D(const StyledItemDelegate);
 
     if (!d->editingIndex.isValid())
         return QModelIndexList();
@@ -85,9 +86,9 @@ QModelIndexList DFMStyledItemDelegate::hasWidgetIndexs() const
     return QModelIndexList() << d->editingIndex;
 }
 
-void DFMStyledItemDelegate::hideAllIIndexWidget()
+void StyledItemDelegate::hideAllIIndexWidget()
 {
-    Q_D(const DFMStyledItemDelegate);
+    Q_D(const StyledItemDelegate);
 
     hideNotEditingIndexWidget();
 
@@ -95,14 +96,14 @@ void DFMStyledItemDelegate::hideAllIIndexWidget()
         d->editingIndex = QModelIndex();
 }
 
-void DFMStyledItemDelegate::hideNotEditingIndexWidget()
+void StyledItemDelegate::hideNotEditingIndexWidget()
 {
 
 }
 
-void DFMStyledItemDelegate::commitDataAndCloseActiveEditor()
+void StyledItemDelegate::commitDataAndCloseActiveEditor()
 {
-    Q_D(const DFMStyledItemDelegate);
+    Q_D(const StyledItemDelegate);
 
     QWidget *editor = parent()->indexWidget(d->editingIndex);
 
@@ -113,7 +114,7 @@ void DFMStyledItemDelegate::commitDataAndCloseActiveEditor()
                               Qt::DirectConnection, Q_ARG(QWidget *, editor));
 }
 
-QRect DFMStyledItemDelegate::fileNameRect(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QRect StyledItemDelegate::fileNameRect(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     const QList<QRect> &rects = paintGeomertys(option, index);
 
@@ -122,85 +123,57 @@ QRect DFMStyledItemDelegate::fileNameRect(const QStyleOptionViewItem &option, co
 
     return QRect();
 }
-int DFMStyledItemDelegate::iconSizeLevel() const
+int StyledItemDelegate::iconSizeLevel() const
 {
     return -1;
 }
 
-int DFMStyledItemDelegate::minimumIconSizeLevel() const
+int StyledItemDelegate::minimumIconSizeLevel() const
 {
     return -1;
 }
 
-int DFMStyledItemDelegate::maximumIconSizeLevel() const
+int StyledItemDelegate::maximumIconSizeLevel() const
 {
     return -1;
 }
 
-int DFMStyledItemDelegate::increaseIcon()
+int StyledItemDelegate::increaseIcon()
 {
     return -1;
 }
 
-int DFMStyledItemDelegate::decreaseIcon()
+int StyledItemDelegate::decreaseIcon()
 {
     return -1;
 }
 
-int DFMStyledItemDelegate::setIconSizeByIconSizeLevel(int level)
+int StyledItemDelegate::setIconSizeByIconSizeLevel(int level)
 {
     Q_UNUSED(level)
 
     return -1;
 }
 
-//QList<QRectF> DFMStyledItemDelegate::drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout, const QRectF &boundingRect,
-//                                              qreal radius, const QBrush &background, QTextOption::WrapMode wordWrap,
-//                                              Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
-//{
-//    initTextLayout(index, layout);
-
-//    QList<QRectF> boundingRegion;
-//    DFMGlobal::elideText(layout, boundingRect.size(), wordWrap, mode, d_func()->textLineHeight, flags, nullptr,
-//                         painter, boundingRect.topLeft(), shadowColor, QPointF(0, 1),
-//                         background, radius, &boundingRegion);
-
-//    return boundingRegion;
-//}
-
-//QList<QRectF> DFMStyledItemDelegate::drawText(const QModelIndex &index, QPainter *painter, const QString &text, const QRectF &boundingRect,
-//                                              qreal radius, const QBrush &background, QTextOption::WrapMode wordWrap,
-//                                              Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
-//{
-//    QTextLayout layout;
-
-//    layout.setText(text);
-
-//    if (painter)
-//        layout.setFont(painter->font());
-
-//    return drawText(index, painter, &layout, boundingRect, radius, background, wordWrap, mode, flags, shadowColor);
-//}
-
-DFMStyledItemDelegate::DFMStyledItemDelegate(DFMStyledItemDelegatePrivate &dd, DListView *parent)
+StyledItemDelegate::StyledItemDelegate(StyledItemDelegatePrivate &dd, DListView *parent)
     : QStyledItemDelegate(parent)
     , d_ptr(&dd)
 {
     dd.init();
 }
 
-void DFMStyledItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
+void StyledItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
 {
     Q_UNUSED(index)
     Q_UNUSED(layout)
 }
 
-void DFMStyledItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
+void StyledItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
 {
     QStyledItemDelegate::initStyleOption(option, index);
 }
 
-QList<QRectF> DFMStyledItemDelegate::getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const
+QList<QRectF> StyledItemDelegate::getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const
 {
     QList<QRectF> list;
     double offset = baseRect.width() / 8;
@@ -215,7 +188,7 @@ QList<QRectF> DFMStyledItemDelegate::getCornerGeometryList(const QRectF &baseRec
     return list;
 }
 
-QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio = 1.0, QIcon::Mode mode, QIcon::State state)
+QPixmap StyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio = 1.0, QIcon::Mode mode, QIcon::State state)
 {
     // ###(zccrs): 开启Qt::AA_UseHighDpiPixmaps后，QIcon::pixmap会自动执行 pixmapSize *= qApp->devicePixelRatio()
     //             而且，在有些QIconEngine的实现中，会去调用另一个QIcon::pixmap，导致 pixmapSize 在这种嵌套调用中越来越大
@@ -299,7 +272,7 @@ static inline Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::A
     return alignment;
 }
 
-void DFMStyledItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment, QIcon::Mode mode, QIcon::State state)
+void StyledItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment, QIcon::Mode mode, QIcon::State state)
 {
     // Copy of QStyle::alignedRect
     alignment = visualAlignment(painter->layoutDirection(), alignment);
@@ -321,7 +294,7 @@ void DFMStyledItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, cons
     painter->drawPixmap(qRound(x), qRound(y), px);
 }
 
-void DFMStyledItemDelegate::paintCircleList(QPainter *painter, QRectF boundingRect, qreal diameter, const QList<QColor> &colors, const QColor &borderColor)
+void StyledItemDelegate::paintCircleList(QPainter *painter, QRectF boundingRect, qreal diameter, const QList<QColor> &colors, const QColor &borderColor)
 {
     bool antialiasing = painter->testRenderHint(QPainter::Antialiasing);
     const QPen pen = painter->pen();
@@ -345,10 +318,10 @@ void DFMStyledItemDelegate::paintCircleList(QPainter *painter, QRectF boundingRe
     painter->setRenderHint(QPainter::Antialiasing, antialiasing);
 }
 
-void DFMStyledItemDelegatePrivate::init()
+void StyledItemDelegatePrivate::init()
 {
-    Q_Q(DFMStyledItemDelegate);
-    q->connect(q->parent(), &QAbstractItemView::iconSizeChanged, q, &DFMStyledItemDelegate::updateItemSizeHint);
+    Q_Q(StyledItemDelegate);
+    q->connect(q->parent(), &QAbstractItemView::iconSizeChanged, q, &StyledItemDelegate::updateItemSizeHint);
 
     QAbstractItemModel *model = q->parent()->model();
     Q_ASSERT(model);
@@ -359,18 +332,18 @@ void DFMStyledItemDelegatePrivate::init()
     textLineHeight = q->parent()->fontMetrics().lineSpacing();
 }
 
-void DFMStyledItemDelegatePrivate::_q_onRowsInserted(const QModelIndex &parent, int first, int last)
+void StyledItemDelegatePrivate::_q_onRowsInserted(const QModelIndex &parent, int first, int last)
 {
     if (editingIndex.isValid() && first <= editingIndex.row() && !editingIndex.parent().isValid()) {
         editingIndex = parent.child(editingIndex.row() + last - first + 1, editingIndex.column());
     }
 }
 
-void DFMStyledItemDelegatePrivate::_q_onRowsRemoved(const QModelIndex &parent, int first, int last)
+void StyledItemDelegatePrivate::_q_onRowsRemoved(const QModelIndex &parent, int first, int last)
 {
     if (editingIndex.isValid() && first <= editingIndex.row() && !editingIndex.parent().isValid()) {
         editingIndex = parent.child(editingIndex.row() - last + first - 1, editingIndex.column());
     }
 }
-
+DFMBASE_END_NAMESPACE
 #include "moc_styleditemdelegate.cpp"

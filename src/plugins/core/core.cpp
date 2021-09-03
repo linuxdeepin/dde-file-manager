@@ -27,10 +27,9 @@
 #include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
 
 #include "dfm-base/widgets/dfmfileview/fileview.h"
-//#include "widgets/dfmfileview/dfilesystemmodel.h"
 
 #include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/application.h"
+#include "services/dfm-business-services/dfm-filemanager-service/applicationservice//application.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include "dfm-base/localfile/localfileinfo.h"
@@ -89,7 +88,7 @@ namespace GlobalPrivate {
 
 //DFM_USE_NAMESPACE
 
-void initSidebar(DFMSideBar* sidebar)
+void initSidebar(SideBar* sidebar)
 {
     if (!sidebar) return ;
 
@@ -109,25 +108,25 @@ void initSidebar(DFMSideBar* sidebar)
     QIcon documentsIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DocumentsPath));
     QIcon downloadsIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DownloadsPath));
 
-    auto homeItem = new DFMSideBarItem(homeIcon,QObject::tr("Home"),"core",homeUrl);
+    auto homeItem = new SideBarItem(homeIcon,QObject::tr("Home"),"core",homeUrl);
     homeItem->setFlags(homeItem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
 
-    auto desktopitem = new DFMSideBarItem(desktopIcon,QObject::tr("Desktop"),"core",desktopUrl);
+    auto desktopitem = new SideBarItem(desktopIcon,QObject::tr("Desktop"),"core",desktopUrl);
     desktopitem->setFlags(desktopitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
 
-    auto videoitem = new DFMSideBarItem(videosIcon,QObject::tr("Video"),"core",videosUrl);
+    auto videoitem = new SideBarItem(videosIcon,QObject::tr("Video"),"core",videosUrl);
     videoitem->setFlags(videoitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
 
-    auto musicitem = new DFMSideBarItem(musicIcon,QObject::tr("Music"),"core",musicUrl);
+    auto musicitem = new SideBarItem(musicIcon,QObject::tr("Music"),"core",musicUrl);
     musicitem->setFlags(musicitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
 
-    auto picturesitem = new DFMSideBarItem(picturesIcon, QObject::tr("Pictures"), "core", picturesUrl);
+    auto picturesitem = new SideBarItem(picturesIcon, QObject::tr("Pictures"), "core", picturesUrl);
     picturesitem->setFlags(picturesitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
 
-    auto documentsitem = new DFMSideBarItem(documentsIcon, QObject::tr("Documents"), "core", documentsUrl);
+    auto documentsitem = new SideBarItem(documentsIcon, QObject::tr("Documents"), "core", documentsUrl);
     documentsitem->setFlags(documentsitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
 
-    auto downloadsitem = new DFMSideBarItem(downloadsIcon, QObject::tr("Downloads"), "core", downloadsUrl);
+    auto downloadsitem = new SideBarItem(downloadsIcon, QObject::tr("Downloads"), "core", downloadsUrl);
     downloadsitem->setFlags(downloadsitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
 
     sidebar->addItem(homeItem,"default");
@@ -273,7 +272,7 @@ bool Core::start(QSharedPointer<dpf::PluginContext> context)
                                       GlobalPrivate::DEFAULT_WINDOW_HEIGHT);
 
             //綁定sidebaritem的點擊邏輯
-            QObject::connect(newWindow->sidebar(), &DFMSideBar::activatedItemUrl,
+            QObject::connect(newWindow->sidebar(), &SideBar::activatedItemUrl,
                              newWindow, [=](const QUrl &url)
             {
                 windowService->setWindowRootUrl(newWindow, url);

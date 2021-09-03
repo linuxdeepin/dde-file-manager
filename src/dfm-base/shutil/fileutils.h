@@ -25,10 +25,7 @@
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
 
-//#include "desktopfile.h"
-#include "properties.h"
 #include "base/abstractfileinfo.h"
-#include "utils/desktopinfo.h"
 #include "dfm-base/dfm_base_global.h"
 
 #include <QObject>
@@ -38,8 +35,8 @@
 #include <QMimeType>
 #include <QUrl>
 
+DFMBASE_BEGIN_NAMESPACE
 class LocalFileInfo;
-
 /**
  * @class FileUtils
  * @brief Utility class providing static helper methods for file management
@@ -149,5 +146,6 @@ public:
     //判断是否是操作系统同盘的本地文件
     static bool isFileOnDisk(const QString &path);
 };
+DFMBASE_END_NAMESPACE
 
 #endif // FILEUTILS_H

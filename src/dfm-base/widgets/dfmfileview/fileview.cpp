@@ -28,36 +28,39 @@
 #include <QResizeEvent>
 #include <QScrollBar>
 
-DFMFileView::DFMFileView(QWidget *parent)
+DFMBASE_BEGIN_NAMESPACE
+FileView::FileView(QWidget *parent)
     : DListView(parent)
-    , d_ptr(new DFMFileViewPrivate(this))
+    , d_ptr(new FileViewPrivate(this))
 {
-    Q_D(DFMFileView);
+    Q_D(FileView);
     auto model = new FileViewModel;
     setModel(model);
     d_ptr->updateViewDelegate(viewMode());
     this->setCornerWidget(d->m_headview);
 }
 
-void DFMFileView::setViewMode(QListView::ViewMode mode)
+void FileView::setViewMode(QListView::ViewMode mode)
 {
     if (viewMode() == mode)
         return;
     d_ptr->updateViewDelegate(mode);
 }
 
-void DFMFileView::setRootUrl(const QUrl &url)
+void FileView::setRootUrl(const QUrl &url)
 {
     qobject_cast<FileViewModel *>(model())->setRootUrl(url);
 }
 
-QUrl DFMFileView::rootUrl()
+QUrl FileView::rootUrl()
 {
     return qobject_cast<FileViewModel *>(model())->rootUrl();
 }
 
-void DFMFileView::resizeEvent(QResizeEvent *event)
+void FileView::resizeEvent(QResizeEvent *event)
 {
     return DListView::resizeEvent(event);
 }
+
+DFMBASE_END_NAMESPACE
 

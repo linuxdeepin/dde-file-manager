@@ -29,8 +29,8 @@
 #include <QUrl>
 
 DWIDGET_USE_NAMESPACE
-
-class DFMSideBarItem : public DStandardItem
+DFMBASE_BEGIN_NAMESPACE
+class SideBarItem : public DStandardItem
 {
 public:
     enum Roles {
@@ -39,16 +39,16 @@ public:
         ItemUserCustomRole = Dtk::UserRole + 0x0100
     };
 
-    DFMSideBarItem(const QUrl &url);
+    SideBarItem(const QUrl &url);
 
-    DFMSideBarItem(const QIcon &icon,
+    SideBarItem(const QIcon &icon,
                    const QString &text,
                    const QString &group,
                    const QUrl &url);
 
-    virtual ~DFMSideBarItem();
+    virtual ~SideBarItem();
 
-    DFMSideBarItem(const DFMSideBarItem& item);
+    SideBarItem(const SideBarItem& item);
 
     QUrl url() const;
     void setUrl(const QUrl &url);
@@ -58,12 +58,13 @@ public:
 };
 
 
-class DFMSideBarItemSeparator :public DFMSideBarItem
+class DFMSideBarItemSeparator :public SideBarItem
 {
 public:
     explicit DFMSideBarItemSeparator();
     virtual ~DFMSideBarItemSeparator();
 };
-Q_DECLARE_METATYPE(DFMSideBarItemSeparator)
+DFMBASE_END_NAMESPACE
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::DFMSideBarItemSeparator)
 
 #endif //DFMSIDEBARITEM_H

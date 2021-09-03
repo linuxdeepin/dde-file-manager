@@ -22,7 +22,8 @@
 #include "traversaldirthread.h"
 #include "base/schemefactory.h"
 
-DFMTraversalDirThread::DFMTraversalDirThread(const QUrl &url,
+DFMBASE_BEGIN_NAMESPACE
+TraversalDirThread::TraversalDirThread(const QUrl &url,
                                              const QStringList &nameFilters,
                                              QDir::Filters filters,
                                              QDirIterator::IteratorFlags flags,
@@ -34,17 +35,16 @@ DFMTraversalDirThread::DFMTraversalDirThread(const QUrl &url,
         m_dirIterator = DirIteratorFactory::instance().create<LocalDirIterator>
                             (url, nameFilters, filters,flags);
     }
-    qRegisterMetaType<QList<QSharedPointer<DFMFileViewItem>>>("QList<QSharedPointer<DFMFileViewItem>>");
-    qRegisterMetaType<QList<QSharedPointer<DFMFileViewItem>>>("QList<QSharedPointer<DFMFileViewItem>>&");
+    qRegisterMetaType<QList<QSharedPointer<FileViewItem>>>("QList<QSharedPointer<DFMFileViewItem>>");
+    qRegisterMetaType<QList<QSharedPointer<FileViewItem>>>("QList<QSharedPointer<DFMFileViewItem>>&");
 }
 
-DFMTraversalDirThread::~DFMTraversalDirThread()
+TraversalDirThread::~TraversalDirThread()
 {
 
 }
 
-
-void DFMTraversalDirThread::run()
+void TraversalDirThread::run()
 {
     if (m_dirIterator.isNull())
         return;
@@ -53,8 +53,10 @@ void DFMTraversalDirThread::run()
         m_dirIterator->next();
         QUrl fileurl = m_dirIterator->fileUrl();
         if (!fileurl.isValid()) continue;
-        QSharedPointer<DFMFileViewItem> item(new DFMFileViewItem(fileurl));
+        QSharedPointer<FileViewItem> item(new FileViewItem(fileurl));
         m_childrenList.append(item);
     }
     Q_EMIT updateChildren(m_childrenList.list());
 }
+
+DFMBASE_END_NAMESPACE

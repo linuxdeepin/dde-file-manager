@@ -23,6 +23,7 @@
 #include "private/abstractfiledevice_p.h"
 #include "base/abstractfiledevice.h"
 
+DFMBASE_BEGIN_NAMESPACE
 /*!
  * \class AbstractFileDevice 抽象文件device类
  *
@@ -124,3 +125,5 @@ bool AbstractFileDevice::syncToDisk(const AbstractFileDevice::SyncOperate &op)
     Q_UNUSED(op);
     return false;
 }
+
+DFMBASE_END_NAMESPACE

@@ -22,7 +22,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "shutil/dmimedatabase.h"
+#include "shutil/mimedatabase.h"
 #include "shutil/fileutils.h"
 
 #include "base/standardpaths.h"
@@ -34,7 +34,7 @@
 #include <QHash>
 #include <QtConcurrent>
 
-//global mimedatabase cache
+DFMBASE_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(QMimeDatabase, mimedb)
 
 //global mimetypes define list cache
@@ -92,31 +92,31 @@ bool loadSupportMimeTypes()
 
 bool loadFileTypeName()
 {
-    (*mimeDisplayNames)[DMimeDatabase::FileType::Directory] = QObject::tr("Directory");
-    (*mimeDisplayNames)[DMimeDatabase::FileType::DesktopApplication] = QObject::tr("Application");
-    (*mimeDisplayNames)[DMimeDatabase::FileType::Videos] = QObject::tr("Video");
-    (*mimeDisplayNames)[DMimeDatabase::FileType::Audios] = QObject::tr("Audio");
-    (*mimeDisplayNames)[DMimeDatabase::FileType::Images] = QObject::tr("Image");
-    (*mimeDisplayNames)[DMimeDatabase::FileType::Archives] = QObject::tr("Archive");
-    (*mimeDisplayNames)[DMimeDatabase::FileType::Documents] = QObject::tr("Text");
-    (*mimeDisplayNames)[DMimeDatabase::FileType::Executable] = QObject::tr("Executable");
-    (*mimeDisplayNames)[DMimeDatabase::FileType::Backups] = QObject::tr("Backup file");
-    (*mimeDisplayNames)[DMimeDatabase::FileType::Unknown] = QObject::tr("Unknown");
+    (*mimeDisplayNames)[MimeDatabase::FileType::Directory] = QObject::tr("Directory");
+    (*mimeDisplayNames)[MimeDatabase::FileType::DesktopApplication] = QObject::tr("Application");
+    (*mimeDisplayNames)[MimeDatabase::FileType::Videos] = QObject::tr("Video");
+    (*mimeDisplayNames)[MimeDatabase::FileType::Audios] = QObject::tr("Audio");
+    (*mimeDisplayNames)[MimeDatabase::FileType::Images] = QObject::tr("Image");
+    (*mimeDisplayNames)[MimeDatabase::FileType::Archives] = QObject::tr("Archive");
+    (*mimeDisplayNames)[MimeDatabase::FileType::Documents] = QObject::tr("Text");
+    (*mimeDisplayNames)[MimeDatabase::FileType::Executable] = QObject::tr("Executable");
+    (*mimeDisplayNames)[MimeDatabase::FileType::Backups] = QObject::tr("Backup file");
+    (*mimeDisplayNames)[MimeDatabase::FileType::Unknown] = QObject::tr("Unknown");
     return true;
 }
 
 bool loadMimeStdIcon()
 {
-    (*mimeStdIconNames)[DMimeDatabase::FileType::Directory] = "folder";
-    (*mimeStdIconNames)[DMimeDatabase::FileType::DesktopApplication] = "application-default-icon";
-    (*mimeStdIconNames)[DMimeDatabase::FileType::Videos] = "video";
-    (*mimeStdIconNames)[DMimeDatabase::FileType::Audios] = "music";
-    (*mimeStdIconNames)[DMimeDatabase::FileType::Images] = "image";
-    (*mimeStdIconNames)[DMimeDatabase::FileType::Archives] = "application-x-archive";
-    (*mimeStdIconNames)[DMimeDatabase::FileType::Documents] = "text-plain";
-    (*mimeStdIconNames)[DMimeDatabase::FileType::Executable] = "application-x-executable";
-    (*mimeStdIconNames)[DMimeDatabase::FileType::Backups] = "application-x-archive"; // generic backup file icon?
-    (*mimeStdIconNames)[DMimeDatabase::FileType::Unknown] = "application-default-icon";
+    (*mimeStdIconNames)[MimeDatabase::FileType::Directory] = "folder";
+    (*mimeStdIconNames)[MimeDatabase::FileType::DesktopApplication] = "application-default-icon";
+    (*mimeStdIconNames)[MimeDatabase::FileType::Videos] = "video";
+    (*mimeStdIconNames)[MimeDatabase::FileType::Audios] = "music";
+    (*mimeStdIconNames)[MimeDatabase::FileType::Images] = "image";
+    (*mimeStdIconNames)[MimeDatabase::FileType::Archives] = "application-x-archive";
+    (*mimeStdIconNames)[MimeDatabase::FileType::Documents] = "text-plain";
+    (*mimeStdIconNames)[MimeDatabase::FileType::Executable] = "application-x-executable";
+    (*mimeStdIconNames)[MimeDatabase::FileType::Backups] = "application-x-archive"; // generic backup file icon?
+    (*mimeStdIconNames)[MimeDatabase::FileType::Unknown] = "application-default-icon";
 
     return true;
 }
@@ -129,19 +129,19 @@ static auto _threadLoadMimeTypes = QtConcurrent::run(loadSupportMimeTypes);
 static auto _threadLoadStdIcons = QtConcurrent::run(loadMimeStdIcon);
 static auto _threadLoadMimeNames = QtConcurrent::run(loadFileTypeName);
 
-DMimeDatabase::DMimeDatabase()
+MimeDatabase::MimeDatabase()
 {
     Q_UNUSED(_threadLoadMimeTypes);
     Q_UNUSED(_threadLoadStdIcons);
     Q_UNUSED(_threadLoadMimeNames);
 }
 
-DMimeDatabase::~DMimeDatabase()
+MimeDatabase::~MimeDatabase()
 {
 
 }
 
-QString DMimeDatabase::mimeFileType(const QString &mimeType)
+QString MimeDatabase::mimeFileType(const QString &mimeType)
 {
     Q_UNUSED(mimeType)
 //todo:
@@ -153,7 +153,7 @@ QString DMimeDatabase::mimeFileType(const QString &mimeType)
     return "";
 }
 
-DMimeDatabase::FileType DMimeDatabase::mimeFileTypeNameToEnum(const QString &mimeFileTypeName)
+MimeDatabase::FileType MimeDatabase::mimeFileTypeNameToEnum(const QString &mimeFileTypeName)
 {
     if (mimeFileTypeName == "application/x-desktop") {
         return FileType::DesktopApplication;
@@ -183,7 +183,7 @@ DMimeDatabase::FileType DMimeDatabase::mimeFileTypeNameToEnum(const QString &mim
     }
 }
 
-QStringList DMimeDatabase::supportMimeFileType(DMimeDatabase::FileType mimeFileType)
+QStringList MimeDatabase::supportMimeFileType(MimeDatabase::FileType mimeFileType)
 {
     QStringList list;
 
@@ -209,37 +209,37 @@ QStringList DMimeDatabase::supportMimeFileType(DMimeDatabase::FileType mimeFileT
     }
 }
 
-QString DMimeDatabase::mimeStdIcon(const QString &mimeType)
+QString MimeDatabase::mimeStdIcon(const QString &mimeType)
 {
     return mimeStdIconNames->value(mimeFileTypeNameToEnum(mimeType));
 }
 
-QMimeType DMimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase::MatchMode mode)
+QMimeType MimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase::MatchMode mode)
 {
     return mimedb->mimeTypeForFile(fileName,mode);
 }
 
-QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabase::MatchMode mode)
+QMimeType MimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabase::MatchMode mode)
 {
     return mimedb->mimeTypeForFile(fileInfo,mode);
 }
 
-QList<QMimeType> DMimeDatabase::mimeTypesForFileName(const QString &fileName)
+QList<QMimeType> MimeDatabase::mimeTypesForFileName(const QString &fileName)
 {
     return mimedb->mimeTypesForFileName(fileName);
 }
 
-QMimeType DMimeDatabase::mimeTypeForData(const QByteArray &data)
+QMimeType MimeDatabase::mimeTypeForData(const QByteArray &data)
 {
     return mimedb->mimeTypeForData(data);
 }
 
-QMimeType DMimeDatabase::mimeTypeForData(QIODevice *device)
+QMimeType MimeDatabase::mimeTypeForData(QIODevice *device)
 {
     return mimedb->mimeTypeForData(device);
 }
 
-QMimeType DMimeDatabase::mimeTypeForUrl(const QUrl &url)
+QMimeType MimeDatabase::mimeTypeForUrl(const QUrl &url)
 {
     if(url.isLocalFile())
         return mimedb->mimeTypeForUrl(url);
@@ -247,23 +247,23 @@ QMimeType DMimeDatabase::mimeTypeForUrl(const QUrl &url)
         return mimedb->mimeTypeForFile(UrlRoute::urlToPath(url));
 }
 
-QMimeType DMimeDatabase::mimeTypeForFileNameAndData(const QString &fileName, QIODevice *device)
+QMimeType MimeDatabase::mimeTypeForFileNameAndData(const QString &fileName, QIODevice *device)
 {
     return mimedb->mimeTypeForFileNameAndData(fileName, device);
 }
 
-QMimeType DMimeDatabase::mimeTypeForFileNameAndData(const QString &fileName, const QByteArray &data)
+QMimeType MimeDatabase::mimeTypeForFileNameAndData(const QString &fileName, const QByteArray &data)
 {
     return mimedb->mimeTypeForFileNameAndData(fileName, data);
 }
 
-QString DMimeDatabase::suffixForFileName(const QString &fileName)
+QString MimeDatabase::suffixForFileName(const QString &fileName)
 {
     return mimedb->suffixForFileName(fileName);
 }
 
-QList<QMimeType> DMimeDatabase::allMimeTypes()
+QList<QMimeType> MimeDatabase::allMimeTypes()
 {
     return mimedb->allMimeTypes();
 }
-
+DFMBASE_END_NAMESPACE

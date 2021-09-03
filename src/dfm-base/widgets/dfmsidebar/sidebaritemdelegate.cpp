@@ -40,16 +40,16 @@
 
 QT_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-
-DFMSideBarItemDelegate::DFMSideBarItemDelegate(QAbstractItemView *parent)
+DFMBASE_BEGIN_NAMESPACE
+SideBarItemDelegate::SideBarItemDelegate(QAbstractItemView *parent)
     : DStyledItemDelegate(parent)
 {
 
 }
 
-void DFMSideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QStandardItem* item = qobject_cast<const DFMSideBarModel*>(index.model())->itemFromIndex(index);
+    QStandardItem* item = qobject_cast<const SideBarModel*>(index.model())->itemFromIndex(index);
     if (dynamic_cast<DFMSideBarItemSeparator*>(item)) {
         return paintSeparator(painter, option);
     }
@@ -57,16 +57,16 @@ void DFMSideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
     return DStyledItemDelegate::paint(painter, option, index);
 }
 
-QSize DFMSideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize SideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QStandardItem* item = qobject_cast<const DFMSideBarModel*>(index.model())->itemFromIndex(index);
+    QStandardItem* item = qobject_cast<const SideBarModel*>(index.model())->itemFromIndex(index);
     if (dynamic_cast<DFMSideBarItemSeparator*>(item)) {
         return QSize(200, 5);
     }
     return DStyledItemDelegate::sizeHint(option, index);
 }
 
-void DFMSideBarItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
+void SideBarItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
     Q_UNUSED(model);
     QByteArray n = editor->metaObject()->userProperty().name();
@@ -77,15 +77,15 @@ void DFMSideBarItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
     return;
 }
 
-QWidget *DFMSideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget *SideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     /***************************************************************************************************************/
     //此部分判断主要是为了解决书签目标目录不存在情况下仍可以对书签进行重命名并且重命名后可打开失效目录问题
     //目前在标签对应目标路径不存在的情况下，右键重命名是失效的，所以也不应允许双击修改。故此处做规避
     //有用过QFileInfo::exists直接path路径有问题所以改成了DAbstractFileInfoPointer
-    DFMSideBarView *sidebarView = dynamic_cast<DFMSideBarView*>(this->parent());
-    DFMSideBarModel *sidebarModel = dynamic_cast<DFMSideBarModel*>(sidebarView->model());
-    DFMSideBarItem *tgItem = sidebarModel->itemFromIndex(index);
+    SideBarView *sidebarView = dynamic_cast<SideBarView*>(this->parent());
+    SideBarModel *sidebarModel = dynamic_cast<SideBarModel*>(sidebarView->model());
+    SideBarItem *tgItem = sidebarModel->itemFromIndex(index);
 
     const LocalFileInfo sourceInfo(tgItem->url()) ;
     if(!sourceInfo.exists())
@@ -106,17 +106,17 @@ QWidget *DFMSideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptio
     return editor;
 }
 
-void DFMSideBarItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void SideBarItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(index);
     DStyledItemDelegate::updateEditorGeometry(editor, option, index);
 
     //DTK在计算editor宽度的时候没有考虑icon的宽度，导致editor超出view的范围，超出部分看不到了，这里需要调整editor的宽度。
-    DFMSideBarView *sidebarView = dynamic_cast<DFMSideBarView*>(this->parent());
+    SideBarView *sidebarView = dynamic_cast<SideBarView*>(this->parent());
     editor->setFixedWidth(sidebarView->width() - 59);
 }
 
-void DFMSideBarItemDelegate::paintSeparator(QPainter *painter, const QStyleOptionViewItem &option) const
+void SideBarItemDelegate::paintSeparator(QPainter *painter, const QStyleOptionViewItem &option) const
 {
     painter->save();
 
@@ -126,4 +126,4 @@ void DFMSideBarItemDelegate::paintSeparator(QPainter *painter, const QStyleOptio
     painter->restore();
 }
 
-
+DFMBASE_END_NAMESPACE

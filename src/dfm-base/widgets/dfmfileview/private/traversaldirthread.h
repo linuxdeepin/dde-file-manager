@@ -19,9 +19,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMTRAVERSALDIRTHREAD_H
-#define DFMTRAVERSALDIRTHREAD_H
+#ifndef TRAVERSALDIRTHREAD_H
+#define TRAVERSALDIRTHREAD_H
 
+#include "dfm-base/dfm_base_global.h"
 #include "localfile/localdiriterator.h"
 #include "widgets/dfmfileview/fileviewitem.h"
 #include "dfm-base/utils/threadcontainer.hpp"
@@ -31,29 +32,27 @@
 #include <QThread>
 #include <QUrl>
 
-class DFMTraversalDirThread : public QThread
+DFMBASE_BEGIN_NAMESPACE
+class TraversalDirThread : public QThread
 {
     Q_OBJECT
 public:
-    explicit DFMTraversalDirThread(const QUrl& url, const QStringList &nameFilters = QStringList(),
+    explicit TraversalDirThread(const QUrl& url, const QStringList &nameFilters = QStringList(),
                                    QDir::Filters filters = QDir::NoFilter,
                                    QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
                                    QObject *parent = nullptr);
-    ~DFMTraversalDirThread() override;
+    ~TraversalDirThread() override;
 
 Q_SIGNALS:
-    void updateChildren(const QList<QSharedPointer<DFMFileViewItem>> &children);
+    void updateChildren(const QList<QSharedPointer<FileViewItem>> &children);
 
-    // QThread interface
 protected:
     virtual void run() override;
-private:
-    //遍历的目录的url
-    QUrl m_dirUrl;
-    //当前遍历目录的diriterator
-    QSharedPointer<LocalDirIterator> m_dirIterator;
-    //当前遍历出来的所有文件
-    DThreadList<QSharedPointer<DFMFileViewItem>> m_childrenList;
+private:   
+    QUrl m_dirUrl; // 遍历的目录的url
+    QSharedPointer<LocalDirIterator> m_dirIterator; // 当前遍历目录的diriterator
+    DThreadList<QSharedPointer<FileViewItem>> m_childrenList; // 当前遍历出来的所有文件
 };
+DFMBASE_END_NAMESPACE
 
 #endif // DFMTRAVERSALDIRTHREAD_H

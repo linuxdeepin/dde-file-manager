@@ -36,7 +36,7 @@
 #include <QPushButton>
 
 DWIDGET_USE_NAMESPACE
-
+DFMBASE_USE_NAMESPACE
 DSB_FM_BEGIN_NAMESPACE
 
 class DFMBrowseWindowPrivate;
@@ -68,10 +68,10 @@ public:
     bool viewIsAdded(const QString &scheme);
 
     //设置左侧边栏
-    void setSidebar(DFMSideBar *sidebar);
+    void setSidebar(SideBar *sidebar);
 
     //获取左侧边栏
-    DFMSideBar* sidebar();
+    SideBar* sidebar();
 
     //设置地址栏
     void setAddressBar(DFMAddressBar *addressBar);

@@ -20,13 +20,11 @@
  */
 #include "sidebar.h"
 #include "sidebarview.h"
-#include "sidebarmanager.h"
 #include "sidebarmodel.h"
 #include "sidebaritemdelegate.h"
 #include "sidebaritem.h"
-
-#include "base/application.h"
-#include "base/dfmsettings.h"
+#include "services/dfm-business-services/dfm-filemanager-service/applicationservice/application.h"
+#include "services/dfm-business-services/dfm-filemanager-service/applicationservice/settings.h"
 #include "base/singleton.hpp"
 
 #include <DApplicationHelper>
@@ -42,15 +40,16 @@
 
 #define SIDEBAR_ITEMORDER_KEY "SideBar/ItemOrder"
 
-DFMSideBar::DFMSideBar(QWidget *parent)
+DFMBASE_BEGIN_NAMESPACE
+SideBar::SideBar(QWidget *parent)
     : QWidget(parent),
-      m_sidebarView(new DFMSideBarView(this)),
-      m_sidebarModel(new DFMSideBarModel(this))
+      m_sidebarView(new SideBarView(this)),
+      m_sidebarModel(new SideBarModel(this))
 {
 
     // init view.
     m_sidebarView->setModel(m_sidebarModel);
-    m_sidebarView->setItemDelegate(new DFMSideBarItemDelegate(m_sidebarView));
+    m_sidebarView->setItemDelegate(new SideBarItemDelegate(m_sidebarView));
     m_sidebarView->setViewportMargins(10, 0, m_sidebarView->verticalScrollBar()->sizeHint().width(), 0);
     m_sidebarView->setContextMenuPolicy(Qt::CustomContextMenu);
     m_sidebarView->setFrameShape(QFrame::Shape::NoFrame);
@@ -61,7 +60,7 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initConnection();
 }
 
-DFMSideBar::~DFMSideBar()
+SideBar::~SideBar()
 {
 #ifdef ENABLE_ASYNCINIT
     m_initDevThread.first = true;
@@ -69,22 +68,22 @@ DFMSideBar::~DFMSideBar()
 #endif
 }
 
-QAbstractItemView *DFMSideBar::view()
+QAbstractItemView *SideBar::view()
 {
     return m_sidebarView;
 }
 
-QRect DFMSideBar::groupGeometry(const QString &groupName)
+QRect SideBar::groupGeometry(const QString &groupName)
 {
     return  m_sidebarView->visualRect(groupModelIndex(groupName));
 }
 
-void DFMSideBar::scrollToGroup(const QString &groupName)
+void SideBar::scrollToGroup(const QString &groupName)
 {
     m_sidebarView->scrollTo(groupModelIndex(groupName));
 }
 
-void DFMSideBar::setCurrentUrl(const QUrl &url)
+void SideBar::setCurrentUrl(const QUrl &url)
 {
     int index = findItem(url, true);
     if (index != -1) {
@@ -94,7 +93,7 @@ void DFMSideBar::setCurrentUrl(const QUrl &url)
     }
 }
 
-int DFMSideBar::addItem(DFMSideBarItem *item, const QString &group)
+int SideBar::addItem(SideBarItem *item, const QString &group)
 {
     if (!item) {
         return 0;
@@ -106,7 +105,7 @@ int DFMSideBar::addItem(DFMSideBarItem *item, const QString &group)
     return lastAtGroup;
 }
 
-bool DFMSideBar::removeItem(const QUrl &url, const QString &group)
+bool SideBar::removeItem(const QUrl &url, const QString &group)
 {
     int index = findItem(url, group);
     bool succ = false;
@@ -117,15 +116,15 @@ bool DFMSideBar::removeItem(const QUrl &url, const QString &group)
     return succ;
 }
 
-int DFMSideBar::findItem(const DFMSideBarItem *item) const
+int SideBar::findItem(const SideBarItem *item) const
 {
     return m_sidebarModel->indexFromItem(item).row();
 }
 
-int DFMSideBar::findItem(const QUrl &url, const QString &group) const
+int SideBar::findItem(const QUrl &url, const QString &group) const
 {
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
-        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(i);
+        SideBarItem *item = m_sidebarModel->itemFromIndex(i);
         if (!dynamic_cast<DFMSideBarItemSeparator*>(item) && item->group() == group) {
             if (item->url() == url) {
                 return i;
@@ -141,10 +140,10 @@ int DFMSideBar::findItem(const QUrl &url, const QString &group) const
  *
  * \return the index of the item we can found, or -1 if not found.
  */
-int DFMSideBar::findItem(const QUrl &url, bool fuzzy/* = false*/) const
+int SideBar::findItem(const QUrl &url, bool fuzzy/* = false*/) const
 {
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
-        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(i);
+        SideBarItem *item = m_sidebarModel->itemFromIndex(i);
         if (!dynamic_cast<DFMSideBarItemSeparator*>(item)) {
             if (item->url() == url)
                 return i;
@@ -159,10 +158,10 @@ int DFMSideBar::findItem(const QUrl &url, bool fuzzy/* = false*/) const
     return -1;
 }
 
-int DFMSideBar::findItem(std::function<bool (const DFMSideBarItem *)> cb) const
+int SideBar::findItem(std::function<bool (const SideBarItem *)> cb) const
 {
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
-        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(i);
+        SideBarItem *item = m_sidebarModel->itemFromIndex(i);
         if (cb(item)) {
             return i;
         }
@@ -171,12 +170,12 @@ int DFMSideBar::findItem(std::function<bool (const DFMSideBarItem *)> cb) const
     return -1;
 }
 
-int DFMSideBar::findLastItem(const QString &group, bool sidebarItemOnly) const
+int SideBar::findLastItem(const QString &group, bool sidebarItemOnly) const
 {
     int index = -1;
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
-        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(i);
-        if (item->group() == group && (dynamic_cast<DFMSideBarItem*>(item) || !sidebarItemOnly)) {
+        SideBarItem *item = m_sidebarModel->itemFromIndex(i);
+        if (item->group() == group && (dynamic_cast<SideBarItem*>(item) || !sidebarItemOnly)) {
             index = i;
         } else if (item->group() != group && index != -1) {
             // already found the group and already leaved the group
@@ -187,27 +186,27 @@ int DFMSideBar::findLastItem(const QString &group, bool sidebarItemOnly) const
     return index;
 }
 
-void DFMSideBar::openItemEditor(int index) const
+void SideBar::openItemEditor(int index) const
 {
     m_sidebarView->edit(m_sidebarModel->index(index, 0));
 }
 
-QSet<QString> DFMSideBar::disableUrlSchemes() const
+QSet<QString> SideBar::disableUrlSchemes() const
 {
     return m_disableUrlSchemes;
 }
 
-void DFMSideBar::setContextMenuEnabled(bool enabled)
+void SideBar::setContextMenuEnabled(bool enabled)
 {
     m_contextMenuEnabled = enabled;
 }
 
-void DFMSideBar::setDisableUrlSchemes(const QSet<QString> &schemes)
+void SideBar::setDisableUrlSchemes(const QSet<QString> &schemes)
 {
     m_disableUrlSchemes += schemes;
     for (QString scheme : m_disableUrlSchemes) {
         Q_FOREVER {
-            int index = findItem([&](const DFMSideBarItem * item) -> bool {
+            int index = findItem([&](const SideBarItem * item) -> bool {
                 return item->url().scheme() == scheme;
             });
 
@@ -222,11 +221,11 @@ void DFMSideBar::setDisableUrlSchemes(const QSet<QString> &schemes)
     Q_EMIT disableUrlSchemesChanged();
 }
 
-QList<QUrl> DFMSideBar::savedItemOrder(const QString &groupName) const
+QList<QUrl> SideBar::savedItemOrder(const QString &groupName) const
 {
     QList<QUrl> list;
 
-    QStringList savedList = Application::genericSetting()->value(SIDEBAR_ITEMORDER_KEY, groupName).toStringList();
+    QStringList savedList = DSB_FM_NAMESPACE::Application::genericSetting()->value(SIDEBAR_ITEMORDER_KEY, groupName).toStringList();
     for (const QString &item : savedList) {
         list << QUrl(item);
     }
@@ -234,34 +233,34 @@ QList<QUrl> DFMSideBar::savedItemOrder(const QString &groupName) const
     return list;
 }
 
-void DFMSideBar::saveItemOrder(const QString &groupName) const
+void SideBar::saveItemOrder(const QString &groupName) const
 {
     QVariantList list;
 
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
-        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(m_sidebarModel->index(i, 0));
+        SideBarItem *item = m_sidebarModel->itemFromIndex(m_sidebarModel->index(i, 0));
         if (!dynamic_cast<DFMSideBarItemSeparator*>(item)
                 && item->group() == groupName) {
             list << QVariant(item->url());
         }
     }
 
-    Application::genericSetting()->setValue(SIDEBAR_ITEMORDER_KEY, groupName, list);
+    DSB_FM_NAMESPACE::Application::genericSetting()->setValue(SIDEBAR_ITEMORDER_KEY, groupName, list);
 }
 
-QString DFMSideBar::groupName(DFMSideBar::GroupName group)
+QString SideBar::groupName(SideBar::GroupName group)
 {
-    auto metaEnum = QMetaEnum::fromType<DFMSideBar::GroupName>();
+    auto metaEnum = QMetaEnum::fromType<SideBar::GroupName>();
     return metaEnum.valueToKey(group);
 }
 
-DFMSideBar::GroupName DFMSideBar::groupFromName(const QString &name)
+SideBar::GroupName SideBar::groupFromName(const QString &name)
 {
-    QMetaEnum groupEnum = QMetaEnum::fromType<DFMSideBar::GroupName>();
+    QMetaEnum groupEnum = QMetaEnum::fromType<SideBar::GroupName>();
 
     bool result = false;
 
-    DFMSideBar::GroupName enumKey = static_cast<DFMSideBar::GroupName>
+    SideBar::GroupName enumKey = static_cast<SideBar::GroupName>
             (groupEnum.keyToValue(name.toLatin1().data(), &result));
 
     if (!result) return Unknown;
@@ -269,16 +268,16 @@ DFMSideBar::GroupName DFMSideBar::groupFromName(const QString &name)
     return enumKey;
 }
 
-void DFMSideBar::onItemActivated(const QModelIndex &index)
+void SideBar::onItemActivated(const QModelIndex &index)
 {
-    DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
+    SideBarItem *item = m_sidebarModel->itemFromIndex(index);
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-    QUrl url = qvariant_cast<QUrl>(item->data(DFMSideBarItem::Roles::ItemUrlRole));
+    QUrl url = qvariant_cast<QUrl>(item->data(SideBarItem::Roles::ItemUrlRole));
     if (!url.isEmpty())
         Q_EMIT activatedItemUrl(url);
 }
 
-void DFMSideBar::onContextMenuRequested(const QPoint &pos)
+void SideBar::onContextMenuRequested(const QPoint &pos)
 {
     // block signals to avoid function reentrant.
     const QSignalBlocker blocker(this);
@@ -291,7 +290,7 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
         return;
     }
 
-    DFMSideBarItem *item = m_sidebarModel->itemFromIndex(modelIndex);
+    SideBarItem *item = m_sidebarModel->itemFromIndex(modelIndex);
     if (!item || dynamic_cast<DFMSideBarItemSeparator*>(item)) {
         return ; // separator should not show menu
     }
@@ -299,15 +298,15 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
     return;
 }
 
-void DFMSideBar::onRename(const QModelIndex &index, const QString &newName) const
+void SideBar::onRename(const QModelIndex &index, const QString &newName) const
 {
-    DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
+    SideBarItem *item = m_sidebarModel->itemFromIndex(index);
     if (!newName.isEmpty() && item->text() != newName) {
         item->setData(newName);
     }
 }
 
-void DFMSideBar::initUI()
+void SideBar::initUI()
 {
     // init layout.
     QVBoxLayout *layout = new QVBoxLayout(this);
@@ -322,15 +321,15 @@ void DFMSideBar::initUI()
     applySidebarColor();
 }
 
-void DFMSideBar::initModelData()
+void SideBar::initModelData()
 {
     qRegisterMetaTypeStreamOperators<QUrl>("QUrl");
 
-    static QList<DFMSideBar::GroupName> groups {
+    static QList<SideBar::GroupName> groups {
         GroupName::StandardPath
     };
 
-    Q_FOREACH (const DFMSideBar::GroupName &groupType, groups) {
+    Q_FOREACH (const SideBar::GroupName &groupType, groups) {
         auto separator = new DFMSideBarItemSeparator();
         separator->setGroup(groupName(groupType));
         m_sidebarModel->appendRow(separator);
@@ -340,36 +339,36 @@ void DFMSideBar::initModelData()
     updateSeparatorVisibleState();
 }
 
-void DFMSideBar::initConnection()
+void SideBar::initConnection()
 {
     // drag to delete bookmark or tag
-    connect(m_sidebarView, &DFMSideBarView::requestRemoveItem, this, [this]() {
-        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(m_sidebarView->currentIndex());
+    connect(m_sidebarView, &SideBarView::requestRemoveItem, this, [this]() {
+        SideBarItem *item = m_sidebarModel->itemFromIndex(m_sidebarView->currentIndex());
         if (item && item->flags().testFlag(Qt::ItemIsEnabled) && item->flags().testFlag(Qt::ItemIsDragEnabled)) {
 //            DFileService::instance()->deleteFiles(nullptr, QList<QUrl>{item->url()}, false);
         }
     });
 
     //resend to extensions
-    QObject::connect(m_sidebarView, &QListView::activated, this, &DFMSideBar::activateditemIndex);
+    QObject::connect(m_sidebarView, &QListView::activated, this, &SideBar::activateditemIndex);
 
     // we need single click also trigger activated()
-    connect(m_sidebarView, &QListView::clicked, this, &DFMSideBar::onItemActivated);
+    connect(m_sidebarView, &QListView::clicked, this, &SideBar::onItemActivated);
 
     // context menu
-    connect(m_sidebarView, &QListView::customContextMenuRequested, this, &DFMSideBar::onContextMenuRequested);
+    connect(m_sidebarView, &QListView::customContextMenuRequested, this, &SideBar::onContextMenuRequested);
 
     // so no extra separator if a group is empty.
     // since we do this, ensure we do initConnection() after initModelData().
-    connect(m_sidebarModel, &QStandardItemModel::rowsInserted, this, &DFMSideBar::updateSeparatorVisibleState);
-    connect(m_sidebarModel, &QStandardItemModel::rowsRemoved, this, &DFMSideBar::updateSeparatorVisibleState);
-    connect(m_sidebarModel, &QStandardItemModel::rowsMoved, this, &DFMSideBar::updateSeparatorVisibleState);
+    connect(m_sidebarModel, &QStandardItemModel::rowsInserted, this, &SideBar::updateSeparatorVisibleState);
+    connect(m_sidebarModel, &QStandardItemModel::rowsRemoved, this, &SideBar::updateSeparatorVisibleState);
+    connect(m_sidebarModel, &QStandardItemModel::rowsMoved, this, &SideBar::updateSeparatorVisibleState);
     // drag to move item will Q_EMIT rowsInserted and rowsMoved..
     connect(m_sidebarModel, &QStandardItemModel::rowsRemoved, this,
             [this](const QModelIndex & parent, int first, int last) {
         Q_UNUSED(parent);
         Q_UNUSED(last);
-        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(first);
+        SideBarItem *item = m_sidebarModel->itemFromIndex(first);
         if (!item) {
             item = m_sidebarModel->itemFromIndex(first - 1);
         }
@@ -379,9 +378,9 @@ void DFMSideBar::initConnection()
             saveItemOrder(item->group());
         }
     });
-    DFMSideBarItemDelegate *idelegate = dynamic_cast<DFMSideBarItemDelegate *>(m_sidebarView->itemDelegate());
+    SideBarItemDelegate *idelegate = dynamic_cast<SideBarItemDelegate *>(m_sidebarView->itemDelegate());
     if (idelegate) {
-        connect(idelegate, &DFMSideBarItemDelegate::rename, this, &DFMSideBar::onRename);
+        connect(idelegate, &SideBarItemDelegate::rename, this, &SideBar::onRename);
     }
 
     //    connect(fileSignalManager, &FileSignalManager::requestRename, this, [this](const DFMUrlBaseEvent & event) {
@@ -391,16 +390,16 @@ void DFMSideBar::initConnection()
     //    });
 }
 
-void DFMSideBar::applySidebarColor()
+void SideBar::applySidebarColor()
 {
     m_sidebarView->setBackgroundType(DStyledItemDelegate::BackgroundType(DStyledItemDelegate::RoundedBackground | DStyledItemDelegate::NoNormalState));
     m_sidebarView->setItemSpacing(0);
 }
 
-void DFMSideBar::updateSeparatorVisibleState()
+void SideBar::updateSeparatorVisibleState()
 {
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
-        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(i);
+        SideBarItem *item = m_sidebarModel->itemFromIndex(i);
         if (dynamic_cast<DFMSideBarItemSeparator*>(item)) {
             int currSeparatorRow = m_sidebarModel->indexFromItem(item).row();
             if (0 == currSeparatorRow) //分隔符首行屏蔽
@@ -411,8 +410,8 @@ void DFMSideBar::updateSeparatorVisibleState()
                 if (isSeparator) { //前节点是Separator 隐藏
                     m_sidebarView->setRowHidden(currSeparatorRow,true);
                 } else {
-                    auto perGroup = perItem->data(DFMSideBarItem::Roles::ItemGroupRole);
-                    auto currGroup = item->data(DFMSideBarItem::Roles::ItemGroupRole);
+                    auto perGroup = perItem->data(SideBarItem::Roles::ItemGroupRole);
+                    auto currGroup = item->data(SideBarItem::Roles::ItemGroupRole);
                     if (perGroup == currGroup)//同分组分割隐藏
                         m_sidebarView->setRowHidden(currSeparatorRow,true);
                 }
@@ -421,7 +420,7 @@ void DFMSideBar::updateSeparatorVisibleState()
     }
 }
 
-void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
+void SideBar::addGroupItems(SideBar::GroupName groupType)
 {
 //    const QString &groupNameStr = groupName(groupType);
 //    switch (groupType) {
@@ -439,7 +438,7 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
 //    }
 }
 
-void DFMSideBar::insertItem(int index, DFMSideBarItem *item, const QString &groupName)
+void SideBar::insertItem(int index, SideBarItem *item, const QString &groupName)
 {
     if (!item) {
         return;
@@ -455,17 +454,17 @@ void DFMSideBar::insertItem(int index, DFMSideBarItem *item, const QString &grou
  * location by the given group name. For that (find group location and append item)
  * purpose, use addItem() instead.
  */
-void DFMSideBar::appendItem(DFMSideBarItem *item, const QString &groupName)
+void SideBar::appendItem(SideBarItem *item, const QString &groupName)
 {
     item->setGroup(groupName);
     m_sidebarModel->appendRow(item);
 }
 
-void DFMSideBar::appendItemWithOrder(QList<DFMSideBarItem *> &list, const QList<QUrl> &order, const QString &groupName)
+void SideBar::appendItemWithOrder(QList<SideBarItem *> &list, const QList<QUrl> &order, const QString &groupName)
 {
     QList<QUrl> urlList;
 
-    for (const DFMSideBarItem *item : list) {
+    for (const SideBarItem *item : list) {
         urlList << item->url();
     }
 
@@ -477,7 +476,7 @@ void DFMSideBar::appendItemWithOrder(QList<DFMSideBarItem *> &list, const QList<
         }
     }
 
-    for (DFMSideBarItem *item : list) {
+    for (SideBarItem *item : list) {
         this->appendItem(item, groupName);
     }
 }
@@ -487,12 +486,12 @@ void DFMSideBar::appendItemWithOrder(QList<DFMSideBarItem *> &list, const QList<
  *
  * \return the the model-index of the groupNname we can found, or invalid-model-index if not found.
  */
-QModelIndex DFMSideBar::groupModelIndex(const QString &groupName)
+QModelIndex SideBar::groupModelIndex(const QString &groupName)
 {
     return m_sidebarModel->index(findLastItem(groupName), 0, m_sidebarView->rootIndex());
 }
 
-void DFMSideBar::changeEvent(QEvent *event)
+void SideBar::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::PaletteChange) {
         applySidebarColor();
@@ -501,4 +500,4 @@ void DFMSideBar::changeEvent(QEvent *event)
     return QWidget::changeEvent(event);
 }
 
-
+DFMBASE_END_NAMESPACE

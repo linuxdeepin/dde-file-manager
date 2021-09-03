@@ -25,7 +25,8 @@
 #ifndef FILEINFO_H
 #define FILEINFO_H
 
-#include "dfm-base/shutil/dmimedatabase.h"
+#include "dfm-base/dfm_base_global.h"
+#include "dfm-base/shutil/mimedatabase.h"
 #include "dfm-base/base/abstractfileinfo.h"
 
 #include <QIcon>
@@ -33,6 +34,7 @@
 #include <QMimeType>
 #include <QMimeDatabase>
 
+DFMBASE_BEGIN_NAMESPACE
 class LocalFileInfoPrivate;
 class LocalFileInfo : public AbstractFileInfo
 {
@@ -76,7 +78,7 @@ public:
     virtual DFMEmblemInfos emblems() const;
     virtual void setIcon(const QIcon &icon);
     virtual QIcon icon() const;
-    virtual DMimeDatabase::FileType fileType() const;
+    virtual MimeDatabase::FileType fileType() const;
     virtual QString linkTargetPath() const;
     virtual int countChildFile() const;
     virtual QString sizeFormat() const;
@@ -91,7 +93,7 @@ protected:
     explicit LocalFileInfo(const QString &filePath);
     explicit LocalFileInfo(const QFileInfo &fileInfo);
 };
-
-typedef QSharedPointer<LocalFileInfo> DFMLocalFileInfoPointer;
+DFMBASE_END_NAMESPACE
+typedef QSharedPointer<DFMBASE_NAMESPACE::LocalFileInfo> DFMLocalFileInfoPointer;
 
 #endif // FILEINFO_H

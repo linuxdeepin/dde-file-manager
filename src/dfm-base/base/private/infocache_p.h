@@ -28,6 +28,7 @@
 #include <QMutex>
 #include <QTimer>
 
+DFMBASE_BEGIN_NAMESPACE
 class InfoCachePrivate
 {
     Q_DECLARE_PUBLIC(InfoCache)
@@ -45,5 +46,6 @@ public:
     QTimer needRemoveTimer; // 需要加入待移除缓存的计时器
     QTimer removeTimer; // 移除缓存的
 };
+DFMBASE_END_NAMESPACE
 
 #endif // INFOCACHE_P_H

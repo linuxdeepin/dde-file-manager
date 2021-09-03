@@ -20,13 +20,14 @@
  */
 #include "headerview.h"
 
-DFMHeaderView::DFMHeaderView(Qt::Orientation orientation, QWidget *parent)
+DFMBASE_BEGIN_NAMESPACE
+HeaderView::HeaderView(Qt::Orientation orientation, QWidget *parent)
     : QHeaderView(orientation, parent)
 {
 
 }
 
-QSize DFMHeaderView::sizeHint() const
+QSize HeaderView::sizeHint() const
 {
     QSize size = QHeaderView::sizeHint();
 
@@ -35,16 +36,17 @@ QSize DFMHeaderView::sizeHint() const
     return size;
 }
 
-void DFMHeaderView::mouseReleaseEvent(QMouseEvent *e)
+void HeaderView::mouseReleaseEvent(QMouseEvent *e)
 {
     Q_EMIT mouseReleased();
 
     return QHeaderView::mouseReleaseEvent(e);
 }
 
-void DFMHeaderView::resizeEvent(QResizeEvent *e)
+void HeaderView::resizeEvent(QResizeEvent *e)
 {
     Q_EMIT viewResized();
 
     return QHeaderView::resizeEvent(e);
 }
+DFMBASE_END_NAMESPACE

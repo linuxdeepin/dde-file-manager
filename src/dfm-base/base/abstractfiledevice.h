@@ -27,6 +27,7 @@
 
 #include <QIODevice>
 
+DFMBASE_BEGIN_NAMESPACE
 class AbstractFileDevicePrivate;
 class AbstractFileDevice : public QIODevice
 {
@@ -53,5 +54,6 @@ protected:
     QScopedPointer<AbstractFileDevicePrivate> d_ptr;
     explicit AbstractFileDevice(AbstractFileDevicePrivate &dd);
 };
+DFMBASE_END_NAMESPACE
 
 #endif // DABSTRACTFILEDEVICE_H

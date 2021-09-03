@@ -31,9 +31,10 @@
 #include <QObject>
 #include <QWidget>
 
+DFMBASE_USE_NAMESPACE
 DSB_FM_BEGIN_NAMESPACE
 
-class DFMBrowseView : public DFMFileView, public DFMDisplayViewLogic
+class DFMBrowseView : public FileView, public DFMDisplayViewLogic
 {
     Q_OBJECT
 

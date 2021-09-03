@@ -57,7 +57,7 @@ class DFMBrowseWindowPrivate : public QObject
     Q_DECLARE_PUBLIC(DFMBrowseWindow)
     DFMBrowseWindow * const q_ptr;
 
-    DFMSideBar* m_sidebar = nullptr;           //左侧边栏
+    SideBar* m_sidebar = nullptr;           //左侧边栏
 
     QFrame *m_titleBar = nullptr;              //标题栏
     QHBoxLayout *m_titleBarLayout = nullptr;   //标题栏布局
@@ -117,8 +117,8 @@ public:
     QWidget *propertyView() const;
     void setPropertyView(QWidget *propertyView);
 
-    DFMSideBar *sidebar() const;
-    void setSidebar(DFMSideBar *sidebar);
+    SideBar *sidebar() const;
+    void setSidebar(SideBar *sidebar);
 
     DFMAddressBar *addressBar() const;
     void setAddressBar(DFMAddressBar *addressBar);

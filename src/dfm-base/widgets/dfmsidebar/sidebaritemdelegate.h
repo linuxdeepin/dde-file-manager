@@ -25,12 +25,12 @@
 #include <DStyledItemDelegate>
 
 DWIDGET_USE_NAMESPACE
-
-class DFMSideBarItemDelegate : public DStyledItemDelegate
+DFMBASE_BEGIN_NAMESPACE
+class SideBarItemDelegate : public DStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit DFMSideBarItemDelegate(QAbstractItemView *parent = nullptr);
+    explicit SideBarItemDelegate(QAbstractItemView *parent = nullptr);
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
@@ -50,3 +50,4 @@ private:
     void paintSeparator(QPainter *painter, const QStyleOptionViewItem &option) const;
 
 };
+DFMBASE_END_NAMESPACE

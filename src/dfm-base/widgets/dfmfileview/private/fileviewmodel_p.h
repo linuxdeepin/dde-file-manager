@@ -23,7 +23,6 @@
 #define FILEVIEWMODEL_P_H
 
 #include "shutil/fileutils.h"
-#include "shutil/dfmfilelistfile.h"
 #include "widgets/dfmfileview/fileviewmodel.h"
 #include "widgets/dfmfileview/private/traversaldirthread.h"
 #include "dfm-base/utils/threadcontainer.hpp"
@@ -31,6 +30,7 @@
 #include <QReadWriteLock>
 #include <QQueue>
 
+DFMBASE_BEGIN_NAMESPACE
 class FileViewModelPrivate
 {
     FileViewModel * q_ptr;
@@ -44,14 +44,15 @@ public:
     ~FileViewModelPrivate();
 
 private:
-    DThreadList<QSharedPointer<DFMFileViewItem>> childers;
-    QSharedPointer<DFMFileViewItem> root;
+    DThreadList<QSharedPointer<FileViewItem>> childers;
+    QSharedPointer<FileViewItem> root;
     int column = 0;
 
     AbstractFileWatcherPointer watcher;
-    QSharedPointer<DFMTraversalDirThread> traversalThread;
+    QSharedPointer<TraversalDirThread> traversalThread;
 
     Q_DECLARE_PUBLIC(FileViewModel)
 };
+DFMBASE_END_NAMESPACE
 
 #endif // FILEVIEWMODEL_P_H

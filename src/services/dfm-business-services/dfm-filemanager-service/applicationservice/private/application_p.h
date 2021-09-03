@@ -21,11 +21,12 @@
 #ifndef APPLICATION_P_H
 #define APPLICATION_P_H
 
-#include "dfm-base/dfm_base_global.h"
+#include "services/dfm-business-services/dfm-filemanager-service/dfm_filemanager_service_global.h"
 
 #include <QString>
 #include <QVariant>
 
+DSB_FM_BEGIN_NAMESPACE
 class Application;
 class ApplicationPrivate
 {
@@ -37,5 +38,5 @@ public:
 
     static Application *self;
 };
-
+DSB_FM_END_NAMESPACE
 #endif // APPLICATION_P_H

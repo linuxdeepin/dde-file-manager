@@ -26,6 +26,7 @@
 #define ABSTRACTFILEINFO_H
 
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include <QFileInfo>
 #include <QDateTime>
@@ -33,6 +34,7 @@
 
 #include <dfm-io/core/dfileinfo.h>
 
+DFMBASE_BEGIN_NAMESPACE
 class AbstractFileInfoPrivate;
 class AbstractFileInfo: public QSharedData
 {
@@ -127,9 +129,10 @@ public:
     virtual QDateTime lastRead() const;
     virtual QDateTime fileTime(QFile::FileTime time) const;
 };
+DFMBASE_END_NAMESPACE
 
-typedef QSharedPointer<AbstractFileInfo> AbstractFileInfoPointer;
-
+typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> AbstractFileInfoPointer;
 Q_DECLARE_METATYPE(AbstractFileInfoPointer)
+
 
 #endif // ABSTRACTFILEINFO_H

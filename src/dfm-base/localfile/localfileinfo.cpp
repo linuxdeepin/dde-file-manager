@@ -26,9 +26,8 @@
 #include "private/localfileinfo_p.h"
 #include "base/urlroute.h"
 #include "shutil/fileutils.h"
-#include "localfile/filecontroller.h"
 #include "dfileiconprovider.h"
-#include "base/application.h"
+#include "services/dfm-business-services/dfm-filemanager-service/applicationservice/application.h"
 #include "base/standardpaths.h"
 
 #include <QDateTime>
@@ -47,7 +46,7 @@
  * \class LocalFileInfo 本地文件信息类
  * \brief 内部实现本地文件的fileinfo，对应url的scheme是file://
  */
-
+DFMBASE_BEGIN_NAMESPACE
 LocalFileInfo::LocalFileInfo()
     :d_ptr(new LocalFileInfoPrivate(this))
 {
@@ -94,7 +93,7 @@ LocalFileInfo& LocalFileInfo::operator =(const LocalFileInfo &info)
  */
 bool LocalFileInfo::isBlockDev() const
 {
-    return fileType() == DMimeDatabase::FileType::BlockDevice;
+    return fileType() == MimeDatabase::FileType::BlockDevice;
 }
 /*!
  * \brief mountPath 获取挂载路径
@@ -113,7 +112,7 @@ QString LocalFileInfo::mountPath() const
  */
 bool LocalFileInfo::isCharDev() const
 {
-    return fileType() == DMimeDatabase::FileType::CharDevice;
+    return fileType() == MimeDatabase::FileType::CharDevice;
 }
 /*!
  * \brief isFifo 获取当前是否为管道文件
@@ -122,7 +121,7 @@ bool LocalFileInfo::isCharDev() const
  */
 bool LocalFileInfo::isFifo() const
 {
-    return fileType() == DMimeDatabase::FileType::FIFOFile;
+    return fileType() == MimeDatabase::FileType::FIFOFile;
 }
 /*!
  * \brief isSocket 获取当前是否为套接字文件
@@ -131,7 +130,7 @@ bool LocalFileInfo::isFifo() const
  */
 bool LocalFileInfo::isSocket() const
 {
-    return fileType() == DMimeDatabase::FileType::SocketFile;
+    return fileType() == MimeDatabase::FileType::SocketFile;
 }
 /*!
  * \brief isRegular 获取当前是否是常规文件(与isFile一致)
@@ -140,7 +139,7 @@ bool LocalFileInfo::isSocket() const
  */
 bool LocalFileInfo::isRegular() const
 {
-    return fileType() == DMimeDatabase::FileType::RegularFile;
+    return fileType() == MimeDatabase::FileType::RegularFile;
 }
 /*!
  * \brief isRegular 设置自定义角标信息
@@ -205,18 +204,18 @@ QIcon LocalFileInfo::icon() const
  *
  * \return DMimeDatabase::FileType 文件设备类型
  */
-DMimeDatabase::FileType LocalFileInfo::fileType() const
+MimeDatabase::FileType LocalFileInfo::fileType() const
 {
     // fix bug#52950 【专业版1030】【文管5.2.0.72】回收站删除指向块设备的链接文件时，删除失败
     // QT_STATBUF判断链接文件属性时，判断的是指向文件的属性，使用QFileInfo判断
     Q_D(const LocalFileInfo);
-    if (d->m_cacheFileType != DMimeDatabase::FileType::Unknown)
+    if (d->m_cacheFileType != MimeDatabase::FileType::Unknown)
         return d->m_cacheFileType;
 
     QString absoluteFilePath = filePath();
     if (absoluteFilePath.startsWith(StandardPaths::location(StandardPaths::TrashFilesPath))
             && isSymLink()) {
-        d->m_cacheFileType = DMimeDatabase::FileType::RegularFile;
+        d->m_cacheFileType = MimeDatabase::FileType::RegularFile;
         return d->m_cacheFileType;
     }
 
@@ -226,22 +225,22 @@ DMimeDatabase::FileType LocalFileInfo::fileType() const
     QT_STATBUF statBuffer;
     if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
         if (S_ISDIR(statBuffer.st_mode))
-            d->m_cacheFileType = DMimeDatabase::FileType::Directory;
+            d->m_cacheFileType = MimeDatabase::FileType::Directory;
 
         else if (S_ISCHR(statBuffer.st_mode))
-            d->m_cacheFileType = DMimeDatabase::FileType::CharDevice;
+            d->m_cacheFileType = MimeDatabase::FileType::CharDevice;
 
         else if (S_ISBLK(statBuffer.st_mode))
-            d->m_cacheFileType = DMimeDatabase::FileType::BlockDevice;
+            d->m_cacheFileType = MimeDatabase::FileType::BlockDevice;
 
         else if (S_ISFIFO(statBuffer.st_mode))
-            d->m_cacheFileType = DMimeDatabase::FileType::FIFOFile;
+            d->m_cacheFileType = MimeDatabase::FileType::FIFOFile;
 
         else if (S_ISSOCK(statBuffer.st_mode))
-            d->m_cacheFileType = DMimeDatabase::FileType::SocketFile;
+            d->m_cacheFileType = MimeDatabase::FileType::SocketFile;
 
         else if (S_ISREG(statBuffer.st_mode))
-            d->m_cacheFileType = DMimeDatabase::FileType::RegularFile;
+            d->m_cacheFileType = MimeDatabase::FileType::RegularFile;
     }
 
     return d->m_cacheFileType;
@@ -376,3 +375,5 @@ quint64 LocalFileInfo::inode() const
 
     return d->inode;
 }
+
+DFMBASE_END_NAMESPACE

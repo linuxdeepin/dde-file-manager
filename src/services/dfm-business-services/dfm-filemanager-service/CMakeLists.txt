@@ -41,12 +41,25 @@ set(windowservice_h
     windowservice/crumbmodel.h
     )
 
+set(applicationservice_cpp
+    applicationservice/application.cpp
+    applicationservice/settings.cpp
+    )
+
+set(applicationservice_h
+    applicationservice/application.h
+    applicationservice/private/application_p.h
+    applicationservice/settings.h
+    )
+
 add_library(
     ${PROJECT_NAME}
     SHARED
     ${${PROJECT_NAME}_global_h}
     ${windowservice_h}
     ${windowservice_cpp}
+    ${applicationservice_h}
+    ${applicationservice_cpp}
     )
 
 target_link_libraries(

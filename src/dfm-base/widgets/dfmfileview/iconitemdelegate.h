@@ -21,10 +21,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DFMICONITEMDELEGATE_H
-#define DFMICONITEMDELEGATE_H
+#ifndef ICONITEMDELEGATE_H
+#define ICONITEMDELEGATE_H
 
 #include "styleditemdelegate.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include <QPointer>
 #include <QMutex>
@@ -34,8 +35,9 @@ QT_BEGIN_NAMESPACE
 class QTextDocument;
 QT_END_NAMESPACE
 
-class DFMIconItemDelegatePrivate;
-class DFMIconItemDelegate : public DFMStyledItemDelegate
+DFMBASE_BEGIN_NAMESPACE
+class IconItemDelegatePrivate;
+class IconItemDelegate : public StyledItemDelegate
 {
     Q_OBJECT
 
@@ -43,8 +45,8 @@ class DFMIconItemDelegate : public DFMStyledItemDelegate
     Q_PROPERTY(bool enabledTextShadow READ enabledTextShadow WRITE setEnabledTextShadow)
 
 public:
-    explicit DFMIconItemDelegate(DListView *parent);
-    ~DFMIconItemDelegate() override;
+    explicit IconItemDelegate(DListView *parent);
+    ~IconItemDelegate() override;
 
     void paint(QPainter *painter,
                const QStyleOptionViewItem &option,
@@ -84,12 +86,6 @@ protected:
 
     bool eventFilter(QObject *object, QEvent *event) override;
 
-//    QList<QRectF> drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout,
-//                           const QRectF &boundingRect, qreal radius, const QBrush &background,
-//                           QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
-//                           Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
-//                           const QColor &shadowColor = QColor()) const;
-
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
 private:
@@ -99,9 +95,10 @@ private:
     QMutex m_mutex; //析构和构造索
     QWindow* m_focusWindow = nullptr;
 
-    Q_DECLARE_PRIVATE(DFMIconItemDelegate)
+    Q_DECLARE_PRIVATE(IconItemDelegate)
 
     friend class ExpandedItem;
 };
+DFMBASE_END_NAMESPACE
 
 #endif // DFMICONITEMDELEGATE_H

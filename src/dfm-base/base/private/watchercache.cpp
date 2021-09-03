@@ -26,7 +26,7 @@
 
 #include <QSharedPointer>
 
-
+DFMBASE_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(WatcherCache,_watcherCacheManager)
 
 /*!
@@ -117,3 +117,4 @@ void WatcherCache::removCacheWatcher(const QUrl &url)
 
     d->watchers.remove(url);
 }
+DFMBASE_END_NAMESPACE

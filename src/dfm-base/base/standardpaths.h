@@ -25,11 +25,14 @@
 #ifndef STANDARDPATHS_H
 #define STANDARDPATHS_H
 
+#include "dfm-base/dfm_base_global.h"
+
 #include <QObject>
 #include <QString>
 #include <QStandardPaths>
 
 class QUrl;
+DFMBASE_BEGIN_NAMESPACE
 class StandardPaths
 {
 public:
@@ -81,5 +84,6 @@ public:
 private:
     StandardPaths();
 };
+DFMBASE_END_NAMESPACE
 
 #endif // STANDARDPATHS_H

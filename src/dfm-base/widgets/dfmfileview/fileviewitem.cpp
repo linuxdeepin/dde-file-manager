@@ -22,44 +22,45 @@
 #include "fileviewitem.h"
 #include "shutil/fileutils.h"
 
-DFMFileViewItem::DFMFileViewItem()
+DFMBASE_USE_NAMESPACE
+FileViewItem::FileViewItem()
 {
 
 }
 
-DFMFileViewItem::DFMFileViewItem(const QUrl &url)
+FileViewItem::FileViewItem(const QUrl &url)
 {
     setUrl(url);
 }
 
-void DFMFileViewItem::refresh(){
+void FileViewItem::refresh(){
     if(!m_fileinfo.isNull())
         m_fileinfo->refresh();
-    m_mimeType = DMimeDatabase::mimeTypeForUrl(m_fileinfo->url());
+    m_mimeType = MimeDatabase::mimeTypeForUrl(m_fileinfo->url());
 }
 
-QUrl DFMFileViewItem::url() const
+QUrl FileViewItem::url() const
 {
     return QStandardItem::data(Roles::ItemUrlRole).toUrl();
 }
 
-void DFMFileViewItem::setUrl(const QUrl url)
+void FileViewItem::setUrl(const QUrl url)
 {
     setData(QVariant(url),Roles::ItemUrlRole);
     m_fileinfo = InfoFactory::instance().create<AbstractFileInfo>(url);
-    m_mimeType = DMimeDatabase::mimeTypeForUrl(url);
+    m_mimeType = MimeDatabase::mimeTypeForUrl(url);
 
     setData(QVariant(QIcon::fromTheme(m_mimeType.iconName())),ItemIconRole);
     setData(QVariant(m_fileinfo->fileName()),ItemNameRole);
 }
 
-QMimeType DFMFileViewItem::mimeType() const
+QMimeType FileViewItem::mimeType() const
 {
     return m_mimeType;
 }
 
 
-QVariant DFMFileViewItem::data(int role) const
+QVariant FileViewItem::data(int role) const
 {
     if (m_fileinfo.isNull())
         return QVariant();

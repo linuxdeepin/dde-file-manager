@@ -26,6 +26,7 @@
 
 #include <QUrl>
 
+DFMBASE_BEGIN_NAMESPACE
 class AbstractFileDevicePrivate
 {
 public:
@@ -37,5 +38,6 @@ public:
 
     Q_DECLARE_PUBLIC(AbstractFileDevice)
 };
+DFMBASE_END_NAMESPACE
 
 #endif // ABSTRACTFILEDEVICE_P_H

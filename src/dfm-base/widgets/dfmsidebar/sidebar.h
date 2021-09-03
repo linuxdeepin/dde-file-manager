@@ -18,8 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
+#ifndef SIDEBAR_H
+#define SIDEBAR_H
 
+#include "dfm-base/dfm_base_global.h"
 #include "dfm-base/base/abstractfileinfo.h"
 #include "dfm-base/dfm_base_global.h"
 
@@ -30,10 +32,11 @@
 #include <QMenu>
 #include <QAbstractItemView>
 
-class DFMSideBarView;
-class DFMSideBarModel;
-class DFMSideBarItem;
-class DFMSideBar : public QWidget
+DFMBASE_BEGIN_NAMESPACE
+class SideBarView;
+class SideBarModel;
+class SideBarItem;
+class SideBar : public QWidget
 {
     Q_OBJECT
 public:
@@ -42,8 +45,8 @@ public:
         StandardPath
     };Q_ENUM(GroupName)
 
-    explicit DFMSideBar(QWidget *parent = nullptr);
-    virtual ~DFMSideBar() override;
+    explicit SideBar(QWidget *parent = nullptr);
+    virtual ~SideBar() override;
     QAbstractItemView *view(); // return m_sidebarView
 
     QRect groupGeometry(const QString &groupName);
@@ -51,12 +54,12 @@ public:
 
     void setCurrentUrl(const QUrl &url);
 
-    int addItem(DFMSideBarItem *item, const QString &group);
+    int addItem(SideBarItem *item, const QString &group);
     bool removeItem(const QUrl &url, const QString &group);
-    int findItem(const DFMSideBarItem *item) const;
+    int findItem(const SideBarItem *item) const;
     int findItem(const QUrl &url, const QString &group) const;
     int findItem(const QUrl &url, bool fuzzy = false) const;
-    int findItem(std::function<bool(const DFMSideBarItem *item)> cb) const; // cb return true to get the index
+    int findItem(std::function<bool(const SideBarItem *item)> cb) const; // cb return true to get the index
     int findLastItem(const QString &group, bool sidebarItemOnly = true) const;
     void openItemEditor(int index) const;
     QSet<QString> disableUrlSchemes() const;
@@ -87,16 +90,16 @@ private:
     void applySidebarColor();
     void updateSeparatorVisibleState();
     void addGroupItems(GroupName groupType);
-    void insertItem(int index, DFMSideBarItem *item, const QString &groupName);
-    void appendItem(DFMSideBarItem *item, const QString &groupName);
-    void appendItemWithOrder(QList<DFMSideBarItem *> &list, const QList<QUrl> &order, const QString &groupName);
+    void insertItem(int index, SideBarItem *item, const QString &groupName);
+    void appendItem(SideBarItem *item, const QString &groupName);
+    void appendItemWithOrder(QList<SideBarItem *> &list, const QList<QUrl> &order, const QString &groupName);
 
     QModelIndex groupModelIndex(const QString &groupName);
 
     void changeEvent(QEvent *event) override;
 
-    DFMSideBarView *m_sidebarView;
-    DFMSideBarModel *m_sidebarModel;
+    SideBarView *m_sidebarView;
+    SideBarModel *m_sidebarModel;
     bool m_contextMenuEnabled = true;
     QList<QUrl> devitems;
     QSet<QString> m_disableUrlSchemes;
@@ -105,5 +108,9 @@ private:
     QPair<bool,QFuture<void>> m_initDevThread; //初始化initDeviceConnection线程，first为是否强制结束线程
 #endif
 };
+
+DFMBASE_END_NAMESPACE
+
+#endif // SIDEBAR_H
 
 

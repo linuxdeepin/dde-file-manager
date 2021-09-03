@@ -22,19 +22,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//fixed:CD display size error
-
-#include "fileutils.h"
-//#include "localfile/dfileservices.h"
-
+#include "shutil/fileutils.h"
 #include "base/singleton.hpp"
 #include "base/standardpaths.h"
 #include "base/urlroute.h"
 #include "base/abstractfileinfo.h"
-
 #include "localfile/localfileinfo.h"
-#include "shutil/dmimedatabase.h"
-//#include "mimesappsmanager.h"
+#include "shutil/mimedatabase.h"
 
 #include <DRecentManager>
 
@@ -68,8 +62,7 @@ extern "C" {
 }
 #define signals public
 
-//DCORE_USE_NAMESPACE
-
+DFMBASE_BEGIN_NAMESPACE
 QString FileUtils::XDG_RUNTIME_DIR = "";
 QStringList FileUtils::CURRENT_ISGVFSFILE_PATH;
 
@@ -92,7 +85,6 @@ bool FileUtils::removeRecurse(const QString &path, const QString &name)
 
     // List of files that will be deleted
     QStringList files;
-
     // If given file is a directory, collect all children of given directory
     if (file.isDir()) {
         QDirIterator it(url, QDir::AllEntries | QDir::System |
@@ -330,8 +322,8 @@ bool FileUtils::isArchive(const QString &path)
 {
     QFileInfo f(path);
     if (f.exists()) {
-        return DMimeDatabase::supportMimeFileType(DMimeDatabase::Archives)
-                .contains(DMimeDatabase::mimeTypeForFile(f).name());
+        return MimeDatabase::supportMimeFileType(MimeDatabase::Archives)
+                .contains(MimeDatabase::mimeTypeForFile(f).name());
     } else {
         return false;
     }
@@ -1523,62 +1515,6 @@ QMap<QString, QString> FileUtils::getKernelParameters()
     return result;
 }
 
-//DFMGlobal::MenuExtension FileUtils::getMenuExtension(const QList<QUrl> &urlList)
-//{
-//    int fileCount = 0;
-//    int dirCount = 0;
-//    Q_FOREACH (QUrl url, urlList) {
-//        QFileInfo info(url.toLocalFile());
-//        if (info.isDir()) {
-//            dirCount += 1;
-//        } else if (info.isFile()) {
-//            fileCount += 1;
-//        }
-//    }
-//    if (urlList.count() == 0) {
-//        return DFMGlobal::MenuExtension::EmptyArea;
-//    } else if (fileCount == 1 && dirCount == 0 && fileCount == urlList.count()) {
-//        return DFMGlobal::MenuExtension::SingleFile;
-//    } else if (fileCount > 1 && dirCount == 0 && fileCount == urlList.count()) {
-//        return DFMGlobal::MenuExtension::MultiFiles;
-//    } else if (fileCount == 0 && dirCount == 1 && dirCount == urlList.count()) {
-//        return DFMGlobal::MenuExtension::SingleDir;
-//    } else if (fileCount == 0 && dirCount > 1 && dirCount == urlList.count()) {
-//        return DFMGlobal::MenuExtension::MultiDirs;
-//    } else if (urlList.count() > 1) {
-//        return DFMGlobal::MenuExtension::MultiFileDirs;
-//    } else {
-//        return DFMGlobal::MenuExtension::UnknowMenuExtension;
-//    }
-//}
-
-//bool FileUtils::isGvfsMountFile(const QString &filePath, const bool &isEx)
-//{
-//    if (filePath.isEmpty())
-//        return false;
-//    //在获取是否是gvfs文件时，先缓存这个filepath，多线程访问时，判断线程是否访问的同一个文件
-//    static QMutex mutex;
-//    mutex.lock();
-//    bool iscontains = CURRENT_ISGVFSFILE_PATH.contains(filePath);
-//    mutex.unlock();
-//    while (iscontains) {
-//        QThread::msleep(10);
-//        mutex.lock();
-//        iscontains = CURRENT_ISGVFSFILE_PATH.contains(filePath);
-//        mutex.unlock();
-//    }
-//    mutex.lock();
-//    CURRENT_ISGVFSFILE_PATH.push_back(filePath);
-//    mutex.unlock();
-
-//    bool isgvfsfile = !DStorageInfo::isLocalDevice(filePath, isEx);
-//    //移除缓存
-//    mutex.lock();
-//    CURRENT_ISGVFSFILE_PATH.removeOne(filePath);
-//    mutex.unlock();
-//    return isgvfsfile;
-//}
-
 bool FileUtils::isFileExists(const QString &filePath)
 {
     GFile *file;
@@ -1759,19 +1695,19 @@ qint32 FileUtils::getCpuProcessCount()
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
 bool FileUtils::isDesktopFile(const QString &filePath)
 {
-    QMimeType mt = DMimeDatabase::mimeTypeForFile(filePath);
+    QMimeType mt = MimeDatabase::mimeTypeForFile(filePath);
     return mt.name() == "application/x-desktop" && mt.suffixes().contains("desktop", Qt::CaseInsensitive);
 }
 
 bool FileUtils::isDesktopFile(const QFileInfo &fileInfo)
 {
-    QMimeType mt = DMimeDatabase::mimeTypeForFile(fileInfo);
+    QMimeType mt = MimeDatabase::mimeTypeForFile(fileInfo);
     return mt.name() == "application/x-desktop" && mt.suffixes().contains("desktop", Qt::CaseInsensitive);
 }
 
 bool FileUtils::isDesktopFile(const QString &filePath, QMimeType &mimetype)
 {
-    QMimeType mt = DMimeDatabase::mimeTypeForFile(filePath, QMimeDatabase::MatchExtension);
+    QMimeType mt = MimeDatabase::mimeTypeForFile(filePath, QMimeDatabase::MatchExtension);
     mimetype = mt;
     return mt.name() == "application/x-desktop" &&
             mt.suffixes().contains("desktop", Qt::CaseInsensitive);
@@ -1779,9 +1715,11 @@ bool FileUtils::isDesktopFile(const QString &filePath, QMimeType &mimetype)
 
 bool FileUtils::isDesktopFile(const QFileInfo &fileInfo, QMimeType &mimetyp)
 {
-    QMimeType mt = DMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
+    QMimeType mt = MimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
     mimetyp = mt;
     return mt.name() == "application/x-desktop" &&
             mt.suffixes().contains("desktop", Qt::CaseInsensitive);
 
 }
+
+DFMBASE_END_NAMESPACE

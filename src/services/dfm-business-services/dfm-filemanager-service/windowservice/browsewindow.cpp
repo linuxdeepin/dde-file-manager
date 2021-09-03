@@ -58,12 +58,12 @@ bool DFMBrowseWindow::viewIsAdded(const QString &scheme)
     return d->viewIsAdded(scheme);
 }
 
-void DFMBrowseWindow::setSidebar(DFMSideBar *sidebar)
+void DFMBrowseWindow::setSidebar(SideBar *sidebar)
 {
     return d->setSidebar(sidebar);
 }
 
-DFMSideBar *DFMBrowseWindow::sidebar()
+SideBar *DFMBrowseWindow::sidebar()
 {
     return d->sidebar();
 }

@@ -19,31 +19,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "sidebaritem.h"
-#include "sidebarmanager.h"
 #include "base/standardpaths.h"
 
 #include <QObject>
 #include <QVariant>
-
-DFMSideBarItem::DFMSideBarItem(const QUrl &url)
-    : DFMSideBarItem (QIcon(), QString(), QString(), url)
+DFMBASE_BEGIN_NAMESPACE
+SideBarItem::SideBarItem(const QUrl &url)
+    : SideBarItem (QIcon(), QString(), QString(), url)
 {
 
 }
 
-DFMSideBarItem::~DFMSideBarItem()
+SideBarItem::~SideBarItem()
 {
 
 }
 
-DFMSideBarItem::DFMSideBarItem(const DFMSideBarItem &item) {
+SideBarItem::SideBarItem(const SideBarItem &item) {
     setUrl(item.url());
     setGroup(item.group());
     setIcon(item.icon());
     setText(item.text());
 }
 
-DFMSideBarItem::DFMSideBarItem(const QIcon &icon, const QString &text, const QString &group, const QUrl &url)
+SideBarItem::SideBarItem(const QIcon &icon, const QString &text, const QString &group, const QUrl &url)
 {
     setIcon(icon);
     setText(text);
@@ -51,28 +50,28 @@ DFMSideBarItem::DFMSideBarItem(const QIcon &icon, const QString &text, const QSt
     setUrl(url);
 }
 
-QUrl DFMSideBarItem::url() const
+QUrl SideBarItem::url() const
 {
     return this->data(ItemUrlRole).value<QUrl>();
 }
 
-void DFMSideBarItem::setUrl(const QUrl &url)
+void SideBarItem::setUrl(const QUrl &url)
 {
     this->setData(QVariant::fromValue(url), ItemUrlRole);
 }
 
-void DFMSideBarItem::setGroup(const QString &group)
+void SideBarItem::setGroup(const QString &group)
 {
     setData(group, Roles::ItemGroupRole);
 }
 
-QString DFMSideBarItem::group() const
+QString SideBarItem::group() const
 {
     return data(Roles::ItemGroupRole).toString();
 }
 
 DFMSideBarItemSeparator::DFMSideBarItemSeparator():
-    DFMSideBarItem(QUrl())
+    SideBarItem(QUrl())
 {
 
 }
@@ -81,3 +80,4 @@ DFMSideBarItemSeparator::~DFMSideBarItemSeparator()
 {
 
 }
+DFMBASE_END_NAMESPACE

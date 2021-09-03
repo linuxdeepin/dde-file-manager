@@ -39,8 +39,8 @@
 #define DRAG_EVENT_URLS ((getuid()==0) ? (QString(getlogin())+"_RootUrlsInDragEvent") :(QString(getlogin())+"_UrlsInDragEvent"))
 
 
-
-DFMSideBarView::DFMSideBarView(QWidget *parent)
+DFMBASE_BEGIN_NAMESPACE
+SideBarView::SideBarView(QWidget *parent)
     : DListView(parent)
 {
     setVerticalScrollMode(ScrollPerPixel);
@@ -53,12 +53,12 @@ DFMSideBarView::DFMSideBarView(QWidget *parent)
     setDragDropMode(QAbstractItemView::InternalMove);
     setDragDropOverwriteMode(false);
     //QListView拖拽时会先插入后删除，于是可以通过rowCountChanged()信号来判断拖拽操作是否结束
-    connect(this, static_cast<void (DListView::*)(const QModelIndex &)>(&DListView::currentChanged), this, &DFMSideBarView::currentChanged);
+    connect(this, static_cast<void (DListView::*)(const QModelIndex &)>(&DListView::currentChanged), this, &SideBarView::currentChanged);
 
     m_lastOpTime = 0;
 }
 
-void DFMSideBarView::mousePressEvent(QMouseEvent *event)
+void SideBarView::mousePressEvent(QMouseEvent *event)
 {
     //频繁点击操作与网络或挂载设备的加载效率低两个因素的共同作用下 会导致侧边栏可能出现显示错误
     //暂时抛去部分频繁点击来规避这个问题
@@ -79,7 +79,7 @@ void DFMSideBarView::mousePressEvent(QMouseEvent *event)
     DListView::mousePressEvent(event);
 }
 
-void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
+void SideBarView::mouseMoveEvent(QMouseEvent *event)
 {
     DListView::mouseMoveEvent(event);
 //    // sp3 feature 35，光标悬浮到光驱item上如果正在加载，需要显示为繁忙光标。添加判定避免额外操作
@@ -101,7 +101,7 @@ void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
 //    }
 }
 
-void DFMSideBarView::dragEnterEvent(QDragEnterEvent *event)
+void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 {
     previousRowCount = model()->rowCount();
     fetchDragEventUrlsFromSharedMemory();
@@ -118,7 +118,7 @@ void DFMSideBarView::dragEnterEvent(QDragEnterEvent *event)
     }
 }
 
-void DFMSideBarView::dragMoveEvent(QDragMoveEvent *event)
+void SideBarView::dragMoveEvent(QDragMoveEvent *event)
 {
     if (isAccepteDragEvent(event)) {
         return;
@@ -131,10 +131,10 @@ void DFMSideBarView::dragMoveEvent(QDragMoveEvent *event)
     }
 }
 
-void DFMSideBarView::dropEvent(QDropEvent *event)
+void SideBarView::dropEvent(QDropEvent *event)
 {
     dropPos = event->pos();
-    DFMSideBarItem *item = itemAt(event->pos());
+    SideBarItem *item = itemAt(event->pos());
     if (!item) {
         return DListView::dropEvent(event);
     }
@@ -217,28 +217,28 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
     }
 }
 
-QModelIndex DFMSideBarView::indexAt(const QPoint &p) const
+QModelIndex SideBarView::indexAt(const QPoint &p) const
 {
     return QListView::indexAt(p);
 }
 
-QModelIndex DFMSideBarView::getPreviousIndex() const
+QModelIndex SideBarView::getPreviousIndex() const
 {
     return  m_previous;
 }
 
-QModelIndex DFMSideBarView::getCurrentIndex() const
+QModelIndex SideBarView::getCurrentIndex() const
 {
     return  m_current;
 }
 
-void DFMSideBarView::currentChanged(const QModelIndex &previous)
+void SideBarView::currentChanged(const QModelIndex &previous)
 {
     m_current = currentIndex();
     m_previous = previous;
 }
 
-bool DFMSideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction action) const
+bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction action) const
 {
     const LocalFileInfo dstInfo(dstUrl);
 
@@ -266,15 +266,15 @@ bool DFMSideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction
     return true;
 }
 
-DFMSideBarItem *DFMSideBarView::itemAt(const QPoint &pt) const
+SideBarItem *SideBarView::itemAt(const QPoint &pt) const
 {
-    DFMSideBarItem *item = nullptr;
+    SideBarItem *item = nullptr;
     QModelIndex index = indexAt(pt);
     if (!index.isValid()) {
         return item;
     }
 
-    DFMSideBarModel *mod = dynamic_cast<DFMSideBarModel *>(model());
+    SideBarModel *mod = dynamic_cast<SideBarModel *>(model());
     Q_ASSERT(mod);
     item = mod->itemFromIndex(index);
     Q_ASSERT(item);
@@ -282,7 +282,7 @@ DFMSideBarItem *DFMSideBarView::itemAt(const QPoint &pt) const
     return item;
 }
 
-Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
+Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
 {
     Q_UNUSED(data)
     // Got a copy of urls so whatever data was changed, it won't affact the following code.
@@ -328,9 +328,9 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
     return action;
 }
 
-bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
+bool SideBarView::isAccepteDragEvent(DFMDragEvent *event)
 {
-    DFMSideBarItem *item = itemAt(event->pos());
+    SideBarItem *item = itemAt(event->pos());
     if (!item) {
         return false;
     }
@@ -350,7 +350,7 @@ bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
     return accept;
 }
 
-bool DFMSideBarView::fetchDragEventUrlsFromSharedMemory()
+bool SideBarView::fetchDragEventUrlsFromSharedMemory()
 {
     QSharedMemory sm;
     sm.setKey(DRAG_EVENT_URLS);
@@ -377,7 +377,7 @@ bool DFMSideBarView::fetchDragEventUrlsFromSharedMemory()
     return true;
 }
 
-bool DFMSideBarView::checkOpTime()
+bool SideBarView::checkOpTime()
 {
     //如果两次操作时间间隔足够长，则返回true
     if (QDateTime::currentDateTime().toMSecsSinceEpoch() - m_lastOpTime > 200) {
@@ -388,4 +388,4 @@ bool DFMSideBarView::checkOpTime()
     return false;
 }
 
-
+DFMBASE_END_NAMESPACE

@@ -30,6 +30,7 @@
 #include <QStandardPaths>
 #include <QMap>
 
+DFMBASE_BEGIN_NAMESPACE
 QString StandardPaths::location(StandardPaths::StandardLocation type)
 {
     switch (type) {
@@ -269,3 +270,4 @@ QString StandardPaths::getCachePath()
 StandardPaths::StandardPaths()
 {
 }
+DFMBASE_END_NAMESPACE

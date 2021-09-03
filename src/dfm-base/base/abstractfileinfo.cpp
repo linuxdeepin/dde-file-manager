@@ -34,6 +34,7 @@
 
 USING_IO_NAMESPACE
 
+DFMBASE_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC_WITH_ARGS(int,type_id,{qRegisterMetaType<AbstractFileInfoPointer>("AbstractFileInfo")});
 
 /*!
@@ -1157,3 +1158,5 @@ AbstractFileInfoPrivate::AbstractFileInfoPrivate(AbstractFileInfo *qq)
 AbstractFileInfoPrivate::~AbstractFileInfoPrivate() {
 
 }
+
+DFMBASE_END_NAMESPACE

@@ -18,11 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "base/dfmsettings.h"
-#ifndef DFM_NO_FILE_WATCHER
-//#include "base/dabstractfilewatcher.h"
-#endif
-#include "base/standardpaths.h"
+#include "applicationservice/settings.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <QCoreApplication>
 #include <QStandardPaths>
@@ -34,34 +31,52 @@
 #include <QTimer>
 #include <QThread>
 
-class DFMSettingsPrivate
+/*!
+ * \class SettingsPrivate 通用设置的私有类
+ * \brief The SettingsPrivate class 保存类Settings的所有数据和成员变量
+ */
+DFMBASE_USE_NAMESPACE
+DSB_FM_BEGIN_NAMESPACE
+class SettingsPrivate
 {
 public:
-    explicit DFMSettingsPrivate(DFMSettings *qq);
+    explicit SettingsPrivate(Settings *qq);
 
-    bool autoSync = false;
-    bool watchChanges = false;
-    bool settingFileIsDirty = false;
-
-    QTimer *syncTimer = nullptr;
-
-    QString fallbackFile;
-    QString settingFile;
-#ifndef DFM_NO_FILE_WATCHER
-    //    DAbstractFileWatcher *settingFileWatcher = nullptr;
-#endif
-
-    DFMSettings *q_ptr;
+    bool autoSync = false; // 是否自动同步
+    bool watchChanges = false; // 监视配置是否发生改变
+    bool settingFileIsDirty = false; // 设置文件是否有缓存数据（脏数据）
+    QTimer *syncTimer = nullptr; // 同步计时器
+    QString fallbackFile; // 备份设置文件路径
+    QString settingFile; // 设置文件路径
+    Settings *q_ptr;
 
     struct Data {
-        QHash<QString, QVariantHash> values;
-        QHash<QString, QVariantHash> privateValues;
-
+        QHash<QString, QVariantHash> values; // 设置文件的配置属性hash表
+        QHash<QString, QVariantHash> privateValues; // 设置文件的配置私用属性hash表
+        /*!
+         * \brief value 获取相应的属性
+         *
+         * \param group 哪一个组
+         *
+         * \param key 键值key
+         *
+         * \param dv 默认的返回属性
+         *
+         * \return QVariant 属性值
+         */
         QVariant value(const QString &group, const QString &key, const QVariant &dv = QVariant()) const
         {
             return values.value(group).value(key, dv);
         }
-
+        /*!
+         * \brief setValue 设置相应的属性值
+         *
+         * \param group 哪一个组
+         *
+         * \param key 键值key
+         *
+         * \param value 属性值
+         */
         void setValue(const QString group, const QString &key, const QVariant &value)
         {
             if (!values.contains(group)) {
@@ -72,26 +87,42 @@ public:
 
             values[group][key] = value;
         }
-
+        /*!
+         * \brief groupMetaData 获取一组的属性
+         *
+         * \param group 组名
+         *
+         * \return QVariantMap 这一组的属性
+         */
         QVariantMap groupMetaData(const QString &group) const
         {
             return privateValues.value("__metadata__").value(group).toMap();
         }
-
+        /*!
+         * \brief groupKeyOrderedList 获取组属性的key序列表
+         *
+         * \param group 组名
+         *
+         * \return QStringList key序列表
+         */
         QStringList groupKeyOrderedList(const QString &group) const
         {
             return groupMetaData(group).value("keyOrdered").toStringList();
         }
     };
 
-    Data defaultData;
-    Data fallbackData;
-    Data writableData;
+    Data defaultData; // 默认的属性data
+    Data fallbackData; // 备份的属性data
+    Data writableData; // 写入的属性data
 
     void fromJsonFile(const QString &fileName, Data *data);
     void fromJson(const QByteArray &json, Data *data);
     QByteArray toJson(const Data &data);
 
+    /*!
+     * \brief makeSettingFileToDirty 同步设置到配置文件
+     * \param dirty 是否是脏数据
+     */
     void makeSettingFileToDirty(bool dirty)
     {
         if (settingFileIsDirty == dirty) {
@@ -116,7 +147,13 @@ public:
             syncTimer->metaObject()->invokeMethod(syncTimer, dirty ? "start" : "stop", Qt::QueuedConnection);
         }
     }
-
+    /*!
+     * \brief urlToKey url转换为key值
+     *
+     * \param url 文件的url
+     *
+     * \return QString key值
+     */
     QString urlToKey(const QUrl &url) const
     {
         if (url.isLocalFile()) {
@@ -133,13 +170,19 @@ public:
     void _q_onFileChanged(const QUrl &url);
 };
 
-DFMSettingsPrivate::DFMSettingsPrivate(DFMSettings *qq)
+SettingsPrivate::SettingsPrivate(Settings *qq)
     : q_ptr(qq)
 {
 
 }
-
-void DFMSettingsPrivate::fromJsonFile(const QString &fileName, Data *data)
+/*!
+ * \brief SettingsPrivate::fromJsonFile 从json文件中读取属性到data中
+ *
+ * \param fileName 配置文件名称
+ *
+ * \param data 输出参数data，属性
+ */
+void SettingsPrivate::fromJsonFile(const QString &fileName, Data *data)
 {
     QFile file(fileName);
 
@@ -161,8 +204,14 @@ void DFMSettingsPrivate::fromJsonFile(const QString &fileName, Data *data)
 
     fromJson(json, data);
 }
-
-void DFMSettingsPrivate::fromJson(const QByteArray &json, Data *data)
+/*!
+ * \brief SettingsPrivate::fromJson 从json文件中读取data
+ *
+ * \param json json文件
+ *
+ * \param data 输出参数属性data
+ */
+void SettingsPrivate::fromJson(const QByteArray &json, Data *data)
 {
     QJsonParseError error;
     const QJsonDocument &doc = QJsonDocument::fromJson(json, &error);
@@ -201,8 +250,14 @@ void DFMSettingsPrivate::fromJson(const QByteArray &json, Data *data)
             data->values[begin.key()] = hash;
     }
 }
-
-QByteArray DFMSettingsPrivate::toJson(const Data &data)
+/*!
+ * \brief SettingsPrivate::toJson 将属性转换为Json对象的QByteArray
+ *
+ * \param data 属性data
+ *
+ * \return QByteArray json 的对象
+ */
+QByteArray SettingsPrivate::toJson(const Data &data)
 {
     QJsonObject root_object;
 
@@ -212,8 +267,12 @@ QByteArray DFMSettingsPrivate::toJson(const Data &data)
 
     return QJsonDocument(root_object).toJson();
 }
-
-void DFMSettingsPrivate::_q_onFileChanged(const QUrl &url)
+/*!
+ * \brief SettingsPrivate::_q_onFileChanged 槽函数，当配置文件发上改变时调用
+ *
+ * \param url 文件改变的url
+ */
+void SettingsPrivate::_q_onFileChanged(const QUrl &url)
 {
     if (url.toLocalFile() != settingFile) {
         return;
@@ -265,14 +324,13 @@ void DFMSettingsPrivate::_q_onFileChanged(const QUrl &url)
 }
 
 /*!
- * \class DFMSettings
- * \inmodule dde-file-manager-lib
+ * \class Settings
  *
- * \brief DFMSettings provide interfaces to access and modify the file manager setting options.
+ * \brief Settings provide interfaces to access and modify the file manager setting options.
  */
-DFMSettings::DFMSettings(const QString &defaultFile, const QString &fallbackFile, const QString &settingFile, QObject *parent)
+Settings::Settings(const QString &defaultFile, const QString &fallbackFile, const QString &settingFile, QObject *parent)
     : QObject(parent)
-    , d_ptr(new DFMSettingsPrivate(this))
+    , d_ptr(new SettingsPrivate(this))
 {
     d_ptr->fallbackFile = fallbackFile;
     d_ptr->settingFile = settingFile;
@@ -281,7 +339,17 @@ DFMSettings::DFMSettings(const QString &defaultFile, const QString &fallbackFile
     d_ptr->fromJsonFile(fallbackFile, &d_ptr->fallbackData);
     d_ptr->fromJsonFile(settingFile, &d_ptr->writableData);
 }
-
+/*!
+ * \brief getConfigFilePath 获取配置文件的路径
+ *
+ * \param type StandardLocation的类型
+ *
+ * \param fileName 文件名称
+ *
+ * \param writable 是否可写
+ *
+ * \return QString 配置文件的路径
+ */
 static QString getConfigFilePath(QStandardPaths::StandardLocation type, const QString &fileName, bool writable)
 {
     if (writable) {
@@ -301,8 +369,8 @@ static QString getConfigFilePath(QStandardPaths::StandardLocation type, const QS
     return path.append(QString("/%1.json").arg(fileName));
 }
 
-DFMSettings::DFMSettings(const QString &name, ConfigType type, QObject *parent)
-    : DFMSettings(QString(":/config/%1.json").arg(name),
+Settings::Settings(const QString &name, ConfigType type, QObject *parent)
+    : Settings(QString(":/config/%1.json").arg(name),
                   getConfigFilePath(type == AppConfig
                                     ? QStandardPaths::AppConfigLocation
                                     : QStandardPaths::GenericConfigLocation,
@@ -316,9 +384,9 @@ DFMSettings::DFMSettings(const QString &name, ConfigType type, QObject *parent)
 
 }
 
-DFMSettings::~DFMSettings()
+Settings::~Settings()
 {
-    Q_D(DFMSettings);
+    Q_D(Settings);
 
     if (d->syncTimer) {
         d->syncTimer->stop();
@@ -328,10 +396,18 @@ DFMSettings::~DFMSettings()
         sync();
     }
 }
-
-bool DFMSettings::contains(const QString &group, const QString &key) const
+/*!
+ * \brief Settings::contains 判断是否包含这个键值的属性
+ *
+ * \param group 组名
+ *
+ * \param key key键值
+ *
+ * \return bool 是否包含这个key值
+ */
+bool Settings::contains(const QString &group, const QString &key) const
 {
-    Q_D(const DFMSettings);
+    Q_D(const Settings);
 
     if (key.isEmpty()) {
         if (d->writableData.values.contains(group)) {
@@ -355,10 +431,14 @@ bool DFMSettings::contains(const QString &group, const QString &key) const
 
     return d->defaultData.values.value(group).contains(key);
 }
-
-QSet<QString> DFMSettings::groups() const
+/*!
+ * \brief Settings::groups 获取属性有哪些组
+ *
+ * \return QSet<QString> 组的集合
+ */
+QSet<QString> Settings::groups() const
 {
-    Q_D(const DFMSettings);
+    Q_D(const Settings);
 
     QSet<QString> groups;
 
@@ -378,10 +458,16 @@ QSet<QString> DFMSettings::groups() const
 
     return groups;
 }
-
-QSet<QString> DFMSettings::keys(const QString &group) const
+/*!
+ * \brief Settings::keys 获取某组中的所有key键值的集合
+ *
+ * \param group 组名
+ *
+ * \return QSet<QString> key键值的集合
+ */
+QSet<QString> Settings::keys(const QString &group) const
 {
-    Q_D(const DFMSettings);
+    Q_D(const Settings);
 
     QSet<QString> keys;
 
@@ -407,13 +493,15 @@ QSet<QString> DFMSettings::keys(const QString &group) const
 }
 
 /*!
- * \brief DFMSettings::keysList
+ * \brief Settings::keysList
+ *
  * \param group name
+ *
  * \return An ordered key list of the group
  */
-QStringList DFMSettings::keyList(const QString &group) const
+QStringList Settings::keyList(const QString &group) const
 {
-    Q_D(const DFMSettings);
+    Q_D(const Settings);
 
     QStringList keyList;
     QSet<QString> keys = this->keys(group);
@@ -443,8 +531,14 @@ QStringList DFMSettings::keyList(const QString &group) const
 
     return keyList;
 }
-
-QUrl DFMSettings::toUrlValue(const QVariant &url)
+/*!
+ * \brief Settings::toUrlValue 从QVariant转换为QUrl
+ *
+ * \param url 属性值
+ *
+ * \return QUrl 文件的URL
+ */
+QUrl Settings::toUrlValue(const QVariant &url)
 {
     const QString &url_string = url.toString();
 
@@ -460,10 +554,20 @@ QUrl DFMSettings::toUrlValue(const QVariant &url)
 
     return QUrl::fromUserInput(url_string);
 }
-
-QVariant DFMSettings::value(const QString &group, const QString &key, const QVariant &defaultValue) const
+/*!
+ * \brief Settings::value 获取某个组的某个key对应的value，配置的某个属性
+ *
+ * \param group 组名
+ *
+ * \param key 键值
+ *
+ * \param defaultValue 返回的默认值
+ *
+ * \return QVariant 属性值
+ */
+QVariant Settings::value(const QString &group, const QString &key, const QVariant &defaultValue) const
 {
-    Q_D(const DFMSettings);
+    Q_D(const Settings);
 
     QVariant value = d->writableData.values.value(group).value(key, QVariant::Invalid);
 
@@ -479,43 +583,99 @@ QVariant DFMSettings::value(const QString &group, const QString &key, const QVar
 
     return d->defaultData.values.value(group).value(key, defaultValue);
 }
-
-QVariant DFMSettings::value(const QString &group, const QUrl &key, const QVariant &defaultValue) const
+/*!
+ * \brief Settings::value 获取某个组的某个key对应的value，配置的某个属性
+ *
+ * \param group 组名
+ *
+ * \param key 键值
+ *
+ * \param defaultValue 返回的默认值
+ *
+ * \return QVariant 属性值
+ */
+QVariant Settings::value(const QString &group, const QUrl &key, const QVariant &defaultValue) const
 {
-    Q_D(const DFMSettings);
+    Q_D(const Settings);
 
     return value(group, d->urlToKey(key), defaultValue);
 }
-
-QUrl DFMSettings::urlValue(const QString &group, const QString &key, const QUrl &defaultValue) const
+/*!
+ * \brief Settings::urlValue 获取属性转换为对应文件的url
+ *
+ * \param group 组名
+ *
+ * \param key 键值QString
+ *
+ * \param defaultValue 返回的默认值
+ *
+ * \return QUrl 文件的URL
+ */
+QUrl Settings::urlValue(const QString &group, const QString &key, const QUrl &defaultValue) const
 {
     return toUrlValue(value(group, key, defaultValue));
 }
-
-QUrl DFMSettings::urlValue(const QString &group, const QUrl &key, const QUrl &defaultValue) const
+/*!
+ * \brief Settings::urlValue 获取属性转换为对应文件的url
+ *
+ * \param group 组名
+ *
+ * \param key 键值url
+ *
+ * \param defaultValue 返回的默认值
+ *
+ * \return QUrl 文件的URL
+ */
+QUrl Settings::urlValue(const QString &group, const QUrl &key, const QUrl &defaultValue) const
 {
-    Q_D(const DFMSettings);
+    Q_D(const Settings);
 
     return urlValue(group, d->urlToKey(key), defaultValue);
 }
-
-void DFMSettings::setValue(const QString &group, const QString &key, const QVariant &value)
+/*!
+ * \brief Settings::setValue 设置属性
+ *
+ * \param group 组名
+ *
+ * \param key 键值QString
+ *
+ * \param value 属性值
+ */
+void Settings::setValue(const QString &group, const QString &key, const QVariant &value)
 {
     if (setValueNoNotify(group, key, value)) {
         Q_EMIT valueChanged(group, key, value);
     }
 }
-
-void DFMSettings::setValue(const QString &group, const QUrl &key, const QVariant &value)
+/*!
+ * \brief Settings::setValue 设置属性
+ *
+ * \param group 组名
+ *
+ * \param key 键值QUrl
+ *
+ * \param value 属性值
+ */
+void Settings::setValue(const QString &group, const QUrl &key, const QVariant &value)
 {
-    Q_D(DFMSettings);
+    Q_D(Settings);
 
     setValue(group, d->urlToKey(key), value);
 }
-
-bool DFMSettings::setValueNoNotify(const QString &group, const QString &key, const QVariant &value)
+/*!
+ * \brief Settings::setValueNoNotify 设置了属性以后的通知
+ *
+ * \param group 组名
+ *
+ * \param key 键值QString
+ *
+ * \param value 属性值
+ *
+ * \return bool 是否通知成功
+ */
+bool Settings::setValueNoNotify(const QString &group, const QString &key, const QVariant &value)
 {
-    Q_D(DFMSettings);
+    Q_D(Settings);
 
     bool changed = false;
 
@@ -534,17 +694,31 @@ bool DFMSettings::setValueNoNotify(const QString &group, const QString &key, con
 
     return changed;
 }
-
-bool DFMSettings::setValueNoNotify(const QString &group, const QUrl &key, const QVariant &value)
+/*!
+ * \brief Settings::setValueNoNotify 设置了属性以后的通知
+ *
+ * \param group 组名
+ *
+ * \param key 键值QUrl
+ *
+ * \param value 属性值
+ *
+ * \return bool 是否通知成功
+ */
+bool Settings::setValueNoNotify(const QString &group, const QUrl &key, const QVariant &value)
 {
-    Q_D(DFMSettings);
+    Q_D(Settings);
 
     return setValueNoNotify(group, d->urlToKey(key), value);
 }
-
-void DFMSettings::removeGroup(const QString &group)
+/*!
+ * \brief Settings::removeGroup 移除某个组
+ *
+ * \param group 组名
+ */
+void Settings::removeGroup(const QString &group)
 {
-    Q_D(DFMSettings);
+    Q_D(Settings);
 
     if (!d->writableData.values.contains(group)) {
         return;
@@ -562,24 +736,46 @@ void DFMSettings::removeGroup(const QString &group)
         }
     }
 }
-
-bool DFMSettings::isRemovable(const QString &group, const QString &key) const
+/*!
+ * \brief Settings::isRemovable 属性是否移除
+ *
+ * \param group 组名
+ *
+ * \param key 键值QString
+ *
+ * \return bool 是否移除了
+ */
+bool Settings::isRemovable(const QString &group, const QString &key) const
 {
-    Q_D(const DFMSettings);
+    Q_D(const Settings);
 
     return d->writableData.values.value(group).contains(key);
 }
-
-bool DFMSettings::isRemovable(const QString &group, const QUrl &key) const
+/*!
+ * \brief Settings::isRemovable 属性是否移除
+ *
+ * \param group 组名
+ *
+ * \param key 键值QUrl
+ *
+ * \return bool 是否移除了
+ */
+bool Settings::isRemovable(const QString &group, const QUrl &key) const
 {
-    Q_D(const DFMSettings);
+    Q_D(const Settings);
 
     return isRemovable(group, d->urlToKey(key));
 }
-
-void DFMSettings::remove(const QString &group, const QString &key)
+/*!
+ * \brief Settings::remove 移除某个属性
+ *
+ * \param group 组名
+ *
+ * \param key 键值
+ */
+void Settings::remove(const QString &group, const QString &key)
 {
-    Q_D(DFMSettings);
+    Q_D(Settings);
 
     if (!d->writableData.values.value(group).contains(key)) {
         return;
@@ -596,17 +792,25 @@ void DFMSettings::remove(const QString &group, const QString &key)
 
     Q_EMIT valueChanged(group, key, new_value);
 }
-
-void DFMSettings::remove(const QString &group, const QUrl &key)
+/*!
+ * \brief Settings::remove 移除某个属性
+ *
+ * \param group 组名
+ *
+ * \param key 键值QUrl
+ */
+void Settings::remove(const QString &group, const QUrl &key)
 {
-    Q_D(DFMSettings);
+    Q_D(Settings);
 
     remove(group, d->urlToKey(key));
 }
-
-void DFMSettings::clear()
+/*!
+ * \brief Settings::clear 清理所有的属性，并保存
+ */
+void Settings::clear()
 {
-    Q_D(DFMSettings);
+    Q_D(Settings);
 
     if (d->writableData.values.isEmpty()) {
         return;
@@ -634,11 +838,12 @@ void DFMSettings::clear()
  * \brief Reload config file.
  *
  * This will be needed if file watcher is disabled, or say, you defined the
+ *
  * DFM_NO_FILE_WATCHER marco.
  */
-void DFMSettings::reload()
+void Settings::reload()
 {
-    Q_D(DFMSettings);
+    Q_D(Settings);
 
     d->fallbackData.privateValues.clear();
     d->fallbackData.values.clear();
@@ -648,10 +853,14 @@ void DFMSettings::reload()
     d->writableData.values.clear();
     d->fromJsonFile(d->settingFile, &d_ptr->writableData);
 }
-
-bool DFMSettings::sync()
+/*!
+ * \brief Settings::sync 将属性写入到配置文件中
+ *
+ * \return  bool 是否写入成功
+ */
+bool Settings::sync()
 {
-    Q_D(DFMSettings);
+    Q_D(Settings);
 
     if (!d->settingFileIsDirty) {
         return true;
@@ -674,26 +883,36 @@ bool DFMSettings::sync()
 
     return ok;
 }
-
-bool DFMSettings::autoSync() const
+/*!
+ * \brief Settings::autoSync 自动将属性写入配置文件
+ *
+ * \return bool 是否写入成功
+ */
+bool Settings::autoSync() const
 {
-    Q_D(const DFMSettings);
+    Q_D(const Settings);
 
     return d->autoSync;
 }
-
-#ifndef DFM_NO_FILE_WATCHER
-bool DFMSettings::watchChanges() const
+/*!
+ * \brief Settings::watchChanges 槽函数监听配置文件是否有改变
+ *
+ * \return bool 配置文件是否有改变
+ */
+bool Settings::watchChanges() const
 {
-    Q_D(const DFMSettings);
+    Q_D(const Settings);
 
     return d->watchChanges;
 }
-#endif
-
-void DFMSettings::setAutoSync(bool autoSync)
+/*!
+ * \brief Settings::setAutoSync 设置是否自动写配置文件
+ *
+ * \param autoSync 是否自动写配置文件
+ */
+void Settings::setAutoSync(bool autoSync)
 {
-    Q_D(DFMSettings);
+    Q_D(Settings);
 
     if (d->autoSync == autoSync) {
         return;
@@ -712,7 +931,7 @@ void DFMSettings::setAutoSync(bool autoSync)
             d->syncTimer->setSingleShot(true);
             d->syncTimer->setInterval(1000);
 
-            connect(d->syncTimer, &QTimer::timeout, this, &DFMSettings::sync);
+            connect(d->syncTimer, &QTimer::timeout, this, &Settings::sync);
         }
     } else {
         if (d->syncTimer) {
@@ -722,49 +941,19 @@ void DFMSettings::setAutoSync(bool autoSync)
         }
     }
 }
-
-#ifndef DFM_NO_FILE_WATCHER
-void DFMSettings::onFileChanged(const QUrl &url)
+/*!
+ * \brief Settings::onFileChanged 配置文件的对应key属性是否发生改变
+ *
+ * \param url 文件url
+ */
+void Settings::onFileChanged(const QUrl &url)
 {
-    Q_D(DFMSettings);
+    Q_D(Settings);
 
     d->_q_onFileChanged(url);
 }
 
-void DFMSettings::setWatchChanges(bool watchChanges)
+void Settings::setWatchChanges(bool watchChanges)
 {
-    //    Q_D(DFMSettings);
-
-    //    if (d->watchChanges == watchChanges) {
-    //        return;
-    //    }
-
-    //    d->watchChanges = watchChanges;
-
-    //    if (watchChanges) {
-    //        {
-    //            QFileInfo info(d->settingFile);
-
-    //            if (!info.exists()) {
-    //                if (info.absoluteDir().mkpath(info.absolutePath())) {
-    //                    QFile file(d->settingFile);
-
-    //                    file.open(QFile::WriteOnly);
-    //                }
-    //            }
-    //        }
-
-    //        d->settingFileWatcher = new DAbstractFileWatcher(d->settingFile, this);
-    //        d->settingFileWatcher->moveToThread(thread());
-
-    //        connect(d->settingFileWatcher, &DAbstractFileWatcher::fileModified, this, &DFMSettings::onFileChanged);
-
-    //        d->settingFileWatcher->startWatcher();
-    //    } else {
-    //        if (d->settingFileWatcher) {
-    //            d->settingFileWatcher->deleteLater();
-    //            d->settingFileWatcher = nullptr;
-    //        }
-    //    }
 }
-#endif
+DSB_FM_END_NAMESPACE

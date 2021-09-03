@@ -5,6 +5,7 @@
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
  *             yanghao<yanghao@uniontech.com>
+ *             hujianzhong<hujianzhong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,33 +20,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DESKTOPINFO_H
-#define DESKTOPINFO_H
+#ifndef STYLEDITEMDELEGATE_P_H
+#define STYLEDITEMDELEGATE_P_H
 
-#include <QString>
+#include "widgets/dfmfileview/styleditemdelegate.h"
 
-class DesktopInfo
+DFMBASE_BEGIN_NAMESPACE
+class StyledItemDelegatePrivate
 {
 public:
-    DesktopInfo();
+    explicit StyledItemDelegatePrivate(StyledItemDelegate *qq)
+        : q_ptr(qq) {}
 
-    enum WM {
-        GNOME,
-        KDE,
-        OTHER
-    };
+    void init();
+    void _q_onRowsInserted(const QModelIndex &parent, int first, int last);
+    void _q_onRowsRemoved(const QModelIndex &parent, int first, int last);
 
-    bool waylandDectected();
-    WM windowManager();
+    StyledItemDelegate *q_ptr;
+    mutable QModelIndex editingIndex;
+    QSize itemSizeHint;
+    int textLineHeight = -1;
 
-private:
-    QString XDG_CURRENT_DESKTOP;
-    QString XDG_SESSION_TYPE;
-    QString WAYLAND_DISPLAY;
-    QString KDE_FULL_SESSION;
-    QString GNOME_DESKTOP_SESSION_ID;
-    QString GDMSESSION;
-    QString DESKTOP_SESSION;
+    Q_DECLARE_PUBLIC(StyledItemDelegate)
 };
+DFMBASE_END_NAMESPACE
 
-#endif // DESKTOPINFO_H
+#endif // STYLEDITEMDELEGATE_P_H

@@ -18,16 +18,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMHEADERVIEW_H
-#define DFMHEADERVIEW_H
+#ifndef HEADERVIEW_H
+#define HEADERVIEW_H
+
+#include "dfm-base/dfm_base_global.h"
 
 #include <QHeaderView>
 
-class DFMHeaderView : public QHeaderView
+DFMBASE_BEGIN_NAMESPACE
+class HeaderView : public QHeaderView
 {
     Q_OBJECT
 public:
-    explicit DFMHeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
+    explicit HeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
 
     QSize sizeHint() const override;
 
@@ -41,5 +44,5 @@ Q_SIGNALS:
     void mouseReleased();
     void viewResized();
 };
-
+DFMBASE_END_NAMESPACE
 #endif // DFMHEADERVIEW_H

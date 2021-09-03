@@ -21,8 +21,10 @@
  */
 #ifndef LOCALMENU_P_H
 #define LOCALMENU_P_H
+#include "dfm-base/dfm_base_global.h"
 #include "localfile/localmenu.h"
 #include "localfile/localfileinfo.h"
+DFMBASE_BEGIN_NAMESPACE
 class LocalMenuPrivate
 {
     Q_DECLARE_PUBLIC(LocalMenu)
@@ -37,6 +39,6 @@ public:
     LocalMenu *q_ptr {nullptr};
 
 };
-
+DFMBASE_END_NAMESPACE
 
 #endif // LOCALMENU_P_H

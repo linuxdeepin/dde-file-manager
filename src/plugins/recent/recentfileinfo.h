@@ -5,6 +5,7 @@
 
 #include <QXmlStreamReader>
 
+DFMBASE_USE_NAMESPACE
 // 该类为二次关联类
 // 从QUrl创建的fileInfo为此类，但是此路径为虚拟路径
 // 而真实路径地址应在内部缓存

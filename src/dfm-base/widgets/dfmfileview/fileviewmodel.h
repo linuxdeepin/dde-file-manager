@@ -27,6 +27,7 @@
 #include "fileviewitem.h"
 #include "localfile/localfileinfo.h"
 #include "base/schemefactory.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
@@ -40,6 +41,7 @@
 
 #include <unistd.h>
 
+DFMBASE_BEGIN_NAMESPACE
 class FileViewModelPrivate;
 class FileViewModel : public QAbstractItemModel
 {
@@ -80,11 +82,12 @@ private Q_SLOTS:
     void dofileCreated(const QUrl &url){}
     void dofileModified(const QUrl &url){}
     void dofileClosed(const QUrl &url){}
-    void doUpdateChildren(const QList<QSharedPointer<DFMFileViewItem>> &children);
+    void doUpdateChildren(const QList<QSharedPointer<FileViewItem>> &children);
 
 private:
     QSharedPointer<FileViewModelPrivate> d_ptr;
 
 };
+DFMBASE_END_NAMESPACE
 
-#endif // DFMFILEVIEWMODEL_H
+#endif // FILEVIEWMODEL_H

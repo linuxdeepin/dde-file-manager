@@ -29,6 +29,7 @@
 #include <QObject>
 #include <QUrl>
 
+DFMBASE_BEGIN_NAMESPACE
 class WacherFactory;
 class InfoCache;
 class WatcherCachePrivate;
@@ -47,5 +48,6 @@ public:
     void cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFileWatcher> &watcher);
     void removCacheWatcher(const QUrl &url);
 };
+DFMBASE_END_NAMESPACE
 
 #endif // WATCHERCACHE_H

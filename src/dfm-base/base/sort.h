@@ -25,6 +25,8 @@
 #ifndef SORT_H
 #define SORT_H
 
+#include "dfm-base/dfm_base_global.h"
+
 #include <sys/types.h>
 #include <errno.h>
 #include <dirent.h>
@@ -32,6 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+DFMBASE_BEGIN_NAMESPACE
 typedef struct
 {
   char *name;
@@ -41,6 +44,7 @@ typedef struct
 char *savedir (char const *dir);
 int direntry_cmp_name (void const *a, void const *b);
 int direntry_cmp_inode (void const *a, void const *b);
+DFMBASE_END_NAMESPACE
 
 
 #endif // SORT_H

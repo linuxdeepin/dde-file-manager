@@ -10,10 +10,14 @@
 #ifndef ABSTRACTFILEWATCHER_H
 #define ABSTRACTFILEWATCHER_H
 
+#include "dfm-base/dfm_base_global.h"
+
 #include <QObject>
 
 #include <dfm-io/core/dfileinfo.h>
+
 class QUrl;
+DFMBASE_BEGIN_NAMESPACE
 class AbstractFileWatcherPrivate;
 class AbstractFileWatcher : public QObject
 {
@@ -65,7 +69,7 @@ private:
     Q_DISABLE_COPY(AbstractFileWatcher)
     Q_DECLARE_PRIVATE(AbstractFileWatcher)
 };
-
-typedef QSharedPointer<AbstractFileWatcher> AbstractFileWatcherPointer;
+DFMBASE_END_NAMESPACE
+typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileWatcher> AbstractFileWatcherPointer;
 
 #endif // ABSTRACTFILEWATCHER_H

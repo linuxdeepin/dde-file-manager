@@ -46,7 +46,7 @@
 #include <DAnchors>
 
 DWIDGET_USE_NAMESPACE
-
+DFMBASE_USE_NAMESPACE
 DSB_FM_BEGIN_NAMESPACE
 
 class DFMAddressBarPrivate : public QObject

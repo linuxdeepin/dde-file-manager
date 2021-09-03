@@ -30,6 +30,7 @@
 #include <QMutex>
 #include <QMap>
 
+DFMBASE_BEGIN_NAMESPACE
 class WatcherCachePrivate
 {
     Q_DECLARE_PUBLIC(WatcherCache)
@@ -41,5 +42,6 @@ public:
     DThreadMap<QUrl,QSharedPointer<AbstractFileWatcher>> watchers;
 
 };
+DFMBASE_END_NAMESPACE
 
 #endif // WATCHERCACHE_P_H

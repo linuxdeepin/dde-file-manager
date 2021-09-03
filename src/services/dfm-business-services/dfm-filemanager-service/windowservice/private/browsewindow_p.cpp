@@ -318,12 +318,12 @@ void DFMBrowseWindowPrivate::setPropertyView(QWidget *propertyView)
     m_propertyView = propertyView;
 }
 
-DFMSideBar *DFMBrowseWindowPrivate::sidebar() const
+SideBar *DFMBrowseWindowPrivate::sidebar() const
 {
     return m_sidebar;
 }
 
-void DFMBrowseWindowPrivate::setSidebar(DFMSideBar *sidebar)
+void DFMBrowseWindowPrivate::setSidebar(SideBar *sidebar)
 {
     m_sidebar = sidebar;
 }
@@ -405,7 +405,7 @@ void DFMBrowseWindowPrivate::initDefaultLayout()
     }
 
     if (!m_sidebar)
-        m_sidebar = new DFMSideBar;
+        m_sidebar = new SideBar;
 
     m_splitter->addWidget(m_sidebar);
 

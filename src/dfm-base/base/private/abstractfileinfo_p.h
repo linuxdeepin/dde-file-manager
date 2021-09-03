@@ -18,7 +18,7 @@
 #include <dfm-io/core/dfileinfo.h>
 
 USING_IO_NAMESPACE
-
+DFMBASE_BEGIN_NAMESPACE
 class AbstractFileInfoPrivate
 {
     Q_DECLARE_PUBLIC(AbstractFileInfo)
@@ -34,8 +34,6 @@ private:
     DThreadMap<AbstractFileInfo::FileInfoCacheType, QVariant> caches;    // 文件缓存
 };
 
-
-
-
+DFMBASE_END_NAMESPACE
 
 #endif // ABSTRACTFILEINFO_P_H

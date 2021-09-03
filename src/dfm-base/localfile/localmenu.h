@@ -27,6 +27,7 @@
 #include <QObject>
 #include <QMenu>
 
+DFMBASE_BEGIN_NAMESPACE
 class LocalMenuPrivate;
 class LocalMenu : public QObject
 {
@@ -165,5 +166,6 @@ public:
     bool isNeedLoadCustomActions();
 
 };
+DFMBASE_END_NAMESPACE
 
 #endif // LOCALMENU_H

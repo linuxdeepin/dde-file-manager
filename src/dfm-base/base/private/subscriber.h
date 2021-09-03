@@ -25,8 +25,10 @@
 #ifndef SUBSCRIBER_H
 #define SUBSCRIBER_H
 
-class QString;
+#include "dfm-base/dfm_base_global.h"
 
+class QString;
+DFMBASE_BEGIN_NAMESPACE
 class Subscriber
 {
 public:
@@ -34,12 +36,12 @@ public:
     virtual ~Subscriber();
 
     virtual void doSubscriberAction(const QString &path) = 0;
-
     int eventKey() const;
     void setEventKey(int eventKey);
 
 private:
     int m_eventKey = 0;
 };
+DFMBASE_END_NAMESPACE
 
 #endif // SUBSCRIBER_H

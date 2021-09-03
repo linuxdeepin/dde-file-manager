@@ -24,6 +24,8 @@
 #ifndef URLROUTE_H
 #define URLROUTE_H
 
+#include "dfm-base/dfm_base_global.h"
+
 #include <QUrl>
 #include <QObject>
 #include <QString>
@@ -38,6 +40,7 @@
 /*!
  * \brief 路由Url注册节点类
  */
+DFMBASE_BEGIN_NAMESPACE
 struct SchemeNode
 {
     QString myScheme; // url前缀
@@ -65,7 +68,6 @@ class UrlRoute
 {
     static QList<SchemeNode> SchemeMapLists;
 public:
-
     static bool schemeMapRoot(const QString &scheme,
                               const QString &root,
                               const QIcon &icon = QIcon(),
@@ -90,7 +92,7 @@ public:
     static QString virtualToPath(const QUrl &url,
                                  QString *errorString = nullptr);
 };
-
+DFMBASE_END_NAMESPACE
 Q_DECLARE_METATYPE(QUrl);
 
 #endif // URLROUTE_H

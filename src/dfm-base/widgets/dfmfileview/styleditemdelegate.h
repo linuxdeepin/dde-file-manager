@@ -21,7 +21,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef STYLEDITEMDELEGATE_H
+#define STYLEDITEMDELEGATE_H
+
+#include "dfm-base/dfm_base_global.h"
 
 #include <QStyledItemDelegate>
 #include <QTextOption>
@@ -34,15 +37,15 @@ QT_BEGIN_NAMESPACE
 class QTextLayout;
 QT_END_NAMESPACE
 
-class DFileViewHelper;
-class DFMStyledItemDelegatePrivate;
-class DFMStyledItemDelegate : public QStyledItemDelegate
+DFMBASE_BEGIN_NAMESPACE
+class StyledItemDelegatePrivate;
+class StyledItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 
 public:
-    explicit DFMStyledItemDelegate(DListView *parent);
-    ~DFMStyledItemDelegate() override;
+    explicit StyledItemDelegate(DListView *parent);
+    ~StyledItemDelegate() override;
 
     DListView *parent() const;
 
@@ -67,23 +70,11 @@ public:
 
     virtual void updateItemSizeHint() = 0;
 
-//    virtual QList<QRectF> drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout,
-//                                   const QRectF &boundingRect, qreal radius, const QBrush &background,
-//                                   QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
-//                                   Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
-//                                   const QColor &shadowColor = QColor()) const;
-
-//    QList<QRectF> drawText(const QModelIndex &index, QPainter *painter, const QString &text,
-//                           const QRectF &boundingRect, qreal radius, const QBrush &background,
-//                           QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
-//                           Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
-//                           const QColor &shadowColor = QColor()) const;
-
     static void paintCircleList(QPainter *painter, QRectF boundingRect, qreal diameter, const QList<QColor> &colors, const QColor &borderColor);
     static QPixmap getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio, QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
 
 protected:
-    DFMStyledItemDelegate(DFMStyledItemDelegatePrivate &dd, DListView *parent);
+    StyledItemDelegate(StyledItemDelegatePrivate &dd, DListView *parent);
 
     virtual void initTextLayout(const QModelIndex &index, QTextLayout *layout) const;
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
@@ -92,11 +83,14 @@ protected:
     static void paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment = Qt::AlignCenter,
                           QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
 
-    QScopedPointer<DFMStyledItemDelegatePrivate> d_ptr;
+    QScopedPointer<StyledItemDelegatePrivate> d_ptr;
 
     Q_PRIVATE_SLOT(d_ptr, void _q_onRowsInserted(const QModelIndex &parent, int first, int last))
     Q_PRIVATE_SLOT(d_ptr, void _q_onRowsRemoved(const QModelIndex &parent, int first, int last))
 
-    Q_DECLARE_PRIVATE(DFMStyledItemDelegate)
-    Q_DISABLE_COPY(DFMStyledItemDelegate)
+    Q_DECLARE_PRIVATE(StyledItemDelegate)
+    Q_DISABLE_COPY(StyledItemDelegate)
 };
+DFMBASE_END_NAMESPACE
+
+#endif // STYLEDITEMDELEGATE_H

@@ -25,6 +25,9 @@
 #ifndef SINGLETON_H
 #define SINGLETON_H
 
+#include "dfm-base/dfm_base_global.h"
+
+DFMBASE_BEGIN_NAMESPACE
 template <class T>
 class Singleton
 {
@@ -42,7 +45,9 @@ protected:
     Singleton &operator= (const Singleton &);
 };
 
+DFMBASE_END_NAMESPACE
+
 #define GOLOBAL_IMPORT_SINGLETON(x) \
-    static x* _ins = Singleton<x>::instance();
+    static x* _ins = DFMBASE_NAMESPACE::Singleton<x>::instance();
 
 #endif // SINGLETON_H

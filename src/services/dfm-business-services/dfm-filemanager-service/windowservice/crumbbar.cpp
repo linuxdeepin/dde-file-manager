@@ -26,8 +26,8 @@
 
 #include "dfm-base/base/singleton.hpp"
 #include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/application.h"
-#include "dfm-base/base/dfmsettings.h"
+#include "services/dfm-business-services/dfm-filemanager-service/applicationservice/application.h"
+#include "services/dfm-business-services/dfm-filemanager-service/applicationservice/settings.h"
 
 #include <DListView>
 
@@ -43,7 +43,7 @@
 #include <QMouseEvent>
 
 DWIDGET_USE_NAMESPACE
-
+DFMBASE_USE_NAMESPACE
 DSB_FM_BEGIN_NAMESPACE
 
 DFMCrumbBarPrivate::DFMCrumbBarPrivate(DFMCrumbBar *qq)

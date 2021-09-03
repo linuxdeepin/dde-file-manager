@@ -24,6 +24,7 @@
 #ifndef INFOCACHE_H
 #define INFOCACHE_H
 
+#include "dfm-base/dfm_base_global.h"
 #include "dfm-base/utils/threadcontainer.hpp"
 #include "dfm-base/base/abstractfileinfo.h"
 
@@ -32,6 +33,7 @@
 #include <QThread>
 #include <QUrl>
 
+DFMBASE_BEGIN_NAMESPACE
 class InfoCachePrivate;
 // 异步刷新线程
 class ReFreshThread : public QThread
@@ -76,5 +78,6 @@ private Q_SLOTS:
     void timeNeedRemoveCache();
     void timeRemoveCache();
 };
+DFMBASE_END_NAMESPACE
 
 #endif // INFOCACHE_H

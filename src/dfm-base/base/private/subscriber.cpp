@@ -24,7 +24,7 @@
 
 #include "subscriber.h"
 
-
+DFMBASE_BEGIN_NAMESPACE
 Subscriber::Subscriber()
 {
 }
@@ -42,3 +42,5 @@ void Subscriber::setEventKey(int eventKey)
 {
     m_eventKey = eventKey;
 }
+
+DFMBASE_END_NAMESPACE

@@ -23,7 +23,7 @@
  */
 
 #include "utils/utils.h"
-#include "shutil/dmimedatabase.h"
+#include "shutil/mimedatabase.h"
 #include "dfm-base/dfm_base_global.h"
 
 #include <QStandardPaths>
@@ -32,6 +32,7 @@
 #include <QProcess>
 #include <QGuiApplication>
 
+DFMBASE_BEGIN_NAMESPACE
 QString getThumbnailsPath(){
     QString cachePath = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).at(0);
     QString thumbnailPath = joinPath(cachePath, "thumbnails");
@@ -168,17 +169,17 @@ bool isRequestThumbnail(QString url){
 }
 
 QString getMimeTypeGenericIconName(QString url){
-    QMimeType mimeType = DMimeDatabase::mimeTypeForFile(deleteFilePrefix(url));
+    QMimeType mimeType = MimeDatabase::mimeTypeForFile(deleteFilePrefix(url));
     return mimeType.genericIconName();
 }
 
 QString getMimeTypeIconName(QString url){
-    QMimeType mimeType = DMimeDatabase::mimeTypeForFile(deleteFilePrefix(url));
+    QMimeType mimeType = MimeDatabase::mimeTypeForFile(deleteFilePrefix(url));
     return mimeType.iconName();
 }
 
 QString getMimeTypeName(QString url){
-    QMimeType mimeType = DMimeDatabase::mimeTypeForFile(deleteFilePrefix(url));
+    QMimeType mimeType = MimeDatabase::mimeTypeForFile(deleteFilePrefix(url));
     return mimeType.name();
 }
 
@@ -253,3 +254,4 @@ bool isAvfsMounted()
     }
     return false;
 }
+DFMBASE_END_NAMESPACE

@@ -36,6 +36,7 @@
 //文件缓存移除的时间
 #define CACHE_REMOVE_TIME 5 * 60 * 1000
 
+DFMBASE_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(InfoCache,_InfoCacheManager)
 
 /*!
@@ -379,3 +380,5 @@ void InfoCache::timeRemoveCache()
         itr = d->needRemoveCacheList.erase(itr);
     }
 }
+
+DFMBASE_END_NAMESPACE

@@ -1,5 +1,6 @@
 #include "recentutil.h"
 
+DFMBASE_USE_NAMESPACE
 Q_GLOBAL_STATIC(RecentUtil, _recentUntil)
 
 RecentUtil::RecentUtil()

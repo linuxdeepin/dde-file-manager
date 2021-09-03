@@ -19,23 +19,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMFILEVIEW_H
-#define DFMFILEVIEW_H
+#ifndef FILEVIEW_H
+#define FILEVIEW_H
+
+#include "dfm-base/dfm_base_global.h"
 
 #include <DListView>
 
 DWIDGET_USE_NAMESPACE
-
+DFMBASE_BEGIN_NAMESPACE
 class FileViewModel;
-class DFMFileViewPrivate;
-class DFMFileView : public DListView
+class FileViewPrivate;
+class FileView : public DListView
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(DFMFileView)
-    QSharedPointer<DFMFileViewPrivate> d_ptr;
+    Q_DECLARE_PRIVATE(FileView)
+    QSharedPointer<FileViewPrivate> d_ptr;
 
 public:
-    explicit DFMFileView(QWidget *parent = nullptr);
+    explicit FileView(QWidget *parent = nullptr);
 
     virtual void setViewMode(QListView::ViewMode mode);
 
@@ -49,5 +51,6 @@ protected:
 Q_SIGNALS:
     void urlChanged(const QUrl &old, const QUrl &now);
 };
+DFMBASE_END_NAMESPACE
 
-#endif // DFMFILEVIEW_H
+#endif // FILEVIEW_H

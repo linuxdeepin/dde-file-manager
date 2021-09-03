@@ -22,11 +22,13 @@
 #ifndef LOCALDIRITERATOR_H
 #define LOCALDIRITERATOR_H
 
+#include "dfm-base/dfm_base_global.h"
 #include "dfm-base/base/abstractdiriterator.h"
 
 #include <QDirIterator>
 
 class QUrl;
+DFMBASE_BEGIN_NAMESPACE
 class LocalFileInfo;
 class LocalDirIteratorPrivate;
 
@@ -50,5 +52,6 @@ public:
     virtual QUrl url() const override;
     bool enableIteratorByKeyword(const QString &keyword) override {Q_UNUSED(keyword); return false;}
 };
+DFMBASE_END_NAMESPACE
 
 #endif // LOCALDIRITERATOR_H

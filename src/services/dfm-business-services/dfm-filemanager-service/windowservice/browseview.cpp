@@ -27,7 +27,7 @@ DSB_FM_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(DFMBrowseWidgetFactory,_browseViewFactory)
 
 DFMBrowseView::DFMBrowseView(QWidget *parent)
-    : DFMFileView (parent)
+    : FileView (parent)
 {
 
 }
@@ -39,12 +39,12 @@ DFMBrowseView::~DFMBrowseView()
 
 void DFMBrowseView::setRootUrl(const QUrl &url)
 {
-    DFMFileView::setRootUrl(url);
+    FileView::setRootUrl(url);
 }
 
 QUrl DFMBrowseView::rootUrl()
 {
-    return DFMFileView::rootUrl();
+    return FileView::rootUrl();
 }
 
 DFMBrowseWidgetFactory &DFMBrowseWidgetFactory::instance() {

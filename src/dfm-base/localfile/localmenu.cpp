@@ -24,6 +24,7 @@
 #include "base/schemefactory.h"
 #include "base/singleton.hpp"
 
+DFMBASE_BEGIN_NAMESPACE
 LocalMenuPrivate::LocalMenuPrivate(const QString &filePath, LocalMenu *qq)
     :m_fileInfo(InfoFactory::instance().create<LocalFileInfo>(filePath)),
       q_ptr(qq)
@@ -495,4 +496,4 @@ bool LocalMenu::isNeedLoadCustomActions()
     return d->m_isNeedLoadCustomActions;
 }
 
-
+DFMBASE_END_NAMESPACE

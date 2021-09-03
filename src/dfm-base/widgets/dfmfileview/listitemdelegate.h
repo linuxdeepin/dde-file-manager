@@ -21,16 +21,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DLISTITEMDELEGATE_H
-#define DLISTITEMDELEGATE_H
+#ifndef LISTITEMDELEGATE_H
+#define LISTITEMDELEGATE_H
 
+#include "dfm-base/dfm_base_global.h"
 #include "styleditemdelegate.h"
 
-class DFMListItemDelegatePrivate;
-class DFMListItemDelegate : public DFMStyledItemDelegate
+DFMBASE_BEGIN_NAMESPACE
+class ListItemDelegatePrivate;
+class ListItemDelegate : public StyledItemDelegate
 {
 public:
-    explicit DFMListItemDelegate(DListView *parent);
+    explicit ListItemDelegate(DListView *parent);
 
     void paint(QPainter *painter,
                const QStyleOptionViewItem &option,
@@ -54,7 +56,8 @@ protected:
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
 private:
-    Q_DECLARE_PRIVATE(DFMListItemDelegate)
+    Q_DECLARE_PRIVATE(ListItemDelegate)
 };
+DFMBASE_END_NAMESPACE
 
 #endif // DLISTITEMDELEGATE_H

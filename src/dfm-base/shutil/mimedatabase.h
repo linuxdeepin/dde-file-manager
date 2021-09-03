@@ -29,14 +29,15 @@
 
 #include <QMimeDatabase>
 
-class DMimeDatabase
+DFMBASE_BEGIN_NAMESPACE
+class MimeDatabase
 {
-    Q_DISABLE_COPY(DMimeDatabase)
+    Q_DISABLE_COPY(MimeDatabase)
 
     //不可继承该类
 private:
-    explicit DMimeDatabase();
-    virtual ~DMimeDatabase();
+    explicit MimeDatabase();
+    virtual ~MimeDatabase();
 
 public:
     enum FileType {
@@ -91,5 +92,5 @@ public:
 
     static QList<QMimeType> allMimeTypes();
 };
-
+DFMBASE_END_NAMESPACE
 #endif // DMIMEDATABASE_H

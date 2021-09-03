@@ -22,9 +22,13 @@
 #ifndef THREADCONTAINER_H
 #define THREADCONTAINER_H
 
+#include "dfm-base/dfm_base_global.h"
+
 #include <QList>
 #include <QMap>
 #include <QMutex>
+
+DFMBASE_BEGIN_NAMESPACE
 /*!
  * \class DThreadList 线程安全的List
  *
@@ -355,5 +359,5 @@ private:
     QMap<DKey, DValue> *myMap; // 当前的QMap
     QMutex mutex; // 当前的锁
 };
-
+DFMBASE_END_NAMESPACE
 #endif // THREADCONTAINER_H

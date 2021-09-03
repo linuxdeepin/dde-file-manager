@@ -23,13 +23,13 @@
 #define FILEVIEWITEM_H
 
 #include "localfile/localfileinfo.h"
-#include "shutil/dmimedatabase.h"
+#include "shutil/mimedatabase.h"
 #include "base/schemefactory.h"
 
 #include <QStandardItem>
 #include <QMetaType>
 
-class DFMFileViewItem: public QStandardItem
+class FileViewItem: public QStandardItem
 {
 public:
     enum Roles {
@@ -55,11 +55,11 @@ public:
         ItemColumWidthScaleListRole = Qt::UserRole + 8,
     };
 
-    DFMFileViewItem();
+    FileViewItem();
 
-    DFMFileViewItem(const QUrl &url);
+    FileViewItem(const QUrl &url);
 
-    DFMFileViewItem &operator=(const DFMFileViewItem &other)
+    FileViewItem &operator=(const FileViewItem &other)
     {
         setData(other.data(ItemNameRole),ItemNameRole);
         setData(other.data(ItemIconRole),ItemIconRole);
@@ -108,6 +108,6 @@ public:
     virtual QVariant data(int role) const override;
 };
 
-Q_DECLARE_METATYPE(DFMFileViewItem);
+Q_DECLARE_METATYPE(FileViewItem);
 
 #endif // DFMFILEVIEWITEM_H

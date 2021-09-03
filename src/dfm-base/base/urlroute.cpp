@@ -23,6 +23,7 @@
 
 #include "urlroute.h"
 
+DFMBASE_BEGIN_NAMESPACE
 QList<SchemeNode> UrlRoute::SchemeMapLists{};
 /*!
  * \class UrlRoute路由
@@ -408,3 +409,5 @@ void SchemeNode::setIsVirtual(bool isVirtual)
 {
     isMyVirtual = isVirtual;
 }
+
+DFMBASE_END_NAMESPACE

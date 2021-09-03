@@ -19,9 +19,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMFILEVIEWPRIVATEA_H
-#define DFMFILEVIEWPRIVATEA_H
+#ifndef FILEVIEW_P_H
+#define FILEVIEW_P_H
 
+#include "dfm-base/dfm_base_global.h"
 #include "widgets/dfmfileview/fileview.h"
 #include "widgets/dfmfileview/fileviewmodel.h"
 #include "widgets/dfmfileview/iconitemdelegate.h"
@@ -40,24 +41,26 @@ const int LIST_VIEW_ICON_SIZE = 24;
 
 } //namespace GlobalPrivate
 
-class DFMFileViewPrivate
+DFMBASE_BEGIN_NAMESPACE
+class FileViewPrivate
 {
-    Q_DECLARE_PUBLIC(DFMFileView)
-    DFMFileView * q_ptr;
+    Q_DECLARE_PUBLIC(FileView)
+    FileView * q_ptr;
 
 public:
 
     QAtomicInteger<bool> m_allowedAdjustColumnSize = true;
-    DFMHeaderView* m_headview = nullptr;
-    DFMListItemDelegate *m_listDelegate = nullptr;
-    DFMIconItemDelegate *m_iconDelegate = nullptr;
+    HeaderView* m_headview = nullptr;
+    ListItemDelegate *m_listDelegate = nullptr;
+    IconItemDelegate *m_iconDelegate = nullptr;
     QUrl m_url;
 
-    explicit DFMFileViewPrivate(DFMFileView *qq);
+    explicit FileViewPrivate(FileView *qq);
 
     int iconModeColumnCount(int itemWidth = 0) const;
 
     void updateViewDelegate(const QListView::ViewMode &mode);
 };
+DFMBASE_END_NAMESPACE
 
-#endif // DFMFILEVIEWPRIVATEA_H
+#endif // FILEVIEW_P_H
