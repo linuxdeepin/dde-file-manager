@@ -249,6 +249,10 @@ void FileIconItem::resizeFromEditTextChanged()
 {
     //根据字符串的长度调整大小调整(之前的逻辑)
     updateEditorGeometry();
+    //调整大小后，重新设置水平居中，否则会左对齐。
+    if (edit) {
+        edit->setAlignment(Qt::AlignHCenter);
+    }
 }
 
 void FileIconItem::showAlertMessage(const QString &text, int duration)
