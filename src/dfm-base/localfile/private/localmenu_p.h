@@ -33,9 +33,9 @@ public:
     virtual~LocalMenuPrivate();
 
 public:
-    QSharedPointer<LocalFileInfo> m_fileInfo {nullptr};
-    bool m_isAddOemExternalAction { false };
-    bool m_isNeedLoadCustomActions { false };
+    QSharedPointer<LocalFileInfo> localFileInfo { nullptr }; // 本地文件信息
+    QAtomicInteger<bool> isAddOemExternalAction { false }; // 是否加载oem的action
+    QAtomicInteger<bool> isNeedLoadCustomActions { false }; // 是否需要加载用户自定义的菜单action
     LocalMenu *q_ptr {nullptr};
 
 };

@@ -32,7 +32,6 @@
 #include <dfmio_global.h>
 #include <dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
-#include <dfm-io/core/diofactory_p.h>
 
 USING_IO_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE

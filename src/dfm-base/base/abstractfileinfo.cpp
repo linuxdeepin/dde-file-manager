@@ -29,7 +29,6 @@
 #include <dfmio_global.h>
 #include <dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
-#include <dfm-io/core/diofactory_p.h>
 
 USING_IO_NAMESPACE
 
@@ -61,16 +60,8 @@ AbstractFileInfo::AbstractFileInfo(const QUrl &url)
     :d_ptr(new AbstractFileInfoPrivate(this))
 {
     Q_D(AbstractFileInfo);
-    d->url = url;
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(d->url.scheme(), d->url);
-    if (!factory) {
-        qWarning("create factory failed.");
-        return;
-    }
-    d->dfmFileInfo = factory->createFileInfo();
-    if (!d->dfmFileInfo) {
-        qWarning("create fileinfo failed.");
-    }
+    d->url = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
+    initFileInfo();
 }
 /*!
  * \brief DAbstractFileInfo 构造函数
@@ -81,16 +72,8 @@ AbstractFileInfo::AbstractFileInfo(const QString &file)
     :d_ptr(new AbstractFileInfoPrivate(this))
 {
     Q_D(AbstractFileInfo);
-    d->url = UrlRoute::pathToUrl(file);
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(d->url.scheme(), d->url);
-    if (!factory) {
-        qWarning("create factory failed.");
-        return;
-    }
-    d->dfmFileInfo = factory->createFileInfo();
-    if (!d->dfmFileInfo) {
-        qWarning("create fileinfo failed.");
-    }
+    d->url = QUrl::fromLocalFile(file);
+    initFileInfo();
 }
 /*!
  * \brief DAbstractFileInfo 构造函数
@@ -101,16 +84,8 @@ AbstractFileInfo::AbstractFileInfo(const QFile &file)
     :d_ptr(new AbstractFileInfoPrivate(this))
 {
     Q_D(AbstractFileInfo);
-    d->url = UrlRoute::pathToUrl(QFileInfo(file).filePath());
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(d->url.scheme(), d->url);
-    if (!factory) {
-        qWarning("create factory failed.");
-        return;
-    }
-    d->dfmFileInfo = factory->createFileInfo();
-    if (!d->dfmFileInfo) {
-        qWarning("create fileinfo failed.");
-    }
+    d->url = QUrl::fromLocalFile(QFileInfo(file).filePath());
+    initFileInfo();
 }
 /*!
  * \brief DAbstractFileInfo 构造函数
@@ -123,16 +98,8 @@ AbstractFileInfo::AbstractFileInfo(const QDir &dir, const QString &file)
     :d_ptr(new AbstractFileInfoPrivate(this))
 {
     Q_D(AbstractFileInfo);
-    d->url = UrlRoute::pathToUrl(QFileInfo(dir,file).filePath());
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(d->url.scheme(), d->url);
-    if (!factory) {
-        qWarning("create factory failed.");
-        return;
-    }
-    d->dfmFileInfo = factory->createFileInfo();
-    if (!d->dfmFileInfo) {
-        qWarning("create fileinfo failed.");
-    }
+    d->url = QUrl::fromLocalFile(QFileInfo(dir,file).absoluteFilePath());
+    initFileInfo();
 }
 /*!
  * \brief DAbstractFileInfo 构造函数
@@ -143,16 +110,8 @@ AbstractFileInfo::AbstractFileInfo(const QFileInfo &fileinfo)
     :d_ptr(new AbstractFileInfoPrivate(this))
 {
     Q_D(AbstractFileInfo);
-    d->url = UrlRoute::pathToUrl(fileinfo.filePath());
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(d->url.scheme(), d->url);
-    if (!factory) {
-        qWarning("create factory failed.");
-        return;
-    }
-    d->dfmFileInfo = factory->createFileInfo();
-    if (!d->dfmFileInfo) {
-        qWarning("create fileinfo failed.");
-    }
+    d->url = QUrl::fromLocalFile(fileinfo.absoluteFilePath());
+    initFileInfo();
 }
 
 AbstractFileInfo::~AbstractFileInfo()
@@ -219,16 +178,8 @@ void AbstractFileInfo::setFile(const DFileInfo &file)
 void AbstractFileInfo::setFile(const QFile &file)
 {
     Q_D(AbstractFileInfo);
-    d->url = UrlRoute::pathToUrl(QFileInfo(file).filePath());
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(d->url.scheme(), d->url);
-    if (!factory) {
-        qWarning("create factory failed.");
-        return;
-    }
-    d->dfmFileInfo = factory->createFileInfo();
-    if (!d->dfmFileInfo) {
-        qWarning("create fileinfo failed.");
-    }
+    d->url = QUrl::fromLocalFile(QFileInfo(file).absoluteFilePath());
+    initFileInfo();
     refresh();
 }
 /*!
@@ -241,16 +192,8 @@ void AbstractFileInfo::setFile(const QFile &file)
 void AbstractFileInfo::setFile(const QUrl &url)
 {
     Q_D(AbstractFileInfo);
-    d->url = url;
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(d->url.scheme(), d->url);
-    if (!factory) {
-        qWarning("create factory failed.");
-        return;
-    }
-    d->dfmFileInfo = factory->createFileInfo();
-    if (!d->dfmFileInfo) {
-        qWarning("create fileinfo failed.");
-    }
+    d->url = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
+    initFileInfo();
     this->refresh();
 }
 /*!
@@ -1141,6 +1084,23 @@ QDateTime AbstractFileInfo::fileTime(QFileDevice::FileTime time) const
         return lastModified();
     } else {
         return QDateTime();
+    }
+}
+/*!
+ * \brief AbstractFileInfo::initFileInfo 创建dfmio中dfileinfo
+ */
+void AbstractFileInfo::initFileInfo()
+{
+    Q_D(AbstractFileInfo);
+    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(d->url.scheme(), static_cast<QUrl>(d->url));
+    if (!factory) {
+        qWarning("create factory failed.");
+        abort();
+    }
+    d->dfmFileInfo = factory->createFileInfo();
+    if (!d->dfmFileInfo) {
+        qWarning("create fileinfo failed.");
+        abort();
     }
 }
 /*!

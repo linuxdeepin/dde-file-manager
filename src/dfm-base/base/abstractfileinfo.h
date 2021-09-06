@@ -127,6 +127,8 @@ public:
     virtual QDateTime lastModified() const;
     virtual QDateTime lastRead() const;
     virtual QDateTime fileTime(QFile::FileTime time) const;
+private:
+    void initFileInfo();
 };
 DFMBASE_END_NAMESPACE
 

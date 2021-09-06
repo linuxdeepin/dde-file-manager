@@ -21,8 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "listitemdelegate.h"
-#include "services/dfm-business-services/dfm-filemanager-service/applicationservice/application.h"
-#include "services/dfm-business-services/dfm-filemanager-service/applicationservice/settings.h"
 #include "fileviewmodel.h"
 #include "private/styleditemdelegate_p.h"
 #include "widgets/dfmfileview/fileviewitem.h"
@@ -258,14 +256,7 @@ QString elideText(const QString &text, const QSizeF &size,
 
 QString preprocessingFileName(QString name)
 {
-    // eg: [\\:*\"?<>|\r\n]
-    const QString &value = DSB_FM_NAMESPACE::Application::genericObtuselySetting()->value("FileName",
-                                                                           "non-allowableCharacters").toString();
-
-    if (value.isEmpty())
-        return name;
-
-    return name.remove(QRegularExpression(value));
+    return name;
 }
 
 void showAlertMessage(QPoint globalPoint, const QColor &backgroundColor, const QString &text, int duration = 3000)

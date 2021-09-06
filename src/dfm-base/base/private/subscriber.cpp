@@ -34,12 +34,12 @@ Subscriber::~Subscriber()
 
 int Subscriber::eventKey() const
 {
-    return m_eventKey;
+    return eventKeys;
 }
 
 void Subscriber::setEventKey(int eventKey)
 {
-    m_eventKey = eventKey;
+    eventKeys = eventKey;
 }
 
 DFMBASE_END_NAMESPACE

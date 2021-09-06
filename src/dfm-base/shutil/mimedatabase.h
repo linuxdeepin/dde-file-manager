@@ -32,7 +32,6 @@ DFMBASE_BEGIN_NAMESPACE
 class MimeDatabase
 {
     Q_DISABLE_COPY(MimeDatabase)
-
     //不可继承该类
 private:
     explicit MimeDatabase();
@@ -40,55 +39,42 @@ private:
 
 public:
     enum FileType {
-            Directory,
-            CharDevice,
-            BlockDevice,
-            FIFOFile,
-            SocketFile,
-            RegularFile,
+            Directory,                          // 目录
+            CharDevice,                         // 字符设备
+            BlockDevice,                        // 块设备
+            FIFOFile,                           // FIFO文件
+            SocketFile,                         // socket文件
+            RegularFile,                        // Regular文件
 
-            Documents,
-            Images,
-            Videos,
-            Audios,
-            Archives,
-            DesktopApplication,
-            Executable,
-            Backups,
+            Documents,                          // 文档
+            Images,                             // 镜像文件
+            Videos,                             // 视频文件
+            Audios,                             // 音乐文件
+            Archives,                           // 归档文件
+            DesktopApplication,                 // 应用
+            Executable,                         // 可执行
+            Backups,                            // 回退
             Unknown,
             CustomType = 0x100
     };
 
     static QString mimeFileType(const QString &mimeFileName);
-
     static FileType mimeFileTypeNameToEnum(const QString &mimeFileTypeName);
-
     static QStringList supportMimeFileType(FileType mimeFileType);
-
     static QString mimeStdIcon(const QString &mimeType);
-
     static QMimeType mimeTypeForFile(const QString &fileName,
                                      QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
-
     static QMimeType mimeTypeForFile(const QFileInfo &fileInfo,
                                      QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
-
     static QList<QMimeType> mimeTypesForFileName(const QString &fileName);
-
     static QMimeType mimeTypeForData(const QByteArray &data);
-
     static QMimeType mimeTypeForData(QIODevice *device);
-
     static QMimeType mimeTypeForUrl(const QUrl &url);
-
     static QMimeType mimeTypeForFileNameAndData(const QString &fileName,
                                                 QIODevice *device);
-
     static QMimeType mimeTypeForFileNameAndData(const QString &fileName,
                                                 const QByteArray &data);
-
     static QString suffixForFileName(const QString &fileName);
-
     static QList<QMimeType> allMimeTypes();
 };
 DFMBASE_END_NAMESPACE

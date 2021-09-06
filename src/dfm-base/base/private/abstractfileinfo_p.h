@@ -26,7 +26,7 @@ public:
     AbstractFileInfoPrivate(AbstractFileInfo *qq);
     virtual ~AbstractFileInfoPrivate();
 
-    QSharedPointer<DFileInfo> dfmFileInfo = nullptr;                     // dfm文件的信息
+    QSharedPointer<DFileInfo> dfmFileInfo { nullptr };                     // dfm文件的信息
     QUrl url;                                                            // 文件的url
     AbstractFileInfo * const q_ptr;                                      // DAbstractFileInfo实例对象
 private:

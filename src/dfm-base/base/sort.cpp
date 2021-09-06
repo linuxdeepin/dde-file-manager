@@ -24,6 +24,18 @@
 #include "sort.h"
 
 DFMBASE_BEGIN_NAMESPACE
+
+/*!
+ * \brief x2nrealloc 分配文件的这是内存
+ *
+ * \param p 分配内存的地址
+ *
+ * \param pn 分配地址大小
+ *
+ * \param s
+ *
+ * \return void * 返回分配内存的起始地址
+ */
 void *
 x2nrealloc (void *p, size_t *pn, size_t s)
 {
@@ -59,8 +71,15 @@ x2nrealloc (void *p, size_t *pn, size_t s)
 }
 
 
-/* Compare the names of two directory entries */
-
+/*!
+ * \brief direntry_cmp_name Compare the names of two directory entries
+ *
+ * \param a 文件a的direntry_t结构体地址
+ *
+ * \param b 文件b的direntry_t结构体地址
+ *
+ * \return int 返回对比结果
+ */
 int
 direntry_cmp_name (void const *a, void const *b)
 {
@@ -69,7 +88,15 @@ direntry_cmp_name (void const *a, void const *b)
 
   return strcmp (dea->name, deb->name);
 }
-
+/*!
+ * \brief direntry_cmp_inode Compare the inode of two directory entries
+ *
+ * \param a 文件a的direntry_t结构体地址
+ *
+ * \param b 文件b的direntry_t结构体地址
+ *
+ * \return int 返回对比结果
+ */
 int
 direntry_cmp_inode (void const *a, void const *b)
 {
@@ -81,20 +108,23 @@ direntry_cmp_inode (void const *a, void const *b)
 
 typedef int (*comparison_function) (void const *, void const *);
 
-static comparison_function const comparison_function_table[] =
-  {
-    nullptr,
-    direntry_cmp_name
-   , direntry_cmp_inode
-  };
-
-/* Return a freshly allocated string containing the file names
-   in directory DIRP, separated by '\0' characters;
-   the end is marked by two '\0' characters in a row.
-   Returned values are sorted according to OPTION.
-   Return NULL (setting errno) if DIRP cannot be read.
-   If DIRP is NULL, return NULL without affecting errno.  */
-
+/*!
+ * \brief streamsavedir Return a freshly allocated string containing the file names
+ *
+ *  in directory DIRP, separated by '\0' characters;
+ *
+ *  the end is marked by two '\0' characters in a row.
+ *
+ *  Returned values are sorted according to OPTION.
+ *
+ *  Return NULL (setting errno) if DIRP cannot be read.
+ *
+ *  If DIRP is NULL, return NULL without affecting errno.
+ *
+ * \param dirp the data type of directory stream objects.
+ *
+ * \return  char * 文件保存的文件流
+ */
 char *
 streamsavedir (DIR *dirp)
 {
@@ -188,10 +218,17 @@ streamsavedir (DIR *dirp)
   return name_space;
 }
 
-/* Return a freshly allocated string containing the file names
-   in directory DIR, separated by '\0' characters;
-   the end is marked by two '\0' characters in a row.
-   Return NULL (setting errno) if DIR cannot be opened, read, or closed.  */
+/*!
+ * \brief savedir Return a freshly allocated string containing the file names
+ *
+ *  in directory DIR, separated by '\0' characters;
+ *
+ *  the end is marked by two '\0' characters in a row.
+ *
+ *  Return NULL (setting errno) if DIR cannot be opened, read, or closed.
+ *
+ * \param char const *dir 文件路径
+ */
 
 char *savedir (char const *dir)
 {

@@ -40,7 +40,7 @@ public:
     DThreadList<QUrl> needRemoveCacheList; // 待移除的fileinfo的urllist
     DThreadList<QUrl> removedCacheList; // 已被removecache的url
     DThreadList<QUrl> removedSortByTimeCacheList; // 已被SortByTimeCache的url
-    QSharedPointer<ReFreshThread> refreshThread = nullptr; // 刷新线程
+    QSharedPointer<ReFreshThread> refreshThread { nullptr }; // 刷新线程
     DThreadList<QUrl> sortByTimeCacheUrl; // 按时间排序的缓存fileinfo的文件url
     QTimer needRemoveTimer; // 需要加入待移除缓存的计时器
     QTimer removeTimer; // 移除缓存的

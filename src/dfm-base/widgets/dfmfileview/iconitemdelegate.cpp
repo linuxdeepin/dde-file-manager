@@ -22,7 +22,6 @@
  */
 #include "iconitemdelegate.h"
 #include "private/styleditemdelegate_p.h"
-#include "services/dfm-business-services/dfm-filemanager-service/applicationservice/application.h"
 #include "dfm-base/dfm_base_global.h"
 
 #include <DApplicationHelper>
@@ -282,16 +281,7 @@ IconItemDelegate::IconItemDelegate(DListView *parent)
     QMutexLocker lk(&m_mutex);
     Q_D(IconItemDelegate);
 
-//    d->expandedItem = new ExpandedItem(this, parent->parent()->viewport());
-//    d->expandedItem->setAttribute(Qt::WA_TransparentForMouseEvents);
-//    d->expandedItem->canDeferredDelete = false;
-//    d->expandedItem->setContentsMargins(0, 0, 0, 0);
-//    /// prevent flash when first call show()
-//    d->expandedItem->setFixedWidth(0);
-
     d->iconSizes << 48 << 64 << 96 << 128 << 256;
-
-//    connect(parent, &DFileViewHelper::triggerEdit, this, &DFMIconItemDelegate::onTriggerEdit);
 
     parent->setIconSize(iconSizeByIconSizeLevel());
 }

@@ -36,8 +36,8 @@
 DFMBASE_BEGIN_NAMESPACE
 typedef struct
 {
-  char *name;
-  ino_t ino;
+  char *name { nullptr} ; // 名称
+  ino_t ino { 0 }; // inode
 } direntry_t;
 
 char *savedir (char const *dir);

@@ -6,24 +6,20 @@ set(${PROJECT_NAME}_global_h
     dfm_base_global.h)
 
 set(${PROJECT_NAME}_utils_h
-    utils/utils.h
     utils/threadcontainer.hpp
     )
 
 set(${PROJECT_NAME}_utils_cpp
-    utils/utils.cpp
     )
 
 
 set(${PROJECT_NAME}_shutil_h
     shutil/fileutils.h
-    shutil/shortcut.h
     shutil/mimedatabase.h
     )
 
 set(${PROJECT_NAME}_shutil_cpp
     shutil/fileutils.cpp
-    shutil/shortcut.cpp
     shutil/mimedatabase.cpp
     )
 

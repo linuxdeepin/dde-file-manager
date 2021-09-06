@@ -80,8 +80,12 @@ QVariant FileViewItem::data(int role) const
                 return QObject::tr("%1 items").arg(size);
             }
         }
-        else
-            return FileUtils::formatSize(m_fileinfo->size());
+        else {
+            QSharedPointer<LocalFileInfo> local = qSharedPointerCast<LocalFileInfo>(m_fileinfo);
+            if (local)
+                return local->sizeFormat();
+            return QString::number(m_fileinfo->size());
+        }
     case ItemFileMimeTypeRole:
         return mimeType().name();
     case ItemColumListRole:

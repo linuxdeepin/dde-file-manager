@@ -39,7 +39,7 @@ public:
     void setEventKey(int eventKey);
 
 private:
-    int m_eventKey = 0;
+    int eventKeys { 0 };
 };
 DFMBASE_END_NAMESPACE
 

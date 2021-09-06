@@ -28,7 +28,6 @@
 #include "dfm-framework/log/logutils.h"
 #include "dfm-framework/log/codetimecheck.h"
 #include "dfm-framework/event/eventcallproxy.h"
-
 #include "dfm-framework/dfm_framework_global.h"
 
 #include <DApplication>
@@ -42,10 +41,13 @@
 #include <QFile>
 #include <QtGlobal>
 
+#include <dfmio_register.h>
+
 #include <iostream>
 #include <algorithm>
 
 DGUI_USE_NAMESPACE
+USING_IO_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 int pluginsLoad()
@@ -90,6 +92,8 @@ int main(int argc, char *argv[])
     DApplication a(argc, argv);
 
     dpf::FrameworkLog::initialize();
+
+    DFMIO::dfmio_init();
 
     pluginsLoad();
 

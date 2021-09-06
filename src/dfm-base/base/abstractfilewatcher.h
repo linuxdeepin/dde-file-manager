@@ -65,6 +65,10 @@ protected:
     QScopedPointer<AbstractFileWatcherPrivate> d_ptr;
 
 private:
+    void initFileWatcher();
+    void initConnect();
+
+private:
     Q_DISABLE_COPY(AbstractFileWatcher)
     Q_DECLARE_PRIVATE(AbstractFileWatcher)
 };

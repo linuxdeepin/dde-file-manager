@@ -22,6 +22,7 @@
  */
 #include "private/abstractfiledevice_p.h"
 #include "base/abstractfiledevice.h"
+#include "base/urlroute.h"
 
 DFMBASE_BEGIN_NAMESPACE
 /*!
@@ -43,7 +44,7 @@ AbstractFileDevicePrivate::~AbstractFileDevicePrivate()
 
 AbstractFileDevice::AbstractFileDevice(const QUrl &url)
 {
-    d_ptr->url = url;
+    d_ptr->url = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
 }
 
 AbstractFileDevice::~AbstractFileDevice()

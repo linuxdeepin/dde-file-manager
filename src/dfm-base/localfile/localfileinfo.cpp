@@ -26,7 +26,6 @@
 #include "base/urlroute.h"
 #include "shutil/fileutils.h"
 #include "dfileiconprovider.h"
-#include "services/dfm-business-services/dfm-filemanager-service/applicationservice/application.h"
 #include "base/standardpaths.h"
 
 #include <QDateTime>

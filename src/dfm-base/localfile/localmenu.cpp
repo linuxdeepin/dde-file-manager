@@ -25,8 +25,13 @@
 #include "base/singleton.hpp"
 
 DFMBASE_BEGIN_NAMESPACE
+/*!
+ * \clase LocalMenuPrivate LocalMenu的私有类
+ *
+ * \brief 存储LocalMenu的基本数据
+ */
 LocalMenuPrivate::LocalMenuPrivate(const QString &filePath, LocalMenu *qq)
-    :m_fileInfo(InfoFactory::instance().create<LocalFileInfo>(filePath)),
+    :localFileInfo(InfoFactory::instance().create<LocalFileInfo>(filePath)),
       q_ptr(qq)
 {
 
@@ -36,13 +41,23 @@ LocalMenuPrivate::~LocalMenuPrivate()
 {
 
 }
-
+/*!
+ * \clase LocalMenu 本地文件的菜单创建类
+ *
+ * \brief 先初始化时，加载oem和用户自动的菜单anction，根据本地文件信息获取不同的菜单action，根据不同的action创建和设置菜单栏
+ */
 LocalMenu::LocalMenu(const QString &filePath)
      :d_ptr(new LocalMenuPrivate(filePath, this))
 {
 
 }
-
+/*!
+ * \brief LocalMenu::menuActionList 获取本地文件的菜单action
+ *
+ * \param type 菜单的类型 MenuType
+ *
+ * \return QVector<LocalMenu::MenuAction> 菜单action的的vector
+ */
 QVector<LocalMenu::MenuAction> LocalMenu::menuActionList(MenuType type) const
 {
     Q_D(const LocalMenu);
@@ -65,7 +80,7 @@ QVector<LocalMenu::MenuAction> LocalMenu::menuActionList(MenuType type) const
                    << MenuAction::Property;
     } else if (type == SingleFile) {
 
-        if (d->m_fileInfo->isDir() /*todo:待DFMLocalFileInfo提供对应接口&& systemPathManager->isSystemPath(d->m_fileInfo->filePath())*/) {
+        if (d->localFileInfo->isDir() /*todo:待DFMLocalFileInfo提供对应接口&& systemPathManager->isSystemPath(d->m_fileInfo->filePath())*/) {
             actionKeys << MenuAction::Open
                        << MenuAction::OpenInNewWindow
                        << MenuAction::OpenInNewTab
@@ -100,7 +115,7 @@ QVector<LocalMenu::MenuAction> LocalMenu::menuActionList(MenuType type) const
             }
             */
 
-            if (d->m_fileInfo->isDir()) {
+            if (d->localFileInfo->isDir()) {
                 actionKeys << MenuAction::OpenInNewWindow
                            << MenuAction::OpenInNewTab
                            << MenuAction::OpenAsAdmin;
@@ -127,7 +142,7 @@ QVector<LocalMenu::MenuAction> LocalMenu::menuActionList(MenuType type) const
             */
             actionKeys << MenuAction::Separator;
 
-            if (d->m_fileInfo->isDir()) {
+            if (d->localFileInfo->isDir()) {
                 actionKeys << MenuAction::Compress;
 
                 actionKeys << MenuAction::Separator;
@@ -140,15 +155,15 @@ QVector<LocalMenu::MenuAction> LocalMenu::menuActionList(MenuType type) const
                                << MenuAction::Separator;
                 }*/
 
-            } else if (d->m_fileInfo->isFile()) {
-                if (!FileUtils::isArchive(d->m_fileInfo->absoluteFilePath())) {
+            } else if (d->localFileInfo->isFile()) {
+                if (!FileUtils::isArchive(d->localFileInfo->absoluteFilePath())) {
                     actionKeys << MenuAction::Compress
                                << MenuAction::Separator;
                 }
             }
 
-            if (d->m_fileInfo->isFile()) {
-                if (FileUtils::isArchive(d->m_fileInfo->absoluteFilePath())) {
+            if (d->localFileInfo->isFile()) {
+                if (FileUtils::isArchive(d->localFileInfo->absoluteFilePath())) {
                     actionKeys << MenuAction::Decompress
                                << MenuAction::DecompressHere
                                << MenuAction::Separator;
@@ -172,7 +187,7 @@ QVector<LocalMenu::MenuAction> LocalMenu::menuActionList(MenuType type) const
                 }
             }
             */
-            if (d->m_fileInfo->isDir()) {
+            if (d->localFileInfo->isDir()) {
                 // FIXME: reimplement BookMark::exist() 's behavior and use it for check bookmark existance.
                 //        after doing this, don't forget to remove the "bookmarkmanager.h" header file include.
                 // if (DFileService::instance()->createFileInfo(nullptr, DUrl::fromBookMarkFile(fileUrl(), QString()))) {
@@ -189,7 +204,7 @@ QVector<LocalMenu::MenuAction> LocalMenu::menuActionList(MenuType type) const
                 actionKeys << MenuAction::Separator
                            << MenuAction::OpenInTerminal
                            << MenuAction::Separator;
-            } else if (d->m_fileInfo->isFile()) {
+            } else if (d->localFileInfo->isFile()) {
                 /*todo:待提供对应接口
                 if (mimeTypeName().startsWith("image") && d->m_fileInfo->isReadable()
 //                        && !mimeTypeName().endsWith("gif")
@@ -290,7 +305,13 @@ QVector<LocalMenu::MenuAction> LocalMenu::menuActionList(MenuType type) const
 
     return actionKeys;
 }
-
+/*!
+ * \brief LocalMenu::subMenuActionList 获取菜单的列表
+ *
+ * \param type 菜单的类型 MenuType
+ *
+ * \return QMap<LocalMenu::MenuAction, QVector<LocalMenu::MenuAction> > 返回对应菜单的actionmap，包含二级菜单的action
+ */
 QMap<LocalMenu::MenuAction, QVector<LocalMenu::MenuAction> > LocalMenu::subMenuActionList(LocalMenu::MenuType type) const
 {
     Q_UNUSED(type)
@@ -390,14 +411,18 @@ QMap<LocalMenu::MenuAction, QVector<LocalMenu::MenuAction> > LocalMenu::subMenuA
     actions.insert(MenuAction::NewDocument, docmentMenuActionKeys);
     return actions;
 }
-
+/*!
+ * \brief LocalMenu::disableMenuActionList 获取不可用菜单的action
+ *
+ * \return QSet<LocalMenu::MenuAction> 不可用菜单的
+ */
 QSet<LocalMenu::MenuAction> LocalMenu::disableMenuActionList() const
 {
     Q_D(const LocalMenu);
 
     QSet<MenuAction> list;
 
-    if (!d->m_fileInfo->isWritable()) {
+    if (!d->localFileInfo->isWritable()) {
         list << MenuAction::NewFolder
              << MenuAction::NewDocument
              << MenuAction::Paste;
@@ -413,7 +438,13 @@ QSet<LocalMenu::MenuAction> LocalMenu::disableMenuActionList() const
    */
     return list;
 }
-
+/*!
+ * \brief LocalMenu::menuActionByColumnRole 根据不同的角色获取不同的菜单action
+ *
+ * \param role 用户角色了
+ *
+ * \return MenuAction 菜单的action
+ */
 LocalMenu::MenuAction LocalMenu::menuActionByColumnRole(int role) const
 {
 
@@ -438,7 +469,11 @@ LocalMenu::MenuAction LocalMenu::menuActionByColumnRole(int role) const
     */
     return MenuAction::Unknow;
 }
-
+/*!
+ * \brief LocalMenu::sortSubMenuActionUserColumnRoles 对子菜单的action的使用用户的role去排序
+ *
+ * \return QList<int> 排序好的role
+ */
 QList<int> LocalMenu::sortSubMenuActionUserColumnRoles() const
 {
     /*todo:先用临时的数据，待接口更新
@@ -471,29 +506,45 @@ QList<int> LocalMenu::sortSubMenuActionUserColumnRoles() const
 
     return userColumnRoles;
 }
-
+/*!
+ * \brief LocalMenu::isAddOemExternalAction 获取是否加载了oem的扩展菜单action
+ *
+ * \return bool 是否加载了oem的扩展菜单action
+ */
 bool LocalMenu::isAddOemExternalAction()
 {
     Q_D(LocalMenu);
-    return d->m_isAddOemExternalAction;
+    return d->isAddOemExternalAction;
 }
-
+/*!
+ * \brief LocalMenu::setAddOemExternalAction 设置是否加载了oem的扩展菜单action
+ *
+ * \param isAdd 是否加载了oem的扩展菜单action
+ */
 void LocalMenu::setAddOemExternalAction(bool isAdd)
 {
     Q_D(LocalMenu);
-    d->m_isAddOemExternalAction = isAdd;
+    d->isAddOemExternalAction = isAdd;
 }
-
+/*!
+ * \brief LocalMenu::setIsNeedLoadCustomActions 设置是否需要加载用户自定义菜单action
+ *
+ * \param needCustom
+ */
 void LocalMenu::setIsNeedLoadCustomActions(bool needCustom)
 {
     Q_D(LocalMenu);
-    d->m_isNeedLoadCustomActions = needCustom;
+    d->isNeedLoadCustomActions = needCustom;
 }
-
+/*!
+ * \brief LocalMenu::isNeedLoadCustomActions 获取是否需要加载用户自定义菜单action
+ *
+ * \return bool 是否需要加载用户自定义菜单action
+ */
 bool LocalMenu::isNeedLoadCustomActions()
 {
     Q_D(LocalMenu);
-    return d->m_isNeedLoadCustomActions;
+    return d->isNeedLoadCustomActions;
 }
 
 DFMBASE_END_NAMESPACE

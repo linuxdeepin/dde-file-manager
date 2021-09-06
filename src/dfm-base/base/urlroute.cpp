@@ -96,10 +96,12 @@ bool UrlRoute::schemeMapRoot(const QString &scheme,
     SchemeMapLists.append({scheme, root, icon, isVirtual});
     return true;
 }
-/* @method schemeIcon
- * @brief 获取scheme注册的图标
- * @param scheme url前缀
- * @return QIcon 无则返回空
+/*!
+ * \brief schemeIcon 获取scheme注册的图标
+ *
+ * \param scheme url前缀
+ *
+ * \return QIcon 无则返回空
  */
 QIcon UrlRoute::schemeIcon(const QString &scheme)
 {
@@ -108,15 +110,28 @@ QIcon UrlRoute::schemeIcon(const QString &scheme)
     }
     return QIcon();
 }
-//判断是否注册Scheme,该函数虚拟路径可用
+/*!
+ * \brief UrlRoute::hasScheme 判断是否注册Scheme,该函数虚拟路径可用
+ *
+ * \param scheme 文件的scheme
+ *
+ * \return bool 是否注册Scheme,该函数虚拟路径可用
+ */
 bool UrlRoute::hasScheme(const QString &scheme) {
     for (auto val : SchemeMapLists) {
         if (val.scheme() == scheme) return true;
     }
     return false;
 }
-//path转换成本地的 Url(file://xxx)
-//该函数虚拟路径不可用
+/*!
+ * \brief UrlRoute::fromLocalFile path转换成本地的 Url(file://xxx),该函数虚拟路径不可用
+ *
+ * \param path 文件的路径
+ *
+ * \param errorString 输出参数错误信息
+ *
+ * \return QUrl 转换后的url
+ */
 QUrl UrlRoute::fromLocalFile(const QString &path, QString *errorString)
 {
     if (!QFileInfo(path).exists()) {
@@ -126,8 +141,13 @@ QUrl UrlRoute::fromLocalFile(const QString &path, QString *errorString)
     }
     return QUrl::fromLocalFile(path);
 }
-//使用scheme找到对应注册时的根路径，
-//该函数虚拟路径可用
+/*!
+ * \brief UrlRoute::isSchemeRoot 使用scheme找到对应注册时的根路径，该函数虚拟路径可用
+ *
+ * \param url 文件的url
+ *
+ * \return bool 是否是对应注册时的根路径
+ */
 bool UrlRoute::isSchemeRoot(const QUrl &url)
 {
     QUrl urlCmp;
@@ -141,7 +161,13 @@ bool UrlRoute::isSchemeRoot(const QUrl &url)
 
     return false;
 }
-//使用已注册的scheme进行本地路径的转换
+/*!
+ * \brief UrlRoute::isVirtualUrl 判断Url是否是虚拟的url
+ *
+ * \param url 文件的url
+ *
+ * \return bool 是否是虚拟的url
+ */
 bool UrlRoute::isVirtualUrl(const QUrl &url)
 {
     auto itera = SchemeMapLists.end();
@@ -157,7 +183,13 @@ bool UrlRoute::isVirtualUrl(const QUrl &url)
     }
     return true;
 }
-//使用以注册的scheme进行虚拟路径到绝对路径的转换，
+/*!
+ * \brief UrlRoute::urlParent 获取url的父目录的url
+ *
+ * \param url 文件的url
+ *
+ * \return QUrl url的父目录的url
+ */
 QUrl UrlRoute::urlParent(const QUrl &url) {
     if(isSchemeRoot(url))
         return url;
@@ -172,11 +204,17 @@ QUrl UrlRoute::urlParent(const QUrl &url) {
 
     return reUrl;
 }
-
-//查找当前Url的前节点，如果当前前节点为根路径则直接返回传入Url
-//{"home","/home/user"} 返回 {"home","/home/"}
-//{"main","/"} 返回 {"main","/"}
-//该函数虚拟路径可用
+/*!
+ * \brief UrlRoute::schemeRoot 查找当前Url的前节点，如果当前前节点为根路径则直接返回传入Url
+ *
+ *  {"home","/home/user"} 返回 {"home","/home/"},{"main","/"} 返回 {"main","/"}
+ *
+ * \param scheme 文件的scheme
+ *
+ * \param errorString 输出参数错误信息
+ *
+ * \return QString 返回scheme对应的目录路径
+ */
 QString UrlRoute::schemeRoot(const QString &scheme, QString *errorString)
 {
     //按照子节点逆序规则选中
@@ -193,11 +231,16 @@ QString UrlRoute::schemeRoot(const QString &scheme, QString *errorString)
         *errorString = QObject::tr("Not found root path from %0").arg(scheme);
     return "";
 }
-/* @method isSchemeRoot
- * @brief 判断当前Url是否为顶层
+/*!
+ * \brief UrlRoute::schemeIsVirtual 判断当前Url是否为顶层
+ *
  *  {"main","/"} 返回 true
+ *
  *  {"desktop","/home/user/Desktop"} 返回 false
- * @return 是根节点则返回true，否则返回false
+ *
+ * \param 文件的scheme
+ *
+ * \return 是根节点则返回true，否则返回false
  */
 bool UrlRoute::schemeIsVirtual(const QString &scheme)
 {
@@ -213,9 +256,12 @@ bool UrlRoute::schemeIsVirtual(const QString &scheme)
 
     return false;
 }
-/* @method isVirtualUrl
- * @brief 判断当前Url是否是虚拟路径
- * @return 是虚拟路径则返回true，否则返回false
+/*!
+ * \brief UrlRoute::pathToVirtual 判断当前Url是否是虚拟路径
+ *
+ * \param errorString 输出参数错误信息
+ *
+ * \return 是虚拟路径则返回true，否则返回false
  */
 QUrl UrlRoute::pathToVirtual(const QString &path, QString *errorString)
 {
@@ -245,18 +291,18 @@ QUrl UrlRoute::pathToVirtual(const QString &path, QString *errorString)
         *errorString = QObject::tr("Not found scheme convert path to virtual url");
     return QUrl();
 }
-//查找当前Url的前根节点，如果存在如下列表项
-//{"home","/home/user"},{"desktop","/home/user/Desktop"}
-//如果传入QUrl("desktop:///123"),
-//则当前函数返回QUrl{"home:///"}，指向的真实地址为"/home/user"
-//    static QUrl urlParentRoot(const QUrl &url);
-
-/* @method pathToVirtual
- * @brief 使用path转换到虚拟路径
- * 存在注册节点 {"virtual":"/"}；
- * 此时传入"/home" 则返回 QUrl("virtual:///home")
- * @param path可以任意,不会进行本地路径检查,但是需要满足根条件
- * @return 返回注册的Scheme虚拟Url
+/*!
+ * \brief UrlRoute::virtualToPath 使用path转换到虚拟路径
+ *
+ *  存在注册节点 {"virtual":"/"}；
+ *
+ *  此时传入"/home" 则返回 QUrl("virtual:///home")
+ *
+ * \param path可以任意,不会进行本地路径检查,但是需要满足根条件
+ *
+ * \param errorString 输出参数错误信息
+ *
+ * \return 返回注册的Scheme虚拟Url
  */
 QString UrlRoute::virtualToPath(const QUrl &url, QString *errorString)
 {
@@ -281,12 +327,20 @@ QString UrlRoute::virtualToPath(const QUrl &url, QString *errorString)
         *errorString = "Maybe in called after execute schemeMapRoot function";
     return "";
 }
-/* @method virtualToPath
- * @brief 使用虚拟路径转化成Path，内部不会进行路径检查
+/*!
+ * \brief UrlRoute::pathToUrl 使用虚拟路径Path转换成url，内部不会进行路径检查
+ *
  *  url可以是任意注册的url，需要满足已scheme的要求
+ *
  *  存在注册节点 {"virtual":"/home"}
+ *
  *  传入QUrl("virtual:///home") 则返回 /home/home
- * @return 返回虚拟Url对应的虚拟路径
+ *
+ * \param path 文件路径
+ *
+ * \param errorString 输入参数错误信息
+ *
+ * \return 返回虚拟Url对应的虚拟路径
  */
 QUrl UrlRoute::pathToUrl(const QString &path, QString *errorString)
 {
@@ -328,7 +382,21 @@ QUrl UrlRoute::pathToUrl(const QString &path, QString *errorString)
     url.setPath(formatPath);
     return url;
 }
-
+/*!
+ * \brief UrlRoute::urlToPath 使用虚拟路径Qurl转化成Path，内部不会进行路径检查
+ *
+ *  url可以是任意注册的url，需要满足已scheme的要求
+ *
+ *  存在注册节点 {"virtual":"/home"}
+ *
+ *  传入QUrl("virtual:///home") 则返回 /home/home
+ *
+ * \param path 文件路径
+ *
+ * \param errorString 输入参数错误信息
+ *
+ * \return 返回虚拟Url对应的虚拟路径
+ */
 QString UrlRoute::urlToPath(const QUrl &url, QString *errorString)
 {
     QString path = "";
@@ -351,7 +419,11 @@ QString UrlRoute::urlToPath(const QUrl &url, QString *errorString)
     if (errorString) *errorString = "Maybe in called after execute schemeMapRoot function";
     return "";
 }
-
+/*!
+ * \brief SchemeNode::icon 获取文件icon
+ *
+ * \return QIcon 文件的ICON实例
+ */
 QIcon SchemeNode::icon() const
 {
     return myIcon;

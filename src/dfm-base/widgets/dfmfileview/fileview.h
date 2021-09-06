@@ -39,13 +39,9 @@ class FileView : public DListView
 
 public:
     explicit FileView(QWidget *parent = nullptr);
-
     virtual void setViewMode(QListView::ViewMode mode);
-
     virtual void setRootUrl(const QUrl &url);
-
     virtual QUrl rootUrl();
-
 protected:
     void resizeEvent(QResizeEvent *event) override;
 

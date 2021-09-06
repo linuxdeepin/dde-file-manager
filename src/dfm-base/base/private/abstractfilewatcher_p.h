@@ -30,10 +30,10 @@ public:
 
     AbstractFileWatcher *q_ptr;
 
-    QAtomicInteger<bool> started = false;             // 是否开始监视
+    QAtomicInteger<bool> started { false };             // 是否开始监视
     QUrl url;                                         // 监视文件的url
     QString path;                                     // 监视文件的路径
-    QSharedPointer<DWatcher> watcher = nullptr;       // dfm-io的文件监视器
+    QSharedPointer<DWatcher> watcher { nullptr };       // dfm-io的文件监视器
     static DThreadList<QString> WatcherPath;          // 全局监视文件的监视列表
 
     Q_DECLARE_PUBLIC(AbstractFileWatcher)

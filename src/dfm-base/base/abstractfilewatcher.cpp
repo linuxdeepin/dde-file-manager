@@ -15,7 +15,6 @@
 #include <dfmio_global.h>
 #include <dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
-#include <dfm-io/core/diofactory_p.h>
 
 #include <QEvent>
 #include <QDir>
@@ -105,27 +104,14 @@ AbstractFileWatcher::AbstractFileWatcher(const QString &filePath, QObject *paren
     : AbstractFileWatcher(*new AbstractFileWatcherPrivate(this), QUrl::fromLocalFile(filePath), parent)
 {
     d_func()->path = AbstractFileWatcherPrivate::formatPath(filePath);
+    initFileWatcher();
+    initConnect();
 }
 
 AbstractFileWatcher::AbstractFileWatcher(const QUrl &url, QObject *parent)
     : AbstractFileWatcher(UrlRoute::urlToPath(url),parent)
 {
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (!factory) {
-        qWarning("create factory failed.");
-        return;
-    }
 
-    d_ptr->watcher = factory->createWatcher();
-    if (!d_ptr->watcher) {
-        qWarning("watcher create failed.");
-        return;
-    }
-    Q_D(AbstractFileWatcher);
-
-    connect(d->watcher.data(), &DWatcher::fileChanged, this, &AbstractFileWatcher::fileAttributeChanged);
-    connect(d->watcher.data(), &DWatcher::fileDeleted, this, &AbstractFileWatcher::fileDeleted);
-    connect(d->watcher.data(), &DWatcher::fileAdded, this, &AbstractFileWatcher::subfileCreated);
 }
 /*!
  * \brief url 获取监视文件的url
@@ -211,5 +197,36 @@ AbstractFileWatcher::AbstractFileWatcher(AbstractFileWatcherPrivate &dd,
     Q_ASSERT(url.isValid());
 
     d_ptr->url = url;
+}
+/*!
+ * \brief AbstractFileWatcher::initFileWatcher 初始化和创建dfm-io的filewatcher
+ */
+void AbstractFileWatcher::initFileWatcher()
+{
+    Q_D(AbstractFileWatcher);
+
+    QUrl watchUrl = QUrl::fromLocalFile(d->path);
+    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(watchUrl.scheme(), static_cast<QUrl>(watchUrl));
+    if (!factory) {
+        qWarning("create factory failed.");
+        abort();
+    }
+
+    d_ptr->watcher = factory->createWatcher();
+    if (!d_ptr->watcher) {
+        qWarning("watcher create failed.");
+        abort();
+    }
+}
+/*!
+ * \brief AbstractFileWatcher::initConnect 初始化dfm-io中文件监视器的信号连接
+ */
+void AbstractFileWatcher::initConnect()
+{
+    Q_D(AbstractFileWatcher);
+
+    connect(d->watcher.data(), &DWatcher::fileChanged, this, &AbstractFileWatcher::fileAttributeChanged);
+    connect(d->watcher.data(), &DWatcher::fileDeleted, this, &AbstractFileWatcher::fileDeleted);
+    connect(d->watcher.data(), &DWatcher::fileAdded, this, &AbstractFileWatcher::subfileCreated);
 }
 DFMBASE_END_NAMESPACE

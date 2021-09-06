@@ -30,6 +30,20 @@
 #include <QMap>
 
 DFMBASE_BEGIN_NAMESPACE
+/*!
+ * \class StandardPaths 基础路径提供类
+ *
+ * \brief 内部使用不同的enum来获取基本公用的文件路径
+ *
+ */
+
+/*!
+ * \brief StandardPaths::location 根据不同的StandardLocation类型获取相应的文件路径
+ *
+ * \param type StandardLocation类型
+ *
+ * \return QString tandardLocation类型对应的文件路径
+ */
 QString StandardPaths::location(StandardPaths::StandardLocation type)
 {
     switch (type) {
@@ -129,7 +143,13 @@ QString StandardPaths::location(StandardPaths::StandardLocation type)
         return QStringLiteral("bug://dde-file-manager-lib/interface/dfmstandardpaths.cpp#") + QT_STRINGIFY(type);
     }
 }
-
+/*!
+ * \brief StandardPaths::iconName 获取不同StandardLocation类型的ICON
+ *
+ * \param type StandardLocation类型
+ *
+ * \return QString StandardLocation类型的对应icon的地址
+ */
 QString StandardPaths::iconName(StandardPaths::StandardLocation type)
 {
     switch (type) {
@@ -155,7 +175,13 @@ QString StandardPaths::iconName(StandardPaths::StandardLocation type)
         return "";
     }
 }
-
+/*!
+ * \brief StandardPaths::displayName 获取不同StandardLocation类型的显示名称
+ *
+ * \param type StandardLocation类型
+ *
+ * \return QString StandardLocation类型的对应显示名称
+ */
 QString StandardPaths::displayName(StandardPaths::StandardLocation type)
 {
     switch (type) {
@@ -181,7 +207,13 @@ QString StandardPaths::displayName(StandardPaths::StandardLocation type)
         return QObject::tr("");
     }
 }
-
+/*!
+ * \brief StandardPaths::fromStandardUrl 获取快捷目录的文件路径（主目录、桌面、视频、音乐、图片、文档、下载）
+ *
+ * \param url 快捷目录的Url
+ *
+ * \return 快捷目录的路径
+ */
 QString StandardPaths::fromStandardUrl(const QUrl &url)
 {
     if (url.scheme() != "standard")
@@ -209,7 +241,13 @@ QString StandardPaths::fromStandardUrl(const QUrl &url)
 
     return path + url.path();
 }
-
+/*!
+ * \brief StandardPaths::toStandardUrl 获取基本路径的QUrl
+ *
+ * \param localPath 基本路径
+ *
+ * \return QUrl 基本路径的url
+ */
 QUrl StandardPaths::toStandardUrl(const QString &localPath)
 {
     static QList<QPair<QString, QString>> path_convert {
@@ -243,20 +281,11 @@ QUrl StandardPaths::toStandardUrl(const QString &localPath)
 
     return QUrl();
 }
-
-
-
-#ifdef QMAKE_TARGET
-QString DFMStandardPaths::getConfigPath()
-{
-    QString projectName = QMAKE_TARGET;
-    QDir::home().mkpath(".config");
-    QDir::home().mkpath(QString("%1/deepin/%2/").arg(".config", projectName));
-    QString defaultPath = QString("%1/%2/deepin/%3").arg(QDir::homePath(), ".config", projectName);
-    return defaultPath;
-}
-#endif
-
+/*!
+ * \brief StandardPaths::getCachePath 获取工程的cache目录
+ *
+ * \return QString 工程的cache目录路径
+ */
 QString StandardPaths::getCachePath()
 {
     QString projectName = qApp->applicationName();
