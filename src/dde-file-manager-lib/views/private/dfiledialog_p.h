@@ -52,6 +52,7 @@ public:
 
 public:
     QList<DUrl> orderedSelectedUrls() const;
+    bool checkFileSuffix(const QString &fileName, const int &filterIndex, QString &suffix) const;
 };
 
 #endif // DFILEDIALOGPRIVATE_P_H
