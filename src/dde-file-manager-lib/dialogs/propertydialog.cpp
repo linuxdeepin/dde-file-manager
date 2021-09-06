@@ -1197,7 +1197,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time created"), widget);
     SectionKeyLabel *TimeReadSectionLabel = new SectionKeyLabel(QObject::tr("Time accessed"), widget);
     SectionKeyLabel *TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"), widget);
-    SectionKeyLabel *sourcePathSectionLabel = new SectionKeyLabel(QObject::tr("Source path"), widget);
+    SectionKeyLabel *sourcePathSectionLabel = new SectionKeyLabel(QObject::tr("Source path"), nullptr);
 
     m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
     m_folderSizeLabel = new SectionValueLabel("", widget);
@@ -1295,10 +1295,9 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         sourcePathLabel->setToolTip(trashSourcePath);
         sourcePathLabel->setWordWrap(false);
         sourcePathLabel->setText(elidedStr);
+        sourcePathSectionLabel->setParent(widget);
         layout->addRow(sourcePathSectionLabel, sourcePathLabel);
     }
-
-
 
     if (info->fileUrl().isRecentFile()) {
         QString pathStr = info->filePath();
@@ -1307,7 +1306,12 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         sourcePathLabel->setToolTip(pathStr);
         sourcePathLabel->setWordWrap(false);
         sourcePathLabel->setText(elidedStr);
+        sourcePathSectionLabel->setParent(widget);
         layout->addRow(sourcePathSectionLabel, sourcePathLabel);
+    }
+
+    if (!sourcePathSectionLabel->parent()) {
+        delete sourcePathSectionLabel;
     }
 
     DGioSettings gsettings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
