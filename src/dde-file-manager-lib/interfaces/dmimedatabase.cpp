@@ -24,6 +24,7 @@
 #include "dmimedatabase.h"
 #include "shutil/fileutils.h"
 #include "dstorageinfo.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QFileInfo>
 
@@ -45,6 +46,10 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
     QMimeType result;
     QString path = fileInfo.path();
     bool isMatchExtension = mode == QMimeDatabase::MatchExtension;
+    // fix bug#93843
+    // 保险箱属于低速设备，故使用扩展模式,提高保险箱中获取icon图标的速度
+    if (VaultController::isVaultFile(path))
+        isMatchExtension = true;
     if (!isMatchExtension) {
         //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
         if (fileInfo.fileName().endsWith(".pid") || path.endsWith("msg.lock")
