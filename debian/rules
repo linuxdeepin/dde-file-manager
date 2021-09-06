@@ -19,5 +19,5 @@ override_dh_auto_configure:
 
 ifeq ($(SYSTYPE), Professional)
 override_dh_gencontrol:
-	dh_gencontrol -- -Vdist:Depends="libudfburn (>=1.1.0)"
+	dh_gencontrol -- -Vdist:Depends="libudfburn (>=1.1.1)"
 endif
