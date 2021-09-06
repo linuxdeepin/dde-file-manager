@@ -6,7 +6,6 @@
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  **/
-
 #ifndef ABSTRACTFILEINFO_P_H
 #define ABSTRACTFILEINFO_P_H
 

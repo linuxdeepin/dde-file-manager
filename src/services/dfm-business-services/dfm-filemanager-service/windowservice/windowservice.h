@@ -55,7 +55,10 @@ public:
 
     virtual ~WindowService() override;
 
+    void addSidebarItem(int windowIndex, SideBarItem * item);
+
 private: //@Method
+
     DFMBrowseWindow* newWindow();
 
     bool setWindowRootUrl(DFMBrowseWindow * newWindow,

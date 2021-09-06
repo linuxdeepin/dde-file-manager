@@ -47,6 +47,7 @@ set(${PROJECT_NAME}_cxx_public_h
     lifecycle/lifecycle.h
     lifecycle/plugindepend.h
     abus/appbus.h
+    listener/private/listener_p.h
     listener/listener.h
     )
 

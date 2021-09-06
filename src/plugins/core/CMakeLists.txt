@@ -9,12 +9,14 @@ include_directories(
     )
 
 set(core_cxx_source
+    eventcalled.cpp
     corelog.cpp
     core.cpp
     core.json
     )
 
 set(core_cxx_include
+    eventcalled.h
     corelog.h
     core.h
     )

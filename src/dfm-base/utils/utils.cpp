@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "utils/utils.h"
 #include "shutil/mimedatabase.h"
 #include "dfm-base/dfm_base_global.h"

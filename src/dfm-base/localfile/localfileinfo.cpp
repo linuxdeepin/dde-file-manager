@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "localfileinfo.h"
 #include "private/localfileinfo_p.h"
 #include "base/urlroute.h"

@@ -19,12 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #ifndef FILEVIEWITEM_H
 #define FILEVIEWITEM_H
 
-#include "localfile/localfileinfo.h"
-#include "shutil/mimedatabase.h"
-#include "base/schemefactory.h"
+#include "dfm-base/localfile/localfileinfo.h"
+#include "dfm-base/shutil/mimedatabase.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QStandardItem>
 #include <QMetaType>

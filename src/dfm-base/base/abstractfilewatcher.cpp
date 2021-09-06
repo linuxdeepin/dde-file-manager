@@ -6,22 +6,21 @@
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  **/
-
 #include "base/abstractfilewatcher.h"
 #include "base/private/abstractfilewatcher_p.h"
 #include "localfile/filesignalmanager.h"
 #include "base/urlroute.h"
-
-#include <QEvent>
-#include <QDir>
-#include <QDebug>
-#include <QApplication>
 
 #include <dfm-io/core/dwatcher.h>
 #include <dfmio_global.h>
 #include <dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
 #include <dfm-io/core/diofactory_p.h>
+
+#include <QEvent>
+#include <QDir>
+#include <QDebug>
+#include <QApplication>
 
 DFMBASE_BEGIN_NAMESPACE
 DThreadList<QString> AbstractFileWatcherPrivate::WatcherPath;

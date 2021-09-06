@@ -18,6 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #ifndef SIDEBAR_H
 #define SIDEBAR_H
 
@@ -54,7 +55,7 @@ public:
 
     void setCurrentUrl(const QUrl &url);
 
-    int addItem(SideBarItem *item, const QString &group);
+    int addItem(SideBarItem *item);
     bool removeItem(const QUrl &url, const QString &group);
     int findItem(const SideBarItem *item) const;
     int findItem(const QUrl &url, const QString &group) const;

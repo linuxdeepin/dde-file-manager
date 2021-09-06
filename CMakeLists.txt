@@ -41,7 +41,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-need -fPIE")
 
 # Use Qt modules
-set(QtFindModules Core Gui Widgets Concurrent Svg Network Sql X11Extras)
+set(QtFindModules Core Gui Widgets Concurrent Svg Network Sql X11Extras Xml)
 
 foreach(QtModule ${QtFindModules})
     find_package(Qt5 COMPONENTS ${QtModule} REQUIRED)

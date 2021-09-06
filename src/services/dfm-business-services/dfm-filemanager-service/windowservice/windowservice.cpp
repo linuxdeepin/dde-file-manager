@@ -47,6 +47,16 @@ WindowService::~WindowService()
     }
 }
 
+void WindowService::addSidebarItem(int windowIndex, SideBarItem *item)
+{
+    if (windowIndex < 0)
+        return;
+
+    auto sidebar = m_windowlist[windowIndex]->sidebar();
+    if (sidebar)
+        sidebar->addItem(item);
+}
+
 DFMBrowseWindow *WindowService::newWindow()
 {
     auto window = new DFMBrowseWindow();

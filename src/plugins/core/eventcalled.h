@@ -1,10 +1,11 @@
 /*
  * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liyigang<liyigang@uniontech.com>
+ * Author:     yanghao<yanghao@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
  *             yanghao<yanghao@uniontech.com>
+ *             hujianzhong<hujianzhong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +20,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "dfmlauchevent.h"
 
-DFMLauchEvent::DFMLauchEvent(int type)
-    : DFMEvent(type)
+#ifndef EVENTCALLED_H
+#define EVENTCALLED_H
+
+#include "dfm-framework/event/event.h"
+#include "dfm-framework/event/eventcallproxy.h"
+#include "windowservice/containerkeys.h"
+
+DSB_FM_USE_NAMESPACE
+
+struct EventCalled
 {
+public:
+    static void sendOpenNewWindowEvent(int windowIdx)
+    {
+        dpf::Event event;
+        event.setTopic(EventKeys::TOPIC_WINDOW_EVENT);
+        event.setData(EventKeys::DATA_OPEN_NEW_WINDOW);
+        event.setProperty(EventKeys::PROPERTY_KEY_WINDOW_INDEX, windowIdx);
+        dpf::EventCallProxy::callEvent(event);
+    }
+};
 
-}
+#endif // EVENTCALLED_H

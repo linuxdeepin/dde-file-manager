@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "shutil/fileutils.h"
 #include "base/singleton.hpp"
 #include "base/standardpaths.h"

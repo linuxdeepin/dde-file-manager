@@ -24,6 +24,7 @@ set(windowservice_cpp
     )
 
 set(windowservice_h
+    windowservice/containerkeys.h
     windowservice/windowservice.h
     windowservice/displayviewlogic.h
     windowservice/displaydefaultview.h

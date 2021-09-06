@@ -25,8 +25,9 @@
 #define FILEVIEWMODEL_H
 
 #include "fileviewitem.h"
-#include "localfile/localfileinfo.h"
-#include "base/schemefactory.h"
+
+#include "dfm-base/localfile/localfileinfo.h"
+#include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_base_global.h"
 
 #include <QAbstractItemModel>

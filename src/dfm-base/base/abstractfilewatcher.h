@@ -6,15 +6,14 @@
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  **/
-
 #ifndef ABSTRACTFILEWATCHER_H
 #define ABSTRACTFILEWATCHER_H
 
 #include "dfm-base/dfm_base_global.h"
 
-#include <QObject>
-
 #include <dfm-io/core/dfileinfo.h>
+
+#include <QObject>
 
 class QUrl;
 DFMBASE_BEGIN_NAMESPACE

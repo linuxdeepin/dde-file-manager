@@ -1,8 +1,32 @@
+/*
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ *
+ * Author:     yanghao<yanghao@uniontech.com>
+ *
+ * Maintainer: zhengyouge<zhengyouge@uniontech.com>
+ *             yanghao<yanghao@uniontech.com>
+ *             hujianzhong<hujianzhong@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #include "pluginmanager_p.h"
 
 #include "lifecycle/private/pluginmetaobject_p.h"
 #include "lifecycle/plugincontext.h"
 #include "lifecycle/plugin.h"
+#include "listener/listener.h"
+#include "listener/private/listener_p.h"
 
 #include "log/frameworklog.h"
 
@@ -428,11 +452,8 @@ void PluginManagerPrivate::loadPlugins()
         pointer->d_ptr->state = PluginMetaObject::State::Loading;
 
         if (!pointer->d_ptr->loader->load()) {
-            pointer->d_ptr->error = "Failed load plugin: " + pointer->errorString();
-            dpfCritical() << "Failed load plugin: "
-                          << pointer->d_ptr->name
-                          << pointer->fileName()
-                          << pointer->errorString();
+            pointer->d_ptr->error = "Failed load plugin: " + pointer->d_ptr->loader->errorString();
+            dpfCritical() << pointer->errorString();
             return;
         }
 
@@ -493,6 +514,9 @@ void PluginManagerPrivate::initPlugins()
 
     runController.waitForFinished();
 
+    // 私有类转发进行Sendler闭包
+    emit Listener::instance().d->pluginsInitialized();
+
     dpfCheckTimeEnd();
 }
 
@@ -535,6 +559,9 @@ void PluginManagerPrivate::startPlugins()
 
         itera ++;
     }
+
+    // 私有类转发进行Sendler闭包
+    emit Listener::instance().d->pluginsStarted();
 
     dpfCheckTimeEnd();
 }
@@ -595,6 +622,9 @@ void PluginManagerPrivate::stopPlugins()
 
         itera ++;
     }
+
+    // 私有类转发进行Sendler闭包
+    emit Listener::instance().d->pluginsStoped();
 
     dpfCheckTimeEnd();
 }

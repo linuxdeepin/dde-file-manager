@@ -9,17 +9,21 @@ include_directories(
     )
 
 set(recent_cxx_source
-    bookmarknode.cpp
+    recenteventrecver.cpp
+    recentbrowseviewmodel.cpp
+    recentbrowseview.cpp
+    recentlog.cpp
     recentutil.cpp
-    recentfileinfo.cpp
     recent.cpp
     recent.json
     )
 
 set(recent_cxx_include
-    bookmarknode.h
+    recenteventrecver.h
+    recentbrowseviewmodel.h
+    recentbrowseview.h
+    recentlog.h
     recentutil.h
-    recentfileinfo.h
     recent.h
     )
 

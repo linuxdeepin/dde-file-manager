@@ -20,45 +20,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//new lib
+
+#include "core.h"
+#include "corelog.h"
+#include "eventcalled.h"
+
+#include "applicationservice/application.h"
+#include "windowservice/windowservice.h"
+#include "windowservice/browseview.h"
+
+#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/abstractfilewatcher.h"
+#include "dfm-base/localfile/localfileinfo.h"
+#include "dfm-base/localfile/localdiriterator.h"
 #include "dfm-base/widgets/dfmsidebar/sidebar.h"
 #include "dfm-base/widgets/dfmsidebar/sidebaritem.h"
 #include "dfm-base/widgets/dfmsidebar/sidebarview.h"
 #include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
-
 #include "dfm-base/widgets/dfmfileview/fileview.h"
 
-#include "dfm-base/base/standardpaths.h"
-#include "services/dfm-business-services/dfm-filemanager-service/applicationservice//application.h"
-#include "dfm-base/base/schemefactory.h"
-
-#include "dfm-base/localfile/localfileinfo.h"
-#include "dfm-base/localfile/localdiriterator.h"
-#include "dfm-base/base/abstractfilewatcher.h"
-
-//old lib
-//#include "interfaces/dfmapplication.h"
-//#include "views/dfmsidebar.h"
-//#include "views/dfileview.h"
-//#include "views/dfmsidebarview.h"
-//#include "models/dfmsidebarmodel.h"
-//#include "interfaces/dfmsidebaritem.h"
-//#include "interfaces/dfilesystemmodel.h"
-//#include "views/dfilemanagerwindow.h"
-//#include "views/dtoolbar.h"
-
-#include "core.h"
-#include "corelog.h"
+#include "dfm-framework/listener/listener.h"
 #include "dfm-framework/lifecycle/plugin.h"
-
-////services
-//#include "previewservice/dfmoldpreviewservice.h"
-////old plugin base
-//#include "previewservice/oldpluginbase/dfmfilepreviewplugin.h"
-//#include "previewservice/oldpluginbase/dfmfilepreview.h"
-
-#include "windowservice/windowservice.h"
-#include "windowservice/browseview.h"
 
 #include <QListWidget>
 #include <QListView>
@@ -78,7 +61,7 @@
 #include <QCoreApplication>
 #include <QToolButton>
 
-DSB_DM_USE_NAMESPACE
+DSB_FM_USE_NAMESPACE
 
 namespace GlobalPrivate {
     const int DEFAULT_WINDOW_WIDTH = 760;
@@ -129,13 +112,13 @@ void initSidebar(SideBar* sidebar)
     auto downloadsitem = new SideBarItem(downloadsIcon, QObject::tr("Downloads"), "core", downloadsUrl);
     downloadsitem->setFlags(downloadsitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
 
-    sidebar->addItem(homeItem,"default");
-    sidebar->addItem(desktopitem,"default");
-    sidebar->addItem(videoitem,"default");
-    sidebar->addItem(musicitem,"default");
-    sidebar->addItem(picturesitem,"default");
-    sidebar->addItem(documentsitem,"default");
-    sidebar->addItem(downloadsitem,"default");
+    sidebar->addItem(homeItem);
+    sidebar->addItem(desktopitem);
+    sidebar->addItem(videoitem);
+    sidebar->addItem(musicitem);
+    sidebar->addItem(picturesitem);
+    sidebar->addItem(documentsitem);
+    sidebar->addItem(downloadsitem);
 
     sidebar->setMinimumWidth(120);
     sidebar->setMaximumWidth(200);
@@ -263,9 +246,15 @@ bool Core::start(QSharedPointer<dpf::PluginContext> context)
 
         if (newWindow){
             int winIdx = windowService->m_windowlist.indexOf(newWindow);
-            //send new window event to bundles
 
-            //初始化sidebar
+            // 绑定当前插件初始化完毕进行的相关操作。
+            QObject::connect(&dpf::Listener::instance(), &dpf::Listener::pluginsStarted,
+                             this, [=](){
+                // 发送打开的新窗口的事件
+                EventCalled::sendOpenNewWindowEvent(winIdx);
+            });
+
+            // 初始化sidebar
             initSidebar(newWindow->sidebar());;
             newWindow->show();
             newWindow->setMinimumSize(GlobalPrivate::DEFAULT_WINDOW_WIDTH,
@@ -273,13 +262,13 @@ bool Core::start(QSharedPointer<dpf::PluginContext> context)
 
             //綁定sidebaritem的點擊邏輯
             QObject::connect(newWindow->sidebar(), &SideBar::activatedItemUrl,
-                             newWindow, [=](const QUrl &url)
+                             newWindow, [&windowService, &newWindow](const QUrl &url)
             {
                 windowService->setWindowRootUrl(newWindow, url);
             });
         }
 
-        //设置默认file
+        // 设置默认file
         windowService->setWindowRootUrl(newWindow, defaultUrl);
     }
 

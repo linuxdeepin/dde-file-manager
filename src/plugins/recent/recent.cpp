@@ -1,29 +1,46 @@
-//new lib
+/*
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ *
+ * Author:     yanghao<yanghao@uniontech.com>
+ *
+ * Maintainer: zhengyouge<zhengyouge@uniontech.com>
+ *             yanghao<yanghao@uniontech.com>
+ *             hujianzhong<hujianzhong@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#include "recent.h"
+#include "recentutil.h"
+#include "recentbrowseview.h"
+#include "recenteventrecver.h"
+
+#include "windowservice/windowservice.h"
+#include "windowservice/browseview.h"
+#include "applicationservice/application.h"
+
+#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/abstractfilewatcher.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/localfile/localfileinfo.h"
+#include "dfm-base/localfile/localdiriterator.h"
 #include "dfm-base/widgets/dfmsidebar/sidebar.h"
 #include "dfm-base/widgets/dfmsidebar/sidebaritem.h"
 #include "dfm-base/widgets/dfmsidebar/sidebarview.h"
 #include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
-
 #include "dfm-base/widgets/dfmfileview/fileview.h"
 
-#include "dfm-base/base/standardpaths.h"
-#include "services/dfm-business-services/dfm-filemanager-service/applicationservice/application.h"
-#include "dfm-base/base/schemefactory.h"
-
-#include "dfm-base/localfile/localfileinfo.h"
-#include "dfm-base/localfile/localdiriterator.h"
-#include "dfm-base/base/abstractfilewatcher.h"
-
-//self files
-#include "recent.h"
-#include "recentutil.h"
-
-//dfm-framework
 #include "dfm-framework/lifecycle/plugincontext.h"
-
-//services
-#include "windowservice/windowservice.h"
-#include "windowservice/browseview.h"
 
 #include <QListWidget>
 #include <QListView>
@@ -42,21 +59,30 @@
 #include <QSizePolicy>
 #include <QToolButton>
 
-#define DEFAULT_WINDOW_WIDTH 760
-#define DEFAULT_WINDOW_HEIGHT 420
-
 //DFM_USE_NAMESPACE
 
 void Recent::initialize()
 {
-    qInfo() << Q_FUNC_INFO;
+    QString recentScheme{"recent"};
+
+    RecentUtil::initRecentSubSystem();
+    //注册路由
+    UrlRoute::schemeMapRoot(recentScheme,"/",QIcon(),true);
+    //注册Scheme为"file"的扩展的文件信息 本地默认文件的
+    //    DFMInfoFactory::instance().regClass<RecentFileInfo>("recent");
+    //    DFMFileDeviceFactory::instance().regClass<DFMLocalFileDevice>("file");
+    //    DFMDirIteratorFactory::instance().regClass<DFMLocalDirIterator>("file");
+    //    DFMWacherFactory::instance().regClass<DAbstractFileWatcher>("file");
+    DFMBrowseWidgetFactory::instance().regClass<RecentBrowseView>(recentScheme);
 }
 
 bool Recent::start(QSharedPointer<dpf::PluginContext> context)
 {
     Q_UNUSED(context)
-    qInfo() << Q_FUNC_INFO;
-    qInfo() << RecentUtil::instance().loadRecentFile();
+
+    SaveBlock::windowServiceTemp = context->service<WindowService>("WindowService");
+
+    qCCritical(RecentPlugin) << context->services() << SaveBlock::windowServiceTemp;
 
     return true;
 }

@@ -20,7 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "styleditemdelegate.h"
 #include "private/styleditemdelegate_p.h"
 #include "dfm-base/dfm_base_global.h"

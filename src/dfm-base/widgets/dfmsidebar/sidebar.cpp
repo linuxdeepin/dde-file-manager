@@ -93,14 +93,14 @@ void SideBar::setCurrentUrl(const QUrl &url)
     }
 }
 
-int SideBar::addItem(SideBarItem *item, const QString &group)
+int SideBar::addItem(SideBarItem *item)
 {
     if (!item) {
         return 0;
     }
-    int lastAtGroup = findLastItem(group, false);
+    int lastAtGroup = findLastItem(item->group(), false);
     lastAtGroup++; // append after the last item
-    this->insertItem(lastAtGroup, item, group);
+    this->insertItem(lastAtGroup, item, item->group());
 
     return lastAtGroup;
 }
