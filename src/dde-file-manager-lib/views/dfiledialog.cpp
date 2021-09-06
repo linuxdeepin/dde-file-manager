@@ -94,6 +94,50 @@ QList<DUrl> DFileDialogPrivate::orderedSelectedUrls() const
     return list;
 }
 
+bool DFileDialogPrivate::checkFileSuffix(const QString &fileName, const int &filterIndex, QString &suffix) const
+{
+    bool suffixCheck = false; //后缀名检测
+    for (QString nameFilterList : nameFilters) {
+        for (QString nameFilter : QPlatformFileDialogHelper::cleanFilterList(nameFilterList)) { //清理掉多余的信息
+            QRegExp re(nameFilter, Qt::CaseInsensitive, QRegExp::Wildcard);
+            if (re.exactMatch(fileName)) {
+                suffixCheck = true;
+                break;
+            };
+        }
+        if (suffixCheck) {
+            break;
+        }
+    }
+
+    //需要补充扩展名，查找匹配扩展名
+    if (!suffixCheck && !nameFilters.isEmpty()) { //文件名、扩展名匹配？
+        QMimeDatabase mdb;
+        QString filter = nameFilters[filterIndex]; //当前设置扩展名
+        QStringList newNameFilters = QPlatformFileDialogHelper::cleanFilterList(filter);
+        if (!newNameFilters.isEmpty()) {
+            for (const QString &newFilter : newNameFilters) {
+                suffix = mdb.suffixForFileName(newFilter);
+                if (suffix.isEmpty()) { //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
+                    QRegExp  regExp(newFilter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
+                    mdb.allMimeTypes().first().suffixes().first();
+                    for (QMimeType m : mdb.allMimeTypes()) {
+                        for (QString suffixe : m.suffixes()) {
+                            if (regExp.exactMatch(suffixe)) {
+                                suffix = suffixe;
+                                return true; //查询到后跳出循环
+                            }
+                        }
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
 
 DFileDialog::DFileDialog(QWidget *parent)
     : DFileManagerWindow(parent)
@@ -137,27 +181,7 @@ DFileDialog::DFileDialog(QWidget *parent)
             static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
             this, &DFileDialog::selectedNameFilterChanged);
 
-    statusBar()->lineEdit()->setMaxLength(255);
-    connect(statusBar()->lineEdit(), &QLineEdit::textChanged, [ = ] {
-        while (statusBar()->lineEdit()->text().toLocal8Bit().length() > 250)    //预留5个字符用于后缀
-        {
-            statusBar()->lineEdit()->setText(statusBar()->lineEdit()->text().chopped(1));
-        }
-
-        // fix bug 65861
-        // 输入框中禁止输入某些特殊字符
-        QString srcText = statusBar()->lineEdit()->text();
-        QString dstText = DFMGlobal::preprocessingFileName(srcText);
-        //如果存在非法字符且更改了当前的文本文件
-        if (srcText != dstText) {
-            //之前的光标Pos
-            int srcCursorPos = statusBar()->lineEdit()->cursorPosition();
-            statusBar()->lineEdit()->setText(dstText);
-            int endPos = srcCursorPos + (dstText.length() - srcText.length());
-            //调整光标位置
-            statusBar()->lineEdit()->setCursorPosition(endPos);
-        }
-    });
+    statusBar()->lineEdit()->setMaxLength(MAX_FILE_NAME_CHAR_COUNT);
 }
 
 DFileDialog::~DFileDialog()
@@ -1219,55 +1243,11 @@ void DFileDialog::onAcceptButtonClicked()
         }
 
         QString file_name = statusBar()->lineEdit()->text(); //文件名
-        bool suffixCheck = false; //后缀名检测
-        QStringList nameFilters = d->nameFilters;//当前所有后缀列表
-        qDebug() << "后缀名列表" << nameFilters;
-        for (QString nameFilterList : nameFilters) {
-            for (QString nameFilter : QPlatformFileDialogHelper::cleanFilterList(nameFilterList)) { //清理掉多余的信息
-                QRegExp re(nameFilter, Qt::CaseInsensitive, QRegExp::Wildcard);
-                qDebug() << "检测后缀名" << nameFilter;
-                if (re.exactMatch(file_name)) {
-                    suffixCheck = true;
-                    break;
-                };
-            }
-            if (suffixCheck) {
-                break;
-            }
-        }
-        //无符合扩展名，补扩展名
-        if (!suffixCheck && !nameFilters.isEmpty()) { //文件名、扩展名匹配？
-            QMimeDatabase mdb;
-            QString nameFilter = nameFilters[statusBar()->comboBox()->currentIndex()]; //当前设置扩展名
-            QStringList newNameFilters = QPlatformFileDialogHelper::cleanFilterList(nameFilter);
-            if (!newNameFilters.isEmpty()) {
-                for (const QString &filter : newNameFilters) {
-                    QString suffix = mdb.suffixForFileName(filter);
-                    if (suffix.isEmpty()) { //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
-                        QRegExp  regExp(filter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
-                        qDebug() << "未通过QMimeDataBase::suffixForFileName查询到匹配的扩展名，尝试使用正则表达式" << filter;
-                        mdb.allMimeTypes().first().suffixes().first();
-                        for (QMimeType m : mdb.allMimeTypes()) {
-                            for (QString suffixe : m.suffixes()) {
-                                if (regExp.exactMatch(suffixe)) {
-                                    suffix = suffixe;
-                                    qDebug() << "正则表达式查询到扩展名" << suffixe;
-                                    break; //查询到后跳出循环
-                                }
-                            }
-                            if (!suffix.isEmpty()) {
-                                break; //查询到后跳出循环
-                            }
-                        }
-                    }
-                    if (!suffix.isEmpty()) {
-                        qDebug() << "扩展名补全" << suffix;
-                        file_name.append('.' + suffix);
-                        setCurrentInputName(file_name);
-                    }
-                    qDebug() << file_name;
-                }
-            }
+        QString suffix = "";
+        //检查是否要补充后缀
+        if (d->checkFileSuffix(file_name, statusBar()->comboBox()->currentIndex(), suffix)) {
+            file_name.append('.' + suffix);
+            setCurrentInputName(file_name);
         }
 
         if (!file_name.isEmpty()) {
@@ -1404,6 +1384,42 @@ void DFileDialog::onCurrentInputNameChanged()
         return;
     }
     Q_D(DFileDialog);
+
+    QString fileName = statusBar()->lineEdit()->text(); //文件名
+    QString suffix = "";
+    int addSuffixLength = 0;
+    if (d->checkFileSuffix(fileName, statusBar()->comboBox()->currentIndex(), suffix))
+        addSuffixLength = QString('.' + suffix).toLocal8Bit().length();
+
+    //文件名超长处理
+    int cursorPos = statusBar()->lineEdit()->cursorPosition();
+    //截取新增字符的左右字符段
+    QString leftStr = statusBar()->lineEdit()->text().left(cursorPos);
+    QString rightStr = statusBar()->lineEdit()->text().mid(cursorPos);
+    int removeCount = 0;
+    //计算需要回退的字符个数
+    while (QString(leftStr.chopped(removeCount) + rightStr).toLocal8Bit().length() > (MAX_FILE_NAME_CHAR_COUNT - addSuffixLength))
+        ++removeCount;
+
+    if (removeCount > 0) {
+        //拼合为输入前的字符串，并调整光标位置
+        statusBar()->lineEdit()->setText(leftStr.chopped(removeCount) + rightStr);
+        statusBar()->lineEdit()->setCursorPosition(cursorPos - removeCount);
+    }
+
+    // fix bug 65861
+    // 输入框中禁止输入某些特殊字符
+    QString srcText = statusBar()->lineEdit()->text();
+    QString dstText = DFMGlobal::preprocessingFileName(srcText);
+    //如果存在非法字符且更改了当前的文本文件
+    if (srcText != dstText) {
+        //之前的光标Pos
+        int srcCursorPos = statusBar()->lineEdit()->cursorPosition();
+        statusBar()->lineEdit()->setText(dstText);
+        int endPos = srcCursorPos + (dstText.length() - srcText.length());
+        //调整光标位置
+        statusBar()->lineEdit()->setCursorPosition(endPos);
+    }
 
     d->currentInputName = statusBar()->lineEdit()->text();
     //statusBar()->acceptButton()->setDisabled(d->currentInputName.isEmpty());
