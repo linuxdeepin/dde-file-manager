@@ -8,7 +8,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-need -fPIE")
 
 # 工程名称
-project(test-file-manager)
+project(test-dde-file-manager)
 
 # 依赖包
 find_package(PkgConfig REQUIRED)

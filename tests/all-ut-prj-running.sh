@@ -54,26 +54,51 @@ cd $UT_TESTS_FOLDER
 cmake $TESTS_FOLDER
 make -j$CPU_NUMBER
 
+regTestFolder()
+{
+  RELATIVEPATH=$1
+  FOLDERNAME=${RELATIVEPATH##*/}
 
-# 下面是编译和工程测试
-# -------------------------------------------------------------------------------------------
+  if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$FOLDERNAME" ] ; then
+    echo "$FOLDERNAME test case is running"
 
-#> 1. dde-file-manager 单元测试与覆盖率测试
-if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANAGER" ] ; then
-	echo $UT_TYPE_FILE_MANAGER "test case is running"
+    DIR_TEST=$UT_TESTS_FOLDER/$RELATIVEPATH
+    cd $DIR_TEST
 
-    DIR_TEST_DDE_FILE_MANAGER=$UT_TESTS_FOLDER/apps/dde-file-manager
-	cd $DIR_TEST_DDE_FILE_MANAGER
+    extract_path="*/src/$RELATIVEPATH/*"
+    remove_path="*/third-party/* *tests* */build-ut/* *moc_* *qrc_*"
+    # report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
+    $TESTS_FOLDER/ut-target-running.sh $BUILD_DIR $FOLDERNAME $DIR_TEST test-$FOLDERNAME "$extract_path" "$remove_path" $SHOW_REPORT
+    check_ut_result $? $FOLDERNAME
+  fi
+}
 
+# 注册列表，测试目录放入该列表
+regList=(
+# apps
+  apps/dde-file-manager 
+  # apps/dde-desktop
+  # apps/dde-file-manager-daemon
+  # apps/dde-file-manager-server
 
-	dde_file_manager_extract_path="*/src/apps/dde-file-manager/*"
-	dde_file_manager_remove_path="*/third-party/* *tests* */build-ut/* *moc_* *qrc_*"
-	# report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
-	./../../../../tests/ut-target-running.sh $BUILD_DIR file-manager $DIR_TEST_DDE_FILE_MANAGER test-file-manager "$dde_file_manager_extract_path" "$dde_file_manager_remove_path" $SHOW_REPORT
-        check_ut_result $? $UT_TYPE_FILE_MANAGER
-fi
+# base、extension、framework
+  # dfm-base
+  # dfm-extension
+  # dfm-framework
 
-# TODO 其它模块的覆盖测试
+# services
+  # services/dfm-business-services/dfm-desktop-service
+  # services/dfm-business-services/dfm-filemanager-service
+  # services/dfm-common-service
+) 
+
+# register test folders.
+for((i=0; i<${#regList[@]}; i++)) 
+do
+FOLDER=${regList[i]}
+echo "register test folder:$FOLDER"
+regTestFolder $FOLDER
+done;
 
 echo "end dde-file-manager all UT cases"
 
