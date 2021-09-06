@@ -1,20 +1,26 @@
-/////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
-// Distributable under the terms of either the Apache License (Version 2.0)
-// or the GNU Lesser General Public License.
-/////////////////////////////////////////////////////////////////////////////
+/*
+ * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
+ *               2016 ~ 2018 lawrence
+ *
+ * Author:     lawrence<hujianzhong@deepin.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-#include <iostream>
-#include <boost/algorithm/string.hpp>
-#include <codecvt>
-#include <dirent.h>
-#include <fnmatch.h>
-
-//lucene++ header
-#include <FileUtils.h>
-#include <FilterIndexReader.h>
-#include <FuzzyQuery.h>
-#include <QueryWrapperFilter.h>
+#include "fulltextsearch.h"
+#include "dfmapplication.h"
+#include "chineseanalyzer.h"
 
 //doctotext header
 #include "misc.h"
@@ -27,9 +33,20 @@
 #include <QDir>
 #include <QFileInfoList>
 
-#include "fulltextsearch.h"
-#include "dfmapplication.h"
-#include "chineseanalyzer.h"
+//lucene++ header
+#include <FileUtils.h>
+#include <FilterIndexReader.h>
+#include <FuzzyQuery.h>
+#include <QueryWrapperFilter.h>
+// pdf
+#include <poppler-document.h>
+#include <poppler-page.h>
+
+#include <iostream>
+#include <boost/algorithm/string.hpp>
+#include <codecvt>
+#include <dirent.h>
+#include <fnmatch.h>
 
 DFM_BEGIN_NAMESPACE
 #define SEARCH_RESULT_NUM   100000
@@ -75,7 +92,7 @@ QString DFMFullTextSearchManager::getFileContents(const QString &filePath)
     else if (ext == "ppt" || ext == "pps" || ext == "dps")
         parser_type = PlainTextExtractor::PARSER_PPT;
     else if (ext == "pdf")
-        parser_type = PlainTextExtractor::PARSER_PDF;
+        return parsePdfFile(filePath, static_cast<quint32>(IndexWriter::MaxFieldLengthLIMITED));
     else if (ext == "txt" || ext == "text")
         parser_type = PlainTextExtractor::PARSER_TXT;
     else {
@@ -307,6 +324,31 @@ QString DFMFullTextSearchManager::dealKeyWorld(const QString &keyWorld)
     }
 
     return newStr.trimmed();
+}
+
+QString DFMFullTextSearchManager::parsePdfFile(const QString &fileName, quint32 maxLen)
+{
+    std::string file = fileName.toStdString();
+    poppler::document *doc = poppler::document::load_from_file(file);
+    if (!doc || doc->is_locked()) {
+        qWarning() << "PDF file load failed:" << fileName;
+        delete doc;
+        return "";
+    }
+
+    QString text;
+    int numPage = doc->pages();
+    for (int i = 0; i < numPage && static_cast<quint32>(text.size()) < maxLen; ++i) {
+        poppler::page *page = doc->create_page(i);
+        if (page) {
+            QString str = page->text().to_utf8().data();
+            text += str.simplified();
+            delete page;
+        }
+    }
+
+    delete doc;
+    return text;
 }
 
 bool DFMFullTextSearchManager::updateIndex(const QString &filePath)
