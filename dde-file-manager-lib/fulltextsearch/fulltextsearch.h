@@ -95,6 +95,8 @@ private:
     void doPagingSearch(const SearcherPtr &searcher, const QueryPtr &query, int32_t hitsPerPage, bool raw, bool interactive);
 
     void readFileName(const char *filePath, QStringList &result);
+
+    QString parsePdfFile(const QString &fileName, quint32 maxLen);
 private:
     bool status;
 
