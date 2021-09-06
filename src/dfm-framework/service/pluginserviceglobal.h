@@ -29,6 +29,8 @@ class QtClassFactory
     //定义创建函数类型
     typedef std::function<CT*()> CreateFunc;
 public:
+    virtual ~QtClassFactory() {}
+
     template<class T>
     bool regClass(const QString& name, QString * errorString = nullptr)
     {
