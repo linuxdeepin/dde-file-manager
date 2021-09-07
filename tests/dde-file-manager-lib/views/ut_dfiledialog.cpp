@@ -4,6 +4,7 @@
 #include "interfaces/dfilesystemmodel.h"
 #include "views/dfmsidebar.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "interfaces/dfilemenumanager.h"
 #include "stub.h"
 #include <QEventLoop>
 #include <QLineEdit>
@@ -24,6 +25,9 @@ namespace  {
 
         virtual void SetUp() override
         {
+            stub_ext::StubExt stu;
+            stu.set_lamda(ADDR(DFileMenuManager, needDeleteAction), [](){return true;});
+
             m_fileDialog = new DFileDialog();
             m_fileDialog->setDirectory(DUrl::fromLocalFile("/usr").toLocalFile());
             m_fileDialog->openNewTab(DUrl::fromLocalFile("/usr"));

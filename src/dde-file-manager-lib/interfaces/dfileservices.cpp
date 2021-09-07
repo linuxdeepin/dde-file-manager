@@ -487,6 +487,18 @@ void DFileService::initHandlersByCreators()
     DFileServicePrivate::controllerCreatorHash.clear();
 }
 
+void DFileService::clearController(const QString &scheme, const QString &host)
+{
+    const HandlerType &type = HandlerType(scheme, host);
+    auto controllers = DFileServicePrivate::controllerHash.values(type);
+    for (auto controller : controllers) {
+        DFileServicePrivate::handlerHash.remove(controller);
+        DFileServicePrivate::controllerHash.remove(type, controller);
+        delete controller;
+        controller = nullptr;
+    }
+}
+
 DFileService *DFileService::instance()
 {
     static DFileService services;

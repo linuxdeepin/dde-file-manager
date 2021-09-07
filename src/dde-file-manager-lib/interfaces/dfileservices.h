@@ -96,6 +96,13 @@ public:
 
     static void initHandlersByCreators();
 
+    /**
+     * @brief ut 主动清理controller 其它地方慎用
+     * @param
+     * @return
+     */
+    static void clearController(const QString &scheme, const QString &host);
+
     static void printStacktrace(int level = 4);
 
     static DFileService *instance();

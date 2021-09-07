@@ -16,6 +16,7 @@
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
 #define private public
 #include "controllers/bookmarkmanager.h"
+#include "interfaces/dfilemenumanager.h"
 
 #include <DDialog>
 
@@ -68,6 +69,8 @@ TEST_F(TestDFMSideBarBookmarkItemHandler, test_cdAction)
     StubExt st;
     st.set_lamda(&DFileManagerWindow::openNewTab, [](){return true;});
 
+    st.set_lamda(ADDR(DFileMenuManager, needDeleteAction), [](){return true;});
+
     DFileManagerWindow *window = new DFileManagerWindow();
     const DFMSideBar *bar = window->getLeftSideBar();
     DUrl dirUrl = DUrl::fromLocalFile(m_dirPath);
@@ -100,6 +103,7 @@ TEST_F(TestDFMSideBarBookmarkItemHandler, test_contextMenu)
     st.set_lamda(&DFMSideBar::openItemEditor, [&](){++calledActionCount;});
     st.set_lamda(&DialogManager::showPropertyDialog, [&](){++calledActionCount;});
     st.set_lamda(&DFileService::deleteFiles, [&](){++calledActionCount; return true;});
+    st.set_lamda(ADDR(DFileMenuManager, needDeleteAction), [](){return true;});
 
     st.set_lamda(VADDR(DDialog, exec), [&]{++calledActionCount; return 0;});
 

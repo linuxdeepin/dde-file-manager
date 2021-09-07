@@ -6,10 +6,12 @@
 #include "tag/tagmanager.h"
 #include "views/dfilemanagerwindow.h"
 #include "interfaces/dfmsidebaritem.h"
+#include "interfaces/dfilemenumanager.h"
 
 #include <QMessageBox>
 
 #include "stub.h"
+#include "stub-ext/stubext.h"
 
 #define private public
 #define protected public
@@ -109,6 +111,9 @@ TEST_F(TestDFMSideBarTagItemHandler, tst_rename)
     static bool myCallOpen = false;
     void (*ut_openNewTab)() = [](){myCallOpen = true;};
     stub.set(ADDR(DFileManagerWindow, openNewTab), ut_openNewTab);
+
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(DFileMenuManager, needDeleteAction), [](){return true;});
 
     DFileManagerWindow window;
     EXPECT_TRUE(myCallOpen);

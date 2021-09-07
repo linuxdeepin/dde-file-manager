@@ -129,6 +129,8 @@ void recycleUserActionType(MenuAction type)
         /*action->deleteLater();
         action = nullptr;*/
     }
+    if (DFileMenuManager::needDeleteAction())
+        delete action;
 }
 }
 
@@ -977,6 +979,11 @@ void DFileMenuData::clearActions()
     actionToMenuAction.clear();
 }
 
+bool DFileMenuManager::needDeleteAction()
+{
+    return false;
+}
+
 DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
                                                 const QSet<MenuAction> &disableList,
                                                 bool checkable,
@@ -1001,6 +1008,8 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
                 /*action->deleteLater();
                 action = nullptr;*/
             }
+            if (needDeleteAction())
+                delete action;
         }
     }
 

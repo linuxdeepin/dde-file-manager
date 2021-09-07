@@ -25,6 +25,7 @@
 #include "stub.h"
 #include "stub-ext/stubext.h"
 #include "views/dfilemanagerwindow.h"
+#include "interfaces/dfilemenumanager.h"
 #include "testhelper.h"
 #include "durl.h"
 #include "interfaces/dfmbaseview.h"
@@ -115,9 +116,11 @@ TEST_F(DfmBaseViewTest,start_reflesh) {
 
 TEST_F(DfmBaseViewTest,start_other) {
 
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(DFileMenuManager, needDeleteAction), [](){return true;});
+
     DFileManagerWindow testbaseview;
 
-    stub_ext::StubExt stu;
     stu.set_lamda(ADDR(QWidget, window), [&testbaseview](){ return qobject_cast<QWidget*>(&testbaseview);});
 
     bool (*cd)(const DUrl &) = [](const DUrl &){return true;};
@@ -134,15 +137,11 @@ TEST_F(DfmBaseViewTest,start_other) {
         EXPECT_NO_FATAL_FAILURE(baseview->notifyStateChanged());
     });
     testbaseview.clearActions();
-    /*EXPECT_NO_FATAL_FAILURE(baseview->requestCdTo(DUrl()));
+    EXPECT_NO_FATAL_FAILURE(baseview->requestCdTo(DUrl()));
     testbaseview.clearActions();
     TestHelper::runInLoop([=]{
         EXPECT_NO_FATAL_FAILURE(baseview->notifySelectUrlChanged(DUrlList()));
-    });*/
+    });
     stu.reset(ADDR(QWidget, window));
     testbaseview.clearActions();
-    /*if (testbaseviewptr) {
-        testbaseviewptr->clearActions();
-        delete testbaseviewptr;
-    }*/
 }

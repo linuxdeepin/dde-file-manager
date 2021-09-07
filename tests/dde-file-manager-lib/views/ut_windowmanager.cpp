@@ -24,6 +24,7 @@
 #include <stubext.h>
 
 #include "views/dfilemanagerwindow.h"
+#include "interfaces/dfilemenumanager.h"
 #define private public
 #define protected public
 #include "views/windowmanager.h"
@@ -33,6 +34,12 @@ namespace  {
     {
     public:
         WindowManager wm;
+
+        static void SetUpTestCase() {
+            stub_ext::StubExt stu;
+            stu.set_lamda(ADDR(DFileMenuManager, needDeleteAction), [](){return true;});
+        }
+
         virtual void SetUp() override
         {
 

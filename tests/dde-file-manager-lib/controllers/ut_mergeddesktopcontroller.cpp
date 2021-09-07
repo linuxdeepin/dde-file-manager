@@ -95,7 +95,11 @@ TEST_F(TestMergedDesktopController, tstFuncsWithEvents)
     EXPECT_TRUE(ctrl->createFileInfo(e1));
 
     auto e2 = dMakeEventPointer<DFMGetChildrensEvent>(nullptr, DUrl("dfmmd:///"), QStringList(), QDir::Filters());
-    EXPECT_FALSE(ctrl->getChildren(e2).isEmpty());
+    {
+        auto list = ctrl->getChildren(e2);
+        EXPECT_FALSE(list.isEmpty());
+        list.clear();
+    }
 
     e2 = dMakeEventPointer<DFMGetChildrensEvent>(nullptr, DUrl("dfmmd:///entry/"), QStringList(), QDir::Filters());
     ctrl->getChildren(e2);

@@ -17,6 +17,7 @@
 #include "interfaces/dfmsidebaritem.h"
 #include "interfaces/dfmsidebariteminterface.h"
 #include "interfaces/dfmcrumbbar.h"
+#include "interfaces/dfilemenumanager.h"
 
 DFM_USE_NAMESPACE
 
@@ -24,6 +25,11 @@ class TestDFMSideBarItemInterface: public testing::Test
 {
 
 public:
+    static void SetUpTestCase() {
+        stub_ext::StubExt stu;
+        stu.set_lamda(ADDR(DFileMenuManager, needDeleteAction), [](){return true;});
+    }
+
     DFMSideBarItemInterface interface;
     DFileManagerWindow window;
 

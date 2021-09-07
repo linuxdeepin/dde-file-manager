@@ -237,9 +237,13 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
             layout->addRow(sizeSectionLabel, m_folderSizeLabel);
             layout->addRow(fileAmountSectionLabel, m_containSizeLabel);
             frameHeight += 30;
+        } else {
+            delete sizeSectionLabel;
+            delete m_containSizeLabel;
         }
     } else {
         layout->addRow(sizeSectionLabel, m_folderSizeLabel);
+        delete m_containSizeLabel;
     }
 
     if (m_showMediaInfo) {
