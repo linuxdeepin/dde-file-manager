@@ -390,10 +390,14 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
     if (isHaveVaultTask(job->sourceUrlList(), job->targetUrl())) {
         mapNotCompleteVaultTask.insert(job);
 
-        // 结束当前保险箱未完成任务时，将保险箱任务记录移除
         connect(this, &DTaskDialog::sigStopJob, job, [job, this]() {
-            mapNotCompleteVaultTask.remove(job);
             emit job->stop();
+        });
+
+        // 保险箱任务线程结束后，移除保险箱任务记录
+        connect(job, &QThread::finished, this, [job, this](){
+            QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+            mapNotCompleteVaultTask.remove(job);
         });
     }
 
@@ -416,11 +420,6 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
         case DFMTaskWidget::STOP:
 
 //                this->closeEvent(&event);
-
-            // 结束当前指定任务时，如果该任务属于保险箱未完成任务，则删除记录
-            if (mapNotCompleteVaultTask.contains(job)) {
-                mapNotCompleteVaultTask.remove(job);
-            }
 
             emit job->stop();
             //fix bug 63202,主动停止时，就不去沉睡0.3秒,不显示100%
@@ -917,6 +916,23 @@ void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail
 
 void DTaskDialog::closeEvent(QCloseEvent *event)
 {
+    // 保险箱特殊判断
+    // 关闭弹窗时，需要判断是否有保险箱的删除任务，如果有，则需要等待保险箱删除任务中的当前文件被删除了，才能关闭进度窗口
+    if(haveNotCompletedVaultTask()) {
+        QSetIterator<DFileCopyMoveJob *> i(mapNotCompleteVaultTask);
+        while (i.hasNext()) {
+            DFileCopyMoveJob *job = i.next();
+            if (job && (job->mode() == DFileCopyMoveJob::MoveMode)) {
+                emit job->stop();
+                job->setProgressShow(false);
+                event->ignore();
+                // 改变鼠标状态为等待，标识当前删除任务未完成
+                QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+                return;
+            }
+        }
+    }
+
     //! 记录是否点击关闭按钮
     m_flag = true;
     iserroroc.clear();
