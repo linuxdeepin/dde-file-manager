@@ -6,6 +6,8 @@
 #include <views/dfilemanagerwindow.h>
 #include <DDialog>
 #include "vault/vaultlockmanager.h"
+#include "interfaces/dfilemenumanager.h"
+#include "stub-ext/stubext.h"
 
 #include "stub.h"
 
@@ -19,6 +21,11 @@ namespace  {
     {
     public:
         QSharedPointer<DFMSideBarVaultItemHandler> m_controller;
+
+        static void SetUpTestCase() {
+            stub_ext::StubExt stu;
+            stu.set_lamda(ADDR(DFileMenuManager, needDeleteAction), [](){return true;});
+        }
 
         virtual void SetUp() override
         {

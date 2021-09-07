@@ -72,6 +72,7 @@ public:
                                          bool isUseCachedAction = true,
                                          bool isRecursiveCall = false);
     static QString getActionString(MenuAction type);
+    static bool needDeleteAction();
 
     static void extendCustomMenu(DFileMenu *menu, bool isNormal,
                                  const DUrl &dir,

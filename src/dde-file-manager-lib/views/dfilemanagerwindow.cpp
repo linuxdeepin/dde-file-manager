@@ -1647,6 +1647,7 @@ bool DFileManagerWindow::getCanDestruct() const
 
 void DFileManagerWindow::clearActions()
 {
-    fileMenuManger->clearActions();
+    if (fileMenuManger)
+        fileMenuManger->clearActions();
 }
 

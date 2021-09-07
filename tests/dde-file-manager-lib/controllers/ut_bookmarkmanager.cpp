@@ -24,9 +24,11 @@
 #include "interfaces/dfmsidebaritem.h"
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
 #include "views/dfilemanagerwindow.h"
+#include "interfaces/dfilemenumanager.h"
 #include "singleton.h"
 #include <dfmevent.h>
 #include "testhelper.h"
+#include "stub-ext/stubext.h"
 
 #include <QProcess>
 #include <QStandardPaths>
@@ -117,6 +119,9 @@ TEST_F(TestBookMarkManager, can_create_bookmark_sidebar_item)
 TEST_F(TestBookMarkManager, can_call_context_menu)
 {
     ASSERT_NE(m_pHandler, nullptr);
+
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(DFileMenuManager, needDeleteAction), [](){return true;});
 
     DFileManagerWindow *window = new DFileManagerWindow();
     const DFMSideBar *bar = window->getLeftSideBar();

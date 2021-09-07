@@ -30,6 +30,7 @@
 #include "views/computerview.h"
 #include "dguiapplicationhelper.h"
 #include "interfaces/dfmapplication.h"
+#include "interfaces/dfilemenumanager.h"
 
 #define private public
 
@@ -37,6 +38,7 @@
 #include "dfmevent.h"
 #include "views/dfilemanagerwindow.h"
 #include "stub.h"
+#include "stub-ext/stubext.h"
 
 DFM_USE_NAMESPACE
 namespace  {
@@ -49,6 +51,9 @@ namespace  {
 
         virtual void SetUp() override
         {
+            stub_ext::StubExt stu;
+            stu.set_lamda(ADDR(DFileMenuManager, needDeleteAction), [](){return true;});
+
             m_window = QSharedPointer<DFileManagerWindow>(new DFileManagerWindow());
             m_window->cd(DUrl(COMPUTER_ROOT));
             m_computerView = dynamic_cast<ComputerView*>(m_window->getFileView());

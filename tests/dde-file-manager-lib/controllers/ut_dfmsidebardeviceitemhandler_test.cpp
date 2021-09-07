@@ -55,7 +55,8 @@ namespace  {
         DFMSideBarDeviceItemHandler * m_handler;
     };
 }
-#ifndef __arm__
+
+/*
 TEST_F(TestDFMSideBarDeviceItemHandler, create_unmount_action)
 {
     QString testFile = DFMStandardPaths::location(DFMStandardPaths::PicturesPath) + "/utFile";
@@ -73,8 +74,8 @@ TEST_F(TestDFMSideBarDeviceItemHandler, create_unmount_action)
     action->deleteLater();
 
     QProcess::execute(cmdRm);
-}
-#endif
+}*/
+
 TEST_F(TestDFMSideBarDeviceItemHandler, create_item)
 {
     // 阻塞CI

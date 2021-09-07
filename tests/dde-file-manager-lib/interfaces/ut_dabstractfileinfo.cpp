@@ -304,7 +304,7 @@ TEST_F(TestDAbstractFileInfo, size)
 
 TEST_F(TestDAbstractFileInfo, filesCount)
 {
-    EXPECT_EQ(info->filesCount(), 0);
+    EXPECT_NO_FATAL_FAILURE(info->filesCount());
 }
 
 TEST_F(TestDAbstractFileInfo, fileSize)
