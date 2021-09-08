@@ -229,6 +229,18 @@ QString Tab::getDisplayNameByUrl(const DUrl &url) const
     if (url.isComputerFile()) {
         if (systemPathManager->isSystemPath(url.toString()))
             urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(url.toString());
+    } //NOTE [REN] 这儿获取plugin插件的tab名
+    else if (url.isPluginFile()) {
+        if(systemPathManager->isSystemPath(url.toString())){
+            urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(url.toString());
+        } else {
+            //NOTE [REN] plugin插件的非根目录的url也是存在plugin的，格式是plugin://***/***，也走这个判断流程
+            QString path = url.path();
+            if (path.contains("/")) {
+                QStringList listvalue = path.split("/");
+                urlDisplayName = listvalue.at(listvalue.size() - 1);
+            }
+        }
     } else if (url == DUrl::fromTrashFile("/")) {
         urlDisplayName = systemPathManager->getSystemPathDisplayName("Trash");
     } else if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme())) {
