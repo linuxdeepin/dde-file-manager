@@ -30,34 +30,19 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-/* @class DFMDisplayViewDefault
- * @brief 默认view的展示界面，主要提供url入口检查与界面提示。
- */
-class DFMDisplayDefaultView : public QLabel, public DFMDisplayViewLogic
+class DisplayDefaultViewPrivate;
+class DisplayDefaultView : public QLabel, public DisplayViewLogic
 {
     Q_OBJECT
-    Q_DISABLE_COPY(DFMDisplayDefaultView)
-
-    QUrl m_url;
-
+    Q_DISABLE_COPY(DisplayDefaultView)
+    Q_DECLARE_PRIVATE(DisplayDefaultView)
+    DisplayDefaultViewPrivate *const d;
 public:
-    explicit DFMDisplayDefaultView(QWidget* parent = nullptr);
-
-    //设置url
+    explicit DisplayDefaultView(QWidget* parent = nullptr);
     virtual void setRootUrl(const QUrl &url) override;
-
-    //获取url
     virtual QUrl rootUrl() override;
-
-    //重载实现现有url检查,实现界面的View弹出提示
     virtual bool checkViewUrl(const QUrl& url, QString *errorString = nullptr) override;
-
-    //run in main loop,cause show dialog and so on.
-    //展示逻辑
     virtual void showBeginLogic() override;
-
-    //用于关闭的逻辑
-    //run in main loop, hide self widget
     virtual void showEndLogic() override;
 };
 

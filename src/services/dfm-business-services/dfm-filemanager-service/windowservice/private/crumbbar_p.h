@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMCRUMBBAR_P_H
-#define DFMCRUMBBAR_P_H
+#ifndef CrumbBar_P_H
+#define CrumbBar_P_H
 
 #include "dfm_filemanager_service_global.h"
 
@@ -33,25 +33,25 @@ DWIDGET_USE_NAMESPACE
 
 DSB_FM_BEGIN_NAMESPACE
 
-class DFMCrumbBar;
-class DFMCrumbModel;
-class DFMCrumbBarPrivate
+class CrumbBar;
+class CrumbModel;
+class CrumbBarPrivate
 {
-    Q_DECLARE_PUBLIC(DFMCrumbBar)
-    DFMCrumbBar *const q_ptr;
+    Q_DECLARE_PUBLIC(CrumbBar)
+    CrumbBar *const q_ptr;
 
-    QPushButton m_leftArrow;
-    QPushButton m_rightArrow;
-    DListView m_crumbView;
-    DFMCrumbModel *m_crumbModel = nullptr;
-    QHBoxLayout *m_crumbBarLayout;
-    QPoint m_clickedPos;
-    bool m_clickableAreaEnabled = false;
+    QPushButton leftArrow;
+    QPushButton rightArrow;
+    DListView crumbView;
+    CrumbModel *crumbModel = nullptr;
+    QHBoxLayout *crumbBarLayout;
+    QPoint clickedPos;
+    bool clickableAreaEnabled = false;
 
 public:
 
-    explicit DFMCrumbBarPrivate(DFMCrumbBar *qq);
-    ~DFMCrumbBarPrivate();
+    explicit CrumbBarPrivate(CrumbBar *qq);
+    virtual ~CrumbBarPrivate();
 
     void clearCrumbs();
     void checkArrowVisiable();
@@ -66,4 +66,4 @@ private:
 
 DSB_FM_END_NAMESPACE
 
-#endif // DFMCRUMBBAR_P_H
+#endif // CrumbBar_P_H

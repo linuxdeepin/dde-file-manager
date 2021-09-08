@@ -29,9 +29,9 @@ TraversalDirThread::TraversalDirThread(const QUrl &url,
                                              QDirIterator::IteratorFlags flags,
                                              QObject *parent)
     : QThread(parent)
-    , m_dirUrl(url)
+    , dirUrl(url)
 {
-    if (m_dirUrl.isValid()) {
+    if (dirUrl.isValid()) {
         m_dirIterator = DirIteratorFactory::instance().create<LocalDirIterator>
                             (url, nameFilters, filters,flags);
     }

@@ -45,27 +45,10 @@
  * \brief 内部实现本地文件的fileinfo，对应url的scheme是file://
  */
 DFMBASE_BEGIN_NAMESPACE
-LocalFileInfo::LocalFileInfo()
-    :d_ptr(new LocalFileInfoPrivate(this))
-{
-
-}
-
-LocalFileInfo::LocalFileInfo(const QString &filePath)
-    : LocalFileInfo(QUrl::fromLocalFile(filePath))
-{
-
-}
 
 LocalFileInfo::LocalFileInfo(const QUrl &url)
     : AbstractFileInfo (url),
       d_ptr(new LocalFileInfoPrivate(this))
-{
-
-}
-
-LocalFileInfo::LocalFileInfo(const QFileInfo &fileInfo)
-    : LocalFileInfo(QUrl::fromLocalFile(fileInfo.absoluteFilePath()))
 {
 
 }
@@ -207,14 +190,14 @@ MimeDatabase::FileType LocalFileInfo::fileType() const
     // fix bug#52950 【专业版1030】【文管5.2.0.72】回收站删除指向块设备的链接文件时，删除失败
     // QT_STATBUF判断链接文件属性时，判断的是指向文件的属性，使用QFileInfo判断
     Q_D(const LocalFileInfo);
-    if (d->m_cacheFileType != MimeDatabase::FileType::Unknown)
-        return d->m_cacheFileType;
+    if (d->cacheFileType != MimeDatabase::FileType::Unknown)
+        return d->cacheFileType;
 
     QString absoluteFilePath = filePath();
     if (absoluteFilePath.startsWith(StandardPaths::location(StandardPaths::TrashFilesPath))
             && isSymLink()) {
-        d->m_cacheFileType = MimeDatabase::FileType::RegularFile;
-        return d->m_cacheFileType;
+        d->cacheFileType = MimeDatabase::FileType::RegularFile;
+        return d->cacheFileType;
     }
 
     // Cannot access statBuf.st_mode from the filesystem engine, so we have to stat again.
@@ -223,25 +206,25 @@ MimeDatabase::FileType LocalFileInfo::fileType() const
     QT_STATBUF statBuffer;
     if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
         if (S_ISDIR(statBuffer.st_mode))
-            d->m_cacheFileType = MimeDatabase::FileType::Directory;
+            d->cacheFileType = MimeDatabase::FileType::Directory;
 
         else if (S_ISCHR(statBuffer.st_mode))
-            d->m_cacheFileType = MimeDatabase::FileType::CharDevice;
+            d->cacheFileType = MimeDatabase::FileType::CharDevice;
 
         else if (S_ISBLK(statBuffer.st_mode))
-            d->m_cacheFileType = MimeDatabase::FileType::BlockDevice;
+            d->cacheFileType = MimeDatabase::FileType::BlockDevice;
 
         else if (S_ISFIFO(statBuffer.st_mode))
-            d->m_cacheFileType = MimeDatabase::FileType::FIFOFile;
+            d->cacheFileType = MimeDatabase::FileType::FIFOFile;
 
         else if (S_ISSOCK(statBuffer.st_mode))
-            d->m_cacheFileType = MimeDatabase::FileType::SocketFile;
+            d->cacheFileType = MimeDatabase::FileType::SocketFile;
 
         else if (S_ISREG(statBuffer.st_mode))
-            d->m_cacheFileType = MimeDatabase::FileType::RegularFile;
+            d->cacheFileType = MimeDatabase::FileType::RegularFile;
     }
 
-    return d->m_cacheFileType;
+    return d->cacheFileType;
 }
 /*!
  * \brief linkTargetPath 获取链接文件的目标路径

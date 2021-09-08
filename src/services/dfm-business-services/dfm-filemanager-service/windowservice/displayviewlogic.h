@@ -31,43 +31,20 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-/* @class DFMDisplayViewLogic
- * @brief 展示的view界面共有逻辑类
- * 框架执行流程为：
- *      1.checkViewUrl
- *      2.setRootUrl
- *      3.showBeginLogic
- *      4.showEndLogic
- */
-class DFMDisplayViewLogic
+class DisplayViewLogic
 {
-    Q_DISABLE_COPY(DFMDisplayViewLogic)
-
+    Q_DISABLE_COPY(DisplayViewLogic)
 public:
-
-    explicit DFMDisplayViewLogic();
-
-    virtual ~DFMDisplayViewLogic();
-
-    //检查当前传入的url是否被view支持
+    explicit DisplayViewLogic();
+    virtual ~DisplayViewLogic();
     virtual bool checkViewUrl(const QUrl& url, QString *errorString = nullptr);
-
-    //设置url
-    virtual void setRootUrl(const QUrl &url) = 0;
-
-    //获取url
-    virtual QUrl rootUrl() = 0;
-
-    //run in main loop,cause show dialog and so on.
-    //展示view之前逻辑
+    virtual void setRootUrl(const QUrl &url) = 0;    //设置url
+    virtual QUrl rootUrl() = 0;    //获取url
     virtual void showBeginLogic();
-
-    //用于view切换关闭的逻辑
-    //run in main loop, hide self widget
     virtual void showEndLogic();
 };
 
-typedef QSharedPointer<DFMDisplayViewLogic> DFMDisplayViewLogicPointer;
+typedef QSharedPointer<DisplayViewLogic> DFMDisplayViewLogicPointer;
 
 DSB_FM_END_NAMESPACE
 

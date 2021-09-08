@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMBROWSEVIEW_H
-#define DFMBROWSEVIEW_H
+#ifndef BrowseView_H
+#define BrowseView_H
 
 #include "displayviewlogic.h"
 #include "dfm_filemanager_service_global.h"
@@ -34,39 +34,30 @@
 DFMBASE_USE_NAMESPACE
 DSB_FM_BEGIN_NAMESPACE
 
-class DFMBrowseView : public FileView, public DFMDisplayViewLogic
+class BrowseView : public FileView, public DisplayViewLogic
 {
     Q_OBJECT
-
 public:
-    explicit DFMBrowseView(QWidget *parent = nullptr);
-
-    virtual ~DFMBrowseView() override;
-
+    explicit BrowseView(QWidget *parent = nullptr);
+    virtual ~BrowseView() override;
     virtual void setRootUrl(const QUrl &url) override;
-
     virtual QUrl rootUrl() override;
 };
 
-
 template <class T>
-class DFMSchemeWidegtFactory
+class SchemeWidegtFactory
 {
-    Q_DISABLE_COPY(DFMSchemeWidegtFactory)
-
-    //定义创建函数类型
-    typedef std::function<T*()> CreateFunc;
-
-    //构造函数列表
-    QHash<QString, CreateFunc> _constructList{};
-
+    Q_DISABLE_COPY(SchemeWidegtFactory)
+    typedef std::function<T*()> CreateFunc; //定义创建函数类型
+    QHash<QString, CreateFunc> constructList{}; //构造函数列表
 public:
-    DFMSchemeWidegtFactory(){}
+    explicit SchemeWidegtFactory(){}
+    virtual ~SchemeWidegtFactory(){}
 
     template<class CT = T>
     bool regClass(const QString &scheme, QString *errorString = nullptr)
     {
-        if (_constructList[scheme]) {
+        if (constructList[scheme]) {
             if (errorString)
                 *errorString = QObject::tr("The current scheme has registered "
                                            "the associated construction class");
@@ -76,7 +67,7 @@ public:
         CreateFunc foo = [=](){
             return new CT();
         };
-        _constructList.insert(scheme,foo);
+        constructList.insert(scheme,foo);
         return true;
     }
 
@@ -90,7 +81,7 @@ public:
             return nullptr;
         }
 
-        CreateFunc constantFunc = _constructList.value(scheme);
+        CreateFunc constantFunc = constructList.value(scheme);
         if (constantFunc) {
             return constantFunc();
         } else {
@@ -102,25 +93,23 @@ public:
     }
 };
 
-class DFMBrowseWidgetFactory : public DFMSchemeWidegtFactory<DFMDisplayViewLogic>
+class BrowseWidgetFactory : public SchemeWidegtFactory<DisplayViewLogic>
 {
-    Q_DISABLE_COPY(DFMBrowseWidgetFactory)
-
+    Q_DISABLE_COPY(BrowseWidgetFactory)
 public:
-
-    DFMBrowseWidgetFactory() {}
-
-    //提供任意子类的转换方法模板，仅限DFMBrowseView树族
+    explicit BrowseWidgetFactory();
+    virtual ~BrowseWidgetFactory();
+    //提供任意子类的转换方法模板，仅限BrowseView树族
     //与qSharedPointerDynamicCast保持一致
     template<class T>
     T* create(const QUrl &url, QString *errorString = nullptr)
     {
-        return dynamic_cast<T*>(DFMSchemeWidegtFactory<DFMDisplayViewLogic>::create(url, errorString));
+        return dynamic_cast<T*>(SchemeWidegtFactory<DisplayViewLogic>::create(url, errorString));
     }
 
-    static DFMBrowseWidgetFactory& instance();
+    static BrowseWidgetFactory& instance();
 };
 
 DSB_FM_END_NAMESPACE
 
-#endif // DFMBROWSEVIEW_H
+#endif // BrowseView_H

@@ -47,19 +47,14 @@ class FileViewPrivate
     Q_DECLARE_PUBLIC(FileView)
     FileView * q_ptr;
 
-public:
-
-    QAtomicInteger<bool> m_allowedAdjustColumnSize = true;
-    HeaderView* m_headview = nullptr;
-    ListItemDelegate *m_listDelegate = nullptr;
-    IconItemDelegate *m_iconDelegate = nullptr;
-    QUrl m_url;
+    QAtomicInteger<bool> allowedAdjustColumnSize = true;
+    HeaderView* headview = nullptr;
+    ListItemDelegate *listDelegate = nullptr;
+    IconItemDelegate *iconDelegate = nullptr;
+    QUrl url;
 
     explicit FileViewPrivate(FileView *qq);
-
     int iconModeColumnCount(int itemWidth = 0) const;
-
-    void updateViewDelegate(const QListView::ViewMode &mode);
 };
 DFMBASE_END_NAMESPACE
 

@@ -20,27 +20,43 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "private/displaydefaultview_p.h"
 #include "displaydefaultview.h"
 
 DSB_FM_BEGIN_NAMESPACE
 
-DFMDisplayDefaultView::DFMDisplayDefaultView(QWidget *parent)
+DisplayDefaultViewPrivate::DisplayDefaultViewPrivate(DisplayDefaultView *qq)
+    : QObject(qq)
+    , q_ptr(qq)
+{
+
+}
+
+/**
+ * @class DFMDisplayViewDefault
+ * @brief 默认view的展示界面，主要提供url入口检查与界面提示。
+ */
+DisplayDefaultView::DisplayDefaultView(QWidget *parent)
     : QLabel (parent)
+    , d(new DisplayDefaultViewPrivate(this))
 {
     setAlignment(Qt::AlignVCenter|Qt::AlignHCenter);
 }
 
-void DFMDisplayDefaultView::setRootUrl(const QUrl &url)
+// 设置url
+void DisplayDefaultView::setRootUrl(const QUrl &url)
 {
-    m_url = url;
+    d->url = url;
 }
 
-QUrl DFMDisplayDefaultView::rootUrl()
+// 获取url
+QUrl DisplayDefaultView::rootUrl()
 {
-    return m_url;
+    return d->url;
 }
 
-bool DFMDisplayDefaultView::checkViewUrl(const QUrl &url, QString *errorString)
+// 重载实现现有url检查,实现界面的View弹出提示
+bool DisplayDefaultView::checkViewUrl(const QUrl &url, QString *errorString)
 {
     Q_UNUSED(errorString)
 
@@ -52,16 +68,21 @@ bool DFMDisplayDefaultView::checkViewUrl(const QUrl &url, QString *errorString)
     return true;
 }
 
-void DFMDisplayDefaultView::showBeginLogic()
+//展示逻辑
+//run in main loop,cause show dialog and so on.
+void DisplayDefaultView::showBeginLogic()
 {
     //直接展示
-    DFMDisplayViewLogic::showBeginLogic();
+    DisplayViewLogic::showBeginLogic();
 }
 
-void DFMDisplayDefaultView::showEndLogic()
+//用于关闭的逻辑
+//run in main loop, hide self widget
+void DisplayDefaultView::showEndLogic()
 {
     //直接隐藏
-    DFMDisplayViewLogic::showEndLogic();
+    DisplayViewLogic::showEndLogic();
 }
 
 DSB_FM_END_NAMESPACE
+

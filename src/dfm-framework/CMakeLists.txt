@@ -13,11 +13,11 @@ set(abus ${CMAKE_CURRENT_SOURCE_DIR}/abus)
 set(log ${CMAKE_CURRENT_SOURCE_DIR}/log)
 set(listener ${CMAKE_CURRENT_SOURCE_DIR}/listener)
 
-set(${PROJECT_NAME}_global_g
+set(LOBAL_H
     dfm_framework_global.h
     )
 
-set(${PROJECT_NAME}_cxx_private_h
+set(PRIVATE_H
     lifecycle/private/pluginmanager_p.h
     lifecycle/private/pluginmetaobject_p.h
     abus/private/appbus_p.h
@@ -25,12 +25,12 @@ set(${PROJECT_NAME}_cxx_private_h
     event/private/eventhandler_p.h
     )
 
-set(${PROJECT_NAME}_cxx_private_cpp
+set(PRIVATE_CPP
     lifecycle/private/pluginmanager_p.cpp
     abus/private/appbus_p.cpp
     )
 
-set(${PROJECT_NAME}_cxx_public_h
+set(PUBLIC_H
     event/event.h
     event/eventcallproxy.h
     event/eventhandler.h
@@ -51,7 +51,7 @@ set(${PROJECT_NAME}_cxx_public_h
     listener/listener.h
     )
 
-set(${PROJECT_NAME}_cxx_public_cpp
+set(PUBLIC_CPP
     event/event.cpp
     event/eventcallproxy.cpp
     event/eventhandler.cpp
@@ -70,10 +70,11 @@ set(${PROJECT_NAME}_cxx_public_cpp
     )
 
 add_library(${PROJECT_NAME} SHARED
-    ${${PROJECT_NAME}_cxx_private_h}
-    ${${PROJECT_NAME}_cxx_private_cpp}
-    ${${PROJECT_NAME}_cxx_public_h}
-    ${${PROJECT_NAME}_cxx_public_cpp}
+    ${LOBAL_H}
+    ${PRIVATE_H}
+    ${PRIVATE_CPP}
+    ${PUBLIC_H}
+    ${PUBLIC_CPP}
     )
 
 target_link_libraries(

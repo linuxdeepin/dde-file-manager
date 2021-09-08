@@ -18,17 +18,51 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "private/sidebarmodel_p.h"
 #include "sidebarmodel.h"
 #include "sidebaritemdelegate.h"
 #include "sidebaritem.h"
 
 #include <QMimeData>
 #include <QDebug>
+#include <QtConcurrent>
 
 #define MODELITEM_MIMETYPE "application/x-dfmsidebaritemmodeldata"
 DFMBASE_BEGIN_NAMESPACE
+
+namespace GlobalPrivate
+{
+    QByteArray generateMimeData(const QModelIndexList &indexes)
+    {
+        if (indexes.isEmpty())
+            return QByteArray();
+        QByteArray encoded;
+        QDataStream stream(&encoded, QIODevice::WriteOnly);
+        stream << indexes.first().row();
+
+        return encoded;
+    }
+
+    int getRowIndexFromMimeData(const QByteArray &data)
+    {
+        int row;
+        QDataStream stream(data);
+        stream >> row;
+
+        return row;
+    }
+} //namespace GlobalPrivate
+
+SideBarModelPrivate::SideBarModelPrivate(SideBarModel *qq)
+    : QObject(qq)
+    , q_ptr(qq)
+{
+
+}
+
 SideBarModel::SideBarModel(QObject *parent)
     : QStandardItemModel(parent)
+    , d(new SideBarModelPrivate(this))
 {
 
 }
@@ -56,7 +90,7 @@ bool SideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction action,
 
     // check if is item internal move by action and mimetype:
     if (action == Qt::MoveAction && data->formats().contains(MODELITEM_MIMETYPE)) {
-        int oriRowIndex = getRowIndexFromMimeData(data->data(MODELITEM_MIMETYPE));
+        int oriRowIndex = GlobalPrivate::getRowIndexFromMimeData(data->data(MODELITEM_MIMETYPE));
         if (oriRowIndex >= 0) {
             sourceItem = this->itemFromIndex(oriRowIndex);
         }
@@ -84,13 +118,8 @@ QMimeData *SideBarModel::mimeData(const QModelIndexList &indexes) const
     QMimeData * data = QStandardItemModel::mimeData(indexes);
     if (!data)
         return nullptr;
-    data->setData(MODELITEM_MIMETYPE, generateMimeData(indexes));
+    data->setData(MODELITEM_MIMETYPE, GlobalPrivate::generateMimeData(indexes));
     return data;
-}
-
-QModelIndex SideBarModel::indexFromItem(const SideBarItem *item) const
-{
-    return QStandardItemModel::indexFromItem(item);
 }
 
 SideBarItem *SideBarModel::itemFromIndex(const QModelIndex &index) const
@@ -106,24 +135,132 @@ SideBarItem *SideBarModel::itemFromIndex(int index) const
     return itemFromIndex(this->index(index, 0));
 }
 
-QByteArray SideBarModel::generateMimeData(const QModelIndexList &indexes) const
+bool SideBarModel::insertRow(int row, SideBarItem *item)
 {
-    if (indexes.isEmpty())
-        return QByteArray();
-    QByteArray encoded;
-    QDataStream stream(&encoded, QIODevice::WriteOnly);
-    stream << indexes.first().row();
+    if (!item)
+        return false;
 
-    return encoded;
+    if (0 > row)
+        return false;
+
+    QString currGroup = item->group();
+
+    int groupCount = -1;
+    int endRowIndex = -1;
+    int beginRowIndex = -1;
+
+    auto controller = QtConcurrent::run([&](){
+        if (rowCount() == 0) {
+            QStandardItemModel::appendRow(item);
+            return true;
+        } else {
+            //find insert group
+            for (int row = rowCount() - 1; row >= 0; row -- ) {
+                auto findedItem = dynamic_cast<SideBarItem*>(this->item(row, 0));
+
+                if (!findedItem)
+                    return false;
+
+                if (findedItem && endRowIndex == -1
+                        && findedItem->group() == currGroup) {
+                    endRowIndex = row;
+                }
+
+                if (findedItem && endRowIndex != -1
+                        && findedItem->group() == currGroup) {
+                    beginRowIndex = row;
+                }
+            }
+
+            if (-1 != endRowIndex && -1 != beginRowIndex) {
+                groupCount = endRowIndex - beginRowIndex;
+            } else {
+                QStandardItemModel::appendRow(item);
+                return true;
+            }
+        }
+        return true;
+    });
+    controller.waitForFinished();
+
+    if (!controller.result())
+        return false;
+
+    if(row >= groupCount)
+        return false;
+
+    QStandardItemModel::insertRow(row + beginRowIndex, item);
+    return true;
 }
 
-int SideBarModel::getRowIndexFromMimeData(const QByteArray &data) const
+int SideBarModel::appendRow(SideBarItem *item)
 {
-    int row;
-    QDataStream stream(data);
-    stream >> row;
+    if (!item)
+        return -1;
 
-    return row;
+    QString currentGroup = item->group();
+    auto controller = QtConcurrent::run([&](){
+        if (rowCount() == 0) {
+            QStandardItemModel::appendRow(item);
+            return 0;
+        } else {
+            //find insert group
+            for (int row = rowCount() - 1; row >= 0; row -- ) {
+                auto findedItem = dynamic_cast<SideBarItem*>(this->item(row, 0));
+
+                if (!findedItem)
+                    return -1;
+
+                if (findedItem && findedItem->group() == currentGroup) {
+                    QStandardItemModel::insertRow(row + 1, item);
+                    return row + 1;
+                }
+            }
+            QStandardItemModel::appendRow(item);
+            return 0;
+        }
+    });
+    controller.waitForFinished();
+
+    return controller.result();
+}
+
+bool SideBarModel::removeRow(SideBarItem *item)
+{
+    if (!item)
+        return false;
+
+    auto controller = QtConcurrent::run([&](){
+        for (int row = rowCount() - 1; row >= 0; row -- ) {
+            auto findedItem = dynamic_cast<SideBarItem*>(this->item(row, 0));
+            if (item == findedItem) {
+                QStandardItemModel::removeRow(row);
+                return true;
+            }
+        }
+        return false;
+    });
+
+    controller.waitForFinished();
+
+    if(!controller.result())
+        return false;
+    else
+        return true;
+}
+
+QStringList SideBarModel::groups() const
+{
+    QStringList list;
+    auto controller = QtConcurrent::run([&](){
+        for (int row = rowCount() - 1; row <= 0; row-- ) {
+            auto findedItem = dynamic_cast<SideBarItem*>(this->item(row, 0));
+            if (!list.contains(findedItem->group()))
+                list.push_front(findedItem->group());
+        }
+    });
+    controller.waitForFinished();
+    return list;
 }
 
 DFMBASE_END_NAMESPACE

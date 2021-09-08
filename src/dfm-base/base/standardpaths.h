@@ -27,10 +27,10 @@
 #include "dfm-base/dfm_base_global.h"
 
 #include <QObject>
-#include <QString>
-#include <QStandardPaths>
 
 class QUrl;
+class QString;
+class QStandardPaths;
 DFMBASE_BEGIN_NAMESPACE
 class StandardPaths
 {

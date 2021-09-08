@@ -29,10 +29,11 @@
 
 #include <dfm-io/core/dfileinfo.h>
 
-#include <QFileInfo>
-#include <QDateTime>
-#include <QFileSystemWatcher>
+#include <QSharedData>
+#include <QFile>
 
+class QDir;
+class QDateTime;
 DFMBASE_BEGIN_NAMESPACE
 class AbstractFileInfoPrivate;
 class AbstractFileInfo: public QSharedData
@@ -76,18 +77,13 @@ public:
     };
 
 public:
-    AbstractFileInfo();
-    AbstractFileInfo(const QUrl &url);
-    AbstractFileInfo(const QString &file);
-    AbstractFileInfo(const QFile &file);
-    AbstractFileInfo(const QDir &dir, const QString &file);
-    AbstractFileInfo(const QFileInfo &fileinfo);
+    explicit AbstractFileInfo() = delete;
+    explicit AbstractFileInfo(const QUrl &url);
     virtual ~AbstractFileInfo();
     virtual AbstractFileInfo &operator=(const AbstractFileInfo &fileinfo);
     virtual bool operator==(const AbstractFileInfo &fileinfo) const;
     virtual bool operator!=(const AbstractFileInfo &fileinfo) const;
     virtual void setFile(const DFMIO::DFileInfo &file);
-    virtual void setFile(const QFile &file);
     virtual void setFile(const QUrl &url);
     virtual bool exists() const;
     virtual void refresh();
@@ -127,8 +123,6 @@ public:
     virtual QDateTime lastModified() const;
     virtual QDateTime lastRead() const;
     virtual QDateTime fileTime(QFile::FileTime time) const;
-private:
-    void initFileInfo();
 };
 DFMBASE_END_NAMESPACE
 

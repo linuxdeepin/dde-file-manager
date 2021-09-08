@@ -31,7 +31,7 @@ DFMBASE_BEGIN_NAMESPACE
 class Subscriber
 {
 public:
-    Subscriber();
+    explicit Subscriber();
     virtual ~Subscriber();
 
     virtual void doSubscriberAction(const QString &path) = 0;

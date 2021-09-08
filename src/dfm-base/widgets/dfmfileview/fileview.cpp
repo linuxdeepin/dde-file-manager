@@ -35,15 +35,12 @@ FileView::FileView(QWidget *parent)
     Q_D(FileView);
     auto model = new FileViewModel;
     setModel(model);
-    d_ptr->updateViewDelegate(viewMode());
-    this->setCornerWidget(d->m_headview);
+    this->setCornerWidget(d->headview);
 }
 
 void FileView::setViewMode(QListView::ViewMode mode)
 {
-    if (viewMode() == mode)
-        return;
-    d_ptr->updateViewDelegate(mode);
+    DListView::setViewMode(mode);
 }
 
 void FileView::setRootUrl(const QUrl &url)

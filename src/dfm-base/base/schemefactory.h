@@ -32,6 +32,8 @@
 #include "dfm-base/base/private/infocache.h"
 #include "dfm-base/base/private/watchercache.h"
 
+#include <dfmio_register.h>
+
 #include <QSharedPointer>
 #include <QDirIterator>
 
@@ -46,7 +48,7 @@ DFMBASE_BEGIN_NAMESPACE
  * @tparam T 顶层基类
  */
 template <class T>
-class SchemeFactory
+        class SchemeFactory
 {
 
 public:
@@ -123,6 +125,7 @@ class InfoFactory final : public SchemeFactory<AbstractFileInfo>
 public:
 
     InfoFactory(){}
+
     //提供任意子类的转换方法模板，仅限DAbstractFileInfo树族，
     //与qSharedPointerDynamicCast保持一致
     template<class T>
@@ -200,9 +203,9 @@ public:
         }
 
         CreateFuncAgu foo = [=](const QUrl &url,
-                             const QStringList &nameFilters = QStringList(),
-                             QDir::Filters filters = QDir::NoFilter,
-                             QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags){
+                const QStringList &nameFilters = QStringList(),
+                QDir::Filters filters = QDir::NoFilter,
+                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags){
             return QSharedPointer<T>(new CT(url, nameFilters, filters, flags));
         };
         _constructAguList.insert(scheme,foo);
@@ -257,13 +260,13 @@ public:
     //与qSharedPointerDynamicCast保持一致
     template<class RT>
     QSharedPointer<RT> create(const QUrl &url,
-                             const QStringList &nameFilters,
-                             QDir::Filters filters = QDir::NoFilter,
-                             QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
-                             QString *errorString = nullptr)
+                              const QStringList &nameFilters,
+                              QDir::Filters filters = QDir::NoFilter,
+                              QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
+                              QString *errorString = nullptr)
     {
         return qSharedPointerDynamicCast<RT>(DirIteratorFactoryT1<T>::create(
-                                                url, nameFilters, filters, flags, errorString));
+                                                 url, nameFilters, filters, flags, errorString));
     }
 };
 

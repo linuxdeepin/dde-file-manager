@@ -25,21 +25,18 @@
 
 #include "dfm-base/dfm_base_global.h"
 
-#include <QUrl>
-#include <QObject>
 #include <QString>
-#include <QFileInfo>
-#include <QDir>
-#include <QMap>
-#include <QDebug>
 #include <QIcon>
 
 #include <list>
 
+class QUrl;
+class QString;
+DFMBASE_BEGIN_NAMESPACE
+
 /*!
  * \brief 路由Url注册节点类
  */
-DFMBASE_BEGIN_NAMESPACE
 struct SchemeNode
 {
     QString myScheme; // url前缀

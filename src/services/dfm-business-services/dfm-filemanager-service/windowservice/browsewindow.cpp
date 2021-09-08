@@ -34,15 +34,32 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-DFMBrowseWindow::DFMBrowseWindow(QWidget *parent)
+/* @class DFMBrowseWindow
+ * @brief 文件背板扩展的主窗口。
+ *  该类只提供布局不会涉及实体对象的new，除非固定的业务逻辑如
+ *  DFMDisplayViewDefault 默认展示的view，这将会提供以错
+ *  误信息提示的View，一个window可以同时存在：
+ *      1.多个展示的view
+ *      2.一个地址编辑栏
+ *      3.一个面包屑
+ *      4.一个导航后退按钮
+ *      5.一个导航前进按钮
+ */
+BrowseWindow::BrowseWindow(QWidget *parent)
     : DMainWindow (parent)
-    , d(new DFMBrowseWindowPrivate(this))
+    , d(new BrowseWindowPrivate(this))
 {
 
 }
 
-void DFMBrowseWindow::addView(const QString &scheme,
-                              DFMDisplayViewLogic* viewWidget)
+BrowseWindow::~BrowseWindow()
+{
+
+}
+
+//使用scheme关联进行view的添加
+void BrowseWindow::addView(const QString &scheme,
+                           DisplayViewLogic* viewWidget)
 {
     if(viewWidget) {
         d->addview(scheme,viewWidget);
@@ -53,102 +70,148 @@ void DFMBrowseWindow::addView(const QString &scheme,
     }
 }
 
-bool DFMBrowseWindow::viewIsAdded(const QString &scheme)
+//判断当前scheme是否关联view
+bool BrowseWindow::viewIsAdded(const QString &scheme)
 {
     return d->viewIsAdded(scheme);
 }
 
-void DFMBrowseWindow::setSidebar(SideBar *sidebar)
+//设置左侧边栏
+void BrowseWindow::setSidebar(SideBar *sidebar)
 {
     return d->setSidebar(sidebar);
 }
 
-SideBar *DFMBrowseWindow::sidebar()
+//获取左侧边栏
+SideBar *BrowseWindow::sidebar()
 {
     return d->sidebar();
 }
 
-void DFMBrowseWindow::setAddressBar(DFMAddressBar *addressBar)
+//设置地址栏
+void BrowseWindow::setAddressBar(AddressBar *addressBar)
 {
     return d->setAddressBar(addressBar);
 }
 
-DFMAddressBar *DFMBrowseWindow::addresssBar()
+//获取地址栏
+AddressBar *BrowseWindow::addresssBar()
 {
     return d->addressBar();
 }
 
-void DFMBrowseWindow::setCrumbBar(DFMCrumbBar *crumbBar)
+//设置面包屑
+void BrowseWindow::setCrumbBar(CrumbBar *crumbBar)
 {
     return d->setCrumbBar(crumbBar);
 }
 
-DFMCrumbBar *DFMBrowseWindow::crumbBar()
+//获取面包屑
+CrumbBar *BrowseWindow::crumbBar()
 {
     return d->crumbBar();
 }
 
-void DFMBrowseWindow::setNavBackButton(DButtonBoxButton *button)
+//设置导航后退按钮
+void BrowseWindow::setNavBackButton(DButtonBoxButton *button)
 {
-   return d->setNavBackButton(button);
+    return d->setNavBackButton(button);
 }
 
-DButtonBoxButton *DFMBrowseWindow::navBackButton()
+//设置导航前进按钮
+DButtonBoxButton *BrowseWindow::navBackButton()
 {
     return d->navBackButton();
 }
 
-void DFMBrowseWindow::setNavForwardButton(DButtonBoxButton *button)
+//设置导航前进按钮
+void BrowseWindow::setNavForwardButton(DButtonBoxButton *button)
 {
     return d->setNavForwardButton(button);
 }
 
-DButtonBoxButton *DFMBrowseWindow::navForwardButton()
+//获取导航前进按钮
+DButtonBoxButton *BrowseWindow::navForwardButton()
 {
     return d->navForwardButton();
 }
 
-void DFMBrowseWindow::setListViewButton(QToolButton *button)
+//设置listview点击button
+void BrowseWindow::setListViewButton(QToolButton *button)
 {
     return d->setListViewButton(button);
 }
 
-QToolButton *DFMBrowseWindow::listViewButton()
+//获取listview点击button
+QToolButton *BrowseWindow::listViewButton()
 {
     return d->listViewButton();
 }
 
-void DFMBrowseWindow::setIconViewButton(QToolButton *button)
+//设置iconview点击的button
+void BrowseWindow::setIconViewButton(QToolButton *button)
 {
     return d->setIconViewButton(button);
 }
 
-QToolButton *DFMBrowseWindow::iconViewButton()
+//获取iconview点击的button
+QToolButton *BrowseWindow::iconViewButton()
 {
     return d->iconViewButton();
 }
 
-void DFMBrowseWindow::setSearchButton(QToolButton *button)
+//设置搜索按钮
+void BrowseWindow::setSearchButton(QToolButton *button)
 {
     return d->setSearchButton(button);
 }
 
-QToolButton *DFMBrowseWindow::searchButton()
+//获取搜索按钮
+QToolButton *BrowseWindow::searchButton()
 {
     return d->searchButton();
 }
 
-void DFMBrowseWindow::setSearchFilterButton(QToolButton *button)
+//设置搜索过滤按钮
+void BrowseWindow::setSearchFilterButton(QToolButton *button)
 {
     return d->setSearchFilterButton(button);
 }
 
-QToolButton *DFMBrowseWindow::searchFilterButton()
+//索取搜索过滤按钮
+QToolButton *BrowseWindow::searchFilterButton()
 {
     return d->searchFilterButton();
 }
 
-void DFMBrowseWindow::setRootUrl(const QUrl &url)
+//设置属性界面点击的button
+void BrowseWindow::setPropertyButton(QWidget *widget)
+{
+    if (widget)
+        delete widget;
+}
+
+//获取属性界面点击的button
+QWidget *BrowseWindow::propertyButton()
+{
+    return nullptr;
+}
+
+//设置属性界面
+void BrowseWindow::setPropertyView(QWidget *widget)
+{
+    if (widget)
+        delete widget;
+}
+
+//获取属性界面
+QWidget *BrowseWindow::propertyView()
+{
+    return nullptr;
+}
+
+//设置当前window展示的url
+void BrowseWindow::setRootUrl(const QUrl &url)
 {
     //內部存在业务逻辑所以需要兼容到private
     return d->setRootUrl(url);

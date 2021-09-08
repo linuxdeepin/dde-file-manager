@@ -42,7 +42,7 @@ public:
                                  const QStringList &nameFilters = QStringList(),
                                  QDir::Filters filters = QDir::NoFilter,
                                  QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
-    ~LocalDirIterator() override;
+    virtual ~LocalDirIterator();
     virtual QUrl next() override;    
     virtual bool hasNext() const override;    
     virtual void close() override {}    

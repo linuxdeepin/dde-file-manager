@@ -25,10 +25,8 @@
 
 #include <QMetaType>
 #include <QDateTime>
-
-#include <dfmio_global.h>
-#include <dfmio_register.h>
-#include <dfm-io/core/diofactory.h>
+#include <QVariant>
+#include <QDir>
 
 USING_IO_NAMESPACE
 
@@ -45,12 +43,6 @@ Q_GLOBAL_STATIC_WITH_ARGS(int,type_id,{qRegisterMetaType<AbstractFileInfoPointer
  * QUrl(file:///root) 标识/root路径
  */
 
-
-AbstractFileInfo::AbstractFileInfo()
-    :d_ptr(new AbstractFileInfoPrivate(this))
-{
-    Q_UNUSED(type_id)
-}
 /*!
  * \brief DAbstractFileInfo 构造函数
  *
@@ -61,57 +53,7 @@ AbstractFileInfo::AbstractFileInfo(const QUrl &url)
 {
     Q_D(AbstractFileInfo);
     d->url = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
-    initFileInfo();
-}
-/*!
- * \brief DAbstractFileInfo 构造函数
- *
- * \param QString & 文件的路径
- */
-AbstractFileInfo::AbstractFileInfo(const QString &file)
-    :d_ptr(new AbstractFileInfoPrivate(this))
-{
-    Q_D(AbstractFileInfo);
-    d->url = QUrl::fromLocalFile(file);
-    initFileInfo();
-}
-/*!
- * \brief DAbstractFileInfo 构造函数
- *
- * \param QFile & 文件的QFile对象
- */
-AbstractFileInfo::AbstractFileInfo(const QFile &file)
-    :d_ptr(new AbstractFileInfoPrivate(this))
-{
-    Q_D(AbstractFileInfo);
-    d->url = QUrl::fromLocalFile(QFileInfo(file).filePath());
-    initFileInfo();
-}
-/*!
- * \brief DAbstractFileInfo 构造函数
- *
- * \param QDir & 文件的父目录的QDir对象
- *
- * \param QString & 文件的名称
- */
-AbstractFileInfo::AbstractFileInfo(const QDir &dir, const QString &file)
-    :d_ptr(new AbstractFileInfoPrivate(this))
-{
-    Q_D(AbstractFileInfo);
-    d->url = QUrl::fromLocalFile(QFileInfo(dir,file).absoluteFilePath());
-    initFileInfo();
-}
-/*!
- * \brief DAbstractFileInfo 构造函数
- *
- * \param QFileInfo & 文件的QFileInfo对象
- */
-AbstractFileInfo::AbstractFileInfo(const QFileInfo &fileinfo)
-    :d_ptr(new AbstractFileInfoPrivate(this))
-{
-    Q_D(AbstractFileInfo);
-    d->url = QUrl::fromLocalFile(fileinfo.absoluteFilePath());
-    initFileInfo();
+    d->initFileInfo();
 }
 
 AbstractFileInfo::~AbstractFileInfo()
@@ -127,8 +69,7 @@ AbstractFileInfo::~AbstractFileInfo()
  */
 AbstractFileInfo &AbstractFileInfo::operator=(const AbstractFileInfo &fileinfo)
 {
-    Q_D(AbstractFileInfo);
-    d->dfmFileInfo = fileinfo.d_ptr->dfmFileInfo;
+    d_ptr->dfmFileInfo = fileinfo.d_ptr->dfmFileInfo;
     return *this;
 }
 /*!
@@ -140,8 +81,8 @@ AbstractFileInfo &AbstractFileInfo::operator=(const AbstractFileInfo &fileinfo)
  */
 bool AbstractFileInfo::operator==(const AbstractFileInfo &fileinfo) const
 {
-    Q_D(const AbstractFileInfo);
-    return (d->dfmFileInfo == fileinfo.d_ptr->dfmFileInfo);
+
+    return (d_ptr->dfmFileInfo == fileinfo.d_ptr->dfmFileInfo);
 }
 /*!
  * \brief != 重载操作符!=
@@ -165,23 +106,10 @@ void AbstractFileInfo::setFile(const DFileInfo &file)
 {
     Q_D(AbstractFileInfo);
     d->url = file.uri();
-    d->dfmFileInfo.reset(new DFileInfo(file));
+    d_ptr->dfmFileInfo.reset(new DFileInfo(file));
     refresh();
 }
-/*!
- * \brief setFile 设置文件的File，跟新当前的fileinfo
- *
- * \param const QFile &file 新文件的QFile的实例
- *
- * \return
- */
-void AbstractFileInfo::setFile(const QFile &file)
-{
-    Q_D(AbstractFileInfo);
-    d->url = QUrl::fromLocalFile(QFileInfo(file).absoluteFilePath());
-    initFileInfo();
-    refresh();
-}
+
 /*!
  * \brief setFile 设置文件的File，跟新当前的fileinfo
  *
@@ -193,7 +121,7 @@ void AbstractFileInfo::setFile(const QUrl &url)
 {
     Q_D(AbstractFileInfo);
     d->url = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
-    initFileInfo();
+    d->initFileInfo();
     this->refresh();
 }
 /*!
@@ -205,17 +133,17 @@ void AbstractFileInfo::setFile(const QUrl &url)
  */
 bool AbstractFileInfo::exists() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeExists)) {
-        if (d->dfmFileInfo) {
+
+
+    if (!d_ptr->caches.contains(TypeExists)) {
+        if (d_ptr->dfmFileInfo) {
             // 目前dfmio这一层还没实现，等待实现了在加入
-//            d_pr->m_caches.insert(TypeExists,QVariant(d_pr->m_dfmFileInfo->attribute()));
+//            d_ptr->m_caches.insert(TypeExists,QVariant(d_ptr->m_dfmFileInfo->attribute()));
         } else {
             return false;
         }
     }
-    return d_pr->caches.value(TypeExists).toBool();
+    return d_ptr->caches.value(TypeExists).toBool();
 }
 /*!
  * \brief refresh 跟新文件信息，清理掉缓存的所有的文件信息
@@ -242,17 +170,17 @@ void AbstractFileInfo::refresh()
  */
 QString AbstractFileInfo::filePath() const
 {
-    Q_D(const AbstractFileInfo);
+
     //文件的路径（当前文件的父目录）
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeFilePath)) {
-        if (d->dfmFileInfo) {
-//            d_pr->m_caches.insert(TypeFilePath, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+
+    if (!d_ptr->caches.contains(TypeFilePath)) {
+        if (d_ptr->dfmFileInfo) {
+//            d_ptr->m_caches.insert(TypeFilePath, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
         } else {
             return QString();
         }
     }
-    return d_pr->caches.value(TypeFilePath).toString();
+    return d_ptr->caches.value(TypeFilePath).toString();
 }
 
 /*!
@@ -283,19 +211,19 @@ QString AbstractFileInfo::absoluteFilePath() const
  */
 QString AbstractFileInfo::fileName() const
 {
-    Q_D(const AbstractFileInfo);
 
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeFileName)) {
-        if (d->dfmFileInfo) {
+
+
+    if (!d_ptr->caches.contains(TypeFileName)) {
+        if (d_ptr->dfmFileInfo) {
             bool success = false;
-            d_pr->caches.insert(TypeFileName, d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeFileName, d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::StandardName, success));
         } else {
             return QString();
         }
     }
-    return d_pr->caches.value(TypeFileName).toString();
+    return d_ptr->caches.value(TypeFileName).toString();
 }
 /*!
  * \brief baseName 文件的基本名称
@@ -310,17 +238,17 @@ QString AbstractFileInfo::fileName() const
  */
 QString AbstractFileInfo::baseName() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeBaseName)) {
-        if (d->dfmFileInfo) {
+
+
+    if (!d_ptr->caches.contains(TypeBaseName)) {
+        if (d_ptr->dfmFileInfo) {
 //            bool success = false;
-//            d_pr->m_caches.insert(TypeBaseName, QVariant(d_pr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+//            d_ptr->m_caches.insert(TypeBaseName, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
     }
-    return d_pr->caches.value(TypeBaseName).toString();
+    return d_ptr->caches.value(TypeBaseName).toString();
 }
 /*!
  * \brief completeBaseName 文件的完整基本名称
@@ -335,17 +263,17 @@ QString AbstractFileInfo::baseName() const
  */
 QString AbstractFileInfo::completeBaseName() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeCompleteBaseName)) {
-        if (d->dfmFileInfo) {
+
+
+    if (!d_ptr->caches.contains(TypeCompleteBaseName)) {
+        if (d_ptr->dfmFileInfo) {
 //            bool success = false;
-//            d_pr->m_caches.insert(TypeCompleteBaseName, QVariant(d_pr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+//            d_ptr->m_caches.insert(TypeCompleteBaseName, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
     }
-    return d_pr->caches.value(TypeCompleteBaseName).toString();
+    return d_ptr->caches.value(TypeCompleteBaseName).toString();
 }
 /*!
  * \brief suffix 文件的suffix
@@ -360,17 +288,17 @@ QString AbstractFileInfo::completeBaseName() const
  */
 QString AbstractFileInfo::suffix() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeSuffix)) {
-        if (d->dfmFileInfo) {
+
+
+    if (!d_ptr->caches.contains(TypeSuffix)) {
+        if (d_ptr->dfmFileInfo) {
 //            bool success = false;
-//            d_pr->m_caches.insert(TypeSuffix, QVariant(d_pr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+//            d_ptr->m_caches.insert(TypeSuffix, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
     }
-    return d_pr->caches.value(TypeSuffix).toString();
+    return d_ptr->caches.value(TypeSuffix).toString();
 }
 /*!
  * \brief suffix 文件的完整suffix
@@ -385,17 +313,17 @@ QString AbstractFileInfo::suffix() const
  */
 QString AbstractFileInfo::completeSuffix()
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeCompleteSuffix)) {
-        if (d->dfmFileInfo) {
+
+
+    if (!d_ptr->caches.contains(TypeCompleteSuffix)) {
+        if (d_ptr->dfmFileInfo) {
 //            bool success = false;
-//            d_pr->m_caches.insert(TypeCompleteSuffix, QVariant(d_pr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+//            d_ptr->m_caches.insert(TypeCompleteSuffix, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
     }
-    return d_pr->caches.value(TypeCompleteSuffix).toString();
+    return d_ptr->caches.value(TypeCompleteSuffix).toString();
 }
 /*!
  * \brief path 获取文件路径，不包含文件的名称，相当于是父目录
@@ -410,17 +338,17 @@ QString AbstractFileInfo::completeSuffix()
  */
 QString AbstractFileInfo::path() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypePath)) {
-        if (d->dfmFileInfo) {
+
+
+    if (!d_ptr->caches.contains(TypePath)) {
+        if (d_ptr->dfmFileInfo) {
 //            bool success = false;
-//            d_pr->m_caches.insert(TypePath, QVariant(d_pr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+//            d_ptr->m_caches.insert(TypePath, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
     }
-    return d_pr->caches.value(TypePath).toString();
+    return d_ptr->caches.value(TypePath).toString();
 }
 /*!
  * \brief path 获取文件路径，不包含文件的名称，相当于是父目录
@@ -510,18 +438,18 @@ QUrl AbstractFileInfo::url() const
  */
 bool AbstractFileInfo::isReadable() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeIsReadable)) {
-        if (d->dfmFileInfo) {
+
+
+    if (!d_ptr->caches.contains(TypeIsReadable)) {
+        if (d_ptr->dfmFileInfo) {
             bool success = false;
-            d_pr->caches.insert(TypeIsReadable,d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeIsReadable,d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::AccessCanRead, success));
         } else {
             return false;
         }
     }
-    return d_pr->caches.value(TypeIsReadable).toBool();
+    return d_ptr->caches.value(TypeIsReadable).toBool();
 }
 /*!
  * \brief isWritable 获取文件是否可写
@@ -536,18 +464,16 @@ bool AbstractFileInfo::isReadable() const
  */
 bool AbstractFileInfo::isWritable() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeIsWritable)) {
-        if (d->dfmFileInfo) {
+    if (!d_ptr->caches.contains(TypeIsWritable)) {
+        if (d_ptr->dfmFileInfo) {
             bool success = false;
-            d_pr->caches.insert(TypeIsWritable,d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeIsWritable,d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::AccessCanWrite, success));
         } else {
             return false;
         }
     }
-    return d_pr->caches.value(TypeIsWritable).toBool();
+    return d_ptr->caches.value(TypeIsWritable).toBool();
 }
 /*!
  * \brief isExecutable 获取文件是否可执行
@@ -558,18 +484,16 @@ bool AbstractFileInfo::isWritable() const
  */
 bool AbstractFileInfo::isExecutable() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeIsExecutable)) {
-        if (d->dfmFileInfo) {
+    if (!d_ptr->caches.contains(TypeIsExecutable)) {
+        if (d_ptr->dfmFileInfo) {
             bool success = false;
-            d_pr->caches.insert(TypeIsExecutable,d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeIsExecutable, d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::AccessCanExecute, success));
         } else {
             return false;
         }
     }
-    return d_pr->caches.value(TypeIsExecutable).toBool();
+    return d_ptr->caches.value(TypeIsExecutable).toBool();
 }
 /*!
  * \brief isHidden 获取文件是否是隐藏
@@ -580,19 +504,17 @@ bool AbstractFileInfo::isExecutable() const
  */
 bool AbstractFileInfo::isHidden() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeIsHidden)) {
-        if (d->dfmFileInfo) {
+    if (!d_ptr->caches.contains(TypeIsHidden)) {
+        if (d_ptr->dfmFileInfo) {
             bool success = false;
-            d_pr->caches.insert(TypeIsHidden,
-                                  d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeIsHidden,
+                                  d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::StandardIsHiden, success));
         } else {
             return false;
         }
     }
-    return d_pr->caches.value(TypeIsHidden).toBool();
+    return d_ptr->caches.value(TypeIsHidden).toBool();
 }
 /*!
  * \brief isFile 获取文件是否是文件
@@ -609,17 +531,14 @@ bool AbstractFileInfo::isHidden() const
  */
 bool AbstractFileInfo::isFile() const
 {
-    Q_D(const AbstractFileInfo);
-
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeIsFile)) {
-        if (d->dfmFileInfo) {
-//            d_pr->m_caches.insert(TypeIsFile, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+    if (!d_ptr->caches.contains(TypeIsFile)) {
+        if (d_ptr->dfmFileInfo) {
+//            d_ptr->m_caches.insert(TypeIsFile, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
         } else {
             return false;
         }
     }
-    return d_pr->caches.value(TypeIsFile).toBool();
+    return d_ptr->caches.value(TypeIsFile).toBool();
 }
 /*!
  * \brief isDir 获取文件是否是目录
@@ -634,16 +553,14 @@ bool AbstractFileInfo::isFile() const
  */
 bool AbstractFileInfo::isDir() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeIsDir)) {
-        if (d->dfmFileInfo) {
-//            d_pr->m_caches.insert(TypeIsDir, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+    if (!d_ptr->caches.contains(TypeIsDir)) {
+        if (d_ptr->dfmFileInfo) {
+//            d_ptr->m_caches.insert(TypeIsDir, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
         } else {
             return false;
         }
     }
-    return d_pr->caches.value(TypeIsDir).toBool();
+    return d_ptr->caches.value(TypeIsDir).toBool();
 }
 /*!
  * \brief isSymLink 获取文件是否是链接文件
@@ -666,16 +583,14 @@ bool AbstractFileInfo::isDir() const
  */
 bool AbstractFileInfo::isSymLink() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeIsSymLink)) {
-        if (d->dfmFileInfo) {
-//            d_pr->m_caches.insert(TypeisSymLink, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+    if (!d_ptr->caches.contains(TypeIsSymLink)) {
+        if (d_ptr->dfmFileInfo) {
+//            d_ptr->m_caches.insert(TypeisSymLink, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
         } else {
             return false;
         }
     }
-    return d_pr->caches.value(TypeIsSymLink).toBool();
+    return d_ptr->caches.value(TypeIsSymLink).toBool();
 }
 /*!
  * \brief isRoot 获取文件是否是根目录
@@ -724,18 +639,16 @@ bool AbstractFileInfo::isBundle() const
  */
 QString AbstractFileInfo::symLinkTarget() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeSymLinkTarget)) {
-        if (d->dfmFileInfo) {
+    if (!d_ptr->caches.contains(TypeSymLinkTarget)) {
+        if (d_ptr->dfmFileInfo) {
             bool success(false);
-            d_pr->caches.insert(TypeSymLinkTarget,d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeSymLinkTarget,d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::StandardSymlinkTarget, success));
         } else {
             return QString();
         }
     }
-    return d_pr->caches.value(TypeSymLinkTarget).toString();
+    return d_ptr->caches.value(TypeSymLinkTarget).toString();
 }
 /*!
  * \brief owner 获取文件的拥有者
@@ -752,18 +665,16 @@ QString AbstractFileInfo::symLinkTarget() const
  */
 QString AbstractFileInfo::owner() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeOwner)) {
-        if (d->dfmFileInfo) {
+    if (!d_ptr->caches.contains(TypeOwner)) {
+        if (d_ptr->dfmFileInfo) {
             bool success(false);
-            d_pr->caches.insert(TypeOwner,d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeOwner, d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::OwnerUser, success));
         } else {
             return QString();
         }
     }
-    return d_pr->caches.value(TypeOwner).toString();
+    return d_ptr->caches.value(TypeOwner).toString();
 }
 /*!
  * \brief ownerId 获取文件的拥有者ID
@@ -776,18 +687,16 @@ QString AbstractFileInfo::owner() const
  */
 uint AbstractFileInfo::ownerId() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeOwnerID)) {
-        if (d->dfmFileInfo) {
+    if (!d_ptr->caches.contains(TypeOwnerID)) {
+        if (d_ptr->dfmFileInfo) {
             bool success(false);
-            d_pr->caches.insert(TypeOwnerID,d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeOwnerID, d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::OwnerUser, success));
         } else {
             return static_cast<uint>(-1);
         }
     }
-    return d_pr->caches.value(TypeOwnerID).toUInt();
+    return d_ptr->caches.value(TypeOwnerID).toUInt();
 }
 /*!
  * \brief group 获取文件所属组
@@ -802,18 +711,16 @@ uint AbstractFileInfo::ownerId() const
  */
 QString AbstractFileInfo::group() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeGroup)) {
-        if (d->dfmFileInfo) {
+    if (!d_ptr->caches.contains(TypeGroup)) {
+        if (d_ptr->dfmFileInfo) {
             bool success(false);
-            d_pr->caches.insert(TypeGroup, d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeGroup, d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::OwnerGroup, success));
         } else {
             return QString();
         }
     }
-    return d_pr->caches.value(TypeGroup).toString();
+    return d_ptr->caches.value(TypeGroup).toString();
 }
 /*!
  * \brief groupId 获取文件所属组的ID
@@ -826,18 +733,16 @@ QString AbstractFileInfo::group() const
  */
 uint AbstractFileInfo::groupId() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeGroupID)) {
-        if (d->dfmFileInfo) {
+    if (!d_ptr->caches.contains(TypeGroupID)) {
+        if (d_ptr->dfmFileInfo) {
             bool success(false);
-            d_pr->caches.insert(TypeGroupID,d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeGroupID, d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::OwnerGroup, success));
         } else {
             return static_cast<uint>(-1);
         }
     }
-    return d_pr->caches.value(TypeGroupID).toUInt();
+    return d_ptr->caches.value(TypeGroupID).toUInt();
 }
 /*!
  * \brief permission 判断文件是否有传入的权限
@@ -865,20 +770,18 @@ bool AbstractFileInfo::permission(QFileDevice::Permissions permissions) const
  */
 QFileDevice::Permissions AbstractFileInfo::permissions() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypePermissions)) {
-        if (d->dfmFileInfo) {
+    if (!d_ptr->caches.contains(TypePermissions)) {
+        if (d_ptr->dfmFileInfo) {
 //            bool success(false);
-//            d_pr->m_caches.insert(TypePermissions,
-//                                  QVariant(d_pr->m_dfmFileInfo->
+//            d_ptr->m_caches.insert(TypePermissions,
+//                                  QVariant(d_ptr->m_dfmFileInfo->
 //                                           attribute(DFileInfo::AttributeID::OwnerGroup, success)));
         } else {
             QFileDevice::Permissions ps;
             return ps;
         }
     }
-    return static_cast<QFileDevice::Permissions>(d_pr->caches.value(TypePermissions).toInt());
+    return static_cast<QFileDevice::Permissions>(d_ptr->caches.value(TypePermissions).toInt());
 }
 /*!
  * \brief size 获取文件的大小
@@ -893,18 +796,16 @@ QFileDevice::Permissions AbstractFileInfo::permissions() const
  */
 qint64 AbstractFileInfo::size() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeSize)) {
-        if (d->dfmFileInfo) {
+    if (!d_ptr->caches.contains(TypeSize)) {
+        if (d_ptr->dfmFileInfo) {
             bool success(false);
-            d_pr->caches.insert(TypeSize,d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeSize,d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::StandardSize, success));
         } else {
             return 0;
         }
     }
-    return static_cast<QFileDevice::Permissions>(d_pr->caches.value(TypeSize).toInt());
+    return static_cast<QFileDevice::Permissions>(d_ptr->caches.value(TypeSize).toInt());
 }
 /*!
  * \brief created 获取文件的创建时间
@@ -921,18 +822,16 @@ qint64 AbstractFileInfo::size() const
  */
 QDateTime AbstractFileInfo::created() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeCreateTime)) {
-        if (d->dfmFileInfo) {
+    if (!d_ptr->caches.contains(TypeCreateTime)) {
+        if (d_ptr->dfmFileInfo) {
             bool success(false);
-            d_pr->caches.insert(TypeCreateTime,d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeCreateTime, d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::TimeCreated, success));
         } else {
             return QDateTime();
         }
     }
-    QString data = d_pr->caches.value(TypeCreateTime).toString();
+    QString data = d_ptr->caches.value(TypeCreateTime).toString();
     QStringList dataList;
     if (data.isEmpty()) {
         dataList << "00" << "00" << "00";
@@ -978,18 +877,16 @@ QDateTime AbstractFileInfo::birthTime() const
  */
 QDateTime AbstractFileInfo::metadataChangeTime() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeChangeTime)) {
-        if (d->dfmFileInfo) {
+    if (!d_ptr->caches.contains(TypeChangeTime)) {
+        if (d_ptr->dfmFileInfo) {
             bool success(false);
-            d_pr->caches.insert(TypeChangeTime,d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeChangeTime,d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::TimeChanged, success));
         } else {
             return QDateTime();
         }
     }
-    QString data = d_pr->caches.value(TypeChangeTime).toString();
+    QString data = d_ptr->caches.value(TypeChangeTime).toString();
     QStringList dataList;
     if (data.isEmpty()) {
         dataList << "00" << "00" << "00";
@@ -1010,18 +907,16 @@ QDateTime AbstractFileInfo::metadataChangeTime() const
  */
 QDateTime AbstractFileInfo::lastModified() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeLastModifyTime)) {
-        if (d->dfmFileInfo) {
+    if (!d_ptr->caches.contains(TypeLastModifyTime)) {
+        if (d_ptr->dfmFileInfo) {
             bool success(false);
-            d_pr->caches.insert(TypeLastModifyTime,d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeLastModifyTime, d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::TimeModified, success));
         } else {
             return QDateTime();
         }
     }
-    QString data = d_pr->caches.value(TypeLastModifyTime).toString();
+    QString data = d_ptr->caches.value(TypeLastModifyTime).toString();
     QStringList dataList;
     if (data.isEmpty()) {
         dataList << "00" << "00" << "00";
@@ -1042,18 +937,16 @@ QDateTime AbstractFileInfo::lastModified() const
  */
 QDateTime AbstractFileInfo::lastRead() const
 {
-    Q_D(const AbstractFileInfo);
-    AbstractFileInfoPrivate * d_pr = const_cast<AbstractFileInfoPrivate *>(d);
-    if (!d_pr->caches.contains(TypeLastReadTime)) {
-        if (d->dfmFileInfo) {
+    if (!d_ptr->caches.contains(TypeLastReadTime)) {
+        if (d_ptr->dfmFileInfo) {
             bool success(false);
-            d_pr->caches.insert(TypeLastReadTime,d_pr->dfmFileInfo->
+            d_ptr->caches.insert(TypeLastReadTime, d_ptr->dfmFileInfo->
                                   attribute(DFileInfo::AttributeID::TimeAccess, success));
         } else {
             return QDateTime();
         }
     }
-    QString data = d_pr->caches.value(TypeLastReadTime).toString();
+    QString data = d_ptr->caches.value(TypeLastReadTime).toString();
     QStringList dataList;
     if (data.isEmpty()) {
         dataList << "00" << "00" << "00";
@@ -1086,23 +979,7 @@ QDateTime AbstractFileInfo::fileTime(QFileDevice::FileTime time) const
         return QDateTime();
     }
 }
-/*!
- * \brief AbstractFileInfo::initFileInfo 创建dfmio中dfileinfo
- */
-void AbstractFileInfo::initFileInfo()
-{
-    Q_D(AbstractFileInfo);
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(d->url.scheme(), static_cast<QUrl>(d->url));
-    if (!factory) {
-        qWarning("create factory failed.");
-        abort();
-    }
-    d->dfmFileInfo = factory->createFileInfo();
-    if (!d->dfmFileInfo) {
-        qWarning("create fileinfo failed.");
-        abort();
-    }
-}
+
 /*!
  * \class DAbstractFileInfoPrivate 抽象文件信息私有类
  *
@@ -1118,4 +995,20 @@ AbstractFileInfoPrivate::~AbstractFileInfoPrivate() {
 
 }
 
+/*!
+ * \brief AbstractFileInfo::initFileInfo 创建dfmio中dfileinfo
+ */
+void AbstractFileInfoPrivate::initFileInfo()
+{
+    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(url.scheme(), QUrl(url));
+    if (factory.isNull()) {
+        qWarning("create factory failed.");
+        abort();
+    }
+    dfmFileInfo = factory->createFileInfo();
+    if (!dfmFileInfo) {
+        qWarning("create fileinfo failed.");
+        return;
+    }
+}
 DFMBASE_END_NAMESPACE

@@ -27,14 +27,14 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-DFMAddressBar::DFMAddressBar(QWidget *parent)
+AddressBar::AddressBar(QWidget *parent)
     : QLineEdit(parent)
-    , d(new DFMAddressBarPrivate(this))
+    , d(new AddressBarPrivate(this))
 {
 
 }
 
-bool DFMAddressBar::completerViewVisible()
+bool AddressBar::completerViewVisible()
 {
     return d->completerView->isVisible();
 }

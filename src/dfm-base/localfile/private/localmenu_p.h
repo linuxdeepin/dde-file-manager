@@ -28,16 +28,13 @@ DFMBASE_BEGIN_NAMESPACE
 class LocalMenuPrivate
 {
     Q_DECLARE_PUBLIC(LocalMenu)
-public:
-    LocalMenuPrivate(const QString &filePath, LocalMenu *qq);
-    virtual~LocalMenuPrivate();
-
-public:
+    LocalMenu *q_ptr {nullptr};
     QSharedPointer<LocalFileInfo> localFileInfo { nullptr }; // 本地文件信息
     QAtomicInteger<bool> isAddOemExternalAction { false }; // 是否加载oem的action
     QAtomicInteger<bool> isNeedLoadCustomActions { false }; // 是否需要加载用户自定义的菜单action
-    LocalMenu *q_ptr {nullptr};
-
+public:
+    explicit LocalMenuPrivate(const QString &filePath, LocalMenu *qq);
+    virtual ~LocalMenuPrivate();
 };
 DFMBASE_END_NAMESPACE
 

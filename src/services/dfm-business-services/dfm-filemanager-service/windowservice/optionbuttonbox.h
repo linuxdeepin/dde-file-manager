@@ -20,52 +20,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMOPTIONBUTTONBOX_H
-#define DFMOPTIONBUTTONBOX_H
+#ifndef OptionButtonBox_H
+#define OptionButtonBox_H
 
 #include "dfm_filemanager_service_global.h"
 
 #include <QWidget>
-#include <QPushButton>
-#include <QHBoxLayout>
 #include <QToolButton>
 
 DSB_FM_BEGIN_NAMESPACE
 
-class DFMActionButton : public QToolButton
+class ActionButton : public QToolButton
 {
     Q_OBJECT
 
 public:
-    explicit DFMActionButton(QWidget *parent = nullptr);
-
+    explicit ActionButton(QWidget *parent = nullptr);
     void setAction(QAction *action);
     QAction *action() const;
 };
 
-class DFMOptionButtonBox : public QWidget
+class OptionButtonBoxPrivate;
+class OptionButtonBox : public QWidget
 {
     Q_OBJECT
-
-    QToolButton* m_iconViewButton = nullptr;
-    QToolButton* m_listViewButton = nullptr;
-    QToolButton* m_detailButton = nullptr;
-
-    QHBoxLayout* m_hBoxLayout = nullptr;
-
+    Q_DECLARE_PRIVATE(OptionButtonBox)
+    OptionButtonBoxPrivate * const d;
 public:
-    DFMOptionButtonBox(QWidget * parent = nullptr);
-
+    explicit OptionButtonBox(QWidget *parent = nullptr);
     QToolButton *iconViewButton() const;
-    void setIconViewButton(QToolButton *iconViewButton);
-
     QToolButton *listViewButton() const;
-    void setListViewButton(QToolButton *listViewButton);
-
     QToolButton *detailButton() const;
+    void setIconViewButton(QToolButton *iconViewButton);
+    void setListViewButton(QToolButton *listViewButton);
     void setDetailButton(QToolButton *detailButton);
 };
 
 DSB_FM_END_NAMESPACE
 
-#endif // DFMOPTIONBUTTONBOX_H
+#endif // OptionButtonBox_H

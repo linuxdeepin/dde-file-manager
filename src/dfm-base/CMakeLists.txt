@@ -2,28 +2,28 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(dfm-base)
 
-set(${PROJECT_NAME}_global_h
+set(GLOBAL_H
     dfm_base_global.h)
 
-set(${PROJECT_NAME}_utils_h
+set(UTILS_H
     utils/threadcontainer.hpp
     )
 
-set(${PROJECT_NAME}_utils_cpp
+set(UTILS_CPP
     )
 
 
-set(${PROJECT_NAME}_shutil_h
+set(SHUTIL_H
     shutil/fileutils.h
     shutil/mimedatabase.h
     )
 
-set(${PROJECT_NAME}_shutil_cpp
+set(SHUTIL_CPP
     shutil/fileutils.cpp
     shutil/mimedatabase.cpp
     )
 
-set(${PROJECT_NAME}_base_h
+set(BASE_H
     base/private/abstractfilewatcher_p.h
     base/private/abstractfiledevice_p.h
     base/private/abstractfileinfo_p.h
@@ -44,7 +44,7 @@ set(${PROJECT_NAME}_base_h
     base/sort.h
     )
 
-set(${PROJECT_NAME}_base_cpp
+set(BASE_CPP
     base/private/subscriber.cpp
     base/private/infocache.cpp
     base/private/watchercache.cpp
@@ -57,26 +57,7 @@ set(${PROJECT_NAME}_base_cpp
     base/abstractfiledevice.cpp
     )
 
-
-set(${PROJECT_NAME}_widgets_cpp
-    widgets/dfmsidebar/sidebar.cpp
-    widgets/dfmsidebar/sidebaritem.cpp
-    widgets/dfmsidebar/sidebaritemdelegate.cpp
-    widgets/dfmsidebar/sidebarmodel.cpp
-    widgets/dfmsidebar/sidebarview.cpp
-    widgets/dfmsplitter/splitter.cpp
-    widgets/dfmfileview/fileview.cpp
-    widgets/dfmfileview/fileviewmodel.cpp
-    widgets/dfmfileview/headerview.cpp
-    widgets/dfmfileview/fileviewitem.cpp
-    widgets/dfmfileview/private/traversaldirthread.cpp
-    widgets/dfmfileview/private/fileview_p.cpp
-    widgets/dfmfileview/listitemdelegate.cpp
-    widgets/dfmfileview/styleditemdelegate.cpp
-    widgets/dfmfileview/iconitemdelegate.cpp
-    )
-
-set(${PROJECT_NAME}_localfile_h
+set(LOCALFILE_H
     localfile/private/localmenu_p.h
     localfile/private/localdiriterator_p.h
     localfile/private/localfileinfo_p.h
@@ -85,13 +66,23 @@ set(${PROJECT_NAME}_localfile_h
     localfile/localmenu.h
     )
 
-set(${PROJECT_NAME}_localfile_cpp
+set(LOCALFILE_CPP
     localfile/localfileinfo.cpp
     localfile/localmenu.cpp
     localfile/localdiriterator.cpp
     )
 
-set(${PROJECT_NAME}_widgets_h
+set(WIDGETS_H
+    widgets/dfmfileview/private/fileview_p.h
+    widgets/dfmfileview/private/fileviewmodel_p.h
+    widgets/dfmfileview/private/traversaldirthread.h
+    widgets/dfmfileview/private/fileviewitem_p.h
+    widgets/dfmfileview/private/delegatecommon.h
+    widgets/dfmfileview/private/iconitemdelegate_p.h
+    widgets/dfmfileview/private/listitemdelegate_p.h
+    widgets/dfmsidebar/private/sidebar_p.h
+    widgets/dfmsidebar/private/sidebarview_p.h
+    widgets/dfmsidebar/private/sidebarmodel_p.h
     widgets/dfmsidebar/sidebar.h
     widgets/dfmsidebar/sidebaritem.h
     widgets/dfmsidebar/sidebaritemdelegate.h
@@ -102,37 +93,49 @@ set(${PROJECT_NAME}_widgets_h
     widgets/dfmfileview/fileviewmodel.h
     widgets/dfmfileview/headerview.h
     widgets/dfmfileview/fileviewitem.h
-    widgets/dfmfileview/private/fileview_p.h
-    widgets/dfmfileview/private/fileviewmodel_p.h
-    widgets/dfmfileview/private/traversaldirthread.h
     widgets/dfmfileview/listitemdelegate.h
-    widgets/dfmfileview/styleditemdelegate.h
-    widgets/dfmfileview/private/styleditemdelegate_p.h
     widgets/dfmfileview/iconitemdelegate.h
     )
 
-set(${PROJECT_NAME}_qrcs
+set(WIDGETS_CPP
+    widgets/dfmfileview/private/traversaldirthread.cpp
+    widgets/dfmfileview/private/fileview_p.cpp
+    widgets/dfmfileview/private/delegatecommon.cpp
+    widgets/dfmfileview/private/iconitemdelegate_p.cpp
+    widgets/dfmfileview/private/listitemdelegate_p.cpp
+    widgets/dfmsidebar/private/sidebar_p.cpp
+    widgets/dfmsidebar/sidebar.cpp
+    widgets/dfmsidebar/sidebaritem.cpp
+    widgets/dfmsidebar/sidebaritemdelegate.cpp
+    widgets/dfmsidebar/sidebarmodel.cpp
+    widgets/dfmsidebar/sidebarview.cpp
+    widgets/dfmsplitter/splitter.cpp
+    widgets/dfmfileview/fileview.cpp
+    widgets/dfmfileview/fileviewmodel.cpp
+    widgets/dfmfileview/headerview.cpp
+    widgets/dfmfileview/fileviewitem.cpp
+    widgets/dfmfileview/listitemdelegate.cpp
+    widgets/dfmfileview/iconitemdelegate.cpp
+    )
+
+set(QRCS
     resources/resources.qrc
     )
 
 add_library(${PROJECT_NAME}
     SHARED
-    ${${PROJECT_NAME}_global_h}
-    ${${PROJECT_NAME}_base_h}
-    ${${PROJECT_NAME}_shutil_h}
-    ${${PROJECT_NAME}_utils_h}
-    ${${PROJECT_NAME}_widgets_h}
-    ${${PROJECT_NAME}_localfile_h}
-    ${${PROJECT_NAME}_job_h}
-    ${${PROJECT_NAME}_event_h}
-    ${${PROJECT_NAME}_base_cpp}
-    ${${PROJECT_NAME}_shutil_cpp}
-    ${${PROJECT_NAME}_utils_cpp}
-    ${${PROJECT_NAME}_widgets_cpp}
-    ${${PROJECT_NAME}_localfile_cpp}
-    ${${PROJECT_NAME}_job_cpp}
-    ${${PROJECT_NAME}_event_cpp}
-    ${${PROJECT_NAME}_qrcs}
+    ${GLOBAL_H}
+    ${BASE_H}
+    ${SHUTIL_H}
+    ${UTILS_H}
+    ${WIDGETS_H}
+    ${LOCALFILE_H}
+    ${BASE_CPP}
+    ${SHUTIL_CPP}
+    ${UTILS_CPP}
+    ${WIDGETS_CPP}
+    ${LOCALFILE_CPP}
+    ${QRCS}
     )
 
 target_link_libraries(

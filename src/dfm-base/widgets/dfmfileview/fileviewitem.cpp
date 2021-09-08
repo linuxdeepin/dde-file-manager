@@ -22,22 +22,51 @@
 
 #include "fileviewitem.h"
 #include "shutil/fileutils.h"
+#include "private/fileviewitem_p.h"
 
 DFMBASE_USE_NAMESPACE
 FileViewItem::FileViewItem()
+    : d(new FileViewItemPrivate(this))
 {
 
 }
 
 FileViewItem::FileViewItem(const QUrl &url)
+    : d(new FileViewItemPrivate(this))
 {
     setUrl(url);
 }
 
+FileViewItem &FileViewItem::operator=(const FileViewItem &other)
+{
+    setData(other.data(ItemNameRole),ItemNameRole);
+    setData(other.data(ItemIconRole),ItemIconRole);
+    setData(other.data(ItemEditRole),ItemEditRole);
+    setData(other.data(ItemToolTipRole),ItemToolTipRole);
+    setData(other.data(ItemSizeHintRole),ItemSizeHintRole);
+    setData(other.data(ItemBackgroundRole),ItemBackgroundRole);
+    setData(other.data(ItemForegroundRole),ItemForegroundRole);
+    setData(other.data(ItemCheckStateRole),ItemCheckStateRole);
+    setData(other.data(ItemInitialSortOrderRole),ItemInitialSortOrderRole);
+    setData(other.data(ItemFontRole),ItemFontRole);
+    setData(other.data(ItemTextAlignmentRole),ItemTextAlignmentRole);
+    setData(other.data(ItemColorRole),ItemColorRole);
+    setData(other.data(ItemUrlRole),ItemUrlRole);
+    setData(other.data(ItemFileLastModifiedRole),ItemFileLastModifiedRole);
+    setData(other.data(ItemFileSizeRole),ItemFileSizeRole);
+    setData(other.data(ItemFileMimeTypeRole),ItemFileMimeTypeRole);
+    setData(other.data(ItemFileSuffixRole),ItemFileSuffixRole);
+    setData(other.data(ItemFilePathRole),ItemFilePathRole);
+    setData(other.data(ItemColumListRole),ItemColumListRole);
+    setData(other.data(ItemColumWidthScaleListRole),ItemColumWidthScaleListRole);
+
+    return *this;
+}
+
 void FileViewItem::refresh(){
-    if(!m_fileinfo.isNull())
-        m_fileinfo->refresh();
-    m_mimeType = MimeDatabase::mimeTypeForUrl(m_fileinfo->url());
+    if(!d->fileinfo.isNull())
+        d->fileinfo->refresh();
+    d->mimeType = MimeDatabase::mimeTypeForUrl(d->fileinfo->url());
 }
 
 QUrl FileViewItem::url() const
@@ -48,32 +77,37 @@ QUrl FileViewItem::url() const
 void FileViewItem::setUrl(const QUrl url)
 {
     setData(QVariant(url),Roles::ItemUrlRole);
-    m_fileinfo = InfoFactory::instance().create<AbstractFileInfo>(url);
-    m_mimeType = MimeDatabase::mimeTypeForUrl(url);
+    d->fileinfo = InfoFactory::instance().create<AbstractFileInfo>(url);
+    d->mimeType = MimeDatabase::mimeTypeForUrl(url);
 
-    setData(QVariant(QIcon::fromTheme(m_mimeType.iconName())),ItemIconRole);
-    setData(QVariant(m_fileinfo->fileName()),ItemNameRole);
+    setData(QVariant(QIcon::fromTheme(d->mimeType.iconName())),ItemIconRole);
+    setData(QVariant(d->fileinfo->fileName()),ItemNameRole);
+}
+
+AbstractFileInfoPointer FileViewItem::fileinfo() const
+{
+    return d->fileinfo;
 }
 
 QMimeType FileViewItem::mimeType() const
 {
-    return m_mimeType;
+    return d->mimeType;
 }
 
 
 QVariant FileViewItem::data(int role) const
 {
-    if (m_fileinfo.isNull())
+    if (d->fileinfo.isNull())
         return QVariant();
 
     switch (role) {
     case ItemFileLastModifiedRole:
-        return m_fileinfo->lastModified().toString("yyyy/MM/dd HH:mm:ss");
+        return d->fileinfo->lastModified().toString("yyyy/MM/dd HH:mm:ss");
     case ItemIconRole:
         return QStandardItem::data(Roles::ItemIconRole);
     case ItemFileSizeRole:
-        if (m_fileinfo->isDir()) {
-            int size = qSharedPointerDynamicCast<LocalFileInfo>(m_fileinfo)->countChildFile();
+        if (d->fileinfo->isDir()) {
+            int size = qSharedPointerDynamicCast<LocalFileInfo>(d->fileinfo)->countChildFile();
             if (size <= 1) {
                 return QObject::tr("%1 item").arg(size);
             } else {
@@ -81,10 +115,10 @@ QVariant FileViewItem::data(int role) const
             }
         }
         else {
-            QSharedPointer<LocalFileInfo> local = qSharedPointerCast<LocalFileInfo>(m_fileinfo);
+            QSharedPointer<LocalFileInfo> local = qSharedPointerCast<LocalFileInfo>(d->fileinfo);
             if (local)
                 return local->sizeFormat();
-            return QString::number(m_fileinfo->size());
+            return QString::number(d->fileinfo->size());
         }
     case ItemFileMimeTypeRole:
         return mimeType().name();
@@ -96,7 +130,7 @@ QVariant FileViewItem::data(int role) const
         return QVariant::fromValue<QList<int>>(columrollist);
     }
     case  ItemFileSuffixRole:
-        return m_fileinfo->completeSuffix();
+        return d->fileinfo->completeSuffix();
     case ItemColumWidthScaleListRole:
     {
         QList<int> columrolwidthlist;
@@ -104,7 +138,7 @@ QVariant FileViewItem::data(int role) const
         return QVariant::fromValue<QList<int>>(columrolwidthlist);
     }
     case ItemNameRole:
-        return m_fileinfo->fileName();
+        return d->fileinfo->fileName();
     case ItemSizeHintRole:
         return QSize(-1, 26);
     default:

@@ -24,6 +24,7 @@
 #include "recentutil.h"
 #include "recentbrowseview.h"
 #include "recenteventrecver.h"
+#include "recentrootfileinfo.h"
 
 #include "windowservice/windowservice.h"
 #include "windowservice/browseview.h"
@@ -69,11 +70,11 @@ void Recent::initialize()
     //注册路由
     UrlRoute::schemeMapRoot(recentScheme,"/",QIcon(),true);
     //注册Scheme为"file"的扩展的文件信息 本地默认文件的
-    //    DFMInfoFactory::instance().regClass<RecentFileInfo>("recent");
+    InfoFactory::instance().regClass<RecentRootFileInfo>("recent");
     //    DFMFileDeviceFactory::instance().regClass<DFMLocalFileDevice>("file");
     //    DFMDirIteratorFactory::instance().regClass<DFMLocalDirIterator>("file");
     //    DFMWacherFactory::instance().regClass<DAbstractFileWatcher>("file");
-    DFMBrowseWidgetFactory::instance().regClass<RecentBrowseView>(recentScheme);
+    BrowseWidgetFactory::instance().regClass<RecentBrowseView>(recentScheme);
 }
 
 bool Recent::start(QSharedPointer<dpf::PluginContext> context)

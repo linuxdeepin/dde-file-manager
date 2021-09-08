@@ -20,13 +20,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#include "recentutil.h"
 #include "recentbrowseviewmodel.h"
 
 RecentBrowseViewModel::RecentBrowseViewModel(QAbstractItemView *parent)
     : FileViewModel(parent)
 {
-
+    setRootUrl(RecentUtil::onlyRootUrl());
 }
 
 RecentBrowseViewModel::~RecentBrowseViewModel()
@@ -41,7 +41,8 @@ AbstractFileInfoPointer RecentBrowseViewModel::fileInfo(const QModelIndex &index
 
 QModelIndex RecentBrowseViewModel::parent(const QModelIndex &child) const
 {
-    return FileViewModel::parent(child);
+    Q_UNUSED(child)
+    return QModelIndex();
 }
 
 int RecentBrowseViewModel::rowCount(const QModelIndex &parent) const
@@ -57,4 +58,14 @@ int RecentBrowseViewModel::columnCount(const QModelIndex &parent) const
 QVariant RecentBrowseViewModel::data(const QModelIndex &index, int role) const
 {
     return FileViewModel::data(index,role);
+}
+
+void RecentBrowseViewModel::fetchMore(const QModelIndex &parent)
+{
+    return FileViewModel::fetchMore(parent);
+}
+
+bool RecentBrowseViewModel::canFetchMore(const QModelIndex &parent) const
+{
+    return FileViewModel::canFetchMore(parent);
 }

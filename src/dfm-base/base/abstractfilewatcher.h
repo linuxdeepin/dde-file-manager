@@ -22,6 +22,7 @@ class AbstractFileWatcher : public QObject
 {
     Q_OBJECT
 public:
+    explicit AbstractFileWatcher() = delete;
     explicit AbstractFileWatcher(const QUrl &url, QObject *parent = nullptr);
     virtual ~AbstractFileWatcher();
 

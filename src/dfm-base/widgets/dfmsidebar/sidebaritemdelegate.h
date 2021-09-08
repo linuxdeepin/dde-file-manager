@@ -45,9 +45,5 @@ public:
                               const QModelIndex &index) const override;
 Q_SIGNALS:
     void rename(const QModelIndex &index, QString newName) const;
-
-private:
-    void paintSeparator(QPainter *painter, const QStyleOptionViewItem &option) const;
-
 };
 DFMBASE_END_NAMESPACE

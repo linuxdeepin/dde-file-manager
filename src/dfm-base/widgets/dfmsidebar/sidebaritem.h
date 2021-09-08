@@ -39,24 +39,19 @@ public:
         ItemUserCustomRole = Dtk::UserRole + 0x0100
     };
 
-    SideBarItem(const QUrl &url);
-
-    SideBarItem(const QIcon &icon,
-                   const QString &text,
-                   const QString &group,
-                   const QUrl &url);
-
+    explicit SideBarItem(const QUrl &url);
+    explicit SideBarItem(const QIcon &icon,
+                         const QString &text,
+                         const QString &group,
+                         const QUrl &url);
+    explicit SideBarItem(const SideBarItem& item);
     virtual ~SideBarItem();
 
-    SideBarItem(const SideBarItem& item);
-
-    QUrl url() const;
     void setUrl(const QUrl &url);
     void setGroup(const QString &group = "");
-
+    QUrl url() const;
     QString group() const;
 };
-
 
 class DFMSideBarItemSeparator :public SideBarItem
 {

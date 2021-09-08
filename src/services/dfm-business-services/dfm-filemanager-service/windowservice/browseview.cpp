@@ -24,30 +24,40 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-Q_GLOBAL_STATIC(DFMBrowseWidgetFactory,_browseViewFactory)
+Q_GLOBAL_STATIC(BrowseWidgetFactory,_browseViewFactory)
 
-DFMBrowseView::DFMBrowseView(QWidget *parent)
+BrowseView::BrowseView(QWidget *parent)
     : FileView (parent)
 {
 
 }
 
-DFMBrowseView::~DFMBrowseView()
+BrowseView::~BrowseView()
 {
 
 }
 
-void DFMBrowseView::setRootUrl(const QUrl &url)
+void BrowseView::setRootUrl(const QUrl &url)
 {
     FileView::setRootUrl(url);
 }
 
-QUrl DFMBrowseView::rootUrl()
+QUrl BrowseView::rootUrl()
 {
     return FileView::rootUrl();
 }
 
-DFMBrowseWidgetFactory &DFMBrowseWidgetFactory::instance() {
+BrowseWidgetFactory::BrowseWidgetFactory()
+{
+
+}
+
+BrowseWidgetFactory::~BrowseWidgetFactory()
+{
+
+}
+
+BrowseWidgetFactory &BrowseWidgetFactory::instance() {
     return * _browseViewFactory;
 }
 

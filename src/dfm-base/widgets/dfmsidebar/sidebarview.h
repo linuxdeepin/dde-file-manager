@@ -28,10 +28,12 @@ DWIDGET_USE_NAMESPACE
 
 DFMBASE_BEGIN_NAMESPACE
 class SideBarItem;
-typedef QDropEvent DFMDragEvent;
+class SideBarViewPrivate;
 class SideBarView : public DListView
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(SideBarView)
+    SideBarViewPrivate * const d;
 public:
     explicit SideBarView(QWidget *parent = nullptr);
     void mousePressEvent(QMouseEvent *event) override;
@@ -42,33 +44,15 @@ public:
     QModelIndex indexAt(const QPoint &p) const override;
     QModelIndex getPreviousIndex() const;
     QModelIndex getCurrentIndex() const;
-    void currentChanged(const QModelIndex &previous);
     SideBarItem *itemAt(const QPoint &pt) const;
 
 protected:
     bool onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction action) const;
     Qt::DropAction canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const;
-    bool isAccepteDragEvent(DFMDragEvent *event);
+    bool isAccepteDragEvent(QDropEvent *event);
 
 Q_SIGNALS:
     void requestRemoveItem();
-
-private:
-    bool fetchDragEventUrlsFromSharedMemory();
-    //检查当前操作与上次操作的时间间隔
-    bool checkOpTime();
-    int previousRowCount;
-    QPoint dropPos;
-    QString dragItemName;
-    int dragRow;
-    QModelIndex m_previous;
-    QModelIndex m_current;
-    QString m_strItemUniqueKey;
-
-    QList<QUrl> m_urlsForDragEvent;
-
-    //上次操作的时间（ms）
-    qint64 m_lastOpTime;
 };
 
 DFMBASE_END_NAMESPACE

@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMADDRESSBAR_H
-#define DFMADDRESSBAR_H
+#ifndef AddressBar_H
+#define AddressBar_H
 
 #include "dfm_filemanager_service_global.h"
 
@@ -29,15 +29,15 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-class DFMAddressBarPrivate;
-class DFMAddressBar : public QLineEdit
+class AddressBarPrivate;
+class AddressBar : public QLineEdit
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(DFMAddressBar)
-    DFMAddressBarPrivate * const d;
+    Q_DECLARE_PRIVATE(AddressBar)
+    AddressBarPrivate * const d;
 
 public:
-    explicit DFMAddressBar(QWidget* parent = nullptr);
+    explicit AddressBar(QWidget* parent = nullptr);
     bool completerViewVisible();
 
 Q_SIGNALS:
@@ -47,4 +47,4 @@ Q_SIGNALS:
 
 DSB_FM_END_NAMESPACE
 
-#endif //DFMADDRESSBAR_H
+#endif //AddressBar_H

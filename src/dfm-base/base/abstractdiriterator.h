@@ -37,7 +37,6 @@ DFMBASE_BEGIN_NAMESPACE
 class AbstractDirIterator
 {
 public:
-    virtual ~AbstractDirIterator() {}
     /*!
      * \brief next 下一个文件，迭代器指向下一个文件
      *
@@ -103,6 +102,7 @@ public:
      */
     virtual bool enableIteratorByKeyword(const QString &keyword) {Q_UNUSED(keyword); return false;}
 };
+
 DFMBASE_END_NAMESPACE
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator> AbstractDirIteratorPointer;
 

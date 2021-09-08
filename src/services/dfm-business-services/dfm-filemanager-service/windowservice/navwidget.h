@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMNAVWIDGET_H
-#define DFMNAVWIDGET_H
+#ifndef NavWidget_H
+#define NavWidget_H
 
 #include "dfm_filemanager_service_global.h"
 
@@ -34,36 +34,24 @@
 DWIDGET_USE_NAMESPACE
 
 DSB_FM_BEGIN_NAMESPACE
-
-class DFMNavWidget : public QWidget
+class NavWidgetPrivate;
+class NavWidget : public QWidget
 {
     Q_OBJECT
-
+    Q_DECLARE_PRIVATE(NavWidget)
+    NavWidgetPrivate * const d;
 public:
-    explicit DFMNavWidget(QWidget *parent = nullptr);
-
+    explicit NavWidget(QWidget *parent = nullptr);
     DButtonBoxButton *navBackButton() const;
-    void setNavBackButton(DButtonBoxButton *navBackButton);
-
     DButtonBoxButton *navForwardButton() const;
+    void setNavBackButton(DButtonBoxButton *navBackButton);
     void setNavForwardButton(DButtonBoxButton *navForwardButton);
-
-private:
-    DButtonBox *m_buttonBox = nullptr;
-    DButtonBoxButton *m_navBackButton = nullptr;
-    DButtonBoxButton *m_navForwardButton = nullptr;
-    QHBoxLayout *m_hboxLayout = nullptr;
-
-private Q_SLOTS:
-   void doButtonClicked();
-
 public Q_SLOTS:
     void appendUrl(const QUrl &url);
-
 Q_SIGNALS:
     void releaseUrl(const QUrl &url);
 };
 
 DSB_FM_END_NAMESPACE
 
-#endif // DFMNAVWIDGET_H
+#endif // NavWidget_H

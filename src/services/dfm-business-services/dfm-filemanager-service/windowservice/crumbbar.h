@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMCRUMBBAR_H
-#define DFMCRUMBBAR_H
+#ifndef CrumbBar_H
+#define CrumbBar_H
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/standardpaths.h"
@@ -31,16 +31,16 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-class DFMCrumbBarPrivate;
-class DFMCrumbBar : public QFrame
+class CrumbBarPrivate;
+class CrumbBar : public QFrame
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(DFMCrumbBar)
-    QScopedPointer<DFMCrumbBarPrivate> d_ptr;
+    Q_DECLARE_PRIVATE(CrumbBar)
+    QScopedPointer<CrumbBarPrivate> d_ptr;
 
 public:
-    explicit DFMCrumbBar(QWidget *parent = nullptr);
-    virtual ~DFMCrumbBar() override;
+    explicit CrumbBar(QWidget *parent = nullptr);
+    virtual ~CrumbBar() override;
 
     void setRootUrl(const QUrl &url);
 
@@ -60,4 +60,4 @@ protected:
 
 DSB_FM_END_NAMESPACE
 
-#endif // DFMCRUMBBAR_H
+#endif // CrumbBar_H

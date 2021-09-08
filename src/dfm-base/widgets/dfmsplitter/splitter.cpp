@@ -25,38 +25,38 @@
 #include <QSizePolicy>
 
 DFMBASE_BEGIN_NAMESPACE
-DFMSplitterHandle::DFMSplitterHandle(Qt::Orientation orientation, QSplitter *parent):
+SplitterHandle::SplitterHandle(Qt::Orientation orientation, QSplitter *parent):
     QSplitterHandle(orientation, parent)
 {
 
 }
 
-void DFMSplitterHandle::enterEvent(QEvent *)
+void SplitterHandle::enterEvent(QEvent *)
 {
     QGuiApplication::setOverrideCursor(orientation() == Qt::Horizontal ? Qt::SizeHorCursor : Qt::SizeVerCursor);
 }
 
-void DFMSplitterHandle::leaveEvent(QEvent *)
+void SplitterHandle::leaveEvent(QEvent *)
 {
     QGuiApplication::restoreOverrideCursor();
 }
 
 // ---------- Item Get Border Line ----------
 
-DFMSplitter::DFMSplitter(Qt::Orientation orientation, QWidget *parent)
+Splitter::Splitter(Qt::Orientation orientation, QWidget *parent)
     :QSplitter(orientation, parent)
 {
 
 }
 
-void DFMSplitter::moveSplitter(int pos, int index)
+void Splitter::moveSplitter(int pos, int index)
 {
     return QSplitter::moveSplitter(pos, index);
 }
 
-QSplitterHandle *DFMSplitter::createHandle()
+QSplitterHandle *Splitter::createHandle()
 {
-    return new DFMSplitterHandle(orientation(), this);
+    return new SplitterHandle(orientation(), this);
 }
 
 DFMBASE_END_NAMESPACE

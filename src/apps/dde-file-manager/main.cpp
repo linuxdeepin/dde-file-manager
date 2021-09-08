@@ -93,8 +93,6 @@ int main(int argc, char *argv[])
 
     dpf::FrameworkLog::initialize();
 
-    DFMIO::dfmio_init();
-
     pluginsLoad();
 
     return a.exec();

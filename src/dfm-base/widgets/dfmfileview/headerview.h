@@ -32,9 +32,7 @@ class HeaderView : public QHeaderView
     Q_OBJECT
 public:
     explicit HeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
-
     QSize sizeHint() const override;
-
     using QHeaderView::updateGeometries;
 
 protected:

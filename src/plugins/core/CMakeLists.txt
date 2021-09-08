@@ -8,14 +8,14 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/src/services/dfm-business-services/dfm-filemanager-service
     )
 
-set(core_cxx_source
+set(core_cxx_cpp
     eventcalled.cpp
     corelog.cpp
     core.cpp
     core.json
     )
 
-set(core_cxx_include
+set(core_cxx_h
     eventcalled.h
     corelog.h
     core.h
@@ -23,8 +23,8 @@ set(core_cxx_include
 
 add_library(${PROJECT_NAME}
     SHARED
-    ${core_cxx_source}
-    ${core_cxx_include}
+    ${core_cxx_cpp}
+    ${core_cxx_h}
     )
 
 target_link_libraries(${PROJECT_NAME}

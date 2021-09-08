@@ -27,16 +27,15 @@
 #include <QUrl>
 
 DFMBASE_BEGIN_NAMESPACE
+class AbstractFileDevice;
 class AbstractFileDevicePrivate
 {
+    Q_DECLARE_PUBLIC(AbstractFileDevice)
+    AbstractFileDevice *q_ptr;
+    QUrl url; // 文件的url
 public:
     explicit AbstractFileDevicePrivate(AbstractFileDevice *qq);
     virtual ~AbstractFileDevicePrivate();
-
-    AbstractFileDevice *q_ptr;
-    QUrl url; // 文件的url
-
-    Q_DECLARE_PUBLIC(AbstractFileDevice)
 };
 DFMBASE_END_NAMESPACE
 

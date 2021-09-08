@@ -34,39 +34,24 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-class DFMCompleterViewDelegate : public QStyledItemDelegate
+class CompleterViewDelegate;
+class CompleterViewPrivate;
+class CompleterView :public QListView
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(CompleterView)
+    CompleterViewPrivate *const d;
 public:
-    explicit DFMCompleterViewDelegate(QObject *parent = nullptr);
-
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-};
-
-class DFMCompleterView :public QListView
-{
-    Q_OBJECT
-public:
-    explicit DFMCompleterView();
-
+    explicit CompleterView();
     QCompleter *completer();
-
     QStringListModel* model();
-
-    DFMCompleterViewDelegate* itemDelegate();
+    CompleterViewDelegate* itemDelegate();
 
 Q_SIGNALS:
     void completerActivated(const QString &text);
     void completerActivated(const QModelIndex &index);
     void completerHighlighted(const QString &text);
     void completerHighlighted(const QModelIndex &index);
-
-private:
-    QCompleter m_completer;
-    QStringListModel m_model;
-    DFMCompleterViewDelegate m_delegate;
 };
 
 DSB_FM_END_NAMESPACE

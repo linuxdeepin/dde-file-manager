@@ -25,7 +25,8 @@
 
 DFMBASE_BEGIN_NAMESPACE
 FileViewModelPrivate::FileViewModelPrivate(FileViewModel *qq)
-    :q_ptr(qq)
+    : QObject (qq)
+    , q_ptr(qq)
 {
 
 }
@@ -35,9 +36,21 @@ FileViewModelPrivate::~FileViewModelPrivate()
 
 }
 
+void FileViewModelPrivate::doUpdateChildren(const QList<QSharedPointer<FileViewItem> > &children)
+{
+    q_ptr->beginResetModel();
+    childers.setList(children);
+    q_ptr->endResetModel();
+}
+
 FileViewModel::FileViewModel(QAbstractItemView *parent)
     : QAbstractItemModel (parent)
     , d_ptr(new FileViewModelPrivate(this))
+{
+
+}
+
+FileViewModel::~FileViewModel()
 {
 
 }
@@ -75,9 +88,12 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     }
     d->watcher = WacherFactory::instance().create<AbstractFileWatcher>(url);
     if (d->watcher.isNull()) {
-        connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted, this, &FileViewModel::doFileDeleted);
-        connect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, this, &FileViewModel::dofileCreated);
-        connect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &FileViewModel::dofileModified);
+        QObject::connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted,
+                         d, &FileViewModelPrivate::doFileDeleted);
+        QObject::connect(d->watcher.data(), &AbstractFileWatcher::subfileCreated,
+                         d, &FileViewModelPrivate::dofileCreated);
+        QObject::connect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged,
+                         d, &FileViewModelPrivate::dofileModified);
     }
 
     return root;
@@ -86,7 +102,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 QUrl FileViewModel::rootUrl()
 {
     Q_D(FileViewModel);
-    return d->root->fileinfo<AbstractFileInfo>()->url();
+    return d->root->fileinfo()->url();
 }
 
 AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index)
@@ -96,7 +112,7 @@ AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index)
         return nullptr;
     if(index.row() < 0  || d->childers.size() <= index.row())
         return  nullptr;
-    return d->childers.at(index.row())->fileinfo<AbstractFileInfo>();
+    return d->childers.at(index.row())->fileinfo();
 }
 
 QModelIndex FileViewModel::parent(const QModelIndex &child) const
@@ -126,16 +142,6 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
     return d->childers.at(index.row())->data(role);
 }
 
-void FileViewModel::doUpdateChildren(const QList<QSharedPointer<FileViewItem> > &children)
-{
-    Q_D(FileViewModel);
-
-    beginResetModel();
-    d->childers.setList(children);
-    endResetModel();
-}
-
-
 void FileViewModel::fetchMore(const QModelIndex &parent)
 {
     Q_UNUSED(parent)
@@ -152,7 +158,8 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
                                    QDirIterator::NoIteratorFlags));
     if (d->traversalThread.isNull())
         return;
-    connect(d->traversalThread.data(),&TraversalDirThread::updateChildren, this, &FileViewModel::doUpdateChildren,
+    QObject::connect(d->traversalThread.data(),& TraversalDirThread::updateChildren,
+            d, &FileViewModelPrivate::doUpdateChildren,
             Qt::QueuedConnection);
     d->traversalThread->start();
 }

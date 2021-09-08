@@ -20,29 +20,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef STYLEDITEMDELEGATE_P_H
-#define STYLEDITEMDELEGATE_P_H
-
-#include "widgets/dfmfileview/styleditemdelegate.h"
+#include "iconitemdelegate_p.h"
 
 DFMBASE_BEGIN_NAMESPACE
-class StyledItemDelegatePrivate
+
+IconItemDelegatePrivate::~IconItemDelegatePrivate()
 {
-public:
-    explicit StyledItemDelegatePrivate(StyledItemDelegate *qq)
-        : q_ptr(qq) {}
 
-    void init();
-    void _q_onRowsInserted(const QModelIndex &parent, int first, int last);
-    void _q_onRowsRemoved(const QModelIndex &parent, int first, int last);
+}
 
-    StyledItemDelegate *q_ptr;
-    mutable QModelIndex editingIndex;
-    QSize itemSizeHint;
-    int textLineHeight = -1;
-
-    Q_DECLARE_PUBLIC(StyledItemDelegate)
-};
 DFMBASE_END_NAMESPACE
 
-#endif // STYLEDITEMDELEGATE_P_H
+
+

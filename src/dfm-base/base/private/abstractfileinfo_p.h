@@ -12,23 +12,34 @@
 #include "base/abstractfileinfo.h"
 #include "utils/threadcontainer.hpp"
 
+#include <dfmio_global.h>
+#include <dfmio_register.h>
+#include <dfm-io/core/diofactory.h>
+
 #include <QPointer>
 
 #include <dfm-io/core/dfileinfo.h>
 
 USING_IO_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
+
+namespace GlobalPrivate {
+static bool dfmioIsInit = DFMIO::dfmio_init();
+}
+
 class AbstractFileInfoPrivate
 {
     Q_DECLARE_PUBLIC(AbstractFileInfo)
+    AbstractFileInfo * const q_ptr;// DAbstractFileInfo实例对象
 
 public:
+    QSharedPointer<DFileInfo> dfmFileInfo { nullptr };// dfm文件的信息
+    QUrl url;// 文件的url
     AbstractFileInfoPrivate(AbstractFileInfo *qq);
     virtual ~AbstractFileInfoPrivate();
 
-    QSharedPointer<DFileInfo> dfmFileInfo { nullptr };                     // dfm文件的信息
-    QUrl url;                                                            // 文件的url
-    AbstractFileInfo * const q_ptr;                                      // DAbstractFileInfo实例对象
+    void initFileInfo();
+
 private:
     DThreadMap<AbstractFileInfo::FileInfoCacheType, QVariant> caches;    // 文件缓存
 };

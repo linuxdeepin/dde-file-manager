@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMSPLITTER_H
-#define DFMSPLITTER_H
+#ifndef Splitter_H
+#define Splitter_H
 
 #include "dfm-base/dfm_base_global.h"
 
@@ -27,12 +27,12 @@
 #include <QSplitterHandle>
 
 DFMBASE_BEGIN_NAMESPACE
-class DFMSplitterHandle: public QSplitterHandle
+class SplitterHandle: public QSplitterHandle
 {
     Q_OBJECT
 
 public:
-    explicit DFMSplitterHandle(Qt::Orientation orientation, QSplitter* parent);
+    explicit SplitterHandle(Qt::Orientation orientation, QSplitter* parent);
 
 protected:
     void enterEvent(QEvent*) override;
@@ -41,12 +41,12 @@ protected:
 
 // ---------- Item Get Border Line ----------
 
-class DFMSplitter : public QSplitter
+class Splitter : public QSplitter
 {
     Q_OBJECT
 
 public:
-    explicit DFMSplitter(Qt::Orientation orientation, QWidget *parent = nullptr);
+    explicit Splitter(Qt::Orientation orientation, QWidget *parent = nullptr);
     void moveSplitter(int pos, int index);
 
 protected:
@@ -54,4 +54,4 @@ protected:
 };
 DFMBASE_END_NAMESPACE
 
-#endif // DFMSPLITTER_H
+#endif // Splitter_H

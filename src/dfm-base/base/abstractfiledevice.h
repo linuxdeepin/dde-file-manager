@@ -39,9 +39,9 @@ public:
         CloseFileOperate,
         DefaultOperate = 255
     };
-
+    explicit AbstractFileDevice() = delete;
     explicit AbstractFileDevice(const QUrl &url);
-    ~AbstractFileDevice();
+    virtual ~AbstractFileDevice();
 
     QUrl url() const;
     virtual int handle() const;

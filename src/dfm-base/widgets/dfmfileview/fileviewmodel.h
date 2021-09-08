@@ -32,63 +32,36 @@
 
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
-#include <QPointer>
-#include <QDir>
 #include <QUrl>
-#include <QFuture>
 
 #include <iostream>
 #include <memory>
 
 #include <unistd.h>
 
+class QAbstractItemView;
 DFMBASE_BEGIN_NAMESPACE
 class FileViewModelPrivate;
 class FileViewModel : public QAbstractItemModel
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), FileViewModel)
-public:
-
-    explicit FileViewModel(QAbstractItemView *parent = nullptr);
-
-    virtual ~FileViewModel() override {
-
-    }
-
-    virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
-
-    QModelIndex setRootUrl(const QUrl &url);
-
-    QUrl rootUrl();
-
-    AbstractFileInfoPointer fileInfo(const QModelIndex &index);
-
-    virtual QModelIndex parent(const QModelIndex &child) const override;
-
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-
-    virtual void fetchMore(const QModelIndex &parent) override;
-
-    virtual bool canFetchMore(const QModelIndex &parent) const override;
-
-private Q_SLOTS:
-    void doFileDeleted(const QUrl &url){}
-    void dofileAttributeChanged(const QUrl &url, const int &isExternalSource = 1){}
-    void dofileMoved(const QUrl &fromUrl, const QUrl &toUrl){}
-    void dofileCreated(const QUrl &url){}
-    void dofileModified(const QUrl &url){}
-    void dofileClosed(const QUrl &url){}
-    void doUpdateChildren(const QList<QSharedPointer<FileViewItem>> &children);
-
-private:
     QSharedPointer<FileViewModelPrivate> d_ptr;
-
+public:
+    explicit FileViewModel(QAbstractItemView *parent = nullptr);
+    virtual ~FileViewModel() override;
+    virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+    QModelIndex setRootUrl(const QUrl &url);
+    QUrl rootUrl();
+    AbstractFileInfoPointer fileInfo(const QModelIndex &index);
+    virtual QModelIndex parent(const QModelIndex &child) const override;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    virtual void fetchMore(const QModelIndex &parent) override;
+    virtual bool canFetchMore(const QModelIndex &parent) const override;
 };
+
 DFMBASE_END_NAMESPACE
 
 #endif // FILEVIEWMODEL_H

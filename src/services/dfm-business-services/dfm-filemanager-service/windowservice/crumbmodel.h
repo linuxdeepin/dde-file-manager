@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMCRUMBMODEL_H
-#define DFMCRUMBMODEL_H
+#ifndef CrumbModel_H
+#define CrumbModel_H
 
 #include "dfm_filemanager_service_global.h"
 
@@ -33,7 +33,7 @@ DWIDGET_USE_NAMESPACE
 
 DSB_FM_BEGIN_NAMESPACE
 
-class DFMCrumbModel : public QStandardItemModel
+class CrumbModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
@@ -42,8 +42,8 @@ public:
     };
     Q_ENUM(Roles)
 
-    explicit DFMCrumbModel(QObject *parent = nullptr);
-    virtual ~DFMCrumbModel();
+    explicit CrumbModel(QObject *parent = nullptr);
+    virtual ~CrumbModel();
 
     void removeAll();
     QModelIndex lastIndex();
@@ -51,4 +51,4 @@ public:
 
 DSB_FM_END_NAMESPACE
 
-#endif // DFMCRUMBMODEL_H
+#endif // CrumbModel_H

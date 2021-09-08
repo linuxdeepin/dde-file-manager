@@ -40,31 +40,28 @@ class Core;
 
 DSB_FM_BEGIN_NAMESPACE
 
-class WindowService : public dpf::PluginService
+class WindowService final : public dpf::PluginService
 {
     Q_OBJECT
     Q_DISABLE_COPY(WindowService)
 
-    QList<DFMBrowseWindow*> m_windowlist;
+    QList<BrowseWindow*> windowList;
 
     //私有方法的权限控制，core拥有访问私有方法权限
     friend class ::Core;
 
 public:
     explicit WindowService();
-
     virtual ~WindowService() override;
-
-    void addSidebarItem(int windowIndex, SideBarItem * item);
+    bool addSideBarItem(int windowIndex, SideBarItem *item);
+    bool removeSideBarItem(int windowIndex, SideBarItem *item);
+    bool insertSideBarItem(int windowIndex, int row, SideBarItem *item);
 
 private: //@Method
-
-    DFMBrowseWindow* newWindow();
-
-    bool setWindowRootUrl(DFMBrowseWindow * newWindow,
+    BrowseWindow* newWindow();
+    bool setWindowRootUrl(BrowseWindow * newWindow,
                           const QUrl &url,
                           QString *errorString = nullptr);
-
 }; PLUGIN_SERVICE(WindowService);
 
 DSB_FM_END_NAMESPACE

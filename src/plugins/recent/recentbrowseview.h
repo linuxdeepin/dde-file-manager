@@ -29,7 +29,7 @@
 
 DSB_FM_USE_NAMESPACE
 
-class RecentBrowseView : public DFMBrowseView
+class RecentBrowseView : public BrowseView
 {
 public:
     explicit RecentBrowseView(QWidget *parent = nullptr)

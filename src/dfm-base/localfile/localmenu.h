@@ -25,7 +25,7 @@
 #include "dfm-base/dfm_base_global.h"
 
 #include <QObject>
-#include <QMenu>
+#include <QSharedPointer>
 
 DFMBASE_BEGIN_NAMESPACE
 class LocalMenuPrivate;

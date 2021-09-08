@@ -30,8 +30,6 @@
 
 #include <QIcon>
 #include <QPointF>
-#include <QMimeType>
-#include <QMimeDatabase>
 
 DFMBASE_BEGIN_NAMESPACE
 class LocalFileInfoPrivate;
@@ -86,11 +84,6 @@ public:
     virtual QFileInfo toQFileInfo() const;
     virtual QVariantHash extraProperties() const;
     virtual quint64 inode() const;
-
-protected:
-    explicit LocalFileInfo();
-    explicit LocalFileInfo(const QString &filePath);
-    explicit LocalFileInfo(const QFileInfo &fileInfo);
 };
 DFMBASE_END_NAMESPACE
 typedef QSharedPointer<DFMBASE_NAMESPACE::LocalFileInfo> DFMLocalFileInfoPointer;

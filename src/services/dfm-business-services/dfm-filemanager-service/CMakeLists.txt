@@ -4,11 +4,11 @@ project(dfm-filemanager-service)
 
 # window service sources
 
-set(${PROJECT_NAME}_global_h
+set(GLOBAL_H
     dfm_filemanager_service_global.h
     )
 
-set(windowservice_cpp
+set(WINDOWSERVICE_CPP
     windowservice/windowservice.cpp
     windowservice/displayviewlogic.cpp
     windowservice/displaydefaultview.cpp
@@ -23,31 +23,34 @@ set(windowservice_cpp
     windowservice/crumbmodel.cpp
     )
 
-set(windowservice_h
+set(WINDOWSERVICE_H
+    windowservice/private/browsewindow_p.h
+    windowservice/private/addressbar_p.h
+    windowservice/private/crumbbar_p.h
+    windowservice/private/navwidget_p.h
+    windowservice/private/optionbuttonbox_p.h
+    windowservice/private/completerview_p.h
+    windowservice/private/displaydefaultview_p.h
     windowservice/containerkeys.h
     windowservice/windowservice.h
     windowservice/displayviewlogic.h
     windowservice/displaydefaultview.h
-    windowservice/private/browsewindow_p.h
     windowservice/navwidget.h
-    windowservice/private/addressbar_p.h
     windowservice/addressbar.h
     windowservice/completerview.h
     windowservice/optionbuttonbox.h
-    windowservice/private/crumbbar_p.h
     windowservice/crumbbar.h
-    windowservice/private/browseview_p.h
     windowservice/browseview.h
     windowservice/browsewindow.h
     windowservice/crumbmodel.h
     )
 
-set(applicationservice_cpp
+set(APPLICATIONSERVICE_CPP
     applicationservice/application.cpp
     applicationservice/settings.cpp
     )
 
-set(applicationservice_h
+set(APPLICATIONSERVICE_H
     applicationservice/application.h
     applicationservice/private/application_p.h
     applicationservice/settings.h
@@ -56,11 +59,11 @@ set(applicationservice_h
 add_library(
     ${PROJECT_NAME}
     SHARED
-    ${${PROJECT_NAME}_global_h}
-    ${windowservice_h}
-    ${windowservice_cpp}
-    ${applicationservice_h}
-    ${applicationservice_cpp}
+    ${GLOBAL_H}
+    ${WINDOWSERVICE_H}
+    ${WINDOWSERVICE_CPP}
+    ${APPLICATIONSERVICE_H}
+    ${APPLICATIONSERVICE_CPP}
     )
 
 target_link_libraries(

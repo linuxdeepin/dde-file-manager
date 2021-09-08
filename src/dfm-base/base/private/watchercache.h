@@ -40,9 +40,9 @@ class WatcherCache : public QObject
     friend WacherFactory;
     friend InfoCache;
 public:
+    static WatcherCache& instance();
     explicit WatcherCache(QObject *parent = nullptr);
     virtual ~WatcherCache();
-    static WatcherCache& instance();
     QSharedPointer<AbstractFileWatcher> getCacheWatcher(const QUrl &url);
     void cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFileWatcher> &watcher);
     void removCacheWatcher(const QUrl &url);

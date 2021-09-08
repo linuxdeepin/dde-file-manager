@@ -30,6 +30,7 @@
 #include <QObject>
 #include <QMutex>
 #include <QThread>
+#include <QTime>
 #include <QUrl>
 
 DFMBASE_BEGIN_NAMESPACE
@@ -64,7 +65,6 @@ class InfoCache : public QObject
     QScopedPointer<InfoCachePrivate> d_ptr;
     friend InfoFactory;
     friend ReFreshThread;
-
 public:
     explicit InfoCache(QObject *parent = nullptr);
     virtual ~InfoCache();

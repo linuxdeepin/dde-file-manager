@@ -30,8 +30,11 @@
 #include <QStandardItem>
 #include <QMetaType>
 
+class FileViewItemPrivate;
 class FileViewItem: public QStandardItem
 {
+    Q_DECLARE_PRIVATE(FileViewItem)
+    QSharedPointer<FileViewItemPrivate> d;
 public:
     enum Roles {
         ItemNameRole = Qt::DisplayRole,
@@ -56,56 +59,15 @@ public:
         ItemColumWidthScaleListRole = Qt::UserRole + 8,
     };
 
-    FileViewItem();
-
-    FileViewItem(const QUrl &url);
-
-    FileViewItem &operator=(const FileViewItem &other)
-    {
-        setData(other.data(ItemNameRole),ItemNameRole);
-        setData(other.data(ItemIconRole),ItemIconRole);
-        setData(other.data(ItemEditRole),ItemEditRole);
-        setData(other.data(ItemToolTipRole),ItemToolTipRole);
-        setData(other.data(ItemSizeHintRole),ItemSizeHintRole);
-        setData(other.data(ItemBackgroundRole),ItemBackgroundRole);
-        setData(other.data(ItemForegroundRole),ItemForegroundRole);
-        setData(other.data(ItemCheckStateRole),ItemCheckStateRole);
-        setData(other.data(ItemInitialSortOrderRole),ItemInitialSortOrderRole);
-        setData(other.data(ItemFontRole),ItemFontRole);
-        setData(other.data(ItemTextAlignmentRole),ItemTextAlignmentRole);
-        setData(other.data(ItemColorRole),ItemColorRole);
-        setData(other.data(ItemUrlRole),ItemUrlRole);
-        setData(other.data(ItemFileLastModifiedRole),ItemFileLastModifiedRole);
-        setData(other.data(ItemFileSizeRole),ItemFileSizeRole);
-        setData(other.data(ItemFileMimeTypeRole),ItemFileMimeTypeRole);
-        setData(other.data(ItemFileSuffixRole),ItemFileSuffixRole);
-        setData(other.data(ItemFilePathRole),ItemFilePathRole);
-        setData(other.data(ItemColumListRole),ItemColumListRole);
-        setData(other.data(ItemColumWidthScaleListRole),ItemColumWidthScaleListRole);
-
-        return *this;
-    }
-
+    explicit FileViewItem();
+    explicit FileViewItem(const QUrl &url);
+    FileViewItem &operator=(const FileViewItem &other);
     void refresh();
-
     QUrl url() const;
-
     void setUrl(const QUrl url);
-
-    template<class T>
-    QSharedPointer<T> fileinfo() const
-    {
-        return qSharedPointerDynamicCast<T>(m_fileinfo);
-    }
-
+    AbstractFileInfoPointer fileinfo() const;
     QMimeType mimeType() const;
-
-private:
-    AbstractFileInfoPointer m_fileinfo;
-    QMimeType m_mimeType;
-
     // QStandardItem interface
-public:
     virtual QVariant data(int role) const override;
 };
 

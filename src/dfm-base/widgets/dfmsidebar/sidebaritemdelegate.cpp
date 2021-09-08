@@ -41,6 +41,19 @@
 QT_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
+
+namespace GlobalPrivate {
+void paintSeparator(QPainter *painter, const QStyleOptionViewItem &option)
+{
+    painter->save();
+
+    int yPoint = option.rect.top() + option.rect.height() / 2;
+    qDrawShadeLine(painter, 0, yPoint, option.rect.width(), yPoint, option.palette);
+
+    painter->restore();
+}
+} // namespace GlobalPrivate
+
 SideBarItemDelegate::SideBarItemDelegate(QAbstractItemView *parent)
     : DStyledItemDelegate(parent)
 {
@@ -51,7 +64,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 {
     QStandardItem* item = qobject_cast<const SideBarModel*>(index.model())->itemFromIndex(index);
     if (dynamic_cast<DFMSideBarItemSeparator*>(item)) {
-        return paintSeparator(painter, option);
+        return GlobalPrivate::paintSeparator(painter, option);
     }
 
     return DStyledItemDelegate::paint(painter, option, index);
@@ -114,16 +127,6 @@ void SideBarItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpti
     //DTK在计算editor宽度的时候没有考虑icon的宽度，导致editor超出view的范围，超出部分看不到了，这里需要调整editor的宽度。
     SideBarView *sidebarView = dynamic_cast<SideBarView*>(this->parent());
     editor->setFixedWidth(sidebarView->width() - 59);
-}
-
-void SideBarItemDelegate::paintSeparator(QPainter *painter, const QStyleOptionViewItem &option) const
-{
-    painter->save();
-
-    int yPoint = option.rect.top() + option.rect.height() / 2;
-    qDrawShadeLine(painter, 0, yPoint, option.rect.width(), yPoint, option.palette);
-
-    painter->restore();
 }
 
 DFMBASE_END_NAMESPACE

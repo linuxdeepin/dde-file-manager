@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMBROWSEWINDOWPRIVATE_H
-#define DFMBROWSEWINDOWPRIVATE_H
+#ifndef BROWSEWINDOWPRIVATE_H
+#define BROWSEWINDOWPRIVATE_H
 
 //services
 #include "windowservice/browsewindow.h"
@@ -47,45 +47,46 @@
 DSB_FM_BEGIN_NAMESPACE
 DWIDGET_USE_NAMESPACE //use dtkwidget
 
-/* @class DFMBrowseWindowPrivate
+/* @class BrowseWindowPrivate
  * @brief 文件背板扩展的主窗口二进制兼容类。
  */
-class DFMBrowseWindowPrivate : public QObject
+class BrowseWindowPrivate : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(DFMBrowseWindow)
-    DFMBrowseWindow * const q_ptr;
+    Q_DECLARE_PUBLIC(BrowseWindow)
+    BrowseWindow * const q_ptr;
 
-    SideBar* m_sidebar = nullptr;           //左侧边栏
+    SideBar *sidebarIns = nullptr;           //左侧边栏
 
-    QFrame *m_titleBar = nullptr;              //标题栏
-    QHBoxLayout *m_titleBarLayout = nullptr;   //标题栏布局
+    QFrame *titleBarIns = nullptr;              //标题栏
+    QHBoxLayout *titleBarLayoutIns = nullptr;   //标题栏布局
 
-    DFMNavWidget * m_navWidget = nullptr;      //导航小部件
-    DFMAddressBar *m_addressBar = nullptr;     //地址編輯栏
-    QToolButton *m_searchButton = nullptr;     //搜索栏按钮
-    QToolButton *m_searchFilterButton = nullptr; //搜索过滤按钮
-    DFMOptionButtonBox * m_optionButtonBox = nullptr; //功能按鈕栏
-    DFMCrumbBar *m_crumbBar = nullptr;         //面包屑
+    NavWidget *navWidgetIns = nullptr;      //导航小部件
+    AddressBar *addressBarIns = nullptr;     //地址編輯栏
+    QToolButton *searchButtonIns = nullptr;     //搜索栏按钮
+    QToolButton *searchFilterButtonIns = nullptr; //搜索过滤按钮
+    OptionButtonBox * optionButtonBoxIns = nullptr; //功能按鈕栏
+    CrumbBar *crumbBarIns = nullptr;         //面包屑
 
-    DFMDisplayDefaultView m_displayCheckView;      //默认检查Url展示的View
-    QWidget *m_displayWidget = nullptr;            //居中組件背板
-    QVBoxLayout *m_displayViewLayout = nullptr;    //居中組件布局
-    QHash<QString, DFMDisplayViewLogic*> m_views;  //展示的view类
+    DisplayDefaultView displayCheckViewIns;      //默认检查Url展示的View
+    QWidget *displayWidgetIns = nullptr;            //居中組件背板
+    QVBoxLayout *displayViewLayoutIns = nullptr;    //居中組件布局
+    QHash<QString, DisplayViewLogic*> views{};  //展示的view类
 
-    QWidget *m_propertyView = nullptr;        //右侧属性界面
-    DFMSplitter *m_splitter = nullptr;        //布局
+    QWidget *propertyViewIns = nullptr;        //右侧属性界面
+    Splitter *splitterIns = nullptr;        //布局
 
-
-    DFMBrowseView::ViewMode m_mode = DFMBrowseView::ListMode;
+    BrowseView::ViewMode mode = BrowseView::ListMode;
 
 public:
-    explicit DFMBrowseWindowPrivate(DFMBrowseWindow *qq);
+    explicit BrowseWindowPrivate(BrowseWindow *qq);
 
-    void setDefaultViewMode(DFMBrowseView::ViewMode mode);
+    virtual ~BrowseWindowPrivate();
+
+    void setDefaultViewMode(BrowseView::ViewMode mode);
 
     void addview(const QString &scheme,
-                 DFMDisplayViewLogic *logic);
+                 DisplayViewLogic *logic);
 
     bool viewIsAdded(const QString &scheme);
 
@@ -101,8 +102,8 @@ public:
     QToolButton *searchFilterButton() const;
     void setSearchFilterButton(QToolButton *searchFilterButton);
 
-    DFMOptionButtonBox *optionButtonBox() const;
-    void setOptionButtonBox(DFMOptionButtonBox *optionButtonBox);
+    OptionButtonBox *optionButtonBox() const;
+    void setOptionButtonBox(OptionButtonBox *optionButtonBox);
 
     QToolButton *listViewButton() const;
     void setListViewButton(QToolButton *button);
@@ -110,8 +111,8 @@ public:
     QToolButton *iconViewButton() const;
     void setIconViewButton(QToolButton *button);
 
-    DFMCrumbBar *crumbBar() const;
-    void setCrumbBar(DFMCrumbBar *crumbBar);
+    CrumbBar *crumbBar() const;
+    void setCrumbBar(CrumbBar *crumbBar);
 
     QWidget *propertyView() const;
     void setPropertyView(QWidget *propertyView);
@@ -119,8 +120,8 @@ public:
     SideBar *sidebar() const;
     void setSidebar(SideBar *sidebar);
 
-    DFMAddressBar *addressBar() const;
-    void setAddressBar(DFMAddressBar *addressBar);
+    AddressBar *addressBar() const;
+    void setAddressBar(AddressBar *addressBar);
 
 private Q_SLOT:
     void doSearchButtonClicked(bool checked);
@@ -140,4 +141,4 @@ private:
 
 DSB_FM_END_NAMESPACE
 
-#endif // DFMBROWSEWINDOWPRIVATE_H
+#endif // BROWSEWINDOWPRIVATE_H

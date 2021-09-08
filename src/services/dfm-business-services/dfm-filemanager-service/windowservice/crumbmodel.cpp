@@ -27,23 +27,23 @@ DWIDGET_USE_NAMESPACE
 
 DSB_FM_BEGIN_NAMESPACE
 
-DFMCrumbModel::DFMCrumbModel(QObject *parent)
+CrumbModel::CrumbModel(QObject *parent)
     :QStandardItemModel (parent)
 {
 
 }
 
-DFMCrumbModel::~DFMCrumbModel()
+CrumbModel::~CrumbModel()
 {
 
 }
 
-void DFMCrumbModel::removeAll()
+void CrumbModel::removeAll()
 {
     removeRows(0, rowCount());
 }
 
-QModelIndex DFMCrumbModel::lastIndex()
+QModelIndex CrumbModel::lastIndex()
 {
     return index(rowCount()-1,0);
 }

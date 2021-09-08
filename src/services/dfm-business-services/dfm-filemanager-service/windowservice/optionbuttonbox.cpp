@@ -20,133 +20,143 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "private/optionbuttonbox_p.h"
 #include "optionbuttonbox.h"
 
 DSB_FM_BEGIN_NAMESPACE
 
-QToolButton *DFMOptionButtonBox::detailButton() const
+OptionButtonBoxPrivate::OptionButtonBoxPrivate(OptionButtonBox *parent)
+    : QObject(parent)
+    , q_ptr(parent)
 {
-    return m_detailButton;
+
 }
 
-void DFMOptionButtonBox::setDetailButton(QToolButton *detailButton)
+QToolButton *OptionButtonBox::detailButton() const
+{
+    return d->detailButton;
+}
+
+void OptionButtonBox::setDetailButton(QToolButton *detailButton)
 {
     if (!detailButton) return;
 
-    if (!m_hBoxLayout->replaceWidget(detailButton, m_detailButton)->isEmpty()){
+    if (!d->hBoxLayout->replaceWidget(detailButton, detailButton)->isEmpty()){
 
-        if (m_detailButton) {
-            delete m_detailButton;
-            m_detailButton = nullptr;
+        if (d->detailButton) {
+            delete d->detailButton;
+            d->detailButton = nullptr;
         }
 
-        if (!m_detailButton)
-            m_detailButton = detailButton;
+        if (!d->detailButton)
+            d->detailButton = detailButton;
 
-        if (m_listViewButton->icon().isNull())
-            m_detailButton->setIcon(QIcon::fromTheme("dfm_rightview_detail"));
+        if (d->listViewButton->icon().isNull())
+            d->detailButton->setIcon(QIcon::fromTheme("dfrightview_detail"));
 
-        m_detailButton->setCheckable(true);
-        m_detailButton->setFocusPolicy(Qt::NoFocus);
-        m_detailButton->setIconSize({16,16});
-        m_detailButton->setFixedSize(36, 36);
+        d->detailButton->setCheckable(true);
+        d->detailButton->setFocusPolicy(Qt::NoFocus);
+        d->detailButton->setIconSize({16,16});
+        d->detailButton->setFixedSize(36, 36);
     }
 }
 
-QToolButton *DFMOptionButtonBox::listViewButton() const
+QToolButton *OptionButtonBox::listViewButton() const
 {
-    return m_listViewButton;
+    return d->listViewButton;
 }
 
-void DFMOptionButtonBox::setListViewButton(QToolButton *listViewButton)
+void OptionButtonBox::setListViewButton(QToolButton *listViewButton)
 {
     if (!listViewButton) return;
 
-    if (!m_hBoxLayout->replaceWidget(listViewButton, m_listViewButton)->isEmpty()){
+    if (!d->hBoxLayout->replaceWidget(listViewButton, listViewButton)->isEmpty()){
 
-        if (m_listViewButton) {
-            delete m_listViewButton;
-            m_listViewButton = nullptr;
+        if (d->listViewButton) {
+            delete d->listViewButton;
+            d->listViewButton = nullptr;
         }
 
-        if (!m_listViewButton)
-            m_listViewButton = listViewButton;
+        if (!listViewButton)
+            d->listViewButton = listViewButton;
 
-        if (m_listViewButton->icon().isNull())
-            m_listViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_details"));
+        if (d->listViewButton->icon().isNull())
+            d->listViewButton->setIcon(QIcon::fromTheme("dfviewlist_details"));
 
-        m_listViewButton->setCheckable(true);
-        m_listViewButton->setFocusPolicy(Qt::NoFocus);
-        m_listViewButton->setIconSize({16,16});
-        m_listViewButton->setFixedSize(36, 36);
+        d->listViewButton->setCheckable(true);
+        d->listViewButton->setFocusPolicy(Qt::NoFocus);
+        d->listViewButton->setIconSize({16,16});
+        d->listViewButton->setFixedSize(36, 36);
     }
 }
 
-DFMOptionButtonBox::DFMOptionButtonBox(QWidget *parent)
+OptionButtonBox::OptionButtonBox(QWidget *parent)
     : QWidget (parent)
+    , d(new OptionButtonBoxPrivate(this))
 {
-    if (!m_iconViewButton)
-        m_iconViewButton = new QToolButton;
-    m_iconViewButton->setCheckable(true);
-    m_iconViewButton->setFocusPolicy(Qt::NoFocus);
-    m_iconViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_icons"));
-    m_iconViewButton->setIconSize({16,16});
-    m_iconViewButton->setFixedSize(36, 36);
+    if (!d->iconViewButton)
+        d->iconViewButton = new QToolButton;
+    d->iconViewButton->setCheckable(true);
+    d->iconViewButton->setFocusPolicy(Qt::NoFocus);
+    d->iconViewButton->setIcon(QIcon::fromTheme("dfviewlist_icons"));
+    d->iconViewButton->setIconSize({16,16});
+    d->iconViewButton->setFixedSize(36, 36);
 
-    if (!m_listViewButton)
-        m_listViewButton = new QToolButton;
-    m_listViewButton->setCheckable(true);
-    m_listViewButton->setFocusPolicy(Qt::NoFocus);
-    m_listViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_details"));
-    m_listViewButton->setIconSize({16,16});
-    m_listViewButton->setFixedSize(36, 36);
+    if (!d->listViewButton)
+        d->listViewButton = new QToolButton;
+    d->listViewButton->setCheckable(true);
+    d->listViewButton->setFocusPolicy(Qt::NoFocus);
+    d->listViewButton->setIcon(QIcon::fromTheme("dfviewlist_details"));
+    d->listViewButton->setIconSize({16,16});
+    d->listViewButton->setFixedSize(36, 36);
 
-    if (!m_detailButton)
-        m_detailButton = new QToolButton;
-    m_detailButton->setCheckable(true);
-    m_detailButton->setFocusPolicy(Qt::NoFocus);
-    m_detailButton->setIcon(QIcon::fromTheme("dfm_rightview_detail"));
-    m_detailButton->setIconSize({16,16});
-    m_detailButton->setFixedSize(36, 36);
+    if (!d->detailButton)
+        d->detailButton = new QToolButton;
+    d->detailButton->setCheckable(true);
+    d->detailButton->setFocusPolicy(Qt::NoFocus);
+    d->detailButton->setIcon(QIcon::fromTheme("dfrightview_detail"));
+    d->detailButton->setIconSize({16,16});
+    d->detailButton->setFixedSize(36, 36);
+    d->detailButton->show();
 
-    if (!m_hBoxLayout)
-        m_hBoxLayout = new QHBoxLayout;
-    m_hBoxLayout->addSpacing(15);
-    m_hBoxLayout->addWidget(m_iconViewButton);
-    m_hBoxLayout->addWidget(m_listViewButton);
-    m_hBoxLayout->addWidget(m_detailButton);
-    m_hBoxLayout->setContentsMargins(0,0,4,0);
-    m_hBoxLayout->setSpacing(18);
+    if (!d->hBoxLayout)
+        d->hBoxLayout = new QHBoxLayout;
+    d->hBoxLayout->addSpacing(15);
+    d->hBoxLayout->addWidget(d->iconViewButton);
+    d->hBoxLayout->addWidget(d->listViewButton);
+    d->hBoxLayout->addWidget(d->detailButton);
+    d->hBoxLayout->setContentsMargins(0,0,4,0);
+    d->hBoxLayout->setSpacing(18);
 
-    setLayout(m_hBoxLayout);
+    setLayout(d->hBoxLayout);
 }
 
-QToolButton *DFMOptionButtonBox::iconViewButton() const
+QToolButton *OptionButtonBox::iconViewButton() const
 {
-    return m_iconViewButton;
+    return d->iconViewButton;
 }
 
-void DFMOptionButtonBox::setIconViewButton(QToolButton *iconViewButton)
+void OptionButtonBox::setIconViewButton(QToolButton *iconViewButton)
 {
     if (!iconViewButton) return;
 
-    if (!m_hBoxLayout->replaceWidget(iconViewButton, m_iconViewButton)->isEmpty()){
+    if (!d->hBoxLayout->replaceWidget(iconViewButton, iconViewButton)->isEmpty()){
 
-        if (m_iconViewButton) {
-            delete m_iconViewButton;
-            m_iconViewButton = nullptr;
+        if (d->iconViewButton) {
+            delete d->iconViewButton;
+            d->iconViewButton = nullptr;
         }
 
-        if (!m_iconViewButton)
-            m_iconViewButton = iconViewButton;
+        if (!iconViewButton)
+            d->iconViewButton = iconViewButton;
 
-        if (m_iconViewButton->icon().isNull())
-            m_iconViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_icons"));
+        if (d->iconViewButton->icon().isNull())
+            d->iconViewButton->setIcon(QIcon::fromTheme("dfviewlist_icons"));
 
-        m_iconViewButton->setCheckable(true);
-        m_iconViewButton->setFocusPolicy(Qt::NoFocus);
-        m_iconViewButton->setIconSize({16,16});
-        m_iconViewButton->setFixedSize(36, 36);
+        d->iconViewButton->setCheckable(true);
+        d->iconViewButton->setFocusPolicy(Qt::NoFocus);
+        d->iconViewButton->setIconSize({16,16});
+        d->iconViewButton->setFixedSize(36, 36);
     }
 }
 

@@ -21,11 +21,9 @@
 #include "sidebarview.h"
 #include "sidebaritem.h"
 #include "sidebarmodel.h"
-
-//#include "localfile/dfileservices.h"
-#include "localfile/localfileinfo.h"
-
-#include "base/urlroute.h"
+#include "private/sidebarview_p.h"
+#include "dfm-base/localfile/localfileinfo.h"
+#include "dfm-base/base/urlroute.h"
 
 #include <QtConcurrent>
 #include <QDebug>
@@ -40,8 +38,23 @@
 
 
 DFMBASE_BEGIN_NAMESPACE
+
+SideBarViewPrivate::SideBarViewPrivate(SideBarView *qq)
+    : QObject(qq)
+    , q_ptr(qq)
+{
+
+}
+
+void SideBarViewPrivate::currentChanged(const QModelIndex &previous)
+{
+    current = q_ptr->currentIndex();
+    SideBarViewPrivate::previous = previous;
+}
+
 SideBarView::SideBarView(QWidget *parent)
     : DListView(parent)
+    , d(new SideBarViewPrivate(this))
 {
     setVerticalScrollMode(ScrollPerPixel);
     setIconSize(QSize(16, 16));
@@ -53,16 +66,17 @@ SideBarView::SideBarView(QWidget *parent)
     setDragDropMode(QAbstractItemView::InternalMove);
     setDragDropOverwriteMode(false);
     //QListView拖拽时会先插入后删除，于是可以通过rowCountChanged()信号来判断拖拽操作是否结束
-    connect(this, static_cast<void (DListView::*)(const QModelIndex &)>(&DListView::currentChanged), this, &SideBarView::currentChanged);
+    QObject::connect(this, static_cast<void (DListView::*)(const QModelIndex &)>(&DListView::currentChanged),
+            d, &SideBarViewPrivate::currentChanged);
 
-    m_lastOpTime = 0;
+    d->lastOpTime = 0;
 }
 
 void SideBarView::mousePressEvent(QMouseEvent *event)
 {
     //频繁点击操作与网络或挂载设备的加载效率低两个因素的共同作用下 会导致侧边栏可能出现显示错误
     //暂时抛去部分频繁点击来规避这个问题
-    if (!checkOpTime())
+    if (!d->checkOpTime())
         return;
 
     if (event->button() == Qt::RightButton) {
@@ -103,8 +117,8 @@ void SideBarView::mouseMoveEvent(QMouseEvent *event)
 
 void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 {
-    previousRowCount = model()->rowCount();
-    fetchDragEventUrlsFromSharedMemory();
+    d->previousRowCount = model()->rowCount();
+    d->fetchDragEventUrlsFromSharedMemory();
 
     if (isAccepteDragEvent(event)) {
         return;
@@ -133,7 +147,7 @@ void SideBarView::dragMoveEvent(QDragMoveEvent *event)
 
 void SideBarView::dropEvent(QDropEvent *event)
 {
-    dropPos = event->pos();
+    d->dropPos = event->pos();
     SideBarItem *item = itemAt(event->pos());
     if (!item) {
         return DListView::dropEvent(event);
@@ -224,18 +238,12 @@ QModelIndex SideBarView::indexAt(const QPoint &p) const
 
 QModelIndex SideBarView::getPreviousIndex() const
 {
-    return  m_previous;
+    return  d->previous;
 }
 
 QModelIndex SideBarView::getCurrentIndex() const
 {
-    return  m_current;
-}
-
-void SideBarView::currentChanged(const QModelIndex &previous)
-{
-    m_current = currentIndex();
-    m_previous = previous;
+    return  d->current;
 }
 
 bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction action) const
@@ -286,7 +294,7 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
 {
     Q_UNUSED(data)
     // Got a copy of urls so whatever data was changed, it won't affact the following code.
-    QList<QUrl> urls = m_urlsForDragEvent;
+    QList<QUrl> urls = d->urlsForDragEvent;
 
     if (urls.empty()) {
         return Qt::IgnoreAction;
@@ -328,7 +336,7 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
     return action;
 }
 
-bool SideBarView::isAccepteDragEvent(DFMDragEvent *event)
+bool SideBarView::isAccepteDragEvent(QDropEvent *event)
 {
     SideBarItem *item = itemAt(event->pos());
     if (!item) {
@@ -350,7 +358,7 @@ bool SideBarView::isAccepteDragEvent(DFMDragEvent *event)
     return accept;
 }
 
-bool SideBarView::fetchDragEventUrlsFromSharedMemory()
+bool SideBarViewPrivate::fetchDragEventUrlsFromSharedMemory()
 {
     QSharedMemory sm;
     sm.setKey(DRAG_EVENT_URLS);
@@ -370,18 +378,18 @@ bool SideBarView::fetchDragEventUrlsFromSharedMemory()
     //用缓冲区得到共享内存关联后得到的数据和数据大小
     buffer.setData((char *)sm.constData(), sm.size());
     buffer.open(QBuffer::ReadOnly);     //设置读取模式
-    in >> m_urlsForDragEvent;               //使用数据流从缓冲区获得共享内存的数据，然后输出到字符串中
+    in >> urlsForDragEvent;               //使用数据流从缓冲区获得共享内存的数据，然后输出到字符串中
     sm.unlock();    //解锁
     sm.detach();//与共享内存空间分离
 
     return true;
 }
 
-bool SideBarView::checkOpTime()
+bool SideBarViewPrivate::checkOpTime()
 {
     //如果两次操作时间间隔足够长，则返回true
-    if (QDateTime::currentDateTime().toMSecsSinceEpoch() - m_lastOpTime > 200) {
-        m_lastOpTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
+    if (QDateTime::currentDateTime().toMSecsSinceEpoch() - lastOpTime > 200) {
+        lastOpTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
         return true;
     }
 

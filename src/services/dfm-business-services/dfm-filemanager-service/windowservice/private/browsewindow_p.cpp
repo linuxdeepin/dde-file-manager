@@ -27,63 +27,63 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-DFMAddressBar *DFMBrowseWindowPrivate::addressBar() const
+AddressBar *BrowseWindowPrivate::addressBar() const
 {
-    return m_addressBar;
+    return addressBarIns;
 }
 
-void DFMBrowseWindowPrivate::setAddressBar(DFMAddressBar *addressBar)
+void BrowseWindowPrivate::setAddressBar(AddressBar *addressBar)
 {
-    if (!m_titleBarLayout) return;
+    if (!titleBarLayoutIns) return;
 
-    if (!m_titleBarLayout->replaceWidget(addressBar,m_addressBar)->isEmpty())
+    if (!addressBar) return;
+
+    if (!titleBarLayoutIns->replaceWidget(addressBarIns,addressBar))
     {
-        if (m_addressBar) {
-            delete m_addressBar;
-            m_addressBar = nullptr;
+        if (addressBar) {
+            delete addressBar;
+            addressBar = nullptr;
         }
-
-        if (m_addressBar)
-        {
-            m_addressBar = addressBar;
-        }
+    } else {
+        addressBarIns = addressBar;
     }
+
 }
 
-void DFMBrowseWindowPrivate::doSearchButtonClicked(bool checked)
+void BrowseWindowPrivate::doSearchButtonClicked(bool checked)
 {
     Q_UNUSED(checked);
     showAddrsssBar();
-    m_searchButton->hide();
+    searchButtonIns->hide();
 }
 
-void DFMBrowseWindowPrivate::doViewModeButtonClicked(bool checked)
+void BrowseWindowPrivate::doViewModeButtonClicked(bool checked)
 {
     Q_UNUSED(checked);
 
-    DFMBrowseView* view = qobject_cast<DFMBrowseView*>(currentDisplayView());
+    BrowseView* view = qobject_cast<BrowseView*>(currentDisplayView());
 
     if (!view || !sender() || !optionButtonBox()
             || !listViewButton() || !iconViewButton()) return ;
 
     if (sender() == listViewButton()) {
         iconViewButton()->setChecked(false);
-        view->setViewMode(DFMBrowseView::ViewMode::ListMode);
+        view->setViewMode(BrowseView::ViewMode::ListMode);
     }
 
     if (sender() == iconViewButton()) {
         listViewButton()->setChecked(false);
-        view->setViewMode(DFMBrowseView::ViewMode::IconMode);
+        view->setViewMode(BrowseView::ViewMode::IconMode);
     }
 }
 
-QWidget *DFMBrowseWindowPrivate::currentDisplayView()
+QWidget *BrowseWindowPrivate::currentDisplayView()
 {
-    if (!m_splitter) return nullptr;
-    return m_splitter->widget(1);
+    if (!splitterIns) return nullptr;
+    return splitterIns->widget(1);
 }
 
-DFMBrowseWindowPrivate::DFMBrowseWindowPrivate(DFMBrowseWindow *qq)
+BrowseWindowPrivate::BrowseWindowPrivate(BrowseWindow *qq)
     : QObject(qq),
       q_ptr(qq)
 {
@@ -91,82 +91,87 @@ DFMBrowseWindowPrivate::DFMBrowseWindowPrivate(DFMBrowseWindow *qq)
     qq->installEventFilter(this);
 }
 
-void DFMBrowseWindowPrivate::setDefaultViewMode(QListView::ViewMode mode)
+BrowseWindowPrivate::~BrowseWindowPrivate()
 {
-    m_mode = mode;
+
 }
 
-void DFMBrowseWindowPrivate::setRootUrl(const QUrl &url)
+void BrowseWindowPrivate::setDefaultViewMode(QListView::ViewMode mode)
+{
+    BrowseWindowPrivate::mode = mode;
+}
+
+void BrowseWindowPrivate::setRootUrl(const QUrl &url)
 {
     //添加url到历史导航
-    if (m_navWidget && sender() != m_navWidget) {
-        m_navWidget->appendUrl(url);
-        QObject::connect(m_navWidget, &DFMNavWidget::releaseUrl,
-                         this, &DFMBrowseWindowPrivate::setRootUrl,
+    if (navWidgetIns && sender() != navWidgetIns) {
+        navWidgetIns->appendUrl(url);
+        QObject::connect(navWidgetIns, &NavWidget::releaseUrl,
+                         this, &BrowseWindowPrivate::setRootUrl,
                          Qt::UniqueConnection);
     }
 
     //切换麵包屑
-    if (m_crumbBar)
-        m_crumbBar->setRootUrl(url);
+    if (crumbBarIns)
+        crumbBarIns->setRootUrl(url);
 
     //切换sidebar
-    if (m_sidebar)
-        m_sidebar->setCurrentUrl(url);
+    if (sidebarIns)
+        sidebarIns->setCurrentUrl(url);
 
     //切換view
-    if (!m_displayCheckView.checkViewUrl(url)) {
+    if (!displayCheckViewIns.checkViewUrl(url)) {
 
         qWarning() << Q_FUNC_INFO << "Failed default URL check";
         //显示 checkView(Label)
-        return m_displayCheckView.showBeginLogic();
+        return displayCheckViewIns.showBeginLogic();
 
     } else {
 
         QString errorString;
-        DFMDisplayViewLogic* viewLogic = m_views.value(url.scheme());
+        DisplayViewLogic* viewLogic = views.value(url.scheme());
         QWidget* viewWidget = dynamic_cast<QWidget*>(viewLogic);
         if (!viewLogic) { // scheme 关联的view url检查失败
-            m_displayCheckView.setText(QObject::tr("You can't use view to display. "
+            displayCheckViewIns.setText(QObject::tr("You can't use view to display. "
                                                    "You need to add view before that"));
 
             //取消功能按钮的显示
-            m_optionButtonBox->hide();
+            optionButtonBoxIns->hide();
             //显示 checkView(Label)
-            if (&m_displayCheckView != m_splitter->widget(1))
-                m_splitter->replaceWidget(1, &m_displayCheckView);
+            if (&displayCheckViewIns != splitterIns->widget(1))
+                splitterIns->replaceWidget(1, &displayCheckViewIns);
 
-            return m_displayCheckView.showBeginLogic();
+            return displayCheckViewIns.showBeginLogic();
         }
 
         if (viewLogic && !viewLogic->checkViewUrl(url, &errorString)) {
             //设置当前错误信息
-            m_displayCheckView.setText(errorString);
+            displayCheckViewIns.setText(errorString);
             //取消功能按钮的显示
-            m_optionButtonBox->hide();
+            optionButtonBoxIns->hide();
             //依然显示 checkView(Label)
-            return m_displayCheckView.showBeginLogic();
+            return displayCheckViewIns.showBeginLogic();
         } else { //正常show logic
 
-            if (m_splitter && viewWidget != m_splitter->widget(1))
-                m_splitter->replaceWidget(1, viewWidget);
+            if (splitterIns && viewWidget != splitterIns->widget(1))
+                splitterIns->replaceWidget(1, viewWidget);
 
             QObject::connect(iconViewButton(), &QToolButton::clicked,
-                             this, &DFMBrowseWindowPrivate::doViewModeButtonClicked,
+                             this, &BrowseWindowPrivate::doViewModeButtonClicked,
                              Qt::UniqueConnection);
 
             QObject::connect(listViewButton(), &QToolButton::clicked,
-                             this, &DFMBrowseWindowPrivate::doViewModeButtonClicked,
+                             this, &BrowseWindowPrivate::doViewModeButtonClicked,
                              Qt::UniqueConnection);
 
-            if (m_mode == DFMBrowseView::IconMode) {
+            if (mode == BrowseView::IconMode) {
                 if (listViewButton())
                     listViewButton()->setChecked(false);
                 if (iconViewButton())
                     iconViewButton()->setChecked(true);
             }
 
-            if (m_mode == DFMBrowseView::ListMode) {
+            if (mode == BrowseView::ListMode) {
                 if (listViewButton())
                     listViewButton()->setChecked(true);
                 if (iconViewButton())
@@ -176,7 +181,7 @@ void DFMBrowseWindowPrivate::setRootUrl(const QUrl &url)
             //设置当前url
             viewLogic->setRootUrl(url);
             //取消默认的CheckView显示
-            m_displayCheckView.showEndLogic();
+            displayCheckViewIns.showEndLogic();
             //展示当前view
             viewLogic->showBeginLogic();
         }
@@ -184,113 +189,113 @@ void DFMBrowseWindowPrivate::setRootUrl(const QUrl &url)
     }
 }
 
-DButtonBoxButton *DFMBrowseWindowPrivate::navBackButton() const
+DButtonBoxButton *BrowseWindowPrivate::navBackButton() const
 {
-    return m_navWidget->navBackButton();
+    return navWidgetIns->navBackButton();
 }
 
-void DFMBrowseWindowPrivate::setNavBackButton(DButtonBoxButton *navBackButton)
+void BrowseWindowPrivate::setNavBackButton(DButtonBoxButton *navBackButton)
 {
-    return m_navWidget->setNavBackButton(navBackButton);
+    return navWidgetIns->setNavBackButton(navBackButton);
 }
 
-DButtonBoxButton *DFMBrowseWindowPrivate::navForwardButton() const
+DButtonBoxButton *BrowseWindowPrivate::navForwardButton() const
 {
-    return m_navWidget->navForwardButton();
+    return navWidgetIns->navForwardButton();
 }
 
-void DFMBrowseWindowPrivate::setNavForwardButton(DButtonBoxButton *navForwardButton)
+void BrowseWindowPrivate::setNavForwardButton(DButtonBoxButton *navForwardButton)
 {
-    return m_navWidget->setNavForwardButton(navForwardButton);
+    return navWidgetIns->setNavForwardButton(navForwardButton);
 }
 
-void DFMBrowseWindowPrivate::setSearchButton(QToolButton *searchButton)
+void BrowseWindowPrivate::setSearchButton(QToolButton *searchButton)
 {
 
-    if (!m_titleBarLayout->replaceWidget(searchButton,m_searchButton)->isEmpty()) {
+    if (!titleBarLayoutIns->replaceWidget(searchButton,searchButton)->isEmpty()) {
 
-        if (m_searchButton) {
-            delete m_searchButton;
-            m_searchButton = nullptr;
+        if (searchButton) {
+            delete searchButton;
+            searchButton = nullptr;
         }
 
-        if (!m_searchButton)
-            m_searchButton = searchButton;
+        if (!searchButton)
+            searchButtonIns = searchButton;
 
-        if (m_searchButton->icon().isNull())
-            m_searchButton->setIcon(QIcon::fromTheme("search"));
+        if (searchButton->icon().isNull())
+            searchButton->setIcon(QIcon::fromTheme("search"));
 
-        m_searchButton->setFixedSize({36,36});
-        m_searchButton->setFocusPolicy(Qt::NoFocus);
-        m_searchButton->setIconSize({16,16});
+        searchButton->setFixedSize({36,36});
+        searchButton->setFocusPolicy(Qt::NoFocus);
+        searchButton->setIconSize({16,16});
 
-        QObject::connect(m_searchButton, &QToolButton::clicked,
-                         this, &DFMBrowseWindowPrivate::doSearchButtonClicked,
+        QObject::connect(searchButton, &QToolButton::clicked,
+                         this, &BrowseWindowPrivate::doSearchButtonClicked,
                          Qt::UniqueConnection);
     }
 }
 
-QToolButton *DFMBrowseWindowPrivate::searchButton() const
+QToolButton *BrowseWindowPrivate::searchButton() const
 {
-    return m_searchButton;
+    return searchButtonIns;
 }
 
-QToolButton *DFMBrowseWindowPrivate::searchFilterButton() const
+QToolButton *BrowseWindowPrivate::searchFilterButton() const
 {
-    return m_searchFilterButton;
+    return searchFilterButtonIns;
 }
 
-void DFMBrowseWindowPrivate::setSearchFilterButton(QToolButton *searchFilterButton)
+void BrowseWindowPrivate::setSearchFilterButton(QToolButton *searchFilterButton)
 {
-    m_searchFilterButton = searchFilterButton;
+    searchFilterButtonIns = searchFilterButton;
 }
 
-DFMOptionButtonBox *DFMBrowseWindowPrivate::optionButtonBox() const
+OptionButtonBox *BrowseWindowPrivate::optionButtonBox() const
 {
-    return m_optionButtonBox;
+    return optionButtonBoxIns;
 }
 
-void DFMBrowseWindowPrivate::setOptionButtonBox(DFMOptionButtonBox *optionButtonBox)
+void BrowseWindowPrivate::setOptionButtonBox(OptionButtonBox *optionButtonBox)
 {
-    m_optionButtonBox = optionButtonBox;
+    optionButtonBoxIns = optionButtonBox;
 }
 
-QToolButton *DFMBrowseWindowPrivate::listViewButton() const
+QToolButton *BrowseWindowPrivate::listViewButton() const
 {
     if (optionButtonBox())
         return optionButtonBox()->listViewButton();
     return nullptr;
 }
 
-void DFMBrowseWindowPrivate::setListViewButton(QToolButton *button)
+void BrowseWindowPrivate::setListViewButton(QToolButton *button)
 {
     if (optionButtonBox())
         optionButtonBox()->setListViewButton(button);
 }
 
-QToolButton *DFMBrowseWindowPrivate::iconViewButton() const
+QToolButton *BrowseWindowPrivate::iconViewButton() const
 {
     if (optionButtonBox())
         return optionButtonBox()->iconViewButton();
     return nullptr;
 }
 
-void DFMBrowseWindowPrivate::setIconViewButton(QToolButton *button){
+void BrowseWindowPrivate::setIconViewButton(QToolButton *button){
     if (optionButtonBox())
         optionButtonBox()->setIconViewButton(button);
 }
 
-DFMCrumbBar *DFMBrowseWindowPrivate::crumbBar() const
+CrumbBar *BrowseWindowPrivate::crumbBar() const
 {
-    return m_crumbBar;
+    return crumbBarIns;
 }
 
-void DFMBrowseWindowPrivate::setCrumbBar(DFMCrumbBar *crumbBar)
+void BrowseWindowPrivate::setCrumbBar(CrumbBar *crumbBar)
 {
-    m_crumbBar = crumbBar;
+    crumbBarIns = crumbBar;
 }
 
-void DFMBrowseWindowPrivate::addview(const QString &scheme, DFMDisplayViewLogic* logic)
+void BrowseWindowPrivate::addview(const QString &scheme, DisplayViewLogic* logic)
 {
     auto viewWidget = dynamic_cast<QWidget*>(logic);
     if (!viewWidget) {
@@ -298,167 +303,170 @@ void DFMBrowseWindowPrivate::addview(const QString &scheme, DFMDisplayViewLogic*
                    << "Error, can't to add logic view, "
                       "cause not inherit QWidget";
     } else {
-        m_views.insert(scheme,logic);
+        views.insert(scheme,logic);
     }
 }
 
-bool DFMBrowseWindowPrivate::viewIsAdded(const QString &scheme)
+bool BrowseWindowPrivate::viewIsAdded(const QString &scheme)
 {
-    return m_views.value(scheme);
+    if (nullptr == views.value(scheme))
+        return false;
+    else
+        return true;
 }
 
-QWidget *DFMBrowseWindowPrivate::propertyView() const
+QWidget *BrowseWindowPrivate::propertyView() const
 {
-    return m_propertyView;
+    return propertyViewIns;
 }
 
-void DFMBrowseWindowPrivate::setPropertyView(QWidget *propertyView)
+void BrowseWindowPrivate::setPropertyView(QWidget *propertyView)
 {
-    m_propertyView = propertyView;
+    propertyView = propertyView;
 }
 
-SideBar *DFMBrowseWindowPrivate::sidebar() const
+SideBar *BrowseWindowPrivate::sidebar() const
 {
-    return m_sidebar;
+    return sidebarIns;
 }
 
-void DFMBrowseWindowPrivate::setSidebar(SideBar *sidebar)
+void BrowseWindowPrivate::setSidebar(SideBar *sidebar)
 {
-    m_sidebar = sidebar;
+    sidebar = sidebar;
 }
 
-void DFMBrowseWindowPrivate::initDefaultLayout()
+void BrowseWindowPrivate::initDefaultLayout()
 {
     q_ptr->titlebar()->setIcon(QIcon::fromTheme("dde-file-manager",
                                                 QIcon::fromTheme("system-file-manager")));
 
-    if (!m_titleBar) {
-        m_titleBar = new QFrame;
+    if (!titleBarIns) {
+        titleBarIns = new QFrame;
     }
 
-    if (!m_titleBarLayout) {
-        m_titleBarLayout = new QHBoxLayout(m_titleBar);
-        m_titleBarLayout->setMargin(0);
-        m_titleBarLayout->setSpacing(0);
+    if (!titleBarLayoutIns) {
+        titleBarLayoutIns = new QHBoxLayout(titleBarIns);
+        titleBarLayoutIns->setMargin(0);
+        titleBarLayoutIns->setSpacing(0);
     }
 
-    if (!m_navWidget) {
-        m_navWidget = new DFMNavWidget;
-        m_titleBarLayout->addSpacing(14); //导航栏左侧间隔14
-        m_titleBarLayout->addWidget(m_navWidget,0,Qt::AlignLeft);
+    if (!navWidgetIns) {
+        navWidgetIns = new NavWidget;
+        titleBarLayoutIns->addSpacing(14); //导航栏左侧间隔14
+        titleBarLayoutIns->addWidget(navWidgetIns, 0, Qt::AlignLeft);
     }
 
-    if (!m_addressBar) {
-        m_addressBar = new DFMAddressBar;
-        m_addressBar->setFixedHeight(36);
-        m_addressBar->installEventFilter(this);
-        m_titleBarLayout->addSpacing(4);
-        m_titleBarLayout->addWidget(m_addressBar);
+    if (!addressBarIns) {
+        addressBarIns = new AddressBar;
+        addressBarIns->setFixedHeight(36);
+        addressBarIns->installEventFilter(this);
+        titleBarLayoutIns->addSpacing(4);
+        titleBarLayoutIns->addWidget(addressBarIns);
     }
 
-    if (!m_crumbBar) {
-        m_crumbBar = new DFMCrumbBar;
-        m_titleBarLayout->addWidget(m_crumbBar);
+    if (!crumbBarIns) {
+        crumbBarIns = new CrumbBar;
+        titleBarLayoutIns->addWidget(crumbBarIns);
     }
 
-    if (!m_searchButton) {
-        m_searchButton = new QToolButton;
-        m_searchButton->setFixedSize({36,36});
-        m_searchButton->setFocusPolicy(Qt::NoFocus);
-        m_searchButton->setIcon(QIcon::fromTheme("search"));
-        m_searchButton->setIconSize({16,16});
-        m_titleBarLayout->addWidget(m_searchButton);
-        QObject::connect(m_searchButton, &QToolButton::clicked,
-                         this, &DFMBrowseWindowPrivate::doSearchButtonClicked,
+    if (!searchButtonIns) {
+        searchButtonIns = new QToolButton;
+        searchButtonIns->setFixedSize({36,36});
+        searchButtonIns->setFocusPolicy(Qt::NoFocus);
+        searchButtonIns->setIcon(QIcon::fromTheme("search"));
+        searchButtonIns->setIconSize({16,16});
+        titleBarLayoutIns->addWidget(searchButtonIns);
+        QObject::connect(searchButtonIns, &QToolButton::clicked,
+                         this, &BrowseWindowPrivate::doSearchButtonClicked,
                          Qt::UniqueConnection);
     }
 
-    if (!m_searchFilterButton) {
-        m_searchFilterButton = new QToolButton;
-        m_searchFilterButton->setFixedSize({36,36});
-        m_searchFilterButton->setFocusPolicy(Qt::NoFocus);
-        m_searchFilterButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
-        m_searchFilterButton->setIconSize({16,16});
-        m_titleBarLayout->addWidget(m_searchFilterButton);
+    if (!searchFilterButtonIns) {
+        searchFilterButtonIns = new QToolButton;
+        searchFilterButtonIns->setFixedSize({36,36});
+        searchFilterButtonIns->setFocusPolicy(Qt::NoFocus);
+        searchFilterButtonIns->setIcon(QIcon::fromTheme("dfview_filter"));
+        searchFilterButtonIns->setIconSize({16,16});
+        titleBarLayoutIns->addWidget(searchFilterButtonIns);
     }
 
-    if (!m_optionButtonBox) {
-        m_optionButtonBox = new DFMOptionButtonBox;
-        m_titleBarLayout->addSpacing(4);
-        m_titleBarLayout->addWidget(m_optionButtonBox,0,Qt::AlignRight);
+    if (!optionButtonBoxIns) {
+        optionButtonBoxIns = new OptionButtonBox;
+        titleBarLayoutIns->addSpacing(4);
+        titleBarLayoutIns->addWidget(optionButtonBoxIns, 0, Qt::AlignRight);
     }
 
-    if (m_titleBar) {
-        m_titleBar->setLayout(m_titleBarLayout);
-        m_titleBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        q_ptr->titlebar()->setCustomWidget(m_titleBar);
+    if (titleBarIns) {
+        titleBarIns->setLayout(titleBarLayoutIns);
+        titleBarIns->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        q_ptr->titlebar()->setCustomWidget(titleBarIns);
     }
 
-    if (!m_splitter) {
-        m_splitter = new DFMSplitter(Qt::Orientation::Horizontal);
-        m_splitter->setChildrenCollapsible(false);
-        m_splitter->setHandleWidth(0);
+    if (!splitterIns) {
+        splitterIns = new Splitter(Qt::Orientation::Horizontal);
+        splitterIns->setChildrenCollapsible(false);
+        splitterIns->setHandleWidth(0);
 
         if (!q_ptr->centralWidget())
-            q_ptr->setCentralWidget(m_splitter);
+            q_ptr->setCentralWidget(splitterIns);
     }
 
-    if (!m_sidebar)
-        m_sidebar = new SideBar;
+    if (!sidebarIns)
+        sidebarIns = new SideBar;
 
-    m_splitter->addWidget(m_sidebar);
+    splitterIns->addWidget(sidebarIns);
 
-    if (m_displayCheckView.text().isEmpty())
-        m_displayCheckView.setText(m_displayCheckView.metaObject()->className());
+    if (displayCheckViewIns.text().isEmpty())
+        displayCheckViewIns.setText(displayCheckViewIns.metaObject()->className());
 
-    m_splitter->addWidget(&m_displayCheckView);
+    splitterIns->addWidget(&displayCheckViewIns);
 
-    if (!m_displayWidget)
-        m_displayWidget = new QWidget;
+    if (!displayWidgetIns)
+        displayWidgetIns = new QWidget;
 
-    if (!m_displayViewLayout)
-        m_displayViewLayout = new QVBoxLayout;
+    if (!displayViewLayoutIns)
+        displayViewLayoutIns = new QVBoxLayout;
 
-    m_displayWidget->setLayout(m_displayViewLayout);
-    m_splitter->addWidget(m_displayWidget);
+    displayWidgetIns->setLayout(displayViewLayoutIns);
+    splitterIns->addWidget(displayWidgetIns);
 
     showCrumbBar();
 }
 
-void DFMBrowseWindowPrivate::showAddrsssBar()
+void BrowseWindowPrivate::showAddrsssBar()
 {
-    m_crumbBar->hide();
-    m_addressBar->show();
-    m_addressBar->setFocus();
+    crumbBarIns->hide();
+    addressBarIns->show();
+    addressBarIns->setFocus();
 }
 
-void DFMBrowseWindowPrivate::showCrumbBar()
+void BrowseWindowPrivate::showCrumbBar()
 {
     showSearchButton();
 
-    if (m_crumbBar) m_crumbBar->show();
+    if (crumbBarIns) crumbBarIns->show();
 
-    if (m_addressBar) {
-        m_addressBar->clear();
-        m_addressBar->hide();
+    if (addressBarIns) {
+        addressBarIns->clear();
+        addressBarIns->hide();
     }
 
     if (q_ptr) q_ptr->setFocus();
 }
 
-void DFMBrowseWindowPrivate::showSearchButton()
+void BrowseWindowPrivate::showSearchButton()
 {
-    if (m_searchButton) m_searchButton->show();
-    if (m_searchFilterButton) m_searchFilterButton->hide();
+    if (searchButtonIns) searchButtonIns->show();
+    if (searchFilterButtonIns) searchFilterButtonIns->hide();
 }
 
-void DFMBrowseWindowPrivate::showSearchFilterButton()
+void BrowseWindowPrivate::showSearchFilterButton()
 {
-    if (m_searchButton) m_searchButton->hide();
-    if (m_searchFilterButton) m_searchFilterButton->show();
+    if (searchButtonIns) searchButtonIns->hide();
+    if (searchFilterButtonIns) searchFilterButtonIns->show();
 }
 
-bool DFMBrowseWindowPrivate::eventFilter(QObject *watched, QEvent *event)
+bool BrowseWindowPrivate::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == q_ptr && event->type() == QEvent::Show) {
         q_ptr->activateWindow();

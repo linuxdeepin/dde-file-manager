@@ -26,8 +26,22 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
 {
     Q_DECLARE_PUBLIC(LocalFileInfo)
     LocalFileInfo *q_ptr;
+    mutable QIcon icon; // 文件的icon
+    mutable LocalFileInfo::DFMEmblemInfos EmblemsInfo;   // 文件的扩展属性
+    mutable QAtomicInteger<bool> iconFromTheme { false }; // icon是否是来自缩略图
+    mutable QAtomicInteger<bool> requestingThumbnail { false };   // 请求缩略图
+    mutable QAtomicInteger<bool> needThumbnail { false }; // 是否需要缩略图
+    mutable QAtomicInteger<qint8> hasThumbnail { -1 }; // 是否拥有缩略图
+    mutable QAtomicInteger<qint8> lowSpeedFile { -1 }; // 是否是低速设备
+    mutable QAtomicInteger<bool> epInitialized { false }; // 扩展属性是否初始化
+    mutable QMimeType mimeType; // 文件的mimetype
+    mutable QAtomicInteger<quint64> inode { 0 };  // 文件的inode，唯一表示符
+    mutable QVariantHash extraProperties; // 扩展属性列表
+    mutable QPointer<QTimer> getEPTimer; // 获取扩展属性的计时器
+    mutable QPointer<QTimer> getIconTimer; // 获取icon的计时器
+    mutable MimeDatabase::FileType cacheFileType { MimeDatabase::FileType::Unknown }; // 缓存文件的FileType
 public:
-    LocalFileInfoPrivate(LocalFileInfo *qq);
+    explicit LocalFileInfoPrivate(LocalFileInfo *qq);
     virtual ~LocalFileInfoPrivate();
     QString sizeString(const QString &str) const
     {
@@ -52,21 +66,6 @@ public:
     bool isLowSpeedFile() const;
     virtual QMimeType readMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const;
 
-private:
-    mutable QIcon icon; // 文件的icon
-    mutable LocalFileInfo::DFMEmblemInfos EmblemsInfo;   // 文件的扩展属性
-    mutable QAtomicInteger<bool> iconFromTheme { false }; // icon是否是来自缩略图
-    mutable QAtomicInteger<bool> requestingThumbnail { false };   // 请求缩略图
-    mutable QAtomicInteger<bool> needThumbnail { false }; // 是否需要缩略图
-    mutable QAtomicInteger<qint8> hasThumbnail { -1 }; // 是否拥有缩略图
-    mutable QAtomicInteger<qint8> lowSpeedFile { -1 }; // 是否是低速设备
-    mutable QAtomicInteger<bool> epInitialized { false }; // 扩展属性是否初始化
-    mutable QMimeType mimeType; // 文件的mimetype
-    mutable QAtomicInteger<quint64> inode { 0 };  // 文件的inode，唯一表示符
-    mutable QVariantHash extraProperties; // 扩展属性列表
-    mutable QPointer<QTimer> getEPTimer; // 获取扩展属性的计时器
-    mutable QPointer<QTimer> getIconTimer; // 获取icon的计时器
-    mutable MimeDatabase::FileType m_cacheFileType { MimeDatabase::FileType::Unknown }; // 缓存文件的FileType
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(LocalFileInfo *qq)

@@ -26,12 +26,35 @@
 #include "base/schemefactory.h"
 
 DFMBASE_BEGIN_NAMESPACE
+
+LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags, LocalDirIterator *q)
+    : q_ptr(q),
+      url(url)
+{
+    Q_UNUSED(nameFilters);
+    Q_UNUSED(filters);
+    Q_UNUSED(flags);
+    QUrl temp = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
+    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(temp.scheme(), temp);
+    if (!factory) {
+        qWarning("create factory failed.");
+//        abort();
+        return;
+    }
+
+    dfmioDirIterator = factory->createEnumerator();
+    if (!dfmioDirIterator) {
+        qWarning("create enumerator failed.");
+//        abort();
+        return;
+    }
+}
+
 /*!
  * @class LocalDirIterator 本地（即和系统盘在同一个磁盘的目录）文件迭代器类
  *
  * @brief 使用dfm-io实现了本文件的迭代器
  */
-
 LocalDirIterator::LocalDirIterator(const QUrl &url,
                                        const QStringList &nameFilters,
                                        QDir::Filters filters,

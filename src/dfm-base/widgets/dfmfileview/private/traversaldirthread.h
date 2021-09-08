@@ -36,22 +36,22 @@ DFMBASE_BEGIN_NAMESPACE
 class TraversalDirThread : public QThread
 {
     Q_OBJECT
+    QUrl dirUrl; // 遍历的目录的url
+    QSharedPointer<LocalDirIterator> m_dirIterator; // 当前遍历目录的diriterator
+    DThreadList<QSharedPointer<FileViewItem>> m_childrenList; // 当前遍历出来的所有文件
 public:
     explicit TraversalDirThread(const QUrl& url, const QStringList &nameFilters = QStringList(),
                                    QDir::Filters filters = QDir::NoFilter,
                                    QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
                                    QObject *parent = nullptr);
-    ~TraversalDirThread() override;
+    virtual ~TraversalDirThread() override;
 
 Q_SIGNALS:
     void updateChildren(const QList<QSharedPointer<FileViewItem>> &children);
 
 protected:
     virtual void run() override;
-private:   
-    QUrl m_dirUrl; // 遍历的目录的url
-    QSharedPointer<LocalDirIterator> m_dirIterator; // 当前遍历目录的diriterator
-    DThreadList<QSharedPointer<FileViewItem>> m_childrenList; // 当前遍历出来的所有文件
+
 };
 DFMBASE_END_NAMESPACE
 

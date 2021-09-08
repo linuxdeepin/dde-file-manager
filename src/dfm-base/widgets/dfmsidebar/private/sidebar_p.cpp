@@ -1,11 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2019 Deepin Technology Co., Ltd.
  *
- * Author:     yanghao<yanghao@uniontech.com>
+ * Author:     Gary Wang <wzc782970009@gmail.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
+ * Maintainer: Gary Wang <wangzichong@deepin.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMBOWSEVIEW_P_H
-#define DFMBOWSEVIEW_P_H
+#include "dfm_base_global.h"
+#include "dfm-base/widgets/dfmsidebar/sidebaritem.h"
+#include "dfm-base/widgets/dfmsidebar/private/sidebar_p.h"
 
-#include "windowservice/browseview.h"
+#include <QApplication>
+#include <QUrl>
 
-#endif // DFMBOWSEVIEW_P_H
+DFMBASE_BEGIN_NAMESPACE
+
+DFMBASE_END_NAMESPACE

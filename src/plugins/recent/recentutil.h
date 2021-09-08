@@ -28,6 +28,7 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/urlroute.h"
 
+#include <QUrl>
 #include <QDomDocument>
 #include <QStandardPaths>
 #include <QFile>

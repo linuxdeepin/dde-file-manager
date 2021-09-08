@@ -24,17 +24,28 @@
 
 DSB_FM_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DFMDisplayViewLogic::DFMDisplayViewLogic()
+
+/**
+ * @class DFMDisplayViewLogic
+ * @brief 展示的view界面共有逻辑类
+ * 框架执行流程为：
+ *      1.checkViewUrl
+ *      2.setRootUrl
+ *      3.showBeginLogic
+ *      4.showEndLogic
+ */
+DisplayViewLogic::DisplayViewLogic()
 {
 
 }
 
-DFMDisplayViewLogic::~DFMDisplayViewLogic()
+DisplayViewLogic::~DisplayViewLogic()
 {
 
 }
 
-bool DFMDisplayViewLogic::checkViewUrl(const QUrl &url, QString *errorString)
+//检查当前传入的url是否被view支持
+bool DisplayViewLogic::checkViewUrl(const QUrl &url, QString *errorString)
 {
     if(url.scheme().isEmpty() || !UrlRoute::hasScheme(url.scheme()))
     {
@@ -45,7 +56,9 @@ bool DFMDisplayViewLogic::checkViewUrl(const QUrl &url, QString *errorString)
     return true;
 }
 
-void DFMDisplayViewLogic::showBeginLogic()
+//run in main loop,cause show dialog and so on.
+//展示view之前逻辑
+void DisplayViewLogic::showBeginLogic()
 {
     auto selfWidget = dynamic_cast<QWidget*>(this);
     if (selfWidget) {
@@ -53,7 +66,9 @@ void DFMDisplayViewLogic::showBeginLogic()
     }
 }
 
-void DFMDisplayViewLogic::showEndLogic()
+//用于view切换关闭的逻辑
+//run in main loop, hide self widget
+void DisplayViewLogic::showEndLogic()
 {
     auto selfWidget = dynamic_cast<QWidget*>(this);
     if (selfWidget) {

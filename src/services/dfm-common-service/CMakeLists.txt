@@ -3,30 +3,30 @@ cmake_minimum_required(VERSION 3.1.0)
 # 定义可执行程序名称
 project(dfm-common-service)
 
-set(${PROJECT_NAME}_global_h
+set(GLOBAL_H
     dfm_common_service_global.h)
 
-set(${PROJECT_NAME}_event_h
+set(EVENT_H
     )
 
-set(${PROJECT_NAME}_event_cpp
+set(EVENT_CPP
     )
 
-set(${PROJECT_NAME}_job_h
+set(JOB_H
     job/abstractjobhandler.h
     )
 
-set(${PROJECT_NAME}_job_cpp
+set(JOB_CPP
     job/abstractjobhandler.cpp
     )
 
 add_library(${PROJECT_NAME}
     SHARED
-    ${${PROJECT_NAME}_global_h}
-    ${${PROJECT_NAME}_event_h}
-    ${${PROJECT_NAME}_event_cpp}
-    ${${PROJECT_NAME}_job_h}
-    ${${PROJECT_NAME}_job_cpp}
+    ${GLOBAL_H}
+    ${EVENT_H}
+    ${EVENT_CPP}
+    ${JOB_H}
+    ${JOB_CPP}
     )
 
 target_link_libraries(

@@ -31,27 +31,32 @@
 #include <QQueue>
 
 DFMBASE_BEGIN_NAMESPACE
-class FileViewModelPrivate
+class FileViewModelPrivate : public QObject
 {
+    Q_OBJECT
+    Q_DECLARE_PUBLIC(FileViewModel)
     FileViewModel * q_ptr;
-
+    DThreadList<QSharedPointer<FileViewItem>> childers;
+    QSharedPointer<FileViewItem> root;
+    int column = 0;
+    AbstractFileWatcherPointer watcher;
+    QSharedPointer<TraversalDirThread> traversalThread;
 public:
     enum EventType {
         AddFile,
         RmFile
     };
     explicit FileViewModelPrivate(FileViewModel *qq);
-    ~FileViewModelPrivate();
+    virtual ~FileViewModelPrivate();
 
-private:
-    DThreadList<QSharedPointer<FileViewItem>> childers;
-    QSharedPointer<FileViewItem> root;
-    int column = 0;
-
-    AbstractFileWatcherPointer watcher;
-    QSharedPointer<TraversalDirThread> traversalThread;
-
-    Q_DECLARE_PUBLIC(FileViewModel)
+private Q_SLOTS:
+    void doFileDeleted(const QUrl &url){Q_UNUSED(url);}
+    void dofileAttributeChanged(const QUrl &url, const int &isExternalSource = 1){Q_UNUSED(url);Q_UNUSED(isExternalSource);}
+    void dofileMoved(const QUrl &fromUrl, const QUrl &toUrl){Q_UNUSED(fromUrl);Q_UNUSED(toUrl);}
+    void dofileCreated(const QUrl &url){Q_UNUSED(url);}
+    void dofileModified(const QUrl &url){Q_UNUSED(url);}
+    void dofileClosed(const QUrl &url){Q_UNUSED(url);}
+    void doUpdateChildren(const QList<QSharedPointer<FileViewItem>> &children);
 };
 DFMBASE_END_NAMESPACE
 

@@ -37,7 +37,7 @@ DSB_FM_USE_NAMESPACE
 
 namespace SaveBlock {
 extern DSB_FM_NAMESPACE::WindowService * windowServiceTemp;
-const QString SidebarDisplayText = QObject::tr("Recent");
+const QString sidebarDisplayText = QObject::tr("Recent");
 }
 
 class RecentEventRecver : public dpf::SynchEventHandler
@@ -64,9 +64,9 @@ public:
                                          << EventKeys::PROPERTY_KEY_WINDOW_INDEX
                                          << winIdx;
                 auto sidebarItem = new SideBarItem(QIcon(),
-                                                   SaveBlock::SidebarDisplayText,
+                                                   SaveBlock::sidebarDisplayText,
                                                    "core",RecentUtil::onlyRootUrl());
-                SaveBlock::windowServiceTemp->addSidebarItem(winIdx,sidebarItem);
+                SaveBlock::windowServiceTemp->insertSideBarItem(winIdx, 0, sidebarItem);
             }
         }
     }

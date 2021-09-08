@@ -20,58 +20,60 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "private/completerview_p.h"
 #include "completerview.h"
 
 DSB_FM_BEGIN_NAMESPACE
 
-DFMCompleterView::DFMCompleterView()
+CompleterView::CompleterView()
+    : d(new CompleterViewPrivate(this))
 {
-    this->setModel(&m_model);
+    this->setModel(&d->model);
 
-    m_completer.setModel(&m_model);
-    m_completer.setModel(&m_model);
-    m_completer.setPopup(this);
-    m_completer.setCompletionMode(QCompleter::PopupCompletion);
-    m_completer.setCaseSensitivity(Qt::CaseSensitive);
-    m_completer.setMaxVisibleItems(10);
+    d->completer.setModel(&d->model);
+    d->completer.setModel(&d->model);
+    d->completer.setPopup(this);
+    d->completer.setCompletionMode(QCompleter::PopupCompletion);
+    d->completer.setCaseSensitivity(Qt::CaseSensitive);
+    d->completer.setMaxVisibleItems(10);
 
-    QObject::connect(&m_completer, QOverload<const QString &>::of(&QCompleter::activated),
-                     this, QOverload<const QString &>::of(&DFMCompleterView::completerActivated));
+    QObject::connect(&d->completer, QOverload<const QString &>::of(&QCompleter::activated),
+                     this, QOverload<const QString &>::of(&CompleterView::completerActivated));
 
-    QObject::connect(&m_completer, QOverload<const QModelIndex &>::of(&QCompleter::activated),
-                     this, QOverload<const QModelIndex &>::of(&DFMCompleterView::completerActivated));
+    QObject::connect(&d->completer, QOverload<const QModelIndex &>::of(&QCompleter::activated),
+                     this, QOverload<const QModelIndex &>::of(&CompleterView::completerActivated));
 
-    QObject::connect(&m_completer, QOverload<const QString &>::of(&QCompleter::highlighted),
-                     this, QOverload<const QString &>::of(&DFMCompleterView::completerHighlighted));
+    QObject::connect(&d->completer, QOverload<const QString &>::of(&QCompleter::highlighted),
+                     this, QOverload<const QString &>::of(&CompleterView::completerHighlighted));
 
-    QObject::connect(&m_completer, QOverload<const QModelIndex &>::of(&QCompleter::highlighted),
-                     this, QOverload<const QModelIndex &>::of(&DFMCompleterView::completerHighlighted));
+    QObject::connect(&d->completer, QOverload<const QModelIndex &>::of(&QCompleter::highlighted),
+                     this, QOverload<const QModelIndex &>::of(&CompleterView::completerHighlighted));
 
-    setItemDelegate(&m_delegate);
+    setItemDelegate(&d->delegate);
 }
 
-QCompleter *DFMCompleterView::completer()
+QCompleter *CompleterView::completer()
 {
-    return &m_completer;
+    return &d->completer;
 }
 
-QStringListModel *DFMCompleterView::model()
+QStringListModel *CompleterView::model()
 {
-    return &m_model;
+    return &d->model;
 }
 
-DFMCompleterViewDelegate *DFMCompleterView::itemDelegate()
+CompleterViewDelegate *CompleterView::itemDelegate()
 {
-    return &m_delegate;
+    return &d->delegate;
 }
 
-DFMCompleterViewDelegate::DFMCompleterViewDelegate(QObject *parent)
+CompleterViewDelegate::CompleterViewDelegate(QObject *parent)
     : QStyledItemDelegate(parent)
 {
 
 }
 
-void DFMCompleterViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void CompleterViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     // prepare
     QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled)
@@ -96,12 +98,19 @@ void DFMCompleterViewDelegate::paint(QPainter *painter, const QStyleOptionViewIt
     painter->drawText(option.rect.adjusted(31, 0, 0, 0), Qt::AlignVCenter, index.data(Qt::DisplayRole).toString());
 }
 
-QSize DFMCompleterViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize CompleterViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QSize s = QStyledItemDelegate::sizeHint(option, index);
     s.setHeight(24);
 
     return s;
+}
+
+CompleterViewPrivate::CompleterViewPrivate(CompleterView *qq)
+    : QObject(qq)
+    , q_ptr(qq)
+{
+
 }
 
 DSB_FM_END_NAMESPACE

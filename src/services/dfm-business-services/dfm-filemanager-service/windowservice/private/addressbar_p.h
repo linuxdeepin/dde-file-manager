@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMADDRESSBAR_P_H
-#define DFMADDRESSBAR_P_H
+#ifndef AddressBar_P_H
+#define AddressBar_P_H
 
 #include "windowservice/addressbar.h"
 #include "windowservice/completerview.h"
@@ -49,12 +49,12 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSB_FM_BEGIN_NAMESPACE
 
-class DFMAddressBarPrivate : public QObject
+class AddressBarPrivate : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(DFMAddressBar)
-    DFMAddressBar * const q_ptr;
-    DFMCompleterView* completerView = nullptr;
+    Q_DECLARE_PUBLIC(AddressBar)
+    AddressBar * const q_ptr;
+    CompleterView* completerView = nullptr;
     QStringList inputHistory;
     QTimer timer;
     DSpinner spinner;
@@ -65,12 +65,12 @@ class DFMAddressBarPrivate : public QObject
 
 public:
 
-    explicit DFMAddressBarPrivate(DFMAddressBar * qq)
+    explicit AddressBarPrivate(AddressBar * qq)
         : QObject(qq),
           q_ptr(qq)
     {
         if (!completerView)
-            completerView = new DFMCompleterView;
+            completerView = new CompleterView;
 
         //设置补全组件
         q_ptr->setCompleter(completerView->completer());
@@ -115,7 +115,7 @@ public:
         animation.setEndValue(QVariant(0.0f));
 
         QObject::connect(&animation, &QVariantAnimation::valueChanged,
-                         q_ptr, QOverload<>::of(&DFMAddressBar::update));
+                         q_ptr, QOverload<>::of(&AddressBar::update));
 
         timer.setInterval(200);
         timer.setSingleShot(true);
@@ -126,14 +126,14 @@ public:
         });
 
         QObject::connect(qq, &QLineEdit::textEdited,
-                         this, &DFMAddressBarPrivate::procTextEdited,
+                         this, &AddressBarPrivate::procTextEdited,
                          Qt::ConnectionType::DirectConnection);
 
         QObject::connect(qq, &QLineEdit::editingFinished,
-                         this, &DFMAddressBarPrivate::inputSave);
+                         this, &AddressBarPrivate::inputSave);
 
         QObject::connect(qq, &QLineEdit::returnPressed,
-                         this, &DFMAddressBarPrivate::procReturnPressed);
+                         this, &AddressBarPrivate::procReturnPressed);
 
         qq->installEventFilter(this);
     }
@@ -240,7 +240,7 @@ public Q_SLOTS:
 
 protected:
 
-    virtual bool eventFilterKeyPress(DFMAddressBar* addressbar, QKeyEvent *event)
+    virtual bool eventFilterKeyPress(AddressBar* addressbar, QKeyEvent *event)
     {
         Q_UNUSED(addressbar)
         if (Qt::Key_Escape == event->key()) {
@@ -255,7 +255,7 @@ protected:
         return false;
     }
 
-    virtual bool eventFilterResize(DFMAddressBar *addressbar, QResizeEvent *event)
+    virtual bool eventFilterResize(AddressBar *addressbar, QResizeEvent *event)
     {
         Q_UNUSED(addressbar)
         spinner.setFixedSize(q_ptr->height() - 8, q_ptr->height() - 8);
@@ -266,7 +266,7 @@ protected:
         return false;
     }
 
-    virtual bool eventFilterShow(DFMAddressBar *addressbar, QShowEvent *event)
+    virtual bool eventFilterShow(AddressBar *addressbar, QShowEvent *event)
     {
         Q_UNUSED(addressbar)
         Q_UNUSED(event)
@@ -274,7 +274,7 @@ protected:
         return false;
     }
 
-    virtual bool eventFilterHide(DFMAddressBar *addressbar, QHideEvent *event)
+    virtual bool eventFilterHide(AddressBar *addressbar, QHideEvent *event)
     {
         Q_UNUSED(addressbar)
         Q_UNUSED(event)
@@ -283,7 +283,7 @@ protected:
         return false;
     }
 
-    virtual bool eventFilterPaint(DFMAddressBar *addressbar, QPaintEvent *event)
+    virtual bool eventFilterPaint(AddressBar *addressbar, QPaintEvent *event)
     {
         //此处调用addressbar绘制事件
         addressbar->paintEvent(event);
@@ -323,29 +323,29 @@ protected:
 
         if (watched == q_ptr && event->type() == QEvent::Show)
         {
-            return eventFilterShow(qobject_cast<DFMAddressBar*>(watched),
+            return eventFilterShow(qobject_cast<AddressBar*>(watched),
                                    dynamic_cast<QShowEvent*>(event));
         }
 
         if (watched == q_ptr && event->type() == QEvent::Hide)
         {
-            return eventFilterHide(qobject_cast<DFMAddressBar*>(watched),
+            return eventFilterHide(qobject_cast<AddressBar*>(watched),
                                    dynamic_cast<QHideEvent*>(event));
         }
 
         if (watched == q_ptr && event->type() == QEvent::Resize)
         {
-            return eventFilterResize(qobject_cast<DFMAddressBar*>(watched),
+            return eventFilterResize(qobject_cast<AddressBar*>(watched),
                                      dynamic_cast<QResizeEvent*>(event));
         }
 
         if (watched == q_ptr && event->type() == QEvent::KeyPress) {
-            return eventFilterKeyPress(qobject_cast<DFMAddressBar*>(watched),
+            return eventFilterKeyPress(qobject_cast<AddressBar*>(watched),
                                        dynamic_cast<QKeyEvent*>(event));
         }
 
         if (watched == q_ptr && event->type() == QEvent::Paint) {
-            return eventFilterPaint(qobject_cast<DFMAddressBar*>(watched),
+            return eventFilterPaint(qobject_cast<AddressBar*>(watched),
                                     dynamic_cast<QPaintEvent*>(event));
         }
 
@@ -355,4 +355,4 @@ protected:
 
 DSB_FM_END_NAMESPACE
 
-#endif //DFMADDRESSBAR_P_H
+#endif //AddressBar_P_H

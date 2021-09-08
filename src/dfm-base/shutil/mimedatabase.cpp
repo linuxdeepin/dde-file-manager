@@ -23,7 +23,6 @@
  */
 #include "shutil/mimedatabase.h"
 #include "shutil/fileutils.h"
-
 #include "base/standardpaths.h"
 
 #include <QFileInfo>

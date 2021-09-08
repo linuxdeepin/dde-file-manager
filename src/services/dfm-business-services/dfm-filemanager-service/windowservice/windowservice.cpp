@@ -39,32 +39,58 @@ WindowService::WindowService()
 
 WindowService::~WindowService()
 {
-    for (auto val: m_windowlist) {
+    for (auto val : windowList) {
         // 框架退出非程序退出，依然会存在QWidget相关操作，
         // 如果强制使用delete，那么将导致Qt机制的崩溃
         if (val) val->deleteLater();
-        m_windowlist.removeOne(val);
+        windowList.removeOne(val);
     }
 }
 
-void WindowService::addSidebarItem(int windowIndex, SideBarItem *item)
+bool WindowService::removeSideBarItem(int windowIndex, SideBarItem *item)
 {
     if (windowIndex < 0)
-        return;
+        return false;
 
-    auto sidebar = m_windowlist[windowIndex]->sidebar();
-    if (sidebar)
-        sidebar->addItem(item);
+    if (windowIndex >= windowList.size())
+        return false;
+
+    return windowList[windowIndex]->sidebar()->removeItem(item);
 }
 
-DFMBrowseWindow *WindowService::newWindow()
+bool WindowService::insertSideBarItem(int windowIndex, int row, SideBarItem *item)
 {
-    auto window = new DFMBrowseWindow();
-    m_windowlist.append(window);
+    if (windowIndex < 0)
+        return false;
+
+    if (windowIndex >= windowList.size())
+        return false;
+
+    return  windowList[windowIndex]->sidebar()->insertItem(row, item);
+}
+
+bool WindowService::addSideBarItem(int windowIndex, SideBarItem *item)
+{
+    if (windowIndex < 0)
+        return false;
+
+    if (windowIndex >= windowList.size())
+        return false;
+
+    if (-1 != windowList[windowIndex]->sidebar()->addItem(item))
+        return true;
+    else
+        return false;
+}
+
+BrowseWindow *WindowService::newWindow()
+{
+    auto window = new BrowseWindow();
+    windowList.append(window);
     return window;
 }
 
-bool WindowService::setWindowRootUrl(DFMBrowseWindow *newWindow, const QUrl &url, QString *errorString)
+bool WindowService::setWindowRootUrl(BrowseWindow *newWindow, const QUrl &url, QString *errorString)
 {
     if (!url.isValid()) {
         if (errorString) {
@@ -99,7 +125,7 @@ bool WindowService::setWindowRootUrl(DFMBrowseWindow *newWindow, const QUrl &url
     if (newWindow) {
         if (!newWindow->viewIsAdded(url.scheme())) {
             QString errorString;
-            DFMBrowseView* view = DFMBrowseWidgetFactory::instance().create<DFMBrowseView>(url);
+            BrowseView* view = BrowseWidgetFactory::instance().create<BrowseView>(url);
             if (!view) {
                 if (errorString.isEmpty()) errorString = "Unknown error";
                 qWarning() << Q_FUNC_INFO << errorString;

@@ -34,12 +34,10 @@ class WatcherCachePrivate
 {
     Q_DECLARE_PUBLIC(WatcherCache)
     WatcherCache *q_ptr;
-
+    DThreadMap<QUrl,QSharedPointer<AbstractFileWatcher>> watchers;
 public:
     explicit WatcherCachePrivate(WatcherCache *qq);
-    ~WatcherCachePrivate() {}
-    DThreadMap<QUrl,QSharedPointer<AbstractFileWatcher>> watchers;
-
+    virtual ~WatcherCachePrivate();
 };
 DFMBASE_END_NAMESPACE
 

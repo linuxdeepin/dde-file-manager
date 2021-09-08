@@ -22,6 +22,9 @@
  */
 #include "urlroute.h"
 
+#include <QDir>
+#include <QUrl>
+
 DFMBASE_BEGIN_NAMESPACE
 QList<SchemeNode> UrlRoute::SchemeMapLists{};
 /*!

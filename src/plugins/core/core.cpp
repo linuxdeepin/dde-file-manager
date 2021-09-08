@@ -112,13 +112,13 @@ void initSidebar(SideBar* sidebar)
     auto downloadsitem = new SideBarItem(downloadsIcon, QObject::tr("Downloads"), "core", downloadsUrl);
     downloadsitem->setFlags(downloadsitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
 
-    sidebar->addItem(homeItem);
-    sidebar->addItem(desktopitem);
-    sidebar->addItem(videoitem);
-    sidebar->addItem(musicitem);
-    sidebar->addItem(picturesitem);
-    sidebar->addItem(documentsitem);
-    sidebar->addItem(downloadsitem);
+    qInfo() <<  sidebar->addItem(homeItem);
+    qInfo() <<  sidebar->addItem(desktopitem);
+    qInfo() <<  sidebar->addItem(videoitem);
+    qInfo() <<  sidebar->addItem(musicitem);
+    qInfo() <<  sidebar->addItem(picturesitem);
+    qInfo() <<  sidebar->addItem(documentsitem);
+    qInfo() <<  sidebar->addItem(downloadsitem);
 
     sidebar->setMinimumWidth(120);
     sidebar->setMaximumWidth(200);
@@ -127,74 +127,74 @@ void initSidebar(SideBar* sidebar)
 static void regStandardPathClass()
 {
     UrlRoute::schemeMapRoot("home",
-                               StandardPaths::location(StandardPaths::HomePath),
-                               QIcon::fromTheme(StandardPaths::iconName(StandardPaths::HomePath)),
-                               false);
+                            StandardPaths::location(StandardPaths::HomePath),
+                            QIcon::fromTheme(StandardPaths::iconName(StandardPaths::HomePath)),
+                            false);
 
     UrlRoute::schemeMapRoot("desktop",
-                               StandardPaths::location(StandardPaths::DesktopPath),
-                               QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DesktopPath)),
-                               false);
+                            StandardPaths::location(StandardPaths::DesktopPath),
+                            QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DesktopPath)),
+                            false);
 
     UrlRoute::schemeMapRoot("videos",
-                               StandardPaths::location(StandardPaths::VideosPath),
-                               QIcon::fromTheme(StandardPaths::iconName(StandardPaths::VideosPath)),
-                               false);
+                            StandardPaths::location(StandardPaths::VideosPath),
+                            QIcon::fromTheme(StandardPaths::iconName(StandardPaths::VideosPath)),
+                            false);
 
     UrlRoute::schemeMapRoot("music",
-                               StandardPaths::location(StandardPaths::MusicPath),
-                               QIcon::fromTheme(StandardPaths::iconName(StandardPaths::MusicPath)),
-                               false);
+                            StandardPaths::location(StandardPaths::MusicPath),
+                            QIcon::fromTheme(StandardPaths::iconName(StandardPaths::MusicPath)),
+                            false);
 
     UrlRoute::schemeMapRoot("pictures",
-                               StandardPaths::location(StandardPaths::PicturesPath),
-                               QIcon::fromTheme(StandardPaths::iconName(StandardPaths::PicturesPath)),
-                               false);
+                            StandardPaths::location(StandardPaths::PicturesPath),
+                            QIcon::fromTheme(StandardPaths::iconName(StandardPaths::PicturesPath)),
+                            false);
 
     UrlRoute::schemeMapRoot("documents",
-                               StandardPaths::location(StandardPaths::DocumentsPath),
-                               QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DocumentsPath)),
-                               false);
+                            StandardPaths::location(StandardPaths::DocumentsPath),
+                            QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DocumentsPath)),
+                            false);
 
     UrlRoute::schemeMapRoot("downloads",
-                               StandardPaths::location(StandardPaths::DownloadsPath),
-                               QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DownloadsPath)),
-                               false);
+                            StandardPaths::location(StandardPaths::DownloadsPath),
+                            QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DownloadsPath)),
+                            false);
 
     InfoFactory::instance().regClass<LocalFileInfo>("home");
     DirIteratorFactory::instance().regClass<LocalDirIterator>("home");
     WacherFactory::instance().regClass<AbstractFileWatcher>("home");
-    DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("home");
+    BrowseWidgetFactory::instance().regClass<BrowseView>("home");
 
     InfoFactory::instance().regClass<LocalFileInfo>("desktop");
     DirIteratorFactory::instance().regClass<LocalDirIterator>("desktop");
     WacherFactory::instance().regClass<AbstractFileWatcher>("desktop");
-    DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("desktop");
+    BrowseWidgetFactory::instance().regClass<BrowseView>("desktop");
 
     InfoFactory::instance().regClass<LocalFileInfo>("videos");
     DirIteratorFactory::instance().regClass<LocalDirIterator>("videos");
     WacherFactory::instance().regClass<AbstractFileWatcher>("videos");
-    DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("videos");
+    BrowseWidgetFactory::instance().regClass<BrowseView>("videos");
 
     InfoFactory::instance().regClass<LocalFileInfo>("music");
     DirIteratorFactory::instance().regClass<LocalDirIterator>("music");
     WacherFactory::instance().regClass<AbstractFileWatcher>("music");
-    DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("music");
+    BrowseWidgetFactory::instance().regClass<BrowseView>("music");
 
     InfoFactory::instance().regClass<LocalFileInfo>("pictures");
     DirIteratorFactory::instance().regClass<LocalDirIterator>("pictures");
     WacherFactory::instance().regClass<AbstractFileWatcher>("pictures");
-    DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("pictures");
+    BrowseWidgetFactory::instance().regClass<BrowseView>("pictures");
 
     InfoFactory::instance().regClass<LocalFileInfo>("documents");
     DirIteratorFactory::instance().regClass<LocalDirIterator>("documents");
     WacherFactory::instance().regClass<AbstractFileWatcher>("documents");
-    DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("documents");
+    BrowseWidgetFactory::instance().regClass<BrowseView>("documents");
 
     InfoFactory::instance().regClass<LocalFileInfo>("downloads");
     DirIteratorFactory::instance().regClass<LocalDirIterator>("downloads");
     WacherFactory::instance().regClass<AbstractFileWatcher>("downloads");
-    DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("downloads");
+    BrowseWidgetFactory::instance().regClass<BrowseView>("downloads");
 }
 
 void Core::initialize()
@@ -211,7 +211,7 @@ void Core::initialize()
     InfoFactory::instance().regClass<LocalFileInfo>("file");
     DirIteratorFactory::instance().regClass<LocalDirIterator>("file");
     WacherFactory::instance().regClass<AbstractFileWatcher>("file");
-    DFMBrowseWidgetFactory::instance().regClass<DFMBrowseView>("file");
+    BrowseWidgetFactory::instance().regClass<BrowseView>("file");
 
     regStandardPathClass();
 }
@@ -242,14 +242,14 @@ bool Core::start(QSharedPointer<dpf::PluginContext> context)
 
     if (windowService) {
         QUrl defaultUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::HomePath));
-        DFMBrowseWindow* newWindow = windowService->newWindow();
+        BrowseWindow* newWindow = windowService->newWindow();
 
         if (newWindow){
-            int winIdx = windowService->m_windowlist.indexOf(newWindow);
+            int winIdx = windowService->windowList.indexOf(newWindow);
 
             // 绑定当前插件初始化完毕进行的相关操作。
             QObject::connect(&dpf::Listener::instance(), &dpf::Listener::pluginsStarted,
-                             this, [=](){
+                             this, [winIdx](){
                 // 发送打开的新窗口的事件
                 EventCalled::sendOpenNewWindowEvent(winIdx);
             });
@@ -262,7 +262,7 @@ bool Core::start(QSharedPointer<dpf::PluginContext> context)
 
             //綁定sidebaritem的點擊邏輯
             QObject::connect(newWindow->sidebar(), &SideBar::activatedItemUrl,
-                             newWindow, [&windowService, &newWindow](const QUrl &url)
+                             newWindow, [windowService, newWindow](const QUrl &url)
             {
                 windowService->setWindowRootUrl(newWindow, url);
             });

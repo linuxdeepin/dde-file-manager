@@ -24,6 +24,8 @@
 #include "base/schemefactory.h"
 #include "base/singleton.hpp"
 
+#include <QSet>
+
 DFMBASE_BEGIN_NAMESPACE
 /*!
  * \clase LocalMenuPrivate LocalMenu的私有类

@@ -8,7 +8,8 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/src/services/dfm-business-services/dfm-filemanager-service
     )
 
-set(recent_cxx_source
+set(recent_cxx_cpp
+    recentrootfileinfo.cpp
     recenteventrecver.cpp
     recentbrowseviewmodel.cpp
     recentbrowseview.cpp
@@ -18,7 +19,8 @@ set(recent_cxx_source
     recent.json
     )
 
-set(recent_cxx_include
+set(recent_cxx_h
+    recentrootfileinfo.h
     recenteventrecver.h
     recentbrowseviewmodel.h
     recentbrowseview.h
@@ -29,8 +31,8 @@ set(recent_cxx_include
 
 add_library(${PROJECT_NAME}
     SHARED
-    ${recent_cxx_source}
-    ${recent_cxx_include}
+    ${recent_cxx_h}
+    ${recent_cxx_cpp}
     )
 
 target_link_libraries(${PROJECT_NAME}
