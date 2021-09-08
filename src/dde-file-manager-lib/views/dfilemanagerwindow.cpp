@@ -1419,6 +1419,12 @@ void DFileManagerWindow::initConnect()
     QObject::connect(d->toolbar, &DToolBar::detailButtonClicked, this, [d]() {
         if (d->rightDetailViewHolder) {
             d->rightDetailViewHolder->setVisible(!d->rightDetailViewHolder->isVisible());
+            //! 触发resize事件，避免文件列表未自适应宽度
+            if (d->currentView && d->currentView->widget()) {
+                QSize variable(1, 1);
+                d->currentView->widget()->resize(d->currentView->widget()->size() - variable);
+                d->currentView->widget()->resize(d->currentView->widget()->size() + variable);
+            }
             qDebug() << "File information window on the right";
         }
     });
