@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2017 ~ 2018 Deepin Technology Co., Ltd.
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     Gary Wang <wzc782970009@gmail.com>
+ * Author:     huanyu<huanyu@uniontech.com>
  *
- * Maintainer: Gary Wang <wangzichong@deepin.com>
+ * Maintainer: zhengyouge<zhengyouge@uniontech.com>
+ *             yanghao<yanghao@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "private/crumbbar_p.h"
-//#include "dfmcrumbinterface.h"
 #include "crumbbar.h"
 #include "crumbmodel.h"
 
