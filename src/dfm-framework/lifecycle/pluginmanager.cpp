@@ -65,17 +65,17 @@ PluginMetaObjectPointer PluginManager::pluginMetaObj(const QString &pluginName, 
     return d->pluginMetaObj(pluginName, version);
 }
 
-void PluginManager::loadPlugin(PluginMetaObjectPointer &pointer)
+bool PluginManager::loadPlugin(PluginMetaObjectPointer &pointer)
 {
     return d->loadPlugin(pointer);
 }
 
-void PluginManager::initPlugin(PluginMetaObjectPointer &pointer)
+bool PluginManager::initPlugin(PluginMetaObjectPointer &pointer)
 {
     return d->initPlugin(pointer);
 }
 
-void PluginManager::startPlugin(PluginMetaObjectPointer &pointer)
+bool PluginManager::startPlugin(PluginMetaObjectPointer &pointer)
 {
     return d->startPlugin(pointer);
 }
@@ -90,9 +90,9 @@ void PluginManager::stopPlugin(PluginMetaObjectPointer &pointer)
  *  读取当前设置插件路径下的所有插件元数据
  * @return void
  */
-void PluginManager::readPlugins()
+bool PluginManager::readPlugins()
 {
-    d->readPlugins();
+   return d->readPlugins();
 }
 
 /** @brief loadPlugins 加载所有的插件
@@ -101,9 +101,9 @@ void PluginManager::readPlugins()
  * 加载所有插件，内部使用Qt类QPluginLoader
  * @return void
  */
-void PluginManager::loadPlugins()
+bool PluginManager::loadPlugins()
 {
-    d->loadPlugins();
+    return d->loadPlugins();
 }
 
 /** @brief initPlugins 执行所有插件initialized接口

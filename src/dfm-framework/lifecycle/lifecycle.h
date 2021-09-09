@@ -44,11 +44,11 @@ public:
     static void setServicePaths(const QStringList &servicePaths);
     static PluginMetaObjectPointer pluginMetaObj(const QString &pluginName,
                                              const QString version = "");
-    static void readPlugins();
-    static void loadPlugins();
+    static bool readPlugins();
+    static bool loadPlugins();
     static void shutdownPlugins();
 
-    static void loadPlugin(PluginMetaObjectPointer &pointer);
+    static bool loadPlugin(PluginMetaObjectPointer &pointer);
     static void shutdownPlugin(PluginMetaObjectPointer &pointer);
 };
 

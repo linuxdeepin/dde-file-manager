@@ -90,7 +90,7 @@ void LifeCycle::setServicePaths(const QStringList &servicePaths)
 PluginMetaObjectPointer LifeCycle::pluginMetaObj(const QString &pluginName,
                                                                  const QString version)
 {
-    return pluginManager->pluginMetaObj(pluginName,version);
+    return pluginManager->pluginMetaObj(pluginName, version);
 }
 
 /** @brief 读取所有的插件的元数据
@@ -103,9 +103,9 @@ PluginMetaObjectPointer LifeCycle::pluginMetaObj(const QString &pluginName,
  *  可参阅文件pluginmetaobject.h/.cpp
  * @return void
  */
-void LifeCycle::readPlugins()
+bool LifeCycle::readPlugins()
 {
-    pluginManager->readPlugins();
+    return pluginManager->readPlugins();
 }
 
 /** @brief 加载所有插件
@@ -121,11 +121,15 @@ void LifeCycle::readPlugins()
  * @endcode
  * 详情可参阅 class PluginManager
  */
-void LifeCycle::loadPlugins()
+bool LifeCycle::loadPlugins()
 {
-    pluginManager->loadPlugins();
+    if (!pluginManager->loadPlugins())
+        return false;
+
     pluginManager->initPlugins();
     pluginManager->startPlugins();
+
+    return true;
 }
 
 /** @brief 卸载所有插件
@@ -141,11 +145,16 @@ void LifeCycle::shutdownPlugins()
     pluginManager->stopPlugins();
 }
 
-void LifeCycle::loadPlugin(PluginMetaObjectPointer &pointer)
+bool LifeCycle::loadPlugin(PluginMetaObjectPointer &pointer)
 {
-    pluginManager->loadPlugin(pointer);
-    pluginManager->initPlugin(pointer);
-    pluginManager->startPlugin(pointer);
+    if (!pluginManager->loadPlugin(pointer))
+        return false;
+    if (!pluginManager->initPlugin(pointer))
+        return false;
+    if (!pluginManager->startPlugin(pointer))
+        return false;
+
+    return true;
 }
 
 void LifeCycle::shutdownPlugin(PluginMetaObjectPointer &pointer)

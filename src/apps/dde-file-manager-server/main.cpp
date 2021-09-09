@@ -31,7 +31,7 @@ DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 /// @brief  默认插件 iid
-#define SERVER_PLUGIN_INTERFACE "Deepin.Bundle.Server.org"
+static const char * const SERVER_PLUGIN_INTERFACE = "Deepin.Bundle.Server.org";
 
 static bool pluginsLoad()
 {
@@ -54,9 +54,12 @@ static bool pluginsLoad()
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
-    dpf::LifeCycle::readPlugins();
+    if (!dpf::LifeCycle::readPlugins())
+        return false;
 
     // load server plugin
+    if (!dpf::LifeCycle::loadPlugins())
+        return false;
 
     dpfCheckTimeEnd();
     return true;

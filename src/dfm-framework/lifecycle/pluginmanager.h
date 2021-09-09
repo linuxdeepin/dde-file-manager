@@ -60,8 +60,8 @@ public:
     void setPluginPaths(const QStringList &pluginPaths);
     void setServicePaths(const QStringList &servicePaths);
 
-    void readPlugins();
-    void loadPlugins();
+    bool readPlugins();
+    bool loadPlugins();
     void initPlugins();
     void startPlugins();
     void stopPlugins();
@@ -69,9 +69,9 @@ public:
     PluginMetaObjectPointer pluginMetaObj(const QString &pluginName,
                                              const QString version = "") const;
 
-    void loadPlugin(PluginMetaObjectPointer &pointer);
-    void initPlugin(PluginMetaObjectPointer &pointer);
-    void startPlugin(PluginMetaObjectPointer &pointer);
+    bool loadPlugin(PluginMetaObjectPointer &pointer);
+    bool initPlugin(PluginMetaObjectPointer &pointer);
+    bool startPlugin(PluginMetaObjectPointer &pointer);
     void stopPlugin(PluginMetaObjectPointer &pointer);
 };
 

@@ -51,9 +51,9 @@ USING_IO_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 /// @brief PLUGIN_INTERFACE 默认插件iid
-#define FM_PLUGIN_INTERFACE "Deepin.Bundle.Filemanager.org"
+static const char * const FM_PLUGIN_INTERFACE = "Deepin.Bundle.Filemanager.org";
 
-int pluginsLoad()
+static bool pluginsLoad()
 {
     dpfCheckTimeBegin();
 
@@ -75,19 +75,25 @@ int pluginsLoad()
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
-    dpf::LifeCycle::readPlugins();
+    if (!dpf::LifeCycle::readPlugins())
+        return false;
 
     // 手动初始化Core插件
     auto corePlugin = dpf::LifeCycle::pluginMetaObj("core");
-    if (!corePlugin.isNull() && corePlugin->fileName().contains("libcore.so")) {
-        dpf::LifeCycle::loadPlugin(corePlugin);
-    }
+    if (corePlugin.isNull())
+        return false;
+    if (!corePlugin->fileName().contains("libcore.so"))
+        return false;
+    if (!dpf::LifeCycle::loadPlugin(corePlugin))
+        return false;
+
     // load plugins without core
-    dpf::LifeCycle::loadPlugins();
+    if (!dpf::LifeCycle::loadPlugins())
+        return false;
 
     dpfCheckTimeEnd();
 
-    return 0;
+    return true;
 }
 
 int main(int argc, char *argv[])
@@ -96,7 +102,10 @@ int main(int argc, char *argv[])
 
     dpf::FrameworkLog::initialize();
 
-    pluginsLoad();
+    if (!pluginsLoad()) {
+        qCritical() << "Load pugin failed!";
+        abort();
+    }
 
     return a.exec();
 }

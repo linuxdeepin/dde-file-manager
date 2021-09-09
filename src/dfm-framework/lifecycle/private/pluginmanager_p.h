@@ -64,12 +64,12 @@ public:
     void setServicePaths(const QStringList &servicePaths);
     void setPluginEnable(const PluginMetaObject& meta, bool enabled);
     PluginMetaObjectPointer pluginMetaObj(const QString &name,const QString &version = "");
-    void loadPlugin(PluginMetaObjectPointer &pluginMetaObj);
-    void initPlugin(PluginMetaObjectPointer &pluginMetaObj);
-    void startPlugin(PluginMetaObjectPointer &pluginMetaObj);
+    bool loadPlugin(PluginMetaObjectPointer &pluginMetaObj);
+    bool initPlugin(PluginMetaObjectPointer &pluginMetaObj);
+    bool startPlugin(PluginMetaObjectPointer &pluginMetaObj);
     void stopPlugin(PluginMetaObjectPointer &pluginMetaObj);
-    void readPlugins();
-    void loadPlugins();
+    bool readPlugins();
+    bool loadPlugins();
     void initPlugins();
     void startPlugins();
     void stopPlugins();
