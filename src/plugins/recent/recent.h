@@ -30,7 +30,7 @@ class DFMWindowManagerService;
 class Recent : public dpf::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID PLUGIN_INTERFACE FILE "recent.json")
+    Q_PLUGIN_METADATA(IID "Deepin.Bundle.Filemanager.org" FILE "recent.json")
 
 public:
     virtual void initialize() override;

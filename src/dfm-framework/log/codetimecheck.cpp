@@ -83,7 +83,7 @@ namespace GlobalPrivate {
         //加锁保证内部函数执行时的互斥
         QMutexLocker lock(&GlobalPrivate::mutex);
 
-        QString currAppLogName = LogUtils::appCacheLogPath()
+        const QString &currAppLogName = LogUtils::appCacheLogPath()
                 + "/" + tcDirName + "/"
                 + LogUtils::localDate() + "_" + tcFileName;
 
@@ -158,7 +158,7 @@ uint CodeCheckTime::logCacheDayCount()
  */
 void CodeCheckTime::begin(const QMessageLogContext &context)
 {
-    GlobalPrivate::outCheck(context,"begin");
+    GlobalPrivate::outCheck(context, "begin");
 }
 
 /**
@@ -167,7 +167,7 @@ void CodeCheckTime::begin(const QMessageLogContext &context)
  */
 void CodeCheckTime::end(const QMessageLogContext &context)
 {
-    GlobalPrivate::outCheck(context,"end");
+    GlobalPrivate::outCheck(context, "end");
 }
 
 #endif // DPF_NO_CHECK_TIME

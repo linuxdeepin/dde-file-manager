@@ -50,12 +50,15 @@ DGUI_USE_NAMESPACE
 USING_IO_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
+/// @brief PLUGIN_INTERFACE 默认插件iid
+#define FM_PLUGIN_INTERFACE "Deepin.Bundle.Filemanager.org"
+
 int pluginsLoad()
 {
     dpfCheckTimeBegin();
 
     // set plugin iid from qt style
-    dpf::LifeCycle::setPluginIID(PLUGIN_INTERFACE);
+    dpf::LifeCycle::setPluginIID(FM_PLUGIN_INTERFACE);
 
     // cmake out definitions "DFM_PLUGIN_PATH" and "DFM_BUILD_OUT_PLGUN_DIR"
     if (DApplication::applicationDirPath() == "/usr/bin") {

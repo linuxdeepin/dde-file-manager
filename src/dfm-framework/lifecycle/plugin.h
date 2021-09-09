@@ -31,8 +31,6 @@
 
 DPF_BEGIN_NAMESPACE
 
-/// @brief PLUGIN_INTERFACE 默认插件iid
-#define PLUGIN_INTERFACE "Deepin.Bundle.org"
 
 class PluginContext;
 

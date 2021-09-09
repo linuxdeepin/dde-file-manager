@@ -82,7 +82,12 @@ void PluginManagerPrivate::setPluginEnable(const PluginMetaObject &meta, bool en
     return setting.setPluginEnable(meta,enabled);
 }
 
-//线程安全
+/*!
+ * \brief 获取插件的元数据，线程安全
+ * \param name
+ * \param version
+ * \return
+ */
 PluginMetaObjectPointer PluginManagerPrivate::pluginMetaObj(const QString &name,
                                                             const QString &version)
 {
@@ -95,13 +100,11 @@ PluginMetaObjectPointer PluginManagerPrivate::pluginMetaObj(const QString &name,
         while (idx < size) {
             if (!version.isEmpty()) {
                 if (readQueue[idx]->d_ptr->version == version
-                        && readQueue[idx]->d_ptr->name == name)
-                {
+                        && readQueue[idx]->d_ptr->name == name) {
                     return readQueue[idx];
                 }
             } else {
-                if (readQueue[idx]->d_ptr->name == name)
-                {
+                if (readQueue[idx]->d_ptr->name == name) {
                     return readQueue[idx];
                 }
             }
@@ -116,7 +119,10 @@ PluginMetaObjectPointer PluginManagerPrivate::pluginMetaObj(const QString &name,
     return controller.result();
 }
 
-//加载一个插件，线程安全，可单独使用。
+/*!
+ * \brief 加载一个插件，线程安全，可单独使用
+ * \param pluginMetaObj
+ */
 void PluginManagerPrivate::loadPlugin(PluginMetaObjectPointer &pluginMetaObj)
 {
     dpfCheckTimeBegin();
@@ -130,7 +136,7 @@ void PluginManagerPrivate::loadPlugin(PluginMetaObjectPointer &pluginMetaObj)
         return;
     }
 
-    auto controller = QtConcurrent::run([=](){
+    auto controller = QtConcurrent::run([=]() {
 
         QMutexLocker lock(&GlobalPrivate::mutex);
 
@@ -155,7 +161,10 @@ void PluginManagerPrivate::loadPlugin(PluginMetaObjectPointer &pluginMetaObj)
     dpfCheckTimeEnd();
 }
 
-//初始化一个插件，线程安全，可单独使用
+/*!
+ * \brief 初始化一个插件，线程安全，可单独使用
+ * \param pluginMetaObj
+ */
 void PluginManagerPrivate::initPlugin(PluginMetaObjectPointer &pluginMetaObj)
 {
     dpfCheckTimeBegin();
@@ -191,7 +200,10 @@ void PluginManagerPrivate::initPlugin(PluginMetaObjectPointer &pluginMetaObj)
     dpfCheckTimeEnd();
 }
 
-//启动一个插件，线程安全，可单独使用
+/*!
+ * \brief 启动一个插件，线程安全，可单独使用
+ * \param pluginMetaObj
+ */
 void PluginManagerPrivate::startPlugin(PluginMetaObjectPointer &pluginMetaObj)
 {
     dpfCheckTimeBegin();
@@ -226,7 +238,10 @@ void PluginManagerPrivate::startPlugin(PluginMetaObjectPointer &pluginMetaObj)
     dpfCheckTimeEnd();
 }
 
-//停止并卸载一个插件，线程安全，可单独使用
+/*!
+ * \brief 停止并卸载一个插件，线程安全，可单独使用
+ * \param pluginMetaObj
+ */
 void PluginManagerPrivate::stopPlugin(PluginMetaObjectPointer &pluginMetaObj)
 {
     dpfCheckTimeBegin();
@@ -249,8 +264,7 @@ void PluginManagerPrivate::stopPlugin(PluginMetaObjectPointer &pluginMetaObj)
         pluginMetaObj->d_ptr->state = PluginMetaObject::State::Stoped;
 
         QObject::connect(pluginMetaObj->d_ptr->plugin.data(), &Plugin::asyncStopFinished,
-                         pluginMetaObj->d_ptr->plugin.data(), [=]()
-        {
+                         pluginMetaObj->d_ptr->plugin.data(), [=]() {
             pluginMetaObj->d_ptr->plugin = nullptr;
 
             if (!pluginMetaObj->d_ptr->loader->unload()) {
@@ -283,7 +297,9 @@ void PluginManagerPrivate::stopPlugin(PluginMetaObjectPointer &pluginMetaObj)
     dpfCheckTimeEnd();
 }
 
-//读取所有插件的Json源数据
+/*!
+ * \brief 读取所有插件的Json源数据
+ */
 void PluginManagerPrivate::readPlugins()
 {
     dpfCheckTimeBegin();
@@ -293,7 +309,7 @@ void PluginManagerPrivate::readPlugins()
         QThreadPool::globalInstance()->setMaxThreadCount(4);
     }
 
-    //内部已有线程互斥
+    // 内部已有线程互斥
     QFuture<void> scanController = QtConcurrent::run(scanfAllPlugin,
                                                      &readQueue,
                                                      pluginLoadPaths,
@@ -312,7 +328,12 @@ void PluginManagerPrivate::readPlugins()
     dpfCheckTimeEnd();
 }
 
-//扫描所有插件到目标队列
+/*!
+ * \brief 扫描所有插件到目标队列
+ * \param destQueue
+ * \param pluginPaths
+ * \param pluginIID
+ */
 void PluginManagerPrivate::scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQueue,
                                           const QStringList &pluginPaths,
                                           const QString &pluginIID)
@@ -322,8 +343,7 @@ void PluginManagerPrivate::scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQ
     if (pluginIID.isEmpty())
         return;
 
-    for(QString path : pluginPaths)
-    {
+    for(const QString &path : pluginPaths) {
         QDirIterator dirItera(path, {"*.so", "*.dll"},
                               QDir::Filter::Files,
                               QDirIterator::IteratorFlag::NoIteratorFlags);
@@ -331,14 +351,13 @@ void PluginManagerPrivate::scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQ
         //线程安全
         QMutexLocker lock(&GlobalPrivate::mutex);
 
-        while (dirItera.hasNext())
-        {
+        while (dirItera.hasNext()) {
             dirItera.next();
 
             PluginMetaObjectPointer metaObj(new PluginMetaObject);
             metaObj->d_ptr->loader->setFileName(dirItera.path() + "/" + dirItera.fileName());
-            QJsonObject metaJson = metaObj->d_ptr->loader->metaData();
-            QString IID = metaJson.value("IID").toString();
+            QJsonObject &&metaJson = metaObj->d_ptr->loader->metaData();
+            QString &&IID = metaJson.value("IID").toString();
             if (pluginIID != IID) {
                 continue;
             }
@@ -351,62 +370,64 @@ void PluginManagerPrivate::scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQ
     dpfCheckTimeEnd();
 }
 
-//同步json到定义类型
+/*!
+ * \brief 同步json到定义类型
+ * \param metaObject
+ */
 void PluginManagerPrivate::readJsonToMeta(const PluginMetaObjectPointer &metaObject)
 {
     dpfCheckTimeBegin();
 
     metaObject->d_ptr->state = PluginMetaObject::Reading;
 
-    QJsonObject jsonObj = metaObject->d_ptr->loader->metaData();
+    QJsonObject &&jsonObj = metaObject->d_ptr->loader->metaData();
 
     if (jsonObj.isEmpty()) return;
 
-    QString iid = jsonObj.value("IID").toString();
+    QString &&iid = jsonObj.value("IID").toString();
     if (iid.isEmpty()) return;
     metaObject->d_ptr->iid = iid;
 
-    QJsonObject metaData = jsonObj.value("MetaData").toObject();
+    QJsonObject &&metaData = jsonObj.value("MetaData").toObject();
 
-    QString name = metaData.value(PLUGIN_NAME).toString();
+    QString &&name = metaData.value(PLUGIN_NAME).toString();
     if (name.isEmpty()) return;
     metaObject->d_ptr->name = name;
 
-    QString version = metaData.value(PLUGIN_VERSION).toString();
+    QString &&version = metaData.value(PLUGIN_VERSION).toString();
     metaObject->d_ptr->version = version;
 
-    QString compatVersion = metaData.value(PLUGIN_COMPATVERSION).toString();
+    QString &&compatVersion = metaData.value(PLUGIN_COMPATVERSION).toString();
     metaObject->d_ptr->compatVersion = compatVersion;
 
-    QString category = metaData.value(PLUGIN_CATEGORY).toString();
+    QString &&category = metaData.value(PLUGIN_CATEGORY).toString();
     metaObject->d_ptr->category = category;
 
-    QJsonArray licenseArray = metaData.value(PLUGIN_LICENSE).toArray();
+    QJsonArray &&licenseArray = metaData.value(PLUGIN_LICENSE).toArray();
     auto licenItera = licenseArray.begin();
     while (licenItera != licenseArray.end()) {
         metaObject->d_ptr->license.append(licenItera->toString());
         licenItera ++;
     }
 
-    QString copyright = metaData.value(PLUGIN_COPYRIGHT).toString();
+    QString &&copyright = metaData.value(PLUGIN_COPYRIGHT).toString();
     metaObject->d_ptr->copyright = copyright;
 
-    QString vendor = metaData.value(PLUGIN_VENDOR).toString();
+    QString &&vendor = metaData.value(PLUGIN_VENDOR).toString();
     metaObject->d_ptr->vendor = vendor;
 
-    QString description = metaData.value(PLUGIN_DESCRIPTION).toString();
+    QString &&description = metaData.value(PLUGIN_DESCRIPTION).toString();
     metaObject->d_ptr->description = description;
 
-    QString urlLink = metaData.value(PLUGIN_URLLINK).toString();
+    QString &&urlLink = metaData.value(PLUGIN_URLLINK).toString();
     metaObject->d_ptr->urlLink = urlLink;
 
-    QJsonArray dependsArray = metaData.value(PLUGIN_DEPENDS).toArray();
+    QJsonArray &&dependsArray = metaData.value(PLUGIN_DEPENDS).toArray();
     auto itera = dependsArray.begin();
-    while (itera != dependsArray.end())
-    {
-        QJsonObject dependObj = itera->toObject();
-        QString dependName = dependObj.value(PLUGIN_NAME).toString();
-        QString dependVersion = dependObj.value(PLUGIN_VERSION).toString();
+    while (itera != dependsArray.end()) {
+        QJsonObject &&dependObj = itera->toObject();
+        QString &&dependName = dependObj.value(PLUGIN_NAME).toString();
+        QString &&dependVersion = dependObj.value(PLUGIN_VERSION).toString();
         PluginDepend depends;
         depends.pluginName = dependName;
         depends.pluginVersion = dependVersion;
@@ -419,7 +440,9 @@ void PluginManagerPrivate::readJsonToMeta(const PluginMetaObjectPointer &metaObj
     dpfCheckTimeEnd();
 }
 
-//内部使用QPluginLoader加载所有插件
+/*!
+ * \brief 内部使用QPluginLoader加载所有插件
+ */
 void PluginManagerPrivate::loadPlugins()
 {
     dpfCheckTimeBegin();
@@ -475,7 +498,9 @@ void PluginManagerPrivate::loadPlugins()
     dpfCheckTimeEnd();
 }
 
-//初始化所有插件
+/*!
+ * \brief 初始化所有插件
+ */
 void PluginManagerPrivate::initPlugins()
 {
     dpfCheckTimeBegin();
@@ -520,7 +545,9 @@ void PluginManagerPrivate::initPlugins()
     dpfCheckTimeEnd();
 }
 
-//拉起插件,仅主线程使用
+/*!
+ * \brief 拉起插件,仅主线程使用
+ */
 void PluginManagerPrivate::startPlugins()
 {
     dpfCheckTimeBegin();
@@ -566,7 +593,9 @@ void PluginManagerPrivate::startPlugins()
     dpfCheckTimeEnd();
 }
 
-//停止插件,仅主线程
+/*!
+ * \brief 停止插件,仅主线程
+ */
 void PluginManagerPrivate::stopPlugins()
 {
     dpfCheckTimeBegin();
@@ -629,7 +658,11 @@ void PluginManagerPrivate::stopPlugins()
     dpfCheckTimeEnd();
 }
 
-//按照依赖排序
+/*!
+ * \brief 按照依赖排序
+ * \param dstQueue
+ * \param srcQueue
+ */
 void PluginManagerPrivate::dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue,
                                        QQueue<PluginMetaObjectPointer> *srcQueue)
 {

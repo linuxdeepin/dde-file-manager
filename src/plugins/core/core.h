@@ -35,7 +35,7 @@ class DFMWindowManagerService;
 class Core : public dpf::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID PLUGIN_INTERFACE FILE "core.json")
+    Q_PLUGIN_METADATA(IID "Deepin.Bundle.Filemanager.org" FILE "core.json")
 
 public:
 
