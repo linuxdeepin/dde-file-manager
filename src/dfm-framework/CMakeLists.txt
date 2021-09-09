@@ -49,6 +49,8 @@ set(PUBLIC_H
     abus/appbus.h
     listener/private/listener_p.h
     listener/listener.h
+    backtrace/backtrace.h
+    framework.h
     )
 
 set(PUBLIC_CPP
@@ -67,6 +69,8 @@ set(PUBLIC_CPP
     lifecycle/lifecycle.cpp
     abus/appbus.cpp
     listener/listener.cpp
+    backtrace/backtrace.cpp
+    framework.cpp
     )
 
 add_library(${PROJECT_NAME} SHARED
