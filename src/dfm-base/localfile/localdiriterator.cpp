@@ -35,18 +35,17 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url, const QStringL
     Q_UNUSED(filters);
     Q_UNUSED(flags);
     QUrl temp = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
+
     QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(temp.scheme(), temp);
     if (!factory) {
-        qWarning("create factory failed.");
-//        abort();
-        return;
+        qWarning("create factory failed.");      
+        abort();
     }
 
     dfmioDirIterator = factory->createEnumerator();
     if (!dfmioDirIterator) {
         qWarning("create enumerator failed.");
-//        abort();
-        return;
+        abort();
     }
 }
 

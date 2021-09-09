@@ -53,7 +53,8 @@ AbstractFileInfo::AbstractFileInfo(const QUrl &url)
 {
     Q_D(AbstractFileInfo);
     d->url = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
-    d->initFileInfo();
+    if (!UrlRoute::isVirtualUrl(url))
+        d->initFileInfo();
 }
 
 AbstractFileInfo::~AbstractFileInfo()

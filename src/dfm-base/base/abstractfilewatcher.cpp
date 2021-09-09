@@ -100,18 +100,14 @@ AbstractFileWatcher::AbstractFileWatcher(QObject *parent)
 
 }
 
-AbstractFileWatcher::AbstractFileWatcher(const QString &filePath, QObject *parent)
-    : AbstractFileWatcher(*new AbstractFileWatcherPrivate(this), QUrl::fromLocalFile(filePath), parent)
-{
-    d_func()->path = AbstractFileWatcherPrivate::formatPath(filePath);
-    initFileWatcher();
-    initConnect();
-}
-
 AbstractFileWatcher::AbstractFileWatcher(const QUrl &url, QObject *parent)
-    : AbstractFileWatcher(UrlRoute::urlToPath(url),parent)
+    : AbstractFileWatcher(*new AbstractFileWatcherPrivate(this), url, parent)
 {
-
+    d_func()->path = AbstractFileWatcherPrivate::formatPath(UrlRoute::urlToPath(url));
+    if (!UrlRoute::isVirtualUrl(url)) {
+        initFileWatcher();
+        initConnect();
+    }
 }
 /*!
  * \brief url 获取监视文件的url

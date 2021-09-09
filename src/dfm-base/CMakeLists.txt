@@ -41,7 +41,6 @@ set(BASE_H
     base/schemefactory.h
     base/abstractfilewatcher.h
     base/abstractfiledevice.h
-    base/sort.h
     )
 
 set(BASE_CPP
@@ -51,7 +50,6 @@ set(BASE_CPP
     base/abstractfileinfo.cpp
     base/urlroute.cpp
     base/standardpaths.cpp
-    base/sort.cpp
     base/schemefactory.cpp
     base/abstractfilewatcher.cpp
     base/abstractfiledevice.cpp

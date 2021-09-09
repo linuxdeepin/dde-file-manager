@@ -61,7 +61,6 @@ Q_SIGNALS:
     void subfileCreated(const QUrl &url, const DFMIO::DFileInfo &fileInfo);
 protected:
     explicit AbstractFileWatcher(QObject* parent = nullptr);
-    explicit AbstractFileWatcher(const QString &filePath, QObject *parent = nullptr);
     explicit AbstractFileWatcher(AbstractFileWatcherPrivate &dd, const QUrl &url, QObject *parent = nullptr);
     QScopedPointer<AbstractFileWatcherPrivate> d_ptr;
 
