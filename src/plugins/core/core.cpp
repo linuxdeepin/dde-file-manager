@@ -259,7 +259,7 @@ bool Core::start(QSharedPointer<dpf::PluginContext> context)
                                       GlobalPrivate::DEFAULT_WINDOW_HEIGHT);
 
             //綁定sidebaritem的點擊邏輯
-            QObject::connect(newWindow->sidebar(), &SideBar::activatedItemUrl,
+            QObject::connect(newWindow->sidebar(), &SideBar::clickedItemUrl,
                              newWindow, [windowService, newWindow](const QUrl &url)
             {
                 windowService->setWindowRootUrl(newWindow, url);

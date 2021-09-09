@@ -67,12 +67,13 @@ void Recent::initialize()
 
     RecentUtil::initRecentSubSystem();
     //注册路由
-    UrlRoute::schemeMapRoot(recentScheme,"/",QIcon(),true);
+    QIcon recentIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::RecentPath));
+    UrlRoute::schemeMapRoot(recentScheme,"/", recentIcon, true);
     //注册Scheme为"file"的扩展的文件信息 本地默认文件的
     InfoFactory::instance().regClass<RecentRootFileInfo>("recent");
-    //    DFMFileDeviceFactory::instance().regClass<DFMLocalFileDevice>("file");
-    //    DFMDirIteratorFactory::instance().regClass<DFMLocalDirIterator>("file");
-    //    DFMWacherFactory::instance().regClass<DAbstractFileWatcher>("file");
+    //    FileDeviceFactory::instance().regClass<>("recent");
+    //    DirIteratorFactory::instance().regClass<LocalDirIterator>("recent");
+    //    WacherFactory::instance().regClass<AbstractFileWatcher>("recent");
     BrowseWidgetFactory::instance().regClass<RecentBrowseView>(recentScheme);
 }
 

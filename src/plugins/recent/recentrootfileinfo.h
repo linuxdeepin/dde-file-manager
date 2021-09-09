@@ -24,6 +24,8 @@
 
 #include "dfm-base/base/abstractfileinfo.h"
 
+#include <QDebug>
+
 class RecentRootFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
 public:

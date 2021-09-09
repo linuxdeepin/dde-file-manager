@@ -41,7 +41,7 @@ class SideBarPrivate : public QObject
     explicit SideBarPrivate(SideBar *qq);
 
 private Q_SLOTS:
-    void onItemActivated(const QModelIndex &index);
+    void onItemClicked(const QModelIndex &index);
 };
 
 DFMBASE_END_NAMESPACE

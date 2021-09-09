@@ -36,7 +36,7 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url, const QStringL
     Q_UNUSED(flags);
     QUrl temp = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
 
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(temp.scheme(), temp);
+    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(temp.scheme(), QUrl(temp));
     if (!factory) {
         qWarning("create factory failed.");      
         abort();

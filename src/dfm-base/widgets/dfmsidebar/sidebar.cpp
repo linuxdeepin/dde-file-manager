@@ -44,6 +44,13 @@ SideBarPrivate::SideBarPrivate(SideBar *qq)
     , sidebarView(new SideBarView(qq))
     , sidebarModel(new SideBarModel(qq))
 {
+    QObject::connect(sidebarView, &SideBarView::clicked,
+                     q_ptr, &SideBar::clickedItemIndex,
+                     Qt::UniqueConnection);
+
+    QObject::connect(sidebarView, &SideBarView::clicked,
+                     this, &SideBarPrivate::onItemClicked,
+                     Qt::UniqueConnection);
 
     QVBoxLayout *vlayout = new QVBoxLayout(q_ptr);
     vlayout->addWidget(sidebarView);
@@ -102,13 +109,14 @@ bool SideBar::removeItem(SideBarItem *item)
     return d->sidebarModel->removeRow(item);
 }
 
-void SideBarPrivate::onItemActivated(const QModelIndex &index)
+void SideBarPrivate::onItemClicked(const QModelIndex &index)
 {
+    qInfo() << "index" << index;
     SideBarItem *item = sidebarModel->itemFromIndex(index);
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     QUrl url = qvariant_cast<QUrl>(item->data(SideBarItem::Roles::ItemUrlRole));
     if (!url.isEmpty())
-        Q_EMIT q_ptr->activatedItemUrl(url);
+        Q_EMIT q_ptr->clickedItemUrl(url);
 }
 
 void SideBar::changeEvent(QEvent *event)

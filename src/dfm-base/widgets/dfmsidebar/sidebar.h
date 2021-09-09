@@ -59,9 +59,8 @@ public:
     void changeEvent(QEvent *event) override;
 
 Q_SIGNALS:
-    void disableUrlSchemesChanged();
-    void activatedItemUrl(const QUrl &url);
-    void activateditemIndex(const QModelIndex &index);
+    void clickedItemUrl(const QUrl &url);
+    void clickedItemIndex(const QModelIndex &index);
 };
 
 DFMBASE_END_NAMESPACE
