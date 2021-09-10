@@ -101,23 +101,29 @@ DWIDGET_USE_NAMESPACE
 
 //candrop十分耗时,在不关心Qt::ItemDropEnable的调用时ignoreDropFlag为true，不调用candrop，节省时间,bug#10926
 namespace  {
-class IgnoreDropFlag
-{
-public:
-    explicit IgnoreDropFlag(DFileSystemModel *m) : model(m)
+    class IgnoreDropFlag
     {
-        if (model)
-            model->ignoreDropFlag = true;
-    }
-    ~IgnoreDropFlag()
+    public:
+        explicit IgnoreDropFlag(DFileSystemModel *m) : model(m)
+        {
+            if (model)
+                model->ignoreDropFlag = true;
+        }
+        ~IgnoreDropFlag()
+        {
+            if (model)
+                model->ignoreDropFlag = false;
+        }
+    private:
+        DFileSystemModel *model = nullptr;
+    };
+
+    static void setMenuActionsFilter()
     {
-        if (model)
-            model->ignoreDropFlag = false;
+        DFileMenuManager::setActionWhitelist(QSet<MenuAction>());
+        DFileMenuManager::setActionBlacklist(QSet<MenuAction>());
     }
-private:
-    DFileSystemModel *model = nullptr;
-};
-//end
+    // end
 }
 
 CanvasGridView::CanvasGridView(const QString &screen, QWidget *parent)
@@ -1181,6 +1187,12 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
                 }
             }
 
+            // fix bug94233 在桌面右键,右键菜单缺少选项
+            if (!DFileMenuManager::actionWhitelist().isEmpty() || !DFileMenuManager::actionBlacklist().isEmpty()) {
+                //! set menu actions filter
+                setMenuActionsFilter();
+            }
+
             if (isEmptyArea) {
                 itemDelegate()->hideNotEditingIndexWidget();
                 clearSelection();
@@ -1794,8 +1806,7 @@ void CanvasGridView::focusInEvent(QFocusEvent *event)
     itemDelegate()->commitDataAndCloseActiveEditor();
 
     /// set menu actions filter
-    DFileMenuManager::setActionWhitelist(QSet<MenuAction>());
-    DFileMenuManager::setActionBlacklist(QSet<MenuAction>());
+    setMenuActionsFilter();
 }
 
 void CanvasGridView::focusOutEvent(QFocusEvent *event)
@@ -1806,6 +1817,12 @@ void CanvasGridView::focusOutEvent(QFocusEvent *event)
 
 void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
 {
+    // fix bug94233 在桌面右键,右键菜单缺少选项
+    if (!DFileMenuManager::actionWhitelist().isEmpty() || !DFileMenuManager::actionBlacklist().isEmpty()) {
+        //! set menu actions filter
+        setMenuActionsFilter();
+    }
+
     //fix bug39609 选中桌面文件夹，进行右键操作，例如打开、重命名，然后再按快捷键home、left、right无效
     d->mousePressed = false;
 
