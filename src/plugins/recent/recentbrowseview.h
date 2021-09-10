@@ -31,20 +31,9 @@ DSB_FM_USE_NAMESPACE
 class RecentBrowseView : public BrowseView
 {
 public:
-    explicit RecentBrowseView(QWidget *parent = nullptr)
-    {
-        setModel(new RecentBrowseViewModel(this));
-    }
-
-    virtual void setRootUrl(const QUrl &url) override
-    {
-        Q_UNUSED(url);
-    }
-
-    virtual QUrl rootUrl() override
-    {
-        return RecentUtil::onlyRootUrl();
-    }
+    explicit RecentBrowseView(QWidget *parent = nullptr);
+    virtual void setRootUrl(const QUrl &url) override;
+    virtual QUrl rootUrl() override;
 };
 
 #endif // RECENTBROWSEVIEW_H

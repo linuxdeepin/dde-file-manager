@@ -22,7 +22,7 @@
 #include "recent.h"
 #include "recentutil.h"
 #include "recentbrowseview.h"
-#include "recenteventrecver.h"
+#include "recenteventreceiver.h"
 #include "recentrootfileinfo.h"
 
 #include "windowservice/windowservice.h"
@@ -39,8 +39,6 @@
 #include "dfm-base/widgets/dfmsidebar/sidebarview.h"
 #include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
 #include "dfm-base/widgets/dfmfileview/fileview.h"
-
-#include "dfm-framework/lifecycle/plugincontext.h"
 
 #include <QListWidget>
 #include <QListView>
@@ -70,21 +68,15 @@ void Recent::initialize()
     QIcon recentIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::RecentPath));
     UrlRoute::schemeMapRoot(recentScheme,"/", recentIcon, true);
     //注册Scheme为"file"的扩展的文件信息 本地默认文件的
-    InfoFactory::instance().regClass<RecentRootFileInfo>("recent");
-    //    FileDeviceFactory::instance().regClass<>("recent");
-    //    DirIteratorFactory::instance().regClass<LocalDirIterator>("recent");
-    //    WacherFactory::instance().regClass<AbstractFileWatcher>("recent");
-    BrowseWidgetFactory::instance().regClass<RecentBrowseView>(recentScheme);
+    InfoFactory::regClass<RecentRootFileInfo>("recent");
+    //    FileDeviceFactory::regClass<>("recent");
+    //    DirIteratorFactory::regClass<LocalDirIterator>("recent");
+    //    WacherFactory::regClass<AbstractFileWatcher>("recent");
+    BrowseWidgetFactory::regClass<RecentBrowseView>(recentScheme);
 }
 
-bool Recent::start(QSharedPointer<dpf::PluginContext> context)
+bool Recent::start()
 {
-    Q_UNUSED(context)
-
-    SaveBlock::windowServiceTemp = context->service<WindowService>("WindowService");
-
-    qCCritical(RecentPlugin) << context->services() << SaveBlock::windowServiceTemp;
-
     return true;
 }
 

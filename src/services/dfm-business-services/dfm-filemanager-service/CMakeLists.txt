@@ -31,7 +31,7 @@ set(WINDOWSERVICE_H
     windowservice/private/optionbuttonbox_p.h
     windowservice/private/completerview_p.h
     windowservice/private/displaydefaultview_p.h
-    windowservice/containerkeys.h
+    windowservice/contexts.h
     windowservice/windowservice.h
     windowservice/displayviewlogic.h
     windowservice/displaydefaultview.h

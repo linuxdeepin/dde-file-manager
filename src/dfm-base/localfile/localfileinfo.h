@@ -33,9 +33,7 @@ DFMBASE_BEGIN_NAMESPACE
 class LocalFileInfoPrivate;
 class LocalFileInfo : public AbstractFileInfo
 {
-    Q_DECLARE_PRIVATE(LocalFileInfo)
-    LocalFileInfoPrivate * const d_ptr;
-
+    LocalFileInfoPrivate *const d;
 public:
     enum Icon {
         LinkIcon,           // 链接文件图标

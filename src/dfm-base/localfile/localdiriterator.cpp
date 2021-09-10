@@ -27,7 +27,11 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags, LocalDirIterator *q)
+LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
+                                                 const QStringList &nameFilters,
+                                                 QDir::Filters filters,
+                                                 QDirIterator::IteratorFlags flags,
+                                                 LocalDirIterator *q)
     : q_ptr(q),
       url(url)
 {
@@ -58,7 +62,7 @@ LocalDirIterator::LocalDirIterator(const QUrl &url,
                                        const QStringList &nameFilters,
                                        QDir::Filters filters,
                                        QDirIterator::IteratorFlags flags)
-    : d_ptr(new LocalDirIteratorPrivate(url,nameFilters, filters,flags,this))
+    : d(new LocalDirIteratorPrivate(url, nameFilters, filters, flags, this))
 {
 
 }
@@ -75,7 +79,6 @@ LocalDirIterator::~LocalDirIterator()
 
 QUrl LocalDirIterator::next()
 {
-    Q_D(LocalDirIterator);
     if (d->dfmioDirIterator)
         return UrlRoute::pathToUrl(d->dfmioDirIterator->next());
     return QUrl();
@@ -88,7 +91,6 @@ QUrl LocalDirIterator::next()
 
 bool LocalDirIterator::hasNext() const
 {
-    Q_D(const LocalDirIterator);
     if (d->dfmioDirIterator)
         return d->dfmioDirIterator->hasNext();
     return false;
@@ -118,7 +120,6 @@ QString LocalDirIterator::fileName() const
  */
 QUrl LocalDirIterator::fileUrl() const
 {
-    Q_D(const LocalDirIterator);
     if (d->dfmioDirIterator)
         return d->dfmioDirIterator->uri();
     return QUrl();
@@ -132,7 +133,7 @@ QUrl LocalDirIterator::fileUrl() const
  **/
 const AbstractFileInfoPointer LocalDirIterator::fileInfo() const
 {
-    return InfoFactory::instance().create<AbstractFileInfo>(fileUrl());
+    return InfoFactory::create<AbstractFileInfo>(fileUrl());
 }
 /*!
  * \brief url 获取文件迭代器的基本文件路径的url
@@ -141,7 +142,6 @@ const AbstractFileInfoPointer LocalDirIterator::fileInfo() const
  */
 QUrl LocalDirIterator::url() const
 {
-    Q_D(const LocalDirIterator);
     return d->url;
 }
 

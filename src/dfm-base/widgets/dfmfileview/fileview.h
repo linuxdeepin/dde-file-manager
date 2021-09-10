@@ -35,7 +35,7 @@ class FileView : public DListView
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(FileView)
-    QSharedPointer<FileViewPrivate> d_ptr;
+    QSharedPointer<FileViewPrivate> d;
 
 public:
     explicit FileView(QWidget *parent = nullptr);

@@ -77,7 +77,7 @@ QUrl FileViewItem::url() const
 void FileViewItem::setUrl(const QUrl url)
 {
     setData(QVariant(url),Roles::ItemUrlRole);
-    d->fileinfo = InfoFactory::instance().create<AbstractFileInfo>(url);
+    d->fileinfo = InfoFactory::create<AbstractFileInfo>(url);
     d->mimeType = MimeDatabase::mimeTypeForUrl(url);
 
     setData(QVariant(QIcon::fromTheme(d->mimeType.iconName())),ItemIconRole);

@@ -37,11 +37,11 @@ set(PUBLIC_H
     log/frameworklog.h
     log/codetimecheck.h
     log/logutils.h
-    service/pluginserviceglobal.h
+    service/qtclassmanager.h
+    service/qtclassfactory.h
     service/pluginservice.h
     lifecycle/pluginsetting.h
     lifecycle/pluginmetaobject.h
-    lifecycle/plugincontext.h
     lifecycle/plugin.h
     lifecycle/pluginmanager.h
     lifecycle/lifecycle.h
@@ -57,13 +57,11 @@ set(PUBLIC_CPP
     event/event.cpp
     event/eventcallproxy.cpp
     event/eventhandler.cpp
-    service/pluginserviceglobal.cpp
     log/frameworklog.cpp
     log/codetimecheck.cpp
     log/logutils.cpp
     lifecycle/pluginsetting.cpp
     lifecycle/pluginmetaobject.cpp
-    lifecycle/plugincontext.cpp
     lifecycle/plugin.cpp
     lifecycle/pluginmanager.cpp
     lifecycle/lifecycle.cpp

@@ -23,7 +23,7 @@
 #include "sidebaritemdelegate.h"
 #include "sidebaritem.h"
 #include "private/sidebar_p.h"
-#include "base/singleton.hpp"
+//#include "base/singleton.hpp"
 
 #include <DApplicationHelper>
 

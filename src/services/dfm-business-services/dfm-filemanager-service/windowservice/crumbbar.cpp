@@ -23,7 +23,6 @@
 #include "crumbbar.h"
 #include "crumbmodel.h"
 
-#include "dfm-base/base/singleton.hpp"
 #include "dfm-base/base/standardpaths.h"
 #include "services/dfm-business-services/dfm-filemanager-service/applicationservice/application.h"
 #include "services/dfm-business-services/dfm-filemanager-service/applicationservice/settings.h"

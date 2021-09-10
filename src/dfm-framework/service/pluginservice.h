@@ -22,10 +22,9 @@
 #ifndef PLUGINSERVICE_H
 #define PLUGINSERVICE_H
 
-#include "pluginserviceglobal.h"
-
+#include "qtclassfactory.h"
+#include "qtclassmanager.h"
 #include "dfm-framework/log/frameworklog.h"
-
 #include "dfm-framework/dfm_framework_global.h"
 
 #include <QObject>
@@ -35,40 +34,62 @@
 
 DPF_BEGIN_NAMESPACE
 
-/**
- * @brief The PluginService class
- * 插件服务接口类
- * @code
- * class PluginService : public QObject
- * {
- *      Q_OBJECT
- *      Q_DISABLE_COPY(PluginService)
- *      friend class PluginServiceGlobal;
- * public:
- *      explicit PluginService(){}
- *      virtual ~PluginService(){}
- * };
- * @endcode
- */
+class PluginService : public QObject
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(PluginService)
+public:
+    explicit PluginService(){}
+    virtual ~PluginService(){}
+}; //接口类
 
-class PluginService;
+class PluginServiceContext final : public QObject,
+        public QtClassFactory<PluginService>,
+        public QtClassManager<PluginService>
+{
+    Q_OBJECT
+    inline static PluginServiceContext* ins = nullptr;
+
+public:
+    static PluginServiceContext &instance()
+    {
+        if (!ins)
+            ins  = new PluginServiceContext();
+        return *ins;
+    }
+
+    template<class CT>
+    static CT *service(const QString &serviceName)
+    {
+        return qobject_cast<CT*>(PluginServiceContext::instance().
+                                QtClassManager<PluginService>::value(serviceName));
+    }
+
+    static QStringList services()
+    {
+        return PluginServiceContext::instance().keys();
+    }
+
+private:
+    explicit PluginServiceContext(){}
+};
 
 #define PLUGIN_SERVICE(x) \
-   static bool x##_regResult = dpf::GlobalPrivate::PluginServiceGlobal::instance().regClass<x>(#x);
+    static bool x##_regResult = dpf::PluginServiceContext::instance().regClass<x>(#x);
 
 #define IMPORT_SERVICE(x) \
     QString errorString; \
-    auto x##_ins = dpf::GlobalPrivate::PluginServiceGlobal::instance().create(#x,&errorString); \
+    auto x##_ins = dpf::PluginServiceContext::instance().create(#x,&errorString); \
     if (!x##_ins) \
         dpfCritical() << errorString; \
     else { \
         dpfCritical() << "IMPORT_SERVICE:" << #x;\
-        auto appendRes = dpf::GlobalPrivate::PluginServiceGlobal::instance().append(#x, x##_ins, &errorString);\
+        auto appendRes = dpf::PluginServiceContext::instance().append(#x, x##_ins, &errorString);\
         if (!appendRes) dpfCritical()<< errorString;\
     }
 
 #define EXPORT_SERVICE(x) \
-    dpf::GlobalPrivate::PluginServiceGlobal::instance().remove(#x);\
+    dpf::PluginServiceContext::instance().remove(#x);\
     dpfCritical() << "EXPORT_SERVICE:" << #x;
 
 DPF_END_NAMESPACE

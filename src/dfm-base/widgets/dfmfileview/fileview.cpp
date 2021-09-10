@@ -29,7 +29,7 @@
 DFMBASE_BEGIN_NAMESPACE
 FileView::FileView(QWidget *parent)
     : DListView(parent)
-    , d_ptr(new FileViewPrivate(this))
+    , d(new FileViewPrivate(this))
 {
     Q_D(FileView);
     auto model = new FileViewModel;

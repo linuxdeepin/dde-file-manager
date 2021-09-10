@@ -34,8 +34,8 @@ class WatcherCachePrivate;
 class WatcherCache : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), WatcherCache)
-    QScopedPointer<WatcherCachePrivate> d_ptr;
+    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d), WatcherCache)
+    QScopedPointer<WatcherCachePrivate> d;
     friend WacherFactory;
     friend InfoCache;
 public:

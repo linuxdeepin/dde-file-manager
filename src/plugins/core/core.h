@@ -34,13 +34,13 @@ class DFMWindowManagerService;
 class Core : public dpf::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "Deepin.Bundle.Filemanager.org" FILE "core.json")
+    Q_PLUGIN_METADATA(IID "deepin.bundle.filemanager.org" FILE "core.json")
 
 public:
 
     virtual void initialize() override;
 
-    virtual bool start(QSharedPointer<dpf::PluginContext> context) override;
+    virtual bool start() override;
 
     virtual dpf::Plugin::ShutdownFlag stop() override;
 

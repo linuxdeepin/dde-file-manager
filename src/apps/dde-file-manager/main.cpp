@@ -51,7 +51,7 @@ USING_IO_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 /// @brief PLUGIN_INTERFACE 默认插件iid
-static const char * const FM_PLUGIN_INTERFACE = "Deepin.Bundle.Filemanager.org";
+static const char * const FM_PLUGIN_INTERFACE = "deepin.bundle.filemanager.org";
 
 static bool pluginsLoad()
 {

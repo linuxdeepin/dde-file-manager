@@ -92,20 +92,31 @@ public:
     }
 };
 
-class BrowseWidgetFactory : public SchemeWidegtFactory<DisplayViewLogic>
+class BrowseWidgetFactory final : public SchemeWidegtFactory<DisplayViewLogic>
 {
     Q_DISABLE_COPY(BrowseWidgetFactory)
+    inline static BrowseWidgetFactory* ins = nullptr;
 public:
-    explicit BrowseWidgetFactory();
-    virtual ~BrowseWidgetFactory();
+
+    template<class CT = DisplayViewLogic>
+    static bool regClass(const QString &scheme, QString *errorString = nullptr)
+    {
+        return instance().SchemeWidegtFactory<DisplayViewLogic>
+                ::regClass<CT>(scheme, errorString);
+    }
+
     //提供任意子类的转换方法模板，仅限BrowseView树族
     //与qSharedPointerDynamicCast保持一致
     template<class T>
-    T* create(const QUrl &url, QString *errorString = nullptr)
+    static T* create(const QUrl &url, QString *errorString = nullptr)
     {
-        return dynamic_cast<T*>(SchemeWidegtFactory<DisplayViewLogic>::create(url, errorString));
+        return dynamic_cast<T*>(instance().SchemeWidegtFactory<DisplayViewLogic>
+                                ::create(url, errorString));
     }
 
+private:
+    explicit BrowseWidgetFactory();
+    virtual ~BrowseWidgetFactory();
     static BrowseWidgetFactory& instance();
 };
 

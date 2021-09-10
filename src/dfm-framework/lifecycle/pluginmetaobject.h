@@ -78,7 +78,7 @@ class PluginService;
 class PluginMetaObjectPrivate;
 class PluginMetaObject final : public PluginMetaT1<Plugin>
 {
-    QSharedPointer<PluginMetaObjectPrivate> d_ptr;
+    QSharedPointer<PluginMetaObjectPrivate> d;
 
     friend class PluginManager;
     friend class PluginManagerPrivate;

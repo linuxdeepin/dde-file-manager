@@ -21,3 +21,18 @@
  */
 #include "recentbrowseview.h"
 
+RecentBrowseView::RecentBrowseView(QWidget *parent)
+    :BrowseView(parent)
+{
+    setModel(new RecentBrowseViewModel(this));
+}
+
+void RecentBrowseView::setRootUrl(const QUrl &url)
+{
+    Q_UNUSED(url);
+}
+
+QUrl RecentBrowseView::rootUrl()
+{
+    return RecentUtil::onlyRootUrl();
+}

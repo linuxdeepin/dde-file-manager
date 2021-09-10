@@ -46,7 +46,7 @@ DFMBASE_BEGIN_NAMESPACE
 
 LocalFileInfo::LocalFileInfo(const QUrl &url)
     : AbstractFileInfo (url),
-      d_ptr(new LocalFileInfoPrivate(this))
+      d(new LocalFileInfoPrivate(this))
 {
 
 }
@@ -58,11 +58,10 @@ LocalFileInfo::~LocalFileInfo()
 
 LocalFileInfo& LocalFileInfo::operator =(const LocalFileInfo &info)
 {
-    Q_D(LocalFileInfo);
     AbstractFileInfo::operator=(info);
-    d->icon = info.d_ptr->icon;
-    d->inode = info.d_ptr->inode;
-    d->mimeType = info.d_ptr->mimeType;
+    d->icon = info.d->icon;
+    d->inode = info.d->inode;
+    d->mimeType = info.d->mimeType;
     return *this;
 }
 /*!
@@ -127,7 +126,6 @@ bool LocalFileInfo::isRegular() const
  */
 void LocalFileInfo::setEmblems(const LocalFileInfo::DFMEmblemInfos &infos)
 {
-    Q_D(LocalFileInfo);
     d->EmblemsInfo = infos;
 }
 /*!
@@ -135,7 +133,6 @@ void LocalFileInfo::setEmblems(const LocalFileInfo::DFMEmblemInfos &infos)
  */
 void LocalFileInfo::clearEmblems()
 {
-    Q_D(LocalFileInfo);
     d->EmblemsInfo.clear();
 }
 /*!
@@ -145,7 +142,6 @@ void LocalFileInfo::clearEmblems()
  */
 LocalFileInfo::DFMEmblemInfos LocalFileInfo::emblems() const
 {
-    Q_D(const LocalFileInfo);
     return d->EmblemsInfo;
 }
 /*!
@@ -155,7 +151,6 @@ LocalFileInfo::DFMEmblemInfos LocalFileInfo::emblems() const
  */
 void LocalFileInfo::setIcon(const QIcon &icon)
 {
-    Q_D(LocalFileInfo);
     d->icon = icon;
 }
 /*!
@@ -165,8 +160,6 @@ void LocalFileInfo::setIcon(const QIcon &icon)
  */
 QIcon LocalFileInfo::icon() const
 {
-    Q_D(const LocalFileInfo);
-
     if (d->icon.isNull()) {
         if (isDir())
             return QIcon::fromTheme("folder");
@@ -187,7 +180,6 @@ MimeDatabase::FileType LocalFileInfo::fileType() const
 {
     // fix bug#52950 【专业版1030】【文管5.2.0.72】回收站删除指向块设备的链接文件时，删除失败
     // QT_STATBUF判断链接文件属性时，判断的是指向文件的属性，使用QFileInfo判断
-    Q_D(const LocalFileInfo);
     if (d->cacheFileType != MimeDatabase::FileType::Unknown)
         return d->cacheFileType;
 
@@ -240,7 +232,6 @@ QString LocalFileInfo::linkTargetPath() const
  */
 int LocalFileInfo::countChildFile() const
 {
-
     if (isDir()) {
         QDir dir(absoluteFilePath());
         QStringList entryList = dir.entryList(QDir::AllEntries | QDir::System
@@ -257,8 +248,6 @@ int LocalFileInfo::countChildFile() const
  */
 QString LocalFileInfo::sizeFormat() const
 {
-    Q_D(const LocalFileInfo);
-
     if (isDir()) {
         return QStringLiteral("-");
     }
@@ -318,8 +307,6 @@ void LocalFileInfo::refresh()
  */
 QFileInfo LocalFileInfo::toQFileInfo() const
 {
-    Q_D(const LocalFileInfo);
-
     return QFileInfo(d->url.path());
 }
 /*!
@@ -329,8 +316,6 @@ QFileInfo LocalFileInfo::toQFileInfo() const
  */
 QVariantHash LocalFileInfo::extraProperties() const
 {
-    Q_D(const LocalFileInfo);
-
     return d->extraProperties;
 }
 /*!
@@ -340,7 +325,6 @@ QVariantHash LocalFileInfo::extraProperties() const
  */
 quint64 LocalFileInfo::inode() const
 {
-    Q_D(const LocalFileInfo);
     if (d->inode != 0) {
         return d->inode;
     }

@@ -22,8 +22,8 @@
 #ifndef PLUGIN_H
 #define PLUGIN_H
 
-#include "dfm-framework/lifecycle/plugincontext.h"
 #include "dfm-framework/dfm_framework_global.h"
+#include "dfm-framework/service/pluginservice.h"
 
 #include <QObject>
 #include <QSharedData>
@@ -68,7 +68,7 @@ public:
      * @return bool 如果返回true则表示当前插件start函数执行正常
      * false则代表当前内部执行存在问题
      */
-    virtual bool start(QSharedPointer<PluginContext> context) = 0;
+    virtual bool start() = 0;
     virtual ShutdownFlag stop();
 
 signals:

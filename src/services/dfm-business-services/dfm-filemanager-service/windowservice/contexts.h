@@ -19,6 +19,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "plugincontext.h"
+#ifndef CONTEXTS_H
+#define CONTEXTS_H
 
+#include "dfm_filemanager_service_global.h"
+#include "dfm-framework/event/event.h"
 
+DSB_FM_BEGIN_NAMESPACE
+
+namespace EventTypes {
+
+const QString TOPIC_WINDOW_EVENT {"WindowEvent"};
+const QString DATA_OPEN_NEW_WINDOW {"OpenNewWindow"};
+const QString PROPERTY_KEY_WINDOW_INDEX {"WindowIndex"};
+
+};//namespace eventContainer
+
+namespace SideBarGroups{
+
+const QString CORE {"core"};
+const QString DEVICE {"device"};
+
+}//namespace eventContainer
+
+DSB_FM_END_NAMESPACE
+
+#endif // CONTEXTS_H

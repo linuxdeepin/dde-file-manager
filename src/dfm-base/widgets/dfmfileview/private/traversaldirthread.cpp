@@ -32,7 +32,7 @@ TraversalDirThread::TraversalDirThread(const QUrl &url,
     , dirUrl(url)
 {
     if (dirUrl.isValid()) {
-        m_dirIterator = DirIteratorFactory::instance().create<LocalDirIterator>
+        m_dirIterator = DirIteratorFactory::create<LocalDirIterator>
                             (url, nameFilters, filters,flags);
     }
     qRegisterMetaType<QList<QSharedPointer<FileViewItem>>>("QList<QSharedPointer<DFMFileViewItem>>");

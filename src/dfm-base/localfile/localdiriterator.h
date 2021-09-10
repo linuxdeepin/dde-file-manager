@@ -34,8 +34,7 @@ class LocalDirIteratorPrivate;
 
 class LocalDirIterator : public AbstractDirIterator
 {
-    Q_DECLARE_PRIVATE(LocalDirIterator)
-    LocalDirIteratorPrivate * const d_ptr;
+    LocalDirIteratorPrivate * const d;
 
 public:
     explicit LocalDirIterator(const QUrl &url,

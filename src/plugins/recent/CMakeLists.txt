@@ -10,7 +10,7 @@ include_directories(
 
 set(recent_cxx_cpp
     recentrootfileinfo.cpp
-    recenteventrecver.cpp
+    recenteventreceiver.cpp
     recentbrowseviewmodel.cpp
     recentbrowseview.cpp
     recentlog.cpp
@@ -21,7 +21,7 @@ set(recent_cxx_cpp
 
 set(recent_cxx_h
     recentrootfileinfo.h
-    recenteventrecver.h
+    recenteventreceiver.h
     recentbrowseviewmodel.h
     recentbrowseview.h
     recentlog.h

@@ -60,8 +60,8 @@ class InfoCachePrivate;
 class InfoCache : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), InfoCache)
-    QScopedPointer<InfoCachePrivate> d_ptr;
+    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d), InfoCache)
+    QScopedPointer<InfoCachePrivate> d;
     friend InfoFactory;
     friend ReFreshThread;
 public:

@@ -40,6 +40,7 @@
 
 #include "dfm-framework/listener/listener.h"
 #include "dfm-framework/lifecycle/plugin.h"
+#include "dfm-framework/service/pluginservice.h"
 
 #include <QListWidget>
 #include <QListView>
@@ -159,40 +160,40 @@ static void regStandardPathClass()
                             QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DownloadsPath)),
                             false);
 
-    InfoFactory::instance().regClass<LocalFileInfo>("home");
-    DirIteratorFactory::instance().regClass<LocalDirIterator>("home");
-    WacherFactory::instance().regClass<AbstractFileWatcher>("home");
-    BrowseWidgetFactory::instance().regClass<BrowseView>("home");
+    InfoFactory::regClass<LocalFileInfo>("home");
+    DirIteratorFactory::regClass<LocalDirIterator>("home");
+    WacherFactory::regClass<AbstractFileWatcher>("home");
+    BrowseWidgetFactory::regClass<BrowseView>("home");
 
-    InfoFactory::instance().regClass<LocalFileInfo>("desktop");
-    DirIteratorFactory::instance().regClass<LocalDirIterator>("desktop");
-    WacherFactory::instance().regClass<AbstractFileWatcher>("desktop");
-    BrowseWidgetFactory::instance().regClass<BrowseView>("desktop");
+    InfoFactory::regClass<LocalFileInfo>("desktop");
+    DirIteratorFactory::regClass<LocalDirIterator>("desktop");
+    WacherFactory::regClass<AbstractFileWatcher>("desktop");
+    BrowseWidgetFactory::regClass<BrowseView>("desktop");
 
-    InfoFactory::instance().regClass<LocalFileInfo>("videos");
-    DirIteratorFactory::instance().regClass<LocalDirIterator>("videos");
-    WacherFactory::instance().regClass<AbstractFileWatcher>("videos");
-    BrowseWidgetFactory::instance().regClass<BrowseView>("videos");
+    InfoFactory::regClass<LocalFileInfo>("videos");
+    DirIteratorFactory::regClass<LocalDirIterator>("videos");
+    WacherFactory::regClass<AbstractFileWatcher>("videos");
+    BrowseWidgetFactory::regClass<BrowseView>("videos");
 
-    InfoFactory::instance().regClass<LocalFileInfo>("music");
-    DirIteratorFactory::instance().regClass<LocalDirIterator>("music");
-    WacherFactory::instance().regClass<AbstractFileWatcher>("music");
-    BrowseWidgetFactory::instance().regClass<BrowseView>("music");
+    InfoFactory::regClass<LocalFileInfo>("music");
+    DirIteratorFactory::regClass<LocalDirIterator>("music");
+    WacherFactory::regClass<AbstractFileWatcher>("music");
+    BrowseWidgetFactory::regClass<BrowseView>("music");
 
-    InfoFactory::instance().regClass<LocalFileInfo>("pictures");
-    DirIteratorFactory::instance().regClass<LocalDirIterator>("pictures");
-    WacherFactory::instance().regClass<AbstractFileWatcher>("pictures");
-    BrowseWidgetFactory::instance().regClass<BrowseView>("pictures");
+    InfoFactory::regClass<LocalFileInfo>("pictures");
+    DirIteratorFactory::regClass<LocalDirIterator>("pictures");
+    WacherFactory::regClass<AbstractFileWatcher>("pictures");
+    BrowseWidgetFactory::regClass<BrowseView>("pictures");
 
-    InfoFactory::instance().regClass<LocalFileInfo>("documents");
-    DirIteratorFactory::instance().regClass<LocalDirIterator>("documents");
-    WacherFactory::instance().regClass<AbstractFileWatcher>("documents");
-    BrowseWidgetFactory::instance().regClass<BrowseView>("documents");
+    InfoFactory::regClass<LocalFileInfo>("documents");
+    DirIteratorFactory::regClass<LocalDirIterator>("documents");
+    WacherFactory::regClass<AbstractFileWatcher>("documents");
+    BrowseWidgetFactory::regClass<BrowseView>("documents");
 
-    InfoFactory::instance().regClass<LocalFileInfo>("downloads");
-    DirIteratorFactory::instance().regClass<LocalDirIterator>("downloads");
-    WacherFactory::instance().regClass<AbstractFileWatcher>("downloads");
-    BrowseWidgetFactory::instance().regClass<BrowseView>("downloads");
+    InfoFactory::regClass<LocalFileInfo>("downloads");
+    DirIteratorFactory::regClass<LocalDirIterator>("downloads");
+    WacherFactory::regClass<AbstractFileWatcher>("downloads");
+    BrowseWidgetFactory::regClass<BrowseView>("downloads");
 }
 
 void Core::initialize()
@@ -206,19 +207,20 @@ void Core::initialize()
     //注册路由
     UrlRoute::schemeMapRoot("file","/");
     //注册Scheme为"file"的扩展的文件信息 本地默认文件的
-    InfoFactory::instance().regClass<LocalFileInfo>("file");
-    DirIteratorFactory::instance().regClass<LocalDirIterator>("file");
-    WacherFactory::instance().regClass<AbstractFileWatcher>("file");
-    BrowseWidgetFactory::instance().regClass<BrowseView>("file");
+    InfoFactory::regClass<LocalFileInfo>("file");
+    DirIteratorFactory::regClass<LocalDirIterator>("file");
+    WacherFactory::regClass<AbstractFileWatcher>("file");
+    BrowseWidgetFactory::regClass<BrowseView>("file");
 
     regStandardPathClass();
 }
 
-bool Core::start(QSharedPointer<dpf::PluginContext> context)
+bool Core::start()
 {
     GlobalPrivate::dfmApp = new Application;
     dpfCritical() << __PRETTY_FUNCTION__;
-    qInfo() << "import service list" << context->services();
+    qInfo() << "import service list" <<  dpf::PluginServiceContext::services();
+
     //    auto previewService = context->service<DFMOldPreviewService>("DFMOldPreviewService");
     //    if (previewService) {
     //        auto viewInterfaces = previewService->getViewInterfaces();
@@ -231,7 +233,7 @@ bool Core::start(QSharedPointer<dpf::PluginContext> context)
     //        qInfo() << "dfmfilePreviewInterface.size()" << dfmfilePreviewInterface.size();
     //    }
 
-    auto windowService = context->service<WindowService>("WindowService");
+    WindowService *windowService = dpf::PluginServiceContext::service<WindowService>("WindowService");
 
     if (!windowService) {
         qCCritical(CorePlugin) << "Failed, init window \"windowService\" is empty";
@@ -240,7 +242,7 @@ bool Core::start(QSharedPointer<dpf::PluginContext> context)
 
     if (windowService) {
         QUrl defaultUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::HomePath));
-        BrowseWindow* newWindow = windowService->newWindow();
+        BrowseWindow *newWindow = windowService->newWindow();
 
         if (newWindow){
             int winIdx = windowService->windowList.indexOf(newWindow);

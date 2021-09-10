@@ -22,7 +22,7 @@
 #include "private/localmenu_p.h"
 #include "shutil/fileutils.h"
 #include "base/schemefactory.h"
-#include "base/singleton.hpp"
+//#include "base/singleton.hpp"
 
 #include <QSet>
 
@@ -33,7 +33,7 @@ DFMBASE_BEGIN_NAMESPACE
  * \brief 存储LocalMenu的基本数据
  */
 LocalMenuPrivate::LocalMenuPrivate(const QString &filePath, LocalMenu *qq)
-    :localFileInfo(InfoFactory::instance().create<LocalFileInfo>(filePath)),
+    :localFileInfo(InfoFactory::create<LocalFileInfo>(filePath)),
       q_ptr(qq)
 {
 
@@ -49,7 +49,7 @@ LocalMenuPrivate::~LocalMenuPrivate()
  * \brief 先初始化时，加载oem和用户自动的菜单anction，根据本地文件信息获取不同的菜单action，根据不同的action创建和设置菜单栏
  */
 LocalMenu::LocalMenu(const QString &filePath)
-     :d_ptr(new LocalMenuPrivate(filePath, this))
+     :d(new LocalMenuPrivate(filePath, this))
 {
 
 }

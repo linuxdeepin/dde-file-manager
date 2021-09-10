@@ -39,6 +39,33 @@
 #include <functional>
 
 DFMBASE_BEGIN_NAMESPACE
+
+/**
+ * \brief The class GC
+ * 垃圾回收类，回收懒汉单例
+ * \code
+ * in cpp file GC<Any class> anyclass_gc;
+ * \endcode
+ */
+template<class CT>
+        class GC
+{
+public:
+    explicit GC() = delete;
+    explicit GC(CT* ins)
+    {
+        cacheIns = ins;
+    }
+    virtual ~GC()
+    {
+        if(cacheIns)
+            delete cacheIns;
+        cacheIns = nullptr;
+    }
+
+    CT * cacheIns = nullptr;
+};
+
 /**
  * @brief The class SchemeFactory
  *  根据Scheme注册Class的工厂类，
@@ -47,7 +74,7 @@ DFMBASE_BEGIN_NAMESPACE
  * @tparam T 顶层基类
  */
 template <class T>
-        class SchemeFactory
+class SchemeFactory
 {
 
 public:
@@ -120,50 +147,65 @@ public:
 class InfoFactory final : public SchemeFactory<AbstractFileInfo>
 {
     Q_DISABLE_COPY(InfoFactory)
-
+    friend class GC<InfoFactory>;
+    inline static InfoFactory *ins = nullptr;
 public:
 
-    InfoFactory(){}
+    template<class CT = AbstractFileInfo>
+    static bool regClass(const QString &scheme, QString *errorString = nullptr)
+    {
+        return instance().SchemeFactory<AbstractFileInfo>
+                ::regClass<CT>(scheme, errorString);
+    }
 
     //提供任意子类的转换方法模板，仅限DAbstractFileInfo树族，
     //与qSharedPointerDynamicCast保持一致
     template<class T>
-    QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
+    static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
     {
         QSharedPointer<AbstractFileInfo> info = InfoCache::instance().getCacheInfo(url);
         if (!info) {
-            info = SchemeFactory<AbstractFileInfo>::create(url, errorString);
+            info = instance().SchemeFactory<AbstractFileInfo>::create(url, errorString);
             InfoCache::instance().cacheInfo(url, info);
         }
         return qSharedPointerDynamicCast<T>(info);
     }
 
-    //获取全局实例
-    static InfoFactory& instance();
+private:
+    static InfoFactory& instance(); //获取全局实例
+    explicit InfoFactory(){}
 };
 
 class WacherFactory final : public SchemeFactory<AbstractFileWatcher>
 {
     Q_DISABLE_COPY(WacherFactory)
+    friend class GC<WacherFactory>;
+    inline static WacherFactory *ins = nullptr;
 public:
 
-    WacherFactory(){}
+    template<class CT = AbstractFileWatcher>
+    static bool regClass(const QString &scheme, QString *errorString = nullptr)
+    {
+        return instance().SchemeFactory<AbstractFileWatcher>
+                ::regClass<CT>(scheme, errorString);
+    }
 
     //提供任意子类的转换方法模板，仅限DAbstractFileWatcher树族，
     //与qSharedPointerDynamicCast保持一致
     template<class T>
-    QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
+    static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
     {
         QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(url);
         if (!watcher) {
-            watcher = SchemeFactory<AbstractFileWatcher>::create(url, errorString);
+            watcher = instance().SchemeFactory<AbstractFileWatcher>::create(url, errorString);
             WatcherCache::instance().cacheWatcher(url, watcher);
         }
         return qSharedPointerDynamicCast<T>(watcher);
     }
 
-    //获取全局实例
-    static WacherFactory& instance();
+private:
+    static WacherFactory& instance();//获取全局实例
+    explicit WacherFactory(){}
 };
 
 //参数列表偏特化
@@ -272,32 +314,85 @@ public:
 class DirIteratorFactory final : public DirIteratorFactoryT1<AbstractDirIterator>
 {
     Q_DISABLE_COPY(DirIteratorFactory)
+    friend class GC<DirIteratorFactory>;
+    inline static DirIteratorFactory *ins = nullptr;
 public:
 
-    DirIteratorFactory(){}
+    /* @method regClass
+     * @brief 注册Class与Scheme的关联
+     * @tparam CT = T 默认传递构造为顶层基类
+     * @param const QString &scheme 传递scheme进行类构造绑定
+     * @param QString *errorString 错误信息赋值的字符串
+     * @return bool 注册结果，如果当前已存在scheme的关联，则返回false
+     *  否则返回true
+     */
+    template<class CT = AbstractDirIterator>
+    static bool regClass(const QString &scheme, QString *errorString = nullptr)
+    {
+        return instance().DirIteratorFactoryT1<AbstractDirIterator>
+                ::create<CT>(scheme,errorString);
+    }
 
-    //获取全局实例
-    static DirIteratorFactory &instance();
+    //提供任意子类的转换方法模板，仅限DAbstractFileDevice树族
+    //与qSharedPointerDynamicCast保持一致
+    template<class RT>
+    static QSharedPointer<RT> create(const QUrl &url, QString *errorString = nullptr)
+    {
+        return instance().DirIteratorFactoryT1<AbstractDirIterator>
+                ::create<RT>(url, errorString);
+    }
+
+    /* @method create
+     * @brief 根据不同的Url进行顶层类构造，调用该函数存在前置条件
+     *  否则将创建空指针
+     *  首先需要注册scheme到DFMUrlRoute类
+     *  其次需要注册scheme到DFMSchemeFactory<T>类
+     * @param const QUrl &url 需要构造的Url
+     * @param QString *errorString 错误信息赋值的字符串
+     * @return QSharedPointer<T> 动态指针类型，顶层类的抽象接口
+     *  如果没有注册 scheme 到 DFMUrlRoute，返回空指针
+     *  如果没有注册 scheme 与 class 构造函数规则，返回空指针
+     */
+    template<class RT = AbstractDirIterator>
+    static QSharedPointer<RT> create(const QUrl &url,
+                                     const QStringList &nameFilters = QStringList(),
+                                     QDir::Filters filters = QDir::NoFilter,
+                                     QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
+                                     QString *errorString = nullptr)
+    {
+        return instance().DirIteratorFactoryT1<AbstractDirIterator>
+                ::create<RT>(url, nameFilters, filters, flags, errorString);
+    }
+
+private:
+    DirIteratorFactory(){}
+    static DirIteratorFactory &instance(); //获取全局实例
 };
 
 class FileDeviceFactory final : public SchemeFactory<AbstractFileDevice>
 {
     Q_DISABLE_COPY(FileDeviceFactory)
-
+    friend class GC<FileDeviceFactory>;
+    inline static FileDeviceFactory *ins = nullptr;
 public:
-
-    FileDeviceFactory(){}
-
     //提供任意子类的转换方法模板，仅限DAbstractFileDevice树族
     //与qSharedPointerDynamicCast保持一致
-    template<class T>
-    QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
+    template<class CT>
+    static bool regClass(const QString &scheme, QString *errorString = nullptr)
     {
-        return qSharedPointerDynamicCast<T>(SchemeFactory<AbstractFileDevice>::create(url, errorString));
+        return instance().SchemeFactory<AbstractFileDevice>::regClass<CT>(scheme, errorString);
     }
 
-    //获取FileDevice的全局实例
-    static FileDeviceFactory& instance();
+    template<class T>
+    static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
+    {
+        return qSharedPointerDynamicCast<T>(
+                    instance().SchemeFactory<AbstractFileDevice>::create(url, errorString));
+    }
+
+private:
+    FileDeviceFactory(){}
+    static FileDeviceFactory &instance(); //获取全局实例
 };
 
 DFMBASE_END_NAMESPACE

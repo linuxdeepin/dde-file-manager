@@ -45,7 +45,7 @@ void FileViewModelPrivate::doUpdateChildren(const QList<QSharedPointer<FileViewI
 
 FileViewModel::FileViewModel(QAbstractItemView *parent)
     : QAbstractItemModel (parent)
-    , d_ptr(new FileViewModelPrivate(this))
+    , d(new FileViewModelPrivate(this))
 {
 
 }
@@ -86,7 +86,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     if (!d->watcher.isNull()) {
         disconnect(d->watcher.data());
     }
-    d->watcher = WacherFactory::instance().create<AbstractFileWatcher>(url);
+    d->watcher = WacherFactory::create<AbstractFileWatcher>(url);
     if (d->watcher.isNull()) {
         QObject::connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted,
                          d, &FileViewModelPrivate::doFileDeleted);

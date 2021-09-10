@@ -198,14 +198,14 @@ void InfoCachePrivate::updateSortByTimeCacheUrlList(const QUrl &url)
 
 InfoCache::InfoCache(QObject *parent)
     : QObject(parent)
-    , d_ptr(new InfoCachePrivate(this))
+    , d(new InfoCachePrivate(this))
 {
-    connect(&d_ptr->removeTimer, &QTimer::timeout, this, &InfoCache::timeRemoveCache);
-    d_ptr->removeTimer.setInterval(CACHE_REMOVE_TIME);
-    d_ptr->removeTimer.start();
-    connect(&d_ptr->needRemoveTimer, &QTimer::timeout, this, &InfoCache::timeNeedRemoveCache);
-    d_ptr->needRemoveTimer.start(1000);
-    d_ptr->needRemoveTimer.setInterval(CACHE_REMOVE_TIME);
+    connect(&d->removeTimer, &QTimer::timeout, this, &InfoCache::timeRemoveCache);
+    d->removeTimer.setInterval(CACHE_REMOVE_TIME);
+    d->removeTimer.start();
+    connect(&d->needRemoveTimer, &QTimer::timeout, this, &InfoCache::timeNeedRemoveCache);
+    d->needRemoveTimer.start(1000);
+    d->needRemoveTimer.setInterval(CACHE_REMOVE_TIME);
 }
 
 InfoCache::~InfoCache()
@@ -258,11 +258,11 @@ void InfoCache::cacheInfo(const QUrl &url, const AbstractFileInfoPointer &info)
     Q_D(InfoCache);
 
     //获取监视器，监听当前的file的改变
-    QSharedPointer<AbstractFileWatcher>  watcher = WacherFactory::instance().create<AbstractFileWatcher>(url);
+    QSharedPointer<AbstractFileWatcher> watcher = WacherFactory::create<AbstractFileWatcher>(url);
     if (watcher) {
-        connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this,  &InfoCache::refreshFileInfo);
-        connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this,  &InfoCache::refreshFileInfo);
-        connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this,  &InfoCache::refreshFileInfo);
+        connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &InfoCache::refreshFileInfo);
+        connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &InfoCache::refreshFileInfo);
+        connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &InfoCache::refreshFileInfo);
     }
 
     d->fileInfos.insert(url, info);
@@ -296,7 +296,7 @@ void InfoCache::removeCacheInfo(const QUrl &url)
 {
     Q_D(InfoCache);
     // 断开信号连接
-    QSharedPointer<AbstractFileWatcher>  watcher = WacherFactory::instance().create<AbstractFileWatcher>(url);
+    QSharedPointer<AbstractFileWatcher> watcher = WacherFactory::create<AbstractFileWatcher>(url);
     if (watcher) {
         disconnect(watcher.data());
         WatcherCache::instance().removCacheWatcher(url);

@@ -88,7 +88,7 @@ Q_SIGNALS:
  * @brief The SynchEventHandler class
  *  同步处理类，禁止多重继承（二义性互斥），该类禁止更改
  */
-class SynchEventHandler : virtual public EventHandler
+class SyncEventHandler : virtual public EventHandler
 {
     Q_OBJECT
 public:
@@ -120,7 +120,7 @@ public:
  * @brief The SynchEventHandler class
  *  异步同步处理类，禁止多重继承（二义性互斥），该类禁止更改
  */
-class AsynchEventHandler : virtual public EventHandler
+class AsyncEventHandler : virtual public EventHandler
 {
     Q_OBJECT
 public:

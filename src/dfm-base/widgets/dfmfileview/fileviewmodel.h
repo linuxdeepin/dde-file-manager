@@ -44,8 +44,8 @@ class FileViewModelPrivate;
 class FileViewModel : public QAbstractItemModel
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), FileViewModel)
-    QSharedPointer<FileViewModelPrivate> d_ptr;
+    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d), FileViewModel)
+    QSharedPointer<FileViewModelPrivate> d;
 public:
     explicit FileViewModel(QAbstractItemView *parent = nullptr);
     virtual ~FileViewModel() override;

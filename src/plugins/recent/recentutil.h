@@ -33,19 +33,17 @@
 #include <QFile>
 #include <QDebug>
 
-const char RECENT_SCHEME[] = "recent";
-
-
-///home/funning/.local/share/recently-used.xbel
-
 class RecentUtil final
 {
     inline static QDomDocument recentDom;
     inline static QDomNodeList nodes;
-    inline static QFile recentFile; // 二级表树
+    ///home/funning/.local/share/recently-used.xbel
+    inline static QFile recentFile;
 public:
+    inline static QString recentScheme = "recent";
+    inline static QString sidebarDisplayText = QObject::tr("Recent");
 
-    RecentUtil() = delete;
+    explicit RecentUtil() = delete;
 
     static bool initRecentSubSystem()
     {
@@ -73,7 +71,7 @@ public:
     {
         QUrl url;
         url.setHost(" ");
-        url.setScheme("recent");
+        url.setScheme(recentScheme);
         url.setPath("/");
         return url;
     }

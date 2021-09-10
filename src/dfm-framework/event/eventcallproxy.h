@@ -68,8 +68,8 @@ public:
                 dpfCritical() << "Call handler asynch: " << info.className;
                 if (!info.topics.contains(event.topic())) return;
                 //显式调用
-                QtConcurrent::run(dynamic_cast<AsynchEventHandler*>(info.ins),
-                                  &AsynchEventHandler::eventProcess,
+                QtConcurrent::run(dynamic_cast<AsyncEventHandler*>(info.ins),
+                                  &AsyncEventHandler::eventProcess,
                                   event);
             };
             dpfCritical() << "Create asynch handler: " << className

@@ -24,7 +24,7 @@
 
 #include "dfm-framework/event/event.h"
 #include "dfm-framework/event/eventcallproxy.h"
-#include "windowservice/containerkeys.h"
+#include "windowservice/contexts.h"
 
 DSB_FM_USE_NAMESPACE
 
@@ -34,9 +34,9 @@ public:
     static void sendOpenNewWindowEvent(int windowIdx)
     {
         dpf::Event event;
-        event.setTopic(EventKeys::TOPIC_WINDOW_EVENT);
-        event.setData(EventKeys::DATA_OPEN_NEW_WINDOW);
-        event.setProperty(EventKeys::PROPERTY_KEY_WINDOW_INDEX, windowIdx);
+        event.setTopic(EventTypes::TOPIC_WINDOW_EVENT);
+        event.setData(EventTypes::DATA_OPEN_NEW_WINDOW);
+        event.setProperty(EventTypes::PROPERTY_KEY_WINDOW_INDEX, windowIdx);
         dpf::EventCallProxy::callEvent(event);
     }
 };

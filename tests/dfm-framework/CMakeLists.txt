@@ -64,21 +64,21 @@ set(${PROJECT_NAME}_cxx_private_h
 set(${PROJECT_NAME}_cxx_private_cpp
     ${lifecycle}/private/pluginmanager_p.cpp
     ${abus}/private/appbus_p.cpp
+    ${listener}/private/listener_p.h
     )
 
 set(${PROJECT_NAME}_cxx_public_h
-    ${SRC_DIR}/dfm_framework_global.h
     ${event}/event.h
     ${event}/eventcallproxy.h
     ${event}/eventhandler.h
     ${log}/frameworklog.h
     ${log}/codetimecheck.h
     ${log}/logutils.h
-    ${service}/pluginserviceglobal.h
+    ${service}/qtclassmanager.h
+    ${service}/qtclassfactory.h
     ${service}/pluginservice.h
     ${lifecycle}/pluginsetting.h
     ${lifecycle}/pluginmetaobject.h
-    ${lifecycle}/plugincontext.h
     ${lifecycle}/plugin.h
     ${lifecycle}/pluginmanager.h
     ${lifecycle}/lifecycle.h
@@ -90,13 +90,11 @@ set(${PROJECT_NAME}_cxx_public_cpp
     ${event}/event.cpp
     ${event}/eventcallproxy.cpp
     ${event}/eventhandler.cpp
-    ${service}/pluginserviceglobal.cpp
     ${log}/frameworklog.cpp
     ${log}/codetimecheck.cpp
     ${log}/logutils.cpp
     ${lifecycle}/pluginsetting.cpp
     ${lifecycle}/pluginmetaobject.cpp
-    ${lifecycle}/plugincontext.cpp
     ${lifecycle}/plugin.cpp
     ${lifecycle}/pluginmanager.cpp
     ${lifecycle}/lifecycle.cpp

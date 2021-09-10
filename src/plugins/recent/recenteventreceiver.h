@@ -19,5 +19,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "pluginserviceglobal.h"
+#ifndef RECENTEVENTRECEIVER_H
+#define RECENTEVENTRECEIVER_H
 
+#include "recentlog.h"
+#include "recentutil.h"
+
+#include "windowservice/windowservice.h"
+#include "windowservice/contexts.h"
+
+#include "dfm-framework/event/eventhandler.h"
+#include "dfm-framework/event/eventcallproxy.h"
+#include "dfm-base/widgets/dfmsidebar/sidebaritem.h"
+
+DSB_FM_USE_NAMESPACE
+
+class RecentEventReceiver : public dpf::SyncEventHandler
+{
+    Q_OBJECT
+public:
+    explicit RecentEventReceiver(){}
+    virtual void eventProcess(const dpf::Event &event) override;
+    void windowEvent(const dpf::Event &event);
+};
+
+#endif // RECENTEVENTRECVER_H

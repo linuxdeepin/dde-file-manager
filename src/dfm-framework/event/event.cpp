@@ -35,20 +35,20 @@ namespace PrivateGlobal
 }
 
 Event::Event()
-    : d_ptr(new EventPrivate(this))
+    : d(new EventPrivate(this))
 {
 
 }
 
 Event::Event(const Event &event):
-    d_ptr(new EventPrivate(this))
+    d(new EventPrivate(this))
 {
-    d_ptr->sourceHash = event.d_ptr->sourceHash;
+    d->sourceHash = event.d->sourceHash;
 }
 
 Event::~Event()
 {
-    delete d_ptr;
+    delete d;
 }
 
 /**
@@ -60,7 +60,7 @@ void Event::setTopic(const QString &topic)
 {
     static QMutex mutex;
     mutex.lock();
-    d_ptr->sourceHash[PrivateGlobal::EVENT_TOPIC_KEY] = topic;
+    d->sourceHash[PrivateGlobal::EVENT_TOPIC_KEY] = topic;
     mutex.unlock();
 }
 
@@ -71,7 +71,7 @@ void Event::setTopic(const QString &topic)
  */
 QString Event::topic() const
 {
-    return d_ptr->sourceHash[PrivateGlobal::EVENT_TOPIC_KEY].toString();
+    return d->sourceHash[PrivateGlobal::EVENT_TOPIC_KEY].toString();
 }
 
 /**
@@ -81,7 +81,7 @@ QString Event::topic() const
  */
 void Event::setData(const QVariant &data)
 {
-    d_ptr->sourceHash[PrivateGlobal::EVENT_DATA_KEY] = data;
+    d->sourceHash[PrivateGlobal::EVENT_DATA_KEY] = data;
 }
 
 /**
@@ -92,7 +92,7 @@ void Event::setData(const QVariant &data)
  */
 QVariant Event::data() const
 {
-    return d_ptr->sourceHash[PrivateGlobal::EVENT_DATA_KEY];
+    return d->sourceHash[PrivateGlobal::EVENT_DATA_KEY];
 }
 
 /**
@@ -102,7 +102,7 @@ QVariant Event::data() const
  */
 void Event::setProperty(const QString &key, const QVariant value)
 {
-    d_ptr->sourceHash[key] = value;
+    d->sourceHash[key] = value;
 }
 
 /**
@@ -112,13 +112,13 @@ void Event::setProperty(const QString &key, const QVariant value)
  */
 QVariant Event::property(const QString &key) const
 {
-    return d_ptr->sourceHash[key];
+    return d->sourceHash[key];
 }
 
 QT_BEGIN_NAMESPACE
 Q_CORE_EXPORT QDebug operator <<(QDebug out, const DPF_NAMESPACE::Event &event)
 {
-    out << event.d_ptr->sourceHash;
+    out << event.d->sourceHash;
     return out;
 }
 QT_END_NAMESPACE

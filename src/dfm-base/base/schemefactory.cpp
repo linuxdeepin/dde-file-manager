@@ -22,28 +22,41 @@
 #include "schemefactory.h"
 
 DFMBASE_BEGIN_NAMESPACE
-Q_GLOBAL_STATIC(DirIteratorFactory,_dirIteratorFactory)
-Q_GLOBAL_STATIC(WacherFactory,_watcherFactory)
-Q_GLOBAL_STATIC(InfoFactory,_infoFactory)
-Q_GLOBAL_STATIC(FileDeviceFactory,_fileDeviceFactory)
 
 InfoFactory &InfoFactory::instance()
 {
-    return *_infoFactory;
+    if (!ins) {
+        ins = new InfoFactory();
+        static GC<InfoFactory> infoFactory_gc(ins);
+    }
+    return *ins;
 }
 
 WacherFactory &WacherFactory::instance()
 {
-    return *_watcherFactory;
+    if (!ins) {
+        ins = new WacherFactory();
+        static GC<WacherFactory> watcherFactory_gc(ins);
+    }
+    return *ins;
 }
 
 FileDeviceFactory &FileDeviceFactory::instance()
 {
-    return *_fileDeviceFactory;
+    if (!ins) {
+        ins = new FileDeviceFactory();
+        static GC<FileDeviceFactory> fileDeviceFactory_gc(ins);
+    }
+    return *ins;
 }
 
 DirIteratorFactory &DirIteratorFactory::instance()
 {
-    return *_dirIteratorFactory;
+    if (!ins) {
+        ins = new DirIteratorFactory();
+        static GC<DirIteratorFactory> dirIteratorFactory(ins);
+    }
+    return *ins;
 }
+
 DFMBASE_END_NAMESPACE

@@ -45,7 +45,7 @@ WatcherCachePrivate::~WatcherCachePrivate()
 
 WatcherCache::WatcherCache(QObject *parent)
     : QObject(parent)
-    , d_ptr(new WatcherCachePrivate(this))
+    , d(new WatcherCachePrivate(this))
 {
 
 }

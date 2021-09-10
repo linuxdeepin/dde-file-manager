@@ -23,8 +23,6 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-Q_GLOBAL_STATIC(BrowseWidgetFactory,_browseViewFactory)
-
 BrowseView::BrowseView(QWidget *parent)
     : FileView (parent)
 {
@@ -56,8 +54,10 @@ BrowseWidgetFactory::~BrowseWidgetFactory()
 
 }
 
-BrowseWidgetFactory &BrowseWidgetFactory::instance() {
-    return * _browseViewFactory;
+BrowseWidgetFactory &BrowseWidgetFactory::instance()
+{
+    if (!ins) ins = new BrowseWidgetFactory();
+    return * ins;
 }
 
 DSB_FM_END_NAMESPACE

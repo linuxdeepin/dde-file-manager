@@ -135,7 +135,7 @@ class LocalMenu : public QObject
     };
 
     Q_DECLARE_PRIVATE(LocalMenu)
-    QSharedPointer<LocalMenuPrivate> d_ptr;
+    QSharedPointer<LocalMenuPrivate> d;
 public:
     explicit LocalMenu(const QString &filePath);
 

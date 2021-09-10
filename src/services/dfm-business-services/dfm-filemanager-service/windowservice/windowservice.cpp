@@ -124,7 +124,7 @@ bool WindowService::setWindowRootUrl(BrowseWindow *newWindow, const QUrl &url, Q
     if (newWindow) {
         if (!newWindow->viewIsAdded(url.scheme())) {
             QString errorString;
-            BrowseView* view = BrowseWidgetFactory::instance().create<BrowseView>(url);
+            BrowseView* view = BrowseWidgetFactory::create<BrowseView>(url);
             if (!view) {
                 if (errorString.isEmpty()) errorString = "Unknown error";
                 qWarning() << Q_FUNC_INFO << errorString;
