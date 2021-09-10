@@ -340,7 +340,7 @@ DFMUrlListBaseEvent::DFMUrlListBaseEvent(DFMEvent::Type type, const QObject *sen
         //遍历传入的urllist
         for (DUrl url : list) {
             //判断是否是来自数据盘路径
-            if (url.path().startsWith("/data/")) {
+            if (url.path().startsWith("/data/home/")) {
                 //去掉数据盘路径开头
                 url.setPath(url.path().mid(sizeof("/data") - 1));
             }
