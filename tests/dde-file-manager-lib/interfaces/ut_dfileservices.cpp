@@ -339,6 +339,7 @@ TEST_F(DFileSeviceTest, sart_fmevent)
     TestHelper::deleteTmpFiles(QStringList() << url.toLocalFile() << to.toLocalFile());
 }
 
+/* 该用例存在高风险异步操作 暂时注释
 TEST_F(DFileSeviceTest, can_isRegisted)
 {
     AppController::instance()->registerUrlHandle();
@@ -364,7 +365,7 @@ TEST_F(DFileSeviceTest, can_isRegisted)
     service->clearController(DFMMD_SCHEME, "");
     service->clearController(DFMROOT_SCHEME, "");
     service->clearController(DFMVAULT_SCHEME, "");
-}
+}*/
 
 TEST_F(DFileSeviceTest, start_HandlerOp)
 {
