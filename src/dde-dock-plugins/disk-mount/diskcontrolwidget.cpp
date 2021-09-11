@@ -170,6 +170,8 @@ void DiskControlWidget::doStartupAutoMount()
         }
 
         if (blDev->isEncrypted()) continue;
+        // 已经解锁一次的加密盘，在重新挂载时就不需要秘钥了，如果这时重启dock就会自动挂载上，所以这里扔需要排除加密明文设备
+        if (blDev->cryptoBackingDevice().length() > 1) continue;
         if (blDev->hintIgnore()) continue;
 
         QList<QByteArray> mountPoints = blDev->mountPoints();
