@@ -22,23 +22,56 @@
 #define FRAMEWORK_H
 
 #include "dfm-framework/dfm_framework_global.h"
+#include "dfm-framework/lifecycle/lifecycle.h"
+
 #include <QObject>
 
 DPF_BEGIN_NAMESPACE
 
-// TODO(mozart): not used yet, should do more job.
-class Framework : public QObject
-{
-    Q_OBJECT
+class FrameworkPrivate;
 
+
+/*!
+ * \brief The Framework class
+ */
+class DPF_EXPORT Framework
+{
     Q_DISABLE_COPY(Framework)
 public:
-    explicit Framework(QObject *parent = nullptr);
+    /*!
+     * \brief Get framework instance.
+     * \return
+     */
+    static Framework &instance();
 
+    /*!
+     * \brief Framework inner modules will be initialized
+     * when it invoked,same for plugins.
+     * \return
+     */
     bool initialize();
+
+    /*!
+     * \brief Start framework after initialized.
+     * \return
+     */
+    bool start();
+
+    /*!
+     * \brief Get plugin life cycle manager
+     * \return
+     */
+    const LifeCycle &lifeCycle() const;
+
+private:
+    Framework();
+
+    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d), Framework)
+    QScopedPointer<FrameworkPrivate> d;
 };
 
 #endif // FRAMEWORK_H
 
-
 DPF_END_NAMESPACE
+
+#define dpfInstance ::dpf::Framework::instance()

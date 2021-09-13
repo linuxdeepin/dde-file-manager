@@ -20,30 +20,72 @@
 */
 #include "framework.h"
 #include "backtrace/backtrace.h"
+#include "dfm-framework/log/frameworklog.h"
+#include "dfm-framework/lifecycle/lifecycle.h"
 
 DPF_BEGIN_NAMESPACE
 
-/*!
- * \brief Framework::Framework
- * include all inner modules, all interfaces fetch form here.
- * \param parent
- */
-Framework::Framework(QObject *parent) : QObject(parent)
+class FrameworkPrivate
+{
+    Q_DECLARE_PUBLIC(Framework)
+
+    explicit FrameworkPrivate(Framework *dd);
+
+    // Plugin lifeCycle manager.
+    QScopedPointer<LifeCycle> lifeCycle;
+
+    bool bInitialized = false;
+
+    Framework *const q_ptr = nullptr;
+};
+
+FrameworkPrivate::FrameworkPrivate(Framework *dd)
+    : q_ptr(dd)
 {
 
 }
 
-/*!
- * \brief Framework::initialize
- * initialize inner modules.
- * \return bool
- */
+Framework &Framework::instance()
+{
+    static Framework ins;
+    return ins;
+}
+
+
 bool Framework::initialize()
 {
-    // TODO(mozart): do more init here.
+    if (d->bInitialized) {
+        qDebug() << "Frame work has been initialized!";
+        return true;
+    }
+
     backtrace::initbacktrace();
 
+    FrameworkLog::initialize();
+
+    // It will be true after all inner moudules initialized
+    // successfully.
+    d->bInitialized = true;
+
     return true;
+}
+
+bool Framework::start()
+{
+    // TODO(anyone):Start plugin after initialized,
+    // thus plugin logic will be run
+    return true;
+}
+
+const LifeCycle &Framework::lifeCycle() const
+{
+    return *d->lifeCycle;
+}
+
+Framework::Framework() :
+    d(new FrameworkPrivate(this))
+{
+    d->lifeCycle.reset(new LifeCycle());
 }
 
 DPF_END_NAMESPACE

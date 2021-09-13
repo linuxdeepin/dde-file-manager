@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.0.2)
 
 project(dfm-framework)
 
+add_definitions(-DDPF_LIBRARY)
+
 #set Module subdir
 #   The module pattern cannot be broken, 
 #   so the installation header file cannot be found

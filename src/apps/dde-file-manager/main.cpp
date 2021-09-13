@@ -29,6 +29,7 @@
 #include "dfm-framework/log/codetimecheck.h"
 #include "dfm-framework/event/eventcallproxy.h"
 #include "dfm-framework/dfm_framework_global.h"
+#include "dfm-framework/framework.h"
 
 #include <DApplication>
 #include <DMainWindow>
@@ -51,44 +52,48 @@ USING_IO_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 /// @brief PLUGIN_INTERFACE 默认插件iid
-static const char * const FM_PLUGIN_INTERFACE = "deepin.bundle.filemanager.org";
+static const char *const FM_PLUGIN_INTERFACE = "deepin.bundle.filemanager.org";
+static const char *const PLUGIN_CORE = "core";
+static const char *const LIB_CORE = "libcore.so";
 
 static bool pluginsLoad()
 {
     dpfCheckTimeBegin();
 
+    const dpf::LifeCycle &lifeCycle = dpfInstance.lifeCycle();
+
     // set plugin iid from qt style
-    dpf::LifeCycle::setPluginIID(FM_PLUGIN_INTERFACE);
+    lifeCycle.setPluginIID(FM_PLUGIN_INTERFACE);
 
     // cmake out definitions "DFM_PLUGIN_PATH" and "DFM_BUILD_OUT_PLGUN_DIR"
     if (DApplication::applicationDirPath() == "/usr/bin") {
         // run dde-file-manager path is /usr/bin, use system install plugins
         qInfo() << "run application in /usr/bin, load system plugin";
-        dpf::LifeCycle::setPluginPaths({DFM_PLUGIN_PATH});
+        lifeCycle.setPluginPaths({DFM_PLUGIN_PATH});
     } else {
         // if debug and any read from cmake out build path
         qInfo() << "run application not /usr/bin, load debug plugin";
-        dpf::LifeCycle::setPluginPaths({DFM_BUILD_OUT_PLGUN_DIR});
+        lifeCycle.setPluginPaths({DFM_BUILD_OUT_PLGUN_DIR});
     }
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
-    if (!dpf::LifeCycle::readPlugins())
+    if (!lifeCycle.readPlugins())
         return false;
 
     // 手动初始化Core插件
-    auto corePlugin = dpf::LifeCycle::pluginMetaObj("core");
+    auto corePlugin = lifeCycle.pluginMetaObj(PLUGIN_CORE);
     if (corePlugin.isNull())
         return false;
-    if (!corePlugin->fileName().contains("libcore.so"))
+    if (!corePlugin->fileName().contains(LIB_CORE))
         return false;
-    if (!dpf::LifeCycle::loadPlugin(corePlugin))
+    if (!lifeCycle.loadPlugin(corePlugin))
         return false;
 
     // load plugins without core
-    if (!dpf::LifeCycle::loadPlugins())
+    if (!lifeCycle.loadPlugins())
         return false;
 
     dpfCheckTimeEnd();
@@ -100,7 +105,7 @@ int main(int argc, char *argv[])
 {
     DApplication a(argc, argv);
 
-    dpf::FrameworkLog::initialize();
+    dpfInstance.initialize();
 
     if (!pluginsLoad()) {
         qCritical() << "Load pugin failed!";

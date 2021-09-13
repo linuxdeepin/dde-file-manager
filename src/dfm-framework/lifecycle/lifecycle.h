@@ -31,11 +31,12 @@
 
 DPF_BEGIN_NAMESPACE
 
+// TODO(huangyu):LifeCycle should be refactor.
 class LifeCycle final : public QObject
 {
     Q_OBJECT
 public:
-    LifeCycle() = delete;
+//    LifeCycle() = delete;
     static void setPluginIID(const QString &pluginIID);
     static QString pluginIID();
     static QStringList pluginPaths();
@@ -43,7 +44,7 @@ public:
     static QStringList servicePaths();
     static void setServicePaths(const QStringList &servicePaths);
     static PluginMetaObjectPointer pluginMetaObj(const QString &pluginName,
-                                             const QString version = "");
+                                                 const QString version = "");
     static bool readPlugins();
     static bool loadPlugins();
     static void shutdownPlugins();
