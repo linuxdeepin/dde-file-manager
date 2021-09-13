@@ -34,8 +34,8 @@ class AbstractFileWatcherPrivate;
 class AbstractFileWatcher : public QObject
 {
     Q_OBJECT
-    QScopedPointer<AbstractFileWatcherPrivate> d_ptr;
-    Q_DECLARE_PRIVATE(AbstractFileWatcher)
+    friend class AbstractFileWatcherPrivate;
+    QScopedPointer<AbstractFileWatcherPrivate> d;
 public:
     explicit AbstractFileWatcher() = delete;
     explicit AbstractFileWatcher(const QUrl &url, QObject *parent = nullptr);
@@ -74,9 +74,6 @@ Q_SIGNALS:
      * \param const DFileInfo &fileInfo 文件的fileinfo
      */
     void subfileCreated(const QUrl &url, const DFMIO::DFileInfo &fileInfo);
-protected:
-    explicit AbstractFileWatcher(QObject* parent = nullptr);
-    explicit AbstractFileWatcher(AbstractFileWatcherPrivate &dd, const QUrl &url, QObject *parent = nullptr);
 };
 DFMBASE_END_NAMESPACE
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileWatcher> AbstractFileWatcherPointer;

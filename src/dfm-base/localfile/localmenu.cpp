@@ -33,8 +33,8 @@ DFMBASE_BEGIN_NAMESPACE
  * \brief 存储LocalMenu的基本数据
  */
 LocalMenuPrivate::LocalMenuPrivate(const QString &filePath, LocalMenu *qq)
-    :localFileInfo(InfoFactory::create<LocalFileInfo>(filePath)),
-      q_ptr(qq)
+    : q(qq)
+    , localFileInfo(InfoFactory::create<LocalFileInfo>(filePath))
 {
 
 }
@@ -62,7 +62,6 @@ LocalMenu::LocalMenu(const QString &filePath)
  */
 QVector<LocalMenu::MenuAction> LocalMenu::menuActionList(MenuType type) const
 {
-    Q_D(const LocalMenu);
     QVector<MenuAction> actionKeys;
 
     if (type == SpaceArea) {
@@ -420,8 +419,6 @@ QMap<LocalMenu::MenuAction, QVector<LocalMenu::MenuAction> > LocalMenu::subMenuA
  */
 QSet<LocalMenu::MenuAction> LocalMenu::disableMenuActionList() const
 {
-    Q_D(const LocalMenu);
-
     QSet<MenuAction> list;
 
     if (!d->localFileInfo->isWritable()) {
@@ -515,7 +512,6 @@ QList<int> LocalMenu::sortSubMenuActionUserColumnRoles() const
  */
 bool LocalMenu::isAddOemExternalAction()
 {
-    Q_D(LocalMenu);
     return d->isAddOemExternalAction;
 }
 /*!
@@ -525,7 +521,6 @@ bool LocalMenu::isAddOemExternalAction()
  */
 void LocalMenu::setAddOemExternalAction(bool isAdd)
 {
-    Q_D(LocalMenu);
     d->isAddOemExternalAction = isAdd;
 }
 /*!
@@ -535,7 +530,6 @@ void LocalMenu::setAddOemExternalAction(bool isAdd)
  */
 void LocalMenu::setIsNeedLoadCustomActions(bool needCustom)
 {
-    Q_D(LocalMenu);
     d->isNeedLoadCustomActions = needCustom;
 }
 /*!
@@ -545,7 +539,6 @@ void LocalMenu::setIsNeedLoadCustomActions(bool needCustom)
  */
 bool LocalMenu::isNeedLoadCustomActions()
 {
-    Q_D(LocalMenu);
     return d->isNeedLoadCustomActions;
 }
 

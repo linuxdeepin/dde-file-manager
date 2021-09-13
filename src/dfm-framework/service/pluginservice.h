@@ -34,7 +34,7 @@
 
 DPF_BEGIN_NAMESPACE
 
-class PluginService : public QObject
+class PluginService: public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(PluginService)
@@ -48,30 +48,18 @@ class PluginServiceContext final : public QObject,
         public QtClassManager<PluginService>
 {
     Q_OBJECT
-    inline static PluginServiceContext* ins = nullptr;
-
 public:
-    static PluginServiceContext &instance()
-    {
-        if (!ins)
-            ins  = new PluginServiceContext();
-        return *ins;
-    }
+    explicit PluginServiceContext(){}
+    virtual ~PluginServiceContext(){}
+    static PluginServiceContext &instance();
+    static QStringList services();
 
-    template<class CT>
+    template<class CT = PluginService>
     static CT *service(const QString &serviceName)
     {
         return qobject_cast<CT*>(PluginServiceContext::instance().
-                                QtClassManager<PluginService>::value(serviceName));
+                                 value(serviceName));
     }
-
-    static QStringList services()
-    {
-        return PluginServiceContext::instance().keys();
-    }
-
-private:
-    explicit PluginServiceContext(){}
 };
 
 #define PLUGIN_SERVICE(x) \
@@ -81,11 +69,11 @@ private:
     QString errorString; \
     auto x##_ins = dpf::PluginServiceContext::instance().create(#x,&errorString); \
     if (!x##_ins) \
-        dpfCritical() << errorString; \
+    dpfCritical() << errorString; \
     else { \
-        dpfCritical() << "IMPORT_SERVICE:" << #x;\
-        auto appendRes = dpf::PluginServiceContext::instance().append(#x, x##_ins, &errorString);\
-        if (!appendRes) dpfCritical()<< errorString;\
+    dpfCritical() << "IMPORT_SERVICE:" << #x;\
+    auto appendRes = dpf::PluginServiceContext::instance().append(#x, x##_ins, &errorString);\
+    if (!appendRes) dpfCritical()<< errorString;\
     }
 
 #define EXPORT_SERVICE(x) \

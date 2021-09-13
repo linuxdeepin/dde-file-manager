@@ -310,7 +310,7 @@ Settings *Application::appObtuselySetting()
 
 Application::Application(ApplicationPrivate *dd, QObject *parent)
     : QObject(parent)
-    , d_ptr(dd)
+    , d(dd)
 {
     if (gsGlobal.exists()) {
         gsGlobal->moveToThread(thread());
@@ -327,12 +327,12 @@ Application::Application(ApplicationPrivate *dd, QObject *parent)
 
 void Application::onSettingsValueChanged(const QString &group, const QString &key, const QVariant &value)
 {
-    d_func()->_q_onSettingsValueChanged(group, key, value);
+    d->_q_onSettingsValueChanged(group, key, value);
 }
 
 void Application::onSettingsValueEdited(const QString &group, const QString &key, const QVariant &value)
 {
-    d_func()->_q_onSettingsValueEdited(group, key, value);
+    d->_q_onSettingsValueEdited(group, key, value);
 }
 
 DSB_FM_END_NAMESPACE

@@ -51,8 +51,8 @@ DSB_FM_BEGIN_NAMESPACE
 class AddressBarPrivate : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(AddressBar)
-    AddressBar * const q_ptr;
+    friend class AddressBar;
+    AddressBar *const q;
     CompleterView* completerView = nullptr;
     QStringList inputHistory;
     QTimer timer;
@@ -66,62 +66,58 @@ public:
 
     explicit AddressBarPrivate(AddressBar * qq)
         : QObject(qq),
-          q_ptr(qq)
+          q(qq)
     {
         if (!completerView)
             completerView = new CompleterView;
 
         //设置补全组件
-        q_ptr->setCompleter(completerView->completer());
+        q->setCompleter(completerView->completer());
 
         //设置补全选择组件为popup的焦点
         completerView->setFocus(Qt::FocusReason::PopupFocusReason);
 
         //左侧Action按钮 设置
-        q_ptr->addAction(&indicatorAction, QLineEdit::LeadingPosition);
+        q->addAction(&indicatorAction, QLineEdit::LeadingPosition);
         //default icon is search
         indicatorAction.setIcon(QIcon::fromTheme("search"));
 
         QObject::connect(&indicatorAction, &QAction::triggered, this, [=]()
         {
             if (indicatorAction.icon().name() == "search") {
-                Q_EMIT q_ptr->editingFinishedSearch(q_ptr->text());
+                Q_EMIT q->editingFinishedSearch(q->text());
             }
 
             if (indicatorAction.icon().name() == "go-right") {
-                QUrl url = UrlRoute::pathToUrl(q_ptr->text());
+                QUrl url = UrlRoute::pathToUrl(q->text());
                 if (url.isValid())
-                    Q_EMIT q_ptr->editingFinishedUrl(url);
+                    Q_EMIT q->editingFinishedUrl(url);
             }
         });
 
         //lineEdit clear Action按钮
-        q_ptr->setClearButtonEnabled(true);
+        q->setClearButtonEnabled(true);
 
-        spinner.setParent(q_ptr);
+        spinner.setParent(q);
         spinner.setAttribute(Qt::WA_TransparentForMouseEvents);
         spinner.setFocusPolicy(Qt::NoFocus);
         spinner.hide();
 
-        //        DAnchorsBase::setAnchor(&spinner, Qt::AnchorVerticalCenter, q_ptr, Qt::AnchorVerticalCenter);
-        //        DAnchorsBase::setAnchor(&spinner, Qt::AnchorRight, q_ptr, Qt::AnchorRight);
-        //        DAnchorsBase::getAnchorBaseByWidget(&spinner)->setRightMargin(q_ptr->height() + 8);
-
-        animation.setParent(q_ptr);
+        animation.setParent(q);
         animation.setDuration(616);
         animation.setEasingCurve(QEasingCurve::OutQuad);
         animation.setStartValue(QVariant(1.0f));
         animation.setEndValue(QVariant(0.0f));
 
         QObject::connect(&animation, &QVariantAnimation::valueChanged,
-                         q_ptr, QOverload<>::of(&AddressBar::update));
+                         q, QOverload<>::of(&AddressBar::update));
 
         timer.setInterval(200);
         timer.setSingleShot(true);
         QObject::connect(&timer, &QTimer::timeout, &animation, [=]()
         {
             animation.start();
-            q_ptr->update();
+            q->update();
         });
 
         QObject::connect(qq, &QLineEdit::textEdited,
@@ -204,35 +200,35 @@ public Q_SLOTS:
 
     void inputSave()
     {
-        if (completerView && 0 > completerView->model()->stringList().indexOf(q_ptr->text()))
-            inputHistory << q_ptr->text();
+        if (completerView && 0 > completerView->model()->stringList().indexOf(q->text()))
+            inputHistory << q->text();
     }
 
     void procReturnPressed()
     {
-        QUrl url(q_ptr->text());
+        QUrl url(q->text());
         if (!UrlRoute::isVirtualUrl(url)) {
             QString localPath = UrlRoute::urlToPath(url);
             if (QDir(localPath).exists()) {
                 qInfo() << "sig editingFinishedUrl :" << url;
-                Q_EMIT q_ptr->editingFinishedUrl(url);
+                Q_EMIT q->editingFinishedUrl(url);
                 startRunState();
                 return;
             }
         }
 
-        if (QDir(q_ptr->text()).exists()) {
-            QUrl url = UrlRoute::pathToUrl(q_ptr->text());
+        if (QDir(q->text()).exists()) {
+            QUrl url = UrlRoute::pathToUrl(q->text());
             if (!url.isValid()) {
                 qInfo() << "sig editingFinishedUrl :" << url;
-                Q_EMIT q_ptr->editingFinishedUrl(url);
+                Q_EMIT q->editingFinishedUrl(url);
                 startRunState();
                 return;
             }
         }
 
-        qInfo() << "sig editingFinishedSearch :" << q_ptr->text();
-        Q_EMIT q_ptr->editingFinishedSearch(q_ptr->text());
+        qInfo() << "sig editingFinishedSearch :" << q->text();
+        Q_EMIT q->editingFinishedSearch(q->text());
         startRunState();
         return;
     }
@@ -243,7 +239,7 @@ protected:
     {
         Q_UNUSED(addressbar)
         if (Qt::Key_Escape == event->key()) {
-            q_ptr->hide();
+            q->hide();
             return false;
         }
 
@@ -257,7 +253,7 @@ protected:
     virtual bool eventFilterResize(AddressBar *addressbar, QResizeEvent *event)
     {
         Q_UNUSED(addressbar)
-        spinner.setFixedSize(q_ptr->height() - 8, q_ptr->height() - 8);
+        spinner.setFixedSize(q->height() - 8, q->height() - 8);
         spinner.setGeometry(event->size().width() - spinner.size().width() - 45,
                             (event->size().height()- spinner.size().height())/2,
                             spinner.size().width(),spinner.size().height());
@@ -291,13 +287,13 @@ protected:
         //设置提示text
         if (addressbar->text().isEmpty()) {
             QPen oldpen = painter.pen();
-            QColor phColor = q_ptr->palette().text().color();
+            QColor phColor = q->palette().text().color();
             const int flags = static_cast<int>(QStyle::visualAlignment(Qt::LeftToRight, QFlag(Qt::AlignCenter)));
 
             phColor.setAlpha(128);
             painter.setPen(phColor);
 
-            painter.drawText(q_ptr->rect(), flags, placeholderText);
+            painter.drawText(q->rect(), flags, placeholderText);
 
             painter.setPen(oldpen);
         }
@@ -310,7 +306,7 @@ protected:
             const QSize size = icon.availableSizes().first();
             QPixmap glowingImg = icon.pixmap(size);
             float curValue = animation.currentValue().toFloat();
-            float xPos = (q_ptr->width() + glowingImg.width()) * curValue - glowingImg.width();
+            float xPos = (q->width() + glowingImg.width()) * curValue - glowingImg.width();
 
             painter.drawPixmap(static_cast<int>(xPos), 0, glowingImg);
         }
@@ -320,30 +316,30 @@ protected:
     virtual bool eventFilter(QObject *watched, QEvent *event) override
     {
 
-        if (watched == q_ptr && event->type() == QEvent::Show)
+        if (watched == q && event->type() == QEvent::Show)
         {
             return eventFilterShow(qobject_cast<AddressBar*>(watched),
                                    dynamic_cast<QShowEvent*>(event));
         }
 
-        if (watched == q_ptr && event->type() == QEvent::Hide)
+        if (watched == q && event->type() == QEvent::Hide)
         {
             return eventFilterHide(qobject_cast<AddressBar*>(watched),
                                    dynamic_cast<QHideEvent*>(event));
         }
 
-        if (watched == q_ptr && event->type() == QEvent::Resize)
+        if (watched == q && event->type() == QEvent::Resize)
         {
             return eventFilterResize(qobject_cast<AddressBar*>(watched),
                                      dynamic_cast<QResizeEvent*>(event));
         }
 
-        if (watched == q_ptr && event->type() == QEvent::KeyPress) {
+        if (watched == q && event->type() == QEvent::KeyPress) {
             return eventFilterKeyPress(qobject_cast<AddressBar*>(watched),
                                        dynamic_cast<QKeyEvent*>(event));
         }
 
-        if (watched == q_ptr && event->type() == QEvent::Paint) {
+        if (watched == q && event->type() == QEvent::Paint) {
             return eventFilterPaint(qobject_cast<AddressBar*>(watched),
                                     dynamic_cast<QPaintEvent*>(event));
         }

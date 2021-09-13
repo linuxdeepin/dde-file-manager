@@ -33,7 +33,7 @@ class ApplicationPrivate;
 class Application : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(Application)
+    friend class ApplicationPrivate;
 
 public:
     // 应用级别的配置，默认存储于 ~/.config/deepin/{AppName}/dde-file-manager.json
@@ -121,7 +121,7 @@ private:
     void onSettingsValueChanged(const QString &, const QString &, const QVariant &);
     void onSettingsValueEdited(const QString &, const QString &, const QVariant &);
 
-    QScopedPointer<ApplicationPrivate> d_ptr;
+    QScopedPointer<ApplicationPrivate> d;
 };
 
 DSB_FM_END_NAMESPACE

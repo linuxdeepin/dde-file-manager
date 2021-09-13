@@ -37,8 +37,8 @@ class NavWidgetPrivate;
 class NavWidget : public QWidget
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(NavWidget)
-    NavWidgetPrivate * const d;
+    friend class NavWidgetPrivate;
+    NavWidgetPrivate *const d;
 public:
     explicit NavWidget(QWidget *parent = nullptr);
     DButtonBoxButton *navBackButton() const;

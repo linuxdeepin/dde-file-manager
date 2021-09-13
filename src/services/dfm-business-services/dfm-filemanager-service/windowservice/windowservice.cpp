@@ -40,8 +40,9 @@ WindowService::~WindowService()
 {
     for (auto val : windowList) {
         // 框架退出非程序退出，依然会存在QWidget相关操作，
-        // 如果强制使用delete，那么将导致Qt机制的崩溃
-        if (val) val->deleteLater();
+        // 如果强制使用delete，那么将导致Qt机制的与懒汉单例冲突崩溃
+        if (val)
+            val->deleteLater();
         windowList.removeOne(val);
     }
 }

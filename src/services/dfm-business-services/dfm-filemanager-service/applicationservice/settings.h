@@ -33,7 +33,7 @@ class SettingsPrivate;
 class Settings : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(Settings)
+    friend class SettingsPrivate;
     Q_PROPERTY(bool autoSync READ autoSync WRITE setAutoSync)
     Q_PROPERTY(bool watchChanges READ watchChanges WRITE setWatchChanges)
 public:
@@ -78,7 +78,7 @@ Q_SIGNALS:
     void valueEdited(const QString &group, const QString &key, const QVariant &value);
 
 private:
-    QScopedPointer<SettingsPrivate> d_ptr;
+    QScopedPointer<SettingsPrivate> d;
     void onFileChanged(const QUrl &);
 };
 

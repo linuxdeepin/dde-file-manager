@@ -33,8 +33,8 @@ DFMBASE_BEGIN_NAMESPACE
 class ListItemDelegate;
 class ListItemDelegatePrivate : public QObject
 {
-    Q_DECLARE_PUBLIC(ListItemDelegate)
-    ListItemDelegate * const q_ptr;
+    friend class ListItemDelegate;
+    ListItemDelegate *const q;
     DTK_WIDGET_NAMESPACE::DListView *listView;
     QModelIndex editingIndex;
     int textLineHeight;

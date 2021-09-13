@@ -45,9 +45,8 @@ class SideBarItem;
 class SideBar : public QWidget
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(SideBar)
-    SideBarPrivate * const d;
-
+    friend class SideBarPrivate;
+    SideBarPrivate *const d;
 public:
     explicit SideBar(QWidget *parent = nullptr);
     virtual ~SideBar() override;

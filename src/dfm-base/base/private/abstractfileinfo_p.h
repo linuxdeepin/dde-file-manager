@@ -42,8 +42,8 @@ static bool dfmioIsInit = DFMIO::dfmio_init();
 
 class AbstractFileInfoPrivate
 {
-    Q_DECLARE_PUBLIC(AbstractFileInfo)
-    AbstractFileInfo * const q_ptr;// DAbstractFileInfo实例对象
+    friend class AbstractFileInfo;
+    AbstractFileInfo *const q;// DAbstractFileInfo实例对象
 public:
     QUrl url;// 文件的url
     AbstractFileInfoPrivate(AbstractFileInfo *qq);

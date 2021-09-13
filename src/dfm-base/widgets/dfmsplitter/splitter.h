@@ -31,7 +31,6 @@ DFMBASE_BEGIN_NAMESPACE
 class SplitterHandle: public QSplitterHandle
 {
     Q_OBJECT
-
 public:
     explicit SplitterHandle(Qt::Orientation orientation, QSplitter* parent);
 
@@ -45,7 +44,6 @@ protected:
 class Splitter : public QSplitter
 {
     Q_OBJECT
-
 public:
     explicit Splitter(Qt::Orientation orientation, QWidget *parent = nullptr);
     void moveSplitter(int pos, int index);

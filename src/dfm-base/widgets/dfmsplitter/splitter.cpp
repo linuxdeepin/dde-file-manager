@@ -26,6 +26,7 @@
 #include <QSizePolicy>
 
 DFMBASE_BEGIN_NAMESPACE
+
 SplitterHandle::SplitterHandle(Qt::Orientation orientation, QSplitter *parent):
     QSplitterHandle(orientation, parent)
 {

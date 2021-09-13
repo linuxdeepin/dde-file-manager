@@ -48,7 +48,7 @@ DWIDGET_USE_NAMESPACE
 
 ListItemDelegatePrivate::ListItemDelegatePrivate(ListItemDelegate *qq)
     : QObject (qq)
-    , q_ptr(qq)
+    , q(qq)
 {
 
 }

@@ -37,8 +37,8 @@ DPF_BEGIN_NAMESPACE
 class AppBusPrivate : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(AppBus)
-    AppBus * const q_ptr;
+    friend class AppBus;
+    AppBus *const q;
 
 public:
     explicit AppBusPrivate(AppBus * dd);

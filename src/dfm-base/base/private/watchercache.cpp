@@ -33,7 +33,7 @@ Q_GLOBAL_STATIC(WatcherCache,_watcherCacheManager)
  * \brief 这个类是对Url的强对应，必须保证url的唯一性
  */
 WatcherCachePrivate::WatcherCachePrivate(WatcherCache *qq)
-    : q_ptr(qq)
+    : q(qq)
 {
 
 }

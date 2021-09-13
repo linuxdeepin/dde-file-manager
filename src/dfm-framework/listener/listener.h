@@ -32,12 +32,11 @@ class ListenerPrivate;
 class Listener final : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(Listener)
-    ListenerPrivate * const d;
+    friend class ListenerPrivate;
+    ListenerPrivate *const d;
     friend class PluginManagerPrivate;
-    explicit Listener(QObject *parent = nullptr);
-    inline static Listener *self = nullptr;
 public:
+    explicit Listener(QObject *parent = nullptr);
     static Listener &instance();
 signals:
     void pluginsInitialized();

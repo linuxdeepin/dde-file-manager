@@ -32,8 +32,8 @@ class Listener;
 class ListenerPrivate final : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(Listener)
-    Listener * const q_ptr;
+    friend class Listener;
+    Listener *const q;
     friend class PluginManagerPrivate;
 public:
     explicit ListenerPrivate(Listener *parent);

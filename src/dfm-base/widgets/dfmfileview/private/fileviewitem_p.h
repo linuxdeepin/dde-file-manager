@@ -27,15 +27,14 @@
 class FileViewItem;
 class FileViewItemPrivate
 {
-    Q_DECLARE_PUBLIC(FileViewItem)
-    FileViewItem * const q_ptr;
-
+    friend class FileViewItem;
+    FileViewItem *const q;
     AbstractFileInfoPointer fileinfo;
     QMimeType mimeType;
 
 public:
     explicit FileViewItemPrivate(FileViewItem* qq)
-        : q_ptr(qq)
+        : q(qq)
     {
 
     }

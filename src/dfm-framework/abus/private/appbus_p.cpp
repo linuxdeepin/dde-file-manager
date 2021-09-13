@@ -31,9 +31,9 @@
 DPF_USE_NAMESPACE
 
 AppBusPrivate::AppBusPrivate(AppBus *dd)
-    : QObject(dd),
-      q_ptr(dd),
-      tryPingString("static void AppBusPrivate::tryPing(const QString &serverName)")
+    : QObject(dd)
+    , q(dd)
+    , tryPingString("static void AppBusPrivate::tryPing(const QString &serverName)")
 {
     //隐藏tmp目录下的套接字文件
     appServerName = "." + QCoreApplication::applicationName() + QString("-%0.%1")
@@ -108,7 +108,7 @@ void AppBusPrivate::procNewConnection()
                 onlineServers[val] = newSocket;
                 dpfCritical() << "insert new server"
                               << val << onlineServers[val];
-                q_ptr->newCreateAppBus(val);
+                q->newCreateAppBus(val);
             }
         }
         dpfDebug() << "now onlineServers: "

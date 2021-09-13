@@ -30,8 +30,8 @@
 DFMBASE_BEGIN_NAMESPACE
 class InfoCachePrivate
 {
-    Q_DECLARE_PUBLIC(InfoCache)
-    InfoCache *q_ptr;
+    friend class InfoCache;
+    InfoCache *const q;
     DThreadMap<QUrl, AbstractFileInfoPointer> fileInfos; // 缓存fileifno的Map
     DThreadList<QUrl> needRemoveCacheList; // 待移除的fileinfo的urllist
     DThreadList<QUrl> removedCacheList; // 已被removecache的url

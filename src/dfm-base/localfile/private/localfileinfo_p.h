@@ -37,8 +37,8 @@
 DFMBASE_BEGIN_NAMESPACE
 class LocalFileInfoPrivate : public AbstractFileInfoPrivate
 {
-    Q_DECLARE_PUBLIC(LocalFileInfo)
-    LocalFileInfo *q_ptr;
+    friend class LocalFileInfo;
+    LocalFileInfo *const q;
     mutable QIcon icon; // 文件的icon
     mutable LocalFileInfo::DFMEmblemInfos EmblemsInfo;   // 文件的扩展属性
     mutable QAtomicInteger<bool> iconFromTheme { false }; // icon是否是来自缩略图
@@ -84,7 +84,8 @@ public:
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(LocalFileInfo *qq)
-    :AbstractFileInfoPrivate(qq)
+    : AbstractFileInfoPrivate(qq)
+    , q(qq)
 {
 
 }
@@ -119,9 +120,8 @@ QIcon LocalFileInfoPrivate::standardFileIcon(LocalFileInfo::Icon iconType)
     return QIcon();
 }
 
-void LocalFileInfoPrivate::readStandardFlagsIcon(){
-
-    Q_Q(LocalFileInfo);
+void LocalFileInfoPrivate::readStandardFlagsIcon()
+{
     if (q->isSymLink()) {
         QIcon::fromTheme("emblem-symbolic-link", standardFileIcon(LocalFileInfo::LinkIcon));
     }
@@ -142,8 +142,6 @@ bool LocalFileInfoPrivate::isLowSpeedFile() const
 
 QMimeType LocalFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) const
 {
-    Q_Q(const LocalFileInfo);
-
     QUrl url = q->url();
     if (url.isLocalFile())
         return MimeDatabase::mimeTypeForUrl(url);

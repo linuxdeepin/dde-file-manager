@@ -36,8 +36,7 @@ DFMBASE_BEGIN_NAMESPACE
 class AbstractFileInfoPrivate;
 class AbstractFileInfo: public QSharedData
 {
-    Q_DECLARE_PRIVATE(AbstractFileInfo)
-    AbstractFileInfoPrivate * const d_ptr;
+    AbstractFileInfoPrivate *const d;
 public:
     /*!
      * \enum FileInfoCacheType 文件缓存的key值

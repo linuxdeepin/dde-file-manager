@@ -24,7 +24,7 @@
 
 DFMBASE_BEGIN_NAMESPACE
 FileViewPrivate::FileViewPrivate(FileView *qq)
-    : q_ptr(qq)
+    : q(qq)
     , headview(new HeaderView(Qt::Orientation::Horizontal, qq))
 {
 
@@ -32,12 +32,8 @@ FileViewPrivate::FileViewPrivate(FileView *qq)
 
 int FileViewPrivate::iconModeColumnCount(int itemWidth) const
 {
-    Q_Q(const FileView);
-
     int horizontalMargin = 0;
-
     int contentWidth = q->maximumViewportSize().width();
-
     return qMax((contentWidth - horizontalMargin - 1) / itemWidth, 1);
 }
 

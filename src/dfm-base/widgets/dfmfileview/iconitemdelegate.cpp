@@ -41,14 +41,13 @@
 #include <QPainterPath>
 #include <QToolTip>
 #include <QtMath>
-#include <private/qtextengine_p.h>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
 
 IconItemDelegatePrivate::IconItemDelegatePrivate(IconItemDelegate *qq)
     : QObject(qq)
-    , q_ptr(qq)
+    , q(qq)
 {
 
 }

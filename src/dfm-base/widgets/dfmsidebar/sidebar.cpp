@@ -40,19 +40,19 @@ DFMBASE_BEGIN_NAMESPACE
 
 SideBarPrivate::SideBarPrivate(SideBar *qq)
     : QObject(qq)
-    , q_ptr(qq)
+    , q(qq)
     , sidebarView(new SideBarView(qq))
     , sidebarModel(new SideBarModel(qq))
 {
     QObject::connect(sidebarView, &SideBarView::clicked,
-                     q_ptr, &SideBar::clickedItemIndex,
+                     q, &SideBar::clickedItemIndex,
                      Qt::UniqueConnection);
 
     QObject::connect(sidebarView, &SideBarView::clicked,
                      this, &SideBarPrivate::onItemClicked,
                      Qt::UniqueConnection);
 
-    QVBoxLayout *vlayout = new QVBoxLayout(q_ptr);
+    QVBoxLayout *vlayout = new QVBoxLayout(q);
     vlayout->addWidget(sidebarView);
     vlayout->setMargin(0);
     vlayout->setSpacing(0);
@@ -68,8 +68,8 @@ SideBarPrivate::SideBarPrivate(SideBar *qq)
                                     | DStyledItemDelegate::NoNormalState));
     sidebarView->setItemSpacing(0);
 
-    q_ptr->setMaximumWidth(200);
-    q_ptr->setFocusProxy(sidebarView);
+    q->setMaximumWidth(200);
+    q->setFocusProxy(sidebarView);
 }
 
 SideBar::SideBar(QWidget *parent)
@@ -116,7 +116,7 @@ void SideBarPrivate::onItemClicked(const QModelIndex &index)
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     QUrl url = qvariant_cast<QUrl>(item->data(SideBarItem::Roles::ItemUrlRole));
     if (!url.isEmpty())
-        Q_EMIT q_ptr->clickedItemUrl(url);
+        Q_EMIT q->clickedItemUrl(url);
 }
 
 void SideBar::changeEvent(QEvent *event)

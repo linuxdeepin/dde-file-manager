@@ -67,6 +67,7 @@ set(PUBLIC_CPP
     lifecycle/plugin.cpp
     lifecycle/pluginmanager.cpp
     lifecycle/lifecycle.cpp
+    service/pluginservice.cpp
     abus/appbus.cpp
     listener/listener.cpp
     backtrace/backtrace.cpp

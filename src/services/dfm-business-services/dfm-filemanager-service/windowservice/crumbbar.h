@@ -36,8 +36,7 @@ class CrumbBarPrivate;
 class CrumbBar : public QFrame
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(CrumbBar)
-    QScopedPointer<CrumbBarPrivate> d_ptr;
+    QScopedPointer<CrumbBarPrivate> d;
 
 public:
     explicit CrumbBar(QWidget *parent = nullptr);

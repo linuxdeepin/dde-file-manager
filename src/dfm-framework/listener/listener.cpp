@@ -21,8 +21,12 @@
  */
 #include "listener.h"
 #include "dfm-framework/listener/private/listener_p.h"
+#include "dfm-framework/service/qtclassmanager.h"
 
 DPF_BEGIN_NAMESPACE
+
+// 饿汉避免释放冲突
+static dpf::Listener listener;
 
 Listener::Listener(QObject *parent)
     : QObject(parent)
@@ -33,25 +37,23 @@ Listener::Listener(QObject *parent)
 
 Listener &Listener::instance()
 {
-    if (!self)
-        self = new Listener();
-    return *self;
+    return listener;
 }
 
 ListenerPrivate::ListenerPrivate(Listener *parent)
     : QObject(parent)
-    , q_ptr(parent)
+    , q(parent)
 {
     QObject::connect(this, &ListenerPrivate::pluginsInitialized,
-                     q_ptr, &Listener::pluginsInitialized,
+                     q, &Listener::pluginsInitialized,
                      Qt::UniqueConnection);
 
     QObject::connect(this, &ListenerPrivate::pluginsStarted,
-                     q_ptr, &Listener::pluginsStarted,
+                     q, &Listener::pluginsStarted,
                      Qt::UniqueConnection);
 
     QObject::connect(this, &ListenerPrivate::pluginsStoped,
-                     q_ptr, &Listener::pluginsStoped,
+                     q, &Listener::pluginsStoped,
                      Qt::UniqueConnection);
 }
 

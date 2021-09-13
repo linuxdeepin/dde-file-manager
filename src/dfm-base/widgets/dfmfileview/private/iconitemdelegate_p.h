@@ -34,13 +34,13 @@ DFMBASE_BEGIN_NAMESPACE
 class IconItemDelegate;
 class IconItemDelegatePrivate : public QObject
 {
-    Q_DECLARE_PUBLIC(IconItemDelegate)
-    IconItemDelegate * const q_ptr;
+    friend class IconItemDelegate;
+    IconItemDelegate *const q;
     QIcon m_checkedIcon = QIcon::fromTheme("emblem-checked");
     QList<int> sizeList {48, 64, 96, 128, 256};
     QSize itemIconSize;
 
-    explicit IconItemDelegatePrivate(IconItemDelegate * qq);
+    explicit IconItemDelegatePrivate(IconItemDelegate *qq);
     virtual ~IconItemDelegatePrivate() override;
 };
 

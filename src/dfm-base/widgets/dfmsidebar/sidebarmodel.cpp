@@ -56,7 +56,7 @@ namespace GlobalPrivate
 
 SideBarModelPrivate::SideBarModelPrivate(SideBarModel *qq)
     : QObject(qq)
-    , q_ptr(qq)
+    , q(qq)
 {
 
 }

@@ -44,8 +44,8 @@ class PluginManager;
 class PluginManagerPrivate : public QSharedData
 {
     Q_DISABLE_COPY(PluginManagerPrivate)
-    Q_DECLARE_PUBLIC(PluginManager)
-    PluginManager * const q_ptr;
+    friend class PluginManager;
+    PluginManager *const q;
     QString pluginLoadIID;
     QStringList pluginLoadPaths;
     QStringList serviceLoadPaths;

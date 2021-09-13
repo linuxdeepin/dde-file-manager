@@ -19,21 +19,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SIDEBARMODEL_P_CPP
-#define SIDEBARMODEL_P_CPP
+#include "pluginservice.h"
 
-#include "dfm_base_global.h"
-#include <QObject>
+DPF_BEGIN_NAMESPACE
 
-DFMBASE_BEGIN_NAMESPACE
-class SideBarModel;
-class SideBarModelPrivate : public QObject
+// 饿汉避免释放冲突
+static dpf::PluginServiceContext pluginServiceCtx;
+
+PluginServiceContext &PluginServiceContext::instance()
 {
-    Q_OBJECT
-    friend class SideBarModel;
-    SideBarModel *const q;
-    explicit SideBarModelPrivate(SideBarModel *qq);
-};
+    return pluginServiceCtx;
+}
 
-DFMBASE_END_NAMESPACE
-#endif // SIDEBARMODEL_P_CPP
+QStringList PluginServiceContext::services()
+{
+    return PluginServiceContext::instance().keys();
+}
+
+DPF_END_NAMESPACE
+
+
+

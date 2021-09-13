@@ -48,9 +48,9 @@ Q_GLOBAL_STATIC_WITH_ARGS(int,type_id,{qRegisterMetaType<AbstractFileInfoPointer
  * \param QUrl & 文件的URL
  */
 AbstractFileInfo::AbstractFileInfo(const QUrl &url)
-    :d_ptr(new AbstractFileInfoPrivate(this))
+    : d(new AbstractFileInfoPrivate(this))
 {
-    Q_D(AbstractFileInfo);
+    Q_UNUSED(type_id)
     d->url = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
 }
 
@@ -67,7 +67,7 @@ AbstractFileInfo::~AbstractFileInfo()
  */
 AbstractFileInfo &AbstractFileInfo::operator=(const AbstractFileInfo &fileinfo)
 {
-    d_ptr->url = fileinfo.d_ptr->url;
+    d->url = fileinfo.d->url;
     return *this;
 }
 /*!
@@ -79,7 +79,7 @@ AbstractFileInfo &AbstractFileInfo::operator=(const AbstractFileInfo &fileinfo)
  */
 bool AbstractFileInfo::operator==(const AbstractFileInfo &fileinfo) const
 {
-    return d_ptr->url == fileinfo.d_ptr->url;
+    return d->url == fileinfo.d->url;
 }
 /*!
  * \brief != 重载操作符!=
@@ -102,7 +102,6 @@ bool AbstractFileInfo::operator!=(const AbstractFileInfo &fileinfo) const
  */
 void AbstractFileInfo::setFile(const QUrl &url)
 {
-    Q_D(AbstractFileInfo);
     d->url = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
 }
 /*!
@@ -114,7 +113,6 @@ void AbstractFileInfo::setFile(const QUrl &url)
  */
 void AbstractFileInfo::setFile(const DFileInfo &file)
 {
-    Q_D(AbstractFileInfo);
     d->url = file.uri();
 }
 /*!
@@ -137,6 +135,7 @@ bool AbstractFileInfo::exists() const
  */
 void AbstractFileInfo::refresh()
 {
+
 }
 /*!
  * \brief filePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径
@@ -694,7 +693,7 @@ QDateTime AbstractFileInfo::fileTime(QFileDevice::FileTime time) const
  * \brief 主要存储文件信息的成员变量和数据
  */
 AbstractFileInfoPrivate::AbstractFileInfoPrivate(AbstractFileInfo *qq)
-    : q_ptr(qq)
+    : q(qq)
 {
 
 }

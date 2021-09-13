@@ -46,7 +46,7 @@ DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 CrumbBarPrivate::CrumbBarPrivate(CrumbBar *qq)
-    : q_ptr(qq)
+    : q(qq)
 {
     initData();
     initUI();
@@ -91,19 +91,13 @@ void CrumbBarPrivate::checkArrowVisiable()
 
 void CrumbBarPrivate::setClickableAreaEnabled(bool enabled)
 {
-    Q_Q(CrumbBar);
-
     if (clickableAreaEnabled == enabled) return;
-
     clickableAreaEnabled = enabled;
-
     q->update();
 }
 
 void CrumbBarPrivate::initUI()
 {
-    Q_Q(CrumbBar);
-
     // Crumbbar Widget
     //q->setFixedHeight(24);
 
@@ -185,8 +179,6 @@ void CrumbBarPrivate::initData()
 
 void CrumbBarPrivate::initConnections()
 {
-    Q_Q(CrumbBar);
-
     QObject::connect(&crumbView, &QListView::customContextMenuRequested,
                      q, &CrumbBar::onCustomContextMenu);
 
@@ -200,27 +192,27 @@ void CrumbBarPrivate::initConnections()
     });
 
     q->connect(&leftArrow, &QPushButton::clicked,
-               q, [=]()
+                   q, [=]()
     {
         crumbView.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepSub);
     });
 
     q->connect(&rightArrow, &QPushButton::clicked,
-               q, [=]()
+                   q, [=]()
     {
         crumbView.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepAdd);
     });
 
     q->connect(crumbView.horizontalScrollBar(), &QScrollBar::valueChanged,
-               q, [=]()
+                   q, [=]()
     {
         checkArrowVisiable();
     });
 
     if (Application::instance()) {
         q->connect(Application::instance(),
-                   &Application::csdClickableAreaAttributeChanged,
-                   q, [=](bool enabled)
+                       &Application::csdClickableAreaAttributeChanged,
+                       q, [=](bool enabled)
         {
             setClickableAreaEnabled(enabled);
         });
@@ -241,7 +233,7 @@ void CrumbBarPrivate::initConnections()
 
 CrumbBar::CrumbBar(QWidget *parent)
     : QFrame(parent)
-    , d_ptr(new CrumbBarPrivate(this))
+    , d(new CrumbBarPrivate(this))
 {
     setFrameShape(QFrame::NoFrame);
     setFixedHeight(36);
@@ -254,10 +246,7 @@ CrumbBar::~CrumbBar()
 
 void CrumbBar::setRootUrl(const QUrl &url)
 {
-    Q_D(CrumbBar);
-
     d->clearCrumbs();
-
     const QIcon firstIcon = UrlRoute::schemeIcon(url.scheme());
 
     QString scheme = url.scheme();
@@ -265,8 +254,7 @@ void CrumbBar::setRootUrl(const QUrl &url)
     QStringList pathList = path.split("/");
 
     QStandardItem* firstItem = new QStandardItem(firstIcon, QString(""));
-    //    firstItem->setData(QSize({36,36}),Qt::SizeHintRole);
-    for (int nodeCount = pathList.size(); nodeCount -- ; nodeCount > 0)
+    for (int nodeCount = pathList.size() - 1; nodeCount > 0 ; nodeCount --)
     {
         if (pathList.at(nodeCount).isEmpty())
             continue;
@@ -293,7 +281,6 @@ void CrumbBar::setRootUrl(const QUrl &url)
 
 void CrumbBar::mousePressEvent(QMouseEvent *event)
 {
-    Q_D(CrumbBar);
     d->clickedPos = event->globalPos();
 
     if (event->button() == Qt::RightButton && d->clickableAreaEnabled) {
@@ -309,8 +296,6 @@ void CrumbBar::mousePressEvent(QMouseEvent *event)
 
 void CrumbBar::mouseReleaseEvent(QMouseEvent *event)
 {
-    Q_D(CrumbBar);
-
     if (!d->clickableAreaEnabled) {
         return QFrame::mouseReleaseEvent(event);;
     }
@@ -320,8 +305,6 @@ void CrumbBar::mouseReleaseEvent(QMouseEvent *event)
 
 void CrumbBar::resizeEvent(QResizeEvent *event)
 {
-    Q_D(CrumbBar);
-
     d->checkArrowVisiable();
 
     return QFrame::resizeEvent(event);
@@ -329,8 +312,6 @@ void CrumbBar::resizeEvent(QResizeEvent *event)
 
 void CrumbBar::showEvent(QShowEvent *event)
 {
-    Q_D(CrumbBar);
-
     //d->crumbListScrollArea.horizontalScrollBar()->setPageStep(d->crumbListHolder->width());
     d->crumbView.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 
@@ -341,7 +322,6 @@ void CrumbBar::showEvent(QShowEvent *event)
 
 bool CrumbBar::eventFilter(QObject *watched, QEvent *event)
 {
-    Q_D(CrumbBar);
     QMouseEvent *me = nullptr;
     if (watched && watched->parent() == &d->crumbView && (me = dynamic_cast<QMouseEvent *>(event))) {
         QEvent::Type type = event->type();
@@ -372,7 +352,6 @@ bool CrumbBar::eventFilter(QObject *watched, QEvent *event)
 
 void CrumbBar::onCustomContextMenu(const QPoint &point)
 {
-    Q_D(CrumbBar);
     QModelIndex index = d->crumbView.indexAt(point);
     if (!index.isValid())
         return;

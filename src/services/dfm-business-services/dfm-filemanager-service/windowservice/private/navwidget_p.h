@@ -35,8 +35,8 @@ class NavWidget;
 class NavWidgetPrivate : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(NavWidget)
-    NavWidget * const q_ptr;
+    friend class NavWidget;
+    NavWidget *const q;
     Dtk::Widget::DButtonBox *buttonBox = nullptr;
     Dtk::Widget::DButtonBoxButton *navBackButton = nullptr;
     Dtk::Widget::DButtonBoxButton *navForwardButton = nullptr;

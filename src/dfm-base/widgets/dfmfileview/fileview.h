@@ -34,7 +34,7 @@ class FileViewPrivate;
 class FileView : public DListView
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(FileView)
+    friend class FileViewPrivate;
     QSharedPointer<FileViewPrivate> d;
 
 public:

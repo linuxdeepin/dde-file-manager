@@ -42,14 +42,14 @@ DFMBASE_BEGIN_NAMESPACE
 
 SideBarViewPrivate::SideBarViewPrivate(SideBarView *qq)
     : QObject(qq)
-    , q_ptr(qq)
+    , q(qq)
 {
 
 }
 
 void SideBarViewPrivate::currentChanged(const QModelIndex &previous)
 {
-    current = q_ptr->currentIndex();
+    current = q->currentIndex();
     SideBarViewPrivate::previous = previous;
 }
 

@@ -47,8 +47,7 @@ class PluginManagerPrivate;
 class PluginManager: public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(PluginManager)
-    Q_DECLARE_PRIVATE(PluginManager)
+    friend class PluginManagerPrivate;
     QSharedPointer<PluginManagerPrivate> d;
 
 public:

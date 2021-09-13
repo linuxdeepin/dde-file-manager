@@ -19,21 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SIDEBARMODEL_P_CPP
-#define SIDEBARMODEL_P_CPP
+#include "eventcaller.h"
 
-#include "dfm_base_global.h"
-#include <QObject>
-
-DFMBASE_BEGIN_NAMESPACE
-class SideBarModel;
-class SideBarModelPrivate : public QObject
+void EventCaller::sendOpenNewWindowEvent(int windowIdx)
 {
-    Q_OBJECT
-    friend class SideBarModel;
-    SideBarModel *const q;
-    explicit SideBarModelPrivate(SideBarModel *qq);
-};
-
-DFMBASE_END_NAMESPACE
-#endif // SIDEBARMODEL_P_CPP
+    dpf::Event event;
+    event.setTopic(EventTypes::TOPIC_WINDOW_EVENT);
+    event.setData(EventTypes::DATA_OPEN_NEW_WINDOW);
+    event.setProperty(EventTypes::PROPERTY_KEY_WINDOW_INDEX, windowIdx);
+    dpf::EventCallProxy::callEvent(event);
+}

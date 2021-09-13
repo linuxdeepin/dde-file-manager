@@ -38,7 +38,7 @@ class CompleterViewPrivate;
 class CompleterView :public QListView
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(CompleterView)
+    friend class CompleterViewPrivate;
     CompleterViewPrivate *const d;
 public:
     explicit CompleterView();

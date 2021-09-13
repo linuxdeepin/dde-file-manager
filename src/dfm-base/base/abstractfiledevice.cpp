@@ -31,7 +31,7 @@ DFMBASE_BEGIN_NAMESPACE
  */
 
 AbstractFileDevicePrivate::AbstractFileDevicePrivate(AbstractFileDevice *qq)
-    : q_ptr(qq)
+    : q(qq)
 {
 
 }
@@ -43,7 +43,7 @@ AbstractFileDevicePrivate::~AbstractFileDevicePrivate()
 
 AbstractFileDevice::AbstractFileDevice(const QUrl &url)
 {
-    d_ptr->url = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
+    d->url = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
 }
 
 AbstractFileDevice::~AbstractFileDevice()
@@ -57,8 +57,6 @@ AbstractFileDevice::~AbstractFileDevice()
  */
 QUrl AbstractFileDevice::url() const
 {
-    Q_D(const AbstractFileDevice);
-
     return d->url;
 }
 /*!
@@ -70,15 +68,12 @@ QUrl AbstractFileDevice::url() const
  */
 bool AbstractFileDevice::setFileUrl(const QUrl &url)
 {
-    Q_D(AbstractFileDevice);
-
     d->url = url;
-
     return true;
 }
 
 AbstractFileDevice::AbstractFileDevice(AbstractFileDevicePrivate &dd)
-    :d_ptr(&dd)
+    : d(&dd)
 {
 
 }

@@ -31,8 +31,7 @@ class AbstractFileDevicePrivate;
 class AbstractFileDevice : public QIODevice
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(AbstractFileDevice)
-
+    friend class AbstractFileDevicePrivate;
 public:
     enum SyncOperate {
         CloseFileOperate,
@@ -50,7 +49,7 @@ public:
 
 protected:
     virtual bool setFileUrl(const QUrl &url);
-    QScopedPointer<AbstractFileDevicePrivate> d_ptr;
+    QScopedPointer<AbstractFileDevicePrivate> d;
     explicit AbstractFileDevice(AbstractFileDevicePrivate &dd);
 };
 DFMBASE_END_NAMESPACE

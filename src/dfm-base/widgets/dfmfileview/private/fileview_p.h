@@ -44,9 +44,8 @@ const int LIST_VIEW_ICON_SIZE = 24;
 DFMBASE_BEGIN_NAMESPACE
 class FileViewPrivate
 {
-    Q_DECLARE_PUBLIC(FileView)
-    FileView * q_ptr;
-
+    friend class FileView;
+    FileView *const q;
     QAtomicInteger<bool> allowedAdjustColumnSize = true;
     HeaderView* headview = nullptr;
     ListItemDelegate *listDelegate = nullptr;

@@ -33,7 +33,7 @@ class ListItemDelegatePrivate;
 class ListItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(ListItemDelegate)
+    friend class ListItemDelegatePrivate;
     ListItemDelegatePrivate *const d;
 public:
     explicit ListItemDelegate(DTK_WIDGET_NAMESPACE::DListView *parent = nullptr);

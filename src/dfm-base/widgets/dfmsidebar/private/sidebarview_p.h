@@ -32,8 +32,8 @@ class SideBarView;
 class SideBarViewPrivate : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(SideBarView)
-    SideBarView * const q_ptr;
+    friend class SideBarView;
+    SideBarView *const q;
     int previousRowCount;
     QPoint dropPos;
     QString dragItemName;

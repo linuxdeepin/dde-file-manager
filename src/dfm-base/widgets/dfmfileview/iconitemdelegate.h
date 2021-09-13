@@ -38,10 +38,9 @@ class IconItemDelegatePrivate;
 class IconItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(IconItemDelegate)
-    IconItemDelegatePrivate * const d;
+    friend class IconItemDelegatePrivate;
+    IconItemDelegatePrivate *const d;
     friend class ExpandedItem;
-
 public:
     explicit IconItemDelegate(DTK_WIDGET_NAMESPACE::DListView *parent);
     virtual ~IconItemDelegate() override;

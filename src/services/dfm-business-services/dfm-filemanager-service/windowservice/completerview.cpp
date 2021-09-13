@@ -107,7 +107,7 @@ QSize CompleterViewDelegate::sizeHint(const QStyleOptionViewItem &option, const 
 
 CompleterViewPrivate::CompleterViewPrivate(CompleterView *qq)
     : QObject(qq)
-    , q_ptr(qq)
+    , q(qq)
 {
 
 }

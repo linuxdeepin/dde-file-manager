@@ -45,8 +45,8 @@
 DFMBASE_BEGIN_NAMESPACE
 
 LocalFileInfo::LocalFileInfo(const QUrl &url)
-    : AbstractFileInfo (url),
-      d(new LocalFileInfoPrivate(this))
+    : AbstractFileInfo (url)
+    , d(new LocalFileInfoPrivate(this))
 {
 }
 
@@ -111,7 +111,7 @@ bool LocalFileInfo::exists() const
     if (!d->caches.contains(TypeExists)) {
         if (d->dfmFileInfo) {
             //@todo 目前dfmio这一层还没实现，等待实现了在加入
-//            d_ptr->m_caches.insert(TypeExists,QVariant(d_ptr->m_dfmFileInfo->attribute()));
+//            d->m_caches.insert(TypeExists,QVariant(d->m_dfmFileInfo->attribute()));
         } else {
             return false;
         }
@@ -148,7 +148,7 @@ QString LocalFileInfo::filePath() const
 
     if (!d->caches.contains(TypeFilePath)) {
         if (d->dfmFileInfo) {
-//            d_ptr->m_caches.insert(TypeFilePath, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+//            d->m_caches.insert(TypeFilePath, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
         } else {
             return QString();
         }
@@ -188,7 +188,7 @@ QString LocalFileInfo::fileName() const
         if (d->dfmFileInfo) {
             bool success = false;
             d->caches.insert(TypeFileName, d->dfmFileInfo->
-                                  attribute(DFileInfo::AttributeID::StandardName, success));
+                                  attribute(DFileInfo::AttributeID::StandardName, &success));
         } else {
             return QString();
         }
@@ -211,7 +211,7 @@ QString LocalFileInfo::baseName() const
     if (!d->caches.contains(TypeBaseName)) {
         if (d->dfmFileInfo) {
 //            bool success = false;
-//            d_ptr->m_caches.insert(TypeBaseName, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+//            d->m_caches.insert(TypeBaseName, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
@@ -234,7 +234,7 @@ QString LocalFileInfo::completeBaseName() const
     if (!d->caches.contains(TypeCompleteBaseName)) {
         if (d->dfmFileInfo) {
 //            bool success = false;
-//            d_ptr->m_caches.insert(TypeCompleteBaseName, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+//            d->m_caches.insert(TypeCompleteBaseName, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
@@ -257,7 +257,7 @@ QString LocalFileInfo::suffix() const
     if (!d->caches.contains(TypeSuffix)) {
         if (d->dfmFileInfo) {
 //            bool success = false;
-//            d_ptr->m_caches.insert(TypeSuffix, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+//            d->m_caches.insert(TypeSuffix, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
@@ -280,7 +280,7 @@ QString LocalFileInfo::completeSuffix()
     if (!d->caches.contains(TypeCompleteSuffix)) {
         if (d->dfmFileInfo) {
 //            bool success = false;
-//            d_ptr->m_caches.insert(TypeCompleteSuffix, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+//            d->m_caches.insert(TypeCompleteSuffix, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
@@ -303,7 +303,7 @@ QString LocalFileInfo::path() const
     if (!d->caches.contains(TypePath)) {
         if (d->dfmFileInfo) {
 //            bool success = false;
-//            d_ptr->m_caches.insert(TypePath, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+//            d->m_caches.insert(TypePath, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
@@ -402,7 +402,7 @@ bool LocalFileInfo::isReadable() const
         if (d->dfmFileInfo) {
             bool success = false;
             d->caches.insert(TypeIsReadable,d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::AccessCanRead, success));
+                             attribute(DFileInfo::AttributeID::AccessCanRead, &success));
         } else {
             return false;
         }
@@ -426,7 +426,7 @@ bool LocalFileInfo::isWritable() const
         if (d->dfmFileInfo) {
             bool success = false;
             d->caches.insert(TypeIsWritable,d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::AccessCanWrite, success));
+                             attribute(DFileInfo::AttributeID::AccessCanWrite, &success));
         } else {
             return false;
         }
@@ -446,7 +446,7 @@ bool LocalFileInfo::isExecutable() const
         if (d->dfmFileInfo) {
             bool success = false;
             d->caches.insert(TypeIsExecutable, d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::AccessCanExecute, success));
+                             attribute(DFileInfo::AttributeID::AccessCanExecute, &success));
         } else {
             return false;
         }
@@ -467,7 +467,7 @@ bool LocalFileInfo::isHidden() const
             bool success = false;
             d->caches.insert(TypeIsHidden,
                              d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::StandardIsHiden, success));
+                             attribute(DFileInfo::AttributeID::StandardIsHiden, &success));
         } else {
             return false;
         }
@@ -491,7 +491,7 @@ bool LocalFileInfo::isFile() const
 {
     if (!d->caches.contains(TypeIsFile)) {
         if (d->dfmFileInfo) {
-//            d_ptr->m_caches.insert(TypeIsFile, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+//            d->m_caches.insert(TypeIsFile, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
         } else {
             return false;
         }
@@ -513,7 +513,7 @@ bool LocalFileInfo::isDir() const
 {
     if (!d->caches.contains(TypeIsDir)) {
         if (d->dfmFileInfo) {
-//            d_ptr->m_caches.insert(TypeIsDir, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+//            d->m_caches.insert(TypeIsDir, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
         } else {
             return false;
         }
@@ -601,7 +601,7 @@ QString LocalFileInfo::symLinkTarget() const
         if (d->dfmFileInfo) {
             bool success(false);
             d->caches.insert(TypeSymLinkTarget,d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::StandardSymlinkTarget, success));
+                             attribute(DFileInfo::AttributeID::StandardSymlinkTarget, &success));
         } else {
             return QString();
         }
@@ -627,7 +627,7 @@ QString LocalFileInfo::owner() const
         if (d->dfmFileInfo) {
             bool success(false);
             d->caches.insert(TypeOwner, d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::OwnerUser, success));
+                             attribute(DFileInfo::AttributeID::OwnerUser, &success));
         } else {
             return QString();
         }
@@ -649,7 +649,7 @@ uint LocalFileInfo::ownerId() const
         if (d->dfmFileInfo) {
             bool success(false);
             d->caches.insert(TypeOwnerID, d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::OwnerUser, success));
+                             attribute(DFileInfo::AttributeID::OwnerUser, &success));
         } else {
             return static_cast<uint>(-1);
         }
@@ -673,7 +673,7 @@ QString LocalFileInfo::group() const
         if (d->dfmFileInfo) {
             bool success(false);
             d->caches.insert(TypeGroup, d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::OwnerGroup, success));
+                             attribute(DFileInfo::AttributeID::OwnerGroup, &success));
         } else {
             return QString();
         }
@@ -695,7 +695,7 @@ uint LocalFileInfo::groupId() const
         if (d->dfmFileInfo) {
             bool success(false);
             d->caches.insert(TypeGroupID, d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::OwnerGroup, success));
+                             attribute(DFileInfo::AttributeID::OwnerGroup, &success));
         } else {
             return static_cast<uint>(-1);
         }
@@ -732,8 +732,8 @@ QFileDevice::Permissions LocalFileInfo::permissions() const
         if (d->dfmFileInfo) {
 //            bool success(false);
 //            d->m_caches.insert(TypePermissions,
-//                                  QVariant(d_ptr->m_dfmFileInfo->
-//                                           attribute(DFileInfo::AttributeID::OwnerGroup, success)));
+//                                  QVariant(d->m_dfmFileInfo->
+//                                           attribute(DFileInfo::AttributeID::OwnerGroup, &success)));
         } else {
             QFileDevice::Permissions ps;
             return ps;
@@ -758,7 +758,7 @@ qint64 LocalFileInfo::size() const
         if (d->dfmFileInfo) {
             bool success(false);
             d->caches.insert(TypeSize,d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::StandardSize, success));
+                             attribute(DFileInfo::AttributeID::StandardSize, &success));
         } else {
             return 0;
         }
@@ -784,7 +784,7 @@ QDateTime LocalFileInfo::created() const
         if (d->dfmFileInfo) {
             bool success(false);
             d->caches.insert(TypeCreateTime, d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::TimeCreated, success));
+                             attribute(DFileInfo::AttributeID::TimeCreated, &success));
         } else {
             return QDateTime();
         }
@@ -839,7 +839,7 @@ QDateTime LocalFileInfo::metadataChangeTime() const
         if (d->dfmFileInfo) {
             bool success(false);
             d->caches.insert(TypeChangeTime,d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::TimeChanged, success));
+                             attribute(DFileInfo::AttributeID::TimeChanged, &success));
         } else {
             return QDateTime();
         }
@@ -869,7 +869,7 @@ QDateTime LocalFileInfo::lastModified() const
         if (d->dfmFileInfo) {
             bool success(false);
             d->caches.insert(TypeLastModifyTime, d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::TimeModified, success));
+                             attribute(DFileInfo::AttributeID::TimeModified, &success));
         } else {
             return QDateTime();
         }
@@ -899,7 +899,7 @@ QDateTime LocalFileInfo::lastRead() const
         if (d->dfmFileInfo) {
             bool success(false);
             d->caches.insert(TypeLastReadTime, d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::TimeAccess, success));
+                             attribute(DFileInfo::AttributeID::TimeAccess, &success));
         } else {
             return QDateTime();
         }

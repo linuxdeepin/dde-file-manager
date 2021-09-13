@@ -52,8 +52,8 @@ DWIDGET_USE_NAMESPACE //use dtkwidget
 class BrowseWindowPrivate : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(BrowseWindow)
-    BrowseWindow * const q_ptr;
+    friend class BrowseWindow;
+    BrowseWindow *const q;
 
     SideBar *sidebarIns = nullptr;           //左侧边栏
 

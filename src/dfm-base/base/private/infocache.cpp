@@ -170,7 +170,7 @@ void ReFreshThread::run()
 }
 
 InfoCachePrivate::InfoCachePrivate(InfoCache *qq)
-    : q_ptr(qq)
+    : q(qq)
 {
     refreshThread.reset(new ReFreshThread);
 }

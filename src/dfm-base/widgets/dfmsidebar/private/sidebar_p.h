@@ -34,8 +34,8 @@ class GroupName;
 class SideBarPrivate : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(SideBar)
-    SideBar *const q_ptr;
+    friend class SideBar;
+    SideBar *const q;
     SideBarView *sidebarView;
     SideBarModel *sidebarModel;
     explicit SideBarPrivate(SideBar *qq);

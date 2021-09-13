@@ -19,12 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "pluginmanager_p.h"
-
-#include "lifecycle/private/pluginmetaobject_p.h"
-#include "lifecycle/plugin.h"
 #include "listener/listener.h"
 #include "listener/private/listener_p.h"
+#include "pluginmanager_p.h"
+#include "lifecycle/private/pluginmetaobject_p.h"
+#include "lifecycle/plugin.h"
 
 #include "log/frameworklog.h"
 
@@ -35,13 +34,14 @@ namespace GlobalPrivate {
 } //namespace GlobalPrivate
 
 PluginManagerPrivate::PluginManagerPrivate(PluginManager *qq)
-    : q_ptr(qq)
+    : q(qq)
 {
     dpfCheckTimeBegin();
     dpfCheckTimeEnd();
 }
 
-PluginManagerPrivate::~PluginManagerPrivate(){
+PluginManagerPrivate::~PluginManagerPrivate()
+{
     stopPlugins();
 }
 

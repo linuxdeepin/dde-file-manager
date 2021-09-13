@@ -34,8 +34,8 @@ class OptionButtonBox;
 class OptionButtonBoxPrivate : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(OptionButtonBox)
-    OptionButtonBox * const q_ptr;
+    friend class OptionButtonBox;
+    OptionButtonBox *const q;
 
     QToolButton* iconViewButton = nullptr;
     QToolButton* listViewButton = nullptr;

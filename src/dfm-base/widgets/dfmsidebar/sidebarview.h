@@ -33,8 +33,8 @@ class SideBarViewPrivate;
 class SideBarView : public DListView
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(SideBarView)
-    SideBarViewPrivate * const d;
+    friend class SideBarViewPrivate;
+    SideBarViewPrivate *const d;
 public:
     explicit SideBarView(QWidget *parent = nullptr);
     void mousePressEvent(QMouseEvent *event) override;

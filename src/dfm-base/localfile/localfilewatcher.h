@@ -49,14 +49,6 @@ public:
     //debug function
     static QStringList getMonitorFiles();
 protected:
-    explicit LocalFileWatcher(QObject* parent = nullptr);
-    explicit LocalFileWatcher(LocalFileWatcherPrivate &dd, const QUrl &url, QObject *parent = nullptr);
-private:
-    void initFileWatcher();
-    void initConnect();
-
-private:
-
 };
 DFMBASE_END_NAMESPACE
 

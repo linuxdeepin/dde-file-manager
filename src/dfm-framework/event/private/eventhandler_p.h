@@ -29,14 +29,14 @@ DPF_BEGIN_NAMESPACE
 class EventHandlerPrivate
 {
     friend class EventHandler;
-    EventHandler * const q_ptr;
+    EventHandler *const q;
     EventHandler::Type type;
 
 public:
     //与public 接口保持一致
     EventHandlerPrivate() = delete;
     EventHandlerPrivate(EventHandler* qq)
-        : q_ptr(qq)
+        : q(qq)
     {
 
     }

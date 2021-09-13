@@ -42,7 +42,7 @@ class BrowseWindowPrivate;
 class BrowseWindow : public DMainWindow
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(BrowseWindow)
+    friend class BrowseWindowPrivate;
     BrowseWindowPrivate* const d;
 public:
     explicit BrowseWindow(QWidget *parent = nullptr);

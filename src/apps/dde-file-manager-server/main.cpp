@@ -31,7 +31,7 @@ DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 /// @brief  默认插件 iid
-static const char * const SERVER_PLUGIN_INTERFACE = "Deepin.Bundle.Server.org";
+static const char *const SERVER_PLUGIN_INTERFACE = "deepin.bundle.server.org";
 
 static bool pluginsLoad()
 {

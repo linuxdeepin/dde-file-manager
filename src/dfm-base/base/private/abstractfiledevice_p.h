@@ -31,8 +31,8 @@ DFMBASE_BEGIN_NAMESPACE
 class AbstractFileDevice;
 class AbstractFileDevicePrivate
 {
-    Q_DECLARE_PUBLIC(AbstractFileDevice)
-    AbstractFileDevice *q_ptr;
+    friend class AbstractFileDevice;
+    AbstractFileDevice *const q;
     QUrl url; // 文件的url
 public:
     explicit AbstractFileDevicePrivate(AbstractFileDevice *qq);

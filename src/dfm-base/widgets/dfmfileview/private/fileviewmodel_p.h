@@ -34,8 +34,8 @@ DFMBASE_BEGIN_NAMESPACE
 class FileViewModelPrivate : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(FileViewModel)
-    FileViewModel * q_ptr;
+    friend class FileViewModel;
+    FileViewModel *const q;
     DThreadList<QSharedPointer<FileViewItem>> childers;
     QSharedPointer<FileViewItem> root;
     int column = 0;

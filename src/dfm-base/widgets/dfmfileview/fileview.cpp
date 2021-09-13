@@ -31,7 +31,6 @@ FileView::FileView(QWidget *parent)
     : DListView(parent)
     , d(new FileViewPrivate(this))
 {
-    Q_D(FileView);
     auto model = new FileViewModel;
     setModel(model);
     this->setCornerWidget(d->headview);

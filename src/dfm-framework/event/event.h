@@ -39,7 +39,7 @@ class EventPrivate;
  */
 class Event final
 {
-    EventPrivate * const d;
+    EventPrivate *const d;
     friend Q_CORE_EXPORT QDebug operator <<(QDebug, const Event &);
 
 public:

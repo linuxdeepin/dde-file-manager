@@ -32,8 +32,8 @@ class AddressBarPrivate;
 class AddressBar : public QLineEdit
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(AddressBar)
-    AddressBarPrivate * const d;
+    friend class AddressBarPrivate;
+    AddressBarPrivate *const d;
 
 public:
     explicit AddressBar(QWidget* parent = nullptr);

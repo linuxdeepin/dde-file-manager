@@ -33,8 +33,8 @@ class DisplayDefaultView;
 class DisplayDefaultViewPrivate : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(DisplayDefaultView)
-    DisplayDefaultView * const q_ptr;
+    friend class DisplayDefaultView;
+    DisplayDefaultView *const q;
     QUrl url;
 
     explicit DisplayDefaultViewPrivate(DisplayDefaultView *qq);

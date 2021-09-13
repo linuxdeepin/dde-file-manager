@@ -27,8 +27,8 @@
 DFMBASE_BEGIN_NAMESPACE
 class LocalMenuPrivate
 {
-    Q_DECLARE_PUBLIC(LocalMenu)
-    LocalMenu *q_ptr {nullptr};
+    friend class LocalMenu;
+    LocalMenu *const q;
     QSharedPointer<LocalFileInfo> localFileInfo { nullptr }; // 本地文件信息
     QAtomicInteger<bool> isAddOemExternalAction { false }; // 是否加载oem的action
     QAtomicInteger<bool> isNeedLoadCustomActions { false }; // 是否需要加载用户自定义的菜单action

@@ -36,8 +36,8 @@ class CrumbBar;
 class CrumbModel;
 class CrumbBarPrivate
 {
-    Q_DECLARE_PUBLIC(CrumbBar)
-    CrumbBar *const q_ptr;
+    friend class CrumbBar;
+    CrumbBar *const q;
 
     QPushButton leftArrow;
     QPushButton rightArrow;

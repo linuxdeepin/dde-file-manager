@@ -35,14 +35,14 @@
 #include <QApplication>
 
 DFMBASE_BEGIN_NAMESPACE
-DThreadList<QString> AbstractFileWatcherPrivate::WatcherPath;
+DThreadList<QString> AbstractFileWatcherPrivate::watcherPath;
 /*!
  * \class AbstractFileWatcherPrivate 文件监视器私有类
  *
  * \brief 存储DAbstractFileWatcher的使用的变量和数据
  */
 AbstractFileWatcherPrivate::AbstractFileWatcherPrivate(AbstractFileWatcher *qq)
-    : q_ptr(qq)
+    : q(qq)
 {
 
 }
@@ -69,7 +69,8 @@ bool AbstractFileWatcherPrivate::stop()
     return started;
 }
 
-AbstractFileWatcher::~AbstractFileWatcher(){
+AbstractFileWatcher::~AbstractFileWatcher()
+{
     stopWatcher();
 }
 /*!
@@ -93,17 +94,11 @@ QString AbstractFileWatcherPrivate::formatPath(const QString &path)
  *
  * \brief 负责文件的监视，通过不同的url监视不同的文件和目录
  */
-AbstractFileWatcher::AbstractFileWatcher(QObject *parent)
-    :QObject (parent)
-    ,d_ptr(new AbstractFileWatcherPrivate(this))
-{
-
-}
-
 AbstractFileWatcher::AbstractFileWatcher(const QUrl &url, QObject *parent)
-    : AbstractFileWatcher(*new AbstractFileWatcherPrivate(this), url, parent)
+    : QObject (parent)
+    , d(new AbstractFileWatcherPrivate(this))
 {
-    d_func()->path = AbstractFileWatcherPrivate::formatPath(UrlRoute::urlToPath(url));
+    d->path = AbstractFileWatcherPrivate::formatPath(UrlRoute::urlToPath(url));
 }
 /*!
  * \brief url 获取监视文件的url
@@ -112,8 +107,6 @@ AbstractFileWatcher::AbstractFileWatcher(const QUrl &url, QObject *parent)
  */
 QUrl AbstractFileWatcher::url() const
 {
-    Q_D(const AbstractFileWatcher);
-
     return d->url;
 }
 /*!
@@ -157,16 +150,6 @@ void AbstractFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool 
 {
     Q_UNUSED(subfileUrl)
     Q_UNUSED(enabled)
-}
-
-AbstractFileWatcher::AbstractFileWatcher(AbstractFileWatcherPrivate &dd,
-                                           const QUrl &url, QObject *parent)
-    : QObject(parent)
-    , d_ptr(&dd)
-{
-    Q_ASSERT(url.isValid());
-
-    d_ptr->url = url;
 }
 
 DFMBASE_END_NAMESPACE

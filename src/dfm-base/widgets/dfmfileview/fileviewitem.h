@@ -33,7 +33,7 @@
 class FileViewItemPrivate;
 class FileViewItem: public QStandardItem
 {
-    Q_DECLARE_PRIVATE(FileViewItem)
+    friend class FileViewItemPrivate;
     QSharedPointer<FileViewItemPrivate> d;
 public:
     enum Roles {

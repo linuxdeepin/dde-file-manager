@@ -27,20 +27,17 @@ DPF_BEGIN_NAMESPACE
 
 class FrameworkPrivate
 {
-    Q_DECLARE_PUBLIC(Framework)
-
-    explicit FrameworkPrivate(Framework *dd);
-
+    friend class Framework;
+    Framework *const q;
     // Plugin lifeCycle manager.
     QScopedPointer<LifeCycle> lifeCycle;
-
     bool bInitialized = false;
 
-    Framework *const q_ptr = nullptr;
+    explicit FrameworkPrivate(Framework *dd);
 };
 
 FrameworkPrivate::FrameworkPrivate(Framework *dd)
-    : q_ptr(dd)
+    : q(dd)
 {
 
 }

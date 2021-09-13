@@ -34,7 +34,7 @@ class DisplayDefaultView : public QLabel, public DisplayViewLogic
 {
     Q_OBJECT
     Q_DISABLE_COPY(DisplayDefaultView)
-    Q_DECLARE_PRIVATE(DisplayDefaultView)
+    friend class DisplayDefaultViewPrivate;
     DisplayDefaultViewPrivate *const d;
 public:
     explicit DisplayDefaultView(QWidget* parent = nullptr);

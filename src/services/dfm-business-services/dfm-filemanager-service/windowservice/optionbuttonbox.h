@@ -43,8 +43,8 @@ class OptionButtonBoxPrivate;
 class OptionButtonBox : public QWidget
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(OptionButtonBox)
-    OptionButtonBoxPrivate * const d;
+    friend class OptionButtonBoxPrivate;
+    OptionButtonBoxPrivate *const d;
 public:
     explicit OptionButtonBox(QWidget *parent = nullptr);
     QToolButton *iconViewButton() const;

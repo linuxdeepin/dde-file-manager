@@ -58,7 +58,7 @@ class PluginMetaObjectPrivate
     friend class PluginManager;
     friend class PluginManagerPrivate;
     friend class PluginMetaObject;
-    PluginMetaObject const * q_ptr;
+    PluginMetaObject const *q;
 public:
     QString iid;
     QString name;
@@ -78,7 +78,7 @@ public:
     QSharedPointer<PluginContext> context;
 
     explicit PluginMetaObjectPrivate(PluginMetaObject * q)
-        : q_ptr(q)
+        : q(q)
         , loader(new QPluginLoader(nullptr))
     {
 

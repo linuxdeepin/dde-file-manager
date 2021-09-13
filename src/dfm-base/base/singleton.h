@@ -19,30 +19,56 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
+#ifndef SINGLETION_H
+#define SINGLETION_H
 
-#include "dfm-base/dfm_base_global.h"
-
-#include <QStandardItemModel>
+#include "dfm_base_global.h"
 
 DFMBASE_BEGIN_NAMESPACE
-class SideBarItem;
-class SideBarModelPrivate;
-class SideBarModel : public QStandardItemModel
+
+/**
+ * \brief The class GC
+ * 懒汉单例垃圾回收类
+ */
+template <class CT>
+class GC
 {
-    Q_OBJECT
-    friend class SideBarModelPrivate;
-    SideBarModelPrivate *const d;
+    inline static CT *ins = nullptr;
 public:
-    explicit SideBarModel(QObject *parent = nullptr);
-    bool canDropMimeData(const QMimeData *data, Qt::DropAction action,
-                         int row, int column, const QModelIndex &parent) const override;
-    QMimeData *mimeData(const QModelIndexList &indexes) const override;
-    SideBarItem *itemFromIndex(const QModelIndex &index) const;
-    SideBarItem *itemFromIndex(int index) const;
-    bool insertRow(int row, SideBarItem *item);
-    int appendRow(SideBarItem *item);
-    bool removeRow(SideBarItem *item);
-    QStringList groups() const;
+    explicit GC(CT* instance)
+    {
+        ins = instance;
+    }
+
+    virtual ~GC()
+    {
+        if(ins) {
+            delete ins;
+            ins = nullptr;
+        }
+    }
 };
+
+/**
+ * \brief The class Singletion
+ * 懒汉单例
+ */
+template <class CT>
+class Singletion
+{
+    inline static CT *ins = nullptr;
+public:
+    explicit Singletion();
+    static CT& instance()
+    {
+        if (!ins) {
+            ins = new CT();
+            static GC<CT> stack_gc(ins);
+        }
+        return *ins;
+    }
+};
+
 DFMBASE_END_NAMESPACE
+
+#endif // SINGLETION_H

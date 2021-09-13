@@ -26,7 +26,7 @@ DSB_FM_BEGIN_NAMESPACE
 
 OptionButtonBoxPrivate::OptionButtonBoxPrivate(OptionButtonBox *parent)
     : QObject(parent)
-    , q_ptr(parent)
+    , q(parent)
 {
 
 }

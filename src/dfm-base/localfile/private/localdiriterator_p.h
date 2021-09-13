@@ -38,8 +38,8 @@ DFMBASE_BEGIN_NAMESPACE
 class LocalDirIterator;
 class LocalDirIteratorPrivate
 {
-    Q_DECLARE_PUBLIC(LocalDirIterator)
-    class LocalDirIterator * const q_ptr;
+    friend class LocalDirIterator;
+    class LocalDirIterator *const q;
 
 public:
     explicit LocalDirIteratorPrivate(const QUrl &url,

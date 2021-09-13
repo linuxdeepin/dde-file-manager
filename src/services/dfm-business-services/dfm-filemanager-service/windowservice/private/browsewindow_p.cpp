@@ -84,7 +84,7 @@ QWidget *BrowseWindowPrivate::currentDisplayView()
 
 BrowseWindowPrivate::BrowseWindowPrivate(BrowseWindow *qq)
     : QObject(qq),
-      q_ptr(qq)
+      q(qq)
 {
     initDefaultLayout();
     qq->installEventFilter(this);
@@ -336,7 +336,7 @@ void BrowseWindowPrivate::setSidebar(SideBar *sidebar)
 
 void BrowseWindowPrivate::initDefaultLayout()
 {
-    q_ptr->titlebar()->setIcon(QIcon::fromTheme("dde-file-manager",
+    q->titlebar()->setIcon(QIcon::fromTheme("dde-file-manager",
                                                 QIcon::fromTheme("system-file-manager")));
 
     if (!titleBarIns) {
@@ -398,7 +398,7 @@ void BrowseWindowPrivate::initDefaultLayout()
     if (titleBarIns) {
         titleBarIns->setLayout(titleBarLayoutIns);
         titleBarIns->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        q_ptr->titlebar()->setCustomWidget(titleBarIns);
+        q->titlebar()->setCustomWidget(titleBarIns);
     }
 
     if (!splitterIns) {
@@ -406,8 +406,8 @@ void BrowseWindowPrivate::initDefaultLayout()
         splitterIns->setChildrenCollapsible(false);
         splitterIns->setHandleWidth(0);
 
-        if (!q_ptr->centralWidget())
-            q_ptr->setCentralWidget(splitterIns);
+        if (!q->centralWidget())
+            q->setCentralWidget(splitterIns);
     }
 
     if (!sidebarIns)
@@ -450,7 +450,7 @@ void BrowseWindowPrivate::showCrumbBar()
         addressBarIns->hide();
     }
 
-    if (q_ptr) q_ptr->setFocus();
+    if (q) q->setFocus();
 }
 
 void BrowseWindowPrivate::showSearchButton()
@@ -467,8 +467,8 @@ void BrowseWindowPrivate::showSearchFilterButton()
 
 bool BrowseWindowPrivate::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched == q_ptr && event->type() == QEvent::Show) {
-        q_ptr->activateWindow();
+    if (watched == q && event->type() == QEvent::Show) {
+        q->activateWindow();
         return false;
     }
 

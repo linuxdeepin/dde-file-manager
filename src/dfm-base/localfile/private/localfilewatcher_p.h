@@ -34,8 +34,8 @@ USING_IO_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
 class LocalFileWatcherPrivate : public AbstractFileWatcherPrivate
 {
-    Q_DECLARE_PUBLIC(LocalFileWatcher)
-    LocalFileWatcher *q_ptr;
+    friend class LocalFileWatcher;
+    LocalFileWatcher *const q;
     QSharedPointer<DWatcher> watcher { nullptr };       // dfm-io的文件监视器
 public:
     explicit LocalFileWatcherPrivate(LocalFileWatcher *qq);
@@ -43,6 +43,8 @@ public:
     virtual bool start();
     virtual bool stop();
     static QString formatPath(const QString &path);
+    void initFileWatcher();
+    void initConnect();
 };
 DFMBASE_END_NAMESPACE
 

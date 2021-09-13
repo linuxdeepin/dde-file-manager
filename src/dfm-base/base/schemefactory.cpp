@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "schemefactory.h"
+#include "dfm-base/base/singleton.h"
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -27,7 +28,7 @@ InfoFactory &InfoFactory::instance()
 {
     if (!ins) {
         ins = new InfoFactory();
-        static GC<InfoFactory> infoFactory_gc(ins);
+        static GC<InfoFactory> gc(ins);
     }
     return *ins;
 }
@@ -36,7 +37,7 @@ WacherFactory &WacherFactory::instance()
 {
     if (!ins) {
         ins = new WacherFactory();
-        static GC<WacherFactory> watcherFactory_gc(ins);
+        static GC<WacherFactory> gc(ins);
     }
     return *ins;
 }
@@ -45,7 +46,7 @@ FileDeviceFactory &FileDeviceFactory::instance()
 {
     if (!ins) {
         ins = new FileDeviceFactory();
-        static GC<FileDeviceFactory> fileDeviceFactory_gc(ins);
+        static GC<FileDeviceFactory> gc(ins);
     }
     return *ins;
 }
@@ -54,7 +55,7 @@ DirIteratorFactory &DirIteratorFactory::instance()
 {
     if (!ins) {
         ins = new DirIteratorFactory();
-        static GC<DirIteratorFactory> dirIteratorFactory(ins);
+        static GC<DirIteratorFactory> gc(ins);
     }
     return *ins;
 }

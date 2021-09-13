@@ -36,16 +36,12 @@ const char ENABLED[] = "enabled";
 class PluginSetting final : public QSettings
 {
     Q_OBJECT
-
 public:
-
     PluginSetting(Scope scope = Scope::UserScope,
                       const QString &organization = ORGANIZATION,
                       const QString &application = QCoreApplication::applicationName(),
                       QObject *parent = nullptr);
-
     void setPluginEnable(const PluginMetaObject &meta, bool enabled);
-
 Q_SIGNALS:
     void pluginEnabled(const PluginMetaObject &meta, bool enabled);
 };

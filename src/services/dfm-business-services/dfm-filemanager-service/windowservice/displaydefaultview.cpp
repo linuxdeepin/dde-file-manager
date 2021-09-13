@@ -26,7 +26,7 @@ DSB_FM_BEGIN_NAMESPACE
 
 DisplayDefaultViewPrivate::DisplayDefaultViewPrivate(DisplayDefaultView *qq)
     : QObject(qq)
-    , q_ptr(qq)
+    , q(qq)
 {
 
 }

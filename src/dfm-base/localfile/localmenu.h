@@ -134,7 +134,6 @@ class LocalMenu : public QObject
         SpaceArea                               // 空白区域
     };
 
-    Q_DECLARE_PRIVATE(LocalMenu)
     QSharedPointer<LocalMenuPrivate> d;
 public:
     explicit LocalMenu(const QString &filePath);

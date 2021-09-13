@@ -32,13 +32,13 @@ DPF_BEGIN_NAMESPACE
 class EventPrivate
 {
     friend class Event;
-    Event * const q_ptr;
+    Event *const q;
     QHash<QString,QVariant> sourceHash;
     friend Q_CORE_EXPORT QDebug operator <<(QDebug, const Event &);
 public:
 
     explicit EventPrivate(Event *qq)
-        : q_ptr(qq)
+        : q(qq)
     {
 
     }

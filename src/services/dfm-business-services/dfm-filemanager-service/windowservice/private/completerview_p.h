@@ -50,8 +50,8 @@ class CompleterView;
 class CompleterViewPrivate : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(CompleterView)
-    CompleterView *const q_ptr;
+    friend class CompleterView;
+    CompleterView *const q;
 
     QCompleter completer;
     QStringListModel model;

@@ -34,7 +34,7 @@ set(BASE_H
     base/private/watchercache_p.h
     base/abstractfileinfo.h
     base/standardpaths.h
-#    base/singleton.hpp
+    base/singleton.h
     base/urlroute.h
     base/schemefactory.h
     base/abstractdiriterator.h

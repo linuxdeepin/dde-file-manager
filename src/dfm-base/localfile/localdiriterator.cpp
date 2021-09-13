@@ -32,8 +32,8 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
                                                  QDir::Filters filters,
                                                  QDirIterator::IteratorFlags flags,
                                                  LocalDirIterator *q)
-    : q_ptr(q),
-      url(url)
+    : q(q)
+    , url(url)
 {
     Q_UNUSED(nameFilters);
     Q_UNUSED(filters);

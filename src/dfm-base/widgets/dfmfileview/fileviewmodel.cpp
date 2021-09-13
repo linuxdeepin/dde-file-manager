@@ -26,7 +26,7 @@
 DFMBASE_BEGIN_NAMESPACE
 FileViewModelPrivate::FileViewModelPrivate(FileViewModel *qq)
     : QObject (qq)
-    , q_ptr(qq)
+    , q(qq)
 {
 
 }
@@ -38,9 +38,9 @@ FileViewModelPrivate::~FileViewModelPrivate()
 
 void FileViewModelPrivate::doUpdateChildren(const QList<QSharedPointer<FileViewItem> > &children)
 {
-    q_ptr->beginResetModel();
+    q->beginResetModel();
     childers.setList(children);
-    q_ptr->endResetModel();
+    q->endResetModel();
 }
 
 FileViewModel::FileViewModel(QAbstractItemView *parent)
@@ -58,8 +58,6 @@ FileViewModel::~FileViewModel()
 QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    Q_D(const FileViewModel);
-
     if(row < 0 || column < 0 || d->childers.size() <= row)
         return  QModelIndex();
 
@@ -68,7 +66,6 @@ QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent)
 
 QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 {
-    Q_D(FileViewModel);
     if (!d->root.isNull() && d->root->url() == url)
         return createIndex(-1, 0, &d->root);
 
@@ -89,11 +86,11 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     d->watcher = WacherFactory::create<AbstractFileWatcher>(url);
     if (d->watcher.isNull()) {
         QObject::connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted,
-                         d, &FileViewModelPrivate::doFileDeleted);
+                         d.data(), &FileViewModelPrivate::doFileDeleted);
         QObject::connect(d->watcher.data(), &AbstractFileWatcher::subfileCreated,
-                         d, &FileViewModelPrivate::dofileCreated);
+                         d.data(), &FileViewModelPrivate::dofileCreated);
         QObject::connect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged,
-                         d, &FileViewModelPrivate::dofileModified);
+                         d.data(), &FileViewModelPrivate::dofileModified);
     }
 
     return root;
@@ -101,13 +98,11 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 
 QUrl FileViewModel::rootUrl()
 {
-    Q_D(FileViewModel);
     return d->root->fileinfo()->url();
 }
 
 AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index)
 {
-    Q_D(FileViewModel);
     if (!index.isValid())
         return nullptr;
     if(index.row() < 0  || d->childers.size() <= index.row())
@@ -125,42 +120,37 @@ QModelIndex FileViewModel::parent(const QModelIndex &child) const
 int FileViewModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    Q_D(const FileViewModel);
     return d->childers.size();
 }
 
 int FileViewModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    Q_D(const FileViewModel);
     return d->column;
 }
 
 QVariant FileViewModel::data(const QModelIndex &index, int role) const
 {
-    Q_D(const FileViewModel);
     return d->childers.at(index.row())->data(role);
 }
 
 void FileViewModel::fetchMore(const QModelIndex &parent)
 {
     Q_UNUSED(parent)
-    Q_D(FileViewModel);
-
     if (!d->traversalThread.isNull()) {
         d->traversalThread->quit();
         d->traversalThread->wait();
         disconnect(d->traversalThread.data());
     }
     d->traversalThread.reset(new TraversalDirThread(
-                                   d->root->url(),QStringList(),
-                                   QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System,
-                                   QDirIterator::NoIteratorFlags));
+                                 d->root->url(),QStringList(),
+                                 QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System,
+                                 QDirIterator::NoIteratorFlags));
     if (d->traversalThread.isNull())
         return;
     QObject::connect(d->traversalThread.data(),& TraversalDirThread::updateChildren,
-            d, &FileViewModelPrivate::doUpdateChildren,
-            Qt::QueuedConnection);
+                     d.data(), &FileViewModelPrivate::doUpdateChildren,
+                     Qt::QueuedConnection);
     d->traversalThread->start();
 }
 

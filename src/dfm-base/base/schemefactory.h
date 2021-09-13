@@ -40,32 +40,7 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-/**
- * \brief The class GC
- * 垃圾回收类，回收懒汉单例
- * \code
- * in cpp file GC<Any class> anyclass_gc;
- * \endcode
- */
-template<class CT>
-        class GC
-{
-public:
-    explicit GC() = delete;
-    explicit GC(CT* ins)
-    {
-        cacheIns = ins;
-    }
-    virtual ~GC()
-    {
-        if(cacheIns)
-            delete cacheIns;
-        cacheIns = nullptr;
-    }
-
-    CT * cacheIns = nullptr;
-};
-
+template <class CT> class GC;
 /**
  * @brief The class SchemeFactory
  *  根据Scheme注册Class的工厂类，

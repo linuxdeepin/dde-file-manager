@@ -35,26 +35,26 @@ void NavWidgetPrivate::doButtonClicked()
 
     if (sender() == navBackButton) {
         if (0 == GlobalPrivate::listIdx) {
-            Q_EMIT q_ptr->releaseUrl(GlobalPrivate::urlCacheList[GlobalPrivate::listIdx]);
+            Q_EMIT q->releaseUrl(GlobalPrivate::urlCacheList[GlobalPrivate::listIdx]);
             return;  //头节点
         }
-        q_ptr->releaseUrl(GlobalPrivate::urlCacheList[-- GlobalPrivate::listIdx]);
+        q->releaseUrl(GlobalPrivate::urlCacheList[-- GlobalPrivate::listIdx]);
         return;
     }
 
     if (sender() == navForwardButton) {
         if (GlobalPrivate::urlCacheList.size() - 1 == GlobalPrivate::listIdx ) {
-            Q_EMIT q_ptr->releaseUrl(GlobalPrivate::urlCacheList[GlobalPrivate::listIdx]); //尾节点
+            Q_EMIT q->releaseUrl(GlobalPrivate::urlCacheList[GlobalPrivate::listIdx]); //尾节点
             return;
         }
-        q_ptr->releaseUrl(GlobalPrivate::urlCacheList[++ GlobalPrivate::listIdx]);
+        q->releaseUrl(GlobalPrivate::urlCacheList[++ GlobalPrivate::listIdx]);
         return;
     }
 }
 
 NavWidgetPrivate::NavWidgetPrivate(NavWidget *qq)
     : QObject (qq)
-    , q_ptr(qq)
+    , q(qq)
 {
 
 }

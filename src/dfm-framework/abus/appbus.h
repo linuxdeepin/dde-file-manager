@@ -33,23 +33,16 @@ class AppBusPrivate;
 class AppBus : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(AppBus)
-    AppBusPrivate * const d;
-
+    friend class AppBusPrivate;
+    AppBusPrivate *const d;
 public:
     explicit AppBus(QObject *parent = nullptr);
-
     virtual ~AppBus();
-
     QStringList onlineServer();
-
     QString mimeServer();
-
     bool isMimeServer(const QString& serverName);
-
 Q_SIGNALS:
     void newCreateAppBus(const QString& serverName);
-
 };
 
 DPF_END_NAMESPACE

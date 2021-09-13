@@ -49,7 +49,7 @@ public:
     QTimer *syncTimer = nullptr; // 同步计时器
     QString fallbackFile; // 备份设置文件路径
     QString settingFile; // 设置文件路径
-    Settings *q_ptr;
+    Settings *q;
 
     struct Data {
         QHash<QString, QVariantHash> values; // 设置文件的配置属性hash表
@@ -172,7 +172,7 @@ public:
 };
 
 SettingsPrivate::SettingsPrivate(Settings *qq)
-    : q_ptr(qq)
+    : q(qq)
 {
 
 }
@@ -303,8 +303,8 @@ void SettingsPrivate::_q_onFileChanged(const QUrl &url)
                 }
             }
 
-            Q_EMIT q_ptr->valueEdited(begin.key(), i.key(), i.value());
-            Q_EMIT q_ptr->valueChanged(begin.key(), i.key(), i.value());
+            Q_EMIT q->valueEdited(begin.key(), i.key(), i.value());
+            Q_EMIT q->valueChanged(begin.key(), i.key(), i.value());
         }
     }
 
@@ -314,11 +314,11 @@ void SettingsPrivate::_q_onFileChanged(const QUrl &url)
                 continue;
             }
 
-            const QVariant &new_value = q_ptr->value(begin.key(), i.key());
+            const QVariant &new_value = q->value(begin.key(), i.key());
 
             if (new_value != old_values.value(begin.key()).value(i.key())) {
-                Q_EMIT q_ptr->valueEdited(begin.key(), i.key(), new_value);
-                Q_EMIT q_ptr->valueChanged(begin.key(), i.key(), new_value);
+                Q_EMIT q->valueEdited(begin.key(), i.key(), new_value);
+                Q_EMIT q->valueChanged(begin.key(), i.key(), new_value);
             }
         }
     }
@@ -331,14 +331,14 @@ void SettingsPrivate::_q_onFileChanged(const QUrl &url)
  */
 Settings::Settings(const QString &defaultFile, const QString &fallbackFile, const QString &settingFile, QObject *parent)
     : QObject(parent)
-    , d_ptr(new SettingsPrivate(this))
+    , d(new SettingsPrivate(this))
 {
-    d_ptr->fallbackFile = fallbackFile;
-    d_ptr->settingFile = settingFile;
+    d->fallbackFile = fallbackFile;
+    d->settingFile = settingFile;
 
-    d_ptr->fromJsonFile(defaultFile, &d_ptr->defaultData);
-    d_ptr->fromJsonFile(fallbackFile, &d_ptr->fallbackData);
-    d_ptr->fromJsonFile(settingFile, &d_ptr->writableData);
+    d->fromJsonFile(defaultFile, &d->defaultData);
+    d->fromJsonFile(fallbackFile, &d->fallbackData);
+    d->fromJsonFile(settingFile, &d->writableData);
 }
 /*!
  * \brief getConfigFilePath 获取配置文件的路径
@@ -387,8 +387,6 @@ Settings::Settings(const QString &name, ConfigType type, QObject *parent)
 
 Settings::~Settings()
 {
-    Q_D(Settings);
-
     if (d->syncTimer) {
         d->syncTimer->stop();
     }
@@ -408,8 +406,6 @@ Settings::~Settings()
  */
 bool Settings::contains(const QString &group, const QString &key) const
 {
-    Q_D(const Settings);
-
     if (key.isEmpty()) {
         if (d->writableData.values.contains(group)) {
             return true;
@@ -439,8 +435,6 @@ bool Settings::contains(const QString &group, const QString &key) const
  */
 QSet<QString> Settings::groups() const
 {
-    Q_D(const Settings);
-
     QSet<QString> groups;
 
     groups.reserve(d->writableData.values.size() + d->fallbackData.values.size() + d->defaultData.values.size());
@@ -468,8 +462,6 @@ QSet<QString> Settings::groups() const
  */
 QSet<QString> Settings::keys(const QString &group) const
 {
-    Q_D(const Settings);
-
     QSet<QString> keys;
 
     const auto &&wg = d->writableData.values.value(group);
@@ -502,8 +494,6 @@ QSet<QString> Settings::keys(const QString &group) const
  */
 QStringList Settings::keyList(const QString &group) const
 {
-    Q_D(const Settings);
-
     QStringList keyList;
     QSet<QString> keys = this->keys(group);
 
@@ -568,8 +558,6 @@ QUrl Settings::toUrlValue(const QVariant &url)
  */
 QVariant Settings::value(const QString &group, const QString &key, const QVariant &defaultValue) const
 {
-    Q_D(const Settings);
-
     QVariant value = d->writableData.values.value(group).value(key, QVariant::Invalid);
 
     if (value.isValid()) {
@@ -597,8 +585,6 @@ QVariant Settings::value(const QString &group, const QString &key, const QVarian
  */
 QVariant Settings::value(const QString &group, const QUrl &key, const QVariant &defaultValue) const
 {
-    Q_D(const Settings);
-
     return value(group, d->urlToKey(key), defaultValue);
 }
 /*!
@@ -629,8 +615,6 @@ QUrl Settings::urlValue(const QString &group, const QString &key, const QUrl &de
  */
 QUrl Settings::urlValue(const QString &group, const QUrl &key, const QUrl &defaultValue) const
 {
-    Q_D(const Settings);
-
     return urlValue(group, d->urlToKey(key), defaultValue);
 }
 /*!
@@ -659,8 +643,6 @@ void Settings::setValue(const QString &group, const QString &key, const QVariant
  */
 void Settings::setValue(const QString &group, const QUrl &key, const QVariant &value)
 {
-    Q_D(Settings);
-
     setValue(group, d->urlToKey(key), value);
 }
 /*!
@@ -676,8 +658,6 @@ void Settings::setValue(const QString &group, const QUrl &key, const QVariant &v
  */
 bool Settings::setValueNoNotify(const QString &group, const QString &key, const QVariant &value)
 {
-    Q_D(Settings);
-
     bool changed = false;
 
     if (isRemovable(group, key)) {
@@ -708,8 +688,6 @@ bool Settings::setValueNoNotify(const QString &group, const QString &key, const 
  */
 bool Settings::setValueNoNotify(const QString &group, const QUrl &key, const QVariant &value)
 {
-    Q_D(Settings);
-
     return setValueNoNotify(group, d->urlToKey(key), value);
 }
 /*!
@@ -719,8 +697,6 @@ bool Settings::setValueNoNotify(const QString &group, const QUrl &key, const QVa
  */
 void Settings::removeGroup(const QString &group)
 {
-    Q_D(Settings);
-
     if (!d->writableData.values.contains(group)) {
         return;
     }
@@ -748,8 +724,6 @@ void Settings::removeGroup(const QString &group)
  */
 bool Settings::isRemovable(const QString &group, const QString &key) const
 {
-    Q_D(const Settings);
-
     return d->writableData.values.value(group).contains(key);
 }
 /*!
@@ -763,8 +737,6 @@ bool Settings::isRemovable(const QString &group, const QString &key) const
  */
 bool Settings::isRemovable(const QString &group, const QUrl &key) const
 {
-    Q_D(const Settings);
-
     return isRemovable(group, d->urlToKey(key));
 }
 /*!
@@ -776,8 +748,6 @@ bool Settings::isRemovable(const QString &group, const QUrl &key) const
  */
 void Settings::remove(const QString &group, const QString &key)
 {
-    Q_D(Settings);
-
     if (!d->writableData.values.value(group).contains(key)) {
         return;
     }
@@ -802,8 +772,6 @@ void Settings::remove(const QString &group, const QString &key)
  */
 void Settings::remove(const QString &group, const QUrl &key)
 {
-    Q_D(Settings);
-
     remove(group, d->urlToKey(key));
 }
 /*!
@@ -811,8 +779,6 @@ void Settings::remove(const QString &group, const QUrl &key)
  */
 void Settings::clear()
 {
-    Q_D(Settings);
-
     if (d->writableData.values.isEmpty()) {
         return;
     }
@@ -844,15 +810,13 @@ void Settings::clear()
  */
 void Settings::reload()
 {
-    Q_D(Settings);
-
     d->fallbackData.privateValues.clear();
     d->fallbackData.values.clear();
-    d->fromJsonFile(d->fallbackFile, &d_ptr->fallbackData);
+    d->fromJsonFile(d->fallbackFile, &d->fallbackData);
 
     d->writableData.privateValues.clear();
     d->writableData.values.clear();
-    d->fromJsonFile(d->settingFile, &d_ptr->writableData);
+    d->fromJsonFile(d->settingFile, &d->writableData);
 }
 /*!
  * \brief Settings::sync 将属性写入到配置文件中
@@ -861,8 +825,6 @@ void Settings::reload()
  */
 bool Settings::sync()
 {
-    Q_D(Settings);
-
     if (!d->settingFileIsDirty) {
         return true;
     }
@@ -891,8 +853,6 @@ bool Settings::sync()
  */
 bool Settings::autoSync() const
 {
-    Q_D(const Settings);
-
     return d->autoSync;
 }
 /*!
@@ -902,8 +862,6 @@ bool Settings::autoSync() const
  */
 bool Settings::watchChanges() const
 {
-    Q_D(const Settings);
-
     return d->watchChanges;
 }
 /*!
@@ -913,8 +871,6 @@ bool Settings::watchChanges() const
  */
 void Settings::setAutoSync(bool autoSync)
 {
-    Q_D(Settings);
-
     if (d->autoSync == autoSync) {
         return;
     }
@@ -949,12 +905,11 @@ void Settings::setAutoSync(bool autoSync)
  */
 void Settings::onFileChanged(const QUrl &url)
 {
-    Q_D(Settings);
-
     d->_q_onFileChanged(url);
 }
 
 void Settings::setWatchChanges(bool watchChanges)
 {
+    Q_UNUSED(watchChanges)
 }
 DSB_FM_END_NAMESPACE

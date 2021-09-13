@@ -42,6 +42,7 @@ DFMBASE_BEGIN_NAMESPACE
  */
 LocalFileWatcherPrivate::LocalFileWatcherPrivate(LocalFileWatcher *qq)
     : AbstractFileWatcherPrivate(qq)
+    , q(qq)
 {
 
 }
@@ -58,7 +59,7 @@ bool LocalFileWatcherPrivate::start()
         return false;
     started = watcher->start(0);
     if (started)
-        WatcherPath.append(path);
+        watcherPath.append(path);
     return started;
 }
 /*!
@@ -74,7 +75,7 @@ bool LocalFileWatcherPrivate::stop()
         return false;
     started = watcher->stop();
     if (started)
-        WatcherPath.removeOne(path);
+        watcherPath.removeOne(path);
     return started;
 }
 
@@ -99,25 +100,15 @@ QString LocalFileWatcherPrivate::formatPath(const QString &path)
 
     return p.isEmpty() ? path : p;
 }
-/*!
- * \class DAbstractFileWatcher 文件监视器类
- *
- * \brief 负责文件的监视，通过不同的url监视不同的文件和目录
- */
-LocalFileWatcher::LocalFileWatcher(QObject *parent)
-    : AbstractFileWatcher(parent)
-    , d(new LocalFileWatcherPrivate(this))
-{
-
-}
 
 LocalFileWatcher::LocalFileWatcher(const QUrl &url, QObject *parent)
-    : LocalFileWatcher(*new LocalFileWatcherPrivate(this), url, parent)
+    : AbstractFileWatcher(url, parent)
+    , d(new LocalFileWatcherPrivate(this))
 {
     d->path = LocalFileWatcherPrivate::formatPath(UrlRoute::urlToPath(url));
     if (!UrlRoute::isVirtualUrl(url)) {
-        initFileWatcher();
-        initConnect();
+        d->initFileWatcher();
+        d->initConnect();
     }
 }
 /*!
@@ -190,29 +181,20 @@ void LocalFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool ena
     Q_UNUSED(enabled)
 }
 
-LocalFileWatcher::LocalFileWatcher(LocalFileWatcherPrivate &dd,
-                                           const QUrl &url, QObject *parent)
-    : AbstractFileWatcher(parent)
-    , d(&dd)
-{
-    Q_ASSERT(url.isValid());
-
-    d->url = url;
-}
 /*!
  * \brief AbstractFileWatcher::initFileWatcher 初始化和创建dfm-io的filewatcher
  */
-void LocalFileWatcher::initFileWatcher()
+void LocalFileWatcherPrivate::initFileWatcher()
 {
-    QUrl watchUrl = QUrl::fromLocalFile(d->path);
+    QUrl watchUrl = QUrl::fromLocalFile(path);
     QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(watchUrl.scheme(), static_cast<QUrl>(watchUrl));
     if (!factory) {
         qWarning("create factory failed.");
         abort();
     }
 
-    d->watcher = factory->createWatcher();
-    if (!d->watcher) {
+    watcher = factory->createWatcher();
+    if (!watcher) {
         qWarning("watcher create failed.");
         abort();
     }
@@ -220,10 +202,10 @@ void LocalFileWatcher::initFileWatcher()
 /*!
  * \brief AbstractFileWatcher::initConnect 初始化dfm-io中文件监视器的信号连接
  */
-void LocalFileWatcher::initConnect()
+void LocalFileWatcherPrivate::initConnect()
 {
-    connect(d->watcher.data(), &DWatcher::fileChanged, this, &LocalFileWatcher::fileAttributeChanged);
-    connect(d->watcher.data(), &DWatcher::fileDeleted, this, &LocalFileWatcher::fileDeleted);
-    connect(d->watcher.data(), &DWatcher::fileAdded, this, &LocalFileWatcher::subfileCreated);
+    QObject::connect(watcher.data(), &DWatcher::fileChanged, q, &LocalFileWatcher::fileAttributeChanged);
+    QObject::connect(watcher.data(), &DWatcher::fileDeleted, q, &LocalFileWatcher::fileDeleted);
+    QObject::connect(watcher.data(), &DWatcher::fileAdded, q, &LocalFileWatcher::subfileCreated);
 }
 DFMBASE_END_NAMESPACE
