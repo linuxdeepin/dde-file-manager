@@ -345,9 +345,6 @@ TEST_F(FileControllerTest, tst_touch)
     stext.set_lamda(VADDR(QDialog, exec), [] { return (int)QDialog::Rejected; });
 
     DUrl url = DUrl::fromLocalFile(fileName);
-    QFile file (url.toLocalFile());
-    if (file.exists())
-        file.remove();
     bool result = controller->touch(dMakeEventPointer<DFMTouchFileEvent>(nullptr, url));
     EXPECT_TRUE(result);
 

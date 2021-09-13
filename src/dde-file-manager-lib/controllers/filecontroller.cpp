@@ -1519,12 +1519,11 @@ bool FileController::touch(const QSharedPointer<DFMTouchFileEvent> &event) const
 
     AppController::selectionAndRenameFile = qMakePair(event->url(), event->windowId());
 
-    if (file.open(QIODevice::NewOnly)) {
+    if (file.open(QIODevice::WriteOnly)) {
         file.close();
         fileAdded(event->url());
     } else {
         // 创建文件失败，提示错误信息
-        qInfo() << strerror(errno);
         QString strErr = tr("Unable to create files here: %1").arg(strerror(errno));
         dialogManager->showMessageDialog(DialogManager::msgWarn, strErr);
 
