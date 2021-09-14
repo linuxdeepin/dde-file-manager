@@ -29,9 +29,9 @@
 
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/abstractfilewatcher.h"
 #include "dfm-base/localfile/localfileinfo.h"
 #include "dfm-base/localfile/localdiriterator.h"
+#include "dfm-base/localfile/localfilewatcher.h"
 #include "dfm-base/widgets/dfmsidebar/sidebar.h"
 #include "dfm-base/widgets/dfmsidebar/sidebaritem.h"
 #include "dfm-base/widgets/dfmsidebar/sidebarview.h"
@@ -162,37 +162,37 @@ static void regStandardPathClass()
 
     InfoFactory::regClass<LocalFileInfo>("home");
     DirIteratorFactory::regClass<LocalDirIterator>("home");
-    WacherFactory::regClass<AbstractFileWatcher>("home");
+    WacherFactory::regClass<LocalFileWatcher>("home");
     BrowseWidgetFactory::regClass<BrowseView>("home");
 
     InfoFactory::regClass<LocalFileInfo>("desktop");
     DirIteratorFactory::regClass<LocalDirIterator>("desktop");
-    WacherFactory::regClass<AbstractFileWatcher>("desktop");
+    WacherFactory::regClass<LocalFileWatcher>("desktop");
     BrowseWidgetFactory::regClass<BrowseView>("desktop");
 
     InfoFactory::regClass<LocalFileInfo>("videos");
     DirIteratorFactory::regClass<LocalDirIterator>("videos");
-    WacherFactory::regClass<AbstractFileWatcher>("videos");
+    WacherFactory::regClass<LocalFileWatcher>("videos");
     BrowseWidgetFactory::regClass<BrowseView>("videos");
 
     InfoFactory::regClass<LocalFileInfo>("music");
     DirIteratorFactory::regClass<LocalDirIterator>("music");
-    WacherFactory::regClass<AbstractFileWatcher>("music");
+    WacherFactory::regClass<LocalFileWatcher>("music");
     BrowseWidgetFactory::regClass<BrowseView>("music");
 
     InfoFactory::regClass<LocalFileInfo>("pictures");
     DirIteratorFactory::regClass<LocalDirIterator>("pictures");
-    WacherFactory::regClass<AbstractFileWatcher>("pictures");
+    WacherFactory::regClass<LocalFileWatcher>("pictures");
     BrowseWidgetFactory::regClass<BrowseView>("pictures");
 
     InfoFactory::regClass<LocalFileInfo>("documents");
     DirIteratorFactory::regClass<LocalDirIterator>("documents");
-    WacherFactory::regClass<AbstractFileWatcher>("documents");
+    WacherFactory::regClass<LocalFileWatcher>("documents");
     BrowseWidgetFactory::regClass<BrowseView>("documents");
 
     InfoFactory::regClass<LocalFileInfo>("downloads");
     DirIteratorFactory::regClass<LocalDirIterator>("downloads");
-    WacherFactory::regClass<AbstractFileWatcher>("downloads");
+    WacherFactory::regClass<LocalFileWatcher>("downloads");
     BrowseWidgetFactory::regClass<BrowseView>("downloads");
 }
 
@@ -209,7 +209,7 @@ void Core::initialize()
     //注册Scheme为"file"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<LocalFileInfo>("file");
     DirIteratorFactory::regClass<LocalDirIterator>("file");
-    WacherFactory::regClass<AbstractFileWatcher>("file");
+    WacherFactory::regClass<LocalFileWatcher>("file");
     BrowseWidgetFactory::regClass<BrowseView>("file");
 
     regStandardPathClass();

@@ -48,7 +48,6 @@ LocalFileInfo::LocalFileInfo(const QUrl &url)
     : AbstractFileInfo (url),
       d(new LocalFileInfoPrivate(this))
 {
-
 }
 
 LocalFileInfo::~LocalFileInfo()
@@ -59,10 +58,884 @@ LocalFileInfo::~LocalFileInfo()
 LocalFileInfo& LocalFileInfo::operator =(const LocalFileInfo &info)
 {
     AbstractFileInfo::operator=(info);
+    d->dfmFileInfo = info.d->dfmFileInfo;
     d->icon = info.d->icon;
     d->inode = info.d->inode;
     d->mimeType = info.d->mimeType;
     return *this;
+}
+/*!
+ * \brief == 重载操作符==
+ *
+ * \param const DAbstractFileInfo & DAbstractFileInfo实例对象的引用
+ *
+ * \return bool 传入的DAbstractFileInfo实例对象和自己是否相等
+ */
+bool LocalFileInfo::operator==(const LocalFileInfo &fileinfo) const
+{
+    return d->dfmFileInfo == fileinfo.d->dfmFileInfo && d->url == fileinfo.d->url;
+}
+/*!
+ * \brief != 重载操作符!=
+ *
+ * \param const LocalFileInfo & LocalFileInfo实例对象的引用
+ *
+ * \return bool 传入的LocalFileInfo实例对象和自己是否不相等
+ */
+bool LocalFileInfo::operator!=(const LocalFileInfo &fileinfo) const
+{
+    return !(operator==(fileinfo));
+}
+/*!
+ * \brief setFile 设置文件的File，跟新当前的fileinfo
+ *
+ * \param const QSharedPointer<DFMIO::DFileInfo> &file 新文件的dfm-io的fileinfo
+ *
+ * \return
+ */
+void LocalFileInfo::setFile(const DFileInfo &file)
+{
+    d->url = file.uri();
+    d->dfmFileInfo.reset(new DFileInfo(file));
+    refresh();
+}
+/*!
+ * \brief exists 文件是否存在
+ *
+ * \param
+ *
+ * \return 返回文件是否存在
+ */
+bool LocalFileInfo::exists() const
+{
+    if (!d->caches.contains(TypeExists)) {
+        if (d->dfmFileInfo) {
+            //@todo 目前dfmio这一层还没实现，等待实现了在加入
+//            d_ptr->m_caches.insert(TypeExists,QVariant(d_ptr->m_dfmFileInfo->attribute()));
+        } else {
+            return false;
+        }
+    }
+    return d->caches.value(TypeExists).toBool();
+}
+/*!
+ * \brief refresh 跟新文件信息，清理掉缓存的所有的文件信息
+ *
+ * \param
+ *
+ * \return
+ */
+void LocalFileInfo::refresh()
+{
+    d->caches.clear();
+    d->initFileInfo();
+}
+/*!
+ * \brief filePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * filePath = /tmp/archive.tar.gz
+ *
+ * \param
+ *
+ * \return
+ */
+QString LocalFileInfo::filePath() const
+{
+
+    //文件的路径（当前文件的父目录）
+
+    if (!d->caches.contains(TypeFilePath)) {
+        if (d->dfmFileInfo) {
+//            d_ptr->m_caches.insert(TypeFilePath, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+        } else {
+            return QString();
+        }
+    }
+    return d->caches.value(TypeFilePath).toString();
+}
+
+/*!
+ * \brief absoluteFilePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径，事例如下：
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * absoluteFilePath = /tmp/archive.tar.gz
+ *
+ * \param
+ *
+ * \return
+ */
+QString LocalFileInfo::absoluteFilePath() const
+{
+    return filePath();
+}
+/*!
+ * \brief fileName 文件名称，全名称
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * fileName = archive.tar.gz
+ *
+ * \param
+ *
+ * \return
+ */
+QString LocalFileInfo::fileName() const
+{
+    if (!d->caches.contains(TypeFileName)) {
+        if (d->dfmFileInfo) {
+            bool success = false;
+            d->caches.insert(TypeFileName, d->dfmFileInfo->
+                                  attribute(DFileInfo::AttributeID::StandardName, success));
+        } else {
+            return QString();
+        }
+    }
+    return d->caches.value(TypeFileName).toString();
+}
+/*!
+ * \brief baseName 文件的基本名称
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * baseName = archive
+ *
+ * \param
+ *
+ * \return
+ */
+QString LocalFileInfo::baseName() const
+{
+    if (!d->caches.contains(TypeBaseName)) {
+        if (d->dfmFileInfo) {
+//            bool success = false;
+//            d_ptr->m_caches.insert(TypeBaseName, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+        } else {
+            return QString();
+        }
+    }
+    return d->caches.value(TypeBaseName).toString();
+}
+/*!
+ * \brief completeBaseName 文件的完整基本名称
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * completeBaseName = archive.tar
+ *
+ * \param
+ *
+ * \return
+ */
+QString LocalFileInfo::completeBaseName() const
+{
+    if (!d->caches.contains(TypeCompleteBaseName)) {
+        if (d->dfmFileInfo) {
+//            bool success = false;
+//            d_ptr->m_caches.insert(TypeCompleteBaseName, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+        } else {
+            return QString();
+        }
+    }
+    return d->caches.value(TypeCompleteBaseName).toString();
+}
+/*!
+ * \brief suffix 文件的suffix
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * suffix = gz
+ *
+ * \param
+ *
+ * \return
+ */
+QString LocalFileInfo::suffix() const
+{
+    if (!d->caches.contains(TypeSuffix)) {
+        if (d->dfmFileInfo) {
+//            bool success = false;
+//            d_ptr->m_caches.insert(TypeSuffix, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+        } else {
+            return QString();
+        }
+    }
+    return d->caches.value(TypeSuffix).toString();
+}
+/*!
+ * \brief suffix 文件的完整suffix
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * suffix = tar.gz
+ *
+ * \param
+ *
+ * \return
+ */
+QString LocalFileInfo::completeSuffix()
+{
+    if (!d->caches.contains(TypeCompleteSuffix)) {
+        if (d->dfmFileInfo) {
+//            bool success = false;
+//            d_ptr->m_caches.insert(TypeCompleteSuffix, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+        } else {
+            return QString();
+        }
+    }
+    return d->caches.value(TypeCompleteSuffix).toString();
+}
+/*!
+ * \brief path 获取文件路径，不包含文件的名称，相当于是父目录
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * path = /tmp
+ *
+ * \param
+ *
+ * \return
+ */
+QString LocalFileInfo::path() const
+{
+    if (!d->caches.contains(TypePath)) {
+        if (d->dfmFileInfo) {
+//            bool success = false;
+//            d_ptr->m_caches.insert(TypePath, QVariant(d_ptr->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+        } else {
+            return QString();
+        }
+    }
+    return d->caches.value(TypePath).toString();
+}
+/*!
+ * \brief path 获取文件路径，不包含文件的名称，相当于是父目录
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * absolutePath = /tmp
+ *
+ * \param
+ *
+ * \return
+ */
+QString LocalFileInfo::absolutePath() const
+{
+    return path();
+}
+/*!
+ * \brief canonicalPath 获取文件canonical路径，包含文件的名称，相当于文件的全路径
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * canonicalPath = /tmp/archive.tar.gz
+ *
+ * \param
+ *
+ * \return QString 返回没有符号链接或冗余“.”或“..”元素的绝对路径
+ */
+QString LocalFileInfo::canonicalPath() const
+{
+    return filePath();
+}
+/*!
+ * \brief dir 获取文件的父母目录的QDir
+ *
+ * Returns the path of the object's parent directory as a QDir object.
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * dirpath = /tmp
+ *
+ * \param
+ *
+ * \return QDir 父母目录的QDir实例对象
+ */
+QDir LocalFileInfo::dir() const
+{
+    return QDir(path());
+}
+/*!
+ * \brief absoluteDir 获取文件的父母目录的QDir
+ *
+ * Returns the file's absolute path as a QDir object.
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * absolute path = /tmp
+ *
+ * \param
+ *
+ * \return QDir 父母目录的QDir实例对象
+ */
+QDir LocalFileInfo::absoluteDir() const
+{
+    return dir();
+}
+/*!
+ * \brief url 获取文件的url，这里的url是转换后的
+ *
+ * \param
+ *
+ * \return QUrl 返回真实路径转换的url
+ */
+QUrl LocalFileInfo::url() const
+{
+    return UrlRoute::pathToUrl(filePath());
+}
+/*!
+ * \brief isReadable 获取文件是否可读
+ *
+ * Returns the file can Read
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * \param
+ *
+ * \return bool 返回文件是否可读
+ */
+bool LocalFileInfo::isReadable() const
+{
+    if (!d->caches.contains(TypeIsReadable)) {
+        if (d->dfmFileInfo) {
+            bool success = false;
+            d->caches.insert(TypeIsReadable,d->dfmFileInfo->
+                             attribute(DFileInfo::AttributeID::AccessCanRead, success));
+        } else {
+            return false;
+        }
+    }
+    return d->caches.value(TypeIsReadable).toBool();
+}
+/*!
+ * \brief isWritable 获取文件是否可写
+ *
+ * Returns the file can write
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * \param
+ *
+ * \return bool 返回文件是否可写
+ */
+bool LocalFileInfo::isWritable() const
+{
+    if (!d->caches.contains(TypeIsWritable)) {
+        if (d->dfmFileInfo) {
+            bool success = false;
+            d->caches.insert(TypeIsWritable,d->dfmFileInfo->
+                             attribute(DFileInfo::AttributeID::AccessCanWrite, success));
+        } else {
+            return false;
+        }
+    }
+    return d->caches.value(TypeIsWritable).toBool();
+}
+/*!
+ * \brief isExecutable 获取文件是否可执行
+ *
+ * \param
+ *
+ * \return bool 返回文件是否可执行
+ */
+bool LocalFileInfo::isExecutable() const
+{
+    if (!d->caches.contains(TypeIsExecutable)) {
+        if (d->dfmFileInfo) {
+            bool success = false;
+            d->caches.insert(TypeIsExecutable, d->dfmFileInfo->
+                             attribute(DFileInfo::AttributeID::AccessCanExecute, success));
+        } else {
+            return false;
+        }
+    }
+    return d->caches.value(TypeIsExecutable).toBool();
+}
+/*!
+ * \brief isHidden 获取文件是否是隐藏
+ *
+ * \param
+ *
+ * \return bool 返回文件是否隐藏
+ */
+bool LocalFileInfo::isHidden() const
+{
+    if (!d->caches.contains(TypeIsHidden)) {
+        if (d->dfmFileInfo) {
+            bool success = false;
+            d->caches.insert(TypeIsHidden,
+                             d->dfmFileInfo->
+                             attribute(DFileInfo::AttributeID::StandardIsHiden, success));
+        } else {
+            return false;
+        }
+    }
+    return d->caches.value(TypeIsHidden).toBool();
+}
+/*!
+ * \brief isFile 获取文件是否是文件
+ *
+ * Returns true if this object points to a file or to a symbolic link to a file.
+ *
+ * Returns false if the object points to something which isn't a file,
+ *
+ * such as a directory.
+ *
+ * \param
+ *
+ * \return bool 返回文件是否文件
+ */
+bool LocalFileInfo::isFile() const
+{
+    if (!d->caches.contains(TypeIsFile)) {
+        if (d->dfmFileInfo) {
+//            d_ptr->m_caches.insert(TypeIsFile, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+        } else {
+            return false;
+        }
+    }
+    return d->caches.value(TypeIsFile).toBool();
+}
+/*!
+ * \brief isDir 获取文件是否是目录
+ *
+ * Returns true if this object points to a directory or to a symbolic link to a directory;
+ *
+ * otherwise returns false.
+ *
+ * \param
+ *
+ * \return bool 返回文件是否目录
+ */
+bool LocalFileInfo::isDir() const
+{
+    if (!d->caches.contains(TypeIsDir)) {
+        if (d->dfmFileInfo) {
+//            d_ptr->m_caches.insert(TypeIsDir, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+        } else {
+            return false;
+        }
+    }
+    return d->caches.value(TypeIsDir).toBool();
+}
+/*!
+ * \brief isSymLink 获取文件是否是链接文件
+ *
+ * Returns true if this object points to a symbolic link;
+ *
+ * otherwise returns false.Symbolic links exist on Unix (including macOS and iOS)
+ *
+ * and Windows and are typically created by the ln -s or mklink commands, respectively.
+ *
+ * Opening a symbolic link effectively opens the link's target.
+ *
+ * In addition, true will be returned for shortcuts (*.lnk files) on Windows.
+ *
+ * Opening those will open the .lnk file itself.
+ *
+ * \param
+ *
+ * \return bool 返回文件是否是链接文件
+ */
+bool LocalFileInfo::isSymLink() const
+{
+    if (!d->caches.contains(TypeIsSymLink)) {
+        if (d->dfmFileInfo) {
+//            d->m_caches.insert(TypeisSymLink, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+        } else {
+            return false;
+        }
+    }
+    return d->caches.value(TypeIsSymLink).toBool();
+}
+/*!
+ * \brief isRoot 获取文件是否是根目录
+ *
+ * Returns true if the object points to a directory or to a symbolic link to a directory,
+ *
+ * and that directory is the root directory; otherwise returns false.
+ *
+ * \param
+ *
+ * \return bool 返回文件是否是根目录
+ */
+bool LocalFileInfo::isRoot() const
+{
+    return filePath() == "/";
+}
+/*!
+ * \brief isBundle 获取文件是否是二进制文件
+ *
+ * Returns true if this object points to a bundle or to a symbolic
+ *
+ * link to a bundle on macOS and iOS; otherwise returns false.
+ *
+ * \param
+ *
+ * \return bool 返回文件是否是二进制文件
+ */
+bool LocalFileInfo::isBundle() const
+{
+    return false;
+}
+/*!
+ * \brief isBundle 获取文件的链接目标文件
+ *
+ * Returns the absolute path to the file or directory a symbolic link points to,
+ *
+ * or an empty string if the object isn't a symbolic link.
+ *
+ * This name may not represent an existing file; it is only a string.
+ *
+ * QFileInfo::exists() returns true if the symlink points to an existing file.
+ *
+ * \param
+ *
+ * \return QString 链接目标文件的路径
+ */
+QString LocalFileInfo::symLinkTarget() const
+{
+    if (!d->caches.contains(TypeSymLinkTarget)) {
+        if (d->dfmFileInfo) {
+            bool success(false);
+            d->caches.insert(TypeSymLinkTarget,d->dfmFileInfo->
+                             attribute(DFileInfo::AttributeID::StandardSymlinkTarget, success));
+        } else {
+            return QString();
+        }
+    }
+    return d->caches.value(TypeSymLinkTarget).toString();
+}
+/*!
+ * \brief owner 获取文件的拥有者
+ *
+ * Returns the owner of the file. On systems where files do not have owners,
+ *
+ * or if an error occurs, an empty string is returned.
+ *
+ * This function can be time consuming under Unix (in the order of milliseconds).
+ *
+ * \param
+ *
+ * \return QString 文件的拥有者
+ */
+QString LocalFileInfo::owner() const
+{
+    if (!d->caches.contains(TypeOwner)) {
+        if (d->dfmFileInfo) {
+            bool success(false);
+            d->caches.insert(TypeOwner, d->dfmFileInfo->
+                             attribute(DFileInfo::AttributeID::OwnerUser, success));
+        } else {
+            return QString();
+        }
+    }
+    return d->caches.value(TypeOwner).toString();
+}
+/*!
+ * \brief ownerId 获取文件的拥有者ID
+ *
+ * Returns the id of the owner of the file.
+ *
+ * \param
+ *
+ * \return uint 文件的拥有者ID
+ */
+uint LocalFileInfo::ownerId() const
+{
+    if (!d->caches.contains(TypeOwnerID)) {
+        if (d->dfmFileInfo) {
+            bool success(false);
+            d->caches.insert(TypeOwnerID, d->dfmFileInfo->
+                             attribute(DFileInfo::AttributeID::OwnerUser, success));
+        } else {
+            return static_cast<uint>(-1);
+        }
+    }
+    return d->caches.value(TypeOwnerID).toUInt();
+}
+/*!
+ * \brief group 获取文件所属组
+ *
+ * Returns the group of the file.
+ *
+ * This function can be time consuming under Unix (in the order of milliseconds).
+ *
+ * \param
+ *
+ * \return QString 文件所属组
+ */
+QString LocalFileInfo::group() const
+{
+    if (!d->caches.contains(TypeGroup)) {
+        if (d->dfmFileInfo) {
+            bool success(false);
+            d->caches.insert(TypeGroup, d->dfmFileInfo->
+                             attribute(DFileInfo::AttributeID::OwnerGroup, success));
+        } else {
+            return QString();
+        }
+    }
+    return d->caches.value(TypeGroup).toString();
+}
+/*!
+ * \brief groupId 获取文件所属组的ID
+ *
+ * Returns the id of the group the file belongs to.
+ *
+ * \param
+ *
+ * \return uint 文件所属组ID
+ */
+uint LocalFileInfo::groupId() const
+{
+    if (!d->caches.contains(TypeGroupID)) {
+        if (d->dfmFileInfo) {
+            bool success(false);
+            d->caches.insert(TypeGroupID, d->dfmFileInfo->
+                             attribute(DFileInfo::AttributeID::OwnerGroup, success));
+        } else {
+            return static_cast<uint>(-1);
+        }
+    }
+    return d->caches.value(TypeGroupID).toUInt();
+}
+/*!
+ * \brief permission 判断文件是否有传入的权限
+ *
+ * Tests for file permissions. The permissions argument can be several flags
+ *
+ * of type QFile::Permissions OR-ed together to check for permission combinations.
+ *
+ * On systems where files do not have permissions this function always returns true.
+ *
+ * \param QFile::Permissions permissions 文件的权限
+ *
+ * \return bool 是否有传入的权限
+ */
+bool LocalFileInfo::permission(QFileDevice::Permissions permissions) const
+{
+    return this->permissions() & permissions;
+}
+/*!
+ * \brief permissions 获取文件的全部权限
+ *
+ * \param
+ *
+ * \return QFile::Permissions 文件的全部权限
+ */
+QFileDevice::Permissions LocalFileInfo::permissions() const
+{
+    if (!d->caches.contains(TypePermissions)) {
+        if (d->dfmFileInfo) {
+//            bool success(false);
+//            d->m_caches.insert(TypePermissions,
+//                                  QVariant(d_ptr->m_dfmFileInfo->
+//                                           attribute(DFileInfo::AttributeID::OwnerGroup, success)));
+        } else {
+            QFileDevice::Permissions ps;
+            return ps;
+        }
+    }
+    return static_cast<QFileDevice::Permissions>(d->caches.value(TypePermissions).toInt());
+}
+/*!
+ * \brief size 获取文件的大小
+ *
+ * Returns the file size in bytes.
+ *
+ * If the file does not exist or cannot be fetched, 0 is returned.
+ *
+ * \param
+ *
+ * \return qint64 文件的大小
+ */
+qint64 LocalFileInfo::size() const
+{
+    if (!d->caches.contains(TypeSize)) {
+        if (d->dfmFileInfo) {
+            bool success(false);
+            d->caches.insert(TypeSize,d->dfmFileInfo->
+                             attribute(DFileInfo::AttributeID::StandardSize, success));
+        } else {
+            return 0;
+        }
+    }
+    return static_cast<QFileDevice::Permissions>(d->caches.value(TypeSize).toInt());
+}
+/*!
+ * \brief created 获取文件的创建时间
+ *
+ * Returns the date and time when the file was created,
+ *
+ * the time its metadata was last changed or the time of last modification,
+ *
+ * whichever one of the three is available (in that order).
+ *
+ * \param
+ *
+ * \return QDateTime 文件的创建时间的QDateTime实例
+ */
+QDateTime LocalFileInfo::created() const
+{
+    if (!d->caches.contains(TypeCreateTime)) {
+        if (d->dfmFileInfo) {
+            bool success(false);
+            d->caches.insert(TypeCreateTime, d->dfmFileInfo->
+                             attribute(DFileInfo::AttributeID::TimeCreated, success));
+        } else {
+            return QDateTime();
+        }
+    }
+    QString data = d->caches.value(TypeCreateTime).toString();
+    QStringList dataList;
+    if (data.isEmpty()) {
+        dataList << "00" << "00" << "00";
+    } else {
+        dataList = data.split(":");
+        while (dataList.count() < 3) {
+            dataList << "0";
+        }
+    }
+    return QDateTime(QDate(dataList.at(0).toInt(), dataList.at(1).toInt(),dataList.at(2).toInt()));
+}
+/*!
+ * \brief birthTime 获取文件的创建时间
+ *
+ * Returns the date and time when the file was created / born.
+ *
+ * If the file birth time is not available, this function
+ *
+ * returns an invalid QDateTime.
+ *
+ * \param
+ *
+ * \return QDateTime 文件的创建时间的QDateTime实例
+ */
+QDateTime LocalFileInfo::birthTime() const
+{
+    return created();
+}
+/*!
+ * \brief metadataChangeTime 获取文件的改变时间
+ *
+ * Returns the date and time when the file metadata was changed.
+ *
+ * A metadata change occurs when the file is created,
+ *
+ * but it also occurs whenever the user writes or sets
+ *
+ * inode information (for example, changing the file permissions).
+ *
+ * \param
+ *
+ * \return QDateTime 文件的改变时间的QDateTime实例
+ */
+QDateTime LocalFileInfo::metadataChangeTime() const
+{
+    if (!d->caches.contains(TypeChangeTime)) {
+        if (d->dfmFileInfo) {
+            bool success(false);
+            d->caches.insert(TypeChangeTime,d->dfmFileInfo->
+                             attribute(DFileInfo::AttributeID::TimeChanged, success));
+        } else {
+            return QDateTime();
+        }
+    }
+    QString data = d->caches.value(TypeChangeTime).toString();
+    QStringList dataList;
+    if (data.isEmpty()) {
+        dataList << "00" << "00" << "00";
+    } else {
+        dataList = data.split(":");
+        while (dataList.count() < 3) {
+            dataList << "0";
+        }
+    }
+    return QDateTime(QDate(dataList.at(0).toInt(), dataList.at(1).toInt(),dataList.at(2).toInt()));
+}
+/*!
+ * \brief lastModified 获取文件的最后修改时间
+ *
+ * \param
+ *
+ * \return QDateTime 文件的最后修改时间的QDateTime实例
+ */
+QDateTime LocalFileInfo::lastModified() const
+{
+    if (!d->caches.contains(TypeLastModifyTime)) {
+        if (d->dfmFileInfo) {
+            bool success(false);
+            d->caches.insert(TypeLastModifyTime, d->dfmFileInfo->
+                             attribute(DFileInfo::AttributeID::TimeModified, success));
+        } else {
+            return QDateTime();
+        }
+    }
+    QString data = d->caches.value(TypeLastModifyTime).toString();
+    QStringList dataList;
+    if (data.isEmpty()) {
+        dataList << "00" << "00" << "00";
+    } else {
+        dataList = data.split(":");
+        while (dataList.count() < 3) {
+            dataList << "0";
+        }
+    }
+    return QDateTime(QDate(dataList.at(0).toInt(), dataList.at(1).toInt(),dataList.at(2).toInt()));
+}
+/*!
+ * \brief lastRead 获取文件的最后读取时间
+ *
+ * \param
+ *
+ * \return QDateTime 文件的最后读取时间的QDateTime实例
+ */
+QDateTime LocalFileInfo::lastRead() const
+{
+    if (!d->caches.contains(TypeLastReadTime)) {
+        if (d->dfmFileInfo) {
+            bool success(false);
+            d->caches.insert(TypeLastReadTime, d->dfmFileInfo->
+                             attribute(DFileInfo::AttributeID::TimeAccess, success));
+        } else {
+            return QDateTime();
+        }
+    }
+    QString data = d->caches.value(TypeLastReadTime).toString();
+    QStringList dataList;
+    if (data.isEmpty()) {
+        dataList << "00" << "00" << "00";
+    } else {
+        dataList = data.split(":");
+        while (dataList.count() < 3) {
+            dataList << "0";
+        }
+    }
+    return QDateTime(QDate(dataList.at(0).toInt(), dataList.at(1).toInt(),dataList.at(2).toInt()));
+}
+/*!
+ * \brief fileTime 获取文件的事件通过传入的参数
+ *
+ * \param QFile::FileTime time 时间类型
+ *
+ * \return QDateTime 文件的不同时间类型的时间的QDateTime实例
+ */
+QDateTime LocalFileInfo::fileTime(QFileDevice::FileTime time) const
+{
+    if (time == QFileDevice::FileAccessTime) {
+        return lastRead();
+    } else if (time == QFileDevice::FileBirthTime) {
+        return created();
+    } else if (time == QFileDevice::FileMetadataChangeTime) {
+        return metadataChangeTime();
+    } else if (time == QFileDevice::FileModificationTime) {
+        return lastModified();
+    } else {
+        return QDateTime();
+    }
 }
 /*!
  * \brief isBlockDev 获取是否是块设备
@@ -292,13 +1165,6 @@ QString LocalFileInfo::sizeFormat() const
 QString LocalFileInfo::fileDisplayName() const
 {
     return fileName();
-}
-/*!
- * \brief refresh 刷新文件信息
- */
-void LocalFileInfo::refresh()
-{
-    return AbstractFileInfo::refresh();
 }
 /*!
  * \brief toQFileInfo 获取他的QFileInfo实例对象

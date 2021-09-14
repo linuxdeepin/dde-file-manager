@@ -81,8 +81,9 @@ public:
     virtual AbstractFileInfo &operator=(const AbstractFileInfo &fileinfo);
     virtual bool operator==(const AbstractFileInfo &fileinfo) const;
     virtual bool operator!=(const AbstractFileInfo &fileinfo) const;
-    virtual void setFile(const DFMIO::DFileInfo &file);
+
     virtual void setFile(const QUrl &url);
+    virtual void setFile(const DFMIO::DFileInfo &file);
     virtual bool exists() const;
     virtual void refresh();
     virtual QString filePath() const;

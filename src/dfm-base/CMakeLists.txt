@@ -59,15 +59,18 @@ set(LOCALFILE_H
     localfile/private/localmenu_p.h
     localfile/private/localdiriterator_p.h
     localfile/private/localfileinfo_p.h
+    localfile/private/localfilewatcher_p.h
     localfile/localdiriterator.h
     localfile/localfileinfo.h
     localfile/localmenu.h
+    localfile/localfilewatcher.h
     )
 
 set(LOCALFILE_CPP
     localfile/localfileinfo.cpp
     localfile/localmenu.cpp
     localfile/localdiriterator.cpp
+    localfile/localfilewatcher.cpp
     )
 
 set(WIDGETS_H

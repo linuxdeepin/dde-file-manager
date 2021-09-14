@@ -19,37 +19,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ABSTRACTFILEINFO_P_H
-#define ABSTRACTFILEINFO_P_H
+#ifndef LOCALFILEWATCHER_P_H
+#define LOCALFILEWATCHER_P_H
 
-#include "base/abstractfileinfo.h"
+#include "localfile/localfilewatcher.h"
+#include "base/private/abstractfilewatcher_p.h"
 #include "utils/threadcontainer.hpp"
 
-#include <dfmio_global.h>
-#include <dfmio_register.h>
-#include <dfm-io/core/diofactory.h>
+#include <dfm-io/core/dwatcher.h>
 
-#include <QPointer>
-
-#include <dfm-io/core/dfileinfo.h>
+#include <QUrl>
 
 USING_IO_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
-
-namespace GlobalPrivate {
-static bool dfmioIsInit = DFMIO::dfmio_init();
-}
-
-class AbstractFileInfoPrivate
+class LocalFileWatcherPrivate : public AbstractFileWatcherPrivate
 {
-    Q_DECLARE_PUBLIC(AbstractFileInfo)
-    AbstractFileInfo * const q_ptr;// DAbstractFileInfo实例对象
+    Q_DECLARE_PUBLIC(LocalFileWatcher)
+    LocalFileWatcher *q_ptr;
+    QSharedPointer<DWatcher> watcher { nullptr };       // dfm-io的文件监视器
 public:
-    QUrl url;// 文件的url
-    AbstractFileInfoPrivate(AbstractFileInfo *qq);
-    virtual ~AbstractFileInfoPrivate();
+    explicit LocalFileWatcherPrivate(LocalFileWatcher *qq);
+    virtual ~LocalFileWatcherPrivate() {}
+    virtual bool start();
+    virtual bool stop();
+    static QString formatPath(const QString &path);
 };
-
 DFMBASE_END_NAMESPACE
 
-#endif // ABSTRACTFILEINFO_P_H
+#endif // LOCALFILEWATCHER_P_H

@@ -34,6 +34,8 @@ class AbstractFileWatcherPrivate;
 class AbstractFileWatcher : public QObject
 {
     Q_OBJECT
+    QScopedPointer<AbstractFileWatcherPrivate> d_ptr;
+    Q_DECLARE_PRIVATE(AbstractFileWatcher)
 public:
     explicit AbstractFileWatcher() = delete;
     explicit AbstractFileWatcher(const QUrl &url, QObject *parent = nullptr);
@@ -75,15 +77,6 @@ Q_SIGNALS:
 protected:
     explicit AbstractFileWatcher(QObject* parent = nullptr);
     explicit AbstractFileWatcher(AbstractFileWatcherPrivate &dd, const QUrl &url, QObject *parent = nullptr);
-    QScopedPointer<AbstractFileWatcherPrivate> d_ptr;
-
-private:
-    void initFileWatcher();
-    void initConnect();
-
-private:
-    Q_DISABLE_COPY(AbstractFileWatcher)
-    Q_DECLARE_PRIVATE(AbstractFileWatcher)
 };
 DFMBASE_END_NAMESPACE
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileWatcher> AbstractFileWatcherPointer;

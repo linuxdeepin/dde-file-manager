@@ -53,6 +53,8 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     mutable QPointer<QTimer> getEPTimer; // 获取扩展属性的计时器
     mutable QPointer<QTimer> getIconTimer; // 获取icon的计时器
     mutable MimeDatabase::FileType cacheFileType { MimeDatabase::FileType::Unknown }; // 缓存文件的FileType
+    DThreadMap<AbstractFileInfo::FileInfoCacheType, QVariant> caches; // 文件缓存
+    QSharedPointer<DFileInfo> dfmFileInfo { nullptr }; // dfm文件的信息
 public:
     explicit LocalFileInfoPrivate(LocalFileInfo *qq);
     virtual ~LocalFileInfoPrivate();
@@ -78,7 +80,7 @@ public:
     void readStandardFlagsIcon();
     bool isLowSpeedFile() const;
     virtual QMimeType readMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const;
-
+    void initFileInfo();
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(LocalFileInfo *qq)
@@ -148,6 +150,22 @@ QMimeType LocalFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) cons
     else
         return MimeDatabase::mimeTypeForFile(UrlRoute::urlToPath(url),
                                               mode);
+}
+/*!
+ * \brief LocalFileInfoPrivate::initFileInfo 创建dfmio中dfileinfo
+ */
+void LocalFileInfoPrivate::initFileInfo()
+{
+    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(url.scheme(), QUrl(url));
+    if (factory.isNull()) {
+        qWarning("create factory failed.");
+        return;
+    }
+    dfmFileInfo = factory->createFileInfo();
+    if (!dfmFileInfo) {
+        qWarning("create fileinfo failed.");
+        return;
+    }
 }
 DFMBASE_END_NAMESPACE
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::LocalFileInfoPrivate*)

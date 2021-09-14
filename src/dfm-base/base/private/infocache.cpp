@@ -317,7 +317,9 @@ void InfoCache::removeCacheInfo(const QUrl &url)
 void InfoCache::refreshFileInfo(const QUrl &url, const DFMIO::DFileInfo &fileInfo)
 {
     AbstractFileInfoPointer info = getCacheInfo(url);
-    info->setFile(fileInfo);
+    if (info) {
+        info->setFile(fileInfo);
+    }
 }
 /*!
  * \brief timeNeedRemoveCache 将需要移除cache的fileurl添加到待移除列表
