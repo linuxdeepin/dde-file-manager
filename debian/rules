@@ -5,8 +5,6 @@ include /usr/share/dpkg/default.mk
 
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-SYSTYPE = $(shell cat /usr/lib/deepin/desktop-version | grep Type= | awk -F'=' '{print $$2}')
-
 %:
 	dh $@ --parallel
 
@@ -16,8 +14,3 @@ override_dh_shlibdeps:
 override_dh_auto_configure:
 	dh_auto_configure -- VERSION=$(VERSION) LIB_INSTALL_DIR=/usr/lib/$(DEB_HOST_MULTIARCH) DEFINES+="VERSION=$(DEB_VERSION_UPSTREAM)" filemanager.pro
 
-
-ifeq ($(SYSTYPE), Professional)
-override_dh_gencontrol:
-	dh_gencontrol -- -Vdist:Depends="libudfburn"
-endif
