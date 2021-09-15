@@ -30,7 +30,7 @@ Q_GLOBAL_STATIC(PluginManager,pluginManager);
 /** @brief 设置插件身份标识，与Qt插件的IID标识接口保持一致
  * 你可以在任何的代码块中使用，如下
  * @code
- * LifeCycle::setPluginIID("deepin.bundle.org")
+ * LifeCycle::setPluginIID("org.deepin.plugin.[XXX]")
  * @encode
  * @param QString 可以传入任意标识IID的字符
  * @return void
@@ -43,7 +43,7 @@ void LifeCycle::setPluginIID(const QString &pluginIID)
 /** @brief 获取插件身份标识
  * 如果当前未设置任意代码
  * @code
- * LifeCycle::setPluginIID("deepin.bundle.org")
+ * LifeCycle::setPluginIID("org.deepin.plugin.[XXX]")
  * @encode
  * @param QString 可以传入任意标识IID的字符
  * @return void

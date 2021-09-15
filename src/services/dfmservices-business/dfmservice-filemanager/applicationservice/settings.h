@@ -22,7 +22,7 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include "services/dfm-business-services/dfm-filemanager-service/dfm_filemanager_service_global.h"
+#include "services/dfmservices-business/dfmservice-filemanager/dfm_filemanager_service_global.h"
 
 #include <QObject>
 #include <QUrl>

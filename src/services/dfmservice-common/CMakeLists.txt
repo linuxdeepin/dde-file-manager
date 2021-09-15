@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1.0)
 
 # 定义可执行程序名称
-project(dfm-common-service)
+project(dfmservice-common)
 
 set(GLOBAL_H
     dfm_common_service_global.h)

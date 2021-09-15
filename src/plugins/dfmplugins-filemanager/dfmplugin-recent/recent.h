@@ -24,25 +24,16 @@
 
 #include "dfm-framework/lifecycle/plugin.h"
 
-DPF_BEGIN_NAMESPACE
-namespace GlobalPrivate{
-    class PluginServiceGlobal;
-};
-DPF_END_NAMESPACE
-
 class DFMWindowManagerService;
-class Core : public dpf::Plugin
+class Recent : public dpf::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "deepin.bundle.filemanager.org" FILE "core.json")
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "recent.json")
 
 public:
-
     virtual void initialize() override;
-
     virtual bool start() override;
-
-    virtual dpf::Plugin::ShutdownFlag stop() override;
+    virtual ShutdownFlag stop() override;
 
     DFMWindowManagerService *windowManagerService;
 };

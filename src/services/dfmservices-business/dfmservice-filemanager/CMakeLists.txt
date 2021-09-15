@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(dfm-filemanager-service)
+project(dfmservice-filemanager)
 
 # window service sources
 

@@ -22,8 +22,8 @@
 */
 
 #include "config.h"
+#include "dfm-framework/framework.h"
 #include "dfm-framework/log/frameworklog.h"
-#include "dfm-framework/lifecycle/lifecycle.h"
 
 #include <DApplication>
 
@@ -31,34 +31,37 @@ DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 /// @brief  默认插件 iid
-static const char *const SERVER_PLUGIN_INTERFACE = "deepin.bundle.server.org";
+static const char *const SERVER_PLUGIN_INTERFACE = "org.deepin.plugin.server";
 
 static bool pluginsLoad()
 {
     dpfCheckTimeBegin();
+
+    const dpf::LifeCycle &lifeCycle = dpfInstance.lifeCycle();
+
     // set plugin iid from qt style
-    dpf::LifeCycle::setPluginIID(SERVER_PLUGIN_INTERFACE);
+    lifeCycle.setPluginIID(SERVER_PLUGIN_INTERFACE);
 
     // cmake out definitions "DFM_PLUGIN_PATH" and "DFM_BUILD_OUT_PLGUN_DIR"
     if (DApplication::applicationDirPath() == "/usr/bin") {
         // run dde-file-manager path is /usr/bin, use system install plugins
         qInfo() << "Run application in /usr/bin, load system plugin";
-        dpf::LifeCycle::setPluginPaths({DFM_PLUGIN_PATH});
+        lifeCycle.setPluginPaths({DFM_PLUGIN_PATH});
     } else {
         // if debug and any read from cmake out build path
         qInfo() << "Run application not /usr/bin, load debug plugin";
-        dpf::LifeCycle::setPluginPaths({DFM_BUILD_OUT_PLGUN_DIR});
+        lifeCycle.setPluginPaths({DFM_BUILD_OUT_PLGUN_DIR});
     }
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
-    if (!dpf::LifeCycle::readPlugins())
+    if (!lifeCycle.readPlugins())
         return false;
 
     // load server plugin
-    if (!dpf::LifeCycle::loadPlugins())
+    if (!lifeCycle.loadPlugins())
         return false;
 
     dpfCheckTimeEnd();
@@ -70,7 +73,7 @@ int main(int argc, char *argv[])
     DApplication a(argc, argv);
     a.setOrganizationName("Deepin");
 
-    dpf::FrameworkLog::initialize();
+    dpfInstance.initialize();
 
     if (!pluginsLoad()) {
         qCritical() << "Load pugin failed!";

@@ -22,7 +22,7 @@
 #ifndef APPLICATION_P_H
 #define APPLICATION_P_H
 
-#include "services/dfm-business-services/dfm-filemanager-service/dfm_filemanager_service_global.h"
+#include "services/dfmservices-business/dfmservice-filemanager/dfm_filemanager_service_global.h"
 
 #include <QString>
 #include <QVariant>

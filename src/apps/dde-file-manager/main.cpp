@@ -52,9 +52,9 @@ USING_IO_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 /// @brief PLUGIN_INTERFACE 默认插件iid
-static const char *const FM_PLUGIN_INTERFACE = "deepin.bundle.filemanager.org";
-static const char *const PLUGIN_CORE = "core";
-static const char *const LIB_CORE = "libcore.so";
+static const char *const FM_PLUGIN_INTERFACE = "org.deepin.plugin.filemanager";
+static const char *const PLUGIN_CORE = "dfmplugin-core";
+static const char *const LIB_CORE = "libdfmplugin-core.so";
 
 static bool pluginsLoad()
 {
