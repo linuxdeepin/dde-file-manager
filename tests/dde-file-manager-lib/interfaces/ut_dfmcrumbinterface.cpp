@@ -21,7 +21,6 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
-#include <QFrame>
 #include "interfaces/dfmcrumbinterface.h"
 #include "interfaces/dfmcrumbmanager.h"
 #include "interfaces/dfmcrumbmanager.h"
@@ -29,6 +28,9 @@
 #include "controllers/dfmfilecrumbcontroller.h"
 #include "dfmcrumbbar.h"
 #include "testhelper.h"
+
+#include <QFrame>
+#include <QThreadPool>
 
 DFM_USE_NAMESPACE
 namespace  {
@@ -73,4 +75,6 @@ TEST_F(TestDFMCrumbInterface, test_requestCompletionList)
 {
     DUrl url("/home");
     crumbController->requestCompletionList(url);
+    QThreadPool::globalInstance()->waitForDone(60*1000);
+    //等待一分钟等待线程执行完毕
 }
