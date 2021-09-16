@@ -24,8 +24,8 @@
 #include "crumbmodel.h"
 
 #include "dfm-base/base/standardpaths.h"
-#include "services/dfmservices-business/dfmservice-filemanager/applicationservice/application.h"
-#include "services/dfmservices-business/dfmservice-filemanager/applicationservice/settings.h"
+#include "services/business/filemanager/applicationservice/application.h"
+#include "services/business/filemanager/applicationservice/settings.h"
 
 #include <DListView>
 

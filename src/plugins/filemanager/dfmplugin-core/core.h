@@ -19,11 +19,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GLOBALDEFINITIONS_H
-#define GLOBALDEFINITIONS_H
+#ifndef COREPLUGIN_H
+#define COREPLUGIN_H
 
-#define DSC_BEGIN_NAMESPACE namespace dfm_service_common{
-#define DSC_END_NAMESPACE }
-#define DSC_NAMESPACE dfm_service_common
+#include "dfm-framework/lifecycle/plugin.h"
 
-#endif //GLOBALDEFINITIONS_H
+DPF_BEGIN_NAMESPACE
+namespace GlobalPrivate{
+    class PluginServiceGlobal;
+};
+DPF_END_NAMESPACE
+
+class DFMWindowManagerService;
+class Core : public dpf::Plugin
+{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "core.json")
+public:
+    virtual void initialize() override;
+    virtual bool start() override;
+    virtual dpf::Plugin::ShutdownFlag stop() override;
+    DFMWindowManagerService *windowManagerService;
+};
+
+#endif // COREPLUGIN_H

@@ -7,9 +7,13 @@ set(GLOBAL_H
     dfm_common_service_global.h)
 
 set(EVENT_H
+    event/laucheventreceiver.h
+    event/fileeventreceiver.h
     )
 
 set(EVENT_CPP
+    event/laucheventreceiver.cpp
+    event/fileeventreceiver.cpp
     )
 
 set(JOB_H

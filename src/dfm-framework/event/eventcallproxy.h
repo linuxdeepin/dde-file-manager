@@ -118,11 +118,9 @@ DPF_END_NAMESPACE
  * @param ... topics,可传递多个订阅主题
  */
 #define DPF_EVENT_HANDLER(x,...) \
-    DPF_BEGIN_NAMESPACE \
     namespace GlobalPrivate { \
-    static x* x##_regInstence = EventCallProxy::regEventHandler<x>(#x,{__VA_ARGS__}); \
+    static x *x##_regInstence = DPF_NAMESPACE::EventCallProxy::regEventHandler<x>(#x,{__VA_ARGS__}); \
     } \
-    DPF_END_NAMESPACE \
 
 #define DPF_EVENT_HANDLER_INS(x) DPF_NAMESPACE::GlobalPrivate::x##_regInstence
 
@@ -131,6 +129,6 @@ DPF_END_NAMESPACE
  * @param event 构造的事件传递数据包
  */
 #define DPF_EVENT_CALL(event) \
-    EventCallProxy::callEvent(event);
+    DPF_NAMESPACE::EventCallProxy::callEvent(event);
 
 #endif // EVENTCALLPROXY_H

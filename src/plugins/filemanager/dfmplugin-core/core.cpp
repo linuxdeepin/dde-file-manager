@@ -21,7 +21,7 @@
  */
 #include "core.h"
 #include "corelog.h"
-#include "eventcalled.h"
+#include "eventcaller.h"
 
 #include "applicationservice/application.h"
 #include "windowservice/windowservice.h"
@@ -251,7 +251,7 @@ bool Core::start()
             QObject::connect(&dpf::Listener::instance(), &dpf::Listener::pluginsStarted,
                              this, [winIdx](){
                 // 发送打开的新窗口的事件
-                EventCalled::sendOpenNewWindowEvent(winIdx);
+                EventCaller::sendOpenNewWindowEvent(winIdx);
             });
 
             // 初始化sidebar

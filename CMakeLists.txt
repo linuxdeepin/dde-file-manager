@@ -86,6 +86,13 @@ endforeach(PkgConfigModule)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 
+#define service source dir
+set(COMMON_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/common)
+set(FILEMANAGER_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/business/filemanager)
+set(DESKTOP_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/business/desktop)
+#any sub dir can use common service
+include_directories(${COMMON_SERVICE_DIR})
+
 message(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
 message(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH})
 

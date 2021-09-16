@@ -19,4 +19,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "eventcalled.h"
+#ifndef APPLICATION_P_H
+#define APPLICATION_P_H
+
+#include "dfm_filemanager_service_global.h"
+
+#include <QString>
+#include <QVariant>
+
+DSB_FM_BEGIN_NAMESPACE
+class Application;
+class ApplicationPrivate
+{
+public:
+    explicit ApplicationPrivate(Application *qq);
+
+    void _q_onSettingsValueChanged(const QString &group, const QString &key, const QVariant &value, bool edited = false);
+    void _q_onSettingsValueEdited(const QString &group, const QString &key, const QVariant &value);
+
+    static Application *self;
+};
+DSB_FM_END_NAMESPACE
+#endif // APPLICATION_P_H
