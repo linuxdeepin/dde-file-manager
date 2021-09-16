@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(disk-mount)
+project(dde-disk-mount-plugin)
 
 #add_definitions(DFM_NO_FILE_WATCHER)
-
 set(CMAKE_AUTOMOC ON)
 
 set(CMAKE_AUTOUIC ON)
@@ -12,12 +11,25 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(MOUNT_PLUGIN_SRC
-    diskmountplugin.cpp
     disk-mount.json
+    diskmountplugin.cpp
+    tipswidget.cpp
+    diskpluginitem.cpp
+    diskcontrolwidget.cpp
+    diskcontrolitem.cpp
+    dattachedblockdevice.cpp
+    dattachedprotocoldevice.cpp
     )
 
 set(MOUNT_PLUGIN_HEADER
     diskmountplugin.h
+    tipswidget.h
+    diskpluginitem.h
+    diskcontrolwidget.h
+    diskcontrolitem.h
+    dattacheddeviceinterface.h
+    dattachedblockdevice.h
+    dattachedprotocoldevice.h
     )
 
 find_package(Qt5Widgets REQUIRED)
@@ -25,6 +37,7 @@ find_package(DtkWidget REQUIRED)
 find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(DdeDockInterface REQUIRED dde-dock)
+pkg_check_modules(Gesttings REQUIRED  gsettings-qt)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -37,17 +50,19 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ./)
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${Qt5Widgets_INCLUDE_DIRS}
     ${DtkWidget_INCLUDE_DIRS}
+    ${Gesttings_INCLUDE_DIRS}
     ${DdeDockInterface_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     ${Qt5Widgets_LIBRARIES}
     ${DtkWidget_LIBRARIES}
+    ${Gesttings_LIBRARIES}
     ${DdeDockInterface_LIBRARIES}
 )
 
 set(CMAKE_INSTALL_PREFIX "/usr")
 
-install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib/dde-dock/plugins)
+install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib/dde-dock/plugins/system-trays)
 
 # TODO(zhangs): translation

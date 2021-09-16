@@ -27,6 +27,12 @@
 
 #include <QObject>
 
+class TipsWidget;
+class DiskPluginItem;
+class DiskControlWidget;
+
+// TODO(zhangs): ref-> https://gerrit.uniontech.com/c/dde-file-manager/+/23583
+
 class DiskMountPlugin : public QObject, PluginsItemInterface
 {
     Q_OBJECT
@@ -35,16 +41,35 @@ class DiskMountPlugin : public QObject, PluginsItemInterface
 
 public:
     explicit DiskMountPlugin(QObject *parent = nullptr);
-    explicit DiskMountPlugin(bool usingAppLoader, QObject *parent = nullptr);
 
     const QString pluginName() const override;
     void init(PluginProxyInterface *proxyInter) override;
     QWidget *itemWidget(const QString &itemKey) override;
-
-signals:
+    QWidget *itemTipsWidget(const QString &itemKey) override;
+    QWidget *itemPopupApplet(const QString &itemKey) override;
+    const QString itemContextMenu(const QString &itemKey) override;
+    void invokedMenuItem(const QString &itemKey, const QString &menuId, const bool checked) override;
+    int itemSortKey(const QString &itemKey) override;
+    void setSortKey(const QString &itemKey, const int order) override;
+    void refreshIcon(const QString &itemKey) override;
 
 public slots:
+    void diskCountChanged(const int count);
 
+private:
+    void initCompoments();
+    void displayModeChanged(const Dock::DisplayMode mode) override;
+    PluginProxyInterface *proxyInter() const;
+    void setProxyInter(PluginProxyInterface *proxy);
+
+private:
+    bool pluginAdded {false};
+
+    TipsWidget        *tipsLabel {nullptr};
+    DiskPluginItem    *diskPluginItem {nullptr};
+    DiskControlWidget *diskControlApplet {nullptr};
+
+    static std::once_flag flag;
 };
 
 #endif // DISKMOUNTPLUGIN_H
