@@ -84,7 +84,7 @@ public:
 
     void setDefaultViewMode(BrowseView::ViewMode mode);
 
-    void addview(const QString &scheme,
+    void addView(const QString &scheme,
                  DisplayViewLogic *logic);
 
     bool viewIsAdded(const QString &scheme);

@@ -22,9 +22,12 @@
 #include "localfileinfo.h"
 #include "private/localfileinfo_p.h"
 #include "base/urlroute.h"
-#include "shutil/fileutils.h"
-#include "dfileiconprovider.h"
 #include "base/standardpaths.h"
+#include "base/schemefactory.h"
+#include "utils/fileutils.h"
+#include "dfileiconprovider.h"
+
+#include <dfm-io/local/dlocalfileinfo.h>
 
 #include <QDateTime>
 #include <QDir>
@@ -48,6 +51,35 @@ LocalFileInfo::LocalFileInfo(const QUrl &url)
     : AbstractFileInfo (url)
     , d(new LocalFileInfoPrivate(this))
 {
+
+    if (url.isEmpty()) {
+        qWarning("Failed, can't use empty url init fileinfo");
+        abort();
+    }
+
+    if (UrlRoute::isVirtualUrl(url)) {
+        qWarning("Failed, can't use virtual scheme init local fileinfo");
+        abort();
+    }
+
+    QUrl cvtResultUrl = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
+
+    if (!url.isValid()) {
+        qWarning("Failed, can't use valid url init fileinfo");
+        abort();
+    }
+
+    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(cvtResultUrl.scheme(), static_cast<QUrl>(cvtResultUrl));
+    if (!factory) {
+        qWarning("Failed, dfm-io create factory");
+        abort();
+    }
+
+    d->dfmFileInfo = factory->createFileInfo();
+    if (!d->dfmFileInfo) {
+        qWarning("Failed, dfm-io use factory create fileinfo");
+        abort();
+    }
 }
 
 LocalFileInfo::~LocalFileInfo()
@@ -59,9 +91,7 @@ LocalFileInfo& LocalFileInfo::operator =(const LocalFileInfo &info)
 {
     AbstractFileInfo::operator=(info);
     d->dfmFileInfo = info.d->dfmFileInfo;
-    d->icon = info.d->icon;
     d->inode = info.d->inode;
-    d->mimeType = info.d->mimeType;
     return *this;
 }
 /*!
@@ -111,7 +141,7 @@ bool LocalFileInfo::exists() const
     if (!d->caches.contains(TypeExists)) {
         if (d->dfmFileInfo) {
             //@todo 目前dfmio这一层还没实现，等待实现了在加入
-//            d->m_caches.insert(TypeExists,QVariant(d->m_dfmFileInfo->attribute()));
+            //            d->m_caches.insert(TypeExists,QVariant(d->m_dfmFileInfo->attribute()));
         } else {
             return false;
         }
@@ -128,7 +158,6 @@ bool LocalFileInfo::exists() const
 void LocalFileInfo::refresh()
 {
     d->caches.clear();
-    d->initFileInfo();
 }
 /*!
  * \brief filePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径
@@ -148,7 +177,7 @@ QString LocalFileInfo::filePath() const
 
     if (!d->caches.contains(TypeFilePath)) {
         if (d->dfmFileInfo) {
-//            d->m_caches.insert(TypeFilePath, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+            //            d->m_caches.insert(TypeFilePath, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
         } else {
             return QString();
         }
@@ -184,16 +213,19 @@ QString LocalFileInfo::absoluteFilePath() const
  */
 QString LocalFileInfo::fileName() const
 {
-    if (!d->caches.contains(TypeFileName)) {
-        if (d->dfmFileInfo) {
-            bool success = false;
-            d->caches.insert(TypeFileName, d->dfmFileInfo->
-                                  attribute(DFileInfo::AttributeID::StandardName, &success));
-        } else {
+    if (!d->caches.contains(TypeFileName)
+            || !d->caches.value(TypeFileName).isValid()) {
+        if (d->dfmFileInfo.isNull()) {
             return QString();
         }
+
+        bool success = false;
+        d->caches.insert(TypeFileName, d->dfmFileInfo->attribute(
+                             DFileInfo::AttributeID::StandardName, &success));
     }
-    return d->caches.value(TypeFileName).toString();
+
+    QString string = d->caches.value(TypeFileName).toString();
+    return string;
 }
 /*!
  * \brief baseName 文件的基本名称
@@ -210,8 +242,8 @@ QString LocalFileInfo::baseName() const
 {
     if (!d->caches.contains(TypeBaseName)) {
         if (d->dfmFileInfo) {
-//            bool success = false;
-//            d->m_caches.insert(TypeBaseName, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+            //            bool success = false;
+            //            d->m_caches.insert(TypeBaseName, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
@@ -233,8 +265,8 @@ QString LocalFileInfo::completeBaseName() const
 {
     if (!d->caches.contains(TypeCompleteBaseName)) {
         if (d->dfmFileInfo) {
-//            bool success = false;
-//            d->m_caches.insert(TypeCompleteBaseName, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+            //            bool success = false;
+            //            d->m_caches.insert(TypeCompleteBaseName, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
@@ -256,8 +288,8 @@ QString LocalFileInfo::suffix() const
 {
     if (!d->caches.contains(TypeSuffix)) {
         if (d->dfmFileInfo) {
-//            bool success = false;
-//            d->m_caches.insert(TypeSuffix, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+            //            bool success = false;
+            //            d->m_caches.insert(TypeSuffix, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
@@ -279,8 +311,8 @@ QString LocalFileInfo::completeSuffix()
 {
     if (!d->caches.contains(TypeCompleteSuffix)) {
         if (d->dfmFileInfo) {
-//            bool success = false;
-//            d->m_caches.insert(TypeCompleteSuffix, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+            //            bool success = false;
+            //            d->m_caches.insert(TypeCompleteSuffix, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
@@ -302,8 +334,8 @@ QString LocalFileInfo::path() const
 {
     if (!d->caches.contains(TypePath)) {
         if (d->dfmFileInfo) {
-//            bool success = false;
-//            d->m_caches.insert(TypePath, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+            //            bool success = false;
+            //            d->m_caches.insert(TypePath, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
         } else {
             return QString();
         }
@@ -462,12 +494,13 @@ bool LocalFileInfo::isExecutable() const
  */
 bool LocalFileInfo::isHidden() const
 {
-    if (!d->caches.contains(TypeIsHidden)) {
+    if (!d->caches.contains(TypeIsHidden)
+            || !d->caches.value(TypeIsHidden).isValid()) {
         if (d->dfmFileInfo) {
             bool success = false;
             d->caches.insert(TypeIsHidden,
                              d->dfmFileInfo->
-                             attribute(DFileInfo::AttributeID::StandardIsHiden, &success));
+                             attribute(DFileInfo::AttributeID::StandardIsHidden, &success));
         } else {
             return false;
         }
@@ -491,7 +524,7 @@ bool LocalFileInfo::isFile() const
 {
     if (!d->caches.contains(TypeIsFile)) {
         if (d->dfmFileInfo) {
-//            d->m_caches.insert(TypeIsFile, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+            //            d->m_caches.insert(TypeIsFile, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
         } else {
             return false;
         }
@@ -513,7 +546,9 @@ bool LocalFileInfo::isDir() const
 {
     if (!d->caches.contains(TypeIsDir)) {
         if (d->dfmFileInfo) {
-//            d->m_caches.insert(TypeIsDir, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+            bool resutl = true;
+            d->caches.insert(TypeIsDir,d->dfmFileInfo->attribute(
+                                 DFileInfo::AttributeID::StandardIsDir, &resutl));
         } else {
             return false;
         }
@@ -543,7 +578,7 @@ bool LocalFileInfo::isSymLink() const
 {
     if (!d->caches.contains(TypeIsSymLink)) {
         if (d->dfmFileInfo) {
-//            d->m_caches.insert(TypeisSymLink, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+            //            d->m_caches.insert(TypeisSymLink, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
         } else {
             return false;
         }
@@ -730,10 +765,10 @@ QFileDevice::Permissions LocalFileInfo::permissions() const
 {
     if (!d->caches.contains(TypePermissions)) {
         if (d->dfmFileInfo) {
-//            bool success(false);
-//            d->m_caches.insert(TypePermissions,
-//                                  QVariant(d->m_dfmFileInfo->
-//                                           attribute(DFileInfo::AttributeID::OwnerGroup, &success)));
+            //            bool success(false);
+            //            d->m_caches.insert(TypePermissions,
+            //                                  QVariant(d->m_dfmFileInfo->
+            //                                           attribute(DFileInfo::AttributeID::OwnerGroup, &success)));
         } else {
             QFileDevice::Permissions ps;
             return ps;
@@ -944,7 +979,7 @@ QDateTime LocalFileInfo::fileTime(QFileDevice::FileTime time) const
  */
 bool LocalFileInfo::isBlockDev() const
 {
-    return fileType() == MimeDatabase::FileType::BlockDevice;
+    return fileType() == BlockDevice;
 }
 /*!
  * \brief mountPath 获取挂载路径
@@ -963,7 +998,7 @@ QString LocalFileInfo::mountPath() const
  */
 bool LocalFileInfo::isCharDev() const
 {
-    return fileType() == MimeDatabase::FileType::CharDevice;
+    return fileType() == CharDevice;
 }
 /*!
  * \brief isFifo 获取当前是否为管道文件
@@ -972,7 +1007,7 @@ bool LocalFileInfo::isCharDev() const
  */
 bool LocalFileInfo::isFifo() const
 {
-    return fileType() == MimeDatabase::FileType::FIFOFile;
+    return fileType() == FIFOFile;
 }
 /*!
  * \brief isSocket 获取当前是否为套接字文件
@@ -981,7 +1016,7 @@ bool LocalFileInfo::isFifo() const
  */
 bool LocalFileInfo::isSocket() const
 {
-    return fileType() == MimeDatabase::FileType::SocketFile;
+    return fileType() == SocketFile;
 }
 /*!
  * \brief isRegular 获取当前是否是常规文件(与isFile一致)
@@ -990,77 +1025,26 @@ bool LocalFileInfo::isSocket() const
  */
 bool LocalFileInfo::isRegular() const
 {
-    return fileType() == MimeDatabase::FileType::RegularFile;
+    return fileType() == RegularFile;
 }
-/*!
- * \brief isRegular 设置自定义角标信息
- *
- * \param LocalFileInfo::DFMEmblemInfos 自定义扩展信息
- */
-void LocalFileInfo::setEmblems(const LocalFileInfo::DFMEmblemInfos &infos)
-{
-    d->EmblemsInfo = infos;
-}
-/*!
- * \brief clearEmblems 清除自定义角标
- */
-void LocalFileInfo::clearEmblems()
-{
-    d->EmblemsInfo.clear();
-}
-/*!
- * \brief emblems 角标信息设置
- *
- * \return LocalFileInfo::DFMEmblemInfos 自定义信息
- */
-LocalFileInfo::DFMEmblemInfos LocalFileInfo::emblems() const
-{
-    return d->EmblemsInfo;
-}
-/*!
- * \brief setIcon 设置文件图标
- *
- * \param const QIcon &icon 文件图标
- */
-void LocalFileInfo::setIcon(const QIcon &icon)
-{
-    d->icon = icon;
-}
-/*!
- * \brief setIcon 获取文件图标
- *
- * \return QIcon 文件图标
- */
-QIcon LocalFileInfo::icon() const
-{
-    if (d->icon.isNull()) {
-        if (isDir())
-            return QIcon::fromTheme("folder");
 
-        if (isFile())
-            //如果是文件就使用mimeType初始化图标
-            return QIcon(d->mimeType.iconName());
-    }
-
-    return d->icon;
-}
 /*!
  * \brief fileType 获取文件类型
  *
  * \return DMimeDatabase::FileType 文件设备类型
  */
-MimeDatabase::FileType LocalFileInfo::fileType() const
+LocalFileInfo::Type LocalFileInfo::fileType() const
 {
     // fix bug#52950 【专业版1030】【文管5.2.0.72】回收站删除指向块设备的链接文件时，删除失败
     // QT_STATBUF判断链接文件属性时，判断的是指向文件的属性，使用QFileInfo判断
-    if (d->cacheFileType != MimeDatabase::FileType::Unknown)
-        return d->cacheFileType;
+    if (d->fileType != MimeDatabase::FileType::Unknown)
+        return Type(d->fileType);
 
     QString absoluteFilePath = filePath();
     if (absoluteFilePath.startsWith(StandardPaths::location(StandardPaths::TrashFilesPath))
             && isSymLink()) {
-        d->cacheFileType = MimeDatabase::FileType::RegularFile;
-        return d->cacheFileType;
+        d->fileType = MimeDatabase::FileType::RegularFile;
+        return Type(d->fileType);
     }
 
     // Cannot access statBuf.st_mode from the filesystem engine, so we have to stat again.
@@ -1069,25 +1053,25 @@ MimeDatabase::FileType LocalFileInfo::fileType() const
     QT_STATBUF statBuffer;
     if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
         if (S_ISDIR(statBuffer.st_mode))
-            d->cacheFileType = MimeDatabase::FileType::Directory;
+            d->fileType = MimeDatabase::FileType::Directory;
 
         else if (S_ISCHR(statBuffer.st_mode))
-            d->cacheFileType = MimeDatabase::FileType::CharDevice;
+            d->fileType = MimeDatabase::FileType::CharDevice;
 
         else if (S_ISBLK(statBuffer.st_mode))
-            d->cacheFileType = MimeDatabase::FileType::BlockDevice;
+            d->fileType = MimeDatabase::FileType::BlockDevice;
 
         else if (S_ISFIFO(statBuffer.st_mode))
-            d->cacheFileType = MimeDatabase::FileType::FIFOFile;
+            d->fileType = MimeDatabase::FileType::FIFOFile;
 
         else if (S_ISSOCK(statBuffer.st_mode))
-            d->cacheFileType = MimeDatabase::FileType::SocketFile;
+            d->fileType = MimeDatabase::FileType::SocketFile;
 
         else if (S_ISREG(statBuffer.st_mode))
-            d->cacheFileType = MimeDatabase::FileType::RegularFile;
+            d->fileType = MimeDatabase::FileType::RegularFile;
     }
 
-    return d->cacheFileType;
+    return Type(d->fileType);
 }
 /*!
  * \brief linkTargetPath 获取链接文件的目标路径

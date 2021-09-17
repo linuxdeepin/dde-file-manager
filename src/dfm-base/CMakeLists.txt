@@ -7,20 +7,21 @@ set(GLOBAL_H
 
 set(UTILS_H
     utils/threadcontainer.hpp
+    utils/fileutils.h
+    utils/iconutils.h
     )
 
 set(UTILS_CPP
+    utils/fileutils.cpp
     )
 
 
-set(SHUTIL_H
-    shutil/fileutils.h
-    shutil/mimedatabase.h
+set(MIMETYPE_H
+    mimetype/mimedatabase.h
     )
 
-set(SHUTIL_CPP
-    shutil/fileutils.cpp
-    shutil/mimedatabase.cpp
+set(MIMETYPE_H
+    mimetype/mimedatabase.cpp
     )
 
 set(BASE_H
@@ -127,15 +128,15 @@ add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_H}
     ${BASE_H}
-    ${SHUTIL_H}
-    ${UTILS_H}
-    ${WIDGETS_H}
-    ${LOCALFILE_H}
     ${BASE_CPP}
-    ${SHUTIL_CPP}
-    ${UTILS_CPP}
-    ${WIDGETS_CPP}
+    ${LOCALFILE_H}
     ${LOCALFILE_CPP}
+    ${MIMETYPE_H}
+    ${MIMETYPE_CPP}
+    ${UTILS_H}
+    ${UTILS_CPP}
+    ${WIDGETS_H}
+    ${WIDGETS_CPP}
     ${QRCS}
     )
 

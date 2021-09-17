@@ -146,8 +146,9 @@ bool PluginManagerPrivate::loadPlugin(PluginMetaObjectPointer &pluginMetaObj)
             pluginMetaObj->d->state = PluginMetaObject::State::Loaded;
             dpfCritical() << "Loaded plugin: " << pluginMetaObj->d->name;
         } else {
-            dpfCritical() << "Failed get plugin instance is nullptr";
-            pluginMetaObj->d->error = pluginMetaObj->d->loader->errorString();
+            pluginMetaObj->d->error = "Failed get plugin instance is nullptr: "
+                    + pluginMetaObj->d->loader->errorString();
+            dpfCritical() << pluginMetaObj->d->error;
             result = false;
         }
         return result;

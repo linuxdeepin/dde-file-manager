@@ -37,4 +37,9 @@ int FileViewPrivate::iconModeColumnCount(int itemWidth) const
     return qMax((contentWidth - horizontalMargin - 1) / itemWidth, 1);
 }
 
+QUrl FileViewPrivate::modelIndexUrl(const QModelIndex &index) const
+{
+    return index.data().toUrl();
+}
+
 DFMBASE_END_NAMESPACE

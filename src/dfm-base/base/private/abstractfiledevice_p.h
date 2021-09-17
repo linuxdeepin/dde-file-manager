@@ -29,8 +29,9 @@
 
 DFMBASE_BEGIN_NAMESPACE
 class AbstractFileDevice;
-class AbstractFileDevicePrivate
+class AbstractFileDevicePrivate : public QObject
 {
+    Q_OBJECT
     friend class AbstractFileDevice;
     AbstractFileDevice *const q;
     QUrl url; // 文件的url

@@ -111,7 +111,5 @@ TEST_F(UT_EventCallProxy, test_callEvent)
     EXPECT_EQ(true, TestHander2::getRunThreadID() != Qt::HANDLE(nullptr));
     // 异步线程非主线程
     EXPECT_EQ(true, TestHander2::getRunThreadID() != qApp->thread()->currentThreadId());
-
-    EXPECT_NO_FATAL_FAILURE(dpf::EventCallProxy::removeAllHandlers());
 }
 

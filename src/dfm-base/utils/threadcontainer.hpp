@@ -27,6 +27,7 @@
 #include <QList>
 #include <QMap>
 #include <QMutex>
+#include <QSharedData>
 
 DFMBASE_BEGIN_NAMESPACE
 /*!
@@ -35,8 +36,8 @@ DFMBASE_BEGIN_NAMESPACE
  * \brief 对QList进行了封装，加锁对每一个list的操作
  */
 template<class T>
-
-class DThreadList {
+class DThreadList : public QSharedData
+{
 public:
     DThreadList<T>():myList(new QList<T>){}
     ~DThreadList() {
@@ -243,18 +244,10 @@ template<class DKey, class DValue>
 
 class DThreadMap {
 public:
-    DThreadMap<DKey, DValue>():myMap(new QMap<DKey,DValue>)
+    DThreadMap<DKey, DValue>()
+        : myMap()
     {
-    }
-    ~DThreadMap() {
-        if (myMap) {
-            {
-                QMutexLocker lk(&mutex);
-                myMap->clear();
-            }
-            delete myMap;
-            myMap = nullptr;
-        }
+
     }
     /*!
      * \brief insert 插入一个模板类型到map
@@ -267,7 +260,7 @@ public:
      */
     inline void insert(const DKey &key, const DValue &value){
         QMutexLocker lk(&mutex);
-        myMap->insert(key, value);
+        myMap.insert(key, value);
     }
     /*!
      * \brief remove 从map中移除所有的模板类型
@@ -278,7 +271,7 @@ public:
      */
     inline void remove(const DKey &key){
         QMutexLocker lk(&mutex);
-        myMap->remove(key);
+        myMap.remove(key);
     }
     /*!
      * \brief contains map中是否包含key对应的键值对
@@ -289,7 +282,7 @@ public:
      */
     inline DValue value(const DKey &key){
         QMutexLocker lk(&mutex);
-        return myMap->value(key);
+        return myMap.value(key);
     }
     /*!
      * \brief contains map中是否包含key对应的键值对
@@ -300,7 +293,7 @@ public:
      */
     inline bool contains(const DKey &key){
         QMutexLocker lk(&mutex);
-        return myMap->contains(key);
+        return myMap.contains(key);
     }
     /*!
      * \brief begin 当前map的开始迭代器
@@ -311,7 +304,7 @@ public:
      */
     inline typename QMap<DKey, DValue>::iterator begin() {
         QMutexLocker lk(&mutex);
-        return myMap->begin();
+        return myMap.begin();
     }
     /*!
      * \brief begin 当前map的结束迭代器
@@ -322,7 +315,7 @@ public:
      */
     inline typename QMap<DKey, DValue>::iterator end() {
         QMutexLocker lk(&mutex);
-        return myMap->end();
+        return myMap.end();
     }
     /*!
      * \brief erase 去掉map中当前的迭代器
@@ -333,7 +326,7 @@ public:
      */
     inline typename QMap<DKey, DValue>::iterator erase(typename QMap<DKey, DValue>::iterator it) {
         QMutexLocker lk(&mutex);
-        return myMap->erase(it);
+        return myMap.erase(it);
     }
     /*!
      * \brief count map的总个数
@@ -342,7 +335,7 @@ public:
      */
     inline int count() {
         QMutexLocker lk(&mutex);
-        return myMap->count();
+        return myMap.count();
     }
     /*!
      * \brief clear 清理整个map
@@ -351,12 +344,12 @@ public:
      */
     inline void clear() {
         QMutexLocker lk(&mutex);
-        return myMap->clear();
+        return myMap.clear();
     }
 
 
 private:
-    QMap<DKey, DValue> *myMap; // 当前的QMap
+    QMap<DKey, DValue> myMap; // 当前的QMap
     QMutex mutex; // 当前的锁
 };
 DFMBASE_END_NAMESPACE

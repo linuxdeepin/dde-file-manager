@@ -26,6 +26,7 @@
 #include "dfm-base/base/abstractdiriterator.h"
 
 #include <QDirIterator>
+#include <QSharedPointer>
 
 class QUrl;
 DFMBASE_BEGIN_NAMESPACE
@@ -34,18 +35,18 @@ class LocalDirIteratorPrivate;
 
 class LocalDirIterator : public AbstractDirIterator
 {
-    LocalDirIteratorPrivate *const d;
+    QScopedPointer<LocalDirIteratorPrivate> d;
 public:
     explicit LocalDirIterator(const QUrl &url,
-                                 const QStringList &nameFilters = QStringList(),
-                                 QDir::Filters filters = QDir::NoFilter,
-                                 QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
-    virtual ~LocalDirIterator();
-    virtual QUrl next() override;    
-    virtual bool hasNext() const override;    
-    virtual void close() override {}    
+                              const QStringList &nameFilters = QStringList(),
+                              QDir::Filters filters = QDir::NoFilter,
+                              QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
+    virtual ~LocalDirIterator() override;
+    virtual QUrl next() override;
+    virtual bool hasNext() const override;
+    virtual void close() override {}
     virtual QString fileName() const override;
-    virtual QUrl fileUrl() const override;    
+    virtual QUrl fileUrl() const override;
     virtual const AbstractFileInfoPointer fileInfo() const override;
     virtual QUrl url() const override;
     bool enableIteratorByKeyword(const QString &keyword) override {Q_UNUSED(keyword); return false;}

@@ -21,20 +21,32 @@
  */
 
 #include "fileviewitem.h"
-#include "shutil/fileutils.h"
+#include "utils/fileutils.h"
 #include "private/fileviewitem_p.h"
 
 DFMBASE_USE_NAMESPACE
 FileViewItem::FileViewItem()
     : d(new FileViewItemPrivate(this))
 {
-
+    qRegisterMetaType<FileViewItem>("FileViewItem");
 }
 
 FileViewItem::FileViewItem(const QUrl &url)
     : d(new FileViewItemPrivate(this))
 {
+    qRegisterMetaType<FileViewItem>("FileViewItem");
     setUrl(url);
+}
+
+FileViewItem::FileViewItem(const FileViewItem &other)
+    : d(new FileViewItemPrivate(this))
+{
+    *this = other;
+}
+
+FileViewItem::~FileViewItem()
+{
+    delete d;
 }
 
 FileViewItem &FileViewItem::operator=(const FileViewItem &other)
@@ -76,17 +88,91 @@ QUrl FileViewItem::url() const
 
 void FileViewItem::setUrl(const QUrl url)
 {
-    setData(QVariant(url),Roles::ItemUrlRole);
+    setData(QVariant(url), Roles::ItemUrlRole);
     d->fileinfo = InfoFactory::create<AbstractFileInfo>(url);
     d->mimeType = MimeDatabase::mimeTypeForUrl(url);
 
-    setData(QVariant(QIcon::fromTheme(d->mimeType.iconName())),ItemIconRole);
-    setData(QVariant(d->fileinfo->fileName()),ItemNameRole);
+    setData(QVariant(QIcon::fromTheme(d->mimeType.iconName())), ItemIconRole);
+    setData(QVariant(d->fileinfo->fileName()), ItemNameRole);
 }
 
 AbstractFileInfoPointer FileViewItem::fileinfo() const
 {
     return d->fileinfo;
+}
+
+void FileViewItem::setCornerMark(const QIcon &tl, const QIcon &tr, const QIcon &bl, const QIcon &br)
+{
+    if (!tl.isNull())
+        setData(tl, TopLeft);
+    if (!tr.isNull())
+        setData(tr, TopRight);
+    if (!tl.isNull())
+        setData(bl, BottomLeft);
+    if (!br.isNull())
+        setData(br, BottomRight);
+}
+
+void FileViewItem::setCornerMark(FileViewItem::CornerMark flag, const QIcon &icon)
+{
+    switch (flag) {
+    case TopLeft:
+        return setData(icon, ItemCornerMarkTLRole);
+    case TopRight:
+        return setData(icon, ItemCornerMarkTRRole);
+    case BottomLeft:
+        return setData(icon, ItemCornerMarkBLRole);
+    case BottomRight:
+        return setData(icon, ItemCornerMarkBRRole);
+    }
+}
+
+QIcon FileViewItem::cornerMarkTR()
+{
+    auto variant = QStandardItem::data(ItemCornerMarkTRRole);
+    if (variant.canConvert<QIcon>()) {
+        return qvariant_cast<QIcon>(variant);
+    }
+    return QIcon();
+}
+
+QIcon FileViewItem::cornerMarkBL()
+{
+    auto variant = QStandardItem::data(ItemCornerMarkBLRole);
+    if (variant.canConvert<QIcon>()) {
+        return qvariant_cast<QIcon>(variant);
+    }
+    return QIcon();
+}
+
+QIcon FileViewItem::cornerMarkBR()
+{
+    auto variant = QStandardItem::data(ItemCornerMarkBRRole);
+    if (variant.canConvert<QIcon>()) {
+        return qvariant_cast<QIcon>(variant);
+    }
+    return QIcon();
+}
+
+void FileViewItem::setIconLayers(const IconLayers &layers)
+{
+    QStandardItem::setData(QVariant::fromValue<IconLayers>(layers),
+                           ItemIconLayersRole);
+}
+
+const FileViewItem::IconLayers &FileViewItem::iconLayers()
+{
+    QVariant variant = data(ItemIconLayersRole);
+    return variant.value<IconLayers>();
+}
+
+QIcon FileViewItem::cornerMarkTL()
+{
+    auto variant = QStandardItem::data(ItemCornerMarkTLRole);
+    if (variant.canConvert<QIcon>()) {
+        return qvariant_cast<QIcon>(variant);
+    }
+    return QIcon();
 }
 
 QMimeType FileViewItem::mimeType() const

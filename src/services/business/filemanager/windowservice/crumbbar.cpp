@@ -183,10 +183,10 @@ void CrumbBarPrivate::initConnections()
                      q, &CrumbBar::onCustomContextMenu);
 
     QObject::connect(&crumbView, &QListView::clicked,
-                     q, [=](const QModelIndex & index)
+                     q, [=](const QModelIndex &index)
     {
         if (index.isValid()) {
-            qInfo() << "sig send selectedUrl: " << index.data(CrumbModel::FileUrlRole).toUrl();
+            qInfo() << "sig send selectedUrl: " << index.data().toUrl();
             emit q->selectedUrl(index.data(CrumbModel::FileUrlRole).toUrl());
         }
     });
@@ -253,7 +253,7 @@ void CrumbBar::setRootUrl(const QUrl &url)
     QString path = url.path();
     QStringList pathList = path.split("/");
 
-    QStandardItem* firstItem = new QStandardItem(firstIcon, QString(""));
+    QStandardItem* firstItem = new QStandardItem(firstIcon, "");
     for (int nodeCount = pathList.size() - 1; nodeCount > 0 ; nodeCount --)
     {
         if (pathList.at(nodeCount).isEmpty())
@@ -263,6 +263,8 @@ void CrumbBar::setRootUrl(const QUrl &url)
         QStringList currNodeList;
         for (int index = 0 ; index <= nodeCount ; index ++)
         {
+            if (pathList.at(index).isEmpty())
+                continue;
             currNodeList.append(pathList.at(index));
         }
         auto currNodeUrl = UrlRoute::pathToUrl(currNodeList.join("/"));
@@ -272,8 +274,10 @@ void CrumbBar::setRootUrl(const QUrl &url)
     }
     d->crumbModel->insertRow(0,firstItem);
 
-    if (d->crumbView.selectionModel() && d->crumbModel)
+    if (d->crumbView.selectionModel() && d->crumbModel) {
+        qInfo() << d->crumbModel->lastIndex();
         d->crumbView.selectionModel()->select(d->crumbModel->lastIndex(), QItemSelectionModel::Select);
+    }
 
     d->checkArrowVisiable();
     d->crumbView.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);

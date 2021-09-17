@@ -59,6 +59,7 @@
 #include <QSizePolicy>
 #include <QCoreApplication>
 #include <QToolButton>
+#include <QApplication>
 
 DSB_FM_USE_NAMESPACE
 
@@ -74,7 +75,7 @@ void initSidebar(SideBar* sidebar)
 {
     if (!sidebar) return ;
 
-    QUrl homeUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::HomePath));
+    QUrl homeUrl = UrlRoute::pathToUrl(QDir::home().path());
     QUrl desktopUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::DesktopPath));
     QUrl videosUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::VideosPath));
     QUrl musicUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::MusicPath));
@@ -126,7 +127,7 @@ void initSidebar(SideBar* sidebar)
 static void regStandardPathClass()
 {
     UrlRoute::schemeMapRoot("home",
-                            StandardPaths::location(StandardPaths::HomePath),
+                            QDir::home().path(),
                             QIcon::fromTheme(StandardPaths::iconName(StandardPaths::HomePath)),
                             false);
 
@@ -241,12 +242,12 @@ bool Core::start()
     }
 
     if (windowService) {
-        QUrl defaultUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::HomePath));
+        QUrl localRootUrl = QUrl::fromLocalFile("/");
+        QUrl defaultUrl = UrlRoute::pathToUrl(QDir::home().path());
         BrowseWindow *newWindow = windowService->newWindow();
 
         if (newWindow){
             int winIdx = windowService->windowList.indexOf(newWindow);
-
             // 绑定当前插件初始化完毕进行的相关操作。
             QObject::connect(&dpf::Listener::instance(), &dpf::Listener::pluginsStarted,
                              this, [winIdx](){
@@ -260,15 +261,16 @@ bool Core::start()
             newWindow->setMinimumSize(GlobalPrivate::DEFAULT_WINDOW_WIDTH,
                                       GlobalPrivate::DEFAULT_WINDOW_HEIGHT);
 
-            //綁定sidebaritem的點擊邏輯
+            // 綁定sidebaritem的點擊邏輯
             QObject::connect(newWindow->sidebar(), &SideBar::clickedItemUrl,
                              newWindow, [windowService, newWindow](const QUrl &url)
             {
-                windowService->setWindowRootUrl(newWindow, url);
+                bool result = windowService->setWindowRootUrl(newWindow, url);
+                if (!result)
+                    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
             });
         }
-
-        // 设置默认file
+        // 设置主目录
         windowService->setWindowRootUrl(newWindow, defaultUrl);
     }
 

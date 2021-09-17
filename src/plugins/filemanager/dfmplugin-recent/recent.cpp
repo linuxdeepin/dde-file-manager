@@ -23,7 +23,8 @@
 #include "recentutil.h"
 #include "recentbrowseview.h"
 #include "recenteventreceiver.h"
-#include "recentrootfileinfo.h"
+#include "recentfileinfo.h"
+#include "recentdiriterator.h"
 
 #include "windowservice/windowservice.h"
 #include "windowservice/browseview.h"
@@ -68,9 +69,9 @@ void Recent::initialize()
     QIcon recentIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::RecentPath));
     UrlRoute::schemeMapRoot(recentScheme,"/", recentIcon, true);
     //注册Scheme为"file"的扩展的文件信息 本地默认文件的
-    InfoFactory::regClass<RecentRootFileInfo>("recent");
+    InfoFactory::regClass<RecentFileInfo>("recent");
     //    FileDeviceFactory::regClass<>("recent");
-    //    DirIteratorFactory::regClass<LocalDirIterator>("recent");
+    DirIteratorFactory::regClass<RecentDirIterator>("recent");
     //    WacherFactory::regClass<AbstractFileWatcher>("recent");
     BrowseWidgetFactory::regClass<RecentBrowseView>(recentScheme);
 }

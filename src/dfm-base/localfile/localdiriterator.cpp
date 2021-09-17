@@ -25,6 +25,8 @@
 #include "base/urlroute.h"
 #include "base/schemefactory.h"
 
+#include <dfm-io/local/dlocalenumerator.h>
+
 DFMBASE_BEGIN_NAMESPACE
 
 LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
@@ -38,17 +40,18 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
     Q_UNUSED(nameFilters);
     Q_UNUSED(filters);
     Q_UNUSED(flags);
+
     QUrl temp = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
 
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(temp.scheme(), QUrl(temp));
+    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(temp.scheme(), static_cast<QUrl>(temp));
     if (!factory) {
-        qWarning("create factory failed.");      
+        qWarning("Failed dfm-io create factory .");
         abort();
     }
 
     dfmioDirIterator = factory->createEnumerator();
     if (!dfmioDirIterator) {
-        qWarning("create enumerator failed.");
+        qWarning("Failed dfm-io use factory create enumerator");
         abort();
     }
 }
@@ -59,10 +62,11 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
  * @brief 使用dfm-io实现了本文件的迭代器
  */
 LocalDirIterator::LocalDirIterator(const QUrl &url,
-                                       const QStringList &nameFilters,
-                                       QDir::Filters filters,
-                                       QDirIterator::IteratorFlags flags)
-    : d(new LocalDirIteratorPrivate(url, nameFilters, filters, flags, this))
+                                   const QStringList &nameFilters,
+                                   QDir::Filters filters,
+                                   QDirIterator::IteratorFlags flags)
+    : AbstractDirIterator (url,nameFilters,filters,flags)
+    , d(new LocalDirIteratorPrivate(url, nameFilters, filters, flags, this))
 {
 
 }
@@ -79,8 +83,9 @@ LocalDirIterator::~LocalDirIterator()
 
 QUrl LocalDirIterator::next()
 {
-    if (d->dfmioDirIterator)
+    if (d->dfmioDirIterator) {
         return UrlRoute::pathToUrl(d->dfmioDirIterator->next());
+    }
     return QUrl();
 }
 /*!

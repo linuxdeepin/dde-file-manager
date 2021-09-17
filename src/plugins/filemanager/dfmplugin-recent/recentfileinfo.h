@@ -26,10 +26,10 @@
 
 #include <QDebug>
 
-class RecentRootFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
+class RecentFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
 public:
-    explicit RecentRootFileInfo(const QUrl &url)
+    explicit RecentFileInfo(const QUrl &url)
         : DFMBASE_NAMESPACE::AbstractFileInfo(url)
     {
         Q_UNUSED(url);

@@ -21,8 +21,9 @@
  */
 #include "browsewindow_p.h"
 #include "windowservice/browseview.h"
-
+#include "dfm-base/widgets/dfmfileview/fileviewitem.h"
 #include "dfm-framework/log/frameworklog.h"
+#include "dfm-base/widgets/dfmfileview/fileviewmodel.h"
 
 DSB_FM_BEGIN_NAMESPACE
 
@@ -102,6 +103,15 @@ void BrowseWindowPrivate::setDefaultViewMode(QListView::ViewMode mode)
 
 void BrowseWindowPrivate::setRootUrl(const QUrl &url)
 {
+    if (!viewIsAdded(url.scheme())){
+        auto view = BrowseWidgetFactory::create<BrowseView>(url);
+        //绑定view点击的触发逻辑
+        QObject::connect(view, &FileView::dirClicked,
+                         this, &BrowseWindowPrivate::setRootUrl,
+                         Qt::UniqueConnection);
+        addView(url.scheme(), view);
+    }
+
     //添加url到历史导航
     if (navWidgetIns && sender() != navWidgetIns) {
         navWidgetIns->appendUrl(url);
@@ -111,12 +121,23 @@ void BrowseWindowPrivate::setRootUrl(const QUrl &url)
     }
 
     //切换麵包屑
-    if (crumbBarIns)
+    if (crumbBarIns) {
+        showCrumbBar();
         crumbBarIns->setRootUrl(url);
+    }
 
     //切换sidebar
     if (sidebarIns)
         sidebarIns->setCurrentUrl(url);
+
+    if (addressBarIns) {
+        QObject::connect(addressBarIns, &AddressBar::editingFinishedUrl,
+                         this, &BrowseWindowPrivate::setRootUrl,
+                         Qt::UniqueConnection);
+        if (sender() == addressBarIns) {
+            addressBarIns->stopSpinner();
+        }
+    }
 
     //切換view
     if (!displayCheckViewIns.checkViewUrl(url)) {
@@ -132,7 +153,7 @@ void BrowseWindowPrivate::setRootUrl(const QUrl &url)
         QWidget* viewWidget = dynamic_cast<QWidget*>(viewLogic);
         if (!viewLogic) { // scheme 关联的view url检查失败
             displayCheckViewIns.setText(QObject::tr("You can't use view to display. "
-                                                   "You need to add view before that"));
+                                                    "You need to add view before that"));
 
             //取消功能按钮的显示
             optionButtonBoxIns->hide();
@@ -184,7 +205,6 @@ void BrowseWindowPrivate::setRootUrl(const QUrl &url)
             //展示当前view
             viewLogic->showBeginLogic();
         }
-
     }
 }
 
@@ -294,7 +314,7 @@ void BrowseWindowPrivate::setCrumbBar(CrumbBar *crumbBar)
     crumbBarIns = crumbBar;
 }
 
-void BrowseWindowPrivate::addview(const QString &scheme, DisplayViewLogic* logic)
+void BrowseWindowPrivate::addView(const QString &scheme, DisplayViewLogic* logic)
 {
     auto viewWidget = dynamic_cast<QWidget*>(logic);
     if (!viewWidget) {
@@ -321,7 +341,7 @@ QWidget *BrowseWindowPrivate::propertyView() const
 
 void BrowseWindowPrivate::setPropertyView(QWidget *propertyView)
 {
-    propertyView = propertyView;
+    propertyViewIns = propertyView;
 }
 
 SideBar *BrowseWindowPrivate::sidebar() const
@@ -331,13 +351,13 @@ SideBar *BrowseWindowPrivate::sidebar() const
 
 void BrowseWindowPrivate::setSidebar(SideBar *sidebar)
 {
-    sidebar = sidebar;
+    sidebarIns = sidebar;
 }
 
 void BrowseWindowPrivate::initDefaultLayout()
 {
     q->titlebar()->setIcon(QIcon::fromTheme("dde-file-manager",
-                                                QIcon::fromTheme("system-file-manager")));
+                                            QIcon::fromTheme("system-file-manager")));
 
     if (!titleBarIns) {
         titleBarIns = new QFrame;

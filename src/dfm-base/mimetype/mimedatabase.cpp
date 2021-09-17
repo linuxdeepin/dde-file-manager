@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "shutil/mimedatabase.h"
-#include "shutil/fileutils.h"
+#include "mimetype/mimedatabase.h"
+#include "utils/fileutils.h"
 #include "base/standardpaths.h"
 
 #include <QFileInfo>

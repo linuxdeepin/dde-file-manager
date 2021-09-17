@@ -135,13 +135,13 @@ public:
 
 public Q_SLOTS:
 
-    void startRunState()
+    void startSpinner()
     {
         spinner.start();
         spinner.show();
     }
 
-    void stopRunState()
+    void stopSpinner()
     {
         spinner.stop();
         spinner.hide();
@@ -212,7 +212,7 @@ public Q_SLOTS:
             if (QDir(localPath).exists()) {
                 qInfo() << "sig editingFinishedUrl :" << url;
                 Q_EMIT q->editingFinishedUrl(url);
-                startRunState();
+                startSpinner();
                 return;
             }
         }
@@ -222,14 +222,14 @@ public Q_SLOTS:
             if (!url.isValid()) {
                 qInfo() << "sig editingFinishedUrl :" << url;
                 Q_EMIT q->editingFinishedUrl(url);
-                startRunState();
+                startSpinner();
                 return;
             }
         }
 
         qInfo() << "sig editingFinishedSearch :" << q->text();
         Q_EMIT q->editingFinishedSearch(q->text());
-        startRunState();
+        startSpinner();
         return;
     }
 
@@ -265,6 +265,7 @@ protected:
     {
         Q_UNUSED(addressbar)
         Q_UNUSED(event)
+        stopSpinner();
         timer.start();
         return false;
     }
@@ -274,7 +275,6 @@ protected:
         Q_UNUSED(addressbar)
         Q_UNUSED(event)
         timer.stop();
-        stopRunState();
         return false;
     }
 

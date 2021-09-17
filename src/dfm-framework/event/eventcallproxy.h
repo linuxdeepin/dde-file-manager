@@ -40,13 +40,13 @@ class EventCallProxy final
     template <typename T>
     friend class AutoEventHandlerRegister;
     struct HandlerInfo;
-    using CreateFunc = std::function<EventHandler*()> ;
+    using CreateFunc = std::function<QSharedPointer<EventHandler>()> ;
     using ExportFunc = std::function<void(HandlerInfo &info, const Event &event)>;
 
     struct HandlerInfo
     {
         QString className;
-        EventHandler* handler {nullptr};
+        QSharedPointer<EventHandler> handler;
         ExportFunc invoke;
         QStringList topics;
         QFuture<void> future;
@@ -55,8 +55,6 @@ class EventCallProxy final
 public:
     EventCallProxy() = delete;
     static bool pubEvent(const Event& event);
-    static bool removeHandler(const QString &className);
-    static void removeAllHandlers();
 
 private:
     static void registerHandler(EventHandler::Type type, const QStringList &topics, CreateFunc creator);
@@ -72,7 +70,7 @@ template <typename T>
 bool AutoEventHandlerRegister<T>::trigger()
 {
     qInfo() << "Register: " << __PRETTY_FUNCTION__;
-    EventCallProxy::registerHandler(T::type(), T::topics(), [] { return new T(); });
+    EventCallProxy::registerHandler(T::type(), T::topics(), [] { return QSharedPointer<T>(new T()); });
     return true;
 }
 

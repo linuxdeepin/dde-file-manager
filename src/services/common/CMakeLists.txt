@@ -7,21 +7,21 @@ set(GLOBAL_H
     dfm_common_service_global.h)
 
 set(EVENT_H
-    event/laucheventreceiver.h
-    event/fileeventreceiver.h
+    eventservice/laucheventreceiver.h
+    eventservice/fileeventreceiver.h
     )
 
 set(EVENT_CPP
-    event/laucheventreceiver.cpp
-    event/fileeventreceiver.cpp
+    eventservice/laucheventreceiver.cpp
+    eventservice/fileeventreceiver.cpp
     )
 
 set(JOB_H
-    job/abstractjobhandler.h
+    jobservice/abstractjobhandler.h
     )
 
 set(JOB_CPP
-    job/abstractjobhandler.cpp
+    jobservice/abstractjobhandler.cpp
     )
 
 add_library(${PROJECT_NAME}

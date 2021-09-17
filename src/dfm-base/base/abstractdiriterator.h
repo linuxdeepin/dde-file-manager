@@ -25,6 +25,8 @@
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/base/abstractfileinfo.h"
 
+#include <QDir>
+#include <QDirIterator>
 /*!
  * \class AbstractDirIterator 文件迭代器接口类
  *
@@ -32,9 +34,23 @@
  *
  */
 DFMBASE_BEGIN_NAMESPACE
-class AbstractDirIterator
+class AbstractDirIterator : public QObject
 {
+    Q_OBJECT
 public:
+    explicit AbstractDirIterator() = delete;
+
+    explicit AbstractDirIterator(const QUrl &url,
+                                 const QStringList &nameFilters = QStringList(),
+                                 QDir::Filters filters = QDir::NoFilter,
+                                 QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags)
+    {
+        Q_UNUSED(url)
+        Q_UNUSED(nameFilters)
+        Q_UNUSED(filters)
+        Q_UNUSED(flags)
+    }
+
     /*!
      * \brief next 下一个文件，迭代器指向下一个文件
      *
@@ -100,6 +116,8 @@ public:
      */
     virtual bool enableIteratorByKeyword(const QString &keyword) {Q_UNUSED(keyword); return false;}
 };
+
+
 
 DFMBASE_END_NAMESPACE
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator> AbstractDirIteratorPointer;

@@ -31,24 +31,69 @@ FileView::FileView(QWidget *parent)
     : DListView(parent)
     , d(new FileViewPrivate(this))
 {
-    auto model = new FileViewModel;
-    setModel(model);
+    auto model = new FileViewModel(this);
     this->setCornerWidget(d->headview);
+    setModel(model);
+    setDelegate(QListView::ViewMode::IconMode, new IconItemDelegate(this));
+    setDelegate(QListView::ViewMode::ListMode, new ListItemDelegate(this));
+    setViewMode(QListView::ViewMode::ListMode);
 }
 
 void FileView::setViewMode(QListView::ViewMode mode)
 {
-    DListView::setViewMode(mode);
+    setItemDelegate(d->delegates[mode]);
+}
+
+void FileView::setDelegate(QListView::ViewMode mode, QAbstractItemDelegate *view)
+{
+    if (!view)
+        return;
+
+    auto delegate = d->delegates[mode];
+    if (delegate) {
+        if (delegate->parent())
+            delegate->setParent(nullptr);
+        delete delegate;
+    }
+
+    d->delegates[mode] = view;
 }
 
 void FileView::setRootUrl(const QUrl &url)
 {
-    qobject_cast<FileViewModel *>(model())->setRootUrl(url);
+    model()->setRootUrl(url);
 }
 
 QUrl FileView::rootUrl()
 {
-    return qobject_cast<FileViewModel *>(model())->rootUrl();
+    return model()->rootUrl();
+}
+
+FileViewModel *FileView::model()
+{
+    return qobject_cast<FileViewModel *>(QAbstractItemView::model());
+}
+
+void FileView::setModel(QAbstractItemModel *model)
+{
+    if (model->parent() != this)
+        model->setParent(this);
+    auto curr = FileView::model();
+    if (curr)
+        delete curr;
+    DListView::setModel(model);
+    QObject::connect(this, &FileView::clicked,
+                     this ,[=](const QModelIndex &index){
+        auto item = FileView::model()->itemFromIndex(index);
+        if (item)
+            Q_EMIT urlClicked(item->url());
+
+        if (item->fileinfo()->isDir())
+            Q_EMIT dirClicked(item->url());
+
+        if (item->fileinfo()->isFile())
+            Q_EMIT fileClicked(item->url());
+    },Qt::UniqueConnection);
 }
 
 void FileView::resizeEvent(QResizeEvent *event)

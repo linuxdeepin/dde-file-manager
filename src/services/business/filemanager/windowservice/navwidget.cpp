@@ -24,30 +24,25 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-namespace GlobalPrivate {
-    static int listIdx = -1;
-    static QList<QUrl> urlCacheList{};
-} //namespace GlobalPrivate
-
 void NavWidgetPrivate::doButtonClicked()
 {
-    if (!sender() || GlobalPrivate::listIdx == -1) return;
+    if (!sender() || listIdx == -1) return;
 
     if (sender() == navBackButton) {
-        if (0 == GlobalPrivate::listIdx) {
-            Q_EMIT q->releaseUrl(GlobalPrivate::urlCacheList[GlobalPrivate::listIdx]);
+        if (0 == listIdx) {
+            Q_EMIT q->releaseUrl(urlCacheList[listIdx]);
             return;  //头节点
         }
-        q->releaseUrl(GlobalPrivate::urlCacheList[-- GlobalPrivate::listIdx]);
+        Q_EMIT q->releaseUrl(urlCacheList[-- listIdx]);
         return;
     }
 
     if (sender() == navForwardButton) {
-        if (GlobalPrivate::urlCacheList.size() - 1 == GlobalPrivate::listIdx ) {
-            Q_EMIT q->releaseUrl(GlobalPrivate::urlCacheList[GlobalPrivate::listIdx]); //尾节点
+        if (urlCacheList.size() - 1 == listIdx ) {
+            Q_EMIT q->releaseUrl(urlCacheList[listIdx]); //尾节点
             return;
         }
-        q->releaseUrl(GlobalPrivate::urlCacheList[++ GlobalPrivate::listIdx]);
+        q->releaseUrl(urlCacheList[++ listIdx]);
         return;
     }
 }
@@ -136,12 +131,17 @@ void NavWidget::setNavForwardButton(DButtonBoxButton *navForwardButton)
 
 void NavWidget::appendUrl(const QUrl &url)
 {
-    if (GlobalPrivate::listIdx != -1) {
-        if(GlobalPrivate::urlCacheList[GlobalPrivate::listIdx] == url) return;//略过当前目录的重复点击
+    //始终保持指针指向最后
+
+    if (d->listIdx >= 0
+            && d->listIdx < d->urlCacheList.size()) {
+        if (d->urlCacheList[d->listIdx] == url) {
+            return;//略过当前目录的重复点击
+        }
     }
 
-    GlobalPrivate::urlCacheList.append(url);
-    GlobalPrivate::listIdx = GlobalPrivate::urlCacheList.size() - 1; //始终保持指针指向最后
+    d->urlCacheList.append(url);
+    d->listIdx = d->urlCacheList.size() - 1;
 }
 
 DSB_FM_END_NAMESPACE

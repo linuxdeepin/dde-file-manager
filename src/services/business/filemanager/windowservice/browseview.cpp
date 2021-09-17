@@ -20,13 +20,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "browseview.h"
+#include "dfm-base/widgets/dfmfileview/listitemdelegate.h"
+#include "dfm-base/widgets/dfmfileview/iconitemdelegate.h"
+#include "dfm-base/widgets/dfmfileview/fileviewmodel.h"
 
 DSB_FM_BEGIN_NAMESPACE
 
 BrowseView::BrowseView(QWidget *parent)
     : FileView (parent)
 {
-
+    setViewMode(DListView::ViewMode::ListMode);
 }
 
 BrowseView::~BrowseView()
@@ -56,7 +59,8 @@ BrowseWidgetFactory::~BrowseWidgetFactory()
 
 BrowseWidgetFactory &BrowseWidgetFactory::instance()
 {
-    if (!ins) ins = new BrowseWidgetFactory();
+    if (!ins)
+        ins = new BrowseWidgetFactory();
     return * ins;
 }
 

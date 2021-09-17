@@ -47,13 +47,13 @@ class FileViewPrivate
     friend class FileView;
     FileView *const q;
     QAtomicInteger<bool> allowedAdjustColumnSize = true;
+    QHash<int, QAbstractItemDelegate*> delegates;
     HeaderView* headview = nullptr;
-    ListItemDelegate *listDelegate = nullptr;
-    IconItemDelegate *iconDelegate = nullptr;
     QUrl url;
 
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
+    QUrl modelIndexUrl(const QModelIndex &index) const;
 };
 DFMBASE_END_NAMESPACE
 

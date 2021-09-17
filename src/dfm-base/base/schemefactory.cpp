@@ -24,6 +24,10 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
+namespace GlobalPrivate {
+static bool dfmioIsInit = DFMIO::dfmio_init();
+}
+
 InfoFactory &InfoFactory::instance()
 {
     if (!ins) {

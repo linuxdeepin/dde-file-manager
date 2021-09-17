@@ -31,7 +31,8 @@ DFMBASE_BEGIN_NAMESPACE
  */
 
 AbstractFileDevicePrivate::AbstractFileDevicePrivate(AbstractFileDevice *qq)
-    : q(qq)
+    : QObject (qq)
+    , q(qq)
 {
 
 }

@@ -23,7 +23,10 @@
 #include "fileviewmodel.h"
 #include "private/fileviewmodel_p.h"
 
+#include <QApplication>
+
 DFMBASE_BEGIN_NAMESPACE
+
 FileViewModelPrivate::FileViewModelPrivate(FileViewModel *qq)
     : QObject (qq)
     , q(qq)
@@ -36,11 +39,12 @@ FileViewModelPrivate::~FileViewModelPrivate()
 
 }
 
-void FileViewModelPrivate::doUpdateChildren(const QList<QSharedPointer<FileViewItem> > &children)
+void FileViewModelPrivate::doUpdateChildren(const QList<FileViewItem*> &children)
 {
     q->beginResetModel();
     childers.setList(children);
     q->endResetModel();
+    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
 }
 
 FileViewModel::FileViewModel(QAbstractItemView *parent)
@@ -52,7 +56,7 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
 
 FileViewModel::~FileViewModel()
 {
-
+    clear();
 }
 
 QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent) const
@@ -61,13 +65,22 @@ QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent)
     if(row < 0 || column < 0 || d->childers.size() <= row)
         return  QModelIndex();
 
-    return createIndex(row,column,const_cast<FileViewItem*>(d->childers.at(row).data()));
+    return createIndex(row, column, d->childers.at(row));
+}
+
+const FileViewItem *FileViewModel::itemFromIndex(const QModelIndex &index) const
+{
+    if (0 > index.row() || index.row() >= d->childers.size())
+        return nullptr;
+    return d->childers.at(index.row());
 }
 
 QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 {
-    if (!d->root.isNull() && d->root->url() == url)
+    if (!d->root.isNull() && d->root->url() == url) {
+        QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
         return createIndex(-1, 0, &d->root);
+    }
 
     d->root.reset(new FileViewItem(url));
     QModelIndex root = createIndex(-1, 0, &d->root);
@@ -93,6 +106,8 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
                          d.data(), &FileViewModelPrivate::dofileModified);
     }
 
+    d->canFetchMoreFlag = true;
+    fetchMore(root);
     return root;
 }
 
@@ -131,7 +146,19 @@ int FileViewModel::columnCount(const QModelIndex &parent) const
 
 QVariant FileViewModel::data(const QModelIndex &index, int role) const
 {
-    return d->childers.at(index.row())->data(role);
+    auto item = itemFromIndex(index);
+    if (item)
+        return item->data(role);
+    return QVariant();
+}
+
+void FileViewModel::clear()
+{
+    for (int x = 0; x < columnCount(); x++) {
+        for (int y = 0; x < rowCount(); y++){
+            delete itemFromIndex(index(x,y));
+        }
+    }
 }
 
 void FileViewModel::fetchMore(const QModelIndex &parent)
@@ -148,16 +175,19 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
                                  QDirIterator::NoIteratorFlags));
     if (d->traversalThread.isNull())
         return;
-    QObject::connect(d->traversalThread.data(),& TraversalDirThread::updateChildren,
+    QObject::connect(d->traversalThread.data(), &TraversalDirThread::updateChildren,
                      d.data(), &FileViewModelPrivate::doUpdateChildren,
                      Qt::QueuedConnection);
-    d->traversalThread->start();
-}
 
+    if (d->canFetchMoreFlag) {
+        d->canFetchMoreFlag = false;
+        d->traversalThread->start();
+    }
+}
 
 bool FileViewModel::canFetchMore(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return true;
+    return d->canFetchMoreFlag;
 }
 DFMBASE_END_NAMESPACE

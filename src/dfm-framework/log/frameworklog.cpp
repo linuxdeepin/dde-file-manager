@@ -36,6 +36,7 @@ namespace GlobalPrivate
 {
     static QFile file;
     static uint dayCount = 7;
+    static QMutex mutex;
 
     QString formatFrameworkLogOut(QtMsgType type, const QMessageLogContext &context, const QString &msg)
     {
@@ -125,6 +126,7 @@ namespace GlobalPrivate
                              const QMessageLogContext &context,
                              const QString &msg)
     {
+        QMutexLocker locker(&mutex);
         QString logMsg = GlobalPrivate::formatFrameworkLogOut(type,context,msg);
         if (type == QtMsgType::QtDebugMsg)
             fprintf(stdin,"%s\n",logMsg.toUtf8().data());

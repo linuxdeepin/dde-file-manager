@@ -25,12 +25,12 @@
 #include "dfm-base/widgets/dfmfileview/fileviewitem.h"
 
 class FileViewItem;
-class FileViewItemPrivate
+class FileViewItemPrivate : public QSharedData
 {
     friend class FileViewItem;
     FileViewItem *const q;
-    AbstractFileInfoPointer fileinfo;
     QMimeType mimeType;
+    AbstractFileInfoPointer fileinfo;
 
 public:
     explicit FileViewItemPrivate(FileViewItem* qq)

@@ -51,7 +51,7 @@ AbstractFileInfo::AbstractFileInfo(const QUrl &url)
     : d(new AbstractFileInfoPrivate(this))
 {
     Q_UNUSED(type_id)
-    d->url = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
+    d->url = url;
 }
 
 AbstractFileInfo::~AbstractFileInfo()
@@ -102,7 +102,7 @@ bool AbstractFileInfo::operator!=(const AbstractFileInfo &fileinfo) const
  */
 void AbstractFileInfo::setFile(const QUrl &url)
 {
-    d->url = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
+    d->url = url;
 }
 /*!
  * \brief setFile 设置文件的File，跟新当前的fileinfo

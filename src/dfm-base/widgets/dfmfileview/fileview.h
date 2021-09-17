@@ -40,13 +40,19 @@ class FileView : public DListView
 public:
     explicit FileView(QWidget *parent = nullptr);
     virtual void setViewMode(QListView::ViewMode mode);
+    virtual void setDelegate(QListView::ViewMode mode, QAbstractItemDelegate* view);
     virtual void setRootUrl(const QUrl &url);
     virtual QUrl rootUrl();
+    virtual FileViewModel* model();
+    virtual void setModel(QAbstractItemModel *model) Q_DECL_OVERRIDE;
+
 protected:
     void resizeEvent(QResizeEvent *event) override;
 
 Q_SIGNALS:
-    void urlChanged(const QUrl &old, const QUrl &now);
+    void urlClicked(const QUrl &url);
+    void fileClicked(const QUrl &url);
+    void dirClicked(const QUrl &url);
 };
 DFMBASE_END_NAMESPACE
 

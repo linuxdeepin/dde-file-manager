@@ -21,15 +21,21 @@
  */
 #include "recentbrowseview.h"
 
+#include "dfm-base/widgets/dfmfileview/iconitemdelegate.h"
+#include "dfm-base/widgets/dfmfileview/listitemdelegate.h"
+
 RecentBrowseView::RecentBrowseView(QWidget *parent)
     :BrowseView(parent)
 {
     setModel(new RecentBrowseViewModel(this));
+    setDelegate(QListView::IconMode,new IconItemDelegate(this));
+    setDelegate(QListView::ListMode,new ListItemDelegate(this));
+    setViewMode(QListView::ListMode);
 }
 
 void RecentBrowseView::setRootUrl(const QUrl &url)
 {
-    Q_UNUSED(url);
+
 }
 
 QUrl RecentBrowseView::rootUrl()

@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "shutil/fileutils.h"
-#include "shutil/mimedatabase.h"
+#include "utils/fileutils.h"
+#include "mimetype/mimedatabase.h"
 
 #include <QFileInfo>
 
@@ -31,23 +31,5 @@ DFMBASE_BEGIN_NAMESPACE
  *
  * @brief Utility class providing static helper methods for file management
  */
-
-/*!
- * \brief FileUtils::isArchive 判断是否是归档包
- *
- * \param path 文件的路径
- *
- * \return bool 是否是归档包
- */
-bool FileUtils::isArchive(const QString &path)
-{
-    QFileInfo f(path);
-    if (f.exists()) {
-        return MimeDatabase::supportMimeFileType(MimeDatabase::Archives)
-                .contains(MimeDatabase::mimeTypeForFile(f).name());
-    } else {
-        return false;
-    }
-}
 
 DFMBASE_END_NAMESPACE

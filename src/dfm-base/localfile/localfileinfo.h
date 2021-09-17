@@ -23,7 +23,7 @@
 #define FILEINFO_H
 
 #include "dfm-base/dfm_base_global.h"
-#include "dfm-base/shutil/mimedatabase.h"
+#include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/base/abstractfileinfo.h"
 
 #include <QIcon>
@@ -33,14 +33,8 @@ DFMBASE_BEGIN_NAMESPACE
 class LocalFileInfoPrivate;
 class LocalFileInfo : public AbstractFileInfo
 {
-    LocalFileInfoPrivate *const d;
+    QSharedPointer<LocalFileInfoPrivate> d;
 public:
-    enum Icon {
-        LinkIcon,           // 链接文件图标
-        LockIcon,           // 带锁的文件图标
-        UnreadableIcon,     // 不可读的文件图标
-        ShareIcon,          // 共享的文件图标
-    };
 
     enum FlagIcon {
         Writable,           // 是否可写
@@ -48,14 +42,25 @@ public:
         Readable,           // 是否可读
     };Q_ENUMS(FlagIcon)
 
-    struct DFMEmblemInfo
-    {
-        FlagIcon flag;      // 图标标识
-        QIcon icon;         // 图标
-        QPointF point;      // 图标位置
+    enum Type {
+        Directory = MimeDatabase::Directory,
+        CharDevice = MimeDatabase::CharDevice,
+        BlockDevice = MimeDatabase::BlockDevice,
+        FIFOFile = MimeDatabase::FIFOFile,
+        SocketFile = MimeDatabase::SocketFile,
+        RegularFile = MimeDatabase::RegularFile,
+        Documents = MimeDatabase::Documents,
+        Images = MimeDatabase::Images,
+        Videos = MimeDatabase::Videos,
+        Audios = MimeDatabase::Audios,
+        Archives = MimeDatabase::Archives,
+        DesktopApplication = MimeDatabase::DesktopApplication,
+        Executable = MimeDatabase::Executable,
+        Backups = MimeDatabase::Backups,
+        Unknown = MimeDatabase::Unknown,
+        CustomType = MimeDatabase::CustomType
     };
 
-    typedef QList<DFMEmblemInfo> DFMEmblemInfos;
     explicit LocalFileInfo(const QUrl &url);
     virtual ~LocalFileInfo() override;
 
@@ -108,12 +113,7 @@ public:
     virtual bool isFifo() const;
     virtual bool isSocket() const;
     virtual bool isRegular() const;
-    virtual void setEmblems(const DFMEmblemInfos &infos);
-    virtual void clearEmblems();
-    virtual DFMEmblemInfos emblems() const;
-    virtual void setIcon(const QIcon &icon);
-    virtual QIcon icon() const;
-    virtual MimeDatabase::FileType fileType() const;
+    virtual Type fileType() const;
     virtual QString linkTargetPath() const;
     virtual int countChildFile() const;
     virtual QString sizeFormat() const;

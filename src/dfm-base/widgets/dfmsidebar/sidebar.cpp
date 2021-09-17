@@ -91,7 +91,19 @@ QAbstractItemView *SideBar::view()
 
 void SideBar::setCurrentUrl(const QUrl &url)
 {
-
+    auto model = d->sidebarView->model();
+    d->sidebarView->selectionModel()->clearSelection();
+    for (int i = 0; i< model->rowCount(); i++ ) {
+        auto item = d->sidebarView->model()->itemFromIndex(i);
+        if (item->url() == url) {
+            d->sidebarView->selectionModel()->select(model->index(i,0),QItemSelectionModel::SelectCurrent);
+            return;
+        }
+        if (item->url().scheme() == url.scheme()) {
+            d->sidebarView->selectionModel()->select(model->index(i,0),QItemSelectionModel::SelectCurrent);
+            return;
+        }
+    }
 }
 
 int SideBar::addItem(SideBarItem *item)

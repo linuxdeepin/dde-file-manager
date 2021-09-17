@@ -29,25 +29,22 @@
 
 DFMBASE_USE_NAMESPACE
 
+class RecentBrowseViewModelPrivate;
 class RecentBrowseViewModel : public FileViewModel
 {
+    Q_OBJECT
+    QSharedPointer<RecentBrowseViewModelPrivate> d;
 public:
     explicit RecentBrowseViewModel(QAbstractItemView *parent = nullptr);
-
     virtual ~RecentBrowseViewModel() override;
-
-    AbstractFileInfoPointer fileInfo(const QModelIndex &index);
-
+    virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+    virtual AbstractFileInfoPointer fileInfo(const QModelIndex &index) override;
+    virtual const FileViewItem *itemFromIndex(const QModelIndex &index) const override;
     virtual QModelIndex parent(const QModelIndex &child) const override;
-
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-
     virtual int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-
     virtual void fetchMore(const QModelIndex &parent) override;
-
     virtual bool canFetchMore(const QModelIndex &parent) const override;
 };
 

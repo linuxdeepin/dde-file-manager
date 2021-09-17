@@ -38,4 +38,14 @@ bool AddressBar::completerViewVisible()
     return d->completerView->isVisible();
 }
 
+void AddressBar::startSpinner()
+{
+    d->startSpinner();
+}
+
+void AddressBar::stopSpinner()
+{
+    d->stopSpinner();
+}
+
 DSB_FM_END_NAMESPACE

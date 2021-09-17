@@ -61,7 +61,7 @@ void BrowseWindow::addView(const QString &scheme,
                            DisplayViewLogic* viewWidget)
 {
     if(viewWidget) {
-        d->addview(scheme,viewWidget);
+        d->addView(scheme,viewWidget);
     } else {
         qWarning() << "Called addview method argument class "
                       "DFMDisplayViewLogic can't show,"

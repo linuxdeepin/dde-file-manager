@@ -35,6 +35,7 @@
 
 #include <QSharedPointer>
 #include <QDirIterator>
+#include <QDebug>
 
 #include <functional>
 
@@ -75,6 +76,7 @@ public:
             if (errorString)
                 *errorString = QObject::tr("The current scheme has registered "
                                            "the associated construction class");
+            qWarning() << errorString;
             return false;
         }
 
@@ -102,6 +104,7 @@ public:
             if (errorString)
                 *errorString = QObject::tr("No scheme found for "
                                            "URL registration");
+            qWarning() << errorString;
             return nullptr;
         }
 
@@ -113,6 +116,7 @@ public:
             if (errorString)
                 *errorString = QObject::tr("Scheme should be call registered 'regClass()' function "
                                            "before create function");
+            qWarning() << errorString;
             return nullptr;
         }
     }
@@ -215,6 +219,7 @@ public:
             if (errorString)
                 *errorString = QObject::tr("The current scheme has registered "
                                            "the associated construction class");
+            qWarning() << errorString;
             return false;
         }
 
@@ -239,51 +244,57 @@ public:
      *  如果没有注册 scheme 到 DFMUrlRoute，返回空指针
      *  如果没有注册 scheme 与 class 构造函数规则，返回空指针
      */
-    QSharedPointer<T> create(const QUrl &url,
-                             const QStringList &nameFilters = QStringList(),
-                             QDir::Filters filters = QDir::NoFilter,
-                             QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
-                             QString *errorString = nullptr)
+    template<class RT>
+    QSharedPointer<RT> create(const QUrl &url,
+                              const QStringList &nameFilters = QStringList(),
+                              QDir::Filters filters = QDir::NoFilter,
+                              QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
+                              QString *errorString = nullptr)
     {
         if(!UrlRoute::hasScheme(url.scheme())) {
             if (errorString)
                 *errorString = QObject::tr("No scheme found for "
                                            "URL registration");
+            qWarning() << errorString;
             return nullptr;
         }
 
         QString scheme = url.scheme();
         CreateFuncAgu constantFunc = _constructAguList.value(scheme);
         if (constantFunc) {
-            return QSharedPointer<T>(constantFunc(url, nameFilters, filters, flags));
+            return qSharedPointerDynamicCast<RT>(constantFunc(url, nameFilters, filters, flags));
         } else {
             if (errorString)
                 *errorString = QObject::tr("Scheme should be call registered 'regClass()' function "
                                            "before create function");
+            qWarning() << errorString;
             return nullptr;
         }
     }
 
-    //提供任意子类的转换方法模板，仅限DAbstractFileDevice树族
-    //与qSharedPointerDynamicCast保持一致
+    /**
+     * \brief 提供任意子类的转换方法模板，仅限DAbstractFileDevice树族
+     * 与qSharedPointerDynamicCast保持一致
+     * 从顶层中创建并转换响应的Iterator
+     */
     template<class RT>
     QSharedPointer<RT> create(const QUrl &url, QString *errorString = nullptr)
     {
         return qSharedPointerDynamicCast<RT>(SchemeFactory<AbstractDirIterator>::create(url, errorString));
     }
 
-    //提供任意子类的转换方法模板，仅限DAbstractFileDevice树族
-    //与qSharedPointerDynamicCast保持一致
-    template<class RT>
-    QSharedPointer<RT> create(const QUrl &url,
-                              const QStringList &nameFilters,
-                              QDir::Filters filters = QDir::NoFilter,
-                              QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
-                              QString *errorString = nullptr)
-    {
-        return qSharedPointerDynamicCast<RT>(DirIteratorFactoryT1<T>::create(
-                                                 url, nameFilters, filters, flags, errorString));
-    }
+    //    //提供任意子类的转换方法模板，仅限DAbstractFileDevice树族
+    //    //与qSharedPointerDynamicCast保持一致
+    //    template<class RT>
+    //    QSharedPointer<RT> create(const QUrl &url,
+    //                              const QStringList &nameFilters,
+    //                              QDir::Filters filters = QDir::NoFilter,
+    //                              QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
+    //                              QString *errorString = nullptr)
+    //    {
+    //        return qSharedPointerDynamicCast<RT>(DirIteratorFactoryT1<T>::create(
+    //                                                 url, nameFilters, filters, flags, errorString));
+    //    }
 };
 
 class DirIteratorFactory final : public DirIteratorFactoryT1<AbstractDirIterator>
@@ -305,7 +316,7 @@ public:
     static bool regClass(const QString &scheme, QString *errorString = nullptr)
     {
         return instance().DirIteratorFactoryT1<AbstractDirIterator>
-                ::create<CT>(scheme,errorString);
+                ::regClass<CT>(scheme,errorString);
     }
 
     //提供任意子类的转换方法模板，仅限DAbstractFileDevice树族

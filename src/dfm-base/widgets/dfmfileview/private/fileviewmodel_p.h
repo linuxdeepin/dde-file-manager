@@ -22,10 +22,10 @@
 #ifndef FILEVIEWMODEL_P_H
 #define FILEVIEWMODEL_P_H
 
-#include "shutil/fileutils.h"
 #include "widgets/dfmfileview/fileviewmodel.h"
 #include "widgets/dfmfileview/private/traversaldirthread.h"
-#include "dfm-base/utils/threadcontainer.hpp"
+#include "utils/fileutils.h"
+#include "utils/threadcontainer.hpp"
 
 #include <QReadWriteLock>
 #include <QQueue>
@@ -36,11 +36,12 @@ class FileViewModelPrivate : public QObject
     Q_OBJECT
     friend class FileViewModel;
     FileViewModel *const q;
-    DThreadList<QSharedPointer<FileViewItem>> childers;
+    DThreadList<FileViewItem*> childers;
     QSharedPointer<FileViewItem> root;
     int column = 0;
     AbstractFileWatcherPointer watcher;
     QSharedPointer<TraversalDirThread> traversalThread;
+    bool canFetchMoreFlag = true;
 public:
     enum EventType {
         AddFile,
@@ -56,7 +57,7 @@ private Q_SLOTS:
     void dofileCreated(const QUrl &url){Q_UNUSED(url);}
     void dofileModified(const QUrl &url){Q_UNUSED(url);}
     void dofileClosed(const QUrl &url){Q_UNUSED(url);}
-    void doUpdateChildren(const QList<QSharedPointer<FileViewItem>> &children);
+    void doUpdateChildren(const QList<FileViewItem *> &children);
 };
 DFMBASE_END_NAMESPACE
 

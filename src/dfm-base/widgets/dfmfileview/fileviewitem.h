@@ -24,7 +24,7 @@
 #define FILEVIEWITEM_H
 
 #include "dfm-base/localfile/localfileinfo.h"
-#include "dfm-base/shutil/mimedatabase.h"
+#include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <QStandardItem>
@@ -34,7 +34,7 @@ class FileViewItemPrivate;
 class FileViewItem: public QStandardItem
 {
     friend class FileViewItemPrivate;
-    QSharedPointer<FileViewItemPrivate> d;
+    FileViewItemPrivate *const d;
 public:
     enum Roles {
         ItemNameRole = Qt::DisplayRole,
@@ -57,20 +57,55 @@ public:
         ItemFilePathRole = Qt::UserRole + 6,
         ItemColumListRole = Qt::UserRole + 7,
         ItemColumWidthScaleListRole = Qt::UserRole + 8,
+        ItemCornerMarkTLRole = Qt::UserRole + 9,
+        ItemCornerMarkTRRole = Qt::UserRole + 10,
+        ItemCornerMarkBLRole = Qt::UserRole + 11,
+        ItemCornerMarkBRRole = Qt::UserRole + 12,
+        ItemIconLayersRole = Qt::UserRole + 13
     };
+
+    enum CornerMark
+    {
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight,
+    };
+
+    struct IconLayer
+    {
+        QPointF pos;
+        QIcon icon;
+    };
+
+    typedef QList<IconLayer> IconLayers;
 
     explicit FileViewItem();
     explicit FileViewItem(const QUrl &url);
+    explicit FileViewItem(const FileViewItem &other);
+    virtual ~FileViewItem() override;
     FileViewItem &operator=(const FileViewItem &other);
     void refresh();
     QUrl url() const;
     void setUrl(const QUrl url);
     AbstractFileInfoPointer fileinfo() const;
+    virtual void setCornerMark(const QIcon& tl, const QIcon& tr,
+                               const QIcon& bl, const QIcon& br);
+    virtual void setCornerMark(CornerMark flag, const QIcon& icon);
+    virtual QIcon cornerMarkTL();
+    virtual QIcon cornerMarkTR();
+    virtual QIcon cornerMarkBL();
+    virtual QIcon cornerMarkBR();
+    virtual void setIconLayers(const IconLayers& layers);
+    virtual const IconLayers& iconLayers();
     QMimeType mimeType() const;
-    // QStandardItem interface
     virtual QVariant data(int role) const override;
 };
 
 Q_DECLARE_METATYPE(FileViewItem);
+Q_DECLARE_METATYPE(FileViewItem*);
+Q_DECLARE_METATYPE(QSharedPointer<FileViewItem>);
+Q_DECLARE_METATYPE(FileViewItem::IconLayer)
+Q_DECLARE_METATYPE(FileViewItem::IconLayers);
 
 #endif // DFMFILEVIEWITEM_H

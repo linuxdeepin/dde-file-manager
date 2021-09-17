@@ -31,8 +31,10 @@
 
 USING_IO_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
-class AbstractFileWatcherPrivate
+class AbstractFileWatcherPrivate : public QObject
 {
+    Q_OBJECT
+    Q_DISABLE_COPY(AbstractFileWatcherPrivate)
     friend class AbstractFileWatcher;
     AbstractFileWatcher *q;
 public:

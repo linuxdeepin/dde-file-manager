@@ -22,8 +22,24 @@
 #include "recentutil.h"
 #include "recentbrowseviewmodel.h"
 
+#include <QDebug>
+
+class RecentBrowseViewModelPrivate
+{
+    friend class RecentBrowseViewModel;
+    RecentBrowseViewModel *const q;
+    QList<QSharedPointer<FileViewItem>> children;
+public:
+    explicit RecentBrowseViewModelPrivate(RecentBrowseViewModel* qq)
+        : q(qq)
+    {
+
+    }
+};
+
 RecentBrowseViewModel::RecentBrowseViewModel(QAbstractItemView *parent)
     : FileViewModel(parent)
+    , d(new RecentBrowseViewModelPrivate(this))
 {
     setRootUrl(RecentUtil::onlyRootUrl());
 }
@@ -33,9 +49,25 @@ RecentBrowseViewModel::~RecentBrowseViewModel()
 
 }
 
+QModelIndex RecentBrowseViewModel::index(int row, int column, const QModelIndex &parent) const
+{
+    Q_UNUSED(column);
+
+    if(row < 0 || column < 0)
+        return QModelIndex();
+    return createIndex(row, column, d->children.at(row).data());
+}
+
 AbstractFileInfoPointer RecentBrowseViewModel::fileInfo(const QModelIndex &index)
 {
     return FileViewModel::fileInfo(index);
+}
+
+const FileViewItem *RecentBrowseViewModel::itemFromIndex(const QModelIndex &index) const
+{
+    if (0 > index.row() || index.row() >= d->children.size())
+        return nullptr;
+    return d->children.at(index.row()).data();
 }
 
 QModelIndex RecentBrowseViewModel::parent(const QModelIndex &child) const
@@ -46,7 +78,7 @@ QModelIndex RecentBrowseViewModel::parent(const QModelIndex &child) const
 
 int RecentBrowseViewModel::rowCount(const QModelIndex &parent) const
 {
-    return FileViewModel::rowCount(parent);
+    return d->children.count();
 }
 
 int RecentBrowseViewModel::columnCount(const QModelIndex &parent) const
@@ -61,7 +93,17 @@ QVariant RecentBrowseViewModel::data(const QModelIndex &index, int role) const
 
 void RecentBrowseViewModel::fetchMore(const QModelIndex &parent)
 {
-    return FileViewModel::fetchMore(parent);
+    FileViewModel::fetchMore(parent);
+    beginResetModel();
+    RecentUtil::initRecentSubSystem();
+    for (int i = 0 ; i < RecentUtil::getRecentNodes().size(); i++) {
+        QUrl url = QUrl(RecentUtil::getRecentNodes().at(i).toElement().attribute("href"));
+        QUrl schemeUrl = UrlRoute::pathToUrl(url.path());
+        if (!schemeUrl.isValid())
+            continue;
+        d->children.append(QSharedPointer<FileViewItem>(new FileViewItem(schemeUrl)));
+    }
+    endResetModel();
 }
 
 bool RecentBrowseViewModel::canFetchMore(const QModelIndex &parent) const

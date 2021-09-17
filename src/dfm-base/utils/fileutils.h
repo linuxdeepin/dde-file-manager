@@ -29,7 +29,7 @@ DFMBASE_BEGIN_NAMESPACE
 class FileUtils
 {
 public:
-    static bool isArchive(const QString &path);
+
 };
 DFMBASE_END_NAMESPACE
 

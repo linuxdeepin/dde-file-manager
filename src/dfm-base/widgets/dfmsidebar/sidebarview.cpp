@@ -73,6 +73,11 @@ SideBarView::SideBarView(QWidget *parent)
     d->lastOpTime = 0;
 }
 
+SideBarModel* SideBarView::model() const
+{
+    return qobject_cast<SideBarModel*>(QAbstractItemView::model());
+}
+
 void SideBarView::mousePressEvent(QMouseEvent *event)
 {
     //频繁点击操作与网络或挂载设备的加载效率低两个因素的共同作用下 会导致侧边栏可能出现显示错误
@@ -283,7 +288,7 @@ SideBarItem *SideBarView::itemAt(const QPoint &pt) const
         return item;
     }
 
-    SideBarModel *mod = dynamic_cast<SideBarModel *>(model());
+    SideBarModel *mod = model();
     Q_ASSERT(mod);
     item = mod->itemFromIndex(index);
     Q_ASSERT(item);

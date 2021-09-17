@@ -9,6 +9,7 @@ set(GLOBAL_H
     )
 
 set(WINDOWSERVICE_CPP
+    windowservice/private/browsewindow_p.cpp
     windowservice/windowservice.cpp
     windowservice/displayviewlogic.cpp
     windowservice/displaydefaultview.cpp
@@ -17,7 +18,6 @@ set(WINDOWSERVICE_CPP
     windowservice/completerview.cpp
     windowservice/optionbuttonbox.cpp
     windowservice/crumbbar.cpp
-    windowservice/private/browsewindow_p.cpp
     windowservice/browseview.cpp
     windowservice/browsewindow.cpp
     windowservice/crumbmodel.cpp
@@ -55,6 +55,12 @@ set(APPLICATIONSERVICE_H
     applicationservice/private/application_p.h
     applicationservice/settings.h
     )
+
+set(SHORTCUTSERVICE_H
+    shortcutservice/shortcut.h)
+
+set(SHORTCUTSERVICE_CPP
+    shortcutservice/shortcut.cpp)
 
 add_library(
     ${PROJECT_NAME}

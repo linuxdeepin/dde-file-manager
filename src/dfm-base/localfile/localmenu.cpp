@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "private/localmenu_p.h"
-#include "shutil/fileutils.h"
+#include "utils/fileutils.h"
 #include "base/schemefactory.h"
 //#include "base/singleton.hpp"
 
@@ -157,14 +157,14 @@ QVector<LocalMenu::MenuAction> LocalMenu::menuActionList(MenuType type) const
                 }*/
 
             } else if (d->localFileInfo->isFile()) {
-                if (!FileUtils::isArchive(d->localFileInfo->absoluteFilePath())) {
+                if (d->localFileInfo->fileType() != LocalFileInfo::Archives) {
                     actionKeys << MenuAction::Compress
                                << MenuAction::Separator;
                 }
             }
 
             if (d->localFileInfo->isFile()) {
-                if (FileUtils::isArchive(d->localFileInfo->absoluteFilePath())) {
+                if (d->localFileInfo->fileType() == LocalFileInfo::Archives) {
                     actionKeys << MenuAction::Decompress
                                << MenuAction::DecompressHere
                                << MenuAction::Separator;

@@ -29,6 +29,7 @@ DWIDGET_USE_NAMESPACE
 
 DFMBASE_BEGIN_NAMESPACE
 class SideBarItem;
+class SideBarModel;
 class SideBarViewPrivate;
 class SideBarView : public DListView
 {
@@ -37,17 +38,18 @@ class SideBarView : public DListView
     SideBarViewPrivate *const d;
 public:
     explicit SideBarView(QWidget *parent = nullptr);
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-    void dragEnterEvent(QDragEnterEvent *event) override;
-    void dragMoveEvent(QDragMoveEvent *event) override;
-    void dropEvent(QDropEvent *event) override;
+    virtual SideBarModel* model() const;
     QModelIndex indexAt(const QPoint &p) const override;
     QModelIndex getPreviousIndex() const;
     QModelIndex getCurrentIndex() const;
     SideBarItem *itemAt(const QPoint &pt) const;
 
 protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
     bool onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction action) const;
     Qt::DropAction canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const;
     bool isAccepteDragEvent(QDropEvent *event);

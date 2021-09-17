@@ -45,6 +45,11 @@ public:
 
     explicit RecentUtil() = delete;
 
+    static QDomNodeList getRecentNodes()
+    {
+        return nodes;
+    }
+
     static bool initRecentSubSystem()
     {
         qCCritical(RecentPlugin) << QStandardPaths::locate(QStandardPaths::HomeLocation,"",QStandardPaths::LocateDirectory);
@@ -75,7 +80,6 @@ public:
         url.setPath("/");
         return url;
     }
-
 };
 
 #endif // DFMRECENTUTIL_H

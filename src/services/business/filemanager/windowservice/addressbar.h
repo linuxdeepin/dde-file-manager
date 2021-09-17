@@ -42,6 +42,10 @@ public:
 Q_SIGNALS:
     void editingFinishedUrl(const QUrl &url);
     void editingFinishedSearch(const QString &url);
+
+public Q_SLOT:
+    void startSpinner();
+    void stopSpinner();
 };
 
 DSB_FM_END_NAMESPACE

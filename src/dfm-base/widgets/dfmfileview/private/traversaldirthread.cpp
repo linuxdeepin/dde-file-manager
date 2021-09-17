@@ -22,26 +22,44 @@
 #include "traversaldirthread.h"
 #include "base/schemefactory.h"
 
+#include <QDebug>
+
 DFMBASE_BEGIN_NAMESPACE
 TraversalDirThread::TraversalDirThread(const QUrl &url,
-                                             const QStringList &nameFilters,
-                                             QDir::Filters filters,
-                                             QDirIterator::IteratorFlags flags,
-                                             QObject *parent)
+                                       const QStringList &nameFilters,
+                                       QDir::Filters filters,
+                                       QDirIterator::IteratorFlags flags,
+                                       QObject *parent)
     : QThread(parent)
     , dirUrl(url)
 {
-    if (dirUrl.isValid()) {
-        m_dirIterator = DirIteratorFactory::create<LocalDirIterator>
-                            (url, nameFilters, filters,flags);
-    }
     qRegisterMetaType<QList<QSharedPointer<FileViewItem>>>("QList<QSharedPointer<DFMFileViewItem>>");
     qRegisterMetaType<QList<QSharedPointer<FileViewItem>>>("QList<QSharedPointer<DFMFileViewItem>>&");
+
+    if (dirUrl.isValid() && !UrlRoute::isVirtualUrl(dirUrl)) {
+        m_dirIterator = DirIteratorFactory::create<LocalDirIterator>
+                (url, nameFilters, filters,flags);
+        if (!m_dirIterator) {
+            qInfo() << "Failed create dir iterator from" << url;
+            abort();
+        }
+    }
 }
 
 TraversalDirThread::~TraversalDirThread()
 {
 
+}
+
+void TraversalDirThread::stop()
+{
+    stopFlag = true;
+}
+
+void TraversalDirThread::quit()
+{
+    stop();
+    QThread::quit();
 }
 
 void TraversalDirThread::run()
@@ -50,12 +68,14 @@ void TraversalDirThread::run()
         return;
     while(m_dirIterator->hasNext())
     {
-        m_dirIterator->next();
-        QUrl fileurl = m_dirIterator->fileUrl();
-        if (!fileurl.isValid()) continue;
-        QSharedPointer<FileViewItem> item(new FileViewItem(fileurl));
-        m_childrenList.append(item);
+        if (stopFlag)
+            break;
+        QUrl fileurl = m_dirIterator->next();
+        if (!fileurl.isValid())
+            continue;
+        m_childrenList.append(new FileViewItem(fileurl));
     }
+    stopFlag = true;
     Q_EMIT updateChildren(m_childrenList.list());
 }
 

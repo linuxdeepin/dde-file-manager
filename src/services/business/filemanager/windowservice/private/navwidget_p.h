@@ -41,6 +41,8 @@ class NavWidgetPrivate : public QObject
     Dtk::Widget::DButtonBoxButton *navBackButton = nullptr;
     Dtk::Widget::DButtonBoxButton *navForwardButton = nullptr;
     QHBoxLayout *hboxLayout = nullptr;
+    int listIdx = -1;
+    QList<QUrl> urlCacheList{};
 
     explicit NavWidgetPrivate(NavWidget* qq);
 

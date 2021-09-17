@@ -42,7 +42,8 @@ DThreadList<QString> AbstractFileWatcherPrivate::watcherPath;
  * \brief 存储DAbstractFileWatcher的使用的变量和数据
  */
 AbstractFileWatcherPrivate::AbstractFileWatcherPrivate(AbstractFileWatcher *qq)
-    : q(qq)
+    : QObject (qq)
+    , q(qq)
 {
 
 }

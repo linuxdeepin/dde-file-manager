@@ -401,24 +401,25 @@ QUrl UrlRoute::pathToUrl(const QString &path, QString *errorString)
  */
 QString UrlRoute::urlToPath(const QUrl &url, QString *errorString)
 {
-    QString path = "";
     for (auto val : SchemeMapLists) {
-
         if (val.isVirtual() == true)
             continue;
-
         auto root = val.root();
         auto scheme = val.scheme();
         if (scheme == url.scheme()) {
-
+            QString path = "";
             if (url.path().startsWith("/")) {
-                path = root.remove(root.size(),1) + url.path();
+                path += root;
+                if (!path.endsWith("/"))
+                    path += "/";
+                path += url.path().remove(0, QString("/").size());
             }
             return path;
         }
     }
 
-    if (errorString) *errorString = "Maybe in called after execute schemeMapRoot function";
+    if (errorString)
+        *errorString = "Maybe in called after execute schemeMapRoot function";
     return "";
 }
 /*!

@@ -34,9 +34,9 @@ class QDir;
 class QDateTime;
 DFMBASE_BEGIN_NAMESPACE
 class AbstractFileInfoPrivate;
-class AbstractFileInfo: public QSharedData
+class AbstractFileInfo : public QSharedData
 {
-    AbstractFileInfoPrivate *const d;
+    QScopedPointer<AbstractFileInfoPrivate> d;
 public:
     /*!
      * \enum FileInfoCacheType 文件缓存的key值

@@ -45,64 +45,13 @@ bool EventCallProxy::pubEvent(const Event &event)
 }
 
 /*!
- * \brief EventCallProxy::removeHandler free handler by class name
- * \param className
- * \return
- */
-bool EventCallProxy::removeHandler(const QString &className)
-{
-    QMutexLocker locker(eventMutex());
-    auto &infoList = getInfoList();
-    auto iter = infoList.begin();
-    int i = 0;
-    bool flag = false;
-    while (iter != infoList.end()) {
-        if (iter->className == className) {
-            if (iter->future.isRunning())
-                iter->future.waitForFinished();
-            if (iter->handler) {
-                delete iter->handler;
-                iter->handler = nullptr;
-            }
-            flag = true;
-            break;
-        }
-        ++iter;
-        ++i;
-    }
-
-    if (flag)
-        infoList.removeAt(i);
-    return flag;
-}
-
-/*!
- * \brief EventCallProxy::removeAllHandlers free all handlers
- */
-void EventCallProxy::removeAllHandlers()
-{
-    QMutexLocker locker(eventMutex());
-    auto &infoList = getInfoList();
-    auto iter = infoList.begin();
-    while (iter != infoList.end()) {
-        if (iter->future.isRunning())
-            iter->future.waitForFinished();
-        if (iter->handler) {
-            delete iter->handler;
-            iter->handler = nullptr;
-        }
-        ++iter;
-    }
-    infoList.clear();
-}
-
-/*!
  * \brief EventCallProxy::registerHandler no need for developers to call directly，
  *  classes that inherit from `AutoEventHandlerRegister` will automatically call
  * \param type
  * \param topics
  * \param creator
  */
+
 void EventCallProxy::registerHandler(EventHandler::Type type, const QStringList &topics, EventCallProxy::CreateFunc creator)
 {
     QMutexLocker locker(eventMutex());
@@ -118,7 +67,7 @@ void EventCallProxy::registerHandler(EventHandler::Type type, const QStringList 
     if (type ==  EventHandler::Type::Async) {
         invoke = [creator] (HandlerInfo &info, const Event &event) {
             fillInfo(info, creator);
-            info.future = QtConcurrent::run(info.handler, &EventHandler::eventProcess, event);
+            info.future = QtConcurrent::run(info.handler.data(), &EventHandler::eventProcess, event);
         };
     }
     qInfo() << "Register Handler, type " << static_cast<int>(type) << ", topics" << topics;
