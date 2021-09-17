@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en">
 <context>
     <name>AppController</name>
     <message>
@@ -227,20 +229,20 @@
     <name>ComputerModel</name>
     <message>
         <location filename="../models/computermodel.cpp" line="64"/>
-        <location filename="../models/computermodel.cpp" line="139"/>
+        <location filename="../models/computermodel.cpp" line="137"/>
         <source>My Directories</source>
         <translation>My Directories</translation>
     </message>
     <message>
         <location filename="../models/computermodel.cpp" line="82"/>
         <location filename="../models/computermodel.cpp" line="86"/>
-        <location filename="../models/computermodel.cpp" line="189"/>
+        <location filename="../models/computermodel.cpp" line="187"/>
+        <location filename="../models/computermodel.cpp" line="198"/>
         <location filename="../models/computermodel.cpp" line="200"/>
-        <location filename="../models/computermodel.cpp" line="202"/>
-        <location filename="../models/computermodel.cpp" line="633"/>
-        <location filename="../models/computermodel.cpp" line="637"/>
-        <location filename="../models/computermodel.cpp" line="670"/>
-        <location filename="../models/computermodel.cpp" line="674"/>
+        <location filename="../models/computermodel.cpp" line="631"/>
+        <location filename="../models/computermodel.cpp" line="635"/>
+        <location filename="../models/computermodel.cpp" line="668"/>
+        <location filename="../models/computermodel.cpp" line="672"/>
         <source>Disks</source>
         <translation>Disks</translation>
     </message>
@@ -1239,22 +1241,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2634"/>
+        <location filename="../views/dfileview.cpp" line="2636"/>
         <source>Disc mount error</source>
         <translation>Disc mount error</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2634"/>
+        <location filename="../views/dfileview.cpp" line="2636"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>The disc is in use, please end the running process and remount the disc.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2648"/>
+        <location filename="../views/dfileview.cpp" line="2650"/>
         <source>Mounting failed</source>
         <translation>Mounting failed</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3352"/>
+        <location filename="../views/dfileview.cpp" line="3354"/>
         <source>(Reverse)</source>
         <translation>(Reverse)</translation>
     </message>
@@ -1460,7 +1462,7 @@
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="117"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="132"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="719"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="717"/>
         <source>%1 Volume</source>
         <translation>%1 Volume</translation>
     </message>
@@ -1471,17 +1473,17 @@
         <translation>Data Disk</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="714"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="712"/>
         <source>%1 Drive</source>
         <translation>%1 Drive</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="698"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="696"/>
         <source>Blank %1 Disc</source>
         <translation>Blank %1 Disc</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="717"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="715"/>
         <source>%1 Encrypted</source>
         <translation>%1 Encrypted</translation>
     </message>
@@ -1789,7 +1791,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirm</translation>
@@ -2844,8 +2845,8 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="66"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="663"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="691"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="661"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="689"/>
         <source>System Disk</source>
         <translation>System Disk</translation>
     </message>
@@ -3266,9 +3267,8 @@
         <translation>Time created</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
         <source>Log out and unmount</source>
-        <translation>Log out and unmount</translation>
+        <translation type="vanished">Log out and unmount</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1200"/>
@@ -3365,11 +3365,16 @@
         <translation>Restore all</translation>
     </message>
     <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
+        <source>Clear saved password and unmount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
-        <location filename="../models/computermodel.cpp" line="123"/>
-        <location filename="../models/computermodel.cpp" line="146"/>
-        <location filename="../models/computermodel.cpp" line="165"/>
-        <location filename="../models/computermodel.cpp" line="184"/>
+        <location filename="../models/computermodel.cpp" line="121"/>
+        <location filename="../models/computermodel.cpp" line="144"/>
+        <location filename="../models/computermodel.cpp" line="163"/>
+        <location filename="../models/computermodel.cpp" line="182"/>
         <source>File Vault</source>
         <translation>File Vault</translation>
     </message>
@@ -3564,7 +3569,7 @@
         <translation>%1 items</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1226"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1223"/>
         <source>Shortcut</source>
         <translation>Shortcut</translation>
     </message>
@@ -3923,9 +3928,9 @@
         <translation>My Vault</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="187"/>
-        <location filename="../models/computermodel.cpp" line="198"/>
-        <location filename="../models/computermodel.cpp" line="607"/>
+        <location filename="../models/computermodel.cpp" line="185"/>
+        <location filename="../models/computermodel.cpp" line="196"/>
+        <location filename="../models/computermodel.cpp" line="605"/>
         <source>Disks</source>
         <translation>Disks</translation>
     </message>
@@ -3980,75 +3985,75 @@
 <context>
     <name>ShareInfoFrame</name>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="58"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="59"/>
         <source>Share this folder</source>
         <translation>Share this folder</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="67"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="68"/>
         <source>Share name:</source>
         <translation>Share name:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="80"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="81"/>
         <source>Permission:</source>
         <translation>Permission:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="85"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="86"/>
         <source>Read and write</source>
         <translation>Read and write</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="85"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="86"/>
         <source>Read only</source>
         <translation>Read only</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="88"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="89"/>
         <source>Anonymous:</source>
         <translation>Anonymous:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="93"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="94"/>
         <source>Not allow</source>
         <translation>Not allow</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="93"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="94"/>
         <source>Allow</source>
         <translation>Allow</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="301"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="316"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>The share name must not be two dots (..) or one dot (.)</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="317"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="332"/>
         <source>The share name is used by another user.</source>
         <translation>The share name is used by another user.</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="318"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="333"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="321"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="336"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="322"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="337"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Replace</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="320"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="335"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>The share name already exists. Do you want to replace the shared folder?</translation>
     </message>
