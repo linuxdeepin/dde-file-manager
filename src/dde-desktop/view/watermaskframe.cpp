@@ -265,9 +265,11 @@ void WaterMaskFrame::initUI()
         mask_pixmap.setDevicePixelRatio(m_logoLabel->devicePixelRatioF());
 
         m_logoLabel->setPixmap(mask_pixmap);
+        //适应图片大小
+        m_logoLabel->adjustSize();
     }
 
-    if(isNeedState()){
+    if (isNeedState()) {
         qInfo() << "get active state from com.deepin.license.Info";
         ActiveState stateType = static_cast<ActiveState>(m_licenseInterface->AuthorizationState());
         qInfo() << "ActiveState:" << stateType;
@@ -307,7 +309,12 @@ void WaterMaskFrame::initUI()
         m_textLabel->setAlignment(Qt::AlignCenter);
     }
 
+    //设置新的layout前需先删除旧的，否则会导致新的布局器布局出错
+    if (auto tempLayout = layout())
+        delete tempLayout;
+
     m_mainLayout = new QHBoxLayout();
+    setLayout(m_mainLayout);
     m_mainLayout->setSpacing(0);
     m_mainLayout->addStretch();
 
@@ -332,19 +339,11 @@ void WaterMaskFrame::initUI()
             m_mainLayout->addWidget(m_textLabel, 0, Qt::AlignCenter);
         }
     }
+
     m_mainLayout->addStretch();
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
-
-    /*initUI会new一个QHBoxLayout，WaterMaskFrame构造时已经调用了一次，
-     * 后续多次同一对象调用initUI会导致泄露，由于updateAuthorizationState会间接调用到initUI,
-     * 因此需要删掉之前的布局之后再调用*/
-    auto tempLayout = this->layout();
-    if (tempLayout) {
-        delete tempLayout;
-        tempLayout = nullptr;
-    }
-    setLayout(m_mainLayout);
     setFixedSize(m_maskWidth, m_maskHeight);
+
     QString color(maskTextColor);
     QString fontsize(maskTextFontSize);
     QString style = QString("QLabel {color: %1; font-size: %2}").arg(color, fontsize);
