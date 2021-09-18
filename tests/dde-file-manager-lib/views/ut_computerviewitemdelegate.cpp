@@ -168,6 +168,7 @@ TEST_F(TestComputerViewItemDelegate, tst_createEditor)
     QModelIndex index;
     QWidget *widget = m_computerViewItemDelegate->createEditor(nullptr, option, index);
     EXPECT_NE(nullptr, widget);
+    delete widget;
 }
 
 
@@ -176,8 +177,8 @@ TEST_F(TestComputerViewItemDelegate, tst_setEditorData)
     QStyleOptionViewItem option;
     QModelIndex index;
     QWidget *widget = m_computerViewItemDelegate->createEditor(nullptr, option, index);
-
     m_computerViewItemDelegate->setEditorData(widget, index);
+    delete widget;
 }
 
 TEST_F(TestComputerViewItemDelegate, tst_updateEditorGeometry)
