@@ -643,7 +643,9 @@ bool DFileView::cdUp()
     const DUrl &oldCurrentUrl = rootUrl();
     const DUrl &parentUrl = fileInfo ? fileInfo->parentUrl() : DUrl::parentUrl(oldCurrentUrl);
 
-    return parentUrl.isValid() && cd(parentUrl);
+    if (parentUrl.isValid())
+        return cd(parentUrl);
+    return cd(DUrl::fromComputerFile("/"));
 }
 
 bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
