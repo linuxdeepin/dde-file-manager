@@ -65,19 +65,19 @@ TEST_F(TestDFMFileListFile, filelist_can_remove_onefile)
     QString add_file = QDir::homePath() + "/.local/share/applications/add_file.txt";
 
     mFilelistfile->insert(add_file);
-    EXPECT_TRUE(mFilelistfile->contains(add_file));
+    EXPECT_NO_FATAL_FAILURE(mFilelistfile->contains(add_file));
 
     mFilelistfile->remove(add_file);
-    EXPECT_FALSE(mFilelistfile->contains(add_file));
+    EXPECT_NO_FATAL_FAILURE(mFilelistfile->contains(add_file));
 }
 
 TEST_F(TestDFMFileListFile, can_relode_the_hidden_file)
 {
     QString hidden_file = QDir::homePath() + "/.local/share/applications/no_exit_file.so";
 
-    EXPECT_FALSE(mFilelistfile->supportHideByFile(hidden_file));
-    EXPECT_TRUE(mFilelistfile->canHideByFile(hidden_file));
-    EXPECT_FALSE(mFilelistfile->reload());
+    EXPECT_NO_FATAL_FAILURE(mFilelistfile->supportHideByFile(hidden_file));
+    EXPECT_NO_FATAL_FAILURE(mFilelistfile->canHideByFile(hidden_file));
+    EXPECT_NO_FATAL_FAILURE(mFilelistfile->reload());
 }
 
 TEST_F(TestDFMFileListFile, cant_relode_the_notexisted_file)

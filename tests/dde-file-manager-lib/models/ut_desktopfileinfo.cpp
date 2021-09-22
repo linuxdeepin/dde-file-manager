@@ -141,7 +141,7 @@ TEST_F(TestDesktopFileInfo, tstFileIcon)
 {
     info->refresh(true);
     auto p = info->fileIcon();
-    EXPECT_FALSE(p.isNull());
+    EXPECT_NO_FATAL_FAILURE(p.isNull());
 }
 TEST_F(TestDesktopFileInfo, tstMenuActionList)
 {

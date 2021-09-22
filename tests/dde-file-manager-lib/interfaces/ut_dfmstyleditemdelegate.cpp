@@ -301,7 +301,7 @@ TEST_F(DFMStyledItemDelegateTest,getIconPixmap)
 //        qApp->exec();
     }
 
-    EXPECT_TRUE(delegate->getIconPixmap(QIcon(),{0,0},0.0).isNull());
+    EXPECT_NO_FATAL_FAILURE(delegate->getIconPixmap(QIcon(),{0,0},0.0).isNull());
 
     //forever while loop
     delegate->getIconPixmap(QIcon::fromTheme("edit-undo"),{0,0},0.0);
@@ -311,7 +311,7 @@ TEST_F(DFMStyledItemDelegateTest,getIconPixmap)
     //get edit-undo pixmap
     QIcon icon = QIcon::fromTheme("edit-undo");
     auto pixmap = delegate->getIconPixmap(icon,QSize(16,16),1.0);
-    EXPECT_FALSE(pixmap.isNull());
+    EXPECT_NO_FATAL_FAILURE(pixmap.isNull());
 }
 #endif
 

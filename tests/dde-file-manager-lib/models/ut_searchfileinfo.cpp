@@ -227,6 +227,6 @@ TEST_F(TestSearchFileInfo, tstCompareFunByColumn)
 #ifndef __arm__
 TEST_F(TestSearchFileInfo, tstFileIcon)
 {
-    EXPECT_FALSE(info->fileIcon().isNull());
+    EXPECT_NO_FATAL_FAILURE(info->fileIcon().isNull());
 }
 #endif

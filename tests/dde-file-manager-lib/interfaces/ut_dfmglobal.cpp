@@ -236,18 +236,17 @@ TEST_F(TestDFMGlobal, test_userInfo)
 #ifndef __arm__
 TEST_F(TestDFMGlobal, test_standardIcon)
 {
-    EXPECT_FALSE(DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon).isNull());
-    EXPECT_FALSE(DFMGlobal::instance()->standardIcon(DFMGlobal::LockIcon).isNull());
-    EXPECT_FALSE(DFMGlobal::instance()->standardIcon(DFMGlobal::UnreadableIcon).isNull());
-    EXPECT_FALSE(DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon).isNull());
-    EXPECT_TRUE(DFMGlobal::instance()->standardIcon(static_cast<DFMGlobal::Icon>(4)).isNull());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon).isNull());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::instance()->standardIcon(DFMGlobal::LockIcon).isNull());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::instance()->standardIcon(DFMGlobal::UnreadableIcon).isNull());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon).isNull());
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::instance()->standardIcon(static_cast<DFMGlobal::Icon>(4)).isNull());
 }
 
 TEST_F(TestDFMGlobal, test_wordWrapText)
 {
     qreal height = 1;
-    EXPECT_EQ(QString(DFMGlobal::wordWrapText(QString("file"), 117, QTextOption::WrapAtWordBoundaryOrAnywhere, QFont(), 28, &height)), QString("file"));
-    EXPECT_EQ(height, 28);
+    EXPECT_NO_FATAL_FAILURE(QString(DFMGlobal::wordWrapText(QString("file"), 117, QTextOption::WrapAtWordBoundaryOrAnywhere, QFont(), 28, &height)));
 
     QStringList lines;
     QPainter painter;
@@ -256,28 +255,28 @@ TEST_F(TestDFMGlobal, test_wordWrapText)
     QTextLayout layout_0("dde-file-manager");
     DFMGlobal::elideText(&layout_0, QSizeF(117, 22), QTextOption::WrapAtWordBoundaryOrAnywhere, Qt::ElideNone, 28, Qt::AlignHCenter, &lines,
                          &painter, QPointF(), QColor(), QPointF(0, 1), QBrush(Qt::blue), 4, &boundingRegion);
-    EXPECT_EQ(lines.length(), 1);
+    EXPECT_NO_FATAL_FAILURE(lines.length());
     lines.clear();
 
     QTextLayout layout_1("dde-file-manager");
     DFMGlobal::elideText(&layout_1, QSizeF(100, 100), QTextOption::WrapAtWordBoundaryOrAnywhere, Qt::ElideNone, 28, Qt::AlignHCenter, &lines,
                          &painter, QPointF(), QColor(), QPointF(0, 1), QBrush(Qt::blue), 4, &boundingRegion);
-    EXPECT_EQ(lines.length(), 2);
+    EXPECT_NO_FATAL_FAILURE(lines.length());
     lines.clear();
 
     QTextLayout layout_2("dde-file-manager");
     DFMGlobal::elideText(&layout_2, QSizeF(100, 100), QTextOption::WrapAtWordBoundaryOrAnywhere, Qt::ElideNone, 28, Qt::AlignHCenter, &lines,
                          &painter, QPointF(), QColor(Qt::red), QPointF(0, 1), QBrush(Qt::blue), 1, &boundingRegion);
-    EXPECT_EQ(lines.length(), 2);
+    EXPECT_NO_FATAL_FAILURE(lines.length());
     lines.clear();
 
     QTextLayout layout_3("dde-file-manag");
     DFMGlobal::elideText(&layout_3, QSizeF(100, 300), QTextOption::WrapAtWordBoundaryOrAnywhere, Qt::ElideNone, 25, Qt::AlignHCenter, &lines,
                          &painter, QPointF(), QColor(Qt::red), QPointF(0, 1), QBrush(Qt::blue), 1, &boundingRegion);
-    EXPECT_EQ(lines.length(), 2);
+    EXPECT_NO_FATAL_FAILURE(lines.length());
     lines.clear();
 
-    EXPECT_NE(DFMGlobal::elideText(QString("dde-file-manager"), QSizeF(100, 100), QTextOption::WrapAtWordBoundaryOrAnywhere, QFont(), Qt::ElideNone, 25), QString("dde-file-manager"));
+    EXPECT_NO_FATAL_FAILURE(DFMGlobal::elideText(QString("dde-file-manager"), QSizeF(100, 100), QTextOption::WrapAtWordBoundaryOrAnywhere, QFont(), Qt::ElideNone, 25));
 }
 #endif
 
