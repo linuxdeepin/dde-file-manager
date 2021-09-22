@@ -25,11 +25,11 @@
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>Příště klepněte na „Bezpečně odebrat“, a až pak odpojte</translation>
+        <translation>Příště klepněte na „Bezpečně odebrat“ a až pak odpojte</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"/>
+        <translation>Zařízení je něčím využíváno, proto ho není možné nyní odebrat</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -41,7 +41,7 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation>Zařízení je něčím využíváno, proto ho nyní není možné vysunout</translation>
     </message>
     <message>
         <source>Disks</source>
@@ -49,7 +49,7 @@
     </message>
     <message>
         <source>Cannot find the mounted device</source>
-        <translation type="unfinished"/>
+        <translation>Nedaří se nalézt připojené zařízení</translation>
     </message>
 </context>
 <context>

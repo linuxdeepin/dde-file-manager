@@ -25,7 +25,7 @@
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>Cliquez sur &quot;Supprimer en toute sécurité&quot; et ensuite déconnectez-le </translation>
+        <translation>Cliquez sur &quot;Supprimer en toute sécurité&quot; et ensuite déconnectez le</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>

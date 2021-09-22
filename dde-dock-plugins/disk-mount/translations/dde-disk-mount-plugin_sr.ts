@@ -25,11 +25,11 @@
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>Следећи пут кликните на &quot;Безбедно уклони&quot;, затим уклоните уређај</translation>
+        <translation>Следећи пут, кликните на &quot;Безбедно уклони&quot;, затим уклоните уређај</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"/>
+        <translation>Уређај је заузет, не може се уклонити</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -41,7 +41,7 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation>Уређај је заузет, не може се избацити</translation>
     </message>
     <message>
         <source>Disks</source>
@@ -49,7 +49,7 @@
     </message>
     <message>
         <source>Cannot find the mounted device</source>
-        <translation type="unfinished"/>
+        <translation>Не могу да пронађем монтирани уређај</translation>
     </message>
 </context>
 <context>
@@ -75,7 +75,7 @@
     </message>
     <message>
         <source>Access denied</source>
-        <translation>Приступ забрањен</translation>
+        <translation>Забрањен приступ</translation>
     </message>
     <message>
         <source>You do not have permission to access this folder</source>

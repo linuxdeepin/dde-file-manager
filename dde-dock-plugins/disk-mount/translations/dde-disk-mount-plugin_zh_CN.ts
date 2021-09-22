@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>DeepinStorage</name>
     <message>
@@ -31,7 +29,7 @@
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>光驱正忙，无法安全移除</translation>
+        <translation>设备正忙，无法安全移除</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -81,7 +79,7 @@
     </message>
     <message>
         <source>You do not have permission to access this folder</source>
-        <translation>您没有权限读取此文件夹</translation>
+        <translation>您没有权限访问该文件夹</translation>
     </message>
     <message>
         <source>Confirm</source>

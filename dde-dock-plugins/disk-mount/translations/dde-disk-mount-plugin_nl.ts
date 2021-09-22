@@ -79,7 +79,7 @@
     </message>
     <message>
         <source>You do not have permission to access this folder</source>
-        <translation>Je bent niet gemachtigd om deze map te openen</translation>
+        <translation>Je bent niet bevoegd om deze map te openen</translation>
     </message>
     <message>
         <source>Confirm</source>

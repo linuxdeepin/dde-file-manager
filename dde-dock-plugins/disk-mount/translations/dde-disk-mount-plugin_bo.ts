@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"/>
+        <translation>འོད་སྡེར་བྲེལ་བཞིན་འདུག་པས། བདེ་འཇགས་ངང་ཕྱིར་བཏོན་ཐབས་བྲལ། </translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -41,7 +41,7 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation>འོད་སྡེར་བྲེལ་བཞིན་འདུག་པས། ཕྱིར་བཏོན་ཐབས་བྲལ། </translation>
     </message>
     <message>
         <source>Disks</source>
@@ -49,7 +49,7 @@
     </message>
     <message>
         <source>Cannot find the mounted device</source>
-        <translation type="unfinished"/>
+        <translation>བབ་མཚུངས་ཀྱི་འགེལ་ཆས་རྙེད་མ་བྱུང་།</translation>
     </message>
 </context>
 <context>

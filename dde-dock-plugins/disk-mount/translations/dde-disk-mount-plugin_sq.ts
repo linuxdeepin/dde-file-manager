@@ -37,7 +37,7 @@
     </message>
     <message>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation>Disku është montuar nga përdoruesi &quot;%1&quot;, s’mund të çmontoni.</translation>
+        <translation>Disku është montuar nga përdoruesi &quot;%1&quot;, s’mund ta çmontoni.</translation>
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
@@ -49,7 +49,7 @@
     </message>
     <message>
         <source>Cannot find the mounted device</source>
-        <translation type="unfinished"/>
+        <translation>S’gjendet pajisje e montuar</translation>
     </message>
 </context>
 <context>

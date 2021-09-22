@@ -113,7 +113,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
         text = DFMGlobal::preprocessingFileName(text);
         if (tmpText != text){
             // 修改文件的命名规则
-            showAlertMessage(tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
+            showAlertMessage(tr("%1 are not allowed").arg("|[/\\*:\"']?<>"));
         }
 
         QVector<uint> list = text.toUcs4();

@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation>光驅正忙，無法安全移除</translation>
+        <translation>設備正忙，無法安全移除</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

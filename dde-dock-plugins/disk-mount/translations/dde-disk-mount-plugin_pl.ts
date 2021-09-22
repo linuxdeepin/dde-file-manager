@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"/>
+        <translation>Urządzenie jest zajęte, nie można go teraz wyjąć</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -41,7 +41,7 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation>Urządzenie jest zajęte, nie można go teraz wysunąć</translation>
     </message>
     <message>
         <source>Disks</source>
@@ -49,7 +49,7 @@
     </message>
     <message>
         <source>Cannot find the mounted device</source>
-        <translation type="unfinished"/>
+        <translation>Nie można odnaleźć podpiętego urządzenia</translation>
     </message>
 </context>
 <context>
