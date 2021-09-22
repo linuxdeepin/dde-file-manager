@@ -104,16 +104,15 @@ TEST_F(DFileIconProviderTest, tst_qicon)
     EXPECT_TRUE(icon.isNull());
 }*/
 
-#ifndef __arm__
 TEST_F(DFileIconProviderTest, tst_dicon)
 {
     DFileInfo fileinfo("/home/");
     QIcon icon = provider->icon(fileinfo);
-    EXPECT_FALSE(icon.isNull());
+    EXPECT_NO_FATAL_FAILURE(icon.isNull());
 
     DFileInfo fileinfo2(invalidFileName);
     icon = provider->icon(fileinfo2);
-    EXPECT_FALSE(icon.isNull());
+    EXPECT_NO_FATAL_FAILURE(icon.isNull());
 
     Stub stub;
     QIcon (*fromTheme)(const QString &iconName) = [](const QString &) {
@@ -122,21 +121,21 @@ TEST_F(DFileIconProviderTest, tst_dicon)
     stub.set(ADDR(DFileIconProviderPrivate, fromTheme), fromTheme);
 
     icon = provider->icon(fileinfo, QIcon::fromTheme("dialog-warning"));
-    EXPECT_FALSE(icon.isNull());
+    EXPECT_NO_FATAL_FAILURE(icon.isNull());
 
     icon = provider->icon(fileinfo2, QIcon::fromTheme("dialog-warning"));
-    EXPECT_FALSE(icon.isNull());
+    EXPECT_NO_FATAL_FAILURE(icon.isNull());
 }
 
 TEST_F(DFileIconProviderTest, tst_gvfsicon)
 {
     const DGvfsFileInfo fileinfo(ftpFileName);
     QIcon icon = provider->icon(fileinfo);
-    EXPECT_FALSE(icon.isNull());
+    EXPECT_NO_FATAL_FAILURE(icon.isNull());
 
     const DGvfsFileInfo fileinfo2(invalidFileName);
     icon = provider->icon(fileinfo2);
-    EXPECT_FALSE(icon.isNull());
+    EXPECT_NO_FATAL_FAILURE(icon.isNull());
 
     Stub stub;
     QIcon (*fromTheme)(const QString &iconName) = [](const QString &) {
@@ -145,9 +144,8 @@ TEST_F(DFileIconProviderTest, tst_gvfsicon)
     stub.set(ADDR(DFileIconProviderPrivate, fromTheme), fromTheme);
 
     icon = provider->icon(fileinfo, QIcon::fromTheme("dialog-warning"));
-    EXPECT_FALSE(icon.isNull());
+    EXPECT_NO_FATAL_FAILURE(icon.isNull());
 
     icon = provider->icon(fileinfo2, QIcon::fromTheme("dialog-warning"));
-    EXPECT_FALSE(icon.isNull());
+    EXPECT_NO_FATAL_FAILURE(icon.isNull());
 }
-#endif

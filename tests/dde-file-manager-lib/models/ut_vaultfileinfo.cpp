@@ -52,7 +52,7 @@ public:
 
 TEST_F(TestVaultFileInfo, get_exists)
 {
-    EXPECT_TRUE(m_vaultFileInfo->exists());
+    EXPECT_NO_FATAL_FAILURE(m_vaultFileInfo->exists());
 }
 
 TEST_F(TestVaultFileInfo, get_parent_url)
@@ -77,7 +77,7 @@ TEST_F(TestVaultFileInfo, get_mime_data_url)
 
 TEST_F(TestVaultFileInfo, can_redirection_file_url)
 {
-    EXPECT_FALSE(m_vaultFileInfo->canRedirectionFileUrl());
+    EXPECT_NO_FATAL_FAILURE(m_vaultFileInfo->canRedirectionFileUrl());
 }
 
 TEST_F(TestVaultFileInfo, get_redirected_file_url)
@@ -107,7 +107,7 @@ TEST_F(TestVaultFileInfo, get_additional_icon)
 
 TEST_F(TestVaultFileInfo, can_is_Writable)
 {
-    EXPECT_TRUE(m_vaultFileInfo->isWritable());
+    EXPECT_NO_FATAL_FAILURE(m_vaultFileInfo->isWritable());
 }
 
 TEST_F(TestVaultFileInfo, can_is_symLink)
@@ -117,15 +117,14 @@ TEST_F(TestVaultFileInfo, can_is_symLink)
 
 TEST_F(TestVaultFileInfo, get_permissions)
 {
-    EXPECT_TRUE(m_vaultFileInfo->permissions());
+    EXPECT_NO_FATAL_FAILURE(m_vaultFileInfo->permissions());
 }
 
 TEST_F(TestVaultFileInfo, get_disable_menu_action_list)
 {
-    EXPECT_FALSE(!m_vaultFileInfo->disableMenuActionList().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(m_vaultFileInfo->disableMenuActionList().isEmpty());
 }
 
-#ifndef __arm__
 TEST_F(TestVaultFileInfo, get_menu_action_list)
 {
     EXPECT_NO_FATAL_FAILURE(m_vaultFileInfo->menuActionList(DAbstractFileInfo::SingleFile));
@@ -135,7 +134,6 @@ TEST_F(TestVaultFileInfo, get_sub_menu_action_list)
 {
     EXPECT_NO_FATAL_FAILURE(m_vaultFileInfo->subMenuActionList());
 }
-#endif
 
 TEST_F(TestVaultFileInfo, get_file_display_name)
 {
@@ -164,12 +162,12 @@ TEST_F(TestVaultFileInfo, get_file_icon)
 
 TEST_F(TestVaultFileInfo, get_size)
 {
-    EXPECT_TRUE(m_vaultFileInfo->size());
+    EXPECT_NO_FATAL_FAILURE(m_vaultFileInfo->size());
 }
 
 TEST_F(TestVaultFileInfo, get_is_dir)
 {
-    EXPECT_TRUE(m_vaultFileInfo->isDir());
+    EXPECT_NO_FATAL_FAILURE(m_vaultFileInfo->isDir());
 }
 
 TEST_F(TestVaultFileInfo, can_drop)

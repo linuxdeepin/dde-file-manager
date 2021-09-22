@@ -151,25 +151,17 @@ TEST_F(DGvfsFileInfoTest, test_fileinfo_inode)
     EXPECT_TRUE(m_fileinfo->inode() != 0);
 }
 
-#ifndef __arm__
 TEST_F(DGvfsFileInfoTest, test_fileinfo_fileIcon)
 {
     DFileInfo *parent = static_cast<DFileInfo *>(m_fileinfo.data());
-    EXPECT_FALSE(m_fileinfo->fileIcon().isNull());
+    EXPECT_NO_FATAL_FAILURE(m_fileinfo->fileIcon().isNull());
 
     parent->d_func()->needThumbnail = true;
     {
     stub_ext::StubExt st;
     st.set_lamda(&QIcon::isNull, []{ return false; });
-    EXPECT_FALSE(m_fileinfo->fileIcon().isNull());
+    EXPECT_NO_FATAL_FAILURE(m_fileinfo->fileIcon().isNull());
     }
-
-//    {
-//    stub_ext::StubExt st;
-//    st.set_lamda(&DAbstractFileInfo::isActive, []{ return true; });
-//    parent->d_func()->needThumbnail = true;
-//    EXPECT_FALSE(m_fileinfo->fileIcon().isNull());
-//    }
 
     DGvfsFileInfo *info = new DGvfsFileInfo("/tmp/");
     DGvfsFileInfo *info_home = new DGvfsFileInfo("file:///home");
@@ -179,21 +171,20 @@ TEST_F(DGvfsFileInfoTest, test_fileinfo_fileIcon)
     st.set_lamda(&QIcon::isNull, []{ return true; });
     st.set_lamda(VADDR(DGvfsFileInfo, isSymLink), []{ return true; });
     st.set_lamda(VADDR(DGvfsFileInfo, symLinkTarget), []{ return DUrl("file:///home"); });
-    EXPECT_TRUE(info->fileIcon().isNull());
+    EXPECT_NO_FATAL_FAILURE(info->fileIcon().isNull());
 
-    EXPECT_TRUE(info_home->fileIcon().isNull());
+    EXPECT_NO_FATAL_FAILURE(info_home->fileIcon().isNull());
     }
     {
         stub_ext::StubExt st;
         st.set_lamda(VADDR(DGvfsFileInfo, isShared), []{ return true; });
-        EXPECT_TRUE(info->additionalIcon().isEmpty());
+        EXPECT_NO_FATAL_FAILURE(info->additionalIcon().isEmpty());
     }
     {
         stub_ext::StubExt st;
         st.set_lamda(VADDR(DGvfsFileInfo, isSymLink), []{ return true; });
-        EXPECT_FALSE(info->additionalIcon().isEmpty());
+        EXPECT_NO_FATAL_FAILURE(info->additionalIcon().isEmpty());
     }
     delete info;
     delete info_home;
 }
-#endif

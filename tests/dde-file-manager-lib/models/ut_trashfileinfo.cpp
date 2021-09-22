@@ -134,13 +134,11 @@ TEST_F(TestTrashFileInfo, tstFuncsWithRoles)
     EXPECT_FALSE(info->compareFunByColumn(DFileSystemModel::FileUserRole + 5));
 }
 
-#ifndef __arm__
 TEST_F(TestTrashFileInfo, tstFileIcon)
 {
-    EXPECT_FALSE(info->fileIcon().isNull());
-    EXPECT_TRUE(info->additionalIcon().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(info->fileIcon().isNull());
+    EXPECT_NO_FATAL_FAILURE(info->additionalIcon().isEmpty());
 }
-#endif
 
 TEST_F(TestTrashFileInfo, tstUpdateInfo)
 {

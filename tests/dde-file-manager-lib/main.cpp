@@ -29,7 +29,13 @@
 
 int main(int argc, char *argv[])
 {
+    //fix icon get is empty ut test
+    if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")) {
+        qputenv("XDG_CURRENT_DESKTOP", "Deepin");
+    }
+
     QApplication app(argc,argv);
+
     qInfo() << "start test cases ..............";
     ::testing::InitGoogleTest(&argc, argv);
     int ret = RUN_ALL_TESTS();
