@@ -1972,6 +1972,12 @@ TEST_F(CanvasGridViewTest, test_indexAt)
     tub.set(ADDR(DIconItemDelegate, editingIndex), myindex);
     QModelIndex ret = m_canvasGridView->indexAt(pos);
     EXPECT_TRUE(index == index);
+
+    //delete the test widget
+    if (widget) {
+        delete widget;
+        widget = nullptr;
+    }
 }
 #ifndef __arm__
 TEST_F(CanvasGridViewTest, test_dropEvent)
