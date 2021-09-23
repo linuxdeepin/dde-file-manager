@@ -99,66 +99,6 @@ FileIconItem::FileIconItem(QWidget *parent) :
     setFrameShape(QFrame::NoFrame);
     setFocusProxy(edit);
 
-    connect(edit, &QTextEdit::textChanged, this, [this] {
-        QSignalBlocker blocker(edit);
-        Q_UNUSED(blocker)
-
-        QString text = edit->toPlainText();
-        const QString old_text = text;
-
-        int text_length = text.length();
-        int text_line_height = fontMetrics().height();
-
-        QString tmpText = text;
-        text = DFMGlobal::preprocessingFileName(text);
-        if (tmpText != text){
-            // 修改文件的命名规则
-            showAlertMessage(tr("%1 are not allowed").arg("|[/\\*:\"']?<>"));
-        }
-
-        QVector<uint> list = text.toUcs4();
-        int cursor_pos = edit->textCursor().position() - text_length + text.length();
-
-        //        while (text.toLocal8Bit().size() > maxCharSize)
-        //        {
-        //            list.removeAt(--cursor_pos);
-
-        //            text = QString::fromUcs4(list.data(), list.size());
-        //        }
-        while (text.toLocal8Bit().size() > maxCharSize)
-            text.chop(1);
-
-        if (text.count() != old_text.count())
-        {
-            edit->setPlainText(text);
-        }
-
-        if (editTextStackCurrentItem() != text)
-        {
-            pushItemToEditTextStack(text);
-        }
-
-        QTextCursor cursor = edit->textCursor();
-
-        cursor.movePosition(QTextCursor::Start);
-
-        do
-        {
-            QTextBlockFormat format = cursor.blockFormat();
-
-            format.setLineHeight(text_line_height, QTextBlockFormat::FixedHeight);
-            cursor.setBlockFormat(format);
-        } while (cursor.movePosition(QTextCursor::NextBlock));
-
-        cursor.setPosition(cursor_pos);
-
-        edit->setTextCursor(cursor);
-        edit->setAlignment(Qt::AlignHCenter);
-
-        if (edit->isVisible()) {
-            updateEditorGeometry();
-        }
-    });
     connect(edit, &QTextEdit::customContextMenuRequested, this, &FileIconItem::popupEditContentMenu);
 }
 
@@ -194,7 +134,12 @@ void FileIconItem::setOpacity(qreal opacity)
 
 void FileIconItem::setMaxCharSize(int maxSize)
 {
-    maxCharSize = maxSize;
+    m_maxCharSize = maxSize;
+}
+
+int FileIconItem::maxCharSize()
+{
+    return m_maxCharSize;
 }
 
 QSize FileIconItem::sizeHint() const
@@ -242,6 +187,67 @@ void FileIconItem::editRedo()
     QTextCursor cursor = edit->textCursor();
     edit->setPlainText(editTextStackAdvance());
     edit->setTextCursor(cursor);
+}
+
+void FileIconItem::doLineEditTextChanged()
+{
+    QSignalBlocker blocker(edit);
+    Q_UNUSED(blocker)
+
+    const QString srcText = edit->toPlainText();
+    QString dstText = DFMGlobal::preprocessingFileName(srcText);
+
+    if (srcText != dstText){
+        // 修改文件的命名规则
+        showAlertMessage(tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
+        edit->setPlainText(dstText);
+    } else {
+        return;
+    }
+
+    QVector<uint> list = dstText.toUcs4();
+    int cursor_pos = edit->textCursor().position() - srcText.length() + dstText.length();
+
+    while (dstText.toLocal8Bit().size() > m_maxCharSize) {
+        list.removeAt(--cursor_pos);
+
+        dstText = QString::fromUcs4(list.data(), list.size());
+    }
+
+    while (dstText.toLocal8Bit().size() > m_maxCharSize) {
+        dstText.chop(1);
+    }
+
+    if (editTextStackCurrentItem() != dstText) {
+        pushItemToEditTextStack(dstText);
+    }
+
+    QTextCursor cursor = edit->textCursor();
+
+    cursor.movePosition(QTextCursor::Start);
+
+    do {
+        QTextBlockFormat format = cursor.blockFormat();
+
+        format.setLineHeight(fontMetrics().height(), QTextBlockFormat::FixedHeight);
+        cursor.setBlockFormat(format);
+    } while (cursor.movePosition(QTextCursor::NextBlock));
+
+    cursor.setPosition(cursor_pos);
+
+    edit->setTextCursor(cursor);
+    edit->setAlignment(Qt::AlignHCenter);
+
+    if (edit->isVisible()) {
+        updateEditorGeometry();
+    }
+}
+
+//提供外部调用的槽函数
+void FileIconItem::resizeFromEditTextChanged()
+{
+    //根据字符串的长度调整大小调整(之前的逻辑)
+    updateEditorGeometry();
 }
 
 void FileIconItem::showAlertMessage(const QString &text, int duration)
