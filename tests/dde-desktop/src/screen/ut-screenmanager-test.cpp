@@ -26,6 +26,7 @@
 #include <QList>
 #include <qpa/qplatformscreen.h>
 #include "stub.h"
+#include "stubext.h"
 #include "dbus/dbusdisplay.h"
 #include "dbus/dbusdock.h"
 #include "dbus/dbusmonitor.h"
@@ -44,8 +45,7 @@ namespace  {
     public:
         ScreenManagerTest():Test()
         {
-            qunsetenv("XDG_SESSION_TYPE");
-            qunsetenv("WAYLAND_DISPLAY");
+
         }
         QVector<ScreenPointer> screens;
         QList<QScreen *> reference;
@@ -62,13 +62,10 @@ namespace  {
     public:
         ScreenManagerTestWayland() : ScreenManagerTest()
         {
-            qputenv("XDG_SESSION_TYPE","wayland");
-            qputenv("WAYLAND_DISPLAY","wayland");
+
         }
         ~ScreenManagerTestWayland()
         {
-            qunsetenv("XDG_SESSION_TYPE");
-            qunsetenv("WAYLAND_DISPLAY");
         }
 
     };

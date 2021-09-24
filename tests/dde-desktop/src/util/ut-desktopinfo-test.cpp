@@ -21,8 +21,12 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+#include "stubext.h"
+
 #include "util/dde/ddesession.h"
 #include "util/dde/desktopinfo.h"
+
+#include <QApplication>
 
 TEST(DdeSession,register_null)
 {
@@ -50,8 +54,8 @@ TEST(DdeSession,register_content)
 
 TEST(DesktopInfo,wayland_dectected_nowayland)
 {
-    qunsetenv("XDG_SESSION_TYPE");
-    qunsetenv("WAYLAND_DISPLAY");
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(QApplication,platformName),[](){return "x11";});
 
     DesktopInfo info;
     EXPECT_EQ(info.waylandDectected(),false);
@@ -59,50 +63,11 @@ TEST(DesktopInfo,wayland_dectected_nowayland)
 
 TEST(DesktopInfo,wayland_dectected_wayland_session)
 {
-    qunsetenv("XDG_SESSION_TYPE");
-    qunsetenv("WAYLAND_DISPLAY");
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(QApplication,platformName),[](){return "wayland";});
 
-    qputenv("XDG_SESSION_TYPE","wayland");
     DesktopInfo info;
     EXPECT_EQ(info.waylandDectected(),true);
-    qunsetenv("XDG_SESSION_TYPE");
-}
-
-TEST(DesktopInfo,wayland_dectected_x11_session)
-{
-    qunsetenv("XDG_SESSION_TYPE");
-    qunsetenv("WAYLAND_DISPLAY");
-
-    qputenv("XDG_SESSION_TYPE","x11");
-    DesktopInfo info;
-    EXPECT_EQ(info.waylandDectected(),false);
-    qunsetenv("XDG_SESSION_TYPE");
-}
-
-TEST(DesktopInfo,wayland_dectected_wayland_display)
-{
-    qputenv("WAYLAND_DISPLAY","wayland");
-    DesktopInfo info;
-    EXPECT_EQ(info.waylandDectected(),true);
-    qunsetenv("WAYLAND_DISPLAY");
-}
-
-TEST(DesktopInfo,wayland_dectected_xcb_display)
-{
-    qputenv("WAYLAND_DISPLAY","xcb");
-    DesktopInfo info;
-    EXPECT_EQ(info.waylandDectected(),false);
-    qunsetenv("WAYLAND_DISPLAY");
-}
-
-TEST(DesktopInfo,wayland_dectected_wl_xcb)
-{
-    qputenv("XDG_SESSION_TYPE","wayland");
-    qputenv("WAYLAND_DISPLAY","xcb");
-    DesktopInfo info;
-    EXPECT_EQ(info.waylandDectected(),true);
-    qunsetenv("WAYLAND_DISPLAY");
-    qunsetenv("XDG_SESSION_TYPE");
 }
 
 TEST(WindowManager,xdg_null_desktop_null)

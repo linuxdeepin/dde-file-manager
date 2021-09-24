@@ -41,6 +41,7 @@
 
 #include <QPainter>
 #include <QTextCodec>
+#include <QApplication>
 
 using namespace stub_ext;
 
@@ -328,8 +329,12 @@ TEST_F(TestDFMGlobal, test_isDesktopFile)
 
 TEST_F(TestDFMGlobal, test_isWayLand)
 {
-    EXPECT_NO_FATAL_FAILURE(DFMGlobal::isWayLand());
-    EXPECT_NO_FATAL_FAILURE(DFMGlobal::isWayLand());
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(QApplication,platformName),[](){return "wayland";});
+    EXPECT_TRUE(DFMGlobal::isWayLand());
+
+    stub.set_lamda(ADDR(QApplication,platformName),[](){return "x11";});
+    EXPECT_FALSE(DFMGlobal::isWayLand());
 }
 
 TEST_F(TestDFMGlobal, test_showMultiFilesRenameDialog)

@@ -117,9 +117,9 @@ int main(int argc, char *argv[])
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
-    if (DesktopInfo().waylandDectected()) {
-        qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell"); //wayland shell
+    DApplication app(argc, argv);
 
+    if (DesktopInfo().waylandDectected()) {
         //! 以下代码用于视频预览使用
         setenv("PULSE_PROP_media.role", "video", 1);
         QSurfaceFormat format;
@@ -131,8 +131,6 @@ int main(int argc, char *argv[])
         //方案：设置环境变量来强制指定 使用NO_TITLEBAR
         qputenv("D_DXCB_FORCE_NO_TITLEBAR", "1");
     }
-
-    DApplication app(argc, argv);
 
     // 集成测试标签
 #ifdef ENABLE_ACCESSIBILITY

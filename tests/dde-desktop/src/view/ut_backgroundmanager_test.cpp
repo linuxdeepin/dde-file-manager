@@ -146,12 +146,6 @@ TEST_F(BackgroundManagerTest, onBackgroundBuild)
     EXPECT_EQ(m_manager->m_backgroundMap.value(primaryScreen)->geometry(), primaryScreen->geometry());
     m_manager->m_visible = oriVisible;
 
-    // 测试多屏代码
-    if (DesktopInfo().waylandDectected()) {
-        qputenv("XDG_SESSION_TYPE","");
-        qputenv("WAYLAND_DISPLAY","");
-    }
-
     ScreenManager *screenManager = static_cast<ScreenManager*>(ScreenMrg);
     QMap<QScreen *, ScreenPointer>  oriScreens;
 

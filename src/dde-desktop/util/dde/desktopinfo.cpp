@@ -23,6 +23,7 @@
 #include "desktopinfo.h"
 
 #include <QProcessEnvironment>
+#include <QApplication>
 
 DesktopInfo::DesktopInfo()
 {
@@ -37,8 +38,9 @@ DesktopInfo::DesktopInfo()
 
 bool DesktopInfo::waylandDectected()
 {
-    return XDG_SESSION_TYPE == QLatin1String("wayland") ||
-           WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive);
+    //! 该函数只能在QApplication之后调用才能返回有效的值，在此之前会返回空值
+    Q_ASSERT(qApp);
+    return QApplication::platformName() == "wayland";
 }
 
 DesktopInfo::WM DesktopInfo::windowManager()

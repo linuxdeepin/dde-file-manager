@@ -138,15 +138,6 @@ int main(int argc, char *argv[])
         qputenv("XDG_CURRENT_DESKTOP", "Deepin");
     }
 
-    if (DFMGlobal::isWayLand()) {
-        qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
-        //以下代码用于视频预览使用
-        setenv("PULSE_PROP_media.role", "video", 1);
-        QSurfaceFormat format;
-        format.setRenderableType(QSurfaceFormat::OpenGLES);
-        format.setDefaultFormat(format);
-    }
-
     winId_mtx.first = false;
 #ifdef ENABLE_PPROF
     ProfilerStart("pprof.prof");
@@ -166,6 +157,16 @@ int main(int argc, char *argv[])
 
     SingleApplication::initSources();
     SingleApplication app(argc, argv);
+
+    if (DFMGlobal::isWayLand()) {
+        //! 解决文管崩溃在defalte的问题，加上该环境变量，就不对图片进行压缩处理
+        qputenv("QT_NO_COMPRESS", "true");
+        //以下代码用于视频预览使用
+        setenv("PULSE_PROP_media.role", "video", 1);
+        QSurfaceFormat format;
+        format.setRenderableType(QSurfaceFormat::OpenGLES);
+        format.setDefaultFormat(format);
+    }
 
     app.setOrganizationName(QMAKE_ORGANIZATION_NAME);
     app.setApplicationName(QMAKE_TARGET);
