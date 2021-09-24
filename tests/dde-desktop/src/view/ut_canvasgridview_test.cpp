@@ -1928,7 +1928,8 @@ TEST_F(CanvasGridViewTest, test_indexAt)
     QRect rect = m_canvasGridView->visualRect(index);
     QPoint pos(rect.x() + 10, rect.y() + 10);
     static QModelIndexList mlist;
-    static QWidget* widget = nullptr;
+    static QWidget* widget = new QWidget;
+    widget->setGeometry(0, 0, 1600, 1000);
     mlist << index;
     QString myf = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     myf = myf + '/' + "new.txt";
@@ -1947,8 +1948,6 @@ TEST_F(CanvasGridViewTest, test_indexAt)
         return true;
     };
     QWidget*(*mywidget)() = [](){
-        widget = new QWidget;
-        widget->setGeometry(0, 0, 1600, 1000);
         return widget;
     };
     bool(*visible)() = [](){
