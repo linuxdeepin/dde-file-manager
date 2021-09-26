@@ -157,26 +157,6 @@
         <translation>OK</translation>
     </message>
     <message>
-        <source>Next</source>
-        <translation type="vanished">Pasuesi</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
-        <source>Done</source>
-        <translation type="vanished">U bë</translation>
-    </message>
-    <message>
-        <source>Retry</source>
-        <translation type="vanished">Riprovo</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="vanished">OK</translation>
-    </message>
-    <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="154"/>
         <source>File sending request timed out</source>
         <translation>Kërkesës për dërgim kartele i mbaroi koha</translation>
@@ -200,32 +180,32 @@
         <translation>Pajisja optike %1 s’ekziston</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="281"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="292"/>
         <source>Advanced settings</source>
         <translation>Rregullime të mëtejshme</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="305"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="316"/>
         <source>File system: </source>
         <translation>Sistem kartelash:</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="309"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="320"/>
         <source>ISO9660/Joliet (For Windows)</source>
         <translation>ISO9660/Joliet (Për Windows)</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="310"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="321"/>
         <source>ISO9660/Rock Ridge (For Unix)</source>
         <translation>ISO9660/Rock Ridge (Për Unix)</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="320"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="331"/>
         <source>%1 (Compatible with Windows CD/DVD mode)</source>
         <translation>%1 (E përputhshme me mënyrën CD/DVD Windows)</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="308"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="319"/>
         <source>ISO9660 Only</source>
         <translation>Vetëm ISO9660</translation>
     </message>
@@ -247,20 +227,20 @@
     <name>ComputerModel</name>
     <message>
         <location filename="../models/computermodel.cpp" line="64"/>
-        <location filename="../models/computermodel.cpp" line="137"/>
+        <location filename="../models/computermodel.cpp" line="139"/>
         <source>My Directories</source>
         <translation>Drejtoritë e Mia</translation>
     </message>
     <message>
         <location filename="../models/computermodel.cpp" line="82"/>
         <location filename="../models/computermodel.cpp" line="86"/>
-        <location filename="../models/computermodel.cpp" line="187"/>
-        <location filename="../models/computermodel.cpp" line="198"/>
+        <location filename="../models/computermodel.cpp" line="189"/>
         <location filename="../models/computermodel.cpp" line="200"/>
-        <location filename="../models/computermodel.cpp" line="629"/>
+        <location filename="../models/computermodel.cpp" line="202"/>
         <location filename="../models/computermodel.cpp" line="633"/>
-        <location filename="../models/computermodel.cpp" line="666"/>
+        <location filename="../models/computermodel.cpp" line="637"/>
         <location filename="../models/computermodel.cpp" line="670"/>
+        <location filename="../models/computermodel.cpp" line="674"/>
         <source>Disks</source>
         <translation>Disqe</translation>
     </message>
@@ -268,72 +248,72 @@
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="273"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="275"/>
         <source>Computer</source>
         <translation>Kompjuter</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="282"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="284"/>
         <source>Basic Info</source>
         <translation>Të dhëna Elementare</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="102"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="293"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="295"/>
         <source>Computer Name</source>
         <translation>Emër Kompjuteri</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="104"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="294"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="296"/>
         <source>Edition</source>
         <translation>Edicion</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="106"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="295"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="305"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="297"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="307"/>
         <source>Version</source>
         <translation>Version</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="108"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="296"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="298"/>
         <source>Type</source>
         <translation>Lloj</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="110"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="297"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="340"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="299"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="342"/>
         <source>Processor</source>
         <translation>Procesor</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="113"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="298"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="337"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="300"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="339"/>
         <source>Memory</source>
         <translation>Kujtesë</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="138"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="186"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="437"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="473"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="193"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="439"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="476"/>
         <source>Bit</source>
         <translation>Bit</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="212"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="483"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="215"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="486"/>
         <source>Available</source>
         <translation>Të passhme</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="359"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="361"/>
         <source>Obtaining...</source>
-        <translation type="unfinished"/>
+        <translation>Po merret…</translation>
     </message>
 </context>
 <context>
@@ -342,14 +322,6 @@
         <location filename="../dialogs/connecttoserverdialog.cpp" line="50"/>
         <source>Connect to Server</source>
         <translation>Lidhu te Shërbyesi</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
-        <source>Connect</source>
-        <translation type="vanished">Lidhu</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="166"/>
@@ -521,19 +493,10 @@
     </message>
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="359"/>
-        <source>1. It is not a DVD-R or DVD+R disc;
+        <source>1. It is not %1 disc;
 2. The version of this file system does not support adding files yet.</source>
-        <translation>1. S’është disk DVD-R ose DVD+R;
+        <translation>1. S’është disk %1;
 2. Versioni i këtij sistemi kartelash nuk mbulon ende shtim kartelash.</translation>
-    </message>
-</context>
-<context>
-    <name>DFMSideBarBookmarkItemHandler</name>
-    <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="147"/>
-        <source>Gotcha</source>
-        <comment>button</comment>
-        <translation>E mora vesh</translation>
     </message>
 </context>
 <context>
@@ -555,18 +518,6 @@
 <context>
     <name>DFMTaskWidget</name>
     <message>
-        <source>Keep both</source>
-        <translation type="vanished">Mbaji të dyja</translation>
-    </message>
-    <message>
-        <source>Skip</source>
-        <translation type="vanished">Anashkaloje</translation>
-    </message>
-    <message>
-        <source>Replace</source>
-        <translation type="vanished">Zëvendësoje</translation>
-    </message>
-    <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="210"/>
         <source>Do not ask again</source>
         <translation>Mos pyet sërish</translation>
@@ -580,10 +531,6 @@
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="388"/>
         <source>Please wait</source>
         <translation>Ju lutemi, prisni</translation>
-    </message>
-    <message>
-        <source>Retry</source>
-        <translation type="vanished">Riprovo</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="456"/>
@@ -823,14 +770,6 @@
         <translation>Shkyçeni përmes Kyçi</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
-        <source>Unlock</source>
-        <translation type="vanished">Shkyçe</translation>
-    </message>
-    <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="274"/>
         <source>Failed to unlock file vault</source>
         <translation>S’u arrit të shkyçet kasafortë kartelash</translation>
@@ -897,21 +836,9 @@
         <translation>Pasi të jetë fshirë, kartelat në të do të fshihen përgjithnjë</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="191"/>
         <source>Use Key</source>
         <translation>Përdor Kyç</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="vanished">Fshije</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="vanished">OK</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="115"/>
@@ -933,7 +860,7 @@
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="143"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="275"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="276"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
@@ -954,17 +881,17 @@
         <translation>Kyç rimarrjesh i gabuar</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="271"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="272"/>
         <source>Failed to delete file vault</source>
         <translation>S’u arrit të fshihet kasafortë kartelash</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="285"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="286"/>
         <source>Deleted successfully</source>
         <translation>U fshi me sukses</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="287"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="288"/>
         <source>Failed to delete</source>
         <translation>S’u arrit të fshihet</translation>
     </message>
@@ -987,14 +914,6 @@
         <translation>Verifikoni fjalëkalimin tuaj</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
-        <source>Unlock</source>
-        <translation type="vanished">Shkyçe</translation>
-    </message>
-    <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="110"/>
         <source>Password hint: %1</source>
         <translation>Ndihmëz fjalëkalimi: %1</translation>
@@ -1003,10 +922,6 @@
         <location filename="../views/dfmvaultunlockpages.cpp" line="246"/>
         <source>Failed to unlock file vault</source>
         <translation>S’u arrit të shkyçet kasafortë kartelash</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="vanished">OK</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="65"/>
@@ -1127,93 +1042,93 @@
         <translation>kopjoje</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1217"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1223"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation>S’u arrit të hapej drejtoria, shkak: emër shumë i gjatë kartele</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1425"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2048"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2948"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1431"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2054"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2954"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation>S’u arrit të hapej kartela, shkak: emër shumë i gjatë kartele</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3835"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3919"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3833"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3917"/>
         <source>Failed to write the file, cause:</source>
         <translation>S’u arrit të shkruhej kartela, shkaku:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4740"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4745"/>
         <source>Syncing data</source>
         <translation>Njëkohësim të dhënash</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4740"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4745"/>
         <source>Please wait</source>
         <translation>Ju lutemi, prisni</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1227"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1233"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>S’u arrit të krijohej drejtoria, shkaku: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1437"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1477"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2060"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2100"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2637"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2677"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1443"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1483"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2066"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2106"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2643"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2683"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>S’u arrit të hapej kartela, shkaku: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1473"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2096"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2673"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3779"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1479"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2102"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2679"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3778"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>S’u arrit të hapej kartela, shkak: Leje e mohuar</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1602"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2225"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1608"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2231"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>S’u arrit të lexohej kartela, shkaku: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1690"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1780"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2313"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2403"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1696"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1786"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2319"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2409"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>S’u arrit të shkruhej kartela, shkaku: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1928"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2544"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1934"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2550"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>Integriteti i kartelës qe cenuar, shkaku: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2960"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2966"/>
         <source>Failed to open the file, cause: </source>
         <translation>S’u arrit të hapej kartela, shkaku:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3041"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3047"/>
         <source>Failed to read the file, cause: </source>
         <translation>S’u arrit të lexohej kartela, shkaku:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3139"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3145"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>S’u arrit të fshihej kartela, shkaku: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3239"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3245"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>S’u arrit të krijohej simlidhje, shkaku: %1</translation>
     </message>
@@ -1221,77 +1136,57 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <source>Save</source>
-        <translation type="vanished">Ruaje</translation>
-    </message>
-    <message>
-        <location filename="../views/dfiledialog.cpp" line="1115"/>
-        <location filename="../views/dfiledialog.cpp" line="1412"/>
+        <location filename="../views/dfiledialog.cpp" line="1145"/>
+        <location filename="../views/dfiledialog.cpp" line="1442"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Ruaje</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1274"/>
-        <location filename="../views/dfiledialog.cpp" line="1315"/>
+        <location filename="../views/dfiledialog.cpp" line="1260"/>
+        <location filename="../views/dfiledialog.cpp" line="1307"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1275"/>
+        <location filename="../views/dfiledialog.cpp" line="1261"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Ripohojeni</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1314"/>
+        <location filename="../views/dfiledialog.cpp" line="1305"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 ekziston tashmë, doni të mbishkruhet?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1316"/>
+        <location filename="../views/dfiledialog.cpp" line="1308"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Zëvendësoje</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1409"/>
+        <location filename="../views/dfiledialog.cpp" line="1439"/>
         <source>Open</source>
         <comment>button</comment>
-        <translation>Hap</translation>
+        <translation>Hape</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
-        <location filename="../views/dfiledialog.cpp" line="1273"/>
+        <location filename="../views/dfiledialog.cpp" line="1259"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation>Kjo kartelë do të kalohet e fshehur, nëse emri i kartelës fillon me një pikë (.). Doni të bëhet fshehja?</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation type="vanished">Ripohojeni</translation>
-    </message>
-    <message>
-        <source>Replace</source>
-        <translation type="vanished">Zëvendësoje</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation type="vanished">Hap</translation>
     </message>
 </context>
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1154"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1215"/>
         <source>Trash</source>
         <translation>Hedhurina</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1163"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1224"/>
         <source>Empty</source>
         <translation>E zbrazët</translation>
     </message>
@@ -1299,41 +1194,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1447"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1446"/>
         <location filename="../models/trashfileinfo.cpp" line="321"/>
         <source>Name</source>
         <translation>Emër</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1121"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1448"/>
         <location filename="../models/searchfileinfo.cpp" line="130"/>
         <source>Time modified</source>
         <translation>Kohë kur u ndryshua</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1450"/>
         <source>Size</source>
         <translation>Madhësi</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1452"/>
         <source>Type</source>
         <translation>Lloj</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1455"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1454"/>
         <source>Time created</source>
         <translation>Kohë kur u krijua</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="843"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1457"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1456"/>
         <source>Last access</source>
         <translation>Hyrja e fundit</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1459"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1458"/>
         <location filename="../models/recentfileinfo.cpp" line="211"/>
         <location filename="../models/searchfileinfo.cpp" line="128"/>
         <location filename="../models/searchfileinfo.cpp" line="133"/>
@@ -1344,22 +1239,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2653"/>
+        <location filename="../views/dfileview.cpp" line="2634"/>
         <source>Disc mount error</source>
         <translation>Gabim montimi disku</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2653"/>
+        <location filename="../views/dfileview.cpp" line="2634"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>Disku është në përdorim, ju lutemi, përfundoni procesin në xhirim dhe rimontoni diskun.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2667"/>
+        <location filename="../views/dfileview.cpp" line="2648"/>
         <source>Mounting failed</source>
         <translation>Montimi dështoi</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3371"/>
+        <location filename="../views/dfileview.cpp" line="3352"/>
         <source>(Reverse)</source>
         <translation>(Së prapthi)</translation>
     </message>
@@ -1367,7 +1262,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="658"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="660"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>Shto etiketë &quot;%1&quot;</translation>
     </message>
@@ -1485,13 +1380,13 @@
         <translation>Shtegu origjinal %1 Shtegu i synuar %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="828"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="826"/>
         <source>Merge</source>
         <comment>button</comment>
         <translation>Përzieji</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="831"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="829"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Zëvendësoje</translation>
@@ -1525,14 +1420,6 @@
         <location filename="../../dialogs/dtaskdialog.cpp" line="811"/>
         <source>Calculating space, please wait</source>
         <translation>Po llogaritet hapësirë, ju lutemi, pritni</translation>
-    </message>
-    <message>
-        <source>Merge</source>
-        <translation type="vanished">Përzieji</translation>
-    </message>
-    <message>
-        <source>Replace</source>
-        <translation type="vanished">Zëvendësoje</translation>
     </message>
 </context>
 <context>
@@ -1573,7 +1460,7 @@
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="117"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="132"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="717"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="719"/>
         <source>%1 Volume</source>
         <translation>Vëllim %1</translation>
     </message>
@@ -1584,17 +1471,17 @@
         <translation>Disk të Dhënash</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="712"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="714"/>
         <source>%1 Drive</source>
         <translation>Pajisje %1</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="696"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="698"/>
         <source>Blank %1 Disc</source>
         <translation>Zbardh Diskun %1</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="715"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="717"/>
         <source>%1 Encrypted</source>
         <translation>%1 i Fshehtëzuar</translation>
     </message>
@@ -1602,511 +1489,440 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="406"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1152"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1177"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="405"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1151"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1166"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1176"/>
         <source>Operation failed!</source>
         <translation>Veprimi dështoi!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="407"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="406"/>
         <source>Target folder is inside the source folder!</source>
         <translation>Dosja e synuar gjendet brenda dosjes burim!</translation>
     </message>
     <message>
-        <source>OK</source>
-        <translation type="vanished">OK</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="432"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="431"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>Doni që %1 të xhirohet apo të shfaqet lënda e saj?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="433"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="432"/>
         <source>It is an executable text file.</source>
         <translation>Është kartelë tekst e ekzekutueshme.</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
-        <source>Run</source>
-        <translation type="vanished">Xhiroje</translation>
-    </message>
-    <message>
-        <source>Run in terminal</source>
-        <translation type="vanished">Xhiroje në terminal</translation>
-    </message>
-    <message>
-        <source>Display</source>
-        <translation type="vanished">Shfaqe</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="464"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="463"/>
         <source>It is an executable file.</source>
         <translation>Është kartelë e ekzekutueshme.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="480"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="479"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>Kartela s’është e ekzekutueshme, doni të shtohet leja e ekzekutimit dhe të xhirohet?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="494"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="493"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot; ekziston tashmë, ju lutemi, përdorni një emër tjetër.</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Ripohojeni</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="509"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="508"/>
         <source>The file name must not contain two dots (..)</source>
         <translation>Emri i kartelës s’duhet të përmbajë dy pika (..)</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="522"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="521"/>
         <source>Are you sure you want to erase all data on the disc?</source>
         <translation>Jeni i sigurt se doni të fshihen krejt të dhënat te disku?</translation>
     </message>
     <message>
-        <source>Erase</source>
-        <translation type="vanished">Fshije</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="550"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="549"/>
         <source>How do you want to use this disc?</source>
         <translation>Si doni ta përdorni këtë disk?</translation>
     </message>
     <message>
-        <source>Burn image</source>
-        <translation type="vanished">Shkruani pamje</translation>
-    </message>
-    <message>
-        <source>Burn files</source>
-        <translation type="vanished">Shkruani kartela</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="583"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="582"/>
         <source>Disc erase failed</source>
         <translation>Fshirja e diskut dështoi</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="587"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="586"/>
         <source>Burn process failed</source>
         <translation>Procesi i shkrimit dështoi</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="593"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="592"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="609"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="608"/>
         <source>Show details</source>
         <translation>Shfaq hollësi</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="613"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="612"/>
         <source>Hide details</source>
         <translation>Fshihi hollësitë</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="614"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="613"/>
         <source>Error</source>
         <translation>Gabim</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="645"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="644"/>
         <source>Permanently delete %1?</source>
         <translation>Të fshihet përgjithmonë %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="646"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="645"/>
         <source>Permanently delete %1 items?</source>
         <translation>Të fshihen përgjithmonë %1 objekte?</translation>
     </message>
     <message>
-        <source>Delete</source>
-        <translation type="vanished">Fshije</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="664"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="663"/>
         <source>Empty</source>
         <translation>E zbrazët</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="709"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="708"/>
         <source>Do you want to delete %1?</source>
         <translation>Doni të fshihet %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="710"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="709"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>Doni të fshihen %1 objektet e përzgjedhur?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="740"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="739"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>Na ndjeni, s’arrihet të gjendet drejtoria juaj e faqerojtësve, të hiqet?</translation>
     </message>
     <message>
-        <source>Remove</source>
-        <translation type="vanished">Hiqe</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="905"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="904"/>
         <source>Name: </source>
         <translation>Emër: </translation>
     </message>
     <message>
-        <source>Force unmount</source>
-        <translation type="vanished">Detyro çmontimin</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="931"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="930"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1 së cilës i referohet kjo shkurtore, është ndryshuar ose lëvizur</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="935"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="934"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Doni të fshihet kjo shkurtore？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1033"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1032"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>U dështua, madhësia e kartelës duhet të jetë më pak 4GB.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1042"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1041"/>
         <source>Fail to create symlink, cause:</source>
         <translation>S’u arrit të krijohej simlidhje, shkaku:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1060"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1059"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Kartelat e përzgjedhura përmbajnë kartelë/drejtori sistemit dhe s’mund të fshihen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1096"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1095"/>
         <source>Unable to find the original file</source>
         <translation>S’arrihet të gjendet kartela origjinale</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1168"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1204"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1203"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>S’keni leje të bëni veprime në kartelë/dosje!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1179"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1178"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
         <translation>S’u arrit të rikthehet %1 kartelë, kartela burim s’ekziston</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1221"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1220"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Na ndjeni, s’keni leje të veproni me %1 kartelën/dosjen(et) vijuese!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1303"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1302"/>
         <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
         <translation>2. Hiqini shenjën mundësive &quot;Aktivizo nisje të shpejtë&quot; dhe &quot;Plogështoje&quot; te rregullimet rreth fikjeve dhe riniseni</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1304"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1303"/>
         <source>3. Reboot and enter %1</source>
         <translation>3. Riniseni dhe jepni %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1321"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1320"/>
         <source>Reboot</source>
         <comment>button</comment>
         <translation>Rinisu</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1445"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1444"/>
         <source>Unable to access %1</source>
         <translation>S’arrihet të hyhet në %1</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="723"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1528"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1527"/>
         <source>Sending files now, please try later</source>
         <translation>Tani po dërgohen kartela, ju lutemi, provoni më vonë</translation>
     </message>
     <message>
-        <source>Format</source>
-        <translation type="vanished">Formatoje</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1577"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1576"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>Që të përdorni pajisjen, së pari duhet ta formatoni diskun. Jeni i sigurt se doni të formatohet tani?</translation>
     </message>
     <message>
-        <source>Stop</source>
-        <translation type="vanished">Ndale</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1592"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1591"/>
         <source>Scanning the device, stop it?</source>
         <translation>Po skanohet pajisja, të ndalet?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1649"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1648"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Dosja e ndarjes s’mund të emërtohet sipas emrin të tanishëm të përdoruesit</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="463"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="462"/>
         <source>Do you want to run %1?</source>
         <translation>Doni të xhirohet %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="555"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="554"/>
         <source>Burn image</source>
         <comment>button</comment>
         <translation>Shkruani pamje</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="556"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="555"/>
         <source>Burn files</source>
         <comment>button</comment>
         <translation>Shkruani kartela</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="643"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="642"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Jeni i sigurt se doni të zbrazet %1 objekt?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="644"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="643"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Jeni i sigurt se doni të zbrazen %1 objekte?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="537"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="688"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="536"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="687"/>
         <source>This action cannot be undone</source>
         <translation>Ky veprim s’mund të zhbëhet</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="409"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="635"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1022"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1035"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1044"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1062"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1159"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1170"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1184"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1250"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1651"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="408"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="634"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1021"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1034"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1043"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1061"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1158"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1169"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1183"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1249"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1650"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="439"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="465"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="481"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="527"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="554"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="652"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="726"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="743"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="907"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="937"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1320"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1575"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1590"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="438"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="464"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="480"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="526"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="553"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="651"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="725"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="742"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="906"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="936"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1319"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1574"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1589"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="440"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="467"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="482"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="439"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="466"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="481"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>Xhiroje</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="441"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="466"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="440"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="465"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>Xhiroje në terminal</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="441"/>
         <source>Display</source>
         <comment>button</comment>
         <translation>Shfaqe</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="496"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="511"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="624"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="938"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1344"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1448"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="495"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="510"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="623"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="937"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
+        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Ripohojeni</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="528"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="527"/>
         <source>Erase</source>
         <comment>button</comment>
         <translation>Fshije</translation>
     </message>
     <message>
-        <source>Burn image,</source>
-        <translation type="vanished">Shkruani pamje,</translation>
-    </message>
-    <message>
-        <source>Burn files,</source>
-        <translation type="vanished">Shkruani kartela,</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="590"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="589"/>
         <source>Data verification failed</source>
         <translation>Verifikimi i të dhënave dështoi</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="623"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="622"/>
         <source>Show details</source>
         <comment>button</comment>
         <translation>Shfaq hollësi</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="653"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="727"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="652"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="726"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>Fshije</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="744"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="743"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Hiqe</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="904"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="903"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Disku është i zënë, s’mund të montohet</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="908"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="907"/>
         <source>Force unmount</source>
         <comment>button</comment>
         <translation>Detyro çmontimin</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1021"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1020"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
         <translation>S’arrihet të kopjohet. S’ka hapësirë të mjaftueshme te disku i synuar.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1154"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1153"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>S’u arrit të rikthehet %1 kartelë, dosja e synuar është vetëm-lexim</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1156"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1155"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>S’u arrit të rikthehen %1 kartela, dosja e synuar është vetëm-lexim</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1181"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1180"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
         <translation>S’u arrit të rikthehet %1 kartela, kartelat burim s’ekzistojnë</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1288"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1287"/>
         <source>Mount partition%1 to be read only</source>
         <translation>Montoje partition%1 vetëm për lexim</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1292"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1291"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
         <translation>Disqet nën Windows s’do të jenë në gjendje të lexohen dhe shkruhen normalisht, nëse i vihet shenjë &quot;Aktivizo nisje të shpejtë (e rekomanduar)&quot;, te rregullimet për Fikje</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1296"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1295"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
         <translation>Ju lutemi, rikthejeni duke ndjekur hapat për hyrje normale në disk Windows</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1302"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1301"/>
         <source>1. Reboot to enter Windows</source>
         <translation>1. Bëni rinisje që të hyhet në Windows</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1576"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1575"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>Formatoje</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1591"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1590"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>Ndale</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation type="vanished">Rinisu</translation>
     </message>
 </context>
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="641"/>
-        <location filename="../controllers/filecontroller.cpp" line="697"/>
-        <location filename="../controllers/filecontroller.cpp" line="760"/>
-        <location filename="../controllers/filecontroller.cpp" line="786"/>
+        <location filename="../controllers/filecontroller.cpp" line="629"/>
+        <location filename="../controllers/filecontroller.cpp" line="685"/>
+        <location filename="../controllers/filecontroller.cpp" line="748"/>
+        <location filename="../controllers/filecontroller.cpp" line="774"/>
         <source>Unable to find the original file</source>
         <translation>S’arrihet të gjendet kartela origjinale</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="819"/>
-        <location filename="../controllers/filecontroller.cpp" line="838"/>
-        <location filename="../controllers/filecontroller.cpp" line="857"/>
+        <location filename="../controllers/filecontroller.cpp" line="807"/>
+        <location filename="../controllers/filecontroller.cpp" line="826"/>
+        <location filename="../controllers/filecontroller.cpp" line="845"/>
         <source>Kindly Reminder</source>
         <translation>Kujtues i Sjellshëm</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="819"/>
-        <location filename="../controllers/filecontroller.cpp" line="838"/>
-        <location filename="../controllers/filecontroller.cpp" line="857"/>
+        <location filename="../controllers/filecontroller.cpp" line="807"/>
+        <location filename="../controllers/filecontroller.cpp" line="826"/>
+        <location filename="../controllers/filecontroller.cpp" line="845"/>
         <source>Please install File Roller first and then continue</source>
         <translation>Ju lutemi, së pari, instaloni File Roller dhe mandej vazhdoni</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1503"/>
-        <location filename="../controllers/filecontroller.cpp" line="1523"/>
+        <location filename="../controllers/filecontroller.cpp" line="1507"/>
+        <location filename="../controllers/filecontroller.cpp" line="1527"/>
         <source>Unable to create files here: %1</source>
         <translation>S’arrihet të krijohen kartela këtu: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1505"/>
+        <location filename="../controllers/filecontroller.cpp" line="1509"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Ripohojeni</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation type="vanished">Ripohojeni</translation>
     </message>
 </context>
 <context>
@@ -2122,8 +1938,28 @@
         <translation>Formatoje</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
+        <location filename="../views/filedialogstatusbar.cpp" line="84"/>
+        <source>Save</source>
+        <comment>button</comment>
+        <translation>Ruaje</translation>
+    </message>
+    <message>
+        <location filename="../views/filedialogstatusbar.cpp" line="84"/>
+        <source>Open</source>
+        <comment>button</comment>
+        <translation>Hape</translation>
+    </message>
+    <message>
+        <location filename="../views/filedialogstatusbar.cpp" line="92"/>
+        <source>Save File</source>
+        <comment>button</comment>
+        <translation>Ruaje Kartelën</translation>
+    </message>
+    <message>
+        <location filename="../views/filedialogstatusbar.cpp" line="92"/>
+        <source>Open File</source>
+        <comment>button</comment>
+        <translation>Hapni Kartelë</translation>
     </message>
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="59"/>
@@ -2132,26 +1968,6 @@
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
-    </message>
-    <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="84"/>
-        <source>Save</source>
-        <translation>Ruaje</translation>
-    </message>
-    <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="84"/>
-        <source>Open</source>
-        <translation>Hape</translation>
-    </message>
-    <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="92"/>
-        <source>Save File</source>
-        <translation>Ruaje Kartelën</translation>
-    </message>
-    <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="92"/>
-        <source>Open File</source>
-        <translation>Hapni Kartelë</translation>
     </message>
 </context>
 <context>
@@ -2706,10 +2522,6 @@
         <translation>Disku është montuar nga përdoruesi &quot;%1&quot;, s’mund të çmontoni.</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Ripohojeni</translation>
-    </message>
-    <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1798"/>
         <source>Cannot unmount the device</source>
         <translation>Nuk çmontohet dot pajisja</translation>
@@ -2838,14 +2650,6 @@
 <context>
     <name>MountAskPasswordDialog</name>
     <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
-        <source>Connect</source>
-        <translation type="vanished">Lidhu</translation>
-    </message>
-    <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="47"/>
         <source>Cancel</source>
         <comment>button</comment>
@@ -2895,14 +2699,6 @@
 </context>
 <context>
     <name>MountSecretDiskAskPasswordDialog</name>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
-        <source>Unlock</source>
-        <translation type="vanished">Shkyçe</translation>
-    </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="47"/>
         <source>Cancel</source>
@@ -2955,14 +2751,6 @@
         <comment>button</comment>
         <translation>Fshije</translation>
     </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="vanished">Fshije</translation>
-    </message>
 </context>
 <context>
     <name>OpenWithDialog</name>
@@ -2992,14 +2780,6 @@
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Ripohojeni</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation type="vanished">Ripohojeni</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="238"/>
@@ -3057,8 +2837,8 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="66"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="661"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="689"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="663"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="691"/>
         <source>System Disk</source>
         <translation>Disk Sistemi</translation>
     </message>
@@ -3126,17 +2906,17 @@
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1319"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1323"/>
         <source>Hide this folder</source>
         <translation>Fshihe këtë dosje</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1319"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1323"/>
         <source>Hide this file</source>
         <translation>Fshihe këtë kartelë</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1700"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1704"/>
         <source>Allow to execute as program</source>
         <translation>Lejo të ekzekutohet si program</translation>
     </message>
@@ -3145,21 +2925,21 @@
     <name>QObject</name>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1195"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="839"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="227"/>
         <source>Size</source>
         <translation>Madhësi</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1237"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1462"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1466"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="236"/>
         <source>Contains</source>
         <translation>Përmban</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1196"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="843"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="228"/>
         <source>Type</source>
         <translation>Lloj</translation>
@@ -3168,129 +2948,129 @@
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="175"/>
         <location filename="../dialogs/propertydialog.cpp" line="1199"/>
         <location filename="../dialogs/propertydialog.cpp" line="1220"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="364"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="368"/>
         <source>Time modified</source>
         <translation>Kohë kur u ndryshua</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1465"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1469"/>
         <source>Free space</source>
         <translation>Hapësirë e lirë</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1458"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1462"/>
         <source>Total space</source>
         <translation>Hapësirë gjithsej</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1209"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="355"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="359"/>
         <source>Time locked</source>
         <translation>Kyçur në kohë</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1593"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1597"/>
         <source>Access denied</source>
         <translation>Hyrja u mohua</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1594"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1606"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1598"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1610"/>
         <source>Executable</source>
         <translation>E ekzekutueshme</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1595"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1596"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1599"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1600"/>
         <source>Write only</source>
         <translation>Vetëm shkrim</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1597"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1598"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1601"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1602"/>
         <source>Read only</source>
         <translation>Vetëm lexim</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1599"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1600"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1603"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1604"/>
         <source>Read-write</source>
         <translation>Lexim-shkrim</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1696"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1700"/>
         <source>Others</source>
         <translation>Të tjera</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1694"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1698"/>
         <source>Owner</source>
         <translation>Pronar</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1442"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1446"/>
         <source>Device type</source>
         <translation>Lloj pajisjeje</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1460"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1464"/>
         <source>File system</source>
         <translation>Sistem kartelash</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1695"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1699"/>
         <source>Group</source>
         <translation>Grup</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="790"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="793"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <source>Open</source>
         <translation>Hape</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
         <source>Lock</source>
         <translation>Kyçe</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="876"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
         <source>Auto lock</source>
         <translation>Vetëkyçu</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="877"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
         <source>Never</source>
         <translation>Kurrë</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
         <source>5 minutes</source>
         <translation>5 minuta</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
         <source>10 minutes</source>
         <translation>10 minuta</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
         <source>20 minutes</source>
         <translation>20 minuta</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
         <source>Delete File Vault</source>
         <translation>Fshi Kasafortë Kartelash</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="885"/>
         <source>Unlock</source>
         <translation>Shkyçe</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="886"/>
         <source>Unlock by key</source>
         <translation>Shkyçe përmes kyçi</translation>
     </message>
@@ -3298,7 +3078,7 @@
         <location filename="../dialogs/filepreviewdialog.cpp" line="97"/>
         <source>Open</source>
         <comment>button</comment>
-        <translation>Hap</translation>
+        <translation>Hape</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="213"/>
@@ -3325,9 +3105,9 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="95"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="87"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="68"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="791"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="794"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="609"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="612"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="58"/>
         <source>Open in new window</source>
         <translation>Hape në dritare të re</translation>
@@ -3336,257 +3116,257 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="99"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="91"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="72"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="792"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="613"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="616"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="62"/>
         <source>Open in new tab</source>
         <translation>Hape në skedë të re</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
         <source>Open with</source>
         <translation>Hape me</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="803"/>
         <location filename="../plugins/dfmadditionalmenu.cpp" line="369"/>
         <source>Compress</source>
         <translation>Ngjeshe</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
         <source>Extract</source>
         <translation>Përfto</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="805"/>
         <source>Extract here</source>
         <translation>Përftoje këtu</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="803"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
         <source>Cut</source>
         <translation>Prije</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="807"/>
         <source>Copy</source>
         <translation>Kopjoje</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="805"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
         <source>Paste</source>
         <translation>Ngjite</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="105"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="78"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="807"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="867"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="809"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="810"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="870"/>
         <source>Rename</source>
         <translation>Riemërtoni</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="112"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="85"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="837"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
         <source>Remove</source>
         <translation>Hiqe</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="809"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
         <source>Create link</source>
         <translation>Krijo lidhje</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="810"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
         <source>Send to desktop</source>
         <translation>Dërgoje në desktop</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="811"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
         <source>Send to</source>
         <translation>Dërgoje te</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="815"/>
         <source>Bluetooth</source>
         <translation>Bluetooth</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="816"/>
         <source>Add to bookmark</source>
         <translation>Shtoni faqerojtës</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="118"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="120"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="816"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="68"/>
         <source>Properties</source>
         <translation>Veti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="818"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="821"/>
         <source>New folder</source>
         <translation>Dosje e re</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
         <source>New window</source>
         <translation>Dritare e re</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="820"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="823"/>
         <source>Select all</source>
         <translation>Përzgjidhi krejt</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="98"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="821"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="824"/>
         <source>Clear recent history</source>
         <translation>Spastro historik së fundi</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1164"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1225"/>
         <source>Empty Trash</source>
         <translation>Zbraz Hedhurinat</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="823"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
         <source>Display as</source>
         <translation>Shfaqe si</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="824"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="827"/>
         <source>Sort by</source>
         <translation>Renditi sipas</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="828"/>
         <source>New document</source>
         <translation>Dokument i ri</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1197"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="841"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
         <source>Time created</source>
         <translation>Kohë kur u krijua</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
         <source>Log out and unmount</source>
         <translation>Bëj daljen dhe çmontoje</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1200"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="382"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="386"/>
         <source>Source path</source>
         <translation>Shteg burimi</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
         <source>Share folder</source>
         <translation>Dosje ndarjesh</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
         <source>Cancel sharing</source>
         <translation>Anuloje ndarjen me të tjerët</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
         <source>Connect to Server</source>
         <translation>Lidhu te Shërbyesi</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
         <source>Set share password</source>
         <translation>Caktoni fjalëkalim ndarjeje</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
         <source>Format</source>
         <translation>Format</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
         <source>Tag information</source>
         <translation>Të dhëna etikete</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <source>Open as administrator</source>
         <translation>Hapeni si përgjegjës</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
         <source>Select default program</source>
         <translation>Përzgjidhni program parazgjedhje</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
         <source>Open file location</source>
         <translation>Hap vendndodhje kartele</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="811"/>
         <source>Remove bookmark</source>
         <translation>Hiqe faqerojtësin</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="815"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="865"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="817"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="818"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="868"/>
         <source>Delete</source>
         <translation>Fshije</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="829"/>
         <source>Office Text</source>
         <translation>Tekst Zyrash</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="827"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="830"/>
         <source>Spreadsheets</source>
         <translation>Fletëllogaritje</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="829"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="832"/>
         <source>Plain Text</source>
         <translation>Tekst i Thjeshtë</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="830"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="833"/>
         <source>Open in terminal</source>
         <translation>Hape në terminal</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="831"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="834"/>
         <source>Restore</source>
         <translation>Riktheje</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="832"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="835"/>
         <source>Restore all</source>
         <translation>Riktheji krejt</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
-        <location filename="../models/computermodel.cpp" line="121"/>
-        <location filename="../models/computermodel.cpp" line="144"/>
-        <location filename="../models/computermodel.cpp" line="163"/>
-        <location filename="../models/computermodel.cpp" line="182"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
+        <location filename="../models/computermodel.cpp" line="123"/>
+        <location filename="../models/computermodel.cpp" line="146"/>
+        <location filename="../models/computermodel.cpp" line="165"/>
+        <location filename="../models/computermodel.cpp" line="184"/>
         <source>File Vault</source>
         <translation>Kasafortë Kartelash</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
         <source>Add to disc</source>
         <translation>Shtoje në disk</translation>
     </message>
@@ -3601,14 +3381,14 @@
         <translation>Hape pas vetëmontimi</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="833"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="869"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="836"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
         <source>Mount</source>
         <translation>Montoje</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="49"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="834"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="837"/>
         <source>Unmount</source>
         <translation>Çmontoje</translation>
     </message>
@@ -3623,175 +3403,175 @@
         <translation>Shkruaje</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="254"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="265"/>
         <source>Disc name:</source>
         <translation>Emër disku:</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="331"/>
-        <location filename="../dialogs/burnoptdialog.cpp" line="333"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="342"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="344"/>
         <source>Maximum</source>
         <translation>Maksimum</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="347"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="358"/>
         <source>Allow files to be added later</source>
         <translation>Lejo shtim kartelash më vonë</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="357"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="368"/>
         <source>Verify data</source>
         <translation>Verifikoni Shkarkime](verify-downloads): Verifikoni pacenueshmëri të dhënash të shkarkimeve</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="328"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="339"/>
         <source>Write speed:</source>
         <translation>Shpejtësi shkrimi:</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="342"/>
-        <location filename="../dialogs/burnoptdialog.cpp" line="242"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="253"/>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="309"/>
-        <location filename="../views/drenamebar.cpp" line="296"/>
+        <location filename="../views/drenamebar.cpp" line="293"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="243"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="254"/>
         <source>Burn</source>
         <comment>button</comment>
         <translation>Shkruaje</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="361"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="835"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="372"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
         <source>Eject</source>
         <translation>Nxirre</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="836"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="839"/>
         <source>Safely Remove</source>
         <translation>Hiqeni Pa Rrezik</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="841"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="217"/>
         <source>Name</source>
         <translation>Emër</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
         <source>Settings</source>
         <translation>Rregullime</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
         <source>Exit</source>
         <translation>Dalje</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
         <source>Icon</source>
         <translation>Ikonë</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
         <source>List</source>
         <translation>Listë</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
         <source>Extend</source>
         <translation>Zgjeroje</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
         <source>Set as wallpaper</source>
         <translation>Vëre si sfond</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="305"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1415"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1416"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1417"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1419"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1420"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1421"/>
         <source>Local disk</source>
         <translation>Disk vendor</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="307"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1418"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1422"/>
         <source>Removable disk</source>
         <translation>Disk i heqshëm</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="309"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1420"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1421"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1424"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1425"/>
         <source>Network shared directory</source>
         <translation>Drejtori e përbashkët në rrjet</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="311"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1422"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1426"/>
         <source>Android mobile device</source>
         <translation>Pajisje celulare Android</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="313"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1423"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1427"/>
         <source>Apple mobile device</source>
         <translation>Pajisje celulare Apple</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="315"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1424"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1428"/>
         <source>Camera</source>
         <translation>Kamerë</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="317"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1419"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1423"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="319"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1442"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1446"/>
         <source>Unknown device</source>
         <translation>Pajisje e panjohur</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="326"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1462"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1466"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="716"/>
         <source>%1 item</source>
         <translation>%1 objekt</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="328"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1462"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1466"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="718"/>
         <source>%1 items</source>
         <translation>%1 objekte</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1206"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1226"/>
         <source>Shortcut</source>
         <translation>Shkurtore</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="751"/>
+        <location filename="../interfaces/dfileservices.cpp" line="768"/>
         <source>Create symlink</source>
         <translation>Krijo simlidhje</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
         <source>Path</source>
         <translation>Shteg</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
         <location filename="../models/trashfileinfo.cpp" line="325"/>
         <location filename="../models/trashfileinfo.cpp" line="333"/>
         <source>Time deleted</source>
@@ -3856,7 +3636,7 @@
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="537"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="828"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="831"/>
         <source>Presentation</source>
         <translation>Paraqitje</translation>
     </message>
@@ -3882,19 +3662,19 @@
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="85"/>
-        <location filename="../views/drenamebar.cpp" line="244"/>
+        <location filename="../views/drenamebar.cpp" line="237"/>
         <source>Replace Text</source>
         <translation>Zëvendësoni Tekst</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="85"/>
-        <location filename="../views/drenamebar.cpp" line="244"/>
+        <location filename="../views/drenamebar.cpp" line="237"/>
         <source>Add Text</source>
         <translation>Shtoni Tekst</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="85"/>
-        <location filename="../views/drenamebar.cpp" line="244"/>
+        <location filename="../views/drenamebar.cpp" line="237"/>
         <source>Custom Text</source>
         <translation>Tekst Vetjak</translation>
     </message>
@@ -3910,7 +3690,7 @@
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="99"/>
-        <location filename="../views/drenamebar.cpp" line="259"/>
+        <location filename="../views/drenamebar.cpp" line="252"/>
         <source>Optional</source>
         <translation>Opsionale</translation>
     </message>
@@ -3936,7 +3716,7 @@
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="310"/>
-        <location filename="../views/drenamebar.cpp" line="298"/>
+        <location filename="../views/drenamebar.cpp" line="295"/>
         <source>Rename</source>
         <comment>button</comment>
         <translation>Riemërtoni</translation>
@@ -3946,78 +3726,74 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="106"/>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="120"/>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="126"/>
-        <location filename="../views/drenamebar.cpp" line="252"/>
-        <location filename="../views/drenamebar.cpp" line="266"/>
+        <location filename="../views/drenamebar.cpp" line="245"/>
+        <location filename="../views/drenamebar.cpp" line="259"/>
+        <location filename="../views/drenamebar.cpp" line="273"/>
         <location filename="../views/drenamebar.cpp" line="280"/>
-        <location filename="../views/drenamebar.cpp" line="287"/>
         <source>Required</source>
         <translation>E domosdoshme</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="113"/>
-        <location filename="../views/drenamebar.cpp" line="273"/>
+        <location filename="../views/drenamebar.cpp" line="266"/>
         <source>Before file name</source>
         <translation>Para emri kartele</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="113"/>
-        <location filename="../views/drenamebar.cpp" line="273"/>
+        <location filename="../views/drenamebar.cpp" line="266"/>
         <source>After file name</source>
         <translation>Pas emri kartele</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="250"/>
+        <location filename="../views/drenamebar.cpp" line="243"/>
         <source>Find</source>
         <translation>Gjej</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="258"/>
+        <location filename="../views/drenamebar.cpp" line="251"/>
         <source>Replace</source>
         <translation>Zëvendësoje</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="265"/>
+        <location filename="../views/drenamebar.cpp" line="258"/>
         <source>Add</source>
         <translation>Shto</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="286"/>
+        <location filename="../views/drenamebar.cpp" line="279"/>
         <source>Start at</source>
         <translation>Fillo në</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1248"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="336"/>
-        <location filename="../views/drenamebar.cpp" line="272"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="340"/>
+        <location filename="../views/drenamebar.cpp" line="265"/>
         <source>Location</source>
         <translation>Vendndodhje</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="279"/>
+        <location filename="../views/drenamebar.cpp" line="272"/>
         <source>File name</source>
         <translation>Emër kartele</translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="317"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="321"/>
         <source>Dimension</source>
         <translation>Përmasë</translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="305"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="309"/>
         <source>Duration</source>
         <translation>Kohëzgjatje</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="293"/>
+        <location filename="../views/drenamebar.cpp" line="290"/>
         <source>Tips: Sort by selected file order</source>
         <translation>Ndihmëza: Renditi sipas rendit të përzgjedhur kartelash</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1616"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1615"/>
         <source>Rename %1 Files</source>
         <translation>Riemërtoni %1 Kartela</translation>
     </message>
@@ -4049,7 +3825,7 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
         <location filename="../dialogs/propertydialog.cpp" line="1198"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="350"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="354"/>
         <source>Time accessed</source>
         <translation>Hapur më</translation>
     </message>
@@ -4104,23 +3880,19 @@
         <translation>Faqerojtës</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
         <source>Erase</source>
         <translation>Fshije</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="601"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="604"/>
         <source>Copy path</source>
         <translation>Kopjo shtegun</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="619"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="622"/>
         <source>Edit address</source>
         <translation>Përpunoni adresë</translation>
-    </message>
-    <message>
-        <source>It does not support burning UDF discs</source>
-        <translation type="vanished">Nuk mbulon pjekje disqesh UDF</translation>
     </message>
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="341"/>
@@ -4143,9 +3915,9 @@
         <translation>Kasaforta Ime</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="185"/>
-        <location filename="../models/computermodel.cpp" line="196"/>
-        <location filename="../models/computermodel.cpp" line="603"/>
+        <location filename="../models/computermodel.cpp" line="187"/>
+        <location filename="../models/computermodel.cpp" line="198"/>
+        <location filename="../models/computermodel.cpp" line="607"/>
         <source>Disks</source>
         <translation>Disqe</translation>
     </message>
@@ -4161,17 +3933,17 @@
         <translation>S’u arrit të krijohej trajtues kartele</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2712"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2748"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2781"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2718"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2754"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2787"/>
         <source>Execution error</source>
         <translation>Gabim ekzekutimi</translation>
     </message>
     <message>
         <location filename="../interfaces/diconitemdelegate.cpp" line="910"/>
         <location filename="../interfaces/diconitemdelegate.cpp" line="1071"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="503"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="708"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="567"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="772"/>
         <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
         <translation>&quot;&apos;/\[]:|&lt;&gt;+=;,?* nuk lejohen</translation>
     </message>
@@ -4196,97 +3968,81 @@
         <comment>button</comment>
         <translation>Ripohojeni</translation>
     </message>
-    <message>
-        <source>Confirm</source>
-        <translation type="vanished">Ripohojeni</translation>
-    </message>
 </context>
 <context>
     <name>ShareInfoFrame</name>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="59"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="58"/>
         <source>Share this folder</source>
         <translation>Ndajeni këtë dosje me të tjerë</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="68"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="67"/>
         <source>Share name:</source>
         <translation>Emër pjese:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="81"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="80"/>
         <source>Permission:</source>
         <translation>Leje:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="86"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="85"/>
         <source>Read and write</source>
         <translation>Lexim dhe shkrim</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="86"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="85"/>
         <source>Read only</source>
         <translation>Vetëm për lexim</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="89"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="88"/>
         <source>Anonymous:</source>
         <translation>I paemër:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="94"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="93"/>
         <source>Not allow</source>
         <translation>Mos e lejo</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="94"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="93"/>
         <source>Allow</source>
         <translation>Lejoje</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="316"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="301"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Emri i ndarjes s’duhet të jetë dy pika (..) ose një pikë (.)</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="332"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="317"/>
         <source>The share name is used by another user.</source>
         <translation>Emri i ndarjes është i përdorur nga tjetër përdorues</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="333"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="318"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="336"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="321"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="337"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="322"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Zëvendësoje</translation>
     </message>
     <message>
-        <source>OK</source>
-        <translation type="vanished">OK</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="335"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="320"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>Emri i ndarjes ekziston tashmë. Doni të zëvendësohet dosja e ndarë?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
-        <source>Replace</source>
-        <translation type="vanished">Zëvendësoje</translation>
     </message>
 </context>
 <context>
@@ -4779,14 +4535,6 @@
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Ripohojeni</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation type="vanished">Ripohojeni</translation>
     </message>
 </context>
 </TS>

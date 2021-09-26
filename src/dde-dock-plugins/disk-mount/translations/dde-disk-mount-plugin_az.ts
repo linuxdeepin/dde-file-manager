@@ -51,14 +51,6 @@
         <translation>Növbəti dəfə &quot;Təhlükəsiz Çıxartmaq&quot; vurun və sonra çıxardın</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Cihaz məşğuldur, indi çıxarıla bilməz</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Cihaz məşğuldur, indi ayrıla bilməz</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Cihazı ayırmaq mümkün deyil</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>Bu qovluğa girməniz üçün icazəniz yoxdur</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Tədiqləmək</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Cihazlar aşkarlanır, dayandırılsın?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">İmtina</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Dayandırmaq</translation>
     </message>
     <message>
         <source>Confirm</source>

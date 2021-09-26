@@ -51,14 +51,6 @@
         <translation>A la propera, cliqueu a &quot;Extreu-lo amb seguretat&quot; i després desconnecteu-lo.</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">El dispositiu està ocupat. No es pot extreure ara.</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">El dispositiu està ocupat. No es pot suprimir ara.</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>No es pot desmuntar el dispositiu.</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>No teniu permís per accedir a aquesta carpeta.</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Confirmeu-ho</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>S&apos;escaneja el dispositiu. Voleu interrompre-ho?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Cancel·la</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Interromp</translation>
     </message>
     <message>
         <source>Confirm</source>

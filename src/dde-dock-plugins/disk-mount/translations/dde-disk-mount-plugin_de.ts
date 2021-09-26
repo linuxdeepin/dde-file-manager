@@ -51,14 +51,6 @@
         <translation>Klicke auf „Sicher entfernen“ und trenne die Verbindung dann beim nächsten Mal</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Das Gerät ist beschäftigt, kann jetzt nicht ausgeworfen werden</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Das Gerät ist beschäftigt, kann jetzt nicht entfernt werden</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Kann das Gerät nicht aushängen</translation>
     </message>
@@ -105,19 +97,7 @@
         <translation>Sie haben keine Berechtigung, um auf diesen Ordner zuzugreifen</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Bestätigen</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Abbrechen</translation>
-    </message>
-    <message>
-        <source>Stop</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -133,7 +113,7 @@
     <message>
         <source>Stop</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Stopp</translation>
     </message>
 </context>
 </TS>

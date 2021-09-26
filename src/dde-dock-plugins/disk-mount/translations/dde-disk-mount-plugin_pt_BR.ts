@@ -51,14 +51,6 @@
         <translation>Clique em &quot;Remover com segurança&quot; e então desconecte-o na próxima vez</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">O dispositivo está ocupado; impossível ejetá-lo</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">O dispositivo está ocupado; impossível removê-lo</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Impossível desmontar o dispositivo</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>Você não tem permissão para acessar esta pasta</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Confirmar</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Verificando o dispositivo, parar?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Cancelar</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Parar</translation>
     </message>
     <message>
         <source>Confirm</source>

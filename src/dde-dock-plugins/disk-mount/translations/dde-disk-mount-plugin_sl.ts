@@ -51,14 +51,6 @@
         <translation>Klikni &quot;Varno odstrani&quot; in nato odstranite</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Naprava je v rabi in je trenutno ni mogoče izvreči</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Naprava je v rabi n je trenutno ni mogoče odstraniti</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Naprave ni mogoče odklopiti</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>Nimate dovoljenja za dostopanje do te mape</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Potrdi</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Preverjanje naprave. Zaustavim?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Prekini</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Zaustavi</translation>
     </message>
     <message>
         <source>Confirm</source>

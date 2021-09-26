@@ -51,14 +51,6 @@
         <translation>Kattintson a &quot;Biztonságos eltávolítás&quot; gombra, majd csatlakoztassa le később</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Az eszköz használatban van, jelenleg nem választható le</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Az eszköz használatban van, jelenleg nem távolítható el</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Eszköz nem leválasztható</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>Nincs jogosultsága a mappához való hozzáféréséhez</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Megerősítés</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Az eszköz ellenőrzése, biztos benne hogy leállítja?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Mégsem</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Leállítás</translation>
     </message>
     <message>
         <source>Confirm</source>

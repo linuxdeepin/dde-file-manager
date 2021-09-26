@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3263"/>
+        <location filename="../view/canvasgridview.cpp" line="3155"/>
         <source>Icon size</source>
         <translation>Таних тэмдэгийн хэмжээ</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3271"/>
+        <location filename="../view/canvasgridview.cpp" line="3163"/>
         <source>Auto merge</source>
         <translation>Автоматаар нэгтгэх</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3283"/>
+        <location filename="../view/canvasgridview.cpp" line="3175"/>
         <source>Auto arrange</source>
         <translation>Автоматаар зохион байгуулах</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3320"/>
+        <location filename="../view/canvasgridview.cpp" line="3212"/>
         <source>Corner Settings</source>
         <translation>Булангийн тохируулга</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3329"/>
-        <location filename="../view/canvasgridview.cpp" line="3334"/>
+        <location filename="../view/canvasgridview.cpp" line="3221"/>
+        <location filename="../view/canvasgridview.cpp" line="3226"/>
         <source>Set Wallpaper</source>
         <translation>Фон зургийг тохируулах</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3332"/>
+        <location filename="../view/canvasgridview.cpp" line="3224"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Фон зураг болон дэлгэц амраагч</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3510"/>
+        <location filename="../view/canvasgridview.cpp" line="3402"/>
         <source>Properties</source>
         <translation>Төлөв байдал</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3311"/>
+        <location filename="../view/canvasgridview.cpp" line="3203"/>
         <source>Display Settings</source>
         <translation>Дэлгэцийн тохируулга</translation>
     </message>
@@ -74,7 +74,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="169"/>
+        <location filename="../main.cpp" line="168"/>
         <source>Desktop</source>
         <translation>Ажлын тавцан</translation>
     </message>
@@ -148,18 +148,6 @@
         <source>Apply</source>
         <comment>button</comment>
         <translation>Бататгах</translation>
-    </message>
-    <message>
-        <source>Only desktop</source>
-        <translation type="vanished">Зөвхөн ажлын тавцан</translation>
-    </message>
-    <message>
-        <source>Only lock screen</source>
-        <translation type="vanished">Зөвхөн түгжээний дэлгэц</translation>
-    </message>
-    <message>
-        <source>Apply</source>
-        <translation type="vanished">Бататгах</translation>
     </message>
 </context>
 <context>

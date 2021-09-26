@@ -51,14 +51,6 @@
         <translation>Clic en «Extraer del equipo» y luego desconéctelo</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">El disco está ocupado, no se puede expulsar ahora</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">El dispositivo está ocupado, no se puede quitar ahora</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>No se puede desmontar el dispositivo</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>No tienes permiso para acceder a esta carpeta</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Confirmar</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Disco bajo escaneo, ¿desea detenerlo?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Cancelar</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Detener</translation>
     </message>
     <message>
         <source>Confirm</source>

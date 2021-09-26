@@ -15,7 +15,7 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Устройство занято, сейчас извлечь нельзя</translation>
+        <translation>Устройство занято и не может быть извлечено сейчас</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
@@ -49,14 +49,6 @@
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>В следующий раз нажмите &quot;Безопасное удаление&quot;, а затем отключите его</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Устройство занято, сейчас извлечь нельзя</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Устройство занято, сейчас извлечь нельзя</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -105,20 +97,8 @@
         <translation>У вас нет права доступа к этой папке</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Подтвердить</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Сканирование устройства, остановить его?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Отмена</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Стоп</translation>
     </message>
     <message>
         <source>Confirm</source>

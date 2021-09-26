@@ -51,14 +51,6 @@
         <translation>Bir daha ki sefer &quot;Güvenle Kaldıra&quot; tıklayın bağlantısını kesin</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Aygıt meşgul, şimdi çıkarılamıyor</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Aygıt meşgul, şimdi çıkarılamaz</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Aygıtın bağı ayrılamadı</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>Bu klasöre erişme izniniz yok</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Onayla</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Cihaz taranıyor, durdurulsun mu?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">İptal</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Durdur</translation>
     </message>
     <message>
         <source>Confirm</source>

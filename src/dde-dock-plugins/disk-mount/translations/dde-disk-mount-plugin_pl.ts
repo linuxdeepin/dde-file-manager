@@ -1,5 +1,28 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="pl" version="2.1">
 <context>
+    <name>DUMountManager</name>
+    <message>
+        <source>Authentication timed out</source>
+        <translation>Upłynął limit czasu uwierzytelniania</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot unmount now</source>
+        <translation>Dysk jest zajęty, nie można teraz odmontować</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot eject now</source>
+        <translation>Dysk jest zajęty, nie można go teraz wysunąć</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>Urządzenie jest zajęte, nie można go teraz wysunąć</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>Urządzenie jest zajęte, nie można go teraz wyjąć</translation>
+    </message>
+</context>
+<context>
     <name>DeepinStorage</name>
     <message>
         <source>%1 Volume</source>
@@ -28,14 +51,6 @@
         <translation>Kliknij „Bezpieczne usuwanie”, a następnie odłącz go następnym razem</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Nie można odmontować urządzenia</translation>
     </message>
@@ -45,7 +60,7 @@
     </message>
     <message>
         <source>Cannot find the mounted device</source>
-        <translation type="unfinished"/>
+        <translation>Nie można odnaleźć podpiętego urządzenia</translation>
     </message>
     <message>
         <source>Disks</source>
@@ -82,8 +97,23 @@
         <translation>Nie masz uprawnień do dostępu do tego katalogu</translation>
     </message>
     <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>Skanowanie urządzenia, zatrzymać?</translation>
+    </message>
+    <message>
         <source>Confirm</source>
+        <comment>button</comment>
         <translation>Potwierdź</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>Anuluj</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <comment>button</comment>
+        <translation>Stop</translation>
     </message>
 </context>
 </TS>

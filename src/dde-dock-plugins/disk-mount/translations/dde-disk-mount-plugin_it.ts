@@ -51,14 +51,6 @@
         <translation>Clicca su &quot;Rimozione sicura&quot; e rimuovilo solo successivamente</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Disco occupato, impossibile espellerlo ora</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Disco occupato, impossibile espellerlo ora</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Impossibile smontare il dispositivo</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>Non hai i permessi per accedere a questa cartella</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Conferma</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Scansione del dispositivo in corso, interromperla?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Annulla</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Stop</translation>
     </message>
     <message>
         <source>Confirm</source>

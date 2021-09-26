@@ -51,14 +51,6 @@
         <translation>Napsauta ensin &quot;Poista turvallisesti&quot; ja irrota se sitten</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Laite on varattu, eikä sitä voi avata</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Laite on varattu, eikä sitä voi poistaa</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Laitteen irrottaminen ei onnistu</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>Sinulla ei ole oikeutta käyttää tätä kansiota</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Vahvista</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Skannaa laitetta, pysäytä se? </translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Peru</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Seis</translation>
     </message>
     <message>
         <source>Confirm</source>
@@ -128,7 +108,7 @@
     <message>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Peru</translation>
+        <translation>Peruuta</translation>
     </message>
     <message>
         <source>Stop</source>

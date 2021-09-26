@@ -51,14 +51,6 @@
         <translation>Наступного разу натисніть кнопку «Вилучити безпечно», а вже потім від&apos;єднуйте пристрій</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Пристрій зайнято, його не можна виштовхнути зараз</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Пристрій зайнято, зараз вилучення неможливе</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Не вдалося демонтувати пристрій</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>У вас немає дозволу на доступ до цієї теки</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Підтвердити</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Скануємо пристрій. Припинити?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Скасувати</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Припинити</translation>
     </message>
     <message>
         <source>Confirm</source>

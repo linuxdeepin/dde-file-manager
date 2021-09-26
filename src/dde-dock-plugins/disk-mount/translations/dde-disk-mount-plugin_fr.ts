@@ -51,14 +51,6 @@
         <translation>Cliquez sur &quot;Supprimer en toute sécurité&quot; et ensuite déconnectez le</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">L&apos;appareil est occupé et ne peut pas être éjecté maintenant</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">L&apos;appareil est occupé et ne peut pas être retiré maintenant</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Impossible de démonter l&apos;appareil</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>Vous n&apos;êtes pas autorisé à accéder à ce dossier</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Confirmer</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Scanner l&apos;appareil, l&apos;arrêter ?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Annuler</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Arrêter</translation>
     </message>
     <message>
         <source>Confirm</source>

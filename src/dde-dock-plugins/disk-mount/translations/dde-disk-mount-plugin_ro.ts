@@ -15,7 +15,7 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Dispozitivul este ocupat, nu pot fi scos acum</translation>
+        <translation>Dispozitivul este ocupat, nu poate  fi scos acum</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
@@ -49,14 +49,6 @@
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Clic pe „Eliminare sigură” și apoi deconectați data viitoare</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Dispozitivul este ocupat, nu poate  fi scos acum</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Dispozitivul este ocupat, nu poate fi eliminat acum</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -105,20 +97,8 @@
         <translation>Nu aveți permisiunea de a accesa acest directoriu</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Confirmare</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Scanarea dispozitivului, oprire?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anulare</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Oprire</translation>
     </message>
     <message>
         <source>Confirm</source>

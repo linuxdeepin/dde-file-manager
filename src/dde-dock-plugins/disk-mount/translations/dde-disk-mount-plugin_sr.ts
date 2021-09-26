@@ -51,14 +51,6 @@
         <translation>Следећи пут, кликните на &quot;Безбедно уклони&quot;, затим уклоните уређај</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Уређај је заузет, не може се избацити</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Уређај је заузет, не може се уклонити</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Не могу да демонтирам уређај</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>Немате дозволу да приступите овој фасцикли</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Потврди</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Проверавање уређаја, зауставити?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Откажи</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Заустави</translation>
     </message>
     <message>
         <source>Confirm</source>

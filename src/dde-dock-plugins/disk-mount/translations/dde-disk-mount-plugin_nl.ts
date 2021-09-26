@@ -51,14 +51,6 @@
         <translation>Klik voortaan op &apos;Veilig verwijderen&apos; voordat je het apparaat loskoppelt</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Schijf is in gebruik; je kunt nu niet uitwerpen</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Schijf is in gebruik; je kunt nu niet afkoppelen</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Kan apparaat niet afkoppelen</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>Je bent niet bevoegd om deze map te openen</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Oké</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Wil je het doorzoeken van het apparaat afbreken?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Annuleren</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Afbreken</translation>
     </message>
     <message>
         <source>Confirm</source>

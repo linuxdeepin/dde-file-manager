@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3263"/>
+        <location filename="../view/canvasgridview.cpp" line="3155"/>
         <source>Icon size</source>
         <translation>ទំហំIcon</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3271"/>
+        <location filename="../view/canvasgridview.cpp" line="3163"/>
         <source>Auto merge</source>
         <translation>បញ្ចូលគ្នាស្វ័យប្រវត្តិ</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3283"/>
+        <location filename="../view/canvasgridview.cpp" line="3175"/>
         <source>Auto arrange</source>
         <translation>រៀបចំស្វ័យប្រវត្តិ</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3320"/>
+        <location filename="../view/canvasgridview.cpp" line="3212"/>
         <source>Corner Settings</source>
         <translation>ការកំណត់ជ្រុង</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3329"/>
-        <location filename="../view/canvasgridview.cpp" line="3334"/>
+        <location filename="../view/canvasgridview.cpp" line="3221"/>
+        <location filename="../view/canvasgridview.cpp" line="3226"/>
         <source>Set Wallpaper</source>
         <translation>កំណត់ផ្ទាំងរូបភាព</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3332"/>
+        <location filename="../view/canvasgridview.cpp" line="3224"/>
         <source>Wallpaper and Screensaver</source>
         <translation>ផ្ទាំងរូបភាពនិងរូបថតអេក្រង់</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3510"/>
+        <location filename="../view/canvasgridview.cpp" line="3402"/>
         <source>Properties</source>
         <translation>Properties</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3311"/>
+        <location filename="../view/canvasgridview.cpp" line="3203"/>
         <source>Display Settings</source>
         <translation>កំណត់ការបង្ហាញ</translation>
     </message>
@@ -74,7 +74,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="169"/>
+        <location filename="../main.cpp" line="168"/>
         <source>Desktop</source>
         <translation>ផ្ទៃតុ</translation>
     </message>
@@ -148,18 +148,6 @@
         <source>Apply</source>
         <comment>button</comment>
         <translation>អនុវត្ត</translation>
-    </message>
-    <message>
-        <source>Only desktop</source>
-        <translation type="vanished">មានតែផ្ទៃតុប៉ុណ្ណោះ</translation>
-    </message>
-    <message>
-        <source>Only lock screen</source>
-        <translation type="vanished">ត្រឹមតែចាក់សោរអេក្រង់</translation>
-    </message>
-    <message>
-        <source>Apply</source>
-        <translation type="vanished">អនុវត្ត</translation>
     </message>
 </context>
 <context>

@@ -7,7 +7,7 @@
     </message>
     <message>
         <source>Disk is busy, cannot unmount now</source>
-        <translation>Disku është i zënë, s’mund të montohet</translation>
+        <translation>Disku është i zënë, s’mund të çmontohet tani</translation>
     </message>
     <message>
         <source>Disk is busy, cannot eject now</source>
@@ -49,14 +49,6 @@
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Herës tjetër klikoni mbi “Hiqe Në Mënyrë të Parrezik” dhe mandej shkëputeni</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Pajisja është e zënë, s’mund të nxirret tani</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Pajisja është e zënë, s’mund të hiqet tani</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -105,20 +97,8 @@
         <translation>S’keni leje të hyni te kjo dosje</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Ripohojeni</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Po skanohet pajisja, të ndalet?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Anuloje</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Ndale</translation>
     </message>
     <message>
         <source>Confirm</source>

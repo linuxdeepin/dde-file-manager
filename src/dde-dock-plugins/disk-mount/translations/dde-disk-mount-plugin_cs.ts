@@ -51,14 +51,6 @@
         <translation>Příště klepněte na „Bezpečně odebrat“ a až pak odpojte</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Zařízení je něčím využíváno, proto ho nyní není možné vysunout</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">Zařízení je něčím využíváno, proto ho není možné nyní odebrat</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Zařízení se nedaří odpojit</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>Nemáte oprávnění pro přistupování k této složce</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Potvrdit</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Prohledává se zařízení. Zastavit?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Zrušit</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Zastavit</translation>
     </message>
     <message>
         <source>Confirm</source>
@@ -128,7 +108,7 @@
     <message>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Zrušit</translation>
+        <translation>Storno</translation>
     </message>
     <message>
         <source>Stop</source>

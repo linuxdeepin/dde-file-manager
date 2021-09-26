@@ -51,14 +51,6 @@
         <translation>請點擊「安全移除」後，再斷開連接</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">光碟機正忙，無法彈出</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">裝置正忙，無法安全移除</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>無法卸載裝置</translation>
     </message>
@@ -105,20 +97,8 @@
         <translation>無權進入資料夾</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">確定</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>正在掃描目前裝置，是否終止掃描？</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">取消</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">終止</translation>
     </message>
     <message>
         <source>Confirm</source>
