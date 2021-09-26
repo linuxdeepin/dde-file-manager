@@ -24,7 +24,6 @@ set(PRIVATE_H
     lifecycle/private/pluginmetaobject_p.h
     abus/private/appbus_p.h
     event/private/event_p.h
-    event/private/eventhandler_p.h
     )
 
 set(PRIVATE_CPP

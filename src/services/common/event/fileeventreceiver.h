@@ -15,11 +15,22 @@ const QString PROPERTY_KEY_URLS {"urls"};
 const QString PROPERTY_KEY_URL {"url"};
 } //FileEventTypes
 
-class FileEventReceiver final : public dpf::AsyncEventHandler
+class FileEventReceiver final : public dpf::EventHandler, dpf::AutoEventHandlerRegister<FileEventReceiver>
 {
     Q_OBJECT
+
 public:
-    explicit FileEventReceiver();
+    static EventHandler::Type type()
+    {
+        return EventHandler::Type::Async;
+    }
+
+    static QStringList topics()
+    {
+         return QStringList() << FileEventTypes::TOPIC_FILE_EVENT;
+    }
+
+    explicit FileEventReceiver() : AutoEventHandlerRegister<FileEventReceiver>() {}
     virtual void eventProcess(const dpf::Event &event) override;
 };
 

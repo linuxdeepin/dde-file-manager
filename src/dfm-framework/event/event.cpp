@@ -40,6 +40,12 @@ Event::Event()
 
 }
 
+Event::Event(const QString &topic)
+    : d(new EventPrivate(this))
+{
+    setTopic(topic);
+}
+
 Event::Event(const Event &event):
     d(new EventPrivate(this))
 {
@@ -49,6 +55,15 @@ Event::Event(const Event &event):
 Event::~Event()
 {
     delete d;
+}
+
+Event &Event::operator =(const Event &event)
+{
+    if (&event != this) {
+        d = new EventPrivate(this);
+        d->sourceHash = event.d->sourceHash;
+    }
+    return *this;
 }
 
 /**

@@ -23,15 +23,127 @@
 
 DPF_BEGIN_NAMESPACE
 
-EventCallProxy::~EventCallProxy()
+/*!
+ * \brief EventCallProxy::pubEvent Send event objects to
+ * all `handlers` that have subscribed to the topic，
+ * and the `eventProcess` function of the `handler` will be called
+ * \param event
+ * \return true if success
+ */
+bool EventCallProxy::pubEvent(const Event &event)
 {
-    auto itera = eventHandlers.begin();
-    while (itera != eventHandlers.end()) {
-        delete itera->ins;
-        itera->className = nullptr;
-        itera->process = nullptr;
-        itera->topics.clear();
+    bool flag = false;
+    for (HandlerInfo &info : getInfoList()) {
+        if (!info.topics.contains(event.topic()))
+            continue;
+        if (Q_LIKELY(info.invoke)) {
+            info.invoke(info, event);
+            flag = true;
+        }
     }
+    return flag;
+}
+
+/*!
+ * \brief EventCallProxy::removeHandler free handler by class name
+ * \param className
+ * \return
+ */
+bool EventCallProxy::removeHandler(const QString &className)
+{
+    QMutexLocker locker(eventMutex());
+    auto &infoList = getInfoList();
+    auto iter = infoList.begin();
+    int i = 0;
+    bool flag = false;
+    while (iter != infoList.end()) {
+        if (iter->className == className) {
+            if (iter->future.isRunning())
+                iter->future.waitForFinished();
+            if (iter->handler) {
+                delete iter->handler;
+                iter->handler = nullptr;
+            }
+            flag = true;
+            break;
+        }
+        ++iter;
+        ++i;
+    }
+
+    if (flag)
+        infoList.removeAt(i);
+    return flag;
+}
+
+/*!
+ * \brief EventCallProxy::removeAllHandlers free all handlers
+ */
+void EventCallProxy::removeAllHandlers()
+{
+    QMutexLocker locker(eventMutex());
+    auto &infoList = getInfoList();
+    auto iter = infoList.begin();
+    while (iter != infoList.end()) {
+        if (iter->future.isRunning())
+            iter->future.waitForFinished();
+        if (iter->handler) {
+            delete iter->handler;
+            iter->handler = nullptr;
+        }
+        ++iter;
+    }
+    infoList.clear();
+}
+
+/*!
+ * \brief EventCallProxy::registerHandler no need for developers to call directly，
+ *  classes that inherit from `AutoEventHandlerRegister` will automatically call
+ * \param type
+ * \param topics
+ * \param creator
+ */
+void EventCallProxy::registerHandler(EventHandler::Type type, const QStringList &topics, EventCallProxy::CreateFunc creator)
+{
+    QMutexLocker locker(eventMutex());
+    auto &infoList = getInfoList();
+    ExportFunc invoke {nullptr};
+    if (type == EventHandler::Type::Sync) {
+        invoke = [creator] (HandlerInfo &info, const Event &event) {
+            fillInfo(info, creator);
+            info.handler->eventProcess(event);
+        };
+    }
+
+    if (type ==  EventHandler::Type::Async) {
+        invoke = [creator] (HandlerInfo &info, const Event &event) {
+            fillInfo(info, creator);
+            info.future = QtConcurrent::run(info.handler, &EventHandler::eventProcess, event);
+        };
+    }
+    qInfo() << "Register Handler, type " << static_cast<int>(type) << ", topics" << topics;
+    infoList.append(HandlerInfo{"", nullptr, invoke, topics, QFuture<void>()});
+}
+
+
+QList<EventCallProxy::HandlerInfo> &EventCallProxy::getInfoList()
+{
+    static QList<HandlerInfo> eventHandlers;
+    return eventHandlers;
+}
+
+void EventCallProxy::fillInfo(EventCallProxy::HandlerInfo &info, EventCallProxy::CreateFunc creator)
+{
+    if (!info.handler) {
+        info.handler = creator();
+        info.className = info.handler->metaObject()->className();
+    }
+}
+
+QMutex *EventCallProxy::eventMutex()
+{
+    static QMutex mutex;
+    return &mutex;
 }
 
 DPF_END_NAMESPACE

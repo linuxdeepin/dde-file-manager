@@ -4,9 +4,15 @@
 *.o
 *.obj
 .qmake.stash
+*.cmake
 CMakeLists.txt.user*
+CMakeFiles
+CMakeCache.txt
+compile_commands.json
 src/apps/dde-file-manager/config.h
 src/apps/dde-file-manager-server/config.h
+moc_*
+mocs_*
 
 # Compiled Dynamic libraries
 *.so

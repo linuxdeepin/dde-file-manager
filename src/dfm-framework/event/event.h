@@ -39,14 +39,15 @@ class EventPrivate;
  */
 class Event final
 {
-    EventPrivate *const d;
+    EventPrivate *d;
     friend Q_CORE_EXPORT QDebug operator <<(QDebug, const Event &);
 
 public:
-    explicit Event();
-    Event(const Event& event);
-
-    virtual ~Event();
+    Event();
+    explicit Event(const QString &topic);
+    explicit Event(const Event& event);
+    ~Event();
+    Event &operator =(const Event &);
 
     void setTopic(const QString &topic);
     QString topic() const;

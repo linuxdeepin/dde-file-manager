@@ -58,7 +58,6 @@ set(${PROJECT_NAME}_cxx_private_h
     ${lifecycle}/private/pluginmanager_p.h
     ${abus}/private/appbus_p.h
     ${event}/private/event_p.h
-    ${event}/private/eventhandler_p.h
     )
 
 set(${PROJECT_NAME}_cxx_private_cpp

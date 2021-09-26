@@ -27,5 +27,5 @@ void EventCaller::sendOpenNewWindowEvent(int windowIdx)
     event.setTopic(EventTypes::TOPIC_WINDOW_EVENT);
     event.setData(EventTypes::DATA_OPEN_NEW_WINDOW);
     event.setProperty(EventTypes::PROPERTY_KEY_WINDOW_INDEX, windowIdx);
-    dpf::EventCallProxy::callEvent(event);
+    dpf::EventCallProxy::pubEvent(event);
 }

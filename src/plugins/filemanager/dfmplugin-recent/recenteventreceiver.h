@@ -34,12 +34,23 @@
 
 DSB_FM_USE_NAMESPACE
 
-class RecentEventReceiver : public dpf::SyncEventHandler
+class RecentEventReceiver : public dpf::EventHandler, dpf::AutoEventHandlerRegister<RecentEventReceiver>
 {
     Q_OBJECT
+
 public:
-    explicit RecentEventReceiver(){}
-    virtual void eventProcess(const dpf::Event &event) override;
+    static EventHandler::Type type()
+    {
+        return EventHandler::Type::Sync;
+    }
+
+    static QStringList topics()
+    {
+         return QStringList() << DSB_FM_NAMESPACE::EventTypes::TOPIC_WINDOW_EVENT;
+    }
+
+    explicit RecentEventReceiver() : AutoEventHandlerRegister<RecentEventReceiver>() {}
+    void eventProcess(const dpf::Event &event) override;
     void windowEvent(const dpf::Event &event);
 };
 

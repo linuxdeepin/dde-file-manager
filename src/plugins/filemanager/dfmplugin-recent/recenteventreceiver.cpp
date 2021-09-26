@@ -22,8 +22,6 @@
 #include "recenteventreceiver.h"
 #include "windowservice/contexts.h"
 
-DPF_EVENT_HANDLER(RecentEventReceiver,DSB_FM_NAMESPACE::EventTypes::TOPIC_WINDOW_EVENT);
-
 void RecentEventReceiver::eventProcess(const dpf::Event &event)
 {
     if (event.topic() == EventTypes::TOPIC_WINDOW_EVENT)
