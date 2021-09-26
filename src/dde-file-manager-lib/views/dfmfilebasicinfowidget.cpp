@@ -203,7 +203,6 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
         delete stackedLayout->currentWidget();
     }
 
-
     QWidget *layoutWidget = new QWidget;
     QFormLayout *layout = new QFormLayout(layoutWidget);
     layout->setHorizontalSpacing(5);
@@ -224,26 +223,21 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
         layout->addRow(fileNameKeyLabel, fileNameLabel);
     }
 
-    SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
-    SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
-
-    m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
     m_folderSizeLabel = new SectionValueLabel("", layoutWidget);
     SectionValueLabel *typeLabel = new SectionValueLabel(info->mimeTypeDisplayName().split(" (")[0]);
 
     if (info->isDir()) {
         if (!m_showSummaryOnly) {
+            m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
+            SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
             SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
             layout->addRow(sizeSectionLabel, m_folderSizeLabel);
             layout->addRow(fileAmountSectionLabel, m_containSizeLabel);
             frameHeight += 30;
-        } else {
-            delete sizeSectionLabel;
-            delete m_containSizeLabel;
         }
     } else {
+        SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
         layout->addRow(sizeSectionLabel, m_folderSizeLabel);
-        delete m_containSizeLabel;
     }
 
     if (m_showMediaInfo) {
@@ -333,6 +327,7 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
     }
 
     /*if (!info->isVirtualEntry())*/ {
+        SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
         layout->addRow(typeSectionLabel, typeLabel);
     }
 
