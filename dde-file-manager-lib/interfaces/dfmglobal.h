@@ -306,6 +306,8 @@ public:
     static bool isTrashDesktopFileUrl(const DUrl& url);
     static bool isComputerDesktopFileUrl(const DUrl& url);
 
+    static bool isProfessional();
+
     /**
      * @brief isWayLand 判断是否是wayland
      * @return true or false

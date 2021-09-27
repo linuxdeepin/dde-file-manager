@@ -85,6 +85,7 @@
 
 #include <QMimeType>
 #include <QMimeDatabase>
+#include <DSysInfo>
 
 
 #ifdef __cplusplus
@@ -1027,6 +1028,11 @@ bool DFMGlobal::isComputerDesktopFileUrl(const DUrl &url)
     if (DesktopFileInfo::computerDesktopFileUrl() == url)
         return isComputerDesktopFile(url);
     return false;
+}
+
+bool DFMGlobal::isProfessional()
+{
+    return DSysInfo::deepinType() == DSysInfo::DeepinProfessional;
 }
 
 bool DFMGlobal::isWayLand()

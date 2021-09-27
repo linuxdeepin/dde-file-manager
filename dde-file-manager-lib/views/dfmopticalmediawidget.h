@@ -11,14 +11,22 @@ class DFileStatisticsJob;
 DFM_END_NAMESPACE
 DFM_USE_NAMESPACE
 
+#define BURN_CAPACITY_ATTRIBUTE     "BurnCapacityAttribute" // 光盘容量属性信息
+
+#define BURN_CAPACITY_TOTAL_SIZE    "BurnCapacityTotalSize" // 光盘容量总大小字节
+#define BURN_CAPACITY_USED_SIZE     "BurnCapacityUsedSize"  // 光盘容量已使用大小字节
+#define BURN_CAPACITY_STATUS        "BurnCapacityStatus"    // 光盘容量状态（DFMOpticalMediaWidget::BurnCapacityStatusAttribute）
+
 struct CdStatusInfo {
     bool bVolFlag = false;
     bool bMntFlag = false;
     quint64 nUsage = 0;
     quint64 nTotal = 0;
+    bool bReadyToBurn = false;
     bool bBurningOrErasing = false;
     bool bProcessLocked = false;
     QString cachePath=""; // bug202007010027:添加文件缓存区，进行统一管理
+    bool bLoading = false; // sp3 feature 35，光盘加载时显示光标为繁忙状态
 };
 
 class DFMOpticalMediaWidgetPrivate;
@@ -56,7 +64,7 @@ public:
     //判断当前磁盘是否正忙碌
     static bool hasVolProcessBusy();
 
-    //fix: 动态更新光驱磁盘状态
+    CdStatusInfo *getCdStatusInfo(const QString &dev);
 private slots:
     void selectBurnFilesOptionUpdate();
 

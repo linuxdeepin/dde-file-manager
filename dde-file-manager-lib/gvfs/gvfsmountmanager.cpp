@@ -39,6 +39,7 @@
 #include "mountsecretdiskaskpassworddialog.h"
 #include "app/filesignalmanager.h"
 #include "shutil/fileutils.h"
+#include "utils.h"
 
 #include "networkmanager.h"
 #include "dfmapplication.h"
@@ -677,16 +678,17 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
     //fix: 每次弹出光驱时需要删除临时缓存数据文件
     if ((qVolume.activation_root_uri().contains("burn:///") && qVolume.unix_device().contains("")) || \
             (qVolume.activation_root_uri().contains("") || qVolume.unix_device().contains("/dev/sr"))) {
-        //fix: 临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
-        QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-        QString tempMediaPath = tempMediaAddr + DISCBURN_CACHE_MID_PATH + getVolTag(volume);
-        QDir(tempMediaPath).removeRecursively();
 
         //fix: 设置光盘容量属性
         DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].nTotal = 0;
         DFMOpticalMediaWidget::g_mapCdStatusInfo[getVolTag(volume)].nUsage = 0;;
         DFMOpticalMediaWidget::setBurnCapacity(DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct, getVolTag(volume));
         emit fileSignalManager->requestUpdateComputerView();
+
+        // clear the empty folders of stage dir
+        const static QString stagePrefix = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/"
+                + qApp->organizationName() + "/" DISCBURN_STAGING "/";
+        clearStageDir(stagePrefix + qVolume.unix_device().replace("/", "_"));
     }
 
     GDrive *drive = g_volume_get_drive(volume);

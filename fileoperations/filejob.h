@@ -31,6 +31,7 @@
 #include <QUrl>
 #include "durl.h"
 #include <QStorageInfo>
+#include <disomaster.h>
 
 #define TRANSFER_RATE 5
 #define MSEC_FOR_DISPLAY 1000
@@ -176,11 +177,10 @@ public slots:
 
     bool doTrashRestore(const QString &srcFilePath, const QString &tarFilePath);
 
-    void doOpticalBurn(const DUrl &device, QString volname, int speed, int flag); // unused
-    void doOpticalBurnByChildProcess(const DUrl &device, QString volname, int speed, int flag); // fork
-    void doOpticalBlank(const DUrl &device);
-    void doOpticalImageBurn(const DUrl &device, const DUrl &image, int speed, int flag); // unused
-    void doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &image, int speed, int flag); // fork
+    void doUDBurn(const DUrl &device, const QString &volname, int speed, const DISOMasterNS::BurnOptions &opts);
+    void doISOBurn(const DUrl &device, QString volname, int speed, DISOMasterNS::BurnOptions opts); // fork
+    void doDiscBlank(const DUrl &device);
+    void doISOImageBurn(const DUrl &device, const DUrl &image, int speed, DISOMasterNS::BurnOptions opts); // fork
     void opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress);
     void opticalJobUpdatedByParentProcess(int status, int progress, const QString &speed, const QStringList &msgs);
 
