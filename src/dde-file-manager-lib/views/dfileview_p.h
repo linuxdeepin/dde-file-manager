@@ -106,6 +106,8 @@ public:
     //记录当前mousePressEvent中按下的Index
     QModelIndex m_currentPressedIndex;
 
+    QItemSelection currentSelection;
+
     /// drag drop
     QModelIndex dragMoveHoverIndex;
     //析构锁，当更新updatestatusbar正在处理时，不要析构

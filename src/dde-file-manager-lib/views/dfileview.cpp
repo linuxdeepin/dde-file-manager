@@ -1244,6 +1244,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
         itemDelegate()->commitDataAndCloseActiveEditor();
 
         if (isEmptyArea) {
+            d->currentSelection = selectionModel()->selection();
             if (!DFMGlobal::keyCtrlIsPressed()) {
                 itemDelegate()->hideNotEditingIndexWidget();
 
@@ -1333,6 +1334,7 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
     D_D(DFileView);
 
     d->dragMoveHoverIndex = QModelIndex();
+    d->currentSelection = QItemSelection();
 
     if (d->mouseLastPressedIndex.isValid() && DFMGlobal::keyCtrlIsPressed()) {
         if (d->mouseLastPressedIndex == indexAt(event->pos()))
@@ -1969,7 +1971,60 @@ void DFileView::dropEvent(QDropEvent *event)
 
 void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags)
 {
+    D_D(DFileView);
     if (DFMGlobal::keyShiftIsPressed()) {
+        //鼠标从空白区域开始框选，追加框选的item
+        if (!d->m_currentPressedIndex.isValid()) {
+            QItemSelection oldSelection = d->currentSelection;
+
+            if (isIconViewMode()) { //图标模式
+                DFileSystemModel *pModel = model();
+                if (pModel) {
+                    // ListView中的文件摆放逻辑是一列多行，所以行的数量就是文件的数量
+                    int nRowNum = pModel->rowCount();
+
+                    QPoint offset(-horizontalOffset() + ICON_X_OFFSET, ICON_Y_OFFSET);
+                    // 判断文件是否在鼠标框选区域内(注意：rect只是view的框选位置，并不是画布的框选位置，所以加上滚动偏移)
+                    QRect actualRect(MIN(rect.left(), rect.right()), MIN(rect.top(), rect.bottom()) + verticalOffset(), abs(rect.width()), abs(rect.height()));
+                    // 用来存放鼠标框选中的文件项
+                    QVector<QModelIndex> selectItems;
+                    for (int i = 0; i < nRowNum; ++i) {
+                        const QModelIndex& index = pModel->index(i, 0);
+                        const QRect& itemRect = rectForIndex(index);
+                        QRect realItemRect((itemRect.topLeft() + offset), itemRect.bottomRight() + offset + QPoint(ICON_HEIGHT_OFFSET, ICON_WIDTH_OFFSET));
+                        if (!(actualRect.left() > realItemRect.right() - 3
+                              || actualRect.top() > realItemRect.bottom() - 3
+                              || realItemRect.left() + 3 > actualRect.right()
+                              || realItemRect.top() + 3 > actualRect.bottom())) {
+                            if (!oldSelection.contains(index)) {
+                                QItemSelectionRange selectionRange(index);
+                                oldSelection.push_back(selectionRange);
+                            }
+                        }
+                    }
+                    selectionModel()->select(oldSelection, QItemSelectionModel::ClearAndSelect);
+                    return;
+                }
+            } else {    //列表模式
+                QRect tmp_rect = rect;
+                //修改远程时，文件选择框内容选中后被取消问题
+                if (tmp_rect.width() < 5 && tmp_rect.width() > -5 && tmp_rect.height() < 5 && tmp_rect.height() > -5)
+                    return;
+
+                tmp_rect.translate(horizontalOffset(), verticalOffset());
+                tmp_rect.setCoords(qMin(tmp_rect.left(), tmp_rect.right()), qMin(tmp_rect.top(), tmp_rect.bottom()),
+                                   qMax(tmp_rect.left(), tmp_rect.right()), qMax(tmp_rect.top(), tmp_rect.bottom()));
+
+                const RandeIndexList &list = visibleIndexes(tmp_rect);
+
+                for (const RandeIndex &index : list) {
+                    oldSelection.append(QItemSelectionRange(rootIndex().child(index.first, 0), rootIndex().child(index.second, 0)));
+                }
+
+                return selectionModel()->select(oldSelection, flags);
+            }
+        }
+
         const QModelIndex &index = indexAt(rect.bottomRight());
 
         if (!index.isValid())
