@@ -37,6 +37,7 @@
 #include <DTitlebar>
 #include <DDialog>
 #include <DPlatformWindowHandle>
+#include <dwidgetutil.h>
 
 #include <QEventLoop>
 #include <QPointer>
@@ -182,6 +183,12 @@ DFileDialog::DFileDialog(QWidget *parent)
             this, &DFileDialog::selectedNameFilterChanged);
 
     statusBar()->lineEdit()->setMaxLength(MAX_FILE_NAME_CHAR_COUNT);
+
+    // 修复bug-45176
+    // 如果是wanyland平台，将弹出的文件框居中
+    if(DFMGlobal::isWayLand()) {
+        Dtk::Widget::moveToCenter(this);
+    }
 }
 
 DFileDialog::~DFileDialog()

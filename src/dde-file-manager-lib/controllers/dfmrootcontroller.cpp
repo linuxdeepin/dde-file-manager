@@ -82,12 +82,6 @@ static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice>
         return true;
     }
 
-    //wayland 情况下sda/sdb/sdc做特殊用处
-    if (DFMGlobal::isWayLand() && blkPath.contains(QRegularExpression("/sd[a-c][1-9]*$"))) {
-        qWarning()  << "block device is ignored by wayland set:"  << blkPath;
-        return true;
-    }
-
     if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
         if (!drv->removable()){ // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
             qWarning()  << "block device is ignored by wrong removeable set for system disk:"  << blkPath;
