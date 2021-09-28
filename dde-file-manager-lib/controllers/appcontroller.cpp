@@ -1446,39 +1446,39 @@ void UnmountWorker::doUnmount(const QString &blkStr)
 void UnmountWorker::doSaveRemove(const QString &blkStr)
 {
     QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blkStr));
+
+    // get the disk path (a '/org/free...../sda' string, not end with a number)
+    QString path = blkStr;
+    path.remove(QRegExp("[0-9]*$"));
+
+    const QStringList &blks = DDiskManager::blockDevices({});
+    for (const auto &blkItem: blks) {
+        if (!blkItem.contains(path))
+            continue;
+
+        QScopedPointer<DBlockDevice> pblk(DDiskManager::createBlockDevice(blkItem));
+        if (pblk->drive() != blk->drive())
+            continue;
+
+        if (pblk->mountPoints().count() > 0) {
+            pblk->unmount({});
+            QDBusError lastErr = pblk->lastError();
+            if (lastErr.type() != QDBusError::NoError) {
+                qCritical() << "device [" << pblk->idLabel() << "] unmount failed: " << lastErr.message();
+                emit unmountResult(tr("%1 is busy and cannot be unmounted now").arg(pblk->idLabel().isEmpty() ? QString(pblk->device()) : pblk->idLabel()));
+                return;
+            }
+        }
+    }
+
     QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-    QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
-
-    bool err = false;
-    if (!blk->mountPoints().empty()) {
-        blk->unmount({});
-        QDBusError lastError = blk->lastError();
-        if (lastError.message().contains("target is busy")) {
-            qDebug() << "disc mount error: " << lastError.message() << lastError.name() << lastError.type();
-            emit unmountResult(tr("Disk is busy, cannot remove now"));
-            return;
-        }
-        if (lastError.type() == QDBusError::Other) { // bug 27164, 取消 应该直接退出操作
-            qDebug() << "blk action has been canceled";
-            return;
-        }
-
-        if (lastError.type() == QDBusError::NoReply) { // bug 29268, 用户超时操作
-            qDebug() << "action timeout with noreply response";
-            emit unmountResult(tr("Action timeout, action is canceled"));
-            return;
-        }
-
-        err |= blk->lastError().isValid();
-    }
-    if (blk->cryptoBackingDevice().length() > 1) {
-        cbblk->lock({});
-        err |= cbblk->lastError().isValid();
-        drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
-    }
-    drv->powerOff({});
-    err |= drv->lastError().isValid();
-    if (err) {
+    if (drv->optical())
+        drv->eject({});
+    else
+        drv->powerOff({});
+    QDBusError err = drv->lastError();
+    if (err.type() != QDBusError::NoError) {
+        qCritical() << "device [" << drv->path() << "] poweroff failed: " << err.message();
         emit unmountResult(tr("Disk is busy, cannot eject now"));
     }
 }

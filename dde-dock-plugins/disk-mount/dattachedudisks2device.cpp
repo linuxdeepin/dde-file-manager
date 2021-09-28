@@ -31,12 +31,66 @@
 
 DFM_USE_NAMESPACE
 
+static std::atomic_bool processingRemove = ATOMIC_VAR_INIT(false);
+
+/*!
+ * \brief removeDevice  detach the device and its sibling devices and eject/poweroff the drive
+ * \param blkPath       a string refers to the dbus path of this device
+ */
+static void removeRelatedBlocks(QString blkPath) {
+    if (processingRemove)
+        return;
+    processingRemove.store(true);
+    // get the disk path (a '/org/free...../sda' string, not end with a number)
+    QString path = blkPath;
+    path.remove(QRegExp("[0-9]*$"));
+
+    QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blkPath));
+    if (!blk) {
+        processingRemove.store(false);
+        return;
+    }
+
+    const QStringList &blks = DDiskManager::blockDevices({});
+    for (const auto &blkItem: blks) {
+        if (!blkItem.contains(path))
+            continue;
+
+        QScopedPointer<DBlockDevice> pblk(DDiskManager::createBlockDevice(blkItem));
+        if (pblk->drive() != blk->drive())
+            continue;
+
+        if (pblk->mountPoints().count() > 0) {
+            pblk->unmount({});
+            QDBusError lastErr = pblk->lastError();
+            if (lastErr.type() != QDBusError::NoError) {
+                qCritical() << "device [" << pblk->idLabel() << "] unmount failed: " << lastErr.message();
+                DiskControlWidget::NotifyMsg(DiskControlWidget::tr("%1 is busy and cannot be unmounted now").arg(pblk->idLabel().isEmpty() ? QString(pblk->device()) : pblk->idLabel()));
+                processingRemove.store(false);
+                return;
+            }
+        }
+    }
+
+    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+    if (drv->optical())
+        drv->eject({});
+    else
+        drv->powerOff({});
+    QDBusError err = drv->lastError();
+    if (err.type() != QDBusError::NoError) {
+        qCritical() << "device [" << drv->path() << "] poweroff failed: " << err.message();
+        DiskControlWidget::NotifyMsg(DiskControlWidget::tr("Disk is busy, cannot remove now"));
+    }
+    processingRemove.store(false);
+}
+
+
 /*!
  * \class DAttachedUdisks2Device
  *
  * \brief An attached (mounted) block device (partition)
  */
-
 DAttachedUdisks2Device::DAttachedUdisks2Device(const DBlockDevice *blockDevicePointer)
 {
     QByteArrayList mountPoints = blockDevicePointer->mountPoints();
@@ -59,29 +113,7 @@ bool DAttachedUdisks2Device::detachable()
 void DAttachedUdisks2Device::detach()
 {
     QtConcurrent::run([this]() {
-        QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
-        blockDevice()->unmount({});
-
-        if (diskDev->optical()) { // is optical
-            if (diskDev->ejectable()) {
-                diskDev->eject({});
-                if (diskDev->lastError().isValid()) {
-                    DiskControlWidget::NotifyMsg(DiskControlWidget::tr("Disk is busy, cannot eject now"));
-                }
-                return;
-            }
-        }
-
-        if (diskDev->removable()) {
-            diskDev->eject({});
-            if (diskDev->lastError().isValid()) {
-                DiskControlWidget::NotifyMsg(DiskControlWidget::tr("Disk is busy, cannot remove now"));
-            }
-        }
-
-        if (diskDev->canPowerOff()) {
-            diskDev->powerOff({});
-        }
+        removeRelatedBlocks(this->deviceDBusId);
     });
 }
 
