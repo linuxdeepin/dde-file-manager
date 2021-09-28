@@ -275,6 +275,7 @@ const DAbstractFileInfoPointer VaultController::createFileInfo(const QSharedPoin
     }
 
     const_cast<VaultController *>(this)->updateFileInfo(DUrlList() << event->url());
+
     return DAbstractFileInfoPointer(new VaultFileInfo(event->url()));
 }
 
@@ -858,11 +859,6 @@ QString VaultController::localPathToVirtualPath(const QString &localPath)
     if (localPath.isEmpty())
         return localPath;
     QString result(localPath);
-    // 如果是目录，并且最后没有"/"，加上"/"
-    DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, DUrl::fromLocalFile(result));
-    if (info && info->isDir()) {
-        result = result.endsWith(QDir::separator()) ? result : result.append(QDir::separator());
-    }
     return result.replace(VaultController::makeVaultLocalPath(), DFMVAULT_ROOT);
 }
 
