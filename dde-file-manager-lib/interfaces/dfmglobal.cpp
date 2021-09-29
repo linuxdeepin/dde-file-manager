@@ -1286,6 +1286,23 @@ QList<QUrl> DFMGlobal::getUrlsByX11()
     return clipboardFileUrls;
 }
 
+void DFMGlobal::setMimeDataUserID(QMimeData *mime)
+{
+    QByteArray userId;
+    QString strUserID = QString::number(getUserId());
+    userId.append(strUserID);
+    // 组装用户ID的Key值
+    QString strKey = QString(MIME_USER_ID) + "_" + strUserID;
+    mime->setData(strKey, userId);
+}
+
+bool DFMGlobal::isMimeDatafromCurrentUser(const QMimeData *mime)
+{
+    // 组装用户ID的Key值
+    QString strKey = QString(MIME_USER_ID) + "_" + QString::number(getUserId());
+    return mime->hasFormat(strKey);
+}
+
 QString DFMGlobal::toUnicode(const QByteArray &data, const QString &fileName)
 {
     if (data.isEmpty())

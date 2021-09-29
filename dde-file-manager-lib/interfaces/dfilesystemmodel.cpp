@@ -1951,6 +1951,7 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
 
     QMimeData *data = new QMimeData();
 
+    DFMGlobal::setMimeDataUserID(data);
     data->setUrls(urls);
 //    data->setText(urls.first().path());
 //    data->setData("forDragEvent", urls.first().toEncoded());

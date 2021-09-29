@@ -46,6 +46,7 @@
 #define DDE_TRASH_ID "dde-trash"
 #define DDE_COMPUTER_ID "dde-computer"
 #define REVOCATION_TIMES 2
+#define MIME_USER_ID "userID_for_MoveAction"
 
 #define ASYN_CALL(Fun, Code, captured...) {\
         QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun);\
@@ -400,6 +401,9 @@ public:
     static bool isInitAppOver();
     //download remote files
     static QList<QUrl> getUrlsByX11();
+
+    static void setMimeDataUserID(QMimeData *mime);
+    static bool isMimeDatafromCurrentUser(const QMimeData *mime);
 
 signals:
     void clipboardDataChanged();
