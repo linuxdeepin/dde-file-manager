@@ -91,9 +91,10 @@ Q_LOGGING_CATEGORY(mountManager, "gvfs.mountMgr", QtInfoMsg)
 
 GvfsMountManager::GvfsMountManager(QObject *parent) : QObject(parent)
 {
+    /* hw 要求去掉该提示
     if (getDialogManager(false)) {
         connect(this, &GvfsMountManager::mount_added, dialogManager, &DialogManager::showNtfsWarningDialog);
-    }
+    }*/
 
     m_gVolumeMonitor = g_volume_monitor_get();
     qRegisterMetaType<QDrive>("QDrive");

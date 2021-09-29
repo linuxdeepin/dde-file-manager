@@ -174,9 +174,10 @@ void DialogManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestShowErrorDialog, this, &DialogManager::showErrorDialog);
     connect(fileSignalManager, &FileSignalManager::activeTaskDlg, this, &DialogManager::showTaskProgressDlgOnActive);
 
+    /* hw 要求去掉该提示
     if (getGvfsMountManager(false)) {
         connect(gvfsMountManager, &GvfsMountManager::mount_added, this, &DialogManager::showNtfsWarningDialog);
-    }
+    }*/
 
 
 #ifdef SW_LABEL
