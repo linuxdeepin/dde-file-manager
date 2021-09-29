@@ -166,9 +166,25 @@ void BackgroundManager::pullImageSettings()
     m_backgroundImagePath.clear();
     if (wmInter) {
         for (ScreenPointer sc : ScreenMrg->logicScreens()) {
-//            QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(sc->name());
-            QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(sc->name());//wm 新接口获取屏幕壁纸
-            qDebug() << "pullImageSettings GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << sc->name();
+
+            int retry = 5;
+            int timeOut = 200;
+            int oldTimeOut = wmInter->timeout();
+            wmInter->setTimeout(timeOut);
+
+            QString path;
+            while (retry--) {
+                qInfo() << "get background by wm GetCurrentWorkspaceBackgroundForMonitor and sc:" << sc->name();
+                path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(sc->name());//wm 新接口获取屏幕壁纸
+                if (!wmInter->lastError().isValid()) {
+                    qInfo() << "pullImageSettings GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << sc->name() << "   get times:" << (5 - retry);
+                    break;
+                } else {
+                    qWarning() << "get background failed from wm and times:" << (5-retry);
+                }
+            }
+            wmInter->setTimeout(oldTimeOut);
+
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
                 qCritical() << "get background fail path :" << path << "screen" << sc->name();
 
@@ -190,8 +206,25 @@ QString BackgroundManager::getBackgroundFromWm(const QString &screen)
 {
     QString ret;
     if (!screen.isEmpty() && wmInter) {
-//        QString path = wmInter->GetCurrentWorkspaceBackground();//GetCurrentWorkspaceBackgroundForMonitor(screen);
-        QString path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screen);//wm 新接口获取屏幕壁纸
+
+        int retry = 5;
+        int timeOut = 200;
+        int oldTimeOut = wmInter->timeout();
+        wmInter->setTimeout(timeOut);
+
+        QString path;
+        while (retry--) {
+            qInfo() << "get background by wm GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
+            path = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screen);//wm 新接口获取屏幕壁纸
+            if (!wmInter->lastError().isValid()) {
+                qInfo() << "pullImageSettings GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << screen << "   get times:" << (5 - retry);
+                break;
+            } else {
+                qWarning() << "get background failed from wm and times:" << (5-retry);
+            }
+        }
+        wmInter->setTimeout(oldTimeOut);
+
         if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
             path = getBackgroundFromWmConfig(screen);
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
