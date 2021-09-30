@@ -44,12 +44,13 @@ public:
     DisplayMode displayMode() const override;
     DisplayMode lastChangedMode() const override;
     void reset() override;
+public slots:
+    void onPrimaryChanged();
 protected:
     void processEvent() override;
 protected slots:
     void onScreenAdded(QScreen *screen);
     void onScreenRemoved(QScreen *screen);
-    void onPrimaryChanged();
     void onScreenGeometryChanged(const QRect &);
     void onScreenAvailableGeometryChanged(const QRect &);
     void onDockChanged();

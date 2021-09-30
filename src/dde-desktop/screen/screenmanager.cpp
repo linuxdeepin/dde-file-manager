@@ -30,6 +30,44 @@
 #include <QGuiApplication>
 
 #define SCREENOBJECT(screen) dynamic_cast<ScreenObject*>(screen)
+
+
+static bool validPrimaryChanged(const ScreenManager *screenManager)
+{
+    /*!
+     * fix bug65195、bug88250 处理只有一个屏幕时，主屏发生改变的情况
+     * 拔掉VGA连接线后不会触发该槽函数，通过dbus获取到的主屏名字仍然是VGA，但是Qt会创建虚拟屏幕，名字会是 :0.0 等。
+     * 插上HDMI连接线会触发该槽函数，通过dbus获取到主屏的名字是HDMI，通过Qt获取到的也是HDMI，
+     * 说明Qt已经从虚拟屏幕转换为真实屏幕，再配合屏幕数量只有1个，来发出屏幕改变事件。
+    */
+    static int times = 0;
+    if (Q_LIKELY(qApp->screens().count() == 1)) {
+        // 偶现，通过Qt获取到的屏幕名称可能是虚拟屏幕名称:0.0，需要延迟几百毫秒后才会获取到正确的名称（例如HDMI）
+        // 规避方案：延迟100毫秒重复获取，超过10秒则放弃获取
+        if (Q_UNLIKELY(QString(":0.0") == qApp->primaryScreen()->name())) {
+            qWarning() << " The screen name obtained by Qt is :0.0, which is re obtained after a delay of 100 milliseconds."
+                          "Current times:" << times;
+            times++;
+            if (Q_LIKELY(times < 100)) {
+                QTimer::singleShot(100, screenManager, &ScreenManager::onPrimaryChanged);
+            } else {
+                qCritical() << "Can not get the correct primary name.Current primary name is " << qApp->primaryScreen()->name();
+                times = 0;
+            }
+            return false;
+        } else {
+            qInfo() << "Primary screen changed, the screen name obtained by Qt is " << qApp->primaryScreen()->name() <<".Current times:" << times;
+            times = 0;
+            return true;
+        }
+    } else {
+        // 多屏由其余正常逻辑处理，不在本特殊处理范围内
+        times = 0;
+        return false;
+    }
+}
+
+
 ScreenManager::ScreenManager(QObject *parent)
     : AbstractScreenManager(parent)
 {
@@ -69,15 +107,8 @@ void ScreenManager::onScreenRemoved(QScreen *screen)
 
 void ScreenManager::onPrimaryChanged()
 {
-    /*!
-     * fix bug65195 处理只有一个屏幕时，主屏发生改变的情况
-     * 拔掉VGA连接线后不会触发该槽函数，通过dbus获取到的主屏名字仍然是VGA，但是Qt会创建虚拟屏幕，名字会是 :0.0 等。
-     * 插上HDMI连接线会触发该槽函数，通过dbus获取到主屏的名字是HDMI，通过Qt获取到的也是HDMI，
-     * 说明Qt已经从虚拟屏幕转换为真实屏幕，再配合屏幕数量只有1个，来发出屏幕改变事件
-    */
-    if (qApp->screens().count() == 1) {
+    if (validPrimaryChanged(this))
         appendEvent(Screen);
-    }
 }
 
 void ScreenManager::onScreenGeometryChanged(const QRect &rect)
