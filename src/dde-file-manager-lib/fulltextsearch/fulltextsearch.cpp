@@ -93,7 +93,7 @@ QString DFMFullTextSearchManager::getFileContents(const QString &filePath)
         parser_type = PlainTextExtractor::PARSER_PPT;
     else if (ext == "pdf")
         return parsePdfFile(filePath, static_cast<quint32>(IndexWriter::MaxFieldLengthLIMITED));
-    else if (ext == "txt" || ext == "text")
+    else if (ext == "txt" || ext == "text" || ext == "md")
         parser_type = PlainTextExtractor::PARSER_TXT;
     else {
         qDebug() << "Unsupported file extension: " << ext;
@@ -280,7 +280,7 @@ void DFMFullTextSearchManager::traverseFloder(const char *filePath, QStringList 
         } else {
             QFileInfo info(fn);
             QString suffix = info.suffix();
-            QRegExp regExp("(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|"
+            QRegExp regExp("(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|(md)|"
                            "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(htm)|(html)|(pdf)|(dps)");
             if (regExp.exactMatch(suffix)) {
                 result.append(fn);
