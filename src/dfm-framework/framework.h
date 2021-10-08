@@ -23,6 +23,8 @@
 
 #include "dfm-framework/dfm_framework_global.h"
 #include "dfm-framework/lifecycle/lifecycle.h"
+#include "dfm-framework/event/eventcallproxy.h"
+#include "dfm-framework/service/pluginservicecontext.h"
 
 #include <QObject>
 
@@ -38,30 +40,13 @@ class DPF_EXPORT Framework
 {
     Q_DISABLE_COPY(Framework)
 public:
-    /*!
-     * \brief Get framework instance.
-     * \return
-     */
     static Framework &instance();
 
-    /*!
-     * \brief Framework inner modules will be initialized
-     * when it invoked,same for plugins.
-     * \return
-     */
     bool initialize();
-
-    /*!
-     * \brief Start framework after initialized.
-     * \return
-     */
     bool start();
-
-    /*!
-     * \brief Get plugin life cycle manager
-     * \return
-     */
     const LifeCycle &lifeCycle() const;
+    PluginServiceContext &serviceContext() const;
+    EventCallProxy &eventProxy() const;
 
 private:
     Framework();
@@ -70,8 +55,9 @@ private:
     QScopedPointer<FrameworkPrivate> d;
 };
 
-#endif // FRAMEWORK_H
 
 DPF_END_NAMESPACE
 
 #define dpfInstance ::dpf::Framework::instance()
+
+#endif // FRAMEWORK_H

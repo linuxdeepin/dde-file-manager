@@ -55,7 +55,7 @@ public:
 
     virtual ~QtClassManager()
     {
-        for (auto val : classList.keys()){
+        for (auto val : classList.keys()) {
             remove(val);
         }
     }
@@ -69,7 +69,7 @@ public:
             return false;
         }
 
-        if (!obj){
+        if (!obj) {
             if (errorString)
                 *errorString = QObject::tr("Failed, Can't append the empty class pointer");
             return false;
@@ -89,7 +89,7 @@ public:
                 *errorString = QObject::tr("Failed, Objects cannot be added repeatedly");
             return false;
         }
-        classList.insert(name,obj);
+        classList.insert(name, obj);
         return true;
     }
 
@@ -107,7 +107,7 @@ public:
     virtual bool remove(const QString &name)
     {
         auto itera = classList.begin();
-        while(itera != classList.end()) {
+        while (itera != classList.end() && !classList.empty()) {
             if (itera.key() == name) {
                 delete itera.value();
                 itera = classList.erase(itera);

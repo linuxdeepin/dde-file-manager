@@ -22,7 +22,7 @@
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H
 
-#include "event.h"
+#include "dfm-framework/event/event.h"
 #include "dfm-framework/log/frameworklog.h"
 #include "dfm-framework/log/codetimecheck.h"
 #include "dfm-framework/dfm_framework_global.h"

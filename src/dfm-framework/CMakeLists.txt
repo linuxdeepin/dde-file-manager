@@ -40,6 +40,7 @@ set(PUBLIC_H
     log/logutils.h
     service/qtclassmanager.h
     service/qtclassfactory.h
+    service/pluginservicecontext.h
     service/pluginservice.h
     lifecycle/pluginsetting.h
     lifecycle/pluginmetaobject.h
@@ -66,7 +67,7 @@ set(PUBLIC_CPP
     lifecycle/plugin.cpp
     lifecycle/pluginmanager.cpp
     lifecycle/lifecycle.cpp
-    service/pluginservice.cpp
+    service/pluginservicecontext.cpp
     abus/appbus.cpp
     listener/listener.cpp
     backtrace/backtrace.cpp

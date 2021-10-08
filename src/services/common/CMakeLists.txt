@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-# 定义可执行程序名称
 project(dfmservice-common)
 
 set(GLOBAL_H
@@ -24,6 +23,14 @@ set(JOB_CPP
     jobservice/abstractjobhandler.cpp
     )
 
+set(SERVICE_H
+    device/deviceservice.h
+    )
+
+set(SERVICE_CPP
+    device/deviceservice.cpp
+    )
+
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_H}
@@ -31,10 +38,13 @@ add_library(${PROJECT_NAME}
     ${EVENT_CPP}
     ${JOB_H}
     ${JOB_CPP}
+    ${SERVICE_H}
+    ${SERVICE_CPP}
     )
 
 target_link_libraries(
     ${PROJECT_NAME}
+    dfm-framework
     ${QtUseModules}
     ${PkgUseModules}
     )

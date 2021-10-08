@@ -22,6 +22,8 @@
 #include "recenteventreceiver.h"
 #include "windowservice/contexts.h"
 
+#include "dfm-framework/framework.h"
+
 void RecentEventReceiver::eventProcess(const dpf::Event &event)
 {
     if (event.topic() == EventTypes::TOPIC_WINDOW_EVENT)
@@ -30,9 +32,9 @@ void RecentEventReceiver::eventProcess(const dpf::Event &event)
 
 void RecentEventReceiver::windowEvent(const dpf::Event &event)
 {
-    if (event.data() == EventTypes::DATA_OPEN_NEW_WINDOW)
-    {
-        WindowService* windowService = dpf::PluginServiceContext::service<WindowService>("WindowService");
+    if (event.data() == EventTypes::DATA_OPEN_NEW_WINDOW) {
+        auto &ctx = dpfInstance.serviceContext();
+        WindowService* windowService = ctx.service<WindowService>(WindowService::name());
         qCCritical(RecentPlugin) << Q_FUNC_INFO << windowService;
         if (windowService) {
             //do new sidebar and plugin all menu;

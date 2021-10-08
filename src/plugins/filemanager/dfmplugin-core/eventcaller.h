@@ -22,8 +22,6 @@
 #ifndef EVENTCALLER_H
 #define EVENTCALLER_H
 
-#include "dfm-framework/event/event.h"
-#include "dfm-framework/event/eventcallproxy.h"
 #include "windowservice/contexts.h"
 
 DSB_FM_USE_NAMESPACE

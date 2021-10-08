@@ -1,10 +1,11 @@
 /*
  * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyu@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +19,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#include "pluginservice.h"
+*/
+#include "deviceservice.h"
 
-DPF_BEGIN_NAMESPACE
+DSC_USE_NAMESPACE
 
-// 饿汉避免释放冲突
-static dpf::PluginServiceContext pluginServiceCtx;
-
-PluginServiceContext &PluginServiceContext::instance()
+DeviceService::DeviceService(QObject *parent)
+    : dpf::PluginService(parent),
+      dpf::AutoServiceRegister<DeviceService>()
 {
-    return pluginServiceCtx;
+
 }
 
-QStringList PluginServiceContext::services()
+DeviceService::~DeviceService()
 {
-    return PluginServiceContext::instance().keys();
+
 }
-
-DPF_END_NAMESPACE
-
-
-

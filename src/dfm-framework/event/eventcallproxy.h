@@ -22,8 +22,8 @@
 #ifndef EVENTCALLPROXY_H
 #define EVENTCALLPROXY_H
 
-#include "event.h"
-#include "eventhandler.h"
+#include "dfm-framework/event/event.h"
+#include "dfm-framework/event/eventhandler.h"
 #include "dfm-framework/log/frameworklog.h"
 
 #include <QObject>
@@ -45,7 +45,6 @@ class EventCallProxy final
 
     struct HandlerInfo
     {
-        QString className;
         QSharedPointer<EventHandler> handler;
         ExportFunc invoke;
         QStringList topics;
@@ -53,8 +52,8 @@ class EventCallProxy final
     };
 
 public:
-    EventCallProxy() = delete;
-    static bool pubEvent(const Event& event);
+    static EventCallProxy &instance();
+    bool pubEvent(const Event& event);
 
 private:
     static void registerHandler(EventHandler::Type type, const QStringList &topics, CreateFunc creator);

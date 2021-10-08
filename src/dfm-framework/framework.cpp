@@ -42,6 +42,10 @@ FrameworkPrivate::FrameworkPrivate(Framework *dd)
 
 }
 
+/*!
+ * \brief Get framework instance.
+ * \return
+ */
 Framework &Framework::instance()
 {
     static Framework ins;
@@ -49,6 +53,11 @@ Framework &Framework::instance()
 }
 
 
+/*!
+ * \brief Framework inner modules will be initialized
+ * when it invoked,same for plugins.
+ * \return
+ */
 bool Framework::initialize()
 {
     if (d->bInitialized) {
@@ -67,6 +76,11 @@ bool Framework::initialize()
     return true;
 }
 
+
+/*!
+ * \brief Start framework after initialized.
+ * \return
+ */
 bool Framework::start()
 {
     // TODO(anyone):Start plugin after initialized,
@@ -74,9 +88,31 @@ bool Framework::start()
     return true;
 }
 
+/*!
+ * \brief Get plugin life cycle manager
+ * \return
+ */
 const LifeCycle &Framework::lifeCycle() const
 {
     return *d->lifeCycle;
+}
+
+/*!
+ * \brief Get plugin service context
+ * \return
+ */
+PluginServiceContext &Framework::serviceContext() const
+{
+    return PluginServiceContext::instance();
+}
+
+/*!
+ * \brief Get event proxy
+ * \return
+ */
+EventCallProxy &Framework::eventProxy() const
+{
+    return EventCallProxy::instance();
 }
 
 Framework::Framework() :

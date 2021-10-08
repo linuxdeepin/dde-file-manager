@@ -23,6 +23,12 @@
 
 DPF_BEGIN_NAMESPACE
 
+EventCallProxy &EventCallProxy::instance()
+{
+    static EventCallProxy proxy;
+    return proxy;
+}
+
 /*!
  * \brief EventCallProxy::pubEvent Send event objects to
  * all `handlers` that have subscribed to the topic，
@@ -33,7 +39,8 @@ DPF_BEGIN_NAMESPACE
 bool EventCallProxy::pubEvent(const Event &event)
 {
     bool flag = false;
-    for (HandlerInfo &info : getInfoList()) {
+    QList<EventCallProxy::HandlerInfo> &infoGroup = getInfoList();
+    for (HandlerInfo &info : infoGroup) {
         if (!info.topics.contains(event.topic()))
             continue;
         if (Q_LIKELY(info.invoke)) {
@@ -71,7 +78,7 @@ void EventCallProxy::registerHandler(EventHandler::Type type, const QStringList 
         };
     }
     qInfo() << "Register Handler, type " << static_cast<int>(type) << ", topics" << topics;
-    infoList.append(HandlerInfo{"", nullptr, invoke, topics, QFuture<void>()});
+    infoList.append(HandlerInfo{nullptr, invoke, topics, QFuture<void>()});
 }
 
 
@@ -83,10 +90,8 @@ QList<EventCallProxy::HandlerInfo> &EventCallProxy::getInfoList()
 
 void EventCallProxy::fillInfo(EventCallProxy::HandlerInfo &info, EventCallProxy::CreateFunc creator)
 {
-    if (!info.handler) {
+    if (!info.handler)
         info.handler = creator();
-        info.className = info.handler->metaObject()->className();
-    }
 }
 
 QMutex *EventCallProxy::eventMutex()

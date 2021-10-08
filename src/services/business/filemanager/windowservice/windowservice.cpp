@@ -31,7 +31,9 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-WindowService::WindowService()
+WindowService::WindowService(QObject *parent)
+    : dpf::PluginService(parent),
+      dpf::AutoServiceRegister<WindowService>()
 {
 
 }

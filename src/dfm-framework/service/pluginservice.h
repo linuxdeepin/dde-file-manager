@@ -22,63 +22,39 @@
 #ifndef PLUGINSERVICE_H
 #define PLUGINSERVICE_H
 
-#include "qtclassfactory.h"
-#include "qtclassmanager.h"
 #include "dfm-framework/log/frameworklog.h"
 #include "dfm-framework/dfm_framework_global.h"
 
 #include <QObject>
-#include <QMetaObject>
 #include <QHash>
-#include <QDebug>
 
 DPF_BEGIN_NAMESPACE
 
-class PluginService: public QObject
+class PluginService : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(PluginService)
 public:
-    explicit PluginService(){}
+    explicit PluginService(QObject *parent = nullptr): QObject(parent) {}
     virtual ~PluginService(){}
-}; //接口类
-
-class PluginServiceContext final : public QObject,
-        public QtClassFactory<PluginService>,
-        public QtClassManager<PluginService>
-{
-    Q_OBJECT
-public:
-    explicit PluginServiceContext(){}
-    virtual ~PluginServiceContext(){}
-    static PluginServiceContext &instance();
-    static QStringList services();
-
-    template<class CT = PluginService>
-    static CT *service(const QString &serviceName)
-    {
-        return qobject_cast<CT*>(PluginServiceContext::instance().
-                                 value(serviceName));
-    }
 };
 
-#define PLUGIN_SERVICE(x) \
-    static bool x##_regResult = dpf::PluginServiceContext::instance().regClass<x>(#x);
-
-#define IMPORT_SERVICE(x) \
-    QString errorString; \
-    auto x##_ins = dpf::PluginServiceContext::instance().create(#x,&errorString); \
-    if (!x##_ins) \
-    dpfCritical() << errorString; \
-    else { \
-    dpfCritical() << "IMPORT_SERVICE:" << #x;\
-    auto appendRes = dpf::PluginServiceContext::instance().append(#x, x##_ins, &errorString);\
-    if (!appendRes) dpfCritical()<< errorString;\
+template <typename T>
+class AutoServiceRegister
+{
+public:
+    AutoServiceRegister()
+    {
+        // must keep it!!!
+        // Otherwise `trigger` will not be called !
+        qDebug() << isRegistered;
     }
 
-#define EXPORT_SERVICE(x) \
-    dpf::PluginServiceContext::instance().remove(#x);\
-    dpfCritical() << "EXPORT_SERVICE:" << #x;
+    static bool trigger();
+
+private:
+    static bool isRegistered;
+};
 
 DPF_END_NAMESPACE
 

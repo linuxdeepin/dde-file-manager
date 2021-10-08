@@ -51,7 +51,7 @@ public:
         CreateFunc foo = [=](){
             return dynamic_cast<CT*>(new T());
         };
-        constructList.insert(name,foo);
+        constructList.insert(name, foo);
         return true;
     }
 

@@ -26,7 +26,7 @@
 #include "displayviewlogic.h"
 #include "dfm_filemanager_service_global.h"
 
-#include "dfm-framework/service/pluginservice.h"
+#include "dfm-framework/service/pluginservicecontext.h"
 
 #include <QUrl>
 #include <QVBoxLayout>
@@ -39,7 +39,7 @@ class Core;
 
 DSB_FM_BEGIN_NAMESPACE
 
-class WindowService final : public dpf::PluginService
+class WindowService final : public dpf::PluginService, dpf::AutoServiceRegister<WindowService>
 {
     Q_OBJECT
     Q_DISABLE_COPY(WindowService)
@@ -50,7 +50,12 @@ class WindowService final : public dpf::PluginService
     friend class ::Core;
 
 public:
-    explicit WindowService();
+    static QString name()
+    {
+        return "org.deepin.service.WindowService";
+    }
+
+    explicit WindowService(QObject *parent = nullptr);
     virtual ~WindowService() override;
     bool addSideBarItem(int windowIndex, SideBarItem *item);
     bool removeSideBarItem(int windowIndex, SideBarItem *item);
@@ -61,7 +66,7 @@ private: //@Method
     bool setWindowRootUrl(BrowseWindow * newWindow,
                           const QUrl &url,
                           QString *errorString = nullptr);
-}; PLUGIN_SERVICE(WindowService);
+};
 
 DSB_FM_END_NAMESPACE
 

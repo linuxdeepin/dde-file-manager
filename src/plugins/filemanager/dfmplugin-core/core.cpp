@@ -38,6 +38,7 @@
 #include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
 #include "dfm-base/widgets/dfmfileview/fileview.h"
 
+#include "dfm-framework/framework.h"
 #include "dfm-framework/listener/listener.h"
 #include "dfm-framework/lifecycle/plugin.h"
 #include "dfm-framework/service/pluginservice.h"
@@ -202,8 +203,12 @@ void Core::initialize()
     dpfCritical() << __PRETTY_FUNCTION__;
     qInfo() << Q_FUNC_INFO;
 
-    IMPORT_SERVICE(WindowService);
-    //    IMPORT_SERVICE(DFMOldPreviewService);
+    QString errStr;
+    auto &ctx = dpfInstance.serviceContext();
+    if (!ctx.load(WindowService::name(), &errStr)) {
+        qCritical() << errStr;
+        abort();
+    }
 
     //注册路由
     UrlRoute::schemeMapRoot("file","/");
@@ -220,21 +225,9 @@ bool Core::start()
 {
     GlobalPrivate::dfmApp = new Application;
     dpfCritical() << __PRETTY_FUNCTION__;
-    qInfo() << "import service list" <<  dpf::PluginServiceContext::services();
-
-    //    auto previewService = context->service<DFMOldPreviewService>("DFMOldPreviewService");
-    //    if (previewService) {
-    //        auto viewInterfaces = previewService->getViewInterfaces();
-    //        qInfo() << "viewInterfaces.size()" << viewInterfaces.size();
-    //        auto previewInterfaces = previewService->getPreviewInterfaces();
-    //        qInfo() << "previewInterfaces.size()" << previewInterfaces.size();
-    //        auto expandInfoInterfaces = previewService->getExpandInfoInterfaces();
-    //        qInfo() << "expandInfoInterfaces.size()" << expandInfoInterfaces.size();
-    //        auto dfmfilePreviewInterface = previewService->getDFMFilePreviewInterface();
-    //        qInfo() << "dfmfilePreviewInterface.size()" << dfmfilePreviewInterface.size();
-    //    }
-
-    WindowService *windowService = dpf::PluginServiceContext::service<WindowService>("WindowService");
+    auto &ctx = dpfInstance.serviceContext();
+    qInfo() << "import service list" <<  ctx.services();
+    WindowService *windowService = ctx.service<WindowService>(WindowService::name());
 
     if (!windowService) {
         qCCritical(CorePlugin) << "Failed, init window \"windowService\" is empty";
@@ -277,10 +270,7 @@ bool Core::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag Core::stop() {
-
-    EXPORT_SERVICE(WindowService);
-    //    EXPORT_SERVICE(DFMOldPreviewService);
-
+dpf::Plugin::ShutdownFlag Core::stop()
+{
     return Synch;
 }

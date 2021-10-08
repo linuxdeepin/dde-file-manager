@@ -1,5 +1,6 @@
 #include "event/event.h"
 #include "event/eventcallproxy.h"
+#include "framework.h"
 
 #include <QCoreApplication>
 #include <QMetaObject>
@@ -84,7 +85,7 @@ TEST_F(UT_EventCallProxy, test_callEvent)
 
     dpf::Event windowEvent;
     windowEvent.setTopic("WindowEvent");
-    EXPECT_EQ(true, dpf::EventCallProxy::pubEvent(windowEvent));
+    EXPECT_EQ(true, dpf::EventCallProxy::instance().pubEvent(windowEvent));
 
     // 同步执行线程非空
     EXPECT_EQ(true, TestHander1::getRunThreadID() != Qt::HANDLE(nullptr));
@@ -97,7 +98,7 @@ TEST_F(UT_EventCallProxy, test_callEvent)
 
     dpf::Event lauchEvent;
     lauchEvent.setTopic("LauchEvent");
-    EXPECT_EQ(true, dpf::EventCallProxy::pubEvent(lauchEvent));
+    EXPECT_EQ(true, dpf::EventCallProxy::instance().pubEvent(lauchEvent));
 
     // 同步执行线程非空
     EXPECT_EQ(true, TestHander1::getRunThreadID() != Qt::HANDLE(nullptr));

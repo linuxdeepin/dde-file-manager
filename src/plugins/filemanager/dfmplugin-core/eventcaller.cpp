@@ -21,11 +21,13 @@
  */
 #include "eventcaller.h"
 
+#include "dfm-framework/framework.h"
+
 void EventCaller::sendOpenNewWindowEvent(int windowIdx)
 {
     dpf::Event event;
     event.setTopic(EventTypes::TOPIC_WINDOW_EVENT);
     event.setData(EventTypes::DATA_OPEN_NEW_WINDOW);
     event.setProperty(EventTypes::PROPERTY_KEY_WINDOW_INDEX, windowIdx);
-    dpf::EventCallProxy::pubEvent(event);
+    dpfInstance.eventProxy().pubEvent(event);
 }
