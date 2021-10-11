@@ -237,8 +237,6 @@ void Frame::show()
 
 void Frame::hide()
 {
-    emit aboutHide();
-
     DBlurEffectWidget::hide();
 }
 
@@ -265,7 +263,7 @@ void Frame::setMode(Frame::Mode mode)
 
 QPair<QString, QString> Frame::desktopBackground() const
 {
-    return QPair<QString, QString>(m_screenName, m_desktopWallpaper);
+    return QPair<QString, QString>(m_screenName, m_cureentWallpaper);
 }
 
 void Frame::handleNeedCloseButton(QString path, QPoint pos)
@@ -331,15 +329,8 @@ void Frame::hideEvent(QHideEvent *event)
     m_mouseArea->unregisterRegion();
 
     if (m_mode == WallpaperMode) {
-        if (!m_desktopWallpaper.isEmpty()){
-            setBackground();
-        }
-
-        else if (m_dbusDeepinWM)
+        if (!m_cureentWallpaper.isEmpty() && m_dbusDeepinWM)
             m_dbusDeepinWM->SetTransientBackground("");
-
-        if (!m_lockWallpaper.isEmpty())
-            m_dbusAppearance->Set("greeterbackground", m_lockWallpaper);
 
         if (ThumbnailManager *manager = ThumbnailManager::instance(devicePixelRatioF()))
             manager->stop();
@@ -1060,10 +1051,6 @@ void Frame::refreshList()
                         return;
                     } else if (path.remove("file://") == currentPath.remove("file://")) { //均有机会出现头部为file:///概率
                         item->pressed();
-
-                        //清除item pressed设置的数据
-                        m_desktopWallpaper.clear();
-                        m_lockWallpaper.clear();
                     }
                 }
 
@@ -1148,8 +1135,7 @@ void Frame::onItemPressed(const QString &data)
         if (m_backgroundManager)
             m_backgroundManager->setBackgroundImage(m_screenName, data);
 
-        m_desktopWallpaper = data;
-        m_lockWallpaper = data;
+        m_cureentWallpaper = data;
 
         // 点击当前壁纸不显示删除按钮
         if (m_closeButton && m_closeButton->isVisible()) {
@@ -1195,9 +1181,11 @@ void Frame::onItemButtonClicked(const QString &buttonID)
         return;
 
     if (buttonID == DESKTOP_BUTTON_ID) {
-        m_lockWallpaper.clear();
+        // 设置桌面
+        applyToDesktop();
     } else if (buttonID == LOCK_SCREEN_BUTTON_ID) {
-        m_desktopWallpaper.clear();
+        // 设置锁屏
+        applyToGreeter();
     }
 #ifndef DISABLE_SCREENSAVER
     else if (buttonID == SCREENSAVER_BUTTON_ID) {
@@ -1228,7 +1216,7 @@ QStringList Frame::processListReply(const QString &reply)
 
 QString Frame::getWallpaperSlideShow()
 {
-    if(nullptr == m_dbusAppearance) {
+    if (nullptr == m_dbusAppearance) {
         qWarning() << "m_dbusAppearance is nullptr";
         return QString();
     }
@@ -1240,7 +1228,7 @@ QString Frame::getWallpaperSlideShow()
 
 void Frame::setWallpaperSlideShow(QString slideShow)
 {
-    if(nullptr == m_dbusAppearance) {
+    if (nullptr == m_dbusAppearance) {
         qWarning() << "m_dbusAppearance is nullptr";
         return;
     }
@@ -1249,13 +1237,36 @@ void Frame::setWallpaperSlideShow(QString slideShow)
     m_dbusAppearance->SetWallpaperSlideShow(m_screenName, slideShow);
 }
 
-void Frame::setBackground()
+void Frame::applyToDesktop()
 {
-    if(nullptr == m_dbusAppearance) {
+    if (nullptr == m_dbusAppearance) {
         qWarning() << "m_dbusAppearance is nullptr";
         return;
     }
 
-    qInfo() << "dbus Appearance SetMonitorBackground is called " << m_screenName << " " << m_desktopWallpaper;
-    m_dbusAppearance->SetMonitorBackground(m_screenName, m_desktopWallpaper);
+    if (m_cureentWallpaper.isEmpty()) {
+        qWarning() << "cureentWallpaper is empty";
+        return;
+    }
+
+    qInfo() << "dbus Appearance SetMonitorBackground is called " << m_screenName << " " << m_cureentWallpaper;
+    m_dbusAppearance->SetMonitorBackground(m_screenName, m_cureentWallpaper);
+
+    emit backgroundChanged();
+}
+
+void Frame::applyToGreeter()
+{
+    if (nullptr == m_dbusAppearance) {
+        qWarning() << "m_dbusAppearance is nullptr";
+        return;
+    }
+
+    if (m_cureentWallpaper.isEmpty()) {
+        qWarning() << "cureentWallpaper is empty";
+        return;
+    }
+
+    qInfo() << "dbus Appearance greeterbackground is called " << m_cureentWallpaper;
+    m_dbusAppearance->Set("greeterbackground", m_cureentWallpaper);
 }

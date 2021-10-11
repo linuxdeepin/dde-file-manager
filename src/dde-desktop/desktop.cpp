@@ -90,7 +90,7 @@ void Desktop::showWallpaperSettings(QString name, int mode)
     });
 
 
-    connect(d->wallpaperSettings, &Frame::aboutHide, this, [this] {
+    connect(d->wallpaperSettings, &Frame::backgroundChanged, this, [this] {
         WallpaperSettings *setting = dynamic_cast<WallpaperSettings *>(sender());
         if (setting && d->m_background) {
             QPair<QString, QString> screenImage = setting->desktopBackground();

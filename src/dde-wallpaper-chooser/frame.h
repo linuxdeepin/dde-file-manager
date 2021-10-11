@@ -64,11 +64,9 @@ public:
 
     void show();
     void hide();
-
     QPair<QString,QString> desktopBackground() const;
-
 signals:
-    void aboutHide();
+    void backgroundChanged();
     void done();
 
 public slots:
@@ -103,9 +101,8 @@ private:
     const Mode m_mode = WallpaperMode;
 #endif
     WallpaperList *m_wallpaperList = nullptr;
-    QString m_desktopWallpaper;
+    QString m_cureentWallpaper;
     QStringList m_needDeleteList;
-    QString m_lockWallpaper;
     DIconButton *m_closeButton = nullptr;
 #ifndef DISABLE_WALLPAPER_CAROUSEL
     QHBoxLayout *m_wallpaperCarouselLayout;
@@ -135,7 +132,8 @@ private:
 
     QString getWallpaperSlideShow();
     void setWallpaperSlideShow(QString slideShow);
-    void setBackground();
+    void applyToDesktop();
+    void applyToGreeter();
 
     QString m_screenName;
 

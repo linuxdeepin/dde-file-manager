@@ -186,15 +186,21 @@ TEST(DesktopTest, show_wallpaper_setting)
     desktop.showWallpaperSettings(qApp->primaryScreen()->name(), Frame::Mode::WallpaperMode);
 
     WallpaperSettings *wset11 = desktop.d.data()->wallpaperSettings;
-    if (nullptr != wset11) {
-        stu.set_lamda(ADDR(Frame, desktopBackground), [](){return QPair<QString, QString>();});
-        stu.set_lamda(ADDR(BackgroundManager, setBackgroundImage), [](){return;});
-        stu.set_lamda(ADDR(Frame, isActiveWindow), [](){return false;});
-        emit wset11->aboutHide();
-        QWindow* win = wset11->windowHandle();
-        if (win)
-            emit  win->activeChanged();
-        QTest::qWait(20);
+    if (wset11 && desktop.d.data()->m_background) {
+        bool callDesktopBackground = false;
+        bool callSetBackgroundImage = false;
+        stu.set_lamda(ADDR(Frame, desktopBackground), [&callDesktopBackground](){
+            callDesktopBackground = true;
+            return QPair<QString, QString>();
+        });
+        stu.set_lamda(ADDR(BackgroundManager, setBackgroundImage), [&callSetBackgroundImage](){
+            callSetBackgroundImage = true;
+            return;
+        });
+        emit wset11->backgroundChanged();
+
+        EXPECT_TRUE(callDesktopBackground);
+        EXPECT_TRUE(callSetBackgroundImage);
     }
 
     desktop.showWallpaperSettings("", Frame::Mode::WallpaperMode);
