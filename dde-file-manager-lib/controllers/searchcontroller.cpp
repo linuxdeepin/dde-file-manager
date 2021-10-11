@@ -462,6 +462,8 @@ bool SearchDiriterator::hasNext() const
             it->next();
 
             DAbstractFileInfoPointer fileInfo = it->fileInfo();
+            if (!fileInfo || !fileInfo->exists())
+                continue;
 
             fileInfo->makeAbsolute();
 
