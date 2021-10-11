@@ -68,7 +68,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         return GlobalPrivate::paintSeparator(painter, option);
     }
 
-    return DStyledItemDelegate::paint(painter, option, index);
+    return QStyledItemDelegate::paint(painter, option, index);
 }
 
 QSize SideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const

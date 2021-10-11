@@ -1,10 +1,9 @@
 /*
  * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyu@uniontech.com>
+ * Author:     luzhen<luzhen@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: luzhen<luzhen@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +17,23 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef FILEUTILS_H
-#define FILEUTILS_H
+*/
 
-#include "dfm-base/base/abstractfileinfo.h"
-#include "dfm-base/dfm_base_global.h"
+#include <gtest/gtest.h>
+#include <sanitizer/asan_interface.h>
+#include <QCoreApplication>
 
-DFMBASE_BEGIN_NAMESPACE
-/*!
- * @class FileUtils
- *
- * @brief Utility class providing static helper methods for file management
- */
-class FileUtils
+int main(int argc, char *argv[])
 {
-public:
-    static bool mkdir(const QUrl &url, const QString dirName, QString *errorString = nullptr);
-    static bool touch(const QUrl &url, const QString fileName, QString *errorString = nullptr);
-};
+    QCoreApplication app(argc,argv);
 
-DFMBASE_END_NAMESPACE
+    ::testing::InitGoogleTest(&argc, argv);
 
-#endif // FILEUTILS_H
+    int ret = RUN_ALL_TESTS();
+
+#ifdef ENABLE_TSAN_TOOL
+    __sanitizer_set_report_path("../../asan_dde-file-manager.log");
+#endif
+
+    return ret;
+}

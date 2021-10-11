@@ -28,7 +28,6 @@
 #include <dfm-io/local/dlocalenumerator.h>
 
 DFMBASE_BEGIN_NAMESPACE
-
 LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
                                                  const QStringList &nameFilters,
                                                  QDir::Filters filters,
@@ -80,7 +79,6 @@ LocalDirIterator::~LocalDirIterator()
  *
  * \return QUrl 返回第一个文件的QUrl
  **/
-
 QUrl LocalDirIterator::next()
 {
     if (d->dfmioDirIterator) {
@@ -93,7 +91,6 @@ QUrl LocalDirIterator::next()
  *
  * \return bool 返回是否还有下一个文件
  */
-
 bool LocalDirIterator::hasNext() const
 {
     if (d->dfmioDirIterator)

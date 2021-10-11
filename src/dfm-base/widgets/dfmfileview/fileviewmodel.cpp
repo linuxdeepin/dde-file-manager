@@ -160,6 +160,22 @@ void FileViewModel::clear()
         }
     }
 }
+/*!
+ * \brief FileViewModel::rowCountMaxShow
+ * \return int 当前view最多展示多少行的item项
+ */
+int FileViewModel::rowCountMaxShow()
+{
+    // 优化思路，初始化计算行数，model设置相关行数，随后向下拉view时进行动态insert和界面刷新。
+    // 避免一次性载入多个文件的长时间等待。
+    auto view = qobject_cast<QAbstractItemView*>(QObject::parent());
+    auto beginIndex = view->indexAt(QPoint{1,1});
+    auto currViewHeight = view->size().height();
+    auto currIndexHeight = beginIndex.data(Qt::SizeHintRole).toSize().height();
+    if (currIndexHeight <= 0)
+        return -1;
+    return (currViewHeight / currIndexHeight) + 1;
+}
 
 void FileViewModel::fetchMore(const QModelIndex &parent)
 {

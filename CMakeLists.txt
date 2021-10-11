@@ -3,10 +3,11 @@ cmake_minimum_required(VERSION 3.1.0)
 project(filemanager)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-message("debug type open sanitize check")
-set(CMAKE_CXX_FLAGS "-fsanitize=undefined,address,leak -fno-omit-frame-pointer")
-set(CMAKE_C_FLAGS "-fsanitize=undefined,address,leak -fno-omit-frame-pointer")
-set(CMAKE_L_FLAGS "-fsanitize=undefined,address,leak -fno-omit-frame-pointer")
+    set(CMAKE_VERBOSE_MAKEFILEON ON)
+    message("debug type open sanitize check")
+    set(CMAKE_CXX_FLAGS "-fsanitize=undefined,address,leak -fno-omit-frame-pointer")
+    set(CMAKE_C_FLAGS "-fsanitize=undefined,address,leak -fno-omit-frame-pointer")
+    set(CMAKE_L_FLAGS "-fsanitize=undefined,address,leak -fno-omit-frame-pointer")
 #    set(CMAKE_CXX_FLAGS "-fsanitize=thread")
 #    set(CMAKE_C_FLAGS "-fsanitize=thread")
 #    set(CMAKE_L_FLAGS "-fsanitize=thread")
@@ -38,9 +39,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}
 
 # Setup the environment
 set(CMAKE_CXX_STANDARD 17)
-if(CMAKE_VERSION VERSION_LESS "3.7.0")
-    set(CMAKE_INCLUDE_CURRENT_DIR ON)
-endif()
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -52,13 +50,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-need -fPIE")
 
 # Use Qt modules
 set(QtFindModules Core Gui Widgets Concurrent Svg Network Sql X11Extras Xml)
-
 foreach(QtModule ${QtFindModules})
     find_package(Qt5 COMPONENTS ${QtModule} REQUIRED)
-
     # include qt module private include directors
     include_directories(${Qt5${QtModule}_PRIVATE_INCLUDE_DIRS})
-
     # can use target_link_libraries(xxx ${QtUseModules})
     list(APPEND QtUseModules "Qt5::${QtModule}")
     message("QtModule found ${QtModule} OK!")
@@ -66,7 +61,6 @@ endforeach()
 
 #other not found libs kde from input for Qt
 set(KdeFindPackage KF5Codecs)
-
 foreach(KdeConfigModule ${KdeFindPackage})
     find_package(${KdeConfigModule} REQUIRED)
     if(${KdeConfigModule}_FOUND)
@@ -82,9 +76,7 @@ endforeach(KdeConfigModule)
 # Use PkgConfig modules
 # You can setting mini version for "glib-2.0>=2.10 gtk+-2.0" in the list
 set(PkgConfigFindModules dtkcore dtkwidget dtkgui gio-unix-2.0 dfm-io)
-
 include(FindPkgConfig)
-
 foreach(PkgConfigModule ${PkgConfigFindModules})
     pkg_check_modules(PkgUseModuleVal REQUIRED ${PkgConfigModule})
     #can use target_link_libraries(xxx ${PkgUseModule})
@@ -102,9 +94,6 @@ set(FILEMANAGER_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/business/filemana
 set(DESKTOP_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/business/desktop)
 #any sub dir can use common service
 include_directories(${COMMON_SERVICE_DIR})
-
-message(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
-message(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH})
 
 # sub directories
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/apps)

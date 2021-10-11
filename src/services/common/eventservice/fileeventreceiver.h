@@ -11,6 +11,7 @@ namespace FileEventTypes
 {
 const QString TOPIC_FILE_EVENT {"fileEvent"};
 const QString DATA_MKDIR {"mkdir"};
+const QString DATA_TOUCH {"touch"};
 const QString PROPERTY_KEY_URLS {"urls"};
 const QString PROPERTY_KEY_URL {"url"};
 } //FileEventTypes

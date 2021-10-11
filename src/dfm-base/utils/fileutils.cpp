@@ -21,15 +21,111 @@
  */
 #include "utils/fileutils.h"
 #include "mimetype/mimedatabase.h"
+#include "dfm-base/base/urlroute.h"
 
 #include <QFileInfo>
+#include <QTimer>
+#include <QDir>
+#include <QProcess>
+#include <QDebug>
 
 DFMBASE_BEGIN_NAMESPACE
 
-/*!
- * @class FileUtils
- *
- * @brief Utility class providing static helper methods for file management
- */
+bool FileUtils::mkdir(const QUrl &url, const QString dirName, QString *errorString)
+{
+    if (!url.isValid()) {
+        if (errorString) {
+            *errorString = QObject::tr("Failed, can't use empty url from create dir");
+        }
+        qInfo() << QObject::tr("Failed, can't use empty url from create dir");
+        return false;
+    }
+
+    if (UrlRoute::isVirtualUrl(url)) {
+        if (errorString) {
+            *errorString = QObject::tr("Failed, can't use virtual url from create dir");
+        }
+        qInfo() << QObject::tr("Failed, can't use virtual url from create dir");
+        return false;
+    }
+
+    QFileInfo info(UrlRoute::urlToPath(url));
+    if (!info.exists()) {
+        if (errorString) {
+            *errorString = QObject::tr("Failed, url not exists");
+        }
+        qInfo() << QObject::tr("Failed, url not exists");
+        return false;
+    }
+
+    if (!info.isDir()) {
+        if (errorString) {
+            *errorString = QObject::tr("Failed, url pat not is dir");
+        }
+        qInfo() << QObject::tr("Failed, url pat not is dir");
+        return false;
+    }
+
+    if (!info.permissions().testFlag(QFile::Permission::WriteUser)) {
+        if (errorString) {
+            *errorString = QObject::tr("Failed, not permission create dir");
+        }
+        qInfo() << QObject::tr("Failed, not permission create dir");
+        return false;
+    }
+
+    auto localDirPath = info.filePath() + "/" + dirName;
+    if (QFileInfo(localDirPath).exists()) {
+        if (errorString) {
+            *errorString = QObject::tr("Failed, current dir is exists \n %0").arg(localDirPath);
+        }
+        qInfo() << QObject::tr("Failed, current dir is exists \n %0").arg(localDirPath);
+        return false;
+    }
+
+    if (!QDir().mkdir(localDirPath)) {
+        if (errorString) {
+            *errorString = QObject::tr("Failed, unknown error from create new dir");
+        }
+        qInfo() << QObject::tr("Failed, unknown error from create new dir");
+        abort();
+    }
+    return true;
+}
+
+bool FileUtils::touch(const QUrl &url,
+                      const QString fileName,
+                      QString *errorString)
+{
+    if (!url.isValid()) {
+        if (errorString) {
+            *errorString = QObject::tr("Failed, can't use empty url from create dir");
+        }
+        qInfo() << QObject::tr("Failed, can't use empty url from create dir");
+        return false;
+    }
+
+    if (UrlRoute::isVirtualUrl(url)) {
+        if (errorString) {
+            *errorString = QObject::tr("Failed, can't use virtual url from create dir");
+        }
+        qInfo() << QObject::tr("Failed, can't use virtual url from create dir");
+        return false;
+    }
+
+    if (!UrlRoute::isVirtualUrl(url)) {
+        QFileInfo info(UrlRoute::urlToPath(url));
+        if (!info.isDir() || !info.exists())
+            return false;
+        if (!info.permissions().testFlag(QFile::Permission::WriteUser))
+            return false;
+        QFile file(info.path() + "/" + fileName);
+        if (!file.open(QIODevice::Truncate)) {
+            qInfo() << "create new dir unknown error";
+            abort();
+        }
+    }
+    return true;
+}
 
 DFMBASE_END_NAMESPACE

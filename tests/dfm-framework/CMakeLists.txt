@@ -40,7 +40,7 @@ file(GLOB_RECURSE UT_CXX_FILE
     FILES_MATCHING PATTERN "*.cpp") #public dir
 
 # 源工程文件
-set(SRC_DIR ${CMAKE_SOURCE_DIR}/../src/dfm-framework)
+set(SRC_DIR ${PROJECT_SOURCE_PATH}/dfm-framework)
 include_directories(${SRC_DIR}) #include source dir
 
 #set Module subdir
@@ -110,8 +110,6 @@ set(SRC_CXX_PRI_FILE
     ${${PROJECT_NAME}_cxx_private_h}
     ${${PROJECT_NAME}_cxx_private_cpp}
     )
-
-message(SRC_CXX_FILE ${SRC_CXX_FILE})
 
 add_executable(${PROJECT_NAME}
     ${UT_CXX_FILE}

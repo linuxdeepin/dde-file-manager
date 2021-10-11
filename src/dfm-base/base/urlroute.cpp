@@ -56,10 +56,10 @@ QList<SchemeNode> UrlRoute::SchemeMapLists{};
  * \return 是根节点则返回true，否则返回false
  */
 bool UrlRoute::schemeMapRoot(const QString &scheme,
-                                const QString &root,
-                                const QIcon &icon,
-                                const bool isVirtual,
-                                QString *errorString)
+                             const QString &root,
+                             const QIcon &icon,
+                             const bool isVirtual,
+                             QString *errorString)
 {
     if (hasScheme(scheme)) {
         *errorString = QObject::tr("Scheme cannot be registered repeatedly.");
