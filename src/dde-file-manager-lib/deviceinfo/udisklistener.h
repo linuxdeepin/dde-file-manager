@@ -101,6 +101,7 @@ public:
     QStringList hiddenDirs();
     bool isBlockFile(const QString &filePath); // 文件是否来自块设备
     bool isFromNativeDisk(const QString &uuid); // 是否为本地分区
+    bool isFromNativeBlockDev(const QString &mntPath); // 挂载点的设备是否是本地的块设备
 
 private:
     void initDiskManager();
