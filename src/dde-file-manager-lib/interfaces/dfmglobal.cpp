@@ -53,6 +53,7 @@
 #include "dfmsettings.h"
 #include "bluetooth/bluetoothmanager.h"
 #include "drootfilemanager.h"
+#include "plugins/schemepluginmanager.h"
 
 #include <DArrowRectangle>
 
@@ -329,6 +330,12 @@ void DFMGlobal::autoLoadDefaultPlugins()
 void DFMGlobal::initPluginManager()
 {
     refreshPlugins();
+}
+
+//NOTE [XIAO] DFMGlobal::initSchemePluginManager
+void DFMGlobal::initSchemePluginManager()
+{
+    SchemePluginManager::instance()->loadSchemePlugin();
 }
 
 void DFMGlobal::initSearchHistoryManager()
@@ -848,7 +855,7 @@ void DFMGlobal::setToolTip(QLabel *label, bool bAlwaysShow)
 
 void DFMGlobal::showAlertMessage(QPoint globalPoint, const QColor &backgroundColor, const QString &text, int duration)
 {
-    static DArrowRectangle* tooltip = nullptr;
+    static DArrowRectangle *tooltip = nullptr;
     if (!tooltip) {
         tooltip = new DArrowRectangle(DArrowRectangle::ArrowTop, nullptr);
         tooltip->setObjectName("AlertTooltip");
@@ -860,7 +867,7 @@ void DFMGlobal::showAlertMessage(QPoint globalPoint, const QColor &backgroundCol
         tooltip->setArrowX(15);
         tooltip->setArrowHeight(5);
 
-        QTimer::singleShot(duration, DFMGlobal::instance(), [=] {
+        QTimer::singleShot(duration, DFMGlobal::instance(), [ = ] {
             delete tooltip;
             tooltip = nullptr;
         });
@@ -868,7 +875,7 @@ void DFMGlobal::showAlertMessage(QPoint globalPoint, const QColor &backgroundCol
         label->setText(text);
         label->adjustSize();
 
-        tooltip->show(static_cast<int>(globalPoint.x()),static_cast<int>(globalPoint.y()));
+        tooltip->show(static_cast<int>(globalPoint.x()), static_cast<int>(globalPoint.y()));
     }
 }
 

@@ -99,7 +99,7 @@ void WindowManager::initConnect()
 {
     connect(fileSignalManager, &FileSignalManager::requestOpenNewWindowByUrl, this, &WindowManager::showNewWindow);
     connect(fileSignalManager, &FileSignalManager::aboutToCloseLastActivedWindow, this, &WindowManager::onLastActivedWindowClosed);
-    connect(qApp, &QApplication::aboutToQuit, this, [=](){
+    connect(qApp, &QApplication::aboutToQuit, this, [ = ]() {
         fileSignalManager->requestCloseListen();
         DFMGlobal::setAppQuiting();
         qInfo() << "app quiting !";
@@ -320,13 +320,19 @@ void WindowManager::onWindowClosed()
         // fix bug 59239 drag事件的接受者的drop事件和发起drag事件的发起者的mousemove事件处理完成才能
         // 析构本窗口，检查当前窗口是否可以析构
         QPointer<DFileManagerWindow> pwindow = window;
-        QTimer::singleShot(1000, this, [=](){
+        QTimer::singleShot(1000, this, [ = ]() {
             if (pwindow)
                 pwindow->deleteLater();
         });
         qInfo() << "window deletelater !";
     }
     m_windows.remove(static_cast<const QWidget *>(sender()));
+
+    if (window->currentUrl().scheme() == PLUGIN_SCHEME) {
+        qInfo() << "delete plugin view:" << window->currentUrl().host();
+        // NOTE [REN] 防止插件窗口关闭后，后台将信号发送到该窗口导致崩溃
+        window->getFileView()->deleteLater();
+    }
 }
 
 void WindowManager::onLastActivedWindowClosed(quint64 winId)

@@ -284,6 +284,8 @@ public:
 
     /* Global instance initialization */
     static void initPluginManager();
+    // NOTE [XIAO] static void initSchemePluginManager();
+    static void initSchemePluginManager();
     static void initSearchHistoryManager();
     static void initBookmarkManager();
     static void initFileMenuManager();
@@ -369,7 +371,7 @@ public:
      * @param label 需要显示的控件
      * @param bAlwaysShow 是否总是显示
      */
-    static void setToolTip(QLabel* label, bool bAlwaysShow = false);
+    static void setToolTip(QLabel *label, bool bAlwaysShow = false);
 
     /**
      * @brief showAlertMessage 显示气泡提示信息

@@ -50,8 +50,8 @@ public:
         if (isRegisted<T>(scheme, host))
             return;
 
-        insertToCreatorHash(KeyType(scheme, host), ViewCreatorType(typeid(T).name(), [=] () {
-            return (DFMBaseView*)new T();
+        insertToCreatorHash(KeyType(scheme, host), ViewCreatorType(typeid(T).name(), [ = ]() {
+            return (DFMBaseView *)new T();
         }));
     }
     bool isRegisted(const QString &scheme, const QString &host, const std::type_info &info) const;
@@ -73,7 +73,8 @@ public:
 private:
     explicit DFMViewManager(QObject *parent = 0);
     ~DFMViewManager();
-
+    //NOTE [XIAO] 从PLGUIN中加载View
+    void initViewFromPlugin();
     void insertToCreatorHash(const KeyType &type, const ViewCreatorType &creator);
 
     QScopedPointer<DFMViewManagerPrivate> d_ptr;

@@ -40,7 +40,7 @@ HistoryStack::HistoryStack(int threshold)
 void HistoryStack::append(DUrl url)
 {
     if ((m_index < m_list.count()) && (m_index >= 0)) {
-        if(m_list.at(m_index) == url)
+        if (m_list.at(m_index) == url)
             return;
     }
 
@@ -72,25 +72,28 @@ DUrl HistoryStack::back()
 
         url = m_list.at(m_index);
 
-        if(url.isComputerFile())
+        if (url.isComputerFile())
             break;
 
-        if(url.isUserShareFile())
+        //TODO [XIAO] 此处可以用插件的方式写
+        //如果是我的手机界面返回,为了我的手机界面前进，回退功能
+        if (url.isPluginFile())
+            break;
+
+        if (url.isUserShareFile())
             break;
 
         if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme()))
             break;
         //判断网络文件是否可以到达
-        if (DFileService::instance()->checkGvfsMountfileBusy(url,false)) {
+        if (DFileService::instance()->checkGvfsMountfileBusy(url, false)) {
             if (currentUrl == url) {
                 removeAt(m_index);
                 url = m_list.at(m_index);
-            }
-            else {
+            } else {
                 break;
             }
-        }
-        else {
+        } else {
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
 
             if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
@@ -116,26 +119,30 @@ DUrl HistoryStack::forward()
     while (++m_index < m_list.count()) {
         url = m_list.at(m_index);
 
-        if(url.isComputerFile())
+        if (url.isComputerFile())
             break;
 
-        if(url.isUserShareFile())
+        //TODO [XIAO] 此处可以用插件的方式写
+        //如果是我的手机界面返回,为了我的手机界面前进，回退功能
+        if (url.isPluginFile())
+            break;
+
+
+        if (url.isUserShareFile())
             break;
 
         if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme()))
             break;
         //判断网络文件是否可以到达
-        if (DFileService::instance()->checkGvfsMountfileBusy(url,false)) {
+        if (DFileService::instance()->checkGvfsMountfileBusy(url, false)) {
             if (currentUrl == url) {
                 removeAt(m_index);
                 --m_index;
                 url = m_list.at(m_index);
-            }
-            else {
+            } else {
                 break;
             }
-        }
-        else {
+        } else {
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
 
             if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
@@ -158,7 +165,7 @@ void HistoryStack::setThreshold(int threshold)
 
 bool HistoryStack::isFirst()
 {
-    if(m_index < 0){
+    if (m_index < 0) {
         m_index = 0;
     }
     return m_index == 0;
@@ -166,7 +173,7 @@ bool HistoryStack::isFirst()
 
 bool HistoryStack::isLast()
 {
-    if(m_index > m_list.size() - 1){
+    if (m_index > m_list.size() - 1) {
         m_index = m_list.size() - 1;
     }
     return m_index == m_list.size() - 1;
@@ -274,6 +281,10 @@ bool HistoryStack::checkPathIsExist(const DUrl &url)
 
         return DRootFileManager::instance()->isRootFileContain(rootUrl);
     } else {
+        // 对我的手机目录进行单独处理，直接返回true，否则涉及我的手机相关目录前进后退会失效 add by CL
+        if (url.scheme() == PLUGIN_SCHEME) {
+            return true;
+        }
         //非协议设备挂载不用考虑断网问题，可以直接取fileinfo来判断是否存在
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
         if (fileInfo)

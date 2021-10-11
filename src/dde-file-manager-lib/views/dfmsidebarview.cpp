@@ -27,6 +27,7 @@
 #include "dfmopticalmediawidget.h"
 #include "controllers/vaultcontroller.h"
 #include "accessibility/ac-lib-file-manager.h"
+#include "plugins/schemepluginmanager.h"
 
 #include <QDebug>
 #include <dstorageinfo.h>
@@ -198,14 +199,14 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
                 QFileInfo folderinfo(folderPath); // 判断上层文件是否是只读，有可能上层是只读，而里面子文件或文件夾又是可以写
                 QFileInfo fileinfo(filePath);
 
-                 isFileWritable = fileinfo.isWritable();
-                 isFolderWritable = folderinfo.isWritable();
+                isFileWritable = fileinfo.isWritable();
+                isFolderWritable = folderinfo.isWritable();
 
-                 //fix 89245 选择Root权限的链接文件，拖拽到侧边栏回收站中，无法拖拽文件到回收站
-                 if (isFolderWritable && fileinfo.isSymLink() && item->url().toString() == TRASH_ROOT) {
+                //fix 89245 选择Root权限的链接文件，拖拽到侧边栏回收站中，无法拖拽文件到回收站
+                if (isFolderWritable && fileinfo.isSymLink() && item->url().toString() == TRASH_ROOT) {
                     urls << DUrl(url);
                     continue;
-                 }
+                }
             }
 
             if (!isFolderWritable || !isFileWritable) {
@@ -224,12 +225,36 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
             action = canDropMimeData(item, event->mimeData(), event->possibleActions());
         }
 
+        if (item->url().scheme() == PLUGIN_SCHEME) { // 对我的手机目录执行的单独拖拽动作，拖拽目录固定 add by CL
+            for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
+                if ((item->url().host() == plugin.first) && plugin.second->isSideBarItemSupportedDrop()) {
+                    if (urls.size() > 0 && plugin.second->dropFileToPlugin(urls, item->url())) {
+                        event->setDropAction(action);
+                        isActionDone = true;
+                    }
+                    break;
+                }
+            }
+        }
+
         if (urls.size() > 0 && onDropData(urls, item->url(), action)) {
             event->setDropAction(action);
             isActionDone = true;
         }
     }
     if (!copyUrls.isEmpty()) {
+        if (item->url().scheme() == PLUGIN_SCHEME) { // 对我的手机目录执行的单独拖拽动作，拖拽目录固定 add by CL
+            for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
+                if ((item->url().host() == plugin.first) && plugin.second->isSideBarItemSupportedDrop()) {
+                    if (urls.size() > 0 && plugin.second->dropFileToPlugin(urls, item->url())) {
+                        event->setDropAction(Qt::CopyAction);
+                        isActionDone = true;
+                    }
+                    break;
+                }
+            }
+        }
+
         if (onDropData(copyUrls, item->url(), Qt::CopyAction)) {  // 对于只读权限的，只能进行 copy动作
             event->setDropAction(Qt::CopyAction);
             isActionDone = true;
@@ -318,11 +343,10 @@ bool DFMSideBarView::onDropData(DUrlList srcUrls, DUrl dstUrl, Qt::DropAction ac
         // 执行，框选事件又在等待drag事件结束（mousemove事件结束），本地事件又阻塞drag事件，相互等待。使用线程去执行
         // 业务逻辑，让drop事件快速返回。
         if (dstUrl.isTrashFile()) {
-            QtConcurrent::run([=]() {
+            QtConcurrent::run([ = ]() {
                 fileService->moveToTrash(this, srcUrls);
             });
-        }
-        else
+        } else
             fileService->pasteFile(this, DFMGlobal::CutAction, dstUrl, srcUrls);
         break;
     default:
@@ -382,6 +406,13 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
     const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, item->url());
 
     if (!info || !info->canDrop()) {
+        for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
+            // 对我的手机item做临时处理，连接成功时允许向item拖拽
+            if ((item->url().scheme() == PLUGIN_SCHEME) && (item->url().host() == plugin.first) && plugin.second->isSideBarItemSupportedDrop()) {
+                return Qt::CopyAction;
+            }
+        }
+
         return Qt::IgnoreAction;
     }
     Qt::DropAction action = Qt::IgnoreAction;

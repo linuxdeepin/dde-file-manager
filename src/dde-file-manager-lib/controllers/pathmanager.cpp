@@ -38,6 +38,7 @@
 #include "dfmsettings.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "interfaces/dfmglobal.h"
+#include "plugins/schemepluginmanager.h" //NOTE [REN] 添加依赖头文件
 
 DFM_USE_NAMESPACE
 
@@ -70,6 +71,12 @@ void PathManager::initPaths()
     m_systemPathDisplayNamesMap["Recent"] = tr("Recent");
     m_systemPathDisplayNamesMap["Vault"] = tr("File Vault");
 
+    //NOTE [REN] 将PLUGIN加载到m_systemPathDisplayNamesMap
+    for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
+        DFMSideBarItem *item = plugin.second->createSideBarItem();
+        m_systemPathDisplayNamesMap[plugin.first] = item->text();
+    }
+
     if (DFMApplication::instance()->genericObtuselySetting()->value("Disk/Options", "windowsStyle").toBool()) {
         m_systemPathDisplayNamesMap["System Disk"] = m_systemPathDisplayNamesMap["System Disk"].append(" (C:)");
     }
@@ -92,15 +99,15 @@ void PathManager::initPaths()
 
 QString PathManager::getSystemPath(QString key)
 {
-    if (m_systemPathsMap.isEmpty()){
+    if (m_systemPathsMap.isEmpty()) {
         initPaths();
     }
     QString path = m_systemPathsMap.value(key);
-    if(key == "Desktop" || key == "Videos" || key == "Music" ||
-       key == "Pictures" || key == "Documents" || key == "Downloads" ||
-       key == "Trash"){
+    if (key == "Desktop" || key == "Videos" || key == "Music" ||
+            key == "Pictures" || key == "Documents" || key == "Downloads" ||
+            key == "Trash") {
 
-        if (!QDir(path).exists()){
+        if (!QDir(path).exists()) {
             bool flag = QDir::home().mkpath(path);
             qDebug() << "mkpath" << path << flag;
         }
@@ -119,8 +126,7 @@ QString PathManager::getSystemPathDisplayName(QString key) const
 void cleanPath(QString &path)
 {
     //这里去掉/data的目的 是让通过数据盘路径进入的用户目录下的Docunment,Vedios等文件也可以被翻译
-    if (path.startsWith("/data"))
-    {
+    if (path.startsWith("/data")) {
         path.remove(0, sizeof("/data") - 1);
     }
 
@@ -133,9 +139,9 @@ QString PathManager::getSystemPathDisplayNameByPath(QString path)
 {
     cleanPath(path);
 
-    if (isSystemPath(path)){
+    if (isSystemPath(path)) {
         foreach (QString key, systemPathsMap().keys()) {
-            if (systemPathsMap().value(key) == path){
+            if (systemPathsMap().value(key) == path) {
                 QString displayName;
                 const QString &name = getSystemPathDisplayName(key);
                 // 系统盘如果有别名，就以别名显示
@@ -177,10 +183,10 @@ QString PathManager::getSystemPathIconNameByPath(QString path)
 {
     cleanPath(path);
 
-    if (isSystemPath(path)){
+    if (isSystemPath(path)) {
         foreach (QString key, systemPathsMap().keys()) {
-            if (systemPathsMap().value(key) == path){
-                 return getSystemPathIconName(key);
+            if (systemPathsMap().value(key) == path) {
+                return getSystemPathIconName(key);
             }
         }
     }
@@ -231,6 +237,12 @@ void PathManager::loadSystemPaths()
     m_systemPathsMap["Recent"] = DFMStandardPaths::location(DFMStandardPaths::RecentPath);
     m_systemPathsMap["Vault"] = DFMStandardPaths::location(DFMStandardPaths::Vault); // 保险库路径
 
+    //NOTE [REN] 将PLUGIN加载到m_systemPathsMap
+    for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
+        DFMSideBarItem *item = plugin.second->createSideBarItem();
+        m_systemPathsMap[plugin.first] = item->url().toString();
+    }
+
     m_systemPathsSet.reserve(m_systemPathsMap.size());
 
     foreach (const QString &key, m_systemPathsMap.keys()) {
@@ -239,9 +251,9 @@ void PathManager::loadSystemPaths()
         if (key != "Trash")
             m_systemPathsSet << path;
 
-        if(key == "Desktop" || key == "Videos" || key == "Music" ||
-           key == "Pictures" || key == "Documents" || key == "Downloads" ||
-           key == "Trash"){
+        if (key == "Desktop" || key == "Videos" || key == "Music" ||
+                key == "Pictures" || key == "Documents" || key == "Downloads" ||
+                key == "Trash") {
             mkPath(path);
         }
     }
@@ -249,7 +261,7 @@ void PathManager::loadSystemPaths()
 
 void PathManager::mkPath(const QString &path)
 {
-    if (!QDir(path).exists()){
+    if (!QDir(path).exists()) {
         bool flag = QDir::home().mkpath(path);
         qDebug() << "mkpath" << path << flag;
     }
