@@ -83,7 +83,7 @@ bool OperatorCenter::createDirAndFile()
     if(!configDir.exists()){
         bool ok = configDir.mkpath(strConfigDir);
         if(!ok){
-            qDebug() << tr("create config dir failure!");
+            qDebug() << "create config dir failure!";
             return false;
         }
     }
@@ -92,7 +92,7 @@ bool OperatorCenter::createDirAndFile()
     QString strPasswordFile = makeVaultLocalPath(PASSWORD_FILE_NAME);
     QFile passwordFile(strPasswordFile);
     if(!passwordFile.open(QIODevice::WriteOnly | QIODevice::Append)){
-        qDebug() << tr("create password file failure!");
+        qDebug() << "create password file failure!";
         return false;
     }
     passwordFile.close();
@@ -101,7 +101,7 @@ bool OperatorCenter::createDirAndFile()
     QString strPriKeyFile = makeVaultLocalPath(RSA_PUB_KEY_FILE_NAME);
     QFile prikeyFile(strPriKeyFile);
     if(!prikeyFile.open(QIODevice::WriteOnly | QIODevice::Append)){
-        qDebug() << tr("create rsa private key file failure!");
+        qDebug() << "create rsa private key file failure!";
         return false;
     }
     prikeyFile.close();
@@ -110,7 +110,7 @@ bool OperatorCenter::createDirAndFile()
     QString strRsaClipher = makeVaultLocalPath(RSA_CLIPHERTEXT_FILE_NAME);
     QFile rsaClipherFile(strRsaClipher);
     if(!rsaClipherFile.open(QIODevice::WriteOnly | QIODevice::Append)){
-        qDebug() << tr("create rsa clipher file failure!");
+        qDebug() << "create rsa clipher file failure!";
         return false;
     }
     rsaClipherFile.close();
@@ -119,7 +119,7 @@ bool OperatorCenter::createDirAndFile()
     QString strPasswordHintFilePath = makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
     QFile passwordHintFile(strPasswordHintFilePath);
     if(!passwordHintFile.open(QIODevice::WriteOnly | QIODevice:: Append)){
-        qDebug() << tr("create password hint file failure!");
+        qDebug() << "create password hint file failure!";
         return false;
     }
     passwordHintFile.close();
@@ -139,7 +139,7 @@ bool OperatorCenter::saveSaltAndClipher(const QString &password, const QString &
     QString strPasswordFile = makeVaultLocalPath(PASSWORD_FILE_NAME);
     QFile passwordFile(strPasswordFile);
     if(!passwordFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)){
-        qDebug() << tr("write cliphertext failure!");
+        qDebug() << "write cliphertext failure!";
         return false;
     }
     QTextStream out(&passwordFile);
@@ -150,7 +150,7 @@ bool OperatorCenter::saveSaltAndClipher(const QString &password, const QString &
     QString strPasswordHintFilePath = makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
     QFile passwordHintFile(strPasswordHintFilePath);
     if(!passwordHintFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)){
-        qDebug() << tr("write password hint failure");
+        qDebug() << "write password hint failure";
         return false;
     }
     QTextStream out2(&passwordHintFile);
@@ -176,7 +176,7 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     // 将公钥分成两部分（一部分用于保存到本地，一部分生成二维码，提供给用户）
     QString strSaveToLocal("");
     if(strPubKey.length() < 2 * USER_KEY_INTERCEPT_INDEX + bytes){
-        qDebug() << tr("USER_KEY_LENGTH is to long!");
+        qDebug() << "USER_KEY_LENGTH is to long!";
         return false;
     }
     QString strPart1 = strPubKey.mid(0, USER_KEY_INTERCEPT_INDEX);
@@ -189,7 +189,7 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     QString publicFilePath = makeVaultLocalPath(RSA_PUB_KEY_FILE_NAME);
     QFile publicFile(publicFilePath);
     if(!publicFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)){
-        qDebug() << tr("open public key file failure!");
+        qDebug() << "open public key file failure!";
         return false;
     }
     QTextStream out(&publicFile);
@@ -200,7 +200,7 @@ bool OperatorCenter::createKey(const QString &password, int bytes)
     QString strClipherFilePath = makeVaultLocalPath(RSA_CLIPHERTEXT_FILE_NAME);
     QFile clipherFile(strClipherFilePath);
     if(!clipherFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)){
-        qDebug() << tr("open rsa clipher file failure!");
+        qDebug() << "open rsa clipher file failure!";
         return false;
     }
     QTextStream out2(&clipherFile);
@@ -216,7 +216,7 @@ bool OperatorCenter::checkPassword(const QString &password, QString &clipher)
     QString strfilePath = makeVaultLocalPath(PASSWORD_FILE_NAME);
     QFile file(strfilePath);
     if(!file.open(QIODevice::Text | QIODevice::ReadOnly)){
-        qDebug() << tr("open pbkdf2clipher file failure!");
+        qDebug() << "open pbkdf2clipher file failure!";
         return false;
     }
     QString strSaltAndClipher = QString(file.readAll());
@@ -228,7 +228,7 @@ bool OperatorCenter::checkPassword(const QString &password, QString &clipher)
     QString strNewClipher = pbkdf2::pbkdf2EncrypyPassword(password, strSalt, ITERATION, PASSWORD_CLIPHER_LENGTH);
     QString strNewSaltAndClipher = strSalt + strNewClipher;
     if(strNewSaltAndClipher != strSaltAndClipher){
-        qDebug() << tr("password error!");
+        qDebug() << "password error!";
         return  false;
     }
 
@@ -240,7 +240,7 @@ bool OperatorCenter::checkPassword(const QString &password, QString &clipher)
 bool OperatorCenter::checkUserKey(const QString &userKey, QString &clipher)
 {
     if(userKey.length() != USER_KEY_LENGTH){
-        qDebug() << tr("user key length error!");
+        qDebug() << "user key length error!";
         return  false;
     }
 
@@ -248,7 +248,7 @@ bool OperatorCenter::checkUserKey(const QString &userKey, QString &clipher)
     QString strLocalPubKeyFilePath = makeVaultLocalPath(RSA_PUB_KEY_FILE_NAME);
     QFile localPubKeyfile(strLocalPubKeyFilePath);
     if(!localPubKeyfile.open(QIODevice::Text | QIODevice::ReadOnly)){
-        qDebug() << tr("cant't open local public key file!");
+        qDebug() << "cant't open local public key file!";
         return false;
     }
     QString strLocalPubKey(localPubKeyfile.readAll());
@@ -270,7 +270,7 @@ bool OperatorCenter::checkUserKey(const QString &userKey, QString &clipher)
 
     // 判断密码的正确性，如果密码正确，则用户密钥正确，否则用户密钥错误
     if(!checkPassword(strNewPassword, clipher)){
-        qDebug() << tr("user key error!");
+        qDebug() << "user key error!";
         return false;
     }
 
@@ -287,7 +287,7 @@ bool OperatorCenter::getPasswordHint(QString &passwordHint)
     QString strPasswordHintFilePath = makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
     QFile passwordHintFile(strPasswordHintFilePath);
     if(!passwordHintFile.open(QIODevice::Text | QIODevice::ReadOnly)){
-        qDebug() << tr("open password hint file failure");
+        qDebug() << "open password hint file failure";
         return false;
     }
     passwordHint = QString(passwordHintFile.readAll());
@@ -299,7 +299,7 @@ bool OperatorCenter::getPasswordHint(QString &passwordHint)
 bool OperatorCenter::createQRCode(const QString &srcStr, int width, int height, QPixmap &pix)
 {
     if(width < 1 || height < 1){
-        qDebug() << tr("QR code width or height error");
+        qDebug() << "QR code width or height error";
         return false;
     }
 
@@ -364,7 +364,7 @@ QString OperatorCenter::getSaltAndPasswordClipher()
     QString strfilePath = makeVaultLocalPath(PASSWORD_FILE_NAME);
     QFile file(strfilePath);
     if(!file.open(QIODevice::Text | QIODevice::ReadOnly)){
-        qDebug() << tr("open pbkdf2clipher file failure!");
+        qDebug() << "open pbkdf2clipher file failure!";
         return "";
     }
     QString strSaltAndClipher = QString(file.readAll());

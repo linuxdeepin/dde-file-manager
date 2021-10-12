@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en">
 <context>
     <name>DeepinStorage</name>
     <message>
@@ -26,6 +28,10 @@
     <message>
         <source>Disk is busy, cannot remove now</source>
         <translation>Disk is busy, cannot remove now</translation>
+    </message>
+    <message>
+        <source>%1 is busy and cannot be unmounted now</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

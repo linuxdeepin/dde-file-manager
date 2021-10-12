@@ -26,7 +26,7 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="728"/>
         <source>Action timeout, action is canceled</source>
-        <translation type="unfinished"></translation>
+        <translation>当前操作超时，操作已被取消</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="705"/>
@@ -41,7 +41,7 @@
     <message>
         <location filename="../dialogs/changediskpassworddialog.cpp" line="90"/>
         <source>Change disk password</source>
-        <translation type="unfinished"></translation>
+        <translation>修改磁盘密码</translation>
     </message>
     <message>
         <location filename="../dialogs/changediskpassworddialog.cpp" line="110"/>
@@ -71,7 +71,7 @@
     <message>
         <location filename="../dialogs/changediskpassworddialog.cpp" line="203"/>
         <source>Password must be no more than 512 characters</source>
-        <translation type="unfinished"></translation>
+        <translation>密码长度不能超过512个字符</translation>
     </message>
     <message>
         <location filename="../dialogs/changediskpassworddialog.cpp" line="216"/>
@@ -81,14 +81,14 @@
     <message>
         <location filename="../dialogs/changediskpassworddialog.cpp" line="232"/>
         <source>New password should differ from the current one</source>
-        <translation type="unfinished"></translation>
+        <translation>新密码和旧密码不能相同</translation>
     </message>
     <message>
         <location filename="../dialogs/changediskpassworddialog.cpp" line="244"/>
         <location filename="../dialogs/changediskpassworddialog.cpp" line="248"/>
         <location filename="../dialogs/changediskpassworddialog.cpp" line="252"/>
         <source>Password cannot be empty</source>
-        <translation type="unfinished"></translation>
+        <translation>密码不能为空</translation>
     </message>
     <message>
         <location filename="../dialogs/changediskpassworddialog.cpp" line="283"/>
@@ -98,7 +98,7 @@
     <message>
         <location filename="../dialogs/changediskpassworddialog.cpp" line="290"/>
         <source>Initialization failed, error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>初始化错误，错误码：%1</translation>
     </message>
 </context>
 <context>
@@ -339,19 +339,19 @@
         <location filename="../views/dfmopticalmediawidget.cpp" line="103"/>
         <location filename="../views/dfmopticalmediawidget.cpp" line="133"/>
         <source>No file to burn.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有文件需要刻录。</translation>
     </message>
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="104"/>
         <location filename="../views/dfmopticalmediawidget.cpp" line="134"/>
         <location filename="../views/dfmopticalmediawidget.cpp" line="155"/>
         <source>OK</source>
-        <translation type="unfinished">确 定</translation>
+        <translation>确 定</translation>
     </message>
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="131"/>
         <source>No file to burn. Duplicated files will be ignore.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有文件需要刻录，重复文件将被忽略。</translation>
     </message>
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="154"/>
@@ -451,7 +451,7 @@
     <message>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="34"/>
         <source>Click &apos;Encrypt&apos; and input the user password to finish the setup wizard.</source>
-        <translation type="unfinished"></translation>
+        <translation>点击“加密保险箱”后，输入用户密码完成设置。</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="35"/>
@@ -473,22 +473,22 @@
     <message>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="132"/>
         <source>warning</source>
-        <translation type="unfinished"></translation>
+        <translation>警告</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="178"/>
         <source>ok</source>
-        <translation type="unfinished"></translation>
+        <translation>确定</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="132"/>
         <source>create vault failure, the error code is %1!</source>
-        <translation type="unfinished"></translation>
+        <translation>创建保险箱失败，错误码为%1！</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="48"/>
         <source>Encrypted...</source>
-        <translation type="unfinished"></translation>
+        <translation>加密中...</translation>
     </message>
 </context>
 <context>
@@ -501,7 +501,7 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyview.cpp" line="29"/>
         <source>Generate a recovery key in case that you forget the password</source>
-        <translation type="unfinished"></translation>
+        <translation>如果忘记密码，可以使用该密钥恢复访问</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyview.cpp" line="35"/>
@@ -575,7 +575,7 @@
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="86"/>
         <source>Password Hint</source>
-        <translation type="unfinished"></translation>
+        <translation>避免忘记密码的信息（选填）</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="91"/>
@@ -652,7 +652,7 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="261"/>
         <source>Unlock File Vault failed.%1</source>
-        <translation type="unfinished"></translation>
+        <translation>解锁保险箱失败。%1</translation>
     </message>
 </context>
 <context>
@@ -733,7 +733,7 @@
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="207"/>
         <source>Remove File Vault failed.%1</source>
-        <translation type="unfinished"></translation>
+        <translation>删除保险箱失败。%1</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="221"/>
@@ -791,7 +791,7 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="210"/>
         <source>Unlock File Vault failed.%1</source>
-        <translation type="unfinished"></translation>
+        <translation>解锁保险箱失败。%1</translation>
     </message>
 </context>
 <context>
@@ -875,7 +875,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="906"/>
         <source>Failed to open the dir, cause: File name too long</source>
-        <translation type="unfinished"></translation>
+        <translation>目录打开失败，原因：目录名太长</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="916"/>
@@ -1117,7 +1117,7 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="346"/>
         <source>The File Vault is progressing delete task, please do nothing!</source>
-        <translation type="unfinished"></translation>
+        <translation>保险箱正在执行删除任务，请不要执行任何操作！</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="696"/>
@@ -1362,7 +1362,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="566"/>
         <source>Checking process failed</source>
-        <translation type="unfinished"></translation>
+        <translation>检查过程失败</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="569"/>
@@ -1474,7 +1474,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1329"/>
         <source>Locate to %1 failed!</source>
-        <translation type="unfinished"></translation>
+        <translation>定位%1失败！</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1446"/>
@@ -1614,7 +1614,7 @@
     <message>
         <location filename="../views/fileitem.cpp" line="115"/>
         <source>Contains invalid characters (any of \ /: *? &quot;&lt; &gt;|)</source>
-        <translation type="unfinished"></translation>
+        <translation>名称包含无效字符（\ /: *? &quot;&lt; &gt;|）</translation>
     </message>
 </context>
 <context>
@@ -1638,7 +1638,7 @@
         <location filename="../../fileoperations/filejob.cpp" line="746"/>
         <location filename="../../fileoperations/filejob.cpp" line="1061"/>
         <source>Data verification failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>数据验证失败。</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="750"/>
@@ -2376,95 +2376,6 @@
     </message>
 </context>
 <context>
-    <name>OperatorCenter</name>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="86"/>
-        <source>create config dir failure!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="95"/>
-        <source>create password file failure!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="104"/>
-        <source>create rsa private key file failure!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="113"/>
-        <source>create rsa clipher file failure!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="122"/>
-        <source>create password hint file failure!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="142"/>
-        <source>write cliphertext failure!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="153"/>
-        <source>write password hint failure</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="179"/>
-        <source>USER_KEY_LENGTH is to long!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="192"/>
-        <source>open public key file failure!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="203"/>
-        <source>open rsa clipher file failure!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="219"/>
-        <location filename="../vault/operatorcenter.cpp" line="367"/>
-        <source>open pbkdf2clipher file failure!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="231"/>
-        <source>password error!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="243"/>
-        <source>user key length error!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="251"/>
-        <source>cant&apos;t open local public key file!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="273"/>
-        <source>user key error!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="290"/>
-        <source>open password hint file failure</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../vault/operatorcenter.cpp" line="302"/>
-        <source>QR code width or height error</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>PathManager</name>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="57"/>
@@ -3023,7 +2934,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="696"/>
         <source>Change disk password</source>
-        <translation type="unfinished"></translation>
+        <translation>修改磁盘密码</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="710"/>
@@ -4013,7 +3924,7 @@
     <message>
         <location filename="../controllers/trashmanager.cpp" line="205"/>
         <source>Unable to open items in the trash,please restore it first</source>
-        <translation type="unfinished"></translation>
+        <translation>无法打开回收站中的文件，请先将其还原</translation>
     </message>
 </context>
 <context>
@@ -4052,7 +3963,7 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="1435"/>
         <source>Action timeout, action is canceled</source>
-        <translation type="unfinished"></translation>
+        <translation>当前操作超时，操作已被取消</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="1442"/>
@@ -4097,12 +4008,12 @@
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="472"/>
         <source>Share name %1 contains invalid characters (any of %&lt;&gt;*?|/\+=;:&quot;,)</source>
-        <translation type="unfinished"></translation>
+        <translation>共享名%1包含无效的字符（%&lt;&gt;*?|/\+=;:&quot;,）</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="490"/>
         <source>Failed to add share %1. The share name is too long.</source>
-        <translation type="unfinished"></translation>
+        <translation>添加共享%1失败。共享名太长。</translation>
     </message>
 </context>
 <context>
@@ -4128,122 +4039,122 @@
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="764"/>
         <source>The command line arguments are invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>命令行参数无效。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="767"/>
         <source>Couldn&apos;t load config file. Probably the password is wrong</source>
-        <translation type="unfinished"></translation>
+        <translation>无法加载配置文件，密码可能不正确。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="770"/>
         <source>Password cannot be empty</source>
-        <translation type="unfinished"></translation>
+        <translation>密码不能为空</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="773"/>
         <source>The file system format is too new for this CryFS version. Please update your CryFS version.</source>
-        <translation type="unfinished"></translation>
+        <translation>对于此CryFS版本，文件系统格式太新了。请更新您的CryFS版本。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="776"/>
         <source>The file system format is too old for this CryFS version. Run with --allow-filesystem-upgrade to upgrade it.</source>
-        <translation type="unfinished"></translation>
+        <translation>对于此CryFS版本，文件系统格式过旧。与--allow-filesystem-upgrade一起运行以对其进行升级。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="779"/>
         <source>The file system uses a different cipher than the one specified on the command line using the --cipher argument.</source>
-        <translation type="unfinished"></translation>
+        <translation>文件系统使用的密码与使用--cipher参数在命令行上指定的密码不同。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="782"/>
         <source>Base directory doesn&apos;t exist or is inaccessible (i.e. not read or writable or not a directory)</source>
-        <translation type="unfinished"></translation>
+        <translation>基本目录不存在或不可访问（即，不可读取或可写或非目录）</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="785"/>
         <source>Mount directory doesn&apos;t exist or is inaccessible (i.e. not read or writable or not a directory)</source>
-        <translation type="unfinished"></translation>
+        <translation>挂载目录不存在或不可访问（即无法读取或写入或不是目录）</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="788"/>
         <source>Base directory can&apos;t be a subdirectory of the mount directory</source>
-        <translation type="unfinished"></translation>
+        <translation>基本目录不能是安装目录的子目录。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="791"/>
         <source>Something&apos;s wrong with the file system.</source>
-        <translation type="unfinished"></translation>
+        <translation>文件系统出了点问题。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="794"/>
         <source>The filesystem id in the config file is different to the last time we loaded a filesystem from this basedir. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.</source>
-        <translation type="unfinished"></translation>
+        <translation>配置文件中的文件系统ID与我们上次从此basedir加载文件系统的时间不同。这可能意味着攻击者用另一种文件系统替换了文件系统。您可以传递--allow-replaced-filesystem选项以允许此操作。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="797"/>
         <source>The filesystem encryption key differs from the last time we loaded this filesystem. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.</source>
-        <translation type="unfinished"></translation>
+        <translation>文件系统加密密钥与我们上次加载此文件系统的时间不同。这可能意味着攻击者用另一种文件系统替换了文件系统。您可以传递--allow-replaced-filesystem选项以允许此操作。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="800"/>
         <source>The command line options and the file system disagree on whether missing blocks should be treated as integrity violations.</source>
-        <translation type="unfinished"></translation>
+        <translation>命令行选项和文件系统在是否应该将丢失的块视为完整性违规方面存在分歧。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="803"/>
         <source>File system is in single-client mode and can only be used from the client that created it.</source>
-        <translation type="unfinished"></translation>
+        <translation>文件系统处于单客户端模式，只能在创建它的客户端中使用。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="806"/>
         <source>A previous run of the file system detected an integrity violation. Preventing access to make sure the user notices. The file system will be accessible again after the user deletes the integrity state file.</source>
-        <translation type="unfinished"></translation>
+        <translation>先前运行的文件系统检测到完整性违规。阻止访问以确保用户注意。用户删除完整性状态文件后，将可以再次访问文件系统。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="809"/>
         <source>An integrity violation was detected and the file system unmounted to make sure the user notices.</source>
-        <translation type="unfinished"></translation>
+        <translation>检测到完整性违规，并卸载文件系统以确保用户注意。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="812"/>
         <source>Mount directory is not empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>挂载点不为空。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="815"/>
         <source>Mount directory in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>挂载目录使用中。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="818"/>
         <source>Cryfs not installed.</source>
-        <translation type="unfinished"></translation>
+        <translation>cryfs不存在。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="821"/>
         <source>Mount directory doesn&apos;t exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>挂载目录不存在。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="824"/>
         <source>Mounted directory encrypted.</source>
-        <translation type="unfinished"></translation>
+        <translation>挂载目录已加密。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="827"/>
         <source>No permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有权限。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="830"/>
         <source>Fusermount does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>fusermount不存在。</translation>
     </message>
     <message>
         <location filename="../controllers/vaultcontroller.cpp" line="833"/>
         <source>An encrypted folder created by Cryfs already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cryfs创建的加密文件夹已存在。</translation>
     </message>
 </context>
 </TS>
