@@ -302,8 +302,10 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
         painter->drawText((m_width - fm.width(str)) / 2, (m_height - fm.height()) / 2,
                           fm.width(str), fm.height(), 0, str);
     } else {
-        color = pal.color(QPalette::Active, QPalette::Base);
-        color = DGuiApplicationHelper::adjustColor(color, 0, 0, 0, 0, 0, 0, +51);
+        if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
+            color = QColor(235, 235, 235, 204);
+        else
+            color = QColor(30, 30, 30, 204);
         painter->fillRect(boundingRect(), color);
         painter->drawText((m_width - fm.width(str)) / 2, (m_height - fm.height()) / 2,
                           fm.width(str), fm.height(), 0, str);
