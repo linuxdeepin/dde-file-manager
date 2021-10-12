@@ -4,10 +4,6 @@ project(dfmplugin-recent)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-include_directories(
-    ${CMAKE_SOURCE_DIR}/src/services/dfmservices-business/dfmservice-filemanager
-    )
-
 set(recent_cxx_cpp
     recentfileinfo.cpp
     recentdiriterator.cpp

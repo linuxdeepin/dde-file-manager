@@ -55,8 +55,8 @@ class Plugin : public QObject
     Q_OBJECT
 public:
     enum ShutdownFlag {
-        Synch, /// 同步释放标识
-        Asynch, /// 异步释放标识
+        Sync, /// 同步释放标识
+        Async, /// 异步释放标识
     };
 
     explicit Plugin();

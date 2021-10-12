@@ -6,21 +6,21 @@ set(GLOBAL_H
     dfm_common_service_global.h)
 
 set(EVENT_H
-    eventservice/laucheventreceiver.h
-    eventservice/fileeventreceiver.h
+    event/laucheventreceiver.h
+    event/fileeventreceiver.h
     )
 
 set(EVENT_CPP
-    eventservice/laucheventreceiver.cpp
-    eventservice/fileeventreceiver.cpp
+    event/laucheventreceiver.cpp
+    event/fileeventreceiver.cpp
     )
 
 set(JOB_H
-    jobservice/abstractjobhandler.h
+    job/abstractjobhandler.h
     )
 
 set(JOB_CPP
-    jobservice/abstractjobhandler.cpp
+    job/abstractjobhandler.cpp
     )
 
 set(SERVICE_H

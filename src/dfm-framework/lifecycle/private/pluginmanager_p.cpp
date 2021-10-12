@@ -264,9 +264,9 @@ void PluginManagerPrivate::stopPlugin(PluginMetaObjectPointer &pluginMetaObj)
     Plugin::ShutdownFlag stFlag = pluginMetaObj->d->plugin->stop();
     pluginMetaObj->d->state = PluginMetaObject::State::Stoped;
 
-    if (stFlag == Plugin::ShutdownFlag::Asynch) {
+    if (stFlag == Plugin::ShutdownFlag::Async) {
 
-        dpfCritical() << "asynch stop" << pluginMetaObj->d->plugin->
+        dpfCritical() << "async stop" << pluginMetaObj->d->plugin->
                          metaObject()->className();
 
         pluginMetaObj->d->state = PluginMetaObject::State::Stoped;
@@ -287,7 +287,7 @@ void PluginManagerPrivate::stopPlugin(PluginMetaObjectPointer &pluginMetaObj)
     } else {
 
         if (pluginMetaObj->d->plugin) {
-            dpfCritical() << "synch stop" << pluginMetaObj->d->plugin->
+            dpfCritical() << "sync stop" << pluginMetaObj->d->plugin->
                              metaObject()->className();
 
             pluginMetaObj->d->plugin = nullptr;
@@ -626,9 +626,9 @@ void PluginManagerPrivate::stopPlugins()
         Plugin::ShutdownFlag stFlag = pointer->d->plugin->stop();
         pointer->d->state = PluginMetaObject::State::Stoped;
 
-        if (stFlag == Plugin::ShutdownFlag::Asynch) {
+        if (stFlag == Plugin::ShutdownFlag::Async) {
 
-            dpfCritical() << "Stoped asynch plugin: " << pointer->d->name;
+            dpfCritical() << "Stoped async plugin: " << pointer->d->name;
 
             pointer->d->state = PluginMetaObject::State::Stoped;
 
@@ -649,7 +649,7 @@ void PluginManagerPrivate::stopPlugins()
         } else {
 
             if (pointer->d->plugin) {
-                dpfCritical() << "Stoped synch plugin: " << pointer->d->name;
+                dpfCritical() << "Stoped sync plugin: " << pointer->d->name;
                 pointer->d->plugin = nullptr;
                 pointer->d->state = PluginMetaObject::State::Stoped;
             }

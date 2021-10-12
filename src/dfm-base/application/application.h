@@ -22,11 +22,11 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "dfm_filemanager_service_global.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include <QObject>
 
-DSB_FM_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 
 class Settings;
 class ApplicationPrivate;
@@ -124,6 +124,6 @@ private:
     QScopedPointer<ApplicationPrivate> d;
 };
 
-DSB_FM_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
 #endif // APPLICATION_H

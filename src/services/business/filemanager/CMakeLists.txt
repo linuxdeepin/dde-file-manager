@@ -9,58 +9,47 @@ set(GLOBAL_H
     )
 
 set(WINDOWSERVICE_CPP
-    windowservice/private/browsewindow_p.cpp
-    windowservice/windowservice.cpp
-    windowservice/displayviewlogic.cpp
-    windowservice/displaydefaultview.cpp
-    windowservice/navwidget.cpp
-    windowservice/addressbar.cpp
-    windowservice/completerview.cpp
-    windowservice/optionbuttonbox.cpp
-    windowservice/crumbbar.cpp
-    windowservice/browseview.cpp
-    windowservice/browsewindow.cpp
-    windowservice/crumbmodel.cpp
+    window/private/browsewindow_p.cpp
+    window/windowservice.cpp
+    window/displayviewlogic.cpp
+    window/displaydefaultview.cpp
+    window/navwidget.cpp
+    window/addressbar.cpp
+    window/completerview.cpp
+    window/optionbuttonbox.cpp
+    window/crumbbar.cpp
+    window/browseview.cpp
+    window/browsewindow.cpp
+    window/crumbmodel.cpp
     )
 
 set(WINDOWSERVICE_H
-    windowservice/private/browsewindow_p.h
-    windowservice/private/addressbar_p.h
-    windowservice/private/crumbbar_p.h
-    windowservice/private/navwidget_p.h
-    windowservice/private/optionbuttonbox_p.h
-    windowservice/private/completerview_p.h
-    windowservice/private/displaydefaultview_p.h
-    windowservice/contexts.h
-    windowservice/windowservice.h
-    windowservice/displayviewlogic.h
-    windowservice/displaydefaultview.h
-    windowservice/navwidget.h
-    windowservice/addressbar.h
-    windowservice/completerview.h
-    windowservice/optionbuttonbox.h
-    windowservice/crumbbar.h
-    windowservice/browseview.h
-    windowservice/browsewindow.h
-    windowservice/crumbmodel.h
-    )
-
-set(APPLICATIONSERVICE_CPP
-    applicationservice/application.cpp
-    applicationservice/settings.cpp
-    )
-
-set(APPLICATIONSERVICE_H
-    applicationservice/application.h
-    applicationservice/private/application_p.h
-    applicationservice/settings.h
+    window/private/browsewindow_p.h
+    window/private/addressbar_p.h
+    window/private/crumbbar_p.h
+    window/private/navwidget_p.h
+    window/private/optionbuttonbox_p.h
+    window/private/completerview_p.h
+    window/private/displaydefaultview_p.h
+    window/contexts.h
+    window/windowservice.h
+    window/displayviewlogic.h
+    window/displaydefaultview.h
+    window/navwidget.h
+    window/addressbar.h
+    window/completerview.h
+    window/optionbuttonbox.h
+    window/crumbbar.h
+    window/browseview.h
+    window/browsewindow.h
+    window/crumbmodel.h
     )
 
 set(SHORTCUTSERVICE_H
-    shortcutservice/shortcut.h)
+    shortcut/shortcut.h)
 
 set(SHORTCUTSERVICE_CPP
-    shortcutservice/shortcut.cpp)
+    shortcut/shortcut.cpp)
 
 add_library(
     ${PROJECT_NAME}
@@ -68,12 +57,13 @@ add_library(
     ${GLOBAL_H}
     ${WINDOWSERVICE_H}
     ${WINDOWSERVICE_CPP}
-    ${APPLICATIONSERVICE_H}
-    ${APPLICATIONSERVICE_CPP}
+    ${SHORTCUTSERVICE_H}
+    ${SHORTCUTSERVICE_CPP}
     )
 
 target_link_libraries(
     ${PROJECT_NAME}
+    dfm-base
     dfm-framework
     ${QtUseModules}
     ${PkgUseModules}

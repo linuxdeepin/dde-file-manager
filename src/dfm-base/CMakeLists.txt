@@ -120,6 +120,17 @@ set(WIDGETS_CPP
     widgets/dfmfileview/iconitemdelegate.cpp
     )
 
+set(APPLICATIONSERVICE_CPP
+    application/application.cpp
+    application/settings.cpp
+    )
+
+set(APPLICATIONSERVICE_H
+    application/application.h
+    application/private/application_p.h
+    application/settings.h
+    )
+
 set(QRCS
     resources/resources.qrc
     )
@@ -137,6 +148,8 @@ add_library(${PROJECT_NAME}
     ${UTILS_CPP}
     ${WIDGETS_H}
     ${WIDGETS_CPP}
+    ${APPLICATIONSERVICE_H}
+    ${APPLICATIONSERVICE_CPP}
     ${QRCS}
     )
 

@@ -1,10 +1,11 @@
 /*
  * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyu@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +19,20 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef RECENTBROWSEVIEW_H
-#define RECENTBROWSEVIEW_H
+*/
+#include "interfaces.h"
 
-#include "recentutil.h"
-#include "window/browseview.h"
-#include "recentbrowseviewmodel.h"
-
-DSB_FM_USE_NAMESPACE
-
-class RecentBrowseView : public BrowseView
+void Interfaces::initialize()
 {
-public:
-    explicit RecentBrowseView(QWidget *parent = nullptr);
-    virtual void setRootUrl(const QUrl &url) override;
-    virtual QUrl rootUrl() override;
-};
 
-#endif // RECENTBROWSEVIEW_H
+}
+
+bool Interfaces::start()
+{
+    return true;
+}
+
+dpf::Plugin::ShutdownFlag Interfaces::stop()
+{
+    return Sync;
+}

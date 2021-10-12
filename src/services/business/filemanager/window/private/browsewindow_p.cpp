@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "browsewindow_p.h"
-#include "windowservice/browseview.h"
+#include "window/browseview.h"
 #include "dfm-base/widgets/dfmfileview/fileviewitem.h"
 #include "dfm-framework/log/frameworklog.h"
 #include "dfm-base/widgets/dfmfileview/fileviewmodel.h"

@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "applicationservice/application.h"
+#include "application/application.h"
 #include "private/application_p.h"
 #if QT_HAS_INCLUDE("anything_interface.h")
 #include "anything_interface.h"
@@ -29,7 +29,7 @@
 #endif
 #endif
 
-#include "applicationservice/settings.h"
+#include "application/settings.h"
 #ifdef FULLTEXTSEARCH_ENABLE
 #include "fulltextsearch/fulltextsearch.h"
 #endif
@@ -38,7 +38,7 @@
 #include <QMetaEnum>
 #include <QtConcurrent>
 
-DSB_FM_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC_WITH_ARGS(Settings, gsGlobal, ("deepin/dde-file-manager", Settings::GenericConfig))
 Q_GLOBAL_STATIC_WITH_ARGS(Settings, asGlobal, ("deepin/dde-file-manager/dde-file-manager", Settings::GenericConfig))
@@ -335,4 +335,4 @@ void Application::onSettingsValueEdited(const QString &group, const QString &key
     d->_q_onSettingsValueEdited(group, key, value);
 }
 
-DSB_FM_END_NAMESPACE
+DFMBASE_END_NAMESPACE

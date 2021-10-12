@@ -19,21 +19,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef RECENTBROWSEVIEW_H
-#define RECENTBROWSEVIEW_H
+#ifndef APPLICATION_P_H
+#define APPLICATION_P_H
 
-#include "recentutil.h"
-#include "window/browseview.h"
-#include "recentbrowseviewmodel.h"
+#include "dfm-base/dfm_base_global.h"
 
-DSB_FM_USE_NAMESPACE
+#include <QString>
+#include <QVariant>
 
-class RecentBrowseView : public BrowseView
+DFMBASE_BEGIN_NAMESPACE
+class Application;
+class ApplicationPrivate
 {
 public:
-    explicit RecentBrowseView(QWidget *parent = nullptr);
-    virtual void setRootUrl(const QUrl &url) override;
-    virtual QUrl rootUrl() override;
-};
+    explicit ApplicationPrivate(Application *qq);
 
-#endif // RECENTBROWSEVIEW_H
+    void _q_onSettingsValueChanged(const QString &group, const QString &key, const QVariant &value, bool edited = false);
+    void _q_onSettingsValueEdited(const QString &group, const QString &key, const QVariant &value);
+
+    static Application *self;
+};
+DFMBASE_END_NAMESPACE
+#endif // APPLICATION_P_H

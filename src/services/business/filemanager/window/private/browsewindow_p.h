@@ -23,12 +23,12 @@
 #define BROWSEWINDOWPRIVATE_H
 
 //services
-#include "windowservice/browsewindow.h"
-#include "windowservice/browseview.h"
-#include "windowservice/navwidget.h"
-#include "windowservice/crumbbar.h"
-#include "windowservice/addressbar.h"
-#include "windowservice/optionbuttonbox.h"
+#include "window/browsewindow.h"
+#include "window/browseview.h"
+#include "window/navwidget.h"
+#include "window/crumbbar.h"
+#include "window/addressbar.h"
+#include "window/optionbuttonbox.h"
 
 //modules
 #include "dfm-base/widgets/dfmsplitter/splitter.h"

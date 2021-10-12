@@ -1,10 +1,11 @@
 /*
  * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyu@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +19,22 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef APPLICATION_P_H
-#define APPLICATION_P_H
+*/
+#ifndef INTERFACES_H
+#define INTERFACES_H
 
-#include "dfm_filemanager_service_global.h"
+#include "dfm-framework/lifecycle/plugin.h"
 
-#include <QString>
-#include <QVariant>
-
-DSB_FM_BEGIN_NAMESPACE
-class Application;
-class ApplicationPrivate
+class Interfaces : public dpf::Plugin
 {
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.server" FILE "interfaces.json")
+
 public:
-    explicit ApplicationPrivate(Application *qq);
+    virtual void initialize() override;
+    virtual bool start() override;
+    virtual ShutdownFlag stop() override;
 
-    void _q_onSettingsValueChanged(const QString &group, const QString &key, const QVariant &value, bool edited = false);
-    void _q_onSettingsValueEdited(const QString &group, const QString &key, const QVariant &value);
-
-    static Application *self;
 };
-DSB_FM_END_NAMESPACE
-#endif // APPLICATION_P_H
+
+#endif // INTERFACES_H

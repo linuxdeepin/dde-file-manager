@@ -26,12 +26,12 @@
 #include "recentfileinfo.h"
 #include "recentdiriterator.h"
 
-#include "windowservice/windowservice.h"
-#include "windowservice/browseview.h"
-#include "applicationservice/application.h"
+#include "window/windowservice.h"
+#include "window/browseview.h"
 
-#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/application/application.h"
 #include "dfm-base/base/abstractfilewatcher.h"
+#include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/localfile/localfileinfo.h"
 #include "dfm-base/localfile/localdiriterator.h"
@@ -82,5 +82,5 @@ bool Recent::start()
 }
 
 dpf::Plugin::ShutdownFlag Recent::stop() {
-    return Synch;
+    return Sync;
 }

@@ -25,8 +25,8 @@
 #include "recentlog.h"
 #include "recentutil.h"
 
-#include "windowservice/windowservice.h"
-#include "windowservice/contexts.h"
+#include "window/windowservice.h"
+#include "window/contexts.h"
 
 #include "dfm-framework/event/eventhandler.h"
 #include "dfm-framework/event/eventcallproxy.h"

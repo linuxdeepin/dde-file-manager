@@ -4,9 +4,6 @@ project(dfmplugin-core)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-include_directories(
-    ${CMAKE_SOURCE_DIR}/src/services/dfmservices-business/dfmservice-filemanager
-    )
 
 set(core_cxx_cpp
     eventcaller.cpp

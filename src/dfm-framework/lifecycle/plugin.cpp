@@ -52,8 +52,8 @@ void Plugin::initialize()
 /**
  * @brief Plugin::stop
  * @return PluginMetaObject::ShutDownFlag 释放的方式
- * 目前支持Synch(同步)与Asynch(异步)
- * 如果使用Asynch，那么插件的构建者应当发送信号
+ * 目前支持Sync(同步)与Async(异步)
+ * 如果使用Async，那么插件的构建者应当发送信号
  * @code
  * emit asyncStopFinished
  * @endcode
@@ -61,5 +61,5 @@ void Plugin::initialize()
  */
 Plugin::ShutdownFlag Plugin::stop()
 {
-    return ShutdownFlag::Synch;
+    return ShutdownFlag::Sync;
 }

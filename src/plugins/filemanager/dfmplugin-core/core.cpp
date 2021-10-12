@@ -23,10 +23,10 @@
 #include "corelog.h"
 #include "eventcaller.h"
 
-#include "applicationservice/application.h"
-#include "windowservice/windowservice.h"
-#include "windowservice/browseview.h"
+#include "window/windowservice.h"
+#include "window/browseview.h"
 
+#include "dfm-base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/localfile/localfileinfo.h"
@@ -272,5 +272,5 @@ bool Core::start()
 
 dpf::Plugin::ShutdownFlag Core::stop()
 {
-    return Synch;
+    return Sync;
 }

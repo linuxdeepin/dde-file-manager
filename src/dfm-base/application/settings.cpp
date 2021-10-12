@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "applicationservice/settings.h"
+#include "application/settings.h"
 #include "dfm-base/base/standardpaths.h"
 
 #include <QCoreApplication>
@@ -36,8 +36,8 @@
  * \class SettingsPrivate 通用设置的私有类
  * \brief The SettingsPrivate class 保存类Settings的所有数据和成员变量
  */
-DFMBASE_USE_NAMESPACE
-DSB_FM_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
+
 class SettingsPrivate
 {
 public:
@@ -912,4 +912,5 @@ void Settings::setWatchChanges(bool watchChanges)
 {
     Q_UNUSED(watchChanges)
 }
-DSB_FM_END_NAMESPACE
+
+DFMBASE_END_NAMESPACE

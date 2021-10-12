@@ -22,13 +22,14 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include "dfm_filemanager_service_global.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include <QObject>
 #include <QUrl>
 #include <QVariantHash>
 
-DSB_FM_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
+
 class SettingsPrivate;
 class Settings : public QObject
 {
@@ -82,6 +83,6 @@ private:
     void onFileChanged(const QUrl &);
 };
 
-DSB_FM_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
 #endif // SETTINGS_H

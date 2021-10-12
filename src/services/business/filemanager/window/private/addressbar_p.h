@@ -22,8 +22,8 @@
 #ifndef AddressBar_P_H
 #define AddressBar_P_H
 
-#include "windowservice/addressbar.h"
-#include "windowservice/completerview.h"
+#include "window/addressbar.h"
+#include "window/completerview.h"
 #include "dfm_filemanager_service_global.h"
 
 #include "dfm-base/base/urlroute.h"
