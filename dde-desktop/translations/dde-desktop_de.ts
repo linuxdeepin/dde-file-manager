@@ -2,42 +2,51 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2482"/>
+        <location filename="../view/canvasgridview.cpp" line="3129"/>
+        <location filename="../view/canvasgridview.cpp" line="3306"/>
         <source>Icon size</source>
         <translation>Symbolgröße</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2488"/>
+        <location filename="../view/canvasgridview.cpp" line="3135"/>
+        <location filename="../view/canvasgridview.cpp" line="3314"/>
         <source>Auto merge</source>
-        <translation>Automatisch verbinden</translation>
+        <translation>Automatisch zusammenführen</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2503"/>
+        <location filename="../view/canvasgridview.cpp" line="3150"/>
+        <location filename="../view/canvasgridview.cpp" line="3326"/>
         <source>Auto arrange</source>
         <translation>Automatisch sortieren</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2559"/>
+        <location filename="../view/canvasgridview.cpp" line="3207"/>
+        <location filename="../view/canvasgridview.cpp" line="3211"/>
+        <location filename="../view/canvasgridview.cpp" line="3381"/>
+        <location filename="../view/canvasgridview.cpp" line="3386"/>
         <source>Set Wallpaper</source>
         <translation>Hintergrundbild festlegen</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2561"/>
+        <location filename="../view/canvasgridview.cpp" line="3213"/>
+        <location filename="../view/canvasgridview.cpp" line="3384"/>
         <source>Wallpaper and Screensaver</source>
-        <translation>Hintergrund und Bildschirmschoner</translation>
+        <translation>Hintergrundbild und Bildschirmschoner</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2642"/>
+        <location filename="../view/canvasgridview.cpp" line="3528"/>
         <source>Properties</source>
         <translation>Eigenschaften</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2543"/>
+        <location filename="../view/canvasgridview.cpp" line="3190"/>
+        <location filename="../view/canvasgridview.cpp" line="3363"/>
         <source>Display Settings</source>
         <translation>Anzeigeeinstellungen</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2552"/>
+        <location filename="../view/canvasgridview.cpp" line="3199"/>
+        <location filename="../view/canvasgridview.cpp" line="3372"/>
         <source>Corner Settings</source>
         <translation>Eckeneinstellungen</translation>
     </message>
@@ -47,7 +56,7 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Tiny</source>
-        <translation>Sehr klein</translation>
+        <translation>Winzig</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="41"/>
@@ -73,7 +82,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="131"/>
+        <location filename="../main.cpp" line="161"/>
         <source>Desktop</source>
         <translation>Desktop</translation>
     </message>
@@ -81,96 +90,72 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="450"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="694"/>
         <source>Wallpaper Slideshow</source>
-        <translation>Hintergrund-Slideshow</translation>
+        <translation>Hintergrundbild-Slideshow</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="482"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="739"/>
         <source>When login</source>
-        <translation>Beim Login</translation>
+        <translation>Bei der Anmeldung</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="484"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="741"/>
         <source>When wakeup</source>
         <translation>Beim Aufwachen</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="528"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="796"/>
         <source>Require a password on wakeup</source>
-        <translation>Erfordert ein Kennwort beim Aufwecken</translation>
+        <translation>Beim Aufwachen ein Passwort anfordern</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="558"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="828"/>
         <source>Never</source>
         <translation>Nie</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="559"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="830"/>
         <source>Wait:</source>
         <translation>Warten:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="592"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="863"/>
         <source>Wallpaper</source>
-        <translation>Hintergrund</translation>
+        <translation>Hintergrundbild</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="593"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="878"/>
         <source>Screensaver</source>
         <translation>Bildschirmschoner</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="666"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="964"/>
         <source>Only desktop</source>
         <translation>Nur Desktop</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="667"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="965"/>
         <source>Only lock screen</source>
         <translation>Nur Sperrbildschirm</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="695"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1018"/>
         <source>Apply</source>
         <translation>Anwenden</translation>
     </message>
 </context>
 <context>
-    <name>ZoneMainWindow</name>
+    <name>WaterMaskFrame</name>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>Fast Screen Off</source>
-        <translation>Bildschirm schnell aus</translation>
+        <location filename="../view/watermaskframe.cpp" line="255"/>
+        <source>Not authorized</source>
+        <translation>Nicht autorisiert</translation>
     </message>
     <message>
-        <source>Control Center</source>
-        <translation type="vanished">Kontrollzentrum</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>All Windows</source>
-        <translation>Alle Fenster</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>Launcher</source>
-        <translation>Starter</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>Desktop</source>
-        <translation>Desktop</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>None</source>
-        <translation>Nichts</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="58"/>
-        <source>Close Window</source>
-        <translation>Fenster schließen</translation>
+        <location filename="../view/watermaskframe.cpp" line="263"/>
+        <source>In trial period</source>
+        <translation>In der Testphase</translation>
     </message>
 </context>
 </TS>

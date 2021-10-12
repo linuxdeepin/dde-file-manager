@@ -2,42 +2,51 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2482"/>
+        <location filename="../view/canvasgridview.cpp" line="3129"/>
+        <location filename="../view/canvasgridview.cpp" line="3306"/>
         <source>Icon size</source>
         <translation>Velikost ikone</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2488"/>
+        <location filename="../view/canvasgridview.cpp" line="3135"/>
+        <location filename="../view/canvasgridview.cpp" line="3314"/>
         <source>Auto merge</source>
-        <translation type="unfinished"/>
+        <translation>Samodejno združevanje</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2503"/>
+        <location filename="../view/canvasgridview.cpp" line="3150"/>
+        <location filename="../view/canvasgridview.cpp" line="3326"/>
         <source>Auto arrange</source>
         <translation>Samodejno razporedi</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2559"/>
+        <location filename="../view/canvasgridview.cpp" line="3207"/>
+        <location filename="../view/canvasgridview.cpp" line="3211"/>
+        <location filename="../view/canvasgridview.cpp" line="3381"/>
+        <location filename="../view/canvasgridview.cpp" line="3386"/>
         <source>Set Wallpaper</source>
         <translation>Nastavi ozadje</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2561"/>
+        <location filename="../view/canvasgridview.cpp" line="3213"/>
+        <location filename="../view/canvasgridview.cpp" line="3384"/>
         <source>Wallpaper and Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Ozadje in ohranjevalnik zaslona</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2642"/>
+        <location filename="../view/canvasgridview.cpp" line="3528"/>
         <source>Properties</source>
         <translation>Lastnosti</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2543"/>
+        <location filename="../view/canvasgridview.cpp" line="3190"/>
+        <location filename="../view/canvasgridview.cpp" line="3363"/>
         <source>Display Settings</source>
         <translation>Nastavitve zaslona</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2552"/>
+        <location filename="../view/canvasgridview.cpp" line="3199"/>
+        <location filename="../view/canvasgridview.cpp" line="3372"/>
         <source>Corner Settings</source>
         <translation>Nastavitve roba</translation>
     </message>
@@ -47,12 +56,12 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Tiny</source>
-        <translation>Drobna</translation>
+        <translation>Drobno</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="41"/>
         <source>Small</source>
-        <translation>Majhna</translation>
+        <translation>Majhno</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="42"/>
@@ -62,115 +71,91 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="43"/>
         <source>Large</source>
-        <translation>Velika</translation>
+        <translation>Veliko</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="44"/>
         <source>Super large</source>
-        <translation>Zelo velika</translation>
+        <translation>Zelo veliko</translation>
     </message>
 </context>
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="131"/>
+        <location filename="../main.cpp" line="161"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Namizje</translation>
     </message>
 </context>
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="450"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="694"/>
         <source>Wallpaper Slideshow</source>
-        <translation type="unfinished"/>
+        <translation>Diaprojekcija ozadji</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="482"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="739"/>
         <source>When login</source>
-        <translation type="unfinished"/>
+        <translation>Ob prijavi</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="484"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="741"/>
         <source>When wakeup</source>
-        <translation type="unfinished"/>
+        <translation>Ob bujenju</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="528"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="796"/>
         <source>Require a password on wakeup</source>
-        <translation type="unfinished"/>
+        <translation>Ob bujenju zahtevaj geslo</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="558"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="828"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>Nikoli</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="559"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="830"/>
         <source>Wait:</source>
-        <translation type="unfinished"/>
+        <translation>Počakaj:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="592"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="863"/>
         <source>Wallpaper</source>
-        <translation type="unfinished"/>
+        <translation>Ozadje</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="593"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="878"/>
         <source>Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Ohranjevalnik zaslona</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="666"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="964"/>
         <source>Only desktop</source>
         <translation>Samo namizje</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="667"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="965"/>
         <source>Only lock screen</source>
         <translation>Samo zaklenjen zaslon</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="695"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1018"/>
         <source>Apply</source>
-        <translation type="unfinished"/>
+        <translation>Uporabi</translation>
     </message>
 </context>
 <context>
-    <name>ZoneMainWindow</name>
+    <name>WaterMaskFrame</name>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>Fast Screen Off</source>
-        <translation>Hiter Zaslon Izključen</translation>
+        <location filename="../view/watermaskframe.cpp" line="255"/>
+        <source>Not authorized</source>
+        <translation>Ni overjeno</translation>
     </message>
     <message>
-        <source>Control Center</source>
-        <translation type="vanished">Nadzorni center</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>All Windows</source>
-        <translation>Vsa okna</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>Launcher</source>
-        <translation>Zaganjalec</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>Desktop</source>
-        <translation>Namizje</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
-        <source>None</source>
-        <translation>Nič</translation>
-    </message>
-    <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="58"/>
-        <source>Close Window</source>
-        <translation>Zapri okno</translation>
+        <location filename="../view/watermaskframe.cpp" line="263"/>
+        <source>In trial period</source>
+        <translation>Preizkusna doba</translation>
     </message>
 </context>
 </TS>

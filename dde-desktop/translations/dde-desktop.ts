@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>CanvasGridView</name>
     <message>
@@ -152,12 +150,12 @@
     <message>
         <location filename="../view/watermaskframe.cpp" line="255"/>
         <source>Not authorized</source>
-        <translation type="unfinished"></translation>
+        <translation>Not authorized</translation>
     </message>
     <message>
         <location filename="../view/watermaskframe.cpp" line="263"/>
         <source>In trial period</source>
-        <translation type="unfinished"></translation>
+        <translation>In trial period</translation>
     </message>
 </context>
 </TS>

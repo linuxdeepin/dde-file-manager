@@ -2,42 +2,43 @@
 <context>
     <name>DeepinStorage</name>
     <message>
-        <location filename="../dattachedudisks2device.cpp" line="100"/>
-        <location filename="../dattachedudisks2device.cpp" line="115"/>
         <source>%1 Volume</source>
         <translation>%1 svazek</translation>
     </message>
 </context>
 <context>
+    <name>DiskControlItem</name>
+    <message>
+        <source>Unknown</source>
+        <translation>Neznámý</translation>
+    </message>
+</context>
+<context>
     <name>DiskControlWidget</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="215"/>
-        <location filename="../diskcontrolwidget.cpp" line="223"/>
-        <location filename="../diskcontrolwidget.cpp" line="294"/>
-        <location filename="../diskcontrolwidget.cpp" line="455"/>
         <source>Disk is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation>Disk je zaneprázdněn, nyní ho proto nelze vysunout</translation>
     </message>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="469"/>
         <source>dde-file-manager</source>
-        <translation type="unfinished"/>
+        <translation>Správce souborů</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot remove now</source>
+        <translation>Zařízení je něčím využíváno, nyní ho proto nelze odebrat</translation>
     </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>
     <message>
-        <location filename="../diskmountplugin.cpp" line="49"/>
         <source>Disk</source>
         <translation>Disk</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="104"/>
         <source>Open</source>
         <translation>Otevřít</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="111"/>
         <source>Unmount all</source>
         <translation>Odpojit vše</translation>
     </message>
@@ -45,9 +46,8 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="390"/>
         <source>Device has been removed</source>
-        <translation>Zařízení bylo odstraněno</translation>
+        <translation>Zařízení bylo odebráno</translation>
     </message>
 </context>
 </TS>
