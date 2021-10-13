@@ -69,7 +69,7 @@ DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"
 target.path = $$BINDIR
 
 desktop.path = $${PREFIX}/share/applications/
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) {
+isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) | isEqual(ARCH, loongarch64) {
     desktop.files = $$PWD/mips/$${TARGET}.desktop \
                     dde-open.desktop
 }else{
@@ -91,7 +91,7 @@ manual.path = /usr/share/deepin-manual/manual-assets/application
 
 INSTALLS += target desktop policy pkexec propertyDialogShell manual
 
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) {
+isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) | isEqual(ARCH, loongarch64) {
     dde-mips-shs.path = $$BINDIR
     dde-mips-shs.files = $$PWD/mips/dde-computer.sh \
                          $$PWD/mips/dde-trash.sh \

@@ -1,0 +1,24 @@
+usr/bin/dde-file-manager
+usr/bin/dde-file-manager-daemon
+usr/bin/dde-file-manager-pkexec
+usr/bin/dde-property-dialog
+usr/bin/dde-computer.sh
+usr/bin/dde-trash.sh
+usr/bin/file-manager.sh
+
+usr/share/applications/dde-file-manager.desktop
+usr/share/applications/dde-open.desktop
+
+usr/share/polkit-1/actions/*.policy
+
+usr/share/deepin-manual/manual-assets/application/dde-file-manager
+
+etc/dbus-1/system.d/com.deepin.filemanager.daemon.conf
+
+usr/share/dbus-1/interfaces/com.deepin.filemanager.filedialog.xml
+usr/share/dbus-1/interfaces/com.deepin.filemanager.filedialogmanager.xml
+usr/share/dbus-1/services/com.deepin.filemanager.filedialog.service
+usr/share/dbus-1/services/org.freedesktop.FileManager.service
+usr/share/dbus-1/system-services/com.deepin.filemanager.daemon.service
+
+usr/lib/systemd/system/ lib/systemd/
