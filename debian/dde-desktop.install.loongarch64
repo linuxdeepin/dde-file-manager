@@ -1,0 +1,5 @@
+usr/bin/dde-desktop
+usr/share/applications/dde-computer.desktop
+usr/share/applications/dde-trash.desktop
+usr/share/dde-desktop/translations/*.qm
+usr/share/dbus-1/services/com.deepin.dde.desktop.service
