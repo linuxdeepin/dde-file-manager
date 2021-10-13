@@ -26,7 +26,6 @@ Button::Button(QWidget * parent) :
     QPushButton(parent)
 {
     //setFlat(true);
-    setFixedSize(160, 36);
 }
 
 Button::~Button()

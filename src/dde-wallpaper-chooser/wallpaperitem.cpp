@@ -29,7 +29,7 @@
 #include <QLabel>
 #include <QUrl>
 #include <QDebug>
-#include <QVBoxLayout>
+#include <QGridLayout>
 #include <QtConcurrent>
 #include <QPainter>
 #include <QPaintEvent>
@@ -55,8 +55,6 @@ protected:
 
         pa.setOpacity(m_opacity);
         pa.drawPixmap(pixmap_geometry.topLeft(), m_pixmap, pixmap_geometry.united(event->rect()));
-        pa.setPen(QColor(255, 255, 255, 25));
-        pa.drawRect(m_pixmapBoxGeometry.adjusted(0, 0, -1, -1));
     }
 
 private:
@@ -97,9 +95,11 @@ void WallpaperItem::initUI()
     buttonArea->setFixedSize(ItemWidth, ItemHeight);
     buttonArea->move(0, ItemHeight);
 
-    m_buttonLayout = new QVBoxLayout(buttonArea);
-    m_buttonLayout->setSpacing(10);
-    m_buttonLayout->setContentsMargins(0, 10, 0, 10);
+    m_buttonLayout = new QGridLayout(buttonArea);
+    m_buttonLayout->setHorizontalSpacing(6);
+    m_buttonLayout->setVerticalSpacing(8);
+    m_buttonLayout->setContentsMargins(4, 10, 4, 10);
+
 }
 
 void WallpaperItem::initAnimation()
@@ -159,20 +159,44 @@ QPushButton *WallpaperItem::addButton(const QString &id, const QString &text)
     return button;
 }
 
+QPushButton *WallpaperItem::addButton(const QString &id, const QString &text, const int btnWidth, int row, int column, int rowSpan, int columnSpan)
+{
+    Button *button = new Button(this);
+    button->setFixedWidth(btnWidth);
+    //bug73116: 藏语环境屏保和壁纸选择按钮字体显示不全被截断问题
+    auto fts = button->fontMetrics();
+    //button的具体圆角半径参考"我的电脑"以及"回收站"
+    auto elidedText = fts.elidedText(text, Qt::ElideMiddle, button->width() - 16);
+    if (elidedText != text)
+        button->setToolTip(text);
+    button->setText(elidedText);
+    button->setAttract(false);
+    button->installEventFilter(this);
+    button->setFocusPolicy(Qt::NoFocus);
+
+    connect(button, &Button::clicked, this, [this, id] {
+        emit buttonClicked(id);
+    });
+
+    m_buttonLayout->addWidget(button, row, column, rowSpan, columnSpan, Qt::AlignHCenter | Qt::AlignTop);
+
+    return button;
+}
+
 void WallpaperItem::slideUp()
 {
     if (m_wrapper->y() < 0 && m_downAnim->state() == QAbstractAnimation::Stopped)
         return;
 
     m_upAnim->setStartValue(QPoint(0, 0));
-    m_upAnim->setEndValue(QPoint(0, -ItemHeight / 2 * m_buttonLayout->count()));
+    m_upAnim->setEndValue(QPoint(0, -ItemHeight / 2 * m_buttonLayout->rowCount()));
     m_upAnim->start();
     //当按钮浮起，设置按钮可获得焦点
     for (int i = 0; i < m_buttonLayout->count(); i++) {
         m_buttonLayout->itemAt(i)->widget()->setFocusPolicy(Qt::StrongFocus);
     }
     //设置第一个按钮为焦点
-    m_buttonLayout->itemAt(0)->widget()->setFocus();
+    focusFirstButton();
 }
 
 void WallpaperItem::slideDown()
@@ -180,7 +204,7 @@ void WallpaperItem::slideDown()
     if (m_wrapper->y() >= 0 && m_upAnim->state() == QAbstractAnimation::Stopped)
         return;
 
-    m_downAnim->setStartValue(QPoint(0, -ItemHeight / 2 * m_buttonLayout->count()));
+    m_downAnim->setStartValue(QPoint(0, -ItemHeight / 2 * m_buttonLayout->rowCount()));
     m_downAnim->setEndValue(QPoint(0, 0));
     m_downAnim->start();
     //当按钮下沉，设置按钮不可获得焦点
@@ -215,6 +239,12 @@ void WallpaperItem::setUseThumbnailManager(bool useThumbnailManager)
     m_useThumbnailManager = useThumbnailManager;
 }
 
+void WallpaperItem::focusFirstButton()
+{
+    if (m_buttonLayout->count() != 0)
+        m_buttonLayout->itemAt(0)->widget()->setFocus();
+}
+
 void WallpaperItem::mousePressEvent(QMouseEvent *event)
 {
     if (event->buttons() == Qt::LeftButton)
@@ -225,11 +255,33 @@ void WallpaperItem::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_Up:
-        m_buttonLayout->itemAt(0)->widget()->setFocus();
+    {
+        QWidget *w = focusWidget();
+        for (int i = 0; i <  m_buttonLayout->count(); ++i) {
+            if (m_buttonLayout->itemAt(i)->widget() == w) {
+                if (0 == i)
+                    focusLastButton();      // 已经在第一个，则设置到最后一个
+                else
+                    m_buttonLayout->itemAt(--i)->widget()->setFocus();
+                break;
+            }
+        }
         break;
+    }
     case Qt::Key_Down:
-        m_buttonLayout->itemAt(m_buttonLayout->count() - 1)->widget()->setFocus();
+    {
+        QWidget *w = focusWidget();
+        for (int i = 0; i <  m_buttonLayout->count(); ++i) {
+            if (m_buttonLayout->itemAt(i)->widget() == w) {
+                if (m_buttonLayout->count() - 1 == i)
+                    focusFirstButton();      // 已经在最后一个，则设置到第一个
+                else
+                    m_buttonLayout->itemAt(++i)->widget()->setFocus();
+                break;
+            }
+        }
         break;
+    }
     default:
         //保持按键事件传递
         event->ignore();
@@ -282,7 +334,8 @@ bool WallpaperItem::eventFilter(QObject *object, QEvent *event)
 
 void WallpaperItem::focusLastButton()
 {
-    m_buttonLayout->itemAt(m_buttonLayout->count() - 1)->widget()->setFocus();
+    if (m_buttonLayout->count() != 0)
+        m_buttonLayout->itemAt(m_buttonLayout->count() - 1)->widget()->setFocus();
 }
 
 void WallpaperItem::refindPixmap()

@@ -69,8 +69,8 @@ TEST_F(WallpaperItemTest, test_keyevent)
     QKeyEvent* eventdown = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
     QKeyEvent* eventdefault = new QKeyEvent(QEvent::KeyPress, Qt::Key_0, Qt::NoModifier);
 
-    m_item->addButton("1", "test01");
-    m_item->addButton("2", "test02");
+    m_item->addButton("1", "test01", 160, 0, 0, 1, 1);
+    m_item->addButton("2", "test02", 160, 1, 0, 1, 1);
 
     stub_ext::StubExt stu;
     bool judge = false;
@@ -203,7 +203,7 @@ TEST_F(WallpaperItemTest, test_slideup)
     stub_ext::StubExt stu;
     bool isy = false;
     bool isstate = false;
-    m_item->addButton("desktop", "test01");
+    m_item->addButton("desktop", "test01", 160, 0, 0, 1, 1);
     m_item->slideUp();
     if (m_item->m_buttonLayout->itemAt(0))
         EXPECT_EQ(m_item->m_buttonLayout->itemAt(0)->widget()->focusPolicy(), Qt::StrongFocus);
@@ -221,7 +221,7 @@ TEST_F(WallpaperItemTest, test_slidedown)
     stub_ext::StubExt stu;
     bool isy = false;
     bool isstate = false;
-    m_item->addButton("desktop", "test01");
+    m_item->addButton("desktop", "test01", 160, 0, 0, 1, 1);
     m_item->slideDown();
     if (m_item->m_buttonLayout->itemAt(0))
         EXPECT_EQ(m_item->m_buttonLayout->itemAt(0)->widget()->focusPolicy(), Qt::NoFocus);
@@ -265,6 +265,26 @@ TEST_F(WallpaperItemTest, test_addbutton)
     QString contant2("test02000000000000000000000000000000000000000000000000000");
     int count2 = m_item->m_buttonLayout->count();
     QPushButton* btn2 = m_item->addButton("desktop", contant2);
+    int secount2 = m_item->m_buttonLayout->count();
+
+    emit btn2->clicked();
+    EXPECT_NE(btn2->text(), contant2);
+    EXPECT_NE(count2, secount2);
+}
+
+TEST_F(WallpaperItemTest, test_addbutton_layout)
+{
+    QString contant("test01");
+    int count = m_item->m_buttonLayout->count();
+    QPushButton* btn = m_item->addButton("desktop", contant, 160, 0, 0, 1, 2);
+    int secount = m_item->m_buttonLayout->count();
+    emit btn->clicked();
+    EXPECT_EQ(btn->text(), contant);
+    EXPECT_NE(count, secount);
+
+    QString contant2("test02000000000000000000000000000000000000000000000000000");
+    int count2 = m_item->m_buttonLayout->count();
+    QPushButton* btn2 = m_item->addButton("desktop", contant2, 80, 0, 0, 1, 1);
     int secount2 = m_item->m_buttonLayout->count();
 
     emit btn2->clicked();

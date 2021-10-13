@@ -60,9 +60,14 @@
 
 #define DESKTOP_BUTTON_ID "desktop"
 #define LOCK_SCREEN_BUTTON_ID "lock-screen"
+#define DESKTOP_AND_LOCKSCREEN_BUTTON_ID "desktop-lockscreen"
 #define SCREENSAVER_BUTTON_ID "screensaver"
 #define SessionManagerService "com.deepin.SessionManager"
 #define SessionManagerPath "/com/deepin/SessionManager"
+
+
+#define BUTTON_NARROW_WIDTH     79
+#define BUTTON_WIDE_WIDTH       164
 
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
@@ -1019,8 +1024,9 @@ void Frame::refreshList()
                     WallpaperItem *item = m_wallpaperList->addWallpaper(path);
                     item->setData(item->getPath());
                     item->setDeletable(m_deletableInfo.value(path));
-                    item->addButton(DESKTOP_BUTTON_ID, tr("Only desktop","button"));
-                    item->addButton(LOCK_SCREEN_BUTTON_ID, tr("Only lock screen","button"));
+                    item->addButton(DESKTOP_BUTTON_ID, tr("Desktop","button"), BUTTON_NARROW_WIDTH, 0, 0, 1, 1);
+                    item->addButton(LOCK_SCREEN_BUTTON_ID, tr("Lock Screen","button"), BUTTON_NARROW_WIDTH, 0, 1, 1, 1);
+                    item->addButton(DESKTOP_AND_LOCKSCREEN_BUTTON_ID, tr("Both"), BUTTON_WIDE_WIDTH, 1, 0, 1, 2);
                     item->show();
                     connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
                     connect(item, &WallpaperItem::tab, this, [=](){
@@ -1095,7 +1101,7 @@ void Frame::refreshList()
             item->setData(name);
             item->setUseThumbnailManager(false);
             item->setDeletable(false);
-            item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply","button"));
+            item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply","button"), BUTTON_WIDE_WIDTH, 0, 0, 1, 2);
             item->show();
             connect(item, &WallpaperItem::tab, this, [=]() {
                 if (m_mode == WallpaperMode) {

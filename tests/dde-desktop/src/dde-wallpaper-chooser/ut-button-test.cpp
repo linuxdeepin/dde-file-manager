@@ -55,13 +55,6 @@ namespace  {
      };
 }
 
-TEST_F(ButtonTest, get_buttonsize)
-{
-    QSize size = m_button->size();
-    EXPECT_EQ(size.width(), 160);
-    EXPECT_EQ(size.height(), 36);
-}
-
 TEST_F(ButtonTest, key_pressevent_of_space)
 {
     bool bjudge = false;

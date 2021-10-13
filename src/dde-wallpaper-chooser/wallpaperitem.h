@@ -29,7 +29,7 @@
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QPushButton;
-class QVBoxLayout;
+class QGridLayout;
 QT_END_NAMESPACE
 
 class Button;
@@ -63,7 +63,10 @@ public:
     QString data() const;
     bool useThumbnailManager() const;
 
+     // 需求变更后，该函数已经废弃。为了保持abi兼容性而暂时保留
     QPushButton *addButton(const QString &id, const QString &text);
+
+    QPushButton *addButton(const QString &id, const QString &text, const int btnWidth, int row, int column, int rowSpan, int columnSpan);
 
 signals:
     void pressed();
@@ -83,6 +86,9 @@ public slots:
 
     void focusLastButton();
 
+private:
+    void focusFirstButton();
+
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
@@ -100,7 +106,7 @@ private:
     QString m_data;
     bool m_useThumbnailManager = true;
 
-    QVBoxLayout *m_buttonLayout = nullptr;
+    QGridLayout *m_buttonLayout = nullptr;
 
     WrapperWidget *m_wrapper = nullptr;
     QPropertyAnimation *m_upAnim = nullptr;
