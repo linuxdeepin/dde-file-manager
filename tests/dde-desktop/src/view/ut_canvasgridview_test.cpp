@@ -732,6 +732,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
         QKeyEvent keyPressEvt_Key_8(QEvent::KeyPress, Qt::Key_8, Qt::NoModifier);
         m_canvasGridView->keyPressEvent(&keyPressEvt_Key_8);
     }
+    QThreadPool::globalInstance()->waitForDone(60*1000);
 }
 
 
