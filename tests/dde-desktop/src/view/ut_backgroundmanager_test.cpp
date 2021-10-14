@@ -15,6 +15,7 @@
 #include "screen/screenhelper.h"
 #include "screen/abstractscreenmanager.h"
 #include "screen/screenmanager.h"
+#include "screen/screenobject.h"
 #include "util/dde/desktopinfo.h"
 #include "util/util.h"
 
@@ -130,13 +131,22 @@ TEST_F(BackgroundManagerTest, onBackgroundBuild)
 {
     int oriMode = ScreenMrg->m_lastMode;
 
-    //测试单屏代码
+    // 测试单屏创建对象
+    m_manager->m_backgroundMap.clear();
     ScreenMrg->m_lastMode = AbstractScreenManager::Showonly;
     m_manager->onBackgroundBuild();
     ASSERT_EQ(m_manager->m_backgroundMap.keys().contains(primaryScreen), true);
     EXPECT_EQ(m_manager->m_backgroundMap.value(primaryScreen)->geometry(), primaryScreen->geometry());
 
-    //测试多屏代码
+    // 测试单屏复用对象
+    bool oriVisible = m_manager->m_visible;
+    m_manager->m_visible = false;
+    m_manager->m_backgroundMap.value(primaryScreen)->setGeometry(100, 100, 100, 100);
+    m_manager->onBackgroundBuild();
+    EXPECT_EQ(m_manager->m_backgroundMap.value(primaryScreen)->geometry(), primaryScreen->geometry());
+    m_manager->m_visible = oriVisible;
+
+    // 测试多屏代码
     if (DesktopInfo().waylandDectected()) {
         qputenv("XDG_SESSION_TYPE","");
         qputenv("WAYLAND_DISPLAY","");
@@ -154,10 +164,24 @@ TEST_F(BackgroundManagerTest, onBackgroundBuild)
     }
     if (screenManager && screenManager->m_screens.count() != 1) {
         ScreenMrg->m_lastMode = AbstractScreenManager::Custom;
+        // 多屏创建对象
+        m_manager->m_backgroundMap.clear();
+        ScreenPointer delPointer(new ScreenObject(qApp->primaryScreen()));
+        BackgroundWidgetPointer delBackgroundWidgetPointer(m_manager->createBackgroundWidget(delPointer));
+        m_manager->m_backgroundMap.insert(delPointer, delBackgroundWidgetPointer);
+
         m_manager->onBackgroundBuild();
         EXPECT_EQ(m_manager->m_backgroundMap.size(), screens.size());
         ASSERT_EQ(m_manager->m_backgroundMap.keys().contains(primaryScreen), true);
         EXPECT_EQ(m_manager->m_backgroundMap.value(primaryScreen)->geometry(), primaryScreen->geometry());
+
+        // 多屏复用对象
+        bool visibles = m_manager->m_visible;
+        m_manager->m_visible = false;
+        m_manager->m_backgroundMap.value(primaryScreen)->setGeometry(100, 100, 100, 100);
+        m_manager->onBackgroundBuild();
+        EXPECT_EQ(m_manager->m_backgroundMap.value(primaryScreen)->geometry(), primaryScreen->geometry());
+        m_manager->m_visible = visibles;
     }
 
     //测试单屏代码中主屏获取错误

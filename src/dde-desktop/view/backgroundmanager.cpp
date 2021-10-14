@@ -350,9 +350,6 @@ void BackgroundManager::onBackgroundBuild()
     AbstractScreenManager::DisplayMode mode = ScreenMrg->lastChangedMode();
     qInfo() << "screen mode" << mode << "screen count" << ScreenMrg->screens().size();
 
-    //删除不存在的屏
-    m_backgroundMap.clear();
-
     //实际是单屏
     if ((AbstractScreenManager::Showonly == mode) || (AbstractScreenManager::Duplicate == mode) //仅显示和复制
             || (ScreenMrg->screens().count() == 1)) {  //单屏模式
@@ -366,7 +363,15 @@ void BackgroundManager::onBackgroundBuild()
             return;
         }
 
-        BackgroundWidgetPointer bwp = createBackgroundWidget(primary);
+        BackgroundWidgetPointer bwp = m_backgroundMap.value(primary);
+        m_backgroundMap.clear();
+        if (!bwp.isNull()) {
+            if (bwp->geometry() != primary->geometry())
+                bwp->setGeometry(primary->geometry());
+        } else {
+            bwp = createBackgroundWidget(primary);
+        }
+
         m_backgroundMap.insert(primary, bwp);
 
         //设置壁纸
@@ -377,9 +382,23 @@ void BackgroundManager::onBackgroundBuild()
         else
             qWarning() << "Disable show the background widget, of screen:" << primary->name() << primary->geometry();
     } else { //多屏
-        for (ScreenPointer sc : ScreenMrg->logicScreens()) {
-            BackgroundWidgetPointer bwp = createBackgroundWidget(sc);
-            m_backgroundMap.insert(sc, bwp);
+        auto screes = ScreenMrg->logicScreens();
+        for (auto sp : m_backgroundMap.keys()) {
+            if (!screes.contains(sp)) {
+                qInfo() << "screen:" << sp->name() << "  invalid, delete it.";
+                m_backgroundMap.remove(sp);
+            }
+        }
+        for (ScreenPointer sc : screes) {
+            BackgroundWidgetPointer bwp = m_backgroundMap.value(sc);
+            if (!bwp.isNull()) {
+                if (bwp->geometry() != sc->geometry())
+                    bwp->setGeometry(sc->geometry());
+            } else {
+                qInfo() << "screen:" << sc->name() << "  added, create it.";
+                bwp = createBackgroundWidget(sc);
+                m_backgroundMap.insert(sc, bwp);
+            }
 
             if (m_visible)
                 bwp->show();
