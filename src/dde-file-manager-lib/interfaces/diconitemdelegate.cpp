@@ -907,7 +907,7 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
             DFMGlobal::showAlertMessage(showPoint,
                                         color,
-                                        QObject::tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
+                                        QObject::tr("%1 are not allowed").arg("|[/\\*:\"']?<>"));
             //之前的光标Pos
             int srcCursorPos = item->edit->textCursor().position();
             QSignalBlocker blocker(item->edit);
@@ -1068,7 +1068,7 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 
         DFMGlobal::showAlertMessage(showPoint,
                                     color,
-                                    QObject::tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
+                                    QObject::tr("%1 are not allowed").arg("|[/\\*:\"']?<>"));
 
         item->edit->setPlainText(dstText);
 

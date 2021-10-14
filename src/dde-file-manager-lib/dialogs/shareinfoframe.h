@@ -53,6 +53,7 @@ signals:
 public slots:
     void handleCheckBoxChanged(const bool &checked);
     void handleShareNameFinished();
+    // 屏蔽NameChanged信号
     void handleShareNameChanged(const QString &str);
     void handlePermissionComboxChanged(const int &index);
     void handleAnonymityComboxChanged(const int &index);

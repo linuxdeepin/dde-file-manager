@@ -200,7 +200,7 @@ void FileIconItem::doLineEditTextChanged()
 
     if (srcText != dstText){
         // 修改文件的命名规则
-        showAlertMessage(tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
+        showAlertMessage(tr("%1 are not allowed").arg("|[/\\*:\"']?<>"));
         edit->setPlainText(dstText);
     } else {
         return;

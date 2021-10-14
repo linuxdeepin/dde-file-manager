@@ -73,7 +73,7 @@ void ShareInfoFrame::initUI()
     m_shareNamelineEdit->setFixedWidth(fieldWidth);
     // sp3需求 共享文件名设置限制
     // 设置只能输入大小写字母、数字和部分符号的正则表达式
-    QRegExp regx("^[^\\[\\]\"'/\\\\:|<>+=;,?*\r\n\t]*$");
+    QRegExp regx("^[^\\s+\\[\\]\"'/\\\\:|<>+=;,?*\r\n\t]*$");
     // 创建验证器
     QValidator *validator = new QRegExpValidator(regx, this);
     m_shareNamelineEdit->setValidator(validator);
@@ -133,7 +133,7 @@ void ShareInfoFrame::initUI()
 void ShareInfoFrame::initConnect()
 {
     connect(m_shareCheckBox, &QCheckBox::clicked, this, &ShareInfoFrame::handleCheckBoxChanged);
-    connect(m_shareNamelineEdit, &QLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
+//    connect(m_shareNamelineEdit, &QLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
     connect(m_shareNamelineEdit, &QLineEdit::editingFinished, this, &ShareInfoFrame::handleShareNameFinished);
     //connect(m_shareNamelineEdit, &QLineEdit::returnPressed, this, [ = ]() {qDebug() << "回车按下";}); //不知为何没有发送returnPressed信号
     connect(m_permissoComBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handlePermissionComboxChanged(int)));
@@ -176,6 +176,7 @@ void ShareInfoFrame::handleShareNameFinished()
 void ShareInfoFrame::handleShareNameChanged(const QString &str)
 {
     // fix bug 69970 与文件名规则保持一致
+    // 采用validator过滤，屏蔽信号
     QString dstText = DFMGlobal::preprocessingFileName(str);
     if (str != dstText) {
         QSignalBlocker blocker(m_shareNamelineEdit);
