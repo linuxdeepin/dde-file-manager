@@ -39,23 +39,6 @@ public:
     virtual ~PluginService(){}
 };
 
-template <typename T>
-class AutoServiceRegister
-{
-public:
-    AutoServiceRegister()
-    {
-        // must keep it!!!
-        // Otherwise `trigger` will not be called !
-        qDebug() << isRegistered;
-    }
-
-    static bool trigger();
-
-private:
-    static bool isRegistered;
-};
-
 DPF_END_NAMESPACE
 
 #endif // PLUGINSERVICE_H

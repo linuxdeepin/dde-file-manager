@@ -36,6 +36,8 @@ class FileUtils
 public:
     static bool mkdir(const QUrl &url, const QString dirName, QString *errorString = nullptr);
     static bool touch(const QUrl &url, const QString fileName, QString *errorString = nullptr);
+
+    static QMap<QString, QString> getKernelParameters();
 };
 
 DFMBASE_END_NAMESPACE

@@ -1,7 +1,7 @@
 #ifndef LAUCHEVENTRECEIVER_H
 #define LAUCHEVENTRECEIVER_H
 
-#include "dfm-framework/event/eventhandler.h"
+#include <dfm-framework/event/eventcallproxy.h>
 
 namespace LauchEventTypes
 {

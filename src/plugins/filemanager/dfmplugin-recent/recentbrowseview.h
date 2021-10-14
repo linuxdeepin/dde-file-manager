@@ -23,7 +23,7 @@
 #define RECENTBROWSEVIEW_H
 
 #include "recentutil.h"
-#include "window/browseview.h"
+#include "window/browseview.h" // TODO(zhangs): hide
 #include "recentbrowseviewmodel.h"
 
 DSB_FM_USE_NAMESPACE

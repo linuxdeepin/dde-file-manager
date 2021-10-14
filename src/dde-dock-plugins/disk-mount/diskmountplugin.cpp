@@ -176,7 +176,7 @@ void DiskMountPlugin::initCompoments()
     diskControlApplet->setVisible(false);
 
     connect(diskControlApplet, &DiskControlWidget::diskCountChanged, this, &DiskMountPlugin::diskCountChanged);
-    // TODO(zhangs): doStartupAutoMount, startMonitor
+    // auto mount and monitor work in service process
 }
 
 void DiskMountPlugin::displayModeChanged(const Dock::DisplayMode mode)

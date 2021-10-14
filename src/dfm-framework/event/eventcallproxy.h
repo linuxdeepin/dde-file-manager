@@ -64,6 +64,46 @@ private:
 
 // auto register all event handler
 template <typename T>
+class AutoEventHandlerRegister
+{
+public:
+    AutoEventHandlerRegister()
+    {
+        // must keep it!!!
+        // Otherwise `trigger` will not be called !
+        qDebug() << isRegistered;
+    }
+
+    static bool trigger();
+
+private:
+    static bool isRegistered;
+};
+
+// for example:
+
+/*!
+ * class WindowEventHandler: public EventHandler, AutoEventHandlerRegister<WindowEventHandler>
+ * {
+ *     Q_OBJECT
+ *
+ * public:
+ *     WindowEventHandler(): AutoEventHandlerRegister<WindowEventHandler>() {}
+ *
+ *     static EventHandler::Type type()
+ *     {
+ *         return EventHandler::Type::Sync;
+ *     }
+ *
+ *     static QStringList topics()
+ *     {
+ *          return QStringList() << "WindowEvent";
+ *     }
+ * };
+ */
+
+
+template <typename T>
 bool AutoEventHandlerRegister<T>::isRegistered = AutoEventHandlerRegister<T>::trigger();
 template <typename T>
 bool AutoEventHandlerRegister<T>::trigger()

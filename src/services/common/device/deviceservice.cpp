@@ -21,8 +21,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "deviceservice.h"
+#include "deviceservicehelper.h"
 
 DSC_USE_NAMESPACE
+
 
 DeviceService::DeviceService(QObject *parent)
     : dpf::PluginService(parent),
@@ -33,5 +35,72 @@ DeviceService::DeviceService(QObject *parent)
 
 DeviceService::~DeviceService()
 {
+    stopMonitor();
+}
 
+/*!
+ * \brief auto mount block devices and protocol devices
+ * !!! Note: call once
+ */
+void DeviceService::startAutoMount()
+{
+    std::call_once(DeviceServiceHelper::onceFlag(), [this]() {
+        qInfo() << "Start auto mount";
+        if (isInLiveSystem()) {
+            qWarning() << "Cannot auto mount, in Live System";
+            return;
+        }
+
+        if (!isAutoMountSetting()) {
+            qWarning() << "Cannot auto mount, AutoMount setting is false";
+            return;
+        }
+
+        DeviceServiceHelper::mountAllBlockDevices();
+        DeviceServiceHelper::mountAllProtocolDevices();
+        qInfo() << "End auto mount";
+    });
+}
+
+bool DeviceService::startMonitor()
+{
+    auto manager = DFMMOUNT::DFMDeviceManager::instance();
+    return manager->startMonitorWatch();
+}
+
+bool DeviceService::stopMonitor()
+{
+    auto manager = DFMMOUNT::DFMDeviceManager::instance();
+    return manager->stopMonitorWatch();
+}
+
+/*!
+ * \brief check if we are in live system, don't do auto mount if we are in live system
+ * \return true if live system
+ */
+bool DeviceService::isInLiveSystem()
+{
+    bool ret = false;
+    static const QMap<QString, QString> &cmdline = dfmbase::FileUtils::getKernelParameters();
+    if (cmdline.value("boot", "") == QStringLiteral("live"))
+        ret = true;
+    return ret;
+}
+
+/*!
+ * \brief check property "AutoMount" of ~/.config/deepin/dde-file-manager.json
+ * \return "AutoMount" property value
+ */
+bool DeviceService::isAutoMountSetting()
+{
+    return DeviceServiceHelper::getGsGlobal()->value("GenericAttribute", "AutoMount", false).toBool();
+}
+
+/*!
+ * \brief check property "AutoMountAndOpen" of ~/.config/deepin/dde-file-manager.json
+ * \return "AutoMountAndOpen" property value
+ */
+bool DeviceService::isAutoMountAndOpenSetting()
+{
+    return DeviceServiceHelper::getGsGlobal()->value("GenericAttribute", "AutoMountAndOpen", false).toBool();
 }

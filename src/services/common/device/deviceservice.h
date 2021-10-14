@@ -25,7 +25,7 @@
 
 #include "dfm_common_service_global.h"
 
-#include "dfm-framework/service/pluginservicecontext.h"
+#include <dfm-framework/service/pluginservicecontext.h>
 
 DSC_BEGIN_NAMESPACE
 
@@ -33,6 +33,7 @@ class DeviceService final : public dpf::PluginService, dpf::AutoServiceRegister<
 {
     Q_OBJECT
     Q_DISABLE_COPY(DeviceService)
+    friend class dpf::QtClassFactory<dpf::PluginService>;
 
 public:
     static QString name()
@@ -40,6 +41,15 @@ public:
         return "org.deepin.service.DeviceService";
     }
 
+public:
+    void startAutoMount();
+    bool startMonitor();
+    bool stopMonitor();
+    bool isInLiveSystem();
+    bool isAutoMountSetting();
+    bool isAutoMountAndOpenSetting();
+
+private:
     explicit DeviceService(QObject *parent = nullptr);
     virtual ~DeviceService() override;
 };

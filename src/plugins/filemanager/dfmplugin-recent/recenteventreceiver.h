@@ -25,8 +25,8 @@
 #include "recentlog.h"
 #include "recentutil.h"
 
-#include "window/windowservice.h"
-#include "window/contexts.h"
+#include "windowservice.h"
+#include "window/contexts.h" // TODO(zhangs): hide
 
 #include "dfm-framework/event/eventhandler.h"
 #include "dfm-framework/event/eventcallproxy.h"

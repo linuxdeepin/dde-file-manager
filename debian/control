@@ -70,6 +70,7 @@ Build-Depends:
  libboost-test-dev,
  libboost-thread-dev,
  libdfm-io-dev,
+ libdfm-mount-dev,
  deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org

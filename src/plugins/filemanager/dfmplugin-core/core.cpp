@@ -23,8 +23,8 @@
 #include "corelog.h"
 #include "eventcaller.h"
 
-#include "window/windowservice.h"
-#include "window/browseview.h"
+#include "windowservice.h"
+#include "window/browseview.h" // TODO(zhangs): hide
 
 #include "dfm-base/application/application.h"
 #include "dfm-base/base/standardpaths.h"

@@ -22,17 +22,39 @@
 */
 #include "interfaces.h"
 
+#include "deviceservice.h"
+
+#include <dfm-framework/framework.h>
+
+DSC_USE_NAMESPACE
+
 void Interfaces::initialize()
 {
-
+    QString errStr;
+    auto &ctx = dpfInstance.serviceContext();
+    if (!ctx.load(DeviceService::name(), &errStr)) {
+        qCritical() << errStr;
+        abort();
+    }
 }
 
 bool Interfaces::start()
 {
+    auto &ctx = dpfInstance.serviceContext();
+    DeviceService *service = ctx.service<DeviceService>(DeviceService::name());
+    Q_ASSERT(service);
+    service->startAutoMount();
+    service->startMonitor();
+    initDBusInterfaces();
     return true;
 }
 
 dpf::Plugin::ShutdownFlag Interfaces::stop()
 {
     return Sync;
+}
+
+void Interfaces::initDBusInterfaces()
+{
+
 }

@@ -59,6 +59,23 @@ private:
 
 // auto register all services
 template <typename T>
+class AutoServiceRegister
+{
+public:
+    AutoServiceRegister()
+    {
+        // must keep it!!!
+        // Otherwise `trigger` will not be called !
+        qDebug() << isRegistered;
+    }
+
+    static bool trigger();
+
+private:
+    static bool isRegistered;
+};
+
+template <typename T>
 bool AutoServiceRegister<T>::isRegistered = AutoServiceRegister<T>::trigger();
 template <typename T>
 bool AutoServiceRegister<T>::trigger()

@@ -2,7 +2,8 @@
 #define FILEEVENTRECEIVER_H
 
 #include "dfm_common_service_global.h"
-#include "dfm-framework/event/eventcallproxy.h"
+
+#include <dfm-framework/event/eventcallproxy.h>
 #include <QString>
 
 DSC_BEGIN_NAMESPACE

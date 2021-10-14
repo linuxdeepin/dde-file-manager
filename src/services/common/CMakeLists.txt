@@ -2,48 +2,37 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(dfmservice-common)
 
-set(GLOBAL_H
-    dfm_common_service_global.h)
-
-set(EVENT_H
-    event/laucheventreceiver.h
-    event/fileeventreceiver.h
+FILE(GLOB GLOBAL_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     )
 
-set(EVENT_CPP
-    event/laucheventreceiver.cpp
-    event/fileeventreceiver.cpp
+FILE(GLOB EVENT_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/event/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/event/*.cpp"
     )
 
-set(JOB_H
-    job/abstractjobhandler.h
+FILE(GLOB JOB_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/job/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/job/*.cpp"
     )
 
-set(JOB_CPP
-    job/abstractjobhandler.cpp
-    )
-
-set(SERVICE_H
-    device/deviceservice.h
-    )
-
-set(SERVICE_CPP
-    device/deviceservice.cpp
+FILE(GLOB DEVICE_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/device/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/device/*.cpp"
     )
 
 add_library(${PROJECT_NAME}
     SHARED
-    ${GLOBAL_H}
-    ${EVENT_H}
-    ${EVENT_CPP}
-    ${JOB_H}
-    ${JOB_CPP}
-    ${SERVICE_H}
-    ${SERVICE_CPP}
+    ${GLOBAL_FILES}
+    ${EVENT_FILES}
+    ${JOB_FILES}
+    ${DEVICE_FILES}
     )
 
 target_link_libraries(
     ${PROJECT_NAME}
+    dfm-base
     dfm-framework
     ${QtUseModules}
     ${PkgUseModules}

@@ -22,6 +22,7 @@ add_library(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     dfm-framework
     dfmservice-common
+    dfm-base
     ${QtUseModules}
     ${PkgUserModules}
     )

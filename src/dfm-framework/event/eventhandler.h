@@ -75,46 +75,6 @@ Q_SIGNALS:
     void handInfo(const QString &info);
 };
 
-
-template <typename T>
-class AutoEventHandlerRegister
-{
-public:
-    AutoEventHandlerRegister()
-    {
-        // must keep it!!!
-        // Otherwise `trigger` will not be called !
-        qDebug() << isRegistered;
-    }
-
-    static bool trigger();
-
-private:
-    static bool isRegistered;
-};
-
-// for example:
-
-/*!
- * class WindowEventHandler: public EventHandler, AutoEventHandlerRegister<WindowEventHandler>
- * {
- *     Q_OBJECT
- *
- * public:
- *     WindowEventHandler(): AutoEventHandlerRegister<WindowEventHandler>() {}
- *
- *     static EventHandler::Type type()
- *     {
- *         return EventHandler::Type::Sync;
- *     }
- *
- *     static QStringList topics()
- *     {
- *          return QStringList() << "WindowEvent";
- *     }
- * };
- */
-
 DPF_END_NAMESPACE
 
 #endif // EVENTHANDLER_H

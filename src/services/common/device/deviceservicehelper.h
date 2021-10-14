@@ -20,23 +20,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef INTERFACES_H
-#define INTERFACES_H
+#ifndef DEVICESERVICEHELPER_H
+#define DEVICESERVICEHELPER_H
 
-#include "dfm-framework/lifecycle/plugin.h"
+#include "dfm_common_service_global.h"
 
-class Interfaces : public dpf::Plugin
+#include "dfm-base/application/settings.h"
+#include "dfm-base/utils/fileutils.h"
+
+#include <dfm-mount/dfmdevicemanager.h>
+#include <dfm-mount/base/dfmdevice.h>
+
+#include <mutex>
+
+DSC_BEGIN_NAMESPACE
+
+class DeviceServiceHelper
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.server" FILE "interfaces.json")
-
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-
+    friend class DeviceService;
 private:
-    void initDBusInterfaces();
+    static dfmbase::Settings *getGsGlobal();
+    static std::once_flag &onceFlag();
+    static void mountAllBlockDevices();
+    static void mountAllProtocolDevices();
 };
 
-#endif // INTERFACES_H
+DSC_END_NAMESPACE
+
+#endif // DEVICESERVICEHELPER_H
