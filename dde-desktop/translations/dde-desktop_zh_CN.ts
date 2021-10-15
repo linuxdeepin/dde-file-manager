@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>CanvasGridView</name>
     <message>
@@ -122,7 +124,7 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="863"/>
         <source>Wallpaper</source>
-        <translation>设置壁纸</translation>
+        <translation>壁纸</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="878"/>
@@ -150,12 +152,12 @@
     <message>
         <location filename="../view/watermaskframe.cpp" line="255"/>
         <source>Not authorized</source>
-        <translation>未授权</translation>
+        <translation type="unfinished">未授权</translation>
     </message>
     <message>
         <location filename="../view/watermaskframe.cpp" line="263"/>
         <source>In trial period</source>
-        <translation>试用期</translation>
+        <translation type="unfinished">试用期</translation>
     </message>
 </context>
 </TS>

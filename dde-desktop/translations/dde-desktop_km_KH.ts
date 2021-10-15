@@ -2,51 +2,42 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3129"/>
-        <location filename="../view/canvasgridview.cpp" line="3306"/>
+        <location filename="../view/canvasgridview.cpp" line="2645"/>
         <source>Icon size</source>
         <translation>ទំហំIcon</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3135"/>
-        <location filename="../view/canvasgridview.cpp" line="3314"/>
+        <location filename="../view/canvasgridview.cpp" line="2651"/>
         <source>Auto merge</source>
         <translation>បញ្ចូលគ្នាស្វ័យប្រវត្តិ</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3150"/>
-        <location filename="../view/canvasgridview.cpp" line="3326"/>
+        <location filename="../view/canvasgridview.cpp" line="2666"/>
         <source>Auto arrange</source>
         <translation>រៀបចំស្វ័យប្រវត្តិ</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3207"/>
-        <location filename="../view/canvasgridview.cpp" line="3211"/>
-        <location filename="../view/canvasgridview.cpp" line="3381"/>
-        <location filename="../view/canvasgridview.cpp" line="3386"/>
+        <location filename="../view/canvasgridview.cpp" line="2722"/>
         <source>Set Wallpaper</source>
         <translation>កំណត់ផ្ទាំងរូបភាព</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3213"/>
-        <location filename="../view/canvasgridview.cpp" line="3384"/>
+        <location filename="../view/canvasgridview.cpp" line="2724"/>
         <source>Wallpaper and Screensaver</source>
         <translation>ផ្ទាំងរូបភាពនិងរូបថតអេក្រង់</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3528"/>
+        <location filename="../view/canvasgridview.cpp" line="2819"/>
         <source>Properties</source>
         <translation>Properties</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3190"/>
-        <location filename="../view/canvasgridview.cpp" line="3363"/>
+        <location filename="../view/canvasgridview.cpp" line="2706"/>
         <source>Display Settings</source>
         <translation>កំណត់ការបង្ហាញ</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3199"/>
-        <location filename="../view/canvasgridview.cpp" line="3372"/>
+        <location filename="../view/canvasgridview.cpp" line="2715"/>
         <source>Corner Settings</source>
         <translation>ការកំណត់ជ្រុង</translation>
     </message>
@@ -82,7 +73,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="161"/>
+        <location filename="../main.cpp" line="134"/>
         <source>Desktop</source>
         <translation>ផ្ទៃតុ</translation>
     </message>
@@ -90,72 +81,96 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="694"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="463"/>
         <source>Wallpaper Slideshow</source>
         <translation>ការបញ្ចាំងផ្ទាំងរូបភាព</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="739"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="505"/>
         <source>When login</source>
         <translation>ពេលចូលប្រើ</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="741"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="507"/>
         <source>When wakeup</source>
         <translation>នៅពេលបើកម្តងទៀត</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="796"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="555"/>
         <source>Require a password on wakeup</source>
         <translation>ទាមទារពាក្យសំងាត់នៅពេលបើកម្តងទៀត</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="828"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="585"/>
         <source>Never</source>
         <translation>មិនដែល</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="830"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="586"/>
         <source>Wait:</source>
         <translation>រងចំា:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="863"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="620"/>
         <source>Wallpaper</source>
         <translation>ផ្ទាំង​រូបភាព</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="878"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="631"/>
         <source>Screensaver</source>
         <translation>Screensaver</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="964"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="701"/>
         <source>Only desktop</source>
         <translation>មានតែផ្ទៃតុប៉ុណ្ណោះ</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="965"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="702"/>
         <source>Only lock screen</source>
         <translation>ត្រឹមតែចាក់សោរអេក្រង់</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1018"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="734"/>
         <source>Apply</source>
         <translation>អនុវត្ត</translation>
     </message>
 </context>
 <context>
-    <name>WaterMaskFrame</name>
+    <name>ZoneMainWindow</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="255"/>
-        <source>Not authorized</source>
-        <translation type="unfinished"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
+        <source>Fast Screen Off</source>
+        <translation>បិតអេក្រង់លឿន</translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="263"/>
-        <source>In trial period</source>
-        <translation type="unfinished"/>
+        <source>Control Center</source>
+        <translation type="vanished">កន្លែងបញ្ជទូទៅ</translation>
+    </message>
+    <message>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
+        <source>All Windows</source>
+        <translation>គ្រប់វីនដូ</translation>
+    </message>
+    <message>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
+        <source>Launcher</source>
+        <translation>ឡាន់ឆ័រ</translation>
+    </message>
+    <message>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
+        <source>Desktop</source>
+        <translation>ផ្ទៃតុ</translation>
+    </message>
+    <message>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
+        <source>None</source>
+        <translation>ទទេ</translation>
+    </message>
+    <message>
+        <location filename="../../dde-zone/mainwindow.cpp" line="58"/>
+        <source>Close Window</source>
+        <translation>បិតផ្ទៃតុ</translation>
     </message>
 </context>
 </TS>

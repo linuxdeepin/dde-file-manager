@@ -2,51 +2,42 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3129"/>
-        <location filename="../view/canvasgridview.cpp" line="3306"/>
+        <location filename="../view/canvasgridview.cpp" line="2482"/>
         <source>Icon size</source>
         <translation>سىن بەلگە چوڭ-كىچكلىكى</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3135"/>
-        <location filename="../view/canvasgridview.cpp" line="3314"/>
+        <location filename="../view/canvasgridview.cpp" line="2488"/>
         <source>Auto merge</source>
-        <translation>ئاپتوماتىك بىرلەشتۈرۈش</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3150"/>
-        <location filename="../view/canvasgridview.cpp" line="3326"/>
+        <location filename="../view/canvasgridview.cpp" line="2503"/>
         <source>Auto arrange</source>
         <translation>ئاپتۇماتىك تىزىش</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3207"/>
-        <location filename="../view/canvasgridview.cpp" line="3211"/>
-        <location filename="../view/canvasgridview.cpp" line="3381"/>
-        <location filename="../view/canvasgridview.cpp" line="3386"/>
+        <location filename="../view/canvasgridview.cpp" line="2559"/>
         <source>Set Wallpaper</source>
         <translation>تەگلىك بەلگىلەش</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3213"/>
-        <location filename="../view/canvasgridview.cpp" line="3384"/>
+        <location filename="../view/canvasgridview.cpp" line="2561"/>
         <source>Wallpaper and Screensaver</source>
-        <translation>تام قەغىزى ۋە ئېكران قوغدىغۇچ</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3528"/>
+        <location filename="../view/canvasgridview.cpp" line="2642"/>
         <source>Properties</source>
-        <translation>خاسلىقلار</translation>
+        <translation>ئىقتىدار</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3190"/>
-        <location filename="../view/canvasgridview.cpp" line="3363"/>
+        <location filename="../view/canvasgridview.cpp" line="2543"/>
         <source>Display Settings</source>
-        <translation>ئېكران تەڭشىكى</translation>
+        <translation>تەڭشەكنى كۆرسىتىش</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3199"/>
-        <location filename="../view/canvasgridview.cpp" line="3372"/>
+        <location filename="../view/canvasgridview.cpp" line="2552"/>
         <source>Corner Settings</source>
         <translation>بۇلۇڭ تەڭشىكى</translation>
     </message>
@@ -61,17 +52,17 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="41"/>
         <source>Small</source>
-        <translation>كىچىك</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="42"/>
         <source>Medium</source>
-        <translation>ئوتتۇرا</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="43"/>
         <source>Large</source>
-        <translation>چوڭ</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="44"/>
@@ -82,80 +73,104 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="161"/>
+        <location filename="../main.cpp" line="131"/>
         <source>Desktop</source>
-        <translation>ئۈستەليۈزى</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="694"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="450"/>
         <source>Wallpaper Slideshow</source>
-        <translation>تام قەغىزى تام تەسۋىرى</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="739"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="482"/>
         <source>When login</source>
-        <translation>كىرگەندە</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="741"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="484"/>
         <source>When wakeup</source>
-        <translation>ئويغانغاندا</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="796"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="528"/>
         <source>Require a password on wakeup</source>
-        <translation>ئويغانغاندا پارول تەلەپ قىلسۇن</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="828"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="558"/>
         <source>Never</source>
-        <translation>ئىشلەتمەسلىك</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="830"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="559"/>
         <source>Wait:</source>
-        <translation>ساقلاش:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="863"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="592"/>
         <source>Wallpaper</source>
-        <translation>تەگلىك رەسىم</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="878"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="593"/>
         <source>Screensaver</source>
-        <translation>ئېكران قوغدىغۇچ</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="964"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="666"/>
         <source>Only desktop</source>
-        <translation>ئېكرانغىلا</translation>
+        <translation>پەقەتلا ئېكران</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="965"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="667"/>
         <source>Only lock screen</source>
-        <translation>قۇلۇپ ئىكرانىغىلا</translation>
+        <translation>پەقەتلا قۇلۇپ</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1018"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="695"/>
         <source>Apply</source>
-        <translation>قوللىنىش</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
-    <name>WaterMaskFrame</name>
+    <name>ZoneMainWindow</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="255"/>
-        <source>Not authorized</source>
-        <translation>ئىجازەتسىز</translation>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
+        <source>Fast Screen Off</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="263"/>
-        <source>In trial period</source>
-        <translation>سىناق مۇددىتى</translation>
+        <source>Control Center</source>
+        <translation type="vanished">كونتىرول مەركىزى</translation>
+    </message>
+    <message>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
+        <source>All Windows</source>
+        <translation>بارلىق كۆزنەك</translation>
+    </message>
+    <message>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
+        <source>Launcher</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
+        <source>Desktop</source>
+        <translation>ئېكران</translation>
+    </message>
+    <message>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
+        <source>None</source>
+        <translation>قۇرۇق</translation>
+    </message>
+    <message>
+        <location filename="../../dde-zone/mainwindow.cpp" line="58"/>
+        <source>Close Window</source>
+        <translation>كوزنەكنى تاقاش</translation>
     </message>
 </context>
 </TS>

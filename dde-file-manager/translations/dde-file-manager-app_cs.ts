@@ -2,14 +2,22 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../main.cpp" line="130"/>
-        <source>File Manager</source>
-        <translation>Správce souborů</translation>
+        <source>Deepin File Manager</source>
+        <translation type="vanished">Správce souborů</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="134"/>
+        <location filename="../main.cpp" line="108"/>
+        <source>File Manager</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="112"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
-        <translation>Správce souborů je mocný, přesto snadno se používající nástroj pro správu souborů. Má funkce jako je vyhledávání, kopírování, mazání, komprimace/rozbalování archivů, zobrazování vlastností souborů a další užitečné funkce.</translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
+        <translation type="vanished">Správce souborů je vyvíjen nezávisle společností Deepin Technology jako nástroj pro správu souborů, vyhledávání obsahu, kopírování, mazání, zabalení/rozbalení archivů, vlastnosti souborů a další funkce pro správu souborů.</translation>
     </message>
 </context>
 </TS>

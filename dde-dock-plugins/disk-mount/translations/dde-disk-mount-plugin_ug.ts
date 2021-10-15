@@ -3,7 +3,7 @@
     <name>DeepinStorage</name>
     <message>
         <source>%1 Volume</source>
-        <translation>%1 رايۇن</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -21,11 +21,7 @@
     </message>
     <message>
         <source>dde-file-manager</source>
-        <translation>ھۆججەت باشقۇرغۇچ</translation>
-    </message>
-    <message>
-        <source>Disk is busy, cannot remove now</source>
-        <translation>دىسكا ھۆججىتى ئىگىلىنىۋېلىنغان ، ھازىر  بىخەتەر چىقىرىۋېتەلمەيدۇ</translation>
+        <translation>dde ھۆججەت باشقۇرغۇچ</translation>
     </message>
 </context>
 <context>

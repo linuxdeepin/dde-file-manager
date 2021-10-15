@@ -2,14 +2,22 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../main.cpp" line="130"/>
-        <source>File Manager</source>
-        <translation>ھۆججەت باشقۇرغۇچ</translation>
+        <source>Deepin File Manager</source>
+        <translation type="vanished">ھۆججەت باشقۇرغۇچ</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="134"/>
+        <location filename="../main.cpp" line="108"/>
+        <source>File Manager</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="112"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
-        <translation>ھۆججەت باشقۇرغۇچ بولسا كۈچلۈك ۋە ئىشلىتىشكە قۇلايلىق بولغان ھۆججەت باشقۇرۇش قورالى بولۇپ ، ئىزدەش ، كۆپەيتىش ، ئەخلەت ساندۇقى ، پىرىسلاش / يېشىش ، ھۆججەت خاسلىقى ۋە باشقا پايدىلىق ئىقتىدارلار بىلەن ئىپادىلىنىدۇ.</translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

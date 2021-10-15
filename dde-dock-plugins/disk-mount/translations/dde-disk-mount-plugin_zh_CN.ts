@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>DeepinStorage</name>
     <message>
@@ -10,7 +12,7 @@
     <name>DiskControlItem</name>
     <message>
         <source>Unknown</source>
-        <translation>未知</translation>
+        <translation>容量未知</translation>
     </message>
 </context>
 <context>
@@ -25,7 +27,7 @@
     </message>
     <message>
         <source>Disk is busy, cannot remove now</source>
-        <translation>磁盘文件被占用，无法安全移除</translation>
+        <translation>磁盘文件被占用，无法移除</translation>
     </message>
 </context>
 <context>
@@ -36,7 +38,7 @@
     </message>
     <message>
         <source>Open</source>
-        <translation>打 开</translation>
+        <translation>打开</translation>
     </message>
     <message>
         <source>Unmount all</source>
