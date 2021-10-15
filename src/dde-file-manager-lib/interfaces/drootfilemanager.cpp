@@ -38,6 +38,8 @@
 #include "interfaces/dfmglobal.h"
 #include "singleton.h"
 #include "models/dfmrootfileinfo.h"
+#include "utils.h"
+#include "dfmapplication.h"
 
 #include <QUrl>
 #include <QDebug>
@@ -68,6 +70,7 @@ DRootFileManager::DRootFileManager(QObject *parent)
     , d_ptr(new DRootFileManagerPrivate())
 {
     connect(fileSignalManager, &FileSignalManager::requestHideSystemPartition, this, &DRootFileManager::hideSystemPartition);
+    connect(DFMApplication::instance(), &DFMApplication::reloadComputerModel, this, &DRootFileManager::hideSystemPartition);
 }
 
 DRootFileManager::~DRootFileManager()
@@ -255,6 +258,8 @@ const DAbstractFileInfoPointer DRootFileManager::getFileInfo(const DUrl &fileUrl
     return DRootFileManagerPrivate::rootfilelist.value(fileUrl);
 }
 
+// sometimes we can use this function to relaod computer model.
+// and i think this function called reloadComputerModel could be better.
 void DRootFileManager::hideSystemPartition()
 {
     QList<DAbstractFileInfoPointer> fileist = DFileService::instance()->\

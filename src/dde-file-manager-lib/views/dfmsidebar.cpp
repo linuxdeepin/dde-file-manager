@@ -48,6 +48,8 @@
 #include "dfmopticalmediawidget.h"
 #include "vault/vaulthelper.h"
 #include "accessibility/ac-lib-file-manager.h"
+#include "dtoolbar.h"
+#include "utils.h"
 
 #include <DApplicationHelper>
 #include <QScrollBar>
@@ -398,6 +400,17 @@ void DFMSideBar::onItemActivated(const QModelIndex &index)
 
     QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
     if (interface) {
+        // searchBarTextEntered also invoke "checkGvfsMountFileBusy", forbit invoke twice
+        if (item->url().path().endsWith(SUFFIX_STASHED_REMOTE)) {
+            DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(this->window());
+            if (window) {
+                auto path = RemoteMountsStashManager::normalizeConnUrl(item->url().path());
+                window->getToolBar()->searchBarTextEntered(path);
+                return;
+            }
+        }
+
+
         //判断网络文件是否可以到达
         if (DFileService::instance()->checkGvfsMountfileBusy(item->url())) {
             return;
@@ -455,7 +468,6 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
         DFileService::instance()->setCursorBusyState(false);
     }
     DFileService::instance()->setCursorBusyState(false);
-    return;
 }
 
 void DFMSideBar::onRename(const QModelIndex &index, QString newName) const

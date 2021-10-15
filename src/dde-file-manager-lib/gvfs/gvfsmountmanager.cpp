@@ -57,6 +57,7 @@
 #include <QStandardPaths>
 #include <QStorageInfo>
 #include <QRegularExpression>
+#include <dgiofile.h>
 
 #include <disomaster.h>
 
@@ -535,6 +536,14 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
         }
     }
 
+    // when remote connection is mounted, reload computer model.
+    if (qMount.mounted_root_uri().startsWith("smb://")) {
+        QScopedPointer<DGioFile> file(DGioFile::createFromUri(qMount.mounted_root_uri()));
+        RemoteMountsStashManager::stashRemoteMount(file->path(), qMount.name());
+        if (DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool())
+            emit DFMApplication::instance()->reloadComputerModel();
+    }
+
     Mounts.insert(qMount.mounted_root_uri(), qMount);
 }
 
@@ -585,6 +594,11 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
         g_free(path);
         g_object_unref(root);
         emit fileSignalManager->requestCloseTab(durl);
+
+        if (qMount.mounted_root_uri().startsWith("smb://")) {
+            if (DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool())
+                emit DFMApplication::instance()->reloadComputerModel();
+        }
     }
 }
 

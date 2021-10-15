@@ -1425,7 +1425,8 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
         {DFMRootFileInfo::ItemType::GvfsSMB, QObject::tr("Network shared directory")},
         {DFMRootFileInfo::ItemType::GvfsMTP, QObject::tr("Android mobile device")},
         {DFMRootFileInfo::ItemType::GvfsGPhoto2, QObject::tr("Apple mobile device")},
-        {DFMRootFileInfo::ItemType::GvfsCamera, QObject::tr("Camera")}
+        {DFMRootFileInfo::ItemType::GvfsCamera, QObject::tr("Camera")},
+        {DFMRootFileInfo::ItemType::NotConnRemote, QObject::tr("Not connected network shared directory")}
     };
 
     //fix GvfsGPhoto2协议对Apple mobile device判断有问题，再增加一层判断

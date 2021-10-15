@@ -31,6 +31,7 @@
 #endif
 
 #include "dfmsettings.h"
+#include "utils.h"
 
 #include <QCoreApplication>
 #include <QMetaEnum>
@@ -102,6 +103,15 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
             break;
         case DFMApplication::GA_ShowCsdCrumbBarClickableArea:
             Q_EMIT self->csdClickableAreaAttributeChanged(value.toBool());
+            break;
+        case DFMApplication::GA_AlwaysShowOfflineRemoteConnections:
+            gsGlobal->sync(); // cause later invocations may update the config file, so sync the config before.
+            if (value.toBool()) { // stash all mounted remote connections
+                RemoteMountsStashManager::stashCurrentMounts();
+            } else { // remove all stashed remote connections
+                RemoteMountsStashManager::clearRemoteMounts();
+            }
+            Q_EMIT self->reloadComputerModel();
             break;
         default:
             break;

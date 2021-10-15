@@ -70,6 +70,7 @@
 #include "recentcontroller.h"
 #include "views/drenamebar.h"
 #include "shutil/filebatchprocess.h"
+#include "utils.h"
 
 #include "../deviceinfo/udisklistener.h"
 
@@ -549,6 +550,15 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
     const DUrl &fileUrl = event->url();
 
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
+        auto path = fileUrl.path();
+        // mount the stashed remote connections
+        if (path.endsWith(SUFFIX_STASHED_REMOTE)) {
+            path = RemoteMountsStashManager::normalizeConnUrl(path);
+            auto e = dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), path);
+            GvfsMountManager::instance()->mount_sync(*e);
+            return;
+        }
+
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
@@ -1073,6 +1083,34 @@ void AppController::actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &ev
     }
 }
 
+void AppController::actionRemoveStashedMount(const QSharedPointer<DFMUrlBaseEvent> &event)
+{
+    auto path = event->url().path(); // something like "/smb://1.2.3.4/shared-folder.remote"
+    path = RemoteMountsStashManager::normalizeConnUrl(path);
+    // then find the stashed key of it.
+    const auto &&stashedRemoteMounts = RemoteMountsStashManager::remoteMounts();
+    QString key;
+    for (const auto &mount: stashedRemoteMounts) {
+        auto protocol = mount.value(REMOTE_PROTOCOL).toString();
+        auto host = mount.value(REMOTE_HOST).toString();
+        auto share = mount.value(REMOTE_SHARE).toString();
+        if (protocol.isEmpty() || host.isEmpty()) {
+            qWarning() << "protocol or host is empty: " << mount;
+            continue;
+        }
+
+        QString connPath = QString("%1://%2/%3").arg(protocol).arg(host).arg(share);
+        if (connPath == path) {
+            key = mount.value(REMOTE_KEY).toString();
+            break;
+        }
+    }
+    if (!key.isEmpty()) {
+        RemoteMountsStashManager::removeRemoteMountItem(key);
+        emit DFMApplication::instance()->reloadComputerModel();
+    }
+}
+
 void AppController::actionctrlL(quint64 winId)
 {
     emit fileSignalManager->requestSearchCtrlL(winId);
@@ -1180,6 +1218,9 @@ void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &
         secretManager->clearPasswordByLoginObj(obj);
     }
     actionUnmount(event);
+
+    auto stashKey = fi->extraProperties()["backer_url"].toString();
+    RemoteMountsStashManager::removeRemoteMountItem(stashKey);
 }
 
 void AppController::actionOpenFileByApp()

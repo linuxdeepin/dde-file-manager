@@ -50,6 +50,9 @@
 #include "controllers/vaultcontroller.h"
 #include "accessibility/ac-lib-file-manager.h"
 #include "../shutil/fileutils.h"
+#include "views/dtoolbar.h"
+#include "drootfilemanager.h"
+#include "utils.h"
 
 #include <dslider.h>
 
@@ -187,6 +190,17 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
         DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
         if (!url.isValid())
             return;
+
+        // searchBarTextEntered also invoke "checkGvfsMountFileBusy", forbit invoke twice
+        if (url.path().endsWith(SUFFIX_STASHED_REMOTE)) {
+            DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(this->window());
+            if (window) {
+                auto path = RemoteMountsStashManager::normalizeConnUrl(url.path());
+                window->getToolBar()->searchBarTextEntered(path);
+                return;
+            }
+        }
+
         //判断网络文件是否可以到达
         // fix bug 63803 这里是鼠标事件进入后，checkGvfsMountfileBusy需要很长时间，所以鼠标事件没有结束
         // 切换到其他界面，就析构了自己，当这个checkGvfsMountfileBusy退出，qt处理鼠标事件就崩溃了。
