@@ -824,17 +824,8 @@ QDateTime LocalFileInfo::created() const
             return QDateTime();
         }
     }
-    QString data = d->caches.value(TypeCreateTime).toString();
-    QStringList dataList;
-    if (data.isEmpty()) {
-        dataList << "00" << "00" << "00";
-    } else {
-        dataList = data.split(":");
-        while (dataList.count() < 3) {
-            dataList << "0";
-        }
-    }
-    return QDateTime(QDate(dataList.at(0).toInt(), dataList.at(1).toInt(),dataList.at(2).toInt()));
+    uint64_t data = d->caches.value(TypeCreateTime).value<uint64_t>();
+    return QDateTime::fromTime_t(static_cast<uint>(data));
 }
 /*!
  * \brief birthTime 获取文件的创建时间
@@ -879,17 +870,8 @@ QDateTime LocalFileInfo::metadataChangeTime() const
             return QDateTime();
         }
     }
-    QString data = d->caches.value(TypeChangeTime).toString();
-    QStringList dataList;
-    if (data.isEmpty()) {
-        dataList << "00" << "00" << "00";
-    } else {
-        dataList = data.split(":");
-        while (dataList.count() < 3) {
-            dataList << "0";
-        }
-    }
-    return QDateTime(QDate(dataList.at(0).toInt(), dataList.at(1).toInt(),dataList.at(2).toInt()));
+    uint64_t data = d->caches.value(TypeChangeTime).value<uint64_t>();
+    return QDateTime::fromTime_t(static_cast<uint>(data));
 }
 /*!
  * \brief lastModified 获取文件的最后修改时间
@@ -909,17 +891,8 @@ QDateTime LocalFileInfo::lastModified() const
             return QDateTime();
         }
     }
-    QString data = d->caches.value(TypeLastModifyTime).toString();
-    QStringList dataList;
-    if (data.isEmpty()) {
-        dataList << "00" << "00" << "00";
-    } else {
-        dataList = data.split(":");
-        while (dataList.count() < 3) {
-            dataList << "0";
-        }
-    }
-    return QDateTime(QDate(dataList.at(0).toInt(), dataList.at(1).toInt(),dataList.at(2).toInt()));
+    uint64_t data = d->caches.value(TypeLastModifyTime).value<uint64_t>();
+    return QDateTime::fromTime_t(static_cast<uint>(data));
 }
 /*!
  * \brief lastRead 获取文件的最后读取时间
@@ -939,17 +912,8 @@ QDateTime LocalFileInfo::lastRead() const
             return QDateTime();
         }
     }
-    QString data = d->caches.value(TypeLastReadTime).toString();
-    QStringList dataList;
-    if (data.isEmpty()) {
-        dataList << "00" << "00" << "00";
-    } else {
-        dataList = data.split(":");
-        while (dataList.count() < 3) {
-            dataList << "0";
-        }
-    }
-    return QDateTime(QDate(dataList.at(0).toInt(), dataList.at(1).toInt(),dataList.at(2).toInt()));
+    uint64_t data = d->caches.value(TypeLastReadTime).value<uint64_t>();
+    return QDateTime::fromTime_t(static_cast<uint>(data));
 }
 /*!
  * \brief fileTime 获取文件的事件通过传入的参数

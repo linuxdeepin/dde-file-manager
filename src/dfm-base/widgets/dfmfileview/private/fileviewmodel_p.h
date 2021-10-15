@@ -29,35 +29,49 @@
 
 #include <QReadWriteLock>
 #include <QQueue>
+#include <QTimer>
 
 DFMBASE_BEGIN_NAMESPACE
 class FileViewModelPrivate : public QObject
 {
+    enum EventType {
+        AddFile,
+        RmFile
+    };
     Q_OBJECT
     friend class FileViewModel;
     FileViewModel *const q;
-    DThreadList<FileViewItem*> childers;
+    DThreadList<FileViewItem*> childrens;
+    DThreadMap<QUrl, FileViewItem*> childrenMap;
     QSharedPointer<FileViewItem> root;
     int column = 0;
     AbstractFileWatcherPointer watcher;
     QSharedPointer<TraversalDirThread> traversalThread;
     bool canFetchMoreFlag = true;
+    DThreadList<QUrl> handlingFileList;
+    QQueue<QPair<QUrl, EventType>> watcherEvent;
+    QMutex watcherEventMutex;
+    QAtomicInteger<bool> isUpdatedChildren = false;
+    QAtomicInteger<bool> processFileEventRuning = false;
+    //文件的刷新队列
+    DThreadList<QUrl> updateurlList;
+    QTimer updateTimer;
+
 public:
-    enum EventType {
-        AddFile,
-        RmFile
-    };
     explicit FileViewModelPrivate(FileViewModel *qq);
     virtual ~FileViewModelPrivate();
-
 private Q_SLOTS:
-    void doFileDeleted(const QUrl &url){Q_UNUSED(url);}
+    void doFileDeleted(const QUrl &url);
     void dofileAttributeChanged(const QUrl &url, const int &isExternalSource = 1){Q_UNUSED(url);Q_UNUSED(isExternalSource);}
     void dofileMoved(const QUrl &fromUrl, const QUrl &toUrl){Q_UNUSED(fromUrl);Q_UNUSED(toUrl);}
-    void dofileCreated(const QUrl &url){Q_UNUSED(url);}
-    void dofileModified(const QUrl &url){Q_UNUSED(url);}
+    void dofileCreated(const QUrl &url);
+    void doFileUpdated(const QUrl &url);
+    void doFilesUpdated();
     void dofileClosed(const QUrl &url){Q_UNUSED(url);}
-    void doUpdateChildren(const QList<FileViewItem *> &children);
+    void doUpdateChildren(const QList<FileViewItem *> &childrens);
+    void doWatcherEvent();
+private:
+    bool checkFileEventQueue();
 };
 DFMBASE_END_NAMESPACE
 

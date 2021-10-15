@@ -230,6 +230,15 @@ public:
         QMutexLocker lk(&mutex);
         *myList = *l.myList;
     }
+    /*!
+     * \brief 获取实例所在位置
+     *
+     * \return int 返回实例所在位置
+     */
+    int indexOf(const T &t, int from = 0) {
+        QMutexLocker lk(&mutex);
+        return myList->indexOf(t, from);
+    }
 
 private:
     QList<T> *myList; // 当前的QList

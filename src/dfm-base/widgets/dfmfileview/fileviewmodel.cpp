@@ -22,8 +22,10 @@
 
 #include "fileviewmodel.h"
 #include "private/fileviewmodel_p.h"
+#include "fileview.h"
 
 #include <QApplication>
+#include <QPointer>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -36,15 +38,138 @@ FileViewModelPrivate::FileViewModelPrivate(FileViewModel *qq)
 
 FileViewModelPrivate::~FileViewModelPrivate()
 {
+}
+//文件的在当前目录下创建、修改、删除都需要顺序处理，并且都是在遍历目录完成后才有序的处理
+//处理方式，受到这3个事件，都加入到事件处理队列
+//判断当前遍历目录是否完成，是启动异步文件监视事件处理，否文件遍历完成时，启动异步文件监视事件处理
+//在退出时清理异步事件处理，再次进行fetchmore时（遍历新目录时）清理文件监视事件。
+void FileViewModelPrivate::doFileDeleted(const QUrl &url)
+{
+    {
+        QMutexLocker lk(&watcherEventMutex);
+        watcherEvent.enqueue(QPair<QUrl,EventType>(url, RmFile));
+    }
+    if (isUpdatedChildren)
+        return;
+    metaObject()->invokeMethod(this, QT_STRINGIFY(doWatcherEvent), Qt::QueuedConnection);
 
+}
+
+void FileViewModelPrivate::dofileCreated(const QUrl &url)
+{
+    {
+        QMutexLocker lk(&watcherEventMutex);
+        watcherEvent.enqueue(QPair<QUrl,EventType>(url, AddFile));
+    }
+    if (isUpdatedChildren)
+        return;
+    metaObject()->invokeMethod(this, QT_STRINGIFY(doWatcherEvent), Qt::QueuedConnection);
+}
+
+void FileViewModelPrivate::doFileUpdated(const QUrl &url)
+{
+    if (!updateurlList.contains(url))
+        updateurlList.append(url);
+
+    if (!updateTimer.isActive())
+        updateTimer.start();
+}
+
+void FileViewModelPrivate::doFilesUpdated()
+{
+    if (updateurlList.count() <= 0) {
+        updateTimer.stop();
+        return;
+    }
+
+    QList<QUrl> fileUrls = updateurlList.list();
+    updateurlList.clear();
+    QPointer<FileViewModelPrivate> ptr = this;
+
+    for (auto &fileUrl : fileUrls) {
+        if (!childrenMap.contains(fileUrl))
+            continue;
+        int fileRow = childrens.indexOf(childrenMap.value(fileUrl));
+        if (fileRow < 0)
+            continue;
+
+        q->updateViewItem(q->index(fileRow, 0));
+    }
 }
 
 void FileViewModelPrivate::doUpdateChildren(const QList<FileViewItem*> &children)
 {
     q->beginResetModel();
-    childers.setList(children);
+    childrens.setList(children);
+    for (auto fileItem : children) {
+        childrenMap.insert(fileItem->url(), fileItem);
+    }
     q->endResetModel();
+    isUpdatedChildren = true;
     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+}
+
+void FileViewModelPrivate::doWatcherEvent()
+{
+    if (isUpdatedChildren)
+        return;
+
+    if (processFileEventRuning)
+        return;
+
+    processFileEventRuning = true;
+    while (checkFileEventQueue()) {
+        QPair<QUrl, EventType> event;
+        {
+            QMutexLocker lk(&watcherEventMutex);
+            event = watcherEvent.dequeue();
+        }
+        const QUrl &fileUrl = event.first;
+
+        if (fileUrl.isValid())
+            continue;
+
+        if (fileUrl == root->url()) {
+            if (event.second == AddFile)
+                continue;
+            //todo:先不做
+        }
+
+        if (UrlRoute::urlParent(fileUrl) != root->url())
+            continue;
+
+        if (event.second == AddFile) {
+            if (childrenMap.contains(fileUrl))
+                continue;
+
+            q->beginInsertRows(QModelIndex(), childrens.count(), childrens.count());
+            FileViewItem *item = new FileViewItem(fileUrl);
+            childrens.append(item);
+            childrenMap.insert(fileUrl, item);
+            q->endInsertRows();
+        } else {
+            if (!childrenMap.contains(fileUrl))
+                continue;
+
+            int fileIndex = childrens.indexOf(childrenMap.value(fileUrl));
+            if (fileIndex == -1)
+                continue;
+
+            q->beginRemoveRows(QModelIndex(),fileIndex,fileIndex);
+            childrens.removeOne(childrenMap.value(fileUrl));
+            childrenMap.remove(fileUrl);
+            q->endMoveRows();
+        }
+
+    }
+    processFileEventRuning = false;
+}
+
+bool FileViewModelPrivate::checkFileEventQueue()
+{
+    QMutexLocker lk(&watcherEventMutex);
+    bool isEmptyQueue = watcherEvent.isEmpty();
+    return !isEmptyQueue;
 }
 
 FileViewModel::FileViewModel(QAbstractItemView *parent)
@@ -62,17 +187,17 @@ FileViewModel::~FileViewModel()
 QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    if(row < 0 || column < 0 || d->childers.size() <= row)
+    if(row < 0 || column < 0 || d->childrens.size() <= row)
         return  QModelIndex();
 
-    return createIndex(row, column, d->childers.at(row));
+    return createIndex(row, column, d->childrens.at(row));
 }
 
 const FileViewItem *FileViewModel::itemFromIndex(const QModelIndex &index) const
 {
-    if (0 > index.row() || index.row() >= d->childers.size())
+    if (0 > index.row() || index.row() >= d->childrens.size())
         return nullptr;
-    return d->childers.at(index.row());
+    return d->childrens.at(index.row());
 }
 
 QModelIndex FileViewModel::setRootUrl(const QUrl &url)
@@ -88,7 +213,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     if(!url.isValid())
         return root;
 
-    d->childers.clear();
+    d->childrens.clear();
 
     if (d->column == 0)
         d->column = 4;
@@ -97,17 +222,17 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         disconnect(d->watcher.data());
     }
     d->watcher = WacherFactory::create<AbstractFileWatcher>(url);
-    if (d->watcher.isNull()) {
+    if (!d->watcher.isNull()) {
         QObject::connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted,
                          d.data(), &FileViewModelPrivate::doFileDeleted);
         QObject::connect(d->watcher.data(), &AbstractFileWatcher::subfileCreated,
                          d.data(), &FileViewModelPrivate::dofileCreated);
         QObject::connect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged,
-                         d.data(), &FileViewModelPrivate::dofileModified);
+                         d.data(), &FileViewModelPrivate::doFileUpdated);
+        d->watcher->startWatcher();
     }
 
     d->canFetchMoreFlag = true;
-    fetchMore(root);
     return root;
 }
 
@@ -120,22 +245,21 @@ AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index)
 {
     if (!index.isValid())
         return nullptr;
-    if(index.row() < 0  || d->childers.size() <= index.row())
+    if(index.row() < 0  || d->childrens.size() <= index.row())
         return  nullptr;
-    return d->childers.at(index.row())->fileinfo();
+    return d->childrens.at(index.row())->fileinfo();
 }
 
 QModelIndex FileViewModel::parent(const QModelIndex &child) const
 {
     Q_UNUSED(child)
     return QModelIndex();
-    //    return createIndex(-1, 0, const_cast<DFMFileViewItem*>(&m_root));
 }
 
 int FileViewModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return d->childers.size();
+    return d->childrens.size();
 }
 
 int FileViewModel::columnCount(const QModelIndex &parent) const
@@ -180,6 +304,7 @@ int FileViewModel::rowCountMaxShow()
 void FileViewModel::fetchMore(const QModelIndex &parent)
 {
     Q_UNUSED(parent)
+    d->isUpdatedChildren = false;
     if (!d->traversalThread.isNull()) {
         d->traversalThread->quit();
         d->traversalThread->wait();
@@ -187,10 +312,12 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
     }
     d->traversalThread.reset(new TraversalDirThread(
                                  d->root->url(),QStringList(),
-                                 QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System,
+                                 QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System  | QDir::Hidden,
                                  QDirIterator::NoIteratorFlags));
-    if (d->traversalThread.isNull())
+    if (d->traversalThread.isNull()) {
+        d->isUpdatedChildren = true;
         return;
+    }
     QObject::connect(d->traversalThread.data(), &TraversalDirThread::updateChildren,
                      d.data(), &FileViewModelPrivate::doUpdateChildren,
                      Qt::QueuedConnection);
@@ -205,5 +332,13 @@ bool FileViewModel::canFetchMore(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return d->canFetchMoreFlag;
+}
+
+void FileViewModel::updateViewItem(const QModelIndex &index)
+{
+    FileView *view = qobject_cast<FileView*>(qobject_cast<QObject*>(this)->parent());
+    if (view) {
+        view->update(index);
+    }
 }
 DFMBASE_END_NAMESPACE

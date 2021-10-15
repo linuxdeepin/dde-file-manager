@@ -62,6 +62,8 @@ public:
     virtual int rowCountMaxShow();
     virtual void fetchMore(const QModelIndex &parent) override;
     virtual bool canFetchMore(const QModelIndex &parent) const override;
+
+    virtual void updateViewItem(const QModelIndex &index);
 };
 
 DFMBASE_END_NAMESPACE
