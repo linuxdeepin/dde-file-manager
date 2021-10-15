@@ -170,6 +170,9 @@ public:
     //currentCursorIndex在使用上已经被多次误用了，所以这里使用新的变量，区分减小影响
     QModelIndex         m_currentMousePressIndex;
 
+    //记录首次光标首次所在位置索引
+    QModelIndex         m_oldCursorIndex;
+
     QPoint              lastMenuPos;
     QString             lastMenuNewFilepath;
 

@@ -736,12 +736,14 @@ QModelIndex CanvasGridView::moveCursor(QAbstractItemView::CursorAction cursorAct
     if (!current.isValid()) {
         current = firstIndex();
         d->currentCursorIndex = current;
+        d->m_oldCursorIndex = current;
         return current;
     }
 
     if (rectForIndex(current).isEmpty()) {
         qCritical() << "current never empty" << current;
         d->currentCursorIndex = firstIndex();
+        d->m_oldCursorIndex = current;
         return d->currentCursorIndex;
     }
 
@@ -824,6 +826,12 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
 
     d->mousePressed = true;
 
+    if (index.isValid()) {
+        d->currentCursorIndex = index;
+        if (!d->m_oldCursorIndex.isValid())
+            d->m_oldCursorIndex = index;
+    }
+
     bool leftButtonPressed = event->button() == Qt::LeftButton;
     bool showSelectFrame = leftButtonPressed;
     showSelectFrame &= !index.isValid();
@@ -858,6 +866,8 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
             itemDelegate()->hideNotEditingIndexWidget();
             QAbstractItemView::setCurrentIndex(QModelIndex());
             clearSelection();
+            d->currentCursorIndex = QModelIndex();
+            d->m_oldCursorIndex = QModelIndex();
         }
     }
 
@@ -893,7 +903,6 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
     }
 
     if (leftButtonPressed) {
-        d->currentCursorIndex = index;
         d->m_currentMousePressIndex = index;
         if (!isEmptyArea) {
             const DUrl &url = model()->getUrlByIndex(index);
@@ -2548,11 +2557,7 @@ void CanvasGridView::initConnection()
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this,
     [this](const QItemSelection & selected, const QItemSelection & deselected) {
 
-        //fix bug39609 选中桌面文件夹，通过按键F2重命名，然后再按快捷键home、left、right均变为桌面第一个图标为选中
-        if (!selected.indexes().isEmpty()) {
-            d->currentCursorIndex = selected.indexes().first();
-        }
-
+        Q_UNUSED(selected)
         QModelIndex index = property("lastPressedIndex").toModelIndex();
         if (index.isValid() && deselected.contains(index)) {
             setProperty("lastPressedIndex", QModelIndex());
@@ -2684,6 +2689,15 @@ void CanvasGridView::initConnection()
 
     //model刷新完毕
     connect(model(), &DFileSystemModel::sigJobFinished, this, &CanvasGridView::onRefreshFinished);
+    connect(model(), &DFileSystemModel::requestSelectFiles,this,[this](const QList<DUrl> &urls){
+        //fix bug39609 选中桌面文件夹，通过按键F2重命名，然后再按快捷键home、left、right均变为桌面第一个图标为选中
+        //重设当前新文件名的index为当前index
+        if (!urls.isEmpty()) {
+            d->currentCursorIndex = model()->index(urls.first());
+            d->m_oldCursorIndex = d->currentCursorIndex;
+        }
+        d->fileViewHelper->onRequestSelectFiles(urls);
+    });
 
     connect(this->model(), &DFileSystemModel::newFileByInternal,
     this, [ = ](const DUrl & fileUrl) {
@@ -3018,7 +3032,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         d->beginPos = QPoint(-1, -1);
     }
     // select by  key board, so mouse not pressed
-    if (!d->mousePressed && d->currentCursorIndex.isValid()) {
+    if (!d->mousePressed && d->currentCursorIndex.isValid() && !ctrlShiftPress) {
         QItemSelectionRange selectionRange(d->currentCursorIndex);
         if (!oldSelection.contains(d->currentCursorIndex)) {
             oldSelection.push_back(selectionRange);
@@ -3102,37 +3116,67 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
     }
 
     if (DFMGlobal::keyShiftIsPressed()) {
-        QItemSelection rectSelection;
-        //just keyShift
-        bool beginSmall = d->beginPos.x() < currentPoint.x() || d->beginPos.y() < currentPoint.y();
-        if (beginSmall) {
-            topLeftGridPos = d->beginPos;
-            bottomRightGridPos = currentPoint;
-        } else {
-            topLeftGridPos = currentPoint;
-            bottomRightGridPos = d->beginPos;
-        }
-        qDebug() << "topLeftGridPos"  << topLeftGridPos << "bottomRightGridPos " << bottomRightGridPos;
-        for (int x = 0; x < d->colCount; ++x) {
-            for (int y = topLeftGridPos.y(); y <= bottomRightGridPos.y(); ++y) {
-                if (x < topLeftGridPos.x() && y == topLeftGridPos.y())
-                    continue;
-                if (x > bottomRightGridPos.x() && y == bottomRightGridPos.y())
-                    break;
+        QModelIndexList needSelectIndex;
+        QModelIndexList selectIndexs;
+        QSize coordSize = GridManager::instance()->gridSize(m_screenNum);
 
-                auto localFile = GridManager::instance()->itemTop(m_screenNum, x, y);
-                //GridManager::instance()->itemId(m_screenNum, x, y);
-                if (localFile.isEmpty()) {
+        QItemSelection rectSelection;
+        DUrl oldRet;
+        DAbstractFileInfoPointer oldFp = model()->fileInfo(d->m_oldCursorIndex);
+        if (!oldFp)
+            return;
+        oldRet = oldFp->fileUrl();
+        QPair<int, QPoint> oldPosInfo;
+        GridManager::instance()->find(oldRet.toString(), oldPosInfo);
+
+        DUrl currentRet;
+        DAbstractFileInfoPointer currentFp = model()->fileInfo(d->currentCursorIndex);
+        if (currentFp) {
+            currentRet = currentFp->fileUrl();
+        }
+        QPair<int, QPoint> currentPosInfo;
+        GridManager::instance()->find(currentRet.toString(), currentPosInfo);
+
+        topLeftGridPos = oldPosInfo.second;
+        bottomRightGridPos = currentPosInfo.second;
+
+        QPoint temp;
+        if (topLeftGridPos.y() > bottomRightGridPos.y()
+                || (topLeftGridPos.x() > bottomRightGridPos.x()
+                && topLeftGridPos.y() == bottomRightGridPos.y())) {
+            temp = topLeftGridPos;
+            topLeftGridPos = bottomRightGridPos;
+            bottomRightGridPos = temp;
+        }
+
+        int rowBegin = topLeftGridPos.y();
+        int rowEnd = bottomRightGridPos.y();
+        QPoint nextItem;
+        for (; rowBegin <= rowEnd; ++ rowBegin) {
+            nextItem.setX(0);
+            nextItem.setY(rowBegin);
+            while (nextItem != bottomRightGridPos) {
+                if (nextItem.y() == topLeftGridPos.y() && nextItem.x() < topLeftGridPos.x()) {
+                    nextItem = QPoint((nextItem.x() + 1), rowBegin);
                     continue;
                 }
-                auto index = model()->index(DUrl(localFile));
-                auto list = QList<QRect>() << itemPaintGeomertys(index);
-                QItemSelectionRange selectionRange(index);
-                if (!rectSelection.contains(index)) {
-                    rectSelection.push_back(selectionRange);
+
+                auto nextUrl = GridManager::instance()->itemId(m_screenNum, nextItem.x(), nextItem.y());
+                auto nextIndex = model()->index(nextUrl);
+                QItemSelectionRange selectionRange(nextIndex);
+                rectSelection.append(selectionRange);
+                nextItem = QPoint((nextItem.x() + 1), rowBegin);
+                bool inLayoutX = 0 <= nextItem.x() && nextItem.x()  <= (coordSize.width() - 1);
+                if (!inLayoutX) {
+                    break;
                 }
             }
+            auto nextUrl = GridManager::instance()->itemId(m_screenNum, nextItem.x(), nextItem.y());
+            auto nextIndex = model()->index(nextUrl);
+            QItemSelectionRange selectionRange(nextIndex);
+            rectSelection.append(selectionRange);
         }
+
         QAbstractItemView::selectionModel()->clear();
         QAbstractItemView::selectionModel()->select(rectSelection, command);
     } else if (DFMGlobal::keyCtrlIsPressed()) {

@@ -2062,15 +2062,6 @@ TEST_F(CanvasGridViewTest, test_renderToPixmap)
     EXPECT_TRUE(judge);
 }
 
-
-TEST(CanvasGridViewTest_end, endTest)
-{
-    auto path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    QDir dir(path);
-    dir.remove(CanvasGridViewTest::tstFile);
-    dir.rmpath(dir.filePath(CanvasGridViewTest::tstDir));
-}
-
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_three){
     ASSERT_NE(m_canvasGridView, nullptr);
 
@@ -2111,13 +2102,149 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_three){
     m_canvasGridView->selectionModel()->clearSelection();
     auto lastSelectww = m_canvasGridView->selectedUrls();
     //再次框选
-    auto tempVr = m_canvasGridView->visualRect(tgIndex);
-    QMargins margins(10, 10, 10, 10);
     QRect lastRect = itemRect;
     lastRect.setLeft(itemRect.topLeft().x() - 3);
 
     m_canvasGridView->setSelection(lastRect, QItemSelectionModel::Select);
     auto lastSelect = m_canvasGridView->selectedUrls();
-    EXPECT_TRUE(0 == lastSelect.size());
+    EXPECT_TRUE(1 == lastSelect.size());
     m_canvasGridView->selectionModel()->clearSelection();
+}
+
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_shiftAndArrowKeys)
+{
+    ASSERT_NE(m_canvasGridView, nullptr);
+
+    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    DUrl desktopUrl = DUrl::fromLocalFile(desktopPath);
+    if (desktopUrl.isEmpty())
+        return;
+    if(m_canvasGridView->setRootUrl(desktopUrl)){
+        EXPECT_TRUE(desktopUrl == m_canvasGridView->model()->rootUrl());
+    }
+
+    auto coordSize = GridManager::instance()->gridSize(m_canvasGridView->screenNum());
+    auto fileCnt = GridManager::instance()->itemIds(m_canvasGridView->screenNum());
+    int testFileNum = coordSize.height() * 3;
+    int addFileNum = 0;
+    if (fileCnt.size() < testFileNum) {
+        addFileNum = testFileNum - fileCnt.size();
+        for (int i = 1; i <= addFileNum; ++i) {
+            QFile tfile(QString("%1/%2%3").arg(desktopPath).arg("forutxxxxxxxxxxxx").arg(QString::number(i)));
+            tfile.open(QIODevice::ReadWrite | QIODevice::NewOnly);
+            tfile.close();
+        }
+    }
+    waitData(m_canvasGridView);
+
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(DFMGlobal, keyShiftIsPressed), [](){ return true;});
+
+    //设置为自动排列
+    stu.set_lamda(ADDR(GridManager, autoArrange), [](){ return true;});
+    m_canvasGridView->model()->clear();
+    m_canvasGridView->model()->refresh();
+    GridManager::instance()->initGridItemsInfos();
+    for(auto tpCanvas : m_cvmgr->m_canvasMap.values()){
+        if(tpCanvas)
+            tpCanvas->update();
+    }
+    waitData(m_canvasGridView);
+    //清空选中
+    m_canvasGridView->selectionModel()->clearSelection();
+
+    auto fileCnt2 = GridManager::instance()->itemIds(m_canvasGridView->screenNum());
+    auto url10 = GridManager::instance()->itemId(m_canvasGridView->screenNum(), 1, 0);
+    QModelIndex index10 = m_canvasGridView->model()->index(DUrl(url10));
+    auto url20 = GridManager::instance()->itemId(m_canvasGridView->screenNum(), 2, 0);
+    QModelIndex index20 = m_canvasGridView->model()->index(DUrl(url20));
+    auto url21 = GridManager::instance()->itemId(m_canvasGridView->screenNum(), 2, 1);
+    QModelIndex index21 = m_canvasGridView->model()->index(DUrl(url21));
+    auto url22 = GridManager::instance()->itemId(m_canvasGridView->screenNum(), 2, 2);
+    QModelIndex index22 = m_canvasGridView->model()->index(DUrl(url22));
+    auto url12 = GridManager::instance()->itemId(m_canvasGridView->screenNum(), 1, 2);
+    QModelIndex index12 = m_canvasGridView->model()->index(DUrl(url12));
+    auto url02 = GridManager::instance()->itemId(m_canvasGridView->screenNum(), 0, 2);
+    QModelIndex index02 = m_canvasGridView->model()->index(DUrl(url02));
+    auto url01 = GridManager::instance()->itemId(m_canvasGridView->screenNum(), 0, 1);
+    QModelIndex index01 = m_canvasGridView->model()->index(DUrl(url01));
+    auto url00 = GridManager::instance()->itemId(m_canvasGridView->screenNum(), 0, 0);
+    QModelIndex index00 = m_canvasGridView->model()->index(DUrl(url00));
+
+    auto url11 = GridManager::instance()->itemId(m_canvasGridView->screenNum(), 1, 1);
+    QModelIndex index11 = m_canvasGridView->model()->index(DUrl(url11));
+
+    //选中布局(1,1)图标
+    m_canvasGridView->select({DUrl(url11)});
+    m_canvasGridView->d->m_oldCursorIndex = index11;
+    m_canvasGridView->d->currentCursorIndex = index11;
+
+    //上
+    m_canvasGridView->d->currentCursorIndex = index10;
+    m_canvasGridView->setSelection(QRect(), QItemSelectionModel::SelectCurrent);
+    auto temp = m_canvasGridView->selectedUrls().size();
+    EXPECT_TRUE(3 <= temp);
+
+    //右
+    m_canvasGridView->d->currentCursorIndex = index20;
+    m_canvasGridView->setSelection(QRect(), QItemSelectionModel::SelectCurrent);
+    temp = m_canvasGridView->selectedUrls().size();
+    EXPECT_TRUE(3 <= temp);
+
+    //下
+    m_canvasGridView->d->currentCursorIndex = index21;
+    m_canvasGridView->setSelection(QRect(), QItemSelectionModel::SelectCurrent);
+    temp = m_canvasGridView->selectedUrls().size();
+    EXPECT_TRUE(2 == temp);
+
+    //下
+    m_canvasGridView->d->currentCursorIndex = index22;
+    m_canvasGridView->setSelection(QRect(), QItemSelectionModel::SelectCurrent);
+    temp = m_canvasGridView->selectedUrls().size();
+    EXPECT_TRUE(5 <= temp);
+
+    //左
+    m_canvasGridView->d->currentCursorIndex = index12;
+    m_canvasGridView->setSelection(QRect(), QItemSelectionModel::SelectCurrent);
+    temp = m_canvasGridView->selectedUrls().size();
+    EXPECT_TRUE(3 <= temp);
+
+    //左
+    m_canvasGridView->d->currentCursorIndex = index02;
+    m_canvasGridView->setSelection(QRect(), QItemSelectionModel::SelectCurrent);
+    temp = m_canvasGridView->selectedUrls().size();
+    auto ttt = m_canvasGridView->selectedUrls();
+    EXPECT_TRUE(2 <= temp);
+
+    //上
+    m_canvasGridView->d->currentCursorIndex = index01;
+    m_canvasGridView->setSelection(QRect(), QItemSelectionModel::SelectCurrent);
+    temp = m_canvasGridView->selectedUrls().size();
+    EXPECT_TRUE(2 == temp);
+
+    //上
+    m_canvasGridView->d->currentCursorIndex = index00;
+    m_canvasGridView->setSelection(QRect(), QItemSelectionModel::SelectCurrent);
+    temp = m_canvasGridView->selectedUrls().size();
+    EXPECT_TRUE(3 <= temp);
+
+    //移除测试文件
+    QDir dir(path);
+    auto temppp = dir.entryInfoList();
+    QStringList removeList;
+    for (auto tmp : temppp) {
+        if (tmp.filePath().contains("forutxxxxxxxxxxxx"))
+            removeList.append(tmp.filePath());
+    }
+    for (auto tpp : removeList) {
+        dir.remove(tpp);
+    }
+}
+
+TEST(CanvasGridViewTest_end, endTest)
+{
+    auto path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QDir dir(path);
+    dir.remove(CanvasGridViewTest::tstFile);
+    dir.rmpath(dir.filePath(CanvasGridViewTest::tstDir));
 }
