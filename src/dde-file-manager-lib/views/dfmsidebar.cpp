@@ -28,13 +28,16 @@
 #include "singleton.h"
 #include "app/define.h"
 #include "drootfilemanager.h"
-
+#include "dtoolbar.h"
+#include "utils.h"
 #include "dfmsidebarmanager.h"
+#include "dfmsidebaritemdelegate.h"
+#include "dfmsidebaritem.h"
+#include "dfmopticalmediawidget.h"
+
 #include "interfaces/dfmsidebariteminterface.h"
 #include "views/dfmsidebarview.h"
 #include "models/dfmsidebarmodel.h"
-#include "dfmsidebaritemdelegate.h"
-#include "dfmsidebaritem.h"
 #include "models/dfmrootfileinfo.h"
 #include "controllers/dfmsidebardefaultitemhandler.h"
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
@@ -44,12 +47,11 @@
 #include "controllers/vaultcontroller.h"
 #include "controllers/pathmanager.h"
 #include "app/filesignalmanager.h"
-#include "interfaces/dfilemenu.h"
-#include "dfmopticalmediawidget.h"
 #include "vault/vaulthelper.h"
+#include "interfaces/dfilemenu.h"
 #include "accessibility/ac-lib-file-manager.h"
-#include "dtoolbar.h"
-#include "utils.h"
+#include "deviceinfo/udisklistener.h"
+#include "shutil/fileutils.h"
 
 #include <DApplicationHelper>
 #include <QScrollBar>
@@ -159,10 +161,13 @@ int DFMSideBar::findItem(const DFMSideBarItem *item) const
 
 int DFMSideBar::findItem(const DUrl &url, const QString &group) const
 {
-    for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
+    for (int i = 0, nEnd = m_sidebarModel->rowCount(); i < nEnd; ++i) {
         DFMSideBarItem *item = m_sidebarModel->itemFromIndex(i);
-        if (item->itemType() == DFMSideBarItem::SidebarItem && item->groupName() == group) {
-            if (item->url() == url) {
+        const auto &itemType = item->itemType();
+        const auto &itemGroupName = item->groupName();
+        if (itemType == DFMSideBarItem::SidebarItem && itemGroupName == group) {
+            const auto &itemUrl = item->url();
+            if (itemUrl == url) {
                 return i;
             }
         }
@@ -746,7 +751,36 @@ void DFMSideBar::initDeviceConnection()
         int curIndex = m_sidebarView->currentIndex().row();
         if ((curIndex == index && index != -1)
                 || (!curUrlCanAccess)) {
-            index = findItem(DUrl::fromLocalFile(QDir::homePath()), groupName(Common));
+
+            DUrl urlSkip;
+            const QString &absFilePath = url.toAbsolutePathUrl().path();
+            QString localFilePath = QUrl::fromPercentEncoding(url.path().toLocal8Bit());
+            localFilePath = localFilePath.startsWith("//") ? localFilePath.mid(1) : localFilePath;
+
+            const auto &allDevice = deviceListener->getAllDeviceInfos();
+            bool blockDevice = false;
+            for (const auto &dev : allDevice.keys()) {
+                if (dev.contains(absFilePath.left(absFilePath.indexOf(".localdisk")))) {
+                    blockDevice = true;
+                    break;
+                }
+            }
+
+            // 判断删除的路径是否是外设路径，外设路径需要跳转到computer页面
+            bool turnToComputer = false;
+            if (deviceListener->isInDeviceFolder(absFilePath)
+                    || localFilePath.startsWith("/run/user")
+                    || localFilePath.startsWith("/media/")
+                    || blockDevice // like u disk
+                    || FileUtils::isGvfsMountFile(localFilePath)
+                    ) {
+                urlSkip = DUrl(COMPUTER_ROOT);
+                turnToComputer = true;
+            } else {
+                urlSkip = DUrl::fromLocalFile(QDir::homePath());
+            }
+
+            index = findItem(urlSkip, groupName(turnToComputer ? Device : Common));
             DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
             if (item) {
                 QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);

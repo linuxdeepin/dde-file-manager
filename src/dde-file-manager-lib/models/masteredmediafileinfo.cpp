@@ -197,16 +197,18 @@ DUrl MasteredMediaFileInfo::parentUrl() const
 
 DUrl MasteredMediaFileInfo::goToUrlWhenDeleted() const
 {
-    QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(fileUrl().burnDestDevice(), {});
+    const auto &fUrl = fileUrl();
+
+    QStringList rootDeviceNode = DDiskManager::resolveDeviceNode(fUrl.burnDestDevice(), {});
     if (rootDeviceNode.isEmpty() || this->m_backerUrl.isEmpty()) {
-        return DUrl::fromLocalFile(QDir::homePath());
+        return DUrl(COMPUTER_ROOT);
     }
 
     QString volTotag = getVolTag(rootDeviceNode.first());
     CdStatusInfo *pStatusInfo = DFMOpticalMediaWidget::getCdStatusInfo(volTotag);
 
-    if (!fileUrl().burnFilePath().isEmpty() && pStatusInfo != nullptr && !pStatusInfo->bReadyToBurn) { // 光盘路径是不能被删除的，有删除动作一般是弹出了，所以直接到homepath
-        return DUrl::fromLocalFile(QDir::homePath());
+    if (!fUrl.burnFilePath().isEmpty() && pStatusInfo != nullptr && !pStatusInfo->bReadyToBurn) { // 光盘路径是不能被删除的，有删除动作一般是弹出了，所以直接到homepath
+        return DUrl(COMPUTER_ROOT);
     }
     return DAbstractFileInfo::goToUrlWhenDeleted();
 }

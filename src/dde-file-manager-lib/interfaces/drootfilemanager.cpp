@@ -218,6 +218,8 @@ void DRootFileManager::startQuryRootFile()
             emit queryRootFileFinsh();
 
         d_ptr->m_rootChanged = false;
+
+        emit serviceHideSystemPartition(); // 刷新计算机页面，去掉无用块设备
     }, openAsAdmin ? Qt::DirectConnection : Qt::AutoConnection);
     d_ptr->m_jobcontroller->start();
 }

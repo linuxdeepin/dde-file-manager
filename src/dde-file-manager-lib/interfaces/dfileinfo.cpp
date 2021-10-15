@@ -924,11 +924,11 @@ void DFileInfo::refresh(const bool isForce)
 
 DUrl DFileInfo::goToUrlWhenDeleted() const
 {
-    QString absFilePath = absoluteFilePath();
+    const QString &absFilePath = absoluteFilePath();
     if (deviceListener->isInDeviceFolder(absFilePath) ||
-            absFilePath.startsWith("/run/user" /*for gvfs mount point*/) ||
-            absFilePath.startsWith("/media/")) {
-        return DUrl::fromLocalFile(QDir::homePath());
+            absFilePath.startsWith("/run/user") // for gvfs mount point
+            || absFilePath.startsWith("/media/")) {
+        return DUrl(COMPUTER_ROOT);
     }
 
     return DAbstractFileInfo::goToUrlWhenDeleted();
