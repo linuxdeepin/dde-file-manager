@@ -27,7 +27,8 @@
         "ShowRecentFileEntry": true,
         "ShowedFileSuffixOnRename": true,
         "DisableNonRemovableDeviceUnmount": false,
-        "HiddenSystemPartition": false
+        "HiddenSystemPartition": false,
+        "AlwaysShowOfflineRemoteConnections": true
     },
     "AnythingMonitorFilterPath": {
         "WhiteList":[

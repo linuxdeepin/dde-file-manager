@@ -250,6 +250,12 @@
                             "text": qsTranslate("GenerateSettingTranslate", "Show item counts and sizes in the path of mounted MTP devices"),
                             "type": "checkbox",
                             "default": false
+                        },
+                        {
+                            "key": "always_show_offline_remote_connection",
+                            "text": qsTranslate("GenerateSettingTranslate", "Keep showing the mounted Samba shares"),
+                            "type": "checkbox",
+                            "default": true
                         }
                     ]
                 },
