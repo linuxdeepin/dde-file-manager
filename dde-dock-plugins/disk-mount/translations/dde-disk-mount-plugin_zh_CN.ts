@@ -29,6 +29,10 @@
         <source>Disk is busy, cannot remove now</source>
         <translation>磁盘文件被占用，无法移除</translation>
     </message>
+    <message>
+        <source>%1 is busy and cannot be unmounted now</source>
+        <translation>%1 磁盘文件被占用，无法卸载</translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>

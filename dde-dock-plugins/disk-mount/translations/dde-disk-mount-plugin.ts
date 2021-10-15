@@ -29,6 +29,10 @@
         <source>Disk is busy, cannot remove now</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>%1 is busy and cannot be unmounted now</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DiskMountPlugin</name>
