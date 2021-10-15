@@ -57,7 +57,8 @@ public:
         UDisksData,
         UDisksFixed,
         UDisksRemovable,
-        UDisksOptical
+        UDisksOptical,
+        NotConnRemote,
     };
 
     explicit DFMRootFileInfo(const DUrl &url);

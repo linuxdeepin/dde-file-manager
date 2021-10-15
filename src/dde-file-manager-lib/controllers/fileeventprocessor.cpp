@@ -366,6 +366,10 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
         if (event->urlList().first().isRecentFile()||event->urlList().first().isSearchFile()) {
             DFileService::instance()->deleteFiles(event->sender(), event->urlList(), false, true);
         }
+        break;
+    case DFMGlobal::RemoveStashedRemoteConn:
+        AppController::instance()->actionRemoveStashedMount(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        break;
     }
 
     return true;

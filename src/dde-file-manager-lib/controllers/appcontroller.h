@@ -142,6 +142,7 @@ public slots:
     void actionSettings(quint64 winId);
     void actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionRemoveStashedMount(const QSharedPointer<DFMUrlBaseEvent> &event);
 
 
     void actionctrlL(quint64 winId);

@@ -910,6 +910,8 @@ void DFileMenuData::initData()
         actionIcons[MenuAction::CreateSymlink] = QIcon::fromTheme("insert-link");
         actionIcons[MenuAction::Property] = QIcon::fromTheme("document-properties");
     }
+
+    actionKeys[MenuAction::RemoveStashedRemoteConn] = QObject::tr("Remove");
 }
 
 void DFileMenuData::initActions()

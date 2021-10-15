@@ -148,6 +148,12 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMSideBar *sidebar, const
 
         disabled.insert(MenuAction::Property);
     }
+
+    if (item->url().path().endsWith(".remote")) {
+        disabled.remove(MenuAction::Mount);
+        disabled.remove(MenuAction::Property);
+    }
+
     DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(infoPointer->menuActionList(), disabled);
     menu->setEventData(DUrl(), {item->url()}, WindowManager::getWindowId(wnd), sidebar);
     menu->setAccessibleInfo(AC_FILE_MENU_SIDEBAR_DEVICE_ITEM);

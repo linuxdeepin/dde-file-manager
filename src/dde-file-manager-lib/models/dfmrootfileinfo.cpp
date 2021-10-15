@@ -31,6 +31,7 @@
 #include "dfmrootfileinfo_p.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
+#include "utils.h"
 
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
@@ -159,6 +160,8 @@ bool DFMRootFileInfo::exists() const
         } else {
             return false;
         }
+    } else if (suffix() == SUFFIX_STASHED_REMOTE) {
+        return true;
     }
     return false; //默认返回false warning项
 }
@@ -185,6 +188,10 @@ QString DFMRootFileInfo::fileDisplayName() const
         return d->gmnt ? d->gmnt->name() : "";
     } else if (suffix() == SUFFIX_UDISKS) {
         return d->udispname;
+    } else if (suffix() == SUFFIX_STASHED_REMOTE) {
+        auto path = fileUrl().path();
+        path = RemoteMountsStashManager::normalizeConnUrl(path);
+        return RemoteMountsStashManager::getDisplayNameByConnUrl(path);
     }
     return baseName();
 }
@@ -300,6 +307,8 @@ DAbstractFileInfo::FileType DFMRootFileInfo::fileType() const
                 ret = ItemType::GvfsGPhoto2;
             }
         }
+    } else if (suffix() == SUFFIX_STASHED_REMOTE) {
+        ret = ItemType::NotConnRemote;
     } else if (d->mps.contains(QByteArray("/\0", 2))) {
         ret = ItemType::UDisksRoot;
     } else if (d->label == "_dde_data") {
@@ -351,6 +360,8 @@ QString DFMRootFileInfo::iconName() const
             }
         }
         return QString("drive-harddisk") + (d->encrypted ? "-encrypted" : "");
+    } else if (suffix() == SUFFIX_STASHED_REMOTE) {
+        return "folder-remote";
     }
     return "";
 }
@@ -365,7 +376,7 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     if (suffix() == SUFFIX_USRDIR) {
         ret.push_back(MenuAction::OpenInNewWindow);
         ret.push_back(MenuAction::OpenInNewTab);
-    } else {
+    } else if (suffix() != SUFFIX_STASHED_REMOTE) { // DO NOT SHOW THESE ACTIONS FOR NOT CONNECTED REMOTE CONNECTION
         ret.push_back(MenuAction::OpenDiskInNewWindow);
         ret.push_back(MenuAction::OpenDiskInNewTab);
     }
@@ -438,6 +449,11 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
         }
     }
 
+    if (suffix() == SUFFIX_STASHED_REMOTE) {
+        ret.push_back(MenuAction::Mount);
+        ret.push_back(MenuAction::RemoveStashedRemoteConn);
+    }
+
     ret.push_back(MenuAction::Separator);
 
     ret.push_back(MenuAction::Property);
@@ -508,6 +524,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         }
         ret["rooturi"] = d->gmnt && d->gmnt->getRootFile() ? d->gmnt->getRootFile()->uri() : "";
         ret["mounted"] = true;
+        ret["backer_url"] = d->backer_url;
     } else if (suffix() == SUFFIX_UDISKS) {
         if (d->mps.empty()) {
             ret["fsUsed"] = ~0ULL;
@@ -756,6 +773,7 @@ bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbst
         {ItemType::UDisksRemovable,  3},
         {ItemType::UDisksOptical,  4},
         {ItemType::GvfsSMB,  5},
+        {ItemType::NotConnRemote, 5},
         {ItemType::GvfsFTP,  5},
         {ItemType::GvfsMTP,  6},
         {ItemType::GvfsGPhoto2,  6},
@@ -790,7 +808,8 @@ bool DFMRootFileInfo::typeCompareByUrl(const DAbstractFileInfoPointer &a, const 
         {ItemType::GvfsGPhoto2,  5},
         {ItemType::GvfsGeneric,  6},
         {ItemType::GvfsSMB,  7},
-        {ItemType::GvfsFTP,  7}
+        {ItemType::GvfsFTP,  7},
+        {ItemType::NotConnRemote, 7}
     };
     // fix bug 64147 网络文件不去判断exists会卡顿
     if (!a)

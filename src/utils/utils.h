@@ -69,6 +69,32 @@ QPixmap svgToPixmap(const QString& path, int w, int h);
 QPixmap svgToHDPIPixmap(const QString& path);
 QPixmap svgToHDPIPixmap(const QString& path, int w, int h);
 
+#define REMOTE_KEY          "key"
+#define REMOTE_PROTOCOL     "protocol"
+#define REMOTE_HOST         "host"
+#define REMOTE_SHARE        "share"
+#define REMOTE_DISPLAYNAME  "name"
+#define REMOTE_ANONYMOUS    "anonymous"
+#define REMOTE_USERNAME     "username"
+#define REMOTE_PASSWORD     "password"
+
+#define CONFIG_PATH         (QDir::homePath() + "/.config/deepin/dde-file-manager.json")
+
+/*!
+ * \brief This class is used for managing the stashed remote mounts configurations in DFM config file
+ */
+class RemoteMountsStashManager {
+public:
+    static QList<QVariantMap> remoteMounts();
+    static void stashRemoteMount(const QString &mpt, const QString &displayName);
+    static void removeRemoteMountItem(const QString &key);
+    static void clearRemoteMounts();
+    static void stashCurrentMounts();
+    static QString getDisplayNameByConnUrl(const QString &url);
+    static QString normalizeConnUrl(const QString &url);
+};
+
+
 void clearStageDir(const QString &stagingRoot);
 #endif // UTILS_H
 

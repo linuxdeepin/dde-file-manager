@@ -254,6 +254,8 @@ public:
         UnLock,
         UnLockByKey,
 
+        RemoveStashedRemoteConn,
+
         UserMenuAction = Unknow + 2000
     };
 

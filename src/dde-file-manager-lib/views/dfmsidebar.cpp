@@ -48,6 +48,8 @@
 #include "dfmopticalmediawidget.h"
 #include "vault/vaulthelper.h"
 #include "accessibility/ac-lib-file-manager.h"
+#include "dtoolbar.h"
+#include "utils.h"
 
 #include <DApplicationHelper>
 #include <QScrollBar>
@@ -380,8 +382,21 @@ void DFMSideBar::rootFileResult()
                 continue;
             }
             if (Singleton<PathManager>::instance()->isVisiblePartitionPath(fi)) {
-                addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
-                devitems.push_back(fi->fileUrl());
+                // 这里需要根据url进行排序
+                const auto &url = fi->fileUrl();
+                auto r = std::upper_bound(devitems.begin(), devitems.end(), url,
+                [](const DUrl & a, const DUrl & b) {
+                    DAbstractFileInfoPointer fia = fileService->createFileInfo(nullptr, a);
+                    DAbstractFileInfoPointer fib = fileService->createFileInfo(nullptr, b);
+                    return DFMRootFileInfo::typeCompare(fia, fib);
+                });
+                if (r == devitems.end()) {
+                    this->addItem(DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
+                    devitems.append(url);
+                } else {
+                    this->insertItem(this->findLastItem(this->groupName(Device)) - (devitems.end() - r) + 1, DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
+                    devitems.insert(r, url);
+                }
             }
         }
     }
@@ -402,6 +417,17 @@ void DFMSideBar::onItemActivated(const QModelIndex &index)
 
     QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
     if (interface) {
+        // searchBarTextEntered also invoke "checkGvfsMountFileBusy", forbit invoke twice
+        if (item->url().path().endsWith(SUFFIX_STASHED_REMOTE)) {
+            DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(this->window());
+            if (window) {
+                auto path = RemoteMountsStashManager::normalizeConnUrl(item->url().path());
+                window->getToolBar()->searchBarTextEntered(path);
+                return;
+            }
+        }
+
+
         //判断网络文件是否可以到达
         if (DFileService::instance()->checkGvfsMountfileBusy(item->url())) {
             return;
@@ -459,7 +485,6 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
         DFileService::instance()->setCursorBusyState(false);
     }
     DFileService::instance()->setCursorBusyState(false);
-    return;
 }
 
 void DFMSideBar::onRename(const QModelIndex &index, QString newName) const
