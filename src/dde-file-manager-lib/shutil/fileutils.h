@@ -143,6 +143,8 @@ public:
     static bool isFileOnDisk(const QString &path);
     //获取线程cpu核个数
     static qint32 getCpuProcessCount();
+    // 获取smbd服务是否打开
+    static bool isSambaServiceRunning();
 };
 
 #endif // FILEUTILS_H

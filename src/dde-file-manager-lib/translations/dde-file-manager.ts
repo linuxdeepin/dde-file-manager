@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -1302,12 +1300,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1215"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1262"/>
         <source>Trash</source>
         <translation>Trash</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1224"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1271"/>
         <source>Empty</source>
         <translation>Empty</translation>
     </message>
@@ -1315,41 +1313,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1447"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1446"/>
         <location filename="../models/trashfileinfo.cpp" line="321"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1121"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1448"/>
         <location filename="../models/searchfileinfo.cpp" line="130"/>
         <source>Time modified</source>
         <translation>Time modified</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1450"/>
         <source>Size</source>
         <translation>Size</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1452"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1455"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1454"/>
         <source>Time created</source>
         <translation>Time created</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1457"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1456"/>
         <source>Last access</source>
         <translation>Last access</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1459"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1458"/>
         <location filename="../models/recentfileinfo.cpp" line="211"/>
         <location filename="../models/searchfileinfo.cpp" line="128"/>
         <location filename="../models/searchfileinfo.cpp" line="133"/>
@@ -1360,22 +1358,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2736"/>
+        <location filename="../views/dfileview.cpp" line="2710"/>
         <source>Disc mount error</source>
         <translation>Disc mount error</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2736"/>
+        <location filename="../views/dfileview.cpp" line="2710"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>The disc is in use, please end the running process and remount the disc.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2750"/>
+        <location filename="../views/dfileview.cpp" line="2724"/>
         <source>Mounting failed</source>
         <translation>Mounting failed</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3459"/>
+        <location filename="../views/dfileview.cpp" line="3428"/>
         <source>(Reverse)</source>
         <translation>(Reverse)</translation>
     </message>
@@ -1910,7 +1908,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirm</translation>
@@ -3374,7 +3371,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1225"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1272"/>
         <source>Empty Trash</source>
         <translation>Empty Trash</translation>
     </message>
@@ -4106,10 +4103,16 @@
     <message>
         <location filename="../interfaces/diconitemdelegate.cpp" line="910"/>
         <location filename="../interfaces/diconitemdelegate.cpp" line="1071"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="532"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="740"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="567"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="772"/>
         <source>%1 are not allowed</source>
         <translation>%1 are not allowed</translation>
+    </message>
+    <message>
+        <location filename="../views/dfilemanagerwindow.cpp" line="365"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="455"/>
+        <source>Failed to start Samba services</source>
+        <translation>Failed to start Samba services</translation>
     </message>
 </context>
 <context>
@@ -4655,7 +4658,7 @@
         <translation>The computer name is too long</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="511"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="536"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>You do not have permission to operate file/folder!</translation>
     </message>

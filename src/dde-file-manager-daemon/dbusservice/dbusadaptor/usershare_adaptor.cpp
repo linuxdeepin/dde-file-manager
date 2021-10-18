@@ -51,3 +51,8 @@ bool UserShareAdaptor::setUserSharePassword(const QString &username, const QStri
     return parent()->setUserSharePassword(username, passward);
 }
 
+bool UserShareAdaptor::startSambaService()
+{
+    return parent()->startSambaService();
+}
+

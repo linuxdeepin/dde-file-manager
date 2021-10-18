@@ -943,22 +943,22 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="209"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Tente novamente %1 minutos mais tarde</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="237"/>
         <source>Wrong password, please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Palavra-passe incorreta. Tente novamente %1 minutos mais tarde</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="240"/>
         <source>Wrong password, one chance left</source>
-        <translation type="unfinished"/>
+        <translation>Palavra-passe incorreta, uma tentativa restante</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="242"/>
         <source>Wrong password, %1 chances left</source>
-        <translation type="unfinished"/>
+        <translation>Palavra-passe incorreta, %1 tentativas restantes</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="287"/>
@@ -1200,12 +1200,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1215"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1262"/>
         <source>Trash</source>
         <translation>Lixo</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1224"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1271"/>
         <source>Empty</source>
         <translation>Esvaziar</translation>
     </message>
@@ -1213,41 +1213,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1447"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1446"/>
         <location filename="../models/trashfileinfo.cpp" line="321"/>
         <source>Name</source>
         <translation>Nome</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1121"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1448"/>
         <location filename="../models/searchfileinfo.cpp" line="130"/>
         <source>Time modified</source>
         <translation>Data de Modificação</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1450"/>
         <source>Size</source>
         <translation>Tamanho</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1452"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1455"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1454"/>
         <source>Time created</source>
         <translation>Data de criação</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1457"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1456"/>
         <source>Last access</source>
         <translation>O último acesso</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1459"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1458"/>
         <location filename="../models/recentfileinfo.cpp" line="211"/>
         <location filename="../models/searchfileinfo.cpp" line="128"/>
         <location filename="../models/searchfileinfo.cpp" line="133"/>
@@ -1258,22 +1258,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2736"/>
+        <location filename="../views/dfileview.cpp" line="2710"/>
         <source>Disc mount error</source>
         <translation>Erro ao montar disco</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2736"/>
+        <location filename="../views/dfileview.cpp" line="2710"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>O disco está a ser utilizado. Termine o processo em execução e volte a montar o disco.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2750"/>
+        <location filename="../views/dfileview.cpp" line="2724"/>
         <source>Mounting failed</source>
         <translation>Falha ao montar</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3459"/>
+        <location filename="../views/dfileview.cpp" line="3428"/>
         <source>(Reverse)</source>
         <translation>(Reverter)</translation>
     </message>
@@ -1991,13 +1991,9 @@
 <context>
     <name>FileIconItem</name>
     <message>
-        <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
-        <translation type="vanished">&quot;&apos;/\[]:|&lt;&gt;+=;,?* não são permitidos</translation>
-    </message>
-    <message>
         <location filename="../views/fileitem.cpp" line="203"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"/>
+        <translation>%1 não são permitidos</translation>
     </message>
 </context>
 <context>
@@ -2368,7 +2364,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="257"/>
         <location filename="../configure/global-setting-template.js" line="256"/>
         <source>Keep showing the mounted Samba shares</source>
-        <translation type="unfinished"/>
+        <translation>Continuar a mostrar as partilhas do Samba montadas</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="269"/>
@@ -3048,7 +3044,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1429"/>
         <source>Unconnected network shared directory</source>
-        <translation type="unfinished"/>
+        <translation>Diretório partilhado não ligado em rede</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1447"/>
@@ -3275,7 +3271,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1225"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1272"/>
         <source>Empty Trash</source>
         <translation>Esvaziar o lixo</translation>
     </message>
@@ -3984,10 +3980,6 @@
         <translation>Erro de execução</translation>
     </message>
     <message>
-        <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
-        <translation type="vanished">&quot;&apos;/\[]:|&lt;&gt;+=;,?* não são permitidos</translation>
-    </message>
-    <message>
         <location filename="../controllers/recentcontroller.cpp" line="332"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Erro ao abrir o ficheiro, causa: %1</translation>
@@ -4011,9 +4003,15 @@
     <message>
         <location filename="../interfaces/diconitemdelegate.cpp" line="910"/>
         <location filename="../interfaces/diconitemdelegate.cpp" line="1071"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="532"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="740"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="567"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="772"/>
         <source>%1 are not allowed</source>
+        <translation>%1 não são permitidos</translation>
+    </message>
+    <message>
+        <location filename="../views/dfilemanagerwindow.cpp" line="365"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="455"/>
+        <source>Failed to start Samba services</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -4560,7 +4558,7 @@
         <translation>O nome do computador é demasiado extenso</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="511"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="536"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Não tem autorização para alterar o ficheiro/pasta!</translation>
     </message>

@@ -141,22 +141,12 @@
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1028"/>
         <source>Lock Screen</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Kyçe Ekranin</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1029"/>
         <source>Both</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Only desktop</source>
-        <comment>button</comment>
-        <translation type="vanished">Vetëm për desktop</translation>
-    </message>
-    <message>
-        <source>Only lock screen</source>
-        <comment>button</comment>
-        <translation type="vanished">Vetëm për kyçje ekrani</translation>
+        <translation>Që të dyja</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1104"/>

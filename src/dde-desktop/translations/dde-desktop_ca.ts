@@ -149,16 +149,6 @@
         <translation>Amdós</translation>
     </message>
     <message>
-        <source>Only desktop</source>
-        <comment>button</comment>
-        <translation type="vanished">Només l&apos;escriptori</translation>
-    </message>
-    <message>
-        <source>Only lock screen</source>
-        <comment>button</comment>
-        <translation type="vanished">Només la pantalla de bloqueig</translation>
-    </message>
-    <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1104"/>
         <source>Apply</source>
         <comment>button</comment>

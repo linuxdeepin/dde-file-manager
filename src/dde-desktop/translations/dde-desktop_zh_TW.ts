@@ -149,16 +149,6 @@
         <translation>同時設定</translation>
     </message>
     <message>
-        <source>Only desktop</source>
-        <comment>button</comment>
-        <translation type="vanished">僅桌面</translation>
-    </message>
-    <message>
-        <source>Only lock screen</source>
-        <comment>button</comment>
-        <translation type="vanished">僅鎖定畫面</translation>
-    </message>
-    <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1104"/>
         <source>Apply</source>
         <comment>button</comment>

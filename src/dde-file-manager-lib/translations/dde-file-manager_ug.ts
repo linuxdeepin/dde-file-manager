@@ -1200,12 +1200,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1215"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1262"/>
         <source>Trash</source>
         <translation>يىغىۋېلىش پونكىتى</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1224"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1271"/>
         <source>Empty</source>
         <translation>قۇرۇقداش</translation>
     </message>
@@ -1213,41 +1213,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1447"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1446"/>
         <location filename="../models/trashfileinfo.cpp" line="321"/>
         <source>Name</source>
         <translation>نامى</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1121"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1448"/>
         <location filename="../models/searchfileinfo.cpp" line="130"/>
         <source>Time modified</source>
         <translation>ئۆزگەرتىلگەن ۋاقىت</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1450"/>
         <source>Size</source>
         <translation>چوڭلۇقى</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1452"/>
         <source>Type</source>
         <translation>تىپى</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1455"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1454"/>
         <source>Time created</source>
         <translation>قۇرۇلغان ۋاقتى</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1457"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1456"/>
         <source>Last access</source>
         <translation>ئاخىرقى زىيارەت ۋاقتى</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1459"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1458"/>
         <location filename="../models/recentfileinfo.cpp" line="211"/>
         <location filename="../models/searchfileinfo.cpp" line="128"/>
         <location filename="../models/searchfileinfo.cpp" line="133"/>
@@ -1258,22 +1258,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2736"/>
+        <location filename="../views/dfileview.cpp" line="2710"/>
         <source>Disc mount error</source>
         <translation>دىسكىغا ئورنىتىشتا خاتالىق كۆرۈلدى</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2736"/>
+        <location filename="../views/dfileview.cpp" line="2710"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>نۆۋەتتىكى قوزغاتقۇچ ئۈسكۈنىسى ئىشلىتىلىۋاتىدۇ، ئىگىلىۋالغان پىروگراممىلارنى تاقاپ قايتا ئورنىتىڭ</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2750"/>
+        <location filename="../views/dfileview.cpp" line="2724"/>
         <source>Mounting failed</source>
         <translation>مەشغۇلات مەغلۇب بولدى</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3459"/>
+        <location filename="../views/dfileview.cpp" line="3428"/>
         <source>(Reverse)</source>
         <translation>(تەتۈر تىزىش)</translation>
     </message>
@@ -1990,10 +1990,6 @@
 </context>
 <context>
     <name>FileIconItem</name>
-    <message>
-        <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
-        <translation type="vanished">&quot;&apos;/\[]:|&lt;&gt;+=;,?* لار بولسا بولمايدۇ</translation>
-    </message>
     <message>
         <location filename="../views/fileitem.cpp" line="203"/>
         <source>%1 are not allowed</source>
@@ -3276,7 +3272,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1225"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1272"/>
         <source>Empty Trash</source>
         <translation>سىۋەتنى قۇرۇقداش</translation>
     </message>
@@ -3985,10 +3981,6 @@
         <translation>ئىجرا خاتالىقى</translation>
     </message>
     <message>
-        <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
-        <translation type="vanished">&quot;&apos;/\[]:|&lt;&gt;+=;,?* لار بولسا بولمايدۇ</translation>
-    </message>
-    <message>
         <location filename="../controllers/recentcontroller.cpp" line="332"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>ھۆججەت ئېچىش مەغلۇب بولدى ، سەۋەبى:% 1</translation>
@@ -4012,10 +4004,16 @@
     <message>
         <location filename="../interfaces/diconitemdelegate.cpp" line="910"/>
         <location filename="../interfaces/diconitemdelegate.cpp" line="1071"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="532"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="740"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="567"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="772"/>
         <source>%1 are not allowed</source>
         <translation>%1 لار بولسا بولمايدۇ</translation>
+    </message>
+    <message>
+        <location filename="../views/dfilemanagerwindow.cpp" line="365"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="455"/>
+        <source>Failed to start Samba services</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4561,7 +4559,7 @@
         <translation>كومپيۇتېر نامى بەك ئۇزۇن بولۇپ قالدى</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="511"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="536"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>سىزنىڭ بۇ ھۆججەت/ ھۆججەت قىسقۇچقا مەشغۇلات قىلىدىغان ھوقۇقىڭىز يوق!</translation>
     </message>

@@ -1200,12 +1200,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1215"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1262"/>
         <source>Trash</source>
         <translation>回收桶</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1224"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1271"/>
         <source>Empty</source>
         <translation>清除</translation>
     </message>
@@ -1213,41 +1213,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1447"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1446"/>
         <location filename="../models/trashfileinfo.cpp" line="321"/>
         <source>Name</source>
         <translation>名稱</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1121"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1448"/>
         <location filename="../models/searchfileinfo.cpp" line="130"/>
         <source>Time modified</source>
         <translation>修改時間</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1450"/>
         <source>Size</source>
         <translation>檔案大小</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1452"/>
         <source>Type</source>
         <translation>檔案類型</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1455"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1454"/>
         <source>Time created</source>
         <translation>建立時間</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1457"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1456"/>
         <source>Last access</source>
         <translation>上次存取</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1459"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1458"/>
         <location filename="../models/recentfileinfo.cpp" line="211"/>
         <location filename="../models/searchfileinfo.cpp" line="128"/>
         <location filename="../models/searchfileinfo.cpp" line="133"/>
@@ -1258,22 +1258,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2736"/>
+        <location filename="../views/dfileview.cpp" line="2710"/>
         <source>Disc mount error</source>
         <translation>光盤掛載錯誤</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2736"/>
+        <location filename="../views/dfileview.cpp" line="2710"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>當前光驅設備正在佔用，請關閉佔用進程再重新掛載</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2750"/>
+        <location filename="../views/dfileview.cpp" line="2724"/>
         <source>Mounting failed</source>
         <translation>掛載失敗</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3459"/>
+        <location filename="../views/dfileview.cpp" line="3428"/>
         <source>(Reverse)</source>
         <translation>（還原）</translation>
     </message>
@@ -1990,10 +1990,6 @@
 </context>
 <context>
     <name>FileIconItem</name>
-    <message>
-        <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
-        <translation type="vanished">不得含有&quot;&apos;/\[]:|&lt;&gt;+=;,?*</translation>
-    </message>
     <message>
         <location filename="../views/fileitem.cpp" line="203"/>
         <source>%1 are not allowed</source>
@@ -3275,7 +3271,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1225"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1272"/>
         <source>Empty Trash</source>
         <translation>清除回收桶</translation>
     </message>
@@ -3984,10 +3980,6 @@
         <translation>執行錯誤</translation>
     </message>
     <message>
-        <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
-        <translation type="vanished">不得含有&quot;&apos;/\[]:|&lt;&gt;+=;,?*</translation>
-    </message>
-    <message>
         <location filename="../controllers/recentcontroller.cpp" line="332"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>無法開啟檔案，因為：%1</translation>
@@ -4011,10 +4003,16 @@
     <message>
         <location filename="../interfaces/diconitemdelegate.cpp" line="910"/>
         <location filename="../interfaces/diconitemdelegate.cpp" line="1071"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="532"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="740"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="567"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="772"/>
         <source>%1 are not allowed</source>
         <translation>不得含有%1</translation>
+    </message>
+    <message>
+        <location filename="../views/dfilemanagerwindow.cpp" line="365"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="455"/>
+        <source>Failed to start Samba services</source>
+        <translation>Samba服務啟動失敗</translation>
     </message>
 </context>
 <context>
@@ -4560,7 +4558,7 @@
         <translation>計算機名過長</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="511"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="536"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>你無權對檔案或資料夾進行操作！</translation>
     </message>

@@ -149,16 +149,6 @@
         <translation>Mindkettő</translation>
     </message>
     <message>
-        <source>Only desktop</source>
-        <comment>button</comment>
-        <translation type="vanished">Csak asztal</translation>
-    </message>
-    <message>
-        <source>Only lock screen</source>
-        <comment>button</comment>
-        <translation type="vanished">Csak zárolási képernyő</translation>
-    </message>
-    <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1104"/>
         <source>Apply</source>
         <comment>button</comment>

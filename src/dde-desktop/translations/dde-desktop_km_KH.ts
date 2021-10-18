@@ -149,16 +149,6 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Only desktop</source>
-        <comment>button</comment>
-        <translation type="vanished">មានតែផ្ទៃតុប៉ុណ្ណោះ</translation>
-    </message>
-    <message>
-        <source>Only lock screen</source>
-        <comment>button</comment>
-        <translation type="vanished">ត្រឹមតែចាក់សោរអេក្រង់</translation>
-    </message>
-    <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1104"/>
         <source>Apply</source>
         <comment>button</comment>

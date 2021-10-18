@@ -444,6 +444,19 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
             }
 
             qWarning() << err << "err code = " << QString::number(process.exitCode());
+
+            if (err.contains("The transport-connection attempt was refused by the remote system") && err.contains("Maybe smbd is not running")) {
+                bool ret = userShareManager->startSambaService();
+                if (ret) {
+                    qInfo() << "smb start success";
+                    return addUserShare(info);
+                } else {
+                    qWarning() << "smb start failed";
+                    dialogManager->showErrorDialog(QString(), QObject::tr("Failed to start Samba services"));
+                    return false;
+                }
+            }
+
             dialogManager->showErrorDialog(QString(), err);
             return false;
         }
@@ -492,6 +505,18 @@ void UserShareManager::usershareCountchanged()
 {
     int count = validShareInfoCount();
     emit userShareCountChanged(count);
+}
+
+bool UserShareManager::startSambaService()
+{
+    QDBusReply<bool> reply = m_userShareInterface->startSambaService();
+    if (reply.isValid()) {
+        qDebug() << "create link succ: " << reply.value();
+        return true;
+    } else {
+        qDebug() << "create link fail: " << reply.error();
+        return false;
+    }
 }
 
 void UserShareManager::deleteUserShareByShareName(const QString &shareName)

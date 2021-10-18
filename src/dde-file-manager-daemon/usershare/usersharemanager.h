@@ -36,16 +36,21 @@ public:
     explicit UserShareManager(QObject *parent = nullptr);
     ~UserShareManager();
 
+public:
     static QString ObjectPath;
     static QString PolicyKitActionId;
+
 protected:
     bool checkAuthentication();
+
 signals:
 
 public slots:
     bool addGroup(const QString &groupName);
     bool setUserSharePassword(const QString &username, const QString &passward);
     bool closeSmbShareByShareName(const QString &sharename,const bool bshow);
+    bool startSambaService();
+
 private:
     UserShareAdaptor* m_userShareAdaptor = nullptr;
 };

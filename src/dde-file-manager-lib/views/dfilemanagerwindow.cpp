@@ -54,6 +54,7 @@
 #include "shutil/fileutils.h"
 #include "gvfs/networkmanager.h"
 #include "dde-file-manager/singleapplication.h"
+#include "dialogs/dialogmanager.h"
 
 #include "xutil.h"
 #include "utils.h"
@@ -95,6 +96,8 @@
 #include <DAnchors>
 #include <DApplicationHelper>
 #include <DHorizontalLine>
+#include <QHostInfo>
+#include <QNetworkInterface>
 
 DWIDGET_USE_NAMESPACE
 
@@ -294,23 +297,30 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
     qInfo() << "  cd   to " << fileUrl;
     DFMBaseView *current_view = tab->fileView();
 
+    const QString &scheme = fileUrl.scheme();
+
     // fix 6942 取消判断先后请求地址差异判断
     // fix 28857 高频进入光驱会死锁
-    if (current_view && current_view->rootUrl() == fileUrl && fileUrl.scheme() == BURN_ROOT) {
+    if (current_view && current_view->rootUrl() == fileUrl && scheme == BURN_ROOT) {
         return false;
     }
 
-    if (fileUrl.scheme() == BURN_SCHEME) {
+    bool fileSamba = false;
+    {
+        const auto &decodeUrl = QUrl::fromEncoded(fileUrl.toString().toLocal8Bit()).toString();
+        QRegExp rx(R"(.*/run/user/.*gvfs/smb-share:server=\d+.\d+.\d+.\d+.*)");
+        rx.setPatternSyntax(QRegExp::RegExp);
+        fileSamba = rx.exactMatch(decodeUrl);
+    }
 
+    if (scheme == BURN_SCHEME) {
         // 如果当前设备正在执行刻录或擦除，激活进度窗口，拒绝跳转至文件列表页面
         QString strVolTag = DFMOpticalMediaWidget::getVolTag(fileUrl);
         if (!strVolTag.isEmpty() && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
             emit fileSignalManager->activeTaskDlg();
             return false;
         }
-    }
-
-    if (fileUrl.scheme() == DFMROOT_SCHEME) {
+    } else if (scheme == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = DFileService::instance()->createFileInfo(q_ptr, fileUrl);
         if (fi->suffix() == SUFFIX_USRDIR) {
             return cdForTab(tab, fi->redirectedFileUrl());
@@ -321,8 +331,46 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
                 qDebug() << "mount the device{" << blkDevicePath << " } at:" << blk->mount({});
             }
         }
+    } else if (scheme == SMB_SCHEME || (fileUrl.toString().contains("/run/user") && fileUrl.toString().contains("smb-share"))) {
+        // 需求 88316，smb 可能已经关闭 这里需求尝试启动
+
+        // 首先判断smb地址是否是自己ip
+        // 获取url里面的ip
+        QString urlIp;
+        QRegExp rx(R"((\d+.\d+.\d+.\d+))");
+        QStringList list;
+        if (rx.indexIn(fileUrl.toString(), 0) != -1) {
+            urlIp = rx.cap(1);
+        }
+
+        // 获取本机ip
+        bool selfIp = false;
+        const auto &allAddresses = QNetworkInterface::allAddresses();
+        qDebug() << allAddresses;
+        for (const auto &address : allAddresses) {
+            if (address.protocol() == QAbstractSocket::IPv4Protocol) {
+                const QString &ipAddr = address.toString();
+                if (ipAddr == urlIp) {
+                    selfIp = true;
+                    break;
+                }
+            }
+        }
+        if (selfIp) { // 自己ip再判断smb状态
+            if (!FileUtils::isSambaServiceRunning()) {
+                bool ret = userShareManager->startSambaService();
+                if (ret)
+                    qInfo() << "smb start success";
+                else {
+                    dialogManager->showErrorDialog(QString(), QObject::tr("Failed to start Samba services"));
+                    return false;
+                }
+                    //qWarning() << "smb start failed";
+            }
+        }
     }
-    if (fileUrl.scheme() == DFMVAULT_SCHEME ||
+
+    if (scheme == DFMVAULT_SCHEME ||
             VaultController::isVaultFile(fileUrl.fragment())) {
         if (VaultController::Unlocked != VaultController::ins()->state()
                 || fileUrl.host() == "delete") {
@@ -340,6 +388,7 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
             return ret;
         }
     }
+
     if (!current_view || !DFMViewManager::instance()->isSuited(fileUrl, current_view)) {
         DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
         if (view) {

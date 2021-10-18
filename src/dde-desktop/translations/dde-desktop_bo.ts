@@ -149,16 +149,6 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Only desktop</source>
-        <comment>button</comment>
-        <translation type="vanished">ཅོག་ངོས་ཁོ་ན་སྒྲིག་འགོད་བྱེད་པ།</translation>
-    </message>
-    <message>
-        <source>Only lock screen</source>
-        <comment>button</comment>
-        <translation type="vanished">བརྙན་ཡོལ་སྒོ་ལྕགས་ཁོ་ན་སྒྲིག་འགོད་བྱེད་པ།</translation>
-    </message>
-    <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1104"/>
         <source>Apply</source>
         <comment>button</comment>

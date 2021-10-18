@@ -1741,6 +1741,21 @@ qint32 FileUtils::getCpuProcessCount()
     return cpuProcessCount;
 }
 
+bool FileUtils::isSambaServiceRunning()
+{
+    QDBusInterface iface("org.freedesktop.systemd1",
+                         "/org/freedesktop/systemd1/unit/smbd_2eservice",
+                         "org.freedesktop.systemd1.Unit",
+                         QDBusConnection::systemBus());
+
+    if (iface.isValid()) {
+        const QVariant &variantStatus = iface.property("SubState"); // 获取属性 SubState，等同于 systemctl status smbd 结果 Active 值
+        if (variantStatus.isValid())
+            return "running" == variantStatus.toString();
+    }
+    return false;
+}
+
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
 bool FileUtils::isDesktopFile(const QString &filePath)
 {

@@ -45,6 +45,35 @@ UserShareManager::~UserShareManager()
 
 }
 
+bool UserShareManager::startSambaService()
+{
+    if (!checkAuthentication()) {
+        qWarning() << "start samba service failed";
+        return false;
+    }
+
+    QDBusInterface ifaceStart("org.freedesktop.systemd1",
+                              "/org/freedesktop/systemd1/unit/smbd_2eservice",
+                              "org.freedesktop.systemd1.Unit",
+                              QDBusConnection::systemBus());
+    QDBusMessage repStart = ifaceStart.call(QStringLiteral("Start"),
+                                            QString("replace"));
+    const QString &errorMsg = repStart.errorMessage();
+    if (errorMsg.isEmpty()) {
+        qInfo() << "smbd service start success";
+
+        // 自启动
+        QProcess sh;
+        sh.start("ln -sf /lib/systemd/system/smbd.service /etc/systemd/system/multi-user.target.wants/smbd.service");
+
+        sh.waitForFinished();
+        qDebug() << sh.readAll() << sh.readAllStandardError() << sh.readAllStandardOutput();
+        return true;
+    }
+
+    return false;
+}
+
 bool UserShareManager::checkAuthentication()
 {
     bool ret = false;

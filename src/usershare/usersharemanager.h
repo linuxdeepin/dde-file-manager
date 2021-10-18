@@ -88,6 +88,8 @@ public slots:
     void onFileDeleted(const QString& filePath);
     void usershareCountchanged();
 
+    bool startSambaService();
+
 private:
     void deleteUserShareByShareName(const QString& shareName);
     void loadUserShareInfoPathNames();
