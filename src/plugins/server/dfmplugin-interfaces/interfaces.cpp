@@ -23,8 +23,11 @@
 #include "interfaces.h"
 
 #include "deviceservice.h"
+#include "devicemanagerdbus.h"
+#include "dbus_adaptor/devicemanagerdbus_adaptor.h"
 
 #include <dfm-framework/framework.h>
+#include <QDBusConnection>
 
 DSC_USE_NAMESPACE
 
@@ -40,12 +43,14 @@ void Interfaces::initialize()
 
 bool Interfaces::start()
 {
-    auto &ctx = dpfInstance.serviceContext();
-    DeviceService *service = ctx.service<DeviceService>(DeviceService::name());
-    Q_ASSERT(service);
-    service->startAutoMount();
-    service->startMonitor();
-    initDBusInterfaces();
+    QDBusConnection connection = QDBusConnection::sessionBus();
+    if (!connection.isConnected()) {
+        qWarning("Cannot connect to the D-Bus session bus.\n"
+                 "Please check your system settings and try again.\n");
+        return false;
+    }
+
+    initServiceDBusInterfaces(connection);
     return true;
 }
 
@@ -54,7 +59,29 @@ dpf::Plugin::ShutdownFlag Interfaces::stop()
     return Sync;
 }
 
-void Interfaces::initDBusInterfaces()
+std::once_flag &Interfaces::onceFlag()
 {
+    static std::once_flag flag;
+    return flag;
+}
 
+void Interfaces::initServiceDBusInterfaces(QDBusConnection &connection)
+{
+    std::call_once(Interfaces::onceFlag(), [&connection, this]() {
+        // add our D-Bus interface and connect to D-Bus
+        if (!connection.registerService("com.deepin.filemanager.service")) {
+            qWarning("Cannot register the \"com.deepin.filemanager.service\" service.\n");
+            return;
+        }
+
+        // register object
+        deviceManager.reset(new DeviceManagerDBus);
+        Q_UNUSED(new DeviceManagerAdaptor(deviceManager.data()));
+        if (!connection.registerObject("/com/deepin/filemanager/service/DeviceManager",
+                                       deviceManager.data())) {
+            qWarning("Cannot register the \"/com/deepin/filemanager/service/DeviceManager\" object.\n");
+            deviceManager->deleteLater();
+            return;
+        }
+    });
 }

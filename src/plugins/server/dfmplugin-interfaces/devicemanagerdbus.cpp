@@ -20,31 +20,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef INTERFACES_H
-#define INTERFACES_H
+#include "devicemanagerdbus.h"
 
-#include <dfm-framework/lifecycle/plugin.h>
+#include "deviceservice.h"
 
-#include <mutex>
+#include <dfm-framework/framework.h>
+#include <QtConcurrent>
 
-class QDBusConnection;
-class DeviceManagerDBus;
-class Interfaces : public dpf::Plugin
+DSC_USE_NAMESPACE
+
+DeviceManagerDBus::DeviceManagerDBus(QObject *parent) : QObject(parent)
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.server" FILE "interfaces.json")
+    initialize();
+}
 
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+DeviceManagerDBus::~DeviceManagerDBus()
+{
 
-private:
-    static std::once_flag &onceFlag();
-    void initServiceDBusInterfaces(QDBusConnection &connection);
+}
 
-private:
-    QScopedPointer<DeviceManagerDBus> deviceManager;
-};
+void DeviceManagerDBus::initialize()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    service = ctx.service<DeviceService>(DeviceService::name());
+    Q_ASSERT(service);
+    QtConcurrent::run([this] () {
+        service->startAutoMount();
+        service->startMonitor();
+        emit AutoMountCompleted();
+    });
+}
 
-#endif // INTERFACES_H
+void DeviceManagerDBus::UnmountAllDevices()
+{
+
+}

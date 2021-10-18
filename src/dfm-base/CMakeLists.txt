@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(dfm-base)
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dbusservice)
+
 set(GLOBAL_H
     dfm_base_global.h)
 
@@ -131,8 +133,12 @@ set(APPLICATIONSERVICE_H
     application/settings.h
     )
 
-set(QRCS
-    resources/resources.qrc
+set(DBUSSERVICE_H
+    dbusservice/dbus_interface/devicemanagerdbus_interface.h
+    )
+
+set(DBUSSERVICE_CPP
+    dbusservice/dbus_interface/devicemanagerdbus_interface.cpp
     )
 
 add_library(${PROJECT_NAME}
@@ -150,6 +156,8 @@ add_library(${PROJECT_NAME}
     ${WIDGETS_CPP}
     ${APPLICATIONSERVICE_H}
     ${APPLICATIONSERVICE_CPP}
+    ${DBUSSERVICE_H}
+    ${DBUSSERVICE_CPP}
     ${QRCS}
     )
 

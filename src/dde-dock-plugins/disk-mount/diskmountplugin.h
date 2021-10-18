@@ -30,6 +30,7 @@
 class TipsWidget;
 class DiskPluginItem;
 class DiskControlWidget;
+class DeviceManagerInterface;
 
 // TODO(zhangs): ref-> https://gerrit.uniontech.com/c/dde-file-manager/+/23583
 
@@ -61,15 +62,14 @@ private:
     void displayModeChanged(const Dock::DisplayMode mode) override;
     PluginProxyInterface *proxyInter() const;
     void setProxyInter(PluginProxyInterface *proxy);
-
+    static std::once_flag &onceFlag();
 private:
     bool pluginAdded {false};
 
     TipsWidget        *tipsLabel {nullptr};
     DiskPluginItem    *diskPluginItem {nullptr};
     DiskControlWidget *diskControlApplet {nullptr};
-
-    static std::once_flag flag;
+    QSharedPointer<DeviceManagerInterface> deviceInter;
 };
 
 #endif // DISKMOUNTPLUGIN_H

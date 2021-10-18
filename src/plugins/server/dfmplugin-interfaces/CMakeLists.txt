@@ -6,10 +6,14 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(INTERFACES_H
     interfaces.h
+    devicemanagerdbus.h
+    dbus_adaptor/devicemanagerdbus_adaptor.h
     )
 
 set(INTERFACES_CPP
     interfaces.cpp
+    devicemanagerdbus.cpp
+    dbus_adaptor/devicemanagerdbus_adaptor.cpp
     interfaces.json
     )
 

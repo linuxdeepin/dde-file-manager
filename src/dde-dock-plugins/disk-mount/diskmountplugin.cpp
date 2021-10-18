@@ -25,6 +25,8 @@
 #include "diskpluginitem.h"
 #include "diskcontrolwidget.h"
 
+#include "dbus_interface/devicemanagerdbus_interface.h"
+
 #include <DApplication>
 #include <QGSettings>
 
@@ -63,8 +65,22 @@ void DiskMountPlugin::init(PluginProxyInterface *proxyInter)
     qApp->loadTranslator();
     qApp->setApplicationName(applicationName);
 
-    std::call_once(DiskMountPlugin::flag, [this, proxyInter] () {
+    std::call_once(DiskMountPlugin::onceFlag(), [this, proxyInter] () {
         setProxyInter(proxyInter); // `m_proxyInter` from Base class `PluginsItemInterface`
+
+        // Note: the plugin depends on `dde-file-manager-server`!
+        // the plugin will not work if `dde-file-manager-server` not run.
+        deviceInter.reset(new DeviceManagerInterface(
+                              "com.deepin.filemanager.service",
+                              "/com/deepin/filemanager/service/DeviceManager",
+                              QDBusConnection::sessionBus(),
+                              this
+                              ));
+        if (!deviceInter->isValid()) {
+            qCritical() << "DeviceManagerInterface cannot link!";
+            deviceInter->deleteLater();
+        }
+
         initCompoments();
         diskPluginItem->setDockDisplayMode(displayMode());
     });
@@ -129,9 +145,8 @@ void DiskMountPlugin::invokedMenuItem(const QString &itemKey, const QString &men
 
     if (menuId == OPEN)
         QProcess::startDetached("gio", QStringList() << "open" << "computer:///");
-    else if (menuId == UNMOUNT_ALL)
-        // TODO(zhangs): unmountAll
-        ;
+    else if (deviceInter && menuId == UNMOUNT_ALL)
+        deviceInter->UnmountAllDevices();
 }
 
 int DiskMountPlugin::itemSortKey(const QString &itemKey)
@@ -171,7 +186,7 @@ void DiskMountPlugin::diskCountChanged(const int count)
 
 void DiskMountPlugin::initCompoments()
 {
-    diskControlApplet = new DiskControlWidget;
+    diskControlApplet = new DiskControlWidget(deviceInter);
     diskControlApplet->setObjectName("disk-mount");
     diskControlApplet->setVisible(false);
 
@@ -194,4 +209,10 @@ void DiskMountPlugin::setProxyInter(PluginProxyInterface *proxy)
 {
     // `m_proxyInter` from Base class `PluginsItemInterface`
     m_proxyInter = proxy;
+}
+
+std::once_flag &DiskMountPlugin::onceFlag()
+{
+    static std::once_flag flag;
+    return flag;
 }

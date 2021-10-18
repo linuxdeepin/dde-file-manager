@@ -10,6 +10,10 @@ set(CMAKE_AUTOUIC ON)
 # generate a compile commands file as complete database for vim-YouCompleteMe or some other similar tools
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+set(DBUS_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/../../dfm-base/dbusservice)
+set(DBUS_INTERFACES_DIR  ${DBUS_DIR}/dbus_interface)
+include_directories(${DBUS_DIR})
+
 set(MOUNT_PLUGIN_SRC
     disk-mount.json
     diskmountplugin.cpp
@@ -32,6 +36,14 @@ set(MOUNT_PLUGIN_HEADER
     dattachedprotocoldevice.h
     )
 
+set(DBUS_INTERFACES_SRC
+    ${DBUS_INTERFACES_DIR}/devicemanagerdbus_interface.cpp
+    )
+
+set(DBUS_INTERFACES_HEADER
+    ${DBUS_INTERFACES_DIR}/devicemanagerdbus_interface.h
+    )
+
 find_package(Qt5Widgets REQUIRED)
 find_package(DtkWidget REQUIRED)
 find_package(PkgConfig REQUIRED)
@@ -43,6 +55,8 @@ add_library(${PROJECT_NAME}
     SHARED
     ${MOUNT_PLUGIN_SRC}
     ${MOUNT_PLUGIN_HEADER}
+    ${DBUS_INTERFACES_SRC}
+    ${DBUS_INTERFACES_HEADER}
     )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ./)

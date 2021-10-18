@@ -22,6 +22,8 @@
 */
 #include "diskcontrolwidget.h"
 
+#include "dbus_interface/devicemanagerdbus_interface.h"
+
 #include <DGuiApplicationHelper>
 
 #include <QScrollBar>
@@ -36,10 +38,11 @@ static const int WIDTH = 300;
  * The control pops up after the left mouse button click on the main control of the plugin
  */
 
-DiskControlWidget::DiskControlWidget(QWidget *parent)
+DiskControlWidget::DiskControlWidget(QWeakPointer<DeviceManagerInterface> inter, QWidget *parent)
     : QScrollArea(parent),
       centralLayout(new QVBoxLayout),
-      centralWidget(new QWidget)
+      centralWidget(new QWidget),
+      deviceInter(inter)
 {
     this->setObjectName("DiskControlWidget-QScrollArea");
     initializeUi();
@@ -48,7 +51,7 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
 
 void DiskControlWidget::initializeUi()
 {
-    std::call_once(DiskControlWidget::flag, [this] () {
+    std::call_once(DiskControlWidget::onceFlag(), [this] () {
         centralWidget->setLayout(centralLayout);
         centralWidget->setFixedWidth(WIDTH);
         centralLayout->setMargin(0);
@@ -132,6 +135,12 @@ int DiskControlWidget::addDeviceItems()
     // TODO(zhangs): request server, remove last seperate line
 
     return mountedCount;
+}
+
+std::once_flag &DiskControlWidget::onceFlag()
+{
+    static std::once_flag flag;
+    return flag;
 }
 
 void DiskControlWidget::onDiskListChanged()

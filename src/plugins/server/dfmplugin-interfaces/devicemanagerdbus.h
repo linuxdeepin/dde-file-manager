@@ -20,31 +20,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef INTERFACES_H
-#define INTERFACES_H
+#ifndef DEVICEMANAGERDBUS_H
+#define DEVICEMANAGERDBUS_H
 
-#include <dfm-framework/lifecycle/plugin.h>
+#include <QObject>
 
-#include <mutex>
+namespace dfm_service_common {
+class DeviceService;
+}
 
-class QDBusConnection;
-class DeviceManagerDBus;
-class Interfaces : public dpf::Plugin
+class DeviceManagerDBus : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.server" FILE "interfaces.json")
+    Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.service.DeviceManager")
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    explicit DeviceManagerDBus(QObject *parent = nullptr);
+    ~DeviceManagerDBus();
 
 private:
-    static std::once_flag &onceFlag();
-    void initServiceDBusInterfaces(QDBusConnection &connection);
+    void initialize();
+
+signals:
+    void AutoMountCompleted();
+
+public slots:
+    void UnmountAllDevices();
 
 private:
-    QScopedPointer<DeviceManagerDBus> deviceManager;
+    dfm_service_common::DeviceService *service {nullptr};
 };
 
-#endif // INTERFACES_H
+
+#endif // DEVICEMANAGERDBUS_H
