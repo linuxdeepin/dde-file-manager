@@ -22,7 +22,6 @@
 
 #pragma once
 
-//#include "interface/dfmvaultcontentinterface.h"
 #include "dfmvaultpagebase.h"
 
 DWIDGET_BEGIN_NAMESPACE
@@ -44,12 +43,23 @@ public:
         Information
     };
 
+protected:
+    // 重写视图隐藏事件，用于隐藏tooltip
+    void hideEvent(QHideEvent *event) override;
+
 public slots:
     void onButtonClicked(const int &index);
 
     void onPasswordChanged(const QString &pwd);
 
     void onVaultUlocked(int state);
+
+    // 恢复密码输入
+    void restorePasswordInput();
+
+private slots:
+    // 超时函数，定时隐藏tooltip显示
+    void slotTooltipTimerTimeout();
 
 private:
     explicit DFMVaultUnlockPages(QWidget *parent = nullptr);
@@ -66,4 +76,6 @@ private:
 
     DToolTip *m_tooltip {nullptr};
     DFloatingWidget *m_frame {nullptr};
+    // 定时器，用于定时隐藏tooltip
+    QTimer *pTooltipTimer {nullptr};
 };

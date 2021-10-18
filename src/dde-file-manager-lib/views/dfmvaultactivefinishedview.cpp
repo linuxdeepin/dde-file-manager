@@ -162,6 +162,10 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
 
         // Reset autolock time config.
         VaultLockManager::getInstance().resetConfig();
+
+        // 保险箱初始化操作
+        VaultController::ins()->restoreLeftoverErrorInputTimes();
+        VaultController::ins()->restoreNeedWaitMinutes();
     } else {
         QMessageBox::warning(this, QString(), QString(tr("Failed to create file vault: %1").arg(nState)));
     }

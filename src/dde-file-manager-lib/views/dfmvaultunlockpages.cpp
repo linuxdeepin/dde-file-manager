@@ -20,6 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#define TOOLTIP_SHOW_DURATION 3000
+
 #include "dfmvaultunlockpages.h"
 #include "vault/interfaceactivevault.h"
 #include "controllers/vaultcontroller.h"
@@ -41,6 +43,10 @@
 DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     : DFMVaultPageBase(parent)
 {
+    pTooltipTimer = new QTimer(this);
+    connect(pTooltipTimer, &QTimer::timeout,
+            this, &DFMVaultUnlockPages::slotTooltipTimerTimeout);
+
     AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_PASSWORD_UNLOCK_WIDGET);
 
     setIcon(QIcon::fromTheme("dfm_vault"));
@@ -103,12 +109,13 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     connect(this, &DFMVaultUnlockPages::buttonClicked, this, &DFMVaultUnlockPages::onButtonClicked);
     connect(m_passwordEdit, &DPasswordEdit::textChanged, this, &DFMVaultUnlockPages::onPasswordChanged);
     connect(VaultController::ins(), &VaultController::signalUnlockVault, this, &DFMVaultUnlockPages::onVaultUlocked);
+    connect(VaultController::ins(), &VaultController::sigRestorePasswordInput, this, &DFMVaultUnlockPages::restorePasswordInput);
     connect(m_tipsButton, &QPushButton::clicked, this, [this] {
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint))
         {
             QString hint = tr("Password hint: %1").arg(strPwdHint);
-            showToolTip(hint, 3000, EN_ToolTip::Information);
+            showToolTip(hint, TOOLTIP_SHOW_DURATION, EN_ToolTip::Information);
         }
     });
     connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
@@ -167,9 +174,12 @@ void DFMVaultUnlockPages::showToolTip(const QString &text, int duration, DFMVaul
         return;
     }
 
-    QTimer::singleShot(duration, this, [ = ] {
-        m_frame->close();
-    });
+    // 重新启动定时器，定时隐藏tooltip
+    if (pTooltipTimer) {
+        if (pTooltipTimer->isActive())
+            pTooltipTimer->stop();
+        pTooltipTimer->start(duration);
+    }
 }
 
 DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
@@ -178,23 +188,59 @@ DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
     return &s_instance;
 }
 
+void DFMVaultUnlockPages::hideEvent(QHideEvent *event)
+{
+    if (m_frame)
+        m_frame->close();
+    DFMVaultPageBase::hideEvent(event);
+}
+
 void DFMVaultUnlockPages::onButtonClicked(const int &index)
 {
     if (index == 1) {
         // 点击解锁后,灰化解锁按钮
         getButton(1)->setEnabled(false);
 
+        // 判断保险箱剩余错误输入次数
+        VaultController *pVaultController = VaultController::ins();
+        int nLeftoverErrorTimes = pVaultController->getLeftoverErrorInputTimes();
+        if (nLeftoverErrorTimes < 1) {
+            int nNeedWaitMinutes = pVaultController->getNeedWaitMinutes();
+            showToolTip(tr("Please try again %1 minutes later").arg(nNeedWaitMinutes), TOOLTIP_SHOW_DURATION, EN_ToolTip::Warning);
+            return;
+        }
+
         QString strPwd = m_passwordEdit->text();
 
         QString strCipher("");
         if (InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
             m_bUnlockByPwd = true;
-            VaultController::ins()->unlockVault(strCipher);
+            pVaultController->unlockVault(strCipher);
+            // 密码输入正确后，剩余输入次数还原,需要等待的分钟数还原
+            pVaultController->restoreLeftoverErrorInputTimes();
+            pVaultController->restoreNeedWaitMinutes();
         } else {
             // 设置密码输入框颜色
             // 修复bug-51508 激活密码框警告状态
             m_passwordEdit->setAlert(true);
-            showToolTip(tr("Wrong password"), 3000, EN_ToolTip::Warning);
+
+
+            // 保险箱剩余错误密码输入次数减1
+            pVaultController->leftoverErrorInputTimesMinusOne();
+            // 显示错误输入提示
+            nLeftoverErrorTimes = pVaultController->getLeftoverErrorInputTimes();
+            if (nLeftoverErrorTimes < 1) {
+                // 计时10分钟后，恢复密码编辑框
+                pVaultController->startTimerOfRestorePasswordInput();
+                // 错误输入次数超过了限制
+                int nNeedWaitMinutes = pVaultController->getNeedWaitMinutes();
+                showToolTip(tr("Wrong password, please try again %1 minutes later").arg(nNeedWaitMinutes), TOOLTIP_SHOW_DURATION, EN_ToolTip::Warning);
+            } else {
+                if (nLeftoverErrorTimes == 1)
+                    showToolTip(tr("Wrong password, one chance left"), TOOLTIP_SHOW_DURATION, EN_ToolTip::Warning);
+                else
+                    showToolTip(tr("Wrong password, %1 chances left").arg(nLeftoverErrorTimes), TOOLTIP_SHOW_DURATION, EN_ToolTip::Warning);
+            }
         }
         return;
     }
@@ -238,7 +284,7 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
                 } else {    // 密码不正确
                     // 设置密码输入框颜色,并弹出tooltip
                     m_passwordEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
-                    showToolTip(tr("Wrong password"), 3000, EN_ToolTip::Warning);
+                    showToolTip(tr("Wrong password"), TOOLTIP_SHOW_DURATION, EN_ToolTip::Warning);
                 }
             }
         } else {
@@ -253,5 +299,19 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
 
         m_bUnlockByPwd = false;
     }
+}
+
+void DFMVaultUnlockPages::restorePasswordInput()
+{
+    // 密码剩余输入次数还原，需要等待的分钟数还原
+    VaultController::ins()->restoreLeftoverErrorInputTimes();
+    VaultController::ins()->restoreNeedWaitMinutes();
+    // 设置密码框可以输入
+    m_passwordEdit->lineEdit()->setEnabled(true);
+}
+
+void DFMVaultUnlockPages::slotTooltipTimerTimeout()
+{
+    m_frame->close();
 }
 

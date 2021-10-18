@@ -894,6 +894,23 @@ void VaultController::setBigFileIsDeleting(const bool isDeleting)
     m_isBigFileDeleting = isDeleting;
 }
 
+void VaultController::startTimerOfRestorePasswordInput()
+{
+    m_timerIdOfRestoreInput = startTimer(TIMER_OUT_TIME);
+}
+
+void VaultController::timerEvent(QTimerEvent *event)
+{
+    int timerID = event->timerId();
+    if (timerID == m_timerIdOfRestoreInput) {
+        --m_restoreInputMinutes;
+        if (m_restoreInputMinutes < 1) {
+            emit sigRestorePasswordInput();
+            killTimer(m_timerIdOfRestoreInput);
+        }
+    }
+}
+
 void VaultController::updateFolderSizeLabel(const qint64 size) noexcept
 {
     m_totalSize = size;
