@@ -294,7 +294,9 @@ void DFMFullTextSearchManager::traverseFloder(const char *filePath, QStringList 
 
 QString DFMFullTextSearchManager::dealKeyWorld(const QString &keyWorld)
 {
-    QRegExp cnReg("^[\u4e00-\u9fa5]"), enReg("^[A-Za-z]+$"), numReg("^[0-9]$");
+    static QRegExp cnReg("^[\u4e00-\u9fa5]");
+    static QRegExp enReg("^[A-Za-z]+$");
+    static QRegExp numReg("^[0-9]$");
     CharType oldType = CN, currType = CN;
     QString newStr;
     for (auto c : keyWorld) {
@@ -304,15 +306,16 @@ QString DFMFullTextSearchManager::dealKeyWorld(const QString &keyWorld)
             currType = EN;
         } else if (numReg.exactMatch(c)) {
             currType = DIGIT;
-        } else if (c == ' ') {
-            currType = SPACE;
         } else {
+            // 特殊符号均当作空格处理
+            newStr += ' ';
+            currType = SPACE;
             continue;
         }
 
         newStr += c;
-        // 如果当前字符或者上一个字符是空格，则不需要再加空格
-        if (oldType == SPACE || currType == SPACE) {
+        // 如果上一个字符是空格，则不需要再加空格
+        if (oldType == SPACE) {
             oldType = currType;
             continue;
         }
