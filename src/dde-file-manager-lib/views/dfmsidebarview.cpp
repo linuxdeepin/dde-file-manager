@@ -127,7 +127,12 @@ void DFMSideBarView::dragEnterEvent(QDragEnterEvent *event)
         //防止误判之前的url数据，这里清空缓存
         m_urlsForDragEvent.clear();
     } else {
-        fetchDragEventUrlsFromSharedMemory();
+        bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
+        if (sameUser) {
+            fetchDragEventUrlsFromSharedMemory();
+        } else {
+            m_urlsForDragEvent = event->mimeData()->urls();
+        }
     }
 
     if (isAccepteDragEvent(event)) {
@@ -303,12 +308,21 @@ bool DFMSideBarView::onDropData(DUrlList srcUrls, DUrl dstUrl, Qt::DropAction ac
         dstUrl = dstInfo->rootSymLinkTarget();
     }
 
+    //这里不能全redirected例如ftp内的书签会有问题
+    if (dstInfo->canRedirectionFileUrl()) {
+        DUrl url = dstInfo->redirectedFileUrl();
+        if (url.burnIsOnDisc()) {
+            dstUrl = url;
+        }
+    }
+
     switch (action) {
     case Qt::CopyAction:
-        // blumia: should run in another thread or user won't do another DnD opreation unless the copy action done.
-        QtConcurrent::run([ = ]() {
-            fileService->pasteFile(this, DFMGlobal::CopyAction, dstUrl, srcUrls);
-        });
+            // blumia: should run in another thread or user won't do another DnD opreation unless the copy action done.
+            QtConcurrent::run([ = ]() {
+                fileService->pasteFile(this, DFMGlobal::CopyAction, dstUrl, srcUrls);
+            });
+
         break;
     case Qt::LinkAction:
         break;
@@ -384,30 +398,62 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
     if (!info || !info->canDrop()) {
         return Qt::IgnoreAction;
     }
-    Qt::DropAction action = Qt::IgnoreAction;
-    const Qt::DropActions support_actions = info->supportedDropActions() & actions;
 
-    if (DStorageInfo::inSameDevice(DUrl(urls.first()), item->url())) {
-        if (support_actions.testFlag(Qt::MoveAction)) {
+    Qt::DropAction action = Qt::CopyAction;
+    const Qt::DropActions support_actions = info->supportedDropActions() & actions;
+    const DUrl from = DUrl(urls.first());
+    DUrl to = info->fileUrl();
+
+    //fix bug#23703勾选自动整理，拖拽其他目录文件到桌面做得是复制操作
+    //因为自动整理的路径被DStorageInfo::inSameDevice判断为false，这里做转化
+    if (to.scheme() == BOOKMARK_SCHEME) {
+        if (info->canRedirectionFileUrl())
+            to = info->redirectedFileUrl();
+    }
+    //end
+
+    if (qApp->keyboardModifiers() == Qt::AltModifier) {
+        action = Qt::MoveAction;
+    } else if (!DFMGlobal::keyCtrlIsPressed()) {
+        // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
+        if (DStorageInfo::inSameDevice(from, to)) {
             action = Qt::MoveAction;
         }
     }
 
-    if (support_actions.testFlag(Qt::CopyAction)) {
-        action = Qt::CopyAction;
+    //任意来源为回收站的drop操作均为move(统一回收站拖拽标准)
+    bool isFromTrash = from.url().contains(".local/share/Trash/");
+    bool isToTrash = to.isTrashFile();
+
+    if (isFromTrash || isToTrash) {
+        if (!isFromTrash || !isToTrash) {
+            action = Qt::MoveAction;
+        } else {
+            return Qt::IgnoreAction;
+        }
     }
 
-    if (support_actions.testFlag(Qt::MoveAction)) {
-        action = Qt::MoveAction;
+    // 保险箱时，修改DropAction为Qt::MoveAction
+    if (VaultController::isVaultFile(from.url())
+            || VaultController::isVaultFile(to.toString())) {
+        QString strFromPath = from.toLocalFile();
+        QString strToPath = to.toLocalFile();
+        if (strFromPath.startsWith("/media") || strToPath.startsWith("/media")) { // 如果是从U盘拖拽文件到保险箱或者是从保险箱拖拽文件到U盘
+            action = Qt::CopyAction;
+        } else if (TRASH_SCHEME == info->fileUrl().scheme()) {  // 修复BUG-47739 保险箱拖拽到回收站时，忽略该操作
+            return Qt::IgnoreAction;
+        } else if (strFromPath.startsWith("/run") && strFromPath.contains("/smb-share:server=")) {  // 修复BUG-59333 如果是smb拖拽到保险箱
+            return Qt::CopyAction;
+        } else {
+            action = DFMGlobal::keyCtrlIsPressed() ? Qt::CopyAction : Qt::MoveAction;
+        }
     }
 
-    if (support_actions.testFlag(Qt::LinkAction)) {
-        action = Qt::LinkAction;
+    if (support_actions.testFlag(action)) {
+        return action;
     }
-    if ((action == Qt::MoveAction) && DFMGlobal::keyCtrlIsPressed()) {
-        action = Qt::CopyAction;
-    }
-    return action;
+
+    return Qt::IgnoreAction;
 }
 
 bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
@@ -418,6 +464,7 @@ bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
     }
 
     bool accept = false;
+
     Qt::DropAction action = canDropMimeData(item, event->mimeData(), event->proposedAction());
     if (action == Qt::IgnoreAction) {
         action = canDropMimeData(item, event->mimeData(), event->possibleActions());

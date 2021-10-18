@@ -799,14 +799,20 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
             default_action = Qt::MoveAction;
         } else if (!DFMGlobal::keyCtrlIsPressed()) {
             // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
-            if (DStorageInfo::inSameDevice(from, to) || to.isTrashFile()) {
+            if (DStorageInfo::inSameDevice(from, to)) {
                 default_action = Qt::MoveAction;
             }
         }
 
         //任意来源为回收站的drop操作均为move(统一回收站拖拽标准)
-        if (from.url().contains(".local/share/Trash/")) {
-            default_action = Qt::MoveAction;
+        bool isFromTrash = from.url().contains(".local/share/Trash/");
+        bool isToTrash = to.isTrashFile();
+        if (isFromTrash || isToTrash) {
+            if (!isFromTrash || !isToTrash) {
+                default_action = Qt::MoveAction;
+            } else {
+                return event->setDropAction(Qt::IgnoreAction);
+            }
         }
 
         if (event->possibleActions().testFlag(default_action)) {
@@ -883,8 +889,20 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
             default_action = Qt::MoveAction;
         } else if (!DFMGlobal::keyCtrlIsPressed()) {
             // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
-            if (DStorageInfo::inSameDevice(from, to) || to.isTrashFile()) {
+            if (DStorageInfo::inSameDevice(from, to)) {
                 default_action = Qt::MoveAction;
+            }
+        }
+
+        //任意来源为回收站的drop操作均为move(统一回收站拖拽标准)
+        bool isFromTrash = from.url().contains(".local/share/Trash/");
+        bool isToTrash = to.isTrashFile();
+
+        if (isFromTrash || isToTrash) {
+            if (!isFromTrash || !isToTrash) {
+                default_action = Qt::MoveAction;
+            } else {
+                return event->setDropAction(Qt::IgnoreAction);
             }
         }
 
