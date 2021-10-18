@@ -48,7 +48,7 @@
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>Klik voortaan op &apos;Veilig verwijderen&apos; voordat je het apparaat loskoppelt</translation>
+        <translation>Klik voortaan op ‘Veilig verwijderen’ voordat je het apparaat loskoppelt</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

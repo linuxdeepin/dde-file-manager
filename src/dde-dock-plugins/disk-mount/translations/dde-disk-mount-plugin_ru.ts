@@ -48,7 +48,7 @@
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>В следующий раз нажмите &quot;Безопасное удаление&quot;, а затем отключите его</translation>
+        <translation>В следующий раз сначала нажмите &quot;Безопасное извлечение&quot;, а затем отключите устройство</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>

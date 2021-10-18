@@ -14,6 +14,7 @@ X-Deepin-Vendor=deepin
 
 # Translations:
 # Do not manually modify!
+Comment[ar]=افتح الدليل الرئيسي 
 Comment[az]=Ev qovluğunu açmaq
 Comment[bo]=དཀར་ཆག་གཙོ་བོ་ཁ་འབྱེད།
 Comment[ca]=Obre la carpeta de l'usuari
@@ -48,6 +49,7 @@ Comment[uk]=Відкрити домашній каталог
 Comment[zh_CN]=打开主目录
 Comment[zh_HK]=打開主目錄
 Comment[zh_TW]=打開主目錄
+GenericName[ar]=المنزل
 GenericName[az]=Ev
 GenericName[bo]=དཀར་ཆག་གཙོ་བོ།
 GenericName[ca]=Carpeta de l'usuari
@@ -82,6 +84,7 @@ GenericName[uk]=Домівка
 GenericName[zh_CN]=主目录
 GenericName[zh_HK]=主目錄
 GenericName[zh_TW]=主資料夾
+Name[ar]=المنزل
 Name[az]=Ev
 Name[bo]=དཀར་ཆག་གཙོ་བོ།
 Name[ca]=Carpeta de l'usuari

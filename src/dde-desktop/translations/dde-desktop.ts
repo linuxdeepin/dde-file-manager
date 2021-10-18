@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>CanvasGridView</name>
     <message>
@@ -76,7 +74,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="168"/>
+        <location filename="../main.cpp" line="166"/>
         <source>Desktop</source>
         <translation>Desktop</translation>
     </message>
@@ -84,69 +82,69 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="728"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="719"/>
         <source>Wallpaper Slideshow</source>
         <translation>Wallpaper Slideshow</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="774"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="765"/>
         <source>When login</source>
         <translation>When login</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="776"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="767"/>
         <source>When wakeup</source>
         <translation>When wakeup</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="828"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="819"/>
         <source>Require a password on wakeup</source>
         <translation>Require a password on wakeup</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="860"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="851"/>
         <source>Never</source>
         <translation>Never</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="862"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="853"/>
         <source>Wait:</source>
         <translation>Wait:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="895"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="886"/>
         <source>Wallpaper</source>
         <translation>Wallpaper</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="907"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="898"/>
         <source>Screensaver</source>
         <translation>Screensaver</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="972"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="963"/>
         <source>Loading wallpapers...</source>
         <translation>Loading wallpapers...</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="974"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="965"/>
         <source>Loading screensavers...</source>
         <translation>Loading screensavers...</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1031"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1022"/>
         <source>Only desktop</source>
         <comment>button</comment>
         <translation>Only desktop</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1032"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1023"/>
         <source>Only lock screen</source>
         <comment>button</comment>
         <translation>Only lock screen</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1111"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1098"/>
         <source>Apply</source>
         <comment>button</comment>
         <translation>Apply</translation>

@@ -98,7 +98,7 @@
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
-        <translation type="unfinished"/>
+        <translation>Skeniram uređaj, prestati?</translation>
     </message>
     <message>
         <source>Confirm</source>
