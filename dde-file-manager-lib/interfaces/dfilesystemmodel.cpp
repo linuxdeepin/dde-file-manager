@@ -2522,12 +2522,6 @@ int DFileSystemModel::columnActiveRole(int column) const
     return d->columnActiveRole.value(column, roles.first());
 }
 
-bool DFileSystemModel::checkFileEventQueue()
-{
-    Q_D(DFileSystemModel);
-    return d->checkFileEventQueue();
-}
-
 void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 {
     Q_D(DFileSystemModel);

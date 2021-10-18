@@ -208,7 +208,6 @@ public:
     int columnActiveRole(int column) const;
 
 //    static QList<QUrl> m_urlForDragEvent;
-    bool checkFileEventQueue();
 
 public slots:
     void updateChildren(QList<DAbstractFileInfoPointer> list);
