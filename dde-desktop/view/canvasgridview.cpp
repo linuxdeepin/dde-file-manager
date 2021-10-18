@@ -537,9 +537,9 @@ void CanvasGridView::delayCustom(int ms)
         auto oriItems = GridManager::instance()->allItems();
         qDebug() << "initCustom file count" << list.size()<<" and oriItems count "<<oriItems.count();
         GridManager::instance()->initCustom(list);
-        //fix bug #32527
-        if(list.isEmpty() && !oriItems.isEmpty())
-        {
+        //fix bug#32527, bug#98551, bug#98498
+        if (list.size() < oriItems.size()) {
+            qWarning() << "model does not matche grid, refresh after 500ms.";
             delayModelRefresh(500);
         }
 
