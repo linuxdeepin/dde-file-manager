@@ -643,7 +643,7 @@ bool DFileView::cdUp()
     const DUrl &oldCurrentUrl = rootUrl();
     const DUrl &parentUrl = fileInfo ? fileInfo->parentUrl() : DUrl::parentUrl(oldCurrentUrl);
 
-    if (parentUrl.isValid())
+    if (parentUrl.isValid() && !parentUrl.isRecentFile())
         return cd(parentUrl);
     return cd(DUrl::fromComputerFile("/"));
 }
