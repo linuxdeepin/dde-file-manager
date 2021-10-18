@@ -238,6 +238,7 @@ private slots:
     void onDriveOpticalChanged(const QString &path);
     void reset() override;
     void setRootIndex(const QModelIndex &index) override;
+    void onHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
 
 protected slots:
     virtual void onRootUrlDeleted(const DUrl &rootUrl);

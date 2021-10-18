@@ -23,6 +23,7 @@
 
 #include "dfmstyleditemdelegate.h"
 #include "dfileviewhelper.h"
+#include "dfilesystemmodel.h"
 #include "private/dstyleditemdelegate_p.h"
 
 #include <QDebug>
@@ -132,8 +133,20 @@ QRect DFMStyledItemDelegate::fileNameRect(const QStyleOptionViewItem &option, co
 {
     const QList<QRect> &rects = paintGeomertys(option, index);
 
+    //根据实际文件名所在列返回rect
+    const QList<int> roleList = parent()->columnRoleList();
+    int fileNameIndex = 0;
+    for (int i = 0; i < roleList.length(); ++i) {
+        if (roleList.at(i) == DFileSystemModel::FileDisplayNameRole ||
+                roleList.at(i) == DFileSystemModel::FileNameRole ) {
+            fileNameIndex = i;
+            break;
+        }
+    }
+
+    //第0个是icon的rect
     if (rects.count() > 1)
-        return rects.at(1);
+        return rects.at(fileNameIndex + 1);
 
     return QRect();
 }

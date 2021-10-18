@@ -249,7 +249,6 @@ void DListItemDelegate::paint(QPainter *painter,
     opt.rect.setRight(opt.rect.right() - RIGHT_PADDING);
 
     /// draw icon
-
     QRect icon_rect = opt.rect;
 
     icon_rect.setSize(parent()->parent()->iconSize());
@@ -281,132 +280,98 @@ void DListItemDelegate::paint(QPainter *painter,
         cornerIconList.at(i).paint(painter, cornerGeometryList.at(i).toRect());
     }
 
-    column_x = icon_rect.right() + ICON_SPACING;
-
-    QRect rect = opt.rect;
-
-    rect.setLeft(column_x);
-
-    column_x = option.rect.x() + parent()->columnWidth(0) - 1 - parent()->fileViewViewportMargins().left();
-
-    rect.setRight(qMin(column_x, opt.rect.right()));
-
     if (columnRoleList.isEmpty())
         return;
-    int role = columnRoleList.at(0);
 
-    if (index != d->editingIndex || (role != DFileSystemModel::FileNameRole && role != DFileSystemModel::FileDisplayNameRole)) {
-        const QVariantHash &ep = index.data(DFileSystemModel::ExtraProperties).toHash();
-        const QList<QColor> &colors = qvariant_cast<QList<QColor>>(ep.value("colored"));
+    column_x = icon_rect.right();
 
-        if (!colors.isEmpty()) {
-            qreal diameter = 10;
-            QRectF tag_boundingRect(0, 0, (colors.size() + 1) * diameter / 2, diameter);
 
-            tag_boundingRect.moveCenter(rect.center());
-            tag_boundingRect.moveRight(rect.right());
-
-            paintCircleList(painter, tag_boundingRect, diameter, colors,
-                            (drawBackground || colors.size() > 1) ? Qt::white : QColor(0, 0, 0, 25));
-            rect.setRight(tag_boundingRect.left() - ICON_SPACING);
-        }
-
-        /// draw file name label
-        const QVariant &data = index.data(role);
-        painter->setPen(opt.palette.color(drawBackground ? QPalette::BrightText : QPalette::Text));
-        if (data.canConvert<QString>()) {
-            QString file_name;
-
-            do {
-                if (role != DFileSystemModel::FileNameRole && role != DFileSystemModel::FileDisplayNameRole) {
-                    break;
-                }
-
-                if (role == DFileSystemModel::FileDisplayNameRole) {
-                    const auto fileName = index.data(DFileSystemModel::FileNameRole);
-                    const auto file_display_name = index.data(DFileSystemModel::FileDisplayNameRole);
-
-                    if (fileName != file_display_name) {
-                        break;
-                    }
-                }
-
-                const QString &suffix = "." + index.data(DFileSystemModel::FileSuffixRole).toString();
-
-                if (suffix == ".") {
-                    break;
-                }
-
-                file_name = DFMGlobal::elideText(index.data(DFileSystemModel::FileBaseNameRole).toString().remove('\n'),
-                                                 QSize(rect.width() - opt.fontMetrics.width(suffix), rect.height()), QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                 opt.font, Qt::ElideRight,
-                                                 d->textLineHeight);
-                file_name.append(suffix);
-            } while (false);
-
-            if (file_name.isEmpty()) {
-                file_name = DFMGlobal::elideText(index.data(role).toString().remove('\n'),
-                                                 rect.size(), QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                 opt.font, Qt::ElideRight,
-                                                 d->textLineHeight);
-            }
-
-            painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), file_name);
-        } else {
-            drawNotStringData(opt, d->textLineHeight, rect, data, drawBackground, painter, 0);
-        }
-    }
-
+    //绘制拖拽时的行
     if (isDragMode) {
+        QRect rect = opt.rect;
+        rect.setLeft(column_x);
+        column_x = option.rect.x() + parent()->columnWidth(0) - 1 - parent()->fileViewViewportMargins().left();
+        rect.setRight(qMin(column_x, opt.rect.right()));
+
+        for(const int &role : columnRoleList) {
+            if (role == DFileSystemModel::FileNameRole || role == DFileSystemModel::FileDisplayNameRole) {
+                paintFileName(painter, opt, index, role, rect, d->textLineHeight);
+                break;
+            }
+        }
         return;
     }
 
     const DFileSystemModel *model = qobject_cast<const DFileSystemModel *>(index.model());
-    if (isSelected)
-        painter->setPen(opt.palette.color(QPalette::Active, QPalette::HighlightedText));
-    else
-        painter->setPen(opt.palette.color(QPalette::Inactive, QPalette::Text));
 
-    for (int i = 1; i < columnRoleList.count(); ++i) {
+
+    for (int i = 0; i < columnRoleList.count(); ++i) {
         int column_width = parent()->columnWidth(i);
 
         if (column_width <= 0) {
             continue;
         }
 
-        QRect rec = opt.rect;
+        int rol = columnRoleList.at(i);
 
+        QRect rec = opt.rect;
         rec.setLeft(column_x + COLUMU_PADDING);
 
         if (rec.left() >= rec.right()) {
             break;
         }
 
-        column_x += column_width;
-
+        if (i == 0) {
+            column_x = option.rect.x() + column_width - 1 - parent()->fileViewViewportMargins().left();
+        } else {
+            column_x += column_width;
+        }
         rec.setRight(qMin(column_x, opt.rect.right()));
 
-        int rol = columnRoleList.at(i);
 
-        QModelIndex tmp_index = model->createIndex(index.row(), model->roleToColumn(rol), index.internalId());
+        if (rol == DFileSystemModel::FileNameRole || rol == DFileSystemModel::FileDisplayNameRole) {
+            //绘制标记
+            const QVariantHash &ep = index.data(DFileSystemModel::ExtraProperties).toHash();
+            const QList<QColor> &colors = qvariant_cast<QList<QColor>>(ep.value("colored"));
+            if (!colors.isEmpty()) {
+                qreal diameter = 10;
+                QRectF tag_boundingRect(0, 0, (colors.size() + 1) * diameter / 2, diameter);
 
-        const QVariant &data = index.data(rol);
+                tag_boundingRect.moveCenter(rec.center());
+                tag_boundingRect.moveRight(rec.right());
 
-        if (data.canConvert<QString>()) {
-            QString strInfo(index.data(rol).toString());
-            // 如果是文件路径项
-            if(rol == DFileSystemModel::FilePathRole) {
-                // 如果是保险箱路径,则不显示真实路径
-                if(VaultController::isVaultFile(strInfo))
-                    strInfo = VaultController::localPathToVirtualPath(index.data(rol).toString());
+                paintCircleList(painter, tag_boundingRect, diameter, colors,
+                                (drawBackground || colors.size() > 1) ? Qt::white : QColor(0, 0, 0, 25));
+                rec.setRight(tag_boundingRect.left() - ICON_SPACING);
             }
-            const QString &text = DFMGlobal::elideText(strInfo, rec.size(),
-                                                       QTextOption::NoWrap, opt.font,
-                                                       Qt::ElideRight, d->textLineHeight);
 
-            painter->drawText(rec, Qt::Alignment(tmp_index.data(Qt::TextAlignmentRole).toInt()), text);
+            paintFileName(painter, opt, index, rol, rec, d->textLineHeight);
         } else {
-            drawNotStringData(opt, d->textLineHeight, rec, data, drawBackground, painter, i);
+            if (isSelected)
+                painter->setPen(opt.palette.color(QPalette::Active, QPalette::HighlightedText));
+            else
+                painter->setPen(opt.palette.color(QPalette::Inactive, QPalette::Text));
+
+            QModelIndex tmp_index = model->createIndex(index.row(), model->roleToColumn(rol), index.internalId());
+
+            const QVariant &data = index.data(rol);
+
+            if (data.canConvert<QString>()) {
+                QString strInfo(index.data(rol).toString());
+                // 如果是文件路径项
+                if(rol == DFileSystemModel::FilePathRole) {
+                    // 如果是保险箱路径,则不显示真实路径
+                    if(VaultController::isVaultFile(strInfo))
+                        strInfo = VaultController::localPathToVirtualPath(index.data(rol).toString());
+                }
+                const QString &text = DFMGlobal::elideText(strInfo, rec.size(),
+                                                           QTextOption::NoWrap, opt.font,
+                                                           Qt::ElideRight, d->textLineHeight);
+
+                painter->drawText(rec, Qt::Alignment(tmp_index.data(Qt::TextAlignmentRole).toInt()), text);
+            } else {
+                drawNotStringData(opt, d->textLineHeight, rec, data, drawBackground, painter, i);
+            }
         }
     }
 
@@ -603,23 +568,26 @@ void DListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
     int column_x = 0;
 
     /// draw icon
-
+    //计算编辑框左侧位置
     const QRect &opt_rect = option.rect + QMargins(-LIST_MODE_LEFT_MARGIN - LEFT_PADDING, 0, -LIST_MODE_RIGHT_MARGIN - RIGHT_PADDING, 0);
-
     QRect icon_rect = opt_rect;
-
     icon_rect.setSize(icon_size);
 
-    column_x = icon_rect.right() + ICON_SPACING + 1;
-
+    const QList<int> roleList = parent()->columnRoleList();
     QRect rect = opt_rect;
+    for (int i = 0; i < roleList.length(); ++i) {
+        if (roleList.at(i) == DFileSystemModel::FileNameRole || roleList.at(i) == DFileSystemModel::FileDisplayNameRole) {
+            int iconOffset = i == 0 ? icon_rect.right() + ICON_SPACING + 1 : 0;
 
-    rect.setLeft(column_x + LIST_MODE_EDITOR_LEFT_PADDING);
+            rect.setLeft(column_x + LIST_MODE_EDITOR_LEFT_PADDING + iconOffset);
+            column_x += parent()->columnWidth(i) - 1 - parent()->fileViewViewportMargins().left();
 
-    column_x = parent()->columnWidth(0) - 1 - parent()->fileViewViewportMargins().left();
-
-    rect.setRight(qMin(column_x, opt_rect.right()));
-    rect.setTop(opt_rect.y() + (opt_rect.height() - editor->height()) / 2);
+            rect.setRight(qMin(column_x, opt_rect.right()));
+            rect.setTop(opt_rect.y() + (opt_rect.height() - editor->height()) / 2);
+        } else {
+            column_x += parent()->columnWidth(i);
+        }
+    }
 
     editor->setGeometry(rect);
 }
@@ -855,4 +823,48 @@ bool DListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, co
     }
 
     return DFMStyledItemDelegate::helpEvent(event, view, option, index);
+}
+
+void DListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const int &role, const QRect &rect, const int &textLineHeight) const
+{
+    bool drawBackground =(option.state & QStyle::State_Selected) && option.showDecorationSelected;
+    const QVariant &data = index.data(role);
+    painter->setPen(option.palette.color(drawBackground ? QPalette::BrightText : QPalette::Text));
+    if (data.canConvert<QString>()) {
+        QString file_name;
+
+        do {
+            if (role != DFileSystemModel::FileNameRole && role != DFileSystemModel::FileDisplayNameRole)
+                break;
+
+            if (role == DFileSystemModel::FileDisplayNameRole) {
+                const auto fileName = index.data(DFileSystemModel::FileNameRole);
+                const auto file_display_name = index.data(DFileSystemModel::FileDisplayNameRole);
+
+                if (fileName != file_display_name)
+                    break;
+            }
+
+            const QString &suffix = "." + index.data(DFileSystemModel::FileSuffixRole).toString();
+            if (suffix == ".")
+                break;
+
+            file_name = DFMGlobal::elideText(index.data(DFileSystemModel::FileBaseNameRole).toString().remove('\n'),
+                                             QSize(rect.width() - option.fontMetrics.width(suffix), rect.height()), QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                             option.font, Qt::ElideRight,
+                                             textLineHeight);
+            file_name.append(suffix);
+        } while (false);
+
+        if (file_name.isEmpty()) {
+            file_name = DFMGlobal::elideText(index.data(role).toString().remove('\n'),
+                                             rect.size(), QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                             option.font, Qt::ElideRight,
+                                             textLineHeight);
+        }
+
+        painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), file_name);
+    } else {
+        drawNotStringData(option, textLineHeight, rect, data, drawBackground, painter, 0);
+    }
 }

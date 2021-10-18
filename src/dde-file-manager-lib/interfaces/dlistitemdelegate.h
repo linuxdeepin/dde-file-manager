@@ -55,6 +55,8 @@ protected:
 
 private:
     Q_DECLARE_PRIVATE(DListItemDelegate)
+
+    void paintFileName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const int &role, const QRect &rect, const int &textLineHeight) const;
 };
 
 #endif // DLISTITEMDELEGATE_H

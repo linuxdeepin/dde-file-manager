@@ -321,7 +321,12 @@ int DFileView::columnWidth(int column) const
 {
     D_DC(DFileView);
 
-    return d->headerView ? d->headerView->sectionSize(column) : 100;
+    if (d->headerView) {
+        int logicalIndex = d->headerView->logicalIndex(column);
+        return d->headerView->sectionSize(logicalIndex);
+    }
+
+    return 100;
 }
 
 int DFileView::headerViewHeight() const
@@ -1624,6 +1629,27 @@ void DFileView::reset()
 void DFileView::setRootIndex(const QModelIndex &index)
 {
     DListView::setRootIndex(index);
+}
+
+void DFileView::onHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex)
+{
+    Q_D(DFileView);
+    Q_UNUSED(logicalIndex)
+    Q_UNUSED(oldVisualIndex)
+    Q_UNUSED(newVisualIndex)
+
+    //更新本地的设置数据
+    QVariantList logicalIndexList;
+    for (int i = 0; i < d->headerView->count(); ++i) {
+        int logicalIndex = d->headerView->logicalIndex(i);
+        logicalIndexList << model()->columnToRole(logicalIndex);
+    }
+    const DUrl &root_url = rootUrl();
+    d->setFileViewStateValue(root_url, "headerList", logicalIndexList);
+
+    //刷新界面
+    updateListHeaderViewProperty();
+    update();
 }
 
 void DFileView::focusInEvent(QFocusEvent *event)
@@ -3027,6 +3053,8 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
                 }
             });
 
+            connect(d->headerView, &DFMHeaderView::sectionMoved, this, &DFileView::onHeaderSectionMoved);
+
             if (d->allowedAdjustColumnSize) {
                 connect(d->headerView, &QHeaderView::sectionResized,
                         this, &DFileView::updateGeometries);
@@ -3303,6 +3331,7 @@ void DFileView::updateListHeaderViewProperty()
     const QVariantMap &state = DFMApplication::appObtuselySetting()->value("WindowManager", "ViewColumnState").toMap();
 
     for (int i = 0; i < d->headerView->count(); ++i) {
+        int logicalIndex = d->headerView->logicalIndex(i);
         d->columnRoles << model()->columnToRole(i);
 
         if (d->allowedAdjustColumnSize) {
@@ -3313,18 +3342,18 @@ void DFileView::updateListHeaderViewProperty()
         } else {
             int column_width = model()->columnWidth(i);
             if (column_width >= 0) {
-                d->headerView->resizeSection(i, column_width + COLUMU_PADDING * 2);
+                d->headerView->resizeSection(logicalIndex, column_width + COLUMU_PADDING * 2);
             } else {
-                d->headerView->setSectionResizeMode(i, QHeaderView::Stretch);
+                d->headerView->setSectionResizeMode(logicalIndex, QHeaderView::Stretch);
             }
         }
 
         const QString &column_name = model()->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString();
 
         if (!d->columnForRoleHiddenMap.contains(column_name)) {
-            d->headerView->setSectionHidden(i, !model()->columnDefaultVisibleForRole(model()->columnToRole(i)));
+            d->headerView->setSectionHidden(logicalIndex, !model()->columnDefaultVisibleForRole(model()->columnToRole(i)));
         } else {
-            d->headerView->setSectionHidden(i, d->columnForRoleHiddenMap.value(column_name));
+            d->headerView->setSectionHidden(logicalIndex, d->columnForRoleHiddenMap.value(column_name));
         }
     }
 
@@ -3366,31 +3395,33 @@ void DFileView::updateColumnWidth()
         int j = column_count - 1;
 
         for (; i < column_count; ++i) {
-            if (d->headerView->isSectionHidden(i))
+            int logicalIndex = d->headerView->logicalIndex(i);
+            if (d->headerView->isSectionHidden(logicalIndex))
                 continue;
 
-            d->headerView->resizeSection(i, model()->columnWidth(i) + LEFT_PADDING + LIST_MODE_LEFT_MARGIN + 2 * COLUMU_PADDING);
+            d->headerView->resizeSection(logicalIndex, model()->columnWidth(i) + LEFT_PADDING + LIST_MODE_LEFT_MARGIN + 2 * COLUMU_PADDING);
             break;
         }
 
         for (; j > 0; --j) {
-            if (d->headerView->isSectionHidden(j))
+            int logicalIndex = d->headerView->logicalIndex(j);
+            if (d->headerView->isSectionHidden(logicalIndex))
                 continue;
 
-            d->headerView->resizeSection(j, model()->columnWidth(j) + RIGHT_PADDING + LIST_MODE_RIGHT_MARGIN + 2 * COLUMU_PADDING);
+            d->headerView->resizeSection(logicalIndex, model()->columnWidth(j) + RIGHT_PADDING + LIST_MODE_RIGHT_MARGIN + 2 * COLUMU_PADDING);
             break;
         }
 
         if (d->firstVisibleColumn != i) {
             if (d->firstVisibleColumn > 0)
-                d->headerView->resizeSection(d->firstVisibleColumn, model()->columnWidth(d->firstVisibleColumn) + 2 * COLUMU_PADDING);
+                d->headerView->resizeSection(d->headerView->logicalIndex(d->firstVisibleColumn), model()->columnWidth(d->firstVisibleColumn) + 2 * COLUMU_PADDING);
 
             d->firstVisibleColumn = i;
         }
 
         if (d->lastVisibleColumn != j) {
             if (d->lastVisibleColumn > 0)
-                d->headerView->resizeSection(d->lastVisibleColumn, model()->columnWidth(d->lastVisibleColumn) + 2 * COLUMU_PADDING);
+                d->headerView->resizeSection(d->headerView->logicalIndex(d->lastVisibleColumn), model()->columnWidth(d->lastVisibleColumn) + 2 * COLUMU_PADDING);
 
             d->lastVisibleColumn = j;
         }
@@ -3453,7 +3484,11 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
             menu->addAction(action);
         }
     } else {
-        for (int i = 1; i < d->headerView->count(); ++i) {
+        for (int i = 0; i < d->headerView->count(); ++i) {
+            //名称列不能被隐藏
+            if (model()->columnToRole(i) == DFileSystemModel::FileNameRole || model()->columnToRole(i) == DFileSystemModel::FileDisplayNameRole)
+                continue;
+
             QAction *action = new QAction(menu);
 
             action->setText(model()->columnNameByRole(model()->columnToRole(i)).toString());

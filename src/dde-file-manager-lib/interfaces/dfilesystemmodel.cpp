@@ -42,6 +42,7 @@
 #include "controllers/mergeddesktopcontroller.h"
 #include "shutil/dfmfilelistfile.h"
 #include "dfilesystemmodel_p.h"
+#include "dfmsettings.h"
 
 #include <memory>
 #include <QList>
@@ -1471,6 +1472,14 @@ int DFileSystemModel::columnToRole(int column) const
     const DAbstractFileInfoPointer &fileInfo = d->rootNode->fileInfo;
 
     if (fileInfo) {
+        //获取修改过顺序后的列属性
+        const QVariantMap &map = DFMApplication::appObtuselySetting()->value("FileViewState", rootUrl()).toMap();
+        if (map.contains("headerList")) {
+            const QVariantList &indexList = map.value("headerList").toList();
+            if (indexList.length() > column)
+                return indexList.at(column).toInt();
+        }
+
         return fileInfo->userColumnRoles().value(column, UnknowRole);
     }
 
@@ -1490,6 +1499,13 @@ int DFileSystemModel::roleToColumn(int role) const
 
     if (fileInfo) {
         int column = fileInfo->userColumnRoles().indexOf(role);
+        //获取修改过顺序后的列属性的索引
+        const QVariantMap &map = DFMApplication::appObtuselySetting()->value("FileViewState", rootUrl()).toMap();
+        if (map.contains("headerList")) {
+            const QVariantList &indexList = map.value("headerList").toList();
+            if (indexList.length() > column)
+                column = indexList.indexOf(role);
+        }
 
         if (column < 0) {
             return -1;
