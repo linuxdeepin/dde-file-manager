@@ -615,18 +615,18 @@
     <message>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="94"/>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="148"/>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="172"/>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="194"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="176"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="198"/>
         <source>Encrypt</source>
         <translation>Зашифрувати</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="166"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="170"/>
         <source>Failed to create file vault: %1</source>
         <translation>Не вдалося створити сховище файлів: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="235"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="239"/>
         <source>OK</source>
         <translation>Гаразд</translation>
     </message>
@@ -904,50 +904,69 @@
 <context>
     <name>DFMVaultUnlockPages</name>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="50"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="56"/>
         <source>Unlock File Vault</source>
         <translation>Не вдалося розблокувати файлове сховище</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="58"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="64"/>
         <source>Verify your password</source>
         <translation>Перевірте ваш пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="110"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="117"/>
         <source>Password hint: %1</source>
         <translation>Підказка пароля: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="246"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="292"/>
         <source>Failed to unlock file vault</source>
         <translation>Не вдалося розблокувати сховище файлів</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="65"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="71"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="95"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="101"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="95"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="101"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Розблокувати</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="197"/>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="241"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="209"/>
+        <source>Please try again %1 minutes later</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="237"/>
+        <source>Wrong password, please try again %1 minutes later</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="240"/>
+        <source>Wrong password, one chance left</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="242"/>
+        <source>Wrong password, %1 chances left</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="287"/>
         <source>Wrong password</source>
         <translation>Помилковий пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="250"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="296"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Гаразд</translation>
@@ -1789,6 +1808,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
+        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Підтвердити</translation>
@@ -2984,11 +3004,6 @@
         <translation>Час блокування</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1429"/>
-        <source>Not connected network shared directory</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <location filename="../dialogs/propertydialog.cpp" line="1598"/>
         <source>Access denied</source>
         <translation>Доступ заборонено</translation>
@@ -3026,6 +3041,11 @@
         <location filename="../dialogs/propertydialog.cpp" line="1699"/>
         <source>Owner</source>
         <translation>Власник</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="1429"/>
+        <source>Unconnected network shared directory</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1447"/>
@@ -3276,10 +3296,6 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
         <source>Time created</source>
         <translation>Час створення</translation>
-    </message>
-    <message>
-        <source>Log out and unmount</source>
-        <translation type="vanished">Вийти й розмонтувати</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1200"/>
