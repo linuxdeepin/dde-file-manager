@@ -8,7 +8,6 @@ configure_file(
     )
 
 set(SRCS
-    uttestclass.cpp
     main.cpp
     )
 

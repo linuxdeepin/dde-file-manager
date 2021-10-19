@@ -166,3 +166,7 @@ target_link_libraries(
     ${QtUseModules}
     ${PkgUseModules}
     )
+
+add_library(DFM::base ALIAS ${PROJECT_NAME})
+
+

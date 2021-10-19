@@ -71,6 +71,8 @@ Build-Depends:
  libboost-thread-dev,
  libdfm-io-dev,
  libdfm-mount-dev,
+ libgtest-dev,
+ libgmock-dev,
  deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org

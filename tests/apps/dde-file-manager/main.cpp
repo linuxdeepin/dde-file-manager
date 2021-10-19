@@ -23,7 +23,6 @@
 #include <sanitizer/asan_interface.h>
 #include <QCoreApplication>
 
-
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc,argv);

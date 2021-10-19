@@ -1,12 +1,6 @@
 # 定义需要的cmake版本
 cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-need -fPIE")
-
 # 工程名称
 project(test-dde-file-manager)
 
@@ -30,24 +24,12 @@ set(Qt_LIBS
     Qt5::DBus
 )
 
-set(PROJECT_SRC_PATH "${PROJECT_SOURCE_PATH}/apps/dde-file-manager")
-include_directories(${PROJECT_SRC_PATH})
-
-#项目工程文件
-FILE(GLOB_RECURSE PRO_SRC "${PROJECT_SRC_PATH}/*/*.h" "${PROJECT_SRC_PATH}/*/*.cpp")
-
 #单元测试文件
 FILE(GLOB_RECURSE UT_SRC "./*/*.cpp")
 
 # 源文件
 set(SRCS
     main.cpp
-    ut_demo.cpp
-    ../../../src/apps/dde-file-manager/uttestclass.cpp
-    ${GLOBAL_SRC}
-    ${PRO_SRC}
-    ${UT_SRC}
-    ${CPP_STUB_SRC}
 )
 
 add_executable(${PROJECT_NAME} ${SRCS})
@@ -67,4 +49,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     -lpthread
 )
 
+add_test(
+  NAME dde-file-manager
+  COMMAND $<TARGET_FILE:${PROJECT_NAME}>
+)
 
