@@ -151,7 +151,7 @@ bool DFMFileListFilePrivate::loadFileWithoutCreateHidden(const QString &path)
     const bool exist = g_file_query_exists(gfile, nullptr);
     if (exist) {
         // exist, read content
-        char *contents = nullptr;
+        char *contents = nullptr; //need g_free release memory
         GError *error = nullptr;
         gsize len = 0;
         const bool succ = g_file_load_contents(gfile, nullptr, &contents, &len, nullptr, &error);
@@ -165,6 +165,11 @@ bool DFMFileListFilePrivate::loadFileWithoutCreateHidden(const QString &path)
                 g_error_free(error);
             setStatus(DFMFileListFile::AccessError);
         }
+        // Loads the content of the file into memory.
+        // The data is always zero-terminated, but this is not included in the resultant length.
+        // The returned contents should be freed with g_free() when no longer needed.
+        // link : https://docs.gtk.org/gio/method.File.load_contents.html
+        g_free(contents);
     } else {
         setStatus(DFMFileListFile::NotExisted);
     }
@@ -201,6 +206,7 @@ bool DFMFileListFilePrivate::loadFileWithCreateHidden(const QString &path)
             g_error_free(error);
             setStatus(DFMFileListFile::AccessError);
         }
+        g_free(contents);
     }
     g_object_unref(gfile);
 
