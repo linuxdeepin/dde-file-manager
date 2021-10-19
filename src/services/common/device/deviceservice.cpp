@@ -22,6 +22,9 @@
 */
 #include "deviceservice.h"
 #include "deviceservicehelper.h"
+#include "defendercontroller.h"
+
+#include <QtConcurrent>
 
 DSC_USE_NAMESPACE
 
@@ -75,6 +78,27 @@ bool DeviceService::stopMonitor()
 }
 
 /*!
+ * \brief unmount all of block devices(async) and protocol devices(sync)
+ */
+void DeviceService::doUnMountAll()
+{
+    DeviceServiceHelper::unmountAllBlockDevices();
+    DeviceServiceHelper::unmountAllProtocolDevices();
+}
+
+bool DeviceService::stopDefenderScanAllDrives()
+{
+    const QList<QUrl> &urls = DeviceServiceHelper::getMountPathForAllDrive();
+
+    if (!DefenderInstance.stopScanning(urls)) {
+        qWarning() << "stop scanning timeout";
+        return false;
+    }
+
+    return true;
+}
+
+/*!
  * \brief check if we are in live system, don't do auto mount if we are in live system
  * \return true if live system
  */
@@ -103,4 +127,14 @@ bool DeviceService::isAutoMountSetting()
 bool DeviceService::isAutoMountAndOpenSetting()
 {
     return DeviceServiceHelper::getGsGlobal()->value("GenericAttribute", "AutoMountAndOpen", false).toBool();
+}
+
+bool DeviceService::isDefenderScanningDrive(const QString &driveName)
+{
+    QList<QUrl> urls;
+    if (driveName.isNull() || driveName.isEmpty())
+        urls = DeviceServiceHelper::getMountPathForAllDrive();
+    else
+        urls = DeviceServiceHelper::getMountPathForDrive(driveName);
+    return DefenderInstance.isScanning(urls);
 }

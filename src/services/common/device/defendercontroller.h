@@ -20,41 +20,51 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DEVICESERVICEHELPER_H
-#define DEVICESERVICEHELPER_H
+#ifndef DEFENDERHELPER_H
+#define DEFENDERHELPER_H
 
 #include "dfm_common_service_global.h"
 
-#include "dfm-base/application/settings.h"
-#include "dfm-base/utils/fileutils.h"
-
-#include <dfm-mount/dfmdevicemanager.h>
-#include <dfm-mount/dfmblockdevice.h>
+#include <QObject>
+#include <QUrl>
+#include <QDBusInterface>
 
 #include <mutex>
 
 DSC_BEGIN_NAMESPACE
 
-class DeviceServiceHelper
+class DefenderController : public QObject
 {
     friend class DeviceService;
-private:
-    static std::once_flag &onceFlag();
-    static dfmbase::Settings *getGsGlobal();
-    static void mountAllBlockDevices();
-    static void mountAllProtocolDevices();
-    static void unmountAllBlockDevices();
-    static void unmountAllProtocolDevices();
-    static QList<QUrl> getMountPathForDrive(const QString &driveName);
-    static QList<QUrl> getMountPathForAllDrive();
-    static QUrl getMountPathForBlock(const DFMMOUNT::DFMBlockDevice *block);
-    static bool isProtectedBlocDevice(const DFMMOUNT::DFMBlockDevice *block);
+    Q_OBJECT
+    Q_DISABLE_COPY(DefenderController)
 
 private:
-    static void showUnmountFailedNotification(DFMMOUNT::MountError err);
-    static bool powerOffBlockblockDeivce(DFMMOUNT::DFMBlockDevice *block);
+    static DefenderController &instance();
+
+    bool isScanning(const QUrl &url);
+    bool isScanning(const QList<QUrl> &urls);
+    bool stopScanning(const QUrl &url);
+    bool stopScanning(const QList<QUrl> &urls);
+
+    Q_SLOT void scanningUsbPathsChanged(const QStringList &list);
+
+private:
+    QList<QUrl> getScanningPaths(const QUrl &url = QUrl("/"));
+    void start();
+
+private:
+    explicit DefenderController(QObject *parent = nullptr);
+    ~DefenderController();
+    static std::once_flag &onceFlag();
+
+private:
+    QScopedPointer<QDBusInterface> interface;
+    QList<QUrl> scanningPaths;
 };
 
 DSC_END_NAMESPACE
 
-#endif // DEVICESERVICEHELPER_H
+#define DefenderInstance DefenderController::instance()
+
+#endif // DEFENDERHELPER_H

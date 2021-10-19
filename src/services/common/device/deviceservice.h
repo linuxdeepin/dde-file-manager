@@ -41,13 +41,18 @@ public:
         return "org.deepin.service.DeviceService";
     }
 
-public:
+public: // operations
     void startAutoMount();
     bool startMonitor();
     bool stopMonitor();
+    void doUnMountAll();
+    bool stopDefenderScanAllDrives();
+
+public: // status
     bool isInLiveSystem();
     bool isAutoMountSetting();
     bool isAutoMountAndOpenSetting();
+    bool isDefenderScanningDrive(const QString &driveName = "");
 
 private:
     explicit DeviceService(QObject *parent = nullptr);

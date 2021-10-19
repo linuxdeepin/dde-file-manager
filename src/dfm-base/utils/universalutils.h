@@ -20,39 +20,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DEVICEMANAGERDBUS_H
-#define DEVICEMANAGERDBUS_H
+#ifndef UNIVERSALUTILS_H
+#define UNIVERSALUTILS_H
 
-#include <QObject>
+#include "dfm-base/dfm_base_global.h"
 
-namespace dfm_service_common {
-class DeviceService;
-class DialogService;
-}
+#include <QString>
 
-class DeviceManagerDBus : public QObject
+DFMBASE_BEGIN_NAMESPACE
+
+class UniversalUtils
 {
-    Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.service.DeviceManager")
-
 public:
-    explicit DeviceManagerDBus(QObject *parent = nullptr);
-    ~DeviceManagerDBus();
-
-signals:      // interfaces
-    void AutoMountCompleted();
-
-public slots: // interfaces
-    void UnmountAllDevices();
-
-private:
-    void initialize();
-    Q_SLOT void askStopAllDefenderScanning(int index, const QString &text);
-
-private:
-    dfm_service_common::DeviceService *deviceServ {nullptr};
-    dfm_service_common::DialogService *dialogServ {nullptr};
+    static void notifyMessage(const QString &msg);
+    static void notifyMessage(const QString &title, const QString &msg);
 };
 
+DFMBASE_END_NAMESPACE
 
-#endif // DEVICEMANAGERDBUS_H
+#endif // UNIVERSALUTILS_H

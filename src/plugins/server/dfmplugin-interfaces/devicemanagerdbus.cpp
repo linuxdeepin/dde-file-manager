@@ -23,6 +23,8 @@
 #include "devicemanagerdbus.h"
 
 #include "deviceservice.h"
+#include "dialogservice.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <dfm-framework/framework.h>
 #include <QtConcurrent>
@@ -42,16 +44,35 @@ DeviceManagerDBus::~DeviceManagerDBus()
 void DeviceManagerDBus::initialize()
 {
     auto &ctx = dpfInstance.serviceContext();
-    service = ctx.service<DeviceService>(DeviceService::name());
-    Q_ASSERT(service);
-    QtConcurrent::run([this] () {
-        service->startAutoMount();
-        service->startMonitor();
-        emit AutoMountCompleted();
-    });
+    deviceServ = ctx.service<DeviceService>(DeviceService::name());
+    Q_ASSERT(deviceServ);
+    deviceServ->startAutoMount();
+    deviceServ->startMonitor();
+    emit AutoMountCompleted();
+}
+
+void DeviceManagerDBus::askStopAllDefenderScanning(int index, const QString &text)
+{
+    qInfo() << "ask stop " << index << text;
+    if (index == 1) { // user clicked stop
+        if (deviceServ->stopDefenderScanAllDrives()) {
+            deviceServ->doUnMountAll();
+        } else {
+            dfmbase::UniversalUtils::notifyMessage(tr("The device was not safely removed"),
+                                                   tr("Click \"Safely Remove\" and then disconnect it next time"));
+        }
+    }
 }
 
 void DeviceManagerDBus::UnmountAllDevices()
 {
-
+    if (deviceServ->isDefenderScanningDrive()) {
+        // show query dialog
+        auto &ctx = dpfInstance.serviceContext();
+        dialogServ = ctx.service<DialogService>(DialogService::name());
+        DDialog *d = dialogServ->showQueryScanningDialog(QObject::tr("Scanning the device, stop it?"));
+        connect(d, &DDialog::buttonClicked, this, &DeviceManagerDBus::askStopAllDefenderScanning);
+        return;
+    }
+    deviceServ->doUnMountAll();
 }

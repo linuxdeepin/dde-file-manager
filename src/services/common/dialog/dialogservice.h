@@ -20,39 +20,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DEVICEMANAGERDBUS_H
-#define DEVICEMANAGERDBUS_H
+#ifndef DIALOGSERVICE_H
+#define DIALOGSERVICE_H
 
-#include <QObject>
+#include "dfm_common_service_global.h"
 
-namespace dfm_service_common {
-class DeviceService;
-class DialogService;
-}
+#include <dfm-framework/service/pluginservicecontext.h>
 
-class DeviceManagerDBus : public QObject
+#include <DDialog>
+
+using namespace DTK_NAMESPACE::Widget;
+DSC_BEGIN_NAMESPACE
+
+class DialogService final : public dpf::PluginService, dpf::AutoServiceRegister<DialogService>
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.service.DeviceManager")
+    Q_DISABLE_COPY(DialogService)
+    friend class dpf::QtClassFactory<dpf::PluginService>;
 
 public:
-    explicit DeviceManagerDBus(QObject *parent = nullptr);
-    ~DeviceManagerDBus();
+    static QString name()
+    {
+        return "org.deepin.service.DialogService";
+    }
 
-signals:      // interfaces
-    void AutoMountCompleted();
-
-public slots: // interfaces
-    void UnmountAllDevices();
-
-private:
-    void initialize();
-    Q_SLOT void askStopAllDefenderScanning(int index, const QString &text);
+    DDialog *showQueryScanningDialog(const QString &title);
+    void showErrorDialog(const QString &title, const QString &message);
 
 private:
-    dfm_service_common::DeviceService *deviceServ {nullptr};
-    dfm_service_common::DialogService *dialogServ {nullptr};
+    explicit DialogService(QObject *parent = nullptr);
+    virtual ~DialogService() override;
 };
 
+DSC_END_NAMESPACE
 
-#endif // DEVICEMANAGERDBUS_H
+#endif // DIALOGSERVICE_H

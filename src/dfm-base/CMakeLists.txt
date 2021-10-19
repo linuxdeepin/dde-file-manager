@@ -11,10 +11,12 @@ set(UTILS_H
     utils/threadcontainer.hpp
     utils/fileutils.h
     utils/iconutils.h
+    utils/universalutils.h
     )
 
 set(UTILS_CPP
     utils/fileutils.cpp
+    utils/universalutils.cpp
     )
 
 

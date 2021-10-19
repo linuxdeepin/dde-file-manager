@@ -79,6 +79,7 @@ void DiskMountPlugin::init(PluginProxyInterface *proxyInter)
         if (!deviceInter->isValid()) {
             qCritical() << "DeviceManagerInterface cannot link!";
             deviceInter->deleteLater();
+            deviceInter.reset(nullptr);
         }
 
         initCompoments();

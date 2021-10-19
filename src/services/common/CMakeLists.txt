@@ -22,12 +22,18 @@ FILE(GLOB DEVICE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/device/*.cpp"
     )
 
+FILE(GLOB DIALOG_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/*.cpp"
+    )
+
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
     ${EVENT_FILES}
     ${JOB_FILES}
     ${DEVICE_FILES}
+    ${DIALOG_FILES}
     )
 
 target_link_libraries(
