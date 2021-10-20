@@ -34,10 +34,9 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
                                                  QDirIterator::IteratorFlags flags,
                                                  LocalDirIterator *q)
     : q(q)
-    , url(url)
+    , curFilters(filters)
 {
     Q_UNUSED(nameFilters);
-    Q_UNUSED(filters);
     Q_UNUSED(flags);
 
     QUrl temp = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
@@ -81,10 +80,15 @@ LocalDirIterator::~LocalDirIterator()
  **/
 QUrl LocalDirIterator::next()
 {
-    if (d->dfmioDirIterator) {
-        return UrlRoute::pathToUrl(d->dfmioDirIterator->next());
+    if (d->isCurrent) {
+        d->isCurrent = false;
+        return d->currentUrl;
     }
-    return QUrl();
+
+    if (d->dfmioDirIterator)
+        d->currentUrl = UrlRoute::pathToUrl(d->dfmioDirIterator->next());
+
+    return d->currentUrl;
 }
 /*!
  * \brief hasNext 获取迭代器是否还有下一个文件
@@ -93,8 +97,22 @@ QUrl LocalDirIterator::next()
  */
 bool LocalDirIterator::hasNext() const
 {
+    if (d->curFilters.testFlag(QDir::Hidden)) {
+        while (d->dfmioDirIterator && d->dfmioDirIterator->hasNext()) {
+            d->isCurrent = true;
+            const QString &path = d->dfmioDirIterator->next();
+            d->currentUrl = UrlRoute::pathToUrl(path);
+
+            if (d->currentUrl.isValid() && !d->currentUrl.path().startsWith("/."))
+                return true;
+        }
+
+        return false;
+    }
+
     if (d->dfmioDirIterator)
         return d->dfmioDirIterator->hasNext();
+
     return false;
 }
 /*!
@@ -107,9 +125,11 @@ QString LocalDirIterator::fileName() const
     QString path = fileUrl().path();
     if (path.isEmpty())
         return QString();
+
     path = path.replace(QRegExp("/*/"),"/");
     if (path == "/")
         return QString();
+
     if (path.endsWith("/"))
         path = path.left(path.size() - 1);
     QStringList pathList = path.split("/");
@@ -122,9 +142,7 @@ QString LocalDirIterator::fileName() const
  */
 QUrl LocalDirIterator::fileUrl() const
 {
-    if (d->dfmioDirIterator)
-        return d->dfmioDirIterator->uri();
-    return QUrl();
+    return d->currentUrl;
 }
 /*!
  * \brief fileUrl 获取文件迭代器当前文件的文件信息
@@ -144,7 +162,10 @@ const AbstractFileInfoPointer LocalDirIterator::fileInfo() const
  */
 QUrl LocalDirIterator::url() const
 {
-    return d->url;
+    if (d->dfmioDirIterator)
+        return UrlRoute::pathToUrl(d->dfmioDirIterator->uri().path());
+
+    return QUrl();
 }
 
 DFMBASE_END_NAMESPACE

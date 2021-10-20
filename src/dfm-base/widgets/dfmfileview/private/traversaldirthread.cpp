@@ -66,13 +66,16 @@ void TraversalDirThread::run()
 {
     if (m_dirIterator.isNull())
         return;
+
     while(m_dirIterator->hasNext())
     {
         if (stopFlag)
             break;
+
         QUrl fileurl = m_dirIterator->next();
         if (!fileurl.isValid())
             continue;
+
         m_childrenList.append(new FileViewItem(fileurl));
     }
     stopFlag = true;

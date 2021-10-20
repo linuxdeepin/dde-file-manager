@@ -49,7 +49,9 @@ public:
                                        LocalDirIterator * q);
 private:
     QSharedPointer<dfmio::DEnumerator> dfmioDirIterator = nullptr; // dfmio的文件迭代器
-    QUrl url; // 当前的url
+    QUrl currentUrl; // 当前迭代器所在位置文件的url
+    QDir::Filters curFilters; // 文件的当前的过滤flags
+    bool isCurrent = false; // 用来判断当前是否使用了一次next
 };
 DFMBASE_END_NAMESPACE
 #endif // ABSTRACTDIRITERATOR_P_H
