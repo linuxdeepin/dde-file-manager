@@ -4,7 +4,7 @@
 %endif
 
 Name:           dde-file-manager
-Version:        5.2.0.56
+Version:        5.2.20
 Release:        %{specrelease}
 Summary:        Deepin File Manager
 License:        GPLv3
@@ -52,6 +52,12 @@ BuildRequires:  libqtxdg-devel
 BuildRequires:  libmediainfo-devel
 BuildRequires:  kf5-kcodecs-devel
 #BuildRequires:  libudisks2-qt5-devel
+BuildRequires:  lucene++-devel
+BuildRequires:  htmlcxx-devel
+BuildRequires:  libgsf-devel
+BuildRequires:  mimetic-devel
+BuildRequires:  boost-devel
+BuildRequires:	deepin-anything-devel deepin-anything-server
 
 # run command by QProcess
 #Requires:       deepin-shortcut-viewer
@@ -61,6 +67,8 @@ Requires:       dde-desktop
 Requires:       jemalloc
 Requires:       libglvnd-glx
 Requires:       libdde-file-manager
+Requires:       cryfs
+Requires:		deepin-anything-dkms deepin-anything-server
 #Requires:       gvfs-client
 #Requires:       samba
 #Requires:       xdg-user-dirs
@@ -88,6 +96,8 @@ Requires:       libzen
 Requires:       udisks2-qt5
 Requires:       taglib
 Requires:       libgio-qt
+Requires:		deepin-anything-libs
+
 
 %description -n libdde-file-manager
 DDE File Manager library.
@@ -115,14 +125,14 @@ Deepin desktop environment - desktop module.
 # fix file permissions
 find -type f -perm 775 -exec chmod 644 {} \;
 #sed -i '/target.path/s|lib|%{_lib}|' src/dde-dock-plugins/disk-mount/disk-mount.pro
-#sed -i '/deepin-daemon/s|lib|libexec|' src/dde-zone/mainwindow.h
+sed -i '/deepin-daemon/s|lib|libexec|' src/dde-zone/mainwindow.h
 sed -i 's|lib/gvfs|libexec|' src/%{name}-lib/gvfs/networkmanager.cpp
 #sed -i 's|%{_datadir}|%{_libdir}|' dde-sharefiles/appbase.pri
 sed -i 's|/lib/dde-dock/plugins|/lib64/dde-dock/plugins|' src/dde-dock-plugins/disk-mount/disk-mount.pro
 
 %build
 export PATH=%{_qt5_bindir}:$PATH
-%qmake_qt5 PREFIX=%{_prefix} QMAKE_CFLAGS_ISYSTEM= CONFIG+="DISABLE_FFMPEG DISABLE_ANYTHING"
+%qmake_qt5 PREFIX=%{_prefix} QMAKE_CFLAGS_ISYSTEM= CONFIG+="DISABLE_FFMPEG"  DEFINES+="VERSION=%{version}" filemanager.pro
 %make_build
 
 %install
@@ -143,6 +153,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/dde-home.desktop ||:
 %{_bindir}/%{name}
 %{_bindir}/%{name}-daemon
 %{_bindir}/%{name}-pkexec
+%ifnarch x86_64
+%{_bindir}/*.sh
+%{_sysconfdir}/xdg/autostart/dde-file-manager-autostart.desktop
+%endif
 %{_bindir}/dde-property-dialog
 /usr/lib/systemd/system/dde-filemanager-daemon.service
 
@@ -155,6 +169,8 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/dde-home.desktop ||:
 %{_datadir}/dbus-1/system-services/com.deepin.filemanager.daemon.service
 %{_polkit_qt_policydir}/com.deepin.filemanager.daemon.policy
 %{_polkit_qt_policydir}/com.deepin.pkexec.dde-file-manager.policy
+%{_datadir}/deepin-manual/manual-assets/application/dde-file-manager
+%{_datadir}/applications/context-menus/.readme
 
 %files -n libdde-file-manager
 %{_libdir}/dde-file-manager/plugins/previews/libdde-image-preview-plugin.so
@@ -183,14 +199,14 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/dde-home.desktop ||:
 %{_datadir}/icons/hicolor/scalable/apps/dde-file-manager.svg
 %{_libdir}/libdde-file-manager.so.1
 %{_libdir}/libdde-file-manager.so.1.8
+%ifarch x86_64
+%{_libdir}/deepin-anything-server-lib/plugins/handlers/libdde-anythingmonitor.so
+%endif
 
 %files -n dde-disk-mount-plugin
 %{_libdir}/dde-dock/plugins/system-trays/libdde-disk-mount-plugin.so
 %{_datadir}/dde-disk-mount-plugin/translations
 %{_datadir}/glib-2.0/schemas/com.deepin.dde.dock.module.disk-mount.gschema.xml
-
-
-
 
 %files devel
 %{_includedir}/%{name}/*.h
