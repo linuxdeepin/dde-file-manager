@@ -555,6 +555,17 @@ TEST_F(FrameTest, test_onitembuttonisclicked)
     desktop = false;
     greeter = false;
     setSs = false;
+    m_frame->onItemButtonClicked("desktop-lockscreen");
+    EXPECT_EQ(m_frame->m_cureentWallpaper, name);
+    EXPECT_TRUE(callHide);
+    EXPECT_TRUE(desktop);
+    EXPECT_TRUE(greeter);
+    EXPECT_FALSE(setSs);
+
+    callHide = false;
+    desktop = false;
+    greeter = false;
+    setSs = false;
     m_frame->onItemButtonClicked("screensaver");
     EXPECT_TRUE(setSs);
     EXPECT_TRUE(callHide);

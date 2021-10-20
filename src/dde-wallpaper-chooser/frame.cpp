@@ -1192,6 +1192,10 @@ void Frame::onItemButtonClicked(const QString &buttonID)
     } else if (buttonID == LOCK_SCREEN_BUTTON_ID) {
         // 设置锁屏
         applyToGreeter();
+    } else if (buttonID == DESKTOP_AND_LOCKSCREEN_BUTTON_ID) {
+        // 同时设置桌面和锁屏
+        applyToDesktop();
+        applyToGreeter();
     }
 #ifndef DISABLE_SCREENSAVER
     else if (buttonID == SCREENSAVER_BUTTON_ID) {
