@@ -23,7 +23,11 @@ DTagEdit::DTagEdit(QWidget *const parent)
 
     this->installEventFilter(this);
 
-    setWindowFlags(Qt::Tool);
+    // wayland协议下，使用Qt::Tool仍然附带窗口边框，此时采用Qt::FramelessWindowHint消除边框
+    if (DFMGlobal::isWayLand())
+        setWindowFlags(windowFlags() | Qt::Tool | Qt::FramelessWindowHint);
+    else
+        setWindowFlags(Qt::Tool);
 }
 
 void DTagEdit::setFocusOutSelfClosing(bool value)noexcept
