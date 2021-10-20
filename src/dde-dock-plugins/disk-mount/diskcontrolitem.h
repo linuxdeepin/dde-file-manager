@@ -23,6 +23,9 @@
 #ifndef DISKCONTROLITEM_H
 #define DISKCONTROLITEM_H
 
+#include "dattacheddeviceinterface.h"
+
+
 #include <DIconButton>
 #include <QFrame>
 #include <QLabel>
@@ -33,10 +36,10 @@ class DiskControlItem : public QFrame
 {
     Q_OBJECT
 public:
-    explicit DiskControlItem(QFrame *parent = nullptr);
+    explicit DiskControlItem(QSharedPointer<DAttachedDeviceInterface> attachedDevicePtr, QWidget *parent = nullptr);
 
-    QString tagName() const;
-    void setTagName(const QString &tagName);
+signals:
+    void umountClicked(DiskControlItem *item);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *e) override;
@@ -49,13 +52,12 @@ private:
     QString sizeString(const QString &str);
 
 private:
-    QString curTagName;
-
     QIcon unknowIcon;
     QPushButton *diskIcon {nullptr};
     QLabel *diskName {nullptr};
     QLabel *diskCapacity {nullptr};
     QProgressBar *capacityValueBar {nullptr};
+    QSharedPointer<DAttachedDeviceInterface> dev;
     DTK_WIDGET_NAMESPACE::DIconButton *unmountButton {nullptr};
 };
 

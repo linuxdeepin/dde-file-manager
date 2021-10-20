@@ -36,6 +36,38 @@ public:
     ~DeviceManagerInterface();
 
 public Q_SLOTS: // METHODS
+    inline QDBusPendingReply<QStringList> BlockDevicesIdList()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("BlockDevicesIdList"), argumentList);
+    }
+
+    inline QDBusPendingReply<bool> IsMonotorWorking()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("IsMonotorWorking"), argumentList);
+    }
+
+    inline QDBusPendingReply<QStringList> ProtolcolDevicesIdList()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("ProtolcolDevicesIdList"), argumentList);
+    }
+
+    inline QDBusPendingReply<QString> QueryBlockDeviceInfo(const QString &id)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id);
+        return asyncCallWithArgumentList(QStringLiteral("QueryBlockDeviceInfo"), argumentList);
+    }
+
+    inline QDBusPendingReply<QString> QueryProtocolDeviceInfo(const QString &id)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id);
+        return asyncCallWithArgumentList(QStringLiteral("QueryProtocolDeviceInfo"), argumentList);
+    }
+
     inline QDBusPendingReply<> UnmountAllDevices()
     {
         QList<QVariant> argumentList;
@@ -43,7 +75,8 @@ public Q_SLOTS: // METHODS
     }
 
 Q_SIGNALS: // SIGNALS
-    void AutoMountCompleted();
+    void BlockDriveAdded();
+    void BlockDriveRemoved();
 };
 
 namespace com {

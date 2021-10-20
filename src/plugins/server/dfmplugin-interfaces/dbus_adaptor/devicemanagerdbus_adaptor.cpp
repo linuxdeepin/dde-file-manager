@@ -33,6 +33,36 @@ DeviceManagerAdaptor::~DeviceManagerAdaptor()
     // destructor
 }
 
+QStringList DeviceManagerAdaptor::BlockDevicesIdList()
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.BlockDevicesIdList
+    return parent()->BlockDevicesIdList();
+}
+
+bool DeviceManagerAdaptor::IsMonotorWorking()
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.IsMonotorWorking
+    return parent()->IsMonotorWorking();
+}
+
+QStringList DeviceManagerAdaptor::ProtolcolDevicesIdList()
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.ProtolcolDevicesIdList
+    return parent()->ProtolcolDevicesIdList();
+}
+
+QString DeviceManagerAdaptor::QueryBlockDeviceInfo(const QString &id)
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.QueryBlockDeviceInfo
+    return parent()->QueryBlockDeviceInfo(id);
+}
+
+QString DeviceManagerAdaptor::QueryProtocolDeviceInfo(const QString &id)
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.QueryProtocolDeviceInfo
+    return parent()->QueryProtocolDeviceInfo(id);
+}
+
 void DeviceManagerAdaptor::UnmountAllDevices()
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.UnmountAllDevices

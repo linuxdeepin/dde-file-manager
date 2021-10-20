@@ -39,14 +39,21 @@ public:
     explicit DeviceManagerDBus(QObject *parent = nullptr);
     ~DeviceManagerDBus();
 
-signals:      // interfaces
-    void AutoMountCompleted();
+signals:
+    void BlockDriveAdded();
+    void BlockDriveRemoved();
 
-public slots: // interfaces
+public slots:
+    bool IsMonotorWorking();
     void UnmountAllDevices();
+    QStringList BlockDevicesIdList();
+    QString QueryBlockDeviceInfo(QString id);
+    QStringList ProtolcolDevicesIdList();
+    QString QueryProtocolDeviceInfo(QString id);
 
 private:
     void initialize();
+    void initConnection();
     Q_SLOT void askStopAllDefenderScanning(int index, const QString &text);
 
 private:

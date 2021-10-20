@@ -30,9 +30,10 @@
  */
 
 
-DAttachedBlockDevice::DAttachedBlockDevice()
+DAttachedBlockDevice::DAttachedBlockDevice(const QString &json)
+    : jsonValue(json)
 {
-
+    parse();
 }
 
 DAttachedBlockDevice::~DAttachedBlockDevice()
@@ -43,7 +44,7 @@ DAttachedBlockDevice::~DAttachedBlockDevice()
 bool DAttachedBlockDevice::isValid()
 {
     // TODO(zhans)
-    return true;
+    return false;
 }
 
 bool DAttachedBlockDevice::detachable()
@@ -91,4 +92,9 @@ QUrl DAttachedBlockDevice::accessPointUrl()
 {
     // TODO(zhans)
     return QUrl();
+}
+
+void DAttachedBlockDevice::parse()
+{
+    // TODO(zhans)
 }

@@ -1,9 +1,28 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
   <interface name="com.deepin.filemanager.service.DeviceManager">
-    <signal name="AutoMountCompleted">
+    <signal name="BlockDriveAdded">
     </signal>
+    <signal name="BlockDriveRemoved">
+    </signal>
+    <method name="IsMonotorWorking">
+      <arg type="b" direction="out"/>
+    </method>
     <method name="UnmountAllDevices">
+    </method>
+    <method name="BlockDevicesIdList">
+      <arg type="as" direction="out"/>
+    </method>
+    <method name="QueryBlockDeviceInfo">
+      <arg type="s" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="ProtolcolDevicesIdList">
+      <arg type="as" direction="out"/>
+    </method>
+    <method name="QueryProtocolDeviceInfo">
+      <arg type="s" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
     </method>
   </interface>
 </node>

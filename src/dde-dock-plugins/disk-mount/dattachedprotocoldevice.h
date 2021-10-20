@@ -27,10 +27,15 @@
 
 #include <QUrl>
 
+struct ProtocolDeviceData
+{
+    // TODO(zhangs): serallize
+};
+
 class DAttachedProtocolDevice : public DAttachedDeviceInterface
 {
 public:
-    explicit DAttachedProtocolDevice(const QString &mountpointPath);
+    explicit DAttachedProtocolDevice(const QString &json);
     virtual ~DAttachedProtocolDevice() override;
     bool isValid() override;
     bool detachable() override;
@@ -43,7 +48,10 @@ public:
     QUrl accessPointUrl() override;
 
 private:
-    QString curMountpointPath;
+    void parse();
+
+private:
+    QString jsonValue;
 };
 
 #endif // DATTACHEDPROTOCOLDEVICE_H

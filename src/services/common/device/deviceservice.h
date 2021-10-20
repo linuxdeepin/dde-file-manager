@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
@@ -24,6 +24,7 @@
 #define DEVICESERVICE_H
 
 #include "dfm_common_service_global.h"
+#include "deviceservicehelper.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
@@ -44,15 +45,30 @@ public:
 public: // operations
     void startAutoMount();
     bool startMonitor();
+    void startConnect();
     bool stopMonitor();
     void doUnMountAll();
     bool stopDefenderScanAllDrives();
 
 public: // status
-    bool isInLiveSystem();
-    bool isAutoMountSetting();
-    bool isAutoMountAndOpenSetting();
-    bool isDefenderScanningDrive(const QString &driveName = "");
+    bool isBlockDeviceMonitorWorking() const;
+    bool isProtolDeviceMonitorWorking() const;
+    bool isInLiveSystem() const;
+    bool isAutoMountSetting() const;
+    bool isAutoMountAndOpenSetting() const;
+    bool isDefenderScanningDrive(const QString &driveName = "") const;
+
+signals:
+    void blockDriveAdded();
+    void blockDriveRemoved();
+    // TODO(zhangs): emit other signals
+
+private slots:
+    void onBlockDriveAdded();
+    void onBlockDriveRemoved();
+    void onBlockDeviceAdded(DFMMOUNT::DFMDevice *dev);
+    void onBlockDeviceRemoved(DFMMOUNT::DFMDevice *dev);
+    void onBlockDeviceMounted(const QString &mountPoint);
 
 private:
     explicit DeviceService(QObject *parent = nullptr);

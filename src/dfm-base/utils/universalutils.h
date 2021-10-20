@@ -34,6 +34,7 @@ class UniversalUtils
 public:
     static void notifyMessage(const QString &msg);
     static void notifyMessage(const QString &title, const QString &msg);
+    static QString userLoginState();
 };
 
 DFMBASE_END_NAMESPACE

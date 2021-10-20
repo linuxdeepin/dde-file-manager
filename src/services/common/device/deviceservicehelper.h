@@ -39,16 +39,19 @@ class DeviceServiceHelper
 {
     friend class DeviceService;
 private:
-    static std::once_flag &onceFlag();
+    static std::once_flag &autoMountOnceFlag();
+    static std::once_flag &connectOnceFlag();
     static dfmbase::Settings *getGsGlobal();
     static void mountAllBlockDevices();
+    static bool mountBlockDevice(DFMMOUNT::DFMBlockDevice *blkDev, const QVariantMap &opts);
     static void mountAllProtocolDevices();
     static void unmountAllBlockDevices();
     static void unmountAllProtocolDevices();
     static QList<QUrl> getMountPathForDrive(const QString &driveName);
     static QList<QUrl> getMountPathForAllDrive();
-    static QUrl getMountPathForBlock(const DFMMOUNT::DFMBlockDevice *block);
-    static bool isProtectedBlocDevice(const DFMMOUNT::DFMBlockDevice *block);
+    static QUrl getMountPathForBlock(const DFMMOUNT::DFMBlockDevice *blkDev);
+    static bool isMountableBlockDevice(const DFMMOUNT::DFMBlockDevice *blkDev);
+    static bool isProtectedBlocDevice(const DFMMOUNT::DFMBlockDevice *blkDev);
 
 private:
     static void showUnmountFailedNotification(DFMMOUNT::MountError err);

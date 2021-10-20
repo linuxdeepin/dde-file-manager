@@ -25,8 +25,7 @@
 #include "diskpluginitem.h"
 #include "diskcontrolwidget.h"
 
-#include "dbus_interface/devicemanagerdbus_interface.h"
-
+#include <dbus_interface/devicemanagerdbus_interface.h>
 #include <DApplication>
 #include <QGSettings>
 
@@ -187,12 +186,13 @@ void DiskMountPlugin::diskCountChanged(const int count)
 
 void DiskMountPlugin::initCompoments()
 {
-    diskControlApplet = new DiskControlWidget(deviceInter);
+    diskControlApplet = new DiskControlWidget(deviceInter.data());
     diskControlApplet->setObjectName("disk-mount");
     diskControlApplet->setVisible(false);
 
     connect(diskControlApplet, &DiskControlWidget::diskCountChanged, this, &DiskMountPlugin::diskCountChanged);
     // auto mount and monitor work in service process
+    diskControlApplet->initListByMonitorState();
 }
 
 void DiskMountPlugin::displayModeChanged(const Dock::DisplayMode mode)

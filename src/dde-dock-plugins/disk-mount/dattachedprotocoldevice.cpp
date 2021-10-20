@@ -30,8 +30,8 @@
  */
 
 
-DAttachedProtocolDevice::DAttachedProtocolDevice(const QString &mountpointPath) :
-    curMountpointPath(mountpointPath)
+DAttachedProtocolDevice::DAttachedProtocolDevice(const QString &json) :
+    jsonValue(json)
 {
 
 }
@@ -92,4 +92,9 @@ QUrl DAttachedProtocolDevice::accessPointUrl()
 {
     // TODO(zhans)
     return QUrl();
+}
+
+void DAttachedProtocolDevice::parse()
+{
+    // TODO(zhans)
 }

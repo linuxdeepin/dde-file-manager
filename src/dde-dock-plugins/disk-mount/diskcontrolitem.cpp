@@ -32,13 +32,14 @@
 
 DWIDGET_USE_NAMESPACE
 
-DiskControlItem::DiskControlItem(QFrame *parent)
+DiskControlItem::DiskControlItem(QSharedPointer<DAttachedDeviceInterface> attachedDevicePtr, QWidget *parent)
     : QFrame(parent),
       unknowIcon(":/icons/resources/unknown.svg"),
       diskIcon(new QPushButton(this)),
       diskName(new QLabel),
       diskCapacity(new QLabel),
       capacityValueBar(new QProgressBar),
+      dev(attachedDevicePtr),
       unmountButton(new DIconButton(this))
 {
     setObjectName("DiskItem");
@@ -47,15 +48,6 @@ DiskControlItem::DiskControlItem(QFrame *parent)
     initConnection();
 }
 
-QString DiskControlItem::tagName() const
-{
-    return curTagName;
-}
-
-void DiskControlItem::setTagName(const QString &tagName)
-{
-    curTagName = tagName;
-}
 
 void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
 {

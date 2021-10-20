@@ -66,7 +66,24 @@ void UniversalUtils::notifyMessage(const QString &title, const QString &msg)
     .arg(msg)
     .arg(QStringList())
     .arg(QVariantMap())
-    .arg(5000).call();
+            .arg(5000).call();
+}
+
+/*!
+ * \brief Determine if the current user is active or not
+ * \return "State" property, we need it's "active" usunally
+ */
+QString UniversalUtils::userLoginState()
+{
+    QString state;
+    QDBusInterface loginManager("org.freedesktop.login1",
+                                "/org/freedesktop/login1/user/self",
+                                "org.freedesktop.login1.User",
+                                QDBusConnection::systemBus());
+    QVariant replay = loginManager.property(("State"));
+    if (replay.isValid())
+        state = replay.toString();
+    return state;
 }
 
 DFMBASE_END_NAMESPACE

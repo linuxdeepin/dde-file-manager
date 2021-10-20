@@ -25,23 +25,26 @@
 
 #include <QScrollArea>
 #include <QVBoxLayout>
-#include <QWeakPointer>
+#include <QPointer>
 
 #include <mutex>
 
 class DeviceManagerInterface;
+class DiskControlItem;
 
 class DiskControlWidget : public QScrollArea
 {
     Q_OBJECT
 public:
-    explicit DiskControlWidget(QWeakPointer<DeviceManagerInterface> inter, QWidget *parent = nullptr);
+    explicit DiskControlWidget(QPointer<DeviceManagerInterface> inter, QWidget *parent = nullptr);
+    void initListByMonitorState();
 
 signals:
     void diskCountChanged(const int count) const;
 
 private slots:
     void onDiskListChanged();
+    void onItemUmountClicked(DiskControlItem *item);
 
 private:
     void initializeUi();
@@ -49,14 +52,17 @@ private:
     void removeWidgets();
     void paintUi();
     void addSeparateLineUi(int width);
-    int addDeviceItems();
+    int addBlockDevicesItems();
+    int addProtocolDevicesItems();
+    int addItems(const QStringList &list, bool isBlockDevice);
 
-    static std::once_flag &onceFlag();
+    static std::once_flag &initOnceFlag();
+    static std::once_flag &retryOnceFlag();
 
 private:
     QVBoxLayout *centralLayout {nullptr};
     QWidget *centralWidget {nullptr};
-    QWeakPointer<DeviceManagerInterface> deviceInter;
+    QPointer<DeviceManagerInterface> deviceInter;
 };
 
 #endif // DISKCONTROLWIDGET_H

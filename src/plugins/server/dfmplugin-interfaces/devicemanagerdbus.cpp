@@ -34,11 +34,17 @@ DSC_USE_NAMESPACE
 DeviceManagerDBus::DeviceManagerDBus(QObject *parent) : QObject(parent)
 {
     initialize();
+    initConnection();
 }
 
 DeviceManagerDBus::~DeviceManagerDBus()
 {
 
+}
+
+bool DeviceManagerDBus::IsMonotorWorking()
+{
+    return deviceServ->isBlockDeviceMonitorWorking() && deviceServ->isProtolDeviceMonitorWorking();
 }
 
 void DeviceManagerDBus::initialize()
@@ -48,7 +54,16 @@ void DeviceManagerDBus::initialize()
     Q_ASSERT(deviceServ);
     deviceServ->startAutoMount();
     deviceServ->startMonitor();
-    emit AutoMountCompleted();
+    deviceServ->startConnect();
+}
+
+/*!
+ * \brief pub signals with device monitor
+ */
+void DeviceManagerDBus::initConnection()
+{
+    connect(deviceServ, &DeviceService::blockDriveAdded, this, &DeviceManagerDBus::BlockDriveAdded);
+    connect(deviceServ, &DeviceService::blockDriveRemoved, this, &DeviceManagerDBus::BlockDriveRemoved);
 }
 
 void DeviceManagerDBus::askStopAllDefenderScanning(int index, const QString &text)
@@ -74,5 +89,30 @@ void DeviceManagerDBus::UnmountAllDevices()
         connect(d, &DDialog::buttonClicked, this, &DeviceManagerDBus::askStopAllDefenderScanning);
         return;
     }
+
     deviceServ->doUnMountAll();
+}
+
+QStringList DeviceManagerDBus::BlockDevicesIdList()
+{
+    // TODO(zhangs): wait dfm-mount impl
+    return QStringList();
+}
+
+QString DeviceManagerDBus::QueryBlockDeviceInfo(QString id)
+{
+    // TODO(zhangs): build json
+    return QString();
+}
+
+QStringList DeviceManagerDBus::ProtolcolDevicesIdList()
+{
+    // TODO(zhangs): wait dfm-mount impl
+    return QStringList();
+}
+
+QString DeviceManagerDBus::QueryProtocolDeviceInfo(QString id)
+{
+    // TODO(zhangs): build json
+    return QString();
 }

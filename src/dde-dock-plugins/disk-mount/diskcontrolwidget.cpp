@@ -21,13 +21,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "diskcontrolwidget.h"
+#include "dattachedblockdevice.h"
+#include "dattachedprotocoldevice.h"
+#include "diskcontrolitem.h"
 
-#include "dbus_interface/devicemanagerdbus_interface.h"
-
+#include <dbus_interface/devicemanagerdbus_interface.h>
 #include <DGuiApplicationHelper>
 
 #include <QScrollBar>
 #include <QLabel>
+#include <QSharedPointer>
 
 static const int WIDTH = 300;
 
@@ -38,7 +41,7 @@ static const int WIDTH = 300;
  * The control pops up after the left mouse button click on the main control of the plugin
  */
 
-DiskControlWidget::DiskControlWidget(QWeakPointer<DeviceManagerInterface> inter, QWidget *parent)
+DiskControlWidget::DiskControlWidget(QPointer<DeviceManagerInterface> inter, QWidget *parent)
     : QScrollArea(parent),
       centralLayout(new QVBoxLayout),
       centralWidget(new QWidget),
@@ -49,9 +52,22 @@ DiskControlWidget::DiskControlWidget(QWeakPointer<DeviceManagerInterface> inter,
     initConnection();
 }
 
+void DiskControlWidget::initListByMonitorState()
+{
+    auto reply = deviceInter->IsMonotorWorking();
+    if (reply.isValid() && reply.value()) {
+        onDiskListChanged();
+    } else {
+        // if failed retry once after 3s
+        std::call_once(retryOnceFlag(), [this] () {
+            QTimer::singleShot(3000, this, &DiskControlWidget::initListByMonitorState);
+        });
+    }
+}
+
 void DiskControlWidget::initializeUi()
 {
-    std::call_once(DiskControlWidget::onceFlag(), [this] () {
+    std::call_once(DiskControlWidget::initOnceFlag(), [this] () {
         centralWidget->setLayout(centralLayout);
         centralWidget->setFixedWidth(WIDTH);
         centralLayout->setMargin(0);
@@ -66,6 +82,7 @@ void DiskControlWidget::initializeUi()
         viewport()->setAutoFillBackground(false);
         paintUi();
     });
+
 }
 
 void DiskControlWidget::initConnection()
@@ -74,6 +91,9 @@ void DiskControlWidget::initConnection()
     // refreshes the list of controls to fit the text color under the new theme
     connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
             this, &DiskControlWidget::onDiskListChanged);
+    connect(deviceInter, &DeviceManagerInterface::BlockDriveAdded, this, &DiskControlWidget::onDiskListChanged);
+    connect(deviceInter, &DeviceManagerInterface::BlockDriveRemoved, this, &DiskControlWidget::onDiskListChanged);
+    // TODO(zhangs): other signals
 }
 
 void DiskControlWidget::removeWidgets()
@@ -107,7 +127,15 @@ void DiskControlWidget::paintUi()
     centralLayout->addWidget(header);
 
     addSeparateLineUi(2);
-    int mountedCount = addDeviceItems();
+    int mountedCount = addBlockDevicesItems() + addProtocolDevicesItems();
+
+    // remove last seperate line
+    QLayoutItem *last = centralLayout->takeAt(centralLayout->count() - 1);
+    if (last) {
+        delete last->widget();
+        delete last;
+    }
+
     emit diskCountChanged(mountedCount);
 
     const int contentHeight = mountedCount * 70 + 46;
@@ -128,16 +156,73 @@ void DiskControlWidget::addSeparateLineUi(int width)
     centralLayout->addWidget(line);
 }
 
-int DiskControlWidget::addDeviceItems()
+int DiskControlWidget::addBlockDevicesItems()
 {
     int mountedCount = 0;
 
-    // TODO(zhangs): request server, remove last seperate line
+    auto reply = deviceInter->BlockDevicesIdList();
+    if (!reply.isValid())
+        return mountedCount;
+
+    const QStringList &list = reply.value();
+    mountedCount = addItems(list, true);
 
     return mountedCount;
 }
 
-std::once_flag &DiskControlWidget::onceFlag()
+int DiskControlWidget::addProtocolDevicesItems()
+{
+    int mountedCount = 0;
+
+    auto reply = deviceInter->ProtolcolDevicesIdList();
+    if (!reply.isValid())
+        return mountedCount;
+
+    const QStringList &list = reply.value();
+    mountedCount = addItems(list, false);
+
+    return mountedCount;
+}
+
+int DiskControlWidget::addItems(const QStringList &list, bool isBlockDevice)
+{
+    int mountedCount = 0;
+
+    for (const QString &id : list) {
+        auto reply = isBlockDevice ? deviceInter->QueryBlockDeviceInfo(id) :
+                                     deviceInter->QueryProtocolDeviceInfo(id);
+
+        if (!reply.isValid())
+            continue;
+
+        QSharedPointer<DAttachedDeviceInterface> dev;
+        const QString &json = reply.value();
+
+        if (isBlockDevice)
+            dev.reset(new DAttachedBlockDevice(json));
+        else
+            dev.reset(new DAttachedProtocolDevice(json));
+
+        if (dev->isValid()) {
+            mountedCount++;
+            DiskControlItem *item = new DiskControlItem(dev, this);
+            centralLayout->addWidget(item);
+            addSeparateLineUi(1);
+            connect(item, &DiskControlItem::umountClicked, this, &DiskControlWidget::onItemUmountClicked);
+        }
+    }
+
+    return mountedCount;
+}
+
+
+std::once_flag &DiskControlWidget::initOnceFlag()
+{
+    static std::once_flag flag;
+    return flag;
+}
+
+std::once_flag &DiskControlWidget::retryOnceFlag()
 {
     static std::once_flag flag;
     return flag;
@@ -147,6 +232,14 @@ void DiskControlWidget::onDiskListChanged()
 {
     removeWidgets();
     paintUi();
+}
+
+void DiskControlWidget::onItemUmountClicked(DiskControlItem *item)
+{
+    if (!item) {
+        qWarning() << "DiskControlWidget, item is null.";
+        return;
+    }
 }
 
 

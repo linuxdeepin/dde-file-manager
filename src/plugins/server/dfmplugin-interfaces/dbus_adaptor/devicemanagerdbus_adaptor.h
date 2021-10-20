@@ -33,8 +33,26 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
     Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.service.DeviceManager")
     Q_CLASSINFO("D-Bus Introspection", ""
 "  <interface name=\"com.deepin.filemanager.service.DeviceManager\">\n"
-"    <signal name=\"AutoMountCompleted\"/>\n"
+"    <signal name=\"BlockDriveAdded\"/>\n"
+"    <signal name=\"BlockDriveRemoved\"/>\n"
+"    <method name=\"IsMonotorWorking\">\n"
+"      <arg direction=\"out\" type=\"b\"/>\n"
+"    </method>\n"
 "    <method name=\"UnmountAllDevices\"/>\n"
+"    <method name=\"BlockDevicesIdList\">\n"
+"      <arg direction=\"out\" type=\"as\"/>\n"
+"    </method>\n"
+"    <method name=\"QueryBlockDeviceInfo\">\n"
+"      <arg direction=\"out\" type=\"s\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"    </method>\n"
+"    <method name=\"ProtolcolDevicesIdList\">\n"
+"      <arg direction=\"out\" type=\"as\"/>\n"
+"    </method>\n"
+"    <method name=\"QueryProtocolDeviceInfo\">\n"
+"      <arg direction=\"out\" type=\"s\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"    </method>\n"
 "  </interface>\n"
         "")
 public:
@@ -46,9 +64,15 @@ public:
 
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
+    QStringList BlockDevicesIdList();
+    bool IsMonotorWorking();
+    QStringList ProtolcolDevicesIdList();
+    QString QueryBlockDeviceInfo(const QString &id);
+    QString QueryProtocolDeviceInfo(const QString &id);
     void UnmountAllDevices();
 Q_SIGNALS: // SIGNALS
-    void AutoMountCompleted();
+    void BlockDriveAdded();
+    void BlockDriveRemoved();
 };
 
 #endif

@@ -27,10 +27,15 @@
 
 #include <QUrl>
 
+struct BlockDeviceData
+{
+    // TODO(zhangs): serallize
+};
+
 class DAttachedBlockDevice : public DAttachedDeviceInterface
 {
 public:
-    explicit DAttachedBlockDevice();
+    explicit DAttachedBlockDevice(const QString &json);
     virtual ~DAttachedBlockDevice() override;
     bool isValid() override;
     bool detachable() override;
@@ -41,6 +46,13 @@ public:
     QString iconName() override;
     QUrl mountpointUrl() override;
     QUrl accessPointUrl() override;
+
+private:
+    void parse();
+
+private:
+    QString jsonValue;
+    BlockDeviceData data;
 };
 
 #endif // DATTACHEDBLOCKDEVICE_H
