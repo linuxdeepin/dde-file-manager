@@ -13,25 +13,17 @@ namespace FileEventTypes
 const QString TOPIC_FILE_EVENT {"fileEvent"};
 const QString DATA_MKDIR {"mkdir"};
 const QString DATA_TOUCH {"touch"};
-const QString PROPERTY_KEY_URLS {"urls"};
-const QString PROPERTY_KEY_URL {"url"};
+const QString PROPERTY_KEY_ROOTURL {"rootUrl"};
+const QString PROPERTY_KEY_DIRNAMES {"dirNames"};
+const QString PROPERTY_KEY_DIRNAME {"dirName"};
 } //FileEventTypes
 
 class FileEventReceiver final : public dpf::EventHandler, dpf::AutoEventHandlerRegister<FileEventReceiver>
 {
     Q_OBJECT
-
 public:
-    static EventHandler::Type type()
-    {
-        return EventHandler::Type::Async;
-    }
-
-    static QStringList topics()
-    {
-         return QStringList() << FileEventTypes::TOPIC_FILE_EVENT;
-    }
-
+    static EventHandler::Type type();
+    static QStringList topics();
     explicit FileEventReceiver() : AutoEventHandlerRegister<FileEventReceiver>() {}
     virtual void eventProcess(const dpf::Event &event) override;
 };

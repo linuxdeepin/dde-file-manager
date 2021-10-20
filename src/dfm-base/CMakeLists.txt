@@ -101,6 +101,8 @@ set(WIDGETS_H
     widgets/dfmfileview/fileviewitem.h
     widgets/dfmfileview/listitemdelegate.h
     widgets/dfmfileview/iconitemdelegate.h
+    widgets/dfmdialog/errordialog.h
+    widgets/dfmdialog/contextdialog.h
     )
 
 set(WIDGETS_CPP
@@ -122,6 +124,8 @@ set(WIDGETS_CPP
     widgets/dfmfileview/fileviewitem.cpp
     widgets/dfmfileview/listitemdelegate.cpp
     widgets/dfmfileview/iconitemdelegate.cpp
+    widgets/dfmdialog/errordialog.cpp
+    widgets/dfmdialog/contextdialog.cpp
     )
 
 set(APPLICATIONSERVICE_CPP
