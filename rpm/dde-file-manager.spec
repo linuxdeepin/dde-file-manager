@@ -115,7 +115,7 @@ Deepin desktop environment - desktop module.
 # fix file permissions
 find -type f -perm 775 -exec chmod 644 {} \;
 #sed -i '/target.path/s|lib|%{_lib}|' dde-dock-plugins/disk-mount/disk-mount.pro
-sed -i '/deepin-daemon/s|lib|libexec|' dde-zone/mainwindow.h
+#sed -i '/deepin-daemon/s|lib|libexec|' dde-zone/mainwindow.h
 sed -i 's|lib/gvfs|libexec|' %{name}-lib/gvfs/networkmanager.cpp
 #sed -i 's|%{_datadir}|%{_libdir}|' dde-sharefiles/appbase.pri
 sed -i 's|/lib/dde-dock/plugins|/lib64/dde-dock/plugins|' dde-dock-plugins/disk-mount/disk-mount.pro
