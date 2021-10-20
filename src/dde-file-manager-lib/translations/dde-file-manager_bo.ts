@@ -3394,7 +3394,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
         <source>Clear saved password and unmount</source>
-        <translation>ཕྱིར་འཐོན་པ་དང་བཤིག་པ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>

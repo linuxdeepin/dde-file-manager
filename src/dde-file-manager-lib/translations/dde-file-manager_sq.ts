@@ -943,22 +943,22 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="209"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, riprovoni pas %1 minutash</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="237"/>
         <source>Wrong password, please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Fjalëkalim i gabuar, ju lutemi, riprovoni pas %1 minutash</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="240"/>
         <source>Wrong password, one chance left</source>
-        <translation type="unfinished"/>
+        <translation>Fjalëkalim i gabuar, edhe një provë</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="242"/>
         <source>Wrong password, %1 chances left</source>
-        <translation type="unfinished"/>
+        <translation>Fjalëkalim i gabuar, edhe %1 prova</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="287"/>
@@ -3045,7 +3045,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1429"/>
         <source>Unconnected network shared directory</source>
-        <translation type="unfinished"/>
+        <translation>Drejtori e ndarë përmes rrjeti jo e lidhur</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1447"/>

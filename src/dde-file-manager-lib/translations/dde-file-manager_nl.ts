@@ -943,22 +943,22 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="209"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Probeer het over %1 minuten opnieuw</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="237"/>
         <source>Wrong password, please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Onjuist wachtwoord - probeer het over %1 minuten opnieuw</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="240"/>
         <source>Wrong password, one chance left</source>
-        <translation type="unfinished"/>
+        <translation>Onjuist wachtwoord - nog 1 poging te gaan</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="242"/>
         <source>Wrong password, %1 chances left</source>
-        <translation type="unfinished"/>
+        <translation>Onjuist wachtwoord - nog %1 pogingen te gaan</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="287"/>
@@ -3045,7 +3045,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1429"/>
         <source>Unconnected network shared directory</source>
-        <translation type="unfinished"/>
+        <translation>Niet verbonden met een gedeelde netwerkmap</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1447"/>

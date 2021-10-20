@@ -943,22 +943,22 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="209"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Si us plau, torneu-ho a provar d&apos;aquí a %1 minuts.</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="237"/>
         <source>Wrong password, please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Contrasenya incorrecta. Si us plau, torneu-ho a provar d&apos;aquí a %1 minuts.</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="240"/>
         <source>Wrong password, one chance left</source>
-        <translation type="unfinished"/>
+        <translation>Contrasenya incorrecta. Us queda un intent.</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="242"/>
         <source>Wrong password, %1 chances left</source>
-        <translation type="unfinished"/>
+        <translation>Contrasenya incorrecta. Us queden %1 intents.</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="287"/>
@@ -2365,7 +2365,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="257"/>
         <location filename="../configure/global-setting-template.js" line="256"/>
         <source>Keep showing the mounted Samba shares</source>
-        <translation type="unfinished"/>
+        <translation>Continua mostrant els recursos compartits de Samba muntats.</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="269"/>
@@ -3045,7 +3045,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1429"/>
         <source>Unconnected network shared directory</source>
-        <translation type="unfinished"/>
+        <translation>Directori compartit de xarxa sense connexió</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1447"/>
@@ -3394,7 +3394,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
         <source>Clear saved password and unmount</source>
-        <translation type="unfinished"/>
+        <translation>Esborra la contrasenya desada i desmunta-ho</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>

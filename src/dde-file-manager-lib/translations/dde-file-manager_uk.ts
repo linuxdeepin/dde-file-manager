@@ -943,22 +943,22 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="209"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Будь ласка, повторіть спробу за %1 хвилин</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="237"/>
         <source>Wrong password, please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Помилковий пароль. Будь ласка, повторіть спробу за %1 хвилин</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="240"/>
         <source>Wrong password, one chance left</source>
-        <translation type="unfinished"/>
+        <translation>Помилковий пароль. Лишилася одна спроба.</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="242"/>
         <source>Wrong password, %1 chances left</source>
-        <translation type="unfinished"/>
+        <translation>Помилковий пароль. Лишилося %1 спроб.</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="287"/>
@@ -2365,7 +2365,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="257"/>
         <location filename="../configure/global-setting-template.js" line="256"/>
         <source>Keep showing the mounted Samba shares</source>
-        <translation type="unfinished"/>
+        <translation>Продовжувати показ змонтованих спільних ресурсів Samba</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="269"/>
@@ -3045,7 +3045,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1429"/>
         <source>Unconnected network shared directory</source>
-        <translation type="unfinished"/>
+        <translation>Нез&apos;єднаний мережевий спільний каталог</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1447"/>

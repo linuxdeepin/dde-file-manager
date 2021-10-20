@@ -3394,7 +3394,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
         <source>Clear saved password and unmount</source>
-        <translation>退出登錄並卸載</translation>
+        <translation>取消記住密碼並卸載</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>

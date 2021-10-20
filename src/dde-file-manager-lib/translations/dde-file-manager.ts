@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en">
 <context>
     <name>AppController</name>
     <message>
@@ -3641,7 +3643,7 @@
     </message>
     <message>
         <location filename="../interfaces/dfileinfo.cpp" line="891"/>
-        <location filename="../models/masteredmediafileinfo.cpp" line="279"/>
+        <location filename="../models/masteredmediafileinfo.cpp" line="281"/>
         <location filename="../models/recentfileinfo.cpp" line="264"/>
         <location filename="../models/trashfileinfo.cpp" line="366"/>
         <location filename="../models/vaultfileinfo.cpp" line="141"/>
