@@ -109,16 +109,26 @@ void WindowManager::initConnect()
 void WindowManager::loadWindowState(DFileManagerWindow *window)
 {
     const QVariantMap &state = DFMApplication::appObtuselySetting()->value("WindowManager", "WindowState").toMap();
-
-    int width = state.value("width").toInt();
-    int height = state.value("height").toInt();
     NetWmStates windowState = static_cast<NetWmStates>(state.value("state").toInt());
+
     // fix bug 30932,获取全屏属性，必须是width全屏和height全屏熟悉都满足，才判断是全屏
-    if ((m_windows.size() == 0) && ((windowState & NetWmStateMaximizedHorz) != 0 && (windowState & NetWmStateMaximizedVert) != 0))
-    {
+    if ((m_windows.size() == 0) && ((windowState & NetWmStateMaximizedHorz) != 0 && (windowState & NetWmStateMaximizedVert) != 0)) {
             window->showMaximized();
     }
     else {
+        int width = state.value("width").toInt();
+        int height = state.value("height").toInt();
+
+        //窗口的size不能超过当前屏幕分辨率大小
+        QPoint pos = QCursor::pos();
+        for (QScreen *screen : qApp->screens()) {
+            if (screen->geometry().contains(pos)) {
+                width = MIN(width, screen->geometry().width());
+                height = MIN(height, screen->geometry().height());
+                break;
+            }
+        }
+
         window->resize(width, height);
     }
 }
