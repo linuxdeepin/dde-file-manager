@@ -33,9 +33,6 @@ class QUrl;
 class QString;
 DFMBASE_BEGIN_NAMESPACE
 
-/*!
- * \brief 路由Url注册节点类
- */
 struct SchemeNode
 {
     QString myScheme; // url前缀
@@ -58,6 +55,18 @@ public:
     QIcon icon() const;
     void setIcon(const QIcon &icon);
 };
+
+namespace SchemeTypes
+{
+    extern const QString File;
+    extern const QString Desktop;
+    extern const QString Home;
+    extern const QString Videos;
+    extern const QString Music;
+    extern const QString Pictures;
+    extern const QString Documents;
+    extern const QString Downloads;
+} //namespace SchemeTypes
 
 class UrlRoute
 {

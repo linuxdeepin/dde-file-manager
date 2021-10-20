@@ -23,6 +23,10 @@
 
 #include "dfm-base/widgets/dfmfileview/iconitemdelegate.h"
 #include "dfm-base/widgets/dfmfileview/listitemdelegate.h"
+#include "services/common/menu/menuservice.h"
+#include "dfm-framework/framework.h"
+
+DSC_USE_NAMESPACE
 
 RecentBrowseView::RecentBrowseView(QWidget *parent)
     :BrowseView(parent)
@@ -41,4 +45,23 @@ void RecentBrowseView::setRootUrl(const QUrl &url)
 QUrl RecentBrowseView::rootUrl()
 {
     return RecentUtil::onlyRootUrl();
+}
+
+void RecentBrowseView::contextMenuEvent(QContextMenuEvent *event)
+{
+    Q_UNUSED(event);
+
+    auto &ctx = dpfInstance.serviceContext();
+    MenuService* menuService = ctx.service<MenuService>(MenuService::name());
+    qCCritical(RecentPlugin) << Q_FUNC_INFO << menuService;
+    if (!menuService) {
+        abort();
+    }
+
+    QMenu *tempMenu = menuService->createMenu(AbstractFileMenu::Empty,
+                                              RecentUtil::onlyRootUrl(), {}, {});
+    if (tempMenu) {
+        tempMenu->exec(QCursor::pos());
+        delete tempMenu;
+    }
 }

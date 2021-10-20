@@ -34,6 +34,7 @@ public:
     explicit RecentBrowseView(QWidget *parent = nullptr);
     virtual void setRootUrl(const QUrl &url) override;
     virtual QUrl rootUrl() override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 };
 
 #endif // RECENTBROWSEVIEW_H

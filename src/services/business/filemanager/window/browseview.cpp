@@ -23,6 +23,7 @@
 #include "dfm-base/widgets/dfmfileview/listitemdelegate.h"
 #include "dfm-base/widgets/dfmfileview/iconitemdelegate.h"
 #include "dfm-base/widgets/dfmfileview/fileviewmodel.h"
+#include "services/common/menu/menuservice.h"
 
 DSB_FM_BEGIN_NAMESPACE
 

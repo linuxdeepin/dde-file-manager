@@ -36,6 +36,7 @@ add_library(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     dfm-base
     dfm-framework
+    dfmservice-common
     dfmservice-filemanager
     ${QtUseModules}
     ${PkgUserModules}

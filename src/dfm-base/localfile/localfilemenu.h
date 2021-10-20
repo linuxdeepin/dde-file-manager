@@ -19,23 +19,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LOCALMENU_P_H
-#define LOCALMENU_P_H
+#ifndef LOCALFILEMENU_H
+#define LOCALFILEMENU_H
+
 #include "dfm-base/dfm_base_global.h"
-#include "localfile/localmenu.h"
-#include "localfile/localfileinfo.h"
+#include "dfm-base/base/abstractfilemenu.h"
+
+#include <QObject>
+#include <QSharedPointer>
+
 DFMBASE_BEGIN_NAMESPACE
-class LocalMenuPrivate
+class LocalMenuPrivate;
+class LocalFileMenu : public AbstractFileMenu
 {
-    friend class LocalMenu;
-    LocalMenu *const q;
-    QSharedPointer<LocalFileInfo> localFileInfo { nullptr }; // 本地文件信息
-    QAtomicInteger<bool> isAddOemExternalAction { false }; // 是否加载oem的action
-    QAtomicInteger<bool> isNeedLoadCustomActions { false }; // 是否需要加载用户自定义的菜单action
+    Q_OBJECT
+    QSharedPointer<LocalMenuPrivate> d;
 public:
-    explicit LocalMenuPrivate(const QString &filePath, LocalMenu *qq);
-    virtual ~LocalMenuPrivate();
+    explicit LocalFileMenu(QObject *parent = nullptr);
+    virtual QMenu *build(MenuMode mode,
+                         const QUrl &rootUrl,
+                         const QUrl &foucsUrl,
+                         const QList<QUrl> &selected = {});
 };
 DFMBASE_END_NAMESPACE
 
-#endif // LOCALMENU_P_H
+#endif // LOCALFILEMENU_H

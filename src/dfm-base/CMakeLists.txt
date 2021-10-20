@@ -46,6 +46,7 @@ set(BASE_H
     base/schemefactory.h
     base/abstractfilewatcher.h
     base/abstractfiledevice.h
+    base/abstractfilemenu.h
     )
 
 set(BASE_CPP
@@ -58,22 +59,22 @@ set(BASE_CPP
     base/schemefactory.cpp
     base/abstractfilewatcher.cpp
     base/abstractfiledevice.cpp
+    base/abstractfilemenu.cpp
     )
 
 set(LOCALFILE_H
-    localfile/private/localmenu_p.h
     localfile/private/localdiriterator_p.h
     localfile/private/localfileinfo_p.h
     localfile/private/localfilewatcher_p.h
     localfile/localdiriterator.h
     localfile/localfileinfo.h
-    localfile/localmenu.h
+    localfile/localfilemenu.h
     localfile/localfilewatcher.h
     )
 
 set(LOCALFILE_CPP
     localfile/localfileinfo.cpp
-    localfile/localmenu.cpp
+    localfile/localfilemenu.cpp
     localfile/localdiriterator.cpp
     localfile/localfilewatcher.cpp
     )

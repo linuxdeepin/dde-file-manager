@@ -27,6 +27,15 @@ FILE(GLOB DIALOG_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/*.cpp"
     )
 
+FILE(GLOB MENU_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/menu/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/menu/*.cpp"
+# todo:
+#    "${CMAKE_CURRENT_SOURCE_DIR}/menu/menucore/private/*.h"
+#    "${CMAKE_CURRENT_SOURCE_DIR}/menu/menucore/*.h"
+#    "${CMAKE_CURRENT_SOURCE_DIR}/menu/menucore/*.cpp"
+    )
+
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
@@ -34,6 +43,7 @@ add_library(${PROJECT_NAME}
     ${JOB_FILES}
     ${DEVICE_FILES}
     ${DIALOG_FILES}
+    ${MENU_FILES}
     )
 
 target_link_libraries(

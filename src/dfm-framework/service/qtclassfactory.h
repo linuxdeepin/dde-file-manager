@@ -55,7 +55,7 @@ public:
         return true;
     }
 
-    virtual CT* create(const QString &name, QString *errorString = nullptr)
+    CT* create(const QString &name, QString *errorString = nullptr)
     {
         CreateFunc constantFunc = constructList.value(name);
         if (constantFunc) {

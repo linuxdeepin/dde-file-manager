@@ -25,6 +25,19 @@
 #include <QUrl>
 
 DFMBASE_BEGIN_NAMESPACE
+
+namespace SchemeTypes
+{
+    const QString File {"file"};
+    const QString Desktop {"desktop"};
+    const QString Home {"home"};
+    const QString Videos {"videos"};
+    const QString Music {"music"};
+    const QString Pictures {"pictures"};
+    const QString Documents {"documents"};
+    const QString Downloads = {"downloads"};
+} //namespace SchemeTypes
+
 QList<SchemeNode> UrlRoute::SchemeMapLists{};
 /*!
  * \class UrlRoute路由
@@ -380,7 +393,7 @@ QUrl UrlRoute::pathToUrl(const QString &path, QString *errorString)
     }
 
     QUrl url;
-    url.setScheme("file");
+    url.setScheme(SchemeTypes::File);
     url.setPath(formatPath);
     return url;
 }
@@ -437,6 +450,9 @@ void SchemeNode::setIcon(const QIcon &icon)
     myIcon = icon;
 }
 
+/*!
+ * \brief 路由Url注册节点类
+ */
 SchemeNode::SchemeNode(const QString &scheme, const QString &root,const QIcon &icon ,const bool isVirtual)
     : myScheme(scheme),
       myRoot(root),

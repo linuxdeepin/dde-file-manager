@@ -22,9 +22,10 @@
 #include "core.h"
 #include "corelog.h"
 #include "eventcaller.h"
+#include "corebrowseview.h"
 
 #include "windowservice.h"
-#include "window/browseview.h" // TODO(zhangs): hide
+#include "services/common/menu/menuservice.h"
 
 #include "dfm-base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
@@ -32,6 +33,7 @@
 #include "dfm-base/localfile/localfileinfo.h"
 #include "dfm-base/localfile/localdiriterator.h"
 #include "dfm-base/localfile/localfilewatcher.h"
+#include "dfm-base/localfile/localfilemenu.h"
 #include "dfm-base/widgets/dfmsidebar/sidebar.h"
 #include "dfm-base/widgets/dfmsidebar/sidebaritem.h"
 #include "dfm-base/widgets/dfmsidebar/sidebarview.h"
@@ -63,6 +65,7 @@
 #include <QApplication>
 
 DSB_FM_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
 namespace GlobalPrivate {
     const int DEFAULT_WINDOW_WIDTH = 760;
@@ -127,75 +130,82 @@ void initSidebar(SideBar* sidebar)
 
 static void regStandardPathClass()
 {
-    UrlRoute::schemeMapRoot("home",
+    UrlRoute::schemeMapRoot(SchemeTypes::Home,
                             QDir::home().path(),
                             QIcon::fromTheme(StandardPaths::iconName(StandardPaths::HomePath)),
                             false);
 
-    UrlRoute::schemeMapRoot("desktop",
+    UrlRoute::schemeMapRoot(SchemeTypes::Desktop,
                             StandardPaths::location(StandardPaths::DesktopPath),
                             QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DesktopPath)),
                             false);
 
-    UrlRoute::schemeMapRoot("videos",
+    UrlRoute::schemeMapRoot(SchemeTypes::Videos,
                             StandardPaths::location(StandardPaths::VideosPath),
                             QIcon::fromTheme(StandardPaths::iconName(StandardPaths::VideosPath)),
                             false);
 
-    UrlRoute::schemeMapRoot("music",
+    UrlRoute::schemeMapRoot(SchemeTypes::Music,
                             StandardPaths::location(StandardPaths::MusicPath),
                             QIcon::fromTheme(StandardPaths::iconName(StandardPaths::MusicPath)),
                             false);
 
-    UrlRoute::schemeMapRoot("pictures",
+    UrlRoute::schemeMapRoot(SchemeTypes::Pictures,
                             StandardPaths::location(StandardPaths::PicturesPath),
                             QIcon::fromTheme(StandardPaths::iconName(StandardPaths::PicturesPath)),
                             false);
 
-    UrlRoute::schemeMapRoot("documents",
+    UrlRoute::schemeMapRoot(SchemeTypes::Documents,
                             StandardPaths::location(StandardPaths::DocumentsPath),
                             QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DocumentsPath)),
                             false);
 
-    UrlRoute::schemeMapRoot("downloads",
+    UrlRoute::schemeMapRoot(SchemeTypes::Downloads,
                             StandardPaths::location(StandardPaths::DownloadsPath),
                             QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DownloadsPath)),
                             false);
 
-    InfoFactory::regClass<LocalFileInfo>("home");
-    DirIteratorFactory::regClass<LocalDirIterator>("home");
-    WacherFactory::regClass<LocalFileWatcher>("home");
-    BrowseWidgetFactory::regClass<BrowseView>("home");
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::Home);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::Home);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::Home);
+    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::Home);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::Home);
 
-    InfoFactory::regClass<LocalFileInfo>("desktop");
-    DirIteratorFactory::regClass<LocalDirIterator>("desktop");
-    WacherFactory::regClass<LocalFileWatcher>("desktop");
-    BrowseWidgetFactory::regClass<BrowseView>("desktop");
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::Desktop);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::Desktop);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::Desktop);
+    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::Desktop);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::Desktop);
 
-    InfoFactory::regClass<LocalFileInfo>("videos");
-    DirIteratorFactory::regClass<LocalDirIterator>("videos");
-    WacherFactory::regClass<LocalFileWatcher>("videos");
-    BrowseWidgetFactory::regClass<BrowseView>("videos");
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::Videos);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::Videos);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::Videos);
+    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::Videos);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::Videos);
 
-    InfoFactory::regClass<LocalFileInfo>("music");
-    DirIteratorFactory::regClass<LocalDirIterator>("music");
-    WacherFactory::regClass<LocalFileWatcher>("music");
-    BrowseWidgetFactory::regClass<BrowseView>("music");
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::Music);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::Music);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::Music);
+    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::Music);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::Music);
 
-    InfoFactory::regClass<LocalFileInfo>("pictures");
-    DirIteratorFactory::regClass<LocalDirIterator>("pictures");
-    WacherFactory::regClass<LocalFileWatcher>("pictures");
-    BrowseWidgetFactory::regClass<BrowseView>("pictures");
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::Pictures);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::Pictures);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::Pictures);
+    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::Pictures);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::Pictures);
 
-    InfoFactory::regClass<LocalFileInfo>("documents");
-    DirIteratorFactory::regClass<LocalDirIterator>("documents");
-    WacherFactory::regClass<LocalFileWatcher>("documents");
-    BrowseWidgetFactory::regClass<BrowseView>("documents");
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::Documents);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::Documents);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::Documents);
+    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::Documents);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::Documents);
 
-    InfoFactory::regClass<LocalFileInfo>("downloads");
-    DirIteratorFactory::regClass<LocalDirIterator>("downloads");
-    WacherFactory::regClass<LocalFileWatcher>("downloads");
-    BrowseWidgetFactory::regClass<BrowseView>("downloads");
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::Downloads);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::Downloads);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::Downloads);
+    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::Downloads);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::Downloads);
 }
 
 void Core::initialize()
@@ -211,12 +221,13 @@ void Core::initialize()
     }
 
     //注册路由
-    UrlRoute::schemeMapRoot("file","/");
+    UrlRoute::schemeMapRoot(SchemeTypes::File,"/");
     //注册Scheme为"file"的扩展的文件信息 本地默认文件的
-    InfoFactory::regClass<LocalFileInfo>("file");
-    DirIteratorFactory::regClass<LocalDirIterator>("file");
-    WacherFactory::regClass<LocalFileWatcher>("file");
-    BrowseWidgetFactory::regClass<BrowseView>("file");
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::File);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::File);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::File);
+    BrowseWidgetFactory::regClass<BrowseView>(SchemeTypes::File);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::File);
 
     regStandardPathClass();
 }

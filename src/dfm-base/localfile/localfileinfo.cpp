@@ -427,7 +427,7 @@ QDir LocalFileInfo::absoluteDir() const
  */
 QUrl LocalFileInfo::url() const
 {
-    return UrlRoute::pathToUrl(filePath());
+    return UrlRoute::pathToUrl(UrlRoute::urlToPath(d->dfmFileInfo->uri()));
 }
 /*!
  * \brief isReadable 获取文件是否可读
