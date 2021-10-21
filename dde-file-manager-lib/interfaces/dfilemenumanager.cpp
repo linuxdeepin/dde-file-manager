@@ -153,9 +153,8 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
                << MenuAction::Settings;
 
     QSettings settings("/etc/deepin-installer.conf", QSettings::IniFormat);
-    QString label = settings.value("DI_FULLDISK_MULTIDISK_LABEL_0").toString();
-    QString policy = settings.value("DI_FULLDISK_MULTIDISK_POLICY_0").toString();
-    if (!label.isEmpty() && !policy.isEmpty())
+    QString cryptInfo = settings.value("DI_CRYPT_INFO").toString();
+    if (!cryptInfo.isEmpty())
         actionKeys.insert(actionKeys.indexOf(MenuAction::Settings), MenuAction::ChangeDiskPassword);
 
     return genereteMenuByKeys(actionKeys, disableList, false, subMenuKeys, false);
