@@ -210,25 +210,19 @@ QVariant FileViewItem::data(int role) const
         return mimeType().name();
     case ItemColumListRole:
     {
-        QList<int> columrollist;
-        columrollist << ItemNameRole << ItemFileLastModifiedRole << ItemFileSizeRole << ItemFileMimeTypeRole;
+        QList<QPair<int,int>> columrollist;
+        columrollist << QPair<int,int>(ItemNameRole, 32) << QPair<int,int>(ItemFileLastModifiedRole, 32)
+                << QPair<int,int>(ItemFileSizeRole, 20) << QPair<int,int>(ItemFileMimeTypeRole, 16);
 
-        return QVariant::fromValue<QList<int>>(columrollist);
+        return QVariant::fromValue<QList<QPair<int,int>>>(columrollist);
     }
     case  ItemFileSuffixRole:
         return d->fileinfo->completeSuffix();
-    case ItemColumWidthScaleListRole:
-    {
-        QList<int> columrolwidthlist;
-        columrolwidthlist << 2 << 2 << 1 << 1;
-        return QVariant::fromValue<QList<int>>(columrolwidthlist);
-    }
     case ItemNameRole:
         return d->fileinfo->fileName();
     case ItemSizeHintRole:
         return QSize(-1, 26);
     default:
         return QVariant();
-        //        return QStandardItem::data(role);
     }
 }

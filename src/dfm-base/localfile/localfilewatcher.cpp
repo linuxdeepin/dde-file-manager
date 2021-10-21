@@ -148,7 +148,6 @@ bool LocalFileWatcher::stopWatcher()
     if (!d->started)
         return false;
 
-    QObject::moveToThread(qApp->thread());
     if (d->stop()) {
         d->started = false;
         return true;

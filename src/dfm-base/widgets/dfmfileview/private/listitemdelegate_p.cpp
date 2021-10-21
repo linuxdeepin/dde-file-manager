@@ -21,7 +21,10 @@
  */
 #include "listitemdelegate_p.h"
 
-dfmbase::ListItemDelegatePrivate::~ListItemDelegatePrivate()
+DFMBASE_BEGIN_NAMESPACE
+ListItemDelegatePrivate::~ListItemDelegatePrivate()
 {
     listView = nullptr;
 }
+
+DFMBASE_END_NAMESPACE

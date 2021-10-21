@@ -27,6 +27,7 @@
 #include <DListView>
 
 #include <QStyledItemDelegate>
+#include <QTextLayout>
 
 QT_BEGIN_NAMESPACE
 class QTextDocument;

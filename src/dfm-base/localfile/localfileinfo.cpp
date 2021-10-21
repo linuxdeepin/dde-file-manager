@@ -51,7 +51,7 @@ LocalFileInfo::LocalFileInfo(const QUrl &url)
     : AbstractFileInfo (url)
     , d(new LocalFileInfoPrivate(this))
 {
-
+    d->url = url;
     if (url.isEmpty()) {
         qWarning("Failed, can't use empty url init fileinfo");
         abort();
@@ -140,8 +140,7 @@ bool LocalFileInfo::exists() const
 {
     if (!d->caches.contains(TypeExists)) {
         if (d->dfmFileInfo) {
-            //@todo 目前dfmio这一层还没实现，等待实现了在加入
-            //            d->m_caches.insert(TypeExists,QVariant(d->m_dfmFileInfo->attribute()));
+            d->caches.insert(TypeExists, QVariant(d->dfmFileInfo->exists()));
         } else {
             return false;
         }
@@ -172,12 +171,13 @@ void LocalFileInfo::refresh()
  */
 QString LocalFileInfo::filePath() const
 {
-
     //文件的路径（当前文件的父目录）
-
     if (!d->caches.contains(TypeFilePath)) {
         if (d->dfmFileInfo) {
-            //            d->m_caches.insert(TypeFilePath, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+            bool success = false;
+            d->caches.insert(TypeFilePath, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardFilePath, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo StandardFilePath failed!";
         } else {
             return QString();
         }
@@ -222,6 +222,8 @@ QString LocalFileInfo::fileName() const
         bool success = false;
         d->caches.insert(TypeFileName, d->dfmFileInfo->attribute(
                              DFileInfo::AttributeID::StandardName, &success));
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardName failed!";
     }
 
     QString string = d->caches.value(TypeFileName).toString();
@@ -242,8 +244,10 @@ QString LocalFileInfo::baseName() const
 {
     if (!d->caches.contains(TypeBaseName)) {
         if (d->dfmFileInfo) {
-            //            bool success = false;
-            //            d->m_caches.insert(TypeBaseName, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+            bool success = false;
+            d->caches.insert(TypeBaseName, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardBaseName, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo StandardBaseName failed!";
         } else {
             return QString();
         }
@@ -265,8 +269,10 @@ QString LocalFileInfo::completeBaseName() const
 {
     if (!d->caches.contains(TypeCompleteBaseName)) {
         if (d->dfmFileInfo) {
-            //            bool success = false;
-            //            d->m_caches.insert(TypeCompleteBaseName, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+            bool success = false;
+            d->caches.insert(TypeCompleteBaseName, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardBaseName, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo StandardBaseName failed!";
         } else {
             return QString();
         }
@@ -288,8 +294,10 @@ QString LocalFileInfo::suffix() const
 {
     if (!d->caches.contains(TypeSuffix)) {
         if (d->dfmFileInfo) {
-            //            bool success = false;
-            //            d->m_caches.insert(TypeSuffix, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+            bool success = false;
+            d->caches.insert(TypeSuffix, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardSuffix, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo StandardSuffix failed!";
         } else {
             return QString();
         }
@@ -311,8 +319,10 @@ QString LocalFileInfo::completeSuffix()
 {
     if (!d->caches.contains(TypeCompleteSuffix)) {
         if (d->dfmFileInfo) {
-            //            bool success = false;
-            //            d->m_caches.insert(TypeCompleteSuffix, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+            bool success = false;
+            d->caches.insert(TypeCompleteSuffix, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardCompleteSuffix, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo StandardCompleteSuffix failed!";
         } else {
             return QString();
         }
@@ -334,8 +344,10 @@ QString LocalFileInfo::path() const
 {
     if (!d->caches.contains(TypePath)) {
         if (d->dfmFileInfo) {
-            //            bool success = false;
-            //            d->m_caches.insert(TypePath, QVariant(d->m_dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, success)));
+            bool success = false;
+            d->caches.insert(TypePath, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardFilePath, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo StandardFilePath failed!";
         } else {
             return QString();
         }
@@ -433,8 +445,10 @@ bool LocalFileInfo::isReadable() const
     if (!d->caches.contains(TypeIsReadable)) {
         if (d->dfmFileInfo) {
             bool success = false;
-            d->caches.insert(TypeIsReadable,d->dfmFileInfo->
+            d->caches.insert(TypeIsReadable, d->dfmFileInfo->
                              attribute(DFileInfo::AttributeID::AccessCanRead, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo AccessCanRead failed!";
         } else {
             return false;
         }
@@ -457,8 +471,10 @@ bool LocalFileInfo::isWritable() const
     if (!d->caches.contains(TypeIsWritable)) {
         if (d->dfmFileInfo) {
             bool success = false;
-            d->caches.insert(TypeIsWritable,d->dfmFileInfo->
+            d->caches.insert(TypeIsWritable, d->dfmFileInfo->
                              attribute(DFileInfo::AttributeID::AccessCanWrite, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo AccessCanWrite failed!";
         } else {
             return false;
         }
@@ -479,6 +495,8 @@ bool LocalFileInfo::isExecutable() const
             bool success = false;
             d->caches.insert(TypeIsExecutable, d->dfmFileInfo->
                              attribute(DFileInfo::AttributeID::AccessCanExecute, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo AccessCanExecute failed!";
         } else {
             return false;
         }
@@ -498,9 +516,10 @@ bool LocalFileInfo::isHidden() const
             || !d->caches.value(TypeIsHidden).isValid()) {
         if (d->dfmFileInfo) {
             bool success = false;
-            d->caches.insert(TypeIsHidden,
-                             d->dfmFileInfo->
+            d->caches.insert(TypeIsHidden, d->dfmFileInfo->
                              attribute(DFileInfo::AttributeID::StandardIsHidden, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo StandardIsHidden failed!";
         } else {
             return false;
         }
@@ -524,7 +543,10 @@ bool LocalFileInfo::isFile() const
 {
     if (!d->caches.contains(TypeIsFile)) {
         if (d->dfmFileInfo) {
-            //            d->m_caches.insert(TypeIsFile, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+            bool success = false;
+            d->caches.insert(TypeIsFile, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIsFile,&success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo StandardIsFile failed!";
         } else {
             return false;
         }
@@ -546,9 +568,11 @@ bool LocalFileInfo::isDir() const
 {
     if (!d->caches.contains(TypeIsDir)) {
         if (d->dfmFileInfo) {
-            bool resutl = true;
-            d->caches.insert(TypeIsDir,d->dfmFileInfo->attribute(
-                                 DFileInfo::AttributeID::StandardIsDir, &resutl));
+            bool success = true;
+            d->caches.insert(TypeIsDir, d->dfmFileInfo->attribute(
+                                 DFileInfo::AttributeID::StandardIsDir, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo StandardIsDir failed!";
         } else {
             return false;
         }
@@ -578,7 +602,11 @@ bool LocalFileInfo::isSymLink() const
 {
     if (!d->caches.contains(TypeIsSymLink)) {
         if (d->dfmFileInfo) {
-            //            d->m_caches.insert(TypeisSymLink, QVariant(DFMUrlRoute::urlToPath(d->m_url)));
+            bool success = true;
+            d->caches.insert(TypeIsDir, d->dfmFileInfo->attribute(
+                                 DFileInfo::AttributeID::StandardIsSymlink, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo StandardIsSymlink failed!";
         } else {
             return false;
         }
@@ -635,8 +663,10 @@ QString LocalFileInfo::symLinkTarget() const
     if (!d->caches.contains(TypeSymLinkTarget)) {
         if (d->dfmFileInfo) {
             bool success(false);
-            d->caches.insert(TypeSymLinkTarget,d->dfmFileInfo->
+            d->caches.insert(TypeSymLinkTarget, d->dfmFileInfo->
                              attribute(DFileInfo::AttributeID::StandardSymlinkTarget, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo StandardSymlinkTarget failed!";
         } else {
             return QString();
         }
@@ -663,6 +693,8 @@ QString LocalFileInfo::owner() const
             bool success(false);
             d->caches.insert(TypeOwner, d->dfmFileInfo->
                              attribute(DFileInfo::AttributeID::OwnerUser, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo OwnerUser failed!";
         } else {
             return QString();
         }
@@ -685,6 +717,8 @@ uint LocalFileInfo::ownerId() const
             bool success(false);
             d->caches.insert(TypeOwnerID, d->dfmFileInfo->
                              attribute(DFileInfo::AttributeID::OwnerUser, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo OwnerUser failed!";
         } else {
             return static_cast<uint>(-1);
         }
@@ -709,6 +743,8 @@ QString LocalFileInfo::group() const
             bool success(false);
             d->caches.insert(TypeGroup, d->dfmFileInfo->
                              attribute(DFileInfo::AttributeID::OwnerGroup, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo OwnerGroup failed!";
         } else {
             return QString();
         }
@@ -731,6 +767,8 @@ uint LocalFileInfo::groupId() const
             bool success(false);
             d->caches.insert(TypeGroupID, d->dfmFileInfo->
                              attribute(DFileInfo::AttributeID::OwnerGroup, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo OwnerGroup failed!";
         } else {
             return static_cast<uint>(-1);
         }
@@ -765,10 +803,10 @@ QFileDevice::Permissions LocalFileInfo::permissions() const
 {
     if (!d->caches.contains(TypePermissions)) {
         if (d->dfmFileInfo) {
-            //            bool success(false);
-            //            d->m_caches.insert(TypePermissions,
-            //                                  QVariant(d->m_dfmFileInfo->
-            //                                           attribute(DFileInfo::AttributeID::OwnerGroup, &success)));
+            // @todo 目前dfm-io还没实现，等待实现
+//            bool success(false);
+//            d->caches.insert(TypePermissions,d->dfmFileInfo->
+//                                           attribute(DFileInfo::AttributeID::OwnerGroup, &success));
         } else {
             QFileDevice::Permissions ps;
             return ps;
@@ -792,8 +830,10 @@ qint64 LocalFileInfo::size() const
     if (!d->caches.contains(TypeSize)) {
         if (d->dfmFileInfo) {
             bool success(false);
-            d->caches.insert(TypeSize,d->dfmFileInfo->
+            d->caches.insert(TypeSize, d->dfmFileInfo->
                              attribute(DFileInfo::AttributeID::StandardSize, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo StandardSize failed!";
         } else {
             return 0;
         }
@@ -820,6 +860,8 @@ QDateTime LocalFileInfo::created() const
             bool success(false);
             d->caches.insert(TypeCreateTime, d->dfmFileInfo->
                              attribute(DFileInfo::AttributeID::TimeCreated, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo TimeCreated failed!";
         } else {
             return QDateTime();
         }
@@ -864,8 +906,10 @@ QDateTime LocalFileInfo::metadataChangeTime() const
     if (!d->caches.contains(TypeChangeTime)) {
         if (d->dfmFileInfo) {
             bool success(false);
-            d->caches.insert(TypeChangeTime,d->dfmFileInfo->
+            d->caches.insert(TypeChangeTime, d->dfmFileInfo->
                              attribute(DFileInfo::AttributeID::TimeChanged, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo TimeChanged failed!";
         } else {
             return QDateTime();
         }
@@ -887,6 +931,8 @@ QDateTime LocalFileInfo::lastModified() const
             bool success(false);
             d->caches.insert(TypeLastModifyTime, d->dfmFileInfo->
                              attribute(DFileInfo::AttributeID::TimeModified, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo TimeModified failed!";
         } else {
             return QDateTime();
         }
@@ -908,6 +954,8 @@ QDateTime LocalFileInfo::lastRead() const
             bool success(false);
             d->caches.insert(TypeLastReadTime, d->dfmFileInfo->
                              attribute(DFileInfo::AttributeID::TimeAccess, &success));
+            if (!success)
+                qWarning() << "get dfm-io DFileInfo TimeAccess failed!";
         } else {
             return QDateTime();
         }
@@ -1073,7 +1121,7 @@ QString LocalFileInfo::sizeFormat() const
         return QStringLiteral("-");
     }
 
-    qreal fileSize(AbstractFileInfo::size());
+    qreal fileSize(size());
     bool withUnitVisible = true;
     int forceUnit = -1;
 

@@ -45,6 +45,13 @@ public:
     void setEditorData(QWidget *editor, const QModelIndex &index) const override;
     bool eventFilter(QObject *object, QEvent *event) override;
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
+private:
+    void paintItemBackground(QPainter *painter, const QStyleOptionViewItem &option,
+                             const QModelIndex &index) const;
+    QRect paintItemIcon(QPainter *painter, const QStyleOptionViewItem &option,
+                        const QModelIndex &index) const;
+    void paintItemColumn(QPainter *painter, const QStyleOptionViewItem &option,
+                         const QModelIndex &index, const QRect &iconRect) const;
 };
 DFMBASE_END_NAMESPACE
 

@@ -69,11 +69,25 @@ void BrowseWindowPrivate::doViewModeButtonClicked(bool checked)
     if (sender() == listViewButton()) {
         iconViewButton()->setChecked(false);
         view->setViewMode(BrowseView::ViewMode::ListMode);
+        mode = BrowseView::ListMode;
     }
 
     if (sender() == iconViewButton()) {
         listViewButton()->setChecked(false);
         view->setViewMode(BrowseView::ViewMode::IconMode);
+        mode = BrowseView::IconMode;
+    }
+
+    if (mode == BrowseView::IconMode) {
+        if (listViewButton())
+            listViewButton()->setChecked(false);
+        if (iconViewButton())
+            iconViewButton()->setChecked(true);
+    } else if (mode == BrowseView::ListMode) {
+        if (listViewButton())
+            listViewButton()->setChecked(true);
+        if (iconViewButton())
+            iconViewButton()->setChecked(false);
     }
 }
 

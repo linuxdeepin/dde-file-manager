@@ -36,11 +36,12 @@ FileView::FileView(QWidget *parent)
     setModel(model);
     setDelegate(QListView::ViewMode::IconMode, new IconItemDelegate(this));
     setDelegate(QListView::ViewMode::ListMode, new ListItemDelegate(this));
-    setViewMode(QListView::ViewMode::ListMode);
+    setViewMode(QListView::ViewMode::IconMode);
 }
 
 void FileView::setViewMode(QListView::ViewMode mode)
 {
+    QListView::setViewMode(mode);
     setItemDelegate(d->delegates[mode]);
 }
 

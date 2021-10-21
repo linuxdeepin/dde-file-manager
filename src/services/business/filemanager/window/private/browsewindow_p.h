@@ -75,7 +75,7 @@ class BrowseWindowPrivate : public QObject
     QWidget *propertyViewIns = nullptr;        //右侧属性界面
     Splitter *splitterIns = nullptr;        //布局
 
-    BrowseView::ViewMode mode = BrowseView::ListMode;
+    BrowseView::ViewMode mode = BrowseView::IconMode;
 
 public:
     explicit BrowseWindowPrivate(BrowseWindow *qq);

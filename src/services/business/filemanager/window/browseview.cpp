@@ -29,7 +29,7 @@ DSB_FM_BEGIN_NAMESPACE
 BrowseView::BrowseView(QWidget *parent)
     : FileView (parent)
 {
-    setViewMode(DListView::ViewMode::ListMode);
+    setViewMode(DListView::ViewMode::IconMode);
 }
 
 BrowseView::~BrowseView()

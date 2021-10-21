@@ -22,6 +22,8 @@
 #include "iconitemdelegate.h"
 #include "private/iconitemdelegate_p.h"
 #include "dfm-base/dfm_base_global.h"
+#include "itemdelegatehelper.h"
+#include "fileviewitem.h"
 
 #include <DApplicationHelper>
 #include <DStyleOption>
@@ -56,7 +58,8 @@ IconItemDelegate::IconItemDelegate(DTK_WIDGET_NAMESPACE::DListView *parent)
     : QStyledItemDelegate(parent)
     , d(new IconItemDelegatePrivate(this))
 {
-
+    d->itemIconSize.setWidth(d->sizeList[2]);
+    d->itemIconSize.setHeight(d->sizeList[2]);
 }
 
 IconItemDelegate::~IconItemDelegate()
@@ -68,7 +71,68 @@ void IconItemDelegate::paint(QPainter *painter,
                              const QStyleOptionViewItem &option,
                              const QModelIndex &index) const
 {
-    return QStyledItemDelegate::paint(painter,option,index);
+    bool isEnabled = option.state & QStyle::State_Enabled;
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
+    painter->setFont(opt.font);
+
+    static QFont oldFont = opt.font;
+    oldFont = opt.font;
+
+    // init background color and geomerty
+    DPalette pl(DApplicationHelper::instance()->palette(option.widget));
+    QColor backgroundColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+    QColor baseColor = backgroundColor;
+    if (option.widget) {
+        DPalette pa = DApplicationHelper::instance()->palette(option.widget);
+        baseColor = option.widget->palette().base().color();
+        DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(baseColor);
+        if (ct == DGuiApplicationHelper::DarkType) {
+            baseColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, +5, 0, 0, 0, 0);
+        }
+    }
+
+    if (option.state & QStyle::StateFlag::State_Selected) {
+        backgroundColor.setAlpha(backgroundColor.alpha() + 30);
+    } else if (option.state & QStyle::StateFlag::State_MouseOver) {
+        DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(baseColor);
+        if (ct == DGuiApplicationHelper::DarkType) {
+            baseColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, +5, 0, 0, 0, 0);
+            backgroundColor = baseColor;
+        }
+        else
+            backgroundColor = backgroundColor.lighter();
+    }
+
+    QRectF backgroundRect = opt.rect;
+    int backgroundMargin = ICON_MODE_COLUMU_PADDING;
+    backgroundRect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin);
+    // draw background
+    QPainterPath path;
+    backgroundRect.moveTopLeft(QPointF(0.5, 0.5) + backgroundRect.topLeft());
+    path.addRoundedRect(backgroundRect, ICON_MODE_BACK_RADIUS, ICON_MODE_BACK_RADIUS);
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->fillPath(path, backgroundColor);
+    painter->setRenderHint(QPainter::Antialiasing, false);
+    // init icon geomerty
+    QRectF iconRect = opt.rect;
+    iconRect.setSize(d->itemIconSize);
+    double iconTopOffset = (opt.rect.height() - iconRect.height()) / 3.0;
+    iconRect.moveLeft(opt.rect.left() + (opt.rect.width() - iconRect.width()) / 2.0);
+    iconRect.moveTop(opt.rect.top() +  iconTopOffset); // move icon down
+    // draw icon
+    ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
+
+    // init file name geometry
+    QRectF labelRect = opt.rect;
+    labelRect.setTop(iconRect.bottom() + ICON_MODE_TEXT_PADDING + ICON_MODE_ICON_SPACING);
+    labelRect.setWidth(opt.rect.width() - 2 * ICON_MODE_TEXT_PADDING - 2 * backgroundMargin - ICON_MODE_BACK_RADIUS);
+    labelRect.moveLeft(labelRect.left() + ICON_MODE_TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS / 2);
+    labelRect.setBottom(path.boundingRect().toRect().bottom());
+    // draw file name
+    painter->drawText(labelRect, Qt::AlignHCenter | Qt::AlignVCenter, opt.text);
+
+    painter->setOpacity(1);
 }
 
 bool IconItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
@@ -82,7 +146,11 @@ QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
     Q_UNUSED(option)
     Q_UNUSED(index)
     //    QStyledItemDelegate::sizeHint(option,index);
-    return d->itemIconSize;
+
+    int height = d->itemIconSize.height() + 2 * ICON_MODE_COLUMU_PADDING/*上下两个icon的间距*/ +
+            3 * 21/*3行文字的高度*/ + 2 * ICON_MODE_TEXT_PADDING/*文字两边的间距*/ +
+            ICON_MODE_ICON_SPACING/*icon的间距*/;
+    return QSize(height, height);
 }
 
 QWidget *IconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
