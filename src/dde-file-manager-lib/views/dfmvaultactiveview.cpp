@@ -23,7 +23,7 @@
 #include "dfmvaultactiveview.h"
 #include "dfmvaultactivestartview.h"
 #include "dfmvaultactivesetunlockmethodview.h"
-#include "dfmvaultactivesavekeyview.h"
+#include "dfmvaultactivesavekeyfileview.h"
 #include "dfmvaultactivefinishedview.h"
 #include "accessibility/ac-lib-file-manager.h"
 
@@ -42,6 +42,7 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
     , m_pSetUnclockMethodWidget(nullptr)
     , m_SaveKeyWidget(nullptr)
     , m_ActiveVaultFinishedWidget(nullptr)
+    , m_SaveKeyFileWidget(nullptr)
 {
     AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_ACTIVE_WIDGET);
     this->setIcon(QIcon::fromTheme("dfm_vault"));
@@ -57,8 +58,8 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
     m_pSetUnclockMethodWidget = new DFMVaultActiveSetUnlockMethodView(this);
     connect(m_pSetUnclockMethodWidget, &DFMVaultActiveSetUnlockMethodView::sigAccepted,
             this, &DFMVaultActiveView::slotNextWidget);
-    m_SaveKeyWidget = new DFMVaultActiveSaveKeyView(this);
-    connect(m_SaveKeyWidget, &DFMVaultActiveSaveKeyView::sigAccepted,
+    m_SaveKeyFileWidget = new DFMVaultActiveSaveKeyFileView(this);
+    connect(m_SaveKeyFileWidget, &DFMVaultActiveSaveKeyFileView::sigAccepted,
             this, &DFMVaultActiveView::slotNextWidget);
     m_ActiveVaultFinishedWidget = new DFMVaultActiveFinishedView(this);
     connect(m_ActiveVaultFinishedWidget, &DFMVaultActiveFinishedView::sigAccepted,
@@ -66,7 +67,7 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
 
     m_pStackedWidget->addWidget(m_pStartVaultWidget);
     m_pStackedWidget->addWidget(m_pSetUnclockMethodWidget);
-    m_pStackedWidget->addWidget(m_SaveKeyWidget);
+    m_pStackedWidget->addWidget(m_SaveKeyFileWidget);
     m_pStackedWidget->addWidget(m_ActiveVaultFinishedWidget);
 
     this->addContent(m_pStackedWidget);

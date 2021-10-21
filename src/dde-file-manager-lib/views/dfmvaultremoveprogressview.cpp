@@ -76,6 +76,7 @@ void DFMVaultRemoveProgressView::removeVault(const QString &vaultLockPath, const
                 QFile::remove(VAULT_BASE_PATH + QDir::separator() + PASSWORD_HINT_FILE_NAME);
                 QFile::remove(VAULT_BASE_PATH + QDir::separator() + VAULT_CONFIG_FILE_NAME);
                 QFile::remove(VAULT_BASE_PATH + QDir::separator() + PASSWORD_FILE_NAME);
+                QFile::remove(VAULT_BASE_PATH + QDir::separator() + RSA_PUB_KEY_FILE_NAME + QString(".key"));
 
                 emit removeFinished(true);
                 //! 清除保险箱所有时间

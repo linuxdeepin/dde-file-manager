@@ -42,6 +42,9 @@ class DLabel;
 DWIDGET_END_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
+/**
+ * @brief The DFMVaultActiveSaveKeyView class 由于新需求UI界面改动很大，所以此类弃用
+ */
 class DFMVaultActiveSaveKeyView : public QWidget
 {
     Q_OBJECT

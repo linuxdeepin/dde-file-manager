@@ -27,6 +27,7 @@
 #define CONFIG_KEY_CIPHER           "pbkgcipher"
 #define CONFIG_KEY_VERSION          "version"
 #define CONFIG_VAULT_VERSION        "new"
+#define CONFIG_VAULT_VERSION_1050   "1050"
 
 #include <QVariant>
 
@@ -37,7 +38,7 @@ QT_END_NAMESPACE
 class VaultConfig
 {
 public:
-    VaultConfig(const QString &filePath = "");
+    explicit VaultConfig(const QString &filePath = "");
     ~VaultConfig();
     void set(const QString &nodeName, const QString &keyName, QVariant value);
     QVariant get(const QString &nodeName, const QString &keyName);

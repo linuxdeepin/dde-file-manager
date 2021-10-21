@@ -70,6 +70,7 @@ private:
 
     void closeEvent(QCloseEvent *event) override;
 
+
 private:
     DFMVaultRemoveByPasswordView *m_passwordView {nullptr};
     DFMVaultRemoveByRecoverykeyView *m_recoverykeyView {nullptr};

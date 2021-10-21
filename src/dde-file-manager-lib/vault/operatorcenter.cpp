@@ -108,7 +108,91 @@ bool OperatorCenter::secondSaveSaltAndCiphertext(const QString &ciphertext, cons
     VaultConfig config;
     config.set(CONFIG_NODE_NAME, CONFIG_KEY_CIPHER, QVariant(strSaltAndCiphertext));
     // 更新保险箱版本信息
-    config.set(CONFIG_NODE_NAME, CONFIG_KEY_VERSION, QVariant(CONFIG_VAULT_VERSION));
+    config.set(CONFIG_NODE_NAME, CONFIG_KEY_VERSION, QVariant(CONFIG_VAULT_VERSION_1050));
+
+    return true;
+}
+
+bool OperatorCenter::createKeyNew(const QString &password)
+{
+    m_strPubKey.clear();
+    QString strPriKey("");
+    rsam::createPublicAndPrivateKey(m_strPubKey, strPriKey);
+
+    // 私钥加密
+    QString strCipher = rsam::privateKeyEncrypt(password, strPriKey);
+
+    // 验证公钥长度
+    if (m_strPubKey.length() < 2 * USER_KEY_INTERCEPT_INDEX + 32) {
+        qDebug() << "USER_KEY_LENGTH is to long!";
+        m_strPubKey.clear();
+        return false;
+    }
+
+    // 保存密文
+    QString strCipherFilePath = makeVaultLocalPath(RSA_CIPHERTEXT_FILE_NAME);
+    QFile cipherFile(strCipherFilePath);
+    if (!cipherFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
+        qDebug() << "open rsa cipher file failure!";
+        return false;
+    }
+    QTextStream out2(&cipherFile);
+    out2 << strCipher;
+    cipherFile.close();
+
+    return true;
+}
+
+bool OperatorCenter::saveKey(QString key, QString path)
+{
+    // 保存部分公钥
+    QString publicFilePath = path;
+    QFile publicFile(publicFilePath);
+    if (!publicFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
+        qDebug() << "open public key file failure!";
+        return false;
+    }
+    QTextStream out(&publicFile);
+    out << key;
+    publicFile.close();
+    return true;
+}
+
+QString OperatorCenter::getPubKey()
+{
+    return m_strPubKey;
+}
+
+bool OperatorCenter::verificationRetrievePassword(const QString keypath, QString &password)
+{
+    QFile localPubKeyfile(keypath);
+    if (!localPubKeyfile.open(QIODevice::Text | QIODevice::ReadOnly)) {
+        qDebug() << "cant't open local public key file!";
+        return false;
+    }
+
+    QString strLocalPubKey(localPubKeyfile.readAll());
+    localPubKeyfile.close();
+
+    // 利用完整公钥解密密文，得到密码
+    QString strRSACipherFilePath = makeVaultLocalPath(RSA_CIPHERTEXT_FILE_NAME);
+    QFile rsaCipherfile(strRSACipherFilePath);
+    if (!rsaCipherfile.open(QIODevice::Text | QIODevice::ReadOnly)) {
+        qDebug() << "cant't open rsa cipher file!";
+        return false;
+    }
+
+    QString strRsaCipher(rsaCipherfile.readAll());
+    rsaCipherfile.close();
+
+    password = rsam::publicKeyDecrypt(strRsaCipher, strLocalPubKey);
+
+    // 判断密码的正确性，如果密码正确，则用户密钥正确，否则用户密钥错误
+    QString temp = "";
+    if (!checkPassword(password, temp)) {
+        qDebug() << "user key error!";
+        return false;
+    }
 
     return true;
 }
@@ -268,7 +352,7 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
     VaultConfig config;
     QString strVersion = config.get(CONFIG_NODE_NAME, CONFIG_KEY_VERSION).toString();
 
-    if (CONFIG_VAULT_VERSION == strVersion) {   // 如果是新版本，验证第二次加密的结果
+    if ((CONFIG_VAULT_VERSION == strVersion) || (CONFIG_VAULT_VERSION_1050 == strVersion)) {   // 如果是新版本，验证第二次加密的结果
         // 获得本地盐及密文
         QString strSaltAndCipher = config.get(CONFIG_NODE_NAME, CONFIG_KEY_CIPHER).toString();
         QString strSalt = strSaltAndCipher.mid(0, RANDOM_SALT_LENGTH);

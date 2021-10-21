@@ -123,12 +123,8 @@ public:
     //! 执行shell命令并获得shell命令的返回值
     int executionShellCommand(const QString &strCmd, QStringList &lstShellOutput);
 
-signals:
-
-public slots:
-
 private:
-    OperatorCenter(QObject *parent = nullptr);
+    explicit OperatorCenter(QObject *parent = nullptr);
     // 组织保险箱本地文件路径
     QString makeVaultLocalPath(const QString &before = "", const QString &behind = "");
     bool runCmd(const QString &cmd);
@@ -136,10 +132,40 @@ private:
     // 保存第二次加密后的密文,并更新保险箱版本信息
     bool secondSaveSaltAndCiphertext(const QString &ciphertext, const QString &salt);
 
+public:
+    /**
+     * @brief createKeyNew rsa生成密钥对，私钥加密密码，将密文写入文件，将一部分公钥写入文件（另一部分公钥提供给用户）
+     * @param in password 密码
+     * @return 是否成功
+     */
+    bool createKeyNew(const QString &password);
+
+    /**
+     * @brief saveKey 保存公钥
+     * @param path 保存路径
+     * @return
+     */
+    bool saveKey(QString key, QString path);
+
+    /**
+     * @brief getPubKey 获得密码公钥
+     * @return 密码公钥
+     */
+    QString getPubKey();
+
+    /**
+     * @brief verificationRetrievePassword 验证用户密钥是否正确
+     * @param1 in keypath 密钥文件
+     * @param2 out password
+     * @return 是否正确
+     */
+    bool verificationRetrievePassword(const QString keypath, QString & password);
+
 private:
     Dtk::Core::DSecureString        m_strCryfsPassword; // cryfs密码
     QString                         m_strUserKey;
     QString                         m_standOutput;
+    QString                         m_strPubKey;
 };
 
 #endif // OPERATORCENTER_H

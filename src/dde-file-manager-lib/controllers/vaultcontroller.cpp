@@ -32,6 +32,8 @@
 #include "dfilestatisticsjob.h"
 #include "log/dfmLogManager.h"
 #include "log/filterAppender.h"
+#include "vaultconfig.h"
+#include "../vault/operatorcenter.h"
 
 #include "appcontroller.h"
 #include "singleton.h"
@@ -1178,6 +1180,16 @@ void VaultController::slotLockVault(int state)
         emit fileSignalManager->requestFreshAllFileView();
     }
     emit signalLockVault(state);
+}
+
+bool VaultController::getVaultVersion()
+{
+    VaultConfig config;
+    QString strVersion = config.get(CONFIG_NODE_NAME, CONFIG_KEY_VERSION).toString();
+    if(CONFIG_VAULT_VERSION_1050 == strVersion)
+        return true;
+
+    return false;
 }
 
 VaultController::~VaultController()

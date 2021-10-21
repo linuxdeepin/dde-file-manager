@@ -405,6 +405,13 @@ signals:
      */
     void sigLockVault(QString unlockFileDir);
 
+public:
+    /**
+     * @brief getVaultVersion   获取当前保险箱版本是否是1050及以上版本
+     * @return  true大于等于1050,false小于1050
+     */
+    static bool getVaultVersion();
+
 private:
     ~VaultController() override;
     QMap<DUrl, FileBaseInfo> m_mapVaultFileInfo;

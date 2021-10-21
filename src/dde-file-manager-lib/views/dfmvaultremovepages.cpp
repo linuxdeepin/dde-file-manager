@@ -114,14 +114,20 @@ void DFMVaultRemovePages::showVerifyWidget()
     clearButtons();
     QStringList buttonTexts({tr("Cancel","button"), tr("Use Key","button"), tr("Delete","button")});
     addButton(buttonTexts[0], false);
-    addButton(buttonTexts[1], false);
+    //! 1050及以上版本无密钥验证
+    if(!VaultController::getVaultVersion())
+        addButton(buttonTexts[1], false);
     addButton(buttonTexts[2], true, DDialog::ButtonWarning);
-    setDefaultButton(2);
+    if(!VaultController::getVaultVersion())
+        setDefaultButton(2);
+    else
+        setDefaultButton(1);
     m_stackedWidget->setCurrentIndex(0);
 
     AC_SET_ACCESSIBLE_NAME(getButton(0), AC_VAULT_DELETE_CANCEL_BUTTON);
     AC_SET_ACCESSIBLE_NAME(getButton(1), AC_VAULT_DELETE_CHANGE_BUTTON);
-    AC_SET_ACCESSIBLE_NAME(getButton(2), AC_VAULT_DELETE_DELETE_BUTTON);
+    if(!VaultController::getVaultVersion())
+        AC_SET_ACCESSIBLE_NAME(getButton(2), AC_VAULT_DELETE_DELETE_BUTTON);
 
     // 如果密码提示信息为空，则隐藏提示按钮
     QString strPwdHint("");
@@ -157,7 +163,7 @@ void DFMVaultRemovePages::closeEvent(QCloseEvent *event)
     m_recoverykeyView->clear();
     m_progressView->clear();
     m_bRemoveVault = false;
-    showVerifyWidget();
+
     // 调用基类关闭事件
     DFMVaultPageBase::closeEvent(event);
 }
@@ -170,6 +176,7 @@ DFMVaultRemovePages *DFMVaultRemovePages::instance()
 
 void DFMVaultRemovePages::showTop()
 {
+    showVerifyWidget();
     activateWindow();
     show();
     raise();
@@ -183,16 +190,20 @@ void DFMVaultRemovePages::onButtonClicked(int index)
     case 0: //点击取消按钮
         close();
         break;
-    case 1: { // 切换验证方式
-        if (m_stackedWidget->currentIndex() == 0) {
-            getButton(1)->setText(tr("Use Password"));
-            m_stackedWidget->setCurrentIndex(1);
-        } else {
-            getButton(1)->setText(tr("Use Key"));
-            m_stackedWidget->setCurrentIndex(0);
+    case 1:
+     //! 1050及以上版本无密钥验证
+        if(!VaultController::getVaultVersion()){
+            { // 切换验证方式
+                if (m_stackedWidget->currentIndex() == 0) {
+                    getButton(1)->setText(tr("Use Password"));
+                    m_stackedWidget->setCurrentIndex(1);
+                } else {
+                    getButton(1)->setText(tr("Use Key"));
+                    m_stackedWidget->setCurrentIndex(0);
+                }
+            }
+            break;
         }
-    }
-    break;
     case 2: { // 删除
         if (m_stackedWidget->currentIndex() == 0) {
             // 密码验证
@@ -222,8 +233,16 @@ void DFMVaultRemovePages::onButtonClicked(int index)
                                 Authority::AllowUserInteraction);
         connect(ins, &Authority::checkAuthorizationFinished,
                 this, &DFMVaultRemovePages::slotCheckAuthorizationFinished);
+
+        QAbstractButton * btn;
+        //! 1050及以上版本无密钥验证
+        if(!VaultController::getVaultVersion()) {
+            btn = getButton(2);
+        }else {
+            btn = getButton(1);
+        }
+
         // 按钮置灰，防止用户胡乱操作
-        auto btn = getButton(2);
         if (btn)
             btn->setEnabled(false);
     }
@@ -248,10 +267,18 @@ void DFMVaultRemovePages::slotCheckAuthorizationFinished(Authority::Result resul
                 VaultController::ins()->lockVault();
             }
         }
-        // 按钮置亮，防止用户胡乱操作
-        auto btn = getButton(2);
+
+        QAbstractButton * btn;
+        //! 1050及以上版本无密钥验证
+        if(!VaultController::getVaultVersion()) {
+            btn = getButton(2);
+        }else {
+            btn = getButton(1);
+        }
+
+        // 按钮置灰，防止用户胡乱操作
         if (btn)
-            btn->setEnabled(true);
+            btn->setEnabled(false);
     }
 
 }

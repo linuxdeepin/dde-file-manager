@@ -209,8 +209,9 @@ QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
                         << MenuAction::Separator
                         << MenuAction::Property;
             } else if (vaultState == VaultController::Encrypted) {
-                actions << MenuAction::UnLock
-                        << MenuAction::UnLockByKey;
+                actions << MenuAction::UnLock;
+                if(!VaultController::getVaultVersion())
+                    actions << MenuAction::UnLockByKey;
             }
 
             return actions;

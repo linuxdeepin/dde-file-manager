@@ -27,6 +27,7 @@
 #include "controllers/vaultcontroller.h"
 #include "dfilemanagerwindow.h"
 #include "accessibility/ac-lib-file-manager.h"
+#include "dfmvaultretrievepassword.h"
 
 #include <DPushButton>
 #include <DPasswordEdit>
@@ -65,6 +66,21 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     AC_SET_ACCESSIBLE_NAME(pMessage, AC_VAULT_PASSWORD_UNLOCK_CONTENT);
     pMessage->setAlignment(Qt::AlignHCenter);
 
+    m_forgetPassword = new QLabel(tr("Forgot password?"));
+    AC_SET_ACCESSIBLE_NAME(m_forgetPassword, AC_VAULT_PASSWORD_UNLOCK_FORGETPASSWORD_BUTTON);
+    font = pTitle->font();
+    font.setPixelSize(12);
+    m_forgetPassword->setFont(font);
+    m_forgetPassword->installEventFilter(this);
+    QPalette pe;
+    pe.setColor(QPalette::WindowText,Qt::blue);
+    m_forgetPassword->setPalette(pe);
+    if(VaultController::getVaultVersion())
+        m_forgetPassword->show();
+    else {
+        m_forgetPassword->hide();
+    }
+
     // 密码编辑框
     m_passwordEdit = new DPasswordEdit(this);
     AC_SET_ACCESSIBLE_NAME(m_passwordEdit, AC_VAULT_PASSWORD_UNLOCK_EDIT);
@@ -77,6 +93,9 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     AC_SET_ACCESSIBLE_NAME(m_tipsButton, AC_VAULT_PASSWORD_UNLOCK_HINT_BUTTON);
     m_tipsButton->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
 
+    //! 找回密码页面
+    m_retrievePage = DFMVaultRetrievePassword::instance();
+
     // 主视图
     QFrame *mainFrame = new QFrame(this);
 
@@ -86,11 +105,17 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     play1->addWidget(m_passwordEdit);
     play1->addWidget(m_tipsButton);
 
+    QHBoxLayout * play2 = new QHBoxLayout();
+    play2->addStretch(1);
+    play2->addWidget(m_forgetPassword);
+    play2->addStretch(1);
+
     QVBoxLayout *mainLayout = new QVBoxLayout(mainFrame);
     mainLayout->setMargin(0);
     mainLayout->addWidget(pTitle);
     mainLayout->addWidget(pMessage);
     mainLayout->addLayout(play1);
+    mainLayout->addLayout(play2);
 
     mainFrame->setLayout(mainLayout);
     addContent(mainFrame);
@@ -119,6 +144,8 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
         }
     });
     connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
+
+    connect(static_cast<DFMVaultRetrievePassword*>(m_retrievePage), &DFMVaultRetrievePassword::signalReturn, this, &DFMVaultUnlockPages::onReturnUnlockedPage);
 }
 
 void DFMVaultUnlockPages::showEvent(QShowEvent *event)
@@ -308,6 +335,26 @@ void DFMVaultUnlockPages::restorePasswordInput()
     VaultController::ins()->restoreNeedWaitMinutes();
     // 设置密码框可以输入
     m_passwordEdit->lineEdit()->setEnabled(true);
+}
+
+void DFMVaultUnlockPages::onReturnUnlockedPage()
+{
+    m_retrievePage->hide();
+    this->show();
+}
+
+bool DFMVaultUnlockPages::eventFilter(QObject *obj, QEvent *evt)
+{
+    if(obj == m_forgetPassword) {
+        if(evt->type() == QEvent::MouseButtonPress) {
+            QMouseEvent * mouseEvent = static_cast<QMouseEvent*>(evt);
+            if(mouseEvent->button() == Qt::LeftButton) {
+                this->hide();
+                m_retrievePage->show();
+            }
+        }
+    }
+    return DDialog::eventFilter(obj, evt);
 }
 
 void DFMVaultUnlockPages::slotTooltipTimerTimeout()

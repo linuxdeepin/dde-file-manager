@@ -34,6 +34,7 @@ class DFMVaultActiveStartView;
 class DFMVaultActiveSetUnlockMethodView;
 class DFMVaultActiveSaveKeyView;
 class DFMVaultActiveFinishedView;
+class DFMVaultActiveSaveKeyFileView;
 
 DWIDGET_USE_NAMESPACE
 
@@ -65,8 +66,9 @@ private:
 
     DFMVaultActiveStartView                 *m_pStartVaultWidget;
     DFMVaultActiveSetUnlockMethodView       *m_pSetUnclockMethodWidget;
-    DFMVaultActiveSaveKeyView               *m_SaveKeyWidget;
+    DFMVaultActiveSaveKeyView               *m_SaveKeyWidget;   //! 弃用
     DFMVaultActiveFinishedView              *m_ActiveVaultFinishedWidget;
+    DFMVaultActiveSaveKeyFileView           *m_SaveKeyFileWidget;
 };
 
 #endif // DFMVAULTACTIVEVIEW_H

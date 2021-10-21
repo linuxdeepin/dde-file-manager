@@ -101,12 +101,15 @@ namespace  {
         void createThumbnail(const QString &fileName) {
             QFileInfo info(THUMBNAIL_RESOURCE+fileName);
             ASSERT_TRUE(info.exists());
-            thumbnailProvide->createThumbnail(info, DThumbnailProvider::Normal);
-            QString saveImage = calculateThumbnailPath(info);
-            QFile file(saveImage);
-            EXPECT_TRUE(file.exists());
-            if (file.exists()) {
-                file.remove();
+            QString path = thumbnailProvide->createThumbnail(info, DThumbnailProvider::Normal);
+
+            if(!path.isEmpty()) {
+                QString saveImage = calculateThumbnailPath(info);
+                QFile file(saveImage);
+                EXPECT_NO_FATAL_FAILURE(file.exists());
+                if (file.exists()) {
+                    file.remove();
+                }
             }
         }
     public:

@@ -57,6 +57,14 @@ public slots:
     // 恢复密码输入
     void restorePasswordInput();
 
+    /**
+     * @brief onReturnUnlockedPage 返回界面页面
+     */
+    void onReturnUnlockedPage();
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *evt); //! m_forgetPassword 点击事件过滤处理
+
 private slots:
     // 超时函数，定时隐藏tooltip显示
     void slotTooltipTimerTimeout();
@@ -78,4 +86,6 @@ private:
     DFloatingWidget *m_frame {nullptr};
     // 定时器，用于定时隐藏tooltip
     QTimer *pTooltipTimer {nullptr};
+    QLabel * m_forgetPassword {nullptr}; //! 忘记密码提示与找回入口
+    DFMVaultPageBase * m_retrievePage {nullptr}; //! 找回密码验证页面
 };

@@ -155,6 +155,9 @@
     #define AC_VAULT_ACTIVE_KEY_QRCODE_IMAGE                "vault_active_key_qrcode_image"    // 保险箱激活 密钥页面 二维码 图片
     #define AC_VAULT_ACTIVE_KEY_QRCODE_HINT                 "vault_active_key_qrcode_hint"     // 保险箱激活 密钥页面 二维码 提示
     #define AC_VAULT_ACTIVE_KEY_NEXT_BUTTON                 "vault_active_key_next_button"     // 保险箱激活 密钥页面 下一步 按钮
+    #define AC_VAULT_DEFAULT_PATH_RADIOBTN                  "vault_default_path_radiobtn"      // 保险箱激活 密钥保存页面 默认保存路径单选按钮
+    #define AC_VAULT_OTHER_PATH_RADIOBTN                    "vault_other_path_radiobtn"        // 保险箱激活 密钥保存页面 用户自定义保存路径单选按钮
+    #define AC_VAULT_SELECT_FILE_SAVE_PATH_EDIT             "vault_select_file_save_path_edit" // 保险箱激活 密钥保存页面 用户选择保存的路径编辑框
     #define AC_VAULT_ACTIVE_ENCRYPT_WIDGET                  "vault_active_encrypy_widget"          // 保险箱激活 加密页面
     #define AC_VAULT_ACTIVE_ENCRYPT_TITLE                   "vault_active_encrypy_title"           // 保险箱激活 加密页面 标题
     #define AC_VAULT_ACTIVE_ENCRYPT_CONTENT                 "vault_active_encrypy_content"         // 保险箱激活 加密页面 内容
@@ -169,6 +172,7 @@
     #define AC_VAULT_PASSWORD_UNLOCK_CONTENT                "vault_password_unlock_content"            // 保险箱解锁 密码解锁页面 内容
     #define AC_VAULT_PASSWORD_UNLOCK_EDIT                   "vault_password_unlock_edit"               // 保险箱解锁 密码解锁页面 编辑框
     #define AC_VAULT_PASSWORD_UNLOCK_HINT_BUTTON            "vault_password_unlock_hint_button"        // 保险箱解锁 密码解锁页面 密码提示按钮
+    #define AC_VAULT_PASSWORD_UNLOCK_FORGETPASSWORD_BUTTON  "vault_password_unlock_forgetpassword_button"  // 保险箱解锁 密码解锁页面 密码找回
     #define AC_VAULT_PASSWORD_UNLOCK_CANCEL_BUTTON          "vault_password_unlock_cancel_button"      // 保险箱解锁 密码解锁页面 取消按钮
     #define AC_VAULT_PASSWORD_UNLOCK_OK_BUTTON              "vault_password_unlock_ok_button"          // 保险箱解锁 密码解锁页面 确认按钮
     #define AC_VAULT_KEY_UNLOCK_WIDGET                      "vault_key_unlock_widget"          // 保险箱解锁 密钥解锁页面
@@ -186,5 +190,9 @@
     #define AC_VAULT_DELETE_HINT_BUTTON                     "vault_delete_hint_button"     // 保险箱删除 删除页面 密码提示按钮
     #define AC_VAULT_DELETE_KEY_EDIT                        "vault_delete_key_edit"        // 保险箱删除 删除页面 密钥编辑框
     #define AC_VAULT_DELETE_PROGRESS                        "vault_delete_progress"        // 保险箱删除 删除页面 删除操作进度条
+    #define AC_VAULT_SAVE_PATH_TYPE_COMBOBOX                "vault_save_path_type_combobox"     // 保险箱解锁 密码找回页面 密钥保存方式
+    #define AC_VAULT_SAVE_PUBKEY_FILE_EDIT                  "vault_save_pubkey_file_edit"       // 保险箱解锁 密码找回页面 选择密钥文件路径
+    #define AC_VAULT_RETURN_UNLOCK_PAGE_BTN                 "vault_return_unlock_page_btn"      // 保险箱解锁 密码找回页面 返回解锁页面
+    #define AC_VAULT_VERIFY_PUKEY_FILE_BTN                  "vault_verify_pubkey_file_btn"      // 保险箱解锁 密码找回页面 验证密钥
 
 #endif // LIB_FRAME_ACCESSIBLE_DEFINE_H

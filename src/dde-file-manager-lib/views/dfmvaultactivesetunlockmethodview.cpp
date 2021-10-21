@@ -292,7 +292,7 @@ void DFMVaultActiveSetUnlockMethodView::slotNextBtnClicked()
     QString strPassword = m_pPassword->text();
     QString strPasswordHint = m_pTips->text();
     if (OperatorCenter::getInstance()->saveSaltAndCiphertext(strPassword, strPasswordHint)
-            && OperatorCenter::getInstance()->createKey(strPassword, USER_KEY_LENGTH))
+            && OperatorCenter::getInstance()->createKeyNew(strPassword))
         emit sigAccepted();
 }
 
