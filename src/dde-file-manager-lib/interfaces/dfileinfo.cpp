@@ -1102,7 +1102,7 @@ QVariantHash DFileInfo::extraProperties() const
         const DUrl &url = fileUrl();
 
         if (!d->getEPTimer) {
-            d->getEPTimer = new QTimer();
+            d->getEPTimer = new QTimer(qApp);
             d->getEPTimer->setSingleShot(true);
             d->getEPTimer->moveToThread(qApp->thread());
             d->getEPTimer->setInterval(REQUEST_THUMBNAIL_DEALY);
