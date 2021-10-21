@@ -21,6 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dattachedprotocoldevice.h"
+#include "pluginsidecar.h"
+
 
 /*!
  * \class DAttachedProtocolDevice
@@ -29,9 +31,8 @@
  * `DAttachedDeviceInterface` interface for protocol devices
  */
 
-
-DAttachedProtocolDevice::DAttachedProtocolDevice(const QString &json) :
-    jsonValue(json)
+DAttachedProtocolDevice::DAttachedProtocolDevice(const QString &id)
+    : DAttachedDevice(id)
 {
 
 }
@@ -53,10 +54,6 @@ bool DAttachedProtocolDevice::detachable()
     return true;
 }
 
-void DAttachedProtocolDevice::detach()
-{
-    // TODO(zhans)
-}
 
 QString DAttachedProtocolDevice::displayName()
 {
@@ -96,5 +93,6 @@ QUrl DAttachedProtocolDevice::accessPointUrl()
 
 void DAttachedProtocolDevice::parse()
 {
-    // TODO(zhans)
+    const QString &json = SidecarInstance.invokeQueryProtocolDeviceInfo(deviceId);
+    // TODO(zhans) make data
 }

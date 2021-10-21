@@ -23,6 +23,8 @@ set(MOUNT_PLUGIN_SRC
     diskcontrolitem.cpp
     dattachedblockdevice.cpp
     dattachedprotocoldevice.cpp
+    dattacheddevice.cpp
+    pluginsidecar.cpp
     )
 
 set(MOUNT_PLUGIN_HEADER
@@ -31,9 +33,11 @@ set(MOUNT_PLUGIN_HEADER
     diskpluginitem.h
     diskcontrolwidget.h
     diskcontrolitem.h
-    dattacheddeviceinterface.h
     dattachedblockdevice.h
     dattachedprotocoldevice.h
+    dattacheddevice.h
+    sizeformathelper.h
+    pluginsidecar.h
     )
 
 set(DBUS_INTERFACES_SRC

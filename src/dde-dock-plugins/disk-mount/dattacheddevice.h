@@ -20,16 +20,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DATTACHEDDEVICEINTERFACE_H
-#define DATTACHEDDEVICEINTERFACE_H
+#ifndef DATTACHEDDEVICE_H
+#define DATTACHEDDEVICE_H
 
 #include <QString>
 #include <QPair>
 #include <QUrl>
+#include <QPointer>
 
-class DAttachedDeviceInterface
+class DAttachedDevice
 {
 public:
+    explicit DAttachedDevice(const QString &id);
+    virtual ~DAttachedDevice();
+
     /*!
      * \brief device isvalid and useable
      * \return
@@ -45,7 +49,7 @@ public:
     /*!
      * \brief do unmount, also do eject if possible.
      */
-    virtual void detach() = 0;
+    virtual void detach();
 
     /*!
      * \brief device display name.
@@ -84,9 +88,12 @@ public:
     virtual QUrl accessPointUrl() = 0;
 
     /*!
-     * \brief ~DAttachedDeviceInterface
+     * \brief parse json from server
      */
-    virtual ~DAttachedDeviceInterface() = 0;
+    virtual void parse() = 0;
+
+protected:
+    QString deviceId;
 };
 
-#endif // DATTACHEDDEVICEINTERFACE_H
+#endif // DATTACHEDDEVICE_H

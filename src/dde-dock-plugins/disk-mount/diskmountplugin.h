@@ -30,7 +30,6 @@
 class TipsWidget;
 class DiskPluginItem;
 class DiskControlWidget;
-class DeviceManagerInterface;
 
 // TODO(zhangs): ref-> https://gerrit.uniontech.com/c/dde-file-manager/+/23583
 
@@ -69,7 +68,6 @@ private:
     TipsWidget        *tipsLabel {nullptr};
     DiskPluginItem    *diskPluginItem {nullptr};
     DiskControlWidget *diskControlApplet {nullptr};
-    QSharedPointer<DeviceManagerInterface> deviceInter;
 };
 
 #endif // DISKMOUNTPLUGIN_H

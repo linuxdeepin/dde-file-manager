@@ -20,38 +20,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DATTACHEDBLOCKDEVICE_H
-#define DATTACHEDBLOCKDEVICE_H
+#ifndef SIZEFORMATHELPER_H
+#define SIZEFORMATHELPER_H
 
-#include "dattacheddevice.h"
+#include <QString>
 
-#include <QUrl>
-#include <QPointer>
-
-struct BlockDeviceData
-{
-    // TODO(zhangs): serallize
-};
-
-class DAttachedBlockDevice final : public DAttachedDevice
+/*!
+ * \brief current only support for `DiskControlItem`!
+ */
+class SizeFormatHelper
 {
 public:
-    explicit DAttachedBlockDevice(const QString &id);
-    virtual ~DAttachedBlockDevice() override;
-    bool isValid() override;
-    bool detachable() override;
-    QString displayName() override;
-    bool deviceUsageValid() override;
-    QPair<quint64, quint64> deviceUsage() override;
-    QString iconName() override;
-    QUrl mountpointUrl() override;
-    QUrl accessPointUrl() override;
-
-protected:
-    void parse() override;
-
-private:
-    BlockDeviceData data;
+    static QString formatDiskSize(const quint64 num);
+    static QString sizeString(const QString &str);
 };
 
-#endif // DATTACHEDBLOCKDEVICE_H
+#endif // SIZEFORMATHELPER_H
+

@@ -71,7 +71,7 @@ void DeviceManagerDBus::askStopAllDefenderScanning(int index, const QString &tex
     qInfo() << "ask stop " << index << text;
     if (index == 1) { // user clicked stop
         if (deviceServ->stopDefenderScanAllDrives()) {
-            deviceServ->doUnMountAll();
+            deviceServ->doEjectAll();
         } else {
             dfmbase::UniversalUtils::notifyMessage(tr("The device was not safely removed"),
                                                    tr("Click \"Safely Remove\" and then disconnect it next time"));
@@ -79,7 +79,7 @@ void DeviceManagerDBus::askStopAllDefenderScanning(int index, const QString &tex
     }
 }
 
-void DeviceManagerDBus::UnmountAllDevices()
+void DeviceManagerDBus::EjectAllDevices()
 {
     if (deviceServ->isDefenderScanningDrive()) {
         // show query dialog
@@ -90,7 +90,12 @@ void DeviceManagerDBus::UnmountAllDevices()
         return;
     }
 
-    deviceServ->doUnMountAll();
+    deviceServ->doEjectAll();
+}
+
+void DeviceManagerDBus::EjectDevice(QString id)
+{
+    deviceServ->doEject(id);
 }
 
 QStringList DeviceManagerDBus::BlockDevicesIdList()

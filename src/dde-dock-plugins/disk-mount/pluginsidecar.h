@@ -20,38 +20,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DATTACHEDBLOCKDEVICE_H
-#define DATTACHEDBLOCKDEVICE_H
+#ifndef PLUGINSIDECAR_H
+#define PLUGINSIDECAR_H
 
-#include "dattacheddevice.h"
-
-#include <QUrl>
+#include <QObject>
 #include <QPointer>
 
-struct BlockDeviceData
-{
-    // TODO(zhangs): serallize
-};
+class DeviceManagerInterface;
 
-class DAttachedBlockDevice final : public DAttachedDevice
+class PluginSidecar: public QObject
 {
+    Q_OBJECT
+    Q_DISABLE_COPY(PluginSidecar)
 public:
-    explicit DAttachedBlockDevice(const QString &id);
-    virtual ~DAttachedBlockDevice() override;
-    bool isValid() override;
-    bool detachable() override;
-    QString displayName() override;
-    bool deviceUsageValid() override;
-    QPair<quint64, quint64> deviceUsage() override;
-    QString iconName() override;
-    QUrl mountpointUrl() override;
-    QUrl accessPointUrl() override;
+    static PluginSidecar &instance();
+    QPointer<DeviceManagerInterface> getDeviceInterface();
 
-protected:
-    void parse() override;
+    bool connectToServer();
+    void invokeEjectAllDevices();
+    bool invokeIsMonotorWorking();
+    QStringList invokeBlockDevicesIdList();
+    QStringList invokeProtolcolDevicesIdList();
+    QString invokeQueryBlockDeviceInfo(const QString &id);
+    QString invokeQueryProtocolDeviceInfo(const QString &id);
+    void invokeEjectDevice(const QString &id);
 
 private:
-    BlockDeviceData data;
+    explicit PluginSidecar(QObject *parent = nullptr);
+    ~PluginSidecar();
+
+private:
+    QSharedPointer<DeviceManagerInterface> deviceInterface {nullptr};
 };
 
-#endif // DATTACHEDBLOCKDEVICE_H
+#define SidecarInstance PluginSidecar::instance()
+
+#endif // PLUGINSIDECAR_H

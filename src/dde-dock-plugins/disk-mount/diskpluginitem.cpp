@@ -82,6 +82,18 @@ void DiskPluginItem::resizeEvent(QResizeEvent *e)
 {
     QWidget::resizeEvent(e);
 
+    // bug-89675
+    // The item size changed when switch dock style,
+    // caused the drawing position to be abnormal and the icon to disappear
+    const Dock::Position position = qApp->property(PROP_POSITION).value<Dock::Position>();
+    if (position == Dock::Bottom || position == Dock::Top) {
+        setMaximumWidth(height());
+        setMaximumHeight(QWIDGETSIZE_MAX);
+    } else {
+        setMaximumHeight(width());
+        setMaximumWidth(QWIDGETSIZE_MAX);
+    }
+
     updateIcon();
 }
 

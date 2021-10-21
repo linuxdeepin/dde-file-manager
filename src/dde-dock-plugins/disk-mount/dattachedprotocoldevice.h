@@ -23,23 +23,23 @@
 #ifndef DATTACHEDPROTOCOLDEVICE_H
 #define DATTACHEDPROTOCOLDEVICE_H
 
-#include "dattacheddeviceinterface.h"
+#include "dattacheddevice.h"
 
 #include <QUrl>
+#include <QPointer>
 
 struct ProtocolDeviceData
 {
     // TODO(zhangs): serallize
 };
 
-class DAttachedProtocolDevice : public DAttachedDeviceInterface
+class DAttachedProtocolDevice final : public DAttachedDevice
 {
 public:
-    explicit DAttachedProtocolDevice(const QString &json);
+    explicit DAttachedProtocolDevice(const QString &id);
     virtual ~DAttachedProtocolDevice() override;
     bool isValid() override;
     bool detachable() override;
-    void detach() override;
     QString displayName() override;
     bool deviceUsageValid() override;
     QPair<quint64, quint64> deviceUsage() override;
@@ -47,11 +47,11 @@ public:
     QUrl mountpointUrl() override;
     QUrl accessPointUrl() override;
 
-private:
-    void parse();
+protected:
+    void parse() override;
 
 private:
-    QString jsonValue;
+    ProtocolDeviceData data;
 };
 
 #endif // DATTACHEDPROTOCOLDEVICE_H

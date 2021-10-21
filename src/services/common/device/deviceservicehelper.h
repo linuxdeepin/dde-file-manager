@@ -45,8 +45,8 @@ private:
     static void mountAllBlockDevices();
     static bool mountBlockDevice(DFMMOUNT::DFMBlockDevice *blkDev, const QVariantMap &opts);
     static void mountAllProtocolDevices();
-    static void unmountAllBlockDevices();
-    static void unmountAllProtocolDevices();
+    static void ejectAllBlockDevices();
+    static void ejectAllProtocolDevices();
     static QList<QUrl> getMountPathForDrive(const QString &driveName);
     static QList<QUrl> getMountPathForAllDrive();
     static QUrl getMountPathForBlock(const DFMMOUNT::DFMBlockDevice *blkDev);
@@ -54,7 +54,7 @@ private:
     static bool isProtectedBlocDevice(const DFMMOUNT::DFMBlockDevice *blkDev);
 
 private:
-    static void showUnmountFailedNotification(DFMMOUNT::MountError err);
+    static void showEjectFailedNotification(DFMMOUNT::MountError err);
     static bool powerOffBlockblockDeivce(DFMMOUNT::DFMBlockDevice *block);
 };
 

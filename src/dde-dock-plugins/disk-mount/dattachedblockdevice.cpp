@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dattachedblockdevice.h"
+#include "pluginsidecar.h"
 
 /*!
  * \class DAttachedBlockDevice
@@ -29,11 +30,10 @@
  * `DAttachedDeviceInterface` interface for block devices
  */
 
-
-DAttachedBlockDevice::DAttachedBlockDevice(const QString &json)
-    : jsonValue(json)
+DAttachedBlockDevice::DAttachedBlockDevice(const QString &id)
+    : DAttachedDevice(id)
 {
-    parse();
+
 }
 
 DAttachedBlockDevice::~DAttachedBlockDevice()
@@ -43,7 +43,7 @@ DAttachedBlockDevice::~DAttachedBlockDevice()
 
 bool DAttachedBlockDevice::isValid()
 {
-    // TODO(zhans)
+    // TODO(zhans): judge hasFileSystem mountPoints hintIgnore hintSystem
     return false;
 }
 
@@ -51,11 +51,6 @@ bool DAttachedBlockDevice::detachable()
 {
     // TODO(zhans)
     return true;
-}
-
-void DAttachedBlockDevice::detach()
-{
-    // TODO(zhans)
 }
 
 QString DAttachedBlockDevice::displayName()
@@ -72,7 +67,13 @@ bool DAttachedBlockDevice::deviceUsageValid()
 
 QPair<quint64, quint64> DAttachedBlockDevice::deviceUsage()
 {
-    // TODO(zhans)
+    if (iconName().simplified().toLower() == "media-optical") {
+        // TODO(zhangs): optical device cannot read capacity
+        // servier must read common data
+        return QPair<quint64, quint64>();
+    }
+
+    // TODO(zhangs): query
     return QPair<quint64, quint64>();
 }
 
@@ -96,5 +97,6 @@ QUrl DAttachedBlockDevice::accessPointUrl()
 
 void DAttachedBlockDevice::parse()
 {
-    // TODO(zhans)
+    const QString &json = SidecarInstance.invokeQueryBlockDeviceInfo(deviceId);
+    // TODO(zhans) make data
 }

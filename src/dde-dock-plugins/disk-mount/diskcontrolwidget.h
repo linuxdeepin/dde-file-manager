@@ -29,14 +29,13 @@
 
 #include <mutex>
 
-class DeviceManagerInterface;
 class DiskControlItem;
 
 class DiskControlWidget : public QScrollArea
 {
     Q_OBJECT
 public:
-    explicit DiskControlWidget(QPointer<DeviceManagerInterface> inter, QWidget *parent = nullptr);
+    explicit DiskControlWidget(QWidget *parent = nullptr);
     void initListByMonitorState();
 
 signals:
@@ -44,7 +43,6 @@ signals:
 
 private slots:
     void onDiskListChanged();
-    void onItemUmountClicked(DiskControlItem *item);
 
 private:
     void initializeUi();
@@ -62,7 +60,6 @@ private:
 private:
     QVBoxLayout *centralLayout {nullptr};
     QWidget *centralWidget {nullptr};
-    QPointer<DeviceManagerInterface> deviceInter;
 };
 
 #endif // DISKCONTROLWIDGET_H

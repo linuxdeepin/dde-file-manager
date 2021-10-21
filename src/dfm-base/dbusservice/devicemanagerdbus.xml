@@ -8,7 +8,10 @@
     <method name="IsMonotorWorking">
       <arg type="b" direction="out"/>
     </method>
-    <method name="UnmountAllDevices">
+    <method name="EjectAllDevices">
+    </method>
+    <method name="EjectDevice">
+      <arg name="id" type="s" direction="in"/>
     </method>
     <method name="BlockDevicesIdList">
       <arg type="as" direction="out"/>

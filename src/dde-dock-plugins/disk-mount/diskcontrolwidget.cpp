@@ -24,13 +24,14 @@
 #include "dattachedblockdevice.h"
 #include "dattachedprotocoldevice.h"
 #include "diskcontrolitem.h"
+#include "pluginsidecar.h"
 
 #include <dbus_interface/devicemanagerdbus_interface.h>
 #include <DGuiApplicationHelper>
-
 #include <QScrollBar>
 #include <QLabel>
 #include <QSharedPointer>
+#include <QTimer>
 
 static const int WIDTH = 300;
 
@@ -41,11 +42,10 @@ static const int WIDTH = 300;
  * The control pops up after the left mouse button click on the main control of the plugin
  */
 
-DiskControlWidget::DiskControlWidget(QPointer<DeviceManagerInterface> inter, QWidget *parent)
+DiskControlWidget::DiskControlWidget(QWidget *parent)
     : QScrollArea(parent),
       centralLayout(new QVBoxLayout),
-      centralWidget(new QWidget),
-      deviceInter(inter)
+      centralWidget(new QWidget)
 {
     this->setObjectName("DiskControlWidget-QScrollArea");
     initializeUi();
@@ -54,8 +54,7 @@ DiskControlWidget::DiskControlWidget(QPointer<DeviceManagerInterface> inter, QWi
 
 void DiskControlWidget::initListByMonitorState()
 {
-    auto reply = deviceInter->IsMonotorWorking();
-    if (reply.isValid() && reply.value()) {
+    if (SidecarInstance.invokeIsMonotorWorking()) {
         onDiskListChanged();
     } else {
         // if failed retry once after 3s
@@ -91,8 +90,8 @@ void DiskControlWidget::initConnection()
     // refreshes the list of controls to fit the text color under the new theme
     connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
             this, &DiskControlWidget::onDiskListChanged);
-    connect(deviceInter, &DeviceManagerInterface::BlockDriveAdded, this, &DiskControlWidget::onDiskListChanged);
-    connect(deviceInter, &DeviceManagerInterface::BlockDriveRemoved, this, &DiskControlWidget::onDiskListChanged);
+    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveAdded, this, &DiskControlWidget::onDiskListChanged);
+    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveRemoved, this, &DiskControlWidget::onDiskListChanged);
     // TODO(zhangs): other signals
 }
 
@@ -160,11 +159,7 @@ int DiskControlWidget::addBlockDevicesItems()
 {
     int mountedCount = 0;
 
-    auto reply = deviceInter->BlockDevicesIdList();
-    if (!reply.isValid())
-        return mountedCount;
-
-    const QStringList &list = reply.value();
+    const QStringList &list = SidecarInstance.invokeBlockDevicesIdList();
     mountedCount = addItems(list, true);
 
     return mountedCount;
@@ -174,11 +169,7 @@ int DiskControlWidget::addProtocolDevicesItems()
 {
     int mountedCount = 0;
 
-    auto reply = deviceInter->ProtolcolDevicesIdList();
-    if (!reply.isValid())
-        return mountedCount;
-
-    const QStringList &list = reply.value();
+    const QStringList &list = SidecarInstance.invokeProtolcolDevicesIdList();
     mountedCount = addItems(list, false);
 
     return mountedCount;
@@ -189,26 +180,17 @@ int DiskControlWidget::addItems(const QStringList &list, bool isBlockDevice)
     int mountedCount = 0;
 
     for (const QString &id : list) {
-        auto reply = isBlockDevice ? deviceInter->QueryBlockDeviceInfo(id) :
-                                     deviceInter->QueryProtocolDeviceInfo(id);
-
-        if (!reply.isValid())
-            continue;
-
-        QSharedPointer<DAttachedDeviceInterface> dev;
-        const QString &json = reply.value();
-
+        QSharedPointer<DAttachedDevice> dev;
         if (isBlockDevice)
-            dev.reset(new DAttachedBlockDevice(json));
+            dev.reset(new DAttachedBlockDevice(id));
         else
-            dev.reset(new DAttachedProtocolDevice(json));
-
+            dev.reset(new DAttachedProtocolDevice(id));
+        dev->parse();
         if (dev->isValid()) {
             mountedCount++;
             DiskControlItem *item = new DiskControlItem(dev, this);
             centralLayout->addWidget(item);
             addSeparateLineUi(1);
-            connect(item, &DiskControlItem::umountClicked, this, &DiskControlWidget::onItemUmountClicked);
         }
     }
 
@@ -234,13 +216,6 @@ void DiskControlWidget::onDiskListChanged()
     paintUi();
 }
 
-void DiskControlWidget::onItemUmountClicked(DiskControlItem *item)
-{
-    if (!item) {
-        qWarning() << "DiskControlWidget, item is null.";
-        return;
-    }
-}
 
 
 

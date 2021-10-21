@@ -20,38 +20,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DATTACHEDBLOCKDEVICE_H
-#define DATTACHEDBLOCKDEVICE_H
-
 #include "dattacheddevice.h"
+#include "pluginsidecar.h"
 
-#include <QUrl>
-#include <QPointer>
-
-struct BlockDeviceData
+DAttachedDevice::DAttachedDevice(const QString &id)
+    : deviceId(id)
 {
-    // TODO(zhangs): serallize
-};
 
-class DAttachedBlockDevice final : public DAttachedDevice
+}
+
+DAttachedDevice::~DAttachedDevice()
 {
-public:
-    explicit DAttachedBlockDevice(const QString &id);
-    virtual ~DAttachedBlockDevice() override;
-    bool isValid() override;
-    bool detachable() override;
-    QString displayName() override;
-    bool deviceUsageValid() override;
-    QPair<quint64, quint64> deviceUsage() override;
-    QString iconName() override;
-    QUrl mountpointUrl() override;
-    QUrl accessPointUrl() override;
 
-protected:
-    void parse() override;
+}
 
-private:
-    BlockDeviceData data;
-};
-
-#endif // DATTACHEDBLOCKDEVICE_H
+void DAttachedDevice::detach()
+{
+    SidecarInstance.invokeEjectDevice(deviceId);
+}

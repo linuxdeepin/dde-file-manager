@@ -104,13 +104,21 @@ bool DeviceService::stopMonitor()
     return manager->stopMonitorWatch();
 }
 
-/*!
- * \brief unmount all of block devices(async) and protocol devices(sync)
- */
-void DeviceService::doUnMountAll()
+void DeviceService::doEject(const QString &id)
 {
-    DeviceServiceHelper::unmountAllBlockDevices();
-    DeviceServiceHelper::unmountAllProtocolDevices();
+    if (id.isEmpty())
+        return;
+
+    // TODO(zhangs): wait dfm-mount provide a interface that create object by id
+}
+
+/*!
+ * \brief eject all of block devices(async) and protocol devices(sync)
+ */
+void DeviceService::doEjectAll()
+{
+    DeviceServiceHelper::ejectAllBlockDevices();
+    DeviceServiceHelper::ejectAllProtocolDevices();
 }
 
 bool DeviceService::stopDefenderScanAllDrives()

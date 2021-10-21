@@ -39,6 +39,18 @@ QStringList DeviceManagerAdaptor::BlockDevicesIdList()
     return parent()->BlockDevicesIdList();
 }
 
+void DeviceManagerAdaptor::EjectAllDevices()
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.EjectAllDevices
+    parent()->EjectAllDevices();
+}
+
+void DeviceManagerAdaptor::EjectDevice(const QString &id)
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.EjectDevice
+    parent()->EjectDevice(id);
+}
+
 bool DeviceManagerAdaptor::IsMonotorWorking()
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.IsMonotorWorking
@@ -61,11 +73,5 @@ QString DeviceManagerAdaptor::QueryProtocolDeviceInfo(const QString &id)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.QueryProtocolDeviceInfo
     return parent()->QueryProtocolDeviceInfo(id);
-}
-
-void DeviceManagerAdaptor::UnmountAllDevices()
-{
-    // handle method call com.deepin.filemanager.service.DeviceManager.UnmountAllDevices
-    parent()->UnmountAllDevices();
 }
 

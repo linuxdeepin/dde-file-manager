@@ -47,7 +47,8 @@ public: // operations
     bool startMonitor();
     void startConnect();
     bool stopMonitor();
-    void doUnMountAll();
+    void doEject(const QString &id);
+    void doEjectAll();
     bool stopDefenderScanAllDrives();
 
 public: // status

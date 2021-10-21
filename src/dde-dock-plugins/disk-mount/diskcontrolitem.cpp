@@ -21,9 +21,59 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "diskcontrolitem.h"
+#include "sizeformathelper.h"
 
 #include <DGuiApplicationHelper>
+#include <DDialog>
+#include <DDesktopServices>
 #include <QVBoxLayout>
+#include <QGSettings>
+#include <QFile>
+#include <QStandardPaths>
+#include <QProcess>
+
+QString SizeFormatHelper::formatDiskSize(const quint64 num)
+{
+    QStringList list {" B", " KB", " MB", " GB", " TB"};
+    qreal fileSize(num);
+
+    QStringListIterator i(list);
+    QString unit = i.next();
+
+    int index = 0;
+    while (i.hasNext()) {
+        if (fileSize < 1024) {
+            break;
+        }
+
+        unit = i.next();
+        fileSize /= 1024;
+        index++;
+    }
+
+    return QString("%1%2").arg(sizeString(QString::number(fileSize, 'f', 1)), unit);
+}
+
+QString SizeFormatHelper::sizeString(const QString &str)
+{
+    int beginPos = str.indexOf('.');
+
+    if (beginPos < 0)
+        return str;
+
+    QString size = str;
+
+    while (size.count() - 1 > beginPos) {
+        if (!size.endsWith('0'))
+            return size;
+
+        size = size.left(size.count() - 1);
+    }
+
+    return size.left(size.count() - 1);
+}
+
+
 /*!
  * \class DiskControlItem
  *
@@ -32,15 +82,15 @@
 
 DWIDGET_USE_NAMESPACE
 
-DiskControlItem::DiskControlItem(QSharedPointer<DAttachedDeviceInterface> attachedDevicePtr, QWidget *parent)
+DiskControlItem::DiskControlItem(QSharedPointer<DAttachedDevice> attachedDevicePtr, QWidget *parent)
     : QFrame(parent),
       unknowIcon(":/icons/resources/unknown.svg"),
       diskIcon(new QPushButton(this)),
       diskName(new QLabel),
       diskCapacity(new QLabel),
       capacityValueBar(new QProgressBar),
-      dev(attachedDevicePtr),
-      unmountButton(new DIconButton(this))
+      attachedDev(attachedDevicePtr),
+      ejectButton(new DIconButton(this))
 {
     setObjectName("DiskItem");
 
@@ -48,14 +98,82 @@ DiskControlItem::DiskControlItem(QSharedPointer<DAttachedDeviceInterface> attach
     initConnection();
 }
 
+void DiskControlItem::detachDevice()
+{
+    // eject all partions of device when a device eject clicked
+    attachedDev->detach();
+}
 
 void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
 {
     QWidget::mouseReleaseEvent(e);
+    QGSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
+    if (!gsettings.get("filemanager-integration").toBool()) {
+        qWarning() << "GSetting `filemanager-integration` is false";
+        return;
+    }
+
+    QUrl &&mountPoint = QUrl(attachedDev->mountpointUrl());
+
+    // 光盘文件系统剥离 RockRidge 后，udisks 的默认挂载权限为 500，为遵从 linux 权限限制，在这里添加访问目录的权限校验
+    QFile f(mountPoint.path());
+    if (f.exists() && !f.permissions().testFlag(QFile::ExeUser)) {
+        DDialog *d = new DDialog(QObject::tr("Access denied"), QObject::tr("You do not have permission to access this folder"));
+        d->setAttribute(Qt::WA_DeleteOnClose);
+        Qt::WindowFlags flags = d->windowFlags();
+        d->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
+        d->setIcon(QIcon::fromTheme("dialog-error"));
+        d->addButton(QObject::tr("Confirm","button"), true, DDialog::ButtonRecommend);
+        d->setMaximumWidth(640);
+        d->show();
+        return;
+    }
+
+    QUrl &&url = QUrl(attachedDev->accessPointUrl());
+    if (url.scheme() == "burn") {
+        // 1. 当前熊默认文件管理器为 dde-file-manager 时，使用它打开光盘
+        // 2. 默认文件管理器为其他时，依然采用打开挂载点的方式
+        if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
+            QString &&path = url.path();
+            QString &&opticalPath = QString("burn://%1").arg(path);
+            qDebug() << "open optical path =>" << opticalPath;
+            QProcess::startDetached(QStringLiteral("dde-file-manager"), {opticalPath});
+        } else {
+            url = QUrl(attachedDev->mountpointUrl());
+            DDesktopServices::showFolder(url);
+        }
+    } else {
+        DDesktopServices::showFolder(url);
+    }
 }
 
 void DiskControlItem::showEvent(QShowEvent *e)
 {
+    diskName->setText(attachedDev->displayName());
+    QString &&name = attachedDev->displayName();
+    const QFont &f = diskName->font();
+    QFontMetrics fm(f);
+    QString &&elideText = fm.elidedText(name, Qt::ElideRight, diskName->width());
+    diskName->setText(elideText);
+
+    if (attachedDev->deviceUsageValid()) {
+        QPair<quint64, quint64> &&freeAndTotal = attachedDev->deviceUsage();
+        quint64 bytesFree = freeAndTotal.first;
+        quint64 bytesTotal = freeAndTotal.second;
+
+        if (bytesTotal > 0 && bytesTotal >= bytesFree) {
+            diskCapacity->setText(QString("%1 / %2")
+                                    .arg(SizeFormatHelper::formatDiskSize(bytesTotal - bytesFree))
+                                    .arg(SizeFormatHelper::formatDiskSize(bytesTotal)));
+        } else {
+            diskCapacity->setText(tr("Unknown"));
+        }
+
+        if (bytesTotal > 0) {
+            capacityValueBar->setValue(static_cast<int>(100 * (bytesTotal - bytesFree) / bytesTotal));
+        }
+    }
+
     QFrame::showEvent(e);
 }
 
@@ -88,9 +206,9 @@ void DiskControlItem::initializeUi()
     capacityValueBar->setTextVisible(false);
     capacityValueBar->setFixedHeight(2);
 
-    unmountButton->setFixedSize(20, 20);
-    unmountButton->setIconSize({20, 20});
-    unmountButton->setFlat(true);
+    ejectButton->setFixedSize(20, 20);
+    ejectButton->setIconSize({20, 20});
+    ejectButton->setFlat(true);
 
     QVBoxLayout *leftLay = new QVBoxLayout;
     leftLay->addWidget(diskIcon);
@@ -111,7 +229,7 @@ void DiskControlItem::initializeUi()
     centLay->setContentsMargins(10, 11, 0, 10);
 
     QVBoxLayout *rigtLay = new QVBoxLayout;
-    rigtLay->addWidget(unmountButton);
+    rigtLay->addWidget(ejectButton);
     rigtLay->setContentsMargins(19, 22, 12, 22);
 
     QHBoxLayout *mainLay = new QHBoxLayout;
@@ -123,10 +241,10 @@ void DiskControlItem::initializeUi()
     mainLay->setSpacing(0);
     setLayout(mainLay);
 
-    // TODO(zhangs): hide unmountButton according dfmsetting
+    // Note: Setting `DisableNonRemovableDeviceUnmount` not exist today
 
     diskIcon->setFlat(true);
-    // TODO(zhangs): diskIcon->setIcon by requist server get icon name
+    diskIcon->setIcon(QIcon::fromTheme(attachedDev->iconName(), unknowIcon));
     diskIcon->setIconSize(QSize(48, 48));
     diskIcon->setAttribute(Qt::WA_TransparentForMouseEvents);
     diskIcon->setStyleSheet("padding: 0;");
@@ -140,28 +258,10 @@ void DiskControlItem::initializeUi()
 void DiskControlItem::initConnection()
 {
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, &DiskControlItem::refreshIcon);
+    connect(ejectButton, &DIconButton::clicked, this, &DiskControlItem::detachDevice);
 }
 
 void DiskControlItem::refreshIcon()
 {
-    unmountButton->setIcon(QIcon::fromTheme("dfm_unmount"));
-}
-
-QString DiskControlItem::sizeString(const QString &str)
-{
-    int beginPos = str.indexOf('.');
-
-    if (beginPos < 0)
-        return str;
-
-    QString size = str;
-
-    while (size.count() - 1 > beginPos) {
-        if (!size.endsWith('0'))
-            return size;
-
-        size = size.left(size.count() - 1);
-    }
-
-    return size.left(size.count() - 1);
+    ejectButton->setIcon(QIcon::fromTheme("dfm_unmount"));
 }

@@ -38,7 +38,10 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "    <method name=\"IsMonotorWorking\">\n"
 "      <arg direction=\"out\" type=\"b\"/>\n"
 "    </method>\n"
-"    <method name=\"UnmountAllDevices\"/>\n"
+"    <method name=\"EjectAllDevices\"/>\n"
+"    <method name=\"EjectDevice\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"    </method>\n"
 "    <method name=\"BlockDevicesIdList\">\n"
 "      <arg direction=\"out\" type=\"as\"/>\n"
 "    </method>\n"
@@ -65,11 +68,12 @@ public:
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
     QStringList BlockDevicesIdList();
+    void EjectAllDevices();
+    void EjectDevice(const QString &id);
     bool IsMonotorWorking();
     QStringList ProtolcolDevicesIdList();
     QString QueryBlockDeviceInfo(const QString &id);
     QString QueryProtocolDeviceInfo(const QString &id);
-    void UnmountAllDevices();
 Q_SIGNALS: // SIGNALS
     void BlockDriveAdded();
     void BlockDriveRemoved();

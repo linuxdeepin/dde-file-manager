@@ -80,7 +80,7 @@ void DeviceServiceHelper::mountAllProtocolDevices()
     // TODO(zhangs): auto mount protocol devices (wait dfm-mount)
 }
 
-void DeviceServiceHelper::unmountAllBlockDevices()
+void DeviceServiceHelper::ejectAllBlockDevices()
 {
     auto manager = DFMMOUNT::DFMDeviceManager::instance();
     QList<DFMMOUNT::DFMDevice *> blkDevcies = manager->devices(DFMMOUNT::DeviceType::BlockDevice);
@@ -106,9 +106,9 @@ void DeviceServiceHelper::unmountAllBlockDevices()
     }
 }
 
-void DeviceServiceHelper::unmountAllProtocolDevices()
+void DeviceServiceHelper::ejectAllProtocolDevices()
 {
-    // TODO(zhangs): unmount protocal devices (wait dfm-mount)
+    // TODO(zhangs): eject protocal devices (wait dfm-mount)
 }
 
 QList<QUrl> DeviceServiceHelper::getMountPathForDrive(const QString &driveName)
@@ -224,7 +224,7 @@ bool DeviceServiceHelper::isProtectedBlocDevice(const dfmmount::DFMBlockDevice *
     return false;
 }
 
-void DeviceServiceHelper::showUnmountFailedNotification(DFMMOUNT::MountError err)
+void DeviceServiceHelper::showEjectFailedNotification(DFMMOUNT::MountError err)
 {
     qWarning() << "error happened :" <<  static_cast<int>(err);
     dfmbase::UniversalUtils::notifyMessage(QObject::tr("The device was not safely removed"),
@@ -237,13 +237,13 @@ bool DeviceServiceHelper::powerOffBlockblockDeivce(dfmmount::DFMBlockDevice *blk
     bool optical = blkDev->getProperty(DFMMOUNT::Property::DriveOptical).toBool();
     bool ejectable = blkDev->getProperty(DFMMOUNT::Property::DriveEjectable).toBool();
     bool canPowerOff = blkDev->getProperty(DFMMOUNT::Property::DriveCanPowerOff).toBool();
-    qInfo() << "unmount(removable optical ejectable canPowerOff): "
+    qInfo() << "eject(removable optical ejectable canPowerOff): "
             << blkDev->mountPoint() << removable << optical << ejectable << canPowerOff;
 
     if (removable) {
         blkDev->eject();
         if (blkDev->getLastError() != DFMMOUNT::MountError::NoError) {
-            showUnmountFailedNotification(blkDev->getLastError());
+            showEjectFailedNotification(blkDev->getLastError());
             return false;
         }
     }
@@ -251,7 +251,7 @@ bool DeviceServiceHelper::powerOffBlockblockDeivce(dfmmount::DFMBlockDevice *blk
     if (optical && ejectable) {
         blkDev->eject();
         if (blkDev->getLastError() != DFMMOUNT::MountError::NoError)
-            showUnmountFailedNotification(blkDev->getLastError());
+            showEjectFailedNotification(blkDev->getLastError());
         return false;
     }
 

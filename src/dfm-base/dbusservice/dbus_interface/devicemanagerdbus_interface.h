@@ -42,6 +42,19 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("BlockDevicesIdList"), argumentList);
     }
 
+    inline QDBusPendingReply<> EjectAllDevices()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("EjectAllDevices"), argumentList);
+    }
+
+    inline QDBusPendingReply<> EjectDevice(const QString &id)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id);
+        return asyncCallWithArgumentList(QStringLiteral("EjectDevice"), argumentList);
+    }
+
     inline QDBusPendingReply<bool> IsMonotorWorking()
     {
         QList<QVariant> argumentList;
@@ -66,12 +79,6 @@ public Q_SLOTS: // METHODS
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(id);
         return asyncCallWithArgumentList(QStringLiteral("QueryProtocolDeviceInfo"), argumentList);
-    }
-
-    inline QDBusPendingReply<> UnmountAllDevices()
-    {
-        QList<QVariant> argumentList;
-        return asyncCallWithArgumentList(QStringLiteral("UnmountAllDevices"), argumentList);
     }
 
 Q_SIGNALS: // SIGNALS

@@ -24,13 +24,13 @@
 #include "tipswidget.h"
 #include "diskpluginitem.h"
 #include "diskcontrolwidget.h"
+#include "pluginsidecar.h"
 
-#include <dbus_interface/devicemanagerdbus_interface.h>
 #include <DApplication>
 #include <QGSettings>
 
 static const char * const OPEN = "open";
-static const char * const UNMOUNT_ALL = "unmount_all";
+static const char * const EJECT_ALL = "eject_all";
 
 DWIDGET_USE_NAMESPACE
 
@@ -66,21 +66,7 @@ void DiskMountPlugin::init(PluginProxyInterface *proxyInter)
 
     std::call_once(DiskMountPlugin::onceFlag(), [this, proxyInter] () {
         setProxyInter(proxyInter); // `m_proxyInter` from Base class `PluginsItemInterface`
-
-        // Note: the plugin depends on `dde-file-manager-server`!
-        // the plugin will not work if `dde-file-manager-server` not run.
-        deviceInter.reset(new DeviceManagerInterface(
-                              "com.deepin.filemanager.service",
-                              "/com/deepin/filemanager/service/DeviceManager",
-                              QDBusConnection::sessionBus(),
-                              this
-                              ));
-        if (!deviceInter->isValid()) {
-            qCritical() << "DeviceManagerInterface cannot link!";
-            deviceInter->deleteLater();
-            deviceInter.reset(nullptr);
-        }
-
+        SidecarInstance.connectToServer();
         initCompoments();
         diskPluginItem->setDockDisplayMode(displayMode());
     });
@@ -124,11 +110,11 @@ const QString DiskMountPlugin::itemContextMenu(const QString &itemKey)
         items.push_back(open);
     }
 
-    QMap<QString, QVariant> unmountAll;
-    unmountAll["itemId"] = UNMOUNT_ALL;
-    unmountAll["itemText"] = tr("Eject all");
-    unmountAll["isActive"] = true;
-    items.push_back(unmountAll);
+    QMap<QString, QVariant> ejectAll;
+    ejectAll["itemId"] = EJECT_ALL;
+    ejectAll["itemText"] = tr("Eject all");
+    ejectAll["isActive"] = true;
+    items.push_back(ejectAll);
 
     QMap<QString, QVariant> menu;
     menu["items"] = items;
@@ -145,8 +131,8 @@ void DiskMountPlugin::invokedMenuItem(const QString &itemKey, const QString &men
 
     if (menuId == OPEN)
         QProcess::startDetached("gio", QStringList() << "open" << "computer:///");
-    else if (deviceInter && menuId == UNMOUNT_ALL)
-        deviceInter->UnmountAllDevices();
+    else if (menuId == EJECT_ALL)
+        SidecarInstance.invokeEjectAllDevices();
 }
 
 int DiskMountPlugin::itemSortKey(const QString &itemKey)
@@ -186,7 +172,7 @@ void DiskMountPlugin::diskCountChanged(const int count)
 
 void DiskMountPlugin::initCompoments()
 {
-    diskControlApplet = new DiskControlWidget(deviceInter.data());
+    diskControlApplet = new DiskControlWidget;
     diskControlApplet->setObjectName("disk-mount");
     diskControlApplet->setVisible(false);
 
