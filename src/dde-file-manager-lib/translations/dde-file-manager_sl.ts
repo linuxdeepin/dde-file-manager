@@ -1213,41 +1213,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1446"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1447"/>
         <location filename="../models/trashfileinfo.cpp" line="321"/>
         <source>Name</source>
         <translation>Naziv</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1121"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1448"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
         <location filename="../models/searchfileinfo.cpp" line="130"/>
         <source>Time modified</source>
         <translation>Čas spremembe</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1450"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
         <source>Size</source>
         <translation>Velikost</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1452"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
         <source>Type</source>
         <translation>Vrsta</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1454"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1455"/>
         <source>Time created</source>
         <translation>Čas nastanka</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1456"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1457"/>
         <source>Last access</source>
         <translation>Zadnji dostop</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1458"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1459"/>
         <location filename="../models/recentfileinfo.cpp" line="211"/>
         <location filename="../models/searchfileinfo.cpp" line="128"/>
         <location filename="../models/searchfileinfo.cpp" line="133"/>
@@ -1258,22 +1258,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2710"/>
+        <location filename="../views/dfileview.cpp" line="2736"/>
         <source>Disc mount error</source>
         <translation>Napaka pri priklapljanju diska</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2710"/>
+        <location filename="../views/dfileview.cpp" line="2736"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>Disk je v rabi. Končajte proces, ki se izvaja in ponovno priklopite disk.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2724"/>
+        <location filename="../views/dfileview.cpp" line="2750"/>
         <source>Mounting failed</source>
         <translation>Priklop ni uspel</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3428"/>
+        <location filename="../views/dfileview.cpp" line="3459"/>
         <source>(Reverse)</source>
         <translation>(Obratno)</translation>
     </message>
@@ -1808,7 +1808,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Potrdi</translation>
@@ -1992,9 +1991,13 @@
 <context>
     <name>FileIconItem</name>
     <message>
-        <location filename="../views/fileitem.cpp" line="203"/>
         <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
-        <translation>Znaki &quot;&apos;/\[]:|&lt;&gt;+=;,?* niso dovoljeni</translation>
+        <translation type="vanished">Znaki &quot;&apos;/\[]:|&lt;&gt;+=;,?* niso dovoljeni</translation>
+    </message>
+    <message>
+        <location filename="../views/fileitem.cpp" line="203"/>
+        <source>%1 are not allowed</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3641,7 +3644,7 @@
     </message>
     <message>
         <location filename="../interfaces/dfileinfo.cpp" line="891"/>
-        <location filename="../models/masteredmediafileinfo.cpp" line="279"/>
+        <location filename="../models/masteredmediafileinfo.cpp" line="281"/>
         <location filename="../models/recentfileinfo.cpp" line="264"/>
         <location filename="../models/trashfileinfo.cpp" line="366"/>
         <location filename="../models/vaultfileinfo.cpp" line="141"/>
@@ -3981,12 +3984,8 @@
         <translation>Napaka ob izvajanju</translation>
     </message>
     <message>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="910"/>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="1071"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="567"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="772"/>
         <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
-        <translation>Znaki &quot;&apos;/\[]:|&lt;&gt;+=;,?* niso dovoljeni</translation>
+        <translation type="vanished">Znaki &quot;&apos;/\[]:|&lt;&gt;+=;,?* niso dovoljeni</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="332"/>
@@ -4008,6 +4007,14 @@
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Potrdi</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="910"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1071"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="532"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="740"/>
+        <source>%1 are not allowed</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4053,35 +4060,35 @@
         <translation>Dovoli</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="316"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="317"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Ime skupne rabe ne sme imeti dveh (..) ali ene pike (.).</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="332"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="333"/>
         <source>The share name is used by another user.</source>
         <translation>Ime skupne rabe uporablja drug uporabnik.</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="333"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="334"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>V redu</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="336"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="337"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Prekini</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="337"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="338"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Zamenjaj</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="335"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="336"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>To ime za skupno rabo že obstaja. Ali želite zamenjati mapo v skupni rabi?</translation>
     </message>
