@@ -127,8 +127,6 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
         } else if (button == 5) {
             m_wallpaperList->nextPage();
         } else {
-            qDebug() << "button pressed on blank area, quit.";
-
             qreal scale = devicePixelRatioF();
             if(!ScreenHelper::screenManager()->screen(m_screenName)){
                 qCritical() << "lost screen " << m_screenName << "closed";
@@ -142,8 +140,11 @@ Frame::Frame(QString screenName, Mode mode, QWidget *parent)
             nativeRect.setSize(nativeRect.size() * scale);
 
             if (!nativeRect.contains(p)) {
+                qDebug() << "button pressed on blank area quit.";
                 hide();
             }
+
+            activateWindow();
         }
     });
 

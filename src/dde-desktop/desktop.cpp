@@ -100,19 +100,10 @@ void Desktop::showWallpaperSettings(QString name, int mode)
 
     d->wallpaperSettings->show();
 
-    //监控窗口状态
-    QWindow *window = d->wallpaperSettings->windowHandle();
-    connect(window, &QWindow::activeChanged, d->wallpaperSettings, [ = ]() {
-        if (d->wallpaperSettings == nullptr || d->wallpaperSettings->isActiveWindow())
-            return;
-        //激活窗口
-        d->wallpaperSettings->activateWindow();
-        //10毫秒后再次检测
-        QTimer::singleShot(10, d->wallpaperSettings, [ = ]() {
-            if (d->wallpaperSettings && !d->wallpaperSettings->isActiveWindow())
-                d->wallpaperSettings->windowHandle()->activeChanged();
-        });
-    });
+    //使壁纸设置窗口保持焦点
+    auto autoAct = new AutoActivateWindow(d->wallpaperSettings);
+    autoAct->setWatched(d->wallpaperSettings);
+    autoAct->start();
 }
 
 

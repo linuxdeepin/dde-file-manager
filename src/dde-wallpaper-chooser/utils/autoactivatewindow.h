@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangyu<zhangyub@uniontech.com>
  *
@@ -18,29 +18,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef AUTOACTIVATEWINDOW_H
+#define AUTOACTIVATEWINDOW_H
 
-#include <gtest/gtest.h>
-#include <sanitizer/asan_interface.h>
-#include <gmock/gmock-matchers.h>
-#include <QApplication>
+#include <QObject>
 
-static void noMessageHandler(QtMsgType type, const QMessageLogContext &context,
-                                   const QString &message)
+class AutoActivateWindowPrivate;
+class AutoActivateWindow : public QObject
 {
-    return;
-}
+    Q_OBJECT
+public:
+    explicit AutoActivateWindow(QObject *parent = nullptr);
+    void setWatched(QWidget *);
+    bool start();
+    void stop();
+signals:
 
-int main(int argc, char *argv[])
-{
-    QApplication app(argc,argv);
-    testing::InitGoogleTest(&argc,argv);
-    //不打印应用的输出日志
-    //qInstallMessageHandler(noMessageHandler);
-    int res = RUN_ALL_TESTS();
+public slots:
+private:
+    AutoActivateWindowPrivate *d;
+};
 
-#ifdef ENABLE_TSAN_TOOL
-    __sanitizer_set_report_path("../../asan_dde-desktop.log");
-#endif
-
-    return res;
-}
+#endif // AUTOACTIVATEWINDOW_H

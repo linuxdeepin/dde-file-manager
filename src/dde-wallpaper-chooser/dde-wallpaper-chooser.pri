@@ -6,7 +6,8 @@ SOURCES += $$PWD/frame.cpp \
     $$PWD/dbus/deepin_wm.cpp \
     $$PWD/checkbox.cpp \
     $$PWD/screensavercontrol.cpp \
-    $$PWD/waititem.cpp
+    $$PWD/waititem.cpp \
+    $$PWD/utils/autoactivatewindow.cpp
 
 HEADERS  += $$PWD/frame.h \
     $$PWD/wallpaperlist.h \
@@ -17,7 +18,9 @@ HEADERS  += $$PWD/frame.h \
     $$PWD/dbus/deepin_wm.h \
     $$PWD/checkbox.h \
     $$PWD/screensavercontrol.h \
-    $$PWD/waititem.h
+    $$PWD/waititem.h \
+    $$PWD/utils/autoactivatewindow.h \
+    $$PWD/utils/autoactivatewindow_p.h
 
 INCLUDEPATH += $$_PRO_FILE_PWD_/view
 

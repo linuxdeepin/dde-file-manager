@@ -23,6 +23,7 @@
 #define DESKTOPPRIVATE_H
 
 #include "../dde-wallpaper-chooser/frame.h"
+#include "../dde-wallpaper-chooser/utils/autoactivatewindow.h"
 
 
 #ifndef DISABLE_ZONE

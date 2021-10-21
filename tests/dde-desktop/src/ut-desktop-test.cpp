@@ -167,6 +167,8 @@ TEST(DesktopTest, show_wallpaper_setting)
 {
     Desktop desktop;
     stub_ext::StubExt stu;
+    bool autoAct = false;
+    stu.set_lamda(&AutoActivateWindow::start,[&autoAct](){autoAct = true;return true;});
 
     WallpaperSettings *wset1 = desktop.d.data()->wallpaperSettings;
     EXPECT_EQ(wset1, nullptr);
@@ -175,13 +177,15 @@ TEST(DesktopTest, show_wallpaper_setting)
     stu.set_lamda(ADDR(WallpaperSettings, show), [&isshow](){isshow = true; return;});
     desktop.showWallpaperSettings(qApp->primaryScreen()->name(), Frame::Mode::WallpaperMode);
     EXPECT_TRUE(isshow);
+    EXPECT_TRUE(autoAct);
 
     WallpaperSettings *wset2 = desktop.d.data()->wallpaperSettings;
     EXPECT_NE(wset2, nullptr);
     desktop.showWallpaperSettings(qApp->primaryScreen()->name(), Frame::Mode::WallpaperMode);
 
     WallpaperSettings *wset3 = desktop.d.data()->wallpaperSettings;
-    if (nullptr != wset3)   emit wset3->done();
+    if (nullptr != wset3)
+        emit wset3->done();
 
     desktop.showWallpaperSettings(qApp->primaryScreen()->name(), Frame::Mode::WallpaperMode);
 
@@ -275,12 +279,15 @@ TEST(DesktopTest, show_Screensaverpaper)
     stub_ext::StubExt stu;
     stu.set_lamda(ADDR(Presenter, init), [](){return;});
     stu.set_lamda(ADDR(CanvasViewManager, init), [](){return;});
+    bool autoAct = false;
+    stu.set_lamda(&AutoActivateWindow::start,[&autoAct](){autoAct = true;return true;});
 
     bool isshow = false;
     Desktop* desktop = new Desktop;
     stu.set_lamda(ADDR(WallpaperSettings, show), [&isshow](){isshow = true; return;});
     desktop->ShowScreensaverChooser(qApp->primaryScreen()->name());
     EXPECT_TRUE(isshow);
+    EXPECT_TRUE(autoAct);
     delete desktop;
 }
 
@@ -292,7 +299,8 @@ TEST(DesktopTest, Fix_Geometry)
 
     Desktop desktop;
     QVector<ScreenPointer> screens = ScreenMrg->logicScreens();
-    if (!screens.size()) return;
+    if (!screens.size())
+        return;
     //此处会发送一个信号
     desktop.FixGeometry(1);
 }
