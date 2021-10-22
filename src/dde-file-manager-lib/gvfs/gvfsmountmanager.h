@@ -82,13 +82,13 @@ public:
 
     static bool AskedPasswordWhileMountDisk;
 
-    static QHash<GMountOperation *,DFMUrlBaseEvent *> MountEventHash;
-    static QHash<GMountOperation *,QSharedPointer<QTimer>> MountTimerHash;
-    static QHash<GMountOperation *,GCancellable *> CancellHash;
-    static QHash<GMountOperation *,QSharedPointer<QEventLoop>> eventLoopHash;
-    static QHash<GMountOperation *,bool> AskingPasswordHash;
-    static QHash<GMountOperation *,MountAskPasswordDialog *> askPasswordDialogHash;
-    static QHash<GMountOperation *,QJsonObject *> SMBLoginObjHash;
+    static QHash<GMountOperation *, QSharedPointer<DFMUrlBaseEvent>> MountEventHash;
+    static QHash<GMountOperation *, QSharedPointer<QTimer>> MountTimerHash;
+    static QHash<GMountOperation *, GCancellable *> CancellHash;
+    static QHash<GMountOperation *, QSharedPointer<QEventLoop>> eventLoopHash;
+    static QHash<GMountOperation *, bool> AskingPasswordHash;
+    static QHash<GMountOperation *, MountAskPasswordDialog *> askPasswordDialogHash;
+    static QHash<GMountOperation *, QJsonObject *> SMBLoginObjHash;
 
     static QStringList getIconNames(GThemedIcon *icon);
     static QDrive gDriveToqDrive(GDrive *drive);
