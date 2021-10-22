@@ -616,3 +616,21 @@ TEST_F(TestFileUtils, can_isSambaServiceRunning)
 {
     EXPECT_NO_FATAL_FAILURE(FileUtils::isSambaServiceRunning());
 }
+
+TEST_F(TestFileUtils, test_isNetworkAncestorUrl) {
+    DUrl dest, source;
+    EXPECT_FALSE(FileUtils::isNetworkAncestorUrl(dest, false, source, false));
+
+    EXPECT_FALSE(FileUtils::isNetworkAncestorUrl(dest, true, source, true));
+
+    EXPECT_FALSE(FileUtils::isNetworkAncestorUrl(dest, false, source, true));
+
+    dest.setPath("/run/user/1000/smb-share:server=,share=");
+    EXPECT_FALSE(FileUtils::isNetworkAncestorUrl(dest, false, source, true));
+
+    dest.setPath("/run/user/1000/smb-share:server=127.8.8.8,share=share");
+    EXPECT_FALSE(FileUtils::isNetworkAncestorUrl(dest, false, source, true));
+
+    dest.setPath("/run/user/1000/smb-share:server=127.0.0.1,share=share");
+    EXPECT_FALSE(FileUtils::isNetworkAncestorUrl(dest, false, source, true));
+}

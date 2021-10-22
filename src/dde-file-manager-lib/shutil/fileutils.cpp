@@ -43,6 +43,8 @@
 #include "models/avfsfileinfo.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
+#include "usershare/usersharemanager.h"
+#include "usershare/shareinfo.h"
 
 #include <dstorageinfo.h>
 
@@ -62,6 +64,7 @@
 #include <dabstractfilewatcher.h>
 #include <QApplication>
 #include <QScreen>
+#include <QNetworkInterface>
 #include <DRecentManager>
 
 #include <sys/vfs.h>
@@ -135,6 +138,70 @@ bool FileUtils::isAncestorUrl(const DUrl &ancestor, const DUrl &url)
         }
         parent = parent.parentUrl();
     }
+    return false;
+}
+/**
+ * @brief Check isNetworkAncestorUrl 检查挂载的目录是否是本机目录，是本地挂载转换为本地url，在判读是否是同一个目录
+ * 两个参数一个是本地，一个网络挂载文件，必须是目标文件是原文的父文件，就返回true
+ * @param ancestor
+ * @param
+ * @param
+ */
+bool FileUtils::isNetworkAncestorUrl(const DUrl &dest, const bool isDestGvfs, const DUrl &source, const bool isSourceGvfs)
+{
+    if ((isDestGvfs && isSourceGvfs) || (!isDestGvfs && !isSourceGvfs))
+        return false;
+
+    QString gvfsUrlStr = isDestGvfs ? dest.toString() : source.toString();
+
+    if (!(gvfsUrlStr.contains("smb-share:server=") && gvfsUrlStr.contains(",share=")))
+        return false;
+
+    QString urlIp, urlShareName, urlPath;
+    // 获取url里面的ip和共享，名称
+    static const QRegExp rxIP(R"((\d+.\d+.\d+.\d+))");
+    static const QRegExp rxShareName(R"((,share=[^/]+))");
+    static const QRegExp rxSharePath(R"((,share=.*))");
+
+
+    if (rxIP.indexIn(gvfsUrlStr, 0) != -1)
+        urlIp = rxIP.cap(1);
+
+    if (rxShareName.indexIn(gvfsUrlStr, 0) != -1)
+        urlShareName = rxShareName.cap(1).replace(",share=","");
+
+    if (rxSharePath.indexIn(gvfsUrlStr, 0) != -1)
+        urlPath = rxSharePath.cap(1).replace(",share=" + urlShareName,"");
+
+    if (urlIp.isEmpty() || urlShareName.isEmpty())
+        return false;
+
+    // 获取本机ip判断是否是自己
+    bool selfIp = false;
+    const auto &allAddresses = QNetworkInterface::allAddresses();
+    for (const auto &address : allAddresses) {
+        const QString &ipAddr = address.toString();
+        if (ipAddr == urlIp) {
+            selfIp = true;
+            break;
+        }
+    }
+
+    if (!selfIp)
+        return false;
+    //获取自己的共享路径
+    QString realPath;
+    if (!userShareManager->getsShareInfoByShareName(urlShareName).isValid())
+        return false;
+
+    realPath = userShareManager->getsShareInfoByShareName(urlShareName).path() + urlPath;
+    DUrl realUrl = DUrl::fromLocalFile(realPath);
+    if (isDestGvfs && realUrl.parentUrl().path().contains(source.path()))
+        return true;
+
+    if (isSourceGvfs && dest.path().contains(realUrl.parentUrl().path()))
+        return true;
+
     return false;
 }
 

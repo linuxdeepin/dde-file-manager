@@ -49,6 +49,8 @@ public:
 
     static bool removeRecurse(const QString &path, const QString &name);
     static bool isAncestorUrl(const DUrl &ancestor, const DUrl &url);
+    static bool isNetworkAncestorUrl(const DUrl &dest, const bool isDestGvfs,
+                                     const DUrl &source, const bool isSourceGvfs);
     static void recurseFolder(const QString &path, const QString &parent,
                               QStringList *list);
     static int filesCount(const QString &dir);

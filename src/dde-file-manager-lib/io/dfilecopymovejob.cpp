@@ -1157,7 +1157,17 @@ process_file:
         return ok;
     } else if (source_info->isDir()) {
         // 禁止目录复制/移动到自己里面
-        if (new_file_info->isAncestorsUrl(source_info->fileUrl())) {
+        // fix bug 99308，转换网络smb挂载到本地路径，在判断是否目录复制/移动到自己里面
+        bool isNewGvfsMountFile = new_file_info->isGvfsMountFile();
+        bool isSourceGvfsMountFile = source_info->isGvfsMountFile();
+        bool isAncestorsUrl = false;
+        if ((isNewGvfsMountFile && !isSourceGvfsMountFile) ||
+                (!isNewGvfsMountFile && isSourceGvfsMountFile)) {
+            isAncestorsUrl = FileUtils::isNetworkAncestorUrl(new_file_info->fileUrl(), isNewGvfsMountFile,
+                                                             source_info->fileUrl(), isSourceGvfsMountFile);
+        }
+        // 禁止目录复制/移动到自己里面
+        if (new_file_info->isAncestorsUrl(source_info->fileUrl()) || isAncestorsUrl) {
             isErrorOccur = true;
             //错误队列处理
             errorQueueHandling();
