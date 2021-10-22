@@ -47,6 +47,10 @@
 #include "usershare/shareinfo.h"
 
 #include <dstorageinfo.h>
+#include <dgiovolumemanager.h>
+#include <dgiomount.h>
+#include <dgiofile.h>
+#include <dgiovolume.h>
 
 #include <QDirIterator>
 #include <QUrl>
@@ -1806,6 +1810,26 @@ qint32 FileUtils::getCpuProcessCount()
     static const int cpuProcessCount = sysconf(_SC_NPROCESSORS_CONF) < 4 ?
                 4 : static_cast<int>(sysconf(_SC_NPROCESSORS_CONF));
     return cpuProcessCount;
+}
+/**
+ * @brief jugment file is mount 通过gioqt获取所有的挂载点，对比当前的url是否在挂载点中，只判断了smb和ftp
+ * @param url file url
+ */
+bool FileUtils::isNetworkUrlMounted(const DUrl &url)
+{
+    for (auto gvfsmp : DGioVolumeManager::getMounts()) {
+        auto rootFile = gvfsmp->getRootFile();
+        if (!rootFile || (!rootFile->uri().contains("smb")
+                && !rootFile->uri().contains("ftp")))
+            continue;
+
+        DUrl mountUrl;
+        mountUrl.setScheme(DFMROOT_SCHEME);
+        mountUrl.setPath("/" + QUrl::toPercentEncoding(rootFile->path()) + "." SUFFIX_GVFSMP);
+        if (mountUrl == url)
+            return true;
+    }
+    return false;
 }
 
 bool FileUtils::isSambaServiceRunning()

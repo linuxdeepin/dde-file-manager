@@ -1080,13 +1080,13 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
 
     if (rootFileName.startsWith(SMB_SCHEME) || rootFileName.startsWith(SFTP_SCHEME)) {
         DAbstractFileInfoPointer rootptr = createFileInfo(nullptr, rootUrl);
-        bool fileexit = rootptr->exists();
+        bool fileExists = rootptr->exists();
         setCursorBusyState(false);
         //文件不存在弹提示框
-        if (!fileexit && bShowDailog) {
+        if (!fileExists && bShowDailog && FileUtils::isNetworkUrlMounted(rootUrl)) {
             dialogManager->showUnableToLocateDir(rootFileName);
         }
-        return !fileexit;
+        return !fileExists;
     }
 
     //是网络文件，就去确定host和port端口号
@@ -1111,7 +1111,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &ro
     setCursorBusyState(false);
 
     //文件不存在弹提示框
-    if (!bvist && bShowDailog) {
+    if (!bvist && bShowDailog && FileUtils::isNetworkUrlMounted(rootUrl)) {
         dialogManager->showUnableToLocateDir(rootFileName);
     }
     qDebug() << bvist;

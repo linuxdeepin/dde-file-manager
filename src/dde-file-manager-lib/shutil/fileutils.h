@@ -147,6 +147,8 @@ public:
     static qint32 getCpuProcessCount();
     // 获取smbd服务是否打开
     static bool isSambaServiceRunning();
+    // 判断当前的网络挂载路径是否挂载了
+    static bool isNetworkUrlMounted(const DUrl &url);
 };
 
 #endif // FILEUTILS_H
