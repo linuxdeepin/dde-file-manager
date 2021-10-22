@@ -91,6 +91,16 @@ TEST_F(TestBluetoothManager, model)
     EXPECT_NO_FATAL_FAILURE(bluetoothManager->model());
 }
 
+TEST_F(TestBluetoothManager, hasAdapter)
+{
+    EXPECT_NO_FATAL_FAILURE(bluetoothManager->hasAdapter());
+}
+
+TEST_F(TestBluetoothManager, bluetoothSendEnable)
+{
+    EXPECT_NO_FATAL_FAILURE(BluetoothManager::bluetoothSendEnable());
+}
+
 TEST_F(TestBluetoothManager, cancleTransfer)
 {
     EXPECT_TRUE(bluetoothManager->cancelTransfer(""));

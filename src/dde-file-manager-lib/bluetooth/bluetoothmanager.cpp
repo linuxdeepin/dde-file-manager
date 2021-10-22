@@ -31,6 +31,7 @@
 
 #define BluetoothService "com.deepin.daemon.Bluetooth"
 #define BluetoothPath "/com/deepin/daemon/Bluetooth"
+#define BlutoothInterface "com.deepin.daemon.Bluetooth"
 
 #define BluetoothPage "bluetooth"
 #define ControlcenterService "com.deepin.dde.ControlCenter"
@@ -313,6 +314,26 @@ BluetoothModel *BluetoothManager::model()
     Q_D(BluetoothManager);
 
     return d->m_model;
+}
+
+bool BluetoothManager::hasAdapter()
+{
+    return model()->adapters().count() > 0;
+}
+
+bool BluetoothManager::bluetoothSendEnable()
+{
+    QDBusInterface btIface(BluetoothService, BluetoothPath, BlutoothInterface, QDBusConnection::sessionBus());
+    if (!btIface.isValid()) {
+        qWarning() << "bluetooth interface is not valid";
+        return false;
+    }
+    auto canSendFile = btIface.property("CanSendFile");
+    if (!canSendFile.isValid()) {
+        qWarning() << "bluetooth interface has no 'CanSendFile' property";
+        return true; // if there is no this property, then we do not disable bluetooth transfer.
+    }
+    return canSendFile.toBool();
 }
 
 void BluetoothManager::showBluetoothSettings()

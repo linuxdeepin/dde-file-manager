@@ -186,22 +186,21 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         return menu;
     }
 
-    bool enableSendToBluetooth = true; // feat 蓝牙：当选中的列表中包含文件夹时不予启用蓝牙发送选项
     //! urlList中有保险箱的DUrl需要进行转换否则会出现报错或功能不可用
     DUrlList urls = urlList;
     for (int i = 0; i < urlList.size(); ++i) {
-        if (urlList[i].isVaultFile()) {
+        if (urlList[i].isVaultFile())
             urls[i] = VaultController::vaultToLocalUrl(urlList[i]);
-
-        }
-
-        // feat 蓝牙：当选中的列表中包含文件夹时不予启用蓝牙发送选项
-        if (bluetoothManager->model()->adapters().count() > 0 && enableSendToBluetooth) {
-            DAbstractFileInfoPointer file_info = fileService->createFileInfo(nullptr, urls[i]);
-            if (file_info && file_info->isDir())
-                enableSendToBluetooth = false;
-        }
     }
+
+    auto dirInUrls = [](const DUrlList &urls) {
+        for (const auto &url: urls) {
+            auto fileInfo = fileService->createFileInfo(nullptr, url);
+            if (fileInfo && fileInfo->isDir())
+                return true;
+        }
+        return false;
+    };
 
     DUrlList redirectedUrlList;
     if (urls.length() == 1) {
@@ -445,7 +444,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
     }
 
     if (deviceListener->isMountedRemovableDiskExits()
-            || bluetoothManager->model()->adapters().count() > 0) {
+            || bluetoothManager->hasAdapter()) {
         QAction *sendToMountedRemovableDiskAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::SendToRemovableDisk));
         if (currentUrl.path().contains("/dev/sr")
                 || (currentUrl.scheme() == SEARCH_SCHEME && currentUrl.query().contains("/dev/sr"))) // 禁用光盘搜索列表中的发送到选项
@@ -454,13 +453,15 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
             DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
             if (sendToMountedRemovableDiskMenu) {
                 // 如果有蓝牙设备并且当前文件不在保险箱内
-                if ((bluetoothManager->model()->adapters().count() > 0) && !VaultController::isVaultFile(currentUrl.toLocalFile())) {
-                        QAction *sendToBluetooth = new QAction(DFileMenuManager::getActionString(DFMGlobal::SendToBluetooth), sendToMountedRemovableDiskMenu);
-                        sendToBluetooth->setProperty("urlList", DUrl::toStringList(urls));
-                        sendToMountedRemovableDiskMenu->addAction(sendToBluetooth);
-                        connect(sendToBluetooth, &QAction::triggered, appController, &AppController::actionSendToBluetooth);
-                        if (!enableSendToBluetooth)
-                            sendToBluetooth->setEnabled(false);
+                if (BluetoothManager::bluetoothSendEnable() // is system disabled "sending via bluetooth"
+                        && bluetoothManager->hasAdapter()
+                        && !VaultController::isVaultFile(currentUrl.toLocalFile())) {
+                    QAction *sendToBluetooth = new QAction(DFileMenuManager::getActionString(DFMGlobal::SendToBluetooth), sendToMountedRemovableDiskMenu);
+                    sendToBluetooth->setProperty("urlList", DUrl::toStringList(urls));
+                    sendToMountedRemovableDiskMenu->addAction(sendToBluetooth);
+                    connect(sendToBluetooth, &QAction::triggered, appController, &AppController::actionSendToBluetooth);
+                    if (dirInUrls(urls))
+                        sendToBluetooth->setEnabled(false);
                 }
 
                 foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {

@@ -942,7 +942,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                        << MenuAction::SendToDesktop;
 
             if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0
-                    || bluetoothManager->model()->adapters().count() > 0) {
+                    || bluetoothManager->hasAdapter()) {
                 actionKeys << MenuAction::SendToRemovableDisk;
             }
 
@@ -1016,7 +1016,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::SendToDesktop;
 
         if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0
-                || bluetoothManager->model()->adapters().count() > 0) {
+                || bluetoothManager->hasAdapter()) {
             actionKeys << MenuAction::SendToRemovableDisk;
         }
 
@@ -1727,7 +1727,7 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList(Menu
     actions.insert(MenuAction::SortBy, sortByMenuActionKeys);
 
     if (deviceListener->isMountedRemovableDiskExits()
-            || bluetoothManager->model()->adapters().count() > 0) {
+            || bluetoothManager->hasAdapter()) {
         QVector<MenuAction> diskMenuActionKeys;
         actions.insert(MenuAction::SendToRemovableDisk, diskMenuActionKeys);
     }

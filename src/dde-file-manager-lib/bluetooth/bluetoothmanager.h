@@ -51,6 +51,10 @@ public:
      */
     BluetoothModel *model();
 
+    bool hasAdapter();
+
+    static bool bluetoothSendEnable();
+
 
 public Q_SLOTS:
     /**
