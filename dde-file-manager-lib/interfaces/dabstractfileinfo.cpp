@@ -927,7 +927,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             DDiskManager diskm;
             for (auto &devs : diskm.diskDevices()) {
                 QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(devs));
-                if (dev->mediaCompatibility().join(' ').contains("_r")) {
+                if (dev->mediaCompatibility().join(' ').contains("_r") && dev->optical()) {
                     actionKeys << MenuAction::StageFileForBurning;
                     break;
                 }
@@ -1001,7 +1001,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
         DDiskManager diskm;
         for (auto &devs : diskm.diskDevices()) {
             QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(devs));
-            if (dev->mediaCompatibility().join(' ').contains("_r")) {
+            if (dev->mediaCompatibility().join(' ').contains("_r") && dev->optical()) {
                 actionKeys << MenuAction::StageFileForBurning;
                 break;
             }
@@ -1710,7 +1710,7 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList(Menu
     DDiskManager diskm;
     for (auto &drvs : diskm.diskDevices()) {
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(drvs));
-        if (drv->mediaCompatibility().join(' ').contains("_r")) {
+        if (drv->mediaCompatibility().join(' ').contains("_r") && drv->optical()) {
             actions.insert(MenuAction::StageFileForBurning, {});
             break;
         }
