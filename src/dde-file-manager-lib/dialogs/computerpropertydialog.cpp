@@ -164,8 +164,13 @@ void GetInfoWork::run()
                 }
             }
             // 获取系统版本名
-            if (m_datas.contains(keyEditon))
-                Edition = DSysInfo::uosEditionName();
+            if (m_datas.contains(keyEditon)) {
+                if (DSysInfo::uosEditionType() == DSysInfo::UosEuler) {
+                    Edition = DSysInfo::minorVersion() + "e";
+                } else {
+                    Edition = DSysInfo::uosEditionName();
+                }
+            }
             // 获取系统版本号
             if (m_datas.contains(keyVersion))
                 version = DSysInfo::majorVersion();
@@ -453,7 +458,11 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     // 如果dbus没有，则从dtk读数据
     if (DSysInfo::isDeepin()) {
         //! 获取系统版本名
-        Edition = DSysInfo::uosEditionName();
+        if (DSysInfo::uosEditionType() == DSysInfo::UosEuler) {
+            Edition = DSysInfo::minorVersion() + "e";
+        } else {
+            Edition = DSysInfo::uosEditionName();
+        }
         //! 获取系统版本号
         version = DSysInfo::majorVersion();
         // 获取实际可用内存总量
