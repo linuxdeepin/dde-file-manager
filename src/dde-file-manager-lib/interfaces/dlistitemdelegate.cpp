@@ -577,13 +577,14 @@ void DListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
     QRect rect = opt_rect;
     for (int i = 0; i < roleList.length(); ++i) {
         if (roleList.at(i) == DFileSystemModel::FileNameRole || roleList.at(i) == DFileSystemModel::FileDisplayNameRole) {
-            int iconOffset = i == 0 ? icon_rect.right() + ICON_SPACING + 1 : 0;
+            int iconOffset = i == 0 ? icon_rect.right() + 1: 0;
 
-            rect.setLeft(column_x + LIST_MODE_EDITOR_LEFT_PADDING + iconOffset);
+            rect.setLeft(column_x + iconOffset);
             column_x += parent()->columnWidth(i) - 1 - parent()->fileViewViewportMargins().left();
 
             rect.setRight(qMin(column_x, opt_rect.right()));
             rect.setTop(opt_rect.y() + (opt_rect.height() - editor->height()) / 2);
+            break;
         } else {
             column_x += parent()->columnWidth(i);
         }
