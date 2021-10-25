@@ -81,6 +81,7 @@ QMutex *getOpticalDriveMutex();
 
 #define IPHONE_STAGING   "Apple_Inc"
 #define MOBILE_ROOT_PATH "/run/user"
+#define NETWORK_REDIRECT_SCHEME_EX "-all-network"
 
 // root 用户下 挂载路径为 /.gvfs/mtp:host=", 所以这里去掉/
 #define MTP_STAGING   "gvfs/mtp:host="

@@ -362,10 +362,13 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
             QTimer::singleShot(0, this, [path, main_window] {
                 const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, DUrl(path));
 
-                if (info && info->canRedirectionFileUrl())
-                                    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(nullptr, info->redirectedFileUrl(), main_window);
-
-                 });
+                if (info && info->canRedirectionFileUrl()) {
+                    DUrl redirectUrl = info->redirectedFileUrl();
+                    redirectUrl.setScheme(redirectUrl.scheme()+ NETWORK_REDIRECT_SCHEME_EX);
+                    redirectUrl.setQuery(path);
+                    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(nullptr, redirectUrl, main_window);
+                 }
+            });
         }
     }
     delete e;

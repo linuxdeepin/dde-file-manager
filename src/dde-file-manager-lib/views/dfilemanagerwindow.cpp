@@ -930,8 +930,21 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl)
         d->toolbar->addHistoryStack();
         d->tabBar->createTab(nullptr);
     }
+    // fix bug 99023 smb挂载成功后所有的标签页是访问smb网络地址的都需要切换到挂载点
+    DUrl tmpUrl = fileUrl;
+    if (fileUrl.scheme().contains(NETWORK_REDIRECT_SCHEME_EX)) {
+        tmpUrl.setScheme(fileUrl.scheme().replace(NETWORK_REDIRECT_SCHEME_EX, ""));
+        DUrl newworkUrl = DUrl(tmpUrl.query());
+        tmpUrl.setQuery("");
+        for (int i = 0; i < d->tabBar->count(); ++i) {
+            if (i == d->tabBar->currentIndex())
+                continue;
+            if (d->tabBar->tabAt(i)->currentUrl() == newworkUrl)
+                d->cdForTab(d->tabBar->tabAt(i), tmpUrl);
+        }
+    }
 
-    if (!d->cdForTab(d->tabBar->currentTab(), fileUrl)) {
+    if (!d->cdForTab(d->tabBar->currentTab(), tmpUrl)) {
         return false;
     }
 
