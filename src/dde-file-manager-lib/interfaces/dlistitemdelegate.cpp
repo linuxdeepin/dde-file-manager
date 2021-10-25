@@ -72,59 +72,6 @@ void DListItemDelegate::paint(QPainter *painter,
                               const QModelIndex &index) const
 {
     Q_D(const DListItemDelegate);
-    //根据UI要求 交替亮度为深色主题
-
-    painter->save();//保存之前的绘制样式
-
-    //反走样抗锯齿
-    painter->setRenderHints(QPainter::Antialiasing
-                           |QPainter::TextAntialiasing
-                           |QPainter::SmoothPixmapTransform);
-    //绘制新的背景交替
-    DPalette pl(DApplicationHelper::instance()->palette(option.widget));
-    QColor baseColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
-    //默认调整色保持背板颜色
-    QColor adjustItemAlterColor = baseColor;//交替色
-    QColor adjustHoverItemColor = baseColor;//hover色
-    if (option.widget) {
-        DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(baseColor);
-        if (ct == DGuiApplicationHelper::DarkType) {
-            adjustItemAlterColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +5);
-            adjustHoverItemColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
-        }
-
-        if (ct == DGuiApplicationHelper::LightType) {
-            adjustItemAlterColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +5);
-            adjustHoverItemColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
-        }
-    }
-
-    //获取item范围
-    auto itemRect = parent()->parent()->visualRect(index);
-    //左右间隔10 px UI设计要求 选中与交替渐变背景
-    QRect dstRect(itemRect.x() + LIST_MODE_LEFT_MARGIN,
-                  itemRect.y(),
-                  itemRect.width() - (LIST_MODE_LEFT_MARGIN + LIST_MODE_RIGHT_MARGIN),
-                  itemRect.height());
-
-    //取模设置当前的交替变化
-    if (index.row() % 2 == 1) {
-        auto blockColorBrush = parent()->parent()->palette().background();
-        QPainterPath path;
-        path.addRoundedRect(dstRect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);//圆角8 UI要求
-        painter->fillPath(path, adjustItemAlterColor);
-    } else {
-        painter->setBrush(baseColor);
-    }
-
-    //设置hover高亮
-    if (option.state & QStyle::StateFlag::State_MouseOver) {
-        QPainterPath path;
-        path.addRoundedRect(dstRect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
-        painter->fillPath(path, adjustHoverItemColor);
-    }
-
-    painter->restore(); //恢复之前的绘制，防止在此逻辑前的绘制丢失
 
     painter->save();//保存之前的绘制样式
 
@@ -150,8 +97,8 @@ void DListItemDelegate::paint(QPainter *painter,
             //如果hover则设置高亮，不绘制交替色
             if (option.state & QStyle::StateFlag::State_MouseOver) {
                 QColor adjustHoverItemColor = baseColor;//hover色 默认调整色保持背板颜色
-                //hover色保持背板%10
-                adjustHoverItemColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
+                //hover色保持背板%8
+                adjustHoverItemColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +8);
                 QPainterPath path;
                 path.addRoundedRect(dstRect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
                 painter->fillPath(path, adjustHoverItemColor);
@@ -167,10 +114,10 @@ void DListItemDelegate::paint(QPainter *painter,
             //如果hover则设置高亮，不保持默认背板
             if (option.state & QStyle::StateFlag::State_MouseOver) {//设置hover高亮
                 QColor adjustHoverItemColor = baseColor;//hover色 默认调整色保持背板颜色
-                adjustHoverItemColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
+                adjustHoverItemColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +8);
                 QPainterPath path;
                 path.addRoundedRect(dstRect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
-                //hover色保持背板%10
+                //hover色保持背板%8
                 painter->fillPath(path, adjustHoverItemColor);
             } else { //保持默认背板颜色
                 painter->setBrush(baseColor);
