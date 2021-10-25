@@ -611,3 +611,8 @@ TEST_F(TestFileUtils, can_get_folder_totalSize)
     // 有的文件系统空文件夹返回size为64B, 所以这里limit设置小一些
     EXPECT_TRUE(FileUtils::totalSize(urlFolderList) != FileUtils::totalSize(urlFolderList, 128, isInLimitFiles));
 }
+
+TEST_F(TestFileUtils, can_isSambaServiceRunning)
+{
+    EXPECT_NO_FATAL_FAILURE(FileUtils::isSambaServiceRunning());
+}

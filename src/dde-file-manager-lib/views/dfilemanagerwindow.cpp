@@ -308,9 +308,9 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
     bool fileSamba = false;
     {
         const auto &decodeUrl = QUrl::fromEncoded(fileUrl.toString().toLocal8Bit()).toString();
-        QRegExp rx(R"(.*/run/user/.*gvfs/smb-share:server=\d+.\d+.\d+.\d+.*)");
-        rx.setPatternSyntax(QRegExp::RegExp);
-        fileSamba = rx.exactMatch(decodeUrl);
+        QRegularExpression rx(R"(.*/run/user/.*gvfs/smb-share:server=\d+.\d+.\d+.\d+.*)");
+        QRegularExpressionMatch match = rx.match(decodeUrl);
+        fileSamba = match.hasMatch();
     }
 
     if (scheme == BURN_SCHEME) {
@@ -337,11 +337,10 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
         // 首先判断smb地址是否是自己ip
         // 获取url里面的ip
         QString urlIp;
-        QRegExp rx(R"((\d+.\d+.\d+.\d+))");
-        QStringList list;
-        if (rx.indexIn(fileUrl.toString(), 0) != -1) {
-            urlIp = rx.cap(1);
-        }
+        QRegularExpression rx(R"((\d+.\d+.\d+.\d+))");
+        QRegularExpressionMatch match = rx.match(fileUrl.toString());
+        if (match.hasMatch())
+            urlIp = match.captured();
 
         // 获取本机ip
         bool selfIp = false;
@@ -365,7 +364,6 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
                     dialogManager->showErrorDialog(QString(), QObject::tr("Failed to start Samba services"));
                     return false;
                 }
-                    //qWarning() << "smb start failed";
             }
         }
     }
