@@ -67,9 +67,9 @@ signals:
 private slots:
     void onBlockDriveAdded();
     void onBlockDriveRemoved();
-    void onBlockDeviceAdded(DFMMOUNT::DFMDevice *dev);
-    void onBlockDeviceRemoved(DFMMOUNT::DFMDevice *dev);
-    void onBlockDeviceMounted(const QString &mountPoint);
+    void onBlockDeviceAdded(const QString &deviceId);
+    void onBlockDeviceRemoved(const QString &deviceId);
+    void onBlockDeviceMounted(const QString &deviceId, const QString &mountPoint);
 
 private:
     explicit DeviceService(QObject *parent = nullptr);

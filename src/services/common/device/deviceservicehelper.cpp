@@ -24,6 +24,7 @@
 
 #include "dfm-base/utils/universalutils.h"
 
+#include <dfm-mount/dfmblockmonitor.h>
 #include <QDebug>
 #include <QGSettings>
 #include <QStorageInfo>
@@ -51,11 +52,8 @@ std::once_flag &DeviceServiceHelper::connectOnceFlag()
 
 void DeviceServiceHelper::mountAllBlockDevices()
 {
-    auto manager = DFMMOUNT::DFMDeviceManager::instance();
-    // TODO(zhangs): wait dfm-mount change monitor
-    QList<DFMMOUNT::DFMDevice *> blkDevcies = manager->devices(DFMMOUNT::DeviceType::BlockDevice);
-    for (auto *dev : blkDevcies) {
-        auto blkDev = qobject_cast<DFMMOUNT::DFMBlockDevice*>(dev);
+    auto ptrList = DeviceServiceHelper::createAllBlockDevices();
+    for (auto &blkDev : ptrList) {
         if (!mountBlockDevice(blkDev, {{"auth.no_user_interaction", true}})) {
             qWarning() << "Mount device failed: " << blkDev->path() << static_cast<int>(blkDev->getLastError());
             continue;
@@ -63,7 +61,7 @@ void DeviceServiceHelper::mountAllBlockDevices()
     }
 }
 
-bool DeviceServiceHelper::mountBlockDevice(dfmmount::DFMBlockDevice *blkDev, const QVariantMap &opts)
+bool DeviceServiceHelper::mountBlockDevice(BlockDevPtr &blkDev, const QVariantMap &opts)
 {
     if (!isMountableBlockDevice(blkDev))
         return false;
@@ -82,10 +80,8 @@ void DeviceServiceHelper::mountAllProtocolDevices()
 
 void DeviceServiceHelper::ejectAllBlockDevices()
 {
-    auto manager = DFMMOUNT::DFMDeviceManager::instance();
-    QList<DFMMOUNT::DFMDevice *> blkDevcies = manager->devices(DFMMOUNT::DeviceType::BlockDevice);
-    for (auto *dev : blkDevcies) {
-        DFMMOUNT::DFMBlockDevice *blk = qobject_cast<DFMMOUNT::DFMBlockDevice*>(dev);
+    auto blkDevcies = DeviceServiceHelper::createAllBlockDevices();
+    for (auto &blk : blkDevcies) {
         if (!blk)
             continue;
         if (isProtectedBlocDevice(blk))
@@ -113,13 +109,13 @@ void DeviceServiceHelper::ejectAllProtocolDevices()
 
 QList<QUrl> DeviceServiceHelper::getMountPathForDrive(const QString &driveName)
 {
-    auto manager = DFMMOUNT::DFMDeviceManager::instance();
     QList<QUrl> urls;
 
-    QList<DFMMOUNT::DFMDevice *> blockDevices = manager->devices(DFMMOUNT::DeviceType::BlockDevice);
-    for (const auto *device : blockDevices) {
+    auto blkDevcies = DeviceServiceHelper::createAllBlockDevices();
+
+    for (const auto &device : blkDevcies) {
         if (device && device->getProperty(DFMMOUNT::Property::BlockDrive).toString() == driveName) {
-            const QUrl &url = getMountPathForBlock(qobject_cast<const DFMMOUNT::DFMBlockDevice*>(device));
+            const QUrl &url = getMountPathForBlock(device);
             if (url.isValid())
                 urls << url;
         }
@@ -130,21 +126,20 @@ QList<QUrl> DeviceServiceHelper::getMountPathForDrive(const QString &driveName)
 
 QList<QUrl> DeviceServiceHelper::getMountPathForAllDrive()
 {
-    auto manager = DFMMOUNT::DFMDeviceManager::instance();
     QList<QUrl> urls;
+    auto blkDevcies = DeviceServiceHelper::createAllBlockDevices();
 
-    QList<DFMMOUNT::DFMDevice *> blockDevices = manager->devices(DFMMOUNT::DeviceType::BlockDevice);
-    for (const auto device : blockDevices) {
+    for (const auto &device : blkDevcies) {
         if (!device)
             continue;
-        const QUrl &url = getMountPathForBlock(qobject_cast<DFMMOUNT::DFMBlockDevice*>(device));
+        const QUrl &url = getMountPathForBlock(device);
         urls << url;
     }
 
     return urls;
 }
 
-QUrl DeviceServiceHelper::getMountPathForBlock(const dfmmount::DFMBlockDevice *blkDev)
+QUrl DeviceServiceHelper::getMountPathForBlock(const BlockDevPtr &blkDev)
 {
     if (!blkDev)
         return QUrl();
@@ -154,7 +149,7 @@ QUrl DeviceServiceHelper::getMountPathForBlock(const dfmmount::DFMBlockDevice *b
     return blkDev->mountPoint();
 }
 
-bool DeviceServiceHelper::isMountableBlockDevice(const dfmmount::DFMBlockDevice *blkDev)
+bool DeviceServiceHelper::isMountableBlockDevice(const BlockDevPtr &blkDev)
 {
     if (!blkDev) {
         qWarning() << "Block Device is Null";
@@ -196,7 +191,7 @@ bool DeviceServiceHelper::isMountableBlockDevice(const dfmmount::DFMBlockDevice 
     return true;
 }
 
-bool DeviceServiceHelper::isProtectedBlocDevice(const dfmmount::DFMBlockDevice *blkDev)
+bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDevPtr &blkDev)
 {
     QGSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
 
@@ -224,6 +219,18 @@ bool DeviceServiceHelper::isProtectedBlocDevice(const dfmmount::DFMBlockDevice *
     return false;
 }
 
+DeviceServiceHelper::BlockDevPtr DeviceServiceHelper::createBlockDevice(const QString &devId)
+{
+     auto devPtr = createDevice(devId, DFMMOUNT::DeviceType::BlockDevice);
+     return qobject_cast<BlockDevPtr>(devPtr);
+}
+
+DeviceServiceHelper::ProtocolDevPtr DeviceServiceHelper::createProtocolDevice(const QString &devId)
+{
+    auto devPtr = createDevice(devId, DFMMOUNT::DeviceType::ProtocolDevice);
+    return qobject_cast<ProtocolDevPtr>(devPtr);
+}
+
 void DeviceServiceHelper::showEjectFailedNotification(DFMMOUNT::MountError err)
 {
     qWarning() << "error happened :" <<  static_cast<int>(err);
@@ -231,7 +238,7 @@ void DeviceServiceHelper::showEjectFailedNotification(DFMMOUNT::MountError err)
                                            QObject::tr("Click \"Safely Remove\" and then disconnect it next time"));
 }
 
-bool DeviceServiceHelper::powerOffBlockblockDeivce(dfmmount::DFMBlockDevice *blkDev)
+bool DeviceServiceHelper::powerOffBlockblockDeivce(BlockDevPtr &blkDev)
 {
     bool removable = blkDev->getProperty(DFMMOUNT::Property::DriveRemovable).toBool();
     bool optical = blkDev->getProperty(DFMMOUNT::Property::DriveOptical).toBool();
@@ -259,6 +266,52 @@ bool DeviceServiceHelper::powerOffBlockblockDeivce(dfmmount::DFMBlockDevice *blk
         blkDev->powerOff();
 
     return true;
+}
+
+DeviceServiceHelper::DevPtr DeviceServiceHelper::createDevice(const QString &devId, DFMMOUNT::DeviceType type)
+{
+    auto manager = DFMMOUNT::DFMDeviceManager::instance();
+    auto monitor = manager->getRegisteredMonitor(type);
+    Q_ASSERT_X(monitor, "DeviceServiceHelper", "dfm-mount return a NULL monitor!");
+    return monitor->createDeviceById(devId);
+}
+
+DeviceServiceHelper::DevPtrList DeviceServiceHelper::createAllDevices(dfmmount::DeviceType type)
+{
+    DevPtrList list;
+    auto manager = DFMMOUNT::DFMDeviceManager::instance();
+    const auto &devicesMap = manager->devices(type);
+    const QStringList &idList = devicesMap[type];
+    for (const QString &id : idList) {
+        auto dev = createDevice(id, type);
+        if (dev)
+            list.append(dev);
+    }
+    return list;
+}
+
+DeviceServiceHelper::BlockDevPtrList DeviceServiceHelper::createAllBlockDevices()
+{
+    BlockDevPtrList list;
+    auto devList = DeviceServiceHelper::createAllDevices(DFMMOUNT::DeviceType::BlockDevice);
+    for (auto dev : devList) {
+        auto blkDev = qobject_cast<QSharedPointer<DFMMOUNT::DFMBlockDevice>>(dev);
+        if (blkDev)
+            list.append(blkDev);
+    }
+    return list;
+}
+
+DeviceServiceHelper::ProtocolDevPtrList DeviceServiceHelper::createAllProtocolDevices()
+{
+    ProtocolDevPtrList list;
+    auto devList = DeviceServiceHelper::createAllDevices(DFMMOUNT::DeviceType::ProtocolDevice);
+    for (auto dev : devList) {
+        auto protocolDev = qobject_cast<QSharedPointer<DFMMOUNT::DFMProtocolDevice>>(dev);
+        if (protocolDev)
+            list.append(protocolDev);
+    }
+    return list;
 }
 
 DSC_END_NAMESPACE

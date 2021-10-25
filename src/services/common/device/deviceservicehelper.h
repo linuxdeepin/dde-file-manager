@@ -30,6 +30,7 @@
 
 #include <dfm-mount/dfmdevicemanager.h>
 #include <dfm-mount/dfmblockdevice.h>
+#include <dfm-mount/dfmprotocoldevice.h>
 
 #include <mutex>
 
@@ -38,24 +39,43 @@ DSC_BEGIN_NAMESPACE
 class DeviceServiceHelper
 {
     friend class DeviceService;
+
+    using DevPtr             = QSharedPointer<DFMMOUNT::DFMDevice>;
+    using BlockDevPtr        = QSharedPointer<DFMMOUNT::DFMBlockDevice>;
+    using ProtocolDevPtr     = QSharedPointer<DFMMOUNT::DFMProtocolDevice>;
+    using DevPtrList         = QList<DevPtr>;
+    using BlockDevPtrList    = QList<BlockDevPtr>;
+    using ProtocolDevPtrList = QList<ProtocolDevPtr>;
+
 private:
     static std::once_flag &autoMountOnceFlag();
     static std::once_flag &connectOnceFlag();
     static dfmbase::Settings *getGsGlobal();
+
     static void mountAllBlockDevices();
-    static bool mountBlockDevice(DFMMOUNT::DFMBlockDevice *blkDev, const QVariantMap &opts);
+    static bool mountBlockDevice(BlockDevPtr &blkDev, const QVariantMap &opts);
     static void mountAllProtocolDevices();
+
     static void ejectAllBlockDevices();
     static void ejectAllProtocolDevices();
+
     static QList<QUrl> getMountPathForDrive(const QString &driveName);
     static QList<QUrl> getMountPathForAllDrive();
-    static QUrl getMountPathForBlock(const DFMMOUNT::DFMBlockDevice *blkDev);
-    static bool isMountableBlockDevice(const DFMMOUNT::DFMBlockDevice *blkDev);
-    static bool isProtectedBlocDevice(const DFMMOUNT::DFMBlockDevice *blkDev);
+    static QUrl getMountPathForBlock(const BlockDevPtr &blkDev);
+
+    static bool isMountableBlockDevice(const BlockDevPtr &blkDev);
+    static bool isProtectedBlocDevice(const BlockDevPtr &blkDev);
+
+    static BlockDevPtr        createBlockDevice(const QString &devId);
+    static ProtocolDevPtr     createProtocolDevice(const QString &devId);
+    static BlockDevPtrList    createAllBlockDevices();
+    static ProtocolDevPtrList createAllProtocolDevices();
 
 private:
     static void showEjectFailedNotification(DFMMOUNT::MountError err);
-    static bool powerOffBlockblockDeivce(DFMMOUNT::DFMBlockDevice *block);
+    static bool powerOffBlockblockDeivce(BlockDevPtr &blkDev);
+    static DevPtr createDevice(const QString &devId, DFMMOUNT::DeviceType type);
+    static DevPtrList createAllDevices(DFMMOUNT::DeviceType type);
 };
 
 DSC_END_NAMESPACE

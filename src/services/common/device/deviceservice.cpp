@@ -83,7 +83,7 @@ void DeviceService::startConnect()
         auto manager = DFMMOUNT::DFMDeviceManager::instance();
 
         // connect block devices signal
-        auto blkMonitor = manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice);
+        auto blkMonitor = qobject_cast<DFMMOUNT::DFMBlockMonitor *>(manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice));
         connect(blkMonitor, &DFMMOUNT::DFMBlockMonitor::driveAdded, this, &DeviceService::onBlockDriveAdded);
         connect(blkMonitor, &DFMMOUNT::DFMBlockMonitor::driveRemoved, this, &DeviceService::onBlockDriveRemoved);
         connect(blkMonitor, &DFMMOUNT::DFMBlockMonitor::deviceAdded, this, &DeviceService::onBlockDeviceAdded);
@@ -178,11 +178,11 @@ void DeviceService::onBlockDriveRemoved()
  * \brief mount block device and open url if isAutoMountAndOpenSetting is true
  * \param dev
  */
-void DeviceService::onBlockDeviceAdded(dfmmount::DFMDevice *dev)
+void DeviceService::onBlockDeviceAdded(const QString &deviceId)
 {
     qInfo() << "A block device added";
-    auto blkDev = qobject_cast<DFMMOUNT::DFMBlockDevice *>(dev);
-    if (!blkDev) {
+    auto blkDev = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (blkDev.isNull()) {
         qWarning() << "Dev NULL!";
         return;
     }
@@ -219,16 +219,15 @@ void DeviceService::onBlockDeviceAdded(dfmmount::DFMDevice *dev)
     }
 }
 
-void DeviceService::onBlockDeviceRemoved(dfmmount::DFMDevice *dev)
+void DeviceService::onBlockDeviceRemoved(const QString &deviceId)
 {
 
 }
 
-void DeviceService::onBlockDeviceMounted(const QString &mountPoint)
+void DeviceService::onBlockDeviceMounted(const QString &deviceId, const QString &mountPoint)
 {
 
 }
-
 
 /*!
  * \brief check if we are in live system, don't do auto mount if we are in live system
