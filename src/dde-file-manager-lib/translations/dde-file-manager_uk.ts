@@ -637,6 +637,39 @@
     </message>
 </context>
 <context>
+    <name>DFMVaultActiveSaveKeyFileView</name>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="41"/>
+        <source>Save Recovery Key</source>
+        <translation>Зберегти ключ відновлення</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="48"/>
+        <source>Keep the key safe to retrieve the vault password later</source>
+        <translation>Зберегти ключ у безпеці для отримання пароля до сховища згодом</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="52"/>
+        <source>Save to default path</source>
+        <translation>Зберегти за типовим шляхом</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="55"/>
+        <source>Save to other locations</source>
+        <translation>Зберегти до інших місць</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="74"/>
+        <source>Next</source>
+        <translation>Наступний</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="87"/>
+        <source>The default path is invisible to other users, and the path information will not be shown.</source>
+        <translation>Типовий шлях є невидимим для інших користувачів, а дані щодо шляху не буде показано.</translation>
+    </message>
+</context>
+<context>
     <name>DFMVaultActiveSaveKeyView</name>
     <message>
         <location filename="../views/dfmvaultactivesavekeyview.cpp" line="48"/>
@@ -836,7 +869,7 @@
         <translation>У результаті вилучення сховища файли буде остаточно вилучено</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="191"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="196"/>
         <source>Use Key</source>
         <translation>Використати ключ</translation>
     </message>
@@ -859,114 +892,181 @@
         <translation>Видалити</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="143"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="276"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="145"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="283"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Гаразд</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="188"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="193"/>
         <source>Use Password</source>
         <translation>Використовувати пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="203"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="210"/>
         <source>Wrong password</source>
         <translation>Помилковий пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="213"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="220"/>
         <source>Wrong recovery key</source>
         <translation>Помилковий ключ відновлення</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="272"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="279"/>
         <source>Failed to delete file vault</source>
         <translation>Не вдалося вилучити сховище файлів</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="286"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="293"/>
         <source>Deleted successfully</source>
         <translation>Успішно вилучено</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="288"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="295"/>
         <source>Failed to delete</source>
         <translation>Не вдалося вилучити</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="139"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="141"/>
         <source>Removing...</source>
         <translation>Вилучення…</translation>
     </message>
 </context>
 <context>
+    <name>DFMVaultRetrievePassword</name>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="76"/>
+        <source>Verification failed</source>
+        <translation>Не вдалося пройти перевірку</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="145"/>
+        <source>Retrieve password</source>
+        <translation>Відновити пароль</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="149"/>
+        <source>By key in the default path</source>
+        <translation>За ключем за типовим шляхом</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
+        <source>By key in the specified path</source>
+        <translation>За ключем за вказаним шляхом</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="172"/>
+        <source>Verification Successful</source>
+        <translation>Перевірку успішно пройдено</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="175"/>
+        <source>Keep it safe</source>
+        <translation>Зберегти у безпеці</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <source>Back</source>
+        <comment>button</comment>
+        <translation>Назад</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <source>Verify Key</source>
+        <comment>button</comment>
+        <translation>Перевірити ключ</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <source>Go to Unlock</source>
+        <comment>button</comment>
+        <translation>Перейти до розблокування</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <source>Close</source>
+        <comment>button</comment>
+        <translation>Закрити</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="267"/>
+        <source>Vault password: %1</source>
+        <translation>Пароль до сховища: %1</translation>
+    </message>
+</context>
+<context>
     <name>DFMVaultUnlockPages</name>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="56"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="57"/>
         <source>Unlock File Vault</source>
         <translation>Не вдалося розблокувати файлове сховище</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="64"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="65"/>
         <source>Verify your password</source>
         <translation>Перевірте ваш пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="117"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="69"/>
+        <source>Forgot password?</source>
+        <translation>Забули пароль?</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="142"/>
         <source>Password hint: %1</source>
         <translation>Підказка пароля: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="292"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="319"/>
         <source>Failed to unlock file vault</source>
         <translation>Не вдалося розблокувати сховище файлів</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="71"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="87"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="101"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="126"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="101"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="126"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Розблокувати</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="209"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="236"/>
         <source>Please try again %1 minutes later</source>
         <translation>Будь ласка, повторіть спробу за %1 хвилин</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="237"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="264"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Помилковий пароль. Будь ласка, повторіть спробу за %1 хвилин</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="240"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="267"/>
         <source>Wrong password, one chance left</source>
         <translation>Помилковий пароль. Лишилася одна спроба.</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="242"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="269"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Помилковий пароль. Лишилося %1 спроб.</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="287"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="314"/>
         <source>Wrong password</source>
         <translation>Помилковий пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="296"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="323"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Гаразд</translation>
@@ -3950,7 +4050,7 @@
         <translation>Невідомо</translation>
     </message>
     <message>
-        <location filename="../models/vaultfileinfo.cpp" line="263"/>
+        <location filename="../models/vaultfileinfo.cpp" line="264"/>
         <source>My Vault</source>
         <translation>Моє сховище</translation>
     </message>

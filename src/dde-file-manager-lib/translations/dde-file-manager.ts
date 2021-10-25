@@ -641,32 +641,32 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="41"/>
         <source>Save Recovery Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Save Recovery Key</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="48"/>
         <source>Keep the key safe to retrieve the vault password later</source>
-        <translation type="unfinished"></translation>
+        <translation>Keep the key safe to retrieve the vault password later</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="52"/>
         <source>Save to default path</source>
-        <translation type="unfinished"></translation>
+        <translation>Save to default path</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="55"/>
         <source>Save to other locations</source>
-        <translation type="unfinished"></translation>
+        <translation>Save to other locations</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="74"/>
         <source>Next</source>
-        <translation type="unfinished">Next</translation>
+        <translation>Next</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="87"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
-        <translation type="unfinished"></translation>
+        <translation>The default path is invisible to other users, and the path information will not be shown.</translation>
     </message>
 </context>
 <context>
@@ -939,61 +939,61 @@
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="76"/>
         <source>Verification failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Verification failed</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="145"/>
         <source>Retrieve password</source>
-        <translation type="unfinished"></translation>
+        <translation>Retrieve password</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="149"/>
         <source>By key in the default path</source>
-        <translation type="unfinished"></translation>
+        <translation>By key in the default path</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
         <source>By key in the specified path</source>
-        <translation type="unfinished"></translation>
+        <translation>By key in the specified path</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="172"/>
         <source>Verification Successful</source>
-        <translation type="unfinished"></translation>
+        <translation>Verification Successful</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="175"/>
         <source>Keep it safe</source>
-        <translation type="unfinished"></translation>
+        <translation>Keep it safe</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
         <source>Back</source>
         <comment>button</comment>
-        <translation type="unfinished">Back</translation>
+        <translation>Back</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
         <source>Verify Key</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>Verify Key</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>Go to Unlock</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
         <source>Close</source>
         <comment>button</comment>
-        <translation type="unfinished">Close</translation>
+        <translation>Close</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="267"/>
         <source>Vault password: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Vault password: %1</translation>
     </message>
 </context>
 <context>
@@ -1011,7 +1011,7 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="69"/>
         <source>Forgot password?</source>
-        <translation type="unfinished"></translation>
+        <translation>Forgot password?</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="142"/>

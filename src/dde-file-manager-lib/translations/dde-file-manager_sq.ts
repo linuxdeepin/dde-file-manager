@@ -637,6 +637,39 @@
     </message>
 </context>
 <context>
+    <name>DFMVaultActiveSaveKeyFileView</name>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="41"/>
+        <source>Save Recovery Key</source>
+        <translation>Ruani Kyç Rimarrjesh</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="48"/>
+        <source>Keep the key safe to retrieve the vault password later</source>
+        <translation>Mbajeni të parrezik kyçin, që të rimerrni më vonë fjalëkalim kasaforte</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="52"/>
+        <source>Save to default path</source>
+        <translation>Ruaje te shtegu parazgjedhje</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="55"/>
+        <source>Save to other locations</source>
+        <translation>Ruajeni në vendndodhje të tjera</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="74"/>
+        <source>Next</source>
+        <translation>Pasuesi</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="87"/>
+        <source>The default path is invisible to other users, and the path information will not be shown.</source>
+        <translation>Shtegu parazgjedhje është i padukshëm për përdorues të tjerë dhe hollësitë e shtegut nuk do të shfaqen.</translation>
+    </message>
+</context>
+<context>
     <name>DFMVaultActiveSaveKeyView</name>
     <message>
         <location filename="../views/dfmvaultactivesavekeyview.cpp" line="48"/>
@@ -836,7 +869,7 @@
         <translation>Pasi të jetë fshirë, kartelat në të do të fshihen përgjithnjë</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="191"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="196"/>
         <source>Use Key</source>
         <translation>Përdor Kyç</translation>
     </message>
@@ -859,114 +892,181 @@
         <translation>Fshije</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="143"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="276"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="145"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="283"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="188"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="193"/>
         <source>Use Password</source>
         <translation>Përdor Fjalëkalim</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="203"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="210"/>
         <source>Wrong password</source>
         <translation>Fjalëkalim i gabuar</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="213"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="220"/>
         <source>Wrong recovery key</source>
         <translation>Kyç rimarrjesh i gabuar</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="272"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="279"/>
         <source>Failed to delete file vault</source>
         <translation>S’u arrit të fshihet kasafortë kartelash</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="286"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="293"/>
         <source>Deleted successfully</source>
         <translation>U fshi me sukses</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="288"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="295"/>
         <source>Failed to delete</source>
         <translation>S’u arrit të fshihet</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="139"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="141"/>
         <source>Removing...</source>
         <translation>Po hiqet…</translation>
     </message>
 </context>
 <context>
+    <name>DFMVaultRetrievePassword</name>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="76"/>
+        <source>Verification failed</source>
+        <translation>Verifikimi dështoi</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="145"/>
+        <source>Retrieve password</source>
+        <translation>Rimerrni fjalëkalimin</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="149"/>
+        <source>By key in the default path</source>
+        <translation>Përmes kyçi te shtegu parazgjedhje</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
+        <source>By key in the specified path</source>
+        <translation>Përmes kyçi te shtegu i përcaktuar</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="172"/>
+        <source>Verification Successful</source>
+        <translation>Verifikim i Suksesshëm</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="175"/>
+        <source>Keep it safe</source>
+        <translation>Mbajeni të parrezik</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <source>Back</source>
+        <comment>button</comment>
+        <translation>Mbrapsht</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <source>Verify Key</source>
+        <comment>button</comment>
+        <translation>Verifikoni Kyç</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <source>Go to Unlock</source>
+        <comment>button</comment>
+        <translation>Kalo te Shkyçja</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <source>Close</source>
+        <comment>button</comment>
+        <translation>Mbylle</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="267"/>
+        <source>Vault password: %1</source>
+        <translation>Fjalëkalim kasaforte: %1</translation>
+    </message>
+</context>
+<context>
     <name>DFMVaultUnlockPages</name>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="56"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="57"/>
         <source>Unlock File Vault</source>
         <translation>Shkyç Kasafortë Kartelash</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="64"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="65"/>
         <source>Verify your password</source>
         <translation>Verifikoni fjalëkalimin tuaj</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="117"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="69"/>
+        <source>Forgot password?</source>
+        <translation>Harruat fjalëkalimin?</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="142"/>
         <source>Password hint: %1</source>
         <translation>Ndihmëz fjalëkalimi: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="292"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="319"/>
         <source>Failed to unlock file vault</source>
         <translation>S’u arrit të shkyçet kasafortë kartelash</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="71"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="87"/>
         <source>Password</source>
         <translation>Fjalëkalim</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="101"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="126"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="101"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="126"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Shkyçe</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="209"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="236"/>
         <source>Please try again %1 minutes later</source>
         <translation>Ju lutemi, riprovoni pas %1 minutash</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="237"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="264"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Fjalëkalim i gabuar, ju lutemi, riprovoni pas %1 minutash</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="240"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="267"/>
         <source>Wrong password, one chance left</source>
         <translation>Fjalëkalim i gabuar, edhe një provë</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="242"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="269"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Fjalëkalim i gabuar, edhe %1 prova</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="287"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="314"/>
         <source>Wrong password</source>
         <translation>Fjalëkalim i gabuar</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="296"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="323"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
@@ -3950,7 +4050,7 @@
         <translation>E panjohur</translation>
     </message>
     <message>
-        <location filename="../models/vaultfileinfo.cpp" line="263"/>
+        <location filename="../models/vaultfileinfo.cpp" line="264"/>
         <source>My Vault</source>
         <translation>Kasaforta Ime</translation>
     </message>

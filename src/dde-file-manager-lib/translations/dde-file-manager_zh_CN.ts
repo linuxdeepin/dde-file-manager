@@ -666,7 +666,7 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="87"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
-        <translation>默认路径为不会暴露给其他用户的特殊路径，且不会明文显示路径信息</translation>
+        <translation>默认路径为不会暴露给其他用户的特殊路径，且不会明文显示路径信息。</translation>
     </message>
 </context>
 <context>
@@ -944,7 +944,7 @@
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="145"/>
         <source>Retrieve password</source>
-        <translation>密码找回</translation>
+        <translation>找回密码</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="149"/>
@@ -970,7 +970,7 @@
         <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
         <source>Back</source>
         <comment>button</comment>
-        <translation>后退</translation>
+        <translation>返 回</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
@@ -993,7 +993,7 @@
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="267"/>
         <source>Vault password: %1</source>
-        <translation>保险箱密码为: %1</translation>
+        <translation>保险箱密码为：%1</translation>
     </message>
 </context>
 <context>
@@ -1009,6 +1009,11 @@
         <translation>请输入密码</translation>
     </message>
     <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="69"/>
+        <source>Forgot password?</source>
+        <translation>忘记密码？</translation>
+    </message>
+    <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="142"/>
         <source>Password hint: %1</source>
         <translation>密码提示：%1</translation>
@@ -1022,11 +1027,6 @@
         <location filename="../views/dfmvaultunlockpages.cpp" line="87"/>
         <source>Password</source>
         <translation>密码</translation>
-    </message>
-    <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="69"/>
-        <source>Forgot password?</source>
-        <translation>忘记密码？</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="126"/>
@@ -3103,11 +3103,6 @@
         <translation>上锁时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1447"/>
-        <source>Device type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../dialogs/propertydialog.cpp" line="1598"/>
         <source>Access denied</source>
         <translation>不可读不可写</translation>
@@ -3150,6 +3145,11 @@
         <location filename="../dialogs/propertydialog.cpp" line="1429"/>
         <source>Unconnected network shared directory</source>
         <translation>未连接的网络共享目录</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="1447"/>
+        <source>Device type</source>
+        <translation>设备类型</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1465"/>

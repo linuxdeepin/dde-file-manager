@@ -637,6 +637,39 @@
     </message>
 </context>
 <context>
+    <name>DFMVaultActiveSaveKeyFileView</name>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="41"/>
+        <source>Save Recovery Key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="48"/>
+        <source>Keep the key safe to retrieve the vault password later</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="52"/>
+        <source>Save to default path</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="55"/>
+        <source>Save to other locations</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="74"/>
+        <source>Next</source>
+        <translation>Seguinte</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="87"/>
+        <source>The default path is invisible to other users, and the path information will not be shown.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>DFMVaultActiveSaveKeyView</name>
     <message>
         <location filename="../views/dfmvaultactivesavekeyview.cpp" line="48"/>
@@ -836,7 +869,7 @@
         <translation>Uma vez eliminados, os ficheiros que lá se encontram serão permanentemente eliminados</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="191"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="196"/>
         <source>Use Key</source>
         <translation>Utilizar chave</translation>
     </message>
@@ -859,114 +892,181 @@
         <translation>Eliminar</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="143"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="276"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="145"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="283"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Aceitar</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="188"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="193"/>
         <source>Use Password</source>
         <translation>Utilizar palavra-passe</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="203"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="210"/>
         <source>Wrong password</source>
         <translation>Palavra-passe incorreta</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="213"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="220"/>
         <source>Wrong recovery key</source>
         <translation>Chave de recuperação incorreta</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="272"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="279"/>
         <source>Failed to delete file vault</source>
         <translation>Falha ao eliminar o cofre de ficheiros</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="286"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="293"/>
         <source>Deleted successfully</source>
         <translation>Eliminado com sucesso</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="288"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="295"/>
         <source>Failed to delete</source>
         <translation>Falha ao eliminar</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="139"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="141"/>
         <source>Removing...</source>
         <translation>A remover...</translation>
     </message>
 </context>
 <context>
+    <name>DFMVaultRetrievePassword</name>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="76"/>
+        <source>Verification failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="145"/>
+        <source>Retrieve password</source>
+        <translation>Recuperar palavra-passe</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="149"/>
+        <source>By key in the default path</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
+        <source>By key in the specified path</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="172"/>
+        <source>Verification Successful</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="175"/>
+        <source>Keep it safe</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <source>Back</source>
+        <comment>button</comment>
+        <translation>Retroceder</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <source>Verify Key</source>
+        <comment>button</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <source>Go to Unlock</source>
+        <comment>button</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <source>Close</source>
+        <comment>button</comment>
+        <translation>Fechar</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="267"/>
+        <source>Vault password: %1</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>DFMVaultUnlockPages</name>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="56"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="57"/>
         <source>Unlock File Vault</source>
         <translation>Desbloquear cofre de ficheiros</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="64"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="65"/>
         <source>Verify your password</source>
         <translation>Verifique a palavra-passe</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="117"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="69"/>
+        <source>Forgot password?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="142"/>
         <source>Password hint: %1</source>
         <translation>Sugestão de palavra-passe: 1%</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="292"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="319"/>
         <source>Failed to unlock file vault</source>
         <translation>Falha ao desbloquear o cofre de ficheiros</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="71"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="87"/>
         <source>Password</source>
         <translation>Palavra-passe</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="101"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="126"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="101"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="126"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Desbloquear</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="209"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="236"/>
         <source>Please try again %1 minutes later</source>
         <translation>Tente novamente %1 minutos mais tarde</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="237"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="264"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Palavra-passe incorreta. Tente novamente %1 minutos mais tarde</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="240"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="267"/>
         <source>Wrong password, one chance left</source>
         <translation>Palavra-passe incorreta, uma tentativa restante</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="242"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="269"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Palavra-passe incorreta, %1 tentativas restantes</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="287"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="314"/>
         <source>Wrong password</source>
         <translation>Palavra-passe incorreta</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="296"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="323"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Aceitar</translation>
@@ -3950,7 +4050,7 @@
         <translation>Desconhecido</translation>
     </message>
     <message>
-        <location filename="../models/vaultfileinfo.cpp" line="263"/>
+        <location filename="../models/vaultfileinfo.cpp" line="264"/>
         <source>My Vault</source>
         <translation>O meu cofre</translation>
     </message>
