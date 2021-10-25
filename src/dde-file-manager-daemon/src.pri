@@ -50,7 +50,10 @@ HEADERS += \
     $$PWD/vault/vaultclock.h \
     $$PWD/revocation/revocationmanager.h \
     $$PWD/dbusservice/dbusadaptor/revocationmgr_adaptor.h \
-    $$PWD/dbusservice/dbusinterface/revocationmgr_interface.h
+    $$PWD/dbusservice/dbusinterface/revocationmgr_interface.h \
+    $$PWD/vault/vaultbruteforceprevention.h \
+    $$PWD/dbusservice/dbusadaptor/vaultbruteforceprevention_adaptor.h \
+    $$PWD/dbusservice/dbusinterface/vaultbruteforceprevention_interface.h
 
 SOURCES += \
     $$PWD/app/filemanagerdaemon.cpp \
@@ -95,4 +98,7 @@ SOURCES += \
     $$PWD/vault/vaultclock.cpp \
     $$PWD/revocation/revocationmanager.cpp \
     $$PWD/dbusservice/dbusadaptor/revocationmgr_adaptor.cpp \
-    $$PWD/dbusservice/dbusinterface/revocationmgr_interface.cpp
+    $$PWD/dbusservice/dbusinterface/revocationmgr_interface.cpp \
+    $$PWD/vault/vaultbruteforceprevention.cpp \
+    $$PWD/dbusservice/dbusadaptor/vaultbruteforceprevention_adaptor.cpp \
+    $$PWD/dbusservice/dbusinterface/vaultbruteforceprevention_interface.cpp

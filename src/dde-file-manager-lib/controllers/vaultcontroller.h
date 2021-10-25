@@ -23,13 +23,11 @@
 #ifndef VAULTCONTROLLER_H
 #define VAULTCONTROLLER_H
 
-#define ERROR_INPUT_TIMES 6             // 错误次数
-#define TIMER_OUT_TIME 60*1000          // 计时器超时时间/ms
-#define TOTAL_WAIT_TIME 10              // 需要等待的分钟数
-
 #include "dabstractfilecontroller.h"
 
 #include <DSecureString>
+
+class VaultBruteForcePreventionInterface;
 
 DFM_BEGIN_NAMESPACE
 class DFileStatisticsJob;
@@ -236,40 +234,22 @@ public:
     void setBigFileIsDeleting(bool const isDeleting);
 
     // 获得保险箱剩余错误密码输入次数
-    inline int getLeftoverErrorInputTimes() const
-    {
-        return m_leftoverErrorInputTimes;
-    }
+    int getLeftoverErrorInputTimes();
 
     // 保险箱剩余错误密码输入次数减1
-    inline void leftoverErrorInputTimesMinusOne()
-    {
-        --m_leftoverErrorInputTimes;
-    }
+    void leftoverErrorInputTimesMinusOne();
 
     // 保险箱剩余错误密码输入次数还原
-    inline void restoreLeftoverErrorInputTimes()
-    {
-        m_leftoverErrorInputTimes = ERROR_INPUT_TIMES;
-    }
+    void restoreLeftoverErrorInputTimes();
 
     // 开启恢复密码输入定时器
     void startTimerOfRestorePasswordInput();
 
     // 获得保险箱再次输入密码需要等待的分钟数
-    inline int getNeedWaitMinutes()
-    {
-        return m_restoreInputMinutes;
-    }
+    int getNeedWaitMinutes();
 
     // 保险箱再次输入密码的等待分钟数还原
-    inline void restoreNeedWaitMinutes()
-    {
-        m_restoreInputMinutes = TOTAL_WAIT_TIME;
-    }
-
-protected:
-    void timerEvent(QTimerEvent *event) override;
+    void restoreNeedWaitMinutes();
 
 public slots:
 
@@ -342,6 +322,10 @@ private slots:
     void slotUnlockVault(int state);
     void slotLockVault(int state);
 
+private:
+    // 创建保险箱防暴力破解的dbus接口对象
+    void createVaultBruteForcePreventionInterface();
+
 signals:
     /**
      * @brief readError 错误输出
@@ -372,11 +356,6 @@ signals:
      * @param state             返回ErrorCode枚举值
      */
     void signalLockVault(int state);
-
-    /**
-     * @brief sigRestorePasswordInput 恢复密码输入的限制
-     */
-    void sigRestorePasswordInput();
 
 signals:
     /**
@@ -432,14 +411,8 @@ private:
     // 计算当前保险箱大小是否需要刷新
     bool m_bNeedRefreshSize = false;
 
-    // 记录保险箱剩余的错误密码输入次数
-    int m_leftoverErrorInputTimes = ERROR_INPUT_TIMES;
-
-    // 定时器ID，用于记录恢复密码输入的剩余时间
-    int m_timerIdOfRestoreInput = 0;
-
-    // 记录恢复密码输入还需要的分钟数
-    int m_restoreInputMinutes = TOTAL_WAIT_TIME;
+    // 防暴力破解功能的dbus对象
+    VaultBruteForcePreventionInterface *m_vaultInterface = nullptr;
 
     Q_DECLARE_PRIVATE(VaultController)
 };

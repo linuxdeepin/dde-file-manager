@@ -134,7 +134,6 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     connect(this, &DFMVaultUnlockPages::buttonClicked, this, &DFMVaultUnlockPages::onButtonClicked);
     connect(m_passwordEdit, &DPasswordEdit::textChanged, this, &DFMVaultUnlockPages::onPasswordChanged);
     connect(VaultController::ins(), &VaultController::signalUnlockVault, this, &DFMVaultUnlockPages::onVaultUlocked);
-    connect(VaultController::ins(), &VaultController::sigRestorePasswordInput, this, &DFMVaultUnlockPages::restorePasswordInput);
     connect(m_tipsButton, &QPushButton::clicked, this, [this] {
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint))
@@ -326,15 +325,6 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
 
         m_bUnlockByPwd = false;
     }
-}
-
-void DFMVaultUnlockPages::restorePasswordInput()
-{
-    // 密码剩余输入次数还原，需要等待的分钟数还原
-    VaultController::ins()->restoreLeftoverErrorInputTimes();
-    VaultController::ins()->restoreNeedWaitMinutes();
-    // 设置密码框可以输入
-    m_passwordEdit->lineEdit()->setEnabled(true);
 }
 
 void DFMVaultUnlockPages::onReturnUnlockedPage()

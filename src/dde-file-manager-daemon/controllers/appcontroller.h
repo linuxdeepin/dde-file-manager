@@ -36,6 +36,7 @@ class TagManagerDaemon;
 class AccessControlManager;
 class VaultManager;
 class RevocationManager;
+class VaultBruteForcePrevention;
 
 class AppController : public QObject
 {
@@ -57,6 +58,7 @@ private:
     AccessControlManager *m_accessController = nullptr;
     VaultManager *m_vaultManager = nullptr;
     RevocationManager *m_revocationManager = nullptr;
+    VaultBruteForcePrevention *m_vaultForce = nullptr;
 };
 
 #endif // APPCONTROLLER_H

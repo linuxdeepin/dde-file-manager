@@ -30,6 +30,7 @@
 #include "accesscontrol/accesscontrolmanager.h"
 #include "vault/vaultmanager.h"
 #include "revocation/revocationmanager.h"
+#include "vault/vaultbruteforceprevention.h"
 
 AppController::AppController(QObject *parent) : QObject(parent)
 {
@@ -49,6 +50,7 @@ void AppController::initControllers()
     m_tagManagerDaemon = new TagManagerDaemon{ this };
     m_vaultManager = new VaultManager(this);
     m_revocationManager = new RevocationManager(this);
+    m_vaultForce = new VaultBruteForcePrevention(this);
 }
 
 void AppController::initConnect()

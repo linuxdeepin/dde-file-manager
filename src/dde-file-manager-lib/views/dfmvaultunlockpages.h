@@ -54,9 +54,6 @@ public slots:
 
     void onVaultUlocked(int state);
 
-    // 恢复密码输入
-    void restorePasswordInput();
-
     /**
      * @brief onReturnUnlockedPage 返回界面页面
      */

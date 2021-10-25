@@ -52,6 +52,7 @@
 
 #include "dfmevent.h"
 #include "../vault/vaultglobaldefine.h"
+#include "dbusinterface/vaultbruteforceprevention_interface.h"
 
 #include <QProcess>
 #include <QStandardPaths>
@@ -254,6 +255,11 @@ VaultController::VaultController(QObject *parent)
     if (pTaskDlg) {
         connect(pTaskDlg, &DTaskDialog::paused, this, &VaultController::taskPaused);
     }
+
+    m_vaultInterface = new VaultBruteForcePreventionInterface("com.deepin.filemanager.daemon",
+                                "/com/deepin/filemanager/daemon/VaultManager2",
+                                QDBusConnection::systemBus(),
+                                this);
 }
 
 VaultController *VaultController::ins()
@@ -896,20 +902,78 @@ void VaultController::setBigFileIsDeleting(const bool isDeleting)
     m_isBigFileDeleting = isDeleting;
 }
 
-void VaultController::startTimerOfRestorePasswordInput()
+int VaultController::getLeftoverErrorInputTimes()
 {
-    m_timerIdOfRestoreInput = startTimer(TIMER_OUT_TIME);
+    createVaultBruteForcePreventionInterface();
+    int leftChance = -1;
+    if (m_vaultInterface->isValid()) {
+        QDBusPendingReply<int> reply = m_vaultInterface->getLeftoverErrorInputTimes(int(getuid()));
+        reply.waitForFinished();
+        if (reply.isError()) {
+            qInfo() << "Warning: Obtaining the remaining number of password input errors!" << reply.error().message();
+        } else {
+            leftChance = reply.value();
+        }
+    }
+    return leftChance;
 }
 
-void VaultController::timerEvent(QTimerEvent *event)
+void VaultController::leftoverErrorInputTimesMinusOne()
 {
-    int timerID = event->timerId();
-    if (timerID == m_timerIdOfRestoreInput) {
-        --m_restoreInputMinutes;
-        if (m_restoreInputMinutes < 1) {
-            emit sigRestorePasswordInput();
-            killTimer(m_timerIdOfRestoreInput);
-        }
+    createVaultBruteForcePreventionInterface();
+    if (m_vaultInterface->isValid()) {
+        QDBusPendingReply<> reply = m_vaultInterface->leftoverErrorInputTimesMinusOne(int(getuid()));
+        reply.waitForFinished();
+        if (reply.isError())
+            qInfo() << "Warning: The remaining password input times minus 1 is wrong!" << reply.error().message();
+    }
+}
+
+void VaultController::restoreLeftoverErrorInputTimes()
+{
+    createVaultBruteForcePreventionInterface();
+    if (m_vaultInterface->isValid()) {
+        QDBusPendingReply<> reply = m_vaultInterface->restoreLeftoverErrorInputTimes(int(getuid()));
+        reply.waitForFinished();
+        if (reply.isError())
+            qInfo() << "Warning: Error in restoring the remaining number of incorrect entries!" << reply.error().message();
+    }
+}
+
+void VaultController::startTimerOfRestorePasswordInput()
+{
+    createVaultBruteForcePreventionInterface();
+    if (m_vaultInterface->isValid()) {
+        QDBusPendingReply<> reply = m_vaultInterface->startTimerOfRestorePasswordInput(int(getuid()));
+        reply.waitForFinished();
+        if (reply.isError())
+            qInfo() << "Warning: Error when opening the password input timer!" << reply.error().message();
+    }
+}
+
+int VaultController::getNeedWaitMinutes()
+{
+    createVaultBruteForcePreventionInterface();
+    int result = 100;
+    if (m_vaultInterface->isValid()) {
+        QDBusPendingReply<int> reply = m_vaultInterface->getNeedWaitMinutes(int(getuid()));
+        reply.waitForFinished();
+        if (reply.isError())
+            qInfo() << "Warning: Failed to get the number of minutes to wait!" << reply.error().message();
+        else
+            result = reply.value();
+    }
+    return result;
+}
+
+void VaultController::restoreNeedWaitMinutes()
+{
+    createVaultBruteForcePreventionInterface();
+    if (m_vaultInterface->isValid()) {
+        QDBusPendingReply<> reply = m_vaultInterface->restoreNeedWaitMinutes(int(getuid()));
+        reply.waitForFinished();
+        if (reply.isError())
+            qInfo() << "Warnning: The restore needs to wait for a few minutes to fail!" << reply.error().message();
     }
 }
 
@@ -1190,6 +1254,16 @@ bool VaultController::getVaultVersion()
         return true;
 
     return false;
+}
+
+void VaultController::createVaultBruteForcePreventionInterface()
+{
+    // 防暴力破解功能的dbus对象
+    if (!m_vaultInterface->isValid())
+        m_vaultInterface = new VaultBruteForcePreventionInterface("com.deepin.filemanager.daemon",
+                                    "/com/deepin/filemanager/daemon/VaultManager2",
+                                    QDBusConnection::systemBus(),
+                                    this);
 }
 
 VaultController::~VaultController()
