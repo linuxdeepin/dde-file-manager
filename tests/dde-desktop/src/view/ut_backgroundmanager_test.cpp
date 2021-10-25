@@ -290,9 +290,12 @@ TEST_F(BackgroundManagerTest, getBackgroundFromWm)
         reply = QDBusPendingCall::fromCompletedCall(message);
     }
 
+    QString ret = m_manager->getBackgroundFromWm("");
+    EXPECT_TRUE(ret.isEmpty());
+
     //kwin正常
     stu.set_lamda(ADDR(WMInter, GetCurrentWorkspaceBackgroundForMonitor), [reply]() {return reply;});
-    QString ret = m_manager->getBackgroundFromWm("test_screen");
+    ret = m_manager->getBackgroundFromWm("test_screen");
     EXPECT_EQ(ret.toStdString(), defaultpath.toStdString());
 
     //kwin空，配置文件空
