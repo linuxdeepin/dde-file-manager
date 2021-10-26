@@ -28,6 +28,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QButtonGroup>
+#include <QPainterPath>
 
 DFMVaultActiveSaveKeyFileView::DFMVaultActiveSaveKeyFileView(QWidget *parent) :
     QWidget(parent)

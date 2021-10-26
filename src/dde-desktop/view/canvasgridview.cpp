@@ -42,7 +42,6 @@
 #include <QPropertyAnimation>
 #include <danchors.h>
 #include <DUtil>
-#include <DApplication>
 
 #include <durl.h>
 #include <dfmglobal.h>
@@ -58,6 +57,9 @@
 #include <dfmsettings.h>
 #include <dgiosettings.h>
 #include <dfiledragclient.h>
+//dfmlib singleton
+#include <../utils/singleton.h>
+#include <DApplication>
 
 #include "../util/dde/desktopinfo.h"
 #include "../model/dfileselectionmodel.h"

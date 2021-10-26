@@ -26,7 +26,7 @@
 #include <QObject>
 #include "../global/singleton.h"
 
-class Presenter : public QObject, public Singleton<Presenter>
+class Presenter : public QObject, public DDEDesktop::Singleton<Presenter>
 {
     Q_OBJECT
 public:
@@ -48,6 +48,6 @@ public slots:
 private:
     Q_DISABLE_COPY(Presenter)
     explicit Presenter(QObject *parent = nullptr);
-    friend class Singleton<Presenter>;
+    friend class DDEDesktop::Singleton<Presenter>;
 };
 

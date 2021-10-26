@@ -29,7 +29,7 @@
 #include <QTimer>
 #include "../global/singleton.h"
 
-class Config: public QObject, public Singleton<Config>
+class Config: public QObject, public DDEDesktop::Singleton<Config>
 {
     Q_OBJECT
 public:
@@ -57,7 +57,7 @@ private:
     explicit Config();
     Config(const Config &) = delete;
     Config &operator=(const Config &) = delete;
-    friend class Singleton<Config>;
+    friend class DDEDesktop::Singleton<Config>;
 
     QMutex  m_mtxLock;
     QSettings *m_settings = nullptr;

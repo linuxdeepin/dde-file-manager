@@ -22,10 +22,8 @@
  */
 
 #pragma once
-#include <memory>
 
-using namespace std;
-
+namespace DDEDesktop {
 template <class T>
 class Singleton
 {
@@ -42,5 +40,7 @@ protected:
     Singleton(const Singleton &) {}
     Singleton &operator= (const Singleton &);
 };
+}
+
 
 

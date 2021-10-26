@@ -28,10 +28,10 @@
 #include "../global/singleton.h"
 
 class DFMSocketInterfacePrivate;
-class DFMSocketInterface : public QObject, public Singleton<DFMSocketInterface>
+class DFMSocketInterface : public QObject, public DDEDesktop::Singleton<DFMSocketInterface>
 {
     Q_OBJECT
-    friend class Singleton<DFMSocketInterface>;
+    friend class DDEDesktop::Singleton<DFMSocketInterface>;
 public:
     explicit DFMSocketInterface(QObject *parent = nullptr);
     virtual ~ DFMSocketInterface();

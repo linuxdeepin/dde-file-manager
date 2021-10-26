@@ -37,7 +37,7 @@
 
 class GridCore;
 class GridManagerPrivate;
-class GridManager: public QObject, public Singleton<GridManager>
+class GridManager: public QObject, public DDEDesktop::Singleton<GridManager>
 {
     Q_OBJECT
 public:
@@ -124,7 +124,7 @@ protected:
     //bool remove(int screenNum, int x, int y, const QString &itemId);
     bool remove(int screenNum, QPoint pos, const QString &id);
 
-    friend class Singleton<GridManager>;
+    friend class DDEDesktop::Singleton<GridManager>;
 
     GridManager();
     ~GridManager();

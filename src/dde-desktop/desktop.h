@@ -34,7 +34,7 @@
 class QDBusConnection;
 class CanvasGridView;
 class DesktopPrivate;
-class Desktop : public QObject, public Singleton<Desktop>
+class Desktop : public QObject, public DDEDesktop::Singleton<Desktop>
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", DesktopServiceInterface)
@@ -60,7 +60,7 @@ protected:
 private:
     explicit Desktop();
     ~Desktop();
-    friend class Singleton<Desktop>;
+    friend class DDEDesktop::Singleton<Desktop>;
     Q_DISABLE_COPY(Desktop)
 
     QScopedPointer<DesktopPrivate> d;

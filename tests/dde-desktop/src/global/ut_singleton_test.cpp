@@ -3,8 +3,9 @@
 
 #define protected public
 #include "global/singleton.h"
+#include "../utils/singleton.h"
 
-class MyUTClass : public Singleton<MyUTClass>
+class MyUTClass : public DDEDesktop::Singleton<MyUTClass>
 {
 };
 
@@ -34,4 +35,9 @@ TEST(Singleton, call_assignment_operator)
     EXPECT_NE(nullptr, &q);
 
     delete p;
+}
+
+TEST(Singleton, conflict)
+{
+    EXPECT_NE(MyUTClass::instance(), Singleton<MyUTClass>::instance());
 }
