@@ -380,9 +380,6 @@ void DToolBar::pushUrlToHistoryStack(DUrl url)
         return;
     }
 
-    // if connected from dtoolbar via link like 'smb://1.1.23.4/share-folder', cannot get back to last page.
-    if (!QFile(url.path()).exists())
-        return;
     m_navStack->append(url);
     updateBackForwardButtonsState();
 }
