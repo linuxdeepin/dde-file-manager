@@ -696,7 +696,11 @@ void DIconItemDelegate::paint(QPainter *painter,
         return;
     }
 
-    QString str = opt.text;
+    //icon模式下固定展示文件名
+    QString str = index.data(DFileSystemModel::FileBaseNameRole).toString().remove('\n');
+    const QString &suffix = "." + index.data(DFileSystemModel::FileSuffixRole).toString();
+    if (suffix != ".")
+        str += suffix;
 
     /// init file name geometry
     QRectF label_rect = opt.rect;
