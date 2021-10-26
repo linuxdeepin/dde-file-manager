@@ -39,6 +39,7 @@ DSC_BEGIN_NAMESPACE
 class DeviceServiceHelper
 {
     friend class DeviceService;
+    friend class DeviceMonitorHandler;
 
     using DevPtr             = QSharedPointer<DFMMOUNT::DFMDevice>;
     using BlockDevPtr        = QSharedPointer<DFMMOUNT::DFMBlockDevice>;
@@ -49,7 +50,6 @@ class DeviceServiceHelper
 
 private:
     static std::once_flag &autoMountOnceFlag();
-    static std::once_flag &connectOnceFlag();
     static dfmbase::Settings *getGsGlobal();
 
     static void mountAllBlockDevices();

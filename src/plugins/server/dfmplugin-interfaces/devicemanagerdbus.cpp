@@ -54,7 +54,6 @@ void DeviceManagerDBus::initialize()
     Q_ASSERT(deviceServ);
     deviceServ->startAutoMount();
     deviceServ->startMonitor();
-    deviceServ->startConnect();
 }
 
 /*!
@@ -64,6 +63,12 @@ void DeviceManagerDBus::initConnection()
 {
     connect(deviceServ, &DeviceService::blockDriveAdded, this, &DeviceManagerDBus::BlockDriveAdded);
     connect(deviceServ, &DeviceService::blockDriveRemoved, this, &DeviceManagerDBus::BlockDriveRemoved);
+    connect(deviceServ, &DeviceService::blockDeviceAdded, this, &DeviceManagerDBus::BlockDeviceAdded);
+    connect(deviceServ, &DeviceService::blockDeviceRemoved, this, &DeviceManagerDBus::BlockDeviceRemoved);
+    connect(deviceServ, &DeviceService::blockDeviceFilesystemAdded, this, &DeviceManagerDBus::BlockDeviceFilesystemAdded);
+    connect(deviceServ, &DeviceService::blockDeviceFilesystemRemoved, this, &DeviceManagerDBus::BlockDeviceFilesystemRemoved);
+    connect(deviceServ, &DeviceService::blockDeviceMounted, this, &DeviceManagerDBus::BlockDeviceMounted);
+    connect(deviceServ, &DeviceService::blockDeviceUnmounted, this, &DeviceManagerDBus::BlockDeviceUnmounted);
 }
 
 void DeviceManagerDBus::askStopAllDefenderScanning(int index, const QString &text)

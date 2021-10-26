@@ -42,6 +42,14 @@ public:
 signals:
     void BlockDriveAdded();
     void BlockDriveRemoved();
+    void BlockDeviceAdded(const QString &deviceId);
+    void BlockDeviceRemoved(const QString &deviceId);
+    void BlockDeviceFilesystemAdded(const QString &deviceId);
+    void BlockDeviceFilesystemRemoved(const QString &deviceId);
+    void BlockDeviceMounted(const QString &deviceId, const QString &mountPoint);
+    void BlockDeviceUnmounted(const QString &deviceId);
+
+    // TODO(zhangs): signals of protocol devices
 
 public slots:
     bool IsMonotorWorking();

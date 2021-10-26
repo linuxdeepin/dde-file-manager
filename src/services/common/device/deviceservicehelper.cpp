@@ -44,12 +44,6 @@ std::once_flag &DeviceServiceHelper::autoMountOnceFlag()
     return flag;
 }
 
-std::once_flag &DeviceServiceHelper::connectOnceFlag()
-{
-    static std::once_flag flag;
-    return flag;
-}
-
 void DeviceServiceHelper::mountAllBlockDevices()
 {
     auto ptrList = DeviceServiceHelper::createAllBlockDevices();
@@ -206,14 +200,14 @@ bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDevPtr &blkDev)
 
     if (gsettings.get("protect-root-device-mounts").toBool()) {
         QStorageInfo qsi("/");
-        // TODO(zhangs): wait dfm-mount impl fllow functions:
-
-//        QStringList rootDevNodes = DDiskManager::resolveDeviceNode(qsi.device(), {});
-//        if (!rootDevNodes.isEmpty()) {
-//            if (DDiskManager::createBlockDevice(rootDevNodes.first())->drive() == blk->drive()) {
-//                return true;
-//            }
-//        }
+        auto manager = DFMMOUNT::DFMDeviceManager::instance();
+        auto monitor = qobject_cast<QSharedPointer<DFMMOUNT::DFMBlockMonitor>>
+                       (manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice));
+        const QStringList &rootDevNodes = monitor->resolveDeviceNode(qsi.device(), {});
+        if (!rootDevNodes.isEmpty()) {
+            if (blkDev->drive() == createBlockDevice(rootDevNodes.first())->drive())
+                return true;
+        }
     }
 
     return false;

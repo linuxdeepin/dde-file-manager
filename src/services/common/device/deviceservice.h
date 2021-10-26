@@ -24,12 +24,12 @@
 #define DEVICESERVICE_H
 
 #include "dfm_common_service_global.h"
-#include "deviceservicehelper.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
 DSC_BEGIN_NAMESPACE
 
+class DeviceMonitorHandler;
 class DeviceService final : public dpf::PluginService, dpf::AutoServiceRegister<DeviceService>
 {
     Q_OBJECT
@@ -45,7 +45,6 @@ public:
 public: // operations
     void startAutoMount();
     bool startMonitor();
-    void startConnect();
     bool stopMonitor();
     void doEject(const QString &id);
     void doEjectAll();
@@ -62,18 +61,19 @@ public: // status
 signals:
     void blockDriveAdded();
     void blockDriveRemoved();
-    // TODO(zhangs): emit other signals
-
-private slots:
-    void onBlockDriveAdded();
-    void onBlockDriveRemoved();
-    void onBlockDeviceAdded(const QString &deviceId);
-    void onBlockDeviceRemoved(const QString &deviceId);
-    void onBlockDeviceMounted(const QString &deviceId, const QString &mountPoint);
+    void blockDeviceAdded(const QString &deviceId);
+    void blockDeviceRemoved(const QString &deviceId);
+    void blockDeviceFilesystemAdded(const QString &deviceId);
+    void blockDeviceFilesystemRemoved(const QString &deviceId);
+    void blockDeviceMounted(const QString &deviceId, const QString &mountPoint);
+    void blockDeviceUnmounted(const QString &deviceId);
 
 private:
     explicit DeviceService(QObject *parent = nullptr);
     virtual ~DeviceService() override;
+
+private:
+    QScopedPointer<DeviceMonitorHandler> monitorHandler;
 };
 
 DSC_END_NAMESPACE

@@ -22,6 +22,7 @@
 */
 #include "deviceservice.h"
 #include "defendercontroller.h"
+#include "devicemonitorhandler.h"
 
 #include "dfm-base/utils/universalutils.h"
 
@@ -32,11 +33,171 @@
 DSC_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
+DeviceMonitorHandler::DeviceMonitorHandler(DeviceService *serv)
+    : QObject (nullptr), service(serv)
+{
+
+}
+
+/*!
+ * \brief device monitor for block devices and protocol devices
+ */
+void DeviceMonitorHandler::startConnect()
+{
+    auto manager = DFMMOUNT::DFMDeviceManager::instance();
+
+    // connect block devices signal
+    auto blkMonitor = qobject_cast<QSharedPointer<DFMMOUNT::DFMBlockMonitor>>
+                      (manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice));
+    if (blkMonitor) {
+        connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::driveAdded, this, &DeviceMonitorHandler::onBlockDriveAdded);
+        connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::driveRemoved, this, &DeviceMonitorHandler::onBlockDriveRemoved);
+        connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::fileSystemAdded, this, &DeviceMonitorHandler::onFilesystemAdded);
+        connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::fileSystemRemoved, this, &DeviceMonitorHandler::onFilesystemRemoved);
+        connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::deviceAdded, this, &DeviceMonitorHandler::onBlockDeviceAdded);
+        connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::deviceRemoved, this, &DeviceMonitorHandler::onBlockDeviceRemoved);
+        connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::mountAdded, this, &DeviceMonitorHandler::onBlockDeviceMounted);
+        connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::mountRemoved, this, &DeviceMonitorHandler::onBlockDeviceUnmounted);
+        connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::propertyChanged, this, &DeviceMonitorHandler::onBlockDevicePropertyChanged);
+
+        // TODO(zhangs): wait dfm-mount impl connect protocol devices signal
+    }
+}
+
+/*!
+ * \brief disconnect device monitor for block devices and protocol devices
+ */
+void DeviceMonitorHandler::stopConnect()
+{
+    auto manager = DFMMOUNT::DFMDeviceManager::instance();
+
+    // disconnect block devices signal
+    auto blkMonitor = qobject_cast<QSharedPointer<DFMMOUNT::DFMBlockMonitor>>
+                      (manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice));
+    if (blkMonitor) {
+        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::driveAdded, this, &DeviceMonitorHandler::onBlockDriveAdded);
+        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::driveRemoved, this, &DeviceMonitorHandler::onBlockDriveRemoved);
+        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::fileSystemAdded, this, &DeviceMonitorHandler::onFilesystemAdded);
+        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::fileSystemRemoved, this, &DeviceMonitorHandler::onFilesystemRemoved);
+        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::deviceAdded, this, &DeviceMonitorHandler::onBlockDeviceAdded);
+        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::deviceRemoved, this, &DeviceMonitorHandler::onBlockDeviceRemoved);
+        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::mountAdded, this, &DeviceMonitorHandler::onBlockDeviceMounted);
+        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::mountRemoved, this, &DeviceMonitorHandler::onBlockDeviceUnmounted);
+        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::propertyChanged, this, &DeviceMonitorHandler::onBlockDevicePropertyChanged);
+
+        // TODO(zhangs): wait dfm-mount impl connect protocol devices signal
+    }
+}
+
+void DeviceMonitorHandler::onBlockDriveAdded(const QString &drvObjPath)
+{
+    qInfo() << "A block dirve added: " << drvObjPath;
+    emit service->blockDriveAdded();
+    DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_DeviceAdded);
+}
+
+void DeviceMonitorHandler::onBlockDriveRemoved(const QString &drvObjPath)
+{
+    qInfo() << "A block dirve removed: " << drvObjPath;
+    emit service->blockDriveRemoved();
+    dfmbase::UniversalUtils::notifyMessage(QObject::tr("The device has been safely removed"));
+    DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_DeviceRemoved);
+}
+
+/*!
+ * \brief mount block device and open url if isAutoMountAndOpenSetting is true
+ * \param dev
+ */
+void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
+{
+    qInfo() << "A block device added: " << deviceId;
+    emit service->blockDeviceAdded(deviceId);
+    auto blkDev = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (blkDev.isNull()) {
+        qWarning() << "Dev NULL!";
+        return;
+    }
+
+    // maybe reload setting ?
+    if (service->isInLiveSystem() || !service->isAutoMountSetting()) {
+        qWarning() << "Cancel mount, live system: " << service->isInLiveSystem()
+                   << "auto mount setting: " <<  service->isAutoMountSetting();
+        return;
+    }
+
+    QString &&loginState = dfmbase::UniversalUtils::userLoginState();
+    if (loginState != "active") {
+        qWarning() << "Cancel mount, user login state is" << loginState;
+        return;
+    }
+
+    if (!DeviceServiceHelper::mountBlockDevice(blkDev, {})) {
+        qWarning() << "Mount device failed: " << blkDev->path() << static_cast<int>(blkDev->getLastError());
+        return;
+    }
+
+    if (service->isAutoMountAndOpenSetting()) {
+        if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
+            // TODO(zhangs): make mount url string
+            QString mountUrlStr /*= DFMROOT_ROOT + QFileInfo(blkDev->device()).fileName() + "." SUFFIX_UDISKS*/;
+            QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
+            qInfo() << "open by dde-file-manager: " << mountUrlStr;
+            return;
+        }
+        QString &&mpt = blkDev->mountPoint().toLocalFile();
+        qInfo() << "a new device mount to: " << mpt;
+        DDesktopServices::showFolder(QUrl::fromLocalFile(mpt));
+    }
+}
+
+void DeviceMonitorHandler::onBlockDeviceRemoved(const QString &deviceId)
+{
+    qInfo() << "A block device removed: " << deviceId;
+    emit service->blockDeviceRemoved(deviceId);
+}
+
+void DeviceMonitorHandler::onFilesystemAdded(const QString &deviceId)
+{
+    qInfo() << "A block device fs added: " << deviceId;
+    emit service->blockDeviceFilesystemAdded(deviceId);
+}
+
+void DeviceMonitorHandler::onFilesystemRemoved(const QString &deviceId)
+{
+    qInfo() << "A block device fs remvoved: " << deviceId;
+    emit service->blockDeviceFilesystemRemoved(deviceId);
+}
+
+void DeviceMonitorHandler::onBlockDeviceMounted(const QString &deviceId, const QString &mountPoint)
+{
+    qInfo() << "A block device mounted: " << deviceId;
+    emit service->blockDeviceMounted(deviceId, mountPoint);
+}
+
+void DeviceMonitorHandler::onBlockDeviceUnmounted(const QString &deviceId)
+{
+    qInfo() << "A block device unmounted: " << deviceId;
+    emit service->blockDeviceUnmounted(deviceId);
+}
+
+void DeviceMonitorHandler::onBlockDevicePropertyChanged(const QString &deviceId, const QMap<dfmmount::Property, QVariant> &changes)
+{
+    // TODO(zhangs):  `hintIgnore`
+}
+
+/*!
+ * \class DeviceService
+ *
+ * \brief DeviceService provides a series of interfaces for
+ * external device operations and signals for device monitoring,
+ * such as mounting, unmounting, ejecting, etc.
+ */
+
 DeviceService::DeviceService(QObject *parent)
     : dpf::PluginService(parent),
       dpf::AutoServiceRegister<DeviceService>()
 {
-
+    monitorHandler.reset(new DeviceMonitorHandler(this));
 }
 
 DeviceService::~DeviceService()
@@ -71,37 +232,17 @@ void DeviceService::startAutoMount()
 bool DeviceService::startMonitor()
 {
     auto manager = DFMMOUNT::DFMDeviceManager::instance();
-    return manager->startMonitorWatch();
-}
-
-/*!
- * \brief device monitor for block devices and protocol devices
- */
-void DeviceService::startConnect()
-{
-    std::call_once(DeviceServiceHelper::connectOnceFlag(), [this]() {
-        auto manager = DFMMOUNT::DFMDeviceManager::instance();
-
-        // connect block devices signal
-        auto blkMonitor = qobject_cast<DFMMOUNT::DFMBlockMonitor *>(manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice));
-        connect(blkMonitor, &DFMMOUNT::DFMBlockMonitor::driveAdded, this, &DeviceService::onBlockDriveAdded);
-        connect(blkMonitor, &DFMMOUNT::DFMBlockMonitor::driveRemoved, this, &DeviceService::onBlockDriveRemoved);
-        connect(blkMonitor, &DFMMOUNT::DFMBlockMonitor::deviceAdded, this, &DeviceService::onBlockDeviceAdded);
-        connect(blkMonitor, &DFMMOUNT::DFMBlockMonitor::deviceRemoved, this, &DeviceService::onBlockDeviceRemoved);
-        // TODO(zhangs): wait dfm-mount give a signal `fileSystemAdded`
-        // TODO(zhangs): wait dfm-mount need give a param 'dfmblockdevice' pointer
-        connect(blkMonitor, &DFMMOUNT::DFMBlockMonitor::mountAdded, this, &DeviceService::onBlockDeviceMounted);
-        // TODO(zhangs): wait dfm-mount change mountRemvoed
-        // TODO(zhangs): wait dfm-mount change propertyChanged
-
-        // TODO(zhangs): wait dfm-mount impl connect protocol devices signal
-    });
+    bool ret = manager->startMonitorWatch();
+    monitorHandler->startConnect();
+    return ret;
 }
 
 bool DeviceService::stopMonitor()
 {
     auto manager = DFMMOUNT::DFMDeviceManager::instance();
-    return manager->stopMonitorWatch();
+    bool ret = manager->stopMonitorWatch();
+    monitorHandler->stopConnect();
+    return ret;
 }
 
 void DeviceService::doEject(const QString &id)
@@ -159,74 +300,6 @@ bool DeviceService::isProtolDeviceMonitorWorking() const
     }
 
     return ret;
-}
-
-void DeviceService::onBlockDriveAdded()
-{
-    DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_DeviceAdded);
-    emit blockDriveAdded();
-}
-
-void DeviceService::onBlockDriveRemoved()
-{
-    dfmbase::UniversalUtils::notifyMessage(QObject::tr("The device has been safely removed"));
-    DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_DeviceRemoved);
-    emit blockDriveRemoved();
-}
-
-/*!
- * \brief mount block device and open url if isAutoMountAndOpenSetting is true
- * \param dev
- */
-void DeviceService::onBlockDeviceAdded(const QString &deviceId)
-{
-    qInfo() << "A block device added";
-    auto blkDev = DeviceServiceHelper::createBlockDevice(deviceId);
-    if (blkDev.isNull()) {
-        qWarning() << "Dev NULL!";
-        return;
-    }
-
-    // maybe reload setting ?
-    if (isInLiveSystem() || !isAutoMountSetting()) {
-        qWarning() << "Cancel mount, live system: " << isInLiveSystem()
-                   << "auto mount setting: " <<  isAutoMountSetting();
-        return;
-    }
-
-    QString &&loginState = dfmbase::UniversalUtils::userLoginState();
-    if (loginState != "active") {
-        qWarning() << "Cancel mount, user login state is" << loginState;
-        return;
-    }
-
-    if (!DeviceServiceHelper::mountBlockDevice(blkDev, {})) {
-        qWarning() << "Mount device failed: " << blkDev->path() << static_cast<int>(blkDev->getLastError());
-        return;
-    }
-
-    if (isAutoMountAndOpenSetting()) {
-        if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
-            // TODO(zhangs): make mount url string
-            QString mountUrlStr /*= DFMROOT_ROOT + QFileInfo(blkDev->device()).fileName() + "." SUFFIX_UDISKS*/;
-            QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
-            qInfo() << "open by dde-file-manager: " << mountUrlStr;
-            return;
-        }
-        QString &&mpt = blkDev->mountPoint().toLocalFile();
-        qInfo() << "a new device mount to: " << mpt;
-        DDesktopServices::showFolder(QUrl::fromLocalFile(mpt));
-    }
-}
-
-void DeviceService::onBlockDeviceRemoved(const QString &deviceId)
-{
-
-}
-
-void DeviceService::onBlockDeviceMounted(const QString &deviceId, const QString &mountPoint)
-{
-
 }
 
 /*!
