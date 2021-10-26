@@ -192,7 +192,13 @@ protected:
     void initConnect();
 
 private:
+    void startSambaServiceAsync(Tab *tab, const DUrl &fileUrl);
+private slots:
+    void callFinishedSlot(QDBusPendingCallWatcher *watcher);
+
+private:
     Tab *m_currentTab{ nullptr };
+    DUrl m_currentUrl;
     std::atomic<bool> m_tabBarIndexChangeFlag{ false };//###: when the index of tabbar changed hide RenameBar through the value.
 
     QScopedPointer<DFileManagerWindowPrivate> d_ptr;

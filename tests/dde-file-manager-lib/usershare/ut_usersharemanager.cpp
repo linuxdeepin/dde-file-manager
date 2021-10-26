@@ -383,19 +383,3 @@ TEST_F(UserShareManagerTest,can_readCacheFromFile){
     TestHelper::deleteTmpFile(url.toLocalFile());
     TestHelper::deleteTmpFile("/tmp/ut_share_manager");
 }
-
-TEST_F(UserShareManagerTest, can_startSambaService)
-{
-    void (*waitForFinished)(void *) = [](void *){};
-    stl.set(ADDR(QDBusPendingCall, waitForFinished), waitForFinished);
-
-    stl.set_lamda(ADDR(UserShareInterface, startSambaService), [](){
-        QDBusMessage msg;
-        msg.setArguments({QVariant(true)});
-        QDBusPendingReply<bool> rep(msg);
-        return rep;
-    });
-    ASSERT_NO_FATAL_FAILURE(sharemanager->startSambaService());
-    stl.reset(ADDR(UserShareInterface, startSambaService));
-    stl.reset(ADDR(QDBusPendingCall, waitForFinished));
-}

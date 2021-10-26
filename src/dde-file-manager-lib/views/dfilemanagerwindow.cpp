@@ -76,7 +76,6 @@
 #include "dfmsplitter.h"
 #include "views/dfmvaultactiveview.h"
 #include "vault/vaultglobaldefine.h"
-#include "accessibility/ac-lib-file-manager.h"
 
 #include <DPlatformWindowHandle>
 #include <DTitlebar>
@@ -357,13 +356,9 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
         }
         if (selfIp) { // 自己ip再判断smb状态
             if (!FileUtils::isSambaServiceRunning()) {
-                bool ret = userShareManager->startSambaService();
-                if (ret)
-                    qInfo() << "smb start success";
-                else {
-                    dialogManager->showErrorDialog(QString(), QObject::tr("Failed to start Samba services"));
-                    return false;
-                }
+                // 异步调启动smb窗口
+                q_ptr->startSambaServiceAsync(tab, fileUrl);
+                return false;
             }
         }
     }
@@ -1502,6 +1497,51 @@ void DFileManagerWindow::initConnect()
     QObject::connect(fileSignalManager, &FileSignalManager::requestRedirectTabUrl, this, &DFileManagerWindow::onRequestRedirectUrl);
     QObject::connect(fileSignalManager, &FileSignalManager::requestCloseTab, this, &DFileManagerWindow::onRequestCloseTabByUrl);
     QObject::connect(fileSignalManager, &FileSignalManager::cdFolder, this, &DFileManagerWindow::cd);
+}
+
+void DFileManagerWindow::startSambaServiceAsync(Tab *tab, const DUrl &fileUrl)
+{
+    QDBusInterface interface("org.freedesktop.systemd1",
+                             "/org/freedesktop/systemd1/unit/smbd_2eservice",
+                             "org.freedesktop.systemd1.Unit",
+                             QDBusConnection::systemBus());
+
+    QDBusPendingCall pcall = interface.asyncCall(QLatin1String("Start"), QString("replace"));
+
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pcall, this);
+
+    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, &DFileManagerWindow::callFinishedSlot);
+
+    m_currentTab = tab;
+    m_currentUrl = fileUrl;
+}
+
+void DFileManagerWindow::callFinishedSlot(QDBusPendingCallWatcher *watcher)
+{
+    QObject::disconnect(watcher, &QDBusPendingCallWatcher::finished, this, &DFileManagerWindow::callFinishedSlot);
+
+    QDBusPendingReply<> reply = *watcher;
+    watcher->deleteLater();
+    if (reply.isValid()) {
+        const QString &errorMsg = reply.reply().errorMessage();
+        if (errorMsg.isEmpty()) {
+            qDebug() << "smbd service start success";
+
+            // 自启动
+            QProcess sh;
+            sh.start("ln -sf /lib/systemd/system/smbd.service /etc/systemd/system/multi-user.target.wants/smbd.service");
+
+            bool succ = sh.waitForFinished();
+            qDebug() << sh.readAll() << sh.readAllStandardError() << sh.readAllStandardOutput();
+            if (succ) {
+                Q_D(DFileManagerWindow);
+                d->cdForTab(m_currentTab, m_currentUrl);
+            }
+
+        }
+    } else {
+        dialogManager->showErrorDialog(QString(), QObject::tr("Failed to start Samba services"));
+    }
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)

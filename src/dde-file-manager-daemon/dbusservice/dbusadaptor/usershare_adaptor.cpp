@@ -50,9 +50,3 @@ bool UserShareAdaptor::setUserSharePassword(const QString &username, const QStri
     // handle method call com.deepin.filemanager.daemon.UserShareManager.setUserSharePassword
     return parent()->setUserSharePassword(username, passward);
 }
-
-bool UserShareAdaptor::startSambaService()
-{
-    return parent()->startSambaService();
-}
-

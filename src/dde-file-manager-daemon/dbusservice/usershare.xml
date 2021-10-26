@@ -15,8 +15,5 @@
             <arg type="b" name="bshow" direction="in"/>
             <arg type="b" name="result" direction="out"/>
         </method>
-        <method name="startSambaService">
-            <arg type="b" name="result" direction="out"/>
-        </method>
     </interface>
 </node>

@@ -64,12 +64,6 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("closeSmbShareByShareName"), argumentList);
     }
 
-    inline QDBusPendingReply<bool> startSambaService()
-    {
-        QList<QVariant> argumentList;
-        return asyncCallWithArgumentList(QStringLiteral("startSambaService"), argumentList);
-    }
-
 Q_SIGNALS: // SIGNALS
 };
 

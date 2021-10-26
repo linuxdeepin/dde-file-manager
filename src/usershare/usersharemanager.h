@@ -30,6 +30,8 @@
 #include "dfmglobal.h"
 #include "shareinfo.h"
 
+class QDBusPendingCallWatcher;
+
 QT_BEGIN_NAMESPACE
 class QTimer;
 QT_END_NAMESPACE
@@ -88,13 +90,16 @@ public slots:
     void onFileDeleted(const QString& filePath);
     void usershareCountchanged();
 
-    bool startSambaService();
+private slots:
+    void callFinishedSlot(QDBusPendingCallWatcher *watcher);
 
 private:
     void deleteUserShareByShareName(const QString& shareName);
     void loadUserShareInfoPathNames();
     void saveUserShareInfoPathNames();
     void updateFileAttributeInfo(const QString &filePath) const;
+    void startSambaServiceAsync();
+
 
     DFileWatcherManager *m_fileMonitor = NULL;
     QTimer* m_shareInfosChangedTimer = NULL;
@@ -103,6 +108,7 @@ private:
     QMap<QString, QString> m_sharePathByFilePath = {};
     QMap<QString, QStringList> m_sharePathToNames = {};
     UserShareInterface* m_userShareInterface = NULL;
+    ShareInfo m_currentInfo;
 };
 
 #endif // USERSHAREMANAGER_H

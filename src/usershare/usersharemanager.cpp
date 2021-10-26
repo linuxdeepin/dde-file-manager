@@ -48,6 +48,7 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "dialogs/dialogmanager.h"
+#include "shutil/fileutils.h"
 #include "ddialog.h"
 
 DWIDGET_USE_NAMESPACE
@@ -184,6 +185,20 @@ void UserShareManager::updateFileAttributeInfo(const QString &filePath) const
         return;
     qDebug() << fileInfo->parentUrl();
     DAbstractFileWatcher::ghostSignal(fileInfo->parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, fileUrl);
+}
+
+void UserShareManager::startSambaServiceAsync()
+{
+    QDBusInterface interface("org.freedesktop.systemd1",
+                             "/org/freedesktop/systemd1/unit/smbd_2eservice",
+                             "org.freedesktop.systemd1.Unit",
+                             QDBusConnection::systemBus());
+
+    QDBusPendingCall pcall = interface.asyncCall(QLatin1String("Start"), QString("replace"));
+
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pcall, this);
+
+    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, &UserShareManager::callFinishedSlot);
 }
 
 void UserShareManager::writeCacheToFile(const QString &path, const QString &content)
@@ -376,6 +391,13 @@ void UserShareManager::setSambaPassword(const QString &userName, const QString &
 
 bool UserShareManager::addUserShare(const ShareInfo &info)
 {
+    if (!FileUtils::isSambaServiceRunning()) {
+        m_currentInfo = info;
+        startSambaServiceAsync();
+
+        return false;
+    }
+
     // check if we got `net` (in `samba-common-bin` package) installed
     QString samba_common_bin_path = QStandardPaths::findExecutable("net");
     if (samba_common_bin_path.isEmpty()) {
@@ -445,18 +467,6 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
 
             qWarning() << err << "err code = " << QString::number(process.exitCode());
 
-            if (err.contains("The transport-connection attempt was refused by the remote system") && err.contains("Maybe smbd is not running")) {
-                bool ret = userShareManager->startSambaService();
-                if (ret) {
-                    qInfo() << "smb start success";
-                    return addUserShare(info);
-                } else {
-                    qWarning() << "smb start failed";
-                    dialogManager->showErrorDialog(QString(), QObject::tr("Failed to start Samba services"));
-                    return false;
-                }
-            }
-
             dialogManager->showErrorDialog(QString(), err);
             return false;
         }
@@ -507,15 +517,30 @@ void UserShareManager::usershareCountchanged()
     emit userShareCountChanged(count);
 }
 
-bool UserShareManager::startSambaService()
+void UserShareManager::callFinishedSlot(QDBusPendingCallWatcher *watcher)
 {
-    QDBusReply<bool> reply = m_userShareInterface->startSambaService();
+    QObject::disconnect(watcher, &QDBusPendingCallWatcher::finished, this, &UserShareManager::callFinishedSlot);
+
+    QDBusPendingReply<> reply = *watcher;
+    watcher->deleteLater();
     if (reply.isValid()) {
-        qDebug() << "create link succ: " << reply.value();
-        return true;
+        const QString &errorMsg = reply.reply().errorMessage();
+        if (errorMsg.isEmpty()) {
+            qDebug() << "smbd service start success";
+
+            // 自启动
+            QProcess sh;
+            sh.start("ln -sf /lib/systemd/system/smbd.service /etc/systemd/system/multi-user.target.wants/smbd.service");
+
+            bool succ = sh.waitForFinished();
+            qDebug() << sh.readAll() << sh.readAllStandardError() << sh.readAllStandardOutput();
+            if (succ) {
+                addUserShare(m_currentInfo);
+            }
+
+        }
     } else {
-        qDebug() << "create link fail: " << reply.error();
-        return false;
+        dialogManager->showErrorDialog(QString(), QObject::tr("Failed to start Samba services"));
     }
 }
 
