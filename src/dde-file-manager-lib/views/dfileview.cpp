@@ -1646,6 +1646,8 @@ void DFileView::onHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int n
     }
     const DUrl &root_url = rootUrl();
     d->setFileViewStateValue(root_url, "headerList", logicalIndexList);
+    //及时同步到本地配置文件中
+    DFMApplication::appObtuselySetting()->sync();
 
     //刷新界面
     updateListHeaderViewProperty();
