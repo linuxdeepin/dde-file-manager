@@ -53,7 +53,7 @@ signals:
 
 public slots:
     bool IsMonotorWorking();
-    void EjectAllDevices();
+    void EjectAllMountedDevices();
     void EjectDevice(QString id);
     QStringList BlockDevicesIdList();
     QString QueryBlockDeviceInfo(QString id);

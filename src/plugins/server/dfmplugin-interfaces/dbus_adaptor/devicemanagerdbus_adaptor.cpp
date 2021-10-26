@@ -39,10 +39,10 @@ QStringList DeviceManagerAdaptor::BlockDevicesIdList()
     return parent()->BlockDevicesIdList();
 }
 
-void DeviceManagerAdaptor::EjectAllDevices()
+void DeviceManagerAdaptor::EjectAllMountedDevices()
 {
-    // handle method call com.deepin.filemanager.service.DeviceManager.EjectAllDevices
-    parent()->EjectAllDevices();
+    // handle method call com.deepin.filemanager.service.DeviceManager.EjectAllMountedDevices
+    parent()->EjectAllMountedDevices();
 }
 
 void DeviceManagerAdaptor::EjectDevice(const QString &id)

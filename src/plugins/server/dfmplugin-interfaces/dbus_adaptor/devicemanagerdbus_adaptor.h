@@ -35,10 +35,29 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "  <interface name=\"com.deepin.filemanager.service.DeviceManager\">\n"
 "    <signal name=\"BlockDriveAdded\"/>\n"
 "    <signal name=\"BlockDriveRemoved\"/>\n"
+"    <signal name=\"BlockDeviceAdded\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"deviceId\"/>\n"
+"    </signal>\n"
+"    <signal name=\"BlockDeviceRemoved\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"deviceId\"/>\n"
+"    </signal>\n"
+"    <signal name=\"BlockDeviceFilesystemAdded\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"deviceId\"/>\n"
+"    </signal>\n"
+"    <signal name=\"BlockDeviceFilesystemRemoved\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"deviceId\"/>\n"
+"    </signal>\n"
+"    <signal name=\"BlockDeviceMounted\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"deviceId\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"mountPoint\"/>\n"
+"    </signal>\n"
+"    <signal name=\"BlockDeviceUnmounted\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"deviceId\"/>\n"
+"    </signal>\n"
 "    <method name=\"IsMonotorWorking\">\n"
 "      <arg direction=\"out\" type=\"b\"/>\n"
 "    </method>\n"
-"    <method name=\"EjectAllDevices\"/>\n"
+"    <method name=\"EjectAllMountedDevices\"/>\n"
 "    <method name=\"EjectDevice\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
@@ -68,13 +87,19 @@ public:
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
     QStringList BlockDevicesIdList();
-    void EjectAllDevices();
+    void EjectAllMountedDevices();
     void EjectDevice(const QString &id);
     bool IsMonotorWorking();
     QStringList ProtolcolDevicesIdList();
     QString QueryBlockDeviceInfo(const QString &id);
     QString QueryProtocolDeviceInfo(const QString &id);
 Q_SIGNALS: // SIGNALS
+    void BlockDeviceAdded(const QString &deviceId);
+    void BlockDeviceFilesystemAdded(const QString &deviceId);
+    void BlockDeviceFilesystemRemoved(const QString &deviceId);
+    void BlockDeviceMounted(const QString &deviceId, const QString &mountPoint);
+    void BlockDeviceRemoved(const QString &deviceId);
+    void BlockDeviceUnmounted(const QString &deviceId);
     void BlockDriveAdded();
     void BlockDriveRemoved();
 };

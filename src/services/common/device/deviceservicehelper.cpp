@@ -47,24 +47,40 @@ std::once_flag &DeviceServiceHelper::autoMountOnceFlag()
 void DeviceServiceHelper::mountAllBlockDevices()
 {
     auto ptrList = DeviceServiceHelper::createAllBlockDevices();
-    for (auto &blkDev : ptrList) {
-        if (!mountBlockDevice(blkDev, {{"auth.no_user_interaction", true}})) {
-            qWarning() << "Mount device failed: " << blkDev->path() << static_cast<int>(blkDev->getLastError());
-            continue;
-        }
-    }
+    for (auto &blkDev : ptrList)
+        mountBlockDeviceAsync(blkDev, {{"auth.no_user_interaction", true}});
 }
 
-bool DeviceServiceHelper::mountBlockDevice(BlockDevPtr &blkDev, const QVariantMap &opts)
+void DeviceServiceHelper::mountBlockDeviceAsync(BlockDevPtr &blkDev, const QVariantMap &opts)
+{
+    if (!isMountableBlockDevice(blkDev))
+        return;
+
+    blkDev->mountAsync(opts);
+}
+
+bool DeviceServiceHelper::mountBlockDevice(DeviceServiceHelper::BlockDevPtr &blkDev, const QVariantMap &opts)
 {
     if (!isMountableBlockDevice(blkDev))
         return false;
 
-    QUrl &&mp = blkDev->mount(opts);
-    if (mp.isEmpty())
+    return !blkDev->mount(opts).isEmpty();
+}
+
+void DeviceServiceHelper::unmountBlockDeviceAsync(DeviceServiceHelper::BlockDevPtr &blkDev, const QVariantMap &opts)
+{
+    if (!isUnmountableBlockDevice(blkDev))
+        return;
+
+    blkDev->unmountAsync(opts);
+}
+
+bool DeviceServiceHelper::unmountBlockDevice(DeviceServiceHelper::BlockDevPtr &blkDev, const QVariantMap &opts)
+{
+    if (!isUnmountableBlockDevice(blkDev))
         return false;
 
-    return true;
+    return blkDev->unmount(opts);
 }
 
 void DeviceServiceHelper::mountAllProtocolDevices()
@@ -72,31 +88,30 @@ void DeviceServiceHelper::mountAllProtocolDevices()
     // TODO(zhangs): auto mount protocol devices (wait dfm-mount)
 }
 
-void DeviceServiceHelper::ejectAllBlockDevices()
+bool DeviceServiceHelper::ejectBlockDevice(BlockDevPtr &blkDev)
+{
+    unmountBlockDevice(blkDev, {});
+    if (isEjectableBlockDevice(blkDev))
+        return blkDev->eject();
+
+    return false;
+}
+
+/*!
+ * \brief Not only to eject, but also to poweroff
+ */
+void DeviceServiceHelper::ejectAllMountedBlockDevices()
 {
     auto blkDevcies = DeviceServiceHelper::createAllBlockDevices();
     for (auto &blk : blkDevcies) {
-        if (!blk)
-            continue;
-        if (isProtectedBlocDevice(blk))
-            continue;
-
-        bool hasFS = !blk->fileSystem().isEmpty();
-        bool mounted = !blk->mountPoint().isEmpty();
-        bool hintIgnore = blk->getProperty(DFMMOUNT::Property::BlockHintIgnore).toBool();
-        bool hintSystem = blk->getProperty(DFMMOUNT::Property::BlockHintSystem).toBool();
-
-        if (hasFS && mounted && !hintIgnore && !hintSystem) {
-            // umount
-            blk->unmount();
-            // there are other operations besides unmount
-            if (!powerOffBlockblockDeivce(blk))
-                continue;
-        }
+       if (!blk->mountPoints().isEmpty()) {
+           if (ejectBlockDevice(blk))
+               poweroffBlockDeivceAsync(blk);
+       }
     }
 }
 
-void DeviceServiceHelper::ejectAllProtocolDevices()
+void DeviceServiceHelper::ejectAllMountedProtocolDevices()
 {
     // TODO(zhangs): eject protocal devices (wait dfm-mount)
 }
@@ -108,7 +123,7 @@ QList<QUrl> DeviceServiceHelper::getMountPathForDrive(const QString &driveName)
     auto blkDevcies = DeviceServiceHelper::createAllBlockDevices();
 
     for (const auto &device : blkDevcies) {
-        if (device && device->getProperty(DFMMOUNT::Property::BlockDrive).toString() == driveName) {
+        if (device->drive() == driveName) {
             const QUrl &url = getMountPathForBlock(device);
             if (url.isValid())
                 urls << url;
@@ -124,8 +139,6 @@ QList<QUrl> DeviceServiceHelper::getMountPathForAllDrive()
     auto blkDevcies = DeviceServiceHelper::createAllBlockDevices();
 
     for (const auto &device : blkDevcies) {
-        if (!device)
-            continue;
         const QUrl &url = getMountPathForBlock(device);
         urls << url;
     }
@@ -143,6 +156,42 @@ QUrl DeviceServiceHelper::getMountPathForBlock(const BlockDevPtr &blkDev)
     return blkDev->mountPoint();
 }
 
+bool DeviceServiceHelper::isUnmountableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
+{
+    if (!blkDev) {
+        qWarning() << "Block Device is Null";
+        return false;
+    }
+
+    if (isProtectedBlocDevice(blkDev)) {
+        qWarning() << "Block Device: " << blkDev->path() << " is protected device!";
+        return false;
+    }
+
+    if (blkDev->fileSystem().isEmpty()) {
+        qWarning() << "Block Device: " << blkDev->path() << " haven't a filesystem!";
+        return false;
+    }
+
+    if (blkDev->mountPoints().isEmpty()) {
+        qWarning() << "Block Device: " << blkDev->path() << " not mounted!";
+        return false;
+    }
+
+    if (blkDev->hintIgnore()) {
+        qWarning() << "Block Device: " << blkDev->path() << " hintIgnore!";
+        return false;
+    }
+
+    bool hintSystem = blkDev->getProperty(DFMMOUNT::Property::BlockHintSystem).toBool();
+    if (hintSystem) {
+        qWarning() << "Block Device: " << blkDev->path() << " hintSystem!";
+        return false;
+    }
+
+    return true;
+}
+
 bool DeviceServiceHelper::isMountableBlockDevice(const BlockDevPtr &blkDev)
 {
     if (!blkDev) {
@@ -150,39 +199,56 @@ bool DeviceServiceHelper::isMountableBlockDevice(const BlockDevPtr &blkDev)
         return false;
     }
 
-    // TODO(zhangs): wait dfm-mount add isEncrypted
-    bool hintIgnore = blkDev->getProperty(DFMMOUNT::Property::BlockHintIgnore).toBool();
-    QString &&cryptoDev = blkDev->getProperty(DFMMOUNT::Property::BlockCryptoBackingDevice).toString();
-    // TODO(zhangs): wait dfm-mount change mountPoint interface
-    QStringList &&mountPoints = blkDev->getProperty(DFMMOUNT::Property::FileSystemMountPoint).toStringList();
-    bool noFS = blkDev->fileSystem().isEmpty();
+    if (blkDev->isEncrypted()) {
+        qWarning() << "Block Device: " << blkDev->path() << " is encrypted device!";
+        return false;
+    }
 
     if (isProtectedBlocDevice(blkDev)) {
         qWarning() << "Block Device: " << blkDev->path() << " is protected device!";
         return false;
     }
 
+    QString &&cryptoDev = blkDev->getProperty(DFMMOUNT::Property::BlockCryptoBackingDevice).toString();
     if (cryptoDev.length() > 1) { // bug: 77010
         qWarning() << "Block Device: " << blkDev->path() << " cryptoDev length > 1";
         return false;
     }
 
-    if (hintIgnore) {
+    if (blkDev->hintIgnore()) {
         qWarning() << "Block Device: " << blkDev->path() << "hintIgnore";
         return false;
     }
 
-    if (!mountPoints.isEmpty()) {
-        qWarning() << "Block Device: " << blkDev->path() << " has mounted: " << mountPoints;
+    if (!blkDev->mountPoints().isEmpty()) {
+        qWarning() << "Block Device: " << blkDev->path() << " has mounted: ";
         return false;
     }
 
-    if (noFS) {
+    if (blkDev->fileSystem().isEmpty()) {
         qWarning() << "Block Device: " << blkDev->path() << " haven't a filesystem";
         return false;
     }
 
     return true;
+}
+
+bool DeviceServiceHelper::isEjectableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
+{
+    bool removable = blkDev->removable();
+    bool optical = blkDev->optical();
+    bool ejectable = blkDev->ejectable();
+
+    qInfo() << "eject" << blkDev->path() << "(removable optical ejectable canPowerOff): "
+            << blkDev->mountPoint() << removable << optical << ejectable;
+
+    if (removable)
+        return true;
+
+    if (optical && ejectable)
+        return true;
+
+    return false;
 }
 
 bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDevPtr &blkDev)
@@ -225,41 +291,11 @@ DeviceServiceHelper::ProtocolDevPtr DeviceServiceHelper::createProtocolDevice(co
     return qobject_cast<ProtocolDevPtr>(devPtr);
 }
 
-void DeviceServiceHelper::showEjectFailedNotification(DFMMOUNT::MountError err)
+void DeviceServiceHelper::poweroffBlockDeivceAsync(BlockDevPtr &blkDev)
 {
-    qWarning() << "error happened :" <<  static_cast<int>(err);
-    dfmbase::UniversalUtils::notifyMessage(QObject::tr("The device was not safely removed"),
-                                           QObject::tr("Click \"Safely Remove\" and then disconnect it next time"));
-}
-
-bool DeviceServiceHelper::powerOffBlockblockDeivce(BlockDevPtr &blkDev)
-{
-    bool removable = blkDev->getProperty(DFMMOUNT::Property::DriveRemovable).toBool();
-    bool optical = blkDev->getProperty(DFMMOUNT::Property::DriveOptical).toBool();
-    bool ejectable = blkDev->getProperty(DFMMOUNT::Property::DriveEjectable).toBool();
-    bool canPowerOff = blkDev->getProperty(DFMMOUNT::Property::DriveCanPowerOff).toBool();
-    qInfo() << "eject(removable optical ejectable canPowerOff): "
-            << blkDev->mountPoint() << removable << optical << ejectable << canPowerOff;
-
-    if (removable) {
-        blkDev->eject();
-        if (blkDev->getLastError() != DFMMOUNT::MountError::NoError) {
-            showEjectFailedNotification(blkDev->getLastError());
-            return false;
-        }
-    }
-
-    if (optical && ejectable) {
-        blkDev->eject();
-        if (blkDev->getLastError() != DFMMOUNT::MountError::NoError)
-            showEjectFailedNotification(blkDev->getLastError());
-        return false;
-    }
-
+    bool canPowerOff = blkDev->canPowerOff();
     if (canPowerOff)
-        blkDev->powerOff();
-
-    return true;
+        blkDev->powerOffAsync();
 }
 
 DeviceServiceHelper::DevPtr DeviceServiceHelper::createDevice(const QString &devId, DFMMOUNT::DeviceType type)

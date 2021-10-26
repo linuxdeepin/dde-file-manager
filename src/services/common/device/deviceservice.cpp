@@ -30,6 +30,8 @@
 #include <QtConcurrent>
 #include <DDesktopServices>
 
+#include <algorithm>
+
 DSC_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
@@ -132,8 +134,8 @@ void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
     }
 
     if (!DeviceServiceHelper::mountBlockDevice(blkDev, {})) {
-        qWarning() << "Mount device failed: " << blkDev->path() << static_cast<int>(blkDev->getLastError());
-        return;
+         qWarning() << "Mount device failed: " << blkDev->path() << static_cast<int>(blkDev->getLastError());
+         return;
     }
 
     if (service->isAutoMountAndOpenSetting()) {
@@ -245,21 +247,27 @@ bool DeviceService::stopMonitor()
     return ret;
 }
 
-void DeviceService::doEject(const QString &id)
+void DeviceService::doEject(const QString &deviceId)
 {
-    if (id.isEmpty())
+    if (deviceId.isEmpty())
         return;
 
-    // TODO(zhangs): wait dfm-mount provide a interface that create object by id
+    DeviceServiceHelper::BlockDevPtr ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (ptr.isNull()) {
+        qWarning() << "Cannot create block device ptr by " << deviceId;
+        return;
+    }
+
+    DeviceServiceHelper::ejectBlockDevice(ptr);
 }
 
 /*!
  * \brief eject all of block devices(async) and protocol devices(sync)
  */
-void DeviceService::doEjectAll()
+void DeviceService::doEjectAllMountedDevices()
 {
-    DeviceServiceHelper::ejectAllBlockDevices();
-    DeviceServiceHelper::ejectAllProtocolDevices();
+    DeviceServiceHelper::ejectAllMountedBlockDevices();
+    DeviceServiceHelper::ejectAllMountedProtocolDevices();
 }
 
 bool DeviceService::stopDefenderScanAllDrives()
@@ -341,4 +349,21 @@ bool DeviceService::isDefenderScanningDrive(const QString &driveName) const
     else
         urls = DeviceServiceHelper::getMountPathForDrive(driveName);
     return DefenderInstance.isScanning(urls);
+}
+
+QStringList DeviceService::blockDevicesIdList() const
+{
+    QStringList idList;
+    auto blkDevcies = DeviceServiceHelper::createAllBlockDevices();
+    std::transform(blkDevcies.cbegin(), blkDevcies.cend(), std::back_inserter(idList),
+                   [](const DeviceServiceHelper::DevPtr &blk) {
+        return blk->path();
+    });
+    return idList;
+}
+
+QStringList DeviceService::protocolDevicesIdList() const
+{
+    // TODO: wait `dfm-mount`
+    return QStringList();
 }

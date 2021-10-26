@@ -92,7 +92,12 @@ void DiskControlWidget::initConnection()
             this, &DiskControlWidget::onDiskListChanged);
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveAdded, this, &DiskControlWidget::onDiskListChanged);
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveRemoved, this, &DiskControlWidget::onDiskListChanged);
-    // TODO(zhangs): other signals
+    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, &DiskControlWidget::onDiskListChanged);
+    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnmounted, this, &DiskControlWidget::onDiskListChanged);
+    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceFilesystemAdded, this, &DiskControlWidget::onDiskListChanged);
+    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceFilesystemRemoved, this, &DiskControlWidget::onDiskListChanged);
+
+    // TODO(zhangs): protocol devices signals
 }
 
 void DiskControlWidget::removeWidgets()

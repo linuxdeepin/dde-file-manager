@@ -5,10 +5,29 @@
     </signal>
     <signal name="BlockDriveRemoved">
     </signal>
+    <signal name="BlockDeviceAdded">
+      <arg name="deviceId" type="s" direction="out"/>
+    </signal>
+    <signal name="BlockDeviceRemoved">
+      <arg name="deviceId" type="s" direction="out"/>
+    </signal>
+    <signal name="BlockDeviceFilesystemAdded">
+      <arg name="deviceId" type="s" direction="out"/>
+    </signal>
+    <signal name="BlockDeviceFilesystemRemoved">
+      <arg name="deviceId" type="s" direction="out"/>
+    </signal>
+    <signal name="BlockDeviceMounted">
+      <arg name="deviceId" type="s" direction="out"/>
+      <arg name="mountPoint" type="s" direction="out"/>
+    </signal>
+    <signal name="BlockDeviceUnmounted">
+      <arg name="deviceId" type="s" direction="out"/>
+    </signal>
     <method name="IsMonotorWorking">
       <arg type="b" direction="out"/>
     </method>
-    <method name="EjectAllDevices">
+    <method name="EjectAllMountedDevices">
     </method>
     <method name="EjectDevice">
       <arg name="id" type="s" direction="in"/>

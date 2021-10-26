@@ -68,7 +68,7 @@ void PluginSidecar::invokeEjectAllDevices()
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        deviceInterface->EjectAllDevices();
+        deviceInterface->EjectAllMountedDevices();
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
     }
 }

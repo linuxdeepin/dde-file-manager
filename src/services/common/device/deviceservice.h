@@ -46,8 +46,8 @@ public: // operations
     void startAutoMount();
     bool startMonitor();
     bool stopMonitor();
-    void doEject(const QString &id);
-    void doEjectAll();
+    void doEject(const QString &deviceId);
+    void doEjectAllMountedDevices();
     bool stopDefenderScanAllDrives();
 
 public: // status
@@ -57,6 +57,8 @@ public: // status
     bool isAutoMountSetting() const;
     bool isAutoMountAndOpenSetting() const;
     bool isDefenderScanningDrive(const QString &driveName = "") const;
+    QStringList blockDevicesIdList() const;
+    QStringList protocolDevicesIdList() const;
 
 signals:
     void blockDriveAdded();

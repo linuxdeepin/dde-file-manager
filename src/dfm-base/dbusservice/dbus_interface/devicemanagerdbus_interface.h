@@ -42,10 +42,10 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("BlockDevicesIdList"), argumentList);
     }
 
-    inline QDBusPendingReply<> EjectAllDevices()
+    inline QDBusPendingReply<> EjectAllMountedDevices()
     {
         QList<QVariant> argumentList;
-        return asyncCallWithArgumentList(QStringLiteral("EjectAllDevices"), argumentList);
+        return asyncCallWithArgumentList(QStringLiteral("EjectAllMountedDevices"), argumentList);
     }
 
     inline QDBusPendingReply<> EjectDevice(const QString &id)
@@ -82,6 +82,12 @@ public Q_SLOTS: // METHODS
     }
 
 Q_SIGNALS: // SIGNALS
+    void BlockDeviceAdded(const QString &deviceId);
+    void BlockDeviceFilesystemAdded(const QString &deviceId);
+    void BlockDeviceFilesystemRemoved(const QString &deviceId);
+    void BlockDeviceMounted(const QString &deviceId, const QString &mountPoint);
+    void BlockDeviceRemoved(const QString &deviceId);
+    void BlockDeviceUnmounted(const QString &deviceId);
     void BlockDriveAdded();
     void BlockDriveRemoved();
 };

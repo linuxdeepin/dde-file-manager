@@ -53,17 +53,29 @@ private:
     static dfmbase::Settings *getGsGlobal();
 
     static void mountAllBlockDevices();
-    static bool mountBlockDevice(BlockDevPtr &blkDev, const QVariantMap &opts);
     static void mountAllProtocolDevices();
+    static void mountBlockDeviceAsync(BlockDevPtr &blkDev, const QVariantMap &opts);
+    static bool mountBlockDevice(BlockDevPtr &blkDev, const QVariantMap &opts);
+    // TODO(zhangs): mountProtocolDevice
 
-    static void ejectAllBlockDevices();
-    static void ejectAllProtocolDevices();
+    static void unmountBlockDeviceAsync(BlockDevPtr &blkDev, const QVariantMap &opts);
+    static bool unmountBlockDevice(BlockDevPtr &blkDev, const QVariantMap &opts);
+    // TODO(zhangs): unmountProtocolDevice
+
+    static void ejectAllMountedBlockDevices();
+    static void ejectAllMountedProtocolDevices();
+    static bool ejectBlockDevice(BlockDevPtr &blkDev);
+    // TODO(zhangs): ejectProtocolDevice
+
+    static void poweroffBlockDeivceAsync(BlockDevPtr &blkDev);
 
     static QList<QUrl> getMountPathForDrive(const QString &driveName);
     static QList<QUrl> getMountPathForAllDrive();
     static QUrl getMountPathForBlock(const BlockDevPtr &blkDev);
 
+    static bool isUnmountableBlockDevice(const BlockDevPtr &blkDev);
     static bool isMountableBlockDevice(const BlockDevPtr &blkDev);
+    static bool isEjectableBlockDevice(const BlockDevPtr &blkDev);
     static bool isProtectedBlocDevice(const BlockDevPtr &blkDev);
 
     static BlockDevPtr        createBlockDevice(const QString &devId);
@@ -72,8 +84,6 @@ private:
     static ProtocolDevPtrList createAllProtocolDevices();
 
 private:
-    static void showEjectFailedNotification(DFMMOUNT::MountError err);
-    static bool powerOffBlockblockDeivce(BlockDevPtr &blkDev);
     static DevPtr createDevice(const QString &devId, DFMMOUNT::DeviceType type);
     static DevPtrList createAllDevices(DFMMOUNT::DeviceType type);
 };
