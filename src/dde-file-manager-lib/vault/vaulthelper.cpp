@@ -147,11 +147,17 @@ bool VaultHelper::killVaultTasks()
 bool VaultHelper::isVaultEnabled()
 {
     if (!DSysInfo::isCommunityEdition()) {  // 如果不是社区版
-        DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-        // 如果是专业版
-        if (DSysInfo::DeepinType::DeepinProfessional == deepinType) {
+        // 获取版本类型
+        DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
+        // 如果是euler版，启用保险箱
+        if (DSysInfo::UosEdition::UosEuler == uosEdition)
             return true;
-        }
+
+        DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
+        // 如果是专业版/服务器企业版，启用保险箱
+        if (DSysInfo::DeepinType::DeepinProfessional == deepinType
+                || DSysInfo::DeepinType::DeepinServer == deepinType)
+            return true;
     }
     return false;
 }
