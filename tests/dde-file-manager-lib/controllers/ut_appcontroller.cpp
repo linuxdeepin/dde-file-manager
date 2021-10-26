@@ -14,6 +14,7 @@
 #include <QDialog>
 #include <QVariant>
 #include <ddiskdevice.h>
+#include <QApplication>
 
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
@@ -997,6 +998,7 @@ TEST_F(AppControllerTest, start_actionGetTagsThroughFiles){
     stl.set(ADDR(TagManager,getColorNameByColor),getColorNameByColorlamda);
     controller->actionChangeTagColor(dMakeEventPointer<DFMChangeTagColorEvent>(nullptr,Qt::red, url));
     controller->showTagEdit(QRect(0,0,0,0),QPoint(0,0),DUrlList() << url);
+    QApplication::closeAllWindows();
 }
 
 TEST_F(AppControllerTest, start_doSubscriberAction){
