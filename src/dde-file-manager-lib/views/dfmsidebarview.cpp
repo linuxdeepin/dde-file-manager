@@ -185,7 +185,7 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
     // 主要有4种场景：1.都是可读写的场景; 2.文件夹是只读属性，子集是可读写的; 3.文件夹或文件是可读写的; 4.拖动的包含 可读写的和只读的
     DUrlList urls, copyUrls;
     for (const QUrl &url : event->mimeData()->urls()) {
-        if (DUrl(url).parentUrl() == item->url()) {
+        if (DUrl(url).parentUrl() == item->url() && !DFMGlobal::keyCtrlIsPressed()) {
             qDebug() << "skip the same dir file..." << url;
         } else {
             QString folderPath = DUrl(url).parentUrl().path();
