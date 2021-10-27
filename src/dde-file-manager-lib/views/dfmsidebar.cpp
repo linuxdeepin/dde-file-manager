@@ -941,13 +941,12 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
             break;
         }
 
-//        QList<DAbstractFileInfoPointer> bookmarkInfos = DFileService::instance()->getChildren(this, DUrl(BOOKMARK_ROOT),
-//                                                                                              QStringList(), QDir::AllEntries);
-//        QList<DFMSideBarItem *> unsortedList;
-//        for (const DAbstractFileInfoPointer &info : bookmarkInfos) {
-//            unsortedList << DFMSideBarBookmarkItemHandler::createItem(info->fileUrl());
-//        }
-//        appendItemWithOrder(unsortedList, savedItemOrder(groupNameStr), groupNameStr);
+        const DUrlList urlList = bookmarkManager->getBookmarkUrls();
+        QList<DFMSideBarItem *> unsortedList;
+        for (const DUrl &url : urlList) {
+            unsortedList << DFMSideBarBookmarkItemHandler::createItem(url);
+        }
+        appendItemWithOrder(unsortedList, savedItemOrder(groupNameStr), groupNameStr);
         break;
     }
     case GroupName::Network:

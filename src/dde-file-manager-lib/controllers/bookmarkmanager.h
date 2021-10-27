@@ -67,6 +67,7 @@ public:
 
     bool onFileRenamed(const DUrl &from, const DUrl &to);
     void refreshBookmark();
+    const DUrlList getBookmarkUrls();
 
 private:
     BookMarkPointer findBookmark(const DUrl &url) const;

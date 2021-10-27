@@ -183,6 +183,11 @@ TEST_F(TestBookMarkManager, can_refresh_bookmark)
     EXPECT_NO_FATAL_FAILURE(m_pTester->refreshBookmark());
 }
 
+TEST_F(TestBookMarkManager, can_get_bookmark_urls)
+{
+    EXPECT_NO_FATAL_FAILURE(m_pTester->getBookmarkUrls());
+}
+
 TEST_F(TestBookMarkManager, can_remove_bookmark)
 {
     DUrl fileUrl = DUrl::fromBookMarkFile(DUrl::fromLocalFile(tempDirPath.replace(BOOKMARK_STR, BOOKMARK_NEW_STR)), BOOKMARK_NEW_STR);

@@ -376,6 +376,16 @@ void BookMarkManager::refreshBookmark()
     update(DFMApplication::genericSetting()->value("BookMark", "Items"));
 }
 
+const DUrlList BookMarkManager::getBookmarkUrls()
+{
+    DUrlList list;
+    for (const BookmarkData &data : m_bookmarkDataMap) {
+        list.append(data.m_url);
+    }
+
+    return list;
+}
+
 const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
     ///这个函数目前不会被调用了
