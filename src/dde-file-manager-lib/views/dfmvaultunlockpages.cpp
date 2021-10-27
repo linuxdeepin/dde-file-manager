@@ -33,6 +33,7 @@
 #include <DPasswordEdit>
 #include <DFloatingWidget>
 #include <DToolTip>
+#include <DLabel>
 
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -40,6 +41,8 @@
 #include <QToolTip>
 #include <QEvent>
 #include <QTimer>
+
+DWIDGET_USE_NAMESPACE
 
 DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     : DFMVaultPageBase(parent)
@@ -54,7 +57,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     setFixedWidth(396);
 
     // 标题
-    QLabel *pTitle = new QLabel(tr("Unlock File Vault"), this);
+    DLabel *pTitle = new DLabel(tr("Unlock File Vault"), this);
     AC_SET_ACCESSIBLE_NAME(pTitle, AC_VAULT_PASSWORD_UNLOCK_TITLE);
     QFont font = pTitle->font();
     font.setPixelSize(18);
@@ -62,19 +65,17 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     pTitle->setAlignment(Qt::AlignHCenter);
 
     // 信息
-    QLabel *pMessage = new QLabel(tr("Verify your password"), this);
+    DLabel *pMessage = new DLabel(tr("Verify your password"), this);
     AC_SET_ACCESSIBLE_NAME(pMessage, AC_VAULT_PASSWORD_UNLOCK_CONTENT);
     pMessage->setAlignment(Qt::AlignHCenter);
 
-    m_forgetPassword = new QLabel(tr("Forgot password?"));
+    m_forgetPassword = new DLabel(tr("Forgot password?"));
     AC_SET_ACCESSIBLE_NAME(m_forgetPassword, AC_VAULT_PASSWORD_UNLOCK_FORGETPASSWORD_BUTTON);
     font = pTitle->font();
     font.setPixelSize(12);
     m_forgetPassword->setFont(font);
     m_forgetPassword->installEventFilter(this);
-    QPalette pe;
-    pe.setColor(QPalette::WindowText,Qt::blue);
-    m_forgetPassword->setPalette(pe);
+    m_forgetPassword->setForegroundRole(DPalette::ColorType::LightLively);
     if(VaultController::getVaultVersion())
         m_forgetPassword->show();
     else {
@@ -108,7 +109,6 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     QHBoxLayout * play2 = new QHBoxLayout();
     play2->addStretch(1);
     play2->addWidget(m_forgetPassword);
-    play2->addStretch(1);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(mainFrame);
     mainLayout->setMargin(0);

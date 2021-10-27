@@ -24,11 +24,15 @@
 #define DFMVAULTRETRIEVEPASSWORD_H
 
 #include "dfmvaultpagebase.h"
+
 #include <DFileChooserEdit>
+#include <DLabel>
 
 #include <QComboBox>
 
 #include <polkit-qt5-1/PolkitQt1/Authority>
+
+
 
 DWIDGET_USE_NAMESPACE
 
@@ -101,7 +105,7 @@ protected:
 
 private:
     //! 找回密码页面标题
-    QLabel * m_title = nullptr;
+    DLabel * m_title = nullptr;
 
     //! 选择要验证的密钥路径
     QComboBox * m_savePathTypeComboBox = nullptr;
@@ -113,7 +117,7 @@ private:
     QLineEdit * m_defaultFilePathEdit = nullptr;
 
     //! 密钥验证失败提示标签
-    QLabel * m_verificationPrompt = nullptr;
+    DLabel * m_verificationPrompt = nullptr;
 
     //! 选择密钥页面
     QFrame * m_selectKeyPage = nullptr;
@@ -122,11 +126,11 @@ private:
     QFrame * m_PasswordRecoveryPage = nullptr;
 
     //! 密钥验证成页面标题
-    QLabel * m_title1 = nullptr;
+    DLabel * m_title1 = nullptr;
     //! 找回的密码信息
-    QLabel * m_passwordMsg = nullptr;
+    DLabel * m_passwordMsg = nullptr;
     //! 安全提示
-    QLabel * m_hintMsg = nullptr;
+    DLabel * m_hintMsg = nullptr;
 
     //! 4个按钮的文本
     QStringList btnList;

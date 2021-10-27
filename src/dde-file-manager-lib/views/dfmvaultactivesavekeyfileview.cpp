@@ -29,6 +29,7 @@
 #include <QVBoxLayout>
 #include <QButtonGroup>
 #include <QPainterPath>
+#include <QFileDialog>
 
 DFMVaultActiveSaveKeyFileView::DFMVaultActiveSaveKeyFileView(QWidget *parent) :
     QWidget(parent)
@@ -41,9 +42,6 @@ void DFMVaultActiveSaveKeyFileView::initUI()
     m_title = new DLabel(this);
     m_title->setMargin(0);
     m_title->setText(tr("Save Recovery Key"));
-    QPalette pe;
-    pe.setColor(QPalette::WindowText,Qt::black);
-    m_title->setPalette(pe);
     m_hintMsg = new DLabel(this);
     m_hintMsg->setWordWrap(true);
     m_hintMsg->setAlignment(Qt::AlignCenter);

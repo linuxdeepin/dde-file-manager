@@ -639,32 +639,32 @@
 <context>
     <name>DFMVaultActiveSaveKeyFileView</name>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="41"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="43"/>
         <source>Save Recovery Key</source>
         <translation>Save Recovery Key</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="48"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="50"/>
         <source>Keep the key safe to retrieve the vault password later</source>
         <translation>Keep the key safe to retrieve the vault password later</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="52"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="54"/>
         <source>Save to default path</source>
         <translation>Save to default path</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="55"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="57"/>
         <source>Save to other locations</source>
         <translation>Save to other locations</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="74"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="76"/>
         <source>Next</source>
         <translation>Next</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="87"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="89"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
         <translation>The default path is invisible to other users, and the path information will not be shown.</translation>
     </message>
@@ -869,7 +869,7 @@
         <translation>Once deleted, the files in it will be permanently deleted</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="196"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="201"/>
         <source>Use Key</source>
         <translation>Use Key</translation>
     </message>
@@ -892,44 +892,44 @@
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="145"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="283"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="149"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="303"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="193"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="198"/>
         <source>Use Password</source>
         <translation>Use Password</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="210"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="214"/>
         <source>Wrong password</source>
         <translation>Wrong password</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="220"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="224"/>
         <source>Wrong recovery key</source>
         <translation>Wrong recovery key</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="279"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="299"/>
         <source>Failed to delete file vault</source>
         <translation>Failed to delete file vault</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="293"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="313"/>
         <source>Deleted successfully</source>
         <translation>Deleted successfully</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="295"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="315"/>
         <source>Failed to delete</source>
         <translation>Failed to delete</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="141"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="145"/>
         <source>Removing...</source>
         <translation>Removing...</translation>
     </message>
@@ -937,61 +937,61 @@
 <context>
     <name>DFMVaultRetrievePassword</name>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="76"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="77"/>
         <source>Verification failed</source>
         <translation>Verification failed</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="145"/>
-        <source>Retrieve password</source>
-        <translation>Retrieve password</translation>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="146"/>
+        <source>Retrieve Password</source>
+        <translation>Retrieve Password</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="149"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
         <source>By key in the default path</source>
         <translation>By key in the default path</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="151"/>
         <source>By key in the specified path</source>
         <translation>By key in the specified path</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="172"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="174"/>
         <source>Verification Successful</source>
         <translation>Verification Successful</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="175"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="177"/>
         <source>Keep it safe</source>
         <translation>Keep it safe</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="238"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>Back</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="238"/>
         <source>Verify Key</source>
         <comment>button</comment>
         <translation>Verify Key</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="238"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
         <translation>Go to Unlock</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="236"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="238"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Close</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="267"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="269"/>
         <source>Vault password: %1</source>
         <translation>Vault password: %1</translation>
     </message>
@@ -1014,12 +1014,12 @@
         <translation>Forgot password?</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="142"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="141"/>
         <source>Password hint: %1</source>
         <translation>Password hint: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="319"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="318"/>
         <source>Failed to unlock file vault</source>
         <translation>Failed to unlock file vault</translation>
     </message>
@@ -1041,32 +1041,32 @@
         <translation>Unlock</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="236"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="235"/>
         <source>Please try again %1 minutes later</source>
         <translation>Please try again %1 minutes later</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="264"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="263"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Wrong password, please try again %1 minutes later</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="267"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="266"/>
         <source>Wrong password, one chance left</source>
         <translation>Wrong password, one chance left</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="269"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="268"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Wrong password, %1 chances left</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="314"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="313"/>
         <source>Wrong password</source>
         <translation>Wrong password</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="323"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="322"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
@@ -1300,12 +1300,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1262"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1275"/>
         <source>Trash</source>
         <translation>Trash</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1271"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1284"/>
         <source>Empty</source>
         <translation>Empty</translation>
     </message>
@@ -1313,41 +1313,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1446"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1447"/>
         <location filename="../models/trashfileinfo.cpp" line="321"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1121"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1448"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
         <location filename="../models/searchfileinfo.cpp" line="130"/>
         <source>Time modified</source>
         <translation>Time modified</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1450"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
         <source>Size</source>
         <translation>Size</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1452"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1454"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1455"/>
         <source>Time created</source>
         <translation>Time created</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1456"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1457"/>
         <source>Last access</source>
         <translation>Last access</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1458"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1459"/>
         <location filename="../models/recentfileinfo.cpp" line="211"/>
         <location filename="../models/searchfileinfo.cpp" line="128"/>
         <location filename="../models/searchfileinfo.cpp" line="133"/>
@@ -1358,22 +1358,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2710"/>
+        <location filename="../views/dfileview.cpp" line="2736"/>
         <source>Disc mount error</source>
         <translation>Disc mount error</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2710"/>
+        <location filename="../views/dfileview.cpp" line="2736"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>The disc is in use, please end the running process and remount the disc.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2724"/>
+        <location filename="../views/dfileview.cpp" line="2750"/>
         <source>Mounting failed</source>
         <translation>Mounting failed</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3428"/>
+        <location filename="../views/dfileview.cpp" line="3459"/>
         <source>(Reverse)</source>
         <translation>(Reverse)</translation>
     </message>
@@ -1908,6 +1908,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
+        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirm</translation>
@@ -2615,51 +2616,51 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="876"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1543"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1549"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1552"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1544"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1550"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1553"/>
         <source>Mounting device error</source>
         <translation>Mounting device error</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1549"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1550"/>
         <source>Wrong username or password</source>
         <translation>Wrong username or password</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1777"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1788"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1815"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1934"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1958"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1778"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1789"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1816"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1935"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1959"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirm</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1783"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1955"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1784"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1956"/>
         <source>Cannot find the mounted device</source>
         <translation>Cannot find the mounted device</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1697"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1698"/>
         <source>No key available to unlock device</source>
         <translation>No key available to unlock device</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1774"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1775"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1812"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1813"/>
         <source>Cannot unmount the device</source>
         <translation>Cannot unmount the device</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1930"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1931"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>Cannot eject the device &quot;%1&quot;</translation>
     </message>
@@ -3057,7 +3058,7 @@
     <name>QObject</name>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1195"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="843"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="232"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="239"/>
         <source>Size</source>
@@ -3072,7 +3073,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1196"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="843"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="330"/>
         <source>Type</source>
         <translation>Type</translation>
@@ -3081,7 +3082,7 @@
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="175"/>
         <location filename="../dialogs/propertydialog.cpp" line="1199"/>
         <location filename="../dialogs/propertydialog.cpp" line="1220"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="363"/>
         <source>Time modified</source>
         <translation>Time modified</translation>
@@ -3162,53 +3163,53 @@
         <translation>Group</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="793"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="794"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
         <source>Open</source>
         <translation>Open</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
         <source>Lock</source>
         <translation>Lock</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
         <source>Auto lock</source>
         <translation>Auto lock</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
         <source>Never</source>
         <translation>Never</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
         <source>5 minutes</source>
         <translation>5 minutes</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
         <source>10 minutes</source>
         <translation>10 minutes</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
         <source>20 minutes</source>
         <translation>20 minutes</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="885"/>
         <source>Delete File Vault</source>
         <translation>Delete File Vault</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="885"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="886"/>
         <source>Unlock</source>
         <translation>Unlock</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="886"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="887"/>
         <source>Unlock by key</source>
         <translation>Unlock by key</translation>
     </message>
@@ -3240,263 +3241,263 @@
         <translation>Items: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="95"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="90"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="87"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="68"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="794"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="612"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="58"/>
         <source>Open in new window</source>
         <translation>Open in new window</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="99"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="94"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="91"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="72"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="616"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="62"/>
         <source>Open in new tab</source>
         <translation>Open in new tab</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
         <source>Open with</source>
         <translation>Open with</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="803"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
         <location filename="../plugins/dfmadditionalmenu.cpp" line="369"/>
         <source>Compress</source>
         <translation>Compress</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="805"/>
         <source>Extract</source>
         <translation>Extract</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="805"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
         <source>Extract here</source>
         <translation>Extract here</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="807"/>
         <source>Cut</source>
         <translation>Cut</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="807"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
         <source>Copy</source>
         <translation>Copy</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="809"/>
         <source>Paste</source>
         <translation>Paste</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="105"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="100"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="78"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="809"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="810"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="870"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="811"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="871"/>
         <source>Rename</source>
         <translation>Rename</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="112"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="107"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="85"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="910"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="841"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="911"/>
         <source>Remove</source>
         <translation>Remove</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
         <source>Create link</source>
         <translation>Create link</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
         <source>Send to desktop</source>
         <translation>Send to desktop</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="815"/>
         <source>Send to</source>
         <translation>Send to</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="815"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="816"/>
         <source>Bluetooth</source>
         <translation>Bluetooth</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="816"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="817"/>
         <source>Add to bookmark</source>
         <translation>Add to bookmark</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="118"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="113"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="120"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="820"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="68"/>
         <source>Properties</source>
         <translation>Properties</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="821"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
         <source>New folder</source>
         <translation>New folder</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="823"/>
         <source>New window</source>
         <translation>New window</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="823"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="824"/>
         <source>Select all</source>
         <translation>Select all</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="98"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="824"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
         <source>Clear recent history</source>
         <translation>Clear recent history</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1272"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1285"/>
         <source>Empty Trash</source>
         <translation>Empty Trash</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="827"/>
         <source>Display as</source>
         <translation>Display as</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="827"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="828"/>
         <source>Sort by</source>
         <translation>Sort by</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="828"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="829"/>
         <source>New document</source>
         <translation>New document</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1197"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
         <source>Time created</source>
         <translation>Time created</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1200"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="381"/>
         <source>Source path</source>
         <translation>Source path</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
         <source>Share folder</source>
         <translation>Share folder</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
         <source>Cancel sharing</source>
         <translation>Cancel sharing</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
         <source>Connect to Server</source>
         <translation>Connect to Server</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
         <source>Set share password</source>
         <translation>Set share password</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
         <source>Format</source>
         <translation>Format</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="867"/>
         <source>Tag information</source>
         <translation>Tag information</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
         <source>Open as administrator</source>
         <translation>Open as administrator</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
         <source>Select default program</source>
         <translation>Select default program</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="803"/>
         <source>Open file location</source>
         <translation>Open file location</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="811"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
         <source>Remove bookmark</source>
         <translation>Remove bookmark</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="817"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="818"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="868"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="869"/>
         <source>Delete</source>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="829"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="830"/>
         <source>Office Text</source>
         <translation>Office Text</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="830"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="831"/>
         <source>Spreadsheets</source>
         <translation>Spreadsheets</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="832"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="833"/>
         <source>Plain Text</source>
         <translation>Plain Text</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="833"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="834"/>
         <source>Open in terminal</source>
         <translation>Open in terminal</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="834"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="835"/>
         <source>Restore</source>
         <translation>Restore</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="835"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="836"/>
         <source>Restore all</source>
         <translation>Restore all</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
         <source>Clear saved password and unmount</source>
         <translation>Clear saved password and unmount</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
         <location filename="../models/computermodel.cpp" line="121"/>
         <location filename="../models/computermodel.cpp" line="144"/>
         <location filename="../models/computermodel.cpp" line="163"/>
@@ -3505,7 +3506,7 @@
         <translation>File Vault</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="876"/>
         <source>Add to disc</source>
         <translation>Add to disc</translation>
     </message>
@@ -3520,14 +3521,14 @@
         <translation>Open after auto mount</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="836"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="837"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="873"/>
         <source>Mount</source>
         <translation>Mount</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="49"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="837"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
         <source>Unmount</source>
         <translation>Unmount</translation>
     </message>
@@ -3584,48 +3585,48 @@
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="372"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="839"/>
         <source>Eject</source>
         <translation>Eject</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="839"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
         <source>Safely Remove</source>
         <translation>Safely Remove</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="841"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="216"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
         <source>Settings</source>
         <translation>Settings</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
         <source>Exit</source>
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
         <source>Icon</source>
         <translation>Icon</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
         <source>List</source>
         <translation>List</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
         <source>Extend</source>
         <translation>Extend</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
         <source>Set as wallpaper</source>
         <translation>Set as wallpaper</translation>
     </message>
@@ -3705,12 +3706,12 @@
         <translation>Create symlink</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
         <source>Path</source>
         <translation>Path</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
         <location filename="../models/trashfileinfo.cpp" line="325"/>
         <location filename="../models/trashfileinfo.cpp" line="333"/>
         <source>Time deleted</source>
@@ -3775,7 +3776,7 @@
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="538"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="831"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="832"/>
         <source>Presentation</source>
         <translation>Presentation</translation>
     </message>
@@ -4009,7 +4010,7 @@
         <translation>Gray</translation>
     </message>
     <message>
-        <location filename="../views/dtagedit.cpp" line="92"/>
+        <location filename="../views/dtagedit.cpp" line="96"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
         <translation>Input tag info, such as work, family. A comma is used between two tags.</translation>
     </message>
@@ -4019,7 +4020,7 @@
         <translation>Bookmarks</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
         <source>Erase</source>
         <translation>Erase</translation>
     </message>
@@ -4103,13 +4104,13 @@
     <message>
         <location filename="../interfaces/diconitemdelegate.cpp" line="910"/>
         <location filename="../interfaces/diconitemdelegate.cpp" line="1071"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="567"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="772"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="479"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="688"/>
         <source>%1 are not allowed</source>
         <translation>%1 are not allowed</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="365"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="364"/>
         <location filename="../../usershare/usersharemanager.cpp" line="455"/>
         <source>Failed to start Samba services</source>
         <translation>Failed to start Samba services</translation>

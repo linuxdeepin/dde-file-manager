@@ -28,6 +28,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
 class DToolTip;
 class DFloatingWidget;
+class DLabel;
 DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
@@ -83,6 +84,6 @@ private:
     DFloatingWidget *m_frame {nullptr};
     // 定时器，用于定时隐藏tooltip
     QTimer *pTooltipTimer {nullptr};
-    QLabel * m_forgetPassword {nullptr}; //! 忘记密码提示与找回入口
+    DLabel * m_forgetPassword {nullptr}; //! 忘记密码提示与找回入口
     DFMVaultPageBase * m_retrievePage {nullptr}; //! 找回密码验证页面
 };

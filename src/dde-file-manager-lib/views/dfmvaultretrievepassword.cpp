@@ -143,7 +143,7 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent):DFMVaultPage
     setIcon(QIcon::fromTheme("dfm_vault"));
     setFixedWidth(396);
 
-    m_title = new QLabel(tr("Retrieve password"), this);
+    m_title = new DLabel(tr("Retrieve Password"), this);
 
     m_savePathTypeComboBox = new QComboBox(this);
     AC_SET_ACCESSIBLE_NAME(m_savePathTypeComboBox, AC_VAULT_SAVE_PATH_TYPE_COMBOBOX);
@@ -162,18 +162,17 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent):DFMVaultPage
     m_defaultFilePathEdit = new QLineEdit(this);
     m_defaultFilePathEdit->setEnabled(false);
 
-    m_verificationPrompt = new QLabel(this);
+    m_verificationPrompt = new DLabel(this);
     QPalette pe;
     pe.setColor(QPalette::WindowText,Qt::red);
     m_verificationPrompt->setPalette(pe);
 
     m_PasswordRecoveryPage = new QFrame(this);
 
-    m_title1 = new QLabel(m_PasswordRecoveryPage);
-    m_title1->setStyleSheet(QString("color: back"));
+    m_title1 = new DLabel(m_PasswordRecoveryPage);
     m_title1->setText(tr("Verification Successful"));
-    m_passwordMsg = new QLabel(m_PasswordRecoveryPage);
-    m_hintMsg = new QLabel(m_PasswordRecoveryPage);
+    m_passwordMsg = new DLabel(m_PasswordRecoveryPage);
+    m_hintMsg = new DLabel(m_PasswordRecoveryPage);
     m_hintMsg->setText(tr("Keep it safe"));
 
     QHBoxLayout * hlayout = new QHBoxLayout();
