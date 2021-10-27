@@ -103,10 +103,15 @@ void DeviceManagerDBus::EjectDevice(QString id)
     deviceServ->doEject(id);
 }
 
-QStringList DeviceManagerDBus::BlockDevicesIdList()
+/*!
+ * \brief user input a opts, then return devices list
+ * \param opts: refrecne to DeviceService::blockDevicesIdList
+ * \return devices id list
+ */
+QStringList DeviceManagerDBus::BlockDevicesIdList(const QVariantMap &opts)
 {
     // TODO(zhangs): add `QVariantMap` as filter
-    return deviceServ->blockDevicesIdList();
+    return deviceServ->blockDevicesIdList(opts);
 }
 
 QString DeviceManagerDBus::QueryBlockDeviceInfo(QString id)

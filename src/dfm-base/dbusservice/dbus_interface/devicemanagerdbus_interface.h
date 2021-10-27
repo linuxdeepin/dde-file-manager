@@ -36,9 +36,10 @@ public:
     ~DeviceManagerInterface();
 
 public Q_SLOTS: // METHODS
-    inline QDBusPendingReply<QStringList> BlockDevicesIdList()
+    inline QDBusPendingReply<QStringList> BlockDevicesIdList(const QVariantMap &opts)
     {
         QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(opts);
         return asyncCallWithArgumentList(QStringLiteral("BlockDevicesIdList"), argumentList);
     }
 

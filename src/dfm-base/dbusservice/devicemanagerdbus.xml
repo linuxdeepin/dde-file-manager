@@ -34,6 +34,8 @@
     </method>
     <method name="BlockDevicesIdList">
       <arg type="as" direction="out"/>
+      <arg name="opts" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
     </method>
     <method name="QueryBlockDeviceInfo">
       <arg type="s" direction="out"/>

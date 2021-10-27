@@ -42,6 +42,15 @@ DeviceMonitorHandler::DeviceMonitorHandler(DeviceService *serv)
 }
 
 /*!
+ * \brief maintaining devices data
+ */
+void DeviceMonitorHandler::startMaintaining()
+{
+    initBlockDevicesData();
+    initProtocolDevicesData();
+}
+
+/*!
  * \brief device monitor for block devices and protocol devices
  */
 void DeviceMonitorHandler::startConnect()
@@ -91,6 +100,47 @@ void DeviceMonitorHandler::stopConnect()
     }
 }
 
+void DeviceMonitorHandler::initBlockDevicesData()
+{
+    const auto &blkPtrList = DeviceServiceHelper::createAllBlockDevices();
+    for (const auto &blk : blkPtrList)
+        insertNewBlockDeviceData(blk);
+}
+
+void DeviceMonitorHandler::initProtocolDevicesData()
+{
+    // TODO(zhangs): wait dfm-mount
+}
+
+void DeviceMonitorHandler::insertNewBlockDeviceData(const DeviceServiceHelper::BlockDevPtr &ptr)
+{
+    const QString &id = ptr->path();
+
+    if (id.isEmpty())
+        return;
+
+    BlockDeviceData data;
+    DeviceServiceHelper::makeBlockDeviceData(ptr, &data);
+    allBlkDevData.insert(id, data);
+}
+
+void DeviceMonitorHandler::insertNewProtocolDeviceData(const DeviceServiceHelper::ProtocolDevPtr &ptr)
+{
+    // TODO(zhangs): wait dfm-mount
+}
+
+void DeviceMonitorHandler::removeBlockDeviceData(const QString &deviceId)
+{
+    if (allBlkDevData.contains(deviceId))
+        allBlkDevData.remove(deviceId);
+}
+
+void DeviceMonitorHandler::removeProtocolDeviceData(const QString &deviceId)
+{
+    if (allProtocolDevData.contains(deviceId))
+        allProtocolDevData.remove(deviceId);
+}
+
 void DeviceMonitorHandler::onBlockDriveAdded(const QString &drvObjPath)
 {
     qInfo() << "A block dirve added: " << drvObjPath;
@@ -113,13 +163,14 @@ void DeviceMonitorHandler::onBlockDriveRemoved(const QString &drvObjPath)
 void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
 {
     qInfo() << "A block device added: " << deviceId;
-    emit service->blockDeviceAdded(deviceId);
     auto blkDev = DeviceServiceHelper::createBlockDevice(deviceId);
     if (blkDev.isNull()) {
         qWarning() << "Dev NULL!";
         return;
     }
 
+    insertNewBlockDeviceData(blkDev);
+    emit service->blockDeviceAdded(deviceId);
     // maybe reload setting ?
     if (service->isInLiveSystem() || !service->isAutoMountSetting()) {
         qWarning() << "Cancel mount, live system: " << service->isInLiveSystem()
@@ -155,6 +206,7 @@ void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
 void DeviceMonitorHandler::onBlockDeviceRemoved(const QString &deviceId)
 {
     qInfo() << "A block device removed: " << deviceId;
+    removeBlockDeviceData(deviceId);
     emit service->blockDeviceRemoved(deviceId);
 }
 
@@ -182,9 +234,51 @@ void DeviceMonitorHandler::onBlockDeviceUnmounted(const QString &deviceId)
     emit service->blockDeviceUnmounted(deviceId);
 }
 
-void DeviceMonitorHandler::onBlockDevicePropertyChanged(const QString &deviceId, const QMap<dfmmount::Property, QVariant> &changes)
+void DeviceMonitorHandler::onBlockDevicePropertyChanged(const QString &deviceId,
+                                                        const QMap<dfmmount::Property, QVariant> &changes)
 {
-    // TODO(zhangs):  `hintIgnore`
+    if (allBlkDevData.contains(deviceId)) {
+        auto &&idUsageFlag = DFMMOUNT::Property::BlockIDUsage;
+        auto &&mptFlag = DFMMOUNT::Property::FileSystemMountPoint;
+        auto &&idLabelFlag = DFMMOUNT::Property::BlockIDLabel;
+        auto &&hintIgnoreFlag = DFMMOUNT::Property::BlockHintIgnore;
+        auto &curDevice = allBlkDevData[deviceId];
+
+        // file system
+        if (changes.contains(idUsageFlag)) {
+            const QString &usage = changes.value(idUsageFlag).toString().toLower();
+            if (usage == "filesystem") {
+                const QString &fs = changes.value(DFMMOUNT::Property::BlockIDType).toString();
+                curDevice.common.fileSystem = fs;
+            }
+        }
+
+        // mounted / unmounted
+        if (changes.contains(mptFlag)) {
+            const QString &mpt = changes.value(mptFlag).toString();
+            if (mpt.isEmpty()) {
+                curDevice.common.mountpoint = QString("");
+                curDevice.mountpoints.clear();
+            } else {
+                curDevice.common.mountpoint = mpt;
+                curDevice.mountpoints.append(mpt);
+            }
+        }
+
+        // idlable
+        if (changes.contains(idLabelFlag)) {
+            const QString &idlabel = changes.value(idLabelFlag).toString();
+            curDevice.idLabel = idlabel;
+        }
+
+        // hintIgnore
+        if (changes.contains(hintIgnoreFlag)) {
+            bool hintIgnore = changes.value(hintIgnoreFlag).toBool();
+            curDevice.hintIgnore = hintIgnore;
+        }
+
+        // TODO(zhangs): handle other Property...
+    }
 }
 
 /*!
@@ -234,16 +328,17 @@ void DeviceService::startAutoMount()
 bool DeviceService::startMonitor()
 {
     auto manager = DFMMOUNT::DFMDeviceManager::instance();
-    bool ret = manager->startMonitorWatch();
     monitorHandler->startConnect();
+    monitorHandler->startMaintaining();
+    bool ret = manager->startMonitorWatch();
     return ret;
 }
 
 bool DeviceService::stopMonitor()
 {
     auto manager = DFMMOUNT::DFMDeviceManager::instance();
-    bool ret = manager->stopMonitorWatch();
     monitorHandler->stopConnect();
+    bool ret = manager->stopMonitorWatch();
     return ret;
 }
 
@@ -351,14 +446,45 @@ bool DeviceService::isDefenderScanningDrive(const QString &driveName) const
     return DefenderInstance.isScanning(urls);
 }
 
-QStringList DeviceService::blockDevicesIdList() const
+/*!
+ * \brief user input a opts, then return block devices list
+ * \param opts: bool unmountable     -> has mounted devices(dde-dock plugin use it)
+ *              bool mountable       -> has unmounted devices
+ *              bool not_ignorable   -> computer and sidebar devices
+ * \return devices id list
+ */
+QStringList DeviceService::blockDevicesIdList(const QVariantMap &opts) const
 {
     QStringList idList;
-    auto blkDevcies = DeviceServiceHelper::createAllBlockDevices();
-    std::transform(blkDevcies.cbegin(), blkDevcies.cend(), std::back_inserter(idList),
-                   [](const DeviceServiceHelper::DevPtr &blk) {
-        return blk->path();
-    });
+
+    // {"unmountable" : GLib.Variant("b", True)}
+    bool needUnmountable = opts.value("unmountable").toBool();
+    bool needMountable = opts.value("mountable").toBool();
+    bool needNotIgnorable = opts.value("not_ignorable").toBool();
+
+    const auto &allBlkData = monitorHandler->allBlkDevData;
+    for (const auto &data : allBlkData) {
+        if (needUnmountable && DeviceServiceHelper::isUnmountableBlockDevice(data)) {
+            idList.append(data.common.id);
+            continue;
+        }
+
+        if (needMountable && DeviceServiceHelper::isMountableBlockDevice(data)) {
+            idList.append(data.common.id);
+            continue;
+        }
+
+        if (needNotIgnorable && !DeviceServiceHelper::isIgnorableBlockDevice(data)) {
+            idList.append(data.common.id);
+            continue;
+        }
+
+        if (!needUnmountable && !needMountable && !needNotIgnorable) {
+            idList.append(data.common.id);
+            continue;
+        }
+    }
+
     return idList;
 }
 

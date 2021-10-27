@@ -39,8 +39,16 @@ class DeviceMonitorHandler : public QObject
 
 private:
     explicit DeviceMonitorHandler(DeviceService *serv);
+    void startMaintaining();
     void startConnect();
     void stopConnect();
+
+    void initBlockDevicesData();
+    void initProtocolDevicesData();
+    void insertNewBlockDeviceData(const DeviceServiceHelper::BlockDevPtr &ptr);
+    void insertNewProtocolDeviceData(const DeviceServiceHelper::ProtocolDevPtr &ptr);
+    void removeBlockDeviceData(const QString &deviceId);
+    void removeProtocolDeviceData(const QString &deviceId);
 
 private slots:
     void onBlockDriveAdded(const QString &drvObjPath);
@@ -55,6 +63,8 @@ private slots:
 
 private:
     QPointer<DeviceService> service;
+    QHash<QString, BlockDeviceData>    allBlkDevData;
+    QHash<QString, ProtocolDeviceData> allProtocolDevData;
 };
 
 DSC_END_NAMESPACE

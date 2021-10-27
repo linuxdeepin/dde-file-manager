@@ -57,7 +57,7 @@ public: // status
     bool isAutoMountSetting() const;
     bool isAutoMountAndOpenSetting() const;
     bool isDefenderScanningDrive(const QString &driveName = "") const;
-    QStringList blockDevicesIdList() const;
+    QStringList blockDevicesIdList(const QVariantMap &opts) const;
     QStringList protocolDevicesIdList() const;
 
 signals:

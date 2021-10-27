@@ -36,6 +36,41 @@
 
 DSC_BEGIN_NAMESPACE
 
+struct DeviceData
+{
+    QString id;
+    QString mountpoint;
+    QString fileSystem;
+    qint64  sizeTotal;
+    qint64  sizeFree;
+    qint64  sizeUsage;
+};
+
+struct BlockDeviceData
+{
+    DeviceData  common;
+    QStringList mountpoints;
+    QString     device;
+    QString     drive;
+    QString     idLabel;
+    bool        removable;
+    bool        optical;
+    bool        opticalBlank;
+    QStringList mediaCompatibility;
+    bool        canPowerOff;
+    bool        ejectable;
+    bool        isEncrypted;
+    bool        hasFileSystem;
+    bool        hintSystem;
+    bool        hintIgnore;
+    QString     cryptoBackingDevice;
+};
+
+struct ProtocolDeviceData
+{
+    DeviceData common;
+};
+
 class DeviceServiceHelper
 {
     friend class DeviceService;
@@ -73,15 +108,19 @@ private:
     static QList<QUrl> getMountPathForAllDrive();
     static QUrl getMountPathForBlock(const BlockDevPtr &blkDev);
 
-    static bool isUnmountableBlockDevice(const BlockDevPtr &blkDev);
-    static bool isMountableBlockDevice(const BlockDevPtr &blkDev);
-    static bool isEjectableBlockDevice(const BlockDevPtr &blkDev);
-    static bool isProtectedBlocDevice(const BlockDevPtr &blkDev);
+    static bool isUnmountableBlockDevice(const BlockDeviceData &data);
+    static bool isMountableBlockDevice(const BlockDeviceData &data);
+    static bool isEjectableBlockDevice(const BlockDeviceData &data);
+    static bool isProtectedBlocDevice(const BlockDeviceData &data);
+    static bool isIgnorableBlockDevice(const BlockDeviceData &data);
 
     static BlockDevPtr        createBlockDevice(const QString &devId);
     static ProtocolDevPtr     createProtocolDevice(const QString &devId);
     static BlockDevPtrList    createAllBlockDevices();
     static ProtocolDevPtrList createAllProtocolDevices();
+
+    static void makeBlockDeviceData(const BlockDevPtr &ptr, BlockDeviceData *data);
+    // TODO(zhangs): makeProtolDeviceData
 
 private:
     static DevPtr createDevice(const QString &devId, DFMMOUNT::DeviceType type);

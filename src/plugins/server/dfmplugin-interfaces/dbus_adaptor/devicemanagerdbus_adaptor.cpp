@@ -33,10 +33,10 @@ DeviceManagerAdaptor::~DeviceManagerAdaptor()
     // destructor
 }
 
-QStringList DeviceManagerAdaptor::BlockDevicesIdList()
+QStringList DeviceManagerAdaptor::BlockDevicesIdList(const QVariantMap &opts)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.BlockDevicesIdList
-    return parent()->BlockDevicesIdList();
+    return parent()->BlockDevicesIdList(opts);
 }
 
 void DeviceManagerAdaptor::EjectAllMountedDevices()

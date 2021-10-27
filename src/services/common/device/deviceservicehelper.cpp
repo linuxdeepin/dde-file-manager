@@ -53,7 +53,9 @@ void DeviceServiceHelper::mountAllBlockDevices()
 
 void DeviceServiceHelper::mountBlockDeviceAsync(BlockDevPtr &blkDev, const QVariantMap &opts)
 {
-    if (!isMountableBlockDevice(blkDev))
+    BlockDeviceData data;
+    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
+    if (!isMountableBlockDevice(data))
         return;
 
     blkDev->mountAsync(opts);
@@ -61,7 +63,9 @@ void DeviceServiceHelper::mountBlockDeviceAsync(BlockDevPtr &blkDev, const QVari
 
 bool DeviceServiceHelper::mountBlockDevice(DeviceServiceHelper::BlockDevPtr &blkDev, const QVariantMap &opts)
 {
-    if (!isMountableBlockDevice(blkDev))
+    BlockDeviceData data;
+    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
+    if (!isMountableBlockDevice(data))
         return false;
 
     return !blkDev->mount(opts).isEmpty();
@@ -69,7 +73,9 @@ bool DeviceServiceHelper::mountBlockDevice(DeviceServiceHelper::BlockDevPtr &blk
 
 void DeviceServiceHelper::unmountBlockDeviceAsync(DeviceServiceHelper::BlockDevPtr &blkDev, const QVariantMap &opts)
 {
-    if (!isUnmountableBlockDevice(blkDev))
+    BlockDeviceData data;
+    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
+    if (!isUnmountableBlockDevice(data))
         return;
 
     blkDev->unmountAsync(opts);
@@ -77,7 +83,9 @@ void DeviceServiceHelper::unmountBlockDeviceAsync(DeviceServiceHelper::BlockDevP
 
 bool DeviceServiceHelper::unmountBlockDevice(DeviceServiceHelper::BlockDevPtr &blkDev, const QVariantMap &opts)
 {
-    if (!isUnmountableBlockDevice(blkDev))
+    BlockDeviceData data;
+    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
+    if (!isUnmountableBlockDevice(data))
         return false;
 
     return blkDev->unmount(opts);
@@ -91,7 +99,9 @@ void DeviceServiceHelper::mountAllProtocolDevices()
 bool DeviceServiceHelper::ejectBlockDevice(BlockDevPtr &blkDev)
 {
     unmountBlockDevice(blkDev, {});
-    if (isEjectableBlockDevice(blkDev))
+    BlockDeviceData data;
+    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
+    if (isEjectableBlockDevice(data))
         return blkDev->eject();
 
     return false;
@@ -156,91 +166,91 @@ QUrl DeviceServiceHelper::getMountPathForBlock(const BlockDevPtr &blkDev)
     return blkDev->mountPoint();
 }
 
-bool DeviceServiceHelper::isUnmountableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
+bool DeviceServiceHelper::isUnmountableBlockDevice(const BlockDeviceData &data)
 {
-    if (!blkDev) {
+    const QString &id = data.common.id;
+    if (data.common.id.isEmpty()) {
         qWarning() << "Block Device is Null";
         return false;
     }
 
-    if (isProtectedBlocDevice(blkDev)) {
-        qWarning() << "Block Device: " << blkDev->path() << " is protected device!";
+    if (isProtectedBlocDevice(data)) {
+        qWarning() << "Block Device: " << id << " is protected device!";
         return false;
     }
 
-    if (blkDev->fileSystem().isEmpty()) {
-        qWarning() << "Block Device: " << blkDev->path() << " haven't a filesystem!";
+    if (data.common.fileSystem.isEmpty()) {
+        qWarning() << "Block Device: " << id << " haven't a filesystem!";
         return false;
     }
 
-    if (blkDev->mountPoints().isEmpty()) {
-        qWarning() << "Block Device: " << blkDev->path() << " not mounted!";
+    if (data.mountpoints.isEmpty()) {
+        qWarning() << "Block Device: " << id << " not mounted!";
         return false;
     }
 
-    if (blkDev->hintIgnore()) {
-        qWarning() << "Block Device: " << blkDev->path() << " hintIgnore!";
+    if (data.hintIgnore) {
+        qWarning() << "Block Device: " << id << " hintIgnore!";
         return false;
     }
 
-    bool hintSystem = blkDev->getProperty(DFMMOUNT::Property::BlockHintSystem).toBool();
-    if (hintSystem) {
-        qWarning() << "Block Device: " << blkDev->path() << " hintSystem!";
+    if (data.hintIgnore) {
+        qWarning() << "Block Device: " << id << " hintSystem!";
         return false;
     }
 
     return true;
 }
 
-bool DeviceServiceHelper::isMountableBlockDevice(const BlockDevPtr &blkDev)
+bool DeviceServiceHelper::isMountableBlockDevice(const BlockDeviceData &data)
 {
-    if (!blkDev) {
+    const QString &id = data.common.id;
+    if (data.common.id.isEmpty()) {
         qWarning() << "Block Device is Null";
         return false;
     }
 
-    if (blkDev->isEncrypted()) {
-        qWarning() << "Block Device: " << blkDev->path() << " is encrypted device!";
+    if (data.isEncrypted) {
+        qWarning() << "Block Device: " << id << " is encrypted device!";
         return false;
     }
 
-    if (isProtectedBlocDevice(blkDev)) {
-        qWarning() << "Block Device: " << blkDev->path() << " is protected device!";
+    if (isProtectedBlocDevice(data)) {
+        qWarning() << "Block Device: " << id << " is protected device!";
         return false;
     }
 
-    QString &&cryptoDev = blkDev->getProperty(DFMMOUNT::Property::BlockCryptoBackingDevice).toString();
-    if (cryptoDev.length() > 1) { // bug: 77010
-        qWarning() << "Block Device: " << blkDev->path() << " cryptoDev length > 1";
+    if (data.cryptoBackingDevice.length() > 1) { // bug: 77010
+        qWarning() << "Block Device: " << id << " cryptoDev length > 1";
         return false;
     }
 
-    if (blkDev->hintIgnore()) {
-        qWarning() << "Block Device: " << blkDev->path() << "hintIgnore";
+    if (data.hintIgnore) {
+        qWarning() << "Block Device: " << id << "hintIgnore";
         return false;
     }
 
-    if (!blkDev->mountPoints().isEmpty()) {
-        qWarning() << "Block Device: " << blkDev->path() << " has mounted: ";
+    if (!data.mountpoints.isEmpty()) {
+        qWarning() << "Block Device: " << id << " has mounted: ";
         return false;
     }
 
-    if (blkDev->fileSystem().isEmpty()) {
-        qWarning() << "Block Device: " << blkDev->path() << " haven't a filesystem";
+    if (data.common.fileSystem.isEmpty()) {
+        qWarning() << "Block Device: " << id << " haven't a filesystem";
         return false;
     }
 
     return true;
 }
 
-bool DeviceServiceHelper::isEjectableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
+bool DeviceServiceHelper::isEjectableBlockDevice(const BlockDeviceData &data)
 {
-    bool removable = blkDev->removable();
-    bool optical = blkDev->optical();
-    bool ejectable = blkDev->ejectable();
+    bool removable = data.removable;
+    bool optical = data.optical;
+    bool ejectable = data.ejectable;
 
-    qInfo() << "eject" << blkDev->path() << "(removable optical ejectable canPowerOff): "
-            << blkDev->mountPoint() << removable << optical << ejectable;
+    qInfo() << "eject" << data.common.id << "(removable optical ejectable canPowerOff): "
+            << data.mountpoints << removable << optical << ejectable;
 
     if (removable)
         return true;
@@ -251,14 +261,13 @@ bool DeviceServiceHelper::isEjectableBlockDevice(const DeviceServiceHelper::Bloc
     return false;
 }
 
-bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDevPtr &blkDev)
+bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDeviceData &data)
 {
     QGSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
 
     if (gsettings.get("protect-non-media-mounts").toBool()) {
-        QStringList &&mountPoints = blkDev->getProperty(DFMMOUNT::Property::FileSystemMountPoint).toStringList();
-        for (auto &mountPoint : mountPoints) {
-            if (!mountPoint.startsWith("/media/")) {
+        for (auto &mountPoint : data.mountpoints) {
+            if (!mountPoint.isEmpty() &&!mountPoint.startsWith("/media/")) {
                 return true;
             }
         }
@@ -271,11 +280,17 @@ bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDevPtr &blkDev)
                        (manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice));
         const QStringList &rootDevNodes = monitor->resolveDeviceNode(qsi.device(), {});
         if (!rootDevNodes.isEmpty()) {
-            if (blkDev->drive() == createBlockDevice(rootDevNodes.first())->drive())
+            if (data.drive == createBlockDevice(rootDevNodes.first())->drive())
                 return true;
         }
     }
 
+    return false;
+}
+
+bool DeviceServiceHelper::isIgnorableBlockDevice(const BlockDeviceData &data)
+{
+    // TODO(zhangs): refrence to dfmrootcontroller.cpp -> ignoreBlkDevice
     return false;
 }
 
@@ -342,6 +357,33 @@ DeviceServiceHelper::ProtocolDevPtrList DeviceServiceHelper::createAllProtocolDe
             list.append(protocolDev);
     }
     return list;
+}
+
+void DeviceServiceHelper::makeBlockDeviceData(const DeviceServiceHelper::BlockDevPtr &ptr, BlockDeviceData *data)
+{
+    Q_ASSERT_X(data, "DeviceServiceHelper", "Data is NULL");
+    data->common.id            = ptr->path();
+    data->common.fileSystem    = ptr->fileSystem();
+    data->common.mountpoint    = ptr->mountPoint().toLocalFile();
+    data->common.sizeTotal     = ptr->sizeTotal();
+    data->common.sizeFree      = ptr->sizeFree();
+    data->common.sizeUsage     = ptr->sizeUsage();
+
+    data->mountpoints          = ptr->mountPoints();
+    data->device               = ptr->device();
+    data->drive                = ptr->drive();
+    data->idLabel              = ptr->idLabel();
+    data->removable            = ptr->removable();
+    data->optical              = ptr->optical();
+    data->opticalBlank         = ptr->opticalBlank();
+    data->mediaCompatibility   = ptr->mediaCompatibility();
+    data->canPowerOff          = ptr->canPowerOff();
+    data->ejectable            = ptr->ejectable();
+    data->isEncrypted          = ptr->isEncrypted();
+    data->hasFileSystem        = ptr->hasFileSystem();
+    data->hintSystem           = ptr->getProperty(DFMMOUNT::Property::BlockHintSystem).toBool(); // TODO(zhangs): wait a interface
+    data->hintIgnore           = ptr->hintIgnore();
+    data->cryptoBackingDevice  = ptr->getProperty(DFMMOUNT::Property::BlockCryptoBackingDevice).toString();
 }
 
 DSC_END_NAMESPACE

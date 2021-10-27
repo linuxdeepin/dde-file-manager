@@ -63,6 +63,8 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "    </method>\n"
 "    <method name=\"BlockDevicesIdList\">\n"
 "      <arg direction=\"out\" type=\"as\"/>\n"
+"      <arg direction=\"in\" type=\"a{sv}\" name=\"opts\"/>\n"
+"      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.In0\"/>\n"
 "    </method>\n"
 "    <method name=\"QueryBlockDeviceInfo\">\n"
 "      <arg direction=\"out\" type=\"s\"/>\n"
@@ -86,7 +88,7 @@ public:
 
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
-    QStringList BlockDevicesIdList();
+    QStringList BlockDevicesIdList(const QVariantMap &opts);
     void EjectAllMountedDevices();
     void EjectDevice(const QString &id);
     bool IsMonotorWorking();

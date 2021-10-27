@@ -92,7 +92,7 @@ QStringList PluginSidecar::invokeBlockDevicesIdList()
 
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto reply = deviceInterface->BlockDevicesIdList();
+        auto reply = deviceInterface->BlockDevicesIdList({{"unmountable", true}});
         if (reply.isValid())
             ret = reply.value();
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
