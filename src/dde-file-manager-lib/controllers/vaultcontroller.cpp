@@ -34,6 +34,8 @@
 #include "log/filterAppender.h"
 #include "vaultconfig.h"
 #include "../vault/operatorcenter.h"
+#include "../vault/vaulthelper.h"
+#include "dfmapplication.h"
 
 #include "appcontroller.h"
 #include "singleton.h"
@@ -214,7 +216,10 @@ DUrl VaultDirIterator::url() const
 }
 
 VaultController::VaultController(QObject *parent)
-    : DAbstractFileController(parent), d_ptr(new VaultControllerPrivate(this))
+    : DAbstractFileController(parent),
+      d_ptr(new VaultControllerPrivate(this)),
+      m_recordVaultPageMark(VaultPageMark::UNKNOWN),
+      m_vaultVisiable(true)
 {
     Q_D(VaultController);
 
@@ -260,6 +265,15 @@ VaultController::VaultController(QObject *parent)
                                 "/com/deepin/filemanager/daemon/VaultManager2",
                                 QDBusConnection::systemBus(),
                                 this);
+
+    slotVaultPolicy();
+
+    QDBusConnection::systemBus().connect("com.deepin.filemanager.daemon",
+                                          "/com/deepin/filemanager/daemon/AccessControlManager",
+                                          "com.deepin.filemanager.daemon.AccessControlManager",
+                                          "AccessVaultPolicyNotify",
+                                          this,
+                                          SLOT(slotVaultPolicy()));
 }
 
 VaultController *VaultController::ins()
@@ -444,6 +458,7 @@ bool VaultController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent
 
 bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
+    const_cast<VaultController*>(this)->setVauleCurrentPageMark(VaultPageMark::DELETEFILEPAGE);
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     bool bDeletedSuccess = DFileService::instance()->deleteFiles(event->sender(), urlList);
     if (bDeletedSuccess) {
@@ -460,6 +475,7 @@ bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
 
 DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
+    const_cast<VaultController*>(this)->setVauleCurrentPageMark(VaultPageMark::DELETEFILEPAGE);
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     bool bDeletedSuccess = DFileService::instance()->deleteFiles(event->sender(), urlList);
     if (bDeletedSuccess) {
@@ -476,6 +492,7 @@ DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> 
 
 DUrlList VaultController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
 {
+    const_cast<VaultController*>(this)->setVauleCurrentPageMark(VaultPageMark::COPYFILEPAGE);
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     DUrl url = vaultToLocalUrl(event->targetUrl());
     DUrlList ulist = DFileService::instance()->pasteFile(event->sender(), event->action(), url, urlList);
@@ -484,6 +501,7 @@ DUrlList VaultController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) 
 
 bool VaultController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
+    const_cast<VaultController*>(this)->setVauleCurrentPageMark(VaultPageMark::CLIPBOARDPAGE);
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(), urlList);
 }
@@ -1242,15 +1260,65 @@ void VaultController::slotLockVault(int state)
         m_enVaultState = Encrypted;
         // 刷新下界面
         emit fileSignalManager->requestFreshAllFileView();
+        VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNKNOWN);
     }
     emit signalLockVault(state);
+}
+
+void VaultController::slotVaultPolicy()
+{
+    switch(getVaultPolicy()) {
+    case 1:
+    {
+        switch (getVaultCurrentPageMark()) {
+        case VaultPageMark::UNKNOWN:
+            break;
+        case VaultPageMark::CREATEVAULTPAGE:
+            emit sigCloseWindow();
+            break;
+        case VaultPageMark::RETRIEVEPASSWORDPAGE:
+            emit sigCloseWindow();
+            break;
+        case VaultPageMark::VAULTPAGE:
+            emit sigCloseWindow();
+            break;
+        case VaultPageMark::CLIPBOARDPAGE:
+            if(!m_vaultVisiable) {
+                VaultHelper::killVaultTasks();
+            }
+            break;
+        case VaultPageMark::COPYFILEPAGE:
+            if(!m_vaultVisiable) {
+                VaultHelper::killVaultTasks();
+            }
+            break;
+        case VaultPageMark::CREATEVAULTPAGE1:
+        case VaultPageMark::UNLOCKVAULTPAGE:
+        case VaultPageMark::DELETEFILEPAGE:
+        case VaultPageMark::DELETEVAULTPAGE:
+            setVaultPolicyState(2);
+            return;
+        }
+
+        lockVault();
+        m_vaultVisiable = false;
+        emit DFMApplication::instance()->reloadComputerModel();
+    }
+        break;
+    case 2:
+        if(m_vaultVisiable) {
+            m_vaultVisiable = true;
+            emit DFMApplication::instance()->reloadComputerModel();
+        }
+        break;
+    }
 }
 
 bool VaultController::getVaultVersion()
 {
     VaultConfig config;
     QString strVersion = config.get(CONFIG_NODE_NAME, CONFIG_KEY_VERSION).toString();
-    if(CONFIG_VAULT_VERSION_1050 == strVersion)
+    if(CONFIG_VAULT_VERSION_1050 <= strVersion)
         return true;
 
     return false;
@@ -1264,6 +1332,86 @@ void VaultController::createVaultBruteForcePreventionInterface()
                                     "/com/deepin/filemanager/daemon/VaultManager2",
                                     QDBusConnection::systemBus(),
                                     this);
+}
+
+int VaultController::getVaultPolicy()
+{
+    QDBusInterface deepin_systemInfo("com.deepin.filemanager.daemon",
+                                     "/com/deepin/filemanager/daemon/AccessControlManager",
+                                     "com.deepin.filemanager.daemon.AccessControlManager",
+                                     QDBusConnection::systemBus(), this);
+
+    int vaulthidestate = -1;
+
+    //调用
+    auto response = deepin_systemInfo.call("QueryVaultAccessPolicyVisible");
+   //判断method是否被正确返回
+   if (response.type() == QDBusMessage::ReplyMessage)
+   {
+       //从返回参数获取返回值
+       QVariantList value = response.arguments();
+       if(!value.isEmpty()) {
+           QVariant varVaule = value.first();
+           vaulthidestate = varVaule.toInt();
+       } else {
+           vaulthidestate = -1;
+       }
+
+   }
+   else
+   {
+       qDebug() << "value method called failed!";
+       vaulthidestate = -1;
+   }
+
+   return vaulthidestate;
+}
+
+bool VaultController::setVaultPolicyState(int policyState)
+{
+    QDBusInterface deepin_systemInfo("com.deepin.filemanager.daemon",
+                                     "/com/deepin/filemanager/daemon/AccessControlManager",
+                                     "com.deepin.filemanager.daemon.AccessControlManager",
+                                     QDBusConnection::systemBus(), this);
+
+    auto response = deepin_systemInfo.call("FileManagerReply", QVariant::fromValue(policyState));
+   //判断method是否被正确返回
+   if (response.type() == QDBusMessage::ReplyMessage)
+   {
+       //从返回参数获取返回值
+       QVariantList value = response.arguments();
+       if(!value.isEmpty()) {
+           QVariant varVaule = value.first();
+           if(!varVaule.toString().isEmpty()) {
+               return true;
+           }
+       } else {
+           return false;
+       }
+
+   }
+   else
+   {
+       qDebug() << "value method called failed!";
+       return false;
+   }
+
+   return false;
+}
+
+void VaultController::setVauleCurrentPageMark(VaultPageMark mark)
+{
+    m_recordVaultPageMark = mark;
+}
+
+VaultPageMark VaultController::getVaultCurrentPageMark()
+{
+    return m_recordVaultPageMark;
+}
+
+bool VaultController::isVaultVisiable()
+{
+    return m_vaultVisiable;
 }
 
 VaultController::~VaultController()

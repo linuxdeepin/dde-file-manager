@@ -46,8 +46,8 @@ QRadioButton * PrivateotherPathRadioBtn(QSharedPointer<DFMVaultActiveSaveKeyFile
     return access_private_field::DFMVaultActiveSaveKeyFileViewm_otherPathRadioBtn(*actionSaveKeyFileView);
 }
 
-TEST_F(TestDFMVaultActionSaveKeyFileView, callslotRadioBtn)
+TEST_F(TestDFMVaultActionSaveKeyFileView, callslotSelectRadioBtn)
 {
-    EXPECT_NO_FATAL_FAILURE(m_view->slotRadioBtn(PrivatedefaultPathRadioBtn(m_view)));
-    EXPECT_NO_FATAL_FAILURE(m_view->slotRadioBtn(PrivateotherPathRadioBtn(m_view)));
+    EXPECT_NO_FATAL_FAILURE(m_view->slotSelectRadioBtn(PrivatedefaultPathRadioBtn(m_view)));
+    EXPECT_NO_FATAL_FAILURE(m_view->slotSelectRadioBtn(PrivateotherPathRadioBtn(m_view)));
 }

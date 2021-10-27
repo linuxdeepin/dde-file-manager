@@ -89,6 +89,8 @@ private:
     // 校验界面输入信息是否符合规则
     bool checkInputInfo();
 
+    void showEvent(QShowEvent *event) override;
+
 private:
     QComboBox           *m_pTypeCombo;
 

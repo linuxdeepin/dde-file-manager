@@ -272,6 +272,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         par->view()->setIndexWidget(index, static_cast<ComputerModelItemData*>(index.internalPointer())->widget);
     }
 
+    if (m_items.count() < index.row()) return QVariant();
     const ComputerModelItemData *pitmdata = &m_items[index.row()];
 
     if (role == Qt::DisplayRole) {
@@ -512,6 +513,7 @@ Qt::ItemFlags ComputerModel::flags(const QModelIndex &index) const
         ret |= Qt::ItemIsEnabled | Qt::ItemFlag::ItemIsSelectable;
     }
 
+    if (m_items.count() < index.row()) return ret;
     const ComputerModelItemData *pitmdata = &m_items[index.row()];
     if (pitmdata->fi && pitmdata->fi->canRename()) {
         ret |= Qt::ItemFlag::ItemIsEditable;

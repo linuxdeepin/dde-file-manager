@@ -134,7 +134,7 @@ private:
 
 public:
     /**
-     * @brief createKeyNew rsa生成密钥对，私钥加密密码，将密文写入文件，将一部分公钥写入文件（另一部分公钥提供给用户）
+     * @brief createKeyNew rsa生成密钥对，私钥加密密码，将密文写入文件
      * @param in password 密码
      * @return 是否成功
      */
@@ -142,6 +142,7 @@ public:
 
     /**
      * @brief saveKey 保存公钥
+     * @param key  公钥
      * @param path 保存路径
      * @return
      */
@@ -156,7 +157,7 @@ public:
     /**
      * @brief verificationRetrievePassword 验证用户密钥是否正确
      * @param1 in keypath 密钥文件
-     * @param2 out password
+     * @param2 out password 密码
      * @return 是否正确
      */
     bool verificationRetrievePassword(const QString keypath, QString & password);

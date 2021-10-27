@@ -55,6 +55,10 @@
 #define KEY_ERRSTR      "errstr"
 #define KEY_ERRNO       "errno"
 
+#define POLICYTYPE      "policytype"
+#define VAULTHIDESTATE  "vaulthidestate"
+#define POLICYSTATE     "policystate"
+
 #define TYPE_INVALID    0x00
 #define TYPE_BLOCK      0x01
 #define TYPE_OPTICAL    0x02
@@ -81,9 +85,11 @@ AccessControlManager::AccessControlManager(QObject *parent)
     m_diskMnanager = new DDiskManager(this);
     m_diskMnanager->setWatchChanges(true);
 
-    m_whiteProcess << "/usr/bin/dmcg";
+    m_whiteProcess << "/usr/bin/dmcg" << "/usr/bin/dde-file-manager";
     m_configPath = "/etc/deepin/devAccessConfig.json";
+    m_vaultConfigPath = "/etc/deepin/vaultAccessConfig.json";
     loadPolicy();
+    loadVaultPolicy();
     changeMountedOnInit();
 
     m_errMsg.insert(NoError, "");
@@ -199,6 +205,86 @@ QVariantList AccessControlManager::QueryAccessPolicy()
 }
 
 /**
+ * @brief AccessControlManager::SetVaultAccessPolicy
+ * @param policy POLICYTYPE 1表示保险箱, VAULTHIDESTATE 1表示隐藏保险箱 2表示显示保险箱, POLICYSTATE 1表示策略执行 2表示策略不执行
+ * @return 返回执行结果
+ */
+QString AccessControlManager::SetVaultAccessPolicy(const QVariantMap &policy)
+{
+    QVariantMap sigInfo;
+    // 0. 接口访问权限
+    uint invokerPid = connection().interface()->servicePid(message().service()).value();
+    QString invokerPath;
+    if (!isValidInvoker(invokerPid, invokerPath)) {
+        sigInfo = policy;
+        sigInfo.insert(KEY_ERRNO, InvalidInvoker);
+        sigInfo.insert(KEY_ERRSTR, m_errMsg.value(InvalidInvoker));
+        emit AccessPolicySetFinished(sigInfo);
+        qInfo() << invokerPath << " is not allowed to invoke this function";
+        return invokerPath + " is not allowed";
+    }
+
+    // 1. 校验策略有效性
+    if (!isValidVaultPolicy(policy)) {
+        sigInfo = policy;
+        sigInfo.insert(KEY_ERRNO, InvalidArgs);
+        sigInfo.insert(KEY_ERRSTR, m_errMsg.value(InvalidArgs));
+        emit AccessPolicySetFinished(sigInfo);
+        qDebug() << "policy is not valid";
+        return QString("policy is not valid");
+    }
+
+    saveVaultPolicy(policy);
+
+    loadVaultPolicy();
+
+    if(m_VaultHidePolicies.isEmpty())
+        return QString("");
+
+    // 2.5.5 发送信号通知策略已完成修改
+    sigInfo.insert(POLICYTYPE, policy.value(POLICYTYPE));
+    sigInfo.insert(VAULTHIDESTATE, policy.value(VAULTHIDESTATE));
+    sigInfo.insert(POLICYSTATE, policy.value(POLICYSTATE));
+    sigInfo.insert(KEY_ERRNO, NoError);
+    sigInfo.insert(KEY_ERRSTR, "");
+    emit AccessPolicySetFinished(sigInfo);
+
+    emit AccessVaultPolicyNotify();
+
+    return QString("OK");
+}
+
+QVariantList AccessControlManager::QueryVaultAccessPolicy()
+{
+    QVariantList ret;
+    QVariantMap item;
+    QMapIterator<QString, int> iter(m_VaultHidePolicies);
+    while (iter.hasNext()) {
+        iter.next();
+        item.insert(iter.key(), iter.value());
+    }
+    ret << QVariant::fromValue(item);
+    return ret;
+}
+
+int AccessControlManager::QueryVaultAccessPolicyVisible()
+{
+    if(m_VaultHidePolicies.value(POLICYSTATE) == 1)
+        return m_VaultHidePolicies.value(VAULTHIDESTATE);
+    else
+        return 0;
+}
+
+QString AccessControlManager::FileManagerReply(int policystate)
+{
+    QVariantList listMap = QueryVaultAccessPolicy();
+    QVariantMap map = listMap.at(0).toMap();
+    map.insert(POLICYSTATE, policystate);
+    SetVaultAccessPolicy(map);
+    return "OK";
+}
+
+/**
  * @brief 设备挂载后，为挂载路径添加写权限
  *        一些设备被 root 挂载，对其他用户没写权限，导致无法正常操作（相关 bug-60788）
  * @param blockDevicePath
@@ -309,27 +395,27 @@ void AccessControlManager::savePolicy(const QVariantMap &policy)
     QJsonDocument doc = QJsonDocument::fromJson(config.readAll(), &err);
     QJsonArray newArr;
     if (doc.isArray()) {
-        QJsonArray arr = doc.array();
-        foreach (auto obj, arr) {
-            if (!obj.isObject())
-                continue;
-            QJsonObject objInfo = obj.toObject();
-            int global = objInfo.contains(KEY_GLOBAL) ? objInfo.value(KEY_GLOBAL).toInt() : 0;
-            QString src = objInfo.contains(KEY_INVOKER) ? objInfo.value(KEY_INVOKER).toString() : "";
-            int type = objInfo.contains(KEY_TYPE) ? objInfo.value(KEY_TYPE).toInt() : 0;
-            QString timestamp = objInfo.contains(KEY_TSTAMP) ? objInfo.value(KEY_TSTAMP).toString() : "";
-            QString dev = objInfo.contains(KEY_DEVICE) ? objInfo.value(KEY_DEVICE).toString() : "";
-            QString invoker = objInfo.contains(KEY_INVOKER) ? objInfo.value(KEY_INVOKER).toString() : "";
+       QJsonArray arr = doc.array();
+       foreach (auto obj, arr) {
+           if (!obj.isObject())
+               continue;
+           QJsonObject objInfo = obj.toObject();
+           int global = objInfo.contains(KEY_GLOBAL) ? objInfo.value(KEY_GLOBAL).toInt() : 0;
+           QString src = objInfo.contains(KEY_INVOKER) ? objInfo.value(KEY_INVOKER).toString() : "";
+           int type = objInfo.contains(KEY_TYPE) ? objInfo.value(KEY_TYPE).toInt() : 0;
+           QString timestamp = objInfo.contains(KEY_TSTAMP) ? objInfo.value(KEY_TSTAMP).toString() : "";
+           QString dev = objInfo.contains(KEY_DEVICE) ? objInfo.value(KEY_DEVICE).toString() : "";
+           QString invoker = objInfo.contains(KEY_INVOKER) ? objInfo.value(KEY_INVOKER).toString() : "";
 
-            if (inGlobal == global && inType == type && inDevice == dev && inInvoker == invoker) {
-                foundExist = true;
-                objInfo.insert(KEY_POLICY, inPolicy);
-                objInfo.insert(KEY_TSTAMP, QString::number(QDateTime::currentSecsSinceEpoch()));
-                qDebug() << "found exist policy, just updtae it";
-            }
+           if (inGlobal == global && inType == type && inDevice == dev && inInvoker == invoker) {
+               foundExist = true;
+               objInfo.insert(KEY_POLICY, inPolicy);
+               objInfo.insert(KEY_TSTAMP, QString::number(QDateTime::currentSecsSinceEpoch()));
+               qDebug() << "found exist policy, just updtae it";
+           }
 
-            newArr.append(objInfo);
-        }
+           newArr.append(objInfo);
+       }
     }
     if (!foundExist) {
         QJsonObject obj;
@@ -556,6 +642,73 @@ void AccessControlManager::decodeConfig()
 void AccessControlManager::encodeConfig()
 {
 
+}
+
+bool AccessControlManager::isValidVaultPolicy(const QVariantMap &policy)
+{
+    if(policy.value(POLICYTYPE).toInt() < 0 || policy.value(VAULTHIDESTATE).toInt() < 0)
+            return false;
+    return true;
+}
+
+void AccessControlManager::saveVaultPolicy(const QVariantMap &policy)
+{
+    // 1. if file does not exist then create it
+    QFile config(m_vaultConfigPath);
+    if (!config.open(QIODevice::ReadOnly)) {
+        qDebug() << "config open failed";
+        config.close();
+        return;
+    }
+    config.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
+
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(config.readAll(), &err);
+    config.close();
+
+    QJsonArray newArr;
+
+    QJsonObject obj;
+    obj.insert(POLICYTYPE, policy.value(POLICYTYPE).toInt());
+    obj.insert(VAULTHIDESTATE, policy.value(VAULTHIDESTATE).toInt());
+    obj.insert(POLICYSTATE, policy.value(POLICYSTATE).toInt());
+    newArr.append(obj);
+    qDebug() << "append new policy";
+    doc.setArray(newArr);
+    config.open(QIODevice::Truncate | QIODevice::ReadWrite); // overwrite the config file
+    config.write(doc.toJson());
+    config.close();
+}
+
+void AccessControlManager::loadVaultPolicy()
+{
+    QFile config(m_vaultConfigPath);
+    if (!config.open(QIODevice::ReadOnly))
+        return;
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(config.readAll(), &err);
+    config.close();
+
+    if (doc.isArray()) {
+        m_VaultHidePolicies.clear();
+        QJsonArray arr = doc.array();
+        foreach (auto item, arr) {
+            if (!item.isObject())
+                continue;
+
+            QJsonObject obj = item.toObject();
+
+            // load default/general policy
+            int policytype = obj.contains(POLICYTYPE) ? obj.value(POLICYTYPE).toInt() : -1;
+            int vaulthidestate = obj.contains(VAULTHIDESTATE) ? obj.value(VAULTHIDESTATE).toInt() : -1;
+            int policystate = obj.contains(POLICYSTATE) ? obj.value(POLICYSTATE).toInt() : -1;
+            m_VaultHidePolicies.insert(POLICYTYPE, policytype);
+            m_VaultHidePolicies.insert(VAULTHIDESTATE, vaulthidestate);
+            m_VaultHidePolicies.insert(POLICYSTATE, policystate);
+        }
+    }
+
+    qDebug() << "loaded policy: " << m_VaultHidePolicies;
 }
 
 void AccessControlManager::onFileCreated(const QString &path, const QString &name)

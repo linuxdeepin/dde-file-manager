@@ -24,6 +24,7 @@
 #define VAULTCONTROLLER_H
 
 #include "dabstractfilecontroller.h"
+#include "../vault/vaultglobaldefine.h"
 
 #include <DSecureString>
 
@@ -322,6 +323,8 @@ private slots:
     void slotUnlockVault(int state);
     void slotLockVault(int state);
 
+    // 保险箱策略处理函数
+    void slotVaultPolicy();
 private:
     // 创建保险箱防暴力破解的dbus接口对象
     void createVaultBruteForcePreventionInterface();
@@ -384,12 +387,46 @@ signals:
      */
     void sigLockVault(QString unlockFileDir);
 
+    //! 通知关闭对话框
+    void sigCloseWindow();
+
 public:
     /**
      * @brief getVaultVersion   获取当前保险箱版本是否是1050及以上版本
      * @return  true大于等于1050,false小于1050
      */
     static bool getVaultVersion();
+
+    /**
+     * @brief getVaultPolicy 获取当前策略
+     * @return 返回保险箱是否隐藏  1隐藏 2显示
+     */
+    int getVaultPolicy();
+
+    /**
+     * @brief setVaultPolicyState 设置策略是否可用
+     * @param policyState 1策略可用 2策略不可用
+     * @return 设置是否成功
+     */
+    bool setVaultPolicyState(int policyState);
+
+    /**
+     * @brief setVauleCurrentPageMark 设置当前所处保险箱页面
+     * @param mark 页面标识
+     */
+    void setVauleCurrentPageMark(VaultPageMark mark);
+
+    /**
+     * @brief getVaultCurrentPageMark 获取当前所处保险箱页面
+     * @return 返回当前页面标识
+     */
+    VaultPageMark getVaultCurrentPageMark();
+
+    /**
+     * @brief isVaultVisiable 获取保险箱显示状态
+     * @return true显示、false隐藏
+     */
+    bool isVaultVisiable();
 
 private:
     ~VaultController() override;
@@ -413,6 +450,11 @@ private:
 
     // 防暴力破解功能的dbus对象
     VaultBruteForcePreventionInterface *m_vaultInterface = nullptr;
+
+    //! 用于记录当前保险箱所处页面标识
+    VaultPageMark m_recordVaultPageMark;
+
+    bool m_vaultVisiable;
 
     Q_DECLARE_PRIVATE(VaultController)
 };

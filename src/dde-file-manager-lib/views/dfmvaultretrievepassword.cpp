@@ -24,6 +24,7 @@
 #include "accessibility/ac-lib-file-manager.h"
 #include "vault/operatorcenter.h"
 #include "durl.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QStringList>
 #include <QFrame>
@@ -62,8 +63,7 @@ void DFMVaultRetrievePassword::verificationKey()
             m_defaultFilePathEdit->setText(QString(DFMVAULT_ROOT) + RSA_PUB_KEY_FILE_NAME + QString(".key"));
             getButton(1)->setEnabled(true);
             keyPath = defaultKeyPath;
-        }
-        else {
+        } else {
             m_defaultFilePathEdit->setPlaceholderText(tr("Unable to get the key file"));
             m_defaultFilePathEdit->setText("");
             getButton(1)->setEnabled(false);
@@ -76,8 +76,7 @@ void DFMVaultRetrievePassword::verificationKey()
             m_filePathEdit->lineEdit()->setPlaceholderText(tr("Unable to get the key file"));
             m_filePathEdit->setText("");
             getButton(1)->setEnabled(false);
-        }
-        else {
+        } else {
             getButton(1)->setEnabled(true);
         }
         break;
@@ -85,8 +84,7 @@ void DFMVaultRetrievePassword::verificationKey()
 
     if(OperatorCenter::getInstance()->verificationRetrievePassword(keyPath, password)) {
         setResultsPage(password);
-    }
-    else {
+    }else {
         m_verificationPrompt->setText(tr("Verification failed"));
     }
 }
@@ -107,7 +105,7 @@ void DFMVaultRetrievePassword::onButtonClicked(int index, const QString &text)
     case 1:
         if(text == btnList[3]) {
             setOnButtonClickedClose(true);  //! 按钮1关闭窗口能力打开
-        }else {
+        } else {
             setOnButtonClickedClose(false); //! 按钮1关闭窗口能力关闭
             // 用户权限认证(异步授权)
             auto ins = Authority::instance();
@@ -131,8 +129,7 @@ void DFMVaultRetrievePassword::onComboBoxIndex(int index)
         if(QFile::exists(defaultKeyPath)) {
             m_defaultFilePathEdit->setText(QString(DFMVAULT_ROOT) + RSA_PUB_KEY_FILE_NAME + QString(".key"));
             getButton(1)->setEnabled(true);
-        }
-        else {
+        } else {
             m_defaultFilePathEdit->setPlaceholderText(tr("Unable to get the key file"));
             m_defaultFilePathEdit->setText("");
             getButton(1)->setEnabled(false);
@@ -149,8 +146,7 @@ void DFMVaultRetrievePassword::onComboBoxIndex(int index)
             m_filePathEdit->lineEdit()->setPlaceholderText(tr("Unable to get the key file"));
             m_filePathEdit->setText("");
             getButton(1)->setEnabled(false);
-        }
-        else {
+        } else {
             m_filePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
             getButton(1)->setEnabled(false);
         }
@@ -286,6 +282,8 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent):DFMVaultPage
     connect(m_savePathTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndex(int)));
 
     connect(m_filePathEdit, &DFileChooserEdit::fileChoosed, this, &DFMVaultRetrievePassword::onBtnSelectFilePath);
+
+    connect(VaultController::ins(), &VaultController::sigCloseWindow, this, &DFMVaultRetrievePassword::close);
 }
 
 void DFMVaultRetrievePassword::setVerificationPage()
@@ -317,15 +315,21 @@ void DFMVaultRetrievePassword::setResultsPage(QString password)
 
 void DFMVaultRetrievePassword::showEvent(QShowEvent *event)
 {
+     VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::RETRIEVEPASSWORDPAGE);
     if(QFile::exists(defaultKeyPath)) {
         m_defaultFilePathEdit->setText(QString(DFMVAULT_ROOT) + RSA_PUB_KEY_FILE_NAME + QString(".key"));
         getButton(1)->setEnabled(true);
-    }
-    else {
+    } else {
         m_defaultFilePathEdit->setPlaceholderText(tr("Unable to get the key file"));
         getButton(1)->setEnabled(false);
     }
     m_filePathEdit->setText("");
     setVerificationPage();
     DFMVaultPageBase::showEvent(event);
+}
+
+void DFMVaultRetrievePassword::closeEvent(QCloseEvent *event)
+{
+    VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNKNOWN);
+    DFMVaultPageBase::closeEvent(event);
 }

@@ -176,6 +176,7 @@ DFMVaultRemovePages *DFMVaultRemovePages::instance()
 
 void DFMVaultRemovePages::showTop()
 {
+    VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::DELETEVAULTPAGE);
     showVerifyWidget();
     activateWindow();
     show();
@@ -257,6 +258,7 @@ void DFMVaultRemovePages::slotCheckAuthorizationFinished(Authority::Result resul
     disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
             this, &DFMVaultRemovePages::slotCheckAuthorizationFinished);
     if (isVisible()) {
+        VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::DELETEVAULTPAGE);
         if (result == Authority::Yes) {
             m_bRemoveVault = true;
             // 删除前，先置顶保险箱内拷贝、剪贴、压缩任务

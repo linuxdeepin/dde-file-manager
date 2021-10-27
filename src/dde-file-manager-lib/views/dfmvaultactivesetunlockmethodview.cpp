@@ -23,6 +23,7 @@
 #include "dfmvaultactivesetunlockmethodview.h"
 #include "operatorcenter.h"
 #include "accessibility/ac-lib-file-manager.h"
+#include "controllers/vaultcontroller.h"
 
 #include <DPasswordEdit>
 #include <DLabel>
@@ -430,4 +431,10 @@ bool DFMVaultActiveSetUnlockMethodView::checkInputInfo()
     } else {
         return false;
     }
+}
+
+void DFMVaultActiveSetUnlockMethodView::showEvent(QShowEvent *event)
+{
+    VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::CREATEVAULTPAGE);
+    QWidget::showEvent(event);
 }

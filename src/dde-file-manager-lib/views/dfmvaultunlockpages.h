@@ -73,6 +73,8 @@ private:
 
     void showEvent(QShowEvent *event) override;
 
+    void closeEvent(QCloseEvent *event) override;
+
     void showToolTip(const QString &text, int duration, EN_ToolTip enType);
 
 private:

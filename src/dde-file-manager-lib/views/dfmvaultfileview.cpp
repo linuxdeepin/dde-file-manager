@@ -46,6 +46,13 @@ DFMVaultFileView::DFMVaultFileView(QWidget *parent)
 
 bool DFMVaultFileView::setRootUrl(const DUrl &url)
 {
+    if(!VaultController::ins()->isVaultVisiable()) {
+        DDialog dialog(tr("hint"), tr("Cannot open this path"), this);
+        dialog.addButton(tr("OK"));
+        dialog.exec();
+        return false;
+    }
+
     VaultController::VaultState enState = VaultController::ins()->state();
 
     QWidget *wndPtr = widget()->topLevelWidget();
@@ -78,6 +85,7 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
 
         //! 记录访问保险箱时间
         if (VaultController::isRootDirectory(url.toLocalFile())) {
+            VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::VAULTPAGE);
             DFM_NAMESPACE::DFMSettings setting(VAULT_TIME_CONFIG_FILE);
             setting.setValue(QString("VaultTime"), QString("InterviewTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
         }
@@ -100,6 +108,7 @@ void DFMVaultFileView::onLeaveVault(int state)
 {
     if (state == 0) {
         this->cd(DUrl(COMPUTER_ROOT));
+        VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNKNOWN);
     }
 }
 

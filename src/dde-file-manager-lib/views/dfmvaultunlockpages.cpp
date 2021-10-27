@@ -89,6 +89,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     m_passwordEdit->lineEdit()->installEventFilter(this);
     m_passwordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
+
     // 提示按钮
     m_tipsButton = new QPushButton(this);
     AC_SET_ACCESSIBLE_NAME(m_tipsButton, AC_VAULT_PASSWORD_UNLOCK_HINT_BUTTON);
@@ -149,6 +150,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
 
 void DFMVaultUnlockPages::showEvent(QShowEvent *event)
 {
+    VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNLOCKVAULTPAGE);
     // 重置所有控件状态
     m_passwordEdit->lineEdit()->clear();
     QLineEdit edit;
@@ -174,6 +176,13 @@ void DFMVaultUnlockPages::showEvent(QShowEvent *event)
         m_forgetPassword->hide();
     }
     event->accept();
+}
+
+void DFMVaultUnlockPages::closeEvent(QCloseEvent *event)
+{
+    VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNKNOWN);
+
+    DFMVaultPageBase::closeEvent(event);
 }
 
 void DFMVaultUnlockPages::showToolTip(const QString &text, int duration, DFMVaultUnlockPages::EN_ToolTip enType)
@@ -256,7 +265,6 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
             // 设置密码输入框颜色
             // 修复bug-51508 激活密码框警告状态
             m_passwordEdit->setAlert(true);
-
 
             // 保险箱剩余错误密码输入次数减1
             pVaultController->leftoverErrorInputTimesMinusOne();

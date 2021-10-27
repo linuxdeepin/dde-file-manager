@@ -530,6 +530,27 @@ void DFMSideBar::initModelData()
 
 void DFMSideBar::initConnection()
 {
+    connect(DFMApplication::instance(), &DFMApplication::reloadComputerModel, this, [this]{
+        bool vaultEnable = VaultHelper::isVaultEnabled();
+        if (vaultEnable) {
+            // if vault is enabled, check if it is exist in sidebar
+            int index = findItem([&](const DFMSideBarItem *item) {return item->url().scheme() == DFMVAULT_SCHEME;});
+            if (index > 0)
+                return;
+
+            // otherwise insert it just below computer item
+            index = findItem([&](const DFMSideBarItem *item) {return item->url().scheme() == COMPUTER_SCHEME;});
+            if (index > 0)
+                this->insertItem(index+1, DFMSideBarVaultItemHandler::createItem("Vault"), groupName(GroupName::Device));
+        } else {
+            // check if vault item is in sidebar
+            int index = findItem([&](const DFMSideBarItem *item) {return item->url().scheme() == DFMVAULT_SCHEME;});
+            if (index < 0)
+                return;
+            this->m_sidebarModel->removeRow(index);
+        }
+    });
+
     // drag to delete bookmark or tag
     connect(m_sidebarView, &DFMSideBarView::requestRemoveItem, this, [this]() {
         DFMSideBarItem *item = m_sidebarModel->itemFromIndex(m_sidebarView->currentIndex());

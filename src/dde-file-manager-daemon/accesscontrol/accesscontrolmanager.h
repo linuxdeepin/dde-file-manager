@@ -62,10 +62,16 @@ public slots:
     QString SetAccessPolicy(const QVariantMap &policy);
     QVariantList QueryAccessPolicy();
 
+    QString SetVaultAccessPolicy(const QVariantMap &policy);
+    QVariantList QueryVaultAccessPolicy();
+    int QueryVaultAccessPolicyVisible();
+    QString FileManagerReply(int policystate);
+
 signals:
     void AccessPolicySetFinished(const QVariantMap &policy);
     void DeviceAccessPolicyChanged(const QVariantList &policy);
 
+    void AccessVaultPolicyNotify();
 
 private slots:
     void onFileCreated(const QString &path, const QString &name);
@@ -90,6 +96,11 @@ private slots:
     void decodeConfig();
     void encodeConfig();
 
+    bool isValidVaultPolicy(const QVariantMap &policy);
+
+    void saveVaultPolicy(const QVariantMap &policy);
+    void loadVaultPolicy();
+
 private:
     AccessControlAdaptor *m_accessControlAdaptor = nullptr;
     DDiskManager *m_diskMnanager = nullptr;
@@ -100,6 +111,9 @@ private:
 
     QMap<int, QPair<QString, int>> m_globalPolicies;
     QMap<int, QString> m_errMsg;
+
+    QString m_vaultConfigPath;
+    QMap<QString, int> m_VaultHidePolicies;
 };
 
 #endif // ACCESSCONTROLMANAGER_H

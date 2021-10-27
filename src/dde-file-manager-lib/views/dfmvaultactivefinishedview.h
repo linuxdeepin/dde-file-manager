@@ -65,6 +65,9 @@ private slots:
     // 异步授权时，此函数接收授权完成的结果
     void slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result);
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 private:
     QWidget             *m_pWidget1;
     DLabel              *m_pTips;

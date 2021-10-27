@@ -26,6 +26,7 @@
 #include "vaulthelper.h"
 #include "dialogs/dialogmanager.h"
 #include "dialogs/dtaskdialog.h"
+#include "controllers/vaultcontroller.h"
 
 #include <DWindowManagerHelper>
 #include <DForeignWindow>
@@ -149,8 +150,8 @@ bool VaultHelper::isVaultEnabled()
     if (!DSysInfo::isCommunityEdition()) {  // 如果不是社区版
         DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
         // 如果是专业版
-        if (DSysInfo::DeepinType::DeepinProfessional == deepinType) {
-            return true;
+        if (DSysInfo::DeepinType::DeepinProfessional == deepinType && VaultController::ins()->isVaultVisiable()) {
+            return true ;
         }
     }
     return false;

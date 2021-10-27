@@ -25,6 +25,7 @@
 #include "vaultglobaldefine.h"
 #include "operatorcenter.h"
 #include "dguiapplicationhelper.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -84,7 +85,7 @@ void DFMVaultActiveSaveKeyFileView::initUI()
     group->addButton(m_defaultPathRadioBtn, 1);
     group->addButton(m_otherPathRadioBtn, 2);
 
-    connect(group, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(slotRadioBtn(QAbstractButton*)));
+    connect(group, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(slotSelectRadioBtn(QAbstractButton*)));
     connect(m_SelectfileSavePathEdit, &DFileChooserEdit::fileChoosed, this, &DFMVaultActiveSaveKeyFileView::slotChangeEdit);
 
 
@@ -181,7 +182,7 @@ void DFMVaultActiveSaveKeyFileView::slotNextBtnClicked()
         //! 密钥保存默认路径
        QString path = VAULT_BASE_PATH + QString("/") + (RSA_PUB_KEY_FILE_NAME) + QString(".key");
        flg = OperatorCenter::getInstance()->saveKey(pubKey, path);
-    }else if(m_otherPathRadioBtn->isChecked()) {
+    } else if(m_otherPathRadioBtn->isChecked()) {
         //! 密钥保存用户指定路径
        QString path = m_SelectfileSavePathEdit->text();
        flg = OperatorCenter::getInstance()->saveKey(pubKey, path);
@@ -192,7 +193,7 @@ void DFMVaultActiveSaveKeyFileView::slotNextBtnClicked()
     }
 }
 
-void DFMVaultActiveSaveKeyFileView::slotRadioBtn(QAbstractButton *btn)
+void DFMVaultActiveSaveKeyFileView::slotSelectRadioBtn(QAbstractButton *btn)
 {
     if(btn == m_defaultPathRadioBtn) {
         m_SelectfileSavePathEdit->setEnabled(false);
@@ -215,7 +216,7 @@ void DFMVaultActiveSaveKeyFileView::slotChangeEdit(const QString &fileName)
     if(temp != QFileDevice::WriteUser) {
         m_pNext->setEnabled(false);
         m_otherRadioBtnHitMsg->show();
-    }else if(!fileName.isEmpty()) {
+    } else if(!fileName.isEmpty()) {
         m_otherRadioBtnHitMsg->hide();
         m_pNext->setEnabled(true);
     }
@@ -223,6 +224,7 @@ void DFMVaultActiveSaveKeyFileView::slotChangeEdit(const QString &fileName)
 
 void DFMVaultActiveSaveKeyFileView::showEvent(QShowEvent *event)
 {
+    VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::CREATEVAULTPAGE);
     m_defaultPathRadioBtn->setChecked(true);
     m_SelectfileSavePathEdit->clear();
     m_otherRadioBtnHitMsg->hide();
@@ -241,7 +243,7 @@ void RadioFrame::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
     if(DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType) {
         painter.setBrush(QBrush(QColor("#4c252525")));
-    }else if(DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType){
+    } else if(DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType){
         painter.setBrush(QBrush(QColor("#4ce6e6e6")));
     }
 

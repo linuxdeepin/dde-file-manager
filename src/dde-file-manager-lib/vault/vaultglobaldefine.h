@@ -67,4 +67,18 @@ enum EN_VaultState {
     NotAvailable
 };
 
+//! 保险箱当前页面标记
+enum VaultPageMark {
+    UNKNOWN,
+    CREATEVAULTPAGE,
+    CREATEVAULTPAGE1,
+    UNLOCKVAULTPAGE,
+    RETRIEVEPASSWORDPAGE,
+    DELETEFILEPAGE,
+    DELETEVAULTPAGE,
+    COPYFILEPAGE,
+    CLIPBOARDPAGE,
+    VAULTPAGE
+};
+
 #endif // VAULTGLOBALDEFINE_H

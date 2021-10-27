@@ -77,7 +77,7 @@ public slots:
      * @brief onBtnSelectFilePath   设置用户选择的密钥文件路径
      * @param path                  选择的密钥文件路径
      */
-    void onBtnSelectFilePath(const QString & path);
+    void onBtnSelectFilePath(const QString &path);
 
 private slots:
     /**
@@ -103,37 +103,39 @@ private:
 protected:
     void showEvent(QShowEvent *event) override;
 
+    void closeEvent(QCloseEvent *event) override;
+
 private:
     //! 找回密码页面标题
-    DLabel * m_title = nullptr;
+    DLabel              *m_title = nullptr;
 
     //! 选择要验证的密钥路径
-    QComboBox * m_savePathTypeComboBox = nullptr;
+    QComboBox           *m_savePathTypeComboBox = nullptr;
 
     //! 用户自选密钥文件路径编辑框
-    DFileChooserEdit * m_filePathEdit = nullptr;
+    DFileChooserEdit    *m_filePathEdit = nullptr;
 
     //! 默认密钥文件路径编辑框
-    QLineEdit * m_defaultFilePathEdit = nullptr;
+    QLineEdit           *m_defaultFilePathEdit = nullptr;
 
     //! 密钥验证失败提示标签
-    DLabel * m_verificationPrompt = nullptr;
+    DLabel              *m_verificationPrompt = nullptr;
 
     //! 选择密钥页面
-    QFrame * m_selectKeyPage = nullptr;
+    QFrame              *m_selectKeyPage = nullptr;
 
     //! 显示找回的密码页面
-    QFrame * m_PasswordRecoveryPage = nullptr;
+    QFrame              *m_PasswordRecoveryPage = nullptr;
 
     //! 密钥验证成页面标题
-    DLabel * m_title1 = nullptr;
+    DLabel              *m_title1 = nullptr;
     //! 找回的密码信息
-    DLabel * m_passwordMsg = nullptr;
+    DLabel              *m_passwordMsg = nullptr;
     //! 安全提示
-    DLabel * m_hintMsg = nullptr;
+    DLabel              *m_hintMsg = nullptr;
 
     //! 4个按钮的文本
-    QStringList btnList;
+    QStringList         btnList;
 };
 
 #endif // DFMVAULTRETRIEVEPASSWORD_H

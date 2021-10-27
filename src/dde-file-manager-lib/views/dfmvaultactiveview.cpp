@@ -26,6 +26,7 @@
 #include "dfmvaultactivesavekeyfileview.h"
 #include "dfmvaultactivefinishedview.h"
 #include "accessibility/ac-lib-file-manager.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QDebug>
 #include <QStackedWidget>
@@ -74,6 +75,8 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
     setFixedWidth(472);
 
     connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
+
+    connect(VaultController::ins(), &VaultController::sigCloseWindow, this, &DFMVaultActiveView::close);
 }
 
 void DFMVaultActiveView::setBeginingState()
@@ -86,9 +89,16 @@ void DFMVaultActiveView::setBeginingState()
 
 void DFMVaultActiveView::closeEvent(QCloseEvent *event)
 {
+    VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNKNOWN);
     setBeginingState();
     // 响应基类关闭事件
     DFMVaultPageBase::closeEvent(event);
+}
+
+void DFMVaultActiveView::showEvent(QShowEvent *event)
+{
+    VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::CREATEVAULTPAGE);
+    DFMVaultPageBase::showEvent(event);
 }
 
 void DFMVaultActiveView::slotNextWidget()

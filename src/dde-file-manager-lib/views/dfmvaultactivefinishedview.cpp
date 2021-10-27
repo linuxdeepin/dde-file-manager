@@ -194,6 +194,7 @@ void DFMVaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Autho
     disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
             this, &DFMVaultActiveFinishedView::slotCheckAuthorizationFinished);
     if (isVisible()) {
+        VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::CREATEVAULTPAGE1);
         if (result == Authority::Yes) {
             if (m_pFinishedBtn->text() == tr("Encrypt")) {
                 // 完成按钮灰化
@@ -229,6 +230,12 @@ void DFMVaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Autho
             m_pFinishedBtn->setEnabled(true);
         }
     }
+}
+
+void DFMVaultActiveFinishedView::showEvent(QShowEvent *event)
+{
+    VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::CREATEVAULTPAGE1);
+    QWidget::showEvent(event);
 }
 
 void DFMVaultActiveFinishedView::slotTimeout()

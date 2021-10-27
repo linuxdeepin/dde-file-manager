@@ -51,6 +51,8 @@ protected:
     // 重写基类关闭事件
     void closeEvent(QCloseEvent *event) override;
 
+    void showEvent(QShowEvent *event) override;
+
 private slots:
     void slotNextWidget();
 
