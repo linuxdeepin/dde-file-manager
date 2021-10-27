@@ -58,6 +58,8 @@ public:
     QDateTime created() const override;
     QDateTime lastModified() const override;
 
+    bool canDrop() const override;
+
 public:
     QDateTime m_created;
     QDateTime m_lastModified;

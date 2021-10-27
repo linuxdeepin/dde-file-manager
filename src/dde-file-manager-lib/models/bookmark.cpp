@@ -26,6 +26,7 @@
 #include "ddiskmanager.h"
 #include "dblockdevice.h"
 #include "dstorageinfo.h"
+#include "private/dabstractfileinfo_p.h"
 
 #include <QIcon>
 #include <QUrlQuery>
@@ -167,4 +168,12 @@ QDateTime BookMark::created() const
 QDateTime BookMark::lastModified() const
 {
     return m_lastModified;
+}
+
+bool BookMark::canDrop() const
+{
+    Q_D(const DAbstractFileInfo);
+    if (d->proxy && d->proxy->isDir() && !d->proxy->isWritable())
+        return false;
+    return DAbstractFileInfo::canDrop();
 }
