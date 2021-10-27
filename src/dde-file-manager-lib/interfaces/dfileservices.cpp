@@ -651,7 +651,9 @@ DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) 
     }
     //end
 
-    if (FileUtils::isGvfsMountFile(list.first().toLocalFile())) {
+    const QString& rootPath = list.first().toLocalFile();
+
+    if (!rootPath.isEmpty() && (FileUtils::isGvfsMountFile(rootPath) || deviceListener->isInRemovableDeviceFolder(rootPath) || VaultController::isVaultFile(rootPath))) {
         deleteFiles(sender, list);
         return list;
     }

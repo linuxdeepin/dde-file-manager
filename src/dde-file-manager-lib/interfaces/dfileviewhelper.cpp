@@ -841,8 +841,6 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
             QString strToPath = info->fileUrl().toLocalFile();
             if (strFromPath.startsWith("/media") || strToPath.startsWith("/media")) { // 如果是从U盘拖拽文件到保险箱或者是从保险箱拖拽文件到U盘
                 event->setDropAction(Qt::CopyAction);
-            } else if (TRASH_SCHEME == info->fileUrl().scheme()) {  // 修复BUG-47739 保险箱拖拽到回收站时，忽略该操作
-                event->setDropAction(Qt::IgnoreAction);
             } else if (strFromPath.startsWith("/run") && strFromPath.contains("/smb-share:server=")) {  // 修复BUG-59333 如果是smb拖拽到保险箱
                 event->setDropAction(Qt::CopyAction);
             } else {
