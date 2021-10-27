@@ -1473,7 +1473,13 @@ int DFileSystemModel::columnToRole(int column) const
 
     if (fileInfo) {
         //获取修改过顺序后的列属性
-        const QVariantMap &map = DFMApplication::appObtuselySetting()->value("FileViewState", rootUrl()).toMap();
+        DUrl url = rootUrl();
+        //搜索目录统一从"search:"项中取配置数据
+        if (url.isSearchFile()) {
+            url = DUrl();
+            url.setScheme(SEARCH_SCHEME);
+        }
+        const QVariantMap &map = DFMApplication::appObtuselySetting()->value("FileViewState", url).toMap();
         if (map.contains("headerList")) {
             const QVariantList &indexList = map.value("headerList").toList();
             if (indexList.length() > column)
@@ -1499,8 +1505,14 @@ int DFileSystemModel::roleToColumn(int role) const
 
     if (fileInfo) {
         int column = fileInfo->userColumnRoles().indexOf(role);
+        DUrl url = rootUrl();
+        //搜索目录统一从"search:"项中取配置数据
+        if (url.isSearchFile()) {
+            url = DUrl();
+            url.setScheme(SEARCH_SCHEME);
+        }
         //获取修改过顺序后的列属性的索引
-        const QVariantMap &map = DFMApplication::appObtuselySetting()->value("FileViewState", rootUrl()).toMap();
+        const QVariantMap &map = DFMApplication::appObtuselySetting()->value("FileViewState", url).toMap();
         if (map.contains("headerList")) {
             const QVariantList &indexList = map.value("headerList").toList();
             if (indexList.length() > column)

@@ -1644,7 +1644,13 @@ void DFileView::onHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int n
         int logicalIndex = d->headerView->logicalIndex(i);
         logicalIndexList << model()->columnToRole(logicalIndex);
     }
-    const DUrl &root_url = rootUrl();
+
+    DUrl root_url = rootUrl();
+    //所有搜索目录统一类目顺序，存入"search:"配置项中
+    if (root_url.isSearchFile()) {
+        root_url = DUrl();
+        root_url.setScheme(SEARCH_SCHEME);
+    }
     d->setFileViewStateValue(root_url, "headerList", logicalIndexList);
     //及时同步到本地配置文件中
     DFMApplication::appObtuselySetting()->sync();
