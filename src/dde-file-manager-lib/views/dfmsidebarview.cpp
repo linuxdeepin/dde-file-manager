@@ -213,7 +213,7 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
                  }
             }
 
-            if (!isFolderWritable || !isFileWritable) {
+            if (!isFolderWritable) {
                 copyUrls << DUrl(url);
                 qDebug() << "this is a unwriteable case:" << url;
             } else {
