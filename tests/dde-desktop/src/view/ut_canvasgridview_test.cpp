@@ -1170,10 +1170,12 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_firstIndex)
 {
     ASSERT_NE(m_canvasGridView, nullptr);
     auto localFile = GridManager::instance()->firstItemId(m_canvasGridView->m_screenNum);
+    if (localFile.isEmpty())
+        return;
+
     auto tempIndex = m_canvasGridView->model()->index(DUrl(localFile));
     auto tempIndexCanvs = m_canvasGridView->firstIndex();
-    bool theSameOne = tempIndex == tempIndexCanvs;
-    EXPECT_TRUE(theSameOne);
+    EXPECT_EQ(tempIndex, tempIndexCanvs);
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_lastIndex)
@@ -2130,6 +2132,12 @@ TEST_F(CanvasGridViewTest, test_renderToPixmap)
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_three){
     ASSERT_NE(m_canvasGridView, nullptr);
 
+    stub_ext::StubExt stub;
+    bool shift = false;
+    stub.set_lamda(&DFMGlobal::keyShiftIsPressed, [&shift]() {
+        return shift;
+    });
+
     QString desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
     DUrl desktopUrl = DUrl::fromLocalFile(desktopPath);
     if (desktopUrl.isEmpty())
@@ -2157,7 +2165,6 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_three){
     bool expectValue = topLeftBeforeSelects == topLeftAfterSelects && 0 == topLeftBeforeSelects.size() && 0 == topLeftAfterSelects.size();
     EXPECT_TRUE(expectValue);
 
-
     QRect topleftRectTwo(itemTopLeft, QPoint(itemTopLeft.x() + 15, itemTopLeft.y() + 15));
     topLeftBeforeSelects = m_canvasGridView->selectedUrls();
     m_canvasGridView->setSelection(topleftRectTwo, QItemSelectionModel::Select);
@@ -2172,6 +2179,12 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_three){
 
     m_canvasGridView->setSelection(lastRect, QItemSelectionModel::Select);
     auto lastSelect = m_canvasGridView->selectedUrls();
+    EXPECT_TRUE(1 == lastSelect.size());
+    //m_canvasGridView->selectionModel()->clearSelection();
+
+    shift = true;
+    m_canvasGridView->setSelection(lastRect, QItemSelectionModel::Select);
+    lastSelect = m_canvasGridView->selectedUrls();
     EXPECT_TRUE(1 == lastSelect.size());
     m_canvasGridView->selectionModel()->clearSelection();
 }

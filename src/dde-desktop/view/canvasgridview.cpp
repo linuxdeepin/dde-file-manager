@@ -830,7 +830,8 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
 
     if (index.isValid()) {
         d->currentCursorIndex = index;
-        if (!d->m_oldCursorIndex.isValid())
+        //shift 开始index无效时更新无当前点击项，未按下shift点击时更新为当前点击项
+        if (!d->m_oldCursorIndex.isValid() || !DFMGlobal::keyShiftIsPressed())
             d->m_oldCursorIndex = index;
     }
 
@@ -3091,24 +3092,33 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
                 }
             }
             if (command != QItemSelectionModel::Deselect) {
-                // Remove dump select
                 QItemSelection lastAllSelection;
-                auto tempNewSelection = rectSelection;
-                auto tempOldSelection = oldSelection;
-                for (auto &sel : rectSelection) {
-                    for (auto &index : sel.indexes())
-                        if (oldSelection.contains(index)) {
-                            //fixbug63317:在桌面按住ctrl+鼠标左键选择文件后，按住鼠标左键框选文件，按住ctrl的过程中鼠标左键无法取消首次选择的文件
-                            //oldSelection.push_back(sel);
-
-                            //bug87509，产品要求按住ctrl鼠标框选效果与文管保持一直
-                            tempNewSelection.removeOne(sel);
-                            tempOldSelection.removeOne(sel);
-                        }
+                if (DFMGlobal::keyShiftIsPressed()) {
+                    //shitf键增量
+                    for (auto &sel : rectSelection) {
+                        for (auto &index : sel.indexes())
+                            if (!oldSelection.contains(index)) {
+                                oldSelection.push_back(sel);
+                            }
+                    }
+                    lastAllSelection.merge(oldSelection, QItemSelectionModel::Select);
+                } else {
+                    // Remove dump select
+                    auto tempNewSelection = rectSelection;
+                    auto tempOldSelection = oldSelection;
+                    for (auto &sel : rectSelection) {
+                        for (auto &index : sel.indexes())
+                            if (oldSelection.contains(index)) {
+                                //bug87509，产品要求按住ctrl鼠标框选效果与文管保持一直
+                                tempNewSelection.removeOne(sel);
+                                tempOldSelection.removeOne(sel);
+                            }
+                    }
+                    // merge
+                    lastAllSelection.merge(tempNewSelection, QItemSelectionModel::Select);
+                    lastAllSelection.merge(tempOldSelection, QItemSelectionModel::Select);
                 }
-                // merge
-                lastAllSelection.merge(tempNewSelection, QItemSelectionModel::Select);
-                lastAllSelection.merge(tempOldSelection, QItemSelectionModel::Select);
+
                 QAbstractItemView::selectionModel()->select(lastAllSelection, command);
             } else {
                 QAbstractItemView::selectionModel()->select(rectSelection, command);
@@ -3714,6 +3724,8 @@ void CanvasGridView::startDrag(Qt::DropActions supportedActions)
     // 在定时器期间收到鼠标move事件低于配置时间，不触发drag
     if (d->touchTimer.isActive())
         return;
+    //drop后该变量依然为true，先将其置为false
+    d->mousePressed = false;
 
     //drag优化，只抓起本屏幕上的图标
     DUrlList validSel;
