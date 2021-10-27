@@ -1781,6 +1781,10 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
 
     for (const auto &url : m_urlsForDragEvent) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));
+        if (!fileInfo || !fileInfo->isReadable()) {
+            event->ignore();
+            return;
+        }
 
         //部分文件不能复制或剪切，需要在拖拽时忽略
         if (!fileInfo || !fileInfo->canMoveOrCopy()) {
