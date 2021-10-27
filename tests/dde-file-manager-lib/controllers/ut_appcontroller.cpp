@@ -23,6 +23,7 @@
 #include "ddialog.h"
 #define private public
 #define protected public
+#include "views/dtagedit.h"
 #include "tag/tagmanager.h"
 #include "testhelper.h"
 #include "stub.h"
@@ -997,6 +998,30 @@ TEST_F(AppControllerTest, start_actionGetTagsThroughFiles){
     };
     stl.set(ADDR(TagManager,getColorNameByColor),getColorNameByColorlamda);
     controller->actionChangeTagColor(dMakeEventPointer<DFMChangeTagColorEvent>(nullptr,Qt::red, url));
+
+    stub_ext::StubExt stub; //在不影响原有覆盖率下打桩
+    stub.set_lamda(&AppController::showTagEdit, [=](){
+        QRect parentRect(0,0,0,0);
+        QPoint globalPos(0,0);
+        DUrlList fileList{url};
+        DTagEdit *tagEdit = new DTagEdit();
+        auto subValue = parentRect.height() - globalPos.y();
+        if (subValue < 98) {
+            tagEdit->setArrowDirection(DArrowRectangle::ArrowDirection::ArrowBottom);
+        }
+        tagEdit->setBaseSize(160, 98);
+        tagEdit->setFilesForTagging(fileList);
+        tagEdit->setFocusOutSelfClosing(true);
+        QList<QString> sameTagsInDiffFiles{ DFileService::instance()->getTagsThroughFiles(nullptr, fileList) };
+        tagEdit->setDefaultCrumbs(sameTagsInDiffFiles);
+        tagEdit->show(globalPos.x(), globalPos.y());
+        tagEdit->close();
+        if (tagEdit) {
+            delete tagEdit;
+            tagEdit = nullptr;
+        }
+    });
+
     controller->showTagEdit(QRect(0,0,0,0),QPoint(0,0),DUrlList() << url);
     QApplication::closeAllWindows();
 }
