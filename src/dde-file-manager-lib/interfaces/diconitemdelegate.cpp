@@ -339,7 +339,8 @@ public:
                          width() - TEXT_PADDING * 2 - margins.left() - margins.right(),
                          INT_MAX);
 
-        const QList<QRectF> &lines = delegate->drawText(index, &pa, option.text, label_rect, ICON_MODE_RECT_RADIUS,
+        QString str = index.data(DFileSystemModel::FileDisplayNameRole).toString();
+        const QList<QRectF> &lines = delegate->drawText(index, &pa, str, label_rect, ICON_MODE_RECT_RADIUS,
                                                         option.palette.brush(QPalette::Normal, QPalette::Highlight),
                                                         QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                         option.textElideMode, Qt::AlignCenter);
@@ -402,7 +403,8 @@ public:
                              width - TEXT_PADDING * 2,
                              INT_MAX);
 
-            const QList<QRectF> &lines = delegate->drawText(index, nullptr, option.text, label_rect, ICON_MODE_RECT_RADIUS, Qt::NoBrush,
+            QString str = index.data(DFileSystemModel::FileDisplayNameRole).toString();
+            const QList<QRectF> &lines = delegate->drawText(index, nullptr, str, label_rect, ICON_MODE_RECT_RADIUS, Qt::NoBrush,
                                                             QTextOption::WrapAtWordBoundaryOrAnywhere, option.textElideMode, Qt::AlignCenter);
 
             textBounding = boundingRect(lines);
@@ -697,10 +699,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     }
 
     //icon模式下固定展示文件名
-    QString str = index.data(DFileSystemModel::FileBaseNameRole).toString().remove('\n');
-    const QString &suffix = "." + index.data(DFileSystemModel::FileSuffixRole).toString();
-    if (suffix != ".")
-        str += suffix;
+    QString str = index.data(DFileSystemModel::FileDisplayNameRole).toString();
 
     /// init file name geometry
     QRectF label_rect = opt.rect;
