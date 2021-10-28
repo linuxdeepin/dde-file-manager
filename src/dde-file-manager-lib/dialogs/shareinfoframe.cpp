@@ -255,6 +255,7 @@ void ShareInfoFrame::updateShareInfo(const QString &filePath)
 
     if (!m_fileinfo->fileSharedName().isEmpty()) {
         m_shareCheckBox->setChecked(true);
+        activateWidgets();
         //disconnect(m_shareNamelineEdit, &QLineEdit::editingFinished, this, &ShareInfoFrame::handleShareNameChanged);
         //int cursorPos = m_shareNamelineEdit->cursorPosition();
         m_shareNamelineEdit->setText(m_fileinfo->fileSharedName());
