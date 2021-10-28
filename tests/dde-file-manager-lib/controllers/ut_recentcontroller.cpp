@@ -121,7 +121,7 @@ TEST_F(TestRecentController, test_moveToTrash)
 {
     auto event = dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, DUrlList() << tmpFileUrl, true);
     StubExt st;
-    st.set_lamda(&DFileService::deleteFiles, []() { return true; });
+    st.set_lamda(VADDR(RecentController,deleteFiles), []() { return true; });
     EXPECT_TRUE(m_controller->moveToTrash(event).isEmpty());
 }
 
@@ -130,6 +130,7 @@ TEST_F(TestRecentController, test_deleteFiles)
     auto event = dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << tmpFileUrl);
     StubExt st;
     st.set_lamda(&DRecentManager::removeItems, []() { return; });
+    st.set_lamda(VADDR(DDialog,exec), [](){return 1;});
     EXPECT_TRUE(m_controller->deleteFiles(event));
 }
 

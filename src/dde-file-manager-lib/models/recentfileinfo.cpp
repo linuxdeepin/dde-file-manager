@@ -234,7 +234,7 @@ int RecentFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &font
 
 DUrl RecentFileInfo::mimeDataUrl() const
 {
-    return DUrl::fromLocalFile(toLocalFile());
+    return fileUrl();
 }
 
 DUrl RecentFileInfo::parentUrl() const

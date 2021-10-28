@@ -462,22 +462,40 @@ bool RecentController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent>
 
 bool RecentController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
-    QStringList list;
-    for (const DUrl &url : event->urlList()) {
-        //list << DUrl::fromLocalFile(url.path()).toString();
-        //通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
-        QString urlPath = url.path();
-        list << "file://" + urlPath;
-    }
+    DThreadUtil::runInMainThread([event] {
+        DDialog dlg;
+        dlg.setIcon(QIcon::fromTheme("dialog-warning"));
+        dlg.addButton(tr("Cancel", "button"));
+        dlg.addButton(tr("Remove", "button"), true, DDialog::ButtonRecommend);
 
-    DRecentManager::removeItems(list);
+        if (event->urlList().size() == 1)
+            dlg.setTitle(tr("Do you want to remove this item?"));
+        else
+            dlg.setTitle(tr("Do yout want to remove %1 items?").arg(event->urlList().size()));
+        dlg.setMessage(tr("It does not delete the original files"));
+
+        int code = dlg.exec();
+        if (code == 1) {
+            QStringList list;
+            for (const DUrl &url : event->urlList()) {
+                //list << DUrl::fromLocalFile(url.path()).toString();
+                //通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
+                QString urlPath = url.path();
+                list << "file://" + urlPath;
+            }
+
+            DRecentManager::removeItems(list);
+        }
+    });
 
     return true;
 }
 
 DUrlList RecentController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
-    DFileService::instance()->deleteFiles(event->sender(), event->urlList(), false, event->silent(), true);
+    deleteFiles(dMakeEventPointer<DFMDeleteEvent>(event->sender(),
+                                                  event->urlList(),
+                                                  event->silent()));
 
     return DUrlList();
 }

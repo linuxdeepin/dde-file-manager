@@ -318,10 +318,10 @@ bool DFMSideBarView::onDropData(DUrlList srcUrls, DUrl dstUrl, Qt::DropAction ac
 
     switch (action) {
     case Qt::CopyAction:
-            // blumia: should run in another thread or user won't do another DnD opreation unless the copy action done.
-            QtConcurrent::run([ = ]() {
-                fileService->pasteFile(this, DFMGlobal::CopyAction, dstUrl, srcUrls);
-            });
+        // blumia: should run in another thread or user won't do another DnD opreation unless the copy action done.
+        QtConcurrent::run([ = ]() {
+            fileService->pasteFile(this, DFMGlobal::CopyAction, dstUrl, srcUrls);
+        });
 
         break;
     case Qt::LinkAction:
@@ -450,6 +450,10 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
     //跨用户的操作不允许修改原文件
     if (!DFMGlobal::isMimeDatafromCurrentUser(data) && action == Qt::MoveAction)
         action = Qt::CopyAction;
+
+    // 最近使用目录下的文件，只有拖拽到回收站为剪切，其他都为拷贝
+    if (from.isRecentFile())
+        action = isToTrash ? Qt::MoveAction : Qt::CopyAction;
 
     if (support_actions.testFlag(action)) {
         return action;

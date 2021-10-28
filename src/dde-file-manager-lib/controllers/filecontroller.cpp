@@ -1452,6 +1452,15 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
         */
     use_old_filejob = !QFile("/proc/thread-self/io").exists();
 #endif
+    // 将最近使用文件url转换为本地url
+    DUrlList urlList = event->urlList();
+    if (!urlList.isEmpty() && urlList.first().isRecentFile()) {
+        for (auto &url : urlList) {
+            const auto &local = url.path();
+            url = DUrl::fromLocalFile(local);
+        }
+        event->setData(urlList);
+    }
 
     DUrlList list;
     //pasteFilesV1走以前的流程

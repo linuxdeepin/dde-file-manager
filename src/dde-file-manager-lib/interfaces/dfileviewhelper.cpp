@@ -851,6 +851,12 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
                 }
             }
         }
+
+        // 最近使用目录下的文件，只有拖拽到回收站为剪切，其他都为拷贝
+        if (from.isRecentFile()) {
+            default_action = isToTrash ? Qt::MoveAction : Qt::CopyAction;
+            event->setDropAction(default_action);
+        }
     }
 }
 
@@ -937,6 +943,12 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
                     break;
                 }
             }
+        }
+
+        // 最近使用目录下的文件，只有拖拽到回收站为剪切，其他都为拷贝
+        if (from.isRecentFile()) {
+            default_action = isToTrash ? Qt::MoveAction : Qt::CopyAction;
+            event->setDropAction(default_action);
         }
     }
 }
