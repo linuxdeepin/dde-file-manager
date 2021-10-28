@@ -152,6 +152,7 @@ bool OperatorCenter::saveKey(QString key, QString path)
         qDebug() << "open public key file failure!";
         return false;
     }
+    publicFile.setPermissions(QFileDevice::ReadOwner|QFileDevice::WriteOwner|QFileDevice::ReadGroup);
     QTextStream out(&publicFile);
     out << key;
     publicFile.close();

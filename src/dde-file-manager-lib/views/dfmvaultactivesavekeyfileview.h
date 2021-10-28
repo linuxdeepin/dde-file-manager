@@ -68,6 +68,9 @@ public slots:
      */
     void slotRadioBtn(QAbstractButton * btn );
 
+protected:
+    void showEvent(QShowEvent * event) override;
+
 private:
     //! 保存密钥文件页面标题
     DLabel * m_title = nullptr;

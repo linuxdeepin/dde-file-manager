@@ -24,12 +24,15 @@
 #include "accessibility/ac-lib-file-manager.h"
 #include "vaultglobaldefine.h"
 #include "operatorcenter.h"
+#include "dguiapplicationhelper.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QButtonGroup>
 #include <QPainterPath>
 #include <QFileDialog>
+
+DGUI_USE_NAMESPACE
 
 DFMVaultActiveSaveKeyFileView::DFMVaultActiveSaveKeyFileView(QWidget *parent) :
     QWidget(parent)
@@ -55,6 +58,8 @@ void DFMVaultActiveSaveKeyFileView::initUI()
     m_otherPathRadioBtn->setText(tr("Save to other locations"));
     m_SelectfileSavePathEdit = new DFileChooserEdit;
     AC_SET_ACCESSIBLE_NAME(m_SelectfileSavePathEdit, AC_VAULT_SELECT_FILE_SAVE_PATH_EDIT);
+    m_SelectfileSavePathEdit->lineEdit()->setReadOnly(true);
+    m_SelectfileSavePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
     QFileDialog * filedialog = new QFileDialog(m_SelectfileSavePathEdit, QDir::homePath(), QString("pubKey.key")/*, tr("Key File(*.key)")*/);
     filedialog->setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
     filedialog->setNameFilter("KEY file(*.key)");
@@ -181,6 +186,13 @@ void DFMVaultActiveSaveKeyFileView::slotRadioBtn(QAbstractButton *btn)
     }
 }
 
+void DFMVaultActiveSaveKeyFileView::showEvent(QShowEvent *event)
+{
+    m_defaultPathRadioBtn->setChecked(true);
+    m_SelectfileSavePathEdit->clear();
+    QWidget::showEvent(event);
+}
+
 RadioFrame::RadioFrame(QFrame *parent):
     QFrame(parent)
 {
@@ -191,7 +203,12 @@ void RadioFrame::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
-    painter.setBrush(QBrush(QColor("#4ce6e6e6")));
+    if(DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType) {
+        painter.setBrush(QBrush(QColor("#4c252525")));
+    }else if(DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType){
+        painter.setBrush(QBrush(QColor("#4ce6e6e6")));
+    }
+
     painter.setPen(Qt::transparent);
     QRect rect = this->rect();
     rect.setWidth(rect.width() - 1);

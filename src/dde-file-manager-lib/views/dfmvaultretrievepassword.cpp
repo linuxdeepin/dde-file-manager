@@ -23,6 +23,7 @@
 #include "dfmvaultretrievepassword.h"
 #include "accessibility/ac-lib-file-manager.h"
 #include "vault/operatorcenter.h"
+#include "durl.h"
 
 #include <QStringList>
 #include <QFrame>
@@ -57,16 +58,28 @@ void DFMVaultRetrievePassword::verificationKey()
     switch (m_savePathTypeComboBox->currentIndex()) {
     case 0:
     {
-        QFile file(defaultKeyPath);
-
-        if(file.exists()) {
-            m_defaultFilePathEdit->setText(QString("dfmvault:///") + RSA_PUB_KEY_FILE_NAME + QString(".key"));
+        if(QFile::exists(defaultKeyPath)) {
+            m_defaultFilePathEdit->setText(QString(DFMVAULT_ROOT) + RSA_PUB_KEY_FILE_NAME + QString(".key"));
+            getButton(1)->setEnabled(true);
             keyPath = defaultKeyPath;
+        }
+        else {
+            m_defaultFilePathEdit->setPlaceholderText(tr("Unable to get the key file"));
+            m_defaultFilePathEdit->setText("");
+            getButton(1)->setEnabled(false);
         }
         break;
     }
     case 1:
         keyPath = m_filePathEdit->text();
+        if(!QFile::exists(keyPath)) {
+            m_filePathEdit->lineEdit()->setPlaceholderText(tr("Unable to get the key file"));
+            m_filePathEdit->setText("");
+            getButton(1)->setEnabled(false);
+        }
+        else {
+            getButton(1)->setEnabled(true);
+        }
         break;
     }
 
@@ -112,12 +125,36 @@ void DFMVaultRetrievePassword::onComboBoxIndex(int index)
 {
     switch (index) {
     case 0:
+    {
         m_defaultFilePathEdit->show();
         m_filePathEdit->hide();
+        if(QFile::exists(defaultKeyPath)) {
+            m_defaultFilePathEdit->setText(QString(DFMVAULT_ROOT) + RSA_PUB_KEY_FILE_NAME + QString(".key"));
+            getButton(1)->setEnabled(true);
+        }
+        else {
+            m_defaultFilePathEdit->setPlaceholderText(tr("Unable to get the key file"));
+            m_defaultFilePathEdit->setText("");
+            getButton(1)->setEnabled(false);
+        }
+        m_verificationPrompt->setText("");
+    }
         break;
     case 1:
         m_defaultFilePathEdit->hide();
         m_filePathEdit->show();
+        if(QFile::exists(m_filePathEdit->text()))
+            getButton(1)->setEnabled(true);
+        else if(!m_filePathEdit->text().isEmpty() && m_filePathEdit->lineEdit()->placeholderText() != QString(tr("Unable to get the key file"))){
+            m_filePathEdit->lineEdit()->setPlaceholderText(tr("Unable to get the key file"));
+            m_filePathEdit->setText("");
+            getButton(1)->setEnabled(false);
+        }
+        else {
+            m_filePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
+            getButton(1)->setEnabled(false);
+        }
+        m_verificationPrompt->setText("");
         break;
     }
 }
@@ -125,6 +162,8 @@ void DFMVaultRetrievePassword::onComboBoxIndex(int index)
 void DFMVaultRetrievePassword::onBtnSelectFilePath(const QString & path)
 {
     m_filePathEdit->setText(path);
+    if(!path.isEmpty())
+        getButton(1)->setEnabled(true);
 }
 
 void DFMVaultRetrievePassword::slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result)
@@ -152,6 +191,7 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent):DFMVaultPage
 
     m_filePathEdit = new DFileChooserEdit(this);
     AC_SET_ACCESSIBLE_NAME(m_filePathEdit, AC_VAULT_SAVE_PUBKEY_FILE_EDIT);
+    m_filePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
     QFileDialog * fileDialog = new QFileDialog(this, QDir::homePath());
     fileDialog->setDirectoryUrl(QDir::homePath());
     fileDialog->setNameFilter(QString("KEY file(*.key)"));
@@ -277,10 +317,15 @@ void DFMVaultRetrievePassword::setResultsPage(QString password)
 
 void DFMVaultRetrievePassword::showEvent(QShowEvent *event)
 {
-    QFile file(defaultKeyPath);
-    if(file.exists()) {
-        m_defaultFilePathEdit->setText(QString("dfmvault:///") + RSA_PUB_KEY_FILE_NAME + QString(".key"));
+    if(QFile::exists(defaultKeyPath)) {
+        m_defaultFilePathEdit->setText(QString(DFMVAULT_ROOT) + RSA_PUB_KEY_FILE_NAME + QString(".key"));
+        getButton(1)->setEnabled(true);
     }
+    else {
+        m_defaultFilePathEdit->setPlaceholderText(tr("Unable to get the key file"));
+        getButton(1)->setEnabled(false);
+    }
+    m_filePathEdit->setText("");
     setVerificationPage();
     DFMVaultPageBase::showEvent(event);
 }
