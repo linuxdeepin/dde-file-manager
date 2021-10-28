@@ -23,6 +23,8 @@
 #include "dattachedblockdevice.h"
 #include "pluginsidecar.h"
 
+#include <QVariantMap>
+
 /*!
  * \class DAttachedBlockDevice
  *
@@ -97,6 +99,6 @@ QUrl DAttachedBlockDevice::accessPointUrl()
 
 void DAttachedBlockDevice::parse()
 {
-    const QString &json = SidecarInstance.invokeQueryBlockDeviceInfo(deviceId);
+    const QVariantMap &map = SidecarInstance.invokeQueryBlockDeviceInfo(deviceId);
     // TODO(zhans) make data
 }

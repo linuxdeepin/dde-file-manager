@@ -41,8 +41,8 @@ public:
     bool invokeIsMonotorWorking();
     QStringList invokeBlockDevicesIdList();
     QStringList invokeProtolcolDevicesIdList();
-    QString invokeQueryBlockDeviceInfo(const QString &id);
-    QString invokeQueryProtocolDeviceInfo(const QString &id);
+    QVariantMap invokeQueryBlockDeviceInfo(const QString &id);
+    QVariantMap invokeQueryProtocolDeviceInfo(const QString &id);
     void invokeEjectDevice(const QString &id);
 
 private:

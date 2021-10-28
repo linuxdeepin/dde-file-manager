@@ -36,13 +36,6 @@ public:
     ~DeviceManagerInterface();
 
 public Q_SLOTS: // METHODS
-    inline QDBusPendingReply<QStringList> BlockDevicesIdList(const QVariantMap &opts)
-    {
-        QList<QVariant> argumentList;
-        argumentList << QVariant::fromValue(opts);
-        return asyncCallWithArgumentList(QStringLiteral("BlockDevicesIdList"), argumentList);
-    }
-
     inline QDBusPendingReply<> EjectAllMountedDevices()
     {
         QList<QVariant> argumentList;
@@ -56,26 +49,33 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("EjectDevice"), argumentList);
     }
 
+    inline QDBusPendingReply<QStringList> GetBlockDevicesIdList(const QVariantMap &opts)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(opts);
+        return asyncCallWithArgumentList(QStringLiteral("GetBlockDevicesIdList"), argumentList);
+    }
+
+    inline QDBusPendingReply<QStringList> GetProtolcolDevicesIdList()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("GetProtolcolDevicesIdList"), argumentList);
+    }
+
     inline QDBusPendingReply<bool> IsMonotorWorking()
     {
         QList<QVariant> argumentList;
         return asyncCallWithArgumentList(QStringLiteral("IsMonotorWorking"), argumentList);
     }
 
-    inline QDBusPendingReply<QStringList> ProtolcolDevicesIdList()
-    {
-        QList<QVariant> argumentList;
-        return asyncCallWithArgumentList(QStringLiteral("ProtolcolDevicesIdList"), argumentList);
-    }
-
-    inline QDBusPendingReply<QString> QueryBlockDeviceInfo(const QString &id)
+    inline QDBusPendingReply<QVariantMap> QueryBlockDeviceInfo(const QString &id)
     {
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(id);
         return asyncCallWithArgumentList(QStringLiteral("QueryBlockDeviceInfo"), argumentList);
     }
 
-    inline QDBusPendingReply<QString> QueryProtocolDeviceInfo(const QString &id)
+    inline QDBusPendingReply<QVariantMap> QueryProtocolDeviceInfo(const QString &id)
     {
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(id);

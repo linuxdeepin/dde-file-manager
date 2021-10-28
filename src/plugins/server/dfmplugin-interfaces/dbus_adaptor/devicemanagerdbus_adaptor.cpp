@@ -33,12 +33,6 @@ DeviceManagerAdaptor::~DeviceManagerAdaptor()
     // destructor
 }
 
-QStringList DeviceManagerAdaptor::BlockDevicesIdList(const QVariantMap &opts)
-{
-    // handle method call com.deepin.filemanager.service.DeviceManager.BlockDevicesIdList
-    return parent()->BlockDevicesIdList(opts);
-}
-
 void DeviceManagerAdaptor::EjectAllMountedDevices()
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.EjectAllMountedDevices
@@ -51,25 +45,31 @@ void DeviceManagerAdaptor::EjectDevice(const QString &id)
     parent()->EjectDevice(id);
 }
 
+QStringList DeviceManagerAdaptor::GetBlockDevicesIdList(const QVariantMap &opts)
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.GetBlockDevicesIdList
+    return parent()->GetBlockDevicesIdList(opts);
+}
+
+QStringList DeviceManagerAdaptor::GetProtolcolDevicesIdList()
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.GetProtolcolDevicesIdList
+    return parent()->GetProtolcolDevicesIdList();
+}
+
 bool DeviceManagerAdaptor::IsMonotorWorking()
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.IsMonotorWorking
     return parent()->IsMonotorWorking();
 }
 
-QStringList DeviceManagerAdaptor::ProtolcolDevicesIdList()
-{
-    // handle method call com.deepin.filemanager.service.DeviceManager.ProtolcolDevicesIdList
-    return parent()->ProtolcolDevicesIdList();
-}
-
-QString DeviceManagerAdaptor::QueryBlockDeviceInfo(const QString &id)
+QVariantMap DeviceManagerAdaptor::QueryBlockDeviceInfo(const QString &id)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.QueryBlockDeviceInfo
     return parent()->QueryBlockDeviceInfo(id);
 }
 
-QString DeviceManagerAdaptor::QueryProtocolDeviceInfo(const QString &id)
+QVariantMap DeviceManagerAdaptor::QueryProtocolDeviceInfo(const QString &id)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.QueryProtocolDeviceInfo
     return parent()->QueryProtocolDeviceInfo(id);

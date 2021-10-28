@@ -23,6 +23,7 @@
 #include "dattachedprotocoldevice.h"
 #include "pluginsidecar.h"
 
+#include <QVariantMap>
 
 /*!
  * \class DAttachedProtocolDevice
@@ -93,6 +94,6 @@ QUrl DAttachedProtocolDevice::accessPointUrl()
 
 void DAttachedProtocolDevice::parse()
 {
-    const QString &json = SidecarInstance.invokeQueryProtocolDeviceInfo(deviceId);
+    const QVariantMap &map = SidecarInstance.invokeQueryProtocolDeviceInfo(deviceId);
     // TODO(zhans) make data
 }

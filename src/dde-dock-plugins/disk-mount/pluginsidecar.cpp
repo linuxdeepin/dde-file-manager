@@ -92,7 +92,7 @@ QStringList PluginSidecar::invokeBlockDevicesIdList()
 
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto reply = deviceInterface->BlockDevicesIdList({{"unmountable", true}});
+        auto reply = deviceInterface->GetBlockDevicesIdList({{"unmountable", true}});
         if (reply.isValid())
             ret = reply.value();
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
@@ -107,7 +107,7 @@ QStringList PluginSidecar::invokeProtolcolDevicesIdList()
 
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto reply = deviceInterface->ProtolcolDevicesIdList();
+        auto reply = deviceInterface->GetProtolcolDevicesIdList();
         if (reply.isValid())
             ret = reply.value();
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
@@ -116,9 +116,9 @@ QStringList PluginSidecar::invokeProtolcolDevicesIdList()
     return ret;
 }
 
-QString PluginSidecar::invokeQueryBlockDeviceInfo(const QString &id)
+QVariantMap PluginSidecar::invokeQueryBlockDeviceInfo(const QString &id)
 {
-    QString ret;
+    QVariantMap ret;
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         auto reply = deviceInterface->QueryBlockDeviceInfo(id);
@@ -129,9 +129,9 @@ QString PluginSidecar::invokeQueryBlockDeviceInfo(const QString &id)
     return ret;
 }
 
-QString PluginSidecar::invokeQueryProtocolDeviceInfo(const QString &id)
+QVariantMap PluginSidecar::invokeQueryProtocolDeviceInfo(const QString &id)
 {
-    QString ret;
+    QVariantMap ret;
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         auto reply = deviceInterface->QueryProtocolDeviceInfo(id);

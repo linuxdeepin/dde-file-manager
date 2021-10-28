@@ -141,6 +141,80 @@ void DeviceMonitorHandler::removeProtocolDeviceData(const QString &deviceId)
         allProtocolDevData.remove(deviceId);
 }
 
+void DeviceMonitorHandler::updateDataWithOpticalInfo(BlockDeviceData *data, const QMap<dfmmount::Property, QVariant> &changes)
+{
+    auto &&opticalFlag = DFMMOUNT::Property::DriveOptical;
+    auto &&idUsageFlag = DFMMOUNT::Property::BlockIDUsage;
+
+    // CD inserted / ejected
+    if (changes.contains(opticalFlag)) {
+        data->optical = changes.value(opticalFlag).toBool();
+        auto &&opticalBlankFlag = DFMMOUNT::Property::DriveOpticalBlank;
+        if (changes.contains(opticalBlankFlag))
+            data->opticalBlank = changes.value(opticalBlankFlag).toBool();
+        // TODO(zhangs): emit a signal about optical inserted or ejected
+    }
+
+    // CD recognized / not recognized
+    if (changes.contains(idUsageFlag)) {
+        const QString &usage = changes.value(idUsageFlag).toString().toLower();
+        if (usage == "filesystem") {
+            auto &&idTypeFlag = DFMMOUNT::Property::BlockIDType;
+            data->common.filesystem = changes.value(idTypeFlag).toString();
+        }
+    }
+}
+
+void DeviceMonitorHandler::updateDataWithMountedInfo(BlockDeviceData *data, const QMap<dfmmount::Property, QVariant> &changes)
+{
+    auto &&mptFlag = DFMMOUNT::Property::FileSystemMountPoint;
+
+    // mounted / unmounted / size
+    if (changes.contains(mptFlag)) {
+        const QString &mpt = changes.value(mptFlag).toString();
+        if (mpt.isEmpty()) { // unmounted
+            data->common.mountpoint = QString("");
+            data->mountpoints.clear();
+        } else { // mounted
+            data->common.mountpoint = mpt;
+            if (!data->mountpoints.contains(mpt))
+                data->mountpoints.append(mpt);
+            QStorageInfo sizeInfo(mpt);
+            // cannot acquire correct strorage info in optical device
+            if (sizeInfo.isValid() && !data->optical) {
+                data->common.sizeUsage = data->common.sizeTotal - sizeInfo.bytesAvailable();
+                data->common.sizeFree = sizeInfo.bytesAvailable();
+            }
+            if (data->optical) {
+                // TODO(zhangs): update optical disk size info (should async)
+            }
+        }
+    }
+}
+
+void DeviceMonitorHandler::updateDataWithOtherInfo(BlockDeviceData *data, const QMap<dfmmount::Property, QVariant> &changes)
+{
+    auto &&idLabelFlag = DFMMOUNT::Property::BlockIDLabel;
+    auto &&hintIgnoreFlag = DFMMOUNT::Property::BlockHintIgnore;
+    auto &&hintSystemFlag = DFMMOUNT::Property::BlockHintSystem;
+
+    // idlable
+    if (changes.contains(idLabelFlag)) {
+        const QString &idlabel = changes.value(idLabelFlag).toString();
+        data->idLabel = idlabel;
+    }
+
+    // hintIgnore
+    if (changes.contains(hintIgnoreFlag))
+        data->hintIgnore = changes.value(hintIgnoreFlag).toBool();
+
+    // hintSystem
+    if (changes.contains(hintSystemFlag))
+        data->hintSystem = changes.value(hintSystemFlag).toBool();
+
+    // TODO(zhangs): handle other Property...
+}
+
 void DeviceMonitorHandler::onBlockDriveAdded(const QString &drvObjPath)
 {
     qInfo() << "A block dirve added: " << drvObjPath;
@@ -238,46 +312,11 @@ void DeviceMonitorHandler::onBlockDevicePropertyChanged(const QString &deviceId,
                                                         const QMap<dfmmount::Property, QVariant> &changes)
 {
     if (allBlkDevData.contains(deviceId)) {
-        auto &&idUsageFlag = DFMMOUNT::Property::BlockIDUsage;
-        auto &&mptFlag = DFMMOUNT::Property::FileSystemMountPoint;
-        auto &&idLabelFlag = DFMMOUNT::Property::BlockIDLabel;
-        auto &&hintIgnoreFlag = DFMMOUNT::Property::BlockHintIgnore;
-        auto &curDevice = allBlkDevData[deviceId];
+        updateDataWithOpticalInfo(&allBlkDevData[deviceId], changes);
+        updateDataWithMountedInfo(&allBlkDevData[deviceId], changes);
+        updateDataWithOtherInfo(&allBlkDevData[deviceId], changes);
 
-        // file system
-        if (changes.contains(idUsageFlag)) {
-            const QString &usage = changes.value(idUsageFlag).toString().toLower();
-            if (usage == "filesystem") {
-                const QString &fs = changes.value(DFMMOUNT::Property::BlockIDType).toString();
-                curDevice.common.fileSystem = fs;
-            }
-        }
-
-        // mounted / unmounted
-        if (changes.contains(mptFlag)) {
-            const QString &mpt = changes.value(mptFlag).toString();
-            if (mpt.isEmpty()) {
-                curDevice.common.mountpoint = QString("");
-                curDevice.mountpoints.clear();
-            } else {
-                curDevice.common.mountpoint = mpt;
-                curDevice.mountpoints.append(mpt);
-            }
-        }
-
-        // idlable
-        if (changes.contains(idLabelFlag)) {
-            const QString &idlabel = changes.value(idLabelFlag).toString();
-            curDevice.idLabel = idlabel;
-        }
-
-        // hintIgnore
-        if (changes.contains(hintIgnoreFlag)) {
-            bool hintIgnore = changes.value(hintIgnoreFlag).toBool();
-            curDevice.hintIgnore = hintIgnore;
-        }
-
-        // TODO(zhangs): handle other Property...
+        // TODO(zhangs): support encrypted devices
     }
 }
 
@@ -342,7 +381,7 @@ bool DeviceService::stopMonitor()
     return ret;
 }
 
-void DeviceService::doEject(const QString &deviceId)
+void DeviceService::eject(const QString &deviceId)
 {
     if (deviceId.isEmpty())
         return;
@@ -359,7 +398,7 @@ void DeviceService::doEject(const QString &deviceId)
 /*!
  * \brief eject all of block devices(async) and protocol devices(sync)
  */
-void DeviceService::doEjectAllMountedDevices()
+void DeviceService::ejectAllMountedDevices()
 {
     DeviceServiceHelper::ejectAllMountedBlockDevices();
     DeviceServiceHelper::ejectAllMountedProtocolDevices();
@@ -488,8 +527,52 @@ QStringList DeviceService::blockDevicesIdList(const QVariantMap &opts) const
     return idList;
 }
 
+/*!
+ * \brief make a map that contains all info for the block device
+ * \param deviceId
+ * \return like this:
+ * {'can_power_off': True,
+ * 'crypto_backingDevice': '/',
+ * 'device': '/dev/sdb1',
+ * 'drive': '/org/freedesktop/UDisks2/drives/USB_SanDisk_3_2e2Gen1_01013114a9e6e689e7acef289dddb66fc5abc0ff411bea158687d2016fc3863c7f4800000000000000000000b6747ae1ff1d7800a3558107b528d85f',
+ * 'ejectable': True,
+ * 'filesystem': 'ntfs',
+ * 'has_filesystem': True,
+ * 'hint_ignore': False,
+ * 'hint_system': False,
+ * 'id': '/org/freedesktop/UDisks2/block_devices/sdb1',
+ * 'id_label': '111',
+ * 'is_encrypted': False,
+ * 'media_compatibility': [],
+ * 'mountpoint': '',
+ * 'mountpoints': ['/media/zhangs/111'],
+ * 'optical': False,
+ * 'optical_blank': False,
+ * 'removable': True,
+ * 'size_free': 47823532032,
+ * 'size_total': 55500210176,
+ * 'size_usage': 7676678144}
+ */
+QVariantMap DeviceService::blockDeviceInfo(const QString &deviceId)
+{
+    QVariantMap info;
+    const auto &allBlkData = monitorHandler->allBlkDevData;
+    if (!allBlkData.contains(deviceId))
+        return info;
+
+    const auto &blkData = allBlkData.value(deviceId);
+    DeviceServiceHelper::makeBlockDeviceMap(blkData, &info);
+    return info;
+}
+
 QStringList DeviceService::protocolDevicesIdList() const
 {
     // TODO: wait `dfm-mount`
     return QStringList();
+}
+
+QVariantMap DeviceService::protocolDeviceInfo(const QString &deviceId)
+{
+    // TODO(zhangs): build data
+    return QVariantMap();
 }

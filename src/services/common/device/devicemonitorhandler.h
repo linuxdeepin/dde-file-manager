@@ -49,6 +49,9 @@ private:
     void insertNewProtocolDeviceData(const DeviceServiceHelper::ProtocolDevPtr &ptr);
     void removeBlockDeviceData(const QString &deviceId);
     void removeProtocolDeviceData(const QString &deviceId);
+    void updateDataWithOpticalInfo(BlockDeviceData *data, const QMap<DFMMOUNT::Property, QVariant> &changes);
+    void updateDataWithMountedInfo(BlockDeviceData *data, const QMap<DFMMOUNT::Property, QVariant> &changes);
+    void updateDataWithOtherInfo(BlockDeviceData *data, const QMap<DFMMOUNT::Property, QVariant> &changes);
 
 private slots:
     void onBlockDriveAdded(const QString &drvObjPath);
@@ -62,6 +65,7 @@ private slots:
     void onBlockDevicePropertyChanged(const QString &deviceId, const QMap<DFMMOUNT::Property, QVariant> &changes);
 
 private:
+    // TODO(zhangs): add a timer, refresh devices size
     QPointer<DeviceService> service;
     QHash<QString, BlockDeviceData>    allBlkDevData;
     QHash<QString, ProtocolDeviceData> allProtocolDevData;

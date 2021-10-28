@@ -40,7 +40,7 @@ struct DeviceData
 {
     QString id;
     QString mountpoint;
-    QString fileSystem;
+    QString filesystem;
     qint64  sizeTotal;
     qint64  sizeFree;
     qint64  sizeUsage;
@@ -121,6 +121,8 @@ private:
 
     static void makeBlockDeviceData(const BlockDevPtr &ptr, BlockDeviceData *data);
     // TODO(zhangs): makeProtolDeviceData
+    static void makeBlockDeviceMap(const BlockDeviceData &data, QVariantMap *map);
+    // TODO(zhangs): makeProtocolDeviceMap
 
 private:
     static DevPtr createDevice(const QString &devId, DFMMOUNT::DeviceType type);

@@ -61,20 +61,22 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "    <method name=\"EjectDevice\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
-"    <method name=\"BlockDevicesIdList\">\n"
+"    <method name=\"GetBlockDevicesIdList\">\n"
 "      <arg direction=\"out\" type=\"as\"/>\n"
 "      <arg direction=\"in\" type=\"a{sv}\" name=\"opts\"/>\n"
 "      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.In0\"/>\n"
 "    </method>\n"
 "    <method name=\"QueryBlockDeviceInfo\">\n"
-"      <arg direction=\"out\" type=\"s\"/>\n"
+"      <arg direction=\"out\" type=\"a{sv}\"/>\n"
+"      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.Out0\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
-"    <method name=\"ProtolcolDevicesIdList\">\n"
+"    <method name=\"GetProtolcolDevicesIdList\">\n"
 "      <arg direction=\"out\" type=\"as\"/>\n"
 "    </method>\n"
 "    <method name=\"QueryProtocolDeviceInfo\">\n"
-"      <arg direction=\"out\" type=\"s\"/>\n"
+"      <arg direction=\"out\" type=\"a{sv}\"/>\n"
+"      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.Out0\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
 "  </interface>\n"
@@ -88,13 +90,13 @@ public:
 
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
-    QStringList BlockDevicesIdList(const QVariantMap &opts);
     void EjectAllMountedDevices();
     void EjectDevice(const QString &id);
+    QStringList GetBlockDevicesIdList(const QVariantMap &opts);
+    QStringList GetProtolcolDevicesIdList();
     bool IsMonotorWorking();
-    QStringList ProtolcolDevicesIdList();
-    QString QueryBlockDeviceInfo(const QString &id);
-    QString QueryProtocolDeviceInfo(const QString &id);
+    QVariantMap QueryBlockDeviceInfo(const QString &id);
+    QVariantMap QueryProtocolDeviceInfo(const QString &id);
 Q_SIGNALS: // SIGNALS
     void BlockDeviceAdded(const QString &deviceId);
     void BlockDeviceFilesystemAdded(const QString &deviceId);

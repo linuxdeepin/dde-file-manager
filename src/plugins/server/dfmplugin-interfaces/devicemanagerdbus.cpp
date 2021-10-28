@@ -76,7 +76,7 @@ void DeviceManagerDBus::askStopAllDefenderScanning(int index, const QString &tex
     qInfo() << "ask stop " << index << text;
     if (index == 1) { // user clicked stop
         if (deviceServ->stopDefenderScanAllDrives()) {
-            deviceServ->doEjectAllMountedDevices();
+            deviceServ->ejectAllMountedDevices();
         } else {
             dfmbase::UniversalUtils::notifyMessage(tr("The device was not safely removed"),
                                                    tr("Click \"Safely Remove\" and then disconnect it next time"));
@@ -95,12 +95,12 @@ void DeviceManagerDBus::EjectAllMountedDevices()
         return;
     }
 
-    deviceServ->doEjectAllMountedDevices();
+    deviceServ->ejectAllMountedDevices();
 }
 
 void DeviceManagerDBus::EjectDevice(QString id)
 {
-    deviceServ->doEject(id);
+    deviceServ->eject(id);
 }
 
 /*!
@@ -108,25 +108,23 @@ void DeviceManagerDBus::EjectDevice(QString id)
  * \param opts: refrecne to DeviceService::blockDevicesIdList
  * \return devices id list
  */
-QStringList DeviceManagerDBus::BlockDevicesIdList(const QVariantMap &opts)
+QStringList DeviceManagerDBus::GetBlockDevicesIdList(const QVariantMap &opts)
 {
-    // TODO(zhangs): add `QVariantMap` as filter
     return deviceServ->blockDevicesIdList(opts);
 }
 
-QString DeviceManagerDBus::QueryBlockDeviceInfo(QString id)
+QVariantMap DeviceManagerDBus::QueryBlockDeviceInfo(QString id)
 {
-    // TODO(zhangs): build json
-    return QString();
+    return deviceServ->blockDeviceInfo(id);
 }
 
-QStringList DeviceManagerDBus::ProtolcolDevicesIdList()
+QStringList DeviceManagerDBus::GetProtolcolDevicesIdList()
 {
     return deviceServ->protocolDevicesIdList();
 }
 
-QString DeviceManagerDBus::QueryProtocolDeviceInfo(QString id)
+QVariantMap DeviceManagerDBus::QueryProtocolDeviceInfo(QString id)
 {
-    // TODO(zhangs): build json
-    return QString();
+    // TODO(zhangs): build data
+    return QVariantMap();
 }

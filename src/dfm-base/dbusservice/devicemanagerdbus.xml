@@ -32,20 +32,22 @@
     <method name="EjectDevice">
       <arg name="id" type="s" direction="in"/>
     </method>
-    <method name="BlockDevicesIdList">
+    <method name="GetBlockDevicesIdList">
       <arg type="as" direction="out"/>
       <arg name="opts" type="a{sv}" direction="in"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
     </method>
     <method name="QueryBlockDeviceInfo">
-      <arg type="s" direction="out"/>
+      <arg type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
       <arg name="id" type="s" direction="in"/>
     </method>
-    <method name="ProtolcolDevicesIdList">
+    <method name="GetProtolcolDevicesIdList">
       <arg type="as" direction="out"/>
     </method>
     <method name="QueryProtocolDeviceInfo">
-      <arg type="s" direction="out"/>
+      <arg type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
       <arg name="id" type="s" direction="in"/>
     </method>
   </interface>

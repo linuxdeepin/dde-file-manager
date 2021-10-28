@@ -179,7 +179,7 @@ bool DeviceServiceHelper::isUnmountableBlockDevice(const BlockDeviceData &data)
         return false;
     }
 
-    if (data.common.fileSystem.isEmpty()) {
+    if (data.common.filesystem.isEmpty()) {
         qWarning() << "Block Device: " << id << " haven't a filesystem!";
         return false;
     }
@@ -235,7 +235,7 @@ bool DeviceServiceHelper::isMountableBlockDevice(const BlockDeviceData &data)
         return false;
     }
 
-    if (data.common.fileSystem.isEmpty()) {
+    if (data.common.filesystem.isEmpty()) {
         qWarning() << "Block Device: " << id << " haven't a filesystem";
         return false;
     }
@@ -362,8 +362,9 @@ DeviceServiceHelper::ProtocolDevPtrList DeviceServiceHelper::createAllProtocolDe
 void DeviceServiceHelper::makeBlockDeviceData(const DeviceServiceHelper::BlockDevPtr &ptr, BlockDeviceData *data)
 {
     Q_ASSERT_X(data, "DeviceServiceHelper", "Data is NULL");
+
     data->common.id            = ptr->path();
-    data->common.fileSystem    = ptr->fileSystem();
+    data->common.filesystem    = ptr->fileSystem();
     data->common.mountpoint    = ptr->mountPoint().toLocalFile();
     data->common.sizeTotal     = ptr->sizeTotal();
     data->common.sizeFree      = ptr->sizeFree();
@@ -384,6 +385,34 @@ void DeviceServiceHelper::makeBlockDeviceData(const DeviceServiceHelper::BlockDe
     data->hintSystem           = ptr->getProperty(DFMMOUNT::Property::BlockHintSystem).toBool(); // TODO(zhangs): wait a interface
     data->hintIgnore           = ptr->hintIgnore();
     data->cryptoBackingDevice  = ptr->getProperty(DFMMOUNT::Property::BlockCryptoBackingDevice).toString();
+}
+
+void DeviceServiceHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVariantMap *map)
+{
+    Q_ASSERT_X(map, "DeviceServiceHelper", "Map is NULL");
+
+    map->insert("id", data.common.id);
+    map->insert("filesystem", data.common.filesystem);
+    map->insert("mountpoint", data.common.mountpoint);
+    map->insert("size_total", data.common.sizeTotal);
+    map->insert("size_free", data.common.sizeFree);
+    map->insert("size_usage", data.common.sizeUsage);
+
+    map->insert("mountpoints", data.mountpoints);
+    map->insert("device", data.device);
+    map->insert("drive", data.drive);
+    map->insert("id_label", data.idLabel);
+    map->insert("removable", data.removable);
+    map->insert("optical", data.optical);
+    map->insert("optical_blank", data.opticalBlank);
+    map->insert("media_compatibility", data.mediaCompatibility);
+    map->insert("can_power_off", data.canPowerOff);
+    map->insert("ejectable", data.ejectable);
+    map->insert("is_encrypted", data.isEncrypted);
+    map->insert("has_filesystem", data.hasFileSystem);
+    map->insert("hint_system", data.hintSystem);
+    map->insert("hint_ignore", data.hintIgnore);
+    map->insert("crypto_backingDevice", data.cryptoBackingDevice);
 }
 
 DSC_END_NAMESPACE

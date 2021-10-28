@@ -55,10 +55,10 @@ public slots:
     bool IsMonotorWorking();
     void EjectAllMountedDevices();
     void EjectDevice(QString id);
-    QStringList BlockDevicesIdList(const QVariantMap &opts);
-    QString QueryBlockDeviceInfo(QString id);
-    QStringList ProtolcolDevicesIdList();
-    QString QueryProtocolDeviceInfo(QString id);
+    QStringList GetBlockDevicesIdList(const QVariantMap &opts);
+    QVariantMap QueryBlockDeviceInfo(QString id);
+    QStringList GetProtolcolDevicesIdList();
+    QVariantMap QueryProtocolDeviceInfo(QString id);
 
 private:
     void initialize();
