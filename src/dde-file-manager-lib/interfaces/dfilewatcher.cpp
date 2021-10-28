@@ -242,7 +242,11 @@ void DFileWatcherPrivate::_q_handleFileDeleted(const QString &path, const QStrin
 
     //如果被删除目录是当前目录的父级及以上目录
     //则需要发出当前目录也被删除的事件
-    if (this->path.startsWith(path) && path != this->path) {
+    // fix 99280
+    // 原判断会造成误删 例如删除 /media/uos/vfat时，会将 /media/uos/vfat1一起删除了
+    const QUrl &currentUrl = QUrl(path);
+    const QUrl &thisPathUrl = QUrl(this->path);
+    if (currentUrl.isParentOf(thisPathUrl)) {
         emit q->fileDeleted(DUrl::fromLocalFile(this->path));
         return;
     }
