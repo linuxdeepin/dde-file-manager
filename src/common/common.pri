@@ -52,6 +52,8 @@ unix {
     } else {
         isEmpty(DISABLE_JEMALLOC) {
             LIBS += -ljemalloc
+        } else {
+            message("DISABLE JEMALLOC")
         }
     }
 
