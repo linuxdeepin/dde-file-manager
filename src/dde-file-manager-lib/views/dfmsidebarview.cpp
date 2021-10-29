@@ -447,6 +447,10 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
         }
     }
 
+    //跨用户的操作不允许修改原文件
+    if (!DFMGlobal::isMimeDatafromCurrentUser(data) && action == Qt::MoveAction)
+        action = Qt::CopyAction;
+
     if (support_actions.testFlag(action)) {
         return action;
     }
