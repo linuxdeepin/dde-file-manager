@@ -1215,6 +1215,7 @@ void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &
         obj.insert("domain", smbObj.value("domain").toString());
         obj.insert("protocol", DUrl(smbObj.value("id").toString()).scheme());
         obj.insert("server", server);
+        obj.insert("path", path);
         secretManager->clearPasswordByLoginObj(obj);
     }
     actionUnmount(event);

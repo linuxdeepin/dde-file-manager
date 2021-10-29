@@ -196,10 +196,14 @@ void SecretManager::clearPasswordByLoginObj(const QJsonObject &obj)
                               "protocol", obj.value("protocol").toString().toStdString().c_str(),
                               nullptr);
     }
+    QMutexLocker lk(&smbMutex);
+    m_smbLoginObjs.remove(obj.value("path").toString());
+    saveCache();
 }
 
 QJsonObject SecretManager::getLoginData(const QString &id)
 {
+    QMutexLocker lk(&smbMutex);
     return m_smbLoginObjs.value(id).toObject();
 }
 
@@ -218,12 +222,18 @@ void SecretManager::cacheSambaLoginData(const QJsonObject &obj)
     QJsonValue v(obj);
     QString path = obj.value("id").toString();
     if (!path.isEmpty() && (path.startsWith("smb://") || path.startsWith("smb-share://"))){
-        bool bend = path.endsWith("/");
-        QString tmppath = bend ? path.left(path.length() - 1) : path;
-        QString tmppathprev = tmppath.left(tmppath.lastIndexOf("/")+1);
-        QString tmppathname = tmppath.mid(tmppath.lastIndexOf("/")+1);
-        path = bend ? tmppathprev + tmppathname.toLower() + "/" : tmppathprev + tmppathname.toLower();
+        static const QRegExp rxTempPath(R"((smb://[^/]+/[^/]+))");
+        static const QRegExp rxTempExPath(R"((smb-share://[^/]+/[^/]+))");
+        const QRegExp &regexp = path.startsWith("smb://") ? rxTempPath : rxTempExPath;
+        QString tmpPath(path);
+        if (regexp.indexIn(path, 0) != -1)
+            tmpPath = regexp.cap(1);
+        QString tmpPathPrev = tmpPath.left(tmpPath.lastIndexOf("/")+1);
+        QString tmpPathName = tmpPath.mid(tmpPath.lastIndexOf("/")+1);
+        path = tmpPathPrev + tmpPathName.toLower();
     }
+
+    QMutexLocker lk(&smbMutex);
     m_smbLoginObjs.insert(path, v);
     saveCache();
 }

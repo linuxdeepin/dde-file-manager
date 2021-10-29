@@ -26,6 +26,7 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QMutex>
 
 #include <DSecureString>
 
@@ -72,6 +73,7 @@ public slots:
 
 private:
     QJsonObject m_smbLoginObjs;
+    QMutex smbMutex;
 };
 
 #endif // SECRETMANAGER_H
