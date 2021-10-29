@@ -3173,7 +3173,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
                     continue;
                 }
 
-                auto nextUrl = GridManager::instance()->itemId(m_screenNum, nextItem.x(), nextItem.y());
+                auto nextUrl = GridManager::instance()->itemTop(m_screenNum, nextItem.x(), nextItem.y());
                 auto nextIndex = model()->index(nextUrl);
                 QItemSelectionRange selectionRange(nextIndex);
                 rectSelection.append(selectionRange);
@@ -3183,7 +3183,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
                     break;
                 }
             }
-            auto nextUrl = GridManager::instance()->itemId(m_screenNum, nextItem.x(), nextItem.y());
+            auto nextUrl = GridManager::instance()->itemTop(m_screenNum, nextItem.x(), nextItem.y());
             auto nextIndex = model()->index(nextUrl);
             QItemSelectionRange selectionRange(nextIndex);
             rectSelection.append(selectionRange);
