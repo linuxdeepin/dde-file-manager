@@ -166,6 +166,13 @@ void DFMVaultUnlockPages::showEvent(QShowEvent *event)
             m_tipsButton->show();
         }
     }
+
+    //! 根据保险箱版本判断是否在解锁页面显示忘记密码控件
+    if(VaultController::getVaultVersion())
+        m_forgetPassword->show();
+    else {
+        m_forgetPassword->hide();
+    }
     event->accept();
 }
 
