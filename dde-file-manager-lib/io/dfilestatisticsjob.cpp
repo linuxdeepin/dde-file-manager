@@ -133,11 +133,11 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
     if (info->isFile()) {
         do {
             // ###(zccrs): skip the file,os file
-            if (info->fileUrl() == DUrl::fromLocalFile("/proc/kcore")) {
+            if (info->fileUrl() == DUrl::fromLocalFile("/proc/kcore") || info->fileUrl() == DUrl::fromLocalFile("/dev/core")) {
                 break;
             }
             //skip os file Shortcut
-            if (info->isSymLink() && info->symlinkTargetPath() == QString("/proc/kcore"))
+            if (info->isSymLink() && (info->symlinkTargetPath() == QStringLiteral("/proc/kcore") || info->symlinkTargetPath() == QStringLiteral("/dev/core")))
             {
                 break;
             }
