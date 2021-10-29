@@ -47,13 +47,34 @@ bool DeviceManagerDBus::IsMonotorWorking()
     return deviceServ->isBlockDeviceMonitorWorking() && deviceServ->isProtolDeviceMonitorWorking();
 }
 
+void DeviceManagerDBus::DetachBlockDevice(QString id)
+{
+    if (deviceServ->isDefenderScanningDrive()) {
+        // show query dialog
+        auto &ctx = dpfInstance.serviceContext();
+        dialogServ = ctx.service<DialogService>(DialogService::name());
+        DDialog *d = dialogServ->showQueryScanningDialog(QObject::tr("Scanning the device, stop it?"));
+        connect(d, &DDialog::buttonClicked, this, [this, &id](int index, const QString &text) {
+            Q_UNUSED(text);
+            onDetachDeviceScanning(index, id);
+        });
+        return;
+    }
+    deviceServ->detachMountedBlockDevice(id);
+}
+
+void DeviceManagerDBus::DetachProtocolDevice(QString id)
+{
+    deviceServ->detachMountedProtocolDevice(id);
+}
+
 void DeviceManagerDBus::initialize()
 {
     auto &ctx = dpfInstance.serviceContext();
     deviceServ = ctx.service<DeviceService>(DeviceService::name());
     Q_ASSERT(deviceServ);
-    deviceServ->startAutoMount();
     deviceServ->startMonitor();
+    deviceServ->startAutoMount();
 }
 
 /*!
@@ -71,12 +92,11 @@ void DeviceManagerDBus::initConnection()
     connect(deviceServ, &DeviceService::blockDeviceUnmounted, this, &DeviceManagerDBus::BlockDeviceUnmounted);
 }
 
-void DeviceManagerDBus::askStopAllDefenderScanning(int index, const QString &text)
+void DeviceManagerDBus::onDetachDeviceScanning(int index, const QString &id)
 {
-    qInfo() << "ask stop " << index << text;
     if (index == 1) { // user clicked stop
-        if (deviceServ->stopDefenderScanAllDrives()) {
-            deviceServ->ejectAllMountedDevices();
+        if (deviceServ->stopDefenderScanDrive(id)) {
+            deviceServ->detachMountedBlockDevice(id);
         } else {
             dfmbase::UniversalUtils::notifyMessage(tr("The device was not safely removed"),
                                                    tr("Click \"Safely Remove\" and then disconnect it next time"));
@@ -84,23 +104,89 @@ void DeviceManagerDBus::askStopAllDefenderScanning(int index, const QString &tex
     }
 }
 
-void DeviceManagerDBus::EjectAllMountedDevices()
+void DeviceManagerDBus::onDetachAllDevicesScannong(int index)
+{
+    if (index == 1) { // user clicked stop
+        if (deviceServ->stopDefenderScanAllDrives()) {
+            deviceServ->detachAllMountedBlockDevices();
+            deviceServ->detachAllMountedProtocolDevices();
+        } else {
+            dfmbase::UniversalUtils::notifyMessage(tr("The device was not safely removed"),
+                                                   tr("Click \"Safely Remove\" and then disconnect it next time"));
+        }
+    }
+}
+
+void DeviceManagerDBus::onUnmountDeviceScanning(int index, const QString &id)
+{
+    if (index == 1) { // user clicked stop
+        if (deviceServ->stopDefenderScanDrive(id)) {
+            deviceServ->unmountBlockDeviceAsync(id);
+        } else {
+            dfmbase::UniversalUtils::notifyMessage(tr("The device was not safely removed"),
+                                                   tr("Click \"Safely Remove\" and then disconnect it next time"));
+        }
+    }
+}
+
+/*!
+ * \brief this is convience interface for `disk-mount` plugin
+ */
+void DeviceManagerDBus::DetachAllMountedDevices()
 {
     if (deviceServ->isDefenderScanningDrive()) {
         // show query dialog
         auto &ctx = dpfInstance.serviceContext();
         dialogServ = ctx.service<DialogService>(DialogService::name());
         DDialog *d = dialogServ->showQueryScanningDialog(QObject::tr("Scanning the device, stop it?"));
-        connect(d, &DDialog::buttonClicked, this, &DeviceManagerDBus::askStopAllDefenderScanning);
+        connect(d, &DDialog::buttonClicked, this, &DeviceManagerDBus::onDetachAllDevicesScannong);
         return;
     }
 
-    deviceServ->ejectAllMountedDevices();
+    deviceServ->detachAllMountedBlockDevices();
+    deviceServ->detachAllMountedProtocolDevices();
 }
 
-void DeviceManagerDBus::EjectDevice(QString id)
+void DeviceManagerDBus::MountBlockDevice(QString id)
 {
-    deviceServ->eject(id);
+    deviceServ->mountBlockDeviceAsync(id);
+}
+
+void DeviceManagerDBus::UnmountBlockDevice(QString id)
+{
+    if (deviceServ->isDefenderScanningDrive()) {
+        // show query dialog
+        auto &ctx = dpfInstance.serviceContext();
+        dialogServ = ctx.service<DialogService>(DialogService::name());
+        DDialog *d = dialogServ->showQueryScanningDialog(QObject::tr("Scanning the device, stop it?"));
+        connect(d, &DDialog::buttonClicked, this, [this, &id](int index, const QString &text) {
+            Q_UNUSED(text);
+            onUnmountDeviceScanning(index, id);
+        });
+        return;
+    }
+
+    deviceServ->unmountBlockDeviceAsync(id);
+}
+
+void DeviceManagerDBus::EjectBlockDevice(QString id)
+{
+    deviceServ->ejectBlockDeviceAsync(id);
+}
+
+void DeviceManagerDBus::PoweroffBlockDevice(QString id)
+{
+    deviceServ->poweroffBlockDeviceAsync(id);
+}
+
+void DeviceManagerDBus::MountProtocolDevice(QString id)
+{
+    // TODO(zhangs):
+}
+
+void DeviceManagerDBus::UnmountProtocolDevice(QString id)
+{
+    // TODO(zhangs):
 }
 
 /*!

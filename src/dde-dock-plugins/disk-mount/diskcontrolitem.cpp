@@ -151,7 +151,7 @@ void DiskControlItem::showEvent(QShowEvent *e)
 {
     diskName->setText(attachedDev->displayName());
     QString &&name = attachedDev->displayName();
-    const QFont &f = diskName->font();
+    auto &&f = diskName->font();
     QFontMetrics fm(f);
     QString &&elideText = fm.elidedText(name, Qt::ElideRight, diskName->width());
     diskName->setText(elideText);

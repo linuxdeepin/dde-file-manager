@@ -46,9 +46,21 @@ public: // operations
     void startAutoMount();
     bool startMonitor();
     bool stopMonitor();
-    void eject(const QString &deviceId);
-    void ejectAllMountedDevices();
+    bool stopDefenderScanDrive(const QString &deviceId);
     bool stopDefenderScanAllDrives();
+
+    bool detachMountedBlockDevice(const QString &deviceId);
+    bool detachMountedProtocolDevice(const QString &deviceId);
+    void detachAllMountedBlockDevices();
+    void detachAllMountedProtocolDevices();
+    void mountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
+    bool mountBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
+    void unmountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
+    bool unmountBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
+    void ejectBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
+    bool ejectBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
+    void poweroffBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
+    bool poweroffBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
 
 public: // status
     bool isBlockDeviceMonitorWorking() const;

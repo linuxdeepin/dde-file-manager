@@ -49,7 +49,7 @@ public:
     /*!
      * \brief do unmount, also do eject if possible.
      */
-    virtual void detach();
+    virtual void detach() = 0;
 
     /*!
      * \brief device display name.
@@ -88,9 +88,9 @@ public:
     virtual QUrl accessPointUrl() = 0;
 
     /*!
-     * \brief parse json from server
+     * \brief query device info from server
      */
-    virtual void parse() = 0;
+    virtual void query() = 0;
 
 protected:
     QString deviceId;

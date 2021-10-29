@@ -73,8 +73,8 @@ void DiskPluginItem::paintEvent(QPaintEvent *e)
     QWidget::paintEvent(e);
 
     QPainter painter(this);
-    const QRectF &rf = QRectF(rect());
-    const QRectF &rfp = QRectF(icon.rect());
+    QRectF &&rf = QRectF(rect());
+    QRectF &&rfp = QRectF(icon.rect());
     painter.drawPixmap(rf.center() - rfp.center() / qApp->devicePixelRatio(), icon);
 }
 

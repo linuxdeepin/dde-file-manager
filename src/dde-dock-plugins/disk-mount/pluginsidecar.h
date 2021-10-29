@@ -37,13 +37,14 @@ public:
     QPointer<DeviceManagerInterface> getDeviceInterface();
 
     bool connectToServer();
-    void invokeEjectAllDevices();
+    void invokeDetachAllMountedDevices();
     bool invokeIsMonotorWorking();
-    QStringList invokeBlockDevicesIdList();
-    QStringList invokeProtolcolDevicesIdList();
+    QStringList invokeBlockDevicesIdList(const QVariantMap &opt);
+    QStringList invokeProtolcolDevicesIdList(const QVariantMap &opt);
     QVariantMap invokeQueryBlockDeviceInfo(const QString &id);
     QVariantMap invokeQueryProtocolDeviceInfo(const QString &id);
-    void invokeEjectDevice(const QString &id);
+    void invokeDetachBlockDevice(const QString &id);
+    void invokeDetachProtocolDevice(const QString &id);
 
 private:
     explicit PluginSidecar(QObject *parent = nullptr);

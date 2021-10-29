@@ -36,17 +36,31 @@ public:
     ~DeviceManagerInterface();
 
 public Q_SLOTS: // METHODS
-    inline QDBusPendingReply<> EjectAllMountedDevices()
+    inline QDBusPendingReply<> DetachAllMountedDevices()
     {
         QList<QVariant> argumentList;
-        return asyncCallWithArgumentList(QStringLiteral("EjectAllMountedDevices"), argumentList);
+        return asyncCallWithArgumentList(QStringLiteral("DetachAllMountedDevices"), argumentList);
     }
 
-    inline QDBusPendingReply<> EjectDevice(const QString &id)
+    inline QDBusPendingReply<> DetachBlockDevice(const QString &id)
     {
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(id);
-        return asyncCallWithArgumentList(QStringLiteral("EjectDevice"), argumentList);
+        return asyncCallWithArgumentList(QStringLiteral("DetachBlockDevice"), argumentList);
+    }
+
+    inline QDBusPendingReply<> DetachProtocolDevice(const QString &id)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id);
+        return asyncCallWithArgumentList(QStringLiteral("DetachProtocolDevice"), argumentList);
+    }
+
+    inline QDBusPendingReply<> EjectBlockDevice(const QString &id)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id);
+        return asyncCallWithArgumentList(QStringLiteral("EjectBlockDevice"), argumentList);
     }
 
     inline QDBusPendingReply<QStringList> GetBlockDevicesIdList(const QVariantMap &opts)
@@ -68,6 +82,27 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("IsMonotorWorking"), argumentList);
     }
 
+    inline QDBusPendingReply<> MountBlockDevice(const QString &id)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id);
+        return asyncCallWithArgumentList(QStringLiteral("MountBlockDevice"), argumentList);
+    }
+
+    inline QDBusPendingReply<> MountProtocolDevice(const QString &id)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id);
+        return asyncCallWithArgumentList(QStringLiteral("MountProtocolDevice"), argumentList);
+    }
+
+    inline QDBusPendingReply<> PoweroffBlockDevice(const QString &id)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id);
+        return asyncCallWithArgumentList(QStringLiteral("PoweroffBlockDevice"), argumentList);
+    }
+
     inline QDBusPendingReply<QVariantMap> QueryBlockDeviceInfo(const QString &id)
     {
         QList<QVariant> argumentList;
@@ -80,6 +115,20 @@ public Q_SLOTS: // METHODS
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(id);
         return asyncCallWithArgumentList(QStringLiteral("QueryProtocolDeviceInfo"), argumentList);
+    }
+
+    inline QDBusPendingReply<> UnmountBlockDevice(const QString &id)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id);
+        return asyncCallWithArgumentList(QStringLiteral("UnmountBlockDevice"), argumentList);
+    }
+
+    inline QDBusPendingReply<> UnmountProtocolDevice(const QString &id)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id);
+        return asyncCallWithArgumentList(QStringLiteral("UnmountProtocolDevice"), argumentList);
     }
 
 Q_SIGNALS: // SIGNALS

@@ -132,12 +132,12 @@ void DiskMountPlugin::invokedMenuItem(const QString &itemKey, const QString &men
     if (menuId == OPEN)
         QProcess::startDetached("gio", QStringList() << "open" << "computer:///");
     else if (menuId == EJECT_ALL)
-        SidecarInstance.invokeEjectAllDevices();
+        SidecarInstance.invokeDetachAllMountedDevices();
 }
 
 int DiskMountPlugin::itemSortKey(const QString &itemKey)
 {
-    const QString &key = QString("pos_%1_%2").arg(itemKey).arg(Dock::Efficient);
+    QString &&key = QString("pos_%1_%2").arg(itemKey).arg(Dock::Efficient);
     int ret = proxyInter()->getValue(this, key, 0).toInt(); // dde-dock默认设置为0
     qDebug() << "itemSortKey [key:" << key << "," << ret << "] for :" << itemKey;
     return ret;
@@ -145,7 +145,7 @@ int DiskMountPlugin::itemSortKey(const QString &itemKey)
 
 void DiskMountPlugin::setSortKey(const QString &itemKey, const int order)
 {
-    const QString &key = QString("pos_%1_%2").arg(itemKey).arg(Dock::Efficient);
+    QString &&key = QString("pos_%1_%2").arg(itemKey).arg(Dock::Efficient);
     proxyInter()->saveValue(this, key, order);
     qDebug() << "setSortKey [key:" << key << "," << order << "] for :" << itemKey;
 }

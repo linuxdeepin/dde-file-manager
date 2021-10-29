@@ -27,11 +27,7 @@
 
 #include <QUrl>
 #include <QPointer>
-
-struct BlockDeviceData
-{
-    // TODO(zhangs): serallize
-};
+#include <QVariantMap>
 
 class DAttachedBlockDevice final : public DAttachedDevice
 {
@@ -39,6 +35,7 @@ public:
     explicit DAttachedBlockDevice(const QString &id);
     virtual ~DAttachedBlockDevice() override;
     bool isValid() override;
+    void detach() override;
     bool detachable() override;
     QString displayName() override;
     bool deviceUsageValid() override;
@@ -48,10 +45,11 @@ public:
     QUrl accessPointUrl() override;
 
 protected:
-    void parse() override;
+    void query() override;
 
 private:
-    BlockDeviceData data;
+    QVariantMap data;
+    const QString ddeI18nSym = QStringLiteral("_dde_");
 };
 
 #endif // DATTACHEDBLOCKDEVICE_H

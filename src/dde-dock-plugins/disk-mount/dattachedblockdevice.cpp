@@ -22,8 +22,27 @@
 */
 #include "dattachedblockdevice.h"
 #include "pluginsidecar.h"
+#include "sizeformathelper.h"
 
+#include <QCoreApplication>
 #include <QVariantMap>
+
+static const char *const BURN_SEG_ONDISC = "disc_files";
+static const char *const BURN_SCHEME = "burn";
+
+/*!
+ * \brief makeBurnFileUrl as `DUrl::fromBurnFile` in old dde-file-manager
+ * \param device like /dev/sr0
+ * \return burn url (like 'burn:///dev/sr0/disc_files/')
+ */
+static QUrl makeBurnFileUrl(const QString &device)
+{
+    QUrl url;
+    QString virtualPath(device + "/" + BURN_SEG_ONDISC + "/");
+    url.setScheme(BURN_SCHEME);
+    url.setPath(virtualPath);
+    return url;
+}
 
 /*!
  * \class DAttachedBlockDevice
@@ -45,60 +64,115 @@ DAttachedBlockDevice::~DAttachedBlockDevice()
 
 bool DAttachedBlockDevice::isValid()
 {
-    // TODO(zhans): judge hasFileSystem mountPoints hintIgnore hintSystem
-    return false;
+    if (data.value("id").toString().isEmpty())
+        return false;
+    if (!data.value("has_filesystem").toBool())
+        return false;
+    if (data.value("mountpoints").toBool())
+        return false;
+    if (data.value("hint_ignore").toBool())
+        return false;
+
+    return true;
+}
+
+void DAttachedBlockDevice::detach()
+{
+    SidecarInstance.instance().invokeDetachBlockDevice(data.value("id").toString());
 }
 
 bool DAttachedBlockDevice::detachable()
 {
-    // TODO(zhans)
-    return true;
+    return data.value("removable").toBool();
 }
 
 QString DAttachedBlockDevice::displayName()
 {
-    // TODO(zhans)
-    return QString();
+    QString result;
+
+    static QMap<QString, const char *> i18nMap {
+        {"data", "Data Disk"}
+    };
+
+    qint64 totalSize = data.value("size_total").toLongLong();
+    if (isValid()) {
+        QString devName = data.value("id_label").toString();
+        if (devName.isEmpty()) {
+            QString name = SizeFormatHelper::formatDiskSize(static_cast<quint64>(totalSize));
+            devName = qApp->translate("DeepinStorage", "%1 Volume").arg(name);
+        }
+
+        // Deepin i10n Label text (_dde_text):
+        if (devName.startsWith(ddeI18nSym)) {
+            QString &&i18nKey = devName.mid(ddeI18nSym.size(), devName.size() - ddeI18nSym.size());
+            devName = qApp->translate("DeepinStorage", i18nMap.value(i18nKey, i18nKey.toUtf8().constData()));
+        }
+
+        result = devName;
+    } else if (totalSize > 0) {
+        QString name = SizeFormatHelper::formatDiskSize(static_cast<quint64>(totalSize));
+        result = qApp->translate("DeepinStorage", "%1 Volume").arg(name);
+    }
+
+    return result;
 }
 
 bool DAttachedBlockDevice::deviceUsageValid()
 {
-    // TODO(zhans)
-    return true;
+    return data.value("size_total").toLongLong() > 0;
 }
 
 QPair<quint64, quint64> DAttachedBlockDevice::deviceUsage()
 {
-    if (iconName().simplified().toLower() == "media-optical") {
-        // TODO(zhangs): optical device cannot read capacity
-        // servier must read common data
-        return QPair<quint64, quint64>();
+    if (deviceUsageValid()) {
+        bool optical = data.value("optical").toBool();
+        qint64 bytesTotal = 0;
+        qint64 bytesFree = 0;
+        if (optical) {
+            // TODO(zhangs): make a temp method read optical size for old dde-file-manager
+        } else {
+            bytesTotal = data.value("size_total").toLongLong();
+            bytesFree = data.value("size_free").toLongLong();
+        }
+        return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
     }
-
-    // TODO(zhangs): query
     return QPair<quint64, quint64>();
 }
 
 QString DAttachedBlockDevice::iconName()
 {
-    // TODO(zhans)
+    bool optical = data.value("optical").toBool();
+    bool removable = data.value("removable").toBool();
+    QString iconName = QStringLiteral("drive-harddisk");
+
+    if (removable)
+        iconName = QStringLiteral("drive-removable-media-usb");
+
+    if (optical)
+        iconName = QStringLiteral("media-optical");
+
     return QString();
 }
 
 QUrl DAttachedBlockDevice::mountpointUrl()
 {
-    // TODO(zhans)
-    return QUrl();
+    return QUrl::fromLocalFile(data.value("mountpoint").toString());
 }
 
 QUrl DAttachedBlockDevice::accessPointUrl()
 {
-    // TODO(zhans)
-    return QUrl();
+    QUrl url = mountpointUrl();
+    bool optical = data.value("optical").toBool();
+
+    if (optical) {
+        QString &&device = data.value("device").toString();
+        url = makeBurnFileUrl(device);
+    }
+
+    return url;
 }
 
-void DAttachedBlockDevice::parse()
+void DAttachedBlockDevice::query()
 {
-    const QVariantMap &map = SidecarInstance.invokeQueryBlockDeviceInfo(deviceId);
-    // TODO(zhans) make data
+    data = SidecarInstance.invokeQueryBlockDeviceInfo(deviceId);
 }

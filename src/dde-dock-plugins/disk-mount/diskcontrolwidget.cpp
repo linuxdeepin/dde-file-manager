@@ -164,7 +164,7 @@ int DiskControlWidget::addBlockDevicesItems()
 {
     int mountedCount = 0;
 
-    const QStringList &list = SidecarInstance.invokeBlockDevicesIdList();
+    QStringList &&list = SidecarInstance.invokeBlockDevicesIdList({{"unmountable", true}});
     mountedCount = addItems(list, true);
 
     return mountedCount;
@@ -174,7 +174,7 @@ int DiskControlWidget::addProtocolDevicesItems()
 {
     int mountedCount = 0;
 
-    const QStringList &list = SidecarInstance.invokeProtolcolDevicesIdList();
+    QStringList &&list = SidecarInstance.invokeProtolcolDevicesIdList({});
     mountedCount = addItems(list, false);
 
     return mountedCount;
@@ -184,13 +184,13 @@ int DiskControlWidget::addItems(const QStringList &list, bool isBlockDevice)
 {
     int mountedCount = 0;
 
-    for (const QString &id : list) {
+    for (auto &&id : list) {
         QSharedPointer<DAttachedDevice> dev;
         if (isBlockDevice)
             dev.reset(new DAttachedBlockDevice(id));
         else
             dev.reset(new DAttachedProtocolDevice(id));
-        dev->parse();
+        dev->query();
         if (dev->isValid()) {
             mountedCount++;
             DiskControlItem *item = new DiskControlItem(dev, this);

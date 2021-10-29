@@ -53,8 +53,16 @@ signals:
 
 public slots:
     bool IsMonotorWorking();
-    void EjectAllMountedDevices();
-    void EjectDevice(QString id);
+    void DetachBlockDevice(QString id);
+    void DetachProtocolDevice(QString id);
+    void DetachAllMountedDevices();
+    void MountBlockDevice(QString id);
+    void UnmountBlockDevice(QString id);
+    void EjectBlockDevice(QString id);
+    void PoweroffBlockDevice(QString id);
+    void MountProtocolDevice(QString id);
+    void UnmountProtocolDevice(QString id);
+
     QStringList GetBlockDevicesIdList(const QVariantMap &opts);
     QVariantMap QueryBlockDeviceInfo(QString id);
     QStringList GetProtolcolDevicesIdList();
@@ -63,7 +71,9 @@ public slots:
 private:
     void initialize();
     void initConnection();
-    Q_SLOT void askStopAllDefenderScanning(int index, const QString &text);
+    Q_SLOT void onDetachDeviceScanning(int index, const QString &id);
+    Q_SLOT void onDetachAllDevicesScannong(int index);
+    Q_SLOT void onUnmountDeviceScanning(int index, const QString &id);
 
 private:
     dfm_service_common::DeviceService *deviceServ {nullptr};

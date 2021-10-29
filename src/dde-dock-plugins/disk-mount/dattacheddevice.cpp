@@ -21,7 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dattacheddevice.h"
-#include "pluginsidecar.h"
 
 DAttachedDevice::DAttachedDevice(const QString &id)
     : deviceId(id)
@@ -34,7 +33,3 @@ DAttachedDevice::~DAttachedDevice()
 
 }
 
-void DAttachedDevice::detach()
-{
-    SidecarInstance.invokeEjectDevice(deviceId);
-}

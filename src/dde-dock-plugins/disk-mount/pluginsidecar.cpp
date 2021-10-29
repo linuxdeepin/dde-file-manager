@@ -64,11 +64,11 @@ bool PluginSidecar::connectToServer()
     return true;
 }
 
-void PluginSidecar::invokeEjectAllDevices()
+void PluginSidecar::invokeDetachAllMountedDevices()
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        deviceInterface->EjectAllMountedDevices();
+        deviceInterface->DetachAllMountedDevices();
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
     }
 }
@@ -86,13 +86,13 @@ bool PluginSidecar::invokeIsMonotorWorking()
     return ret;
 }
 
-QStringList PluginSidecar::invokeBlockDevicesIdList()
+QStringList PluginSidecar::invokeBlockDevicesIdList(const QVariantMap &opt)
 {
     QStringList ret;
 
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto reply = deviceInterface->GetBlockDevicesIdList({{"unmountable", true}});
+        auto reply = deviceInterface->GetBlockDevicesIdList(opt);
         if (reply.isValid())
             ret = reply.value();
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
@@ -101,10 +101,11 @@ QStringList PluginSidecar::invokeBlockDevicesIdList()
     return ret;
 }
 
-QStringList PluginSidecar::invokeProtolcolDevicesIdList()
+QStringList PluginSidecar::invokeProtolcolDevicesIdList(const QVariantMap &opt)
 {
     QStringList ret;
 
+    // TODO(zhangs): opt
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         auto reply = deviceInterface->GetProtolcolDevicesIdList();
@@ -142,11 +143,20 @@ QVariantMap PluginSidecar::invokeQueryProtocolDeviceInfo(const QString &id)
     return ret;
 }
 
-void PluginSidecar::invokeEjectDevice(const QString &id)
+void PluginSidecar::invokeDetachBlockDevice(const QString &id)
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        deviceInterface->EjectDevice(id);
+        deviceInterface->DetachBlockDevice(id);
+        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+    }
+}
+
+void PluginSidecar::invokeDetachProtocolDevice(const QString &id)
+{
+    if (deviceInterface) {
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        deviceInterface->DetachProtocolDevice(id);
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
     }
 }

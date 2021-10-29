@@ -37,7 +37,7 @@ static bool pluginsLoad()
 {
     dpfCheckTimeBegin();
 
-    const dpf::LifeCycle &lifeCycle = dpfInstance.lifeCycle();
+    auto &&lifeCycle = dpfInstance.lifeCycle();
 
     // set plugin iid from qt style
     lifeCycle.setPluginIID(SERVER_PLUGIN_INTERFACE);

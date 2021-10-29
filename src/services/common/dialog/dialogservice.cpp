@@ -27,7 +27,7 @@ DSC_USE_NAMESPACE
 DDialog *DialogService::showQueryScanningDialog(const QString &title)
 {
     DDialog *d = new DDialog;
-    d->setTitle(title); // 正在扫描当前设备，是否终止扫描？
+    d->setTitle(title);
     d->setAttribute(Qt::WA_DeleteOnClose);
     Qt::WindowFlags flags = d->windowFlags();
     d->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);

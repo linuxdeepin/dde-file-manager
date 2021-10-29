@@ -57,8 +57,29 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "    <method name=\"IsMonotorWorking\">\n"
 "      <arg direction=\"out\" type=\"b\"/>\n"
 "    </method>\n"
-"    <method name=\"EjectAllMountedDevices\"/>\n"
-"    <method name=\"EjectDevice\">\n"
+"    <method name=\"DetachBlockDevice\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"    </method>\n"
+"    <method name=\"DetachProtocolDevice\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"    </method>\n"
+"    <method name=\"DetachAllMountedDevices\"/>\n"
+"    <method name=\"MountBlockDevice\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"    </method>\n"
+"    <method name=\"UnmountBlockDevice\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"    </method>\n"
+"    <method name=\"EjectBlockDevice\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"    </method>\n"
+"    <method name=\"PoweroffBlockDevice\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"    </method>\n"
+"    <method name=\"MountProtocolDevice\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"    </method>\n"
+"    <method name=\"UnmountProtocolDevice\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
 "    <method name=\"GetBlockDevicesIdList\">\n"
@@ -90,13 +111,20 @@ public:
 
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
-    void EjectAllMountedDevices();
-    void EjectDevice(const QString &id);
+    void DetachAllMountedDevices();
+    void DetachBlockDevice(const QString &id);
+    void DetachProtocolDevice(const QString &id);
+    void EjectBlockDevice(const QString &id);
     QStringList GetBlockDevicesIdList(const QVariantMap &opts);
     QStringList GetProtolcolDevicesIdList();
     bool IsMonotorWorking();
+    void MountBlockDevice(const QString &id);
+    void MountProtocolDevice(const QString &id);
+    void PoweroffBlockDevice(const QString &id);
     QVariantMap QueryBlockDeviceInfo(const QString &id);
     QVariantMap QueryProtocolDeviceInfo(const QString &id);
+    void UnmountBlockDevice(const QString &id);
+    void UnmountProtocolDevice(const QString &id);
 Q_SIGNALS: // SIGNALS
     void BlockDeviceAdded(const QString &deviceId);
     void BlockDeviceFilesystemAdded(const QString &deviceId);

@@ -49,6 +49,11 @@ bool DAttachedProtocolDevice::isValid()
     return true;
 }
 
+void DAttachedProtocolDevice::detach()
+{
+    SidecarInstance.instance().invokeDetachProtocolDevice(data.value("id").toString());
+}
+
 bool DAttachedProtocolDevice::detachable()
 {
     // TODO(zhans)
@@ -92,8 +97,7 @@ QUrl DAttachedProtocolDevice::accessPointUrl()
     return QUrl();
 }
 
-void DAttachedProtocolDevice::parse()
+void DAttachedProtocolDevice::query()
 {
-    const QVariantMap &map = SidecarInstance.invokeQueryProtocolDeviceInfo(deviceId);
-    // TODO(zhans) make data
+    data = SidecarInstance.invokeQueryProtocolDeviceInfo(deviceId);
 }

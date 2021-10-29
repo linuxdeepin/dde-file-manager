@@ -102,8 +102,8 @@ void DeviceMonitorHandler::stopConnect()
 
 void DeviceMonitorHandler::initBlockDevicesData()
 {
-    const auto &blkPtrList = DeviceServiceHelper::createAllBlockDevices();
-    for (const auto &blk : blkPtrList)
+    auto &&blkPtrList = DeviceServiceHelper::createAllBlockDevices();
+    for (auto &&blk : blkPtrList)
         insertNewBlockDeviceData(blk);
 }
 
@@ -114,7 +114,7 @@ void DeviceMonitorHandler::initProtocolDevicesData()
 
 void DeviceMonitorHandler::insertNewBlockDeviceData(const DeviceServiceHelper::BlockDevPtr &ptr)
 {
-    const QString &id = ptr->path();
+    QString &&id = ptr->path();
 
     if (id.isEmpty())
         return;
@@ -157,7 +157,7 @@ void DeviceMonitorHandler::updateDataWithOpticalInfo(BlockDeviceData *data, cons
 
     // CD recognized / not recognized
     if (changes.contains(idUsageFlag)) {
-        const QString &usage = changes.value(idUsageFlag).toString().toLower();
+        QString &&usage = changes.value(idUsageFlag).toString().toLower();
         if (usage == "filesystem") {
             auto &&idTypeFlag = DFMMOUNT::Property::BlockIDType;
             data->common.filesystem = changes.value(idTypeFlag).toString();
@@ -171,7 +171,7 @@ void DeviceMonitorHandler::updateDataWithMountedInfo(BlockDeviceData *data, cons
 
     // mounted / unmounted / size
     if (changes.contains(mptFlag)) {
-        const QString &mpt = changes.value(mptFlag).toString();
+        QString &&mpt = changes.value(mptFlag).toString();
         if (mpt.isEmpty()) { // unmounted
             data->common.mountpoint = QString("");
             data->mountpoints.clear();
@@ -200,7 +200,7 @@ void DeviceMonitorHandler::updateDataWithOtherInfo(BlockDeviceData *data, const 
 
     // idlable
     if (changes.contains(idLabelFlag)) {
-        const QString &idlabel = changes.value(idLabelFlag).toString();
+        QString &&idlabel = changes.value(idLabelFlag).toString();
         data->idLabel = idlabel;
     }
 
@@ -258,7 +258,7 @@ void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
         return;
     }
 
-    if (!DeviceServiceHelper::mountBlockDevice(blkDev, {})) {
+    if (!service->mountBlockDevice(deviceId, {})) {
          qWarning() << "Mount device failed: " << blkDev->path() << static_cast<int>(blkDev->getLastError());
          return;
     }
@@ -358,8 +358,12 @@ void DeviceService::startAutoMount()
             return;
         }
 
-        DeviceServiceHelper::mountAllBlockDevices();
-        DeviceServiceHelper::mountAllProtocolDevices();
+        QStringList &&blkList = blockDevicesIdList({{"mountable", true}});
+        for (const QString &id :blkList)
+            mountBlockDeviceAsync(id, {{"auth.no_user_interaction", true}});
+
+        // TODO(zhangs): mountAllProtocolDevices
+
         qInfo() << "End auto mount";
     });
 }
@@ -381,27 +385,57 @@ bool DeviceService::stopMonitor()
     return ret;
 }
 
-void DeviceService::eject(const QString &deviceId)
+/*!
+ * \brief async eject a block device
+ * \param deviceId
+ */
+void DeviceService::ejectBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts)
 {
-    if (deviceId.isEmpty())
-        return;
-
-    DeviceServiceHelper::BlockDevPtr ptr = DeviceServiceHelper::createBlockDevice(deviceId);
-    if (ptr.isNull()) {
-        qWarning() << "Cannot create block device ptr by " << deviceId;
-        return;
-    }
-
-    DeviceServiceHelper::ejectBlockDevice(ptr);
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (DeviceServiceHelper::isEjectableBlockDevice(ptr))
+        ptr->ejectAsync(opts);
 }
 
-/*!
- * \brief eject all of block devices(async) and protocol devices(sync)
- */
-void DeviceService::ejectAllMountedDevices()
+bool DeviceService::ejectBlockDevice(const QString &deviceId, const QVariantMap &opts)
 {
-    DeviceServiceHelper::ejectAllMountedBlockDevices();
-    DeviceServiceHelper::ejectAllMountedProtocolDevices();
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (DeviceServiceHelper::isEjectableBlockDevice(ptr))
+        return ptr->eject(opts);
+
+    return false;
+}
+
+void DeviceService::poweroffBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (DeviceServiceHelper::isCanPoweroffBlockDevice(ptr))
+        ptr->powerOffAsync(opts);
+}
+
+bool DeviceService::poweroffBlockDevice(const QString &deviceId, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (DeviceServiceHelper::isCanPoweroffBlockDevice(ptr))
+        return ptr->powerOff(opts);
+
+    return false;
+}
+
+bool DeviceService::stopDefenderScanDrive(const QString &deviceId)
+{
+    auto &&ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    QList<QUrl> &&urls = DeviceServiceHelper::getMountPathForDrive(ptr->drive());
+
+    if (!DefenderInstance.stopScanning(urls)) {
+        qWarning() << "stop scanning timeout";
+        return false;
+    }
+
+    return true;
 }
 
 bool DeviceService::stopDefenderScanAllDrives()
@@ -414,6 +448,81 @@ bool DeviceService::stopDefenderScanAllDrives()
     }
 
     return true;
+}
+
+bool DeviceService::detachMountedBlockDevice(const QString &deviceId)
+{
+    if (!unmountBlockDevice(deviceId)) {
+        qWarning() << "detach " << deviceId << "failed, it's cannot unmount";
+        return false;
+    }
+
+    if (!ejectBlockDevice(deviceId)) {
+        qWarning() << "detach " << deviceId << "failed, it's cannot eject";
+        return false;
+    }
+
+    if (!poweroffBlockDevice(deviceId)) {
+        qWarning() << "detach " << deviceId << "failed, it's cannot poweroff";
+        return false;
+    }
+
+    return true;
+}
+
+bool DeviceService::detachMountedProtocolDevice(const QString &deviceId)
+{
+    // TODO(zhangs):
+    return false;
+}
+
+void DeviceService::detachAllMountedBlockDevices()
+{
+    QStringList && list = blockDevicesIdList({{"", true}});
+    // TODO(zhangs): use thread in here
+    for (const QString &id : list)
+        detachMountedBlockDevice(id);
+}
+
+void DeviceService::detachAllMountedProtocolDevices()
+{
+
+}
+
+void DeviceService::mountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (DeviceServiceHelper::isMountableBlockDevice(ptr))
+        ptr->mountAsync(opts);
+}
+
+bool DeviceService::mountBlockDevice(const QString &deviceId, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (DeviceServiceHelper::isMountableBlockDevice(ptr))
+        return !ptr->mount(opts).isEmpty();
+
+    return false;
+}
+
+void DeviceService::unmountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (DeviceServiceHelper::isUnmountableBlockDevice(ptr))
+        ptr->unmountAsync(opts);
+}
+
+bool DeviceService::unmountBlockDevice(const QString &deviceId, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (DeviceServiceHelper::isUnmountableBlockDevice(ptr))
+        return ptr->unmount(opts);
+
+    return false;
 }
 
 bool DeviceService::isBlockDeviceMonitorWorking() const

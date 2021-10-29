@@ -27,9 +27,30 @@
     <method name="IsMonotorWorking">
       <arg type="b" direction="out"/>
     </method>
-    <method name="EjectAllMountedDevices">
+    <method name="DetachBlockDevice">
+      <arg name="id" type="s" direction="in"/>
     </method>
-    <method name="EjectDevice">
+    <method name="DetachProtocolDevice">
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="DetachAllMountedDevices">
+    </method>
+    <method name="MountBlockDevice">
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="UnmountBlockDevice">
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="EjectBlockDevice">
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="PoweroffBlockDevice">
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="MountProtocolDevice">
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="UnmountProtocolDevice">
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="GetBlockDevicesIdList">

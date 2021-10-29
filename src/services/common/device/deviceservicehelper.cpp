@@ -44,88 +44,6 @@ std::once_flag &DeviceServiceHelper::autoMountOnceFlag()
     return flag;
 }
 
-void DeviceServiceHelper::mountAllBlockDevices()
-{
-    auto ptrList = DeviceServiceHelper::createAllBlockDevices();
-    for (auto &blkDev : ptrList)
-        mountBlockDeviceAsync(blkDev, {{"auth.no_user_interaction", true}});
-}
-
-void DeviceServiceHelper::mountBlockDeviceAsync(BlockDevPtr &blkDev, const QVariantMap &opts)
-{
-    BlockDeviceData data;
-    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
-    if (!isMountableBlockDevice(data))
-        return;
-
-    blkDev->mountAsync(opts);
-}
-
-bool DeviceServiceHelper::mountBlockDevice(DeviceServiceHelper::BlockDevPtr &blkDev, const QVariantMap &opts)
-{
-    BlockDeviceData data;
-    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
-    if (!isMountableBlockDevice(data))
-        return false;
-
-    return !blkDev->mount(opts).isEmpty();
-}
-
-void DeviceServiceHelper::unmountBlockDeviceAsync(DeviceServiceHelper::BlockDevPtr &blkDev, const QVariantMap &opts)
-{
-    BlockDeviceData data;
-    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
-    if (!isUnmountableBlockDevice(data))
-        return;
-
-    blkDev->unmountAsync(opts);
-}
-
-bool DeviceServiceHelper::unmountBlockDevice(DeviceServiceHelper::BlockDevPtr &blkDev, const QVariantMap &opts)
-{
-    BlockDeviceData data;
-    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
-    if (!isUnmountableBlockDevice(data))
-        return false;
-
-    return blkDev->unmount(opts);
-}
-
-void DeviceServiceHelper::mountAllProtocolDevices()
-{
-    // TODO(zhangs): auto mount protocol devices (wait dfm-mount)
-}
-
-bool DeviceServiceHelper::ejectBlockDevice(BlockDevPtr &blkDev)
-{
-    unmountBlockDevice(blkDev, {});
-    BlockDeviceData data;
-    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
-    if (isEjectableBlockDevice(data))
-        return blkDev->eject();
-
-    return false;
-}
-
-/*!
- * \brief Not only to eject, but also to poweroff
- */
-void DeviceServiceHelper::ejectAllMountedBlockDevices()
-{
-    auto blkDevcies = DeviceServiceHelper::createAllBlockDevices();
-    for (auto &blk : blkDevcies) {
-       if (!blk->mountPoints().isEmpty()) {
-           if (ejectBlockDevice(blk))
-               poweroffBlockDeivceAsync(blk);
-       }
-    }
-}
-
-void DeviceServiceHelper::ejectAllMountedProtocolDevices()
-{
-    // TODO(zhangs): eject protocal devices (wait dfm-mount)
-}
-
 QList<QUrl> DeviceServiceHelper::getMountPathForDrive(const QString &driveName)
 {
     QList<QUrl> urls;
@@ -134,7 +52,7 @@ QList<QUrl> DeviceServiceHelper::getMountPathForDrive(const QString &driveName)
 
     for (const auto &device : blkDevcies) {
         if (device->drive() == driveName) {
-            const QUrl &url = getMountPathForBlock(device);
+            QUrl &&url = getMountPathForBlock(device);
             if (url.isValid())
                 urls << url;
         }
@@ -149,7 +67,7 @@ QList<QUrl> DeviceServiceHelper::getMountPathForAllDrive()
     auto blkDevcies = DeviceServiceHelper::createAllBlockDevices();
 
     for (const auto &device : blkDevcies) {
-        const QUrl &url = getMountPathForBlock(device);
+        QUrl &&url = getMountPathForBlock(device);
         urls << url;
     }
 
@@ -164,6 +82,22 @@ QUrl DeviceServiceHelper::getMountPathForBlock(const BlockDevPtr &blkDev)
         return QUrl();
 
     return blkDev->mountPoint();
+}
+
+bool DeviceServiceHelper::isUnmountableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
+{
+    if (blkDev.isNull()) {
+        qWarning() << "Cannot create block device ptr by " << blkDev->path();
+        return false;
+    }
+
+    BlockDeviceData data;
+    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
+
+    if (DeviceServiceHelper::isUnmountableBlockDevice(data))
+        return true;
+
+    return false;
 }
 
 bool DeviceServiceHelper::isUnmountableBlockDevice(const BlockDeviceData &data)
@@ -200,6 +134,38 @@ bool DeviceServiceHelper::isUnmountableBlockDevice(const BlockDeviceData &data)
     }
 
     return true;
+}
+
+bool DeviceServiceHelper::isEjectableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
+{
+    if (blkDev.isNull()) {
+        qWarning() << "Cannot create block device ptr by " << blkDev->path();
+        return false;
+    }
+
+    BlockDeviceData data;
+    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
+
+    if (DeviceServiceHelper::isEjectableBlockDevice(data))
+        return true;
+
+    return false;
+}
+
+bool DeviceServiceHelper::isMountableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
+{
+    if (blkDev.isNull()) {
+        qWarning() << "Cannot create block device ptr by " << blkDev->path();
+        return false;
+    }
+
+    BlockDeviceData data;
+    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
+
+    if (DeviceServiceHelper::isMountableBlockDevice(data))
+        return true;
+
+    return false;
 }
 
 bool DeviceServiceHelper::isMountableBlockDevice(const BlockDeviceData &data)
@@ -249,7 +215,7 @@ bool DeviceServiceHelper::isEjectableBlockDevice(const BlockDeviceData &data)
     bool optical = data.optical;
     bool ejectable = data.ejectable;
 
-    qInfo() << "eject" << data.common.id << "(removable optical ejectable canPowerOff): "
+    qInfo() << "can eject? " << data.common.id << "(removable optical ejectable mountpoints): "
             << data.mountpoints << removable << optical << ejectable;
 
     if (removable)
@@ -259,6 +225,35 @@ bool DeviceServiceHelper::isEjectableBlockDevice(const BlockDeviceData &data)
         return true;
 
     return false;
+}
+
+bool DeviceServiceHelper::isCanPoweroffBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
+{
+    if (blkDev.isNull()) {
+        qWarning() << "Cannot create block device ptr by " << blkDev->path();
+        return false;
+    }
+
+    BlockDeviceData data;
+    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
+
+    if (DeviceServiceHelper::isCanPoweroffBlockDevice(data))
+        return true;
+
+    return false;
+}
+
+bool DeviceServiceHelper::isCanPoweroffBlockDevice(const BlockDeviceData &data)
+{
+    const QStringList &mpts = data.mountpoints;
+    bool canPowerOff =  data.canPowerOff;
+
+    qInfo()<< "can poweroff? " << mpts << canPowerOff;
+
+   if (!canPowerOff)
+       return false;
+
+   return true;
 }
 
 bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDeviceData &data)
@@ -278,7 +273,7 @@ bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDeviceData &data)
         auto manager = DFMMOUNT::DFMDeviceManager::instance();
         auto monitor = qobject_cast<QSharedPointer<DFMMOUNT::DFMBlockMonitor>>
                        (manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice));
-        const QStringList &rootDevNodes = monitor->resolveDeviceNode(qsi.device(), {});
+        QStringList &&rootDevNodes = monitor->resolveDeviceNode(qsi.device(), {});
         if (!rootDevNodes.isEmpty()) {
             if (data.drive == createBlockDevice(rootDevNodes.first())->drive())
                 return true;
@@ -306,13 +301,6 @@ DeviceServiceHelper::ProtocolDevPtr DeviceServiceHelper::createProtocolDevice(co
     return qobject_cast<ProtocolDevPtr>(devPtr);
 }
 
-void DeviceServiceHelper::poweroffBlockDeivceAsync(BlockDevPtr &blkDev)
-{
-    bool canPowerOff = blkDev->canPowerOff();
-    if (canPowerOff)
-        blkDev->powerOffAsync();
-}
-
 DeviceServiceHelper::DevPtr DeviceServiceHelper::createDevice(const QString &devId, DFMMOUNT::DeviceType type)
 {
     auto manager = DFMMOUNT::DFMDeviceManager::instance();
@@ -325,7 +313,7 @@ DeviceServiceHelper::DevPtrList DeviceServiceHelper::createAllDevices(dfmmount::
 {
     DevPtrList list;
     auto manager = DFMMOUNT::DFMDeviceManager::instance();
-    const auto &devicesMap = manager->devices(type);
+    auto &&devicesMap = manager->devices(type);
     const QStringList &idList = devicesMap[type];
     for (const QString &id : idList) {
         auto dev = createDevice(id, type);
