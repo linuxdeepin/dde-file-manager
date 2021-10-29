@@ -45,17 +45,26 @@ void DFMVaultActiveSaveKeyFileView::initUI()
     m_title = new DLabel(this);
     m_title->setMargin(0);
     m_title->setText(tr("Save Recovery Key"));
+
     m_hintMsg = new DLabel(this);
     m_hintMsg->setWordWrap(true);
     m_hintMsg->setAlignment(Qt::AlignCenter);
     m_hintMsg->setText(tr("Keep the key safe to retrieve the vault password later"));
+
     m_defaultPathRadioBtn = new QRadioButton(this);
     AC_SET_ACCESSIBLE_NAME(m_defaultPathRadioBtn, AC_VAULT_DEFAULT_PATH_RADIOBTN);
     m_defaultPathRadioBtn->setChecked(true);
     m_defaultPathRadioBtn->setText(tr("Save to default path"));
+
     m_otherPathRadioBtn = new QRadioButton;
     AC_SET_ACCESSIBLE_NAME(m_otherPathRadioBtn, AC_VAULT_OTHER_PATH_RADIOBTN);
     m_otherPathRadioBtn->setText(tr("Save to other locations"));
+    m_otherRadioBtnHitMsg = new DLabel(tr("No permission, please reselect"));
+    m_otherRadioBtnHitMsg->hide();
+    QPalette pe;
+    pe.setColor(QPalette::WindowText,Qt::red);
+    m_otherRadioBtnHitMsg->setPalette(pe);
+
     m_SelectfileSavePathEdit = new DFileChooserEdit;
     AC_SET_ACCESSIBLE_NAME(m_SelectfileSavePathEdit, AC_VAULT_SELECT_FILE_SAVE_PATH_EDIT);
     m_SelectfileSavePathEdit->lineEdit()->setReadOnly(true);
@@ -73,6 +82,7 @@ void DFMVaultActiveSaveKeyFileView::initUI()
     group->addButton(m_otherPathRadioBtn, 2);
 
     connect(group, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(slotRadioBtn(QAbstractButton*)));
+    connect(m_SelectfileSavePathEdit, &DFileChooserEdit::fileChoosed, this, &DFMVaultActiveSaveKeyFileView::slotChangeEdit);
 
 
     // 下一步按钮
@@ -181,8 +191,28 @@ void DFMVaultActiveSaveKeyFileView::slotRadioBtn(QAbstractButton *btn)
 {
     if(btn == m_defaultPathRadioBtn) {
         m_SelectfileSavePathEdit->setEnabled(false);
+        m_pNext->setEnabled(true);
     } else if(btn == m_otherPathRadioBtn) {
         m_SelectfileSavePathEdit->setEnabled(true);
+        if(m_SelectfileSavePathEdit->text().isEmpty())
+            m_pNext->setEnabled(false);
+    }
+}
+
+void DFMVaultActiveSaveKeyFileView::slotChangeEdit(const QString &fileName)
+{
+    QDir dir(fileName);
+    dir.cdUp();
+    QString path = dir.absolutePath();
+    QFile file(path);
+    QFileDevice::Permissions ps = file.permissions();
+    auto temp = ps & QFileDevice::WriteUser;
+    if(temp != QFileDevice::WriteUser) {
+        m_pNext->setEnabled(false);
+        m_otherRadioBtnHitMsg->show();
+    }else if(!fileName.isEmpty()) {
+        m_otherRadioBtnHitMsg->hide();
+        m_pNext->setEnabled(true);
     }
 }
 
@@ -190,6 +220,7 @@ void DFMVaultActiveSaveKeyFileView::showEvent(QShowEvent *event)
 {
     m_defaultPathRadioBtn->setChecked(true);
     m_SelectfileSavePathEdit->clear();
+    m_otherRadioBtnHitMsg->hide();
     QWidget::showEvent(event);
 }
 

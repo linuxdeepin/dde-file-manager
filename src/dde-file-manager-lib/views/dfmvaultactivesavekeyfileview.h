@@ -68,6 +68,12 @@ public slots:
      */
     void slotRadioBtn(QAbstractButton * btn );
 
+    /**
+     * @brief slotChangeEdit 处理保存密钥路径权限问题,并在UI上进行提示
+     * @param fileName      选择保存密钥的路径
+     */
+    void slotChangeEdit(const QString &fileName);
+
 protected:
     void showEvent(QShowEvent * event) override;
 
@@ -84,6 +90,8 @@ private:
     DFileChooserEdit * m_SelectfileSavePathEdit = nullptr;
     //! 保存密钥文件并进行下一步操作的按钮
     QPushButton * m_pNext = nullptr;
+    //! 保存密钥权限提示
+    DLabel * m_otherRadioBtnHitMsg = nullptr;
 };
 
 #endif // DFMVAULTACTIVESAVEKEYFILEVIEW_H
