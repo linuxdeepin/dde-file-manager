@@ -316,7 +316,7 @@ void UserShareManager::updateUserShareInfo(bool sendSignal)
                 info.insert(key, value);
             }
         }
-        QString shareName = info.value("sharename");
+        QString shareName = info.value("sharename").toLower();
         QString sharePath = info.value("path");
         QString share_acl = info.value("usershare_acl");
         if (!shareName.isEmpty() &&

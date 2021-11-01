@@ -156,36 +156,28 @@ bool FileUtils::isNetworkAncestorUrl(const DUrl &dest, const bool isDestGvfs, co
     if ((isDestGvfs && isSourceGvfs) || (!isDestGvfs && !isSourceGvfs))
         return false;
 
-    QString gvfsUrlStr = isDestGvfs ? dest.toString() : source.toString();
+    QString gvfsUrlStr = isDestGvfs ? dest.path() : source.path();
 
-    if (!(gvfsUrlStr.contains("smb-share:server=") && gvfsUrlStr.contains(",share=")))
+    static QRegularExpression regExp("^/run/user/\\d+/gvfs/smb-share:server=(?<host>.*),share=(?<shareName>[^/]+)(?<path>.*)",
+                                     QRegularExpression::DotMatchesEverythingOption
+                                     | QRegularExpression::DontCaptureOption
+                                     | QRegularExpression::OptimizeOnFirstUsageOption);
+
+    const QRegularExpressionMatch &match = regExp.match(gvfsUrlStr, 0, QRegularExpression::NormalMatch,
+                                                        QRegularExpression::DontCheckSubjectStringMatchOption);
+
+    if (!match.hasMatch())
         return false;
 
-    QString urlIp, urlShareName, urlPath;
-    // 获取url里面的ip和共享，名称
-    static const QRegExp rxIP(R"((\d+.\d+.\d+.\d+))");
-    static const QRegExp rxShareName(R"((,share=[^/]+))");
-    static const QRegExp rxSharePath(R"((,share=.*))");
-
-
-    if (rxIP.indexIn(gvfsUrlStr, 0) != -1)
-        urlIp = rxIP.cap(1);
-
-    if (rxShareName.indexIn(gvfsUrlStr, 0) != -1)
-        urlShareName = rxShareName.cap(1).replace(",share=","");
-
-    if (rxSharePath.indexIn(gvfsUrlStr, 0) != -1)
-        urlPath = rxSharePath.cap(1).replace(",share=" + urlShareName,"");
-
-    if (urlIp.isEmpty() || urlShareName.isEmpty())
-        return false;
-
+    const QString &host = match.captured("host");
+    const QString &shareName = match.captured("shareName");
+    const QString &path = match.captured("path");
     // 获取本机ip判断是否是自己
     bool selfIp = false;
     const auto &allAddresses = QNetworkInterface::allAddresses();
     for (const auto &address : allAddresses) {
         const QString &ipAddr = address.toString();
-        if (ipAddr == urlIp) {
+        if (ipAddr == host) {
             selfIp = true;
             break;
         }
@@ -195,10 +187,10 @@ bool FileUtils::isNetworkAncestorUrl(const DUrl &dest, const bool isDestGvfs, co
         return false;
     //获取自己的共享路径
     QString realPath;
-    if (!userShareManager->getsShareInfoByShareName(urlShareName).isValid())
+    if (!userShareManager->getsShareInfoByShareName(shareName).isValid())
         return false;
 
-    realPath = userShareManager->getsShareInfoByShareName(urlShareName).path() + urlPath;
+    realPath = userShareManager->getsShareInfoByShareName(shareName).path() + path;
     DUrl realUrl = DUrl::fromLocalFile(realPath);
     if (isDestGvfs && realUrl.parentUrl().path().contains(source.path()))
         return true;
