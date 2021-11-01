@@ -4612,7 +4612,7 @@ void DFileCopyMoveJob::run()
                         || targetStorageInfo->fileSystemType().startsWith("fuseblk"))
                     d->m_openFlag = d->m_openFlag | O_DIRECT;
 
-                if (d->canUseWriteBytes)
+                if (d->canUseWriteBytes && !d->m_bDestLocal)
                     d->m_refineStat = NoRefine;
 
                 if (!d->canUseWriteBytes) {
