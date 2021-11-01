@@ -56,16 +56,19 @@ void DFMVaultActiveSaveKeyFileView::initUI()
     m_defaultPathRadioBtn->setChecked(true);
     m_defaultPathRadioBtn->setText(tr("Save to default path"));
 
-    m_otherPathRadioBtn = new QRadioButton;
+    m_otherPathRadioBtn = new QRadioButton(this);
     AC_SET_ACCESSIBLE_NAME(m_otherPathRadioBtn, AC_VAULT_OTHER_PATH_RADIOBTN);
     m_otherPathRadioBtn->setText(tr("Save to other locations"));
-    m_otherRadioBtnHitMsg = new DLabel(tr("No permission, please reselect"));
+    m_otherRadioBtnHitMsg = new DLabel(tr("No permission, please reselect"), this);
     m_otherRadioBtnHitMsg->hide();
     QPalette pe;
     pe.setColor(QPalette::WindowText,Qt::red);
     m_otherRadioBtnHitMsg->setPalette(pe);
+    QFont font1;
+    font1.setPixelSize(10);
+    m_otherRadioBtnHitMsg->setFont(font1);
 
-    m_SelectfileSavePathEdit = new DFileChooserEdit;
+    m_SelectfileSavePathEdit = new DFileChooserEdit(this);
     AC_SET_ACCESSIBLE_NAME(m_SelectfileSavePathEdit, AC_VAULT_SELECT_FILE_SAVE_PATH_EDIT);
     m_SelectfileSavePathEdit->lineEdit()->setReadOnly(true);
     m_SelectfileSavePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
@@ -119,6 +122,8 @@ void DFMVaultActiveSaveKeyFileView::initUI()
     QHBoxLayout * layout3 = new QHBoxLayout();
     layout3->setContentsMargins(0,0,0,0);
     layout3->addWidget(m_otherPathRadioBtn);
+    layout3->addWidget(m_otherRadioBtnHitMsg);
+    layout3->addStretch(1);
 
     QHBoxLayout * layout4 = new QHBoxLayout();
     layout4->setContentsMargins(4,4,4,4);

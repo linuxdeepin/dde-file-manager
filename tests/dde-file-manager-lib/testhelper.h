@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QEventLoop>
 #include <QTimer>
+#include <QApplication>
 
 #define FreePointer(x) if(x){delete x;x = nullptr;}
 
@@ -72,6 +73,7 @@ public:
             loop.exit();
         });
         loop.exec();
+        qApp->processEvents();
     }
 
 };

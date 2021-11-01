@@ -290,8 +290,8 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent):DFMVaultPage
 
 void DFMVaultRetrievePassword::setVerificationPage()
 {
+    m_savePathTypeComboBox->setCurrentIndex(0);
     if(getContent(0) == m_PasswordRecoveryPage) {
-        m_savePathTypeComboBox->setCurrentIndex(0);
         removeContent(m_PasswordRecoveryPage, false);
         m_PasswordRecoveryPage->hide();
         addContent(m_selectKeyPage);

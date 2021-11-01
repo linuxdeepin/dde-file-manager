@@ -69,6 +69,7 @@ namespace  {
         }
         void TearDown() override
         {
+            qApp->processEvents();
             delete m_pDaemon;
             m_pDaemon = nullptr;
             delete m_pManager;
