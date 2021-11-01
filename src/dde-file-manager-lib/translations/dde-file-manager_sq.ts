@@ -639,32 +639,42 @@
 <context>
     <name>DFMVaultActiveSaveKeyFileView</name>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="43"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="47"/>
         <source>Save Recovery Key</source>
         <translation>Ruani Kyç Rimarrjesh</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="50"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="52"/>
         <source>Keep the key safe to retrieve the vault password later</source>
         <translation>Mbajeni të parrezik kyçin, që të rimerrni më vonë fjalëkalim kasaforte</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="54"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="57"/>
         <source>Save to default path</source>
         <translation>Ruaje te shtegu parazgjedhje</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="57"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="61"/>
         <source>Save to other locations</source>
         <translation>Ruajeni në vendndodhje të tjera</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="76"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="62"/>
+        <source>No permission, please reselect</source>
+        <translation>S’kihen leje, ju lutemi, ripërzgjidhni</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="71"/>
+        <source>Select a path</source>
+        <translation>Përzgjidhni një shteg</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="89"/>
         <source>Next</source>
         <translation>Pasuesi</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="89"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="102"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
         <translation>Shtegu parazgjedhje është i padukshëm për përdorues të tjerë dhe hollësitë e shtegut nuk do të shfaqen.</translation>
     </message>
@@ -937,61 +947,77 @@
 <context>
     <name>DFMVaultRetrievePassword</name>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="77"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="67"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="76"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="136"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="148"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="149"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="325"/>
+        <source>Unable to get the key file</source>
+        <translation>S’arrihet të merret kartela e kyçit</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="90"/>
         <source>Verification failed</source>
         <translation>Verifikimi dështoi</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="146"/>
-        <source>Retrieve Password</source>
-        <translation type="unfinished"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="154"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="194"/>
+        <source>Select a path</source>
+        <translation>Përzgjidhni një shteg</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="185"/>
+        <source>Retrieve Password</source>
+        <translation>Rimerrni Fjalëkalimin</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="189"/>
         <source>By key in the default path</source>
         <translation>Përmes kyçi te shtegu parazgjedhje</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="151"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="190"/>
         <source>By key in the specified path</source>
         <translation>Përmes kyçi te shtegu i përcaktuar</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="174"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="213"/>
         <source>Verification Successful</source>
         <translation>Verifikim i Suksesshëm</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="177"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="216"/>
         <source>Keep it safe</source>
         <translation>Mbajeni të parrezik</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="238"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>Mbrapsht</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="238"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
         <source>Verify Key</source>
         <comment>button</comment>
         <translation>Verifikoni Kyç</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="238"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
         <translation>Kalo te Shkyçja</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="238"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Mbylle</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="269"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="308"/>
         <source>Vault password: %1</source>
         <translation>Fjalëkalim kasaforte: %1</translation>
     </message>
@@ -999,17 +1025,17 @@
 <context>
     <name>DFMVaultUnlockPages</name>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="57"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="60"/>
         <source>Unlock File Vault</source>
         <translation>Shkyç Kasafortë Kartelash</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="65"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="68"/>
         <source>Verify your password</source>
         <translation>Verifikoni fjalëkalimin tuaj</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="69"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="72"/>
         <source>Forgot password?</source>
         <translation>Harruat fjalëkalimin?</translation>
     </message>
@@ -1019,12 +1045,12 @@
         <translation>Ndihmëz fjalëkalimi: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="318"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="325"/>
         <source>Failed to unlock file vault</source>
         <translation>S’u arrit të shkyçet kasafortë kartelash</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="87"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="88"/>
         <source>Password</source>
         <translation>Fjalëkalim</translation>
     </message>
@@ -1041,32 +1067,32 @@
         <translation>Shkyçe</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="235"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="242"/>
         <source>Please try again %1 minutes later</source>
         <translation>Ju lutemi, riprovoni pas %1 minutash</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="263"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="270"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Fjalëkalim i gabuar, ju lutemi, riprovoni pas %1 minutash</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="266"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="273"/>
         <source>Wrong password, one chance left</source>
         <translation>Fjalëkalim i gabuar, edhe një provë</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="268"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="275"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Fjalëkalim i gabuar, edhe %1 prova</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="313"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="320"/>
         <source>Wrong password</source>
         <translation>Fjalëkalim i gabuar</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="322"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="329"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
@@ -1161,93 +1187,93 @@
         <translation>kopjoje</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1223"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1233"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation>S’u arrit të hapej drejtoria, shkak: emër shumë i gjatë kartele</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1431"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2054"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2954"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1441"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2064"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2964"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation>S’u arrit të hapej kartela, shkak: emër shumë i gjatë kartele</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3833"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3917"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3843"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3927"/>
         <source>Failed to write the file, cause:</source>
         <translation>S’u arrit të shkruhej kartela, shkaku:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4745"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4755"/>
         <source>Syncing data</source>
         <translation>Njëkohësim të dhënash</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4745"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4755"/>
         <source>Please wait</source>
         <translation>Ju lutemi, prisni</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1233"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1243"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>S’u arrit të krijohej drejtoria, shkaku: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1443"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1483"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2066"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2106"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2643"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2683"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1453"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1493"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2076"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2116"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2653"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2693"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>S’u arrit të hapej kartela, shkaku: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1479"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2102"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2679"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3778"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1489"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2112"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2689"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3788"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>S’u arrit të hapej kartela, shkak: Leje e mohuar</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1608"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2231"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1618"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2241"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>S’u arrit të lexohej kartela, shkaku: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1696"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1786"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2319"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2409"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1706"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1796"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2329"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2419"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>S’u arrit të shkruhej kartela, shkaku: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1934"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2550"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1944"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2560"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>Integriteti i kartelës qe cenuar, shkaku: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2966"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2976"/>
         <source>Failed to open the file, cause: </source>
         <translation>S’u arrit të hapej kartela, shkaku:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3047"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3057"/>
         <source>Failed to read the file, cause: </source>
         <translation>S’u arrit të lexohej kartela, shkaku:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3145"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3155"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>S’u arrit të fshihej kartela, shkaku: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3245"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3255"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>S’u arrit të krijohej simlidhje, shkaku: %1</translation>
     </message>
@@ -1300,12 +1326,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1275"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1270"/>
         <source>Trash</source>
         <translation>Hedhurina</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1284"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1279"/>
         <source>Empty</source>
         <translation>E zbrazët</translation>
     </message>
@@ -1358,22 +1384,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2736"/>
+        <location filename="../views/dfileview.cpp" line="2748"/>
         <source>Disc mount error</source>
         <translation>Gabim montimi disku</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2736"/>
+        <location filename="../views/dfileview.cpp" line="2748"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>Disku është në përdorim, ju lutemi, përfundoni procesin në xhirim dhe rimontoni diskun.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2750"/>
+        <location filename="../views/dfileview.cpp" line="2762"/>
         <source>Mounting failed</source>
         <translation>Montimi dështoi</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3459"/>
+        <location filename="../views/dfileview.cpp" line="3471"/>
         <source>(Reverse)</source>
         <translation>(Së prapthi)</translation>
     </message>
@@ -3372,7 +3398,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1285"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1280"/>
         <source>Empty Trash</source>
         <translation>Zbraz Hedhurinat</translation>
     </message>
@@ -3696,12 +3722,12 @@
         <translation>%1 objekte</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1223"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1225"/>
         <source>Shortcut</source>
         <translation>Shkurtore</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="768"/>
+        <location filename="../interfaces/dfileservices.cpp" line="770"/>
         <source>Create symlink</source>
         <translation>Krijo simlidhje</translation>
     </message>
@@ -4045,7 +4071,7 @@
         <translation>Kartelat po përpunohen</translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="575"/>
+        <location filename="../shutil/fileutils.cpp" line="646"/>
         <location filename="../../utils/utils.cpp" line="512"/>
         <source>Unknown</source>
         <translation>E panjohur</translation>
@@ -4074,9 +4100,9 @@
         <translation>S’u arrit të krijohej trajtues kartele</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2718"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2754"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2787"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2728"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2764"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2797"/>
         <source>Execution error</source>
         <translation>Gabim ekzekutimi</translation>
     </message>
@@ -4102,16 +4128,16 @@
         <translation>Ripohojeni</translation>
     </message>
     <message>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="910"/>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="1071"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="913"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1074"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="479"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="688"/>
         <source>%1 are not allowed</source>
         <translation>Nuk lejohen %1</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="364"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="455"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1543"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="543"/>
         <source>Failed to start Samba services</source>
         <translation>S’u arrit të niseshin shërbime Samba</translation>
     </message>
@@ -4159,35 +4185,35 @@
         <translation>Lejoje</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="317"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="318"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Emri i ndarjes s’duhet të jetë dy pika (..) ose një pikë (.)</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="333"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="334"/>
         <source>The share name is used by another user.</source>
         <translation>Emri i ndarjes është i përdorur nga tjetër përdorues</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="334"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="335"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="337"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="338"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="338"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="339"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Zëvendësoje</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="336"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="337"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>Emri i ndarjes ekziston tashmë. Doni të zëvendësohet dosja e ndarë?</translation>
     </message>
@@ -4629,37 +4655,37 @@
 <context>
     <name>UserShareManager</name>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="382"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="404"/>
         <source>Kindly Reminder</source>
         <translation>Kujtues i Sjellshëm</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="382"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="404"/>
         <source>Please firstly install samba to continue</source>
         <translation>Ju lutemi, që të vazhdohet, së pari instaloni Samba-n</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="419"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="441"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>Që të mbrohen kartelat, s’mund ta ndani këtë dosje me të tjerë.</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="425"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="447"/>
         <source>The share name must not contain %&lt;&gt;*?|/\+=;:,&quot;</source>
         <translation>Emri i ndarjes s’duhet të përmbajë %&lt;&gt;*?|/\+=;:,&quot;</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="442"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="464"/>
         <source>Sharing failed</source>
         <translation>Ndarja me të tjerë dështoi</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="442"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="464"/>
         <source>The computer name is too long</source>
         <translation>Emri i kompjuterit është shumë i gjatë</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="536"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="561"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>S’keni leje të bëni veprime në kartelë/dosje!</translation>
     </message>

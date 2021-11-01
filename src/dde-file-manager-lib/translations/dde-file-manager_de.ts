@@ -638,32 +638,42 @@
 <context>
     <name>DFMVaultActiveSaveKeyFileView</name>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="43"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="47"/>
         <source>Save Recovery Key</source>
-        <translation type="unfinished"/>
+        <translation>Wiederherstellungsschlüssel speichern</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="50"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="52"/>
         <source>Keep the key safe to retrieve the vault password later</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="54"/>
-        <source>Save to default path</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="57"/>
+        <source>Save to default path</source>
+        <translation>Im Standardpfad speichern</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="61"/>
         <source>Save to other locations</source>
+        <translation>An anderen Orten speichern</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="62"/>
+        <source>No permission, please reselect</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="76"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="71"/>
+        <source>Select a path</source>
+        <translation>Wählen Sie einen Pfad aus</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="89"/>
         <source>Next</source>
         <translation>Weiter</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="89"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="102"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
         <translation type="unfinished"/>
     </message>
@@ -865,7 +875,7 @@
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="111"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation>Einmal gelöscht, werden die darin befindlichen Dateien dauerhaft gelöscht</translation>
+        <translation>Einmal gelöscht, werden die darin enthaltenen Dateien endgültig gelöscht</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="201"/>
@@ -936,81 +946,97 @@
 <context>
     <name>DFMVaultRetrievePassword</name>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="77"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="67"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="76"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="136"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="148"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="149"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="325"/>
+        <source>Unable to get the key file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="90"/>
         <source>Verification failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="146"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="154"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="194"/>
+        <source>Select a path</source>
+        <translation>Wählen Sie einen Pfad aus</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="185"/>
         <source>Retrieve Password</source>
-        <translation type="unfinished"/>
+        <translation>Passwort abrufen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="189"/>
         <source>By key in the default path</source>
-        <translation type="unfinished"/>
+        <translation>Mit dem Schlüssel im Standardpfad</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="151"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="190"/>
         <source>By key in the specified path</source>
-        <translation type="unfinished"/>
+        <translation>Mit dem Schlüssel im angegebenen Pfad</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="174"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="213"/>
         <source>Verification Successful</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="177"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="216"/>
         <source>Keep it safe</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="238"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>Zurück</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="238"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
         <source>Verify Key</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="238"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="238"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Schließen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="269"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="308"/>
         <source>Vault password: %1</source>
-        <translation type="unfinished"/>
+        <translation>Tresor-Passwort: %1</translation>
     </message>
 </context>
 <context>
     <name>DFMVaultUnlockPages</name>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="57"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="60"/>
         <source>Unlock File Vault</source>
         <translation>Dateitresor entsperren</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="65"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="68"/>
         <source>Verify your password</source>
         <translation>Überprüfen Sie Ihr Passwort</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="69"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="72"/>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Passwort vergessen?</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="141"/>
@@ -1018,12 +1044,12 @@
         <translation>Passworthinweis: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="318"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="325"/>
         <source>Failed to unlock file vault</source>
         <translation>Fehler beim Entsperren des Dateitresors</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="87"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="88"/>
         <source>Password</source>
         <translation>Passwort</translation>
     </message>
@@ -1040,32 +1066,32 @@
         <translation>Entsperren</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="235"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="242"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Bitte versuchen Sie es %1 Minuten später erneut</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="263"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="270"/>
         <source>Wrong password, please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Falsches Passwort, bitte versuchen Sie es %1 Minuten später erneut</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="266"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="273"/>
         <source>Wrong password, one chance left</source>
-        <translation type="unfinished"/>
+        <translation>Falsches Passwort, noch eine Chance übrig</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="268"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="275"/>
         <source>Wrong password, %1 chances left</source>
-        <translation type="unfinished"/>
+        <translation>Falsches Passwort, noch %1 Chancen übrig</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="313"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="320"/>
         <source>Wrong password</source>
         <translation>Falsches Passwort</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="322"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="329"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
@@ -1160,93 +1186,93 @@
         <translation>Kopie</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1223"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1233"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation>Fehler beim Öffnen des Verzeichnisses, Grund: Dateiname zu lang</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1431"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2054"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2954"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1441"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2064"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2964"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation>Fehler beim Öffnen der Datei, Grund: Dateiname zu lang</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3833"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3917"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3843"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3927"/>
         <source>Failed to write the file, cause:</source>
         <translation>Fehler beim Öffnen der Datei, Grund:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4745"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4755"/>
         <source>Syncing data</source>
         <translation>Daten werden synchronisiert</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4745"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4755"/>
         <source>Please wait</source>
         <translation>Bitte warten</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1233"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1243"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>Fehler beim Erstellen des Verzeichnisses, Grund: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1443"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1483"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2066"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2106"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2643"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2683"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1453"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1493"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2076"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2116"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2653"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2693"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Fehler beim Öffnen der Datei, Grund: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1479"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2102"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2679"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3778"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1489"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2112"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2689"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3788"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>Fehler beim Öffnen der Datei, Grund: Berechtigung verweigert</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1608"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2231"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1618"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2241"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>Fehler beim Lesen der Datei, Grund: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1696"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1786"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2319"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2409"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1706"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1796"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2329"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2419"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>Fehler beim Schreiben der Datei, Grund: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1934"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2550"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1944"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2560"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>Datei-Integrität wurde beschädigt, Grund: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2966"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2976"/>
         <source>Failed to open the file, cause: </source>
         <translation>Fehler beim Öffnen der Datei, Grund: </translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3047"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3057"/>
         <source>Failed to read the file, cause: </source>
         <translation>Fehler beim Lesen der Datei, Grund: </translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3145"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3155"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>Fehler beim Löschen der Datei, Grund: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3245"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3255"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>Fehler beim Erstellen des Symlinks, Grund: %1</translation>
     </message>
@@ -1299,12 +1325,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1275"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1270"/>
         <source>Trash</source>
         <translation>Papierkorb</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1284"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1279"/>
         <source>Empty</source>
         <translation>Leeren</translation>
     </message>
@@ -1357,22 +1383,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2736"/>
+        <location filename="../views/dfileview.cpp" line="2748"/>
         <source>Disc mount error</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2736"/>
+        <location filename="../views/dfileview.cpp" line="2748"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2750"/>
+        <location filename="../views/dfileview.cpp" line="2762"/>
         <source>Mounting failed</source>
         <translation>Einhängen fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3459"/>
+        <location filename="../views/dfileview.cpp" line="3471"/>
         <source>(Reverse)</source>
         <translation>(Umgekehrt)</translation>
     </message>
@@ -1692,12 +1718,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="644"/>
         <source>Permanently delete %1?</source>
-        <translation>%1 dauerhaft löschen?</translation>
+        <translation>%1 endgültig löschen?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="645"/>
         <source>Permanently delete %1 items?</source>
-        <translation>%1 Elemente dauerhaft löschen?</translation>
+        <translation>%1 Elemente endgültig löschen?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="663"/>
@@ -1832,12 +1858,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="642"/>
         <source>Are you sure you want to empty %1 item?</source>
-        <translation>Sind Sie sicher, %1 Element zu löschen?</translation>
+        <translation>Sind Sie sicher, dass Sie %1 Element löschen möchten?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="643"/>
         <source>Are you sure you want to empty %1 items?</source>
-        <translation>Sind Sie sicher, %1 Elemente zu löschen?</translation>
+        <translation>Sind Sie sicher, dass Sie %1 Elemente löschen möchten?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="536"/>
@@ -2093,7 +2119,7 @@
     <message>
         <location filename="../views/fileitem.cpp" line="203"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"/>
+        <translation>%1 sind nicht erlaubt</translation>
     </message>
 </context>
 <context>
@@ -2230,7 +2256,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="35"/>
         <location filename="../configure/global-setting-template.js" line="35"/>
         <source>Open from default window:</source>
-        <translation>Standardordner beim Öffnen:</translation>
+        <translation>Vom Standardfenster aus öffnen:</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="39"/>
@@ -2464,7 +2490,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="257"/>
         <location filename="../configure/global-setting-template.js" line="256"/>
         <source>Keep showing the mounted Samba shares</source>
-        <translation type="unfinished"/>
+        <translation>Eingehängte Samba-Freigaben weiterhin anzeigen</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="269"/>
@@ -2854,7 +2880,7 @@
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="50"/>
         <source>Are you sure you want to permanently delete %1?</source>
-        <translation>Sind Sie sicher, dass Sie %1 dauerhaft löschen möchten?</translation>
+        <translation>Sind Sie sicher, dass Sie %1 endgültig löschen möchten?</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="49"/>
@@ -2869,7 +2895,7 @@
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="54"/>
         <source>Are you sure you want to permanently delete %1 files?</source>
-        <translation>Möchten Sie %1 Dateien dauerhaft löschen?</translation>
+        <translation>Sind Sie sicher, dass Sie %1 Dateien endgültig löschen möchten?</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="74"/>
@@ -3144,7 +3170,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1429"/>
         <source>Unconnected network shared directory</source>
-        <translation type="unfinished"/>
+        <translation>Nicht verbundenes gemeinsames Netzwerkverzeichnis</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1447"/>
@@ -3371,7 +3397,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1285"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1280"/>
         <source>Empty Trash</source>
         <translation>Papierkorb leeren</translation>
     </message>
@@ -3695,12 +3721,12 @@
         <translation>%1 Elemente</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1223"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1225"/>
         <source>Shortcut</source>
         <translation>Verknüpfung</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="768"/>
+        <location filename="../interfaces/dfileservices.cpp" line="770"/>
         <source>Create symlink</source>
         <translation>Symbolische Verknüpfung erstellen</translation>
     </message>
@@ -4044,7 +4070,7 @@
         <translation>Dateien werden verarbeitet</translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="575"/>
+        <location filename="../shutil/fileutils.cpp" line="646"/>
         <location filename="../../utils/utils.cpp" line="512"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
@@ -4073,9 +4099,9 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2718"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2754"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2787"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2728"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2764"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2797"/>
         <source>Execution error</source>
         <translation>Ausführungsfehler</translation>
     </message>
@@ -4087,7 +4113,7 @@
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="333"/>
         <source>Original file does not exist</source>
-        <translation>Originale Datei existiert nicht</translation>
+        <translation>Ursprungsdatei existiert nicht</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="334"/>
@@ -4101,16 +4127,16 @@
         <translation>Bestätigen</translation>
     </message>
     <message>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="910"/>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="1071"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="913"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1074"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="479"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="688"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"/>
+        <translation>%1 sind nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="364"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="455"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1543"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="543"/>
         <source>Failed to start Samba services</source>
         <translation type="unfinished"/>
     </message>
@@ -4158,35 +4184,35 @@
         <translation>Erlauben</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="317"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="318"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Der Freigabename darf nicht aus zwei Punkten (..) oder einem Punkt (.) bestehen</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="333"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="334"/>
         <source>The share name is used by another user.</source>
         <translation>Der Freigabename wird von einem anderen Benutzer verwendet.</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="334"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="335"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="337"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="338"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="338"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="339"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Ersetzen</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="336"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="337"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>Der Freigabename existiert bereits. Möchten Sie den freigegebenen Ordner ersetzen?</translation>
     </message>
@@ -4281,7 +4307,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="42"/>
         <source>Permanently delete</source>
-        <translation>Dauerhaft löschen</translation>
+        <translation>Endgültig löschen</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="42"/>
@@ -4607,7 +4633,7 @@
     <message>
         <location filename="../deviceinfo/udisklistener.cpp" line="235"/>
         <source>Failed to rename the label</source>
-        <translation>Fehler beim Umbenennen des Labels</translation>
+        <translation>Fehler beim Umbenennen der Bezeichnung</translation>
     </message>
 </context>
 <context>
@@ -4617,7 +4643,7 @@
         <location filename="../../fileoperations/filejob.cpp" line="757"/>
         <location filename="../../fileoperations/filejob.cpp" line="1016"/>
         <source>The device was not safely unmounted</source>
-        <translation>Das Gerät wurde nicht sicher ausgehängt.</translation>
+        <translation>Das Gerät wurde nicht sicher ausgehängt</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="1611"/>
@@ -4628,37 +4654,37 @@
 <context>
     <name>UserShareManager</name>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="382"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="404"/>
         <source>Kindly Reminder</source>
         <translation>Freundliche Erinnerung</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="382"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="404"/>
         <source>Please firstly install samba to continue</source>
-        <translation>Bitte installieren Sie zuerst Samba, um fortzufahren.</translation>
+        <translation>Bitte installieren Sie zunächst Samba, um fortzufahren</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="419"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="441"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>Um die Dateien zu schützen, können Sie diesen Ordner nicht freigeben.</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="425"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="447"/>
         <source>The share name must not contain %&lt;&gt;*?|/\+=;:,&quot;</source>
         <translation>Der Freigabename darf nicht %&lt;&gt;*?|/\+=;;,&quot; enthalten.</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="442"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="464"/>
         <source>Sharing failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="442"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="464"/>
         <source>The computer name is too long</source>
         <translation>Der Computername ist zu lang</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="536"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="561"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Sie besitzen nicht die erforderlichen Rechte um den Ordner oder die Datei zu bearbeiten!</translation>
     </message>
