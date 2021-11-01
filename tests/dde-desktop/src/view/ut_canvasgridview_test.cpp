@@ -2306,6 +2306,21 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_shiftAndArrowKeys)
     temp = m_canvasGridView->selectedUrls().size();
     EXPECT_TRUE(3 <= temp);
 
+    //选中布局(1,1)图标
+    m_canvasGridView->select({DUrl(url11)});
+    m_canvasGridView->d->m_oldCursorIndex = index11;
+    m_canvasGridView->d->currentCursorIndex = index11;
+    stu.reset(&DFMGlobal::keyShiftIsPressed);
+    stu.set_lamda(ADDR(DFMGlobal, keyShiftIsPressed), [](){ return false;});
+    QTest::keyPress(m_canvasGridView, Qt::Key_Left);
+
+    //重新选中布局(0,1)图标
+    stu.reset(&DFMGlobal::keyShiftIsPressed);
+    stu.set_lamda(ADDR(DFMGlobal, keyShiftIsPressed), [](){ return true;});
+    m_canvasGridView->d->currentCursorIndex = index00;
+    m_canvasGridView->setSelection(QRect(), QItemSelectionModel::SelectCurrent);
+    auto sUrls = m_canvasGridView->selectedUrls();
+    EXPECT_TRUE(!sUrls.contains(DUrl(url11)));
     //移除测试文件
     QDir dir(path);
     auto temppp = dir.entryInfoList();

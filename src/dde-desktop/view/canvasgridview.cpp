@@ -753,6 +753,8 @@ QModelIndex CanvasGridView::moveCursor(QAbstractItemView::CursorAction cursorAct
 
     if (index.isValid()) {
         d->currentCursorIndex = index;
+        if (!DFMGlobal::keyShiftIsPressed())
+            d->m_oldCursorIndex = index;
         return index;
     }
 
