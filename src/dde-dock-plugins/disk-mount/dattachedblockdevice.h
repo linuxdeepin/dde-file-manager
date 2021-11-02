@@ -49,7 +49,7 @@ protected:
 
 private:
     QVariantMap data;
-    const QString ddeI18nSym = QStringLiteral("_dde_");
+    const QString ddeI18nSym {QStringLiteral("_dde_")};
 };
 
 #endif // DATTACHEDBLOCKDEVICE_H

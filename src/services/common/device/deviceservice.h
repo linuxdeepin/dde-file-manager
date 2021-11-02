@@ -49,8 +49,8 @@ public: // operations
     bool stopDefenderScanDrive(const QString &deviceId);
     bool stopDefenderScanAllDrives();
 
-    bool detachMountedBlockDevice(const QString &deviceId);
-    bool detachMountedProtocolDevice(const QString &deviceId);
+    void detachBlockDevice(const QString &deviceId);
+    void detachProtocolDevice(const QString &deviceId);
     void detachAllMountedBlockDevices();
     void detachAllMountedProtocolDevices();
     void mountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});

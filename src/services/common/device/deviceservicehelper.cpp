@@ -44,7 +44,7 @@ std::once_flag &DeviceServiceHelper::autoMountOnceFlag()
     return flag;
 }
 
-QList<QUrl> DeviceServiceHelper::getMountPathForDrive(const QString &driveName)
+QList<QUrl> DeviceServiceHelper::makeMountpointsForDrive(const QString &driveName)
 {
     QList<QUrl> urls;
 
@@ -52,7 +52,7 @@ QList<QUrl> DeviceServiceHelper::getMountPathForDrive(const QString &driveName)
 
     for (const auto &device : blkDevcies) {
         if (device->drive() == driveName) {
-            QUrl &&url = getMountPathForBlock(device);
+            QUrl &&url = makeMountpointForBlock(device);
             if (url.isValid())
                 urls << url;
         }
@@ -61,20 +61,20 @@ QList<QUrl> DeviceServiceHelper::getMountPathForDrive(const QString &driveName)
     return urls;
 }
 
-QList<QUrl> DeviceServiceHelper::getMountPathForAllDrive()
+QList<QUrl> DeviceServiceHelper::makeMountpointsForAllDrive()
 {
     QList<QUrl> urls;
     auto blkDevcies = DeviceServiceHelper::createAllBlockDevices();
 
     for (const auto &device : blkDevcies) {
-        QUrl &&url = getMountPathForBlock(device);
+        QUrl &&url = makeMountpointForBlock(device);
         urls << url;
     }
 
     return urls;
 }
 
-QUrl DeviceServiceHelper::getMountPathForBlock(const BlockDevPtr &blkDev)
+QUrl DeviceServiceHelper::makeMountpointForBlock(const BlockDevPtr &blkDev)
 {
     if (!blkDev)
         return QUrl();
@@ -84,10 +84,27 @@ QUrl DeviceServiceHelper::getMountPathForBlock(const BlockDevPtr &blkDev)
     return blkDev->mountPoint();
 }
 
+
+QStringList DeviceServiceHelper::makeAllDevicesIdForDrive(const QString &driveName)
+{
+    // TODO(zhangs): use `Monitor::resolveDeviceOfDrive` replace it
+    QStringList idList;
+    if (driveName.isEmpty())
+        return idList;
+
+    auto &&ptrList = createAllBlockDevices();
+    std::for_each(ptrList.cbegin(), ptrList.cend(), [&idList, driveName](const BlockDevPtr &ptr) {
+        if (ptr->drive() == driveName && isUnmountableBlockDevice(ptr))
+            idList.push_back(ptr->path());
+    });
+
+    return idList;
+}
+
 bool DeviceServiceHelper::isUnmountableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
 {
-    if (blkDev.isNull()) {
-        qWarning() << "Cannot create block device ptr by " << blkDev->path();
+    if (!blkDev || blkDev.isNull()) {
+        qWarning() << "Cannot create block device ptr";
         return false;
     }
 
@@ -138,8 +155,8 @@ bool DeviceServiceHelper::isUnmountableBlockDevice(const BlockDeviceData &data)
 
 bool DeviceServiceHelper::isEjectableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
 {
-    if (blkDev.isNull()) {
-        qWarning() << "Cannot create block device ptr by " << blkDev->path();
+    if (!blkDev || blkDev.isNull()) {
+        qWarning() << "Cannot create block device ptr";
         return false;
     }
 
@@ -154,8 +171,8 @@ bool DeviceServiceHelper::isEjectableBlockDevice(const DeviceServiceHelper::Bloc
 
 bool DeviceServiceHelper::isMountableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
 {
-    if (blkDev.isNull()) {
-        qWarning() << "Cannot create block device ptr by " << blkDev->path();
+    if (!blkDev || blkDev.isNull()) {
+        qWarning() << "Cannot create block device ptr";
         return false;
     }
 
@@ -229,8 +246,8 @@ bool DeviceServiceHelper::isEjectableBlockDevice(const BlockDeviceData &data)
 
 bool DeviceServiceHelper::isCanPoweroffBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
 {
-    if (blkDev.isNull()) {
-        qWarning() << "Cannot create block device ptr by " << blkDev->path();
+    if (!blkDev || blkDev.isNull()) {
+        qWarning() << "Cannot create block device ptr";
         return false;
     }
 

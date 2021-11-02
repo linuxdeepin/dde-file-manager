@@ -53,6 +53,7 @@ signals:
 
 public slots:
     bool IsMonotorWorking();
+    void SafelyRemoveBlockDevice(QString id);
     void DetachBlockDevice(QString id);
     void DetachProtocolDevice(QString id);
     void DetachAllMountedDevices();

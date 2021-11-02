@@ -79,6 +79,7 @@ bool PluginSidecar::invokeIsMonotorWorking()
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         auto reply = deviceInterface->IsMonotorWorking();
+        reply.waitForFinished();
         if (reply.isValid() && reply.value())
             ret = true;
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
@@ -93,6 +94,7 @@ QStringList PluginSidecar::invokeBlockDevicesIdList(const QVariantMap &opt)
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         auto reply = deviceInterface->GetBlockDevicesIdList(opt);
+        reply.waitForFinished();
         if (reply.isValid())
             ret = reply.value();
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
@@ -109,6 +111,7 @@ QStringList PluginSidecar::invokeProtolcolDevicesIdList(const QVariantMap &opt)
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         auto reply = deviceInterface->GetProtolcolDevicesIdList();
+        reply.waitForFinished();
         if (reply.isValid())
             ret = reply.value();
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
@@ -123,6 +126,7 @@ QVariantMap PluginSidecar::invokeQueryBlockDeviceInfo(const QString &id)
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         auto reply = deviceInterface->QueryBlockDeviceInfo(id);
+        reply.waitForFinished();
         if (reply.isValid())
             ret = reply.value();
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
@@ -136,6 +140,7 @@ QVariantMap PluginSidecar::invokeQueryProtocolDeviceInfo(const QString &id)
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         auto reply = deviceInterface->QueryProtocolDeviceInfo(id);
+        reply.waitForFinished();
         if (reply.isValid())
             ret = reply.value();
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;

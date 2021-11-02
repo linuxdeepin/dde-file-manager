@@ -158,7 +158,7 @@ void DeviceMonitorHandler::updateDataWithOpticalInfo(BlockDeviceData *data, cons
     // CD recognized / not recognized
     if (changes.contains(idUsageFlag)) {
         QString &&usage = changes.value(idUsageFlag).toString().toLower();
-        if (usage == "filesystem") {
+        if (usage.toLower() == "filesystem") {
             auto &&idTypeFlag = DFMMOUNT::Property::BlockIDType;
             data->common.filesystem = changes.value(idTypeFlag).toString();
         }
@@ -428,7 +428,7 @@ bool DeviceService::poweroffBlockDevice(const QString &deviceId, const QVariantM
 bool DeviceService::stopDefenderScanDrive(const QString &deviceId)
 {
     auto &&ptr = DeviceServiceHelper::createBlockDevice(deviceId);
-    QList<QUrl> &&urls = DeviceServiceHelper::getMountPathForDrive(ptr->drive());
+    QList<QUrl> &&urls = DeviceServiceHelper::makeMountpointsForDrive(ptr->drive());
 
     if (!DefenderInstance.stopScanning(urls)) {
         qWarning() << "stop scanning timeout";
@@ -440,7 +440,7 @@ bool DeviceService::stopDefenderScanDrive(const QString &deviceId)
 
 bool DeviceService::stopDefenderScanAllDrives()
 {
-    const QList<QUrl> &urls = DeviceServiceHelper::getMountPathForAllDrive();
+    QList<QUrl> &&urls = DeviceServiceHelper::makeMountpointsForAllDrive();
 
     if (!DefenderInstance.stopScanning(urls)) {
         qWarning() << "stop scanning timeout";
@@ -450,38 +450,53 @@ bool DeviceService::stopDefenderScanAllDrives()
     return true;
 }
 
-bool DeviceService::detachMountedBlockDevice(const QString &deviceId)
+/*!
+ * \brief detach a block device (dde-dock plugin is eject, dde-file-manager
+ * is safely remove)
+ * \param deviceId is block device path
+ * \param removeOptical is only effetive for optical disk
+ * \return device ejected or poweroffed
+ */
+
+void DeviceService::detachBlockDevice(const QString &deviceId)
 {
-    if (!unmountBlockDevice(deviceId)) {
-        qWarning() << "detach " << deviceId << "failed, it's cannot unmount";
-        return false;
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (!ptr) {
+        qWarning() << "Cannot create ptr for" << deviceId;
+        return;
     }
 
-    if (!ejectBlockDevice(deviceId)) {
-        qWarning() << "detach " << deviceId << "failed, it's cannot eject";
-        return false;
+    if (!ptr->removable()) {
+        qWarning() << "Not removable device: " << deviceId;
+        return;
     }
 
-    if (!poweroffBlockDevice(deviceId)) {
-        qWarning() << "detach " << deviceId << "failed, it's cannot poweroff";
-        return false;
-    }
+    // A block device may have more than one partition,
+    // when detach a device, you need to unmount its partitions,
+    // and then poweroff
+    QStringList &&idList = DeviceServiceHelper::makeAllDevicesIdForDrive(ptr->drive());
+    std::for_each(idList.cbegin(), idList.cend(), [this] (const QString &id) {
+        if (!unmountBlockDevice(id))
+            qWarning() << "Detach " << id << " abnormal, it's cannot unmount";
+    });
 
-    return true;
+    // TODO(zhangs): acquire error msg and send to `org.freedesktop.Notifications`
+    if (ptr->optical())
+        ejectBlockDeviceAsync(deviceId);
+    else
+        poweroffBlockDeviceAsync(deviceId);
 }
 
-bool DeviceService::detachMountedProtocolDevice(const QString &deviceId)
+void DeviceService::detachProtocolDevice(const QString &deviceId)
 {
     // TODO(zhangs):
-    return false;
 }
 
 void DeviceService::detachAllMountedBlockDevices()
 {
-    QStringList && list = blockDevicesIdList({{"", true}});
-    // TODO(zhangs): use thread in here
+    QStringList &&list = blockDevicesIdList({{"unmountable", true}});
     for (const QString &id : list)
-        detachMountedBlockDevice(id);
+        detachBlockDevice(id);
 }
 
 void DeviceService::detachAllMountedProtocolDevices()
@@ -588,9 +603,9 @@ bool DeviceService::isDefenderScanningDrive(const QString &driveName) const
 {
     QList<QUrl> urls;
     if (driveName.isNull() || driveName.isEmpty())
-        urls = DeviceServiceHelper::getMountPathForAllDrive();
+        urls = DeviceServiceHelper::makeMountpointsForAllDrive();
     else
-        urls = DeviceServiceHelper::getMountPathForDrive(driveName);
+        urls = DeviceServiceHelper::makeMountpointsForDrive(driveName);
     return DefenderInstance.isScanning(urls);
 }
 

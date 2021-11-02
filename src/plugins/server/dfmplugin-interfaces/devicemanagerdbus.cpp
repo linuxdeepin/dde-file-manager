@@ -27,7 +27,6 @@
 #include "dfm-base/utils/universalutils.h"
 
 #include <dfm-framework/framework.h>
-#include <QtConcurrent>
 
 DSC_USE_NAMESPACE
 
@@ -47,6 +46,12 @@ bool DeviceManagerDBus::IsMonotorWorking()
     return deviceServ->isBlockDeviceMonitorWorking() && deviceServ->isProtolDeviceMonitorWorking();
 }
 
+void DeviceManagerDBus::SafelyRemoveBlockDevice(QString id)
+{
+    DetachBlockDevice(id);
+    // TODO(zhangs): service emit a signal
+}
+
 void DeviceManagerDBus::DetachBlockDevice(QString id)
 {
     if (deviceServ->isDefenderScanningDrive()) {
@@ -60,12 +65,12 @@ void DeviceManagerDBus::DetachBlockDevice(QString id)
         });
         return;
     }
-    deviceServ->detachMountedBlockDevice(id);
+    deviceServ->detachBlockDevice(id);
 }
 
 void DeviceManagerDBus::DetachProtocolDevice(QString id)
 {
-    deviceServ->detachMountedProtocolDevice(id);
+    deviceServ->detachProtocolDevice(id);
 }
 
 void DeviceManagerDBus::initialize()
@@ -96,7 +101,7 @@ void DeviceManagerDBus::onDetachDeviceScanning(int index, const QString &id)
 {
     if (index == 1) { // user clicked stop
         if (deviceServ->stopDefenderScanDrive(id)) {
-            deviceServ->detachMountedBlockDevice(id);
+            deviceServ->detachBlockDevice(id);
         } else {
             dfmbase::UniversalUtils::notifyMessage(tr("The device was not safely removed"),
                                                    tr("Click \"Safely Remove\" and then disconnect it next time"));

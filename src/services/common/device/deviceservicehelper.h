@@ -87,9 +87,10 @@ private:
     static std::once_flag &autoMountOnceFlag();
     static dfmbase::Settings *getGsGlobal();
 
-    static QList<QUrl> getMountPathForDrive(const QString &driveName);
-    static QList<QUrl> getMountPathForAllDrive();
-    static QUrl getMountPathForBlock(const BlockDevPtr &blkDev);
+    static QList<QUrl> makeMountpointsForDrive(const QString &driveName);
+    static QList<QUrl> makeMountpointsForAllDrive();
+    static QUrl makeMountpointForBlock(const BlockDevPtr &blkDev);
+    static QStringList makeAllDevicesIdForDrive(const QString &driveName);
 
     static bool isMountableBlockDevice(const BlockDevPtr &blkDev);
     static bool isMountableBlockDevice(const BlockDeviceData &data);
