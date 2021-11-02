@@ -337,12 +337,21 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
 {
     qDebug() << event;
     DFMEvent *e = new DFMEvent(event);
-    QString path = event.fileUrl().toString();
+    // fix bug 100864 使用smb://ip或者域名/共享名/path，gio使用这个路径作为挂载，就会直接通过网络访问smb://ip或者域名/共享名/path，
+    // 但是共享下的path被删除了，所以gio返回错误，不让挂载。其真实要挂载的是smb://ip或者域名/共享名，这里修改流程挂载smb://ip或者域名/共享名
+    // 再跳转到这个目录下smb://ip或者域名/共享名/path
+    DUrl fileUrl = event.fileUrl();
+    static const QRegExp rxPath(R"((^/[^/]+))");
+    if (rxPath.indexIn(fileUrl.path()) != -1) {
+        fileUrl.setPath(rxPath.cap(1));
+    }
+    QString path = fileUrl.toString();
+    QString fullPath = event.fileUrl().toString();
 
-    UDiskDeviceInfoPointer p1 = deviceListener->getDeviceByMountPoint(path);
-    UDiskDeviceInfoPointer p2 = deviceListener->getDeviceByMountPointFilePath(path);
+    UDiskDeviceInfoPointer p1 = deviceListener->getDeviceByMountPoint(fullPath);
+    UDiskDeviceInfoPointer p2 = deviceListener->getDeviceByMountPointFilePath(fullPath);
 
-    qDebug() << path << p1 << p2;
+    qDebug() << path << fullPath << p1 << p2;
 
     if (p1) {
         e->setData(p1->getMountPointUrl());
@@ -359,13 +368,13 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
             QWidget *main_window = WindowManager::getWindowById(e->windowId());
 
             // call later
-            QTimer::singleShot(0, this, [path, main_window] {
-                const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, DUrl(path));
+            QTimer::singleShot(0, this, [fullPath, main_window] {
+                const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, DUrl(fullPath));
 
                 if (info && info->canRedirectionFileUrl()) {
                     DUrl redirectUrl = info->redirectedFileUrl();
                     redirectUrl.setScheme(redirectUrl.scheme()+ NETWORK_REDIRECT_SCHEME_EX);
-                    redirectUrl.setQuery(path);
+                    redirectUrl.setQuery(fullPath);
                     DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(nullptr, redirectUrl, main_window);
                  }
             });

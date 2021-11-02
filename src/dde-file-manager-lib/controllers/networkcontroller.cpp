@@ -24,6 +24,7 @@
 #include "networkcontroller.h"
 #include "models/networkfileinfo.h"
 #include "gvfs/networkmanager.h"
+#include "durl.h"
 
 #include "singleton.h"
 

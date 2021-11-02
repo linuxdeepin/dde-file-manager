@@ -1437,7 +1437,14 @@ void GvfsMountManager::mount(const QDiskInfo &diskInfo, bool silent)
 
 MountStatus GvfsMountManager::mount_sync(const DFMUrlBaseEvent &event)
 {
-    GFile *file = g_file_new_for_uri(event.fileUrl().toString().toUtf8().constData());
+    DUrl fileUrl = event.fileUrl();
+    // fix bug 100864 获取真实的网络挂载点
+    static const QRegExp rxPath(R"((^/[^/]+))");
+    if (rxPath.indexIn(fileUrl.path()) != -1) {
+        qInfo() << rxPath.cap(1);
+        fileUrl.setPath(rxPath.cap(1));
+    }
+    GFile *file = g_file_new_for_uri(fileUrl.toString().toUtf8().constData());
 
     if (file == nullptr)
         return MOUNT_FAILED;
