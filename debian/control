@@ -54,7 +54,6 @@ Build-Depends:
  libqt5xdg-dev,
  libtag1-dev,
  libicu-dev,
- libcue-dev,
  liblucene++-dev,
  libgsf-1-dev,
  libglib2.0-dev,
