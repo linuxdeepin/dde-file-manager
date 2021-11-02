@@ -466,20 +466,19 @@ public:
             return fun(std::forward<Args>(args)...);
 
         ReturnType result;
-        FunctionCallProxy *proxy = new FunctionCallProxy(thread);
-        FunctionType proxyFun = [&, proxy]() {
+        FunctionType proxyFun = [&]() {
             result = fun(std::forward<Args>(args)...);
             s->release();
-            proxy->deleteLater();
         };
 
-        proxy->moveToThread(thread);
+        FunctionCallProxy proxy(thread);
+        proxy.moveToThread(thread);
 
         if (thread->loopLevel() <= 0) {
             qWarning() << thread << ", the thread no event loop";
         }
 
-        proxy->callInLiveThread(&proxyFun);
+        proxy.callInLiveThread(&proxyFun);
         s->acquire();
 
         return result;
@@ -495,20 +494,19 @@ public:
         if (QThread::currentThread() == thread)
             return fun(std::forward<Args>(args)...);
 
-        FunctionCallProxy *proxy = new FunctionCallProxy(thread);
-        FunctionType proxyFun = [&, proxy]() {
+        FunctionType proxyFun = [&]() {
             fun(std::forward<Args>(args)...);
             s->release();
-            proxy->deleteLater();
         };
 
-        proxy->moveToThread(thread);
+        FunctionCallProxy proxy(thread);
+        proxy.moveToThread(thread);
 
         if (thread->loopLevel() <= 0) {
             qWarning() << thread << ", the thread no event loop";
         }
 
-        proxy->callInLiveThread(&proxyFun);
+        proxy.callInLiveThread(&proxyFun);
         s->acquire();
     }
 };
