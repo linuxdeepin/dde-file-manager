@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QEventLoop>
 #include <QTimer>
+#include <QApplication>
 
 #define FreePointer(x) if(x){delete x;x = nullptr;}
 
@@ -58,6 +59,8 @@ public:
         fun();
         QObject::connect(&timer, &QTimer::timeout, [&]{
             timer.stop();
+            qApp->processEvents();
+            loop.processEvents();
             loop.exit();
         });
         loop.exec();
