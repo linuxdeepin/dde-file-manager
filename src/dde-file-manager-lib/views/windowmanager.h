@@ -27,6 +27,7 @@
 
 #include <QObject>
 #include <QHash>
+#include <QMutex>
 
 class DFileManagerWindow;
 class DUrl;
@@ -71,6 +72,8 @@ public slots:
 private slots:
     void onWindowClosed();
     void onLastActivedWindowClosed(quint64 winId);
+    void onShowNewWindow();
+    void onRemoveNeedShowSmbUrl(const DUrl &url);
 
 protected:
     explicit WindowManager(QObject *parent = nullptr);
@@ -79,6 +82,8 @@ private:
     static QHash<const QWidget*, quint64> m_windows;
     static int m_count;
     DFileManagerWindow *m_lastWindow = nullptr;
+    QMultiHash<DUrl, DUrl> m_smbPointUrl;
+    QMutex m_smbPointUrlMutex;
 
 #ifdef AUTO_RESTART_DEAMON
     QTimer* m_restartProcessTimer = NULL;

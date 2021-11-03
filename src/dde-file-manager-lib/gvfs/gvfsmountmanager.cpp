@@ -1499,7 +1499,7 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
 
     if (!succeeded) {
         Q_ASSERT(error->domain == G_IO_ERROR);
-
+        emit fileSignalManager->requestRemoveSmbUrl(DUrl(g_file_get_uri(G_FILE (object))));
         bool showWarnDlg = false;
 
         switch (error->code) {

@@ -63,7 +63,7 @@ public:
     bool isRootFileContain(const DUrl &url);
     //get root file info cache
     static const DAbstractFileInfoPointer getFileInfo(const DUrl &fileUrl);
-
+    bool isRootFileContainSmb(const DUrl &smburl);
 signals:
     void rootFileChange(const DAbstractFileInfoPointer &chi) const;
     void queryRootFileFinsh() const;

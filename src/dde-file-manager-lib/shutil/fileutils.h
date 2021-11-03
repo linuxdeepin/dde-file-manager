@@ -143,6 +143,9 @@ public:
     static bool isFileOnDisk(const QString &path);
     //获取线程cpu核个数
     static qint32 getCpuProcessCount();
+
+    static DUrl smbFileUrl(const QString &filePath);
+    static bool isSmbUnmountedFile(const DUrl &url);
 };
 
 #endif // FILEUTILS_H

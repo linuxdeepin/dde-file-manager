@@ -29,7 +29,7 @@
 #include "dfileservices.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
-
+#include "drootfilemanager.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 
@@ -104,6 +104,11 @@ void WindowManager::initConnect()
         DFMGlobal::setAppQuiting();
         qInfo() << "app quiting !";
     });
+    connect(fileSignalManager, &FileSignalManager::requestShowNewWindows, this, &WindowManager::onShowNewWindow,
+                Qt::QueuedConnection);
+    connect(DRootFileManager::instance(), &DRootFileManager::queryRootFileFinsh, this, &WindowManager::onShowNewWindow,
+            Qt::QueuedConnection);
+    connect(fileSignalManager, &FileSignalManager::requestRemoveSmbUrl, this, &WindowManager::onRemoveNeedShowSmbUrl);
 
 #ifdef AUTO_RESTART_DEAMON
     connect(m_restartProcessTimer, &QTimer::timeout, this, &WindowManager::reastartAppProcess);
@@ -187,7 +192,10 @@ void WindowManager::showNewWindow(const DUrl &url, const bool &isNewWindow)
         qInfo() << "window app not init over or app quit! " << isNewWindow << url;
         return;
     }
-    if (!isNewWindow) {
+    bool tempNewWindow = isNewWindow;
+    if (url.scheme() == SMB_SCHEME && !url.host().isEmpty() && !url.path().isEmpty())
+        tempNewWindow = true;
+    if (!tempNewWindow){
         for (int i = 0; i < m_windows.count(); i++) {
             QWidget *window = const_cast<QWidget *>(m_windows.keys().at(i));
             DUrl currentUrl = static_cast<DFileManagerWindow *>(window)->currentUrl();
@@ -202,7 +210,23 @@ void WindowManager::showNewWindow(const DUrl &url, const bool &isNewWindow)
             }
         }
     }
-
+    // 处理同一个smb在挂载时，第二个窗口不要启动，等待这个一个smb挂载结束了在启动窗口
+    if (url.scheme() == SMB_SCHEME && !url.host().isEmpty() && !url.path().isEmpty()) {
+       DUrl smbUrl(url);
+       QString smbShareName = url.path().mid(1);
+       smbShareName = smbShareName.mid(0,smbShareName.indexOf("/"));
+       smbUrl.setPath("/"+smbShareName);
+       if (!DRootFileManager::instance()->isRootFileInited() ||
+               !DRootFileManager::instance()->isRootFileContainSmb(url)) {
+           QMutexLocker lk(&m_smbPointUrlMutex);
+           if (m_smbPointUrl.keys().contains(smbUrl)) {
+               m_smbPointUrl.insert(smbUrl, url);
+               return;
+           } else {
+               m_smbPointUrl.insert(smbUrl, DUrl());
+           }
+       }
+    }
     QX11Info::setAppTime(QX11Info::appUserTime());
     DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewWindow) : url);
     loadWindowState(window);
@@ -353,4 +377,51 @@ void WindowManager::onLastActivedWindowClosed(quint64 winId)
     //fix bug 32774 在复制大量文件时，用菜单的退出按钮，会造成这里qApp退出（等待拷贝线程），dfilesystemmodel中的addfile中qApp->processEvents
     //上的while循环等待，卡死主进程，所以复制进度条也卡死
 //    qApp->quit();
+}
+
+
+/*!
+ * \brief onShowNewWindow 同一个smb共享下的url正在挂载时或者启动没有获取挂载目录结束阻塞不显示，
+ *
+ *  当挂载这个smb或者获取挂载目录结束后，在创建相应的window并显示
+ */
+void WindowManager::onShowNewWindow()
+{
+    if (!DRootFileManager::instance()->isRootFileInited())
+        return;
+    QMutexLocker lk(&m_smbPointUrlMutex);
+    QList<DUrl> smbUrlKey = m_smbPointUrl.keys();
+    QList<DUrl>::Iterator it = smbUrlKey.begin();
+    while (it != smbUrlKey.end()) {
+        if (DRootFileManager::instance()->isRootFileContainSmb(*it)) {
+            QList<DUrl> showUrls = m_smbPointUrl.values(*it);
+            m_smbPointUrl.remove(*it);
+            for (auto showUrl : showUrls) {
+                if (showUrl.isValid())
+                    showNewWindow(showUrl, true);
+            }
+        }
+        ++it;
+    }
+}
+/*!
+ * \brief onRemoveNeedShowSmbUrl 同一个smb共享下的url正在挂载时或者启动没有获取挂载目录结束阻塞不显示，
+ *
+ *  当挂载失败后，清理掉要显示的窗口
+ *
+ * \param url 挂载失败的smb的url
+ */
+void WindowManager::onRemoveNeedShowSmbUrl(const DUrl &url)
+{
+    if (url.scheme() != SMB_SCHEME || url.host().isEmpty() || url.path().isNull()) {
+        qWarning() << "url is not a valid smb url, url = " << url;
+        return;
+    }
+    DUrl smbUrl(url);
+    QString shareName = url.path();
+    shareName = shareName.mid(1);
+    shareName = shareName.mid(0, shareName.indexOf("/"));
+    smbUrl.setPath("/" + shareName);
+    QMutexLocker lk(&m_smbPointUrlMutex);
+    m_smbPointUrl.remove(smbUrl);
 }

@@ -54,6 +54,19 @@ signals:
     void unmountResult(const QString &title, const QString &msg);
 };
 
+class DesktopInterface: public QDBusAbstractInterface
+{
+    Q_OBJECT
+public:
+    static inline const char *staticInterfaceName()
+    { return "com.deepin.dde.desktop"; }
+public:
+    DesktopInterface(const QString &service, const QString &path,
+                     const QDBusConnection &connection, QObject *parent = nullptr);
+    ~DesktopInterface();
+};
+
+
 class AppController : public QObject, public Subscriber
 {
     Q_OBJECT
@@ -181,6 +194,7 @@ private:
     void createDBusInterface();
     void showErrorDialog(const QString &title, const QString &content);
     void popQueryScanningDialog(QObject *object, std::function<void()> onStop);
+    void refreshDesktop();
 
     QSharedPointer<DFMEvent> m_fmEvent;
     static QPair<DUrl, quint64> selectionAndRenameFile;        //###: for creating new file.

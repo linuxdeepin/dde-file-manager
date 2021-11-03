@@ -667,6 +667,17 @@ void AppController::popQueryScanningDialog(QObject *object, std::function<void()
         onStop();
 }
 
+void AppController::refreshDesktop()
+{
+    static const QString DesktopService = "com.deepin.dde.desktop";
+    static const QString DesktopPath = "/com/deepin/dde/desktop";
+    DesktopInterface desktop(DesktopService,
+                            DesktopPath,
+                            QDBusConnection::sessionBus(),
+                            this);
+    desktop.asyncCallWithArgumentList(QStringLiteral("Refresh"), QList<QVariant>());
+}
+
 void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
@@ -1458,6 +1469,8 @@ void AppController::initConnect()
     connect(m_unmountWorker, &UnmountWorker::unmountResult, this, &AppController::showErrorDialog);
     connect(this, &AppController::doUnmount, m_unmountWorker, &UnmountWorker::doUnmount);
     connect(this, &AppController::doSaveRemove, m_unmountWorker, &UnmountWorker::doSaveRemove);
+    connect(fileSignalManager, &FileSignalManager::requestFreshAllDesktop,
+                this, &AppController::refreshDesktop);
 
     m_unmountThread.start();
 
@@ -1568,4 +1581,13 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
     DUMountManager manager;
     if (!manager.removeDrive(manager.getDriveName(blkStr)))
         emit unmountResult(tr("The device was not safely removed"), manager.getErrorMsg());
+}
+
+DesktopInterface::DesktopInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent)
+    : QDBusAbstractInterface(service, path, staticInterfaceName(), connection, parent)
+{
+}
+
+DesktopInterface::~DesktopInterface()
+{
 }

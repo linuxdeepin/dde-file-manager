@@ -173,6 +173,8 @@ signals:
     /*request fresh file view*/
     void requestFreshFileView(quint64 winId);
     void requestFreshAllFileView();
+    /*request fresh desktop view*/
+    void requestFreshAllDesktop();
 
     /*request abort copy/move job*/
     void requestAbortJob(const DUrl &url);
@@ -255,6 +257,13 @@ signals:
 
     // 请求忽略当前鼠标拖拽事件
     void requestIgnoreDragEvent();
+
+    /*request show smb url mounted all window*/
+    void requestShowNewWindows();
+
+    /*mounted failed and remove need open windows*/
+    void requestRemoveSmbUrl(const DUrl &url);
+
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString &srcFileName);
