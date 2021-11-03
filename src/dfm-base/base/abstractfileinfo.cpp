@@ -339,7 +339,7 @@ QDir AbstractFileInfo::absoluteDir() const
  */
 QUrl AbstractFileInfo::url() const
 {
-    return UrlRoute::pathToUrl(filePath());
+    return UrlRoute::pathToUrl(filePath(), d->url.scheme());
 }
 /*!
  * \brief isReadable 获取文件是否可读

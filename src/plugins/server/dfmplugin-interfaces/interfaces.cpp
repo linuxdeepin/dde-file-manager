@@ -42,7 +42,7 @@ void Interfaces::initialize()
         qCritical() << errStr;
         abort();
     }
-    UrlRoute::schemeMapRoot(SchemeTypes::ROOT, "/", QIcon(), true);
+    UrlRoute::regScheme(SchemeTypes::ROOT, "/", QIcon(), true);
 }
 
 bool Interfaces::start()

@@ -98,7 +98,7 @@ void RecentBrowseViewModel::fetchMore(const QModelIndex &parent)
     RecentUtil::initRecentSubSystem();
     for (int i = 0 ; i < RecentUtil::getRecentNodes().size(); i++) {
         QUrl url = QUrl(RecentUtil::getRecentNodes().at(i).toElement().attribute("href"));
-        QUrl schemeUrl = UrlRoute::pathToUrl(url.path());
+        QUrl schemeUrl = UrlRoute::pathToReal(url.path());
         if (!schemeUrl.isValid())
             continue;
         d->children.append(QSharedPointer<FileViewItem>(new FileViewItem(schemeUrl)));

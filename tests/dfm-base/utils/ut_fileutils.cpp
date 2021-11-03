@@ -26,9 +26,9 @@ public:
 
 TEST_F(UT_FileUtils, test_mkdir)
 {
-    UrlRoute::schemeMapRoot(SchemeTypes::FILE,"/");
-    qInfo() << UrlRoute::pathToUrl("/funningTest/");
-    FileUtils::mkdir(UrlRoute::pathToUrl("/"),"test");
+    UrlRoute::regScheme(SchemeTypes::FILE,"/");
+    qInfo() << UrlRoute::pathToReal("/funningTest/");
+    FileUtils::mkdir(UrlRoute::pathToReal("/"),"test");
     qInfo() << StandardPaths::location(StandardPaths::HomePath);
     FileUtils::mkdir(QUrl::fromLocalFile(StandardPaths::location(StandardPaths::HomePath)),"test");
 }

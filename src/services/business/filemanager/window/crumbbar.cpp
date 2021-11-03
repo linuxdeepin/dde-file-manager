@@ -247,7 +247,7 @@ CrumbBar::~CrumbBar()
 void CrumbBar::setRootUrl(const QUrl &url)
 {
     d->clearCrumbs();
-    const QIcon firstIcon = UrlRoute::schemeIcon(url.scheme());
+    const QIcon firstIcon = UrlRoute::icon(url.scheme());
 
     QString scheme = url.scheme();
     QString path = url.path();
@@ -267,7 +267,7 @@ void CrumbBar::setRootUrl(const QUrl &url)
                 continue;
             currNodeList.append(pathList.at(index));
         }
-        auto currNodeUrl = UrlRoute::pathToUrl(currNodeList.join("/"));
+        auto currNodeUrl = UrlRoute::pathToUrl(currNodeList.join("/"), url.scheme());
         currNodeItem->setData(currNodeUrl, CrumbModel::Roles::FileUrlRole);
 
         d->crumbModel->insertRow(0, currNodeItem);

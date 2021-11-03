@@ -26,8 +26,7 @@
 
 #include <QString>
 #include <QIcon>
-
-#include <list>
+#include <QMap>
 
 class QUrl;
 class QString;
@@ -35,25 +34,20 @@ DFMBASE_BEGIN_NAMESPACE
 
 struct SchemeNode
 {
-    QString myScheme; // url前缀
-    QString myRoot;   // 根路径
-    QIcon myIcon;     // 标志root的图标
-    bool isMyVirtual; // 没有本地路径作为映射的Url
-
+    QString path;   // 根路径
+    QIcon icon;     // 标志root的图标
+    bool virtualFlag;   // 没有本地路径作为映射的Url
+    friend class QHash<QString, SchemeNode>;
+    SchemeNode(){}
 public:
-    SchemeNode(const QString &scheme,
-               const QString &root,
+    SchemeNode(const QString &root,
                const QIcon &icon = QIcon(),
                const bool isVirtual= false);
     SchemeNode& operator = (const SchemeNode& node);
-    QString scheme() const;
-    void setScheme(const QString &scheme);
-    QString root() const;
-    void setRoot(const QString &root);
+    bool isEmpty();
+    QString rootPath() const;
+    QIcon pathIcon() const;
     bool isVirtual() const;
-    void setIsVirtual(bool isVirtual);
-    QIcon icon() const;
-    void setIcon(const QIcon &icon);
 };
 
 namespace SchemeTypes {
@@ -70,31 +64,25 @@ extern const QString ROOT;
 
 class UrlRoute
 {
-    static QList<SchemeNode> SchemeMapLists;
+    static QHash<QString, SchemeNode> schemeInfos;//info cache
+    static QMultiMap<int, QString> schemeRealTree; //index cache
 public:
-    static bool schemeMapRoot(const QString &scheme,
-                              const QString &root,
-                              const QIcon &icon = QIcon(),
-                              const bool isVirtual = false,
-                              QString *errorString = nullptr);
-    static QIcon schemeIcon(const QString &scheme);
-    static bool hasScheme(const QString &scheme);
-    static QUrl fromLocalFile(const QString &path,
-                              QString *errorString = nullptr);
-    static QString schemeRoot(const QString &scheme,
-                              QString *errorString = nullptr);
-    static bool schemeIsVirtual(const QString &scheme);
-    static QUrl pathToUrl(const QString &path,
+    static bool regScheme(const QString &scheme,
+                          const QString &root,
+                          const QIcon &icon = QIcon(),
+                          const bool isVirtual = false,
                           QString *errorString = nullptr);
-    static QString urlToPath(const QUrl &url,
-                             QString *errorString = nullptr);
+    static bool hasScheme(const QString &scheme);
+    static QIcon icon(const QString &scheme);
+    static QString rootPath(const QString &scheme);
+    static QString urlToPath(const QUrl &url);
+    static QUrl fromLocalFile(const QString &path);
+    static QUrl pathToReal(const QString &path);
+    static QUrl pathToUrl(const QString &path, const QString &scheme);
+    static bool isVirtual(const QString &scheme);
+    static bool isVirtual(const QUrl &url);
+    static bool isRootUrl(const QUrl &url);
     static QUrl urlParent(const QUrl &url);
-    static bool isSchemeRoot(const QUrl &url);
-    static bool isVirtualUrl(const QUrl &url);
-    static QUrl pathToVirtual(const QString &path,
-                              QString *errorString = nullptr);
-    static QString virtualToPath(const QUrl &url,
-                                 QString *errorString = nullptr);
 };
 DFMBASE_END_NAMESPACE
 Q_DECLARE_METATYPE(QUrl);

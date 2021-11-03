@@ -86,7 +86,7 @@ QUrl LocalDirIterator::next()
     }
 
     if (d->dfmioDirIterator)
-        d->currentUrl = UrlRoute::pathToUrl(d->dfmioDirIterator->next());
+        d->currentUrl = QUrl::fromLocalFile(d->dfmioDirIterator->next());
 
     return d->currentUrl;
 }
@@ -101,7 +101,7 @@ bool LocalDirIterator::hasNext() const
         while (d->dfmioDirIterator && d->dfmioDirIterator->hasNext()) {
             d->isCurrent = true;
             const QString &path = d->dfmioDirIterator->next();
-            d->currentUrl = UrlRoute::pathToUrl(path);
+            d->currentUrl = QUrl::fromLocalFile(path);
 
             if (d->currentUrl.isValid() && !d->currentUrl.path().startsWith("/."))
                 return true;
@@ -142,7 +142,7 @@ QString LocalDirIterator::fileName() const
  */
 QUrl LocalDirIterator::fileUrl() const
 {
-    return d->currentUrl;
+    return UrlRoute::pathToReal(d->currentUrl.path());
 }
 /*!
  * \brief fileUrl 获取文件迭代器当前文件的文件信息
@@ -163,7 +163,7 @@ const AbstractFileInfoPointer LocalDirIterator::fileInfo() const
 QUrl LocalDirIterator::url() const
 {
     if (d->dfmioDirIterator)
-        return UrlRoute::pathToUrl(d->dfmioDirIterator->uri().path());
+        return UrlRoute::pathToReal(d->dfmioDirIterator->uri().path());
 
     return QUrl();
 }

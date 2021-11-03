@@ -264,7 +264,7 @@ void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
 
     if (service->isAutoMountAndOpenSetting()) {
         if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
-            QString root {dfmbase::UrlRoute::pathToVirtual("/").toString()};
+            QString root = dfmbase::UrlRoute::rootPath(dfmbase::SchemeTypes::ROOT);
             QString mountUrlStr {root + QFileInfo(blkDev->device()).fileName() + "." + dfmbase::SuffixInfo::BLOCK};
             QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
             qInfo() << "open by dde-file-manager: " << mountUrlStr;

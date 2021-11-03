@@ -79,13 +79,13 @@ void initSidebar(SideBar* sidebar)
 {
     if (!sidebar) return ;
 
-    QUrl homeUrl = UrlRoute::pathToUrl(QDir::home().path());
-    QUrl desktopUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::DesktopPath));
-    QUrl videosUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::VideosPath));
-    QUrl musicUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::MusicPath));
-    QUrl picturesUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::PicturesPath));
-    QUrl documentsUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::DocumentsPath));
-    QUrl downloadsUrl = UrlRoute::pathToUrl(StandardPaths::location(StandardPaths::DownloadsPath));
+    QUrl homeUrl = UrlRoute::pathToReal(QDir::home().path());
+    QUrl desktopUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::DesktopPath));
+    QUrl videosUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::VideosPath));
+    QUrl musicUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::MusicPath));
+    QUrl picturesUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::PicturesPath));
+    QUrl documentsUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::DocumentsPath));
+    QUrl downloadsUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::DownloadsPath));
 
     QIcon homeIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::HomePath));
     QIcon desktopIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DesktopPath));
@@ -130,40 +130,40 @@ void initSidebar(SideBar* sidebar)
 
 static void regStandardPathClass()
 {
-    UrlRoute::schemeMapRoot(SchemeTypes::HOME,
-                            QDir::home().path(),
-                            QIcon::fromTheme(StandardPaths::iconName(StandardPaths::HomePath)),
-                            false);
+    UrlRoute::regScheme(SchemeTypes::HOME,
+                        QDir::home().path(),
+                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::HomePath)),
+                        false);
 
-    UrlRoute::schemeMapRoot(SchemeTypes::DESKTOP,
-                            StandardPaths::location(StandardPaths::DesktopPath),
-                            QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DesktopPath)),
-                            false);
+    UrlRoute::regScheme(SchemeTypes::DESKTOP,
+                        StandardPaths::location(StandardPaths::DesktopPath),
+                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DesktopPath)),
+                        false);
 
-    UrlRoute::schemeMapRoot(SchemeTypes::VIDEOS,
-                            StandardPaths::location(StandardPaths::VideosPath),
-                            QIcon::fromTheme(StandardPaths::iconName(StandardPaths::VideosPath)),
-                            false);
+    UrlRoute::regScheme(SchemeTypes::VIDEOS,
+                        StandardPaths::location(StandardPaths::VideosPath),
+                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::VideosPath)),
+                        false);
 
-    UrlRoute::schemeMapRoot(SchemeTypes::MUSIC,
-                            StandardPaths::location(StandardPaths::MusicPath),
-                            QIcon::fromTheme(StandardPaths::iconName(StandardPaths::MusicPath)),
-                            false);
+    UrlRoute::regScheme(SchemeTypes::MUSIC,
+                        StandardPaths::location(StandardPaths::MusicPath),
+                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::MusicPath)),
+                        false);
 
-    UrlRoute::schemeMapRoot(SchemeTypes::PICTURES,
-                            StandardPaths::location(StandardPaths::PicturesPath),
-                            QIcon::fromTheme(StandardPaths::iconName(StandardPaths::PicturesPath)),
-                            false);
+    UrlRoute::regScheme(SchemeTypes::PICTURES,
+                        StandardPaths::location(StandardPaths::PicturesPath),
+                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::PicturesPath)),
+                        false);
 
-    UrlRoute::schemeMapRoot(SchemeTypes::DOCUMENTS,
-                            StandardPaths::location(StandardPaths::DocumentsPath),
-                            QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DocumentsPath)),
-                            false);
+    UrlRoute::regScheme(SchemeTypes::DOCUMENTS,
+                        StandardPaths::location(StandardPaths::DocumentsPath),
+                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DocumentsPath)),
+                        false);
 
-    UrlRoute::schemeMapRoot(SchemeTypes::DOWNLOADS,
-                            StandardPaths::location(StandardPaths::DownloadsPath),
-                            QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DownloadsPath)),
-                            false);
+    UrlRoute::regScheme(SchemeTypes::DOWNLOADS,
+                        StandardPaths::location(StandardPaths::DownloadsPath),
+                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DownloadsPath)),
+                        false);
 
     InfoFactory::regClass<LocalFileInfo>(SchemeTypes::HOME);
     DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::HOME);
@@ -221,7 +221,7 @@ void Core::initialize()
     }
 
     //注册路由
-    UrlRoute::schemeMapRoot(SchemeTypes::FILE,"/");
+    UrlRoute::regScheme(SchemeTypes::FILE,"/");
     //注册Scheme为"file"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<LocalFileInfo>(SchemeTypes::FILE);
     DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::FILE);
@@ -247,7 +247,7 @@ bool Core::start()
 
     if (windowService) {
         QUrl localRootUrl = QUrl::fromLocalFile("/");
-        QUrl defaultUrl = UrlRoute::pathToUrl(QDir::home().path());
+        QUrl defaultUrl = UrlRoute::pathToReal(QDir::home().path());
         BrowseWindow *newWindow = windowService->newWindow();
 
         if (newWindow){

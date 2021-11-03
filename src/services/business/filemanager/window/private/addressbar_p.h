@@ -89,8 +89,8 @@ public:
             }
 
             if (indicatorAction.icon().name() == "go-right") {
-                QUrl url = UrlRoute::pathToUrl(q->text());
-                if (url.isValid())
+                QUrl url(q->text());
+                if (UrlRoute::hasScheme(url.scheme()) && url.isValid())
                     Q_EMIT q->editingFinishedUrl(url);
             }
         });
@@ -156,8 +156,8 @@ public Q_SLOTS:
 
         if (UrlRoute::hasScheme(string)) {
             QStringList rootUrls;
-            QString localPath = UrlRoute::schemeRoot(string);
-            if (QFileInfo::exists(localPath) && !UrlRoute::schemeIsVirtual(string)) {
+            QString localPath = UrlRoute::rootPath(string);
+            if (QFileInfo::exists(localPath) && !UrlRoute::isVirtual(string)) {
 
                 QDirIterator itera(localPath,
                                    QDir::Dirs | QDir::NoDotAndDotDot | QDir::System,
@@ -166,7 +166,7 @@ public Q_SLOTS:
                 while(itera.hasNext())
                 {
                     itera.next();
-                    rootUrls << UrlRoute::pathToUrl(itera.filePath()).toString();
+                    rootUrls << UrlRoute::pathToUrl(itera.filePath(),string).toString();
                 }
             }
 
@@ -207,7 +207,7 @@ public Q_SLOTS:
     void procReturnPressed()
     {
         QUrl url(q->text());
-        if (!UrlRoute::isVirtualUrl(url)) {
+        if (!UrlRoute::isVirtual(url)) {
             QString localPath = UrlRoute::urlToPath(url);
             if (QDir(localPath).exists()) {
                 qInfo() << "sig editingFinishedUrl :" << url;
@@ -218,7 +218,7 @@ public Q_SLOTS:
         }
 
         if (QDir(q->text()).exists()) {
-            QUrl url = UrlRoute::pathToUrl(q->text());
+            QUrl url = UrlRoute::pathToReal(q->text());
             if (!url.isValid()) {
                 qInfo() << "sig editingFinishedUrl :" << url;
                 Q_EMIT q->editingFinishedUrl(url);

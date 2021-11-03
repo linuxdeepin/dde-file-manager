@@ -23,6 +23,7 @@
 
 #include <QDir>
 #include <QUrl>
+#include <QRegularExpression>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -38,178 +39,125 @@ const QString DOWNLOADS {"downloads"};
 const QString ROOT {"dfmroot"};
 } // namespace SchemeTypes
 
-QList<SchemeNode> UrlRoute::SchemeMapLists{};
+QHash<QString, SchemeNode> UrlRoute::schemeInfos{};
+QMultiMap<int, QString> UrlRoute::schemeRealTree{};
+
 /*!
- * \class UrlRoute路由
- *
- * \brief 包含情况时子目录将靠后，例如存在节点
- *
- * {"file://";"/home/uos"},
- *
- * 此时增加一个节点{"desktop://","/home/uos/.desktop"}
- *
- * 那么当前list存在的排布情况为{file,desktop}
- *
- * 解析时逆序查找，insert会插入当前节点后
+ * \brief The UrlRoute class
+ * 统一资源定位符路由，最基础的功能
+ * 使用前，你需要调用RegScheme注册scheme与映射路径。
+ * 该类支持虚拟路径与真实路径两种状态。
+ * 该类是QUrl的延伸，应对Abstract继承树族的任意策略。
  */
 
 /*!
- * \brief schemeMapRoot 注册scheme到root的关联数据
- *
- *  {"main","/"} 返回 true
- *
- *  {"desktop","/home/user/Desktop"} 返回 false
- *
+ * \brief UrlRoute::regScheme 注册scheme
  * \param scheme url前缀
- *
- * \param root 根路径
- *
- * \param virtPath 是否是虚拟路径，无本地路径与Url的关联映射，
- *
- * \return 是根节点则返回true，否则返回false
+ * \param root 映射的跟路径
+ * \param icon 前缀所包含的头
+ * \param isVirtual 是否为虚拟映射
+ * \param[out] errorString 错误信息
+ * \return
  */
-bool UrlRoute::schemeMapRoot(const QString &scheme,
-                             const QString &root,
-                             const QIcon &icon,
-                             const bool isVirtual,
-                             QString *errorString)
+bool UrlRoute::regScheme(const QString &scheme,
+                         const QString &root,
+                         const QIcon &icon,
+                         const bool isVirtual,
+                         QString *errorString)
 {
     if (hasScheme(scheme)) {
         *errorString = QObject::tr("Scheme cannot be registered repeatedly.");
         return false;
     }
+    //统一处理路径在最后加上"/"
+    QString formatRoot = root;
+    if (!root.endsWith("/")) {
+        formatRoot = root + "/";
+    }
 
     //非虚拟路径则进行本地路径判断
     if (!isVirtual) {
-
-        if (!QDir(root).exists(root)) {
+        if (!QDir().exists(formatRoot)) {
             if (errorString)
                 *errorString = QObject::tr("Scheme map to root path not exists.");
             return false;
         }
 
-        QString formatRoot = root;
-        if (!root.endsWith("/")) {
-            formatRoot = root + "/";
-        }
-
-        //逆序遍历
-        auto itera = SchemeMapLists.end();
-        while(itera != SchemeMapLists.begin()) {
-            -- itera;
-            //如果当前注册的映射根是注册过的任意根的子目录
-            //并且非虚拟路径
-            if (itera->root().endsWith(formatRoot)) {
-                //放到注册节点之后
-                SchemeMapLists.insert(itera,{scheme, formatRoot, icon ,isVirtual});
-                return true;
-            }
-        }
+        QString temp = formatRoot;
+        temp.replace(QRegularExpression("/{1,}"), "/");
+        int treeLevel = temp.count("/");
+        schemeRealTree.insert( -- treeLevel, scheme); //缓存层级
     }
-
-    //是虚拟路径则直接添加到最后
-    SchemeMapLists.append({scheme, root, icon, isVirtual});
+    schemeInfos.insert(scheme, {formatRoot, icon, isVirtual});
     return true;
 }
+
 /*!
- * \brief schemeIcon 获取scheme注册的图标
- *
+ * \brief UrlRoute::icon 获取注册的Icon图标
  * \param scheme url前缀
- *
- * \return QIcon 无则返回空
+ * \return regScheme注册的映射图标
  */
-QIcon UrlRoute::schemeIcon(const QString &scheme)
+QIcon UrlRoute::icon(const QString &scheme)
 {
-    for (auto val: SchemeMapLists) {
-        if (val.scheme() == scheme) return val.icon();
-    }
-    return QIcon();
+    if (!hasScheme(scheme))
+        return QIcon();
+    return schemeInfos[scheme].pathIcon();
 }
+
 /*!
- * \brief UrlRoute::hasScheme 判断是否注册Scheme,该函数虚拟路径可用
- *
- * \param scheme 文件的scheme
- *
- * \return bool 是否注册Scheme,该函数虚拟路径可用
+ * \brief UrlRoute::hasScheme 判断是否存在Scheme
+ * \param scheme 要查找的url前缀
+ * \return 如果注册则为true，反之false
  */
-bool UrlRoute::hasScheme(const QString &scheme) {
-    for (auto val : SchemeMapLists) {
-        if (val.scheme() == scheme) return true;
-    }
-    return false;
-}
-/*!
- * \brief UrlRoute::fromLocalFile path转换成本地的 Url(file://xxx),该函数虚拟路径不可用
- *
- * \param path 文件的路径
- *
- * \param errorString 输出参数错误信息
- *
- * \return QUrl 转换后的url
- */
-QUrl UrlRoute::fromLocalFile(const QString &path, QString *errorString)
+bool UrlRoute::hasScheme(const QString &scheme)
 {
-    if (!QFileInfo(path).exists()) {
-        if (errorString)
-            *errorString = QObject::tr("path not exists");
-        return QUrl();
-    }
-    return QUrl::fromLocalFile(path);
+    return schemeInfos.keys().contains(scheme);
 }
+
 /*!
- * \brief UrlRoute::isSchemeRoot 使用scheme找到对应注册时的根路径，该函数虚拟路径可用
- *
- * \param url 文件的url
- *
- * \return bool 是否是对应注册时的根路径
+ * \brief UrlRoute::isRootUrl 判断当前Url是否为映射的跟url
+ * \param url 判断的url
+ * \return
  */
-bool UrlRoute::isSchemeRoot(const QUrl &url)
+bool UrlRoute::isRootUrl(const QUrl &url)
 {
+    if (!hasScheme(url.scheme()))
+        return false;
+
     QUrl urlCmp;
     urlCmp.setScheme(url.scheme());
-    urlCmp.setPath("/");
-    urlCmp.setHost(" ");
-    urlCmp.setPort(-1);
+    urlCmp.setPath(schemeInfos[url.scheme()].rootPath());
 
     if (url == urlCmp)
         return true;
 
     return false;
 }
+
 /*!
- * \brief UrlRoute::isVirtualUrl 判断Url是否是虚拟的url
- *
- * \param url 文件的url
- *
- * \return bool 是否是虚拟的url
+ * \brief UrlRoute::isVirtualUrl 判断当前url是否为虚拟的url
+ * \param url 参数url
+ * \return 超出regScheme边界默认返回false，如果注册则返回注册时isVirtual形参
  */
-bool UrlRoute::isVirtualUrl(const QUrl &url)
+bool UrlRoute::isVirtual(const QUrl &url)
 {
-    auto itera = SchemeMapLists.end();
-    while (itera != SchemeMapLists.begin())
-    {
-        -- itera;
+    if (!hasScheme(url.scheme()))
+        return false;
 
-        auto scheme = itera->scheme();
-
-        if(scheme == url.scheme()) {
-            return itera->isVirtual();
-        }
-    }
-    return true;
+    return schemeInfos[url.scheme()].virtualFlag;
 }
+
 /*!
- * \brief UrlRoute::urlParent 获取url的父目录的url
- *
- * \param url 文件的url
- *
- * \return QUrl url的父目录的url
+ * \brief UrlRoute::urlParent 纯分割函数找到前节点
+ * \param url 源Url
+ * \return 返回处理后的url
  */
 QUrl UrlRoute::urlParent(const QUrl &url) {
-    if(isSchemeRoot(url))
+
+    if(isRootUrl(url))
         return url;
 
-    auto list = url.path().split("/");
+    auto &&list = url.path().split("/");
     list.removeAt(list.size() -1);
 
     QUrl reUrl;
@@ -219,284 +167,154 @@ QUrl UrlRoute::urlParent(const QUrl &url) {
 
     return reUrl;
 }
-/*!
- * \brief UrlRoute::schemeRoot 查找当前Url的前节点，如果当前前节点为根路径则直接返回传入Url
- *
- *  {"home","/home/user"} 返回 {"home","/home/"},{"main","/"} 返回 {"main","/"}
- *
- * \param scheme 文件的scheme
- *
- * \param errorString 输出参数错误信息
- *
- * \return QString 返回scheme对应的目录路径
- */
-QString UrlRoute::schemeRoot(const QString &scheme, QString *errorString)
-{
-    //按照子节点逆序规则选中
-    auto itera = SchemeMapLists.end();
-    while (itera != SchemeMapLists.begin())
-    {
-        -- itera;
-        if (itera->scheme() == scheme) {
-            return itera->root();
-        }
-    }
 
-    if (errorString)
-        *errorString = QObject::tr("Not found root path from %0").arg(scheme);
-    return "";
+/*!
+ * \brief UrlRoute::rootPath 获取根路径
+ * \param scheme 已注册的scheme
+ * \return 如果传入未注册scheme，则总是返回空，否则将返回注册时指定的path形参
+ */
+QString UrlRoute::rootPath(const QString &scheme)
+{
+    if (!hasScheme(scheme))
+        return "";
+    return schemeInfos[scheme].path;
 }
+
 /*!
- * \brief UrlRoute::schemeIsVirtual 判断当前Url是否为顶层
- *
- *  {"main","/"} 返回 true
- *
- *  {"desktop","/home/user/Desktop"} 返回 false
- *
- * \param 文件的scheme
- *
- * \return 是根节点则返回true，否则返回false
+ * \brief UrlRoute::pathToReal 转换成本地映射的路径
+ *  如果注册了其他scheme，例如{downloads,/home/user/Downloads}
+ *  此时传入 /home/user/Downloads/aaa.txt，则转换为
+ *  downloads:///aaa.txt。此转换只本地存在路径映射
+ *  如果没有注册 downloads，则向上继续检索，如果注册了{file，/}
+ *  则转换为file:///home/user/Downloads,
+ *  总体来说这是QUrl的扩展，新增了自定义本地映射结构。
+ *  使用该机制可以构造scheme的组件空间，以应对低速设备等特殊要求，
+ *  避免文管走file通用流程导致的卡顿
+ * \param path 本地路径
+ * \return 转换后的路径
  */
-bool UrlRoute::schemeIsVirtual(const QString &scheme)
+QUrl UrlRoute::pathToReal(const QString &path)
 {
-    if (scheme.isEmpty())
-        return true;
-
-    for (auto node : SchemeMapLists) {
-        if (node.scheme() == scheme)
-        {
-            return node.isVirtual();
+    QString temp = path;
+    temp.replace(QRegularExpression("/{1,}"), "/");
+    int treeLevel = temp.count("/");
+    while (treeLevel >= 0) {
+        //同层级所有的scheme
+        auto &&schemeList = schemeRealTree.values(treeLevel);
+        for (auto val : schemeList) {
+            // 包含映射的根路径，判断是否转换为当前scheme
+            QString rootPath = schemeInfos[val].rootPath();
+            if (path.contains(rootPath)
+                    || QString(path + "/").contains(rootPath)) {
+                QUrl result = pathToUrl(path, val);
+                return result;
+            }
         }
+        -- treeLevel;
     }
-
-    return false;
-}
-/*!
- * \brief UrlRoute::pathToVirtual 判断当前Url是否是虚拟路径
- *
- * \param errorString 输出参数错误信息
- *
- * \return 是虚拟路径则返回true，否则返回false
- */
-QUrl UrlRoute::pathToVirtual(const QString &path, QString *errorString)
-{
-    auto itera = SchemeMapLists.end();
-    while (itera != SchemeMapLists.begin()) {
-        -- itera;
-
-        if (itera->isVirtual() == false)
-            continue;
-
-        auto shcheme = itera->scheme();
-        auto root = itera->root();
-        auto pathTmp = path;
-
-        if(pathTmp.startsWith(root)) {
-            QUrl url;
-            QString repPath = pathTmp.replace(root,"/").replace("//","/");
-            url.setHost(" ");
-            url.setPort(-1);
-            url.setPath(repPath);
-            url.setScheme(shcheme);
-            return url;
-        }
-    }
-    if (errorString)
-        *errorString = QObject::tr("Not found scheme convert path to virtual url");
     return QUrl();
 }
+
 /*!
- * \brief UrlRoute::virtualToPath 使用path转换到虚拟路径
- *
- *  存在注册节点 {"virtual":"/"}；
- *
- *  此时传入"/home" 则返回 QUrl("virtual:///home")
- *
- * \param path可以任意,不会进行本地路径检查,但是需要满足根条件
- *
- * \param errorString 输出参数错误信息
- *
- * \return 返回注册的Scheme虚拟Url
+ * \brief UrlRoute::fromLocalFile 同QUrl::fromLocalFile转换
+ * \param path 本地路径
+ * \return 转换后的Url
  */
-QString UrlRoute::virtualToPath(const QUrl &url, QString *errorString)
+QUrl UrlRoute::fromLocalFile(const QString &path)
 {
-    QString path = "";
-    for (auto val : SchemeMapLists) {
-
-        if (val.isVirtual() == false)
-            continue;
-
-        auto root = val.root();
-        auto scheme = val.scheme();
-        if (scheme == url.scheme()) {
-
-            if (url.path().startsWith("/")) {
-                path = root.remove(root.size()-1,1) + url.path();
-            }
-            return path;
-        }
-    }
-
-    if (errorString)
-        *errorString = "Maybe in called after execute schemeMapRoot function";
-    return "";
+    return QUrl::fromLocalFile(path);
 }
-/*!
- * \brief UrlRoute::pathToUrl 使用虚拟路径Path转换成url，内部不会进行路径检查
- *
- *  url可以是任意注册的url，需要满足已scheme的要求
- *
- *  存在注册节点 {"virtual":"/home"}
- *
- *  传入QUrl("virtual:///home") 则返回 /home/home
- *
- * \param path 文件路径
- *
- * \param errorString 输入参数错误信息
- *
- * \return 返回虚拟Url对应的虚拟路径
- */
-QUrl UrlRoute::pathToUrl(const QString &path, QString *errorString)
-{
-    QString formatPath = path;
-    if (QFileInfo(path).isDir()
-            && !path.endsWith("/")) {
-        formatPath = path + "/";
-    }
 
-    if (!QFileInfo(path).exists()) {
-        if (errorString)
-            *errorString = QObject::tr("Can't convert path to url , '%0' it not exists").arg(path);
+/*!
+ * \brief UrlRoute::isVirtualScheme 判断是否虚拟的Url前缀
+ * \param scheme url前缀
+ * \return 默认未注册范围false，注册则返回regScheme isVirtual形参结果
+ */
+bool UrlRoute::isVirtual(const QString &scheme)
+{
+    if (!hasScheme(scheme))
+        return false;
+    return schemeInfos[scheme].isVirtual();
+}
+
+/*!
+ * \brief UrlRoute::pathToUrl 使用scheme进行路径转换，非本地文件映射则必须使用该函数
+ * \param path 路径，可以是本地或者虚拟
+ * \param scheme url前缀
+ * \return 转换后的路径
+ */
+QUrl UrlRoute::pathToUrl(const QString &path, const QString &scheme)
+{
+    if (!hasScheme(scheme))
         return QUrl();
-    }
 
-    auto itera = SchemeMapLists.end();
-    while (itera != SchemeMapLists.begin())
-    {
-        -- itera;
+    QString rootPath = schemeInfos[scheme].rootPath();
+    if (rootPath.isEmpty())
+        return QUrl();
 
-        if (itera->isVirtual()) continue;
-
-        auto shcheme = itera->scheme();
-        auto root = itera->root();
-
-        if(formatPath.startsWith(root)) {
-            QUrl url;
-            QString repPath = formatPath.replace(root,"/").replace("//","/");
-            url.setHost(" ");
-            url.setPort(-1);
-            url.setPath(repPath);
-            url.setScheme(shcheme);
-            return url;
-        }
-    }
-
-    QUrl url;
-    url.setScheme(SchemeTypes::FILE);
-    url.setPath(formatPath);
-    return url;
+    QString tempPath = path;
+    tempPath = tempPath.replace(0, rootPath.size(), "/"); //制空映射前缀
+    QUrl result;
+    result.setScheme(scheme);
+    result.setPath(tempPath);
+    return result;
 }
+
 /*!
- * \brief UrlRoute::urlToPath 使用虚拟路径Qurl转化成Path，内部不会进行路径检查
- *
- *  url可以是任意注册的url，需要满足已scheme的要求
- *
- *  存在注册节点 {"virtual":"/home"}
- *
- *  传入QUrl("virtual:///home") 则返回 /home/home
- *
- * \param path 文件路径
- *
- * \param errorString 输入参数错误信息
- *
- * \return 返回虚拟Url对应的虚拟路径
+ * \brief UrlRoute::urlToPath url转换为路径，虚拟路径与真实本地映射均可使用
+ * \param url 带有regScheme注册前缀的url
+ * \return
  */
-QString UrlRoute::urlToPath(const QUrl &url, QString *errorString)
+QString UrlRoute::urlToPath(const QUrl &url)
 {
-    for (auto val : SchemeMapLists) {
-        if (val.isVirtual() == true)
-            continue;
-        auto root = val.root();
-        auto scheme = val.scheme();
-        if (scheme == url.scheme()) {
-            QString path = "";
-            if (url.path().startsWith("/")) {
-                path += root;
-                if (!path.endsWith("/"))
-                    path += "/";
-                path += url.path().remove(0, QString("/").size());
-            }
-            return path;
-        }
-    }
+    if (!hasScheme(url.scheme()))
+        return "";
 
-    if (errorString)
-        *errorString = "Maybe in called after execute schemeMapRoot function";
-    return "";
+    QString result = schemeInfos[url.scheme()].rootPath() + url.path();
+    result.replace(QRegularExpression("/{1,}"), "/");
+    return result;
 }
+
 /*!
  * \brief SchemeNode::icon 获取文件icon
- *
  * \return QIcon 文件的ICON实例
  */
-QIcon SchemeNode::icon() const
+QIcon SchemeNode::pathIcon() const
 {
-    return myIcon;
-}
-
-void SchemeNode::setIcon(const QIcon &icon)
-{
-    myIcon = icon;
+    return icon;
 }
 
 /*!
  * \brief 路由Url注册节点类
  */
-SchemeNode::SchemeNode(const QString &scheme, const QString &root,const QIcon &icon ,const bool isVirtual)
-    : myScheme(scheme),
-      myRoot(root),
-      myIcon(icon),
-      isMyVirtual(isVirtual)
+SchemeNode::SchemeNode(const QString &root,const QIcon &icon ,const bool isVirtual)
+    : path(root),
+      icon(icon),
+      virtualFlag(isVirtual)
 {
 
 }
 
-SchemeNode &SchemeNode::operator =(const SchemeNode &node)
+SchemeNode &SchemeNode::operator = (const SchemeNode &node)
 {
-    myScheme = node.scheme();
-    myRoot = node.root();
-    isMyVirtual = node.isVirtual();
+    path = node.rootPath();
+    virtualFlag = node.isVirtual();
     return *this;
 }
 
-QString SchemeNode::scheme() const
+bool SchemeNode::isEmpty()
 {
-    return myScheme;
+    return path.isEmpty();
 }
 
-void SchemeNode::setScheme(const QString &scheme)
+QString SchemeNode::rootPath() const
 {
-    myScheme = scheme;
-}
-
-QString SchemeNode::root() const
-{
-    return myRoot;
-}
-
-void SchemeNode::setRoot(const QString &root)
-{
-    myRoot = root;
+    return path;
 }
 
 bool SchemeNode::isVirtual() const
 {
-    return isMyVirtual;
-}
-
-void SchemeNode::setIsVirtual(bool isVirtual)
-{
-    isMyVirtual = isVirtual;
+    return virtualFlag;
 }
 
 DFMBASE_END_NAMESPACE

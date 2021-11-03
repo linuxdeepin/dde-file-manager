@@ -57,7 +57,7 @@ LocalFileInfo::LocalFileInfo(const QUrl &url)
         abort();
     }
 
-    if (UrlRoute::isVirtualUrl(url)) {
+    if (UrlRoute::isVirtual(url)) {
         qWarning("Failed, can't use virtual scheme init local fileinfo");
         abort();
     }
@@ -427,7 +427,7 @@ QDir LocalFileInfo::absoluteDir() const
  */
 QUrl LocalFileInfo::url() const
 {
-    return UrlRoute::pathToUrl(UrlRoute::urlToPath(d->dfmFileInfo->uri()));
+    return UrlRoute::pathToReal(UrlRoute::urlToPath(d->dfmFileInfo->uri()));
 }
 /*!
  * \brief isReadable 获取文件是否可读

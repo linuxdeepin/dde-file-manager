@@ -41,7 +41,7 @@ bool FileUtils::mkdir(const QUrl &url, const QString dirName, QString *errorStri
         return false;
     }
 
-    if (UrlRoute::isVirtualUrl(url)) {
+    if (UrlRoute::isVirtual(url)) {
         if (errorString) {
             *errorString = QObject::tr("Failed, can't use virtual url from create dir");
         }
@@ -105,7 +105,7 @@ bool FileUtils::touch(const QUrl &url,
         return false;
     }
 
-    if (UrlRoute::isVirtualUrl(url)) {
+    if (UrlRoute::isVirtual(url)) {
         if (errorString) {
             *errorString = QObject::tr("Failed, can't use virtual url from create dir");
         }
@@ -113,7 +113,7 @@ bool FileUtils::touch(const QUrl &url,
         return false;
     }
 
-    if (!UrlRoute::isVirtualUrl(url)) {
+    if (!UrlRoute::isVirtual(url)) {
         QFileInfo info(UrlRoute::urlToPath(url));
         if (!info.isDir() || !info.exists())
             return false;

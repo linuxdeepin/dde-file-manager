@@ -106,7 +106,7 @@ LocalFileWatcher::LocalFileWatcher(const QUrl &url, QObject *parent)
     , d(new LocalFileWatcherPrivate(this))
 {
     d->path = LocalFileWatcherPrivate::formatPath(UrlRoute::urlToPath(url));
-    if (!UrlRoute::isVirtualUrl(url)) {
+    if (!UrlRoute::isVirtual(url)) {
         d->initFileWatcher();
         d->initConnect();
     }
