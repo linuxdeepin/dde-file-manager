@@ -9,6 +9,7 @@
 #include "config/config.h"
 #include "dbus/licenceInterface.h"
 #include <QLayout>
+#include <QTest>
 
 using namespace testing;
 
@@ -67,28 +68,97 @@ TEST(WaterMaskFrame, test_initui)
 
 TEST(WaterMaskFrame, test_initui_extend)
 {
-    WaterMaskFrame* wid = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
     stub_ext::StubExt tub;
+    tub.set_lamda(ADDR(WaterMaskFrame, initUI), [](){});
+
+    WaterMaskFrame* wid = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
+    wid->m_licenseProp->setTimeout(4000);
+
     tub.set_lamda(ADDR(Config, getConfig), [](){return 0;});
-    tub.set_lamda(ADDR(ComDeepinLicenseInterface, AuthorizationState), [](){return ActiveState::Authorized;});
+    tub.set_lamda(ADDR(WaterMaskFrame, isNeedState), [](){return true;});
+    bool done = false;
+    tub.set_lamda(ADDR(WaterMaskFrame, onActiveStateFinished), [&wid, &done](WaterMaskFrame *obj){
+        if (obj == wid)
+            done = true;
+    });
+    tub.reset(ADDR(WaterMaskFrame, initUI));
     wid->initUI();
+
+    QTest::qWaitFor([&done](){return done;}, 3000);
+    EXPECT_TRUE(done);
     EXPECT_TRUE(wid->m_textLabel->text().isEmpty());
     delete wid;
     wid = nullptr;
 
+    tub.set_lamda(ADDR(WaterMaskFrame, initUI), [](){});
     wid = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
-    tub.reset(ADDR(ComDeepinLicenseInterface, AuthorizationState));
-    tub.set_lamda(ADDR(ComDeepinLicenseInterface, AuthorizationState), [](){return ActiveState::TrialAuthorized;});
-    wid->initUI();
-    EXPECT_TRUE(!wid->m_textLabel->text().isEmpty());
-    delete wid;
-    wid = nullptr;
-
-    wid = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
+    wid->m_licenseProp->setTimeout(500);
     tub.set_lamda(ADDR(WaterMaskFrame, isNeedState), [](){return false;});
+    done = false;
+    tub.set_lamda(ADDR(WaterMaskFrame, onActiveStateFinished), [wid, &done](WaterMaskFrame *obj){
+        if (obj == wid)
+            done = true;
+    });
+    tub.reset(ADDR(WaterMaskFrame, initUI));
     wid->initUI();
+    QTest::qWaitFor([&done](){return done;}, 1000);
+    EXPECT_FALSE(done);
     EXPECT_TRUE(wid->m_textLabel->text().isEmpty());
     delete wid;
     wid = nullptr;
 }
 
+TEST(WaterMaskFrame, test_onActiveStateFinished)
+{
+    WaterMaskFrame* wid = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
+    {
+        stub_ext::StubExt stub;
+        stub.set_lamda(VADDR(WaterMaskFrame,sender),[](){return nullptr;});
+        EXPECT_NO_FATAL_FAILURE(wid->onActiveStateFinished());
+        EXPECT_TRUE(wid->m_textLabel->text().isEmpty());
+    }
+
+    {
+        stub_ext::StubExt stub;
+        QDBusPendingCall call = QDBusPendingCall::fromError(QDBusError(QDBusError::NoReply,""));
+        QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call);
+        stub.set_lamda(VADDR(WaterMaskFrame, sender),[watcher](){return watcher;});
+        EXPECT_NO_FATAL_FAILURE(wid->onActiveStateFinished());
+        EXPECT_TRUE(wid->m_textLabel->text().isEmpty());
+        delete watcher;
+    }
+
+    {
+        stub_ext::StubExt stub;
+        QDBusPendingCall call = QDBusPendingCall::fromCompletedCall(QDBusMessage());
+        QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call);
+        stub.set_lamda(ADDR(QDBusPendingCall, error),[](){return QDBusError(QDBusError::NoError,"");});
+        stub.set_lamda(VADDR(WaterMaskFrame, sender),[watcher](){return watcher;});
+
+        int ret = Unauthorized;
+        stub.set_lamda(ADDR(QDBusPendingReplyData, argumentAt),[&ret](){
+            return QVariant::fromValue(QDBusVariant(QVariant::fromValue(ret)));
+        });
+
+        EXPECT_NO_FATAL_FAILURE(wid->onActiveStateFinished());
+        EXPECT_FALSE(wid->m_textLabel->text().isEmpty());
+
+        ret = Authorized;
+        EXPECT_NO_FATAL_FAILURE(wid->onActiveStateFinished());
+        EXPECT_TRUE(wid->m_textLabel->text().isEmpty());
+
+        ret = AuthorizedLapse;
+        EXPECT_NO_FATAL_FAILURE(wid->onActiveStateFinished());
+        EXPECT_FALSE(wid->m_textLabel->text().isEmpty());
+
+        ret = TrialAuthorized;
+        EXPECT_NO_FATAL_FAILURE(wid->onActiveStateFinished());
+        EXPECT_FALSE(wid->m_textLabel->text().isEmpty());
+
+        ret = TrialExpired;
+        EXPECT_NO_FATAL_FAILURE(wid->onActiveStateFinished());
+        EXPECT_FALSE(wid->m_textLabel->text().isEmpty());
+
+        delete watcher;
+    }
+}

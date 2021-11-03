@@ -310,8 +310,11 @@ TEST_F(FrameTest, test_refreshlist_wallpaper)
 {
     ASSERT_EQ(m_frame->m_mode, Frame::WallpaperMode);
     ASSERT_TRUE(m_frame->isVisible());
+    ASSERT_EQ(m_frame->m_itemwait, nullptr);
 
     m_frame->refreshList();
+    ASSERT_NE(m_frame->m_itemwait, nullptr);
+
     QTest::qWaitFor([m_frame]{return (m_frame->m_itemwait == nullptr)
                 || (m_frame->m_loadTimer.isActive());}
                 , 6000);
