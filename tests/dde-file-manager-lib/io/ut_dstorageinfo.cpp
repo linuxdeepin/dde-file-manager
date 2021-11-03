@@ -43,49 +43,24 @@ DFM_USE_NAMESPACE
 class DStorageInfoTest:public testing::Test{
 
 public:
-
-    DStorageInfo *storageinfo = nullptr;
-    DStorageInfo *storageinfopath = nullptr;
-    DStorageInfo *storageinfodir = nullptr;
-    DStorageInfo *storageinfoother = nullptr;
     DUrl url;
     StubExt stl;
     virtual void SetUp() override{
-        storageinfo = new DStorageInfo();
-        storageinfopath = new DStorageInfo("~/test.log");
-        storageinfodir = new DStorageInfo(QDir("~/Pictures/"));
-        storageinfoother = new DStorageInfo(*storageinfopath);
         url.setScheme(FILE_SCHEME);
         url.setPath("/");
         std::cout << "start DStorageInfoTest" << std::endl;
     }
 
     virtual void TearDown() override{
-        if (storageinfo) {
-            delete storageinfo;
-            storageinfo = nullptr;
-        }
-        if (storageinfodir) {
-            delete storageinfodir;
-            storageinfodir = nullptr;
-        }
-        if (storageinfopath) {
-            delete storageinfopath;
-            storageinfopath = nullptr;
-        }
-        if (storageinfoother) {
-            delete storageinfoother;
-            storageinfoother = nullptr;
-        }
-
         std::cout << "end DStorageInfoTest" << std::endl;
     }
 };
 
 TEST_F(DStorageInfoTest,can_setPath) {
-    DStorageInfo teststorage = *storageinfo;
-    DStorageInfo teststoragetemp = teststorage;
-    teststoragetemp = *storageinfodir;
+
+    DStorageInfo teststorage;
+    DStorageInfo teststoragetemp(QDir("~/Pictures/"));
+
     url.setScheme(FILE_SCHEME);
     url.setPath("~/test_DStrogInfo_test.log");
     QProcess::execute("touch "+url.toLocalFile());
@@ -109,125 +84,148 @@ TEST_F(DStorageInfoTest,can_setPath) {
         path[0] = '2';
         return path;
     });
-    stl.set_lamda(g_free,[](){});
-    stl.set_lamda(g_object_unref,[](){});
+    // stl.set_lamda(g_free,[](){});
+    // stl.set_lamda(g_object_unref,[](){});
     QProcess::execute("touch "+url.toLocalFile());
-    teststorage.setPath(url.toLocalFile());
-    EXPECT_FALSE(teststorage.rootPath().isEmpty());
-    EXPECT_FALSE(teststorage.device().isEmpty());
-    EXPECT_FALSE(teststorage.bytesFree() == 0);
+    DStorageInfo teststorage2(url.toLocalFile());
+    EXPECT_FALSE(teststorage2.rootPath().isEmpty());
+    EXPECT_FALSE(teststorage2.device().isEmpty());
+    EXPECT_FALSE(teststorage2.bytesFree() == 0);
     url.setPath("~/test.log");
     TestHelper::deleteTmpFiles(QStringList() << url.toLocalFile());
 }
 
 TEST_F(DStorageInfoTest,can_rootPath) {
-    EXPECT_TRUE(storageinfo->rootPath().isEmpty());
-    storageinfo->setPath("~/test.log");
-    storageinfo->refresh();
-    storageinfodir->refresh();
-    EXPECT_NO_FATAL_FAILURE(storageinfo->rootPath().isEmpty());
-    EXPECT_NO_FATAL_FAILURE(storageinfodir->rootPath().isEmpty());
+    DStorageInfo storageinfo;
+    DStorageInfo storageinfodir(QDir("~/Pictures/"));
+    EXPECT_TRUE(storageinfo.rootPath().isEmpty());
+    storageinfo.setPath("~/test.log");
+    storageinfo.refresh();
+    storageinfodir.refresh();
+    EXPECT_NO_FATAL_FAILURE(storageinfo.rootPath().isEmpty());
+    EXPECT_NO_FATAL_FAILURE(storageinfodir.rootPath().isEmpty());
     url.setScheme(FILE_SCHEME);
     url.setPath("~/test.log");
     TestHelper::deleteTmpFiles(QStringList() << url.toLocalFile());
 }
 
 TEST_F(DStorageInfoTest,can_device) {
-    EXPECT_TRUE(storageinfo->device().isEmpty());
-    storageinfo->setPath("~/test.log");
-    storageinfo->refresh();
-    EXPECT_TRUE(storageinfo->device().isEmpty());
-    EXPECT_TRUE(storageinfodir->device().isEmpty());
+    DStorageInfo storageinfo;
+    DStorageInfo storageinfodir(QDir("~/Pictures/"));
+    EXPECT_TRUE(storageinfo.device().isEmpty());
+    storageinfo.setPath("~/test.log");
+    storageinfo.refresh();
+    EXPECT_TRUE(storageinfo.device().isEmpty());
+    EXPECT_TRUE(storageinfodir.device().isEmpty());
     url.setScheme(FILE_SCHEME);
     url.setPath("~/test.log");
     TestHelper::deleteTmpFiles(QStringList() << url.toLocalFile());
 }
 
 TEST_F(DStorageInfoTest,can_fileSystemType) {
-    EXPECT_TRUE(storageinfo->fileSystemType().isEmpty());
-    storageinfo->setPath("~/test.log");
-    storageinfo->refresh();
-    EXPECT_FALSE(storageinfo->fileSystemType().isEmpty());
-    storageinfodir->refresh();
-    EXPECT_FALSE(storageinfodir->fileSystemType().isEmpty());
+    DStorageInfo storageinfo;
+    DStorageInfo storageinfodir(QDir("~/Pictures/"));
+    EXPECT_TRUE(storageinfo.fileSystemType().isEmpty());
+    storageinfo.setPath("~/test.log");
+    storageinfo.refresh();
+    EXPECT_FALSE(storageinfo.fileSystemType().isEmpty());
+    storageinfodir.refresh();
+    EXPECT_FALSE(storageinfodir.fileSystemType().isEmpty());
     url.setScheme(FILE_SCHEME);
     url.setPath("~/test.log");
     TestHelper::deleteTmpFiles(QStringList() << url.toLocalFile());
 }
 
 TEST_F(DStorageInfoTest,can_bytesTotal) {
-    EXPECT_TRUE(storageinfo->bytesTotal() != 0);
-    storageinfo->setPath("~/test.log");
-    storageinfo->refresh();
-    EXPECT_TRUE(storageinfo->bytesTotal() != 0);
-    EXPECT_FALSE(storageinfodir->bytesTotal() == 0);
+    DStorageInfo storageinfo;
+    DStorageInfo storageinfodir(QDir("~/Pictures/"));
+    EXPECT_TRUE(storageinfo.bytesTotal() != 0);
+    storageinfo.setPath("~/test.log");
+    storageinfo.refresh();
+    EXPECT_TRUE(storageinfo.bytesTotal() != 0);
+    EXPECT_FALSE(storageinfodir.bytesTotal() == 0);
     url.setScheme(FILE_SCHEME);
     url.setPath("~/test.log");
     TestHelper::deleteTmpFiles(QStringList() << url.toLocalFile());
 }
 
 TEST_F(DStorageInfoTest,can_bytesFree) {
-    EXPECT_TRUE(storageinfo->bytesFree() != 0);
-    storageinfo->setPath("~/test.log");
-    EXPECT_TRUE(storageinfo->bytesFree() != 0);
-    EXPECT_FALSE(storageinfodir->bytesFree() == 0);
+    DStorageInfo storageinfo;
+    DStorageInfo storageinfodir(QDir("~/Pictures/"));
+    EXPECT_TRUE(storageinfo.bytesFree() != 0);
+    storageinfo.setPath("~/test.log");
+    EXPECT_TRUE(storageinfo.bytesFree() != 0);
+    EXPECT_FALSE(storageinfodir.bytesFree() == 0);
     url.setScheme(FILE_SCHEME);
     url.setPath("~/test.log");
     TestHelper::deleteTmpFiles(QStringList() << url.toLocalFile());
 }
 
 TEST_F(DStorageInfoTest,can_bytesAvailable) {
-    EXPECT_TRUE(storageinfo->bytesAvailable() != 0);
-    storageinfo->setPath("~/test.log");
-    EXPECT_TRUE(storageinfo->bytesFree() != 0);
-    EXPECT_FALSE(storageinfodir->bytesAvailable() == 0);
+    DStorageInfo storageinfo;
+    DStorageInfo storageinfodir(QDir("~/Pictures/"));
+    EXPECT_TRUE(storageinfo.bytesAvailable() != 0);
+    storageinfo.setPath("~/test.log");
+    EXPECT_TRUE(storageinfo.bytesFree() != 0);
+    EXPECT_FALSE(storageinfodir.bytesAvailable() == 0);
     url.setScheme(FILE_SCHEME);
     url.setPath("~/test.log");
     TestHelper::deleteTmpFiles(QStringList() << url.toLocalFile());
 }
 
 TEST_F(DStorageInfoTest,can_isReadOnly) {
-    EXPECT_FALSE(storageinfo->isReadOnly());
-    storageinfo->setPath("/sys/bin");
-    storageinfo->refresh();
-    EXPECT_FALSE(storageinfo->isReadOnly());
-    storageinfo->setPath("/sys/bin/aconnect");
-    storageinfo->refresh();
-    EXPECT_FALSE(storageinfo->isReadOnly());
+    DStorageInfo storageinfo;
+    EXPECT_FALSE(storageinfo.isReadOnly());
+    storageinfo.setPath("/sys/bin");
+    storageinfo.refresh();
+    EXPECT_FALSE(storageinfo.isReadOnly());
+    storageinfo.setPath("/sys/bin/aconnect");
+    storageinfo.refresh();
+    EXPECT_FALSE(storageinfo.isReadOnly());
 }
 
 TEST_F(DStorageInfoTest,can_isLocalDevice) {
-    EXPECT_FALSE(storageinfo->isLocalDevice());
-    storageinfo->setPath("/sys/bin");
-    storageinfo->refresh();
-    EXPECT_FALSE(storageinfo->isLocalDevice());
+    DStorageInfo storageinfo;
+    EXPECT_FALSE(storageinfo.isLocalDevice());
+    storageinfo.setPath("/sys/bin");
+    storageinfo.refresh();
+    EXPECT_FALSE(storageinfo.isLocalDevice());
 }
 
 TEST_F(DStorageInfoTest,can_isLowSpeedDevice) {
-    EXPECT_FALSE(storageinfo->isLowSpeedDevice());
-    storageinfo->setPath("/sys/bin");
-    EXPECT_FALSE(storageinfo->isLowSpeedDevice());
+    DStorageInfo storageinfo;
+    EXPECT_FALSE(storageinfo.isLowSpeedDevice());
+    storageinfo.setPath("/sys/bin");
+    EXPECT_FALSE(storageinfo.isLowSpeedDevice());
 }
 
 TEST_F(DStorageInfoTest,can_isValid) {
-    EXPECT_FALSE(storageinfo->isValid());
-    storageinfo->setPath("/sys/bin");
-    storageinfo->refresh();
-    EXPECT_FALSE(storageinfo->isValid());
+    DStorageInfo storageinfo;
+    DStorageInfo storageinfopath("~/test.log");
+    DStorageInfo storageinfodir(QDir("~/Pictures/"));
+    DStorageInfo storageinfoother("~/test.log");
+    EXPECT_FALSE(storageinfo.isValid());
+    storageinfo.setPath("/sys/bin");
+    storageinfo.refresh();
+    EXPECT_FALSE(storageinfo.isValid());
 }
 
 TEST_F(DStorageInfoTest,can_operator) {
-    EXPECT_FALSE(storageinfo->isValid());
-    storageinfo->setPath("/sys/bin");
-    DStorageInfo tmp = *storageinfo;
-    DStorageInfo tmp1 = *storageinfopath;
+    DStorageInfo storageinfo;
+    DStorageInfo storageinfopath("~/test.log");
+    DStorageInfo storageinfodir(QDir("~/Pictures/"));
+    DStorageInfo storageinfoother("~/test.log");
+    EXPECT_FALSE(storageinfo.isValid());
+    storageinfo.setPath("/sys/bin");
+    DStorageInfo tmp(storageinfo);
+    DStorageInfo tmp1(storageinfopath);
     QList<DStorageInfo> infolist;
     infolist << tmp << tmp1;
     qDebug() << tmp;
     qDebug() << tmp1;
     EXPECT_TRUE(infolist.contains(tmp));
     EXPECT_TRUE(infolist.contains(tmp1));
-    EXPECT_TRUE(infolist.contains(*storageinfodir));
+    EXPECT_TRUE(infolist.contains(storageinfodir));
     stl.set_lamda(&DStorageInfo::isValid,[](){return true;});
     stl.set_lamda(&QByteArray::isEmpty,[](){return false;});
     stl.set_lamda(&QString::isEmpty,[](){return false;});

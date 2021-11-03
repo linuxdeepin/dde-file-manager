@@ -112,6 +112,14 @@ void DStorageInfo::setPath(const QString &path, PathHints hints)
     if (QStorageInfo::bytesTotal() <= 0) {
         GFile *file = g_file_new_for_path(QFile::encodeName(path).constData());
         GError *error = nullptr;
+
+        // 如果为拷贝构造，之前的d对象setPath后会存在gfileinfo，此处做初始化判断。
+        // 如果存在info 对象则先释放
+        if (d->gioInfo) {
+            g_object_unref(d->gioInfo);
+            d->gioInfo =nullptr;
+        }
+
         d->gioInfo = g_file_query_filesystem_info(file, "filesystem::*", nullptr, &error);
 
         if (error) {
