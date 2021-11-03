@@ -49,7 +49,11 @@ bool DeviceManagerDBus::IsMonotorWorking()
 void DeviceManagerDBus::SafelyRemoveBlockDevice(QString id)
 {
     DetachBlockDevice(id);
-    // TODO(zhangs): service emit a signal
+    // only optical eject
+    connect(deviceServ, &DeviceService::blockDevAsyncEjected, this, [this, id] (const QString &deviceId) {
+        if (deviceId == id)
+            deviceServ->poweroffBlockDeviceAsync(id);
+    });
 }
 
 void DeviceManagerDBus::DetachBlockDevice(QString id)
@@ -89,12 +93,12 @@ void DeviceManagerDBus::initConnection()
 {
     connect(deviceServ, &DeviceService::blockDriveAdded, this, &DeviceManagerDBus::BlockDriveAdded);
     connect(deviceServ, &DeviceService::blockDriveRemoved, this, &DeviceManagerDBus::BlockDriveRemoved);
-    connect(deviceServ, &DeviceService::blockDeviceAdded, this, &DeviceManagerDBus::BlockDeviceAdded);
-    connect(deviceServ, &DeviceService::blockDeviceRemoved, this, &DeviceManagerDBus::BlockDeviceRemoved);
-    connect(deviceServ, &DeviceService::blockDeviceFilesystemAdded, this, &DeviceManagerDBus::BlockDeviceFilesystemAdded);
-    connect(deviceServ, &DeviceService::blockDeviceFilesystemRemoved, this, &DeviceManagerDBus::BlockDeviceFilesystemRemoved);
-    connect(deviceServ, &DeviceService::blockDeviceMounted, this, &DeviceManagerDBus::BlockDeviceMounted);
-    connect(deviceServ, &DeviceService::blockDeviceUnmounted, this, &DeviceManagerDBus::BlockDeviceUnmounted);
+    connect(deviceServ, &DeviceService::blockDevAdded, this, &DeviceManagerDBus::BlockDeviceAdded);
+    connect(deviceServ, &DeviceService::blockDevRemoved, this, &DeviceManagerDBus::BlockDeviceRemoved);
+    connect(deviceServ, &DeviceService::blockDevFilesystemAdded, this, &DeviceManagerDBus::BlockDeviceFilesystemAdded);
+    connect(deviceServ, &DeviceService::blockDevFilesystemRemoved, this, &DeviceManagerDBus::BlockDeviceFilesystemRemoved);
+    connect(deviceServ, &DeviceService::blockDevMounted, this, &DeviceManagerDBus::BlockDeviceMounted);
+    connect(deviceServ, &DeviceService::blockDevUnmounted, this, &DeviceManagerDBus::BlockDeviceUnmounted);
 }
 
 void DeviceManagerDBus::onDetachDeviceScanning(int index, const QString &id)

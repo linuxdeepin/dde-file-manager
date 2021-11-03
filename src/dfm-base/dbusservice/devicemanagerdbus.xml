@@ -27,6 +27,9 @@
     <method name="IsMonotorWorking">
       <arg type="b" direction="out"/>
     </method>
+    <method name="SafelyRemoveBlockDevice">
+      <arg name="id" type="s" direction="in"/>
+    </method>
     <method name="DetachBlockDevice">
       <arg name="id" type="s" direction="in"/>
     </method>

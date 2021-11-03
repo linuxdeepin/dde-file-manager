@@ -105,6 +105,12 @@ QVariantMap DeviceManagerAdaptor::QueryProtocolDeviceInfo(const QString &id)
     return parent()->QueryProtocolDeviceInfo(id);
 }
 
+void DeviceManagerAdaptor::SafelyRemoveBlockDevice(const QString &id)
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.SafelyRemoveBlockDevice
+    parent()->SafelyRemoveBlockDevice(id);
+}
+
 void DeviceManagerAdaptor::UnmountBlockDevice(const QString &id)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.UnmountBlockDevice

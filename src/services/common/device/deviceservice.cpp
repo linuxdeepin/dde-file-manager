@@ -58,8 +58,7 @@ void DeviceMonitorHandler::startConnect()
     auto manager = DFMMOUNT::DFMDeviceManager::instance();
 
     // connect block devices signal
-    auto blkMonitor = qobject_cast<QSharedPointer<DFMMOUNT::DFMBlockMonitor>>
-                      (manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice));
+    auto blkMonitor = manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice).objectCast<DFMMOUNT::DFMBlockMonitor>();
     if (blkMonitor) {
         connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::driveAdded, this, &DeviceMonitorHandler::onBlockDriveAdded);
         connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::driveRemoved, this, &DeviceMonitorHandler::onBlockDriveRemoved);
@@ -83,8 +82,7 @@ void DeviceMonitorHandler::stopConnect()
     auto manager = DFMMOUNT::DFMDeviceManager::instance();
 
     // disconnect block devices signal
-    auto blkMonitor = qobject_cast<QSharedPointer<DFMMOUNT::DFMBlockMonitor>>
-                      (manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice));
+    auto blkMonitor = manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice).objectCast<DFMMOUNT::DFMBlockMonitor>();
     if (blkMonitor) {
         disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::driveAdded, this, &DeviceMonitorHandler::onBlockDriveAdded);
         disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::driveRemoved, this, &DeviceMonitorHandler::onBlockDriveRemoved);
@@ -244,7 +242,7 @@ void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
     }
 
     insertNewBlockDeviceData(blkDev);
-    emit service->blockDeviceAdded(deviceId);
+    emit service->blockDevAdded(deviceId);
     // maybe reload setting ?
     if (service->isInLiveSystem() || !service->isAutoMountSetting()) {
         qWarning() << "Cancel mount, live system: " << service->isInLiveSystem()
@@ -271,7 +269,7 @@ void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
             qInfo() << "open by dde-file-manager: " << mountUrlStr;
             return;
         }
-        QString &&mpt = blkDev->mountPoint().toLocalFile();
+        QString &&mpt = blkDev->mountPoint();
         qInfo() << "a new device mount to: " << mpt;
         DDesktopServices::showFolder(QUrl::fromLocalFile(mpt));
     }
@@ -281,31 +279,31 @@ void DeviceMonitorHandler::onBlockDeviceRemoved(const QString &deviceId)
 {
     qInfo() << "A block device removed: " << deviceId;
     removeBlockDeviceData(deviceId);
-    emit service->blockDeviceRemoved(deviceId);
+    emit service->blockDevRemoved(deviceId);
 }
 
 void DeviceMonitorHandler::onFilesystemAdded(const QString &deviceId)
 {
     qInfo() << "A block device fs added: " << deviceId;
-    emit service->blockDeviceFilesystemAdded(deviceId);
+    emit service->blockDevFilesystemAdded(deviceId);
 }
 
 void DeviceMonitorHandler::onFilesystemRemoved(const QString &deviceId)
 {
     qInfo() << "A block device fs remvoved: " << deviceId;
-    emit service->blockDeviceFilesystemRemoved(deviceId);
+    emit service->blockDevFilesystemRemoved(deviceId);
 }
 
 void DeviceMonitorHandler::onBlockDeviceMounted(const QString &deviceId, const QString &mountPoint)
 {
     qInfo() << "A block device mounted: " << deviceId;
-    emit service->blockDeviceMounted(deviceId, mountPoint);
+    emit service->blockDevMounted(deviceId, mountPoint);
 }
 
 void DeviceMonitorHandler::onBlockDeviceUnmounted(const QString &deviceId)
 {
     qInfo() << "A block device unmounted: " << deviceId;
-    emit service->blockDeviceUnmounted(deviceId);
+    emit service->blockDevUnmounted(deviceId);
 }
 
 void DeviceMonitorHandler::onBlockDevicePropertyChanged(const QString &deviceId,
@@ -393,8 +391,16 @@ void DeviceService::ejectBlockDeviceAsync(const QString &deviceId, const QVarian
 {
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
-    if (DeviceServiceHelper::isEjectableBlockDevice(ptr))
-        ptr->ejectAsync(opts);
+    if (DeviceServiceHelper::isEjectableBlockDevice(ptr)) {
+        ptr->ejectAsync(opts, [this, deviceId] (bool ret, DFMMOUNT::DeviceError err) {
+            if (!ret) {
+                qWarning() << "Eject failed: " << int(err);
+                dfmbase::UniversalUtils::notifyMessage(tr("The device is busy, cannot eject now"));
+            } else {
+                emit blockDevAsyncEjected(deviceId);
+            }
+        });
+    }
 }
 
 bool DeviceService::ejectBlockDevice(const QString &deviceId, const QVariantMap &opts)
@@ -411,8 +417,16 @@ void DeviceService::poweroffBlockDeviceAsync(const QString &deviceId, const QVar
 {
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
-    if (DeviceServiceHelper::isCanPoweroffBlockDevice(ptr))
-        ptr->powerOffAsync(opts);
+    if (DeviceServiceHelper::isCanPoweroffBlockDevice(ptr)) {
+        ptr->powerOffAsync(opts, [this, deviceId] (bool ret, DFMMOUNT::DeviceError err) {
+            if (!ret) {
+                qWarning() << "Poweroff failed: " << int(err);
+                dfmbase::UniversalUtils::notifyMessage(tr("The device is busy, cannot remove now"));
+            } else {
+                emit blockDevAsyncPoweroffed(deviceId);
+            }
+        });
+    }
 }
 
 bool DeviceService::poweroffBlockDevice(const QString &deviceId, const QVariantMap &opts)
@@ -480,7 +494,6 @@ void DeviceService::detachBlockDevice(const QString &deviceId)
             qWarning() << "Detach " << id << " abnormal, it's cannot unmount";
     });
 
-    // TODO(zhangs): acquire error msg and send to `org.freedesktop.Notifications`
     if (ptr->optical())
         ejectBlockDeviceAsync(deviceId);
     else
@@ -508,8 +521,14 @@ void DeviceService::mountBlockDeviceAsync(const QString &deviceId, const QVarian
 {
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
-    if (DeviceServiceHelper::isMountableBlockDevice(ptr))
-        ptr->mountAsync(opts);
+    if (DeviceServiceHelper::isMountableBlockDevice(ptr)) {
+        ptr->mountAsync(opts, [this, deviceId] (bool ret, DFMMOUNT::DeviceError err) {
+            if (!ret)
+                qWarning() << "Mount failed: " << int(err);
+            else
+                emit blockDevAsyncMounted(deviceId);
+        });
+    }
 }
 
 bool DeviceService::mountBlockDevice(const QString &deviceId, const QVariantMap &opts)
@@ -526,8 +545,16 @@ void DeviceService::unmountBlockDeviceAsync(const QString &deviceId, const QVari
 {
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
-    if (DeviceServiceHelper::isUnmountableBlockDevice(ptr))
-        ptr->unmountAsync(opts);
+    if (DeviceServiceHelper::isUnmountableBlockDevice(ptr)) {
+        ptr->unmountAsync(opts, [this, deviceId] (bool ret, DFMMOUNT::DeviceError err) {
+            if (!ret) {
+                qWarning() << "Unmount failed: " << int(err);
+                dfmbase::UniversalUtils::notifyMessage(tr("Disk is busy, cannot unmount now"));
+            } else {
+                emit blockDevAsyncUnmounted(deviceId);
+            }
+        });
+    }
 }
 
 bool DeviceService::unmountBlockDevice(const QString &deviceId, const QVariantMap &opts)

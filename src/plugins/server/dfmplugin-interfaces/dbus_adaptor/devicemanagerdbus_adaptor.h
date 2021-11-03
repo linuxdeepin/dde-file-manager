@@ -57,6 +57,9 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "    <method name=\"IsMonotorWorking\">\n"
 "      <arg direction=\"out\" type=\"b\"/>\n"
 "    </method>\n"
+"    <method name=\"SafelyRemoveBlockDevice\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"    </method>\n"
 "    <method name=\"DetachBlockDevice\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
@@ -123,6 +126,7 @@ public Q_SLOTS: // METHODS
     void PoweroffBlockDevice(const QString &id);
     QVariantMap QueryBlockDeviceInfo(const QString &id);
     QVariantMap QueryProtocolDeviceInfo(const QString &id);
+    void SafelyRemoveBlockDevice(const QString &id);
     void UnmountBlockDevice(const QString &id);
     void UnmountProtocolDevice(const QString &id);
 Q_SIGNALS: // SIGNALS

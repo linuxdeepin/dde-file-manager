@@ -77,12 +77,17 @@ public: // status
 signals:
     void blockDriveAdded();
     void blockDriveRemoved();
-    void blockDeviceAdded(const QString &deviceId);
-    void blockDeviceRemoved(const QString &deviceId);
-    void blockDeviceFilesystemAdded(const QString &deviceId);
-    void blockDeviceFilesystemRemoved(const QString &deviceId);
-    void blockDeviceMounted(const QString &deviceId, const QString &mountPoint);
-    void blockDeviceUnmounted(const QString &deviceId);
+    void blockDevAdded(const QString &deviceId);
+    void blockDevRemoved(const QString &deviceId);
+    void blockDevFilesystemAdded(const QString &deviceId);
+    void blockDevFilesystemRemoved(const QString &deviceId);
+    void blockDevMounted(const QString &deviceId, const QString &mountPoint);
+    void blockDevUnmounted(const QString &deviceId);
+
+    void blockDevAsyncMounted(const QString &deviceId);
+    void blockDevAsyncUnmounted(const QString &deviceId);
+    void blockDevAsyncEjected(const QString &deviceId);
+    void blockDevAsyncPoweroffed(const QString &deviceId);
 
 private:
     explicit DeviceService(QObject *parent = nullptr);

@@ -87,16 +87,11 @@ QUrl DeviceServiceHelper::makeMountpointForBlock(const BlockDevPtr &blkDev)
 
 QStringList DeviceServiceHelper::makeAllDevicesIdForDrive(const QString &driveName)
 {
-    // TODO(zhangs): use `Monitor::resolveDeviceOfDrive` replace it
     QStringList idList;
-    if (driveName.isEmpty())
-        return idList;
 
-    auto &&ptrList = createAllBlockDevices();
-    std::for_each(ptrList.cbegin(), ptrList.cend(), [&idList, driveName](const BlockDevPtr &ptr) {
-        if (ptr->drive() == driveName && isUnmountableBlockDevice(ptr))
-            idList.push_back(ptr->path());
-    });
+    auto manager = DFMMOUNT::DFMDeviceManager::instance();
+    auto monitor = manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice).staticCast<DFMMOUNT::DFMBlockMonitor>();
+    idList = monitor->resolveDeviceFromDrive(driveName);
 
     return idList;
 }
@@ -232,7 +227,7 @@ bool DeviceServiceHelper::isEjectableBlockDevice(const BlockDeviceData &data)
     bool optical = data.optical;
     bool ejectable = data.ejectable;
 
-    qInfo() << "can eject? " << data.common.id << "(removable optical ejectable mountpoints): "
+    qInfo() << "can eject? " << data.common.id << "(mountpoints removable optical ejectable): "
             << data.mountpoints << removable << optical << ejectable;
 
     if (removable)
@@ -288,8 +283,7 @@ bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDeviceData &data)
     if (gsettings.get("protect-root-device-mounts").toBool()) {
         QStorageInfo qsi("/");
         auto manager = DFMMOUNT::DFMDeviceManager::instance();
-        auto monitor = qobject_cast<QSharedPointer<DFMMOUNT::DFMBlockMonitor>>
-                       (manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice));
+        auto monitor = manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice).staticCast<DFMMOUNT::DFMBlockMonitor>();
         QStringList &&rootDevNodes = monitor->resolveDeviceNode(qsi.device(), {});
         if (!rootDevNodes.isEmpty()) {
             if (data.drive == createBlockDevice(rootDevNodes.first())->drive())
@@ -343,9 +337,9 @@ DeviceServiceHelper::DevPtrList DeviceServiceHelper::createAllDevices(dfmmount::
 DeviceServiceHelper::BlockDevPtrList DeviceServiceHelper::createAllBlockDevices()
 {
     BlockDevPtrList list;
-    auto devList = DeviceServiceHelper::createAllDevices(DFMMOUNT::DeviceType::BlockDevice);
+    auto &&devList = DeviceServiceHelper::createAllDevices(DFMMOUNT::DeviceType::BlockDevice);
     for (auto dev : devList) {
-        auto blkDev = qobject_cast<QSharedPointer<DFMMOUNT::DFMBlockDevice>>(dev);
+        auto blkDev = dev.staticCast<DFMMOUNT::DFMBlockDevice>();
         if (blkDev)
             list.append(blkDev);
     }
@@ -355,9 +349,9 @@ DeviceServiceHelper::BlockDevPtrList DeviceServiceHelper::createAllBlockDevices(
 DeviceServiceHelper::ProtocolDevPtrList DeviceServiceHelper::createAllProtocolDevices()
 {
     ProtocolDevPtrList list;
-    auto devList = DeviceServiceHelper::createAllDevices(DFMMOUNT::DeviceType::ProtocolDevice);
+    auto &&devList = DeviceServiceHelper::createAllDevices(DFMMOUNT::DeviceType::ProtocolDevice);
     for (auto dev : devList) {
-        auto protocolDev = qobject_cast<QSharedPointer<DFMMOUNT::DFMProtocolDevice>>(dev);
+        auto protocolDev = dev.staticCast<DFMMOUNT::DFMProtocolDevice>();
         if (protocolDev)
             list.append(protocolDev);
     }
@@ -370,7 +364,7 @@ void DeviceServiceHelper::makeBlockDeviceData(const DeviceServiceHelper::BlockDe
 
     data->common.id            = ptr->path();
     data->common.filesystem    = ptr->fileSystem();
-    data->common.mountpoint    = ptr->mountPoint().toLocalFile();
+    data->common.mountpoint    = ptr->mountPoint();
     data->common.sizeTotal     = ptr->sizeTotal();
     data->common.sizeFree      = ptr->sizeFree();
     data->common.sizeUsage     = ptr->sizeUsage();
@@ -387,7 +381,7 @@ void DeviceServiceHelper::makeBlockDeviceData(const DeviceServiceHelper::BlockDe
     data->ejectable            = ptr->ejectable();
     data->isEncrypted          = ptr->isEncrypted();
     data->hasFileSystem        = ptr->hasFileSystem();
-    data->hintSystem           = ptr->getProperty(DFMMOUNT::Property::BlockHintSystem).toBool(); // TODO(zhangs): wait a interface
+    data->hintSystem           = ptr->hintSystem();
     data->hintIgnore           = ptr->hintIgnore();
     data->cryptoBackingDevice  = ptr->getProperty(DFMMOUNT::Property::BlockCryptoBackingDevice).toString();
 }
