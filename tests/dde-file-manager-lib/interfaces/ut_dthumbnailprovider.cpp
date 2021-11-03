@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     yanghao<yanghao@uniontech.com>
@@ -161,10 +161,12 @@ TEST_F(DThumbnailProviderTest, createThumbnailWithPdf)
     createThumbnail("test.pdf");
 }
 
+#ifndef __arm__
 TEST_F(DThumbnailProviderTest, createThumbnailWithMp4)
 {
     createThumbnail("introduction.mp4");
 }
+#endif
 
 /*
 TEST_F(DThumbnailProviderTest, createThumbnailWithDjuv)
