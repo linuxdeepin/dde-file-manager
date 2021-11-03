@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en">
 <context>
     <name>AppController</name>
     <message>
@@ -2971,75 +2973,75 @@
 <context>
     <name>PathManager</name>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="58"/>
+        <location filename="../controllers/pathmanager.cpp" line="59"/>
         <source>Home</source>
         <translation>Home</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="59"/>
+        <location filename="../controllers/pathmanager.cpp" line="60"/>
         <source>Desktop</source>
         <translation>Desktop</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="60"/>
+        <location filename="../controllers/pathmanager.cpp" line="61"/>
         <source>Videos</source>
         <translation>Videos</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="61"/>
+        <location filename="../controllers/pathmanager.cpp" line="62"/>
         <source>Music</source>
         <translation>Music</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="62"/>
+        <location filename="../controllers/pathmanager.cpp" line="63"/>
         <source>Pictures</source>
         <translation>Pictures</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="63"/>
+        <location filename="../controllers/pathmanager.cpp" line="64"/>
         <source>Documents</source>
         <translation>Documents</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="64"/>
+        <location filename="../controllers/pathmanager.cpp" line="65"/>
         <source>Downloads</source>
         <translation>Downloads</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="65"/>
+        <location filename="../controllers/pathmanager.cpp" line="66"/>
         <location filename="../models/trashfileinfo.cpp" line="85"/>
         <source>Trash</source>
         <translation>Trash</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="66"/>
+        <location filename="../controllers/pathmanager.cpp" line="67"/>
         <location filename="../models/dfmrootfileinfo.cpp" line="678"/>
         <location filename="../models/dfmrootfileinfo.cpp" line="706"/>
         <source>System Disk</source>
         <translation>System Disk</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="67"/>
+        <location filename="../controllers/pathmanager.cpp" line="68"/>
         <source>Computers in LAN</source>
         <translation>Computers in LAN</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="68"/>
+        <location filename="../controllers/pathmanager.cpp" line="69"/>
         <source>My Shares</source>
         <translation>My Shares</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="69"/>
+        <location filename="../controllers/pathmanager.cpp" line="70"/>
         <source>Computer</source>
         <translation>Computer</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="70"/>
+        <location filename="../controllers/pathmanager.cpp" line="71"/>
         <source>Recent</source>
         <translation>Recent</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="71"/>
+        <location filename="../controllers/pathmanager.cpp" line="72"/>
         <source>File Vault</source>
         <translation>File Vault</translation>
     </message>
@@ -3289,7 +3291,7 @@
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="68"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="612"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="613"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="58"/>
         <source>Open in new window</source>
         <translation>Open in new window</translation>
@@ -3300,7 +3302,7 @@
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="72"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="616"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="617"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="62"/>
         <source>Open in new tab</source>
         <translation>Open in new tab</translation>
@@ -4068,12 +4070,12 @@
         <translation>Erase</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="604"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="605"/>
         <source>Copy path</source>
         <translation>Copy path</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="622"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="623"/>
         <source>Edit address</source>
         <translation>Edit address</translation>
     </message>

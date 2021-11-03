@@ -40,6 +40,7 @@
 #include "models/dfmrootfileinfo.h"
 #include "utils.h"
 #include "dfmapplication.h"
+#include "plugins/schemepluginmanager.h"
 
 #include <QUrl>
 #include <QDebug>
@@ -140,6 +141,9 @@ void DRootFileManager::startQuryRootFile()
 {
     if (!d_ptr->bstartonce) {
         d_ptr->bstartonce = true;
+
+        //NOTE [XIAO] 加载插件
+        SchemePluginManager::instance()->loadSchemePlugin();
 
         DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
         Q_CHECK_PTR(devicesWatcher);
@@ -269,7 +273,7 @@ bool DRootFileManager::isRootFileContainSmb(const DUrl &smburl)
     if (host.isEmpty() || shareName.isEmpty())
         return false;
     shareName = shareName.mid(1);
-    shareName = shareName.mid(0,shareName.indexOf("/"));
+    shareName = shareName.mid(0, shareName.indexOf("/"));
     if (shareName.isEmpty())
         return false;
     QMutexLocker lock(&d_ptr->rootfileMtx);

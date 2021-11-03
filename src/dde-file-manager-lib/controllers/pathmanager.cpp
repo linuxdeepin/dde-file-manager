@@ -38,6 +38,7 @@
 #include "dfmsettings.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "interfaces/dfmglobal.h"
+#include "plugins/schemepluginmanager.h" //NOTE [REN] 添加依赖头文件
 
 DFM_USE_NAMESPACE
 
@@ -69,6 +70,12 @@ void PathManager::initPaths()
     m_systemPathDisplayNamesMap["Computer"] = tr("Computer");
     m_systemPathDisplayNamesMap["Recent"] = tr("Recent");
     m_systemPathDisplayNamesMap["Vault"] = tr("File Vault");
+
+    //NOTE [REN] 将PLUGIN加载到m_systemPathDisplayNamesMap
+    for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
+        DFMSideBarItem *item = plugin.second->createSideBarItem();
+        m_systemPathDisplayNamesMap[plugin.first] = item->text();
+    }
 
     if (DFMApplication::instance()->genericObtuselySetting()->value("Disk/Options", "windowsStyle").toBool()) {
         m_systemPathDisplayNamesMap["System Disk"] = m_systemPathDisplayNamesMap["System Disk"].append(" (C:)");
@@ -230,6 +237,12 @@ void PathManager::loadSystemPaths()
     m_systemPathsMap["Computer"] = DFMStandardPaths::location(DFMStandardPaths::ComputerRootPath);
     m_systemPathsMap["Recent"] = DFMStandardPaths::location(DFMStandardPaths::RecentPath);
     m_systemPathsMap["Vault"] = DFMStandardPaths::location(DFMStandardPaths::Vault); // 保险库路径
+
+    //NOTE [REN] 将PLUGIN加载到m_systemPathsMap
+    for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
+        DFMSideBarItem *item = plugin.second->createSideBarItem();
+        m_systemPathsMap[plugin.first] = item->url().toString();
+    }
 
     m_systemPathsSet.reserve(m_systemPathsMap.size());
 

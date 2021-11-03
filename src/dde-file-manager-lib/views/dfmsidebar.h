@@ -46,6 +46,7 @@ public:
         Network,
         Tag,
         Other,
+        Plugin,//NOTE [ren] Add new group
         Unknow
     };
 
@@ -100,6 +101,8 @@ private:
     void initBookmarkConnection();
     void initDeviceConnection();
     void initTagsConnection();
+    //NOTE [XIAO] 从Plugin中导入SideBarItem
+    void initItemFromPlugin();
     void applySidebarColor();
     void updateSeparatorVisibleState();
     void addGroupItems(GroupName groupType);

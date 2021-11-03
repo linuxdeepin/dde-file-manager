@@ -43,6 +43,7 @@
 #include "controllers/dfmvaultcrumbcontroller.h"
 #include "controllers/dfmftpcrumbcontroller.h"
 #include "controllers/dfmsftpcrumbcontroller.h"
+#include "plugins/schemepluginmanager.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -115,6 +116,10 @@ DFMCrumbInterface *DFMCrumbManager::createControllerByUrl(const DUrl &fileUrl, D
     Q_D(const DFMCrumbManager);
 
     KeyType theType = fileUrl.scheme();
+    //NOTE [HMOE REN] 插件(plugin)中注册的CrumbController(面包屑)对应的hash索引为url的host
+    if (theType == PLUGIN_SCHEME) {
+        theType = fileUrl.host();
+    }
 
     const QList<CrumbCreaterType> creatorList = d->controllerCreatorHash.values(theType);
 
@@ -160,6 +165,9 @@ DFMCrumbManager::DFMCrumbManager(QObject *parent)
             return DFMCrumbFactory::create(key);
         }));
     }
+
+    //NOTE [XIAO] 从PLUGIN中加载面包屑插件
+    initCrumbControllerFromPlugin();
 }
 
 DFMCrumbManager::~DFMCrumbManager()
@@ -172,6 +180,17 @@ void DFMCrumbManager::insertToCreatorHash(const DFMCrumbManager::KeyType &type, 
     Q_D(DFMCrumbManager);
 
     d->controllerCreatorHash.insertMulti(type, creator);
+}
+
+//NOTE [XIAO] 从PLUGIN中加载面包屑插件
+void DFMCrumbManager::initCrumbControllerFromPlugin()
+{
+    qWarning() << "[PLUGIN]" << "try to load plugin of crumb controller";
+    auto plugins = SchemePluginManager::instance()->schemePlugins();
+    for (auto plugin : plugins) {
+        qWarning() << "[PLUGIN]" << "load crumb controller from plugin:" << plugin.first;
+        insertToCreatorHash(plugin.first, plugin.second->createCrumbCreaterTypeFunc());
+    }
 }
 
 DFM_END_NAMESPACE

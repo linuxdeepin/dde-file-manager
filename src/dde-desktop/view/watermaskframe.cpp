@@ -343,9 +343,20 @@ void WaterMaskFrame::initUI()
 bool WaterMaskFrame::isNeedState()
 {
     DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-    return (DSysInfo::DeepinType::DeepinProfessional == deepinType
-            || DSysInfo::DeepinType::DeepinPersonal == deepinType
-            || DSysInfo::DeepinType::DeepinServer == deepinType );
+    DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
+    qInfo() << "deepinType" << deepinType << "uosEditionType" << uosEdition;
+
+    bool ret = (DSysInfo::DeepinType::DeepinProfessional == deepinType
+                || DSysInfo::DeepinType::DeepinPersonal == deepinType
+                || DSysInfo::DeepinType::DeepinServer == deepinType);
+
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 4, 7, 0))
+    // 教育版不需要水印
+    ret = ret || DSysInfo::UosEdition::UosEducation == uosEdition;
+    qInfo() << "check uos Edition" << ret;
+#endif
+
+    return ret;
 }
 
 bool WaterMaskFrame::parseJson(QString key)
