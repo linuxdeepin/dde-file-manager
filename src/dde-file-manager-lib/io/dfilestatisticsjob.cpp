@@ -150,7 +150,7 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
                 break;
             }
             //skip os file Shortcut
-            if (info->isSymLink() && info->symlinkTargetPath() == QString("/proc/kcore"))
+            if (info->isSymLink() && (info->symlinkTargetPath() == QStringLiteral("/proc/kcore") || info->symlinkTargetPath() == QStringLiteral("/dev/core")))
             {
                 break;
             }
