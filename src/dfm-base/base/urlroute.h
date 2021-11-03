@@ -56,17 +56,17 @@ public:
     void setIcon(const QIcon &icon);
 };
 
-namespace SchemeTypes
-{
-    extern const QString File;
-    extern const QString Desktop;
-    extern const QString Home;
-    extern const QString Videos;
-    extern const QString Music;
-    extern const QString Pictures;
-    extern const QString Documents;
-    extern const QString Downloads;
-} //namespace SchemeTypes
+namespace SchemeTypes {
+extern const QString FILE;
+extern const QString DESKTOP;
+extern const QString HOME;
+extern const QString VIDEOS;
+extern const QString MUSIC;
+extern const QString PICTURES;
+extern const QString DOCUMENTS;
+extern const QString DOWNLOADS;
+extern const QString ROOT;
+} // namespace SchemeTypes
 
 class UrlRoute
 {

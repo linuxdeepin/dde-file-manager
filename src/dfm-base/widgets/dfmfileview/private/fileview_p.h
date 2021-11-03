@@ -33,13 +33,11 @@
 #include <QUrl>
 
 namespace GlobalPrivate {
-
-const int ICON_VIEW_SPACING = 5;
-const int LIST_VIEW_SPACING = 1;
-const int LIST_VIEW_MINIMUM_WIDTH = 80;
-const int LIST_VIEW_ICON_SIZE = 24;
-
-} //namespace GlobalPrivate
+const int ICON_VIEW_SPACING {5};
+const int LIST_VIEW_SPACING {1};
+const int LIST_VIEW_MINIMUM_WIDTH {80};
+const int LIST_VIEW_ICON_SIZE {24};
+} // namespace GlobalPrivate
 
 DFMBASE_BEGIN_NAMESPACE
 class FileViewPrivate

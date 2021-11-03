@@ -52,7 +52,7 @@ namespace GlobalPrivate
 
         return row;
     }
-} //namespace GlobalPrivate
+} // namespace GlobalPrivate
 
 SideBarModelPrivate::SideBarModelPrivate(SideBarModel *qq)
     : QObject(qq)

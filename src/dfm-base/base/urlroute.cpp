@@ -26,17 +26,17 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-namespace SchemeTypes
-{
-    const QString File {"file"};
-    const QString Desktop {"desktop"};
-    const QString Home {"home"};
-    const QString Videos {"videos"};
-    const QString Music {"music"};
-    const QString Pictures {"pictures"};
-    const QString Documents {"documents"};
-    const QString Downloads = {"downloads"};
-} //namespace SchemeTypes
+namespace SchemeTypes {
+const QString FILE {"file"};
+const QString DESKTOP {"desktop"};
+const QString HOME {"home"};
+const QString VIDEOS {"videos"};
+const QString MUSIC {"music"};
+const QString PICTURES {"pictures"};
+const QString DOCUMENTS {"documents"};
+const QString DOWNLOADS {"downloads"};
+const QString ROOT {"dfmroot"};
+} // namespace SchemeTypes
 
 QList<SchemeNode> UrlRoute::SchemeMapLists{};
 /*!
@@ -281,8 +281,7 @@ bool UrlRoute::schemeIsVirtual(const QString &scheme)
 QUrl UrlRoute::pathToVirtual(const QString &path, QString *errorString)
 {
     auto itera = SchemeMapLists.end();
-    while (itera != SchemeMapLists.begin())
-    {
+    while (itera != SchemeMapLists.begin()) {
         -- itera;
 
         if (itera->isVirtual() == false)
@@ -393,7 +392,7 @@ QUrl UrlRoute::pathToUrl(const QString &path, QString *errorString)
     }
 
     QUrl url;
-    url.setScheme(SchemeTypes::File);
+    url.setScheme(SchemeTypes::FILE);
     url.setPath(formatPath);
     return url;
 }

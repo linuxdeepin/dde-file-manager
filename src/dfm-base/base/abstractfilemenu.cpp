@@ -5,21 +5,20 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-namespace FileMenuTypes
-{
-    const QString CreateNewDir = {QObject::tr("Create New Dir")};
-    const QString CreateNewDoc = {QObject::tr("Create New Doc")};
-    const QString ViewModeSwitch = {QObject::tr("Switch View Mode")};
-    const QString ViewSortSwitch = {QObject::tr("Switch View Sort")};
-    const QString OpenAsAdmin = {QObject::tr("Open As Admin")};
-    const QString OpenInTerminal {QObject::tr("Open In Terminal")};
-    const QString SelectAll {QObject::tr("Select All")};
-    const QString Property {QObject::tr("Property")};
-    const QString Cut {QObject::tr("Cut")};
-    const QString Copy {QObject::tr("Copy")};
-    const QString Paste {QObject::tr("Paste")};
-    const QString Rename = {QObject::tr("Rename")};
-} //namespace FileMenuTypes
+namespace FileMenuTypes{
+const QString CREATE_NEW_DIR {QObject::tr("Create New Dir")};
+const QString CREATE_NEW_DOC {QObject::tr("Create New Doc")};
+const QString VIEW_MODE_SWITCH {QObject::tr("Switch View Mode")};
+const QString VIEW_SORT_SWITCH {QObject::tr("Switch View Sort")};
+const QString OPEN_AS_ADMIN {QObject::tr("Open As Admin")};
+const QString OPEN_IN_TERMINAL {QObject::tr("Open In Terminal")};
+const QString SELECT_ALL {QObject::tr("Select All")};
+const QString PROPERTY {QObject::tr("Property")};
+const QString CUT {QObject::tr("Cut")};
+const QString COPY {QObject::tr("Copy")};
+const QString PASTE {QObject::tr("Paste")};
+const QString RENAME {QObject::tr("Rename")};
+} // namespace FileMenuTypes
 
 AbstractFileMenu::AbstractFileMenu(QObject *parent)
     : QObject (parent)
@@ -43,27 +42,27 @@ QMenu *AbstractFileMenu::build(AbstractFileMenu::MenuMode mode,
 
     if (AbstractFileMenu::MenuMode::Empty == mode) {
         QMenu *menu = new QMenu(nullptr);
-        menu->addAction(FileMenuTypes::CreateNewDir);
-        menu->addAction(FileMenuTypes::CreateNewDoc);
-        menu->addAction(FileMenuTypes::ViewModeSwitch);
-        menu->addAction(FileMenuTypes::ViewSortSwitch);
-        menu->addAction(FileMenuTypes::OpenAsAdmin);
-        menu->addAction(FileMenuTypes::OpenInTerminal);
-        menu->addAction(FileMenuTypes::SelectAll);
-        menu->addAction(FileMenuTypes::Property);
+        menu->addAction(FileMenuTypes::CREATE_NEW_DIR);
+        menu->addAction(FileMenuTypes::CREATE_NEW_DOC);
+        menu->addAction(FileMenuTypes::VIEW_MODE_SWITCH);
+        menu->addAction(FileMenuTypes::VIEW_SORT_SWITCH);
+        menu->addAction(FileMenuTypes::OPEN_AS_ADMIN);
+        menu->addAction(FileMenuTypes::OPEN_IN_TERMINAL);
+        menu->addAction(FileMenuTypes::SELECT_ALL);
+        menu->addAction(FileMenuTypes::PROPERTY);
         return menu;
     }
 
     if (AbstractFileMenu::MenuMode::Normal == mode) {
         QMenu *menu = new QMenu(nullptr);
-        menu->addAction(FileMenuTypes::CreateNewDir);
-        menu->addAction(FileMenuTypes::CreateNewDoc);
-        menu->addAction(FileMenuTypes::ViewModeSwitch);
-        menu->addAction(FileMenuTypes::ViewSortSwitch);
-        menu->addAction(FileMenuTypes::OpenAsAdmin);
-        menu->addAction(FileMenuTypes::OpenInTerminal);
-        menu->addAction(FileMenuTypes::SelectAll);
-        menu->addAction(FileMenuTypes::Property);
+        menu->addAction(FileMenuTypes::CREATE_NEW_DIR);
+        menu->addAction(FileMenuTypes::CREATE_NEW_DOC);
+        menu->addAction(FileMenuTypes::VIEW_MODE_SWITCH);
+        menu->addAction(FileMenuTypes::VIEW_SORT_SWITCH);
+        menu->addAction(FileMenuTypes::OPEN_AS_ADMIN);
+        menu->addAction(FileMenuTypes::OPEN_IN_TERMINAL);
+        menu->addAction(FileMenuTypes::SELECT_ALL);
+        menu->addAction(FileMenuTypes::PROPERTY);
         return menu;
     }
 

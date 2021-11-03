@@ -8,18 +8,16 @@ DFMBASE_USE_NAMESPACE
 
 const QString TOPIC_FILE_EVENT {"fileEvent"};
 
-namespace FileEventDatas
-{
-    const QString MKDIR {"mkdir"};
-    const QString TOUCH {"touch"};
-} //namespace FileEventDatas
+namespace FileEventDatas {
+const QString MKDIR {"mkdir"};
+const QString TOUCH {"touch"};
+} // namespace FileEventDatas
 
-namespace FileEvenPropertys
-{
-    const QString ROOTURL {"rootUrl"};
-    const QString DIRNAMES {"dirNames"};
-    const QString DIRNAME {"dirName"};
-} //namespace FileEvenPropertys
+namespace FileEvenPropertys {
+const QString ROOTURL {"rootUrl"};
+const QString DIRNAMES {"dirNames"};
+const QString DIRNAME {"dirName"};
+} // namespace FileEvenPropertys
 
 dpf::EventHandler::Type FileEventReceiver::type()
 {

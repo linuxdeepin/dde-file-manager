@@ -30,9 +30,20 @@
 #include <QSharedData>
 #include <QFile>
 
+
+
 class QDir;
 class QDateTime;
+
 DFMBASE_BEGIN_NAMESPACE
+
+namespace SuffixInfo {
+extern const QString USER_DIR;
+extern const QString PROTOCOL;
+extern const QString BLOCK;
+extern const QString STASHED_REMOTE;
+} // namespace SuffixInfo
+
 class AbstractFileInfoPrivate;
 class AbstractFileInfo : public QSharedData
 {

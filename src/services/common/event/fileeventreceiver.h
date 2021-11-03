@@ -10,18 +10,16 @@ DSC_BEGIN_NAMESPACE
 
 extern const QString TOPIC_FILE_EVENT;
 
-namespace FileEventDatas
-{
-    extern const QString MKDIR;
-    extern const QString TOUCH;
-} //namespace FileEventDatas
+namespace FileEventDatas {
+extern const QString MKDIR;
+extern const QString TOUCH;
+} // namespace FileEventDatas
 
-namespace FileEvenPropertys
-{
-    extern const QString ROOTURL;
-    extern const QString DIRNAMES;
-    extern const QString DIRNAME;
-} //namespace FileEvenPropertys
+namespace FileEvenPropertys {
+extern const QString ROOTURL;
+extern const QString DIRNAMES;
+extern const QString DIRNAME;
+} // namespace FileEvenPropertys
 
 class FileEventReceiver final : public dpf::EventHandler, dpf::AutoEventHandlerRegister<FileEventReceiver>
 {

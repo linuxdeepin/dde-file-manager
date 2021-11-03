@@ -77,7 +77,7 @@ void Recent::initialize()
     RecentUtil::initRecentSubSystem();
     //注册路由
     QIcon recentIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::RecentPath));
-    UrlRoute::schemeMapRoot(recentScheme,"/", recentIcon, true);
+    UrlRoute::schemeMapRoot(recentScheme, "/", recentIcon, true);
     //注册Scheme为"recent"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<RecentFileInfo>(recentScheme);
     //    FileDeviceFactory::regClass<>("recent");

@@ -28,19 +28,15 @@
 DSB_FM_BEGIN_NAMESPACE
 
 namespace EventTypes {
-
 const QString TOPIC_WINDOW_EVENT {"WindowEvent"};
 const QString DATA_OPEN_NEW_WINDOW {"OpenNewWindow"};
 const QString PROPERTY_KEY_WINDOW_INDEX {"WindowIndex"};
+}; // namespace eventContainer
 
-};//namespace eventContainer
-
-namespace SideBarGroups{
-
+namespace SideBarGroups {
 const QString CORE {"core"};
 const QString DEVICE {"device"};
-
-}//namespace eventContainer
+} // namespace eventContainer
 
 DSB_FM_END_NAMESPACE
 

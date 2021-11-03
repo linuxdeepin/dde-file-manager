@@ -32,6 +32,14 @@ USING_IO_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC_WITH_ARGS(int,type_id,{qRegisterMetaType<AbstractFileInfoPointer>("AbstractFileInfo")});
 
+namespace SuffixInfo {
+const QString USER_DIR {"userdir"};
+const QString PROTOCOL {"gvfsmp"};
+const QString BLOCK {"localdisk"};
+const QString STASHED_REMOTE {"remote"};
+} // namespace SuffixInfo
+
+
 /*!
  * \class DAbstractFileInfo 抽象文件信息类
  *

@@ -377,4 +377,4 @@ namespace GlobalPrivate {
         return replaceChars;
     }
 
-} //namespace GlobalPrivate
+} // namespace GlobalPrivate

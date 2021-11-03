@@ -25,6 +25,7 @@
 #include "devicemonitorhandler.h"
 
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/base/abstractfileinfo.h"
 
 #include <dfm-mount/dfmblockmonitor.h>
 #include <QtConcurrent>
@@ -263,8 +264,8 @@ void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
 
     if (service->isAutoMountAndOpenSetting()) {
         if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
-            // TODO(zhangs): make mount url string
-            QString mountUrlStr /*= DFMROOT_ROOT + QFileInfo(blkDev->device()).fileName() + "." SUFFIX_UDISKS*/;
+            QString root {dfmbase::UrlRoute::pathToVirtual("/").toString()};
+            QString mountUrlStr {root + QFileInfo(blkDev->device()).fileName() + "." + dfmbase::SuffixInfo::BLOCK};
             QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
             qInfo() << "open by dde-file-manager: " << mountUrlStr;
             return;
@@ -314,7 +315,7 @@ void DeviceMonitorHandler::onBlockDevicePropertyChanged(const QString &deviceId,
         updateDataWithMountedInfo(&allBlkDevData[deviceId], changes);
         updateDataWithOtherInfo(&allBlkDevData[deviceId], changes);
 
-        // TODO(zhangs): support encrypted devices
+        // TODO(zhangs): support encrypted devices(reference DFMRootFileInfo::extraProperties)
     }
 }
 

@@ -26,10 +26,13 @@
 #include "devicemanagerdbus.h"
 #include "dbus_adaptor/devicemanagerdbus_adaptor.h"
 
+#include "dfm-base/base/urlroute.h"
+
 #include <dfm-framework/framework.h>
 #include <QDBusConnection>
 
 DSC_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 void Interfaces::initialize()
 {
@@ -39,6 +42,7 @@ void Interfaces::initialize()
         qCritical() << errStr;
         abort();
     }
+    UrlRoute::schemeMapRoot(SchemeTypes::ROOT, "/", QIcon(), true);
 }
 
 bool Interfaces::start()

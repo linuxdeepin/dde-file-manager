@@ -30,8 +30,8 @@
 DPF_BEGIN_NAMESPACE
 
 namespace GlobalPrivate {
-    static QMutex mutex;
-} //namespace GlobalPrivate
+static QMutex mutex;
+} // namespace GlobalPrivate
 
 PluginManagerPrivate::PluginManagerPrivate(PluginManager *qq)
     : q(qq)

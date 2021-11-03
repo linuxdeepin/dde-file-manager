@@ -69,6 +69,6 @@ QString fileNameReplaceChars();
 void showAlertMessage(QPoint globalPoint, const QColor &backgroundColor,
                       const QString &text, int duration = 3000);
 
-} //namespace GlobalPrivate
+} // namespace GlobalPrivate
 
 #endif // DELEGATECOMMON_H

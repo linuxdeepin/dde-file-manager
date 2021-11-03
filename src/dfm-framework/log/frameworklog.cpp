@@ -193,7 +193,7 @@ namespace GlobalPrivate
         GlobalPrivate::file.close();
     }
 
-} //namespace GlobalPrivate
+} // namespace GlobalPrivate
 
 /**
  * @brief enableFrameworkLog 开启框架日志打印

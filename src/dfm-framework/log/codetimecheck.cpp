@@ -130,7 +130,7 @@ namespace GlobalPrivate {
         file.close();
     }
 
-}//namespace GlobalPrivate
+}// namespace GlobalPrivate
 
 /**
  * @brief setLogCacheDayCount 设置日志缓存时间
