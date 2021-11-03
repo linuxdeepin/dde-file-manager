@@ -629,11 +629,11 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
             dialogManager->showErrorDialog(tr("Unable to find the original file"), QString());
             return false;
         }
-        if (!linkInfo->exists()) {
+        const_cast<DUrl &>(fileUrl) = linkInfo->redirectedFileUrl();
+        if (!linkInfo->exists() && !FileUtils::isSmbUnmountedFile(fileUrl)) {
             dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
             return false;
         }
-        const_cast<DUrl &>(fileUrl) = linkInfo->redirectedFileUrl();
     }
 
     if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
@@ -685,11 +685,11 @@ bool FileController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) c
                 dialogManager->showErrorDialog(tr("Unable to find the original file"), QString());
                 continue;
             }
-            if (!linkInfo->exists()) {
+            fileUrl = linkInfo->redirectedFileUrl();
+            if (!linkInfo->exists() && !FileUtils::isSmbUnmountedFile(fileUrl)) {
                 dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
                 continue;
             }
-            fileUrl = linkInfo->redirectedFileUrl();
         }
 
         if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
@@ -748,11 +748,11 @@ bool FileController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &
             dialogManager->showErrorDialog(tr("Unable to find the original file"), QString());
             return false;
         }
-        if (!linkInfo->exists()) {
+        const_cast<DUrl &>(fileUrl) = linkInfo->redirectedFileUrl();
+        if (!linkInfo->exists() && !FileUtils::isSmbUnmountedFile(fileUrl)) {
             dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
             return false;
         }
-        const_cast<DUrl &>(fileUrl) = linkInfo->redirectedFileUrl();
     }
     return FileUtils::openFilesByApp(event->appName(), {fileUrl.toString()});
 }
@@ -774,12 +774,11 @@ bool FileController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent>
                 dialogManager->showErrorDialog(tr("Unable to find the original file"), QString());
                 continue;
             }
-
-            if (!linkInfo->exists()) {
+            fileUrl = linkInfo->redirectedFileUrl();
+            if (!linkInfo->exists() && !FileUtils::isSmbUnmountedFile(fileUrl)) {
                 dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
                 continue;
-            }
-            fileUrl = linkInfo->redirectedFileUrl();
+            } 
         }
         QString url = fileUrl.toLocalFile();
         if (FileUtils::isFileWindowsUrlShortcut(url)) {

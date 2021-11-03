@@ -775,14 +775,21 @@ bool FileUtils::openFile(const QString &filePath)
         mimetype = getFileMimetype(filePath);
     }
     /*********************************************************/
-
+    QAtomicInteger<bool> isOpenNow = false;
     QString defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
     if (defaultDesktopFile.isEmpty()) {
-        qDebug() << "no default application for" << filePath;
-        return false;
+        if (isSmbUnmountedFile(DUrl::fromLocalFile(filePath))) {
+            mimetype = QString("inode/directory");
+            defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
+            isOpenNow = true;
+            mimetype = QString();
+        } else {
+            qDebug() << "no default application for" << filePath;
+            return false;
+        }
     }
     //此处会排除执行段(Exec=)包含dde-file-manager的desktop文件，需要对目录(inode/directory)类型及dde-open.desktop例外处理
-    if (isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory" && !defaultDesktopFile.contains("/dde-open.desktop")) {
+    if (!isOpenNow && isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory" && !defaultDesktopFile.contains("/dde-open.desktop")) {
         QStringList recommendApps = mimeAppsManager->getRecommendedApps(DUrl::fromLocalFile(filePath));
         recommendApps.removeOne(defaultDesktopFile);
         if (recommendApps.count() > 0) {
@@ -845,14 +852,21 @@ bool FileUtils::openFiles(const QStringList &filePaths)
         mimetype = getFileMimetype(filePath);
     }
     /*********************************************************/
-
+    bool isOpenNow = false;
     QString defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
     if (defaultDesktopFile.isEmpty()) {
-        qDebug() << "no default application for" << rePath;
-        return false;
+        if (isSmbUnmountedFile(DUrl::fromLocalFile(filePath))) {
+            mimetype = QString("inode/directory");
+            defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
+            isOpenNow = true;
+            mimetype = QString();
+        } else {
+            qDebug() << "no default application for" << filePath;
+            return false;
+        }
     }
 
-    if (isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory") {
+    if (!isOpenNow && isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory") {
         QStringList recommendApps = mimeAppsManager->getRecommendedApps(DUrl::fromLocalFile(filePath));
         recommendApps.removeOne(defaultDesktopFile);
         if (recommendApps.count() > 0) {
@@ -878,6 +892,8 @@ bool FileUtils::openFiles(const QStringList &filePaths)
             addRecentFile(file_path, df, mimetype);
         }
         return result;
+    } else if (isSmbUnmountedFile(DUrl::fromLocalFile(rePath[0]))) {
+        return false;
     }
 
     if (mimeAppsManager->getDefaultAppByFileName(filePath) == "org.gnome.font-viewer.desktop") {
@@ -929,14 +945,21 @@ bool FileUtils::openEnterFiles(const QStringList &filePaths)
         }
         mimetypeinfo.insert(DUrl::fromLocalFile(filePath).toString(), mimetype);
         /*********************************************************/
-
+        bool isOpenNow = false;
         QString defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
         if (defaultDesktopFile.isEmpty()) {
-            qDebug() << "no default application for" << rePath;
-            continue;
+            if (isSmbUnmountedFile(DUrl::fromLocalFile(filePath))) {
+                mimetype = QString("inode/directory");
+                defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
+                isOpenNow = true;
+                mimetype = QString();
+            } else {
+                qDebug() << "no default application for" << filePath;
+                continue;
+            }
         }
 
-        if (isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory") {
+        if (!isOpenNow && isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory") {
             QStringList recommendApps = mimeAppsManager->getRecommendedApps(DUrl::fromLocalFile(filePath));
             recommendApps.removeOne(defaultDesktopFile);
             if (recommendApps.count() > 0) {
@@ -955,6 +978,8 @@ bool FileUtils::openEnterFiles(const QStringList &filePaths)
 
     //未找到默认打开应用，需要返回false，让上层逻辑走选择默认打开程序的流程
     if (openinfo.isEmpty()) {
+        return false;
+    } else if (isSmbUnmountedFile(DUrl::fromLocalFile(rePath[0]))) {
         return false;
     }
 
@@ -1003,6 +1028,7 @@ bool FileUtils::openEnterFiles(const QStringList &filePaths)
 
 bool FileUtils::launchApp(const QString &desktopFile, const QStringList &filePaths)
 {
+    QStringList newList(filePaths);
     if (isFileManagerSelf(desktopFile) && filePaths.count() > 1) {
         foreach (const QString &filePath, filePaths) {
             // fix bug#33577在桌面上，多选文件夹不能打开
@@ -1016,9 +1042,17 @@ bool FileUtils::launchApp(const QString &desktopFile, const QStringList &filePat
         return true;
     }
 
-    bool ok = launchAppByDBus(desktopFile, filePaths);
+    if (isFileManagerSelf(desktopFile) && filePaths.count() == 1) {
+        DUrl fileUrl(filePaths[0]);
+        if (isSmbUnmountedFile(fileUrl)) {
+            newList.clear();
+            newList << smbFileUrl(filePaths[0]).toString();
+        }
+    }
+
+    bool ok = launchAppByDBus(desktopFile, newList);
     if (!ok) {
-        ok = launchAppByGio(desktopFile, filePaths);
+        ok = launchAppByGio(desktopFile, newList);
     }
     return ok;
 }
@@ -1837,6 +1871,36 @@ bool FileUtils::isSambaServiceRunning()
             return "running" == variantStatus.toString();
     }
     return false;
+}
+
+DUrl FileUtils::smbFileUrl(const QString &filePath)
+{
+    static QRegularExpression regExp("file:///run/user/\\d+/gvfs/smb-share:server=(?<host>.*),share=(?<path>.*)",
+                                     QRegularExpression::DotMatchesEverythingOption
+                                     | QRegularExpression::DontCaptureOption
+                                     | QRegularExpression::OptimizeOnFirstUsageOption);
+
+    const QRegularExpressionMatch &match = regExp.match(filePath, 0, QRegularExpression::NormalMatch,
+                                                        QRegularExpression::DontCheckSubjectStringMatchOption);
+
+    if (!match.hasMatch())
+        return DUrl::fromLocalFile(filePath);
+
+    const QString &host = match.captured("host");
+    const QString &path = match.captured("path");
+
+    DUrl newUrl;
+    newUrl.setScheme("smb");
+    newUrl.setHost(host);
+    newUrl.setPath("/" + path.mid(0, path.lastIndexOf("/")));
+    return newUrl;
+}
+
+bool FileUtils::isSmbUnmountedFile(const DUrl &url)
+{
+    return url.path().startsWith("/run/user/")
+            && url.path().contains("/gvfs/smb-share:server=")
+            && DFileService::instance()->checkGvfsMountfileBusy(url, false);
 }
 
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率

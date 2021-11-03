@@ -149,6 +149,9 @@ public:
     static bool isSambaServiceRunning();
     // 判断当前的网络挂载路径是否挂载了
     static bool isNetworkUrlMounted(const DUrl &url);
+
+    static DUrl smbFileUrl(const QString &filePath);
+    static bool isSmbUnmountedFile(const DUrl &url);
 };
 
 #endif // FILEUTILS_H
