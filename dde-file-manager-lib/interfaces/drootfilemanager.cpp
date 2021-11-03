@@ -245,6 +245,30 @@ const DAbstractFileInfoPointer DRootFileManager::getFileInfo(const DUrl &fileUrl
     return DRootFileManagerPrivate::rootfilelist.value(fileUrl);
 }
 
+bool DRootFileManager::isRootFileContainSmb(const DUrl &smburl)
+{
+    if (smburl.scheme() != SMB_SCHEME)
+        return false;
+    QString host = smburl.host();
+    QString shareName = smburl.path();
+    if (host.isEmpty() || shareName.isEmpty())
+        return false;
+    shareName = shareName.mid(1);
+    shareName = shareName.mid(0,shareName.indexOf("/"));
+    if (shareName.isEmpty())
+        return false;
+    QMutexLocker lock(&d_ptr->rootfileMtx);
+    for (auto url : d_ptr->rootfilelist.keys()) {
+        QString strUrl = url.path();
+        if (strUrl.contains(QUrl::toPercentEncoding("/run/user/"))
+                && strUrl.contains(QUrl::toPercentEncoding("/gvfs/smb-share:server="))
+                && strUrl.contains(host)
+                && strUrl.endsWith(shareName + "." + SUFFIX_GVFSMP))
+            return true;
+    }
+    return false;
+}
+
 void DRootFileManager::hideSystemPartition()
 {
     QList<DAbstractFileInfoPointer> fileist = DFileService::instance()->\

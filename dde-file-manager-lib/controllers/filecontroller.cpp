@@ -616,14 +616,15 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
     if (pfile->isSymLink()) {
         const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
 
-        if (linkInfo && !linkInfo->exists()) {
-            dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
-            return false;
-        }
         if (!linkInfo) {
             return false;
         }
         const_cast<DUrl &>(fileUrl) = linkInfo->redirectedFileUrl();
+        if (!linkInfo->exists() &&
+                !FileUtils::isSmbUnmountedFile(fileUrl)) {
+            dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
+            return false;
+        }
     }
 
     if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
@@ -667,11 +668,14 @@ bool FileController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) c
         if (pfile->isSymLink()) {
             const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
 
-            if (linkInfo && !linkInfo->exists()) {
-                dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
+            if (!linkInfo) {
                 continue;
             }
             fileUrl = linkInfo->redirectedFileUrl();
+            if (!linkInfo->exists() && !FileUtils::isSmbUnmountedFile(fileUrl)) {
+                dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
+                continue;
+            }
         }
 
         if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
@@ -726,11 +730,15 @@ bool FileController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &
     if (pfile->isSymLink()) {
         const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
 
-        if (linkInfo && !linkInfo->exists()) {
-            dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
+        if (!linkInfo) {
             return false;
         }
         const_cast<DUrl &>(fileUrl) = linkInfo->redirectedFileUrl();
+
+        if (!linkInfo->exists()  && !FileUtils::isSmbUnmountedFile(fileUrl)) {
+            dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
+            return false;
+        }
     }
     return FileUtils::openFilesByApp(event->appName(), {fileUrl.toString()});
 }
@@ -748,11 +756,15 @@ bool FileController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent>
         if (pfile->isSymLink()) {
             const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
 
-            if (linkInfo && !linkInfo->exists()) {
-                dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
+            if (!linkInfo) {
                 continue;
             }
             fileUrl = linkInfo->redirectedFileUrl();
+
+            if (!linkInfo->exists() && !FileUtils::isSmbUnmountedFile(fileUrl)) {
+                dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
+                continue;
+            }
         }
         QString url = fileUrl.toLocalFile();
         if (FileUtils::isFileWindowsUrlShortcut(url)) {

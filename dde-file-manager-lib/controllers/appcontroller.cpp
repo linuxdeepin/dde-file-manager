@@ -1376,6 +1376,8 @@ void AppController::initConnect()
     connect(m_unmountWorker, &UnmountWorker::unmountResult, this, &AppController::showErrorDialog);
     connect(this, &AppController::doUnmount, m_unmountWorker, &UnmountWorker::doUnmount);
     connect(this, &AppController::doSaveRemove, m_unmountWorker, &UnmountWorker::doSaveRemove);
+    connect(fileSignalManager, &FileSignalManager::requestFreshAllDesktop,
+                this, &AppController::refreshDesktop);
 
     m_unmountThread.start();
 }
@@ -1444,6 +1446,17 @@ void AppController::createDBusInterface()
 void AppController::showErrorDialog(const QString &title, const QString &content)
 {
     dialogManager->showErrorDialog(title, content);
+}
+
+void AppController::refreshDesktop()
+{
+    static const QString DesktopService = "com.deepin.dde.desktop";
+    static const QString DesktopPath = "/com/deepin/dde/desktop";
+    DesktopInterface desktop(DesktopService,
+                            DesktopPath,
+                            QDBusConnection::sessionBus(),
+                            this);
+    desktop.asyncCallWithArgumentList(QStringLiteral("Refresh"), QList<QVariant>());
 }
 
 bool AppController::checkLaunchAppInterface()
@@ -1527,4 +1540,13 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
     if (err) {
         emit unmountResult(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time"));
     }
+}
+
+DesktopInterface::DesktopInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent)
+    : QDBusAbstractInterface(service, path, staticInterfaceName(), connection, parent)
+{
+}
+
+DesktopInterface::~DesktopInterface()
+{
 }

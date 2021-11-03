@@ -349,8 +349,17 @@ bool DFMRootFileWatcherPrivate::start()
         }
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
+        QString mountPointPath = mnt->getRootFile()->path();
+        if (mountPointPath.startsWith("/run/user/") && mountPointPath.contains("/gvfs/smb-share:server=")) {
+            //refresh all dde-file-manager window
+            emit fileSignalManager->requestFreshAllFileView();
+            //refresh dde-desktop
+            emit fileSignalManager->requestFreshAllDesktop();
+        }
         url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
         Q_EMIT wpar->subfileCreated(url);
+        if (mountPointPath.startsWith("/run/user/") && mountPointPath.contains("/gvfs/smb-share:server="))
+            emit fileSignalManager->requestShowNewWindows();
     }));
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountRemoved, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
         if (mnt->getVolume() && mnt->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
@@ -381,6 +390,10 @@ bool DFMRootFileWatcherPrivate::start()
             }
         }
         qDebug() << path;
+        if (path.startsWith("/run/user/") && path.contains("/gvfs/smb-share:server=")) {
+            emit fileSignalManager->requestFreshAllFileView();
+            emit fileSignalManager->requestFreshAllDesktop();
+        }
         url.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
         Q_EMIT wpar->fileDeleted(url);
         QString uri = mnt->getRootFile()->uri();
@@ -392,6 +405,11 @@ bool DFMRootFileWatcherPrivate::start()
                 smbUri = smbUri.left(smbUri.length() - 1);
             }
             DUrl uri(smbUri);
+            DUrlList networkNodesKeys = NetworkManager::NetworkNodes.keys();
+            for (auto networkNodesKey : networkNodesKeys) {
+               if (networkNodesKey.toString().toLower().startsWith(uri.toString().toLower()))
+                    NetworkManager::NetworkNodes.remove(networkNodesKey);
+            }
             NetworkManager::NetworkNodes.remove(uri);
             uri.setPath("");
             NetworkManager::NetworkNodes.remove(uri);

@@ -174,6 +174,8 @@ signals:
     /*request fresh file view*/
     void requestFreshFileView(quint64 winId);
     void requestFreshAllFileView();
+    /*request fresh desktop view*/
+    void requestFreshAllDesktop();
 
     /*request abort copy/move job*/
     void requestAbortJob(const DUrl& url);
@@ -241,6 +243,12 @@ signals:
 
     // 请求关闭本地监听端口
     void requestCloseListen();
+
+    /*request show smb url mounted all window*/
+    void requestShowNewWindows();
+
+    /*mounted failed and remove need open windows*/
+    void requestRemoveSmbUrl(const DUrl &url);
 
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
