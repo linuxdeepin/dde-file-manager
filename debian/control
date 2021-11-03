@@ -136,6 +136,8 @@ Depends:
  libudisks2-qt5 (>=5.0.6),
  libdisomaster (>=5.0.7),
  libgio-qt (>=0.0.11)
+Recommends:
+ libudfburn
 Breaks: dde-file-manager(<=1.2.3-3)
 Multi-Arch: same
 Description: DDE File Manager library
