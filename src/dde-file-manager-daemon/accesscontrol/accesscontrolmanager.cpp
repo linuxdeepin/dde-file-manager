@@ -655,7 +655,7 @@ void AccessControlManager::saveVaultPolicy(const QVariantMap &policy)
 {
     // 1. if file does not exist then create it
     QFile config(m_vaultConfigPath);
-    if (!config.open(QIODevice::ReadOnly)) {
+    if (!config.open(QIODevice::ReadWrite)) {
         qDebug() << "config open failed";
         config.close();
         return;

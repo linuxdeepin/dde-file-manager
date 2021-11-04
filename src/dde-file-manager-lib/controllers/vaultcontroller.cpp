@@ -1306,7 +1306,7 @@ void VaultController::slotVaultPolicy()
     }
         break;
     case 2:
-        if(m_vaultVisiable) {
+        if(!m_vaultVisiable) {
             m_vaultVisiable = true;
             emit DFMApplication::instance()->reloadComputerModel();
         }
