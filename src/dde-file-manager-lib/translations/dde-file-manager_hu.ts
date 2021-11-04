@@ -1402,22 +1402,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2748"/>
+        <location filename="../views/dfileview.cpp" line="2749"/>
         <source>Disc mount error</source>
         <translation>Lemez csatolási hiba</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2748"/>
+        <location filename="../views/dfileview.cpp" line="2749"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>A lemez használatban van, kérjük fejezze be a futó folyamatokat, és csatolja fel újra a lemezt.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2762"/>
+        <location filename="../views/dfileview.cpp" line="2763"/>
         <source>Mounting failed</source>
         <translation>A csatolás sikertelen</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3471"/>
+        <location filename="../views/dfileview.cpp" line="3472"/>
         <source>(Reverse)</source>
         <translation>(Fordított)</translation>
     </message>
@@ -1952,7 +1952,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Megerősítés</translation>
@@ -2076,13 +2075,13 @@
         <translation>Kérjük először telepítse a Fájl Rollert, majd folytassa</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1507"/>
-        <location filename="../controllers/filecontroller.cpp" line="1527"/>
+        <location filename="../controllers/filecontroller.cpp" line="1516"/>
+        <location filename="../controllers/filecontroller.cpp" line="1536"/>
         <source>Unable to create files here: %1</source>
         <translation>Nem lehet itt fájlokat létrehozni: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1509"/>
+        <location filename="../controllers/filecontroller.cpp" line="1518"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Megerősítés</translation>
@@ -2660,51 +2659,51 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="876"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1544"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1550"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1553"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1551"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1557"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1560"/>
         <source>Mounting device error</source>
         <translation>Csatoló eszköz hiba</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1550"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1557"/>
         <source>Wrong username or password</source>
         <translation>Helytelen felhasználónév vagy jelszó</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1778"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1789"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1816"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1935"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1959"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1785"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1796"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1823"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1942"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1966"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Megerősítés</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1784"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1956"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1791"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1963"/>
         <source>Cannot find the mounted device</source>
         <translation>Nem található a csatlakoztatott eszköz</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1698"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1705"/>
         <source>No key available to unlock device</source>
         <translation>Nincs elérhető kulcs az eszköz feloldásához</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1775"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1782"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>A lemez &quot;%1&quot; felhasználó által felcsatolva, a leválasztása nem lehetséges.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1813"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1820"/>
         <source>Cannot unmount the device</source>
         <translation>Eszköz nem leválasztható</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1931"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1938"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>&quot;%1&quot; eszköz nem kiadható</translation>
     </message>
@@ -4161,6 +4160,36 @@
     </message>
 </context>
 <context>
+    <name>RecentController</name>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="468"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>Mégsem</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="469"/>
+        <source>Remove</source>
+        <comment>button</comment>
+        <translation>Eltávolítás</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="472"/>
+        <source>Do you want to remove this item?</source>
+        <translation>Biztosan el szeretné távolítani ezt az elemet?</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="474"/>
+        <source>Do yout want to remove %1 items?</source>
+        <translation>Biztosan el szeretne távolítani %1 elemet?</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="475"/>
+        <source>It does not delete the original files</source>
+        <translation>Nem törli az eredeti fájlokat</translation>
+    </message>
+</context>
+<context>
     <name>ShareInfoFrame</name>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="59"/>
@@ -4658,14 +4687,14 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1604"/>
+        <location filename="../controllers/appcontroller.cpp" line="1605"/>
         <location filename="../../fileoperations/filejob.cpp" line="757"/>
         <location filename="../../fileoperations/filejob.cpp" line="1016"/>
         <source>The device was not safely unmounted</source>
         <translation>Az eszközt nem sikerült biztonságosan leválasztani</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1611"/>
+        <location filename="../controllers/appcontroller.cpp" line="1612"/>
         <source>The device was not safely removed</source>
         <translation>Az eszközt nem sikerült biztonságosan eltávolítani</translation>
     </message>

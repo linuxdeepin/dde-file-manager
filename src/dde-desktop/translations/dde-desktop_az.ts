@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3334"/>
+        <location filename="../view/canvasgridview.cpp" line="3348"/>
         <source>Icon size</source>
         <translation>Nişan ölçüsü</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3342"/>
+        <location filename="../view/canvasgridview.cpp" line="3356"/>
         <source>Auto merge</source>
         <translation>Avtomatik birləşdirmə</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3354"/>
+        <location filename="../view/canvasgridview.cpp" line="3368"/>
         <source>Auto arrange</source>
         <translation>Avtomatik tənzimləmə</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3391"/>
+        <location filename="../view/canvasgridview.cpp" line="3405"/>
         <source>Corner Settings</source>
         <translation>Künc ayarları</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3400"/>
-        <location filename="../view/canvasgridview.cpp" line="3405"/>
+        <location filename="../view/canvasgridview.cpp" line="3414"/>
+        <location filename="../view/canvasgridview.cpp" line="3419"/>
         <source>Set Wallpaper</source>
         <translation>Divar kağızını təyin etmək</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3403"/>
+        <location filename="../view/canvasgridview.cpp" line="3417"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Divar kağızı və Ekran şəkli</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3581"/>
+        <location filename="../view/canvasgridview.cpp" line="3595"/>
         <source>Properties</source>
         <translation>Tərcihlər</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3382"/>
+        <location filename="../view/canvasgridview.cpp" line="3396"/>
         <source>Display Settings</source>
         <translation>Ekran ayarları</translation>
     </message>
@@ -82,74 +82,74 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="724"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="725"/>
         <source>Wallpaper Slideshow</source>
         <translation>Divar kağızları slaydı</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="770"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="771"/>
         <source>When login</source>
         <translation>Daxil oduqda</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="772"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="773"/>
         <source>When wakeup</source>
         <translation>Oyandıqda</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="824"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="825"/>
         <source>Require a password on wakeup</source>
         <translation>Oyatmaq üçün şifrə tələb olunur</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="856"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="857"/>
         <source>Never</source>
         <translation>Heç vaxt</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="858"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="859"/>
         <source>Wait:</source>
         <translation>Gözləmək:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="891"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="892"/>
         <source>Wallpaper</source>
         <translation>Divar kağızı</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="903"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="904"/>
         <source>Screensaver</source>
         <translation>Ekran şəkli</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="968"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="969"/>
         <source>Loading wallpapers...</source>
         <translation>Divar kağızları yüklənir...</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="970"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="971"/>
         <source>Loading screensavers...</source>
         <translation>Ekran şəkilləri yüklənir</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1027"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1028"/>
         <source>Desktop</source>
         <comment>button</comment>
         <translation>İş Masası</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1028"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1029"/>
         <source>Lock Screen</source>
         <comment>button</comment>
         <translation>Kilid ekranı</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1029"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1030"/>
         <source>Both</source>
         <translation>Hər ikisi</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1104"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1105"/>
         <source>Apply</source>
         <comment>button</comment>
         <translation>Tətbiq etmək</translation>

@@ -1402,22 +1402,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2748"/>
+        <location filename="../views/dfileview.cpp" line="2749"/>
         <source>Disc mount error</source>
         <translation>Erro ao montar disco</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2748"/>
+        <location filename="../views/dfileview.cpp" line="2749"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>O disco está a ser utilizado. Termine o processo em execução e volte a montar o disco.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2762"/>
+        <location filename="../views/dfileview.cpp" line="2763"/>
         <source>Mounting failed</source>
         <translation>Falha ao montar</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3471"/>
+        <location filename="../views/dfileview.cpp" line="3472"/>
         <source>(Reverse)</source>
         <translation>(Reverter)</translation>
     </message>
@@ -1952,7 +1952,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirmar</translation>
@@ -2076,13 +2075,13 @@
         <translation>Instalar o File Roller primeiro e depois continuar</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1507"/>
-        <location filename="../controllers/filecontroller.cpp" line="1527"/>
+        <location filename="../controllers/filecontroller.cpp" line="1516"/>
+        <location filename="../controllers/filecontroller.cpp" line="1536"/>
         <source>Unable to create files here: %1</source>
         <translation>Incapaz de criar ficheiros aqui: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1509"/>
+        <location filename="../controllers/filecontroller.cpp" line="1518"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirmar</translation>
@@ -2660,51 +2659,51 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="876"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1544"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1550"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1553"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1551"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1557"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1560"/>
         <source>Mounting device error</source>
         <translation>Erro ao montar dispositivo</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1550"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1557"/>
         <source>Wrong username or password</source>
         <translation>Nome de utilizador ou palavra-passe incorretos</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1778"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1789"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1816"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1935"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1959"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1785"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1796"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1823"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1942"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1966"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirmar</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1784"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1956"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1791"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1963"/>
         <source>Cannot find the mounted device</source>
         <translation>Não é possível localizar o dispositivo montado</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1698"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1705"/>
         <source>No key available to unlock device</source>
         <translation>Nenhuma chave disponível para desbloquear o dispositivo</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1775"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1782"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>O disco foi montado pelo utilizador &quot;%1&quot;, não o pode desmontar.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1813"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1820"/>
         <source>Cannot unmount the device</source>
         <translation>Não é possível desmontar o dispositivo</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1931"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1938"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>Não é possível ejectar o dispositivo &quot;%1&quot;</translation>
     </message>
@@ -4161,6 +4160,36 @@
     </message>
 </context>
 <context>
+    <name>RecentController</name>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="468"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>Cancelar</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="469"/>
+        <source>Remove</source>
+        <comment>button</comment>
+        <translation>Remover</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="472"/>
+        <source>Do you want to remove this item?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="474"/>
+        <source>Do yout want to remove %1 items?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="475"/>
+        <source>It does not delete the original files</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>ShareInfoFrame</name>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="59"/>
@@ -4658,14 +4687,14 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1604"/>
+        <location filename="../controllers/appcontroller.cpp" line="1605"/>
         <location filename="../../fileoperations/filejob.cpp" line="757"/>
         <location filename="../../fileoperations/filejob.cpp" line="1016"/>
         <source>The device was not safely unmounted</source>
         <translation>O dispositivo não foi desmontado em segurança</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1611"/>
+        <location filename="../controllers/appcontroller.cpp" line="1612"/>
         <source>The device was not safely removed</source>
         <translation>O dispositivo não foi removido em segurança</translation>
     </message>

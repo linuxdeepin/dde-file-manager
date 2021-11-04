@@ -1402,22 +1402,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2748"/>
+        <location filename="../views/dfileview.cpp" line="2749"/>
         <source>Disc mount error</source>
         <translation>光盤掛載錯誤</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2748"/>
+        <location filename="../views/dfileview.cpp" line="2749"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>當前光驅設備正在佔用，請關閉佔用進程再重新掛載</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2762"/>
+        <location filename="../views/dfileview.cpp" line="2763"/>
         <source>Mounting failed</source>
         <translation>掛載失敗</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3471"/>
+        <location filename="../views/dfileview.cpp" line="3472"/>
         <source>(Reverse)</source>
         <translation>（還原）</translation>
     </message>
@@ -1952,7 +1952,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>確 定</translation>
@@ -2076,13 +2075,13 @@
         <translation>請先安裝歸檔管理器然後繼續</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1507"/>
-        <location filename="../controllers/filecontroller.cpp" line="1527"/>
+        <location filename="../controllers/filecontroller.cpp" line="1516"/>
+        <location filename="../controllers/filecontroller.cpp" line="1536"/>
         <source>Unable to create files here: %1</source>
         <translation>不能在此建立文件：%1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1509"/>
+        <location filename="../controllers/filecontroller.cpp" line="1518"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>確 定</translation>
@@ -2660,51 +2659,51 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="876"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1544"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1550"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1553"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1551"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1557"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1560"/>
         <source>Mounting device error</source>
         <translation>掛載裝置時發生錯誤</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1550"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1557"/>
         <source>Wrong username or password</source>
         <translation>使用者名稱或密碼錯誤</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1778"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1789"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1816"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1935"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1959"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1785"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1796"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1823"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1942"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1966"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>確 定</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1784"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1956"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1791"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1963"/>
         <source>Cannot find the mounted device</source>
         <translation>找不到掛載裝置</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1698"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1705"/>
         <source>No key available to unlock device</source>
         <translation>沒有金鑰解鎖裝置</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1775"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1782"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>此磁碟已被「%1」給掛載，你無法移除它。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1813"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1820"/>
         <source>Cannot unmount the device</source>
         <translation>無法卸載裝置</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1931"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1938"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>無法退出裝置「%1」</translation>
     </message>
@@ -4161,6 +4160,36 @@
     </message>
 </context>
 <context>
+    <name>RecentController</name>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="468"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>取 消</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="469"/>
+        <source>Remove</source>
+        <comment>button</comment>
+        <translation>移 除</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="472"/>
+        <source>Do you want to remove this item?</source>
+        <translation>您確定要移除選中的此項內容？</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="474"/>
+        <source>Do yout want to remove %1 items?</source>
+        <translation>您確定要移除選中的%1項內容？</translation>
+    </message>
+    <message>
+        <location filename="../controllers/recentcontroller.cpp" line="475"/>
+        <source>It does not delete the original files</source>
+        <translation>此操作不會刪除來源文件</translation>
+    </message>
+</context>
+<context>
     <name>ShareInfoFrame</name>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="59"/>
@@ -4658,14 +4687,14 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1604"/>
+        <location filename="../controllers/appcontroller.cpp" line="1605"/>
         <location filename="../../fileoperations/filejob.cpp" line="757"/>
         <location filename="../../fileoperations/filejob.cpp" line="1016"/>
         <source>The device was not safely unmounted</source>
         <translation>裝置沒有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1611"/>
+        <location filename="../controllers/appcontroller.cpp" line="1612"/>
         <source>The device was not safely removed</source>
         <translation>裝置沒有正常移除</translation>
     </message>
