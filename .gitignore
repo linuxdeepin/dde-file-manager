@@ -11,6 +11,7 @@ CMakeCache.txt
 compile_commands.json
 src/apps/dde-file-manager/config.h
 src/apps/dde-file-manager-server/config.h
+src/apps/dde-desktop/config.h
 moc_*
 mocs_*
 

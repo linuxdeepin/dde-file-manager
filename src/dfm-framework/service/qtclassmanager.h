@@ -99,6 +99,11 @@ public:
         return res;
     }
 
+    virtual QList<CT*> values() const
+    {
+        return classList.values();
+    }
+
     virtual const QStringList keys() const
     {
         return classList.keys();
