@@ -2878,13 +2878,23 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 {
     D_D(DFileView);
 
-    if (d->currentViewMode == mode) {
-        return;
-    }
-
     const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(rootUrl());
 
-    if (fileInfo && (fileInfo->supportViewMode() & mode) == 0) {
+    if (fileInfo) {
+        const auto modes = fileInfo->supportViewMode();
+        if ((modes  & mode) == 0) {
+            if (modes & DFileView::ListMode) {
+                mode = DFileView::ListMode;
+            } else if (modes & DFileView::IconMode) {
+                mode = DFileView::IconMode;
+            } else {
+                return;
+            }
+        }
+
+    }
+
+    if (d->currentViewMode == mode) {
         return;
     }
 
