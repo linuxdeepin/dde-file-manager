@@ -237,10 +237,10 @@
         <location filename="../models/computermodel.cpp" line="187"/>
         <location filename="../models/computermodel.cpp" line="198"/>
         <location filename="../models/computermodel.cpp" line="200"/>
-        <location filename="../models/computermodel.cpp" line="631"/>
-        <location filename="../models/computermodel.cpp" line="635"/>
-        <location filename="../models/computermodel.cpp" line="668"/>
-        <location filename="../models/computermodel.cpp" line="672"/>
+        <location filename="../models/computermodel.cpp" line="633"/>
+        <location filename="../models/computermodel.cpp" line="637"/>
+        <location filename="../models/computermodel.cpp" line="670"/>
+        <location filename="../models/computermodel.cpp" line="674"/>
         <source>Disks</source>
         <translation>Levyt</translation>
     </message>
@@ -616,7 +616,7 @@
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="94"/>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="148"/>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="176"/>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="198"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="199"/>
         <source>Encrypt</source>
         <translation>Salaa</translation>
     </message>
@@ -626,7 +626,7 @@
         <translation>Varaston luominen epäonnistui: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="239"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="246"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -639,42 +639,42 @@
 <context>
     <name>DFMVaultActiveSaveKeyFileView</name>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="47"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="48"/>
         <source>Save Recovery Key</source>
         <translation>Tallenna palautusavain</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="52"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="53"/>
         <source>Keep the key safe to retrieve the vault password later</source>
         <translation>Pidä avain turvassa, jotta voit hakea holvin salasanan myöhemmin</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="57"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="58"/>
         <source>Save to default path</source>
         <translation>Tallenna oletuspolkuun</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="61"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="62"/>
         <source>Save to other locations</source>
         <translation>Tallenna toiseen sijaintiin</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="62"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="63"/>
         <source>No permission, please reselect</source>
-        <translation type="unfinished"/>
+        <translation>Ei oikeuksia, valitse uudelleen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="71"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="75"/>
         <source>Select a path</source>
-        <translation type="unfinished"/>
+        <translation>Valitse polku</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="89"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="93"/>
         <source>Next</source>
         <translation>Seuraava</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="102"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="106"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
         <translation>Oletuspolku on näkymätön muille käyttäjille, eikä polkutietoa näytetä.</translation>
     </message>
@@ -720,59 +720,59 @@
 <context>
     <name>DFMVaultActiveSetUnlockMethodView</name>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="56"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="57"/>
         <source>Set Vault Password</source>
         <translation>Aseta tietovaraston salasana</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="64"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="65"/>
         <source>Method</source>
         <translation>Menetelmä</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="69"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="70"/>
         <source>Manual</source>
         <translation>Manuaalinen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="80"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="81"/>
         <source>Password</source>
         <translation>Salasana</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="85"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="226"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="86"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="227"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>≥ 8 merkkiä, sisältäen A-Z-, a-z-, 0-9 ja erikoismerkit</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="98"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="99"/>
         <source>Repeat password</source>
         <translation>Toista salasana</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="103"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="104"/>
         <source>Input the password again</source>
         <translation>Anna salasana uudelleen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="115"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="116"/>
         <source>Password hint</source>
         <translation>Salasanavihje</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="120"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="121"/>
         <source>Optional</source>
         <translation>Valinnainen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="125"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="126"/>
         <source>Next</source>
         <translation>Seuraava</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="249"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="265"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="250"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="266"/>
         <source>Passwords do not match</source>
         <translation>Salasanat eivät täsmää</translation>
     </message>
@@ -803,6 +803,24 @@
         <location filename="../views/dfmvaultactivestartview.cpp" line="62"/>
         <source>Create</source>
         <translation>Luo</translation>
+    </message>
+</context>
+<context>
+    <name>DFMVaultFileView</name>
+    <message>
+        <location filename="../views/dfmvaultfileview.cpp" line="50"/>
+        <source>Cannot open this path</source>
+        <translation>Tätä polkua ei voi avata</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultfileview.cpp" line="50"/>
+        <source>Hint</source>
+        <translation>Vihje</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultfileview.cpp" line="51"/>
+        <source>OK</source>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -879,7 +897,7 @@
         <translation>Tiedostot poistetaan pysyvästi</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="201"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="202"/>
         <source>Use Key</source>
         <translation>Käytä avainta</translation>
     </message>
@@ -903,38 +921,38 @@
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="149"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="303"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="305"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="198"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="199"/>
         <source>Use Password</source>
         <translation>Käytä salasanaa</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="214"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="215"/>
         <source>Wrong password</source>
         <translation>Väärä salasana</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="224"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="225"/>
         <source>Wrong recovery key</source>
         <translation>Väärä palautusavain</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="299"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="301"/>
         <source>Failed to delete file vault</source>
         <translation>Varaston poistaminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="313"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="315"/>
         <source>Deleted successfully</source>
         <translation>Poistettu onnistuneesti</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="315"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="317"/>
         <source>Failed to delete</source>
         <translation>Poistaminen epäonnistui</translation>
     </message>
@@ -949,75 +967,75 @@
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="67"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="76"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="136"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="148"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="149"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="325"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="133"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="145"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="146"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="323"/>
         <source>Unable to get the key file</source>
-        <translation type="unfinished"/>
+        <translation>Avaintiedostoa ei voi hakea</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="90"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="88"/>
         <source>Verification failed</source>
         <translation>Tarkistaminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="154"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="194"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="190"/>
         <source>Select a path</source>
-        <translation type="unfinished"/>
+        <translation>Valitse polku</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="181"/>
+        <source>Retrieve Password</source>
+        <translation>Hae salasana</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="185"/>
-        <source>Retrieve Password</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="189"/>
         <source>By key in the default path</source>
         <translation>Oletuspolun avaimella</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="190"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="186"/>
         <source>By key in the specified path</source>
         <translation>Avaimella määritetyssä polussa</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="213"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="209"/>
         <source>Verification Successful</source>
         <translation>Tarkistaminen onnistui</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="216"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="212"/>
         <source>Keep it safe</source>
         <translation>Pidä se turvassa</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>Takaisin</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
         <source>Verify Key</source>
         <comment>button</comment>
         <translation>Vahvista avain</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
         <translation>Lukituksen avaamiseen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Sulje</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="308"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="306"/>
         <source>Vault password: %1</source>
         <translation>Holvin salasana: %1</translation>
     </message>
@@ -1040,12 +1058,12 @@
         <translation>Unohtuiko salasana?</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="141"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="142"/>
         <source>Password hint: %1</source>
         <translation>Salasanavihje: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="325"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="333"/>
         <source>Failed to unlock file vault</source>
         <translation>Varaston lukituksen poistaminen epäonnistui</translation>
     </message>
@@ -1055,44 +1073,44 @@
         <translation>Salasana</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="126"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="127"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Peruuta</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="126"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="127"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Avaa</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="242"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="251"/>
         <source>Please try again %1 minutes later</source>
         <translation>Yritä uudelleen %1 minuuttia myöhemmin</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="270"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="278"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Väärä salasana, yritä uudelleen %1 minuuttia myöhemmin</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="273"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="281"/>
         <source>Wrong password, one chance left</source>
         <translation>Väärä salasana, yksi mahdollisuus jäljellä</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="275"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="283"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Väärä salasana, %1 mahdollisuutta jäljellä</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="320"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="328"/>
         <source>Wrong password</source>
         <translation>Väärä salasana</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="329"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="337"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
@@ -4071,7 +4089,7 @@
         <translation>Tiedostoja käsitellään</translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="646"/>
+        <location filename="../shutil/fileutils.cpp" line="638"/>
         <location filename="../../utils/utils.cpp" line="512"/>
         <source>Unknown</source>
         <translation>Tuntematon</translation>
@@ -4084,7 +4102,7 @@
     <message>
         <location filename="../models/computermodel.cpp" line="185"/>
         <location filename="../models/computermodel.cpp" line="196"/>
-        <location filename="../models/computermodel.cpp" line="605"/>
+        <location filename="../models/computermodel.cpp" line="607"/>
         <source>Disks</source>
         <translation>Levyt</translation>
     </message>

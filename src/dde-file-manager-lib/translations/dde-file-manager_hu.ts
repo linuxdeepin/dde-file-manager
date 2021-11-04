@@ -237,10 +237,10 @@
         <location filename="../models/computermodel.cpp" line="187"/>
         <location filename="../models/computermodel.cpp" line="198"/>
         <location filename="../models/computermodel.cpp" line="200"/>
-        <location filename="../models/computermodel.cpp" line="631"/>
-        <location filename="../models/computermodel.cpp" line="635"/>
-        <location filename="../models/computermodel.cpp" line="668"/>
-        <location filename="../models/computermodel.cpp" line="672"/>
+        <location filename="../models/computermodel.cpp" line="633"/>
+        <location filename="../models/computermodel.cpp" line="637"/>
+        <location filename="../models/computermodel.cpp" line="670"/>
+        <location filename="../models/computermodel.cpp" line="674"/>
         <source>Disks</source>
         <translation>Lemezek</translation>
     </message>
@@ -616,7 +616,7 @@
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="94"/>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="148"/>
         <location filename="../views/dfmvaultactivefinishedview.cpp" line="176"/>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="198"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="199"/>
         <source>Encrypt</source>
         <translation>Titkosítás</translation>
     </message>
@@ -626,7 +626,7 @@
         <translation>Nem sikerült létrehozni a % 1 fájltárolót</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="239"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="246"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -639,42 +639,42 @@
 <context>
     <name>DFMVaultActiveSaveKeyFileView</name>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="47"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="48"/>
         <source>Save Recovery Key</source>
         <translation>Helyreállítási kulcs mentése</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="52"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="53"/>
         <source>Keep the key safe to retrieve the vault password later</source>
         <translation>Tartsa biztonságban a kulcsot, hogy később lekérhesse a trezor jelszót</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="57"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="58"/>
         <source>Save to default path</source>
         <translation>Mentés az alapértelmezett elérési útvonalra</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="61"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="62"/>
         <source>Save to other locations</source>
         <translation>Mentés más helyre</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="62"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="63"/>
         <source>No permission, please reselect</source>
         <translation>Nincs engedélye, kérjük válasszon újra</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="71"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="75"/>
         <source>Select a path</source>
         <translation>Válasszon egy útvonalat</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="89"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="93"/>
         <source>Next</source>
         <translation>Következő</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="102"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="106"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
         <translation>Az alapértelmezett elérési útvonal más felhasználók számára nem látható, és az elérési útvonal információi nem jelennek meg.</translation>
     </message>
@@ -720,59 +720,59 @@
 <context>
     <name>DFMVaultActiveSetUnlockMethodView</name>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="56"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="57"/>
         <source>Set Vault Password</source>
         <translation>Tároló jelszó beállítása</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="64"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="65"/>
         <source>Method</source>
         <translation>Módszer</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="69"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="70"/>
         <source>Manual</source>
         <translation>Manuális</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="80"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="81"/>
         <source>Password</source>
         <translation>Jelszó</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="85"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="226"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="86"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="227"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>≥ 8 karakter, tartalmazhatja  A-Z, a-z, 0-9 és szimbólumokat</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="98"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="99"/>
         <source>Repeat password</source>
         <translation>Jelszó ismétlése</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="103"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="104"/>
         <source>Input the password again</source>
         <translation>Adja meg a jelszót újra</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="115"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="116"/>
         <source>Password hint</source>
         <translation>Jelszó emlékeztető</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="120"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="121"/>
         <source>Optional</source>
         <translation>Opcionális</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="125"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="126"/>
         <source>Next</source>
         <translation>Következő</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="249"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="265"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="250"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="266"/>
         <source>Passwords do not match</source>
         <translation>A jelszavak nem egyeznek</translation>
     </message>
@@ -803,6 +803,24 @@
         <location filename="../views/dfmvaultactivestartview.cpp" line="62"/>
         <source>Create</source>
         <translation>Létrehozás</translation>
+    </message>
+</context>
+<context>
+    <name>DFMVaultFileView</name>
+    <message>
+        <location filename="../views/dfmvaultfileview.cpp" line="50"/>
+        <source>Cannot open this path</source>
+        <translation>Ez az útvonal nem nyitható meg</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultfileview.cpp" line="50"/>
+        <source>Hint</source>
+        <translation>Célzás</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultfileview.cpp" line="51"/>
+        <source>OK</source>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -879,7 +897,7 @@
         <translation>A törlés után a benne lévő fájlok véglegesen törlődnek</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="201"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="202"/>
         <source>Use Key</source>
         <translation>Kulcs használata</translation>
     </message>
@@ -903,38 +921,38 @@
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="149"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="303"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="305"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="198"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="199"/>
         <source>Use Password</source>
         <translation>Jelszó használata</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="214"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="215"/>
         <source>Wrong password</source>
         <translation>Helytelen jelszó</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="224"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="225"/>
         <source>Wrong recovery key</source>
         <translation>Helytelen helyreállítási kulcs</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="299"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="301"/>
         <source>Failed to delete file vault</source>
         <translation>A fájl tároló törlése sikertelen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="313"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="315"/>
         <source>Deleted successfully</source>
         <translation>Sikeresen törölve</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="315"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="317"/>
         <source>Failed to delete</source>
         <translation>A törlés sikertelen</translation>
     </message>
@@ -949,75 +967,75 @@
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="67"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="76"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="136"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="148"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="149"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="325"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="133"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="145"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="146"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="323"/>
         <source>Unable to get the key file</source>
         <translation>Nem sikerült beszerezni a kulcsfájlt</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="90"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="88"/>
         <source>Verification failed</source>
         <translation>Az ellenőrzés sikertelen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="154"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="194"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="190"/>
         <source>Select a path</source>
         <translation>Válasszon egy útvonalat</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="185"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="181"/>
         <source>Retrieve Password</source>
         <translation>Jelszó lekérése</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="189"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="185"/>
         <source>By key in the default path</source>
         <translation>Az alapértelmezett elérési útvonal kulcsával</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="190"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="186"/>
         <source>By key in the specified path</source>
         <translation>Kulcs segítségével a megadott útvonalon</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="213"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="209"/>
         <source>Verification Successful</source>
         <translation>Az ellenőrzés sikeres</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="216"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="212"/>
         <source>Keep it safe</source>
         <translation>Tartsa biztonságban</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>Vissza</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
         <source>Verify Key</source>
         <comment>button</comment>
         <translation>Kulcs ellenőrzése</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
         <translation>Ugrás a feloldáshoz</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="277"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Bezárás</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="308"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="306"/>
         <source>Vault password: %1</source>
         <translation>Trezor jelszó: %1</translation>
     </message>
@@ -1040,12 +1058,12 @@
         <translation>Elfelejtette a jelszavát?</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="141"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="142"/>
         <source>Password hint: %1</source>
         <translation>Jelszó emlékeztető: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="325"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="333"/>
         <source>Failed to unlock file vault</source>
         <translation>Nem sikerült feloldani a fájltárolót</translation>
     </message>
@@ -1055,44 +1073,44 @@
         <translation>Jelszó</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="126"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="127"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Mégsem</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="126"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="127"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Feloldás</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="242"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="251"/>
         <source>Please try again %1 minutes later</source>
         <translation>Kérjük próbálja újra %1 perc múlva</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="270"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="278"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Helytelen jelszó, kérjük próbálja újra %1 perc múlva</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="273"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="281"/>
         <source>Wrong password, one chance left</source>
         <translation>Helytelen jelszó, egy próbálkozása maradt</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="275"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="283"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Helytelen jelszó, %1 próbálkozása maradt</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="320"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="328"/>
         <source>Wrong password</source>
         <translation>Helytelen jelszó</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="329"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="337"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
@@ -4071,7 +4089,7 @@
         <translation>A fájlok feldolgozás alatt vannak</translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="646"/>
+        <location filename="../shutil/fileutils.cpp" line="638"/>
         <location filename="../../utils/utils.cpp" line="512"/>
         <source>Unknown</source>
         <translation>Ismeretlen</translation>
@@ -4084,7 +4102,7 @@
     <message>
         <location filename="../models/computermodel.cpp" line="185"/>
         <location filename="../models/computermodel.cpp" line="196"/>
-        <location filename="../models/computermodel.cpp" line="605"/>
+        <location filename="../models/computermodel.cpp" line="607"/>
         <source>Disks</source>
         <translation>Lemezek</translation>
     </message>

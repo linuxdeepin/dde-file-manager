@@ -47,7 +47,7 @@ DFMVaultFileView::DFMVaultFileView(QWidget *parent)
 bool DFMVaultFileView::setRootUrl(const DUrl &url)
 {
     if(!VaultController::ins()->isVaultVisiable()) {
-        DDialog dialog(tr("hint"), tr("Cannot open this path"), this);
+        DDialog dialog(tr("Hint"), tr("Cannot open this path"), this);
         dialog.addButton(tr("OK"));
         dialog.exec();
         return false;
