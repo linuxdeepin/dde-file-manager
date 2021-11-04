@@ -45,8 +45,8 @@ private:
 
     void initBlockDevicesData();
     void initProtocolDevicesData();
-    void insertNewBlockDeviceData(const DeviceServiceHelper::BlockDevPtr &ptr);
-    void insertNewProtocolDeviceData(const DeviceServiceHelper::ProtocolDevPtr &ptr);
+    bool insertNewBlockDeviceData(const DeviceServiceHelper::BlockDevPtr &ptr);
+    bool insertNewProtocolDeviceData(const DeviceServiceHelper::ProtocolDevPtr &ptr);
     void removeBlockDeviceData(const QString &deviceId);
     void removeProtocolDeviceData(const QString &deviceId);
     void updateDataWithOpticalInfo(BlockDeviceData *data, const QMap<DFMMOUNT::Property, QVariant> &changes);

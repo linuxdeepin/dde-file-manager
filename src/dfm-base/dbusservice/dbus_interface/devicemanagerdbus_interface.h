@@ -103,17 +103,17 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("PoweroffBlockDevice"), argumentList);
     }
 
-    inline QDBusPendingReply<QVariantMap> QueryBlockDeviceInfo(const QString &id)
+    inline QDBusPendingReply<QVariantMap> QueryBlockDeviceInfo(const QString &id, bool detail)
     {
         QList<QVariant> argumentList;
-        argumentList << QVariant::fromValue(id);
+        argumentList << QVariant::fromValue(id) << QVariant::fromValue(detail);
         return asyncCallWithArgumentList(QStringLiteral("QueryBlockDeviceInfo"), argumentList);
     }
 
-    inline QDBusPendingReply<QVariantMap> QueryProtocolDeviceInfo(const QString &id)
+    inline QDBusPendingReply<QVariantMap> QueryProtocolDeviceInfo(const QString &id, bool detail)
     {
         QList<QVariant> argumentList;
-        argumentList << QVariant::fromValue(id);
+        argumentList << QVariant::fromValue(id) << QVariant::fromValue(detail);
         return asyncCallWithArgumentList(QStringLiteral("QueryProtocolDeviceInfo"), argumentList);
     }
 

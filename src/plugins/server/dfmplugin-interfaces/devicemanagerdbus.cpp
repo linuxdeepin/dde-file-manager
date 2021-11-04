@@ -208,9 +208,9 @@ QStringList DeviceManagerDBus::GetBlockDevicesIdList(const QVariantMap &opts)
     return deviceServ->blockDevicesIdList(opts);
 }
 
-QVariantMap DeviceManagerDBus::QueryBlockDeviceInfo(QString id)
+QVariantMap DeviceManagerDBus::QueryBlockDeviceInfo(QString id, bool detail)
 {
-    return deviceServ->blockDeviceInfo(id);
+    return deviceServ->blockDeviceInfo(id, detail);
 }
 
 QStringList DeviceManagerDBus::GetProtolcolDevicesIdList()
@@ -218,7 +218,7 @@ QStringList DeviceManagerDBus::GetProtolcolDevicesIdList()
     return deviceServ->protocolDevicesIdList();
 }
 
-QVariantMap DeviceManagerDBus::QueryProtocolDeviceInfo(QString id)
+QVariantMap DeviceManagerDBus::QueryProtocolDeviceInfo(QString id, bool detail)
 {
     // TODO(zhangs): build data
     return QVariantMap();

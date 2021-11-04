@@ -68,7 +68,7 @@ bool DAttachedBlockDevice::isValid()
         return false;
     if (!data.value("has_filesystem").toBool())
         return false;
-    if (data.value("mountpoints").toBool())
+    if (data.value("mountpoints").toStringList().isEmpty())
         return false;
     if (data.value("hint_ignore").toBool())
         return false;

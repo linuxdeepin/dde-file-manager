@@ -53,14 +53,18 @@ struct BlockDeviceData
     QString     device;
     QString     drive;
     QString     idLabel;
+    QString     media;
+    QStringList mediaCompatibility;
     bool        removable;
     bool        optical;
     bool        opticalBlank;
-    QStringList mediaCompatibility;
+    bool        mediaAvailable;
     bool        canPowerOff;
     bool        ejectable;
     bool        isEncrypted;
+    bool        isLoopDevice;
     bool        hasFileSystem;
+    bool        hasPartitionTable;
     bool        hintSystem;
     bool        hintIgnore;
     QString     cryptoBackingDevice;
@@ -86,6 +90,7 @@ class DeviceServiceHelper
 private:
     static std::once_flag &autoMountOnceFlag();
     static dfmbase::Settings *getGsGlobal();
+    static void openFileManagerToDevice(const BlockDevPtr &blkDev);
 
     static QList<QUrl> makeMountpointsForDrive(const QString &driveName);
     static QList<QUrl> makeMountpointsForAllDrive();
@@ -110,7 +115,7 @@ private:
 
     static void makeBlockDeviceData(const BlockDevPtr &ptr, BlockDeviceData *data);
     // TODO(zhangs): makeProtolDeviceData
-    static void makeBlockDeviceMap(const BlockDeviceData &data, QVariantMap *map);
+    static void makeBlockDeviceMap(const BlockDeviceData &data, QVariantMap *map, bool detail = false);
     // TODO(zhangs): makeProtocolDeviceMap
 
 private:

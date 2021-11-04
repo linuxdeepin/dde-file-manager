@@ -65,9 +65,9 @@ public slots:
     void UnmountProtocolDevice(QString id);
 
     QStringList GetBlockDevicesIdList(const QVariantMap &opts);
-    QVariantMap QueryBlockDeviceInfo(QString id);
+    QVariantMap QueryBlockDeviceInfo(QString id, bool detail);
     QStringList GetProtolcolDevicesIdList();
-    QVariantMap QueryProtocolDeviceInfo(QString id);
+    QVariantMap QueryProtocolDeviceInfo(QString id, bool detail);
 
 private:
     void initialize();

@@ -25,7 +25,6 @@
 #include "devicemonitorhandler.h"
 
 #include "dfm-base/utils/universalutils.h"
-#include "dfm-base/base/abstractfileinfo.h"
 
 #include <dfm-mount/dfmblockmonitor.h>
 #include <QtConcurrent>
@@ -33,8 +32,8 @@
 
 #include <algorithm>
 
-DSC_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
 DeviceMonitorHandler::DeviceMonitorHandler(DeviceService *serv)
     : QObject (nullptr), service(serv)
@@ -111,21 +110,23 @@ void DeviceMonitorHandler::initProtocolDevicesData()
     // TODO(zhangs): wait dfm-mount
 }
 
-void DeviceMonitorHandler::insertNewBlockDeviceData(const DeviceServiceHelper::BlockDevPtr &ptr)
+bool DeviceMonitorHandler::insertNewBlockDeviceData(const DeviceServiceHelper::BlockDevPtr &ptr)
 {
     QString &&id = ptr->path();
 
     if (id.isEmpty())
-        return;
+        return false;
 
     BlockDeviceData data;
     DeviceServiceHelper::makeBlockDeviceData(ptr, &data);
     allBlkDevData.insert(id, data);
+    return true;
 }
 
-void DeviceMonitorHandler::insertNewProtocolDeviceData(const DeviceServiceHelper::ProtocolDevPtr &ptr)
+bool DeviceMonitorHandler::insertNewProtocolDeviceData(const DeviceServiceHelper::ProtocolDevPtr &ptr)
 {
     // TODO(zhangs): wait dfm-mount
+    return false;
 }
 
 void DeviceMonitorHandler::removeBlockDeviceData(const QString &deviceId)
@@ -237,12 +238,14 @@ void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
 {
     qInfo() << "A block device added: " << deviceId;
     auto blkDev = DeviceServiceHelper::createBlockDevice(deviceId);
-    if (blkDev.isNull()) {
+    if (!blkDev) {
         qWarning() << "Dev NULL!";
         return;
     }
 
-    insertNewBlockDeviceData(blkDev);
+    if (!insertNewBlockDeviceData(blkDev))
+        return;
+
     emit service->blockDevAdded(deviceId);
     // maybe reload setting ?
     if (service->isInLiveSystem() || !service->isAutoMountSetting()) {
@@ -258,22 +261,12 @@ void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
     }
 
     if (!service->mountBlockDevice(deviceId, {})) {
-         qWarning() << "Mount device failed: " << blkDev->path() << static_cast<int>(blkDev->getLastError());
+         qWarning() << "Mount device failed: " << blkDev->path();
          return;
     }
 
-    if (service->isAutoMountAndOpenSetting()) {
-        if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
-            QString root = dfmbase::UrlRoute::rootPath(dfmbase::SchemeTypes::ROOT);
-            QString mountUrlStr {root + QFileInfo(blkDev->device()).fileName() + "." + dfmbase::SuffixInfo::BLOCK};
-            QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
-            qInfo() << "open by dde-file-manager: " << mountUrlStr;
-            return;
-        }
-        QString &&mpt = blkDev->mountPoint();
-        qInfo() << "a new device mount to: " << mpt;
-        DDesktopServices::showFolder(QUrl::fromLocalFile(mpt));
-    }
+    if (service->isAutoMountAndOpenSetting())
+        DeviceServiceHelper::openFileManagerToDevice(blkDev);
 }
 
 void DeviceMonitorHandler::onBlockDeviceRemoved(const QString &deviceId)
@@ -682,30 +675,47 @@ QStringList DeviceService::blockDevicesIdList(const QVariantMap &opts) const
 /*!
  * \brief make a map that contains all info for the block device
  * \param deviceId
+ * \param detail: return all if true
+ * if input:  '/org/freedesktop/UDisks2/block_devices/sr0', GLib.Variant("b", True)
  * \return like this:
  * {'can_power_off': True,
- * 'crypto_backingDevice': '/',
- * 'device': '/dev/sdb1',
- * 'drive': '/org/freedesktop/UDisks2/drives/USB_SanDisk_3_2e2Gen1_01013114a9e6e689e7acef289dddb66fc5abc0ff411bea158687d2016fc3863c7f4800000000000000000000b6747ae1ff1d7800a3558107b528d85f',
- * 'ejectable': True,
- * 'filesystem': 'ntfs',
- * 'has_filesystem': True,
- * 'hint_ignore': False,
- * 'hint_system': False,
- * 'id': '/org/freedesktop/UDisks2/block_devices/sdb1',
- * 'id_label': '111',
- * 'is_encrypted': False,
- * 'media_compatibility': [],
- * 'mountpoint': '',
- * 'mountpoints': ['/media/zhangs/111'],
- * 'optical': False,
- * 'optical_blank': False,
- * 'removable': True,
- * 'size_free': 47823532032,
- * 'size_total': 55500210176,
- * 'size_usage': 7676678144}
+ *  'crypto_backingDevice': '/',
+ *  'device': '/dev/sr0',
+ *  'drive': '/org/freedesktop/UDisks2/drives/HL_DT_ST_DVDRAM_GP75N_KXDJAVB0521',
+ *  'ejectable': True,
+ *  'filesystem': 'iso9660',
+ *  'has_filesystem': True,
+ *  'has_partition_table': False,
+ *  'hint_ignore': False,
+ *  'hint_system': False,
+ *  'id': '/org/freedesktop/UDisks2/block_devices/sr0',
+ *  'id_label': '',
+ *  'is_encrypted': False,
+ *  'is_loop_device': False,
+ *  'media': 'optical_dvd_r',
+ *  'media_available': True,
+ *  'media_compatibility': ['optical_cd',
+ *                          'optical_cd_r',
+ *                          'optical_cd_rw',
+ *                          'optical_dvd',
+ *                          'optical_dvd_plus_r',
+ *                          'optical_dvd_plus_r_dl',
+ *                          'optical_dvd_plus_rw',
+ *                          'optical_dvd_r',
+ *                          'optical_dvd_ram',
+ *                          'optical_dvd_rw',
+ *                          'optical_mrw',
+ *                          'optical_mrw_w'],
+ *  'mountpoint': '/media/zhangs/2021-10-15-09-50-02-00',
+ *  'mountpoints': ['/media/zhangs/2021-10-15-09-50-02-00'],
+ *  'optical': True,
+ *  'optical_blank': False,
+ *  'removable': True,
+ *  'size_free': 0,
+ *  'size_total': 393216,
+ *  'size_usage': 393216}
  */
-QVariantMap DeviceService::blockDeviceInfo(const QString &deviceId)
+QVariantMap DeviceService::blockDeviceInfo(const QString &deviceId, bool detail)
 {
     QVariantMap info;
     const auto &allBlkData = monitorHandler->allBlkDevData;
@@ -713,7 +723,7 @@ QVariantMap DeviceService::blockDeviceInfo(const QString &deviceId)
         return info;
 
     const auto &blkData = allBlkData.value(deviceId);
-    DeviceServiceHelper::makeBlockDeviceMap(blkData, &info);
+    DeviceServiceHelper::makeBlockDeviceMap(blkData, &info, detail);
     return info;
 }
 
@@ -723,7 +733,7 @@ QStringList DeviceService::protocolDevicesIdList() const
     return QStringList();
 }
 
-QVariantMap DeviceService::protocolDeviceInfo(const QString &deviceId)
+QVariantMap DeviceService::protocolDeviceInfo(const QString &deviceId, bool detail)
 {
     // TODO(zhangs): build data
     return QVariantMap();

@@ -70,9 +70,9 @@ public: // status
     bool isAutoMountAndOpenSetting() const;
     bool isDefenderScanningDrive(const QString &driveName = "") const;
     QStringList blockDevicesIdList(const QVariantMap &opts) const;
-    QVariantMap blockDeviceInfo(const QString &deviceId);
+    QVariantMap blockDeviceInfo(const QString &deviceId, bool detail = false);
     QStringList protocolDevicesIdList() const;
-    QVariantMap protocolDeviceInfo(const QString &deviceId);
+    QVariantMap protocolDeviceInfo(const QString &deviceId, bool detail = false);
 
 signals:
     void blockDriveAdded();

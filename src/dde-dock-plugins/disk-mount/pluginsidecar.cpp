@@ -125,7 +125,7 @@ QVariantMap PluginSidecar::invokeQueryBlockDeviceInfo(const QString &id)
     QVariantMap ret;
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto reply = deviceInterface->QueryBlockDeviceInfo(id);
+        auto reply = deviceInterface->QueryBlockDeviceInfo(id, false);
         reply.waitForFinished();
         if (reply.isValid())
             ret = reply.value();
@@ -139,7 +139,7 @@ QVariantMap PluginSidecar::invokeQueryProtocolDeviceInfo(const QString &id)
     QVariantMap ret;
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto reply = deviceInterface->QueryProtocolDeviceInfo(id);
+        auto reply = deviceInterface->QueryProtocolDeviceInfo(id, false);
         reply.waitForFinished();
         if (reply.isValid())
             ret = reply.value();

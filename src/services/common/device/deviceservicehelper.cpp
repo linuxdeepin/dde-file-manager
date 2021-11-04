@@ -28,14 +28,32 @@
 #include <QDebug>
 #include <QGSettings>
 #include <QStorageInfo>
+#include <QStandardPaths>
+#include <QProcess>
+#include <DDesktopServices>
 
 Q_GLOBAL_STATIC_WITH_ARGS(dfmbase::Settings, gsGlobal, ("deepin/dde-file-manager", dfmbase::Settings::GenericConfig))
 
+DWIDGET_USE_NAMESPACE
 DSC_BEGIN_NAMESPACE
 
 dfmbase::Settings *DeviceServiceHelper::getGsGlobal()
 {
     return gsGlobal;
+}
+
+void DeviceServiceHelper::openFileManagerToDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
+{
+    if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
+        QString root {dfmbase::UrlRoute::rootPath(dfmbase::SchemeTypes::ROOT)};
+        QString mountUrlStr {root + QFileInfo(blkDev->device()).fileName() + "." + dfmbase::SuffixInfo::BLOCK};
+        QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
+        qInfo() << "open by dde-file-manager: " << mountUrlStr;
+        return;
+    }
+    QString &&mp = blkDev->mountPoint();
+    qInfo() << "a new device mount to: " << mp;
+    DDesktopServices::showFolder(QUrl::fromLocalFile(mp));
 }
 
 std::once_flag &DeviceServiceHelper::autoMountOnceFlag()
@@ -296,7 +314,37 @@ bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDeviceData &data)
 
 bool DeviceServiceHelper::isIgnorableBlockDevice(const BlockDeviceData &data)
 {
-    // TODO(zhangs): refrence to dfmrootcontroller.cpp -> ignoreBlkDevice
+    auto &&id = data.common.id;
+
+    if (data.hasPartitionTable) {
+        qDebug()  << "Block device is ignored by parent node:"  << id;
+        return true;
+    }
+
+    if (Q_UNLIKELY(data.hintIgnore)) {
+        qWarning()  << "Block device is ignored by hintIgnore:"  << id;
+        return true;
+    }
+
+    if (Q_UNLIKELY(data.cryptoBackingDevice.length() > 1)) {
+        qWarning()  << "Block device is ignored by crypted back device:"  << id;
+        return true;
+    }
+
+    if (Q_UNLIKELY(data.isLoopDevice)) {
+        qDebug()  << "Block device is ignored by loop device:"  << id;
+        return true;
+    }
+
+    if (Q_UNLIKELY(!data.hasFileSystem && !data.isEncrypted
+            && !data.removable && !data.mediaCompatibility.join(" ").contains("optical"))) {
+        qWarning()  << "Block device is ignored by wrong removeable set for system disk:"  << id;
+        return true;
+    }
+
+    // TODO(zhangs): refrence dfmrootcontroller -> ignoreBlkDevice
+    // -> get device partion type ...
+
     return false;
 }
 
@@ -373,20 +421,24 @@ void DeviceServiceHelper::makeBlockDeviceData(const DeviceServiceHelper::BlockDe
     data->device               = ptr->device();
     data->drive                = ptr->drive();
     data->idLabel              = ptr->idLabel();
+    data->media                = ptr->getProperty(DFMMOUNT::Property::DriveMedia).toString();
+    data->mediaCompatibility   = ptr->mediaCompatibility();
     data->removable            = ptr->removable();
     data->optical              = ptr->optical();
     data->opticalBlank         = ptr->opticalBlank();
-    data->mediaCompatibility   = ptr->mediaCompatibility();
+    data->mediaAvailable       = ptr->getProperty(DFMMOUNT::Property::DriveMediaAvailable).toBool();
     data->canPowerOff          = ptr->canPowerOff();
     data->ejectable            = ptr->ejectable();
     data->isEncrypted          = ptr->isEncrypted();
+    data->isLoopDevice         = ptr->isLoopDevice();
     data->hasFileSystem        = ptr->hasFileSystem();
+    data->hasPartitionTable    = ptr->hasPartitionTable();
     data->hintSystem           = ptr->hintSystem();
     data->hintIgnore           = ptr->hintIgnore();
     data->cryptoBackingDevice  = ptr->getProperty(DFMMOUNT::Property::BlockCryptoBackingDevice).toString();
 }
 
-void DeviceServiceHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVariantMap *map)
+void DeviceServiceHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVariantMap *map, bool detail)
 {
     Q_ASSERT_X(map, "DeviceServiceHelper", "Map is NULL");
 
@@ -397,21 +449,30 @@ void DeviceServiceHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVaria
     map->insert("size_free", data.common.sizeFree);
     map->insert("size_usage", data.common.sizeUsage);
 
-    map->insert("mountpoints", data.mountpoints);
     map->insert("device", data.device);
-    map->insert("drive", data.drive);
     map->insert("id_label", data.idLabel);
+    map->insert("media", data.media);
     map->insert("removable", data.removable);
     map->insert("optical", data.optical);
     map->insert("optical_blank", data.opticalBlank);
-    map->insert("media_compatibility", data.mediaCompatibility);
+    map->insert("media_available", data.mediaAvailable);
     map->insert("can_power_off", data.canPowerOff);
     map->insert("ejectable", data.ejectable);
     map->insert("is_encrypted", data.isEncrypted);
+    map->insert("is_loop_device", data.isLoopDevice);
     map->insert("has_filesystem", data.hasFileSystem);
+    map->insert("has_partition_table", data.hasPartitionTable);
     map->insert("hint_system", data.hintSystem);
     map->insert("hint_ignore", data.hintIgnore);
     map->insert("crypto_backingDevice", data.cryptoBackingDevice);
+
+    // Too much information can slow down the performance of D-Bus interface calls,
+    // so only return all information when using `detail`.
+    if (detail) {
+        map->insert("mountpoints", data.mountpoints);
+        map->insert("drive", data.drive);
+        map->insert("media_compatibility", data.mediaCompatibility);
+    }
 }
 
 DSC_END_NAMESPACE

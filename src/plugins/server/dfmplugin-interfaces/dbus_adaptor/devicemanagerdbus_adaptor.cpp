@@ -93,16 +93,16 @@ void DeviceManagerAdaptor::PoweroffBlockDevice(const QString &id)
     parent()->PoweroffBlockDevice(id);
 }
 
-QVariantMap DeviceManagerAdaptor::QueryBlockDeviceInfo(const QString &id)
+QVariantMap DeviceManagerAdaptor::QueryBlockDeviceInfo(const QString &id, bool detail)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.QueryBlockDeviceInfo
-    return parent()->QueryBlockDeviceInfo(id);
+    return parent()->QueryBlockDeviceInfo(id, detail);
 }
 
-QVariantMap DeviceManagerAdaptor::QueryProtocolDeviceInfo(const QString &id)
+QVariantMap DeviceManagerAdaptor::QueryProtocolDeviceInfo(const QString &id, bool detail)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.QueryProtocolDeviceInfo
-    return parent()->QueryProtocolDeviceInfo(id);
+    return parent()->QueryProtocolDeviceInfo(id, detail);
 }
 
 void DeviceManagerAdaptor::SafelyRemoveBlockDevice(const QString &id)

@@ -94,6 +94,7 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"out\" type=\"a{sv}\"/>\n"
 "      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.Out0\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"      <arg direction=\"in\" type=\"b\" name=\"detail\"/>\n"
 "    </method>\n"
 "    <method name=\"GetProtolcolDevicesIdList\">\n"
 "      <arg direction=\"out\" type=\"as\"/>\n"
@@ -102,6 +103,7 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"out\" type=\"a{sv}\"/>\n"
 "      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.Out0\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"      <arg direction=\"in\" type=\"b\" name=\"detail\"/>\n"
 "    </method>\n"
 "  </interface>\n"
         "")
@@ -124,8 +126,8 @@ public Q_SLOTS: // METHODS
     void MountBlockDevice(const QString &id);
     void MountProtocolDevice(const QString &id);
     void PoweroffBlockDevice(const QString &id);
-    QVariantMap QueryBlockDeviceInfo(const QString &id);
-    QVariantMap QueryProtocolDeviceInfo(const QString &id);
+    QVariantMap QueryBlockDeviceInfo(const QString &id, bool detail);
+    QVariantMap QueryProtocolDeviceInfo(const QString &id, bool detail);
     void SafelyRemoveBlockDevice(const QString &id);
     void UnmountBlockDevice(const QString &id);
     void UnmountProtocolDevice(const QString &id);
