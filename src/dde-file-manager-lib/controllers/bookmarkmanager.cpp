@@ -115,9 +115,9 @@ bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
     DUrl new_from = from.bookmarkTargetUrl();
     DUrl to = event->toUrl();
 
-    BookMarkPointer item = findBookmark(event->fromUrl());
+    BookmarkData data = findBookmarkData(event->fromUrl());
 
-    if (!item) {
+    if (!data.m_url.isValid()) {
         return false;
     }
 
@@ -126,20 +126,29 @@ bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
     for (int i = 0; i < list.count(); ++i) {
         QVariantMap map = list.at(i).toMap();
 
-        if (map.value("name").toString() == item->getName()) {
+        if (map.value("name").toString() == data.m_url.bookmarkName()) {
             map["name"] = event->toUrl().bookmarkName();
             list[i] = map;
 
             DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
-            BookMark *new_item = new BookMark(event->toUrl());
-            QUrlQuery query(event->toUrl());
 
-            new_item->m_created = item->m_created;
-            new_item->m_lastModified = QDateTime::currentDateTime();
-            new_item->mountPoint = item->getMountPoint();//query.queryItemValue("mount_point");
-            new_item->locateUrl = map.value("locateUrl").toString();//query.queryItemValue("locate_url");
+            data.m_url = event->toUrl();
+            data.m_lastModified = QDateTime::currentDateTime();
+            m_bookmarkDataMap[event->toUrl().bookmarkTargetUrl()] = data;
 
-            m_bookmarks[event->toUrl().bookmarkTargetUrl()] = new_item;
+            BookMarkPointer item = findBookmark(event->fromUrl());
+            if (item) {
+                BookMark *new_item = new BookMark(event->toUrl());
+                QUrlQuery query(event->toUrl());
+
+                new_item->m_created = data.m_created;
+                new_item->m_lastModified = data.m_lastModified;
+                new_item->mountPoint = data.mountPoint;//query.queryItemValue("mount_point");
+                new_item->locateUrl = map.value("locateUrl").toString();//query.queryItemValue("locate_url");
+
+                m_bookmarks[event->toUrl().bookmarkTargetUrl()] = new_item;
+            }
+
             break;
         }
     }
