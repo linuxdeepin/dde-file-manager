@@ -112,7 +112,7 @@ void handleEnvOfOpenAsAdmin()
 {
     QProcess p;
     p.start("bash", QStringList() << "-c"
-            << "echo $(dbus-launch)");
+                                  << "echo $(dbus-launch)");
     p.waitForFinished();
     QString envName("DBUS_SESSION_BUS_ADDRESS");
     QString output(p.readAllStandardOutput());
@@ -147,8 +147,12 @@ int main(int argc, char *argv[])
 #endif
 
     //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
-    if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")){
+    if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")) {
         qputenv("XDG_CURRENT_DESKTOP", "Deepin");
+    }
+
+    if (qEnvironmentVariable("CLUTTER_IM_MODULE") == QStringLiteral("fcitx")) {
+        setenv("QT_IM_MODULE", "fcitx", 1);
     }
 
     winId_mtx.first = false;
@@ -187,10 +191,10 @@ int main(int argc, char *argv[])
     app.setProductIcon(QIcon::fromTheme("dde-file-manager"));
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
     app.setApplicationDescription(app.translate("Application", "File Manager is a powerful and "
-                                                "easy-to-use file management tool, "
-                                                "featured with searching, copying, "
-                                                "trash, compression/decompression, file property "
-                                                "and other useful functions."));
+                                                               "easy-to-use file management tool, "
+                                                               "featured with searching, copying, "
+                                                               "trash, compression/decompression, file property "
+                                                               "and other useful functions."));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     // 集成测试标签
@@ -267,7 +271,7 @@ int main(int argc, char *argv[])
 
     QString uniqueKey = app.applicationName();
 
-    bool isSingleInstance  = true;
+    bool isSingleInstance = true;
     // cannot open the filemanager when multiple users as an administrator
     // to open the filemanager(bug-42832). therefore, we have to give up single application mode.
     if (DFMGlobal::isOpenAsAdmin()) {
@@ -293,7 +297,7 @@ int main(int argc, char *argv[])
         }
 
         signal(SIGTERM, handleSIGTERM);
-        signal(SIGPIPE, handleSIGPIPE); // SIGPIPE 引起程序挂死
+        signal(SIGPIPE, handleSIGPIPE);   // SIGPIPE 引起程序挂死
 
 #ifdef ENABLE_PPROF
         int request = app.exec();
