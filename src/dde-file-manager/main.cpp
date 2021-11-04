@@ -138,6 +138,10 @@ int main(int argc, char *argv[])
         qputenv("XDG_CURRENT_DESKTOP", "Deepin");
     }
 
+    if (qEnvironmentVariable("CLUTTER_IM_MODULE") == QStringLiteral("fcitx")) {
+        setenv("QT_IM_MODULE", "fcitx", 1);
+    }
+
     if (DFMGlobal::isWayLand()) {
         qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
         //以下代码用于视频预览使用
