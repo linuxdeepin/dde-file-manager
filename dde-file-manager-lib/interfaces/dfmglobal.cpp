@@ -1074,6 +1074,22 @@ QString DFMGlobal::preprocessingFileName(QString name)
     return name.remove(QRegularExpression(value));
 }
 
+bool DFMGlobal::isServerSys()
+{
+    return DSysInfo::deepinType() == DSysInfo::DeepinServer;
+}
+
+bool DFMGlobal::isDesktopSys()
+{
+    return !(DFMGlobal::isServerSys());
+}
+
+bool DFMGlobal::isOpenAsAdmin()
+{
+    return DFMGlobal::isRootUser() && DFMGlobal::isDesktopSys();
+}
+
+
 QString DFMGlobal::toUnicode(const QByteArray &data, const QString &fileName)
 {
     if (data.isEmpty())

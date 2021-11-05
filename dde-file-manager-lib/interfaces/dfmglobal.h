@@ -379,6 +379,9 @@ public:
     ///###: this function detect what the charset of str is.
     static QByteArray detectCharset(const QByteArray& data, const QString& fileName = QString{});
     static QString preprocessingFileName(QString name);
+    static bool isServerSys();
+    static bool isDesktopSys();
+    static bool isOpenAsAdmin();
 
 signals:
     void clipboardDataChanged();

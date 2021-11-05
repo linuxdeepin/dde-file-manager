@@ -35,6 +35,7 @@
 #include "dfilemenumanager.h"
 #include "dfilemenu.h"
 #include "models/dfmrootfileinfo.h"
+#include "drootfilemanager.h"
 
 #include <QAction>
 
@@ -65,7 +66,15 @@ DViewItemAction *DFMSideBarDeviceItemHandler::createUnmountOrEjectAction(const D
 
 DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
 {
-    const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
+    DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
+    //fix 60959 如果是smb,sftp,ftp的共享文件，本来是显示的，但是断网了以后，新开窗口就创建了新的dfmrootfileinfo判断文件就不存在，
+    //到DRootFileManager中去获取缓存，如果缓存不存在就返回
+    const QString urlString = url.toString();
+    if(!infoPointer->exists() && infoPointer->suffix() == SUFFIX_GVFSMP &&
+            ((urlString.contains("smb-share") && urlString.contains("server")) ||
+             (urlString.contains("ftp") && urlString.contains("host")))) {
+        infoPointer = DRootFileManager::getFileInfo(url);
+    }
     if(!infoPointer->exists()) {
         return nullptr;
     }

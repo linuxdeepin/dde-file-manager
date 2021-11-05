@@ -30,6 +30,7 @@
 #include <QSet>
 
 #include "durl.h"
+#include "dabstractfileinfo.h"
 
 #define DESKTOP_DIR_NAME            "Desktop"
 #define VIDEOS_DIR_NAME             "Videos"
@@ -58,6 +59,7 @@ public:
     QMap<QString, QString> systemPathDisplayNamesMap() const;
 
     bool isSystemPath(QString path) const;
+    bool isVisiblePartitionPath(const DAbstractFileInfoPointer &fi);
 
 public slots:
     void loadSystemPaths();

@@ -15,9 +15,14 @@ unix {
 
     isEqual(ARCH, x86_64) | isEqual(ARCH, i686) {
         message("Build arch:" $$ARCH)
+        #起动时，使用异步初始化，加载资源，提升起动速度
+        DEFINES += ENABLE_ASYNCINIT
     } else {
         message("Build arch:" $$ARCH "Deepin Anything support disabled")
         CONFIG += DISABLE_ANYTHING
+
+        #起动时，使用异步初始化，加载资源，提升起动速度
+        DEFINES += ENABLE_ASYNCINIT
     }
 
     isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
@@ -32,6 +37,9 @@ unix {
         DEFINES += DISABLE_COMPRESS_PREIVEW
 
         DEFINES += DISABLE_QUIT_ON_LAST_WINDOW_CLOSED
+
+        #起动时，使用异步初始化，加载资源，提升起动速度
+        DEFINES += ENABLE_ASYNCINIT
     } else {
         isEmpty(DISABLE_JEMALLOC) {
             LIBS += -ljemalloc

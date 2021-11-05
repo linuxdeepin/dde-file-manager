@@ -27,7 +27,7 @@
 #include "dfileservices.h"
 #include "singleton.h"
 #include "app/define.h"
-
+#include "controllers/pathmanager.h"
 #include "dfmsidebarmanager.h"
 #include "interfaces/dfmsidebariteminterface.h"
 #include "views/dfmsidebarview.h"
@@ -44,6 +44,9 @@
 #include "app/filesignalmanager.h"
 #include "interfaces/dfilemenu.h"
 #include "dfmopticalmediawidget.h"
+#include "drootfilemanager.h"
+#include "deviceinfo/udisklistener.h"
+#include "shutil/fileutils.h"
 
 #include <DApplicationHelper>
 #include <QScrollBar>
@@ -84,6 +87,14 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     //   DFMSideBarManager::instance();
 }
 
+DFMSideBar::~DFMSideBar()
+{
+#ifdef ENABLE_ASYNCINIT
+    m_initDevThread.first = true;
+    m_initDevThread.second.waitForFinished();
+#endif
+}
+
 QWidget *DFMSideBar::sidebarView()
 {
     return m_sidebarView;
@@ -99,11 +110,14 @@ void DFMSideBar::scrollToGroup(const QString &groupName)
     m_sidebarView->scrollTo(groupModelIndex(groupName));
 }
 
-void DFMSideBar::setCurrentUrl(const DUrl &url)
+void DFMSideBar::setCurrentUrl(const DUrl &url, bool changeUrl)
 {
-    int index = findItem(url, true);
+    QMutexLocker lk(&m_currentUrlMutex);
+    m_currentUrl = changeUrl ? url : m_currentUrl;
+    int index = findItem(m_currentUrl, true);
     if (index != -1) {
         m_sidebarView->setCurrentIndex(m_sidebarModel->index(index, 0));
+        m_sidebarView->updateItemUniqueKey(m_sidebarView->currentIndex());
     } else {
         m_sidebarView->clearSelection();
     }
@@ -339,33 +353,29 @@ DFMSideBar::GroupName DFMSideBar::groupFromName(const QString &name)
     return Unknow;
 }
 
-void DFMSideBar::rootFileChange()
+void DFMSideBar::rootFileResult()
 {
-    QList<DAbstractFileInfoPointer> filist  = DFileService::instance()->getRootFile();
-    std::sort(filist.begin(), filist.end(), &DFMRootFileInfo::typeCompare);
+    QList<DAbstractFileInfoPointer> filist  = rootFileManager->getRootFile();
+    qDebug() << "DFileService::instance()->getRootFile() filist:" << filist.size();
+    if (filist.isEmpty())
+        return;
 
     for (const DAbstractFileInfoPointer &fi : filist) {
+#ifdef ENABLE_ASYNCINIT
+        if (m_initDevThread.first){
+            qDebug() << "thrad cancled" << this;
+            return;
+        }
+#endif
         if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
             if (devitems.contains(fi->fileUrl())) {
-                devitems.removeOne(fi->fileUrl());
-                removeItem(fi->fileUrl(), groupName(Device));
+                continue;
             }
-            addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
-            devitems.push_back(fi->fileUrl());
+            if (Singleton<PathManager>::instance()->isVisiblePartitionPath(fi)) {
+                addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
+                devitems.push_back(fi->fileUrl());
+            }
         }
-    }
-}
-
-void DFMSideBar::onRootFileChange(const DAbstractFileInfoPointer &fi)
-{
-    QList<DAbstractFileInfoPointer> filist  = DFileService::instance()->getRootFile();
-    if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
-        if (devitems.contains(fi->fileUrl())) {
-            devitems.removeOne(fi->fileUrl());
-            removeItem(fi->fileUrl(), groupName(Device));
-        }
-        addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
-        devitems.push_back(fi->fileUrl());
     }
 }
 
@@ -644,74 +654,103 @@ void DFMSideBar::initBookmarkConnection()
 
 void DFMSideBar::initDeviceConnection()
 {
-    DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
-    Q_CHECK_PTR(devicesWatcher);
-    devicesWatcher->startWatcher();
+    // 获取遍历结果进行显示
+    connect(DRootFileManager::instance(),&DRootFileManager::queryRootFileFinsh,this,[this](){
+        rootFileResult();
+    },Qt::QueuedConnection);
 
-    m_udisks2DiskManager.reset(new DDiskManager);
-    m_udisks2DiskManager->setWatchChanges(true);
-
-    QList<DAbstractFileInfoPointer> filist = DFileService::instance()->getChildren(this, DUrl(DFMROOT_ROOT),
-                                                                                   QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false, true);
-
-    std::sort(filist.begin(), filist.end(), &DFMRootFileInfo::typeCompare);
-    DFileService::instance()->changRootFile(filist);
-
-    for (const DAbstractFileInfoPointer &fi : filist) {
-        if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
-            if (devitems.contains(fi->fileUrl())) {
-                devitems.removeOne(fi->fileUrl());
-                removeItem(fi->fileUrl(), groupName(Device));
+    connect(DRootFileManager::instance(),&DRootFileManager::serviceHideSystemPartition,this,[this](){
+        QList<DUrl> removelist;
+        for (auto itemurl : devitems) {
+            if (!DRootFileManager::instance()->isRootFileContain(itemurl)) {
+                removelist.push_back(itemurl);
             }
-            addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
-            devitems.push_back(fi->fileUrl());
         }
+        for (auto removeurl : removelist) {
+            devitems.removeOne(removeurl);
+            removeItem(removeurl, groupName(Device));
+        }
+        rootFileResult();
+    },Qt::QueuedConnection);
+
+    // 已经初始化了就直接拿结果
+   if (DRootFileManager::instance()->isRootFileInited()) {
+        rootFileResult();
     }
+    // 开启遍历线程,刷新一次root，修复分区问题
+    DRootFileManager::instance()->startQuryRootFile();
 
-    DFileService::instance()->startQuryRootFile();
-    rootFileChange();
-    connect(DFileService::instance(),&DFileService::rootFileChange,this,&DFMSideBar::onRootFileChange,Qt::QueuedConnection);
-    connect(DFileService::instance(),&DFileService::serviceHideSystemPartition,this,[this](){
-            QList<DUrl> removelist;
-            for (auto itemurl : devitems) {
-                if (!DFileService::instance()->isRootFileContain(itemurl)) {
-                    removelist.push_back(itemurl);
-                }
-            }
-            for (auto removeurl : removelist) {
-                devitems.removeOne(removeurl);
-                removeItem(removeurl, groupName(Device));
-            }
-            rootFileChange();
-        },Qt::QueuedConnection);
-
-
+    DAbstractFileWatcher *devicesWatcher = rootFileManager->rootFileWather();
     connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
-        if (!fileService->createFileInfo(nullptr, url)->exists()) {
+        auto fi = fileService->createFileInfo(nullptr, url);
+        if (!fi->exists()) {
             return;
         }
+
+        if (!Singleton<PathManager>::instance()->isVisiblePartitionPath(fi)) {
+            return;
+        }
+
         if (this->findItem(url) == -1) {
             auto r = std::upper_bound(devitems.begin(), devitems.end(), url,
-                                      [](const DUrl &a, const DUrl &b) {
-                                          DAbstractFileInfoPointer fia = fileService->createFileInfo(nullptr, a);
-                                          DAbstractFileInfoPointer fib = fileService->createFileInfo(nullptr, b);
-                                          return DFMRootFileInfo::typeCompare(fia, fib);
-                                      });
+            [](const DUrl & a, const DUrl & b) {
+                DAbstractFileInfoPointer fia = fileService->createFileInfo(nullptr, a);
+                DAbstractFileInfoPointer fib = fileService->createFileInfo(nullptr, b);
+                return DFMRootFileInfo::typeCompare(fia, fib);
+            });
             if (r == devitems.end()) {
-                DFileService::instance()->changeRootFile(url);
+                //DFileService::instance()->changeRootFile(url); //性能优化，注释
                 this->addItem(DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
                 devitems.append(url);
             } else {
-                DFileService::instance()->changeRootFile(url);
+                //DFileService::instance()->changeRootFile(url); //性能优化，注释
                 this->insertItem(this->findLastItem(this->groupName(Device)) - (devitems.end() - r) + 1, DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
                 devitems.insert(r, url);
             }
+            //还原url
+            if (m_currentUrl == fi->redirectedFileUrl())
+                setCurrentUrl(m_currentUrl, false);
         }
     });
-    connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [this](const DUrl &url) {
+    connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [this](const DUrl & url) {
+        bool curUrlCanAccess = true; // 初始化为true 避免影响原有逻辑
+        auto fi = fileService->createFileInfo(nullptr, m_currentUrl);
+        if (fi)
+            curUrlCanAccess = fi->exists();
         int index = findItem(url, groupName(Device));
-        if (m_sidebarView->currentIndex().row() == index && index != -1) {
-            index = findItem(DUrl::fromLocalFile(QDir::homePath()), groupName(Common));
+        int curIndex = m_sidebarView->currentIndex().row();
+        if ((curIndex == index && index != -1)
+                || (!curUrlCanAccess)) {
+
+            DUrl urlSkip;
+            const QString &absFilePath = url.toAbsolutePathUrl().path();
+            QString localFilePath = QUrl::fromPercentEncoding(url.path().toLocal8Bit());
+            localFilePath = localFilePath.startsWith("//") ? localFilePath.mid(1) : localFilePath;
+
+            const auto &allDevice = deviceListener->getAllDeviceInfos();
+            bool blockDevice = false;
+            for (const auto &dev : allDevice.keys()) {
+                if (dev.contains(absFilePath.left(absFilePath.indexOf(".localdisk")))) {
+                    blockDevice = true;
+                    break;
+                }
+            }
+
+            // 判断删除的路径是否是外设路径，外设路径需要跳转到computer页面
+            bool turnToComputer = false;
+            if (deviceListener->isInDeviceFolder(absFilePath)
+                    || localFilePath.startsWith("/run/user")
+                    || localFilePath.startsWith("/media/")
+                    || blockDevice // like u disk
+                    || FileUtils::isGvfsMountFile(localFilePath)
+                    ) {
+                urlSkip = DUrl(COMPUTER_ROOT);
+                turnToComputer = true;
+            } else {
+                urlSkip = DUrl::fromLocalFile(QDir::homePath());
+            }
+
+            index = findItem(urlSkip, groupName(turnToComputer ? Device : Common));
             DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
             if (item) {
                 QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
@@ -721,17 +760,11 @@ void DFMSideBar::initDeviceConnection()
                 }
             }
         }
-        DFileService::instance()->changeRootFile(url, false);
+        //DFileService::instance()->changeRootFile(url,false); //性能优化，注释
         this->removeItem(url, this->groupName(Device));
         devitems.removeAll(url);
-
-        //清除可能由于卸载出现的无效目录
-        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(this->topLevelWidget());
-        if (wnd) {
-            wnd->closeUnAvailableTabs();
-        }
     });
-    connect(devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this](const DUrl &url) {
+    connect(devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this](const DUrl & url) {
         int index = findItem(url, groupName(Device));
         DAbstractFileInfoPointer fi = DFileService::instance()->createFileInfo(nullptr, url);
 

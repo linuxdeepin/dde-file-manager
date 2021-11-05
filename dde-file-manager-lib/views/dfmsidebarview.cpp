@@ -272,6 +272,12 @@ DFMSideBarItem *DFMSideBarView::itemAt(const QPoint &pt)
     return item;
 }
 
+void DFMSideBarView::updateItemUniqueKey(const QModelIndex &index)
+{
+    if (model() && index.isValid())
+        m_strItemUniqueKey = model()->data(index, DFMSideBarItem::ItemUniqueKeyRole).toString();
+}
+
 Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
 {
     Q_UNUSED(data)

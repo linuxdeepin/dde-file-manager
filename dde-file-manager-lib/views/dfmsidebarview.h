@@ -43,6 +43,7 @@ public:
     QModelIndex getCurrentIndex() const;
     void currentChanged(const QModelIndex &previous);
     DFMSideBarItem *itemAt(const QPoint &pt);
+    void updateItemUniqueKey(const QModelIndex &index);
 
 protected:
     bool onDropData(DUrlList srcUrls, DUrl dstUrl, Qt::DropAction action) const;
@@ -64,7 +65,7 @@ private:
     int dragRow;
     QModelIndex m_previous;
     QModelIndex m_current;
-
+    QString m_strItemUniqueKey;
     QList<QUrl> m_urlsForDragEvent;
 
     //上次操作的时间（ms）

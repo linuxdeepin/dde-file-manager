@@ -47,6 +47,7 @@
 #include "controllers/appcontroller.h"
 #include "singleton.h"
 #include "gvfs/gvfsmountmanager.h"
+#include "interfaces/drootfilemanager.h"
 
 #include "dfmapplication.h"
 
@@ -190,6 +191,9 @@ int main(int argc, char *argv[])
     if (isSingleInstance) {
         // init app
         Q_UNUSED(FileManagerApp::instance())
+
+        //!开始扫描文件，提升启动速度.
+        DRootFileManager::instance()->startQuryRootFile();
 
         if (CommandLineManager::instance()->isSet("d")) {
             fileManagerApp;

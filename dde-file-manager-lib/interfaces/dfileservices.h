@@ -163,18 +163,13 @@ public:
     DFileDevice *createFileDevice(const QObject *sender, const DUrl &url);
     DFileHandler *createFileHandler(const QObject *sender, const DUrl &url);
     DStorageInfo *createStorageInfo(const QObject *sender, const DUrl &url);
-    QList<DAbstractFileInfoPointer> getRootFile();
     void changeRootFile(const DUrl &fileurl, const bool bcreate = true);
-    void startQuryRootFile();
-    void clearThread();
 
     //set cursor busy status
     void setCursorBusyState(const bool bbusy);
     //check networkfile is busy(or network is unline)
     bool checkGvfsMountfileBusy(const DUrl &url, const bool showdailog = true);
     bool checkGvfsMountfileBusy(const DUrl &rootUrl, const QString &rootfilename, const bool showdailog = true);
-    //chang rootfile
-    void changRootFile(const QList<DAbstractFileInfoPointer> &rootinfo);
     //judge me net work is online
     bool isNetWorkOnline();
     //judge network can visit host
@@ -185,9 +180,7 @@ public:
     void setDoClearTrashState(const bool bdoing);
     //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
     void dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUrlList &result);
-    //处理rootfilelist中是否包含某个durl
-    bool isRootFileContain(const DUrl &url);
-	//判断当前的可访问的smb和ftp中是否包含某个url
+    //判断当前的可访问的smb和ftp中是否包含某个url
     bool isSmbFtpContain(const DUrl &url);
 
 signals:
@@ -198,17 +191,15 @@ signals:
     void fileRenamed(const DUrl &from, const DUrl &to) const;
     void rootFileChange(const DAbstractFileInfoPointer &chi) const;
     void queryRootFileFinsh() const;
-    void serviceHideSystemPartition() const;
 public Q_SLOTS:
     void slotError(QNetworkReply::NetworkError err);
-    void hideSystemPartition();
 
 private slots:
     void laterRequestSelectFiles(const DFMUrlListBaseEvent &event) const;
 
 private:
-    explicit DFileService(QObject *parent = 0);
-    ~DFileService();
+    explicit DFileService(QObject *parent = nullptr);
+    ~DFileService() override;
 
     bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = 0) Q_DECL_OVERRIDE;
 

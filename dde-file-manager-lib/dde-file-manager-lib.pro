@@ -293,7 +293,8 @@ HEADERS += \
     views/dfmvaultremovebyrecoverykeyview.h \
     views/dfmvaultpagebase.h \
     shutil/checknetwork.h \
-    dialogs/changediskpassworddialog.h
+    dialogs/changediskpassworddialog.h \
+    interfaces/drootfilemanager.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -496,7 +497,8 @@ SOURCES += \
     views/dfmvaultremovebyrecoverykeyview.cpp \
     views/dfmvaultpagebase.cpp \
     shutil/checknetwork.cpp \
-    dialogs/changediskpassworddialog.cpp
+    dialogs/changediskpassworddialog.cpp \
+    interfaces/drootfilemanager.cpp
     
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h
