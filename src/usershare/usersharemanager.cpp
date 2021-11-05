@@ -418,7 +418,7 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
             _info.setUsershare_acl("Everyone:R");
         }
         args << "usershare" << "add"
-             << "\"" + _info.shareName() + "\"" << "\"" + _info.path() + "\""
+             << "'" + _info.shareName() + "'" << _info.path()
              << _info.comment() << _info.usershare_acl()
              << _info.guest_ok();
 
