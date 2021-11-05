@@ -25,12 +25,22 @@ unix {
         DEFINES += ENABLE_ASYNCINIT
     }
 
+    isEqual(ARCH, aarch64) {
+        #启用守护，当前进程退出后会接着起动一个文管后台驻留进程，提升响应速度
+        #只在release开启，方便debug时开发
+        CONFIG(release, debug|release) {
+            message("x86 ENABLE_DAEMON")
+            #启用守护，当前进程退出后会接着起动一个文管后台驻留进程，提升响应速度
+            DEFINES += ENABLE_DAEMON
+        }
+    }
+
     isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
         DEFINES += ARCH_MIPSEL ARCH_SW
 
         #use classical file section mode
         DEFINES += CLASSICAL_SECTION
-        DEFINES += AUTO_RESTART_DEAMON
+        DEFINES += ENABLE_DAEMON
 
         DEFINES += LOAD_FILE_INTERVAL=150
 

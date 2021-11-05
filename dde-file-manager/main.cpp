@@ -197,13 +197,7 @@ int main(int argc, char *argv[])
 
         if (CommandLineManager::instance()->isSet("d")) {
             fileManagerApp;
-#ifdef AUTO_RESTART_DEAMON
-            QWidget w;
-            w.setWindowFlags(Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
-            w.setAttribute(Qt::WA_TranslucentBackground);
-            w.resize(0, 0);
-            w.show();
-#endif
+            app.setQuitOnLastWindowClosed(false);
         } else {
             CommandLineManager::instance()->processCommand();
         }
@@ -222,9 +216,11 @@ int main(int argc, char *argv[])
         return request;
 #else
         int ret = app.exec();
-#ifdef AUTO_RESTART_DEAMON
-        app.closeServer();
-        QProcess::startDetached(QString("%1 -d").arg(QString(argv[0])));
+#ifdef ENABLE_DAEMON
+        if (!DFMGlobal::isOpenAsAdmin()) {
+            app.closeServer();
+            QProcess::startDetached(QString("%1 -d").arg(QString(argv[0])));
+        }
 #endif
         return ret;
 #endif
