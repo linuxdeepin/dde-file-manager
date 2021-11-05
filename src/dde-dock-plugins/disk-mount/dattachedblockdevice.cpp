@@ -64,13 +64,13 @@ DAttachedBlockDevice::~DAttachedBlockDevice()
 
 bool DAttachedBlockDevice::isValid()
 {
-    if (data.value("id").toString().isEmpty())
+    if (qvariant_cast<QString>(data.value("id")).isEmpty())
         return false;
-    if (!data.value("has_filesystem").toBool())
+    if (!qvariant_cast<bool>(data.value("has_filesystem")))
         return false;
-    if (data.value("mountpoints").toStringList().isEmpty())
+    if (qvariant_cast<QStringList>(data.value("mountpoints")).isEmpty())
         return false;
-    if (data.value("hint_ignore").toBool())
+    if (qvariant_cast<bool>(data.value("hint_ignore")))
         return false;
 
     return true;
@@ -78,7 +78,7 @@ bool DAttachedBlockDevice::isValid()
 
 void DAttachedBlockDevice::detach()
 {
-    SidecarInstance.instance().invokeDetachBlockDevice(data.value("id").toString());
+    SidecarInstance.instance().invokeDetachBlockDevice(qvariant_cast<QString>(data.value("id")));
 }
 
 bool DAttachedBlockDevice::detachable()
@@ -94,11 +94,11 @@ QString DAttachedBlockDevice::displayName()
         {"data", "Data Disk"}
     };
 
-    qint64 totalSize = data.value("size_total").toLongLong();
+    qint64 totalSize {qvariant_cast<qint64>(data.value("size_total"))};
     if (isValid()) {
-        QString devName = data.value("id_label").toString();
+        QString devName {qvariant_cast<QString>(data.value("id_label"))};
         if (devName.isEmpty()) {
-            QString name = SizeFormatHelper::formatDiskSize(static_cast<quint64>(totalSize));
+            QString name {SizeFormatHelper::formatDiskSize(static_cast<quint64>(totalSize))};
             devName = qApp->translate("DeepinStorage", "%1 Volume").arg(name);
         }
 
@@ -119,20 +119,20 @@ QString DAttachedBlockDevice::displayName()
 
 bool DAttachedBlockDevice::deviceUsageValid()
 {
-    return data.value("size_total").toLongLong() > 0;
+    return qvariant_cast<qint64>(data.value("size_total")) > 0;
 }
 
 QPair<quint64, quint64> DAttachedBlockDevice::deviceUsage()
 {
     if (deviceUsageValid()) {
-        bool optical = data.value("optical").toBool();
-        qint64 bytesTotal = 0;
-        qint64 bytesFree = 0;
+        bool optical {qvariant_cast<bool>(data.value("optical"))};
+        qint64 bytesTotal {0};
+        qint64 bytesFree {0};
         if (optical) {
             // TODO(zhangs): make a temp method read optical size for old dde-file-manager
         } else {
-            bytesTotal = data.value("size_total").toLongLong();
-            bytesFree = data.value("size_free").toLongLong();
+            bytesTotal = qvariant_cast<qint64>(data.value("size_total"));
+            bytesFree = qvariant_cast<qint64>(data.value("size_free"));
         }
         return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
     }
@@ -141,8 +141,8 @@ QPair<quint64, quint64> DAttachedBlockDevice::deviceUsage()
 
 QString DAttachedBlockDevice::iconName()
 {
-    bool optical = data.value("optical").toBool();
-    bool removable = data.value("removable").toBool();
+    bool optical {qvariant_cast<bool>(data.value("optical"))};
+    bool removable {qvariant_cast<bool>(data.value("removable"))};
     QString iconName = QStringLiteral("drive-harddisk");
 
     if (removable)
@@ -162,10 +162,10 @@ QUrl DAttachedBlockDevice::mountpointUrl()
 QUrl DAttachedBlockDevice::accessPointUrl()
 {
     QUrl url = mountpointUrl();
-    bool optical = data.value("optical").toBool();
+    bool optical {qvariant_cast<bool>(data.value("optical"))};
 
     if (optical) {
-        QString &&device = data.value("device").toString();
+        QString device {qvariant_cast<bool>(data.value("device"))};
         url = makeBurnFileUrl(device);
     }
 

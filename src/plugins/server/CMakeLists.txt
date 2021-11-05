@@ -4,4 +4,4 @@ cmake_minimum_required(VERSION 3.1.0)
 
 include_directories(${COMMON_SERVICE_DIR}/device)
 include_directories(${COMMON_SERVICE_DIR}/dialog)
-add_subdirectory(dfmplugin-interfaces)
+add_subdirectory(dfmsplugin-interfaces)
