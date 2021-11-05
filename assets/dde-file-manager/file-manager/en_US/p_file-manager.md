@@ -19,7 +19,7 @@ You can run, close and create a shortcut for File Manager by the following ways.
  - Click **Send to dock** to fix the application on dock.
  - Click **Add to startup** to add the application to startup, it will automatically run when the system starts up.
 
-   >![tips](../common/tips.svg)Tips: You can also press **Super** + **E** to start File Manager.
+   >![tips](../common/tips.svg) Tips: You can also press **Super** + **E** to start File Manager.
 
 ### Exit File Manager
 
@@ -49,7 +49,7 @@ On File Manager interface, you can execute many operations with the functional b
 | 6    | Status bar        | You can view the number of files or selected files.                            |
 
 
-> ![tips](../common/tips.svg)Tips: you can drag the dividing line on the right of left panel to change its width.
+> ![tips](../common/tips.svg) Tips: you can drag the dividing line on the right of left panel to change its width.
 
 
 ## Basic Functions
@@ -79,7 +79,7 @@ File Manager is featured with the basic functions as a file manager, you can eas
 
 ![0|rename](fig/p_contextmenu.png)
 
-> ![tips](../common/tips.svg)Tips: Check "Hide file extension when rename" in **Settings** to rename file more conveniently.
+> ![tips](../common/tips.svg) Tips: Check "Hide file extension when rename" in **Settings** to rename file more conveniently.
 
 ### Batch Rename
 
@@ -104,10 +104,9 @@ Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view
 
 ![1|listview](fig/p_listview.png)
 
-> ![tips](../common/tips.svg)Tips:
+> ![tips](../common/tips.svg) Tips:
 >
 > -  In list view, place the cursor on the dividing line between any two columns and drag it to change the width of the current column. Double-click the dividing line to adjust to the biggest width of the current column automatically. 
-
 > - Press  **Ctrl**+**1**  or  **Ctrl**+ **2**  to switch icon view and list view. 
 
 ### Sorting
@@ -115,7 +114,7 @@ Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view
 1. Right-click in the blank area on File Manager, select **Sort by**.
 2. Choose among the sorting options, which include **Name**, **Time modified**, **Size** and **Type**.
 
-> ![tips](../common/tips.svg)Tips: you can click the head of the columns in the list view to change the sort order.
+> ![tips](../common/tips.svg) Tips: you can click the head of the columns in the list view to change the sort order.
 
 
 ### Open Files
@@ -124,7 +123,7 @@ Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view
 2. In the context menu, select **Open with**>**Select default program**.
 3. Select the application you want to open the file in the list.
 
-> ![notes](../common/notes.svg)Notes: It will use the default application to open the file when you double-click it. You can right-click multiple files of the same type, and select **Open with** to open them at a time.
+> ![notes](../common/notes.svg) Notes: It will use the default application to open the file when you double-click it. You can right-click multiple files of the same type, and select **Open with** to open them at a time.
 
 ![0|open_with](fig/p_open.png)
 
@@ -147,7 +146,7 @@ Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view
 3. Select a location to store it.
 4. Select **Compress** to generate the compressed file.
 
-> ![notes](../common/notes.svg)Notes: Switch on **Advanced Options** to set password and split volumes sizes. **Encrypt the archive** and **Split to volumes** are only applicable for some formats.
+> ![notes](../common/notes.svg) Notes: Switch on **Advanced Options** to set password and split volumes sizes. **Encrypt the archive** and **Split to volumes** are only applicable for some formats.
 
 ### Delete File/Folder
 
@@ -155,7 +154,7 @@ Right-click file/folder to select **Delete**.
   - You can find the deleted files in Trash. Right-click files in Trash, you can choose **Restore** or **Delete**. 
   - The shortcut of the deleted files will become invalid.
 
-> ![attention](../common/attention.svg)Attention: File/folder in external device will be permanently deleted and can not be restored when you select **Delete**.
+> ![attention](../common/attention.svg) Attention: File/folder in external device will be permanently deleted and can not be restored when you select **Delete**.
 
 ### Undo Operation
 In file manager,  use **Ctrl + Z** to undo the previous steps, including:
@@ -165,7 +164,7 @@ In file manager,  use **Ctrl + Z** to undo the previous steps, including:
 - Restore the moved (via dragging or cutting) file/folder to the previous location.
 - Delete the copied and pasted file/folder.
 
-> ![attention](../common/attention.svg)Attention: It can undo two continuous steps at most. If there is file overwriting or permanently file deleting, then you can only return to that step.
+> ![attention](../common/attention.svg) Attention: It can undo two continuous steps at most. If there is file overwriting or permanently file deleting, then you can only return to that step.
 
 
 
@@ -179,17 +178,15 @@ In Properties of files, you can view the basic info, open with list, and permiss
 ![0|info](fig/info.png)
 
 
-> ![notes](../common/notes.svg)Notes: If you check the properties of multiple files at a time, the total size and quantities will be displayed. If you check the properties of a shortcut, the source file location will be displayed in addition. You can use shortcuts **Ctrl + I** to view the properties as well.
+> ![notes](../common/notes.svg) Notes: If you check the properties of multiple files at a time, the total size and quantities will be displayed. If you check the properties of a shortcut, the source file location will be displayed in addition. You can use shortcuts **Ctrl + I** to view the properties as well.
 
 ### Virus scan
 
 1. On File Manager interface, right-click a file(folder). 
 2. Select **Virus scan**, the **Virus Scan** interface of Security Center pops up, so you can scan the file(folder) for virus. Refer to [Virus Scan](dman:///deepin-defender#Virus Scan) of Security Center for detailed operations.
 
-   >![notes](../common/notes.svg)Notes: 
-   >
+   >![notes](../common/notes.svg) Notes: 
    >- If there is a scanning task in Security Center currently, click **View** in the pop-up dialog box to enter the virus scanning interface of Security Center.
-   
    >- **Add "Virus scan" to the context menu** is enabled by default in Security Center. You can also enter Security Center setting interface and uncheck this function. After unchecking, "Virus Scan" will not be displayed in the context menu.
 
 
@@ -219,7 +216,7 @@ Click the search button or press **Ctrl + F**  to switch to the search bar. Or, 
 
 - If you need to search in a specified directory, please enter it before search.
 
-> ![notes](../common/notes.svg)Notes: In **Settings**, check "Auto index internal disk" and "Index external storage device after connected to computer" to quicken the searching speed.
+> ![notes](../common/notes.svg) Notes: In **Settings**, check "Auto index internal disk" and "Index external storage device after connected to computer" to quicken the searching speed.
 
 #### Full-Text Search
 
@@ -241,7 +238,7 @@ When there are many files and the search is slow, you can enable advanced search
 ### Recent Files
 By default, there is a **Recent** entry on left panel. Click it to view the recently used files. Files are sorted by default in reverse order of access time.
 
-> ![notes](../common/notes.svg)Notes: If you want to hide "Recent", you can uncheck "Display recent file entry in left panel" in Settings > Basic > Hidden files. To hide the access record of a specific file, right-click the file and select **Remove** which will not delete the file.
+> ![notes](../common/notes.svg) Notes: If you want to hide "Recent", you can uncheck "Display recent file entry in left panel" in Settings > Basic > Hidden files. To hide the access record of a specific file, right-click the file and select **Remove** which will not delete the file.
 
 ### Manage Tabs
 
@@ -256,7 +253,7 @@ File Manager supports multi-tab view.
 
 ![1|tab](fig/p_tab.png)
 
-> ![tips](../common/tips.svg)Tips: When the File Manager has only one tab, the tab bar is hidden, you can press **Ctrl + T** to add a new tab.
+> ![tips](../common/tips.svg) Tips: When the File Manager has only one tab, the tab bar is hidden, you can press **Ctrl + T** to add a new tab.
 
 ### Manage Bookmarks
 
@@ -272,7 +269,7 @@ To quickly visit a folder from the left panel, you can add bookmarks for frequen
 
 By adding tags on file/folder, you can classify and manage your files better.
 
-> ![notes](../common/notes.svg)Notes: currently only x86 platform supports **Tag information**. All contents related to "Tag information" in this manual are only applicable for x86 platform.
+> ![notes](../common/notes.svg) Notes: currently only x86 platform supports **Tag information**. All contents related to "Tag information" in this manual are only applicable for x86 platform.
 
 #### Add Tags
 
@@ -284,7 +281,7 @@ You can add tag to multiple files/folders at a time, or add multiple tags to a s
 2. Input tag info. Use comma to separate tags in case of multiple tags.
 3. Click any blank area to finish adding tag.
 
-> ![notes](../common/notes.svg)Notes: The tag color is randomly assigned from eight default colors.
+> ![notes](../common/notes.svg) Notes: The tag color is randomly assigned from eight default colors.
 
 
 ![1|taginfo](fig/p_taginfo.png)
@@ -304,7 +301,7 @@ Select a file/folder, click ![fileinfo](../common/fileinfo.svg), and add tags in
 
 
 
-> ![notes](../common/notes.svg)Notes: If a file has a tag, copy or cut and then paste it, the new file still has the same tag.
+> ![notes](../common/notes.svg) Notes: If a file has a tag, copy or cut and then paste it, the new file still has the same tag.
 
 #### Rename Tag
 
@@ -338,7 +335,7 @@ File Manager supports file preview by pressing space bar. Select a file and pres
 
 ![1|videopreview](fig/videopreview.png)
 
-![notes](../common/notes.svg)Notes: You can select multiple files and press space bar to preview them at a time.
+>![notes](../common/notes.svg) Notes: You can select multiple files and press space bar to preview them at a time.
 
 ### Permission Management
 In file/folder properties, click **Permissions** to set **Owner**, **Group** and **Others**. 
@@ -359,7 +356,7 @@ You can share folders in File Manager, if there are some folders shared, the sha
 
 ![0|share](fig/share.png)
 
-> ![tips](../common/tips.svg)Tips: You can cancel sharing by unchecking **Share this folder**, or right-click the folder and select **Cancel sharing**. 
+> ![tips](../common/tips.svg) Tips: You can cancel sharing by unchecking **Share this folder**, or right-click the folder and select **Cancel sharing**. 
 
 #### Visit Sharing Folders 
 
@@ -406,24 +403,26 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 <td>UDF</td></tr>
 <tr>
 <td rowspan="2">Blank disks</td>
-<td>DVD-R/DVD+R</td>
+<td>DVD-R, DVD+R, CD-R, CD-RW</td>
 <td>Supported</td>
 <td>Supported</td></tr>
 <tr>
-<td>Non DVD-R/DVD+R</td>
+<td>Non DVD-R, DVD+R, CD-R, CD-RW</td>
 <td>Supported</td>
 <td>Not Supported</td></tr>
 <tr>
 <td rowspan="2">Non blank disks</td>
-<td>DVD-R/DVD+R</td>
+<td>DVD-R, DVD+R, CD-R, CD-RW</td>
 <td>Adding files afterwards is supported.</td>
 <td>Only formats burned by primitive tools of Windows are supported.</td></tr>
 <tr>
 <!--<td>4.1</td>-->
-<td>Non DVD-R/DVD+R</td>
+<td>Non DVD-R, DVD+R, CD-R, CD-RW</td>
 <td>Adding files afterwards is supported.</td>
 <td>Adding files afterwards is not supported</td></tr>   
 </table>
+
+
 
 
 
@@ -439,7 +438,7 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 
 4. In the burning interface, click **Burn** in the upper right corner.
 
->![notes](../common/notes.svg)Notes: if you want to delete a file/folder from the burning list, right-click it and select **Delete** to remove it from the list.
+>![notes](../common/notes.svg) Notes: if you want to delete a file/folder from the burning list, right-click it and select **Delete** to remove it from the list.
 
 5. A dialog box pops up. Input the disc name. You can also enter the **Advanced settings** interface, set the file system and write speed, or check "Allow files to be added later", "Verify data" and so on, and click **Burn**.
 
@@ -447,7 +446,7 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 
 6. After burning, a prompt box will pop up in the interface, and click **OK**.
 
->![notes](../common/notes.svg)Notes: If you need to erase the disc data, you can right-click the disc icon in the left panel and select **Unmount**, right-click the disc icon again and select **Erase**.
+>![notes](../common/notes.svg) Notes: If you need to erase the disc data, you can right-click the disc icon in the left panel and select **Unmount**, right-click the disc icon again and select **Erase**.
 
 ### Create Link
 
@@ -456,7 +455,7 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 3. In the pop-up window, select a location and input the name of the link.
 4. Click **Save** to finish creating the link.
 
-> ![tips](../common/tips.svg)Tips: By selecting **Send to desktop** for an item, you can create a link on desktop with one click.
+> ![tips](../common/tips.svg) Tips: By selecting **Send to desktop** for an item, you can create a link on desktop with one click.
 
 ### Send To Other Device
 
@@ -482,28 +481,33 @@ Prerequisite: The Bluetooth devices of sender and receiver have been paired and 
 ## Add Corner Marker to Files/Folders
 
 You can assign an icon file to a file or folder icon through the command line and display it as a corner marker.
->![notes](../common/notes.svg)Notes: 
+>![notes](../common/notes.svg) Notes: 
 >- The corner marker files support formats such as svg, jpg, png, bmp, and gif, but not bigger than 100KB.
 >- The corner marker could not be added to files in USB disks and CD-ROM disks.
 
 ### Add single corner marker
 
 1. Open Terminal, input **gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path)"**, which means to add a corner marker in the lower right corner of the file/folder icon by default.
->![attention](../common/attention.svg)Attention: the special corner markers defined by the system could not be replaced.
+
+>![attention](../common/attention.svg) Attention: the special corner markers defined by the system could not be replaced.
+
 2. You can add position codes into the above command to add a corner marker to the upper left corner(lu), lower left corner(ld), upper right corner(ru) or lower right corner(rd).
 For example, to add a corner marker to the upper left corner, you have to input:
 **gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path);lu"**
-![mark](fig/p_single.png)
+
+![mark](fig/single.png)
 
 ### Add multiple corner markers
+
 To add 2~4 corner markers to a file/folder, you can input "|" in the command to separate multiple paths of the corner marker files. Only one corner marker can be added to the same corner, but you can replace it.
 
 For example, to add 4 corner markers to a file/folder icon, you can input:
 **gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path);lu|xxx(icon path);ld|xxx(icon path);ru|xxx(icon path);rd"**
 
-![mark](fig/p_multi.png)
+![mark](fig/multi.png)
 
 ### Cancel corner markers
+
 Open Terminal, input **gio set xxx(file path) -t stringv metadata::emblems ""** to cancel all corner markers on the file/folder icon. 
 
 ## File Vault
@@ -519,12 +523,11 @@ You will have to set a password when you use File Vault for the first time as fo
 
 ![0|password](fig/password.png)
 
-> ![notes](../common/notes.svg)Notes: the password must contain upper case letters, lower case letters,  Arabic numbers and special symbols at the same time and no less than 8 digits. Otherwise, you are not able to go to the next step.
-
+> ![notes](../common/notes.svg) Notes: the password must contain upper case letters, lower case letters,  Arabic numbers and special symbols at the same time and no less than 8 digits. Otherwise, you are not able to go to the next step.
 
 3. A key/QR code is generated. It is recommended to save it in case you forget it. Click **Next**. 
-
 4. Click **Encrypt**; enter your login password in the pop-up authentication box and click **Confirm**. 
+
    ![encrypt](fig/encrypt.png)
 
 5. Click **OK** when encryption finishes.
@@ -552,7 +555,7 @@ Right-click![file_vault](../common/file_vault.svg) or **My Vault** in the **Comp
 - Select  **Unlock**, input password in the pop-up dialogue box and click **Unlock**. 
 - Select  **Unlock by key**, input the 32-digit recovery key in the pop-up dialogue box and click **Unlock**. 
 
-> ![tips](../common/tips.svg)Tips: You can click ![file_vault](../common/file_vault.svg) in the left panel or double-click **My Vault** in the **Computer** interface and input password. 
+> ![tips](../common/tips.svg) Tips: You can click ![file_vault](../common/file_vault.svg) in the left panel or double-click **My Vault** in the **Computer** interface and input password. 
 
 ### Delete File Vault
 
@@ -562,7 +565,7 @@ You can delete a vault only after unlocking it.
 2. Input file vault password in the pop-up dialogue box and click **Remove**. 
 3. Input your login password in the pop-up dialogue box and click **Confirm** to finish this operation.
 
-> ![attention](../common/attention.svg)Attention: Files inside the vault would be deleted as you remove the file vault. Please backup them before you remove the file vault if needed. 
+> ![attention](../common/attention.svg) Attention: Files inside the vault would be deleted as you remove the file vault. Please backup them before you remove the file vault if needed. 
 
 ## Disk Management
 
@@ -588,10 +591,12 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
     </tbody>
 </table>
 
-> ![notes](../common/notes.svg)Notes: If disks or folders in the disk are encrypted, you will have to input password before visiting them. 
+> ![notes](../common/notes.svg) Notes: If disks or folders in the disk are encrypted, you will have to input password before visiting them. 
 
 ### Local Disks
+
 #### Hide Local Disks
+
 1. Click ![icon_menu](../common/icon_menu.svg)> **Settings** on the interface of File Manager.
 2. Check **Hide system disk** under **Advanced** > **Other**.
 
@@ -602,11 +607,12 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
 2. Select **Rename**.
 3. Input the new name and press **Enter** or click any blank area to save the modification.
 
-> ![tips](../common/tips.svg)Tips: In the computer interface, double click any local disk slowly, after the editing box appears, you can rename it directly.
+> ![tips](../common/tips.svg) Tips: In the computer interface, double click any local disk slowly, after the editing box appears, you can rename it directly.
 
 ![0|disk](fig/p_rename_disk.png)
 
 ### External Disks
+
 #### Eject External Disks
 
 1. In the left panel of File Manager, right-click the disk you want to remove.
@@ -618,9 +624,10 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
 
 ![0|disk](fig/disk1.png)
 
-> ![tips](../common/tips.svg)Tips: you can also select **Eject** or click ![unmount](../common/unmount_normal.svg) in the left panel to unmount the disk.
+> ![tips](../common/tips.svg) Tips: you can also select **Eject** or click ![unmount](../common/unmount_normal.svg) in the left panel to unmount the disk.
 
 #### Rename External Disks
+
 1. In the left panel or on computer interface, right-click the disk you want to rename.
 2. Select **Unmount** and then select **Rename**.
 3. Input the new name and press **Enter** or click any blank area to save the modification.
@@ -637,7 +644,7 @@ Local disks are displayed in the left panel of File Manager. When you mount any 
 
    ![0|disk](fig/disk2.png)
 
-> ![notes](../common/notes.svg)Notes: If you check **Quick Format**, the disk can be formatted quickly in a few seconds, but the data could be restored by file recovery tools. If you don't want these data to be restored, you can uncheck this option box and format the disk.
+> ![notes](../common/notes.svg) Notes: If you check **Quick Format**, the disk can be formatted quickly in a few seconds, but the data could be restored by file recovery tools. If you don't want these data to be restored, you can uncheck this option box and format the disk.
 
 
 ## Main Menu
@@ -681,6 +688,7 @@ You can [visit sharing folders](#Visit Sharing Folders) by connecting to server.
 
 
 #### Advanced
+
 1. Click ![icon_menu](../common/icon_menu.svg)> **Settings** on the interface of File Manager.
 2. Select **Advanced**.
    - You can check **Auto index internal disk**, when you search files, the files in internal disks would be searched.
@@ -689,6 +697,7 @@ You can [visit sharing folders](#Visit Sharing Folders) by connecting to server.
    - You can select which types of files can be previewed.
    - You can check **Auto mount**, when any external disks connect to the computer, they would be mounted automatically. 
    - You can check **Open after auto mount**, when any external disks connect to the computer, they would be mounted automatically and opened. 
+   - You can check **Show item counts and sizes in the path of mounted MTP devices** to show the status bar information below the path after MTP devices are mounted.
    - You can check **Use the file chooser dialog of File Manager**, when selecting files, File Manager window would be opened.
    - You can check **Ask for my confirmation when deleting files**, when deleting files, a hint dialog would pop up.
    - You can check **Hide system disk**, local disks would not be displayed in left panel and computer interface. 
