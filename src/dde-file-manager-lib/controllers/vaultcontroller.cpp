@@ -1283,13 +1283,21 @@ void VaultController::slotVaultPolicy()
             emit sigCloseWindow();
             break;
         case VaultPageMark::CLIPBOARDPAGE:
-            if(!m_vaultVisiable) {
+            if(m_vaultVisiable) {
+                lockVault();
+                m_vaultVisiable = false;
+                emit DFMApplication::instance()->reloadComputerModel();
                 VaultHelper::killVaultTasks();
+                return;
             }
             break;
         case VaultPageMark::COPYFILEPAGE:
-            if(!m_vaultVisiable) {
+            if(m_vaultVisiable) {
+                lockVault();
+                m_vaultVisiable = false;
+                emit DFMApplication::instance()->reloadComputerModel();
                 VaultHelper::killVaultTasks();
+                return;
             }
             break;
         case VaultPageMark::CREATEVAULTPAGE1:
