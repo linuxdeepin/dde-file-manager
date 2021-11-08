@@ -35,13 +35,13 @@
 
 class RecentUtil final
 {
-    inline static QDomDocument recentDom;
-    inline static QDomNodeList nodes;
+    static QDomDocument recentDom;
+    static QDomNodeList nodes;
     ///home/funning/.local/share/recently-used.xbel
-    inline static QFile recentFile;
+    static QFile recentFile;
 public:
-    inline static QString recentScheme = "recent";
-    inline static QString sidebarDisplayText = QObject::tr("Recent");
+    static QString recentScheme;
+    static QString sidebarDisplayText;
 
     explicit RecentUtil() = delete;
 

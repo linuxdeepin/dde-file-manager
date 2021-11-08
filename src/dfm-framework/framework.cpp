@@ -31,6 +31,7 @@ class FrameworkPrivate
     Framework *const q;
     // Plugin lifeCycle manager.
     QScopedPointer<LifeCycle> lifeCycle;
+    QScopedPointer<AppBus> appBus;
     bool bInitialized = false;
 
     explicit FrameworkPrivate(Framework *dd);
@@ -113,6 +114,14 @@ PluginServiceContext &Framework::serviceContext() const
 EventCallProxy &Framework::eventProxy() const
 {
     return EventCallProxy::instance();
+}
+
+AppBus &Framework::appBus() const
+{
+    if (!d->appBus) {
+        d->appBus.reset(new AppBus());
+    }
+    return *d->appBus;
 }
 
 Framework::Framework() :

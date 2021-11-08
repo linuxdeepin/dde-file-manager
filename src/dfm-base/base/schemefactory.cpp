@@ -28,6 +28,11 @@ namespace GlobalPrivate {
 static bool dfmioIsInit = DFMIO::dfmio_init();
 }
 
+InfoFactory *InfoFactory::ins = nullptr;
+WacherFactory *WacherFactory::ins = nullptr;
+FileDeviceFactory *FileDeviceFactory::ins = nullptr;
+DirIteratorFactory *DirIteratorFactory::ins = nullptr;
+
 InfoFactory &InfoFactory::instance()
 {
     if (!ins) {

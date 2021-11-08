@@ -95,7 +95,7 @@ public:
 class BrowseWidgetFactory final : public SchemeWidegtFactory<DisplayViewLogic>
 {
     Q_DISABLE_COPY(BrowseWidgetFactory)
-    inline static BrowseWidgetFactory* ins = nullptr;
+    static BrowseWidgetFactory* ins;
 public:
 
     template<class CT = DisplayViewLogic>

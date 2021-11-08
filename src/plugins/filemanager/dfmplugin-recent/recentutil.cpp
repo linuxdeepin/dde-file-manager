@@ -20,3 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "recentutil.h"
+QDomDocument RecentUtil::recentDom{};
+QDomNodeList RecentUtil::nodes{};
+QFile RecentUtil::recentFile{};
+QString RecentUtil::recentScheme {"recent"};
+QString RecentUtil::sidebarDisplayText {QObject::tr("Recent")};

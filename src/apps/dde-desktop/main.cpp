@@ -95,6 +95,11 @@ static bool pluginsLoad()
     return true;
 }
 
+void initAbus()
+{
+    dpfInstance.appBus();
+}
+
 int main(int argc, char *argv[])
 {
     DApplication a(argc, argv);
@@ -105,6 +110,8 @@ int main(int argc, char *argv[])
         qCritical() << "Load pugin failed!";
         abort();
     }
+
+    initAbus();
 
     return a.exec();
 }

@@ -166,10 +166,12 @@ void FileViewItem::setIconLayers(const IconLayers &layers)
                            ItemIconLayersRole);
 }
 
-const FileViewItem::IconLayers &FileViewItem::iconLayers()
+IconLayers FileViewItem::iconLayers()
 {
     QVariant variant = data(ItemIconLayersRole);
-    return variant.value<IconLayers>();
+    if (!variant.canConvert<IconLayers>())
+        return {};
+    return qvariant_cast<IconLayers>(variant);
 }
 
 QIcon FileViewItem::cornerMarkTL()

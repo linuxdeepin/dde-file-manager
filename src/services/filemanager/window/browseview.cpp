@@ -27,6 +27,8 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
+BrowseWidgetFactory* BrowseWidgetFactory::ins = nullptr;
+
 BrowseView::BrowseView(QWidget *parent)
     : FileView (parent)
 {

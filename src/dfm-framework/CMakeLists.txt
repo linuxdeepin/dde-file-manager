@@ -84,17 +84,12 @@ add_library(${PROJECT_NAME} SHARED
 
 target_link_libraries(
     ${PROJECT_NAME}
-    stdc++fs
     ${QtUseModules}
     ${PkgUseModules}
-)
+    )
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
-)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 add_library(DFM::framework ALIAS ${PROJECT_NAME})
-
 #install library file
 install(TARGETS
     ${PROJECT_NAME}

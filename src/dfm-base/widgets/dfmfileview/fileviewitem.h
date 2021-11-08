@@ -31,6 +31,25 @@
 #include <QMetaType>
 
 class FileViewItemPrivate;
+
+/*!
+ * \brief The IconLayer class 脚本图层变量
+ */
+class IconLayer
+{
+    QPointF apos; // 相对与文件icon的坐标
+    QIcon aicon; // 添加到icon上的图标
+public:
+    explicit IconLayer(){}
+    explicit IconLayer(const QPointF &pos, const QIcon &icon) : apos(pos), aicon(icon){}
+    void setPos(const QPointF &pos){ IconLayer::apos = pos; }
+    void setIcon(const QIcon &icon){ IconLayer::aicon = icon; }
+    QIcon icon(){ return IconLayer::aicon; }
+    QPointF pos(){ return IconLayer::apos; }
+};
+
+typedef QList<IconLayer> IconLayers; //多个图标叠加图层
+
 class FileViewItem: public QStandardItem
 {
     friend class FileViewItemPrivate;
@@ -72,14 +91,6 @@ public:
         BottomRight,
     };
 
-    struct IconLayer
-    {
-        QPointF pos;
-        QIcon icon;
-    };
-
-    typedef QList<IconLayer> IconLayers;
-
     explicit FileViewItem();
     explicit FileViewItem(const QUrl &url);
     explicit FileViewItem(const FileViewItem &other);
@@ -97,7 +108,7 @@ public:
     virtual QIcon cornerMarkBL();
     virtual QIcon cornerMarkBR();
     virtual void setIconLayers(const IconLayers& layers);
-    virtual const IconLayers& iconLayers();
+    virtual IconLayers iconLayers();
     QMimeType mimeType() const;
     virtual QVariant data(int role) const override;
 };
@@ -105,7 +116,7 @@ public:
 Q_DECLARE_METATYPE(FileViewItem);
 Q_DECLARE_METATYPE(FileViewItem*);
 Q_DECLARE_METATYPE(QSharedPointer<FileViewItem>);
-Q_DECLARE_METATYPE(FileViewItem::IconLayer)
-Q_DECLARE_METATYPE(FileViewItem::IconLayers);
+Q_DECLARE_METATYPE(IconLayer);
+Q_DECLARE_METATYPE(IconLayers);
 
 #endif // DFMFILEVIEWITEM_H

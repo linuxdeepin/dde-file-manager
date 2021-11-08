@@ -12,27 +12,27 @@ RecentDirIterator::RecentDirIterator(const QUrl &url,
 
 QUrl RecentDirIterator::next()
 {
-
+    return QUrl();
 }
 
 bool RecentDirIterator::hasNext() const
 {
-
+    return false;
 }
 
 QString RecentDirIterator::fileName() const
 {
-
+    return "";
 }
 
 QUrl RecentDirIterator::fileUrl() const
 {
-
+    return QUrl();
 }
 
 const AbstractFileInfoPointer RecentDirIterator::fileInfo() const
 {
-
+    return {};
 }
 
 QUrl RecentDirIterator::url() const

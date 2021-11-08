@@ -127,7 +127,7 @@ class InfoFactory final : public SchemeFactory<AbstractFileInfo>
 {
     Q_DISABLE_COPY(InfoFactory)
     friend class GC<InfoFactory>;
-    inline static InfoFactory *ins = nullptr;
+    static InfoFactory *ins;
 public:
 
     template<class CT = AbstractFileInfo>
@@ -159,7 +159,7 @@ class WacherFactory final : public SchemeFactory<AbstractFileWatcher>
 {
     Q_DISABLE_COPY(WacherFactory)
     friend class GC<WacherFactory>;
-    inline static WacherFactory *ins = nullptr;
+    static WacherFactory *ins;
 public:
 
     template<class CT = AbstractFileWatcher>
@@ -301,7 +301,7 @@ class DirIteratorFactory final : public DirIteratorFactoryT1<AbstractDirIterator
 {
     Q_DISABLE_COPY(DirIteratorFactory)
     friend class GC<DirIteratorFactory>;
-    inline static DirIteratorFactory *ins = nullptr;
+    static DirIteratorFactory *ins;
 public:
 
     /* @method regClass
@@ -359,7 +359,7 @@ class FileDeviceFactory final : public SchemeFactory<AbstractFileDevice>
 {
     Q_DISABLE_COPY(FileDeviceFactory)
     friend class GC<FileDeviceFactory>;
-    inline static FileDeviceFactory *ins = nullptr;
+    static FileDeviceFactory *ins;
 public:
     //提供任意子类的转换方法模板，仅限DAbstractFileDevice树族
     //与qSharedPointerDynamicCast保持一致

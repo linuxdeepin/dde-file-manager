@@ -26,7 +26,7 @@
 #include <QDataStream>
 #include <QFileInfo>
 #include <QtConcurrent>
-#include <filesystem>
+#include <QDirIterator>
 
 DPF_USE_NAMESPACE
 
@@ -43,7 +43,7 @@ AppBusPrivate::AppBusPrivate(AppBus *dd)
     //当前master加入
     onlineServers[appServerName] = nullptr;
 
-    for(auto val : scanfUseBusApp())
+    for (auto val : scanfUseBusApp())
     {
         auto localSocket = new QLocalSocket;
         localSocket->setServerName(val);
@@ -133,10 +133,13 @@ QStringList AppBusPrivate::scanfUseBusApp()
     auto controller = QtConcurrent::run([=]()
     {
         QStringList fileNames;
-        std::filesystem::directory_iterator itera(tmp.toStdString());
-        for(auto &emle: itera)
-        {
-            QString fileName = QString(emle.path().filename().c_str());
+        QDirIterator itera(tmp, QDir::NoSymLinks
+                           | QDir::System
+                           | QDir::Hidden
+                           | QDir::NoDotAndDotDot);
+        while (itera.hasNext()) {
+            itera.next();
+            QString fileName = itera.fileName();
 
             if (QFileInfo(tmp + "/" + fileName).suffix()
                     != metaObject()->className()) {

@@ -33,7 +33,7 @@ DFMBASE_BEGIN_NAMESPACE
 template <class CT>
 class GC
 {
-    inline static CT *ins = nullptr;
+    CT *ins;
 public:
     explicit GC(CT* instance)
     {
@@ -56,7 +56,7 @@ public:
 template <class CT>
 class Singletion
 {
-    inline static CT *ins = nullptr;
+    static CT *ins;
 public:
     explicit Singletion();
     static CT& instance()
