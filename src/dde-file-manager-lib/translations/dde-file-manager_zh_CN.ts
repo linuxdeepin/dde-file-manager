@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -24,29 +22,29 @@
         <translation>挂载错误，镜像文件格式不支持</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="780"/>
-        <location filename="../controllers/appcontroller.cpp" line="820"/>
+        <location filename="../controllers/appcontroller.cpp" line="791"/>
+        <location filename="../controllers/appcontroller.cpp" line="831"/>
         <source>The device was not safely removed</source>
         <translation>设备没有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="780"/>
-        <location filename="../controllers/appcontroller.cpp" line="820"/>
+        <location filename="../controllers/appcontroller.cpp" line="791"/>
+        <location filename="../controllers/appcontroller.cpp" line="831"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>请点击“安全移除”后，再断开连接</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="790"/>
+        <location filename="../controllers/appcontroller.cpp" line="801"/>
         <source>The device was not ejected</source>
         <translation>设备未弹出</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="790"/>
+        <location filename="../controllers/appcontroller.cpp" line="801"/>
         <source>Disk is busy, cannot eject now</source>
         <translation>磁盘文件被占用，无法弹出</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="801"/>
+        <location filename="../controllers/appcontroller.cpp" line="812"/>
         <source>Authentication timed out</source>
         <translation>认证超时</translation>
     </message>
@@ -1954,6 +1952,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
+        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>确 定</translation>
@@ -2063,27 +2062,27 @@
         <translation>无法找到链接目标文件</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="807"/>
-        <location filename="../controllers/filecontroller.cpp" line="826"/>
-        <location filename="../controllers/filecontroller.cpp" line="845"/>
+        <location filename="../controllers/filecontroller.cpp" line="806"/>
+        <location filename="../controllers/filecontroller.cpp" line="825"/>
+        <location filename="../controllers/filecontroller.cpp" line="844"/>
         <source>Kindly Reminder</source>
         <translation>温馨提示</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="807"/>
-        <location filename="../controllers/filecontroller.cpp" line="826"/>
-        <location filename="../controllers/filecontroller.cpp" line="845"/>
+        <location filename="../controllers/filecontroller.cpp" line="806"/>
+        <location filename="../controllers/filecontroller.cpp" line="825"/>
+        <location filename="../controllers/filecontroller.cpp" line="844"/>
         <source>Please install File Roller first and then continue</source>
         <translation>请先安装归档管理器然后继续</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1516"/>
-        <location filename="../controllers/filecontroller.cpp" line="1536"/>
+        <location filename="../controllers/filecontroller.cpp" line="1515"/>
+        <location filename="../controllers/filecontroller.cpp" line="1535"/>
         <source>Unable to create files here: %1</source>
         <translation>不能在此创建文件：%1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1518"/>
+        <location filename="../controllers/filecontroller.cpp" line="1517"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>确 定</translation>
@@ -4156,7 +4155,7 @@
     </message>
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="1543"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="543"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="548"/>
         <source>Failed to start Samba services</source>
         <translation>Samba服务启动失败</translation>
     </message>
@@ -4689,14 +4688,14 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1605"/>
+        <location filename="../controllers/appcontroller.cpp" line="1618"/>
         <location filename="../../fileoperations/filejob.cpp" line="757"/>
         <location filename="../../fileoperations/filejob.cpp" line="1016"/>
         <source>The device was not safely unmounted</source>
         <translation>设备没有正常卸载</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1612"/>
+        <location filename="../controllers/appcontroller.cpp" line="1625"/>
         <source>The device was not safely removed</source>
         <translation>设备没有正常移除</translation>
     </message>
@@ -4714,27 +4713,28 @@
         <translation>请您先安装samba后，再进行共享相关操作！</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="441"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="414"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="452"/>
+        <source>The share name must not contain %&lt;&gt;*?|/\+=;:,&quot; and should not start with %1</source>
+        <translation>共享名不得包含%&lt;&gt;*?|/\+=;:,&quot;，且不能以%1开头</translation>
+    </message>
+    <message>
+        <location filename="../../usershare/usersharemanager.cpp" line="446"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>为了文件安全，无法共享此文件夹。</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="447"/>
-        <source>The share name must not contain %&lt;&gt;*?|/\+=;:,&quot;</source>
-        <translation>共享名不得包含%&lt;&gt;*?|/\+=;:,&quot;</translation>
-    </message>
-    <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="464"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="469"/>
         <source>Sharing failed</source>
         <translation>共享失败</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="464"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="469"/>
         <source>The computer name is too long</source>
         <translation>计算机名过长</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="561"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="566"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>您没有权限操作文件/文件夹！</translation>
     </message>

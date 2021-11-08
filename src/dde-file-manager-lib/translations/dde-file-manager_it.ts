@@ -22,29 +22,29 @@
         <translation>Mount fallito: formato immagine non supportato</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="780"/>
-        <location filename="../controllers/appcontroller.cpp" line="820"/>
+        <location filename="../controllers/appcontroller.cpp" line="791"/>
+        <location filename="../controllers/appcontroller.cpp" line="831"/>
         <source>The device was not safely removed</source>
         <translation>Il dispositivo non è stato rimosso in sicurezza</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="780"/>
-        <location filename="../controllers/appcontroller.cpp" line="820"/>
+        <location filename="../controllers/appcontroller.cpp" line="791"/>
+        <location filename="../controllers/appcontroller.cpp" line="831"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Clicca su &quot;Rimozione sicura&quot; e rimuovilo solo successivamente</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="790"/>
+        <location filename="../controllers/appcontroller.cpp" line="801"/>
         <source>The device was not ejected</source>
         <translation>Il dispositivo non è stato rimosso</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="790"/>
+        <location filename="../controllers/appcontroller.cpp" line="801"/>
         <source>Disk is busy, cannot eject now</source>
         <translation>Disco occupato, impossibile espellerlo ora</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="801"/>
+        <location filename="../controllers/appcontroller.cpp" line="812"/>
         <source>Authentication timed out</source>
         <translation>Autenticazione scaduta</translation>
     </message>
@@ -641,32 +641,32 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="48"/>
         <source>Save Recovery Key</source>
-        <translation type="unfinished"/>
+        <translation>Salva chiave di recupero</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="53"/>
         <source>Keep the key safe to retrieve the vault password later</source>
-        <translation type="unfinished"/>
+        <translation>Conserva la chiave al sicuro per recuperare la password del vault in un secondo momento</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="58"/>
         <source>Save to default path</source>
-        <translation type="unfinished"/>
+        <translation>Salva nel percorso predefinito</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="62"/>
         <source>Save to other locations</source>
-        <translation type="unfinished"/>
+        <translation>Salva in altri percorsi</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="63"/>
         <source>No permission, please reselect</source>
-        <translation type="unfinished"/>
+        <translation>Autorizzazione negata</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="75"/>
         <source>Select a path</source>
-        <translation type="unfinished"/>
+        <translation>Seleziona un percorso</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="93"/>
@@ -676,7 +676,7 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="106"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
-        <translation type="unfinished"/>
+        <translation>Il percorso predefinito è invisibile agli altri utenti e le informazioni sul percorso non verranno visualizzate.</translation>
     </message>
 </context>
 <context>
@@ -811,7 +811,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="50"/>
         <source>Cannot open this path</source>
-        <translation type="unfinished"/>
+        <translation>Impossibile aprire questo percorso</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="50"/>
@@ -973,43 +973,43 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="146"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="323"/>
         <source>Unable to get the key file</source>
-        <translation type="unfinished"/>
+        <translation>Impossibile ottenere il file chiave</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="88"/>
         <source>Verification failed</source>
-        <translation type="unfinished"/>
+        <translation>Verifica fallita</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="190"/>
         <source>Select a path</source>
-        <translation type="unfinished"/>
+        <translation>Seleziona un percorso</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="181"/>
         <source>Retrieve Password</source>
-        <translation type="unfinished"/>
+        <translation>Recupera la password</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="185"/>
         <source>By key in the default path</source>
-        <translation type="unfinished"/>
+        <translation>Dalla chiave nel percorso predefinito</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="186"/>
         <source>By key in the specified path</source>
-        <translation type="unfinished"/>
+        <translation>Dalla chiave in un percorso specifico</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="209"/>
         <source>Verification Successful</source>
-        <translation type="unfinished"/>
+        <translation>Verifica completata</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="212"/>
         <source>Keep it safe</source>
-        <translation type="unfinished"/>
+        <translation>Tienila al sicuro</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
@@ -1021,13 +1021,13 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
         <source>Verify Key</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Verifica chiave</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Vai allo sblocco</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
@@ -1038,7 +1038,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="306"/>
         <source>Vault password: %1</source>
-        <translation type="unfinished"/>
+        <translation>Password Vault: %1</translation>
     </message>
 </context>
 <context>
@@ -1056,7 +1056,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="72"/>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Password dimenticata?</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="142"/>
@@ -1088,22 +1088,22 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="251"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Riprova tra %1 minuti</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="278"/>
         <source>Wrong password, please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Password errata, riprova tra %1 minuti</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="281"/>
         <source>Wrong password, one chance left</source>
-        <translation type="unfinished"/>
+        <translation>Password errata, ultimo tentativo disponibile</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="283"/>
         <source>Wrong password, %1 chances left</source>
-        <translation type="unfinished"/>
+        <translation>Password errata, %1 tentativi disponibili</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="328"/>
@@ -1953,6 +1953,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
+        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Conferma</translation>
@@ -2062,27 +2063,27 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <translation>Impossibile trovare il file di origine</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="807"/>
-        <location filename="../controllers/filecontroller.cpp" line="826"/>
-        <location filename="../controllers/filecontroller.cpp" line="845"/>
+        <location filename="../controllers/filecontroller.cpp" line="806"/>
+        <location filename="../controllers/filecontroller.cpp" line="825"/>
+        <location filename="../controllers/filecontroller.cpp" line="844"/>
         <source>Kindly Reminder</source>
         <translation>Promemoria</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="807"/>
-        <location filename="../controllers/filecontroller.cpp" line="826"/>
-        <location filename="../controllers/filecontroller.cpp" line="845"/>
+        <location filename="../controllers/filecontroller.cpp" line="806"/>
+        <location filename="../controllers/filecontroller.cpp" line="825"/>
+        <location filename="../controllers/filecontroller.cpp" line="844"/>
         <source>Please install File Roller first and then continue</source>
         <translation>Installa File Roller prima di continuare</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1516"/>
-        <location filename="../controllers/filecontroller.cpp" line="1536"/>
+        <location filename="../controllers/filecontroller.cpp" line="1515"/>
+        <location filename="../controllers/filecontroller.cpp" line="1535"/>
         <source>Unable to create files here: %1</source>
         <translation>Impossibile creare qui il file: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1518"/>
+        <location filename="../controllers/filecontroller.cpp" line="1517"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Conferma</translation>
@@ -2138,7 +2139,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../views/fileitem.cpp" line="203"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"/>
+        <translation>%1 non ammessi</translation>
     </message>
 </context>
 <context>
@@ -2509,7 +2510,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <location filename="../configure/global-setting-template-pro.js" line="257"/>
         <location filename="../configure/global-setting-template.js" line="256"/>
         <source>Keep showing the mounted Samba shares</source>
-        <translation type="unfinished"/>
+        <translation>Continua a mostrare le condivisioni Samba montate</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="269"/>
@@ -2972,75 +2973,75 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
 <context>
     <name>PathManager</name>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="58"/>
+        <location filename="../controllers/pathmanager.cpp" line="59"/>
         <source>Home</source>
         <translation>Home</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="59"/>
+        <location filename="../controllers/pathmanager.cpp" line="60"/>
         <source>Desktop</source>
         <translation>Desktop</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="60"/>
+        <location filename="../controllers/pathmanager.cpp" line="61"/>
         <source>Videos</source>
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="61"/>
+        <location filename="../controllers/pathmanager.cpp" line="62"/>
         <source>Music</source>
         <translation>Musica</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="62"/>
+        <location filename="../controllers/pathmanager.cpp" line="63"/>
         <source>Pictures</source>
         <translation>Immagini</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="63"/>
+        <location filename="../controllers/pathmanager.cpp" line="64"/>
         <source>Documents</source>
         <translation>Documenti</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="64"/>
+        <location filename="../controllers/pathmanager.cpp" line="65"/>
         <source>Downloads</source>
         <translation>Download</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="65"/>
+        <location filename="../controllers/pathmanager.cpp" line="66"/>
         <location filename="../models/trashfileinfo.cpp" line="85"/>
         <source>Trash</source>
         <translation>Cestino</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="66"/>
+        <location filename="../controllers/pathmanager.cpp" line="67"/>
         <location filename="../models/dfmrootfileinfo.cpp" line="678"/>
         <location filename="../models/dfmrootfileinfo.cpp" line="706"/>
         <source>System Disk</source>
         <translation>Disco di sistema</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="67"/>
+        <location filename="../controllers/pathmanager.cpp" line="68"/>
         <source>Computers in LAN</source>
         <translation>Computer in LAN</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="68"/>
+        <location filename="../controllers/pathmanager.cpp" line="69"/>
         <source>My Shares</source>
         <translation>Condivisi</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="69"/>
+        <location filename="../controllers/pathmanager.cpp" line="70"/>
         <source>Computer</source>
         <translation>Computer</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="70"/>
+        <location filename="../controllers/pathmanager.cpp" line="71"/>
         <source>Recent</source>
         <translation>File Recenti</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="71"/>
+        <location filename="../controllers/pathmanager.cpp" line="72"/>
         <source>File Vault</source>
         <translation>File di recupero Vault</translation>
     </message>
@@ -3189,7 +3190,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1429"/>
         <source>Unconnected network shared directory</source>
-        <translation type="unfinished"/>
+        <translation>Directory condivisa di rete non connessa</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1447"/>
@@ -3290,7 +3291,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="68"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="612"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="613"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="58"/>
         <source>Open in new window</source>
         <translation>Apri in una nuova finestra</translation>
@@ -3301,7 +3302,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="72"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="616"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="617"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="62"/>
         <source>Open in new tab</source>
         <translation>Apri in una nuova scheda</translation>
@@ -3538,7 +3539,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
         <source>Clear saved password and unmount</source>
-        <translation type="unfinished"/>
+        <translation>Cancella le password salvate e smonta</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
@@ -4069,12 +4070,12 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <translation>Elimina</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="604"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="605"/>
         <source>Copy path</source>
         <translation>Copia percorso</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="622"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="623"/>
         <source>Edit address</source>
         <translation>Modifica percorso</translation>
     </message>
@@ -4151,13 +4152,13 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="479"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="688"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"/>
+        <translation>%1 non ammessi</translation>
     </message>
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="1543"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="543"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="548"/>
         <source>Failed to start Samba services</source>
-        <translation type="unfinished"/>
+        <translation>Impossibile avviare i servizi Samba</translation>
     </message>
 </context>
 <context>
@@ -4177,17 +4178,17 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="472"/>
         <source>Do you want to remove this item?</source>
-        <translation type="unfinished"/>
+        <translation>Desideri eliminare questo elemento?</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="474"/>
         <source>Do yout want to remove %1 items?</source>
-        <translation type="unfinished"/>
+        <translation>Vuoi rimuovere %1 elementi?</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="475"/>
         <source>It does not delete the original files</source>
-        <translation type="unfinished"/>
+        <translation>Non cancellare i file originali</translation>
     </message>
 </context>
 <context>
@@ -4688,14 +4689,14 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1605"/>
+        <location filename="../controllers/appcontroller.cpp" line="1618"/>
         <location filename="../../fileoperations/filejob.cpp" line="757"/>
         <location filename="../../fileoperations/filejob.cpp" line="1016"/>
         <source>The device was not safely unmounted</source>
         <translation>Il dispositivo non è stato rimosso in sicurezza</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1612"/>
+        <location filename="../controllers/appcontroller.cpp" line="1625"/>
         <source>The device was not safely removed</source>
         <translation>Il dispositivo non è stato rimosso in sicurezza</translation>
     </message>
@@ -4713,27 +4714,28 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <translation>Installa Samba prima di continuare</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="441"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="414"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="452"/>
+        <source>The share name must not contain %&lt;&gt;*?|/\+=;:,&quot; and should not start with %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../usershare/usersharemanager.cpp" line="446"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>Per proteggere i file non puoi condividere questa cartella.</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="447"/>
-        <source>The share name must not contain %&lt;&gt;*?|/\+=;:,&quot;</source>
-        <translation>Il nome condiviso non deve contenere %&lt;&gt;*?|/\+=;:,&quot;</translation>
-    </message>
-    <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="464"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="469"/>
         <source>Sharing failed</source>
         <translation>Condivisione fallita</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="464"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="469"/>
         <source>The computer name is too long</source>
         <translation>Il nome computer è troppo lungo</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="561"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="566"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Non hai i permessi per modificare il file/cartella!</translation>
     </message>

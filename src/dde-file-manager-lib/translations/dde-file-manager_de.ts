@@ -14,7 +14,7 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="616"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
-        <translation>Das Disc-Image ist beschädigt. Es kann jetzt nicht geladen werden. Löschen Sie zuerst die Disc</translation>
+        <translation>Das Disc-Abbild ist beschädigt. Es kann jetzt nicht geladen werden. Löschen Sie zuerst die Disc</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="658"/>
@@ -22,29 +22,29 @@
         <translation>Einhängefehler: Nicht unterstütztes Abbildformat</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="780"/>
-        <location filename="../controllers/appcontroller.cpp" line="820"/>
+        <location filename="../controllers/appcontroller.cpp" line="791"/>
+        <location filename="../controllers/appcontroller.cpp" line="831"/>
         <source>The device was not safely removed</source>
         <translation>Das Gerät wurde nicht sicher entfernt</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="780"/>
-        <location filename="../controllers/appcontroller.cpp" line="820"/>
+        <location filename="../controllers/appcontroller.cpp" line="791"/>
+        <location filename="../controllers/appcontroller.cpp" line="831"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Klicke auf „Sicher entfernen“ und trenne die Verbindung dann beim nächsten Mal</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="790"/>
+        <location filename="../controllers/appcontroller.cpp" line="801"/>
         <source>The device was not ejected</source>
         <translation>Das Gerät wurde nicht ausgeworfen</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="790"/>
+        <location filename="../controllers/appcontroller.cpp" line="801"/>
         <source>Disk is busy, cannot eject now</source>
-        <translation>Festplatte wird verwendet, sie kann jetzt nicht ausgeworfen werden</translation>
+        <translation>Datenträger wird verwendet, er kann jetzt nicht ausgeworfen werden</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="801"/>
+        <location filename="../controllers/appcontroller.cpp" line="812"/>
         <source>Authentication timed out</source>
         <translation>Zeitüberschreitung bei der Authentifizierung</translation>
     </message>
@@ -242,7 +242,7 @@
         <location filename="../models/computermodel.cpp" line="670"/>
         <location filename="../models/computermodel.cpp" line="674"/>
         <source>Disks</source>
-        <translation>Festplatten</translation>
+        <translation>Laufwerke</translation>
     </message>
 </context>
 <context>
@@ -313,7 +313,7 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="366"/>
         <source>Obtaining...</source>
-        <translation type="unfinished"/>
+        <translation>Wird abgerufen ...</translation>
     </message>
 </context>
 <context>
@@ -645,7 +645,7 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="53"/>
         <source>Keep the key safe to retrieve the vault password later</source>
-        <translation type="unfinished"/>
+        <translation>Bewahren Sie den Schlüssel sicher auf, um das Passwort für den Tresor später abrufen zu können</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="58"/>
@@ -660,7 +660,7 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="63"/>
         <source>No permission, please reselect</source>
-        <translation type="unfinished"/>
+        <translation>Keine Berechtigung, bitte erneut auswählen</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="75"/>
@@ -675,7 +675,7 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="106"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
-        <translation type="unfinished"/>
+        <translation>Der Standardpfad ist für andere Benutzer unsichtbar, und die Pfadinformationen werden nicht angezeigt.</translation>
     </message>
 </context>
 <context>
@@ -809,12 +809,12 @@
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="50"/>
         <source>Cannot open this path</source>
-        <translation type="unfinished"/>
+        <translation>Dieser Pfad kann nicht geöffnet werden</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="50"/>
         <source>Hint</source>
-        <translation type="unfinished"/>
+        <translation>Hinweis</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="51"/>
@@ -971,12 +971,12 @@
         <location filename="../views/dfmvaultretrievepassword.cpp" line="146"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="323"/>
         <source>Unable to get the key file</source>
-        <translation type="unfinished"/>
+        <translation>Die Schlüsseldatei kann nicht abgerufen werden</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="88"/>
         <source>Verification failed</source>
-        <translation type="unfinished"/>
+        <translation>Verifizierung fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
@@ -1002,7 +1002,7 @@
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="209"/>
         <source>Verification Successful</source>
-        <translation type="unfinished"/>
+        <translation>Verifizierung erfolgreich</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="212"/>
@@ -1019,7 +1019,7 @@
         <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
         <source>Verify Key</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Schlüssel verifizieren</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
@@ -1049,7 +1049,7 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="68"/>
         <source>Verify your password</source>
-        <translation>Überprüfen Sie Ihr Passwort</translation>
+        <translation>Verifizieren Sie Ihr Passwort</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="72"/>
@@ -1170,7 +1170,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="237"/>
         <source>Not enough free space on the target disk</source>
-        <translation>Nicht genügend freier Speicherplatz auf der Zielfestplatte</translation>
+        <translation>Nicht genügend freier Speicherplatz auf dem Ziellaufwerk</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="239"/>
@@ -1517,7 +1517,7 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="740"/>
         <source>Verifying data...</source>
-        <translation>Daten werden überprüft ...</translation>
+        <translation>Daten werden verifiziert ...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="790"/>
@@ -1597,12 +1597,12 @@
         <location filename="../../fileoperations/filejob.cpp" line="758"/>
         <location filename="../../fileoperations/filejob.cpp" line="1017"/>
         <source>Disk is busy, cannot unmount now</source>
-        <translation>Die Festplatte wird verwndet und kann jetzt nicht ausgehängt werden</translation>
+        <translation>Laufwerk wird verwendet, es kann jetzt nicht ausgehängt werden</translation>
     </message>
     <message>
         <location filename="../interfaces/dumountmanager.cpp" line="181"/>
         <source>Disk is busy, cannot eject now</source>
-        <translation>Festplatte wird verwendet, sie kann jetzt nicht ausgeworfen werden</translation>
+        <translation>Datenträger wird verwendet, er kann jetzt nicht ausgeworfen werden</translation>
     </message>
     <message>
         <location filename="../interfaces/dumountmanager.cpp" line="236"/>
@@ -1630,7 +1630,7 @@
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="52"/>
         <source>Data Disk</source>
         <comment>Data Partition</comment>
-        <translation>Datenfestplatte</translation>
+        <translation>Datenlaufwerk</translation>
     </message>
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="729"/>
@@ -1796,7 +1796,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1095"/>
         <source>Unable to find the original file</source>
-        <translation type="unfinished"/>
+        <translation>Die Originaldatei kann nicht gefunden werden</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
@@ -1844,7 +1844,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1576"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
-        <translation>Um auf das Gerät zugreifen zu können, müssen Sie den Datenträger zuerst formatieren. Sind Sie sicher, dass Sie es jetzt formatieren wollen?</translation>
+        <translation>Um auf das Gerät zugreifen zu können, müssen Sie das Laufwerk zuerst formatieren. Sind Sie sicher, dass Sie es jetzt formatieren wollen?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1591"/>
@@ -1951,6 +1951,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
+        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Bestätigen</translation>
@@ -1964,7 +1965,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="589"/>
         <source>Data verification failed</source>
-        <translation>Datenüberprüfung fehlgeschlagen</translation>
+        <translation>Datenverifizierung fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="622"/>
@@ -1988,7 +1989,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="903"/>
         <source>Disk is busy, cannot unmount now</source>
-        <translation>Die Festplatte ist beschäftigt und kann jetzt nicht ausgehängt werden</translation>
+        <translation>Laufwerk wird verwendet, es kann jetzt nicht ausgehängt werden</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="907"/>
@@ -1999,7 +2000,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1020"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
-        <translation>Kopieren nicht möglich. Nicht genügend freier Speicherplatz auf der Zielfestplatte.</translation>
+        <translation>Kopieren nicht möglich. Nicht genügend freier Speicherplatz auf dem Ziellaufwerk.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1153"/>
@@ -2024,7 +2025,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1291"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation>Die  Laufwerke können unter Windows für gewöhnlich nicht gelesen oder beschrieben werden, wenn die Einstellung &quot;Aktiviere Schnellstart (empfohlen)&quot; bei den Herunterfahreinstellungen aktiviert ist.</translation>
+        <translation>Die Laufwerke können unter Windows für gewöhnlich nicht gelesen oder beschrieben werden, wenn die Einstellung &quot;Schnellstart aktivieren (empfohlen)&quot; bei den Herunterfahreinstellungen aktiviert ist.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1295"/>
@@ -2057,30 +2058,30 @@
         <location filename="../controllers/filecontroller.cpp" line="748"/>
         <location filename="../controllers/filecontroller.cpp" line="774"/>
         <source>Unable to find the original file</source>
-        <translation type="unfinished"/>
+        <translation>Die Originaldatei kann nicht gefunden werden</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="807"/>
-        <location filename="../controllers/filecontroller.cpp" line="826"/>
-        <location filename="../controllers/filecontroller.cpp" line="845"/>
+        <location filename="../controllers/filecontroller.cpp" line="806"/>
+        <location filename="../controllers/filecontroller.cpp" line="825"/>
+        <location filename="../controllers/filecontroller.cpp" line="844"/>
         <source>Kindly Reminder</source>
         <translation>Freundliche Erinnerung</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="807"/>
-        <location filename="../controllers/filecontroller.cpp" line="826"/>
-        <location filename="../controllers/filecontroller.cpp" line="845"/>
+        <location filename="../controllers/filecontroller.cpp" line="806"/>
+        <location filename="../controllers/filecontroller.cpp" line="825"/>
+        <location filename="../controllers/filecontroller.cpp" line="844"/>
         <source>Please install File Roller first and then continue</source>
         <translation>Bitte installieren Sie zuerst File Roller und fahren Sie dann fort</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1516"/>
-        <location filename="../controllers/filecontroller.cpp" line="1536"/>
+        <location filename="../controllers/filecontroller.cpp" line="1515"/>
+        <location filename="../controllers/filecontroller.cpp" line="1535"/>
         <source>Unable to create files here: %1</source>
         <translation>Dateien können hier nicht erstellt werden: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1518"/>
+        <location filename="../controllers/filecontroller.cpp" line="1517"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Bestätigen</translation>
@@ -2152,7 +2153,7 @@
         <location filename="../../fileoperations/filejob.cpp" line="1455"/>
         <location filename="../../fileoperations/filejob.cpp" line="1464"/>
         <source>Data verification successful.</source>
-        <translation>Datenüberprüfung erfolgreich.</translation>
+        <translation>Datenverifizierung erfolgreich.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="892"/>
@@ -2535,14 +2536,14 @@
         <location filename="../configure/global-setting-template-pro.js" line="287"/>
         <location filename="../configure/global-setting-template.js" line="286"/>
         <source>Hide system disk</source>
-        <translation>Systempartition verstecken</translation>
+        <translation>Systemlaufwerk verstecken</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="300"/>
         <location filename="../configure/global-setting-template-pro.js" line="300"/>
         <location filename="../configure/global-setting-template.js" line="299"/>
         <source>Show file system on disk icon</source>
-        <translation>Dateisystem auf Festplattensymbol anzeigen</translation>
+        <translation>Dateisystem auf Laufwerkssymbol anzeigen</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="188"/>
@@ -2694,17 +2695,17 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1782"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation>Das Laufwerk ist bereits vom Benutzer &quot;%1&quot; eingehängt, Sie können es nicht aushängen.</translation>
+        <translation>Das Laufwerk ist vom Benutzer „%1“ eingehängt, Sie können es nicht aushängen.</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1820"/>
         <source>Cannot unmount the device</source>
-        <translation>Kann das Gerät nicht aushängen</translation>
+        <translation>Das Gerät kann nicht ausgehängt werden</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1938"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
-        <translation>Das Gerät &quot;%1&quot; kann nicht ausgeworfen werden</translation>
+        <translation>Das Gerät „%1“ kann nicht ausgeworfen werden</translation>
     </message>
 </context>
 <context>
@@ -2889,7 +2890,7 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="51"/>
         <source>Input password to decrypt the disk</source>
-        <translation>Passwort eingeben, um die Festplatte zu entschlüsseln</translation>
+        <translation>Passwort eingeben, um das Laufwerk zu entschlüsseln</translation>
     </message>
 </context>
 <context>
@@ -2970,75 +2971,75 @@
 <context>
     <name>PathManager</name>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="58"/>
+        <location filename="../controllers/pathmanager.cpp" line="59"/>
         <source>Home</source>
         <translation>Home</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="59"/>
+        <location filename="../controllers/pathmanager.cpp" line="60"/>
         <source>Desktop</source>
         <translation>Arbeitsplatz</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="60"/>
+        <location filename="../controllers/pathmanager.cpp" line="61"/>
         <source>Videos</source>
         <translation>Videos</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="61"/>
+        <location filename="../controllers/pathmanager.cpp" line="62"/>
         <source>Music</source>
         <translation>Musik</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="62"/>
+        <location filename="../controllers/pathmanager.cpp" line="63"/>
         <source>Pictures</source>
         <translation>Bilder</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="63"/>
+        <location filename="../controllers/pathmanager.cpp" line="64"/>
         <source>Documents</source>
         <translation>Dokumente</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="64"/>
+        <location filename="../controllers/pathmanager.cpp" line="65"/>
         <source>Downloads</source>
         <translation>Downloads</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="65"/>
+        <location filename="../controllers/pathmanager.cpp" line="66"/>
         <location filename="../models/trashfileinfo.cpp" line="85"/>
         <source>Trash</source>
         <translation>Papierkorb</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="66"/>
+        <location filename="../controllers/pathmanager.cpp" line="67"/>
         <location filename="../models/dfmrootfileinfo.cpp" line="678"/>
         <location filename="../models/dfmrootfileinfo.cpp" line="706"/>
         <source>System Disk</source>
-        <translation>Systemfestplatte</translation>
+        <translation>Systemlaufwerk</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="67"/>
+        <location filename="../controllers/pathmanager.cpp" line="68"/>
         <source>Computers in LAN</source>
         <translation>Computer im LAN</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="68"/>
+        <location filename="../controllers/pathmanager.cpp" line="69"/>
         <source>My Shares</source>
         <translation>Meine Freigaben</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="69"/>
+        <location filename="../controllers/pathmanager.cpp" line="70"/>
         <source>Computer</source>
         <translation>Computer</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="70"/>
+        <location filename="../controllers/pathmanager.cpp" line="71"/>
         <source>Recent</source>
         <translation>Zuletzt</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="71"/>
+        <location filename="../controllers/pathmanager.cpp" line="72"/>
         <source>File Vault</source>
         <translation>Dateitresor</translation>
     </message>
@@ -3288,7 +3289,7 @@
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="68"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="612"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="613"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="58"/>
         <source>Open in new window</source>
         <translation>In neuem Fenster öffnen</translation>
@@ -3299,7 +3300,7 @@
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="72"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="616"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="617"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="62"/>
         <source>Open in new tab</source>
         <translation>In neuem Tab öffnen</translation>
@@ -3536,7 +3537,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
         <source>Clear saved password and unmount</source>
-        <translation type="unfinished"/>
+        <translation>Gespeichertes Passwort löschen und aushängen</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
@@ -3577,7 +3578,7 @@
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="308"/>
         <source>It does not support burning %1 discs</source>
-        <translation type="unfinished"/>
+        <translation>Das Brennen von %1-Datenträgern wird nicht unterstützt</translation>
     </message>
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="311"/>
@@ -3603,7 +3604,7 @@
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="368"/>
         <source>Verify data</source>
-        <translation>Daten überprüfen</translation>
+        <translation>Daten verifizieren</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="339"/>
@@ -4067,12 +4068,12 @@
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="604"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="605"/>
         <source>Copy path</source>
         <translation>Pfad kopieren</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="622"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="623"/>
         <source>Edit address</source>
         <translation>Adresse bearbeiten</translation>
     </message>
@@ -4102,7 +4103,7 @@
         <location filename="../models/computermodel.cpp" line="196"/>
         <location filename="../models/computermodel.cpp" line="607"/>
         <source>Disks</source>
-        <translation>Festplatten</translation>
+        <translation>Laufwerke</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="709"/>
@@ -4153,9 +4154,9 @@
     </message>
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="1543"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="543"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="548"/>
         <source>Failed to start Samba services</source>
-        <translation type="unfinished"/>
+        <translation>Start der Samba-Dienste ist fehlgeschlagen</translation>
     </message>
 </context>
 <context>
@@ -4175,17 +4176,17 @@
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="472"/>
         <source>Do you want to remove this item?</source>
-        <translation type="unfinished"/>
+        <translation>Möchten Sie dieses Element entfernen?</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="474"/>
         <source>Do yout want to remove %1 items?</source>
-        <translation type="unfinished"/>
+        <translation>Möchten Sie %1 Elemente entfernen?</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="475"/>
         <source>It does not delete the original files</source>
-        <translation type="unfinished"/>
+        <translation>Die Originaldateien werden dabei nicht gelöscht.</translation>
     </message>
 </context>
 <context>
@@ -4686,14 +4687,14 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1605"/>
+        <location filename="../controllers/appcontroller.cpp" line="1618"/>
         <location filename="../../fileoperations/filejob.cpp" line="757"/>
         <location filename="../../fileoperations/filejob.cpp" line="1016"/>
         <source>The device was not safely unmounted</source>
         <translation>Das Gerät wurde nicht sicher ausgehängt</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1612"/>
+        <location filename="../controllers/appcontroller.cpp" line="1625"/>
         <source>The device was not safely removed</source>
         <translation>Das Gerät wurde nicht sicher entfernt</translation>
     </message>
@@ -4711,27 +4712,28 @@
         <translation>Bitte installieren Sie zunächst Samba, um fortzufahren</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="441"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="414"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="452"/>
+        <source>The share name must not contain %&lt;&gt;*?|/\+=;:,&quot; and should not start with %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../usershare/usersharemanager.cpp" line="446"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>Um die Dateien zu schützen, können Sie diesen Ordner nicht freigeben.</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="447"/>
-        <source>The share name must not contain %&lt;&gt;*?|/\+=;:,&quot;</source>
-        <translation>Der Freigabename darf nicht %&lt;&gt;*?|/\+=;;,&quot; enthalten.</translation>
-    </message>
-    <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="464"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="469"/>
         <source>Sharing failed</source>
-        <translation type="unfinished"/>
+        <translation>Teilen fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="464"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="469"/>
         <source>The computer name is too long</source>
         <translation>Der Computername ist zu lang</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="561"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="566"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Sie besitzen nicht die erforderlichen Rechte um den Ordner oder die Datei zu bearbeiten!</translation>
     </message>

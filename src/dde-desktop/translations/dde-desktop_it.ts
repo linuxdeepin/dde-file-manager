@@ -141,12 +141,12 @@
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1029"/>
         <source>Lock Screen</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Lock Screen</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1030"/>
         <source>Both</source>
-        <translation type="unfinished"/>
+        <translation>Entrambe</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1105"/>

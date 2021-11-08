@@ -7,11 +7,11 @@
     </message>
     <message>
         <source>Disk is busy, cannot unmount now</source>
-        <translation>Die Festplatte wird verwndet und kann jetzt nicht ausgehängt werden</translation>
+        <translation>Laufwerk wird verwendet, es kann jetzt nicht ausgehängt werden</translation>
     </message>
     <message>
         <source>Disk is busy, cannot eject now</source>
-        <translation>Festplatte wird verwendet, sie kann jetzt nicht ausgeworfen werden</translation>
+        <translation>Datenträger wird verwendet, er kann jetzt nicht ausgeworfen werden</translation>
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
@@ -56,7 +56,7 @@
     </message>
     <message>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation>Das Laufwerk ist bereits vom Benutzer &quot;%1&quot; eingehängt, Sie können es nicht aushängen.</translation>
+        <translation>Das Laufwerk ist vom Benutzer „%1“ eingehängt, Sie können es nicht aushängen.</translation>
     </message>
     <message>
         <source>Cannot find the mounted device</source>
@@ -64,7 +64,7 @@
     </message>
     <message>
         <source>Disks</source>
-        <translation>Festplatten</translation>
+        <translation>Laufwerke</translation>
     </message>
 </context>
 <context>

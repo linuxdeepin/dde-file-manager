@@ -409,6 +409,11 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
     ShareInfo oldInfo = getOldShareInfoByNewInfo(info);
     qDebug() << oldInfo << info;
     if (!info.shareName().isEmpty() && QFile(info.path()).exists()) {
+        // 共享文件的共享名不能以-开头
+        if (info.shareName().startsWith("-")) {
+            dialogManager->showErrorDialog(tr("The share name must not contain %<>*?|/\\+=;:,\" and should not start with %1").arg("-"), "");
+            return false;
+        }
         QString cmd = "net";
         QStringList args;
         ShareInfo _info = info;
@@ -418,7 +423,7 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
             _info.setUsershare_acl("Everyone:R");
         }
         args << "usershare" << "add"
-             << "'" + _info.shareName() + "'" << _info.path()
+             << _info.shareName() << _info.path()
              << _info.comment() << _info.usershare_acl()
              << _info.guest_ok();
 
@@ -444,7 +449,7 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
 
             // 共享文件的共享名输入特殊字符会报这个错误信息
             if (err.contains("contains invalid characters")) {
-                dialogManager->showErrorDialog(tr("The share name must not contain %<>*?|/\\+=;:,\""), "");
+                dialogManager->showErrorDialog(tr("The share name must not contain %<>*?|/\\+=;:,\" and should not start with %1").arg("-"), "");
                 return false;
             }
 
