@@ -678,7 +678,7 @@ void DIconItemDelegate::paint(QPainter *painter,
         rc.moveTopRight(QPoint(option.rect.right() - 5, option.rect.top() + 5));
 
         DStyleOptionButton check;
-        check.state = DStyle::State_On;
+        check.state = DStyle::State_Enabled | DStyle::State_On;
         check.rect = rc;
 
         DApplication::style()->drawPrimitive(DStyle::PE_IndicatorItemViewItemCheck, &check, painter);
