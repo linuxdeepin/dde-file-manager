@@ -55,9 +55,6 @@ class CanvasGridViewTest : public testing::Test
 {
 public:
     CanvasGridViewTest():Test(){
-    }
-
-    virtual void SetUp() override{
         //以防桌面没文件
         path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
         m_cvmgr.reset(new CanvasViewManager(new BackgroundManager()));
@@ -67,6 +64,10 @@ public:
             }
             tpCanvas->hide();
         }
+    }
+
+    virtual void SetUp() override{
+        m_canvasGridView->clearSelection();
     }
 
     virtual void TearDown()override{
@@ -658,6 +659,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent_ShiftDelete)
 
     stub_ext::StubExt stub;
     stub.set_lamda(ADDR(DFileSelectionModel, selectedIndexes), [list](){return list;});
+    stub.set_lamda(ADDR(DFileService, deleteFiles), [](){return true;});
     m_canvasGridView->keyPressEvent(&keyPressEvt_Key_ShiftDelete);
 }
 
@@ -2312,8 +2314,8 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_shiftAndArrowKeys)
     m_canvasGridView->d->currentCursorIndex = index11;
     stu.reset(&DFMGlobal::keyShiftIsPressed);
     stu.set_lamda(ADDR(DFMGlobal, keyShiftIsPressed), [](){ return false;});
-    QTest::keyPress(m_canvasGridView, Qt::Key_Left);
-
+    QTest::keyPress(m_canvasGridView, Qt::Key_Left , Qt::NoModifier);
+    waitData(m_canvasGridView);
     //重新选中布局(0,1)图标
     stu.reset(&DFMGlobal::keyShiftIsPressed);
     stu.set_lamda(ADDR(DFMGlobal, keyShiftIsPressed), [](){ return true;});

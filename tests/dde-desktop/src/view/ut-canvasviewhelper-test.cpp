@@ -27,7 +27,7 @@ public:
         for (auto tpCanvas : m_cvmgr->m_canvasMap.values()) {
             if (1 == tpCanvas->screenNum()) {
                 m_view = tpCanvas.data();
-                m_canvas = tpCanvas.data()->d->fileViewHelper;
+                m_canvasHelper = tpCanvas.data()->d->fileViewHelper;
                 break;
             }
         }
@@ -39,6 +39,18 @@ public:
             file.open(QIODevice::ReadWrite | QIODevice::NewOnly);
             file.close();
         }
+
+        if (!m_view)
+            return;
+
+        auto model = m_view->model();
+        if (!model)
+            return;
+
+        QEventLoop loop;
+        QObject::connect(model, &DFileSystemModel::sigJobFinished, &loop,&QEventLoop::quit,Qt::QueuedConnection);
+        QTimer::singleShot(2000, &loop, &QEventLoop::quit);
+        loop.exec();
     }
     void SetUp() override {
     }
@@ -46,12 +58,11 @@ public:
     void TearDown() override {
     }
     QString path;
-    CanvasViewHelper *m_canvas = nullptr;
+    CanvasViewHelper *m_canvasHelper = nullptr;
     CanvasGridView *m_view = nullptr;
     QScopedPointer<CanvasViewManager> m_cvmgr{new CanvasViewManager(new BackgroundManager())};
 };
 }
-
 
 //TEST_F(CanvasViewHelperTest, test_onRequestSelectFiles)
 //{
@@ -60,36 +71,44 @@ public:
 //    bool isSelected = false;
 //    stub.set_lamda(VADDR(CanvasViewHelper, select), [&isSelected]() {isSelected = true;});
 
-//    m_canvas->onRequestSelectFiles(list);
+//    m_canvasHelper->onRequestSelectFiles(list);
 
 //    EXPECT_TRUE(isSelected);
 //}
 
 TEST_F(CanvasViewHelperTest, test_handleSelectEvent)
 {
+    stub_ext::StubExt stu;
+    bool judge = false;
+    typedef void (*fptr)(CanvasViewHelper*,const QList<DUrl> &list);
+    fptr testSelect = (fptr)(&CanvasViewHelper::select);
+    stu.set_lamda(testSelect, [&judge](){ judge = true; });
+
     DUrlList ulist;
     ulist << DUrl::fromLocalFile(path);
-    DFMUrlListBaseEvent event(m_canvas, ulist);
-    m_canvas->handleSelectEvent(event);
-    DFMUrlListBaseEvent event1(m_view, ulist);
-    m_canvas->handleSelectEvent(event1);
-    QModelIndex index;
-    for (auto url : ulist) {
-        index = m_view->model()->index(url, 0);
-        if (index.isValid()) {
-            EXPECT_TRUE(m_view->isSelected(index));
-        }
-    }
+    QObject obj;
+    DFMUrlListBaseEvent eventOne(&obj, ulist);
+    m_canvasHelper->handleSelectEvent(eventOne);
+    EXPECT_TRUE(!judge);
+
+    DFMUrlListBaseEvent eventTwo(m_view, ulist);
+    m_canvasHelper->handleSelectEvent(eventTwo);
+    EXPECT_TRUE(judge);
 }
 #ifndef __arm__
 //test
 TEST_F(CanvasViewHelperTest, test_edit)
 {
-    DFMEvent event(m_canvas);
+    DFMEvent event(m_canvasHelper);
     Stub stu, stu1;
     static QString mypath = path;
     static bool judge = false;
-    m_canvas->edit(event);
+    m_canvasHelper->edit(event);
+
+    stub_ext::StubExt stub;
+    typedef bool (*fptr)(CanvasGridView*,const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *even);
+    fptr testEdit = (fptr)&CanvasGridView::edit;
+    stub.set_lamda(testEdit, []()->bool{return true;});
 
     DUrlList(*mylist)() = []() {
         DUrlList ulist;
@@ -98,7 +117,7 @@ TEST_F(CanvasViewHelperTest, test_edit)
         return ulist;
     } ;
     stu.set(ADDR(DFMEvent, fileUrlList), mylist);
-    m_canvas->edit(event);
+    m_canvasHelper->edit(event);
 
     DUrlList(*mylist1)() = []() {
         DUrlList ulist;
@@ -106,13 +125,13 @@ TEST_F(CanvasViewHelperTest, test_edit)
         return ulist;
     } ;
     stu.reset(mylist1);
-    m_canvas->edit(event);
+    m_canvasHelper->edit(event);
 
     bool(*myjudge)() = []() {
         return true;
     };
     stu1.set(ADDR(DUrl, isEmpty), myjudge);
-    m_canvas->edit(event);
+    m_canvasHelper->edit(event);
     EXPECT_TRUE(judge);
 }
 #endif
@@ -120,7 +139,7 @@ TEST_F(CanvasViewHelperTest, test_selecturls)
 {
     stub_ext::StubExt stub;
     stub.set_lamda(VADDR(CanvasGridView, selectedUrls), []() {return DUrlList{DUrl("test")};});
-    DUrlList ulist = m_canvas->selectedUrls();
+    DUrlList ulist = m_canvasHelper->selectedUrls();
     EXPECT_EQ(ulist.size(), 1);
 }
 
@@ -138,12 +157,12 @@ TEST_F(CanvasViewHelperTest, test_initStyleOption)
     option->state = QStyle::State_HasFocus;
     option->showDecorationSelected = true;
     QModelIndex index = m_view->firstIndex();
-    m_canvas->initStyleOption(option, index);
+    m_canvasHelper->initStyleOption(option, index);
 
     tub.reset(VADDR(DFileViewHelper, isTransparent));
     tub.set_lamda(VADDR(DFileViewHelper, isTransparent), []() {return true;});
-    m_canvas->itemDelegate();
-    m_canvas->initStyleOption(option, m_view->firstIndex());
+    m_canvasHelper->itemDelegate();
+    m_canvasHelper->initStyleOption(option, m_view->firstIndex());
 
     EXPECT_EQ(option->textElideMode, Qt::ElideLeft);
 
