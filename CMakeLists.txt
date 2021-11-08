@@ -90,8 +90,8 @@ include_directories(${PROJECT_SOURCE_DIR}/src)
 
 #define service source dir
 set(COMMON_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/common)
-set(FILEMANAGER_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/business/filemanager)
-set(DESKTOP_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/business/desktop)
+set(FILEMANAGER_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/filemanager)
+set(DESKTOP_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/desktop)
 #any sub dir can use common service
 include_directories(${COMMON_SERVICE_DIR})
 
