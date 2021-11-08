@@ -110,7 +110,7 @@ void CryFsHandle::lockVault(QString unlockFileDir)
     int flg = lockVaultProcess(unlockFileDir);
     if(m_activeState.value(7) != static_cast<int>(ErrorCode::Success))
         emit signalLockVault(m_activeState.value(7));
-    else{
+    else {
         emit signalLockVault(flg);
         //! 记录保险箱上锁时间
         DFM_NAMESPACE::DFMSettings setting(VAULT_TIME_CONFIG_FILE);
@@ -137,7 +137,7 @@ int CryFsHandle::runVaultProcess(QString lockBaseDir, QString unlockFileDir, QSt
     m_process->waitForFinished();
     m_process->terminate();
 
-    if(m_process->exitStatus() == QProcess::NormalExit && m_process->exitCode() == 0)
+    if(m_process->exitStatus() == QProcess::NormalExit)
         return static_cast<int>(ErrorCode::Success);
     else
         return m_process->exitCode();
@@ -154,7 +154,7 @@ int CryFsHandle::lockVaultProcess(QString unlockFileDir)
     m_process->waitForFinished();
     m_process->terminate();
 
-    if(m_process->exitStatus() == QProcess::NormalExit && m_process->exitCode() == 0) {
+    if(m_process->exitStatus() == QProcess::NormalExit) {
         // 修复bug-52351
         // 保险箱上锁成功后,删除挂载目录
         if(rmdir(unlockFileDir.toStdString().c_str()) == -1) {
@@ -163,8 +163,7 @@ int CryFsHandle::lockVaultProcess(QString unlockFileDir)
             qDebug() << "Vault Info: remove vault unlock dir success";
         }
         return static_cast<int>(ErrorCode::Success);
-    }
-    else
+    } else
         return m_process->exitCode();
 }
 
@@ -177,15 +176,13 @@ void CryFsHandle::slotReadError()
             m_activeState[1] = static_cast<int>(ErrorCode::MountpointNotEmpty);
         else if(error.contains("Permission denied"))
             m_activeState[1] = static_cast<int>(ErrorCode::PermissionDenied);
-    }
-    else if(m_activeState.contains(3))
+    } else if(m_activeState.contains(3))
     {
         if(error.contains("mountpoint is not empty"))
             m_activeState[3] = static_cast<int>(ErrorCode::MountpointNotEmpty);
         else if(error.contains("Permission denied"))
             m_activeState[3] = static_cast<int>(ErrorCode::PermissionDenied);
-    }
-    else if(m_activeState.contains(7))
+    } else if(m_activeState.contains(7))
     {
         if(error.contains("Device or resource busy"))
             m_activeState[7] = static_cast<int>(ErrorCode::ResourceBusy);
