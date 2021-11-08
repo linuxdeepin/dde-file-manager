@@ -491,6 +491,8 @@ void DFMSideBar::onRename(const QModelIndex &index, QString newName) const
     if (interface && !newName.isEmpty() && item->text() != newName) {
         interface->rename(item, newName);
     }
+    if(m_sidebarView)
+        m_sidebarView->update();
 }
 
 void DFMSideBar::initUI()
