@@ -28,9 +28,9 @@
 #include "windowservice.h"
 #include "window/contexts.h" // TODO(zhangs): hide
 
-#include "dfm-framework/event/eventhandler.h"
-#include "dfm-framework/event/eventcallproxy.h"
 #include "dfm-base/widgets/dfmsidebar/sidebaritem.h"
+
+#include <dfm-framework/framework.h>
 
 DSB_FM_USE_NAMESPACE
 

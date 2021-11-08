@@ -1,6 +1,7 @@
 #include "corebrowseview.h"
-#include "dfm-framework/framework.h"
 #include "services/common/menu/menuservice.h"
+
+#include <dfm-framework/framework.h>
 
 DSC_USE_NAMESPACE
 

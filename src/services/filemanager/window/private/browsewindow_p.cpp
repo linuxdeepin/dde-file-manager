@@ -22,8 +22,9 @@
 #include "browsewindow_p.h"
 #include "window/browseview.h"
 #include "dfm-base/widgets/dfmfileview/fileviewitem.h"
-#include "dfm-framework/log/frameworklog.h"
 #include "dfm-base/widgets/dfmfileview/fileviewmodel.h"
+
+#include <dfm-framework/framework.h>
 
 DSB_FM_BEGIN_NAMESPACE
 

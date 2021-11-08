@@ -40,10 +40,7 @@
 #include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
 #include "dfm-base/widgets/dfmfileview/fileview.h"
 
-#include "dfm-framework/framework.h"
-#include "dfm-framework/listener/listener.h"
-#include "dfm-framework/lifecycle/plugin.h"
-#include "dfm-framework/service/pluginservice.h"
+#include <dfm-framework/framework.h>
 
 #include <QListWidget>
 #include <QListView>

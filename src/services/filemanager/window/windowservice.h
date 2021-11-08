@@ -26,7 +26,7 @@
 #include "displayviewlogic.h"
 #include "dfm_filemanager_service_global.h"
 
-#include "dfm-framework/service/pluginservicecontext.h"
+#include <dfm-framework/framework.h>
 
 #include <QUrl>
 #include <QVBoxLayout>

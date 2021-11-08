@@ -24,7 +24,8 @@
 #include "dfm-base/widgets/dfmfileview/iconitemdelegate.h"
 #include "dfm-base/widgets/dfmfileview/listitemdelegate.h"
 #include "services/common/menu/menuservice.h"
-#include "dfm-framework/framework.h"
+
+#include <dfm-framework/framework.h>
 
 DSC_USE_NAMESPACE
 

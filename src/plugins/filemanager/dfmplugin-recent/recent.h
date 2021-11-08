@@ -22,7 +22,7 @@
 #ifndef COREPLUGIN_H
 #define COREPLUGIN_H
 
-#include "dfm-framework/lifecycle/plugin.h"
+#include <dfm-framework/framework.h>
 
 class DFMWindowManagerService;
 class Recent : public dpf::Plugin

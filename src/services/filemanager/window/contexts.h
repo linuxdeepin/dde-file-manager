@@ -23,7 +23,8 @@
 #define CONTEXTS_H
 
 #include "dfm_filemanager_service_global.h"
-#include "dfm-framework/event/event.h"
+
+#include <dfm-framework/framework.h>
 
 DSB_FM_BEGIN_NAMESPACE
 

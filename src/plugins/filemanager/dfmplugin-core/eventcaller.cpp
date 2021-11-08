@@ -21,7 +21,7 @@
  */
 #include "eventcaller.h"
 
-#include "dfm-framework/framework.h"
+#include <dfm-framework/framework.h>
 
 void EventCaller::sendOpenNewWindowEvent(int windowIdx)
 {

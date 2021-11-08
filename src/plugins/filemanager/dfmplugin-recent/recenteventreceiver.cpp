@@ -22,7 +22,7 @@
 #include "recenteventreceiver.h"
 #include "window/contexts.h" // TODO(zhangs): hide
 
-#include "dfm-framework/framework.h"
+#include <dfm-framework/framework.h>
 
 void RecentEventReceiver::eventProcess(const dpf::Event &event)
 {

@@ -22,8 +22,8 @@
 */
 
 #include "config.h"
-#include "dfm-framework/framework.h"
-#include "dfm-framework/log/frameworklog.h"
+
+#include <dfm-framework/framework.h>
 
 #include <DApplication>
 
