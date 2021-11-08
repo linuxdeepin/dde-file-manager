@@ -68,7 +68,9 @@ void PluginSidecar::invokeDetachAllMountedDevices()
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        deviceInterface->DetachAllMountedDevices();
+        auto &&reply = deviceInterface->DetachAllMountedDevices();
+        if (!reply.isValid())
+            qCritical() << "D-Bus reply is invalid ";
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
     }
 }
@@ -78,10 +80,12 @@ bool PluginSidecar::invokeIsMonotorWorking()
     bool ret = false;
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto reply = deviceInterface->IsMonotorWorking();
+        auto &&reply = deviceInterface->IsMonotorWorking();
         reply.waitForFinished();
         if (reply.isValid() && reply.value())
             ret = true;
+        else
+            qCritical() << "D-Bus reply is invalid ";
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
     }
     return ret;
@@ -93,10 +97,12 @@ QStringList PluginSidecar::invokeBlockDevicesIdList(const QVariantMap &opt)
 
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto reply = deviceInterface->GetBlockDevicesIdList(opt);
+        auto &&reply = deviceInterface->GetBlockDevicesIdList(opt);
         reply.waitForFinished();
         if (reply.isValid())
             ret = reply.value();
+        else
+            qCritical() << "D-Bus reply is invalid ";
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
     }
 
@@ -110,10 +116,12 @@ QStringList PluginSidecar::invokeProtolcolDevicesIdList(const QVariantMap &opt)
     // TODO(zhangs): opt
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto reply = deviceInterface->GetProtolcolDevicesIdList();
+        auto &&reply = deviceInterface->GetProtolcolDevicesIdList();
         reply.waitForFinished();
         if (reply.isValid())
             ret = reply.value();
+        else
+            qCritical() << "D-Bus reply is invalid ";
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
     }
 
@@ -125,10 +133,12 @@ QVariantMap PluginSidecar::invokeQueryBlockDeviceInfo(const QString &id)
     QVariantMap ret;
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto reply = deviceInterface->QueryBlockDeviceInfo(id, false);
+        auto &&reply = deviceInterface->QueryBlockDeviceInfo(id, false);
         reply.waitForFinished();
         if (reply.isValid())
             ret = reply.value();
+        else
+            qCritical() << "D-Bus reply is invalid ";
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
     }
     return ret;
@@ -139,10 +149,12 @@ QVariantMap PluginSidecar::invokeQueryProtocolDeviceInfo(const QString &id)
     QVariantMap ret;
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto reply = deviceInterface->QueryProtocolDeviceInfo(id, false);
+        auto &&reply = deviceInterface->QueryProtocolDeviceInfo(id, false);
         reply.waitForFinished();
         if (reply.isValid())
             ret = reply.value();
+        else
+            qCritical() << "D-Bus reply is invalid ";
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
     }
     return ret;
@@ -152,7 +164,9 @@ void PluginSidecar::invokeDetachBlockDevice(const QString &id)
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        deviceInterface->DetachBlockDevice(id);
+        auto &&reply = deviceInterface->DetachBlockDevice(id);
+        if (!reply.isValid())
+            qCritical() << "D-Bus reply is invalid ";
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
     }
 }
@@ -161,7 +175,9 @@ void PluginSidecar::invokeDetachProtocolDevice(const QString &id)
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        deviceInterface->DetachProtocolDevice(id);
+        auto &&reply = deviceInterface->DetachProtocolDevice(id);
+        if (!reply.isValid())
+            qCritical() << "D-Bus reply is invalid ";
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
     }
 }

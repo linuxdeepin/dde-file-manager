@@ -620,9 +620,17 @@ bool DeviceService::isAutoMountAndOpenSetting() const
     return DeviceServiceHelper::getGsGlobal()->value("GenericAttribute", "AutoMountAndOpen", false).toBool();
 }
 
-bool DeviceService::isDefenderScanningDrive(const QString &driveName) const
+bool DeviceService::isDefenderScanningDrive(const QString &deviceId) const
 {
     QList<QUrl> urls;
+    QString driveName;
+
+    if (!deviceId.isEmpty()) {
+        auto &&ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+        if (ptr)
+            driveName = ptr->drive();
+    }
+
     if (driveName.isNull() || driveName.isEmpty())
         urls = DeviceServiceHelper::makeMountpointsForAllDrive();
     else

@@ -99,7 +99,7 @@ QUrl DeviceServiceHelper::makeMountpointForBlock(const BlockDevPtr &blkDev)
     if (blkDev->mountPoint().isEmpty())
         return QUrl();
 
-    return blkDev->mountPoint();
+    return QUrl::fromLocalFile(blkDev->mountPoint());
 }
 
 
@@ -292,9 +292,8 @@ bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDeviceData &data)
 
     if (gsettings.get("protect-non-media-mounts").toBool()) {
         for (auto &mountPoint : data.mountpoints) {
-            if (!mountPoint.isEmpty() &&!mountPoint.startsWith("/media/")) {
+            if (!mountPoint.isEmpty() && !mountPoint.startsWith("/media/"))
                 return true;
-            }
         }
     }
 

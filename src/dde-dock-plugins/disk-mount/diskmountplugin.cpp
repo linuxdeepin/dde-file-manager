@@ -152,9 +152,8 @@ void DiskMountPlugin::setSortKey(const QString &itemKey, const int order)
 
 void DiskMountPlugin::refreshIcon(const QString &itemKey)
 {
-    if (itemKey == DISK_MOUNT_KEY) {
+    if (itemKey == DISK_MOUNT_KEY)
         diskPluginItem->updateIcon();
-    }
 }
 
 void DiskMountPlugin::diskCountChanged(const int count)

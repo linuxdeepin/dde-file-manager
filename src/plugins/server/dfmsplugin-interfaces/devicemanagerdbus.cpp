@@ -58,12 +58,12 @@ void DeviceManagerDBus::SafelyRemoveBlockDevice(QString id)
 
 void DeviceManagerDBus::DetachBlockDevice(QString id)
 {
-    if (deviceServ->isDefenderScanningDrive()) {
+    if (deviceServ->isDefenderScanningDrive(id)) {
         // show query dialog
         auto &ctx = dpfInstance.serviceContext();
         dialogServ = ctx.service<DialogService>(DialogService::name());
         DDialog *d = dialogServ->showQueryScanningDialog(QObject::tr("Scanning the device, stop it?"));
-        connect(d, &DDialog::buttonClicked, this, [this, &id](int index, const QString &text) {
+        connect(d, &DDialog::buttonClicked, this, [this, id](int index, const QString &text) {
             Q_UNUSED(text);
             onDetachDeviceScanning(index, id);
         });
@@ -163,12 +163,12 @@ void DeviceManagerDBus::MountBlockDevice(QString id)
 
 void DeviceManagerDBus::UnmountBlockDevice(QString id)
 {
-    if (deviceServ->isDefenderScanningDrive()) {
+    if (deviceServ->isDefenderScanningDrive(id)) {
         // show query dialog
         auto &ctx = dpfInstance.serviceContext();
         dialogServ = ctx.service<DialogService>(DialogService::name());
         DDialog *d = dialogServ->showQueryScanningDialog(QObject::tr("Scanning the device, stop it?"));
-        connect(d, &DDialog::buttonClicked, this, [this, &id](int index, const QString &text) {
+        connect(d, &DDialog::buttonClicked, this, [this, id](int index, const QString &text) {
             Q_UNUSED(text);
             onUnmountDeviceScanning(index, id);
         });

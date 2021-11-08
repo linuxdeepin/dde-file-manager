@@ -4,8 +4,8 @@ project(dde-disk-mount-plugin)
 
 #add_definitions(DFM_NO_FILE_WATCHER)
 set(CMAKE_AUTOMOC ON)
-
 set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
 # generate a compile commands file as complete database for vim-YouCompleteMe or some other similar tools
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

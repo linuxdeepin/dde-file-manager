@@ -68,7 +68,7 @@ public: // status
     bool isInLiveSystem() const;
     bool isAutoMountSetting() const;
     bool isAutoMountAndOpenSetting() const;
-    bool isDefenderScanningDrive(const QString &driveName = "") const;
+    bool isDefenderScanningDrive(const QString &deviceId = "") const;
     QStringList blockDevicesIdList(const QVariantMap &opts) const;
     QVariantMap blockDeviceInfo(const QString &deviceId, bool detail = false);
     QStringList protocolDevicesIdList() const;

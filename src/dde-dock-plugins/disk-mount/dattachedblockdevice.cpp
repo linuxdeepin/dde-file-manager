@@ -68,7 +68,7 @@ bool DAttachedBlockDevice::isValid()
         return false;
     if (!qvariant_cast<bool>(data.value("has_filesystem")))
         return false;
-    if (qvariant_cast<QStringList>(data.value("mountpoints")).isEmpty())
+    if (qvariant_cast<QString>(data.value("mountpoint")).isEmpty())
         return false;
     if (qvariant_cast<bool>(data.value("hint_ignore")))
         return false;
@@ -143,7 +143,7 @@ QString DAttachedBlockDevice::iconName()
 {
     bool optical {qvariant_cast<bool>(data.value("optical"))};
     bool removable {qvariant_cast<bool>(data.value("removable"))};
-    QString iconName = QStringLiteral("drive-harddisk");
+    QString iconName {QStringLiteral("drive-harddisk")};
 
     if (removable)
         iconName = QStringLiteral("drive-removable-media-usb");
@@ -151,7 +151,7 @@ QString DAttachedBlockDevice::iconName()
     if (optical)
         iconName = QStringLiteral("media-optical");
 
-    return QString();
+    return iconName;
 }
 
 QUrl DAttachedBlockDevice::mountpointUrl()
@@ -161,11 +161,11 @@ QUrl DAttachedBlockDevice::mountpointUrl()
 
 QUrl DAttachedBlockDevice::accessPointUrl()
 {
-    QUrl url = mountpointUrl();
+    QUrl url {mountpointUrl()};
     bool optical {qvariant_cast<bool>(data.value("optical"))};
 
     if (optical) {
-        QString device {qvariant_cast<bool>(data.value("device"))};
+        QString device {qvariant_cast<QString>(data.value("device"))};
         url = makeBurnFileUrl(device);
     }
 
