@@ -695,6 +695,10 @@ void DFMAddressBar::updateCompletionState(const QString &text)
 void DFMAddressBar::appendToCompleterModel(const QStringList &stringList)
 {
     for (const QString &str : stringList) {
+        //防止出现空的补全提示
+        if (str.isEmpty())
+            continue;
+
         if (completerModel.insertRow(completerModel.rowCount())) {
             QModelIndex index = completerModel.index(completerModel.rowCount() - 1, 0);
             completerModel.setData(index, str);
