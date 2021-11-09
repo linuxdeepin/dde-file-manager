@@ -74,6 +74,13 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
         }
         else {
             mView->setScreenNum(1);
+            mView->clearSelection();
+            /*!
+             * 在DIconItemDelegate::paint中，通过setEditorData将expandedItem和index产生关联，
+             * 只执行clearSelection无法清除QAbstractItemView的数据editorIndexHash，导致执行
+             * updateEditorGeometries时，将不存在的expandedItem显示到错误的地方
+             */
+            mView->itemDelegate()->hideNotEditingIndexWidget();
             GridManager::instance()->addCoord(1, {0,0});
         }
 
@@ -104,6 +111,13 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
             else {
                 GridManager::instance()->addCoord(screenNum, {0,0});
                 mView->setScreenNum(screenNum);
+                mView->clearSelection();
+                /*!
+                 * 在DIconItemDelegate::paint中，通过setEditorData将expandedItem和index产生关联，
+                 * 只执行clearSelection无法清除QAbstractItemView的数据editorIndexHash，导致执行
+                 * updateEditorGeometries时，将不存在的expandedItem显示到错误的地方
+                 */
+                mView->itemDelegate()->hideNotEditingIndexWidget();
             }
 
             qDebug() << "mode" << mode << mView->geometry() << "inited" << mView->property(PROPERTY_VIEW_INITED).toBool()
