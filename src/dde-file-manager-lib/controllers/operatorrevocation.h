@@ -28,6 +28,7 @@
 #include "dfmevent.h"
 
 #include <QStack>
+#include <QMutex>
 class RevocationMgrInterface;
 
 DFM_BEGIN_NAMESPACE
@@ -96,6 +97,7 @@ private:
     QString getProcessOwner();
 private:
     QStack<DFMEvent> operatorStack;
+    QMutex m_mtx;
 
     RevocationMgrInterface *m_dbusInterface = nullptr;
 

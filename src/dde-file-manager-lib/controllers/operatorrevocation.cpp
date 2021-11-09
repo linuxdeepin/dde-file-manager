@@ -49,12 +49,14 @@ bool OperatorRevocation::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
 
         if (e->iniaiator() && e->iniaiator()->property("_dfm_is_revocaion_event").toBool())
             return true;
-
-        //fix bug44556、44632文件多次删除、剪切、撤销出现撤销失败（根据产品需求，限制最多连续撤销两次）
-        if (REVOCATION_TIMES == operatorStack.count()) {
-            operatorStack.pop_front();
+        {
+            QMutexLocker lk(&m_mtx);
+            //fix bug44556、44632文件多次删除、剪切、撤销出现撤销失败（根据产品需求，限制最多连续撤销两次）
+            if (REVOCATION_TIMES == operatorStack.count()) {
+                operatorStack.pop_front();
+            }
+            operatorStack.push(*event.data());
         }
-        operatorStack.push(*event.data());
         pushEvent();
         return true;
     }
@@ -63,7 +65,10 @@ bool OperatorRevocation::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         return true;
     }
     case DFMEvent::CleanSaveOperator:
+    {
+        QMutexLocker lk(&m_mtx);
         operatorStack.clear();
+    }
         break;
     default:
         break;
@@ -139,11 +144,12 @@ bool OperatorRevocation::revocation()
     bool batch_mode = false;
 
     batch_revocation:
-
+    QMutexLocker lk(&m_mtx);
     if (operatorStack.isEmpty())
         return true;
 
     DFMSaveOperatorEvent e = dfmevent_cast<DFMSaveOperatorEvent>(operatorStack.pop());
+    lk.unlock();
 
     if (e.split()) {
         if (batch_mode) {
