@@ -717,6 +717,38 @@ public:
     }
 };
 
+static QStringList readErrorsFromLog() {
+    auto homePaths = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
+    if (homePaths.isEmpty())
+        return {};
+
+    auto logPath = homePaths.at(0) + "/.cache/deepin/discburn/uburn/";
+    QDir logDir(logPath);
+    if (!logDir.exists())
+        return {};
+
+    auto burns = logDir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot, QDir::SortFlag::Time);
+    if (burns.count() == 0)
+        return {};
+
+    auto lastBurn = burns.first();
+    auto logFilePath = logPath + lastBurn + "/log";
+    QFile logFile(logFilePath);
+    if (!logFile.exists())
+        return {};
+
+    QStringList ret;
+    logFile.open(QIODevice::ReadOnly | QIODevice::Text);
+    while (!logFile.atEnd()) {
+        QString line(logFile.readLine());
+        if (!line.startsWith("Warning") || !line.startsWith("Error"))
+            continue;
+        line.remove(QRegExp("/home/.*/.cache/deepin/discburn/_dev_sr[0-9]*/"));
+        ret << line;
+    }
+    logFile.close();
+    return ret;
+}
 }
 
 void FileJob::doUDBurn(const DUrl &device, const QString &volname, int speed, const DISOMasterNS::BurnOptions &opts)
@@ -894,6 +926,10 @@ void FileJob::doUDBurn(const DUrl &device, const QString &volname, int speed, co
             qInfo() << "the staging files are deleted, cause burning succeed. Files: \n" << stagings;
             doDelete({DUrl::fromLocalFile(stagingurl.path())});
         } else { // burn failed
+            // 1. get errors from log
+            m_lastSrcError << readErrorsFromLog();
+
+            // 2. get errors from lib
             QString err(result + 1);
             auto err_list = ba.split(';');
             for (int i = 0; i < err_list.count(); i++) {
