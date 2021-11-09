@@ -671,7 +671,9 @@ QString DFMRootFileInfo::udisksDisplayName()
 
     if (d->label.startsWith(ddeI18nSym)) {
         QString i18nKey = d->label.mid(ddeI18nSym.size(), d->label.size() - ddeI18nSym.size());
-        return qApp->translate("DeepinStorage", i18nMap.value(i18nKey, i18nKey.toUtf8().constData()));
+        auto &&bytes = i18nKey.toUtf8();
+        auto ret = qApp->translate("DeepinStorage", i18nMap.value(i18nKey, bytes.data()));
+        return ret;
     }
 
     if (d->mps.contains(QByteArray("/\0", 2))) {
