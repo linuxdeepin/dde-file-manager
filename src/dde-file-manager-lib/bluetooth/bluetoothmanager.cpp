@@ -28,7 +28,6 @@
 #include <QFutureWatcher>
 #include <QtConcurrent/QtConcurrent>
 
-
 #define BluetoothService "com.deepin.daemon.Bluetooth"
 #define BluetoothPath "/com/deepin/daemon/Bluetooth"
 #define BlutoothInterface "com.deepin.daemon.Bluetooth"
@@ -66,6 +65,13 @@ void BluetoothManagerPrivate::resolve(const QDBusReply<QString> &req)
 void BluetoothManagerPrivate::initConnects()
 {
     Q_Q(BluetoothManager);
+
+    QObject::connect(m_bluetoothInter, &DBusBluetooth::serviceValidChanged, q, [q](bool valid){
+        if (valid) {
+            qInfo() << "bluetooth service is valid now...";
+            QTimer::singleShot(0, q, [q]{ q->refresh(); });
+        }
+    });
 
     // adapter added
     QObject::connect(m_bluetoothInter, &DBusBluetooth::AdapterAdded, q, [=](const QString & json) {
@@ -290,8 +296,10 @@ void BluetoothManager::refresh()
 {
     Q_D(BluetoothManager);
 
-    if (!d->m_bluetoothInter->isValid())
+    if (!d->m_bluetoothInter->isValid()) {
+        qCritical() << "bluetooth interface is not valid!!!";
         return;
+    }
 
     // 获取蓝牙设备
     QDBusPendingCall call = d->m_bluetoothInter->GetAdapters();
