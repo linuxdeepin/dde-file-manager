@@ -90,6 +90,8 @@ void DiskControlWidget::initConnection()
     // refreshes the list of controls to fit the text color under the new theme
     connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
             this, &DiskControlWidget::onDiskListChanged);
+    connect(&SidecarInstance, &PluginSidecar::serviceUnregistered, this, &DiskControlWidget::onDiskListChanged);
+    connect(&SidecarInstance, &PluginSidecar::serviceRegistered, this, &DiskControlWidget::onDiskListChanged);
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveAdded, this, &DiskControlWidget::onDiskListChanged);
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveRemoved, this, &DiskControlWidget::onDiskListChanged);
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, &DiskControlWidget::onDiskListChanged);

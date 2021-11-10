@@ -22,7 +22,6 @@
 */
 #include "pluginsidecar.h"
 
-#include <dbus_interface/devicemanagerdbus_interface.h>
 #include <QDebug>
 
 /*!
@@ -59,6 +58,10 @@ bool PluginSidecar::connectToServer()
         deviceInterface.reset(nullptr);
         return false;
     }
+
+    watcher.reset(new QDBusServiceWatcher("com.deepin.filemanager.service", deviceInterface->connection()));
+    connect(watcher.data(), &QDBusServiceWatcher::serviceUnregistered, this, &PluginSidecar::serviceUnregistered);
+    connect(watcher.data(), &QDBusServiceWatcher::serviceRegistered, this, &PluginSidecar::serviceRegistered);
 
     qInfo() << "Finish initilize dbus: `DeviceManagerInterface`";
     return true;

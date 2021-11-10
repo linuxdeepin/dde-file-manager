@@ -23,10 +23,11 @@
 #ifndef PLUGINSIDECAR_H
 #define PLUGINSIDECAR_H
 
+#include <dbus_interface/devicemanagerdbus_interface.h>
+
 #include <QObject>
 #include <QPointer>
-
-class DeviceManagerInterface;
+#include <QDBusServiceWatcher>
 
 class PluginSidecar: public QObject
 {
@@ -46,12 +47,17 @@ public:
     void invokeDetachBlockDevice(const QString &id);
     void invokeDetachProtocolDevice(const QString &id);
 
+signals:
+    void serviceUnregistered(const QString &service);
+    void serviceRegistered(const QString &service);
+
 private:
     explicit PluginSidecar(QObject *parent = nullptr);
     ~PluginSidecar();
 
 private:
-    QSharedPointer<DeviceManagerInterface> deviceInterface {nullptr};
+    QScopedPointer<DeviceManagerInterface> deviceInterface {nullptr};
+    QScopedPointer<QDBusServiceWatcher> watcher {nullptr};
 };
 
 #define SidecarInstance PluginSidecar::instance()

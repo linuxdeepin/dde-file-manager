@@ -49,6 +49,7 @@ set(DBUS_INTERFACES_HEADER
     )
 
 find_package(Qt5Widgets REQUIRED)
+find_package(Qt5DBus REQUIRED)
 find_package(DtkWidget REQUIRED)
 find_package(PkgConfig REQUIRED)
 
@@ -67,6 +68,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ./)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${Qt5Widgets_INCLUDE_DIRS}
+    ${Qt5DBus_INCLUDE_DIRS}
     ${DtkWidget_INCLUDE_DIRS}
     ${Gesttings_INCLUDE_DIRS}
     ${DdeDockInterface_INCLUDE_DIRS}
@@ -74,6 +76,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     ${Qt5Widgets_LIBRARIES}
+    ${Qt5DBus_LIBRARIES}
     ${DtkWidget_LIBRARIES}
     ${Gesttings_LIBRARIES}
     ${DdeDockInterface_LIBRARIES}
