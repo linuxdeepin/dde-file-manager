@@ -540,8 +540,6 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
     if (qMount.mounted_root_uri().startsWith("smb://")) {
         QScopedPointer<DGioFile> file(DGioFile::createFromUri(qMount.mounted_root_uri()));
         RemoteMountsStashManager::stashRemoteMount(file->path(), qMount.name());
-        if (DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool())
-            emit DFMApplication::instance()->reloadComputerModel();
     }
 
     Mounts.insert(qMount.mounted_root_uri(), qMount);

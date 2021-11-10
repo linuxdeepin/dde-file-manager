@@ -116,6 +116,8 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
         default:
             break;
         }
+    } else if (group == "RemoteMounts") {
+        Q_EMIT self->reloadComputerModel();
     }
 }
 

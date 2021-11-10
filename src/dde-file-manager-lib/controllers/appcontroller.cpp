@@ -1118,7 +1118,6 @@ void AppController::actionRemoveStashedMount(const QSharedPointer<DFMUrlBaseEven
     }
     if (!key.isEmpty()) {
         RemoteMountsStashManager::removeRemoteMountItem(key);
-        emit DFMApplication::instance()->reloadComputerModel();
     }
 }
 
