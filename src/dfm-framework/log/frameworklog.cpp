@@ -28,6 +28,10 @@
 #include <QCoreApplication>
 #include <QtConcurrent>
 
+#ifdef DTK_LOG
+#include <DLog>
+#endif
+
 Q_LOGGING_CATEGORY(Framework, "Framework")
 
 DPF_BEGIN_NAMESPACE
@@ -241,7 +245,18 @@ uint FrameworkLog::logCacheDayCount()
  */
 void FrameworkLog::initialize()
 {
+#ifdef DTK_LOG
+
+    QString tempPath = DTK_CORE_NAMESPACE::DLogManager::getlogFilePath();
+    QString appName = "/" + qApp->applicationName() + "/";
+    QString result = "/deepin" + appName;
+    DTK_CORE_NAMESPACE::DLogManager::setlogFilePath(tempPath.replace(appName,result));
+    qInfo() << "redirect output info to log: " << DTK_CORE_NAMESPACE::DLogManager::getlogFilePath();
+    DTK_CORE_NAMESPACE::DLogManager::registerConsoleAppender();
+    DTK_CORE_NAMESPACE::DLogManager::registerFileAppender();
+#else
     qInstallMessageHandler(&GlobalPrivate::redirectGlobalDebug);
+#endif
 }
 
 DPF_END_NAMESPACE

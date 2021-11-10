@@ -22,7 +22,6 @@
 #ifndef RECENTEVENTRECEIVER_H
 #define RECENTEVENTRECEIVER_H
 
-#include "recentlog.h"
 #include "recentutil.h"
 
 #include "windowservice.h"

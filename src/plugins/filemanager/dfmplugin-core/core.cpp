@@ -113,13 +113,13 @@ void initSidebar(SideBar* sidebar)
     auto downloadsitem = new SideBarItem(downloadsIcon, QObject::tr("Downloads"), "core", downloadsUrl);
     downloadsitem->setFlags(downloadsitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
 
-    qInfo() <<  sidebar->addItem(homeItem);
-    qInfo() <<  sidebar->addItem(desktopitem);
-    qInfo() <<  sidebar->addItem(videoitem);
-    qInfo() <<  sidebar->addItem(musicitem);
-    qInfo() <<  sidebar->addItem(picturesitem);
-    qInfo() <<  sidebar->addItem(documentsitem);
-    qInfo() <<  sidebar->addItem(downloadsitem);
+    sidebar->addItem(homeItem);
+    sidebar->addItem(desktopitem);
+    sidebar->addItem(videoitem);
+    sidebar->addItem(musicitem);
+    sidebar->addItem(picturesitem);
+    sidebar->addItem(documentsitem);
+    sidebar->addItem(downloadsitem);
 
     sidebar->setMinimumWidth(120);
     sidebar->setMaximumWidth(200);
@@ -207,7 +207,7 @@ static void regStandardPathClass()
 
 void Core::initialize()
 {
-    dpfCritical() << __PRETTY_FUNCTION__;
+    dpfDebug() << __PRETTY_FUNCTION__;
     qInfo() << Q_FUNC_INFO;
 
     QString errStr;
@@ -232,7 +232,7 @@ void Core::initialize()
 bool Core::start()
 {
     GlobalPrivate::dfmApp = new Application;
-    dpfCritical() << __PRETTY_FUNCTION__;
+    dpfDebug() << __PRETTY_FUNCTION__;
     auto &ctx = dpfInstance.serviceContext();
     qInfo() << "import service list" <<  ctx.services();
     WindowService *windowService = ctx.service<WindowService>(WindowService::name());

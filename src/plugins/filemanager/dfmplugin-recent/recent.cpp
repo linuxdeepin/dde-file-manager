@@ -70,7 +70,7 @@ void Recent::initialize()
     QString errStr;
     auto &ctx = dpfInstance.serviceContext();
     if (!ctx.load(MenuService::name(), &errStr)) {
-        qCritical() << errStr;
+        dpfDebug() << errStr;
         abort();
     }
 

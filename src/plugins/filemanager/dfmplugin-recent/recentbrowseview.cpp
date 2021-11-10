@@ -54,7 +54,7 @@ void RecentBrowseView::contextMenuEvent(QContextMenuEvent *event)
 
     auto &ctx = dpfInstance.serviceContext();
     MenuService* menuService = ctx.service<MenuService>(MenuService::name());
-    qCCritical(RecentPlugin) << Q_FUNC_INFO << menuService;
+    dpfInfo() << Q_FUNC_INFO << menuService;
     if (!menuService) {
         abort();
     }

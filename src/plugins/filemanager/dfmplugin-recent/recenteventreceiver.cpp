@@ -35,13 +35,13 @@ void RecentEventReceiver::windowEvent(const dpf::Event &event)
     if (event.data() == EventTypes::DATA_OPEN_NEW_WINDOW) {
         auto &ctx = dpfInstance.serviceContext();
         WindowService* windowService = ctx.service<WindowService>(WindowService::name());
-        qCCritical(RecentPlugin) << Q_FUNC_INFO << windowService;
+        dpfDebug() << Q_FUNC_INFO << windowService;
         if (windowService) {
             //do new sidebar and plugin all menu;
             int winIdx = event.property(EventTypes::PROPERTY_KEY_WINDOW_INDEX).toInt();
-            qCCritical(RecentPlugin) << "recver:"
-                                     << EventTypes::PROPERTY_KEY_WINDOW_INDEX
-                                     << winIdx;
+            dpfDebug() << "recver:"
+                       << EventTypes::PROPERTY_KEY_WINDOW_INDEX
+                       << winIdx;
 
             QIcon recentIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::RecentPath));
 

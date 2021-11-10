@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(dfm-framework)
 
 add_definitions(-DDPF_LIBRARY)
+add_definitions(-DDTK_LOG)
 
 #set Module subdir
 #   The module pattern cannot be broken, 

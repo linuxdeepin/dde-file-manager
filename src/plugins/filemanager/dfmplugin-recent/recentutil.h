@@ -22,8 +22,6 @@
 #ifndef DFMRECENTUTIL_H
 #define DFMRECENTUTIL_H
 
-#include "recentlog.h"
-
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/urlroute.h"
 
@@ -52,18 +50,18 @@ public:
 
     static bool initRecentSubSystem()
     {
-        qCCritical(RecentPlugin) << QStandardPaths::locate(QStandardPaths::HomeLocation,"",QStandardPaths::LocateDirectory);
+        qInfo() << QStandardPaths::locate(QStandardPaths::HomeLocation,"",QStandardPaths::LocateDirectory);
 
         recentFile.setFileName(QStandardPaths::locate(QStandardPaths::HomeLocation,"",QStandardPaths::LocateDirectory)
                 + ".local/share/recently-used.xbel");
 
         if (!recentFile.open(QFile::OpenModeFlag::ReadOnly)) {
-            qCCritical(RecentPlugin) << "Failed, open recent file:" << recentFile.fileName();
+            qInfo() << "Failed, open recent file:" << recentFile.fileName();
             return false;
         }
 
         if (!recentDom.setContent(&recentFile)) {
-            qCCritical(RecentPlugin) << "Failed, QDomDocument setContent recent file";
+            qInfo() << "Failed, QDomDocument setContent recent file";
             return false;
         }
 

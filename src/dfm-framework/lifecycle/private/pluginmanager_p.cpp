@@ -30,7 +30,7 @@
 DPF_BEGIN_NAMESPACE
 
 namespace GlobalPrivate {
-static QMutex mutex;
+    static QMutex mutex;
 } // namespace GlobalPrivate
 
 PluginManagerPrivate::PluginManagerPrivate(PluginManager *qq)
@@ -144,7 +144,7 @@ bool PluginManagerPrivate::loadPlugin(PluginMetaObjectPointer &pluginMetaObj)
                 (qobject_cast<Plugin*>(pluginMetaObj->d->loader->instance()));
         if (!pluginMetaObj->d->plugin.isNull()) {
             pluginMetaObj->d->state = PluginMetaObject::State::Loaded;
-            dpfCritical() << "Loaded plugin: " << pluginMetaObj->d->name;
+            dpfDebug() << "Loaded plugin: " << pluginMetaObj->d->name;
         } else {
             pluginMetaObj->d->error = "Failed get plugin instance is nullptr: "
                     + pluginMetaObj->d->loader->errorString();
@@ -195,7 +195,7 @@ bool PluginManagerPrivate::initPlugin(PluginMetaObjectPointer &pluginMetaObj)
 
     //    auto controller = QtConcurrent::run([=](){
     pluginMetaObj->d->plugin->initialize();
-    dpfCritical() << "Initialized plugin: " << pluginMetaObj->d->name;
+    dpfDebug() << "Initialized plugin: " << pluginMetaObj->d->name;
     //    });
     //    controller.waitForFinished();
 
@@ -236,7 +236,7 @@ bool PluginManagerPrivate::startPlugin(PluginMetaObjectPointer &pluginMetaObj)
 
     if (pluginMetaObj->d->plugin->start()) {
         pluginMetaObj->d->state = PluginMetaObject::State::Started;
-        dpfCritical() << "Started plugin: " << pluginMetaObj->d->name;
+        dpfDebug() << "Started plugin: " << pluginMetaObj->d->name;
     } else {
         pluginMetaObj->d->error = "Failed start plugin in function start() logic";
         dpfCritical() << pluginMetaObj->d->error.toLocal8Bit().data();
@@ -266,8 +266,8 @@ void PluginManagerPrivate::stopPlugin(PluginMetaObjectPointer &pluginMetaObj)
 
     if (stFlag == Plugin::ShutdownFlag::Async) {
 
-        dpfCritical() << "async stop" << pluginMetaObj->d->plugin->
-                         metaObject()->className();
+        dpfDebug() << "async stop" << pluginMetaObj->d->plugin->
+                      metaObject()->className();
 
         pluginMetaObj->d->state = PluginMetaObject::State::Stoped;
 
@@ -276,30 +276,30 @@ void PluginManagerPrivate::stopPlugin(PluginMetaObjectPointer &pluginMetaObj)
             pluginMetaObj->d->plugin = nullptr;
 
             if (!pluginMetaObj->d->loader->unload()) {
-                dpfCritical() << pluginMetaObj->d->loader->errorString();
+                dpfDebug() << pluginMetaObj->d->loader->errorString();
             }
 
             pluginMetaObj->d->state = PluginMetaObject::State::Shutdown;
-            dpfCritical() << "shutdown" << pluginMetaObj->d->loader->fileName();
+            dpfDebug() << "shutdown" << pluginMetaObj->d->loader->fileName();
 
         },Qt::ConnectionType::DirectConnection); //同步信号直接调用无需等待
 
     } else {
 
         if (pluginMetaObj->d->plugin) {
-            dpfCritical() << "sync stop" << pluginMetaObj->d->plugin->
-                             metaObject()->className();
+            dpfDebug() << "sync stop" << pluginMetaObj->d->plugin->
+                          metaObject()->className();
 
             pluginMetaObj->d->plugin = nullptr;
             pluginMetaObj->d->state = PluginMetaObject::State::Stoped;
         }
 
         if (!pluginMetaObj->d->loader->unload()) {
-            dpfCritical() << pluginMetaObj->d->loader->errorString();
+            dpfDebug() << pluginMetaObj->d->loader->errorString();
         }
 
         pluginMetaObj->d->state = PluginMetaObject::State::Shutdown;
-        dpfCritical() << "shutdown" << pluginMetaObj->d->loader->fileName();
+        dpfDebug() << "shutdown" << pluginMetaObj->d->loader->fileName();
     }
 
     dpfCheckTimeEnd();
@@ -417,7 +417,7 @@ void PluginManagerPrivate::readJsonToMeta(const PluginMetaObjectPointer &metaObj
     auto licenItera = licenseArray.begin();
     while (licenItera != licenseArray.end()) {
         metaObject->d->license.append(licenItera->toString());
-        licenItera ++;
+        ++ licenItera;
     }
 
     QString &&copyright = metaData.value(PLUGIN_COPYRIGHT).toString();
@@ -442,7 +442,7 @@ void PluginManagerPrivate::readJsonToMeta(const PluginMetaObjectPointer &metaObj
         depends.pluginName = dependName;
         depends.pluginVersion = dependVersion;
         metaObject->d->depends.append(depends);
-        itera ++;
+        ++ itera;
     }
 
     metaObject->d->state = PluginMetaObject::Readed;
@@ -466,46 +466,46 @@ bool PluginManagerPrivate::loadPlugins()
     QFuture<void> mapController = QtConcurrent::map(readQueue.begin(),
                                                     readQueue.end(),
                                                     [&ret] (PluginMetaObjectPointer &pointer) {
-        // 流程互斥
-        if (pointer->d->state >= PluginMetaObject::State::Loaded) {
-            dpfCritical() << "Is Loaded plugin: "
-                          << pointer->d->name
-                          << pointer->fileName();
+            // 流程互斥
+            if (pointer->d->state >= PluginMetaObject::State::Loaded) {
+            dpfDebug() << "Is Loaded plugin: "
+                       << pointer->d->name
+                       << pointer->fileName();
             return;
-        }
+}
 
-        // 必须执行了读取操作
-        if (pointer->d->state != PluginMetaObject::State::Readed) {
-            dpfCritical() << "Failed load plugin: "
-                          << pointer->d->name
-                          << pointer->fileName();
+            // 必须执行了读取操作
+            if (pointer->d->state != PluginMetaObject::State::Readed) {
+            dpfDebug() << "Failed load plugin: "
+                       << pointer->d->name
+                       << pointer->fileName();
             ret = false;
             return;
-        }
+}
 
-        //设置当前正在加载的标志位
-        pointer->d->state = PluginMetaObject::State::Loading;
+            //设置当前正在加载的标志位
+            pointer->d->state = PluginMetaObject::State::Loading;
 
-        if (!pointer->d->loader->load()) {
+            if (!pointer->d->loader->load()) {
             pointer->d->error = "Failed load plugin: " + pointer->d->loader->errorString();
             dpfCritical() << pointer->errorString();
             ret = false;
             return;
-        }
+}
 
-        pointer->d->plugin = QSharedPointer<Plugin>
-                (qobject_cast<Plugin*>(pointer->d->loader->instance()));
+            pointer->d->plugin = QSharedPointer<Plugin>
+            (qobject_cast<Plugin*>(pointer->d->loader->instance()));
 
-        if (pointer.isNull()) {
+            if (pointer.isNull()) {
             pointer->d->error = "Failed get plugin instance is nullptr";
             dpfCritical() << pointer->d->error;
             ret = false;
             return;
-        }
+}
 
-        pointer->d->state = PluginMetaObject::State::Loaded;
-        dpfCritical() << "Loaded plugin: " << pointer->d->name;
-    });
+            pointer->d->state = PluginMetaObject::State::Loaded;
+            dpfDebug() << "Loaded plugin: " << pointer->d->name;
+});
     mapController.waitForFinished();
 
     dpfDebug() << loadQueue;
@@ -529,10 +529,10 @@ void PluginManagerPrivate::initPlugins()
             auto pointer = *itera;
             //流程互斥
             if (pointer->d->state >= PluginMetaObject::State::Initialized) {
-                dpfCritical() << "Is initialized plugin: "
-                              << pointer->d->name
-                              << pointer->fileName();
-                itera ++;
+                dpfDebug() << "Is initialized plugin: "
+                           << pointer->d->name
+                           << pointer->fileName();
+                ++ itera;
                 continue;
             }
 
@@ -540,16 +540,16 @@ void PluginManagerPrivate::initPlugins()
                 dpfCritical() << "Failed initialized plugin"
                               << pointer->d->name
                               << pointer->fileName();
-                itera ++;
+                ++ itera;
                 continue;
             }
 
             if (!pointer->d->plugin.isNull()) {
                 pointer->d->plugin->initialize();
-                dpfCritical() << "Initialized plugin: " << pointer->d->name;
+                dpfDebug() << "Initialized plugin: " << pointer->d->name;
                 pointer->d->state = PluginMetaObject::State::Initialized;
             }
-            itera ++;
+            ++ itera;
         }
     });
 
@@ -575,10 +575,10 @@ void PluginManagerPrivate::startPlugins()
         PluginMetaObjectPointer pointer = *itera;
         //流程互斥
         if (pointer->d->state >= PluginMetaObject::State::Started) {
-            dpfCritical() << "Is started plugin:"
-                          << pointer->d->name
-                          << pointer->fileName();
-            itera ++;
+            dpfDebug() << "Is started plugin:"
+                       << pointer->d->name
+                       << pointer->fileName();
+            ++ itera;
             continue;
         }
 
@@ -586,19 +586,19 @@ void PluginManagerPrivate::startPlugins()
             dpfCritical() << "Failed start plugin:"
                           << pointer->d->name
                           << pointer->fileName();
-            itera ++;
+            ++ itera;
             continue;
         }
 
         if (pointer->d->plugin->start()) {
-            dpfCritical() << "Started plugin: " << pointer->d->name;
+            dpfDebug() << "Started plugin: " << pointer->d->name;
             pointer->d->state = PluginMetaObject::State::Started;
         } else {
             pointer->d->error = "Failed start plugin in function start() logic";
             dpfCritical() << pointer->d->error.toLocal8Bit().data();
         }
 
-        itera ++;
+        ++ itera;
     }
 
     // 私有类转发进行Sendler闭包
@@ -628,7 +628,7 @@ void PluginManagerPrivate::stopPlugins()
 
         if (stFlag == Plugin::ShutdownFlag::Async) {
 
-            dpfCritical() << "Stoped async plugin: " << pointer->d->name;
+            dpfDebug() << "Stoped async plugin: " << pointer->d->name;
 
             pointer->d->state = PluginMetaObject::State::Stoped;
 
@@ -638,32 +638,32 @@ void PluginManagerPrivate::stopPlugins()
                 pointer->d->plugin = nullptr;
 
                 if (!pointer->d->loader->unload()) {
-                    dpfCritical() << pointer->d->loader->errorString();
+                    dpfDebug() << pointer->d->loader->errorString();
                 }
 
                 pointer->d->state = PluginMetaObject::State::Shutdown;
-                dpfCritical() << "shutdown" << pointer->d->loader->fileName();
+                dpfDebug() << "shutdown" << pointer->d->loader->fileName();
 
             },Qt::ConnectionType::DirectConnection); //同步信号直接调用无需等待
 
         } else {
 
             if (pointer->d->plugin) {
-                dpfCritical() << "Stoped sync plugin: " << pointer->d->name;
+                dpfDebug() << "Stoped sync plugin: " << pointer->d->name;
                 pointer->d->plugin = nullptr;
                 pointer->d->state = PluginMetaObject::State::Stoped;
             }
 
             if (!pointer->d->loader->unload()) {
-                dpfCritical() << pointer->d->loader->errorString();
+                dpfDebug() << pointer->d->loader->errorString();
                 continue;
             }
 
             pointer->d->state = PluginMetaObject::State::Shutdown;
-            dpfCritical() << "shutdown" << pointer->d->loader->fileName();
+            dpfDebug() << "shutdown" << pointer->d->loader->fileName();
         }
 
-        itera ++;
+        ++ itera;
     }
 
     // 私有类转发进行Sendler闭包
@@ -713,7 +713,7 @@ void PluginManagerPrivate::dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue
                 }
             }
         }
-        dpfCritical() << "Unknown Error from" << Q_FUNC_INFO;
+        dpfDebug() << "Unknown Error from" << Q_FUNC_INFO;
         return false;
     });
 

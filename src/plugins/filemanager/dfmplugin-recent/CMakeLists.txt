@@ -10,7 +10,6 @@ set(recent_cxx_cpp
     recenteventreceiver.cpp
     recentbrowseviewmodel.cpp
     recentbrowseview.cpp
-    recentlog.cpp
     recentutil.cpp
     recent.cpp
     recent.json
@@ -22,7 +21,6 @@ set(recent_cxx_h
     recenteventreceiver.h
     recentbrowseviewmodel.h
     recentbrowseview.h
-    recentlog.h
     recentutil.h
     recent.h
     )

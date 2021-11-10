@@ -29,6 +29,12 @@
 #include <QDebug>
 #include <QLoggingCategory>
 
+#ifdef DTK_LOG
+#define dpfDebug() qDebug() << "Framework:"
+#define dpfInfo() qInfo() << "Framework:"
+#define dpfWarning() qWarning() << "Framework:"
+#define dpfCritical() qCritical() << "Framework:"
+#else
 /**
  * @brief Framework 可进行相关调用，如下
  * @code
@@ -53,6 +59,7 @@ Q_DECLARE_LOGGING_CATEGORY(Framework)
 #define dpfInfo() qCInfo(Framework)
 #define dpfWarning() qCDWarning(Framework)
 #define dpfCritical() qCCritical(Framework)
+#endif
 
 DPF_BEGIN_NAMESPACE
 

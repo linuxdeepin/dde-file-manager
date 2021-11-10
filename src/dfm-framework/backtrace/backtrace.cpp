@@ -21,6 +21,7 @@
 #include "backtrace.h"
 
 #include <qlogging.h>
+#include <QCoreApplication>
 
 #include <csignal>
 #include <execinfo.h>
@@ -109,13 +110,19 @@ std::string demangle(void *value)
         strSig = szTmpBuf;
         break;
     };
-
-    qCritical("signal:%s numLine:%d\n", strSig.data(), numLine);
+    QString head,end;
+    head = QString("****************** %0 crashed backtrace ******************")
+            .arg(qApp->applicationName());
+    qCritical("%s", head.toStdString().data());
+    qCritical("* signal:%s numLine:%d", strSig.data(), numLine);
     for (int i = 1; i < numLine; ++i) {
         std::string stackInfo = demangle(buffer[i]);
-        qCritical("%d>  %s\n", i, stackInfo.data());
+        qCritical("* %d>  %s", i, stackInfo.data());
     }
-
+    for(int index = head.size(); index > 0; index --) {
+        end += "*";
+    }
+    qCritical("%s", end.toStdString().data());
     exit(EXIT_FAILURE);
 }
 
