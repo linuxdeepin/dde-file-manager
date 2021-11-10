@@ -40,6 +40,8 @@ public:
         TemplatesPath,
         MimeTypePath,
         PluginsPath,
+        ExtensionsPath,
+        ExtensionsAppEntryPath,
         ThumbnailPath,
         ThumbnailFailPath,
         ThumbnailLargePath,

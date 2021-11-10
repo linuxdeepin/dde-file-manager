@@ -13,8 +13,10 @@ RESOURCES += \
 HEADERS += \
     $$PWD/controllers/appcontroller.h \
     $$PWD/controllers/dfmrootcontroller.h \
+    $$PWD/controllers/dfmappentrycontroller.h \
     $$PWD/models/computermodel.h \
     $$PWD/models/dfmrootfileinfo.h \
+    $$PWD/models/dfmappentryfileinfo.h \
     $$PWD/views/computerviewitemdelegate.h \
     $$PWD/views/dtoolbar.h \
     $$PWD/views/dfileview_p.h   \
@@ -243,6 +245,7 @@ HEADERS += \
     $$PWD/dialogs/private/dfmsettingdialog_p.h \
     $$PWD/interfaces/plugins/private/dfmviewfactory_p.h \
     $$PWD/models/dfmrootfileinfo_p.h \
+    $$PWD/models/dfmappentryfileinfo_p.h \
     $$PWD/interfaces/private/dfmcrumbbar_p.h \
     $$PWD/interfaces/defenderinterface.h \
     $$PWD/interfaces/dumountmanager.h \
@@ -256,8 +259,10 @@ HEADERS += \
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
     $$PWD/controllers/dfmrootcontroller.cpp \
+    $$PWD/controllers/dfmappentrycontroller.cpp \
     $$PWD/models/computermodel.cpp \
     $$PWD/models/dfmrootfileinfo.cpp \
+    $$PWD/models/dfmappentryfileinfo.cpp \
     $$PWD/views/computerviewitemdelegate.cpp \
     $$PWD/views/dtoolbar.cpp \
     $$PWD/views/dfileview.cpp \

@@ -36,6 +36,8 @@ Q_GLOBAL_STATIC(DISOMasterNS::DISOMaster, gsDISOMaster)
 
 static QMutex odmutex;
 
+bool g_isFileDialogMode = false;
+
 DialogManager *getDialogManager(bool doConstruct)
 {
     if (doConstruct) {

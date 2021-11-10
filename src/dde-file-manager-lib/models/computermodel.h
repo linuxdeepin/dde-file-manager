@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     dengkeyun<dengkeyun@uniontech.com>
+ * Author:     lanxuesong<lanxuesong@uniontech.com>
  *
  * Maintainer: max-lv<lvwujun@uniontech.com>
  *             xushitong<xushitong@uniontech.com>
@@ -78,7 +78,8 @@ public:
         SizeRole = Qt::UserRole + 14,        // Bool(Size visible)
         DiscUUIDRole = Qt::UserRole + 15,    // 设备UUID
         DiscOpticalRole = Qt::UserRole + 16, // 光盘是否是空盘
-        EditorLengthRole = Qt::UserRole + 17 // 重命名LineEditor的最大长度
+        EditorLengthRole = Qt::UserRole + 17,// 重命名LineEditor的最大长度
+        AppEntryDescription,                 // the Comment field of an app entry
     };
     Q_ENUM(DataRoles)
 
@@ -97,6 +98,9 @@ public:
     int itemCount() const;
     void getRootFile();
 
+protected:
+    void addRootItem(const DAbstractFileInfoPointer &info);
+
 public Q_SLOTS:
     void addItem(const DUrl &url, QWidget *w = nullptr);
     void insertAfter(const DUrl &url, const DUrl &ref, QWidget *w = nullptr);
@@ -112,6 +116,7 @@ Q_SIGNALS:
 private:
     ComputerView* par;
     QScopedPointer<DDiskManager> m_diskm;
+    QScopedPointer<DAbstractFileWatcher> m_appEntryWatcher;
     QList<ComputerModelItemData> m_items;
     DAbstractFileWatcher* m_watcher;
     int m_nitems;
@@ -124,7 +129,15 @@ private:
     void initItemData(ComputerModelItemData &data, const DUrl &url, QWidget *w);
     int findItem(const DUrl &url);
 
+    enum SplitterType {
+        MyDirectories,
+        Disks,
+        FileVault,
+        QuickAccess,
+    };
+
     static DUrl makeSplitterUrl(QString text);
+    static DUrl makeSplitterUrl(SplitterType type);
     int findNextSplitter(const int &index);
 };
 

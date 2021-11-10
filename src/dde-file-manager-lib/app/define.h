@@ -86,4 +86,6 @@ QMutex *getOpticalDriveMutex();
 // root 用户下 挂载路径为 /.gvfs/mtp:host=", 所以这里去掉/
 #define MTP_STAGING   "gvfs/mtp:host="
 
+extern bool g_isFileDialogMode;
+
 #endif // GLOBAL_H

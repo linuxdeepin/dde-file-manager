@@ -77,7 +77,9 @@ SOURCES += \
     $$PWD/models/ut_trashfileinfo.cpp \
     $$PWD/mediainfo/ut_dfmmediainfo.cpp \
     $$PWD/views/ut_dfmvaultretrievepassword.cpp \
-    $$PWD/views/ut_dfmvaultactivesavekeyfileview.cpp
+    $$PWD/views/ut_dfmvaultactivesavekeyfileview.cpp \
+    $$PWD/models/ut_dfmappentryfileinfo.cpp \
+    $$PWD/controllers/ut_dfmappentrycontroller.cpp
 
 isEqual(ARCH, x86_64) {
 SOURCES += \

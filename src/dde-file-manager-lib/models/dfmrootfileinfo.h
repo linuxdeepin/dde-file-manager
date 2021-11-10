@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     dengkeyun<dengkeyun@uniontech.com>
+ * Author:     lanxuesong<lanxuesong@uniontech.com>
  *
  * Maintainer: max-lv<lvwujun@uniontech.com>
  *             xushitong<xushitong@uniontech.com>
@@ -59,6 +59,7 @@ public:
         UDisksRemovable,
         UDisksOptical,
         NotConnRemote,
+        AppEntry,
     };
 
     explicit DFMRootFileInfo(const DUrl &url);

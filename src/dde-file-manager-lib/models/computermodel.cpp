@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     dengkeyun<dengkeyun@uniontech.com>
+ * Author:     lanxuesong<lanxuesong@uniontech.com>
  *
  * Maintainer: max-lv<lvwujun@uniontech.com>
  *             xushitong<xushitong@uniontech.com>
@@ -29,9 +29,11 @@
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
 #include "controllers/dfmrootcontroller.h"
+#include "controllers/dfmappentrycontroller.h"
 #include "controllers/vaultcontroller.h"
 #include "controllers/pathmanager.h"
 #include "dfmrootfileinfo.h"
+#include "dfmappentryfileinfo.h"
 #include "app/define.h"
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
@@ -45,6 +47,8 @@
 
 #include <QtConcurrent>
 
+//#define SPLIT_APP_ENTRY // enable it to split appentry and disks
+
 bool ComputerModel::m_isQueryRootFileFinshed = false;
 ComputerModel::ComputerModel(QObject *parent)
     : QAbstractItemModel(parent)
@@ -53,6 +57,7 @@ ComputerModel::ComputerModel(QObject *parent)
     m_diskm->setWatchChanges(true);
     par = qobject_cast<ComputerView*>(parent);
     m_nitems = 0;
+    m_appEntryWatcher.reset(fileService->createFileWatcher(nullptr, DUrl(APPENTRY_ROOT), this));
 
     // 光驱事件
     connect(this, &ComputerModel::opticalChanged, this, &ComputerModel::onOpticalChanged, Qt::QueuedConnection);
@@ -61,43 +66,22 @@ ComputerModel::ComputerModel(QObject *parent)
     m_initThread.first = false;
     m_initThread.second = QtConcurrent::run([=](){
 #endif
-        addItem(makeSplitterUrl(tr("My Directories")));
+        addItem(makeSplitterUrl(MyDirectories));
         auto rootInit = [=](const QList<DAbstractFileInfoPointer> &ch){
             QMutexLocker lx(&m_initItemMutex);
-            bool splt = false;
             bool opticalchanged = false;
             for (auto chi : ch) {
-
 #ifdef ENABLE_ASYNCINIT
                 //线程退出
                 if (m_initThread.first)
                     return;
 #endif
-
-                if (!Singleton<PathManager>::instance()->isVisiblePartitionPath(chi)) {
-                    continue;
-                }
-
-                if (chi->suffix() != SUFFIX_USRDIR && !splt) {
-                    addItem(makeSplitterUrl(tr("Disks")));
-                    splt = true;
-                }
-                if (splt) {
-                    auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), chi,
-                                              [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
-                                                  return DFMRootFileInfo::typeCompare(a, b.fi);
-                                              });
-                    if (r == m_items.end()) {
-                        addItem(chi->fileUrl());
-                    } else {
-                        insertBefore(chi->fileUrl(), r->url);
-                    }
-                } else {
+                if (chi->scheme() == DFMROOT_SCHEME && chi->suffix() == SUFFIX_USRDIR) {
                     addItem(chi->fileUrl());
-                }
-
-                if (chi->fileUrl().path().contains("sr")) {
-                    opticalchanged = true;
+                } else {
+                    addRootItem(chi);
+                    if (chi->fileUrl().path().contains("sr"))
+                        opticalchanged = true;
                 }
             }
 
@@ -112,21 +96,25 @@ ComputerModel::ComputerModel(QObject *parent)
 
         connect(DRootFileManager::instance(),&DRootFileManager::queryRootFileFinsh,this,[this,rootInit](){
             QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
+            if (!g_isFileDialogMode) {
+                DFMAppEntryController appEntryController;
+                ch << appEntryController.getChildren({});
+            }
             qDebug() << "DFileService::queryRootFileFinsh computer mode get " << ch.size();
             rootInit(ch);
 
             // 判断是否启用保险箱
             if ( VaultHelper::isVaultEnabled() ) {
-                const DUrl vaultUrl = VaultController::makeVaultUrl();
-                const DUrl vaultUrlTag = makeSplitterUrl(QObject::tr("File Vault"));
-                const int vaultIndex = findItem(vaultUrl);
+                const DUrl &vaultUrl = VaultController::makeVaultUrl();
+                const DUrl &vaultSplitterUrl = makeSplitterUrl(FileVault);
+                const int vaultIndex = findItem(vaultSplitterUrl);
                 //保险箱不是最后一个则移除，再添加，保证在最后一个
                 if (vaultIndex != rowCount() - 1){
                     removeItem(vaultUrl);
-                    removeItem(vaultUrlTag);
+                    removeItem(vaultSplitterUrl);
                 }
 
-                addItem(vaultUrlTag);
+                addItem(vaultSplitterUrl);
                 addItem(vaultUrl);
             }
         });
@@ -136,14 +124,18 @@ ComputerModel::ComputerModel(QObject *parent)
             m_items.clear();
             endResetModel();
             m_nitems = 0;
-            addItem(makeSplitterUrl(tr("My Directories")));
+            addItem(makeSplitterUrl(MyDirectories));
             QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
+            if (!g_isFileDialogMode) {
+                DFMAppEntryController appEntryController;
+                ch << appEntryController.getChildren({});
+            }
             qDebug() << "DFileService::queryRootFileFinsh computer mode get " << ch.size();
             rootInit(ch);
 
             if ( VaultHelper::isVaultEnabled() ) {
                 // 保险柜
-                addItem(makeSplitterUrl(QObject::tr("File Vault")));
+                addItem(makeSplitterUrl(FileVault));
                 addItem(VaultController::makeVaultUrl());
             }
         });
@@ -151,6 +143,10 @@ ComputerModel::ComputerModel(QObject *parent)
         if (DRootFileManager::instance()->isRootFileInited()) {
 
             QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
+            if (!g_isFileDialogMode) {
+                DFMAppEntryController appEntryController;
+                ch << appEntryController.getChildren({});
+            }
             qDebug() << "get root file now" << ch.size();
             rootInit(ch);
 
@@ -162,72 +158,70 @@ ComputerModel::ComputerModel(QObject *parent)
             // 根据系统类型，判断是否启用保险柜
             if ( VaultHelper::isVaultEnabled() ) {
                 // 保险柜
-                addItem(makeSplitterUrl(QObject::tr("File Vault")));
+                addItem(makeSplitterUrl(FileVault));
                 addItem(VaultController::makeVaultUrl());
             }
         }
         //使用分区工具，不显示磁盘问题，再刷一次
         DRootFileManager::instance()->startQuryRootFile();
 
+        auto addComputerItem = [this](const DUrl &url) {
+            DAbstractFileInfoPointer fi = fileService->createFileInfo(this, url);
+            addRootItem(fi);
+        };
         m_watcher = DRootFileManager::instance()->rootFileWather();
         connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
-        connect(m_watcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
-            DAbstractFileInfoPointer fi = fileService->createFileInfo(this, url);
-            if (!fi->exists()) {
-                return;
-            }
-
-            if (!Singleton<PathManager>::instance()->isVisiblePartitionPath(fi)) {
-                return;
-            }
-
-            int nIndex = findItem(makeSplitterUrl(QObject::tr("File Vault")));
-            if(nIndex != -1){   // 有保险箱的情况
-                //fix bug PPMS20200213,在没有磁盘项时，创建磁盘项
-                int ndisksIndex = findItem(makeSplitterUrl(QObject::tr("Disks")));
-                if (ndisksIndex == -1 ) {
-                    insertBefore(makeSplitterUrl(tr("Disks")), m_items[nIndex].url);
-                    nIndex++;
-                }
-                if(m_items.count() > nIndex){
-                    insertBefore(url, m_items[nIndex].url);
-                }
-            }
-            else {  // 没有保险箱的情况
-                //fix bug PPMS20200213,在没有磁盘项时，创建磁盘项
-                int ndisksIndex = findItem(makeSplitterUrl(QObject::tr("Disks")));
-                if (ndisksIndex == -1 ) {
-                    addItem(makeSplitterUrl(tr("Disks")));
-                }
-                auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), fi,
-                                          [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
-                    return DFMRootFileInfo::typeCompare(a, b.fi);
-                });
-                if (r == m_items.end()) {
-                    addItem(url);
-                } else {
-                    insertBefore(url, r->url);
-                }
-            }
-
-            if (url.path().contains("sr")) {
+        connect(m_watcher, &DAbstractFileWatcher::subfileCreated, this, [this, addComputerItem](const DUrl &url) {
+            addComputerItem(url);
+            if (url.path().contains("sr"))
                 emit opticalChanged();
-            }
         });
         connect(m_watcher, &DAbstractFileWatcher::fileAttributeChanged, this,[this](const DUrl &url) {
-            int p;
-            for (p = 0; p < m_items.size(); ++p) {
-                if (m_items[p].url == url) {
-                    break;
-                }
-            }
-            if (p >= m_items.size()) {
+            int p = findItem(url);
+            if (p >= m_items.size() || p < 0)
                 return;
-            }
             QModelIndex idx = index(p, 0);
             static_cast<DFMRootFileInfo*>(m_items[p].fi.data())->checkCache();
             emit dataChanged(idx, idx, {Qt::ItemDataRole::DisplayRole});
         });
+
+        if (!g_isFileDialogMode && m_appEntryWatcher) {
+            connect(m_appEntryWatcher.data(), &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
+            connect(m_appEntryWatcher.data(), &DAbstractFileWatcher::subfileCreated, this, [this, addComputerItem](const DUrl &url){
+                int appEntrySplitterIdx = findItem(makeSplitterUrl(QuickAccess));
+                if (appEntrySplitterIdx < 0) {
+                    addComputerItem(url);
+                    return;
+                }
+
+                auto newEntry = fileService->createFileInfo(nullptr, url);
+                auto entryInfo = dynamic_cast<DFMAppEntryFileInfo *>(newEntry.data());
+                if (!entryInfo)
+                    return;
+                auto cmd = entryInfo->cmd();
+
+                // find if there is a item which's command is equals to the new one.
+                for (int i = appEntrySplitterIdx; i < m_items.count(); i++) {
+                    const auto &item = m_items.at(i);
+                    auto info = fileService->createFileInfo(nullptr, item.url);
+                    auto entryInfo = dynamic_cast<DFMAppEntryFileInfo *>(info.data());
+                    if (!entryInfo)
+                        continue;
+                    if (cmd == entryInfo->cmd())
+                        return;
+                }
+
+                addComputerItem(url);
+            });
+            connect(m_appEntryWatcher.data(), &DAbstractFileWatcher::fileAttributeChanged, this, [this](const DUrl &url){
+                int pos = findItem(url);
+                if (pos < 0 || pos >= m_items.size())
+                    return;
+                QModelIndex idx = index(pos, 0);
+                emit dataChanged(idx, idx, { Qt::ItemDataRole::DisplayRole });
+            });
+            m_appEntryWatcher->startWatcher();
+        }
 #ifdef ENABLE_ASYNCINIT
     });
 #endif
@@ -419,6 +413,8 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
             if (scheme == DFMVAULT_SCHEME) {
                 // vault not show progress.
                 bProgressVisible = false;
+            } else if (scheme == APPENTRY_SCHEME) {
+                bProgressVisible = false;
             } else {
                 // optical and removable device not show progress when unmounted.
                 DFMRootFileInfo::ItemType itemType = static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType());
@@ -450,6 +446,8 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                         || state == VaultController::NotExisted) {
                     bSizeVisible = false;
                 }
+            } else if (itemType == DFMRootFileInfo::AppEntry) {
+                bSizeVisible = false;
             }
         }
 
@@ -486,6 +484,16 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         }
     }
 
+    if (role == DataRoles::AppEntryDescription) {
+#if 0 // PO says, show fixed words here
+        if (pitmdata->fi) {
+            auto appEntryInfo = dynamic_cast<DFMAppEntryFileInfo *>(pitmdata->fi.data());
+            if (appEntryInfo)
+                return appEntryInfo->appComment();
+        }
+#endif
+        return tr("Double click to open it");
+    }
     return QVariant();
 }
 
@@ -605,8 +613,16 @@ void ComputerModel::removeItem(const DUrl &url)
     beginRemoveRows(QModelIndex(), p, p);
     m_items.removeAt(p);
     endRemoveRows();
+
+#ifdef SPLIT_APP_ENTRY
+    auto splitterUrl = url.scheme() == APPENTRY_SCHEME
+            ? makeSplitterUrl(QuickAccess)
+            : makeSplitterUrl(Disks);
+#else
+    auto splitterUrl = makeSplitterUrl(Disks);
+#endif
     //fix bug PPMS20200213,在移除最后一个磁盘时，移除磁盘这个项
-    int ndiskindex = findItem(makeSplitterUrl(QObject::tr("Disks")));
+    int ndiskindex = findItem(splitterUrl);
     int nextspliter = findNextSplitter(ndiskindex);
     //磁盘的分割线的ndiskindex和从磁盘到下一个分割线nextspliter，如果没有下一个分割线并且磁盘分割线ndiskindex是最后一项
     //或者磁盘分割线ndiskindex到从磁盘到下一个分割线nextspliter之间的item为0就移除磁盘的分割线
@@ -631,12 +647,14 @@ void ComputerModel::onGetRootFile(const DAbstractFileInfoPointer &chi)
     {
         return;
     }
+
+    const auto &diskSplitterUrl = makeSplitterUrl(Disks);
     if (chi->suffix() != SUFFIX_USRDIR && !splt) {
-        addItem(makeSplitterUrl(tr("Disks")));
+        addItem(diskSplitterUrl);
         splt = true;
     }
     if (splt) {
-        auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), chi,
+        auto r = std::upper_bound(m_items.begin() + findItem(diskSplitterUrl) + 1, m_items.end(), chi,
                                   [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
                                       return DFMRootFileInfo::typeCompare(a, b.fi);
                                   });
@@ -667,13 +685,14 @@ void ComputerModel::getRootFile()
 
     bool splt = false;
     m_nitems = 0;
+    const auto &diskSplitterUrl = makeSplitterUrl(Disks);
     for (auto chi : ch) {
         if (chi->suffix() != SUFFIX_USRDIR && !splt) {
-            addItem(makeSplitterUrl(tr("Disks")));
+            addItem(diskSplitterUrl);
             splt = true;
         }
         if (splt) {
-            auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), chi,
+            auto r = std::upper_bound(m_items.begin() + findItem(diskSplitterUrl) + 1, m_items.end(), chi,
                                       [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
                                           return DFMRootFileInfo::typeCompare(a, b.fi);
                                       });
@@ -687,6 +706,55 @@ void ComputerModel::getRootFile()
         }
     }
 }
+
+void ComputerModel::addRootItem(const DAbstractFileInfoPointer &info)
+{
+    if (!info || !info->exists())
+        return;
+    if (!Singleton<PathManager>::instance()->isVisiblePartitionPath(info))
+        return;
+
+#ifdef SPLIT_APP_ENTRY
+    auto splitterUrl = info->scheme() == DFMROOT_SCHEME
+            ? makeSplitterUrl(Disks)
+            : makeSplitterUrl(QuickAccess);
+#else
+    auto splitterUrl = makeSplitterUrl(Disks);
+#endif
+    int splitterIdx = findItem(splitterUrl);
+    if (splitterIdx > 0) {
+        auto r = std::upper_bound(m_items.begin() + splitterIdx + 1, m_items.end(), info,
+                                  [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
+            return DFMRootFileInfo::typeCompare(a, b.fi);
+        });
+        if (r == m_items.end()) {
+            addItem(info->fileUrl());
+        } else {
+            insertBefore(info->fileUrl(), r->url);
+        }
+    } else {
+        // if newInfo is disk, insert from top (my directories)
+        if (info->scheme() == DFMROOT_SCHEME) {
+            if (m_items.count() < 7) { // `My Directories` and 6 user directories
+                addItem(splitterUrl);
+                addItem(info->fileUrl());
+            } else { // in normal case, index 6 refers to the Downloads directory
+                insertAfter(info->fileUrl(), m_items[6].url);
+                insertAfter(splitterUrl, m_items[6].url);
+            }
+        } else { // if newInfo is appentry, insert from bottom (vault)
+            auto vaultIdx = findItem(makeSplitterUrl(FileVault));
+            if (vaultIdx > 0) {
+                insertBefore(splitterUrl, makeSplitterUrl(FileVault));
+                insertBefore(info->fileUrl(), makeSplitterUrl(FileVault));
+            } else {
+                addItem(splitterUrl);
+                addItem(info->fileUrl());
+            }
+        }
+    }
+}
+
 
 void ComputerModel::initItemData(ComputerModelItemData &data, const DUrl &url, QWidget *w)
 {
@@ -741,6 +809,26 @@ DUrl ComputerModel::makeSplitterUrl(QString text)
     ret.setScheme(SPLITTER_SCHEME);
     ret.setFragment(text);
     return ret;
+}
+
+DUrl ComputerModel::makeSplitterUrl(SplitterType type)
+{
+    QString text;
+    switch (type) {
+    case MyDirectories:
+        text = tr("My Directories");
+        break;
+    case Disks:
+        text = tr("Disks");
+        break;
+    case FileVault:
+        text = tr("File Vault");
+        break;
+    case QuickAccess:
+        text = tr("Quick Access");
+        break;
+    }
+    return makeSplitterUrl(text);
 }
 
 int ComputerModel::findNextSplitter(const int &index)

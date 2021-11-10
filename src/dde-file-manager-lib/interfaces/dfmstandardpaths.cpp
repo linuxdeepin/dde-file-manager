@@ -62,6 +62,20 @@ QString DFMStandardPaths::location(DFMStandardPaths::StandardLocation type)
         }
         return path;
     }
+    case ExtensionsPath: {
+        QString path = APPSHAREDIR"/extensions";
+        if (!QDir(path).exists()) {
+            path = qApp->applicationDirPath() + "/extensions";
+        }
+        return path;
+    }
+    case ExtensionsAppEntryPath: {
+        QString path = APPSHAREDIR"/extensions/appEntry";
+        if (!QDir(path).exists()) {
+            path = qApp->applicationDirPath() + "/extensions/appEntry";
+        }
+        return path;
+    }
 #endif
 #ifdef PLUGINDIR
     case PluginsPath: {

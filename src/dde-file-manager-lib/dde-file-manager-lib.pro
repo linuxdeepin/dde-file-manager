@@ -204,7 +204,10 @@ readmefile.files = plugins/.readme
 contextmenusfile.path = /usr/share/applications/context-menus
 contextmenusfile.files = plugins/.readme
 
-INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations \
+appentry.path = $$APPSHAREDIR/extensions/appEntry
+appentry.files = plugins/.readme
+
+INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations appentry \
  icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile contextmenusfile policy
 
 DISTFILES += \

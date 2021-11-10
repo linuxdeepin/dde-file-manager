@@ -123,7 +123,7 @@ void DRootFileManager::changeRootFile(const DUrl &fileurl, const bool bcreate)
     if (bcreate) {
         if (!d_ptr->rootfilelist.contains(fileurl)) {
             DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, fileurl);
-            if (info->exists()) {
+            if (info && info->exists()) {
                 d_ptr->rootfilelist.insert(fileurl, info);
                 qInfo() << "  insert   " << fileurl;
             }

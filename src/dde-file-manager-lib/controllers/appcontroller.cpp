@@ -39,6 +39,7 @@
 #include "networkcontroller.h"
 #include "mergeddesktopcontroller.h"
 #include "dfmrootcontroller.h"
+#include "dfmappentrycontroller.h"
 #include "deviceinfo/udisklistener.h"
 #include "dfileservices.h"
 #include "fileoperations/filejob.h"
@@ -142,7 +143,7 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<FileController>(FILE_SCHEME, "");
     //    DFileService::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
     //sanitinizer工具检测到DFileService::setFileUrlHandler(TRASH_SCHEME, "", new TrashManager());泄露
-    auto *tempTrashMgr = new TrashManager();
+    auto tempTrashMgr = new TrashManager();
     tempTrashMgr->setObjectName("trashMgr");
     DFileService::setFileUrlHandler(TRASH_SCHEME, "", tempTrashMgr);
     DFileService::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
@@ -161,6 +162,7 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<MergedDesktopController>(DFMMD_SCHEME, "");
     DFileService::dRegisterUrlHandler<DFMRootController>(DFMROOT_SCHEME, "");
     DFileService::dRegisterUrlHandler<VaultController>(DFMVAULT_SCHEME, "");
+    DFileService::dRegisterUrlHandler<DFMAppEntryController>(APPENTRY_SCHEME, "");
 }
 
 void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event, const bool isEnter)
@@ -598,6 +600,10 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
         q.setQuery(blk->device());
         const QSharedPointer<DFMUrlBaseEvent> &e = dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), q);
         actionMount(e);
+        return;
+    } else if (fileUrl.scheme() == APPENTRY_SCHEME) {
+        auto e = dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), DUrlList() << fileUrl);
+        actionOpen(e);
         return;
     }
 

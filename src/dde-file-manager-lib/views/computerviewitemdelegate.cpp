@@ -229,13 +229,33 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
 
     // Paint size.
     bool bSizeVisible = index.data(ComputerModel::DataRoles::SizeRole).toBool();
+    QString scheme = index.data(ComputerModel::DataRoles::SchemeRole).toString();
     if (bSizeVisible) {
-        QString scheme = index.data(ComputerModel::DataRoles::SchemeRole).toString();
         if (scheme == DFMVAULT_SCHEME) {
             // vault only show size.
             painter->drawText(totalLabelRect, Qt::AlignLeft, FileUtils::formatSize(static_cast<qint64>(sizeinuse)));
         } else {
             painter->drawText(totalLabelRect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal, strVolTag));
+        }
+    }
+
+    // for app entry description
+    if (scheme == APPENTRY_SCHEME) {
+        auto commentRect = totalLabelRect;
+        commentRect.setWidth(text_max_width);
+        auto fullComment = index.data(ComputerModel::DataRoles::AppEntryDescription).toString();
+        QFontMetrics fm(smallf);
+        auto firstLine = fm.elidedText(fullComment, Qt::ElideRight, text_max_width);
+        if (firstLine.endsWith("…")) {
+            firstLine.chop(1);
+            painter->drawText(commentRect, Qt::AlignLeft, firstLine);
+            // draw second line
+            auto secondLine = fullComment.remove(0, firstLine.length());
+            secondLine = fm.elidedText(secondLine, Qt::ElideRight, text_max_width);
+            commentRect.moveTo(commentRect.x(), commentRect.y() + commentRect.height());
+            painter->drawText(commentRect, Qt::AlignLeft, secondLine);
+        } else {
+            painter->drawText(commentRect, Qt::AlignLeft, firstLine);
         }
     }
 

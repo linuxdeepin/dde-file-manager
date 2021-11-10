@@ -41,6 +41,7 @@
 #define SUFFIX_GVFSMP           "gvfsmp"
 #define SUFFIX_UDISKS           "localdisk"
 #define SUFFIX_STASHED_REMOTE   "remote"
+#define SUFFIX_APP_ENTRY        "appentry"
 
 #define COMPARE_FUN_DEFINE(Value, Name, Type) \
     bool compareFileListBy##Name(const DAbstractFileInfoPointer &info1, const DAbstractFileInfoPointer &info2, Qt::SortOrder order)\

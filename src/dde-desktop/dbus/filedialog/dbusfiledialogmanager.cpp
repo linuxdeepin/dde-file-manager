@@ -49,6 +49,8 @@ QDBusObjectPath DBusFileDialogManager::createDialog(QString key)
     if (key.isEmpty())
         key = QUuid::createUuid().toRfc4122().toHex();
 
+    g_isFileDialogMode = true;
+
     if (!initJobDone) {
         DFMGlobal::initGvfsMountManager();
         DFMGlobal::initDeviceListener();

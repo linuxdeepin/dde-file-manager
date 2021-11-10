@@ -69,6 +69,9 @@
 //NOTE [XIAO] #define PLUGIN_ROOT "plugin:///"
 #define PLUGIN_ROOT "plugin:///"
 
+#define APPENTRY_ROOT    "appentry:///"
+#define APPENTRY_SCHEME  "appentry"
+
 // internal scheme, don't rely on this scheme outside the file manager app.
 #define DFMMD_SCHEME "dfmmd"
 #define DFMMD_ROOT "dfmmd:///"

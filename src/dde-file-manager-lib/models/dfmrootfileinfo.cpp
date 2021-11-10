@@ -768,18 +768,19 @@ bool DFMRootFileInfo::checkMpsStr(const QString &path) const
 bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b)
 {
     static const QHash<ItemType, int> priomap = {
-        {ItemType::UserDirectory, -1},
-        {ItemType::UDisksRoot,  0},
-        {ItemType::UDisksData,  1},
-        {ItemType::UDisksFixed,  2},
-        {ItemType::UDisksRemovable,  3},
-        {ItemType::UDisksOptical,  4},
-        {ItemType::GvfsSMB,  5},
-        {ItemType::NotConnRemote, 5},
-        {ItemType::GvfsFTP,  5},
-        {ItemType::GvfsMTP,  6},
-        {ItemType::GvfsGPhoto2,  6},
-        {ItemType::GvfsGeneric,  7}
+        {ItemType::UserDirectory,   -1},
+        {ItemType::UDisksRoot,      0},
+        {ItemType::UDisksData,      1},
+        {ItemType::UDisksFixed,     2},
+        {ItemType::UDisksRemovable, 3},
+        {ItemType::UDisksOptical,   4},
+        {ItemType::GvfsSMB,         5},
+        {ItemType::NotConnRemote,   5},
+        {ItemType::GvfsFTP,         5},
+        {ItemType::GvfsMTP,         6},
+        {ItemType::GvfsGPhoto2,     6},
+        {ItemType::GvfsGeneric,     7},
+        {ItemType::AppEntry,        10}
     };
     // fix bug 64147 网络文件不去判断exists会卡顿
     if (!a)
@@ -800,18 +801,19 @@ bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbst
 bool DFMRootFileInfo::typeCompareByUrl(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b)
 {
     static const QHash<ItemType, int> priomap = {
-        {ItemType::UserDirectory, -1},
-        {ItemType::UDisksRoot,  0},
-        {ItemType::UDisksData,  1},
-        {ItemType::UDisksFixed,  2},
-        {ItemType::UDisksRemovable,  3},
-        {ItemType::UDisksOptical,  4},
-        {ItemType::GvfsMTP,  5},
-        {ItemType::GvfsGPhoto2,  5},
-        {ItemType::GvfsGeneric,  6},
-        {ItemType::GvfsSMB,  7},
-        {ItemType::GvfsFTP,  7},
-        {ItemType::NotConnRemote, 7}
+        {ItemType::UserDirectory,   -1},
+        {ItemType::UDisksRoot,      0},
+        {ItemType::UDisksData,      1},
+        {ItemType::UDisksFixed,     2},
+        {ItemType::UDisksRemovable, 3},
+        {ItemType::UDisksOptical,   4},
+        {ItemType::GvfsMTP,         5},
+        {ItemType::GvfsGPhoto2,     5},
+        {ItemType::GvfsGeneric,     6},
+        {ItemType::GvfsSMB,         7},
+        {ItemType::GvfsFTP,         7},
+        {ItemType::NotConnRemote,   7},
+        {ItemType::AppEntry,        10}
     };
     // fix bug 64147 网络文件不去判断exists会卡顿
     if (!a)
