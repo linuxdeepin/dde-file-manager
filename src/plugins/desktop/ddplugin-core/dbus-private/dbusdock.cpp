@@ -79,5 +79,6 @@ DBusDock *DockInfo::dock() const
 DockInfo::DockInfo(QObject *parent)
     : QObject (parent)
 {
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
     m_dock = new DBusDock(this);
 }

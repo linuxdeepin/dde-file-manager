@@ -40,6 +40,7 @@ set(widgets_cxx_h
     dfm-base/widgets/abstractbackground.h
     dfm-base/widgets/abstractscreen.h
     dfm-base/widgets/abstractscreenproxy.h
+    dfm-base/widgets/screenglobal.h
     )
 
 set(service_cxx_cpp
@@ -50,7 +51,6 @@ set(service_cxx_cpp
     canvas/canvasservice.cpp
     canvas/canvasfactory.cpp
     screen/screenservice.cpp
-    screen/screenfactory.cpp
     )
 
 set(service_cxx_h
@@ -61,7 +61,6 @@ set(service_cxx_h
     canvas/canvasservice.h
     canvas/canvasfactory.h
     screen/screenservice.h
-    screen/screenfactory.h
     )
 
 set(core_cxx_cpp
@@ -70,10 +69,11 @@ set(core_cxx_cpp
     dbus-private/dbusmonitor.cpp
     dbus-private/licenceInterface.cpp
     backgrounddefault.cpp
-    screenqt.cpp
-    screenproxyqt.cpp
-    screendbus.cpp
-    screenproxydbus.cpp
+    utils/desktoputils.cpp
+    screen/screenqt.cpp
+    screen/screenproxyqt.cpp
+    screen/screendbus.cpp
+    screen/screenproxydbus.cpp
     core.cpp
     core.json
     )
@@ -84,10 +84,11 @@ set(core_cxx_h
     dbus-private/dbusmonitor.h
     dbus-private/licenceInterface.h
     backgrounddefault.h
-    screenqt.h
-    screenproxyqt.h
-    screendbus.h
-    screenproxydbus.h
+    utils/desktoputils.h
+    screen/screenqt.h
+    screen/screenproxyqt.h
+    screen/screendbus.h
+    screen/screenproxydbus.h
     core.h
     dfm_desktop_service_global.h
     )

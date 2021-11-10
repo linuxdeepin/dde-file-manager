@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huangyu<huangyub@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,43 +18,76 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "screenservice.h"
+#include "screen/screenproxyqt.h"
+#include "screenproxydbus.h"
+
+#include "utils/desktoputils.h"
 
 #include <QGuiApplication>
+
 DSB_D_BEGIN_NAMESPACE
 
-namespace PlatformTypes{
-const QString WAYLAND {"wayland"};
-const QString XCB {"xcb"};
-} //namespace ScreenType
-
-ScreenService::ScreenService()
+ScreenService::ScreenService(QObject *parent) : PluginService(parent), AutoServiceRegister<ScreenService>()
 {
+    if (waylandDectected())
+        proxy = new ScreenProxyDBus(this);
+    else
+        proxy = new ScreenProxyQt(this);
+    proxy->reset();
 
-}
-
-ScreenService *ScreenService::instance()
-{
-    static ScreenService service;
-    return &service;
-}
-
-QList<dfmbase::AbstractScreen *> ScreenService::allScreen(const QString &platform)
-{
-    auto proxy = ScreenFactory::create(platform);
-    if (!proxy)
-        return {};
-
-    QObject::connect(proxy, &dfmbase::AbstractScreenProxy::screenAdded,
-                     this, &ScreenService::screenAdded, Qt::UniqueConnection);
-
-    QObject::connect(proxy, &dfmbase::AbstractScreenProxy::screenRemoved,
-                     this, &ScreenService::screenRemoved, Qt::UniqueConnection);
-
-    QObject::connect(proxy, &dfmbase::AbstractScreenProxy::screenChanged,
+    connect(proxy, &dfmbase::AbstractScreenProxy::screenChanged,
                      this, &ScreenService::screenChanged, Qt::UniqueConnection);
 
-    return proxy->allScreen();
+    connect(proxy, &dfmbase::AbstractScreenProxy::displayModeChanged,
+                     this, &ScreenService::displayModeChanged, Qt::UniqueConnection);
+
+    connect(proxy, &dfmbase::AbstractScreenProxy::screenGeometryChanged,
+                     this, &ScreenService::screenGeometryChanged, Qt::UniqueConnection);
+
+    connect(proxy, &dfmbase::AbstractScreenProxy::screenAvailableGeometryChanged,
+                     this, &ScreenService::screenAvailableGeometryChanged, Qt::UniqueConnection);
+}
+
+dfmbase::ScreenPointer ScreenService::primaryScreen()
+{
+    return proxy->primaryScreen();
+}
+
+QVector<dfmbase::ScreenPointer> ScreenService::screens() const
+{
+    return proxy->screens();
+}
+
+QVector<dfmbase::ScreenPointer> ScreenService::logicScreens() const
+{
+    return proxy->logicScreens();
+}
+
+dfmbase::ScreenPointer ScreenService::screen(const QString &name) const
+{
+    return proxy->screen(name);
+}
+
+qreal ScreenService::devicePixelRatio() const
+{
+    return proxy->devicePixelRatio();
+}
+
+dfmbase::DisplayMode ScreenService::displayMode() const
+{
+    return proxy->displayMode();
+}
+
+dfmbase::DisplayMode ScreenService::lastChangedMode() const
+{
+    return proxy->lastChangedMode();
+}
+
+void ScreenService::reset()
+{
+    return proxy->reset();
 }
 
 DSB_D_END_NAMESPACE

@@ -24,33 +24,46 @@
 
 #include "abstractscreen.h"
 #include "dfm-base/dfm_base_global.h"
+#include "dfm-base/widgets/screenglobal.h"
 
 #include <QObject>
+#include <QMultiMap>
+
+class QTimer;
 
 DFMBASE_BEGIN_NAMESPACE
 
 class AbstractScreenProxy : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(AbstractScreenProxy)
+public:
+    enum Event{Screen,Mode,Geometry,AvailableGeometry};
 public:
     explicit AbstractScreenProxy(QObject *parent = nullptr);
 
-    virtual ~AbstractScreenProxy(){
-        for (auto && val :screenList) {
-            delete val;
-            screenList.removeOne(val);
-        }
-    }
-
-    virtual QList<dfmbase::AbstractScreen*> allScreen();
-
-signals:
-    void screenChanged(dfmbase::AbstractScreen *screen);
-    void screenRemoved(dfmbase::AbstractScreen *screen);
-    void screenAdded(dfmbase::AbstractScreen *screen);
-
+    virtual ScreenPointer primaryScreen() = 0;
+    virtual QVector<ScreenPointer> screens() const = 0;
+    virtual QVector<ScreenPointer> logicScreens() const = 0;
+    virtual ScreenPointer screen(const QString &name) const = 0;
+    virtual qreal devicePixelRatio() const = 0;
+    virtual DisplayMode displayMode() const = 0;
+    virtual DisplayMode lastChangedMode() const;
+    virtual void reset() = 0;
 protected:
-    QList<dfmbase::AbstractScreen*> screenList;
+    virtual void processEvent() = 0;
+protected:
+    void appendEvent(Event);
+signals:
+    void screenChanged();
+    void displayModeChanged();
+    void screenGeometryChanged();
+    void screenAvailableGeometryChanged();
+protected:
+    DisplayMode lastMode = Custom;
+    QMultiMap<Event, qint64> events;
+private:
+    QTimer *eventShot = nullptr;
 };
 
 DFMBASE_END_NAMESPACE

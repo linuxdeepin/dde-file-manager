@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huangyu<huangyub@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "screenqt.h"
 #include "dbus-private/dbusdock.h"
 
+#include <qpa/qplatformscreen.h>
 #include <QDebug>
 #include <QApplication>
 
@@ -38,31 +39,24 @@ static QRect dealRectRatio(QRect orgRect)
 }
 } // namespace GlobalPrivate
 
+DSB_D_BEGIN_NAMESPACE
+
 ScreenQt::ScreenQt(QScreen *screen, QObject *parent)
-    : dfmbase::AbstractScreen (parent)
+    : dfmbase::AbstractScreen(parent)
     , qscreen(screen)
 {
-
-}
-
-bool ScreenQt::isValid() const
-{
-    if(qscreen)
-        return true;
-    return false;
+    Q_ASSERT(qscreen);
+    connect(qscreen,SIGNAL(geometryChanged(const QRect &)),this,SIGNAL(geometryChanged(const QRect &)));
+    connect(qscreen,SIGNAL(availableGeometryChanged(const QRect &)),this,SIGNAL(availableGeometryChanged(const QRect &)));
 }
 
 QString ScreenQt::name() const
 {
-    if (!qscreen)
-        return AbstractScreen::name();
     return qscreen->name();
 }
 
 QRect ScreenQt::geometry() const
 {
-    if (!qscreen)
-        return AbstractScreen::geometry();
     return qscreen->geometry();
 }
 
@@ -75,7 +69,7 @@ QRect ScreenQt::availableGeometry() const
     QRect ret = geometry(); //已经缩放过
 
     int dockHideMode = DockInfoIns->hideMode();
-    if ( 1 == dockHideMode) {//隐藏
+    if (1 == dockHideMode) {//隐藏
         qInfo() << "dock is Hidden";
         return ret;
     }
@@ -83,20 +77,17 @@ QRect ScreenQt::availableGeometry() const
     DockRect dockrectI = DockInfoIns->frontendWindowRect(); //原始dock大小
     QRect dockrect = GlobalPrivate::dealRectRatio(dockrectI.operator QRect());  //缩放处理
 
-#ifndef UNUSED_SMARTDOCK
     qreal ratio = qApp->primaryScreen()->devicePixelRatio();
-    //bug 52241
-    QRect t_rect = handleGeometry();
+    QRect hRect = handleGeometry();
 
-    if (!t_rect.contains(dockrectI)) { //使用原始大小判断的dock区所在的屏幕
-        qDebug() << "screen:" << name() << "  handleGeometry:" << t_rect << "    dockrectI:" << dockrectI;
+    if (!hRect.contains(dockrectI)) { //使用原始大小判断的dock区所在的屏幕
+        qDebug() << "screen:" << name() << "  handleGeometry:" << hRect << "    dockrectI:" << dockrectI;
         return ret;
     }
-#endif
 
-    qDebug() << "frontendWindowRect: dockrectI " << QRect(dockrectI);
-    qDebug() << "dealRectRatio dockrect " << dockrect;
-    qDebug() << "ScreenObject ret " << ret << name();
+//    qDebug() << "frontendWindowRect: dockrectI " << QRect(dockrectI);
+//    qDebug() << "dealRectRatio dockrect " << dockrect;
+    qDebug() << "ScreenQt ret " << ret << name();
     switch (DockInfoIns->position()) {
     case 0: //上
         ret.setY(dockrect.bottom());
@@ -129,7 +120,7 @@ QRect ScreenQt::availableGeometry() const
         qDebug() << "dock on left,availableGeometry" << ret;
         break;
     default:
-        qCritical() << "dock postion error!" << "and  handleGeometry:" << t_rect << "    dockrectI:" << dockrectI;
+        qCritical() << "dock postion error!" << "and  handleGeometry:" << hRect << "    dockrectI:" << dockrectI;
         break;
     }
     return ret;
@@ -137,12 +128,12 @@ QRect ScreenQt::availableGeometry() const
 
 QRect ScreenQt::handleGeometry() const
 {
-    //    if (!qscreen)
-    return AbstractScreen::handleGeometry();
-    //    return qscreen->handle()->geometry(); //TODO huangyu 此处应当实现逻辑。
+    return qscreen->handle()->geometry();
 }
 
-QScreen* ScreenQt::qScreen() const
+QScreen *ScreenQt::screen() const
 {
     return qscreen;
 }
+
+DSB_D_END_NAMESPACE

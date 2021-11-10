@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huangyu<huangyub@uniontech.com>
  *
@@ -46,38 +46,18 @@
 
 #include <dfm-framework/framework.h>
 
-#include <QListWidget>
-#include <QListView>
-#include <QTreeView>
-#include <QStandardItemModel>
-#include <QHeaderView>
-#include <QDockWidget>
-#include <QStatusBar>
-#include <QLabel>
-#include <QFrame>
-#include <QIcon>
-#include <QHBoxLayout>
-#include <QLineEdit>
-#include <QSplitter>
-#include <QDir>
-#include <QSizePolicy>
-#include <QCoreApplication>
-#include <QToolButton>
-#include <QApplication>
-#include <QScreen>
 
 DSC_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
 
-namespace GlobalPrivate {
-    static QList<dfmbase::AbstractScreen*> screens{};
-    static QList<dfmbase::AbstractBackground*> backgrounds{};
-} // namespace GlobalPrivate
-
 void registerAllService()
 {
-    ScreenService::regClass<ScreenProxyQt>(PlatformTypes::XCB);
-    ScreenService::regClass<ScreenProxyDBus>(PlatformTypes::WAYLAND);
+    QString errStr;
+    auto &ctx = dpfInstance.serviceContext();
+    if (!ctx.load(ScreenService::name(), &errStr)) {
+        qCritical() << errStr;
+        abort();
+    }
 }
 
 void registerFileSystem()
@@ -93,13 +73,11 @@ void Core::initialize()
 {
     registerFileSystem();
     registerAllService();
-    GlobalPrivate::screens = ScreenService::instance()->allScreen(qApp->platformName());
-    for (auto val : GlobalPrivate::screens) {
-        //注册到服务自动管理
-        BackgroundService::regClass<BackgroundDefault>(val->name());
-        BackgroundService::create(val->name());
-    }
-    GlobalPrivate::backgrounds = BackgroundService::instance()->allBackground();
+
+    auto &ctx = dpfInstance.serviceContext();
+    ScreenService *screenService = ctx.service<ScreenService>(ScreenService::name());
+    screenService->screens();
+
     //获取所有的背景
 }
 
@@ -108,13 +86,6 @@ bool Core::start()
     // qInfo() << PlatformTypes::XCB << ScreenService::instance()->allScreen(PlatformTypes::XCB);
     // qInfo() << PlatformTypes::WAYLAND << ScreenService::instance()->allScreen(PlatformTypes::WAYLAND);
 
-    for (auto val: GlobalPrivate::backgrounds) { //此处可线程并发设置图片
-        val->setDisplay("/usr/share/wallpapers/deepin/abc-123.jpg"); //这里需要从WallpaperService中获取壁纸，先做测试
-        //        val->setWindowFlags(Qt::FramelessWindowHint);
-        val->setAttribute(Qt::WA_TranslucentBackground,true);
-        val->setWindowOpacity(1);
-        val->show();
-    }
     return true;
 }
 

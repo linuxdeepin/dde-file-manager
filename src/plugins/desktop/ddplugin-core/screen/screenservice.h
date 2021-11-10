@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huangyu<huangyub@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,31 +18,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #ifndef SCREENSERVICE_H
 #define SCREENSERVICE_H
 
-#include "screenfactory.h"
-
 #include "dfm_desktop_service_global.h"
+#include "dfm-base/widgets/screenglobal.h"
 
 #include <dfm-framework/framework.h>
 
+namespace dfmbase {
+class AbstractScreenProxy;
+}
+
 class Core;
 DSB_D_BEGIN_NAMESPACE
-namespace PlatformTypes{
-extern const QString WAYLAND;
-extern const QString XCB;
-} //namespace ScreenType
-
 class ScreenService final : public dpf::PluginService, dpf::AutoServiceRegister<ScreenService>
 {
     Q_OBJECT
     Q_DISABLE_COPY(ScreenService)
     friend class dpf::QtClassFactory<dpf::PluginService>;
     friend class ::Core;
-    ScreenService();
-    static ScreenService *instance();
-
+    explicit ScreenService(QObject *parent = nullptr);
 public:
 
     static QString name()
@@ -51,18 +47,22 @@ public:
         return "org.deepin.service.ScreenService";
     }
 
-    QList<dfmbase::AbstractScreen*> allScreen(const QString &platform);
-
-    template<class T>
-    static bool regClass(const QString &platform, QString *errorString = nullptr)
-    {
-        return ScreenFactory::regClass<T>(platform, errorString);
-    }
+    dfmbase::ScreenPointer primaryScreen();
+    QVector<dfmbase::ScreenPointer> screens() const;
+    QVector<dfmbase::ScreenPointer> logicScreens() const;
+    dfmbase::ScreenPointer screen(const QString &name) const;
+    qreal devicePixelRatio() const;
+    dfmbase::DisplayMode displayMode() const;
+    dfmbase::DisplayMode lastChangedMode() const;
+    void reset();
 
 signals:
-    void screenAdded(dfmbase::AbstractScreen *screen);
-    void screenRemoved(dfmbase::AbstractScreen *screen);
-    void screenChanged(dfmbase::AbstractScreen *screen);
+    void screenChanged();
+    void displayModeChanged();
+    void screenGeometryChanged();
+    void screenAvailableGeometryChanged();
+private:
+    dfmbase::AbstractScreenProxy *proxy = nullptr;
 };
 
 DSB_D_END_NAMESPACE

@@ -21,6 +21,9 @@
  */
 #include "abstractscreenproxy.h"
 
+#include <QTimer>
+#include <QDebug>
+
 DFMBASE_BEGIN_NAMESPACE
 /*!
  * \brief The AbstractScreenProxy class
@@ -34,16 +37,27 @@ DFMBASE_BEGIN_NAMESPACE
  */
 AbstractScreenProxy::AbstractScreenProxy(QObject *parent) : QObject(parent)
 {
-
+    eventShot = new QTimer(this);
+    eventShot->setSingleShot(true);
+    QObject::connect(eventShot, &QTimer::timeout, this, [=]() {
+        processEvent();
+        events.clear();
+    });
 }
 
-/*!
- * \brief AbstractScreenProxy::allScreen 获取所有的屏幕对象接口
- *  实现但不限于平台xcb与wayland重载实现的屏幕获取
- * \return
- */
-QList<dfmbase::AbstractScreen *> AbstractScreenProxy::allScreen()
+DisplayMode AbstractScreenProxy::lastChangedMode() const
 {
-    return {};
+    return lastMode;
 }
+
+void AbstractScreenProxy::appendEvent(AbstractScreenProxy::Event e)
+{
+    qDebug() << "append event" << e << "current size" << (events.size() + 1);
+    //收集短时间内爆发出的事件，合并处理，优化响应速度
+    events.insert(e, 0);
+
+    eventShot->stop();
+    eventShot->start(100);
+}
+
 DFMBASE_END_NAMESPACE

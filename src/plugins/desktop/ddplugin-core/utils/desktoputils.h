@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huangyu<huangyub@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,17 +18,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SCREENPROXYDBUS_H
-#define SCREENPROXYDBUS_H
+#ifndef DESKTOPUTILS_H
+#define DESKTOPUTILS_H
 
-#include "dfm-base/widgets/abstractscreenproxy.h"
+#include "dfm_desktop_service_global.h"
 
-class ScreenProxyDBus : public dfmbase::AbstractScreenProxy
-{
-    Q_OBJECT
-public:
-    explicit ScreenProxyDBus(QObject *parent = nullptr);
-    virtual QList<dfmbase::AbstractScreen*> allScreen() override;
-};
+DSB_D_BEGIN_NAMESPACE
 
-#endif // SCREENPROXYDBUS_H
+bool waylandDectected();
+
+DSB_D_END_NAMESPACE
+
+#endif // DESKTOPUTILS_H

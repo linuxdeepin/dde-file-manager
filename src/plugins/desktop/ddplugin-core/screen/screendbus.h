@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huangyu<huangyub@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,24 +21,30 @@
 #ifndef SCREENDBUS_H
 #define SCREENDBUS_H
 
+#include "dfm_desktop_service_global.h"
 #include "dfm-base/widgets/abstractscreen.h"
-#include "dbus-private/dbusmonitor.h"
 
 #include <QMutex>
+
+class DBusMonitor;
+
+DSB_D_BEGIN_NAMESPACE
 
 class ScreenDBus : public dfmbase::AbstractScreen
 {
     Q_OBJECT
-    DBusMonitor *dbusMonitor = nullptr;
 public:
     explicit ScreenDBus(DBusMonitor *monitor, QObject *parent = nullptr);
     virtual ~ScreenDBus() override;
-    bool isValid() const override;
     virtual QString name() const override;
     virtual QRect geometry() const override;
     virtual QRect availableGeometry() const override;
     QRect handleGeometry() const override;
-    DBusMonitor *monitor() const;
+    QString path() const;
+    bool enabled() const;
+private:
+    DBusMonitor *dbusMonitor = nullptr;
 };
 
+DSB_D_END_NAMESPACE
 #endif // SCREENDBUS_H

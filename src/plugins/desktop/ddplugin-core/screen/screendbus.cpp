@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huangyu<huangyub@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "screendbus.h"
 #include "dbus-private/dbusdock.h"
+#include "dbus-private/dbusmonitor.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -38,11 +39,13 @@ static QRect dealRectRatio(QRect orgRect)
 }
 } // namespace GlobalPrivate
 
+DSB_D_BEGIN_NAMESPACE
 
 ScreenDBus::ScreenDBus(DBusMonitor *monitor, QObject *parent)
     : dfmbase::AbstractScreen(parent)
     , dbusMonitor(monitor)
 {
+    Q_ASSERT(dbusMonitor);
     QObject::connect(dbusMonitor,&DBusMonitor::monitorRectChanged, this, [this](){
         emit geometryChanged(geometry());
     });
@@ -58,8 +61,6 @@ ScreenDBus::~ScreenDBus()
 
 QString ScreenDBus::name() const
 {
-    if (!dbusMonitor)
-        return "";
     return dbusMonitor->name();
 }
 
@@ -70,35 +71,28 @@ QRect ScreenDBus::geometry() const
     return orgRect;
 }
 
-
 QRect ScreenDBus::availableGeometry() const
 {
     QRect ret = geometry(); //已经缩放过
     int dockHideMode = DockInfoIns->hideMode();
-    if ( 1 == dockHideMode){ //隐藏
+    if (1 == dockHideMode){ //隐藏
         qInfo() << "dock is Hidden";
         return ret;
     }
 
-    //DockGeoIns->getGeometry(); //经过缩放处理后的docks,有问题
     DockRect dockrectI = DockInfoIns->frontendWindowRect(); //原始dock大小
     QRect dockrect = GlobalPrivate::dealRectRatio(dockrectI.operator QRect());  //缩放处理
-
-#ifndef UNUSED_SMARTDOCK
     qreal ratio = qApp->primaryScreen()->devicePixelRatio();
-    //fix bug52241
-    //当缩放比例为小数时，获得的缩放rect会向下整失去精度，缩放推算原始大小修改为直接获取
-    QRect t_rect = handleGeometry(); //原始geometry大小
+    QRect hRect = handleGeometry(); //原始geometry大小
 
-    if (!t_rect.contains(dockrectI)) { //使用原始大小判断的dock区所在的屏幕
-        qDebug() << "screen:" << name() << "  handleGeometry:" << t_rect << "    dockrectI:" << dockrectI;
+    if (!hRect.contains(dockrectI)) { //使用原始大小判断的dock区所在的屏幕
+        qDebug() << "screen:" << name() << "  handleGeometry:" << hRect << "    dockrectI:" << dockrectI;
         return ret;
     }
-#endif
 
-    qDebug() << "frontendWindowRect: dockrectI " << QRect(dockrectI);
-    qDebug() << "dealRectRatio dockrect " << dockrect;
-    qDebug() << "ScreenObject ret " << ret << name();
+//    qDebug() << "frontendWindowRect: dockrectI " << QRect(dockrectI);
+//    qDebug() << "dealRectRatio dockrect " << dockrect;
+    qDebug() << "ScreenDBus ret " << ret << name();
    switch (DockInfoIns->position()) {
    case 0: //上
        ret.setY(dockrect.bottom());
@@ -131,7 +125,7 @@ QRect ScreenDBus::availableGeometry() const
        qDebug() << "dock on left,availableGeometry" << ret;
        break;
    default:
-       qCritical() << "dock postion error!" << "and  handleGeometry:" << t_rect << "    dockrectI:" << dockrectI;
+       qCritical() << "dock postion error!" << "and  handleGeometry:" << hRect << "    dockrectI:" << dockrectI;
        break;
    }
     return ret;
@@ -139,20 +133,17 @@ QRect ScreenDBus::availableGeometry() const
 
 QRect ScreenDBus::handleGeometry() const
 {
-    if (!dbusMonitor)
-        return AbstractScreen::handleGeometry();
     return dbusMonitor->rect();
 }
 
-DBusMonitor *ScreenDBus::monitor() const
+QString ScreenDBus::path() const
 {
-    return dbusMonitor;
+    return dbusMonitor->path();
 }
 
-bool ScreenDBus::isValid() const
+bool ScreenDBus::enabled() const
 {
-    if (dbusMonitor && dbusMonitor->isValid() && dbusMonitor->enabled())
-        return true;
-    return AbstractScreen::isValid();
+    return dbusMonitor->enabled();
 }
 
+DSB_D_END_NAMESPACE

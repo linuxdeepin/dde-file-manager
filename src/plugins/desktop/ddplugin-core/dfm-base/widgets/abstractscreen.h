@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huangyu<huangyub@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #ifndef ABSTRACTSCREEN_H
 #define ABSTRACTSCREEN_H
 
@@ -33,13 +33,11 @@ class AbstractScreen : public QObject
     Q_OBJECT
     Q_DISABLE_COPY(AbstractScreen)
 public:
-    explicit AbstractScreen(QObject *parent = nullptr): QObject (parent){}
-    virtual ~AbstractScreen(){}
-    virtual bool isValid() const {return false;}
-    virtual QString name() const {return "";}
-    virtual QRect geometry() const {return QRect(0,0,0,0);}
-    virtual QRect availableGeometry() const {return QRect(0,0,0,0);}
-    virtual QRect handleGeometry() const {return QRect(0,0,0,0);}
+    explicit AbstractScreen(QObject *parent = nullptr);
+    virtual QString name() const = 0;
+    virtual QRect geometry() const = 0;
+    virtual QRect availableGeometry() const = 0;
+    virtual QRect handleGeometry() const = 0;
 signals:
     void geometryChanged(const QRect &);
     void availableGeometryChanged(const QRect &);

@@ -1,11 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyu@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
+ * Maintainer: huanyu<huanyu@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,8 +79,10 @@ static bool pluginsLoad()
     auto corePlugin = lifeCycle.pluginMetaObj(PLUGIN_CORE);
     if (corePlugin.isNull())
         return false;
-    if (!corePlugin->fileName().contains(LIB_CORE))
+    if (!corePlugin->fileName().contains(LIB_CORE)) {
+        qWarning() << corePlugin->fileName() << "is not" << LIB_CORE;
         return false;
+    }
     if (!lifeCycle.loadPlugin(corePlugin))
         return false;
 
