@@ -938,6 +938,14 @@ void CanvasGridView::mouseReleaseEvent(QMouseEvent *event)
         setProperty("lastPressedIndex", QModelIndex());
     }
 
+    auto releaseIndex = indexAt(event->pos());
+    if (releaseIndex.isValid()) {
+        //按照产品要求，框选时鼠标释放位置若为有效index时，设置该index为焦点index，
+        //若释放时位置的index无效，则默认为左上角第一个
+        d->currentCursorIndex = releaseIndex;
+        d->m_oldCursorIndex = releaseIndex;
+    }
+
     update();
 }
 
@@ -2361,6 +2369,10 @@ void CanvasGridView::select(const QList<DUrl> &list)
 
     if (lastIndex.isValid()) {
         selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::Select);
+
+        //fix #bug100789 根据产品要求，在粘贴导致原有选中项中的焦点项被取消选中状态时，已粘贴后的扩展方向的最后一个为焦点
+        d->currentCursorIndex = lastIndex;
+        d->m_oldCursorIndex = lastIndex;
     }
 }
 
