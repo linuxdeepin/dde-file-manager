@@ -1670,7 +1670,8 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, toUrl);
 
     // 当为拖拽压缩时
-    if (info->canDragCompress()) {
+    if (info->canDragCompress()
+            && !info->isDir()) { // fix 101867: 如果是文件夹 就不走压缩逻辑
         qDebug() << "执行拖拽压缩";
         return FileUtils::appendCompress(toUrl, urlList);
     }
