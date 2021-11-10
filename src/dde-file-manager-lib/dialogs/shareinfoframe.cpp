@@ -35,6 +35,7 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QLineEdit>
+#include <QAbstractItemView>
 #include <unistd.h>
 
 ShareInfoFrame::ShareInfoFrame(const DAbstractFileInfoPointer &info, QWidget *parent) :
@@ -81,6 +82,7 @@ void ShareInfoFrame::initUI()
     SectionKeyLabel *permissionLabel = new SectionKeyLabel(tr("Permission:"));
     permissionLabel->setFixedWidth(labelWidth);
     m_permissoComBox = new QComboBox(this);
+    m_permissoComBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
     m_permissoComBox->setFixedWidth(fieldWidth);
     QStringList permissions;
     permissions << tr("Read and write") << tr("Read only");
@@ -89,6 +91,7 @@ void ShareInfoFrame::initUI()
     SectionKeyLabel *anonymityLabel = new SectionKeyLabel(tr("Anonymous:"));
     anonymityLabel->setFixedWidth(labelWidth);
     m_anonymityCombox = new QComboBox(this);
+    m_anonymityCombox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
     m_anonymityCombox->setFixedWidth(fieldWidth);
     QStringList anonymityChoices;
     anonymityChoices << tr("Not allow") << tr("Allow");

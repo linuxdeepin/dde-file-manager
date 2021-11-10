@@ -1581,6 +1581,10 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     QComboBox *groupBox = new QComboBox;
     QComboBox *otherBox = new QComboBox;
 
+    ownerBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
+    groupBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
+    otherBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
+
     DUrl parentUrl = info->parentUrl();
     DStorageInfo storageInfo(parentUrl.toLocalFile());
     const QString &fsType = storageInfo.fileSystemType();
