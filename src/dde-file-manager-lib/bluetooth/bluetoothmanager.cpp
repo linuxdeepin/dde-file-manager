@@ -52,7 +52,20 @@ BluetoothManagerPrivate::BluetoothManagerPrivate(BluetoothManager *qq)
 
 void BluetoothManagerPrivate::resolve(const QDBusReply<QString> &req)
 {
+    Q_Q(BluetoothManager);
     const QString replyStr = req.value();
+    qInfo() << replyStr;
+    static int maxRetry = 3;
+    // GetAdapter method, if there has no adapter, the method returns an emtpy json [], but if the method is not ready,
+    // returns a null string. if null, retry
+    if (replyStr.isEmpty() && maxRetry > 0) {
+        qInfo() << "retry to get bluetooth adapters..." << maxRetry;
+        QTimer::singleShot(500, q, [q]{
+            q->refresh();
+        });
+        maxRetry--;
+        return;
+    }
     QJsonDocument doc = QJsonDocument::fromJson(replyStr.toUtf8());
     QJsonArray arr = doc.array();
     for (QJsonValue val : arr) {
@@ -69,7 +82,7 @@ void BluetoothManagerPrivate::initConnects()
     QObject::connect(m_bluetoothInter, &DBusBluetooth::serviceValidChanged, q, [q](bool valid){
         if (valid) {
             qInfo() << "bluetooth service is valid now...";
-            QTimer::singleShot(0, q, [q]{ q->refresh(); });
+            QTimer::singleShot(1000, q, [q]{ q->refresh(); });
         }
     });
 
