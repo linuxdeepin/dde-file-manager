@@ -57,7 +57,10 @@ BuildRequires:  htmlcxx-devel
 BuildRequires:  libgsf-devel
 BuildRequires:  mimetic-devel
 BuildRequires:  boost-devel
+%ifarch %{ix86} x86_64
 BuildRequires:	deepin-anything-devel deepin-anything-server
+%endif
+
 
 # run command by QProcess
 #Requires:       deepin-shortcut-viewer
@@ -96,8 +99,9 @@ Requires:       libzen
 Requires:       udisks2-qt5
 Requires:       taglib
 Requires:       libgio-qt
+%ifarch %{ix86} x86_64 
 Requires:		deepin-anything-libs
-
+%endif
 
 %description -n libdde-file-manager
 DDE File Manager library.
