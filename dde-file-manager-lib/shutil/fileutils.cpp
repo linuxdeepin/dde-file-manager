@@ -1140,6 +1140,11 @@ bool FileUtils::isFileExecutable(const QString &path)
 {
     QFile file(path);
 
+    // regard these type as unexecutable.
+    const static QStringList noValidateType {"txt", "md"};
+    if (noValidateType.contains(QFileInfo(file).suffix()))
+        return false;
+
     bool isExeUser = false;
 
     // Vault file need to use stat function to read file permission.
