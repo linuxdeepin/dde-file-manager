@@ -1,0 +1,85 @@
+# Copyright (C) 2016 Olivier Goffart <ogoffart@woboq.com>
+#
+# You may use this file under the terms of the 3-clause BSD license.
+# See the file LICENSE from this package for details.
+
+# This is the clang-format configuration style to be used by Qt,
+# based on the rules from https://wiki.qt.io/Qt_Coding_Style and
+# https://wiki.qt.io/Coding_Conventions
+
+---
+# Webkit style was loosely based on the Qt style
+BasedOnStyle: WebKit
+
+Standard: Cpp11
+
+# Column width is limited to 100 in accordance with Qt Coding Style.
+# https://wiki.qt.io/Qt_Coding_Style
+# 每行字符的限制，0表示没有限制
+ColumnLimit: 0
+# 对于每个在行字符数限制之外的字符的penalty
+# PenaltyExcessCharacter: 4
+
+# Disable reflow of qdoc comments: indentation rules are different.
+CommentPragmas: "^!|^:"
+
+# We want a space between the type and the star for pointer types.
+PointerBindsToType: false
+
+# 在 template 关键字后插入一个空格
+SpaceAfterTemplateKeyword: false
+
+# 在二元运算符前换行: None(在操作符后换行), NonAssignment(在非赋值的操作符前换行), All(在操作符前换行)
+BreakBeforeBinaryOperators: NonAssignment
+
+# Braces are usually attached, but not after functions or class declarations.
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterClass: true
+    AfterControlStatement: false
+    AfterEnum: false
+    AfterFunction: true
+    AfterNamespace: false
+    AfterObjCDeclaration: false
+    AfterStruct: true
+    AfterUnion: false
+    BeforeCatch: false
+    BeforeElse: false
+    IndentBraces: false
+
+# When constructor initializers do not fit on one line, put them each on a new line.
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+# 构造函数的初始化列表的缩进宽度
+ConstructorInitializerIndentWidth: 4
+
+# 延续的行的缩进宽度
+ContinuationIndentWidth: 8
+
+# 命名空间的缩进: None, Inner(缩进嵌套的命名空间中的内容), All
+NamespaceIndentation: None
+
+# 要使用的预处理器指令缩进样式
+IndentPPDirectives: AfterHash
+
+# 左括号(左圆括号、左尖括号、左方括号)后的对齐
+AlignAfterOpenBracket: true
+# 总是在template声明后换行
+AlwaysBreakTemplateDeclarations: true
+
+# 允许短的函数放在同一行: None, InlineOnly(定义在类中), Empty(空函数), Inline(定义在类中，空函数), All
+AllowShortFunctionsOnASingleLine: Inline
+
+# 允许短的if语句保持在同一行
+AllowShortIfStatementsOnASingleLine: true
+
+# 允许排序#include
+SortIncludes: false
+
+# 需要被解读为foreach循环而不是函数调用的宏
+ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH, forever, Q_FOREVER, QBENCHMARK, QBENCHMARK_ONCE ]
+
+# 要使用的构造函数初始化式样式
+BreakConstructorInitializers: BeforeColon
+
+# 在尾随的评论前添加的空格数(只适用于//)
+SpacesBeforeTrailingComments: 3
