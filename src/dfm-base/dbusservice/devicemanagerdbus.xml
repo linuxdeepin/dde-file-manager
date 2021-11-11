@@ -1,28 +1,36 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
   <interface name="com.deepin.filemanager.service.DeviceManager">
+    <signal name="AskStopSacnningWhenUnmount">
+      <arg name="id" type="s" direction="out"/>
+    </signal>
+    <signal name="AskStopScanningWhenDetach">
+      <arg name="id" type="s" direction="out"/>
+    </signal>
+    <signal name="AskStopScanningWhenDetachAll">
+    </signal>
     <signal name="BlockDriveAdded">
     </signal>
     <signal name="BlockDriveRemoved">
     </signal>
     <signal name="BlockDeviceAdded">
-      <arg name="deviceId" type="s" direction="out"/>
+      <arg name="id" type="s" direction="out"/>
     </signal>
     <signal name="BlockDeviceRemoved">
-      <arg name="deviceId" type="s" direction="out"/>
+      <arg name="id" type="s" direction="out"/>
     </signal>
     <signal name="BlockDeviceFilesystemAdded">
-      <arg name="deviceId" type="s" direction="out"/>
+      <arg name="id" type="s" direction="out"/>
     </signal>
     <signal name="BlockDeviceFilesystemRemoved">
-      <arg name="deviceId" type="s" direction="out"/>
+      <arg name="id" type="s" direction="out"/>
     </signal>
     <signal name="BlockDeviceMounted">
-      <arg name="deviceId" type="s" direction="out"/>
+      <arg name="id" type="s" direction="out"/>
       <arg name="mountPoint" type="s" direction="out"/>
     </signal>
     <signal name="BlockDeviceUnmounted">
-      <arg name="deviceId" type="s" direction="out"/>
+      <arg name="id" type="s" direction="out"/>
     </signal>
     <method name="IsMonotorWorking">
       <arg type="b" direction="out"/>
@@ -33,15 +41,23 @@
     <method name="DetachBlockDevice">
       <arg name="id" type="s" direction="in"/>
     </method>
+    <method name="DetachBlockDeviceForced">
+      <arg name="id" type="s" direction="in"/>
+    </method>
     <method name="DetachProtocolDevice">
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="DetachAllMountedDevices">
     </method>
+    <method name="DetachAllMountedDevicesForced">
+    </method>
     <method name="MountBlockDevice">
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="UnmountBlockDevice">
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="UnmountBlockDeviceForced">
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="EjectBlockDevice">

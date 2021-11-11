@@ -40,14 +40,18 @@ public:
     ~DeviceManagerDBus();
 
 signals:
+    void AskStopSacnningWhenUnmount(QString id);
+    void AskStopScanningWhenDetach(QString id);
+    void AskStopScanningWhenDetachAll();
+
     void BlockDriveAdded();
     void BlockDriveRemoved();
-    void BlockDeviceAdded(const QString &deviceId);
-    void BlockDeviceRemoved(const QString &deviceId);
-    void BlockDeviceFilesystemAdded(const QString &deviceId);
-    void BlockDeviceFilesystemRemoved(const QString &deviceId);
-    void BlockDeviceMounted(const QString &deviceId, const QString &mountPoint);
-    void BlockDeviceUnmounted(const QString &deviceId);
+    void BlockDeviceAdded(QString id);
+    void BlockDeviceRemoved(QString id);
+    void BlockDeviceFilesystemAdded(QString id);
+    void BlockDeviceFilesystemRemoved(QString id);
+    void BlockDeviceMounted(QString id, QString mountPoint);
+    void BlockDeviceUnmounted(QString id);
 
     // TODO(zhangs): signals of protocol devices
 
@@ -55,10 +59,13 @@ public slots:
     bool IsMonotorWorking();
     void SafelyRemoveBlockDevice(QString id);
     void DetachBlockDevice(QString id);
+    void DetachBlockDeviceForced(QString id);
     void DetachProtocolDevice(QString id);
     void DetachAllMountedDevices();
+    void DetachAllMountedDevicesForced();
     void MountBlockDevice(QString id);
     void UnmountBlockDevice(QString id);
+    void UnmountBlockDeviceForced(QString id);
     void EjectBlockDevice(QString id);
     void PoweroffBlockDevice(QString id);
     void MountProtocolDevice(QString id);
@@ -72,13 +79,9 @@ public slots:
 private:
     void initialize();
     void initConnection();
-    Q_SLOT void onDetachDeviceScanning(int index, const QString &id);
-    Q_SLOT void onDetachAllDevicesScannong(int index);
-    Q_SLOT void onUnmountDeviceScanning(int index, const QString &id);
 
 private:
     dfm_service_common::DeviceService *deviceServ {nullptr};
-    dfm_service_common::DialogService *dialogServ {nullptr};
 };
 
 

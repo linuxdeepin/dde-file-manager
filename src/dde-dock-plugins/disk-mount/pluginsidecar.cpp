@@ -59,12 +59,33 @@ bool PluginSidecar::connectToServer()
         return false;
     }
 
+    initConnection();
+
+    qInfo() << "Finish initilize dbus: `DeviceManagerInterface`";
+    return true;
+}
+
+void PluginSidecar::initConnection()
+{
+    // hanlder server signals
+    // method refrecent to `DiskControlWidget::onAskStopScanning`
+    connect(deviceInterface.data(), &DeviceManagerInterface::AskStopScanningWhenDetach, this, [this](const QString &id) {
+        emit askStopScanning("detach", id);
+    });
+
+    connect(deviceInterface.data(), &DeviceManagerInterface::AskStopScanningWhenDetachAll, this, [this]() {
+        emit askStopScanning("detach_all", "");
+    });
+
+    connect(deviceInterface.data(), &DeviceManagerInterface::AskStopSacnningWhenUnmount, this, [this](const QString &id) {
+        emit askStopScanning("unmount", id);
+    });
+
+    // monitor server status
     watcher.reset(new QDBusServiceWatcher("com.deepin.filemanager.service", deviceInterface->connection()));
     connect(watcher.data(), &QDBusServiceWatcher::serviceUnregistered, this, &PluginSidecar::serviceUnregistered);
     connect(watcher.data(), &QDBusServiceWatcher::serviceRegistered, this, &PluginSidecar::serviceRegistered);
 
-    qInfo() << "Finish initilize dbus: `DeviceManagerInterface`";
-    return true;
 }
 
 void PluginSidecar::invokeDetachAllMountedDevices()
@@ -72,6 +93,17 @@ void PluginSidecar::invokeDetachAllMountedDevices()
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         auto &&reply = deviceInterface->DetachAllMountedDevices();
+        if (!reply.isValid())
+            qCritical() << "D-Bus reply is invalid ";
+        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+    }
+}
+
+void PluginSidecar::invokeDetachAllMountedDevicesForced()
+{
+    if (deviceInterface) {
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        auto &&reply = deviceInterface->DetachAllMountedDevicesForced();
         if (!reply.isValid())
             qCritical() << "D-Bus reply is invalid ";
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
@@ -168,6 +200,28 @@ void PluginSidecar::invokeDetachBlockDevice(const QString &id)
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         auto &&reply = deviceInterface->DetachBlockDevice(id);
+        if (!reply.isValid())
+            qCritical() << "D-Bus reply is invalid ";
+        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+    }
+}
+
+void PluginSidecar::invokeDetachBlockDeviceForced(const QString &id)
+{
+    if (deviceInterface) {
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        auto &&reply = deviceInterface->DetachBlockDeviceForced(id);
+        if (!reply.isValid())
+            qCritical() << "D-Bus reply is invalid ";
+        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+    }
+}
+
+void PluginSidecar::invokeUnmountBlockDeviceForced(const QString &id)
+{
+    if (deviceInterface) {
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        auto &&reply = deviceInterface->UnmountBlockDeviceForced(id);
         if (!reply.isValid())
             qCritical() << "D-Bus reply is invalid ";
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;

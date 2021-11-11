@@ -42,11 +42,24 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("DetachAllMountedDevices"), argumentList);
     }
 
+    inline QDBusPendingReply<> DetachAllMountedDevicesForced()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("DetachAllMountedDevicesForced"), argumentList);
+    }
+
     inline QDBusPendingReply<> DetachBlockDevice(const QString &id)
     {
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(id);
         return asyncCallWithArgumentList(QStringLiteral("DetachBlockDevice"), argumentList);
+    }
+
+    inline QDBusPendingReply<> DetachBlockDeviceForced(const QString &id)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id);
+        return asyncCallWithArgumentList(QStringLiteral("DetachBlockDeviceForced"), argumentList);
     }
 
     inline QDBusPendingReply<> DetachProtocolDevice(const QString &id)
@@ -131,6 +144,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("UnmountBlockDevice"), argumentList);
     }
 
+    inline QDBusPendingReply<> UnmountBlockDeviceForced(const QString &id)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id);
+        return asyncCallWithArgumentList(QStringLiteral("UnmountBlockDeviceForced"), argumentList);
+    }
+
     inline QDBusPendingReply<> UnmountProtocolDevice(const QString &id)
     {
         QList<QVariant> argumentList;
@@ -139,12 +159,15 @@ public Q_SLOTS: // METHODS
     }
 
 Q_SIGNALS: // SIGNALS
-    void BlockDeviceAdded(const QString &deviceId);
-    void BlockDeviceFilesystemAdded(const QString &deviceId);
-    void BlockDeviceFilesystemRemoved(const QString &deviceId);
-    void BlockDeviceMounted(const QString &deviceId, const QString &mountPoint);
-    void BlockDeviceRemoved(const QString &deviceId);
-    void BlockDeviceUnmounted(const QString &deviceId);
+    void AskStopSacnningWhenUnmount(const QString &id);
+    void AskStopScanningWhenDetach(const QString &id);
+    void AskStopScanningWhenDetachAll();
+    void BlockDeviceAdded(const QString &id);
+    void BlockDeviceFilesystemAdded(const QString &id);
+    void BlockDeviceFilesystemRemoved(const QString &id);
+    void BlockDeviceMounted(const QString &id, const QString &mountPoint);
+    void BlockDeviceRemoved(const QString &id);
+    void BlockDeviceUnmounted(const QString &id);
     void BlockDriveAdded();
     void BlockDriveRemoved();
 };

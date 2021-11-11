@@ -33,26 +33,33 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
     Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.service.DeviceManager")
     Q_CLASSINFO("D-Bus Introspection", ""
 "  <interface name=\"com.deepin.filemanager.service.DeviceManager\">\n"
+"    <signal name=\"AskStopSacnningWhenUnmount\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
+"    </signal>\n"
+"    <signal name=\"AskStopScanningWhenDetach\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
+"    </signal>\n"
+"    <signal name=\"AskStopScanningWhenDetachAll\"/>\n"
 "    <signal name=\"BlockDriveAdded\"/>\n"
 "    <signal name=\"BlockDriveRemoved\"/>\n"
 "    <signal name=\"BlockDeviceAdded\">\n"
-"      <arg direction=\"out\" type=\"s\" name=\"deviceId\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
 "    </signal>\n"
 "    <signal name=\"BlockDeviceRemoved\">\n"
-"      <arg direction=\"out\" type=\"s\" name=\"deviceId\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
 "    </signal>\n"
 "    <signal name=\"BlockDeviceFilesystemAdded\">\n"
-"      <arg direction=\"out\" type=\"s\" name=\"deviceId\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
 "    </signal>\n"
 "    <signal name=\"BlockDeviceFilesystemRemoved\">\n"
-"      <arg direction=\"out\" type=\"s\" name=\"deviceId\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
 "    </signal>\n"
 "    <signal name=\"BlockDeviceMounted\">\n"
-"      <arg direction=\"out\" type=\"s\" name=\"deviceId\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
 "      <arg direction=\"out\" type=\"s\" name=\"mountPoint\"/>\n"
 "    </signal>\n"
 "    <signal name=\"BlockDeviceUnmounted\">\n"
-"      <arg direction=\"out\" type=\"s\" name=\"deviceId\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
 "    </signal>\n"
 "    <method name=\"IsMonotorWorking\">\n"
 "      <arg direction=\"out\" type=\"b\"/>\n"
@@ -63,14 +70,21 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "    <method name=\"DetachBlockDevice\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
+"    <method name=\"DetachBlockDeviceForced\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"    </method>\n"
 "    <method name=\"DetachProtocolDevice\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
 "    <method name=\"DetachAllMountedDevices\"/>\n"
+"    <method name=\"DetachAllMountedDevicesForced\"/>\n"
 "    <method name=\"MountBlockDevice\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
 "    <method name=\"UnmountBlockDevice\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"    </method>\n"
+"    <method name=\"UnmountBlockDeviceForced\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
 "    <method name=\"EjectBlockDevice\">\n"
@@ -117,7 +131,9 @@ public:
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
     void DetachAllMountedDevices();
+    void DetachAllMountedDevicesForced();
     void DetachBlockDevice(const QString &id);
+    void DetachBlockDeviceForced(const QString &id);
     void DetachProtocolDevice(const QString &id);
     void EjectBlockDevice(const QString &id);
     QStringList GetBlockDevicesIdList(const QVariantMap &opts);
@@ -130,14 +146,18 @@ public Q_SLOTS: // METHODS
     QVariantMap QueryProtocolDeviceInfo(const QString &id, bool detail);
     void SafelyRemoveBlockDevice(const QString &id);
     void UnmountBlockDevice(const QString &id);
+    void UnmountBlockDeviceForced(const QString &id);
     void UnmountProtocolDevice(const QString &id);
 Q_SIGNALS: // SIGNALS
-    void BlockDeviceAdded(const QString &deviceId);
-    void BlockDeviceFilesystemAdded(const QString &deviceId);
-    void BlockDeviceFilesystemRemoved(const QString &deviceId);
-    void BlockDeviceMounted(const QString &deviceId, const QString &mountPoint);
-    void BlockDeviceRemoved(const QString &deviceId);
-    void BlockDeviceUnmounted(const QString &deviceId);
+    void AskStopSacnningWhenUnmount(const QString &id);
+    void AskStopScanningWhenDetach(const QString &id);
+    void AskStopScanningWhenDetachAll();
+    void BlockDeviceAdded(const QString &id);
+    void BlockDeviceFilesystemAdded(const QString &id);
+    void BlockDeviceFilesystemRemoved(const QString &id);
+    void BlockDeviceMounted(const QString &id, const QString &mountPoint);
+    void BlockDeviceRemoved(const QString &id);
+    void BlockDeviceUnmounted(const QString &id);
     void BlockDriveAdded();
     void BlockDriveRemoved();
 };

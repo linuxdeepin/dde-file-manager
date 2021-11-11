@@ -39,10 +39,22 @@ void DeviceManagerAdaptor::DetachAllMountedDevices()
     parent()->DetachAllMountedDevices();
 }
 
+void DeviceManagerAdaptor::DetachAllMountedDevicesForced()
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.DetachAllMountedDevicesForced
+    parent()->DetachAllMountedDevicesForced();
+}
+
 void DeviceManagerAdaptor::DetachBlockDevice(const QString &id)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.DetachBlockDevice
     parent()->DetachBlockDevice(id);
+}
+
+void DeviceManagerAdaptor::DetachBlockDeviceForced(const QString &id)
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.DetachBlockDeviceForced
+    parent()->DetachBlockDeviceForced(id);
 }
 
 void DeviceManagerAdaptor::DetachProtocolDevice(const QString &id)
@@ -115,6 +127,12 @@ void DeviceManagerAdaptor::UnmountBlockDevice(const QString &id)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.UnmountBlockDevice
     parent()->UnmountBlockDevice(id);
+}
+
+void DeviceManagerAdaptor::UnmountBlockDeviceForced(const QString &id)
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.UnmountBlockDeviceForced
+    parent()->UnmountBlockDeviceForced(id);
 }
 
 void DeviceManagerAdaptor::UnmountProtocolDevice(const QString &id)

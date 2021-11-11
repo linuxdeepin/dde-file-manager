@@ -92,6 +92,7 @@ void DiskControlWidget::initConnection()
             this, &DiskControlWidget::onDiskListChanged);
     connect(&SidecarInstance, &PluginSidecar::serviceUnregistered, this, &DiskControlWidget::onDiskListChanged);
     connect(&SidecarInstance, &PluginSidecar::serviceRegistered, this, &DiskControlWidget::onDiskListChanged);
+    connect(&SidecarInstance, &PluginSidecar::askStopScanning, this, &DiskControlWidget::onAskStopScanning);
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveAdded, this, &DiskControlWidget::onDiskListChanged);
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveRemoved, this, &DiskControlWidget::onDiskListChanged);
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, &DiskControlWidget::onDiskListChanged);
@@ -204,6 +205,33 @@ int DiskControlWidget::addItems(const QStringList &list, bool isBlockDevice)
     return mountedCount;
 }
 
+DDialog *DiskControlWidget::showQueryScanningDialog(const QString &title)
+{
+    DDialog *d = new DDialog;
+    d->setTitle(title);
+    d->setAttribute(Qt::WA_DeleteOnClose);
+    Qt::WindowFlags flags = d->windowFlags();
+    d->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
+    d->setIcon(QIcon::fromTheme("dialog-warning"));
+    d->addButton(QObject::tr("Cancel","button"));
+    d->addButton(QObject::tr("Stop","button"), true, DDialog::ButtonWarning); // 终止
+    d->setMaximumWidth(640);
+    d->show();
+    return d;
+}
+
+void DiskControlWidget::handleWhetherScanning(const QString &method, const QString &id)
+{
+    if (method == "unmount" && !id.isEmpty()) {
+        SidecarInstance.invokeUnmountBlockDeviceForced(id);
+    } else if (method == "detach" && !id.isEmpty()) {
+        SidecarInstance.invokeDetachBlockDeviceForced(id);
+    } else if (method == "detach_all") {
+        SidecarInstance.invokeDetachAllMountedDevicesForced();
+    } else {
+        qWarning() << "unknow method: " << method << "or id: " << id;
+    }
+}
 
 std::once_flag &DiskControlWidget::initOnceFlag()
 {
@@ -223,6 +251,23 @@ void DiskControlWidget::onDiskListChanged()
     paintUi();
 }
 
+/*!
+ * \brief show as dialog, then call interfaces
+ * \param method: "unmount", "detach", "detach_all"
+ * \param id
+ */
+void DiskControlWidget::onAskStopScanning(const QString &method, const QString &id)
+{
+    DDialog *d = showQueryScanningDialog(QObject::tr("Scanning the device, stop it?"));
+
+    connect(d, &DDialog::buttonClicked, this, [this, id, method](int index, const QString &text) {
+        Q_UNUSED(text);
+        if (index == 1)  // user clicked stop
+            handleWhetherScanning(method, id);
+        else
+            qInfo() << "You have cancelled stop scanning " << method;
+    });
+}
 
 
 

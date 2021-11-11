@@ -36,20 +36,25 @@ class PluginSidecar: public QObject
 public:
     static PluginSidecar &instance();
     QPointer<DeviceManagerInterface> getDeviceInterface();
-
     bool connectToServer();
+    void initConnection();
+
     void invokeDetachAllMountedDevices();
+    void invokeDetachAllMountedDevicesForced();
     bool invokeIsMonotorWorking();
     QStringList invokeBlockDevicesIdList(const QVariantMap &opt);
     QStringList invokeProtolcolDevicesIdList(const QVariantMap &opt);
     QVariantMap invokeQueryBlockDeviceInfo(const QString &id);
     QVariantMap invokeQueryProtocolDeviceInfo(const QString &id);
     void invokeDetachBlockDevice(const QString &id);
+    void invokeDetachBlockDeviceForced(const QString &id);
+    void invokeUnmountBlockDeviceForced(const QString &id);
     void invokeDetachProtocolDevice(const QString &id);
 
 signals:
     void serviceUnregistered(const QString &service);
     void serviceRegistered(const QString &service);
+    void askStopScanning(const QString &method, const QString &id);
 
 private:
     explicit PluginSidecar(QObject *parent = nullptr);

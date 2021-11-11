@@ -26,9 +26,11 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QPointer>
+#include <DDialog>
 
 #include <mutex>
 
+using namespace DTK_NAMESPACE::Widget;
 class DiskControlItem;
 
 class DiskControlWidget : public QScrollArea
@@ -43,6 +45,7 @@ signals:
 
 private slots:
     void onDiskListChanged();
+    void onAskStopScanning(const QString &method, const QString &id);
 
 private:
     void initializeUi();
@@ -53,6 +56,8 @@ private:
     int addBlockDevicesItems();
     int addProtocolDevicesItems();
     int addItems(const QStringList &list, bool isBlockDevice);
+    DDialog *showQueryScanningDialog(const QString &title);
+    void handleWhetherScanning(const QString &method, const QString &id);
 
     static std::once_flag &initOnceFlag();
     static std::once_flag &retryOnceFlag();
