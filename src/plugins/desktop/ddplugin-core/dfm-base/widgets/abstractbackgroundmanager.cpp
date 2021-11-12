@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huangyu<huangyub@uniontech.com>
+ * Author:     wangchunlin<wangchunlin@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,18 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "backgroundservice.h"
+#include "abstractbackgroundmanager.h"
 
-DSB_D_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 
-BackgroundService *BackgroundService::instance(){
-    static BackgroundService service;
-    return &service;
-}
-
-QList<dfmbase::AbstractBackground *> BackgroundService::allBackground()
+AbstractBackgroundManager::AbstractBackgroundManager(QObject *parent) : QObject(parent)
 {
-    return BackgroundFactory::instance()->values();
+
 }
 
-DSB_D_END_NAMESPACE
+DFMBASE_END_NAMESPACE

@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huangyu<huangyub@uniontech.com>
+ * Author:     wangchunlin<wangchunlin@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +28,10 @@
 
 #include <dfm-framework/framework.h>
 
+namespace dfmbase {
+class AbstractBackgroundManager;
+}
+
 class Core;
 DSB_D_BEGIN_NAMESPACE
 class BackgroundService final : public dpf::PluginService, dpf::AutoServiceRegister<BackgroundService>
@@ -37,28 +40,23 @@ class BackgroundService final : public dpf::PluginService, dpf::AutoServiceRegis
     Q_DISABLE_COPY(BackgroundService)
     friend class dpf::QtClassFactory<dpf::PluginService>;
     friend class ::Core; //权限管控
-
-    BackgroundService(){}
-    static BackgroundService* instance();
-
-    template<class T>
-    static bool regClass(const QString &screenName, QString *errorString = nullptr)
-    {
-        return BackgroundFactory::regClass<T>(screenName, errorString);
-    }
-
-    static dfmbase::AbstractBackground* create(const QString &screenName, QString *errorString = nullptr)
-    {
-        return BackgroundFactory::create(screenName, errorString);
-    }
-
+    explicit BackgroundService(QObject *parent = nullptr);
 public:
     static QString name()
     {
         return "org.deepin.service.BackgroundService";
     }
 
-    QList<dfmbase::AbstractBackground*> allBackground();
+    QMap<QString,dfmbase::BackgroundWidgetPointer> allBackground();
+    dfmbase::BackgroundWidgetPointer background(const QString &screenName);
+    QMap<QString, QString> allBackgroundPath();
+    QString backgroundPath(const QString &screen);
+
+signals:
+    void sigBackgroundBuilded(int mode);
+
+private:
+    dfmbase::AbstractBackgroundManager *proxy = nullptr;
 };
 DSB_D_END_NAMESPACE
 

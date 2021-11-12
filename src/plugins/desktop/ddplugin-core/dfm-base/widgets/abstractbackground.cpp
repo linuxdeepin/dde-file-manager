@@ -23,8 +23,9 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-AbstractBackground::AbstractBackground(QWidget *parent)
+AbstractBackground::AbstractBackground(const QString &screenName, QWidget *parent)
     : QWidget(parent)
+    , screen(screenName)
 {
 
 }

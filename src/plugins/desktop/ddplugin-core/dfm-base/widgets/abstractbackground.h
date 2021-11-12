@@ -45,18 +45,22 @@ public:
         Center,
         ZoomCustom = 50,
     };
-    explicit AbstractBackground(QWidget *parent = nullptr);
+    explicit AbstractBackground(const QString &screenName, QWidget *parent = nullptr);
     virtual void setMode(int mode) {displayMode = static_cast<Mode>(mode);}
     virtual int mode() const {return displayMode;}
     virtual void setZoom(int zoom) {displayZoom = static_cast<Mode>(zoom);}
     virtual int zoom() const {return displayZoom;}
     virtual void setDisplay(const QString &path) {filePath = path;}
     virtual QString display() const {return filePath;}
+    virtual void updateDisplay() {}
 protected:
     int displayMode = Mode::Statics;
-    int displayZoom = Zoom::Fit;
-    QString filePath = "";
+    int displayZoom = Zoom::Stretch;
+    QString screen;
+    QString filePath;
 };
+
+typedef QSharedPointer<AbstractBackground> BackgroundWidgetPointer;
 
 DFMBASE_END_NAMESPACE
 

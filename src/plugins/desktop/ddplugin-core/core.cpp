@@ -22,7 +22,6 @@
 #include "core.h"
 #include "screenproxydbus.h"
 #include "screenproxyqt.h"
-#include "backgrounddefault.h"
 
 #include "services/common/menu/menuservice.h"
 
@@ -55,6 +54,11 @@ void registerAllService()
     QString errStr;
     auto &ctx = dpfInstance.serviceContext();
     if (!ctx.load(ScreenService::name(), &errStr)) {
+        qCritical() << errStr;
+        abort();
+    }
+
+    if (!ctx.load(BackgroundService::name(), &errStr)) {
         qCritical() << errStr;
         abort();
     }

@@ -7,6 +7,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/background
+    ${CMAKE_CURRENT_SOURCE_DIR}/background/services
     ${CMAKE_CURRENT_SOURCE_DIR}/wallpaper
     ${CMAKE_CURRENT_SOURCE_DIR}/canvas
     ${CMAKE_CURRENT_SOURCE_DIR}/screen
@@ -22,6 +23,7 @@ set(widgets_cxx_cpp
     dfm-base/widgets/abstractwallpaperitem.cpp
     dfm-base/widgets/abstractwallpaperlist.cpp
     dfm-base/widgets/abstractwallpapersetting.cpp
+    dfm-base/widgets/abstractbackgroundmanager.cpp
     dfm-base/widgets/abstractbackground.cpp
     dfm-base/widgets/abstractscreen.cpp
     dfm-base/widgets/abstractscreenproxy.cpp
@@ -37,6 +39,8 @@ set(widgets_cxx_h
     dfm-base/widgets/abstractwallpaperitem.h
     dfm-base/widgets/abstractwallpaperlist.h
     dfm-base/widgets/abstractwallpapersetting.h
+    dfm-base/widgets/abstractbackgroundmanager.h
+    dfm-base/widgets/abstractbackgroundmanager.h
     dfm-base/widgets/abstractbackground.h
     dfm-base/widgets/abstractscreen.h
     dfm-base/widgets/abstractscreenproxy.h
@@ -44,8 +48,8 @@ set(widgets_cxx_h
     )
 
 set(service_cxx_cpp
-    background/backgroundservice.cpp
-    background/backgroundfactory.cpp
+    background/services/backgroundservice.cpp
+    background/services/backgroundfactory.cpp
     wallpaper/wallpaperservice.cpp
     wallpaper/wallpaperfactory.cpp
     canvas/canvasservice.cpp
@@ -54,8 +58,8 @@ set(service_cxx_cpp
     )
 
 set(service_cxx_h
-    background/backgroundservice.h
-    background/backgroundfactory.h
+    background/services/backgroundservice.h
+    background/services/backgroundfactory.h
     wallpaper/wallpaperservice.h
     wallpaper/wallpaperfactory.h
     canvas/canvasservice.h
@@ -68,7 +72,8 @@ set(core_cxx_cpp
     dbus-private/dbusdock.cpp
     dbus-private/dbusmonitor.cpp
     dbus-private/licenceInterface.cpp
-    backgrounddefault.cpp
+    background/backgroundmanager.cpp
+    background/backgrounddefault.cpp
     utils/desktoputils.cpp
     screen/screenqt.cpp
     screen/screenproxyqt.cpp
@@ -83,7 +88,9 @@ set(core_cxx_h
     dbus-private/dbusdock.h
     dbus-private/dbusmonitor.h
     dbus-private/licenceInterface.h
-    backgrounddefault.h
+    background/backgroundmanager.h
+    background/backgroundmanager_p.h
+    background/backgrounddefault.h
     utils/desktoputils.h
     screen/screenqt.h
     screen/screenproxyqt.h
@@ -103,12 +110,23 @@ add_library(${PROJECT_NAME}
     ${widgets_cxx_h}
     )
 
+
+pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
+pkg_check_modules(GIO-QT REQUIRED gio-qt)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${DFrameworkDBus_INCLUDE_DIRS}
+    ${GIO-QT_INCLUDE_DIRS}
+)
+
 target_link_libraries(${PROJECT_NAME}
     dfm-base
     DFM::framework
     dfmservice-common
     ${QtUseModules}
     ${PkgUserModules}
+    ${DFrameworkDBus_LIBRARIES}
+    ${GIO-QT_LIBRARIES}
     )
 
 #install library file

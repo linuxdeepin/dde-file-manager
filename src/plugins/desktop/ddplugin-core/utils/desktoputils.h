@@ -23,9 +23,13 @@
 
 #include "dfm_desktop_service_global.h"
 
+#include <QWidget>
+
 DSB_D_BEGIN_NAMESPACE
 
 bool waylandDectected();
+void setDesktopWindow(QWidget *w);
+void setPrviewWindow(QWidget *w);
 
 DSB_D_END_NAMESPACE
 
