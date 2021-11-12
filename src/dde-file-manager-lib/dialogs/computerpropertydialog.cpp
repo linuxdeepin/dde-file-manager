@@ -43,6 +43,7 @@
 #include <QPainter>
 #include <DGraphicsClipEffect>
 #include <QWindow>
+#include <QImageReader>
 
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
@@ -266,13 +267,29 @@ void ComputerPropertyDialog::initUI()
 
     QString distributerLogoPath = DSysInfo::distributionOrgLogo();
     QIcon logoIcon;
-    if (!distributerLogoPath.isEmpty() && QFile::exists(distributerLogoPath)) {
-        logoIcon = QIcon(distributerLogoPath);
-    } else {
-        logoIcon = QIcon::fromTheme("dfm_deepin_logo");
+    if (distributerLogoPath.isEmpty() || !QFile::exists(distributerLogoPath)) {
+        distributerLogoPath = QStringLiteral("dfm_deepin_logo");
     }
+    qreal ratio = 1.0;
 
-    iconLabel->setPixmap(logoIcon.pixmap(152, 39));
+    const qreal devicePixelRatio = devicePixelRatioF();
+
+    QPixmap pixmap;
+
+    if (!qFuzzyCompare(ratio, devicePixelRatio)) {
+        QImageReader reader;
+        reader.setFileName(qt_findAtNxFile(distributerLogoPath, devicePixelRatio, &ratio));
+        if (reader.canRead()) {
+            reader.setScaledSize(reader.size() * (devicePixelRatio / ratio));
+            pixmap = QPixmap::fromImage(reader.read());
+            pixmap.setDevicePixelRatio(devicePixelRatio);
+        }
+    } else {
+        pixmap.load(distributerLogoPath);
+    }
+    pixmap = pixmap.scaled(258,40);
+    iconLabel->setPixmap(pixmap);
+
     QLabel *nameLabel = new QLabel(tr("Computer"), this);
     auto pt = nameLabel->palette();
     pt.setColor(QPalette::Text, palette().color(QPalette::Normal, QPalette::Text));
