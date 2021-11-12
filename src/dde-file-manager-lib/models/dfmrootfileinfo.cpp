@@ -836,6 +836,11 @@ void DFMRootFileInfo::loadDiskInfo()
     if (d->mps.empty())
         return;
 
+    if (d->blk) {
+        auto drv = DDiskManager::createDiskDevice(d->blk->drive());
+        if (drv && drv->optical())
+            return;
+    }
     QDir dir(QString(d->mps.front()) + "/UOSICON");
     if (!dir.exists()) {
         return;
