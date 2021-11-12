@@ -3047,7 +3047,9 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
             connect(d->headerView, &QHeaderView::customContextMenuRequested,
                     this, &DFileView::popupHeaderViewContextMenu);
             connect(d->headerView, &DFMHeaderView::mouseReleased, this, [ = ] {
-                d->toggleHeaderViewSnap(false);
+                //仅当修改了宽度使headerview和view的宽度不一致时才取消自适应宽度
+                if (d->headerView->width() != width())
+                    d->toggleHeaderViewSnap(false);
                 QList<int> roleList = columnRoleList();
                 QVariantMap state;
                 for (const int role : roleList)
