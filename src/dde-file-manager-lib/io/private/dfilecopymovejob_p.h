@@ -232,6 +232,19 @@ public:
     void waitRefineThreadFinish();
     void setLastErrorAction(const DFileCopyMoveJob::Action &action);
     DFileCopyMoveJob::Action getLastErrorAction();
+    qint64 reopenGvfsFiles(const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo,
+                          QSharedPointer<DFileDevice> &fromDevice, QSharedPointer<DFileDevice> &toDevice,
+                          const bool &isWriteError = true);
+    DFileCopyMoveJob::Action seekFile(const DAbstractFileInfoPointer &fileInfo,
+                                          QSharedPointer<DFileDevice> &device, const qint64 &pos);
+    DFileCopyMoveJob::Action openGvfsFile(const DAbstractFileInfoPointer &fileInfo,
+                                          QSharedPointer<DFileDevice> &device,
+                                          const QIODevice::OpenMode &flags);
+    void cleanCopySources(char *data, QSharedPointer<DFileDevice> &fromDevice,
+                          QSharedPointer<DFileDevice> &toDevice, bool &isError);
+    DFileCopyMoveJob::GvfsRetryType gvfsFileRetry(char * data, bool &isErrorOccur, qint64 &currentPos, const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo,
+                                                  QSharedPointer<DFileDevice> &fromDevice, QSharedPointer<DFileDevice> &toDevice,
+                                                  const bool &isWriteError = true);
 
     // 初始化优化状态
     void initRefineState();
@@ -369,6 +382,8 @@ public:
     //打开写入文件的fd
     QMap<DUrl,int> m_writeOpenFd;
     QList<QSharedPointer<DirSetPermissonInfo>> m_dirPermissonList;
+
+    qint64 m_gvfsFileInnvliadProgress = 0;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };

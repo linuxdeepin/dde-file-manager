@@ -107,6 +107,7 @@ public:
         TargetIsSelfError,
         NotSupportedError,
         PermissionDeniedError,
+        SeekError,
         UnknowError,
     };
 
@@ -142,6 +143,16 @@ public:
 
     Q_ENUM(Action)
     Q_DECLARE_FLAGS(Actions, Action)
+
+    enum GvfsRetryType {
+        GvfsRetryNoAction = 0x01,
+        GvfsRetrySkipAction = 0x02,
+        GvfsRetryCancelAction = 0x03,
+        GvfsRetryDefault = 0x04
+    };
+
+    Q_ENUM(GvfsRetryType)
+    Q_DECLARE_FLAGS(GvfsRetryTypes, Action)
 
     class Handle
     {

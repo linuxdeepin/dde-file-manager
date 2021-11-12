@@ -245,6 +245,8 @@ QString DFileCopyMoveJobPrivate::errorToString(DFileCopyMoveJob::Error error)
         return qApp->translate("DFileCopyMoveJob", "The action is not supported");
     case DFileCopyMoveJob::PermissionDeniedError:
         return qApp->translate("DFileCopyMoveJob", "You do not have permission to traverse files in it");
+    case DFileCopyMoveJob::SeekError:
+        return qApp->translate("DFileCopyMoveJob", "Failed to position the file pointer!");
     default:
         break;
     }
@@ -1622,40 +1624,29 @@ open_file: {
             errorQueueHandling();
             switch (setAndhandleError(errortype, fromInfo, toInfo, errorstr)) {
             case DFileCopyMoveJob::RetryAction: {
+                //处理网络文件是否是可以访问的
+                DFileCopyMoveJob::GvfsRetryType retryType = gvfsFileRetry(data, isErrorOccur, current_pos, fromInfo, toInfo, fromDevice, toDevice, false);
+                if (DFileCopyMoveJob::GvfsRetrySkipAction == retryType) {
+                    return true;
+                } else if (DFileCopyMoveJob::GvfsRetryCancelAction == retryType) {
+                    return false;
+                } else if (DFileCopyMoveJob::GvfsRetryNoAction == retryType) {
+                    goto read_data;
+                }
+
                 if (!fromDevice->seek(current_pos)) {
                     setError(DFileCopyMoveJob::UnknowError, fromDevice->errorString());
-                    delete[] data;
-                    fromDevice->close();
-                    toDevice->close();
-                    //当前错误处理完成
-                    if (isErrorOccur) {
-                        errorQueueHandled();
-                        isErrorOccur = false;
-                    }
+                    cleanCopySources(data, fromDevice, toDevice, isErrorOccur);
                     return false;
                 }
 
                 goto read_data;
             }
             case DFileCopyMoveJob::SkipAction:
-                delete[] data;
-                fromDevice->close();
-                toDevice->close();
-                //当前错误处理完成
-                if (isErrorOccur) {
-                    errorQueueHandled();
-                    isErrorOccur = false;
-                }
+                cleanCopySources(data, fromDevice, toDevice, isErrorOccur);
                 return true;
             default:
-                delete[] data;
-                fromDevice->close();
-                toDevice->close();
-                //当前错误处理完成
-                if (isErrorOccur) {
-                    errorQueueHandled(false);
-                    isErrorOccur = false;
-                }
+                cleanCopySources(data, fromDevice, toDevice, isErrorOccur);
                 return false;
             }
         }
@@ -1705,6 +1696,16 @@ open_file: {
             switch (setAndhandleError(DFileCopyMoveJob::WriteError, fromInfo, toInfo,
                                       qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").arg(toDevice->errorString()))) {
             case DFileCopyMoveJob::RetryAction: {
+                //处理网络文件是否是可以访问的
+                DFileCopyMoveJob::GvfsRetryType retryType = gvfsFileRetry(data, isErrorOccur, current_pos, fromInfo, toInfo, fromDevice, toDevice, true);
+                if (DFileCopyMoveJob::GvfsRetrySkipAction == retryType) {
+                    return true;
+                } else if (DFileCopyMoveJob::GvfsRetryCancelAction == retryType) {
+                    return false;
+                } else if (DFileCopyMoveJob::GvfsRetryNoAction == retryType) {
+                    goto read_data;
+                }
+
                 if (!toDevice->seek(current_pos)) {
                     setError(DFileCopyMoveJob::UnknowError, toDevice->errorString());
                     //临时处理 fix
@@ -3511,6 +3512,7 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
     }
 
     dataSize += completedProgressDataSize;
+    dataSize -= m_gvfsFileInnvliadProgress;
 
     //优化
     dataSize = m_bDestLocal ? m_refineCopySize : dataSize;
@@ -4297,6 +4299,198 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::getLastErrorAction()
         return m_lastErrorHandleAction.value(current);
     return DFileCopyMoveJob::NoAction;
 }
+/*!
+ * \brief DFileCopyMoveJobPrivate::reopenGvfsFiles 拷贝文件到网络文件或者从网络文件上拷贝文件，
+ * 在拷贝途中断网再恢复后才能调用，不然就会卡死。主要功能是调整断点续传时重新打开远程文件，调整文件位置，方便再次拷贝写入
+ * \param fromInfo 源文件的信息
+ * \param toInfo 目标文件的信息
+ * \param fromDevice 源文件的iodevice
+ * \param toDevice 目标文件的iodevice
+ * \param isWriteError 是否是写时错误
+ * \return qint64 返回当前文件拷贝到的位置
+ */
+qint64 DFileCopyMoveJobPrivate::reopenGvfsFiles(const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo, QSharedPointer<DFileDevice> &fromDevice,
+                                               QSharedPointer<DFileDevice> &toDevice, const bool &isWriteError)
+{
+    DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
+    if (isWriteError) {
+        toInfo->refresh(true);
+        toDevice->close();
+        action = openGvfsFile(toInfo, toDevice, (QIODevice::WriteOnly | QIODevice::Truncate));
+    } else {
+        fromInfo->refresh(true);
+        toInfo->refresh(true);
+        fromDevice->close();
+        action = openGvfsFile(fromInfo, fromDevice, QIODevice::ReadOnly);
+    }
+
+    if (action == DFileCopyMoveJob::SkipAction) {
+        return -1;
+    } else if (action != DFileCopyMoveJob::NoAction) {
+        return -2;
+    }
+    fromInfo->refresh(true);
+    toInfo->refresh(true);
+    m_gvfsFileInnvliadProgress = const_cast<DFileCopyMoveJobPrivate*>(this)->getCompletedDataSize();
+    qint64 currentPos = 0;
+    if (isWriteError) {
+        action = seekFile(fromInfo, fromDevice, currentPos);
+    } else {
+        action = seekFile(toInfo, toDevice, currentPos);
+    }
+
+    if (action == DFileCopyMoveJob::SkipAction) {
+        return -1;
+    } else if (action != DFileCopyMoveJob::NoAction) {
+        return -2;
+    }
+
+    return currentPos;
+}
+
+/*!
+ * \brief DFileCopyMoveJobPrivate::seekFile seek文件指针到指定位置，错误就阻塞弹窗重试就继续
+ *  需要注意的是调用此接口必须是文件打开的情况
+ * \param fileInfo 文件信息
+ * \param device 文件的iodevice
+ * \param pos 要seek的位置
+ * \return DFileCopyMoveJob::Action 拷贝操作
+ */
+DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::seekFile(const DAbstractFileInfoPointer &fileInfo,
+                                                               QSharedPointer<DFileDevice> &device, const qint64 &pos)
+{
+    DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
+    bool isErrorOccur = false;
+    do {
+        if (device->seek(pos)) {
+            action = DFileCopyMoveJob::NoAction;
+        } else {
+            QString errorstr = qApp->translate("DFileCopyMoveJob", "Failed to position the file pointer, cause: %1").arg(device->errorString());
+            isErrorOccur = true;
+            //错误队列处理
+            errorQueueHandling();
+            DFileCopyMoveJob::Error errortype = DFileCopyMoveJob::OpenError;
+            action = setAndhandleError(errortype, fileInfo, DAbstractFileInfoPointer(nullptr), errorstr);
+            if (action == DFileCopyMoveJob::RetryAction) {
+                QThread::msleep(THREAD_SLEEP_TIME);
+            }
+        }
+    } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
+
+    //当前错误处理完成
+    if (isErrorOccur) {
+        errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                          action == DFileCopyMoveJob::NoAction);
+        isErrorOccur = false;
+    }
+    return action;
+}
+
+/*!
+ * \brief DFileCopyMoveJobPrivate::openGvfsFile 打开文件，错误就阻塞弹窗重试就继续
+ * \param fileInfo 文件信息
+ * \param device 文件的iodevice
+ * \param flags 打开文件的描述符
+ * \return DFileCopyMoveJob::Action 拷贝操作
+ */
+DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::openGvfsFile(const DAbstractFileInfoPointer &fileInfo,
+                                                               QSharedPointer<DFileDevice> &device, const QIODevice::OpenMode &flags)
+{
+    DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
+    bool isErrorOccur = false;
+    do {
+        if (device->open(flags)) {
+            action = DFileCopyMoveJob::NoAction;
+        } else {
+            qCDebug(fileJob()) << "open error:" << fileInfo->fileUrl() << QThread::currentThreadId();
+            DFileCopyMoveJob::Error errortype = (!fileInfo->exists() || fileInfo->isWritable()) ?
+                        DFileCopyMoveJob::OpenError :
+                        DFileCopyMoveJob::PermissionError;
+            // task-36496 "Permission denied"没有被翻译 翻译为“没有权限”
+            QString errorstr("");
+            if ("Permission denied" == device->errorString()) {
+                errorstr = (!fileInfo->exists() || fileInfo->isWritable()) ?
+                           qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: Permission denied") :
+                           QString();
+            } else {
+                errorstr = (!fileInfo->exists() || fileInfo->isWritable()) ?
+                           qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: %1").arg(device->errorString()) :
+                           QString();
+            }
+            isErrorOccur = true;
+            //错误队列处理
+            errorQueueHandling();
+            action = setAndhandleError(errortype, fileInfo, DAbstractFileInfoPointer(nullptr), errorstr);
+            if (action == DFileCopyMoveJob::RetryAction) {
+                QThread::msleep(THREAD_SLEEP_TIME);
+            }
+        }
+    } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
+
+    //当前错误处理完成
+    if (isErrorOccur) {
+        errorQueueHandled(action == DFileCopyMoveJob::SkipAction ||
+                          action == DFileCopyMoveJob::NoAction);
+        isErrorOccur = false;
+    }
+    return action;
+}
+/*!
+ * \brief DFileCopyMoveJobPrivate::cleanCopySources 清理掉拷贝失败后的资源
+ * \param data 拷贝时的缓存buffer
+ * \param fromDevice 源文件的iodevice
+ * \param toDevice 目标文件的iodevice
+ * \param isError 是否正在处理错误
+ */
+void DFileCopyMoveJobPrivate::cleanCopySources(char *data, QSharedPointer<DFileDevice> &fromDevice,
+                                               QSharedPointer<DFileDevice> &toDevice, bool &isError)
+{
+    delete[] data;
+    data = nullptr;
+    fromDevice->close();
+    toDevice->close();
+    //当前错误处理完成
+    if (isError) {
+        errorQueueHandled();
+        isError = false;
+    }
+}
+/*!
+ * \brief DFileCopyMoveJobPrivate::gvfsFileRetry 处理smb文件在拷贝过程中断网，网络恢复后点击重试处理
+ * \param data 拷贝的data
+ * \param isErrorOccur 是否当前在错误处理
+ * \param currentPos 当前的文件文职
+ * \param fromInfo 源文件的文件信息
+ * \param toInfo 目标文件的文件信息
+ * \param fromDevice 源文件的iodevice
+ * \param toDevice 目标文件的iodevice
+ * \param isWriteError 是写遇到错误重试
+ * \return DFileCopyMoveJob::GvfsRetryType 网络文件重试的操作
+ */
+DFileCopyMoveJob::GvfsRetryType DFileCopyMoveJobPrivate::gvfsFileRetry(char *data, bool &isErrorOccur, qint64 &currentPos, const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo, QSharedPointer<DFileDevice> &fromDevice, QSharedPointer<DFileDevice> &toDevice, const bool &isWriteError)
+{
+    if (fromInfo->isGvfsMountFile()
+            && !DFileService::instance()->checkGvfsMountfileBusy(toInfo->fileUrl(), false)) {
+        currentPos = reopenGvfsFiles(fromInfo, toInfo, fromDevice, toDevice, isWriteError);
+        if (currentPos == -1) {
+            cleanCopySources(data, fromDevice, toDevice, isErrorOccur);
+            return DFileCopyMoveJob::GvfsRetrySkipAction;
+        } else if (currentPos == -2) {
+            cleanCopySources(data, fromDevice, toDevice, isErrorOccur);
+            return DFileCopyMoveJob::GvfsRetryCancelAction;
+        } else {
+            DUrl fromurl = fromInfo->fileUrl();
+            DUrl tourl = toInfo->fileUrl();
+            {
+                QMutexLocker lk(&m_emitUrlMutex);
+                m_emitUrl.insert(fromurl,tourl);
+                Q_EMIT q_ptr->currentJobChanged(m_emitUrl.lastKey(), m_emitUrl.last(), false);
+            }
+            return DFileCopyMoveJob::GvfsRetryNoAction;
+        }
+    }
+    return DFileCopyMoveJob::GvfsRetryDefault;
+}
 
 void DFileCopyMoveJobPrivate::initRefineState()
 {
@@ -4363,6 +4557,7 @@ DFileCopyMoveJob::Actions DFileCopyMoveJob::supportActions(DFileCopyMoveJob::Err
     case ResizeError:
     case RemoveError:
     case RenameError:
+    case SeekError:
     case IntegrityCheckingError:
         return SkipAction | RetryAction | CancelAction;
     case SpecialFileError:
