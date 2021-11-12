@@ -1007,6 +1007,12 @@ void DFileView::onRowCountChanged()
 
 void DFileView::wheelEvent(QWheelEvent *event)
 {
+    Q_D(DFileView);
+    // 左键按下则不响应滚轮事件，解决87504Bug，完善框选未定义行为
+    if (d->m_isMouseLeftKeyPress) {
+        return;
+    }
+
     if (isIconViewMode()) {
         if (DFMGlobal::keyCtrlIsPressed()) {
             if (event->angleDelta().y() > 0) {
@@ -1206,6 +1212,8 @@ void DFileView::mousePressEvent(QMouseEvent *event)
         break;
     }
     case Qt::LeftButton: {
+        // 采集左键按下状态
+        d->m_isMouseLeftKeyPress = true;
         // 当事件source为MouseEventSynthesizedByQt，认为此事件为TouchBegin转换而来
 //        if (event->source() == Qt::MouseEventSynthesizedByQt) {
 //            d->lastTouchBeginPos = event->pos();
@@ -1290,9 +1298,11 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     case Qt::RightButton: {
         // 47203 创建链接后，先打开桌面文件菜单，会将创建链接弹窗内的菜单改变
         // 弹出文件选择框后，左键选择文件之前右键选择其中的文件无法触发focusInEvent事件，这里手动设置焦点
-        // 此处慎重添加向上的DListView::mousePressEvent(event);执行逻辑，会导致contextMenuEvent的重复触发
         if (qApp->activeWindow() != this->window())
             setFocus(Qt::ActiveWindowFocusReason);
+        // 87504 完善边界，原生Qt框选时右键松开会取消框与坐标
+        if (d->m_isMouseLeftKeyPress)
+            DListView::mousePressEvent(event);
         break;
     }
     default:
@@ -1338,6 +1348,11 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
 void DFileView::mouseReleaseEvent(QMouseEvent *event)
 {
     D_D(DFileView);
+
+    // BUG#87504 采集左键松开状态
+    if (event->button() == Qt::MouseButton::LeftButton) {
+        d->m_isMouseLeftKeyPress = false;
+    }
 
     d->dragMoveHoverIndex = QModelIndex();
     d->currentSelection = QItemSelection();
@@ -1742,8 +1757,14 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 
 bool DFileView::canShowContextMenu(QContextMenuEvent *event)
 {
+    Q_D(DFileView);
+
     //检查当前路径是否可访问辨别smb目录
     if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl()))
+        return false;
+
+    // BUG#87504 添加左键与右键菜单弹出的互斥操作
+    if (d->m_isMouseLeftKeyPress)
         return false;
 
     //搜索路径下存在不可访问（访问不可达）的文件

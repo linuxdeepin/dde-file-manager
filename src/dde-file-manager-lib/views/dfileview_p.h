@@ -152,6 +152,7 @@ public:
     QAtomicInteger<bool> m_isMouseMoveing = false;
     //正在设置当前的rooturl
     QAtomicInteger<bool> m_isSetRootUrl = false;
+    QAtomicInteger<bool> m_isMouseLeftKeyPress = false;
 
     Q_DECLARE_PUBLIC(DFileView)
 };
