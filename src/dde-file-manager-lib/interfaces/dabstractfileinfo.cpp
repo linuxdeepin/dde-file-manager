@@ -1758,7 +1758,7 @@ QSet<MenuAction> DAbstractFileInfo::disableMenuActionList() const
         list << MenuAction::Cut << MenuAction::Rename << MenuAction::Delete << MenuAction::CompleteDeletion;
     }
 
-    if (isVirtualEntry()) {
+    if (isVirtualEntry() || (!isReadable() && !isSymLink())) {
         list << MenuAction::Copy;
     }
 

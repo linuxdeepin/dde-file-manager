@@ -3234,9 +3234,6 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
 
     // blumia: when touching this part, do the same change in canvasgridview.cpp
     if (list.size() == 1) {
-        if (!info->isReadable() && !info->isSymLink()) {
-            disableList << MenuAction::Copy;
-        }
 
         if (!info->isWritable() && !info->isFile() && !info->isSymLink()) {
             disableList << MenuAction::Delete;
