@@ -137,21 +137,34 @@ QString DAttachedVfsDevice::displayName()
 
 bool DAttachedVfsDevice::deviceUsageValid()
 {
-    if (m_dgioMount.isNull()) return false;
+    if (m_dgioMount.isNull())
+        return false;
 
     QExplicitlySharedDataPointer<DGioFile> file = m_dgioMount->getRootFile();
-    QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileInfo("*", FILE_QUERY_INFO_NONE, 500);
+    if (file) {
+        QExplicitlySharedDataPointer<DGioFileInfo> fi = file->createFileInfo("*", FILE_QUERY_INFO_NONE, 500);
+        // 直接取createFileInfo数据有误，createFileSystemInfo数据才准确, createFileInfo仅用来判断文件是否可访问
+        // 这里逻辑与计算机页面保持一致
+        if (fi && fi->fileType() == DGioFileType::FILE_TYPE_DIRECTORY) {
+            return file->createFileSystemInfo();
+        }
+    }
 
-    return fsInfo;
+    return false;
 }
 
 QPair<quint64, quint64> DAttachedVfsDevice::deviceUsage()
 {
     QExplicitlySharedDataPointer<DGioFile> file = m_dgioMount->getRootFile();
-    QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileInfo("*", FILE_QUERY_INFO_NONE, 500);
-
-    if (fsInfo) {
-        return QPair<quint64, quint64>(fsInfo->fsFreeBytes(), fsInfo->fsTotalBytes());
+    if (file) {
+        QExplicitlySharedDataPointer<DGioFileInfo> fi = file->createFileInfo("*", FILE_QUERY_INFO_NONE, 500);
+        // 直接取createFileInfo数据有误，createFileSystemInfo数据才准确, createFileInfo仅用来判断文件是否可访问
+        // 这里逻辑与计算机页面保持一致
+        if (fi && fi->fileType() == DGioFileType::FILE_TYPE_DIRECTORY) {
+            QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileSystemInfo();
+            if (fsInfo)
+                return QPair<quint64, quint64>(fsInfo->fsFreeBytes(), fsInfo->fsTotalBytes());
+        }
     }
 
     return QPair<quint64, quint64>(0, 0);

@@ -202,22 +202,25 @@ QDrive GvfsMountManager::gDriveToqDrive(GDrive *drive)
     return qDrive;
 }
 
-QVolume GvfsMountManager::gVolumeToqVolume(GVolume *volume)
+QVolume GvfsMountManager::gVolumeToqVolume(GVolume *gvolume)
 {
+    if (!gvolume)
+        return QVolume();
+
     QVolume qVolume;
     char *name;
     char **ids;
     GIcon *icon;
     GFile *activation_root;
 
-    name = g_volume_get_name(volume);
+    name = g_volume_get_name(gvolume);
     qVolume.setName(QString(name));
     g_free(name);
 
-    ids = g_volume_enumerate_identifiers(volume);
+    ids = g_volume_enumerate_identifiers(gvolume);
     if (ids && ids[0] != nullptr) {
         for (int i = 0; ids[i] != nullptr; i++) {
-            char *id = g_volume_get_identifier(volume, ids[i]);
+            char *id = g_volume_get_identifier(gvolume, ids[i]);
             if (QString(ids[i]) == G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE) {
                 qVolume.setUnix_device(QString(id));
             } else if (QString(ids[i]) == G_VOLUME_IDENTIFIER_KIND_LABEL) {
@@ -237,12 +240,12 @@ QVolume GvfsMountManager::gVolumeToqVolume(GVolume *volume)
     }
     g_strfreev(ids);
 
-    qVolume.setCan_mount(g_volume_can_mount(volume));
-    qVolume.setCan_eject(g_volume_can_eject(volume));
-    qVolume.setShould_automount(g_volume_should_automount(volume));
+    qVolume.setCan_mount(g_volume_can_mount(gvolume));
+    qVolume.setCan_eject(g_volume_can_eject(gvolume));
+    qVolume.setShould_automount(g_volume_should_automount(gvolume));
 
 
-    icon = g_volume_get_icon(volume);
+    icon = g_volume_get_icon(gvolume);
     if (icon) {
         if (G_IS_THEMED_ICON(icon)) {
             qVolume.setIcons(getIconNames(G_THEMED_ICON(icon)));
@@ -250,7 +253,7 @@ QVolume GvfsMountManager::gVolumeToqVolume(GVolume *volume)
         g_object_unref(icon);
     }
 
-    icon = g_volume_get_symbolic_icon(volume);
+    icon = g_volume_get_symbolic_icon(gvolume);
     if (icon) {
         if (G_IS_THEMED_ICON(icon)) {
             qVolume.setSymbolic_icons(getIconNames(G_THEMED_ICON(icon)));
@@ -258,7 +261,7 @@ QVolume GvfsMountManager::gVolumeToqVolume(GVolume *volume)
         g_object_unref(icon);
     }
 
-    GMount *mount = g_volume_get_mount(volume);
+    GMount *mount = g_volume_get_mount(gvolume);
     if (mount) {
         qVolume.setIsMounted(true);
         GFile *root = g_mount_get_root(mount);
@@ -269,7 +272,7 @@ QVolume GvfsMountManager::gVolumeToqVolume(GVolume *volume)
         g_free(uri);
     }
 
-    activation_root = g_volume_get_activation_root(volume);
+    activation_root = g_volume_get_activation_root(gvolume);
     if (activation_root != nullptr) {
         char *action_root_uri = g_file_get_uri(activation_root);
         qVolume.setActivation_root_uri(QString(action_root_uri));
@@ -277,7 +280,7 @@ QVolume GvfsMountManager::gVolumeToqVolume(GVolume *volume)
         g_free(action_root_uri);
     }
 
-    GDrive *gDrive = g_volume_get_drive(volume);
+    GDrive *gDrive = g_volume_get_drive(gvolume);
     if (gDrive) {
         QDrive qDrive = gDriveToqDrive(gDrive);
         qVolume.setDrive_unix_device(QString(g_drive_get_identifier(gDrive, "unix-device")));
@@ -287,24 +290,27 @@ QVolume GvfsMountManager::gVolumeToqVolume(GVolume *volume)
     return qVolume;
 }
 
-QMount GvfsMountManager::gMountToqMount(GMount *mount)
+QMount GvfsMountManager::gMountToqMount(GMount *gmount)
 {
+    if(!gmount)
+        return QMount();
+
     QMount qMount;
     char *name, *uri;
     GFile *root, *default_location;
     GIcon *icon;
 
-    name = g_mount_get_name(mount);
+    name = g_mount_get_name(gmount);
     qMount.setName(QString(name));
     g_free(name);
 
-    root = g_mount_get_root(mount);
+    root = g_mount_get_root(gmount);
     uri = g_file_get_uri(root);
     qMount.setMounted_root_uri(QString(uri));
     g_object_unref(root);
     g_free(uri);
 
-    default_location = g_mount_get_default_location(mount);
+    default_location = g_mount_get_default_location(gmount);
     if (default_location) {
         char *loc_uri = g_file_get_uri(default_location);
         qMount.setDefault_location(QString(loc_uri));
@@ -312,7 +318,7 @@ QMount GvfsMountManager::gMountToqMount(GMount *mount)
         g_object_unref(default_location);
     }
 
-    icon = g_mount_get_icon(mount);
+    icon = g_mount_get_icon(gmount);
     if (icon) {
         if (G_IS_THEMED_ICON(icon)) {
             qMount.setIcons(getIconNames(G_THEMED_ICON(icon)));
@@ -320,7 +326,7 @@ QMount GvfsMountManager::gMountToqMount(GMount *mount)
         g_object_unref(icon);
     }
 
-    icon = g_mount_get_symbolic_icon(mount);
+    icon = g_mount_get_symbolic_icon(gmount);
     if (icon) {
         if (G_IS_THEMED_ICON(icon)) {
             qMount.setSymbolic_icons(getIconNames(G_THEMED_ICON(icon)));
@@ -328,9 +334,9 @@ QMount GvfsMountManager::gMountToqMount(GMount *mount)
         g_object_unref(icon);
     }
 
-    qMount.setCan_unmount(g_mount_can_unmount(mount));
-    qMount.setCan_eject(g_mount_can_eject(mount));
-    qMount.setIs_shadowed(g_mount_is_shadowed(mount));
+    qMount.setCan_unmount(g_mount_can_unmount(gmount));
+    qMount.setCan_eject(g_mount_can_eject(gmount));
+    qMount.setIs_shadowed(g_mount_is_shadowed(gmount));
 
     return qMount;
 }
@@ -468,17 +474,17 @@ void GvfsMountManager::monitor_mount_removed_root(GVolumeMonitor *volume_monitor
     emit gvfsMountManager->volume_removed(diskInfo);
 }
 
-void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMount *mount)
+void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMount *gmount)
 {
     Q_UNUSED(volume_monitor)
     qCDebug(mountManager()) << "==============================monitor_mount_added==============================";
-    QMount qMount = gMountToqMount(mount);
-    GVolume *volume = g_mount_get_volume(mount);
-    QVolume qVolume = gVolumeToqVolume(volume);
+    QMount qMount = gMountToqMount(gmount);
+    GVolume *gvolume = g_mount_get_volume(gmount);
+    QVolume qVolume = gVolumeToqVolume(gvolume);
 
     //fix: 探测光盘推进,弹出和挂载状态机标识
     if (qMount.icons().contains("media-optical")) { //CD/DVD
-        QString volTag = getVolTag(volume);
+        QString volTag = getVolTag(gvolume);
         DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag].bMntFlag = true;
         DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag].bVolFlag = true;
 
@@ -500,10 +506,10 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
         }
     }
 
-    qCDebug(mountManager()) << "===================" << qMount.mounted_root_uri() << volume << "=======================";
+    qCDebug(mountManager()) << "===================" << qMount.mounted_root_uri() << gvolume << "=======================";
     qCDebug(mountManager()) << "===================" << qMount << "=======================";
-    if (volume != nullptr) {
-        QVolume qVolume = gVolumeToqVolume(volume);
+    if (gvolume != nullptr) {
+        QVolume qVolume = gVolumeToqVolume(gvolume);
         Volumes.insert(qVolume.unix_device(), qVolume);
 
         QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);

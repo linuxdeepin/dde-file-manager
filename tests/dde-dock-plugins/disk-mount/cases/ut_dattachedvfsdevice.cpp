@@ -224,7 +224,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_deviceUsageValid)
     Stub stub;
     stub.set(ADDR(DGioMount, name), name_stub);
     stub.set(ADDR(DGioMount, getRootFile), getRootFile_stub);
-    stub.set(ADDR(DGioFile, createFileInfo), createFileSystemInfo_stub);
+    stub.set(ADDR(DGioFileInfo, fileType), getFileType_stub);
+    stub.set(ADDR(DGioFile, createFileInfo), createFileInfo_stub);
+    stub.set(ADDR(DGioFile, createFileSystemInfo), createFileSystemInfo_stub);
     stub_ext::StubExt stue;
     stue.set_lamda(&DDBusCaller::call, [](){QDBusMessage msg; return QDBusPendingCall::fromCompletedCall(msg);});
 
@@ -236,7 +238,9 @@ TEST_F(TestDAttachedVfsDevice, dummy_vfsdev_can_getUsageValid)
     Stub stub;
     stub.set(ADDR(DGioMount, name), name_stub);
     stub.set(ADDR(DGioMount, getRootFile), getRootFile_stub);
-    stub.set(ADDR(DGioFile, createFileInfo), createFileSystemInfo_stub);
+    stub.set(ADDR(DGioFileInfo, fileType), getFileType_stub);
+    stub.set(ADDR(DGioFile, createFileInfo), createFileInfo_stub);
+    stub.set(ADDR(DGioFile, createFileSystemInfo), createFileSystemInfo_stub);
     stub.set(ADDR(DGioFileInfo, fsFreeBytes), fsFreeBytes_1KB_stub);
     stub.set(ADDR(DGioFileInfo, fsTotalBytes), fsTotalBytes_2KB_stub);
 

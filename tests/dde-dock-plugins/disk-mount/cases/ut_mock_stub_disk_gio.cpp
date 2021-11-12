@@ -116,8 +116,20 @@ QExplicitlySharedDataPointer<DGioFile> getRootFile_stub()
     return rootfile;
 }
 
-QExplicitlySharedDataPointer<DGioFileInfo> createFileSystemInfo_stub(QString attr, DGioFileQueryInfoFlags queryInfoFlags, unsigned long timeout_msec )
+QExplicitlySharedDataPointer<DGioFileInfo> createFileInfo_stub(QString attr, DGioFileQueryInfoFlags queryInfoFlags, unsigned long timeout_msec)
 {
+    Q_UNUSED(attr);
+    Q_UNUSED(queryInfoFlags);
+    Q_UNUSED(timeout_msec);
+
+    QExplicitlySharedDataPointer<DGioFileInfo> fileSystemInfo = QExplicitlySharedDataPointer<DGioFileInfo>( new DGioFileInfo(nullptr));
+    return fileSystemInfo;
+}
+
+QExplicitlySharedDataPointer<DGioFileInfo> createFileSystemInfo_stub(QString attr)
+{
+    Q_UNUSED(attr);
+
     QExplicitlySharedDataPointer<DGioFileInfo> fileSystemInfo = QExplicitlySharedDataPointer<DGioFileInfo>( new DGioFileInfo(nullptr));
     return fileSystemInfo;
 }
@@ -207,3 +219,8 @@ bool isShadowed_stub()
 
 void detach_stub()
 {}
+
+DGioFileType getFileType_stub()
+{
+    return DGioFileType::FILE_TYPE_DIRECTORY;
+}

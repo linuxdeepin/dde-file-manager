@@ -64,8 +64,10 @@ const QList<QExplicitlySharedDataPointer<DGioMount> > get_gvfs_Mounts_stub();
 QExplicitlySharedDataPointer<DGioFile> get_gvfs_RootFile_stub();
 
 QExplicitlySharedDataPointer<DGioFile> getRootFile_stub();
+DGioFileType getFileType_stub();
 
-QExplicitlySharedDataPointer<DGioFileInfo> createFileSystemInfo_stub(QString attr = "*", DGioFileQueryInfoFlags queryInfoFlags = FILE_QUERY_INFO_NONE, unsigned long timeout_msec = ULONG_MAX);
+QExplicitlySharedDataPointer<DGioFileInfo> createFileInfo_stub(QString attr = "*", DGioFileQueryInfoFlags queryInfoFlags = FILE_QUERY_INFO_NONE, unsigned long timeout_msec = ULONG_MAX);
+QExplicitlySharedDataPointer<DGioFileInfo> createFileSystemInfo_stub(QString attr = "*");
 
 QExplicitlySharedDataPointer<DGioFileInfo> createFileSystemInfo_return_null_stub(QString attr = "*", DGioFileQueryInfoFlags queryInfoFlags = FILE_QUERY_INFO_NONE, unsigned long timeout_msec = ULONG_MAX);
 
