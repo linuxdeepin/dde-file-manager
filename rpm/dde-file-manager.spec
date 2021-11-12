@@ -71,7 +71,9 @@ Requires:       jemalloc
 Requires:       libglvnd-glx
 Requires:       libdde-file-manager
 Requires:       cryfs
+%ifarch %{ix86} x86_64
 Requires:		deepin-anything-dkms deepin-anything-server
+%endif
 #Requires:       gvfs-client
 #Requires:       samba
 #Requires:       xdg-user-dirs
