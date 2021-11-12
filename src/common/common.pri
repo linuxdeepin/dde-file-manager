@@ -55,6 +55,7 @@ unix {
         DEFINES += ENABLE_ASYNCINIT
     } else {
         isEmpty(DISABLE_JEMALLOC) {
+            DEFINES += ENABLE_JEMALLOC
             LIBS += -ljemalloc
         }
     }

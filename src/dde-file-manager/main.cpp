@@ -67,6 +67,10 @@
 #include <QMediaPlayer>
 #include <QMediaMetaData>
 
+#ifdef ENABLE_JEMALLOC
+#include <jemalloc/jemalloc.h>
+#endif
+
 #ifdef ENABLE_PPROF
 #include <gperftools/profiler.h>
 #endif
@@ -133,6 +137,15 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
+#ifdef ENABLE_JEMALLOC
+    // fix bug 89285
+    // 设置background_thread=true，让jemalloc后台回收脏数据
+    bool oldp = false;
+    bool newp = true;
+    size_t len = sizeof(bool);
+    mallctl("background_thread", &oldp, &len, &newp, len);
+#endif
+
     //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
     if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")){
         qputenv("XDG_CURRENT_DESKTOP", "Deepin");
