@@ -390,8 +390,21 @@ void DFMSideBar::rootFileResult()
                 continue;
             }
             if (Singleton<PathManager>::instance()->isVisiblePartitionPath(fi)) {
-                addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
-                devitems.push_back(fi->fileUrl());
+                // 这里需要根据url进行排序
+                const auto &url = fi->fileUrl();
+                auto r = std::upper_bound(devitems.begin(), devitems.end(), url,
+                [](const DUrl & a, const DUrl & b) {
+                    DAbstractFileInfoPointer fia = fileService->createFileInfo(nullptr, a);
+                    DAbstractFileInfoPointer fib = fileService->createFileInfo(nullptr, b);
+                    return DFMRootFileInfo::typeCompare(fia, fib);
+                });
+                if (r == devitems.end()) {
+                    this->addItem(DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
+                    devitems.append(url);
+                } else {
+                    this->insertItem(this->findLastItem(this->groupName(Device)) - (devitems.end() - r) + 1, DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
+                    devitems.insert(r, url);
+                }
             }
         }
     }
