@@ -40,7 +40,7 @@
 #include "ddiskmanager.h"
 #include "disomaster.h"
 #include "dfmopticalmediawidget.h"
-
+#include "io/dstorageinfo.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 
@@ -1809,7 +1809,13 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
 
     for (const auto &url : m_urlsForDragEvent) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));
-        if (!fileInfo || !fileInfo->isReadable()) {
+        if (!fileInfo) {
+            event->ignore();
+            return;
+        }
+
+        bool isInSameDevice = DStorageInfo::inSameDevice(fileInfo->fileUrl(), model()->rootUrl());
+        if ((!isInSameDevice && !fileInfo->isReadable()) || (!DFMGlobal::keyCtrlIsPressed() && isInSameDevice && !fileInfo->canRename())) {
             event->ignore();
             return;
         }

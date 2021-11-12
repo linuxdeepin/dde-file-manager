@@ -403,11 +403,17 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
         return Qt::IgnoreAction;
     }
 
+    const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, item->url());
+
     for (const QUrl &url : urls) {
         const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, DUrl(url));
-        if (!fileInfo || !fileInfo->isReadable()) {
+        if ( !fileInfo || !info)
             return Qt::IgnoreAction;
-        }
+
+        bool isInSameDevice = DStorageInfo::inSameDevice(fileInfo->fileUrl(), info->fileUrl());
+        if ((!isInSameDevice && !fileInfo->isReadable()) || (DFMGlobal::keyCtrlIsPressed() && isInSameDevice && !fileInfo->canRename()))
+            return Qt::IgnoreAction;
+
         //部分文件不能复制或剪切，需要在拖拽时忽略
         if (!fileInfo->canMoveOrCopy()) {
             return Qt::IgnoreAction;
@@ -417,8 +423,6 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
             return Qt::IgnoreAction;
         }
     }
-
-    const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, item->url());
 
     if (!info || !info->canDrop()) {
         for (auto plugin : SchemePluginManager::instance()->schemePlugins()) {
