@@ -1477,6 +1477,7 @@ FunctionCallProxy::FunctionCallProxy(QThread *thread)
 {
     connect(this, &FunctionCallProxy::callInLiveThread, this, [](FunctionType * func) {
         (*func)();
+        delete func;
     }, Qt::QueuedConnection);
     connect(thread, &QThread::finished, this, [this] {
         qWarning() << sender() << "the thread finished";

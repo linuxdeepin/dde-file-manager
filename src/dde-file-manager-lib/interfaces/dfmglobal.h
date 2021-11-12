@@ -36,6 +36,7 @@
 #include <QUrl>
 #include <QDebug>
 #include <QtWidgets/QLabel>
+#include <QMutex>
 
 #include <functional>
 #include <cmath>
@@ -468,16 +469,18 @@ public:
             return fun(std::forward<Args>(args)...);
 
         ReturnType result;
+        QSharedPointer<bool> cancle(new bool(false));
+        QSharedPointer<QMutex> mtx(new QMutex);
         FunctionCallProxy *proxy = new FunctionCallProxy(thread);
-        //! warning 1, 在s->release()被调用后proxyFun变量会在另一个线程被释放，因此其捕获
-        //! 的变量也都会随之释放，proxy变量被释放后调用deleteLater崩溃
-        FunctionType proxyFun = [&]() {
-            //! warning 2, proxy为引用，会在runInThread退出后释放，在此拷贝。
-            FunctionCallProxy *dupProxy = proxy;
-            result = fun(std::forward<Args>(args)...);
-            s->release();   //! warning 3 此后禁止操作任何捕获的变量
-            dupProxy->deleteLater();
-        };
+        FunctionType *proxyFun = new FunctionType([&, proxy, cancle, mtx]() {
+            mtx->lock();
+            if (!*cancle.get()) {
+                result = fun(std::forward<Args>(args)...);
+                s->release();
+            }
+            mtx->unlock();
+            proxy->deleteLater();
+        });
 
         proxy->moveToThread(thread);
 
@@ -485,8 +488,11 @@ public:
             qWarning() << thread << ", the thread no event loop";
         }
 
-        proxy->callInLiveThread(&proxyFun);
+        proxy->callInLiveThread(proxyFun);
         s->acquire();
+        mtx->lock();
+        *cancle.get() = true;
+        mtx->unlock();
         return result;
     }
 };
@@ -500,16 +506,18 @@ public:
         if (QThread::currentThread() == thread)
             return fun(std::forward<Args>(args)...);
 
+        QSharedPointer<bool> cancle(new bool(false));
+        QSharedPointer<QMutex> mtx(new QMutex);
         FunctionCallProxy *proxy = new FunctionCallProxy(thread);
-        //! warning 1，在s->release()被调用后proxyFun变量会在另一个线程被释放，因此其捕获
-        //! 的变量也都会随之释放，proxy变量被释放后调用deleteLater崩溃
-        FunctionType proxyFun = [&]() {
-            //! warning 2, proxy为引用，会在runInThread退出后释放，在此拷贝。
-            FunctionCallProxy *dupProxy = proxy;
-            fun(std::forward<Args>(args)...);
-            s->release();  //! warning 3 此后禁止操作任何捕获的变量
-            dupProxy->deleteLater();
-        };
+        FunctionType *proxyFun = new FunctionType([&, proxy, cancle, mtx]() {
+            mtx->lock();
+            if (!*cancle.get()) {
+                fun(std::forward<Args>(args)...);
+                s->release();
+            }
+            mtx->unlock();
+            proxy->deleteLater();
+        });
 
         proxy->moveToThread(thread);
 
@@ -517,8 +525,11 @@ public:
             qWarning() << thread << ", the thread no event loop";
         }
 
-        proxy->callInLiveThread(&proxyFun);
+        proxy->callInLiveThread(proxyFun);
         s->acquire();
+        mtx->lock();
+        *cancle.get() = true;
+        mtx->unlock();
     }
 };
 
