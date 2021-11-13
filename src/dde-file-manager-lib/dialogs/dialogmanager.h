@@ -105,6 +105,7 @@ public slots:
     int showRenameNameSameErrorDialog(const QString &name, const DFMEvent &event);
     // 重命名文件时，如果文件名为..，则弹出警告对话框
     int showRenameNameDotDotErrorDialog(const DFMEvent &event);
+    void showRenameBusyErrDialog(const DFMEvent &event);
     int showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &event);
     int showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &event);
     void showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details);

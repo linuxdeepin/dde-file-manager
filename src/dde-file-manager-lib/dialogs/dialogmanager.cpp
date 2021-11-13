@@ -510,6 +510,21 @@ int DialogManager::showRenameNameDotDotErrorDialog(const DFMEvent &event)
     return code;
 }
 
+void DialogManager::showRenameBusyErrDialog(const DFMEvent &event)
+{
+    // 获取父对话框字体特性
+    DDialog d(WindowManager::getWindowById(event.windowId()));
+    QFontMetrics fm(d.font());
+    d.setTitle(tr("Device or resource busy"));
+    QStringList buttonTexts;
+    buttonTexts.append(tr("Confirm","button"));
+    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
+    d.setDefaultButton(0);
+    // 设置对话框icon
+    d.setIcon(m_dialogWarningIcon);
+    d.exec();
+}
+
 int DialogManager::showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &event)
 {
     QString EraseDisk = tr("Are you sure you want to erase all data on the disc?");

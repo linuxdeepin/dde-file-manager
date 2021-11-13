@@ -432,6 +432,14 @@ TEST_F(DFileSeviceTest, start_writeFilesToClipboard)
 
 TEST_F(DFileSeviceTest, start_renameFile)
 {
+    Stub stl;
+    typedef int(*fptr)(QDialog*);
+    fptr pQDialogExec = (fptr)(&QDialog::exec);
+    fptr pDDialogExec = (fptr)(&Dtk::Widget::DDialog::exec);
+    int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Accepted;};
+    stl.set(pQDialogExec, stub_DDialog_exec);
+    stl.set(pDDialogExec, stub_DDialog_exec);
+
     DUrl url, to;
     url.setScheme(FILE_SCHEME);
     QString filepath = TestHelper::createTmpFile();

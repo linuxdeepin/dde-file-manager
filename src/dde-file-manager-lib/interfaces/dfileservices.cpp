@@ -247,6 +247,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
 
             if (result.toBool()) {
                 emit fileRenamed(e->fromUrl(), e->toUrl());
+            } else {
+                DThreadUtil::runInMainThread(dialogManager, &DialogManager::showRenameBusyErrDialog, *event.data());
             }
         }
 

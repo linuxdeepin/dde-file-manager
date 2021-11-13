@@ -440,6 +440,7 @@ TEST_F(TestDialogManager, testShowRenameNameSameErrorDialog)
 
     int code = m_pTester->showRenameNameSameErrorDialog(name, event);
     EXPECT_EQ(code, 0);
+    m_pTester->showRenameBusyErrDialog(event);
 }
 
 // 测试文件命名为“..”时，弹出提示框

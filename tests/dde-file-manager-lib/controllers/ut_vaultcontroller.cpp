@@ -20,6 +20,8 @@
 #include <QSharedPointer>
 #include <QTimer>
 #include <QDirIterator>
+#include <QDialog>
+#include <DDialog>
 
 #include "stub.h"
 #include "../stub-ext/stubext.h"
@@ -475,8 +477,15 @@ TEST_F(TestVaultController, tst_renameFile)
 
     QString cmdTouch = QString("touch ") + testFile;
     QString cmdRm = QString("rm ") + testFile + " " + testRenameFile;
-
     QProcess::execute(cmdTouch);
+
+    Stub stl;
+    typedef int(*fptr)(QDialog*);
+    fptr pQDialogExec = (fptr)(&QDialog::exec);
+    fptr pDDialogExec = (fptr)(&Dtk::Widget::DDialog::exec);
+    int (*stub_DDialog_exec)(void) = [](void)->int{return QDialog::Accepted;};
+    stl.set(pQDialogExec, stub_DDialog_exec);
+    stl.set(pDDialogExec, stub_DDialog_exec);
 
     QSharedPointer<DFMRenameEvent> event = dMakeEventPointer<DFMRenameEvent>(nullptr, testFile, testRenameFile);
     m_controller->renameFile(event);
