@@ -320,7 +320,7 @@ void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QStrin
         reg.setPattern("share=(.*)");
         idx = reg.indexIn(mountPoint);
         if (idx > 0)
-            share = reg.cap(1);
+            share = QByteArray::fromPercentEncoding((reg.cap(1)).toUtf8());
     } else if (mountPoint.contains("/ftp:")) { // parse ftp mpt(//run/user/1000/gvfs/ftp:host=4.3.2.1)
         // TODO: maybe someday we need to stash ftp too. but for now, just return.
         qInfo() << "not valid smb share, do not stash.";
@@ -351,8 +351,10 @@ void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QStrin
         QJsonValue remoteMounts = obj.value("RemoteMounts");
         if (remoteMounts.isObject()) {
             remoteMountsObj = remoteMounts.toObject();
-            if (remoteMountsObj.keys().contains(key))
+            if (remoteMountsObj.keys().contains(key)) {
+                emit DFMApplication::instance()->reloadComputerModel();
                 return;
+            }
         }
     }
 
