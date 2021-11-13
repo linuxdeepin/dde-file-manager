@@ -116,7 +116,8 @@ QString BookMark::fileDisplayName() const
 
 bool BookMark::canRedirectionFileUrl() const
 {
-    if (!mountPoint.isEmpty() && !locateUrl.isEmpty() && udisksMountPoint.isEmpty() && !udisksDBusPath.isEmpty()) {
+    //书签指向目录就是挂载目录本身时locateUrl为空，属于正常逻辑，这里无需判断locateUrl
+    if (!mountPoint.isEmpty() /*&& !locateUrl.isEmpty()*/ && udisksMountPoint.isEmpty() && !udisksDBusPath.isEmpty()) {
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(udisksDBusPath));
         udisksMountPoint = blDev->mount({});
     }
@@ -126,7 +127,8 @@ bool BookMark::canRedirectionFileUrl() const
 
 DUrl BookMark::redirectedFileUrl() const
 {
-    if (!mountPoint.isEmpty() && !locateUrl.isEmpty()) {
+    //书签指向目录就是挂载目录本身时locateUrl为空，属于正常逻辑，这里无需判断locateUrl
+    if (!mountPoint.isEmpty() /*&& !locateUrl.isEmpty()*/) {
         DUrl mountPointUrl(mountPoint);
         QString schemeStr = mountPointUrl.scheme();
         //为防止locateUrl传入QUrl被转码，locateUrl统一保存为base64,这里需要从base64转回来。
