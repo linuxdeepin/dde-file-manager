@@ -306,7 +306,8 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
                                      QRegularExpression::DotMatchesEverythingOption
                                      | QRegularExpression::DontCaptureOption
                                      | QRegularExpression::OptimizeOnFirstUsageOption);
-    QString urlString = neturl.toString();
+    std::string stdStr = neturl.toString().toStdString();
+    QString urlString = QUrl::fromPercentEncoding(stdStr.data());
     const QRegularExpressionMatch &match = regExp.match(urlString, 0, QRegularExpression::NormalMatch,
                                                         QRegularExpression::DontCheckSubjectStringMatchOption);
     if (match.hasMatch()) {
@@ -373,6 +374,8 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
 
                 if (info && info->canRedirectionFileUrl()) {
                     DUrl redirectUrl = info->redirectedFileUrl();
+                    std::string stdStr = redirectUrl.path().toStdString();
+                    redirectUrl.setPath(QUrl::fromPercentEncoding(stdStr.data()));
                     redirectUrl.setScheme(redirectUrl.scheme()+ NETWORK_REDIRECT_SCHEME_EX);
                     redirectUrl.setQuery(fullPath);
                     DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(nullptr, redirectUrl, main_window);

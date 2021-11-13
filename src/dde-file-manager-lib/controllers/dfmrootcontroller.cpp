@@ -559,7 +559,9 @@ bool DFMRootFileWatcherPrivate::start()
         qDebug() << uri << "mount removed";
         if (uri.contains("smb-share://") || uri.contains("smb://") || uri.contains("ftp://") || uri.contains("sftp://")) {
             // remove NetworkNodes cache, so next time cd uri will fetchNetworks
-            QString smbUri = uri;
+            std::string stdStr = uri.toStdString();
+            QString smbUri = QUrl::fromPercentEncoding(QByteArray(stdStr.data()));
+            qDebug() << smbUri << "mount removed";
             if (smbUri.endsWith("/")) {
                 smbUri = smbUri.left(smbUri.length() - 1);
             }
