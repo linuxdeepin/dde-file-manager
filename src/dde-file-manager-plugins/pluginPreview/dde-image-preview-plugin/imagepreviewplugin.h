@@ -32,7 +32,7 @@ class ImagePreviewPlugin : public DFM_NAMESPACE::DFMFilePreviewPlugin
     Q_OBJECT
     Q_PLUGIN_METADATA(IID DFMFilePreviewFactoryInterface_iid FILE "dde-image-preview-plugin.json")
 
-public:
+public slots:
     DFM_NAMESPACE::DFMFilePreview *create(const QString &key) Q_DECL_OVERRIDE;
 };
 

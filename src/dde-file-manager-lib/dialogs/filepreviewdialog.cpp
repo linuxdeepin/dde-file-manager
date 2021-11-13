@@ -559,30 +559,14 @@ void FilePreviewDialog::switchToPage(int index)
     QTimer::singleShot(0, this, [this] {
         updateTitle();
         m_statusBar->openButton()->setFocus();
-        if (m_firstEnterSwitchToPage)
-        {
-            adjustSize();
-        } else
-        {
-            /*fix bug 48357 预览图片快速切换导致预览析构了定时器还在工作，使用智能指针对其进行判断*/
-            if (!m_preview) {
-                qDebug() << "switchToPage m_preview is null,so exit";
-                return;
-            }
-            if (m_preview->metaObject()->className() == QStringLiteral("dde_file_manager::VideoPreview")) {
-                adjustSize();
-            } else {
-                /*fix bug 45465 对视频和图片的切换进行size整理，adjustSize有不成功的可能，所以需要二次resize*/
-                this->resize(m_preview->contentWidget()->size().width(), m_preview->contentWidget()->size().height());
-                QSize end_zoompin = size();
-                adjustSize();
-                if (end_zoompin.width() > size().width()) {
-                    /*m_preview->contentWidget()->size().width() * 2 2和1.5是adjustSize的自适应值*/
-                    resize((double)m_preview->contentWidget()->size().width() * 2, (double)m_preview->contentWidget()->size().height() * 1.5);
-                } else if (end_zoompin.width() == size().width()) {
-                    resize(m_preview->contentWidget()->size().width(), m_preview->contentWidget()->size().height());
-                }
-            }
+        this->resize(m_preview->contentWidget()->size().width(), m_preview->contentWidget()->size().height());
+        QSize end_zoompin = size();
+        adjustSize();
+        if (end_zoompin.width() > size().width() && (m_preview->metaObject()->className() == QStringLiteral("dde_file_manager::DFMFilePreview"))) {
+            /*m_preview->contentWidget()->size().width() * 2 2和1.5是adjustSize的自适应值*/
+            resize((double)m_preview->contentWidget()->size().width() * 2, (double)m_preview->contentWidget()->size().height() * 1.5);
+        } else if (end_zoompin.width() == size().width()) {
+            resize(m_preview->contentWidget()->size().width(), m_preview->contentWidget()->size().height());
         }
         playCurrentPreviewFile();
         moveToCenter();
