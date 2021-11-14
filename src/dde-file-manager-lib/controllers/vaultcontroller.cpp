@@ -238,12 +238,13 @@ VaultController::VaultController(QObject *parent)
     connect(d->m_cryFsHandle, &CryFsHandle::signalLockVault, this, &VaultController::slotLockVault);
     connect(d->m_cryFsHandle, &CryFsHandle::signalReadError, this, &VaultController::signalReadError);
     connect(d->m_cryFsHandle, &CryFsHandle::signalReadOutput, this, &VaultController::signalReadOutput);
+    connect(this, &VaultController::sigFinishedCopyFile, this, &VaultController::slotFinishedCopyFileTotalSize);
 
     // Get root dir size.
     m_sizeWorker = new DFileStatisticsJob(this);
 
-    DUrl rootUrl = vaultToLocalUrl(makeVaultUrl());
-    m_sizeWorker->start({rootUrl});
+    slotFinishedCopyFileTotalSize();
+
     connect(m_sizeWorker, &DFileStatisticsJob::dataNotify, this, &VaultController::updateFolderSizeLabel);
 
     // Refresh size when lock state changed.
@@ -458,6 +459,8 @@ bool VaultController::openFilesByApp(const QSharedPointer<DFMOpenFilesByAppEvent
 
 bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
+    const_cast<VaultController*>(this)->slotFinishedCopyFileTotalSize();
+
     const_cast<VaultController*>(this)->setVauleCurrentPageMark(VaultPageMark::DELETEFILEPAGE);
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     bool bDeletedSuccess = DFileService::instance()->deleteFiles(event->sender(), urlList);
@@ -475,6 +478,7 @@ bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
 
 DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
+    const_cast<VaultController*>(this)->slotFinishedCopyFileTotalSize();
     const_cast<VaultController*>(this)->setVauleCurrentPageMark(VaultPageMark::DELETEFILEPAGE);
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     bool bDeletedSuccess = DFileService::instance()->deleteFiles(event->sender(), urlList);
@@ -492,6 +496,7 @@ DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> 
 
 DUrlList VaultController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
 {
+    const_cast<VaultController*>(this)->slotFinishedCopyFileTotalSize();
     const_cast<VaultController*>(this)->setVauleCurrentPageMark(VaultPageMark::COPYFILEPAGE);
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     DUrl url = vaultToLocalUrl(event->targetUrl());
@@ -501,6 +506,7 @@ DUrlList VaultController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) 
 
 bool VaultController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
+    const_cast<VaultController*>(this)->slotFinishedCopyFileTotalSize();
     const_cast<VaultController*>(this)->setVauleCurrentPageMark(VaultPageMark::CLIPBOARDPAGE);
     DUrlList urlList = vaultToLocalUrls(event->urlList());
     return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(), urlList);
@@ -1263,6 +1269,14 @@ void VaultController::slotLockVault(int state)
         VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNKNOWN);
     }
     emit signalLockVault(state);
+}
+
+void VaultController::slotFinishedCopyFileTotalSize()
+{
+    if(!m_sizeWorker->isRunning()) {
+        DUrl rootUrl = vaultToLocalUrl(makeVaultUrl());
+        m_sizeWorker->start({rootUrl});
+    }
 }
 
 void VaultController::slotVaultPolicy()

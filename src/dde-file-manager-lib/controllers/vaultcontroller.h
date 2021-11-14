@@ -323,6 +323,8 @@ private slots:
     void slotUnlockVault(int state);
     void slotLockVault(int state);
 
+    void slotFinishedCopyFileTotalSize();
+
     // 保险箱策略处理函数
     void slotVaultPolicy();
 private:
@@ -359,6 +361,9 @@ signals:
      * @param state             返回ErrorCode枚举值
      */
     void signalLockVault(int state);
+
+    //! 通知拷贝或剪切任务完成
+    void sigFinishedCopyFile();
 
 signals:
     /**

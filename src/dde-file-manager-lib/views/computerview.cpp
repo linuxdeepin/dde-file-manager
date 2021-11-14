@@ -182,14 +182,21 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
 
     connect(m_view, &QWidget::customContextMenuRequested, this, &ComputerView::contextMenu);
     auto enterfunc = [this](const QModelIndex & idx, int triggermatch) {
+
+        DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
+        if (!url.isValid())
+            return;
+
+        //! 在点击计算机页面中的图标时，判断是否是保险箱以及保险箱是否解锁，如果解锁发送信号触发计算保险箱大小的线程
+        if(VaultController::Unlocked == VaultController::ins()->state() && url.isVaultFile()) {
+            emit VaultController::ins()->sigFinishedCopyFile();
+        }
+
         if (~triggermatch) {
             if (DFMApplication::instance()->appAttribute(DFMApplication::AA_OpenFileMode).toInt() != triggermatch) {
                 return;
             }
         }
-        DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
-        if (!url.isValid())
-            return;
 
         // searchBarTextEntered also invoke "checkGvfsMountFileBusy", forbit invoke twice
         if (url.path().endsWith(SUFFIX_STASHED_REMOTE)) {
@@ -451,6 +458,15 @@ void ComputerListView::mouseMoveEvent(QMouseEvent *event)
     } else {
         DFileService::instance()->setCursorBusyState(false);
     }
+}
+
+void ComputerListView::showEvent(QShowEvent *event)
+{
+    //! 显示计算机页面时，判断保险箱是否解锁，如果解锁发送信号触发计算保险箱大小的线程
+    if(VaultController::Unlocked == VaultController::ins()->state()) {
+        emit VaultController::ins()->sigFinishedCopyFile();
+    }
+    QListView::showEvent(event);
 }
 
 #include "computerview.moc"

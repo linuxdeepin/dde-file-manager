@@ -1273,6 +1273,10 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
         }
         //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
         this->dealpasteEnd(targetUrlList, event);
+        //! 判断目标目录是否是保险箱目录如果是，发送信号激活计算保险大小的线程
+        if(!targetUrlList.isEmpty() && targetUrlList.at(0).toLocalFile().contains(VaultController::makeVaultLocalPath())) {
+            emit VaultController::ins()->sigFinishedCopyFile();
+        }
     });
 
     return job->targetUrlList();

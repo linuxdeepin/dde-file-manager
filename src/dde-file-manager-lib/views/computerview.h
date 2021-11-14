@@ -96,6 +96,8 @@ public:
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
+
+    void showEvent(QShowEvent *event) override;
 };
 
 #endif // COMPUTERVIEW_H
