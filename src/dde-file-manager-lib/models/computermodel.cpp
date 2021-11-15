@@ -132,7 +132,9 @@ ComputerModel::ComputerModel(QObject *parent)
         });
 
         connect(DRootFileManager::instance(),&DRootFileManager::serviceHideSystemPartition,this,[this,rootInit](){
+            beginResetModel();
             m_items.clear();
+            endResetModel();
             m_nitems = 0;
             addItem(makeSplitterUrl(tr("My Directories")));
             QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
