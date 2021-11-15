@@ -78,6 +78,8 @@ private:
     DTagActionWidget *m_tagActionWidget{ nullptr };
     DAbstractFileWatcher *m_devicesWatcher{ nullptr };
 
+    QMap<QString, QString> currentTagWithColorMap;
+
     DFMTagWidget *q_ptr{ nullptr };
     Q_DECLARE_PUBLIC(DFMTagWidget)
 };
@@ -223,8 +225,25 @@ void DFMTagWidget::loadTags(const DUrl &durl)
     QSet<QString> defaultColors = TagManager::instance()->allTagOfDefaultColors();
     QList<QColor>  selectColors;
 
+    //避免重复刷新edit，防止出现因刷新导致输入文本丢失的情况
+    if (d->m_url == url && tag_name_list.length() == d->currentTagWithColorMap.count()) {
+        bool needRefreshEdit = false;
+        for (const QString &tag : tag_name_list) {
+            QString colorName = TagManager::instance()->getColorByDisplayName(tag);
+            if (!d->currentTagWithColorMap.contains(tag) ||
+                    d->currentTagWithColorMap.value(tag) != colorName) {
+                needRefreshEdit = true;
+                break;
+            }
+        }
+
+        if (!needRefreshEdit)
+            return;
+    }
+
     d->m_tagCrumbEdit->setProperty("LoadFileTags", true);
     d->m_tagCrumbEdit->clear();
+    d->currentTagWithColorMap.clear();
     for (auto it = nameColors.begin(); it != nameColors.end(); ++it) {
         DCrumbTextFormat format = d->m_tagCrumbEdit->makeTextFormat();
         format.setText(it.key());
@@ -239,6 +258,7 @@ void DFMTagWidget::loadTags(const DUrl &durl)
         format.setBackground(QBrush(it.value()));
         format.setBackgroundRadius(5);
         d->m_tagCrumbEdit->insertCrumb(format, 0);
+        d->currentTagWithColorMap.insert(it.key(), colorName);
     }
     d->m_tagCrumbEdit->setProperty("LoadFileTags", false);
 
