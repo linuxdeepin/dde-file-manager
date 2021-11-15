@@ -287,7 +287,8 @@ void ComputerPropertyDialog::initUI()
     } else {
         pixmap.load(distributerLogoPath);
     }
-    pixmap = pixmap.scaled(258,40);
+    iconLabel->setFixedSize(220,34);
+    iconLabel->setScaledContents(true);
     iconLabel->setPixmap(pixmap);
 
     QLabel *nameLabel = new QLabel(tr("Computer"), this);
