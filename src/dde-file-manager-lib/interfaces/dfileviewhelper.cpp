@@ -225,6 +225,12 @@ void DFileViewHelperPrivate::init()
     QObject::connect(cut_action, &QAction::triggered,
     q, [q] {
         // 只支持回收站根目录下的文件执行剪切
+        const DAbstractFileInfoPointer &rootInfo = fileService->createFileInfo(q, q->currentUrl());
+        if (!rootInfo || !rootInfo->isWritable()) {
+            qInfo() << "Read only folders do not support Ctrl + X operations！folders = " << q->currentUrl();
+            return;
+        }
+
         if (!q->selectedUrls().isEmpty()) {
             DUrl url = q->selectedUrls().first();
             if (url.isTrashFile() && url.parentUrl() != DUrl::fromTrashFile("/"))
