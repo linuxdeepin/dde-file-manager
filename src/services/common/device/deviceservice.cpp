@@ -36,9 +36,8 @@ DWIDGET_USE_NAMESPACE
 DSC_USE_NAMESPACE
 
 DeviceMonitorHandler::DeviceMonitorHandler(DeviceService *serv)
-    : QObject (nullptr), service(serv)
+    : QObject(nullptr), service(serv)
 {
-
 }
 
 /*!
@@ -156,12 +155,14 @@ void DeviceMonitorHandler::updateDataWithOpticalInfo(BlockDeviceData *data, cons
     }
 
     // CD recognized / not recognized
+    // TODO(zhangs): test CD-RW
     if (changes.contains(idUsageFlag)) {
         QString &&usage = changes.value(idUsageFlag).toString().toLower();
         if (usage.toLower() == "filesystem") {
             auto &&idTypeFlag = DFMMOUNT::Property::BlockIDType;
             data->common.filesystem = changes.value(idTypeFlag).toString();
         }
+        data->hasFileSystem = data->common.filesystem.isEmpty() ? false : true;
     }
 }
 
@@ -172,10 +173,10 @@ void DeviceMonitorHandler::updateDataWithMountedInfo(BlockDeviceData *data, cons
     // mounted / unmounted / size
     if (changes.contains(mptFlag)) {
         QString &&mpt = changes.value(mptFlag).toString();
-        if (mpt.isEmpty()) { // unmounted
+        if (mpt.isEmpty()) {   // unmounted
             data->common.mountpoint = QString("");
             data->mountpoints.clear();
-        } else { // mounted
+        } else {   // mounted
             data->common.mountpoint = mpt;
             if (!data->mountpoints.contains(mpt))
                 data->mountpoints.append(mpt);
@@ -250,7 +251,7 @@ void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
     // maybe reload setting ?
     if (service->isInLiveSystem() || !service->isAutoMountSetting()) {
         qWarning() << "Cancel mount, live system: " << service->isInLiveSystem()
-                   << "auto mount setting: " <<  service->isAutoMountSetting();
+                   << "auto mount setting: " << service->isAutoMountSetting();
         return;
     }
 
@@ -261,8 +262,8 @@ void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
     }
 
     if (!service->mountBlockDevice(deviceId, {})) {
-         qWarning() << "Mount device failed: " << blkDev->path();
-         return;
+        qWarning() << "Mount device failed: " << blkDev->path();
+        return;
     }
 
     if (service->isAutoMountAndOpenSetting())
@@ -350,9 +351,9 @@ void DeviceService::startAutoMount()
             return;
         }
 
-        QStringList &&blkList = blockDevicesIdList({{"mountable", true}});
-        for (const QString &id :blkList)
-            mountBlockDeviceAsync(id, {{"auth.no_user_interaction", true}});
+        QStringList &&blkList = blockDevicesIdList({ { "mountable", true } });
+        for (const QString &id : blkList)
+            mountBlockDeviceAsync(id, { { "auth.no_user_interaction", true } });
 
         // TODO(zhangs): mountAllProtocolDevices
 
@@ -386,7 +387,7 @@ void DeviceService::ejectBlockDeviceAsync(const QString &deviceId, const QVarian
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
     if (DeviceServiceHelper::isEjectableBlockDevice(ptr)) {
-        ptr->ejectAsync(opts, [this, deviceId] (bool ret, DFMMOUNT::DeviceError err) {
+        ptr->ejectAsync(opts, [this, deviceId](bool ret, DFMMOUNT::DeviceError err) {
             if (!ret) {
                 qWarning() << "Eject failed: " << int(err);
                 dfmbase::UniversalUtils::notifyMessage(tr("The device is busy, cannot eject now"));
@@ -412,7 +413,7 @@ void DeviceService::poweroffBlockDeviceAsync(const QString &deviceId, const QVar
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
     if (DeviceServiceHelper::isCanPoweroffBlockDevice(ptr)) {
-        ptr->powerOffAsync(opts, [this, deviceId] (bool ret, DFMMOUNT::DeviceError err) {
+        ptr->powerOffAsync(opts, [this, deviceId](bool ret, DFMMOUNT::DeviceError err) {
             if (!ret) {
                 qWarning() << "Poweroff failed: " << int(err);
                 dfmbase::UniversalUtils::notifyMessage(tr("The device is busy, cannot remove now"));
@@ -483,7 +484,7 @@ void DeviceService::detachBlockDevice(const QString &deviceId)
     // when detach a device, you need to unmount its partitions,
     // and then poweroff
     QStringList &&idList = DeviceServiceHelper::makeAllDevicesIdForDrive(ptr->drive());
-    std::for_each(idList.cbegin(), idList.cend(), [this] (const QString &id) {
+    std::for_each(idList.cbegin(), idList.cend(), [this](const QString &id) {
         if (!unmountBlockDevice(id))
             qWarning() << "Detach " << id << " abnormal, it's cannot unmount";
     });
@@ -501,14 +502,13 @@ void DeviceService::detachProtocolDevice(const QString &deviceId)
 
 void DeviceService::detachAllMountedBlockDevices()
 {
-    QStringList &&list = blockDevicesIdList({{"unmountable", true}});
+    QStringList &&list = blockDevicesIdList({ { "unmountable", true } });
     for (const QString &id : list)
         detachBlockDevice(id);
 }
 
 void DeviceService::detachAllMountedProtocolDevices()
 {
-
 }
 
 void DeviceService::mountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts)
@@ -516,7 +516,7 @@ void DeviceService::mountBlockDeviceAsync(const QString &deviceId, const QVarian
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
     if (DeviceServiceHelper::isMountableBlockDevice(ptr)) {
-        ptr->mountAsync(opts, [this, deviceId] (bool ret, DFMMOUNT::DeviceError err) {
+        ptr->mountAsync(opts, [this, deviceId](bool ret, DFMMOUNT::DeviceError err) {
             if (!ret)
                 qWarning() << "Mount failed: " << int(err);
             else
@@ -540,7 +540,7 @@ void DeviceService::unmountBlockDeviceAsync(const QString &deviceId, const QVari
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
     if (DeviceServiceHelper::isUnmountableBlockDevice(ptr)) {
-        ptr->unmountAsync(opts, [this, deviceId] (bool ret, DFMMOUNT::DeviceError err) {
+        ptr->unmountAsync(opts, [this, deviceId](bool ret, DFMMOUNT::DeviceError err) {
             if (!ret) {
                 qWarning() << "Unmount failed: " << int(err);
                 dfmbase::UniversalUtils::notifyMessage(tr("Disk is busy, cannot unmount now"));
