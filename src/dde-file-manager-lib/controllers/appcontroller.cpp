@@ -45,6 +45,7 @@
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
 #include "disomaster.h"
+#include "pathmanager.h"
 
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
@@ -442,7 +443,21 @@ void AppController::actionDelete(const QSharedPointer<DFMUrlListBaseEvent> &even
 
 void AppController::actionCompleteDeletion(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    fileService->deleteFiles(event->sender(), event->urlList());
+    auto &&list = event->urlList();
+    if (list.isEmpty())
+        return;
+
+    auto sender { event->sender() };
+    foreach (const DUrl &url, list) {
+        if (systemPathManager->isSystemPath(url.toLocalFile())) {
+            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteSystemPathWarnDialog, DFMEvent::windowIdByQObject(sender));
+            return;
+        }
+    }
+
+    bool slient { false };
+    bool force { false };
+    DFMEventDispatcher::instance()->processEventAsync(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient, force));
 }
 
 void AppController::actionCreateSymlink(const QSharedPointer<DFMUrlBaseEvent> &event)
