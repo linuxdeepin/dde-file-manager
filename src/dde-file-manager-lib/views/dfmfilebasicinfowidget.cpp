@@ -207,11 +207,10 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
     QFormLayout *layout = new QFormLayout(layoutWidget);
     layout->setHorizontalSpacing(5);
     layout->setVerticalSpacing(16);
-    layout->setLabelAlignment(Qt::AlignRight);
+    layout->setLabelAlignment(Qt::AlignRight | Qt::AlignTop);
     stackedLayout->addWidget(layoutWidget);
     stackedLayout->setCurrentWidget(layoutWidget);
 
-    int frameHeight = 160;
     if (m_showFileName) {
         QLabel *fileNameKeyLabel = new SectionKeyLabel(QObject::tr("Name"));
         QLabel *fileNameLabel = new SectionValueLabel(info->fileDisplayName());
@@ -219,7 +218,6 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
         fileNameLabel->setText(fileNameLabel->fontMetrics().elidedText(text, Qt::ElideMiddle, fileNameLabel->width()));
         fileNameLabel->setToolTip(text);
 
-        frameHeight += 30;
         layout->addRow(fileNameKeyLabel, fileNameLabel);
     }
 
@@ -233,7 +231,6 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
             SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
             layout->addRow(sizeSectionLabel, m_folderSizeLabel);
             layout->addRow(fileAmountSectionLabel, m_containSizeLabel);
-            frameHeight += 30;
         }
     } else {
         SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
@@ -342,7 +339,6 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
         QString t = linkPathLabel->fontMetrics().elidedText(info->symlinkTargetPath(), Qt::ElideMiddle, 150);
         linkPathLabel->setText(t);
         layout->addRow(linkPathSectionLabel, linkPathLabel);
-        frameHeight += 30;
     }
 
     if (!info->isVirtualEntry()) {
@@ -383,7 +379,6 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
     }
 
     //layout->setContentsMargins(0, 0, 40, 0);
-    q->setFixedHeight(frameHeight);
     //! lixiang change
     layoutWidget->update();
     //! lixiang change
