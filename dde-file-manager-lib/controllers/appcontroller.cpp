@@ -1472,10 +1472,11 @@ void UnmountWorker::doSaveRemove(const QString &blkStr)
     }
 
     QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-    if (drv->optical())
-        drv->eject({});
-    else
-        drv->powerOff({});
+    if (!drv) {
+        qCritical() << "Drive is not valid!";
+        return;
+    }
+    drv->powerOff({});
     QDBusError err = drv->lastError();
     if (err.type() != QDBusError::NoError) {
         qCritical() << "device [" << drv->path() << "] poweroff failed: " << err.message();
