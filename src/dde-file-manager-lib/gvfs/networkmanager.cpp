@@ -374,8 +374,6 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
 
                 if (info && info->canRedirectionFileUrl()) {
                     DUrl redirectUrl = info->redirectedFileUrl();
-                    std::string stdStr = redirectUrl.path().toStdString();
-                    redirectUrl.setPath(QUrl::fromPercentEncoding(stdStr.data()));
                     redirectUrl.setScheme(redirectUrl.scheme()+ NETWORK_REDIRECT_SCHEME_EX);
                     redirectUrl.setQuery(fullPath);
                     DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(nullptr, redirectUrl, main_window);

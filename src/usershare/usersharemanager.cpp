@@ -126,7 +126,8 @@ ShareInfo UserShareManager::getShareInfoByPath(const QString &path) const
 
 ShareInfo UserShareManager::getsShareInfoByShareName(const QString &shareName) const
 {
-    return m_shareInfos.value(shareName);
+    std::string stdStr = shareName.toStdString();
+    return m_shareInfos.value(QUrl::fromPercentEncoding(stdStr.data()));
 }
 
 QString UserShareManager::getShareNameByPath(const QString &path) const
@@ -410,7 +411,7 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
     qDebug() << oldInfo << info;
     if (!info.shareName().isEmpty() && QFile(info.path()).exists()) {
         // 共享文件的共享名不能以-开头
-        if (info.shareName().startsWith("-")) {
+        if (info.shareName().startsWith("-") || info.shareName().endsWith(" ")) {
             dialogManager->showErrorDialog(tr("The share name must not contain %<>*?|/\\+=;:,\" and should not start with %1").arg("-"), "");
             return false;
         }
