@@ -81,14 +81,6 @@ DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCo
         emit job->currentJobChanged(fromUrl, toUrl, true);
     }
     break;
-    case DFileCopyMoveJob::UnknowUrlError: {
-        DDialog dialog("Error", QCoreApplication::translate("DTaskDialog", "This action is not supported"));
-        dialog.setIcon(QIcon::fromTheme("dialog-error"));
-        dialog.exec();
-    }
-    // fall-through
-    case DFileCopyMoveJob::UnknowError:
-        return DFileCopyMoveJob::CancelAction;
     default:
         DUrl fromUrl = sourceInfo ? sourceInfo->fileUrl() : DUrl();
         DUrl toUrl = targetInfo ? targetInfo->fileUrl() : DUrl();
@@ -556,7 +548,8 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
                 bool supprotRetry = job->supportActions(job->error()).testFlag(DFileCopyMoveJob::RetryAction);
                 data["supprotRetry"] = supprotRetry ? "true" : "false";
                 data["errorMsg"] = job->errorString();
-                qInfo() << "dfilecopymovejob error and errorMsg = " << job->errorString();
+                if (job->error() != DFileCopyMoveJob::CancelError)
+                    qInfo() << "dfilecopymovejob error and errorMsg = " << job->errorString();
             }
         }
 
@@ -580,7 +573,7 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job, const b
                 emit closed();
             }
         }
-    });
+    }, Qt::QueuedConnection);
     connect(job, &DFileCopyMoveJob::errorChanged, wid, [wid](DFileCopyMoveJob::Error error) {
         wid->getButton(DFMTaskWidget::PAUSE)->setEnabled(error == DFileCopyMoveJob::NoError);
     }, Qt::QueuedConnection);

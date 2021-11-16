@@ -1129,7 +1129,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
             dialogManager->taskDialog()->removeTaskJob(fileJob.data());
             fileJob->disconnect();
             fileJob.reset(nullptr);
-            qInfo() << "file copy error handle release!";
+            qDebug() << "file copy error handle release!";
         }
 
         // 处理任务对话框显示之前的错误, 无法处理的错误将立即弹出对话框处理

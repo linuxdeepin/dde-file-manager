@@ -112,7 +112,6 @@ public:
         DAbstractFileInfoPointer toInfo;
         QSharedPointer<DFileDevice> fromDevice = nullptr;
         QSharedPointer<DFileDevice> toDevice = nullptr;
-        int blockSize = 0;
     };
 
     struct DirSetPermissonInfo {
@@ -158,9 +157,7 @@ public:
     bool doCopyFile(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
     bool doCopySmallFilesOnDisk(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo,
                                 const QSharedPointer<DFileDevice> &fromDevice, const QSharedPointer<DFileDevice> &toDevice,
-                                const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
-    bool doCopyLargeFilesOnDisk(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
-    bool doCopyLargeFilesOnDiskOnly(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
+                                const QSharedPointer<DFileHandler> &handler);
     //线程池中拷贝大量小文件
     bool doThreadPoolCopyFile();
     //拷贝文件到块设备（除光驱和系统所在的磁盘）
@@ -240,12 +237,17 @@ public:
     DFileCopyMoveJob::Action openGvfsFile(const DAbstractFileInfoPointer &fileInfo,
                                           QSharedPointer<DFileDevice> &device,
                                           const QIODevice::OpenMode &flags);
-    void cleanCopySources(char *data, QSharedPointer<DFileDevice> &fromDevice,
-                          QSharedPointer<DFileDevice> &toDevice, bool &isError);
+    void cleanCopySources(char *data, const QSharedPointer<DFileDevice> &fromDevice,
+                          const QSharedPointer<DFileDevice> &toDevice, bool &isError);
     DFileCopyMoveJob::GvfsRetryType gvfsFileRetry(char * data, bool &isErrorOccur, qint64 &currentPos, const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo,
                                                   QSharedPointer<DFileDevice> &fromDevice, QSharedPointer<DFileDevice> &toDevice,
                                                   const bool &isWriteError = true);
-
+    void readAheadSourceFile(const DAbstractFileInfoPointer &fromInfo);
+    bool handleUnknowUrlError(const DAbstractFileInfoPointer &fromInfo,const DAbstractFileInfoPointer &toInfo);
+    bool handleUnknowError(const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo, const QString &errorStr);
+    void sendCopyInfo(const DAbstractFileInfoPointer &fromInfo,const DAbstractFileInfoPointer &toInfo);
+    void cleanDoCopyFileSource(char *data, const DAbstractFileInfoPointer &fromInfo,const DAbstractFileInfoPointer &toInfo, const QSharedPointer<DFileDevice> &fromDevice,
+                               const QSharedPointer<DFileDevice> &toDevice);
     // 初始化优化状态
     void initRefineState();
     //! 剪切回收站文件路径
@@ -374,7 +376,7 @@ public:
     QMutex m_errorQueueMutex;
     QMutex m_stopMutex;
     QMutex m_clearThreadPoolMutex;
-    QQueue<ThreadCopyInfo> m_threadInfo;
+    QQueue<QSharedPointer<ThreadCopyInfo>> m_threadInfos;
     QMutex m_threadMutex;
     QMap<DUrl,DUrl> m_emitUrl;
     QMutex m_emitUrlMutex;

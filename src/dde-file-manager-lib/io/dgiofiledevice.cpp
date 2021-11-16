@@ -418,7 +418,7 @@ void DGIOFileDevice::cancelAllOperate()
         g_cancellable_cancel(d->m_writeCancel);
     if (d->m_readCancel)
         g_cancellable_cancel(d->m_readCancel);
-    qInfo() << "stop all cancels" << this << QThread::currentThreadId();
+    qDebug() << "stop all cancels" << this << QThread::currentThreadId();
 }
 
 qint64 DGIOFileDevice::readData(char *data, qint64 maxlen)

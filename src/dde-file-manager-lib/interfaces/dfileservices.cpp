@@ -716,7 +716,7 @@ void DFileService::pasteFileByClipboard(const QObject *sender, const DUrl &targe
 DUrlList DFileService::pasteFile(const QObject *sender, DFMGlobal::ClipboardAction action, const DUrl &targetUrl, const DUrlList &list) const
 {
     const QSharedPointer<DFMPasteEvent> &event = dMakeEventPointer<DFMPasteEvent>(sender, action, targetUrl, list);
-    const DUrlList &new_list = qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEventWithEventLoop(event));
+    const DUrlList &new_list = qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEvent(event));
 
     return new_list;
 }
