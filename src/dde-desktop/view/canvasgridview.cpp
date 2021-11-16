@@ -2814,8 +2814,9 @@ void CanvasGridView::initConnection()
 
     connect(this, &CanvasGridView::itemDeleted, this, [ = ](const DUrl & url) {
         auto index = model()->index(url);
-        if (d->currentCursorIndex == index) {
-            d->currentCursorIndex  = QModelIndex();
+        //当选中的文件中有文件被移除时就清空所有选中项
+        if (d->currentCursorIndex == index || selectionModel()->selectedIndexes().contains(index)) {
+            d->currentCursorIndex = QModelIndex();
             selectionModel()->setCurrentIndex(QModelIndex(), QItemSelectionModel::Clear);
             setCurrentIndex(QModelIndex());
         }
