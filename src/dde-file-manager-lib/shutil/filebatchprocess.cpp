@@ -144,6 +144,9 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrl
 
     QSharedMap<DUrl, DUrl> result{new QMap<DUrl, DUrl>{}};
 
+    QList<DUrl> modifyUrls;
+
+    bool needRecombination = false;
     for (auto url : originUrls) {
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, url);
 
@@ -166,11 +169,40 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrl
         DUrl beModifieddUrl = { info->getUrlByNewFileName(fileBaseName) };
         result->insert(url, beModifieddUrl);
 
+        modifyUrls << beModifieddUrl;
+
+        // 如果源url包含了待修改的url 就需要重组结果
+        if (originUrls.contains(beModifieddUrl))
+            needRecombination = true;
+
         if(isDeskTopApp) {
             qDebug()<<"this is desktop app case,file name will be changed as { "<< fileBaseName << " } for path:" << info->fileUrl();
         }
 
         ++index;
+    }
+
+    // 重组map
+    if (needRecombination) {
+        QList<DUrl> originUrlsTemp = originUrls;
+
+        auto it = modifyUrls.begin();
+        while (it != modifyUrls.end()) {
+            DUrl url = *it;
+            if (originUrlsTemp.contains(url)) {
+                originUrlsTemp.removeOne(url);
+                it = modifyUrls.erase(it);
+                continue;
+            }
+            ++it;
+        }
+
+        if (originUrlsTemp.size() == modifyUrls.size()) {
+            result.reset(new QMap<DUrl, DUrl>{});
+            for (int i = 0, end = originUrlsTemp.size(); i < end; ++i) {
+                result->insert(originUrlsTemp[i], modifyUrls[i]);
+            }
+        }
     }
 
     return result;
