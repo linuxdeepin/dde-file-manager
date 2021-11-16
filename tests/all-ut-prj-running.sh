@@ -51,7 +51,7 @@ echo "start dde-file-manager all UT cases:" $UT_PRJ_TYPE
 # 1. 编译工程
 mkdir -p $UT_TESTS_FOLDER
 cd $UT_TESTS_FOLDER
-cmake $TESTS_FOLDER
+cmake $PROJECT_FOLDER -DCMAKE_BUILD_TYPE=Debug
 make -j$CPU_NUMBER
 
 regTestFolder()
@@ -62,7 +62,8 @@ regTestFolder()
   if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$FOLDERNAME" ] ; then
     echo "$FOLDERNAME test case is running"
 
-    DIR_TEST=$UT_TESTS_FOLDER/$RELATIVEPATH
+    DIR_TEST=$UT_TESTS_FOLDER/tests/$RELATIVEPATH
+
     cd $DIR_TEST
 
     extract_path="*/src/$RELATIVEPATH/*"
@@ -76,7 +77,7 @@ regTestFolder()
 # 注册列表，测试目录放入该列表
 regList=(
 # apps
-  apps/dde-file-manager 
+  # apps/dde-file-manager
   # apps/dde-desktop
   # apps/dde-file-manager-daemon
   # apps/dde-file-manager-server
@@ -84,7 +85,7 @@ regList=(
 # base、extension、framework
   # dfm-base
   # dfm-extension
-  # dfm-framework
+  dfm-framework
 
 # services
   # services/dfm-business-services/dfm-desktop-service
