@@ -25,6 +25,7 @@
 #include "dfmeventdispatcher.h"
 #include "models/trashfileinfo.h"
 #include "dbusinterface/revocationmgr_interface.h"
+#include "vaultcontroller.h"
 #include <QDBusConnection>
 #include <unistd.h>
 
@@ -163,6 +164,17 @@ bool OperatorRevocation::revocation()
     const QSharedPointer<DFMEvent> new_event = e.event();
 
     new_event->setProperty("_dfm_is_revocaion_event", true);
+
+    //! 保险箱文件处理撤销事件，如果路径是保险箱路径但scheme是非保险箱的，需要重新设置scheme为DFMVAULT_SCHEME
+    DUrlList urlList = new_event.data()->fileUrlList();
+    if(!urlList.isEmpty()) {
+        for(DUrl & url : urlList) {
+            if(url.toLocalFile().contains(VaultController::makeVaultLocalPath()) && url.scheme() != DFMVAULT_SCHEME) {
+                url.setScheme(DFMVAULT_SCHEME);
+            }
+        }
+        new_event.data()->setData(urlList);
+    }
 
     if (e.async())
         DFMEventDispatcher::instance()->processEventAsync(new_event);
