@@ -741,10 +741,10 @@ static QStringList readErrorsFromLog() {
     logFile.open(QIODevice::ReadOnly | QIODevice::Text);
     while (!logFile.atEnd()) {
         QString line(logFile.readLine());
-        if (!line.startsWith("Warning") || !line.startsWith("Error"))
-            continue;
-        line.remove(QRegExp("/home/.*/.cache/deepin/discburn/_dev_sr[0-9]*/"));
-        ret << line;
+        if (line.startsWith("Warning") || line.startsWith("Error")) {
+            line.remove(QRegExp("/home/.*/.cache/deepin/discburn/_dev_sr[0-9]*/"));
+            ret << line;
+        }
     }
     logFile.close();
     return ret;
