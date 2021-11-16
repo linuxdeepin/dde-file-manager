@@ -2,49 +2,49 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="476"/>
+        <location filename="../controllers/appcontroller.cpp" line="491"/>
         <source>New Folder</source>
         <translation>ཡིག་ཁུག་གསར་འཛུགས།</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="577"/>
+        <location filename="../controllers/appcontroller.cpp" line="592"/>
         <source>Mounting device error</source>
         <translation>འཇུག་ཆས་ལ་ནོར་འཁྲུལ་ཤོར་བ།</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="616"/>
+        <location filename="../controllers/appcontroller.cpp" line="631"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>སྡུད་སྡེར་འདིའི་ཤེལ་བརྙན་སྐྱོན་ཤོར་བས་འཇུག་ཐབས་བྲལ། བསུབས་རྗེས་བེད་སྤྱོད་བྱེད།</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="658"/>
+        <location filename="../controllers/appcontroller.cpp" line="673"/>
         <source>Mount error: unsupported image format</source>
         <translation>བཅུག་པ་ནོར་འདུག ཤེལ་བརྙན་ཡིག་ཆའི་རྣམ་གཞག་ལ་རྒྱབ་སྐྱོར་མེད་པ།</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="791"/>
-        <location filename="../controllers/appcontroller.cpp" line="831"/>
+        <location filename="../controllers/appcontroller.cpp" line="806"/>
+        <location filename="../controllers/appcontroller.cpp" line="846"/>
         <source>The device was not safely removed</source>
         <translation>སྒྲིག་ཆས་རྒྱུན་གཏན་ངང་སྤོ་འབུད་བྱས་མེད།</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="791"/>
-        <location filename="../controllers/appcontroller.cpp" line="831"/>
+        <location filename="../controllers/appcontroller.cpp" line="806"/>
+        <location filename="../controllers/appcontroller.cpp" line="846"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>“བདེ་འཇགས་སྤོ་འབུད་”མནན་རྗེས། མུ་མཐུད་འབྲེལ་མཐུད་བྱེད་མཚམས་འཇོག་རྒྱུ།</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="801"/>
+        <location filename="../controllers/appcontroller.cpp" line="816"/>
         <source>The device was not ejected</source>
         <translation>སྒྲིག་ཆས་ཕྱིར་བཏོན་མེད།</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="801"/>
+        <location filename="../controllers/appcontroller.cpp" line="816"/>
         <source>Disk is busy, cannot eject now</source>
         <translation>སྡུད་སྡེར་ཡིག་ཆ་གཞན་གྱིས་བཟུང་ཡོད་པས། ཕྱིར་དོན་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="812"/>
+        <location filename="../controllers/appcontroller.cpp" line="827"/>
         <source>Authentication timed out</source>
         <translation>དཔང་དཔྱད་དུས་བརྒལ།</translation>
     </message>
@@ -646,27 +646,27 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="53"/>
         <source>Keep the key safe to retrieve the vault password later</source>
-        <translation type="unfinished"/>
+        <translation>གསང་ལྡེའི་ཡིག་ཆས་ཁྱེད་ཀྱིས་སྒྲིག་འགོད་བྱས་པའི་ཉེན་འགོག་སྒམ་ཆུང་གི་གསང་ཨང་འཚོལ་བར་སྤྱད་ཆོག་པས། ཉར་ཚགས་ལེགས་པོ་བྱེད་དགོས། </translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="58"/>
         <source>Save to default path</source>
-        <translation type="unfinished"/>
+        <translation>སོར་བཞག་བརྒྱུད་ལམ་དུ་ཉར་ཚགས་བྱ་རྒྱུ།</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="62"/>
         <source>Save to other locations</source>
-        <translation type="unfinished"/>
+        <translation>བརྒྱུད་ལམ་གཞན་དག་དུ་ཉར་ཚགས་བྱ་རྒྱུ། </translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="63"/>
         <source>No permission, please reselect</source>
-        <translation type="unfinished"/>
+        <translation>དབང་ཚད་མི་འདང་བས། ཡང་བསྐྱར་འདེམས་རོགས། </translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="75"/>
         <source>Select a path</source>
-        <translation type="unfinished"/>
+        <translation>གསང་ལྡེའི་ཡིག་ཆའི་ཉར་ཚགས་བརྒྱུད་ལམ་འདེམས་རོགས། </translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="93"/>
@@ -676,7 +676,7 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="106"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
-        <translation type="unfinished"/>
+        <translation>སོར་བཞག་བརྒྱུད་ལམ་ནི་སྤྱོད་མཁན་གཞག་དག་གིས་མི་མཐོང་བའི་བརྒྱུད་ལམ་དམིགས་བསལ་ཞིག་རེད་ལ། ཡི་གེའི་ཐོག་ནས་བརྒྱུད་ལམ་ཆ་འཕྲིན་མངོན་མི་སྲིད།</translation>
     </message>
 </context>
 <context>
@@ -810,12 +810,12 @@
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="50"/>
         <source>Cannot open this path</source>
-        <translation type="unfinished"/>
+        <translation>མིག་སྔའི་བརྒྱུད་ལམ་ཁ་ཕྱེ་ཐབས་མེད།</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="50"/>
         <source>Hint</source>
-        <translation type="unfinished"/>
+        <translation>དྲན་སྐུལ། </translation>
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="51"/>
@@ -972,43 +972,43 @@
         <location filename="../views/dfmvaultretrievepassword.cpp" line="146"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="323"/>
         <source>Unable to get the key file</source>
-        <translation type="unfinished"/>
+        <translation>གསང་ལྡེའི་ཡིག་ཆ་ཐོབ་ཐབས་མེད། </translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="88"/>
         <source>Verification failed</source>
-        <translation type="unfinished"/>
+        <translation>གསང་ལྡེ་ར་སྤྲོད་བྱེད་མ་ཐུབ། </translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="190"/>
         <source>Select a path</source>
-        <translation type="unfinished"/>
+        <translation>གསང་ལྡེའི་ཡིག་ཆའི་ཉར་ཚགས་བརྒྱུད་ལམ་འདེམས་རོགས། </translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="181"/>
         <source>Retrieve Password</source>
-        <translation type="unfinished"/>
+        <translation>གསང་ཨང་འཚོལ་བ།</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="185"/>
         <source>By key in the default path</source>
-        <translation type="unfinished"/>
+        <translation>སོར་བཞག་བརྒྱུད་ལམ་གྱི་གསང་ལྡེའི་ཡིག་ཆ་བརྒྱུད་ནས་གསང་ཨང་འཚོལ་བ།</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="186"/>
         <source>By key in the specified path</source>
-        <translation type="unfinished"/>
+        <translation>དམིགས་བཙུགས་བརྒྱུད་ལམ་གྱི་གསང་ལྡེའི་ཡིག་ཆ་བརྒྱུད་ནས་གསང་ཨང་འཚོལ་བ།</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="209"/>
         <source>Verification Successful</source>
-        <translation type="unfinished"/>
+        <translation>གསང་ལྡེ་ར་སྤྲོད་ལེགས་གྲུབ་བྱུང་བ།</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="212"/>
         <source>Keep it safe</source>
-        <translation type="unfinished"/>
+        <translation>ཉར་ཚགས་ལེགས་པོ་བྱེད་རོགས། </translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
@@ -1020,13 +1020,13 @@
         <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
         <source>Verify Key</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>ར་སྤྲོད་གསང་ལྡེ། </translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>སྒོ་ལྕགས་ཕྱེ་བར་ལོག་པ། </translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
@@ -1037,7 +1037,7 @@
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="306"/>
         <source>Vault password: %1</source>
-        <translation type="unfinished"/>
+        <translation>ཉེན་འགོག་སྒམ་ཆུང་གི་གསང་ཨང་ནི་%1</translation>
     </message>
 </context>
 <context>
@@ -1055,7 +1055,7 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="72"/>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>གསང་ཨང་བརྗེད་འདུག་གམ། </translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="142"/>
@@ -1087,22 +1087,22 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="251"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>སྐར་མ་%1རྗེས་ལ་ཚོད་ལྟ་གྱིས་དང་།</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="278"/>
         <source>Wrong password, please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>གསང་ཨང་ནོར་འདུག སྐར་མ་%1རྗེས་ལ་ཚོད་ལྟ་གྱིས་དང་།</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="281"/>
         <source>Wrong password, one chance left</source>
-        <translation type="unfinished"/>
+        <translation>གསང་ཨང་ནོར་འདུག ཁྱེད་ཀྱིས་ད་དུང་ཚོད་ལྟ་ཐེངས་1བྱས་ཆོག</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="283"/>
         <source>Wrong password, %1 chances left</source>
-        <translation type="unfinished"/>
+        <translation>གསང་ཨང་ནོར་འདུག ཁྱེད་ཀྱིས་ད་དུང་ཚོད་ལྟ་ཐེངས་%1བྱས་ཆོག</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="328"/>
@@ -1199,99 +1199,111 @@
         <translation>ཁྱོད་ལ་ཡན་ལག་ཡིག་ཆར་ལྟ་སྤྱོད་བྱེད་དབང་མེད།</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="669"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="249"/>
+        <source>Failed to position the file pointer!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="671"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>བུ་ཡིག</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1233"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1235"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation>དཀར་ཆག་ཁ་ཕྱེ་མ་ཐུབ། རྒྱུ་མཚན་ནི་ཡིག་ཆའི་མིང་རིང་དྲགས་པ། </translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1441"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2064"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2964"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1443"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2065"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2965"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation>ཡིག་ཆ་ཁ་ཕྱེ་མ་ཐུབ། རྒྱུ་མཚན་ནི་ཡིག་ཆའི་མིང་རིང་དྲགས་པ། </translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3843"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3927"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3845"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3929"/>
         <source>Failed to write the file, cause:</source>
         <translation>ཡིག་ཆའི་ནང་དོན་འབྲི་མ་ཐུབ། རྒྱུ་མཚན་ནི།</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4755"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4368"/>
+        <source>Failed to position the file pointer, cause: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="4952"/>
         <source>Syncing data</source>
         <translation>གཞི་གྲངས་མཉམ་བགྲོད་བྱེད་བཞིན་པ།</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4755"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4952"/>
         <source>Please wait</source>
         <translation>སྒུག་རོགས།</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1243"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1245"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>དཀར་ཆག་བཟོ་མ་ཐུབ། རྒྱུ་མཚན་ནི་%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1453"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1493"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2076"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2116"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2653"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2693"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1455"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1495"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2077"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2117"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2654"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2694"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4417"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>ཡིག་ཆ་ཁ་ཕྱེ་མ་ཐུབ། རྒྱུ་མཚན་ནི་%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1489"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2112"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2689"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3788"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1491"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2113"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2690"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3790"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4413"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>ཡིག་ཆ་ཁ་ཕྱེ་མ་ཐུབ། རྒྱུ་མཚན་ནི་དབང་ཚད་མི་འདང་བ། </translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1618"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2241"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1620"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2242"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>ཡིག་ཆའི་ནང་དོན་ཀློག་མ་ཐུབ། རྒྱུ་མཚན་ནི་%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1706"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1796"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2329"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2419"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1697"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1797"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2330"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2420"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>ཡིག་ཆའི་ནང་དོན་འབྲི་མ་ཐུབ། རྒྱུ་མཚན་ནི་%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1944"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2560"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1945"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2561"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>ཡིག་ཆའི་ཆ་ཚང་རང་བཞིན་ལ་ཞིབ་བཤེར་བྱེད་མ་ཐུབ། རྒྱུ་མཚན་ནི་%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2976"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2977"/>
         <source>Failed to open the file, cause: </source>
         <translation>ཡིག་ཆ་ཁ་ཕྱེ་མ་ཐུབ། རྒྱུ་མཚན་ནི།</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3057"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3058"/>
         <source>Failed to read the file, cause: </source>
         <translation>ཡིག་ཆའི་ནང་དོན་ཀློག་མ་ཐུབ། རྒྱུ་མཚན་ནི།</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3155"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3156"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>ཡིག་ཆ་བསུབས་མ་ཐུབ། རྒྱུ་མཚན་ནི་%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3255"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3256"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>སྦྲེལ་མཐུད་བཟོ་མ་ཐུབ། རྒྱུ་མཚན་ནི་%1</translation>
     </message>
@@ -1344,12 +1356,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1270"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1272"/>
         <source>Trash</source>
         <translation>སྙིགས་སྣོད།</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1279"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1281"/>
         <source>Empty</source>
         <translation>གཙང་སེལ།</translation>
     </message>
@@ -1402,22 +1414,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2749"/>
+        <location filename="../views/dfileview.cpp" line="2776"/>
         <source>Disc mount error</source>
         <translation>སྡུད་སྡེར་འགེལ་བ་ནོར་འདུག</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2749"/>
+        <location filename="../views/dfileview.cpp" line="2776"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>མིག་སྔར་སྡུད་སྡེར་བེད་སྤྱོད་བྱེད་བཞིན་འདུག་པས། སྔོན་ལ་དེ་ཉིད་ཁ་བརྒྱབ་རྗེས་ཡང་བསྐྱར་འགེལ།</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2763"/>
+        <location filename="../views/dfileview.cpp" line="2790"/>
         <source>Mounting failed</source>
         <translation>འགེལ་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3472"/>
+        <location filename="../views/dfileview.cpp" line="3498"/>
         <source>(Reverse)</source>
         <translation>（གོ་རིམ་ལྡོག་པ།）</translation>
     </message>
@@ -1595,8 +1607,8 @@
     </message>
     <message>
         <location filename="../interfaces/dumountmanager.cpp" line="169"/>
-        <location filename="../../fileoperations/filejob.cpp" line="758"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1017"/>
+        <location filename="../../fileoperations/filejob.cpp" line="790"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1053"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>སྡུད་སྡེར་ཡིག་ཆ་གཞན་གྱིས་བཟུང་ཡོད་པས། བཤིག་འདོན་བྱེད་ཐབས་བྲལ།</translation>
     </message>
@@ -1623,7 +1635,7 @@
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="117"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="132"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="734"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="736"/>
         <source>%1 Volume</source>
         <translation>བམ་པོ་%1 </translation>
     </message>
@@ -1634,17 +1646,17 @@
         <translation>གཞི་གྲངས་སྡེར།</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="729"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="731"/>
         <source>%1 Drive</source>
         <translation>སྐུལ་ཆས་%1 </translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="713"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="715"/>
         <source>Blank %1 Disc</source>
         <translation>འོད་སྡེར་སྟོང་པ་%1 </translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="732"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="734"/>
         <source>%1 Encrypted</source>
         <translation>གསང་སྡོམ་%1 </translation>
     </message>
@@ -1652,400 +1664,363 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="405"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1151"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1166"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1176"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="399"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1145"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1160"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1170"/>
         <source>Operation failed!</source>
         <translation>བཀོལ་སྤྱོད་བྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="406"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="400"/>
         <source>Target folder is inside the source folder!</source>
         <translation>དམིགས་འབེན་ཡིག་ཁུག་ཁུངས་ཡིག་ཁུག་ནང་འདུག</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="431"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="425"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>“%1”འཁོར་སྐྱོད་བྱེད་རྒྱུ་ཡིན་ནམ་ཡང་ན་དེའི་ནང་དོན་མངོན་སྟོན་བྱེད་དགོས།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="432"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="426"/>
         <source>It is an executable text file.</source>
         <translation>དེ་ལག་བསྟར་བྱེད་ཆོག་པའི་ཡིག་རྐྱང་ཡིག་ཆ་ཡིན།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="463"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="457"/>
         <source>It is an executable file.</source>
         <translation>དེ་ལག་བསྟར་བྱེད་ཆོག་པའི་ཡིག་ཆ་ཞིག་ཡིན།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="479"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="473"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>ཡིག་ཆ་འདིར་ལག་བསྟར་བྱེད་དབང་མེད་པས། དབང་ཚད་སྣོན་ཏེ་འཁོར་སྐྱོད་བྱེད་དགོས་སམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="493"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="487"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>ཡིག་ཆ་&quot;%1&quot; བཟུང་ཟིན་པས། མིང་གཞན་སྤྱོད་རོགས།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="508"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="502"/>
         <source>The file name must not contain two dots (..)</source>
         <translation>ཡིག་ཆའི་མིང་ནང་ཚེག་གཉིས་ཡོད་མི་ཆོག （..）</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="521"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="515"/>
         <source>Are you sure you want to erase all data on the disc?</source>
         <translation>ཁྱོད་ཀྱིས་འོད་སྡེར་འདིའི་ནང་དོན་ཚང་མ་བསུབ་རྒྱུ་ཡིན་པ་གཏན་ཁེལ་ལམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="549"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="543"/>
         <source>How do you want to use this disc?</source>
         <translation>ཁྱོད་ཀྱིས་འོད་སྡེར་འདི་བེད་སྤྱོད་བྱས་ཏེ་ཤེལ་བརྙན་ཕབ་བརྐོ་བྱེད་པ་ཡིན་ཡང་ན་ཡིག་ཆ་ཉར་གསོག་བྱེད་པ་ཡིན།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="582"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="576"/>
         <source>Disc erase failed</source>
         <translation>བསུབས་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="586"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="580"/>
         <source>Burn process failed</source>
         <translation>ཕབ་བརྐོ་བྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="592"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="586"/>
         <source>%1: %2</source>
         <translation>%1：%2</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="608"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="602"/>
         <source>Show details</source>
         <translation>ཞིབ་ཕྲའི་གནས་ཚུལ་མངོན་སྟོན།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="612"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="606"/>
         <source>Hide details</source>
         <translation>ཞིབ་ཕྲའི་གནས་ཚུལ་ཡིབ་པ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="613"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="607"/>
         <source>Error</source>
         <translation>ཆ་འཕྲིན་ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="644"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="638"/>
         <source>Permanently delete %1?</source>
         <translation>ཁྱོད་ཀྱིས་%1ཡོངས་སུ་བསུབ་རྒྱུ་ཡིན་པ་གཏན་ཁེལ་ལམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="645"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="639"/>
         <source>Permanently delete %1 items?</source>
         <translation>ཁྱོད་ཀྱིས་བདམས་ཡོད་པའི་ནང་དོན་%1ཡོངས་སུ་བསུབ་རྒྱུ་ཡིན་པ་གཏན་ཁེལ་ལམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="663"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="657"/>
         <source>Empty</source>
         <translation>གཙང་སེལ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="708"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="702"/>
         <source>Do you want to delete %1?</source>
         <translation>%1བསུབ་དགོས་སམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="709"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="703"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>བདམས་ཟིན་པའི་ནང་དོན་%1བསུབ་དགོས་སམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="739"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="733"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>དགོངས་དག་ཞུ། ཁྱོད་ཀྱི་དཀར་ཆག་རྙེད་ཐུབ་མ་སོང་བས། སྤོ་དགོས་སམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="904"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="898"/>
         <source>Name: </source>
         <translation>མིང་།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="930"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="924"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>མྱུར་ལམ་འདིས་སྟོན་པའི་“%1”སྒྱུར་ཟིན་པའམ་སྤོས་འདུག</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="934"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="928"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>མྱུར་ལམ་འདི་བསུབ་དགོས་སམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1032"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1026"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>བཀོལ་སྤྱོད་བྱེད་མ་ཐུབ། ཡིག་ཆའི་ཆེ་ཆུང་ཚད་4GBལས་བརྒལ་འདུག</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1041"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1035"/>
         <source>Fail to create symlink, cause:</source>
         <translation>སྦྲེལ་མཐུད་བཟོ་མ་ཐུབ། རྒྱུ་མཚན་ནི།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1059"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1053"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>བདམས་ཟིན་པའི་ཡིག་ཆའི་ནང་རྒྱུད་ཁོངས་ཀྱི་དཀར་ཆག་ཚུད་ཡོད་པས། སུབ་ཐབས་མི་འདུག</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1095"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1089"/>
         <source>Unable to find the original file</source>
         <translation>དམིགས་འབེན་ཡིག་ཆའི་འབྲེལ་མཐུད་རྙེད་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1203"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1161"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1197"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>ཁྱོད་ལ་ཡིག་ཆ་/ཡིག་ཁུག་བཀོལ་སྤྱོད་བྱེད་དབང་མེད།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1178"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1172"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
         <translation>ཐོག་མའི་ཡིག་ཆ་བསྡད་མེད། ཡིག་ཆ་%1སོར་ཆུད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1220"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1214"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>དགོངས་དག་ཞུ། ཁྱོད་ལ་གཤམ་གྱི་ཡིག་ཆ་/ཡིག་ཁུག་%1བཀོལ་སྤྱོད་བྱེད་དབང་མེད།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1302"/>
-        <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
-        <translation>2. མྱུར་སྐུལ་སློང་དང་མལ་གསོ་སྒོ་བརྒྱབ་རྗེས་རྒྱུད་ཁོངས་ཡང་བསྐྱར་འགོ་སློང་།</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1303"/>
-        <source>3. Reboot and enter %1</source>
-        <translation>3. བསྐྱར་དུ་འགོ་སློང་སྐབས་%1འདེམས།</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1320"/>
-        <source>Reboot</source>
-        <comment>button</comment>
-        <translation>བསྐྱར་སློང་།</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1444"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1355"/>
         <source>Unable to access %1</source>
         <translation>ལྟ་སྤྱོད་%1བྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="723"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1527"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1438"/>
         <source>Sending files now, please try later</source>
         <translation>མིག་སྔར་སྐུར་བཞིན་པའི་ཡིག་ཆ་ཡོད་པས། ཏོག་ཙམ་ནས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱེད།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1576"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1487"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>སྡུད་སྡེར་རྣམ་གཞག་ཅན་དུ་འགྱུར་ཚེ་གཞི་ནས་སྒྲིག་ཆས་འདིར་ལྟ་སྤྱོད་བྱེད་ཐུབ། མུ་མཐུད་བྱེད་དགོས་སམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1591"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1502"/>
         <source>Scanning the device, stop it?</source>
         <translation>མིག་སྔའི་སྒྲིག་ཆས་བཤར་འབེབས་བཞིན་ཡོད་པས། བཤེར་འབེབས་མཚམས་འཇོག་རྒྱུ་ཡིན་ནམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1648"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1559"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>མཉམ་སྤྱོད་ཡིག་ཁུག་གི་མིང་མིག་སྔའི་སྤྱོད་མཁན་མིང་དང་གཅིག་པ་ཡིན་མི་རུང་།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="462"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="456"/>
         <source>Do you want to run %1?</source>
         <translation>ཁྱོད་ཀྱིས་“%1”འཁོར་སྐྱོད་བྱེད་རྒྱུ་ཡིན་ནམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="554"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="548"/>
         <source>Burn image</source>
         <comment>button</comment>
         <translation>ཤེལ་བརྙན་ཕབ་བརྐོ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="555"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="549"/>
         <source>Burn files</source>
         <comment>button</comment>
         <translation>ཡིག་ཆ་ཉར་གསོག</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="642"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="636"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>ཁྱོད་ཀྱིས་སྙིགས་སྣོད་ནང་གི་ནང་དོན་“%1”གཙང་སེལ་བྱེད་རྒྱུ་གཏན་ཁེལ་ལམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="643"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="637"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>ཁྱོད་ཀྱིས་སྙིགས་སྣོད་ནང་གི་ནང་དོན་“%1”གཙང་སེལ་བྱེད་རྒྱུ་གཏན་ཁེལ་ལམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="536"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="687"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="530"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="681"/>
         <source>This action cannot be undone</source>
         <translation>བཀོལ་སྤྱོད་འདི་བྱས་ཚེ་སོར་ཆུད་མི་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="408"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="634"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1021"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1034"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1043"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1061"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1158"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1169"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1183"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1249"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1650"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="402"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="628"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1015"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1028"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1037"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1055"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1152"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1163"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1177"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1243"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1561"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>ཆོག</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="438"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="464"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="480"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="526"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="553"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="651"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="725"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="742"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="906"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="936"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1319"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1574"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1589"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="432"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="458"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="474"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="520"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="547"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="645"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="719"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="736"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="900"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="930"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1485"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1500"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>འདོར་བ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="439"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="466"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="481"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="433"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="460"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="475"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>འཁོར་སྐྱོད།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="440"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="465"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="434"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="459"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>མཐའ་སྣེའི་ནང་འཁོར་སྐྱོད་བྱེད།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="441"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="435"/>
         <source>Display</source>
         <comment>button</comment>
         <translation>མངོན་སྟོན།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="495"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="510"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="623"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="937"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1447"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="489"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="504"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="617"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="931"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1254"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1358"/>
+        <location filename="../dialogs/dialogmanager.h" line="152"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>ཆོག</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="527"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="521"/>
         <source>Erase</source>
         <comment>button</comment>
         <translation>སུབ་པ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="589"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="583"/>
         <source>Data verification failed</source>
         <translation>གཞི་གྲངས་ར་སྤྲོད་བྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="622"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="616"/>
         <source>Show details</source>
         <comment>button</comment>
         <translation>ཞིབ་ཕྲའི་གནས་ཚུལ་མངོན་སྟོན།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="652"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="726"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="646"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="720"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>སུབ་པ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="743"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="737"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>སྤོ་བ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="903"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="897"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>སྡུད་སྡེར་ཡིག་ཆ་གཞན་གྱིས་བཟུང་ཡོད་པས། བཤིག་འདོན་བྱེད་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="907"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="901"/>
         <source>Force unmount</source>
         <comment>button</comment>
         <translation>བཙན་ཤེད་ཀྱིས་བཤིག་འདོན་བྱེད།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1020"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1014"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
         <translation>དམིགས་འབེན་སྡུད་སྡེར་གྱི་ཤོང་ཚད་མི་འདང་བས། པར་སློག་བྱེད་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1153"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1147"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>ཡིག་ཆ་%1སོར་ཆུད་ཐུབ་མ་སོང་། དམིགས་འབེན་ཡིག་ཁུག་འབྲི་མི་རུང་།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1155"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1149"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>ཡིག་ཆ་%1སོར་ཆུད་ཐུབ་མ་སོང་། དམིགས་འབེན་ཡིག་ཁུག་འབྲི་མི་རུང་།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1180"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1174"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
         <translation>ཐོག་མའི་ཡིག་ཆ་བསྡད་མེད། ཡིག་ཆ་%1སོར་ཆུད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1287"/>
-        <source>Mount partition%1 to be read only</source>
-        <translation>འཇུག་ཁུལ་%1 ཀློག་ཙམ་གྱི་དཔེ་རྣམ་ལ་འཇུག་པ།</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1291"/>
-        <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation>Windowsརྒྱུད་ཁོངས་ཀྱི་གློག་ཁུངས་དཔེ་དུམ་སྒོ་རྒྱག་སྐབས་མྱུར་དུ་འགོ་སློང་བ་ཞེས་པ་ཕྱེ་འདུག་པས། རྒྱུད་ཁོངས་གཞན་དག་གིས་Windowsསྡུད་སྡེར་རྒྱུན་ལྡན་ལྟར་འབྲི་ཀློག་བྱེད་མི་ཐུབ་པ་ཆགས་སྲིད།</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1295"/>
-        <source>Please restore by the following steps to normally access Windows disk</source>
-        <translation>གཤམ་གྱི་ཐབས་ལམ་ལྟར་བཟོ་བཅོས་བྱས་ཚེ་Windowsསྡུད་སྡེར་ལ་ལྟ་སྤྱོད་བྱེད་ཐུབ།</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1301"/>
-        <source>1. Reboot to enter Windows</source>
-        <translation>1.གློག་ཀླད་ཡང་བསྐྱར་འགོ་བསླངས་སྟེ་Windowsརྒྱུད་ཁོངས་ལ་འཛུལ་བ།</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1575"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1486"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>རྣམ་གཞག་ཏུ་སྒྱུར་བ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1590"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1501"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>མཚམས་འཇོགས།</translation>
@@ -2149,67 +2124,67 @@
         <translation>བུ་ཡིག</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1211"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1220"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1455"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1464"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1247"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1256"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1491"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1500"/>
         <source>Data verification successful.</source>
         <translation>གཞི་གྲངས་ར་སྤྲོད་ལེགས་གྲུབ་བྱུང་བ།</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="892"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1224"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1468"/>
+        <location filename="../../fileoperations/filejob.cpp" line="924"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1260"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1504"/>
         <source>Burn process completed</source>
         <translation>ཕབ་བརྐོ་ལེགས་གྲུབ་བྱུང་།</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1626"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1662"/>
         <source>%1 s</source>
         <translation>སྐར་ཆ་%1 </translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1630"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1666"/>
         <source>%1 m %2 s</source>
         <translation>སྐར་མ་%1 དང་སྐར་ཆ་ %2 </translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1635"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1671"/>
         <source>%1 h %2 m %3 s</source>
         <translation>ཆུ་ཚོད་%1 དང་སྐར་མ་ %2 སྐར་ཆ་ %3</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1642"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1678"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>ཉིན་གྲངས་%1དང་ཆུ་ཚོད་ %2སྐར་མ་ %3 སྐར་ཆ་%4</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3353"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3389"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1བསྐྱར་ཟློས་ཡིག་ཆ།</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3356"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3392"/>
         <source>Insufficient disc space.</source>
         <translation>འོད་སྡེར་གྱི་ཤོང་ཚད་མི་འདང་བ།</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3359"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3395"/>
         <source>Lost connection to drive.</source>
         <translation>སྡེར་སྐུལ་དང་སྦྲེལ་ཐག་བཅད་པ།</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3362"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3398"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>སྡེར་སྐུར་གྲ་སྒྲིག་ཡག་པོ་བྱས་མེད་པས། ཁྱོད་ཀྱིས་འོད་སྡེར་བརྗེས་རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱ་ཆོག</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3365"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3401"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>སྡེར་སྐུར་བཟུང་སྤྱོད་བྱས་འདུག་པས། ཁྱོད་ཀྱིས་ད་ལྟ་སྤྱོད་བཞིན་པའི་སྡེར་སྐུར་གྱི་བྱ་རིམ་སྒོ་བརྒྱབ་རྗེས་ཡང་་བསྐྱར་སྡེར་སྐུར་བཅུག་ཆོག</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3372"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3408"/>
         <source>Unknown error</source>
         <translation>རྒྱུས་མེད་པའི་ནོར་འཁྲུལ།</translation>
     </message>
@@ -2509,7 +2484,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="257"/>
         <location filename="../configure/global-setting-template.js" line="256"/>
         <source>Keep showing the mounted Samba shares</source>
-        <translation type="unfinished"/>
+        <translation>Sambaམཉམ་སྤྱོད་སྣེ་ཡིས་རྒྱུན་དུ་སྣོན་འཇུག་ཁ་འཆར་གྱི་འདུག</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="269"/>
@@ -2638,73 +2613,73 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="815"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="809"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>%1ཡི་ཐོབ་ཐང་ངོས་འཛིན་བྱེད་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="816"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="810"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>ཁྱོད་རང་ཐེངས་དང་པོར་ཐོ་འཇུག་བྱེད་སྐབས་དྲན་སྐུལ་འདི་མཐོང་སྲིད། </translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="817"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="811"/>
         <source>The identity sent by the remote computer is</source>
         <translation>རྒྱང་སྟོན་གློག་ཀླད་ཀྱིས་བསྐུར་བའི་ཐོབ་ཐང་གི་ཆ་འཕྲིན་ནི།</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="819"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="813"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>མུ་མཐུད་བཀོལ་སྤྱོད་བྱས་ཚེ་བདེ་འཇགས་ཡིན་མིན་གཏན་འཁེལ་བྱེད་དགོས་ན། རྒྱུད་ཁོངས་ཀྱི་དོ་དམ་པར་འབྲེལ་བ་བྱོས། </translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="876"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="866"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="870"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1545"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1551"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1557"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1560"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1554"/>
         <source>Mounting device error</source>
         <translation>འཇུག་ཆས་ལ་ནོར་འཁྲུལ་ཤོར་བ།</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1557"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="866"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1551"/>
         <source>Wrong username or password</source>
         <translation>སྤྱོད་མཁན་མིང་ངམ་གསང་ཨང་ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1785"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1796"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1823"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1942"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1966"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1779"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1790"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1817"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1936"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1960"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>ཆོག</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1791"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1963"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1785"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1957"/>
         <source>Cannot find the mounted device</source>
         <translation>བབ་མཚུངས་ཀྱི་འགེལ་ཆས་རྙེད་མ་བྱུང་།</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1705"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1699"/>
         <source>No key available to unlock device</source>
         <translation>སྒྲིག་ཆས་སྒོ་འབྱེད་པའི་གསང་ལྡེ་མེད།</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1782"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1776"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>སྡུད་སྡེར་ནི་སྤྱོད་མཁན་“%1”གྱིས་བཅུག་པས། ཁྱོད་ལ་བཤིག་འདོན་བྱེད་དབང་མེད།</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1820"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1814"/>
         <source>Cannot unmount the device</source>
         <translation>སྒྲིག་ཆས་བཤིག་འདོན་བྱེད་ཐབས་བྲལ།</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1938"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1932"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>སྒྲིག་ཆས་&quot;%1&quot;ཕྱིར་འདོན་ཐབས་བྲལ།</translation>
     </message>
@@ -3014,8 +2989,8 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="67"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="678"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="706"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="680"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="708"/>
         <source>System Disk</source>
         <translation>རྒྱུད་ཁོངས་སྡེར།</translation>
     </message>
@@ -3093,7 +3068,7 @@
         <translation>ཡིག་ཆ་འདི་ཡིབ་པ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1705"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1709"/>
         <source>Allow to execute as program</source>
         <translation>བྱ་རིམ་གྱིས་ལག་བསྟར་བྱེད་ཆོག</translation>
     </message>
@@ -3148,48 +3123,48 @@
         <translation>སྒོ་ལྕགས་བརྒྱབ་པའི་དུས་ཚོད། </translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1598"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1602"/>
         <source>Access denied</source>
         <translation>ཀློག་མི་རུང་བ་དང་འབྲི་མི་རུང་བ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1599"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1611"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1603"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1615"/>
         <source>Executable</source>
         <translation>ལག་བསྟར་བྱེད་ཆོག་པའི་བྱ་རིམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1600"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1601"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1604"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1605"/>
         <source>Write only</source>
         <translation>འབྲི་རུང་ཡང་ཀློག་མི་རུང་བ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1602"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1603"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1606"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1607"/>
         <source>Read only</source>
         <translation>ཀློག་ཙམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1604"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1605"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1608"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1609"/>
         <source>Read-write</source>
         <translation>འབྲི་ཀློག</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1701"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1705"/>
         <source>Others</source>
         <translation>གཞན།</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1699"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1703"/>
         <source>Owner</source>
         <translation>དབང་མཁན།</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1429"/>
         <source>Unconnected network shared directory</source>
-        <translation type="unfinished"/>
+        <translation>དྲ་བ་འབྲེལ་མེད་པའི་མཉམ་སྤྱོད་དཀར་ཆག</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1447"/>
@@ -3202,7 +3177,7 @@
         <translation>ཡིག་ཆའི་རྒྱུད་ཁོངས།</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1700"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1704"/>
         <source>Group</source>
         <translation>ཚོགས་ཆུང་།</translation>
     </message>
@@ -3416,7 +3391,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1280"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1282"/>
         <source>Empty Trash</source>
         <translation>སྙིགས་སྣོད་གཙང་སེལ།</translation>
     </message>
@@ -3538,7 +3513,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
         <source>Clear saved password and unmount</source>
-        <translation type="unfinished"/>
+        <translation>གསང་ཨང་ངེས་རྒྱུ་དོར་བ་མ་ཟད་བཤིག་རྒྱུ།</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
@@ -3809,23 +3784,23 @@
         <translation>ཐོག་མའི་འགྲོ་ལམ།</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="520"/>
+        <location filename="../controllers/appcontroller.cpp" line="535"/>
         <source>Document</source>
         <translation>Wordཡིག་ཆ་གསར་བཟོ།</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="529"/>
+        <location filename="../controllers/appcontroller.cpp" line="544"/>
         <source>Spreadsheet</source>
         <translation>Excelཡིག་ཆ་གསར་བཟོ།</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="538"/>
+        <location filename="../controllers/appcontroller.cpp" line="553"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="832"/>
         <source>Presentation</source>
         <translation>ཡིག་ཆ་སྟོན་འགྲེམས།</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="545"/>
+        <location filename="../controllers/appcontroller.cpp" line="560"/>
         <source>Text</source>
         <translation>ཡིག་ཆ་གསར་བཟོ།</translation>
     </message>
@@ -3977,7 +3952,7 @@
         <translation>དྲན་སྐུལ། བདམས་ཡོད་པའི་ཡིག་ཆའི་གོ་རིམ་ལྟར་རིམ་པ་སྒྲིག་པ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1615"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1526"/>
         <source>Rename %1 Files</source>
         <translation>ཡིག་ཆ་%1མིང་བསྐྱར་དུ་འདོགས་པ།</translation>
     </message>
@@ -4090,7 +4065,7 @@
     </message>
     <message>
         <location filename="../shutil/fileutils.cpp" line="638"/>
-        <location filename="../../utils/utils.cpp" line="512"/>
+        <location filename="../../utils/utils.cpp" line="514"/>
         <source>Unknown</source>
         <translation>མི་ཤེས་པ།</translation>
     </message>
@@ -4107,20 +4082,20 @@
         <translation>སྡུད་སྡེར།</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="709"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="809"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="711"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="811"/>
         <source>Failed to create file info</source>
         <translation>ཡིག་ཆའི་ཆ་འཕྲིན་བཟོ་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="765"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="767"/>
         <source>Failed to create file handler</source>
         <translation>ཡིག་ཆ་ཐག་གཅོད་བྱེད་པའི་བྱ་རིམ་བཟོ་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2728"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2764"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2797"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2729"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2765"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2798"/>
         <source>Execution error</source>
         <translation>ལག་བསྟར་བྱེད་སྟངས་ནོར་བ།</translation>
     </message>
@@ -4154,10 +4129,10 @@
         <translation>%1ཡོད་མི་རུང་། </translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1543"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1545"/>
         <location filename="../../usershare/usersharemanager.cpp" line="548"/>
         <source>Failed to start Samba services</source>
-        <translation type="unfinished"/>
+        <translation>Sambaཞབས་ཞུ་སྐུལ་སློང་བྱེད་མི་ཐུབ།</translation>
     </message>
 </context>
 <context>
@@ -4177,91 +4152,91 @@
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="472"/>
         <source>Do you want to remove this item?</source>
-        <translation type="unfinished"/>
+        <translation>ཁྱེད་ཀྱིས་བདམས་ཟིན་པའི་ནང་དོན་འདི་བསུབ་རྒྱུ་གཏན་ཁེལ་ལམ། </translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="474"/>
         <source>Do yout want to remove %1 items?</source>
-        <translation type="unfinished"/>
+        <translation>ཁྱེད་ཀྱིས་བདམས་ཟིན་པའི་ནང་དོན་%1བསུབ་རྒྱུ་གཏན་ཁེལ་ལམ། </translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="475"/>
         <source>It does not delete the original files</source>
-        <translation type="unfinished"/>
+        <translation>བཀོལ་སྤྱོད་འདིས་ཁུངས་ཡིག་ཆ་བསུབ་མི་སྲིད།</translation>
     </message>
 </context>
 <context>
     <name>ShareInfoFrame</name>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="59"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="60"/>
         <source>Share this folder</source>
         <translation>ཡིག་ཁུག་འདི་མཉམ་སྤྱོད་བྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="68"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="69"/>
         <source>Share name:</source>
         <translation>མཉམ་སྤྱོད་མིང་།</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="81"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="82"/>
         <source>Permission:</source>
         <translation>དབང་ཚད།</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="86"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="88"/>
         <source>Read and write</source>
         <translation>འབྲི་ཀློག་རུང་བ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="86"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="88"/>
         <source>Read only</source>
         <translation>ཀློག་ཙམ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="89"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="91"/>
         <source>Anonymous:</source>
         <translation>མིང་མི་འགོད་པའི་ལྟ་སྤྱོད་བྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="94"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="97"/>
         <source>Not allow</source>
         <translation>མི་ཆོག</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="94"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="97"/>
         <source>Allow</source>
         <translation>ཆོག་པ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="318"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="321"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>དང་བཀག་འགོག་ནི་མཉམ་སྤྱོད་མིང་ལ་བྱས་ཏེ་སྤྱོད་པ། </translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="334"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="337"/>
         <source>The share name is used by another user.</source>
         <translation>མཉམ་སྤྱོད་མིང་འདི་སྤྱོད་མཁན་གཞན་གྱིས་བེད་སྤྱོད་བྱས་འདུག </translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="335"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="338"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>ཆོག</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="338"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="341"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>འདོར་བ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="339"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="342"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>བརྗེ་བ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="337"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="340"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>མཉམ་སྤྱོད་མིང་འདི་འདུག་པས། དང་ཐོག་གི་མཉམ་སྤྱོད་ཡིག་ཁུལ་ལ་བརྗེ་དགོས་དགོས་སམ།</translation>
     </message>
@@ -4688,14 +4663,14 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1618"/>
-        <location filename="../../fileoperations/filejob.cpp" line="757"/>
-        <location filename="../../fileoperations/filejob.cpp" line="1016"/>
+        <location filename="../controllers/appcontroller.cpp" line="1632"/>
+        <location filename="../../fileoperations/filejob.cpp" line="789"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1052"/>
         <source>The device was not safely unmounted</source>
         <translation>སྒྲིག་ཆས་རྒྱུན་ལྡན་ལྟར་བཀལ་མེད། </translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1625"/>
+        <location filename="../controllers/appcontroller.cpp" line="1639"/>
         <source>The device was not safely removed</source>
         <translation>སྒྲིག་ཆས་རྒྱུན་གཏན་ངང་སྤོ་འབུད་བྱས་མེད།</translation>
     </message>
@@ -4716,7 +4691,7 @@
         <location filename="../../usershare/usersharemanager.cpp" line="414"/>
         <location filename="../../usershare/usersharemanager.cpp" line="452"/>
         <source>The share name must not contain %&lt;&gt;*?|/\+=;:,&quot; and should not start with %1</source>
-        <translation type="unfinished"/>
+        <translation>མཉམ་སྤྱོད་མིང་ནང་%&lt;&gt;*?|/\+=;:,&quot;ཡོད་མི་རུང་ལ། %1ཡིས་འགོ་ཚུགས་མི་རུང་།</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="446"/>

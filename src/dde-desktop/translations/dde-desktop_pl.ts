@@ -4,7 +4,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="3348"/>
         <source>Icon size</source>
-        <translation>Rozmiar ikony</translation>
+        <translation>Rozmiar ikon</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="3356"/>
@@ -14,7 +14,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="3368"/>
         <source>Auto arrange</source>
-        <translation>Automatyczne porządkowanie</translation>
+        <translation>Automatyczne sortowanie</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="3405"/>

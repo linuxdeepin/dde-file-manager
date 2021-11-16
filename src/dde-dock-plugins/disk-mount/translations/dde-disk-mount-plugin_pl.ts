@@ -56,7 +56,7 @@
     </message>
     <message>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation>Dysk został zamontowany przez użytkownika &quot;%1&quot;, nie możesz go odmontować.</translation>
+        <translation>Dysk został zamontowany przez użytkownika &quot;%1&quot;, nie możesz go wymontować.</translation>
     </message>
     <message>
         <source>Cannot find the mounted device</source>
