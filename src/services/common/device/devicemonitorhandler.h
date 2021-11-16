@@ -67,10 +67,10 @@ private slots:
 private:
     // TODO(zhangs): add a timer, refresh devices size
     QPointer<DeviceService> service;
-    QHash<QString, BlockDeviceData>    allBlkDevData;
+    QHash<QString, BlockDeviceData> allBlkDevData;
     QHash<QString, ProtocolDeviceData> allProtocolDevData;
 };
 
 DSC_END_NAMESPACE
 
-#endif // DEVICEMONITORHANDLER_H
+#endif   // DEVICEMONITORHANDLER_H

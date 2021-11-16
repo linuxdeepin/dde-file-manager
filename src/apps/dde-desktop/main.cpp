@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "config.h" //cmake
+#include "config.h"   //cmake
 
 #include <dfm-framework/framework.h>
 
@@ -43,6 +43,12 @@ DGUI_USE_NAMESPACE
 USING_IO_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
+#ifdef DFM_ORGANIZATION_NAME
+#    define ORGANIZATION_NAME DFM_ORGANIZATION_NAME
+#else
+#    define ORGANIZATION_NAME "deepin"
+#endif
+
 /// @brief PLUGIN_INTERFACE 默认插件iid
 static const char *const FM_PLUGIN_INTERFACE = "org.deepin.plugin.desktop";
 static const char *const PLUGIN_CORE = "ddplugin-core";
@@ -61,11 +67,11 @@ static bool pluginsLoad()
     if (DApplication::applicationDirPath() == "/usr/bin") {
         // run dde-file-manager path is /usr/bin, use system install plugins
         qInfo() << "run application in /usr/bin, load system plugin";
-        lifeCycle.setPluginPaths({DFM_PLUGIN_PATH});
+        lifeCycle.setPluginPaths({ DFM_PLUGIN_PATH });
     } else {
         // if debug and any read from cmake out build path
         qInfo() << "run application not /usr/bin, load debug plugin";
-        lifeCycle.setPluginPaths({DFM_BUILD_OUT_PLGUN_DIR});
+        lifeCycle.setPluginPaths({ DFM_BUILD_OUT_PLGUN_DIR });
     }
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
@@ -103,6 +109,7 @@ void initAbus()
 int main(int argc, char *argv[])
 {
     DApplication a(argc, argv);
+    a.setOrganizationName(ORGANIZATION_NAME);
 
     dpfInstance.initialize();
 
