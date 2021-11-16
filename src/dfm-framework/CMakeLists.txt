@@ -83,6 +83,8 @@ add_library(${PROJECT_NAME} SHARED
     ${PUBLIC_CPP}
     )
 
+set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+
 target_link_libraries(
     ${PROJECT_NAME}
     ${QtUseModules}
@@ -91,17 +93,19 @@ target_link_libraries(
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 add_library(DFM::framework ALIAS ${PROJECT_NAME})
+
 #install library file
 install(TARGETS
     ${PROJECT_NAME}
+    LIBRARY
     DESTINATION
-    ${LIBRARY_INSTALL_PREFIX}
+    ${LIB_INSTALL_DIR}
     )
 
-#recursion install head file
-install(DIRECTORY
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    DESTINATION
-    ${INCLUDE_INSTALL_RPEFIX}
-    FILES_MATCHING PATTERN "*.h"
-    )
+# #recursion install head file
+# install(DIRECTORY
+#     ${CMAKE_CURRENT_SOURCE_DIR}
+#     DESTINATION
+#     ${INCLUDE_INSTALL_RPEFIX}
+#     FILES_MATCHING PATTERN "*.h"
+#     )

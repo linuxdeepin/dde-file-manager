@@ -26,9 +26,11 @@ add_library(${PROJECT_NAME}
     ${core_cxx_h}
     )
 
+set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+
 target_link_libraries(${PROJECT_NAME}
-    dfm-base
-    dfm-framework
+    DFM::base
+    DFM::framework
     dfmservice-common
     dfmservice-filemanager
     ${QtUseModules}
@@ -36,3 +38,10 @@ target_link_libraries(${PROJECT_NAME}
     )
 
 
+#install library file
+install(TARGETS
+    ${PROJECT_NAME}
+    LIBRARY
+    DESTINATION
+    ${DFM_PLUGIN_DIR}
+    )

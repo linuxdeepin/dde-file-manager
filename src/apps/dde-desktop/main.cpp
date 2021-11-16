@@ -63,16 +63,13 @@ static bool pluginsLoad()
     // set plugin iid from qt style
     lifeCycle.setPluginIID(FM_PLUGIN_INTERFACE);
 
-    // cmake out definitions "DFM_PLUGIN_PATH" and "DFM_BUILD_OUT_PLGUN_DIR"
-    if (DApplication::applicationDirPath() == "/usr/bin") {
-        // run dde-file-manager path is /usr/bin, use system install plugins
-        qInfo() << "run application in /usr/bin, load system plugin";
-        lifeCycle.setPluginPaths({ DFM_PLUGIN_PATH });
-    } else {
-        // if debug and any read from cmake out build path
-        qInfo() << "run application not /usr/bin, load debug plugin";
-        lifeCycle.setPluginPaths({ DFM_BUILD_OUT_PLGUN_DIR });
+    QString pluginsDir(qApp->applicationDirPath() + "../../plugins");
+    if (!QDir(pluginsDir).exists()) {
+        pluginsDir = DFM_PLUGIN_PATH;
     }
+    qDebug() << "using plugins dir:" << pluginsDir;
+
+    lifeCycle.setPluginPaths({pluginsDir});
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();

@@ -4,10 +4,6 @@ cmake_minimum_required(VERSION 3.10)
 # 设置工程名字
 project(ut-file-manager)
 
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../build-test/${CMAKE_BUILD_TYPE})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../build-test/${CMAKE_BUILD_TYPE})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../build-test/${CMAKE_BUILD_TYPE})
-
 #if no debug, can't out in code define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 

@@ -179,3 +179,10 @@ target_link_libraries(
 add_library(DFM::base ALIAS ${PROJECT_NAME})
 
 
+#install library file
+install(TARGETS 
+    ${PROJECT_NAME} 
+    LIBRARY 
+    DESTINATION 
+    ${LIB_INSTALL_DIR}
+    )

@@ -1,6 +1,15 @@
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.7)
 
 project(filemanager)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-need -fPIE")
+
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_VERBOSE_MAKEFILEON ON)
@@ -13,37 +22,9 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 #    set(CMAKE_L_FLAGS "-fsanitize=thread")
 endif()
 
-# Setup install paths
-#   /usr/bin/dde-file-manager
-#       execute bin file
-#   /usr/lib/x86_64-linux-gnu/dde-file-manager
-#       dir plugins && dir tools abv thumbnail
-#   /usr/include/dde-file-manager
-#       public *.h && private dir *.h
-#   /usr/share/dde-file-manager
-#       subdir"database  mimetypeassociations  mimetypes  templates  translations"
-set(LIBRARY_INSTALL_PREFIX "/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}")
-#set(ARCHIVE_INSTALL_RPEFIX "") undefined the static lib archive
-set(RUNTIME_INSTALL_RPEFIX "/usr/bin")
-set(SOURCES_INSTALL_RPEFIX "/usr/share/dde-file-manager")
-set(INCLUDE_INSTALL_RPEFIX "/usr/include")
-
-set(DFM_PLUGIN_PATH ${LIBRARY_INSTALL_PREFIX}/plugins/dfm-framework)
 
 #if no debug, can't out in code define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
-
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE})
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-need -fPIE")
 
 # Use Qt modules
 set(QtFindModules Core Gui Widgets Concurrent Svg Network Sql X11Extras Xml DBus)
@@ -91,6 +72,21 @@ set(FILEMANAGER_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/filemanager)
 set(DESKTOP_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/desktop)
 #any sub dir can use common service
 include_directories(${COMMON_SERVICE_DIR})
+
+# Install settings
+
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX /usr)
+endif()
+
+include(GNUInstallDirs)
+if(NOT DEFINED LIB_INSTALL_DIR)
+    set(LIB_INSTALL_DIR   ${CMAKE_INSTALL_FULL_LIBDIR})
+endif()
+
+if(NOT DEFINED DFM_PLUGIN_DIR)
+    set(DFM_PLUGIN_DIR ${LIB_INSTALL_DIR}/dde-file-manager/plugins)
+endif()
 
 # sub directories
 add_subdirectory(src/apps)

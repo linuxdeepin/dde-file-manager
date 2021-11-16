@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.1.0)
 project(dde-desktop)
 
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/config.h.in"
-    "${CMAKE_CURRENT_SOURCE_DIR}/config.h"
+    "config.h.in"
+    "${PROJECT_BINARY_DIR}/config.h"
     )
 
 set(SRCS
@@ -13,13 +13,18 @@ set(SRCS
 
 add_executable(${PROJECT_NAME} ${SRCS})
 
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        ${CMAKE_BINARY_DIR}
+    )
+
 target_link_libraries(
     ${PROJECT_NAME}
-    dfm-framework
+    DFM::framework
     ${QtUseModules}
     ${PkgUseModules}
     )
 
-install(TARGETS ${PROJECT_NAME} DESTINATION ${RUNTIME_INSTALL_RPEFIX})
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
 # TODO(zhangs): translation

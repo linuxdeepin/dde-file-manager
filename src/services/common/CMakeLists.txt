@@ -48,8 +48,16 @@ add_library(${PROJECT_NAME}
 
 target_link_libraries(
     ${PROJECT_NAME}
-    dfm-base
-    dfm-framework
+    DFM::base
+    DFM::framework
     ${QtUseModules}
     ${PkgUseModules}
+    )
+
+#install library file
+install(TARGETS
+    ${PROJECT_NAME}
+    LIBRARY
+    DESTINATION
+    ${LIB_INSTALL_DIR}
     )

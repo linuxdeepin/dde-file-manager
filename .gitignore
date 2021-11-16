@@ -9,9 +9,6 @@ CMakeLists.txt.user*
 CMakeFiles
 CMakeCache.txt
 compile_commands.json
-src/apps/dde-file-manager/config.h
-src/apps/dde-file-manager-server/config.h
-src/apps/dde-desktop/config.h
 moc_*
 mocs_*
 
@@ -73,3 +70,6 @@ dde-file-manager-lib/test_shutil/new1.txt
 dde-file-manager-lib/test_shutil/new2.txt
 
 dde-file-manager-lib/test_shutil/property/oneProperty.pro
+
+# vscode
+.vscode 
