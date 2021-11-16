@@ -649,7 +649,7 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     // 判断出入的url是否是一个目录，不是就取parentUrl
     DUrl newurl = fileUrl;
     //排除u盘自动挂载，并且自动打开，拖拽的文件都是FILE_SCHEME
-    if (newurl.scheme() == FILE_SCHEME) {
+    if (newurl.scheme() == FILE_SCHEME || newurl.scheme() == DFMVAULT_SCHEME) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, fileUrl);
 
         if (fileInfo && !fileInfo->isDir()) {
