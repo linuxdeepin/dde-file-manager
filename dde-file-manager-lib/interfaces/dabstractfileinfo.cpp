@@ -171,6 +171,26 @@ void DAbstractFileInfoPrivate::setUrl(const DUrl &url, bool hasCache)
     fileUrl = url;
 }
 
+/*!
+    过滤识别结果带*的情况，返回当前文件名的实际全后缀(已经经过DMimeDatabase识别后且为复式后缀后使用)。
+    检查 \a fileName 待划分后缀的全文件名， \a suf 经过DMimeDatabase识别后的复式后缀。
+ */
+QString DAbstractFileInfoPrivate::getCompleteSuffix(const QString &fileName, const QString &suf)
+{
+    QString tempStr;
+    if (!suf.contains(".") || suf.isEmpty())
+        return suf;
+    auto sufLst = suf.split(".");
+    if (0 < sufLst.size()) {
+        tempStr = sufLst.first();
+        int index = fileName.lastIndexOf(tempStr);
+        if (index > 0) {
+            return fileName.mid(index);
+        }
+    }
+    return suf;
+}
+
 DAbstractFileInfo *DAbstractFileInfoPrivate::getFileInfo(const DUrl &fileUrl)
 {
     //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题
@@ -1293,19 +1313,35 @@ QString DAbstractFileInfo::suffix() const
     if (isDir()) {
         return QString();
     }
-    // xushitong 20200424 修改后缀名获取策略为小数点后非空字符串
-    const QString &strFileName = this->fileName();
-    QString tmpName  = strFileName;
-    int nIdx = 0;
-    QString strSuffix;
-    while (strSuffix.isEmpty()) {
-        nIdx = tmpName.lastIndexOf(".");
-        if (nIdx == -1)
-            return QString();
-        strSuffix = tmpName.mid(nIdx + 1);
-        tmpName = tmpName.mid(0, nIdx);
+
+    const QString &fileName = this->fileName();
+
+    QString suffix = d->mimeDatabase.suffixForFileName(fileName);
+    //suffixForFileName对复式后缀会返回xx.*,比如test.7z.001返回的是7z.*
+    //不过在一些非标准的复式后缀判定中，仍可能判定不准确：比如：test.part1.rar被识别成rar
+    //隐藏文件：".tar"、".tar.gz"后缀识别成""和".gz"
+    //可能无法识别到后缀：如test.run或者.tar
+    if (!suffix.isEmpty()) {
+         Q_D(const DAbstractFileInfo);
+         //二次过滤后缀，方式识别到分卷带*的情况
+         suffix = d->getCompleteSuffix(fileName, suffix);
     }
-    return strFileName.mid(nIdx + 1);
+    //没有取到后缀取小数点后非空字符串
+    if (suffix.isEmpty()) {
+        QString tmpName  = fileName;
+        int nIdx = 0;
+        QString strSuffix;
+        while (strSuffix.isEmpty()) {
+            nIdx = tmpName.lastIndexOf(".");
+            if (nIdx == -1)
+                return QString();
+            strSuffix = tmpName.mid(nIdx + 1);
+            tmpName = tmpName.mid(0, nIdx);
+        }
+        suffix = fileName.mid(nIdx + 1);
+    }
+
+    return suffix;
 }
 
 QString DAbstractFileInfo::suffixOfRename() const

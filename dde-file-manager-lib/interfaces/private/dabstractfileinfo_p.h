@@ -29,6 +29,7 @@ public:
 
     void setUrl(const DUrl &url, bool hasCache);
     static DAbstractFileInfo *getFileInfo(const DUrl &fileUrl);
+    static QString getCompleteSuffix(const QString &fileName, const QString &suf);
 
     DAbstractFileInfo *q_ptr = Q_NULLPTR;
 
