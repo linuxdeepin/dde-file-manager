@@ -21,12 +21,20 @@ FILE(GLOB SHORTCUT_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/shortcut/*.cpp"
     )
 
+FILE(GLOB VAULT_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/vault/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/vault/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/vault/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/vault/private/*.cpp"
+    )
+
 add_library(
     ${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
     ${WINDOW_FILES}
     ${SHORTCUT_FILES}
+    ${VAULT_FILES}
     )
 
 target_link_libraries(
