@@ -152,6 +152,8 @@ public:
 
     static DUrl smbFileUrl(const QString &filePath);
     static bool isSmbUnmountedFile(const DUrl &url);
+    static bool isGvfsSuffix(const DUrl &url);
+    static bool isRemoteSuffix(const DUrl &url);
 };
 
 #endif // FILEUTILS_H

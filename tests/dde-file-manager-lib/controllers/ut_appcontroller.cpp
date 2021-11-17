@@ -1069,14 +1069,17 @@ TEST_F(AppControllerTest, start_showErrorDialog){
 TEST_F(AppControllerTest, start_actionRemoveStashedMount) {
     RemoteMountsStashManager::stashRemoteMount("/run/user/1000/gvfs/smb-share:server=1.2.3.4,share=test", "test");
 
-    auto e = dMakeEventPointer<DFMUrlBaseEvent>(nullptr, DUrl("dfmroot:///smb://1.2.3.4/test.remote"));
+    DUrl url;
+    url.setScheme(DFMROOT_SCHEME);
+    url.setPath("/" + QUrl::toPercentEncoding("/run/user/1000/gvfs/smb-share:server=1.2.3.4,share=test") + ".remote");
+    auto e = dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url);
     EXPECT_NO_FATAL_FAILURE(controller->actionRemoveStashedMount(e));
 
     // cover RemoteMountsStashManager
     RemoteMountsStashManager::stashRemoteMount("/run/user/1000/gvfs/smb-share:server=1.2.3.4,share=test", "test");
     auto mounts = RemoteMountsStashManager::remoteMounts();
     EXPECT_TRUE(1 == mounts.size());
-    EXPECT_TRUE("test" == RemoteMountsStashManager::getDisplayNameByConnUrl("smb://1.2.3.4/test"));
+    EXPECT_TRUE("test" == RemoteMountsStashManager::getDisplayNameByConnUrl("/run/user/1000/gvfs/smb-share:server=1.2.3.4,share=test"));
     EXPECT_TRUE("smb://1.2.3.4/test" == RemoteMountsStashManager::normalizeConnUrl("/smb://1.2.3.4/test.remote"));
     EXPECT_NO_FATAL_FAILURE(RemoteMountsStashManager::clearRemoteMounts());
     EXPECT_NO_FATAL_FAILURE(RemoteMountsStashManager::stashCurrentMounts());

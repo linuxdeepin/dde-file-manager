@@ -198,16 +198,6 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
             }
         }
 
-        // searchBarTextEntered also invoke "checkGvfsMountFileBusy", forbit invoke twice
-        if (url.path().endsWith(SUFFIX_STASHED_REMOTE)) {
-            DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(this->window());
-            if (window) {
-                auto path = RemoteMountsStashManager::normalizeConnUrl(url.path());
-                window->getToolBar()->searchBarTextEntered(path);
-                return;
-            }
-        }
-
         //判断网络文件是否可以到达
         // fix bug 63803 这里是鼠标事件进入后，checkGvfsMountfileBusy需要很长时间，所以鼠标事件没有结束
         // 切换到其他界面，就析构了自己，当这个checkGvfsMountfileBusy退出，qt处理鼠标事件就崩溃了。
@@ -223,7 +213,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
             DFMBaseView::deleteLater();
             return;
         }
-        if (url.path().endsWith(SUFFIX_USRDIR)) {
+        if (url.path().endsWith(SUFFIX_USRDIR) || url.path().endsWith(SUFFIX_STASHED_REMOTE)) {
             appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
         } else if (url.scheme() == DFMVAULT_SCHEME) {
             appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));

@@ -31,6 +31,7 @@
 #include "interfaces/dfmsidebaritem.h"
 #include "interfaces/dfilemenu.h"
 #include "controllers/vaultcontroller.h"
+#include "utils.h"
 
 
 DFMSideBarItemInterface::DFMSideBarItemInterface(QObject *parent) : QObject(parent)
@@ -42,9 +43,16 @@ void DFMSideBarItemInterface::cdAction(const DFMSideBar *sidebar, const DFMSideB
 {
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
     if (item->itemType() != DFMSideBarItem::Separator) {
-        qDebug() << " item->url() " << item->url();
-
-        wnd->cd(item->url()); // don't `setChecked` here, wait for a signal.
+        DUrl fileUrl = item->url();
+        if (fileUrl.toString().endsWith(SUFFIX_STASHED_REMOTE)) {
+            QString key = fileUrl.path().replace(QString(".") + SUFFIX_STASHED_REMOTE, "");
+            if (!key.isEmpty()) {
+                key = key.mid(1);
+                fileUrl = RemoteMountsStashManager::remoteUrl(key);
+            }
+        }
+        qDebug() << " item->url() " << item->url() << fileUrl;
+        wnd->cd(fileUrl); // don't `setChecked` here, wait for a signal.
     }
 }
 

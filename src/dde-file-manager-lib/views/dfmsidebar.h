@@ -91,6 +91,8 @@ private slots:
     void onItemActivated(const QModelIndex &index);
     void onContextMenuRequested(const QPoint &pos);
     void onRename(const QModelIndex &index, QString newName) const ;
+    void onHandleAddItem(const DUrl &url);
+    void onHandleRemoveItem(const DUrl &url);
 
 private:
     void initUI();

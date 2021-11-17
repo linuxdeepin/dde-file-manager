@@ -1907,6 +1907,24 @@ bool FileUtils::isSmbUnmountedFile(const DUrl &url)
             && url.path().contains("/gvfs/smb-share:server=")
             && DFileService::instance()->checkGvfsMountfileBusy(url, false);
 }
+/*!
+ * \brief FileUtils::isGvfsSuffix 判断文件是否是SUFFIX_GVFSMP的suffix
+ * \param url
+ * \return
+ */
+bool FileUtils::isGvfsSuffix(const DUrl &url)
+{
+    return url.path().endsWith(QString(".") + SUFFIX_GVFSMP);
+}
+/*!
+ * \brief FileUtils::isRemoteSuffix 判断文件是否是SUFFIX_STASHED_REMOTE smb 常驻的suffix
+ * \param url
+ * \return
+ */
+bool FileUtils::isRemoteSuffix(const DUrl &url)
+{
+    return url.path().endsWith(QString(".") + SUFFIX_STASHED_REMOTE);
+}
 
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
 bool FileUtils::isDesktopFile(const QString &filePath)

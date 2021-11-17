@@ -41,6 +41,10 @@
 
 DFM_USE_NAMESPACE
 
+QMap<QString, QVariantMap> RemoteMountsStashManager::remoteMountsInfos;
+QAtomicInteger<bool> RemoteMountsStashManager::isRemoteMountsInit = false;
+QList<QString> RemoteMountsStashManager::needRemoveRemoteMounts;
+
 QString getThumbnailsPath(){
     QString cachePath = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).at(0);
     QString thumbnailPath = joinPath(cachePath, "thumbnails");
@@ -307,7 +311,7 @@ void clearStageDir(const QString &stagingRoot)
 
 void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QString &displayName)
 {
-    if (!DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool())
+    if (!RemoteMountsStashManager::isRemoteMountValid())
         return;
     QString key {mpt}, protocol, host, share;
     QString mountPoint(mpt);
@@ -330,6 +334,25 @@ void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QStrin
         return;
     }
 
+    bool needUpdate = false;
+    if (remoteMountsInfos.contains(key)) {
+        const QVariantMap &mount = remoteMountsInfos.value(key);
+        if (mount.value(REMOTE_PROTOCOL).toString() != protocol ||
+                mount.value(REMOTE_HOST).toString() != host ||
+                mount.value(REMOTE_SHARE).toString() != share ||
+                mount.value(REMOTE_DISPLAYNAME).toString() != displayName)
+            needUpdate = true;
+        if (!needUpdate)
+            return;
+    }
+
+    QVariantMap mount = remoteMountsInfos.value(key);
+    mount.insert(REMOTE_KEY, key);
+    mount.insert(REMOTE_PROTOCOL, protocol);
+    mount.insert(REMOTE_HOST, host);
+    mount.insert(REMOTE_SHARE, share);
+    mount.insert(REMOTE_DISPLAYNAME, displayName);
+    remoteMountsInfos.insert(key, mount);
     // stash to local config file
     QFile configFile(CONFIG_PATH);
     if (!configFile.open(QIODevice::ReadOnly))
@@ -347,16 +370,6 @@ void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QStrin
     QJsonObject newMount;
     QJsonObject obj = config.object();
     QJsonObject remoteMountsObj;
-    if (obj.contains("RemoteMounts")) {
-        QJsonValue remoteMounts = obj.value("RemoteMounts");
-        if (remoteMounts.isObject()) {
-            remoteMountsObj = remoteMounts.toObject();
-            if (remoteMountsObj.keys().contains(key)) {
-                emit DFMApplication::instance()->reloadComputerModel();
-                return;
-            }
-        }
-    }
 
     newMount.insert(REMOTE_HOST, host);
     newMount.insert(REMOTE_SHARE, share);
@@ -372,12 +385,30 @@ void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QStrin
     qInfo() << "remote mounts: " << mpt << "is stashed.";
 }
 
-QList<QVariantMap> RemoteMountsStashManager::remoteMounts()
+void RemoteMountsStashManager::handleRemoveRemoteMountItem(const QString &key, const bool &isForce)
 {
-    QList<QVariantMap> ret;
+    if (isForce || needRemoveRemoteMounts.contains(key)) {
+        needRemoveRemoteMounts.removeOne(key);
+        removeRemoteMountItem(key);
+    }
+}
+
+void RemoteMountsStashManager::handleUnRemoveRemoteMountItem(const QString &key)
+{
+    needRemoveRemoteMounts.removeOne(key);
+}
+
+void RemoteMountsStashManager::initRemoteMounts()
+{
+    if (isRemoteMountsInit) {
+        return;
+    } else {
+        isRemoteMountsInit = true;
+    }
+
     QFile configFile(CONFIG_PATH);
     if (!configFile.open(QIODevice::ReadOnly)) {
-        return ret;
+        return;
     }
     QByteArray data = configFile.readAll();
     configFile.close();
@@ -386,7 +417,7 @@ QList<QVariantMap> RemoteMountsStashManager::remoteMounts()
     QJsonDocument config = QJsonDocument::fromJson(data, &err);
     if (err.error != QJsonParseError::NoError) {
         qWarning() << "config file is not valid json file: " << err.errorString();
-        return ret;
+        return;
     }
 
     QJsonObject obj = config.object();
@@ -396,20 +427,32 @@ QList<QVariantMap> RemoteMountsStashManager::remoteMounts()
         const QStringList &itemKeys = mountsObj.keys();
         for (const auto &itemKey: itemKeys) {
             QJsonValue mountItem = mountsObj.value(itemKey);
-            if (!mountItem.isObject())
+            QJsonObject itemObj = mountItem.toObject();
+            if (!mountItem.isObject() ||
+                    !itemObj.keys().contains(REMOTE_PROTOCOL) ||
+                    !itemObj.keys().contains(REMOTE_HOST) ||
+                    !itemObj.keys().contains(REMOTE_SHARE) ||
+                    !itemObj.keys().contains(REMOTE_DISPLAYNAME))
                 continue;
 
             QVariantMap item;
-            item.insert("key", itemKey);
-            QJsonObject itemObj = mountItem.toObject();
+            item.insert(REMOTE_KEY, itemKey);
             const QStringList &mountObjKeys = itemObj.keys();
             for (const auto &mountObjKey: mountObjKeys) {
                 const QVariant &value = itemObj.value(mountObjKey).toVariant();
                 item.insert(mountObjKey, value);
             }
-            ret << item;
+            remoteMountsInfos.insert(itemKey, item);
         }
     }
+}
+
+QList<QVariantMap> RemoteMountsStashManager::remoteMounts()
+{
+    if (!isRemoteMountsInit)
+        initRemoteMounts();
+
+    QList<QVariantMap> ret = remoteMountsInfos.values();
     return ret;
 }
 
@@ -444,6 +487,8 @@ void RemoteMountsStashManager::removeRemoteMountItem(const QString &key)
         configFile.write(config.toJson());
         configFile.close();
 
+        remoteMountsInfos.remove(key);
+
         qInfo() << "remote mount: " << key << "is unstashed.";
     }
 }
@@ -474,6 +519,8 @@ void RemoteMountsStashManager::clearRemoteMounts()
     configFile.write(config.toJson());
     configFile.close();
 
+    remoteMountsInfos.clear();
+
     qInfo() << "stashed remote mounts are cleared";
 }
 
@@ -492,23 +539,10 @@ void RemoteMountsStashManager::stashCurrentMounts()
 
 QString RemoteMountsStashManager::getDisplayNameByConnUrl(const QString &url)
 {
-    QString displayName;
-    const auto &&mounts = remoteMounts();
-    for (const auto &mount: mounts) {
-        auto protocol = mount.value(REMOTE_PROTOCOL).toString();
-        auto host = mount.value(REMOTE_HOST).toString();
-        auto share = mount.value(REMOTE_SHARE).toString();
-        if (protocol.isEmpty() || host.isEmpty()) {
-            qWarning() << "protocol or host is empty: " << mount;
-            continue;
-        }
-
-        QString connPath = QString("%1://%2/%3").arg(protocol).arg(host).arg(share);
-        if (connPath == url) {
-            displayName = mount.value(REMOTE_DISPLAYNAME).toString();
-            break;
-        }
+    if (remoteMountsInfos.contains(url)) {
+        return remoteMountsInfos.value(url).value(REMOTE_DISPLAYNAME).toString();
     }
+    QString displayName;
 
     if (displayName.isEmpty())
         displayName = QObject::tr("Unknown");
@@ -526,5 +560,37 @@ QString RemoteMountsStashManager::normalizeConnUrl(const QString &url)
     while (path.startsWith("/"))
         path = path.mid(1);
     path.remove(".remote");
+    std::string stdStr = path.toStdString();
+    path = QUrl::fromPercentEncoding(stdStr.data());
     return path;
+}
+
+DUrl RemoteMountsStashManager::remoteUrl(const QString &key)
+{
+    if (!remoteMountsInfos.contains(key))
+        return DUrl();
+    DUrl url;
+    auto mount = remoteMountsInfos.value(key);
+    url.setScheme(mount.value(REMOTE_PROTOCOL).toString());
+    url.setHost(mount.value(REMOTE_HOST).toString());
+    url.setPath("/" + mount.value(REMOTE_SHARE).toString());
+    return url;
+}
+
+bool RemoteMountsStashManager::isRemoteMounts(const QString &key)
+{
+    if (remoteMountsInfos.contains(key))
+        return !needRemoveRemoteMounts.contains(key);
+    return false;
+}
+
+void RemoteMountsStashManager::setNeedremoveRemoteMountItem(const QString &key)
+{
+    if (!needRemoveRemoteMounts.contains(key))
+        needRemoveRemoteMounts << key;
+}
+
+bool RemoteMountsStashManager::isRemoteMountValid()
+{
+    return DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool();
 }

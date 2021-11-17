@@ -260,48 +260,26 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
     }
 
     // get the not connected, storaged remote connection
-    if (DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool()) {
+    if (RemoteMountsStashManager::isRemoteMountValid()) {
         const QList<QVariantMap> &&stashedMounts = RemoteMountsStashManager::remoteMounts();
-        qDebug() << stashedMounts;
         for (const auto &mount: stashedMounts) {
             if (!mount.contains(REMOTE_KEY))
                 continue;
             auto key = mount.value(REMOTE_KEY).toString() + "." + SUFFIX_GVFSMP;
             auto encodedKey = QUrl::toPercentEncoding(key);
             encodedKey.prepend("/");
-            qDebug() << encodedKey;
             if (urllist.contains(encodedKey)) {
                 qDebug() << "stashed mount is mounted" << mount;
                 continue;
             }
-
-            // ftp sometimes do not have share field
-            if (!(mount.contains(REMOTE_PROTOCOL) && mount.contains(REMOTE_HOST))) {
-                qWarning() << "invalid stashed remote connection: " << mount;
-                continue;
-            }
-            auto protocol = mount.value(REMOTE_PROTOCOL).toString();
-            auto host = mount.value(REMOTE_HOST).toString();
-            auto share = mount.value(REMOTE_SHARE).toString();
-            if (protocol.isEmpty() || host.isEmpty()) {
-                qWarning() << "protocol or host is empty: " << mount;
-                continue;
-            }
-
-            QString path = QString("%1://%2/%3").arg(protocol).arg(host).arg(share);
-            path.append(QString(".%1").arg(SUFFIX_STASHED_REMOTE));
-            path.prepend(DFMROOT_ROOT);
-            qDebug() << "get stashed remote connection: " << path;
-
-            auto stashedMountInfo = new DFMRootFileInfo(DUrl::fromPercentEncoding(path.toUtf8()));
+            DUrl fileUrl;
+            fileUrl.setScheme(DFMROOT_SCHEME);
+            fileUrl.setPath(encodedKey.replace(SUFFIX_GVFSMP,SUFFIX_STASHED_REMOTE));
+            qInfo() << fileUrl;
+            auto stashedMountInfo = new DFMRootFileInfo(fileUrl);
             DAbstractFileInfoPointer fp(stashedMountInfo);
             ret.push_back(fp);
         }
-    }
-
-    qInfo() << "get rootfileinfo over !" << ret;
-    for(auto item: ret) {
-        qInfo() << item->fileUrl();
     }
 
     return ret;

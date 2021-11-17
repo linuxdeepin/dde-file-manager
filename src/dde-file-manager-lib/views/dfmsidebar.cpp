@@ -425,17 +425,6 @@ void DFMSideBar::onItemActivated(const QModelIndex &index)
 
     QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
     if (interface) {
-        // searchBarTextEntered also invoke "checkGvfsMountFileBusy", forbit invoke twice
-        if (item->url().path().endsWith(SUFFIX_STASHED_REMOTE)) {
-            DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(this->window());
-            if (window) {
-                auto path = RemoteMountsStashManager::normalizeConnUrl(item->url().path());
-                window->getToolBar()->searchBarTextEntered(path);
-                return;
-            }
-        }
-
-
         //判断网络文件是否可以到达
         if (DFileService::instance()->checkGvfsMountfileBusy(item->url())) {
             return;
@@ -508,6 +497,112 @@ void DFMSideBar::onRename(const QModelIndex &index, QString newName) const
         m_sidebarView->update();
 }
 
+void DFMSideBar::onHandleAddItem(const DUrl &url)
+{
+    auto fi = fileService->createFileInfo(nullptr, url);
+    if (!fi || !fi->exists()) {
+        return;
+    }
+
+    if (!Singleton<PathManager>::instance()->isVisiblePartitionPath(fi)) {
+        return;
+    }
+    // 处理smb挂载问题
+    if (RemoteMountsStashManager::isRemoteMountValid() && FileUtils::isGvfsSuffix(url)) {
+        DUrl fileUrl = url;
+        fileUrl.setPath(fileUrl.path().replace(SUFFIX_GVFSMP, SUFFIX_STASHED_REMOTE));
+        this->removeItem(fileUrl, this->groupName(Device));
+        devitems.removeAll(fileUrl);
+    }
+
+    if (this->findItem(url) == -1) {
+        auto r = std::upper_bound(devitems.begin(), devitems.end(), url,
+        [](const DUrl & a, const DUrl & b) {
+            DAbstractFileInfoPointer fia = fileService->createFileInfo(nullptr, a);
+            DAbstractFileInfoPointer fib = fileService->createFileInfo(nullptr, b);
+            return DFMRootFileInfo::typeCompare(fia, fib);
+        });
+        if (r == devitems.end()) {
+            //DFileService::instance()->changeRootFile(url); //性能优化，注释
+            this->addItem(DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
+            devitems.append(url);
+        } else {
+            //DFileService::instance()->changeRootFile(url); //性能优化，注释
+            this->insertItem(this->findLastItem(this->groupName(Device)) - (devitems.end() - r) + 1, DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
+            devitems.insert(r, url);
+        }
+        //还原url
+        if (m_currentUrl == fi->redirectedFileUrl())
+            setCurrentUrl(m_currentUrl, false);
+    }
+}
+
+void DFMSideBar::onHandleRemoveItem(const DUrl &url)
+{
+    bool curUrlCanAccess = true; // 初始化为true 避免影响原有逻辑
+    auto fi = fileService->createFileInfo(nullptr, m_currentUrl);
+    if (fi)
+        curUrlCanAccess = fi->exists();
+    int index = findItem(url, groupName(Device));
+    int curIndex = m_sidebarView->currentIndex().row();
+    if ((curIndex == index && index != -1)
+            || (!curUrlCanAccess)) {
+
+        DUrl urlSkip;
+        const QString &absFilePath = url.toAbsolutePathUrl().path();
+        QString localFilePath = QUrl::fromPercentEncoding(url.path().toLocal8Bit());
+        localFilePath = localFilePath.startsWith("//") ? localFilePath.mid(1) : localFilePath;
+
+        const auto &allDevice = deviceListener->getAllDeviceInfos();
+        bool blockDevice = false;
+        for (const auto &dev : allDevice.keys()) {
+            if (dev.contains(absFilePath.left(absFilePath.indexOf(".localdisk")))) {
+                blockDevice = true;
+                break;
+            }
+        }
+
+        // 判断删除的路径是否是外设路径，外设路径需要跳转到computer页面
+        bool turnToComputer = false;
+        if (deviceListener->isInDeviceFolder(absFilePath)
+                || localFilePath.startsWith("/run/user")
+                || localFilePath.startsWith("/media/")
+                || blockDevice // like u disk
+                || FileUtils::isGvfsMountFile(localFilePath)
+                ) {
+            urlSkip = DUrl(COMPUTER_ROOT);
+            turnToComputer = true;
+        } else {
+            urlSkip = DUrl::fromLocalFile(QDir::homePath());
+        }
+
+        index = findItem(urlSkip, groupName(turnToComputer ? Device : Common));
+        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
+        if (item) {
+            QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
+            QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
+            if (interface) {
+                interface->cdAction(this, item);
+            }
+        }
+    }
+    this->removeItem(url, this->groupName(Device));
+    devitems.removeAll(url);
+
+    if (RemoteMountsStashManager::isRemoteMountValid() && FileUtils::isGvfsSuffix(url)) {
+        DUrl fileUrl = url;
+        QString key = fileUrl.path().replace(QString(".") + SUFFIX_GVFSMP, "");
+        if (key.isEmpty())
+            return;
+        std::string stdStr = key.mid(1).toStdString();
+        key = QUrl::fromPercentEncoding(stdStr.data());
+        if (!RemoteMountsStashManager::isRemoteMounts(key))
+            return;
+        fileUrl.setPath(fileUrl.path().replace(SUFFIX_GVFSMP, SUFFIX_STASHED_REMOTE));
+        onHandleAddItem(fileUrl);
+    }
+}
+
 void DFMSideBar::initUI()
 {
     // init layout.
@@ -571,6 +666,9 @@ void DFMSideBar::initConnection()
             this->m_sidebarModel->removeRow(index);
         }
     });
+
+    // remove remote stashed smb item
+    connect(fileSignalManager, &FileSignalManager::requestRemoveRemoteStashSmbUrl, this, &DFMSideBar::onHandleRemoveItem);
 
     // drag to delete bookmark or tag
     connect(m_sidebarView, &DFMSideBarView::requestRemoveItem, this, [this]() {
@@ -758,89 +856,8 @@ void DFMSideBar::initDeviceConnection()
     DRootFileManager::instance()->startQuryRootFile();
 
     DAbstractFileWatcher *devicesWatcher = rootFileManager->rootFileWather();
-    connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
-        auto fi = fileService->createFileInfo(nullptr, url);
-        if (!fi->exists()) {
-            return;
-        }
-
-        if (!Singleton<PathManager>::instance()->isVisiblePartitionPath(fi)) {
-            return;
-        }
-
-        if (this->findItem(url) == -1) {
-            auto r = std::upper_bound(devitems.begin(), devitems.end(), url,
-            [](const DUrl & a, const DUrl & b) {
-                DAbstractFileInfoPointer fia = fileService->createFileInfo(nullptr, a);
-                DAbstractFileInfoPointer fib = fileService->createFileInfo(nullptr, b);
-                return DFMRootFileInfo::typeCompare(fia, fib);
-            });
-            if (r == devitems.end()) {
-                //DFileService::instance()->changeRootFile(url); //性能优化，注释
-                this->addItem(DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
-                devitems.append(url);
-            } else {
-                //DFileService::instance()->changeRootFile(url); //性能优化，注释
-                this->insertItem(this->findLastItem(this->groupName(Device)) - (devitems.end() - r) + 1, DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
-                devitems.insert(r, url);
-            }
-            //还原url
-            if (m_currentUrl == fi->redirectedFileUrl())
-                setCurrentUrl(m_currentUrl, false);
-        }
-    });
-    connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [this](const DUrl & url) {
-        bool curUrlCanAccess = true; // 初始化为true 避免影响原有逻辑
-        auto fi = fileService->createFileInfo(nullptr, m_currentUrl);
-        if (fi)
-            curUrlCanAccess = fi->exists();
-        int index = findItem(url, groupName(Device));
-        int curIndex = m_sidebarView->currentIndex().row();
-        if ((curIndex == index && index != -1)
-                || (!curUrlCanAccess)) {
-
-            DUrl urlSkip;
-            const QString &absFilePath = url.toAbsolutePathUrl().path();
-            QString localFilePath = QUrl::fromPercentEncoding(url.path().toLocal8Bit());
-            localFilePath = localFilePath.startsWith("//") ? localFilePath.mid(1) : localFilePath;
-
-            const auto &allDevice = deviceListener->getAllDeviceInfos();
-            bool blockDevice = false;
-            for (const auto &dev : allDevice.keys()) {
-                if (dev.contains(absFilePath.left(absFilePath.indexOf(".localdisk")))) {
-                    blockDevice = true;
-                    break;
-                }
-            }
-
-            // 判断删除的路径是否是外设路径，外设路径需要跳转到computer页面
-            bool turnToComputer = false;
-            if (deviceListener->isInDeviceFolder(absFilePath)
-                    || localFilePath.startsWith("/run/user")
-                    || localFilePath.startsWith("/media/")
-                    || blockDevice // like u disk
-                    || FileUtils::isGvfsMountFile(localFilePath)
-                    ) {
-                urlSkip = DUrl(COMPUTER_ROOT);
-                turnToComputer = true;
-            } else {
-                urlSkip = DUrl::fromLocalFile(QDir::homePath());
-            }
-
-            index = findItem(urlSkip, groupName(turnToComputer ? Device : Common));
-            DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
-            if (item) {
-                QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
-                QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
-                if (interface) {
-                    interface->cdAction(this, item);
-                }
-            }
-        }
-        //DFileService::instance()->changeRootFile(url,false); //性能优化，注释
-        this->removeItem(url, this->groupName(Device));
-        devitems.removeAll(url);
-    });
+    connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, &DFMSideBar::onHandleAddItem);
+    connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, &DFMSideBar::onHandleRemoveItem);
     connect(devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this](const DUrl & url) {
         int index = findItem(url, groupName(Device));
         DAbstractFileInfoPointer fi = DFileService::instance()->createFileInfo(nullptr, url);

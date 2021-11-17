@@ -571,7 +571,7 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
         // mount the stashed remote connections
         if (path.endsWith(SUFFIX_STASHED_REMOTE)) {
             path = RemoteMountsStashManager::normalizeConnUrl(path);
-            auto e = dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), path);
+            auto e = dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), RemoteMountsStashManager::remoteUrl(path));
             GvfsMountManager::instance()->mount_sync(*e);
             return;
         }
@@ -1119,27 +1119,8 @@ void AppController::actionRemoveStashedMount(const QSharedPointer<DFMUrlBaseEven
 {
     auto path = event->url().path(); // something like "/smb://1.2.3.4/shared-folder.remote"
     path = RemoteMountsStashManager::normalizeConnUrl(path);
-    // then find the stashed key of it.
-    const auto &&stashedRemoteMounts = RemoteMountsStashManager::remoteMounts();
-    QString key;
-    for (const auto &mount: stashedRemoteMounts) {
-        auto protocol = mount.value(REMOTE_PROTOCOL).toString();
-        auto host = mount.value(REMOTE_HOST).toString();
-        auto share = mount.value(REMOTE_SHARE).toString();
-        if (protocol.isEmpty() || host.isEmpty()) {
-            qWarning() << "protocol or host is empty: " << mount;
-            continue;
-        }
-
-        QString connPath = QString("%1://%2/%3").arg(protocol).arg(host).arg(share);
-        if (connPath == path) {
-            key = mount.value(REMOTE_KEY).toString();
-            break;
-        }
-    }
-    if (!key.isEmpty()) {
-        RemoteMountsStashManager::removeRemoteMountItem(key);
-    }
+    RemoteMountsStashManager::handleRemoveRemoteMountItem(path);
+    emit fileSignalManager->requestRemoveRemoteStashSmbUrl(event->url());
 }
 
 void AppController::actionctrlL(quint64 winId)
@@ -1252,7 +1233,7 @@ void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &
     actionUnmount(event);
 
     auto stashKey = fi->extraProperties()["backer_url"].toString();
-    RemoteMountsStashManager::removeRemoteMountItem(stashKey);
+    RemoteMountsStashManager::setNeedremoveRemoteMountItem(stashKey);
 }
 
 void AppController::actionOpenFileByApp()
