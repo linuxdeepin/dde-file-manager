@@ -63,7 +63,7 @@ static bool pluginsLoad()
     // set plugin iid from qt style
     lifeCycle.setPluginIID(FM_PLUGIN_INTERFACE);
 
-    QString pluginsDir(qApp->applicationDirPath() + "../../plugins");
+    QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
     if (!QDir(pluginsDir).exists()) {
         pluginsDir = DFM_PLUGIN_PATH;
     }

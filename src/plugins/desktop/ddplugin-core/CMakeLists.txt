@@ -110,6 +110,7 @@ add_library(${PROJECT_NAME}
     ${widgets_cxx_h}
     )
 
+set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
 pkg_check_modules(GIO-QT REQUIRED gio-qt)
