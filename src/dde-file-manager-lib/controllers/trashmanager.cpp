@@ -305,7 +305,7 @@ bool TrashManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) cons
 
     for (const DUrl &url : event->urlList()) {
         if (DUrl::fromTrashFile("/") == url) {
-            cleanTrash(event->sender());
+            cleanTrash(event->sender(), event->silent());
             return true;
         }
 
@@ -439,7 +439,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
     return ok;
 }
 
-void TrashManager::cleanTrash(const QObject *sender) const
+void TrashManager::cleanTrash(const QObject *sender, bool silent) const
 {
     DUrlList list;
     const DUrl &file_url = DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath));
@@ -448,7 +448,7 @@ void TrashManager::cleanTrash(const QObject *sender) const
     if (QFile::exists(file_url.toLocalFile())) {
         list << file_url;
     }
-    bool ret = fileService->deleteFiles(sender, list, false, false, true);
+    bool ret = fileService->deleteFiles(sender, list, false, silent, true);
 
     // 清空回收站意味着回收站所有文件都被删除，因此直接删除info的目录即可
     if (ret) {
