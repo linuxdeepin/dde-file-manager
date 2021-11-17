@@ -350,7 +350,7 @@ class DFMFileInfoSchemeFacotry : public SchemeFacotry<DFMFileInfo>{};
 - 声明为 `constexpr` 或 `const` 的变量, 或在程序运行期间其值始终保持不变的,  大小写混合
 
   ```C++
-  const int DaysInAWeek = 7;
+  const int kDaysInAWeek = 7;
   ```
 
 ### 函数命名
@@ -371,9 +371,9 @@ class DFMFileInfoSchemeFacotry : public SchemeFacotry<DFMFileInfo>{};
 
   ```c++
   enum UrlTableErrors {
-      OK = 0,
-      ErrorOutOfMemory,
-      ErrorMalformedInput,
+      kOK = 0,
+      kErrorOutOfMemory,
+      kErrorMalformedInput,
   };
   ```
 
@@ -385,11 +385,11 @@ class DFMFileInfoSchemeFacotry : public SchemeFacotry<DFMFileInfo>{};
 
 ### 文件头
 
-- 每个代码文件的开头请加上开源协议头（将 xx 改为自己的昵称）
+- 每个代码文件的开头请加上开源协议头（将 xx 改为自己的昵称，时间根据当前的时间灵活修改）
 
   ```c++
   /*
-   * Copyright (C) 2020 ~ 2021 Deepin Technology Co., Ltd.
+   * Copyright (C) 2021 Deepin Technology Co., Ltd.
    *
    * Author:     xx <xx@uniontech.com>
    *
@@ -826,7 +826,7 @@ class DFMFileInfoSchemeFacotry : public SchemeFacotry<DFMFileInfo>{};
 
 ### Lambda 表达式
 
-- **禁止在 Qt 的槽函数使用 lambda 表达式!!!(**因为崩溃不好分析, ut 不好覆盖) 
+- **禁止在 Qt 的槽函数使用 lambda 表达式写复杂的业务逻辑!!!(**因为崩溃不好分析, ut 不好覆盖) ，简单的场景允许使用（理论上不超过 10 行）
 
 - lambda 表达式对形参和函数体的格式化和其他函数一致; 捕获列表同理, 表项用逗号隔开
 
