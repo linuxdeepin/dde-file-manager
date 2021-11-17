@@ -63,8 +63,8 @@ private:
     static std::once_flag &retryOnceFlag();
 
 private:
-    QVBoxLayout *centralLayout {nullptr};
-    QWidget *centralWidget {nullptr};
+    QVBoxLayout *centralLayout { nullptr };
+    QWidget *centralWidget { nullptr };
 };
 
-#endif // DISKCONTROLWIDGET_H
+#endif   // DISKCONTROLWIDGET_H

@@ -32,15 +32,13 @@
  * `DAttachedDeviceInterface` interface for protocol devices
  */
 
-DAttachedProtocolDevice::DAttachedProtocolDevice(const QString &id)
-    : DAttachedDevice(id)
+DAttachedProtocolDevice::DAttachedProtocolDevice(const QString &id, QObject *parent)
+    : QObject(parent), DAttachedDevice(id)
 {
-
 }
 
 DAttachedProtocolDevice::~DAttachedProtocolDevice()
 {
-
 }
 
 bool DAttachedProtocolDevice::isValid()
@@ -59,7 +57,6 @@ bool DAttachedProtocolDevice::detachable()
     // TODO(zhans)
     return true;
 }
-
 
 QString DAttachedProtocolDevice::displayName()
 {

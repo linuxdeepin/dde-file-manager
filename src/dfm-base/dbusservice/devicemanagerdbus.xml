@@ -9,6 +9,11 @@
     </signal>
     <signal name="AskStopScanningWhenDetachAll">
     </signal>
+    <signal name="SizeUsedChanged">
+      <arg name="id" type="s" direction="out"/>
+      <arg name="total" type="x" direction="out"/>
+      <arg name="free" type="x" direction="out"/>
+    </signal>
     <signal name="BlockDriveAdded">
     </signal>
     <signal name="BlockDriveRemoved">

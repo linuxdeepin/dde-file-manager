@@ -170,6 +170,7 @@ Q_SIGNALS: // SIGNALS
     void BlockDeviceUnmounted(const QString &id);
     void BlockDriveAdded();
     void BlockDriveRemoved();
+    void SizeUsedChanged(const QString &id, qlonglong total, qlonglong free);
 };
 
 namespace com {

@@ -96,4 +96,4 @@ protected:
     QString deviceId;
 };
 
-#endif // DATTACHEDDEVICE_H
+#endif   // DATTACHEDDEVICE_H

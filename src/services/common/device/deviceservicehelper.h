@@ -41,33 +41,33 @@ struct DeviceData
     QString id;
     QString mountpoint;
     QString filesystem;
-    qint64  sizeTotal;
-    qint64  sizeFree;
-    qint64  sizeUsage;
+    qint64 sizeTotal;
+    qint64 sizeFree;
+    qint64 sizeUsed;
 };
 
 struct BlockDeviceData
 {
-    DeviceData  common;
+    DeviceData common;
     QStringList mountpoints;
-    QString     device;
-    QString     drive;
-    QString     idLabel;
-    QString     media;
+    QString device;
+    QString drive;
+    QString idLabel;
+    QString media;
     QStringList mediaCompatibility;
-    bool        removable;
-    bool        optical;
-    bool        opticalBlank;
-    bool        mediaAvailable;
-    bool        canPowerOff;
-    bool        ejectable;
-    bool        isEncrypted;
-    bool        isLoopDevice;
-    bool        hasFileSystem;
-    bool        hasPartitionTable;
-    bool        hintSystem;
-    bool        hintIgnore;
-    QString     cryptoBackingDevice;
+    bool removable;
+    bool optical;
+    bool opticalBlank;
+    bool mediaAvailable;
+    bool canPowerOff;
+    bool ejectable;
+    bool isEncrypted;
+    bool isLoopDevice;
+    bool hasFileSystem;
+    bool hasPartitionTable;
+    bool hintSystem;
+    bool hintIgnore;
+    QString cryptoBackingDevice;
 };
 
 struct ProtocolDeviceData
@@ -80,11 +80,11 @@ class DeviceServiceHelper
     friend class DeviceService;
     friend class DeviceMonitorHandler;
 
-    using DevPtr             = QSharedPointer<DFMMOUNT::DFMDevice>;
-    using BlockDevPtr        = QSharedPointer<DFMMOUNT::DFMBlockDevice>;
-    using ProtocolDevPtr     = QSharedPointer<DFMMOUNT::DFMProtocolDevice>;
-    using DevPtrList         = QList<DevPtr>;
-    using BlockDevPtrList    = QList<BlockDevPtr>;
+    using DevPtr = QSharedPointer<DFMMOUNT::DFMDevice>;
+    using BlockDevPtr = QSharedPointer<DFMMOUNT::DFMBlockDevice>;
+    using ProtocolDevPtr = QSharedPointer<DFMMOUNT::DFMProtocolDevice>;
+    using DevPtrList = QList<DevPtr>;
+    using BlockDevPtrList = QList<BlockDevPtr>;
     using ProtocolDevPtrList = QList<ProtocolDevPtr>;
 
 private:
@@ -108,14 +108,16 @@ private:
     static bool isProtectedBlocDevice(const BlockDeviceData &data);
     static bool isIgnorableBlockDevice(const BlockDeviceData &data);
 
-    static BlockDevPtr        createBlockDevice(const QString &devId);
-    static ProtocolDevPtr     createProtocolDevice(const QString &devId);
-    static BlockDevPtrList    createAllBlockDevices();
+    static BlockDevPtr createBlockDevice(const QString &devId);
+    static ProtocolDevPtr createProtocolDevice(const QString &devId);
+    static BlockDevPtrList createAllBlockDevices();
     static ProtocolDevPtrList createAllProtocolDevices();
 
     static void makeBlockDeviceData(const BlockDevPtr &ptr, BlockDeviceData *data);
-    // TODO(zhangs): makeProtolDeviceData
     static void makeBlockDeviceMap(const BlockDeviceData &data, QVariantMap *map, bool detail = false);
+    static void updateBlockDeviceSizeUsed(BlockDeviceData *data, qint64 total, qint64 free);
+
+    // TODO(zhangs): makeProtolDeviceData
     // TODO(zhangs): makeProtocolDeviceMap
 
 private:
@@ -125,4 +127,4 @@ private:
 
 DSC_END_NAMESPACE
 
-#endif // DEVICESERVICEHELPER_H
+#endif   // DEVICESERVICEHELPER_H

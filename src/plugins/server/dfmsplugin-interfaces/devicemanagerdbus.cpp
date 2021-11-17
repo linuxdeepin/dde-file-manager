@@ -29,7 +29,8 @@
 
 DSC_USE_NAMESPACE
 
-DeviceManagerDBus::DeviceManagerDBus(QObject *parent) : QObject(parent)
+DeviceManagerDBus::DeviceManagerDBus(QObject *parent)
+    : QObject(parent)
 {
     initialize();
     initConnection();
@@ -37,7 +38,6 @@ DeviceManagerDBus::DeviceManagerDBus(QObject *parent) : QObject(parent)
 
 DeviceManagerDBus::~DeviceManagerDBus()
 {
-
 }
 
 bool DeviceManagerDBus::IsMonotorWorking()
@@ -49,7 +49,7 @@ void DeviceManagerDBus::SafelyRemoveBlockDevice(QString id)
 {
     DetachBlockDevice(id);
     // only optical eject
-    connect(deviceServ, &DeviceService::blockDevAsyncEjected, this, [this, id] (const QString &deviceId) {
+    connect(deviceServ, &DeviceService::blockDevAsyncEjected, this, [this, id](const QString &deviceId) {
         if (deviceId == id)
             deviceServ->poweroffBlockDeviceAsync(id);
     });
@@ -94,6 +94,7 @@ void DeviceManagerDBus::initialize()
  */
 void DeviceManagerDBus::initConnection()
 {
+    connect(deviceServ, &DeviceService::deviceSizeUsedChanged, this, &DeviceManagerDBus::SizeUsedChanged);
     connect(deviceServ, &DeviceService::blockDriveAdded, this, &DeviceManagerDBus::BlockDriveAdded);
     connect(deviceServ, &DeviceService::blockDriveRemoved, this, &DeviceManagerDBus::BlockDriveRemoved);
     connect(deviceServ, &DeviceService::blockDevAdded, this, &DeviceManagerDBus::BlockDeviceAdded);

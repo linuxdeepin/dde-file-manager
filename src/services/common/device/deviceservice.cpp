@@ -68,9 +68,14 @@ void DeviceMonitorHandler::startConnect()
         connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::mountAdded, this, &DeviceMonitorHandler::onBlockDeviceMounted);
         connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::mountRemoved, this, &DeviceMonitorHandler::onBlockDeviceUnmounted);
         connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::propertyChanged, this, &DeviceMonitorHandler::onBlockDevicePropertyChanged);
-
-        // TODO(zhangs): wait dfm-mount impl connect protocol devices signal
     }
+
+    // TODO(zhangs): wait dfm-mount impl connect protocol devices signal
+
+    // connect device size update worker
+    connect(&sizeUpdateTimer, &QTimer::timeout, this, &DeviceMonitorHandler::onDeviceSizeUsedTimeout);
+    sizeUpdateTimer.setInterval(kUpdateInterval);
+    sizeUpdateTimer.start();
 }
 
 /*!
@@ -183,7 +188,7 @@ void DeviceMonitorHandler::updateDataWithMountedInfo(BlockDeviceData *data, cons
             QStorageInfo sizeInfo(mpt);
             // cannot acquire correct strorage info in optical device
             if (sizeInfo.isValid() && !data->optical) {
-                data->common.sizeUsage = data->common.sizeTotal - sizeInfo.bytesAvailable();
+                data->common.sizeUsed = data->common.sizeTotal - sizeInfo.bytesAvailable();
                 data->common.sizeFree = sizeInfo.bytesAvailable();
             }
             if (data->optical) {
@@ -214,6 +219,40 @@ void DeviceMonitorHandler::updateDataWithOtherInfo(BlockDeviceData *data, const 
         data->hintSystem = changes.value(hintSystemFlag).toBool();
 
     // TODO(zhangs): handle other Property...
+}
+
+void DeviceMonitorHandler::handleBlockDevicesSizeUsedChanged()
+{
+    qDebug() << "Start check block devices size used changed";
+    for (auto iter = allBlkDevData.begin(); iter != allBlkDevData.end(); ++iter) {
+        if (!DeviceServiceHelper::isIgnorableBlockDevice(*iter)) {
+            if (iter->optical)
+                continue;
+            if (iter->mountpoints.isEmpty())
+                continue;
+
+            const QString &id = iter->common.id;
+            const QString &mpt = iter->common.mountpoint;
+            qint64 sizeUsed = iter->common.sizeUsed;
+
+            QStorageInfo info(mpt);
+            qint64 curSizeUsed = iter->common.sizeTotal - info.bytesAvailable();
+
+            if (curSizeUsed != sizeUsed) {
+                qInfo() << "Block:" << id << "old size: " << sizeUsed << "new size: " << curSizeUsed;
+                DeviceServiceHelper::updateBlockDeviceSizeUsed(&(*iter), iter->common.sizeTotal, info.bytesAvailable());
+                emit service->deviceSizeUsedChanged(id, iter->common.sizeTotal, iter->common.sizeFree);
+            }
+        }
+    }
+}
+
+/*!
+ * \brief DeviceMonitorHandler::handleProtolDevicesSizeUsedChanged run in thread
+ */
+void DeviceMonitorHandler::handleProtolDevicesSizeUsedChanged()
+{
+    // TODO(zhangs): wait dfm-mount
 }
 
 void DeviceMonitorHandler::onBlockDriveAdded(const QString &drvObjPath)
@@ -311,6 +350,14 @@ void DeviceMonitorHandler::onBlockDevicePropertyChanged(const QString &deviceId,
 
         // TODO(zhangs): support encrypted devices(reference DFMRootFileInfo::extraProperties)
     }
+}
+
+void DeviceMonitorHandler::onDeviceSizeUsedTimeout()
+{
+    QtConcurrent::run([this]() {
+        handleBlockDevicesSizeUsedChanged();
+        handleProtolDevicesSizeUsedChanged();
+    });
 }
 
 /*!

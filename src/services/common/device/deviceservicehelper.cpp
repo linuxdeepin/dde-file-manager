@@ -30,6 +30,7 @@
 #include <QStorageInfo>
 #include <QStandardPaths>
 #include <QProcess>
+#include <QMutexLocker>
 #include <DDesktopServices>
 
 Q_GLOBAL_STATIC_WITH_ARGS(dfmbase::Settings, gsGlobal, ("deepin/dde-file-manager", dfmbase::Settings::GenericConfig))
@@ -45,9 +46,9 @@ dfmbase::Settings *DeviceServiceHelper::getGsGlobal()
 void DeviceServiceHelper::openFileManagerToDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
 {
     if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
-        QString root {dfmbase::UrlRoute::rootPath(dfmbase::SchemeTypes::ROOT)};
-        QString mountUrlStr {root + QFileInfo(blkDev->device()).fileName() + "." + dfmbase::SuffixInfo::BLOCK};
-        QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
+        QString root { dfmbase::UrlRoute::rootPath(dfmbase::SchemeTypes::ROOT) };
+        QString mountUrlStr { root + QFileInfo(blkDev->device()).fileName() + "." + dfmbase::SuffixInfo::BLOCK };
+        QProcess::startDetached(QStringLiteral("dde-file-manager"), { mountUrlStr });
         qInfo() << "open by dde-file-manager: " << mountUrlStr;
         return;
     }
@@ -101,7 +102,6 @@ QUrl DeviceServiceHelper::makeMountpointForBlock(const BlockDevPtr &blkDev)
 
     return QUrl::fromLocalFile(blkDev->mountPoint());
 }
-
 
 QStringList DeviceServiceHelper::makeAllDevicesIdForDrive(const QString &driveName)
 {
@@ -216,7 +216,7 @@ bool DeviceServiceHelper::isMountableBlockDevice(const BlockDeviceData &data)
         return false;
     }
 
-    if (data.cryptoBackingDevice.length() > 1) { // bug: 77010
+    if (data.cryptoBackingDevice.length() > 1) {   // bug: 77010
         qWarning() << "Block Device: " << id << " cryptoDev length > 1";
         return false;
     }
@@ -276,14 +276,14 @@ bool DeviceServiceHelper::isCanPoweroffBlockDevice(const DeviceServiceHelper::Bl
 bool DeviceServiceHelper::isCanPoweroffBlockDevice(const BlockDeviceData &data)
 {
     const QStringList &mpts = data.mountpoints;
-    bool canPowerOff =  data.canPowerOff;
+    bool canPowerOff = data.canPowerOff;
 
-    qInfo()<< "can poweroff? " << mpts << canPowerOff;
+    qInfo() << "can poweroff? " << mpts << canPowerOff;
 
-   if (!canPowerOff)
-       return false;
+    if (!canPowerOff)
+        return false;
 
-   return true;
+    return true;
 }
 
 bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDeviceData &data)
@@ -297,7 +297,8 @@ bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDeviceData &data)
         }
     }
 
-    if (gsettings.get("protect-root-device-mounts").toBool()) {
+    // Warning: monitor only work in main thread
+    if (dfmbase::UniversalUtils::inMainThread() && gsettings.get("protect-root-device-mounts").toBool()) {
         QStorageInfo qsi("/");
         auto manager = DFMMOUNT::DFMDeviceManager::instance();
         auto monitor = manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice).staticCast<DFMMOUNT::DFMBlockMonitor>();
@@ -316,28 +317,28 @@ bool DeviceServiceHelper::isIgnorableBlockDevice(const BlockDeviceData &data)
     auto &&id = data.common.id;
 
     if (data.hasPartitionTable) {
-        qDebug()  << "Block device is ignored by parent node:"  << id;
+        qDebug() << "Block device is ignored by parent node:" << id;
         return true;
     }
 
     if (Q_UNLIKELY(data.hintIgnore)) {
-        qWarning()  << "Block device is ignored by hintIgnore:"  << id;
+        qWarning() << "Block device is ignored by hintIgnore:" << id;
         return true;
     }
 
     if (Q_UNLIKELY(data.cryptoBackingDevice.length() > 1)) {
-        qWarning()  << "Block device is ignored by crypted back device:"  << id;
+        qWarning() << "Block device is ignored by crypted back device:" << id;
         return true;
     }
 
     if (Q_UNLIKELY(data.isLoopDevice)) {
-        qDebug()  << "Block device is ignored by loop device:"  << id;
+        qDebug() << "Block device is ignored by loop device:" << id;
         return true;
     }
 
     if (Q_UNLIKELY(!data.hasFileSystem && !data.isEncrypted
-            && !data.removable && !data.mediaCompatibility.join(" ").contains("optical"))) {
-        qWarning()  << "Block device is ignored by wrong removeable set for system disk:"  << id;
+                   && !data.removable && !data.mediaCompatibility.join(" ").contains("optical"))) {
+        qWarning() << "Block device is ignored by wrong removeable set for system disk:" << id;
         return true;
     }
 
@@ -349,8 +350,8 @@ bool DeviceServiceHelper::isIgnorableBlockDevice(const BlockDeviceData &data)
 
 DeviceServiceHelper::BlockDevPtr DeviceServiceHelper::createBlockDevice(const QString &devId)
 {
-     auto devPtr = createDevice(devId, DFMMOUNT::DeviceType::BlockDevice);
-     return qobject_cast<BlockDevPtr>(devPtr);
+    auto devPtr = createDevice(devId, DFMMOUNT::DeviceType::BlockDevice);
+    return qobject_cast<BlockDevPtr>(devPtr);
 }
 
 DeviceServiceHelper::ProtocolDevPtr DeviceServiceHelper::createProtocolDevice(const QString &devId)
@@ -409,32 +410,32 @@ void DeviceServiceHelper::makeBlockDeviceData(const DeviceServiceHelper::BlockDe
 {
     Q_ASSERT_X(data, "DeviceServiceHelper", "Data is NULL");
 
-    data->common.id            = ptr->path();
-    data->common.filesystem    = ptr->fileSystem();
-    data->common.mountpoint    = ptr->mountPoint();
-    data->common.sizeTotal     = ptr->sizeTotal();
-    data->common.sizeFree      = ptr->sizeFree();
-    data->common.sizeUsage     = ptr->sizeUsage();
+    data->common.id = ptr->path();
+    data->common.filesystem = ptr->fileSystem();
+    data->common.mountpoint = ptr->mountPoint();
+    data->common.sizeTotal = ptr->sizeTotal();
+    data->common.sizeFree = ptr->sizeFree();
+    data->common.sizeUsed = ptr->sizeUsage();
 
-    data->mountpoints          = ptr->mountPoints();
-    data->device               = ptr->device();
-    data->drive                = ptr->drive();
-    data->idLabel              = ptr->idLabel();
-    data->media                = ptr->getProperty(DFMMOUNT::Property::DriveMedia).toString();
-    data->mediaCompatibility   = ptr->mediaCompatibility();
-    data->removable            = ptr->removable();
-    data->optical              = ptr->optical();
-    data->opticalBlank         = ptr->opticalBlank();
-    data->mediaAvailable       = ptr->getProperty(DFMMOUNT::Property::DriveMediaAvailable).toBool();
-    data->canPowerOff          = ptr->canPowerOff();
-    data->ejectable            = ptr->ejectable();
-    data->isEncrypted          = ptr->isEncrypted();
-    data->isLoopDevice         = ptr->isLoopDevice();
-    data->hasFileSystem        = ptr->hasFileSystem();
-    data->hasPartitionTable    = ptr->hasPartitionTable();
-    data->hintSystem           = ptr->hintSystem();
-    data->hintIgnore           = ptr->hintIgnore();
-    data->cryptoBackingDevice  = ptr->getProperty(DFMMOUNT::Property::BlockCryptoBackingDevice).toString();
+    data->mountpoints = ptr->mountPoints();
+    data->device = ptr->device();
+    data->drive = ptr->drive();
+    data->idLabel = ptr->idLabel();
+    data->media = ptr->getProperty(DFMMOUNT::Property::DriveMedia).toString();
+    data->mediaCompatibility = ptr->mediaCompatibility();
+    data->removable = ptr->removable();
+    data->optical = ptr->optical();
+    data->opticalBlank = ptr->opticalBlank();
+    data->mediaAvailable = ptr->getProperty(DFMMOUNT::Property::DriveMediaAvailable).toBool();
+    data->canPowerOff = ptr->canPowerOff();
+    data->ejectable = ptr->ejectable();
+    data->isEncrypted = ptr->isEncrypted();
+    data->isLoopDevice = ptr->isLoopDevice();
+    data->hasFileSystem = ptr->hasFileSystem();
+    data->hasPartitionTable = ptr->hasPartitionTable();
+    data->hintSystem = ptr->hintSystem();
+    data->hintIgnore = ptr->hintIgnore();
+    data->cryptoBackingDevice = ptr->getProperty(DFMMOUNT::Property::BlockCryptoBackingDevice).toString();
 }
 
 void DeviceServiceHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVariantMap *map, bool detail)
@@ -446,7 +447,7 @@ void DeviceServiceHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVaria
     map->insert("mountpoint", data.common.mountpoint);
     map->insert("size_total", data.common.sizeTotal);
     map->insert("size_free", data.common.sizeFree);
-    map->insert("size_usage", data.common.sizeUsage);
+    map->insert("size_usage", data.common.sizeUsed);
 
     map->insert("device", data.device);
     map->insert("id_label", data.idLabel);
@@ -471,6 +472,17 @@ void DeviceServiceHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVaria
         map->insert("mountpoints", data.mountpoints);
         map->insert("drive", data.drive);
         map->insert("media_compatibility", data.mediaCompatibility);
+    }
+}
+
+void DeviceServiceHelper::updateBlockDeviceSizeUsed(BlockDeviceData *data, qint64 total, qint64 free)
+{
+    if (data) {
+        static QMutex mutex;
+        QMutexLocker guard(&mutex);
+        data->common.sizeTotal = total;
+        data->common.sizeFree = free;
+        data->common.sizeUsed = total - free;
     }
 }
 

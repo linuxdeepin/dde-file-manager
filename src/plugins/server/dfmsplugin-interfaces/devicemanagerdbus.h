@@ -43,6 +43,7 @@ signals:
     void AskStopSacnningWhenUnmount(QString id);
     void AskStopScanningWhenDetach(QString id);
     void AskStopScanningWhenDetachAll();
+    void SizeUsedChanged(QString id, qint64 total, qint64 free);
 
     void BlockDriveAdded();
     void BlockDriveRemoved();
@@ -81,8 +82,7 @@ private:
     void initConnection();
 
 private:
-    dfm_service_common::DeviceService *deviceServ {nullptr};
+    dfm_service_common::DeviceService *deviceServ { nullptr };
 };
 
-
-#endif // DEVICEMANAGERDBUS_H
+#endif   // DEVICEMANAGERDBUS_H

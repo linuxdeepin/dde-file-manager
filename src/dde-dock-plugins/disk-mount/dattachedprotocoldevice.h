@@ -29,10 +29,11 @@
 #include <QPointer>
 #include <QVariantMap>
 
-class DAttachedProtocolDevice final : public DAttachedDevice
+class DAttachedProtocolDevice final : public QObject, public DAttachedDevice
 {
+    Q_OBJECT
 public:
-    explicit DAttachedProtocolDevice(const QString &id);
+    explicit DAttachedProtocolDevice(const QString &id, QObject *parent = nullptr);
     virtual ~DAttachedProtocolDevice() override;
     bool isValid() override;
     void detach() override;
@@ -51,4 +52,4 @@ private:
     QVariantMap data;
 };
 
-#endif // DATTACHEDPROTOCOLDEVICE_H
+#endif   // DATTACHEDPROTOCOLDEVICE_H

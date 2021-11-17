@@ -23,6 +23,8 @@
 #include "universalutils.h"
 
 #include <DDBusSender>
+#include <QCoreApplication>
+#include <QThread>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -33,18 +35,19 @@ DFMBASE_BEGIN_NAMESPACE
 void UniversalUtils::notifyMessage(const QString &msg)
 {
     DDBusSender()
-    .service("org.freedesktop.Notifications")
-    .path("/org/freedesktop/Notifications")
-    .interface("org.freedesktop.Notifications")
-    .method(QString("Notify"))
-    .arg(QObject::tr("dde-file-manager"))
-    .arg(static_cast<uint>(0))
-    .arg(QString("media-eject"))
-    .arg(msg)
-    .arg(QString())
-    .arg(QStringList())
-    .arg(QVariantMap())
-    .arg(5000).call();
+            .service("org.freedesktop.Notifications")
+            .path("/org/freedesktop/Notifications")
+            .interface("org.freedesktop.Notifications")
+            .method(QString("Notify"))
+            .arg(QObject::tr("dde-file-manager"))
+            .arg(static_cast<uint>(0))
+            .arg(QString("media-eject"))
+            .arg(msg)
+            .arg(QString())
+            .arg(QStringList())
+            .arg(QVariantMap())
+            .arg(5000)
+            .call();
 }
 
 /*!
@@ -55,18 +58,19 @@ void UniversalUtils::notifyMessage(const QString &msg)
 void UniversalUtils::notifyMessage(const QString &title, const QString &msg)
 {
     DDBusSender()
-    .service("org.freedesktop.Notifications")
-    .path("/org/freedesktop/Notifications")
-    .interface("org.freedesktop.Notifications")
-    .method(QString("Notify"))
-    .arg(QObject::tr("dde-file-manager"))
-    .arg(static_cast<uint>(0))
-    .arg(QString("media-eject"))
-    .arg(title)
-    .arg(msg)
-    .arg(QStringList())
-    .arg(QVariantMap())
-            .arg(5000).call();
+            .service("org.freedesktop.Notifications")
+            .path("/org/freedesktop/Notifications")
+            .interface("org.freedesktop.Notifications")
+            .method(QString("Notify"))
+            .arg(QObject::tr("dde-file-manager"))
+            .arg(static_cast<uint>(0))
+            .arg(QString("media-eject"))
+            .arg(title)
+            .arg(msg)
+            .arg(QStringList())
+            .arg(QVariantMap())
+            .arg(5000)
+            .call();
 }
 
 /*!
@@ -86,6 +90,13 @@ QString UniversalUtils::userLoginState()
     return state;
 }
 
+/*!
+ * \brief UniversalUtils::inMainThread
+ * \return true if in main thread
+ */
+bool UniversalUtils::inMainThread()
+{
+    return QThread::currentThread() == QCoreApplication::instance()->thread();
+}
+
 DFMBASE_END_NAMESPACE
-
-

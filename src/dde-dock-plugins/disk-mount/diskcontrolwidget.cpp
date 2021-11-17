@@ -58,7 +58,7 @@ void DiskControlWidget::initListByMonitorState()
         onDiskListChanged();
     } else {
         // if failed retry once after 3s
-        std::call_once(retryOnceFlag(), [this] () {
+        std::call_once(retryOnceFlag(), [this]() {
             QTimer::singleShot(3000, this, &DiskControlWidget::initListByMonitorState);
         });
     }
@@ -66,7 +66,7 @@ void DiskControlWidget::initListByMonitorState()
 
 void DiskControlWidget::initializeUi()
 {
-    std::call_once(DiskControlWidget::initOnceFlag(), [this] () {
+    std::call_once(DiskControlWidget::initOnceFlag(), [this]() {
         centralWidget->setLayout(centralLayout);
         centralWidget->setFixedWidth(WIDTH);
         centralLayout->setMargin(0);
@@ -81,7 +81,6 @@ void DiskControlWidget::initializeUi()
         viewport()->setAutoFillBackground(false);
         paintUi();
     });
-
 }
 
 void DiskControlWidget::initConnection()
@@ -167,7 +166,7 @@ int DiskControlWidget::addBlockDevicesItems()
 {
     int mountedCount = 0;
 
-    QStringList &&list = SidecarInstance.invokeBlockDevicesIdList({{"unmountable", true}});
+    QStringList &&list = SidecarInstance.invokeBlockDevicesIdList({ { "unmountable", true } });
     mountedCount = addItems(list, true);
 
     return mountedCount;
@@ -213,8 +212,8 @@ DDialog *DiskControlWidget::showQueryScanningDialog(const QString &title)
     Qt::WindowFlags flags = d->windowFlags();
     d->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
     d->setIcon(QIcon::fromTheme("dialog-warning"));
-    d->addButton(QObject::tr("Cancel","button"));
-    d->addButton(QObject::tr("Stop","button"), true, DDialog::ButtonWarning); // 终止
+    d->addButton(QObject::tr("Cancel", "button"));
+    d->addButton(QObject::tr("Stop", "button"), true, DDialog::ButtonWarning);   // 终止
     d->setMaximumWidth(640);
     d->show();
     return d;
@@ -262,12 +261,9 @@ void DiskControlWidget::onAskStopScanning(const QString &method, const QString &
 
     connect(d, &DDialog::buttonClicked, this, [this, id, method](int index, const QString &text) {
         Q_UNUSED(text);
-        if (index == 1)  // user clicked stop
+        if (index == 1)   // user clicked stop
             handleWhetherScanning(method, id);
         else
             qInfo() << "You have cancelled stop scanning " << method;
     });
 }
-
-
-

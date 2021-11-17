@@ -42,7 +42,7 @@ public:
         return "org.deepin.service.DeviceService";
     }
 
-public: // operations
+public:   // operations
     void startAutoMount();
     bool startMonitor();
     bool stopMonitor();
@@ -62,7 +62,7 @@ public: // operations
     void poweroffBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
     bool poweroffBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
 
-public: // status
+public:   // status
     bool isBlockDeviceMonitorWorking() const;
     bool isProtolDeviceMonitorWorking() const;
     bool isInLiveSystem() const;
@@ -75,6 +75,7 @@ public: // status
     QVariantMap protocolDeviceInfo(const QString &deviceId, bool detail = false);
 
 signals:
+    void deviceSizeUsedChanged(const QString &deviceId, qint64 total, qint64 free);
     void blockDriveAdded();
     void blockDriveRemoved();
     void blockDevAdded(const QString &deviceId);
@@ -99,4 +100,4 @@ private:
 
 DSC_END_NAMESPACE
 
-#endif // DEVICESERVICE_H
+#endif   // DEVICESERVICE_H

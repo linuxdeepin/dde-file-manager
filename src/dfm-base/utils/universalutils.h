@@ -35,8 +35,9 @@ public:
     static void notifyMessage(const QString &msg);
     static void notifyMessage(const QString &title, const QString &msg);
     static QString userLoginState();
+    static bool inMainThread();
 };
 
 DFMBASE_END_NAMESPACE
 
-#endif // UNIVERSALUTILS_H
+#endif   // UNIVERSALUTILS_H

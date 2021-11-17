@@ -29,10 +29,10 @@
 #include <QPointer>
 #include <QVariantMap>
 
-class DAttachedBlockDevice final : public DAttachedDevice
+class DAttachedBlockDevice final : public QObject, public DAttachedDevice
 {
 public:
-    explicit DAttachedBlockDevice(const QString &id);
+    explicit DAttachedBlockDevice(const QString &id, QObject *parent = nullptr);
     virtual ~DAttachedBlockDevice() override;
     bool isValid() override;
     void detach() override;
@@ -48,8 +48,12 @@ protected:
     void query() override;
 
 private:
+    void initializeConnect();
+    Q_SLOT void onSizeChanged(const QString &id, qint64 total, qint64 free);
+
+private:
     QVariantMap data;
-    const QString ddeI18nSym {QStringLiteral("_dde_")};
+    const QString ddeI18nSym { QStringLiteral("_dde_") };
 };
 
-#endif // DATTACHEDBLOCKDEVICE_H
+#endif   // DATTACHEDBLOCKDEVICE_H

@@ -28,6 +28,7 @@
 
 #include <QObject>
 #include <QPointer>
+#include <QTimer>
 
 DSC_BEGIN_NAMESPACE
 
@@ -52,6 +53,8 @@ private:
     void updateDataWithOpticalInfo(BlockDeviceData *data, const QMap<DFMMOUNT::Property, QVariant> &changes);
     void updateDataWithMountedInfo(BlockDeviceData *data, const QMap<DFMMOUNT::Property, QVariant> &changes);
     void updateDataWithOtherInfo(BlockDeviceData *data, const QMap<DFMMOUNT::Property, QVariant> &changes);
+    void handleBlockDevicesSizeUsedChanged();
+    void handleProtolDevicesSizeUsedChanged();
 
 private slots:
     void onBlockDriveAdded(const QString &drvObjPath);
@@ -63,9 +66,12 @@ private slots:
     void onBlockDeviceMounted(const QString &deviceId, const QString &mountPoint);
     void onBlockDeviceUnmounted(const QString &deviceId);
     void onBlockDevicePropertyChanged(const QString &deviceId, const QMap<DFMMOUNT::Property, QVariant> &changes);
+    void onDeviceSizeUsedTimeout();
 
 private:
-    // TODO(zhangs): add a timer, refresh devices size
+    static constexpr int kUpdateInterval = 10000;   // timer interval: 10s
+
+    QTimer sizeUpdateTimer;
     QPointer<DeviceService> service;
     QHash<QString, BlockDeviceData> allBlkDevData;
     QHash<QString, ProtocolDeviceData> allProtocolDevData;
