@@ -342,8 +342,11 @@ You can share folders in File Manager, if there are some folders shared, the sha
 
 1. On File Manager interface, right-click a folder, select **Share folder**.
 2. In the properties window, check **Share this folder**.
+
+>![notes](../common/notes.svg) Notes: If smb service is not turned on, authentication window pops up. Input password to turn smb on.
+
 3. Input **Share name**, and choose **Permission** and **Anonymous** according to actual needs before closing the window.
-5. To set share password, click ![menu](../common/icon_menu.svg) and select **Set share password**.
+4. To set share password, click ![menu](../common/icon_menu.svg) and select **Set share password**.
 5. Input password and click **Confirm**.
 
 ![0|share](fig/share.png)
@@ -593,6 +596,8 @@ You can [visit sharing folders](#Visit Sharing Folders) by connecting to server.
    - You can select which types of files can be previewed.
    - You can check **Auto mount**, when any external disks connect to the computer, they would be mounted automatically. 
    - You can check **Open after auto mount**, when any external disks connect to the computer, they would be mounted automatically and opened. 
+   - Check **Show item counts and sizes in the path of  mounted MTP devices** to display the status bar information at the bottom of the MTP device's path after it is mounted.
+   - Check **Keep showing the mounted Samba shares** to show the remote mount link always in the left panel.
    - You can check **Use the file chooser dialog of File Manager**, when selecting files, File Manager window would be opened.
    - You can check **Ask for my confirmation when deleting files**, when deleting files, a hint dialog would pop up.
    - You can check **Hide system disk**, local disks would not be displayed in left panel and computer interface. 
