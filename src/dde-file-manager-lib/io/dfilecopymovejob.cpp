@@ -2570,7 +2570,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
     return true;
 }
 
-bool DFileCopyMoveJobPrivate::doRemoveFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fileInfo)
+bool DFileCopyMoveJobPrivate::doRemoveFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fileInfo, const DAbstractFileInfoPointer &toInfo)
 {
     if (!fileInfo->exists()) {
         return true;
@@ -2605,7 +2605,7 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(const QSharedPointer<DFileHandler> &h
             }
         }
 
-        action = setAndhandleError(errortype, fileInfo, DAbstractFileInfoPointer(nullptr), errorstr);
+        action = setAndhandleError(errortype, fileInfo, toInfo, errorstr);
         if (action == DFileCopyMoveJob::RetryAction) { // 仅在选择重试时触发休眠
             QThread::msleep(THREAD_SLEEP_TIME); // fix bug 44436 高频执行循环高频发送信号导致主界面卡死
         }
@@ -2654,7 +2654,7 @@ bool DFileCopyMoveJobPrivate::doRenameFile(const QSharedPointer<DFileHandler> &h
                 }
 
                 // 删除旧的链接文件
-                if (!doRemoveFile(handler, oldInfo)) {
+                if (!doRemoveFile(handler, oldInfo, newInfo)) {
                     return false;
                 }
 
@@ -2678,7 +2678,7 @@ bool DFileCopyMoveJobPrivate::doRenameFile(const QSharedPointer<DFileHandler> &h
 
     handler->setFileTime(newInfo->fileUrl(), oldInfo->lastRead(), oldInfo->lastModified());
 
-    if (!doRemoveFile(handler, oldInfo)) {
+    if (!doRemoveFile(handler, oldInfo, newInfo)) {
         return false;
     }
 

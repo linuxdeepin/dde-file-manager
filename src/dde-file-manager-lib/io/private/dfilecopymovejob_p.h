@@ -162,7 +162,8 @@ public:
     bool doThreadPoolCopyFile();
     //拷贝文件到块设备（除光驱和系统所在的磁盘）
     bool doCopyFileOnBlock(const DAbstractFileInfoPointer fromInfo, const DAbstractFileInfoPointer toInfo, const QSharedPointer<DFileHandler> &handler, int blockSize = 1048576);
-    bool doRemoveFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fileInfo);
+    bool doRemoveFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fileInfo,
+                      const DAbstractFileInfoPointer &toInfo = DAbstractFileInfoPointer(nullptr));
     bool doRenameFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer oldInfo, const DAbstractFileInfoPointer newInfo);
     bool doLinkFile(const QSharedPointer<DFileHandler> &handler, const DAbstractFileInfoPointer fileInfo, const QString &linkPath);
 
