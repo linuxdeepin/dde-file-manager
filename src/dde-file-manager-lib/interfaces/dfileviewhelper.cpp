@@ -840,22 +840,10 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
             }
         }
 
-        // 保险箱时，修改DropAction为Qt::MoveAction
+        // 保险箱时，修改DropAction为Qt::CopyAction
         if (VaultController::isVaultFile(info->fileUrl().toString())
                 || VaultController::isVaultFile(urls[0].toString())) {
-            QString strFromPath = urls[0].toLocalFile();
-            QString strToPath = info->fileUrl().toLocalFile();
-            if (strFromPath.startsWith("/media") || strToPath.startsWith("/media")) { // 如果是从U盘拖拽文件到保险箱或者是从保险箱拖拽文件到U盘
-                event->setDropAction(Qt::CopyAction);
-            } else if (strFromPath.startsWith("/run") && strFromPath.contains("/smb-share:server=")) {  // 修复BUG-59333 如果是smb拖拽到保险箱
-                event->setDropAction(Qt::CopyAction);
-            } else {
-                if (!DFMGlobal::keyCtrlIsPressed()) {
-                    event->setDropAction(Qt::MoveAction);
-                } else {
-                    event->setDropAction(Qt::CopyAction);
-                }
-            }
+            event->setDropAction(Qt::CopyAction);
         }
 
         // 最近使用目录下的文件，只有拖拽到回收站为剪切，其他都为拷贝
@@ -920,20 +908,10 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
             event->setDropAction((default_action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : default_action);
         }
 
-        // 保险箱时，修改DropAction为Qt::MoveAction
+        // 保险箱时，修改DropAction为Qt::CopyAction
         if (VaultController::isVaultFile(info->fileUrl().toString())
                 || VaultController::isVaultFile(urls[0].toString())) {
-            QString strFromPath = urls[0].toLocalFile();
-            QString strToPath = info->fileUrl().toLocalFile();
-            if (strFromPath.startsWith("/media") || strToPath.startsWith("/media")) { // 如果是从U盘拖拽文件到保险箱或者是从保险箱拖拽文件到U盘
-                event->setDropAction(Qt::CopyAction);
-            } else {
-                if (!DFMGlobal::keyCtrlIsPressed()) {
-                    event->setDropAction(sameUser ? Qt::MoveAction : Qt::IgnoreAction);
-                } else {
-                    event->setDropAction(Qt::CopyAction);
-                }
-            }
+             event->setDropAction(Qt::CopyAction);
         }
 
         if (!info->supportedDropActions().testFlag(event->dropAction())) {

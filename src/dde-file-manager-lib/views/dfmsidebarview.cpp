@@ -469,18 +469,10 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
         }
     }
 
-    // 保险箱时，修改DropAction为Qt::MoveAction
+    // 保险箱时，修改DropAction为Qt::CopyAction
     if (VaultController::isVaultFile(from.url())
             || VaultController::isVaultFile(to.toString())) {
-        QString strFromPath = from.toLocalFile();
-        QString strToPath = to.toLocalFile();
-        if (strFromPath.startsWith("/media") || strToPath.startsWith("/media")) { // 如果是从U盘拖拽文件到保险箱或者是从保险箱拖拽文件到U盘
-            action = Qt::CopyAction;
-        } else if (strFromPath.startsWith("/run") && strFromPath.contains("/smb-share:server=")) {  // 修复BUG-59333 如果是smb拖拽到保险箱
-            return Qt::CopyAction;
-        } else {
-            action = DFMGlobal::keyCtrlIsPressed() ? Qt::CopyAction : Qt::MoveAction;
-        }
+        action = Qt::CopyAction;
     }
 
     //跨用户的操作不允许修改原文件
