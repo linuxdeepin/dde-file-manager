@@ -928,7 +928,14 @@ void CanvasGridView::mouseReleaseEvent(QMouseEvent *event)
     if (d->showSelectRect && d->selectRect.isValid()) {
         d->showSelectRect = false;
         d->selectRect = QRect();
-//        update(d->selectRect);
+
+        auto releaseIndex = indexAt(event->pos());
+        if (releaseIndex.isValid()) {
+            //按照产品要求，框选时鼠标释放位置若为有效index时，设置该index为焦点index，
+            //若释放时位置的index无效，则会在moveCursor中默认为左上角第一个
+            d->currentCursorIndex = releaseIndex;
+            d->m_oldCursorIndex = releaseIndex;
+        }
     }
 
     QModelIndex index = property("lastPressedIndex").toModelIndex();
@@ -936,14 +943,6 @@ void CanvasGridView::mouseReleaseEvent(QMouseEvent *event)
         //fix 修改ctrl+左键取消选中状态导致所有选中文件被取消选中的问题。
         selectionModel()->select(QItemSelection(index, index), QItemSelectionModel::Deselect);
         setProperty("lastPressedIndex", QModelIndex());
-    }
-
-    auto releaseIndex = indexAt(event->pos());
-    if (releaseIndex.isValid()) {
-        //按照产品要求，框选时鼠标释放位置若为有效index时，设置该index为焦点index，
-        //若释放时位置的index无效，则默认为左上角第一个
-        d->currentCursorIndex = releaseIndex;
-        d->m_oldCursorIndex = releaseIndex;
     }
 
     update();
