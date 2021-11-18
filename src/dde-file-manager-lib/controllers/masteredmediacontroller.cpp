@@ -318,7 +318,7 @@ bool MasteredMediaController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &
         }
     }
 
-    return fileService->deleteFiles(event->sender(), lst, false);
+    return fileService->deleteFiles(event->sender(), lst, false, event->silent());
 }
 
 DUrlList MasteredMediaController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
