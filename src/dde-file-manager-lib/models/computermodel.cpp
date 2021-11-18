@@ -722,8 +722,15 @@ void ComputerModel::addRootItem(const DAbstractFileInfoPointer &info)
     auto splitterUrl = makeSplitterUrl(Disks);
 #endif
     int splitterIdx = findItem(splitterUrl);
+    int vaultSplitterIdx = findItem(makeSplitterUrl(FileVault));
+    if (vaultSplitterIdx < 0)
+        vaultSplitterIdx = m_items.count();
+
+    // [firstDisk, vaultSplitter)
+    auto start = m_items.begin() + splitterIdx + 1;
+    auto end = m_items.begin() + vaultSplitterIdx;
     if (splitterIdx > 0) {
-        auto r = std::upper_bound(m_items.begin() + splitterIdx + 1, m_items.end(), info,
+        auto r = std::upper_bound(start, end, info,
                                   [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
             return DFMRootFileInfo::typeCompare(a, b.fi);
         });
