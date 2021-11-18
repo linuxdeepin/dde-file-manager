@@ -407,11 +407,12 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
 
     for (const QUrl &url : urls) {
         const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, DUrl(url));
-        if ( !fileInfo || !info)
+        if (!fileInfo || !info)
             return Qt::IgnoreAction;
 
         bool isInSameDevice = DStorageInfo::inSameDevice(fileInfo->fileUrl(), info->fileUrl());
-        if ((!isInSameDevice && !fileInfo->isReadable()) || (DFMGlobal::keyCtrlIsPressed() && isInSameDevice && !fileInfo->canRename()))
+        if ((!isInSameDevice && !fileInfo->isReadable()) ||
+                (!DFMGlobal::keyCtrlIsPressed() && isInSameDevice && !fileInfo->canRename()))
             return Qt::IgnoreAction;
 
         //部分文件不能复制或剪切，需要在拖拽时忽略

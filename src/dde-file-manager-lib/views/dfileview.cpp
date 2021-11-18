@@ -1871,6 +1871,21 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 
                 return event->ignore();
             }
+            if (fileInfo->isDir()) {
+                for (const auto &url : m_urlsForDragEvent) {
+                    const DAbstractFileInfoPointer &dragFileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));
+                    if (!dragFileInfo) {
+                        event->ignore();
+                        return;
+                    }
+
+                    bool isInSameDevice = DStorageInfo::inSameDevice(dragFileInfo->fileUrl(), fileInfo->fileUrl());
+                    if ((!isInSameDevice && !dragFileInfo->isReadable()) || (!DFMGlobal::keyCtrlIsPressed() && isInSameDevice && !dragFileInfo->canRename())) {
+                        event->ignore();
+                        return;
+                    }
+                }
+            }
             // 如果是回收站里面搜索，不让拖拽
             const DUrl &toUrl = model()->getUrlByIndex(d->dragMoveHoverIndex);
             if (toUrl.isSearchFile() && toUrl.fragment().startsWith(TRASH_ROOT)) {
@@ -1930,6 +1945,19 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
                     return event->setDropAction(Qt::CopyAction);
                 }
                 return event->ignore();
+            }
+        }
+    } else {
+        for (const auto &url : m_urlsForDragEvent) {
+            const DAbstractFileInfoPointer &dragFileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));
+            if (!dragFileInfo) {
+                event->ignore();
+            }
+
+            bool isInSameDevice = DStorageInfo::inSameDevice(dragFileInfo->fileUrl(), model()->rootUrl());
+            if ((!isInSameDevice && !dragFileInfo->isReadable()) || (!DFMGlobal::keyCtrlIsPressed() && isInSameDevice && !dragFileInfo->canRename())) {
+                event->ignore();
+                return;
             }
         }
     }
