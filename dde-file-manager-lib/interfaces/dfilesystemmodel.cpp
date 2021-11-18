@@ -1195,10 +1195,6 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
 
         if (!info) {
-            // 华为mtp下删除，直接刷新
-            if (fileUrl.isMTPFile() && event.first == RmFile) {
-                q->refresh();
-            }
             continue;
         }
 
