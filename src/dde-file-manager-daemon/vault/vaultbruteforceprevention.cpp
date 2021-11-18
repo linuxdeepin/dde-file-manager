@@ -99,10 +99,16 @@ void VaultBruteForcePrevention::timerEvent(QTimerEvent *event)
 
 bool VaultBruteForcePrevention::isValidInvoker()
 {
+#if 0
+    // 暂时屏蔽，后期优化
+    // 1. 该白名单方案会造成调试运行保险箱，保险箱进程不再白名单内，导致无法开锁
+    // 2. 该写法存在逻辑问题，导致了bug#103685
     static QStringList VaultwhiteProcess = {"/usr/bin/dde-file-manager", "/usr/bin/dde-desktop", "/usr/bin/dde-select-dialog-wayland", "/usr/bin/dde-select-dialog-x11"};
     uint pid = connection().interface()->servicePid(message().service()).value();
     QFileInfo f(QString("/proc/%1/exe").arg(pid));
     if (!f.exists())
         return false;
     return VaultwhiteProcess.contains(f.canonicalFilePath());
+#endif
+    return true;
 }
