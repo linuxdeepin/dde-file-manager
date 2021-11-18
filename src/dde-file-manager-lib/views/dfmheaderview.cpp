@@ -24,6 +24,7 @@ DFMHeaderView::DFMHeaderView(Qt::Orientation orientation, QWidget *parent)
     : QHeaderView(orientation, parent)
 {
     setSectionsMovable(true);
+    setFirstSectionMovable(false);
 }
 
 QSize DFMHeaderView::sizeHint() const
