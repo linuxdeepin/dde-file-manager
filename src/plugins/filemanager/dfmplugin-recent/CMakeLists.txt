@@ -13,7 +13,7 @@ set(recent_cxx_cpp
     recentutil.cpp
     recent.cpp
     recent.json
-    )
+)
 
 set(recent_cxx_h
     recentfileinfo.h
@@ -23,24 +23,32 @@ set(recent_cxx_h
     recentbrowseview.h
     recentutil.h
     recent.h
-    )
+)
+
+find_package(Qt5 REQUIRED Xml REQUIRED)
+find_package(Dtk REQUIRED Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
     ${recent_cxx_h}
     ${recent_cxx_cpp}
-    )
+)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        ${DtkWidget_INCLUDE_DIRS}
+)
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    dfmservice-common
-    dfmservice-filemanager
-    ${QtUseModules}
-    ${PkgUserModules}
-    )
+    DFMSERVICE::common
+    DFMSERVICE::filemanager
+    Qt5::Xml
+    ${DtkWidget_LIBRARIES}
+)
 
 #install library file
 install(TARGETS
@@ -48,4 +56,4 @@ install(TARGETS
     LIBRARY
     DESTINATION
     ${DFM_PLUGIN_DIR}
-    )
+)

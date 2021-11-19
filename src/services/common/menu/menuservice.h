@@ -22,14 +22,16 @@
 #ifndef MENUSERVICE_H
 #define MENUSERVICE_H
 
+#include "menufactory.h"
 #include "dfm_common_service_global.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/abstractfilemenu.h"
-#include "menufactory.h"
-#include <QUrl>
-#include <functional>
-#include <QMenu>
 #include <dfm-framework/service/pluginservicecontext.h>
+
+#include <QUrl>
+#include <QMenu>
+
+#include <functional>
 
 DSC_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE

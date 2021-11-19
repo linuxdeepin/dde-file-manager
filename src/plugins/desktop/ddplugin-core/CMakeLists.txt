@@ -11,7 +11,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/wallpaper
     ${CMAKE_CURRENT_SOURCE_DIR}/canvas
     ${CMAKE_CURRENT_SOURCE_DIR}/screen
-    )
+)
 
 set(widgets_cxx_cpp
     dfm-base/widgets/abstractcanvas.cpp
@@ -27,7 +27,7 @@ set(widgets_cxx_cpp
     dfm-base/widgets/abstractbackground.cpp
     dfm-base/widgets/abstractscreen.cpp
     dfm-base/widgets/abstractscreenproxy.cpp
-    )
+)
 
 set(widgets_cxx_h
     dfm-base/widgets/abstractcanvas.h
@@ -45,7 +45,7 @@ set(widgets_cxx_h
     dfm-base/widgets/abstractscreen.h
     dfm-base/widgets/abstractscreenproxy.h
     dfm-base/widgets/screenglobal.h
-    )
+)
 
 set(service_cxx_cpp
     background/services/backgroundservice.cpp
@@ -55,7 +55,7 @@ set(service_cxx_cpp
     canvas/canvasservice.cpp
     canvas/canvasfactory.cpp
     screen/screenservice.cpp
-    )
+)
 
 set(service_cxx_h
     background/services/backgroundservice.h
@@ -65,7 +65,7 @@ set(service_cxx_h
     canvas/canvasservice.h
     canvas/canvasfactory.h
     screen/screenservice.h
-    )
+)
 
 set(core_cxx_cpp
     dbus-private/dbusdisplay.cpp
@@ -81,7 +81,7 @@ set(core_cxx_cpp
     screen/screenproxydbus.cpp
     core.cpp
     core.json
-    )
+)
 
 set(core_cxx_h
     dbus-private/dbusdisplay.h
@@ -98,7 +98,7 @@ set(core_cxx_h
     screen/screenproxydbus.h
     core.h
     dfm_desktop_service_global.h
-    )
+)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -108,27 +108,30 @@ add_library(${PROJECT_NAME}
     ${service_cxx_h}
     ${widgets_cxx_cpp}
     ${widgets_cxx_h}
-    )
+)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
+find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(PkgConfig REQUIRED)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
 pkg_check_modules(GIO-QT REQUIRED gio-qt)
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-    ${DFrameworkDBus_INCLUDE_DIRS}
-    ${GIO-QT_INCLUDE_DIRS}
+target_include_directories(${PROJECT_NAME} 
+    PUBLIC
+        ${DFrameworkDBus_INCLUDE_DIRS}
+        ${GIO-QT_INCLUDE_DIRS}
+        ${DtkWidget_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    dfm-base
+    DFM::base
     DFM::framework
-    dfmservice-common
-    ${QtUseModules}
-    ${PkgUserModules}
+    DFMSERVICE::common
     ${DFrameworkDBus_LIBRARIES}
     ${GIO-QT_LIBRARIES}
-    )
+    ${DtkWidget_LIBRARIES}
+)
 
 #install library file
 install(TARGETS
@@ -136,4 +139,4 @@ install(TARGETS
     LIBRARY
     DESTINATION
     ${DFM_PLUGIN_DIR}
-    )
+)

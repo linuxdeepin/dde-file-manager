@@ -2,35 +2,32 @@ cmake_minimum_required(VERSION 3.0.2)
 
 project(dfm-framework)
 
+if (NOT VERSION)
+    set(VERSION "1.0.0")
+endif()
+
+if (NOT PROJECT_VERSION_MAJOR)
+    set(PROJECT_VERSION_MAJOR 0)
+endif()
+
 add_definitions(-DDPF_LIBRARY)
 add_definitions(-DDTK_LOG)
 
-#set Module subdir
-#   The module pattern cannot be broken, 
-#   so the installation header file cannot be found
-set(lifecycle ${CMAKE_CURRENT_SOURCE_DIR}/lifecycle)
-set(listener ${CMAKE_CURRENT_SOURCE_DIR}/listener)
-set(service ${CMAKE_CURRENT_SOURCE_DIR}/service)
-set(event ${CMAKE_CURRENT_SOURCE_DIR}/event)
-set(abus ${CMAKE_CURRENT_SOURCE_DIR}/abus)
-set(log ${CMAKE_CURRENT_SOURCE_DIR}/log)
-set(listener ${CMAKE_CURRENT_SOURCE_DIR}/listener)
-
 set(LOBAL_H
     dfm_framework_global.h
-    )
+)
 
 set(PRIVATE_H
     lifecycle/private/pluginmanager_p.h
     lifecycle/private/pluginmetaobject_p.h
     abus/private/appbus_p.h
     event/private/event_p.h
-    )
+)
 
 set(PRIVATE_CPP
     lifecycle/private/pluginmanager_p.cpp
     abus/private/appbus_p.cpp
-    )
+)
 
 set(PUBLIC_H
     event/event.h
@@ -54,7 +51,7 @@ set(PUBLIC_H
     listener/listener.h
     backtrace/backtrace.h
     framework.h
-    )
+)
 
 set(PUBLIC_CPP
     event/event.cpp
@@ -73,7 +70,12 @@ set(PUBLIC_CPP
     listener/listener.cpp
     backtrace/backtrace.cpp
     framework.cpp
-    )
+)
+
+find_package(Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt5 COMPONENTS Concurrent REQUIRED)
+find_package(Qt5 COMPONENTS Network REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
     ${LOBAL_H}
@@ -81,31 +83,42 @@ add_library(${PROJECT_NAME} SHARED
     ${PRIVATE_CPP}
     ${PUBLIC_H}
     ${PUBLIC_CPP}
-    )
+)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    VERSION ${VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+)
 
 target_link_libraries(
     ${PROJECT_NAME}
-    ${QtUseModules}
-    ${PkgUseModules}
-    )
+    Qt5::Core
+    Qt5::Concurrent
+    Qt5::Network
+    ${DtkWidget_LIBRARIES}
+)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 add_library(DFM::framework ALIAS ${PROJECT_NAME})
 
-#install library file
+target_include_directories(${PROJECT_NAME} 
+    PUBLIC 
+        ${CMAKE_CURRENT_SOURCE_DIR}/../
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${DtkWidget_INCLUDEDIRS}
+)
+
+# install library file
 install(TARGETS
     ${PROJECT_NAME}
     LIBRARY
     DESTINATION
     ${LIB_INSTALL_DIR}
-    )
+)
 
-# #recursion install head file
-# install(DIRECTORY
-#     ${CMAKE_CURRENT_SOURCE_DIR}
-#     DESTINATION
-#     ${INCLUDE_INSTALL_RPEFIX}
-#     FILES_MATCHING PATTERN "*.h"
-#     )
+# install head file
+install(DIRECTORY
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    DESTINATION include
+    FILES_MATCHING PATTERN "*.h"
+    PATTERN "private" EXCLUDE
+)

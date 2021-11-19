@@ -22,7 +22,7 @@
 #ifndef SINGLETION_H
 #define SINGLETION_H
 
-#include "dfm_base_global.h"
+#include "dfm-base/dfm_base_global.h"
 
 DFMBASE_BEGIN_NAMESPACE
 

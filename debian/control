@@ -6,69 +6,19 @@ Build-Depends:
  cmake,
  debhelper (>=9),
  pkg-config,
- qt5-qmake,
+ dh-systemd,
  qtbase5-dev,
  qtbase5-private-dev,
- libqt5x11extras5-dev,
- libjemalloc-dev,
  libqt5svg5-dev,
- libmagic-dev,
- libsecret-1-dev,
- libpoppler-cpp-dev,
- libpolkit-agent-1-dev,
- libpolkit-qt5-1-dev,
- qtmultimedia5-dev,
- libffmpegthumbnailer-dev,
- libtag1-dev,
  libdtkwidget-dev,
  libdtkgui-dev,
- libxcb1-dev,
- x11proto-core-dev,
- libx11-dev,
- qttools5-dev-tools,
- libglib2.0-dev,
- dde-dock-dev(>=4.8.4.1),
- libxcb-ewmh-dev,
- libxcb-shape0-dev,
- libdframeworkdbus-dev,
- libxcb-util0-dev,
- qtdeclarative5-dev,
- deepin-gettext-tools,
- libkf5codecs-dev,
  libdtkcore-dev,
  libdtkcore5-bin,
- libdmr-dev,
- dh-systemd,
- deepin-anything-dev[i386 amd64],
- deepin-anything-server-dev[i386 amd64],
- libudisks2-qt5-dev,
- libxrender-dev,
- libmtdev-dev,
- libfontconfig1-dev,
- libfreetype6-dev,
- libegl1-mesa-dev,
- libglibmm-2.4-dev,
- libgio-qt-dev,
- libdisomaster-dev,
- libssl-dev,
- libmediainfo-dev,
+ qttools5-dev-tools,
+ dde-dock-dev(>=4.8.4.1),
+ libdframeworkdbus-dev,
  libqt5xdg-dev,
- libtag1-dev,
- libicu-dev,
- libcue-dev,
- liblucene++-dev,
- libgsf-1-dev,
- libglib2.0-dev,
- libhtmlcxx-dev,
- libxml2-dev,
- libmimetic-dev,
- libboost-date-time-dev,
- libboost-filesystem-dev,
- libboost-iostreams-dev,
- libboost-regex-dev,
- libboost-system-dev,
- libboost-test-dev,
- libboost-thread-dev,
+ libgio-qt-dev,
  libdfm-io-dev,
  libdfm-mount-dev,
  libgtest-dev,
@@ -84,12 +34,6 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends},
  libdde-file-manager( =${binary:Version}),
- socat,
- cryfs,
- deepin-anything-dkms[i386 amd64],
- deepin-anything-server[i386 amd64],
- libblockdev-crypto2,
- dde-device-formatter
 Conflicts: dde-file-manager-oem
 Replaces: dde-file-manager-oem
 Recommends: dde-qt5integration, avfs, samba
@@ -102,18 +46,6 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends},
  ${dist:Depends},
- libpoppler-cpp0v5 (>= 0.48.0),
- gvfs-backends(>=1.27.3),
- cryptsetup,
- libkf5codecs5,
- deepin-anything-libs[i386 amd64],
- liblucene++-dev,
- libgsf-1-dev,
- libglib2.0-dev,
- libhtmlcxx-dev,
- libxml2-dev,
- libmimetic-dev
-Breaks: dde-file-manager(<=1.2.3-3)
 Multi-Arch: same
 Description: DDE File Manager library
  This package contains the shared libraries.
@@ -124,3 +56,72 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Vers
 Description: DDE File Manager Devel library
  This package contains the header files and static libraries
  of libdde-file-manager
+
+Package: dde-desktop
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
+Replaces: dde-file-manager-oem
+Recommends: qt5dxcb-plugin, deepin-screensaver
+Description: deepin desktop-environment - desktop module
+ Deepin Desktop Environment (DDE) - desktop module.
+
+Package: dde-disk-mount-plugin
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: plugin of dde-dock
+ Disk mount plugin of dde-dock which is created by libdde-file-manager
+
+Package: dfm-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: File manager plugins
+ File manager plugins of Deepin OS
+
+Package: libdfm-base
+Architecture: any
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+Multi-Arch: same
+Description: DDE File Manager Base library
+ This package contains the shared libraries.
+
+Package: libdfm-base-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-base( =${binary:Version})
+Description: DDE File Manager Base Devel library
+ This package contains the header files and static libraries
+ of libdfm-base
+
+Package: libdfm-framework
+Architecture: any
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+Multi-Arch: same
+Description: DDE File Manager Framework library
+ This package contains the shared libraries.
+
+Package: libdfm-framework-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-framework( =${binary:Version})
+Description: DDE File Manager Framework Devel library
+ This package contains the header files and static libraries
+ of libdfm-framework
+
+Package: libdfm-services
+Architecture: any
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+Multi-Arch: same
+Description: DDE File Manager Service library
+ This package contains the shared libraries.
+
+Package: libdfm-services-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-services( =${binary:Version})
+Description: DDE File Manager Service Devel library
+ This package contains the header files and static libraries
+ of libdfm-services

@@ -22,7 +22,7 @@
 #ifndef SIDEBAR_P_H
 #define SIDEBAR_P_H
 
-#include "dfm_base_global.h"
+#include "dfm-base/dfm_base_global.h"
 #include "dfm-base/widgets/dfmsidebar/sidebarview.h"
 #include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
 

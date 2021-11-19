@@ -25,7 +25,7 @@
 #include "fileview.h"
 #include "fileviewitem.h"
 #include "fileviewmodel.h"
-#include "dfm_base_global.h"
+#include "dfm-base/dfm_base_global.h"
 #include "itemdelegatehelper.h"
 
 #include <DListView>

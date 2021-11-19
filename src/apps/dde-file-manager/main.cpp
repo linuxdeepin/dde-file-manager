@@ -36,13 +36,10 @@
 #include <QFile>
 #include <QtGlobal>
 
-#include <dfmio_register.h>
-
 #include <iostream>
 #include <algorithm>
 
 DGUI_USE_NAMESPACE
-USING_IO_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 #ifdef DFM_ORGANIZATION_NAME

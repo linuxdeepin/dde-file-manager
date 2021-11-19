@@ -10,21 +10,25 @@ configure_file(
 
 set(SRCS
     main.cpp
-    )
+)
+
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Dtk REQUIRED Widget REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SRCS})
 
 target_include_directories(${PROJECT_NAME} 
     PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}
-    )
+        ${DtkWidget_INCLUDE_DIRS}
+)
 
 target_link_libraries(
     ${PROJECT_NAME}
+    Qt5::Widgets
     DFM::framework
-    ${QtUseModules}
-    ${PkgUseModules}
-    )
+    ${DtkWidget_LIBRARIES}
+)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 

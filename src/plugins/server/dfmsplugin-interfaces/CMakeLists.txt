@@ -8,30 +8,28 @@ set(INTERFACES_H
     interfaces.h
     devicemanagerdbus.h
     dbus_adaptor/devicemanagerdbus_adaptor.h
-    )
+)
 
 set(INTERFACES_CPP
     interfaces.cpp
     devicemanagerdbus.cpp
     dbus_adaptor/devicemanagerdbus_adaptor.cpp
     interfaces.json
-    )
+)
 
 add_library(${PROJECT_NAME}
     SHARED
     ${INTERFACES_H}
     ${INTERFACES_CPP}
-    )
+)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    dfmservice-common
-    ${QtUseModules}
-    ${PkgUserModules}
-    )
+    DFMSERVICE::common
+)
 
 #install library file
 install(TARGETS
@@ -39,4 +37,4 @@ install(TARGETS
     LIBRARY
     DESTINATION
     ${DFM_PLUGIN_DIR}
-    )
+)

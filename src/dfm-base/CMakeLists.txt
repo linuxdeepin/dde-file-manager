@@ -2,10 +2,15 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(dfm-base)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dbusservice)
+if (NOT VERSION)
+    set(VERSION "1.0.0")
+endif()
 
-set(GLOBAL_H
-    dfm_base_global.h)
+if (NOT PROJECT_VERSION_MAJOR)
+    set(PROJECT_VERSION_MAJOR 0)
+endif()
+
+set(GLOBAL_H dfm_base_global.h)
 
 set(UTILS_H
     utils/threadcontainer.hpp
@@ -13,22 +18,21 @@ set(UTILS_H
     utils/iconutils.h
     utils/universalutils.h
     utils/finallyutil.h
-    )
+)
 
 set(UTILS_CPP
     utils/fileutils.cpp
     utils/universalutils.cpp
     utils/finallyutil.cpp
-    )
-
+)
 
 set(MIMETYPE_H
     mimetype/mimedatabase.h
-    )
+)
 
 set(MIMETYPE_H
     mimetype/mimedatabase.cpp
-    )
+)
 
 set(BASE_H
     base/private/abstractfilewatcher_p.h
@@ -50,7 +54,7 @@ set(BASE_H
     base/abstractfiledevice.h
     base/abstractfilemenu.h
     base/abstractjobhandler.h
-    )
+)
 
 set(BASE_CPP
     base/private/subscriber.cpp
@@ -64,7 +68,7 @@ set(BASE_CPP
     base/abstractfiledevice.cpp
     base/abstractfilemenu.cpp
     base/abstractjobhandler.cpp
-    )
+)
 
 set(LOCALFILE_H
     localfile/private/localdiriterator_p.h
@@ -75,7 +79,7 @@ set(LOCALFILE_H
     localfile/localfilemenu.h
     localfile/localfilewatcher.h
     localfile/localfilehandler.h
-    )
+)
 
 set(LOCALFILE_CPP
     localfile/localfileinfo.cpp
@@ -83,7 +87,7 @@ set(LOCALFILE_CPP
     localfile/localdiriterator.cpp
     localfile/localfilewatcher.cpp
     localfile/localfilehandler.cpp
-    )
+)
 
 set(WIDGETS_H
     widgets/dfmfileview/private/fileview_p.h
@@ -111,7 +115,7 @@ set(WIDGETS_H
     widgets/dfmfileview/itemdelegatehelper.h
     widgets/dfmdialog/errordialog.h
     widgets/dfmdialog/contextdialog.h
-    )
+)
 
 set(WIDGETS_CPP
     widgets/dfmfileview/private/traversaldirthread.cpp
@@ -135,27 +139,39 @@ set(WIDGETS_CPP
     widgets/dfmfileview/itemdelegatehelper.cpp
     widgets/dfmdialog/errordialog.cpp
     widgets/dfmdialog/contextdialog.cpp
-    )
+)
 
 set(APPLICATIONSERVICE_CPP
     application/application.cpp
     application/settings.cpp
-    )
+)
 
 set(APPLICATIONSERVICE_H
     application/application.h
     application/private/application_p.h
     application/settings.h
-    )
+)
 
 set(DBUSSERVICE_H
     dbusservice/dbus_interface/devicemanagerdbus_interface.h
     dbusservice/global_server_defines.h
-    )
+)
 
 set(DBUSSERVICE_CPP
     dbusservice/dbus_interface/devicemanagerdbus_interface.cpp
-    )
+)
+
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Concurrent REQUIRED)
+find_package(Qt5 COMPONENTS DBus REQUIRED)
+find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+pkg_search_module(util-dfm
+    REQUIRED
+    dfm-io dfm-mount
+    IMPORTED_TARGET
+)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -175,21 +191,45 @@ add_library(${PROJECT_NAME}
     ${DBUSSERVICE_H}
     ${DBUSSERVICE_CPP}
     ${QRCS}
-    )
+)
 
-target_link_libraries(
-    ${PROJECT_NAME}
-    ${QtUseModules}
-    ${PkgUseModules}
-    )
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    VERSION ${VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+)
+
+target_link_libraries( ${PROJECT_NAME}
+    Qt5::Widgets
+    Qt5::Concurrent
+    Qt5::DBus
+    PkgConfig::util-dfm
+    ${DtkWidget_LIBRARIES}
+)
 
 add_library(DFM::base ALIAS ${PROJECT_NAME})
 
 
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/../
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        dbusservice
+        ${DtkWidget_INCLUDEDIRS}
+        ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
+)
 #install library file
 install(TARGETS 
     ${PROJECT_NAME} 
     LIBRARY 
     DESTINATION 
     ${LIB_INSTALL_DIR}
-    )
+)
+
+# install head file
+install(DIRECTORY
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    DESTINATION include
+    FILES_MATCHING PATTERN "*.h"
+    PATTERN "private" EXCLUDE
+    PATTERN "resources" EXCLUDE  
+)

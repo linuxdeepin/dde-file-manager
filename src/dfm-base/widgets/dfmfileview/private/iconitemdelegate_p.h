@@ -22,7 +22,7 @@
 #ifndef ICONITEMDELEGATE_P_H
 #define ICONITEMDELEGATE_P_H
 
-#include "dfm_base_global.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include <QObject>
 #include <QMutex>

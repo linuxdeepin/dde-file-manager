@@ -5,7 +5,6 @@ cmake_minimum_required(VERSION 3.10)
 project(test-dde-file-manager)
 
 # 依赖包
-find_package(PkgConfig REQUIRED)
 find_package(DtkWidget REQUIRED)
 find_package(DtkGui REQUIRED)
 find_package(DtkCMake REQUIRED)

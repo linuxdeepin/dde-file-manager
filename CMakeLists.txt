@@ -22,58 +22,9 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 #    set(CMAKE_L_FLAGS "-fsanitize=thread")
 endif()
 
-
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
 #if no debug, can't out in code define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
-
-# Use Qt modules
-set(QtFindModules Core Gui Widgets Concurrent Svg Network Sql X11Extras Xml DBus)
-foreach(QtModule ${QtFindModules})
-    find_package(Qt5 COMPONENTS ${QtModule} REQUIRED)
-    # include qt module private include directors
-    include_directories(${Qt5${QtModule}_PRIVATE_INCLUDE_DIRS})
-    # can use target_link_libraries(xxx ${QtUseModules})
-    list(APPEND QtUseModules "Qt5::${QtModule}")
-    message("QtModule found ${QtModule} OK!")
-endforeach()
-
-#other not found libs kde from input for Qt
-set(KdeFindPackage KF5Codecs)
-foreach(KdeConfigModule ${KdeFindPackage})
-    find_package(${KdeConfigModule} REQUIRED)
-    if(${KdeConfigModule}_FOUND)
-        #can use target_link_libraries(xxx ${QtUseModules})
-        list(APPEND QtUseModules "${KdeConfigModule}")
-        include_directories(${${KdeConfigModule}_INCLUDE_DIRS})
-        include_directories(/usr/include/KF5/KCodecs/)
-    else()
-        message(FATAL_ERROR "NotFound ${KdeConfigModule}")
-    endif(${CMakeConfigModule}_FOUND)
-endforeach(KdeConfigModule)
-
-# Use PkgConfig modules
-# You can setting mini version for "glib-2.0>=2.10 gtk+-2.0" in the list
-set(PkgConfigFindModules dtkcore dtkwidget dtkgui gio-unix-2.0 dfm-io dfm-mount gsettings-qt)
-include(FindPkgConfig)
-foreach(PkgConfigModule ${PkgConfigFindModules})
-    pkg_check_modules(PkgUseModuleVal REQUIRED ${PkgConfigModule})
-    #can use target_link_libraries(xxx ${PkgUseModule})
-    list(APPEND PkgUseModules ${PkgUseModuleVal_LDFLAGS})
-    include_directories(${PkgUseModuleVal_INCLUDE_DIRS})
-    #    link_libraries(${PkgUseModuleVal_LIBRARIES})
-    #    link_directories(${PkgUseModuleVal_LINK_LIBRARIES})
-endforeach(PkgConfigModule)
-
-include_directories(${PROJECT_SOURCE_DIR}/src)
-
-#define service source dir
-set(COMMON_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/common)
-set(FILEMANAGER_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/filemanager)
-set(DESKTOP_SERVICE_DIR ${PROJECT_SOURCE_DIR}/src/services/desktop)
-#any sub dir can use common service
-include_directories(${COMMON_SERVICE_DIR})
-
-# Install settings
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX /usr)
@@ -81,7 +32,7 @@ endif()
 
 include(GNUInstallDirs)
 if(NOT DEFINED LIB_INSTALL_DIR)
-    set(LIB_INSTALL_DIR   ${CMAKE_INSTALL_FULL_LIBDIR})
+    set(LIB_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
 endif()
 
 if(NOT DEFINED DFM_PLUGIN_DIR)
