@@ -1805,18 +1805,23 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
     } else {
         m_urlsForDragEvent = event->mimeData()->urls();
     }
+    const DAbstractFileInfoPointer &rootFileInfo = DFileService::instance()->createFileInfo(this, rootUrl());
 
+    DUrl rootItemUrl = rootUrl();
+    if (rootFileInfo && rootItemUrl.isTaggedFile() && rootFileInfo->canRedirectionFileUrl())
+        rootItemUrl = rootFileInfo->redirectedFileUrl();
     for (const auto &url : m_urlsForDragEvent) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));
         if (!fileInfo) {
             event->ignore();
             return;
         }
-
-        bool isInSameDevice = DStorageInfo::inSameDevice(fileInfo->fileUrl(), model()->rootUrl());
-        if ((!isInSameDevice && !fileInfo->isReadable()) || (!DFMGlobal::keyCtrlIsPressed() && isInSameDevice && !fileInfo->canRename())) {
-            event->ignore();
-            return;
+        if (!rootUrl().isTaggedFile() || (rootUrl().isTaggedFile() && rootFileInfo && rootFileInfo->canRedirectionFileUrl())) {
+            bool isInSameDevice = DStorageInfo::inSameDevice(fileInfo->fileUrl(), rootItemUrl);
+            if ((!isInSameDevice && !fileInfo->isReadable()) || (!DFMGlobal::keyCtrlIsPressed() && isInSameDevice && !fileInfo->canRename())) {
+                event->ignore();
+                return;
+            }
         }
 
         //部分文件不能复制或剪切，需要在拖拽时忽略
@@ -1871,7 +1876,8 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 
                 return event->ignore();
             }
-            if (fileInfo->isDir()) {
+            if (fileInfo->isDir() && ((!fileInfo->fileUrl().isTaggedFile()) || (fileInfo->fileUrl().isTaggedFile() && fileInfo->canRedirectionFileUrl()))) {
+                DUrl dragMoveHoverIndexUrl = fileInfo->fileUrl().isTaggedFile() ? fileInfo->redirectedFileUrl() : fileInfo->fileUrl();
                 for (const auto &url : m_urlsForDragEvent) {
                     const DAbstractFileInfoPointer &dragFileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));
                     if (!dragFileInfo) {
@@ -1879,7 +1885,7 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
                         return;
                     }
 
-                    bool isInSameDevice = DStorageInfo::inSameDevice(dragFileInfo->fileUrl(), fileInfo->fileUrl());
+                    bool isInSameDevice = DStorageInfo::inSameDevice(dragFileInfo->fileUrl(), dragMoveHoverIndexUrl);
                     if ((!isInSameDevice && !dragFileInfo->isReadable()) || (!DFMGlobal::keyCtrlIsPressed() && isInSameDevice && !dragFileInfo->canRename())) {
                         event->ignore();
                         return;
@@ -1945,19 +1951,6 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
                     return event->setDropAction(Qt::CopyAction);
                 }
                 return event->ignore();
-            }
-        }
-    } else {
-        for (const auto &url : m_urlsForDragEvent) {
-            const DAbstractFileInfoPointer &dragFileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));
-            if (!dragFileInfo) {
-                event->ignore();
-            }
-
-            bool isInSameDevice = DStorageInfo::inSameDevice(dragFileInfo->fileUrl(), model()->rootUrl());
-            if ((!isInSameDevice && !dragFileInfo->isReadable()) || (!DFMGlobal::keyCtrlIsPressed() && isInSameDevice && !dragFileInfo->canRename())) {
-                event->ignore();
-                return;
             }
         }
     }
