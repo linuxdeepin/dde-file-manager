@@ -33,6 +33,7 @@
 #include <QSemaphore>
 #include <QThread>
 #include <QUrl>
+#include <QMutex>
 #include <QDebug>
 
 #include <functional>
@@ -411,27 +412,36 @@ class _TMP
 {
 public:
     template <typename Fun, typename... Args>
-    static ReturnType runInThread(QSemaphore *s, QThread *thread, Fun fun, Args&&... args)
+    static ReturnType runInThread(QSemaphore *s, QThread *thread, Fun fun, Args &&... args)
     {
         if (QThread::currentThread() == thread)
             return fun(std::forward<Args>(args)...);
 
         ReturnType result;
-        FunctionType proxyFun = [&] () {
-            result = fun(std::forward<Args>(args)...);
-            s->release();
-        };
+        QSharedPointer<bool> cancle(new bool(false));
+        QSharedPointer<QMutex> mtx(new QMutex);
+        FunctionCallProxy *proxy = new FunctionCallProxy(thread);
+        FunctionType *proxyFun = new FunctionType([&, proxy, cancle, mtx]() {
+            mtx->lock();
+            if (!*cancle.get()) {
+                result = fun(std::forward<Args>(args)...);
+                s->release();
+            }
+            mtx->unlock();
+            proxy->deleteLater();
+        });
 
-        FunctionCallProxy proxy(thread);
-        proxy.moveToThread(thread);
+        proxy->moveToThread(thread);
 
         if (thread->loopLevel() <= 0) {
             qWarning() << thread << ", the thread no event loop";
         }
 
-        proxy.callInLiveThread(&proxyFun);
+        proxy->callInLiveThread(proxyFun);
         s->acquire();
-
+        mtx->lock();
+        *cancle.get() = true;
+        mtx->unlock();
         return result;
     }
 };
@@ -440,25 +450,35 @@ class _TMP<void>
 {
 public:
     template <typename Fun, typename... Args>
-    static void runInThread(QSemaphore *s, QThread *thread, Fun fun, Args&&... args)
+    static void runInThread(QSemaphore *s, QThread *thread, Fun fun, Args &&... args)
     {
         if (QThread::currentThread() == thread)
             return fun(std::forward<Args>(args)...);
 
-        FunctionType proxyFun = [&] () {
-            fun(std::forward<Args>(args)...);
-            s->release();
-        };
+        QSharedPointer<bool> cancle(new bool(false));
+        QSharedPointer<QMutex> mtx(new QMutex);
+        FunctionCallProxy *proxy = new FunctionCallProxy(thread);
+        FunctionType *proxyFun = new FunctionType([&, proxy, cancle, mtx]() {
+            mtx->lock();
+            if (!*cancle.get()) {
+                fun(std::forward<Args>(args)...);
+                s->release();
+            }
+            mtx->unlock();
+            proxy->deleteLater();
+        });
 
-        FunctionCallProxy proxy(thread);
-        proxy.moveToThread(thread);
+        proxy->moveToThread(thread);
 
         if (thread->loopLevel() <= 0) {
             qWarning() << thread << ", the thread no event loop";
         }
 
-        proxy.callInLiveThread(&proxyFun);
+        proxy->callInLiveThread(proxyFun);
         s->acquire();
+        mtx->lock();
+        *cancle.get() = true;
+        mtx->unlock();
     }
 };
 
