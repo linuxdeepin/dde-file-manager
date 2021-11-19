@@ -25,8 +25,6 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <durl.h>
-
 #include <QtCore>
 #include <QPixmap>
 
@@ -87,23 +85,13 @@ QPixmap svgToHDPIPixmap(const QString& path, int w, int h);
  */
 class RemoteMountsStashManager {
 public:
-    static void initRemoteMounts();
     static QList<QVariantMap> remoteMounts();
     static void stashRemoteMount(const QString &mpt, const QString &displayName);
-    static void handleRemoveRemoteMountItem(const QString &key, const bool &isForce = true);
-    static void handleUnRemoveRemoteMountItem(const QString &key);
     static void removeRemoteMountItem(const QString &key);
     static void clearRemoteMounts();
     static void stashCurrentMounts();
     static QString getDisplayNameByConnUrl(const QString &url);
     static QString normalizeConnUrl(const QString &url);
-    static DUrl remoteUrl(const QString &key);
-    static bool isRemoteMounts(const QString &key);
-    static void setNeedremoveRemoteMountItem(const QString &key);
-    static bool isRemoteMountValid();
-    static QMap<QString, QVariantMap> remoteMountsInfos;
-    static QAtomicInteger<bool> isRemoteMountsInit;
-    static QList<QString> needRemoveRemoteMounts;
 };
 
 

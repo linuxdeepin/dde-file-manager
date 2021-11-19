@@ -988,6 +988,7 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
 {
     //找出url的rootfile路径，判断rootfile是否存在
     Q_D(DFileService);
+//    printStacktrace(6);    
 
     DUrl rooturl;
     QString urlpath = url.path();
@@ -1004,8 +1005,6 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
             return false;
         }
         rooturl = url;
-    } else if (urlpath.endsWith(SUFFIX_STASHED_REMOTE)) {
-        return false;
     } else {
         static QRegularExpression regExp(GVFS_MATCH_EX,
                                          QRegularExpression::DotMatchesEverythingOption

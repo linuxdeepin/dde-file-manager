@@ -24,7 +24,7 @@
 //fixed:CD display size error
 #include "views/dfmopticalmediawidget.h"
 #include "gvfs/gvfsmountmanager.h"
-#include "dfmapplication.h"
+
 #include "singleton.h"
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
@@ -39,14 +39,11 @@
 #include "dabstractfileinfo.h"
 #include "deviceinfoparser.h"
 #include "drootfilemanager.h"
-#include "utils.h"
+
 #include "views/computerview.h"
 #include "shutil/fileutils.h"
 #include "vault/vaulthelper.h"
 #include "computermodel.h"
-#include "app/define.h"
-#include "singleton.h"
-#include "app/filesignalmanager.h"
 
 #include <QtConcurrent>
 
@@ -168,20 +165,17 @@ ComputerModel::ComputerModel(QObject *parent)
         //使用分区工具，不显示磁盘问题，再刷一次
         DRootFileManager::instance()->startQuryRootFile();
 
-        connect(fileSignalManager, &FileSignalManager::requestRemoveRemoteStashSmbUrl, this, &ComputerModel::removeItem);
-
         auto addComputerItem = [this](const DUrl &url) {
             DAbstractFileInfoPointer fi = fileService->createFileInfo(this, url);
             addRootItem(fi);
         };
         m_watcher = DRootFileManager::instance()->rootFileWather();
-        connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::onHandleRemoveItem);
+        connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
         connect(m_watcher, &DAbstractFileWatcher::subfileCreated, this, [this, addComputerItem](const DUrl &url) {
             addComputerItem(url);
             if (url.path().contains("sr"))
                 emit opticalChanged();
         });
-
         connect(m_watcher, &DAbstractFileWatcher::fileAttributeChanged, this,[this](const DUrl &url) {
             int p = findItem(url);
             if (p >= m_items.size() || p < 0)
@@ -433,6 +427,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         }
         return QVariant::fromValue(bProgressVisible);
     }
+
     if (role == DataRoles::SizeRole) {
 
         bool bSizeVisible = true;
@@ -681,24 +676,6 @@ void ComputerModel::onOpticalChanged()
     thread.detach();
 }
 
-void ComputerModel::onHandleRemoveItem(const DUrl &url)
-{
-    removeItem(url);
-    if (RemoteMountsStashManager::isRemoteMountValid() && url.toString().endsWith(SUFFIX_GVFSMP)) {
-        DUrl fileUrl = url;
-        QString key = fileUrl.path().remove(QRegExp(QString(".") + SUFFIX_GVFSMP + "$"));
-        if (key.isEmpty())
-            return;
-        std::string stdStr = key.mid(1).toStdString();
-        key = QUrl::fromPercentEncoding(stdStr.data());
-        if (!RemoteMountsStashManager::isRemoteMounts(key))
-            return;
-        fileUrl.setPath(fileUrl.path().replace(SUFFIX_GVFSMP, SUFFIX_STASHED_REMOTE));
-        DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
-        addRootItem(fi);
-    }
-}
-
 void ComputerModel::getRootFile()
 {
     QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
@@ -736,15 +713,6 @@ void ComputerModel::addRootItem(const DAbstractFileInfoPointer &info)
         return;
     if (!Singleton<PathManager>::instance()->isVisiblePartitionPath(info))
         return;
-
-    // 处理smb挂载问题
-    DUrl url = info->fileUrl();
-    if (RemoteMountsStashManager::isRemoteMountValid() && FileUtils::isGvfsSuffix(url)) {
-        DUrl fileUrl = url;
-        fileUrl.setPath(fileUrl.path().replace(SUFFIX_GVFSMP, SUFFIX_STASHED_REMOTE));
-        removeItem(fileUrl);
-    }
-
 
 #ifdef SPLIT_APP_ENTRY
     auto splitterUrl = info->scheme() == DFMROOT_SCHEME

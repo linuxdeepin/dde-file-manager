@@ -27,7 +27,7 @@
 #include "dabstractfileinfo.h"
 #include "dabstractfilewatcher.h"
 #include "dfiledevice.h"
-#include "utils.h"
+
 #include "app/filesignalmanager.h"
 #include "app/define.h"
 #include "controllers/jobcontroller.h"
@@ -72,9 +72,6 @@ DRootFileManager::DRootFileManager(QObject *parent)
 {
     connect(fileSignalManager, &FileSignalManager::requestHideSystemPartition, this, &DRootFileManager::hideSystemPartition);
     connect(DFMApplication::instance(), &DFMApplication::reloadComputerModel, this, &DRootFileManager::hideSystemPartition);
-    connect(fileSignalManager, &FileSignalManager::requestRemoveRemoteStashSmbUrl, this, [this](DUrl url){
-        changeRootFile(url, false);
-    });
 }
 
 DRootFileManager::~DRootFileManager()
@@ -124,11 +121,6 @@ void DRootFileManager::changeRootFile(const DUrl &fileurl, const bool bcreate)
 {
     QMutexLocker lk(&d_ptr->rootfileMtx);
     if (bcreate) {
-        if (FileUtils::isGvfsSuffix(fileurl)) {
-            DUrl url = fileurl;
-            url.setPath(url.path().replace(SUFFIX_GVFSMP, SUFFIX_STASHED_REMOTE));
-            d_ptr->rootfilelist.remove(url);
-        }
         if (!d_ptr->rootfilelist.contains(fileurl)) {
             DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, fileurl);
             if (info && info->exists()) {
@@ -137,27 +129,10 @@ void DRootFileManager::changeRootFile(const DUrl &fileurl, const bool bcreate)
             }
         }
     } else {
+        qDebug() << "  remove   " << d_ptr->rootfilelist;
         if (d_ptr->rootfilelist.contains(fileurl)) {
             qInfo() << "  remove   " << fileurl;
             d_ptr->rootfilelist.remove(fileurl);
-            if (RemoteMountsStashManager::isRemoteMountValid() && FileUtils::isGvfsSuffix(fileurl)) {
-                DUrl url = fileurl;
-                QString key = url.path().remove(QRegExp(QString(".") + SUFFIX_GVFSMP + "$"));
-                if (key.isEmpty())
-                    return;
-                std::string stdStr = key.mid(1).toStdString();
-                key = QUrl::fromPercentEncoding(stdStr.data());
-                if (!RemoteMountsStashManager::isRemoteMounts(key))
-                    return;
-                url.setPath(url.path().replace(SUFFIX_GVFSMP, SUFFIX_STASHED_REMOTE));
-                if (!d_ptr->rootfilelist.contains(url)) {
-                    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
-                    if (info->exists()) {
-                        d_ptr->rootfilelist.insert(url, info);
-                        qInfo() << "  insert   " << url;
-                    }
-                }
-            }
         }
     }
 }
@@ -212,24 +187,9 @@ void DRootFileManager::startQuryRootFile()
     d_ptr->m_jobcontroller = fileService->getChildrenJob(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries);
 
     lk.unlock();
-    auto checkSameRemoteStash = [this](const DAbstractFileInfoPointer & chi) {
-        if (RemoteMountsStashManager::isRemoteMountValid()) {
-            if (FileUtils::isGvfsSuffix(chi->fileUrl()) || FileUtils::isRemoteSuffix(chi->fileUrl())) {
-                DUrl url = chi->fileUrl();
-                bool isGvfs = url.path().endsWith(SUFFIX_GVFSMP);
-                QString source = isGvfs ? SUFFIX_GVFSMP : SUFFIX_STASHED_REMOTE;
-                QString replaced =isGvfs ? SUFFIX_STASHED_REMOTE : SUFFIX_GVFSMP;
-                url.setPath(url.path().replace(source, replaced));
-                if (d_ptr->rootfilelist.contains(url))
-                    return true;
-            }
-        }
-        return false;
-    };
-    connect(d_ptr->m_jobcontroller, &JobController::addChildren, this, [this, checkSameRemoteStash](const DAbstractFileInfoPointer & chi) {
+
+    connect(d_ptr->m_jobcontroller, &JobController::addChildren, this, [this](const DAbstractFileInfoPointer & chi) {
         QMutexLocker locker(&d_ptr->rootfileMtx);
-        if (checkSameRemoteStash(chi))
-            return;
         if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
             d_ptr->rootfilelist.insert(chi->fileUrl(), chi);
             d_ptr->m_rootChanged = true;
@@ -238,11 +198,9 @@ void DRootFileManager::startQuryRootFile()
         }
     }, Qt::DirectConnection);
 
-    connect(d_ptr->m_jobcontroller, &JobController::addChildrenList, this, [this, checkSameRemoteStash](QList<DAbstractFileInfoPointer> ch) {
+    connect(d_ptr->m_jobcontroller, &JobController::addChildrenList, this, [this](QList<DAbstractFileInfoPointer> ch) {
         for (auto chi : ch) {
             QMutexLocker locker(&d_ptr->rootfileMtx);
-            if (checkSameRemoteStash(chi))
-                continue;
             if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
                 d_ptr->rootfilelist.insert(chi->fileUrl(), chi);
                 d_ptr->m_rootChanged = true;

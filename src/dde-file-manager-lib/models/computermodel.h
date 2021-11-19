@@ -108,7 +108,6 @@ public Q_SLOTS:
     void removeItem(const DUrl &url);
     void onGetRootFile(const DAbstractFileInfoPointer &chi);
     void onOpticalChanged();
-    void onHandleRemoveItem(const DUrl &url);
 
 Q_SIGNALS:
     void itemCountChanged(int nitems);

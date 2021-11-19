@@ -572,15 +572,6 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
 
     bool removed = Mounts.remove(qMount.mounted_root_uri());
     if (removed) {
-        // 触发关闭标签的信号
-        GFile *root = g_mount_get_root(mount);
-        char *path = g_file_get_path(root);
-        DUrl durl = DUrl::fromLocalFile(path);
-        if (qMount.mounted_root_uri().startsWith("smb://")) {
-            RemoteMountsStashManager::handleRemoveRemoteMountItem(path, false);
-        }
-        g_free(path);
-        g_object_unref(root);
 
         if (volume.isValid()) {
             QDiskInfo diskInfo = qVolumeToqDiskInfo(volume);
@@ -596,10 +587,18 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
             }
         }
 
-
+        // 触发关闭标签的信号
+        GFile *root = g_mount_get_root(mount);
+        char *path = g_file_get_path(root);
+        DUrl durl = DUrl::fromLocalFile(path);
+        g_free(path);
+        g_object_unref(root);
         emit fileSignalManager->requestCloseTab(durl);
 
-
+        if (qMount.mounted_root_uri().startsWith("smb://")) {
+            if (DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool())
+                emit DFMApplication::instance()->reloadComputerModel();
+        }
     }
 }
 
@@ -1818,21 +1817,6 @@ void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpoin
     succeeded = g_mount_unmount_with_operation_finish(G_MOUNT(object), res, &error);
 
     if (!succeeded) {
-        if (RemoteMountsStashManager::isRemoteMountValid()) {
-            char *local_mount_point = reinterpret_cast<char *>(user_data);
-            // 从缓存的Network节点中清理数据
-            GFile *root_file = g_mount_get_root(G_MOUNT(object));
-            char *root_uri = g_file_get_uri(root_file);
-            if (root_uri &&  local_mount_point) {
-                const QString &root_url = QFile::decodeName(root_uri);
-                if (root_url.startsWith("smb:"))
-                    RemoteMountsStashManager::handleUnRemoveRemoteMountItem(local_mount_point);
-                g_free(local_mount_point);
-            }
-            if (root_uri) g_free(root_uri);
-            if (root_file) g_object_unref(root_file);
-        }
-
         DDialog error_dilaog(tr("Cannot unmount the device"), QString(error->message));
 
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));

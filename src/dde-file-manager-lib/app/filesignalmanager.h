@@ -264,9 +264,6 @@ signals:
     /*mounted failed and remove need open windows*/
     void requestRemoveSmbUrl(const DUrl &url);
 
-    /*remove remote stashed smb item*/
-    void requestRemoveRemoteStashSmbUrl(const DUrl &url);
-
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString &srcFileName);

@@ -492,9 +492,6 @@ DUrl DFMRootFileInfo::redirectedFileUrl() const
             }
             return rootUrl;
         }
-    } else if (suffix() == SUFFIX_STASHED_REMOTE) {
-        auto key = RemoteMountsStashManager::normalizeConnUrl(filePath());
-        return RemoteMountsStashManager::remoteUrl(key);
     }
     return DUrl();
 }
