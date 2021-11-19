@@ -54,20 +54,23 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_PASSWORD_UNLOCK_WIDGET);
 
     setIcon(QIcon::fromTheme("dfm_vault"));
-    setFixedWidth(396);
+    setMinimumSize(396, 244);
 
     // 标题
     DLabel *pTitle = new DLabel(tr("Unlock File Vault"), this);
     AC_SET_ACCESSIBLE_NAME(pTitle, AC_VAULT_PASSWORD_UNLOCK_TITLE);
     QFont font = pTitle->font();
-    font.setPixelSize(18);
+    font.setPixelSize(14);
+
     pTitle->setFont(font);
     pTitle->setAlignment(Qt::AlignHCenter);
-
-    // 信息
-    DLabel *pMessage = new DLabel(tr("Verify your password"), this);
-    AC_SET_ACCESSIBLE_NAME(pMessage, AC_VAULT_PASSWORD_UNLOCK_CONTENT);
-    pMessage->setAlignment(Qt::AlignHCenter);
+    pTitle->setMargin(0);
+    // Set font color.
+    QPalette pal = pTitle->palette();
+    QColor color;
+    color.setRgbF(0, 0, 0, 0.9);
+    pal.setColor(QPalette::WindowText, color);
+    pTitle->setPalette(pal);
 
     m_forgetPassword = new DLabel(tr("Forgot password?"));
     AC_SET_ACCESSIBLE_NAME(m_forgetPassword, AC_VAULT_PASSWORD_UNLOCK_FORGETPASSWORD_BUTTON);
@@ -76,7 +79,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     m_forgetPassword->setFont(font);
     m_forgetPassword->installEventFilter(this);
     m_forgetPassword->setForegroundRole(DPalette::ColorType::LightLively);
-    if(VaultController::getVaultVersion())
+    if (VaultController::getVaultVersion())
         m_forgetPassword->show();
     else {
         m_forgetPassword->hide();
@@ -85,7 +88,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     // 密码编辑框
     m_passwordEdit = new DPasswordEdit(this);
     AC_SET_ACCESSIBLE_NAME(m_passwordEdit, AC_VAULT_PASSWORD_UNLOCK_EDIT);
-    m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
+    m_passwordEdit->lineEdit()->setPlaceholderText(tr("Input your password please"));
     m_passwordEdit->lineEdit()->installEventFilter(this);
     m_passwordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
@@ -107,14 +110,13 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     play1->addWidget(m_passwordEdit);
     play1->addWidget(m_tipsButton);
 
-    QHBoxLayout * play2 = new QHBoxLayout();
+    QHBoxLayout *play2 = new QHBoxLayout();
     play2->addStretch(1);
     play2->addWidget(m_forgetPassword);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(mainFrame);
     mainLayout->setMargin(0);
     mainLayout->addWidget(pTitle);
-    mainLayout->addWidget(pMessage);
     mainLayout->addLayout(play1);
     mainLayout->addLayout(play2);
 
@@ -124,7 +126,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     // 防止点击按钮后界面隐藏
     setOnButtonClickedClose(false);
 
-    QStringList btnList({tr("Cancel","button"), tr("Unlock","button")});
+    QStringList btnList({tr("Cancel", "button"), tr("Unlock", "button")});
     addButton(btnList[0], false);
     addButton(btnList[1], true, ButtonType::ButtonRecommend);
     getButton(1)->setEnabled(false);
@@ -145,7 +147,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     });
     connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
 
-    connect(static_cast<DFMVaultRetrievePassword*>(m_retrievePage), &DFMVaultRetrievePassword::signalReturn, this, &DFMVaultUnlockPages::onReturnUnlockedPage);
+    connect(static_cast<DFMVaultRetrievePassword *>(m_retrievePage), &DFMVaultRetrievePassword::signalReturn, this, &DFMVaultUnlockPages::onReturnUnlockedPage);
 }
 
 void DFMVaultUnlockPages::showEvent(QShowEvent *event)
@@ -170,7 +172,7 @@ void DFMVaultUnlockPages::showEvent(QShowEvent *event)
     }
 
     //! 根据保险箱版本判断是否在解锁页面显示忘记密码控件
-    if(VaultController::getVaultVersion())
+    if (VaultController::getVaultVersion())
         m_forgetPassword->show();
     else {
         m_forgetPassword->hide();
@@ -334,7 +336,7 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"));
             dialog.setTitle(errMsg);
-            dialog.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
+            dialog.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
             dialog.exec();
         }
 
@@ -350,10 +352,10 @@ void DFMVaultUnlockPages::onReturnUnlockedPage()
 
 bool DFMVaultUnlockPages::eventFilter(QObject *obj, QEvent *evt)
 {
-    if(obj == m_forgetPassword) {
-        if(evt->type() == QEvent::MouseButtonPress) {
-            QMouseEvent * mouseEvent = static_cast<QMouseEvent*>(evt);
-            if(mouseEvent->button() == Qt::LeftButton) {
+    if (obj == m_forgetPassword) {
+        if (evt->type() == QEvent::MouseButtonPress) {
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(evt);
+            if (mouseEvent->button() == Qt::LeftButton) {
                 this->hide();
                 m_retrievePage->show();
             }
