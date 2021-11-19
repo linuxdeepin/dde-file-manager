@@ -35,7 +35,8 @@ DFMBASE_BEGIN_NAMESPACE
  * \brief AbstractScreenProxy::AbstractScreenProxy
  * \param parent
  */
-AbstractScreenProxy::AbstractScreenProxy(QObject *parent) : QObject(parent)
+AbstractScreenProxy::AbstractScreenProxy(QObject *parent)
+    : QObject(parent)
 {
     eventShot = new QTimer(this);
     eventShot->setSingleShot(true);
@@ -53,7 +54,7 @@ DisplayMode AbstractScreenProxy::lastChangedMode() const
 void AbstractScreenProxy::appendEvent(AbstractScreenProxy::Event e)
 {
     qDebug() << "append event" << e << "current size" << (events.size() + 1);
-    //收集短时间内爆发出的事件，合并处理，优化响应速度
+    // 收集短时间内爆发出的事件，合并处理，优化响应速度
     events.insert(e, 0);
 
     eventShot->stop();

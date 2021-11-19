@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huangyu<huangyub@uniontech.com>
  *
@@ -19,25 +19,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASSERVICE_H
-#define CANVASSERVICE_H
+#ifndef CANVASFACTORY_H
+#define CANVASFACTORY_H
 
 #include "dfm_desktop_service_global.h"
 
 #include <dfm-framework/framework.h>
 
 DSB_D_BEGIN_NAMESPACE
-class CanvasService final : public dpf::PluginService, dpf::AutoServiceRegister<CanvasService>
+class CanvasFactory
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(CanvasService)
-    friend class dpf::QtClassFactory<dpf::PluginService>;
 public:
-    static QString name()
-    {
-        return "org.deepin.service.CanvasService";
-    }
+    CanvasFactory();
 };
 DSB_D_END_NAMESPACE
 
-#endif // CANVASSERVICE_H
+#endif   // CANVASFACTORY_H

@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huangyu<huangyub@uniontech.com>
+ * Author:     liqiang<liqianga@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,24 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ABSTRACTCANVASMODELGRID_H
-#define ABSTRACTCANVASMODELGRID_H
-
-#include "dfm-base/dfm_base_global.h"
-
-#include <QObject>
+#include "abstractfiletreater.h"
 
 DFMBASE_BEGIN_NAMESPACE
-class AbstractCanvasModelGrid : public QObject
+AbstractFileTreater::AbstractFileTreater(QObject *parent)
+    : QObject(parent)
 {
-    Q_OBJECT
-public:
-    explicit AbstractCanvasModelGrid(QObject *parent = nullptr);
+}
 
-signals:
-
-public slots:
-};
 DFMBASE_END_NAMESPACE
-
-#endif // ABSTRACTCANVASMODELGRID_H

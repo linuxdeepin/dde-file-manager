@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huangyu<huangyub@uniontech.com>
  *
@@ -25,14 +25,31 @@
 #include "dfm-base/dfm_base_global.h"
 
 #include <QStyledItemDelegate>
+#include <QTextOption>
+#include <QTextLayout>
 
 DFMBASE_BEGIN_NAMESPACE
+class AbstractCanvas;
 class AbstractCanvasDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit AbstractCanvasDelegate(QObject *parent = nullptr);
+    explicit AbstractCanvasDelegate(AbstractCanvas *parent = nullptr);
+    ~AbstractCanvasDelegate() {}
+
+public:
+    static void paintCircleList(QPainter *painter, QRectF boundingRect, qreal diameter, const QList<QColor> &colors, const QColor &borderColor);
+    static void elideText(QTextLayout *layout, const QSizeF &size,
+                          QTextOption::WrapMode wordWrap,
+                          Qt::TextElideMode mode, qreal lineHeight,
+                          int flags = 0, QStringList *lines = nullptr,
+                          QPainter *painter = nullptr, QPointF offset = QPoint(0, 0),
+                          const QColor &shadowColor = QColor(),
+                          const QPointF &shadowOffset = QPointF(0, 1),
+                          const QBrush &background = QBrush(Qt::NoBrush),
+                          qreal backgroundRadius = 4,
+                          QList<QRectF> *boundingRegion = nullptr);
 };
 DFMBASE_END_NAMESPACE
 
-#endif // ABSTRACTCANVASDELEGATE_H
+#endif   // ABSTRACTCANVASDELEGATE_H

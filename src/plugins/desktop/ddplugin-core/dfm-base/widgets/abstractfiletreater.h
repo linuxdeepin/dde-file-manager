@@ -1,10 +1,9 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huangyu<huangyub@uniontech.com>
+ * Author:     liqiang<liqianga@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,24 +18,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ABSTRACTCANVASMODELWATCHER_H
-#define ABSTRACTCANVASMODELWATCHER_H
+#ifndef ABSTRACTFILETREATER_H
+#define ABSTRACTFILETREATER_H
 
+#include "dfm_desktop_service_global.h"
 #include "dfm-base/dfm_base_global.h"
 
 #include <QObject>
 
 DFMBASE_BEGIN_NAMESPACE
-class AbstractCanvasModelWatcher : public QObject
+class AbstractFileTreater : public QObject
 {
     Q_OBJECT
 public:
-    explicit AbstractCanvasModelWatcher(QObject *parent = nullptr);
-
-signals:
-
-public slots:
+    explicit AbstractFileTreater(QObject *parent = nullptr);
 };
 DFMBASE_END_NAMESPACE
 
-#endif   // ABSTRACTCANVASMODELWATCHER_H
+#endif   // ABSTRACTFILETREATER_H

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huangyu<huangyub@uniontech.com>
  *
@@ -31,8 +31,36 @@ class AbstractCanvasModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
+    // todo: 待剔除非桌面使用部分
+    enum Roles {
+        FileIconRole = Qt::DecorationRole,
+        FilePathRole = Qt::UserRole + 1,
+        FileNameRole = Qt::UserRole + 2,
+        FileSizeRole = Qt::UserRole + 3,
+        FileMimeTypeRole = Qt::UserRole + 4,
+        FileOwnerRole = Qt::UserRole + 5,
+        FileLastModifiedRole = Qt::UserRole + 6,
+        FileLastReadRole = Qt::UserRole + 7,
+        FileCreatedRole = Qt::UserRole + 8,
+        FileDisplayNameRole = Qt::UserRole + 9,
+        FilePinyinName = Qt::UserRole + 10,
+        ExtraProperties = Qt::UserRole + 11,
+        FileBaseNameRole = Qt::UserRole + 12,
+        FileSuffixRole = Qt::UserRole + 13,
+        FileNameOfRenameRole = Qt::UserRole + 14,
+        FileBaseNameOfRenameRole = Qt::UserRole + 15,
+        FileSuffixOfRenameRole = Qt::UserRole + 16,
+        FileSizeInKiloByteRole = Qt::UserRole + 17,
+        FileLastModifiedDateTimeRole = Qt::UserRole + 18,
+        FileIconModelToolTipRole = Qt::UserRole + 19,
+        FileLastReadDateTimeRole = Qt::UserRole + 20,
+        FileCreatedDateTimeRole = Qt::UserRole + 21,
+        FileUserRole = Qt::UserRole + 99,
+        UnknowRole = Qt::UserRole + 999
+    };
+
     explicit AbstractCanvasModel(QObject *parent = nullptr);
 };
 DFMBASE_END_NAMESPACE
 
-#endif // ABSTRACTCANVASMODEL_H
+#endif   // ABSTRACTCANVASMODEL_H

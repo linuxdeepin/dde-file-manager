@@ -19,24 +19,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ABSTRACTCANVASMODELWATCHER_H
-#define ABSTRACTCANVASMODELWATCHER_H
+#include "canvasfactory.h"
 
-#include "dfm-base/dfm_base_global.h"
+DSB_D_BEGIN_NAMESPACE
 
-#include <QObject>
-
-DFMBASE_BEGIN_NAMESPACE
-class AbstractCanvasModelWatcher : public QObject
+CanvasFactory::CanvasFactory()
 {
-    Q_OBJECT
-public:
-    explicit AbstractCanvasModelWatcher(QObject *parent = nullptr);
+}
 
-signals:
-
-public slots:
-};
-DFMBASE_END_NAMESPACE
-
-#endif   // ABSTRACTCANVASMODELWATCHER_H
+DSB_D_END_NAMESPACE

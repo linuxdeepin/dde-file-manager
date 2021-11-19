@@ -19,19 +19,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ABSTRACTCANVASMODELWATCHER_H
-#define ABSTRACTCANVASMODELWATCHER_H
+#ifndef ABSTRACTCANVASGRIDMANAGER_H
+#define ABSTRACTCANVASGRIDMANAGER_H
 
+#include "dfm_desktop_service_global.h"
 #include "dfm-base/dfm_base_global.h"
 
 #include <QObject>
 
 DFMBASE_BEGIN_NAMESPACE
-class AbstractCanvasModelWatcher : public QObject
+class AbstractCanvasGridManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit AbstractCanvasModelWatcher(QObject *parent = nullptr);
+    explicit AbstractCanvasGridManager(QObject *parent = nullptr);
 
 signals:
 
@@ -39,4 +40,4 @@ public slots:
 };
 DFMBASE_END_NAMESPACE
 
-#endif   // ABSTRACTCANVASMODELWATCHER_H
+#endif   // ABSTRACTCANVASGRIDMANAGER_H

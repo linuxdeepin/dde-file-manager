@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huangyu<huangyub@uniontech.com>
  *
@@ -19,14 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractcanvasmodelgrid.h"
+#include "abstractcanvasgridmanager.h"
 
 DFMBASE_BEGIN_NAMESPACE
 
-AbstractCanvasModelGrid::AbstractCanvasModelGrid(QObject *parent)
+AbstractCanvasGridManager::AbstractCanvasGridManager(QObject *parent)
     : QObject(parent)
 {
-
 }
 
 DFMBASE_END_NAMESPACE

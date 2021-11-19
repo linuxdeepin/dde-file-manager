@@ -1,10 +1,9 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huangyu<huangyub@uniontech.com>
+ * Author:     liqiang<liqianga@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,24 +18,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ABSTRACTCANVASMODELWATCHER_H
-#define ABSTRACTCANVASMODELWATCHER_H
+#ifndef DEFAULTDESKTOPFILEINFO_P_H
+#define DEFAULTDESKTOPFILEINFO_P_H
 
-#include "dfm-base/dfm_base_global.h"
+#include "defaultdesktopfileinfo.h"
 
-#include <QObject>
-
-DFMBASE_BEGIN_NAMESPACE
-class AbstractCanvasModelWatcher : public QObject
+DSB_D_BEGIN_NAMESPACE
+class DefaultDesktopFileInfoPrivate
 {
-    Q_OBJECT
 public:
-    explicit AbstractCanvasModelWatcher(QObject *parent = nullptr);
+    DefaultDesktopFileInfoPrivate() {}
+    ~DefaultDesktopFileInfoPrivate() {}
 
-signals:
-
-public slots:
+public:
+    mutable QMimeType mimeType;
+    mutable QMimeDatabase::MatchMode mimeTypeMode;
+    mutable QIcon icon;
+    mutable bool iconFromTheme { false };
+    // 小于0时表示此值未初始化，0表示不支持，1表示支持
+    mutable qint8 hasThumbnail { -1 };
+    QString iconName;
 };
-DFMBASE_END_NAMESPACE
 
-#endif   // ABSTRACTCANVASMODELWATCHER_H
+DSB_D_END_NAMESPACE
+#endif   // DEFAULTDESKTOPFILEINFO_P_H

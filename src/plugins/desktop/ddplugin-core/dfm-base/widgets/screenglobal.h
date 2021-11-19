@@ -40,4 +40,4 @@ typedef QSharedPointer<AbstractScreen> ScreenPointer;
 
 DFMBASE_END_NAMESPACE
 
-#endif // SCREENGLOBAL_H
+#endif   // SCREENGLOBAL_H

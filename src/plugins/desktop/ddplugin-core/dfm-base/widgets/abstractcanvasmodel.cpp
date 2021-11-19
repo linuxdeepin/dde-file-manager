@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huangyu<huangyub@uniontech.com>
  *
@@ -26,7 +26,6 @@ DFMBASE_BEGIN_NAMESPACE
 AbstractCanvasModel::AbstractCanvasModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
-
 }
 
 DFMBASE_END_NAMESPACE

@@ -19,24 +19,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ABSTRACTCANVASMODELWATCHER_H
-#define ABSTRACTCANVASMODELWATCHER_H
+#ifndef CANVASSERVICE_H
+#define CANVASSERVICE_H
 
-#include "dfm-base/dfm_base_global.h"
+#include "dfm_desktop_service_global.h"
+#include "canvasfactory.h"
+#include "dfm-base/widgets/abstractcanvas.h"
+#include "dfm-base/widgets/abstractscreen.h"
+#include "canvasviewmanager.h"
 
-#include <QObject>
+#include <dfm-framework/framework.h>
 
-DFMBASE_BEGIN_NAMESPACE
-class AbstractCanvasModelWatcher : public QObject
+DSB_D_BEGIN_NAMESPACE
+class CanvasService final : public dpf::PluginService, dpf::AutoServiceRegister<CanvasService>
 {
     Q_OBJECT
+    Q_DISABLE_COPY(CanvasService)
+
+    friend class dpf::QtClassFactory<dpf::PluginService>;
+    friend class ::Core;
+    explicit CanvasService(QObject *parent = nullptr);
+
 public:
-    explicit AbstractCanvasModelWatcher(QObject *parent = nullptr);
+    static QString name()
+    {
+        return "org.deepin.service.CanvasService";
+    }
 
-signals:
-
-public slots:
+private:
+    dfmbase::AbstractCanvasManager *canvasMgrProxy { nullptr };
 };
-DFMBASE_END_NAMESPACE
+DSB_D_END_NAMESPACE
 
-#endif   // ABSTRACTCANVASMODELWATCHER_H
+#endif   // CANVASSERVICE_H

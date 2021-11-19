@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huangyu<huangyub@uniontech.com>
  *
@@ -20,3 +20,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "canvasservice.h"
+#include "defaultfiletreater.h"
+
+DSB_D_BEGIN_NAMESPACE
+
+CanvasService::CanvasService(QObject *parent)
+    : PluginService(parent), AutoServiceRegister<CanvasService>()
+{
+    DefaultFileTreaterCt->init();
+    canvasMgrProxy = new CanvasViewManager(this);
+
+    // todo background signal
+}
+
+DSB_D_END_NAMESPACE

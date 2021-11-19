@@ -29,6 +29,13 @@ QStringList FileEventReceiver::topics()
     return QStringList() << TOPIC_FILE_EVENT; //订阅主题
 }
 
+FileEventReceiver::FileEventReceiver(QObject *parent)
+    : dpf::EventHandler (parent)
+    , AutoEventHandlerRegister<FileEventReceiver>()
+{
+
+}
+
 void FileEventReceiver::eventProcess(const dpf::Event &event)
 {
     if (event.topic() == TOPIC_FILE_EVENT) {

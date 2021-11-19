@@ -60,13 +60,17 @@ static bool pluginsLoad()
     // set plugin iid from qt style
     lifeCycle.setPluginIID(FM_PLUGIN_INTERFACE);
 
-    QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
-    if (!QDir(pluginsDir).exists()) {
+    QDir dir(qApp->applicationDirPath());
+    QString pluginsDir;
+    if (!dir.cd("../../plugins/")) {
+        qInfo() << QString("Path does not exist, use path : %1").arg(DFM_PLUGIN_PATH);
         pluginsDir = DFM_PLUGIN_PATH;
+    } else {
+        pluginsDir = dir.absolutePath();
     }
     qDebug() << "using plugins dir:" << pluginsDir;
 
-    lifeCycle.setPluginPaths({pluginsDir});
+    lifeCycle.setPluginPaths({ pluginsDir });
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();

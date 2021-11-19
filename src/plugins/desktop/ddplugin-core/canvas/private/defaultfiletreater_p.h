@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huangyu<huangyub@uniontech.com>
+ * Author:     liqiang<liqianga@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,19 +18,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASFACTORY_H
-#define CANVASFACTORY_H
+#ifndef DEFAULTFILETREATER_P_H
+#define DEFAULTFILETREATER_P_H
 
-#include "dfm_desktop_service_global.h"
-
-#include <dfm-framework/framework.h>
+#include "defaultfiletreater.h"
 
 DSB_D_BEGIN_NAMESPACE
-class CanvasFactory
+
+class DefaultFileTreaterPrivate
 {
 public:
-    CanvasFactory();
-};
-DSB_D_END_NAMESPACE
+    explicit DefaultFileTreaterPrivate(DefaultFileTreater *qq)
+        : q(qq) {}
 
-#endif // CANVASFACTORY_H
+public:
+    QList<DFMDesktopFileInfoPointer> fileList;
+    QMap<QString, DFMDesktopFileInfoPointer> fileHashTable;
+    QString homePath;
+    bool isDone { false };
+    DefaultFileTreater *q { nullptr };
+};
+
+DSB_D_END_NAMESPACE
+#endif   // DEFAULTFILETREATER_P_H

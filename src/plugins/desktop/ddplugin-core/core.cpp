@@ -27,8 +27,9 @@
 
 #include "wallpaperservice.h"
 #include "screenservice.h"
-#include "canvasservice.h"
 #include "backgroundservice.h"
+#include "canvasservice.h"
+#include "defaultdesktopfileinfo.h"
 
 #include "dfm-base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
@@ -62,6 +63,12 @@ void registerAllService()
         qCritical() << errStr;
         abort();
     }
+
+    auto &ctxCanvas = dpfInstance.serviceContext();
+    if (!ctxCanvas.load(CanvasService::name(), &errStr)) {
+        qCritical() << errStr;
+        abort();
+    }
 }
 
 void registerFileSystem()
@@ -71,6 +78,13 @@ void registerFileSystem()
                         StandardPaths::location(StandardPaths::DesktopPath),
                         QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DesktopPath)),
                         false);
+    UrlRoute::regScheme({ "defaultdesktop" },
+                        StandardPaths::location(StandardPaths::DesktopPath),
+                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DesktopPath)),
+                        false);
+
+    QString desktopScheme{"defaultdesktop"};
+    InfoFactory::regClass<DefaultDesktopFileInfo>(desktopScheme);
 }
 
 void Core::initialize()

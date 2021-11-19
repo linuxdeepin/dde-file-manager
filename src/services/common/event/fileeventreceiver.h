@@ -27,7 +27,7 @@ class FileEventReceiver final : public dpf::EventHandler, dpf::AutoEventHandlerR
 public:
     static EventHandler::Type type();
     static QStringList topics();
-    explicit FileEventReceiver() : AutoEventHandlerRegister<FileEventReceiver>() {}
+    explicit FileEventReceiver(QObject *parent = nullptr);
     virtual void eventProcess(const dpf::Event &event) override;
 };
 

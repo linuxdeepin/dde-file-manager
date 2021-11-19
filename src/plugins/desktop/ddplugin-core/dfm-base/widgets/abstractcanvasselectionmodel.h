@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huangyu<huangyub@uniontech.com>
  *
@@ -35,4 +35,4 @@ public:
 };
 DFMBASE_END_NAMESPACE
 
-#endif // ABSTRACTCANVASSELECTIONMODEL_H
+#endif   // ABSTRACTCANVASSELECTIONMODEL_H

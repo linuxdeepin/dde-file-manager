@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huangyu<huangyub@uniontech.com>
  *
@@ -31,7 +31,12 @@ class AbstractCanvas : public QAbstractItemView
     Q_OBJECT
 public:
     explicit AbstractCanvas(QWidget *parent = nullptr);
+    virtual ~AbstractCanvas() {}
+    virtual void setScreenNum(const int screenNum) = 0;
+    virtual void setScreenName(const QString screenNum) = 0;
+    virtual int getScreenNum() = 0;
+    virtual QString getScreenName() = 0;
 };
 DFMBASE_END_NAMESPACE
 
-#endif // ABSTRACTCANVAS_H
+#endif   // ABSTRACTCANVAS_H
