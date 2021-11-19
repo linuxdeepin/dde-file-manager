@@ -41,6 +41,8 @@ private:
 public slots:
     void updatePosition();
     void updateAuthorizationState();
+private:
+    void onActiveStateFinished();
 
 private:
     QString m_configFile;
@@ -53,7 +55,8 @@ private:
     int m_maskWidth;
     int m_maskHeight;
 
-    std::unique_ptr<ComDeepinLicenseInterface> m_licenseInterface;
+    QScopedPointer<ComDeepinLicenseInterface> m_licenseInterface;
+    QScopedPointer<QDBusInterface> m_licenseProp;
 };
 
 #endif // WATERMASKFRAME_H

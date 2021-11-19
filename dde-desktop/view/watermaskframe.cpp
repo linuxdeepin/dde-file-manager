@@ -30,16 +30,22 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent) :
     m_configFile(fileName)
 {
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    m_licenseInterface = std::unique_ptr<ComDeepinLicenseInterface> { new ComDeepinLicenseInterface {
-            "com.deepin.license",
-            "/com/deepin/license/Info",
-            QDBusConnection::systemBus()
-        }
-    };
+    qInfo() << "create ComDeepinLicenseInterface...";
+    m_licenseInterface.reset(new ComDeepinLicenseInterface(
+                                 "com.deepin.license",
+                                 "/com/deepin/license/Info",
+                                 QDBusConnection::systemBus()));
+    QObject::connect(m_licenseInterface.get(), &ComDeepinLicenseInterface::LicenseStateChange,
+                     this, &WaterMaskFrame::updateAuthorizationState);
 
-    if (m_licenseInterface) {
-        QObject::connect(m_licenseInterface.get(), &ComDeepinLicenseInterface::LicenseStateChange, this, &WaterMaskFrame::updateAuthorizationState);
-    }
+    qInfo() << "create /com/deepin/license/Info org.freedesktop.DBus.Properties...";
+    //使用异步调用访问接口的方式读取授权状态
+    m_licenseProp.reset(new QDBusInterface("com.deepin.license",
+                                           "/com/deepin/license/Info",
+                                           "org.freedesktop.DBus.Properties",
+                                           QDBusConnection::systemBus()));
+    qInfo() << "interface inited.";
+
 
     m_logoLabel = new QLabel(this);
     m_textLabel = new QLabel(this);
@@ -231,7 +237,7 @@ void WaterMaskFrame::initUI()
         const QSize &mask_image_size = mask_image_reader.size();
 
         if (maskLogoUri.endsWith(".svg") || (mask_image_size.width() >= mask_size.width()
-                                             && mask_image_size.height() >= mask_image_size.height())) {
+                                             && mask_image_size.height() >= mask_size.height())) {
             mask_image_reader.setScaledSize(mask_size);
         } else {
             mask_image_reader.setScaledSize(QSize(maskLogoWidth, maskLogoHeight));
@@ -245,24 +251,13 @@ void WaterMaskFrame::initUI()
     }
 
     if(isNeedState()){
-        qInfo() << "get active state from com.deepin.license.Info";
-        ActiveState stateType = static_cast<ActiveState>(m_licenseInterface->AuthorizationState());
-        qInfo() << "ActiveState:" << stateType;
-        switch (stateType) {
-        case Unauthorized:
-        case AuthorizedLapse:
-        case TrialExpired:
-            m_textLabel->setText(tr("Not authorized"));
-            break;
-        case Authorized:
-            //2020-07-06 需求变更，已授权不显示
-            //m_textLabel->setText(tr("authorized"));
-            m_textLabel->setText("");
-            break;
-        case TrialAuthorized:
-            m_textLabel->setText(tr("In trial period"));
-            break;
-        }
+        QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(
+                    m_licenseProp->asyncCall(QStringLiteral("Get"),
+                                             QString("com.deepin.license.Info"),
+                                             QString("AuthorizationState")), this);
+
+        connect(watcher, &QDBusPendingCallWatcher::finished, this, &WaterMaskFrame::onActiveStateFinished, Qt::QueuedConnection);
+        qInfo() << "asyncCall Get com.deepin.license.Info AuthorizationState";
     }else {
         m_textLabel->setText("");
     }
@@ -345,5 +340,43 @@ void WaterMaskFrame::updateAuthorizationState()
     bool isConfigFileExist = checkConfigFile(m_configFile);
     if (isConfigFileExist) {
         loadConfig(m_configFile);
+    }
+}
+
+void WaterMaskFrame::onActiveStateFinished()
+{
+    QDBusPendingCallWatcher *watcher = qobject_cast<QDBusPendingCallWatcher *>(sender());
+    if (!watcher) {
+        qWarning() << "invaild watcher...";
+        return;
+    }
+    watcher->deleteLater();
+
+    QDBusPendingReply<QVariant> reply = *watcher;
+    auto errorType = reply.error().type();
+    if (errorType != QDBusError::NoError) {
+        qWarning() << "get ActiveState error:" << errorType << QDBusError::errorString(errorType);
+        return;
+    }
+
+    int stateType = reply.value().toInt();
+    qInfo() << "reply ActiveState is" << stateType;
+
+    switch (stateType) {
+    case Unauthorized:
+    case AuthorizedLapse:
+    case TrialExpired:
+        m_textLabel->setText(tr("Not authorized"));
+        break;
+    case Authorized:
+        //2020-07-06 需求变更，已授权不显示
+        //m_textLabel->setText(tr("authorized"));
+        m_textLabel->setText("");
+        break;
+    case TrialAuthorized:
+        m_textLabel->setText(tr("In trial period"));
+        break;
+    default:
+        qWarning() << "unkown active state:" << stateType;
     }
 }
