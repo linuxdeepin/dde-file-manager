@@ -704,8 +704,14 @@ void DIconItemDelegate::paint(QPainter *painter,
     /// init file name geometry
     QRectF label_rect = opt.rect;
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
-    label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING - 2 * backgroundMargin - ICON_MODE_BACK_RADIUS);
-    label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS / 2);
+    if (isCanvas) {
+        label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING);
+        label_rect.moveLeft(label_rect.left() + TEXT_PADDING);
+    } else {
+        label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING - 2 * backgroundMargin - ICON_MODE_BACK_RADIUS);
+        label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS / 2);
+    }
+
     //限制当前文字在圆角背景之内，否则字体将超出背景绘制框
     label_rect.setBottom(path.boundingRect().toRect().bottom());
 
@@ -1130,9 +1136,13 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     QRect label_rect = option.rect;
     bool isCanvas = parent()->property("isCanvasViewHelper").toBool();
     int backgroundMargin = isCanvas ? 0 : COLUMU_PADDING;
-
-    label_rect.setWidth(label_rect.width() - 2 * TEXT_PADDING - 2 * backgroundMargin - ICON_MODE_BACK_RADIUS);
-    label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS / 2);
+    if (isCanvas) {
+        label_rect.setWidth(label_rect.width() - 2 * TEXT_PADDING);
+        label_rect.moveLeft(label_rect.left() + TEXT_PADDING);
+    } else {
+        label_rect.setWidth(label_rect.width() - 2 * TEXT_PADDING - 2 * backgroundMargin - ICON_MODE_BACK_RADIUS);
+        label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS / 2);
+    }
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
 
     QStyleOptionViewItem opt = option;
