@@ -136,7 +136,8 @@ void DFMRightDetailView::initUI()
 
     initTagWidget();
 
-    d->mainLayout->addStretch();
+    // 默认值在此场景下无效
+    d->mainLayout->addStretch(9999);
 
     mainFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     d->scrollArea->setWidget(mainFrame);

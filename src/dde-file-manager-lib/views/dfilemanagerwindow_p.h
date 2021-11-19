@@ -67,6 +67,8 @@ public:
     void setRenameBarVisible(bool visible);
     void resetRenameBar();
     void storeUrlListToRenameBar(const QList<DUrl> &list) noexcept;
+    void updateSelectUrl();
+    void createRightDetailViewHolder();
     /**
      * @brief moveVaultPath 移动保险箱存储路径
      * @return 返回REMOVEOK移动成功，REMOVENO失败，EXIST文件不存在
@@ -78,6 +80,7 @@ public:
     QFrame *rightView { nullptr };
     DFMRightDetailView *detailView { nullptr };
     QFrame *rightDetailViewHolder { nullptr };
+    QHBoxLayout *midLayout { nullptr };
     QVBoxLayout *rightViewLayout { nullptr };
     DToolBar *toolbar{ nullptr };
     TabBar *tabBar { nullptr };

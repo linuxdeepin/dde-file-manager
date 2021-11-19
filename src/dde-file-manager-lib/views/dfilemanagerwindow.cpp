@@ -618,6 +618,38 @@ void DFileManagerWindowPrivate::storeUrlListToRenameBar(const QList<DUrl> &list)
     renameBar->storeUrlList(list);
 }
 
+void DFileManagerWindowPrivate::updateSelectUrl()
+{
+    DFileView *fv = dynamic_cast<DFileView *>(currentView);
+    if (detailView && fv) {
+        detailView->setUrl(fv->selectedUrls().value(0, fv->rootUrl()));
+        if (fv->selectedIndexCount() == 0)
+            detailView->setTagWidgetVisible(false);
+    }
+}
+
+void DFileManagerWindowPrivate::createRightDetailViewHolder()
+{
+    rightDetailViewHolder = new QFrame;
+    rightDetailViewHolder->setObjectName("rightviewHolder");
+    AC_SET_ACCESSIBLE_NAME(rightDetailViewHolder, AC_DM_RIGHT_VIEW_HOLDER);
+    rightDetailViewHolder->setAutoFillBackground(true);
+    rightDetailViewHolder->setBackgroundRole(QPalette::ColorRole::Base);
+    rightDetailViewHolder->setFixedWidth(320);
+    QHBoxLayout *rvLayout = new QHBoxLayout(rightDetailViewHolder);
+    rvLayout->setMargin(0);
+
+    detailView = new DFMRightDetailView(currentView ? currentView->rootUrl() : DUrl());
+    QFrame *rightDetailVLine = new QFrame;
+    AC_SET_OBJECT_NAME(rightDetailVLine, AC_DM_RIGHT_VIEW_DETAIL_VLINE);
+    AC_SET_ACCESSIBLE_NAME(rightDetailVLine, AC_DM_RIGHT_VIEW_DETAIL_VLINE);
+    rightDetailVLine->setFrameShape(QFrame::VLine);
+    rvLayout->addWidget(rightDetailVLine);
+    rvLayout->addWidget(detailView, 1);
+    midLayout->addWidget(rightDetailViewHolder, 1);
+    rightDetailViewHolder->setVisible(false); //不显示先
+}
+
 DFileManagerWindow::DFileManagerWindow(QWidget *parent)
     : DFileManagerWindow(DUrl(), parent)
 {
@@ -1378,34 +1410,15 @@ void DFileManagerWindow::initCentralWidget()
     QVBoxLayout *mainLayout = new QVBoxLayout;
 
     QWidget *midWidget = new QWidget;
-    QHBoxLayout *midLayout = new QHBoxLayout;
+    d->midLayout = new QHBoxLayout;
     AC_SET_OBJECT_NAME(midWidget, AC_VIEW_MID_WIDGET);
     AC_SET_ACCESSIBLE_NAME(midWidget, AC_VIEW_MID_WIDGET);
 
-    midWidget->setLayout(midLayout);
+    midWidget->setLayout(d->midLayout);
     //! lixiang start 设置后显示空间会大些
-    midLayout->setContentsMargins(0, 0, 0, 0);
+    d->midLayout->setContentsMargins(0, 0, 0, 0);
     //! lixiang end
-    midLayout->addWidget(d->splitter);
-
-    d->rightDetailViewHolder = new QFrame;
-    d->rightDetailViewHolder->setObjectName("rightviewHolder");
-    AC_SET_ACCESSIBLE_NAME(d->rightDetailViewHolder, AC_DM_RIGHT_VIEW_HOLDER);
-    d->rightDetailViewHolder->setAutoFillBackground(true);
-    d->rightDetailViewHolder->setBackgroundRole(QPalette::ColorRole::Base);
-    d->rightDetailViewHolder->setFixedWidth(320);
-    QHBoxLayout *rvLayout = new QHBoxLayout(d->rightDetailViewHolder);
-    rvLayout->setMargin(0);
-
-    d->detailView = new DFMRightDetailView(currentUrl());
-    QFrame *rightDetailVLine = new QFrame;
-    AC_SET_OBJECT_NAME(rightDetailVLine, AC_DM_RIGHT_VIEW_DETAIL_VLINE);
-    AC_SET_ACCESSIBLE_NAME(rightDetailVLine, AC_DM_RIGHT_VIEW_DETAIL_VLINE);
-    rightDetailVLine->setFrameShape(QFrame::VLine);
-    rvLayout->addWidget(rightDetailVLine);
-    rvLayout->addWidget(d->detailView, 1);
-    midLayout->addWidget(d->rightDetailViewHolder, 1);
-    d->rightDetailViewHolder->setVisible(false); //不显示先
+    d->midLayout->addWidget(d->splitter);
 
     mainLayout->addWidget(midWidget);
     mainLayout->setSpacing(0);
@@ -1473,7 +1486,11 @@ void DFileManagerWindow::initConnect()
 
     QObject::connect(fileSignalManager, &FileSignalManager::requestMultiFilesRename, this, &DFileManagerWindow::onShowRenameBar);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTabBarCurrentIndexChange);
-    QObject::connect(d->toolbar, &DToolBar::detailButtonClicked, this, [d]() {
+    QObject::connect(d->toolbar, &DToolBar::detailButtonClicked, this, [this, d]() {
+        if (!d->rightDetailViewHolder) {
+            d->createRightDetailViewHolder();
+        }
+
         if (d->rightDetailViewHolder) {
             d->rightDetailViewHolder->setVisible(!d->rightDetailViewHolder->isVisible());
             //! 触发resize事件，避免文件列表未自适应宽度
@@ -1484,15 +1501,13 @@ void DFileManagerWindow::initConnect()
             }
             qDebug() << "File information window on the right";
         }
+
+        // 这里需要更新 selectUrlChanged
+        d->updateSelectUrl();
     });
 
     QObject::connect(this, &DFileManagerWindow::selectUrlChanged, this, [d](/*const QList<DUrl> &urlList*/) {
-        DFileView *fv = dynamic_cast<DFileView *>(d->currentView);
-        if (d->detailView && fv) {
-            d->detailView->setUrl(fv->selectedUrls().value(0, fv->rootUrl()));
-            if (fv->selectedIndexCount() == 0)
-                d->detailView->setTagWidgetVisible(false);
-        }
+        d->updateSelectUrl();
     });
 
     //! redirect when tab root url changed.
