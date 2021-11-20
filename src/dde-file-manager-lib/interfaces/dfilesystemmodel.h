@@ -87,6 +87,7 @@ class DFileSystemModel : public QAbstractItemModel
     Q_OBJECT
 
     Q_PROPERTY(bool enabledSort READ enabledSort WRITE setEnabledSort NOTIFY enabledSortChanged)
+
 public:
     enum Roles {
         FileIconRole = Qt::DecorationRole,
@@ -225,7 +226,6 @@ public slots:
     void toggleHiddenFiles(const DUrl &fileUrl);
 
     void setEnabledSort(bool enabledSort);
-    void clearAll();
 
 signals:
     void rootUrlDeleted(const DUrl &rootUrl);

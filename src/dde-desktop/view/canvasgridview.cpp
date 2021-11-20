@@ -3321,17 +3321,8 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
         actions << MenuAction::SortBy;
     }
     actions << MenuAction::Paste
-            << MenuAction::SelectAll << MenuAction::OpenInTerminal;
-    // 右键刷新
-    {
-        static const DGioSettings menuSwitch("com.deepin.dde.filemanager.contextmenu",
-                                         "/com/deepin/dde/filemanager/contextmenu/");
-        auto showRefreh = menuSwitch.value("Refresh");
-        if (showRefreh.isValid() && showRefreh.toBool())
-            actions << MenuAction::RefreshModel;
-    }
-
-    actions << MenuAction::Property << MenuAction::Separator;
+            << MenuAction::SelectAll << MenuAction::OpenInTerminal
+            << MenuAction::Property << MenuAction::Separator;
     if (actions.isEmpty()) {
         return;
     }
