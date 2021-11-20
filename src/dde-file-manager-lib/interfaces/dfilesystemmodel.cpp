@@ -2566,6 +2566,25 @@ void DFileSystemModel::setEnabledSort(bool enabledSort)
     emit enabledSortChanged(enabledSort);
 }
 
+void DFileSystemModel::clearAll()
+{
+    Q_D(const DFileSystemModel);
+
+    if (d->state != Idle) {
+        return;
+    }
+    const FileSystemNodePointer &node = d->rootNode;
+    if (node && node->childrenCount() > 0) {
+        node->populatedChildren = false;
+
+        const QModelIndex &index = createIndex(node, 0);
+        if (beginRemoveRows(index, 0, rowCount(index) - 1)) {
+            node->clearChildren();
+            endRemoveRows();
+        }
+    }
+}
+
 bool DFileSystemModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     Q_D(DFileSystemModel);

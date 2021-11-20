@@ -909,12 +909,13 @@ void DFileMenuData::initData()
     }
 
     actionKeys[MenuAction::RemoveStashedRemoteConn] = QObject::tr("Remove");
+    actionKeys[MenuAction::RefreshModel] = QObject::tr("Refresh");
 }
 
 void DFileMenuData::initActions()
 {
     QList<MenuAction> unCachedActions;
-    unCachedActions << MenuAction::NewWindow;
+    unCachedActions << MenuAction::NewWindow << MenuAction::RefreshModel;
     foreach (MenuAction key, actionKeys.keys()) {
         if (unCachedActions.contains(key)) {
             continue;

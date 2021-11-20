@@ -54,7 +54,6 @@ public:
                     << dir.filePath("dde-trash.desktop")
                     << dir.filePath("dde-computer.desktop");
 
-        m_desktopSettings = new DGioSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
         autoArrange = Config::instance()->getConfig(Config::groupGeneral, Config::keyAutoAlign).toBool();
 #ifdef ENABLE_AUTOMERGE  //sp2需求调整，屏蔽自动整理
         autoMerge = Config::instance()->getConfig(Config::groupGeneral, Config::keyAutoMerge, false).toBool();

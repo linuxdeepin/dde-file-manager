@@ -69,6 +69,8 @@
 #include "models/desktopfileinfo.h"
 #include "dfmstandardpaths.h"
 
+#include <dgiosettings.h>
+
 #include <QDrag>
 #include <QApplication>
 #include <DFileDragClient>
@@ -85,6 +87,7 @@
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformtheme.h>
 #include <DSysInfo>
+
 
 DWIDGET_USE_NAMESPACE
 
@@ -3170,6 +3173,15 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     const QModelIndex &index = rootIndex();
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
     QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SpaceArea);
+
+    // 右键刷新
+    {
+        static const DGioSettings menuSwitch("com.deepin.dde.filemanager.contextmenu",
+                                         "/com/deepin/dde/filemanager/contextmenu/");
+        auto showRefreh = menuSwitch.value("Refresh");
+        if (!showRefreh.isValid() || !showRefreh.toBool())
+            actions.removeAll(MenuAction::RefreshModel);
+    }
 
     if (actions.isEmpty())
         return;

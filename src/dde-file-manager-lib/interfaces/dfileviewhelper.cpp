@@ -88,7 +88,18 @@ public:
         }
 
         const DFMMenuActionEvent &menu_event = dfmevent_cast<DFMMenuActionEvent>(*event.data());
-
+        if (menu_event.action() == DFMGlobal::MenuAction::RefreshModel) {
+            auto model = viewHelper->model();
+            auto view = viewHelper->parent();
+            if (model && view) {
+                model->clearAll();
+                view->repaint();
+                model->refresh();
+            }
+            else
+                qWarning() << "RefreshModel: model or view is invaild." << model << view;
+            return true;
+        }
         if (menu_event.action() != DFMGlobal::TagInfo)
             return false;
 
