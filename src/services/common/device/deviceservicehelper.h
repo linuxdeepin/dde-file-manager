@@ -48,15 +48,20 @@ struct DeviceData
 
 struct BlockDeviceData
 {
+    QString uuid;
     DeviceData common;
+    QString fsVersion;
     QStringList mountpoints;
     QString device;
     QString drive;
     QString idLabel;
     QString media;
     QStringList mediaCompatibility;
+    bool readOnly;
     bool removable;
+    bool mediaRemovable;
     bool optical;
+    bool opticalDrive;
     bool opticalBlank;
     bool mediaAvailable;
     bool canPowerOff;

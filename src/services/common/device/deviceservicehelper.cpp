@@ -417,14 +417,19 @@ void DeviceServiceHelper::makeBlockDeviceData(const DeviceServiceHelper::BlockDe
     data->common.sizeFree = ptr->sizeFree();
     data->common.sizeUsed = ptr->sizeUsage();
 
+    data->uuid = ptr->getProperty(DFMMOUNT::Property::BlockIDUUID).toString();
+    data->fsVersion = ptr->getProperty(DFMMOUNT::Property::BlockIDVersion).toString();
     data->mountpoints = ptr->mountPoints();
     data->device = ptr->device();
     data->drive = ptr->drive();
     data->idLabel = ptr->idLabel();
     data->media = ptr->getProperty(DFMMOUNT::Property::DriveMedia).toString();
     data->mediaCompatibility = ptr->mediaCompatibility();
+    data->readOnly = ptr->getProperty(DFMMOUNT::Property::BlockReadOnly).toBool();
     data->removable = ptr->removable();
+    data->mediaRemovable = ptr->getProperty(DFMMOUNT::Property::DriveMediaRemovable).toBool();
     data->optical = ptr->optical();
+    data->opticalDrive = ptr->mediaCompatibility().join(" ").contains("optical");
     data->opticalBlank = ptr->opticalBlank();
     data->mediaAvailable = ptr->getProperty(DFMMOUNT::Property::DriveMediaAvailable).toBool();
     data->canPowerOff = ptr->canPowerOff();
@@ -449,11 +454,16 @@ void DeviceServiceHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVaria
     map->insert("size_free", data.common.sizeFree);
     map->insert("size_usage", data.common.sizeUsed);
 
+    map->insert("uuid", data.uuid);
+    map->insert("fs_version", data.fsVersion);
     map->insert("device", data.device);
     map->insert("id_label", data.idLabel);
     map->insert("media", data.media);
+    map->insert("read_only", data.readOnly);
     map->insert("removable", data.removable);
+    map->insert("media_removable", data.mediaRemovable);
     map->insert("optical", data.optical);
+    map->insert("optical_drive", data.opticalDrive);
     map->insert("optical_blank", data.opticalBlank);
     map->insert("media_available", data.mediaAvailable);
     map->insert("can_power_off", data.canPowerOff);
@@ -469,8 +479,8 @@ void DeviceServiceHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVaria
     // Too much information can slow down the performance of D-Bus interface calls,
     // so only return all information when using `detail`.
     if (detail) {
-        map->insert("mountpoints", data.mountpoints);
         map->insert("drive", data.drive);
+        map->insert("mountpoints", data.mountpoints);
         map->insert("media_compatibility", data.mediaCompatibility);
     }
 }

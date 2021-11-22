@@ -89,8 +89,17 @@ void DiskControlWidget::initConnection()
     // refreshes the list of controls to fit the text color under the new theme
     connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
             this, &DiskControlWidget::onDiskListChanged);
-    connect(&SidecarInstance, &PluginSidecar::serviceUnregistered, this, &DiskControlWidget::onDiskListChanged);
-    connect(&SidecarInstance, &PluginSidecar::serviceRegistered, this, &DiskControlWidget::onDiskListChanged);
+    connect(&SidecarInstance, &PluginSidecar::serviceUnregistered, this, [this]() {
+        qWarning() << "[disk-mount] dde-file-manager-server disconnect!";
+        onDiskListChanged();
+    });
+    connect(&SidecarInstance, &PluginSidecar::serviceRegistered, this, [this]() {
+        qInfo() << "[disk-mount] dde-file-manager-server connect!";
+        // wait server initialized
+        QTimer::singleShot(3000, this, [this]() {
+            onDiskListChanged();
+        });
+    });
     connect(&SidecarInstance, &PluginSidecar::askStopScanning, this, &DiskControlWidget::onAskStopScanning);
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveAdded, this, &DiskControlWidget::onDiskListChanged);
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveRemoved, this, &DiskControlWidget::onDiskListChanged);
