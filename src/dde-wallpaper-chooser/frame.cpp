@@ -976,6 +976,7 @@ void Frame::loading()
 
     m_itemwait->setContantText(lablecontant);
 }
+
 void Frame::refreshList()
 {
     //fix bug 47159
@@ -1196,11 +1197,21 @@ void Frame::onItemButtonClicked(const QString &buttonID)
 
     if (buttonID == DESKTOP_BUTTON_ID) {
         m_lockWallpaper.clear();
+        if (m_desktopWallpaper.isEmpty()) {
+            m_desktopWallpaper = item->getPath();
+            qInfo() << "desktop wallpaper" << m_desktopWallpaper;
+        }
     } else if (buttonID == LOCK_SCREEN_BUTTON_ID) {
         m_desktopWallpaper.clear();
+        if (m_lockWallpaper.isEmpty()) {
+            m_lockWallpaper = item->getPath();
+            qInfo() << "lock wallpaper" << m_lockWallpaper;
+        }
     }
 #ifndef DISABLE_SCREENSAVER
     else if (buttonID == SCREENSAVER_BUTTON_ID) {
+        m_desktopWallpaper.clear();
+        m_lockWallpaper.clear();
         m_dbusScreenSaver->setCurrentScreenSaver(item->data());
     }
 #endif
