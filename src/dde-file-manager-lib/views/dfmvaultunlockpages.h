@@ -78,6 +78,7 @@ private:
     void showToolTip(const QString &text, int duration, EN_ToolTip enType);
 
 private:
+    static DFMVaultUnlockPages *m_instance;
     DPasswordEdit *m_passwordEdit {nullptr};
     QPushButton *m_tipsButton {nullptr};
     bool m_bUnlockByPwd = false;
@@ -86,6 +87,6 @@ private:
     DFloatingWidget *m_frame {nullptr};
     // 定时器，用于定时隐藏tooltip
     QTimer *pTooltipTimer {nullptr};
-    DLabel * m_forgetPassword {nullptr}; //! 忘记密码提示与找回入口
-    DFMVaultPageBase * m_retrievePage {nullptr}; //! 找回密码验证页面
+    DLabel *m_forgetPassword {nullptr};  //! 忘记密码提示与找回入口
+    DFMVaultPageBase *m_retrievePage {nullptr};  //! 找回密码验证页面
 };

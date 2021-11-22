@@ -45,6 +45,8 @@
 
 DWIDGET_USE_NAMESPACE
 
+DFMVaultUnlockPages *DFMVaultUnlockPages::m_instance = nullptr;
+
 DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     : DFMVaultPageBase(parent)
 {
@@ -223,8 +225,9 @@ void DFMVaultUnlockPages::showToolTip(const QString &text, int duration, DFMVaul
 
 DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
 {
-    static DFMVaultUnlockPages s_instance;
-    return &s_instance;
+    if (!m_instance)
+        m_instance = new DFMVaultUnlockPages();
+    return m_instance;
 }
 
 void DFMVaultUnlockPages::hideEvent(QHideEvent *event)
@@ -245,7 +248,7 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
         int nLeftoverErrorTimes = pVaultController->getLeftoverErrorInputTimes();
         if (nLeftoverErrorTimes < 1) {
             int nNeedWaitMinutes = pVaultController->getNeedWaitMinutes();
-            showToolTip(tr("Please try again %1 minutes later").arg(nNeedWaitMinutes), TOOLTIP_SHOW_DURATION, EN_ToolTip::Warning);
+            m_passwordEdit->showAlertMessage(tr("Please try again %1 minutes later").arg(nNeedWaitMinutes));
             return;
         }
 
@@ -272,12 +275,12 @@ void DFMVaultUnlockPages::onButtonClicked(const int &index)
                 pVaultController->startTimerOfRestorePasswordInput();
                 // 错误输入次数超过了限制
                 int nNeedWaitMinutes = pVaultController->getNeedWaitMinutes();
-                showToolTip(tr("Wrong password, please try again %1 minutes later").arg(nNeedWaitMinutes), TOOLTIP_SHOW_DURATION, EN_ToolTip::Warning);
+                m_passwordEdit->showAlertMessage(tr("Wrong password, please try again %1 minutes later").arg(nNeedWaitMinutes));
             } else {
                 if (nLeftoverErrorTimes == 1)
-                    showToolTip(tr("Wrong password, one chance left"), TOOLTIP_SHOW_DURATION, EN_ToolTip::Warning);
+                    m_passwordEdit->showAlertMessage(tr("Wrong password, one chance left"));
                 else
-                    showToolTip(tr("Wrong password, %1 chances left").arg(nLeftoverErrorTimes), TOOLTIP_SHOW_DURATION, EN_ToolTip::Warning);
+                    m_passwordEdit->showAlertMessage(tr("Wrong password, %1 chances left").arg(nLeftoverErrorTimes));
             }
         }
         return;
@@ -322,7 +325,7 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
                 } else {    // 密码不正确
                     // 设置密码输入框颜色,并弹出tooltip
                     m_passwordEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
-                    showToolTip(tr("Wrong password"), TOOLTIP_SHOW_DURATION, EN_ToolTip::Warning);
+                    m_passwordEdit->showAlertMessage(tr("Wrong password"));
                 }
             }
         } else {
