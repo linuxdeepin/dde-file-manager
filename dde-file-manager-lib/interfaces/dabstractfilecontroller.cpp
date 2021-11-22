@@ -24,8 +24,10 @@
 
 #include "dabstractfilecontroller.h"
 #include "dfmevent.h"
+#include "dfmstandardpaths.h"
 
 #include <DDesktopServices>
+#include <QProcess>
 
 DWIDGET_USE_NAMESPACE
 
@@ -208,7 +210,26 @@ bool DAbstractFileController::setPermissions(const QSharedPointer<DFMSetPermissi
 
 bool DAbstractFileController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
-    return DDesktopServices::showFileItem(event->url());
+    const DUrl &durl = event->url();
+    // why? because 'DDesktopServices::showFileItem(realUrl(event->url()))' will call session bus 'org.freedesktop.FileManager1'
+    // but cannot find session bus when user is root!
+    if (DFMGlobal::isRootUser()) {
+        QStringList urls{QStringList() << durl.toLocalFile()};
+        // call by platform 'mips'
+        if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" <<  urls << "--raw"))
+            return true;
+
+        return QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" <<  urls << "--raw");
+    }
+
+    DUrl realUrl = durl;
+    if (durl.path().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+        QString trashFilePath = durl.path();
+        if (trashFilePath == DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))
+            trashFilePath = trashFilePath + "/";
+        realUrl = DUrl(trashFilePath.replace(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + "/", TRASH_ROOT));
+    }
+    return DDesktopServices::showFileItem(realUrl);
 }
 
 const QList<DAbstractFileInfoPointer> DAbstractFileController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
