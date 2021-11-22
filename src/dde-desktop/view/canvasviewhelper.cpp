@@ -158,3 +158,24 @@ bool CanvasViewHelper::isSelected(const QModelIndex &index) const
 {
     return parent()->isSelected(index);
 }
+
+void CanvasViewHelper::viewFlicker()
+{
+    auto fileModel = model();
+    auto view = parent();
+    if (fileModel && view) {
+        //刷新时的闪烁效果
+        m_paintFile = false;
+        view->repaint(); //依赖Qt重绘ui，若本次repaint不进入paintevent，则不会闪烁
+        view->update();
+        m_paintFile = true;
+
+        //刷新model
+        fileModel->refresh();
+    }
+}
+
+bool CanvasViewHelper::isPaintFile() const
+{
+    return m_paintFile;
+}

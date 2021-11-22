@@ -846,6 +846,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::SortBy
                    << MenuAction::OpenAsAdmin
                    << MenuAction::OpenInTerminal
+                   << MenuAction::RefreshView
                    << MenuAction::Separator
                    << MenuAction::Paste
                    << MenuAction::SelectAll

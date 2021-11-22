@@ -1090,7 +1090,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             }
             break;
         case Qt::Key_F5:
-            model()->refresh();
+            Refresh();
             return;
         case Qt::Key_Delete:
             if (canDeleted && !selectUrlsMap.contains(rootUrl.toString()) && !selectUrls.isEmpty()) {
@@ -1674,21 +1674,23 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
     }
 
     QStringList repaintLocalFiles;
-    for (int x = 0; x < d->colCount; ++x) {
-        for (int y = 0; y < d->rowCount; ++y) {
-            auto localFile = GridManager::instance()->itemId(m_screenNum, x, y);
+    if (d->fileViewHelper->isPaintFile()) {
+        for (int x = 0; x < d->colCount; ++x) {
+            for (int y = 0; y < d->rowCount; ++y) {
+                auto localFile = GridManager::instance()->itemId(m_screenNum, x, y);
+                if (!localFile.isEmpty()) {
+                    repaintLocalFiles << localFile;
+                }
+            }
+        }
+
+        //放入堆叠
+        auto overlayItems = GridManager::instance()->overlapItems(m_screenNum);
+        for (int i = 0; i < overlayItems.length(); ++i) {
+            auto localFile = overlayItems.value(i);
             if (!localFile.isEmpty()) {
                 repaintLocalFiles << localFile;
             }
-        }
-    }
-
-    //放入堆叠
-    auto overlayItems = GridManager::instance()->overlapItems(m_screenNum);
-    for (int i = 0; i < overlayItems.length(); ++i) {
-        auto localFile = overlayItems.value(i);
-        if (!localFile.isEmpty()) {
-            repaintLocalFiles << localFile;
         }
     }
 
@@ -2511,7 +2513,7 @@ QString CanvasGridView::DumpPos(qint32 x, qint32 y)
 
 void CanvasGridView::Refresh()
 {
-    model()->update();
+    d->fileViewHelper->viewFlicker();
 }
 
 void CanvasGridView::initUI()
@@ -3321,8 +3323,17 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
         actions << MenuAction::SortBy;
     }
     actions << MenuAction::Paste
-            << MenuAction::SelectAll << MenuAction::OpenInTerminal
-            << MenuAction::Property << MenuAction::Separator;
+            << MenuAction::SelectAll << MenuAction::OpenInTerminal;
+    // 右键刷新
+    {
+        static const DGioSettings menuSwitch("com.deepin.dde.filemanager.contextmenu",
+                                         "/com/deepin/dde/filemanager/contextmenu/");
+        auto showRefreh = menuSwitch.value("Refresh");
+        if (showRefreh.isValid() && showRefreh.toBool())
+            actions << MenuAction::RefreshView;
+    }
+
+    actions << MenuAction::Property << MenuAction::Separator;
     if (actions.isEmpty()) {
         return;
     }

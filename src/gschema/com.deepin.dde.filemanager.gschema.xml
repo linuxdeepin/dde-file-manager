@@ -57,7 +57,7 @@
       <summary>Wether use watermask on the desktop</summary>
       <description>
         If enabled, watermask will display on the desktop.
-        If disabled, watermask will not display on the desktop.s
+        If disabled, watermask will not display on the desktop.
       </description>
     </key>
 
@@ -66,7 +66,7 @@
       <summary>Wether use screen saver on the desktop</summary>
       <description>
         If enabled, screen saver will display on the desktop.
-        If disabled, screen saver will not display on the desktop.s
+        If disabled, screen saver will not display on the desktop.
       </description>
     </key>
 
@@ -75,7 +75,7 @@
       <summary>Wether use context menu on the desktop</summary>
       <description>
         If enabled, context menu will display on the desktop.
-        If disabled, context menu will not display on the desktop.s
+        If disabled, context menu will not display on the desktop.
       </description>
     </key>
 
@@ -84,7 +84,7 @@
       <summary>Wether use desktop computer on the desktop</summary>
       <description>
         If enabled, desktop computer will display on the desktop.
-        If disabled, desktop computer will not display on the desktop.s
+        If disabled, desktop computer will not display on the desktop.
       </description>
     </key>
 
@@ -93,7 +93,7 @@
       <summary>Wether use desktop trash on the desktop</summary>
       <description>
         If enabled, desktop trash will display on the desktop.
-        If disabled, desktop trash will not display on the desktop.s
+        If disabled, desktop trash will not display on the desktop.
       </description>
     </key>
 
@@ -102,10 +102,22 @@
       <summary>Wether use desktop home directory on the desktop</summary>
       <description>
         If enabled, desktop home directory will display on the desktop.
-        If disabled, desktop home directory will not display on the desktop.s
+        If disabled, desktop home directory will not display on the desktop.
       </description>
     </key>
 
   </schema>
 
+  <schema path="/com/deepin/dde/filemanager/contextmenu/" id="com.deepin.dde.filemanager.contextmenu" gettext-domain="dde-file-manager-contextmenu">
+
+    <key name='refresh' type='b'>
+      <default>false</default>
+      <summary>Wether use 'Refresh' action on context menu</summary>
+      <description>
+        If enabled, 'Refresh' will display on the context menu.
+        If disabled, 'Refresh' will not display on the context menu.
+      </description>
+    </key>
+
+  </schema>
 </schemalist>

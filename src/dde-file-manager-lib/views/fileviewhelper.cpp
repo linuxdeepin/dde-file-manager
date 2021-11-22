@@ -117,6 +117,11 @@ void FileViewHelper::select(const QList<DUrl> &list)
 
 }
 
+void FileViewHelper::viewFlicker()
+{
+    refreshFileView(windowId());
+}
+
 void FileViewHelper::preHandleCd(const DFMUrlBaseEvent &event)
 {
     if (event.windowId() != windowId())

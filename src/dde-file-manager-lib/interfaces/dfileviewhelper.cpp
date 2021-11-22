@@ -88,7 +88,10 @@ public:
         }
 
         const DFMMenuActionEvent &menu_event = dfmevent_cast<DFMMenuActionEvent>(*event.data());
-
+        if (menu_event.action() == DFMGlobal::MenuAction::RefreshView) {
+            viewHelper->viewFlicker();
+            return true;
+        }
         if (menu_event.action() != DFMGlobal::TagInfo)
             return false;
 

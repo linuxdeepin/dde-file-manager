@@ -256,7 +256,7 @@ public:
         UnLockByKey,
 
         RemoveStashedRemoteConn,
-
+        RefreshView,
         UserMenuAction = Unknow + 2000
     };
 

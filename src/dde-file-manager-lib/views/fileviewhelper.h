@@ -41,7 +41,7 @@ public:
     QList<int> columnRoleList() const override;
     int columnWidth(int columnIndex) const override;
     void select(const QList<DUrl> &list) override;
-
+    virtual void viewFlicker() override;
 public slots:
     // helper fm event
     void preHandleCd(const DFMUrlBaseEvent &event);

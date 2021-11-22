@@ -45,9 +45,13 @@ public:
     virtual void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
     virtual int selectedIndexsCount() const override;
     virtual bool isSelected(const QModelIndex &index) const override;
+    virtual void viewFlicker() override;
+    bool isPaintFile() const;
 
 public slots:
     void edit(const DFMEvent &event);
     void onRequestSelectFiles(const QList<DUrl> &urls);
     void handleSelectEvent(const DFMUrlListBaseEvent &event);
+private:
+    bool m_paintFile = true;
 };

@@ -71,6 +71,7 @@ public:
     virtual void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const;
     virtual void handleMenu(QMenu *menu);
 
+    virtual void viewFlicker() = 0;
     void setIndexWidget(const QModelIndex &index, QWidget *widget);
     QWidget *indexWidget(const QModelIndex &index) const;
     void updateGeometries();

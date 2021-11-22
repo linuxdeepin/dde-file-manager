@@ -228,27 +228,27 @@
 <context>
     <name>ComputerModel</name>
     <message>
-        <location filename="../models/computermodel.cpp" line="500"/>
+        <location filename="../models/computermodel.cpp" line="495"/>
         <source>Double click to open it</source>
         <translation>Double click to open it</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="858"/>
+        <location filename="../models/computermodel.cpp" line="826"/>
         <source>My Directories</source>
         <translation>My Directories</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="861"/>
+        <location filename="../models/computermodel.cpp" line="829"/>
         <source>Disks</source>
         <translation>Disks</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="864"/>
+        <location filename="../models/computermodel.cpp" line="832"/>
         <source>File Vault</source>
         <translation>File Vault</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="867"/>
+        <location filename="../models/computermodel.cpp" line="835"/>
         <source>Quick Access</source>
         <translation>Quick Access</translation>
     </message>
@@ -975,10 +975,10 @@
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="67"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="76"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="133"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="132"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="144"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="145"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="146"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="323"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="336"/>
         <source>Unable to get the key file</source>
         <translation>Unable to get the key file</translation>
     </message>
@@ -988,8 +988,8 @@
         <translation>Verification failed</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="190"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="149"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="202"/>
         <source>Select a path</source>
         <translation>Select a path</translation>
     </message>
@@ -999,51 +999,51 @@
         <translation>Retrieve Password</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="185"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="197"/>
         <source>By key in the default path</source>
         <translation>By key in the default path</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="186"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="198"/>
         <source>By key in the specified path</source>
         <translation>By key in the specified path</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="209"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="221"/>
         <source>Verification Successful</source>
         <translation>Verification Successful</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="212"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="224"/>
         <source>Keep it safe</source>
         <translation>Keep it safe</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="285"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>Back</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="285"/>
         <source>Verify Key</source>
         <comment>button</comment>
         <translation>Verify Key</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="285"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
         <translation>Go to Unlock</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="285"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Close</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="306"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="318"/>
         <source>Vault password: %1</source>
         <translation>Vault password: %1</translation>
     </message>
@@ -1056,64 +1056,64 @@
         <translation>Unlock File Vault</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="74"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="75"/>
         <source>Forgot password?</source>
         <translation>Forgot password?</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="90"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="91"/>
         <source>Input your password please</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="143"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="144"/>
         <source>Password hint: %1</source>
         <translation>Password hint: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="334"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="335"/>
         <source>Failed to unlock file vault</source>
         <translation>Failed to unlock file vault</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="129"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="129"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Unlock</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="252"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="253"/>
         <source>Please try again %1 minutes later</source>
         <translation>Please try again %1 minutes later</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="279"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="280"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Wrong password, please try again %1 minutes later</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="282"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="283"/>
         <source>Wrong password, one chance left</source>
         <translation>Wrong password, one chance left</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="284"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="285"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Wrong password, %1 chances left</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="329"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="330"/>
         <source>Wrong password</source>
         <translation>Wrong password</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="338"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="339"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
@@ -1355,12 +1355,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1272"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1304"/>
         <source>Trash</source>
         <translation>Trash</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1281"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1313"/>
         <source>Empty</source>
         <translation>Empty</translation>
     </message>
@@ -1374,7 +1374,7 @@
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1121"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1122"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1445"/>
         <location filename="../models/searchfileinfo.cpp" line="130"/>
         <source>Time modified</source>
@@ -1413,22 +1413,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2803"/>
+        <location filename="../views/dfileview.cpp" line="2806"/>
         <source>Disc mount error</source>
         <translation>Disc mount error</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2803"/>
+        <location filename="../views/dfileview.cpp" line="2806"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>The disc is in use, please end the running process and remount the disc.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2817"/>
+        <location filename="../views/dfileview.cpp" line="2820"/>
         <source>Mounting failed</source>
         <translation>Mounting failed</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3525"/>
+        <location filename="../views/dfileview.cpp" line="3537"/>
         <source>(Reverse)</source>
         <translation>(Reverse)</translation>
     </message>
@@ -1436,7 +1436,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="666"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="669"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>Add tag &quot;%1&quot;</translation>
     </message>
@@ -1629,7 +1629,7 @@
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="117"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="132"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="739"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="736"/>
         <source>%1 Volume</source>
         <translation>%1 Volume</translation>
     </message>
@@ -1640,17 +1640,17 @@
         <translation>Data Disk</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="734"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="731"/>
         <source>%1 Drive</source>
         <translation>%1 Drive</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="718"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="715"/>
         <source>Blank %1 Disc</source>
         <translation>Blank %1 Disc</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="737"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="734"/>
         <source>%1 Encrypted</source>
         <translation>%1 Encrypted</translation>
     </message>
@@ -2613,73 +2613,73 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="816"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="815"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>Can’t verify the identity of %1.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="817"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="816"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>This happens when you log in to a computer the first time.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="818"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="817"/>
         <source>The identity sent by the remote computer is</source>
         <translation>The identity sent by the remote computer is</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="820"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="819"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>If you want to be absolutely sure it is safe to continue, contact the system administrator.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="873"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="877"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1552"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1558"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1561"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="876"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1551"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1557"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1560"/>
         <source>Mounting device error</source>
         <translation>Mounting device error</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="873"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1558"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1557"/>
         <source>Wrong username or password</source>
         <translation>Wrong username or password</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1786"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1797"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1839"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1958"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1982"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1785"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1796"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1823"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1942"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1966"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirm</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1792"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1979"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1791"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1963"/>
         <source>Cannot find the mounted device</source>
         <translation>Cannot find the mounted device</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1706"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1705"/>
         <source>No key available to unlock device</source>
         <translation>No key available to unlock device</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1783"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1782"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1836"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1820"/>
         <source>Cannot unmount the device</source>
         <translation>Cannot unmount the device</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1954"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1938"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>Cannot eject the device &quot;%1&quot;</translation>
     </message>
@@ -2989,8 +2989,8 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="67"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="683"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="711"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="680"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="708"/>
         <source>System Disk</source>
         <translation>System Disk</translation>
     </message>
@@ -3266,7 +3266,7 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="613"/>
-        <location filename="../interfaces/dfmsidebariteminterface.cpp" line="66"/>
+        <location filename="../interfaces/dfmsidebariteminterface.cpp" line="58"/>
         <source>Open in new window</source>
         <translation>Open in new window</translation>
     </message>
@@ -3277,7 +3277,7 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="617"/>
-        <location filename="../interfaces/dfmsidebariteminterface.cpp" line="70"/>
+        <location filename="../interfaces/dfmsidebariteminterface.cpp" line="62"/>
         <source>Open in new tab</source>
         <translation>Open in new tab</translation>
     </message>
@@ -3363,7 +3363,7 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="113"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="120"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="820"/>
-        <location filename="../interfaces/dfmsidebariteminterface.cpp" line="76"/>
+        <location filename="../interfaces/dfmsidebariteminterface.cpp" line="68"/>
         <source>Properties</source>
         <translation>Properties</translation>
     </message>
@@ -3391,7 +3391,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1282"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1314"/>
         <source>Empty Trash</source>
         <translation>Empty Trash</translation>
     </message>
@@ -3524,6 +3524,11 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="876"/>
         <source>Add to disc</source>
         <translation>Add to disc</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="912"/>
+        <source>Refresh</source>
+        <translation>Refresh</translation>
     </message>
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="348"/>
@@ -3711,7 +3716,7 @@
         <translation>%1 items</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1219"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1218"/>
         <source>Shortcut</source>
         <translation>Shortcut</translation>
     </message>
@@ -3733,7 +3738,7 @@
         <translation>Time deleted</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1330"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1331"/>
         <source>Loading...</source>
         <translation>Loading...</translation>
     </message>
@@ -4061,7 +4066,7 @@
     </message>
     <message>
         <location filename="../shutil/fileutils.cpp" line="638"/>
-        <location filename="../../utils/utils.cpp" line="548"/>
+        <location filename="../../utils/utils.cpp" line="514"/>
         <source>Unknown</source>
         <translation>Unknown</translation>
     </message>
@@ -4111,7 +4116,7 @@
         <translation>%1 are not allowed</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1545"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1560"/>
         <location filename="../../usershare/usersharemanager.cpp" line="549"/>
         <source>Failed to start Samba services</source>
         <translation>Failed to start Samba services</translation>
@@ -4645,14 +4650,14 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1619"/>
+        <location filename="../controllers/appcontroller.cpp" line="1638"/>
         <location filename="../../fileoperations/filejob.cpp" line="789"/>
         <location filename="../../fileoperations/filejob.cpp" line="1052"/>
         <source>The device was not safely unmounted</source>
         <translation>The device was not safely unmounted</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1626"/>
+        <location filename="../controllers/appcontroller.cpp" line="1645"/>
         <source>The device was not safely removed</source>
         <translation>The device was not safely removed</translation>
     </message>

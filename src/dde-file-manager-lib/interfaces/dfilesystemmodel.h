@@ -87,7 +87,6 @@ class DFileSystemModel : public QAbstractItemModel
     Q_OBJECT
 
     Q_PROPERTY(bool enabledSort READ enabledSort WRITE setEnabledSort NOTIFY enabledSortChanged)
-
 public:
     enum Roles {
         FileIconRole = Qt::DecorationRole,

@@ -65,6 +65,8 @@ public:
         Q_UNUSED(list)
         return;
     }
+
+    virtual void viewFlicker() override {} //nothing to do
 };
 
 #ifndef __arm__

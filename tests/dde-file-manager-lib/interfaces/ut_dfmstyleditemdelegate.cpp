@@ -62,6 +62,8 @@ public:
     virtual const DUrlList selectedUrls() const override { return DUrlList{}; }
 
     virtual void select(const QList<DUrl> &list) override {} //nothing to do
+
+    virtual void viewFlicker() override {} //nothing to do
 };
 
 
