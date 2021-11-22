@@ -25,6 +25,7 @@
 #include "vault/operatorcenter.h"
 #include "durl.h"
 #include "controllers/vaultcontroller.h"
+#include "dfmvaultunlockpages.h"
 
 #include <QStringList>
 #include <QFrame>
@@ -57,9 +58,8 @@ void DFMVaultRetrievePassword::verificationKey()
     QString password;
     QString keyPath;
     switch (m_savePathTypeComboBox->currentIndex()) {
-    case 0:
-    {
-        if(QFile::exists(defaultKeyPath)) {
+    case 0: {
+        if (QFile::exists(defaultKeyPath)) {
             m_defaultFilePathEdit->setText(QString(DFMVAULT_ROOT) + RSA_PUB_KEY_FILE_NAME + QString(".key"));
             getButton(1)->setEnabled(true);
             keyPath = defaultKeyPath;
@@ -72,7 +72,7 @@ void DFMVaultRetrievePassword::verificationKey()
     }
     case 1:
         keyPath = m_filePathEdit->text();
-        if(!QFile::exists(keyPath)) {
+        if (!QFile::exists(keyPath)) {
             m_filePathEdit->lineEdit()->setPlaceholderText(tr("Unable to get the key file"));
             m_filePathEdit->setText("");
             getButton(1)->setEnabled(false);
@@ -82,9 +82,9 @@ void DFMVaultRetrievePassword::verificationKey()
         break;
     }
 
-    if(OperatorCenter::getInstance()->verificationRetrievePassword(keyPath, password)) {
+    if (OperatorCenter::getInstance()->verificationRetrievePassword(keyPath, password)) {
         setResultsPage(password);
-    }else {
+    } else {
         m_verificationPrompt->setText(tr("Verification failed"));
     }
 }
@@ -98,12 +98,12 @@ QString DFMVaultRetrievePassword::getUserName()
 
 void DFMVaultRetrievePassword::onButtonClicked(int index, const QString &text)
 {
-    switch(index) {
+    switch (index) {
     case 0:
         emit signalReturn();
         break;
     case 1:
-        if(text == btnList[3]) {
+        if (text == btnList[3]) {
             setOnButtonClickedClose(true);  //! 按钮1关闭窗口能力打开
         } else {
             setOnButtonClickedClose(false); //! 按钮1关闭窗口能力关闭
@@ -122,11 +122,10 @@ void DFMVaultRetrievePassword::onButtonClicked(int index, const QString &text)
 void DFMVaultRetrievePassword::onComboBoxIndex(int index)
 {
     switch (index) {
-    case 0:
-    {
+    case 0: {
         m_defaultFilePathEdit->show();
         m_filePathEdit->hide();
-        if(QFile::exists(defaultKeyPath)) {
+        if (QFile::exists(defaultKeyPath)) {
             m_defaultFilePathEdit->setText(QString(DFMVAULT_ROOT) + RSA_PUB_KEY_FILE_NAME + QString(".key"));
             getButton(1)->setEnabled(true);
         } else {
@@ -136,13 +135,13 @@ void DFMVaultRetrievePassword::onComboBoxIndex(int index)
         }
         m_verificationPrompt->setText("");
     }
-        break;
+    break;
     case 1:
         m_defaultFilePathEdit->hide();
         m_filePathEdit->show();
-        if(QFile::exists(m_filePathEdit->text()))
+        if (QFile::exists(m_filePathEdit->text()))
             getButton(1)->setEnabled(true);
-        else if(!m_filePathEdit->text().isEmpty() && m_filePathEdit->lineEdit()->placeholderText() != QString(tr("Unable to get the key file"))){
+        else if (!m_filePathEdit->text().isEmpty() && m_filePathEdit->lineEdit()->placeholderText() != QString(tr("Unable to get the key file"))) {
             m_filePathEdit->lineEdit()->setPlaceholderText(tr("Unable to get the key file"));
             m_filePathEdit->setText("");
             getButton(1)->setEnabled(false);
@@ -155,17 +154,17 @@ void DFMVaultRetrievePassword::onComboBoxIndex(int index)
     }
 }
 
-void DFMVaultRetrievePassword::onBtnSelectFilePath(const QString & path)
+void DFMVaultRetrievePassword::onBtnSelectFilePath(const QString &path)
 {
     m_filePathEdit->setText(path);
-    if(!path.isEmpty())
+    if (!path.isEmpty())
         getButton(1)->setEnabled(true);
 }
 
 void DFMVaultRetrievePassword::slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result)
 {
     disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
-            this, &DFMVaultRetrievePassword::slotCheckAuthorizationFinished);
+               this, &DFMVaultRetrievePassword::slotCheckAuthorizationFinished);
     if (isVisible()) {
         if (result == Authority::Yes) {
             verificationKey();
@@ -173,12 +172,25 @@ void DFMVaultRetrievePassword::slotCheckAuthorizationFinished(PolkitQt1::Authori
     }
 }
 
-DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent):DFMVaultPageBase(parent)
+DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent): DFMVaultPageBase(parent)
 {
     setIcon(QIcon::fromTheme("dfm_vault"));
     setFixedWidth(396);
+    setMinimumHeight(270);
 
     m_title = new DLabel(tr("Retrieve Password"), this);
+    QFont font = m_title->font();
+    font.setPixelSize(14);
+
+    m_title->setFont(font);
+    m_title->setAlignment(Qt::AlignHCenter);
+    m_title->setMargin(0);
+    // Set font color.
+    QPalette pal = m_title->palette();
+    QColor color;
+    color.setRgbF(0, 0, 0, 0.9);
+    pal.setColor(QPalette::WindowText, color);
+    m_title->setPalette(pal);
 
     m_savePathTypeComboBox = new QComboBox(this);
     AC_SET_ACCESSIBLE_NAME(m_savePathTypeComboBox, AC_VAULT_SAVE_PATH_TYPE_COMBOBOX);
@@ -188,7 +200,7 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent):DFMVaultPage
     m_filePathEdit = new DFileChooserEdit(this);
     AC_SET_ACCESSIBLE_NAME(m_filePathEdit, AC_VAULT_SAVE_PUBKEY_FILE_EDIT);
     m_filePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
-    QFileDialog * fileDialog = new QFileDialog(this, QDir::homePath());
+    QFileDialog *fileDialog = new QFileDialog(this, QDir::homePath());
     fileDialog->setDirectoryUrl(QDir::homePath());
     fileDialog->setNameFilter(QString("KEY file(*.key)"));
     m_filePathEdit->setFileDialog(fileDialog);
@@ -196,11 +208,11 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent):DFMVaultPage
     m_filePathEdit->hide();
 
     m_defaultFilePathEdit = new QLineEdit(this);
-    m_defaultFilePathEdit->setEnabled(false);
+    m_defaultFilePathEdit->setReadOnly(true);
 
     m_verificationPrompt = new DLabel(this);
     QPalette pe;
-    pe.setColor(QPalette::WindowText,Qt::red);
+    pe.setColor(QPalette::WindowText, Qt::red);
     m_verificationPrompt->setPalette(pe);
 
     m_PasswordRecoveryPage = new QFrame(this);
@@ -211,25 +223,25 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent):DFMVaultPage
     m_hintMsg = new DLabel(m_PasswordRecoveryPage);
     m_hintMsg->setText(tr("Keep it safe"));
 
-    QHBoxLayout * hlayout = new QHBoxLayout();
+    QHBoxLayout *hlayout = new QHBoxLayout();
     hlayout->setMargin(0);
     hlayout->addStretch(1);
     hlayout->addWidget(m_title1);
     hlayout->addStretch(1);
 
-    QHBoxLayout * hlayout1 = new QHBoxLayout();
+    QHBoxLayout *hlayout1 = new QHBoxLayout();
     hlayout1->setMargin(0);
     hlayout1->addStretch(1);
     hlayout1->addWidget(m_passwordMsg);
     hlayout1->addStretch(1);
 
-    QHBoxLayout * hlayout2 = new QHBoxLayout();
+    QHBoxLayout *hlayout2 = new QHBoxLayout();
     hlayout2->setMargin(0);
     hlayout2->addStretch(1);
     hlayout2->addWidget(m_hintMsg);
     hlayout2->addStretch(1);
 
-    QVBoxLayout * vlayout = new QVBoxLayout(m_PasswordRecoveryPage);
+    QVBoxLayout *vlayout = new QVBoxLayout(m_PasswordRecoveryPage);
     vlayout->setContentsMargins(0, 0, 0, 10);
     vlayout->addLayout(hlayout);
     vlayout->addSpacing(15);
@@ -270,7 +282,7 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent):DFMVaultPage
     // 防止点击按钮后界面隐藏
     setOnButtonClickedClose(false);
 
-    btnList = QStringList({tr("Back","button"), tr("Verify Key","button"),tr("Go to Unlock", "button"), tr("Close", "button")});
+    btnList = QStringList({tr("Back", "button"), tr("Verify Key", "button"), tr("Go to Unlock", "button"), tr("Close", "button")});
     addButton(btnList[0], false);
     addButton(btnList[1], true, ButtonType::ButtonRecommend);
 
@@ -289,7 +301,7 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent):DFMVaultPage
 void DFMVaultRetrievePassword::setVerificationPage()
 {
     m_savePathTypeComboBox->setCurrentIndex(0);
-    if(getContent(0) == m_PasswordRecoveryPage) {
+    if (getContent(0) == m_PasswordRecoveryPage) {
         removeContent(m_PasswordRecoveryPage, false);
         m_PasswordRecoveryPage->hide();
         addContent(m_selectKeyPage);
@@ -313,10 +325,11 @@ void DFMVaultRetrievePassword::setResultsPage(QString password)
     AC_SET_ACCESSIBLE_NAME(getButton(1), AC_VAULT_VERIFY_PUKEY_FILE_BTN);
 }
 
+
 void DFMVaultRetrievePassword::showEvent(QShowEvent *event)
 {
-     VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::RETRIEVEPASSWORDPAGE);
-    if(QFile::exists(defaultKeyPath)) {
+    VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::RETRIEVEPASSWORDPAGE);
+    if (QFile::exists(defaultKeyPath)) {
         m_defaultFilePathEdit->setText(QString(DFMVAULT_ROOT) + RSA_PUB_KEY_FILE_NAME + QString(".key"));
         getButton(1)->setEnabled(true);
     } else {
@@ -325,7 +338,12 @@ void DFMVaultRetrievePassword::showEvent(QShowEvent *event)
     }
     m_filePathEdit->setText("");
     setVerificationPage();
-    DFMVaultPageBase::showEvent(event);
+
+    //! 保持和解锁界面对齐
+    QPoint pt = DFMVaultUnlockPages::instance()->pos();
+    move(pt.x(), pt.y());
+
+    event->accept();
 }
 
 void DFMVaultRetrievePassword::closeEvent(QCloseEvent *event)
