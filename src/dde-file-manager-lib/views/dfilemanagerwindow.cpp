@@ -1546,7 +1546,7 @@ void DFileManagerWindow::callFinishedSlot(QDBusPendingCallWatcher *watcher)
 
             // 自启动
             QProcess sh;
-            sh.start("ln -sf /lib/systemd/system/smbd.service /etc/systemd/system/multi-user.target.wants/smbd.service");
+            sh.start("sudo ln -sf /lib/systemd/system/smbd.service /etc/systemd/system/multi-user.target.wants/smbd.service");
 
             bool succ = sh.waitForFinished();
             qDebug() << sh.readAll() << sh.readAllStandardError() << sh.readAllStandardOutput();
