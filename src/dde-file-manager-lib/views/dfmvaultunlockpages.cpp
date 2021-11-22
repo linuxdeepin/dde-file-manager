@@ -34,6 +34,7 @@
 #include <DFloatingWidget>
 #include <DToolTip>
 #include <DLabel>
+#include <DFontSizeManager>
 
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -59,22 +60,16 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     // 标题
     DLabel *pTitle = new DLabel(tr("Unlock File Vault"), this);
     AC_SET_ACCESSIBLE_NAME(pTitle, AC_VAULT_PASSWORD_UNLOCK_TITLE);
-    QFont font = pTitle->font();
-    font.setPixelSize(14);
 
-    pTitle->setFont(font);
     pTitle->setAlignment(Qt::AlignHCenter);
     pTitle->setMargin(0);
-    // Set font color.
-    QPalette pal = pTitle->palette();
-    QColor color;
-    color.setRgbF(0, 0, 0, 0.9);
-    pal.setColor(QPalette::WindowText, color);
-    pTitle->setPalette(pal);
+    // Set font.
+    DFontSizeManager::instance()->bind(pTitle, DFontSizeManager::T7, QFont::Medium);
+    pTitle->setForegroundRole(DPalette::TextTitle);
 
     m_forgetPassword = new DLabel(tr("Forgot password?"));
     AC_SET_ACCESSIBLE_NAME(m_forgetPassword, AC_VAULT_PASSWORD_UNLOCK_FORGETPASSWORD_BUTTON);
-    font = pTitle->font();
+    QFont font = pTitle->font();
     font.setPixelSize(12);
     m_forgetPassword->setFont(font);
     m_forgetPassword->installEventFilter(this);

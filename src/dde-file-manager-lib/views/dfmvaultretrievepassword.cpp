@@ -27,6 +27,8 @@
 #include "controllers/vaultcontroller.h"
 #include "dfmvaultunlockpages.h"
 
+#include <DFontSizeManager>
+
 #include <QStringList>
 #include <QFrame>
 #include <QLabel>
@@ -179,18 +181,11 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent): DFMVaultPag
     setMinimumHeight(270);
 
     m_title = new DLabel(tr("Retrieve Password"), this);
-    QFont font = m_title->font();
-    font.setPixelSize(14);
-
-    m_title->setFont(font);
     m_title->setAlignment(Qt::AlignHCenter);
     m_title->setMargin(0);
-    // Set font color.
-    QPalette pal = m_title->palette();
-    QColor color;
-    color.setRgbF(0, 0, 0, 0.9);
-    pal.setColor(QPalette::WindowText, color);
-    m_title->setPalette(pal);
+    // Set font.
+    DFontSizeManager::instance()->bind(m_title, DFontSizeManager::T7, QFont::Medium);
+    m_title->setForegroundRole(DPalette::TextTitle);
 
     m_savePathTypeComboBox = new QComboBox(this);
     AC_SET_ACCESSIBLE_NAME(m_savePathTypeComboBox, AC_VAULT_SAVE_PATH_TYPE_COMBOBOX);
