@@ -27,6 +27,9 @@
 #include "dguiapplicationhelper.h"
 #include "controllers/vaultcontroller.h"
 
+#include <DPalette>
+#include <DFontSizeManager>
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QButtonGroup>
@@ -35,8 +38,8 @@
 
 DGUI_USE_NAMESPACE
 
-DFMVaultActiveSaveKeyFileView::DFMVaultActiveSaveKeyFileView(QWidget *parent) :
-    QWidget(parent)
+DFMVaultActiveSaveKeyFileView::DFMVaultActiveSaveKeyFileView(QWidget *parent)
+    : QWidget(parent)
 {
     initUI();
 }
@@ -44,50 +47,56 @@ DFMVaultActiveSaveKeyFileView::DFMVaultActiveSaveKeyFileView(QWidget *parent) :
 void DFMVaultActiveSaveKeyFileView::initUI()
 {
     m_title = new DLabel(this);
-    m_title->setMargin(0);
+    DFontSizeManager::instance()->bind(m_title, DFontSizeManager::T7, QFont::Medium);
+    m_title->setForegroundRole(DPalette::TextTitle);
+    m_title->setAlignment(Qt::AlignCenter);
     m_title->setText(tr("Save Recovery Key"));
 
     m_hintMsg = new DLabel(this);
+    DFontSizeManager::instance()->bind(m_hintMsg, DFontSizeManager::T7, QFont::Normal);
+    m_hintMsg->setForegroundRole(DPalette::TextTips);
     m_hintMsg->setWordWrap(true);
     m_hintMsg->setAlignment(Qt::AlignCenter);
     m_hintMsg->setText(tr("Keep the key safe to retrieve the vault password later"));
 
     m_defaultPathRadioBtn = new QRadioButton(this);
+    DFontSizeManager::instance()->bind(m_defaultPathRadioBtn, DFontSizeManager::T7, QFont::Medium);
+    m_defaultPathRadioBtn->setForegroundRole(DPalette::ButtonText);
     AC_SET_ACCESSIBLE_NAME(m_defaultPathRadioBtn, AC_VAULT_DEFAULT_PATH_RADIOBTN);
     m_defaultPathRadioBtn->setChecked(true);
     m_defaultPathRadioBtn->setText(tr("Save to default path"));
 
     m_otherPathRadioBtn = new QRadioButton(this);
+    DFontSizeManager::instance()->bind(m_otherPathRadioBtn, DFontSizeManager::T7, QFont::Medium);
+    m_otherPathRadioBtn->setForegroundRole(DPalette::ButtonText);
     AC_SET_ACCESSIBLE_NAME(m_otherPathRadioBtn, AC_VAULT_OTHER_PATH_RADIOBTN);
     m_otherPathRadioBtn->setText(tr("Save to other locations"));
+
     m_otherRadioBtnHitMsg = new DLabel(tr("No permission, please reselect"), this);
     m_otherRadioBtnHitMsg->hide();
-    QPalette pe;
-    pe.setColor(QPalette::WindowText,Qt::red);
-    m_otherRadioBtnHitMsg->setPalette(pe);
-    QFont font1;
-    font1.setPixelSize(10);
-    m_otherRadioBtnHitMsg->setFont(font1);
+    DFontSizeManager::instance()->bind(m_otherRadioBtnHitMsg, DFontSizeManager::T9, QFont::Normal);
+    m_otherRadioBtnHitMsg->setForegroundRole(DPalette::TextWarning);
 
     m_SelectfileSavePathEdit = new DFileChooserEdit(this);
     AC_SET_ACCESSIBLE_NAME(m_SelectfileSavePathEdit, AC_VAULT_SELECT_FILE_SAVE_PATH_EDIT);
     m_SelectfileSavePathEdit->lineEdit()->setReadOnly(true);
     m_SelectfileSavePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
-    QFileDialog * filedialog = new QFileDialog(m_SelectfileSavePathEdit, QDir::homePath(), QString("pubKey.key")/*, tr("Key File(*.key)")*/);
+    QFileDialog *filedialog = new QFileDialog(m_SelectfileSavePathEdit, QDir::homePath(), QString("pubKey.key"));
     filedialog->setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
     filedialog->setNameFilter("KEY file(*.key)");
+    filedialog->setDefaultSuffix(QString("key"));
     m_SelectfileSavePathEdit->setFileDialog(filedialog);
     m_SelectfileSavePathEdit->setDirectoryUrl(QDir::homePath());
     m_SelectfileSavePathEdit->setEnabled(false);
-    m_SelectfileSavePathEdit->setFileMode(QFileDialog::FileMode::Directory);
+    m_SelectfileSavePathEdit->setFileMode(QFileDialog::Directory);
 
     QButtonGroup *group = new QButtonGroup(this);
     group->addButton(m_defaultPathRadioBtn, 1);
     group->addButton(m_otherPathRadioBtn, 2);
 
-    connect(group, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(slotSelectRadioBtn(QAbstractButton*)));
+    connect(group, SIGNAL(buttonClicked(QAbstractButton *)), this, SLOT(slotSelectRadioBtn(QAbstractButton *)));
     connect(m_SelectfileSavePathEdit, &DFileChooserEdit::fileChoosed, this, &DFMVaultActiveSaveKeyFileView::slotChangeEdit);
-
+    connect(filedialog, &QFileDialog::fileSelected, this, &DFMVaultActiveSaveKeyFileView::slotSelectCurrentFile);
 
     // 下一步按钮
     m_pNext = new QPushButton(tr("Next"), this);
@@ -95,76 +104,57 @@ void DFMVaultActiveSaveKeyFileView::initUI()
     connect(m_pNext, &QPushButton::clicked,
             this, &DFMVaultActiveSaveKeyFileView::slotNextBtnClicked);
 
-    RadioFrame * frame = new RadioFrame;
+    RadioFrame *frame = new RadioFrame;
 
-    QLabel * checkBoxLabel = new QLabel(frame);
+    DLabel *checkBoxLabel = new DLabel(frame);
+    DFontSizeManager::instance()->bind(checkBoxLabel, DFontSizeManager::T9, QFont::Normal);
+    checkBoxLabel->setForegroundRole(DPalette::TextTips);
     checkBoxLabel->setWordWrap(true);
-    checkBoxLabel->setAlignment(Qt::AlignCenter);
-    QFont font = checkBoxLabel->font();
-    font.setPixelSize(10);
-    checkBoxLabel->setFont(font);
+    checkBoxLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     checkBoxLabel->setText(tr("The default path is invisible to other users, and the path information will not be shown."));
 
-    QHBoxLayout * layout = new QHBoxLayout();
-    layout->setContentsMargins(0,0,0,0);
+    QHBoxLayout *layout = new QHBoxLayout();
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(m_defaultPathRadioBtn);
 
-    QHBoxLayout * layout1 = new QHBoxLayout();
-    layout1->setContentsMargins(24,0,15,0);
+    QHBoxLayout *layout1 = new QHBoxLayout();
+    layout1->setContentsMargins(30, 0, 0, 0);
     layout1->addWidget(checkBoxLabel);
 
-    QVBoxLayout * layout2 = new QVBoxLayout(frame);
-    layout2->setContentsMargins(0,0,0,0);
+    QVBoxLayout *layout2 = new QVBoxLayout(frame);
+    layout2->setMargin(8);
     layout2->addLayout(layout);
     layout2->addLayout(layout1);
+    layout2->addStretch(2);
 
-    RadioFrame * frame1 = new RadioFrame;
+    RadioFrame *frame1 = new RadioFrame;
 
-    QHBoxLayout * layout3 = new QHBoxLayout();
-    layout3->setContentsMargins(0,0,0,0);
+    QHBoxLayout *layout3 = new QHBoxLayout();
+    layout3->setContentsMargins(0, 0, 0, 0);
     layout3->addWidget(m_otherPathRadioBtn);
     layout3->addWidget(m_otherRadioBtnHitMsg);
     layout3->addStretch(1);
 
-    QHBoxLayout * layout4 = new QHBoxLayout();
-    layout4->setContentsMargins(4,4,4,4);
-    layout4->addWidget(m_SelectfileSavePathEdit);
+    QVBoxLayout *vlayout5 = new QVBoxLayout(frame1);
+    vlayout5->setMargin(8);
+    vlayout5->addLayout(layout3);
+    vlayout5->setSpacing(2);
+    vlayout5->addWidget(m_SelectfileSavePathEdit);
 
-    QVBoxLayout * layout5 = new QVBoxLayout(frame1);
-    layout5->setContentsMargins(0,0,0,0);
-    layout5->addLayout(layout3);
-    layout5->setSpacing(2);
-    layout5->addLayout(layout4);
+    QVBoxLayout *vlayout3 = new QVBoxLayout;
+    vlayout3->setContentsMargins(20, 0, 20, 0);
+    vlayout3->addWidget(frame, 1);
+    vlayout3->addStretch(2);
+    vlayout3->addWidget(frame1, 1);
 
-    QHBoxLayout * hlayout1 = new QHBoxLayout;
-    hlayout1->setContentsMargins(0,0,0,0);
-    hlayout1->addStretch(1);
-    hlayout1->addWidget(m_title);
-    hlayout1->addStretch(1);
-
-    QHBoxLayout * hlayout2 = new QHBoxLayout;
-    hlayout2->setContentsMargins(25,0,25,0);
-    hlayout2->addWidget(m_hintMsg, 1);
-
-    QHBoxLayout * hlayout3 = new QHBoxLayout;
-    hlayout3->setContentsMargins(25,0,25,0);
-    hlayout3->addWidget(frame, 1);
-
-    QHBoxLayout * hlayout4 = new QHBoxLayout;
-    hlayout4->setContentsMargins(25,0,25,0);
-    hlayout4->addWidget(frame1, 1);
-
-    QHBoxLayout * hlayout5 = new QHBoxLayout;
-    hlayout5->setContentsMargins(10,0,10,0);
-    hlayout5->addWidget(m_pNext, 1);
-
-    QVBoxLayout * vlayout1 = new QVBoxLayout;
-    vlayout1->setContentsMargins(0,0,0,0);
-    vlayout1->addLayout(hlayout1);
-    vlayout1->addLayout(hlayout2);
-    vlayout1->addLayout(hlayout3);
-    vlayout1->addLayout(hlayout4);
-    vlayout1->addLayout(hlayout5);
+    QVBoxLayout *vlayout1 = new QVBoxLayout;
+    vlayout1->setContentsMargins(0, 0, 0, 0);
+    vlayout1->addWidget(m_title);
+    vlayout1->addWidget(m_hintMsg);
+    vlayout1->addStretch(2);
+    vlayout1->addLayout(vlayout3);
+    vlayout1->addStretch(2);
+    vlayout1->addWidget(m_pNext);
 
     setLayout(vlayout1);
 }
@@ -173,34 +163,34 @@ void DFMVaultActiveSaveKeyFileView::slotNextBtnClicked()
 {
     //! 获取密钥字符串
     QString pubKey = OperatorCenter::getInstance()->getPubKey();
-    if(pubKey.isEmpty()) {
+    if (pubKey.isEmpty()) {
         return;
     }
 
     bool flg = false;
-    if(m_defaultPathRadioBtn->isChecked()) {
+    if (m_defaultPathRadioBtn->isChecked()) {
         //! 密钥保存默认路径
-       QString path = VAULT_BASE_PATH + QString("/") + (RSA_PUB_KEY_FILE_NAME) + QString(".key");
-       flg = OperatorCenter::getInstance()->saveKey(pubKey, path);
-    } else if(m_otherPathRadioBtn->isChecked()) {
+        QString path = VAULT_BASE_PATH + QString("/") + (RSA_PUB_KEY_FILE_NAME) + QString(".key");
+        flg = OperatorCenter::getInstance()->saveKey(pubKey, path);
+    } else if (m_otherPathRadioBtn->isChecked()) {
         //! 密钥保存用户指定路径
-       QString path = m_SelectfileSavePathEdit->text();
-       flg = OperatorCenter::getInstance()->saveKey(pubKey, path);
+        QString path = m_SelectfileSavePathEdit->text();
+        flg = OperatorCenter::getInstance()->saveKey(pubKey, path);
     }
 
-    if(flg) {
+    if (flg) {
         emit sigAccepted();
     }
 }
 
 void DFMVaultActiveSaveKeyFileView::slotSelectRadioBtn(QAbstractButton *btn)
 {
-    if(btn == m_defaultPathRadioBtn) {
+    if (btn == m_defaultPathRadioBtn) {
         m_SelectfileSavePathEdit->setEnabled(false);
         m_pNext->setEnabled(true);
-    } else if(btn == m_otherPathRadioBtn) {
+    } else if (btn == m_otherPathRadioBtn) {
         m_SelectfileSavePathEdit->setEnabled(true);
-        if(m_SelectfileSavePathEdit->text().isEmpty())
+        if (m_SelectfileSavePathEdit->text().isEmpty())
             m_pNext->setEnabled(false);
     }
 }
@@ -213,12 +203,22 @@ void DFMVaultActiveSaveKeyFileView::slotChangeEdit(const QString &fileName)
     QFile file(path);
     QFileDevice::Permissions ps = file.permissions();
     auto temp = ps & QFileDevice::WriteUser;
-    if(temp != QFileDevice::WriteUser) {
+    if (temp != QFileDevice::WriteUser) {
         m_pNext->setEnabled(false);
         m_otherRadioBtnHitMsg->show();
-    } else if(!fileName.isEmpty()) {
+    } else if (!fileName.isEmpty()) {
         m_otherRadioBtnHitMsg->hide();
         m_pNext->setEnabled(true);
+    }
+}
+
+void DFMVaultActiveSaveKeyFileView::slotSelectCurrentFile(const QString &file)
+{
+    QFileInfo fileInfo(file);
+    if (fileInfo.isDir()) {
+        m_SelectfileSavePathEdit->fileDialog()->selectFile(QString("pubKey.key"));
+    } else if (!file.endsWith(QString(".key"))) {
+        m_SelectfileSavePathEdit->fileDialog()->selectFile(file + QString(".key"));
     }
 }
 
@@ -231,20 +231,26 @@ void DFMVaultActiveSaveKeyFileView::showEvent(QShowEvent *event)
     QWidget::showEvent(event);
 }
 
-RadioFrame::RadioFrame(QFrame *parent):
-    QFrame(parent)
+RadioFrame::RadioFrame(QFrame *parent)
+    : QFrame(parent)
 {
-
+    DPalette pal;
+    QColor color;
+    color.setRgbF(0.9, 0.9, 0.9, 0.03);
+    pal.setColor(DPalette::Light, color);
+    this->setPalette(pal);
 }
 
 void RadioFrame::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
-    if(DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType) {
+    painter.setRenderHint(QPainter::Antialiasing);   // 反锯齿;
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType) {
         painter.setBrush(QBrush(QColor("#4c252525")));
-    } else if(DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType){
-        painter.setBrush(QBrush(QColor("#4ce6e6e6")));
+    } else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType) {
+        QColor color;
+        color.setRgbF(0.0, 0.0, 0.0, 0.03);
+        painter.setBrush(QBrush(color));
     }
 
     painter.setPen(Qt::transparent);

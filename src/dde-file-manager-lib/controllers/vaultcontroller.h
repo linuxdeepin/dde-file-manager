@@ -50,7 +50,8 @@ public:
         NotAvailable
     };
 
-    struct FileBaseInfo {
+    struct FileBaseInfo
+    {
         bool isExist = false;
         bool isFile;
         bool isDir;
@@ -58,9 +59,15 @@ public:
         bool isSymLink = false;
     };
 
-    explicit VaultController(QObject *parent = nullptr);
-public:
+    //! 保险箱可见策略
+    enum VaultVisiblePolicy {
+        INVISIBLE = 1,   //! 不可见
+        VISIBLE   //! 可见
+    };
 
+    explicit VaultController(QObject *parent = nullptr);
+
+public:
     static VaultController *ins();
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
@@ -327,6 +334,7 @@ private slots:
 
     // 保险箱策略处理函数
     void slotVaultPolicy();
+
 private:
     // 创建保险箱防暴力破解的dbus接口对象
     void createVaultBruteForcePreventionInterface();
@@ -446,9 +454,9 @@ private:
     static bool m_isBigFileDeleting;
 
     // 记录保险箱状态
-    VaultState m_enVaultState{NotExisted};
+    VaultState m_enVaultState { NotExisted };
 
-    DFM_NAMESPACE::DFileStatisticsJob *m_sizeWorker{ nullptr };
+    DFM_NAMESPACE::DFileStatisticsJob *m_sizeWorker { nullptr };
 
     // 计算当前保险箱大小是否需要刷新
     bool m_bNeedRefreshSize = false;

@@ -37,13 +37,13 @@
 #include <QMouseEvent>
 
 DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
-    : DFMVaultPageBase(parent)
-    , m_pStackedWidget(nullptr)
-    , m_pStartVaultWidget(nullptr)
-    , m_pSetUnclockMethodWidget(nullptr)
-    , m_SaveKeyWidget(nullptr)
-    , m_ActiveVaultFinishedWidget(nullptr)
-    , m_SaveKeyFileWidget(nullptr)
+    : DFMVaultPageBase(parent),
+      m_pStackedWidget(nullptr),
+      m_pStartVaultWidget(nullptr),
+      m_pSetUnclockMethodWidget(nullptr),
+      m_SaveKeyWidget(nullptr),
+      m_ActiveVaultFinishedWidget(nullptr),
+      m_SaveKeyFileWidget(nullptr)
 {
     AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_ACTIVE_WIDGET);
     this->setIcon(QIcon::fromTheme("dfm_vault"));
@@ -70,9 +70,10 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
     m_pStackedWidget->addWidget(m_pSetUnclockMethodWidget);
     m_pStackedWidget->addWidget(m_SaveKeyFileWidget);
     m_pStackedWidget->addWidget(m_ActiveVaultFinishedWidget);
+    m_pStackedWidget->layout()->setMargin(0);
 
     this->addContent(m_pStackedWidget);
-    setFixedWidth(472);
+    setMinimumSize(472, 346);
 
     connect(this, &DFMVaultPageBase::accepted, this, &DFMVaultPageBase::enterVaultDir);
 
@@ -110,7 +111,7 @@ void DFMVaultActiveView::slotNextWidget()
             int nNextIndex = nIndex + 1;
             m_pStackedWidget->setCurrentIndex(nNextIndex);
         } else {
-            setBeginingState(); // 控件文本恢复初值
+            setBeginingState();   // 控件文本恢复初值
             emit accept();
         }
     }
