@@ -29,6 +29,7 @@
 #include "models/dfmappentryfileinfo.h"
 #include "dfmstandardpaths.h"
 #include "dfmevent.h"
+#include "dabstractfilewatcher.h"
 
 #include <QDir>
 
@@ -77,7 +78,9 @@ TEST_F(TestDFMAppEntryController, tst_createFileInfo) {
 }
 
 TEST_F(TestDFMAppEntryController, tst_createFileWatcher) {
-    EXPECT_TRUE(controller.createFileWatcher({}));
+    auto watcher = controller.createFileWatcher({});
+    EXPECT_TRUE(watcher);
+    delete watcher;
 }
 
 TEST_F(TestDFMAppEntryController, tst_openFile) {

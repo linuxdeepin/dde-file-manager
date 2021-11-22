@@ -93,12 +93,14 @@ QString DFMAppEntryFileInfo::cmd() const
     auto cmd = entryFile.getExec();
     for (const auto &param: unsupportedParams)
         cmd.remove(param);
-    return cmd;
+    return cmd.remove("\"").remove("'");
 }
 
 QString DFMAppEntryFileInfo::executableBin() const
 {
     auto cmd = this->cmd();
     auto cmdArgs = cmd.split(" ", QString::SkipEmptyParts);
-    return cmdArgs.count() > 0 ? cmdArgs.at(0) : QString();
+    auto bin = cmdArgs.count() > 0 ? cmdArgs.at(0) : QString();
+    bin.remove("\"").remove("'");
+    return bin;
 }
