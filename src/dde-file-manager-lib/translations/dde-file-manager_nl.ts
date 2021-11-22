@@ -231,22 +231,22 @@
         <translation>Dubbelklik om te openen</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="819"/>
+        <location filename="../models/computermodel.cpp" line="826"/>
         <source>My Directories</source>
         <translation>Mijn mappen</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="822"/>
+        <location filename="../models/computermodel.cpp" line="829"/>
         <source>Disks</source>
         <translation>Schijven</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="825"/>
+        <location filename="../models/computermodel.cpp" line="832"/>
         <source>File Vault</source>
         <translation>Bestandskluis</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="828"/>
+        <location filename="../models/computermodel.cpp" line="835"/>
         <source>Quick Access</source>
         <translation>Snelle toegang</translation>
     </message>
@@ -516,7 +516,7 @@
 <context>
     <name>DFMTagWidget</name>
     <message>
-        <location filename="../views/dfmtagwidget.cpp" line="136"/>
+        <location filename="../views/dfmtagwidget.cpp" line="138"/>
         <source>Tag</source>
         <translation>Label</translation>
     </message>
@@ -973,10 +973,10 @@
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="67"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="76"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="133"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="132"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="144"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="145"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="146"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="323"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="336"/>
         <source>Unable to get the key file</source>
         <translation>Het sleutelbestand kan niet worden opgehaald</translation>
     </message>
@@ -986,8 +986,8 @@
         <translation>De verificatie is mislukt</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="190"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="149"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="202"/>
         <source>Select a path</source>
         <translation>Kies een locatie</translation>
     </message>
@@ -997,51 +997,51 @@
         <translation>Wachtwoord opvragen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="185"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="197"/>
         <source>By key in the default path</source>
         <translation>Op sleutel op standaardlocatie</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="186"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="198"/>
         <source>By key in the specified path</source>
         <translation>Op sleutel op andere locatie</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="209"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="221"/>
         <source>Verification Successful</source>
         <translation>De sleutel is geverifieerd.</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="212"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="224"/>
         <source>Keep it safe</source>
         <translation>Veilig bewaren</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="285"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>Terug</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="285"/>
         <source>Verify Key</source>
         <comment>button</comment>
         <translation>Sleutel verifiëren</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="285"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
         <translation>Ontgrendelen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="273"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="285"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Sluiten</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="306"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="318"/>
         <source>Vault password: %1</source>
         <translation>Kluiswachtwoord: %1</translation>
     </message>
@@ -1054,69 +1054,64 @@
         <translation>Bestandskluis ontgrendelen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="68"/>
-        <source>Verify your password</source>
-        <translation>Bevestig je wachtwoord</translation>
-    </message>
-    <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="72"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="75"/>
         <source>Forgot password?</source>
         <translation>Wachtwoord vergeten?</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="142"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="91"/>
+        <source>Input your password please</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="144"/>
         <source>Password hint: %1</source>
         <translation>Wachtwoordhint: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="333"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="335"/>
         <source>Failed to unlock file vault</source>
         <translation>De bestandskluis kan niet worden ontgrendeld</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="88"/>
-        <source>Password</source>
-        <translation>Wachtwoord</translation>
-    </message>
-    <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="127"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="129"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Annuleren</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="127"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="129"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Ontgrendelen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="251"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="253"/>
         <source>Please try again %1 minutes later</source>
         <translation>Probeer het over %1 minuten opnieuw</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="278"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="280"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Onjuist wachtwoord - probeer het over %1 minuten opnieuw</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="281"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="283"/>
         <source>Wrong password, one chance left</source>
         <translation>Onjuist wachtwoord - nog 1 poging te gaan</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="283"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="285"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Onjuist wachtwoord - nog %1 pogingen te gaan</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="328"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="330"/>
         <source>Wrong password</source>
         <translation>Onjuist wachtwoord</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="337"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="339"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Oké</translation>
@@ -1125,191 +1120,187 @@
 <context>
     <name>DFileCopyMoveJob</name>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="213"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="212"/>
         <source>Permission error</source>
         <translation>Bevoegdheidsfout</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="215"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="214"/>
         <source>The action is denied</source>
         <translation>De actie is niet toegestaan</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="221"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="220"/>
         <source>Failed to open the file</source>
         <translation>Openen van bestand mislukt</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="223"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="222"/>
         <source>Failed to read the file</source>
         <translation>Lezen van bestand mislukt</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="225"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="224"/>
         <source>Failed to write the file</source>
         <translation>Schrijven naar bestand mislukt</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="227"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="226"/>
         <source>Failed to create the directory</source>
         <translation>Kan map niet aanmaken</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="229"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="228"/>
         <source>Failed to delete the file</source>
         <translation>Verwijderen van bestand mislukt</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="231"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="230"/>
         <source>Failed to move the file</source>
         <translation>Verplaatsen van bestand mislukt</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="233"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="232"/>
         <source>Original file does not exist</source>
         <translation>Origineel bestand bestaat niet</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="235"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="234"/>
         <source>Failed, file size must be less than 4GB</source>
         <translation>Mislukt; de bestandsgrootte moet kleiner dan 4 GB zijn</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="237"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="236"/>
         <source>Not enough free space on the target disk</source>
         <translation>Onvoldoende vrije ruimte op de doelschijf</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="239"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="238"/>
         <source>File integrity was damaged</source>
         <translation>De bestandsintegriteit is beschadigd</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="241"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="240"/>
         <source>The target device is read only</source>
         <translation>Het doelapparaat is alleen-lezen</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="243"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="242"/>
         <source>Target folder is inside the source folder</source>
         <translation>De doelmap staat in de hoofdmap!</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="245"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="244"/>
         <source>The action is not supported</source>
         <translation>Deze actie wordt niet ondersteund</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="247"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="246"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>Je bent niet bevoegd om deze map te gebruiken</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="249"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="248"/>
         <source>Failed to position the file pointer!</source>
         <translation>De bestandsverwijzing kan niet worden gepositioneerd!</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="671"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="670"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>kopiëren</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1235"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1234"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation>De map kan niet worden geopend: de bestandsnaam is te lang.</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1443"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2065"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2965"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1427"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2413"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation>Het bestand kan niet worden geopend: de bestandsnaam is te lang</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3845"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3929"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3295"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3379"/>
         <source>Failed to write the file, cause:</source>
         <translation>Schrijven naar bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4368"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3799"/>
         <source>Failed to position the file pointer, cause: %1</source>
         <translation>De bestandsverwijzing kan niet worden gepositioneerd! Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4952"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4474"/>
         <source>Syncing data</source>
         <translation>Bezig met synchroniseren…</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4952"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4474"/>
         <source>Please wait</source>
         <translation>Even geduld…</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1245"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1244"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>De map kan niet worden aangemaakt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1455"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1495"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2077"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2117"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2654"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2694"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="4417"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1439"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1479"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1948"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1988"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3848"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Openen van bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1491"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2113"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2690"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3790"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="4413"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1475"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1984"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3240"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3844"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>Openen van bestand mislukt. Oorzaak: toegang geweigerd.</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1620"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2242"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1589"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2098"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>Lezen van bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1697"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1797"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2330"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2420"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1643"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1716"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2142"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2189"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>Schrijven naar bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1945"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2561"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1846"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2297"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>Bestandsintegriteit is beschadigd. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2977"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2425"/>
         <source>Failed to open the file, cause: </source>
         <translation>Openen van bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3058"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2506"/>
         <source>Failed to read the file, cause: </source>
         <translation>Lezen van bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3156"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2604"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>Verwijderen van bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3256"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2704"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>Er kan geen snelkoppeling worden gemaakt. Oorzaak: %1</translation>
     </message>
@@ -1362,12 +1353,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1272"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1304"/>
         <source>Trash</source>
         <translation>Prullenbak</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1281"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1313"/>
         <source>Empty</source>
         <translation>Legen</translation>
     </message>
@@ -1375,41 +1366,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1447"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1443"/>
         <location filename="../models/trashfileinfo.cpp" line="321"/>
         <source>Name</source>
         <translation>Naam</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1121"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1122"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1445"/>
         <location filename="../models/searchfileinfo.cpp" line="130"/>
         <source>Time modified</source>
         <translation>Gewijzigd</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1447"/>
         <source>Size</source>
         <translation>Grootte</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1455"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
         <source>Time created</source>
         <translation>Aangemaakt op</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1457"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
         <source>Last access</source>
         <translation>Laatst benaderd</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1459"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1455"/>
         <location filename="../models/recentfileinfo.cpp" line="211"/>
         <location filename="../models/searchfileinfo.cpp" line="128"/>
         <location filename="../models/searchfileinfo.cpp" line="133"/>
@@ -1420,22 +1411,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2776"/>
+        <location filename="../views/dfileview.cpp" line="2806"/>
         <source>Disc mount error</source>
         <translation>Schijfaankoppelfout</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2776"/>
+        <location filename="../views/dfileview.cpp" line="2806"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>De schijf is in gebruik. Beëindig het lopende proces en koppel de schijf opnieuw aan.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2790"/>
+        <location filename="../views/dfileview.cpp" line="2820"/>
         <source>Mounting failed</source>
         <translation>Aankoppelen mislukt</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3498"/>
+        <location filename="../views/dfileview.cpp" line="3537"/>
         <source>(Reverse)</source>
         <translation>(Omkeren)</translation>
     </message>
@@ -1443,7 +1434,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="666"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="669"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>‘%1’-label toekennen</translation>
     </message>
@@ -1514,91 +1505,86 @@
 <context>
     <name>DTaskDialog</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="85"/>
-        <source>This action is not supported</source>
-        <translation>Deze actie wordt niet ondersteund</translation>
-    </message>
-    <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="733"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="726"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>Bezig met wissen van %1…</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="734"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="727"/>
         <source>Burning disc %1, please wait...</source>
         <translation>Bezig met branden van %1…</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="739"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="732"/>
         <source>Writing data...</source>
         <translation>Bezig met wegschrijven…</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="740"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="733"/>
         <source>Verifying data...</source>
         <translation>Bezig met verifiëren…</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="790"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="783"/>
         <source>Copying %1</source>
         <translation>Bezig met kopiëren van %1</translation>
     </message>
     <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="784"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="788"/>
         <location filename="../../dialogs/dtaskdialog.cpp" line="791"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="795"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="798"/>
         <source>to %2</source>
         <translation>naar %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="814"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="807"/>
         <source>%1 already exists in target folder</source>
         <translation>‘%1’ staat al in de doelmap</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="815"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="808"/>
         <source>Original path %1 Target path %2</source>
         <translation>Oorspronkelijk pad %1 - Doelpad %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="826"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="819"/>
         <source>Merge</source>
         <comment>button</comment>
         <translation>Samenvoegen</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="829"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="822"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Vervangen</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="794"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="787"/>
         <source>Moving %1</source>
         <translation>Bezig met verplaatsen van %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="359"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="351"/>
         <source>Removing file vault, please try later</source>
         <translation>De bestandskluis wordt vernietigd - probeer het later opnieuw</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="797"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="790"/>
         <source>Restoring %1</source>
         <translation>Bezig met herstellen van %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="800"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="793"/>
         <source>Deleting %1</source>
         <translation>Bezig met verwijderen van %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="803"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="796"/>
         <source>Trashing %1</source>
         <translation>Bezig met verplaatsen van %1 naar de prullenbak</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="811"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="804"/>
         <source>Calculating space, please wait</source>
         <translation>Bezig met vaststellen van ruimte…</translation>
     </message>
@@ -2363,7 +2349,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="95"/>
         <location filename="../configure/global-setting-template.js" line="95"/>
         <source>View</source>
-        <translation>Tonen</translation>
+        <translation>Weergave</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="99"/>
@@ -3403,7 +3389,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1282"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1314"/>
         <source>Empty Trash</source>
         <translation>Prullenbak legen</translation>
     </message>
@@ -3536,6 +3522,11 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="876"/>
         <source>Add to disc</source>
         <translation>Toevoegen aan schijf</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="912"/>
+        <source>Refresh</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="348"/>
@@ -3745,7 +3736,7 @@
         <translation>Verwijderd om</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1330"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1331"/>
         <source>Loading...</source>
         <translation>Bezig met laden…</translation>
     </message>
@@ -3813,12 +3804,12 @@
         <translation>Tekst</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="217"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="209"/>
         <source>1 task in progress</source>
         <translation>Er wordt 1 taak uitgevoerd</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="219"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="211"/>
         <source>%1 tasks in progress</source>
         <translation>Er worden 1% taken uitgevoerd</translation>
     </message>
@@ -4067,7 +4058,7 @@
         <translation>Vrije ruimte %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="285"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="277"/>
         <source>Files are being processed</source>
         <translation>De bestanden worden verwerkt</translation>
     </message>
@@ -4083,22 +4074,15 @@
         <translation>Mijn kluis</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="711"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="811"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="710"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="810"/>
         <source>Failed to create file info</source>
         <translation>Kan geen bestandsinformatie samenstellen</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="767"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="766"/>
         <source>Failed to create file handler</source>
         <translation>Kan geen bestandshandeling aanmaken</translation>
-    </message>
-    <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2729"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2765"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2798"/>
-        <source>Execution error</source>
-        <translation>Uitvoerfout</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="332"/>
@@ -4122,15 +4106,15 @@
         <translation>Oké</translation>
     </message>
     <message>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="913"/>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="1074"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="919"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1080"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="479"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="688"/>
         <source>%1 are not allowed</source>
         <translation>%1 is niet toegestaan</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1545"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1560"/>
         <location filename="../../usershare/usersharemanager.cpp" line="549"/>
         <source>Failed to start Samba services</source>
         <translation>De Samba-diensten kunnen niet worden gestart</translation>
