@@ -87,8 +87,13 @@ bool DFMAppEntryController::openFile(const QSharedPointer<DFMOpenFileEvent> &eve
     auto appEntryInfo = dynamic_cast<DFMAppEntryFileInfo *>(info.data());
     if (appEntryInfo) {
         auto cmd = appEntryInfo->cmd();
-        return QProcess::startDetached(cmd);
+        auto ret = QProcess::startDetached(cmd);
+        if (!ret) {
+            qWarning() << "QProcess::startDetached(" << cmd << ") failed!";
+        }
+        return ret;
     }
+    qWarning() << "Cannot get the appEntryInfo!";
     return false;
 }
 
