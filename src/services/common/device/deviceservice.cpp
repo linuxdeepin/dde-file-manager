@@ -123,7 +123,8 @@ bool DeviceMonitorHandler::insertNewBlockDeviceData(const DeviceServiceHelper::B
 
     BlockDeviceData data;
     DeviceServiceHelper::makeBlockDeviceData(ptr, &data);
-    allBlkDevData.insert(id, data);
+    QMutexLocker guard(&mutexForBlock);
+    allBlockDevData.insert(id, data);
     return true;
 }
 
@@ -135,12 +136,14 @@ bool DeviceMonitorHandler::insertNewProtocolDeviceData(const DeviceServiceHelper
 
 void DeviceMonitorHandler::removeBlockDeviceData(const QString &deviceId)
 {
-    if (allBlkDevData.contains(deviceId))
-        allBlkDevData.remove(deviceId);
+    QMutexLocker guard(&mutexForBlock);
+    if (allBlockDevData.contains(deviceId))
+        allBlockDevData.remove(deviceId);
 }
 
 void DeviceMonitorHandler::removeProtocolDeviceData(const QString &deviceId)
 {
+    QMutexLocker guard(&mutexForProtocol);
     if (allProtocolDevData.contains(deviceId))
         allProtocolDevData.remove(deviceId);
 }
@@ -224,7 +227,9 @@ void DeviceMonitorHandler::updateDataWithOtherInfo(BlockDeviceData *data, const 
 void DeviceMonitorHandler::handleBlockDevicesSizeUsedChanged()
 {
     qDebug() << "Start check block devices size used changed";
-    for (auto iter = allBlkDevData.begin(); iter != allBlkDevData.end(); ++iter) {
+    QList<BlockDeviceData> changedDataGroup;
+    QMutexLocker guard(&mutexForBlock);
+    for (auto iter = allBlockDevData.begin(); iter != allBlockDevData.end(); ++iter) {
         if (!DeviceServiceHelper::isIgnorableBlockDevice(*iter)) {
             if (iter->optical)
                 continue;
@@ -241,9 +246,15 @@ void DeviceMonitorHandler::handleBlockDevicesSizeUsedChanged()
             if (curSizeUsed != sizeUsed) {
                 qInfo() << "Block:" << id << "old size: " << sizeUsed << "new size: " << curSizeUsed;
                 DeviceServiceHelper::updateBlockDeviceSizeUsed(&(*iter), iter->common.sizeTotal, info.bytesAvailable());
-                emit service->deviceSizeUsedChanged(id, iter->common.sizeTotal, iter->common.sizeFree);
+                changedDataGroup.push_back(*iter);
             }
         }
+    }
+    guard.unlock();
+
+    for (auto iter = changedDataGroup.cbegin(); iter != changedDataGroup.cend(); ++iter) {
+        if (Q_LIKELY(!iter->common.id.isEmpty()))
+            emit service->deviceSizeUsedChanged(iter->common.id, iter->common.sizeTotal, iter->common.sizeFree);
     }
 }
 
@@ -343,10 +354,11 @@ void DeviceMonitorHandler::onBlockDeviceUnmounted(const QString &deviceId)
 void DeviceMonitorHandler::onBlockDevicePropertyChanged(const QString &deviceId,
                                                         const QMap<dfmmount::Property, QVariant> &changes)
 {
-    if (allBlkDevData.contains(deviceId)) {
-        updateDataWithOpticalInfo(&allBlkDevData[deviceId], changes);
-        updateDataWithMountedInfo(&allBlkDevData[deviceId], changes);
-        updateDataWithOtherInfo(&allBlkDevData[deviceId], changes);
+    QMutexLocker guard(&mutexForBlock);
+    if (allBlockDevData.contains(deviceId)) {
+        updateDataWithOpticalInfo(&allBlockDevData[deviceId], changes);
+        updateDataWithMountedInfo(&allBlockDevData[deviceId], changes);
+        updateDataWithOtherInfo(&allBlockDevData[deviceId], changes);
 
         // TODO(zhangs): support encrypted devices(reference DFMRootFileInfo::extraProperties)
     }
@@ -701,7 +713,7 @@ QStringList DeviceService::blockDevicesIdList(const QVariantMap &opts) const
     bool needMountable = opts.value("mountable").toBool();
     bool needNotIgnorable = opts.value("not_ignorable").toBool();
 
-    const auto &allBlkData = monitorHandler->allBlkDevData;
+    const auto allBlkData = monitorHandler->allBlockDevData;   // must use value!!!
     for (const auto &data : allBlkData) {
         if (needUnmountable && DeviceServiceHelper::isUnmountableBlockDevice(data)) {
             idList.append(data.common.id);
@@ -770,14 +782,14 @@ QStringList DeviceService::blockDevicesIdList(const QVariantMap &opts) const
  *  'size_total': 393216,
  *  'size_usage': 393216}
  */
-QVariantMap DeviceService::blockDeviceInfo(const QString &deviceId, bool detail)
+QVariantMap DeviceService::blockDeviceInfo(const QString &deviceId, bool detail) const
 {
     QVariantMap info;
-    const auto &allBlkData = monitorHandler->allBlkDevData;
+    const auto allBlkData = monitorHandler->allBlockDevData;   // must use value!!!
     if (!allBlkData.contains(deviceId))
         return info;
 
-    const auto &blkData = allBlkData.value(deviceId);
+    const auto &&blkData = allBlkData.value(deviceId);
     DeviceServiceHelper::makeBlockDeviceMap(blkData, &info, detail);
     return info;
 }
@@ -788,7 +800,7 @@ QStringList DeviceService::protocolDevicesIdList() const
     return QStringList();
 }
 
-QVariantMap DeviceService::protocolDeviceInfo(const QString &deviceId, bool detail)
+QVariantMap DeviceService::protocolDeviceInfo(const QString &deviceId, bool detail) const
 {
     // TODO(zhangs): build data
     return QVariantMap();

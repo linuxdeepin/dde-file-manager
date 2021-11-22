@@ -29,6 +29,7 @@
 #include <QObject>
 #include <QPointer>
 #include <QTimer>
+#include <QMutex>
 
 DSC_BEGIN_NAMESPACE
 
@@ -73,7 +74,9 @@ private:
 
     QTimer sizeUpdateTimer;
     QPointer<DeviceService> service;
-    QHash<QString, BlockDeviceData> allBlkDevData;
+    QMutex mutexForBlock;
+    QMutex mutexForProtocol;
+    QHash<QString, BlockDeviceData> allBlockDevData;
     QHash<QString, ProtocolDeviceData> allProtocolDevData;
 };
 
