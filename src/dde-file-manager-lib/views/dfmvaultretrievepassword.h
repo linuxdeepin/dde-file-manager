@@ -40,7 +40,7 @@ class DFMVaultRetrievePassword : public DFMVaultPageBase
 {
     Q_OBJECT
 public:
-    static DFMVaultRetrievePassword * instance();
+    static DFMVaultRetrievePassword *instance();
 
     /**
      * @brief verificationKey 验证密钥

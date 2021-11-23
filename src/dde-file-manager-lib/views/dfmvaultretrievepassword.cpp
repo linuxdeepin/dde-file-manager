@@ -182,7 +182,7 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent): DFMVaultPag
 
     m_title = new DLabel(tr("Retrieve Password"), this);
     m_title->setAlignment(Qt::AlignHCenter);
-    m_title->setMargin(0);
+
     // Set font.
     DFontSizeManager::instance()->bind(m_title, DFontSizeManager::T7, QFont::Medium);
     m_title->setForegroundRole(DPalette::TextTitle);
@@ -206,9 +206,9 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent): DFMVaultPag
     m_defaultFilePathEdit->setReadOnly(true);
 
     m_verificationPrompt = new DLabel(this);
-    QPalette pe;
-    pe.setColor(QPalette::WindowText, Qt::red);
-    m_verificationPrompt->setPalette(pe);
+    m_verificationPrompt->setForegroundRole(DPalette::TextWarning);
+    m_verificationPrompt->setAlignment(Qt::AlignHCenter);
+    DFontSizeManager::instance()->bind(m_verificationPrompt, DFontSizeManager::T7, QFont::Medium);
 
     m_PasswordRecoveryPage = new QFrame(this);
 
@@ -248,32 +248,28 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent): DFMVaultPag
     m_selectKeyPage = new QFrame(this);
 
     // 布局
-    QHBoxLayout *play1 = new QHBoxLayout();
-    play1->setMargin(0);
-    play1->addWidget(m_filePathEdit);
-    play1->addWidget(m_defaultFilePathEdit);
+    QVBoxLayout *funLayout = new QVBoxLayout();
+    funLayout->addWidget(m_savePathTypeComboBox);
+    funLayout->addSpacing(4);
+    funLayout->addWidget(m_filePathEdit);
+    funLayout->addWidget(m_defaultFilePathEdit);
 
-    QHBoxLayout *play2 = new QHBoxLayout();
-    play2->addStretch(1);
-    play2->addWidget(m_title);
-    play2->addStretch(1);
+    QVBoxLayout *titleLayout = new QVBoxLayout();
+    titleLayout->addWidget(m_title);
+    titleLayout->addStretch(1);
 
-    QHBoxLayout *play3 = new QHBoxLayout();
-    play3->addStretch(1);
-    play3->addWidget(m_verificationPrompt);
-    play3->addStretch(1);
+    QVBoxLayout *tipLayout = new QVBoxLayout();
+    tipLayout->addWidget(m_verificationPrompt);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(m_selectKeyPage);
-    mainLayout->setContentsMargins(0, 0, 0, 10);
-    mainLayout->addLayout(play2);
-    mainLayout->addSpacing(15);
-    mainLayout->addWidget(m_savePathTypeComboBox);
-    mainLayout->addLayout(play1);
-    mainLayout->addLayout(play3);
+    mainLayout->setContentsMargins(25, 0, 25, 0);
+    mainLayout->addLayout(titleLayout);
+    mainLayout->addLayout(funLayout);
+    mainLayout->addLayout(tipLayout);
 
+    layout()->setSpacing(0);
     m_selectKeyPage->setLayout(mainLayout);
     addContent(m_selectKeyPage);
-    setSpacing(0);
     // 防止点击按钮后界面隐藏
     setOnButtonClickedClose(false);
 
