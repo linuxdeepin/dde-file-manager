@@ -106,9 +106,9 @@ void DFMVaultRetrievePassword::onButtonClicked(int index, const QString &text)
         break;
     case 1:
         if (text == btnList[3]) {
-            setOnButtonClickedClose(true);  //! 按钮1关闭窗口能力打开
+            setOnButtonClickedClose(true);   //! 按钮1关闭窗口能力打开
         } else {
-            setOnButtonClickedClose(false); //! 按钮1关闭窗口能力关闭
+            setOnButtonClickedClose(false);   //! 按钮1关闭窗口能力关闭
             // 用户权限认证(异步授权)
             auto ins = Authority::instance();
             ins->checkAuthorization(PolicyKitRetrievePasswordActionId,
@@ -136,8 +136,7 @@ void DFMVaultRetrievePassword::onComboBoxIndex(int index)
             getButton(1)->setEnabled(false);
         }
         m_verificationPrompt->setText("");
-    }
-    break;
+    } break;
     case 1:
         m_defaultFilePathEdit->hide();
         m_filePathEdit->show();
@@ -174,7 +173,8 @@ void DFMVaultRetrievePassword::slotCheckAuthorizationFinished(PolkitQt1::Authori
     }
 }
 
-DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent): DFMVaultPageBase(parent)
+DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent)
+    : DFMVaultPageBase(parent)
 {
     setIcon(QIcon::fromTheme("dfm_vault"));
     setFixedWidth(396);
@@ -213,35 +213,25 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent): DFMVaultPag
     m_PasswordRecoveryPage = new QFrame(this);
 
     m_title1 = new DLabel(m_PasswordRecoveryPage);
+    DFontSizeManager::instance()->bind(m_title1, DFontSizeManager::T7, QFont::Medium);
+    m_title1->setForegroundRole(DPalette::TextTitle);
+    m_title1->setAlignment(Qt::AlignCenter);
     m_title1->setText(tr("Verification Successful"));
+
     m_passwordMsg = new DLabel(m_PasswordRecoveryPage);
+    m_passwordMsg->setAlignment(Qt::AlignCenter);
+
     m_hintMsg = new DLabel(m_PasswordRecoveryPage);
+    m_hintMsg->setAlignment(Qt::AlignCenter);
     m_hintMsg->setText(tr("Keep it safe"));
 
-    QHBoxLayout *hlayout = new QHBoxLayout();
-    hlayout->setMargin(0);
-    hlayout->addStretch(1);
-    hlayout->addWidget(m_title1);
-    hlayout->addStretch(1);
-
-    QHBoxLayout *hlayout1 = new QHBoxLayout();
-    hlayout1->setMargin(0);
-    hlayout1->addStretch(1);
-    hlayout1->addWidget(m_passwordMsg);
-    hlayout1->addStretch(1);
-
-    QHBoxLayout *hlayout2 = new QHBoxLayout();
-    hlayout2->setMargin(0);
-    hlayout2->addStretch(1);
-    hlayout2->addWidget(m_hintMsg);
-    hlayout2->addStretch(1);
-
     QVBoxLayout *vlayout = new QVBoxLayout(m_PasswordRecoveryPage);
-    vlayout->setContentsMargins(0, 0, 0, 10);
-    vlayout->addLayout(hlayout);
-    vlayout->addSpacing(15);
-    vlayout->addLayout(hlayout1);
-    vlayout->addLayout(hlayout2);
+    vlayout->setContentsMargins(0, 0, 0, 0);
+    vlayout->addWidget(m_title1);
+    vlayout->addStretch(1);
+    vlayout->addWidget(m_passwordMsg);
+    vlayout->addWidget(m_hintMsg);
+    vlayout->addStretch(1);
     m_PasswordRecoveryPage->hide();
 
     // 主视图
@@ -273,7 +263,7 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent): DFMVaultPag
     // 防止点击按钮后界面隐藏
     setOnButtonClickedClose(false);
 
-    btnList = QStringList({tr("Back", "button"), tr("Verify Key", "button"), tr("Go to Unlock", "button"), tr("Close", "button")});
+    btnList = QStringList({ tr("Back", "button"), tr("Verify Key", "button"), tr("Go to Unlock", "button"), tr("Close", "button") });
     addButton(btnList[0], false);
     addButton(btnList[1], true, ButtonType::ButtonRecommend);
 
@@ -315,7 +305,6 @@ void DFMVaultRetrievePassword::setResultsPage(QString password)
     setButtonText(1, btnList[3]);
     AC_SET_ACCESSIBLE_NAME(getButton(1), AC_VAULT_VERIFY_PUKEY_FILE_BTN);
 }
-
 
 void DFMVaultRetrievePassword::showEvent(QShowEvent *event)
 {
