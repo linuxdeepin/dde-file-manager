@@ -47,6 +47,7 @@ set(BASE_H
     base/abstractfilewatcher.h
     base/abstractfiledevice.h
     base/abstractfilemenu.h
+    base/abstractjobhandler.h
     )
 
 set(BASE_CPP
@@ -60,6 +61,7 @@ set(BASE_CPP
     base/abstractfilewatcher.cpp
     base/abstractfiledevice.cpp
     base/abstractfilemenu.cpp
+    base/abstractjobhandler.cpp
     )
 
 set(LOCALFILE_H
@@ -70,6 +72,7 @@ set(LOCALFILE_H
     localfile/localfileinfo.h
     localfile/localfilemenu.h
     localfile/localfilewatcher.h
+    localfile/localfilehandler.h
     )
 
 set(LOCALFILE_CPP
@@ -77,6 +80,7 @@ set(LOCALFILE_CPP
     localfile/localfilemenu.cpp
     localfile/localdiriterator.cpp
     localfile/localfilewatcher.cpp
+    localfile/localfilehandler.cpp
     )
 
 set(WIDGETS_H

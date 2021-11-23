@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dialogservice.h"
+#include "taskdialog/taskdialog.h"
 
 DSC_USE_NAMESPACE
 
@@ -49,6 +50,18 @@ void DialogService::showErrorDialog(const QString &title, const QString &message
     d.addButton(tr("Confirm","button"), true, DDialog::ButtonRecommend);
     d.setMaximumWidth(640);
     d.exec();
+}
+/*!
+ * \brief DialogService::addTask 添加一个文件操作任务，当收到这个任务的线程结束时，自己移除掉这个任务
+ *
+ * \param task 文件操作任务的处理器
+ */
+void DialogService::addTask(const JobHandlePointer &task)
+{
+    if (!taskdailog)
+        taskdailog = new TaskDialog();
+
+    taskdailog->addTask(task);
 }
 
 DialogService::DialogService(QObject *parent)

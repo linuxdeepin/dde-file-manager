@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     zhangsheng<zhangsheng@uniontech.com>
+ * Author:     liyigang<liyigang@uniontech.com>
  *
  * Maintainer: max-lv<lvwujun@uniontech.com>
  *             lanxuesong<lanxuesong@uniontech.com>
@@ -20,42 +20,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DIALOGSERVICE_H
-#define DIALOGSERVICE_H
+#ifndef FILEOPERATIONSSERVICE_H
+#define FILEOPERATIONSSERVICE_H
 
 #include "dfm_common_service_global.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
 #include <dfm-base/base/abstractjobhandler.h>
 
-#include <DDialog>
-
-
-using namespace DTK_NAMESPACE::Widget;
 DSC_BEGIN_NAMESPACE
-class TaskDialog;
-class DialogService final : public dpf::PluginService, dpf::AutoServiceRegister<DialogService>
+class FileOperationsService final : public dpf::PluginService, dpf::AutoServiceRegister<FileOperationsService>
 {
     Q_OBJECT
-    Q_DISABLE_COPY(DialogService)
+    Q_DISABLE_COPY(FileOperationsService)
     friend class dpf::QtClassFactory<dpf::PluginService>;
 
 public:
     static QString name()
     {
-        return "org.deepin.service.DialogService";
+        return "org.deepin.service.FileOperationsService";
     }
 
-    DDialog *showQueryScanningDialog(const QString &title);
-    void showErrorDialog(const QString &title, const QString &message);
-    void addTask(const JobHandlePointer &task);
+    JobHandlePointer copyFiles(const QList<QUrl> &sources, const QUrl &target);
+    JobHandlePointer moveFilesToTrash(const QList<QUrl> &sources);
+    JobHandlePointer restoreFilesFromTrash(const QList<QUrl> &sources);
+    JobHandlePointer deleteFiles(const QList<QUrl> &sources);
+    JobHandlePointer cutFiles(const QList<QUrl> &sources, const QUrl &target);
 
 private:
-    explicit DialogService(QObject *parent = nullptr);
-    virtual ~DialogService() override;
-    TaskDialog *taskdailog = nullptr; // 文件任务进度和错误处理弹窗
+    explicit FileOperationsService(QObject *parent = nullptr);
+    virtual ~FileOperationsService() override;
+    static QList<JobHandlePointer> copyTash;
 };
 
 DSC_END_NAMESPACE
 
-#endif // DIALOGSERVICE_H
+#endif   // FILEOPERATIONSSERVICE_H

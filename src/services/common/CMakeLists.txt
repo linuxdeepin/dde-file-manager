@@ -13,8 +13,8 @@ FILE(GLOB EVENT_FILES
     )
 
 FILE(GLOB JOB_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/job/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/job/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/*.cpp"
     )
 
 FILE(GLOB DEVICE_FILES
@@ -25,6 +25,8 @@ FILE(GLOB DEVICE_FILES
 FILE(GLOB DIALOG_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/taskdialog/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/taskdialog/*.cpp"
     )
 
 FILE(GLOB MENU_FILES
