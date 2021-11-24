@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -27,22 +27,16 @@
 
 #include <QObject>
 #include <QSharedPointer>
-DFMBASE_BEGIN_NAMESPACE
+#include <QVariant>
 
+typedef QSharedPointer<QMap<quint8, QVariant>> JobInfoPointer;
+Q_DECLARE_METATYPE(JobInfoPointer);
+
+DFMBASE_BEGIN_NAMESPACE
 class AbstractJobHandler : public QObject
 {
     Q_OBJECT
 public:
-    enum class JobOperate : uint8_t {
-        kPauseOperate,   // 暂停操作
-        kResumeOperate,   // 恢复操作
-        kStopOperate,   // 停止操作
-        kReplaceOperate,   // 替换操作
-        kMergeDirOperate,   // 合并目录操作
-        kSkipOperatre,   // 跳过操作
-        kCancelOperate,   // 退出操作
-        kUnknowOperate = 255
-    };
     enum class JobState : uint8_t {
         kStartState,   // 开始状态
         kRunningState,   // 运行状态
@@ -50,32 +44,147 @@ public:
         kStopState,   // 停止状态
         kUnknowState = 255
     };
+    Q_ENUM(JobState)
+    enum class JobErrorType : uint8_t {
+        kNoError,   // 没有错误
+        kCancelError,   // 退出错误
+        kPermissionError,   // 权限错误
+        kSpecialFileError,   // 特殊文件错误
+        kFileExistsError,   // 文件已存在
+        kDirectoryExistsError,   // 目录已存在
+        kOpenError,   // 打开文件错误
+        kReadError,   // 读取文件错误
+        kWriteError,   // 写入文件错误
+        kSymlinkError,   // 创建链接文件错误
+        kMkdirError,   // 创建目录错误
+        kResizeError,   // 调整文件大小错误
+        kRemoveError,   // 移除错误
+        kRenameError,   // 重命名错误
+        kSymlinkToGvfsError,   // 连接gvfs文件错误
+        kUnknowUrlError,   // 未知的url
+        kNonexistenceError,   // 不存在错误
+        kIntegrityCheckingError,   // 检查文件类型错误
+        kFileSizeTooBigError,   // 文件太大
+        kNotEnoughSpaceError,   // 没有剩余空间进行拷贝
+        kTargetReadOnlyError,   // 目标目录是只读
+        kTargetIsSelfError,   // 目标是自己
+        kNotSupportedError,   // 不支持的操作
+        kPermissionDeniedError,   // 权限错误
+        kSeekError,   // 文件移动错误
+        kUnknowError,   // 未知错误
+    };
+    Q_ENUM(JobErrorType)
+    enum class JobType : uint8_t {
+        kCopyType,   // 拷贝任务
+        kCutType,   // 剪切任务
+        kDeleteTpye,   // 删除任务
+        kMoveToTrashType,   //移动到回收站
+        kRestoreType,   // 从回收站还原
+        kUnknow
+    };
+    Q_ENUM(JobType)
+    enum SupportAction {
+        kNoAction = 0x00,   // 没有操作
+        kRetryAction = 0x01,   // 重试
+        kReplaceAction = 0x02,   // 替换
+        kMergeAction = 0x04,   // 合并
+        kSkipAction = 0x08,   // 跳过
+        kCoexistAction = 0x10,   // 共存
+        kCancelAction = 0x20,   // 取消
+        kEnforceAction = 0x40,   // 强制执行
+        kRememberAction = 0x80,   // 记住当前动作
+        kPauseAction = 0x100,   // 暂停操作
+        kStopAction = 0x200   // 停止操作
+    };
+    Q_ENUM(SupportAction)
+    Q_DECLARE_FLAGS(SupportActions, SupportAction)
+    enum NotifyInfoKey : uint8_t {
+        kJobtypeKey,
+        kCurrentProccessKey,
+        kTotalSizeKey,
+        kJobStateKey,
+        kSourceUrlKey,
+        kTargetUrlKey,
+        kErrorTypeKey,
+        kSourceMsgKey,
+        kTargetMsgKey,
+        kErrorMsgKey,
+        kActionsKey,
+        kSpeedKey,
+        kRemindTimeKey
+    };
+    Q_ENUM(NotifyInfoKey)
     explicit AbstractJobHandler(QObject *parent = nullptr);
     virtual ~AbstractJobHandler();
     virtual qreal currentJobProcess() const;
     virtual qint64 totalSize() const;
     virtual qint64 currentSize() const;
     virtual JobState currentState() const;
-    virtual bool operate(const JobOperate &op);
-signals:
+signals:   // 发送给任务调用者使用的信号
     /*!
-     * @brief proccessChanged 当前任务的进度变化信号
-     * 任务实时进度变化
-     * param qint64 &current 当前任务执行的进度
-     * param qint64 &total 当前任务文件的总大小
-     * @return bool 操作是否成功
+     * @brief proccessChanged 当前任务的进度变化信号，此信号都可能是异步连接，所以所有参数都没有使用引用
+     * \param info 这个Varint信息map
+     * 在我们自己提供的fileoperations服务中，这个VarintMap里面会有kJobtypeKey（任务类型，类型JobType）,kCurrentProccessKey（当前任务执行的进度，类型qint64），
+     * kTotalSizeKey（当前任务文件的总大小，如果统计文件数量没有完成，值为-1,类型qint64）三个字段
+     * 在我们自己提供的dailog服务中，这个VarintMap必须有kCurrentProccessKey（当前任务执行的进度，类型qint64）和
+     * kTotalSizeKey（当前任务文件的总大小，如果统计文件数量没有完成，值为-1，类型qint64）值来做文件进度的展示
      */
-    void proccessChanged(const qint64 &current, const qint64 &total);
+    void proccessChangedNotify(const JobInfoPointer jobInfo);
     /*!
-     * @brief proccessChanged 当前任务的进度发生变化信号
-     * 任务状态发生改变
-     * param JobState &state 当前任务执行的状态
-     * @return bool 操作是否成功
+     * @brief stateChanged 任务状态发生改变，此信号都可能是异步连接，所以所有参数都没有使用引用
+     * \param info 这个Varint信息map
+     * 在我们自己提供的fileoperations服务中，这个VarintMap里面会有kJobStateKey（当前任务执行的状态,类型：JobState）和存在kJobtypeKey（任务类型，类型JobType）
+     * 在我们自己提供的dailog服务中，这个VarintMap必须存在kJobStateKey（当前任务执行的状态，类型：JobState）用来展示暂停和开始按钮状态
      */
-    void stateChanged(const JobState &state);
+    void stateChangedNotify(const JobInfoPointer jobInfo);
+    /*!
+     * \brief currentTaskNotify 当前任务的信息变化，此信号都可能是异步连接，所以所有参数都没有使用引用
+     * 例如：拷贝文件时，正在拷贝a文件到b目录，发送此信号
+     * \param info 这个Varint信息map
+     * 在我们自己提供的fileoperations服务中，这个VarintMap里面会有kJobtypeKey（任务类型，类型JobType）、kSourceUrlKey（源文件url，类型：QUrl）
+     * 、kTargetUrlKey（源文件url，类型：QUrl）、kSourceMsgKey（源文件url拼接的显示字符串，类型：QString）和kTargetMsgKey（目标文件url拼接的显示字符串，
+     * 类型：QString）
+     * 在我们自己提供的dailog服务中，这个VarintMap必须有有kSourceMsgKey（显示任务的左第一个label的显示，类型：QString）
+     * 和kTargetMsgKey显示任务的左第二个label的显示，类型：QString）
+     */
+    void currentTaskNotify(const JobInfoPointer jobInfo);
+    /*!
+     * \brief finishedNotify 任务完成
+     */
+    void finishedNotify();
+    /*!
+     * \brief errorNotify 错误信息，此信号都可能是异步连接，所以所有参数都没有使用引用
+     * \param info 这个Varint信息map
+     * 在我们自己提供的fileoperations服务中，这个VarintMap里面会有kJobtypeKey任务类型，类型JobType）、source（源文件url，类型：QUrl）
+     * 、target（源文件url，类型：QUrl）、errorType（错误类型，类型：JobErrorType）、sourceMsg（源文件url拼接的显示字符串，
+     * 类型：QString）、targetMsg（目标文件url拼接的显示字符串，类型：QString）、kErrorMsgKey（错误信息字符串，类型：QString）、
+     * kActionsKey（支持的操作，类型：SupportActions）
+     * 在我们自己提供的dailog服务中，这个VarintMap必须有有sourceMsg（显示任务的左第一个label的显示，类型：QString）、
+     * targetMsg（显示任务的左第二个label的显示，类型：QString）、kErrorMsgKey（显示任务的左第三个label的显示，类型：QString）、
+     * kActionsKey（支持的操作，用来显示那些按钮，类型：SupportActions）
+     */
+    void errorNotify(const JobInfoPointer jobInfo);
+    /*!
+     * \brief speedUpdatedNotify 速度更新信号，此信号都可能是异步连接，所以所有参数都没有使用引用
+     * \param info 这个Varint信息map
+     * 在我们自己提供的fileoperations服务中，这个VarintMap里面会有kJobtypeKey（任务类型，类型JobType）、kSpeedKey（源文件url拼接的
+     * 显示字符串，类型：QString）、kRemindTimeKey（目标文件url拼接的显示字符串，类型：QString）
+     * 在我们自己提供的dailog服务中，这个VarintMap必须有有kSpeedKey（显示任务的右第一个label的显示，类型：QString）、
+     * kRemindTimeKey（（显示任务的右第二个label的显示，类型：QString）
+     */
+    void speedUpdatedNotify(const JobInfoPointer jobInfo);
+signals:   // 发送给任务使用的信号
+    /*!
+     * \brief userAction 用户当前动作
+     * \param action 当前的动作类型 这里的动作只能是action的一种和kRememberAction并存
+     */
+    void userAction(SupportActions actions);
+public slots:
+    void operateTaskJob(SupportActions actions);
 };
 DFMBASE_END_NAMESPACE
 
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::SupportActions)
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractJobHandler> JobHandlePointer;
 Q_DECLARE_METATYPE(JobHandlePointer)
 

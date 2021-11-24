@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -34,8 +34,10 @@
 
 class QListWidget;
 class QListWidgetItem;
+class QMutex;
 DWIDGET_USE_NAMESPACE
 DSC_BEGIN_NAMESPACE
+class TaskWidget;
 class TaskDialog : public DAbstractDialog
 {
     Q_OBJECT
@@ -44,11 +46,30 @@ class TaskDialog : public DAbstractDialog
     ~TaskDialog();
     void addTask(const JobHandlePointer &taskHandler);
     void initUI();
+    void blockShutdown();
+    void addTaskWidget(const JobHandlePointer &taskHandler, TaskWidget *wid);
+    void setTitle(int taskCount);
+signals:
+    /*!
+     * \brief closed 当前进度窗口关闭时，发送关闭信号
+     */
+    void closed();
+private slots:
+    void adjustSize();
+    void moveYCenter();
+    void removeTask();
+
+protected:
+    void closeEvent(QCloseEvent *event);
 
 private:
     QListWidget *taskListWidget = nullptr;
-    QMultiMap<QString, QListWidgetItem *> taskItems;
+    QMap<JobHandlePointer, QListWidgetItem *> taskItems;
     DTitlebar *titlebar = nullptr;
+    QDBusReply<QDBusUnixFileDescriptor> replyBlokShutDown;
+    QMutex *addTaskMutex = nullptr;
+    QMutex *adjustSizeMutex = nullptr;
+    static int MaxHeight;
 };
 
 DSC_END_NAMESPACE

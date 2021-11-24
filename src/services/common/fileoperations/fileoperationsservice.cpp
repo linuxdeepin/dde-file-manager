@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -43,7 +43,7 @@ FileOperationsService::~FileOperationsService() {}
  * \param target 目标目录
  * \return QSharedPointer<AbstractJobHandler> 任务控制器
  */
-JobHandlePointer FileOperationsService::copyFiles(const QList<QUrl> &sources, const QUrl &target)
+JobHandlePointer FileOperationsService::copy(const QList<QUrl> &sources, const QUrl &target)
 {
     Q_UNUSED(sources);
     Q_UNUSED(target);
@@ -56,7 +56,7 @@ JobHandlePointer FileOperationsService::copyFiles(const QList<QUrl> &sources, co
  * \param sources 移动到回收站的源文件
  * \return JobHandlePointer 任务控制器
  */
-JobHandlePointer FileOperationsService::moveFilesToTrash(const QList<QUrl> &sources)
+JobHandlePointer FileOperationsService::moveToTrash(const QList<QUrl> &sources)
 {
     Q_UNUSED(sources);
     return JobHandlePointer(new DFMBASE_NAMESPACE::AbstractJobHandler);
@@ -67,7 +67,7 @@ JobHandlePointer FileOperationsService::moveFilesToTrash(const QList<QUrl> &sour
  * \param sources 需要还原的文件
  * \return JobHandlePointer 任务控制器
  */
-JobHandlePointer FileOperationsService::restoreFilesFromTrash(const QList<QUrl> &sources)
+JobHandlePointer FileOperationsService::restoreFromTrash(const QList<QUrl> &sources)
 {
     Q_UNUSED(sources);
     return JobHandlePointer(new DFMBASE_NAMESPACE::AbstractJobHandler);
@@ -78,7 +78,7 @@ JobHandlePointer FileOperationsService::restoreFilesFromTrash(const QList<QUrl> 
  * \param sources 需要删除的源文件
  * \return JobHandlePointer 任务控制器
  */
-JobHandlePointer FileOperationsService::deleteFiles(const QList<QUrl> &sources)
+JobHandlePointer FileOperationsService::deletes(const QList<QUrl> &sources)
 {
     Q_UNUSED(sources);
     return JobHandlePointer(new DFMBASE_NAMESPACE::AbstractJobHandler);
@@ -91,7 +91,7 @@ JobHandlePointer FileOperationsService::deleteFiles(const QList<QUrl> &sources)
  * \param target 目标目录
  * \return JobHandlePointer 任务控制器
  */
-JobHandlePointer FileOperationsService::cutFiles(const QList<QUrl> &sources, const QUrl &target)
+JobHandlePointer FileOperationsService::cut(const QList<QUrl> &sources, const QUrl &target)
 {
     Q_UNUSED(sources);
     Q_UNUSED(target);

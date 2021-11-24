@@ -24,7 +24,9 @@
 
 #include <DDBusSender>
 #include <QCoreApplication>
+#include <QApplication>
 #include <QThread>
+#include <QDebug>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -97,6 +99,33 @@ QString UniversalUtils::userLoginState()
 bool UniversalUtils::inMainThread()
 {
     return QThread::currentThread() == QCoreApplication::instance()->thread();
+}
+
+/*!
+ * \brief FileUtils::blockShutdown 调用dbus去设置阻塞睡眠
+ * \param replay 输入参数，dbus回复
+ */
+void UniversalUtils::blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay)
+{
+    qInfo() << " create dbus to block computer shut down!!!";
+    if (replay.value().isValid()) {
+        qWarning() << "current qt dbus replyBlokShutDown is using!";
+        return;
+    }
+
+    QDBusInterface loginManager("org.freedesktop.login1",
+                                "/org/freedesktop/login1",
+                                "org.freedesktop.login1.Manager",
+                                QDBusConnection::systemBus());
+
+    QList<QVariant> arg;
+    arg << QString("shutdown:sleep:")   // what
+        << qApp->applicationDisplayName()   // who
+        << QObject::tr("Files are being processed")   // why
+        << QString("block");   // mode
+
+    replay = loginManager.callWithArgumentList(QDBus::Block, "Inhibit", arg);
+    qInfo() << " create over dbus to block computer shut down!!!";
 }
 
 DFMBASE_END_NAMESPACE

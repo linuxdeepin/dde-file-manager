@@ -26,6 +26,8 @@
 #include "dfm-base/dfm_base_global.h"
 
 #include <QString>
+#include <QtDBus/QDBusReply>
+#include <QtDBus/QDBusUnixFileDescriptor>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -36,6 +38,8 @@ public:
     static void notifyMessage(const QString &title, const QString &msg);
     static QString userLoginState();
     static bool inMainThread();
+
+    static void blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay);
 };
 
 DFMBASE_END_NAMESPACE

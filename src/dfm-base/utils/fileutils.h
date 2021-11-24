@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -42,4 +42,4 @@ public:
 
 DFMBASE_END_NAMESPACE
 
-#endif // FILEUTILS_H
+#endif   // FILEUTILS_H

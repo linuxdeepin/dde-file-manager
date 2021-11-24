@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -65,14 +65,11 @@ AbstractJobHandler::JobState AbstractJobHandler::currentState() const
     return JobState::kUnknowState;
 }
 /*!
- * @brief operate 对当前任务的操作
- * 进度是当前任务拷贝的百分比*100,例如，拷贝过程中，当前拷贝了2300kb，总大小是250000kb，当前的进度是
- * (2300kb/250000kb) = 0.92
- * param JOBOPERATE 对当前任务的操作
- * @return bool 操作是否成功
+ * \brief AbstractJobHandler::operateTaskJob 对任务进行操作
+ * 如：停止任务，暂停任务，任务重试，替换操作
+ * \param actions 操作的动作 这里的动作只能是action的一种和kRememberAction并存
  */
-bool AbstractJobHandler::operate(const AbstractJobHandler::JobOperate &op)
+void AbstractJobHandler::operateTaskJob(SupportActions actions)
 {
-    Q_UNUSED(op);
-    return false;
+    emit userAction(actions);
 }

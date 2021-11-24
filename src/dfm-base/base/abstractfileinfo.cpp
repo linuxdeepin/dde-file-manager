@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -30,15 +30,14 @@
 USING_IO_NAMESPACE
 
 DFMBASE_BEGIN_NAMESPACE
-Q_GLOBAL_STATIC_WITH_ARGS(int,type_id,{qRegisterMetaType<AbstractFileInfoPointer>("AbstractFileInfo")});
+Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<AbstractFileInfoPointer>("AbstractFileInfo") });
 
 namespace SuffixInfo {
-const QString USER_DIR {"userdir"};
-const QString PROTOCOL {"gvfsmp"};
-const QString BLOCK {"localdisk"};
-const QString STASHED_REMOTE {"remote"};
-} // namespace SuffixInfo
-
+const QString kUserDir { "userdir" };
+const QString kProtocol { "gvfsmp" };
+const QString kBlock { "localdisk" };
+const QString kStashedRemote { "remote" };
+}   // namespace SuffixInfo
 
 /*!
  * \class DAbstractFileInfo 抽象文件信息类
@@ -64,7 +63,6 @@ AbstractFileInfo::AbstractFileInfo(const QUrl &url)
 
 AbstractFileInfo::~AbstractFileInfo()
 {
-
 }
 /*!
  * \brief = 重载操作符=
@@ -143,7 +141,6 @@ bool AbstractFileInfo::exists() const
  */
 void AbstractFileInfo::refresh()
 {
-
 }
 /*!
  * \brief filePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径
@@ -553,7 +550,7 @@ QString AbstractFileInfo::group() const
  */
 uint AbstractFileInfo::groupId() const
 {
-    return static_cast<uint>(-1);;
+    return static_cast<uint>(-1);
 }
 /*!
  * \brief permission 判断文件是否有传入的权限
@@ -694,6 +691,22 @@ QDateTime AbstractFileInfo::fileTime(QFileDevice::FileTime time) const
         return QDateTime();
     }
 }
+/*!
+ * \brief dfmbase::AbstractFileInfo::countChildFile 获取目录下有多少个文件
+ * \return
+ */
+int dfmbase::AbstractFileInfo::countChildFile() const
+{
+    return -1;
+}
+/*!
+ * \brief dfmbase::AbstractFileInfo::sizeFormat 使用kb，mb，gb显示文件大小
+ * \return
+ */
+QString dfmbase::AbstractFileInfo::sizeFormat() const
+{
+    return QString();
+}
 
 /*!
  * \class DAbstractFileInfoPrivate 抽象文件信息私有类
@@ -703,10 +716,9 @@ QDateTime AbstractFileInfo::fileTime(QFileDevice::FileTime time) const
 AbstractFileInfoPrivate::AbstractFileInfoPrivate(AbstractFileInfo *qq)
     : q(qq)
 {
-
 }
 
-AbstractFileInfoPrivate::~AbstractFileInfoPrivate() {
-
+AbstractFileInfoPrivate::~AbstractFileInfoPrivate()
+{
 }
 DFMBASE_END_NAMESPACE

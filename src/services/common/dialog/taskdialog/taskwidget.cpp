@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -21,21 +21,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "taskwidget.h"
+#include "dfm-base/base/abstractfileinfo.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/mimetype/mimedatabase.h"
+#include "dfm-base/utils/fileutils.h"
+
+#include <DWaterProgress>
+#include <DIconButton>
+#include <DGuiApplicationHelper>
 
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QCheckBox>
 #include <QTimer>
-
-#include <DWaterProgress>
-#include <DIconButton>
+#include <QUrl>
+#include <QApplication>
+#include <QPointer>
 
 DWIDGET_USE_NAMESPACE
-
+DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
 const static int kMsgLabelWidth = 350;
 const static int kSpeedLabelWidth = 100;
-static const char *const kBtnPropertyName = "btnType";
+static const char *const kBtnPropertyActionName = "btnType";
+static const AbstractJobHandler::JobState kPausedState = AbstractJobHandler::JobState::kPauseState;
 
 ElidedLable::ElidedLable(QWidget *parent)
     : QLabel(parent)
@@ -67,26 +76,244 @@ TaskWidget::TaskWidget(QWidget *parent)
     showConflictButtons(false);
 }
 
-TaskWidget::~TaskWidget() {}
+TaskWidget::~TaskWidget()
+{
+    disconnect();
+}
+/*!
+ * \brief TaskWidget::setTaskHandle 连接当前任务处理器的信号，处理当前拷贝信息的显示
+ * \param handle 任务处理控制器
+ */
+void TaskWidget::setTaskHandle(const JobHandlePointer &handle)
+{
+    if (!handle)
+        return;
 
+    connect(handle.data(), &AbstractJobHandler::proccessChangedNotify, this, &TaskWidget::onShowTaskProccess, Qt::QueuedConnection);
+    connect(handle.data(), &AbstractJobHandler::stateChangedNotify, this, &TaskWidget::onHandlerTaskStateChange, Qt::QueuedConnection);
+    connect(handle.data(), &AbstractJobHandler::errorNotify, this, &TaskWidget::onShowErrors, Qt::QueuedConnection);
+    connect(handle.data(), &AbstractJobHandler::currentTaskNotify, this, &TaskWidget::onShowTaskInfo, Qt::QueuedConnection);
+    connect(handle.data(), &AbstractJobHandler::speedUpdatedNotify, this, &TaskWidget::onShowSpeedUpdatedInfo, Qt::QueuedConnection);
+
+    connect(this, &TaskWidget::buttonClicked, handle.data(), &AbstractJobHandler::operateTaskJob, Qt::QueuedConnection);
+}
+/*!
+ * \brief TaskWidget::onButtonClicked 处理所有按钮按下
+ */
 void TaskWidget::onButtonClicked()
 {
-    QObject *obj = sender();
-    if (!obj)
+    QObject *obj { sender() };
+    if (!obj) {
+        qWarning() << "the button is null or the button is release!";
         return;
-    BUTTON button = obj->property(kBtnPropertyName).value<BUTTON>();
-    showConflictButtons(button == BUTTON::kPause);
-    emit butonClicked(button);
+    }
+    AbstractJobHandler::SupportActions actions = obj->property(kBtnPropertyActionName).value<AbstractJobHandler::SupportAction>();
+    showConflictButtons(actions.testFlag(AbstractJobHandler::SupportAction::kPauseAction));
+    actions = chkboxNotAskAgain->isChecked() ? actions | AbstractJobHandler::SupportAction::kRememberAction : actions;
+    emit buttonClicked(actions);
 }
-
-void TaskWidget::onTimerTimeOut()
+/*!
+ * \brief TaskWidget::onShowErrors 处理和显示错误信息
+ * \param info 这个Varint信息map
+ * 在我们自己提供的dailog服务中，这个VarintMap必须有存在kSpeedKey（显示任务的右第一个label的显示，类型：QString）、
+ * kRemindTimeKey（（显示任务的右第二个label的显示，类型：QString）
+ */
+void TaskWidget::onShowErrors(const JobInfoPointer JobInfo)
 {
-    isSettingValue = false;
+
+    AbstractJobHandler::JobErrorType errorType = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>();
+    QString sourceMsg = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey).toString();
+    QString targetMsg = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey).toString();
+    AbstractJobHandler::SupportActions actions = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kActionsKey).value<AbstractJobHandler::SupportActions>();
+    lbSrcPath->setText(sourceMsg);
+    lbDstPath->setText(targetMsg);
+    if (errorType == AbstractJobHandler::JobErrorType::kFileExistsError || errorType == AbstractJobHandler::JobErrorType::kDirectoryExistsError) {
+        QUrl source = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey).value<QUrl>();
+        QUrl target = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetUrlKey).value<QUrl>();
+        return onShowConflictInfo(source, target, actions);
+    }
+    QString errorMsg = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey).toString();
+    lbErrorMsg->setText(errorMsg);
+    lbErrorMsg->setHidden(errorMsg.isEmpty());
+    if (!widButton) {
+        widButton = createBtnWidget();
+        mainLayout->addWidget(widButton);
+    }
+    widButton->setHidden(false);
+    if (widConfict)
+        widConfict->hide();
+    showBtnByAction(actions);
+    showConflictButtons(true, false);
+}
+/*!
+ * \brief TaskWidget::onShowConflictInfo 显示冲突界面信息
+ * \param source 源文件的url
+ * \param target 目标文件的url
+ * \param action 支持的操作
+ */
+void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const AbstractJobHandler::SupportActions action)
+{
+    if (!widButton) {
+        widButton = createBtnWidget();
+        mainLayout->addWidget(widButton);
+    }
+    if (!widConfict) {
+        widConfict = createConflictWidget();
+        rVLayout->addWidget(widConfict);
+    }
+    QString error;
+    const AbstractFileInfoPointer &originInfo = InfoFactory::create<AbstractFileInfo>(source, &error);
+    if (originInfo && !error.isEmpty()) {
+        lbErrorMsg->setText(QString(tr("create source file %1 Info failed in show conflict Info function!")).arg(source.path()));
+        showConflictButtons(true, false);
+        qWarning() << QString("create source file %1 Info failed in show conflict Info function!").arg(source.path());
+        return;
+    }
+    error.clear();
+    AbstractFileInfoPointer targetInfo = InfoFactory::create<AbstractFileInfo>(target, &error);
+    if (originInfo && !error.isEmpty()) {
+        lbErrorMsg->setText(QString(tr("create source file %1 Info failed in show conflict Info function!")).arg(target.path()));
+        showConflictButtons(true, false);
+        qWarning() << QString("create source file %1 Info failed in show conflict Info function!").arg(target.path());
+        return;
+    }
+
+    showBtnByAction(action);
+
+    if (originInfo && targetInfo) {
+        QMimeType mimeTypeSrc = MimeDatabase::mimeTypeForUrl(target);
+        if (!mimeTypeSrc.isValid()) {
+            qWarning() << "get source file mimetype is valid!";
+        }
+        lbSrcIcon->setPixmap(QIcon::fromTheme(mimeTypeSrc.iconName()).pixmap(48, 48));
+        lbSrcModTime->setText(QString(tr("Time modified: %1")).arg(originInfo->lastModified().isValid() ? originInfo->lastModified().toString("yyyy/MM/dd HH:mm:ss") : qApp->translate("MimeTypeDisplayManager", "Unknown")));
+        if (originInfo->isDir()) {
+            lbSrcTitle->setText(tr("Original folder"));
+            QString filecount = originInfo->countChildFile() <= 1 ? QObject::tr("%1 item").arg(originInfo->countChildFile()) : QObject::tr("%1 items").arg(originInfo->countChildFile());
+            lbSrcFileSize->setText(QString(tr("Contains: %1")).arg(filecount));
+        } else {
+            lbSrcTitle->setText(tr("Original file"));
+            lbSrcFileSize->setText(QString(tr("Size: %1")).arg(originInfo->sizeFormat()));
+        }
+        QMimeType mimeTypeDst = MimeDatabase::mimeTypeForUrl(source);
+        if (!mimeTypeDst.isValid()) {
+            qWarning() << "get source file mimetype is valid!";
+        }
+        lbDstIcon->setPixmap(QIcon::fromTheme(mimeTypeSrc.iconName()).pixmap(48, 48));
+        lbDstModTime->setText(QString(tr("Time modified: %1")).arg(targetInfo->lastModified().isValid() ? targetInfo->lastModified().toString("yyyy/MM/dd HH:mm:ss") : qApp->translate("MimeTypeDisplayManager", "Unknown")));
+
+        if (targetInfo->isDir()) {
+            lbDstTitle->setText(tr("Target folder"));
+            QString filecount = targetInfo->countChildFile() <= 1 ? QObject::tr("%1 item").arg(targetInfo->countChildFile()) : QObject::tr("%1 items").arg(targetInfo->countChildFile());
+            lbDstFileSize->setText(QString(tr("Contains: %1")).arg(filecount));
+            lbDstFileSize->setText(QString(tr("Contains: %1")).arg(QObject::tr("%1 item")));
+        } else {
+            lbDstTitle->setText(tr("Target file"));
+            lbDstFileSize->setText(QString(tr("Size: %1")).arg(targetInfo->sizeFormat()));
+        }
+
+        widConfict->show();
+        widButton->show();
+        btnCoexist->setHidden(false);
+        showConflictButtons();
+    }
+}
+/*!
+ * \brief TaskWidget::onHandlerTaskStateChange 处理和显示当前拷贝任务的状态变化
+ * \param info 这个Varint信息map
+ * 在我们自己提供的dailog服务中，这个VarintMap必须存在kJobStateKey（当前任务执行的状态，类型：JobState）用来展示暂停和开始按钮状态
+ */
+void TaskWidget::onHandlerTaskStateChange(const JobInfoPointer JobInfo)
+{
+    AbstractJobHandler::JobState state = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey).value<AbstractJobHandler::JobState>();
+    bool isCurPaused = kPausedState == state;
+    if (isCurPaused == isPauseState) {
+        return;
+    }
+    if (state == kPausedState) {
+        isPauseState = true;
+        btnPause->setIcon(QIcon::fromTheme("dfm_task_start"));
+        progress->stop();
+    } else {
+        isPauseState = false;
+        btnPause->setIcon(QIcon::fromTheme("dfm_task_pause"));
+        progress->start();
+    }
+}
+/*!
+ * \brief TaskWidget::onShowTaskInfo 显示当前任务的任务信息
+ * \param info 这个Varint信息map
+ * 在我们自己提供的dailog服务中，这个VarintMap必须有存在kSourceMsgKey（显示任务的左第一个label的显示，类型：QString）
+ * 和kTargetMsgKey显示任务的左第二个label的显示，类型：QString）
+ */
+void TaskWidget::onShowTaskInfo(const JobInfoPointer JobInfo)
+{
+    QString source = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey).toString();
+    QString target = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey).toString();
+    lbSrcPath->setText(source);
+    lbDstPath->setText(target);
+    if (lbErrorMsg->isVisible()) {
+        lbErrorMsg->setText("");
+        lbErrorMsg->hide();
+    }
+    if (widConfict)
+        widConfict->hide();
+    if (widButton)
+        widButton->hide();
+}
+/*!
+ * \brief TaskWidget::showTaskProccess 显示当前任务进度
+ * \param info 这个Varint信息map
+ * 在我们自己提供的dailog服务中，这个VarintMap必须有kCurrentProccessKey（当前任务执行的进度，类型qint64）和
+ * kTotalSizeKey（当前任务文件的总大小，如果统计文件数量没有完成，值为-1，类型qint64）值来做文件进度的展示
+ */
+void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
+{
+    qint64 current = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kCurrentProccessKey).value<qint64>();
+    qint64 total = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey).value<qint64>();
+    qint64 value = total <= 0 ? 1 : current * 100 / total;
+
+    if (value > 100) {
+        value = 100;
+    }
+
+    if (value > 0 && value == progress->value()) {
+        return;
+    } else if (value >= 0 && progress->value() == 0) {
+        progress->start();
+        progress->setValue(static_cast<int>(value));
+        return;
+    }
+
+    if (value < 0) {
+        progress->stop();
+    } else {
+        progress->setValue(static_cast<int>(value));
+        progress->update();
+    }
+}
+/*!
+ * \brief sendDataSyncing 数据同步中信号
+ * \param info 这个Varint信息map
+ * 在我们自己提供的dailog服务中，这个VarintMap必须有存在kSpeedKey（显示任务的右第一个label的显示，类型：QString）、
+ * kRemindTimeKey（（显示任务的右第二个label的显示，类型：QString）
+ */
+void TaskWidget::onShowSpeedUpdatedInfo(const JobInfoPointer JobInfo)
+{
+    QString speed = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSpeedKey).toString();
+    QString rmTime = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kRemindTimeKey).toString();
+    lbSpeed->setHidden(speed.isEmpty());
+    lbSpeed->setText(speed);
+    lbRmTime->setHidden(rmTime.isEmpty());
+    lbRmTime->setText(rmTime);
 }
 
+/*!
+ * \brief TaskWidget::initUI 初始化当前任务的界面
+ */
 void TaskWidget::initUI()
 {
-    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
     progress = new DWaterProgress(this);
@@ -107,7 +334,7 @@ void TaskWidget::initUI()
     lbSpeed->setFixedWidth(kSpeedLabelWidth);
     lbRmTime->setFixedWidth(kSpeedLabelWidth);
 
-    QVBoxLayout *rVLayout = new QVBoxLayout;
+    rVLayout = new QVBoxLayout;
     QHBoxLayout *hLayout1 = new QHBoxLayout;
     hLayout1->addWidget(lbSrcPath, Qt::AlignLeft);
     hLayout1->addSpacing(10);
@@ -127,16 +354,13 @@ void TaskWidget::initUI()
     lbErrorMsg->setFixedWidth(kMsgLabelWidth + kSpeedLabelWidth);
     rVLayout->addWidget(lbErrorMsg);
 
-    widConfict = createConflictWidget();
-    rVLayout->addWidget(widConfict);
-
     normalLayout->addLayout(rVLayout, 1);
 
     btnStop = new DIconButton(this);
     btnStop->setObjectName("TaskWidgetStopButton");
     QVariant variantStop;
-    variantStop.setValue<BUTTON>(BUTTON::kStop);
-    btnStop->setProperty(kBtnPropertyName, variantStop);
+    variantStop.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kStopAction);
+    btnStop->setProperty(kBtnPropertyActionName, variantStop);
     btnStop->setIcon(QIcon::fromTheme("dfm_task_stop"));
     btnStop->setFixedSize(24, 24);
     btnStop->setIconSize({ 24, 24 });
@@ -146,8 +370,8 @@ void TaskWidget::initUI()
     btnPause = new DIconButton(this);
     btnPause->setObjectName("TaskWidgetPauseButton");
     QVariant variantPause;
-    variantPause.setValue<BUTTON>(BUTTON::kPause);
-    btnPause->setProperty(kBtnPropertyName, variantPause);
+    variantPause.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kPauseAction);
+    btnPause->setProperty(kBtnPropertyActionName, variantPause);
     btnPause->setIcon(QIcon::fromTheme("dfm_task_pause"));
     btnPause->setIconSize({ 24, 24 });
     btnPause->setFixedSize(24, 24);
@@ -158,34 +382,27 @@ void TaskWidget::initUI()
     normalLayout->addSpacing(10);
     normalLayout->addWidget(btnStop, Qt::AlignRight);
 
-    widButton = createBtnWidget();
-
     mainLayout->addLayout(normalLayout);
-    mainLayout->addWidget(widButton);
 
     lbErrorMsg->setVisible(false);
     btnPause->setVisible(false);
     btnStop->setVisible(false);
-    widConfict->setVisible(false);
-    widButton->setVisible(false);
-
-    timer = new QTimer(this);
-    isSettingValue = false;
-    isEnableHover = true;
 }
-
+/*!
+ * \brief TaskWidget::initConnection 初始化信号连接
+ */
 void TaskWidget::initConnection()
 {
     connect(btnSkip, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
     connect(btnReplace, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
     connect(btnCoexist, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
     connect(btnPause, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
-    connect(btnStop, &QPushButton::clicked, this, &TaskWidget::onButtonClicked,
-            Qt::DirectConnection);
-
-    QObject::connect(timer, &QTimer::timeout, this, &TaskWidget::onTimerTimeOut);
+    connect(btnStop, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
 }
-
+/*!
+ * \brief TaskWidget::createConflictWidget 创建任务显示错误信息的widget
+ * \return
+ */
 QWidget *TaskWidget::createConflictWidget()
 {
     QWidget *conflictWidget = new QWidget;
@@ -240,7 +457,10 @@ QWidget *TaskWidget::createConflictWidget()
     conflictWidget->setLayout(hLayout);
     return conflictWidget;
 }
-
+/*!
+ * \brief TaskWidget::createBtnWidget 创建错误信息显示的按钮
+ * \return
+ */
 QWidget *TaskWidget::createBtnWidget()
 {
     QWidget *buttonWidget = new QWidget;
@@ -248,18 +468,18 @@ QWidget *TaskWidget::createBtnWidget()
     buttonLayout->setSpacing(12);
 
     QVariant variantCoexit;
-    variantCoexit.setValue<BUTTON>(BUTTON::kCoexist);
+    variantCoexit.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kCoexistAction);
     btnCoexist = new QPushButton(TaskWidget::tr("Keep both", "button"));
-    btnCoexist->setProperty(kBtnPropertyName, variantCoexit);
+    btnCoexist->setProperty(kBtnPropertyActionName, variantCoexit);
     btnSkip = new QPushButton(TaskWidget::tr("Skip", "button"));
 
     QVariant variantSkip;
-    variantSkip.setValue<BUTTON>(BUTTON::kSkip);
-    btnSkip->setProperty(kBtnPropertyName, variantSkip);
+    variantSkip.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kSkipAction);
+    btnSkip->setProperty(kBtnPropertyActionName, variantSkip);
     btnReplace = new QPushButton(TaskWidget::tr("Replace", "button"));
     QVariant variantReplace;
-    variantReplace.setValue<BUTTON>(BUTTON::kReplace);
-    btnReplace->setProperty(kBtnPropertyName, variantReplace);
+    variantReplace.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kReplaceAction);
+    btnReplace->setProperty(kBtnPropertyActionName, variantReplace);
     btnSkip->setFocusPolicy(Qt::NoFocus);
     btnReplace->setFocusPolicy(Qt::NoFocus);
 
@@ -286,6 +506,38 @@ QWidget *TaskWidget::createBtnWidget()
     buttonWidget->setLayout(btnMainLayout);
     return buttonWidget;
 }
+/*!
+ * \brief TaskWidget::showBtnByAction 根据不同的操作显示不同的按钮
+ * \param action
+ */
+void TaskWidget::showBtnByAction(const AbstractJobHandler::SupportActions &actions)
+{
+    btnSkip->setHidden(!actions.testFlag(AbstractJobHandler::SupportAction::kSkipAction));
+    btnCoexist->setHidden(!actions.testFlag(AbstractJobHandler::SupportAction::kCoexistAction));
+    QString btnTxt;
+    QVariant variantReplace;
+    if (actions.testFlag(AbstractJobHandler::SupportAction::kRetryAction)) {
+        btnReplace->setText(tr("Retry", "button"));
+        variantReplace.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kRetryAction);
+    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kReplaceAction)) {
+        btnReplace->setText(tr("RePlace", "button"));
+        variantReplace.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kReplaceAction);
+    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kMergeAction)) {
+        btnReplace->setText(tr("Merge", "button"));
+        variantReplace.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kMergeAction);
+    } else {
+        btnReplace->setHidden(true);
+        return;
+    }
+
+    btnReplace->setHidden(false);
+    btnReplace->setProperty(kBtnPropertyActionName, variantReplace);
+}
+/*!
+ * \brief TaskWidget::showConflictButtons 显示或者隐藏错误信息的界面
+ * \param showBtns 是否显示按钮
+ * \param showConflict 是否显示错误信息
+ */
 void TaskWidget::showConflictButtons(bool showBtns, bool showConflict)
 {
     if (!widConfict) {
@@ -302,4 +554,64 @@ void TaskWidget::showConflictButtons(bool showBtns, bool showConflict)
 
     setFixedHeight(h);
     emit heightChanged();
+}
+
+void TaskWidget::onMouseHover(const bool hover)
+{
+    btnPause->setVisible(hover);
+    btnStop->setVisible(hover);
+
+    lbSpeed->setHidden(hover);
+    lbRmTime->setHidden(hover);
+
+    update(rect());
+}
+
+void TaskWidget::enterEvent(QEvent *event)
+{
+    onMouseHover(true);
+
+    return QWidget::enterEvent(event);
+}
+
+void TaskWidget::leaveEvent(QEvent *event)
+{
+    onMouseHover(false);
+
+    return QWidget::enterEvent(event);
+}
+
+void TaskWidget::paintEvent(QPaintEvent *event)
+{
+    QStyleOption opt;
+    opt.initFrom(this);
+    QPainter painter(this);
+    if (opt.state & QStyle::State_MouseOver) {
+        int radius = 8;
+        QRectF bgRect;
+        bgRect.setSize(size());
+        QPainterPath path;
+        path.addRoundedRect(bgRect, radius, radius);
+        QColor bgColor;
+        if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType) {
+            bgColor = QColor(0, 0, 0, 13);   //rgba(0,0,0,13); border-radius: 8px
+        } else {
+            bgColor = QColor(255, 255, 255, 13);   //rgba(255,255,255,13); border-radius: 8px
+        }
+        painter.save();
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.fillPath(path, bgColor);
+        painter.setRenderHint(QPainter::Antialiasing, false);
+        painter.restore();
+    } else if (property("drawSeparator").toBool()) {
+        QPoint p1, p2;
+        p1 = opt.rect.topLeft();
+        p2 = opt.rect.topRight();
+        QPen oldPen = painter.pen();
+        painter.setPen(QPen(opt.palette.brush(foregroundRole()), 1));
+        painter.drawLine(p1, p2);
+        painter.setPen(oldPen);
+    }
+
+    QWidget::paintEvent(event);
 }

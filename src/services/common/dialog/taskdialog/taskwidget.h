@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     lanxuesong<zhangsheng@uniontech.com>
+ * Author:     liyigang<liyigang@uniontech.com>
  *
  * Maintainer: max-lv<lvwujun@uniontech.com>
  *             lanxuesong<lanxuesong@uniontech.com>
@@ -24,20 +24,24 @@
 #define TASKWIDGET_H
 
 #include "dfm_common_service_global.h"
+#include <dfm-base/base/abstractjobhandler.h>
+
+#include <DWaterProgress>
+#include <DIconButton>
 
 #include <QWidget>
 #include <QLabel>
 
-#include <DWaterProgress>
-#include <DIconButton>
 class QPushButton;
 class QCheckBox;
+class QVBoxLayout;
 DWIDGET_USE_NAMESPACE
 DSC_BEGIN_NAMESPACE
+DFMBASE_USE_NAMESPACE
 class ElidedLable : public QLabel
 {
+    friend class TaskWidget;
     Q_OBJECT
-public:
     explicit ElidedLable(QWidget *parent = nullptr);
     virtual ~ElidedLable();
     void setText(const QString &text);
@@ -45,65 +49,67 @@ public:
 
 class TaskWidget : public QWidget
 {
+    friend class TaskDialog;
     Q_OBJECT
-public:
-    enum class BUTTON : uint8_t {
-        kPause,   // 暂停
-        kStop,   // 停止
-        kSkip,   // 跳过
-        kReplace,   // 替换
-        kCoexist,   // 共存
-        kCheckBoxNoAsk   // 记住选项
-    };
-    Q_ENUM(BUTTON)
     explicit TaskWidget(QWidget *parent = nullptr);
     ~TaskWidget();
+    void setTaskHandle(const JobHandlePointer &handle);
 
 signals:
-    void butonClicked(BUTTON btn);
+    void buttonClicked(AbstractJobHandler::SupportActions actions);
     void heightChanged();
-    void hoverChanged(bool);
 private slots:
     void onButtonClicked();
-    void onTimerTimeOut();
-
-protected:
-    void initUI();
-    void initConnection();
-
-    QWidget *createConflictWidget();
-    QWidget *createBtnWidget();
-
-    void showConflictButtons(bool showBtns = true, bool showConflict = true);
+    void onShowErrors(const JobInfoPointer JobInfo);
+    void onShowConflictInfo(const QUrl source, const QUrl target, const AbstractJobHandler::SupportActions action);
+    void onHandlerTaskStateChange(const JobInfoPointer JobInfo);
+    void onShowTaskInfo(const JobInfoPointer JobInfo);
+    void onShowTaskProccess(const JobInfoPointer JobInfo);
+    void onShowSpeedUpdatedInfo(const JobInfoPointer JobInfo);
 
 private:
-    DWaterProgress *progress = nullptr;
-    ElidedLable *lbSrcPath = nullptr;
-    ElidedLable *lbDstPath = nullptr;
-    QLabel *lbSpeed = nullptr;
-    QLabel *lbRmTime = nullptr;
-    ElidedLable *lbErrorMsg = nullptr;
-    QLabel *lbSrcIcon = nullptr;
-    QLabel *lbDstIcon = nullptr;
-    ElidedLable *lbSrcTitle = nullptr;
-    ElidedLable *lbDstTitle = nullptr;
-    ElidedLable *lbSrcModTime = nullptr;
-    ElidedLable *lbDstModTime = nullptr;
-    ElidedLable *lbSrcFileSize = nullptr;
-    ElidedLable *lbDstFileSize = nullptr;
-    QWidget *widConfict = nullptr;
-    QWidget *widButton = nullptr;
+    void initUI();
+    void initConnection();
+    QWidget *createConflictWidget();
+    QWidget *createBtnWidget();
+    void showBtnByAction(const AbstractJobHandler::SupportActions &actions);
+    void showConflictButtons(bool showBtns = true, bool showConflict = true);
+    void onMouseHover(const bool hover);
 
-    QCheckBox *chkboxNotAskAgain = nullptr;
-    DIconButton *btnStop = nullptr;
-    DIconButton *btnPause = nullptr;
-    QPushButton *btnCoexist = nullptr;
-    QPushButton *btnSkip = nullptr;
-    QPushButton *btnReplace = nullptr;
+protected:
+    virtual void enterEvent(QEvent *event);
+    virtual void leaveEvent(QEvent *event);
+    virtual void paintEvent(QPaintEvent *event);
 
-    QTimer *timer = nullptr;
-    bool isSettingValue { false };
-    bool isEnableHover { false };
+private:
+    DWaterProgress *progress = nullptr;   // 左侧水球动画
+    ElidedLable *lbSrcPath = nullptr;   // 左第一个label
+    ElidedLable *lbDstPath = nullptr;   // 左第二个label
+    QLabel *lbSpeed = nullptr;   // 右第一个label
+    QLabel *lbRmTime = nullptr;   // 右第二个label
+    ElidedLable *lbErrorMsg = nullptr;   // 错误信label
+    QLabel *lbSrcIcon = nullptr;   // 冲突widget上的源文件图标
+    QLabel *lbDstIcon = nullptr;   // 冲突widget上的目标文件图标
+    ElidedLable *lbSrcTitle = nullptr;   // 冲突widget上的源文件文件显示名称
+    ElidedLable *lbDstTitle = nullptr;   // 冲突widget上的目标文件显示名称
+    ElidedLable *lbSrcModTime = nullptr;   // 冲突widget上的源文件文件修改时间
+    ElidedLable *lbDstModTime = nullptr;   // 冲突widget上的目标文件修改时间
+    ElidedLable *lbSrcFileSize = nullptr;   // 冲突widget上的源文件文件文件大小
+    ElidedLable *lbDstFileSize = nullptr;   // 冲突widget上的目标文件文件文件大小
+    QWidget *widConfict = nullptr;   // 冲突widget
+    QWidget *widButton = nullptr;   // 按钮界面
+
+    QCheckBox *chkboxNotAskAgain = nullptr;   // 不在询问按钮
+    DIconButton *btnStop = nullptr;   // 停止按钮
+    DIconButton *btnPause = nullptr;   // 暂停按钮
+    QPushButton *btnCoexist = nullptr;   // 共存按钮
+    QPushButton *btnSkip = nullptr;   // 跳过按钮
+    QPushButton *btnReplace = nullptr;   // 替换、合并按钮
+
+    QVBoxLayout *rVLayout = nullptr;
+    QVBoxLayout *mainLayout = nullptr;
+
+    QAtomicInteger<bool> isPauseState { false };   // 是否是暂停状态
 };
 
 DSC_END_NAMESPACE

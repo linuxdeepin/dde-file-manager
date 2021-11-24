@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef FILEOPERATIONSSERVICE_H
 #define FILEOPERATIONSSERVICE_H
 
@@ -29,28 +29,26 @@
 #include <dfm-base/base/abstractjobhandler.h>
 
 DSC_BEGIN_NAMESPACE
-class FileOperationsService final : public dpf::PluginService, dpf::AutoServiceRegister<FileOperationsService>
+class FileOperationsService final : public dpf::PluginService,
+                                    dpf::AutoServiceRegister<FileOperationsService>
 {
     Q_OBJECT
     Q_DISABLE_COPY(FileOperationsService)
     friend class dpf::QtClassFactory<dpf::PluginService>;
 
 public:
-    static QString name()
-    {
-        return "org.deepin.service.FileOperationsService";
-    }
+    static QString name() { return "org.deepin.service.FileOperationsService"; }
 
-    JobHandlePointer copyFiles(const QList<QUrl> &sources, const QUrl &target);
-    JobHandlePointer moveFilesToTrash(const QList<QUrl> &sources);
-    JobHandlePointer restoreFilesFromTrash(const QList<QUrl> &sources);
-    JobHandlePointer deleteFiles(const QList<QUrl> &sources);
-    JobHandlePointer cutFiles(const QList<QUrl> &sources, const QUrl &target);
+    JobHandlePointer copy(const QList<QUrl> &sources, const QUrl &target);
+    JobHandlePointer moveToTrash(const QList<QUrl> &sources);
+    JobHandlePointer restoreFromTrash(const QList<QUrl> &sources);
+    JobHandlePointer deletes(const QList<QUrl> &sources);
+    JobHandlePointer cut(const QList<QUrl> &sources, const QUrl &target);
 
 private:
     explicit FileOperationsService(QObject *parent = nullptr);
     virtual ~FileOperationsService() override;
-    static QList<JobHandlePointer> copyTash;
+    static QList<JobHandlePointer> copyTask;
 };
 
 DSC_END_NAMESPACE

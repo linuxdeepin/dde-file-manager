@@ -28,6 +28,7 @@
 #include <QDir>
 #include <QProcess>
 #include <QDebug>
+#include <QApplication>
 
 DFMBASE_BEGIN_NAMESPACE
 
