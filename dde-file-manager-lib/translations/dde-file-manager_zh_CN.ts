@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>AppController</name>
     <message>
@@ -1090,12 +1092,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1184"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1183"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1193"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1192"/>
         <source>Empty</source>
         <translation>清空</translation>
     </message>
@@ -1148,22 +1150,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2373"/>
+        <location filename="../views/dfileview.cpp" line="2374"/>
         <source>Disc mount error</source>
         <translation>光盘挂载错误</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2373"/>
+        <location filename="../views/dfileview.cpp" line="2374"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>当前光驱设备正在占用，请关闭占用进程再重新挂载</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2386"/>
+        <location filename="../views/dfileview.cpp" line="2387"/>
         <source>Mounting failed</source>
         <translation>挂载失败</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3042"/>
+        <location filename="../views/dfileview.cpp" line="3043"/>
         <source>(Reverse)</source>
         <translation>（反序）</translation>
     </message>
@@ -1174,6 +1176,23 @@
         <location filename="../interfaces/dfileviewhelper.cpp" line="620"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>添加标记“%1”</translation>
+    </message>
+</context>
+<context>
+    <name>DIconItemDelegate</name>
+    <message>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="935"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1101"/>
+        <source>%1 are not allowed</source>
+        <translation type="unfinished">不得含有%1</translation>
+    </message>
+</context>
+<context>
+    <name>DListItemDelegate</name>
+    <message>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="445"/>
+        <source>%1 are not allowed</source>
+        <translation type="unfinished">不得含有%1</translation>
     </message>
 </context>
 <context>
@@ -1247,84 +1266,84 @@
         <translation>不支持此操作</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="729"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="731"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>正在擦除%1，请稍候...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="730"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="732"/>
         <source>Burning disc %1, please wait...</source>
         <translation>正在刻录到%1，请稍候...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="735"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="737"/>
         <source>Writing data...</source>
         <translation>正在写入数据...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="736"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="738"/>
         <source>Verifying data...</source>
         <translation>正在校验数据...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="786"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="788"/>
         <source>Copying %1</source>
         <translation>正在复制%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="787"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="791"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="794"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="789"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="793"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="796"/>
         <source>to %2</source>
         <translation>到%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="810"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="812"/>
         <source>%1 already exists in target folder</source>
         <translation>目标文件夹中已存在名为%1的文件</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="811"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="813"/>
         <source>Original path %1 Target path %2</source>
         <translation>原路径%1 目标路径%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="790"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="792"/>
         <source>Moving %1</source>
         <translation>正在移动%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="356"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="358"/>
         <source>Removing file vault, please try later</source>
         <translation>正在删除保险箱，请稍候...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="793"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="795"/>
         <source>Restoring %1</source>
         <translation>正在恢复%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="796"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="798"/>
         <source>Deleting %1</source>
         <translation>正在删除%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="799"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="801"/>
         <source>Trashing %1</source>
         <translation>正在移动 %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="807"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="809"/>
         <source>Calculating space, please wait</source>
         <translation>正在计算大小，请稍候</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="822"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="824"/>
         <source>Merge</source>
         <translation>合 并</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="825"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="827"/>
         <source>Replace</source>
         <translation>替 换</translation>
     </message>
@@ -1720,27 +1739,27 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="780"/>
-        <location filename="../controllers/filecontroller.cpp" line="799"/>
-        <location filename="../controllers/filecontroller.cpp" line="818"/>
+        <location filename="../controllers/filecontroller.cpp" line="792"/>
+        <location filename="../controllers/filecontroller.cpp" line="811"/>
+        <location filename="../controllers/filecontroller.cpp" line="830"/>
         <source>Kindly Reminder</source>
         <translation>温馨提示</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="780"/>
-        <location filename="../controllers/filecontroller.cpp" line="799"/>
-        <location filename="../controllers/filecontroller.cpp" line="818"/>
+        <location filename="../controllers/filecontroller.cpp" line="792"/>
+        <location filename="../controllers/filecontroller.cpp" line="811"/>
+        <location filename="../controllers/filecontroller.cpp" line="830"/>
         <source>Please install File Roller first and then continue</source>
         <translation>请先安装归档管理器然后继续</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1413"/>
-        <location filename="../controllers/filecontroller.cpp" line="1435"/>
+        <location filename="../controllers/filecontroller.cpp" line="1425"/>
+        <location filename="../controllers/filecontroller.cpp" line="1447"/>
         <source>Unable to create files here: %1</source>
         <translation>不能在此创建文件：%1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1415"/>
+        <location filename="../controllers/filecontroller.cpp" line="1427"/>
         <source>Confirm</source>
         <translation>确 定</translation>
     </message>
@@ -1792,7 +1811,7 @@
         <translation type="vanished">不得含有&quot;&apos;/\[]:|&lt;&gt;+=;,?*</translation>
     </message>
     <message>
-        <location filename="../views/fileitem.cpp" line="116"/>
+        <location filename="../views/fileitem.cpp" line="202"/>
         <source>%1 are not allowed</source>
         <translation>不得含有%1</translation>
     </message>
@@ -2265,71 +2284,71 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="801"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="802"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>无法确认%1的身份。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="802"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="803"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>当您首次登录时会看到这个提示。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="803"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="804"/>
         <source>The identity sent by the remote computer is</source>
         <translation>远程电脑发送的身份信息为</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="805"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="806"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>若想确认继续操作是否安全，请联系系统管理员。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="851"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1483"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1489"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1492"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="852"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1484"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1490"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1493"/>
         <source>Mounting device error</source>
         <translation>挂载设备出错</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="851"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1489"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="852"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1490"/>
         <source>Wrong username or password</source>
         <translation>用户名或密码错误</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1613"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1614"/>
         <source>No key available to unlock device</source>
         <translation>没有密钥解锁设备</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1701"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1702"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>磁盘由用户“%1”挂载，您没有卸载权限。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1704"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1714"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1742"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1861"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1892"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1705"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1715"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1743"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1862"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1893"/>
         <source>Confirm</source>
         <translation>确 定</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1711"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1889"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1712"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1890"/>
         <source>Cannot find the mounted device</source>
         <translation>找不到对应的挂载设备</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1739"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1740"/>
         <source>Cannot unmount the device</source>
         <translation>无法卸载设备</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1857"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1858"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>无法弹出设备 &quot;%1&quot;</translation>
     </message>
@@ -3007,7 +3026,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="107"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1194"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1193"/>
         <source>Empty Trash</source>
         <translation>清空回收站</translation>
     </message>
@@ -3678,6 +3697,15 @@
         <source>Disks</source>
         <translation>磁盘</translation>
     </message>
+    <message>
+        <source>&quot;&apos;/\[]:|&lt;&gt;+=;,?* are not allowed</source>
+        <translation type="obsolete">不得含有&quot;&apos;/\[]:|&lt;&gt;+=;,?*</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="633"/>
+        <source>%1 are not allowed</source>
+        <translation type="unfinished">不得含有%1</translation>
+    </message>
 </context>
 <context>
     <name>ShareInfoFrame</name>
@@ -4174,35 +4202,35 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1493"/>
+        <location filename="../controllers/appcontroller.cpp" line="1506"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>磁盘文件被占用，无法卸载</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1486"/>
-        <location filename="../controllers/appcontroller.cpp" line="1510"/>
+        <location filename="../controllers/appcontroller.cpp" line="1499"/>
+        <location filename="../controllers/appcontroller.cpp" line="1523"/>
         <source>Authentication timed out</source>
         <translation>认证超时</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1493"/>
+        <location filename="../controllers/appcontroller.cpp" line="1506"/>
         <location filename="../../fileoperations/filejob.cpp" line="726"/>
         <source>The device was not safely unmounted</source>
         <translation>设备没有正常卸载</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1514"/>
-        <location filename="../controllers/appcontroller.cpp" line="1528"/>
+        <location filename="../controllers/appcontroller.cpp" line="1527"/>
+        <location filename="../controllers/appcontroller.cpp" line="1541"/>
         <source>The device was not safely removed</source>
         <translation>设备没有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1514"/>
+        <location filename="../controllers/appcontroller.cpp" line="1527"/>
         <source>Disk is busy, cannot remove now</source>
         <translation>磁盘文件被占用，无法安全移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1528"/>
+        <location filename="../controllers/appcontroller.cpp" line="1541"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>请点击“安全移除”后，再断开连接</translation>
     </message>

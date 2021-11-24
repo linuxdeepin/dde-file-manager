@@ -199,7 +199,7 @@ void FileIconItem::doLineEditTextChanged()
 
     if (srcText != dstText){
         // 修改文件的命名规则
-        showAlertMessage(tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
+        showAlertMessage(QObject::tr("%1 are not allowed").arg("|/\\*:\"'?<>"));
         edit->setPlainText(dstText);
     } else {
         return;
@@ -278,7 +278,7 @@ void FileIconItem::showAlertMessage(const QString &text, int duration)
     if (!label) {
         return;
     }
-
+    qInfo() << text << "+++++-------------";
     label->setText(text);
     label->adjustSize();
 
