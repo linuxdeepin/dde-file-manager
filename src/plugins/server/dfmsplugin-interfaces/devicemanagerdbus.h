@@ -23,6 +23,8 @@
 #ifndef DEVICEMANAGERDBUS_H
 #define DEVICEMANAGERDBUS_H
 
+#include <QDBusVariant>
+#include <QVariantMap>
 #include <QObject>
 
 namespace dfm_service_common {
@@ -53,6 +55,7 @@ signals:
     void BlockDeviceFilesystemRemoved(QString id);
     void BlockDeviceMounted(QString id, QString mountPoint);
     void BlockDeviceUnmounted(QString id);
+    void BlockDevicePropertyChanged(QString id, QString property, QDBusVariant value);
 
     // TODO(zhangs): signals of protocol devices
 

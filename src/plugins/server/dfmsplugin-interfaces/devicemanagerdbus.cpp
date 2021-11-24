@@ -94,6 +94,9 @@ void DeviceManagerDBus::initialize()
  */
 void DeviceManagerDBus::initConnection()
 {
+    connect(deviceServ, &DeviceService::blockDevicePropertyChanged, this, [this](const QString &deviceId, const QString &property, const QVariant &val) {
+        emit BlockDevicePropertyChanged(deviceId, property, QDBusVariant(val));
+    });
     connect(deviceServ, &DeviceService::deviceSizeUsedChanged, this, &DeviceManagerDBus::SizeUsedChanged);
     connect(deviceServ, &DeviceService::blockDriveAdded, this, &DeviceManagerDBus::BlockDriveAdded);
     connect(deviceServ, &DeviceService::blockDriveRemoved, this, &DeviceManagerDBus::BlockDriveRemoved);

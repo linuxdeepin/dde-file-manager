@@ -76,6 +76,7 @@ public:   // status
 
 signals:
     void deviceSizeUsedChanged(const QString &deviceId, qint64 total, qint64 free);
+    void blockDevicePropertyChanged(const QString &deviceId, const QString &property, const QVariant &val);
     void blockDriveAdded();
     void blockDriveRemoved();
     void blockDevAdded(const QString &deviceId);

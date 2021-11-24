@@ -26,7 +26,9 @@
 
 #include "dfm-base/utils/universalutils.h"
 
+#include <dfm-mount/base/dfmmountutils.h>
 #include <dfm-mount/dfmblockmonitor.h>
+
 #include <QtConcurrent>
 #include <DDesktopServices>
 
@@ -361,6 +363,13 @@ void DeviceMonitorHandler::onBlockDevicePropertyChanged(const QString &deviceId,
         updateDataWithOtherInfo(&allBlockDevData[deviceId], changes);
 
         // TODO(zhangs): support encrypted devices(reference DFMRootFileInfo::extraProperties)
+    }
+    guard.unlock();
+    QList<dfmmount::Property> &&keys = changes.keys();
+    for (dfmmount::Property k : keys) {
+        QString propertyName { dfmmount::Utils::getNameByProperty(k) };
+        if (Q_LIKELY(!propertyName.isEmpty()))
+            emit service->blockDevicePropertyChanged(deviceId, propertyName, changes.value(k));
     }
 }
 

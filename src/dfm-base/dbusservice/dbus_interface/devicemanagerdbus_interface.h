@@ -166,6 +166,7 @@ Q_SIGNALS: // SIGNALS
     void BlockDeviceFilesystemAdded(const QString &id);
     void BlockDeviceFilesystemRemoved(const QString &id);
     void BlockDeviceMounted(const QString &id, const QString &mountPoint);
+    void BlockDevicePropertyChanged(const QString &id, const QString &property, const QDBusVariant &value);
     void BlockDeviceRemoved(const QString &id);
     void BlockDeviceUnmounted(const QString &id);
     void BlockDriveAdded();

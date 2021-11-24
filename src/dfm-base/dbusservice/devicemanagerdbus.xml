@@ -37,6 +37,11 @@
     <signal name="BlockDeviceUnmounted">
       <arg name="id" type="s" direction="out"/>
     </signal>
+    <signal name="BlockDevicePropertyChanged">
+      <arg name="id" type="s" direction="out"/>
+      <arg name="property" type="s" direction="out"/>
+      <arg name="value" type="v" direction="out"/>
+    </signal>
     <method name="IsMonotorWorking">
       <arg type="b" direction="out"/>
     </method>

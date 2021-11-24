@@ -66,6 +66,11 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "    <signal name=\"BlockDeviceUnmounted\">\n"
 "      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
 "    </signal>\n"
+"    <signal name=\"BlockDevicePropertyChanged\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"property\"/>\n"
+"      <arg direction=\"out\" type=\"v\" name=\"value\"/>\n"
+"    </signal>\n"
 "    <method name=\"IsMonotorWorking\">\n"
 "      <arg direction=\"out\" type=\"b\"/>\n"
 "    </method>\n"
@@ -161,6 +166,7 @@ Q_SIGNALS: // SIGNALS
     void BlockDeviceFilesystemAdded(const QString &id);
     void BlockDeviceFilesystemRemoved(const QString &id);
     void BlockDeviceMounted(const QString &id, const QString &mountPoint);
+    void BlockDevicePropertyChanged(const QString &id, const QString &property, const QDBusVariant &value);
     void BlockDeviceRemoved(const QString &id);
     void BlockDeviceUnmounted(const QString &id);
     void BlockDriveAdded();
