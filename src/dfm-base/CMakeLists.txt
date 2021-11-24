@@ -148,6 +148,7 @@ set(APPLICATIONSERVICE_H
 
 set(DBUSSERVICE_H
     dbusservice/dbus_interface/devicemanagerdbus_interface.h
+    dbusservice/global_server_defines.h
     )
 
 set(DBUSSERVICE_CPP

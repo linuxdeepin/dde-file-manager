@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -26,14 +26,18 @@
 #include "diskcontrolitem.h"
 #include "pluginsidecar.h"
 
+#include <global_server_defines.h>
 #include <dbus_interface/devicemanagerdbus_interface.h>
 #include <DGuiApplicationHelper>
+#include <DDBusSender>
 #include <QScrollBar>
 #include <QLabel>
 #include <QSharedPointer>
 #include <QTimer>
 
-static const int WIDTH = 300;
+static const int kWidth = 300;
+
+using namespace GlobalServerDefines;
 
 /*!
  * \class DiskControlWidget
@@ -68,11 +72,11 @@ void DiskControlWidget::initializeUi()
 {
     std::call_once(DiskControlWidget::initOnceFlag(), [this]() {
         centralWidget->setLayout(centralLayout);
-        centralWidget->setFixedWidth(WIDTH);
+        centralWidget->setFixedWidth(kWidth);
         centralLayout->setMargin(0);
         centralLayout->setSpacing(0);
         setWidget(centralWidget);
-        setFixedWidth(WIDTH);
+        setFixedWidth(kWidth);
         setFrameShape(QFrame::NoFrame);
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -101,8 +105,12 @@ void DiskControlWidget::initConnection()
         });
     });
     connect(&SidecarInstance, &PluginSidecar::askStopScanning, this, &DiskControlWidget::onAskStopScanning);
+    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::NotifyDeviceBusy, this, &DiskControlWidget::onDeviceBusy);
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveAdded, this, &DiskControlWidget::onDiskListChanged);
-    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveRemoved, this, &DiskControlWidget::onDiskListChanged);
+    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveRemoved, this, [this]() {
+        notifyMessage(QObject::tr("The device has been safely removed"));
+        onDiskListChanged();
+    });
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, &DiskControlWidget::onDiskListChanged);
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnmounted, this, &DiskControlWidget::onDiskListChanged);
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceFilesystemAdded, this, &DiskControlWidget::onDiskListChanged);
@@ -237,8 +245,44 @@ void DiskControlWidget::handleWhetherScanning(const QString &method, const QStri
     } else if (method == "detach_all") {
         SidecarInstance.invokeDetachAllMountedDevicesForced();
     } else {
-        qWarning() << "unknow method: " << method << "or id: " << id;
+        qWarning() << "[disk-mount] unknow method: " << method << "or id: " << id;
     }
+}
+
+void DiskControlWidget::notifyMessage(const QString &msg)
+{
+    DDBusSender()
+            .service("org.freedesktop.Notifications")
+            .path("/org/freedesktop/Notifications")
+            .interface("org.freedesktop.Notifications")
+            .method(QString("Notify"))
+            .arg(QString("dde-file-manager"))
+            .arg(static_cast<uint>(0))
+            .arg(QString("media-eject"))
+            .arg(msg)
+            .arg(QString())
+            .arg(QStringList())
+            .arg(QVariantMap())
+            .arg(5000)
+            .call();
+}
+
+void DiskControlWidget::notifyMessage(const QString &title, const QString &msg)
+{
+    DDBusSender()
+            .service("org.freedesktop.Notifications")
+            .path("/org/freedesktop/Notifications")
+            .interface("org.freedesktop.Notifications")
+            .method(QString("Notify"))
+            .arg(QString("dde-file-manager"))
+            .arg(static_cast<uint>(0))
+            .arg(QString("media-eject"))
+            .arg(title)
+            .arg(msg)
+            .arg(QStringList())
+            .arg(QVariantMap())
+            .arg(5000)
+            .call();
 }
 
 std::once_flag &DiskControlWidget::initOnceFlag()
@@ -273,6 +317,27 @@ void DiskControlWidget::onAskStopScanning(const QString &method, const QString &
         if (index == 1)   // user clicked stop
             handleWhetherScanning(method, id);
         else
-            qInfo() << "You have cancelled stop scanning " << method;
+            qInfo() << "[disk-mount] Continue scanning, status: " << method;
     });
+}
+
+void DiskControlWidget::onDeviceBusy(int action)
+{
+    switch (action) {
+    case DeviceBusyAction::kSafelyRemove:
+        notifyMessage(tr("The device was not safely removed"),
+                      tr("Click \"Safely Remove\" and then disconnect it next time"));
+        break;
+    case DeviceBusyAction::kUnmount:
+        notifyMessage(tr("Disk is busy, cannot unmount now"));
+        break;
+    case DeviceBusyAction::kRemove:
+        notifyMessage(tr("The device is busy, cannot remove now"));
+        break;
+    case DeviceBusyAction::kEject:
+        notifyMessage(tr("The device is busy, cannot eject now"));
+        break;
+    default:
+        qWarning() << "[disk-mount] Unknown action: " << action;
+    }
 }

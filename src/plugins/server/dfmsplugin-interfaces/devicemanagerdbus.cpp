@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -24,10 +24,13 @@
 
 #include "deviceservice.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <dfm-framework/framework.h>
 
 DSC_USE_NAMESPACE
+
+using namespace GlobalServerDefines;
 
 DeviceManagerDBus::DeviceManagerDBus(QObject *parent)
     : QObject(parent)
@@ -49,8 +52,8 @@ void DeviceManagerDBus::SafelyRemoveBlockDevice(QString id)
 {
     DetachBlockDevice(id);
     // only optical eject
-    connect(deviceServ, &DeviceService::blockDevAsyncEjected, this, [this, id](const QString &deviceId) {
-        if (deviceId == id)
+    connect(deviceServ, &DeviceService::blockDevAsyncEjected, this, [this, id](const QString &deviceId, bool success) {
+        if (deviceId == id && success)
             deviceServ->poweroffBlockDeviceAsync(id);
     });
 }
@@ -70,8 +73,7 @@ void DeviceManagerDBus::DetachBlockDeviceForced(QString id)
     if (deviceServ->stopDefenderScanDrive(id)) {
         deviceServ->detachBlockDevice(id);
     } else {
-        dfmbase::UniversalUtils::notifyMessage(tr("The device was not safely removed"),
-                                               tr("Click \"Safely Remove\" and then disconnect it next time"));
+        emit NotifyDeviceBusy(DeviceBusyAction::kSafelyRemove);
     }
 }
 
@@ -97,6 +99,19 @@ void DeviceManagerDBus::initConnection()
     connect(deviceServ, &DeviceService::blockDevicePropertyChanged, this, [this](const QString &deviceId, const QString &property, const QVariant &val) {
         emit BlockDevicePropertyChanged(deviceId, property, QDBusVariant(val));
     });
+    connect(deviceServ, &DeviceService::blockDevAsyncUnmounted, this, [this](const QString &deviceId, bool success) {
+        if (!deviceId.isEmpty() && !success)
+            emit NotifyDeviceBusy(DeviceBusyAction::kUnmount);
+    });
+    connect(deviceServ, &DeviceService::blockDevAsyncEjected, this, [this](const QString &deviceId, bool success) {
+        if (!deviceId.isEmpty() && !success)
+            emit NotifyDeviceBusy(DeviceBusyAction::kEject);
+    });
+    connect(deviceServ, &DeviceService::blockDevAsyncPoweroffed, this, [this](const QString &deviceId, bool success) {
+        if (!deviceId.isEmpty() && !success)
+            emit NotifyDeviceBusy(DeviceBusyAction::kRemove);
+    });
+
     connect(deviceServ, &DeviceService::deviceSizeUsedChanged, this, &DeviceManagerDBus::SizeUsedChanged);
     connect(deviceServ, &DeviceService::blockDriveAdded, this, &DeviceManagerDBus::BlockDriveAdded);
     connect(deviceServ, &DeviceService::blockDriveRemoved, this, &DeviceManagerDBus::BlockDriveRemoved);
@@ -129,8 +144,7 @@ void DeviceManagerDBus::DetachAllMountedDevicesForced()
         deviceServ->detachAllMountedBlockDevices();
         deviceServ->detachAllMountedProtocolDevices();
     } else {
-        dfmbase::UniversalUtils::notifyMessage(tr("The device was not safely removed"),
-                                               tr("Click \"Safely Remove\" and then disconnect it next time"));
+        emit NotifyDeviceBusy(DeviceBusyAction::kSafelyRemove);
     }
 }
 
@@ -155,8 +169,7 @@ void DeviceManagerDBus::UnmountBlockDeviceForced(QString id)
     if (deviceServ->stopDefenderScanDrive(id)) {
         deviceServ->unmountBlockDeviceAsync(id);
     } else {
-        dfmbase::UniversalUtils::notifyMessage(tr("The device was not safely removed"),
-                                               tr("Click \"Safely Remove\" and then disconnect it next time"));
+        emit NotifyDeviceBusy(DeviceBusyAction::kSafelyRemove);
     }
 }
 

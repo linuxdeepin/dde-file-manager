@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -46,6 +46,7 @@ signals:
     void AskStopScanningWhenDetach(QString id);
     void AskStopScanningWhenDetachAll();
     void SizeUsedChanged(QString id, qint64 total, qint64 free);
+    void NotifyDeviceBusy(int action);   // see "dfm-base/dbusservice/global_server_defines.h"
 
     void BlockDriveAdded();
     void BlockDriveRemoved();

@@ -27,4 +27,3 @@ target_link_libraries(
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
-# TODO(zhangs): translation

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -279,7 +279,6 @@ void DeviceMonitorHandler::onBlockDriveRemoved(const QString &drvObjPath)
 {
     qInfo() << "A block dirve removed: " << drvObjPath;
     emit service->blockDriveRemoved();
-    dfmbase::UniversalUtils::notifyMessage(QObject::tr("The device has been safely removed"));
     DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_DeviceRemoved);
 }
 
@@ -458,9 +457,9 @@ void DeviceService::ejectBlockDeviceAsync(const QString &deviceId, const QVarian
         ptr->ejectAsync(opts, [this, deviceId](bool ret, DFMMOUNT::DeviceError err) {
             if (!ret) {
                 qWarning() << "Eject failed: " << int(err);
-                dfmbase::UniversalUtils::notifyMessage(tr("The device is busy, cannot eject now"));
+                emit blockDevAsyncEjected(deviceId, false);
             } else {
-                emit blockDevAsyncEjected(deviceId);
+                emit blockDevAsyncEjected(deviceId, true);
             }
         });
     }
@@ -484,9 +483,9 @@ void DeviceService::poweroffBlockDeviceAsync(const QString &deviceId, const QVar
         ptr->powerOffAsync(opts, [this, deviceId](bool ret, DFMMOUNT::DeviceError err) {
             if (!ret) {
                 qWarning() << "Poweroff failed: " << int(err);
-                dfmbase::UniversalUtils::notifyMessage(tr("The device is busy, cannot remove now"));
+                emit blockDevAsyncPoweroffed(deviceId, false);
             } else {
-                emit blockDevAsyncPoweroffed(deviceId);
+                emit blockDevAsyncPoweroffed(deviceId, true);
             }
         });
     }
@@ -585,10 +584,12 @@ void DeviceService::mountBlockDeviceAsync(const QString &deviceId, const QVarian
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
     if (DeviceServiceHelper::isMountableBlockDevice(ptr)) {
         ptr->mountAsync(opts, [this, deviceId](bool ret, DFMMOUNT::DeviceError err) {
-            if (!ret)
+            if (!ret) {
                 qWarning() << "Mount failed: " << int(err);
-            else
-                emit blockDevAsyncMounted(deviceId);
+                emit blockDevAsyncMounted(deviceId, false);
+            } else {
+                emit blockDevAsyncMounted(deviceId, true);
+            }
         });
     }
 }
@@ -611,9 +612,9 @@ void DeviceService::unmountBlockDeviceAsync(const QString &deviceId, const QVari
         ptr->unmountAsync(opts, [this, deviceId](bool ret, DFMMOUNT::DeviceError err) {
             if (!ret) {
                 qWarning() << "Unmount failed: " << int(err);
-                dfmbase::UniversalUtils::notifyMessage(tr("Disk is busy, cannot unmount now"));
+                emit blockDevAsyncUnmounted(deviceId, false);
             } else {
-                emit blockDevAsyncUnmounted(deviceId);
+                emit blockDevAsyncUnmounted(deviceId, true);
             }
         });
     }

@@ -14,6 +14,9 @@
       <arg name="total" type="x" direction="out"/>
       <arg name="free" type="x" direction="out"/>
     </signal>
+    <signal name="NotifyDeviceBusy">
+      <arg name="action" type="i" direction="out"/>
+    </signal>
     <signal name="BlockDriveAdded">
     </signal>
     <signal name="BlockDriveRemoved">

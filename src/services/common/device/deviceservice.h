@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -86,10 +86,10 @@ signals:
     void blockDevMounted(const QString &deviceId, const QString &mountPoint);
     void blockDevUnmounted(const QString &deviceId);
 
-    void blockDevAsyncMounted(const QString &deviceId);
-    void blockDevAsyncUnmounted(const QString &deviceId);
-    void blockDevAsyncEjected(const QString &deviceId);
-    void blockDevAsyncPoweroffed(const QString &deviceId);
+    void blockDevAsyncMounted(const QString &deviceId, bool success);
+    void blockDevAsyncUnmounted(const QString &deviceId, bool success);
+    void blockDevAsyncEjected(const QString &deviceId, bool success);
+    void blockDevAsyncPoweroffed(const QString &deviceId, bool success);
 
 private:
     explicit DeviceService(QObject *parent = nullptr);

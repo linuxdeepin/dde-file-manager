@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -46,6 +46,7 @@ signals:
 private slots:
     void onDiskListChanged();
     void onAskStopScanning(const QString &method, const QString &id);
+    void onDeviceBusy(int action);
 
 private:
     void initializeUi();
@@ -58,6 +59,8 @@ private:
     int addItems(const QStringList &list, bool isBlockDevice);
     DDialog *showQueryScanningDialog(const QString &title);
     void handleWhetherScanning(const QString &method, const QString &id);
+    void notifyMessage(const QString &msg);
+    void notifyMessage(const QString &title, const QString &msg);
 
     static std::once_flag &initOnceFlag();
     static std::once_flag &retryOnceFlag();

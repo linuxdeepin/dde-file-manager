@@ -45,6 +45,9 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"out\" type=\"x\" name=\"total\"/>\n"
 "      <arg direction=\"out\" type=\"x\" name=\"free\"/>\n"
 "    </signal>\n"
+"    <signal name=\"NotifyDeviceBusy\">\n"
+"      <arg direction=\"out\" type=\"i\" name=\"action\"/>\n"
+"    </signal>\n"
 "    <signal name=\"BlockDriveAdded\"/>\n"
 "    <signal name=\"BlockDriveRemoved\"/>\n"
 "    <signal name=\"BlockDeviceAdded\">\n"
@@ -171,6 +174,7 @@ Q_SIGNALS: // SIGNALS
     void BlockDeviceUnmounted(const QString &id);
     void BlockDriveAdded();
     void BlockDriveRemoved();
+    void NotifyDeviceBusy(int action);
     void SizeUsedChanged(const QString &id, qlonglong total, qlonglong free);
 };
 

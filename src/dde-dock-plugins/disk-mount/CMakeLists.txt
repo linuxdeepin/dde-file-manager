@@ -46,6 +46,7 @@ set(DBUS_INTERFACES_SRC
 
 set(DBUS_INTERFACES_HEADER
     ${DBUS_INTERFACES_DIR}/devicemanagerdbus_interface.h
+    ${DBUS_DIR}/global_server_defines.h
     )
 
 find_package(Qt5Widgets REQUIRED)
