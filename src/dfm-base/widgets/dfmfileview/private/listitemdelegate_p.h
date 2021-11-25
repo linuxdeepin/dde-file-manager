@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -22,28 +22,24 @@
 #ifndef LISTITEMDELEGATE_P_H
 #define LISTITEMDELEGATE_P_H
 
-#include "dfm-base/dfm_base_global.h"
-
-#include <DListView>
+#include "dfm_base_global.h"
+#include "baseitemdelegate_p.h"
+#include "widgets/dfmfileview/listitemdelegate.h"
 
 #include <QObject>
 
 DFMBASE_BEGIN_NAMESPACE
 
 class ListItemDelegate;
-class ListItemDelegatePrivate : public QObject
+class ListItemDelegatePrivate : public BaseItemDelegatePrivate
 {
-    friend class ListItemDelegate;
-    ListItemDelegate *const q;
-    DTK_WIDGET_NAMESPACE::DListView *listView;
-    QModelIndex editingIndex;
-    int textLineHeight;
-
 public:
     explicit ListItemDelegatePrivate(ListItemDelegate *qq);
     virtual ~ListItemDelegatePrivate();
+
+    Q_DECLARE_PUBLIC(ListItemDelegate)
 };
 
 DFMBASE_END_NAMESPACE
 
-#endif // LISTITEMDELEGATE_P_H
+#endif   // LISTITEMDELEGATE_P_H

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     liuyangming<liuyangming@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
  *             yanghao<yanghao@uniontech.com>
@@ -19,34 +19,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ICONITEMDELEGATE_P_H
-#define ICONITEMDELEGATE_P_H
-
-#include "dfm_base_global.h"
-#include "baseitemdelegate_p.h"
-#include "widgets/dfmfileview/iconitemdelegate.h"
-
-#include <QObject>
-#include <QMutex>
-#include <QWindow>
-#include <QTextDocument>
+#include "baseitemdelegate.h"
+#include "private/baseitemdelegate_p.h"
+#include "widgets/dfmfileview/fileview.h"
 
 DFMBASE_BEGIN_NAMESPACE
 
-class IconItemDelegate;
-class IconItemDelegatePrivate : public BaseItemDelegatePrivate
+BaseItemDelegate::BaseItemDelegate(FileView *parent)
+    : QStyledItemDelegate(parent),
+      d(new BaseItemDelegatePrivate(this))
 {
-public:
-    explicit IconItemDelegatePrivate(IconItemDelegate *qq);
-    ~IconItemDelegatePrivate();
+    Q_D(BaseItemDelegate);
+    d->fileView = parent;
+    d->textLineHeight = parent->fontMetrics().lineSpacing();
+}
 
-    QIcon checkedIcon = QIcon::fromTheme("emblem-checked");
-    QList<int> sizeList { 48, 64, 96, 128, 256 };
-    QSize itemIconSize;
+BaseItemDelegate::BaseItemDelegate(BaseItemDelegatePrivate &dd, FileView *parent)
+    : QStyledItemDelegate(parent),
+      d(&dd)
+{
+    Q_D(BaseItemDelegate);
+    d->fileView = parent;
+    d->textLineHeight = parent->fontMetrics().lineSpacing();
+}
 
-    Q_DECLARE_PUBLIC(IconItemDelegate)
-};
+BaseItemDelegate::~BaseItemDelegate()
+{
+}
+
+int BaseItemDelegate::setIconSizeByIconSizeLevel(int level)
+{
+    Q_UNUSED(level)
+    return -1;
+}
 
 DFMBASE_END_NAMESPACE
-
-#endif   // ICONITEMDELEGATE_P_H

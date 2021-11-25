@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -23,28 +23,31 @@
 #define LISTITEMDELEGATE_H
 
 #include "dfm-base/dfm_base_global.h"
-
-#include <DListView>
+#include "baseitemdelegate.h"
 
 #include <QStyledItemDelegate>
 
 DFMBASE_BEGIN_NAMESPACE
 class ListItemDelegatePrivate;
-class ListItemDelegate : public QStyledItemDelegate
+class ListItemDelegate : public BaseItemDelegate
 {
     Q_OBJECT
-    friend class ListItemDelegatePrivate;
-    ListItemDelegatePrivate *const d;
 public:
-    explicit ListItemDelegate(DTK_WIDGET_NAMESPACE::DListView *parent = nullptr);
+    explicit ListItemDelegate(FileView *parent = nullptr);
     virtual ~ListItemDelegate() override;
-    void paint(QPainter *painter,const QStyleOptionViewItem &option,const QModelIndex &index) const override;
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &) const override;
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     void setEditorData(QWidget *editor, const QModelIndex &index) const override;
     bool eventFilter(QObject *object, QEvent *event) override;
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
+
+    QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode = false) const override;
+
+public slots:
+    void onEditorTextChanged(const QString &text);
+
 private:
     void paintItemBackground(QPainter *painter, const QStyleOptionViewItem &option,
                              const QModelIndex &index) const;
@@ -52,7 +55,9 @@ private:
                         const QModelIndex &index) const;
     void paintItemColumn(QPainter *painter, const QStyleOptionViewItem &option,
                          const QModelIndex &index, const QRect &iconRect) const;
+
+    Q_DECLARE_PRIVATE_D(d, ListItemDelegate)
 };
 DFMBASE_END_NAMESPACE
 
-#endif // DLISTITEMDELEGATE_H
+#endif   // DLISTITEMDELEGATE_H

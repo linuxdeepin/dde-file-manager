@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     liuyangming<liuyangming@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
  *             yanghao<yanghao@uniontech.com>
@@ -19,32 +19,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "fileselectionmodel_p.h"
 
-#ifndef HEADERVIEW_H
-#define HEADERVIEW_H
-
-#include "dfm-base/dfm_base_global.h"
-
-#include <QHeaderView>
+#include <QItemSelectionModel>
 
 DFMBASE_BEGIN_NAMESPACE
-class HeaderView : public QHeaderView
+
+FileSelectionModelPrivate::FileSelectionModelPrivate(FileSelectionModel *qq)
+    : QObject(qq),
+      q(qq)
 {
-    Q_OBJECT
-public:
-    explicit HeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
-    QSize sizeHint() const override;
-    using QHeaderView::updateGeometries;
+    timer.setSingleShot(true);
+    QObject::connect(&timer, &QTimer::timeout, this, &FileSelectionModelPrivate::updateSelecteds);
+}
 
-    int sectionsTotalWidth() const;
+void FileSelectionModelPrivate::updateSelecteds()
+{
+    q->select(selection, currentCommand);
+}
 
-protected:
-    void mouseReleaseEvent(QMouseEvent *e) override;
-    void resizeEvent(QResizeEvent *e) override;
-
-Q_SIGNALS:
-    void mouseReleased();
-    void viewResized();
-};
 DFMBASE_END_NAMESPACE
-#endif   // DFMHEADERVIEW_H

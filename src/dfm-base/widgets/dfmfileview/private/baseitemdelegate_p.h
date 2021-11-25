@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     liuyangming<liuyangming@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
  *             yanghao<yanghao@uniontech.com>
@@ -19,32 +19,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef HEADERVIEW_H
-#define HEADERVIEW_H
+#ifndef BASEITEMDELEGATE_P_H
+#define BASEITEMDELEGATE_P_H
 
 #include "dfm-base/dfm_base_global.h"
 
-#include <QHeaderView>
+#include <QModelIndex>
+#include <QtGlobal>
+
+class QLineEdit;
 
 DFMBASE_BEGIN_NAMESPACE
-class HeaderView : public QHeaderView
+
+class FileView;
+class BaseItemDelegate;
+class BaseItemDelegatePrivate
 {
-    Q_OBJECT
 public:
-    explicit HeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
-    QSize sizeHint() const override;
-    using QHeaderView::updateGeometries;
+    explicit BaseItemDelegatePrivate(BaseItemDelegate *qq);
+    virtual ~BaseItemDelegatePrivate();
 
-    int sectionsTotalWidth() const;
+    FileView *fileView = nullptr;
+    int textLineHeight = -1;
+    mutable QModelIndex editingIndex;
+    mutable QLineEdit *editor = nullptr;
 
-protected:
-    void mouseReleaseEvent(QMouseEvent *e) override;
-    void resizeEvent(QResizeEvent *e) override;
-
-Q_SIGNALS:
-    void mouseReleased();
-    void viewResized();
+    BaseItemDelegate *q_ptr;
+    Q_DECLARE_PUBLIC(BaseItemDelegate)
 };
+
 DFMBASE_END_NAMESPACE
-#endif   // DFMHEADERVIEW_H
+
+#endif   // BASEITEMDELEGATE_P_H

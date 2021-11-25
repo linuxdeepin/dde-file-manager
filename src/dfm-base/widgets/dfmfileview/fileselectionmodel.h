@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     liuyangming<liuyangming@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
  *             yanghao<yanghao@uniontech.com>
@@ -19,32 +19,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef HEADERVIEW_H
-#define HEADERVIEW_H
+#ifndef FILESELECTIONMODEL_H
+#define FILESELECTIONMODEL_H
 
 #include "dfm-base/dfm_base_global.h"
 
-#include <QHeaderView>
+#include <QItemSelectionModel>
 
 DFMBASE_BEGIN_NAMESPACE
-class HeaderView : public QHeaderView
+
+class FileSelectionModelPrivate;
+class FileSelectionModel : public QItemSelectionModel
 {
     Q_OBJECT
-public:
-    explicit HeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
-    QSize sizeHint() const override;
-    using QHeaderView::updateGeometries;
+    friend class FileSelectionModelPrivate;
+    FileSelectionModelPrivate *const d;
 
-    int sectionsTotalWidth() const;
+public:
+    explicit FileSelectionModel(QAbstractItemModel *model = nullptr);
+    explicit FileSelectionModel(QAbstractItemModel *model, QObject *parent);
+
+    bool isSelected(const QModelIndex &index) const;
+    int selectedCount() const;
+    QModelIndexList selectedIndexes() const;
 
 protected:
-    void mouseReleaseEvent(QMouseEvent *e) override;
-    void resizeEvent(QResizeEvent *e) override;
-
-Q_SIGNALS:
-    void mouseReleased();
-    void viewResized();
+    void select(const QItemSelection &selection, QItemSelectionModel::SelectionFlags command) override;
+    void clear() override;
 };
+
 DFMBASE_END_NAMESPACE
-#endif   // DFMHEADERVIEW_H
+
+#endif   // FILESELECTIONMODEL_H

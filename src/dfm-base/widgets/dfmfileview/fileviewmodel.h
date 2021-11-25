@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -46,11 +46,12 @@ class FileViewModel : public QAbstractItemModel
     Q_OBJECT
     friend class FileViewModelPrivate;
     QSharedPointer<FileViewModelPrivate> d;
+
 public:
     explicit FileViewModel(QAbstractItemView *parent = nullptr);
     virtual ~FileViewModel() override;
     virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
-    virtual const FileViewItem* itemFromIndex(const QModelIndex &index) const;
+    virtual const FileViewItem *itemFromIndex(const QModelIndex &index) const;
     virtual QModelIndex setRootUrl(const QUrl &url);
     virtual QUrl rootUrl();
     virtual AbstractFileInfoPointer fileInfo(const QModelIndex &index);
@@ -62,10 +63,14 @@ public:
     virtual int rowCountMaxShow();
     virtual void fetchMore(const QModelIndex &parent) override;
     virtual bool canFetchMore(const QModelIndex &parent) const override;
+    virtual QVariant headerData(int column, Qt::Orientation, int role) const override;
 
     virtual void updateViewItem(const QModelIndex &index);
+
+    int getColumnWidth(const int &column) const;
+    FileViewItem::Roles getRoleByColumn(const int &column) const;
 };
 
 DFMBASE_END_NAMESPACE
 
-#endif // FILEVIEWMODEL_H
+#endif   // FILEVIEWMODEL_H

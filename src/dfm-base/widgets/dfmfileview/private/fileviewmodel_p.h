@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -41,8 +41,8 @@ class FileViewModelPrivate : public QObject
     Q_OBJECT
     friend class FileViewModel;
     FileViewModel *const q;
-    DThreadList<FileViewItem*> childrens;
-    DThreadMap<QUrl, FileViewItem*> childrenMap;
+    DThreadList<FileViewItem *> childrens;
+    DThreadMap<QUrl, FileViewItem *> childrenMap;
     QSharedPointer<FileViewItem> root;
     int column = 0;
     AbstractFileWatcherPointer watcher;
@@ -62,17 +62,27 @@ public:
     virtual ~FileViewModelPrivate();
 private Q_SLOTS:
     void doFileDeleted(const QUrl &url);
-    void dofileAttributeChanged(const QUrl &url, const int &isExternalSource = 1){Q_UNUSED(url);Q_UNUSED(isExternalSource);}
-    void dofileMoved(const QUrl &fromUrl, const QUrl &toUrl){Q_UNUSED(fromUrl);Q_UNUSED(toUrl);}
+    void dofileAttributeChanged(const QUrl &url, const int &isExternalSource = 1)
+    {
+        Q_UNUSED(url);
+        Q_UNUSED(isExternalSource);
+    }
+    void dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
+    {
+        Q_UNUSED(fromUrl);
+        Q_UNUSED(toUrl);
+    }
     void dofileCreated(const QUrl &url);
     void doFileUpdated(const QUrl &url);
     void doFilesUpdated();
-    void dofileClosed(const QUrl &url){Q_UNUSED(url);}
+    void dofileClosed(const QUrl &url) { Q_UNUSED(url); }
     void doUpdateChildren(const QList<FileViewItem *> &childrens);
     void doWatcherEvent();
+
 private:
     bool checkFileEventQueue();
+    QString roleDisplayString(int role);
 };
 DFMBASE_END_NAMESPACE
 
-#endif // FILEVIEWMODEL_P_H
+#endif   // FILEVIEWMODEL_P_H

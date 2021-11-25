@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -19,6 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include "private/delegatecommon.h"
 #include "iconitemdelegate.h"
 #include "private/iconitemdelegate_p.h"
 #include "dfm-base/dfm_base_global.h"
@@ -47,30 +49,24 @@
 DWIDGET_USE_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
 
-IconItemDelegatePrivate::IconItemDelegatePrivate(IconItemDelegate *qq)
-    : QObject(qq)
-    , q(qq)
+IconItemDelegate::IconItemDelegate(FileView *parent)
+    : BaseItemDelegate(*new IconItemDelegatePrivate(this), parent)
 {
+    Q_D(IconItemDelegate);
 
-}
-
-IconItemDelegate::IconItemDelegate(DTK_WIDGET_NAMESPACE::DListView *parent)
-    : QStyledItemDelegate(parent)
-    , d(new IconItemDelegatePrivate(this))
-{
-    d->itemIconSize.setWidth(d->sizeList[2]);
-    d->itemIconSize.setHeight(d->sizeList[2]);
+    d->itemIconSize.setWidth(d->sizeList[1]);
+    d->itemIconSize.setHeight(d->sizeList[1]);
 }
 
 IconItemDelegate::~IconItemDelegate()
 {
-
 }
 
 void IconItemDelegate::paint(QPainter *painter,
                              const QStyleOptionViewItem &option,
                              const QModelIndex &index) const
 {
+    D_DC(IconItemDelegate);
     bool isEnabled = option.state & QStyle::State_Enabled;
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
@@ -99,63 +95,99 @@ void IconItemDelegate::paint(QPainter *painter,
         if (ct == DGuiApplicationHelper::DarkType) {
             baseColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, +5, 0, 0, 0, 0);
             backgroundColor = baseColor;
-        }
-        else
+        } else
             backgroundColor = backgroundColor.lighter();
     }
 
     QRectF backgroundRect = opt.rect;
-    int backgroundMargin = ICON_MODE_COLUMU_PADDING;
+    int backgroundMargin = kIconModeColumnPadding;
     backgroundRect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin);
     // draw background
     QPainterPath path;
     backgroundRect.moveTopLeft(QPointF(0.5, 0.5) + backgroundRect.topLeft());
-    path.addRoundedRect(backgroundRect, ICON_MODE_BACK_RADIUS, ICON_MODE_BACK_RADIUS);
+    path.addRoundedRect(backgroundRect, kIconModeBackRadius, kIconModeBackRadius);
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->fillPath(path, backgroundColor);
     painter->setRenderHint(QPainter::Antialiasing, false);
+
+    bool isSelected = (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
+    if (isSelected) {
+        QRect rc = option.rect;
+        rc.setSize({ 30, 30 });
+        rc.moveTopRight(QPoint(option.rect.right(), option.rect.top()));
+        d->checkedIcon.paint(painter, rc);
+    }
+
     // init icon geomerty
     QRectF iconRect = opt.rect;
     iconRect.setSize(d->itemIconSize);
     double iconTopOffset = (opt.rect.height() - iconRect.height()) / 3.0;
     iconRect.moveLeft(opt.rect.left() + (opt.rect.width() - iconRect.width()) / 2.0);
-    iconRect.moveTop(opt.rect.top() +  iconTopOffset); // move icon down
+    iconRect.moveTop(opt.rect.top() + iconTopOffset);   // move icon down
     // draw icon
     ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
 
     // init file name geometry
     QRectF labelRect = opt.rect;
-    labelRect.setTop(iconRect.bottom() + ICON_MODE_TEXT_PADDING + ICON_MODE_ICON_SPACING);
-    labelRect.setWidth(opt.rect.width() - 2 * ICON_MODE_TEXT_PADDING - 2 * backgroundMargin - ICON_MODE_BACK_RADIUS);
-    labelRect.moveLeft(labelRect.left() + ICON_MODE_TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS / 2);
+    labelRect.setTop(iconRect.bottom() + kIconModeTextPadding + kIconModeIconSpacing);
+    labelRect.setWidth(opt.rect.width() - 2 * kIconModeTextPadding - 2 * backgroundMargin - kIconModeBackRadius);
+    labelRect.moveLeft(labelRect.left() + kIconModeTextPadding + backgroundMargin + kIconModeBackRadius / 2);
     labelRect.setBottom(path.boundingRect().toRect().bottom());
     // draw file name
-    painter->drawText(labelRect, Qt::AlignHCenter | Qt::AlignVCenter, opt.text);
+    QString displayString = ItemDelegateHelper::elideText(index.data(FileViewItem::kItemNameRole).toString(), labelRect.size(),
+                                                          QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                          option.font, opt.textElideMode,
+                                                          GlobalPrivate::kListEditorHeight);
+    painter->drawText(labelRect, Qt::AlignHCenter | Qt::AlignVCenter, displayString);
 
     painter->setOpacity(1);
 }
 
 bool IconItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
-
     return QStyledItemDelegate::helpEvent(event, view, option, index);
+}
+
+QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode) const
+{
+    Q_UNUSED(option)
+    Q_UNUSED(index)
+    Q_UNUSED(sizeHintMode)
+
+    return QList<QRect>();
+}
+
+int IconItemDelegate::setIconSizeByIconSizeLevel(int level)
+{
+    Q_D(IconItemDelegate);
+    if (level < d->sizeList.length()) {
+        int length = d->sizeList.at(level);
+        d->itemIconSize.setWidth(length);
+        d->itemIconSize.setHeight(length);
+
+        return level;
+    }
+
+    return -1;
 }
 
 QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(option)
     Q_UNUSED(index)
-    //    QStyledItemDelegate::sizeHint(option,index);
+    D_DC(IconItemDelegate);
 
-    int height = d->itemIconSize.height() + 2 * ICON_MODE_COLUMU_PADDING/*上下两个icon的间距*/ +
-            3 * 21/*3行文字的高度*/ + 2 * ICON_MODE_TEXT_PADDING/*文字两边的间距*/ +
-            ICON_MODE_ICON_SPACING/*icon的间距*/;
+    int height = d->itemIconSize.height()
+            + 2 * kIconModeColumnPadding   // 上下两个icon的间距
+            + 3 * 21   // 3行文字的高度
+            + 2 * kIconModeTextPadding   // 文字两边的间距
+            + kIconModeIconSpacing;   // icon的间距
     return QSize(height, height);
 }
 
 QWidget *IconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    return QStyledItemDelegate::createEditor(parent,option,index);
+    return QStyledItemDelegate::createEditor(parent, option, index);
 }
 
 void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -169,7 +201,7 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
 
 void IconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    QStyledItemDelegate::setEditorData(editor,index);
+    QStyledItemDelegate::setEditorData(editor, index);
 }
 
 bool IconItemDelegate::eventFilter(QObject *object, QEvent *event)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -26,7 +26,6 @@ DFMBASE_BEGIN_NAMESPACE
 HeaderView::HeaderView(Qt::Orientation orientation, QWidget *parent)
     : QHeaderView(orientation, parent)
 {
-
 }
 
 QSize HeaderView::sizeHint() const
@@ -36,6 +35,16 @@ QSize HeaderView::sizeHint() const
     size.setWidth(length());
 
     return size;
+}
+
+int HeaderView::sectionsTotalWidth() const
+{
+    int totalWidth = 0;
+    for (int i = 0; i < model()->columnCount(); ++i) {
+        totalWidth += sectionSize(i);
+    }
+
+    return totalWidth;
 }
 
 void HeaderView::mouseReleaseEvent(QMouseEvent *e)

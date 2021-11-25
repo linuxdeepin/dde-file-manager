@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -31,6 +31,7 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
 class FileViewModel;
 class FileViewPrivate;
+class BaseItemDelegate;
 class FileView : public DListView
 {
     Q_OBJECT
@@ -40,20 +41,34 @@ class FileView : public DListView
 public:
     explicit FileView(QWidget *parent = nullptr);
     virtual void setViewMode(QListView::ViewMode mode);
-    virtual void setDelegate(QListView::ViewMode mode, QAbstractItemDelegate* view);
+    virtual void setDelegate(QListView::ViewMode mode, BaseItemDelegate *view);
     virtual void setRootUrl(const QUrl &url);
     virtual QUrl rootUrl();
-    virtual FileViewModel* model();
-    virtual void setModel(QAbstractItemModel *model) Q_DECL_OVERRIDE;
+    virtual FileViewModel *model();
+    virtual void setModel(QAbstractItemModel *model) override;
+
+    int getColumnWidth(const int &column) const;
+    int getHeaderViewWidth() const;
+
+public slots:
+    void onHeaderViewMouseReleased();
+    void onHeaderSectionResized(int logicalIndex, int oldSize, int newSize);
+    void onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order);
+    void onClicked(const QModelIndex &index);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    QModelIndexList selectedIndexes() const override;
 
 Q_SIGNALS:
     void urlClicked(const QUrl &url);
     void fileClicked(const QUrl &url);
     void dirClicked(const QUrl &url);
+
+private:
+    void initializeModel();
+    void initializeDelegate();
 };
 DFMBASE_END_NAMESPACE
 
-#endif // FILEVIEW_H
+#endif   // FILEVIEW_H

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -37,58 +37,59 @@ class FileViewItemPrivate;
  */
 class IconLayer
 {
-    QPointF apos; // 相对与文件icon的坐标
-    QIcon aicon; // 添加到icon上的图标
+    QPointF apos;   // 相对与文件icon的坐标
+    QIcon aicon;   // 添加到icon上的图标
 public:
-    explicit IconLayer(){}
-    explicit IconLayer(const QPointF &pos, const QIcon &icon) : apos(pos), aicon(icon){}
-    void setPos(const QPointF &pos){ IconLayer::apos = pos; }
-    void setIcon(const QIcon &icon){ IconLayer::aicon = icon; }
-    QIcon icon(){ return IconLayer::aicon; }
-    QPointF pos(){ return IconLayer::apos; }
+    explicit IconLayer() {}
+    explicit IconLayer(const QPointF &pos, const QIcon &icon)
+        : apos(pos), aicon(icon) {}
+    void setPos(const QPointF &pos) { IconLayer::apos = pos; }
+    void setIcon(const QIcon &icon) { IconLayer::aicon = icon; }
+    QIcon icon() { return IconLayer::aicon; }
+    QPointF pos() { return IconLayer::apos; }
 };
 
-typedef QList<IconLayer> IconLayers; //多个图标叠加图层
+typedef QList<IconLayer> IconLayers;   //多个图标叠加图层
 
-class FileViewItem: public QStandardItem
+class FileViewItem : public QStandardItem
 {
     friend class FileViewItemPrivate;
     FileViewItemPrivate *const d;
+
 public:
     enum Roles {
-        ItemNameRole = Qt::DisplayRole,
-        ItemIconRole = Qt::DecorationRole,
-        ItemEditRole = Qt::EditRole,
-        ItemToolTipRole = Qt::ToolTipRole,
-        ItemSizeHintRole = Qt::SizeHintRole,
-        ItemBackgroundRole = Qt::BackgroundRole,
-        ItemForegroundRole = Qt::ForegroundRole,
-        ItemCheckStateRole = Qt::CheckStateRole,
-        ItemInitialSortOrderRole = Qt::InitialSortOrderRole,
-        ItemFontRole = Qt::FontRole,
-        ItemTextAlignmentRole = Qt::TextAlignmentRole,
-        ItemColorRole = Qt::TextColorRole,
-        ItemUrlRole = Qt::UserRole + 1,
-        ItemFileLastModifiedRole = Qt::UserRole + 2,
-        ItemFileSizeRole = Qt::UserRole + 3,
-        ItemFileMimeTypeRole = Qt::UserRole + 4,
-        ItemFileSuffixRole = Qt::UserRole + 5,
-        ItemFilePathRole = Qt::UserRole + 6,
-        ItemColumListRole = Qt::UserRole + 7,
-        ItemColumWidthScaleListRole = Qt::UserRole + 8,
-        ItemCornerMarkTLRole = Qt::UserRole + 9,
-        ItemCornerMarkTRRole = Qt::UserRole + 10,
-        ItemCornerMarkBLRole = Qt::UserRole + 11,
-        ItemCornerMarkBRRole = Qt::UserRole + 12,
-        ItemIconLayersRole = Qt::UserRole + 13
+        kItemNameRole = Qt::DisplayRole,
+        kItemIconRole = Qt::DecorationRole,
+        kItemEditRole = Qt::EditRole,
+        kItemToolTipRole = Qt::ToolTipRole,
+        kItemSizeHintRole = Qt::SizeHintRole,
+        kItemBackgroundRole = Qt::BackgroundRole,
+        kItemForegroundRole = Qt::ForegroundRole,
+        kItemCheckStateRole = Qt::CheckStateRole,
+        kItemInitialSortOrderRole = Qt::InitialSortOrderRole,
+        kItemFontRole = Qt::FontRole,
+        kItemTextAlignmentRole = Qt::TextAlignmentRole,
+        kItemColorRole = Qt::TextColorRole,
+        kItemUrlRole = Qt::UserRole + 1,
+        kItemFileLastModifiedRole = Qt::UserRole + 2,
+        kItemFileSizeRole = Qt::UserRole + 3,
+        kItemFileMimeTypeRole = Qt::UserRole + 4,
+        kItemFileSuffixRole = Qt::UserRole + 5,
+        kItemFilePathRole = Qt::UserRole + 6,
+        kItemColumListRole = Qt::UserRole + 7,
+        kItemColumWidthScaleListRole = Qt::UserRole + 8,
+        kItemCornerMarkTLRole = Qt::UserRole + 9,
+        kItemCornerMarkTRRole = Qt::UserRole + 10,
+        kItemCornerMarkBLRole = Qt::UserRole + 11,
+        kItemCornerMarkBRRole = Qt::UserRole + 12,
+        kItemIconLayersRole = Qt::UserRole + 13
     };
 
-    enum CornerMark
-    {
-        TopLeft,
-        TopRight,
-        BottomLeft,
-        BottomRight,
+    enum CornerMark {
+        kTopLeft,
+        kTopRight,
+        kBottomLeft,
+        kBottomRight,
     };
 
     explicit FileViewItem();
@@ -100,23 +101,28 @@ public:
     QUrl url() const;
     void setUrl(const QUrl url);
     AbstractFileInfoPointer fileinfo() const;
-    virtual void setCornerMark(const QIcon& tl, const QIcon& tr,
-                               const QIcon& bl, const QIcon& br);
-    virtual void setCornerMark(CornerMark flag, const QIcon& icon);
+    virtual void setCornerMark(const QIcon &tl, const QIcon &tr,
+                               const QIcon &bl, const QIcon &br);
+    virtual void setCornerMark(CornerMark flag, const QIcon &icon);
     virtual QIcon cornerMarkTL();
     virtual QIcon cornerMarkTR();
     virtual QIcon cornerMarkBL();
     virtual QIcon cornerMarkBR();
-    virtual void setIconLayers(const IconLayers& layers);
+    virtual void setIconLayers(const IconLayers &layers);
     virtual IconLayers iconLayers();
     QMimeType mimeType() const;
     virtual QVariant data(int role) const override;
+
+    inline static QString dateTimeFormat()
+    {
+        return "yyyy/MM/dd HH:mm:ss";
+    }
 };
 
 Q_DECLARE_METATYPE(FileViewItem);
-Q_DECLARE_METATYPE(FileViewItem*);
+Q_DECLARE_METATYPE(FileViewItem *);
 Q_DECLARE_METATYPE(QSharedPointer<FileViewItem>);
 Q_DECLARE_METATYPE(IconLayer);
 Q_DECLARE_METATYPE(IconLayers);
 
-#endif // DFMFILEVIEWITEM_H
+#endif   // DFMFILEVIEWITEM_H

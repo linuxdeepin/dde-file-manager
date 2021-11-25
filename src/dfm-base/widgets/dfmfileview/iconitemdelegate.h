@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -23,8 +23,7 @@
 #define ICONITEMDELEGATE_H
 
 #include "dfm-base/dfm_base_global.h"
-
-#include <DListView>
+#include "baseitemdelegate.h"
 
 #include <QStyledItemDelegate>
 #include <QTextLayout>
@@ -36,15 +35,14 @@ QT_END_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
 class FileIconItem;
 class IconItemDelegatePrivate;
-class IconItemDelegate : public QStyledItemDelegate
+class IconItemDelegate : public BaseItemDelegate
 {
     Q_OBJECT
-    friend class IconItemDelegatePrivate;
-    IconItemDelegatePrivate *const d;
     friend class ExpandedItem;
+
 public:
-    explicit IconItemDelegate(DTK_WIDGET_NAMESPACE::DListView *parent);
-    virtual ~IconItemDelegate() override;
+    explicit IconItemDelegate(FileView *parent);
+    ~IconItemDelegate() override;
     void paint(QPainter *painter,
                const QStyleOptionViewItem &option,
                const QModelIndex &index) const override;
@@ -54,7 +52,13 @@ public:
     void setEditorData(QWidget *editor, const QModelIndex &index) const override;
     bool eventFilter(QObject *object, QEvent *event) override;
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
+
+    QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode = false) const override;
+    int setIconSizeByIconSizeLevel(int level) override;
+
+private:
+    Q_DECLARE_PRIVATE_D(d, IconItemDelegate)
 };
 DFMBASE_END_NAMESPACE
 
-#endif // DFMICONITEMDELEGATE_H
+#endif   // DFMICONITEMDELEGATE_H

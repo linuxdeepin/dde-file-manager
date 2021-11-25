@@ -22,7 +22,7 @@
 #ifndef BROWSEWINDOWPRIVATE_H
 #define BROWSEWINDOWPRIVATE_H
 
-//services
+// services
 #include "window/browsewindow.h"
 #include "window/browseview.h"
 #include "window/navwidget.h"
@@ -30,23 +30,23 @@
 #include "window/addressbar.h"
 #include "window/optionbuttonbox.h"
 
-//modules
+// modules
 #include "dfm-base/widgets/dfmsplitter/splitter.h"
 #include "dfm-base/widgets/dfmsidebar/sidebar.h"
 
-//DTK
+// DTK
 #include <DTitlebar>
 #include <DButtonBox>
 
-//Qt
+// Qt
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QToolButton>
 
 DSB_FM_BEGIN_NAMESPACE
-DWIDGET_USE_NAMESPACE   //use dtkwidget
+DWIDGET_USE_NAMESPACE
 
-        class DetailView;
+class DetailView;
 
 /*!
  * \class BrowseWindowPrivate
@@ -58,22 +58,20 @@ class BrowseWindowPrivate : public QObject
     friend class BrowseWindow;
     BrowseWindow *const q;
 
-    SideBar *sidebarIns = nullptr;   //左侧边栏
+    SideBar *sidebarIns = nullptr;   // 左侧边栏
 
-    QFrame *titleBarIns = nullptr;   //标题栏
-    QHBoxLayout *titleBarLayoutIns = nullptr;   //标题栏布局
+    QFrame *titleBarIns = nullptr;   // 标题栏
+    QHBoxLayout *titleBarLayoutIns = nullptr;   // 标题栏布局
 
-    NavWidget *navWidgetIns = nullptr;   //导航小部件
-    AddressBar *addressBarIns = nullptr;   //地址編輯栏
-    QToolButton *searchButtonIns = nullptr;   //搜索栏按钮
-    QToolButton *searchFilterButtonIns = nullptr;   //搜索过滤按钮
-    OptionButtonBox *optionButtonBoxIns = nullptr;   //功能按鈕栏
-    CrumbBar *crumbBarIns = nullptr;   //面包屑
+    NavWidget *navWidgetIns = nullptr;   // 导航小部件
+    AddressBar *addressBarIns = nullptr;   // 地址編輯栏
+    QToolButton *searchButtonIns = nullptr;   // 搜索栏按钮
+    QToolButton *searchFilterButtonIns = nullptr;   // 搜索过滤按钮
+    OptionButtonBox *optionButtonBoxIns = nullptr;   // 功能按鈕栏
+    CrumbBar *crumbBarIns = nullptr;   // 面包屑
 
-    DisplayDefaultView displayCheckViewIns;   //默认检查Url展示的View
-    QWidget *displayWidgetIns = nullptr;   //居中組件背板
-    QVBoxLayout *displayViewLayoutIns = nullptr;   //居中組件布局
-    QHash<QString, DisplayViewLogic *> views {};   //展示的view类
+    DisplayDefaultView displayCheckViewIns;   // 默认检查Url展示的View
+    QHash<QString, DisplayViewLogic *> views {};   // 展示的view类
 
     DetailView *propertyViewIns = nullptr;   //面右侧属性界
     Splitter *splitterIns = nullptr;   //布局
@@ -135,8 +133,8 @@ private
 
 private:
     QWidget *currentDisplayView();
-    void initDefaultLayout();   //初始化界面模块与布局
-    void showAddrsssBar();   //switch addrasssBar and crumbBar show
+    void initDefaultLayout();   // 初始化界面模块与布局
+    void showAddrsssBar();   // switch addrasssBar and crumbBar show
     void showCrumbBar();
     void showSearchButton();
     void showSearchFilterButton();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -22,9 +22,14 @@
 #include "listitemdelegate_p.h"
 
 DFMBASE_BEGIN_NAMESPACE
+
+ListItemDelegatePrivate::ListItemDelegatePrivate(ListItemDelegate *qq)
+    : BaseItemDelegatePrivate(qq)
+{
+}
+
 ListItemDelegatePrivate::~ListItemDelegatePrivate()
 {
-    listView = nullptr;
 }
 
 DFMBASE_END_NAMESPACE

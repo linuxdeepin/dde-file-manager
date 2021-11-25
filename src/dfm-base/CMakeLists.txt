@@ -95,8 +95,10 @@ set(WIDGETS_H
     widgets/dfmfileview/private/traversaldirthread.h
     widgets/dfmfileview/private/fileviewitem_p.h
     widgets/dfmfileview/private/delegatecommon.h
+    widgets/dfmfileview/private/baseitemdelegate_p.h
     widgets/dfmfileview/private/iconitemdelegate_p.h
     widgets/dfmfileview/private/listitemdelegate_p.h
+    widgets/dfmfileview/private/fileselectionmodel_p.h
     widgets/dfmsidebar/private/sidebar_p.h
     widgets/dfmsidebar/private/sidebarview_p.h
     widgets/dfmsidebar/private/sidebarmodel_p.h
@@ -110,9 +112,12 @@ set(WIDGETS_H
     widgets/dfmfileview/fileviewmodel.h
     widgets/dfmfileview/headerview.h
     widgets/dfmfileview/fileviewitem.h
+    widgets/dfmfileview/baseitemdelegate.h
     widgets/dfmfileview/listitemdelegate.h
     widgets/dfmfileview/iconitemdelegate.h
     widgets/dfmfileview/itemdelegatehelper.h
+    widgets/dfmfileview/filesortfilterproxymodel.h
+    widgets/dfmfileview/fileselectionmodel.h
     widgets/dfmdialog/errordialog.h
     widgets/dfmdialog/contextdialog.h
 )
@@ -121,8 +126,10 @@ set(WIDGETS_CPP
     widgets/dfmfileview/private/traversaldirthread.cpp
     widgets/dfmfileview/private/fileview_p.cpp
     widgets/dfmfileview/private/delegatecommon.cpp
+    widgets/dfmfileview/private/baseitemdelegate_p.cpp
     widgets/dfmfileview/private/iconitemdelegate_p.cpp
     widgets/dfmfileview/private/listitemdelegate_p.cpp
+    widgets/dfmfileview/private/fileselectionmodel_p.cpp
     widgets/dfmsidebar/private/sidebar_p.cpp
     widgets/dfmsidebar/sidebar.cpp
     widgets/dfmsidebar/sidebaritem.cpp
@@ -134,9 +141,12 @@ set(WIDGETS_CPP
     widgets/dfmfileview/fileviewmodel.cpp
     widgets/dfmfileview/headerview.cpp
     widgets/dfmfileview/fileviewitem.cpp
+    widgets/dfmfileview/baseitemdelegate.cpp
     widgets/dfmfileview/listitemdelegate.cpp
     widgets/dfmfileview/iconitemdelegate.cpp
     widgets/dfmfileview/itemdelegatehelper.cpp
+    widgets/dfmfileview/filesortfilterproxymodel.cpp
+    widgets/dfmfileview/fileselectionmodel.cpp
     widgets/dfmdialog/errordialog.cpp
     widgets/dfmdialog/contextdialog.cpp
 )

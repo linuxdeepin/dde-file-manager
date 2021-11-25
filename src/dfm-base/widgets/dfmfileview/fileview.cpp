@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -22,30 +22,57 @@
 #include "headerview.h"
 #include "fileview.h"
 #include "private/fileview_p.h"
+#include "filesortfilterproxymodel.h"
+#include "fileselectionmodel.h"
+#include "fileviewmodel.h"
+#include "baseitemdelegate.h"
+#include "iconitemdelegate.h"
+#include "listitemdelegate.h"
 
 #include <QResizeEvent>
 #include <QScrollBar>
 
 DFMBASE_BEGIN_NAMESPACE
 FileView::FileView(QWidget *parent)
-    : DListView(parent)
-    , d(new FileViewPrivate(this))
+    : DListView(parent), d(new FileViewPrivate(this))
 {
-    auto model = new FileViewModel(this);
-    this->setCornerWidget(d->headview);
-    setModel(model);
-    setDelegate(QListView::ViewMode::IconMode, new IconItemDelegate(this));
-    setDelegate(QListView::ViewMode::ListMode, new ListItemDelegate(this));
-    setViewMode(QListView::ViewMode::IconMode);
+    setResizeMode(QListView::Adjust);
+    setDragDropMode(QAbstractItemView::DragDrop);
+    setDropIndicatorShown(false);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
+    setTextElideMode(Qt::ElideMiddle);
+    setAlternatingRowColors(false);
+
+    initializeModel();
+    initializeDelegate();
+
+    // TODO(liuyangming): init data from config
+    QAbstractItemView::model()->sort(0);
 }
 
 void FileView::setViewMode(QListView::ViewMode mode)
 {
+    if (viewMode() == mode)
+        return;
+
     QListView::setViewMode(mode);
     setItemDelegate(d->delegates[mode]);
+
+    switch (mode) {
+    case QListView::IconMode:
+        d->initIconModeView();
+        break;
+    case QListView::ListMode:
+        if (model())
+            setMinimumWidth(model()->columnCount() * GlobalPrivate::kListViewMinimumWidth);
+        d->initListModeView();
+        break;
+    }
 }
 
-void FileView::setDelegate(QListView::ViewMode mode, QAbstractItemDelegate *view)
+void FileView::setDelegate(QListView::ViewMode mode, BaseItemDelegate *view)
 {
     if (!view)
         return;
@@ -72,7 +99,11 @@ QUrl FileView::rootUrl()
 
 FileViewModel *FileView::model()
 {
-    return qobject_cast<FileViewModel *>(QAbstractItemView::model());
+    auto model = qobject_cast<FileSortFilterProxyModel *>(QAbstractItemView::model());
+    if (model)
+        return qobject_cast<FileViewModel *>(model->sourceModel());
+
+    return nullptr;
 }
 
 void FileView::setModel(QAbstractItemModel *model)
@@ -83,24 +114,99 @@ void FileView::setModel(QAbstractItemModel *model)
     if (curr)
         delete curr;
     DListView::setModel(model);
-    QObject::connect(this, &FileView::clicked,
-                     this ,[=](const QModelIndex &index){
-        auto item = FileView::model()->itemFromIndex(index);
-        if (item)
-            Q_EMIT urlClicked(item->url());
+    QObject::connect(this, &FileView::clicked, this, &FileView::onClicked, Qt::UniqueConnection);
+}
 
-        if (item->fileinfo()->isDir())
-            Q_EMIT dirClicked(item->url());
+int FileView::getColumnWidth(const int &column) const
+{
+    if (d->headerView)
+        return d->headerView->sectionSize(column);
 
-        if (item->fileinfo()->isFile())
-            Q_EMIT fileClicked(item->url());
-    },Qt::UniqueConnection);
+    return GlobalPrivate::kListViewDefaultWidth;
+}
+
+int FileView::getHeaderViewWidth() const
+{
+    if (d->headerView)
+        return d->headerView->sectionsTotalWidth();
+
+    return 0;
+}
+
+void FileView::onHeaderViewMouseReleased()
+{
+    if (d->headerView->sectionsTotalWidth() != width())
+        d->allowedAdjustColumnSize = false;
+
+    // TODO(liuyangming): save data to config
+}
+
+void FileView::onHeaderSectionResized(int logicalIndex, int oldSize, int newSize)
+{
+    Q_UNUSED(logicalIndex)
+    Q_UNUSED(oldSize)
+    Q_UNUSED(newSize)
+
+    // TODO(liuyangming): save data to config
+
+    update();
+}
+
+void FileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
+{
+    auto proxyModel = qobject_cast<FileSortFilterProxyModel *>(QAbstractItemView::model());
+    proxyModel->setSortRole(model()->getRoleByColumn(logicalIndex));
+
+    proxyModel->sort(logicalIndex, order);
+
+    //TODO liuyangming: save data to config
+}
+
+void FileView::onClicked(const QModelIndex &index)
+{
+    auto item = FileView::model()->itemFromIndex(index);
+    if (item)
+        Q_EMIT urlClicked(item->url());
+
+    if (item->fileinfo()->isDir())
+        Q_EMIT dirClicked(item->url());
+
+    if (item->fileinfo()->isFile())
+        Q_EMIT fileClicked(item->url());
 }
 
 void FileView::resizeEvent(QResizeEvent *event)
 {
+    if (d->headerView) {
+        if (qAbs(d->headerView->sectionsTotalWidth() - width()) < 10)
+            d->allowedAdjustColumnSize = true;
+
+        d->updateListModeColumnWidth();
+    }
+
     return DListView::resizeEvent(event);
 }
 
-DFMBASE_END_NAMESPACE
+QModelIndexList FileView::selectedIndexes() const
+{
+    return qobject_cast<FileSelectionModel *>(selectionModel())->selectedIndexes();
+}
 
+void FileView::initializeModel()
+{
+    auto model = new FileViewModel(this);
+    auto proxyModel = new FileSortFilterProxyModel(this);
+    proxyModel->setSourceModel(model);
+    setModel(proxyModel);
+
+    auto selectionModel = new FileSelectionModel(model);
+    setSelectionModel(selectionModel);
+}
+
+void FileView::initializeDelegate()
+{
+    setDelegate(QListView::ViewMode::IconMode, new IconItemDelegate(this));
+    setDelegate(QListView::ViewMode::ListMode, new ListItemDelegate(this));
+}
+
+DFMBASE_END_NAMESPACE

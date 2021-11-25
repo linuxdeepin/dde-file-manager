@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     liuyangming<liuyangming@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
  *             yanghao<yanghao@uniontech.com>
@@ -19,32 +19,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef HEADERVIEW_H
-#define HEADERVIEW_H
+#ifndef FILESORTFILTERPROXYMODEL_H
+#define FILESORTFILTERPROXYMODEL_H
 
 #include "dfm-base/dfm_base_global.h"
 
-#include <QHeaderView>
+#include <QSortFilterProxyModel>
 
 DFMBASE_BEGIN_NAMESPACE
-class HeaderView : public QHeaderView
+
+class FileSortFilterProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 public:
-    explicit HeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
-    QSize sizeHint() const override;
-    using QHeaderView::updateGeometries;
-
-    int sectionsTotalWidth() const;
+    explicit FileSortFilterProxyModel(QObject *parent = nullptr);
+    virtual ~FileSortFilterProxyModel() override;
 
 protected:
-    void mouseReleaseEvent(QMouseEvent *e) override;
-    void resizeEvent(QResizeEvent *e) override;
-
-Q_SIGNALS:
-    void mouseReleased();
-    void viewResized();
+    virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
+    virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 };
+
 DFMBASE_END_NAMESPACE
-#endif   // DFMHEADERVIEW_H
+
+#endif   // FILESORTFILTERPROXYMODEL_H

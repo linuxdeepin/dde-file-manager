@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -24,35 +24,41 @@
 
 #include "dfm-base/dfm_base_global.h"
 #include "widgets/dfmfileview/fileview.h"
-#include "widgets/dfmfileview/fileviewmodel.h"
-#include "widgets/dfmfileview/iconitemdelegate.h"
-#include "widgets/dfmfileview/listitemdelegate.h"
-#include "widgets/dfmfileview/headerview.h"
 
 #include <QObject>
 #include <QUrl>
 
 namespace GlobalPrivate {
-const int ICON_VIEW_SPACING {5};
-const int LIST_VIEW_SPACING {1};
-const int LIST_VIEW_MINIMUM_WIDTH {80};
-const int LIST_VIEW_ICON_SIZE {24};
-} // namespace GlobalPrivate
+const int kIconViewSpacing { 5 };
+const int kListViewSpacing { 1 };
+const int kListViewMinimumWidth { 80 };
+const int kListViewDefaultWidth { 120 };
+const int kListViewIconSize { 24 };
+}   // namespace GlobalPrivate
 
 DFMBASE_BEGIN_NAMESPACE
+class HeaderView;
+class BaseItemDelegate;
+class FileSortFilterProxyModel;
 class FileViewPrivate
 {
     friend class FileView;
     FileView *const q;
     QAtomicInteger<bool> allowedAdjustColumnSize = true;
-    QHash<int, QAbstractItemDelegate*> delegates;
-    HeaderView* headview = nullptr;
+    QHash<int, BaseItemDelegate *> delegates;
+    HeaderView *headerView = nullptr;
+    FileSortFilterProxyModel *proxyModel = nullptr;
     QUrl url;
 
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
     QUrl modelIndexUrl(const QModelIndex &index) const;
+
+    void initIconModeView();
+    void initListModeView();
+
+    void updateListModeColumnWidth();
 };
 DFMBASE_END_NAMESPACE
 
-#endif // FILEVIEW_P_H
+#endif   // FILEVIEW_P_H

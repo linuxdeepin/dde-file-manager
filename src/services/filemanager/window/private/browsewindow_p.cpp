@@ -154,13 +154,10 @@ void BrowseWindowPrivate::setRootUrl(const QUrl &url)
 
     //切換view
     if (!displayCheckViewIns.checkViewUrl(url)) {
-
         qWarning() << Q_FUNC_INFO << "Failed default URL check";
         //显示 checkView(Label)
         return displayCheckViewIns.showBeginLogic();
-
     } else {
-
         QString errorString;
         DisplayViewLogic *viewLogic = views.value(url.scheme());
         QWidget *viewWidget = dynamic_cast<QWidget *>(viewLogic);
@@ -185,7 +182,6 @@ void BrowseWindowPrivate::setRootUrl(const QUrl &url)
             //依然显示 checkView(Label)
             return displayCheckViewIns.showBeginLogic();
         } else {   //正常show logic
-
             if (splitterIns && viewWidget != splitterIns->widget(1))
                 splitterIns->replaceWidget(1, viewWidget);
 
@@ -252,7 +248,6 @@ void BrowseWindowPrivate::setNavForwardButton(DButtonBoxButton *navForwardButton
 
 void BrowseWindowPrivate::setSearchButton(QToolButton *searchButton)
 {
-
     if (!titleBarLayoutIns->replaceWidget(searchButton, searchButton)->isEmpty()) {
 
         if (searchButton) {
@@ -474,15 +469,6 @@ void BrowseWindowPrivate::initDefaultLayout()
         displayCheckViewIns.setText(displayCheckViewIns.metaObject()->className());
 
     splitterIns->addWidget(&displayCheckViewIns);
-
-    if (!displayWidgetIns)
-        displayWidgetIns = new QWidget;
-
-    if (!displayViewLayoutIns)
-        displayViewLayoutIns = new QVBoxLayout;
-
-    displayWidgetIns->setLayout(displayViewLayoutIns);
-    splitterIns->addWidget(displayWidgetIns);
 
     if (!propertyViewIns)
         propertyViewIns = new DetailView();

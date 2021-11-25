@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -21,6 +21,7 @@
  */
 #include "recentbrowseview.h"
 
+#include "dfm-base/widgets/dfmfileview/filesortfilterproxymodel.h"
 #include "dfm-base/widgets/dfmfileview/iconitemdelegate.h"
 #include "dfm-base/widgets/dfmfileview/listitemdelegate.h"
 #include "services/common/menu/menuservice.h"
@@ -30,17 +31,18 @@
 DSC_USE_NAMESPACE
 
 RecentBrowseView::RecentBrowseView(QWidget *parent)
-    :BrowseView(parent)
+    : BrowseView(parent)
 {
-    setModel(new RecentBrowseViewModel(this));
-    setDelegate(QListView::IconMode,new IconItemDelegate(this));
-    setDelegate(QListView::ListMode,new ListItemDelegate(this));
+    auto proxyModel = new FileSortFilterProxyModel(this);
+    proxyModel->setSourceModel(new RecentBrowseViewModel(this));
+    setModel(proxyModel);
+    setDelegate(QListView::IconMode, new IconItemDelegate(this));
+    setDelegate(QListView::ListMode, new ListItemDelegate(this));
     setViewMode(QListView::ListMode);
 }
 
 void RecentBrowseView::setRootUrl(const QUrl &url)
 {
-
 }
 
 QUrl RecentBrowseView::rootUrl()
@@ -53,7 +55,7 @@ void RecentBrowseView::contextMenuEvent(QContextMenuEvent *event)
     Q_UNUSED(event);
 
     auto &ctx = dpfInstance.serviceContext();
-    MenuService* menuService = ctx.service<MenuService>(MenuService::name());
+    MenuService *menuService = ctx.service<MenuService>(MenuService::name());
     dpfInfo() << Q_FUNC_INFO << menuService;
     if (!menuService) {
         abort();

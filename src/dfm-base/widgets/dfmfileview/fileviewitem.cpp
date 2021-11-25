@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -51,44 +51,45 @@ FileViewItem::~FileViewItem()
 
 FileViewItem &FileViewItem::operator=(const FileViewItem &other)
 {
-    setData(other.data(ItemNameRole),ItemNameRole);
-    setData(other.data(ItemIconRole),ItemIconRole);
-    setData(other.data(ItemEditRole),ItemEditRole);
-    setData(other.data(ItemToolTipRole),ItemToolTipRole);
-    setData(other.data(ItemSizeHintRole),ItemSizeHintRole);
-    setData(other.data(ItemBackgroundRole),ItemBackgroundRole);
-    setData(other.data(ItemForegroundRole),ItemForegroundRole);
-    setData(other.data(ItemCheckStateRole),ItemCheckStateRole);
-    setData(other.data(ItemInitialSortOrderRole),ItemInitialSortOrderRole);
-    setData(other.data(ItemFontRole),ItemFontRole);
-    setData(other.data(ItemTextAlignmentRole),ItemTextAlignmentRole);
-    setData(other.data(ItemColorRole),ItemColorRole);
-    setData(other.data(ItemUrlRole),ItemUrlRole);
-    setData(other.data(ItemFileLastModifiedRole),ItemFileLastModifiedRole);
-    setData(other.data(ItemFileSizeRole),ItemFileSizeRole);
-    setData(other.data(ItemFileMimeTypeRole),ItemFileMimeTypeRole);
-    setData(other.data(ItemFileSuffixRole),ItemFileSuffixRole);
-    setData(other.data(ItemFilePathRole),ItemFilePathRole);
-    setData(other.data(ItemColumListRole),ItemColumListRole);
-    setData(other.data(ItemColumWidthScaleListRole),ItemColumWidthScaleListRole);
+    setData(other.data(kItemNameRole), kItemNameRole);
+    setData(other.data(kItemIconRole), kItemIconRole);
+    setData(other.data(kItemEditRole), kItemEditRole);
+    setData(other.data(kItemToolTipRole), kItemToolTipRole);
+    setData(other.data(kItemSizeHintRole), kItemSizeHintRole);
+    setData(other.data(kItemBackgroundRole), kItemBackgroundRole);
+    setData(other.data(kItemForegroundRole), kItemForegroundRole);
+    setData(other.data(kItemCheckStateRole), kItemCheckStateRole);
+    setData(other.data(kItemInitialSortOrderRole), kItemInitialSortOrderRole);
+    setData(other.data(kItemFontRole), kItemFontRole);
+    setData(other.data(kItemTextAlignmentRole), kItemTextAlignmentRole);
+    setData(other.data(kItemColorRole), kItemColorRole);
+    setData(other.data(kItemUrlRole), kItemUrlRole);
+    setData(other.data(kItemFileLastModifiedRole), kItemFileLastModifiedRole);
+    setData(other.data(kItemFileSizeRole), kItemFileSizeRole);
+    setData(other.data(kItemFileMimeTypeRole), kItemFileMimeTypeRole);
+    setData(other.data(kItemFileSuffixRole), kItemFileSuffixRole);
+    setData(other.data(kItemFilePathRole), kItemFilePathRole);
+    setData(other.data(kItemColumListRole), kItemColumListRole);
+    setData(other.data(kItemColumWidthScaleListRole), kItemColumWidthScaleListRole);
 
     return *this;
 }
 
-void FileViewItem::refresh(){
-    if(!d->fileinfo.isNull())
+void FileViewItem::refresh()
+{
+    if (!d->fileinfo.isNull())
         d->fileinfo->refresh();
     d->mimeType = MimeDatabase::mimeTypeForUrl(d->fileinfo->url());
 }
 
 QUrl FileViewItem::url() const
 {
-    return QStandardItem::data(Roles::ItemUrlRole).toUrl();
+    return QStandardItem::data(Roles::kItemUrlRole).toUrl();
 }
 
 void FileViewItem::setUrl(const QUrl url)
 {
-    setData(QVariant(url), Roles::ItemUrlRole);
+    setData(QVariant(url), Roles::kItemUrlRole);
 
     d->fileinfo = InfoFactory::create<AbstractFileInfo>(url);
     if (!d->fileinfo)
@@ -98,8 +99,8 @@ void FileViewItem::setUrl(const QUrl url)
     if (!d->mimeType.isValid())
         abort();
 
-    setData(QVariant(QIcon::fromTheme(d->mimeType.iconName())), ItemIconRole);
-    setData(QVariant(d->fileinfo->fileName()), ItemNameRole);
+    setData(QVariant(QIcon::fromTheme(d->mimeType.iconName())), kItemIconRole);
+    setData(QVariant(d->fileinfo->fileName()), kItemNameRole);
 }
 
 AbstractFileInfoPointer FileViewItem::fileinfo() const
@@ -110,32 +111,32 @@ AbstractFileInfoPointer FileViewItem::fileinfo() const
 void FileViewItem::setCornerMark(const QIcon &tl, const QIcon &tr, const QIcon &bl, const QIcon &br)
 {
     if (!tl.isNull())
-        setData(tl, TopLeft);
+        setData(tl, kTopLeft);
     if (!tr.isNull())
-        setData(tr, TopRight);
+        setData(tr, kTopRight);
     if (!tl.isNull())
-        setData(bl, BottomLeft);
+        setData(bl, kBottomLeft);
     if (!br.isNull())
-        setData(br, BottomRight);
+        setData(br, kBottomRight);
 }
 
 void FileViewItem::setCornerMark(FileViewItem::CornerMark flag, const QIcon &icon)
 {
     switch (flag) {
-    case TopLeft:
-        return setData(icon, ItemCornerMarkTLRole);
-    case TopRight:
-        return setData(icon, ItemCornerMarkTRRole);
-    case BottomLeft:
-        return setData(icon, ItemCornerMarkBLRole);
-    case BottomRight:
-        return setData(icon, ItemCornerMarkBRRole);
+    case kTopLeft:
+        return setData(icon, kItemCornerMarkTLRole);
+    case kTopRight:
+        return setData(icon, kItemCornerMarkTRRole);
+    case kBottomLeft:
+        return setData(icon, kItemCornerMarkBLRole);
+    case kBottomRight:
+        return setData(icon, kItemCornerMarkBRRole);
     }
 }
 
 QIcon FileViewItem::cornerMarkTR()
 {
-    auto variant = QStandardItem::data(ItemCornerMarkTRRole);
+    auto variant = QStandardItem::data(kItemCornerMarkTRRole);
     if (variant.canConvert<QIcon>()) {
         return qvariant_cast<QIcon>(variant);
     }
@@ -144,7 +145,7 @@ QIcon FileViewItem::cornerMarkTR()
 
 QIcon FileViewItem::cornerMarkBL()
 {
-    auto variant = QStandardItem::data(ItemCornerMarkBLRole);
+    auto variant = QStandardItem::data(kItemCornerMarkBLRole);
     if (variant.canConvert<QIcon>()) {
         return qvariant_cast<QIcon>(variant);
     }
@@ -153,7 +154,7 @@ QIcon FileViewItem::cornerMarkBL()
 
 QIcon FileViewItem::cornerMarkBR()
 {
-    auto variant = QStandardItem::data(ItemCornerMarkBRRole);
+    auto variant = QStandardItem::data(kItemCornerMarkBRRole);
     if (variant.canConvert<QIcon>()) {
         return qvariant_cast<QIcon>(variant);
     }
@@ -163,12 +164,12 @@ QIcon FileViewItem::cornerMarkBR()
 void FileViewItem::setIconLayers(const IconLayers &layers)
 {
     QStandardItem::setData(QVariant::fromValue<IconLayers>(layers),
-                           ItemIconLayersRole);
+                           kItemIconLayersRole);
 }
 
 IconLayers FileViewItem::iconLayers()
 {
-    QVariant variant = data(ItemIconLayersRole);
+    QVariant variant = data(kItemIconLayersRole);
     if (!variant.canConvert<IconLayers>())
         return {};
     return qvariant_cast<IconLayers>(variant);
@@ -176,7 +177,7 @@ IconLayers FileViewItem::iconLayers()
 
 QIcon FileViewItem::cornerMarkTL()
 {
-    auto variant = QStandardItem::data(ItemCornerMarkTLRole);
+    auto variant = QStandardItem::data(kItemCornerMarkTLRole);
     if (variant.canConvert<QIcon>()) {
         return qvariant_cast<QIcon>(variant);
     }
@@ -188,18 +189,17 @@ QMimeType FileViewItem::mimeType() const
     return d->mimeType;
 }
 
-
 QVariant FileViewItem::data(int role) const
 {
     if (d->fileinfo.isNull())
         return QVariant();
 
     switch (role) {
-    case ItemFileLastModifiedRole:
-        return d->fileinfo->lastModified().toString("yyyy/MM/dd HH:mm:ss");
-    case ItemIconRole:
-        return QStandardItem::data(Roles::ItemIconRole);
-    case ItemFileSizeRole:
+    case kItemFileLastModifiedRole:
+        return d->fileinfo->lastModified().toString(dateTimeFormat());
+    case kItemIconRole:
+        return QStandardItem::data(Roles::kItemIconRole);
+    case kItemFileSizeRole:
         if (d->fileinfo->isDir()) {
             int size = qSharedPointerDynamicCast<LocalFileInfo>(d->fileinfo)->countChildFile();
             if (size <= 1) {
@@ -207,28 +207,26 @@ QVariant FileViewItem::data(int role) const
             } else {
                 return QObject::tr("%1 items").arg(size);
             }
-        }
-        else {
+        } else {
             QSharedPointer<LocalFileInfo> local = qSharedPointerCast<LocalFileInfo>(d->fileinfo);
             if (local)
                 return local->sizeFormat();
             return QString::number(d->fileinfo->size());
         }
-    case ItemFileMimeTypeRole:
+    case kItemFileMimeTypeRole:
         return mimeType().name();
-    case ItemColumListRole:
-    {
-        QList<QPair<int,int>> columrollist;
-        columrollist << QPair<int,int>(ItemNameRole, 32) << QPair<int,int>(ItemFileLastModifiedRole, 32)
-                << QPair<int,int>(ItemFileSizeRole, 20) << QPair<int,int>(ItemFileMimeTypeRole, 16);
+    case kItemColumListRole: {
+        QList<QPair<int, int>> columrollist;
+        columrollist << QPair<int, int>(kItemNameRole, 32) << QPair<int, int>(kItemFileLastModifiedRole, 32)
+                     << QPair<int, int>(kItemFileSizeRole, 20) << QPair<int, int>(kItemFileMimeTypeRole, 16);
 
-        return QVariant::fromValue<QList<QPair<int,int>>>(columrollist);
+        return QVariant::fromValue<QList<QPair<int, int>>>(columrollist);
     }
-    case  ItemFileSuffixRole:
+    case kItemFileSuffixRole:
         return d->fileinfo->completeSuffix();
-    case ItemNameRole:
+    case kItemNameRole:
         return d->fileinfo->fileName();
-    case ItemSizeHintRole:
+    case kItemSizeHintRole:
         return QSize(-1, 26);
     default:
         return QVariant();

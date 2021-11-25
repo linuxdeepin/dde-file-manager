@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     huangyu<huangyub@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
  *             yanghao<yanghao@uniontech.com>
@@ -23,12 +23,13 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
+IconItemDelegatePrivate::IconItemDelegatePrivate(IconItemDelegate *qq)
+    : BaseItemDelegatePrivate(qq)
+{
+}
+
 IconItemDelegatePrivate::~IconItemDelegatePrivate()
 {
-
 }
 
 DFMBASE_END_NAMESPACE
-
-
-

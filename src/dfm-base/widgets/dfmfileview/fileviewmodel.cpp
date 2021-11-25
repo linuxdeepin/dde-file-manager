@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -30,36 +30,33 @@
 DFMBASE_BEGIN_NAMESPACE
 
 FileViewModelPrivate::FileViewModelPrivate(FileViewModel *qq)
-    : QObject (qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
-
 }
 
 FileViewModelPrivate::~FileViewModelPrivate()
 {
 }
-//文件的在当前目录下创建、修改、删除都需要顺序处理，并且都是在遍历目录完成后才有序的处理
-//处理方式，受到这3个事件，都加入到事件处理队列
-//判断当前遍历目录是否完成，是启动异步文件监视事件处理，否文件遍历完成时，启动异步文件监视事件处理
-//在退出时清理异步事件处理，再次进行fetchmore时（遍历新目录时）清理文件监视事件。
+// 文件的在当前目录下创建、修改、删除都需要顺序处理，并且都是在遍历目录完成后才有序的处理
+// 处理方式，受到这3个事件，都加入到事件处理队列
+// 判断当前遍历目录是否完成，是启动异步文件监视事件处理，否文件遍历完成时，启动异步文件监视事件处理
+// 在退出时清理异步事件处理，再次进行fetchmore时（遍历新目录时）清理文件监视事件。
 void FileViewModelPrivate::doFileDeleted(const QUrl &url)
 {
     {
         QMutexLocker lk(&watcherEventMutex);
-        watcherEvent.enqueue(QPair<QUrl,EventType>(url, RmFile));
+        watcherEvent.enqueue(QPair<QUrl, EventType>(url, RmFile));
     }
     if (isUpdatedChildren)
         return;
     metaObject()->invokeMethod(this, QT_STRINGIFY(doWatcherEvent), Qt::QueuedConnection);
-
 }
 
 void FileViewModelPrivate::dofileCreated(const QUrl &url)
 {
     {
         QMutexLocker lk(&watcherEventMutex);
-        watcherEvent.enqueue(QPair<QUrl,EventType>(url, AddFile));
+        watcherEvent.enqueue(QPair<QUrl, EventType>(url, AddFile));
     }
     if (isUpdatedChildren)
         return;
@@ -97,7 +94,7 @@ void FileViewModelPrivate::doFilesUpdated()
     }
 }
 
-void FileViewModelPrivate::doUpdateChildren(const QList<FileViewItem*> &children)
+void FileViewModelPrivate::doUpdateChildren(const QList<FileViewItem *> &children)
 {
     q->beginResetModel();
     childrens.setList(children);
@@ -155,12 +152,11 @@ void FileViewModelPrivate::doWatcherEvent()
             if (fileIndex == -1)
                 continue;
 
-            q->beginRemoveRows(QModelIndex(),fileIndex,fileIndex);
+            q->beginRemoveRows(QModelIndex(), fileIndex, fileIndex);
             childrens.removeOne(childrenMap.value(fileUrl));
             childrenMap.remove(fileUrl);
             q->endMoveRows();
         }
-
     }
     processFileEventRuning = false;
 }
@@ -172,11 +168,25 @@ bool FileViewModelPrivate::checkFileEventQueue()
     return !isEmptyQueue;
 }
 
-FileViewModel::FileViewModel(QAbstractItemView *parent)
-    : QAbstractItemModel (parent)
-    , d(new FileViewModelPrivate(this))
+QString FileViewModelPrivate::roleDisplayString(int role)
 {
+    switch (role) {
+    case FileViewItem::kItemNameRole:
+        return tr("Name");
+    case FileViewItem::kItemFileLastModifiedRole:
+        return tr("Time modified");
+    case FileViewItem::kItemFileSizeRole:
+        return tr("Size");
+    case FileViewItem::kItemFileMimeTypeRole:
+        return tr("Type");
+    default:
+        return QString();
+    }
+}
 
+FileViewModel::FileViewModel(QAbstractItemView *parent)
+    : QAbstractItemModel(parent), d(new FileViewModelPrivate(this))
+{
 }
 
 FileViewModel::~FileViewModel()
@@ -187,8 +197,8 @@ FileViewModel::~FileViewModel()
 QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    if(row < 0 || column < 0 || d->childrens.size() <= row)
-        return  QModelIndex();
+    if (row < 0 || column < 0 || d->childrens.size() <= row)
+        return QModelIndex();
 
     return createIndex(row, column, d->childrens.at(row));
 }
@@ -210,7 +220,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     d->root.reset(new FileViewItem(url));
     QModelIndex root = createIndex(-1, 0, &d->root);
 
-    if(!url.isValid())
+    if (!url.isValid())
         return root;
 
     d->childrens.clear();
@@ -245,8 +255,8 @@ AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index)
 {
     if (!index.isValid())
         return nullptr;
-    if(index.row() < 0  || d->childrens.size() <= index.row())
-        return  nullptr;
+    if (index.row() < 0 || d->childrens.size() <= index.row())
+        return nullptr;
     return d->childrens.at(index.row())->fileinfo();
 }
 
@@ -279,8 +289,8 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
 void FileViewModel::clear()
 {
     for (int x = 0; x < columnCount(); x++) {
-        for (int y = 0; x < rowCount(); y++){
-            delete itemFromIndex(index(x,y));
+        for (int y = 0; x < rowCount(); y++) {
+            delete itemFromIndex(index(x, y));
         }
     }
 }
@@ -292,8 +302,8 @@ int FileViewModel::rowCountMaxShow()
 {
     // 优化思路，初始化计算行数，model设置相关行数，随后向下拉view时进行动态insert和界面刷新。
     // 避免一次性载入多个文件的长时间等待。
-    auto view = qobject_cast<QAbstractItemView*>(QObject::parent());
-    auto beginIndex = view->indexAt(QPoint{1,1});
+    auto view = qobject_cast<QAbstractItemView *>(QObject::parent());
+    auto beginIndex = view->indexAt(QPoint { 1, 1 });
     auto currViewHeight = view->size().height();
     auto currIndexHeight = beginIndex.data(Qt::SizeHintRole).toSize().height();
     if (currIndexHeight <= 0)
@@ -311,9 +321,9 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
         disconnect(d->traversalThread.data());
     }
     d->traversalThread.reset(new TraversalDirThread(
-                                 d->root->url(),QStringList(),
-                                 QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System  | QDir::Hidden,
-                                 QDirIterator::NoIteratorFlags));
+            d->root->url(), QStringList(),
+            QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden,
+            QDirIterator::NoIteratorFlags));
     if (d->traversalThread.isNull()) {
         d->isUpdatedChildren = true;
         return;
@@ -334,11 +344,46 @@ bool FileViewModel::canFetchMore(const QModelIndex &parent) const
     return d->canFetchMoreFlag;
 }
 
+QVariant FileViewModel::headerData(int column, Qt::Orientation, int role) const
+{
+    if (role == Qt::DisplayRole) {
+        int column_role = getRoleByColumn(column);
+        return d->roleDisplayString(column_role);
+    }
+
+    return QVariant();
+}
+
 void FileViewModel::updateViewItem(const QModelIndex &index)
 {
-    FileView *view = qobject_cast<FileView*>(qobject_cast<QObject*>(this)->parent());
+    FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
     if (view) {
         view->update(index);
     }
+}
+
+FileViewItem::Roles FileViewModel::getRoleByColumn(const int &column) const
+{
+    // TODO(liuyangming): get role list from config
+    static QList<FileViewItem::Roles> columnRoleList = QList<FileViewItem::Roles>() << FileViewItem::kItemNameRole
+                                                                                    << FileViewItem::kItemFileLastModifiedRole
+                                                                                    << FileViewItem::kItemFileSizeRole
+                                                                                    << FileViewItem::kItemFileMimeTypeRole;
+
+    if (columnRoleList.length() > column)
+        return columnRoleList.at(column);
+
+    return FileViewItem::kItemNameRole;
+}
+
+int FileViewModel::getColumnWidth(const int &column) const
+{
+    // TODO(liuyangming): get column width from config
+    static QList<int> columnWidthList = QList<int>() << 120 << 120 << 120 << 120;
+
+    if (columnWidthList.length() > column)
+        return columnWidthList.at(column);
+
+    return 120;
 }
 DFMBASE_END_NAMESPACE
