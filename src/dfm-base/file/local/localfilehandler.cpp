@@ -22,11 +22,17 @@
  */
 #include "localfilehandler.h"
 
+#include <dfm-io/dfmio_register.h>
+#include <dfm-io/core/doperator.h>
+#include <dfm-io/core/diofactory.h>
+#include <dfm-io/core/dfile.h>
+
 #include <QString>
 #include <QUrl>
 #include <QFile>
 #include <QDir>
 #include <QDateTime>
+#include <QDebug>
 
 #include <unistd.h>
 #include <utime.h>
@@ -34,7 +40,10 @@
 
 DFMBASE_USE_NAMESPACE
 
-LocalFileHandler::LocalFileHandler() {}
+LocalFileHandler::LocalFileHandler()
+{
+    dfmio::dfmio_init();   // 注册暂时放在这里
+}
 
 LocalFileHandler::~LocalFileHandler()
 {
@@ -51,16 +60,37 @@ LocalFileHandler::~LocalFileHandler()
  */
 bool LocalFileHandler::touchFile(const QUrl &url)
 {
-    QFile file(url.toLocalFile());
+    bool ret = true;
 
-    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        file.close();
-    } else {
-        QString strErr = QObject::tr("Unable to create files here: %1").arg(file.errorString());
-        setError(strErr);
-        return false;
-    }
-    return true;
+    do {
+        QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+        if (!factory) {
+            qWarning() << "create factory failed, url: " << url;
+            ret = false;
+            break;
+        }
+        QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+        if (!oper) {
+            qWarning() << "create operator failed, url: " << url;
+            ret = false;
+            break;
+        }
+
+        bool success = oper->touchFile();
+        if (!success) {
+            qWarning() << "touch file failed, url: " << url;
+            ret = false;
+
+            DFMIOError error = oper->lastError();
+            // TODO lanxs
+            // 等待dfm-io代码合入
+            // setError(error.errorMsg());
+
+            break;
+        }
+    } while (0);
+
+    return ret;
 }
 /*!
  * \brief LocalFileHandler::mkdir 创建目录
@@ -69,12 +99,37 @@ bool LocalFileHandler::touchFile(const QUrl &url)
  */
 bool LocalFileHandler::mkdir(const QUrl &dir)
 {
-    if (!QDir::current().mkpath(dir.toLocalFile())) {
-        QString strErr = QObject::tr("Unable to create files here: %1").arg(strerror(errno));
-        return false;
-    }
+    bool ret = true;
 
-    return true;
+    do {
+        QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(dir.scheme(), static_cast<QUrl>(dir));
+        if (!factory) {
+            qWarning() << "create factory failed, url: " << dir;
+            ret = false;
+            break;
+        }
+        QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+        if (!oper) {
+            qWarning() << "create operator failed, url: " << dir;
+            ret = false;
+            break;
+        }
+
+        bool success = oper->makeDirectory();
+        if (!success) {
+            qWarning() << "make directory failed, url: " << dir;
+            ret = false;
+
+            DFMIOError error = oper->lastError();
+            // TODO lanxs
+            // 等待dfm-io代码合入
+            // setError(error.errorMsg());
+
+            break;
+        }
+    } while (0);
+
+    return ret;
 }
 /*!
  * \brief LocalFileHandler::rmdir 删除目录
@@ -83,12 +138,37 @@ bool LocalFileHandler::mkdir(const QUrl &dir)
  */
 bool LocalFileHandler::rmdir(const QUrl &url)
 {
-    if (::rmdir(url.toLocalFile().toLocal8Bit()) == 0)
-        return true;
+    bool ret = true;
 
-    setError(QString::fromLocal8Bit(strerror(errno)));
+    do {
+        QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+        if (!factory) {
+            qWarning() << "create factory failed, url: " << url;
+            ret = false;
+            break;
+        }
+        QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+        if (!oper) {
+            qWarning() << "create operator failed, url: " << url;
+            ret = false;
+            break;
+        }
 
-    return false;
+        bool success = oper->trashFile();
+        if (!success) {
+            qWarning() << "trash file failed, url: " << url;
+            ret = false;
+
+            DFMIOError error = oper->lastError();
+            // TODO lanxs
+            // 等待dfm-io代码合入
+            // setError(error.errorMsg());
+
+            break;
+        }
+    } while (0);
+
+    return ret;
 }
 /*!
  * \brief LocalFileHandler::rename 重命名文件
@@ -98,15 +178,42 @@ bool LocalFileHandler::rmdir(const QUrl &url)
  */
 bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
 {
-    const QByteArray &sourceFile = url.toLocalFile().toLocal8Bit();
-    const QByteArray &targetFile = newUrl.toLocalFile().toLocal8Bit();
+    bool ret = true;
 
-    if (::rename(sourceFile.constData(), targetFile.constData()) == 0)
-        return true;
+    if (url.scheme() != newUrl.scheme())
+        return false;
 
-    setError(QString::fromLocal8Bit(strerror(errno)));
+    const QString &newName = newUrl.fileName();
 
-    return false;
+    do {
+        QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+        if (!factory) {
+            qWarning() << "create factory failed, url: " << url;
+            ret = false;
+            break;
+        }
+        QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+        if (!oper) {
+            qWarning() << "create operator failed, url: " << url;
+            ret = false;
+            break;
+        }
+
+        bool success = oper->renameFile(newName);
+        if (!success) {
+            qWarning() << "rename file failed, url: " << url;
+            ret = false;
+
+            DFMIOError error = oper->lastError();
+            // TODO lanxs
+            // 等待dfm-io代码合入
+            // setError(error.errorMsg());
+
+            break;
+        }
+    } while (0);
+
+    return ret;
 }
 /*!
  * \brief LocalFileHandler::openFile 打开文件
@@ -165,14 +272,37 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &files, const QString &a
  */
 bool LocalFileHandler::createSystemLink(const QUrl &sourcfile, const QUrl &link)
 {
-    if (::symlink(sourcfile.path().toLocal8Bit().constData(),
-                  link.toLocalFile().toLocal8Bit().constData())
-        == 0)
-        return true;
+    bool ret = true;
 
-    setError(QString::fromLocal8Bit(strerror(errno)));
+    do {
+        QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(sourcfile.scheme(), static_cast<QUrl>(sourcfile));
+        if (!factory) {
+            qWarning() << "create factory failed, url: " << sourcfile;
+            ret = false;
+            break;
+        }
+        QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+        if (!oper) {
+            qWarning() << "create operator failed, url: " << sourcfile;
+            ret = false;
+            break;
+        }
 
-    return false;
+        bool success = oper->createLink(link);
+        if (!success) {
+            qWarning() << "create link failed, url: " << sourcfile << " link url: " << link;
+            ret = false;
+
+            DFMIOError error = oper->lastError();
+            // TODO lanxs
+            // 等待dfm-io代码合入
+            // setError(error.errorMsg());
+
+            break;
+        }
+    } while (0);
+
+    return ret;
 }
 /*!
  * \brief LocalFileHandler::setPermissions 设置文件的权限
@@ -182,14 +312,40 @@ bool LocalFileHandler::createSystemLink(const QUrl &sourcfile, const QUrl &link)
  */
 bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions permissions)
 {
-    QFile file(url.toLocalFile());
+    bool ret = true;
 
-    if (file.setPermissions(permissions))
-        return true;
+    do {
+        QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+        if (!factory) {
+            qWarning() << "create factory failed, url: " << url;
+            ret = false;
+            break;
+        }
+        QSharedPointer<DFMIO::DFile> dfile = factory->createFile();
+        if (!dfile) {
+            qWarning() << "create file failed, url: " << url;
+            ret = false;
+            break;
+        }
 
-    setError(file.errorString());
+        // bool success = dfile->setPermissions();
+        // TODO lanxs
+        // 等待dfm-io代码合入
+        bool success = true;
+        if (!success) {
+            qWarning() << "set permissions failed, url: " << url;
+            ret = false;
 
-    return false;
+            DFMIOError error = dfile->lastError();
+            // TODO lanxs
+            // 等待dfm-io代码合入
+            // setError(error.errorMsg());
+
+            break;
+        }
+    } while (0);
+
+    return ret;
 }
 /*!
  * \brief LocalFileHandler::deleteFile 删除文件使用系统c库
