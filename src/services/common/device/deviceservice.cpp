@@ -582,7 +582,8 @@ void DeviceService::mountBlockDeviceAsync(const QString &deviceId, const QVarian
 {
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
-    if (DeviceServiceHelper::isMountableBlockDevice(ptr)) {
+    QString errMsg;
+    if (DeviceServiceHelper::isMountableBlockDevice(ptr, &errMsg)) {
         ptr->mountAsync(opts, [this, deviceId](bool ret, DFMMOUNT::DeviceError err) {
             if (!ret) {
                 qWarning() << "Mount failed: " << int(err);
@@ -591,6 +592,8 @@ void DeviceService::mountBlockDeviceAsync(const QString &deviceId, const QVarian
                 emit blockDevAsyncMounted(deviceId, true);
             }
         });
+    } else {
+        qWarning() << "Not mountable device: " << errMsg;
     }
 }
 
@@ -598,8 +601,11 @@ bool DeviceService::mountBlockDevice(const QString &deviceId, const QVariantMap 
 {
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
-    if (DeviceServiceHelper::isMountableBlockDevice(ptr))
+    QString errMsg;
+    if (DeviceServiceHelper::isMountableBlockDevice(ptr, &errMsg))
         return !ptr->mount(opts).isEmpty();
+    else
+        qWarning() << "Not mountable device: " << errMsg;
 
     return false;
 }
@@ -608,7 +614,8 @@ void DeviceService::unmountBlockDeviceAsync(const QString &deviceId, const QVari
 {
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
-    if (DeviceServiceHelper::isUnmountableBlockDevice(ptr)) {
+    QString errMsg;
+    if (DeviceServiceHelper::isUnmountableBlockDevice(ptr, &errMsg)) {
         ptr->unmountAsync(opts, [this, deviceId](bool ret, DFMMOUNT::DeviceError err) {
             if (!ret) {
                 qWarning() << "Unmount failed: " << int(err);
@@ -617,6 +624,8 @@ void DeviceService::unmountBlockDeviceAsync(const QString &deviceId, const QVari
                 emit blockDevAsyncUnmounted(deviceId, true);
             }
         });
+    } else {
+        qWarning() << "Not unmountable device: " << errMsg;
     }
 }
 
@@ -624,8 +633,11 @@ bool DeviceService::unmountBlockDevice(const QString &deviceId, const QVariantMa
 {
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
-    if (DeviceServiceHelper::isUnmountableBlockDevice(ptr))
+    QString errMsg;
+    if (DeviceServiceHelper::isUnmountableBlockDevice(ptr, &errMsg))
         return ptr->unmount(opts);
+    else
+        qWarning() << "Not unmountable device: " << errMsg;
 
     return false;
 }
@@ -735,9 +747,12 @@ QStringList DeviceService::blockDevicesIdList(const QVariantMap &opts) const
             continue;
         }
 
-        if (needNotIgnorable && !DeviceServiceHelper::isIgnorableBlockDevice(data)) {
+        QString errMsg;
+        if (needNotIgnorable && !DeviceServiceHelper::isIgnorableBlockDevice(data, &errMsg)) {
             idList.append(data.common.id);
             continue;
+        } else {
+            qWarning() << "Device has beeen ignore: " << errMsg;
         }
 
         if (!needUnmountable && !needMountable && !needNotIgnorable) {

@@ -23,6 +23,7 @@
 #include "deviceservicehelper.h"
 
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/finallyutil.h"
 
 #include <dfm-mount/dfmblockmonitor.h>
 #include <QDebug>
@@ -114,55 +115,65 @@ QStringList DeviceServiceHelper::makeAllDevicesIdForDrive(const QString &driveNa
     return idList;
 }
 
-bool DeviceServiceHelper::isUnmountableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
+bool DeviceServiceHelper::isUnmountableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev, QString *errMsg)
 {
     if (!blkDev || blkDev.isNull()) {
-        qWarning() << "Cannot create block device ptr";
+        if (errMsg)
+            *errMsg = "Cannot create block device ptr";
         return false;
     }
 
     BlockDeviceData data;
     DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
 
-    if (DeviceServiceHelper::isUnmountableBlockDevice(data))
-        return true;
+    bool ret { false };
+    QString error;
+    if (DeviceServiceHelper::isUnmountableBlockDevice(data, &error))
+        ret = true;
 
-    return false;
+    if (errMsg)
+        *errMsg = error;
+
+    return ret;
 }
 
-bool DeviceServiceHelper::isUnmountableBlockDevice(const BlockDeviceData &data)
+bool DeviceServiceHelper::isUnmountableBlockDevice(const BlockDeviceData &data, QString *errMsg)
 {
+    QString error;
+    FinallyUtil finally([&]() { if (errMsg) *errMsg = error; });
     const QString &id = data.common.id;
+
     if (data.common.id.isEmpty()) {
-        qWarning() << "Block Device is Null";
+        error = "Block Device is Null";
         return false;
     }
 
     if (isProtectedBlocDevice(data)) {
-        qWarning() << "Block Device: " << id << " is protected device!";
+        error = QString("Block Device: %1 is protected device!").arg(id);
         return false;
     }
 
     if (data.common.filesystem.isEmpty()) {
-        qWarning() << "Block Device: " << id << " haven't a filesystem!";
+        error = QString("Block Device: %1 haven't a filesystem!").arg(id);
         return false;
     }
 
     if (data.mountpoints.isEmpty()) {
-        qWarning() << "Block Device: " << id << " not mounted!";
+        error = QString("Block Device: %1 not mounted!").arg(id);
         return false;
     }
 
     if (data.hintIgnore) {
-        qWarning() << "Block Device: " << id << " hintIgnore!";
+        error = QString("Block Device: %1 hintIgnore!").arg(id);
         return false;
     }
 
-    if (data.hintIgnore) {
-        qWarning() << "Block Device: " << id << " hintSystem!";
+    if (data.hintSystem) {
+        error = QString("Block Device: %1 hintSystem!").arg(id);
         return false;
     }
 
+    finally.dismiss();
     return true;
 }
 
@@ -182,60 +193,70 @@ bool DeviceServiceHelper::isEjectableBlockDevice(const DeviceServiceHelper::Bloc
     return false;
 }
 
-bool DeviceServiceHelper::isMountableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
+bool DeviceServiceHelper::isMountableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev, QString *errMsg)
 {
     if (!blkDev || blkDev.isNull()) {
-        qWarning() << "Cannot create block device ptr";
+        if (errMsg)
+            *errMsg = "Cannot create block device ptr";
         return false;
     }
 
     BlockDeviceData data;
     DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
 
-    if (DeviceServiceHelper::isMountableBlockDevice(data))
-        return true;
+    bool ret { false };
+    QString error;
+    if (DeviceServiceHelper::isMountableBlockDevice(data, &error))
+        ret = true;
 
-    return false;
+    if (errMsg)
+        *errMsg = error;
+
+    return ret;
 }
 
-bool DeviceServiceHelper::isMountableBlockDevice(const BlockDeviceData &data)
+bool DeviceServiceHelper::isMountableBlockDevice(const BlockDeviceData &data, QString *errMsg)
 {
+    QString error;
+    FinallyUtil finally([&]() { if (errMsg) *errMsg = error; });
     const QString &id = data.common.id;
+
     if (data.common.id.isEmpty()) {
-        qWarning() << "Block Device is Null";
+        error = "Block Device is Null";
         return false;
     }
 
     if (data.isEncrypted) {
-        qWarning() << "Block Device: " << id << " is encrypted device!";
+        error = QString("Block Device: %1 is encrypted device!").arg(id);
         return false;
     }
 
     if (isProtectedBlocDevice(data)) {
-        qWarning() << "Block Device: " << id << " is protected device!";
+        error = QString("Block Device: %1 is protected device!").arg(id);
         return false;
     }
 
     if (data.cryptoBackingDevice.length() > 1) {   // bug: 77010
-        qWarning() << "Block Device: " << id << " cryptoDev length > 1";
+        error = QString("Block Device: %1 cryptoDev length > 1").arg(id);
         return false;
     }
 
     if (data.hintIgnore) {
-        qWarning() << "Block Device: " << id << "hintIgnore";
+        error = QString("Block Device: %1 hintIgnore").arg(id);
         return false;
     }
 
     if (!data.mountpoints.isEmpty()) {
-        qWarning() << "Block Device: " << id << " has mounted: ";
+        error = QString("Block Device: %1 has mounted").arg(id);
         return false;
     }
 
     if (data.common.filesystem.isEmpty()) {
-        qWarning() << "Block Device: " << id << " haven't a filesystem";
+        error = QString("Block Device: %1 haven't a filesystem").arg(id);
         return false;
     }
 
+    finally.dismiss();
     return true;
 }
 
@@ -312,38 +333,41 @@ bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDeviceData &data)
     return false;
 }
 
-bool DeviceServiceHelper::isIgnorableBlockDevice(const BlockDeviceData &data)
+bool DeviceServiceHelper::isIgnorableBlockDevice(const BlockDeviceData &data, QString *errMsg)
 {
+    QString error;
+    FinallyUtil finally([&]() { if (errMsg) *errMsg = error; });
     auto &&id = data.common.id;
 
     if (data.hasPartitionTable) {
-        qDebug() << "Block device is ignored by parent node:" << id;
+        error = QString("Block device is ignored by parent node: %1").arg(id);
         return true;
     }
 
     if (Q_UNLIKELY(data.hintIgnore)) {
-        qWarning() << "Block device is ignored by hintIgnore:" << id;
+        error = QString("Block device is ignored by hintIgnore: %1").arg(id);
         return true;
     }
 
     if (Q_UNLIKELY(data.cryptoBackingDevice.length() > 1)) {
-        qWarning() << "Block device is ignored by crypted back device:" << id;
+        error = QString("Block device is ignored by crypted back device: %1").arg(id);
         return true;
     }
 
     if (Q_UNLIKELY(data.isLoopDevice)) {
-        qDebug() << "Block device is ignored by loop device:" << id;
+        error = QString("Block device is ignored by loop device: %1").arg(id);
         return true;
     }
 
     if (Q_UNLIKELY(!data.hasFileSystem && !data.isEncrypted
                    && !data.removable && !data.mediaCompatibility.join(" ").contains("optical"))) {
-        qWarning() << "Block device is ignored by wrong removeable set for system disk:" << id;
+        error = QString("Block device is ignored by wrong removeable set for system disk: %1").arg(id);
         return true;
     }
 
     // TODO(zhangs): refrence dfmrootcontroller -> ignoreBlkDevice
     // -> get device partion type ...
+    finally.dismiss();
 
     return false;
 }

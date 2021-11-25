@@ -102,16 +102,16 @@ private:
     static QUrl makeMountpointForBlock(const BlockDevPtr &blkDev);
     static QStringList makeAllDevicesIdForDrive(const QString &driveName);
 
-    static bool isMountableBlockDevice(const BlockDevPtr &blkDev);
-    static bool isMountableBlockDevice(const BlockDeviceData &data);
-    static bool isUnmountableBlockDevice(const BlockDevPtr &blkDev);
-    static bool isUnmountableBlockDevice(const BlockDeviceData &data);
+    static bool isMountableBlockDevice(const BlockDevPtr &blkDev, QString *errMsg = nullptr);
+    static bool isMountableBlockDevice(const BlockDeviceData &data, QString *errMsg = nullptr);
+    static bool isUnmountableBlockDevice(const BlockDevPtr &blkDev, QString *errMsg = nullptr);
+    static bool isUnmountableBlockDevice(const BlockDeviceData &data, QString *errMsg = nullptr);
     static bool isEjectableBlockDevice(const BlockDevPtr &blkDev);
     static bool isEjectableBlockDevice(const BlockDeviceData &data);
     static bool isCanPoweroffBlockDevice(const BlockDevPtr &blkDev);
     static bool isCanPoweroffBlockDevice(const BlockDeviceData &data);
     static bool isProtectedBlocDevice(const BlockDeviceData &data);
-    static bool isIgnorableBlockDevice(const BlockDeviceData &data);
+    static bool isIgnorableBlockDevice(const BlockDeviceData &data, QString *errMsg = nullptr);
 
     static BlockDevPtr createBlockDevice(const QString &devId);
     static ProtocolDevPtr createProtocolDevice(const QString &devId);

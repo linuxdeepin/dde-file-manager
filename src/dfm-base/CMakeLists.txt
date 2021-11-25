@@ -12,11 +12,13 @@ set(UTILS_H
     utils/fileutils.h
     utils/iconutils.h
     utils/universalutils.h
+    utils/finallyutil.h
     )
 
 set(UTILS_CPP
     utils/fileutils.cpp
     utils/universalutils.cpp
+    utils/finallyutil.cpp
     )
 
 
