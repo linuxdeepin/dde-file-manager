@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -60,6 +60,7 @@ public:
 Q_SIGNALS:
     void clickedItemUrl(const QUrl &url);
     void clickedItemIndex(const QModelIndex &index);
+    void customContextMenu(const QUrl &url, const QPoint &pos);
 };
 
 DFMBASE_END_NAMESPACE

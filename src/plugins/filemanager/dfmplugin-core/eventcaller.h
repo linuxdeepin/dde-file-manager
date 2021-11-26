@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -31,6 +31,7 @@ class EventCaller final
 public:
     explicit EventCaller() = delete;
     static void sendOpenNewWindowEvent(int windowIdx);
+    static void sendSideBarContextMenuEvent(const QUrl &url, const QPoint &pos);
 };
 
 #endif // EVENTCALLER_H

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -45,12 +45,14 @@ public:
 
     static QStringList topics()
     {
-         return QStringList() << DSB_FM_NAMESPACE::EventTypes::TOPIC_WINDOW_EVENT;
+        return QStringList() << DSB_FM_NAMESPACE::EventTypes::kTopicWindowEvent
+               << DSB_FM_NAMESPACE::EventTypes::kSidebarContextMenuEvent;
     }
 
     explicit RecentEventReceiver() : AutoEventHandlerRegister<RecentEventReceiver>() {}
     void eventProcess(const dpf::Event &event) override;
     void windowEvent(const dpf::Event &event);
+    void sidebarContextMenuEvent(const dpf::Event &event);
 };
 
 #endif // RECENTEVENTRECVER_H

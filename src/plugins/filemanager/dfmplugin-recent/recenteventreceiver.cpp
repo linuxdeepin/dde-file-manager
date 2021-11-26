@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -24,23 +24,31 @@
 
 #include <dfm-framework/framework.h>
 
+#include <QMenu>
+
 void RecentEventReceiver::eventProcess(const dpf::Event &event)
 {
-    if (event.topic() == EventTypes::TOPIC_WINDOW_EVENT)
+    QString eventTopic = event.topic();
+    if (eventTopic == EventTypes::kTopicWindowEvent) {
         windowEvent(event);
+    } else if (eventTopic == EventTypes::kSidebarContextMenuEvent) {
+        // 筛选事件
+        if (event.property(EventTypes::kPropertySidebarItemUrl).toUrl().scheme() == RecentUtil::recentScheme)
+            sidebarContextMenuEvent(event);
+    }
 }
 
 void RecentEventReceiver::windowEvent(const dpf::Event &event)
 {
-    if (event.data() == EventTypes::DATA_OPEN_NEW_WINDOW) {
+    if (event.data() == EventTypes::kDataOpenNewWindow) {
         auto &ctx = dpfInstance.serviceContext();
-        WindowService* windowService = ctx.service<WindowService>(WindowService::name());
+        WindowService *windowService = ctx.service<WindowService>(WindowService::name());
         dpfDebug() << Q_FUNC_INFO << windowService;
         if (windowService) {
             //do new sidebar and plugin all menu;
-            int winIdx = event.property(EventTypes::PROPERTY_KEY_WINDOW_INDEX).toInt();
+            int winIdx = event.property(EventTypes::kPropertyKeyWindowIndex).toInt();
             dpfDebug() << "recver:"
-                       << EventTypes::PROPERTY_KEY_WINDOW_INDEX
+                       << EventTypes::kPropertyKeyWindowIndex
                        << winIdx;
 
             QIcon recentIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::RecentPath));
@@ -49,9 +57,30 @@ void RecentEventReceiver::windowEvent(const dpf::Event &event)
                                               RecentUtil::sidebarDisplayText,
                                               "core", RecentUtil::onlyRootUrl());
 
-            recentItem->setFlags(recentItem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
+            recentItem->setFlags(recentItem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
 
             windowService->insertSideBarItem(winIdx, 0, recentItem);
         }
+    }
+}
+
+void RecentEventReceiver::sidebarContextMenuEvent(const dpf::Event &event)
+{
+    if (event.data() == EventTypes::kDataSidebarContextMenu) {
+        // 创建右键菜单
+        QMenu *menu = new QMenu();
+        QAction *openInNewWindow = new QAction(tr("Open in new window"), menu);
+        QAction *openInNewTab = new QAction(tr("Open in new tab"), menu);
+        QAction *clearRecentHistory = new QAction(tr("Clear recent history"), menu);
+        menu->addAction(openInNewWindow);
+        menu->addAction(openInNewTab);
+        menu->addSeparator();
+        menu->addAction(clearRecentHistory);
+
+        // 获取显示位置
+        QPoint pos = event.property(EventTypes::kPropertySidebarItemPos).toPoint();
+        menu->exec(pos);
+        delete menu;
+        menu = nullptr;
     }
 }

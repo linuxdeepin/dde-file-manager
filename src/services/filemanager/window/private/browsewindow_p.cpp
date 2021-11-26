@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -39,8 +39,7 @@ void BrowseWindowPrivate::setAddressBar(AddressBar *addressBar)
 
     if (!addressBar) return;
 
-    if (!titleBarLayoutIns->replaceWidget(addressBarIns,addressBar))
-    {
+    if (!titleBarLayoutIns->replaceWidget(addressBarIns, addressBar)) {
         if (addressBar) {
             delete addressBar;
             addressBar = nullptr;
@@ -48,7 +47,6 @@ void BrowseWindowPrivate::setAddressBar(AddressBar *addressBar)
     } else {
         addressBarIns = addressBar;
     }
-
 }
 
 void BrowseWindowPrivate::doSearchButtonClicked(bool checked)
@@ -62,10 +60,10 @@ void BrowseWindowPrivate::doViewModeButtonClicked(bool checked)
 {
     Q_UNUSED(checked);
 
-    BrowseView* view = qobject_cast<BrowseView*>(currentDisplayView());
+    BrowseView *view = qobject_cast<BrowseView *>(currentDisplayView());
 
     if (!view || !sender() || !optionButtonBox()
-            || !listViewButton() || !iconViewButton()) return ;
+        || !listViewButton() || !iconViewButton()) return;
 
     if (sender() == listViewButton()) {
         iconViewButton()->setChecked(false);
@@ -108,7 +106,6 @@ BrowseWindowPrivate::BrowseWindowPrivate(BrowseWindow *qq)
 
 BrowseWindowPrivate::~BrowseWindowPrivate()
 {
-
 }
 
 void BrowseWindowPrivate::setDefaultViewMode(QListView::ViewMode mode)
@@ -118,7 +115,7 @@ void BrowseWindowPrivate::setDefaultViewMode(QListView::ViewMode mode)
 
 void BrowseWindowPrivate::setRootUrl(const QUrl &url)
 {
-    if (!viewIsAdded(url.scheme())){
+    if (!viewIsAdded(url.scheme())) {
         auto view = BrowseWidgetFactory::create<BrowseView>(url);
         //绑定view点击的触发逻辑
         QObject::connect(view, &FileView::dirClicked,
@@ -164,9 +161,9 @@ void BrowseWindowPrivate::setRootUrl(const QUrl &url)
     } else {
 
         QString errorString;
-        DisplayViewLogic* viewLogic = views.value(url.scheme());
-        QWidget* viewWidget = dynamic_cast<QWidget*>(viewLogic);
-        if (!viewLogic) { // scheme 关联的view url检查失败
+        DisplayViewLogic *viewLogic = views.value(url.scheme());
+        QWidget *viewWidget = dynamic_cast<QWidget *>(viewLogic);
+        if (!viewLogic) {   // scheme 关联的view url检查失败
             displayCheckViewIns.setText(QObject::tr("You can't use view to display. "
                                                     "You need to add view before that"));
 
@@ -186,7 +183,7 @@ void BrowseWindowPrivate::setRootUrl(const QUrl &url)
             optionButtonBoxIns->hide();
             //依然显示 checkView(Label)
             return displayCheckViewIns.showBeginLogic();
-        } else { //正常show logic
+        } else {   //正常show logic
 
             if (splitterIns && viewWidget != splitterIns->widget(1))
                 splitterIns->replaceWidget(1, viewWidget);
@@ -246,7 +243,7 @@ void BrowseWindowPrivate::setNavForwardButton(DButtonBoxButton *navForwardButton
 void BrowseWindowPrivate::setSearchButton(QToolButton *searchButton)
 {
 
-    if (!titleBarLayoutIns->replaceWidget(searchButton,searchButton)->isEmpty()) {
+    if (!titleBarLayoutIns->replaceWidget(searchButton, searchButton)->isEmpty()) {
 
         if (searchButton) {
             delete searchButton;
@@ -259,9 +256,9 @@ void BrowseWindowPrivate::setSearchButton(QToolButton *searchButton)
         if (searchButton->icon().isNull())
             searchButton->setIcon(QIcon::fromTheme("search"));
 
-        searchButton->setFixedSize({36,36});
+        searchButton->setFixedSize({ 36, 36 });
         searchButton->setFocusPolicy(Qt::NoFocus);
-        searchButton->setIconSize({16,16});
+        searchButton->setIconSize({ 16, 16 });
 
         QObject::connect(searchButton, &QToolButton::clicked,
                          this, &BrowseWindowPrivate::doSearchButtonClicked,
@@ -314,7 +311,8 @@ QToolButton *BrowseWindowPrivate::iconViewButton() const
     return nullptr;
 }
 
-void BrowseWindowPrivate::setIconViewButton(QToolButton *button){
+void BrowseWindowPrivate::setIconViewButton(QToolButton *button)
+{
     if (optionButtonBox())
         optionButtonBox()->setIconViewButton(button);
 }
@@ -329,15 +327,14 @@ void BrowseWindowPrivate::setCrumbBar(CrumbBar *crumbBar)
     crumbBarIns = crumbBar;
 }
 
-void BrowseWindowPrivate::addView(const QString &scheme, DisplayViewLogic* logic)
+void BrowseWindowPrivate::addView(const QString &scheme, DisplayViewLogic *logic)
 {
-    auto viewWidget = dynamic_cast<QWidget*>(logic);
+    auto viewWidget = dynamic_cast<QWidget *>(logic);
     if (!viewWidget) {
         qWarning() << Q_FUNC_INFO
-                   << "Error, can't to add logic view, "
-                      "cause not inherit QWidget";
+                   << "Error, can't to add logic view, cause not inherit QWidget";
     } else {
-        views.insert(scheme,logic);
+        views.insert(scheme, logic);
     }
 }
 
@@ -386,7 +383,7 @@ void BrowseWindowPrivate::initDefaultLayout()
 
     if (!navWidgetIns) {
         navWidgetIns = new NavWidget;
-        titleBarLayoutIns->addSpacing(14); //导航栏左侧间隔14
+        titleBarLayoutIns->addSpacing(14);   //导航栏左侧间隔14
         titleBarLayoutIns->addWidget(navWidgetIns, 0, Qt::AlignLeft);
     }
 
@@ -405,10 +402,10 @@ void BrowseWindowPrivate::initDefaultLayout()
 
     if (!searchButtonIns) {
         searchButtonIns = new QToolButton;
-        searchButtonIns->setFixedSize({36,36});
+        searchButtonIns->setFixedSize({ 36, 36 });
         searchButtonIns->setFocusPolicy(Qt::NoFocus);
         searchButtonIns->setIcon(QIcon::fromTheme("search"));
-        searchButtonIns->setIconSize({16,16});
+        searchButtonIns->setIconSize({ 16, 16 });
         titleBarLayoutIns->addWidget(searchButtonIns);
         QObject::connect(searchButtonIns, &QToolButton::clicked,
                          this, &BrowseWindowPrivate::doSearchButtonClicked,
@@ -417,10 +414,10 @@ void BrowseWindowPrivate::initDefaultLayout()
 
     if (!searchFilterButtonIns) {
         searchFilterButtonIns = new QToolButton;
-        searchFilterButtonIns->setFixedSize({36,36});
+        searchFilterButtonIns->setFixedSize({ 36, 36 });
         searchFilterButtonIns->setFocusPolicy(Qt::NoFocus);
         searchFilterButtonIns->setIcon(QIcon::fromTheme("dfview_filter"));
-        searchFilterButtonIns->setIconSize({16,16});
+        searchFilterButtonIns->setIconSize({ 16, 16 });
         titleBarLayoutIns->addWidget(searchFilterButtonIns);
     }
 

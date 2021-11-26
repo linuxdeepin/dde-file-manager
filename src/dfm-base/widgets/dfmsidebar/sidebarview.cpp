@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -68,14 +68,14 @@ SideBarView::SideBarView(QWidget *parent)
     setDragDropOverwriteMode(false);
     //QListView拖拽时会先插入后删除，于是可以通过rowCountChanged()信号来判断拖拽操作是否结束
     QObject::connect(this, static_cast<void (DListView::*)(const QModelIndex &)>(&DListView::currentChanged),
-            d, &SideBarViewPrivate::currentChanged);
+                     d, &SideBarViewPrivate::currentChanged);
 
     d->lastOpTime = 0;
 }
 
-SideBarModel* SideBarView::model() const
+SideBarModel *SideBarView::model() const
 {
-    return qobject_cast<SideBarModel*>(QAbstractItemView::model());
+    return qobject_cast<SideBarModel *>(QAbstractItemView::model());
 }
 
 void SideBarView::mousePressEvent(QMouseEvent *event)
@@ -102,23 +102,18 @@ void SideBarView::mousePressEvent(QMouseEvent *event)
 void SideBarView::mouseMoveEvent(QMouseEvent *event)
 {
     DListView::mouseMoveEvent(event);
-//    // sp3 feature 35，光标悬浮到光驱item上如果正在加载，需要显示为繁忙光标。添加判定避免额外操作
-//    if (event->button() == Qt::NoButton) {
-//        DFileService::instance()->setCursorBusyState(false);
-//    } else {
 #if QT_CONFIG(draganddrop)
-        if (state() == DraggingState) {
-            startDrag(Qt::MoveAction);
-            setState(NoState); // the startDrag will return when the dnd operation is done
-            stopAutoScroll();
-            QPoint pt = mapFromGlobal(QCursor::pos());
-            QRect rc = geometry();
-            if (!rc.contains(pt)) {
-                Q_EMIT requestRemoveItem(); //model()->removeRow(currentIndex().row());
-            }
+    if (state() == DraggingState) {
+        startDrag(Qt::MoveAction);
+        setState(NoState); // the startDrag will return when the dnd operation is done
+        stopAutoScroll();
+        QPoint pt = mapFromGlobal(QCursor::pos());
+        QRect rc = geometry();
+        if (!rc.contains(pt)) {
+            Q_EMIT requestRemoveItem(); // model()->removeRow(currentIndex().row());
         }
+    }
 #endif // QT_CONFIG(draganddrop)
-//    }
 }
 
 void SideBarView::dragEnterEvent(QDragEnterEvent *event)
@@ -294,6 +289,14 @@ SideBarItem *SideBarView::itemAt(const QPoint &pt) const
     Q_ASSERT(item);
 
     return item;
+}
+
+QUrl SideBarView::urlAt(const QPoint &pt) const
+{
+    SideBarItem *item = itemAt(pt);
+    if (!item)
+        return QUrl("");
+    return item->url();
 }
 
 Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const

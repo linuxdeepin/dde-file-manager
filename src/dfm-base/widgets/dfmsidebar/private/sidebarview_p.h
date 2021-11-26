@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -34,22 +34,22 @@ class SideBarViewPrivate : public QObject
     Q_OBJECT
     friend class SideBarView;
     SideBarView *const q;
-    int previousRowCount;
+    int previousRowCount { 0 };
     QPoint dropPos;
     QString dragItemName;
-    int dragRow;
+    int dragRow { 0 };
     QModelIndex previous;
     QModelIndex current;
     QString strItemUniqueKey;
     QList<QUrl> urlsForDragEvent;
-    qint64 lastOpTime; //上次操作的时间（ms）
+    qint64 lastOpTime;   //上次操作的时间（ms）
 
     explicit SideBarViewPrivate(SideBarView *qq);
     bool fetchDragEventUrlsFromSharedMemory();
-    bool checkOpTime(); //检查当前操作与上次操作的时间间隔
+    bool checkOpTime();   //检查当前操作与上次操作的时间间隔
     void currentChanged(const QModelIndex &previous);
 };
 
 DFMBASE_END_NAMESPACE
 
-#endif // SIDEBARVIEW_P_H
+#endif   // SIDEBARVIEW_P_H

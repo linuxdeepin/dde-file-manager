@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -65,16 +65,16 @@ DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
 
 namespace GlobalPrivate {
-    const int DEFAULT_WINDOW_WIDTH = 760;
-    const int DEFAULT_WINDOW_HEIGHT = 420;
-    static Application* dfmApp = nullptr;
+const int kDefaultWindowWidth = 760;
+const int kDefaultWindowHeight = 420;
+static Application *kDFMApp = nullptr;
 }
 
 //DFM_USE_NAMESPACE
 
-void initSidebar(SideBar* sidebar)
+void initSidebar(SideBar *sidebar)
 {
-    if (!sidebar) return ;
+    if (!sidebar) return;
 
     QUrl homeUrl = UrlRoute::pathToReal(QDir::home().path());
     QUrl desktopUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::DesktopPath));
@@ -92,26 +92,26 @@ void initSidebar(SideBar* sidebar)
     QIcon documentsIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DocumentsPath));
     QIcon downloadsIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DownloadsPath));
 
-    auto homeItem = new SideBarItem(homeIcon,QObject::tr("Home"),"core",homeUrl);
-    homeItem->setFlags(homeItem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
+    auto homeItem = new SideBarItem(homeIcon, QObject::tr("Home"), "core", homeUrl);
+    homeItem->setFlags(homeItem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
 
-    auto desktopitem = new SideBarItem(desktopIcon,QObject::tr("Desktop"),"core",desktopUrl);
-    desktopitem->setFlags(desktopitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
+    auto desktopitem = new SideBarItem(desktopIcon, QObject::tr("Desktop"), "core", desktopUrl);
+    desktopitem->setFlags(desktopitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
 
-    auto videoitem = new SideBarItem(videosIcon,QObject::tr("Video"),"core",videosUrl);
-    videoitem->setFlags(videoitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
+    auto videoitem = new SideBarItem(videosIcon, QObject::tr("Video"), "core", videosUrl);
+    videoitem->setFlags(videoitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
 
-    auto musicitem = new SideBarItem(musicIcon,QObject::tr("Music"),"core",musicUrl);
-    musicitem->setFlags(musicitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
+    auto musicitem = new SideBarItem(musicIcon, QObject::tr("Music"), "core", musicUrl);
+    musicitem->setFlags(musicitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
 
     auto picturesitem = new SideBarItem(picturesIcon, QObject::tr("Pictures"), "core", picturesUrl);
-    picturesitem->setFlags(picturesitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
+    picturesitem->setFlags(picturesitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
 
     auto documentsitem = new SideBarItem(documentsIcon, QObject::tr("Documents"), "core", documentsUrl);
-    documentsitem->setFlags(documentsitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
+    documentsitem->setFlags(documentsitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
 
     auto downloadsitem = new SideBarItem(downloadsIcon, QObject::tr("Downloads"), "core", downloadsUrl);
-    downloadsitem->setFlags(downloadsitem->flags()&~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled));
+    downloadsitem->setFlags(downloadsitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
 
     sidebar->addItem(homeItem);
     sidebar->addItem(desktopitem);
@@ -218,7 +218,7 @@ void Core::initialize()
     }
 
     //注册路由
-    UrlRoute::regScheme(SchemeTypes::FILE,"/");
+    UrlRoute::regScheme(SchemeTypes::FILE, "/");
     //注册Scheme为"file"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<LocalFileInfo>(SchemeTypes::FILE);
     DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::FILE);
@@ -231,10 +231,10 @@ void Core::initialize()
 
 bool Core::start()
 {
-    GlobalPrivate::dfmApp = new Application;
+    GlobalPrivate::kDFMApp = new Application;
     dpfDebug() << __PRETTY_FUNCTION__;
     auto &ctx = dpfInstance.serviceContext();
-    qInfo() << "import service list" <<  ctx.services();
+    qInfo() << "import service list" << ctx.services();
     WindowService *windowService = ctx.service<WindowService>(WindowService::name());
 
     if (!windowService) {
@@ -247,29 +247,36 @@ bool Core::start()
         QUrl defaultUrl = UrlRoute::pathToReal(QDir::home().path());
         BrowseWindow *newWindow = windowService->newWindow();
 
-        if (newWindow){
+        if (newWindow) {
             int winIdx = windowService->windowList.indexOf(newWindow);
             // 绑定当前插件初始化完毕进行的相关操作。
             QObject::connect(&dpf::Listener::instance(), &dpf::Listener::pluginsStarted,
-                             this, [winIdx](){
-                // 发送打开的新窗口的事件
-                EventCaller::sendOpenNewWindowEvent(winIdx);
-            });
+                             this, [winIdx]() {
+                                 // 发送打开的新窗口的事件
+                                 EventCaller::sendOpenNewWindowEvent(winIdx);
+                             });
 
             // 初始化sidebar
-            initSidebar(newWindow->sidebar());;
+            initSidebar(newWindow->sidebar());
+            ;
             newWindow->show();
-            newWindow->setMinimumSize(GlobalPrivate::DEFAULT_WINDOW_WIDTH,
-                                      GlobalPrivate::DEFAULT_WINDOW_HEIGHT);
+            newWindow->setMinimumSize(GlobalPrivate::kDefaultWindowWidth,
+                                      GlobalPrivate::kDefaultWindowHeight);
 
             // 綁定sidebaritem的點擊邏輯
             QObject::connect(newWindow->sidebar(), &SideBar::clickedItemUrl,
-                             newWindow, [windowService, newWindow](const QUrl &url)
-            {
-                bool result = windowService->setWindowRootUrl(newWindow, url);
-                if (!result)
-                    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
-            });
+                             newWindow, [windowService, newWindow](const QUrl &url) {
+                                 bool result = windowService->setWindowRootUrl(newWindow, url);
+                                 if (!result)
+                                     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+                             });
+
+            // 绑定Sidebar右键菜单信号
+            QObject::connect(newWindow->sidebar(), &SideBar::customContextMenu,
+                             newWindow, [=](const QUrl &url, const QPoint &pos) {
+                                 // 发送侧边栏右键菜单事件
+                                 EventCaller::sendSideBarContextMenuEvent(url, pos);
+                             });
         }
         // 设置主目录
         windowService->setWindowRootUrl(newWindow, defaultUrl);

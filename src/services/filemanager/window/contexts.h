@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -29,14 +29,19 @@
 DSB_FM_BEGIN_NAMESPACE
 
 namespace EventTypes {
-const QString TOPIC_WINDOW_EVENT {"WindowEvent"};
-const QString DATA_OPEN_NEW_WINDOW {"OpenNewWindow"};
-const QString PROPERTY_KEY_WINDOW_INDEX {"WindowIndex"};
+const char *const kTopicWindowEvent = "WindowEvent";
+const char *const kDataOpenNewWindow = "OpenNewWindow";
+const char *const kPropertyKeyWindowIndex = "WindowIndex";
+
+const char *const kSidebarContextMenuEvent = "SidebarContextMenuEvent";
+const char *const kDataSidebarContextMenu = "SendSidebarContextMenuEvent";
+const char *const kPropertySidebarItemUrl = "ItemUrl";
+const char *const kPropertySidebarItemPos = "ItemPos";
 }; // namespace eventContainer
 
 namespace SideBarGroups {
-const QString CORE {"core"};
-const QString DEVICE {"device"};
+const char *const kCore = "core";
+const char *const kDevice = "device";
 } // namespace eventContainer
 
 DSB_FM_END_NAMESPACE

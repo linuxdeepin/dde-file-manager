@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -39,6 +39,7 @@ class SideBarPrivate : public QObject
     SideBarView *sidebarView;
     SideBarModel *sidebarModel;
     explicit SideBarPrivate(SideBar *qq);
+    void customContextMenuCall(const QPoint &pos);
 
 private Q_SLOTS:
     void onItemClicked(const QModelIndex &index);
@@ -46,4 +47,4 @@ private Q_SLOTS:
 
 DFMBASE_END_NAMESPACE
 
-#endif // SIDEBAR_P_H
+#endif   // SIDEBAR_P_H

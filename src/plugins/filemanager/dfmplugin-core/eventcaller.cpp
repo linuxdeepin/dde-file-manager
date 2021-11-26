@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -26,8 +26,18 @@
 void EventCaller::sendOpenNewWindowEvent(int windowIdx)
 {
     dpf::Event event;
-    event.setTopic(EventTypes::TOPIC_WINDOW_EVENT);
-    event.setData(EventTypes::DATA_OPEN_NEW_WINDOW);
-    event.setProperty(EventTypes::PROPERTY_KEY_WINDOW_INDEX, windowIdx);
+    event.setTopic(EventTypes::kTopicWindowEvent);
+    event.setData(EventTypes::kDataOpenNewWindow);
+    event.setProperty(EventTypes::kPropertyKeyWindowIndex, windowIdx);
+    dpfInstance.eventProxy().pubEvent(event);
+}
+
+void EventCaller::sendSideBarContextMenuEvent(const QUrl &url, const QPoint &pos)
+{
+    dpf::Event event;
+    event.setTopic(EventTypes::kSidebarContextMenuEvent);
+    event.setData(EventTypes::kDataSidebarContextMenu);
+    event.setProperty(EventTypes::kPropertySidebarItemUrl, QVariant(url));
+    event.setProperty(EventTypes::kPropertySidebarItemPos, QVariant(pos));
     dpfInstance.eventProxy().pubEvent(event);
 }

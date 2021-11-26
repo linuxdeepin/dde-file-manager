@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -38,11 +38,12 @@ class SideBarView : public DListView
     SideBarViewPrivate *const d;
 public:
     explicit SideBarView(QWidget *parent = nullptr);
-    virtual SideBarModel* model() const;
+    virtual SideBarModel *model() const;
     QModelIndex indexAt(const QPoint &p) const override;
     QModelIndex getPreviousIndex() const;
     QModelIndex getCurrentIndex() const;
     SideBarItem *itemAt(const QPoint &pt) const;
+    QUrl urlAt(const QPoint &pt) const;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

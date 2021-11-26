@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -25,8 +25,8 @@
 #include <dfm-framework/framework.h>
 
 DPF_BEGIN_NAMESPACE
-namespace GlobalPrivate{
-    class PluginServiceGlobal;
+namespace GlobalPrivate {
+class PluginServiceGlobal;
 };
 DPF_END_NAMESPACE
 

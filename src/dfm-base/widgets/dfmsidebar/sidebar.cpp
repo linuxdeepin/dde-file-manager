@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -52,6 +52,9 @@ SideBarPrivate::SideBarPrivate(SideBar *qq)
                      this, &SideBarPrivate::onItemClicked,
                      Qt::UniqueConnection);
 
+    QObject::connect(sidebarView, &SideBarView::customContextMenuRequested,
+                     this, &SideBarPrivate::customContextMenuCall);
+
     QVBoxLayout *vlayout = new QVBoxLayout(q);
     vlayout->addWidget(sidebarView);
     vlayout->setMargin(0);
@@ -70,6 +73,16 @@ SideBarPrivate::SideBarPrivate(SideBar *qq)
 
     q->setMaximumWidth(200);
     q->setFocusProxy(sidebarView);
+}
+
+void SideBarPrivate::customContextMenuCall(const QPoint &pos)
+{
+    // 拿到Item对应的QUrl
+    const QUrl &url = sidebarView->urlAt(pos);
+    // 相对坐标转全局坐标
+    const QPoint &globalPos = sidebarView->mapToGlobal(pos);
+
+    Q_EMIT q->customContextMenu(url, globalPos);
 }
 
 SideBar::SideBar(QWidget *parent)
@@ -93,14 +106,14 @@ void SideBar::setCurrentUrl(const QUrl &url)
 {
     auto model = d->sidebarView->model();
     d->sidebarView->selectionModel()->clearSelection();
-    for (int i = 0; i< model->rowCount(); i++ ) {
+    for (int i = 0; i < model->rowCount(); i++) {
         auto item = d->sidebarView->model()->itemFromIndex(i);
         if (item->url() == url) {
-            d->sidebarView->selectionModel()->select(model->index(i,0),QItemSelectionModel::SelectCurrent);
+            d->sidebarView->selectionModel()->select(model->index(i, 0), QItemSelectionModel::SelectCurrent);
             return;
         }
         if (item->url().scheme() == url.scheme()) {
-            d->sidebarView->selectionModel()->select(model->index(i,0),QItemSelectionModel::SelectCurrent);
+            d->sidebarView->selectionModel()->select(model->index(i, 0), QItemSelectionModel::SelectCurrent);
             return;
         }
     }
