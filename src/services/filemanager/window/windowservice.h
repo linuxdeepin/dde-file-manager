@@ -44,7 +44,7 @@ class WindowService final : public dpf::PluginService, dpf::AutoServiceRegister<
     Q_OBJECT
     Q_DISABLE_COPY(WindowService)
 
-    QList<BrowseWindow*> windowList;
+    QList<BrowseWindow *> windowList;
 
     //私有方法的权限控制，core拥有访问私有方法权限
     friend class ::Core;
@@ -60,14 +60,16 @@ public:
     bool addSideBarItem(int windowIndex, SideBarItem *item);
     bool removeSideBarItem(int windowIndex, SideBarItem *item);
     bool insertSideBarItem(int windowIndex, int row, SideBarItem *item);
+    bool addDetailViewItem(int windowIndex, QWidget *widget);
+    bool insertDetailViewItem(int windowIndex, int index, QWidget *widget);
 
-private: //@Method
-    BrowseWindow* newWindow();
-    bool setWindowRootUrl(BrowseWindow * newWindow,
+private:   //@Method
+    BrowseWindow *newWindow();
+    bool setWindowRootUrl(BrowseWindow *newWindow,
                           const QUrl &url,
                           QString *errorString = nullptr);
 };
 
 DSB_FM_END_NAMESPACE
 
-#endif // DFMWINDOWMANAGERSERVICE_H
+#endif   // DFMWINDOWMANAGERSERVICE_H

@@ -42,7 +42,7 @@ Q_GLOBAL_STATIC(QStringList, mimeImageTypes)
 Q_GLOBAL_STATIC(QStringList, mimeExecutableTypes)
 Q_GLOBAL_STATIC(QStringList, mimeBackupTypes)
 
-typedef QHash<int,QString> kiVsHash;
+typedef QHash<int, QString> kiVsHash;
 Q_GLOBAL_STATIC(kiVsHash, mimeDisplayNames)
 Q_GLOBAL_STATIC(kiVsHash, mimeStdIconNames)
 /*!
@@ -134,7 +134,7 @@ bool loadMimeStdIcon()
     (*mimeStdIconNames)[MimeDatabase::FileType::Archives] = "application-x-archive";
     (*mimeStdIconNames)[MimeDatabase::FileType::Documents] = "text-plain";
     (*mimeStdIconNames)[MimeDatabase::FileType::Executable] = "application-x-executable";
-    (*mimeStdIconNames)[MimeDatabase::FileType::Backups] = "application-x-archive"; // generic backup file icon?
+    (*mimeStdIconNames)[MimeDatabase::FileType::Backups] = "application-x-archive";   // generic backup file icon?
     (*mimeStdIconNames)[MimeDatabase::FileType::Unknown] = "application-default-icon";
 
     return true;
@@ -157,7 +157,6 @@ MimeDatabase::MimeDatabase()
 
 MimeDatabase::~MimeDatabase()
 {
-
 }
 /*!
  * \brief MimeDatabase::mimeFileType 获取文件的mimetype
@@ -169,12 +168,12 @@ MimeDatabase::~MimeDatabase()
 QString MimeDatabase::mimeFileType(const QString &mimeType)
 {
     Q_UNUSED(mimeType)
-//todo:
-//#ifdef QT_DEBUG
-//    return mimeDisplayNames->value(mimeFileTypeNameToEnum(mimeType)) + " (" + mimeType + ")";
-//#else // Q_DEBUG
-//    return mimeDisplayNames->value(mimeFileTypeToEnum(mimeType));
-//#endif
+    //todo:
+    //#ifdef QT_DEBUG
+    //    return mimeDisplayNames->value(mimeFileTypeNameToEnum(mimeType)) + " (" + mimeType + ")";
+    //#else // Q_DEBUG
+    //    return mimeDisplayNames->value(mimeFileTypeToEnum(mimeType));
+    //#endif
     return "";
 }
 /*!
@@ -226,7 +225,7 @@ QStringList MimeDatabase::supportMimeFileType(MimeDatabase::FileType mimeFileTyp
 
     switch (mimeFileType) {
     case Documents:
-        return list; //empty
+        return list;   //empty
     case Images:
         return *mimeImageTypes;
     case Videos:
@@ -236,13 +235,13 @@ QStringList MimeDatabase::supportMimeFileType(MimeDatabase::FileType mimeFileTyp
     case Archives:
         return *mimeArchiveTypes;
     case DesktopApplication:
-        return list; //empty
+        return list;   //empty
     case Executable:
         return *mimeExecutableTypes;
     case Backups:
         return *mimeBackupTypes;
     default:
-        return list; //empty
+        return list;   //empty
     }
 }
 /*!
@@ -267,7 +266,7 @@ QString MimeDatabase::mimeStdIcon(const QString &mimeType)
  */
 QMimeType MimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase::MatchMode mode)
 {
-    return mimedb->mimeTypeForFile(fileName,mode);
+    return mimedb->mimeTypeForFile(fileName, mode);
 }
 /*!
  * \brief MimeDatabase::mimeTypeForFile 获取一个文件的mimetype
@@ -280,7 +279,7 @@ QMimeType MimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase::
  */
 QMimeType MimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabase::MatchMode mode)
 {
-    return mimedb->mimeTypeForFile(fileInfo,mode);
+    return mimedb->mimeTypeForFile(fileInfo, mode);
 }
 /*!
  * \brief MimeDatabase::mimeTypesForFileName 获取一个文件的mimetype，调用qt的接口mimeTypesForFileName
@@ -332,7 +331,7 @@ QMimeType MimeDatabase::mimeTypeForData(QIODevice *device)
  */
 QMimeType MimeDatabase::mimeTypeForUrl(const QUrl &url)
 {
-    if(url.isLocalFile())
+    if (url.isLocalFile())
         return mimedb->mimeTypeForUrl(url);
     else
         return mimedb->mimeTypeForFile(UrlRoute::urlToPath(url));

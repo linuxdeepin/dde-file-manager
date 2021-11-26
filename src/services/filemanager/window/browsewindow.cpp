@@ -45,23 +45,20 @@ DSB_FM_BEGIN_NAMESPACE
  *      5.一个导航前进按钮
  */
 BrowseWindow::BrowseWindow(QWidget *parent)
-    : DMainWindow (parent)
-    , d(new BrowseWindowPrivate(this))
+    : DMainWindow(parent), d(new BrowseWindowPrivate(this))
 {
-
 }
 
 BrowseWindow::~BrowseWindow()
 {
-
 }
 
 //使用scheme关联进行view的添加
 void BrowseWindow::addView(const QString &scheme,
-                           DisplayViewLogic* viewWidget)
+                           DisplayViewLogic *viewWidget)
 {
-    if(viewWidget) {
-        d->addView(scheme,viewWidget);
+    if (viewWidget) {
+        d->addView(scheme, viewWidget);
     } else {
         qWarning() << "Called addview method argument class "
                       "DFMDisplayViewLogic can't show,"
@@ -184,29 +181,27 @@ QToolButton *BrowseWindow::searchFilterButton()
 }
 
 //设置属性界面点击的button
-void BrowseWindow::setPropertyButton(QWidget *widget)
+void BrowseWindow::setPropertyButton(QToolButton *button)
 {
-    if (widget)
-        delete widget;
+    d->setDetailButton(button);
 }
 
 //获取属性界面点击的button
-QWidget *BrowseWindow::propertyButton()
+QToolButton *BrowseWindow::propertyButton()
 {
-    return nullptr;
+    return d->detailButton();
 }
 
 //设置属性界面
-void BrowseWindow::setPropertyView(QWidget *widget)
+void BrowseWindow::setPropertyView(DetailView *widget)
 {
-    if (widget)
-        delete widget;
+    return d->setPropertyView(widget);
 }
 
 //获取属性界面
-QWidget *BrowseWindow::propertyView()
+DetailView *BrowseWindow::propertyView()
 {
-    return nullptr;
+    return d->propertyView();
 }
 
 //设置当前window展示的url

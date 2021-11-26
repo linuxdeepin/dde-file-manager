@@ -29,6 +29,7 @@
 
 #include <QSharedData>
 #include <QFile>
+#include <QMimeType>
 
 class QDir;
 class QDateTime;
@@ -36,10 +37,10 @@ class QDateTime;
 DFMBASE_BEGIN_NAMESPACE
 
 namespace SuffixInfo {
-extern const QString kUserDir;
-extern const QString kProtocol;
-extern const QString kBlock;
-extern const QString kStashedRemote;
+extern const char *const kUserDir;
+extern const char *const kProtocol;
+extern const char *const kBlock;
+extern const char *const kStashedRemote;
 }   // namespace SuffixInfo
 
 class AbstractFileInfoPrivate;
@@ -133,6 +134,9 @@ public:
     virtual QDateTime fileTime(QFile::FileTime time) const;
     virtual int countChildFile() const;
     virtual QString sizeFormat() const;
+    virtual QIcon fileIcon() const;
+    virtual QMimeType fileMimeType() const;
+    virtual QVariantHash extraProperties() const;
 };
 DFMBASE_END_NAMESPACE
 

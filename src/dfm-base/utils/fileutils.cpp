@@ -129,6 +129,67 @@ bool FileUtils::touch(const QUrl &url,
     return true;
 }
 
+QString sizeString(const QString &str)
+{
+    int begin_pos = str.indexOf('.');
+
+    if (begin_pos < 0)
+        return str;
+
+    QString size = str;
+
+    while (size.count() - 1 > begin_pos) {
+        if (!size.endsWith('0'))
+            return size;
+
+        size = size.left(size.count() - 1);
+    }
+
+    return size.left(size.count() - 1);
+}
+
+QString FileUtils::formatSize(qint64 num, bool withUnitVisible, int precision, int forceUnit, QStringList unitList)
+{
+    if (num < 0) {
+        qWarning() << "Negative number passed to formatSize():" << num;
+        num = 0;
+    }
+
+    bool isForceUnit = (forceUnit >= 0);
+    QStringList list;
+    qreal fileSize(num);
+
+    if (unitList.size() == 0) {
+        list << " B"
+             << " KB"
+             << " MB"
+             << " GB"
+             << " TB";   // should we use KiB since we use 1024 here?
+    } else {
+        list = unitList;
+    }
+
+    QStringListIterator i(list);
+    QString unit = i.hasNext() ? i.next() : QStringLiteral(" B");
+
+    int index = 0;
+    while (i.hasNext()) {
+        if (fileSize < 1024 && !isForceUnit) {
+            break;
+        }
+
+        if (isForceUnit && index == forceUnit) {
+            break;
+        }
+
+        unit = i.next();
+        fileSize /= 1024;
+        index++;
+    }
+    QString unitString = withUnitVisible ? unit : QString();
+    return QString("%1%2").arg(sizeString(QString::number(fileSize, 'f', precision)), unitString);
+}
+
 QMap<QString, QString> FileUtils::getKernelParameters()
 {
     QFile cmdline("/proc/cmdline");

@@ -21,6 +21,7 @@
  */
 #include "windowservice.h"
 #include "browseview.h"
+#include "detailview.h"
 
 #include "dfm-base/base/urlroute.h"
 
@@ -35,7 +36,6 @@ WindowService::WindowService(QObject *parent)
     : dpf::PluginService(parent),
       dpf::AutoServiceRegister<WindowService>()
 {
-
 }
 
 WindowService::~WindowService()
@@ -68,7 +68,42 @@ bool WindowService::insertSideBarItem(int windowIndex, int row, SideBarItem *ite
     if (windowIndex >= windowList.size())
         return false;
 
-    return  windowList[windowIndex]->sidebar()->insertItem(row, item);
+    return windowList[windowIndex]->sidebar()->insertItem(row, item);
+}
+
+/*!
+ * \brief               添加DetailView控件
+ * \param windowIndex   主窗口
+ * \param widget        需要添加的控件(必须继承DetailExtendView,并实现setFileUrl函数)
+ * \return              返回是否成功
+ */
+bool WindowService::addDetailViewItem(int windowIndex, QWidget *widget)
+{
+    if (windowIndex < 0)
+        return false;
+
+    if (windowIndex >= windowList.size())
+        return false;
+
+    return windowList[windowIndex]->propertyView()->addCustomControl(widget);
+}
+
+/*!
+ * \brief               添加DetailView控件
+ * \param windowIndex   主窗口
+ * \param index         需要插入的位置
+ * \param widget        需要添加的控件(必须继承DetailExtendView,并实现setFileUrl函数)
+ * \return              返回是否成功
+ */
+bool WindowService::insertDetailViewItem(int windowIndex, int index, QWidget *widget)
+{
+    if (windowIndex < 0)
+        return false;
+
+    if (windowIndex >= windowList.size())
+        return false;
+
+    return windowList[windowIndex]->propertyView()->insertCustomControl(index, widget);
 }
 
 bool WindowService::addSideBarItem(int windowIndex, SideBarItem *item)
@@ -96,16 +131,15 @@ bool WindowService::setWindowRootUrl(BrowseWindow *newWindow, const QUrl &url, Q
 {
     if (!url.isValid()) {
         if (errorString) {
-            * errorString = QObject::tr("can't new window use not valid url");
+            *errorString = QObject::tr("can't new window use not valid url");
             qWarning() << Q_FUNC_INFO << "can't new window use not valid url";
         }
         return false;
     }
 
-    if (url.isEmpty())
-    {
+    if (url.isEmpty()) {
         if (errorString) {
-            * errorString = QObject::tr("can't new window use empty url");
+            *errorString = QObject::tr("can't new window use empty url");
             qWarning() << Q_FUNC_INFO << "can't new window use empty url";
         }
         return false;
@@ -113,12 +147,14 @@ bool WindowService::setWindowRootUrl(BrowseWindow *newWindow, const QUrl &url, Q
 
     if (!UrlRoute::hasScheme(url.scheme())) {
         if (errorString) {
-            * errorString = QObject::tr("No related scheme is registered "
-                                        "in the route form %0").arg(url.scheme());
+            *errorString = QObject::tr("No related scheme is registered "
+                                       "in the route form %0")
+                                   .arg(url.scheme());
 
             qWarning() << Q_FUNC_INFO
                        << QString("No related scheme is registered "
-                                  "in the route form %0").arg(url.scheme());
+                                  "in the route form %0")
+                                  .arg(url.scheme());
         }
         return false;
     }

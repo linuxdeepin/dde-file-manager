@@ -23,6 +23,7 @@
 #include "window/browseview.h"
 #include "dfm-base/widgets/dfmfileview/fileviewitem.h"
 #include "dfm-base/widgets/dfmfileview/fileviewmodel.h"
+#include "window/detailview.h"
 
 #include <dfm-framework/framework.h>
 
@@ -196,6 +197,15 @@ void BrowseWindowPrivate::setRootUrl(const QUrl &url)
                              this, &BrowseWindowPrivate::doViewModeButtonClicked,
                              Qt::UniqueConnection);
 
+            QObject::connect(detailButton(), &QToolButton::clicked,
+                             this, &BrowseWindowPrivate::detailViewVisible,
+                             Qt::UniqueConnection);
+
+            QObject::connect(static_cast<BrowseView *>(viewLogic), &BrowseView::fileClicked,
+                             propertyViewIns, &DetailView::setUrl,
+                             Qt::UniqueConnection);
+            propertyViewIns->setUrl(url);
+
             if (mode == BrowseView::IconMode) {
                 if (listViewButton())
                     listViewButton()->setChecked(false);
@@ -317,6 +327,19 @@ void BrowseWindowPrivate::setIconViewButton(QToolButton *button)
         optionButtonBox()->setIconViewButton(button);
 }
 
+QToolButton *BrowseWindowPrivate::detailButton() const
+{
+    if (optionButtonBox())
+        return optionButtonBox()->detailButton();
+    return nullptr;
+}
+
+void BrowseWindowPrivate::setDetailButton(QToolButton *button)
+{
+    if (optionButtonBox())
+        optionButtonBox()->setDetailButton(button);
+}
+
 CrumbBar *BrowseWindowPrivate::crumbBar() const
 {
     return crumbBarIns;
@@ -346,12 +369,12 @@ bool BrowseWindowPrivate::viewIsAdded(const QString &scheme)
         return true;
 }
 
-QWidget *BrowseWindowPrivate::propertyView() const
+DetailView *BrowseWindowPrivate::propertyView() const
 {
     return propertyViewIns;
 }
 
-void BrowseWindowPrivate::setPropertyView(QWidget *propertyView)
+void BrowseWindowPrivate::setPropertyView(DetailView *propertyView)
 {
     propertyViewIns = propertyView;
 }
@@ -461,6 +484,12 @@ void BrowseWindowPrivate::initDefaultLayout()
     displayWidgetIns->setLayout(displayViewLayoutIns);
     splitterIns->addWidget(displayWidgetIns);
 
+    if (!propertyViewIns)
+        propertyViewIns = new DetailView();
+    propertyViewIns->setVisible(false);
+
+    splitterIns->addWidget(propertyViewIns);
+
     showCrumbBar();
 }
 
@@ -495,6 +524,14 @@ void BrowseWindowPrivate::showSearchFilterButton()
 {
     if (searchButtonIns) searchButtonIns->hide();
     if (searchFilterButtonIns) searchFilterButtonIns->show();
+}
+
+void BrowseWindowPrivate::detailViewVisible()
+{
+    if (propertyViewIns->isVisible())
+        propertyViewIns->setVisible(false);
+    else
+        propertyViewIns->setVisible(true);
 }
 
 bool BrowseWindowPrivate::eventFilter(QObject *watched, QEvent *event)

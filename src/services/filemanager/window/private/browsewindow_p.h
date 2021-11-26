@@ -46,10 +46,13 @@
 DSB_FM_BEGIN_NAMESPACE
 DWIDGET_USE_NAMESPACE   //use dtkwidget
 
-        /* @class BrowseWindowPrivate
- * @brief 文件背板扩展的主窗口二进制兼容类。
+        class DetailView;
+
+/*!
+ * \class BrowseWindowPrivate
+ * \brief 文件背板扩展的主窗口二进制兼容类。
  */
-        class BrowseWindowPrivate : public QObject
+class BrowseWindowPrivate : public QObject
 {
     Q_OBJECT
     friend class BrowseWindow;
@@ -72,7 +75,7 @@ DWIDGET_USE_NAMESPACE   //use dtkwidget
     QVBoxLayout *displayViewLayoutIns = nullptr;   //居中組件布局
     QHash<QString, DisplayViewLogic *> views {};   //展示的view类
 
-    QWidget *propertyViewIns = nullptr;   //右侧属性界面
+    DetailView *propertyViewIns = nullptr;   //面右侧属性界
     Splitter *splitterIns = nullptr;   //布局
 
     BrowseView::ViewMode mode = BrowseView::IconMode;
@@ -110,11 +113,14 @@ public:
     QToolButton *iconViewButton() const;
     void setIconViewButton(QToolButton *button);
 
+    QToolButton *detailButton() const;
+    void setDetailButton(QToolButton *button);
+
     CrumbBar *crumbBar() const;
     void setCrumbBar(CrumbBar *crumbBar);
 
-    QWidget *propertyView() const;
-    void setPropertyView(QWidget *propertyView);
+    DetailView *propertyView() const;
+    void setPropertyView(DetailView *propertyView);
 
     SideBar *sidebar() const;
     void setSidebar(SideBar *sidebar);
@@ -134,6 +140,7 @@ private:
     void showCrumbBar();
     void showSearchButton();
     void showSearchFilterButton();
+    void detailViewVisible();
 
     virtual bool eventFilter(QObject *watched, QEvent *event);
 };

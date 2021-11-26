@@ -38,12 +38,14 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSB_FM_BEGIN_NAMESPACE
 
+class DetailView;
 class BrowseWindowPrivate;
 class BrowseWindow : public DMainWindow
 {
     Q_OBJECT
     friend class BrowseWindowPrivate;
-    BrowseWindowPrivate* const d;
+    BrowseWindowPrivate *const d;
+
 public:
     explicit BrowseWindow(QWidget *parent = nullptr);
     virtual ~BrowseWindow();
@@ -59,21 +61,21 @@ public:
     void setIconViewButton(QToolButton *button);
     void setSearchButton(QToolButton *button);
     void setSearchFilterButton(QToolButton *button);
-    void setPropertyButton(QWidget *widget);
-    void setPropertyView(QWidget *widget);
-    SideBar* sidebar();
-    AddressBar* addresssBar();
+    void setPropertyButton(QToolButton *button);
+    void setPropertyView(DetailView *widget);
+    SideBar *sidebar();
+    AddressBar *addresssBar();
     CrumbBar *crumbBar();
-    DButtonBoxButton * navBackButton();
-    DButtonBoxButton* navForwardButton();
-    QToolButton* listViewButton();
-    QToolButton* iconViewButton();
+    DButtonBoxButton *navBackButton();
+    DButtonBoxButton *navForwardButton();
+    QToolButton *listViewButton();
+    QToolButton *iconViewButton();
     QToolButton *searchButton();
     QToolButton *searchFilterButton();
-    QWidget* propertyButton();
-    QWidget* propertyView();
+    QToolButton *propertyButton();
+    DetailView *propertyView();
 };
 
 DSB_FM_END_NAMESPACE
 
-#endif // DFMBROWSEWINDOW_H
+#endif   // DFMBROWSEWINDOW_H

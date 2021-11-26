@@ -49,6 +49,7 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     DThreadMap<AbstractFileInfo::FileInfoCacheType, QVariant> caches;
     // dfm文件的信息
     QSharedPointer<DFileInfo> dfmFileInfo { nullptr };
+
 public:
     explicit LocalFileInfoPrivate(LocalFileInfo *qq);
     virtual ~LocalFileInfoPrivate();
@@ -74,15 +75,12 @@ public:
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(LocalFileInfo *qq)
-    : AbstractFileInfoPrivate(qq)
-    , q(qq)
+    : AbstractFileInfoPrivate(qq), q(qq)
 {
-
 }
 
 LocalFileInfoPrivate::~LocalFileInfoPrivate()
 {
-
 }
 
 QMimeType LocalFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) const
@@ -96,6 +94,6 @@ QMimeType LocalFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) cons
 }
 
 DFMBASE_END_NAMESPACE
-Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::LocalFileInfoPrivate*)
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::LocalFileInfoPrivate *)
 
-#endif // LOCALFILEINFO_P_H
+#endif   // LOCALFILEINFO_P_H

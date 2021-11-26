@@ -206,6 +206,11 @@ target_link_libraries( ${PROJECT_NAME}
     ${DtkWidget_LIBRARIES}
 )
 
+target_compile_definitions(
+    ${PROJECT_NAME} PRIVATE APPSHAREDIR="/usr/share/dde-file-manager"
+    )
+
+
 add_library(DFM::base ALIAS ${PROJECT_NAME})
 
 

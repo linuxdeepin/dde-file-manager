@@ -34,37 +34,38 @@ class LocalFileInfoPrivate;
 class LocalFileInfo : public AbstractFileInfo
 {
     QSharedPointer<LocalFileInfoPrivate> d;
-public:
 
+public:
     enum FlagIcon {
-        Writable,           // 是否可写
-        SymLink,            // 是否是链接文件
-        Readable,           // 是否可读
-    };Q_ENUMS(FlagIcon)
+        kWritable,   // 是否可写
+        kSymLink,   // 是否是链接文件
+        kReadable,   // 是否可读
+    };
+    Q_ENUMS(FlagIcon)
 
     enum Type {
-        Directory = MimeDatabase::Directory,
-        CharDevice = MimeDatabase::CharDevice,
-        BlockDevice = MimeDatabase::BlockDevice,
-        FIFOFile = MimeDatabase::FIFOFile,
-        SocketFile = MimeDatabase::SocketFile,
-        RegularFile = MimeDatabase::RegularFile,
-        Documents = MimeDatabase::Documents,
-        Images = MimeDatabase::Images,
-        Videos = MimeDatabase::Videos,
-        Audios = MimeDatabase::Audios,
-        Archives = MimeDatabase::Archives,
-        DesktopApplication = MimeDatabase::DesktopApplication,
-        Executable = MimeDatabase::Executable,
-        Backups = MimeDatabase::Backups,
-        Unknown = MimeDatabase::Unknown,
-        CustomType = MimeDatabase::CustomType
+        kDirectory = MimeDatabase::Directory,
+        kCharDevice = MimeDatabase::CharDevice,
+        kBlockDevice = MimeDatabase::BlockDevice,
+        kFIFOFile = MimeDatabase::FIFOFile,
+        kSocketFile = MimeDatabase::SocketFile,
+        kRegularFile = MimeDatabase::RegularFile,
+        kDocuments = MimeDatabase::Documents,
+        kImages = MimeDatabase::Images,
+        kVideos = MimeDatabase::Videos,
+        kAudios = MimeDatabase::Audios,
+        kArchives = MimeDatabase::Archives,
+        kDesktopApplication = MimeDatabase::DesktopApplication,
+        kExecutable = MimeDatabase::Executable,
+        kBackups = MimeDatabase::Backups,
+        kUnknown = MimeDatabase::Unknown,
+        kCustomType = MimeDatabase::CustomType
     };
 
     explicit LocalFileInfo(const QUrl &url);
     virtual ~LocalFileInfo() override;
 
-    LocalFileInfo& operator = (const LocalFileInfo &info);
+    LocalFileInfo &operator=(const LocalFileInfo &info);
     virtual bool operator==(const LocalFileInfo &fileinfo) const;
     virtual bool operator!=(const LocalFileInfo &fileinfo) const;
     virtual void setFile(const DFMIO::DFileInfo &file) override;
@@ -119,10 +120,10 @@ public:
     virtual QString sizeFormat() const;
     virtual QString fileDisplayName() const;
     virtual QFileInfo toQFileInfo() const;
-    virtual QVariantHash extraProperties() const;
+    virtual QVariantHash extraProperties() const override;
     virtual quint64 inode() const;
 };
 DFMBASE_END_NAMESPACE
 typedef QSharedPointer<DFMBASE_NAMESPACE::LocalFileInfo> DFMLocalFileInfoPointer;
 
-#endif // FILEINFO_H
+#endif   // FILEINFO_H

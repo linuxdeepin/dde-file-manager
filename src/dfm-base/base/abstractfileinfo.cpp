@@ -33,10 +33,10 @@ DFMBASE_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<AbstractFileInfoPointer>("AbstractFileInfo") });
 
 namespace SuffixInfo {
-const QString kUserDir { "userdir" };
-const QString kProtocol { "gvfsmp" };
-const QString kBlock { "localdisk" };
-const QString kStashedRemote { "remote" };
+const char *const kUserDir { "userdir" };
+const char *const kProtocol { "gvfsmp" };
+const char *const kBlock { "localdisk" };
+const char *const kStashedRemote { "remote" };
 }   // namespace SuffixInfo
 
 /*!
@@ -706,6 +706,25 @@ int dfmbase::AbstractFileInfo::countChildFile() const
 QString dfmbase::AbstractFileInfo::sizeFormat() const
 {
     return QString();
+}
+
+QIcon dfmbase::AbstractFileInfo::fileIcon() const
+{
+    return QIcon();
+}
+
+QMimeType dfmbase::AbstractFileInfo::fileMimeType() const
+{
+    return QMimeType();
+}
+
+/*!
+ * \brief 用于获取特定类型文件的特定属性扩展接口
+ * \return 返回特定属性的hash表
+ */
+QVariantHash dfmbase::AbstractFileInfo::extraProperties() const
+{
+    return QVariantHash();
 }
 
 /*!
