@@ -37,6 +37,20 @@ class AbstractJobHandler : public QObject
 {
     Q_OBJECT
 public:
+    enum class JobFlag {
+        kNoHint = 0x00,
+        kCopyFollowSymlink = 0x01,   // 是否拷贝链接文件的源文件
+        kCopyAttributes = 0x02,   // 复制文件时携带它的扩展属性
+        kCopyAttributesOnly = 0x04,   // 只复制文件的扩展属性
+        kCopyToSelf = 0x08,   // 复制到自己
+        kCopyRemoveDestination = 0x10,   // 复制文件前先删除已存在的
+        kCopyResizeDestinationFile = 0x20,   // 复制文件前对目标文件执行resize操作
+        kCopyIntegrityChecking = 0x40,   // 复制文件时进行完整性校验
+        kDeleteForceDeleteFile = 0x80,   // 强制删除文件夹(去除文件夹的只读权限)
+        kDontFormatFileName = 0x100,   // 拷贝时不处理文件名称
+    };
+    Q_ENUM(JobFlag)
+    Q_DECLARE_FLAGS(JobFlags, JobFlag)
     enum class JobState : uint8_t {
         kStartState,   // 开始状态
         kRunningState,   // 运行状态
@@ -47,6 +61,7 @@ public:
     Q_ENUM(JobState)
     enum class JobErrorType : uint8_t {
         kNoError,   // 没有错误
+        kNoSourceError,   // 没有源文件
         kCancelError,   // 退出错误
         kPermissionError,   // 权限错误
         kSpecialFileError,   // 特殊文件错误
@@ -71,6 +86,8 @@ public:
         kNotSupportedError,   // 不支持的操作
         kPermissionDeniedError,   // 权限错误
         kSeekError,   // 文件移动错误
+        kProrogramError,   // 程序错误
+        kDfmIoError,   // 程序错误
         kUnknowError,   // 未知错误
     };
     Q_ENUM(JobErrorType)
@@ -94,7 +111,8 @@ public:
         kEnforceAction = 0x40,   // 强制执行
         kRememberAction = 0x80,   // 记住当前动作
         kPauseAction = 0x100,   // 暂停操作
-        kStopAction = 0x200   // 停止操作
+        kStopAction = 0x200,   // 停止操作
+        kStartAction = 0x400,   // 开始操作
     };
     Q_ENUM(SupportAction)
     Q_DECLARE_FLAGS(SupportActions, SupportAction)
@@ -120,6 +138,7 @@ public:
     virtual qint64 totalSize() const;
     virtual qint64 currentSize() const;
     virtual JobState currentState() const;
+    virtual void setSignalConnectFinished();
 signals:   // 发送给任务调用者使用的信号
     /*!
      * @brief proccessChanged 当前任务的进度变化信号，此信号都可能是异步连接，所以所有参数都没有使用引用
@@ -181,10 +200,20 @@ signals:   // 发送给任务使用的信号
     void userAction(SupportActions actions);
 public slots:
     void operateTaskJob(SupportActions actions);
+    void onProccessChanged(const JobInfoPointer JobInfo);
+    void onStateChanged(const JobInfoPointer JobInfo);
+    void onCurrentTask(const JobInfoPointer JobInfo);
+    void onError(const JobInfoPointer JobInfo);
+    void onFinished();
+    void onSpeedUpdated(const JobInfoPointer JobInfo);
+
+private:
+    QAtomicInteger<bool> isSignalConnectOver { false };
 };
 DFMBASE_END_NAMESPACE
 
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::SupportActions)
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags)
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractJobHandler> JobHandlePointer;
 Q_DECLARE_METATYPE(JobHandlePointer)
 

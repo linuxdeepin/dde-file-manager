@@ -21,6 +21,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fileoperationsservice.h"
+#include "copyfiles/copyfiles.h"
+#include "cutfiles/cutfiles.h"
+#include "deletefiles/deletefiles.h"
+#include "trashfiles/movetotrashfiles.h"
+#include "trashfiles/restoretrashfiles.h"
+
+#include <QUrl>
 
 /*!
  * 特殊说明，调用当前服务的5个服务时，返回的JobHandlePointer时就已经启动了线程去处理相应的任务，那么使用JobHandlePointer做信号链接时，
@@ -43,11 +50,13 @@ FileOperationsService::~FileOperationsService() {}
  * \param target 目标目录
  * \return QSharedPointer<AbstractJobHandler> 任务控制器
  */
-JobHandlePointer FileOperationsService::copy(const QList<QUrl> &sources, const QUrl &target)
+JobHandlePointer FileOperationsService::copy(const QList<QUrl> &sources, const QUrl &target,
+                                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
-    Q_UNUSED(sources);
-    Q_UNUSED(target);
-    return JobHandlePointer(new DFMBASE_NAMESPACE::AbstractJobHandler);
+    JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
+    CopyFiles *task = new CopyFiles();
+    task->setJobArgs(jobHandler, sources, target, flags);
+    return jobHandler;
 }
 /*!
  * \brief FileOperationsService::moveFilesToTrash 移动文件到回收站
@@ -56,10 +65,13 @@ JobHandlePointer FileOperationsService::copy(const QList<QUrl> &sources, const Q
  * \param sources 移动到回收站的源文件
  * \return JobHandlePointer 任务控制器
  */
-JobHandlePointer FileOperationsService::moveToTrash(const QList<QUrl> &sources)
+JobHandlePointer FileOperationsService::moveToTrash(const QList<QUrl> &sources,
+                                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
-    Q_UNUSED(sources);
-    return JobHandlePointer(new DFMBASE_NAMESPACE::AbstractJobHandler);
+    JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
+    MoveToTrashFiles *task = new MoveToTrashFiles();
+    task->setJobArgs(jobHandler, sources, QUrl(), flags);
+    return jobHandler;
 }
 /*!
  * \brief FileOperationsService::restoreFilesFromTrash
@@ -67,10 +79,13 @@ JobHandlePointer FileOperationsService::moveToTrash(const QList<QUrl> &sources)
  * \param sources 需要还原的文件
  * \return JobHandlePointer 任务控制器
  */
-JobHandlePointer FileOperationsService::restoreFromTrash(const QList<QUrl> &sources)
+JobHandlePointer FileOperationsService::restoreFromTrash(const QList<QUrl> &sources,
+                                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
-    Q_UNUSED(sources);
-    return JobHandlePointer(new DFMBASE_NAMESPACE::AbstractJobHandler);
+    JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
+    RestoreTrashFiles *task = new RestoreTrashFiles();
+    task->setJobArgs(jobHandler, sources, QUrl(), flags);
+    return jobHandler;
 }
 /*!
  * \brief FileOperationsService::deleteFiles 删除文件
@@ -78,10 +93,13 @@ JobHandlePointer FileOperationsService::restoreFromTrash(const QList<QUrl> &sour
  * \param sources 需要删除的源文件
  * \return JobHandlePointer 任务控制器
  */
-JobHandlePointer FileOperationsService::deletes(const QList<QUrl> &sources)
+JobHandlePointer FileOperationsService::deletes(const QList<QUrl> &sources,
+                                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
-    Q_UNUSED(sources);
-    return JobHandlePointer(new DFMBASE_NAMESPACE::AbstractJobHandler);
+    JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
+    DeleteFiles *task = new DeleteFiles();
+    task->setJobArgs(jobHandler, sources, QUrl(), flags);
+    return jobHandler;
 }
 /*!
  * \brief FileOperationsService::cutFiles 剪切文件
@@ -91,9 +109,11 @@ JobHandlePointer FileOperationsService::deletes(const QList<QUrl> &sources)
  * \param target 目标目录
  * \return JobHandlePointer 任务控制器
  */
-JobHandlePointer FileOperationsService::cut(const QList<QUrl> &sources, const QUrl &target)
+JobHandlePointer FileOperationsService::cut(const QList<QUrl> &sources, const QUrl &target,
+                                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
-    Q_UNUSED(sources);
-    Q_UNUSED(target);
-    return JobHandlePointer(new DFMBASE_NAMESPACE::AbstractJobHandler);
+    JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
+    CutFiles *task = new CutFiles();
+    task->setJobArgs(jobHandler, sources, target, flags);
+    return jobHandler;
 }

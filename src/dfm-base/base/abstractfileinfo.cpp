@@ -692,8 +692,8 @@ QDateTime AbstractFileInfo::fileTime(QFileDevice::FileTime time) const
     }
 }
 /*!
- * \brief dfmbase::AbstractFileInfo::countChildFile 获取目录下有多少个文件
- * \return
+ * \brief dfmbase::AbstractFileInfo::countChildFile 获取目录下有多少个文件（只有下一级）
+ * \return 返回文件数量
  */
 int dfmbase::AbstractFileInfo::countChildFile() const
 {
@@ -706,6 +706,14 @@ int dfmbase::AbstractFileInfo::countChildFile() const
 QString dfmbase::AbstractFileInfo::sizeFormat() const
 {
     return QString();
+}
+/*!
+ * \brief dfmbase::AbstractFileInfo::fileType 获取文件的设备类型
+ * \return 返回文件的设备类型
+ */
+dfmbase::AbstractFileInfo::Type dfmbase::AbstractFileInfo::fileType() const
+{
+    return kUnknown;
 }
 
 QIcon dfmbase::AbstractFileInfo::fileIcon() const

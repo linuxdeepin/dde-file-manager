@@ -63,13 +63,13 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private:
-    QListWidget *taskListWidget = nullptr;
+    QListWidget *taskListWidget { nullptr };
     QMap<JobHandlePointer, QListWidgetItem *> taskItems;
-    DTitlebar *titlebar = nullptr;
+    DTitlebar *titlebar { nullptr };
     QDBusReply<QDBusUnixFileDescriptor> replyBlokShutDown;
-    QMutex *addTaskMutex = nullptr;
-    QMutex *adjustSizeMutex = nullptr;
-    static int MaxHeight;
+    QMutex *addTaskMutex { nullptr };
+    QMutex *adjustSizeMutex { nullptr };
+    static int kMaxHeight;
 };
 
 DSC_END_NAMESPACE

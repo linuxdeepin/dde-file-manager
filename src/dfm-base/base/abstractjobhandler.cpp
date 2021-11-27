@@ -65,6 +65,14 @@ AbstractJobHandler::JobState AbstractJobHandler::currentState() const
     return JobState::kUnknowState;
 }
 /*!
+ * \brief AbstractJobHandler::setSignalConnectFinished 设置连接信号处理槽函数完成
+ * 处理类连接了所有的要处理的槽函数后设置，才会发送相应的信号，信号之前的信息都可以使用相应的接口获取
+ */
+void AbstractJobHandler::setSignalConnectFinished()
+{
+    isSignalConnectOver = true;
+}
+/*!
  * \brief AbstractJobHandler::operateTaskJob 对任务进行操作
  * 如：停止任务，暂停任务，任务重试，替换操作
  * \param actions 操作的动作 这里的动作只能是action的一种和kRememberAction并存
@@ -72,4 +80,49 @@ AbstractJobHandler::JobState AbstractJobHandler::currentState() const
 void AbstractJobHandler::operateTaskJob(SupportActions actions)
 {
     emit userAction(actions);
+}
+
+void AbstractJobHandler::onProccessChanged(const JobInfoPointer JobInfo)
+{
+    //TODO:: do save something to use
+
+    if (isSignalConnectOver)
+        emit proccessChangedNotify(JobInfo);
+}
+
+void AbstractJobHandler::onStateChanged(const JobInfoPointer JobInfo)
+{
+    //TODO:: do save something to use
+
+    if (isSignalConnectOver)
+        emit stateChangedNotify(JobInfo);
+}
+
+void AbstractJobHandler::onCurrentTask(const JobInfoPointer JobInfo)
+{
+    //TODO:: do save something to use
+
+    if (isSignalConnectOver)
+        emit currentTaskNotify(JobInfo);
+}
+
+void AbstractJobHandler::onError(const JobInfoPointer JobInfo)
+{
+    //TODO:: do save something to use
+    if (isSignalConnectOver)
+        emit currentTaskNotify(JobInfo);
+}
+
+void AbstractJobHandler::onFinished()
+{
+    if (isSignalConnectOver)
+        emit finishedNotify();
+}
+
+void AbstractJobHandler::onSpeedUpdated(const JobInfoPointer JobInfo)
+{
+    //TODO:: do save something to use
+
+    if (isSignalConnectOver)
+        emit speedUpdatedNotify(JobInfo);
 }

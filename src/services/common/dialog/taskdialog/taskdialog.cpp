@@ -22,7 +22,7 @@
  */
 #include "taskdialog.h"
 #include "taskwidget.h"
-#include <dfm-base/utils/universalutils.h>
+#include "dfm-base/utils/universalutils.h"
 
 #include <QListWidgetItem>
 #include <QListWidget>
@@ -34,8 +34,8 @@
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-static const int kDefaultWidth = 700;
-int TaskDialog::MaxHeight = 0;
+static const int kDefaultWidth { 700 };
+int TaskDialog::kMaxHeight { 0 };
 
 TaskDialog::TaskDialog(QObject *parent)
     : DAbstractDialog(parent)
@@ -64,6 +64,9 @@ void TaskDialog::addTask(const JobHandlePointer &taskHandler)
 
     connect(wid, &TaskWidget::heightChanged, this, &TaskDialog::adjustSize, Qt::QueuedConnection);
     connect(taskHandler.data(), &AbstractJobHandler::finishedNotify, this, &TaskDialog::removeTask, Qt::QueuedConnection);
+    wid->setTaskHandle(taskHandler);
+
+    taskHandler->setSignalConnectFinished();
 
     addTaskWidget(taskHandler, wid);
 
@@ -103,7 +106,7 @@ void TaskDialog::initUI()
     moveToCenter();
 }
 /*!
- * \brief TaskDialog::blockShutdown 调用dbus处理任务中，阻止系统进入休眠或关键，避免文件损坏
+ * \brief TaskDialog::blockShutdown 调用dbus处理任务中，阻止系统进入休眠或关机，避免文件损坏
  */
 void TaskDialog::blockShutdown()
 {
@@ -176,9 +179,9 @@ void TaskDialog::adjustSize()
     if (listHeight < qApp->desktop()->availableGeometry().height() - 60) {
         taskListWidget->setFixedHeight(listHeight);
         setFixedHeight(listHeight + 60);
-        MaxHeight = height();
+        kMaxHeight = height();
     } else {
-        setFixedHeight(MaxHeight);
+        setFixedHeight(kMaxHeight);
     }
 
     layout()->setSizeConstraint(QLayout::SetNoConstraint);

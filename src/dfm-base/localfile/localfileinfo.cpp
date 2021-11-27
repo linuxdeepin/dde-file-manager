@@ -981,6 +981,7 @@ bool LocalFileInfo::isBlockDev() const
  */
 QString LocalFileInfo::mountPath() const
 {
+    // TODO::
     if (!isBlockDev())
         return "";
     else
@@ -1030,8 +1031,6 @@ bool LocalFileInfo::isRegular() const
  */
 LocalFileInfo::Type LocalFileInfo::fileType() const
 {
-    // fix bug#52950 【专业版1030】【文管5.2.0.72】回收站删除指向块设备的链接文件时，删除失败
-    // QT_STATBUF判断链接文件属性时，判断的是指向文件的属性，使用QFileInfo判断
     if (d->fileType != MimeDatabase::FileType::Unknown)
         return Type(d->fileType);
 
@@ -1095,7 +1094,6 @@ int LocalFileInfo::countChildFile() const
 }
 /*!
  * \brief sizeFormat 格式化大小
- *
  * \return QString 大小格式化后的大小
  */
 QString LocalFileInfo::sizeFormat() const

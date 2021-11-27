@@ -43,25 +43,6 @@ public:
     };
     Q_ENUMS(FlagIcon)
 
-    enum Type {
-        kDirectory = MimeDatabase::Directory,
-        kCharDevice = MimeDatabase::CharDevice,
-        kBlockDevice = MimeDatabase::BlockDevice,
-        kFIFOFile = MimeDatabase::FIFOFile,
-        kSocketFile = MimeDatabase::SocketFile,
-        kRegularFile = MimeDatabase::RegularFile,
-        kDocuments = MimeDatabase::Documents,
-        kImages = MimeDatabase::Images,
-        kVideos = MimeDatabase::Videos,
-        kAudios = MimeDatabase::Audios,
-        kArchives = MimeDatabase::Archives,
-        kDesktopApplication = MimeDatabase::DesktopApplication,
-        kExecutable = MimeDatabase::Executable,
-        kBackups = MimeDatabase::Backups,
-        kUnknown = MimeDatabase::Unknown,
-        kCustomType = MimeDatabase::CustomType
-    };
-
     explicit LocalFileInfo(const QUrl &url);
     virtual ~LocalFileInfo() override;
 
@@ -114,10 +95,10 @@ public:
     virtual bool isFifo() const;
     virtual bool isSocket() const;
     virtual bool isRegular() const;
-    virtual Type fileType() const;
+    virtual Type fileType() const override;
     virtual QString linkTargetPath() const;
-    virtual int countChildFile() const;
-    virtual QString sizeFormat() const;
+    virtual int countChildFile() const override;
+    virtual QString sizeFormat() const override;
     virtual QString fileDisplayName() const;
     virtual QFileInfo toQFileInfo() const;
     virtual QVariantHash extraProperties() const override;

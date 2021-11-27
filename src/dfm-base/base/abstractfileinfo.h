@@ -24,6 +24,7 @@
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_base_global.h"
+#include "dfm-base/mimetype/mimedatabase.h"
 
 #include <dfm-io/core/dfileinfo.h>
 
@@ -83,6 +84,24 @@ public:
         kTypeLastReadTime,   // 文件的最后修改时间
         kTypeUnknow = 255
     };
+    enum Type {
+        kDirectory = MimeDatabase::Directory,
+        kCharDevice = MimeDatabase::CharDevice,
+        kBlockDevice = MimeDatabase::BlockDevice,
+        kFIFOFile = MimeDatabase::FIFOFile,
+        kSocketFile = MimeDatabase::SocketFile,
+        kRegularFile = MimeDatabase::RegularFile,
+        kDocuments = MimeDatabase::Documents,
+        kImages = MimeDatabase::Images,
+        kVideos = MimeDatabase::Videos,
+        kAudios = MimeDatabase::Audios,
+        kArchives = MimeDatabase::Archives,
+        kDesktopApplication = MimeDatabase::DesktopApplication,
+        kExecutable = MimeDatabase::Executable,
+        kBackups = MimeDatabase::Backups,
+        kUnknown = MimeDatabase::Unknown,
+        kCustomType = MimeDatabase::CustomType
+    };
 
 public:
     explicit AbstractFileInfo() = delete;
@@ -137,6 +156,7 @@ public:
     virtual QIcon fileIcon() const;
     virtual QMimeType fileMimeType() const;
     virtual QVariantHash extraProperties() const;
+    virtual Type fileType() const;
 };
 DFMBASE_END_NAMESPACE
 
