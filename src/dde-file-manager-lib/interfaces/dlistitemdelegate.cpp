@@ -476,7 +476,7 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
             DFMGlobal::showAlertMessage(showPoint,
                                         color,
-                                        QObject::tr("%1 are not allowed").arg("|[/\\*:\"']?<>"));
+                                        QObject::tr("%1 are not allowed").arg("|/\\*:\"'?<>"));
 
             currPos += dstText.length() - srcText.length();
             QSignalBlocker blocker(edit);
@@ -685,7 +685,7 @@ bool DListItemDelegate::eventFilter(QObject *object, QEvent *event)
             //气泡提示
             DFMGlobal::showAlertMessage(edit->mapToGlobal(edit->pos()),
                                         parent()->parent()->palette().background().color(),
-                                        QObject::tr("%1 are not allowed").arg("|[/\\*:\"']?<>"));
+                                        QObject::tr("%1 are not allowed").arg("|/\\*:\"'?<>"));
 
             //移动坐标
             auto srcBaseNameLength =  d->editingIndex.data(DFileSystemModel::FileBaseNameOfRenameRole).toString().length();
