@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -28,19 +28,19 @@
 DFMBASE_BEGIN_NAMESPACE
 
 namespace SchemeTypes {
-const QString FILE {"file"};
-const QString DESKTOP {"desktop"};
-const QString HOME {"home"};
-const QString VIDEOS {"videos"};
-const QString MUSIC {"music"};
-const QString PICTURES {"pictures"};
-const QString DOCUMENTS {"documents"};
-const QString DOWNLOADS {"downloads"};
-const QString ROOT {"dfmroot"};
-} // namespace SchemeTypes
+const char *const kFile = "file";
+const char *const kDesktop = "desktop";
+const char *const kHome = "home";
+const char *const kVideos = "videos";
+const char *const kMusic = "music";
+const char *const kPictures = "pictures";
+const char *const kDocuments = "documents";
+const char *const kDownloads = "downloads";
+const char *const kRoot = "dfmroot";
+}   // namespace SchemeTypes
 
-QHash<QString, SchemeNode> UrlRoute::schemeInfos{};
-QMultiMap<int, QString> UrlRoute::schemeRealTree{};
+QHash<QString, SchemeNode> UrlRoute::schemeInfos {};
+QMultiMap<int, QString> UrlRoute::schemeRealTree {};
 
 /*!
  * \brief The UrlRoute class
@@ -85,10 +85,10 @@ bool UrlRoute::regScheme(const QString &scheme,
 
         QString temp = formatRoot;
         temp.replace(QRegularExpression("/{1,}"), "/");
-        int treeLevel = temp.count("/");
-        schemeRealTree.insert( -- treeLevel, scheme); //缓存层级
+        int treeLevel = temp.count("/") - 1;
+        schemeRealTree.insert(treeLevel, scheme);   //缓存层级
     }
-    schemeInfos.insert(scheme, {formatRoot, icon, isVirtual});
+    schemeInfos.insert(scheme, { formatRoot, icon, isVirtual });
     return true;
 }
 
@@ -152,13 +152,13 @@ bool UrlRoute::isVirtual(const QUrl &url)
  * \param url 源Url
  * \return 返回处理后的url
  */
-QUrl UrlRoute::urlParent(const QUrl &url) {
-
-    if(isRootUrl(url))
+QUrl UrlRoute::urlParent(const QUrl &url)
+{
+    if (isRootUrl(url))
         return url;
 
     auto &&list = url.path().split("/");
-    list.removeAt(list.size() -1);
+    list.removeAt(list.size() - 1);
 
     QUrl reUrl;
     url.scheme();
@@ -205,12 +205,12 @@ QUrl UrlRoute::pathToReal(const QString &path)
             // 包含映射的根路径，判断是否转换为当前scheme
             QString rootPath = schemeInfos[val].rootPath();
             if (path.contains(rootPath)
-                    || QString(path + "/").contains(rootPath)) {
+                || QString(path + "/").contains(rootPath)) {
                 QUrl result = pathToUrl(path, val);
                 return result;
             }
         }
-        -- treeLevel;
+        treeLevel -= 1;
     }
     return QUrl();
 }
@@ -253,7 +253,7 @@ QUrl UrlRoute::pathToUrl(const QString &path, const QString &scheme)
         return QUrl();
 
     QString tempPath = path;
-    tempPath = tempPath.replace(0, rootPath.size(), "/"); //制空映射前缀
+    tempPath = tempPath.replace(0, rootPath.size(), "/");   //制空映射前缀
     QUrl result;
     result.setScheme(scheme);
     result.setPath(tempPath);
@@ -287,15 +287,14 @@ QIcon SchemeNode::pathIcon() const
 /*!
  * \brief 路由Url注册节点类
  */
-SchemeNode::SchemeNode(const QString &root,const QIcon &icon ,const bool isVirtual)
+SchemeNode::SchemeNode(const QString &root, const QIcon &icon, const bool isVirtual)
     : path(root),
       icon(icon),
       virtualFlag(isVirtual)
 {
-
 }
 
-SchemeNode &SchemeNode::operator = (const SchemeNode &node)
+SchemeNode &SchemeNode::operator=(const SchemeNode &node)
 {
     path = node.rootPath();
     virtualFlag = node.isVirtual();

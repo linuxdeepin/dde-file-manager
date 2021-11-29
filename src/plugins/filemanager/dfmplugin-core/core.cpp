@@ -127,82 +127,82 @@ void initSidebar(SideBar *sidebar)
 
 static void regStandardPathClass()
 {
-    UrlRoute::regScheme(SchemeTypes::HOME,
+    UrlRoute::regScheme(SchemeTypes::kHome,
                         QDir::home().path(),
                         QIcon::fromTheme(StandardPaths::iconName(StandardPaths::HomePath)),
                         false);
 
-    UrlRoute::regScheme(SchemeTypes::DESKTOP,
+    UrlRoute::regScheme(SchemeTypes::kDesktop,
                         StandardPaths::location(StandardPaths::DesktopPath),
                         QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DesktopPath)),
                         false);
 
-    UrlRoute::regScheme(SchemeTypes::VIDEOS,
+    UrlRoute::regScheme(SchemeTypes::kVideos,
                         StandardPaths::location(StandardPaths::VideosPath),
                         QIcon::fromTheme(StandardPaths::iconName(StandardPaths::VideosPath)),
                         false);
 
-    UrlRoute::regScheme(SchemeTypes::MUSIC,
+    UrlRoute::regScheme(SchemeTypes::kMusic,
                         StandardPaths::location(StandardPaths::MusicPath),
                         QIcon::fromTheme(StandardPaths::iconName(StandardPaths::MusicPath)),
                         false);
 
-    UrlRoute::regScheme(SchemeTypes::PICTURES,
+    UrlRoute::regScheme(SchemeTypes::kPictures,
                         StandardPaths::location(StandardPaths::PicturesPath),
                         QIcon::fromTheme(StandardPaths::iconName(StandardPaths::PicturesPath)),
                         false);
 
-    UrlRoute::regScheme(SchemeTypes::DOCUMENTS,
+    UrlRoute::regScheme(SchemeTypes::kDocuments,
                         StandardPaths::location(StandardPaths::DocumentsPath),
                         QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DocumentsPath)),
                         false);
 
-    UrlRoute::regScheme(SchemeTypes::DOWNLOADS,
+    UrlRoute::regScheme(SchemeTypes::kDownloads,
                         StandardPaths::location(StandardPaths::DownloadsPath),
                         QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DownloadsPath)),
                         false);
 
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::HOME);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::HOME);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::HOME);
-    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::HOME);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::HOME);
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kHome);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kHome);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kHome);
+    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::kHome);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::kHome);
 
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::DESKTOP);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::DESKTOP);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::DESKTOP);
-    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::DESKTOP);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::DESKTOP);
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kDesktop);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kDesktop);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kDesktop);
+    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::kDesktop);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::kDesktop);
 
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::VIDEOS);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::VIDEOS);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::VIDEOS);
-    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::VIDEOS);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::VIDEOS);
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kVideos);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kVideos);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kVideos);
+    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::kVideos);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::kVideos);
 
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::MUSIC);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::MUSIC);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::MUSIC);
-    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::MUSIC);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::MUSIC);
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kMusic);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kMusic);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kMusic);
+    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::kMusic);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::kMusic);
 
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::PICTURES);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::PICTURES);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::PICTURES);
-    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::PICTURES);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::PICTURES);
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kPictures);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kPictures);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kPictures);
+    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::kPictures);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::kPictures);
 
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::DOCUMENTS);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::DOCUMENTS);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::DOCUMENTS);
-    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::DOCUMENTS);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::DOCUMENTS);
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kDocuments);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kDocuments);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kDocuments);
+    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::kDocuments);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::kDocuments);
 
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::DOWNLOADS);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::DOWNLOADS);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::DOWNLOADS);
-    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::DOWNLOADS);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::DOWNLOADS);
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kDownloads);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kDownloads);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kDownloads);
+    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::kDownloads);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::kDownloads);
 }
 
 void Core::initialize()
@@ -218,13 +218,13 @@ void Core::initialize()
     }
 
     //注册路由
-    UrlRoute::regScheme(SchemeTypes::FILE, "/");
+    UrlRoute::regScheme(SchemeTypes::kFile, "/");
     //注册Scheme为"file"的扩展的文件信息 本地默认文件的
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::FILE);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::FILE);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::FILE);
-    BrowseWidgetFactory::regClass<BrowseView>(SchemeTypes::FILE);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::FILE);
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kFile);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kFile);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kFile);
+    BrowseWidgetFactory::regClass<BrowseView>(SchemeTypes::kFile);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::kFile);
 
     regStandardPathClass();
 }

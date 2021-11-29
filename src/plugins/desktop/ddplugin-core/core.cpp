@@ -46,7 +46,6 @@
 
 #include <dfm-framework/framework.h>
 
-
 DSC_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
 
@@ -73,8 +72,8 @@ void registerAllService()
 
 void registerFileSystem()
 {
-    UrlRoute::regScheme(SchemeTypes::FILE,"/");
-    UrlRoute::regScheme(SchemeTypes::DESKTOP,
+    UrlRoute::regScheme(SchemeTypes::kFile, "/");
+    UrlRoute::regScheme(SchemeTypes::kDesktop,
                         StandardPaths::location(StandardPaths::DesktopPath),
                         QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DesktopPath)),
                         false);

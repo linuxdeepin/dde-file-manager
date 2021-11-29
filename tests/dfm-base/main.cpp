@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     luzhen<luzhen@uniontech.com>
  *
@@ -25,7 +25,7 @@
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc,argv);
+    QCoreApplication app(argc, argv);
 
     ::testing::InitGoogleTest(&argc, argv);
 

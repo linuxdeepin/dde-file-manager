@@ -49,7 +49,7 @@ dfmbase::Settings *DeviceServiceHelper::getGsGlobal()
 void DeviceServiceHelper::openFileManagerToDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
 {
     if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
-        QString root { dfmbase::UrlRoute::rootPath(dfmbase::SchemeTypes::ROOT) };
+        QString root { dfmbase::UrlRoute::rootPath(dfmbase::SchemeTypes::kRoot) };
         QString mountUrlStr { root + QFileInfo(blkDev->device()).fileName() + "." + dfmbase::SuffixInfo::kBlock };
         QProcess::startDetached(QStringLiteral("dde-file-manager"), { mountUrlStr });
         qInfo() << "open by dde-file-manager: " << mountUrlStr;

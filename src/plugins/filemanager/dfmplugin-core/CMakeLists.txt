@@ -11,6 +11,7 @@ set(core_cxx_cpp
     corelog.cpp
     core.cpp
     core.json
+    coreeventreceiver.cpp
 )
 
 set(core_cxx_h
@@ -18,6 +19,7 @@ set(core_cxx_h
     eventcaller.h
     corelog.h
     core.h
+    coreeventreceiver.h
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

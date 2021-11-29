@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "recenteventreceiver.h"
-#include "window/contexts.h" // TODO(zhangs): hide
+#include "window/contexts.h"   // TODO(zhangs): hide
 
 #include <dfm-framework/framework.h>
 

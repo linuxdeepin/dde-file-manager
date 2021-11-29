@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -35,15 +35,16 @@ DFMBASE_BEGIN_NAMESPACE
 struct SchemeNode
 {
     QString path;   // 根路径
-    QIcon icon;     // 标志root的图标
+    QIcon icon;   // 标志root的图标
     bool virtualFlag;   // 没有本地路径作为映射的Url
     friend class QHash<QString, SchemeNode>;
-    SchemeNode(){}
+    SchemeNode() {}
+
 public:
     SchemeNode(const QString &root,
                const QIcon &icon = QIcon(),
-               const bool isVirtual= false);
-    SchemeNode& operator = (const SchemeNode& node);
+               const bool isVirtual = false);
+    SchemeNode &operator=(const SchemeNode &node);
     bool isEmpty();
     QString rootPath() const;
     QIcon pathIcon() const;
@@ -51,21 +52,21 @@ public:
 };
 
 namespace SchemeTypes {
-extern const QString FILE;
-extern const QString DESKTOP;
-extern const QString HOME;
-extern const QString VIDEOS;
-extern const QString MUSIC;
-extern const QString PICTURES;
-extern const QString DOCUMENTS;
-extern const QString DOWNLOADS;
-extern const QString ROOT;
-} // namespace SchemeTypes
+extern const char *const kFile;
+extern const char *const kDesktop;
+extern const char *const kHome;
+extern const char *const kVideos;
+extern const char *const kMusic;
+extern const char *const kPictures;
+extern const char *const kDocuments;
+extern const char *const kDownloads;
+extern const char *const kRoot;
+}   // namespace SchemeTypes
 
 class UrlRoute
 {
-    static QHash<QString, SchemeNode> schemeInfos;//info cache
-    static QMultiMap<int, QString> schemeRealTree; //index cache
+    static QHash<QString, SchemeNode> schemeInfos;   //info cache
+    static QMultiMap<int, QString> schemeRealTree;   //index cache
 public:
     static bool regScheme(const QString &scheme,
                           const QString &root,
@@ -87,4 +88,4 @@ public:
 DFMBASE_END_NAMESPACE
 Q_DECLARE_METATYPE(QUrl);
 
-#endif // URLROUTE_H
+#endif   // URLROUTE_H
