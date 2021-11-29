@@ -106,7 +106,7 @@
     </message>
     <message>
         <source>Confirm</source>
-        <translation type="vanished">確定</translation>
+        <translation type="vanished">確 定</translation>
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
@@ -114,11 +114,11 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">取消</translation>
+        <translation type="vanished">取 消</translation>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="vanished">終止</translation>
+        <translation type="vanished">終 止</translation>
     </message>
     <message>
         <source>Confirm</source>

@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>DUMountManager</name>
     <message>
@@ -106,7 +108,7 @@
     </message>
     <message>
         <source>Confirm</source>
-        <translation type="vanished">确定</translation>
+        <translation type="vanished">确 定</translation>
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
@@ -114,11 +116,11 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">取消</translation>
+        <translation type="vanished">取 消</translation>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="vanished">终止</translation>
+        <translation type="vanished">终 止</translation>
     </message>
     <message>
         <source>Confirm</source>

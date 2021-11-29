@@ -15,7 +15,7 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Dispozitivul este ocupat, nu pot fi scos acum</translation>
+        <translation>Dispozitivul este ocupat, nu poate  fi scos acum</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>

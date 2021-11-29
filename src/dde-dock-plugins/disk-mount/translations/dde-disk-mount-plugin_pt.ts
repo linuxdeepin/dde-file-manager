@@ -44,11 +44,11 @@
     </message>
     <message>
         <source>The device was not safely removed</source>
-        <translation>O dispositivo não foi removido com segurança</translation>
+        <translation>O dispositivo não foi removido em segurança</translation>
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>Clique em &quot;Remover com segurança&quot; e retire-o da próxima vez</translation>
+        <translation>Clique em &quot;Remover em segurança&quot; e retire-o da próxima vez</translation>
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>

@@ -15,7 +15,7 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation>Устройство занято, сейчас извлечь нельзя</translation>
+        <translation>Устройство занято и не может быть извлечено сейчас</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
@@ -48,11 +48,11 @@
     </message>
     <message>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>В следующий раз нажмите &quot;Безопасное удаление&quot;, а затем отключите его</translation>
+        <translation>В следующий раз сначала нажмите &quot;Безопасное извлечение&quot;, а затем отключите устройство</translation>
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">Устройство занято, сейчас извлечь нельзя</translation>
+        <translation type="vanished">Устройство занято и не может быть извлечено сейчас</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>

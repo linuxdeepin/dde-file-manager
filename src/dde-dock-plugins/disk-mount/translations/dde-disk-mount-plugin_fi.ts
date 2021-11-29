@@ -114,7 +114,7 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Peru</translation>
+        <translation type="vanished">Peruuta</translation>
     </message>
     <message>
         <source>Stop</source>
@@ -128,7 +128,7 @@
     <message>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Peru</translation>
+        <translation>Peruuta</translation>
     </message>
     <message>
         <source>Stop</source>

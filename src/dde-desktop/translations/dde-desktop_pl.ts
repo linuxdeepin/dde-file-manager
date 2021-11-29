@@ -4,7 +4,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="3263"/>
         <source>Icon size</source>
-        <translation>Rozmiar ikony</translation>
+        <translation>Rozmiar ikon</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="3271"/>
@@ -14,7 +14,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="3283"/>
         <source>Auto arrange</source>
-        <translation>Automatyczne porządkowanie</translation>
+        <translation>Automatyczne sortowanie</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="3320"/>
@@ -124,12 +124,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="972"/>
         <source>Loading wallpapers...</source>
-        <translation type="unfinished"/>
+        <translation>Wczytywanie tapet...</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="974"/>
         <source>Loading screensavers...</source>
-        <translation type="unfinished"/>
+        <translation>Wczytywanie wygaszaczy ekranu...</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1031"/>

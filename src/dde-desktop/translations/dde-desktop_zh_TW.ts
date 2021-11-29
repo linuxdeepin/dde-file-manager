@@ -159,7 +159,7 @@
     </message>
     <message>
         <source>Apply</source>
-        <translation type="vanished">套用</translation>
+        <translation type="vanished">套 用</translation>
     </message>
 </context>
 <context>

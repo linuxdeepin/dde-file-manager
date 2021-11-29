@@ -124,12 +124,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="972"/>
         <source>Loading wallpapers...</source>
-        <translation>Bezig met laden van achtergronden...</translation>
+        <translation>Bezig met laden van achtergronden…</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="974"/>
         <source>Loading screensavers...</source>
-        <translation>Bezig met laden van schermbeveiligingen...</translation>
+        <translation>Bezig met laden van schermbeveiligingen…</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1031"/>

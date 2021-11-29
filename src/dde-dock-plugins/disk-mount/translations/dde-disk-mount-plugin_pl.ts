@@ -1,5 +1,28 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="pl" version="2.1">
 <context>
+    <name>DUMountManager</name>
+    <message>
+        <source>Authentication timed out</source>
+        <translation>Upłynął limit czasu uwierzytelniania</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot unmount now</source>
+        <translation>Dysk jest zajęty, nie można teraz odmontować</translation>
+    </message>
+    <message>
+        <source>Disk is busy, cannot eject now</source>
+        <translation>Dysk jest zajęty, nie można go teraz wysunąć</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot eject now</source>
+        <translation>Urządzenie jest zajęte, nie można go teraz wysunąć</translation>
+    </message>
+    <message>
+        <source>The device is busy, cannot remove now</source>
+        <translation>Urządzenie jest zajęte, nie można go teraz wyjąć</translation>
+    </message>
+</context>
+<context>
     <name>DeepinStorage</name>
     <message>
         <source>%1 Volume</source>
@@ -29,11 +52,11 @@
     </message>
     <message>
         <source>The device is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation type="vanished">Urządzenie jest zajęte, nie można go teraz wysunąć</translation>
     </message>
     <message>
         <source>The device is busy, cannot remove now</source>
-        <translation type="unfinished"/>
+        <translation type="vanished">Urządzenie jest zajęte, nie można go teraz wyjąć</translation>
     </message>
     <message>
         <source>Cannot unmount the device</source>
@@ -41,11 +64,11 @@
     </message>
     <message>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation>Dysk został zamontowany przez użytkownika &quot;%1&quot;, nie możesz go odmontować.</translation>
+        <translation>Dysk został zamontowany przez użytkownika &quot;%1&quot;, nie możesz go wymontować.</translation>
     </message>
     <message>
         <source>Cannot find the mounted device</source>
-        <translation type="unfinished"/>
+        <translation>Nie można odnaleźć podpiętego urządzenia</translation>
     </message>
     <message>
         <source>Disks</source>
@@ -83,7 +106,34 @@
     </message>
     <message>
         <source>Confirm</source>
+        <translation type="vanished">Potwierdź</translation>
+    </message>
+    <message>
+        <source>Scanning the device, stop it?</source>
+        <translation>Skanowanie urządzenia, zatrzymać?</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="vanished">Anuluj</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation type="vanished">Stop</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <comment>button</comment>
         <translation>Potwierdź</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>Anuluj</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <comment>button</comment>
+        <translation>Stop</translation>
     </message>
 </context>
 </TS>

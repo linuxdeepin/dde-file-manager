@@ -124,12 +124,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="972"/>
         <source>Loading wallpapers...</source>
-        <translation type="unfinished"/>
+        <translation>Memuatkan kertas dinding...</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="974"/>
         <source>Loading screensavers...</source>
-        <translation type="unfinished"/>
+        <translation>Memuatkan penyelamat skrin...</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1031"/>
@@ -168,13 +168,13 @@
         <location filename="../view/watermaskframe.cpp" line="279"/>
         <location filename="../view/watermaskframe.cpp" line="280"/>
         <source>Not authorized</source>
-        <translation type="unfinished"/>
+        <translation>Tidak dibenarkan</translation>
     </message>
     <message>
         <location filename="../view/watermaskframe.cpp" line="290"/>
         <location filename="../view/watermaskframe.cpp" line="291"/>
         <source>In trial period</source>
-        <translation type="unfinished"/>
+        <translation>Masih dalam percubaan</translation>
     </message>
 </context>
 </TS>

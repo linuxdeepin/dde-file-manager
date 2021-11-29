@@ -1,44 +1,46 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3263"/>
+        <location filename="../view/canvasgridview.cpp" line="3290"/>
         <source>Icon size</source>
         <translation>图标大小</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3271"/>
+        <location filename="../view/canvasgridview.cpp" line="3298"/>
         <source>Auto merge</source>
         <translation>自动整理</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3283"/>
+        <location filename="../view/canvasgridview.cpp" line="3310"/>
         <source>Auto arrange</source>
         <translation>自动排列</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3320"/>
+        <location filename="../view/canvasgridview.cpp" line="3347"/>
         <source>Corner Settings</source>
         <translation>热区设置</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3329"/>
-        <location filename="../view/canvasgridview.cpp" line="3334"/>
+        <location filename="../view/canvasgridview.cpp" line="3356"/>
+        <location filename="../view/canvasgridview.cpp" line="3361"/>
         <source>Set Wallpaper</source>
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3332"/>
+        <location filename="../view/canvasgridview.cpp" line="3359"/>
         <source>Wallpaper and Screensaver</source>
         <translation>壁纸与屏保</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3510"/>
+        <location filename="../view/canvasgridview.cpp" line="3537"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3311"/>
+        <location filename="../view/canvasgridview.cpp" line="3338"/>
         <source>Display Settings</source>
         <translation>显示设置</translation>
     </message>
@@ -132,19 +134,19 @@
         <translation>屏保加载中…</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1031"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1032"/>
         <source>Only desktop</source>
         <comment>button</comment>
         <translation>仅设置桌面</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1032"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1033"/>
         <source>Only lock screen</source>
         <comment>button</comment>
         <translation>仅设置锁屏</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1111"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1112"/>
         <source>Apply</source>
         <comment>button</comment>
         <translation>设置屏保</translation>
@@ -165,14 +167,14 @@
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="279"/>
-        <location filename="../view/watermaskframe.cpp" line="280"/>
+        <location filename="../view/watermaskframe.cpp" line="402"/>
+        <location filename="../view/watermaskframe.cpp" line="403"/>
         <source>Not authorized</source>
         <translation>未授权</translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="290"/>
-        <location filename="../view/watermaskframe.cpp" line="291"/>
+        <location filename="../view/watermaskframe.cpp" line="413"/>
+        <location filename="../view/watermaskframe.cpp" line="414"/>
         <source>In trial period</source>
         <translation>试用期</translation>
     </message>

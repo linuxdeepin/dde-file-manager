@@ -7,7 +7,7 @@
     </message>
     <message>
         <source>Disk is busy, cannot unmount now</source>
-        <translation>Disku është i zënë, s’mund të montohet</translation>
+        <translation>Disku është i zënë, s’mund të çmontohet tani</translation>
     </message>
     <message>
         <source>Disk is busy, cannot eject now</source>
