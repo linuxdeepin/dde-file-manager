@@ -130,6 +130,7 @@ private
     Q_SLOT : void doSearchButtonClicked(bool checked);
     void doViewModeButtonClicked(bool checked);
     void setRootUrl(const QUrl &url);
+    const QUrl rootUrl();
 
 private:
     QWidget *currentDisplayView();

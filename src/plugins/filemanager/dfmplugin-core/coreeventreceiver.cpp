@@ -19,9 +19,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "coreeventreceiver.h"
+
 #include "dfm-base/base/urlroute.h"
+#include "windowservice.h"
 
 #include <QMenu>
+#include <QApplication>
 
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -40,6 +43,10 @@ void CoreEventReceiver::eventProcess(const dpf::Event &event)
             || scheme == SchemeTypes::kDocuments
             || scheme == SchemeTypes::kDownloads)
             sidebarContextMenuEvent(event);
+    } else if (eventTopic == EventTypes::kTopicWindowEvent) {
+        QString eventData = event.data().toString();
+        if (eventData == EventTypes::kDataSetRootUrlEvent)
+            setRootUrlEvent(event);
     }
 }
 
@@ -61,5 +68,19 @@ void CoreEventReceiver::sidebarContextMenuEvent(const dpf::Event &event)
         menu->exec(pos);
         delete menu;
         menu = nullptr;
+    }
+}
+
+void CoreEventReceiver::setRootUrlEvent(const dpf::Event &event)
+{
+    auto &ctx = dpfInstance.serviceContext();
+    WindowService *windowService = ctx.service<WindowService>(WindowService::name());
+    if (windowService) {
+        const QUrl rootUrl = event.property(EventTypes::kPropertyRootUrl).toUrl();
+        const quint64 winIdx = event.property(EventTypes::kPropertyKeyWindowIndex).toULongLong();
+
+        bool result = windowService->setWindowRootUrl(winIdx, rootUrl);
+        if (!result)
+            QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
     }
 }

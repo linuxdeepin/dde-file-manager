@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     liuzhangjian<liuzhangjian@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: liuzhangjian<liuzhangjian@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,20 +18,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef EVENTCALLER_H
-#define EVENTCALLER_H
+#ifndef SEARCHFILEINFO_H
+#define SEARCHFILEINFO_H
 
-#include "window/contexts.h"   // TODO(zhangs): hide
+#include "dfm-base/base/abstractfileinfo.h"
 
-DSB_FM_USE_NAMESPACE
-
-class EventCaller final
+class SearchFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
 public:
-    explicit EventCaller() = delete;
-    static void sendOpenNewWindowEvent(quint64 windowIdx);
-    static void sendSideBarContextMenuEvent(const QUrl &url, const QPoint &pos);
-    static void sendSearchEvent(const QUrl &targetUrl, const QString &keyword, quint64 winIdx);
+    explicit SearchFileInfo(const QUrl &url);
 };
 
-#endif   // EVENTCALLER_H
+#endif // SEARCHFILEINFO_H

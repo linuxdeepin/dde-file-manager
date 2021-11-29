@@ -40,35 +40,29 @@ WindowService::WindowService(QObject *parent)
 
 WindowService::~WindowService()
 {
-    for (auto val : windowList) {
+    for (auto val : windowHash.values()) {
         // 框架退出非程序退出，依然会存在QWidget相关操作，
         // 如果强制使用delete，那么将导致Qt机制的与懒汉单例冲突崩溃
         if (val)
             val->deleteLater();
-        windowList.removeOne(val);
     }
+    windowHash.clear();
 }
 
-bool WindowService::removeSideBarItem(int windowIndex, SideBarItem *item)
+bool WindowService::removeSideBarItem(quint64 windowIndex, SideBarItem *item)
 {
-    if (windowIndex < 0)
+    if (!windowHash.contains(windowIndex))
         return false;
 
-    if (windowIndex >= windowList.size())
-        return false;
-
-    return windowList[windowIndex]->sidebar()->removeItem(item);
+    return windowHash[windowIndex]->sidebar()->removeItem(item);
 }
 
-bool WindowService::insertSideBarItem(int windowIndex, int row, SideBarItem *item)
+bool WindowService::insertSideBarItem(quint64 windowIndex, int row, SideBarItem *item)
 {
-    if (windowIndex < 0)
+    if (!windowHash.contains(windowIndex))
         return false;
 
-    if (windowIndex >= windowList.size())
-        return false;
-
-    return windowList[windowIndex]->sidebar()->insertItem(row, item);
+    return windowHash[windowIndex]->sidebar()->insertItem(row, item);
 }
 
 /*!
@@ -77,15 +71,12 @@ bool WindowService::insertSideBarItem(int windowIndex, int row, SideBarItem *ite
  * \param widget        需要添加的控件(必须继承DetailExtendView,并实现setFileUrl函数)
  * \return              返回是否成功
  */
-bool WindowService::addDetailViewItem(int windowIndex, QWidget *widget)
+bool WindowService::addDetailViewItem(quint64 windowIndex, QWidget *widget)
 {
-    if (windowIndex < 0)
+    if (!windowHash.contains(windowIndex))
         return false;
 
-    if (windowIndex >= windowList.size())
-        return false;
-
-    return windowList[windowIndex]->propertyView()->addCustomControl(widget);
+    return windowHash[windowIndex]->propertyView()->addCustomControl(widget);
 }
 
 /*!
@@ -95,26 +86,20 @@ bool WindowService::addDetailViewItem(int windowIndex, QWidget *widget)
  * \param widget        需要添加的控件(必须继承DetailExtendView,并实现setFileUrl函数)
  * \return              返回是否成功
  */
-bool WindowService::insertDetailViewItem(int windowIndex, int index, QWidget *widget)
+bool WindowService::insertDetailViewItem(quint64 windowIndex, int index, QWidget *widget)
 {
-    if (windowIndex < 0)
+    if (!windowHash.contains(windowIndex))
         return false;
 
-    if (windowIndex >= windowList.size())
-        return false;
-
-    return windowList[windowIndex]->propertyView()->insertCustomControl(index, widget);
+    return windowHash[windowIndex]->propertyView()->insertCustomControl(index, widget);
 }
 
-bool WindowService::addSideBarItem(int windowIndex, SideBarItem *item)
+bool WindowService::addSideBarItem(quint64 windowIndex, SideBarItem *item)
 {
-    if (windowIndex < 0)
+    if (!windowHash.contains(windowIndex))
         return false;
 
-    if (windowIndex >= windowList.size())
-        return false;
-
-    if (-1 != windowList[windowIndex]->sidebar()->addItem(item))
+    if (-1 != windowHash[windowIndex]->sidebar()->addItem(item))
         return true;
     else
         return false;
@@ -123,7 +108,7 @@ bool WindowService::addSideBarItem(int windowIndex, SideBarItem *item)
 BrowseWindow *WindowService::newWindow()
 {
     auto window = new BrowseWindow();
-    windowList.append(window);
+    windowHash.insert(window->internalWinId(), window);
     return window;
 }
 
@@ -163,6 +148,20 @@ bool WindowService::setWindowRootUrl(BrowseWindow *newWindow, const QUrl &url, Q
         newWindow->setRootUrl(url);
     }
     return true;
+}
+
+bool WindowService::setWindowRootUrl(quint64 winIdx, const QUrl &url, QString *errorString)
+{
+    if (!windowHash.contains(winIdx)) {
+        if (errorString) {
+            *errorString = QObject::tr("Can not find window by winIdx");
+            qWarning() << Q_FUNC_INFO << "Can not find window by winIdx";
+        }
+
+        return false;
+    }
+
+    return setWindowRootUrl(windowHash[winIdx], url, errorString);
 }
 
 DSB_FM_END_NAMESPACE

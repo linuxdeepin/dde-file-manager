@@ -42,4 +42,4 @@ public:
     DFMWindowManagerService *windowManagerService;
 };
 
-#endif // COREPLUGIN_H
+#endif   // COREPLUGIN_H

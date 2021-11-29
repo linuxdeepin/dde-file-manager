@@ -37,13 +37,21 @@ const char *const kSidebarContextMenuEvent = "SidebarContextMenuEvent";
 const char *const kDataSidebarContextMenu = "SendSidebarContextMenuEvent";
 const char *const kPropertySidebarItemUrl = "ItemUrl";
 const char *const kPropertySidebarItemPos = "ItemPos";
-}; // namespace eventContainer
+
+const char *const kTopicSearchEvent = "SearchEvent";
+const char *const kDataSearch = "Search";
+const char *const kPropertyTargetUrl = "TargetUrl";
+const char *const kPropertyKeyword = "Keyword";
+
+const char *const kDataSetRootUrlEvent = "SetRootUrl";
+const char *const kPropertyRootUrl = "RootUrl";
+};   // namespace eventContainer
 
 namespace SideBarGroups {
 const char *const kCore = "core";
 const char *const kDevice = "device";
-} // namespace eventContainer
+}   // namespace eventContainer
 
 DSB_FM_END_NAMESPACE
 
-#endif // CONTEXTS_H
+#endif   // CONTEXTS_H

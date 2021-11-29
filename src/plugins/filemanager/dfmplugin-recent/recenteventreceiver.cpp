@@ -46,7 +46,7 @@ void RecentEventReceiver::windowEvent(const dpf::Event &event)
         dpfDebug() << Q_FUNC_INFO << windowService;
         if (windowService) {
             //do new sidebar and plugin all menu;
-            int winIdx = event.property(EventTypes::kPropertyKeyWindowIndex).toInt();
+            quint64 winIdx = event.property(EventTypes::kPropertyKeyWindowIndex).toULongLong();
             dpfDebug() << "recver:"
                        << EventTypes::kPropertyKeyWindowIndex
                        << winIdx;

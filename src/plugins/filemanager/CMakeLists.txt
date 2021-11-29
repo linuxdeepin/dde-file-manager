@@ -4,3 +4,4 @@ cmake_minimum_required(VERSION 3.1.0)
 
 add_subdirectory(dfmplugin-core)
 add_subdirectory(dfmplugin-recent)
+add_subdirectory(dfmplugin-search)

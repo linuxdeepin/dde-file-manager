@@ -226,6 +226,15 @@ void BrowseWindowPrivate::setRootUrl(const QUrl &url)
     }
 }
 
+const QUrl BrowseWindowPrivate::rootUrl()
+{
+    auto currentView = qobject_cast<FileView *>(splitterIns->widget(1));
+    if (currentView)
+        return currentView->rootUrl();
+
+    return {};
+}
+
 DButtonBoxButton *BrowseWindowPrivate::navBackButton() const
 {
     return navWidgetIns->navBackButton();

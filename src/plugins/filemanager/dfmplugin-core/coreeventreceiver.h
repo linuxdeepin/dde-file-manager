@@ -38,13 +38,15 @@ public:
 
     static QStringList topics()
     {
-        return QStringList() << DSB_FM_NAMESPACE::EventTypes::kSidebarContextMenuEvent;
+        return QStringList() << DSB_FM_NAMESPACE::EventTypes::kSidebarContextMenuEvent
+                             << DSB_FM_NAMESPACE::EventTypes::kTopicWindowEvent;
     }
 
     explicit CoreEventReceiver()
         : AutoEventHandlerRegister<CoreEventReceiver>() {}
     void eventProcess(const dpf::Event &event) override;
     void sidebarContextMenuEvent(const dpf::Event &event);
+    void setRootUrlEvent(const dpf::Event &event);
 };
 
 #endif   // COREEVENTRECEIVER_H

@@ -209,7 +209,7 @@ public Q_SLOTS:
         QUrl url(q->text());
         if (!UrlRoute::isVirtual(url)) {
             QString localPath = UrlRoute::urlToPath(url);
-            if (QDir(localPath).exists()) {
+            if (!localPath.isEmpty() && QDir(localPath).exists()) {
                 qInfo() << "sig editingFinishedUrl :" << url;
                 Q_EMIT q->editingFinishedUrl(url);
                 startSpinner();

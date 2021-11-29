@@ -52,6 +52,7 @@ public:
     void addView(const QString &scheme, DisplayViewLogic *viewWidget);
     bool viewIsAdded(const QString &scheme);
     void setRootUrl(const QUrl &url);
+    const QUrl rootUrl();
     void setSidebar(SideBar *sidebar);
     void setAddressBar(AddressBar *addressBar);
     void setCrumbBar(CrumbBar *crumbBar);

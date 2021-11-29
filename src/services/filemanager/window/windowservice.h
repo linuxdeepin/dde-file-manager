@@ -32,10 +32,12 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QHash>
 
 DWIDGET_USE_NAMESPACE
 
 class Core;
+class CoreEventReceiver;
 
 DSB_FM_BEGIN_NAMESPACE
 
@@ -44,10 +46,11 @@ class WindowService final : public dpf::PluginService, dpf::AutoServiceRegister<
     Q_OBJECT
     Q_DISABLE_COPY(WindowService)
 
-    QList<BrowseWindow *> windowList;
+    QHash<quint64, BrowseWindow *> windowHash;
 
     //私有方法的权限控制，core拥有访问私有方法权限
     friend class ::Core;
+    friend class ::CoreEventReceiver;
 
 public:
     static QString name()
@@ -57,15 +60,18 @@ public:
 
     explicit WindowService(QObject *parent = nullptr);
     virtual ~WindowService() override;
-    bool addSideBarItem(int windowIndex, SideBarItem *item);
-    bool removeSideBarItem(int windowIndex, SideBarItem *item);
-    bool insertSideBarItem(int windowIndex, int row, SideBarItem *item);
-    bool addDetailViewItem(int windowIndex, QWidget *widget);
-    bool insertDetailViewItem(int windowIndex, int index, QWidget *widget);
+    bool addSideBarItem(quint64 windowIndex, SideBarItem *item);
+    bool removeSideBarItem(quint64 windowIndex, SideBarItem *item);
+    bool insertSideBarItem(quint64 windowIndex, int row, SideBarItem *item);
+    bool addDetailViewItem(quint64 windowIndex, QWidget *widget);
+    bool insertDetailViewItem(quint64 windowIndex, int index, QWidget *widget);
 
 private:   //@Method
     BrowseWindow *newWindow();
     bool setWindowRootUrl(BrowseWindow *newWindow,
+                          const QUrl &url,
+                          QString *errorString = nullptr);
+    bool setWindowRootUrl(quint64 winIdx,
                           const QUrl &url,
                           QString *errorString = nullptr);
 };

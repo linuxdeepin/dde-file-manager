@@ -248,7 +248,7 @@ bool Core::start()
         BrowseWindow *newWindow = windowService->newWindow();
 
         if (newWindow) {
-            int winIdx = windowService->windowList.indexOf(newWindow);
+            quint64 winIdx = newWindow->internalWinId();
             // 绑定当前插件初始化完毕进行的相关操作。
             QObject::connect(&dpf::Listener::instance(), &dpf::Listener::pluginsStarted,
                              this, [winIdx]() {
@@ -276,6 +276,13 @@ bool Core::start()
                              newWindow, [=](const QUrl &url, const QPoint &pos) {
                                  // 发送侧边栏右键菜单事件
                                  EventCaller::sendSideBarContextMenuEvent(url, pos);
+                             });
+
+            // 绑定搜索逻辑
+            QObject::connect(newWindow->addresssBar(), &AddressBar::editingFinishedSearch,
+                             newWindow, [newWindow, winIdx](const QString &keyword) {
+                                 // 发送搜索事件
+                                 EventCaller::sendSearchEvent(newWindow->rootUrl(), keyword, winIdx);
                              });
         }
         // 设置主目录

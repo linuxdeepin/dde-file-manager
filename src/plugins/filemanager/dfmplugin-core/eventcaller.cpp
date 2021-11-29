@@ -23,7 +23,7 @@
 
 #include <dfm-framework/framework.h>
 
-void EventCaller::sendOpenNewWindowEvent(int windowIdx)
+void EventCaller::sendOpenNewWindowEvent(quint64 windowIdx)
 {
     dpf::Event event;
     event.setTopic(EventTypes::kTopicWindowEvent);
@@ -39,5 +39,16 @@ void EventCaller::sendSideBarContextMenuEvent(const QUrl &url, const QPoint &pos
     event.setData(EventTypes::kDataSidebarContextMenu);
     event.setProperty(EventTypes::kPropertySidebarItemUrl, QVariant(url));
     event.setProperty(EventTypes::kPropertySidebarItemPos, QVariant(pos));
+    dpfInstance.eventProxy().pubEvent(event);
+}
+
+void EventCaller::sendSearchEvent(const QUrl &targetUrl, const QString &keyword, quint64 winIdx)
+{
+    dpf::Event event;
+    event.setTopic(EventTypes::kTopicSearchEvent);
+    event.setData(EventTypes::kDataSearch);
+    event.setProperty(EventTypes::kPropertyTargetUrl, QVariant(targetUrl));
+    event.setProperty(EventTypes::kPropertyKeyword, QVariant(keyword));
+    event.setProperty(EventTypes::kPropertyKeyWindowIndex, winIdx);
     dpfInstance.eventProxy().pubEvent(event);
 }

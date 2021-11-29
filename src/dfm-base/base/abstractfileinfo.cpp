@@ -328,15 +328,15 @@ QDir AbstractFileInfo::absoluteDir() const
     return dir();
 }
 /*!
- * \brief url 获取文件的url，这里的url是转换后的
+ * \brief url 获取文件的url
  *
  * \param
  *
- * \return QUrl 返回真实路径转换的url
+ * \return QUrl 返回设置的url
  */
 QUrl AbstractFileInfo::url() const
 {
-    return UrlRoute::pathToUrl(filePath(), d->url.scheme());
+    return d->url;
 }
 /*!
  * \brief isReadable 获取文件是否可读

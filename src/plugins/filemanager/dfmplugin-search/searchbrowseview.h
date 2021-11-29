@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     liuzhangjian<liuzhangjian@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: liuzhangjian<liuzhangjian@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,20 +18,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef EVENTCALLER_H
-#define EVENTCALLER_H
+#ifndef SEARCHBROWSEVIEW_H
+#define SEARCHBROWSEVIEW_H
 
-#include "window/contexts.h"   // TODO(zhangs): hide
+#include "window/browseview.h"   // TODO(zhangs): hide
+#include "searchfileviewmodel.h"
 
 DSB_FM_USE_NAMESPACE
 
-class EventCaller final
+class SearchBrowseView : public BrowseView
 {
 public:
-    explicit EventCaller() = delete;
-    static void sendOpenNewWindowEvent(quint64 windowIdx);
-    static void sendSideBarContextMenuEvent(const QUrl &url, const QPoint &pos);
-    static void sendSearchEvent(const QUrl &targetUrl, const QString &keyword, quint64 winIdx);
+    explicit SearchBrowseView(QWidget *parent = nullptr);
+    virtual void setRootUrl(const QUrl &url) override;
+    virtual QUrl rootUrl() override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
+
+private:
+    QUrl m_rootUrl;
 };
 
-#endif   // EVENTCALLER_H
+#endif   // SEARCHBROWSEVIEW_H

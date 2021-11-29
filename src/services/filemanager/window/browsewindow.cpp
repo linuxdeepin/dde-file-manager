@@ -211,4 +211,10 @@ void BrowseWindow::setRootUrl(const QUrl &url)
     return d->setRootUrl(url);
 }
 
+// 获取当前window展示的url
+const QUrl BrowseWindow::rootUrl()
+{
+    return d->rootUrl();
+}
+
 DSB_FM_END_NAMESPACE
