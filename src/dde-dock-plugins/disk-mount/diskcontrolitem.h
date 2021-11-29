@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -51,12 +51,12 @@ private:
 
 private:
     QIcon unknowIcon;
-    QPushButton *diskIcon {nullptr};
-    QLabel *diskName {nullptr};
-    QLabel *diskCapacity {nullptr};
-    QProgressBar *capacityValueBar {nullptr};
+    QPushButton *diskIcon { nullptr };
+    QLabel *diskName { nullptr };
+    QLabel *diskCapacity { nullptr };
+    QProgressBar *capacityValueBar { nullptr };
     QSharedPointer<DAttachedDevice> attachedDev;
-    DTK_WIDGET_NAMESPACE::DIconButton *ejectButton {nullptr};
+    DTK_WIDGET_NAMESPACE::DIconButton *ejectButton { nullptr };
 };
 
-#endif // DISKCONTROLITEM_H
+#endif   // DISKCONTROLITEM_H

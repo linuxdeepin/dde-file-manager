@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -48,14 +48,13 @@ static bool pluginsLoad()
     // set plugin iid from qt style
     lifeCycle.setPluginIID(SERVER_PLUGIN_INTERFACE);
 
-
     QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
     if (!QDir(pluginsDir).exists()) {
         pluginsDir = DFM_PLUGIN_PATH;
     }
     qDebug() << "using plugins dir:" << pluginsDir;
 
-    lifeCycle.setPluginPaths({pluginsDir});
+    lifeCycle.setPluginPaths({ pluginsDir });
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();

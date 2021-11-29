@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -34,7 +34,7 @@
 
 QString SizeFormatHelper::formatDiskSize(const quint64 num)
 {
-    QStringList list {" B", " KB", " MB", " GB", " TB"};
+    QStringList list { " B", " KB", " MB", " GB", " TB" };
     qreal fileSize(num);
 
     QStringListIterator i(list);
@@ -72,7 +72,6 @@ QString SizeFormatHelper::sizeString(const QString &str)
 
     return size.left(size.count() - 1);
 }
-
 
 /*!
  * \class DiskControlItem
@@ -123,7 +122,7 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
         Qt::WindowFlags flags = d->windowFlags();
         d->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
         d->setIcon(QIcon::fromTheme("dialog-error"));
-        d->addButton(QObject::tr("Confirm","button"), true, DDialog::ButtonRecommend);
+        d->addButton(QObject::tr("Confirm", "button"), true, DDialog::ButtonRecommend);
         d->setMaximumWidth(640);
         d->show();
         return;
@@ -137,7 +136,7 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
             QString &&path = url.path();
             QString &&opticalPath = QString("burn://%1").arg(path);
             qDebug() << "open optical path =>" << opticalPath;
-            QProcess::startDetached(QStringLiteral("dde-file-manager"), {opticalPath});
+            QProcess::startDetached(QStringLiteral("dde-file-manager"), { opticalPath });
         } else {
             url = QUrl(attachedDev->mountpointUrl());
             DDesktopServices::showFolder(url);
@@ -163,8 +162,8 @@ void DiskControlItem::showEvent(QShowEvent *e)
 
         if (bytesTotal > 0 && bytesTotal >= bytesFree) {
             diskCapacity->setText(QString("%1 / %2")
-                                    .arg(SizeFormatHelper::formatDiskSize(bytesTotal - bytesFree))
-                                    .arg(SizeFormatHelper::formatDiskSize(bytesTotal)));
+                                          .arg(SizeFormatHelper::formatDiskSize(bytesTotal - bytesFree))
+                                          .arg(SizeFormatHelper::formatDiskSize(bytesTotal)));
         } else {
             diskCapacity->setText(tr("Unknown"));
         }
@@ -183,7 +182,7 @@ void DiskControlItem::initializeUi()
     diskName->setTextFormat(Qt::PlainText);
 
     int colorValue = Dtk::Gui::DGuiApplicationHelper::instance()->themeType()
-            == Dtk::Gui::DGuiApplicationHelper::LightType
+                    == Dtk::Gui::DGuiApplicationHelper::LightType
             ? 0
             : 1;
 
@@ -207,7 +206,7 @@ void DiskControlItem::initializeUi()
     capacityValueBar->setFixedHeight(2);
 
     ejectButton->setFixedSize(20, 20);
-    ejectButton->setIconSize({20, 20});
+    ejectButton->setIconSize({ 20, 20 });
     ejectButton->setFlat(true);
 
     QVBoxLayout *leftLay = new QVBoxLayout;
@@ -248,7 +247,7 @@ void DiskControlItem::initializeUi()
     diskIcon->setIconSize(QSize(48, 48));
     diskIcon->setAttribute(Qt::WA_TransparentForMouseEvents);
     diskIcon->setStyleSheet("padding: 0;");
-    diskName->setText(QStringLiteral("OwO")); // blumia: correct text should be set in DiskControlItem::showEvent()
+    diskName->setText(QStringLiteral("OwO"));   // blumia: correct text should be set in DiskControlItem::showEvent()
     capacityValueBar->setMinimum(0);
     capacityValueBar->setMaximum(100);
 

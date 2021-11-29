@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -44,4 +44,4 @@ private:
     QString curText;
 };
 
-#endif // TIPSWIDGET_H
+#endif   // TIPSWIDGET_H

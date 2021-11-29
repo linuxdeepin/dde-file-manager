@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -46,11 +46,10 @@ bool PluginSidecar::connectToServer()
     // Note: the plugin depends on `dde-file-manager-server`!
     // the plugin will not work if `dde-file-manager-server` not run.
     deviceInterface.reset(new DeviceManagerInterface(
-                          "com.deepin.filemanager.service",
-                          "/com/deepin/filemanager/service/DeviceManager",
-                          QDBusConnection::sessionBus(),
-                          this
-                          ));
+            "com.deepin.filemanager.service",
+            "/com/deepin/filemanager/service/DeviceManager",
+            QDBusConnection::sessionBus(),
+            this));
 
     if (!deviceInterface->isValid()) {
         qCritical() << "DeviceManagerInterface cannot link!!!";
@@ -85,7 +84,6 @@ void PluginSidecar::initConnection()
     watcher.reset(new QDBusServiceWatcher("com.deepin.filemanager.service", deviceInterface->connection()));
     connect(watcher.data(), &QDBusServiceWatcher::serviceUnregistered, this, &PluginSidecar::serviceUnregistered);
     connect(watcher.data(), &QDBusServiceWatcher::serviceRegistered, this, &PluginSidecar::serviceRegistered);
-
 }
 
 void PluginSidecar::invokeDetachAllMountedDevices()
@@ -242,10 +240,8 @@ void PluginSidecar::invokeDetachProtocolDevice(const QString &id)
 PluginSidecar::PluginSidecar(QObject *parent)
     : QObject(parent)
 {
-
 }
 
 PluginSidecar::~PluginSidecar()
 {
-
 }

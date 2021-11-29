@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -29,7 +29,7 @@
 #include <QPointer>
 #include <QDBusServiceWatcher>
 
-class PluginSidecar: public QObject
+class PluginSidecar : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(PluginSidecar)
@@ -61,10 +61,10 @@ private:
     ~PluginSidecar();
 
 private:
-    QScopedPointer<DeviceManagerInterface> deviceInterface {nullptr};
-    QScopedPointer<QDBusServiceWatcher> watcher {nullptr};
+    QScopedPointer<DeviceManagerInterface> deviceInterface { nullptr };
+    QScopedPointer<QDBusServiceWatcher> watcher { nullptr };
 };
 
 #define SidecarInstance PluginSidecar::instance()
 
-#endif // PLUGINSIDECAR_H
+#endif   // PLUGINSIDECAR_H

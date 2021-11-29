@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -29,8 +29,8 @@
 #include <DApplication>
 #include <QGSettings>
 
-static const char * const OPEN = "open";
-static const char * const EJECT_ALL = "eject_all";
+static const char *const kOpen = "open";
+static const char *const kEjectAll = "eject_all";
 
 DWIDGET_USE_NAMESPACE
 
@@ -64,8 +64,8 @@ void DiskMountPlugin::init(PluginProxyInterface *proxyInter)
     qApp->loadTranslator();
     qApp->setApplicationName(applicationName);
 
-    std::call_once(DiskMountPlugin::onceFlag(), [this, proxyInter] () {
-        setProxyInter(proxyInter); // `m_proxyInter` from Base class `PluginsItemInterface`
+    std::call_once(DiskMountPlugin::onceFlag(), [this, proxyInter]() {
+        setProxyInter(proxyInter);   // `m_proxyInter` from Base class `PluginsItemInterface`
         SidecarInstance.connectToServer();
         initCompoments();
         diskPluginItem->setDockDisplayMode(displayMode());
@@ -104,14 +104,14 @@ const QString DiskMountPlugin::itemContextMenu(const QString &itemKey)
 
     if (settings.get("filemanager-integration").toBool()) {
         QMap<QString, QVariant> open;
-        open["itemId"] = OPEN;
+        open["itemId"] = kOpen;
         open["itemText"] = tr("Open");
         open["isActive"] = true;
         items.push_back(open);
     }
 
     QMap<QString, QVariant> ejectAll;
-    ejectAll["itemId"] = EJECT_ALL;
+    ejectAll["itemId"] = kEjectAll;
     ejectAll["itemText"] = tr("Eject all");
     ejectAll["isActive"] = true;
     items.push_back(ejectAll);
@@ -129,16 +129,17 @@ void DiskMountPlugin::invokedMenuItem(const QString &itemKey, const QString &men
     Q_UNUSED(itemKey)
     Q_UNUSED(checked)
 
-    if (menuId == OPEN)
-        QProcess::startDetached("gio", QStringList() << "open" << "computer:///");
-    else if (menuId == EJECT_ALL)
+    if (menuId == kOpen)
+        QProcess::startDetached("gio", QStringList() << "open"
+                                                     << "computer:///");
+    else if (menuId == kEjectAll)
         SidecarInstance.invokeDetachAllMountedDevices();
 }
 
 int DiskMountPlugin::itemSortKey(const QString &itemKey)
 {
     QString &&key = QString("pos_%1_%2").arg(itemKey).arg(Dock::Efficient);
-    int ret = proxyInter()->getValue(this, key, 0).toInt(); // dde-dock默认设置为0
+    int ret = proxyInter()->getValue(this, key, 0).toInt();   // dde-dock默认设置为0
     qDebug() << "itemSortKey [key:" << key << "," << ret << "] for :" << itemKey;
     return ret;
 }

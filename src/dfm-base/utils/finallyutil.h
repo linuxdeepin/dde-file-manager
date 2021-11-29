@@ -23,9 +23,13 @@
 #ifndef FINALLYUTIL_H
 #define FINALLYUTIL_H
 
+#include "dfm-base/dfm_base_global.h"
+
 #include <QObject>
 
 #include <functional>
+
+DFMBASE_BEGIN_NAMESPACE
 
 class FinallyUtil
 {
@@ -40,5 +44,7 @@ private:
     std::function<void()> exitFunc;
     bool hasDismissed { false };
 };
+
+DFMBASE_END_NAMESPACE
 
 #endif   // FINALLYUTIL_H

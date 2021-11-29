@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -38,6 +38,8 @@ Q_GLOBAL_STATIC_WITH_ARGS(dfmbase::Settings, gsGlobal, ("deepin/dde-file-manager
 
 DWIDGET_USE_NAMESPACE
 DSC_BEGIN_NAMESPACE
+
+using dfmbase::FinallyUtil;
 
 dfmbase::Settings *DeviceServiceHelper::getGsGlobal()
 {

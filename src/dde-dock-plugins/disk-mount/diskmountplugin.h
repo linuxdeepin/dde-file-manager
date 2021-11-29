@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -62,12 +62,13 @@ private:
     PluginProxyInterface *proxyInter() const;
     void setProxyInter(PluginProxyInterface *proxy);
     static std::once_flag &onceFlag();
-private:
-    bool pluginAdded {false};
 
-    TipsWidget        *tipsLabel {nullptr};
-    DiskPluginItem    *diskPluginItem {nullptr};
-    DiskControlWidget *diskControlApplet {nullptr};
+private:
+    bool pluginAdded { false };
+
+    TipsWidget *tipsLabel { nullptr };
+    DiskPluginItem *diskPluginItem { nullptr };
+    DiskControlWidget *diskControlApplet { nullptr };
 };
 
-#endif // DISKMOUNTPLUGIN_H
+#endif   // DISKMOUNTPLUGIN_H

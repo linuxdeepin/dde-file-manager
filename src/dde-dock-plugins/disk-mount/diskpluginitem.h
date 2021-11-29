@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -28,7 +28,7 @@
 #include <QWidget>
 #include <QPixmap>
 
-static const char * const DISK_MOUNT_KEY  = "mount-item-key";
+static const char *const DISK_MOUNT_KEY = "mount-item-key";
 
 class DiskPluginItem : public QWidget
 {
@@ -50,4 +50,4 @@ private:
     QPixmap icon;
 };
 
-#endif // DISKPLUGINITEM_H
+#endif   // DISKPLUGINITEM_H

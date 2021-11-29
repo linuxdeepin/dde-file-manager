@@ -751,7 +751,7 @@ QStringList DeviceService::blockDevicesIdList(const QVariantMap &opts) const
         if (needNotIgnorable && !DeviceServiceHelper::isIgnorableBlockDevice(data, &errMsg)) {
             idList.append(data.common.id);
             continue;
-        } else {
+        } else if (!errMsg.isEmpty()) {
             qWarning() << "Device has beeen ignore: " << errMsg;
         }
 

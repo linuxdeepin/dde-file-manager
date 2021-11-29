@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -32,11 +32,11 @@
 
 // Need to consider stopping multiple directory scans at the same time,
 // and extend the timeout period appropriately
-static const int MAX_DBUS_TIMEOUT = 1000;
+static const int kMaxDBusTimeout = 1000;
 
-static const char * const DEFENDER_SERVICE_NAME    = "com.deepin.defender.daemonservice";
-static const char * const DEFENDER_SERVICE_PATH    = "/com/deepin/defender/daemonservice";
-static const char * const DEFENDER_INTERFACE_NAME  = "com.deepin.defender.daemonservice";
+static const char *const kDefenderServiceName = "com.deepin.defender.daemonservice";
+static const char *const kDefenderServicePath = "/com/deepin/defender/daemonservice";
+static const char *const kDefenderInterfaceName = "com.deepin.defender.daemonservice";
 
 DSC_BEGIN_NAMESPACE
 
@@ -85,7 +85,7 @@ bool DefenderController::stopScanning(const QList<QUrl> &urls)
     start();
 
     QList<QUrl> paths;
-    foreach(const QUrl &url, urls)
+    foreach (const QUrl &url, urls)
         paths << getScanningPaths(url);
 
     if (paths.empty())
@@ -99,7 +99,7 @@ bool DefenderController::stopScanning(const QList<QUrl> &urls)
     // Wait for the scan directory change signal until it times out
     QTime t;
     t.start();
-    while (t.elapsed() < MAX_DBUS_TIMEOUT) {
+    while (t.elapsed() < kMaxDBusTimeout) {
         qApp->processEvents();
         if (!isScanning(urls))
             return true;
@@ -120,22 +120,22 @@ QList<QUrl> DefenderController::getScanningPaths(const QUrl &url)
 
 void DefenderController::start()
 {
-    std::call_once(DefenderController::onceFlag(), [this] () {
-        qInfo() << "create dbus interface:" << DEFENDER_SERVICE_NAME;
-        interface.reset(new QDBusInterface(DEFENDER_SERVICE_NAME,
-                             DEFENDER_SERVICE_PATH,
-                             DEFENDER_INTERFACE_NAME,
-                             QDBusConnection::sessionBus()));
+    std::call_once(DefenderController::onceFlag(), [this]() {
+        qInfo() << "create dbus interface:" << kDefenderServiceName;
+        interface.reset(new QDBusInterface(kDefenderServiceName,
+                                           kDefenderServicePath,
+                                           kDefenderInterfaceName,
+                                           QDBusConnection::sessionBus()));
 
         qInfo() << "create dbus interface done";
 
         QDBusConnection::sessionBus().connect(
-            DEFENDER_SERVICE_NAME,
-            DEFENDER_SERVICE_PATH,
-            DEFENDER_INTERFACE_NAME,
-            "ScanningUsbPathsChanged",
-            this,
-            SLOT(scanningUsbPathsChanged(QStringList)));
+                kDefenderServiceName,
+                kDefenderServicePath,
+                kDefenderInterfaceName,
+                "ScanningUsbPathsChanged",
+                this,
+                SLOT(scanningUsbPathsChanged(QStringList)));
 
         qInfo() << "start get usb scanning path";
         QStringList list = interface->property("ScanningUsbPaths").toStringList();
@@ -157,12 +157,10 @@ void DefenderController::scanningUsbPathsChanged(const QStringList &list)
 DefenderController::DefenderController(QObject *parent)
     : QObject(parent)
 {
-
 }
 
 DefenderController::~DefenderController()
 {
-
 }
 
 std::once_flag &DefenderController::onceFlag()
@@ -170,7 +168,5 @@ std::once_flag &DefenderController::onceFlag()
     static std::once_flag flag;
     return flag;
 }
-
-
 
 DSC_END_NAMESPACE

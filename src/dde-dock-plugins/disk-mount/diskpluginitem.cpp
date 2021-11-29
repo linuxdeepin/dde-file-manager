@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -31,7 +31,6 @@
 #include <DGuiApplicationHelper>
 
 DGUI_USE_NAMESPACE
-
 
 /*!
  * \class DiskPluginItem

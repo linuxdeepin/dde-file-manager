@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -27,8 +27,8 @@
 #include <QCoreApplication>
 #include <QVariantMap>
 
-static const char *const BURN_SEG_ONDISC = "disc_files";
-static const char *const BURN_SCHEME = "burn";
+static const char *const kBurnSegOndisc = "disc_files";
+static const char *const kBurnScheme = "burn";
 
 /*!
  * \brief makeBurnFileUrl as `DUrl::fromBurnFile` in old dde-file-manager
@@ -38,8 +38,8 @@ static const char *const BURN_SCHEME = "burn";
 static QUrl makeBurnFileUrl(const QString &device)
 {
     QUrl url;
-    QString virtualPath(device + "/" + BURN_SEG_ONDISC + "/");
-    url.setScheme(BURN_SCHEME);
+    QString virtualPath(device + "/" + kBurnSegOndisc + "/");
+    url.setScheme(kBurnScheme);
     url.setPath(virtualPath);
     return url;
 }

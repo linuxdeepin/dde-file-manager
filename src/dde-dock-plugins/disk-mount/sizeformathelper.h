@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -35,5 +35,4 @@ public:
     static QString sizeString(const QString &str);
 };
 
-#endif // SIZEFORMATHELPER_H
-
+#endif   // SIZEFORMATHELPER_H
