@@ -65,8 +65,8 @@ public:
 //！ 测试文件名的命名规范
 TEST_F(TestDFMGlobal, test_fileNameRule)
 {
-    // 剔除的字符 (^\\s+|[\"'/\\\\\[\\\]:|<>+=;,?*\r\n])
-    QString strInput("\"\'/\\[]:|<>+=;,?*");
+    // 剔除的字符 (^\\s+|[\"'/\\:|<>;?*\r\n])
+    QString strInput("\"\'/\\:|<>?*");
     QString strOutput = DFMGlobal::preprocessingFileName(strInput);
     EXPECT_STREQ(strOutput.toStdString().c_str(), "");
 }
