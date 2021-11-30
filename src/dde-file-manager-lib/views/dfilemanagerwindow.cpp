@@ -44,9 +44,19 @@
 #include "dfmapplication.h"
 #include "dfmstandardpaths.h"
 #include "dfmopticalmediawidget.h"
+#include "dfmevent.h"
+#include "xutil.h"
+#include "utils.h"
+#include "dfmadvancesearchbar.h"
+#include "dtagactionwidget.h"
+#include "droundbutton.h"
+#include "dfmrightdetailview.h"
+#include "drenamebar.h"
+#include "singleton.h"
+#include "dfileservices.h"
+#include "dfmsplitter.h"
 
 #include "app/define.h"
-#include "dfmevent.h"
 #include "app/filesignalmanager.h"
 #include "deviceinfo/udisklistener.h"
 #include "usershare/usersharemanager.h"
@@ -55,17 +65,6 @@
 #include "gvfs/networkmanager.h"
 #include "dde-file-manager/singleapplication.h"
 #include "dialogs/dialogmanager.h"
-
-#include "xutil.h"
-#include "utils.h"
-#include "dfmadvancesearchbar.h"
-#include "dtagactionwidget.h"
-#include "droundbutton.h"
-#include "dfmrightdetailview.h"
-
-#include "drenamebar.h"
-#include "singleton.h"
-#include "dfileservices.h"
 #include "controllers/appcontroller.h"
 #include "view/viewinterface.h"
 #include "plugins/pluginmanager.h"
@@ -73,13 +72,12 @@
 #include "controllers/filecontroller.h"
 #include "models/dfmrootfileinfo.h"
 #include "controllers/vaultcontroller.h"
-#include "dfmsplitter.h"
 #include "views/dfmvaultactiveview.h"
 #include "vault/vaultglobaldefine.h"
+#include "dde-file-manager-daemon/dbusservice/dbusinterface/usershare_interface.h"
 
 #include <DPlatformWindowHandle>
 #include <DTitlebar>
-
 #include <QScreen>
 #include <QStatusBar>
 #include <QFrame>
@@ -1545,16 +1543,21 @@ void DFileManagerWindow::callFinishedSlot(QDBusPendingCallWatcher *watcher)
             qDebug() << "smbd service start success";
 
             // 自启动
-            QProcess sh;
-            sh.start("sudo ln -sf /lib/systemd/system/smbd.service /etc/systemd/system/multi-user.target.wants/smbd.service");
-
-            bool succ = sh.waitForFinished();
-            qDebug() << sh.readAll() << sh.readAllStandardError() << sh.readAllStandardOutput();
-            if (succ) {
-                Q_D(DFileManagerWindow);
-                d->cdForTab(m_currentTab, m_currentUrl);
+            // 这里创建链接文件 以便下次开机自启
+            UserShareInterface userShareInterface("com.deepin.filemanager.daemon",
+                                                  "/com/deepin/filemanager/daemon/UserShareManager",
+                                                  QDBusConnection::systemBus(),
+                                                  this);
+            QDBusReply<bool> reply = userShareInterface.createShareLinkFile();
+            if (reply.isValid()) {
+                qDebug() << "set usershare password:" << reply.value();
+                if(reply.value()) {
+                    Q_D(DFileManagerWindow);
+                    d->cdForTab(m_currentTab, m_currentUrl);
+                }
+            } else {
+                qDebug() << "set usershare password:" << reply.error();
             }
-
         }
     } else {
         dialogManager->showErrorDialog(QString(), QObject::tr("Failed to start Samba services"));

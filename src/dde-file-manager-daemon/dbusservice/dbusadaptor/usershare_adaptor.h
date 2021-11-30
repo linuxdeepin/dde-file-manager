@@ -47,6 +47,9 @@ class UserShareAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"b\" name=\"bshow\"/>\n"
 "      <arg direction=\"out\" type=\"b\" name=\"result\"/>\n"
 "    </method>\n"
+"    <method name=\"createShareLinkFile\">\n"
+"      <arg direction=\"out\" type=\"b\" name=\"result\"/>\n"
+"    </method>\n"
 "  </interface>\n"
         "")
 public:
@@ -60,6 +63,7 @@ public: // PROPERTIES
 public Q_SLOTS: // METHODS
     bool addGroup(const QString &groupName);
     bool closeSmbShareByShareName(const QString &sharename, bool bshow);
+    bool createShareLinkFile();
     bool setUserSharePassword(const QString &username, const QString &passward);
 Q_SIGNALS: // SIGNALS
 };

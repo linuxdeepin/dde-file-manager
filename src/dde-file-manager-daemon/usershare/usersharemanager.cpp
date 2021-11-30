@@ -133,3 +133,17 @@ bool UserShareManager::closeSmbShareByShareName(const QString &sharename, const 
     qDebug() << p.readAll() << p.readAllStandardError() << p.readAllStandardOutput();
     return ret;
 }
+
+bool UserShareManager::createShareLinkFile()
+{
+    // 创建链接文件之前已经提权了 这里就不需要再次判断权限了
+    /*if (!checkAuthentication()) {
+        qDebug() << "createShareLinkFile";
+        return false;
+    }*/
+
+    QProcess sh;
+    sh.start("ln -sf /lib/systemd/system/smbd.service /etc/systemd/system/multi-user.target.wants/smbd.service");
+    auto ret = sh.waitForFinished();
+    return ret;
+}

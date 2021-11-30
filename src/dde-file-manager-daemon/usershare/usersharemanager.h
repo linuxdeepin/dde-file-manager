@@ -49,6 +49,7 @@ public slots:
     bool addGroup(const QString &groupName);
     bool setUserSharePassword(const QString &username, const QString &passward);
     bool closeSmbShareByShareName(const QString &sharename,const bool bshow);
+    bool createShareLinkFile();
 
 private:
     UserShareAdaptor* m_userShareAdaptor = nullptr;

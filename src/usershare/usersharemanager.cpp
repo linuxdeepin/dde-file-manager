@@ -535,15 +535,15 @@ void UserShareManager::callFinishedSlot(QDBusPendingCallWatcher *watcher)
             qDebug() << "smbd service start success";
 
             // 自启动
-            QProcess sh;
-            sh.start("sudo ln -sf /lib/systemd/system/smbd.service /etc/systemd/system/multi-user.target.wants/smbd.service");
-
-            bool succ = sh.waitForFinished();
-            qDebug() << sh.readAll() << sh.readAllStandardError() << sh.readAllStandardOutput();
-            if (succ) {
-                addUserShare(m_currentInfo);
+            // 这里创建链接文件 以便下次开机自启
+            QDBusReply<bool> reply = m_userShareInterface->createShareLinkFile();
+            if (reply.isValid()) {
+                qDebug() << "set usershare password:" << reply.value();
+                if(reply.value())
+                    addUserShare(m_currentInfo);
+            } else {
+                qDebug() << "set usershare password:" << reply.error();
             }
-
         }
     } else {
         dialogManager->showErrorDialog(QString(), QObject::tr("Failed to start Samba services"));

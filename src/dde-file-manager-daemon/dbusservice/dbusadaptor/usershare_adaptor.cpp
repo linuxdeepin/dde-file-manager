@@ -45,8 +45,15 @@ bool UserShareAdaptor::closeSmbShareByShareName(const QString &sharename, bool b
     return parent()->closeSmbShareByShareName(sharename, bshow);
 }
 
+bool UserShareAdaptor::createShareLinkFile()
+{
+    // handle method call com.deepin.filemanager.daemon.UserShareManager.createShareLinkFile
+    return parent()->createShareLinkFile();
+}
+
 bool UserShareAdaptor::setUserSharePassword(const QString &username, const QString &passward)
 {
     // handle method call com.deepin.filemanager.daemon.UserShareManager.setUserSharePassword
     return parent()->setUserSharePassword(username, passward);
 }
+
