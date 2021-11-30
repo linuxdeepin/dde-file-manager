@@ -53,6 +53,7 @@ void BackgroundWidget::paintEvent(QPaintEvent *event)
 
 void BackgroundWidget::setView(const QSharedPointer<CanvasGridView> &v)
 {
-    v->setParent(this);
+    if (v.get() != nullptr)
+        v->setParent(this);
     m_view = v;
 }

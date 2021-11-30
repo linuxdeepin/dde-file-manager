@@ -156,8 +156,7 @@ void CanvasViewManager::onBackgroundEnableChanged()
                 qCritical() << "ERROR!! The screen data obtained by CanvasViewManager is inconsistent with that obtained by BackGroundManager.";
                 return;
             }
-            mView->setAttribute(Qt::WA_NativeWindow, false);
-            bw->setView(mView);
+
             QRect avRect;
 #ifndef UNUSED_SMARTDOCK
             avRect = relativeRect(sp->availableGeometry(),sp->geometry());
@@ -169,6 +168,22 @@ void CanvasViewManager::onBackgroundEnableChanged()
                 avRect = relativeRect(sp->geometry(),sp->geometry());
             }
 #endif
+            // fix bug105508 获取到屏幕数据为空导致卡死。创建时屏幕数据错误，则直接放弃创建。
+            if (avRect.size().width() < 1 || avRect.size().height() < 1) {
+                m_canvasMap.clear();
+                qCritical() << "ERROR!! The screen data obtained by CanvasViewManager is invalid."
+                            << "Screen name:" << sp->name() << "    geometry:" << sp->geometry();
+                for(auto w : m_background->allbackgroundWidgets().values()) {
+                    // 清空已经设置过的view
+                    w->setView(nullptr);
+                }
+
+                return;
+            }
+
+            mView->setAttribute(Qt::WA_NativeWindow, false);
+            bw->setView(mView);
+
             mView->setGeometry(avRect);
             mView->show();
 
@@ -177,20 +192,29 @@ void CanvasViewManager::onBackgroundEnableChanged()
                      << "inited" << mView->property(PROPERTY_VIEW_INITED).toBool()
                      << "screen" << sp->name() << sp->geometry() << sp->availableGeometry();
         }
-    }
-    else {
+    } else {
         for (const ScreenPointer &sp : m_canvasMap.keys()){
+
+            QRect avRect;
+#ifndef UNUSED_SMARTDOCK
+            avRect = sp->availableGeometry();
+#else
+            avRect = sp == ScreenMrg->primaryScreen() ? sp->availableGeometry() : sp->geometry();
+#endif
+            // fix bug105508 获取到屏幕数据为空导致卡死。创建时屏幕数据错误，则直接放弃创建。
+            if (avRect.size().width() < 1 || avRect.size().height() < 1) {
+                m_canvasMap.clear();
+                qCritical() << "ERROR!! The screen data obtained by CanvasViewManager is invalid."
+                            << "Screen name:" << sp->name() << "    geometry:" << sp->geometry() << sp->availableGeometry();
+                return;
+            }
 
             CanvasViewPointer mView = m_canvasMap.value(sp);
             mView->setParent(nullptr);
             mView->setWindowFlag(Qt::FramelessWindowHint, true);
 
             DesktopUtil::set_desktop_window(mView.data());
-#ifndef UNUSED_SMARTDOCK
-            mView->setGeometry(sp->availableGeometry());
-#else
-            mView->setGeometry(sp == ScreenMrg->primaryScreen() ? sp->availableGeometry() : sp->geometry());
-#endif
+            mView->setGeometry(avRect);
             mView->show();
             initView(mView);
             qDebug() << "no background. primaryScreen" << ScreenMrg->primaryScreen()->name()
