@@ -24,11 +24,14 @@
 #include "pluginsidecar.h"
 #include "sizeformathelper.h"
 
+#include <global_server_defines.h>
 #include <QCoreApplication>
 #include <QVariantMap>
 
 static const char *const kBurnSegOndisc = "disc_files";
 static const char *const kBurnScheme = "burn";
+
+using namespace GlobalServerDefines;
 
 /*!
  * \brief makeBurnFileUrl as `DUrl::fromBurnFile` in old dde-file-manager
@@ -63,13 +66,13 @@ DAttachedBlockDevice::~DAttachedBlockDevice()
 
 bool DAttachedBlockDevice::isValid()
 {
-    if (qvariant_cast<QString>(data.value("id")).isEmpty())
+    if (qvariant_cast<QString>(data.value(DeviceProperty::kId)).isEmpty())
         return false;
-    if (!qvariant_cast<bool>(data.value("has_filesystem")))
+    if (!qvariant_cast<bool>(data.value(DeviceProperty::kHasFileSystem)))
         return false;
-    if (qvariant_cast<QString>(data.value("mountpoint")).isEmpty())
+    if (qvariant_cast<QString>(data.value(DeviceProperty::kMountpoint)).isEmpty())
         return false;
-    if (qvariant_cast<bool>(data.value("hint_ignore")))
+    if (qvariant_cast<bool>(data.value(DeviceProperty::kHintIgnore)))
         return false;
 
     return true;
@@ -77,12 +80,12 @@ bool DAttachedBlockDevice::isValid()
 
 void DAttachedBlockDevice::detach()
 {
-    SidecarInstance.instance().invokeDetachBlockDevice(qvariant_cast<QString>(data.value("id")));
+    SidecarInstance.instance().invokeDetachBlockDevice(qvariant_cast<QString>(data.value(DeviceProperty::kId)));
 }
 
 bool DAttachedBlockDevice::detachable()
 {
-    return data.value("removable").toBool();
+    return data.value(DeviceProperty::kRemovable).toBool();
 }
 
 QString DAttachedBlockDevice::displayName()
@@ -93,9 +96,9 @@ QString DAttachedBlockDevice::displayName()
         { "data", "Data Disk" }
     };
 
-    qint64 totalSize { qvariant_cast<qint64>(data.value("size_total")) };
+    qint64 totalSize { qvariant_cast<qint64>(DeviceProperty::kSizeTotal) };
     if (isValid()) {
-        QString devName { qvariant_cast<QString>(data.value("id_label")) };
+        QString devName { qvariant_cast<QString>(data.value(DeviceProperty::kIdLabel)) };
         if (devName.isEmpty()) {
             QString name { SizeFormatHelper::formatDiskSize(static_cast<quint64>(totalSize)) };
             devName = qApp->translate("DeepinStorage", "%1 Volume").arg(name);
@@ -118,20 +121,20 @@ QString DAttachedBlockDevice::displayName()
 
 bool DAttachedBlockDevice::deviceUsageValid()
 {
-    return qvariant_cast<qint64>(data.value("size_total")) > 0;
+    return qvariant_cast<qint64>(data.value(DeviceProperty::kSizeTotal)) > 0;
 }
 
 QPair<quint64, quint64> DAttachedBlockDevice::deviceUsage()
 {
     if (deviceUsageValid()) {
-        bool optical { qvariant_cast<bool>(data.value("optical")) };
+        bool optical { qvariant_cast<bool>(data.value(DeviceProperty::kOptical)) };
         qint64 bytesTotal { 0 };
         qint64 bytesFree { 0 };
         if (optical) {
             // TODO(zhangs): make a temp method read optical size for old dde-file-manager
         } else {
-            bytesTotal = qvariant_cast<qint64>(data.value("size_total"));
-            bytesFree = qvariant_cast<qint64>(data.value("size_free"));
+            bytesTotal = qvariant_cast<qint64>(data.value(DeviceProperty::kSizeTotal));
+            bytesFree = qvariant_cast<qint64>(data.value(DeviceProperty::kSizeFree));
         }
         return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
     }
@@ -140,8 +143,8 @@ QPair<quint64, quint64> DAttachedBlockDevice::deviceUsage()
 
 QString DAttachedBlockDevice::iconName()
 {
-    bool optical { qvariant_cast<bool>(data.value("optical")) };
-    bool removable { qvariant_cast<bool>(data.value("removable")) };
+    bool optical { qvariant_cast<bool>(data.value(DeviceProperty::kOptical)) };
+    bool removable { qvariant_cast<bool>(data.value(DeviceProperty::kRemovable)) };
     QString iconName { QStringLiteral("drive-harddisk") };
 
     if (removable)
@@ -155,13 +158,13 @@ QString DAttachedBlockDevice::iconName()
 
 QUrl DAttachedBlockDevice::mountpointUrl()
 {
-    return QUrl::fromLocalFile(data.value("mountpoint").toString());
+    return QUrl::fromLocalFile(data.value(DeviceProperty::kMountpoint).toString());
 }
 
 QUrl DAttachedBlockDevice::accessPointUrl()
 {
     QUrl url { mountpointUrl() };
-    bool optical { qvariant_cast<bool>(data.value("optical")) };
+    bool optical { qvariant_cast<bool>(data.value(DeviceProperty::kOptical)) };
 
     if (optical) {
         QString device { qvariant_cast<QString>(data.value("device")) };
@@ -183,10 +186,10 @@ void DAttachedBlockDevice::initializeConnect()
 
 void DAttachedBlockDevice::onSizeChanged(const QString &id, qint64 total, qint64 free)
 {
-    QString thisId = qvariant_cast<QString>(data.value("id"));
+    QString thisId = qvariant_cast<QString>(data.value(DeviceProperty::kId));
     if (thisId == id) {
         qInfo() << "[disk-mout] Update device: " << thisId << "size, total: " << total << "free: " << free;
-        data["size_total"] = total;
-        data["size_free"] = free;
+        data[DeviceProperty::kSizeTotal] = total;
+        data[DeviceProperty::kSizeFree] = free;
     }
 }

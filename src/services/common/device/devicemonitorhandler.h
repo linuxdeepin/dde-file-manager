@@ -70,7 +70,7 @@ private slots:
     void onDeviceSizeUsedTimeout();
 
 private:
-    static constexpr int kUpdateInterval = 10000;   // timer interval: 10s
+    static constexpr int kSizeUpdateInterval = 10000;   // timer interval: 10s
 
     QTimer sizeUpdateTimer;
     QPointer<DeviceService> service;

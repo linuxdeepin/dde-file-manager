@@ -25,6 +25,7 @@
 #include "devicemonitorhandler.h"
 
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <dfm-mount/base/dfmmountutils.h>
 #include <dfm-mount/dfmblockmonitor.h>
@@ -36,6 +37,8 @@
 
 DWIDGET_USE_NAMESPACE
 DSC_USE_NAMESPACE
+
+using namespace GlobalServerDefines;
 
 DeviceMonitorHandler::DeviceMonitorHandler(DeviceService *serv)
     : QObject(nullptr), service(serv)
@@ -76,7 +79,7 @@ void DeviceMonitorHandler::startConnect()
 
     // connect device size update worker
     connect(&sizeUpdateTimer, &QTimer::timeout, this, &DeviceMonitorHandler::onDeviceSizeUsedTimeout);
-    sizeUpdateTimer.setInterval(kUpdateInterval);
+    sizeUpdateTimer.setInterval(kSizeUpdateInterval);
     sizeUpdateTimer.start();
 }
 
@@ -208,6 +211,7 @@ void DeviceMonitorHandler::updateDataWithOtherInfo(BlockDeviceData *data, const 
     auto &&idLabelFlag = DFMMOUNT::Property::BlockIDLabel;
     auto &&hintIgnoreFlag = DFMMOUNT::Property::BlockHintIgnore;
     auto &&hintSystemFlag = DFMMOUNT::Property::BlockHintSystem;
+    auto &&clearTextFalg = DFMMOUNT::Property::EncryptedCleartextDevice;
 
     // idlable
     if (changes.contains(idLabelFlag)) {
@@ -222,6 +226,10 @@ void DeviceMonitorHandler::updateDataWithOtherInfo(BlockDeviceData *data, const 
     // hintSystem
     if (changes.contains(hintSystemFlag))
         data->hintSystem = changes.value(hintSystemFlag).toBool();
+
+    // clearText
+    if (changes.contains(clearTextFalg))
+        data->cleartextDevice = changes.value(clearTextFalg).toString();
 
     // TODO(zhangs): handle other Property...
 }
@@ -360,15 +368,17 @@ void DeviceMonitorHandler::onBlockDevicePropertyChanged(const QString &deviceId,
         updateDataWithOpticalInfo(&allBlockDevData[deviceId], changes);
         updateDataWithMountedInfo(&allBlockDevData[deviceId], changes);
         updateDataWithOtherInfo(&allBlockDevData[deviceId], changes);
-
-        // TODO(zhangs): support encrypted devices(reference DFMRootFileInfo::extraProperties)
     }
     guard.unlock();
     QList<dfmmount::Property> &&keys = changes.keys();
     for (dfmmount::Property k : keys) {
         QString propertyName { dfmmount::Utils::getNameByProperty(k) };
-        if (Q_LIKELY(!propertyName.isEmpty()))
+        if (Q_LIKELY(!propertyName.isEmpty())) {
             emit service->blockDevicePropertyChanged(deviceId, propertyName, changes.value(k));
+            qInfo() << "Block Device: " << deviceId << "property: " << propertyName
+                    << "changed!"
+                    << "New value is:" << changes.value(k);
+        }
     }
 }
 
@@ -418,7 +428,7 @@ void DeviceService::startAutoMount()
             return;
         }
 
-        QStringList &&blkList = blockDevicesIdList({ { "mountable", true } });
+        QStringList &&blkList = blockDevicesIdList({ { ListOpt::kMountable, true } });
         for (const QString &id : blkList)
             mountBlockDeviceAsync(id, { { "auth.no_user_interaction", true } });
 
@@ -569,7 +579,7 @@ void DeviceService::detachProtocolDevice(const QString &deviceId)
 
 void DeviceService::detachAllMountedBlockDevices()
 {
-    QStringList &&list = blockDevicesIdList({ { "unmountable", true } });
+    QStringList &&list = blockDevicesIdList({ { ListOpt::kUnmountable, true } });
     for (const QString &id : list)
         detachBlockDevice(id);
 }
@@ -731,9 +741,9 @@ QStringList DeviceService::blockDevicesIdList(const QVariantMap &opts) const
     QStringList idList;
 
     // {"unmountable" : GLib.Variant("b", True)}
-    bool needUnmountable = opts.value("unmountable").toBool();
-    bool needMountable = opts.value("mountable").toBool();
-    bool needNotIgnorable = opts.value("not_ignorable").toBool();
+    bool needUnmountable = opts.value(ListOpt::kUnmountable).toBool();
+    bool needMountable = opts.value(ListOpt::kMountable).toBool();
+    bool needNotIgnorable = opts.value(ListOpt::kNotIgnorable).toBool();
 
     const auto allBlkData = monitorHandler->allBlockDevData;   // must use value!!!
     for (const auto &data : allBlkData) {

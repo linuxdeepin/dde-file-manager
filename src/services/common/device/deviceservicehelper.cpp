@@ -24,6 +24,7 @@
 
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/utils/finallyutil.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <dfm-mount/dfmblockmonitor.h>
 #include <QDebug>
@@ -40,6 +41,7 @@ DWIDGET_USE_NAMESPACE
 DSC_BEGIN_NAMESPACE
 
 using dfmbase::FinallyUtil;
+using namespace GlobalServerDefines;
 
 dfmbase::Settings *DeviceServiceHelper::getGsGlobal()
 {
@@ -367,8 +369,11 @@ bool DeviceServiceHelper::isIgnorableBlockDevice(const BlockDeviceData &data, QS
         return true;
     }
 
-    // TODO(zhangs): refrence dfmrootcontroller -> ignoreBlkDevice
-    // -> get device partion type ...
+    if (data.hasPartition && data.hasExtendedPartition) {
+        error = QString("Block device is ignored by extended partion type");
+        return true;
+    }
+
     finally.dismiss();
 
     return false;
@@ -464,53 +469,70 @@ void DeviceServiceHelper::makeBlockDeviceData(const DeviceServiceHelper::BlockDe
     data->isLoopDevice = ptr->isLoopDevice();
     data->hasFileSystem = ptr->hasFileSystem();
     data->hasPartitionTable = ptr->hasPartitionTable();
+    data->hasPartition = ptr->hasPartition();
+
+    /*!
+     * brief Extended partition with CHS addressing.
+     * It must reside within the first physical 8 GB of disk,
+     * else use 0Fh instead (see 0Fh, 85h, C5h, D5h)
+     */
+    auto eType = ptr->partitionEType();
+    data->hasExtendedPartition = (eType == DFMMOUNT::PartitionType::MbrWin95_Extended_LBA
+                                  || eType == DFMMOUNT::PartitionType::MbrLinux_extended
+                                  || eType == DFMMOUNT::PartitionType::MbrExtended
+                                  || eType == DFMMOUNT::PartitionType::MbrDRDOS_sec_extend
+                                  || eType == DFMMOUNT::PartitionType::MbrMultiuser_DOS_extend);
+
     data->hintSystem = ptr->hintSystem();
     data->hintIgnore = ptr->hintIgnore();
     data->cryptoBackingDevice = ptr->getProperty(DFMMOUNT::Property::BlockCryptoBackingDevice).toString();
+    data->cleartextDevice = ptr->getProperty(DFMMOUNT::Property::EncryptedCleartextDevice).toString();
 }
 
 void DeviceServiceHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVariantMap *map, bool detail)
 {
     Q_ASSERT_X(map, "DeviceServiceHelper", "Map is NULL");
 
-    map->insert("id", data.common.id);
-    map->insert("filesystem", data.common.filesystem);
-    map->insert("mountpoint", data.common.mountpoint);
-    map->insert("size_total", data.common.sizeTotal);
-    map->insert("size_free", data.common.sizeFree);
-    map->insert("size_usage", data.common.sizeUsed);
+    map->insert(DeviceProperty::kId, data.common.id);
+    map->insert(DeviceProperty::kMountpoint, data.common.mountpoint);
+    map->insert(DeviceProperty::kFilesystem, data.common.filesystem);
+    map->insert(DeviceProperty::kSizeTotal, data.common.sizeTotal);
+    map->insert(DeviceProperty::kSizeFree, data.common.sizeFree);
+    map->insert(DeviceProperty::kSizeUsed, data.common.sizeUsed);
 
-    map->insert("uuid", data.uuid);
-    map->insert("fs_version", data.fsVersion);
-    map->insert("device", data.device);
-    map->insert("id_label", data.idLabel);
-    map->insert("media", data.media);
-    map->insert("read_only", data.readOnly);
-    map->insert("removable", data.removable);
-    map->insert("media_removable", data.mediaRemovable);
-    map->insert("optical", data.optical);
-    map->insert("optical_drive", data.opticalDrive);
-    map->insert("optical_blank", data.opticalBlank);
-    map->insert("media_available", data.mediaAvailable);
-    map->insert("can_power_off", data.canPowerOff);
-    map->insert("ejectable", data.ejectable);
-    map->insert("is_encrypted", data.isEncrypted);
-    map->insert("is_loop_device", data.isLoopDevice);
-    map->insert("has_filesystem", data.hasFileSystem);
-    map->insert("has_partition_table", data.hasPartitionTable);
-    map->insert("hint_system", data.hintSystem);
-    map->insert("hint_ignore", data.hintIgnore);
-    map->insert("crypto_backingDevice", data.cryptoBackingDevice);
+    map->insert(DeviceProperty::kUUID, data.uuid);
+    map->insert(DeviceProperty::kFsVersion, data.fsVersion);
+    map->insert(DeviceProperty::kDevice, data.device);
+    map->insert(DeviceProperty::kIdLabel, data.idLabel);
+    map->insert(DeviceProperty::kMedia, data.media);
+    map->insert(DeviceProperty::kReadOnly, data.readOnly);
+    map->insert(DeviceProperty::kRemovable, data.removable);
+    map->insert(DeviceProperty::kMediaRemovable, data.mediaRemovable);
+    map->insert(DeviceProperty::kOptical, data.optical);
+    map->insert(DeviceProperty::kOpticalDrive, data.opticalDrive);
+    map->insert(DeviceProperty::kOpticalBlank, data.opticalBlank);
+    map->insert(DeviceProperty::kMediaAvailable, data.mediaAvailable);
+    map->insert(DeviceProperty::kCanPowerOff, data.canPowerOff);
+    map->insert(DeviceProperty::kEjectable, data.ejectable);
+    map->insert(DeviceProperty::kIsEncrypted, data.isEncrypted);
+    map->insert(DeviceProperty::kIsLoopDevice, data.isLoopDevice);
+    map->insert(DeviceProperty::kHasFileSystem, data.hasFileSystem);
+    map->insert(DeviceProperty::kHasPartitionTable, data.hasPartitionTable);
+    map->insert(DeviceProperty::kHasPartition, data.hasPartition);
+    map->insert(DeviceProperty::kHasExtendedPatition, data.hasExtendedPartition);
+    map->insert(DeviceProperty::kHintSystem, data.hintSystem);
+    map->insert(DeviceProperty::kHintIgnore, data.hintIgnore);
+    map->insert(DeviceProperty::kCryptoBackingDevice, data.cryptoBackingDevice);
 
     // Too much information can slow down the performance of D-Bus interface calls,
     // so only return all information when using `detail`.
     if (detail) {
-        map->insert("drive", data.drive);
-        map->insert("mountpoints", data.mountpoints);
-        map->insert("media_compatibility", data.mediaCompatibility);
+        map->insert(DeviceProperty::kDrive, data.drive);
+        map->insert(DeviceProperty::kMountPoints, data.mountpoints);
+        map->insert(DeviceProperty::kMediaCompatibility, data.mediaCompatibility);
+        map->insert(DeviceProperty::kCleartextDevice, data.cleartextDevice);
     }
 }
-
 void DeviceServiceHelper::updateBlockDeviceSizeUsed(BlockDeviceData *data, qint64 total, qint64 free)
 {
     if (data) {

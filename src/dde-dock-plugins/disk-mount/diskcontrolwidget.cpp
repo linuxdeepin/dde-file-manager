@@ -183,7 +183,7 @@ int DiskControlWidget::addBlockDevicesItems()
 {
     int mountedCount = 0;
 
-    QStringList &&list = SidecarInstance.invokeBlockDevicesIdList({ { "unmountable", true } });
+    QStringList &&list = SidecarInstance.invokeBlockDevicesIdList({ { ListOpt::kUnmountable, true } });
     mountedCount = addItems(list, true);
 
     return mountedCount;

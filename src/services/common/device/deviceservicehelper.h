@@ -48,8 +48,8 @@ struct DeviceData
 
 struct BlockDeviceData
 {
-    QString uuid;
     DeviceData common;
+    QString uuid;
     QString fsVersion;
     QStringList mountpoints;
     QString device;
@@ -70,11 +70,13 @@ struct BlockDeviceData
     bool isLoopDevice;
     bool hasFileSystem;
     bool hasPartitionTable;
+    bool hasPartition;
+    bool hasExtendedPartition;
     bool hintSystem;
     bool hintIgnore;
     QString cryptoBackingDevice;
+    QString cleartextDevice;
 };
-
 struct ProtocolDeviceData
 {
     DeviceData common;
