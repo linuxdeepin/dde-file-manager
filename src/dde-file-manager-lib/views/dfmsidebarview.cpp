@@ -255,6 +255,7 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
                         event->setDropAction(Qt::CopyAction);
                         isActionDone = true;
                     }
+
                     break;
                 }
             }
