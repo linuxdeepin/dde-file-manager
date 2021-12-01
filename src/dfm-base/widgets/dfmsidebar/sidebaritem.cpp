@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -71,10 +71,10 @@ QString SideBarItem::group() const
     return data(Roles::ItemGroupRole).toString();
 }
 
-DFMSideBarItemSeparator::DFMSideBarItemSeparator():
+DFMSideBarItemSeparator::DFMSideBarItemSeparator(const QString &group):
     SideBarItem(QUrl())
 {
-
+    setGroup(group);
 }
 
 DFMSideBarItemSeparator::~DFMSideBarItemSeparator()

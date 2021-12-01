@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -57,7 +57,7 @@ public:
 class DFMSideBarItemSeparator :public SideBarItem
 {
 public:
-    explicit DFMSideBarItemSeparator();
+    explicit DFMSideBarItemSeparator(const QString &group = "");
     virtual ~DFMSideBarItemSeparator();
 };
 DFMBASE_END_NAMESPACE

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -144,53 +144,38 @@ bool SideBarModel::insertRow(int row, SideBarItem *item)
     if (0 > row)
         return false;
 
-    QString currGroup = item->group();
+    if (rowCount() == 0) {
+        QStandardItemModel::appendRow(item);
+    } else {
+        int endRowIndex = -1;
+        int beginRowIndex = -1;
+        // find insert group
+        for (int rowIndex = rowCount() - 1; rowIndex >= 0; rowIndex -- ) {
+            auto findedItem = dynamic_cast<SideBarItem*>(this->item(rowIndex, 0));
 
-    int groupCount = -1;
-    int endRowIndex = -1;
-    int beginRowIndex = -1;
+            if (!findedItem)
+                return false;
 
-    auto controller = QtConcurrent::run([&](){
-        if (rowCount() == 0) {
-            QStandardItemModel::appendRow(item);
-            return true;
-        } else {
-            //find insert group
-            for (int row = rowCount() - 1; row >= 0; row -- ) {
-                auto findedItem = dynamic_cast<SideBarItem*>(this->item(row, 0));
-
-                if (!findedItem)
-                    return false;
-
-                if (findedItem && endRowIndex == -1
-                        && findedItem->group() == currGroup) {
-                    endRowIndex = row;
-                }
-
-                if (findedItem && endRowIndex != -1
-                        && findedItem->group() == currGroup) {
-                    beginRowIndex = row;
-                }
-            }
-
-            if (-1 != endRowIndex && -1 != beginRowIndex) {
-                groupCount = endRowIndex - beginRowIndex;
-            } else {
-                QStandardItemModel::appendRow(item);
-                return true;
+            if (findedItem->group() == item->group()) {
+                if (-1 == endRowIndex)
+                    endRowIndex = rowIndex;
+                else
+                    beginRowIndex = rowIndex;
             }
         }
-        return true;
-    });
-    controller.waitForFinished();
 
-    if (!controller.result())
-        return false;
+        if (-1 != endRowIndex && -1 != beginRowIndex) {
+            int groupCount = endRowIndex - beginRowIndex + 1;
+            // if the index is greater than the total number of elements in the group,
+            // then inserted at the end of the group.
+            if (row > groupCount)
+                row = groupCount;
+            QStandardItemModel::insertRow(row + beginRowIndex, item);
+        } else {
+            QStandardItemModel::appendRow(item);
+        }
+    }
 
-    if(row >= groupCount)
-        return false;
-
-    QStandardItemModel::insertRow(row + beginRowIndex, item);
     return true;
 }
 
