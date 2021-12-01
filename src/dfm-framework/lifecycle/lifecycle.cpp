@@ -25,19 +25,17 @@
 
 DPF_BEGIN_NAMESPACE
 
-Q_GLOBAL_STATIC(PluginManager,pluginManager);
+Q_GLOBAL_STATIC(PluginManager, pluginManager);
 
-/** @brief 设置插件身份标识，与Qt插件的IID标识接口保持一致
- * 你可以在任何的代码块中使用，如下
- * @code
- * LifeCycle::setPluginIID("org.deepin.plugin.[XXX]")
- * @encode
- * @param QString 可以传入任意标识IID的字符
- * @return void
+/*!
+ * \brief Add a class of plug-in IID to the framework,
+ * the framework will load the IID plug-in to achieve an
+ * APP can load a variety of different IID plug-in capabilities
+ * \param pluginIID: like org.deepin.plugin.[XXX]
  */
-void LifeCycle::setPluginIID(const QString &pluginIID)
+void LifeCycle::addPluginIID(const QString &pluginIID)
 {
-    return pluginManager->setPluginIID(pluginIID);
+    return pluginManager->addPluginIID(pluginIID);
 }
 
 /** @brief 获取插件身份标识
@@ -48,9 +46,9 @@ void LifeCycle::setPluginIID(const QString &pluginIID)
  * @param QString 可以传入任意标识IID的字符
  * @return void
  */
-QString LifeCycle::pluginIID()
+QStringList LifeCycle::pluginIIDs()
 {
-    return pluginManager->pluginIID();
+    return pluginManager->pluginIIDs();
 }
 
 /** @brief 获取设置的插件路径
@@ -88,7 +86,7 @@ void LifeCycle::setServicePaths(const QStringList &servicePaths)
 }
 
 PluginMetaObjectPointer LifeCycle::pluginMetaObj(const QString &pluginName,
-                                                                 const QString version)
+                                                 const QString version)
 {
     return pluginManager->pluginMetaObj(pluginName, version);
 }

@@ -46,24 +46,25 @@ class PluginManagerPrivate : public QSharedData
     Q_DISABLE_COPY(PluginManagerPrivate)
     friend class PluginManager;
     PluginManager *const q;
-    QString pluginLoadIID;
+    QStringList pluginLoadIIDs;
     QStringList pluginLoadPaths;
     QStringList serviceLoadPaths;
     QList<PluginMetaObjectPointer> plugins;
     QQueue<PluginMetaObjectPointer> readQueue;
     QQueue<PluginMetaObjectPointer> loadQueue;
     PluginSetting setting;
+
 public:
     explicit PluginManagerPrivate(PluginManager *qq);
     virtual ~PluginManagerPrivate();
-    QString pluginIID() const;
-    void setPluginIID(const QString &pluginIID);
+    QStringList pluginIIDs() const;
+    void addPluginIID(const QString &pluginIIDs);
     QStringList pluginPaths() const;
     void setPluginPaths(const QStringList &pluginPaths);
     QStringList servicePaths() const;
     void setServicePaths(const QStringList &servicePaths);
-    void setPluginEnable(const PluginMetaObject& meta, bool enabled);
-    PluginMetaObjectPointer pluginMetaObj(const QString &name,const QString &version = "");
+    void setPluginEnable(const PluginMetaObject &meta, bool enabled);
+    PluginMetaObjectPointer pluginMetaObj(const QString &name, const QString &version = "");
     bool loadPlugin(PluginMetaObjectPointer &pluginMetaObj);
     bool initPlugin(PluginMetaObjectPointer &pluginMetaObj);
     bool startPlugin(PluginMetaObjectPointer &pluginMetaObj);
@@ -74,13 +75,13 @@ public:
     void startPlugins();
     void stopPlugins();
     static void scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQueue,
-                               const QStringList& pluginPaths,
-                               const QString &pluginIID);
+                               const QStringList &pluginPaths,
+                               const QStringList &pluginIIDs);
     static void readJsonToMeta(const PluginMetaObjectPointer &metaObject);
-    static void dependsSort(QQueue<PluginMetaObjectPointer>* dstQueue,
-                            QQueue<PluginMetaObjectPointer>* srcQueue);
+    static void dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue,
+                            QQueue<PluginMetaObjectPointer> *srcQueue);
 };
 
 DPF_END_NAMESPACE
 
-#endif // PLUGINMANAGER_P_H
+#endif   // PLUGINMANAGER_P_H

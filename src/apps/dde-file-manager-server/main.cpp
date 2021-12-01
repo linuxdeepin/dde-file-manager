@@ -37,7 +37,7 @@ DWIDGET_USE_NAMESPACE
 #endif
 
 /// @brief  默认插件 iid
-static const char *const SERVER_PLUGIN_INTERFACE = "org.deepin.plugin.server";
+static const char *const kServerPluginInterface = "org.deepin.plugin.server";
 
 static bool pluginsLoad()
 {
@@ -46,7 +46,7 @@ static bool pluginsLoad()
     auto &&lifeCycle = dpfInstance.lifeCycle();
 
     // set plugin iid from qt style
-    lifeCycle.setPluginIID(SERVER_PLUGIN_INTERFACE);
+    lifeCycle.addPluginIID(kServerPluginInterface);
 
     QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
     if (!QDir(pluginsDir).exists()) {

@@ -29,17 +29,17 @@ DPF_USE_NAMESPACE
 PluginManager::PluginManager()
     : d(new PluginManagerPrivate(this))
 {
-
 }
 
-/** @brief setPluginIID 设置插件IID
- * @param const QString &pluginIID
- *  可以设置任意字符作为当前IID，需要与与加载插件IID一致
- * @return void
+/*!
+ * \brief Add a class of plug-in IID to the framework,
+ * the framework will load the IID plug-in to achieve an
+ * APP can load a variety of different IID plug-in capabilities
+ * \param pluginIID: like org.deepin.plugin.[XXX]
  */
-void PluginManager::setPluginIID(const QString &pluginIID)
+void PluginManager::addPluginIID(const QString &pluginIID)
 {
-    d->setPluginIID(pluginIID);
+    d->addPluginIID(pluginIID);
 }
 
 /** @brief setPluginPaths 设置插件加载的路径
@@ -92,7 +92,7 @@ void PluginManager::stopPlugin(PluginMetaObjectPointer &pointer)
  */
 bool PluginManager::readPlugins()
 {
-   return d->readPlugins();
+    return d->readPlugins();
 }
 
 /** @brief loadPlugins 加载所有的插件
@@ -146,9 +146,9 @@ void PluginManager::stopPlugins()
 /** @brief pluginIID 获取插件标识IID
  * @return QString 返回设置的IID，默认为空
  */
-QString PluginManager::pluginIID() const
+QStringList PluginManager::pluginIIDs() const
 {
-    return d->pluginIID();
+    return d->pluginIIDs();
 }
 
 /** @brief pluginPaths 获取插件路径

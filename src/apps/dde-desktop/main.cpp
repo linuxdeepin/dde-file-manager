@@ -47,9 +47,9 @@ DWIDGET_USE_NAMESPACE
 #endif
 
 /// @brief PLUGIN_INTERFACE 默认插件iid
-static const char *const FM_PLUGIN_INTERFACE = "org.deepin.plugin.desktop";
-static const char *const PLUGIN_CORE = "ddplugin-core";
-static const char *const LIB_CORE = "libddplugin-core.so";
+static const char *const kFmPluginInterface = "org.deepin.plugin.desktop";
+static const char *const kPluginCore = "ddplugin-core";
+static const char *const kLibCore = "libddplugin-core.so";
 
 static bool pluginsLoad()
 {
@@ -58,7 +58,7 @@ static bool pluginsLoad()
     auto &&lifeCycle = dpfInstance.lifeCycle();
 
     // set plugin iid from qt style
-    lifeCycle.setPluginIID(FM_PLUGIN_INTERFACE);
+    lifeCycle.addPluginIID(kFmPluginInterface);
 
     QDir dir(qApp->applicationDirPath());
     QString pluginsDir;
@@ -79,12 +79,12 @@ static bool pluginsLoad()
     if (!lifeCycle.readPlugins())
         return false;
 
-    // 手动初始化Core插件
-    auto corePlugin = lifeCycle.pluginMetaObj(PLUGIN_CORE);
+    // We should make sure that the core plugin is loaded first
+    auto corePlugin = lifeCycle.pluginMetaObj(kPluginCore);
     if (corePlugin.isNull())
         return false;
-    if (!corePlugin->fileName().contains(LIB_CORE)) {
-        qWarning() << corePlugin->fileName() << "is not" << LIB_CORE;
+    if (!corePlugin->fileName().contains(kLibCore)) {
+        qWarning() << corePlugin->fileName() << "is not" << kLibCore;
         return false;
     }
     if (!lifeCycle.loadPlugin(corePlugin))

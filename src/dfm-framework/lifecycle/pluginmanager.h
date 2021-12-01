@@ -44,7 +44,7 @@ class PluginManagerPrivate;
  * 其中重要的特性为：plugin IID (插件身份标识) 可参阅Qt插件规范；
  * 此处目前只支持Plugin接口插件的动态库形式插件加载
  */
-class PluginManager: public QObject
+class PluginManager : public QObject
 {
     Q_OBJECT
     friend class PluginManagerPrivate;
@@ -52,10 +52,10 @@ class PluginManager: public QObject
 
 public:
     explicit PluginManager();
-    QString pluginIID() const;
+    QStringList pluginIIDs() const;
     QStringList pluginPaths() const;
     QStringList servicePaths() const;
-    void setPluginIID(const QString &pluginIID);
+    void addPluginIID(const QString &pluginIIDs);
     void setPluginPaths(const QStringList &pluginPaths);
     void setServicePaths(const QStringList &servicePaths);
 
@@ -66,7 +66,7 @@ public:
     void stopPlugins();
 
     PluginMetaObjectPointer pluginMetaObj(const QString &pluginName,
-                                             const QString version = "") const;
+                                          const QString version = "") const;
 
     bool loadPlugin(PluginMetaObjectPointer &pointer);
     bool initPlugin(PluginMetaObjectPointer &pointer);
@@ -76,4 +76,4 @@ public:
 
 DPF_END_NAMESPACE
 
-#endif // PLUGINMANAGER_H
+#endif   // PLUGINMANAGER_H

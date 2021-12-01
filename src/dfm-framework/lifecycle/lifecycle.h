@@ -35,8 +35,8 @@ class LifeCycle final : public QObject
 {
     Q_OBJECT
 public:
-    static void setPluginIID(const QString &pluginIID);
-    static QString pluginIID();
+    static void addPluginIID(const QString &pluginIIDs);
+    static QStringList pluginIIDs();
     static QStringList pluginPaths();
     static void setPluginPaths(const QStringList &pluginPaths);
     static QStringList servicePaths();
@@ -53,4 +53,4 @@ public:
 
 DPF_END_NAMESPACE
 
-#endif // LIFECYCLE_H
+#endif   // LIFECYCLE_H

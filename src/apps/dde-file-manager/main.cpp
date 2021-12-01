@@ -49,9 +49,10 @@ DWIDGET_USE_NAMESPACE
 #endif
 
 /// @brief PLUGIN_INTERFACE 默认插件iid
-static const char *const FM_PLUGIN_INTERFACE = "org.deepin.plugin.filemanager";
-static const char *const PLUGIN_CORE = "dfmplugin-core";
-static const char *const LIB_CORE = "libdfmplugin-core.so";
+static const char *const kFmPluginInterface = "org.deepin.plugin.filemanager";
+static const char *const kCommonPluginInterface = "org.deepin.plugin.common";
+static const char *const kPluginCore = "dfmplugin-core";
+static const char *const kLibCore = "libdfmplugin-core.so";
 
 static bool pluginsLoad()
 {
@@ -60,8 +61,8 @@ static bool pluginsLoad()
     auto &&lifeCycle = dpfInstance.lifeCycle();
 
     // set plugin iid from qt style
-    lifeCycle.setPluginIID(FM_PLUGIN_INTERFACE);
-
+    lifeCycle.addPluginIID(kFmPluginInterface);
+    lifeCycle.addPluginIID(kCommonPluginInterface);
 
     QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
     if (!QDir(pluginsDir).exists()) {
@@ -69,7 +70,7 @@ static bool pluginsLoad()
     }
     qDebug() << "using plugins dir:" << pluginsDir;
 
-    lifeCycle.setPluginPaths({pluginsDir});
+    lifeCycle.setPluginPaths({ pluginsDir });
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
@@ -78,11 +79,11 @@ static bool pluginsLoad()
     if (!lifeCycle.readPlugins())
         return false;
 
-    // 手动初始化Core插件
-    auto corePlugin = lifeCycle.pluginMetaObj(PLUGIN_CORE);
+    // We should make sure that the core plugin is loaded first
+    auto corePlugin = lifeCycle.pluginMetaObj(kPluginCore);
     if (corePlugin.isNull())
         return false;
-    if (!corePlugin->fileName().contains(LIB_CORE))
+    if (!corePlugin->fileName().contains(kLibCore))
         return false;
     if (!lifeCycle.loadPlugin(corePlugin))
         return false;
