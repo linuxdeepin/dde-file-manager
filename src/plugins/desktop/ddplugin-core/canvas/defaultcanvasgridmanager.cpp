@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "defaultfiletreater.h"
-#include "config.h"
+#include "displayconfig.h"
 #include "private/defaultcanvasgridmanager_p.h"
 
 #include "dfm-base/base/schemefactory.h"
@@ -41,33 +41,33 @@ DefaultCanvasGridManagerPrivate::DefaultCanvasGridManagerPrivate()
 {
 }
 
-void DefaultCanvasGridManagerPrivate::readProfileGroup()
+static const char *const kScreenProfilePrefix = "Screen_";
+static const char *const kSingleScreen = "SingleScreen";
+
+static inline QString screenProfile(int index)
 {
-    screenProfiles.clear();
-    QMutexLocker lk(Config::instance()->mutex());
-    auto settings = Config::instance()->settings();
-    settings->beginGroup(Config::kKeyProfile);
-    for (QString &key : settings->allKeys()) {
-        screenProfiles.insert(key.toInt(), settings->value(key).toString());
-    }
-    settings->endGroup();
+    return QString(kScreenProfilePrefix) + QString::number(index);
 }
 
-void DefaultCanvasGridManagerPrivate::writeProfileGroup()
+static int profileIndex(QString screenKey)
 {
-    screenProfiles.clear();
-    QStringList keys;
-    QVariantList values;
+    auto strIdx = screenKey.remove(kScreenProfilePrefix);
+    bool ok = false;
+    int idx = strIdx.toInt(&ok);
 
-    auto screens = screenCode();
-    foreach (int index, screens) {
-        screenProfiles.insert(index, QString("Screen_%1").arg(index));
-        keys.append(QString::fromStdString(std::to_string(index)));
-        values.append(QString("Screen_%1").arg(index));
-    }
+    if (ok)
+        return idx;
+    else
+        return -1;
+}
 
-    Config::instance()->removeConfig(Config::kKeyProfile, "");
-    Config::instance()->setConfigList(Config::kKeyProfile, keys, values);
+void DefaultCanvasGridManagerPrivate::saveProfile()
+{
+    QSet<QString> profile;
+    for (int index : screenCode())
+        profile.insert(screenProfile(index));
+
+    DispalyIns->setProfile(profile);
 }
 
 QPair<int, QPoint> DefaultCanvasGridManagerPrivate::takeEmptyPos(const int screenNum)
@@ -130,66 +130,72 @@ void DefaultCanvasGridManagerPrivate::loadProfile(const QList<DFMDesktopFileInfo
         return;
     }
 
-    QHash<int, QString> screenNumProfiles;
-    if (singleScreen) {
-        screenNumProfiles.insert(1, QString("SingleScreen"));
-    } else {
-        readProfileGroup();
-        screenNumProfiles = screenProfiles;
+    // signle screen and multi-screen use different key
+    QSet<QString> screenProfiles;
+    if (singleScreen)
+        screenProfiles.insert(kSingleScreen);
+    else
+        screenProfiles = DispalyIns->profile();
+
+    // read config
+    QHash<int, QHash<QString, QPoint>> screenFilePos;
+    for (const QString &screenKey : screenProfiles) {
+       int idx = profileIndex(screenKey);
+       if (idx < 1)
+           continue;
+       QHash<QString, QPoint> filePos = DispalyIns->coordinates(screenKey);
+       if (filePos.isEmpty())
+           continue;
+
+       screenFilePos.insert(idx, filePos);
     }
 
-    // 获取每个屏幕分组信息对应的图标信息
-    QMap<int, QList<DFMDesktopFileInfoPointer>> moreIcon;
-    QMutexLocker lk(Config::instance()->mutex());
-    auto settings = Config::instance()->settings();
-    for (int &screenKey : screenNumProfiles.keys()) {
-        settings->beginGroup(screenNumProfiles.value(screenKey));
-        auto ttt = settings->allKeys();
-        for (auto &key : settings->allKeys()) {
-            auto coords = key.split("_");
-            auto x = coords.value(0).toInt();
-            auto y = coords.value(1).toInt();
-            QString item = settings->value(key).toString();
-            item = UrlRoute::urlToPath(item);
-            auto routeU = UrlRoute::pathToReal(item);
+    QMap<int, QList<DFMDesktopFileInfoPointer>> other;
+
+    // restore current screen's files into coordinates as it configured
+    for (int screenIdx : screenCode()) {
+        const QHash<QString, QPoint> &filePos = screenFilePos.value(screenIdx);
+        for (auto iter = filePos.cbegin(); iter != filePos.end(); ++iter) {
+            QString path = UrlRoute::urlToPath(iter.key());
+            QUrl url = UrlRoute::pathToReal(path);
             QString errString;
-            auto itemInfo = InfoFactory::create<DefaultDesktopFileInfo>(routeU, &errString);
+            auto itemInfo = InfoFactory::create<DefaultDesktopFileInfo>(url, &errString);
             if (!itemInfo)
                 qInfo() << "loadProfile error: " << errString;
             if (existItems.contains(itemInfo)) {
-                QPoint pos { x, y };
-                if (!screenCode().contains(screenKey) || !isValid(screenKey, pos)) {
+                const QPoint &pos = iter.value();
+                if (!isValid(screenIdx, pos)) {
                     // 读取的文件实际存在，但是配置的位置不合法，则后面重新查找空位
-                    moreIcon[screenKey].append(itemInfo);
+                    other[screenIdx].append(itemInfo);
                 } else {
                     // 将文件添加到指定位置
-                    if (!add(screenKey, pos, itemInfo)) {
+                    if (!add(screenIdx, pos, itemInfo)) {
                         continue;
                     }
                 }
                 existItems.remove(itemInfo);
             }
         }
-        settings->endGroup();
     }
-    lk.unlock();
+
 
     // 优先处理文件位置有记录但是不合法的项
-    for (int key : moreIcon.keys()) {
-        foreach (auto item, moreIcon.value(key)) {
+    for (int key : other.keys()) {
+        foreach (auto item, other.value(key)) {
             // 优先在原记录的屏幕上添加,失败则自动查找空位
             add(key, item);
         }
     }
 
     // 再处理没有记录文件位置的项
+    int begin = screenCode().first();
     for (auto &item : orderedItems) {
         // 已经处理过的项跳过
         if (!existItems.contains(item))
             continue;
 
         // 优先依据屏幕顺序查找空位
-        add(screenCode().first(), item);
+        add(begin, item);
     }
 }
 
@@ -390,11 +396,8 @@ void DefaultCanvasGridManager::initCoord(const int screenCount)
 {
     if (screenCount <= 0)
         return;
-    if (screenCount == 1)
-        d->singleScreen = true;
-    else
-        d->singleScreen = false;
 
+    d->singleScreen = screenCount == 1;
     d->clearCoord();
     for (int i = 1; i <= screenCount; ++i) {
         d->screensCoordInfo[i] = qMakePair(0, 0);

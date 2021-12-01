@@ -85,7 +85,7 @@ set(core_cxx_cpp
     canvas/defaultcanvasgridmanager.cpp
     canvas/defaultdesktopfileinfo.cpp
     canvas/defaultfiletreater.cpp
-    canvas/config.cpp
+    canvas/displayconfig.cpp
     utils/desktoputils.cpp
     screen/screenqt.cpp
     screen/screenproxyqt.cpp
@@ -116,7 +116,7 @@ set(core_cxx_h
     canvas/defaultcanvasgridmanager.h
     canvas/defaultdesktopfileinfo.h
     canvas/defaultfiletreater.h
-    canvas/config.h
+    canvas/displayconfig.h
     utils/desktoputils.h
     screen/screenqt.h
     screen/screenproxyqt.h

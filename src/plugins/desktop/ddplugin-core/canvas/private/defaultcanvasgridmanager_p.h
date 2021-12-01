@@ -152,14 +152,11 @@ public:
 
 private:
     QPair<QStringList, QVariantList> generateProfileVariable(int screenNum);
-    void readProfileGroup();
-    void writeProfileGroup();
+    void saveProfile();
     QPair<int, QPoint> takeEmptyPos(const int screenNum = 1);
     bool setCellStatus(const int screenNum, const int index, bool state);
 
 public:
-    // 屏幕配置文件 1=Screen_1     2=Screen_2
-    QHash<int, QString> screenProfiles;
     // 屏幕编号-栅格行列数信息
     QMap<int, QPair<int, int>> screensCoordInfo;
     // 屏幕编号-是否有图标
