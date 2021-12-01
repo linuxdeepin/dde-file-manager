@@ -21,16 +21,16 @@
 #ifndef BACKGROUNDMANAGER_H
 #define BACKGROUNDMANAGER_H
 
-#include "dfm-base/widgets/abstractbackgroundmanager.h"
 #include "dfm-base/widgets/screenglobal.h"
-
+#include "dfm-base/widgets/abstractbackground.h"
+#include "dfm_desktop_service_global.h"
 #include <QObject>
 
 DSB_D_BEGIN_NAMESPACE
 
 class BackgroundManagerPrivate;
 
-class BackgroundManager : public dfmbase::AbstractBackgroundManager
+class BackgroundManager : public QObject
 {
     Q_OBJECT
     friend class BackgroundManagerPrivate;

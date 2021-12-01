@@ -149,8 +149,7 @@ bool BackgroundManagerPrivate::isEnableBackground()
 }
 
 BackgroundManager::BackgroundManager(QObject *parent)
-    : AbstractBackgroundManager(parent)
-    , d(new BackgroundManagerPrivate(this))
+    : d(new BackgroundManagerPrivate(this))
 {
     init();
 

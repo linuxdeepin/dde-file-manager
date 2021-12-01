@@ -24,13 +24,14 @@
 
 #include "dfm_desktop_service_global.h"
 #include "canvasfactory.h"
-#include "dfm-base/widgets/abstractcanvas.h"
 #include "dfm-base/widgets/abstractscreen.h"
 #include "canvasviewmanager.h"
 
 #include <dfm-framework/framework.h>
 
+
 DSB_D_BEGIN_NAMESPACE
+class CanvasViewManager;
 class CanvasService final : public dpf::PluginService, dpf::AutoServiceRegister<CanvasService>
 {
     Q_OBJECT
@@ -38,16 +39,17 @@ class CanvasService final : public dpf::PluginService, dpf::AutoServiceRegister<
 
     friend class dpf::QtClassFactory<dpf::PluginService>;
     friend class ::Core;
-    explicit CanvasService(QObject *parent = nullptr);
 
 public:
     static QString name()
     {
         return "org.deepin.service.CanvasService";
     }
-
+protected:
+    explicit CanvasService(QObject *parent = nullptr);
+    ~CanvasService();
 private:
-    dfmbase::AbstractCanvasManager *canvasMgrProxy { nullptr };
+    CanvasViewManager *canvasMgrProxy { nullptr };
 };
 DSB_D_END_NAMESPACE
 

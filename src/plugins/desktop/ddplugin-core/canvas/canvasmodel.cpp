@@ -18,25 +18,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "defaultcanvasmodel.h"
+#include "canvasmodel.h"
 #include "defaultdesktopfileinfo.h"
-#include "defaultfiletreater.h"
+#include "filetreater.h"
 #include "dfm-base/base/abstractfileinfo.h"
 
 DSB_D_BEGIN_NAMESPACE
 
-DefaultCanvasModel::DefaultCanvasModel(QObject *parent)
-    : dfmbase::AbstractCanvasModel(parent)
+CanvasModel::CanvasModel(QObject *parent)
+    : QAbstractItemModel(parent)
 {
 }
 
-QModelIndex DefaultCanvasModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex CanvasModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    if (row < 0 || column < 0 || 0 == DefaultFileTreaterCt->fileCount()) {
+    if (row < 0 || column < 0 || 0 == FileTreaterCt->fileCount()) {
         return QModelIndex();
     }
-    auto fileInfo = DefaultFileTreaterCt->getFileByIndex(row);
+    auto fileInfo = FileTreaterCt->getFileByIndex(row);
     if (!fileInfo) {
         return QModelIndex();
     }
@@ -44,46 +44,46 @@ QModelIndex DefaultCanvasModel::index(int row, int column, const QModelIndex &pa
     return createIndex(row, column, fileInfo.data());
 }
 
-QModelIndex DefaultCanvasModel::index(const QString &fileUrl, int column)
+QModelIndex CanvasModel::index(const QString &fileUrl, int column)
 {
     if (!fileUrl.isEmpty())
         return QModelIndex();
-    auto fileInfo = DefaultFileTreaterCt->getFileByUrl(fileUrl);
+    auto fileInfo = FileTreaterCt->getFileByUrl(fileUrl);
     if (!fileInfo)
         return QModelIndex();
 
     return createIndexByFileInfo(fileInfo, column);
 }
 
-QModelIndex DefaultCanvasModel::index(const DFMDesktopFileInfoPointer &fileInfo, int column) const
+QModelIndex CanvasModel::index(const DFMDesktopFileInfoPointer &fileInfo, int column) const
 {
     if (!fileInfo)
         return QModelIndex();
     return createIndexByFileInfo(fileInfo, column);
 }
 
-QModelIndex DefaultCanvasModel::parent(const QModelIndex &index) const
+QModelIndex CanvasModel::parent(const QModelIndex &index) const
 {
     Q_UNUSED(index)
     // 用不着此接口
     return QModelIndex();
 }
 
-int DefaultCanvasModel::rowCount(const QModelIndex &parent) const
+int CanvasModel::rowCount(const QModelIndex &parent) const
 {
     if (!parent.isValid())
         return 0;
 
-    return DefaultFileTreaterCt->fileCount();
+    return FileTreaterCt->fileCount();
 }
 
-int DefaultCanvasModel::columnCount(const QModelIndex &parent) const
+int CanvasModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     return 0;
 }
 
-QVariant DefaultCanvasModel::data(const QModelIndex &index, int role) const
+QVariant CanvasModel::data(const QModelIndex &index, int role) const
 {
     // todo: 待优化剔除非桌面角色
     if (!index.isValid() || index.model() != this) {
@@ -141,7 +141,7 @@ QVariant DefaultCanvasModel::data(const QModelIndex &index, int role) const
     }
 }
 
-QVariant DefaultCanvasModel::dataByRole(const DefaultDesktopFileInfo *fileInfo, int role) const
+QVariant CanvasModel::dataByRole(const DefaultDesktopFileInfo *fileInfo, int role) const
 {
     // todo temp使用
     switch (role) {
@@ -167,9 +167,9 @@ QVariant DefaultCanvasModel::dataByRole(const DefaultDesktopFileInfo *fileInfo, 
     }
 }
 
-QModelIndex DefaultCanvasModel::createIndexByFileInfo(const DFMDesktopFileInfoPointer &fileInfo, int column) const
+QModelIndex CanvasModel::createIndexByFileInfo(const DFMDesktopFileInfoPointer &fileInfo, int column) const
 {
-    int row = (0 < DefaultFileTreaterCt->fileCount()) ? DefaultFileTreaterCt->indexOfChild(fileInfo) : 0;
+    int row = (0 < FileTreaterCt->fileCount()) ? FileTreaterCt->indexOfChild(fileInfo) : 0;
     return createIndex(row, column, const_cast<DefaultDesktopFileInfo *>(fileInfo.data()));
 }
 

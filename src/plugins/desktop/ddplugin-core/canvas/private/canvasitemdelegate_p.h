@@ -18,10 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DEFAULTCANVASITEMDELEGATE_P_H
-#define DEFAULTCANVASITEMDELEGATE_P_H
+#ifndef CANVASITEMDELEGATE_P_H
+#define CANVASITEMDELEGATE_P_H
 
-#include "defaultcanvasitemdelegate.h"
+#include "canvasitemdelegate.h"
 
 #include <QPointer>
 #include <QTextDocument>
@@ -33,7 +33,7 @@ class ExpandedItem : public QWidget
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
 
 public:
-    explicit ExpandedItem(DefaultCanvasItemDelegate *d, QWidget *parent = nullptr)
+    explicit ExpandedItem(CanvasItemDelegate *d, QWidget *parent = nullptr)
         : QWidget(parent), delegate(d)
     {
     }
@@ -56,20 +56,20 @@ public:
     QStyleOptionViewItem option;
     qreal m_opactity = 1;
     bool canDeferredDelete = true;
-    DefaultCanvasItemDelegate *delegate;
+    CanvasItemDelegate *delegate;
 };
 
-class DefaultCanvasItemDelegatePrivate
+class CanvasItemDelegatePrivate
 {
-    friend class DefaultCanvasItemDelegate;
+    friend class CanvasItemDelegate;
 
 public:
-    explicit DefaultCanvasItemDelegatePrivate(DefaultCanvasItemDelegate *qq)
+    explicit CanvasItemDelegatePrivate(CanvasItemDelegate *qq)
         : q(qq)
     {
         iconSizes << 32 << 48 << 64 << 96 << 128;
     }
-    ~DefaultCanvasItemDelegatePrivate() {}
+    ~CanvasItemDelegatePrivate() {}
 
 public:
     QPointer<ExpandedItem> expandedItem;
@@ -83,7 +83,7 @@ public:
     QList<int> iconSizes;
 
     QTextDocument *document = nullptr;
-    DefaultCanvasItemDelegate *const q;
+    CanvasItemDelegate *const q;
 };
 
-#endif   // DEFAULTCANVASITEMDELEGATE_P_H
+#endif   // CANVASITEMDELEGATE_P_H

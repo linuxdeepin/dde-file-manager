@@ -18,23 +18,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DEFAULTCANVASVIEW_H
-#define DEFAULTCANVASVIEW_H
+#ifndef CANVASVIEW_H
+#define CANVASVIEW_H
 
-#include "dfm-base/widgets/abstractcanvas.h"
 #include "defaultdesktopfileinfo.h"
-#include "defaultcanvasmodel.h"
+#include "canvasmodel.h"
+
+#include <QAbstractItemView>
 
 DSB_D_USE_NAMESPACE
 
-class DefaultCanvasItemDelegate;
-class DefaultCanvasViewPrivate;
-class DefaultCanvasView : public dfmbase::AbstractCanvas
+class CanvasItemDelegate;
+class CanvasViewPrivate;
+class CanvasView : public QAbstractItemView
 {
+    Q_OBJECT
 public:
-    explicit DefaultCanvasView(QWidget *parent = nullptr);
-    ~DefaultCanvasView() override {}
-
+    explicit CanvasView(QWidget *parent = nullptr);
     virtual QRect visualRect(const QModelIndex &index) const override;
     QRect visualRect(const QPoint &gridPos);
     virtual void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
@@ -50,14 +50,14 @@ public:
     virtual void paintEvent(QPaintEvent *event) override;
 
 public:
-    void setScreenNum(const int screenNum) override;
-    void setScreenName(const QString name) override;
-    int getScreenNum() override;
-    QString getScreenName() override;
+    void setScreenNum(const int screenNum);
+    void setScreenName(const QString name);
+    int getScreenNum();
+    QString getScreenName();
 
 public:
-    DefaultCanvasItemDelegate *itemDelegate() const;
-    DefaultCanvasModel *canvasModel() const;
+    CanvasItemDelegate *itemDelegate() const;
+    CanvasModel *canvasModel() const;
     void setGeometry(const QRect &rect);
     void updateCanvas();
     QString fileDisplayNameRole(const QModelIndex &index);
@@ -74,6 +74,6 @@ private:
     void drawDragMove(QPainter *painter, QStyleOptionViewItem &option);
 
 private:
-    QScopedPointer<DefaultCanvasViewPrivate> d;
+    QScopedPointer<CanvasViewPrivate> d;
 };
-#endif   // DEFAULTCANVASVIEW_H
+#endif   // CANVASVIEW_H

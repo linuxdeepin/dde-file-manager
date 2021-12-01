@@ -18,28 +18,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DEFAULTCANVASGRID_P_H
-#define DEFAULTCANVASGRID_P_H
+#ifndef CANVASGRID_P_H
+#define CANVASGRID_P_H
 
-#include "defaultcanvasgridmanager.h"
+#include "canvasgridmanager.h"
 
 uint qHash(const QPoint &key, uint seed = 0);
 
 DSB_D_BEGIN_NAMESPACE
 
-class DefaultCanvasGridManagerPrivate : public QObject
+class CanvasGridManagerPrivate
 {
-    Q_OBJECT
-    friend class DefaultCanvasGridManager;
-
+    friend class CanvasGridManager;
 public:
-    explicit DefaultCanvasGridManagerPrivate();
-    DefaultCanvasGridManagerPrivate(DefaultCanvasGridManagerPrivate &) = delete;
-    DefaultCanvasGridManagerPrivate &operator=(DefaultCanvasGridManagerPrivate &) = delete;
-
-    ~DefaultCanvasGridManagerPrivate();
-
-public:
+    explicit CanvasGridManagerPrivate(CanvasGridManager *q_ptr);
     void loadProfile(const QList<DFMDesktopFileInfoPointer> &orderedItems, QHash<DFMDesktopFileInfoPointer, bool> existItems);
     void syncAllProfile();
     void syncProfile(const int screenNum);
@@ -76,9 +68,9 @@ public:
          * \brief 获取实际屏幕编号
          * \return 返回所有屏幕编号
          */
-    inline QList<int> screenCode() const
+    QList<int> screenCode() const
     {
-        QList<int> screenOrder = screensCoordInfo.keys();
+        QList<int> screenOrder = gridSize.keys();
         qSort(screenOrder.begin(), screenOrder.end());
         return screenOrder;
     }
@@ -87,10 +79,10 @@ public:
          * \brief 获取堆叠图标位置
          * \return 返回堆叠图标位置
          */
-    inline QPoint overlapPos()
+    QPoint overlapPos()
     {
-        auto coordInfo = screensCoordInfo.last();
-        return QPoint(coordInfo.first - 1, coordInfo.second - 1);
+        auto coordInfo = gridSize.last();
+        return QPoint(coordInfo.x() - 1, coordInfo.y() - 1);
     }
 
     /*!
@@ -101,7 +93,7 @@ public:
          */
     inline QPoint gridPosAt(const int screenNum, const int index)
     {
-        auto coordHeight = screensCoordInfo.value(screenNum).second;
+        auto coordHeight = gridSize.value(screenNum).y();
         auto x = index / coordHeight;
         auto y = index % coordHeight;
         return QPoint(x, y);
@@ -115,11 +107,11 @@ public:
          */
     inline int indexOfGridPos(const int screenNum, const QPoint &pos)
     {
-        auto screenCoord = screensCoordInfo.value(screenNum);
-        if (0 == screenCoord.first) {
+        auto screenCoord = gridSize.value(screenNum);
+        if (0 == screenCoord.x()) {
             return 0;
         } else {
-            return pos.x() * screenCoord.second + pos.y();
+            return pos.x() * screenCoord.y() + pos.y();
         }
     }
 
@@ -131,8 +123,8 @@ public:
          */
     inline bool isValid(int screenNum, QPoint pos) const
     {
-        auto coordInfo = screensCoordInfo.value(screenNum);
-        return coordInfo.first > pos.x() && coordInfo.second > pos.y()
+        auto coordInfo = gridSize.value(screenNum);
+        return coordInfo.x() > pos.x() && coordInfo.y() > pos.y()
                 && pos.x() >= 0 && pos.y() >= 0;
     }
 
@@ -143,22 +135,24 @@ public:
          */
     inline int cellCount(int screenNum) const
     {
-        auto coordInfo = screensCoordInfo.value(screenNum);
-        return coordInfo.second * coordInfo.first;
+        auto coordInfo = gridSize.value(screenNum);
+        return coordInfo.y() * coordInfo.x();
     }
 
     void clearCoord();
     void clearPositionData();
 
 private:
+    Q_DISABLE_COPY(CanvasGridManagerPrivate)
     QPair<QStringList, QVariantList> generateProfileVariable(int screenNum);
     void saveProfile();
     QPair<int, QPoint> takeEmptyPos(const int screenNum = 1);
     bool setCellStatus(const int screenNum, const int index, bool state);
 
-public:
+private:
     // 屏幕编号-栅格行列数信息
-    QMap<int, QPair<int, int>> screensCoordInfo;
+    // x ~ column, y ~ row
+    QMap<int, QPoint> gridSize;
     // 屏幕编号-是否有图标
     QHash<int, QVector<bool>> cellStatus;
     // 屏幕编号<栅格位置,文件info>
@@ -169,7 +163,7 @@ public:
     QList<DFMDesktopFileInfoPointer> overlapItems;
     // 所有文件
     QList<DFMDesktopFileInfoPointer> allItems;
-    DefaultCanvasGridManager *const q { nullptr };
+    CanvasGridManager *const q;
 
     bool singleScreen = false;
     bool isAutoArrange = false;
@@ -178,4 +172,4 @@ public:
 };
 
 DSB_D_END_NAMESPACE
-#endif   // DEFAULTCANVASGRID_P_H
+#endif   // CANVASGRID_P_H

@@ -18,9 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "defaultfiletreater.h"
+#include "filetreater.h"
 #include "displayconfig.h"
-#include "private/defaultcanvasgridmanager_p.h"
+#include "private/canvasgridmanager_p.h"
 
 #include "dfm-base/base/schemefactory.h"
 
@@ -37,12 +37,17 @@ uint qHash(const QPoint &key, uint seed)
 
 DSB_D_BEGIN_NAMESPACE
 
-DefaultCanvasGridManagerPrivate::DefaultCanvasGridManagerPrivate()
-{
-}
+class CanvasGridManagerGlobal : public CanvasGridManager{};
+Q_GLOBAL_STATIC(CanvasGridManagerGlobal, canvasGridManager)
 
 static const char *const kScreenProfilePrefix = "Screen_";
 static const char *const kSingleScreen = "SingleScreen";
+
+CanvasGridManagerPrivate::CanvasGridManagerPrivate(CanvasGridManager *q_ptr)
+    : q(q_ptr)
+{
+
+}
 
 static inline QString screenProfile(int index)
 {
@@ -61,7 +66,7 @@ static int profileIndex(QString screenKey)
         return -1;
 }
 
-void DefaultCanvasGridManagerPrivate::saveProfile()
+void CanvasGridManagerPrivate::saveProfile()
 {
     QSet<QString> profile;
     for (int index : screenCode())
@@ -70,7 +75,7 @@ void DefaultCanvasGridManagerPrivate::saveProfile()
     DispalyIns->setProfile(profile);
 }
 
-QPair<int, QPoint> DefaultCanvasGridManagerPrivate::takeEmptyPos(const int screenNum)
+QPair<int, QPoint> CanvasGridManagerPrivate::takeEmptyPos(const int screenNum)
 {
     QPair<int, QPoint> posPair;
     if (cellStatus.contains(screenNum)) {
@@ -98,7 +103,7 @@ QPair<int, QPoint> DefaultCanvasGridManagerPrivate::takeEmptyPos(const int scree
     return posPair;
 }
 
-bool DefaultCanvasGridManagerPrivate::setCellStatus(const int screenNum, const int index, bool state)
+bool CanvasGridManagerPrivate::setCellStatus(const int screenNum, const int index, bool state)
 {
     if (!cellStatus.contains(screenNum)) {
         return false;
@@ -112,10 +117,6 @@ bool DefaultCanvasGridManagerPrivate::setCellStatus(const int screenNum, const i
     return true;
 }
 
-DefaultCanvasGridManagerPrivate::~DefaultCanvasGridManagerPrivate()
-{
-}
-
 /*!
  * \brief GridManagerPrivate::loadProfile，加载配置文件数据，加载时会根据真实文件信息对配置文件进行过滤，
  * 过配置文件中存在但真实文件中已被删除的文件，新增配置文件中不存在的文件，这里的设计是：配置文件中是1357,若新增2468则根据
@@ -123,7 +124,7 @@ DefaultCanvasGridManagerPrivate::~DefaultCanvasGridManagerPrivate()
  * \param orderedItems 需要处理的的文件列表，用于解析文件后，配置文件中不存在的项去查找新位置（该项可能比existItems少）
  * \param existItems 实际存在的文件哈西表，用于解析文件时，判断该文件实际是否存在（使用QHash而非QList是为了提升性能）
  */
-void DefaultCanvasGridManagerPrivate::loadProfile(const QList<DFMDesktopFileInfoPointer> &orderedItems, QHash<DFMDesktopFileInfoPointer, bool> existItems)
+void CanvasGridManagerPrivate::loadProfile(const QList<DFMDesktopFileInfoPointer> &orderedItems, QHash<DFMDesktopFileInfoPointer, bool> existItems)
 {
     if (screenCode().isEmpty()) {
         qWarning() << "not found screen,give up load profile!!!";
@@ -199,11 +200,11 @@ void DefaultCanvasGridManagerPrivate::loadProfile(const QList<DFMDesktopFileInfo
     }
 }
 
-void DefaultCanvasGridManagerPrivate::syncAllProfile()
+void CanvasGridManagerPrivate::syncAllProfile()
 {
 }
 
-void DefaultCanvasGridManagerPrivate::syncProfile(const int screenNum)
+void CanvasGridManagerPrivate::syncProfile(const int screenNum)
 {
     Q_UNUSED(screenNum)
 }
@@ -212,7 +213,7 @@ void DefaultCanvasGridManagerPrivate::syncProfile(const int screenNum)
  * \brief GridManagerPrivate::autoArrange,自动排列，自动排列功能仅排列收拢已排序数据
  * \param sortedItems，所有排序数据
  */
-void DefaultCanvasGridManagerPrivate::autoArrange(QList<DFMDesktopFileInfoPointer> sortedItems)
+void CanvasGridManagerPrivate::autoArrange(QList<DFMDesktopFileInfoPointer> sortedItems)
 {
     // todo：过滤gsetting中配置的文件
     auto screenOrder = screenCode();
@@ -222,7 +223,7 @@ void DefaultCanvasGridManagerPrivate::autoArrange(QList<DFMDesktopFileInfoPointe
         QHash<DFMDesktopFileInfoPointer, QPoint> tempItemGrids;
         if (!sortedItems.empty()) {
             auto tempCellStatus = cellStatus.value(screenNum);
-            int coordHeight = screensCoordInfo.value(screenNum).second;
+            int coordHeight = gridSize.value(screenNum).x();
             for (int i = 0; i < tempCellStatus.size() && !sortedItems.empty(); ++i) {
                 auto item = sortedItems.takeFirst();
                 QPoint pos(i / coordHeight, i % coordHeight);
@@ -237,7 +238,7 @@ void DefaultCanvasGridManagerPrivate::autoArrange(QList<DFMDesktopFileInfoPointe
     overlapItems = sortedItems;
 }
 
-void DefaultCanvasGridManagerPrivate::clear()
+void CanvasGridManagerPrivate::clear()
 {
     itemGrids.clear();
     gridItems.clear();
@@ -251,8 +252,8 @@ void DefaultCanvasGridManagerPrivate::clear()
         itemGrids.insert(i, itemGrid);
     }
 
-    auto coordkeys = screensCoordInfo.keys();
-    for (auto key : coordkeys) {
+    auto coordkeys = gridSize.keys();
+    for (int key : coordkeys) {
         QVector<bool> tempVector;
         tempVector.resize(cellCount(key));
         cellStatus.insert(key, tempVector);
@@ -265,12 +266,12 @@ void DefaultCanvasGridManagerPrivate::clear()
     }
 }
 
-bool DefaultCanvasGridManagerPrivate::add(const int screenNum, const QPoint &pos, const DFMDesktopFileInfoPointer &info)
+bool CanvasGridManagerPrivate::add(const int screenNum, const QPoint &pos, const DFMDesktopFileInfoPointer &info)
 {
     if (!info) {
         qCritical() << "add empty item";
         return false;
-    } else if (!screensCoordInfo.contains(screenNum)) {
+    } else if (!gridSize.contains(screenNum)) {
         qCritical() << "add" << info->filePath() << "failed. screen:" << screenNum << " invalid.";
         return false;
     } else if (!isValid(screenNum, pos)) {
@@ -303,7 +304,7 @@ bool DefaultCanvasGridManagerPrivate::add(const int screenNum, const QPoint &pos
     return ret;
 }
 
-bool DefaultCanvasGridManagerPrivate::add(const int screenNum, const DFMDesktopFileInfoPointer &info)
+bool CanvasGridManagerPrivate::add(const int screenNum, const DFMDesktopFileInfoPointer &info)
 {
     if (!info) {
         qCritical() << "add empty item";
@@ -314,7 +315,7 @@ bool DefaultCanvasGridManagerPrivate::add(const int screenNum, const DFMDesktopF
     return add(posPair.first, posPair.second, info);
 }
 
-bool DefaultCanvasGridManagerPrivate::add(const DFMDesktopFileInfoPointer &info)
+bool CanvasGridManagerPrivate::add(const DFMDesktopFileInfoPointer &info)
 {
     if (!info) {
         qCritical() << "add empty item";
@@ -325,7 +326,7 @@ bool DefaultCanvasGridManagerPrivate::add(const DFMDesktopFileInfoPointer &info)
     return add(posPair.first, posPair.second, info);
 }
 
-bool DefaultCanvasGridManagerPrivate::remove(const int screenNum, const DFMDesktopFileInfoPointer &info)
+bool CanvasGridManagerPrivate::remove(const int screenNum, const DFMDesktopFileInfoPointer &info)
 {
     if (!itemGrids.value(screenNum).contains(info)) {
         qDebug() << "can not remove:" << info->filePath() << " from screen:" << screenNum;
@@ -344,7 +345,7 @@ bool DefaultCanvasGridManagerPrivate::remove(const int screenNum, const DFMDeskt
     return setCellStatus(screenNum, usageIndex, false);
 }
 
-bool DefaultCanvasGridManagerPrivate::remove(const DFMDesktopFileInfoPointer &info)
+bool CanvasGridManagerPrivate::remove(const DFMDesktopFileInfoPointer &info)
 {
     if (overlapItems.contains(info)) {
         overlapItems.removeAll(info);
@@ -360,14 +361,14 @@ bool DefaultCanvasGridManagerPrivate::remove(const DFMDesktopFileInfoPointer &in
     return false;
 }
 
-void DefaultCanvasGridManagerPrivate::updateGridSize(const int screenNum, const int width, const int height)
+void CanvasGridManagerPrivate::updateGridSize(const int screenNum, const int width, const int height)
 {
-    if (!screensCoordInfo.contains(screenNum)) {
+    if (!gridSize.contains(screenNum)) {
         return;
     }
-    auto coordInfo = screensCoordInfo.find(screenNum);
-    coordInfo.value().first = width;
-    coordInfo.value().second = height;
+    auto coordInfo = gridSize.find(screenNum);
+    coordInfo->setX(width);
+    coordInfo->setY(height);
 
     cellStatus[screenNum] = QVector<bool>(width * height, false);
 }
@@ -375,24 +376,23 @@ void DefaultCanvasGridManagerPrivate::updateGridSize(const int screenNum, const 
 /*!
  * \brief 清除栅格相关信息（需要重新解析配置文件）（初始化、模式改变）
  */
-void DefaultCanvasGridManagerPrivate::clearCoord()
+void CanvasGridManagerPrivate::clearCoord()
 {
 }
 
 /*!
  * \brief 清除与记录的文件位置相关的数据（分辨率改变）
  */
-void DefaultCanvasGridManagerPrivate::clearPositionData()
+void CanvasGridManagerPrivate::clearPositionData()
 {
 }
 
-DefaultCanvasGridManager *DefaultCanvasGridManager::instance()
+CanvasGridManager *CanvasGridManager::instance()
 {
-    static DefaultCanvasGridManager gridMgr;
-    return &gridMgr;
+    return canvasGridManager;
 }
 
-void DefaultCanvasGridManager::initCoord(const int screenCount)
+void CanvasGridManager::initCoord(const int screenCount)
 {
     if (screenCount <= 0)
         return;
@@ -400,15 +400,15 @@ void DefaultCanvasGridManager::initCoord(const int screenCount)
     d->singleScreen = screenCount == 1;
     d->clearCoord();
     for (int i = 1; i <= screenCount; ++i) {
-        d->screensCoordInfo[i] = qMakePair(0, 0);
+        d->gridSize[i] = QPoint(0, 0);
     }
 }
 
-void DefaultCanvasGridManager::initGridItemsInfo()
+void CanvasGridManager::initGridItemsInfo()
 {
     QList<DFMDesktopFileInfoPointer> list;
     QHash<DFMDesktopFileInfoPointer, bool> existItems;
-    QList<DFMDesktopFileInfoPointer> &actualList = DefaultFileTreaterCt->getFiles();
+    QList<DFMDesktopFileInfoPointer> &actualList = FileTreaterCt->getFiles();
     for (const DFMDesktopFileInfoPointer &df : actualList) {
         list.append(df);
         qDebug() << df->fileName() << df;
@@ -417,20 +417,20 @@ void DefaultCanvasGridManager::initGridItemsInfo()
     d->loadProfile(list, existItems);
 }
 
-void DefaultCanvasGridManager::initArrage(const QList<DFMDesktopFileInfoPointer> &items)
+void CanvasGridManager::initArrage(const QList<DFMDesktopFileInfoPointer> &items)
 {
     d->clear();
     d->autoArrange(items);
 }
 
-void DefaultCanvasGridManager::updateGridSize(const int screenNum, const int width, const int height)
+void CanvasGridManager::updateGridSize(const int screenNum, const int width, const int height)
 {
-    auto coordInfo = d->screensCoordInfo.value(screenNum);
-    if (width == coordInfo.first && height == coordInfo.second) {
+    auto coordInfo = d->gridSize.value(screenNum);
+    if (width == coordInfo.x() && height == coordInfo.y()) {
         return;
     }
 
-    if (0 == coordInfo.first || 0 == coordInfo.second) {
+    if (0 == coordInfo.x() || 0 == coordInfo.y()) {
         d->updateGridSize(screenNum, width, height);
         return;
     }
@@ -438,34 +438,34 @@ void DefaultCanvasGridManager::updateGridSize(const int screenNum, const int wid
     d->updateGridSize(screenNum, width, height);
 }
 
-QPoint DefaultCanvasGridManager::filePos(const int screenNum, const DFMDesktopFileInfoPointer &info)
+QPoint CanvasGridManager::filePos(const int screenNum, const DFMDesktopFileInfoPointer &info)
 {
     Q_UNUSED(screenNum)
     Q_UNUSED(info)
     return QPoint(0, 0);
 }
 
-QPoint DefaultCanvasGridManager::filePos(const int screenNum, const QModelIndex &info)
+QPoint CanvasGridManager::filePos(const int screenNum, const QModelIndex &info)
 {
     Q_UNUSED(screenNum)
     Q_UNUSED(info)
     return QPoint(0, 0);
 }
 
-int DefaultCanvasGridManager::emptyPostionCount(int screenNum) const
+int CanvasGridManager::emptyPostionCount(int screenNum) const
 {
     Q_UNUSED(screenNum)
     return 0;
 }
 
-bool DefaultCanvasGridManager::find(const QString &itemId, QPair<int, QPoint> &pos)
+bool CanvasGridManager::find(const QString &itemId, QPair<int, QPoint> &pos)
 {
     Q_UNUSED(itemId)
     Q_UNUSED(pos)
     return false;
 }
 
-bool DefaultCanvasGridManager::isEmpty(int screenNum, int x, int y)
+bool CanvasGridManager::isEmpty(int screenNum, int x, int y)
 {
     Q_UNUSED(screenNum)
     Q_UNUSED(x)
@@ -473,33 +473,33 @@ bool DefaultCanvasGridManager::isEmpty(int screenNum, int x, int y)
     return false;
 }
 
-bool DefaultCanvasGridManager::contains(int screebNum, const QString &id)
+bool CanvasGridManager::contains(int screebNum, const QString &id)
 {
     Q_UNUSED(screebNum)
     Q_UNUSED(id)
     return false;
 }
 
-DFMDesktopFileInfoPointer DefaultCanvasGridManager::firstItemId(int screenNum)
+DFMDesktopFileInfoPointer CanvasGridManager::firstItemId(int screenNum)
 {
     Q_UNUSED(screenNum)
     return nullptr;
 }
 
-DFMDesktopFileInfoPointer DefaultCanvasGridManager::lastItemId(int screenNum)
+DFMDesktopFileInfoPointer CanvasGridManager::lastItemId(int screenNum)
 {
     Q_UNUSED(screenNum)
     return nullptr;
 }
 
-DFMDesktopFileInfoPointer DefaultCanvasGridManager::itemId(int screenNum, QPoint pos)
+DFMDesktopFileInfoPointer CanvasGridManager::itemId(int screenNum, QPoint pos)
 {
     Q_UNUSED(screenNum)
     Q_UNUSED(pos)
     return nullptr;
 }
 
-DFMDesktopFileInfoPointer DefaultCanvasGridManager::itemTop(int screenNum, int x, int y)
+DFMDesktopFileInfoPointer CanvasGridManager::itemTop(int screenNum, int x, int y)
 {
     Q_UNUSED(screenNum)
     Q_UNUSED(x)
@@ -507,26 +507,26 @@ DFMDesktopFileInfoPointer DefaultCanvasGridManager::itemTop(int screenNum, int x
     return nullptr;
 }
 
-DFMDesktopFileInfoPointer DefaultCanvasGridManager::itemTop(int screenNum, QPoint pos)
+DFMDesktopFileInfoPointer CanvasGridManager::itemTop(int screenNum, QPoint pos)
 {
     Q_UNUSED(screenNum)
     Q_UNUSED(pos)
     return nullptr;
 }
 
-QList<DFMDesktopFileInfoPointer> DefaultCanvasGridManager::overlapItems() const
+QList<DFMDesktopFileInfoPointer> CanvasGridManager::overlapItems() const
 {
     return {};
 }
 
-int DefaultCanvasGridManager::overLapScreen()
+int CanvasGridManager::overlapScreen()
 {
     if (d->overlapItems.isEmpty())
         return -1;
     auto screenCount = d->gridItems.size();
     while (screenCount > 0) {
         screenCount--;
-        auto itemCount = d->screensCoordInfo[screenCount].first * d->screensCoordInfo[screenCount].second;
+        auto itemCount = d->gridSize[screenCount].x() * d->gridSize[screenCount].y();
         if (itemCount > d->gridItems[screenCount].size())
             continue;
         break;
@@ -534,28 +534,35 @@ int DefaultCanvasGridManager::overLapScreen()
     return ++screenCount;
 }
 
-void DefaultCanvasGridManager::allItems(QList<DFMDesktopFileInfoPointer> &list) const {
+void CanvasGridManager::allItems(QList<DFMDesktopFileInfoPointer> &list) const {
     Q_UNUSED(list)
 }
 
-QHash<QPoint, DFMDesktopFileInfoPointer> DefaultCanvasGridManager::items(const int screenNum) const
+QHash<QPoint, DFMDesktopFileInfoPointer> CanvasGridManager::items(const int screenNum) const
 {
     return d->gridItems.value(screenNum);
 }
 
-void DefaultCanvasGridManager::setShowHiddenFiles(bool value) noexcept
+void CanvasGridManager::setShowHiddenFiles(bool value) noexcept
 {
     d->setWhetherShowHiddenFiles(value);
 }
 
-bool DefaultCanvasGridManager::getShowHiddenFiles() noexcept
+bool CanvasGridManager::getShowHiddenFiles() noexcept
 {
     return d->getWhetherShowHiddenFiles();
 }
 
-DefaultCanvasGridManager::DefaultCanvasGridManager(QObject *parent)
-    : dfmbase::AbstractCanvasGridManager(parent), d(new DefaultCanvasGridManagerPrivate())
+CanvasGridManager::CanvasGridManager(QObject *parent)
+    : QObject(parent)
+    , d(new CanvasGridManagerPrivate(this))
 {
+}
+
+CanvasGridManager::~CanvasGridManager()
+{
+    delete d;
+    d = nullptr;
 }
 
 DSB_D_END_NAMESPACE

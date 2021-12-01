@@ -18,9 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "defaultfiletreater.h"
-#include "private/defaultfiletreater_p.h"
-#include "defaultcanvasgridmanager.h"
+#include "filetreater.h"
+#include "private/filetreater_p.h"
+#include "canvasgridmanager.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <QDir>
@@ -29,22 +29,32 @@
 
 DSB_D_BEGIN_NAMESPACE
 
-DefaultFileTreater::DefaultFileTreater(QObject *parent)
-    : QObject(parent), d(new DefaultFileTreaterPrivate(this))
+class FileTreaterGlobal : public FileTreater{};
+Q_GLOBAL_STATIC(FileTreaterGlobal, fileTreater)
+
+FileTreater::FileTreater(QObject *parent)
+    : QObject(parent)
+    , d(new FileTreaterPrivate(this))
 {
+    Q_ASSERT(thread() == qApp->thread());
 }
 
-DefaultFileTreater *DefaultFileTreater::instance()
+FileTreater::~FileTreater()
 {
-    static DefaultFileTreater fileTreater;
-    return &fileTreater;
+    delete d;
+    d = nullptr;
+}
+
+FileTreater *FileTreater::instance()
+{
+    return fileTreater;
 }
 
 /*!
  * \brief 根据url获取对应的文件对象, \a url 文件路径
  * \return
  */
-DFMDesktopFileInfoPointer DefaultFileTreater::getFileByUrl(const QString &url)
+DFMDesktopFileInfoPointer FileTreater::getFileByUrl(const QString &url)
 {
     Q_UNUSED(url)
     return nullptr;
@@ -54,7 +64,7 @@ DFMDesktopFileInfoPointer DefaultFileTreater::getFileByUrl(const QString &url)
  * \brief 根据index获取对应的文件对象, \a index 文件路径
  * \return
  */
-DFMDesktopFileInfoPointer DefaultFileTreater::getFileByIndex(int index)
+DFMDesktopFileInfoPointer FileTreater::getFileByIndex(int index)
 {
     Q_UNUSED(index)
     return nullptr;
@@ -66,24 +76,24 @@ DFMDesktopFileInfoPointer DefaultFileTreater::getFileByIndex(int index)
  * \param str 排序方式
  * \return 排序后的列表
  */
-QList<DFMDesktopFileInfoPointer> &DefaultFileTreater::sortFiles(QList<AbstractFileInfo *> &fileInfoLst, QString &str)
+QList<DFMDesktopFileInfoPointer> &FileTreater::sortFiles(QList<AbstractFileInfo *> &fileInfoLst, QString &str)
 {
     Q_UNUSED(fileInfoLst)
     Q_UNUSED(str)
     return d->fileList;
 }
 
-QList<DFMDesktopFileInfoPointer> &DefaultFileTreater::getFiles()
+QList<DFMDesktopFileInfoPointer> &FileTreater::getFiles()
 {
     return d->fileList;
 }
 
-int DefaultFileTreater::indexOfChild(DFMDesktopFileInfoPointer info)
+int FileTreater::indexOfChild(DFMDesktopFileInfoPointer info)
 {
     return d->fileList.indexOf(info, 0);
 }
 
-int DefaultFileTreater::fileCount()
+int FileTreater::fileCount()
 {
     return d->fileList.size();
 }
@@ -91,7 +101,7 @@ int DefaultFileTreater::fileCount()
 /*!
  * \brief 初始化数据
  */
-void DefaultFileTreater::init()
+void FileTreater::init()
 {
     d->isDone = false;
     d->homePath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
@@ -103,47 +113,47 @@ void DefaultFileTreater::init()
     }
 }
 
-QString &DefaultFileTreater::homePath()
+QString &FileTreater::homePath()
 {
     return d->homePath;
 }
 
-bool DefaultFileTreater::isDone()
+bool FileTreater::isDone()
 {
     return d->isDone;
 }
 
-void DefaultFileTreater::loadData(const QDir &url)
+void FileTreater::loadData(const QDir &url)
 {
-    connect(&futureWatcher, &QFutureWatcher<void>::finished, this, &DefaultFileTreater::onFileWatcher);
-    future = QtConcurrent::run(this, &DefaultFileTreater::asyncFunc, url);
+    connect(&futureWatcher, &QFutureWatcher<void>::finished, this, &FileTreater::onFileWatcher);
+    future = QtConcurrent::run(this, &FileTreater::asyncFunc, url);
 
     futureWatcher.setFuture(future);
 }
 
-void DefaultFileTreater::initconnection()
+void FileTreater::initconnection()
 {
 }
 
-bool DefaultFileTreater::startWatch()
-{
-    return false;
-}
-
-bool DefaultFileTreater::stopWatch()
+bool FileTreater::startWatch()
 {
     return false;
 }
 
-void DefaultFileTreater::updateFile(const QString &)
+bool FileTreater::stopWatch()
+{
+    return false;
+}
+
+void FileTreater::updateFile(const QString &)
 {
 }
 
-void DefaultFileTreater::asyncFunc(const QDir &url)
+void FileTreater::asyncFunc(const QDir &url)
 {
     QMutexLocker lk(&mutex);
     QDir dir(url);
-    bool isHidden = DefaultCanvasGridManager::instance()->getShowHiddenFiles();
+    bool isHidden = CanvasGridManager::instance()->getShowHiddenFiles();
     for (auto info : dir.entryInfoList()) {
         if ((!info.isHidden()) || (info.isHidden() && isHidden)) {
             qDebug() << info.filePath();
@@ -158,19 +168,19 @@ void DefaultFileTreater::asyncFunc(const QDir &url)
     qDebug() << "file count " << d->fileList.size();
 }
 
-void DefaultFileTreater::onAddFile(const QString &)
+void FileTreater::onAddFile(const QString &)
 {
 }
 
-void DefaultFileTreater::onDeleteFile(const QString &)
+void FileTreater::onDeleteFile(const QString &)
 {
 }
 
-void DefaultFileTreater::onMoveFile(const QString &, const QString &)
+void FileTreater::onMoveFile(const QString &, const QString &)
 {
 }
 
-void DefaultFileTreater::onFileWatcher()
+void FileTreater::onFileWatcher()
 {
     emit fileFinished();
     d->isDone = true;

@@ -21,15 +21,16 @@
 #ifndef CANVASVIEWMANAGER_P_H
 #define CANVASVIEWMANAGER_P_H
 
-#include "defaultcanvasview_p.h"
+#include "canvasview_p.h"
 #include "canvasviewmanager.h"
 
 #include "dfm-base/dfm_base_global.h"
 
 DFMBASE_USE_NAMESPACE
 DSB_D_BEGIN_NAMESPACE
-
-typedef QSharedPointer<DefaultCanvasView> canvasViewPointer;
+class CanvasModel;
+class CanvasSelectionModel;
+typedef QSharedPointer<CanvasView> CanvasViewPointer;
 class CanvasViewManagerPrivate : public QObject
 {
     Q_OBJECT
@@ -55,12 +56,12 @@ public:
 
 public:
     bool isDone { false };
-    dfmbase::AbstractCanvasModel *canvasModel = { nullptr };
-    dfmbase::AbstractCanvasSelectionModel *canvasSelectModel { nullptr };
+    CanvasModel *canvasModel = { nullptr };
+    CanvasSelectionModel *canvasSelectModel { nullptr };
     QItemSelectionModel *selectModel = nullptr;
     ScreenService *screenScevice { nullptr };
     BackgroundService *backgroundService { nullptr };
-    QMap<QString, canvasViewPointer> canvasViewMap;
+    QMap<QString, CanvasViewPointer> canvasViewMap;
     QMap<QString, ScreenPointer> screenMap;
     CanvasViewManager *const q { nullptr };
 };

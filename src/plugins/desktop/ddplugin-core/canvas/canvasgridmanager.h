@@ -18,20 +18,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DEFAULTCANVASGRID_H
-#define DEFAULTCANVASGRID_H
+#ifndef CANVASGRID_H
+#define CANVASGRID_H
 
-#include "dfm-base/widgets/abstractcanvasgridmanager.h"
 #include "dfm-base/base/abstractfileinfo.h"
 #include "defaultdesktopfileinfo.h"
 
 DSB_D_BEGIN_NAMESPACE
 
-class DefaultCanvasGridManagerPrivate;
-class DefaultCanvasGridManager : public dfmbase::AbstractCanvasGridManager
+class CanvasGridManagerPrivate;
+class CanvasGridManager : public QObject
 {
+    Q_OBJECT
 public:
-    static DefaultCanvasGridManager *instance();
+    static CanvasGridManager *instance();
     void initCoord(const int screenCount);
     void initGridItemsInfo();
     void initArrage(const QList<DFMDesktopFileInfoPointer> &items);
@@ -50,7 +50,7 @@ public:
     DFMDesktopFileInfoPointer itemTop(int screenNum, int x, int y);
     DFMDesktopFileInfoPointer itemTop(int screenNum, QPoint pos);
     QList<DFMDesktopFileInfoPointer> overlapItems() const;
-    int overLapScreen();
+    int overlapScreen();
     void allItems(QList<DFMDesktopFileInfoPointer> &list) const;
     QHash<QPoint, DFMDesktopFileInfoPointer> items(const int screenNum) const;
     void setShowHiddenFiles(bool value) noexcept;
@@ -58,11 +58,12 @@ public:
     void delaySyncAllProfile(int ms = 100);
     void toggleArrange();
     bool autoArrange() const;
-
+protected:
+    explicit CanvasGridManager(QObject *parent = nullptr);
+    ~CanvasGridManager();
 private:
-
-    DefaultCanvasGridManager(QObject *parent = nullptr);
-    QScopedPointer<DefaultCanvasGridManagerPrivate> d;
+    CanvasGridManagerPrivate *d;
 };
+
 DSB_D_END_NAMESPACE
-#endif   // DEFAULTCANVASGRID_H
+#endif   // CANVASGRID_H

@@ -32,7 +32,6 @@ class DisplayConfig : public QObject
     Q_OBJECT
 public:
     static DisplayConfig *instance();
-    explicit DisplayConfig(QObject *parent = nullptr);
     QSet<QString> profile();
     bool setProfile(const QSet<QString> &profile);
     QHash<QString, QPoint> coordinates(const QString &key);
@@ -47,11 +46,14 @@ public:
 public slots:
     void sync();
 protected:
+    explicit DisplayConfig(QObject *parent = nullptr);
+    ~DisplayConfig();
+
     QVariant value(const QString &group, const QString &key, const QVariant &defaultVar);
     void setValues(const QString &group, const QHash<QString, QVariant> &values);
     void remove(const QString &group, const QString &key);
     void remove(const QString &group, const QStringList &keys);
-    virtual QString path() const;
+    QString path() const;
 private:
     static bool covertPostion(const QString &strPos, QPoint &pos);
     static QString covertPostion(const QPoint &pos);

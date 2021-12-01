@@ -18,9 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "private/defaultcanvasitemdelegate_p.h"
-#include "private/defaultcanvasview_p.h"
-#include "defaultcanvasmodel.h"
+#include "private/canvasitemdelegate_p.h"
+#include "private/canvasview_p.h"
+#include "canvasmodel.h"
 
 #include <dtkcore_global.h>
 #include <private/qtextengine_p.h>
@@ -117,14 +117,15 @@ QRectF ExpandedItem::textGeometry(int width) const
     return textBounding;
 }
 
-DefaultCanvasItemDelegate::DefaultCanvasItemDelegate(dfmbase::AbstractCanvas *parent)
-    : dfmbase::AbstractCanvasDelegate(parent), d(new DefaultCanvasItemDelegatePrivate(this))
+CanvasItemDelegate::CanvasItemDelegate(CanvasView *parent)
+    : QStyledItemDelegate(parent)
+    , d(new CanvasItemDelegatePrivate(this))
 {
     // 临时放于此处
     d->textLineHeight = this->parent()->fontMetrics().lineSpacing();
 }
 
-DefaultCanvasItemDelegate::~DefaultCanvasItemDelegate()
+CanvasItemDelegate::~CanvasItemDelegate()
 {
 }
 
@@ -132,7 +133,7 @@ DefaultCanvasItemDelegate::~DefaultCanvasItemDelegate()
  * \brief 获取当前图标等级
  * \return 返回当前图标等级
  */
-int DefaultCanvasItemDelegate::currentIconSizeLevel() const
+int CanvasItemDelegate::currentIconSizeLevel() const
 {
     // 暂时固定为： 32 << 48 << 64 << 96 << 128，后续开设注册接口
     return d->currentIconSizeIndex;
@@ -143,13 +144,13 @@ int DefaultCanvasItemDelegate::currentIconSizeLevel() const
  * \param  \a lv 图标等级
  * \return 返回对应等级图标大小
  */
-QSize DefaultCanvasItemDelegate::getIconSizeByIconSizeLevel(const int lv) const
+QSize CanvasItemDelegate::getIconSizeByIconSizeLevel(const int lv) const
 {
     int size = d->iconSizes.at(lv);
     return QSize(size, size);
 }
 
-QSize DefaultCanvasItemDelegate::getCurrentIconSize() const
+QSize CanvasItemDelegate::getCurrentIconSize() const
 {
     int size = d->iconSizes.at(d->currentIconSizeIndex);
     return QSize(size, size);
@@ -160,7 +161,7 @@ QSize DefaultCanvasItemDelegate::getCurrentIconSize() const
  * \param \a lv 图标等级
  * \return 成功返回设置的图标等级大小，失败返回-1
  */
-int DefaultCanvasItemDelegate::setIconSizeByIconSizeLevel(const int lv)
+int CanvasItemDelegate::setIconSizeByIconSizeLevel(const int lv)
 {
     if (lv == d->currentIconSizeIndex) {
         return lv;
@@ -175,17 +176,17 @@ int DefaultCanvasItemDelegate::setIconSizeByIconSizeLevel(const int lv)
     return -1;
 }
 
-int DefaultCanvasItemDelegate::minimumIconSizeLevel() const
+int CanvasItemDelegate::minimumIconSizeLevel() const
 {
     return 0;
 }
 
-int DefaultCanvasItemDelegate::maximumIconSizeLevel() const
+int CanvasItemDelegate::maximumIconSizeLevel() const
 {
     return d->iconSizes.count() - 1;
 }
 
-void DefaultCanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void CanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     // 项是否可用，用于图标绘制disable与否
     bool isEnabled = option.state & QStyle::State_Enabled;
@@ -226,7 +227,7 @@ void DefaultCanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewI
     iconRect.moveTop(opt.rect.top());   // move icon down
     // draw icon
     // todo: select and drop status
-    const_cast<DefaultCanvasItemDelegate *>(this)->drawIcon(painter, opt.icon,
+    const_cast<CanvasItemDelegate *>(this)->drawIcon(painter, opt.icon,
                                                             iconRect, Qt::AlignCenter,
                                                             isEnabled ? QIcon::Normal : QIcon::Disabled);
     // todo draw file additional icon (角标)
@@ -277,20 +278,20 @@ void DefaultCanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewI
     painter->setOpacity(1);
 }
 
-QList<QRectF> DefaultCanvasItemDelegate::drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout,
+QList<QRectF> CanvasItemDelegate::drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout,
                                                   const QRectF &boundingRect, qreal radius, const QBrush &background,
                                                   QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags,
                                                   const QColor &shadowColor) const
 {
     initTextLayout(index, layout);
     QList<QRectF> boundingRegion;
-    AbstractCanvasDelegate::elideText(layout, boundingRect.size(), wordWrap, mode, d->textLineHeight, flags, nullptr,
+    elideText(layout, boundingRect.size(), wordWrap, mode, d->textLineHeight, flags, nullptr,
                                       painter, boundingRect.topLeft(), shadowColor, QPointF(0, 1),
                                       background, radius, &boundingRegion);
     return boundingRegion;
 }
 
-QList<QRectF> DefaultCanvasItemDelegate::drawText(const QModelIndex &index, QPainter *painter, const QString &text,
+QList<QRectF> CanvasItemDelegate::drawText(const QModelIndex &index, QPainter *painter, const QString &text,
                                                   const QRectF &boundingRect, qreal radius, const QBrush &background,
                                                   QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags,
                                                   const QColor &shadowColor) const
@@ -302,16 +303,16 @@ QList<QRectF> DefaultCanvasItemDelegate::drawText(const QModelIndex &index, QPai
     return drawText(index, painter, &layout, boundingRect, radius, background, wordWrap, mode, flags, shadowColor);
 }
 
-DefaultCanvasView *DefaultCanvasItemDelegate::parent() const
+CanvasView *CanvasItemDelegate::parent() const
 {
-    return dynamic_cast<DefaultCanvasView *>(QObject::parent());
+    return qobject_cast<CanvasView *>(QObject::parent());
 }
 
 /*!
  * \brief 返回所有正显示部件的索引
  * \return 显示部件的索引
  */
-QModelIndexList DefaultCanvasItemDelegate::hasWidgetIndexs() const
+QModelIndexList CanvasItemDelegate::hasWidgetIndexs() const
 {
     // todo:
     return QModelIndexList();
@@ -320,7 +321,7 @@ QModelIndexList DefaultCanvasItemDelegate::hasWidgetIndexs() const
 /*!
  * \brief 隐藏未编辑的索引对应的部件
  */
-void DefaultCanvasItemDelegate::hideNotEditingIndexWidget()
+void CanvasItemDelegate::hideNotEditingIndexWidget()
 {
     if (d->expandedIndex.isValid()) {
         parent()->setIndexWidget(d->expandedIndex, nullptr);
@@ -334,7 +335,7 @@ void DefaultCanvasItemDelegate::hideNotEditingIndexWidget()
  * \brief 返回扩展项的索引
  * \return 扩展项索引
  */
-QModelIndex DefaultCanvasItemDelegate::expandedIndex() const
+QModelIndex CanvasItemDelegate::expandedIndex() const
 {
     return d->editingIndex;
 }
@@ -343,19 +344,212 @@ QModelIndex DefaultCanvasItemDelegate::expandedIndex() const
  * \brief 返回扩展索引项部件
  * \return 所在索引项部件
  */
-QWidget *DefaultCanvasItemDelegate::expandedIndexWidget() const
+QWidget *CanvasItemDelegate::expandedIndexWidget() const
 {
     return d->expandedItem;
 }
 
-bool DefaultCanvasItemDelegate::isTransparent(const QModelIndex &index) const
+void CanvasItemDelegate::paintCircleList(QPainter *painter, QRectF boundingRect, qreal diameter, const QList<QColor> &colors, const QColor &borderColor)
+{
+    // temp here
+    bool antialiasing = painter->testRenderHint(QPainter::Antialiasing);
+    const QPen pen = painter->pen();
+    const QBrush brush = painter->brush();
+
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setPen(QPen(borderColor, 1));
+
+    for (const QColor &color : colors) {
+        QPainterPath circle;
+
+        //根据tag颜色设置笔刷
+        painter->setBrush(QBrush(color));
+        circle.addEllipse(QRectF(QPointF(boundingRect.right() - diameter, boundingRect.top()), boundingRect.bottomRight()));
+        //        painter->fillPath(circle, color);
+        painter->drawPath(circle);
+        boundingRect.setRight(boundingRect.right() - diameter / 2);
+    }
+
+    painter->setPen(pen);
+    painter->setBrush(brush);
+    painter->setRenderHint(QPainter::Antialiasing, antialiasing);
+}
+
+void CanvasItemDelegate::elideText(QTextLayout *layout, const QSizeF &size,
+                                       QTextOption::WrapMode wordWrap, Qt::TextElideMode mode,
+                                       qreal lineHeight, int flags, QStringList *lines,
+                                       QPainter *painter, QPointF offset, const QColor &shadowColor,
+                                       const QPointF &shadowOffset, const QBrush &background,
+                                       qreal backgroundRadius, QList<QRectF> *boundingRegion)
+{
+    qreal height = 0;
+    bool drawBackground = background.style() != Qt::NoBrush;
+    bool drawShadow = shadowColor.isValid();
+
+    QString text = layout->engine()->hasFormats() ? layout->engine()->block.text() : layout->text();
+    QTextOption &text_option = *const_cast<QTextOption *>(&layout->textOption());
+
+    text_option.setWrapMode(wordWrap);
+
+    if (flags & Qt::AlignRight)
+        text_option.setAlignment(Qt::AlignRight);
+    else if (flags & Qt::AlignHCenter)
+        text_option.setAlignment(Qt::AlignHCenter);
+
+    if (painter) {
+        text_option.setTextDirection(painter->layoutDirection());
+        layout->setFont(painter->font());
+    } else {
+        // dont paint
+        layout->engine()->ignoreBidi = true;
+    }
+
+    auto naturalTextRect = [&](const QRectF rect) {
+        QRectF new_rect = rect;
+
+        new_rect.setHeight(lineHeight);
+
+        return new_rect;
+    };
+
+    auto drawShadowFun = [&](const QTextLine &line) {
+        const QPen pen = painter->pen();
+
+        painter->setPen(shadowColor);
+        line.draw(painter, shadowOffset);
+
+        // restore
+        painter->setPen(pen);
+    };
+
+    layout->beginLayout();
+
+    QTextLine line = layout->createLine();
+    QRectF lastLineRect;
+
+    while (line.isValid()) {
+        height += lineHeight;
+        if (height + lineHeight > size.height()) {
+            const QString &end_str = layout->engine()->elidedText(mode, qRound(size.width()), flags, line.textStart());
+
+            layout->endLayout();
+            layout->setText(end_str);
+
+            if (layout->engine()->block.docHandle()) {
+                const_cast<QTextDocument *>(layout->engine()->block.document())->setPlainText(end_str);
+            }
+
+            text_option.setWrapMode(QTextOption::NoWrap);
+            layout->beginLayout();
+            line = layout->createLine();
+            line.setLineWidth(size.width() - 1);
+            text = end_str;
+        } else {
+            line.setLineWidth(size.width());
+        }
+
+        line.setPosition(offset);
+
+        const QRectF rect = naturalTextRect(line.naturalTextRect());
+
+        if (painter) {
+            if (drawBackground) {
+                const QMarginsF margins(backgroundRadius, 0, backgroundRadius, 0);
+                QRectF backBounding = rect;
+                QPainterPath path;
+
+                if (lastLineRect.isValid()) {
+                    if (qAbs(rect.width() - lastLineRect.width()) < backgroundRadius * 2) {
+                        backBounding.setWidth(lastLineRect.width());
+                        backBounding.moveCenter(rect.center());
+                        path.moveTo(lastLineRect.x() - backgroundRadius, lastLineRect.bottom() - backgroundRadius);
+                        path.lineTo(lastLineRect.x(), lastLineRect.bottom() - 1);
+                        path.lineTo(lastLineRect.right(), lastLineRect.bottom() - 1);
+                        path.lineTo(lastLineRect.right() + backgroundRadius, lastLineRect.bottom() - backgroundRadius);
+                        path.lineTo(lastLineRect.right() + backgroundRadius, backBounding.bottom() - backgroundRadius);
+                        path.arcTo(backBounding.right() - backgroundRadius, backBounding.bottom() - backgroundRadius * 2, backgroundRadius * 2, backgroundRadius * 2, 0, -90);
+                        path.lineTo(backBounding.x(), backBounding.bottom());
+                        path.arcTo(backBounding.x() - backgroundRadius, backBounding.bottom() - backgroundRadius * 2, backgroundRadius * 2, backgroundRadius * 2, 270, -90);
+                        lastLineRect = backBounding;
+                    } else if (lastLineRect.width() > rect.width()) {
+                        backBounding += margins;
+                        path.moveTo(backBounding.x() - backgroundRadius, backBounding.y() - 1);
+                        path.arcTo(backBounding.x() - backgroundRadius * 2, backBounding.y() - 1, backgroundRadius * 2, backgroundRadius * 2 + 1, 90, -90);
+                        path.lineTo(backBounding.x(), backBounding.bottom() - backgroundRadius);
+                        path.arcTo(backBounding.x(), backBounding.bottom() - backgroundRadius * 2, backgroundRadius * 2, backgroundRadius * 2, 180, 90);
+                        path.lineTo(backBounding.right() - backgroundRadius, backBounding.bottom());
+                        path.arcTo(backBounding.right() - backgroundRadius * 2, backBounding.bottom() - backgroundRadius * 2, backgroundRadius * 2, backgroundRadius * 2, 270, 90);
+                        path.lineTo(backBounding.right(), backBounding.top() + backgroundRadius);
+                        path.arcTo(backBounding.right(), backBounding.top() - 1, backgroundRadius * 2, backgroundRadius * 2 + 1, 180, -90);
+                        path.closeSubpath();
+                        lastLineRect = rect;
+                    } else {
+                        backBounding += margins;
+                        path.moveTo(lastLineRect.x() - backgroundRadius * 2, lastLineRect.bottom());
+                        path.arcTo(lastLineRect.x() - backgroundRadius * 3, lastLineRect.bottom() - backgroundRadius * 2, backgroundRadius * 2, backgroundRadius * 2, 270, 90);
+                        path.lineTo(lastLineRect.x(), lastLineRect.bottom() - 1);
+                        path.lineTo(lastLineRect.right(), lastLineRect.bottom() - 1);
+                        path.lineTo(lastLineRect.right() + backgroundRadius, lastLineRect.bottom() - backgroundRadius * 2);
+                        path.arcTo(lastLineRect.right() + backgroundRadius, lastLineRect.bottom() - backgroundRadius * 2, backgroundRadius * 2, backgroundRadius * 2, 180, 90);
+                        path.addRoundedRect(backBounding, backgroundRadius, backgroundRadius);
+                        lastLineRect = rect;
+                    }
+                } else {
+                    lastLineRect = backBounding;
+                    path.addRoundedRect(backBounding + margins, backgroundRadius, backgroundRadius);
+                }
+
+                bool a = painter->testRenderHint(QPainter::Antialiasing);
+                qreal o = painter->opacity();
+
+                painter->setRenderHint(QPainter::Antialiasing, true);
+                painter->setOpacity(1);
+                painter->fillPath(path, background);
+                painter->setRenderHint(QPainter::Antialiasing, a);
+                painter->setOpacity(o);
+            }
+
+            if (drawShadow) {
+                drawShadowFun(line);
+            }
+
+            line.draw(painter, QPointF(0, 0));
+        }
+
+        if (boundingRegion) {
+            boundingRegion->append(rect);
+        }
+
+        offset.setY(offset.y() + lineHeight);
+
+        //        // find '\n'
+        //        int text_length_line = line.textLength();
+        //        for (int start = line.textStart(); start < line.textStart() + text_length_line; ++start) {
+        //            if (text.at(start) == '\n')
+        //                height += lineHeight;
+        //        }
+
+        if (lines) {
+            lines->append(text.mid(line.textStart(), line.textLength()));
+        }
+
+        if (height + lineHeight > size.height())
+            break;
+
+        line = layout->createLine();
+    }
+
+    layout->endLayout();
+}
+
+bool CanvasItemDelegate::isTransparent(const QModelIndex &index) const
 {
     Q_UNUSED(index)
     // todo 剪切等半透明状态绘制判断
     return false;
 }
 
-Qt::Alignment DefaultCanvasItemDelegate::visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment)
+Qt::Alignment CanvasItemDelegate::visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment)
 {
     if (!(alignment & Qt::AlignHorizontal_Mask))
         alignment |= Qt::AlignLeft;
@@ -367,7 +561,7 @@ Qt::Alignment DefaultCanvasItemDelegate::visualAlignment(Qt::LayoutDirection dir
     return alignment;
 }
 
-QPixmap DefaultCanvasItemDelegate::getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio, QIcon::Mode mode, QIcon::State state)
+QPixmap CanvasItemDelegate::getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio, QIcon::Mode mode, QIcon::State state)
 {
     bool useHighDpiPixmaps = qApp->testAttribute(Qt::AA_UseHighDpiPixmaps);
     qApp->setAttribute(Qt::AA_UseHighDpiPixmaps, false);
@@ -428,7 +622,7 @@ QPixmap DefaultCanvasItemDelegate::getIconPixmap(const QIcon &icon, const QSize 
     return px;
 }
 
-QList<QRectF> DefaultCanvasItemDelegate::getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const
+QList<QRectF> CanvasItemDelegate::getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const
 {
     QList<QRectF> list;
     double offset = baseRect.width() / 8;
@@ -444,7 +638,7 @@ QList<QRectF> DefaultCanvasItemDelegate::getCornerGeometryList(const QRectF &bas
     return list;
 }
 
-QRectF DefaultCanvasItemDelegate::initIconGeometry(const QStyleOptionViewItem &opt) const
+QRectF CanvasItemDelegate::initIconGeometry(const QStyleOptionViewItem &opt) const
 {
     QRectF iconRect = opt.rect;
     iconRect.setSize(parent()->iconSize());
@@ -453,15 +647,15 @@ QRectF DefaultCanvasItemDelegate::initIconGeometry(const QStyleOptionViewItem &o
     return iconRect;
 }
 
-void DefaultCanvasItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
+void CanvasItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
 {
     Q_UNUSED(layout)
-    const QVariantHash &ep = index.data(DefaultCanvasModel::ExtraProperties).toHash();
+    const QVariantHash &ep = index.data(CanvasModel::ExtraProperties).toHash();
     const QList<QColor> &colors = qvariant_cast<QList<QColor>>(ep.value("colored"));
     Q_UNUSED(colors)
 }
 
-QColor DefaultCanvasItemDelegate::itemBaseColor(const QStyleOptionViewItem &opt, bool isSelected, bool isDropTarget) const
+QColor CanvasItemDelegate::itemBaseColor(const QStyleOptionViewItem &opt, bool isSelected, bool isDropTarget) const
 {
     DPalette pl(DApplicationHelper::instance()->palette(opt.widget));
     QColor tempColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
@@ -483,7 +677,7 @@ QColor DefaultCanvasItemDelegate::itemBaseColor(const QStyleOptionViewItem &opt,
     return tempColor;
 }
 
-void DefaultCanvasItemDelegate::setIconBaseParameter(QPainter *painter, const QColor &clr, const QStyleOptionViewItem &option, bool isSelected, bool isDragMode) const
+void CanvasItemDelegate::setIconBaseParameter(QPainter *painter, const QColor &clr, const QStyleOptionViewItem &option, bool isSelected, bool isDragMode) const
 {
     QPainterPath path;
     QRectF rect = option.rect;
@@ -499,7 +693,7 @@ void DefaultCanvasItemDelegate::setIconBaseParameter(QPainter *painter, const QC
     }
 }
 
-QRectF DefaultCanvasItemDelegate::setTextBaseParameter(QPainter *painter, const QStyleOptionViewItem &opt, const QRectF &iconRect, bool isSelected, bool isDragMode) const
+QRectF CanvasItemDelegate::setTextBaseParameter(QPainter *painter, const QStyleOptionViewItem &opt, const QRectF &iconRect, bool isSelected, bool isDragMode) const
 {
     Q_UNUSED(isSelected)
     Q_UNUSED(isDragMode)
@@ -515,7 +709,7 @@ QRectF DefaultCanvasItemDelegate::setTextBaseParameter(QPainter *painter, const 
     return labelRect;
 }
 
-void DefaultCanvasItemDelegate::drawIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment, QIcon::Mode mode, QIcon::State state)
+void CanvasItemDelegate::drawIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment, QIcon::Mode mode, QIcon::State state)
 {
     // Copy of QStyle::alignedRect
     alignment = visualAlignment(painter->layoutDirection(), alignment);
@@ -536,7 +730,7 @@ void DefaultCanvasItemDelegate::drawIcon(QPainter *painter, const QIcon &icon, c
     painter->drawPixmap(qRound(x), qRound(y), px);
 }
 
-void DefaultCanvasItemDelegate::drawFileName(QPainter *painter, const QStyleOptionViewItem &opt, const QModelIndex &index, const QString &str, const QRectF labelRect) const
+void CanvasItemDelegate::drawFileName(QPainter *painter, const QStyleOptionViewItem &opt, const QModelIndex &index, const QString &str, const QRectF labelRect) const
 {
     qreal pixel_ratio = painter->device()->devicePixelRatioF();
     QImage text_image((labelRect.size() * pixel_ratio).toSize(), QImage::Format_ARGB32_Premultiplied);
@@ -564,7 +758,7 @@ void DefaultCanvasItemDelegate::drawFileName(QPainter *painter, const QStyleOpti
     painter->drawPixmap(labelRect.topLeft(), text_pixmap);
 }
 
-QSize DefaultCanvasItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &index) const
+QSize CanvasItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &index) const
 {
     Q_UNUSED(index)
     const QSize &size = d->itemSizeHint;
@@ -575,7 +769,7 @@ QSize DefaultCanvasItemDelegate::sizeHint(const QStyleOptionViewItem &, const QM
     return size;
 }
 
-void DefaultCanvasItemDelegate::updateItemSizeHint()
+void CanvasItemDelegate::updateItemSizeHint()
 {
     // todo 处理一下这些魔数
     int width = parent()->iconSize().width() * 17 / 10;

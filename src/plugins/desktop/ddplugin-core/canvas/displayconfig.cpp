@@ -30,7 +30,8 @@
 #include <QSettings>
 #include <QDebug>
 
-Q_GLOBAL_STATIC(DisplayConfig, displayConfig)
+class DisplayConfigGlobal : public DisplayConfig{};
+Q_GLOBAL_STATIC(DisplayConfigGlobal, displayConfig)
 
 static const char * const kGroupGeneral = "GeneralConfig";
 static const char * const kKeyProfile = "Profile";
@@ -72,6 +73,15 @@ DisplayConfig::DisplayConfig(QObject *parent) : QObject(parent)
         QMutexLocker lk(&mtxLock);
         settings->sync();
     }, Qt::QueuedConnection);
+}
+
+DisplayConfig::~DisplayConfig()
+{
+    delete settings;
+    settings = nullptr;
+
+    delete syncTimer;
+    syncTimer = nullptr;
 }
 
 QSet<QString> DisplayConfig::profile()

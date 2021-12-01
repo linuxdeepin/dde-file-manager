@@ -21,7 +21,7 @@
 #ifndef DEFAULTCANVASVIEW_P_H
 #define DEFAULTCANVASVIEW_P_H
 
-#include "defaultcanvasview.h"
+#include "canvasview.h"
 
 #include <QDebug>
 
@@ -79,11 +79,11 @@ private:
     CoordinateData d;
 };
 
-class DefaultCanvasViewPrivate
+class CanvasViewPrivate
 {
 public:
-    explicit DefaultCanvasViewPrivate() {}
-    ~DefaultCanvasViewPrivate() {}
+    explicit CanvasViewPrivate() {}
+    ~CanvasViewPrivate() {}
 
     void updateCellMargins(QMargins &tgMargin, const QSize &szItem, const QSize &szCell)
     {
@@ -156,4 +156,4 @@ public:
     QMargins viewMargins;
     QPoint dragTargetGrid { QPoint(-1, -1) };
 };
-#endif   // DEFAULTCANVASVIEW_P_H
+#endif   // CANVASVIEW_P_H

@@ -28,12 +28,10 @@
 
 #include <dfm-framework/framework.h>
 
-namespace dfmbase {
-class AbstractBackgroundManager;
-}
-
 class Core;
 DSB_D_BEGIN_NAMESPACE
+
+class BackgroundManager;
 class BackgroundService final : public dpf::PluginService, dpf::AutoServiceRegister<BackgroundService>
 {
     Q_OBJECT
@@ -56,7 +54,7 @@ signals:
     void sigBackgroundBuilded(int mode);
 
 private:
-    dfmbase::AbstractBackgroundManager *proxy = nullptr;
+    BackgroundManager *proxy = nullptr;
 };
 DSB_D_END_NAMESPACE
 

@@ -18,80 +18,82 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "private/defaultcanvasview_p.h"
-#include "defaultcanvasitemdelegate.h"
-#include "defaultcanvasgridmanager.h"
+#include "private/canvasview_p.h"
+#include "canvasitemdelegate.h"
+#include "canvasgridmanager.h"
+#include "displayconfig.h"
 
 #include <QPainter>
 #include <QDebug>
 #include <QScrollBar>
 #include <QPaintEvent>
 
-DefaultCanvasView::DefaultCanvasView(QWidget *parent)
-    : dfmbase::AbstractCanvas(parent), d(new DefaultCanvasViewPrivate())
+CanvasView::CanvasView(QWidget *parent)
+    : QAbstractItemView(parent)
+    , d(new CanvasViewPrivate())
 {
     initUI();
 }
 
-QRect DefaultCanvasView::visualRect(const QModelIndex &index) const
+QRect CanvasView::visualRect(const QModelIndex &index) const
 {
     Q_UNUSED(index)
     return QRect();
 }
 
-QRect DefaultCanvasView::visualRect(const QPoint &gridPos)
+QRect CanvasView::visualRect(const QPoint &gridPos)
 {
     auto x = gridPos.x() * d->cellWidth + d->viewMargins.left();
     auto y = gridPos.y() * d->cellHeight + d->viewMargins.top();
     return QRect(x, y, d->cellWidth, d->cellHeight);
 }
 
-void DefaultCanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint) {
+void CanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint) {
     Q_UNUSED(index)
             Q_UNUSED(hint)
 }
 
-QModelIndex DefaultCanvasView::indexAt(const QPoint &point) const
+QModelIndex CanvasView::indexAt(const QPoint &point) const
 {
     Q_UNUSED(point)
     return QModelIndex();
 }
 
-QModelIndex DefaultCanvasView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
+QModelIndex CanvasView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
 {
     Q_UNUSED(cursorAction)
     Q_UNUSED(modifiers)
     return QModelIndex();
 }
 
-int DefaultCanvasView::horizontalOffset() const
+int CanvasView::horizontalOffset() const
 {
     return horizontalScrollBar()->value();
 }
 
-int DefaultCanvasView::verticalOffset() const
+int CanvasView::verticalOffset() const
 {
     return verticalScrollBar()->value();
 }
 
-bool DefaultCanvasView::isIndexHidden(const QModelIndex &index) const
+bool CanvasView::isIndexHidden(const QModelIndex &index) const
 {
     Q_UNUSED(index)
     return false;
 }
 
-void DefaultCanvasView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) {
+void CanvasView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) {
     Q_UNUSED(rect)
             Q_UNUSED(command)
 }
 
-QRegion DefaultCanvasView::visualRegionForSelection(const QItemSelection &selection) const
+QRegion CanvasView::visualRegionForSelection(const QItemSelection &selection) const
 {
     Q_UNUSED(selection)
     return QRegion();
 }
 
-void DefaultCanvasView::paintEvent(QPaintEvent *event)
+void CanvasView::paintEvent(QPaintEvent *event)
 {
     QPainter painter(viewport());
     painter.setRenderHints(QPainter::HighQualityAntialiasing);
@@ -116,37 +118,37 @@ void DefaultCanvasView::paintEvent(QPaintEvent *event)
     drawDragMove(&painter, option);
 }
 
-void DefaultCanvasView::setScreenNum(const int screenNum)
+void CanvasView::setScreenNum(const int screenNum)
 {
     d->screenNum = screenNum;
 }
 
-void DefaultCanvasView::setScreenName(const QString name)
+void CanvasView::setScreenName(const QString name)
 {
     d->screenName = name;
 }
 
-int DefaultCanvasView::getScreenNum()
+int CanvasView::getScreenNum()
 {
     return d->screenNum;
 }
 
-QString DefaultCanvasView::getScreenName()
+QString CanvasView::getScreenName()
 {
     return d->screenName;
 }
 
-DefaultCanvasItemDelegate *DefaultCanvasView::itemDelegate() const
+CanvasItemDelegate *CanvasView::itemDelegate() const
 {
-    return qobject_cast<DefaultCanvasItemDelegate *>(QAbstractItemView::itemDelegate());
+    return qobject_cast<CanvasItemDelegate *>(QAbstractItemView::itemDelegate());
 }
 
-DefaultCanvasModel *DefaultCanvasView::canvasModel() const
+CanvasModel *CanvasView::canvasModel() const
 {
-    return qobject_cast<DefaultCanvasModel *>(QAbstractItemView::model());
+    return qobject_cast<CanvasModel *>(QAbstractItemView::model());
 }
 
-void DefaultCanvasView::setGeometry(const QRect &rect)
+void CanvasView::setGeometry(const QRect &rect)
 {
     if (rect.size().width() < 1 || rect.size().height() < 1) {
         return;
@@ -157,24 +159,24 @@ void DefaultCanvasView::setGeometry(const QRect &rect)
     }
 }
 
-void DefaultCanvasView::updateCanvas()
+void CanvasView::updateCanvas()
 {
     // todo:
     itemDelegate()->updateItemSizeHint();
     auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
     QMargins geometryMargins = QMargins(0, 0, 0, 0);
     d->updateCanvasSize(this->geometry().size(), this->geometry().size(), geometryMargins, itemSize);
-    DefaultCanvasGridManager::instance()->updateGridSize(d->screenNum, d->colCount, d->rowCount);
+    CanvasGridManager::instance()->updateGridSize(d->screenNum, d->colCount, d->rowCount);
 }
 
-QString DefaultCanvasView::fileDisplayNameRole(const QModelIndex &index)
+QString CanvasView::fileDisplayNameRole(const QModelIndex &index)
 {
     if (index.isValid())
-        return index.data(DefaultCanvasModel::FileDisplayNameRole).toString();
+        return index.data(CanvasModel::FileDisplayNameRole).toString();
     return QString();
 }
 
-void DefaultCanvasView::initUI()
+void CanvasView::initUI()
 {
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
@@ -186,16 +188,18 @@ void DefaultCanvasView::initUI()
     setDragDropMode(QAbstractItemView::DragDrop);
     setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::SelectedClicked);
     setDefaultDropAction(Qt::CopyAction);
-    auto delegate = new DefaultCanvasItemDelegate(this);
+
+    // init icon delegate
+    auto delegate = new CanvasItemDelegate(this);
     setItemDelegate(delegate);
-    itemDelegate()->setIconSizeByIconSizeLevel(1);
+    delegate->setIconSizeByIconSizeLevel(DispalyIns->iconLevel());
 }
 
 /*!
     待显示文件过滤和绘制，包括堆叠文件绘制，传入参数\a painter用于绘制，\a option绘制项相关信息，
     \a event绘制事件信息(包括重叠区域、待更新区域等信息)
 */
-void DefaultCanvasView::fileterAndRepaintLocalFiles(QPainter *painter, QStyleOptionViewItem &option, QPaintEvent *event)
+void CanvasView::fileterAndRepaintLocalFiles(QPainter *painter, QStyleOptionViewItem &option, QPaintEvent *event)
 {
     Q_UNUSED(painter)
     Q_UNUSED(option)
@@ -206,7 +210,7 @@ void DefaultCanvasView::fileterAndRepaintLocalFiles(QPainter *painter, QStyleOpt
 
     // todo:封装优化代码
     QHash<QPoint, DFMDesktopFileInfoPointer> repaintLocalFiles;
-    repaintLocalFiles = DefaultCanvasGridManager::instance()->items(d->screenNum);
+    repaintLocalFiles = CanvasGridManager::instance()->items(d->screenNum);
     if (repaintLocalFiles.isEmpty())
         return;
 
@@ -222,10 +226,10 @@ void DefaultCanvasView::fileterAndRepaintLocalFiles(QPainter *painter, QStyleOpt
 
     // 重叠图标绘制(不包括最底层被覆盖的图标)
     // todo暂时没考虑堆叠的栈情况；
-    auto overLapScreen = DefaultCanvasGridManager::instance()->overLapScreen();
+    auto overLapScreen = CanvasGridManager::instance()->overlapScreen();
     if (-1 == overLapScreen)
         return;
-    auto overLapItems = DefaultCanvasGridManager::instance()->overlapItems();
+    auto overLapItems = CanvasGridManager::instance()->overlapItems();
 
     if (d->screenNum == overLapScreen) {
         QPoint overLapPos(d->colCount - 1, d->rowCount - 1);
@@ -247,7 +251,7 @@ void DefaultCanvasView::fileterAndRepaintLocalFiles(QPainter *painter, QStyleOpt
  * \param pos 指定布局坐标位置
  * \return 返回刷新与否，true:刷新；false,不刷新
  */
-bool DefaultCanvasView::isRepaintFlash(QStyleOptionViewItem &option, QPaintEvent *event, const QPoint pos)
+bool CanvasView::isRepaintFlash(QStyleOptionViewItem &option, QPaintEvent *event, const QPoint pos)
 {
     option.rect = visualRect(pos);
     auto repaintRect = event->rect();
@@ -269,7 +273,7 @@ bool DefaultCanvasView::isRepaintFlash(QStyleOptionViewItem &option, QPaintEvent
 /*!
     绘制显示栅格信息。当debug_show_grid变量为true时绘制栅格信息，反之不绘制，传入参数\a painter用于绘制。
 */
-void DefaultCanvasView::drawGirdInfos(QPainter *painter)
+void CanvasView::drawGirdInfos(QPainter *painter)
 {
     Q_UNUSED(painter)
     d->debug_show_grid = true;
@@ -303,12 +307,12 @@ void DefaultCanvasView::drawGirdInfos(QPainter *painter)
 /*!
     让位相关绘制，由成员变量startDodge控制，startDodge为true进行让位相关绘制，传入参数\a painter用于绘制。
 */
-void DefaultCanvasView::drawDodge(QPainter *painter)
+void CanvasView::drawDodge(QPainter *painter)
 {
     Q_UNUSED(painter)
 }
 
-void DefaultCanvasView::drawLocalFile(QPainter *painter, QStyleOptionViewItem &option,
+void CanvasView::drawLocalFile(QPainter *painter, QStyleOptionViewItem &option,
                                       bool enabled, const QPoint pos,
                                       const DFMDesktopFileInfoPointer &file)
 {
@@ -316,7 +320,7 @@ void DefaultCanvasView::drawLocalFile(QPainter *painter, QStyleOptionViewItem &o
 
     option.rect = visualRect(pos);
 
-    auto tempModel = qobject_cast<DefaultCanvasModel *>(QAbstractItemView::model());
+    auto tempModel = qobject_cast<CanvasModel *>(QAbstractItemView::model());
     auto index = tempModel->index(file);
     if (!index.isValid())
         return;
@@ -348,7 +352,7 @@ void DefaultCanvasView::drawLocalFile(QPainter *painter, QStyleOptionViewItem &o
 /*!
     选择文件状态哦绘制，绘制鼠标左键框选蒙版，参数\a painter用于绘制。
 */
-void DefaultCanvasView::drawSelectRect(QPainter *painter)
+void CanvasView::drawSelectRect(QPainter *painter)
 {
     Q_UNUSED(painter)
 }
@@ -356,7 +360,7 @@ void DefaultCanvasView::drawSelectRect(QPainter *painter)
 /*!
     文件拖动相关绘制，参数\a painter用于绘制， \a option拖动绘制项相关信息
 */
-void DefaultCanvasView::drawDragMove(QPainter *painter, QStyleOptionViewItem &option)
+void CanvasView::drawDragMove(QPainter *painter, QStyleOptionViewItem &option)
 {
     Q_UNUSED(painter)
     Q_UNUSED(option)

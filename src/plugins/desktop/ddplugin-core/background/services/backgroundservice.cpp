@@ -29,7 +29,7 @@ BackgroundService::BackgroundService(QObject *parent)
 {
     proxy = new BackgroundManager(this);
 
-    connect(proxy, &dfmbase::AbstractBackgroundManager::sigBackgroundBuilded
+    connect(proxy, &BackgroundManager::sigBackgroundBuilded
             , this, &BackgroundService::sigBackgroundBuilded, Qt::UniqueConnection);
 }
 

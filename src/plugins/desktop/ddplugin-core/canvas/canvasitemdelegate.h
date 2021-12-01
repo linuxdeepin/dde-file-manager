@@ -18,24 +18,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DEFAULTCANVASITEMDELEGATE_H
-#define DEFAULTCANVASITEMDELEGATE_H
+#ifndef CANVASITEMDELEGATE_H
+#define CANVASITEMDELEGATE_H
 
-#include "dfm-base/widgets/abstractcanvasdelegate.h"
-
+#include <QStyledItemDelegate>
 #include <QTextOption>
 
 class QTextLayout;
-class DefaultCanvasView;
-class DefaultCanvasItemDelegatePrivate;
-class DefaultCanvasItemDelegate : public dfmbase::AbstractCanvasDelegate
+class CanvasView;
+class CanvasItemDelegatePrivate;
+class CanvasItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
-    friend class DefaultCanvasItemDelegatePrivate;
+    friend class CanvasItemDelegatePrivate;
 
 public:
-    explicit DefaultCanvasItemDelegate(dfmbase::AbstractCanvas *parent = nullptr);
-    ~DefaultCanvasItemDelegate() override;
+    explicit CanvasItemDelegate(CanvasView *parent);
+    ~CanvasItemDelegate() override;
 
     int currentIconSizeLevel() const;
     QSize getIconSizeByIconSizeLevel(const int lv) const;
@@ -56,13 +55,25 @@ public:
                            QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
                            Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
                            const QColor &shadowColor = QColor()) const;
-    DefaultCanvasView *parent() const;
+
+    CanvasView *parent() const;
 
     QModelIndexList hasWidgetIndexs() const;
     void hideNotEditingIndexWidget();
     QModelIndex expandedIndex() const;
     QWidget *expandedIndexWidget() const;
-
+public:
+    static void paintCircleList(QPainter *painter, QRectF boundingRect, qreal diameter, const QList<QColor> &colors, const QColor &borderColor);
+    static void elideText(QTextLayout *layout, const QSizeF &size,
+                          QTextOption::WrapMode wordWrap,
+                          Qt::TextElideMode mode, qreal lineHeight,
+                          int flags = 0, QStringList *lines = nullptr,
+                          QPainter *painter = nullptr, QPointF offset = QPoint(0, 0),
+                          const QColor &shadowColor = QColor(),
+                          const QPointF &shadowOffset = QPointF(0, 1),
+                          const QBrush &background = QBrush(Qt::NoBrush),
+                          qreal backgroundRadius = 4,
+                          QList<QRectF> *boundingRegion = nullptr);
 private:
     bool isTransparent(const QModelIndex &index) const;
     static Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment);
@@ -82,9 +93,9 @@ private:
 private:
     mutable QModelIndex lastAndExpandedIndex;
     QSize itemSizeHint;
-    DefaultCanvasItemDelegatePrivate *const d = nullptr;
+    CanvasItemDelegatePrivate *const d = nullptr;
 
     //    QMutex mutex; //暂时不见得需要
 };
 
-#endif   // DEFAULTCANVASITEMDELEGATE_H
+#endif   // CANVASITEMDELEGATE_H

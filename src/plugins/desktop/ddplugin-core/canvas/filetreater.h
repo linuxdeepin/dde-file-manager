@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DEFAULTFILETREATER_H
-#define DEFAULTFILETREATER_H
+#ifndef FILETREATER_H
+#define FILETREATER_H
 
 #include "dfm-base/widgets/abstractfiletreater.h"
 #include "defaultdesktopfileinfo.h"
@@ -31,12 +31,12 @@
 DFMBASE_USE_NAMESPACE
 DSB_D_BEGIN_NAMESPACE
 
-class DefaultFileTreaterPrivate;
-class DefaultFileTreater : public QObject
+class FileTreaterPrivate;
+class FileTreater : public QObject
 {
     Q_OBJECT
 public:
-    static DefaultFileTreater *instance();
+    static FileTreater *instance();
     void init();
     DFMDesktopFileInfoPointer getFileByUrl(const QString &url);
     DFMDesktopFileInfoPointer getFileByIndex(int index);
@@ -68,17 +68,17 @@ protected slots:
     void onMoveFile(const QString &, const QString &);
     void onFileWatcher();
 
-private:
-    explicit DefaultFileTreater(QObject *parent = nullptr);
-
+protected:
+    explicit FileTreater(QObject *parent = nullptr);
+    ~FileTreater();
 private:
     QFuture<void> future;
     QFutureWatcher<void> futureWatcher;
-    DefaultFileTreaterPrivate *d;
+    FileTreaterPrivate *d;
     QMutex mutex;
 };
 
-#define DefaultFileTreaterCt DefaultFileTreater::instance()
+#define FileTreaterCt DSB_D_NAMESPACE::FileTreater::instance()
 
 DSB_D_END_NAMESPACE
-#endif   // DEFAULTFILETREATER_H
+#endif   // FILETREATER_H

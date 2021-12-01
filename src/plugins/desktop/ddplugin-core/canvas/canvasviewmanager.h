@@ -23,9 +23,6 @@
 
 #include "screen/screenservice.h"
 #include "services/backgroundservice.h"
-#include "dfm-base/widgets/abstractcanvasmanager.h"
-#include "dfm-base/widgets/abstractcanvasmodel.h"
-#include "dfm-base/widgets/abstractcanvasselectionmodel.h"
 
 #include <QObject>
 
@@ -34,14 +31,13 @@ DSB_D_BEGIN_NAMESPACE
 
 class AbstractCanvas;
 class CanvasViewManagerPrivate;
-class CanvasViewManager : public dfmbase::AbstractCanvasManager
+class CanvasViewManager : public QObject
 {
     Q_OBJECT
     friend class CanvasViewManagerPrivate;
 
 public:
     explicit CanvasViewManager(QObject *parent = nullptr);
-    ~CanvasViewManager() {}
 
 private slots:
     void onFileLoadFinish();

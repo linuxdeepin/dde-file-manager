@@ -15,36 +15,14 @@ include_directories(
 )
 
 set(widgets_cxx_cpp
-    dfm-base/widgets/abstractcanvas.cpp
-    dfm-base/widgets/abstractcanvasmodel.cpp
-    dfm-base/widgets/abstractcanvasdelegate.cpp
-    dfm-base/widgets/abstractcanvasmodelwatcher.cpp
-    dfm-base/widgets/abstractcanvasgridmanager.cpp
-    dfm-base/widgets/abstractcanvasselectionmodel.cpp
-    dfm-base/widgets/abstractwallpaperitem.cpp
-    dfm-base/widgets/abstractwallpaperlist.cpp
-    dfm-base/widgets/abstractwallpapersetting.cpp
-    dfm-base/widgets/abstractbackgroundmanager.cpp
     dfm-base/widgets/abstractbackground.cpp
-    dfm-base/widgets/abstractcanvasmanager.cpp
     dfm-base/widgets/abstractscreen.cpp
     dfm-base/widgets/abstractscreenproxy.cpp
     dfm-base/widgets/abstractfiletreater.cpp
     )
 
 set(widgets_cxx_h
-    dfm-base/widgets/abstractcanvas.h
-    dfm-base/widgets/abstractcanvasmodel.h
-    dfm-base/widgets/abstractcanvasdelegate.h
-    dfm-base/widgets/abstractcanvasmodelwatcher.h
-    dfm-base/widgets/abstractcanvasgridmanager.h
-    dfm-base/widgets/abstractcanvasselectionmodel.h
-    dfm-base/widgets/abstractwallpaperitem.h
-    dfm-base/widgets/abstractwallpaperlist.h
-    dfm-base/widgets/abstractwallpapersetting.h
-    dfm-base/widgets/abstractbackgroundmanager.h
     dfm-base/widgets/abstractbackground.h
-    dfm-base/widgets/abstractcanvasmanager.h
     dfm-base/widgets/abstractscreen.h
     dfm-base/widgets/abstractscreenproxy.h
     dfm-base/widgets/screenglobal.h
@@ -79,12 +57,12 @@ set(core_cxx_cpp
     background/backgroundmanager.cpp
     background/backgrounddefault.cpp
     canvas/canvasviewmanager.cpp
-    canvas/defaultcanvasview.cpp
-    canvas/defaultcanvasmodel.cpp
-    canvas/defaultcanvasitemdelegate.cpp
-    canvas/defaultcanvasgridmanager.cpp
+    canvas/canvasview.cpp
+    canvas/canvasmodel.cpp
+    canvas/canvasitemdelegate.cpp
+    canvas/canvasgridmanager.cpp
     canvas/defaultdesktopfileinfo.cpp
-    canvas/defaultfiletreater.cpp
+    canvas/filetreater.cpp
     canvas/displayconfig.cpp
     utils/desktoputils.cpp
     screen/screenqt.cpp
@@ -103,19 +81,19 @@ set(core_cxx_h
     background/backgroundmanager.h
     background/backgroundmanager_p.h
     background/backgrounddefault.h
-    canvas/private/defaultcanvasview_p.h
+    canvas/private/canvasview_p.h
     canvas/private/canvasviewmanager_p.h
-    canvas/private/defaultcanvasitemdelegate_p.h
-    canvas/private/defaultcanvasgridmanager_p.h
+    canvas/private/canvasitemdelegate_p.h
+    canvas/private/canvasgridmanager_p.h
     canvas/private/defaultdesktopfileinfo_p.h
-    canvas/private/defaultfiletreater_p.h
+    canvas/private/filetreater_p.h
     canvas/canvasviewmanager.h
-    canvas/defaultcanvasview.h
-    canvas/defaultcanvasmodel.h
-    canvas/defaultcanvasitemdelegate.h
-    canvas/defaultcanvasgridmanager.h
+    canvas/canvasview.h
+    canvas/canvasmodel.h
+    canvas/canvasitemdelegate.h
+    canvas/canvasgridmanager.h
     canvas/defaultdesktopfileinfo.h
-    canvas/defaultfiletreater.h
+    canvas/filetreater.h
     canvas/displayconfig.h
     utils/desktoputils.h
     screen/screenqt.h

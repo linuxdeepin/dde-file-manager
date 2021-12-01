@@ -19,9 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "canvasviewmanager.h"
-#include "defaultcanvasmodel.h"
-#include "defaultcanvasgridmanager.h"
-#include "defaultfiletreater.h"
+#include "canvasmodel.h"
+#include "canvasgridmanager.h"
+#include "filetreater.h"
 #include "private/canvasviewmanager_p.h"
 
 #include "dfm-framework/framework.h"
@@ -29,7 +29,8 @@
 DSB_D_BEGIN_NAMESPACE
 
 CanvasViewManager::CanvasViewManager(QObject *parent)
-    : AbstractCanvasManager(parent), d(new CanvasViewManagerPrivate(this))
+    : QObject(parent)
+    , d(new CanvasViewManagerPrivate(this))
 {
     auto &ctx = dpfInstance.serviceContext();
     // 获取屏幕服务
@@ -42,8 +43,8 @@ CanvasViewManager::CanvasViewManager(QObject *parent)
     // todo
     initConnect();
 
-    d->canvasModel = new DefaultCanvasModel(this);
-    DefaultCanvasGridManager::instance()->initCoord(d->backgroundService->allBackground().size());
+    d->canvasModel = new CanvasModel(this);
+    CanvasGridManager::instance()->initCoord(d->backgroundService->allBackground().size());
     // 根据屏幕build
     onCanvasViewBuild();
 }
@@ -61,7 +62,7 @@ void CanvasViewManager::onFileLoadFinish()
 void CanvasViewManager::initConnect()
 {
     // 遍历数据完成后通知更新栅格位置信息
-    connect(DefaultFileTreaterCt, &DefaultFileTreater::fileFinished, this, &CanvasViewManager::onFileLoadFinish, Qt::DirectConnection);
+    connect(FileTreaterCt, &FileTreater::fileFinished, this, &CanvasViewManager::onFileLoadFinish, Qt::DirectConnection);
 
     // 屏幕增删，模式改变
     connect(d->backgroundService, &BackgroundService::sigBackgroundBuilded, this, &CanvasViewManager::onCanvasViewBuild);
@@ -70,10 +71,10 @@ void CanvasViewManager::initConnect()
 void CanvasViewManager::loadDataAndShow()
 {
     // 初始化栅布局信息
-    DefaultCanvasGridManager::instance()->initGridItemsInfo();
+    CanvasGridManager::instance()->initGridItemsInfo();
 
     // show canvas
-    for (const canvasViewPointer &cv : d->canvasViewMap.values()) {
+    for (const CanvasViewPointer &cv : d->canvasViewMap.values()) {
         cv->show();
     }
 }
@@ -96,7 +97,7 @@ void CanvasViewManager::onCanvasViewBuild()
             return;
         }
 
-        canvasViewPointer mView = d->canvasViewMap.value(primary->name());
+        CanvasViewPointer mView = d->canvasViewMap.value(primary->name());
         // 清空前次画布信息
         d->canvasViewMap.clear();
 
@@ -114,7 +115,7 @@ void CanvasViewManager::onCanvasViewBuild()
 #endif
 
         if (mView.get() == nullptr) {
-            mView.reset(new DefaultCanvasView());
+            mView.reset(new CanvasView());
             mView->setScreenName(primary->name());
             mView->setScreenNum(1);
             mView->setModel(d->canvasModel);
@@ -143,11 +144,11 @@ void CanvasViewManager::onCanvasViewBuild()
             QRect avRect;
             QRect screenAvaRect = sp->availableGeometry();
             avRect = d->relativeRect(screenAvaRect, sp->geometry());
-            canvasViewPointer mView = d->canvasViewMap.value(sp->name());
+            CanvasViewPointer mView = d->canvasViewMap.value(sp->name());
 
             //新增
             if (mView.get() == nullptr) {
-                mView.reset(new DefaultCanvasView());
+                mView.reset(new CanvasView());
                 mView->setScreenName(sp->name());
                 mView->setScreenNum(screenNum);
                 mView->setModel(d->canvasModel);
@@ -177,7 +178,7 @@ void CanvasViewManager::onCanvasViewBuild()
     }
     d->isDone = true;
     //检查是否展示的桌面数据已到位
-    if (DefaultFileTreaterCt->isDone()) {
+    if (FileTreaterCt->isDone()) {
         loadDataAndShow();
     } else {
         qDebug() << "view builed but no data, need to show when FileTreater done ";

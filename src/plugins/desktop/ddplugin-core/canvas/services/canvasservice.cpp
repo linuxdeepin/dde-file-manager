@@ -20,17 +20,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "canvasservice.h"
-#include "defaultfiletreater.h"
+#include "filetreater.h"
 
 DSB_D_BEGIN_NAMESPACE
 
 CanvasService::CanvasService(QObject *parent)
     : PluginService(parent), AutoServiceRegister<CanvasService>()
 {
-    DefaultFileTreaterCt->init();
+    FileTreaterCt->init();
     canvasMgrProxy = new CanvasViewManager(this);
 
     // todo background signal
+}
+
+CanvasService::~CanvasService()
+{
+    delete canvasMgrProxy;
+    canvasMgrProxy = nullptr;
 }
 
 DSB_D_END_NAMESPACE

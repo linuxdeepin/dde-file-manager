@@ -1,10 +1,9 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huangyu<huangyub@uniontech.com>
+ * Author:     liqiang<liqianga@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,24 +18,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ABSTRACTCANVASMODELWATCHER_H
-#define ABSTRACTCANVASMODELWATCHER_H
+#ifndef FILETREATER_P_H
+#define FILETREATER_P_H
 
-#include "dfm-base/dfm_base_global.h"
+#include "filetreater.h"
 
-#include <QObject>
+DSB_D_BEGIN_NAMESPACE
 
-DFMBASE_BEGIN_NAMESPACE
-class AbstractCanvasModelWatcher : public QObject
+class FileTreaterPrivate
 {
-    Q_OBJECT
 public:
-    explicit AbstractCanvasModelWatcher(QObject *parent = nullptr);
+    explicit FileTreaterPrivate(FileTreater *q_ptr)
+        : q(q_ptr) {}
 
-signals:
-
-public slots:
+public:
+    QList<DFMDesktopFileInfoPointer> fileList;
+    QMap<QString, DFMDesktopFileInfoPointer> fileHashTable;
+    QString homePath;
+    bool isDone { false };
+    FileTreater *q { nullptr };
 };
-DFMBASE_END_NAMESPACE
 
-#endif   // ABSTRACTCANVASMODELWATCHER_H
+DSB_D_END_NAMESPACE
+#endif   // FILETREATER_P_H
