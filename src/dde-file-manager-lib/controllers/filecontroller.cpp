@@ -76,6 +76,7 @@
 #include <QUrlQuery>
 #include <QRegularExpression>
 
+#include <thread>
 #include <unistd.h>
 #include <gio/gio.h>
 
