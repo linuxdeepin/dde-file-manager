@@ -34,26 +34,6 @@ DoRestoreTrashFilesWorker::DoRestoreTrashFilesWorker(QObject *parent)
 DoRestoreTrashFilesWorker::~DoRestoreTrashFilesWorker()
 {
 }
-/*!
- * \brief doOperateWork 处理用户的操作
- * \param actions 当前操作
- */
-void DoRestoreTrashFilesWorker::doOperateWork(AbstractJobHandler::SupportActions actions)
-{
-    if (actions.testFlag(AbstractJobHandler::SupportAction::kStopAction)) {
-        stop();
-    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kPauseAction)) {
-        pause();
-    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kRememberAction)) {
-    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kEnforceAction)) {
-    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kCancelAction)) {
-    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kCoexistAction)) {
-    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kSkipAction)) {
-    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kMergeAction)) {
-    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kReplaceAction)) {
-    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kRetryAction)) {
-    }
-}
 
 void DoRestoreTrashFilesWorker::doWork()
 {

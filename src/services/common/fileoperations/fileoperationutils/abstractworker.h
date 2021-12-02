@@ -30,6 +30,7 @@
 #include <QUrl>
 #include <QSharedPointer>
 
+class QWaitCondition;
 DSC_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 class StatisticsFilesSize;
@@ -98,12 +99,14 @@ public:
      * \brief doOperateWork 处理用户的操作
      * \param actions 当前操作
      */
-    virtual void doOperateWork(AbstractJobHandler::SupportActions actions)
-    {
-        Q_UNUSED(actions);
-    }
+    virtual void doOperateWork(AbstractJobHandler::SupportActions actions);
+
+protected:
+    virtual void stop() {}
+    virtual void pause() {}
+    virtual void resume() {}
 protected slots:
-    virtual void doWork();
+    virtual void doWork() {}
 
 protected:
     void initHandleConnects(const JobHandlePointer &handle);
@@ -117,6 +120,8 @@ public:
     QList<QUrl> sources;   // 源文件
     QUrl target;   // 目标目录
     AbstractJobHandler::JobFlags jobFlags { AbstractJobHandler::JobFlag::kNoHint };   // 任务标志
+    AbstractJobHandler::SupportAction currentAction { AbstractJobHandler::SupportAction::kNoAction };   // 当前的操作
+    QSharedPointer<QWaitCondition> handlingErrorCondition { nullptr };
 };
 
 DSC_END_NAMESPACE

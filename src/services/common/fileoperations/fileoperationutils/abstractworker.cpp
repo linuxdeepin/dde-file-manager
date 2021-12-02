@@ -24,6 +24,7 @@
 
 #include <QUrl>
 #include <QDebug>
+#include <QWaitCondition>
 
 DSC_USE_NAMESPACE
 /*!
@@ -42,6 +43,43 @@ void AbstractWorker::setWorkArgs(const JobHandlePointer &handle, const QList<QUr
     this->target = target;
     jobFlags = flags;
 }
+
+/*!
+ * \brief doOperateWork 处理用户的操作 不在拷贝线程执行的函数，协同类直接调用
+ * \param actions 当前操作
+ */
+void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions)
+{
+    if (actions.testFlag(AbstractJobHandler::SupportAction::kStopAction)) {
+        stop();
+    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kPauseAction)) {
+        pause();
+    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kResumAction)) {
+        resume();
+    } else {
+        if (actions.testFlag(AbstractJobHandler::SupportAction::kCancelAction)) {
+            currentAction = AbstractJobHandler::SupportAction::kCancelAction;
+        } else if (actions.testFlag(AbstractJobHandler::SupportAction::kCoexistAction)) {
+            currentAction = AbstractJobHandler::SupportAction::kCoexistAction;
+        } else if (actions.testFlag(AbstractJobHandler::SupportAction::kSkipAction)) {
+            currentAction = AbstractJobHandler::SupportAction::kSkipAction;
+        } else if (actions.testFlag(AbstractJobHandler::SupportAction::kMergeAction)) {
+            currentAction = AbstractJobHandler::SupportAction::kMergeAction;
+        } else if (actions.testFlag(AbstractJobHandler::SupportAction::kReplaceAction)) {
+            currentAction = AbstractJobHandler::SupportAction::kReplaceAction;
+        } else if (actions.testFlag(AbstractJobHandler::SupportAction::kRetryAction)) {
+            currentAction = AbstractJobHandler::SupportAction::kRetryAction;
+        } else if (actions.testFlag(AbstractJobHandler::SupportAction::kEnforceAction)) {
+            currentAction = AbstractJobHandler::SupportAction::kEnforceAction;
+        } else {
+            currentAction = AbstractJobHandler::SupportAction::kNoAction;
+        }
+
+        if (handlingErrorCondition)
+            handlingErrorCondition->wakeAll();
+    }
+}
+
 AbstractWorker::AbstractWorker(QObject *parent)
     : QObject(parent)
 {

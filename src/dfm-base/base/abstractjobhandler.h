@@ -113,6 +113,7 @@ public:
         kPauseAction = 0x100,   // 暂停操作
         kStopAction = 0x200,   // 停止操作
         kStartAction = 0x400,   // 开始操作
+        kResumAction = 0x800,   // 恢复
     };
     Q_ENUM(SupportAction)
     Q_DECLARE_FLAGS(SupportActions, SupportAction)
@@ -129,7 +130,8 @@ public:
         kErrorMsgKey,
         kActionsKey,
         kSpeedKey,
-        kRemindTimeKey
+        kRemindTimeKey,
+        kErrorUniqueKey
     };
     Q_ENUM(NotifyInfoKey)
     explicit AbstractJobHandler(QObject *parent = nullptr);

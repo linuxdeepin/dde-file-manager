@@ -41,10 +41,9 @@ public:
     virtual ~DoDeleteFilesWorker() override;
 
 protected:
-    virtual void doOperateWork(AbstractJobHandler::SupportActions actions) override;
     void doWork() override;
-    void stop();
-    void pause();
+    void stop() override;
+    void pause() override;
 };
 
 DSC_END_NAMESPACE
