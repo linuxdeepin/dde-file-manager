@@ -45,6 +45,7 @@
  * \class LocalFileInfo 本地文件信息类
  * \brief 内部实现本地文件的fileinfo，对应url的scheme是file://
  */
+DWIDGET_USE_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
 
 LocalFileInfo::LocalFileInfo(const QUrl &url)
@@ -1162,6 +1163,11 @@ QVariantHash LocalFileInfo::extraProperties() const
     if (d->extraProperties.isEmpty()) {
     }
     return d->extraProperties;
+}
+
+QIcon LocalFileInfo::fileIcon() const
+{
+    return DFileIconProvider::globalProvider()->icon(this->path());
 }
 /*!
  * \brief inode linux系统下的唯一表示符

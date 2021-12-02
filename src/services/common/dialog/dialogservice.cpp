@@ -22,6 +22,8 @@
 */
 #include "dialogservice.h"
 #include "taskdialog/taskdialog.h"
+#include "propertydialog/computerpropertydialog.h"
+#include "propertydialog/trashpropertydialog.h"
 
 DSC_USE_NAMESPACE
 
@@ -33,8 +35,8 @@ DDialog *DialogService::showQueryScanningDialog(const QString &title)
     Qt::WindowFlags flags = d->windowFlags();
     d->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
     d->setIcon(QIcon::fromTheme("dialog-warning"));
-    d->addButton(QObject::tr("Cancel","button"));
-    d->addButton(QObject::tr("Stop","button"), true, DDialog::ButtonWarning); // 终止
+    d->addButton(QObject::tr("Cancel", "button"));
+    d->addButton(QObject::tr("Stop", "button"), true, DDialog::ButtonWarning);   // 终止
     d->setMaximumWidth(640);
     d->show();
     return d;
@@ -47,7 +49,7 @@ void DialogService::showErrorDialog(const QString &title, const QString &message
     // dialog show top
     d.setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
     d.setIcon(QIcon::fromTheme("dialog-error"));
-    d.addButton(tr("Confirm","button"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("Confirm", "button"), true, DDialog::ButtonRecommend);
     d.setMaximumWidth(640);
     d.exec();
 }
@@ -64,14 +66,34 @@ void DialogService::addTask(const JobHandlePointer &task)
     taskdailog->addTask(task);
 }
 
+/*!
+ * \brief 创建与显示计算机属性页面
+ */
+void DialogService::showComputerPropertyDialog()
+{
+    if (!computerPropertyDialog)
+        computerPropertyDialog = new ComputerPropertyDialog();
+
+    computerPropertyDialog->show();
+}
+
+/*!
+ * \brief 创建与显示回收站属性页面
+ */
+void DialogService::showTrashPropertyDialog()
+{
+    if (!trashPropertyDialog)
+        trashPropertyDialog = new TrashPropertyDialog();
+
+    trashPropertyDialog->show();
+}
+
 DialogService::DialogService(QObject *parent)
     : dpf::PluginService(parent),
       dpf::AutoServiceRegister<DialogService>()
 {
-
 }
 
 dfm_service_common::DialogService::~DialogService()
 {
-
 }

@@ -88,6 +88,8 @@ public:
     virtual QDateTime lastModified() const override;
     virtual QDateTime lastRead() const override;
     virtual QDateTime fileTime(QFile::FileTime time) const override;
+    virtual QVariantHash extraProperties() const override;
+    virtual QIcon fileIcon() const override;
 
     virtual bool isBlockDev() const;
     virtual QString mountPath() const;
@@ -101,7 +103,6 @@ public:
     virtual QString sizeFormat() const override;
     virtual QString fileDisplayName() const;
     virtual QFileInfo toQFileInfo() const;
-    virtual QVariantHash extraProperties() const override;
     virtual quint64 inode() const;
 };
 DFMBASE_END_NAMESPACE

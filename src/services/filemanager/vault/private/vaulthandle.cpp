@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Deepin Technology Co., Ltd.
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     lixiang<lixianga@uniontech.com>
  *
@@ -52,10 +52,8 @@ VaultHandle::~VaultHandle()
     disconnect(vaultHandlePrivatePtr->process, &QProcess::readyReadStandardError, this, &VaultHandle::slotReadError);
     disconnect(vaultHandlePrivatePtr->process, &QProcess::readyReadStandardOutput, this, &VaultHandle::slotReadOutput);
 
-    if (vaultHandlePrivatePtr) {
-        delete vaultHandlePrivatePtr;
-        vaultHandlePrivatePtr = nullptr;
-    }
+    delete vaultHandlePrivatePtr;
+    vaultHandlePrivatePtr = nullptr;
 }
 
 /*!

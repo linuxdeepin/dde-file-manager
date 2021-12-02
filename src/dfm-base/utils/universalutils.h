@@ -40,6 +40,10 @@ public:
     static bool inMainThread();
 
     static void blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay);
+
+    static qint64 computerMemory();
+
+    static void computerInformation(QString &cpuinfo, QString &systemType, QString &Edition, QString &version);
 };
 
 DFMBASE_END_NAMESPACE

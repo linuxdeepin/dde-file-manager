@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Deepin Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     lixiang<lixianga@uniontech.com>
  *
@@ -18,6 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "detailview.h"
 #include "private/detailview_p.h"
 #include "detailextendview.h"
@@ -28,16 +29,19 @@
 #include <QLabel>
 #include <QGridLayout>
 #include <QPushButton>
+#include <QScrollArea>
+#include <QFileSystemModel>
+#include <QTreeView>
 
-DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
+DSB_FM_USE_NAMESPACE
 
 DetailView::DetailView(QWidget *parent)
     : DFrame(parent),
       detailViewPrivate(new DetailViewPrivate(this))
 {
-    this->setMinimumWidth(300);
-    this->setMaximumWidth(325);
+    this->setFixedWidth(320);
     this->setAutoFillBackground(true);
 }
 
@@ -56,6 +60,8 @@ DetailView::~DetailView()
 bool DetailView::addCustomControl(QWidget *widget)
 {
     if (widget) {
+        QPushButton *btn = new QPushButton(this);
+        btn->setMaximumHeight(1);
         detailViewPrivate->addCustomControl(widget);
         return true;
     }
@@ -105,7 +111,8 @@ void DetailViewPrivate::setFileUrl(QUrl &url)
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     if (info.isNull())
         return;
-    //    iconLabel->setPixmap(info.fileIcon().pixmap(64, 64));
+    QSize targetSize = iconLabel->size().scaled(iconLabel->width(), iconLabel->height(), Qt::KeepAspectRatio);
+    iconLabel->setPixmap(info->fileIcon().pixmap(targetSize));
     baseInfoView->setFileUrl(url);
 }
 
@@ -115,7 +122,10 @@ DetailViewPrivate::~DetailViewPrivate()
 
 void DetailViewPrivate::initUI()
 {
-    splitter = new Splitter(Qt::Orientation::Vertical, detailView);
+    QFrame *frame = new QFrame(detailView);
+    splitter = new QVBoxLayout();
+    splitter->setContentsMargins(15, 0, 15, 0);
+    splitter->setSpacing(8);
     iconLabel = new QLabel(detailView);
     iconLabel->setFixedSize(160, 160);
     iconLabel->setAlignment(Qt::AlignCenter);
@@ -131,11 +141,27 @@ void DetailViewPrivate::initUI()
     vlayout->addWidget(btn);
     vlayout->addWidget(baseInfoView);
 
-    QVBoxLayout *vlayout1 = new QVBoxLayout(detailView);
+    QVBoxLayout *vlayout1 = new QVBoxLayout(frame);
     vlayout1->setMargin(0);
     vlayout1->addLayout(vlayout);
-    vlayout1->addWidget(splitter);
+    vlayout1->addLayout(splitter);
     vlayout1->addStretch(1);
+
+    scrollArea = new QScrollArea(detailView);
+    scrollArea->setAlignment(Qt::AlignTop);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scrollArea->setFrameShape(QFrame::NoFrame);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setMargin(0);
+    mainLayout->setAlignment(Qt::AlignCenter);
+    mainLayout->addWidget(scrollArea);
+
+    detailView->setLayout(mainLayout);
+
+    frame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    scrollArea->setWidget(frame);
+    scrollArea->setWidgetResizable(true);
 }
 
 /*!
@@ -158,43 +184,6 @@ void DetailViewPrivate::insertCustomControl(int index, QWidget *widget)
     static_cast<DetailExtendView *>(widget)->setFileUrl(url);
 }
 
-KeyValueLabel::KeyValueLabel(QWidget *parent)
-    : QFrame(parent)
-{
-    initUI();
-}
-
-KeyValueLabel::~KeyValueLabel()
-{
-}
-
-void KeyValueLabel::initUI()
-{
-    leftValueLabel = new QLabel(this);
-    rightValueLabel = new QLabel(this);
-    QGridLayout *glayout = new QGridLayout;
-    glayout->setMargin(0);
-    glayout->addWidget(leftValueLabel, 0, 0, 1, 1);
-    glayout->addWidget(rightValueLabel, 0, 1, 1, 1);
-    setLayout(glayout);
-}
-
-void KeyValueLabel::setLeftValue(QString value)
-{
-    leftValueLabel->setText(value);
-}
-
-void KeyValueLabel::setRightValue(QString value)
-{
-    rightValueLabel->setText(value);
-}
-
-void KeyValueLabel::setLeftRightValue(QString leftValue, QString rightValue)
-{
-    setLeftValue(leftValue);
-    setRightValue(rightValue);
-}
-
 FileBaseInfoView::FileBaseInfoView(QWidget *parent)
     : QFrame(parent)
 {
@@ -208,19 +197,19 @@ FileBaseInfoView::~FileBaseInfoView()
 void FileBaseInfoView::initUI()
 {
     fileName = new KeyValueLabel(this);
-    fileName->setLeftValue(tr("name"));
+    fileName->setLeftValue(tr("Name"));
     fileSize = new KeyValueLabel(this);
-    fileSize->setLeftValue(tr("size"));
+    fileSize->setLeftValue(tr("Size"));
     fileViewSize = new KeyValueLabel(this);
-    fileViewSize->setLeftValue(tr("dimension"));
+    fileViewSize->setLeftValue(tr("Dimension"));
     fileDuration = new KeyValueLabel(this);
-    fileDuration->setLeftValue(tr("duration"));
+    fileDuration->setLeftValue(tr("Duration"));
     fileType = new KeyValueLabel(this);
-    fileType->setLeftValue(tr("file type"));
+    fileType->setLeftValue(tr("Type"));
     fileInterviewTime = new KeyValueLabel(this);
-    fileInterviewTime->setLeftValue(tr("interview time"));
+    fileInterviewTime->setLeftValue(tr("Accessed"));
     fileChangeTime = new KeyValueLabel(this);
-    fileChangeTime->setLeftValue(tr("change time"));
+    fileChangeTime->setLeftValue(tr("Modified"));
     QGridLayout *glayout = new QGridLayout;
     glayout->setSpacing(10);
     glayout->addWidget(fileName, 0, 0);
@@ -244,74 +233,74 @@ void FileBaseInfoView::setFileUrl(QUrl &url)
     if (info.isNull())
         return;
 
-    fileName->setRightValue(info->fileName());
-    fileInterviewTime->setRightValue(info->lastRead().toString("yyyy/MM/dd hh:mm:ss"));
-    fileChangeTime->setRightValue(info->lastModified().toString("yyyy/MM/dd hh:mm:ss"));
+    fileName->setRightValue(info->fileName(), Qt::ElideMiddle, Qt::AlignLeft, true);
+    fileInterviewTime->setRightValue(info->lastRead().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideMiddle, Qt::AlignLeft, true);
+    fileChangeTime->setRightValue(info->lastModified().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideMiddle, Qt::AlignLeft, true);
 
     QMimeType mimeType = MimeDatabase::mimeTypeForUrl(url);
     MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(mimeType.name());
     switch (type) {
     case MimeDatabase::FileType::Directory:
-        fileType->setRightValue(tr("Directory"));
+        fileType->setRightValue(tr("Directory"), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setVisible(false);
         fileViewSize->setVisible(false);
         fileDuration->setVisible(false);
         break;
     case MimeDatabase::FileType::Documents: {
-        fileType->setRightValue(tr("Documents"));
-        fileSize->setRightValue(FileUtils::formatSize(info->size()));
+        fileType->setRightValue(tr("Documents"), Qt::ElideNone, Qt::AlignLeft, true);
+        fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setVisible(true);
         fileViewSize->setVisible(false);
         fileDuration->setVisible(false);
     } break;
     case MimeDatabase::FileType::Videos: {
-        fileType->setRightValue(tr("Videos"));
-        fileSize->setRightValue(FileUtils::formatSize(info->size()));
+        fileType->setRightValue(tr("Videos"), Qt::ElideNone, Qt::AlignLeft, true);
+        fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         QVariant dimension = info->extraProperties().value(QString("Dimension"));
-        fileViewSize->setRightValue(dimension.toString());
+        fileViewSize->setRightValue(dimension.toString(), Qt::ElideNone, Qt::AlignLeft, true);
         QVariant duration = info->extraProperties().value(QString("Duration"));
-        fileDuration->setRightValue(duration.toString());
+        fileDuration->setRightValue(duration.toString(), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setVisible(true);
         fileViewSize->setVisible(true);
         fileDuration->setVisible(true);
     } break;
     case MimeDatabase::FileType::Images: {
-        fileType->setRightValue(tr("Images"));
-        fileSize->setRightValue(QString::number(info->size()));
+        fileType->setRightValue(tr("Images"), Qt::ElideNone, Qt::AlignLeft, true);
+        fileSize->setRightValue(QString::number(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         QVariant dimension = info->extraProperties().value(QString("Dimension"));
-        fileViewSize->setRightValue(dimension.toString());
+        fileViewSize->setRightValue(dimension.toString(), Qt::ElideNone, Qt::AlignLeft, true);
         QVariant duration = info->extraProperties().value(QString("Duration"));
-        fileDuration->setRightValue(duration.toString());
+        fileDuration->setRightValue(duration.toString(), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setVisible(true);
         fileViewSize->setVisible(true);
         fileDuration->setVisible(false);
     } break;
     case MimeDatabase::FileType::Audios: {
-        fileType->setRightValue(tr("Audios"));
-        fileSize->setRightValue(FileUtils::formatSize(info->size()));
+        fileType->setRightValue(tr("Audios"), Qt::ElideNone, Qt::AlignLeft, true);
+        fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         QVariant duration = info->extraProperties().value(QString("Duration"));
-        fileDuration->setRightValue(duration.toString());
+        fileDuration->setRightValue(duration.toString(), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setVisible(true);
         fileViewSize->setVisible(false);
         fileDuration->setVisible(true);
     } break;
     case MimeDatabase::FileType::Executable:
-        fileType->setRightValue(tr("Executable"));
-        fileSize->setRightValue(FileUtils::formatSize(info->size()));
+        fileType->setRightValue(tr("Executable"), Qt::ElideNone, Qt::AlignLeft, true);
+        fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setVisible(true);
         fileViewSize->setVisible(false);
         fileDuration->setVisible(false);
         break;
     case MimeDatabase::FileType::Archives:
-        fileType->setRightValue(tr("Archives"));
-        fileSize->setRightValue(FileUtils::formatSize(info->size()));
+        fileType->setRightValue(tr("Archives"), Qt::ElideNone, Qt::AlignLeft, true);
+        fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setVisible(true);
         fileViewSize->setVisible(false);
         fileDuration->setVisible(false);
         break;
     case MimeDatabase::FileType::Unknown:
-        fileType->setRightValue(tr("Unknown"));
-        fileSize->setRightValue(FileUtils::formatSize(info->size()));
+        fileType->setRightValue(tr("Unknown"), Qt::ElideNone, Qt::AlignLeft, true);
+        fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setVisible(true);
         fileViewSize->setVisible(false);
         fileDuration->setVisible(false);

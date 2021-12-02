@@ -1,10 +1,9 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     lixiang<lixianga@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: lixiang<lixianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,20 +18,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef EVENTCALLER_H
-#define EVENTCALLER_H
 
-#include "window/contexts.h"   // TODO(zhangs): hide
+#ifndef DEVICEPROPERTYVIEW_H
+#define DEVICEPROPERTYVIEW_H
 
-DSB_FM_USE_NAMESPACE
+#include "dfm_common_service_global.h"
 
-class EventCaller final
+#include <DAbstractDialog>
+DWIDGET_USE_NAMESPACE
+DSC_BEGIN_NAMESPACE
+class DevicePropertyDialog : public DAbstractDialog
 {
+    Q_OBJECT
 public:
-    explicit EventCaller() = delete;
-    static void sendOpenNewWindowEvent(quint64 windowIdx);
-    static void sendSideBarContextMenuEvent(const QUrl &url, const QPoint &pos);
-    static void sendSearchEvent(const QUrl &targetUrl, const QString &keyword, quint64 winIdx);
-};
+    explicit DevicePropertyDialog(QObject *parent = nullptr);
 
-#endif   // EVENTCALLER_H
+signals:
+
+public slots:
+};
+DSC_END_NAMESPACE
+#endif   // DEVICEPROPERTYVIEW_H

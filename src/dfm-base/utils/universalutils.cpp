@@ -128,4 +128,45 @@ void UniversalUtils::blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay)
     qInfo() << " create over dbus to block computer shut down!!!";
 }
 
+qint64 UniversalUtils::computerMemory()
+{
+    //! 从com.deepin.system.SystemInfo中获取实际安装的内存的大小
+    QDBusInterface deepinSystemInfo("com.deepin.system.SystemInfo",
+                                    "/com/deepin/system/SystemInfo",
+                                    "com.deepin.system.SystemInfo",
+                                    QDBusConnection::systemBus());
+    // 部分数据优先从dbus读取
+    // 获取安装的内存总量
+    if (deepinSystemInfo.isValid())
+        return static_cast<qint64>(deepinSystemInfo.property("MemorySize").toULongLong());
+
+    return -1;
+}
+
+void UniversalUtils::computerInformation(QString &cpuinfo, QString &systemType, QString &edition, QString &version)
+{
+    QDBusInterface systemInfo("com.deepin.daemon.SystemInfo",
+                              "/com/deepin/daemon/SystemInfo",
+                              "com.deepin.daemon.SystemInfo",
+                              QDBusConnection::sessionBus());
+
+    if (systemInfo.isValid()) {
+        //! 获取cpu信息
+        cpuinfo = qvariant_cast<QString>(systemInfo.property("Processor"));
+        //! 获取系统是64位还是32位
+        systemType = QString::number(qvariant_cast<qint64>(systemInfo.property("SystemType"))) + QObject::tr("Bit");
+
+        if (edition.isEmpty()) {
+            edition = qvariant_cast<QString>(systemInfo.property("Version"));
+            QStringList temp = edition.split(' ');
+            if (temp.size() > 1) {
+                version = temp[0];
+                edition = temp[1];
+            } else if (!temp.isEmpty()) {
+                edition = temp[0];
+            }
+        }
+    }
+}
+
 DFMBASE_END_NAMESPACE

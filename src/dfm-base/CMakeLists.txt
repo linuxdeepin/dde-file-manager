@@ -120,7 +120,8 @@ set(WIDGETS_H
     widgets/dfmfileview/fileselectionmodel.h
     widgets/dfmdialog/errordialog.h
     widgets/dfmdialog/contextdialog.h
-)
+    widgets/dfmkeyvaluelabel/keyvaluelabel.h
+    )
 
 set(WIDGETS_CPP
     widgets/dfmfileview/private/traversaldirthread.cpp
@@ -149,7 +150,8 @@ set(WIDGETS_CPP
     widgets/dfmfileview/fileselectionmodel.cpp
     widgets/dfmdialog/errordialog.cpp
     widgets/dfmdialog/contextdialog.cpp
-)
+    widgets/dfmkeyvaluelabel/keyvaluelabel.cpp
+    )
 
 set(APPLICATIONSERVICE_CPP
     application/application.cpp

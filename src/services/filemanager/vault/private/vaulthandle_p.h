@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Deepin Technology Co., Ltd.
+ * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     lixiang<lixianga@uniontech.com>
  *
@@ -37,7 +37,7 @@ class VaultHandle;
 class VaultHandlePrivate
 {
     friend class VaultHandle;
-
+    Q_DISABLE_COPY(VaultHandlePrivate)
 private:
     explicit VaultHandlePrivate(VaultHandle *q = nullptr);
 

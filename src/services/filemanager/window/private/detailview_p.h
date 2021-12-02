@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Deepin Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     lixiang<lixianga@uniontech.com>
  *
@@ -23,37 +23,16 @@
 
 #include "dfm_filemanager_service_global.h"
 #include "dfm-base/widgets/dfmsplitter/splitter.h"
+#include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 
 #include <QUrl>
 #include <QFrame>
 
 class QLabel;
-
+class QScrollArea;
 DSB_FM_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 class DetailView;
-class KeyValueLabel : public QFrame
-{
-    Q_OBJECT
-public:
-    explicit KeyValueLabel(QWidget *parent);
-    virtual ~KeyValueLabel();
-
-private:
-    void initUI();
-
-public:
-    void setLeftValue(QString value);
-
-    void setRightValue(QString value);
-
-    void setLeftRightValue(QString leftValue, QString rightValue);
-
-private:
-    QLabel *leftValueLabel = nullptr;
-    QLabel *rightValueLabel = nullptr;
-};
-
 class FileBaseInfoView : public QFrame
 {
     Q_OBJECT
@@ -96,10 +75,11 @@ private:
 
 private:
     QUrl url;
-    Splitter *splitter = nullptr;
+    QVBoxLayout *splitter = nullptr;
     QLabel *iconLabel = nullptr;
     FileBaseInfoView *baseInfoView = nullptr;
     DetailView *detailView = nullptr;
+    QScrollArea *scrollArea = nullptr;
 };
 DSB_FM_END_NAMESPACE
 #endif   // DETAILVIEW_P_H

@@ -30,10 +30,11 @@
 
 #include <DDialog>
 
-
 using namespace DTK_NAMESPACE::Widget;
 DSC_BEGIN_NAMESPACE
 class TaskDialog;
+class ComputerPropertyDialog;
+class TrashPropertyDialog;
 class DialogService final : public dpf::PluginService, dpf::AutoServiceRegister<DialogService>
 {
     Q_OBJECT
@@ -49,13 +50,17 @@ public:
     DDialog *showQueryScanningDialog(const QString &title);
     void showErrorDialog(const QString &title, const QString &message);
     void addTask(const JobHandlePointer &task);
+    void showComputerPropertyDialog();
+    void showTrashPropertyDialog();
 
 private:
     explicit DialogService(QObject *parent = nullptr);
     virtual ~DialogService() override;
-    TaskDialog *taskdailog = nullptr; // 文件任务进度和错误处理弹窗
+    TaskDialog *taskdailog = nullptr;   // 文件任务进度和错误处理弹窗
+    ComputerPropertyDialog *computerPropertyDialog { nullptr };
+    TrashPropertyDialog *trashPropertyDialog { nullptr };
 };
 
 DSC_END_NAMESPACE
 
-#endif // DIALOGSERVICE_H
+#endif   // DIALOGSERVICE_H

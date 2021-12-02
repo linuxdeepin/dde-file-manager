@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2021 ~ 2021 Deepin Technology Co., Ltd.
+* Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
 *
 * Author:     gongheng <gongheng@uniontech.com>
 *
@@ -19,7 +19,6 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "coreeventreceiver.h"
-
 #include "dfm-base/base/urlroute.h"
 #include "windowservice.h"
 
@@ -62,7 +61,6 @@ void CoreEventReceiver::sidebarContextMenuEvent(const dpf::Event &event)
         menu->addAction(openInNewTab);
         menu->addSeparator();
         menu->addAction(property);
-
         // 获取显示位置
         QPoint pos = event.property(EventTypes::kPropertySidebarItemPos).toPoint();
         menu->exec(pos);
@@ -78,7 +76,6 @@ void CoreEventReceiver::setRootUrlEvent(const dpf::Event &event)
     if (windowService) {
         const QUrl rootUrl = event.property(EventTypes::kPropertyRootUrl).toUrl();
         const quint64 winIdx = event.property(EventTypes::kPropertyKeyWindowIndex).toULongLong();
-
         bool result = windowService->setWindowRootUrl(winIdx, rootUrl);
         if (!result)
             QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));

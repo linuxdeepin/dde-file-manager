@@ -45,7 +45,9 @@ FILE(GLOB DIALOG_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/taskdialog/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/taskdialog/*.cpp"
-)
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/propertydialog/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/propertydialog/*.cpp"
+    )
 
 FILE(GLOB MENU_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/menu/*.h"

@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2021 ~ 2021 Deepin Technology Co., Ltd.
+* Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
 *
 * Author:     gongheng <gongheng@uniontech.com>
 *
