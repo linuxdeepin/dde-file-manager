@@ -60,5 +60,5 @@ bool Search::start()
 
 dpf::Plugin::ShutdownFlag Search::stop()
 {
-    return Sync;
+    return kSync;
 }
