@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -30,22 +30,22 @@
 
 DPF_BEGIN_NAMESPACE
 
-/**
- * @brief PluginMetaT1 模板类
- * @details 此模板类为扩展特性，可实现不同插件元数据
+/*!
+ * \brief PluginMetaT1 模板类
+ * \details 此模板类为扩展特性，可实现不同插件元数据
  *  目前只是预留接口
- * @tparam 传入插件对象接口例如 Plugin
+ * \tparam 传入插件对象接口例如 Plugin
  */
-template <class T>
+template<class T>
 class PluginMetaT1 : public QSharedData
 {
     Q_DISABLE_COPY(PluginMetaT1)
 public:
-    PluginMetaT1(){}
+    PluginMetaT1() {}
 };
 
-/** 插件json元文件示例
- * @code
+/*! 插件json元文件示例
+ * \code
  * {
  *   "Name" : "more",
  *   "Version" : "4.8.2",
@@ -63,17 +63,17 @@ public:
  *       {"Name" : "other", "Version" : "4.8.2"}
  *   ]
  * }
- * @endcode
+ * \endcode
  */
 
 class Plugin;
 class PluginContext;
 class PluginService;
 
-/**
- * @brief The PluginMetaObject class
+/*!
+ * \brief The PluginMetaObject class
  *  插件元数据对象
- * @details 该类与SharedPointer配套使用时是线程安全的
+ * \details 该类与SharedPointer配套使用时是线程安全的
  */
 class PluginMetaObjectPrivate;
 class PluginMetaObject final : public PluginMetaT1<Plugin>
@@ -82,25 +82,24 @@ class PluginMetaObject final : public PluginMetaT1<Plugin>
 
     friend class PluginManager;
     friend class PluginManagerPrivate;
-    friend Q_CORE_EXPORT QDebug operator<< (QDebug, const PluginMetaObject &);
+    friend Q_CORE_EXPORT QDebug operator<<(QDebug, const PluginMetaObject &);
 
 public:
-
     enum State {
-        Invalid,     /// 插件未操作获得任何状态
-        Reading,     /// 插件正在读取Json
-        Readed,      /// 插件读取Json完毕
-        Loading,     /// 插件正在加载
-        Loaded,      /// 插件已加载
-        Initialized, /// 插件已经操作Initialized函数
-        Started,     /// 插件已经操作Start函数
-        Stoped,      /// 插件已停操作Stop函数
-        Shutdown,    /// 插件卸载并已经释放
+        Invalid,   /// 插件未操作获得任何状态
+        Reading,   /// 插件正在读取Json
+        Readed,   /// 插件读取Json完毕
+        Loading,   /// 插件正在加载
+        Loaded,   /// 插件已加载
+        Initialized,   /// 插件已经操作Initialized函数
+        Started,   /// 插件已经操作Start函数
+        Stoped,   /// 插件已停操作Stop函数
+        Shutdown,   /// 插件卸载并已经释放
     };
 
     PluginMetaObject();
     PluginMetaObject(const PluginMetaObject &meta);
-    PluginMetaObject& operator = (const PluginMetaObject &meta);
+    PluginMetaObject &operator=(const PluginMetaObject &meta);
     QString fileName() const;
     QString iid() const;
     QString name() const;
@@ -122,11 +121,11 @@ typedef QSharedPointer<DPF_NAMESPACE::PluginMetaObject> PluginMetaObjectPointer;
 
 QT_BEGIN_NAMESPACE
 #ifndef QT_NO_DEBUG_STREAM
-Q_CORE_EXPORT QDebug operator<< (QDebug, const DPF_NAMESPACE::PluginMetaObject &);
-Q_CORE_EXPORT QDebug operator<< (QDebug, const DPF_NAMESPACE::PluginMetaObjectPointer &);
-#endif //QT_NO_DEBUG_STREAM
+Q_CORE_EXPORT QDebug operator<<(QDebug, const DPF_NAMESPACE::PluginMetaObject &);
+Q_CORE_EXPORT QDebug operator<<(QDebug, const DPF_NAMESPACE::PluginMetaObjectPointer &);
+#endif   //QT_NO_DEBUG_STREAM
 QT_END_NAMESPACE
 
 DPF_END_NAMESPACE
 
-#endif // PLUGINMETAOBJECT_H
+#endif   // PLUGINMETAOBJECT_H

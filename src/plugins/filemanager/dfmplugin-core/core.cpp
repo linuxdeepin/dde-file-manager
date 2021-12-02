@@ -287,5 +287,5 @@ bool Core::start()
 
 dpf::Plugin::ShutdownFlag Core::stop()
 {
-    return Sync;
+    return kSync;
 }

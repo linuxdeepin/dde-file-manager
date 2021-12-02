@@ -31,26 +31,26 @@
 
 DPF_BEGIN_NAMESPACE
 
-/// @brief PLUGIN_NAME 插件名称Key
-const char PLUGIN_NAME[] = "Name";
-/// @brief PLUGIN_VERSION 插件版本Key
-const char PLUGIN_VERSION[] = "Version";
-/// @brief PLUGIN_VERSION 插件兼容版本Key
-const char PLUGIN_COMPATVERSION[] = "CompatVersion";
-/// @brief PLUGIN_VERSION 插件类型Key
-const char PLUGIN_CATEGORY[] = "Category";
-/// @nrief PLUGIN_VENDOR 插件作者
-const char PLUGIN_VENDOR[] = "Vendor";
-/// @nrief PLUGIN_VENDOR 插件所持有的公司
-const char PLUGIN_COPYRIGHT[] = "Copyright";
-/// @nrief PLUGIN_VENDOR 插件描述
-const char PLUGIN_DESCRIPTION[] = "Description";
-/// @nrief PLUGIN_VENDOR 插件开源协议
-const char PLUGIN_LICENSE[] = "License";
-/// @nrief PLUGIN_VENDOR 插件主页链接地址
-const char PLUGIN_URLLINK[] = "UrlLink";
-/// @nrief PLUGIN_VENDOR 插件依赖
-const char PLUGIN_DEPENDS[] = "Depends";
+/// \brief kPluginName 插件名称Key
+const char kPluginName[] = "Name";
+/// \brief kPluginVersion 插件版本Key
+const char kPluginVersion[] = "Version";
+/// \brief kPluginCompatversion 插件兼容版本Key
+const char kPluginCompatversion[] = "CompatVersion";
+/// \brief kPluginCategory 插件类型Key
+const char kPluginCategory[] = "Category";
+/// \nrief kPluginVendor 插件作者
+const char kPluginVendor[] = "Vendor";
+/// \nrief kPluginCopyright 插件所持有的公司
+const char kPluginCopyright[] = "Copyright";
+/// \nrief kPluginDescription 插件描述
+const char kPluginDescription[] = "Description";
+/// \nrief kPluginLicense 插件开源协议
+const char kPluginLicense[] = "License";
+/// \nrief kPluginUrllink 插件主页链接地址
+const char kPluginUrlLink[] = "UrlLink";
+/// \nrief kPluginDepends 插件依赖
+const char kPluginDepends[] = "Depends";
 
 class PluginMetaObject;
 class PluginMetaObjectPrivate
@@ -59,6 +59,7 @@ class PluginMetaObjectPrivate
     friend class PluginManagerPrivate;
     friend class PluginMetaObject;
     PluginMetaObject const *q;
+
 public:
     QString iid;
     QString name;
@@ -77,14 +78,12 @@ public:
     QSharedPointer<QPluginLoader> loader;
     QSharedPointer<PluginContext> context;
 
-    explicit PluginMetaObjectPrivate(PluginMetaObject * q)
-        : q(q)
-        , loader(new QPluginLoader(nullptr))
+    explicit PluginMetaObjectPrivate(PluginMetaObject *q)
+        : q(q), loader(new QPluginLoader(nullptr))
     {
-
     }
 };
 
 DPF_END_NAMESPACE
 
-#endif // PLUGINMETAOBJECT_P_H
+#endif   // PLUGINMETAOBJECT_P_H

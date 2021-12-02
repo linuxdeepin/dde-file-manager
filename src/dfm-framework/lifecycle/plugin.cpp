@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -23,43 +23,52 @@
 
 DPF_USE_NAMESPACE
 
-/**
- * @brief Plugin::Plugin 插件默认构造接口
+/*!
+ * \class DiskControlWidget
+ *
+ * \brief DiskControlWidget is Plug-in interface class, used to implement the plug-in, use the following way:
+ * \code
+ * class Core : public Plugin
+ * {
+ *     Q_OBJECT
+ *     Q_PLUGIN_METADATA(IID PLUGIN_INTERFACE FILE "core.json")
+ * public:
+ *     virtual void initialized() override;
+ *     virtual bool start() override;
+ *     virtual PluginMetaObject::ShutDownFlag stop() override;
+ * };
+ * \endcode
+ * Q_PLUGIN_METADATA see Qt macro definitions
+ * PLUGIN_INTERFACE
  */
+
 Plugin::Plugin()
 {
-
 }
 
-/**
- * @brief Plugin::~Plugin 插件析构函数
- */
 Plugin::~Plugin()
 {
-
 }
 
-/**
- * @brief Plugin::initialized 插件初始化接口
- * @details 此函数是多线程执行，内部可用于一些线程安全的函数、类操作
- * @return void
+/*!
+ * \brief Plugin::initialize This function is multi-threaded execution
+ * and can be used internally for some thread-safe functions, class operations
  */
 void Plugin::initialize()
 {
-
 }
 
-/**
- * @brief Plugin::stop
- * @return PluginMetaObject::ShutDownFlag 释放的方式
- * 目前支持Sync(同步)与Async(异步)
- * 如果使用Async，那么插件的构建者应当发送信号
- * @code
+/*!
+ * \brief Plugin::stop
+ * \return Release method
+ * Sync (synchronous) and Async (asynchronous) are currently supported
+ * If Async is used, then the builder of the plugin should send the signal
+ * \code
  * emit asyncStopFinished
- * @endcode
- * 否则将导致内存泄露，或者无法卸载插件。
+ * \endcode
+ * Otherwise it will lead to memory leaks or the inability to uninstall the plugin.
  */
 Plugin::ShutdownFlag Plugin::stop()
 {
-    return ShutdownFlag::Sync;
+    return ShutdownFlag::kSync;
 }

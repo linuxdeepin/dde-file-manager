@@ -93,5 +93,5 @@ bool Recent::start()
 }
 
 dpf::Plugin::ShutdownFlag Recent::stop() {
-    return Sync;
+    return kSync;
 }

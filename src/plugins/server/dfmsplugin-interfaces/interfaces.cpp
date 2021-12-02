@@ -60,7 +60,7 @@ bool Interfaces::start()
 
 dpf::Plugin::ShutdownFlag Interfaces::stop()
 {
-    return Sync;
+    return kSync;
 }
 
 std::once_flag &Interfaces::onceFlag()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -30,55 +30,32 @@
 
 DPF_BEGIN_NAMESPACE
 
-
 class PluginContext;
-
-/**
- * @brief The Plugin class
- * 插件接口类，用于实现插件,使用方式如下
- * @code
- *  class Core : public Plugin
- *  {
- *      Q_OBJECT
- *      Q_PLUGIN_METADATA(IID PLUGIN_INTERFACE FILE "core.json")
- *  public:
- *      virtual void initialized() override;
- *      virtual bool start() override;
- *      virtual PluginMetaObject::ShutDownFlag stop() override;
- *  };
- * @endcode
- * Q_PLUGIN_METADATA 可参阅Qt宏定义
- * PLUGIN_INTERFACE
- */
 class Plugin : public QObject
 {
     Q_OBJECT
 public:
     enum ShutdownFlag {
-        Sync, /// 同步释放标识
-        Async, /// 异步释放标识
+        kSync,   /// Sync relase flag
+        kAsync,   /// Async relase flag
     };
 
     explicit Plugin();
     virtual ~Plugin() override;
     virtual void initialize();
 
-    /**
-     * @brief start
-     * @return bool 如果返回true则表示当前插件start函数执行正常
-     * false则代表当前内部执行存在问题
+    /*!
+     * \brief start
+     * \return bool If it returns true, it means that the current plugin start function is executing properly,
+     * false that a problem with current internal implementation
      */
     virtual bool start() = 0;
     virtual ShutdownFlag stop();
 
 signals:
-
-    /**
-     * @brief asyncStopFinished 异步释放完成的信号
-     */
     void asyncStopFinished();
 };
 
 DPF_END_NAMESPACE
 
-#endif // PLUGIN_H
+#endif   // PLUGIN_H

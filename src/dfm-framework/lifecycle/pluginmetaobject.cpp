@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -26,137 +26,136 @@
 
 DPF_BEGIN_NAMESPACE
 
-/**
- * @brief PluginMetaObject::version
+/*!
+ * \brief PluginMetaObject::version
  * 获取插件元数据中插件版本
- * @return
+ * \return
  */
 QString PluginMetaObject::version() const
 {
     return d->version;
 }
 
-/**
- * @brief PluginMetaObject::compatVersion
+/*!
+ * \brief PluginMetaObject::compatVersion
  * 获取插件元数据中兼容版本
- * @return
+ * \return
  */
 QString PluginMetaObject::compatVersion() const
 {
     return d->compatVersion;
 }
 
-/**
- * @brief PluginMetaObject::vendor
+/*!
+ * \brief PluginMetaObject::vendor
  * 获取插件元数据中插件所有者
- * @return
+ * \return
  */
 QString PluginMetaObject::vendor() const
 {
     return d->vendor;
 }
 
-/**
- * @brief PluginMetaObject::copyright
+/*!
+ * \brief PluginMetaObject::copyright
  * 获取插件元数据中的插件版权
- * @return
+ * \return
  */
 QString PluginMetaObject::copyright() const
 {
     return d->copyright;
 }
 
-/**
- * @brief PluginMetaObject::license
+/*!
+ * \brief PluginMetaObject::license
  * 获取插件元数据中开源许可协议
- * @return
+ * \return
  */
 QStringList PluginMetaObject::license() const
 {
     return d->license;
 }
 
-/**
- * @brief PluginMetaObject::description
+/*!
+ * \brief PluginMetaObject::description
  * 获取插件元数据中插件描述
- * @return
+ * \return
  */
 QString PluginMetaObject::description() const
 {
     return d->description;
 }
 
-/**
- * @brief PluginMetaObject::category
+/*!
+ * \brief PluginMetaObject::category
  * 获取插件元数据中插件类别
- * @return
+ * \return
  */
 QString PluginMetaObject::category() const
 {
     return d->category;
 }
 
-/**
- * @brief PluginMetaObject::urlLink
+/*!
+ * \brief PluginMetaObject::urlLink
  * 获取插件元数据中插件主页链接
- * @return
+ * \return
  */
 QString PluginMetaObject::urlLink() const
 {
     return d->urlLink;
 }
 
-/**
- * @brief PluginMetaObject::depends
+/*!
+ * \brief PluginMetaObject::depends
  * 获取插件元数据中插件启动依赖
- * @return
+ * \return
  */
 QList<PluginDepend> PluginMetaObject::depends() const
 {
     return d->depends;
 }
 
-/**
- * @brief PluginMetaObject::pluginState
+/*!
+ * \brief PluginMetaObject::pluginState
  * 获取插件当前状态
- * @return
+ * \return
  */
 PluginMetaObject::State PluginMetaObject::pluginState() const
 {
     return d->state;
 }
 
-/**
- * @brief PluginMetaObject::plugin
+/*!
+ * \brief PluginMetaObject::plugin
  * 获取插件对象接口
- * @return
+ * \return
  */
 QSharedPointer<Plugin> PluginMetaObject::plugin()
 {
     return d->plugin;
 }
 
-/**
- * @brief PluginMetaObject::errorString
+/*!
+ * \brief PluginMetaObject::errorString
  * 获取插件加载错误信息
- * @return
+ * \return
  */
 QString PluginMetaObject::errorString()
 {
     return d->error;
 }
 
-/**
- * @brief 默认构造函数
+/*!
+ * \brief 默认构造函数
  */
 PluginMetaObject::PluginMetaObject()
     : d(new PluginMetaObjectPrivate(this))
 {
-
 }
 
-/**
- * @brief 拷贝构造函数
+/*!
+ * \brief 拷贝构造函数
  */
 PluginMetaObject::PluginMetaObject(const PluginMetaObject &meta)
 {
@@ -173,10 +172,10 @@ PluginMetaObject::PluginMetaObject(const PluginMetaObject &meta)
     d->plugin = plugin();
     d->loader = meta.d->loader;
 }
-/**
-  * @brief 赋值拷贝
+/*!
+  * \brief 赋值拷贝
   */
-PluginMetaObject &PluginMetaObject::operator =(const PluginMetaObject &meta)
+PluginMetaObject &PluginMetaObject::operator=(const PluginMetaObject &meta)
 {
     d->iid = meta.iid();
     d->name = meta.name();
@@ -193,49 +192,48 @@ PluginMetaObject &PluginMetaObject::operator =(const PluginMetaObject &meta)
     return *this;
 }
 
-/**
- * @brief PluginMetaObject::fileName
+/*!
+ * \brief PluginMetaObject::fileName
  *  获取插件文件路径名称
- * @return
+ * \return
  */
 QString PluginMetaObject::fileName() const
 {
     return d->loader->fileName();
 }
 
-/**
- * @brief PluginMetaObject::iid
+/*!
+ * \brief PluginMetaObject::iid
  *  获取插件元数据中iid
- * @return
+ * \return
  */
 QString PluginMetaObject::iid() const
 {
     return d->iid;
 }
 
-/**
- * @brief PluginMetaObject::name
+/*!
+ * \brief PluginMetaObject::name
  *  获取插件元数据中名称
- * @return
+ * \return
  */
 QString PluginMetaObject::name() const
 {
     return d->name;
 }
 
-/**
- * @brief PluginDepend::PluginDepend
+/*!
+ * \brief PluginDepend::PluginDepend
  *  构造函数
  */
 PluginDepend::PluginDepend()
 {
-
 }
 
-/**
- * @brief PluginDepend::PluginDepend
+/*!
+ * \brief PluginDepend::PluginDepend
  * 拷贝构造
- * @param depend
+ * \param depend
  */
 PluginDepend::PluginDepend(const PluginDepend &depend)
 {
@@ -243,70 +241,70 @@ PluginDepend::PluginDepend(const PluginDepend &depend)
     pluginVersion = depend.version();
 }
 
-/**
- * @brief PluginDepend::operator =
+/*!
+ * \brief PluginDepend::operator =
  * 赋值拷贝
- * @param depend
- * @return
+ * \param depend
+ * \return
  */
-PluginDepend &PluginDepend::operator =(const PluginDepend &depend)
+PluginDepend &PluginDepend::operator=(const PluginDepend &depend)
 {
     pluginName = depend.name();
     pluginVersion = depend.version();
     return *this;
 }
 
-
 QT_BEGIN_NAMESPACE
-/**
- * @brief operator <<
+/*!
+ * \brief operator <<
  * 重定向全局Debug打印PluginDepend对象的函数
- * @param out
- * @param depend
- * @return
+ * \param out
+ * \param depend
+ * \return
  */
 Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginDepend &depend)
 {
     DPF_USE_NAMESPACE
-    out << "PluginDepend(" <<  QString("0x%0").arg(qint64(&depend),0,16) << "){";
-    out << PLUGIN_NAME << " : " << depend.name() << "; ";
-    out << PLUGIN_VERSION << " : " << depend.version() << "; ";
+    out << "PluginDepend(" << QString("0x%0").arg(qint64(&depend), 0, 16) << "){";
+    out << kPluginName << " : " << depend.name() << "; ";
+    out << kPluginVersion << " : " << depend.version() << "; ";
     out << "}";
     return out;
 }
 
-/**
- * @brief operator <<
+/*!
+ * \brief operator <<
  * 重定向全局Debug打印PluginMetaObject对象的函数
- * @param out
- * @param metaObj
- * @return
+ * \param out
+ * \param metaObj
+ * \return
  */
-Q_CORE_EXPORT QDebug operator<< (QDebug out, const DPF_NAMESPACE::PluginMetaObject &metaObj)
+Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginMetaObject &metaObj)
 {
     DPF_USE_NAMESPACE
-    out << "PluginMetaObject(" << QString("0x%0").arg(qint64(&metaObj),0,16) << "){";
-    out << "IID" << ":" << metaObj.iid() << "; ";
-    out << PLUGIN_NAME << ":" << metaObj.name() << "; ";
-    out << PLUGIN_VERSION << ":" << metaObj.version() << "; ";
-    out << PLUGIN_COMPATVERSION << ":" << metaObj.compatVersion() << "; ";
-    out << PLUGIN_CATEGORY << ":" << metaObj.category() << "; ";
-    out << PLUGIN_VENDOR << ":" << metaObj.vendor() << "; ";
-    out << PLUGIN_COPYRIGHT << ":" << metaObj.copyright() << "; ";
-    out << PLUGIN_DESCRIPTION << ":" << metaObj.description() << "; ";
-    out << PLUGIN_LICENSE << ":" << metaObj.license() << "; ";
-    out << PLUGIN_URLLINK << ":" << metaObj.urlLink() << "; ";
-    out << PLUGIN_DEPENDS << ":" << metaObj.depends() << ";";
+    out << "PluginMetaObject(" << QString("0x%0").arg(qint64(&metaObj), 0, 16) << "){";
+    out << "IID"
+        << ":" << metaObj.iid() << "; ";
+    out << kPluginName << ":" << metaObj.name() << "; ";
+    out << kPluginVersion << ":" << metaObj.version() << "; ";
+    out << kPluginCompatversion << ":" << metaObj.compatVersion() << "; ";
+    out << kPluginCategory << ":" << metaObj.category() << "; ";
+    out << kPluginVendor << ":" << metaObj.vendor() << "; ";
+    out << kPluginCopyright << ":" << metaObj.copyright() << "; ";
+    out << kPluginDescription << ":" << metaObj.description() << "; ";
+    out << kPluginLicense << ":" << metaObj.license() << "; ";
+    out << kPluginUrlLink << ":" << metaObj.urlLink() << "; ";
+    out << kPluginDepends << ":" << metaObj.depends() << ";";
     out << "}";
     return out;
 }
 
-/**
- * @brief operator <<
+/*!
+ * \brief operator <<
  * 重定向全局Debug入口函数
- * @param out
- * @param pointer
- * @return
+ * \param out
+ * \param pointer
+ * \return
  */
 Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginMetaObjectPointer &pointer)
 {

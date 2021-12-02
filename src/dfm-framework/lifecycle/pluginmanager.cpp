@@ -24,7 +24,14 @@
 
 DPF_USE_NAMESPACE
 
-/** @brief PluginManager的构造函数
+/*!
+ * \class PluginManager 插件管理器
+ * \details 提供插件加载与卸载
+ * 其中重要的特性为：plugin IID (插件身份标识) 可参阅Qt插件规范；
+ * 此处目前只支持Plugin接口插件的动态库形式插件加载
+ */
+
+/*! \brief PluginManager的构造函数
  */
 PluginManager::PluginManager()
     : d(new PluginManagerPrivate(this))
@@ -42,18 +49,19 @@ void PluginManager::addPluginIID(const QString &pluginIID)
     d->addPluginIID(pluginIID);
 }
 
-/** @brief setPluginPaths 设置插件加载的路径
- * @param const QStringList &pluginPaths 传入路径列表
- * @return void
+/*!
+ * \brief setPluginPaths 设置插件加载的路径
+ * \param const QStringList &pluginPaths 传入路径列表
+ * \return void
  */
 void PluginManager::setPluginPaths(const QStringList &pluginPaths)
 {
     d->setPluginPaths(pluginPaths);
 }
 
-/** @brief setServicePaths 设置当前插件服务加载的路径
- * @param const QStringList &servicePaths 传入路径列表
- * @return void
+/*! \brief setServicePaths 设置当前插件服务加载的路径
+ * \param const QStringList &servicePaths 传入路径列表
+ * \return void
  */
 void PluginManager::setServicePaths(const QStringList &servicePaths)
 {
@@ -85,82 +93,89 @@ void PluginManager::stopPlugin(PluginMetaObjectPointer &pointer)
     return d->stopPlugin(pointer);
 }
 
-/** @brief readPlugins 读取插件元数据
- * @details [此函数是线程安全的]
+/*!
+ * \brief readPlugins 读取插件元数据
+ * \details [此函数是线程安全的]
  *  读取当前设置插件路径下的所有插件元数据
- * @return void
+ * \return void
  */
 bool PluginManager::readPlugins()
 {
     return d->readPlugins();
 }
 
-/** @brief loadPlugins 加载所有的插件
- * @pre 需要先执行readPlugins方法
- * @details [此函数是线程安全的]
+/*!
+ * \brief loadPlugins 加载所有的插件
+ * \pre 需要先执行readPlugins方法
+ * \details [此函数是线程安全的]
  * 加载所有插件，内部使用Qt类QPluginLoader
- * @return void
+ * \return void
  */
 bool PluginManager::loadPlugins()
 {
     return d->loadPlugins();
 }
 
-/** @brief initPlugins 执行所有插件initialized接口
- * @pre 需要先执行loadPlugins方法
- * @details [此函数是线程安全的]
+/*!
+ * \brief initPlugins 执行所有插件initialized接口
+ * \pre 需要先执行loadPlugins方法
+ * \details [此函数是线程安全的]
  * 调用插件接口Plugin中initialized函数，
- * @return void
+ * \return void
  */
 void PluginManager::initPlugins()
 {
     d->initPlugins();
 }
 
-/** @brief startPlugins 执行所有插件代码Plugin::start接口
- * @pre 执行initPlugins后插件执行的函数，
+/*!
+ * \brief startPlugins 执行所有插件代码Plugin::start接口
+ * \pre 执行initPlugins后插件执行的函数，
  * 否则可能遇到未知崩溃，
  * 因为该操作的存在是未定义的。
- * @details [此函数是线程安全的]
+ * \details [此函数是线程安全的]
  * 调用插件接口Plugin中start函数
- * @return void
+ * \return void
  */
 void PluginManager::startPlugins()
 {
     d->startPlugins();
 }
 
-/** @brief stopPlugins 执行所有插件代码Plugin::stop接口
- * @pre 执行startPlugins后插件执行的函数，
+/*!
+ * \brief stopPlugins 执行所有插件代码Plugin::stop接口
+ * \pre 执行startPlugins后插件执行的函数，
  * 否则可能遇到未知崩溃，
  * 因为该操作的存在是未定义的。
- * @details [此函数是线程安全的]
+ * \details [此函数是线程安全的]
  * 调用插件接口Plugin中stop函数，并且卸载加载的插件。
- * @return void
+ * \return void
  */
 void PluginManager::stopPlugins()
 {
     d->stopPlugins();
 }
 
-/** @brief pluginIID 获取插件标识IID
- * @return QString 返回设置的IID，默认为空
+/*!
+ * \brief pluginIID 获取插件标识IID
+ * \return QString 返回设置的IID，默认为空
  */
 QStringList PluginManager::pluginIIDs() const
 {
     return d->pluginIIDs();
 }
 
-/** @brief pluginPaths 获取插件路径
- * @return QString 返回设置的插件路径，默认为空
+/*!
+ * \brief pluginPaths 获取插件路径
+ * \return QString 返回设置的插件路径，默认为空
  */
 QStringList PluginManager::pluginPaths() const
 {
     return d->pluginPaths();
 }
 
-/** @brief servicePaths 获取插件服务路径
- * @return QString 返回设置的插件服务路径，默认为空
+/*! \brief servicePaths 获取插件服务路径
+ * \return QString 返回设置的插件服务路径，默认为空
  */
 QStringList PluginManager::servicePaths() const
 {

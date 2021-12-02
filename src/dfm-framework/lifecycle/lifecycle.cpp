@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -38,47 +38,45 @@ void LifeCycle::addPluginIID(const QString &pluginIID)
     return pluginManager->addPluginIID(pluginIID);
 }
 
-/** @brief 获取插件身份标识
- * 如果当前未设置任意代码
- * @code
- * LifeCycle::setPluginIID("org.deepin.plugin.[XXX]")
- * @encode
- * @param QString 可以传入任意标识IID的字符
- * @return void
+/*!
+ * \brief LifeCycle::pluginIIDs Get plugin identity
+ * \return all id list
  */
 QStringList LifeCycle::pluginIIDs()
 {
     return pluginManager->pluginIIDs();
 }
 
-/** @brief 获取设置的插件路径
- * @return QStringList 返回插件路径列表
+/*!
+ * \brief LifeCycle::pluginPaths get all plugin path list
+ * \return plugin path list
  */
 QStringList LifeCycle::pluginPaths()
 {
     return pluginManager->pluginPaths();
 }
 
-/** @brief 设置的插件路径
- * @param const QStringList &pluginPaths 设置插件的路径
- * @return void
+/*!
+ * \brief LifeCycle::setPluginPaths
+ * \param pluginPaths
  */
 void LifeCycle::setPluginPaths(const QStringList &pluginPaths)
 {
     return pluginManager->setPluginPaths(pluginPaths);
 }
 
-/** @brief 获取插件服务的路径
- * @return QStringList 返回插件服务路径的列表
+/*!
+ * \brief LifeCycle::servicePaths
+ * \return service path list
  */
 QStringList LifeCycle::servicePaths()
 {
     return pluginManager->servicePaths();
 }
 
-/** @brief 设置服务的路径列表路径
- * @param const QStringList &servicePaths 设置插件服务的路径列表
- * @return void
+/*!
+ * \brief LifeCycle::setServicePaths
+ * \param servicePaths
  */
 void LifeCycle::setServicePaths(const QStringList &servicePaths)
 {
@@ -91,33 +89,37 @@ PluginMetaObjectPointer LifeCycle::pluginMetaObj(const QString &pluginName,
     return pluginManager->pluginMetaObj(pluginName, version);
 }
 
-/** @brief 读取所有的插件的元数据
- * @pre {
- *  在使用该函数之前应该先调用setPluginIID与setPluginPaths函数，否则执行该函数没有任何意义
+/*!
+ * \brief LifeCycle::readPlugins read meta data of all plugins
+ * \pre {
+ * The setPluginIID and setPluginPaths functions should be called before using this function, otherwise there is no point in executing it
  * }
- * @details 该函数执行将自动扫描设置的插件路径下所有符合IID要求的插件，同时读取插件元数据。
- *  当插件管理器PluginManager读取到相关插件元数据后，
- *  内部将产生PluginMetaObject元数据对象，
- *  可参阅文件pluginmetaobject.h/.cpp
- * @return void
+ * @details The execution of this function will automatically scan for all IID-compliant plugins under the setPluginPaths and read the plugin metadata at the same time.
+ * When the plugin manager PluginManager reads the relevant plugin metadata, the
+ * the PluginMetaObject metadata object will be generated internally.
+ * See the file pluginmetaobject.h/.cpp
+ * \return true if success
  */
 bool LifeCycle::readPlugins()
 {
     return pluginManager->readPlugins();
 }
 
-/** @brief 加载所有插件
- * @pre {
- *  需要先执行readPlugins，否则将无法加载任何插件
+/*!
+ * \brief LifeCycle::loadPlugins load all plugins
+ * \pre {
+ *  You need to execute readPlugins first, otherwise you will not be able to load any plugins
  * }
- * @details 内部使用QPluginLoader对读取到插件元数据的插件进行插件加载
- *  该函数将调用 PluginManager中如下函数
- * @code
+ * \details internally uses QPluginLoader to load plugins that have been read with plugin metadata
+ *  This function will call the following function in the PluginManager
+ * \code
  *  loadPlugins();
  *  initPlugins();
  *  startPlugins();
- * @endcode
- * 详情可参阅 class PluginManager
+ * \endcode
+ * For more details, see class PluginManager
+ *
+ * \return true if success
  */
 bool LifeCycle::loadPlugins()
 {
@@ -130,13 +132,15 @@ bool LifeCycle::loadPlugins()
     return true;
 }
 
-/** @brief 卸载所有插件
- * @pre {
- *  需要先执行loadPlugins，否则调用无意义
+/*!
+ * \brief LifeCycle::shutdownPlugins unload all plugins
+ * \pre {
+ *  Need to execute loadPlugins first, otherwise the call is meaningless
  * }
- * @details 内部将执行释放Plugin接口指针，
- *  随后内部将执行QPluginLoader unloader函数，参照Qt特性
- * 详情可参阅 class PluginManager中stopPlugins函数
+ * @details will internally execute the release Plugin interface pointer.
+ *  Then the QPluginLoader unloader function will be executed internally, referring to the Qt feature
+ * See the stopPlugins function in the class PluginManager for details
+ *
  */
 void LifeCycle::shutdownPlugins()
 {

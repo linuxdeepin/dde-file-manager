@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -74,12 +74,18 @@ public:
     void initPlugins();
     void startPlugins();
     void stopPlugins();
+    static QMutex *mutex();
     static void scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQueue,
                                const QStringList &pluginPaths,
                                const QStringList &pluginIIDs);
     static void readJsonToMeta(const PluginMetaObjectPointer &metaObject);
     static void dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue,
                             QQueue<PluginMetaObjectPointer> *srcQueue);
+
+private:
+    bool doLoadPlugin(PluginMetaObjectPointer &pointer);
+    void doUnloadPlugin(PluginMetaObjectPointer &pointer);
+    static bool doDependSort(PluginMetaObjectPointer after, PluginMetaObjectPointer befor);
 };
 
 DPF_END_NAMESPACE

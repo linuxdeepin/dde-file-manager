@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -30,17 +30,14 @@
 
 DPF_BEGIN_NAMESPACE
 
-const char ORGANIZATION[] = "deepin";
-const char ENABLED[] = "enabled";
-
 class PluginSetting final : public QSettings
 {
     Q_OBJECT
 public:
     PluginSetting(Scope scope = Scope::UserScope,
-                      const QString &organization = ORGANIZATION,
-                      const QString &application = QCoreApplication::applicationName(),
-                      QObject *parent = nullptr);
+                  const QString &organization = "deepin",
+                  const QString &application = QCoreApplication::applicationName(),
+                  QObject *parent = nullptr);
     void setPluginEnable(const PluginMetaObject &meta, bool enabled);
 Q_SIGNALS:
     void pluginEnabled(const PluginMetaObject &meta, bool enabled);
@@ -48,4 +45,4 @@ Q_SIGNALS:
 
 DPF_END_NAMESPACE
 
-#endif // PLUGINSSETTING_H
+#endif   // PLUGINSSETTING_H
