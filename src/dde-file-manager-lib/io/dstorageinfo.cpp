@@ -47,7 +47,8 @@ static QString preprocessPath(const QString &path, DStorageInfo::PathHints hints
 class DStorageInfoPrivate : public QSharedData
 {
 public:
-    ~DStorageInfoPrivate() {
+    ~DStorageInfoPrivate()
+    {
         if (gioInfo) {
             g_object_unref(gioInfo);
         }
@@ -59,17 +60,15 @@ public:
 };
 
 DStorageInfo::DStorageInfo()
-    : QStorageInfo()
-    , d_ptr(new DStorageInfoPrivate())
+    : QStorageInfo(), d_ptr(new DStorageInfoPrivate())
 {
-
 }
 
 DStorageInfo::DStorageInfo(const QString &path, PathHints hints)
     : DStorageInfo()
 {
     //! 如果是保险箱就不进行setpath处理,增加访问速度
-    if(!VaultController::isVaultFile(path))
+    if (!VaultController::isVaultFile(path))
         setPath(path, hints);
 }
 
@@ -80,15 +79,12 @@ DStorageInfo::DStorageInfo(const QDir &dir, PathHints hints)
 }
 
 DStorageInfo::DStorageInfo(const DStorageInfo &other)
-    : QStorageInfo(other)
-    , d_ptr(other.d_ptr)
+    : QStorageInfo(other), d_ptr(other.d_ptr)
 {
-
 }
 
 DStorageInfo::~DStorageInfo()
 {
-
 }
 
 DStorageInfo &DStorageInfo::operator=(const DStorageInfo &other)
@@ -115,7 +111,7 @@ void DStorageInfo::setPath(const QString &path, PathHints hints)
         d->gioInfo = g_file_query_filesystem_info(file, "filesystem::*", nullptr, &error);
 
         if (error) {
-//            qWarning() << QString::fromLocal8Bit(error->message);
+            //            qWarning() << QString::fromLocal8Bit(error->message);
 
             g_error_free(error);
             error = nullptr;
@@ -124,7 +120,7 @@ void DStorageInfo::setPath(const QString &path, PathHints hints)
         GMount *mount = g_file_find_enclosing_mount(file, nullptr, &error);
 
         if (error) {
-//            qWarning() << QString::fromLocal8Bit(error->message);
+            //            qWarning() << QString::fromLocal8Bit(error->message);
 
             g_error_free(error);
         } else if (mount) {
@@ -302,6 +298,10 @@ bool DStorageInfo::inSameDevice(const DUrl &url1, const DUrl &url2, PathHints hi
         return false;
 
     if (url1.isLocalFile()) {
+        // 本地设备和非本地设备可直接判断为不同设备
+        if (isLocalDevice(url1.path()) != isLocalDevice(url2.path()))
+            return false;
+
         return inSameDevice(url1.toLocalFile(), url2.toLocalFile(), hints);
     }
 
@@ -312,14 +312,14 @@ bool DStorageInfo::isLocalDevice(const QString &path, const bool &isEx)
 {
     static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
                                      QRegularExpression::DotMatchesEverythingOption
-                                     | QRegularExpression::DontCaptureOption
-                                     | QRegularExpression::OptimizeOnFirstUsageOption);
+                                             | QRegularExpression::DontCaptureOption
+                                             | QRegularExpression::OptimizeOnFirstUsageOption);
 
     if (regExp.match(path, 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch())
         return false;
 
     // 保险箱路径直接返回真
-    if (VaultController::isVaultFile(path)){
+    if (VaultController::isVaultFile(path)) {
         return true;
     }
 
@@ -336,8 +336,8 @@ bool DStorageInfo::isLowSpeedDevice(const QString &path)
     QMutexLocker lk(&mutex);
     static QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
                                      QRegularExpression::DotMatchesEverythingOption
-                                     | QRegularExpression::DontCaptureOption
-                                     | QRegularExpression::OptimizeOnFirstUsageOption);
+                                             | QRegularExpression::DontCaptureOption
+                                             | QRegularExpression::OptimizeOnFirstUsageOption);
 
     const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
                                                         QRegularExpression::DontCheckSubjectStringMatchOption);
@@ -372,7 +372,7 @@ bool DStorageInfo::isSameFile(const QString &filePath1, const QString &filePath2
     if (0 == fromStat && 0 == toStat) {
         // 通过inode判断是否是同一个文件
         if (statFromInfo.st_ino == statToInfo.st_ino
-                && statFromInfo.st_dev == statToInfo.st_dev) { //! 需要判断设备号
+            && statFromInfo.st_dev == statToInfo.st_dev) {   //! 需要判断设备号
             return true;
         }
     }
@@ -406,12 +406,12 @@ QDebug operator<<(QDebug debug, const DFM_NAMESPACE::DStorageInfo &info)
         debug << (info.isReady() ? " [ready]" : " [not ready]");
         if (info.bytesTotal() > 0) {
             debug << ", bytesTotal=" << info.bytesTotal() << ", bytesFree=" << info.bytesFree()
-                << ", bytesAvailable=" << info.bytesAvailable();
+                  << ", bytesAvailable=" << info.bytesAvailable();
         }
     } else {
         debug << "invalid";
     }
-    debug<< ')';
+    debug << ')';
     return debug;
 }
 QT_END_NAMESPACE
