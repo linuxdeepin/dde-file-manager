@@ -233,7 +233,7 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
     }
 
     QX11Info::setAppTime(QX11Info::appUserTime());
-    auto window = new FMWindow(url.isEmpty() ? Application::instance()->appUrlAttribute(Application::AA_UrlOfNewWindow) : url);
+    auto window = new FMWindow(url.isEmpty() ? Application::instance()->appUrlAttribute(Application::kUrlOfNewWindow) : url);
     d->loadWindowState(window);
     connect(window, &FileManagerWindow::aboutToClose, this, [this, window]() {
         emit windowClosed(window->internalWinId());

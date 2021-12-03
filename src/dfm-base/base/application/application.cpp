@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -30,9 +30,6 @@
 #endif
 
 #include "base/application/settings.h"
-#ifdef FULLTEXTSEARCH_ENABLE
-#    include "fulltextsearch/fulltextsearch.h"
-#endif
 
 #include <QCoreApplication>
 #include <QMetaEnum>
@@ -53,7 +50,7 @@ Application *ApplicationPrivate::self = nullptr;
 
 ApplicationPrivate::ApplicationPrivate(Application *qq)
 {
-    Q_ASSERT_X(!self, "DFMApplication", "there should be only one application object");
+    Q_ASSERT_X(!self, "Application", "there should be only one application object");
     self = qq;
 }
 
@@ -69,15 +66,15 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
 
         Q_EMIT self->appAttributeChanged(aa, value);
 
-        if (aa == Application::AA_IconSizeLevel) {
+        if (aa == Application::kIconSizeLevel) {
             Q_EMIT self->iconSizeLevelChanged(value.toInt());
-        } else if (aa == Application::AA_ViewMode) {
+        } else if (aa == Application::kViewMode) {
             Q_EMIT self->viewModeChanged(value.toInt());
         }
     } else if (group == QT_STRINGIFY(GenericAttribute)) {
         const QMetaEnum &me = QMetaEnum::fromType<Application::GenericAttribute>();
 
-        Application::GenericAttribute ga = static_cast<Application::GenericAttribute>(me.keyToValue(QByteArray("GA_" + key.toLatin1()).constData()));
+        Application::GenericAttribute ga = static_cast<Application::GenericAttribute>(me.keyToValue(QByteArray("k" + key.toLatin1()).constData()));
 
         if (edited)
             Q_EMIT self->genericAttributeEdited(ga, value);
@@ -85,31 +82,29 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
         Q_EMIT self->genericAttributeChanged(ga, value);
 
         switch (ga) {
-        case Application::GA_PreviewDocumentFile:
-        case Application::GA_PreviewImage:
-        case Application::GA_PreviewTextFile:
-        case Application::GA_PreviewVideo:
+        case Application::kPreviewDocumentFile:
+        case Application::kPreviewImage:
+        case Application::kPreviewTextFile:
+        case Application::kPreviewVideo:
             Q_EMIT self->previewAttributeChanged(ga, value.toBool());
             break;
-        case Application::GA_ShowedHiddenFiles:
+        case Application::kShowedHiddenFiles:
             Q_EMIT self->showedHiddenFilesChanged(value.toBool());
             break;
-        case Application::GA_ShowRecentFileEntry:
+        case Application::kShowRecentFileEntry:
             Q_EMIT self->recentDisplayChanged(value.toBool());
             break;
-        case Application::GA_PreviewCompressFile:
+        case Application::kPreviewCompressFile:
             Q_EMIT self->previewCompressFileChanged(value.toBool());
             break;
-        case Application::GA_ShowCsdCrumbBarClickableArea:
+        case Application::kShowCsdCrumbBarClickableArea:
             Q_EMIT self->csdClickableAreaAttributeChanged(value.toBool());
             break;
-#ifdef FULLTEXTSEARCH_ENABLE
-        case DFMApplication::GA_IndexFullTextSearch:
+        case Application::kIndexFullTextSearch:
             if (value.toBool()) {
-                DFMFullTextSearchManager::getInstance()->fulltextIndex("/"); /*全文搜索建立索引*/
+                //TODO: emit full search index signal
             }
             break;
-#endif
         default:
             break;
         }
@@ -189,11 +184,11 @@ static ComDeepinAnythingInterface *getAnythingInterface()
 
 QVariant Application::genericAttribute(Application::GenericAttribute ga)
 {
-    if (ga == GA_IndexInternal) {
+    if (ga == kIndexInternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->autoIndexInternal();
 #endif
-    } else if (ga == GA_IndexExternal) {
+    } else if (ga == kIndexExternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->autoIndexExternal();
 #endif
@@ -208,11 +203,11 @@ QVariant Application::genericAttribute(Application::GenericAttribute ga)
 
 void Application::setGenericAttribute(Application::GenericAttribute ga, const QVariant &value)
 {
-    if (ga == GA_IndexInternal) {
+    if (ga == kIndexInternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->setAutoIndexInternal(value.toBool());
 #endif
-    } else if (ga == GA_IndexExternal) {
+    } else if (ga == kIndexExternal) {
 #ifndef DISABLE_QUICK_SEARCH
         return getAnythingInterface()->setAutoIndexExternal(value.toBool());
 #endif

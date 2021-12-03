@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -36,44 +36,46 @@ class Application : public QObject
     friend class ApplicationPrivate;
 
 public:
-    // 应用级别的配置，默认存储于 ~/.config/deepin/{AppName}/dde-file-manager.json
+    // Application-level configuration, default in the ~/.config/deepin/{AppName}/dde-file-manager.json
     enum ApplicationAttribute {
-        AA_AllwayOpenOnNewWindow,
-        AA_IconSizeLevel,
-        AA_ViewMode,
-        AA_ViewSizeAdjustable, // 可调整列表模式的表头宽度
-        AA_ViewComppactMode,
-        AA_ViewAutoCompace,
-        AA_OpenFileMode, // 点击/双击[0/1]
-        AA_UrlOfNewWindow, // 新窗口默认路径
-        AA_UrlOfNewTab, // 新标签页默认路径
-        AA_ThemeName
+        kAllwayOpenOnNewWindow,
+        kIconSizeLevel,
+        kViewMode,
+        kViewSizeAdjustable,   // adjustable table header width for list mode
+        kViewComppactMode,
+        kViewAutoCompace,
+        kOpenFileMode,   // Click/double-click [0/1]
+        kUrlOfNewWindow,   // default path to new window
+        kUrlOfNewTab,   // default path to new tabs
+        kThemeName
     };
 
     Q_ENUM(ApplicationAttribute)
 
-    // 通用型配置，默认存储于 ~/.config/deepin/dde-file-manager.json
+    // Generic configuration, default in the ~/.config/deepin/dde-file-manager.json
     enum GenericAttribute {
-        GA_IndexInternal,
-        GA_IndexExternal,
-        GA_IndexFullTextSearch, //全文搜索
-        GA_PreviewCompressFile, // 把压缩包当做目录打开
-        GA_PreviewTextFile, // 纯文本生成缩略图
-        GA_PreviewDocumentFile, // 文档生成缩略图（pdf）
-        GA_PreviewImage, // 图片生成缩略图
-        GA_PreviewVideo, // 文件生成缩略图
-        GA_AutoMount, // 自动挂载硬盘设备
-        GA_AutoMountAndOpen, // 自动挂载并打开硬盘设备
-        GA_OverrideFileChooserDialog, // 将DDE文件管理器作为应用选择文件时的对话框
-        GA_ShowedHiddenOnSearch, // 搜索时显示隐藏文件
-        GA_ShowedHiddenFiles, // 显示隐藏文件
-        GA_ShowedFileSuffixOnRename, // 重命名文件时显示后缀
-        GA_DisableNonRemovableDeviceUnmount, // 禁用本地磁盘卸载功能
-        GA_HiddenSystemPartition, // 隐藏系统分区
-        GA_ShowRecentFileEntry, // 在侧边栏显示“最近文件”入口
-        GA_ShowCsdCrumbBarClickableArea, // 在面包屑栏预留可供点击以进入地址栏编辑状态的区域
-        GA_ShowFileSystemTagOnDiskIcon, // 在磁盘图标上显示文件系统信息
-        GA_ShowDeleteConfirmDialog // 显示删除确认对话框
+        kIndexInternal,
+        kIndexExternal,
+        kIndexFullTextSearch,   //full text search
+        kPreviewCompressFile,   // open the zip as a directory
+        kPreviewTextFile,   // generate thumbnails from plain text
+        kPreviewDocumentFile,   // document generation thumbnails (pdf)
+        kPreviewImage,   // image generation thumbnails
+        kPreviewVideo,   // video generation thumbnails
+        kAutoMount,   // automatic mounting of hard disk devices
+        kAutoMountAndOpen,   // automatically mount and open hard disk devices
+        kMTPShowBottomInfo,   // mtp show bottom statistics when mounted
+        kAlwaysShowOfflineRemoteConnections,   // always show offline remote mounts (currently only smb mounts are resident)
+        kOverrideFileChooserDialog,   // dialog box when using DDE File Manager as an application to select files
+        kShowedHiddenOnSearch,   // show hidden files when searching
+        kShowedHiddenFiles,   // show hidden files
+        kShowedFileSuffixOnRename,   // show suffix when renaming files
+        kDisableNonRemovableDeviceUnmount,   // disable local disk uninstallation
+        kHiddenSystemPartition,   // hide system partition
+        kShowRecentFileEntry,   // show "Recent Documents" entry in the sidebar
+        kShowCsdCrumbBarClickableArea,   // eave an area in the breadcrumb bar that can be clicked on to go to the edit state of the address bar
+        kShowFileSystemTagOnDiskIcon,   // display file system information on the disk icon
+        kShowDeleteConfirmDialog   // display the delete confirmation dialog
     };
 
     Q_ENUM(GenericAttribute)
@@ -126,4 +128,4 @@ private:
 
 DFMBASE_END_NAMESPACE
 
-#endif // APPLICATION_H
+#endif   // APPLICATION_H

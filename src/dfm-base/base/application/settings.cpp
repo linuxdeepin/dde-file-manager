@@ -43,18 +43,18 @@ class SettingsPrivate
 public:
     explicit SettingsPrivate(Settings *qq);
 
-    bool autoSync = false;   // 是否自动同步
-    bool watchChanges = false;   // 监视配置是否发生改变
-    bool settingFileIsDirty = false;   // 设置文件是否有缓存数据（脏数据）
-    QTimer *syncTimer = nullptr;   // 同步计时器
-    QString fallbackFile;   // 备份设置文件路径
-    QString settingFile;   // 设置文件路径
+    bool autoSync = false;   // automatically synchronize
+    bool watchChanges = false;   //monitor for configuration changes
+    bool settingFileIsDirty = false;   // set whether the file has cached data (dirty data)
+    QTimer *syncTimer = nullptr;   // synchronization Timer
+    QString fallbackFile;   // backup settings file path
+    QString settingFile;   // set the file path
     Settings *q;
 
     struct Data
     {
-        QHash<QString, QVariantHash> values;   // 设置文件的配置属性hash表
-        QHash<QString, QVariantHash> privateValues;   // 设置文件的配置私用属性hash表
+        QHash<QString, QVariantHash> values;   // Set the file's configuration property hash table
+        QHash<QString, QVariantHash> privateValues;   // set the file's configuration private attribute hash table
         /*!
          * \brief value 获取相应的属性
          *

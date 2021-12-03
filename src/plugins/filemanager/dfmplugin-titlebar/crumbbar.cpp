@@ -170,7 +170,7 @@ void CrumbBarPrivate::initUI()
 
 void CrumbBarPrivate::initData()
 {
-    clickableAreaEnabled = Application::instance()->genericAttribute(Application::GA_ShowCsdCrumbBarClickableArea).toBool();
+    clickableAreaEnabled = Application::instance()->genericAttribute(Application::kShowCsdCrumbBarClickableArea).toBool();
 }
 
 void CrumbBarPrivate::initConnections()
@@ -289,7 +289,6 @@ void CrumbBar::mouseReleaseEvent(QMouseEvent *event)
 {
     if (!d->clickableAreaEnabled) {
         return QFrame::mouseReleaseEvent(event);
-        ;
     }
 
     QFrame::mouseReleaseEvent(event);
