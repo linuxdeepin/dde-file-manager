@@ -31,9 +31,6 @@ CONFIG(release, debug|release) {
 #安全加固
 QMAKE_CXXFLAGS += -fstack-protector-all
 QMAKE_LFLAGS += -z now -fPIC
-isEqual(ARCH, mips64) | isEqual(ARCH, mips32){
-    QMAKE_CXXFLAGS += -z noexecstack -z relro
-}
 
 gschema.path = $${PREFIX}/share/glib-2.0/schemas
 gschema.files = *.gschema.xml

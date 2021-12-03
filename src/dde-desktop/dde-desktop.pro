@@ -54,9 +54,6 @@ CONFIG(debug, debug|release) {
 #安全加固
 QMAKE_CXXFLAGS += -fstack-protector-all
 QMAKE_LFLAGS += -z now -pie -fPIE
-isEqual(ARCH, mips64) | isEqual(ARCH, mips32){
-    QMAKE_CXXFLAGS += -z noexecstack -z relro
-}
 
 SOURCES += \
     main.cpp \
