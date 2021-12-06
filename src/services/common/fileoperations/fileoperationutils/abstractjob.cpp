@@ -60,6 +60,7 @@ AbstractJob::AbstractJob(AbstractWorker *doWorker, QObject *parent)
     if (this->doWorker) {
         this->doWorker->moveToThread(&thread);
         connect(this, &AbstractJob::startWork, doWorker, &AbstractWorker::doWork);
+        connect(doWorker, &AbstractWorker::finishedNotify, this, &AbstractJob::deleteLater);
     }
 }
 

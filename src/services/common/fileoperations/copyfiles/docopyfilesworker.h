@@ -31,6 +31,7 @@
 #include "dfm-base/utils/threadcontainer.hpp"
 #include "dfm-base/file/local/localfilehandler.h"
 
+
 #include <dfm-io/core/dfile.h>
 
 #include <QObject>
@@ -39,29 +40,12 @@
 #include <QQueue>
 #include <QThread>
 #include <QThreadPool>
+#include <QMultiMap>
 
 class QWaitCondition;
 DSC_BEGIN_NAMESPACE
 USING_IO_NAMESPACE
 DFMBASE_USE_NAMESPACE
-class UpdateProccessTimer : public QObject
-{
-    Q_OBJECT
-    friend class DoCopyFilesWorker;
-    explicit UpdateProccessTimer(QObject *parent = nullptr)
-        : QObject(parent) {}
-signals:
-    void updateProccessNotify();
-private slots:
-    void doStartTime()
-    {
-        emit updateProccessNotify();
-        QThread::msleep(500);
-    }
-
-public:
-    ~UpdateProccessTimer() = default;
-};
 class StorageInfo;
 class DoCopyFilesWorker : public AbstractWorker
 {
@@ -90,14 +74,15 @@ public:
     virtual ~DoCopyFilesWorker() override;
 
 protected:
-    void doWork() override;
+    bool doWork() override;
     void stop() override;
-    void pause() override;
-    void resume() override;
-    bool initArgs();
-    void statisticsFilesSize();
+    void setStat(const AbstractJobHandler::JobState &stat) override;
+    bool initArgs() override;
+    void endWork() override;
+    AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error) override;
+
+protected:
     void setCountProccessType();
-    void startCountProccess();
     bool copyFiles();
     bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo);
     bool doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, AbstractFileInfoPointer &newTargetInfo);
@@ -159,23 +144,11 @@ protected:
                              QSharedPointer<DFile> &toFile);
     void setAllDirPermisson();
     void syncFilesToDevice();
-
-    void endCopy();
-    void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
-                         const QString &errorMsg = QString());
-    void emitProccessChangedNotify(const qint64 &writSize);
-    void emitStateChangedNotify();
-    void emitCurrentTaskNotify(const QUrl &from, const QUrl &to);
     void emitSpeedUpdatedNotify(const qint64 &writSize);
-    bool stateCheck();
-    bool copyWait();
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from, const QUrl &to,
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const QString &errorMsg = QString());
-    void setStat(const AbstractJobHandler::JobState &stat);
-    AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error);
     QString errorToString(const AbstractJobHandler::JobErrorType &error);
-    JobInfoPointer createCopyJobInfo(const QUrl &from, const QUrl &to);
     QString formatFileName(const QString &fileName);
     QString getNonExistFileName(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer targetDir);
     qint64 getWriteDataSize();
@@ -183,42 +156,27 @@ protected:
     qint64 getSectorsWritten();
     void readAheadSourceFile(const AbstractFileInfoPointer &fileInfo);
     void cancelThreadProcessingError();
-signals:   // update proccess timer use
-    void startUpdateProccessTimer();
+
 private slots:
-    void onStatisticsFilesSizeFinish(const SizeInfoPoiter sizeInfo);
-    void onUpdateProccess();
+    void onUpdateProccess() override;
 
 private:
-    QAtomicInteger<qint64> sourceFilesTotalSize { 0 };   // 源文件的总大小
     QAtomicInteger<qint64> skipWritSize { 0 };   // 当前写入文件的大小
     QAtomicInteger<qint64> currentWritSize { 0 };   // 跳过的文件大小
-    QSharedPointer<QList<QUrl>> allFilesList;   // 所有源文件的统计文件
-    quint16 dirSize { 0 };   // 目录大小
-    bool isSourceFileLocal { false };   // 源文件是否在可以出设备上
-    bool isTargetFileLocal { false };   // 目标文件是否在可以出设备上
-    QSharedPointer<QWaitCondition> waitCondition;   // 线程等待
-    QMutex conditionMutex;   // 线程等待锁
-    AbstractJobHandler::JobState currentState = AbstractJobHandler::JobState::kUnknowState;   // current state
+
     QTime time;   // time eslape
     AbstractFileInfoPointer targetInfo { nullptr };   // target file infor pointer
-    QSharedPointer<LocalFileHandler> handler;   // file base operations handler
     QSharedPointer<StorageInfo> targetStorageInfo { nullptr };   // target file's device infor
-    QSharedPointer<UpdateProccessTimer> updateProccessTimer { nullptr };   // update proccess timer
-    QThread updateProccessThread;   // update proccess timer thread
     long copyTid = { -1 };   // 使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据
     CountWriteSizeType countWriteType { CountWriteSizeType::kTidType };   // get write size type
     qint8 targetIsRemovable { 1 };   // 目标磁盘设备是不是可移除或者热插拔设备
     qint16 targetLogSecionSize { 512 };   // 目标设备逻辑扇区大小
     qint64 targetDeviceStartSectorsWritten { 0 };   // 记录任务开始时目标磁盘设备已写入扇区数
     QString targetSysDevPath;   // /sys/dev/block/x:x
-    QQueue<QSharedPointer<SmallFileThreadCopyInfo>> smallFileThreadCopyInfoQueue;   // copy small file thread information Queue
-    QMutex smallFileThreadCopyInfoQueueMutex;   // copy small file thread information Queue's mutex
-    QThreadPool threadPool;   // copy small file thread pool
+    QSharedPointer<QQueue<QSharedPointer<SmallFileThreadCopyInfo>>> smallFileThreadCopyInfoQueue;   // copy small file thread information Queue
+    QSharedPointer<QMutex> smallFileThreadCopyInfoQueueMutex { nullptr };   // copy small file thread information Queue's mutex
+    QSharedPointer<QThreadPool> threadPool { nullptr };   // copy small file thread pool
     DThreadList<QSharedPointer<DirSetPermissonInfo>> dirPermissonList;   // dir set Permisson list
-    QQueue<Qt::HANDLE> errorThreadIdQueue;   // Thread queue for processing errors
-    QSharedPointer<QWaitCondition> errorCondition;   //  Condition variables that block other bad threads
-    QMutex errorThreadIdQueueMutex;   // Condition variables that block other bad threads mutex
 };
 
 DSC_END_NAMESPACE

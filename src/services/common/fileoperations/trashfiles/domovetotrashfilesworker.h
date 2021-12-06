@@ -41,7 +41,7 @@ public:
     virtual ~DoMoveToTrashFilesWorker() override;
 
 protected:
-    void doWork() override;
+    bool doWork() override;
     void stop() override;
     void pause() override;
 };

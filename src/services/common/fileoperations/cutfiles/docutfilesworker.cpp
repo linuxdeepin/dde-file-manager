@@ -35,17 +35,14 @@ DoCutFilesWorker::~DoCutFilesWorker()
 {
 }
 
-void DoCutFilesWorker::doWork()
+bool DoCutFilesWorker::doWork()
 {
-    // ToDo::执行剪切的业务逻辑
-}
+    // The endcopy interface function has been called here
+    if (!AbstractWorker::doWork())
+        return false;
+    // ToDo::执行删除的业务逻辑
+    // 完成
+    endWork();
 
-void DoCutFilesWorker::stop()
-{
-    // ToDo::停止剪切的业务逻辑
-}
-
-void DoCutFilesWorker::pause()
-{
-    // ToDo::暂停剪切的业务逻辑
+    return true;
 }

@@ -25,15 +25,20 @@
 
 #include "dfm_common_service_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
+#include "dfm-base/file/local/localfilehandler.h"
+#include "fileoperationsutils.h"
 
 #include <QObject>
 #include <QUrl>
 #include <QSharedPointer>
 
+Q_DECLARE_METATYPE(QSharedPointer<QList<QUrl>>);
 class QWaitCondition;
+class QMutex;
 DSC_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 class StatisticsFilesSize;
+class UpdateProccessTimer;
 class AbstractWorker : public QObject
 {
     friend class AbstractJob;
@@ -71,7 +76,7 @@ signals:
     /*!
      * \brief finishedNotify 任务完成
      */
-    void finishedNotify();
+    void finishedNotify(const JobInfoPointer jobInfo);
     /*!
      * \brief errorNotify 错误信息，此信号都可能是异步连接，所以所有参数都没有使用引用
      * \param info 这个Varint信息map
@@ -93,35 +98,71 @@ signals:
      * kRemindTimeKey（（显示任务的右第二个label的显示，类型：QString）
      */
     void speedUpdatedNotify(const JobInfoPointer JobInfo);
+signals:   // update proccess timer use
+    void startUpdateProccessTimer();
 
 public:
-    /*!
-     * \brief doOperateWork 处理用户的操作
-     * \param actions 当前操作
-     */
     virtual void doOperateWork(AbstractJobHandler::SupportActions actions);
 
 protected:
-    virtual void stop() {}
-    virtual void pause() {}
-    virtual void resume() {}
+    virtual void stop();
+    virtual void pause();
+    virtual void resume();
+    virtual void startCountProccess();
+    virtual bool statisticsFilesSize();
+    virtual bool stateCheck();
+    virtual bool workerWait();
+    virtual void setStat(const AbstractJobHandler::JobState &stat);
+    virtual bool initArgs();
+    virtual void endWork();
+    virtual void emitStateChangedNotify();
+    virtual void emitCurrentTaskNotify(const QUrl &from, const QUrl &to);
+    virtual void emitProccessChangedNotify(const qint64 &writSize);
+    virtual void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
+                                 const QString &errorMsg = QString());
+    virtual AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error)
+    {
+        Q_UNUSED(error);
+        return AbstractJobHandler::SupportAction::kNoAction;
+    }
+    bool isStopped();
+    JobInfoPointer createCopyJobInfo(const QUrl &from, const QUrl &to);
 protected slots:
-    virtual void doWork() {}
+    virtual bool doWork();
+    virtual void onUpdateProccess() {}
+    virtual void onStatisticsFilesSizeFinish(const SizeInfoPoiter sizeInfo);
 
 protected:
     void initHandleConnects(const JobHandlePointer &handle);
     explicit AbstractWorker(QObject *parent = nullptr);
 
 public:
-    virtual ~AbstractWorker() = default;
+    virtual ~AbstractWorker();
 
 public:
+    AbstractJobHandler::JobType jobType { AbstractJobHandler::JobType::kUnknow };   // current task type
     QSharedPointer<StatisticsFilesSize> statisticsFilesSizeJob { nullptr };   // 异步文件大小统计
+    QAtomicInteger<qint64> sourceFilesTotalSize { 0 };   // 源文件的总大小
+    QAtomicInteger<qint64> sourceFilesCount { 0 };   // source files count
+    quint16 dirSize { 0 };   // 目录大小
     QList<QUrl> sources;   // 源文件
     QUrl target;   // 目标目录
     AbstractJobHandler::JobFlags jobFlags { AbstractJobHandler::JobFlag::kNoHint };   // 任务标志
     AbstractJobHandler::SupportAction currentAction { AbstractJobHandler::SupportAction::kNoAction };   // 当前的操作
     QSharedPointer<QWaitCondition> handlingErrorCondition { nullptr };
+    AbstractJobHandler::JobState currentState = AbstractJobHandler::JobState::kUnknowState;   // current state
+    bool isSourceFileLocal { false };   // 源文件是否在可以出设备上
+    bool isTargetFileLocal { false };   // 目标文件是否在可以出设备上
+    QSharedPointer<QWaitCondition> waitCondition { nullptr };   // 线程等待
+    QSharedPointer<QMutex> conditionMutex { nullptr };   // 线程等待锁
+    QSharedPointer<QList<QUrl>> allFilesList { nullptr };   // 所有源文件的统计文件
+    QSharedPointer<LocalFileHandler> handler { nullptr };   // file base operations handler
+    QSharedPointer<QQueue<Qt::HANDLE>> errorThreadIdQueue { nullptr };   // Thread queue for processing errors
+    QSharedPointer<QWaitCondition> errorCondition { nullptr };   //  Condition variables that block other bad threads
+    QSharedPointer<QMutex> errorThreadIdQueueMutex { nullptr };   // Condition variables that block other bad threads mutex
+    QSharedPointer<UpdateProccessTimer> updateProccessTimer { nullptr };   // update proccess timer
+    QSharedPointer<QThread> updateProccessThread { nullptr };   // update proccess timer thread
+    QSharedPointer<QList<QUrl>> completeFiles { nullptr };   // List of all copied files
 };
 
 DSC_END_NAMESPACE

@@ -88,6 +88,7 @@ public:
         kSeekError,   // 文件移动错误
         kProrogramError,   // 程序错误
         kDfmIoError,   // 程序错误
+        kDeleteFileError,   // 删除文件错误
         kUnknowError,   // 未知错误
     };
     Q_ENUM(JobErrorType)
@@ -131,7 +132,7 @@ public:
         kActionsKey,
         kSpeedKey,
         kRemindTimeKey,
-        kErrorUniqueKey
+        kCompleteFilesKey,
     };
     Q_ENUM(NotifyInfoKey)
     explicit AbstractJobHandler(QObject *parent = nullptr);
@@ -172,7 +173,7 @@ signals:   // 发送给任务调用者使用的信号
     /*!
      * \brief finishedNotify 任务完成
      */
-    void finishedNotify();
+    void finishedNotify(const JobInfoPointer jobInfo);
     /*!
      * \brief errorNotify 错误信息，此信号都可能是异步连接，所以所有参数都没有使用引用
      * \param info 这个Varint信息map
@@ -206,7 +207,7 @@ public slots:
     void onStateChanged(const JobInfoPointer JobInfo);
     void onCurrentTask(const JobInfoPointer JobInfo);
     void onError(const JobInfoPointer JobInfo);
-    void onFinished();
+    void onFinished(const JobInfoPointer jobInfo);
     void onSpeedUpdated(const JobInfoPointer JobInfo);
 
 private:

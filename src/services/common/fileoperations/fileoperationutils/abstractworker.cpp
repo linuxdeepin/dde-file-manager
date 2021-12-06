@@ -21,10 +21,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "abstractworker.h"
+#include "statisticsfilessize.h"
 
 #include <QUrl>
 #include <QDebug>
 #include <QWaitCondition>
+#include <QMutex>
 
 DSC_USE_NAMESPACE
 /*!
@@ -79,10 +81,308 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions)
             handlingErrorCondition->wakeAll();
     }
 }
+/*!
+ * \brief AbstractWorker::stop stop task
+ */
+void AbstractWorker::stop()
+{
+    setStat(AbstractJobHandler::JobState::kStopState);
+    if (statisticsFilesSizeJob)
+        statisticsFilesSizeJob->stop();
+    // clean error info queue
+    if (errorThreadIdQueue) {
+        if (!errorThreadIdQueueMutex)
+            errorThreadIdQueueMutex.reset(new QMutex);
+        QMutexLocker lk(errorThreadIdQueueMutex.data());
+        errorThreadIdQueue.clear();
+    }
+
+    if (waitCondition)
+        waitCondition->wakeAll();
+
+    if (handlingErrorCondition)
+        handlingErrorCondition->wakeAll();
+
+    if (errorCondition)
+        errorCondition->wakeAll();
+}
+/*!
+ * \brief AbstractWorker::pause paused task
+ */
+void AbstractWorker::pause()
+{
+    if (currentState == AbstractJobHandler::JobState::kPauseState)
+        return;
+    setStat(AbstractJobHandler::JobState::kPauseState);
+}
+/*!
+ * \brief AbstractWorker::resume resume task
+ */
+void AbstractWorker::resume()
+{
+    setStat(AbstractJobHandler::JobState::kRunningState);
+
+    if (!waitCondition)
+        waitCondition.reset(new QWaitCondition);
+
+    waitCondition->wakeAll();
+
+    if (errorCondition)
+        errorCondition->wakeAll();
+}
+/*!
+ * \brief AbstractWorker::startCountProccess start update proccess timer
+ */
+void AbstractWorker::startCountProccess()
+{
+    if (!updateProccessTimer)
+        updateProccessTimer.reset(new UpdateProccessTimer());
+    if (!updateProccessThread)
+        updateProccessThread.reset(new QThread);
+    updateProccessTimer->moveToThread(updateProccessThread.data());
+    updateProccessThread->start();
+    connect(this, &AbstractWorker::startUpdateProccessTimer, updateProccessTimer.data(), &UpdateProccessTimer::doStartTime);
+    connect(updateProccessTimer.data(), &UpdateProccessTimer::updateProccessNotify, this, &AbstractWorker::onUpdateProccess);
+    emit startUpdateProccessTimer();
+}
+/*!
+ * \brief AbstractWorker::statisticsFilesSize statistics source files size
+ * \return
+ */
+bool AbstractWorker::statisticsFilesSize()
+{
+    if (sources.isEmpty()) {
+        qWarning() << "delete sources files list is empty!";
+        return false;
+    }
+    // 判读源文件所在设备位置，执行异步或者同统计源文件大小
+    isSourceFileLocal = FileOperationsUtils::isFileInCanRemoveDevice(sources.at(0));
+
+    if (isSourceFileLocal) {
+        const QSharedPointer<FileOperationsUtils::FilesSizeInfo> &fileSizeInfo =
+                FileOperationsUtils::statisticsFilesSize(sources, true);
+        allFilesList = fileSizeInfo->allFiles;
+        sourceFilesTotalSize = fileSizeInfo->totalSize;
+        dirSize = fileSizeInfo->dirSize;
+        sourceFilesCount = fileSizeInfo->fileCount;
+        return true;
+    }
+
+    statisticsFilesSizeJob.reset(new StatisticsFilesSize(sources));
+    connect(statisticsFilesSizeJob.data(), &StatisticsFilesSize::finished, this, &AbstractWorker::onStatisticsFilesSizeFinish);
+    statisticsFilesSizeJob->start();
+    return true;
+}
+/*!
+ * \brief AbstractWorker::copyWait Blocking waiting for task
+ * \return Is it running
+ */
+bool AbstractWorker::workerWait()
+{
+    if (!conditionMutex)
+        conditionMutex.reset(new QMutex);
+    conditionMutex->lock();
+    if (!waitCondition)
+        waitCondition.reset(new QWaitCondition);
+    waitCondition->wait(conditionMutex.data());
+    conditionMutex->unlock();
+
+    return currentState == AbstractJobHandler::JobState::kRunningState;
+}
+/*!
+ * \brief AbstractWorker::setStat Set current task status
+ * \param stat task status
+ */
+void AbstractWorker::setStat(const AbstractJobHandler::JobState &stat)
+{
+    if (stat == currentState)
+        return;
+
+    currentState = stat;
+
+    emitStateChangedNotify();
+}
+/*!
+ * \brief AbstractWorker::initArgs init job agruments
+ * \return
+ */
+bool AbstractWorker::initArgs()
+{
+    sourceFilesTotalSize = -1;
+    setStat(AbstractJobHandler::JobState::kRunningState);
+    if (!handler)
+        handler.reset(new LocalFileHandler);
+
+    if (!errorThreadIdQueueMutex)
+        errorThreadIdQueueMutex.reset(new QMutex);
+    return true;
+}
+/*!
+ * \brief AbstractWorker::endWork end task and emit task finished
+ */
+void AbstractWorker::endWork()
+{
+    setStat(AbstractJobHandler::JobState::kStopState);
+
+    // send finish signal
+    JobInfoPointer info(new QMap<quint8, QVariant>);
+    info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kCompleteFilesKey, QVariant::fromValue(completeFiles));
+
+    emit finishedNotify(info);
+}
+/*!
+ * \brief AbstractWorker::emitStateChangedNotify send state changed signal
+ */
+void AbstractWorker::emitStateChangedNotify()
+{
+    JobInfoPointer info(new QMap<quint8, QVariant>);
+    info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kJobStateKey, QVariant::fromValue(currentState));
+
+    emit stateChangedNotify(info);
+}
+/*!
+ * \brief AbstractWorker::emitCurrentTaskNotify send current task information
+ * \param from source url
+ * \param to target url
+ */
+void AbstractWorker::emitCurrentTaskNotify(const QUrl &from, const QUrl &to)
+{
+    JobInfoPointer info = createCopyJobInfo(from, to);
+
+    emit currentTaskNotify(info);
+}
+/*!
+ * \brief AbstractWorker::emitProccessChangedNotify send process changed signal
+ * \param writSize task complete data size
+ */
+void AbstractWorker::emitProccessChangedNotify(const qint64 &writSize)
+{
+    JobInfoPointer info(new QMap<quint8, QVariant>);
+    info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
+    if (AbstractJobHandler::JobType::kCopyType == jobType) {
+        info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(int(sourceFilesTotalSize)));
+    } else if (AbstractJobHandler::JobType::kCopyType == jobType) {
+        info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(int(sourceFilesCount)));
+    }
+
+    info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(int(writSize)));
+
+    emit proccessChangedNotify(info);
+}
+/*!
+ * \brief AbstractWorker::emitErrorNotify send job error signal
+ * \param from source url
+ * \param to target url
+ * \param error task error type
+ * \param errorMsg task error message
+ */
+void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const QString &errorMsg)
+{
+    JobInfoPointer info = createCopyJobInfo(from, to);
+    info->insert(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey, QVariant::fromValue(error));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey, QVariant::fromValue(errorMsg));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kActionsKey, QVariant::fromValue(supportActions(error)));
+    emit errorNotify(info);
+}
+/*!
+ * \brief AbstractWorker::isStopped current task is stopped
+ * \return current task is stopped
+ */
+bool AbstractWorker::isStopped()
+{
+    return AbstractJobHandler::JobState::kStopState == currentState;
+}
+/*!
+ * \brief AbstractWorker::createCopyJobInfo create signal agruments information
+ * \param from source url
+ * \param to from url
+ * \return signal agruments information
+ */
+JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &to)
+{
+    JobInfoPointer info(new QMap<quint8, QVariant>);
+    info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey, QVariant::fromValue(from));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey, QVariant::fromValue(to));
+    QString fromMsg, toMsg;
+    if (AbstractJobHandler::JobType::kCopyType == jobType) {
+        fromMsg = QString(QObject::tr("copy file %1")).arg(from.path());
+        toMsg = QString(QObject::tr("to %1")).arg(to.path());
+    } else if (AbstractJobHandler::JobType::kDeleteTpye == jobType) {
+        fromMsg = QString(QObject::tr("delete file %1")).arg(from.path());
+    }
+    info->insert(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey, QVariant::fromValue(fromMsg));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey, QVariant::fromValue(toMsg));
+    return info;
+}
+/*!
+ * \brief AbstractWorker::doWork task Thread execution
+ * \return
+ */
+bool AbstractWorker::doWork()
+{
+    // 执行拷贝的业务逻辑
+    if (!initArgs()) {
+        endWork();
+        return false;
+    }
+    // 统计文件总大小
+    if (statisticsFilesSize()) {
+        endWork();
+        return false;
+    }
+    // 启动统计写入数据大小计时器
+    startCountProccess();
+
+    return true;
+}
+/*!
+ * \brief AbstractWorker::stateCheck Blocking waiting for task and check status
+ * \return is Correct state
+ */
+bool AbstractWorker::stateCheck()
+{
+    if (currentState == AbstractJobHandler::JobState::kRunningState) {
+        return true;
+    }
+    if (currentState == AbstractJobHandler::JobState::kPauseState) {
+        qInfo() << "Will be suspended";
+        if (!workerWait()) {
+            return currentState != AbstractJobHandler::JobState::kStopState;
+        }
+    } else if (currentState == AbstractJobHandler::JobState::kStopState) {
+        return false;
+    }
+
+    return true;
+}
+/*!
+ * \brief AbstractWorker::onStatisticsFilesSizeFinish  Count the size of all files
+ * and the slot at the end of the thread
+ * \param sizeInfo All file size information
+ */
+void AbstractWorker::onStatisticsFilesSizeFinish(const SizeInfoPoiter sizeInfo)
+{
+    statisticsFilesSizeJob->stop();
+    sourceFilesTotalSize = sizeInfo->totalSize;
+    dirSize = sizeInfo->dirSize;
+    sourceFilesCount = sizeInfo->fileCount;
+}
 
 AbstractWorker::AbstractWorker(QObject *parent)
     : QObject(parent)
 {
+}
+
+AbstractWorker::~AbstractWorker()
+{
+    stop();
+    if (updateProccessThread) {
+        updateProccessThread->quit();
+        updateProccessThread->wait();
+    }
 }
 
 /*!

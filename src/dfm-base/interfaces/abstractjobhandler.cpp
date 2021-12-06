@@ -113,10 +113,10 @@ void AbstractJobHandler::onError(const JobInfoPointer JobInfo)
         emit currentTaskNotify(JobInfo);
 }
 
-void AbstractJobHandler::onFinished()
+void AbstractJobHandler::onFinished(const JobInfoPointer jobInfo)
 {
     if (isSignalConnectOver)
-        emit finishedNotify();
+        emit finishedNotify(jobInfo);
 }
 
 void AbstractJobHandler::onSpeedUpdated(const JobInfoPointer JobInfo)

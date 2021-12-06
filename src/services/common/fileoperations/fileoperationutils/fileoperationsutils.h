@@ -26,10 +26,42 @@
 #include "dfm_common_service_global.h"
 
 #include <QSharedPointer>
+#include <QThread>
 
 DSC_BEGIN_NAMESPACE
+class UpdateProccessTimer : public QObject
+{
+    Q_OBJECT
+    friend class AbstractWorker;
+    friend class DoCopyFilesWorker;
+    explicit UpdateProccessTimer(QObject *parent = nullptr)
+        : QObject(parent) {}
+    void stopTimer()
+    {
+        isStop = true;
+    }
+signals:
+    void updateProccessNotify();
+private slots:
+    void doStartTime()
+    {
+        while (true) {
+            emit updateProccessNotify();
+            QThread::msleep(500);
+            if (isStop)
+                return;
+        }
+    }
+
+public:
+    ~UpdateProccessTimer() = default;
+
+private:
+    QAtomicInteger<bool> isStop { false };
+};
 class FileOperationsUtils
 {
+    friend class AbstractWorker;
     friend class DoCopyFilesWorker;
     friend class DoStatisticsFilesWorker;
 

@@ -35,17 +35,15 @@ DoRestoreTrashFilesWorker::~DoRestoreTrashFilesWorker()
 {
 }
 
-void DoRestoreTrashFilesWorker::doWork()
+bool DoRestoreTrashFilesWorker::doWork()
 {
+    // The endcopy interface function has been called here
+    if (!AbstractWorker::doWork())
+        return false;
+
     // ToDo::执行从回收站还原的业务逻辑
-}
+    // 完成
+    endWork();
 
-void DoRestoreTrashFilesWorker::stop()
-{
-    // ToDo::停止移动到回收站的业务逻辑
-}
-
-void DoRestoreTrashFilesWorker::pause()
-{
-    // ToDo::暂停移动到回收站的业务逻辑
+    return true;
 }

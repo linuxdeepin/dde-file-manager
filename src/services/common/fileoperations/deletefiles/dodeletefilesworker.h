@@ -26,6 +26,7 @@
 #include "dfm_common_service_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "fileoperations/fileoperationutils/abstractworker.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QObject>
 
@@ -41,9 +42,25 @@ public:
     virtual ~DoDeleteFilesWorker() override;
 
 protected:
-    void doWork() override;
+    bool doWork() override;
     void stop() override;
-    void pause() override;
+    void onUpdateProccess() override;
+    void doOperateWork(AbstractJobHandler::SupportActions actions) override;
+    void endWork() override;
+    AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error) override;
+
+protected:
+    bool deleteAllFiles();
+    bool deleteFilesOnCanNotRemoveDevice();
+    bool deleteFilesOnOtherDevice();
+    bool deleteFileOnOtherDevice(const QUrl &url);
+    bool deleteDirOnOtherDevice(const AbstractFileInfoPointer &dir);
+    AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from,
+                                                           const AbstractJobHandler::JobErrorType &error,
+                                                           const QString &errorMsg = QString());
+
+private:
+    QAtomicInteger<qint64> deleteFilesCount { 0 };
 };
 
 DSC_END_NAMESPACE

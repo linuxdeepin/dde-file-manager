@@ -21,7 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "docopyfilesworker.h"
-#include "fileoperations/fileoperationutils/fileoperationsutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
 #include "fileoperations/fileoperationutils/statisticsfilessize.h"
@@ -51,90 +50,49 @@ USING_IO_NAMESPACE
 DoCopyFilesWorker::DoCopyFilesWorker(QObject *parent)
     : AbstractWorker(parent)
 {
+    jobType = AbstractJobHandler::JobType::kCopyType;
 }
 
 DoCopyFilesWorker::~DoCopyFilesWorker()
 {
 }
 
-void DoCopyFilesWorker::doWork()
+bool DoCopyFilesWorker::doWork()
 {
-    // 执行拷贝的业务逻辑
-    if (!initArgs()) {
-        endCopy();
-        return;
-    }
-    // 统计文件总大小
-    statisticsFilesSize();
+    // The endcopy interface function has been called here
+    if (!AbstractWorker::doWork())
+        return false;
     // 设置读取写入数据大小的方式
     setCountProccessType();
-    // 启动统计写入数据大小计时器
-    startCountProccess();
     // 执行文件拷贝
     if (!copyFiles()) {
-        endCopy();
-        return;
+        endWork();
+        return false;
     }
     // 同步文件
     syncFilesToDevice();
     // 完成
-    endCopy();
+    endWork();
+
+    return true;
 }
 
 void DoCopyFilesWorker::stop()
 {
-    setStat(AbstractJobHandler::JobState::kStopState);
-    // ToDo::停止拷贝的业务逻辑
-    if (statisticsFilesSizeJob)
-        statisticsFilesSizeJob->stop();
-    // clean error info queue
-    {
-        QMutexLocker lk(&errorThreadIdQueueMutex);
-        errorThreadIdQueue.clear();
-    }
     // clean muilt thread copy file info queue
-    {
-        QMutexLocker lk(&smallFileThreadCopyInfoQueueMutex);
+    if (smallFileThreadCopyInfoQueue) {
+        if (!smallFileThreadCopyInfoQueueMutex)
+            smallFileThreadCopyInfoQueueMutex.reset(new QMutex);
+        QMutexLocker lk(smallFileThreadCopyInfoQueueMutex.data());
         smallFileThreadCopyInfoQueue.clear();
     }
 
-    if (waitCondition)
-        waitCondition->wakeAll();
-
-    if (handlingErrorCondition)
-        handlingErrorCondition->wakeAll();
-
-    if (errorCondition)
-        errorCondition->wakeAll();
-}
-
-void DoCopyFilesWorker::pause()
-{
-    // ToDo::暂停拷贝的业务逻辑
-    if (currentState == AbstractJobHandler::JobState::kPauseState)
-        return;
-    setStat(AbstractJobHandler::JobState::kPauseState);
-}
-
-void DoCopyFilesWorker::resume()
-{
-    setStat(AbstractJobHandler::JobState::kRunningState);
-
-    if (waitCondition) {
-        waitCondition->wakeAll();
-    } else {
-        waitCondition.reset(new QWaitCondition);
-    }
-    if (errorCondition)
-        errorCondition->wakeAll();
+    AbstractWorker::stop();
 }
 
 bool DoCopyFilesWorker::initArgs()
 {
     time.start();
-    sourceFilesTotalSize = -1;
-    currentState = AbstractJobHandler::JobState::kRunningState;
-
     if (sources.count() <= 0) {
         // pause and emit error msg
         doHandleErrorAndWait(QUrl(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
@@ -162,29 +120,7 @@ bool DoCopyFilesWorker::initArgs()
         return false;
     }
 
-    if (!handler)
-        handler.reset(new LocalFileHandler);
-
-    return true;
-}
-
-void DoCopyFilesWorker::statisticsFilesSize()
-{
-    // 判读源文件所在设备位置，执行异步或者同统计源文件大小
-    isSourceFileLocal = FileOperationsUtils::isFileInCanRemoveDevice(sources.at(0));
-
-    if (isSourceFileLocal) {
-        const QSharedPointer<FileOperationsUtils::FilesSizeInfo> &fileSizeInfo =
-                FileOperationsUtils::statisticsFilesSize(sources, jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyToSelf));
-        allFilesList = fileSizeInfo->allFiles;
-        sourceFilesTotalSize = fileSizeInfo->totalSize;
-        dirSize = fileSizeInfo->dirSize;
-        return;
-    }
-
-    statisticsFilesSizeJob.reset(new StatisticsFilesSize(sources));
-    connect(statisticsFilesSizeJob.data(), &StatisticsFilesSize::finished, this, &DoCopyFilesWorker::onStatisticsFilesSizeFinish);
-    statisticsFilesSizeJob->start();
+    return AbstractWorker::initArgs();
 }
 
 void DoCopyFilesWorker::setCountProccessType()
@@ -250,17 +186,6 @@ void DoCopyFilesWorker::setCountProccessType()
         countWriteType = CountWriteSizeType::kCustomizeType;
 
     copyTid = countWriteType == CountWriteSizeType::kTidType ? syscall(SYS_gettid) : -1;
-}
-
-void DoCopyFilesWorker::startCountProccess()
-{
-    if (updateProccessTimer)
-        updateProccessTimer.reset(new UpdateProccessTimer());
-    updateProccessTimer->moveToThread(&updateProccessThread);
-    updateProccessThread.start();
-    connect(this, &DoCopyFilesWorker::startUpdateProccessTimer, updateProccessTimer.data(), &UpdateProccessTimer::doStartTime);
-    connect(updateProccessTimer.data(), &UpdateProccessTimer::updateProccessNotify, this, &DoCopyFilesWorker::onUpdateProccess);
-    emit startUpdateProccessTimer();
 }
 
 bool DoCopyFilesWorker::copyFiles()
@@ -489,7 +414,7 @@ bool DoCopyFilesWorker::creatSystemLink(const AbstractFileInfoPointer &fromInfo,
             return true;
         }
         action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kSymlinkError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(handler->errorString()));
-    } while (action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
     cancelThreadProcessingError();
     return action == AbstractJobHandler::SupportAction::kSkipAction;
 }
@@ -499,7 +424,7 @@ bool DoCopyFilesWorker::checkAndCopyFile(const AbstractFileInfoPointer fromInfo,
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     while (doCheckFileFreeSpace(fromInfo->size())) {
         action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kNotEnoughSpaceError);
-        if (action == AbstractJobHandler::SupportAction::kRetryAction) {
+        if (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction) {
             continue;
         } else if (action == AbstractJobHandler::SupportAction::kSkipAction) {
             skipWritSize += fromInfo->size() <= 0 ? dirSize : fromInfo->size();
@@ -522,15 +447,24 @@ bool DoCopyFilesWorker::checkAndCopyFile(const AbstractFileInfoPointer fromInfo,
         QSharedPointer<SmallFileThreadCopyInfo> threadInfo(new SmallFileThreadCopyInfo);
         threadInfo->fromInfo = fromInfo;
         threadInfo->toInfo = toInfo;
-        {
-            QMutexLocker lk(&smallFileThreadCopyInfoQueueMutex);
-            smallFileThreadCopyInfoQueue.enqueue(threadInfo);
-        }
-        QtConcurrent::run(&threadPool, this, static_cast<bool (DoCopyFilesWorker::*)()>(&DoCopyFilesWorker::doThreadPoolCopyFile));
-    }
+        if (!smallFileThreadCopyInfoQueue)
+            smallFileThreadCopyInfoQueue.reset(new QQueue<QSharedPointer<SmallFileThreadCopyInfo>>);
 
-    while (threadPool.activeThreadCount() > 0) {
-        QThread::msleep(100);
+        {
+            if (!smallFileThreadCopyInfoQueueMutex)
+                smallFileThreadCopyInfoQueueMutex.reset(new QMutex);
+            QMutexLocker lk(smallFileThreadCopyInfoQueueMutex.data());
+            smallFileThreadCopyInfoQueue->enqueue(threadInfo);
+        }
+
+        if (!threadPool)
+            threadPool.reset(new QThreadPool);
+        QtConcurrent::run(threadPool.data(), this, static_cast<bool (DoCopyFilesWorker::*)()>(&DoCopyFilesWorker::doThreadPoolCopyFile));
+    }
+    if (threadPool) {
+        while (threadPool->activeThreadCount() > 0) {
+            QThread::msleep(100);
+        }
     }
 
     return doCopyOneFile(fromInfo, toInfo);
@@ -542,11 +476,17 @@ bool DoCopyFilesWorker::doThreadPoolCopyFile()
         return false;
     QSharedPointer<SmallFileThreadCopyInfo> threadInfo(nullptr);
     {
-        QMutexLocker lk(&smallFileThreadCopyInfoQueueMutex);
-        if (smallFileThreadCopyInfoQueue.count() <= 0) {
+        if (!smallFileThreadCopyInfoQueueMutex)
+            smallFileThreadCopyInfoQueueMutex.reset(new QMutex);
+
+        QMutexLocker lk(smallFileThreadCopyInfoQueueMutex.data());
+        if (!smallFileThreadCopyInfoQueue)
+            smallFileThreadCopyInfoQueue.reset(new QQueue<QSharedPointer<SmallFileThreadCopyInfo>>);
+
+        if (smallFileThreadCopyInfoQueue->count() <= 0) {
             return false;
         }
-        threadInfo = smallFileThreadCopyInfoQueue.dequeue();
+        threadInfo = smallFileThreadCopyInfoQueue->dequeue();
     }
     if (!threadInfo) {
         setStat(AbstractJobHandler::JobState::kStopState);
@@ -643,7 +583,7 @@ bool DoCopyFilesWorker::createFileDevice(const AbstractFileInfoPointer &fromInfo
         if (!factory) {
             action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kDfmIoError, QObject::tr("create dfm io factory failed!"));
         }
-    } while (action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
     cancelThreadProcessingError();
     if (action != AbstractJobHandler::SupportAction::kNoAction) {
         skipWritSize += action == AbstractJobHandler::SupportAction::kSkipAction ? (fromInfo->size() <= 0 ? dirSize : fromInfo->size()) : 0;
@@ -656,7 +596,7 @@ bool DoCopyFilesWorker::createFileDevice(const AbstractFileInfoPointer &fromInfo
         if (!file) {
             action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kDfmIoError, QObject::tr("create dfm io dfile failed!"));
         }
-    } while (action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     cancelThreadProcessingError();
     if (action != AbstractJobHandler::SupportAction::kNoAction) {
@@ -692,7 +632,7 @@ bool DoCopyFilesWorker::openFile(const AbstractFileInfoPointer &fromInfo,
         if (!file->open(flags)) {
             action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kDfmIoError, QObject::tr("create dfm io dfile failed!"));
         }
-    } while (action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
     cancelThreadProcessingError();
     if (action != AbstractJobHandler::SupportAction::kNoAction) {
         skipWritSize += action == AbstractJobHandler::SupportAction::kSkipAction ? (fromInfo->size() <= 0 ? dirSize : fromInfo->size()) : 0;
@@ -709,7 +649,7 @@ bool DoCopyFilesWorker::resizeTargetFile(const AbstractFileInfoPointer &fromInfo
         if (!file->write(QByteArray())) {
             action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kResizeError, QObject::tr("resize file failed!"));
         }
-    } while (action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
     cancelThreadProcessingError();
     if (action != AbstractJobHandler::SupportAction::kNoAction) {
         skipWritSize += action == AbstractJobHandler::SupportAction::kSkipAction ? (fromInfo->size() <= 0 ? dirSize : fromInfo->size()) : 0;
@@ -761,7 +701,7 @@ bool DoCopyFilesWorker::doReadFile(const AbstractFileInfoPointer &fromInfo,
                 }
             }
         }
-    } while (action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     cancelThreadProcessingError();
 
@@ -809,7 +749,7 @@ bool DoCopyFilesWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo, con
                 return false;
             }
         }
-    } while (action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     cancelThreadProcessingError();
 
@@ -841,7 +781,7 @@ bool DoCopyFilesWorker::checkAndcopyDir(const AbstractFileInfoPointer &fromInfo,
                 break;
             }
             action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kMkdirError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(handler->errorString()));
-        } while (action == AbstractJobHandler::SupportAction::kRetryAction);
+        } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
         cancelThreadProcessingError();
         if (AbstractJobHandler::SupportAction::kNoAction != action) {
             // skip write size += all file size in sources dir
@@ -940,14 +880,15 @@ bool DoCopyFilesWorker::verifyFileIntegrity(const qint64 &blockSize,
             QString errorstr = QObject::tr("File integrity was damaged, cause: %1").arg("some error occ!");
             AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
             action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kIntegrityCheckingError, errorstr);
-            if (AbstractJobHandler::SupportAction::kRetryAction == action) {
+            if (!isStopped() && AbstractJobHandler::SupportAction::kRetryAction == action) {
                 continue;
             } else {
                 cancelThreadProcessingError();
                 return action == AbstractJobHandler::SupportAction::kSkipAction;
             }
-            cancelThreadProcessingError();
         }
+
+        cancelThreadProcessingError();
 
         targetCheckSum = adler32(targetCheckSum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(size));
 
@@ -988,74 +929,26 @@ void DoCopyFilesWorker::syncFilesToDevice()
         return;
 
     qint64 writeSize = getWriteDataSize() + skipWritSize;
-    while (currentState != AbstractJobHandler::JobState::kStopState && sourceFilesTotalSize > 0 && writeSize < sourceFilesTotalSize) {
+    while (!isStopped() && sourceFilesTotalSize > 0 && writeSize < sourceFilesTotalSize) {
         QThread::msleep(100);
     }
 }
 /*!
  * \brief DoCopyFilesWorker::endCopy  Clean up the current copy task and send the copy task completion signal
  */
-void DoCopyFilesWorker::endCopy()
+void DoCopyFilesWorker::endWork()
 {
-
     // wait for thread pool over
-    while (threadPool.activeThreadCount() > 0) {
-        QThread::msleep(100);
+    if (threadPool) {
+        while (threadPool->activeThreadCount() > 0) {
+            QThread::msleep(100);
+        }
     }
 
     // set dirs permissions
     setAllDirPermisson();
 
-    emit finishedNotify();
-}
-/*!
- * \brief DoCopyFilesWorker::emitErrorNotify send ErrorNotify signal
- * \param from source url
- * \param to target url
- * \param error error type
- * \param errorMsg error message
- */
-void DoCopyFilesWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const QString &errorMsg)
-{
-    JobInfoPointer info = createCopyJobInfo(from, to);
-    info->insert(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey, QVariant::fromValue(error));
-    info->insert(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey, QVariant::fromValue(errorToString(error) + errorMsg));
-    info->insert(AbstractJobHandler::NotifyInfoKey::kActionsKey, QVariant::fromValue(supportActions(error)));
-    emit errorNotify(info);
-}
-/*!
- * \brief DoCopyFilesWorker::emitProccessChangedNotify send ProccessChangedNotify signal
- * \param writSize current write data size
- */
-void DoCopyFilesWorker::emitProccessChangedNotify(const qint64 &writSize)
-{
-    JobInfoPointer info(new QMap<quint8, QVariant>);
-    info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(AbstractJobHandler::JobType::kCopyType));
-    info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(int(sourceFilesTotalSize)));
-    info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(int(writSize)));
-
-    emit proccessChangedNotify(info);
-}
-/*!
- * \brief DoCopyFilesWorker::emitStateChangedNotify send StateChangedNotify signal
- */
-void DoCopyFilesWorker::emitStateChangedNotify()
-{
-    JobInfoPointer info(new QMap<quint8, QVariant>);
-    info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(AbstractJobHandler::JobType::kCopyType));
-    info->insert(AbstractJobHandler::NotifyInfoKey::kJobStateKey, QVariant::fromValue(currentState));
-
-    emit stateChangedNotify(info);
-}
-/*!
- * \brief DoCopyFilesWorker::emitCurrentTaskNotify send CurrentTaskNotify signal
- * \param from source url
- * \param to target url
- */
-void DoCopyFilesWorker::emitCurrentTaskNotify(const QUrl &from, const QUrl &to)
-{
-    JobInfoPointer info = createCopyJobInfo(from, to);
-    emit errorNotify(info);
+    AbstractWorker::endWork();
 }
 /*!
  * \brief DoCopyFilesWorker::emitSpeedUpdatedNotify send  speedUpdatedNotify signal
@@ -1069,40 +962,6 @@ void DoCopyFilesWorker::emitSpeedUpdatedNotify(const qint64 &writSize)
     info->insert(AbstractJobHandler::NotifyInfoKey::kRemindTimeKey, QVariant::fromValue((sourceFilesTotalSize - writSize) / speed));
 
     emit stateChangedNotify(info);
-}
-/*!
- * \brief DoCopyFilesWorker::stateCheck Blocking waiting for copy and check status
- * \return is Correct state
- */
-bool DoCopyFilesWorker::stateCheck()
-{
-    if (currentState == AbstractJobHandler::JobState::kRunningState) {
-        return true;
-    }
-    if (currentState == AbstractJobHandler::JobState::kPauseState) {
-        qInfo() << "Will be suspended";
-        if (!copyWait()) {
-            return currentState != AbstractJobHandler::JobState::kStopState;
-        }
-    } else if (currentState == AbstractJobHandler::JobState::kStopState) {
-        return false;
-    }
-
-    return true;
-}
-/*!
- * \brief DoCopyFilesWorker::copyWait Blocking waiting for copy
- * \return Is it running
- */
-bool DoCopyFilesWorker::copyWait()
-{
-    conditionMutex.lock();
-    if (!waitCondition)
-        waitCondition.reset(new QWaitCondition);
-    waitCondition->wait(&conditionMutex);
-    conditionMutex.unlock();
-
-    return currentState == AbstractJobHandler::JobState::kRunningState;
 }
 /*!
  * \brief DoCopyFilesWorker::doHandleErrorAndWait Blocking handles errors and returns
@@ -1127,31 +986,35 @@ AbstractJobHandler::SupportAction DoCopyFilesWorker::doHandleErrorAndWait(const 
     // 判断是否有线程在处理错误,1.无，当前线程加入到处理队列，阻塞其他线程的错误处理，发送错误信号，阻塞自己。收到错误处理，恢复自己。
     // 判读是否有retry操作,当前错误处理线程就切换（错误处理线程不出队列），继续处理，外部判读处理完成就切换处理线程
     // 当前处理线程为队列的第一个对象
-    errorThreadIdQueueMutex.lock();
-    if (errorThreadIdQueue.count() <= 0 || errorThreadIdQueue.first() != QThread::currentThreadId()) {
-        errorThreadIdQueue.enqueue(QThread::currentThreadId());
+    if (!errorThreadIdQueueMutex)
+        errorThreadIdQueueMutex.reset(new QMutex);
+    errorThreadIdQueueMutex->lock();
+    if (!errorThreadIdQueue)
+        errorThreadIdQueue.reset(new QQueue<Qt::HANDLE>);
+    if (errorThreadIdQueue->count() <= 0 || errorThreadIdQueue->first() != QThread::currentThreadId()) {
+        errorThreadIdQueue->enqueue(QThread::currentThreadId());
     }
 
     // 阻塞其他线程 当前不是停止状态，并且当前线程不是处理错误线程
-    while (currentState != AbstractJobHandler::JobState::kStopState && errorThreadIdQueue.first() != QThread::currentThreadId()) {
-        errorThreadIdQueueMutex.unlock();
+    while (!isStopped() && errorThreadIdQueue->first() != QThread::currentThreadId()) {
+        errorThreadIdQueueMutex->unlock();
         if (!errorCondition)
             errorCondition.reset(new QWaitCondition);
         QMutex lock;
         errorCondition->wait(&lock);
         lock.unlock();
-        errorThreadIdQueueMutex.lock();
+        errorThreadIdQueueMutex->lock();
     }
 
-    errorThreadIdQueueMutex.unlock();
-    if (currentState != AbstractJobHandler::JobState::kStopState)
+    errorThreadIdQueueMutex->unlock();
+    if (isStopped())
         return AbstractJobHandler::SupportAction::kCancelAction;
     // 发送错误处理 阻塞自己
-    emitErrorNotify(from, to, error, errorMsg);
+    emitErrorNotify(from, to, error, errorToString(error) + errorMsg);
     QMutex lock;
     handlingErrorCondition->wait(&lock);
     lock.unlock();
-    if (currentState != AbstractJobHandler::JobState::kStopState)
+    if (isStopped())
         return AbstractJobHandler::SupportAction::kCancelAction;
 
     return currentAction;
@@ -1162,14 +1025,14 @@ AbstractJobHandler::SupportAction DoCopyFilesWorker::doHandleErrorAndWait(const 
  */
 void DoCopyFilesWorker::setStat(const AbstractJobHandler::JobState &stat)
 {
-    if (stat == currentState)
-        return;
-    if (stat == AbstractJobHandler::JobState::kStopState) {
-        QMutexLocker lk(&smallFileThreadCopyInfoQueueMutex);
+    AbstractWorker::setStat(stat);
+
+    if (isStopped() && smallFileThreadCopyInfoQueue) {
+        if (smallFileThreadCopyInfoQueueMutex)
+            smallFileThreadCopyInfoQueueMutex.reset(new QMutex);
+        QMutexLocker lk(smallFileThreadCopyInfoQueueMutex.data());
         smallFileThreadCopyInfoQueue.clear();
     }
-    currentState = stat;
-    emitStateChangedNotify();
 }
 /*!
  * \brief DoCopyFilesWorker::supportActions get the support Acttions by error type
@@ -1264,24 +1127,6 @@ QString DoCopyFilesWorker::errorToString(const AbstractJobHandler::JobErrorType 
     return QString();
 }
 /*!
- * \brief DoCopyFilesWorker::createCopyJobInfo create emit signal job infor pointer
- * \param from source url
- * \param to target url
- * \return Pointer to signal information
- */
-JobInfoPointer DoCopyFilesWorker::createCopyJobInfo(const QUrl &from, const QUrl &to)
-{
-    JobInfoPointer info(new QMap<quint8, QVariant>);
-    info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(AbstractJobHandler::JobType::kCopyType));
-    info->insert(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey, QVariant::fromValue(from));
-    info->insert(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey, QVariant::fromValue(to));
-    QString fromMsg = QString(QObject::tr("copy file %1")).arg(from.path());
-    info->insert(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey, QVariant::fromValue(fromMsg));
-    QString toMsg = QString(QObject::tr("to %1")).arg(to.path());
-    info->insert(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey, QVariant::fromValue(toMsg));
-    return info;
-}
-/*!
  * \brief DoCopyFilesWorker::formatFileName Processing and formatting file names
  * \param fileName file name
  * \return format file name
@@ -1292,9 +1137,9 @@ QString DoCopyFilesWorker::formatFileName(const QString &fileName)
     if (jobFlags.testFlag(AbstractJobHandler::JobFlag::kDontFormatFileName)) {
         return fileName;
     }
-    if (!targetStorageInfo) {
+    if (!targetStorageInfo)
         targetStorageInfo.reset(new StorageInfo(target.path()));
-    }
+
     const QString &fs_type = targetStorageInfo->fileSystemType();
 
     if (fs_type == "vfat") {
@@ -1451,20 +1296,19 @@ void DoCopyFilesWorker::readAheadSourceFile(const AbstractFileInfoPointer &fileI
 void DoCopyFilesWorker::cancelThreadProcessingError()
 {
     // 当前错误线程处理结束
-    QMutexLocker lk(&errorThreadIdQueueMutex);
-    errorThreadIdQueue.removeOne(QThread::currentThreadId());
+    if (!errorThreadIdQueue)
+        return;
+
+    if (!errorThreadIdQueueMutex)
+        errorThreadIdQueueMutex.reset(new QMutex);
+    QMutexLocker lk(errorThreadIdQueueMutex.data());
+
+    errorThreadIdQueue->removeOne(QThread::currentThreadId());
+    if (errorThreadIdQueue->count() <= 0)
+        resume();
+
     if (errorCondition)
         errorCondition->wakeAll();
-}
-/*!
- * \brief DoCopyFilesWorker::onStatisticsFilesSizeFinish  Count the size of all files
- * and the slot at the end of the thread
- * \param sizeInfo All file size information
- */
-void DoCopyFilesWorker::onStatisticsFilesSizeFinish(const SizeInfoPoiter sizeInfo)
-{
-    sourceFilesTotalSize = sizeInfo->totalSize;
-    dirSize = sizeInfo->dirSize;
 }
 /*!
  * \brief DoCopyFilesWorker::onUpdateProccess update proccess and speed slot

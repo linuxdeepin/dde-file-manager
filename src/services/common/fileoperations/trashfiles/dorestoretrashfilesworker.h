@@ -41,9 +41,7 @@ public:
     virtual ~DoRestoreTrashFilesWorker() override;
 
 protected:
-    void doWork() override;
-    void stop() override;
-    void pause() override;
+    bool doWork() override;
 };
 
 DSC_END_NAMESPACE
