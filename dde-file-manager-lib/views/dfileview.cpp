@@ -185,6 +185,7 @@ public:
     char justAvoidWaringOfAlignmentBoundary[2];//只是为了避免边界对其问题警告，其他地方未使用。//若有更好的办法可以替换之
 
     bool isVaultDelSigConnected = false; //is vault delete signal connected.
+    QAtomicInteger<bool> m_isMouseLeftPress = false;
 
     Q_DECLARE_PUBLIC(DFileView)
 };
@@ -913,6 +914,11 @@ void DFileView::onRowCountChanged()
 
 void DFileView::wheelEvent(QWheelEvent *event)
 {
+    // 左键按下则不响应滚轮事件，解决87504Bug，完善框选未定义行为
+    if (event->buttons().testFlag(Qt::LeftButton)) {
+        return;
+    }
+
     if (isIconViewMode()) {
         if (DFMGlobal::keyCtrlIsPressed()) {
             if (event->angleDelta().y() > 0) {
@@ -1131,6 +1137,13 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 {
     D_D(DFileView);
 
+    //获取已按下的鼠标是否存在左侧按键
+    if (event->buttons().testFlag(Qt::LeftButton)) {
+        d->m_isMouseLeftPress = true;
+    } else {
+        d->m_isMouseLeftPress = false;
+    }
+
     switch (event->button()) {
     case Qt::BackButton: {
         DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMBackEvent>(this), qobject_cast<DFileManagerWindow *>(window()));
@@ -1222,9 +1235,12 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     case Qt::RightButton: {
         // 47203 创建链接后，先打开桌面文件菜单，会将创建链接弹窗内的菜单改变
         // 弹出文件选择框后，左键选择文件之前右键选择其中的文件无法触发focusInEvent事件，这里手动设置焦点
+        // 此处慎重添加向上的DListView::mousePressEvent(event);执行逻辑，会导致contextMenuEvent的重复触发
         if (qApp->activeWindow() != this->window())
             setFocus(Qt::ActiveWindowFocusReason);
-        DListView::mousePressEvent(event);
+        // 87504 完善边界，原生Qt框选时右键松开会取消框与坐标
+        if (d->m_isMouseLeftPress)
+           DListView::mousePressEvent(event);
         break;
     }
     default:
@@ -1577,42 +1593,75 @@ void DFileView::resizeEvent(QResizeEvent *event)
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
     D_DC(DFileView);
+
+    if (!canShowContextMenu(event))
+            return;
+
     const QModelIndex &index = indexAt(event->pos());
-    bool indexIsSelected = isIconViewMode() ? index.isValid() : this->isSelected(index);
-    bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos()) && !indexIsSelected;
-    Qt::ItemFlags flags;
+    bool clickedSelected = isSelected(index);
+    bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
+    Qt::ItemFlags flags = index.flags();
 
-    if (isEmptyArea) {
-        //判断网络文件是否可以到达
-        if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
-            return;
-        }
-        flags = model()->flags(rootIndex());
-        if (!flags.testFlag(Qt::ItemIsEnabled))
-            return;
-    } else {
-        //判断网络文件是否可以到达
-        if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
-            return;
-        }
-        flags = model()->flags(index);
+    // 顶层目录没有开启item flags列表，任何菜单都将不会展示
+    if (isEmptyArea && !model()->flags(rootIndex()).testFlag(Qt::ItemIsEnabled)) {
+        return;
+    }
+
+    if (clickedSelected) {  // 选中逻辑
+        // 当前选中的index未使能
         if (!flags.testFlag(Qt::ItemIsEnabled)) {
-            isEmptyArea = true;
-            flags = rootIndex().flags();
+            return showEmptyAreaMenu(rootIndex().flags());  // show root Index flags
+        } else {
+            return showNormalMenu(index, flags);  // show opration menu
+        }
+    } else {  // 非选中逻辑
+        itemDelegate()->hideNotEditingIndexWidget();  // 提交所有的编辑框edit数据
+        clearSelection();  // 清除选中的indexs
+
+        if (!index.isValid()) {  // index不存在
+            return showEmptyAreaMenu(rootIndex().flags());  // show root Index flags
+        } else if (!isIconViewMode() && isEmptyArea) {  // listview 下判断 isEmptyArea
+            return showEmptyAreaMenu(rootIndex().flags());  // show root Index flags
+        } else {  // index 存在
+            selectionModel()->select(index, QItemSelectionModel::SelectionFlag::Select);
+            // 当前选中的index未使能
+            if (!flags.testFlag(Qt::ItemIsEnabled)) {
+                // show root Index flags
+                return showEmptyAreaMenu(rootIndex().flags());
+            } else {
+                return showNormalMenu(index, flags);
+            }
+        }  // else end
+    }
+}
+
+bool DFileView::canShowContextMenu(QContextMenuEvent *event)
+{
+    Q_D(DFileView);
+
+    // BUG#87504 添加左键与右键菜单弹出的互斥操作
+    if (d->m_isMouseLeftPress)
+        return false;
+
+    // 检查当前路径是否可访问辨别smb目录
+    if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl()))
+        return false;
+
+    // 搜索路径下存在不可访问（访问不可达）的文件
+    if (rootUrl().isSearchFile()) {
+        // 搜索结果有效点击了index
+        if (indexAt(event->pos()).isValid()) {
+            DUrl fileUrl = model()->getUrlByIndex(indexAt(event->pos())).searchedFileUrl();
+            if (DFileService::instance()->checkGvfsMountfileBusy(fileUrl))
+                return false;
+        } else { // 搜索结果界面点击了空白区域
+            DUrl fileUrl = rootUrl().searchTargetUrl();
+            if (DFileService::instance()->checkGvfsMountfileBusy(fileUrl))
+                return false;
         }
     }
 
-    if (isEmptyArea) {
-        itemDelegate()->hideNotEditingIndexWidget();
-        clearSelection();
-        showEmptyAreaMenu(flags);
-    } else {
-        if (!isSelected(index)) {
-            setCurrentIndex(index);
-        }
-
-        showNormalMenu(index, flags);
-    }
+    return true;
 }
 
 void DFileView::dragEnterEvent(QDragEnterEvent *event)
@@ -1667,7 +1716,15 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 {
     D_D(DFileView);
 
-    d->dragMoveHoverIndex = d->fileViewHelper->isEmptyArea(event->pos()) ? rootIndex() : indexAt(event->pos());
+    if (isIconViewMode()) {
+        d->dragMoveHoverIndex = d->fileViewHelper->isEmptyArea(event->pos()) ? rootIndex() : indexAt(event->pos());
+    } else { // fix 88616 在列表模式下，拖拽文件到文件夹的名称后面空出，无法拖拽文件到文件夹中
+        d->dragMoveHoverIndex = indexAt(event->pos());
+        // 保持index为空时，rootIndex判断
+        if (!d->dragMoveHoverIndex.isValid())
+            d->dragMoveHoverIndex = rootIndex();
+    }
+
 
     if (d->dragMoveHoverIndex.isValid()) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(d->dragMoveHoverIndex);
@@ -1736,7 +1793,12 @@ void DFileView::dropEvent(QDropEvent *event)
 
         event->accept(); // yeah! we've done with XDS so stop Qt from further event propagation.
     } else {
-        QModelIndex index = d->fileViewHelper->isEmptyArea(event->pos()) ? QModelIndex() : indexAt(event->pos());
+        QModelIndex index;
+        if (isIconViewMode()) {
+          index = d->fileViewHelper->isEmptyArea(event->pos()) ? QModelIndex() : indexAt(event->pos());
+        } else {  // fix 88616 在列表模式下，拖拽文件到文件夹的名称后面空出，无法拖拽文件到文件夹中
+          index = indexAt(event->pos());
+        }
 
         if (!index.isValid())
             index = rootIndex();
@@ -1768,7 +1830,12 @@ void DFileView::dropEvent(QDropEvent *event)
     }
 
     if (DFileDragClient::checkMimeData(event->mimeData())) {
-        QModelIndex index = d->fileViewHelper->isEmptyArea(event->pos()) ? QModelIndex() : indexAt(event->pos());
+        QModelIndex index;
+        if (isIconViewMode()) {
+            index = d->fileViewHelper->isEmptyArea(event->pos()) ? QModelIndex() : indexAt(event->pos());
+        } else {  // fix 88616 在列表模式下，拖拽文件到文件夹的名称后面空出，无法拖拽文件到文件夹中
+            index = indexAt(event->pos());
+        }
 
         if (!index.isValid())
             index = rootIndex();
