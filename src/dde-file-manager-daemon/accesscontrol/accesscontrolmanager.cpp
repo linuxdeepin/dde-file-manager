@@ -41,6 +41,7 @@
 #include <dblockdevice.h>
 
 #include "dfilesystemwatcher.h"
+#include "dfilewatcher.h"
 
 #include "app/policykithelper.h"
 #include "dbusservice/dbusadaptor/accesscontrol_adaptor.h"
@@ -83,6 +84,16 @@ AccessControlManager::AccessControlManager(QObject *parent)
 
     m_whiteProcess << "/usr/bin/dmcg";
     m_configPath = "/etc/deepin/devAccessConfig.json";
+    QFile cfg(m_configPath);
+    if (!cfg.exists()) {
+        cfg.open(QIODevice::NewOnly);
+        cfg.close();
+    }
+    m_watcherForPolicy = new DFileWatcher(m_configPath, this);
+    m_watcherForPolicy->startWatcher();
+
+    m_timerForUpdatePolicy = new QTimer(this);
+
     loadPolicy();
     changeMountedOnInit();
 
@@ -105,6 +116,17 @@ void AccessControlManager::initConnect()
     connect(m_diskMnanager, &DDiskManager::mountAdded, this, &AccessControlManager::chmodMountpoints);
     connect(m_watcher, &DFileSystemWatcher::fileCreated, this, &AccessControlManager::onFileCreated);
     connect(m_diskMnanager, &DDiskManager::diskDeviceAdded, this, &AccessControlManager::disconnOpticalDev);
+
+    m_timerForUpdatePolicy->setInterval(100);
+    m_timerForUpdatePolicy->setSingleShot(true);
+    connect(m_timerForUpdatePolicy, &QTimer::timeout, this, [this]{
+        this->loadPolicy();
+        this->changeMountedOnInit();
+    });
+
+    connect(m_watcherForPolicy, &DFileWatcher::fileModified, this, [this]{
+        m_timerForUpdatePolicy->start();
+    });
 }
 
 bool AccessControlManager::checkAuthentication()

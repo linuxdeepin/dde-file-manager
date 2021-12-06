@@ -28,6 +28,8 @@
 class AccessControlAdaptor;
 class DDiskManager;
 class DFileSystemWatcher;
+class DFileWatcher;
+class QTimer;
 
 class AccessControlManager : public QObject, public QDBusContext
 {
@@ -94,6 +96,8 @@ private:
     AccessControlAdaptor *m_accessControlAdaptor = nullptr;
     DDiskManager *m_diskMnanager = nullptr;
     DFileSystemWatcher *m_watcher = nullptr;
+    DFileWatcher *m_watcherForPolicy = nullptr;
+    QTimer *m_timerForUpdatePolicy = nullptr;
 
     QString m_configPath;
     QStringList m_whiteProcess;
