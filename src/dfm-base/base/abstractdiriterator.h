@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -114,14 +114,16 @@ public:
      *
      * \return bool 是否设置成功
      */
-    virtual bool enableIteratorByKeyword(const QString &keyword) {Q_UNUSED(keyword); return false;}
+    virtual bool enableIteratorByKeyword(const QString &keyword)
+    {
+        Q_UNUSED(keyword);
+        return false;
+    }
 };
-
-
 
 DFMBASE_END_NAMESPACE
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator> AbstractDirIteratorPointer;
 
 Q_DECLARE_METATYPE(AbstractDirIteratorPointer)
 
-#endif // ABSTRACTDIRITERATOR_H
+#endif   // ABSTRACTDIRITERATOR_H

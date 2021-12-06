@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -34,36 +34,36 @@ class StandardPaths
 {
 public:
     enum StandardLocation {
-        TrashPath,                                  // 回收站路径
-        TrashExpungedPath,                          // 回收站中文件源文件地址的位置
-        TrashFilesPath,                             // 回收站文件存放地址
-        TrashInfosPath,                             // 回收站文件信息路径
-        TranslationPath,                            // 翻译文件所在路径
-        TemplatesPath,                              // 临时文件所在路径
-        MimeTypePath,                               // mimetype文件的路径
-        PluginsPath,                                // 插件路径
-        ThumbnailPath,                              // 缩略图路径
-        ThumbnailFailPath,                          // 缩略图s失败路径
-        ThumbnailLargePath,                         // 缩略图大图片路径
-        ThumbnailNormalPath,                        // 缩略图普通大小路径
-        ThumbnailSmallPath,                         // 缩略图小图片路径
-        ApplicationConfigPath,                      // app配置文件路径 ~/.config
-        ApplicationSharePath,                       // app共享路径 /usr/share/dde-file-manager
-        RecentPath,                                 // 最近使用的文件保存路径
-        HomePath,                                   // home目录的文件路径
-        DesktopPath,                                // 桌面目录路径
-        VideosPath,                                 // 视频目录路径
-        MusicPath,                                  // 音乐目录路径
-        PicturesPath,                               // 图片目录路径
-        DocumentsPath,                              // 文档目录路径
-        DownloadsPath,                              // 下载目录路径
-        CachePath,                                  // 缓存文件路径 ~/.cache/dde-file-manager
-        DiskPath,                                   // 磁盘路径
-        NetworkRootPath,                            // 网络邻居路径
-        UserShareRootPath,                          // 用户共享的根目录路径
-        ComputerRootPath,                           // 计算机根目录路径
-        Root,                                       // 根目录路径
-        Vault                                       // 保险箱路径
+        kTrashPath,   // 回收站路径
+        kTrashExpungedPath,   // 回收站中文件源文件地址的位置
+        kTrashFilesPath,   // 回收站文件存放地址
+        kTrashInfosPath,   // 回收站文件信息路径
+        kTranslationPath,   // 翻译文件所在路径
+        kTemplatesPath,   // 临时文件所在路径
+        kMimeTypePath,   // mimetype文件的路径
+        kPluginsPath,   // 插件路径
+        kThumbnailPath,   // 缩略图路径
+        kThumbnailFailPath,   // 缩略图s失败路径
+        kThumbnailLargePath,   // 缩略图大图片路径
+        kThumbnailNormalPath,   // 缩略图普通大小路径
+        kThumbnailSmallPath,   // 缩略图小图片路径
+        kApplicationConfigPath,   // app配置文件路径 ~/.config
+        kApplicationSharePath,   // app共享路径 /usr/share/dde-file-manager
+        kRecentPath,   // 最近使用的文件保存路径
+        kHomePath,   // home目录的文件路径
+        kDesktopPath,   // 桌面目录路径
+        kVideosPath,   // 视频目录路径
+        kMusicPath,   // 音乐目录路径
+        kPicturesPath,   // 图片目录路径
+        kDocumentsPath,   // 文档目录路径
+        kDownloadsPath,   // 下载目录路径
+        kCachePath,   // 缓存文件路径 ~/.cache/dde-file-manager
+        kDiskPath,   // 磁盘路径
+        kNetworkRootPath,   // 网络邻居路径
+        kUserShareRootPath,   // 用户共享的根目录路径
+        kComputerRootPath,   // 计算机根目录路径
+        kRoot,   // 根目录路径
+        kVault   // 保险箱路径
     };
 
     static QString location(StandardLocation type);
@@ -78,4 +78,4 @@ private:
 };
 DFMBASE_END_NAMESPACE
 
-#endif // STANDARDPATHS_H
+#endif   // STANDARDPATHS_H

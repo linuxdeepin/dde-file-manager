@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -27,15 +27,15 @@
 
 #include <dfm-io/core/dfileinfo.h>
 
-//更新间隔时间
-#define REFRESH_SPACE_TIME 500
-//文件缓存文件的总个数
-#define CACHE_FILEINFO_COUNT 100000
-//文件缓存移除的时间
-#define CACHE_REMOVE_TIME 5 * 60 * 1000
+// 更新间隔时间
+static constexpr int kRefreshSpaceTime = 500;
+// 文件缓存文件的总个数
+static constexpr int kCacheFileinfoCount = 100000;
+// 文件缓存移除的时间
+static constexpr int kCacheRemoveTime = (5 * 60 * 1000);
 
 DFMBASE_BEGIN_NAMESPACE
-Q_GLOBAL_STATIC(InfoCache,_InfoCacheManager)
+Q_GLOBAL_STATIC(InfoCache, _InfoCacheManager)
 
 /*!
  * \class ReFreshThread
@@ -85,8 +85,7 @@ void ReFreshThread::refreshFileInfoByUrl(const QUrl &url)
     if (time.elapsed() - reflreshTime > 500) {
         updateRefreshTimeByUrl(url);
         fileinfo->refresh();
-    }
-    else {
+    } else {
         needRefreshMap.insert(url, reflreshTime);
     }
 }
@@ -101,7 +100,7 @@ void ReFreshThread::refreshFileInfoByUrl(const QUrl &url)
  */
 void ReFreshThread::updateRefreshTimeByUrl(const QUrl &url)
 {
-    refreshMap.insert(url,time.elapsed());
+    refreshMap.insert(url, time.elapsed());
 }
 /*!
  * \brief removeRefreshByUrl 根据URL移除更新
@@ -146,7 +145,7 @@ void ReFreshThread::run()
         return;
     QMap<QUrl, qint64>::iterator itr = needRefreshMap.begin();
     QMap<QUrl, qint64>::iterator itrEnd = needRefreshMap.end();
-    while(itr != itrEnd) {
+    while (itr != itrEnd) {
         AbstractFileInfoPointer fileinfo = InfoCache::instance().getCacheInfo(itr.key());
         if (!fileinfo)
             continue;
@@ -158,7 +157,7 @@ void ReFreshThread::run()
             continue;
         }
 
-        if (time.elapsed() - itr.value() >= REFRESH_SPACE_TIME) {
+        if (time.elapsed() - itr.value() >= kRefreshSpaceTime) {
             updateRefreshTimeByUrl(itr.key());
             fileinfo->refresh();
             itr = needRefreshMap.erase(itr);
@@ -166,7 +165,7 @@ void ReFreshThread::run()
         } else
             ++itr;
     }
-    QThread::msleep(REFRESH_SPACE_TIME);
+    QThread::msleep(kRefreshSpaceTime);
 }
 
 InfoCachePrivate::InfoCachePrivate(InfoCache *qq)
@@ -197,15 +196,14 @@ void InfoCachePrivate::updateSortByTimeCacheUrlList(const QUrl &url)
 }
 
 InfoCache::InfoCache(QObject *parent)
-    : QObject(parent)
-    , d(new InfoCachePrivate(this))
+    : QObject(parent), d(new InfoCachePrivate(this))
 {
     connect(&d->removeTimer, &QTimer::timeout, this, &InfoCache::timeRemoveCache);
-    d->removeTimer.setInterval(CACHE_REMOVE_TIME);
+    d->removeTimer.setInterval(kCacheRemoveTime);
     d->removeTimer.start();
     connect(&d->needRemoveTimer, &QTimer::timeout, this, &InfoCache::timeNeedRemoveCache);
     d->needRemoveTimer.start(1000);
-    d->needRemoveTimer.setInterval(CACHE_REMOVE_TIME);
+    d->needRemoveTimer.setInterval(kCacheRemoveTime);
 }
 
 InfoCache::~InfoCache()
@@ -237,8 +235,7 @@ AbstractFileInfoPointer InfoCache::getCacheInfo(const QUrl &url)
     Q_D(InfoCache);
     if (d->fileInfos.contains(url)) {
         d->updateSortByTimeCacheUrlList(url);
-        if (d->needRemoveCacheList.contains(url))
-        {
+        if (d->needRemoveCacheList.contains(url)) {
             d->removedCacheList.push_back(url);
         }
     }
@@ -269,9 +266,8 @@ void InfoCache::cacheInfo(const QUrl &url, const AbstractFileInfoPointer &info)
     d->updateSortByTimeCacheUrlList(url);
     d->refreshThread->updateRefreshTimeByUrl(url);
     //超过缓存总数量时，直接移除缓存，将移除的url加入到已移除队列
-    if (d->sortByTimeCacheUrl.count() > CACHE_FILEINFO_COUNT) {
-        QUrl removeUrl = d->sortByTimeCacheUrl.first() == nullptr ?
-                    QUrl() : *(d->sortByTimeCacheUrl.first());
+    if (d->sortByTimeCacheUrl.count() > kCacheFileinfoCount) {
+        QUrl removeUrl = d->sortByTimeCacheUrl.first() == nullptr ? QUrl() : *(d->sortByTimeCacheUrl.first());
         removeCacheInfo(removeUrl);
         //已加入到待remove的链表，加入到m_removedCacheList链表
         if (d->needRemoveCacheList.contains(removeUrl))
@@ -333,7 +329,7 @@ void InfoCache::timeNeedRemoveCache()
     Q_D(InfoCache);
     QList<QUrl>::iterator itr = d->sortByTimeCacheUrl.begin();
     QList<QUrl>::iterator itrEnd = d->sortByTimeCacheUrl.end();
-    while(itr != itrEnd) {
+    while (itr != itrEnd) {
         //移除的直接移除当前的url和移除移除的url
         if (d->removedSortByTimeCacheList.contains(*itr)) {
             itr = d->sortByTimeCacheUrl.erase(itr);
@@ -367,7 +363,7 @@ void InfoCache::timeRemoveCache()
     Q_D(InfoCache);
     QList<QUrl>::iterator itr = d->needRemoveCacheList.begin();
     QList<QUrl>::iterator itrEnd = d->needRemoveCacheList.end();
-    while(itr != itrEnd) {
+    while (itr != itrEnd) {
         //已被析构了的info，直接移除和从移除的列表中移除
         if (d->removedCacheList.contains(*itr)) {
             itr = d->needRemoveCacheList.erase(itr);

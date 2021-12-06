@@ -24,7 +24,6 @@
 
 #include <dfm-framework/framework.h>
 
-class DFMWindowManagerService;
 class Recent : public dpf::Plugin
 {
     Q_OBJECT
@@ -34,8 +33,6 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
-
-    DFMWindowManagerService *windowManagerService;
 };
 
-#endif // COREPLUGIN_H
+#endif   // COREPLUGIN_H

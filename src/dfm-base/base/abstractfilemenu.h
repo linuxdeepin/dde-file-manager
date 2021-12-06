@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -35,27 +35,27 @@ DFMBASE_BEGIN_NAMESPACE
 class AbstractFileMenuPrivate;
 
 namespace FileMenuTypes {
-extern const QString CREATE_NEW_DIR;
-extern const QString CREATE_NEW_DOC;
-extern const QString VIEW_MODE_SWITCH;
-extern const QString VIEW_SORT_SWITCH;
-extern const QString OPEN_AS_ADMIN;
-extern const QString OPEN_IN_TERMINAL;
-extern const QString SELECT_ALL;
-extern const QString PROPERTY;
-extern const QString CUT;
-extern const QString COPY;
-extern const QString PASTE;
-extern const QString RENAME;
-} // namesapce FileMenuTypes
+extern const QString kCreateNewDir;
+extern const QString kCreateNewDoc;
+extern const QString kViewModeSwitch;
+extern const QString kViewSortSwitch;
+extern const QString kOpenAsAdmin;
+extern const QString kOpenInTerminal;
+extern const QString kSelectAll;
+extern const QString kProperty;
+extern const QString kCut;
+extern const QString kCopy;
+extern const QString kPaste;
+extern const QString kRename;
+}   // namesapce FileMenuTypes
 
 class AbstractFileMenu : public QObject
 {
     Q_OBJECT
 public:
-    enum MenuMode{
-        Empty,
-        Normal,
+    enum MenuMode {
+        kEmpty,
+        kNormal,
     };
 
     explicit AbstractFileMenu(QObject *parent = nullptr);
@@ -68,4 +68,4 @@ public:
 
 DFMBASE_END_NAMESPACE
 
-#endif // ABSTRACTFILEMENU_H
+#endif   // ABSTRACTFILEMENU_H

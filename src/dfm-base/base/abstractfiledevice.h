@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -32,10 +32,11 @@ class AbstractFileDevice : public QIODevice
 {
     Q_OBJECT
     friend class AbstractFileDevicePrivate;
+
 public:
     enum SyncOperate {
-        CloseFileOperate,
-        DefaultOperate = 255
+        kCloseFileOperate,
+        kDefaultOperate = 255
     };
     explicit AbstractFileDevice() = delete;
     explicit AbstractFileDevice(const QUrl &url);
@@ -45,7 +46,7 @@ public:
     virtual int handle() const;
     virtual bool resize(qint64 size);
     virtual bool flush();
-    virtual bool syncToDisk(const AbstractFileDevice::SyncOperate &op = AbstractFileDevice::DefaultOperate);
+    virtual bool syncToDisk(const AbstractFileDevice::SyncOperate &op = AbstractFileDevice::kDefaultOperate);
 
 protected:
     virtual bool setFileUrl(const QUrl &url);
@@ -54,4 +55,4 @@ protected:
 };
 DFMBASE_END_NAMESPACE
 
-#endif // DABSTRACTFILEDEVICE_H
+#endif   // DABSTRACTFILEDEVICE_H

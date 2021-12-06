@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -22,6 +22,7 @@
 #include "utils/fileutils.h"
 #include "mimetype/mimedatabase.h"
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/utils/finallyutil.h"
 
 #include <QFileInfo>
 #include <QTimer>
@@ -32,113 +33,105 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-bool FileUtils::mkdir(const QUrl &url, const QString dirName, QString *errorString)
+/*!
+ * \class FileUtils
+ *
+ * \brief Utility class providing static helper methods for file management
+ */
+
+bool FileUtils::mkdir(const QUrl &url, const QString &dirName, QString *errorString)
 {
+    QString error;
+    FinallyUtil finally([&]() {if (errorString) *errorString = error; });
     if (!url.isValid()) {
-        if (errorString) {
-            *errorString = QObject::tr("Failed, can't use empty url from create dir");
-        }
-        qInfo() << QObject::tr("Failed, can't use empty url from create dir");
+        error = "Failed, can't use empty url from create dir";
         return false;
     }
 
     if (UrlRoute::isVirtual(url)) {
-        if (errorString) {
-            *errorString = QObject::tr("Failed, can't use virtual url from create dir");
-        }
-        qInfo() << QObject::tr("Failed, can't use virtual url from create dir");
+        error = "Failed, can't use virtual url from create dir";
         return false;
     }
 
     QFileInfo info(UrlRoute::urlToPath(url));
     if (!info.exists()) {
-        if (errorString) {
-            *errorString = QObject::tr("Failed, url not exists");
-        }
-        qInfo() << QObject::tr("Failed, url not exists");
+        error = "Failed, url not exists";
         return false;
     }
 
     if (!info.isDir()) {
-        if (errorString) {
-            *errorString = QObject::tr("Failed, url pat not is dir");
-        }
-        qInfo() << QObject::tr("Failed, url pat not is dir");
+        error = "Failed, url pat not is dir";
         return false;
     }
 
     if (!info.permissions().testFlag(QFile::Permission::WriteUser)) {
-        if (errorString) {
-            *errorString = QObject::tr("Failed, not permission create dir");
-        }
-        qInfo() << QObject::tr("Failed, not permission create dir");
+        error = "Failed, not permission create dir";
         return false;
     }
 
     auto localDirPath = info.filePath() + "/" + dirName;
     if (QFileInfo(localDirPath).exists()) {
-        if (errorString) {
-            *errorString = QObject::tr("Failed, current dir is exists \n %0").arg(localDirPath);
-        }
-        qInfo() << QObject::tr("Failed, current dir is exists \n %0").arg(localDirPath);
+        error = QString("Failed, current dir is exists \n %0").arg(localDirPath);
         return false;
     }
 
     if (!QDir().mkdir(localDirPath)) {
-        if (errorString) {
-            *errorString = QObject::tr("Failed, unknown error from create new dir");
-        }
-        qInfo() << QObject::tr("Failed, unknown error from create new dir");
-        abort();
+        error = "Failed, unknown error from create new dir";
+        return false;
     }
+
+    finally.dismiss();
     return true;
 }
 
 bool FileUtils::touch(const QUrl &url,
-                      const QString fileName,
+                      const QString &fileName,
                       QString *errorString)
 {
+    QString error;
+    FinallyUtil finally([&]() {if (errorString) *errorString = error; });
+
     if (!url.isValid()) {
-        if (errorString) {
-            *errorString = QObject::tr("Failed, can't use empty url from create dir");
-        }
-        qInfo() << QObject::tr("Failed, can't use empty url from create dir");
+        error = "Failed, can't use empty url from create dir";
         return false;
     }
 
     if (UrlRoute::isVirtual(url)) {
-        if (errorString) {
-            *errorString = QObject::tr("Failed, can't use virtual url from create dir");
-        }
-        qInfo() << QObject::tr("Failed, can't use virtual url from create dir");
+        error = "Failed, can't use virtual url from create dir";
         return false;
     }
 
     if (!UrlRoute::isVirtual(url)) {
         QFileInfo info(UrlRoute::urlToPath(url));
-        if (!info.isDir() || !info.exists())
+        if (!info.isDir() || !info.exists()) {
+            error = "Failed, Fileinfo error";
             return false;
-        if (!info.permissions().testFlag(QFile::Permission::WriteUser))
+        }
+        if (!info.permissions().testFlag(QFile::Permission::WriteUser)) {
+            error = "Failed, Fileinfo permission error";
             return false;
+        }
         QFile file(info.path() + "/" + fileName);
         if (!file.open(QIODevice::Truncate)) {
-            qInfo() << "create new dir unknown error";
-            abort();
+            error = "Failed, Create new dir unknown error";
+            return false;
         }
     }
+
+    finally.dismiss();
     return true;
 }
 
 QString sizeString(const QString &str)
 {
-    int begin_pos = str.indexOf('.');
+    int beginPos = str.indexOf('.');
 
-    if (begin_pos < 0)
+    if (beginPos < 0)
         return str;
 
     QString size = str;
 
-    while (size.count() - 1 > begin_pos) {
+    while (size.count() - 1 > beginPos) {
         if (!size.endsWith('0'))
             return size;
 

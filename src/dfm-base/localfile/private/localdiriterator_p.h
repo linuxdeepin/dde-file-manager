@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -43,15 +43,16 @@ class LocalDirIteratorPrivate
 
 public:
     explicit LocalDirIteratorPrivate(const QUrl &url,
-                                       const QStringList &nameFilters,
-                                       QDir::Filters filters,
-                                       QDirIterator::IteratorFlags flags,
-                                       LocalDirIterator * q);
+                                     const QStringList &nameFilters,
+                                     QDir::Filters filters,
+                                     QDirIterator::IteratorFlags flags,
+                                     LocalDirIterator *q);
+
 private:
-    QSharedPointer<dfmio::DEnumerator> dfmioDirIterator = nullptr; // dfmio的文件迭代器
-    QUrl currentUrl; // 当前迭代器所在位置文件的url
-    QDir::Filters curFilters; // 文件的当前的过滤flags
-    bool isCurrent = false; // 用来判断当前是否使用了一次next
+    QSharedPointer<dfmio::DEnumerator> dfmioDirIterator = nullptr;   // dfmio的文件迭代器
+    QUrl currentUrl;   // 当前迭代器所在位置文件的url
+    QDir::Filters curFilters;   // 文件的当前的过滤flags
+    bool isCurrent = false;   // 用来判断当前是否使用了一次next
 };
 DFMBASE_END_NAMESPACE
-#endif // ABSTRACTDIRITERATOR_P_H
+#endif   // ABSTRACTDIRITERATOR_P_H

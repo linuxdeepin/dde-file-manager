@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -30,10 +30,10 @@
 #include <QLoggingCategory>
 
 #ifdef DTK_LOG
-#define dpfDebug() qDebug() << "Framework:"
-#define dpfInfo() qInfo() << "Framework:"
-#define dpfWarning() qWarning() << "Framework:"
-#define dpfCritical() qCritical() << "Framework:"
+#    define dpfDebug() qDebug() << "Framework:"
+#    define dpfInfo() qInfo() << "Framework:"
+#    define dpfWarning() qWarning() << "Framework:"
+#    define dpfCritical() qCritical() << "Framework:"
 #else
 /**
  * @brief Framework 可进行相关调用，如下
@@ -55,10 +55,10 @@ Q_DECLARE_LOGGING_CATEGORY(Framework)
  * dpfCritical() << "hello";     //关键日志打印
  * @endcode
  */
-#define dpfDebug() qCDebug(Framework)
-#define dpfInfo() qCInfo(Framework)
-#define dpfWarning() qCDWarning(Framework)
-#define dpfCritical() qCCritical(Framework)
+#    define dpfDebug() qCDebug(Framework)
+#    define dpfInfo() qCInfo(Framework)
+#    define dpfWarning() qCDWarning(Framework)
+#    define dpfCritical() qCCritical(Framework)
 #endif
 
 DPF_BEGIN_NAMESPACE
@@ -79,4 +79,4 @@ public:
 
 DPF_END_NAMESPACE
 
-#endif // FRAMEWORKLOG_H
+#endif   // FRAMEWORKLOG_H

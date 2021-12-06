@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -38,8 +38,9 @@ class WatcherCache : public QObject
     QScopedPointer<WatcherCachePrivate> d;
     friend WacherFactory;
     friend InfoCache;
+
 public:
-    static WatcherCache& instance();
+    static WatcherCache &instance();
     explicit WatcherCache(QObject *parent = nullptr);
     virtual ~WatcherCache();
     QSharedPointer<AbstractFileWatcher> getCacheWatcher(const QUrl &url);
@@ -48,4 +49,4 @@ public:
 };
 DFMBASE_END_NAMESPACE
 
-#endif // WATCHERCACHE_H
+#endif   // WATCHERCACHE_H

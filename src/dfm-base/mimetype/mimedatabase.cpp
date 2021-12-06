@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -33,7 +33,7 @@
 DFMBASE_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(QMimeDatabase, mimedb)
 
-//global mimetypes define list cache
+// global mimetypes define list cache
 Q_GLOBAL_STATIC(QStringList, mimeArchiveTypes);
 Q_GLOBAL_STATIC(QStringList, mimeTextTypes)
 Q_GLOBAL_STATIC(QStringList, mimeVideoTypes)
@@ -84,13 +84,13 @@ QStringList readlines(const QString &path)
  */
 bool loadSupportMimeTypes()
 {
-    QString textPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::MimeTypePath), "text.mimetype");
-    QString archivePath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::MimeTypePath), "archive.mimetype");
-    QString videoPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::MimeTypePath), "video.mimetype");
-    QString audioPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::MimeTypePath), "audio.mimetype");
-    QString imagePath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::MimeTypePath), "image.mimetype");
-    QString executablePath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::MimeTypePath), "executable.mimetype");
-    QString backupPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::MimeTypePath), "backup.mimetype");
+    QString textPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "text.mimetype");
+    QString archivePath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "archive.mimetype");
+    QString videoPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "video.mimetype");
+    QString audioPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "audio.mimetype");
+    QString imagePath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "image.mimetype");
+    QString executablePath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "executable.mimetype");
+    QString backupPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "backup.mimetype");
     *mimeTextTypes = readlines(textPath);
     *mimeArchiveTypes = readlines(archivePath);
     *mimeVideoTypes = readlines(videoPath);
@@ -107,16 +107,16 @@ bool loadSupportMimeTypes()
  */
 bool loadFileTypeName()
 {
-    (*mimeDisplayNames)[MimeDatabase::FileType::Directory] = QObject::tr("Directory");
-    (*mimeDisplayNames)[MimeDatabase::FileType::DesktopApplication] = QObject::tr("Application");
-    (*mimeDisplayNames)[MimeDatabase::FileType::Videos] = QObject::tr("Video");
-    (*mimeDisplayNames)[MimeDatabase::FileType::Audios] = QObject::tr("Audio");
-    (*mimeDisplayNames)[MimeDatabase::FileType::Images] = QObject::tr("Image");
-    (*mimeDisplayNames)[MimeDatabase::FileType::Archives] = QObject::tr("Archive");
-    (*mimeDisplayNames)[MimeDatabase::FileType::Documents] = QObject::tr("Text");
-    (*mimeDisplayNames)[MimeDatabase::FileType::Executable] = QObject::tr("Executable");
-    (*mimeDisplayNames)[MimeDatabase::FileType::Backups] = QObject::tr("Backup file");
-    (*mimeDisplayNames)[MimeDatabase::FileType::Unknown] = QObject::tr("Unknown");
+    (*mimeDisplayNames)[MimeDatabase::FileType::kDirectory] = QObject::tr("Directory");
+    (*mimeDisplayNames)[MimeDatabase::FileType::kDesktopApplication] = QObject::tr("Application");
+    (*mimeDisplayNames)[MimeDatabase::FileType::kVideos] = QObject::tr("Video");
+    (*mimeDisplayNames)[MimeDatabase::FileType::kAudios] = QObject::tr("Audio");
+    (*mimeDisplayNames)[MimeDatabase::FileType::kImages] = QObject::tr("Image");
+    (*mimeDisplayNames)[MimeDatabase::FileType::kArchives] = QObject::tr("Archive");
+    (*mimeDisplayNames)[MimeDatabase::FileType::kDocuments] = QObject::tr("Text");
+    (*mimeDisplayNames)[MimeDatabase::FileType::kExecutable] = QObject::tr("Executable");
+    (*mimeDisplayNames)[MimeDatabase::FileType::kBackups] = QObject::tr("Backup file");
+    (*mimeDisplayNames)[MimeDatabase::FileType::kUnknown] = QObject::tr("Unknown");
     return true;
 }
 /*!
@@ -126,16 +126,16 @@ bool loadFileTypeName()
  */
 bool loadMimeStdIcon()
 {
-    (*mimeStdIconNames)[MimeDatabase::FileType::Directory] = "folder";
-    (*mimeStdIconNames)[MimeDatabase::FileType::DesktopApplication] = "application-default-icon";
-    (*mimeStdIconNames)[MimeDatabase::FileType::Videos] = "video";
-    (*mimeStdIconNames)[MimeDatabase::FileType::Audios] = "music";
-    (*mimeStdIconNames)[MimeDatabase::FileType::Images] = "image";
-    (*mimeStdIconNames)[MimeDatabase::FileType::Archives] = "application-x-archive";
-    (*mimeStdIconNames)[MimeDatabase::FileType::Documents] = "text-plain";
-    (*mimeStdIconNames)[MimeDatabase::FileType::Executable] = "application-x-executable";
-    (*mimeStdIconNames)[MimeDatabase::FileType::Backups] = "application-x-archive";   // generic backup file icon?
-    (*mimeStdIconNames)[MimeDatabase::FileType::Unknown] = "application-default-icon";
+    (*mimeStdIconNames)[MimeDatabase::FileType::kDirectory] = "folder";
+    (*mimeStdIconNames)[MimeDatabase::FileType::kDesktopApplication] = "application-default-icon";
+    (*mimeStdIconNames)[MimeDatabase::FileType::kVideos] = "video";
+    (*mimeStdIconNames)[MimeDatabase::FileType::kAudios] = "music";
+    (*mimeStdIconNames)[MimeDatabase::FileType::kImages] = "image";
+    (*mimeStdIconNames)[MimeDatabase::FileType::kArchives] = "application-x-archive";
+    (*mimeStdIconNames)[MimeDatabase::FileType::kDocuments] = "text-plain";
+    (*mimeStdIconNames)[MimeDatabase::FileType::kExecutable] = "application-x-executable";
+    (*mimeStdIconNames)[MimeDatabase::FileType::kBackups] = "application-x-archive";   // generic backup file icon?
+    (*mimeStdIconNames)[MimeDatabase::FileType::kUnknown] = "application-default-icon";
 
     return true;
 }
@@ -144,15 +144,15 @@ bool loadMimeStdIcon()
 //Q_GLOBAL_STATIC_WITH_ARGS(QFuture<void>, _threadLoadStdIcons, {QtConcurrent::run(loadMimeStdIcon)});
 //Q_GLOBAL_STATIC_WITH_ARGS(QFuture<void>, _threadLoadMimeNames, {QtConcurrent::run(loadFileTypeName)});
 
-static auto _threadLoadMimeTypes = QtConcurrent::run(loadSupportMimeTypes);
-static auto _threadLoadStdIcons = QtConcurrent::run(loadMimeStdIcon);
-static auto _threadLoadMimeNames = QtConcurrent::run(loadFileTypeName);
+static auto kThreadLoadMimeTypes = QtConcurrent::run(loadSupportMimeTypes);
+static auto kThreadLoadStdIcons = QtConcurrent::run(loadMimeStdIcon);
+static auto kThreadLoadMimeNames = QtConcurrent::run(loadFileTypeName);
 
 MimeDatabase::MimeDatabase()
 {
-    Q_UNUSED(_threadLoadMimeTypes);
-    Q_UNUSED(_threadLoadStdIcons);
-    Q_UNUSED(_threadLoadMimeNames);
+    Q_UNUSED(kThreadLoadMimeTypes);
+    Q_UNUSED(kThreadLoadStdIcons);
+    Q_UNUSED(kThreadLoadMimeNames);
 }
 
 MimeDatabase::~MimeDatabase()
@@ -186,30 +186,30 @@ QString MimeDatabase::mimeFileType(const QString &mimeType)
 MimeDatabase::FileType MimeDatabase::mimeFileTypeNameToEnum(const QString &mimeFileTypeName)
 {
     if (mimeFileTypeName == "application/x-desktop") {
-        return FileType::DesktopApplication;
+        return FileType::kDesktopApplication;
     } else if (mimeFileTypeName == "inode/directory") {
-        return FileType::Directory;
+        return FileType::kDirectory;
     } else if (mimeFileTypeName == "application/x-executable"
                || mimeExecutableTypes->contains(mimeFileTypeName)) {
-        return FileType::Executable;
+        return FileType::kExecutable;
     } else if (mimeFileTypeName.startsWith("video/")
                || mimeVideoTypes->contains(mimeFileTypeName)) {
-        return FileType::Videos;
+        return FileType::kVideos;
     } else if (mimeFileTypeName.startsWith("audio/")
                || mimeAudioTypes->contains(mimeFileTypeName)) {
-        return FileType::Audios;
+        return FileType::kAudios;
     } else if (mimeFileTypeName.startsWith("image/")
                || mimeImageTypes->contains(mimeFileTypeName)) {
-        return FileType::Images;
+        return FileType::kImages;
     } else if (mimeFileTypeName.startsWith("text/")
                || mimeTextTypes->contains(mimeFileTypeName)) {
-        return FileType::Documents;
+        return FileType::kDocuments;
     } else if (mimeArchiveTypes->contains(mimeFileTypeName)) {
-        return FileType::Archives;
+        return FileType::kArchives;
     } else if (mimeBackupTypes->contains(mimeFileTypeName)) {
-        return FileType::Backups;
+        return FileType::kBackups;
     } else {
-        return FileType::Unknown;
+        return FileType::kUnknown;
     }
 }
 /*!
@@ -224,21 +224,21 @@ QStringList MimeDatabase::supportMimeFileType(MimeDatabase::FileType mimeFileTyp
     QStringList list;
 
     switch (mimeFileType) {
-    case Documents:
+    case kDocuments:
         return list;   //empty
-    case Images:
+    case kImages:
         return *mimeImageTypes;
-    case Videos:
+    case kVideos:
         return *mimeVideoTypes;
-    case Audios:
+    case kAudios:
         return *mimeAudioTypes;
-    case Archives:
+    case kArchives:
         return *mimeArchiveTypes;
-    case DesktopApplication:
+    case kDesktopApplication:
         return list;   //empty
-    case Executable:
+    case kExecutable:
         return *mimeExecutableTypes;
-    case Backups:
+    case kBackups:
         return *mimeBackupTypes;
     default:
         return list;   //empty

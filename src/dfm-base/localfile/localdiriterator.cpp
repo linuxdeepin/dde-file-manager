@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -33,8 +33,7 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
                                                  QDir::Filters filters,
                                                  QDirIterator::IteratorFlags flags,
                                                  LocalDirIterator *q)
-    : q(q)
-    , curFilters(filters)
+    : q(q), curFilters(filters)
 {
     Q_UNUSED(nameFilters);
     Q_UNUSED(flags);
@@ -63,15 +62,12 @@ LocalDirIterator::LocalDirIterator(const QUrl &url,
                                    const QStringList &nameFilters,
                                    QDir::Filters filters,
                                    QDirIterator::IteratorFlags flags)
-    : AbstractDirIterator (url,nameFilters,filters,flags)
-    , d(new LocalDirIteratorPrivate(url, nameFilters, filters, flags, this))
+    : AbstractDirIterator(url, nameFilters, filters, flags), d(new LocalDirIteratorPrivate(url, nameFilters, filters, flags, this))
 {
-
 }
 
 LocalDirIterator::~LocalDirIterator()
 {
-
 }
 /*!
  * \brief next 下一个文件，迭代器指向下一个文件
@@ -126,7 +122,7 @@ QString LocalDirIterator::fileName() const
     if (path.isEmpty())
         return QString();
 
-    path = path.replace(QRegExp("/*/"),"/");
+    path = path.replace(QRegExp("/*/"), "/");
     if (path == "/")
         return QString();
 

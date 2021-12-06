@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -34,11 +34,11 @@ class AbstractFileDevicePrivate : public QObject
     Q_OBJECT
     friend class AbstractFileDevice;
     AbstractFileDevice *const q;
-    QUrl url; // 文件的url
+    QUrl url;   // 文件的url
 public:
     explicit AbstractFileDevicePrivate(AbstractFileDevice *qq);
     virtual ~AbstractFileDevicePrivate();
 };
 DFMBASE_END_NAMESPACE
 
-#endif // ABSTRACTFILEDEVICE_P_H
+#endif   // ABSTRACTFILEDEVICE_P_H

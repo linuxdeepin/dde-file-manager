@@ -30,7 +30,6 @@ class PluginServiceGlobal;
 };
 DPF_END_NAMESPACE
 
-class DFMWindowManagerService;
 class Core : public dpf::Plugin
 {
     Q_OBJECT
@@ -39,7 +38,6 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual dpf::Plugin::ShutdownFlag stop() override;
-    DFMWindowManagerService *windowManagerService;
 };
 
 #endif   // COREPLUGIN_H

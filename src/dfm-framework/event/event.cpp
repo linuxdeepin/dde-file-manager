@@ -28,16 +28,14 @@
 
 DPF_BEGIN_NAMESPACE
 
-namespace PrivateGlobal
-{
-    static QString EVENT_TOPIC_KEY{"EVENT_TOPIC_KEY"};
-    static QString EVENT_DATA_KEY{"EVENT_DATA_KEY"};
-}
+namespace PrivateGlobal {
+static const char *kEventTopicKey { "EVENT_TOPIC_KEY" };
+static const char *kEventDataKey { "EVENT_DATA_KEY" };
+}   // namespace PrivateGlobal
 
 Event::Event()
     : d(new EventPrivate(this))
 {
-
 }
 
 Event::Event(const QString &topic)
@@ -46,8 +44,8 @@ Event::Event(const QString &topic)
     setTopic(topic);
 }
 
-Event::Event(const Event &event):
-    d(new EventPrivate(this))
+Event::Event(const Event &event)
+    : d(new EventPrivate(this))
 {
     d->sourceHash = event.d->sourceHash;
 }
@@ -57,7 +55,7 @@ Event::~Event()
     delete d;
 }
 
-Event &Event::operator =(const Event &event)
+Event &Event::operator=(const Event &event)
 {
     if (&event != this) {
         d = new EventPrivate(this);
@@ -75,7 +73,7 @@ void Event::setTopic(const QString &topic)
 {
     static QMutex mutex;
     mutex.lock();
-    d->sourceHash[PrivateGlobal::EVENT_TOPIC_KEY] = topic;
+    d->sourceHash[PrivateGlobal::kEventTopicKey] = topic;
     mutex.unlock();
 }
 
@@ -86,7 +84,7 @@ void Event::setTopic(const QString &topic)
  */
 QString Event::topic() const
 {
-    return d->sourceHash[PrivateGlobal::EVENT_TOPIC_KEY].toString();
+    return d->sourceHash[PrivateGlobal::kEventTopicKey].toString();
 }
 
 /**
@@ -96,7 +94,7 @@ QString Event::topic() const
  */
 void Event::setData(const QVariant &data)
 {
-    d->sourceHash[PrivateGlobal::EVENT_DATA_KEY] = data;
+    d->sourceHash[PrivateGlobal::kEventDataKey] = data;
 }
 
 /**
@@ -107,7 +105,7 @@ void Event::setData(const QVariant &data)
  */
 QVariant Event::data() const
 {
-    return d->sourceHash[PrivateGlobal::EVENT_DATA_KEY];
+    return d->sourceHash[PrivateGlobal::kEventDataKey];
 }
 
 /**
@@ -131,7 +129,7 @@ QVariant Event::property(const QString &key) const
 }
 
 QT_BEGIN_NAMESPACE
-Q_CORE_EXPORT QDebug operator <<(QDebug out, const DPF_NAMESPACE::Event &event)
+Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::Event &event)
 {
     out << event.d->sourceHash;
     return out;
@@ -139,7 +137,3 @@ Q_CORE_EXPORT QDebug operator <<(QDebug out, const DPF_NAMESPACE::Event &event)
 QT_END_NAMESPACE
 
 DPF_END_NAMESPACE
-
-
-
-

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -37,6 +37,7 @@ class AbstractFileWatcherPrivate : public QObject
     Q_DISABLE_COPY(AbstractFileWatcherPrivate)
     friend class AbstractFileWatcher;
     AbstractFileWatcher *q;
+
 public:
     explicit AbstractFileWatcherPrivate(AbstractFileWatcher *qq);
     virtual ~AbstractFileWatcherPrivate() {}
@@ -45,12 +46,12 @@ public:
     static QString formatPath(const QString &path);
 
 protected:
-    QAtomicInteger<bool> started { false };             // 是否开始监视
-    QUrl url;                                         // 监视文件的url
-    QString path;                                     // 监视文件的路径
-    QSharedPointer<DWatcher> watcher { nullptr };       // dfm-io的文件监视器
-    static DThreadList<QString> watcherPath;          // 全局监视文件的监视列表
+    QAtomicInteger<bool> started { false };   // 是否开始监视
+    QUrl url;   // 监视文件的url
+    QString path;   // 监视文件的路径
+    QSharedPointer<DWatcher> watcher { nullptr };   // dfm-io的文件监视器
+    static DThreadList<QString> watcherPath;   // 全局监视文件的监视列表
 };
 DFMBASE_END_NAMESPACE
 
-#endif // DABSTRACTFILEWATCHER_P_H
+#endif   // DABSTRACTFILEWATCHER_P_H

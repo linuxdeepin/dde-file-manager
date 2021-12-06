@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -36,7 +36,7 @@ class LocalFileWatcherPrivate : public AbstractFileWatcherPrivate
 {
     friend class LocalFileWatcher;
     LocalFileWatcher *const q;
-    QSharedPointer<DWatcher> watcher { nullptr };       // dfm-io的文件监视器
+
 public:
     explicit LocalFileWatcherPrivate(LocalFileWatcher *qq);
     virtual ~LocalFileWatcherPrivate() {}
@@ -48,4 +48,4 @@ public:
 };
 DFMBASE_END_NAMESPACE
 
-#endif // LOCALFILEWATCHER_P_H
+#endif   // LOCALFILEWATCHER_P_H

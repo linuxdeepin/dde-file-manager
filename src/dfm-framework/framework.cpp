@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     luzhen<luzhen@uniontech.com>
  *
@@ -40,7 +40,6 @@ class FrameworkPrivate
 FrameworkPrivate::FrameworkPrivate(Framework *dd)
     : q(dd)
 {
-
 }
 
 /*!
@@ -52,7 +51,6 @@ Framework &Framework::instance()
     static Framework ins;
     return ins;
 }
-
 
 /*!
  * \brief Framework inner modules will be initialized
@@ -76,7 +74,6 @@ bool Framework::initialize()
 
     return true;
 }
-
 
 /*!
  * \brief Start framework after initialized.
@@ -124,8 +121,8 @@ AppBus &Framework::appBus() const
     return *d->appBus;
 }
 
-Framework::Framework() :
-    d(new FrameworkPrivate(this))
+Framework::Framework()
+    : d(new FrameworkPrivate(this))
 {
     d->lifeCycle.reset(new LifeCycle());
 }

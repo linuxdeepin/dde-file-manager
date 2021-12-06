@@ -39,7 +39,7 @@ void TrashPropertyDialog::initUI()
     setFixedWidth(320);
     setTitle(tr("Trash"));
 
-    QString path = StandardPaths::location(StandardPaths::TrashFilesPath);
+    QString path = StandardPaths::location(StandardPaths::kTrashFilesPath);
     QUrl url(QUrl::fromLocalFile(path));
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
 

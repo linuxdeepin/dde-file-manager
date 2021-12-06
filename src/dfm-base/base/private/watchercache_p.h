@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -33,11 +33,12 @@ class WatcherCachePrivate
 {
     friend class WatcherCache;
     WatcherCache *const q;
-    DThreadMap<QUrl,QSharedPointer<AbstractFileWatcher>> watchers;
+    DThreadMap<QUrl, QSharedPointer<AbstractFileWatcher>> watchers;
+
 public:
     explicit WatcherCachePrivate(WatcherCache *qq);
     virtual ~WatcherCachePrivate();
 };
 DFMBASE_END_NAMESPACE
 
-#endif // WATCHERCACHE_P_H
+#endif   // WATCHERCACHE_P_H

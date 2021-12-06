@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -41,4 +41,4 @@ private:
 };
 DFMBASE_END_NAMESPACE
 
-#endif // SUBSCRIBER_H
+#endif   // SUBSCRIBER_H

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -37,9 +37,19 @@ Q_LOGGING_CATEGORY(Framework, "Framework")
 DPF_BEGIN_NAMESPACE
 
 namespace GlobalPrivate {
-static QFile file;
-static uint dayCount = 7;
-static QMutex mutex;
+static uint kDayCount = 7;
+
+static QFile *file()
+{
+    static QFile file;
+    return &file;
+}
+
+static QMutex *mutex()
+{
+    static QMutex m;
+    return &m;
+}
 
 QString formatFrameworkLogOut(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -94,7 +104,7 @@ QString formatFrameworkLogOut(QtMsgType type, const QMessageLogContext &context,
 static void rmExpiredLogs()
 {
     QtConcurrent::run([=]() {
-        QDirIterator itera(LogUtils::appCacheLogPath(), QDir::Files);
+        QDirIterator itera(LogUtils::cachePath(), QDir::Files);
         while (itera.hasNext()) {
             itera.next();
             auto list = itera.fileName().split("_");
@@ -104,7 +114,7 @@ static void rmExpiredLogs()
                            QDateTime(QDate::fromString(list[0], "yyyy-MM-dd"),
                                      QTime(0, 0, 0, 0)),
                            LogUtils::toDayZero(),
-                           GlobalPrivate::dayCount)) {
+                           GlobalPrivate::kDayCount)) {
 
                 auto outMsg = formatFrameworkLogOut(QtMsgType::QtInfoMsg,
                                                     QMessageLogContext {
@@ -126,7 +136,7 @@ void redirectGlobalDebug(QtMsgType type,
                          const QMessageLogContext &context,
                          const QString &msg)
 {
-    QMutexLocker locker(&mutex);
+    QMutexLocker locker(GlobalPrivate::mutex());
     QString logMsg = GlobalPrivate::formatFrameworkLogOut(type, context, msg);
     if (type == QtMsgType::QtDebugMsg)
         fprintf(stdin, "%s\n", logMsg.toUtf8().data());
@@ -144,12 +154,12 @@ void redirectGlobalDebug(QtMsgType type,
     // cache/deepin/qApp->applicationName()
     LogUtils::checkAppCacheLogDir();
 
-    if (GlobalPrivate::file.fileName().isEmpty()) {
-        GlobalPrivate::file.setFileName(LogUtils::appCacheLogPath()
-                                        + "/"
-                                        + LogUtils::localDate()
-                                        + "_" + QCoreApplication::applicationName()
-                                        + ".log");
+    if (GlobalPrivate::file()->fileName().isEmpty()) {
+        GlobalPrivate::file()->setFileName(LogUtils::cachePath()
+                                           + "/"
+                                           + LogUtils::localDate()
+                                           + "_" + QCoreApplication::applicationName()
+                                           + ".log");
 
         auto outMsg = GlobalPrivate::formatFrameworkLogOut(QtMsgType::QtInfoMsg,
                                                            QMessageLogContext {
@@ -158,7 +168,7 @@ void redirectGlobalDebug(QtMsgType type,
                                                                    __FUNCTION__,
                                                                    Framework().categoryName() },
                                                            "Current redirect log file path: "
-                                                                   + GlobalPrivate::file.fileName());
+                                                                   + GlobalPrivate::file()->fileName());
 
         fprintf(stderr, "%s\n", outMsg.toUtf8().data());
 
@@ -166,7 +176,7 @@ void redirectGlobalDebug(QtMsgType type,
         GlobalPrivate::rmExpiredLogs();
     }
 
-    if (!GlobalPrivate::file.open(QFile::Append | QFile::ReadOnly)) {
+    if (!GlobalPrivate::file()->open(QFile::Append | QFile::ReadOnly)) {
 
         auto outMsg = GlobalPrivate::formatFrameworkLogOut(QtMsgType::QtInfoMsg,
                                                            QMessageLogContext {
@@ -175,18 +185,18 @@ void redirectGlobalDebug(QtMsgType type,
                                                                    __FUNCTION__,
                                                                    Framework().categoryName() },
                                                            "Failed, open redirect log file"
-                                                                   + GlobalPrivate::file.fileName()
+                                                                   + GlobalPrivate::file()->fileName()
                                                                    + " "
-                                                                   + GlobalPrivate::file.errorString());
+                                                                   + GlobalPrivate::file()->errorString());
 
         fprintf(stderr, "%s\n", outMsg.toUtf8().data());
 
         return;
     }
 
-    GlobalPrivate::file.write((logMsg + ("\n")).toLocal8Bit().data());
-    GlobalPrivate::file.flush();
-    GlobalPrivate::file.close();
+    GlobalPrivate::file()->write((logMsg + ("\n")).toLocal8Bit().data());
+    GlobalPrivate::file()->flush();
+    GlobalPrivate::file()->close();
 }
 
 }   // namespace GlobalPrivate
@@ -220,7 +230,7 @@ void FrameworkLog::setLogCacheDayCount(uint dayCount)
 {
     static QMutex mutex;
     mutex.lock();
-    GlobalPrivate::dayCount = dayCount;
+    GlobalPrivate::kDayCount = dayCount;
     mutex.unlock();
 }
 
@@ -230,7 +240,7 @@ void FrameworkLog::setLogCacheDayCount(uint dayCount)
  */
 uint FrameworkLog::logCacheDayCount()
 {
-    return GlobalPrivate::dayCount;
+    return GlobalPrivate::kDayCount;
 }
 
 /**

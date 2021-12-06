@@ -31,8 +31,6 @@ class TipsWidget;
 class DiskPluginItem;
 class DiskControlWidget;
 
-// TODO(zhangs): ref-> https://gerrit.uniontech.com/c/dde-file-manager/+/23583
-
 class DiskMountPlugin : public QObject, PluginsItemInterface
 {
     Q_OBJECT

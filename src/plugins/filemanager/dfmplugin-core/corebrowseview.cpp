@@ -23,7 +23,7 @@ void CoreBrowseView::contextMenuEvent(QContextMenuEvent *event)
 
     qInfo() << "rooturl" << rootUrl();
 
-    QMenu *tempMenu = menuService->createMenu(AbstractFileMenu::Empty,
+    QMenu *tempMenu = menuService->createMenu(AbstractFileMenu::kEmpty,
                                               rootUrl(), {}, {});
     if (tempMenu) {
         tempMenu->exec(QCursor::pos());

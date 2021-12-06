@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -44,7 +44,7 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     // 扩展属性列表
     QVariantHash extraProperties;
     // 缓存文件的FileType
-    MimeDatabase::FileType fileType { MimeDatabase::FileType::Unknown };
+    MimeDatabase::FileType fileType { MimeDatabase::FileType::kUnknown };
     // 文件缓存
     DThreadMap<AbstractFileInfo::FileInfoCacheType, QVariant> caches;
     // dfm文件的信息

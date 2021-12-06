@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -28,9 +28,8 @@
 DFMBASE_BEGIN_NAMESPACE
 
 LocalFileMenu::LocalFileMenu(QObject *parent)
-    :AbstractFileMenu(parent)
+    : AbstractFileMenu(parent)
 {
-
 }
 
 QMenu *LocalFileMenu::build(AbstractFileMenu::MenuMode mode,

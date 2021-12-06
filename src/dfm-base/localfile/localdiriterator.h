@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -36,6 +36,7 @@ class LocalDirIteratorPrivate;
 class LocalDirIterator : public AbstractDirIterator
 {
     QScopedPointer<LocalDirIteratorPrivate> d;
+
 public:
     explicit LocalDirIterator(const QUrl &url,
                               const QStringList &nameFilters = QStringList(),
@@ -49,8 +50,12 @@ public:
     virtual QUrl fileUrl() const override;
     virtual const AbstractFileInfoPointer fileInfo() const override;
     virtual QUrl url() const override;
-    bool enableIteratorByKeyword(const QString &keyword) override {Q_UNUSED(keyword); return false;}
+    bool enableIteratorByKeyword(const QString &keyword) override
+    {
+        Q_UNUSED(keyword);
+        return false;
+    }
 };
 DFMBASE_END_NAMESPACE
 
-#endif // LOCALDIRITERATOR_H
+#endif   // LOCALDIRITERATOR_H

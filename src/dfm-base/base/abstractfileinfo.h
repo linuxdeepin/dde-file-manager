@@ -85,22 +85,22 @@ public:
         kTypeUnknow = 255
     };
     enum Type {
-        kDirectory = MimeDatabase::Directory,
-        kCharDevice = MimeDatabase::CharDevice,
-        kBlockDevice = MimeDatabase::BlockDevice,
-        kFIFOFile = MimeDatabase::FIFOFile,
-        kSocketFile = MimeDatabase::SocketFile,
-        kRegularFile = MimeDatabase::RegularFile,
-        kDocuments = MimeDatabase::Documents,
-        kImages = MimeDatabase::Images,
-        kVideos = MimeDatabase::Videos,
-        kAudios = MimeDatabase::Audios,
-        kArchives = MimeDatabase::Archives,
-        kDesktopApplication = MimeDatabase::DesktopApplication,
-        kExecutable = MimeDatabase::Executable,
-        kBackups = MimeDatabase::Backups,
-        kUnknown = MimeDatabase::Unknown,
-        kCustomType = MimeDatabase::CustomType
+        kDirectory = MimeDatabase::kDirectory,
+        kCharDevice = MimeDatabase::kCharDevice,
+        kBlockDevice = MimeDatabase::kBlockDevice,
+        kFIFOFile = MimeDatabase::kFIFOFile,
+        kSocketFile = MimeDatabase::kSocketFile,
+        kRegularFile = MimeDatabase::kRegularFile,
+        kDocuments = MimeDatabase::kDocuments,
+        kImages = MimeDatabase::kImages,
+        kVideos = MimeDatabase::kVideos,
+        kAudios = MimeDatabase::kAudios,
+        kArchives = MimeDatabase::kArchives,
+        kDesktopApplication = MimeDatabase::kDesktopApplication,
+        kExecutable = MimeDatabase::kExecutable,
+        kBackups = MimeDatabase::kBackups,
+        kUnknown = MimeDatabase::kUnknown,
+        kCustomType = MimeDatabase::kCustomType
     };
 
 public:

@@ -27,7 +27,7 @@
 #include "recentdiriterator.h"
 
 #include "windowservice.h"
-#include "window/browseview.h" // TODO(zhangs): hide
+#include "window/browseview.h"   // TODO(zhangs): hide
 
 #include "dfm-base/application/application.h"
 #include "dfm-base/base/abstractfilewatcher.h"
@@ -65,7 +65,7 @@ DSC_USE_NAMESPACE
 
 void Recent::initialize()
 {
-    QString recentScheme{"recent"};
+    QString recentScheme { "recent" };
 
     QString errStr;
     auto &ctx = dpfInstance.serviceContext();
@@ -76,7 +76,7 @@ void Recent::initialize()
 
     RecentUtil::initRecentSubSystem();
     //注册路由
-    QIcon recentIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::RecentPath));
+    QIcon recentIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kRecentPath));
     UrlRoute::regScheme(recentScheme, "/", recentIcon, true);
     //注册Scheme为"recent"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<RecentFileInfo>(recentScheme);
@@ -92,6 +92,7 @@ bool Recent::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag Recent::stop() {
+dpf::Plugin::ShutdownFlag Recent::stop()
+{
     return kSync;
 }

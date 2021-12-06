@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -30,6 +30,7 @@
 #include "dfm-base/base/abstractfiledevice.h"
 #include "dfm-base/base/private/infocache.h"
 #include "dfm-base/base/private/watchercache.h"
+#include "dfm-base/utils/finallyutil.h"
 
 #include <dfmio_register.h>
 
@@ -41,104 +42,107 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-template <class CT> class GC;
-/**
- * @brief The class SchemeFactory
- *  根据Scheme注册Class的工厂类，
+template<class CT>
+class GC;
+/*!
+ * \class SchemeFactory
+ * \brief 根据Scheme注册Class的工厂类，
  *  可使用Scheme进行类构造，前提是当前类需要满足参数
  *  const QUrl &url的构造函数，否则该类将不适用于场景
- * @tparam T 顶层基类
+ * \tparam T 顶层基类
  */
-template <class T>
+template<class T>
 class SchemeFactory
 {
 
 public:
-    //定义创建函数类型
+    // 定义创建函数类型
     typedef std::function<QSharedPointer<T>(const QUrl &url)> CreateFunc;
 
 protected:
-    //构造函数列表
-    QHash<QString, CreateFunc> _constructList{};
+    // 构造函数列表
+    QHash<QString, CreateFunc> constructList {};
+
 public:
-    /* @method regClass
-     * @brief 注册Class与Scheme的关联
-     * @tparam CT = T 默认传递构造为顶层基类
-     * @param const QString &scheme 传递scheme进行类构造绑定
-     * @param QString *errorString 错误信息赋值的字符串
-     * @return bool 注册结果，如果当前已存在scheme的关联，则返回false
+    /*!
+     * \method regClass
+     * \brief 注册Class与Scheme的关联
+     * \param CT = T 默认传递构造为顶层基类
+     * \param scheme 传递scheme进行类构造绑定
+     * \param errorString 错误信息赋值的字符串
+     * \return bool 注册结果，如果当前已存在scheme的关联，则返回false
      *  否则返回true
      */
     template<class CT = T>
     bool regClass(const QString &scheme, QString *errorString = nullptr)
     {
-        if (_constructList[scheme]) {
-            if (errorString)
-                *errorString = QObject::tr("The current scheme has registered "
-                                           "the associated construction class");
-            qWarning() << errorString;
+        QString error;
+        FinallyUtil finally([&]() { if (errorString) *errorString = error; });
+
+        if (constructList[scheme]) {
+            error = QObject::tr("The current scheme has registered "
+                                "the associated construction class");
             return false;
         }
 
-        CreateFunc foo = [=](const QUrl& url){
+        CreateFunc foo = [=](const QUrl &url) {
             return QSharedPointer<T>(new CT(url));
         };
-        _constructList.insert(scheme,foo);
+        constructList.insert(scheme, foo);
+        finally.dismiss();
         return true;
     }
 
-    /* @method create
-     * @brief 根据不同的Url进行顶层类构造，调用该函数存在前置条件
-     *  否则将创建空指针
-     *  首先需要注册scheme到DFMUrlRoute类
-     *  其次需要注册scheme到DFMSchemeFactory<T>类
-     * @param const QUrl &url 需要构造的Url
-     * @param QString *errorString 错误信息赋值的字符串
-     * @return QSharedPointer<T> 动态指针类型，顶层类的抽象接口
-     *  如果没有注册 scheme 到 DFMUrlRoute，返回空指针
-     *  如果没有注册 scheme 与 class 构造函数规则，返回空指针
+    /*!
+     * \method create
+     * \brief 根据不同的Url进行顶层类构造，调用该函数存在前置条件
+     * 否则将创建空指针
+     * 首先需要注册scheme到DFMUrlRoute类
+     * 其次需要注册scheme到DFMSchemeFactory<T>类
+     * \param url 需要构造的Url
+     * \param errorString 错误信息赋值的字符串
+     * \return QSharedPointer<T> 动态指针类型，顶层类的抽象接口
+     * 如果没有注册 scheme 到 DFMUrlRoute，返回空指针
+     * 如果没有注册 scheme 与 class 构造函数规则，返回空指针
      */
     QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
     {
-        if(!UrlRoute::hasScheme(url.scheme())) {
-            if (errorString)
-                *errorString = QObject::tr("No scheme found for "
-                                           "URL registration");
-            qWarning() << errorString;
+        QString error;
+        FinallyUtil finally([&]() { if (errorString) *errorString = error; });
+
+        if (!UrlRoute::hasScheme(url.scheme())) {
+            error = QObject::tr("No scheme found for "
+                                "URL registration");
             return nullptr;
         }
 
-        QString scheme = url.scheme();
-        CreateFunc constantFunc = _constructList.value(scheme);
-        if (constantFunc) {
-            return QSharedPointer<T>(constantFunc(url));
-        } else {
-            if (errorString)
-                *errorString = QObject::tr("Scheme should be call registered 'regClass()' function "
-                                           "before create function");
-            qWarning() << errorString;
+        QString &&scheme = url.scheme();
+        CreateFunc constantFunc = constructList.value(scheme);
+        if (!constantFunc) {
+            error = QObject::tr("Scheme should be call registered 'regClass()' function "
+                                "before create function");
             return nullptr;
         }
+        finally.dismiss();
+        return QSharedPointer<T>(constantFunc(url));
     }
 };
-
 
 class InfoFactory final : public SchemeFactory<AbstractFileInfo>
 {
     Q_DISABLE_COPY(InfoFactory)
     friend class GC<InfoFactory>;
     static InfoFactory *ins;
-public:
 
+public:
     template<class CT = AbstractFileInfo>
     static bool regClass(const QString &scheme, QString *errorString = nullptr)
     {
-        return instance().SchemeFactory<AbstractFileInfo>
-                ::regClass<CT>(scheme, errorString);
+        return instance().SchemeFactory<AbstractFileInfo>::regClass<CT>(scheme, errorString);
     }
 
-    //提供任意子类的转换方法模板，仅限DAbstractFileInfo树族，
-    //与qSharedPointerDynamicCast保持一致
+    // 提供任意子类的转换方法模板，仅限DAbstractFileInfo树族，
+    // 与qSharedPointerDynamicCast保持一致
     template<class T>
     static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
     {
@@ -151,8 +155,8 @@ public:
     }
 
 private:
-    static InfoFactory& instance(); //获取全局实例
-    explicit InfoFactory(){}
+    static InfoFactory &instance();   // 获取全局实例
+    explicit InfoFactory() {}
 };
 
 class WacherFactory final : public SchemeFactory<AbstractFileWatcher>
@@ -160,17 +164,16 @@ class WacherFactory final : public SchemeFactory<AbstractFileWatcher>
     Q_DISABLE_COPY(WacherFactory)
     friend class GC<WacherFactory>;
     static WacherFactory *ins;
-public:
 
+public:
     template<class CT = AbstractFileWatcher>
     static bool regClass(const QString &scheme, QString *errorString = nullptr)
     {
-        return instance().SchemeFactory<AbstractFileWatcher>
-                ::regClass<CT>(scheme, errorString);
+        return instance().SchemeFactory<AbstractFileWatcher>::regClass<CT>(scheme, errorString);
     }
 
-    //提供任意子类的转换方法模板，仅限DAbstractFileWatcher树族，
-    //与qSharedPointerDynamicCast保持一致
+    // 提供任意子类的转换方法模板，仅限DAbstractFileWatcher树族，
+    // 与qSharedPointerDynamicCast保持一致
     template<class T>
     static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
     {
@@ -183,33 +186,34 @@ public:
     }
 
 private:
-    static WacherFactory& instance();//获取全局实例
-    explicit WacherFactory(){}
+    static WacherFactory &instance();   // 获取全局实例
+    explicit WacherFactory() {}
 };
 
-//参数列表偏特化
+// 参数列表偏特化
 template<class T = AbstractDirIterator>
-class DirIteratorFactoryT1: public SchemeFactory<T>
+class DirIteratorFactoryT1 : public SchemeFactory<T>
 {
     Q_DISABLE_COPY(DirIteratorFactoryT1)
 
-    //定义多参数构造函数类型
+    // 定义多参数构造函数类型
     typedef std::function<QSharedPointer<T>(const QUrl &url, const QStringList &nameFilters,
-                                            QDir::Filters filters, QDirIterator::IteratorFlags flags)> CreateFuncAgu;
+                                            QDir::Filters filters, QDirIterator::IteratorFlags flags)>
+            CreateFuncAgu;
 
-    //构造函数列表
-    QHash<QString, CreateFuncAgu> _constructAguList{};
+    // 构造函数列表
+    QHash<QString, CreateFuncAgu> _constructAguList {};
 
 public:
+    DirIteratorFactoryT1() {}
 
-    DirIteratorFactoryT1(){}
-
-    /* @method regClass
-     * @brief 注册Class与Scheme的关联
-     * @tparam CT = T 默认传递构造为顶层基类
-     * @param const QString &scheme 传递scheme进行类构造绑定
-     * @param QString *errorString 错误信息赋值的字符串
-     * @return bool 注册结果，如果当前已存在scheme的关联，则返回false
+    /*!
+     * \method regClass
+     * \brief 注册Class与Scheme的关联
+     * \tparam CT = T 默认传递构造为顶层基类
+     * \param const QString &scheme 传递scheme进行类构造绑定
+     * \param QString *errorString 错误信息赋值的字符串
+     * \return bool 注册结果，如果当前已存在scheme的关联，则返回false
      *  否则返回true
      */
     template<class CT = T>
@@ -224,23 +228,24 @@ public:
         }
 
         CreateFuncAgu foo = [=](const QUrl &url,
-                const QStringList &nameFilters = QStringList(),
-                QDir::Filters filters = QDir::NoFilter,
-                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags){
+                                const QStringList &nameFilters = QStringList(),
+                                QDir::Filters filters = QDir::NoFilter,
+                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) {
             return QSharedPointer<T>(new CT(url, nameFilters, filters, flags));
         };
-        _constructAguList.insert(scheme,foo);
+        _constructAguList.insert(scheme, foo);
         return true;
     }
 
-    /* @method create
-     * @brief 根据不同的Url进行顶层类构造，调用该函数存在前置条件
+    /*!
+     * \method create
+     * \brief 根据不同的Url进行顶层类构造，调用该函数存在前置条件
      *  否则将创建空指针
      *  首先需要注册scheme到DFMUrlRoute类
      *  其次需要注册scheme到DFMSchemeFactory<T>类
-     * @param const QUrl &url 需要构造的Url
-     * @param QString *errorString 错误信息赋值的字符串
-     * @return QSharedPointer<T> 动态指针类型，顶层类的抽象接口
+     * \param const QUrl &url 需要构造的Url
+     * \param QString *errorString 错误信息赋值的字符串
+     * \return QSharedPointer<T> 动态指针类型，顶层类的抽象接口
      *  如果没有注册 scheme 到 DFMUrlRoute，返回空指针
      *  如果没有注册 scheme 与 class 构造函数规则，返回空指针
      */
@@ -251,7 +256,7 @@ public:
                               QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
                               QString *errorString = nullptr)
     {
-        if(!UrlRoute::hasScheme(url.scheme())) {
+        if (!UrlRoute::hasScheme(url.scheme())) {
             if (errorString)
                 *errorString = QObject::tr("No scheme found for "
                                            "URL registration");
@@ -282,19 +287,6 @@ public:
     {
         return qSharedPointerDynamicCast<RT>(SchemeFactory<AbstractDirIterator>::create(url, errorString));
     }
-
-    //    //提供任意子类的转换方法模板，仅限DAbstractFileDevice树族
-    //    //与qSharedPointerDynamicCast保持一致
-    //    template<class RT>
-    //    QSharedPointer<RT> create(const QUrl &url,
-    //                              const QStringList &nameFilters,
-    //                              QDir::Filters filters = QDir::NoFilter,
-    //                              QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
-    //                              QString *errorString = nullptr)
-    //    {
-    //        return qSharedPointerDynamicCast<RT>(DirIteratorFactoryT1<T>::create(
-    //                                                 url, nameFilters, filters, flags, errorString));
-    //    }
 };
 
 class DirIteratorFactory final : public DirIteratorFactoryT1<AbstractDirIterator>
@@ -302,40 +294,40 @@ class DirIteratorFactory final : public DirIteratorFactoryT1<AbstractDirIterator
     Q_DISABLE_COPY(DirIteratorFactory)
     friend class GC<DirIteratorFactory>;
     static DirIteratorFactory *ins;
-public:
 
-    /* @method regClass
-     * @brief 注册Class与Scheme的关联
-     * @tparam CT = T 默认传递构造为顶层基类
-     * @param const QString &scheme 传递scheme进行类构造绑定
-     * @param QString *errorString 错误信息赋值的字符串
-     * @return bool 注册结果，如果当前已存在scheme的关联，则返回false
+public:
+    /*!
+     * \method regClass
+     * \brief 注册Class与Scheme的关联
+     * \tparam CT = T 默认传递构造为顶层基类
+     * \param const QString &scheme 传递scheme进行类构造绑定
+     * \param QString *errorString 错误信息赋值的字符串
+     * \return bool 注册结果，如果当前已存在scheme的关联，则返回false
      *  否则返回true
      */
     template<class CT = AbstractDirIterator>
     static bool regClass(const QString &scheme, QString *errorString = nullptr)
     {
-        return instance().DirIteratorFactoryT1<AbstractDirIterator>
-                ::regClass<CT>(scheme,errorString);
+        return instance().DirIteratorFactoryT1<AbstractDirIterator>::regClass<CT>(scheme, errorString);
     }
 
-    //提供任意子类的转换方法模板，仅限DAbstractFileDevice树族
-    //与qSharedPointerDynamicCast保持一致
+    // 提供任意子类的转换方法模板，仅限DAbstractFileDevice树族
+    // 与qSharedPointerDynamicCast保持一致
     template<class RT>
     static QSharedPointer<RT> create(const QUrl &url, QString *errorString = nullptr)
     {
-        return instance().DirIteratorFactoryT1<AbstractDirIterator>
-                ::create<RT>(url, errorString);
+        return instance().DirIteratorFactoryT1<AbstractDirIterator>::create<RT>(url, errorString);
     }
 
-    /* @method create
-     * @brief 根据不同的Url进行顶层类构造，调用该函数存在前置条件
+    /*!
+     * \method create
+     * \brief 根据不同的Url进行顶层类构造，调用该函数存在前置条件
      *  否则将创建空指针
      *  首先需要注册scheme到DFMUrlRoute类
      *  其次需要注册scheme到DFMSchemeFactory<T>类
-     * @param const QUrl &url 需要构造的Url
-     * @param QString *errorString 错误信息赋值的字符串
-     * @return QSharedPointer<T> 动态指针类型，顶层类的抽象接口
+     * \param const QUrl &url 需要构造的Url
+     * \param QString *errorString 错误信息赋值的字符串
+     * \return QSharedPointer<T> 动态指针类型，顶层类的抽象接口
      *  如果没有注册 scheme 到 DFMUrlRoute，返回空指针
      *  如果没有注册 scheme 与 class 构造函数规则，返回空指针
      */
@@ -346,13 +338,12 @@ public:
                                      QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
                                      QString *errorString = nullptr)
     {
-        return instance().DirIteratorFactoryT1<AbstractDirIterator>
-                ::create<RT>(url, nameFilters, filters, flags, errorString);
+        return instance().DirIteratorFactoryT1<AbstractDirIterator>::create<RT>(url, nameFilters, filters, flags, errorString);
     }
 
 private:
-    DirIteratorFactory(){}
-    static DirIteratorFactory &instance(); //获取全局实例
+    DirIteratorFactory() {}
+    static DirIteratorFactory &instance();   // 获取全局实例
 };
 
 class FileDeviceFactory final : public SchemeFactory<AbstractFileDevice>
@@ -360,9 +351,10 @@ class FileDeviceFactory final : public SchemeFactory<AbstractFileDevice>
     Q_DISABLE_COPY(FileDeviceFactory)
     friend class GC<FileDeviceFactory>;
     static FileDeviceFactory *ins;
+
 public:
-    //提供任意子类的转换方法模板，仅限DAbstractFileDevice树族
-    //与qSharedPointerDynamicCast保持一致
+    // 提供任意子类的转换方法模板，仅限DAbstractFileDevice树族
+    // 与qSharedPointerDynamicCast保持一致
     template<class CT>
     static bool regClass(const QString &scheme, QString *errorString = nullptr)
     {
@@ -373,14 +365,14 @@ public:
     static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
     {
         return qSharedPointerDynamicCast<T>(
-                    instance().SchemeFactory<AbstractFileDevice>::create(url, errorString));
+                instance().SchemeFactory<AbstractFileDevice>::create(url, errorString));
     }
 
 private:
-    FileDeviceFactory(){}
-    static FileDeviceFactory &instance(); //获取全局实例
+    FileDeviceFactory() {}
+    static FileDeviceFactory &instance();   // 获取全局实例
 };
 
 DFMBASE_END_NAMESPACE
 
-#endif // SCHEMEFACTORY_H
+#endif   // SCHEMEFACTORY_H

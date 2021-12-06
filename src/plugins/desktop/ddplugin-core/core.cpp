@@ -74,12 +74,12 @@ void registerFileSystem()
 {
     UrlRoute::regScheme(SchemeTypes::kFile, "/");
     UrlRoute::regScheme(SchemeTypes::kDesktop,
-                        StandardPaths::location(StandardPaths::DesktopPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DesktopPath)),
+                        StandardPaths::location(StandardPaths::kDesktopPath),
+                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDesktopPath)),
                         false);
     UrlRoute::regScheme({ "defaultdesktop" },
-                        StandardPaths::location(StandardPaths::DesktopPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::DesktopPath)),
+                        StandardPaths::location(StandardPaths::kDesktopPath),
+                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDesktopPath)),
                         false);
 
     QString desktopScheme{"defaultdesktop"};

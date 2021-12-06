@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     luzhen<luzhen@uniontech.com>
  *
@@ -34,7 +34,6 @@ DPF_BEGIN_NAMESPACE
 
 class FrameworkPrivate;
 
-
 /*!
  * \brief The Framework class
  */
@@ -58,9 +57,8 @@ private:
     QScopedPointer<FrameworkPrivate> d;
 };
 
-
 DPF_END_NAMESPACE
 
 #define dpfInstance ::dpf::Framework::instance()
 
-#endif // FRAMEWORK_H
+#endif   // FRAMEWORK_H

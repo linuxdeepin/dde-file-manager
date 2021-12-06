@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -1032,13 +1032,13 @@ bool LocalFileInfo::isRegular() const
  */
 LocalFileInfo::Type LocalFileInfo::fileType() const
 {
-    if (d->fileType != MimeDatabase::FileType::Unknown)
+    if (d->fileType != MimeDatabase::FileType::kUnknown)
         return Type(d->fileType);
 
     QString absoluteFilePath = filePath();
-    if (absoluteFilePath.startsWith(StandardPaths::location(StandardPaths::TrashFilesPath))
+    if (absoluteFilePath.startsWith(StandardPaths::location(StandardPaths::kTrashFilesPath))
         && isSymLink()) {
-        d->fileType = MimeDatabase::FileType::RegularFile;
+        d->fileType = MimeDatabase::FileType::kRegularFile;
         return Type(d->fileType);
     }
 
@@ -1048,22 +1048,22 @@ LocalFileInfo::Type LocalFileInfo::fileType() const
     QT_STATBUF statBuffer;
     if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
         if (S_ISDIR(statBuffer.st_mode))
-            d->fileType = MimeDatabase::FileType::Directory;
+            d->fileType = MimeDatabase::FileType::kDirectory;
 
         else if (S_ISCHR(statBuffer.st_mode))
-            d->fileType = MimeDatabase::FileType::CharDevice;
+            d->fileType = MimeDatabase::FileType::kCharDevice;
 
         else if (S_ISBLK(statBuffer.st_mode))
-            d->fileType = MimeDatabase::FileType::BlockDevice;
+            d->fileType = MimeDatabase::FileType::kBlockDevice;
 
         else if (S_ISFIFO(statBuffer.st_mode))
-            d->fileType = MimeDatabase::FileType::FIFOFile;
+            d->fileType = MimeDatabase::FileType::kFIFOFile;
 
         else if (S_ISSOCK(statBuffer.st_mode))
-            d->fileType = MimeDatabase::FileType::SocketFile;
+            d->fileType = MimeDatabase::FileType::kSocketFile;
 
         else if (S_ISREG(statBuffer.st_mode))
-            d->fileType = MimeDatabase::FileType::RegularFile;
+            d->fileType = MimeDatabase::FileType::kRegularFile;
     }
 
     return Type(d->fileType);

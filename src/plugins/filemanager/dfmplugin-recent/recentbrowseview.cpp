@@ -61,7 +61,7 @@ void RecentBrowseView::contextMenuEvent(QContextMenuEvent *event)
         abort();
     }
 
-    QMenu *tempMenu = menuService->createMenu(AbstractFileMenu::Empty,
+    QMenu *tempMenu = menuService->createMenu(AbstractFileMenu::kEmpty,
                                               RecentUtil::onlyRootUrl(), {}, {});
     if (tempMenu) {
         tempMenu->exec(QCursor::pos());

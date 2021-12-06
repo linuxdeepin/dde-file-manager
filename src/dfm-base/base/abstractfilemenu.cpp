@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -26,30 +26,28 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-namespace FileMenuTypes{
-const QString CREATE_NEW_DIR {QObject::tr("Create New Dir")};
-const QString CREATE_NEW_DOC {QObject::tr("Create New Doc")};
-const QString VIEW_MODE_SWITCH {QObject::tr("Switch View Mode")};
-const QString VIEW_SORT_SWITCH {QObject::tr("Switch View Sort")};
-const QString OPEN_AS_ADMIN {QObject::tr("Open As Admin")};
-const QString OPEN_IN_TERMINAL {QObject::tr("Open In Terminal")};
-const QString SELECT_ALL {QObject::tr("Select All")};
-const QString PROPERTY {QObject::tr("Property")};
-const QString CUT {QObject::tr("Cut")};
-const QString COPY {QObject::tr("Copy")};
-const QString PASTE {QObject::tr("Paste")};
-const QString RENAME {QObject::tr("Rename")};
-} // namespace FileMenuTypes
+namespace FileMenuTypes {
+const QString kCreateNewDir { QObject::tr("Create New Dir") };
+const QString kCreateNewDoc { QObject::tr("Create New Doc") };
+const QString kViewModeSwitch { QObject::tr("Switch View Mode") };
+const QString kViewSortSwitch { QObject::tr("Switch View Sort") };
+const QString kOpenAsAdmin { QObject::tr("Open As Admin") };
+const QString kOpenInTerminal { QObject::tr("Open In Terminal") };
+const QString kSelectAll { QObject::tr("Select All") };
+const QString kProperty { QObject::tr("Property") };
+const QString kCut { QObject::tr("Cut") };
+const QString kCopy { QObject::tr("Copy") };
+const QString kPaste { QObject::tr("Paste") };
+const QString kRename { QObject::tr("Rename") };
+}   // namespace FileMenuTypes
 
 AbstractFileMenu::AbstractFileMenu(QObject *parent)
-    : QObject (parent)
+    : QObject(parent)
 {
-
 }
 
 AbstractFileMenu::~AbstractFileMenu()
 {
-
 }
 
 QMenu *AbstractFileMenu::build(AbstractFileMenu::MenuMode mode,
@@ -61,29 +59,29 @@ QMenu *AbstractFileMenu::build(AbstractFileMenu::MenuMode mode,
     Q_UNUSED(foucsUrl)
     Q_UNUSED(selected)
 
-    if (AbstractFileMenu::MenuMode::Empty == mode) {
+    if (AbstractFileMenu::MenuMode::kEmpty == mode) {
         QMenu *menu = new QMenu(nullptr);
-        menu->addAction(FileMenuTypes::CREATE_NEW_DIR);
-        menu->addAction(FileMenuTypes::CREATE_NEW_DOC);
-        menu->addAction(FileMenuTypes::VIEW_MODE_SWITCH);
-        menu->addAction(FileMenuTypes::VIEW_SORT_SWITCH);
-        menu->addAction(FileMenuTypes::OPEN_AS_ADMIN);
-        menu->addAction(FileMenuTypes::OPEN_IN_TERMINAL);
-        menu->addAction(FileMenuTypes::SELECT_ALL);
-        menu->addAction(FileMenuTypes::PROPERTY);
+        menu->addAction(FileMenuTypes::kCreateNewDir);
+        menu->addAction(FileMenuTypes::kCreateNewDoc);
+        menu->addAction(FileMenuTypes::kViewModeSwitch);
+        menu->addAction(FileMenuTypes::kViewSortSwitch);
+        menu->addAction(FileMenuTypes::kOpenAsAdmin);
+        menu->addAction(FileMenuTypes::kOpenInTerminal);
+        menu->addAction(FileMenuTypes::kSelectAll);
+        menu->addAction(FileMenuTypes::kProperty);
         return menu;
     }
 
-    if (AbstractFileMenu::MenuMode::Normal == mode) {
+    if (AbstractFileMenu::MenuMode::kNormal == mode) {
         QMenu *menu = new QMenu(nullptr);
-        menu->addAction(FileMenuTypes::CREATE_NEW_DIR);
-        menu->addAction(FileMenuTypes::CREATE_NEW_DOC);
-        menu->addAction(FileMenuTypes::VIEW_MODE_SWITCH);
-        menu->addAction(FileMenuTypes::VIEW_SORT_SWITCH);
-        menu->addAction(FileMenuTypes::OPEN_AS_ADMIN);
-        menu->addAction(FileMenuTypes::OPEN_IN_TERMINAL);
-        menu->addAction(FileMenuTypes::SELECT_ALL);
-        menu->addAction(FileMenuTypes::PROPERTY);
+        menu->addAction(FileMenuTypes::kCreateNewDir);
+        menu->addAction(FileMenuTypes::kCreateNewDoc);
+        menu->addAction(FileMenuTypes::kViewModeSwitch);
+        menu->addAction(FileMenuTypes::kViewSortSwitch);
+        menu->addAction(FileMenuTypes::kOpenAsAdmin);
+        menu->addAction(FileMenuTypes::kOpenInTerminal);
+        menu->addAction(FileMenuTypes::kSelectAll);
+        menu->addAction(FileMenuTypes::kProperty);
         return menu;
     }
 

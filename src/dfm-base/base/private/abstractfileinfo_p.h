@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -39,13 +39,13 @@ DFMBASE_BEGIN_NAMESPACE
 class AbstractFileInfoPrivate
 {
     friend class AbstractFileInfo;
-    AbstractFileInfo *const q;// DAbstractFileInfo实例对象
+    AbstractFileInfo *const q;   // DAbstractFileInfo实例对象
 public:
-    QUrl url;// 文件的url
+    QUrl url;   // 文件的url
     explicit AbstractFileInfoPrivate(AbstractFileInfo *qq);
     virtual ~AbstractFileInfoPrivate();
 };
 
 DFMBASE_END_NAMESPACE
 
-#endif // ABSTRACTFILEINFO_P_H
+#endif   // ABSTRACTFILEINFO_P_H

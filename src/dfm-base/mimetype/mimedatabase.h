@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -37,23 +37,23 @@ private:
 
 public:
     enum FileType {
-            Directory,                          // 目录
-            CharDevice,                         // 字符设备
-            BlockDevice,                        // 块设备
-            FIFOFile,                           // FIFO文件
-            SocketFile,                         // socket文件
-            RegularFile,                        // Regular文件
+        kDirectory,   // 目录
+        kCharDevice,   // 字符设备
+        kBlockDevice,   // 块设备
+        kFIFOFile,   // FIFO文件
+        kSocketFile,   // socket文件
+        kRegularFile,   // Regular文件
 
-            Documents,                          // 文档
-            Images,                             // 镜像文件
-            Videos,                             // 视频文件
-            Audios,                             // 音乐文件
-            Archives,                           // 归档文件
-            DesktopApplication,                 // 应用
-            Executable,                         // 可执行
-            Backups,                            // 回退
-            Unknown,
-            CustomType = 0x100
+        kDocuments,   // 文档
+        kImages,   // 镜像文件
+        kVideos,   // 视频文件
+        kAudios,   // 音乐文件
+        kArchives,   // 归档文件
+        kDesktopApplication,   // 应用
+        kExecutable,   // 可执行
+        kBackups,   // 回退
+        kUnknown,
+        kCustomType = 0x100
     };
 
     static QString mimeFileType(const QString &mimeFileName);
@@ -76,4 +76,4 @@ public:
     static QList<QMimeType> allMimeTypes();
 };
 DFMBASE_END_NAMESPACE
-#endif // DMIMEDATABASE_H
+#endif   // DMIMEDATABASE_H

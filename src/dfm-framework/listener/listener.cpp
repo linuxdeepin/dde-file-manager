@@ -25,24 +25,19 @@
 
 DPF_BEGIN_NAMESPACE
 
-// 饿汉避免释放冲突
-static dpf::Listener listener;
-
 Listener::Listener(QObject *parent)
-    : QObject(parent)
-    , d(new ListenerPrivate(this))
+    : QObject(parent), d(new ListenerPrivate(this))
 {
-
 }
 
 Listener &Listener::instance()
 {
+    static dpf::Listener listener;
     return listener;
 }
 
 ListenerPrivate::ListenerPrivate(Listener *parent)
-    : QObject(parent)
-    , q(parent)
+    : QObject(parent), q(parent)
 {
     QObject::connect(this, &ListenerPrivate::pluginsInitialized,
                      q, &Listener::pluginsInitialized,

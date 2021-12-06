@@ -65,8 +65,8 @@ extern const char *const kRoot;
 
 class UrlRoute
 {
-    static QHash<QString, SchemeNode> schemeInfos;   //info cache
-    static QMultiMap<int, QString> schemeRealTree;   //index cache
+    static QHash<QString, SchemeNode> kSchemeInfos;   // info cache
+    static QMultiMap<int, QString> kSchemeRealTree;   // index cache
 public:
     static bool regScheme(const QString &scheme,
                           const QString &root,
@@ -85,6 +85,7 @@ public:
     static bool isRootUrl(const QUrl &url);
     static QUrl urlParent(const QUrl &url);
 };
+
 DFMBASE_END_NAMESPACE
 Q_DECLARE_METATYPE(QUrl);
 

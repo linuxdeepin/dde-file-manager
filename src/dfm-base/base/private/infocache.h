@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -44,16 +44,17 @@ public:
     void updateRefreshTimeByUrl(const QUrl &url);
     void stopRefresh();
     void removeRefreshByUrl(const QUrl &url);
+
 protected:
     void run() override;
-private:
-    DThreadMap<QUrl, qint64> needRefreshMap; // 待更新链表
-    DThreadMap<QUrl, qint64> refreshMap; // 刷新时间
-    DThreadList<QUrl> removedCacheList; // 已被removecache的url
-    QTime time; // 计时器
-    QAtomicInteger<bool> bStop = false; // 停止标志
-};
 
+private:
+    DThreadMap<QUrl, qint64> needRefreshMap;   // 待更新链表
+    DThreadMap<QUrl, qint64> refreshMap;   // 刷新时间
+    DThreadList<QUrl> removedCacheList;   // 已被removecache的url
+    QTime time;   // 计时器
+    QAtomicInteger<bool> bStop = false;   // 停止标志
+};
 
 class InfoFactory;
 class InfoCachePrivate;
@@ -64,6 +65,7 @@ class InfoCache : public QObject
     QScopedPointer<InfoCachePrivate> d;
     friend InfoFactory;
     friend ReFreshThread;
+
 public:
     explicit InfoCache(QObject *parent = nullptr);
     virtual ~InfoCache();
@@ -78,4 +80,4 @@ private Q_SLOTS:
 };
 DFMBASE_END_NAMESPACE
 
-#endif // INFOCACHE_H
+#endif   // INFOCACHE_H

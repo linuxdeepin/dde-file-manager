@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -25,7 +25,7 @@
 #include <QSharedPointer>
 
 DFMBASE_BEGIN_NAMESPACE
-Q_GLOBAL_STATIC(WatcherCache,_watcherCacheManager)
+Q_GLOBAL_STATIC(WatcherCache, _watcherCacheManager)
 
 /*!
  * \class DFMWatcherCachesManager
@@ -35,24 +35,19 @@ Q_GLOBAL_STATIC(WatcherCache,_watcherCacheManager)
 WatcherCachePrivate::WatcherCachePrivate(WatcherCache *qq)
     : q(qq)
 {
-
 }
 
 WatcherCachePrivate::~WatcherCachePrivate()
 {
-
 }
 
 WatcherCache::WatcherCache(QObject *parent)
-    : QObject(parent)
-    , d(new WatcherCachePrivate(this))
+    : QObject(parent), d(new WatcherCachePrivate(this))
 {
-
 }
 
 WatcherCache::~WatcherCache()
 {
-
 }
 /*!
  * \brief  instance 获取全局的文件监视器的缓存管理模块实例
@@ -99,7 +94,7 @@ void WatcherCache::cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFi
 {
     Q_D(WatcherCache);
 
-    d->watchers.insert(url,watcher);
+    d->watchers.insert(url, watcher);
 }
 /*!
  * \brief removCacheWatcher 根据Url移除当前缓存的watcher

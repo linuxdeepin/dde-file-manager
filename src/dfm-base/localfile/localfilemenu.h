@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -34,6 +34,7 @@ class LocalFileMenu : public AbstractFileMenu
 {
     Q_OBJECT
     QSharedPointer<LocalMenuPrivate> d;
+
 public:
     explicit LocalFileMenu(QObject *parent = nullptr);
     virtual QMenu *build(MenuMode mode,
@@ -43,4 +44,4 @@ public:
 };
 DFMBASE_END_NAMESPACE
 
-#endif // LOCALFILEMENU_H
+#endif   // LOCALFILEMENU_H

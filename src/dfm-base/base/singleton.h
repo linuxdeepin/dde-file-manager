@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -30,19 +30,20 @@ DFMBASE_BEGIN_NAMESPACE
  * \brief The class GC
  * 懒汉单例垃圾回收类
  */
-template <class CT>
+template<class CT>
 class GC
 {
     CT *ins;
+
 public:
-    explicit GC(CT* instance)
+    explicit GC(CT *instance)
     {
         ins = instance;
     }
 
     virtual ~GC()
     {
-        if(ins) {
+        if (ins) {
             delete ins;
             ins = nullptr;
         }
@@ -53,13 +54,14 @@ public:
  * \brief The class Singletion
  * 懒汉单例
  */
-template <class CT>
+template<class CT>
 class Singletion
 {
     static CT *ins;
+
 public:
     explicit Singletion();
-    static CT& instance()
+    static CT &instance()
     {
         if (!ins) {
             ins = new CT();
@@ -71,4 +73,4 @@ public:
 
 DFMBASE_END_NAMESPACE
 
-#endif // SINGLETION_H
+#endif   // SINGLETION_H

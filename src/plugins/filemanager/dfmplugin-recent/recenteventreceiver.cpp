@@ -51,7 +51,7 @@ void RecentEventReceiver::windowEvent(const dpf::Event &event)
                        << EventTypes::kPropertyKeyWindowIndex
                        << winIdx;
 
-            QIcon recentIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::RecentPath));
+            QIcon recentIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kRecentPath));
 
             auto recentItem = new SideBarItem(recentIcon,
                                               RecentUtil::sidebarDisplayText,

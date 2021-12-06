@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -41,10 +41,8 @@ DFMBASE_BEGIN_NAMESPACE
  * \brief 存储DAbstractFileWatcher的使用的变量和数据
  */
 LocalFileWatcherPrivate::LocalFileWatcherPrivate(LocalFileWatcher *qq)
-    : AbstractFileWatcherPrivate(qq)
-    , q(qq)
+    : AbstractFileWatcherPrivate(qq), q(qq)
 {
-
 }
 /*!
  * \brief start 启动文件监视器
@@ -79,7 +77,8 @@ bool LocalFileWatcherPrivate::stop()
     return started;
 }
 
-LocalFileWatcher::~LocalFileWatcher(){
+LocalFileWatcher::~LocalFileWatcher()
+{
     stopWatcher();
     if (d->watcher)
         disconnect(d->watcher.data());
@@ -102,8 +101,7 @@ QString LocalFileWatcherPrivate::formatPath(const QString &path)
 }
 
 LocalFileWatcher::LocalFileWatcher(const QUrl &url, QObject *parent)
-    : AbstractFileWatcher(url, parent)
-    , d(new LocalFileWatcherPrivate(this))
+    : AbstractFileWatcher(url, parent), d(new LocalFileWatcherPrivate(this))
 {
     d->path = LocalFileWatcherPrivate::formatPath(UrlRoute::urlToPath(url));
     if (!UrlRoute::isVirtual(url)) {

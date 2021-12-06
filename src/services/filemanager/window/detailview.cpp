@@ -240,20 +240,20 @@ void FileBaseInfoView::setFileUrl(QUrl &url)
     QMimeType mimeType = MimeDatabase::mimeTypeForUrl(url);
     MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(mimeType.name());
     switch (type) {
-    case MimeDatabase::FileType::Directory:
+    case MimeDatabase::FileType::kDirectory:
         fileType->setRightValue(tr("Directory"), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setVisible(false);
         fileViewSize->setVisible(false);
         fileDuration->setVisible(false);
         break;
-    case MimeDatabase::FileType::Documents: {
+    case MimeDatabase::FileType::kDocuments: {
         fileType->setRightValue(tr("Documents"), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setVisible(true);
         fileViewSize->setVisible(false);
         fileDuration->setVisible(false);
     } break;
-    case MimeDatabase::FileType::Videos: {
+    case MimeDatabase::FileType::kVideos: {
         fileType->setRightValue(tr("Videos"), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         QVariant dimension = info->extraProperties().value(QString("Dimension"));
@@ -264,7 +264,7 @@ void FileBaseInfoView::setFileUrl(QUrl &url)
         fileViewSize->setVisible(true);
         fileDuration->setVisible(true);
     } break;
-    case MimeDatabase::FileType::Images: {
+    case MimeDatabase::FileType::kImages: {
         fileType->setRightValue(tr("Images"), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setRightValue(QString::number(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         QVariant dimension = info->extraProperties().value(QString("Dimension"));
@@ -275,7 +275,7 @@ void FileBaseInfoView::setFileUrl(QUrl &url)
         fileViewSize->setVisible(true);
         fileDuration->setVisible(false);
     } break;
-    case MimeDatabase::FileType::Audios: {
+    case MimeDatabase::FileType::kAudios: {
         fileType->setRightValue(tr("Audios"), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         QVariant duration = info->extraProperties().value(QString("Duration"));
@@ -284,21 +284,21 @@ void FileBaseInfoView::setFileUrl(QUrl &url)
         fileViewSize->setVisible(false);
         fileDuration->setVisible(true);
     } break;
-    case MimeDatabase::FileType::Executable:
+    case MimeDatabase::FileType::kExecutable:
         fileType->setRightValue(tr("Executable"), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setVisible(true);
         fileViewSize->setVisible(false);
         fileDuration->setVisible(false);
         break;
-    case MimeDatabase::FileType::Archives:
+    case MimeDatabase::FileType::kArchives:
         fileType->setRightValue(tr("Archives"), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setVisible(true);
         fileViewSize->setVisible(false);
         fileDuration->setVisible(false);
         break;
-    case MimeDatabase::FileType::Unknown:
+    case MimeDatabase::FileType::kUnknown:
         fileType->setRightValue(tr("Unknown"), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);
         fileSize->setVisible(true);

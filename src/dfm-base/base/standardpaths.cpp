@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -45,31 +45,31 @@ DFMBASE_BEGIN_NAMESPACE
 QString StandardPaths::location(StandardPaths::StandardLocation type)
 {
     switch (type) {
-    case TrashPath:
+    case kTrashPath:
         return QDir::homePath() + "/.local/share/Trash";
-    case TrashExpungedPath:
+    case kTrashExpungedPath:
         return QDir::homePath() + "/.local/share/Trash/expunged";
-    case TrashFilesPath:
+    case kTrashFilesPath:
         return QDir::homePath() + "/.local/share/Trash/files";
-    case TrashInfosPath:
+    case kTrashInfosPath:
         return QDir::homePath() + "/.local/share/Trash/info";
 #ifdef APPSHAREDIR
-    case TranslationPath: {
-        QString path = APPSHAREDIR"/translations";
+    case kTranslationPath: {
+        QString path = APPSHAREDIR "/translations";
         if (!QDir(path).exists()) {
             path = qApp->applicationDirPath() + "/translations";
         }
         return path;
     }
-    case TemplatesPath: {
-        QString path = APPSHAREDIR"/templates";
+    case kTemplatesPath: {
+        QString path = APPSHAREDIR "/templates";
         if (!QDir(path).exists()) {
             path = qApp->applicationDirPath() + "/templates";
         }
         return path;
     }
-    case MimeTypePath: {
-        QString path = APPSHAREDIR"/mimetypes";
+    case kMimeTypePath: {
+        QString path = APPSHAREDIR "/mimetypes";
         if (!QDir(path).exists()) {
             path = qApp->applicationDirPath() + "/mimetypes";
         }
@@ -89,39 +89,39 @@ QString StandardPaths::location(StandardPaths::StandardLocation type)
     case ApplicationConfigPath:
         return getConfigPath();
 #endif
-    case ThumbnailPath:
+    case kThumbnailPath:
         return QDir::homePath() + "/.cache/thumbnails";
-    case ThumbnailFailPath:
-        return location(ThumbnailPath) + "/fail";
-    case ThumbnailLargePath:
-        return location(ThumbnailPath) + "/large";
-    case ThumbnailNormalPath:
-        return location(ThumbnailPath) + "/normal";
-    case ThumbnailSmallPath:
-        return location(ThumbnailPath) + "/small";
+    case kThumbnailFailPath:
+        return location(kThumbnailPath) + "/fail";
+    case kThumbnailLargePath:
+        return location(kThumbnailPath) + "/large";
+    case kThumbnailNormalPath:
+        return location(kThumbnailPath) + "/normal";
+    case kThumbnailSmallPath:
+        return location(kThumbnailPath) + "/small";
 #ifdef APPSHAREDIR
-    case ApplicationSharePath:
+    case kApplicationSharePath:
         return APPSHAREDIR;
 #endif
-    case RecentPath:
+    case kRecentPath:
         return "recent:///";
-    case HomePath:
+    case kHomePath:
         return QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
-    case DesktopPath:
+    case kDesktopPath:
         return QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
-    case VideosPath:
+    case kVideosPath:
         return QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).first();
-    case MusicPath:
+    case kMusicPath:
         return QStandardPaths::standardLocations(QStandardPaths::MusicLocation).first();
-    case PicturesPath:
+    case kPicturesPath:
         return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first();
-    case DocumentsPath:
+    case kDocumentsPath:
         return QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
-    case DownloadsPath:
+    case kDownloadsPath:
         return QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first();
-    case CachePath:
+    case kCachePath:
         return getCachePath();
-    case DiskPath:
+    case kDiskPath:
         return QDir::rootPath();
 #ifdef NETWORK_ROOT
     case NetworkRootPath:
@@ -135,7 +135,7 @@ QString StandardPaths::location(StandardPaths::StandardLocation type)
     case ComputerRootPath:
         return COMPUTER_ROOT;
 #endif
-    case Root:
+    case kRoot:
         return "/";
     default:
         return QStringLiteral("bug://dde-file-manager-lib/interface/dfmstandardpaths.cpp#") + QT_STRINGIFY(type);
@@ -151,23 +151,23 @@ QString StandardPaths::location(StandardPaths::StandardLocation type)
 QString StandardPaths::iconName(StandardPaths::StandardLocation type)
 {
     switch (type) {
-    case HomePath:
+    case kHomePath:
         return "user-home";
-    case DesktopPath:
+    case kDesktopPath:
         return "user-desktop";
-    case VideosPath:
+    case kVideosPath:
         return "folder-videos";
-    case MusicPath:
+    case kMusicPath:
         return "folder-music";
-    case PicturesPath:
+    case kPicturesPath:
         return "folder-pictures";
-    case DocumentsPath:
+    case kDocumentsPath:
         return "folder-documents";
-    case DownloadsPath:
+    case kDownloadsPath:
         return "folder-downloads";
-    case TrashPath:
+    case kTrashPath:
         return "user-trash";
-    case RecentPath:
+    case kRecentPath:
         return "document-open-recent";
     default:
         return "";
@@ -183,23 +183,23 @@ QString StandardPaths::iconName(StandardPaths::StandardLocation type)
 QString StandardPaths::displayName(StandardPaths::StandardLocation type)
 {
     switch (type) {
-    case HomePath:
+    case kHomePath:
         return QObject::tr("Home");
-    case DesktopPath:
+    case kDesktopPath:
         return QObject::tr("Desktop");
-    case VideosPath:
+    case kVideosPath:
         return QObject::tr("Videos");
-    case MusicPath:
+    case kMusicPath:
         return QObject::tr("Music");
-    case PicturesPath:
+    case kPicturesPath:
         return QObject::tr("Pictures");
-    case DocumentsPath:
+    case kDocumentsPath:
         return QObject::tr("Documents");
-    case DownloadsPath:
+    case kDownloadsPath:
         return QObject::tr("Downloads");
-    case TrashPath:
+    case kTrashPath:
         return QObject::tr("Trash");
-    case RecentPath:
+    case kRecentPath:
         return QObject::tr("Recent");
     default:
         return QObject::tr("");
@@ -218,13 +218,13 @@ QString StandardPaths::fromStandardUrl(const QUrl &url)
         return QString();
 
     static QMap<QString, QString> path_convert {
-        {"home", location(HomePath)},
-        {"desktop", location(DesktopPath)},
-        {"videos", location(VideosPath)},
-        {"music", location(MusicPath)},
-        {"pictures", location(PicturesPath)},
-        {"documents", location(DocumentsPath)},
-        {"downloads", location(DownloadsPath)}
+        { "home", location(kHomePath) },
+        { "desktop", location(kDesktopPath) },
+        { "videos", location(kVideosPath) },
+        { "music", location(kMusicPath) },
+        { "pictures", location(kPicturesPath) },
+        { "documents", location(kDocumentsPath) },
+        { "downloads", location(kDownloadsPath) }
     };
 
     const QString &path = path_convert.value(url.host());
@@ -249,13 +249,13 @@ QString StandardPaths::fromStandardUrl(const QUrl &url)
 QUrl StandardPaths::toStandardUrl(const QString &localPath)
 {
     static QList<QPair<QString, QString>> path_convert {
-        {location(DesktopPath), "desktop"},
-        {location(VideosPath), "videos"},
-        {location(MusicPath), "music"},
-        {location(PicturesPath), "pictures"},
-        {location(DocumentsPath), "documents"},
-        {location(DownloadsPath), "downloads"},
-        {location(HomePath), "home"}
+        { location(kDesktopPath), "desktop" },
+        { location(kVideosPath), "videos" },
+        { location(kMusicPath), "music" },
+        { location(kPicturesPath), "pictures" },
+        { location(kDocumentsPath), "documents" },
+        { location(kDownloadsPath), "downloads" },
+        { location(kHomePath), "home" }
     };
 
     for (auto begin : path_convert) {

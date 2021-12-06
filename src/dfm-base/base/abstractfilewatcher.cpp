@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -42,10 +42,8 @@ DThreadList<QString> AbstractFileWatcherPrivate::watcherPath;
  * \brief 存储DAbstractFileWatcher的使用的变量和数据
  */
 AbstractFileWatcherPrivate::AbstractFileWatcherPrivate(AbstractFileWatcher *qq)
-    : QObject (qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
-
 }
 /*!
  * \brief start 启动文件监视器
@@ -96,8 +94,7 @@ QString AbstractFileWatcherPrivate::formatPath(const QString &path)
  * \brief 负责文件的监视，通过不同的url监视不同的文件和目录
  */
 AbstractFileWatcher::AbstractFileWatcher(const QUrl &url, QObject *parent)
-    : QObject (parent)
-    , d(new AbstractFileWatcherPrivate(this))
+    : QObject(parent), d(new AbstractFileWatcherPrivate(this))
 {
     d->path = AbstractFileWatcherPrivate::formatPath(UrlRoute::urlToPath(url));
 }
@@ -147,10 +144,9 @@ bool AbstractFileWatcher::restartWatcher()
  *
  * \param bool enabled 是否能监视
  */
-void AbstractFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled)
-{
+void AbstractFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled) {
     Q_UNUSED(subfileUrl)
-    Q_UNUSED(enabled)
+            Q_UNUSED(enabled)
 }
 
 DFMBASE_END_NAMESPACE

@@ -21,6 +21,8 @@
  */
 #include "urlroute.h"
 
+#include "utils/finallyutil.h"
+
 #include <QDir>
 #include <QUrl>
 #include <QRegularExpression>
@@ -39,12 +41,12 @@ const char *const kDownloads = "downloads";
 const char *const kRoot = "dfmroot";
 }   // namespace SchemeTypes
 
-QHash<QString, SchemeNode> UrlRoute::schemeInfos {};
-QMultiMap<int, QString> UrlRoute::schemeRealTree {};
+QHash<QString, SchemeNode> UrlRoute::kSchemeInfos {};
+QMultiMap<int, QString> UrlRoute::kSchemeRealTree {};
 
 /*!
- * \brief The UrlRoute class
- * 统一资源定位符路由，最基础的功能
+   \class UrlRoute
+ * \brief 统一资源定位符路由，最基础的功能
  * 使用前，你需要调用RegScheme注册scheme与映射路径。
  * 该类支持虚拟路径与真实路径两种状态。
  * 该类是QUrl的延伸，应对Abstract继承树族的任意策略。
@@ -65,30 +67,31 @@ bool UrlRoute::regScheme(const QString &scheme,
                          const bool isVirtual,
                          QString *errorString)
 {
+    QString error;
+    FinallyUtil finally([&]() {if (errorString) *errorString = error; });
     if (hasScheme(scheme)) {
-        *errorString = QObject::tr("Scheme cannot be registered repeatedly.");
+        error = QObject::tr("Scheme cannot be registered repeatedly.");
         return false;
     }
-    //统一处理路径在最后加上"/"
+    // 统一处理路径在最后加上 "/"
     QString formatRoot = root;
-    if (!root.endsWith("/")) {
+    if (!root.endsWith("/"))
         formatRoot = root + "/";
-    }
 
-    //非虚拟路径则进行本地路径判断
+    // 非虚拟路径则进行本地路径判断
     if (!isVirtual) {
         if (!QDir().exists(formatRoot)) {
-            if (errorString)
-                *errorString = QObject::tr("Scheme map to root path not exists.");
+            error = QObject::tr("Scheme map to root path not exists.");
             return false;
         }
 
         QString temp = formatRoot;
         temp.replace(QRegularExpression("/{1,}"), "/");
         int treeLevel = temp.count("/") - 1;
-        schemeRealTree.insert(treeLevel, scheme);   //缓存层级
+        kSchemeRealTree.insert(treeLevel, scheme);   // 缓存层级
     }
-    schemeInfos.insert(scheme, { formatRoot, icon, isVirtual });
+    kSchemeInfos.insert(scheme, { formatRoot, icon, isVirtual });
+    finally.dismiss();
     return true;
 }
 
@@ -101,7 +104,7 @@ QIcon UrlRoute::icon(const QString &scheme)
 {
     if (!hasScheme(scheme))
         return QIcon();
-    return schemeInfos[scheme].pathIcon();
+    return kSchemeInfos[scheme].pathIcon();
 }
 
 /*!
@@ -111,7 +114,7 @@ QIcon UrlRoute::icon(const QString &scheme)
  */
 bool UrlRoute::hasScheme(const QString &scheme)
 {
-    return schemeInfos.keys().contains(scheme);
+    return kSchemeInfos.keys().contains(scheme);
 }
 
 /*!
@@ -126,7 +129,7 @@ bool UrlRoute::isRootUrl(const QUrl &url)
 
     QUrl urlCmp;
     urlCmp.setScheme(url.scheme());
-    urlCmp.setPath(schemeInfos[url.scheme()].rootPath());
+    urlCmp.setPath(kSchemeInfos[url.scheme()].rootPath());
 
     if (url == urlCmp)
         return true;
@@ -144,7 +147,7 @@ bool UrlRoute::isVirtual(const QUrl &url)
     if (!hasScheme(url.scheme()))
         return false;
 
-    return schemeInfos[url.scheme()].virtualFlag;
+    return kSchemeInfos[url.scheme()].virtualFlag;
 }
 
 /*!
@@ -177,7 +180,7 @@ QString UrlRoute::rootPath(const QString &scheme)
 {
     if (!hasScheme(scheme))
         return "";
-    return schemeInfos[scheme].path;
+    return kSchemeInfos[scheme].path;
 }
 
 /*!
@@ -200,10 +203,10 @@ QUrl UrlRoute::pathToReal(const QString &path)
     int treeLevel = temp.count("/");
     while (treeLevel >= 0) {
         //同层级所有的scheme
-        auto &&schemeList = schemeRealTree.values(treeLevel);
+        auto &&schemeList = kSchemeRealTree.values(treeLevel);
         for (auto val : schemeList) {
             // 包含映射的根路径，判断是否转换为当前scheme
-            QString rootPath = schemeInfos[val].rootPath();
+            QString rootPath = kSchemeInfos[val].rootPath();
             if (path.contains(rootPath)
                 || QString(path + "/").contains(rootPath)) {
                 QUrl result = pathToUrl(path, val);
@@ -234,7 +237,7 @@ bool UrlRoute::isVirtual(const QString &scheme)
 {
     if (!hasScheme(scheme))
         return false;
-    return schemeInfos[scheme].isVirtual();
+    return kSchemeInfos[scheme].isVirtual();
 }
 
 /*!
@@ -248,7 +251,7 @@ QUrl UrlRoute::pathToUrl(const QString &path, const QString &scheme)
     if (!hasScheme(scheme))
         return QUrl();
 
-    QString rootPath = schemeInfos[scheme].rootPath();
+    QString rootPath = kSchemeInfos[scheme].rootPath();
     if (rootPath.isEmpty())
         return QUrl();
 
@@ -270,7 +273,7 @@ QString UrlRoute::urlToPath(const QUrl &url)
     if (!hasScheme(url.scheme()))
         return "";
 
-    QString result = schemeInfos[url.scheme()].rootPath() + url.path();
+    QString result = kSchemeInfos[url.scheme()].rootPath() + url.path();
     result.replace(QRegularExpression("/{1,}"), "/");
     return result;
 }

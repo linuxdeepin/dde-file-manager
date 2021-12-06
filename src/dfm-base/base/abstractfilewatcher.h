@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -36,6 +36,7 @@ class AbstractFileWatcher : public QObject
     Q_OBJECT
     friend class AbstractFileWatcherPrivate;
     QScopedPointer<AbstractFileWatcherPrivate> d;
+
 public:
     explicit AbstractFileWatcher() = delete;
     explicit AbstractFileWatcher(const QUrl &url, QObject *parent = nullptr);
@@ -44,7 +45,7 @@ public:
     virtual QUrl url() const;
     virtual bool startWatcher();
     virtual bool stopWatcher();
-    virtual bool restartWatcher();    
+    virtual bool restartWatcher();
     virtual void setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled = true);
     //debug function
     static QStringList getMonitorFiles();
@@ -78,4 +79,4 @@ Q_SIGNALS:
 DFMBASE_END_NAMESPACE
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileWatcher> AbstractFileWatcherPointer;
 
-#endif // ABSTRACTFILEWATCHER_H
+#endif   // ABSTRACTFILEWATCHER_H

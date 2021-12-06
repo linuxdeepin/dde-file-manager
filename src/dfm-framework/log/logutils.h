@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -34,7 +34,6 @@ class LogUtils final
 public:
     explicit LogUtils() = delete;
     static void checkAppCacheLogDir(const QString &subDirName = "");
-    static QString appCacheLogPath();
     static QString localDateTime();
     static QString localDate();
     static QString localDataTimeCSV();
@@ -42,8 +41,9 @@ public:
     static QDateTime lastDateTime(const QDateTime &dateTime, uint dayCount);
     static bool containLastDay(const QDateTime &src, const QDateTime &dst, uint dayCount);
     static QDateTime toDayZero();
+    static QString cachePath();
 };
 
 DPF_END_NAMESPACE
 
-#endif // LOGUTILS_H
+#endif   // LOGUTILS_H

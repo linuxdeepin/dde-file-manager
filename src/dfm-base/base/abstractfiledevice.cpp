@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -31,15 +31,12 @@ DFMBASE_BEGIN_NAMESPACE
  */
 
 AbstractFileDevicePrivate::AbstractFileDevicePrivate(AbstractFileDevice *qq)
-    : QObject (qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
-
 }
 
 AbstractFileDevicePrivate::~AbstractFileDevicePrivate()
 {
-
 }
 
 AbstractFileDevice::AbstractFileDevice(const QUrl &url)
@@ -49,7 +46,6 @@ AbstractFileDevice::AbstractFileDevice(const QUrl &url)
 
 AbstractFileDevice::~AbstractFileDevice()
 {
-
 }
 /*!
  * \brief url 获取当前文件的url
@@ -76,7 +72,6 @@ bool AbstractFileDevice::setFileUrl(const QUrl &url)
 AbstractFileDevice::AbstractFileDevice(AbstractFileDevicePrivate &dd)
     : d(&dd)
 {
-
 }
 /*!
  * \brief handle 获取文件的描述符
