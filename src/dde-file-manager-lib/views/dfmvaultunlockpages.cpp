@@ -107,7 +107,9 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     play1->addWidget(m_passwordEdit);
     play1->addWidget(m_tipsButton);
 
-    QVBoxLayout *play2 = new QVBoxLayout();
+    QHBoxLayout *play2 = new QHBoxLayout();
+    play2->setMargin(0);
+    play2->addStretch(1);
     play2->addWidget(m_forgetPassword);
     m_forgetPassword->setAlignment(Qt::AlignRight);
 
