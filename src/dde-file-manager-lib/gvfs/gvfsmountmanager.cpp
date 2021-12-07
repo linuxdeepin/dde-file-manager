@@ -1459,7 +1459,6 @@ MountStatus GvfsMountManager::mount_sync(const DFMUrlBaseEvent &event)
     MountEventHash.remove(op);
     MountTimerHash.remove(op);
     if (CancellHash.value(op)) {
-        g_cancellable_release_fd(CancellHash.value(op));
         g_object_unref(CancellHash.value(op));
     }
     CancellHash.remove(op);
