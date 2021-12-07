@@ -22,6 +22,7 @@
 #include "trashpropertydialog.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <DHorizontalLine>
 
@@ -29,7 +30,8 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
 TrashPropertyDialog::TrashPropertyDialog(QWidget *parent)
-    : DDialog(parent)
+    : DDialog(parent),
+      fileExtendAttribThread(new FileExtendAttribThread())
 {
     initUI();
 }
@@ -41,6 +43,7 @@ void TrashPropertyDialog::initUI()
 
     QString path = StandardPaths::location(StandardPaths::kTrashFilesPath);
     QUrl url(QUrl::fromLocalFile(path));
+
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
 
     QIcon trashIcon;
@@ -63,7 +66,7 @@ void TrashPropertyDialog::initUI()
     DHorizontalLine *hLine = new DHorizontalLine(this);
     fileCountAndFileSize = new KeyValueLabel(this);
     fileCountAndFileSize->setLeftValue(QString(tr("Contains %1 %2")).arg(QString::number(fCount), itemStr));
-    fileCountAndFileSize->setRightValue(QString("56GB"), Qt::ElideNone, Qt::AlignRight);
+    fileCountAndFileSize->setRightValue(FileUtils::formatSize(0), Qt::ElideNone, Qt::AlignRight);
 
     QFrame *infoFrame = new QFrame;
     infoFrame->setFixedHeight(48);
@@ -85,4 +88,20 @@ void TrashPropertyDialog::initUI()
     contenFrame->setLayout(mainLayout);
 
     addContent(contenFrame);
+
+    connect(fileExtendAttribThread, &FileExtendAttribThread::sigDirSizeChange, this, &TrashPropertyDialog::slotTrashDirSizeChange);
+    fileExtendAttribThread->startThread(QList<QUrl>() << url);
+}
+
+void TrashPropertyDialog::slotTrashDirSizeChange(qint64 size)
+{
+    fileCountAndFileSize->setRightValue(FileUtils::formatSize(size), Qt::ElideNone, Qt::AlignRight);
+}
+
+void TrashPropertyDialog::showEvent(QShowEvent *event)
+{
+    QString path = StandardPaths::location(StandardPaths::kTrashFilesPath);
+    QUrl url(QUrl::fromLocalFile(path));
+    fileExtendAttribThread->startThread(QList<QUrl>() << url);
+    DDialog::showEvent(event);
 }

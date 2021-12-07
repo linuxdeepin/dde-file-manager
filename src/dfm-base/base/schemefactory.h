@@ -44,6 +44,7 @@ DFMBASE_BEGIN_NAMESPACE
 
 template<class CT>
 class GC;
+
 /*!
  * \class SchemeFactory
  * \brief 根据Scheme注册Class的工厂类，
@@ -202,7 +203,7 @@ class DirIteratorFactoryT1 : public SchemeFactory<T>
             CreateFuncAgu;
 
     // 构造函数列表
-    QHash<QString, CreateFuncAgu> _constructAguList {};
+    QHash<QString, CreateFuncAgu> constructAguList {};
 
 public:
     DirIteratorFactoryT1() {}
@@ -219,7 +220,7 @@ public:
     template<class CT = T>
     bool regClass(const QString &scheme, QString *errorString = nullptr)
     {
-        if (_constructAguList[scheme]) {
+        if (constructAguList[scheme]) {
             if (errorString)
                 *errorString = QObject::tr("The current scheme has registered "
                                            "the associated construction class");
@@ -233,7 +234,7 @@ public:
                                 QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) {
             return QSharedPointer<T>(new CT(url, nameFilters, filters, flags));
         };
-        _constructAguList.insert(scheme, foo);
+        constructAguList.insert(scheme, foo);
         return true;
     }
 
@@ -265,7 +266,7 @@ public:
         }
 
         QString scheme = url.scheme();
-        CreateFuncAgu constantFunc = _constructAguList.value(scheme);
+        CreateFuncAgu constantFunc = constructAguList.value(scheme);
         if (constantFunc) {
             return qSharedPointerDynamicCast<RT>(constantFunc(url, nameFilters, filters, flags));
         } else {
@@ -285,7 +286,9 @@ public:
     template<class RT>
     QSharedPointer<RT> create(const QUrl &url, QString *errorString = nullptr)
     {
-        return qSharedPointerDynamicCast<RT>(SchemeFactory<AbstractDirIterator>::create(url, errorString));
+        return create<RT>(url, {}, QDir::NoFilter,
+                          QDirIterator::NoIteratorFlags,
+                          errorString);
     }
 };
 

@@ -18,12 +18,15 @@ set(UTILS_H
     utils/iconutils.h
     utils/universalutils.h
     utils/finallyutil.h
+    utils/fileextendattribthread.h
+    utils/private/fileextendattribthreadprivate.h
 )
 
 set(UTILS_CPP
     utils/fileutils.cpp
     utils/universalutils.cpp
     utils/finallyutil.cpp
+    utils/fileextendattribthread.cpp
 )
 
 set(MIMETYPE_H

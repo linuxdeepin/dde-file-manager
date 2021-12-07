@@ -18,38 +18,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef FILEEXTENDATTRIBTHREADPRIVATE_H
+#define FILEEXTENDATTRIBTHREADPRIVATE_H
 
-#ifndef TRASHPROPERTYDIALOG_H
-#define TRASHPROPERTYDIALOG_H
+#include "dfm-base/dfm_base_global.h"
 
-#include "dfm_common_service_global.h"
-#include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
-#include "dfm-base/utils/fileextendattribthread.h"
+#include <QUrl>
+#include <QList>
+#include <QQueue>
 
-#include <DDialog>
-
-DWIDGET_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
-DSC_BEGIN_NAMESPACE
-class TrashPropertyDialog : public DDialog
+DFMBASE_BEGIN_NAMESPACE
+class FileExtendAttribThread;
+class FileExtendAttribThreadPrivate
 {
-public:
-    explicit TrashPropertyDialog(QWidget *parent = nullptr);
+    friend class FileExtendAttribThread;
+    Q_DISABLE_COPY(FileExtendAttribThreadPrivate)
+private:
+    explicit FileExtendAttribThreadPrivate(FileExtendAttribThread *extendAttribThread = nullptr);
+
+    virtual ~FileExtendAttribThreadPrivate();
 
 private:
-    void initUI();
-
-public slots:
-    void slotTrashDirSizeChange(qint64 size);
-
-protected:
-    virtual void showEvent(QShowEvent *event);
-
-private:
-    DLabel *trashNameLabel { nullptr };
-    DLabel *trashIconLabel { nullptr };
-    KeyValueLabel *fileCountAndFileSize { nullptr };
-    FileExtendAttribThread *fileExtendAttribThread { nullptr };
+    FileExtendAttribThread *fileExtendAttibThread { nullptr };
+    QList<QUrl> urlList {};
+    qint64 totalSize { 0 };
+    QQueue<QUrl> dirList {};
+    int state { 0 };
 };
-DSC_END_NAMESPACE
-#endif   // TRASHPROPERTYDIALOG_H
+DFMBASE_END_NAMESPACE
+#endif   //FILEEXTENDATTRIBTHREADPRIVATE_H
