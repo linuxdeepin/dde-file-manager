@@ -202,8 +202,11 @@ bool FileSystemNode::shouldHideByFilterRule(std::shared_ptr<FileFilter> filter)
 
 void FileSystemNode::noLockInsertChildren(int index, const DUrl &url, const FileSystemNodePointer &node)
 {
-    children[url] = node;
-    visibleChildren.insert(index, node);
+    // fix bug 105595
+    if (!children.contains(url)) {
+        children[url] = node;
+        visibleChildren.insert(index, node);
+    }
 }
 
 void FileSystemNode::insertChildren(int index, const DUrl &url, const FileSystemNodePointer &node)
@@ -215,8 +218,11 @@ void FileSystemNode::insertChildren(int index, const DUrl &url, const FileSystem
 
 void FileSystemNode::noLockAppendChildren(const DUrl &url, const FileSystemNodePointer &node)
 {
-    children[url] = node;
-    visibleChildren.append(node);
+    // fix bug 105595
+    if (!children.contains(url)) {
+        children[url] = node;
+        visibleChildren.append(node);
+    }
 }
 
 void FileSystemNode::appendChildren(const DUrl &url, const FileSystemNodePointer &node)
