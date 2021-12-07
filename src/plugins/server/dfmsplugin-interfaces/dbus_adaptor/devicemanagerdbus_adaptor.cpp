@@ -75,10 +75,10 @@ QStringList DeviceManagerAdaptor::GetBlockDevicesIdList(const QVariantMap &opts)
     return parent()->GetBlockDevicesIdList(opts);
 }
 
-QStringList DeviceManagerAdaptor::GetProtolcolDevicesIdList()
+QStringList DeviceManagerAdaptor::GetProtocolDevicesIdList()
 {
-    // handle method call com.deepin.filemanager.service.DeviceManager.GetProtolcolDevicesIdList
-    return parent()->GetProtolcolDevicesIdList();
+    // handle method call com.deepin.filemanager.service.DeviceManager.GetProtocolDevicesIdList
+    return parent()->GetProtocolDevicesIdList();
 }
 
 bool DeviceManagerAdaptor::IsMonotorWorking()
@@ -87,10 +87,22 @@ bool DeviceManagerAdaptor::IsMonotorWorking()
     return parent()->IsMonotorWorking();
 }
 
+void DeviceManagerAdaptor::LockBlockDevice(const QString &id)
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.LockBlockDevice
+    parent()->LockBlockDevice(id);
+}
+
 void DeviceManagerAdaptor::MountBlockDevice(const QString &id)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.MountBlockDevice
     parent()->MountBlockDevice(id);
+}
+
+void DeviceManagerAdaptor::MountNetworkDevice(const QString &address)
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.MountNetworkDevice
+    parent()->MountNetworkDevice(address);
 }
 
 void DeviceManagerAdaptor::MountProtocolDevice(const QString &id)
@@ -121,6 +133,12 @@ void DeviceManagerAdaptor::SafelyRemoveBlockDevice(const QString &id)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.SafelyRemoveBlockDevice
     parent()->SafelyRemoveBlockDevice(id);
+}
+
+void DeviceManagerAdaptor::UnlockBlockDevice(const QString &id, const QString &passwd)
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.UnlockBlockDevice
+    parent()->UnlockBlockDevice(id, passwd);
 }
 
 void DeviceManagerAdaptor::UnmountBlockDevice(const QString &id)

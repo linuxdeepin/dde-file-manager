@@ -28,8 +28,10 @@
 #include <QObject>
 
 namespace dfm_service_common {
-class DeviceService;
 class DialogService;
+}
+namespace dfm_service_server {
+class DeviceService;
 }
 
 class DeviceManagerDBus : public QObject
@@ -57,8 +59,13 @@ signals:
     void BlockDeviceMounted(QString id, QString mountPoint);
     void BlockDeviceUnmounted(QString id);
     void BlockDevicePropertyChanged(QString id, QString property, QDBusVariant value);
+    void BlockDeviceUnlocked(QString id, QString clearDeviceId);
+    void BlockDeviceLocked(QString id);
 
-    // TODO(zhangs): signals of protocol devices
+    void ProtocolDeviceAdded(QString id);
+    void ProtocolDeviceRemoved(QString id);
+    void ProtocolDeviceMounted(QString id, QString mountPoint);
+    void ProtocolDeviceUnmounted(QString id);
 
 public slots:
     bool IsMonotorWorking();
@@ -75,10 +82,13 @@ public slots:
     void PoweroffBlockDevice(QString id);
     void MountProtocolDevice(QString id);
     void UnmountProtocolDevice(QString id);
+    void UnlockBlockDevice(QString id, QString passwd);
+    void LockBlockDevice(QString id);
+    void MountNetworkDevice(QString address);
 
     QStringList GetBlockDevicesIdList(const QVariantMap &opts);
     QVariantMap QueryBlockDeviceInfo(QString id, bool detail);
-    QStringList GetProtolcolDevicesIdList();
+    QStringList GetProtocolDevicesIdList();
     QVariantMap QueryProtocolDeviceInfo(QString id, bool detail);
 
 private:
@@ -86,7 +96,7 @@ private:
     void initConnection();
 
 private:
-    dfm_service_common::DeviceService *deviceServ { nullptr };
+    dfm_service_server::DeviceService *deviceServ { nullptr };
 };
 
 #endif   // DEVICEMANAGERDBUS_H

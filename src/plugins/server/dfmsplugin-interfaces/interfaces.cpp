@@ -31,7 +31,7 @@
 #include <dfm-framework/framework.h>
 #include <QDBusConnection>
 
-DSC_USE_NAMESPACE
+DSS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 void Interfaces::initialize()

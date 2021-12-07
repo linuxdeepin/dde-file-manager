@@ -74,6 +74,26 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"out\" type=\"s\" name=\"property\"/>\n"
 "      <arg direction=\"out\" type=\"v\" name=\"value\"/>\n"
 "    </signal>\n"
+"    <signal name=\"BlockDeviceUnlocked\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"clearDeviceId\"/>\n"
+"    </signal>\n"
+"    <signal name=\"BlockDeviceLocked\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
+"    </signal>\n"
+"    <signal name=\"ProtocolDeviceAdded\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
+"    </signal>\n"
+"    <signal name=\"ProtocolDeviceRemoved\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
+"    </signal>\n"
+"    <signal name=\"ProtocolDeviceMounted\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
+"      <arg direction=\"out\" type=\"s\" name=\"mountPoint\"/>\n"
+"    </signal>\n"
+"    <signal name=\"ProtocolDeviceUnmounted\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
+"    </signal>\n"
 "    <method name=\"IsMonotorWorking\">\n"
 "      <arg direction=\"out\" type=\"b\"/>\n"
 "    </method>\n"
@@ -112,6 +132,16 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "    <method name=\"UnmountProtocolDevice\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
+"    <method name=\"UnlockBlockDevice\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"passwd\"/>\n"
+"    </method>\n"
+"    <method name=\"LockBlockDevice\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"    </method>\n"
+"    <method name=\"MountNetworkDevice\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"address\"/>\n"
+"    </method>\n"
 "    <method name=\"GetBlockDevicesIdList\">\n"
 "      <arg direction=\"out\" type=\"as\"/>\n"
 "      <arg direction=\"in\" type=\"a{sv}\" name=\"opts\"/>\n"
@@ -123,7 +153,7 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "      <arg direction=\"in\" type=\"b\" name=\"detail\"/>\n"
 "    </method>\n"
-"    <method name=\"GetProtolcolDevicesIdList\">\n"
+"    <method name=\"GetProtocolDevicesIdList\">\n"
 "      <arg direction=\"out\" type=\"as\"/>\n"
 "    </method>\n"
 "    <method name=\"QueryProtocolDeviceInfo\">\n"
@@ -150,14 +180,17 @@ public Q_SLOTS: // METHODS
     void DetachProtocolDevice(const QString &id);
     void EjectBlockDevice(const QString &id);
     QStringList GetBlockDevicesIdList(const QVariantMap &opts);
-    QStringList GetProtolcolDevicesIdList();
+    QStringList GetProtocolDevicesIdList();
     bool IsMonotorWorking();
+    void LockBlockDevice(const QString &id);
     void MountBlockDevice(const QString &id);
+    void MountNetworkDevice(const QString &address);
     void MountProtocolDevice(const QString &id);
     void PoweroffBlockDevice(const QString &id);
     QVariantMap QueryBlockDeviceInfo(const QString &id, bool detail);
     QVariantMap QueryProtocolDeviceInfo(const QString &id, bool detail);
     void SafelyRemoveBlockDevice(const QString &id);
+    void UnlockBlockDevice(const QString &id, const QString &passwd);
     void UnmountBlockDevice(const QString &id);
     void UnmountBlockDeviceForced(const QString &id);
     void UnmountProtocolDevice(const QString &id);
@@ -168,13 +201,19 @@ Q_SIGNALS: // SIGNALS
     void BlockDeviceAdded(const QString &id);
     void BlockDeviceFilesystemAdded(const QString &id);
     void BlockDeviceFilesystemRemoved(const QString &id);
+    void BlockDeviceLocked(const QString &id);
     void BlockDeviceMounted(const QString &id, const QString &mountPoint);
     void BlockDevicePropertyChanged(const QString &id, const QString &property, const QDBusVariant &value);
     void BlockDeviceRemoved(const QString &id);
+    void BlockDeviceUnlocked(const QString &id, const QString &clearDeviceId);
     void BlockDeviceUnmounted(const QString &id);
     void BlockDriveAdded();
     void BlockDriveRemoved();
     void NotifyDeviceBusy(int action);
+    void ProtocolDeviceAdded(const QString &id);
+    void ProtocolDeviceMounted(const QString &id, const QString &mountPoint);
+    void ProtocolDeviceRemoved(const QString &id);
+    void ProtocolDeviceUnmounted(const QString &id);
     void SizeUsedChanged(const QString &id, qlonglong total, qlonglong free);
 };
 

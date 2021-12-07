@@ -28,7 +28,7 @@
 
 #include <dfm-framework/framework.h>
 
-DSC_USE_NAMESPACE
+DSS_USE_NAMESPACE
 
 using namespace GlobalServerDefines;
 
@@ -121,6 +121,8 @@ void DeviceManagerDBus::initConnection()
     connect(deviceServ, &DeviceService::blockDevFilesystemRemoved, this, &DeviceManagerDBus::BlockDeviceFilesystemRemoved);
     connect(deviceServ, &DeviceService::blockDevMounted, this, &DeviceManagerDBus::BlockDeviceMounted);
     connect(deviceServ, &DeviceService::blockDevUnmounted, this, &DeviceManagerDBus::BlockDeviceUnmounted);
+    connect(deviceServ, &DeviceService::blockDevUnlocked, this, &DeviceManagerDBus::BlockDeviceUnlocked);
+    connect(deviceServ, &DeviceService::blockDevLocked, this, &DeviceManagerDBus::BlockDeviceLocked);
 }
 
 /*!
@@ -185,12 +187,27 @@ void DeviceManagerDBus::PoweroffBlockDevice(QString id)
 
 void DeviceManagerDBus::MountProtocolDevice(QString id)
 {
-    // TODO(zhangs):
+    deviceServ->mountProtocolDeviceAsync(id);
 }
 
 void DeviceManagerDBus::UnmountProtocolDevice(QString id)
 {
-    // TODO(zhangs):
+    deviceServ->unmountProtocolDeviceAsync(id);
+}
+
+void DeviceManagerDBus::UnlockBlockDevice(QString id, QString passwd)
+{
+    deviceServ->unlockBlockDevice(passwd, id);
+}
+
+void DeviceManagerDBus::LockBlockDevice(QString id)
+{
+    deviceServ->lockBlockDevice(id);
+}
+
+void DeviceManagerDBus::MountNetworkDevice(QString address)
+{
+    deviceServ->mountNetworkDevice(address);
 }
 
 /*!
@@ -208,13 +225,12 @@ QVariantMap DeviceManagerDBus::QueryBlockDeviceInfo(QString id, bool detail)
     return deviceServ->blockDeviceInfo(id, detail);
 }
 
-QStringList DeviceManagerDBus::GetProtolcolDevicesIdList()
+QStringList DeviceManagerDBus::GetProtocolDevicesIdList()
 {
     return deviceServ->protocolDevicesIdList();
 }
 
 QVariantMap DeviceManagerDBus::QueryProtocolDeviceInfo(QString id, bool detail)
 {
-    // TODO(zhangs): build data
-    return QVariantMap();
+    return deviceServ->protocolDeviceInfo(id, detail);
 }

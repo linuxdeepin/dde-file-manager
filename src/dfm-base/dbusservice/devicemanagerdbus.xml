@@ -45,6 +45,26 @@
       <arg name="property" type="s" direction="out"/>
       <arg name="value" type="v" direction="out"/>
     </signal>
+    <signal name="BlockDeviceUnlocked">
+      <arg name="id" type="s" direction="out"/>
+      <arg name="clearDeviceId" type="s" direction="out"/>
+    </signal>
+    <signal name="BlockDeviceLocked">
+      <arg name="id" type="s" direction="out"/>
+    </signal>
+    <signal name="ProtocolDeviceAdded">
+      <arg name="id" type="s" direction="out"/>
+    </signal>
+    <signal name="ProtocolDeviceRemoved">
+      <arg name="id" type="s" direction="out"/>
+    </signal>
+    <signal name="ProtocolDeviceMounted">
+      <arg name="id" type="s" direction="out"/>
+      <arg name="mountPoint" type="s" direction="out"/>
+    </signal>
+    <signal name="ProtocolDeviceUnmounted">
+      <arg name="id" type="s" direction="out"/>
+    </signal>
     <method name="IsMonotorWorking">
       <arg type="b" direction="out"/>
     </method>
@@ -85,6 +105,16 @@
     <method name="UnmountProtocolDevice">
       <arg name="id" type="s" direction="in"/>
     </method>
+    <method name="UnlockBlockDevice">
+      <arg name="id" type="s" direction="in"/>
+      <arg name="passwd" type="s" direction="in"/>
+    </method>
+    <method name="LockBlockDevice">
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="MountNetworkDevice">
+      <arg name="address" type="s" direction="in"/>
+    </method>
     <method name="GetBlockDevicesIdList">
       <arg type="as" direction="out"/>
       <arg name="opts" type="a{sv}" direction="in"/>
@@ -96,7 +126,7 @@
       <arg name="id" type="s" direction="in"/>
       <arg name="detail" type="b" direction="in"/>
     </method>
-    <method name="GetProtolcolDevicesIdList">
+    <method name="GetProtocolDevicesIdList">
       <arg type="as" direction="out"/>
     </method>
     <method name="QueryProtocolDeviceInfo">

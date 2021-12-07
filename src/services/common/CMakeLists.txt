@@ -35,11 +35,6 @@ FILE(GLOB JOB_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/fileoperationutils/*.cpp"
     )
 
-FILE(GLOB DEVICE_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/device/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/device/*.cpp"
-)
-
 FILE(GLOB DIALOG_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/*.cpp"
@@ -63,7 +58,6 @@ add_library(${PROJECT_NAME}
     ${GLOBAL_FILES}
     ${EVENT_FILES}
     ${JOB_FILES}
-    ${DEVICE_FILES}
     ${DIALOG_FILES}
     ${MENU_FILES}
 )
@@ -78,13 +72,6 @@ pkg_search_module(gsettings
     IMPORTED_TARGET
 )
 
-pkg_search_module(dfm-mount
-    REQUIRED
-    dfm-mount
-    IMPORTED_TARGET
-)
-
-
 add_library(DFMSERVICE::common ALIAS ${PROJECT_NAME})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -95,7 +82,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 target_include_directories(${PROJECT_NAME}
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/device
     ${CMAKE_CURRENT_SOURCE_DIR}/dialog
     ${DtkWidget_INCLUDE_DIRS}
 )
@@ -105,7 +91,6 @@ target_link_libraries(
     DFM::base
     DFM::framework
     PkgConfig::gsettings
-    PkgConfig::dfm-mount
     ${DtkWidget_LIBRARIES}
 )
 

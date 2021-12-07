@@ -23,7 +23,7 @@
 #ifndef DEFENDERHELPER_H
 #define DEFENDERHELPER_H
 
-#include "dfm_common_service_global.h"
+#include "dfm_server_service_global.h"
 
 #include <QObject>
 #include <QUrl>
@@ -31,7 +31,7 @@
 
 #include <mutex>
 
-DSC_BEGIN_NAMESPACE
+DSS_BEGIN_NAMESPACE
 
 class DefenderController : public QObject
 {
@@ -63,7 +63,7 @@ private:
     QList<QUrl> scanningPaths;
 };
 
-DSC_END_NAMESPACE
+DSS_END_NAMESPACE
 
 #define DefenderInstance DefenderController::instance()
 

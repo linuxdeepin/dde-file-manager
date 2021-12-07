@@ -21,8 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "deviceservice.h"
-#include "defendercontroller.h"
-#include "devicemonitorhandler.h"
+#include "private/defendercontroller.h"
+#include "private/devicemonitorhandler.h"
 
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
@@ -36,7 +36,7 @@
 #include <algorithm>
 
 DWIDGET_USE_NAMESPACE
-DSC_USE_NAMESPACE
+DSS_USE_NAMESPACE
 
 using namespace GlobalServerDefines;
 
@@ -73,9 +73,17 @@ void DeviceMonitorHandler::startConnect()
         connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::mountAdded, this, &DeviceMonitorHandler::onBlockDeviceMounted);
         connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::mountRemoved, this, &DeviceMonitorHandler::onBlockDeviceUnmounted);
         connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::propertyChanged, this, &DeviceMonitorHandler::onBlockDevicePropertyChanged);
+        connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::blockUnlocked, this, &DeviceMonitorHandler::onBlockDeviceUnlocked);
+        connect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::blockLocked, this, &DeviceMonitorHandler::onBlockDeviceLocked);
     }
 
-    // TODO(zhangs): wait dfm-mount impl connect protocol devices signal
+    auto protoMonitor = manager->getRegisteredMonitor(DFMMOUNT::DeviceType::ProtocolDevice).objectCast<DFMMOUNT::DFMProtocolMonitor>();
+    if (protoMonitor) {
+        connect(protoMonitor.data(), &DFMMOUNT::DFMProtocolMonitor::deviceAdded, this, &DeviceMonitorHandler::onProtocolDeviceAdded);
+        connect(protoMonitor.data(), &DFMMOUNT::DFMProtocolMonitor::deviceRemoved, this, &DeviceMonitorHandler::onProtocolDeviceRemoved);
+        connect(protoMonitor.data(), &DFMMOUNT::DFMProtocolMonitor::mountAdded, this, &DeviceMonitorHandler::onProtocolDeviceMounted);
+        connect(protoMonitor.data(), &DFMMOUNT::DFMProtocolMonitor::mountRemoved, this, &DeviceMonitorHandler::onProtocolDeviceUnmounted);
+    }
 
     // connect device size update worker
     connect(&sizeUpdateTimer, &QTimer::timeout, this, &DeviceMonitorHandler::onDeviceSizeUsedTimeout);
@@ -102,8 +110,16 @@ void DeviceMonitorHandler::stopConnect()
         disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::mountAdded, this, &DeviceMonitorHandler::onBlockDeviceMounted);
         disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::mountRemoved, this, &DeviceMonitorHandler::onBlockDeviceUnmounted);
         disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::propertyChanged, this, &DeviceMonitorHandler::onBlockDevicePropertyChanged);
+        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::blockUnlocked, this, &DeviceMonitorHandler::onBlockDeviceUnlocked);
+        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::blockLocked, this, &DeviceMonitorHandler::onBlockDeviceLocked);
+    }
 
-        // TODO(zhangs): wait dfm-mount impl connect protocol devices signal
+    auto protoMonitor = manager->getRegisteredMonitor(DFMMOUNT::DeviceType::ProtocolDevice).objectCast<DFMMOUNT::DFMProtocolMonitor>();
+    if (protoMonitor) {
+        disconnect(protoMonitor.data(), &DFMMOUNT::DFMProtocolMonitor::deviceAdded, this, &DeviceMonitorHandler::onProtocolDeviceAdded);
+        disconnect(protoMonitor.data(), &DFMMOUNT::DFMProtocolMonitor::deviceRemoved, this, &DeviceMonitorHandler::onProtocolDeviceRemoved);
+        disconnect(protoMonitor.data(), &DFMMOUNT::DFMProtocolMonitor::mountAdded, this, &DeviceMonitorHandler::onProtocolDeviceMounted);
+        disconnect(protoMonitor.data(), &DFMMOUNT::DFMProtocolMonitor::mountRemoved, this, &DeviceMonitorHandler::onProtocolDeviceUnmounted);
     }
 }
 
@@ -116,7 +132,9 @@ void DeviceMonitorHandler::initBlockDevicesData()
 
 void DeviceMonitorHandler::initProtocolDevicesData()
 {
-    // TODO(zhangs): wait dfm-mount
+    auto &&protoPtrList = DeviceServiceHelper::createAllProtocolDevices();
+    for (auto &&dev : protoPtrList)
+        insertNewProtocolDeviceData(dev);
 }
 
 bool DeviceMonitorHandler::insertNewBlockDeviceData(const DeviceServiceHelper::BlockDevPtr &ptr)
@@ -135,8 +153,15 @@ bool DeviceMonitorHandler::insertNewBlockDeviceData(const DeviceServiceHelper::B
 
 bool DeviceMonitorHandler::insertNewProtocolDeviceData(const DeviceServiceHelper::ProtocolDevPtr &ptr)
 {
-    // TODO(zhangs): wait dfm-mount
-    return false;
+    auto &&id = ptr->path();
+    if (id.isEmpty())
+        return false;
+
+    ProtocolDeviceData data;
+    DeviceServiceHelper::makeProtocolDeviceData(ptr, &data);
+    QMutexLocker guard(&mutexForProtocol);
+    allProtocolDevData.insert(id, data);
+    return true;
 }
 
 void DeviceMonitorHandler::removeBlockDeviceData(const QString &deviceId)
@@ -275,7 +300,41 @@ void DeviceMonitorHandler::handleBlockDevicesSizeUsedChanged()
  */
 void DeviceMonitorHandler::handleProtolDevicesSizeUsedChanged()
 {
-    // TODO(zhangs): wait dfm-mount
+    // TODO(xust): this function is run in thread, not sure the gvfs returns correct datas in thread...
+    qDebug() << "Start check protocol devices size used changed";
+    QList<ProtocolDeviceData> changedDataGroup;
+    QMutexLocker guard(&mutexForProtocol);
+    auto &&keys = allProtocolDevData.keys();
+    for (const auto &key : keys) {
+        auto dev = DeviceServiceHelper::createProtocolDevice(key);
+        if (dev) {
+            qint64 total = dev->sizeTotal();
+            qint64 free = dev->sizeFree();
+            qint64 usage = dev->sizeUsage();
+
+            auto &devData = allProtocolDevData[key];
+            const qint64 &oldTotal = devData.common.sizeTotal;
+            const qint64 &oldFree = devData.common.sizeFree;
+            const qint64 &oldUsage = devData.common.sizeUsed;
+
+            if (total != oldTotal
+                || free != oldFree
+                || usage != oldUsage) {
+                qDebug() << "Protocol[new/old]: " << key
+                         << QString("total: %1/%2, ").arg(total).arg(oldTotal)
+                         << QString("usage: %1/%2, ").arg(usage).arg(oldUsage)
+                         << QString("free: %1/%2, ").arg(free).arg(oldFree);
+                DeviceServiceHelper::updateProtocolDeviceSizeUsed(&devData, total, free, usage);
+                changedDataGroup.push_back(devData);
+            }
+        }
+    }
+    guard.unlock();
+
+    for (auto iter = changedDataGroup.cbegin(); iter != changedDataGroup.cend(); ++iter) {
+        if (Q_LIKELY(!iter->common.id.isEmpty()))
+            emit service->deviceSizeUsedChanged(iter->common.id, iter->common.sizeTotal, iter->common.sizeFree);
+    }
 }
 
 void DeviceMonitorHandler::onBlockDriveAdded(const QString &drvObjPath)
@@ -384,12 +443,88 @@ void DeviceMonitorHandler::onBlockDevicePropertyChanged(const QString &deviceId,
     }
 }
 
+void DeviceMonitorHandler::onBlockDeviceUnlocked(const QString &deviceId, const QString &clearDeviceId)
+{
+    emit service->blockDevUnlocked(deviceId, clearDeviceId);
+}
+
+void DeviceMonitorHandler::onBlockDeviceLocked(const QString &deviceId)
+{
+    emit service->blockDevLocked(deviceId);
+}
+
 void DeviceMonitorHandler::onDeviceSizeUsedTimeout()
 {
     QtConcurrent::run([this]() {
         handleBlockDevicesSizeUsedChanged();
         handleProtolDevicesSizeUsedChanged();
     });
+}
+
+void DeviceMonitorHandler::onProtocolDeviceAdded(const QString &deviceId)
+{
+    auto protoDev = DeviceServiceHelper::createProtocolDevice(deviceId);
+    if (!protoDev) {
+        qWarning() << "protocol device is null!!";
+        return;
+    }
+    qInfo() << "A new protocol device is added: " << protoDev->displayName() << deviceId;
+
+    if (!insertNewProtocolDeviceData(protoDev))
+        return;
+
+    emit service->protocolDevAdded(deviceId);
+
+    if (service->isInLiveSystem() || !service->isAutoMountSetting()) {
+        qWarning() << "Cancel mount, live system: " << service->isInLiveSystem()
+                   << "auto mount setting: " << service->isAutoMountSetting();
+        return;
+    }
+
+    QString &&loginState = dfmbase::UniversalUtils::userLoginState();
+    if (loginState != "active") {
+        qWarning() << "Cancel mount, user login state is" << loginState;
+        return;
+    }
+
+    // TODO(xust) do mount volume here
+    if (!service->mountProtocolDevice(deviceId, {})) {
+        qWarning() << "Mount device failed: " << protoDev->displayName();
+        return;
+    }
+}
+
+void DeviceMonitorHandler::onProtocolDeviceRemoved(const QString &deviceId)
+{
+    qInfo() << "A new protocol device is removed: " << deviceId;
+    removeProtocolDeviceData(deviceId);
+}
+
+void DeviceMonitorHandler::onProtocolDeviceMounted(const QString &deviceId, const QString &mountPoint)
+{
+    qInfo() << "A protocol device is mounted at: " << mountPoint;
+    auto protoDev = DeviceServiceHelper::createProtocolDevice(deviceId);
+    if (!protoDev) {
+        qWarning() << deviceId << "constructed a null device!!!";
+        return;
+    }
+
+    // if it already existed in cache, then update it.
+    insertNewProtocolDeviceData(protoDev);
+    emit service->protocolDevMounted(deviceId, mountPoint);
+}
+
+void DeviceMonitorHandler::onProtocolDeviceUnmounted(const QString &deviceId)
+{
+    qInfo() << "A protocol device in unmounted: " << deviceId;
+    auto protoDev = DeviceServiceHelper::createProtocolDevice(deviceId);
+    if (!protoDev) {
+        removeProtocolDeviceData(deviceId);
+    } else {
+        insertNewProtocolDeviceData(protoDev);
+    }
+
+    emit service->protocolDevUnmounted(deviceId);
 }
 
 /*!
@@ -434,7 +569,9 @@ void DeviceService::startAutoMount()
         for (const QString &id : blkList)
             mountBlockDeviceAsync(id, { { "auth.no_user_interaction", true } });
 
-        // TODO(zhangs): mountAllProtocolDevices
+        QStringList &&protocolList = protocolDevicesIdList();
+        for (const QString &id : protocolList)
+            mountProtocolDeviceAsync(id, {});
 
         qInfo() << "End auto mount";
     });
@@ -513,6 +650,196 @@ bool DeviceService::poweroffBlockDevice(const QString &deviceId, const QVariantM
     return false;
 }
 
+QString DeviceService::unlockBlockDevice(const QString &passwd, const QString &deviceId, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (!ptr) {
+        qWarning() << "block: cannot create device handler by " << deviceId;
+        return "";
+    }
+
+    if (ptr->isEncrypted()) {
+        QString unlockdedObjPath;
+        auto ok = ptr->unlock(passwd, unlockdedObjPath, opts);
+        if (!ok) {
+            qDebug() << "block: unlock device failed: " << deviceId
+                     << dfmmount::Utils::errorMessage(ptr->lastError());
+            return "";
+        } else {
+            return unlockdedObjPath;
+        }
+    }
+    qWarning() << "block: device is not encrypted: " << deviceId;
+    return "";
+}
+
+void DeviceService::unlockBlockDeviceAsync(const QString &passwd, const QString &deviceId, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (!ptr) {
+        qWarning() << "block: cannot create device handler by " << deviceId;
+        return;
+    }
+
+    if (ptr->isEncrypted()) {
+        ptr->unlockAsync(passwd, opts, [this, deviceId](bool result, dfmmount::DeviceError err, QString ret) {
+            if (!result)
+                qDebug() << "unlock" << deviceId << "failed: " << dfmmount::Utils::errorMessage(err);
+            emit blockDevAsyncUnlocked(deviceId, ret, result);
+        });
+    } else {
+        qDebug() << "device " << deviceId << "is not encrypted device";
+    }
+}
+
+/*!
+ * \brief DeviceService::preLockBlock do something before lock, such as check if encrypted, unmount..
+ * \param deviceId
+ * \return true if device can be locked otherwise false
+ */
+bool DeviceService::preLockBlock(const QString &deviceId)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (!ptr) {
+        qWarning() << "block: cannot create device handler by " << deviceId;
+        return false;
+    }
+
+    // 1. get clear text block
+    auto cleartextPath = ptr->getProperty(dfmmount::Property::EncryptedCleartextDevice).toString();
+    if (cleartextPath == "/") {
+        qDebug() << "block: device is not encrypted: " << deviceId;
+        return false;
+    }
+
+    // 2. check if clear block is mounted
+    auto clearBlk = DeviceServiceHelper::createBlockDevice(cleartextPath);
+    if (!clearBlk) {
+        qDebug() << "block: cannot create clear text block device" << cleartextPath;
+        return false;
+    }
+    if (!clearBlk->mountPoints().isEmpty()) {
+        auto ret = clearBlk->unmount({});
+        if (!ret) {
+            qDebug() << "block: unmount clear text block failed: " << dfmmount::Utils::errorMessage(clearBlk->lastError());
+            return false;
+        }
+    }
+    return true;
+}
+
+bool DeviceService::lockBlockDevice(const QString &deviceId, const QVariantMap &opts)
+{
+    if (!preLockBlock(deviceId)) {
+        qDebug() << "block: pre lock device failed: " << deviceId;
+        return false;
+    }
+
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (!ptr) {
+        qWarning() << "block: cannot create device handler by " << deviceId;
+        return false;
+    }
+
+    auto ok = ptr->lock(opts);
+    if (!ok) {
+        qDebug() << "block: lock device failed: " << deviceId
+                 << dfmmount::Utils::errorMessage(ptr->lastError());
+    }
+    return ok;
+}
+
+void DeviceService::lockBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    if (!preLockBlock(deviceId)) {
+        qDebug() << "block: pre lock device failed: " << deviceId;
+        return;
+    }
+
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (!ptr) {
+        qWarning() << "block: cannot create device handler by " << deviceId;
+        return;
+    }
+
+    if (!ptr->isEncrypted()) {
+        qDebug() << "device" << deviceId << "is not encrypted";
+        return;
+    }
+
+    ptr->lockAsync(opts, [this, deviceId](bool result, dfmmount::DeviceError err) {
+        if (!result)
+            qDebug() << "lock" << deviceId << "failed: " << dfmmount::Utils::errorMessage(err);
+        emit blockDevAsyncLocked(deviceId, result);
+    });
+}
+
+bool DeviceService::mountProtocolDevice(const QString &deviceId, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createProtocolDevice(deviceId);
+    if (!ptr) {
+        qWarning() << "Null protocol pointer" << deviceId;
+        return false;
+    }
+
+    return !ptr->mount(opts).isEmpty();
+}
+
+void DeviceService::mountProtocolDeviceAsync(const QString &deviceId, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createProtocolDevice(deviceId);
+    if (!ptr) {
+        qWarning() << "Null protocol pointer" << deviceId;
+        return;
+    }
+
+    ptr->mountAsync(opts, [this, deviceId](bool ret, dfmmount::DeviceError err) {
+        emit protocolDevAsyncMounted(deviceId, ret);
+        if (!ret) {
+            qDebug() << "mount protocol device: " << deviceId << "failed. " << dfmmount::Utils::errorMessage(err);
+        }
+    });
+}
+
+bool DeviceService::unmountProtocolDevice(const QString &deviceId, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createProtocolDevice(deviceId);
+    if (!ptr) {
+        qWarning() << "Null protocol pointer" << deviceId;
+        return false;
+    }
+
+    return ptr->unmount(opts);
+}
+
+void DeviceService::unmountProtocolDeviceAsync(const QString &deviceId, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createProtocolDevice(deviceId);
+    if (!ptr) {
+        qWarning() << "Null protocol pointer" << deviceId;
+        return;
+    }
+
+    ptr->unmountAsync(opts, [this, deviceId](bool ret, dfmmount::DeviceError err) {
+        emit protocolDevAsyncUnmounted(deviceId, ret);
+        if (!ret) {
+            qDebug() << "unmount protocol device: " << deviceId << "failed. " << dfmmount::Utils::errorMessage(err);
+        }
+    });
+}
+
+void DeviceService::mountNetworkDevice(const QString &address)
+{
+}
+
 bool DeviceService::stopDefenderScanDrive(const QString &deviceId)
 {
     auto &&ptr = DeviceServiceHelper::createBlockDevice(deviceId);
@@ -576,7 +903,8 @@ void DeviceService::detachBlockDevice(const QString &deviceId)
 
 void DeviceService::detachProtocolDevice(const QString &deviceId)
 {
-    // TODO(zhangs):
+    // for protocol devices, there is no eject/poweroff, so just unmount them
+    unmountProtocolDeviceAsync(deviceId);
 }
 
 void DeviceService::detachAllMountedBlockDevices()
@@ -833,12 +1161,25 @@ QVariantMap DeviceService::blockDeviceInfo(const QString &deviceId, bool detail)
 
 QStringList DeviceService::protocolDevicesIdList() const
 {
-    // TODO: wait `dfm-mount`
-    return QStringList();
+    QStringList idList;
+
+    const auto allProtoData = monitorHandler->allProtocolDevData;
+    auto iter = allProtoData.cbegin();
+    while (iter != allProtoData.cend()) {
+        idList.append(iter.value().common.id);
+        iter += 1;
+    }
+    return idList;
 }
 
 QVariantMap DeviceService::protocolDeviceInfo(const QString &deviceId, bool detail) const
 {
-    // TODO(zhangs): build data
-    return QVariantMap();
+    QVariantMap info;
+    const auto allProtoData = monitorHandler->allProtocolDevData;
+    if (!allProtoData.contains(deviceId))
+        return info;
+
+    const auto &protoData = allProtoData.value(deviceId);
+    DeviceServiceHelper::makeProtocolDeviceMap(protoData, &info, detail);
+    return info;
 }

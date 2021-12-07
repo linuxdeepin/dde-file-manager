@@ -23,7 +23,7 @@
 #ifndef DEVICESERVICEHELPER_H
 #define DEVICESERVICEHELPER_H
 
-#include "dfm_common_service_global.h"
+#include "dfm_server_service_global.h"
 
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/fileutils.h"
@@ -34,7 +34,7 @@
 
 #include <mutex>
 
-DSC_BEGIN_NAMESPACE
+DSS_BEGIN_NAMESPACE
 
 struct DeviceData
 {
@@ -80,6 +80,7 @@ struct BlockDeviceData
 struct ProtocolDeviceData
 {
     DeviceData common;
+    QString displayName;
 };
 
 class DeviceServiceHelper
@@ -124,14 +125,15 @@ private:
     static void makeBlockDeviceMap(const BlockDeviceData &data, QVariantMap *map, bool detail = false);
     static void updateBlockDeviceSizeUsed(BlockDeviceData *data, qint64 total, qint64 free);
 
-    // TODO(zhangs): makeProtolDeviceData
-    // TODO(zhangs): makeProtocolDeviceMap
+    static void makeProtocolDeviceData(const ProtocolDevPtr &ptr, ProtocolDeviceData *data);
+    static void makeProtocolDeviceMap(const ProtocolDeviceData &data, QVariantMap *map, bool detail = false);
+    static void updateProtocolDeviceSizeUsed(ProtocolDeviceData *data, qint64 total, qint64 free, qint64 used);
 
 private:
     static DevPtr createDevice(const QString &devId, DFMMOUNT::DeviceType type);
     static DevPtrList createAllDevices(DFMMOUNT::DeviceType type);
 };
 
-DSC_END_NAMESPACE
+DSS_END_NAMESPACE
 
 #endif   // DEVICESERVICEHELPER_H

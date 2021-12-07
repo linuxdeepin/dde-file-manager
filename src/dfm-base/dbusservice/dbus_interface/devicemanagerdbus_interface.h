@@ -83,10 +83,10 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("GetBlockDevicesIdList"), argumentList);
     }
 
-    inline QDBusPendingReply<QStringList> GetProtolcolDevicesIdList()
+    inline QDBusPendingReply<QStringList> GetProtocolDevicesIdList()
     {
         QList<QVariant> argumentList;
-        return asyncCallWithArgumentList(QStringLiteral("GetProtolcolDevicesIdList"), argumentList);
+        return asyncCallWithArgumentList(QStringLiteral("GetProtocolDevicesIdList"), argumentList);
     }
 
     inline QDBusPendingReply<bool> IsMonotorWorking()
@@ -95,11 +95,25 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("IsMonotorWorking"), argumentList);
     }
 
+    inline QDBusPendingReply<> LockBlockDevice(const QString &id)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id);
+        return asyncCallWithArgumentList(QStringLiteral("LockBlockDevice"), argumentList);
+    }
+
     inline QDBusPendingReply<> MountBlockDevice(const QString &id)
     {
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(id);
         return asyncCallWithArgumentList(QStringLiteral("MountBlockDevice"), argumentList);
+    }
+
+    inline QDBusPendingReply<> MountNetworkDevice(const QString &address)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(address);
+        return asyncCallWithArgumentList(QStringLiteral("MountNetworkDevice"), argumentList);
     }
 
     inline QDBusPendingReply<> MountProtocolDevice(const QString &id)
@@ -137,6 +151,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("SafelyRemoveBlockDevice"), argumentList);
     }
 
+    inline QDBusPendingReply<> UnlockBlockDevice(const QString &id, const QString &passwd)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id) << QVariant::fromValue(passwd);
+        return asyncCallWithArgumentList(QStringLiteral("UnlockBlockDevice"), argumentList);
+    }
+
     inline QDBusPendingReply<> UnmountBlockDevice(const QString &id)
     {
         QList<QVariant> argumentList;
@@ -165,13 +186,19 @@ Q_SIGNALS: // SIGNALS
     void BlockDeviceAdded(const QString &id);
     void BlockDeviceFilesystemAdded(const QString &id);
     void BlockDeviceFilesystemRemoved(const QString &id);
+    void BlockDeviceLocked(const QString &id);
     void BlockDeviceMounted(const QString &id, const QString &mountPoint);
     void BlockDevicePropertyChanged(const QString &id, const QString &property, const QDBusVariant &value);
     void BlockDeviceRemoved(const QString &id);
+    void BlockDeviceUnlocked(const QString &id, const QString &clearDeviceId);
     void BlockDeviceUnmounted(const QString &id);
     void BlockDriveAdded();
     void BlockDriveRemoved();
     void NotifyDeviceBusy(int action);
+    void ProtocolDeviceAdded(const QString &id);
+    void ProtocolDeviceMounted(const QString &id, const QString &mountPoint);
+    void ProtocolDeviceRemoved(const QString &id);
+    void ProtocolDeviceUnmounted(const QString &id);
     void SizeUsedChanged(const QString &id, qlonglong total, qlonglong free);
 };
 

@@ -23,11 +23,11 @@
 #ifndef DEVICESERVICE_H
 #define DEVICESERVICE_H
 
-#include "dfm_common_service_global.h"
+#include "dfm_server_service_global.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
-DSC_BEGIN_NAMESPACE
+DSS_BEGIN_NAMESPACE
 
 class DeviceMonitorHandler;
 class DeviceService final : public dpf::PluginService, dpf::AutoServiceRegister<DeviceService>
@@ -62,6 +62,19 @@ public:   // operations
     void poweroffBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
     bool poweroffBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
 
+    QString unlockBlockDevice(const QString &passwd, const QString &deviceId, const QVariantMap &opts = {});
+    void unlockBlockDeviceAsync(const QString &passwd, const QString &deviceId, const QVariantMap &opts = {});
+    bool preLockBlock(const QString &deviceId);
+    bool lockBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
+    void lockBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
+
+    bool mountProtocolDevice(const QString &deviceId, const QVariantMap &opts = {});
+    void mountProtocolDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
+    bool unmountProtocolDevice(const QString &deviceId, const QVariantMap &opts = {});
+    void unmountProtocolDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
+
+    void mountNetworkDevice(const QString &address);
+
 public:   // status
     bool isBlockDeviceMonitorWorking() const;
     bool isProtolDeviceMonitorWorking() const;
@@ -85,11 +98,23 @@ signals:
     void blockDevFilesystemRemoved(const QString &deviceId);
     void blockDevMounted(const QString &deviceId, const QString &mountPoint);
     void blockDevUnmounted(const QString &deviceId);
+    void blockDevLocked(const QString &deviceId);
+    void blockDevUnlocked(const QString &deviceId, const QString &cleartextBlkId);
 
     void blockDevAsyncMounted(const QString &deviceId, bool success);
     void blockDevAsyncUnmounted(const QString &deviceId, bool success);
     void blockDevAsyncEjected(const QString &deviceId, bool success);
     void blockDevAsyncPoweroffed(const QString &deviceId, bool success);
+    void blockDevAsyncUnlocked(const QString &deviceId, const QString &cleartextBlkId,  bool success);
+    void blockDevAsyncLocked(const QString &deviceId, bool success);
+
+    void protocolDevAdded(const QString &deviceId);
+    void protocolDevRemoved(const QString &deviceId);
+    void protocolDevMounted(const QString &deviceId, const QString &mountpoint);
+    void protocolDevUnmounted(const QString &deviceId);
+
+    void protocolDevAsyncMounted(const QString &deviceId, bool success);
+    void protocolDevAsyncUnmounted(const QString &deviceId, bool success);
 
 private:
     explicit DeviceService(QObject *parent = nullptr);
@@ -99,6 +124,6 @@ private:
     QScopedPointer<DeviceMonitorHandler> monitorHandler;
 };
 
-DSC_END_NAMESPACE
+DSS_END_NAMESPACE
 
 #endif   // DEVICESERVICE_H

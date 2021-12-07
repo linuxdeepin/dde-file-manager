@@ -91,6 +91,8 @@ const char *const kMountPoints { "mountpoints" };
 const char *const kMediaCompatibility { "media_compatibility" };
 const char *const kCleartextDevice { "cleartext_device" };
 
+const char *const kDisplayName { "display_name" };
+
 }   // namespace DeviceProperty
 
 /*!

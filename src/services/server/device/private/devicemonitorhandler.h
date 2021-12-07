@@ -23,7 +23,7 @@
 #ifndef DEVICEMONITORHANDLER_H
 #define DEVICEMONITORHANDLER_H
 
-#include "dfm_common_service_global.h"
+#include "dfm_server_service_global.h"
 #include "deviceservicehelper.h"
 
 #include <QObject>
@@ -31,7 +31,7 @@
 #include <QTimer>
 #include <QMutex>
 
-DSC_BEGIN_NAMESPACE
+DSS_BEGIN_NAMESPACE
 
 class DeviceService;
 class DeviceMonitorHandler : public QObject
@@ -67,7 +67,14 @@ private slots:
     void onBlockDeviceMounted(const QString &deviceId, const QString &mountPoint);
     void onBlockDeviceUnmounted(const QString &deviceId);
     void onBlockDevicePropertyChanged(const QString &deviceId, const QMap<DFMMOUNT::Property, QVariant> &changes);
+    void onBlockDeviceUnlocked(const QString &deviceId, const QString &clearDeviceId);
+    void onBlockDeviceLocked(const QString &deviceId);
     void onDeviceSizeUsedTimeout();
+
+    void onProtocolDeviceAdded(const QString &deviceId);
+    void onProtocolDeviceRemoved(const QString &deviceId);
+    void onProtocolDeviceMounted(const QString &deviceId, const QString &mountPoint);
+    void onProtocolDeviceUnmounted(const QString &deviceId);
 
 private:
     static constexpr int kSizeUpdateInterval = 10000;   // timer interval: 10s
@@ -80,6 +87,6 @@ private:
     QHash<QString, ProtocolDeviceData> allProtocolDevData;
 };
 
-DSC_END_NAMESPACE
+DSS_END_NAMESPACE
 
 #endif   // DEVICEMONITORHANDLER_H

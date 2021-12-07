@@ -38,7 +38,7 @@
 Q_GLOBAL_STATIC_WITH_ARGS(dfmbase::Settings, gsGlobal, ("deepin/dde-file-manager", dfmbase::Settings::GenericConfig))
 
 DWIDGET_USE_NAMESPACE
-DSC_BEGIN_NAMESPACE
+DSS_BEGIN_NAMESPACE
 
 using dfmbase::FinallyUtil;
 using namespace GlobalServerDefines;
@@ -240,7 +240,7 @@ bool DeviceServiceHelper::isMountableBlockDevice(const BlockDeviceData &data, QS
         return false;
     }
 
-    if (data.cryptoBackingDevice.length() > 1) {   // bug: 77010
+    if (data.cryptoBackingDevice.length() > 1) {   // bug: 77010 TODO(xust) perhaps this is no need to concern anymore
         error = QString("Block Device: %1 cryptoDev length > 1").arg(id);
         return false;
     }
@@ -544,4 +544,45 @@ void DeviceServiceHelper::updateBlockDeviceSizeUsed(BlockDeviceData *data, qint6
     }
 }
 
-DSC_END_NAMESPACE
+void DeviceServiceHelper::makeProtocolDeviceData(const DeviceServiceHelper::ProtocolDevPtr &ptr, ProtocolDeviceData *data)
+{
+    Q_ASSERT_X(data, "DeviceServiceHelper", "Data is NULL");
+    if (!ptr)
+        return;
+
+    data->common.id = ptr->path();
+    data->common.filesystem = ptr->fileSystem();
+    data->common.sizeTotal = ptr->sizeTotal();
+    data->common.sizeUsed = ptr->sizeUsage();
+    data->common.sizeFree = data->common.sizeTotal - data->common.sizeUsed;
+    data->common.mountpoint = ptr->mountPoint();
+    data->displayName = ptr->displayName();
+}
+
+void DeviceServiceHelper::makeProtocolDeviceMap(const ProtocolDeviceData &data, QVariantMap *map, bool detail)
+{
+    Q_ASSERT_X(map, "DeviceServiceHelper", "Map is NULL");
+    Q_UNUSED(detail);
+
+    map->insert(DeviceProperty::kId, data.common.id);
+    map->insert(DeviceProperty::kMountpoint, data.common.mountpoint);
+    map->insert(DeviceProperty::kFilesystem, data.common.filesystem);
+    map->insert(DeviceProperty::kSizeTotal, data.common.sizeTotal);
+    map->insert(DeviceProperty::kSizeFree, data.common.sizeFree);
+    map->insert(DeviceProperty::kSizeUsed, data.common.sizeUsed);
+
+    map->insert(DeviceProperty::kDisplayName, data.displayName);
+}
+
+void DeviceServiceHelper::updateProtocolDeviceSizeUsed(ProtocolDeviceData *data, qint64 total, qint64 free, qint64 used)
+{
+    if (data) {
+        static QMutex mutex;
+        QMutexLocker guard(&mutex);
+        data->common.sizeTotal = total;
+        data->common.sizeFree = free;
+        data->common.sizeUsed = used;
+    }
+}
+
+DSS_END_NAMESPACE

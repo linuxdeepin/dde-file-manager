@@ -149,7 +149,7 @@ QStringList PluginSidecar::invokeProtolcolDevicesIdList(const QVariantMap &opt)
     // TODO(zhangs): opt
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto &&reply = deviceInterface->GetProtolcolDevicesIdList();
+        auto &&reply = deviceInterface->GetProtocolDevicesIdList();
         reply.waitForFinished();
         if (reply.isValid())
             ret = reply.value();

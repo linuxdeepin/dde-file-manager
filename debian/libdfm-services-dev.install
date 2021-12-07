@@ -2,3 +2,5 @@ usr/include/dfmservice-common/*.h
 usr/include/dfmservice-common/*/*.h
 usr/include/dfmservice-filemanager/*.h
 usr/include/dfmservice-filemanager/*/*.h
+usr/include/dfmservice-server/*.h
+usr/include/dfmservice-server/*/*.h
