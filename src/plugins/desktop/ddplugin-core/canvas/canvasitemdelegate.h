@@ -36,12 +36,11 @@ public:
     explicit CanvasItemDelegate(CanvasView *parent);
     ~CanvasItemDelegate() override;
 
-    int currentIconSizeLevel() const;
-    QSize getIconSizeByIconSizeLevel(const int lv) const;
-    QSize getCurrentIconSize() const;
-    int setIconSizeByIconSizeLevel(const int lv);
-    int minimumIconSizeLevel() const;
-    int maximumIconSizeLevel() const;
+    QSize iconSize(int lv) const;
+    int setIconLevel(const int lv);
+    int iconLevel() const;
+    int minimumIconLevel() const;
+    int maximumIconLevel() const;
 
     QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &index) const override;
     void updateItemSizeHint();

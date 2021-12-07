@@ -20,7 +20,13 @@
  */
 #include "canvasviewmanager.h"
 #include "canvasmodel.h"
+
+#ifndef NEWGRID
 #include "canvasgridmanager.h"
+#else
+#include "grid/canvasgrid.h"
+#endif
+
 #include "filetreater.h"
 #include "private/canvasviewmanager_p.h"
 
@@ -44,7 +50,11 @@ CanvasViewManager::CanvasViewManager(QObject *parent)
     initConnect();
 
     d->canvasModel = new CanvasModel(this);
+#ifndef NEWGRID
     CanvasGridManager::instance()->initCoord(d->backgroundService->allBackground().size());
+#else
+    GridIns->initSurface(d->backgroundService->allBackground().size());
+#endif
     // 根据屏幕build
     onCanvasViewBuild();
 }
@@ -71,7 +81,20 @@ void CanvasViewManager::initConnect()
 void CanvasViewManager::loadDataAndShow()
 {
     // 初始化栅布局信息
+#ifndef NEWGRID
     CanvasGridManager::instance()->initGridItemsInfo();
+#else
+    // new grid
+    {
+        GridIns->setMode(CanvasGrid::Mode::Custom);
+        QStringList existItems;
+        QList<DFMDesktopFileInfoPointer> &actualList = FileTreaterCt->getFiles();
+        for (const DFMDesktopFileInfoPointer &df : actualList) {
+            existItems.append(df->url().toString());
+        }
+        GridIns->setItems(existItems);
+    }
+#endif
 
     // show canvas
     for (const CanvasViewPointer &cv : d->canvasViewMap.values()) {

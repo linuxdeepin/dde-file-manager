@@ -20,7 +20,11 @@
  */
 #include "filetreater.h"
 #include "private/filetreater_p.h"
+#ifndef NEWGRID
 #include "canvasgridmanager.h"
+#else
+#include "grid/canvasgrid.h"
+#endif
 #include "dfm-base/base/schemefactory.h"
 
 #include <QDir>
@@ -153,7 +157,11 @@ void FileTreater::asyncFunc(const QDir &url)
 {
     QMutexLocker lk(&mutex);
     QDir dir(url);
+#ifndef NEWGRID
     bool isHidden = CanvasGridManager::instance()->getShowHiddenFiles();
+#else
+    bool isHidden = false; //todo(lq)
+#endif
     for (auto info : dir.entryInfoList()) {
         if ((!info.isHidden()) || (info.isHidden() && isHidden)) {
             qDebug() << info.filePath();

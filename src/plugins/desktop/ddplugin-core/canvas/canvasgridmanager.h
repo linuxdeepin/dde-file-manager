@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASGRID_H
-#define CANVASGRID_H
+#ifndef CANVASGRIDMANAGER_H
+#define CANVASGRIDMANAGER_H
 
 #include "dfm-base/base/abstractfileinfo.h"
 #include "defaultdesktopfileinfo.h"
@@ -32,6 +32,8 @@ class CanvasGridManager : public QObject
     Q_OBJECT
 public:
     static CanvasGridManager *instance();
+
+public:
     void initCoord(const int screenCount);
     void initGridItemsInfo();
     void initArrage(const QList<DFMDesktopFileInfoPointer> &items);
@@ -66,4 +68,4 @@ private:
 };
 
 DSB_D_END_NAMESPACE
-#endif   // CANVASGRID_H
+#endif   // CANVASGRIDMANAGER_H

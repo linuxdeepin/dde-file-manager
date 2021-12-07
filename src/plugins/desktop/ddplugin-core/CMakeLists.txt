@@ -14,6 +14,9 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/screen
 )
 
+# temp using
+add_definitions(-DNEWGRID)
+
 set(widgets_cxx_cpp
     dfm-base/widgets/abstractbackground.cpp
     dfm-base/widgets/abstractscreen.cpp
@@ -61,6 +64,8 @@ set(core_cxx_cpp
     canvas/canvasmodel.cpp
     canvas/canvasitemdelegate.cpp
     canvas/canvasgridmanager.cpp
+    canvas/grid/canvasgrid.cpp
+    canvas/grid/gridcore.cpp
     canvas/defaultdesktopfileinfo.cpp
     canvas/filetreater.cpp
     canvas/displayconfig.cpp
@@ -92,6 +97,10 @@ set(core_cxx_h
     canvas/canvasmodel.h
     canvas/canvasitemdelegate.h
     canvas/canvasgridmanager.h
+    canvas/grid/canvasgrid.h
+    canvas/grid/canvasgrid_p.h
+    canvas/grid/canvasgridspecialist.h
+    canvas/grid/gridcore.h
     canvas/defaultdesktopfileinfo.h
     canvas/filetreater.h
     canvas/displayconfig.h

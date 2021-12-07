@@ -29,12 +29,6 @@
 #include <QPoint>
 #include <QHash>
 
-uint qHash(const QPoint &key, uint seed)
-{
-    QString val = QString("%1x%2").arg(key.x()).arg(key.y());
-    return qHash<QString>(val, seed);
-}
-
 DSB_D_BEGIN_NAMESPACE
 
 class CanvasGridManagerGlobal : public CanvasGridManager{};

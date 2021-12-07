@@ -77,12 +77,14 @@ void registerFileSystem()
                         StandardPaths::location(StandardPaths::kDesktopPath),
                         QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDesktopPath)),
                         false);
-    UrlRoute::regScheme({ "defaultdesktop" },
+
+    const QString desktopScheme("ddedesktop");
+    UrlRoute::regScheme(desktopScheme,
                         StandardPaths::location(StandardPaths::kDesktopPath),
                         QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDesktopPath)),
                         false);
 
-    QString desktopScheme{"defaultdesktop"};
+
     InfoFactory::regClass<DefaultDesktopFileInfo>(desktopScheme);
 }
 

@@ -79,7 +79,7 @@ public:
 
     QSize itemSizeHint;
     int textLineHeight = -1;
-    int currentIconSizeIndex = -1;
+    int iconLevel = -1;
     QList<int> iconSizes;
 
     QTextDocument *document = nullptr;

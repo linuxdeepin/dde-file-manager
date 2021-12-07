@@ -147,8 +147,8 @@ public:
     bool debug_show_grid = false;
     QString screenName;
     int screenNum;
-    int rowCount = 0;
-    int colCount = 0;
+    int rowCount = 1;
+    int colCount = 1;
     int cellWidth = 0;
     int cellHeight = 0;
     QRect dockReserveArea { QRect(0, 0, 80, 80) };

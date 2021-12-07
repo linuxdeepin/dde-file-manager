@@ -148,6 +148,9 @@ QHash<QString, QPoint> DisplayConfig::coordinates(const QString &key)
 
 bool DisplayConfig::setCoordinates(const QString &key, const QHash<QString, QPoint> &pos)
 {
+    // todo(zy) lift the ban
+    return false;
+
     if (key.isEmpty())
         return false;
 

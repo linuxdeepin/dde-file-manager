@@ -123,6 +123,11 @@ CanvasItemDelegate::CanvasItemDelegate(CanvasView *parent)
 {
     // 临时放于此处
     d->textLineHeight = this->parent()->fontMetrics().lineSpacing();
+
+    // 初始化默认图标为小
+    const int iconLevel = 1;
+    Q_ASSERT(iconLevel < d->iconSizes.size());
+    setIconLevel(iconLevel);
 }
 
 CanvasItemDelegate::~CanvasItemDelegate()
@@ -133,10 +138,10 @@ CanvasItemDelegate::~CanvasItemDelegate()
  * \brief 获取当前图标等级
  * \return 返回当前图标等级
  */
-int CanvasItemDelegate::currentIconSizeLevel() const
+int CanvasItemDelegate::iconLevel() const
 {
     // 暂时固定为： 32 << 48 << 64 << 96 << 128，后续开设注册接口
-    return d->currentIconSizeIndex;
+    return d->iconLevel;
 }
 
 /*!
@@ -144,16 +149,14 @@ int CanvasItemDelegate::currentIconSizeLevel() const
  * \param  \a lv 图标等级
  * \return 返回对应等级图标大小
  */
-QSize CanvasItemDelegate::getIconSizeByIconSizeLevel(const int lv) const
+QSize CanvasItemDelegate::iconSize(int lv) const
 {
-    int size = d->iconSizes.at(lv);
-    return QSize(size, size);
-}
+    if (lv >= minimumIconLevel() && lv <= maximumIconLevel()) {
+        int size = d->iconSizes.at(lv);
+        return QSize(size, size);
+    }
 
-QSize CanvasItemDelegate::getCurrentIconSize() const
-{
-    int size = d->iconSizes.at(d->currentIconSizeIndex);
-    return QSize(size, size);
+    return QSize();
 }
 
 /*!
@@ -161,27 +164,27 @@ QSize CanvasItemDelegate::getCurrentIconSize() const
  * \param \a lv 图标等级
  * \return 成功返回设置的图标等级大小，失败返回-1
  */
-int CanvasItemDelegate::setIconSizeByIconSizeLevel(const int lv)
+int CanvasItemDelegate::setIconLevel(const int lv)
 {
-    if (lv == d->currentIconSizeIndex) {
+    if (lv == d->iconLevel) {
         return lv;
     }
 
-    if (lv >= minimumIconSizeLevel() && lv <= maximumIconSizeLevel()) {
-        d->currentIconSizeIndex = lv;
-        parent()->setIconSize(getCurrentIconSize());
-        return d->currentIconSizeIndex;
+    if (lv >= minimumIconLevel() && lv <= maximumIconLevel()) {
+        d->iconLevel = lv;
+        parent()->setIconSize(iconSize(lv));
+        return d->iconLevel;
     }
 
     return -1;
 }
 
-int CanvasItemDelegate::minimumIconSizeLevel() const
+int CanvasItemDelegate::minimumIconLevel() const
 {
     return 0;
 }
 
-int CanvasItemDelegate::maximumIconSizeLevel() const
+int CanvasItemDelegate::maximumIconLevel() const
 {
     return d->iconSizes.count() - 1;
 }

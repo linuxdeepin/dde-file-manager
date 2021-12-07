@@ -20,7 +20,12 @@
  */
 #include "private/canvasview_p.h"
 #include "canvasitemdelegate.h"
+#ifndef NEWGRID
 #include "canvasgridmanager.h"
+#else
+#include "grid/canvasgrid.h"
+#include "base/schemefactory.h"
+#endif
 #include "displayconfig.h"
 
 #include <QPainter>
@@ -166,7 +171,12 @@ void CanvasView::updateCanvas()
     auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
     QMargins geometryMargins = QMargins(0, 0, 0, 0);
     d->updateCanvasSize(this->geometry().size(), this->geometry().size(), geometryMargins, itemSize);
+#ifndef NEWGRID
     CanvasGridManager::instance()->updateGridSize(d->screenNum, d->colCount, d->rowCount);
+#else
+    GridIns->updateSize(d->screenNum, QSize(d->colCount, d->rowCount));
+#endif
+
 }
 
 QString CanvasView::fileDisplayNameRole(const QModelIndex &index)
@@ -192,7 +202,7 @@ void CanvasView::initUI()
     // init icon delegate
     auto delegate = new CanvasItemDelegate(this);
     setItemDelegate(delegate);
-    delegate->setIconSizeByIconSizeLevel(DispalyIns->iconLevel());
+    delegate->setIconLevel(DispalyIns->iconLevel());
 }
 
 /*!
@@ -210,7 +220,23 @@ void CanvasView::fileterAndRepaintLocalFiles(QPainter *painter, QStyleOptionView
 
     // todo:封装优化代码
     QHash<QPoint, DFMDesktopFileInfoPointer> repaintLocalFiles;
+#ifndef NEWGRID
     repaintLocalFiles = CanvasGridManager::instance()->items(d->screenNum);
+#else
+    {
+        const QHash<QString, QPoint> &pos = GridIns->points(d->screenNum);
+        for (auto itor = pos.begin(); itor != pos.end(); ++itor) {
+            auto info = DFMBASE_NAMESPACE::InfoFactory::create<DefaultDesktopFileInfo>(itor.key());
+            if (!info){
+                qWarning() << "create file info failed" << itor.key();
+                continue;
+            }
+
+            repaintLocalFiles.insert(itor.value(), info);
+        }
+    }
+
+#endif
     if (repaintLocalFiles.isEmpty())
         return;
 
@@ -226,20 +252,35 @@ void CanvasView::fileterAndRepaintLocalFiles(QPainter *painter, QStyleOptionView
 
     // 重叠图标绘制(不包括最底层被覆盖的图标)
     // todo暂时没考虑堆叠的栈情况；
+#ifndef NEWGRID
     auto overLapScreen = CanvasGridManager::instance()->overlapScreen();
     if (-1 == overLapScreen)
         return;
     auto overLapItems = CanvasGridManager::instance()->overlapItems();
 
     if (d->screenNum == overLapScreen) {
-        QPoint overLapPos(d->colCount - 1, d->rowCount - 1);
-        for (auto &item : overLapItems) {
+#else
+    {
+        QList<DFMDesktopFileInfoPointer> overlapItems;
+        auto overlap = GridIns->overloadItems(d->screenNum);
+        for (auto itor = overlap.begin(); itor != overlap.end(); ++itor) {
+            auto info = DFMBASE_NAMESPACE::InfoFactory::create<DefaultDesktopFileInfo>(*itor);
+            if (!info){
+                qWarning() << "create file info failed" << *itor;
+                continue;
+            }
+
+            overlapItems.append(info);
+        }
+#endif
+        const QPoint overlapPos(d->colCount - 1, d->rowCount - 1);
+        for (auto &item : overlapItems) {
             // todo：拖拽让位的一些图标保持情况
 
-            auto needPaint = isRepaintFlash(option, event, overLapPos);
+            auto needPaint = isRepaintFlash(option, event, overlapPos);
             if (!needPaint)
                 continue;
-            drawLocalFile(painter, option, enabled, overLapPos, item);
+            drawLocalFile(painter, option, enabled, overlapPos, item);
         }
     }
 }
