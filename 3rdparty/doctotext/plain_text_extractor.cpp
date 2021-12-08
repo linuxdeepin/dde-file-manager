@@ -61,6 +61,8 @@
 #include "xlsb_parser.h"
 #include "txt_parser.h"
 
+#include "doc.hpp"
+
 using namespace doctotext;
 
 struct PlainTextExtractor::Implementation
@@ -966,9 +968,10 @@ bool PlainTextExtractor::processFile(ParserType parser_type, bool fallback, cons
 		}
 		case PARSER_DOC:
 		{
-			DOCParser doc(file_name);
-			error = impl->parseDOC(doc, text);
-			break;
+            doc::Doc doc(file_name);
+            error = doc.convert();
+            text = doc.m_text;
+            break;
 		}
 		case PARSER_PPT:
 		{
