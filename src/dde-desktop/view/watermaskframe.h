@@ -25,8 +25,6 @@
 #ifndef WATERMASKFRAME_H
 #define WATERMASKFRAME_H
 
-#include "dbus/licenceInterface.h"
-
 #include <QFrame>
 #include <QJsonObject>
 #include <QLabel>
@@ -57,8 +55,8 @@ private:
 public slots:
     void updatePosition();
     void updateAuthorizationState();
-private:
-    void onActiveStateFinished();
+private slots:
+    void onChangeAuthorizationLabel(int);
 private:
     QString m_configFile;
     QJsonObject m_configs;
@@ -70,9 +68,6 @@ private:
     int m_yRightBottom;
     int m_maskWidth;
     int m_maskHeight;
-
-    QScopedPointer<ComDeepinLicenseInterface> m_licenseInterface;
-    QScopedPointer<QDBusInterface> m_licenseProp;
 };
 
 #endif // WATERMASKFRAME_H
