@@ -321,7 +321,7 @@ void DTaskDialog::addTaskWidget(DFMTaskWidget *wid)
     setModal(false);
     QPointer<DTaskDialog> ptr = this;
     QTimer::singleShot(350, this, [ptr](){
-        if (!ptr)
+        if (!ptr || ptr->m_taskListWidget->count() <= 0)
             return;
         ptr->show();
         ptr->activateWindow();
@@ -366,7 +366,7 @@ void DTaskDialog::showVaultDeleteDialog(DFMTaskWidget *wid)
     setModal(true);
     QPointer<DTaskDialog> ptr = this;
     QTimer::singleShot(350, this, [ptr](){
-        if (!ptr)
+        if (!ptr || ptr->m_taskListWidget->count() <= 0)
             return;
         ptr->show();
         ptr->activateWindow();
@@ -944,3 +944,9 @@ void DTaskDialog::keyPressEvent(QKeyEvent *event)
     QDialog::keyPressEvent(event);
 }
 
+void DTaskDialog::showEvent(QShowEvent *event)
+{
+    if (!m_taskListWidget || m_taskListWidget->count() <= 0)
+        close();
+    return DAbstractDialog::showEvent(event);
+}

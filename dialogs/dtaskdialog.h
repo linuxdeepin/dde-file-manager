@@ -115,8 +115,11 @@ public slots:
     void moveYCenter();
 
 protected:
-    void closeEvent(QCloseEvent *event);
-    void keyPressEvent(QKeyEvent *event);
+    void closeEvent(QCloseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    // QWidget interface
+protected:
+    virtual void showEvent(QShowEvent *event) override;
 
     void blockShutdown();
     void addTaskWidget(DFMTaskWidget *wid);
