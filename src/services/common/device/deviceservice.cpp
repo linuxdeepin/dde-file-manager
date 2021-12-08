@@ -239,24 +239,26 @@ void DeviceMonitorHandler::handleBlockDevicesSizeUsedChanged()
     qDebug() << "Start check block devices size used changed";
     QList<BlockDeviceData> changedDataGroup;
     QMutexLocker guard(&mutexForBlock);
-    for (auto iter = allBlockDevData.begin(); iter != allBlockDevData.end(); ++iter) {
-        if (!DeviceServiceHelper::isIgnorableBlockDevice(*iter)) {
-            if (iter->optical)
+    auto &&keys = allBlockDevData.keys();
+    for (const auto &key : keys) {
+        auto &val = allBlockDevData[key];
+        if (!DeviceServiceHelper::isIgnorableBlockDevice(val)) {
+            if (val.optical)
                 continue;
-            if (iter->mountpoints.isEmpty())
+            if (val.mountpoints.isEmpty())
                 continue;
 
-            const QString &id = iter->common.id;
-            const QString &mpt = iter->common.mountpoint;
-            qint64 sizeUsed = iter->common.sizeUsed;
+            const QString &id = val.common.id;
+            const QString &mpt = val.common.mountpoint;
+            qint64 sizeUsed = val.common.sizeUsed;
 
             QStorageInfo info(mpt);
-            qint64 curSizeUsed = iter->common.sizeTotal - info.bytesAvailable();
+            qint64 curSizeUsed = val.common.sizeTotal - info.bytesAvailable();
 
             if (curSizeUsed != sizeUsed) {
                 qInfo() << "Block:" << id << "old size: " << sizeUsed << "new size: " << curSizeUsed;
-                DeviceServiceHelper::updateBlockDeviceSizeUsed(&(*iter), iter->common.sizeTotal, info.bytesAvailable());
-                changedDataGroup.push_back(*iter);
+                DeviceServiceHelper::updateBlockDeviceSizeUsed(&val, val.common.sizeTotal, info.bytesAvailable());
+                changedDataGroup.push_back(val);
             }
         }
     }
