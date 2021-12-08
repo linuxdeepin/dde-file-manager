@@ -54,6 +54,7 @@ struct ComputerModelItemData
     QString sptext;
     QWidget* widget = nullptr;
     Category cat;
+    bool isEditing = false;
 };
 
 class ComputerModel : public QAbstractItemModel
@@ -80,6 +81,7 @@ public:
         DiscOpticalRole = Qt::UserRole + 16, // 光盘是否是空盘
         EditorLengthRole = Qt::UserRole + 17,// 重命名LineEditor的最大长度
         AppEntryDescription,                 // the Comment field of an app entry
+        IsEditingRole,                       // if this device is editing name
     };
     Q_ENUM(DataRoles)
 

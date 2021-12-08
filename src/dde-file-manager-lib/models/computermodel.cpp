@@ -268,7 +268,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         par->view()->setIndexWidget(index, static_cast<ComputerModelItemData*>(index.internalPointer())->widget);
     }
 
-    if (m_items.count() < index.row()) return QVariant();
+    if (m_items.count() <= index.row()) return QVariant();
     const ComputerModelItemData *pitmdata = &m_items[index.row()];
 
     if (role == Qt::DisplayRole) {
@@ -494,13 +494,20 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 #endif
         return tr("Double click to open it");
     }
+
+    if (role == DataRoles::IsEditingRole) {
+        return pitmdata->isEditing;
+    }
     return QVariant();
 }
 
 bool ComputerModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+    if (m_items.count() <= index.row() || index.row() < 0)
+        return false;
+    ComputerModelItemData *pitmdata = &m_items[index.row()];
+
     if (role == Qt::EditRole) {
-        ComputerModelItemData *pitmdata = &m_items[index.row()];
         if (!pitmdata || !pitmdata->fi)
             return false;
         if (!pitmdata->fi->canRename()) {
@@ -511,6 +518,12 @@ bool ComputerModel::setData(const QModelIndex &index, const QVariant &value, int
         newUrl.setPath(value.toString()); // 直接构造 URL 会忽略掉一些特殊符号，因此使用 setPath
         fileService->renameFile(this, pitmdata->fi->fileUrl(), newUrl);
         emit dataChanged(index, index, {Qt::DisplayRole});
+        return true;
+    }
+    if (role == DataRoles::IsEditingRole) {
+        if (!pitmdata)
+            return false;
+        pitmdata->isEditing = value.toBool();
         return true;
     }
     return false;

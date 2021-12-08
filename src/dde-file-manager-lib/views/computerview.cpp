@@ -100,8 +100,8 @@ protected:
                     if (!curIdx.isValid()) {
                         return true;
                     }
-                    // 目的是可移动设备的item重命名时，按enter键时，不应该进入对应的目录，因此直接返回false
-                    if (model->flags(curIdx) & Qt::ItemFlag::ItemIsEditable) {
+                    // when device is editing name, ignore enter event.
+                    if (model->data(curIdx, ComputerModel::DataRoles::IsEditingRole).toBool()) {
                         return false;
                     }
                     Q_EMIT entered(curIdx);
