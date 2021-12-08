@@ -25,9 +25,8 @@
 
 QT += widgets
 CONFIG += c++11 link_pkgconfig
-PKGCONFIG += liblucene++ liblucene++-contrib
+PKGCONFIG += liblucene++ liblucene++-contrib docparser
 
-include($$PWD/../../../3rdparty/doctotext/doctotext.pri)
 HEADERS += \
     $$PWD/fulltextsearch.h \
     $$PWD/chinesetokenizer.h \
@@ -39,7 +38,4 @@ SOURCES += \
     $$PWD/chineseanalyzer.cpp
 
 INCLUDEPATH += $$PWD
-INCLUDEPATH += $$PWD/../3rdParty/doctotext
-DEPENDPATH += $$PWD/../3rdParty/doctotext
-
 LIBS += -lboost_system

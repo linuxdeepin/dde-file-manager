@@ -22,10 +22,6 @@
 #include "dfmapplication.h"
 #include "chineseanalyzer.h"
 
-//doctotext header
-#include "misc.h"
-#include "plain_text_extractor.h"
-
 #include <QtConcurrentRun>
 #include <QStringList>
 #include <QStandardPaths>
@@ -38,9 +34,8 @@
 #include <FilterIndexReader.h>
 #include <FuzzyQuery.h>
 #include <QueryWrapperFilter.h>
-// pdf
-#include <poppler-document.h>
-#include <poppler-page.h>
+
+#include <docparser/docparser.h>
 
 #include <iostream>
 #include <boost/algorithm/string.hpp>
@@ -69,59 +64,7 @@ DFMFullTextSearchManager *DFMFullTextSearchManager::getInstance()
 
 QString DFMFullTextSearchManager::getFileContents(const QString &filePath)
 {
-    std::string text = "";
-    FormattingStyle options;
-    options.table_style = TABLE_STYLE_TABLE_LOOK;
-    options.list_style.setPrefix(" * ");
-    options.url_style = URL_STYLE_UNDERSCORED;
-    XmlParseMode mode = PARSE_XML;
-
-    PlainTextExtractor::ParserType parser_type = PlainTextExtractor::PARSER_AUTO;
-    QFileInfo info(filePath);
-    QString ext = info.suffix();
-    if (ext == "rtf")
-        parser_type = PlainTextExtractor::PARSER_RTF;
-    else if (ext == "odt" || ext == "ods" || ext == "odp" || ext == "odg" || ext == "docx" || ext == "xlsx" || ext == "pptx" || ext == "ppsx")
-        parser_type = PlainTextExtractor::PARSER_ODF_OOXML;
-    else if (ext == "xls")
-        parser_type = PlainTextExtractor::PARSER_XLS;
-    else if (ext == "xlsb")
-        parser_type = PlainTextExtractor::PARSER_XLSB;
-    else if (ext == "doc" || ext == "dot" || ext == "wps")
-        parser_type = PlainTextExtractor::PARSER_DOC;
-    else if (ext == "ppt" || ext == "pps" || ext == "dps")
-        parser_type = PlainTextExtractor::PARSER_PPT;
-    else if (ext == "pdf")
-        return parsePdfFile(filePath, static_cast<quint32>(IndexWriter::MaxFieldLengthLIMITED));
-    else if (ext == "txt" || ext == "text" || ext == "md")
-        parser_type = PlainTextExtractor::PARSER_TXT;
-    else {
-        qDebug() << "Unsupported file extension: " << ext;
-        return "";
-    }
-
-    //创建文件解析器
-    PlainTextExtractor extractor(parser_type);
-
-    //设置 xml 格式解析模式
-    if (mode != PARSE_XML) {
-        extractor.setXmlParseMode(mode);
-    }
-
-    //
-    extractor.setFormattingStyle(options);
-
-    //解析文件内容,
-    /*
-     * 原因是解析出来的内容和 tests目录下面 *.out 中的内容不相符，
-     * 例如: 解析 tests/1.doc.out 最终结果的内容就是现在下面 printf 所打印输出的内容格式，
-     * 从可以 tests/Makefile 中看到，在测试的过程中是通过 diff 命令比较，也就是通过比较 1.doc
-     * 的解析结果内容和 1.doc.out 内容的是否相同来判断程序是否正常运行的
-     */
-    if (!extractor.processFile(filePath.toStdString(), text)) {
-        qDebug() << "Error processing file " << filePath;
-        return "";
-    }
+    auto text = DocParser::convertFile(filePath.toStdString());
     return QString(text.c_str());
 }
 
@@ -327,31 +270,6 @@ QString DFMFullTextSearchManager::dealKeyWorld(const QString &keyWorld)
     }
 
     return newStr.trimmed();
-}
-
-QString DFMFullTextSearchManager::parsePdfFile(const QString &fileName, quint32 maxLen)
-{
-    std::string file = fileName.toStdString();
-    poppler::document *doc = poppler::document::load_from_file(file);
-    if (!doc || doc->is_locked()) {
-        qWarning() << "PDF file load failed:" << fileName;
-        delete doc;
-        return "";
-    }
-
-    QString text;
-    int numPage = doc->pages();
-    for (int i = 0; i < numPage && static_cast<quint32>(text.size()) < maxLen; ++i) {
-        poppler::page *page = doc->create_page(i);
-        if (page) {
-            QString str = page->text().to_utf8().data();
-            text += str.simplified();
-            delete page;
-        }
-    }
-
-    delete doc;
-    return text;
 }
 
 bool DFMFullTextSearchManager::updateIndex(const QString &filePath)

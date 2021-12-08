@@ -115,7 +115,6 @@ private:
      */
     QString dealKeyWorld(const QString &keyWorld);
 
-    QString parsePdfFile(const QString &fileName, quint32 maxLen);
 private:
     bool status;
 

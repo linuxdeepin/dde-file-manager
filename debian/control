@@ -57,9 +57,6 @@ Build-Depends:
  liblucene++-dev,
  libgsf-1-dev,
  libglib2.0-dev,
- libhtmlcxx-dev,
- libxml2-dev,
- libmimetic-dev,
  libboost-date-time-dev,
  libboost-filesystem-dev,
  libboost-iostreams-dev,
@@ -67,6 +64,7 @@ Build-Depends:
  libboost-system-dev,
  libboost-test-dev,
  libboost-thread-dev,
+ libdocparser-dev,
  deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
@@ -129,11 +127,9 @@ Depends:
  liblucene++-dev,
  libgsf-1-dev,
  libglib2.0-dev,
- libhtmlcxx-dev,
- libxml2-dev,
- libmimetic-dev,
  libudisks2-qt5 (>=5.0.6),
  libdisomaster (>=5.0.7),
+ libdocparser
 Recommends:
  libudfburn
 Breaks: dde-file-manager(<=1.2.3-3)
