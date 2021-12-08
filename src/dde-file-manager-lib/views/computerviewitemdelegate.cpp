@@ -351,12 +351,14 @@ void ComputerViewItemDelegate::setEditorData(QWidget *editor, const QModelIndex 
 {
     QLineEdit *le = qobject_cast<QLineEdit *>(editor);
     le->setText(index.data(Qt::DisplayRole).toString()); // TODO: implement EditRole
+    this->par->view()->model()->setData(index, true, ComputerModel::DataRoles::IsEditingRole);
 }
 
 void ComputerViewItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
     QLineEdit *le = qobject_cast<QLineEdit *>(editor);
     model->setData(index, le->text());
+    model->setData(index, false, ComputerModel::DataRoles::IsEditingRole);
 }
 
 void ComputerViewItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
