@@ -39,9 +39,10 @@
 
 DWIDGET_USE_NAMESPACE
 
-class DFMRightDetailViewPrivate{
+class DFMRightDetailViewPrivate
+{
 public:
-    explicit DFMRightDetailViewPrivate(DFMRightDetailView *qq, const DUrl& url);
+    explicit DFMRightDetailViewPrivate(DFMRightDetailView *qq, const DUrl &url);
     virtual ~DFMRightDetailViewPrivate();
 
     DUrl m_url;
@@ -58,21 +59,17 @@ public:
     D_DECLARE_PUBLIC(DFMRightDetailView)
 };
 
-DFMRightDetailViewPrivate::DFMRightDetailViewPrivate(DFMRightDetailView *qq, const DUrl& url)
-    :m_url(url)
-    ,q_ptr(qq)
+DFMRightDetailViewPrivate::DFMRightDetailViewPrivate(DFMRightDetailView *qq, const DUrl &url)
+    : m_url(url), q_ptr(qq)
 {
-
 }
 
 DFMRightDetailViewPrivate::~DFMRightDetailViewPrivate()
 {
-
 }
 
 DFMRightDetailView::DFMRightDetailView(const DUrl &fileUrl, QWidget *parent)
-    :QFrame(parent)
-    , d_private(new DFMRightDetailViewPrivate(this, fileUrl))
+    : QFrame(parent), d_private(new DFMRightDetailViewPrivate(this, fileUrl))
 {
     AC_SET_OBJECT_NAME(this, AC_DM_RIGHT_VIEW_DETAIL_VIEW);
     AC_SET_ACCESSIBLE_NAME(this, AC_DM_RIGHT_VIEW_DETAIL_VIEW);
@@ -83,10 +80,9 @@ DFMRightDetailView::DFMRightDetailView(const DUrl &fileUrl, QWidget *parent)
 
 DFMRightDetailView::~DFMRightDetailView()
 {
-
 }
 
-static QFrame* createLine()
+static QFrame *createLine()
 {
     DHorizontalLine *line = new DHorizontalLine();
     AC_SET_OBJECT_NAME(line, AC_DM_RIGHT_VIEW_MAIN_FRAME_LINE);
@@ -181,7 +177,7 @@ void DFMRightDetailView::setUrl(const DUrl &url)
             iconName = systemPathManager->getSystemPathIconName("Recent");
         } else if (url == DUrl(TRASH_ROOT)) {
             iconName = systemPathManager->getSystemPathIconName("Trash");
-        } else if (url.isNetWorkFile() || url.isSMBFile() ) {
+        } else if (url.isNetWorkFile() || url.isSMBFile()) {
             iconName = systemPathManager->getSystemPathIconName("Network");
         } else if (url.isUserShareFile()) {
             iconName = systemPathManager->getSystemPathIconName("UserShare");
@@ -192,7 +188,7 @@ void DFMRightDetailView::setUrl(const DUrl &url)
         QList<QSize> iconSizeList = fileIcon.availableSizes();
         //缩放处理的图标,系统图标都是成队出现
         if (iconSizeList.size() == 1
-                && iconSizeList.first().width() != iconSizeList.first().height()) {
+            && iconSizeList.first().width() != iconSizeList.first().height()) {
             QSize avaliSize = iconSizeList.first();
             QSize targetSize = avaliSize.scaled(d->iconLabel->height(),
                                                 d->iconLabel->height(),
@@ -201,12 +197,12 @@ void DFMRightDetailView::setUrl(const DUrl &url)
             //自适应layout居中
             d->iconLabel->setFixedWidth(targetSize.width());
         } else {
-            d->iconLabel->setFixedSize(d->iconLabel->height(),d->iconLabel->height());
+            d->iconLabel->setFixedSize(d->iconLabel->height(), d->iconLabel->height());
             d->iconLabel->setPixmap(fileIcon.pixmap(d->iconLabel->size()));
         }
-
     }
-    if (d->baseInfoWidget){
+
+    if (d->baseInfoWidget) {
         d->mainLayout->removeWidget(d->baseInfoWidget);
         d->baseInfoWidget->setHidden(true);
         d->baseInfoWidget->deleteLater();
