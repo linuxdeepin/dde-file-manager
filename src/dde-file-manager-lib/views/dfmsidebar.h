@@ -46,6 +46,7 @@ public:
         Network,
         Tag,
         Other,
+        Plugin,//NOTE [ren] Add new group
         Unknow
     };
 
@@ -100,6 +101,8 @@ private:
     void initBookmarkConnection();
     void initDeviceConnection();
     void initTagsConnection();
+    //NOTE [XIAO] 从Plugin中导入SideBarItem
+    void initItemFromPlugin();
     void applySidebarColor();
     void updateSeparatorVisibleState();
     void addGroupItems(GroupName groupType);
@@ -124,7 +127,7 @@ private:
     QMutex m_currentUrlMutex;
 
 #ifdef ENABLE_ASYNCINIT
-    QPair<bool,QFuture<void>> m_initDevThread; //初始化initDeviceConnection线程，first为是否强制结束线程
+    QPair<bool, QFuture<void>> m_initDevThread; //初始化initDeviceConnection线程，first为是否强制结束线程
 #endif
 };
 

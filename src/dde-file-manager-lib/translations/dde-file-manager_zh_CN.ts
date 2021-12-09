@@ -250,70 +250,70 @@
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="276"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="300"/>
         <source>Computer</source>
         <translation>计算机</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="285"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="309"/>
         <source>Basic Info</source>
         <translation>基本信息</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="102"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="296"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="103"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="320"/>
         <source>Computer Name</source>
         <translation>计算机名</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="104"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="297"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="105"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="321"/>
         <source>Edition</source>
         <translation>版本</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="106"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="298"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="308"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="107"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="322"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="332"/>
         <source>Version</source>
         <translation>版本号</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="108"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="299"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="109"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="323"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="110"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="300"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="343"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="111"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="324"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="367"/>
         <source>Processor</source>
         <translation>处理器</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="113"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="301"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="340"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="114"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="325"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="364"/>
         <source>Memory</source>
         <translation>内存</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="138"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="193"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="440"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="476"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="139"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="200"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="464"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="504"/>
         <source>Bit</source>
         <translation>位</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="215"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="486"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="222"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="514"/>
         <source>Available</source>
         <translation>可用</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="362"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="386"/>
         <source>Obtaining...</source>
         <translation>正在获取中...</translation>
     </message>
@@ -1655,44 +1655,28 @@
         <translation>抱歉，您没有权限操作以下%1个文件/文件夹</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1303"/>
-        <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
-        <translation>2. 关闭快速启动和休眠，然后重启系统</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1304"/>
-        <source>3. Reboot and enter %1</source>
-        <translation>3. 重启时选择%1</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1321"/>
-        <source>Reboot</source>
-        <comment>button</comment>
-        <translation>重 启</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1445"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1368"/>
         <source>Unable to access %1</source>
         <translation>访问%1失败</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="723"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1528"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1451"/>
         <source>Sending files now, please try later</source>
         <translation>当前已有发送中的文件，请稍后再试</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1577"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1500"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>需要格式化磁盘才能访问此设备，是否继续？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1592"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1515"/>
         <source>Scanning the device, stop it?</source>
         <translation>正在扫描当前设备，是否终止扫描？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1649"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1572"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>共享文件夹不能和当前用户名重名</translation>
     </message>
@@ -1740,7 +1724,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1170"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1184"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1250"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1651"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1574"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>确 定</translation>
@@ -1756,9 +1740,8 @@
         <location filename="../dialogs/dialogmanager.cpp" line="743"/>
         <location filename="../dialogs/dialogmanager.cpp" line="907"/>
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1320"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1575"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1590"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1498"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1513"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>
@@ -1789,8 +1772,9 @@
         <location filename="../dialogs/dialogmanager.cpp" line="511"/>
         <location filename="../dialogs/dialogmanager.cpp" line="624"/>
         <location filename="../dialogs/dialogmanager.cpp" line="938"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1344"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1448"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1267"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1371"/>
+        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>确 定</translation>
@@ -1857,33 +1841,13 @@
         <translation>原文件不存在，%1个文件恢复失败</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1288"/>
-        <source>Mount partition%1 to be read only</source>
-        <translation>挂载分区%1，挂载为只读模式</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1292"/>
-        <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation>Windows系统电源模块开启了关机快速启动选项时， 会导致其它系统无法正常读写Windows磁盘</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1296"/>
-        <source>Please restore by the following steps to normally access Windows disk</source>
-        <translation>请按照以下方式进行修复即可正常访问Windows磁盘</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1302"/>
-        <source>1. Reboot to enter Windows</source>
-        <translation>1.重启电脑进入Windows系统</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1576"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1499"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>格式化</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1591"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1514"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>终 止</translation>
@@ -2795,75 +2759,75 @@
 <context>
     <name>PathManager</name>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="58"/>
+        <location filename="../controllers/pathmanager.cpp" line="59"/>
         <source>Home</source>
         <translation>主目录</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="59"/>
+        <location filename="../controllers/pathmanager.cpp" line="60"/>
         <source>Desktop</source>
         <translation>桌面</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="60"/>
+        <location filename="../controllers/pathmanager.cpp" line="61"/>
         <source>Videos</source>
         <translation>视频</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="61"/>
+        <location filename="../controllers/pathmanager.cpp" line="62"/>
         <source>Music</source>
         <translation>音乐</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="62"/>
+        <location filename="../controllers/pathmanager.cpp" line="63"/>
         <source>Pictures</source>
         <translation>图片</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="63"/>
+        <location filename="../controllers/pathmanager.cpp" line="64"/>
         <source>Documents</source>
         <translation>文档</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="64"/>
+        <location filename="../controllers/pathmanager.cpp" line="65"/>
         <source>Downloads</source>
         <translation>下载</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="65"/>
+        <location filename="../controllers/pathmanager.cpp" line="66"/>
         <location filename="../models/trashfileinfo.cpp" line="85"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="66"/>
+        <location filename="../controllers/pathmanager.cpp" line="67"/>
         <location filename="../models/dfmrootfileinfo.cpp" line="661"/>
         <location filename="../models/dfmrootfileinfo.cpp" line="689"/>
         <source>System Disk</source>
         <translation>系统盘</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="67"/>
+        <location filename="../controllers/pathmanager.cpp" line="68"/>
         <source>Computers in LAN</source>
         <translation>网络邻居</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="68"/>
+        <location filename="../controllers/pathmanager.cpp" line="69"/>
         <source>My Shares</source>
         <translation>我的共享</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="69"/>
+        <location filename="../controllers/pathmanager.cpp" line="70"/>
         <source>Computer</source>
         <translation>计算机</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="70"/>
+        <location filename="../controllers/pathmanager.cpp" line="71"/>
         <source>Recent</source>
         <translation>最近使用</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="71"/>
+        <location filename="../controllers/pathmanager.cpp" line="72"/>
         <source>File Vault</source>
         <translation>保险箱</translation>
     </message>
@@ -3108,7 +3072,7 @@
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="68"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="612"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="613"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="58"/>
         <source>Open in new window</source>
         <translation>在新窗口打开</translation>
@@ -3119,7 +3083,7 @@
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="72"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="616"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="617"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="62"/>
         <source>Open in new tab</source>
         <translation>在新标签中打开</translation>
@@ -3794,7 +3758,7 @@
         <translation>提示：根据选择文件的顺序先后排序</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1616"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1539"/>
         <source>Rename %1 Files</source>
         <translation>给%1个文件重命名</translation>
     </message>
@@ -3886,12 +3850,12 @@
         <translation>擦除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="604"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="605"/>
         <source>Copy path</source>
         <translation>复制路径</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="622"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="623"/>
         <source>Edit address</source>
         <translation>编辑地址</translation>
     </message>

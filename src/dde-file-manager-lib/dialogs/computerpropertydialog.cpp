@@ -43,6 +43,7 @@
 #include <QPainter>
 #include <DGraphicsClipEffect>
 #include <QWindow>
+#include <QImageReader>
 
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
@@ -190,7 +191,7 @@ void GetInfoWork::run()
             if (m_datas.contains(keyProcessor) && processor.isEmpty()) {
                 // 如果没有用过dbus获取CPU信息，则通过dtk获取
                 processor = QString("%1 x %2").arg(DSysInfo::cpuModelName())
-                                              .arg(QThread::idealThreadCount());
+                            .arg(QThread::idealThreadCount());
             }
 
         }
@@ -258,8 +259,7 @@ void ComputerPropertyDialog::initUI()
 {
     QLabel *iconLabel = new QLabel(this);
 
-    if(DFMGlobal::isWayLand())
-    {
+    if (DFMGlobal::isWayLand()) {
         //设置对话框窗口最大最小化按钮隐藏
         this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
         this->setAttribute(Qt::WA_NativeWindow);
@@ -272,11 +272,29 @@ void ComputerPropertyDialog::initUI()
 
     QString distributerLogoPath = DSysInfo::distributionOrgLogo();
     QIcon logoIcon;
-    if (!distributerLogoPath.isEmpty() && QFile::exists(distributerLogoPath)) {
-        logoIcon = QIcon(distributerLogoPath);
-    } else {
-        logoIcon = QIcon::fromTheme("dfm_deepin_logo");
+    if (distributerLogoPath.isEmpty() || !QFile::exists(distributerLogoPath)) {
+        distributerLogoPath = QStringLiteral("dfm_deepin_logo");
     }
+    qreal ratio = 1.0;
+
+    const qreal devicePixelRatio = devicePixelRatioF();
+
+    QPixmap pixmap;
+
+    if (!qFuzzyCompare(ratio, devicePixelRatio)) {
+        QImageReader reader;
+        reader.setFileName(qt_findAtNxFile(distributerLogoPath, devicePixelRatio, &ratio));
+        if (reader.canRead()) {
+            reader.setScaledSize(reader.size() * (devicePixelRatio / ratio));
+            pixmap = QPixmap::fromImage(reader.read());
+            pixmap.setDevicePixelRatio(devicePixelRatio);
+        }
+    } else {
+        pixmap.load(distributerLogoPath);
+    }
+    iconLabel->setFixedSize(220, 34);
+    iconLabel->setScaledContents(true);
+    iconLabel->setPixmap(pixmap);
 
     iconLabel->setPixmap(logoIcon.pixmap(152, 39));
     QLabel *nameLabel = new QLabel(tr("Computer"), this);
@@ -479,7 +497,7 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
         // 如果dbus中没有获得，则从dtk获取cpu信息
         if (processor.isEmpty())
             processor = QString("%1 x %2").arg(DSysInfo::cpuModelName())
-                                          .arg(QThread::idealThreadCount());
+                        .arg(QThread::idealThreadCount());
     }
     // 通过qt获得
     if (systemType.isEmpty())

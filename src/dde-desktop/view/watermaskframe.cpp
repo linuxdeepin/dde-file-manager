@@ -41,33 +41,33 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent) :
     QFrame(parent),
     m_configFile(fileName)
 {
-    AC_SET_OBJECT_NAME( this, AC_WATER_MASK_FRAME);
-    AC_SET_ACCESSIBLE_NAME( this, AC_WATER_MASK_FRAME);
+    AC_SET_OBJECT_NAME(this, AC_WATER_MASK_FRAME);
+    AC_SET_ACCESSIBLE_NAME(this, AC_WATER_MASK_FRAME);
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     qInfo() << "create ComDeepinLicenseInterface...";
     m_licenseInterface.reset(new ComDeepinLicenseInterface(
-            "com.deepin.license",
-            "/com/deepin/license/Info",
-            QDBusConnection::systemBus()));
+                                 "com.deepin.license",
+                                 "/com/deepin/license/Info",
+                                 QDBusConnection::systemBus()));
     QObject::connect(m_licenseInterface.get(), &ComDeepinLicenseInterface::LicenseStateChange,
                      this, &WaterMaskFrame::updateAuthorizationState);
 
     qInfo() << "create /com/deepin/license/Info org.freedesktop.DBus.Properties...";
     //使用异步调用访问接口的方式读取授权状态
     m_licenseProp.reset(new QDBusInterface("com.deepin.license",
-                                             "/com/deepin/license/Info",
-                                             "org.freedesktop.DBus.Properties",
-                                             QDBusConnection::systemBus()));
+                                           "/com/deepin/license/Info",
+                                           "org.freedesktop.DBus.Properties",
+                                           QDBusConnection::systemBus()));
     qInfo() << "interface inited.";
 
     m_logoLabel = new QLabel(this);
     m_textLabel = new QLabel(this);
 
-    AC_SET_OBJECT_NAME( m_logoLabel, AC_WATER_MASK_LOGO_LABEL);
-    AC_SET_ACCESSIBLE_NAME( m_logoLabel, AC_WATER_MASK_LOGO_LABEL);
-    AC_SET_OBJECT_NAME( m_textLabel, AC_WATER_MASK_TEXT);
-    AC_SET_ACCESSIBLE_NAME( m_textLabel, AC_WATER_MASK_TEXT);
+    AC_SET_OBJECT_NAME(m_logoLabel, AC_WATER_MASK_LOGO_LABEL);
+    AC_SET_ACCESSIBLE_NAME(m_logoLabel, AC_WATER_MASK_LOGO_LABEL);
+    AC_SET_OBJECT_NAME(m_textLabel, AC_WATER_MASK_TEXT);
+    AC_SET_ACCESSIBLE_NAME(m_textLabel, AC_WATER_MASK_TEXT);
 
     bool isConfigFileExist = checkConfigFile(m_configFile);
     if (isConfigFileExist) {
@@ -79,12 +79,12 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent) :
 
 WaterMaskFrame::~WaterMaskFrame()
 {
-    if(m_logoLabel){
+    if (m_logoLabel) {
         m_logoLabel->deleteLater();
         m_logoLabel = nullptr;
     }
 
-    if(m_textLabel){
+    if (m_textLabel) {
         m_textLabel->deleteLater();
         m_textLabel = nullptr;
     }
@@ -127,16 +127,15 @@ void WaterMaskFrame::initUI()
         m_isMaskAlwaysOn =  m_configs.value("isMaskAlwaysOn").toBool();
     }
 
-    bool useJosn = Config::instance()->getConfig(Config::groupGeneral,Config::keyWaterMask, true).toBool();
+    bool useJosn = Config::instance()->getConfig(Config::groupGeneral, Config::keyWaterMask, true).toBool();
     QString maskLogoUri;
-    if(useJosn){
+    if (useJosn) {
         if (m_configs.contains("maskLogoUri")) {
             maskLogoUri = m_configs.value("maskLogoUri").toString();
         } else {
             maskLogoUri.clear();
         }
-    }
-    else {
+    } else {
         maskLogoUri = DSysInfo::distributionOrgLogo(DSysInfo::OrgType::Distribution, DSysInfo::LogoType::Transparent);
     }
 
@@ -278,9 +277,9 @@ void WaterMaskFrame::initUI()
     if (isNeedState()) {
         qInfo() << "get active state from com.deepin.license.Info";
         QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(
-                    m_licenseProp->asyncCall(QStringLiteral("Get"),
-                                             QString("com.deepin.license.Info"),
-                                             QString("AuthorizationState")), this);
+            m_licenseProp->asyncCall(QStringLiteral("Get"),
+                                     QString("com.deepin.license.Info"),
+                                     QString("AuthorizationState")), this);
 
         connect(watcher, &QDBusPendingCallWatcher::finished, this, &WaterMaskFrame::onActiveStateFinished, Qt::QueuedConnection);
         qInfo() << "asyncCall Get com.deepin.license.Info AuthorizationState";
@@ -342,18 +341,28 @@ void WaterMaskFrame::initUI()
 bool WaterMaskFrame::isNeedState()
 {
     DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-    return (DSysInfo::DeepinType::DeepinProfessional == deepinType
-            || DSysInfo::DeepinType::DeepinPersonal == deepinType
-            || DSysInfo::DeepinType::DeepinServer == deepinType );
+    DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
+    qInfo() << "deepinType" << deepinType << "uosEditionType" << uosEdition;
+
+    bool ret = (DSysInfo::DeepinType::DeepinProfessional == deepinType
+                || DSysInfo::DeepinType::DeepinPersonal == deepinType
+                || DSysInfo::DeepinType::DeepinServer == deepinType);
+
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 4, 7, 0))
+    // 教育版不需要水印
+    ret = ret || DSysInfo::UosEdition::UosEducation == uosEdition;
+    qInfo() << "check uos Edition" << ret;
+#endif
+
+    return ret;
 }
 
 bool WaterMaskFrame::parseJson(QString key)
 {
-    if(key.isNull() || key.isEmpty() || (!m_configs.contains(key))){
-        qWarning() << key <<"WaterMask load Config fail";
+    if (key.isNull() || key.isEmpty() || (!m_configs.contains(key))) {
+        qWarning() << key << "WaterMask load Config fail";
         return false;
-    }
-    else {
+    } else {
         m_configs = m_configs.value(key).toObject();
         return true;
     }
@@ -403,18 +412,18 @@ void WaterMaskFrame::onActiveStateFinished()
         m_textLabel->setObjectName(tr("Not authorized"));
         AC_SET_ACCESSIBLE_NAME(m_textLabel, AC_WATER_TEXT_LABEL_NO_AUTHORIZED);
     }
-        break;
+    break;
     case Authorized:
         //2020-07-06 需求变更，已授权不显示
         //m_textLabel->setText(tr("authorized"));
         m_textLabel->setText("");
         break;
-    case TrialAuthorized:{
+    case TrialAuthorized: {
         m_textLabel->setText(tr("In trial period"));
         m_textLabel->setObjectName(tr("In trial period"));
         AC_SET_ACCESSIBLE_NAME(m_textLabel, AC_WATER_TEXT_LABEL_IN_TRIAL);
     }
-        break;
+    break;
     default:
         qWarning() << "unkown active state:" << stateType;
     }

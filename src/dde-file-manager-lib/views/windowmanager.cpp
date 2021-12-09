@@ -99,13 +99,13 @@ void WindowManager::initConnect()
 {
     connect(fileSignalManager, &FileSignalManager::requestOpenNewWindowByUrl, this, &WindowManager::showNewWindow);
     connect(fileSignalManager, &FileSignalManager::aboutToCloseLastActivedWindow, this, &WindowManager::onLastActivedWindowClosed);
-    connect(qApp, &QApplication::aboutToQuit, this, [=](){
+    connect(qApp, &QApplication::aboutToQuit, this, [ = ]() {
         fileSignalManager->requestCloseListen();
         DFMGlobal::setAppQuiting();
         qInfo() << "app quiting !";
     });
     connect(fileSignalManager, &FileSignalManager::requestShowNewWindows, this, &WindowManager::onShowNewWindow,
-                Qt::QueuedConnection);
+            Qt::QueuedConnection);
     connect(DRootFileManager::instance(), &DRootFileManager::queryRootFileFinsh, this, &WindowManager::onShowNewWindow,
             Qt::QueuedConnection);
     connect(fileSignalManager, &FileSignalManager::requestRemoveSmbUrl, this, &WindowManager::onRemoveNeedShowSmbUrl);
@@ -180,7 +180,7 @@ void WindowManager::clearWindowActions()
 {
     for (auto win : m_windows.keys()) {
         QWidget *window = const_cast<QWidget *>(win);
-        DFileManagerWindow *fmWin = qobject_cast<DFileManagerWindow*>(window);
+        DFileManagerWindow *fmWin = qobject_cast<DFileManagerWindow *>(window);
         if (fmWin)
             fmWin->clearActions();
     }
@@ -195,7 +195,7 @@ void WindowManager::showNewWindow(const DUrl &url, const bool &isNewWindow)
     bool tempNewWindow = isNewWindow;
     if (url.scheme() == SMB_SCHEME && !url.host().isEmpty() && !url.path().isEmpty())
         tempNewWindow = true;
-    if (!tempNewWindow){
+    if (!tempNewWindow) {
         for (int i = 0; i < m_windows.count(); i++) {
             QWidget *window = const_cast<QWidget *>(m_windows.keys().at(i));
             DUrl currentUrl = static_cast<DFileManagerWindow *>(window)->currentUrl();
@@ -212,20 +212,20 @@ void WindowManager::showNewWindow(const DUrl &url, const bool &isNewWindow)
     }
     // 处理同一个smb在挂载时，第二个窗口不要启动，等待这个一个smb挂载结束了在启动窗口
     if (url.scheme() == SMB_SCHEME && !url.host().isEmpty() && !url.path().isEmpty()) {
-       DUrl smbUrl(url);
-       QString smbShareName = url.path().mid(1);
-       smbShareName = smbShareName.mid(0,smbShareName.indexOf("/"));
-       smbUrl.setPath("/"+smbShareName);
-       if (!DRootFileManager::instance()->isRootFileInited() ||
-               !DRootFileManager::instance()->isRootFileContainSmb(url)) {
-           QMutexLocker lk(&m_smbPointUrlMutex);
-           if (m_smbPointUrl.keys().contains(smbUrl)) {
-               m_smbPointUrl.insert(smbUrl, url);
-               return;
-           } else {
-               m_smbPointUrl.insert(smbUrl, DUrl());
-           }
-       }
+        DUrl smbUrl(url);
+        QString smbShareName = url.path().mid(1);
+        smbShareName = smbShareName.mid(0, smbShareName.indexOf("/"));
+        smbUrl.setPath("/" + smbShareName);
+        if (!DRootFileManager::instance()->isRootFileInited() ||
+                !DRootFileManager::instance()->isRootFileContainSmb(url)) {
+            QMutexLocker lk(&m_smbPointUrlMutex);
+            if (m_smbPointUrl.keys().contains(smbUrl)) {
+                m_smbPointUrl.insert(smbUrl, url);
+                return;
+            } else {
+                m_smbPointUrl.insert(smbUrl, DUrl());
+            }
+        }
     }
     QX11Info::setAppTime(QX11Info::appUserTime());
     DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewWindow) : url);
@@ -354,13 +354,19 @@ void WindowManager::onWindowClosed()
         // fix bug 59239 drag事件的接受者的drop事件和发起drag事件的发起者的mousemove事件处理完成才能
         // 析构本窗口，检查当前窗口是否可以析构
         QPointer<DFileManagerWindow> pwindow = window;
-        QTimer::singleShot(1000, this, [=](){
+        QTimer::singleShot(1000, this, [ = ]() {
             if (pwindow)
                 pwindow->deleteLater();
         });
         qInfo() << "window deletelater !";
     }
     m_windows.remove(static_cast<const QWidget *>(sender()));
+
+    if (window->currentUrl().scheme() == PLUGIN_SCHEME) {
+        qInfo() << "delete plugin view:" << window->currentUrl().host();
+        // NOTE [REN] 防止插件窗口关闭后，后台将信号发送到该窗口导致崩溃
+        window->getFileView()->deleteLater();
+    }
 }
 
 void WindowManager::onLastActivedWindowClosed(quint64 winId)

@@ -46,27 +46,33 @@ public:
     static DFMSideBarManager *instance();
 
     template <class T>
-    void dRegisterSideBarInterface(const QString &identifier) {
+    void dRegisterSideBarInterface(const QString &identifier)
+    {
         if (isRegisted<T>(identifier))
             return;
 
-        insertToCreatorHash(KeyType(identifier), SideBarInterfaceCreaterType(typeid(T).name(), [=] () {
-            return static_cast<DFMSideBarItemInterface*>(new T());
+        insertToCreatorHash(KeyType(identifier), SideBarInterfaceCreaterType(typeid(T).name(), [ = ]() {
+            return static_cast<DFMSideBarItemInterface *>(new T());
         }));
     }
 
     bool isRegisted(const QString &scheme, const std::type_info &info) const;
 
     template <class T>
-    bool isRegisted(const QString &scheme) const {
+    bool isRegisted(const QString &scheme) const
+    {
         return isRegisted(scheme, typeid(T));
     }
 
-    DFMSideBarItemInterface * createByIdentifier(const QString& identifier);
+    DFMSideBarItemInterface *createByIdentifier(const QString &identifier);
 
 private:
     explicit DFMSideBarManager(QObject *parent = nullptr);
     ~DFMSideBarManager();
+
+
+    //NOTE [XIAO] 从PLGUIN中加载SideBarItemHandler
+    void initSideBarItemHandlerFromPlugin();
 
     void insertToCreatorHash(const KeyType &type, const SideBarInterfaceCreaterType &creator);
 

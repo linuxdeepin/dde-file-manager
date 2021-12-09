@@ -53,6 +53,7 @@
 #include "dfmsettings.h"
 #include "bluetooth/bluetoothmanager.h"
 #include "drootfilemanager.h"
+#include "plugins/schemepluginmanager.h"
 
 #include <DArrowRectangle>
 
@@ -344,6 +345,12 @@ void DFMGlobal::autoLoadDefaultPlugins()
 void DFMGlobal::initPluginManager()
 {
     refreshPlugins();
+}
+
+//NOTE [XIAO] DFMGlobal::initSchemePluginManager
+void DFMGlobal::initSchemePluginManager()
+{
+    SchemePluginManager::instance()->loadSchemePlugin();
 }
 
 void DFMGlobal::initSearchHistoryManager()
@@ -863,7 +870,7 @@ void DFMGlobal::setToolTip(QLabel *label, bool bAlwaysShow)
 
 void DFMGlobal::showAlertMessage(QPoint globalPoint, const QColor &backgroundColor, const QString &text, int duration)
 {
-    static DArrowRectangle* tooltip = nullptr;
+    static DArrowRectangle *tooltip = nullptr;
     if (!tooltip) {
         tooltip = new DArrowRectangle(DArrowRectangle::ArrowTop, nullptr);
         tooltip->setObjectName("AlertTooltip");
@@ -875,7 +882,7 @@ void DFMGlobal::showAlertMessage(QPoint globalPoint, const QColor &backgroundCol
         tooltip->setArrowX(15);
         tooltip->setArrowHeight(5);
 
-        QTimer::singleShot(duration, DFMGlobal::instance(), [=] {
+        QTimer::singleShot(duration, DFMGlobal::instance(), [ = ] {
             delete tooltip;
             tooltip = nullptr;
         });
@@ -883,7 +890,7 @@ void DFMGlobal::showAlertMessage(QPoint globalPoint, const QColor &backgroundCol
         label->setText(text);
         label->adjustSize();
 
-        tooltip->show(static_cast<int>(globalPoint.x()),static_cast<int>(globalPoint.y()));
+        tooltip->show(static_cast<int>(globalPoint.x()), static_cast<int>(globalPoint.y()));
     }
 }
 
@@ -1286,7 +1293,7 @@ QList<QUrl> DFMGlobal::getUrlsByX11()
     //使用x11创建一个窗口去阻塞获取URl
     Display *display = XOpenDisplay(nullptr);
     unsigned long color = BlackPixel(display, DefaultScreen(display));
-    Window window = XCreateSimpleWindow(display, DefaultRootWindow(display), 0,0, 1,1, 0, color, color);
+    Window window = XCreateSimpleWindow(display, DefaultRootWindow(display), 0, 0, 1, 1, 0, color, color);
 
     char *result = nullptr;
     unsigned long ressize = 0, restail = 0;
@@ -1301,17 +1308,17 @@ QList<QUrl> DFMGlobal::getUrlsByX11()
     QString results;
     QAtomicInteger<bool> isCanceled = false;
 
-    XSelectInput (display, window, PropertyChangeMask);
+    XSelectInput(display, window, PropertyChangeMask);
     XConvertSelection(display, bufid, fmtid, propid, window, CurrentTime);
     do {
-      XNextEvent(display, &event);
+        XNextEvent(display, &event);
     } while (event.type != SelectionNotify || event.xselection.selection != bufid);
     if (event.xselection.property) {
-        XGetWindowProperty(display, window, propid, 0, LONG_MAX/4, True, AnyPropertyType,
-                           &fmtid, &resbits, &ressize, &restail, (unsigned char**)&result);
+        XGetWindowProperty(display, window, propid, 0, LONG_MAX / 4, True, AnyPropertyType,
+                           &fmtid, &resbits, &ressize, &restail, (unsigned char **)&result);
         if (fmtid != incrid) {
-           qInfo() << QString(result);
-           urls += QUrl::fromStringList(QString(result).split("\n"));
+            qInfo() << QString(result);
+            urls += QUrl::fromStringList(QString(result).split("\n"));
         }
 
         XFree(result);
@@ -1327,7 +1334,7 @@ QList<QUrl> DFMGlobal::getUrlsByX11()
                 } while (event.type != PropertyNotify || event.xproperty.atom != propid || event.xproperty.state != PropertyNewValue);
                 if (isCanceled)
                     break;
-                XGetWindowProperty(display, window, propid, 0, LONG_MAX/4, True, AnyPropertyType, &fmtid, &resbits, &ressize, &restail, (unsigned char**)&result);
+                XGetWindowProperty(display, window, propid, 0, LONG_MAX / 4, True, AnyPropertyType, &fmtid, &resbits, &ressize, &restail, (unsigned char **)&result);
                 if (QString(result) != "/")
                     results += QString(result);
                 XFree(result);
@@ -1350,7 +1357,7 @@ QList<QUrl> DFMGlobal::getUrlsByX11()
             continue;
 
         QString path = url.path();
-        path = path.replace(QRegExp("/*/"),"/");
+        path = path.replace(QRegExp("/*/"), "/");
         if (path.isEmpty() || path == "/")
             continue;
         QUrl temp;
@@ -1393,7 +1400,7 @@ QList<QUrl> DFMGlobal::getUrlsByQt()
             continue;
 
         QString path = url.path();
-        path = path.replace(QRegExp("/*/"),"/");
+        path = path.replace(QRegExp("/*/"), "/");
         if (path.isEmpty() || path == "/")
             continue;
         QUrl temp;

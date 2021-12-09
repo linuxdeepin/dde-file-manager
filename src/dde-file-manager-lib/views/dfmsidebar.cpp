@@ -62,6 +62,8 @@
 
 #include <algorithm>
 
+#include "plugins/schemepluginmanager.h"
+
 #define SIDEBAR_ITEMORDER_KEY "SideBar/ItemOrder"
 
 DFM_BEGIN_NAMESPACE
@@ -89,6 +91,8 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initRecentItem();
 
     //   DFMSideBarManager::instance();
+    //NOTE [XIAO] 从Plugin中导入SideBarItem
+    initItemFromPlugin();
 }
 
 DFMSideBar::~DFMSideBar()
@@ -366,7 +370,7 @@ void DFMSideBar::rootFileResult()
 
     for (const DAbstractFileInfoPointer &fi : filist) {
 #ifdef ENABLE_ASYNCINIT
-        if (m_initDevThread.first){
+        if (m_initDevThread.first) {
             qDebug() << "thrad cancled" << this;
             return;
         }
@@ -490,7 +494,8 @@ void DFMSideBar::initModelData()
     qRegisterMetaTypeStreamOperators<DUrl>("DUrl");
 
     static QList<DFMSideBar::GroupName> groups = {
-        GroupName::Common, GroupName::Device, GroupName::Bookmark, GroupName::Network, GroupName::Tag
+        //NOTE [REN] 添加Plugin类型，实现插件组的分割线
+        GroupName::Common, GroupName::Device, GroupName::Bookmark, GroupName::Network, GroupName::Tag, GroupName::Plugin
     };
 
     //bool hasSeparator = false;
@@ -560,7 +565,7 @@ void DFMSideBar::initConnection()
     initBookmarkConnection();
 #ifdef ENABLE_ASYNCINIT
     m_initDevThread.first = false;
-    m_initDevThread.second = QtConcurrent::run([this](){initDeviceConnection();});
+    m_initDevThread.second = QtConcurrent::run([this]() {initDeviceConnection();});
 #else
     initDeviceConnection();
 #endif
@@ -668,11 +673,11 @@ void DFMSideBar::initBookmarkConnection()
 void DFMSideBar::initDeviceConnection()
 {
     // 获取遍历结果进行显示
-    connect(DRootFileManager::instance(),&DRootFileManager::queryRootFileFinsh,this,[this](){
+    connect(DRootFileManager::instance(), &DRootFileManager::queryRootFileFinsh, this, [this]() {
         rootFileResult();
-    },Qt::QueuedConnection);
+    }, Qt::QueuedConnection);
 
-    connect(DRootFileManager::instance(),&DRootFileManager::serviceHideSystemPartition,this,[this](){
+    connect(DRootFileManager::instance(), &DRootFileManager::serviceHideSystemPartition, this, [this]() {
         QList<DUrl> removelist;
         for (auto itemurl : devitems) {
             if (!DRootFileManager::instance()->isRootFileContain(itemurl)) {
@@ -684,17 +689,17 @@ void DFMSideBar::initDeviceConnection()
             removeItem(removeurl, groupName(Device));
         }
         rootFileResult();
-    },Qt::QueuedConnection);
+    }, Qt::QueuedConnection);
 
     // 已经初始化了就直接拿结果
-   if (DRootFileManager::instance()->isRootFileInited()) {
+    if (DRootFileManager::instance()->isRootFileInited()) {
         rootFileResult();
     }
     // 开启遍历线程,刷新一次root，修复分区问题
     DRootFileManager::instance()->startQuryRootFile();
 
     DAbstractFileWatcher *devicesWatcher = rootFileManager->rootFileWather();
-    connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
+    connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl & url) {
         auto fi = fileService->createFileInfo(nullptr, url);
         if (!fi->exists()) {
             return;
@@ -818,6 +823,20 @@ void DFMSideBar::initTagsConnection()
     //        DFMSideBarItem *item = group->findItem(url);
     //        item->setIconFromThemeConfig("BookmarkItem." + TagManager::instance()->getTagColorName(url.tagName()));
     //    });
+}
+
+//NOTE [XIAO] 从Plugin中导入SideBarItem
+void DFMSideBar::initItemFromPlugin()
+{
+    qWarning() << "[PLUGIN]" << "try to load plugin of sidebar item";
+    auto plugins = SchemePluginManager::instance()->schemePlugins();
+    for (auto plugin : plugins) {
+        qWarning() << "[PLUGIN]" << "load sidebar item from plugin:" << plugin.first;
+        DFMSideBarItem *item = plugin.second->createSideBarItem();
+        // NOTE [XIAO] 插件中的GroupName与文管版本中一致。
+        //this->addItem(item, item->groupName());
+        this->appendItem(item, item->groupName());
+    }
 }
 
 void DFMSideBar::applySidebarColor()

@@ -50,6 +50,7 @@
 #include "accessible/accessiblelist.h"
 #include "dfmapplication.h"
 #include "views/dfilemanagerwindow.h"
+#include "plugins/schemepluginmanager.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -134,7 +135,7 @@ DWIDGET_USE_NAMESPACE
 int main(int argc, char *argv[])
 {
     //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
-    if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")){
+    if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")) {
         qputenv("XDG_CURRENT_DESKTOP", "Deepin");
     }
 
@@ -184,6 +185,9 @@ int main(int argc, char *argv[])
                                                 "trash, compression/decompression, file property "
                                                 "and other useful functions."));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+
+    //NOTE [XIAO] 加载插件
+    SchemePluginManager::instance()->loadSchemePlugin();
 
     // 集成测试标签
 #ifdef ENABLE_ACCESSIBILITY
