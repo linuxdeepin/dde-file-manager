@@ -37,20 +37,16 @@
 #include <QProcess>
 
 OperatorCenter::OperatorCenter(QObject *parent)
-    : QObject(parent)
-    , m_strCryfsPassword("")
-    , m_strUserKey("")
-    , m_standOutput("")
+    : QObject(parent), m_strCryfsPassword(""), m_strUserKey(""), m_standOutput("")
 {
-
 }
 
 QString OperatorCenter::makeVaultLocalPath(const QString &before, const QString &behind)
 {
     return VAULT_BASE_PATH
-//            + QDir::separator() + CONFIG_DIR_NAME
-           + (before.isEmpty() ? QString("") : QDir::separator()) + before
-           + (behind.isEmpty() ? QString("") : QDir::separator()) + behind;
+            //            + QDir::separator() + CONFIG_DIR_NAME
+            + (before.isEmpty() ? QString("") : QDir::separator()) + before
+            + (behind.isEmpty() ? QString("") : QDir::separator()) + behind;
 }
 
 bool OperatorCenter::runCmd(const QString &cmd)
@@ -97,7 +93,7 @@ bool OperatorCenter::executeProcess(const QString &cmd)
     return runCmd(newCmd);
 }
 
-bool OperatorCenter::secondSaveSaltAndCiphertext(const QString &ciphertext, const QString &salt)
+bool OperatorCenter::secondSaveSaltAndCiphertext(const QString &ciphertext, const QString &salt, const char *vaultVersion)
 {
     // 密文
     QString strCiphertext = pbkdf2::pbkdf2EncrypyPassword(ciphertext, salt, ITERATION_TWO, PASSWORD_CIPHER_LENGTH);
@@ -108,7 +104,7 @@ bool OperatorCenter::secondSaveSaltAndCiphertext(const QString &ciphertext, cons
     VaultConfig config;
     config.set(CONFIG_NODE_NAME, CONFIG_KEY_CIPHER, QVariant(strSaltAndCiphertext));
     // 更新保险箱版本信息
-    config.set(CONFIG_NODE_NAME, CONFIG_KEY_VERSION, QVariant(CONFIG_VAULT_VERSION_1050));
+    config.set(CONFIG_NODE_NAME, CONFIG_KEY_VERSION, QVariant(vaultVersion));
 
     return true;
 }
@@ -152,7 +148,7 @@ bool OperatorCenter::saveKey(QString key, QString path)
         qDebug() << "open public key file failure!";
         return false;
     }
-    publicFile.setPermissions(QFileDevice::ReadOwner|QFileDevice::WriteOwner|QFileDevice::ReadGroup);
+    publicFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
     QTextStream out(&publicFile);
     out << key;
     publicFile.close();
@@ -257,7 +253,7 @@ bool OperatorCenter::createDirAndFile()
     // 创建密码提示信息文件,并设置文件权限
     QString strPasswordHintFilePath = makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
     QFile passwordHintFile(strPasswordHintFilePath);
-    if (!passwordHintFile.open(QIODevice::WriteOnly | QIODevice:: Append)) {
+    if (!passwordHintFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
         qDebug() << "create password hint file failure!";
         return false;
     }
@@ -278,7 +274,7 @@ bool OperatorCenter::saveSaltAndCiphertext(const QString &password, const QStrin
     QString strSaltAndCiphertext = strRandomSalt + strCiphertext;
 
     // 保存第二次加密后的密文,并更新保险箱版本信息
-    secondSaveSaltAndCiphertext(strSaltAndCiphertext, strRandomSalt);
+    secondSaveSaltAndCiphertext(strSaltAndCiphertext, strRandomSalt, CONFIG_VAULT_VERSION_1050);
 
     // 保存密码提示信息
     QString strPasswordHintFilePath = makeVaultLocalPath(PASSWORD_HINT_FILE_NAME);
@@ -367,10 +363,10 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
 
         if (strCipher != strNewCipher2) {
             qDebug() << "password error!";
-            return  false;
+            return false;
         }
         cipher = strNewSaltAndCipher;
-    } else {    // 如果是旧版本，验证第一次加密的结果
+    } else {   // 如果是旧版本，验证第一次加密的结果
         // 获得本地盐及密文
         QString strfilePath = makeVaultLocalPath(PASSWORD_FILE_NAME);
         QFile file(strfilePath);
@@ -388,13 +384,13 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
         QString strNewSaltAndCipher = strSalt + strNewCipher;
         if (strNewSaltAndCipher != strSaltAndCipher) {
             qDebug() << "password error!";
-            return  false;
+            return false;
         }
 
         cipher = strNewSaltAndCipher;
 
         // 保存第二次加密后的密文,并更新保险箱版本信息
-        if (!secondSaveSaltAndCiphertext(strNewSaltAndCipher, strSalt)) {
+        if (!secondSaveSaltAndCiphertext(strNewSaltAndCipher, strSalt, CONFIG_VAULT_VERSION)) {
             qDebug() << "第二次加密密文失败！";
             return false;
         }
@@ -409,7 +405,7 @@ bool OperatorCenter::checkUserKey(const QString &userKey, QString &cipher)
 {
     if (userKey.length() != USER_KEY_LENGTH) {
         qDebug() << "user key length error!";
-        return  false;
+        return false;
     }
 
     // 结合本地公钥和用户密钥，还原完整公钥
@@ -506,7 +502,6 @@ bool OperatorCenter::createQRCode(const QString &srcStr, int width, int height, 
 
     pix = QPixmap::fromImage(mainimg);
 
-
     if (qrcode)
         QRcode_free(qrcode);
     return true;
@@ -589,7 +584,7 @@ QString OperatorCenter::autoGeneratePassword(int length)
 bool OperatorCenter::getRootPassword()
 {
     // 判断当前是否是管理员登陆
-    bool res = runCmd("id -un");  // file path is fixed. So write cmd direct
+    bool res = runCmd("id -un");   // file path is fixed. So write cmd direct
     if (res && m_standOutput.trimmed() == "root") {
         return true;
     }
@@ -619,8 +614,8 @@ int OperatorCenter::executionShellCommand(const QString &strCmd, QStringList &ls
         qDebug() << QString("popen error: %s").arg(strerror(errno));
         return -1;
     } else {
-        char buf[MAXLINE] = {'\0'};
-        while (fgets(buf, sizeof(buf), fp)) { // 获得每行输出
+        char buf[MAXLINE] = { '\0' };
+        while (fgets(buf, sizeof(buf), fp)) {   // 获得每行输出
             QString strLineOutput(buf);
             if (strLineOutput.endsWith('\n'))
                 strLineOutput.chop(1);
@@ -639,4 +634,3 @@ int OperatorCenter::executionShellCommand(const QString &strCmd, QStringList &ls
         }
     }
 }
-

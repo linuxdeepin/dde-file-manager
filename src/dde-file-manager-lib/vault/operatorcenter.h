@@ -130,7 +130,7 @@ private:
     bool runCmd(const QString &cmd);
     bool executeProcess(const QString &cmd);
     // 保存第二次加密后的密文,并更新保险箱版本信息
-    bool secondSaveSaltAndCiphertext(const QString &ciphertext, const QString &salt);
+    bool secondSaveSaltAndCiphertext(const QString &ciphertext, const QString &salt, const char *vaultVersion);
 
 public:
     /**
@@ -160,13 +160,13 @@ public:
      * @param2 out password 密码
      * @return 是否正确
      */
-    bool verificationRetrievePassword(const QString keypath, QString & password);
+    bool verificationRetrievePassword(const QString keypath, QString &password);
 
 private:
-    Dtk::Core::DSecureString        m_strCryfsPassword; // cryfs密码
-    QString                         m_strUserKey;
-    QString                         m_standOutput;
-    QString                         m_strPubKey;
+    Dtk::Core::DSecureString m_strCryfsPassword;   // cryfs密码
+    QString m_strUserKey;
+    QString m_standOutput;
+    QString m_strPubKey;
 };
 
-#endif // OPERATORCENTER_H
+#endif   // OPERATORCENTER_H

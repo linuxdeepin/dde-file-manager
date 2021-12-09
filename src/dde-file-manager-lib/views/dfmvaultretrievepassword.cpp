@@ -180,12 +180,10 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent)
     setFixedWidth(396);
     setMinimumHeight(270);
 
-    m_title = new DLabel(tr("Retrieve Password"), this);
-    m_title->setAlignment(Qt::AlignHCenter);
-
-    // Set font.
-    DFontSizeManager::instance()->bind(m_title, DFontSizeManager::T7, QFont::Medium);
-    m_title->setForegroundRole(DPalette::TextTitle);
+    setTitle(tr("Retrieve Password"));
+    QLabel *title = this->findChild<QLabel *>("TitleLabel");
+    if (title)
+        DFontSizeManager::instance()->bind(title, DFontSizeManager::T7, QFont::Medium);
 
     m_savePathTypeComboBox = new QComboBox(this);
     AC_SET_ACCESSIBLE_NAME(m_savePathTypeComboBox, AC_VAULT_SAVE_PATH_TYPE_COMBOBOX);
@@ -212,12 +210,6 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent)
 
     m_PasswordRecoveryPage = new QFrame(this);
 
-    m_title1 = new DLabel(m_PasswordRecoveryPage);
-    DFontSizeManager::instance()->bind(m_title1, DFontSizeManager::T7, QFont::Medium);
-    m_title1->setForegroundRole(DPalette::TextTitle);
-    m_title1->setAlignment(Qt::AlignCenter);
-    m_title1->setText(tr("Verification Successful"));
-
     m_passwordMsg = new DLabel(m_PasswordRecoveryPage);
     m_passwordMsg->setAlignment(Qt::AlignCenter);
 
@@ -227,8 +219,7 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent)
 
     QVBoxLayout *vlayout = new QVBoxLayout(m_PasswordRecoveryPage);
     vlayout->setContentsMargins(0, 0, 0, 0);
-    vlayout->addWidget(m_title1);
-    vlayout->addStretch(1);
+    vlayout->setAlignment(Qt::AlignTop);
     vlayout->addWidget(m_passwordMsg);
     vlayout->addWidget(m_hintMsg);
     vlayout->addStretch(1);
@@ -244,22 +235,15 @@ DFMVaultRetrievePassword::DFMVaultRetrievePassword(QWidget *parent)
     funLayout->addWidget(m_filePathEdit);
     funLayout->addWidget(m_defaultFilePathEdit);
 
-    QVBoxLayout *titleLayout = new QVBoxLayout();
-    titleLayout->addWidget(m_title);
-    titleLayout->addStretch(1);
-
-    QVBoxLayout *tipLayout = new QVBoxLayout();
-    tipLayout->addWidget(m_verificationPrompt);
-
     QVBoxLayout *mainLayout = new QVBoxLayout(m_selectKeyPage);
-    mainLayout->setContentsMargins(25, 0, 25, 0);
-    mainLayout->addLayout(titleLayout);
+    mainLayout->setContentsMargins(25, 10, 25, 0);
+    mainLayout->addStretch(1);
     mainLayout->addLayout(funLayout);
-    mainLayout->addLayout(tipLayout);
+    mainLayout->addWidget(m_verificationPrompt);
 
-    layout()->setSpacing(0);
     m_selectKeyPage->setLayout(mainLayout);
-    addContent(m_selectKeyPage);
+    addContent(m_selectKeyPage, Qt::AlignVCenter);
+
     // 防止点击按钮后界面隐藏
     setOnButtonClickedClose(false);
 
@@ -298,6 +282,12 @@ void DFMVaultRetrievePassword::setResultsPage(QString password)
 {
     m_passwordMsg->setText(tr("Vault password: %1").arg(password));
     m_selectKeyPage->hide();
+
+    setTitle(tr("Verification Successful"));
+    QLabel *title = this->findChild<QLabel *>("TitleLabel");
+    if (title)
+        DFontSizeManager::instance()->bind(title, DFontSizeManager::T7, QFont::Medium);
+
     removeContent(m_selectKeyPage, false);
     addContent(m_PasswordRecoveryPage);
     m_PasswordRecoveryPage->show();
