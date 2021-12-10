@@ -268,6 +268,7 @@ void DFMVaultRetrievePassword::setVerificationPage()
     m_savePathTypeComboBox->setCurrentIndex(0);
     if (getContent(0) == m_PasswordRecoveryPage) {
         removeContent(m_PasswordRecoveryPage, false);
+        setTitle(tr("Retrieve Password"));
         m_PasswordRecoveryPage->hide();
         addContent(m_selectKeyPage);
         m_selectKeyPage->show();
@@ -284,10 +285,6 @@ void DFMVaultRetrievePassword::setResultsPage(QString password)
     m_selectKeyPage->hide();
 
     setTitle(tr("Verification Successful"));
-    QLabel *title = this->findChild<QLabel *>("TitleLabel");
-    if (title)
-        DFontSizeManager::instance()->bind(title, DFontSizeManager::T7, QFont::Medium);
-
     removeContent(m_selectKeyPage, false);
     addContent(m_PasswordRecoveryPage);
     m_PasswordRecoveryPage->show();

@@ -71,7 +71,6 @@ public:
         : DFMAbstractEventHandler(false)
         , viewHelper(helper)
     {
-
     }
 
     bool fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target, QVariant *resultData) override
@@ -772,7 +771,7 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
     return index.isValid();//true;
 }
 
-void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
+void DFileViewHelper::preproccessDropEvent(QDropEvent *event) const
 {
     bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
     if (event->source() == parent() && !DFMGlobal::keyCtrlIsPressed()) {
@@ -844,8 +843,9 @@ void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
         }
 
         // 保险箱时，修改DropAction为Qt::CopyAction
-        if (VaultController::isVaultFile(info->fileUrl().toString())
-                || VaultController::isVaultFile(urls[0].toString())) {
+        if ((VaultController::isVaultFile(info->fileUrl().toString())
+             || VaultController::isVaultFile(urls[0].toString()))
+            && !isToTrash) {
             event->setDropAction(Qt::CopyAction);
         }
 
@@ -913,8 +913,8 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
 
         // 保险箱时，修改DropAction为Qt::CopyAction
         if (VaultController::isVaultFile(info->fileUrl().toString())
-                || VaultController::isVaultFile(urls[0].toString())) {
-             event->setDropAction(Qt::CopyAction);
+            || VaultController::isVaultFile(urls[0].toString())) {
+            event->setDropAction(Qt::CopyAction);
         }
 
         if (!info->supportedDropActions().testFlag(event->dropAction())) {
