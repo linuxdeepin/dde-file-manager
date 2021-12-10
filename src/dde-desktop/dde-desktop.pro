@@ -82,7 +82,8 @@ SOURCES += \
     screen/screenmanagerwayland.cpp \
     screen/screenobjectwayland.cpp \
     dbus/licenceInterface.cpp \
-    view/canvasviewmanager.cpp
+    view/canvasviewmanager.cpp \
+    presenter/deepinlicensehelper.cpp
 
 
 
@@ -120,7 +121,8 @@ HEADERS += \
     accessibility/ac-desktop-define.h \
     accessibility/acobjectlist.h \
     desktopprivate.h \
-    presenter/dfmsocketinterface_p.h
+    presenter/dfmsocketinterface_p.h \
+    presenter/deepinlicensehelper.h
 
 RESOURCES +=
 

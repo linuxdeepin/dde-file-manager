@@ -58,7 +58,8 @@ SOURCES += \
     $$PWD/screen/screenmanagerwayland.cpp \
     $$PWD/screen/screenobjectwayland.cpp \
     $$PWD/dbus/licenceInterface.cpp \
-    $$PWD/view/canvasviewmanager.cpp
+    $$PWD/view/canvasviewmanager.cpp \
+    $$PWD/presenter/deepinlicensehelper.cpp
 
 
 
@@ -92,6 +93,7 @@ HEADERS += \
     $$PWD/screen/screenmanagerwayland.h \
     $$PWD/screen/screenobjectwayland.h \
     $$PWD/view/canvasviewmanager.h \
-    $$PWD/screen/abstractscreenmanager_p.h
-    $$PWD/accessible/frameaccessibledefine.h
-    $$PWD/accessible/accessiblelist.h
+    $$PWD/screen/abstractscreenmanager_p.h \
+    $$PWD/accessible/frameaccessibledefine.h \
+    $$PWD/accessible/accessiblelist.h \
+    $$PWD/presenter/deepinlicensehelper.h
