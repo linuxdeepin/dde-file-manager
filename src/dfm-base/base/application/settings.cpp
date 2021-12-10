@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "application/settings.h"
-#include "dfm-base/base/standardpaths.h"
+#include "base/application/settings.h"
+#include "base/standardpaths.h"
 
 #include <QCoreApplication>
 #include <QStandardPaths>
@@ -43,17 +43,18 @@ class SettingsPrivate
 public:
     explicit SettingsPrivate(Settings *qq);
 
-    bool autoSync = false; // 是否自动同步
-    bool watchChanges = false; // 监视配置是否发生改变
-    bool settingFileIsDirty = false; // 设置文件是否有缓存数据（脏数据）
-    QTimer *syncTimer = nullptr; // 同步计时器
-    QString fallbackFile; // 备份设置文件路径
-    QString settingFile; // 设置文件路径
+    bool autoSync = false;   // 是否自动同步
+    bool watchChanges = false;   // 监视配置是否发生改变
+    bool settingFileIsDirty = false;   // 设置文件是否有缓存数据（脏数据）
+    QTimer *syncTimer = nullptr;   // 同步计时器
+    QString fallbackFile;   // 备份设置文件路径
+    QString settingFile;   // 设置文件路径
     Settings *q;
 
-    struct Data {
-        QHash<QString, QVariantHash> values; // 设置文件的配置属性hash表
-        QHash<QString, QVariantHash> privateValues; // 设置文件的配置私用属性hash表
+    struct Data
+    {
+        QHash<QString, QVariantHash> values;   // 设置文件的配置属性hash表
+        QHash<QString, QVariantHash> privateValues;   // 设置文件的配置私用属性hash表
         /*!
          * \brief value 获取相应的属性
          *
@@ -81,7 +82,7 @@ public:
         void setValue(const QString group, const QString &key, const QVariant &value)
         {
             if (!values.contains(group)) {
-                values.insert(group, {{key, value}});
+                values.insert(group, { { key, value } });
 
                 return;
             }
@@ -112,9 +113,9 @@ public:
         }
     };
 
-    Data defaultData; // 默认的属性data
-    Data fallbackData; // 备份的属性data
-    Data writableData; // 写入的属性data
+    Data defaultData;   // 默认的属性data
+    Data fallbackData;   // 备份的属性data
+    Data writableData;   // 写入的属性data
 
     void fromJsonFile(const QString &fileName, Data *data);
     void fromJson(const QByteArray &json, Data *data);
@@ -174,7 +175,6 @@ public:
 SettingsPrivate::SettingsPrivate(Settings *qq)
     : q(qq)
 {
-
 }
 /*!
  * \brief SettingsPrivate::fromJsonFile 从json文件中读取属性到data中
@@ -330,8 +330,7 @@ void SettingsPrivate::_q_onFileChanged(const QUrl &url)
  * \brief Settings provide interfaces to access and modify the file manager setting options.
  */
 Settings::Settings(const QString &defaultFile, const QString &fallbackFile, const QString &settingFile, QObject *parent)
-    : QObject(parent)
-    , d(new SettingsPrivate(this))
+    : QObject(parent), d(new SettingsPrivate(this))
 {
     d->fallbackFile = fallbackFile;
     d->settingFile = settingFile;
@@ -372,17 +371,16 @@ static QString getConfigFilePath(QStandardPaths::StandardLocation type, const QS
 
 Settings::Settings(const QString &name, ConfigType type, QObject *parent)
     : Settings(QString(":/config/%1.json").arg(name),
-                  getConfigFilePath(type == AppConfig
-                                    ? QStandardPaths::AppConfigLocation
-                                    : QStandardPaths::GenericConfigLocation,
-                                    name, false),
-                  getConfigFilePath(type == AppConfig
-                                    ? QStandardPaths::AppConfigLocation
-                                    : QStandardPaths::GenericConfigLocation,
-                                    name, true),
-                  parent)
+               getConfigFilePath(type == AppConfig
+                                         ? QStandardPaths::AppConfigLocation
+                                         : QStandardPaths::GenericConfigLocation,
+                                 name, false),
+               getConfigFilePath(type == AppConfig
+                                         ? QStandardPaths::AppConfigLocation
+                                         : QStandardPaths::GenericConfigLocation,
+                                 name, true),
+               parent)
 {
-
 }
 
 Settings::~Settings()
@@ -665,7 +663,7 @@ bool Settings::setValueNoNotify(const QString &group, const QString &key, const 
             return false;
         }
 
-        changed  = true;
+        changed = true;
     } else {
         changed = this->value(group, key, value) != value;
     }
@@ -908,8 +906,7 @@ void Settings::onFileChanged(const QUrl &url)
     d->_q_onFileChanged(url);
 }
 
-void Settings::setWatchChanges(bool watchChanges)
-{
+void Settings::setWatchChanges(bool watchChanges) {
     Q_UNUSED(watchChanges)
 }
 

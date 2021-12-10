@@ -23,7 +23,7 @@
 #define TRAVERSALDIRTHREAD_H
 
 #include "dfm-base/dfm_base_global.h"
-#include "localfile/localdiriterator.h"
+#include "file/local/localdiriterator.h"
 #include "widgets/dfmfileview/fileviewitem.h"
 #include "dfm-base/utils/threadcontainer.hpp"
 

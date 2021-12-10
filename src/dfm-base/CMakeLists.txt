@@ -12,86 +12,55 @@ endif()
 
 set(GLOBAL_H dfm_base_global.h)
 
-set(UTILS_H
-    utils/threadcontainer.hpp
-    utils/fileutils.h
-    utils/iconutils.h
-    utils/universalutils.h
-    utils/finallyutil.h
-    utils/fileextendattribthread.h
-    utils/private/fileextendattribthreadprivate.h
-)
+FILE (GLOB INTERFACES_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/private/*.cpp"
+    )
 
-set(UTILS_CPP
-    utils/fileutils.cpp
-    utils/universalutils.cpp
-    utils/finallyutil.cpp
-    utils/fileextendattribthread.cpp
-)
+FILE (GLOB UTILS_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"    
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/private/*.cpp"
+    )
 
-set(MIMETYPE_H
-    mimetype/mimedatabase.h
-)
+FILE (GLOB MIMETYPE_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/mimetype/*"
+    )
 
-set(MIMETYPE_H
-    mimetype/mimedatabase.cpp
-)
+FILE (GLOB BASE_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/application/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/application/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/application/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/application/private/*.cpp"
+    )
 
-set(BASE_H
-    base/private/abstractfilewatcher_p.h
-    base/private/abstractfiledevice_p.h
-    base/private/abstractfileinfo_p.h
-    base/private/subscriber.h
-    base/private/infocache.h
-    base/private/infocache_p.h
-    base/private/watchercache.h
-    base/private/watchercache_p.h
-    base/abstractfileinfo.h
-    base/standardpaths.h
-    base/singleton.h
-    base/urlroute.h
-    base/schemefactory.h
-    base/abstractdiriterator.h
-    base/schemefactory.h
-    base/abstractfilewatcher.h
-    base/abstractfiledevice.h
-    base/abstractfilemenu.h
-    base/abstractjobhandler.h
-)
+FILE (GLOB ALL_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/local/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/local/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/local/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/local/private/*.cpp"
+    )
 
-set(BASE_CPP
-    base/private/subscriber.cpp
-    base/private/infocache.cpp
-    base/private/watchercache.cpp
-    base/abstractfileinfo.cpp
-    base/urlroute.cpp
-    base/standardpaths.cpp
-    base/schemefactory.cpp
-    base/abstractfilewatcher.cpp
-    base/abstractfiledevice.cpp
-    base/abstractfilemenu.cpp
-    base/abstractjobhandler.cpp
-)
+# TODO(zhangs): move `WIDGETS_*` to here
+FILE (GLOB WIDGETS_FILES
+    )
 
-set(LOCALFILE_H
-    localfile/private/localdiriterator_p.h
-    localfile/private/localfileinfo_p.h
-    localfile/private/localfilewatcher_p.h
-    localfile/localdiriterator.h
-    localfile/localfileinfo.h
-    localfile/localfilemenu.h
-    localfile/localfilewatcher.h
-    localfile/localfilehandler.h
-)
+FILE (GLOB DBUSSERVER_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/dbusservice/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dbusservice/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dbusservice/dbus_interface/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dbusservice/dbus_interface/*.cpp"
+    )
 
-set(LOCALFILE_CPP
-    localfile/localfileinfo.cpp
-    localfile/localfilemenu.cpp
-    localfile/localdiriterator.cpp
-    localfile/localfilewatcher.cpp
-    localfile/localfilehandler.cpp
-)
 
+# TODO(zhangs): remove `WIDGETS_*`
 set(WIDGETS_H
     widgets/dfmfileview/private/fileview_p.h
     widgets/dfmfileview/private/fileviewmodel_p.h
@@ -121,8 +90,6 @@ set(WIDGETS_H
     widgets/dfmfileview/itemdelegatehelper.h
     widgets/dfmfileview/filesortfilterproxymodel.h
     widgets/dfmfileview/fileselectionmodel.h
-    widgets/dfmdialog/errordialog.h
-    widgets/dfmdialog/contextdialog.h
     widgets/dfmkeyvaluelabel/keyvaluelabel.h
     )
 
@@ -151,21 +118,11 @@ set(WIDGETS_CPP
     widgets/dfmfileview/itemdelegatehelper.cpp
     widgets/dfmfileview/filesortfilterproxymodel.cpp
     widgets/dfmfileview/fileselectionmodel.cpp
-    widgets/dfmdialog/errordialog.cpp
-    widgets/dfmdialog/contextdialog.cpp
     widgets/dfmkeyvaluelabel/keyvaluelabel.cpp
     )
 
-set(APPLICATIONSERVICE_CPP
-    application/application.cpp
-    application/settings.cpp
-)
 
-set(APPLICATIONSERVICE_H
-    application/application.h
-    application/private/application_p.h
-    application/settings.h
-)
+
 
 set(DBUSSERVICE_H
     dbusservice/dbus_interface/devicemanagerdbus_interface.h
@@ -191,21 +148,14 @@ pkg_search_module(util-dfm
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_H}
-    ${BASE_H}
-    ${BASE_CPP}
-    ${LOCALFILE_H}
-    ${LOCALFILE_CPP}
-    ${MIMETYPE_H}
-    ${MIMETYPE_CPP}
-    ${UTILS_H}
-    ${UTILS_CPP}
+    ${INTERFACES_FILES}
+    ${UTILS_FILES}
+    ${MIMETYPE_FILES}
+    ${BASE_FILES}
+    ${ALL_FILES}
     ${WIDGETS_H}
     ${WIDGETS_CPP}
-    ${APPLICATIONSERVICE_H}
-    ${APPLICATIONSERVICE_CPP}
-    ${DBUSSERVICE_H}
-    ${DBUSSERVICE_CPP}
-    ${QRCS}
+    ${DBUSSERVER_FILES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

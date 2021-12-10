@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liyigang<liyigang@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
  * Maintainer: max-lv<lvwujun@uniontech.com>
  *             lanxuesong<lanxuesong@uniontech.com>
@@ -19,27 +19,35 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef MOVETOtRASHFILES_H
-#define MOVETOtRASHFILES_H
+*/
+#ifndef BASEVIEW_H
+#define BASEVIEW_H
 
-#include "fileoperations/fileoperationutils/abstractjob.h"
-#include "dfm-base/interfaces/abstractjobhandler.h"
+#include "dfm-base/dfm_base_global.h"
 
-#include <QObject>
-#include <QThread>
+#include <QWidget>
 
-DFMBASE_USE_NAMESPACE
-DSC_BEGIN_NAMESPACE
-class MoveToTrashFiles : private AbstractJob
+DFMBASE_BEGIN_NAMESPACE
+
+class AbstractBaseView
 {
-    Q_OBJECT
-    friend class FileOperationsService;
-    explicit MoveToTrashFiles(QObject *parent = nullptr);
-
 public:
-    ~MoveToTrashFiles() override;
-};
-DSC_END_NAMESPACE
+    enum class ViewState : uint8_t {
+        kViewBusy,
+        kViewIdle
+    };
 
-#endif   // MOVETOtRASHFILES_H
+    AbstractBaseView();
+    virtual ~AbstractBaseView();
+
+    void deleteLater();
+
+    virtual QWidget *widget() const = 0;
+    virtual QUrl rootUrl() const = 0;
+    virtual ViewState viewState() const;
+    virtual bool setRootUrl(const QUrl &url) = 0;
+};
+
+DFMBASE_END_NAMESPACE
+
+#endif   // BASEVIEW_H

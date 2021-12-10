@@ -26,7 +26,7 @@
 #include "dfm_common_service_global.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
-#include <dfm-base/base/abstractjobhandler.h>
+#include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <DDialog>
 

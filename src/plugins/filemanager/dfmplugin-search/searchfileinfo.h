@@ -21,7 +21,7 @@
 #ifndef SEARCHFILEINFO_H
 #define SEARCHFILEINFO_H
 
-#include "dfm-base/base/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
 class SearchFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {

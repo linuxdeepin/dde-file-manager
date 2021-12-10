@@ -24,8 +24,8 @@
 #include "crumbmodel.h"
 
 #include "dfm-base/base/standardpaths.h"
-#include "dfm-base/application/application.h"
-#include "dfm-base/application/settings.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 
 #include <DListView>
 
@@ -55,7 +55,6 @@ CrumbBarPrivate::CrumbBarPrivate(CrumbBar *qq)
 
 CrumbBarPrivate::~CrumbBarPrivate()
 {
-
 }
 
 /*!
@@ -127,7 +126,7 @@ void CrumbBarPrivate::initUI()
     crumbView.setFocusPolicy(Qt::NoFocus);
     crumbView.setContentsMargins(0, 0, 0, 0);
     crumbView.setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
-    crumbView.setIconSize({16, 16});
+    crumbView.setIconSize({ 16, 16 });
     crumbView.setHorizontalScrollMode(QAbstractItemView::ScrollPerItem);
     crumbView.setOrientation(QListView::LeftToRight, false);
     crumbView.setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -144,7 +143,8 @@ void CrumbBarPrivate::initUI()
     class IconItemDelegate : public DStyledItemDelegate
     {
     public:
-        explicit IconItemDelegate(QAbstractItemView *parent = nullptr): DStyledItemDelegate(parent)
+        explicit IconItemDelegate(QAbstractItemView *parent = nullptr)
+            : DStyledItemDelegate(parent)
         {
             setItemSpacing(10);
         }
@@ -172,9 +172,7 @@ void CrumbBarPrivate::initUI()
 
 void CrumbBarPrivate::initData()
 {
-    clickableAreaEnabled = Application::instance()->
-            genericAttribute(Application::GA_ShowCsdCrumbBarClickableArea)
-            .toBool();
+    clickableAreaEnabled = Application::instance()->genericAttribute(Application::GA_ShowCsdCrumbBarClickableArea).toBool();
 }
 
 void CrumbBarPrivate::initConnections()
@@ -183,39 +181,34 @@ void CrumbBarPrivate::initConnections()
                      q, &CrumbBar::onCustomContextMenu);
 
     QObject::connect(&crumbView, &QListView::clicked,
-                     q, [=](const QModelIndex &index)
-    {
-        if (index.isValid()) {
-            qInfo() << "sig send selectedUrl: " << index.data().toUrl();
-            emit q->selectedUrl(index.data(CrumbModel::FileUrlRole).toUrl());
-        }
-    });
+                     q, [=](const QModelIndex &index) {
+                         if (index.isValid()) {
+                             qInfo() << "sig send selectedUrl: " << index.data().toUrl();
+                             emit q->selectedUrl(index.data(CrumbModel::FileUrlRole).toUrl());
+                         }
+                     });
 
     q->connect(&leftArrow, &QPushButton::clicked,
-                   q, [=]()
-    {
-        crumbView.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepSub);
-    });
+               q, [=]() {
+                   crumbView.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepSub);
+               });
 
     q->connect(&rightArrow, &QPushButton::clicked,
-                   q, [=]()
-    {
-        crumbView.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepAdd);
-    });
+               q, [=]() {
+                   crumbView.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepAdd);
+               });
 
     q->connect(crumbView.horizontalScrollBar(), &QScrollBar::valueChanged,
-                   q, [=]()
-    {
-        checkArrowVisiable();
-    });
+               q, [=]() {
+                   checkArrowVisiable();
+               });
 
     if (Application::instance()) {
         q->connect(Application::instance(),
-                       &Application::csdClickableAreaAttributeChanged,
-                       q, [=](bool enabled)
-        {
-            setClickableAreaEnabled(enabled);
-        });
+                   &Application::csdClickableAreaAttributeChanged,
+                   q, [=](bool enabled) {
+                       setClickableAreaEnabled(enabled);
+                   });
     }
 }
 
@@ -232,8 +225,7 @@ void CrumbBarPrivate::initConnections()
  */
 
 CrumbBar::CrumbBar(QWidget *parent)
-    : QFrame(parent)
-    , d(new CrumbBarPrivate(this))
+    : QFrame(parent), d(new CrumbBarPrivate(this))
 {
     setFrameShape(QFrame::NoFrame);
     setFixedHeight(36);
@@ -241,7 +233,6 @@ CrumbBar::CrumbBar(QWidget *parent)
 
 CrumbBar::~CrumbBar()
 {
-
 }
 
 void CrumbBar::setRootUrl(const QUrl &url)
@@ -253,16 +244,14 @@ void CrumbBar::setRootUrl(const QUrl &url)
     QString path = url.path();
     QStringList pathList = path.split("/");
 
-    QStandardItem* firstItem = new QStandardItem(firstIcon, "");
-    for (int nodeCount = pathList.size() - 1; nodeCount > 0 ; nodeCount --)
-    {
+    QStandardItem *firstItem = new QStandardItem(firstIcon, "");
+    for (int nodeCount = pathList.size() - 1; nodeCount > 0; nodeCount--) {
         if (pathList.at(nodeCount).isEmpty())
             continue;
 
         auto currNodeItem = new QStandardItem(pathList.at(nodeCount));
         QStringList currNodeList;
-        for (int index = 0 ; index <= nodeCount ; index ++)
-        {
+        for (int index = 0; index <= nodeCount; index++) {
             if (pathList.at(index).isEmpty())
                 continue;
             currNodeList.append(pathList.at(index));
@@ -272,7 +261,7 @@ void CrumbBar::setRootUrl(const QUrl &url)
 
         d->crumbModel->insertRow(0, currNodeItem);
     }
-    d->crumbModel->insertRow(0,firstItem);
+    d->crumbModel->insertRow(0, firstItem);
 
     if (d->crumbView.selectionModel() && d->crumbModel) {
         qInfo() << d->crumbModel->lastIndex();
@@ -301,7 +290,8 @@ void CrumbBar::mousePressEvent(QMouseEvent *event)
 void CrumbBar::mouseReleaseEvent(QMouseEvent *event)
 {
     if (!d->clickableAreaEnabled) {
-        return QFrame::mouseReleaseEvent(event);;
+        return QFrame::mouseReleaseEvent(event);
+        ;
     }
 
     QFrame::mouseReleaseEvent(event);
@@ -335,7 +325,7 @@ bool CrumbBar::eventFilter(QObject *watched, QEvent *event)
             pos = QCursor::pos();
         }
 
-        bool isIgnore = isMousePressed ||  type == QEvent::MouseMove;
+        bool isIgnore = isMousePressed || type == QEvent::MouseMove;
         if (isIgnore) {
             event->ignore();
             return true;

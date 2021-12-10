@@ -19,19 +19,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "application/application.h"
+#include "base/application/application.h"
 #include "private/application_p.h"
 #if QT_HAS_INCLUDE("anything_interface.h")
-#include "anything_interface.h"
+#    include "anything_interface.h"
 #else
-#ifndef DISABLE_QUICK_SEARCH
-#define DISABLE_QUICK_SEARCH
-#endif
+#    ifndef DISABLE_QUICK_SEARCH
+#        define DISABLE_QUICK_SEARCH
+#    endif
 #endif
 
-#include "application/settings.h"
+#include "base/application/settings.h"
 #ifdef FULLTEXTSEARCH_ENABLE
-#include "fulltextsearch/fulltextsearch.h"
+#    include "fulltextsearch/fulltextsearch.h"
 #endif
 
 #include <QCoreApplication>
@@ -48,8 +48,6 @@ Q_GLOBAL_STATIC_WITH_ARGS(Settings, aosGlobal, ("deepin/dde-file-manager/dde-fil
 
 // blumia: since dde-desktop now also do show file selection dialog job, thus dde-desktop should share the same config file
 //         with dde-file-manager, so we use GenericConfig with specify path to simulate AppConfig.
-
-
 
 Application *ApplicationPrivate::self = nullptr;
 
@@ -108,7 +106,7 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
 #ifdef FULLTEXTSEARCH_ENABLE
         case DFMApplication::GA_IndexFullTextSearch:
             if (value.toBool()) {
-                DFMFullTextSearchManager::getInstance()->fulltextIndex("/");/*全文搜索建立索引*/
+                DFMFullTextSearchManager::getInstance()->fulltextIndex("/"); /*全文搜索建立索引*/
             }
             break;
 #endif
@@ -132,7 +130,6 @@ Application::Application(QObject *parent)
 
 Application::~Application()
 {
-
 }
 
 QVariant Application::appAttribute(Application::ApplicationAttribute aa)
@@ -309,8 +306,7 @@ Settings *Application::appObtuselySetting()
 }
 
 Application::Application(ApplicationPrivate *dd, QObject *parent)
-    : QObject(parent)
-    , d(dd)
+    : QObject(parent), d(dd)
 {
     if (gsGlobal.exists()) {
         gsGlobal->moveToThread(thread());

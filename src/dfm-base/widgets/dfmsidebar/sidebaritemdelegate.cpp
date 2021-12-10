@@ -27,10 +27,10 @@
 
 /*********************************************************/
 //bug 26937 书签目标目录不存在情况下还可以重命名问题。相关头文件添加
-//#include "localfile/dfileservices.h"
+//#include "file/local/dfileservices.h"
 /*********************************************************/
 
-#include "localfile/localfileinfo.h"
+#include "file/local/localfileinfo.h"
 
 #include <QPainter>
 #include <QDebug>

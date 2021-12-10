@@ -20,7 +20,7 @@
  */
 #ifndef DEFAULTDESKTOPFILEINFO_H
 #define DEFAULTDESKTOPFILEINFO_H
-#include "dfm-base/localfile/localfileinfo.h"
+#include "dfm-base/file/local/localfileinfo.h"
 #include "dfm_desktop_service_global.h"
 
 DSB_D_BEGIN_NAMESPACE

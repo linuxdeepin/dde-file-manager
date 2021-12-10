@@ -25,7 +25,7 @@
 
 #include "fileviewitem.h"
 
-#include "dfm-base/localfile/localfileinfo.h"
+#include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_base_global.h"
 

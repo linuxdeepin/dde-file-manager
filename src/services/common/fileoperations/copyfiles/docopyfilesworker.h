@@ -24,12 +24,12 @@
 #define DOCOPYFILESWORKER_H
 
 #include "dfm_common_service_global.h"
-#include "dfm-base/base/abstractjobhandler.h"
+#include "dfm-base/interfaces/abstractjobhandler.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 #include "fileoperations/fileoperationutils/abstractworker.h"
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
-#include "dfm-base/base/abstractfileinfo.h"
 #include "dfm-base/utils/threadcontainer.hpp"
-#include "dfm-base/localfile/localfilehandler.h"
+#include "dfm-base/file/local/localfilehandler.h"
 
 #include <dfm-io/core/dfile.h>
 

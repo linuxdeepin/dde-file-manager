@@ -19,10 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ABSTRACTFILEWATCHER_P_H
-#define ABSTRACTFILEWATCHER_P_H
+#ifndef LOCALFILEWATCHER_P_H
+#define LOCALFILEWATCHER_P_H
 
-#include "base/abstractfilewatcher.h"
+#include "file/local/localfilewatcher.h"
+#include "interfaces/private/abstractfilewatcher_p.h"
 #include "utils/threadcontainer.hpp"
 
 #include <dfm-io/core/dwatcher.h>
@@ -31,27 +32,20 @@
 
 USING_IO_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
-class AbstractFileWatcherPrivate : public QObject
+class LocalFileWatcherPrivate : public AbstractFileWatcherPrivate
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(AbstractFileWatcherPrivate)
-    friend class AbstractFileWatcher;
-    AbstractFileWatcher *q;
+    friend class LocalFileWatcher;
+    LocalFileWatcher *const q;
 
 public:
-    explicit AbstractFileWatcherPrivate(AbstractFileWatcher *qq);
-    virtual ~AbstractFileWatcherPrivate() {}
+    explicit LocalFileWatcherPrivate(LocalFileWatcher *qq);
+    virtual ~LocalFileWatcherPrivate() {}
     virtual bool start();
     virtual bool stop();
     static QString formatPath(const QString &path);
-
-protected:
-    QAtomicInteger<bool> started { false };   // 是否开始监视
-    QUrl url;   // 监视文件的url
-    QString path;   // 监视文件的路径
-    QSharedPointer<DWatcher> watcher { nullptr };   // dfm-io的文件监视器
-    static DThreadList<QString> watcherPath;   // 全局监视文件的监视列表
+    void initFileWatcher();
+    void initConnect();
 };
 DFMBASE_END_NAMESPACE
 
-#endif   // DABSTRACTFILEWATCHER_P_H
+#endif   // LOCALFILEWATCHER_P_H

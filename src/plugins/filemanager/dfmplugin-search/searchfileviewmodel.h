@@ -21,7 +21,7 @@
 #ifndef SEARCHFILEVIEWMODEL_H
 #define SEARCHFILEVIEWMODEL_H
 
-#include "dfm-base/base/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/widgets/dfmfileview/fileviewmodel.h"
 
 #include <QAbstractItemView>

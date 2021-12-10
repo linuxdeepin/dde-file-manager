@@ -23,7 +23,7 @@
 #define LOCALDIRITERATOR_H
 
 #include "dfm-base/dfm_base_global.h"
-#include "dfm-base/base/abstractdiriterator.h"
+#include "dfm-base/interfaces/abstractdiriterator.h"
 
 #include <QDirIterator>
 #include <QSharedPointer>

@@ -25,7 +25,7 @@
 
 #include "dfm_common_service_global.h"
 
-#include "dfm-base/application/settings.h"
+#include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/fileutils.h"
 
 #include <dfm-mount/dfmdevicemanager.h>

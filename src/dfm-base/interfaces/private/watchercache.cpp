@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "base/private/watchercache.h"
-#include "base/private/watchercache_p.h"
+#include "interfaces/private/watchercache.h"
+#include "interfaces/private/watchercache_p.h"
 
 #include <QSharedPointer>
 

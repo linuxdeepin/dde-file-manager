@@ -24,7 +24,7 @@
 #define ABSTRACTJOB_H
 
 #include "dfm_common_service_global.h"
-#include "dfm-base/base/abstractjobhandler.h"
+#include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <QObject>
 #include <QUrl>

@@ -24,7 +24,7 @@
 
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/utils/threadcontainer.hpp"
-#include "dfm-base/base/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QObject>
 #include <QMutex>

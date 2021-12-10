@@ -22,7 +22,7 @@
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
 
-#include "dfm-base/base/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/dfm_base_global.h"
 
 DFMBASE_BEGIN_NAMESPACE

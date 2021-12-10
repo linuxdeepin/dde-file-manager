@@ -24,12 +24,11 @@
 
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/abstractfileinfo.h"
-#include "dfm-base/base/abstractfilewatcher.h"
-#include "dfm-base/base/abstractdiriterator.h"
-#include "dfm-base/base/abstractfiledevice.h"
-#include "dfm-base/base/private/infocache.h"
-#include "dfm-base/base/private/watchercache.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include "dfm-base/interfaces/abstractdiriterator.h"
+#include "dfm-base/interfaces/private/infocache.h"
+#include "dfm-base/interfaces/private/watchercache.h"
 #include "dfm-base/utils/finallyutil.h"
 
 #include <dfmio_register.h>
@@ -347,33 +346,6 @@ public:
 private:
     DirIteratorFactory() {}
     static DirIteratorFactory &instance();   // 获取全局实例
-};
-
-class FileDeviceFactory final : public SchemeFactory<AbstractFileDevice>
-{
-    Q_DISABLE_COPY(FileDeviceFactory)
-    friend class GC<FileDeviceFactory>;
-    static FileDeviceFactory *ins;
-
-public:
-    // 提供任意子类的转换方法模板，仅限DAbstractFileDevice树族
-    // 与qSharedPointerDynamicCast保持一致
-    template<class CT>
-    static bool regClass(const QString &scheme, QString *errorString = nullptr)
-    {
-        return instance().SchemeFactory<AbstractFileDevice>::regClass<CT>(scheme, errorString);
-    }
-
-    template<class T>
-    static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
-    {
-        return qSharedPointerDynamicCast<T>(
-                instance().SchemeFactory<AbstractFileDevice>::create(url, errorString));
-    }
-
-private:
-    FileDeviceFactory() {}
-    static FileDeviceFactory &instance();   // 获取全局实例
 };
 
 DFMBASE_END_NAMESPACE

@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "infocache.h"
-#include "base/private/infocache_p.h"
+#include "interfaces/private/infocache_p.h"
 #include "base/schemefactory.h"
 
 #include <QSharedPointer>

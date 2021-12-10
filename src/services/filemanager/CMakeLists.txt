@@ -23,10 +23,6 @@ FILE(GLOB WINDOW_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/window/private/*.cpp"
 )
 
-FILE(GLOB SHORTCUT_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/shortcut/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/shortcut/*.cpp"
-)
 
 FILE(GLOB VAULT_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/vault/*.h"
@@ -40,7 +36,6 @@ add_library(
     SHARED
     ${GLOBAL_FILES}
     ${WINDOW_FILES}
-    ${SHORTCUT_FILES}
     ${VAULT_FILES}
 )
 

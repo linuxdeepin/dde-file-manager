@@ -1,7 +1,7 @@
 #ifndef RECENTDIRITERATOR_H
 #define RECENTDIRITERATOR_H
 
-#include "dfm-base/base/abstractdiriterator.h"
+#include "dfm-base/interfaces/abstractdiriterator.h"
 
 DFMBASE_USE_NAMESPACE
 

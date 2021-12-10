@@ -19,33 +19,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ABSTRACTFILEINFO_P_H
-#define ABSTRACTFILEINFO_P_H
+#ifndef LOCALFILEDIRITERATOR_P_H
+#define LOCALFILEDIRITERATOR_P_H
 
-#include "base/abstractfileinfo.h"
-#include "utils/threadcontainer.hpp"
+#include "file/local/localdiriterator.h"
+#include "base/urlroute.h"
 
+#include <QDirIterator>
+#include <QDebug>
+
+#include <dfm-io/core/denumerator.h>
 #include <dfmio_global.h>
 #include <dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
 
-#include <QPointer>
-
-#include <dfm-io/core/dfileinfo.h>
-
 USING_IO_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
-
-class AbstractFileInfoPrivate
+class LocalDirIterator;
+class LocalDirIteratorPrivate
 {
-    friend class AbstractFileInfo;
-    AbstractFileInfo *const q;   // DAbstractFileInfo实例对象
+    friend class LocalDirIterator;
+    class LocalDirIterator *const q;
+
 public:
-    QUrl url;   // 文件的url
-    explicit AbstractFileInfoPrivate(AbstractFileInfo *qq);
-    virtual ~AbstractFileInfoPrivate();
+    explicit LocalDirIteratorPrivate(const QUrl &url,
+                                     const QStringList &nameFilters,
+                                     QDir::Filters filters,
+                                     QDirIterator::IteratorFlags flags,
+                                     LocalDirIterator *q);
+
+private:
+    QSharedPointer<dfmio::DEnumerator> dfmioDirIterator = nullptr;   // dfmio的文件迭代器
+    QUrl currentUrl;   // 当前迭代器所在位置文件的url
+    QDir::Filters curFilters;   // 文件的当前的过滤flags
+    bool isCurrent = false;   // 用来判断当前是否使用了一次next
 };
-
 DFMBASE_END_NAMESPACE
-
-#endif   // ABSTRACTFILEINFO_P_H
+#endif   // ABSTRACTDIRITERATOR_P_H

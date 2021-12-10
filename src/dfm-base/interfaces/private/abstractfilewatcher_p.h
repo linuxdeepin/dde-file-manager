@@ -19,39 +19,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LOCALFILEWATCHER_H
-#define LOCALFILEWATCHER_H
+#ifndef ABSTRACTFILEWATCHER_P_H
+#define ABSTRACTFILEWATCHER_P_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/base/abstractfilewatcher.h"
+#include "interfaces/abstractfilewatcher.h"
+#include "utils/threadcontainer.hpp"
 
-#include <dfm-io/core/dfileinfo.h>
+#include <dfm-io/core/dwatcher.h>
 
-#include <QObject>
+#include <QUrl>
 
-class QUrl;
+USING_IO_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
-class LocalFileWatcherPrivate;
-class LocalFileWatcher : public AbstractFileWatcher
+class AbstractFileWatcherPrivate : public QObject
 {
     Q_OBJECT
-    LocalFileWatcherPrivate *const d;
+    Q_DISABLE_COPY(AbstractFileWatcherPrivate)
+    friend class AbstractFileWatcher;
+    AbstractFileWatcher *q;
 
 public:
-    explicit LocalFileWatcher() = delete;
-    explicit LocalFileWatcher(const QUrl &url, QObject *parent = nullptr);
-    virtual ~LocalFileWatcher();
-
-    virtual QUrl url() const;
-    virtual bool startWatcher();
-    virtual bool stopWatcher();
-    virtual bool restartWatcher();
-    virtual void setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled = true);
-    //debug function
-    static QStringList getMonitorFiles();
+    explicit AbstractFileWatcherPrivate(AbstractFileWatcher *qq);
+    virtual ~AbstractFileWatcherPrivate() {}
+    virtual bool start();
+    virtual bool stop();
+    static QString formatPath(const QString &path);
 
 protected:
+    QAtomicInteger<bool> started { false };   // 是否开始监视
+    QUrl url;   // 监视文件的url
+    QString path;   // 监视文件的路径
+    QSharedPointer<DWatcher> watcher { nullptr };   // dfm-io的文件监视器
+    static DThreadList<QString> watcherPath;   // 全局监视文件的监视列表
 };
 DFMBASE_END_NAMESPACE
 
-#endif   // LOCALFILEWATCHER_H
+#endif   // DABSTRACTFILEWATCHER_P_H

@@ -29,12 +29,12 @@
 #include "windowservice.h"
 #include "window/browseview.h"   // TODO(zhangs): hide
 
-#include "dfm-base/application/application.h"
-#include "dfm-base/base/abstractfilewatcher.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/interfaces/abstractfilewatcher.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/localfile/localfileinfo.h"
-#include "dfm-base/localfile/localdiriterator.h"
+#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/widgets/dfmsidebar/sidebar.h"
 #include "dfm-base/widgets/dfmsidebar/sidebaritem.h"
 #include "dfm-base/widgets/dfmsidebar/sidebarview.h"

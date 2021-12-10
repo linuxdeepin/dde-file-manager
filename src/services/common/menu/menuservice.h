@@ -25,7 +25,7 @@
 #include "menufactory.h"
 #include "dfm_common_service_global.h"
 #include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/abstractfilemenu.h"
+#include "dfm-base/interfaces/abstractfilemenu.h"
 #include <dfm-framework/service/pluginservicecontext.h>
 
 #include <QUrl>
@@ -41,6 +41,7 @@ class MenuService final : public dpf::PluginService, dpf::AutoServiceRegister<Me
     Q_OBJECT
     Q_DISABLE_COPY(MenuService)
     friend class dpf::QtClassFactory<dpf::PluginService>;
+
 public:
     static QString name()
     {
@@ -64,4 +65,4 @@ private:
 };
 
 DSC_END_NAMESPACE
-#endif // MENUSERVICE_H
+#endif   // MENUSERVICE_H

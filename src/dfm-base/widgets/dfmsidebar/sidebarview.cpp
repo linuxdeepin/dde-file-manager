@@ -23,7 +23,7 @@
 #include "sidebaritem.h"
 #include "sidebarmodel.h"
 #include "private/sidebarview_p.h"
-#include "dfm-base/localfile/localfileinfo.h"
+#include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/base/urlroute.h"
 
 #include <QtConcurrent>

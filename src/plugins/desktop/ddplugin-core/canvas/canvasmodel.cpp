@@ -21,7 +21,7 @@
 #include "canvasmodel.h"
 #include "defaultdesktopfileinfo.h"
 #include "filetreater.h"
-#include "dfm-base/base/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
 DSB_D_BEGIN_NAMESPACE
 

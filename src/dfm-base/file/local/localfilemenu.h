@@ -4,7 +4,7 @@
  * Author:     huanyu<huanyub@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ *             zhangyu<zhangyub@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,34 +19,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef WATCHERCACHE_H
-#define WATCHERCACHE_H
+#ifndef LOCALFILEMENU_H
+#define LOCALFILEMENU_H
 
-#include "dfm-base/base/abstractfilewatcher.h"
+#include "dfm-base/dfm_base_global.h"
+#include "dfm-base/interfaces/abstractfilemenu.h"
 
 #include <QObject>
-#include <QUrl>
+#include <QSharedPointer>
 
 DFMBASE_BEGIN_NAMESPACE
-class WacherFactory;
-class InfoCache;
-class WatcherCachePrivate;
-class WatcherCache : public QObject
+class LocalMenuPrivate;
+class LocalFileMenu : public AbstractFileMenu
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d), WatcherCache)
-    QScopedPointer<WatcherCachePrivate> d;
-    friend WacherFactory;
-    friend InfoCache;
+    QSharedPointer<LocalMenuPrivate> d;
 
 public:
-    static WatcherCache &instance();
-    explicit WatcherCache(QObject *parent = nullptr);
-    virtual ~WatcherCache();
-    QSharedPointer<AbstractFileWatcher> getCacheWatcher(const QUrl &url);
-    void cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFileWatcher> &watcher);
-    void removCacheWatcher(const QUrl &url);
+    explicit LocalFileMenu(QObject *parent = nullptr);
+    virtual QMenu *build(MenuMode mode,
+                         const QUrl &rootUrl,
+                         const QUrl &foucsUrl,
+                         const QList<QUrl> &selected = {});
 };
 DFMBASE_END_NAMESPACE
 
-#endif   // WATCHERCACHE_H
+#endif   // LOCALFILEMENU_H

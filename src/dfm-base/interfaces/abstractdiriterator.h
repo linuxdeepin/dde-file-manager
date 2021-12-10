@@ -23,7 +23,7 @@
 #define ABSTRACTDIRITERATOR_H
 
 #include "dfm-base/dfm_base_global.h"
-#include "dfm-base/base/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QDir>
 #include <QDirIterator>

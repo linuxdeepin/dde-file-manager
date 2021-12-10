@@ -19,26 +19,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ABSTRACTFILEDEVICE_P_H
-#define ABSTRACTFILEDEVICE_P_H
+#ifndef LOCALFILEWATCHER_H
+#define LOCALFILEWATCHER_H
 
-#include "base/abstractfiledevice.h"
 #include "dfm-base/dfm_base_global.h"
+#include "dfm-base/interfaces/abstractfilewatcher.h"
 
-#include <QUrl>
+#include <dfm-io/core/dfileinfo.h>
 
+#include <QObject>
+
+class QUrl;
 DFMBASE_BEGIN_NAMESPACE
-class AbstractFileDevice;
-class AbstractFileDevicePrivate : public QObject
+class LocalFileWatcherPrivate;
+class LocalFileWatcher : public AbstractFileWatcher
 {
     Q_OBJECT
-    friend class AbstractFileDevice;
-    AbstractFileDevice *const q;
-    QUrl url;   // 文件的url
+    LocalFileWatcherPrivate *const d;
+
 public:
-    explicit AbstractFileDevicePrivate(AbstractFileDevice *qq);
-    virtual ~AbstractFileDevicePrivate();
+    explicit LocalFileWatcher() = delete;
+    explicit LocalFileWatcher(const QUrl &url, QObject *parent = nullptr);
+    virtual ~LocalFileWatcher();
+
+    virtual QUrl url() const;
+    virtual bool startWatcher();
+    virtual bool stopWatcher();
+    virtual bool restartWatcher();
+    virtual void setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled = true);
+    //debug function
+    static QStringList getMonitorFiles();
+
+protected:
 };
 DFMBASE_END_NAMESPACE
 
-#endif   // ABSTRACTFILEDEVICE_P_H
+#endif   // LOCALFILEWATCHER_H

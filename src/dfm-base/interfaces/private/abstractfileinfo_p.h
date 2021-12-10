@@ -4,7 +4,7 @@
  * Author:     huanyu<huanyub@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ *             yanghao<yanghao@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,29 +19,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LOCALFILEMENU_H
-#define LOCALFILEMENU_H
+#ifndef ABSTRACTFILEINFO_P_H
+#define ABSTRACTFILEINFO_P_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/base/abstractfilemenu.h"
+#include "interfaces/abstractfileinfo.h"
+#include "utils/threadcontainer.hpp"
 
-#include <QObject>
-#include <QSharedPointer>
+#include <dfmio_global.h>
+#include <dfmio_register.h>
+#include <dfm-io/core/diofactory.h>
 
+#include <QPointer>
+
+#include <dfm-io/core/dfileinfo.h>
+
+USING_IO_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
-class LocalMenuPrivate;
-class LocalFileMenu : public AbstractFileMenu
-{
-    Q_OBJECT
-    QSharedPointer<LocalMenuPrivate> d;
 
+class AbstractFileInfoPrivate
+{
+    friend class AbstractFileInfo;
+    AbstractFileInfo *const q;   // DAbstractFileInfo实例对象
 public:
-    explicit LocalFileMenu(QObject *parent = nullptr);
-    virtual QMenu *build(MenuMode mode,
-                         const QUrl &rootUrl,
-                         const QUrl &foucsUrl,
-                         const QList<QUrl> &selected = {});
+    QUrl url;   // 文件的url
+    explicit AbstractFileInfoPrivate(AbstractFileInfo *qq);
+    virtual ~AbstractFileInfoPrivate();
 };
+
 DFMBASE_END_NAMESPACE
 
-#endif   // LOCALFILEMENU_H
+#endif   // ABSTRACTFILEINFO_P_H

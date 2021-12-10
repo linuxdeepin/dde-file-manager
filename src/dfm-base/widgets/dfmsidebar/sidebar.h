@@ -24,13 +24,13 @@
 #define SIDEBAR_H
 
 #include "dfm-base/dfm_base_global.h"
-#include "dfm-base/base/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/dfm_base_global.h"
 
 #include <QWidget>
 #include <QSet>
 #ifdef ENABLE_ASYNCINIT
-#include <QFuture>
+#    include <QFuture>
 #endif
 
 #include <functional>
@@ -47,10 +47,11 @@ class SideBar : public QWidget
     Q_OBJECT
     friend class SideBarPrivate;
     SideBarPrivate *const d;
+
 public:
     explicit SideBar(QWidget *parent = nullptr);
     virtual ~SideBar() override;
-    QAbstractItemView *view(); // return m_sidebarView
+    QAbstractItemView *view();   // return m_sidebarView
     int addItem(SideBarItem *item);
     bool insertItem(const int index, SideBarItem *item);
     bool removeItem(SideBarItem *item);
@@ -65,6 +66,4 @@ Q_SIGNALS:
 
 DFMBASE_END_NAMESPACE
 
-#endif // SIDEBAR_H
-
-
+#endif   // SIDEBAR_H

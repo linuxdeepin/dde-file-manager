@@ -23,15 +23,15 @@
 #define MENUFACTORY_H
 
 #include "dfm_common_service_global.h"
+#include "dfm-base/interfaces/abstractfilemenu.h"
 
-#include <dfm-base/base/abstractfilemenu.h>
 #include <dfm-framework/service/pluginservicecontext.h>
 
 DSC_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 class MenuFactory final : dpf::QtClassFactory<AbstractFileMenu>,
-        dpf::QtClassManager<AbstractFileMenu>
+                          dpf::QtClassManager<AbstractFileMenu>
 {
     Q_DISABLE_COPY(MenuFactory)
     friend class MenuService;
@@ -39,10 +39,10 @@ class MenuFactory final : dpf::QtClassFactory<AbstractFileMenu>,
     MenuFactory();
     ~MenuFactory();
 
-    template <class T>
+    template<class T>
     static bool regClass(const QString name, QString *errorString = nullptr)
     {
-        return MenuFactory::instance().dpf::QtClassFactory<AbstractFileMenu>::regClass<T>(name,errorString);
+        return MenuFactory::instance().dpf::QtClassFactory<AbstractFileMenu>::regClass<T>(name, errorString);
     }
 
     static AbstractFileMenu *create(const QString name, QString *errorString = nullptr);
@@ -55,4 +55,4 @@ class MenuFactory final : dpf::QtClassFactory<AbstractFileMenu>,
 };
 
 DSC_END_NAMESPACE
-#endif // MENUFACTORY_H
+#endif   // MENUFACTORY_H

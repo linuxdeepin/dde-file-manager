@@ -19,9 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "localfile/private/localdiriterator_p.h"
-#include "localfile/localfileinfo.h"
-#include "localfile/localdiriterator.h"
+#include "file/local/private/localdiriterator_p.h"
+#include "file/local/localfileinfo.h"
+#include "file/local/localdiriterator.h"
 #include "base/urlroute.h"
 #include "base/schemefactory.h"
 

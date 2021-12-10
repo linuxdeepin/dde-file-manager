@@ -22,8 +22,8 @@
 #ifndef LOCALFILEINFO_P_H
 #define LOCALFILEINFO_P_H
 
-#include "base/private/abstractfileinfo_p.h"
-#include "localfile/localfileinfo.h"
+#include "interfaces/private/abstractfileinfo_p.h"
+#include "file/local/localfileinfo.h"
 #include "mimetype/mimedatabase.h"
 
 #include <QFileInfo>

@@ -30,7 +30,6 @@ static bool dfmioIsInit = DFMIO::dfmio_init();
 
 InfoFactory *InfoFactory::ins = nullptr;
 WacherFactory *WacherFactory::ins = nullptr;
-FileDeviceFactory *FileDeviceFactory::ins = nullptr;
 DirIteratorFactory *DirIteratorFactory::ins = nullptr;
 
 InfoFactory &InfoFactory::instance()
@@ -47,15 +46,6 @@ WacherFactory &WacherFactory::instance()
     if (!ins) {
         ins = new WacherFactory();
         static GC<WacherFactory> gc(ins);
-    }
-    return *ins;
-}
-
-FileDeviceFactory &FileDeviceFactory::instance()
-{
-    if (!ins) {
-        ins = new FileDeviceFactory();
-        static GC<FileDeviceFactory> gc(ins);
     }
     return *ins;
 }

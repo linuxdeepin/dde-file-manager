@@ -19,33 +19,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LOCALFILEWATCHER_P_H
-#define LOCALFILEWATCHER_P_H
+#ifndef WATCHERCACHE_H
+#define WATCHERCACHE_H
 
-#include "localfile/localfilewatcher.h"
-#include "base/private/abstractfilewatcher_p.h"
-#include "utils/threadcontainer.hpp"
+#include "dfm-base/interfaces/abstractfilewatcher.h"
 
-#include <dfm-io/core/dwatcher.h>
-
+#include <QObject>
 #include <QUrl>
 
-USING_IO_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
-class LocalFileWatcherPrivate : public AbstractFileWatcherPrivate
+class WacherFactory;
+class InfoCache;
+class WatcherCachePrivate;
+class WatcherCache : public QObject
 {
-    friend class LocalFileWatcher;
-    LocalFileWatcher *const q;
+    Q_OBJECT
+    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d), WatcherCache)
+    QScopedPointer<WatcherCachePrivate> d;
+    friend WacherFactory;
+    friend InfoCache;
 
 public:
-    explicit LocalFileWatcherPrivate(LocalFileWatcher *qq);
-    virtual ~LocalFileWatcherPrivate() {}
-    virtual bool start();
-    virtual bool stop();
-    static QString formatPath(const QString &path);
-    void initFileWatcher();
-    void initConnect();
+    static WatcherCache &instance();
+    explicit WatcherCache(QObject *parent = nullptr);
+    virtual ~WatcherCache();
+    QSharedPointer<AbstractFileWatcher> getCacheWatcher(const QUrl &url);
+    void cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFileWatcher> &watcher);
+    void removCacheWatcher(const QUrl &url);
 };
 DFMBASE_END_NAMESPACE
 
-#endif   // LOCALFILEWATCHER_P_H
+#endif   // WATCHERCACHE_H

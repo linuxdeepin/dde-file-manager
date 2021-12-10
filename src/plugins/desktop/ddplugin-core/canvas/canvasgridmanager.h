@@ -21,7 +21,7 @@
 #ifndef CANVASGRIDMANAGER_H
 #define CANVASGRIDMANAGER_H
 
-#include "dfm-base/base/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 #include "defaultdesktopfileinfo.h"
 
 DSB_D_BEGIN_NAMESPACE
@@ -60,9 +60,11 @@ public:
     void delaySyncAllProfile(int ms = 100);
     void toggleArrange();
     bool autoArrange() const;
+
 protected:
     explicit CanvasGridManager(QObject *parent = nullptr);
     ~CanvasGridManager();
+
 private:
     CanvasGridManagerPrivate *d;
 };

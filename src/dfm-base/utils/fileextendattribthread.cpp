@@ -21,7 +21,7 @@
 #include "fileextendattribthread.h"
 #include "private/fileextendattribthreadprivate.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/localfile/localdiriterator.h"
+#include "dfm-base/file/local/localdiriterator.h"
 
 DFMBASE_USE_NAMESPACE
 

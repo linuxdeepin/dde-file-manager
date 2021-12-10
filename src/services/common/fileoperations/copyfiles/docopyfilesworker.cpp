@@ -23,7 +23,7 @@
 #include "docopyfilesworker.h"
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/abstractdiriterator.h"
+#include "dfm-base/interfaces/abstractdiriterator.h"
 #include "fileoperations/fileoperationutils/statisticsfilessize.h"
 #include "storageinfo.h"
 

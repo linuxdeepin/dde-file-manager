@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +19,28 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+#include "abstractbaseview.h"
+
+DFMBASE_BEGIN_NAMESPACE
+
+/*!
+ * \class BaseView
+ *
+ * \brief
  */
-#ifndef RECENTROOTFILEINFO_H
-#define RECENTROOTFILEINFO_H
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
-
-#include <QDebug>
-
-class RecentFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
+AbstractBaseView::AbstractBaseView()
 {
-public:
-    explicit RecentFileInfo(const QUrl &url)
-        : DFMBASE_NAMESPACE::AbstractFileInfo(url)
-    {
-        Q_UNUSED(url);
-    }
-};
+}
 
-#endif // RECENTROOTFILEINFO_H
+AbstractBaseView::~AbstractBaseView()
+{
+}
+
+AbstractBaseView::ViewState AbstractBaseView::viewState() const
+{
+    return ViewState::kViewIdle;
+}
+
+DFMBASE_END_NAMESPACE

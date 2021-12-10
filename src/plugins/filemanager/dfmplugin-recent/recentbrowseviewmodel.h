@@ -22,7 +22,7 @@
 #ifndef RECENTBROWSEVIEWMODEL_H
 #define RECENTBROWSEVIEWMODEL_H
 
-#include "dfm-base/base/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/widgets/dfmfileview/fileviewmodel.h"
 
 #include <QAbstractItemView>
