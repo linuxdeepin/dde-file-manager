@@ -24,6 +24,7 @@ enum ActiveState {
     TrialExpired //试用期已过期
 };
 
+class QHBoxLayout;
 class WaterMaskFrame : public QFrame
 {
     Q_OBJECT
@@ -41,22 +42,19 @@ private:
 public slots:
     void updatePosition();
     void updateAuthorizationState();
-private:
-    void onActiveStateFinished();
-
+private slots:
+    void onChangeAuthorizationLabel(int);
 private:
     QString m_configFile;
     QJsonObject m_configs;
-    QLabel* m_logoLabel = NULL;
-    QLabel* m_textLabel = NULL;
+    QLabel* m_logoLabel = nullptr;
+    QLabel* m_textLabel = nullptr;
+    QHBoxLayout *m_mainLayout = nullptr;
     bool m_isMaskAlwaysOn = false;
     int m_xRightBottom;
     int m_yRightBottom;
     int m_maskWidth;
     int m_maskHeight;
-
-    QScopedPointer<ComDeepinLicenseInterface> m_licenseInterface;
-    QScopedPointer<QDBusInterface> m_licenseProp;
 };
 
 #endif // WATERMASKFRAME_H

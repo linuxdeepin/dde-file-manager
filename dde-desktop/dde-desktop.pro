@@ -71,7 +71,8 @@ SOURCES += \
     screen/screenmanagerwayland.cpp \
     screen/screenobjectwayland.cpp \
     dbus/licenceInterface.cpp \
-    view/canvasviewmanager.cpp
+    view/canvasviewmanager.cpp \
+    presenter/deepinlicensehelper.cpp
 
 
 
@@ -109,9 +110,10 @@ HEADERS += \
     view/backgroundwidget.h \
     screen/screenmanagerwayland.h \
     screen/screenobjectwayland.h \
-    view/canvasviewmanager.h
-    accessible/frameaccessibledefine.h
-    accessible/accessiblelist.h
+    view/canvasviewmanager.h \
+    accessible/frameaccessibledefine.h \
+    accessible/accessiblelist.h \
+    presenter/deepinlicensehelper.h
 
 
 RESOURCES +=

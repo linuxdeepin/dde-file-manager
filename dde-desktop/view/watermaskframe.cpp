@@ -9,6 +9,8 @@
 
 #include "watermaskframe.h"
 #include "../config/config.h"
+#include "presenter/deepinlicensehelper.h"
+
 #include <DSysInfo>
 #include <QFile>
 #include <QDebug>
@@ -30,22 +32,15 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent) :
     m_configFile(fileName)
 {
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    qInfo() << "create ComDeepinLicenseInterface...";
-    m_licenseInterface.reset(new ComDeepinLicenseInterface(
-                                 "com.deepin.license",
-                                 "/com/deepin/license/Info",
-                                 QDBusConnection::systemBus()));
-    QObject::connect(m_licenseInterface.get(), &ComDeepinLicenseInterface::LicenseStateChange,
-                     this, &WaterMaskFrame::updateAuthorizationState);
 
-    qInfo() << "create /com/deepin/license/Info org.freedesktop.DBus.Properties...";
-    //使用异步调用访问接口的方式读取授权状态
-    m_licenseProp.reset(new QDBusInterface("com.deepin.license",
-                                           "/com/deepin/license/Info",
-                                           "org.freedesktop.DBus.Properties",
-                                           QDBusConnection::systemBus()));
-    qInfo() << "interface inited.";
+    DeepinLicenseHelper::instance()->init();
+    // 授权状态改变
+    connect(DeepinLicenseHelper::instance(), &DeepinLicenseHelper::licenseStateChanged,
+            this, &WaterMaskFrame::updateAuthorizationState);
 
+    // 获取到当前授权状态
+    connect(DeepinLicenseHelper::instance(), &DeepinLicenseHelper::postLicenseState,
+            this, &WaterMaskFrame::onChangeAuthorizationLabel);
 
     m_logoLabel = new QLabel(this);
     m_textLabel = new QLabel(this);
@@ -69,6 +64,11 @@ WaterMaskFrame::~WaterMaskFrame()
         m_textLabel->deleteLater();
         m_textLabel = nullptr;
     }
+
+    if (m_mainLayout) {
+        m_mainLayout->deleteLater();
+        m_mainLayout = nullptr;
+    }
 }
 
 bool WaterMaskFrame::checkConfigFile(const QString &fileName)
@@ -84,7 +84,7 @@ void WaterMaskFrame::loadConfig(const QString &fileName)
 {
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly)) {
-        qDebug() << "WaterMask config file doesn't exist!";
+        qWarning() << "WaterMask config file doesn't exist!";
     }
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
@@ -92,7 +92,7 @@ void WaterMaskFrame::loadConfig(const QString &fileName)
         m_configs = QJsonObject::fromVariantMap(doc.toVariant().toMap());
         initUI();
     } else {
-        qDebug() << error.errorString();
+        qCritical() << error.errorString();
     }
 
 }
@@ -250,15 +250,11 @@ void WaterMaskFrame::initUI()
         m_logoLabel->setObjectName(WATER_MASK_LOGO_LABEL);
     }
 
-    if(isNeedState()){
-        QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(
-                    m_licenseProp->asyncCall(QStringLiteral("Get"),
-                                             QString("com.deepin.license.Info"),
-                                             QString("AuthorizationState")), this);
-
-        connect(watcher, &QDBusPendingCallWatcher::finished, this, &WaterMaskFrame::onActiveStateFinished, Qt::QueuedConnection);
-        qInfo() << "asyncCall Get com.deepin.license.Info AuthorizationState";
-    }else {
+    if (isNeedState()) {
+        qInfo() << "delayGetState";
+        DeepinLicenseHelper::instance()->delayGetState();
+        qInfo() << "called delayGetState";
+    } else {
         m_textLabel->setText("");
     }
 
@@ -272,36 +268,41 @@ void WaterMaskFrame::initUI()
         m_textLabel->setAlignment(Qt::AlignCenter);
     }
 
-    QHBoxLayout *mainLayout = new QHBoxLayout;
-    mainLayout->setSpacing(0);
-    mainLayout->addStretch();
+    //设置新的layout前需先删除旧的，否则会导致新的布局器布局出错
+    if (auto tempLayout = layout())
+        delete tempLayout;
+
+    m_mainLayout = new QHBoxLayout();
+    setLayout(m_mainLayout);
+    m_mainLayout->setSpacing(0);
+    m_mainLayout->addStretch();
 
     if (maskLogoUri.length() != 0) {
         if (maskLogoLayoutAlign == "left") {
-            mainLayout->addWidget(m_logoLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
+            m_mainLayout->addWidget(m_logoLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
         } else if (maskLogoLayoutAlign == "right") {
-            mainLayout->addWidget(m_logoLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
+            m_mainLayout->addWidget(m_logoLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
         } else if (maskLogoLayoutAlign == "center") {
-            mainLayout->addWidget(m_logoLabel, 0, Qt::AlignCenter);
+            m_mainLayout->addWidget(m_logoLabel, 0, Qt::AlignCenter);
         }
     }
 
-    mainLayout->addSpacing(maskLogoTextSpacing);
+    m_mainLayout->addSpacing(maskLogoTextSpacing);
 
     if (isNeedState()) {
         if (maskTextLayoutAlign == "left") {
-            mainLayout->addWidget(m_textLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
+            m_mainLayout->addWidget(m_textLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
         } else if (maskTextLayoutAlign == "right") {
-            mainLayout->addWidget(m_textLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
+            m_mainLayout->addWidget(m_textLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
         } else if (maskTextLayoutAlign == "center") {
-            mainLayout->addWidget(m_textLabel, 0, Qt::AlignCenter);
+            m_mainLayout->addWidget(m_textLabel, 0, Qt::AlignCenter);
         }
     }
-    mainLayout->addStretch();
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    setLayout(mainLayout);
 
+    m_mainLayout->addStretch();
+    m_mainLayout->setContentsMargins(0, 0, 0, 0);
     setFixedSize(m_maskWidth, m_maskHeight);
+
     QString color(maskTextColor);
     QString fontsize(maskTextFontSize);
     QString style = QString("QLabel {color: %1; font-size: %2}").arg(color, fontsize);
@@ -319,7 +320,7 @@ bool WaterMaskFrame::isNeedState()
 bool WaterMaskFrame::parseJson(QString key)
 {
     if(key.isNull() || key.isEmpty() || (!m_configs.contains(key))){
-        qDebug() << key <<"WaterMask load Config fail";
+        qWarning() << key <<"WaterMask load Config fail";
         return false;
     }
     else {
@@ -343,24 +344,9 @@ void WaterMaskFrame::updateAuthorizationState()
     }
 }
 
-void WaterMaskFrame::onActiveStateFinished()
+void WaterMaskFrame::onChangeAuthorizationLabel(int stateType)
 {
-    QDBusPendingCallWatcher *watcher = qobject_cast<QDBusPendingCallWatcher *>(sender());
-    if (!watcher) {
-        qWarning() << "invaild watcher...";
-        return;
-    }
-    watcher->deleteLater();
-
-    QDBusPendingReply<QVariant> reply = *watcher;
-    auto errorType = reply.error().type();
-    if (errorType != QDBusError::NoError) {
-        qWarning() << "get ActiveState error:" << errorType << QDBusError::errorString(errorType);
-        return;
-    }
-
-    int stateType = reply.value().toInt();
-    qInfo() << "reply ActiveState is" << stateType;
+    qInfo() << "reply ActiveState is" << stateType << this;
 
     switch (stateType) {
     case Unauthorized:
