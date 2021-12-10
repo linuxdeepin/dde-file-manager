@@ -16,7 +16,9 @@ SUBDIRS  += \
     dde-select-dialog-x11 \
     dde-select-dialog-wayland \
     dde-file-thumbnail-tool \
-    gschema
+    gschema \
+    dde-file-manager-extension
+
 
 !CONFIG(DISABLE_ANYTHING) {
     message("Deepin Anything server plugin enabled for" $$ARCH)
@@ -25,6 +27,7 @@ SUBDIRS  += \
 
 dde-file-manager.subdir = src/dde-file-manager
 dde-file-manager-lib.subdir = src/dde-file-manager-lib
+dde-file-manager-extension.subdir = src/dde-file-manager-extension
 dde-file-manager-daemon.subdir = src/dde-file-manager-daemon
 dde-file-manager-plugins.subdir = src/dde-file-manager-plugins
 dde-dock-plugins.subdir = src/dde-dock-plugins
