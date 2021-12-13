@@ -135,8 +135,8 @@
                             "default": false
                         },
                         {
-                            "key": "hide_suffix",
-                            "text": qsTranslate("GenerateSettingTranslate", "Hide file extension when rename"),
+                            "key": "show_suffix",
+                            "text": qsTranslate("GenerateSettingTranslate", "Show file extension"),
                             "type": "checkbox",
                             "default": true
                         },
@@ -305,5 +305,5 @@
             ]
         }
 
-      ]
+    ]
 }
