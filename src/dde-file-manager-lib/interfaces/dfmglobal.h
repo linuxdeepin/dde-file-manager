@@ -406,6 +406,7 @@ public:
     static bool fileNameCorrection(const QString &filePath);
     static bool fileNameCorrection(const QByteArray &filePath);
 
+    static bool autoInitExtPluginManager();
 
     static void showMultiFilesRenameDialog(const QList<DUrl> &selectedFiles);
 

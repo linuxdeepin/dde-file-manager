@@ -62,6 +62,9 @@
 #include "customization/dcustomactionbuilder.h"
 #include "customization/dcustomactionparser.h"
 #include "gvfs/gvfsmountmanager.h"
+#include "extensionimpl/dfmextpluginmanager.h"
+#include "extensionimpl/dfmextmenuimplproxy.h"
+#include "extensionimpl/dfmextmenuimpl.h"
 
 #include <DSysInfo>
 
@@ -128,6 +131,12 @@ void recycleUserActionType(MenuAction type)
     if (DFileMenuManager::needDeleteAction())
         delete action;
 }
+
+DFMExtMenuImpl *createMenuImpl(QMenu *menu)
+{
+    return new DFMExtMenuImpl(menu);
+}
+
 }
 
 DFileMenu *DFileMenuManager::createDefaultBookMarkMenu(const QSet<MenuAction> &disableList)
@@ -1224,6 +1233,37 @@ void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DU
     }
 }
 
+void DFileMenuManager::extensionPluginCustomMenu(DFileMenu *menu,
+                                                 bool isNormal,
+                                                 const DUrl currentUrl,
+                                                 const DUrl focusFile,
+                                                 const DUrlList &selected,
+                                                 bool onDesktop)
+{
+    if(!menu)
+        return;
+
+    DFMGlobal::autoInitExtPluginManager();
+
+    std::string newCurrentUrl = currentUrl.toString().toStdString();
+    std::string newFocusUrl = focusFile.toString().toStdString();
+
+    for (auto val : DFMExtPluginManager::instance().menus()) {
+        val->initialize(DFMExtPluginManager::instance().pluginMenuProxy());
+        //生命周期与DFileMene绑定
+        DFMExtMenuImpl *extMenuImpl = DFileMenuData::createMenuImpl(menu);
+        if (isNormal) {
+            std::list<std::string> newSection;
+            for (auto url : selected) { //导出所有的Durl到std::string
+                newSection.push_back(url.toString().toStdString());
+            }
+            val->buildNormalMenu(extMenuImpl, newCurrentUrl, newFocusUrl, newSection, onDesktop);
+        } else {
+            val->buildEmptyAreaMenu(extMenuImpl, newCurrentUrl, onDesktop);
+        }
+    }
+}
+
 /*
  * 自定义菜单在以下作用域时支持：
  * U盘盘内文件、移动硬盘盘内文件、桌面
@@ -1245,8 +1285,27 @@ bool DFileMenuManager::isCustomMenuSupported(const DUrl &viewRootUrl)
             && !viewRootUrl.isUserShareFile() //过滤共享文件
             && !deviceListener->isFileFromDisc(path) //过滤光盘
             && !viewRootUrl.isVaultFile() //过滤保险箱
-            && !viewRootUrl.isTrashFile();//过滤回收站
+            && !viewRootUrl.isTrashFile(); //过滤回收站
 
+}
+
+bool DFileMenuManager::isReadOnlyRemovableDiskDevice(const DUrl &viewRootUrl)
+{
+    //外部设备只读时不展示第三方插件自定义菜单
+
+    const QString &path = viewRootUrl.toLocalFile();
+    const auto deviceList = deviceListener->getDeviceList();
+    for (int i = 0; i < deviceList.size(); i++) {
+        UDiskDeviceInfoPointer info = deviceList.at(i);
+        if (info->getDiskInfo().is_removable() && info->getDiskInfo().can_unmount()) {
+            QString mountPath = info->getMountPointUrl().path();
+            if (!mountPath.isEmpty() && mountPath != "/" && path.startsWith(mountPath)) {
+                if (info->getDiskInfo().read_only())
+                    return true;
+            }
+        }
+    }
+    return false;
 }
 
 void DFileMenuManager::addActionWhitelist(MenuAction action)

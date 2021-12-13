@@ -41,3 +41,8 @@ filedialog_service_wayland.path = /usr/share/dbus-1/services
 filedialog_service_wayland.files = $$PWD/com.deepin.filemanager.filedialog_wayland.service
 
 INSTALLS += target filedialog_service_wayland
+
+unix:!macx: LIBS += -L$$OUT_PWD/../dde-file-manager-extension/ -ldfm-extension
+
+INCLUDEPATH += $$PWD/../dde-file-manager-extension
+DEPENDPATH += $$PWD/../dde-file-manager-extension

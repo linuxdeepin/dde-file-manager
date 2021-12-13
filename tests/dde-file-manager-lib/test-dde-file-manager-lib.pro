@@ -72,6 +72,7 @@ include($$LIB_DFM_SRC_FOLDER/mediainfo/mediainfo.pri)
 include($$LIB_DFM_SRC_FOLDER/vault/vault.pri)
 include($$LIB_DFM_SRC_FOLDER/fulltextsearch/fulltextsearch.pri)
 include($$LIB_DFM_SRC_FOLDER/log/log.pri)
+include($$LIB_DFM_SRC_FOLDER/extensionimpl/extensionimpl.pri)
 
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
@@ -162,3 +163,10 @@ HEADERS += \
     dialogs/burnoptdialog_p.h
 
 include(test.pri)
+
+unix:!macx: LIBS += -L$$OUT_PWD/../../src/dde-file-manager-extension/ -ldfm-extension
+CONFIG(debug, debug|release) {
+    DEPENDPATH += $$PWD/../../src/dde-file-manager-extension
+    unix:QMAKE_RPATHDIR += $$OUT_PWD/../../src/dde-file-manager-extension
+}
+

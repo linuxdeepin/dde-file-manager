@@ -20,11 +20,12 @@ CONFIG(release, release|debug) {
 }
 CONFIG += c++11 link_pkgconfig
 
-LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager -lKF5Codecs
+LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager -lKF5Codecs \
+        -L$$OUT_PWD/../dde-file-manager-extension -ldfm-extension
 
 CONFIG(debug, debug|release) {
-    DEPENDPATH += $$PWD/../dde-file-manager-lib
-    unix:QMAKE_RPATHDIR += $$OUT_PWD/../dde-file-manager-lib
+    DEPENDPATH += $$PWD/../dde-file-manager-lib $$PWD/../dde-file-manager-extension
+    unix:QMAKE_RPATHDIR += $$OUT_PWD/../dde-file-manager-lib $$OUT_PWD/../dde-file-manager-extension
 }
 
 TEMPLATE = app

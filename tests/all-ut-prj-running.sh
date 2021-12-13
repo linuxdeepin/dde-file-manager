@@ -56,7 +56,30 @@ echo "start dde-file-manager all UT cases:" $UT_PRJ_TYPE
 
 # 下面是编译和工程测试
 
-# 1. 编译test-dde-file-manager-lib工程
+# 1 编译lib库用于支持其他项目
+NEED_LIB_DDE_FILE_MANAGER=true
+if [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANAGER_LIB" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_DOCK_PLUGINS" ]; then
+       NEED_LIB_DDE_FILE_MANAGER=false
+       echo "set NEED_LIB_DDE_FILE_MANAGER as false to not support dde-file-manager-lib compilation"
+fi
+
+NEED_LIB_DDE_FILE_MANAGER_EXTENSION=true
+if [ "$NEED_LIB_DDE_FILE_MANAGER" = false ] && [ "$UT_PRJ_TYPE" != "$UT_TYPE_FILE_MANAGER_LIB" ]; then
+       NEED_LIB_DDE_FILE_MANAGER=false
+       echo "set NEED_LIB_DDE_FILE_MANAGER_EXTENSION as false to not support dde-file-manager-extension compilation"
+fi
+
+export LD_LIBRARY_PATH=$UT_SRC_FOLDER/dde-file-manager-extension:$LD_LIBRARY_PATH
+if [ "$NEED_LIB_DDE_FILE_MANAGER_EXTENSION" = true ] ; then
+        DFM_EXTENSION_LIB=$UT_SRC_FOLDER/dde-file-manager-extension
+        mkdir -p $DFM_EXTENSION_LIB
+        cd $DFM_EXTENSION_LIB   
+        echo "common dfm-extension lib is making"
+	qmake $SRC_FOLDER/dde-file-manager-extension/dde-file-manager-extension.pro $QMAKE_ARGS
+	make -j$CPU_NUMBER
+fi
+
+# 2. 编译test-dde-file-manager-lib工程
 if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANAGER_LIB" ] ; then
         echo $UT_TYPE_FILE_MANAGER_LIB "test case is running"
 
@@ -75,12 +98,6 @@ if [ "$UT_PRJ_TYPE" = "$UT_TYPE_ALL" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANA
         # report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
 	./../../../tests/ut-target-running.sh $BUILD_DIR dde-file-manager-lib $DIR_TEST_DDE_FILE_MANAGER_LIB test-dde-file-manager-lib "$extract_path_dde_file_manager_lib" "$remove_path_dde_file_manager_lib" $SHOW_REPORT
         check_ut_result $? $UT_TYPE_FILE_MANAGER_LIB
-fi
-# 2 编译lib库用于支持其他项目
-NEED_LIB_DDE_FILE_MANAGER=true
-if [ "$UT_PRJ_TYPE" = "$UT_TYPE_FILE_MANAGER_LIB" ] || [ "$UT_PRJ_TYPE" = "$UT_TYPE_DOCK_PLUGINS" ]; then
-       NEED_LIB_DDE_FILE_MANAGER=false
-       echo "set NEED_LIB_DDE_FILE_MANAGER as false to not support dde-file-manager-lib compilation"
 fi
 
 if [ "$NEED_LIB_DDE_FILE_MANAGER" = true ] ; then

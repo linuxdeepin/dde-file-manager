@@ -86,8 +86,9 @@ unix {
 
     PLUGINDIR = $$LIB_BASE_DIR/plugins
     TOOLDIR = $$LIB_BASE_DIR/tools
+    EXTENSIONSDIR = $$LIB_BASE_DIR/plugins/extensions
 
-    DEFINES += PLUGINDIR=\\\"$$top_srcdir/plugins:$$PLUGINDIR\\\" TOOLDIR=\\\"$$top_srcdir/tools:$$TOOLDIR\\\"
+    DEFINES += PLUGINDIR=\\\"$$top_srcdir/plugins:$$PLUGINDIR\\\" TOOLDIR=\\\"$$top_srcdir/tools:$$TOOLDIR\\\" EXTENSIONSDIR=\\\"$$EXTENSIONSDIR\\\"
 
     isEmpty(VERSION) {
         VERSION = 1.8.2

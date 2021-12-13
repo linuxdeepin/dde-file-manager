@@ -77,6 +77,7 @@ include(tag/tag.pri)
 include(mediainfo/mediainfo.pri)
 include(vault/vault.pri)
 include(log/log.pri)
+include(extensionimpl/extensionimpl.pri)
 
 isEqual(ARCH, sw_64){
     DEFINES += SW_LABEL
@@ -221,3 +222,8 @@ DISTFILES += \
 
 include($$PWD/settings_dialog_json.pri)
 
+unix:!macx: LIBS += -L$$OUT_PWD/../dde-file-manager-extension/ -ldfm-extension
+CONFIG(debug, debug|release) {
+    DEPENDPATH += $$PWD/../dde-file-manager-extension
+    unix:QMAKE_RPATHDIR += $$OUT_PWD/../dde-file-manager-extension
+}

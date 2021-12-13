@@ -54,6 +54,7 @@
 #include "bluetooth/bluetoothmanager.h"
 #include "drootfilemanager.h"
 #include "plugins/schemepluginmanager.h"
+#include "extensionimpl/dfmextpluginmanager.h"
 
 #include <DArrowRectangle>
 
@@ -1151,6 +1152,37 @@ bool DFMGlobal::fileNameCorrection(const QByteArray &filePath)
         return true;
 
     return std::rename(filePath.constData(), newFilePath.constData());
+}
+
+bool DFMGlobal::autoInitExtPluginManager()
+{
+    if (DFMExtPluginManager::instance().pluginPaths().isEmpty()) {
+        auto pluginPaths = DFMExtPluginManager::instance().pluginPaths();
+        pluginPaths.append(DFMExtPluginManager::instance().pluginDefaultPath());
+        DFMExtPluginManager::instance().setPluginPaths(pluginPaths);
+    }
+
+    if (DFMExtPluginManager::instance().state() == DFMExtPluginManager::State::Invalid) {
+        qInfo() << "extPluginPath:" << DFMExtPluginManager::instance().pluginPaths();
+        DFMExtPluginManager::instance().scannPlugins();
+        qInfo() << "extPlugin scanned all plugin";
+    }
+
+    if (DFMExtPluginManager::instance().state() == DFMExtPluginManager::State::Scanned) {
+        DFMExtPluginManager::instance().loadPlugins();
+        qInfo() << "extPlugin loaded all plugin";
+    }
+
+    if (DFMExtPluginManager::instance().state() == DFMExtPluginManager::State::Loaded) {
+        DFMExtPluginManager::instance().initPlugins();
+        qInfo() << "extPlugin initialized all plugin";
+    }
+
+    if (DFMExtPluginManager::instance().state() == DFMExtPluginManager::State::Initialized) {
+        qDebug() << "extPlugin contain menus: " << DFMExtPluginManager::instance().menus();
+    }
+
+    return true;
 }
 
 bool DFMGlobal::isDesktopFile(const DUrl &url)

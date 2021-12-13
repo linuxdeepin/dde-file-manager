@@ -79,7 +79,14 @@ public:
                                  const DUrl &focusFile,
                                  const DUrlList &selected = {},
                                  bool onDesktop = false);
+    static void extensionPluginCustomMenu(DFileMenu *menu, bool isNormal,
+                                              const DUrl currentUrl,
+                                              const DUrl focusFile,
+                                              const DUrlList &selected = {},
+                                              bool onDesktop = false);
+
     static bool isCustomMenuSupported(const DUrl &viewRootUrl);
+    static bool isReadOnlyRemovableDiskDevice(const DUrl &viewRootUrl);
 
     /// actions filter(global)
     static void addActionWhitelist(MenuAction action);

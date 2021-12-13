@@ -41,3 +41,8 @@ filedialog_service_x11.path = /usr/share/dbus-1/services
 filedialog_service_x11.files = $$PWD/com.deepin.filemanager.filedialog_x11.service
 
 INSTALLS += target filedialog_service_x11
+
+unix:!macx: LIBS += -L$$OUT_PWD/../dde-file-manager-extension/ -ldfm-extension
+
+INCLUDEPATH += $$PWD/../dde-file-manager-extension
+DEPENDPATH += $$PWD/../dde-file-manager-extension

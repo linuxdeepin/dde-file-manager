@@ -72,6 +72,9 @@ menu.path = $$includes.path/menu
 emblemicon.files += $$PWD/emblemicon/*.h
 emblemicon.path = $$includes.path/emblemicon
 
+plugindir.files = $$PWD/.readme
+plugindir.path = $${target.path}/dde-file-manager/plugins/extensions
+
 QMAKE_PKGCONFIG_LIBDIR = $$target.path
 QMAKE_PKGCONFIG_VERSION = $$VERSION
 QMAKE_PKGCONFIG_DESTDIR = pkgconfig
@@ -79,4 +82,4 @@ QMAKE_PKGCONFIG_NAME = dfm-extension
 QMAKE_PKGCONFIG_DESCRIPTION = Extension library of dde-file-manager which is provided for third parties
 QMAKE_PKGCONFIG_INCDIR = $$includes.path
 
-INSTALLS += target includes menu emblemicon
+INSTALLS += target includes menu emblemicon plugindir
