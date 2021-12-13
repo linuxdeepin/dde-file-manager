@@ -89,4 +89,5 @@ private:
     QTimer *pTooltipTimer {nullptr};
     DLabel *m_forgetPassword {nullptr};  //! 忘记密码提示与找回入口
     DFMVaultPageBase *m_retrievePage {nullptr};  //! 找回密码验证页面
+    bool m_extraLockVault = true;
 };

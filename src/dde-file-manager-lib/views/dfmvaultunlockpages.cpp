@@ -151,6 +151,21 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
 
 void DFMVaultUnlockPages::showEvent(QShowEvent *event)
 {
+    if(m_extraLockVault) {
+        //! 预防由于其他外部因素导致保险箱之前上锁未能全部完成，所以额外在解锁页面显示时主动调用lockVault函数进行强行卸载保险箱挂载点
+        QDir dir(VAULT_BASE_PATH);
+        QFileInfoList filelist = dir.entryInfoList(QStringList() << VAULT_DECRYPT_DIR_NAME, QDir::Dirs);
+        for(QFileInfo & info : filelist) {
+            if(info.absoluteFilePath() + QDir::separator() == VaultController::makeVaultLocalPath()) {
+                if(!QFile::exists(VaultController::makeVaultLocalPath())) {
+                    emit VaultController::ins()->sigLockVault(info.absoluteFilePath());
+                    break;
+                }
+            }
+        }
+        m_extraLockVault = false;
+    }
+
     VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNLOCKVAULTPAGE);
     // 重置所有控件状态
     m_passwordEdit->lineEdit()->clear();
@@ -181,6 +196,7 @@ void DFMVaultUnlockPages::showEvent(QShowEvent *event)
 
 void DFMVaultUnlockPages::closeEvent(QCloseEvent *event)
 {
+    m_extraLockVault = true;
     VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNKNOWN);
 
     DFMVaultPageBase::closeEvent(event);
