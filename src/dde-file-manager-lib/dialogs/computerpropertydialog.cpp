@@ -165,8 +165,8 @@ void GetInfoWork::run()
             }
             // 获取系统版本名
             if (m_datas.contains(keyEditon)) {
-                if (DSysInfo::uosEditionType() == DSysInfo::UosEuler) {
-                    Edition = DSysInfo::minorVersion() + "e";
+                if (DSysInfo::UosType::UosServer == DSysInfo::uosType()) {  // 服务器版本
+                    Edition = DSysInfo::minorVersion() + DSysInfo::uosEditionName();
                 } else {
                     Edition = DSysInfo::uosEditionName();
                 }
@@ -458,8 +458,8 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     // 如果dbus没有，则从dtk读数据
     if (DSysInfo::isDeepin()) {
         //! 获取系统版本名
-        if (DSysInfo::uosEditionType() == DSysInfo::UosEuler) {
-            Edition = DSysInfo::minorVersion() + "e";
+        if (DSysInfo::UosType::UosServer == DSysInfo::uosType()) {  // 服务器版本
+            Edition = DSysInfo::minorVersion() + DSysInfo::uosEditionName();
         } else {
             Edition = DSysInfo::uosEditionName();
         }
