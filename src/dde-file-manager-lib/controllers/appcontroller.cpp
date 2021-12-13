@@ -1192,30 +1192,6 @@ void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &
         path = QUrl(fi->extraProperties()["rooturi"].toString()).toString();
     }
     QJsonObject smbObj = secretManager->getLoginData(path);
-    if (smbObj.empty()) {
-        if (path.endsWith("/")) {
-            path = path.left(path.length() - 1);
-            smbObj = secretManager->getLoginData(path);
-
-            if (smbObj.isEmpty()) {
-                QString share = path.split("/").last();
-                path = path.left(path.length() - share.length());
-                path += share.toUpper();
-                smbObj = secretManager->getLoginData(path);
-            }
-        } else {
-            path += "/";
-            smbObj = secretManager->getLoginData(path);
-            if (smbObj.isEmpty()) {
-                QStringList _pl = path.split("/");
-                QString share = _pl.at(_pl.length() - 2);
-                path = path.left(path.length() - share.length() - 1);
-                path += share.toUpper();
-                path += "/";
-                smbObj = secretManager->getLoginData(path);
-            }
-        }
-    }
 
     qDebug() << path << smbObj;
 
@@ -1246,7 +1222,7 @@ void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &
         obj.insert("domain", smbObj.value("domain").toString());
         obj.insert("protocol", DUrl(smbObj.value("id").toString()).scheme());
         obj.insert("server", server);
-        obj.insert("path", path);
+        obj.insert("key", smbObj.value("key").toString());
         secretManager->clearPasswordByLoginObj(obj);
     }
     actionUnmount(event);
