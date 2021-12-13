@@ -16,7 +16,7 @@ SOURCES += \
     $$PWD/vault_interface.cpp \
     $$PWD/revocationmgr_interface.cpp
 
-!CONFIG(DISABLE_ANYTHING) {
+CONFIG(ENABLE_ANYTHING) {
     dbus_anything.files = /usr/share/dbus-1/interfaces/com.deepin.anything.xml
     DBUS_INTERFACES += dbus_anything
 }

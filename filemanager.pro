@@ -16,7 +16,7 @@ SUBDIRS  += \
     dde-file-thumbnail-tool \
     gschema
 
-!CONFIG(DISABLE_ANYTHING) {
+CONFIG(ENABLE_ANYTHING) {
     message("Deepin Anything server plugin enabled for" $$ARCH)
     SUBDIRS += deepin-anything-server-plugins
 }

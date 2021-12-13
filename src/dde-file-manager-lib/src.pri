@@ -464,7 +464,7 @@ SOURCES += \
     $$PWD/controllers/dfmsftpcrumbcontroller.cpp \
     $$PWD/plugins/schemepluginmanager.cpp
 
-!CONFIG(DISABLE_ANYTHING) {
+CONFIG(ENABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h
     SOURCES += $$PWD/shutil/danythingmonitor.cpp
 }
