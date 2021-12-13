@@ -20,6 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #ifndef LOCALFILEHANDLER_H
 #define LOCALFILEHANDLER_H
 
@@ -30,7 +31,11 @@
 
 class QUrl;
 class QString;
+
 DFMBASE_BEGIN_NAMESPACE
+
+class DesktopFile;
+
 class LocalFileHandler
 {
 public:
@@ -47,13 +52,26 @@ public:
     virtual bool createSystemLink(const QUrl &sourcfile, const QUrl &link);
     virtual bool setPermissions(const QUrl &url, QFileDevice::Permissions permissions);
     virtual bool deleteFile(const QUrl &file);
-    virtual bool setFileTime(const QUrl &url, const QDateTime &accessDateTime,
-                             const QDateTime &lastModifiedTime);
+    virtual bool setFileTime(const QUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime);
+
     QString errorString();
 
 private:
+    bool launchApp(const QString &desktopFile, const QStringList &filePaths = {});
+    bool launchAppByDBus(const QString &desktopFile, const QStringList &filePaths = {});
+    bool launchAppByGio(const QString &desktopFile, const QStringList &filePaths = {});
+
+    bool isFileManagerSelf(const QString &desktopFile);
+    bool isSmbUnmountedFile(const QUrl &url);
+    QUrl smbFileUrl(const QString &filePath);
+    QString getFileMimetypeFromGio(const QUrl &url);
+    void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
+    QString defaultTerminalPath();
+    QString getFileMimetype(const QString &path);
+
+private:
     void setError(const QString &error);
-    QString *errorStr = nullptr;   // 错误信息
+    QString *errorStr = nullptr;
 };
 
 DFMBASE_END_NAMESPACE

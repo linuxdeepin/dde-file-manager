@@ -22,10 +22,19 @@
  */
 #include "localfilehandler.h"
 
+#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/mimetype/mimedatabase.h"
+#include "dfm-base/mimetype/mimesappsmanager.h"
+#include "dfm-base/mimetype/mimetypedisplaymanager.h"
+#include "dfm-base/utils/desktopfile.h"
+
 #include <dfm-io/dfmio_register.h>
 #include <dfm-io/core/doperator.h>
 #include <dfm-io/core/diofactory.h>
 #include <dfm-io/core/dfile.h>
+
+#include <DRecentManager>
 
 #include <QString>
 #include <QUrl>
@@ -33,16 +42,30 @@
 #include <QDir>
 #include <QDateTime>
 #include <QDebug>
+#include <QRegularExpression>
+#include <QProcess>
+#include <QDesktopServices>
+#include <QX11Info>
 
 #include <unistd.h>
 #include <utime.h>
 #include <cstdio>
 
+#undef signals
+extern "C" {
+#include <gio/gio.h>
+#include <gio/gappinfo.h>
+#include <gio-unix-2.0/gio/gdesktopappinfo.h>
+}
+#define signals public
+
 DFMBASE_USE_NAMESPACE
 
 LocalFileHandler::LocalFileHandler()
 {
-    dfmio::dfmio_init();   // 注册暂时放在这里
+    // TODO(lanxs)
+    // 注册暂时放在这里
+    dfmio::dfmio_init();
 }
 
 LocalFileHandler::~LocalFileHandler()
@@ -60,37 +83,29 @@ LocalFileHandler::~LocalFileHandler()
  */
 bool LocalFileHandler::touchFile(const QUrl &url)
 {
-    bool ret = true;
+    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+    if (!factory) {
+        qWarning() << "create factory failed, url: " << url;
+        return false;
+    }
 
-    do {
-        QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-        if (!factory) {
-            qWarning() << "create factory failed, url: " << url;
-            ret = false;
-            break;
-        }
-        QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
-        if (!oper) {
-            qWarning() << "create operator failed, url: " << url;
-            ret = false;
-            break;
-        }
+    QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+    if (!oper) {
+        qWarning() << "create operator failed, url: " << url;
+        return false;
+    }
 
-        bool success = oper->touchFile();
-        if (!success) {
-            qWarning() << "touch file failed, url: " << url;
-            ret = false;
+    bool success = oper->touchFile();
+    if (!success) {
+        qWarning() << "touch file failed, url: " << url;
 
-            DFMIOError error = oper->lastError();
-            // TODO lanxs
-            // 等待dfm-io代码合入
-            // setError(error.errorMsg());
+        DFMIOError error = oper->lastError();
+        setError(error.errorMsg());
 
-            break;
-        }
-    } while (0);
+        return false;
+    }
 
-    return ret;
+    return true;
 }
 /*!
  * \brief LocalFileHandler::mkdir 创建目录
@@ -99,37 +114,29 @@ bool LocalFileHandler::touchFile(const QUrl &url)
  */
 bool LocalFileHandler::mkdir(const QUrl &dir)
 {
-    bool ret = true;
+    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(dir.scheme(), static_cast<QUrl>(dir));
+    if (!factory) {
+        qWarning() << "create factory failed, url: " << dir;
+        return false;
+    }
 
-    do {
-        QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(dir.scheme(), static_cast<QUrl>(dir));
-        if (!factory) {
-            qWarning() << "create factory failed, url: " << dir;
-            ret = false;
-            break;
-        }
-        QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
-        if (!oper) {
-            qWarning() << "create operator failed, url: " << dir;
-            ret = false;
-            break;
-        }
+    QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+    if (!oper) {
+        qWarning() << "create operator failed, url: " << dir;
+        return false;
+    }
 
-        bool success = oper->makeDirectory();
-        if (!success) {
-            qWarning() << "make directory failed, url: " << dir;
-            ret = false;
+    bool success = oper->makeDirectory();
+    if (!success) {
+        qWarning() << "make directory failed, url: " << dir;
 
-            DFMIOError error = oper->lastError();
-            // TODO lanxs
-            // 等待dfm-io代码合入
-            // setError(error.errorMsg());
+        DFMIOError error = oper->lastError();
+        setError(error.errorMsg());
 
-            break;
-        }
-    } while (0);
+        return false;
+    }
 
-    return ret;
+    return true;
 }
 /*!
  * \brief LocalFileHandler::rmdir 删除目录
@@ -138,37 +145,29 @@ bool LocalFileHandler::mkdir(const QUrl &dir)
  */
 bool LocalFileHandler::rmdir(const QUrl &url)
 {
-    bool ret = true;
+    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+    if (!factory) {
+        qWarning() << "create factory failed, url: " << url;
+        return false;
+    }
 
-    do {
-        QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-        if (!factory) {
-            qWarning() << "create factory failed, url: " << url;
-            ret = false;
-            break;
-        }
-        QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
-        if (!oper) {
-            qWarning() << "create operator failed, url: " << url;
-            ret = false;
-            break;
-        }
+    QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+    if (!oper) {
+        qWarning() << "create operator failed, url: " << url;
+        return false;
+    }
 
-        bool success = oper->trashFile();
-        if (!success) {
-            qWarning() << "trash file failed, url: " << url;
-            ret = false;
+    bool success = oper->trashFile();
+    if (!success) {
+        qWarning() << "trash file failed, url: " << url;
 
-            DFMIOError error = oper->lastError();
-            // TODO lanxs
-            // 等待dfm-io代码合入
-            // setError(error.errorMsg());
+        DFMIOError error = oper->lastError();
+        setError(error.errorMsg());
 
-            break;
-        }
-    } while (0);
+        return false;
+    }
 
-    return ret;
+    return true;
 }
 /*!
  * \brief LocalFileHandler::rename 重命名文件
@@ -178,64 +177,132 @@ bool LocalFileHandler::rmdir(const QUrl &url)
  */
 bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
 {
-    bool ret = true;
-
     if (url.scheme() != newUrl.scheme())
         return false;
 
+    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+    if (!factory) {
+        qWarning() << "create factory failed, url: " << url;
+        return false;
+    }
+    QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+    if (!oper) {
+        qWarning() << "create operator failed, url: " << url;
+        return false;
+    }
+
     const QString &newName = newUrl.fileName();
+    bool success = oper->renameFile(newName);
+    if (!success) {
+        qWarning() << "rename file failed, url: " << url;
 
-    do {
-        QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-        if (!factory) {
-            qWarning() << "create factory failed, url: " << url;
-            ret = false;
-            break;
-        }
-        QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
-        if (!oper) {
-            qWarning() << "create operator failed, url: " << url;
-            ret = false;
-            break;
-        }
+        DFMIOError error = oper->lastError();
+        setError(error.errorMsg());
 
-        bool success = oper->renameFile(newName);
-        if (!success) {
-            qWarning() << "rename file failed, url: " << url;
-            ret = false;
+        return false;
+    }
 
-            DFMIOError error = oper->lastError();
-            // TODO lanxs
-            // 等待dfm-io代码合入
-            // setError(error.errorMsg());
-
-            break;
-        }
-    } while (0);
-
-    return ret;
+    return true;
 }
 /*!
  * \brief LocalFileHandler::openFile 打开文件
  * \param file 打开文件的url
  * \return bool 打开文件是否成功
  */
-bool LocalFileHandler::openFile(const QUrl &file)
+bool LocalFileHandler::openFile(const QUrl &url)
 {
-    // Todo:: open file
-    Q_UNUSED(file);
-    return true;
+    return openFiles({ url });
 }
 /*!
  * \brief LocalFileHandler::openFiles 打开多个文件
  * \param files 打开文件的url列表
  * \return bool 打开文件是否成功
  */
-bool LocalFileHandler::openFiles(const QList<QUrl> &files)
+bool LocalFileHandler::openFiles(const QList<QUrl> &urls)
 {
-    // Todo:: open files
-    Q_UNUSED(files);
-    return true;
+    QList<QUrl> resourceUrls = urls;
+
+    bool ret = false;
+    for (const QUrl &url : urls) {
+        if (QFileInfo(url.path()).suffix() == "desktop") {
+            ret = launchApp(url.path()) || ret;   //有一个成功就成功
+            resourceUrls.removeOne(url);
+            continue;
+        }
+    }
+    if (resourceUrls.isEmpty())
+        return ret;
+
+    const QUrl firstUrl = resourceUrls.first();
+
+    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(firstUrl);
+    QString mimetype;
+    if (info && info->size() == 0 && info->exists()) {
+        mimetype = info->fileMimeType().name();
+    } else {
+        mimetype = getFileMimetypeFromGio(firstUrl);
+    }
+
+    bool isOpenNow = false;
+    QString defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
+    if (defaultDesktopFile.isEmpty()) {
+        if (isSmbUnmountedFile(firstUrl)) {
+            mimetype = QString("inode/directory");
+            defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
+            isOpenNow = true;
+            mimetype = QString();
+        } else {
+            qDebug() << "no default application for" << firstUrl;
+            return false;
+        }
+    }
+
+    if (!isOpenNow && isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory") {
+        QStringList recommendApps = MimesAppsManager::getRecommendedApps(firstUrl);
+        recommendApps.removeOne(defaultDesktopFile);
+        if (recommendApps.count() > 0) {
+            defaultDesktopFile = recommendApps.first();
+        } else {
+            qDebug() << "no default application for" << firstUrl;
+            return false;
+        }
+    }
+
+    QStringList appAgrs;
+    for (const QUrl &tmp : resourceUrls)
+        appAgrs << tmp.toString();
+    bool result = launchApp(defaultDesktopFile, appAgrs);
+    if (result) {
+        // workaround since DTK apps doesn't support the recent file spec.
+        // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
+        // the correct approach: let the app add it to the recent list.
+        // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
+        for (const QUrl &tmp : resourceUrls) {
+            QString file_path = tmp.path();
+            DesktopFile df(defaultDesktopFile);
+            addRecentFile(file_path, df, mimetype);
+        }
+        return result;
+    } else if (isSmbUnmountedFile(firstUrl)) {
+        return false;
+    }
+
+    if (MimesAppsManager::getDefaultAppByFileName(firstUrl.path()) == "org.gnome.font-viewer.desktop") {
+        QProcess::startDetached("gio", QStringList() << "open" << firstUrl.path());
+        QTimer::singleShot(200, [=] {
+            QProcess::startDetached("gio", QStringList() << "open" << firstUrl.path());
+        });
+        return true;
+    }
+
+    result = QProcess::startDetached("gio", QStringList() << "open" << firstUrl.path());
+
+    if (!result) {
+        result = false;
+        for (const QUrl &tmp : resourceUrls)
+            result = QDesktopServices::openUrl(tmp) || result;   //有一个成功就成功
+    }
+    return result;
 }
 /*!
  * \brief LocalFileHandler::openFileByApp 指定的app打开文件
@@ -243,12 +310,9 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &files)
  * \param appDesktop app的desktop路径
  * \return bool 是否打开成功
  */
-bool LocalFileHandler::openFileByApp(const QUrl &file, const QString &appDesktop)
+bool LocalFileHandler::openFileByApp(const QUrl &file, const QString &desktopFile)
 {
-    // Todo:: open file by app
-    Q_UNUSED(file);
-    Q_UNUSED(appDesktop);
-    return true;
+    return openFilesByApp({ file }, desktopFile);
 }
 /*!
  * \brief LocalFileHandler::openFilesByApp 指定的app打开多个文件
@@ -256,12 +320,62 @@ bool LocalFileHandler::openFileByApp(const QUrl &file, const QString &appDesktop
  * \param appDesktop app的desktop路径
  * \return bool 是否打开成功
  */
-bool LocalFileHandler::openFilesByApp(const QList<QUrl> &files, const QString &appDesktop)
+bool LocalFileHandler::openFilesByApp(const QList<QUrl> &filePaths, const QString &desktopFile)
 {
-    // Todo:: open files by app
-    Q_UNUSED(files);
-    Q_UNUSED(appDesktop);
-    return true;
+    bool ok = false;
+
+    if (desktopFile.isEmpty()) {
+        qDebug() << "Failed to open desktop file with gio: app file path is empty";
+        return ok;
+    }
+
+    if (filePaths.isEmpty()) {
+        qDebug() << "Failed to open desktop file with gio: file path is empty";
+        return ok;
+    }
+
+    qDebug() << desktopFile << filePaths;
+
+    GDesktopAppInfo *appInfo = g_desktop_app_info_new_from_filename(desktopFile.toLocal8Bit().constData());
+    if (!appInfo) {
+        qDebug() << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
+        return false;
+    }
+
+    QStringList filePathsStr;
+    for (const auto &url : filePaths) {
+        filePathsStr << url.toString();
+    }
+
+    QString terminalFlag = QString(g_desktop_app_info_get_string(appInfo, "Terminal"));
+    if (terminalFlag == "true") {
+        QString exec = QString(g_desktop_app_info_get_string(appInfo, "Exec"));
+        QStringList args;
+        args << "-e" << exec.split(" ").at(0) << filePathsStr;
+        QString termPath = defaultTerminalPath();
+        qDebug() << termPath << args;
+        ok = QProcess::startDetached(termPath, args);
+    } else {
+        ok = launchApp(desktopFile, filePathsStr);
+    }
+    g_object_unref(appInfo);
+
+    if (ok) {
+        // workaround since DTK apps doesn't support the recent file spec.
+        // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
+        // the correct approach: let the app add it to the recent list.
+        // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
+        QString filePath = filePaths.first().toString();
+        filePath = QUrl::fromUserInput(filePath).path();
+        QString mimetype = getFileMimetype(filePath);
+        for (const QUrl &tmp : filePaths) {
+            QString temFilePath = tmp.path();
+            DesktopFile df(desktopFile);
+            addRecentFile(temFilePath, df, mimetype);
+        }
+    }
+
+    return ok;
 }
 
 /*!
@@ -272,37 +386,29 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &files, const QString &a
  */
 bool LocalFileHandler::createSystemLink(const QUrl &sourcfile, const QUrl &link)
 {
-    bool ret = true;
+    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(sourcfile.scheme(), static_cast<QUrl>(sourcfile));
+    if (!factory) {
+        qWarning() << "create factory failed, url: " << sourcfile;
+        return false;
+    }
 
-    do {
-        QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(sourcfile.scheme(), static_cast<QUrl>(sourcfile));
-        if (!factory) {
-            qWarning() << "create factory failed, url: " << sourcfile;
-            ret = false;
-            break;
-        }
-        QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
-        if (!oper) {
-            qWarning() << "create operator failed, url: " << sourcfile;
-            ret = false;
-            break;
-        }
+    QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+    if (!oper) {
+        qWarning() << "create operator failed, url: " << sourcfile;
+        return false;
+    }
 
-        bool success = oper->createLink(link);
-        if (!success) {
-            qWarning() << "create link failed, url: " << sourcfile << " link url: " << link;
-            ret = false;
+    bool success = oper->createLink(link);
+    if (!success) {
+        qWarning() << "create link failed, url: " << sourcfile << " link url: " << link;
 
-            DFMIOError error = oper->lastError();
-            // TODO lanxs
-            // 等待dfm-io代码合入
-            // setError(error.errorMsg());
+        DFMIOError error = oper->lastError();
+        setError(error.errorMsg());
 
-            break;
-        }
-    } while (0);
+        return false;
+    }
 
-    return ret;
+    return true;
 }
 /*!
  * \brief LocalFileHandler::setPermissions 设置文件的权限
@@ -312,40 +418,28 @@ bool LocalFileHandler::createSystemLink(const QUrl &sourcfile, const QUrl &link)
  */
 bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions permissions)
 {
-    bool ret = true;
+    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+    if (!factory) {
+        qWarning() << "create factory failed, url: " << url;
+        return false;
+    }
+    QSharedPointer<DFMIO::DFile> dfile = factory->createFile();
+    if (!dfile) {
+        qWarning() << "create file failed, url: " << url;
+        return false;
+    }
 
-    do {
-        QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-        if (!factory) {
-            qWarning() << "create factory failed, url: " << url;
-            ret = false;
-            break;
-        }
-        QSharedPointer<DFMIO::DFile> dfile = factory->createFile();
-        if (!dfile) {
-            qWarning() << "create file failed, url: " << url;
-            ret = false;
-            break;
-        }
+    bool success = dfile->setPermissions(DFMIO::DFile::Permissions(uint16_t(permissions)));
+    if (!success) {
+        qWarning() << "set permissions failed, url: " << url;
 
-        // bool success = dfile->setPermissions();
-        // TODO lanxs
-        // 等待dfm-io代码合入
-        bool success = true;
-        if (!success) {
-            qWarning() << "set permissions failed, url: " << url;
-            ret = false;
+        DFMIOError error = dfile->lastError();
+        setError(error.errorMsg());
 
-            DFMIOError error = dfile->lastError();
-            // TODO lanxs
-            // 等待dfm-io代码合入
-            // setError(error.errorMsg());
+        return false;
+    }
 
-            break;
-        }
-    } while (0);
-
-    return ret;
+    return true;
 }
 /*!
  * \brief LocalFileHandler::deleteFile 删除文件使用系统c库
@@ -380,6 +474,183 @@ bool LocalFileHandler::setFileTime(const QUrl &url, const QDateTime &accessDateT
     setError(QString::fromLocal8Bit(strerror(errno)));
 
     return false;
+}
+
+bool LocalFileHandler::launchApp(const QString &desktopFilePath, const QStringList &fileUrls)
+{
+    QStringList newFileUrls(fileUrls);
+
+    if (isFileManagerSelf(desktopFilePath) && fileUrls.count() > 1) {
+        for (const QString &url : fileUrls) {
+            openFile(url);
+        }
+        return true;
+    }
+
+    if (isFileManagerSelf(desktopFilePath) && fileUrls.count() == 1) {
+        QUrl fileUrl(fileUrls[0]);
+        if (isSmbUnmountedFile(fileUrl)) {
+            newFileUrls.clear();
+            newFileUrls << smbFileUrl(fileUrls[0]).toLocalFile();
+        }
+    }
+
+    bool ok = launchAppByDBus(desktopFilePath, newFileUrls);
+    if (!ok) {
+        ok = launchAppByGio(desktopFilePath, newFileUrls);
+    }
+    return ok;
+}
+
+bool LocalFileHandler::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
+{
+    // TODO(lanxs)
+    /*if (appController->checkLaunchAppInterface()) {
+        qDebug() << "launchApp by dbus:" << desktopFile << filePaths;
+
+        appController->startManagerInterface()->LaunchApp(desktopFile, static_cast<uint>(QX11Info::getTimestamp()), filePaths);
+        return true;
+    }*/
+    return false;
+}
+
+bool LocalFileHandler::launchAppByGio(const QString &desktopFilePath, const QStringList &fileUrls)
+{
+    qDebug() << "launchApp by gio:" << desktopFilePath << fileUrls;
+
+    const char *cDesktopFilePath = desktopFilePath.toLocal8Bit().data();
+
+    g_autoptr(GDesktopAppInfo) appInfo = g_desktop_app_info_new_from_filename(cDesktopFilePath);
+    if (!appInfo) {
+        qDebug() << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
+        return false;
+    }
+
+    g_autolist(GList) gfiles = nullptr;
+    foreach (const QString &url, fileUrls) {
+        const char *cFilePath = url.toLocal8Bit().data();
+        GFile *gfile = g_file_new_for_uri(cFilePath);
+        gfiles = g_list_append(gfiles, gfile);
+    }
+
+    g_autoptr(GError) gerror = nullptr;
+    gboolean ok = g_app_info_launch(reinterpret_cast<GAppInfo *>(appInfo), gfiles, nullptr, &gerror);
+
+    if (gerror) {
+        qWarning() << "Error when trying to open desktop file with gio:" << gerror->message;
+    }
+
+    if (!ok) {
+        qWarning() << "Failed to open desktop file with gio: g_app_info_launch returns false";
+    }
+
+    return ok;
+}
+
+bool LocalFileHandler::isFileManagerSelf(const QString &desktopFile)
+{
+    /*
+     *  return true if exec field contains dde-file-manager/file-manager.sh of dde-file-manager desktopFile
+    */
+    DesktopFile d(desktopFile);
+    return d.getExec().contains("dde-file-manager") || d.getExec().contains("file-manager.sh");
+}
+
+bool LocalFileHandler::isSmbUnmountedFile(const QUrl &url)
+{
+    return url.path().startsWith("/run/user/")
+            && url.path().contains("/gvfs/smb-share:server=");
+    // TODO(lanxs)
+    /*return url.path().startsWith("/run/user/")
+            && url.path().contains("/gvfs/smb-share:server=")
+            && DFileService::instance()->checkGvfsMountfileBusy(url, false);*/
+}
+
+QUrl LocalFileHandler::smbFileUrl(const QString &filePath)
+{
+    static QRegularExpression regExp("file:///run/user/\\d+/gvfs/smb-share:server=(?<host>.*),share=(?<path>.*)",
+                                     QRegularExpression::DotMatchesEverythingOption
+                                             | QRegularExpression::DontCaptureOption
+                                             | QRegularExpression::OptimizeOnFirstUsageOption);
+
+    const QRegularExpressionMatch &match = regExp.match(filePath, 0, QRegularExpression::NormalMatch,
+                                                        QRegularExpression::DontCheckSubjectStringMatchOption);
+
+    if (!match.hasMatch())
+        return QUrl::fromLocalFile(filePath);
+
+    const QString &host = match.captured("host");
+    const QString &path = match.captured("path");
+
+    QUrl newUrl;
+    newUrl.setScheme("smb");
+    newUrl.setHost(host);
+    newUrl.setPath("/" + path.mid(0, path.lastIndexOf("/")));
+    return newUrl;
+}
+
+QString LocalFileHandler::getFileMimetypeFromGio(const QUrl &url)
+{
+    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+    if (!factory) {
+        qWarning() << "create factory failed, url: " << url;
+        return QString();
+    }
+    QSharedPointer<DFMIO::DFileInfo> dfileinfo = factory->createFileInfo();
+    if (!dfileinfo) {
+        qWarning() << "create fileinfo failed, url: " << url;
+        return QString();
+    }
+
+    bool succ = false;
+    auto mimeType = dfileinfo->attribute(DFMIO::DFileInfo::AttributeID::StandardContentType, &succ);
+    if (succ)
+        return mimeType.toString();
+
+    return QString();
+}
+
+void LocalFileHandler::addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype)
+{
+    if (filePath.isEmpty()) {
+        return;
+    }
+    DTK_CORE_NAMESPACE::DRecentData recentData;
+    recentData.appName = desktopFile.getName();
+    recentData.appExec = desktopFile.getExec();
+    recentData.mimeType = mimetype;
+    DTK_CORE_NAMESPACE::DRecentManager::removeItem(filePath);
+    DTK_CORE_NAMESPACE::DRecentManager::addItem(filePath, recentData);
+}
+
+QString LocalFileHandler::defaultTerminalPath()
+{
+    const static QString dde_daemon_default_term = QStringLiteral("/usr/lib/deepin-daemon/default-terminal");
+    const static QString debian_x_term_emu = QStringLiteral("/usr/bin/x-terminal-emulator");
+
+    if (QFileInfo::exists(dde_daemon_default_term)) {
+        return dde_daemon_default_term;
+    } else if (QFileInfo::exists(debian_x_term_emu)) {
+        return debian_x_term_emu;
+    }
+
+    return QStandardPaths::findExecutable("xterm");
+}
+
+QString LocalFileHandler::getFileMimetype(const QString &path)
+{
+    g_autoptr(GFile) file;
+    g_autoptr(GFileInfo) info;
+    QString result = QString();
+
+    file = g_file_new_for_path(path.toLocal8Bit().data());
+    info = g_file_query_info(file, "standard::content-type", G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
+    if (info)
+        result = g_file_info_get_content_type(info);
+
+    g_object_unref(file);
+
+    return result;
 }
 /*!
  * \brief LocalFileHandler::errorString 获取错误信息

@@ -17,18 +17,18 @@ FILE (GLOB INTERFACES_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/private/*.cpp"
-    )
+)
 
 FILE (GLOB UTILS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"    
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/private/*.cpp"
-    )
+)
 
 FILE (GLOB MIMETYPE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/mimetype/*"
-    )
+)
 
 FILE (GLOB BASE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/base/*.h"
@@ -39,14 +39,14 @@ FILE (GLOB BASE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/private/*.cpp"
-    )
+)
 
 FILE (GLOB ALL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/file/local/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/local/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/local/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/local/private/*.cpp"
-    )
+)
 
 FILE (GLOB WIDGETS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmfileview/*.h"
@@ -61,14 +61,14 @@ FILE (GLOB WIDGETS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/filemanagerwindow/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/filemanagerwindow/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/filemanagerwindow/private/*.cpp"
-    )
+)
 
 FILE (GLOB DBUSSERVER_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dbusservice/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dbusservice/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/dbusservice/dbus_interface/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dbusservice/dbus_interface/*.cpp"
-    )
+)
 
 set(DBUSSERVICE_H
     dbusservice/dbus_interface/devicemanagerdbus_interface.h
@@ -83,6 +83,7 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS Concurrent REQUIRED)
 find_package(Qt5 COMPONENTS DBus REQUIRED)
 find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Qt5 COMPONENTS X11Extras REQUIRED)
 find_package(PkgConfig REQUIRED)
 
 pkg_search_module(util-dfm
@@ -112,13 +113,14 @@ target_link_libraries( ${PROJECT_NAME}
     Qt5::Widgets
     Qt5::Concurrent
     Qt5::DBus
+    Qt5::X11Extras
     PkgConfig::util-dfm
     ${DtkWidget_LIBRARIES}
 )
 
 target_compile_definitions(
     ${PROJECT_NAME} PRIVATE APPSHAREDIR="/usr/share/dde-file-manager"
-    )
+)
 
 
 add_library(DFM::base ALIAS ${PROJECT_NAME})

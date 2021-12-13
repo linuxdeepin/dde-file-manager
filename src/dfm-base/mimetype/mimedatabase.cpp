@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     lanxuesong<lanxuesong@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: liyigang<liyigang@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "mimetype/mimedatabase.h"
-#include "utils/fileutils.h"
-#include "base/standardpaths.h"
+
+#include "dfm-base/mimetype/mimedatabase.h"
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <QFileInfo>
 #include <QRegularExpression>
@@ -30,7 +30,8 @@
 #include <QHash>
 #include <QtConcurrent>
 
-DFMBASE_BEGIN_NAMESPACE
+DFMBASE_USE_NAMESPACE
+
 Q_GLOBAL_STATIC(QMimeDatabase, mimedb)
 
 // global mimetypes define list cache
@@ -45,11 +46,7 @@ Q_GLOBAL_STATIC(QStringList, mimeBackupTypes)
 typedef QHash<int, QString> kiVsHash;
 Q_GLOBAL_STATIC(kiVsHash, mimeDisplayNames)
 Q_GLOBAL_STATIC(kiVsHash, mimeStdIconNames)
-/*!
- * \class MimeDatabase 文件类型数据获取类
- *
- * \brief 通过Qt和gio两种方式获取文件的类型
- */
+
 /*!
  * \brief readlines 读取文件的所有行数据
  *
@@ -139,10 +136,6 @@ bool loadMimeStdIcon()
 
     return true;
 }
-
-//Q_GLOBAL_STATIC_WITH_ARGS(QFuture<void>, _threadLoadMimeTypes, {QtConcurrent::run(loadSupportMimeTypes)});
-//Q_GLOBAL_STATIC_WITH_ARGS(QFuture<void>, _threadLoadStdIcons, {QtConcurrent::run(loadMimeStdIcon)});
-//Q_GLOBAL_STATIC_WITH_ARGS(QFuture<void>, _threadLoadMimeNames, {QtConcurrent::run(loadFileTypeName)});
 
 static auto kThreadLoadMimeTypes = QtConcurrent::run(loadSupportMimeTypes);
 static auto kThreadLoadStdIcons = QtConcurrent::run(loadMimeStdIcon);
@@ -420,4 +413,3 @@ QList<QMimeType> MimeDatabase::allMimeTypes()
 {
     return mimedb->allMimeTypes();
 }
-DFMBASE_END_NAMESPACE

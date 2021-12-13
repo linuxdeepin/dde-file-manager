@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     lanxuesong<lanxuesong@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: liyigang<liyigang@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #ifndef DMIMEDATABASE_H
 #define DMIMEDATABASE_H
 
@@ -27,10 +27,11 @@
 #include <QMimeDatabase>
 
 DFMBASE_BEGIN_NAMESPACE
+
 class MimeDatabase
 {
     Q_DISABLE_COPY(MimeDatabase)
-    //不可继承该类
+
 private:
     explicit MimeDatabase();
     virtual ~MimeDatabase();
@@ -75,5 +76,7 @@ public:
     static QString suffixForFileName(const QString &fileName);
     static QList<QMimeType> allMimeTypes();
 };
+
 DFMBASE_END_NAMESPACE
+
 #endif   // DMIMEDATABASE_H
