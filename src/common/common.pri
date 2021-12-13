@@ -32,10 +32,13 @@ unix {
         #起动时，使用异步初始化，加载资源，提升起动速度
         DEFINES += ENABLE_ASYNCINIT
     } else {
-        message("Build arch:" $$ARCH "Deepin Anything support disabled")
-        CONFIG += DISABLE_ANYTHING
-
         DEFINES += ENABLE_ASYNCINIT
+    }
+
+    # support anything search
+    isEqual(ARCH, x86_64) | isEqual(ARCH, i686) | isEqual(ARCH, aarch64) {
+        message("Build arch:" $$ARCH "Deepin Anything support enabled")
+        CONFIG += ENABLE_ANYTHING
     }
 
     isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, loongarch64) {
