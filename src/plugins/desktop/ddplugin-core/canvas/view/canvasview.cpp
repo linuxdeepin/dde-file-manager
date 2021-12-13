@@ -1,9 +1,10 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: liqiang<liqianga@uniontech.com>
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
+ *             liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,39 +19,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "private/canvasview_p.h"
+
+#include "view/canvasview_p.h"
 #include "canvasitemdelegate.h"
-#ifndef NEWGRID
-#include "canvasgridmanager.h"
-#else
 #include "grid/canvasgrid.h"
-#include "base/schemefactory.h"
-#endif
 #include "displayconfig.h"
+
+#include "base/schemefactory.h"
 
 #include <QPainter>
 #include <QDebug>
 #include <QScrollBar>
 #include <QPaintEvent>
 
+DSB_D_USE_NAMESPACE
+
 CanvasView::CanvasView(QWidget *parent)
     : QAbstractItemView(parent)
-    , d(new CanvasViewPrivate())
+    , d(new CanvasViewPrivate(this))
 {
-    initUI();
+
 }
 
 QRect CanvasView::visualRect(const QModelIndex &index) const
 {
     Q_UNUSED(index)
     return QRect();
-}
-
-QRect CanvasView::visualRect(const QPoint &gridPos)
-{
-    auto x = gridPos.x() * d->cellWidth + d->viewMargins.left();
-    auto y = gridPos.y() * d->cellHeight + d->viewMargins.top();
-    return QRect(x, y, d->cellWidth, d->cellHeight);
 }
 
 void CanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint) {
@@ -128,19 +122,9 @@ void CanvasView::setScreenNum(const int screenNum)
     d->screenNum = screenNum;
 }
 
-void CanvasView::setScreenName(const QString name)
-{
-    d->screenName = name;
-}
-
-int CanvasView::getScreenNum()
+int CanvasView::screenNum() const
 {
     return d->screenNum;
-}
-
-QString CanvasView::getScreenName()
-{
-    return d->screenName;
 }
 
 CanvasItemDelegate *CanvasView::itemDelegate() const
@@ -159,24 +143,27 @@ void CanvasView::setGeometry(const QRect &rect)
         return;
     } else {
         QAbstractItemView::setGeometry(rect);
-        updateCanvas();
+        updateGrid();
         // todo:水印
     }
 }
 
-void CanvasView::updateCanvas()
+void CanvasView::updateGrid()
 {
     // todo:
     itemDelegate()->updateItemSizeHint();
     auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
-    QMargins geometryMargins = QMargins(0, 0, 0, 0);
-    d->updateCanvasSize(this->geometry().size(), this->geometry().size(), geometryMargins, itemSize);
-#ifndef NEWGRID
-    CanvasGridManager::instance()->updateGridSize(d->screenNum, d->colCount, d->rowCount);
-#else
-    GridIns->updateSize(d->screenNum, QSize(d->colCount, d->rowCount));
-#endif
 
+    // add view margin. present is none.
+    const QMargins geometryMargins = QMargins(0, 0, 0, 0);
+    d->updateGridSize(geometry().size(), geometryMargins, itemSize);
+
+    GridIns->updateSize(d->screenNum, QSize(d->canvasInfo.columnCount, d->canvasInfo.rowCount));
+
+    //todo update expend item if needed.
+    //auto expandedWidget = reinterpret_cast<QWidget *>(itemDelegate()->expandedIndexWidget());
+
+    update();
 }
 
 QString CanvasView::fileDisplayNameRole(const QModelIndex &index)
@@ -191,7 +178,7 @@ void CanvasView::initUI()
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAutoFillBackground(false);
-    setFrameShape(QFrame::NoFrame);   // TODO: using QWidget instead of QFrame?
+    setFrameShape(QFrame::NoFrame);
 
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setAcceptDrops(true);
@@ -273,7 +260,7 @@ void CanvasView::fileterAndRepaintLocalFiles(QPainter *painter, QStyleOptionView
             overlapItems.append(info);
         }
 #endif
-        const QPoint overlapPos(d->colCount - 1, d->rowCount - 1);
+        const QPoint overlapPos(d->canvasInfo.columnCount - 1, d->canvasInfo.rowCount - 1);
         for (auto &item : overlapItems) {
             // todo：拖拽让位的一些图标保持情况
 
@@ -294,7 +281,7 @@ void CanvasView::fileterAndRepaintLocalFiles(QPainter *painter, QStyleOptionView
  */
 bool CanvasView::isRepaintFlash(QStyleOptionViewItem &option, QPaintEvent *event, const QPoint pos)
 {
-    option.rect = visualRect(pos);
+    option.rect = d->visualRect(pos);
     auto repaintRect = event->rect();
     // 刷新区域判定，跳过不刷新的区域
     bool needflash = false;
@@ -316,33 +303,30 @@ bool CanvasView::isRepaintFlash(QStyleOptionViewItem &option, QPaintEvent *event
 */
 void CanvasView::drawGirdInfos(QPainter *painter)
 {
-    Q_UNUSED(painter)
-    d->debug_show_grid = true;
-    if (d->debug_show_grid) {
-        painter->save();
-        if (canvasModel()) {
-            for (int i = 0; i < d->colCount * d->rowCount; ++i) {
-                // todo:CellMargins计算有点偏移
-                auto pos = d->indexCoordinate(i).position();
-                auto x = pos.x() * d->cellWidth + d->viewMargins.left();
-                auto y = pos.y() * d->cellHeight + d->viewMargins.top();
+    if (!d->showGrid)
+        return;
 
-                auto rect = QRect(x, y, d->cellWidth, d->cellHeight);
+    painter->save();
+    painter->setPen(QPen(Qt::red, 2));
 
-                int rowMode = pos.x() % 2;
-                int colMode = pos.y() % 2;
-                auto color = (colMode == rowMode) ? QColor(0, 0, 255, 32) : QColor(255, 0, 0, 32);
-                painter->fillRect(rect, color);
+    for (int i = 0; i < d->canvasInfo.columnCount * d->canvasInfo.rowCount; ++i) {
+        // todo:CellMargins计算有点偏移
+        auto pos = d->gridCoordinate(i);
+        auto rect = d->visualRect(pos.point());
 
-                if (pos == d->dragTargetGrid) {
-                    painter->fillRect(rect, Qt::green);
-                }
-                painter->setPen(QPen(Qt::red, 2));
-                painter->drawText(rect, QString("%1-%2").arg(pos.x()).arg(pos.y()));
-            }
-        }
-        painter->restore();
+        int rowMode = pos.x() % 2;
+        int colMode = pos.y() % 2;
+        auto color = (colMode == rowMode) ? QColor(0, 0, 255, 32) : QColor(255, 0, 0, 32);
+        painter->fillRect(rect, color);
+
+        // drag target
+        if (pos.point() == d->dragTargetGrid)
+            painter->fillRect(rect, Qt::green);
+
+        painter->drawText(rect, QString("%1-%2").arg(pos.x()).arg(pos.y()));
+
     }
+    painter->restore();
 }
 
 /*!
@@ -359,7 +343,7 @@ void CanvasView::drawLocalFile(QPainter *painter, QStyleOptionViewItem &option,
 {
     // todo：拖拽让位的一些图标保持情况
 
-    option.rect = visualRect(pos);
+    option.rect = d->visualRect(pos);
 
     auto tempModel = qobject_cast<CanvasModel *>(QAbstractItemView::model());
     auto index = tempModel->index(file);
@@ -405,4 +389,100 @@ void CanvasView::drawDragMove(QPainter *painter, QStyleOptionViewItem &option)
 {
     Q_UNUSED(painter)
     Q_UNUSED(option)
+}
+
+const QMargins CanvasViewPrivate::gridMiniMargin = QMargins(2, 2, 2, 2);
+
+// dockReserveSize leads to lessen the column and row，and increase the width and height of grid by expanding grid margin.
+// keep it for compatibility. Remove it if need reduce the grid margin
+const QSize CanvasViewPrivate::dockReserveSize = QSize(80, 80);
+
+CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
+    : QObject(qq)
+    , q(qq)
+{
+#ifdef QT_DEBUG
+    showGrid = true;
+#endif
+}
+
+CanvasViewPrivate::~CanvasViewPrivate()
+{
+
+}
+
+void CanvasViewPrivate::updateGridSize(const QSize &viewSize, const QMargins &geometryMargins, const QSize &itemSize)
+{
+    // canvas size is view size minus geometry margins.
+    QSize canvasSize(viewSize.width() - geometryMargins.left() - geometryMargins.right(),
+                     viewSize.height() - geometryMargins.top() - geometryMargins.bottom());
+    qInfo() << "view size" << viewSize << "canvas size" << canvasSize  << "view margin" << geometryMargins << "item size" << itemSize;
+
+    if (canvasSize.width() < 1 || canvasSize.height() < 1) {
+        qCritical() << "canvas size is invalid.";
+        return;
+    }
+
+    // the minimum width of each grid.
+    const int miniGridWidth = itemSize.width() + gridMiniMargin.left() + gridMiniMargin.right();
+
+    // mins dockReserveSize is to keep column count same as the old.
+    // it leads to fewer column count and widen the grid margin.
+    int columnCount = (canvasSize.width() - dockReserveSize.width()) / miniGridWidth;
+    int gridWidth = 1;
+    if (Q_UNLIKELY(columnCount < 1)) {
+        qCritical() << " column count is 0. set it to 1 and set grid width to " << canvasSize.width();
+        gridWidth = canvasSize.width();
+        columnCount = 1;
+    } else {
+        gridWidth = canvasSize.width() / columnCount;
+    }
+
+    if (Q_UNLIKELY(gridWidth < 1))
+        gridWidth = 1;
+
+    // the minimum height of each grid.
+    const int miniGridHeight = itemSize.height() + gridMiniMargin.top() + gridMiniMargin.bottom();
+    int gridHeight = 1;
+
+    // mins dockReserveSize is to keep row count same as the old.
+    // it leads to fewer row count and rise the grid margin.
+    int rowCount = (canvasSize.height() - dockReserveSize.height())/ miniGridHeight;
+    if (Q_UNLIKELY(rowCount < 1)) {
+        qCritical() << "row count is 0. set it to 1 and set grid height to" << canvasSize.height();
+        gridHeight = canvasSize.height();
+        rowCount = 1;
+    } else {
+        gridHeight = canvasSize.height() / rowCount;
+    }
+
+    if (Q_UNLIKELY(gridHeight < 1))
+        gridHeight = 1;
+
+    // margin for each gird
+    gridMargins = calcMargins(itemSize, QSize(gridWidth, gridHeight));
+
+    // margins around the view，canvas gemotry is view gemotry minus viewMargins.
+    viewMargins = geometryMargins + calcMargins(QSize(gridWidth * columnCount, gridHeight * rowCount), canvasSize);
+
+    canvasInfo = CanvasInfo(columnCount, rowCount, gridWidth, gridHeight);
+}
+
+QMargins CanvasViewPrivate::calcMargins(const QSize &inSize, const QSize &outSize)
+{
+    auto horizontal = (outSize.width() - inSize.width());
+    auto vertical = (outSize.height() - inSize.height());
+    auto left = horizontal / 2;
+    auto right = horizontal - left;
+    auto top = vertical / 2;
+    auto bottom = vertical - top;
+
+    return QMargins(left, top, right, bottom);
+}
+
+QRect CanvasViewPrivate::visualRect(const QPoint &gridPos)
+{
+    auto x = gridPos.x() * canvasInfo.gridWidth + viewMargins.left();
+    auto y = gridPos.y() * canvasInfo.gridHeight + viewMargins.top();
+    return QRect(x, y, canvasInfo.gridWidth, canvasInfo.gridHeight);
 }

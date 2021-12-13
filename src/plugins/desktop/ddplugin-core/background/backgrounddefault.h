@@ -31,6 +31,7 @@ class ScreenService;
 
 class BackgroundDefault: public dfmbase::AbstractBackground
 {
+    Q_OBJECT
 public:
     explicit BackgroundDefault(const QString &screenName, QWidget *parent = nullptr);
     virtual void paintEvent(QPaintEvent *event) override;

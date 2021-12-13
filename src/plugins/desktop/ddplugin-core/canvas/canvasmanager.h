@@ -1,9 +1,10 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: liqiang<liqianga@uniontech.com>
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
+ *             liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,42 +19,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASVIEWMANAGER_H
-#define CANVASVIEWMANAGER_H
+#ifndef CANVASMANAGER_H
+#define CANVASMANAGER_H
 
-#include "screen/screenservice.h"
-#include "services/backgroundservice.h"
+#include "dfm_desktop_service_global.h"
 
 #include <QObject>
 
-DFMBASE_USE_NAMESPACE
 DSB_D_BEGIN_NAMESPACE
 
 class AbstractCanvas;
-class CanvasViewManagerPrivate;
-class CanvasViewManager : public QObject
+class CanvasManagerPrivate;
+class CanvasManager : public QObject
 {
     Q_OBJECT
-    friend class CanvasViewManagerPrivate;
+    friend class CanvasManagerPrivate;
 
 public:
-    explicit CanvasViewManager(QObject *parent = nullptr);
+    explicit CanvasManager(QObject *parent = nullptr);
+    void init();
+    void update();
+public slots:
+    void onCanvasBuild();
+    void onGeometryChanged();
+protected slots:
+    void reloadItem();
 
-private slots:
-    void onFileLoadFinish();
-
-private:
+protected:
     void initConnect();
-    void loadDataAndShow();
-
 signals:
 
-public slots:
-    void onCanvasViewBuild();
-
 private:
-    CanvasViewManagerPrivate *const d { nullptr };
+    CanvasManagerPrivate *d = nullptr;
 };
 
 DSB_D_END_NAMESPACE
-#endif   // CANVASVIEWMANAGER_H
+#endif   // CANVASMANAGER_H

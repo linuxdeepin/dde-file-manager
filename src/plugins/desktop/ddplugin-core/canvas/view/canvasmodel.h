@@ -27,6 +27,7 @@
 #include <QAbstractItemModel>
 
 DSB_D_BEGIN_NAMESPACE
+
 class CanvasModel : public QAbstractItemModel
 {
     Q_OBJECT

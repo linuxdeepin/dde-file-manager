@@ -1,9 +1,10 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: liqiang<liqianga@uniontech.com>
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
+ *             liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,23 +21,25 @@
  */
 #ifndef CANVASVIEW_H
 #define CANVASVIEW_H
-
 #include "defaultdesktopfileinfo.h"
-#include "canvasmodel.h"
 
 #include <QAbstractItemView>
 
-DSB_D_USE_NAMESPACE
+#include "dfm_desktop_service_global.h"
 
+DSB_D_BEGIN_NAMESPACE
+class CanvasModel;
 class CanvasItemDelegate;
 class CanvasViewPrivate;
 class CanvasView : public QAbstractItemView
 {
     Q_OBJECT
+    friend class CanvasViewPrivate;
 public:
     explicit CanvasView(QWidget *parent = nullptr);
+    void initUI();
+public:
     virtual QRect visualRect(const QModelIndex &index) const override;
-    QRect visualRect(const QPoint &gridPos);
     virtual void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
     virtual QModelIndex indexAt(const QPoint &point) const override;
     virtual QModelIndex moveCursor(CursorAction cursorAction,
@@ -51,19 +54,16 @@ public:
 
 public:
     void setScreenNum(const int screenNum);
-    void setScreenName(const QString name);
-    int getScreenNum();
-    QString getScreenName();
-
-public:
+    int screenNum() const;
     CanvasItemDelegate *itemDelegate() const;
     CanvasModel *canvasModel() const;
     void setGeometry(const QRect &rect);
-    void updateCanvas();
+    void updateGrid();
+
     QString fileDisplayNameRole(const QModelIndex &index);
 
 private:
-    void initUI();
+    //todo(lq) using class painthelper to do all painting mission.
     void fileterAndRepaintLocalFiles(QPainter *painter, QStyleOptionViewItem &option, QPaintEvent *event);
     bool isRepaintFlash(QStyleOptionViewItem &option, QPaintEvent *event, const QPoint pos);
 
@@ -76,4 +76,6 @@ private:
 private:
     QScopedPointer<CanvasViewPrivate> d;
 };
+
+DSB_D_END_NAMESPACE
 #endif   // CANVASVIEW_H

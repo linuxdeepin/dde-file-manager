@@ -21,6 +21,7 @@
  */
 #include "canvasservice.h"
 #include "filetreater.h"
+#include "canvasmanager.h"
 
 DSB_D_BEGIN_NAMESPACE
 
@@ -28,7 +29,8 @@ CanvasService::CanvasService(QObject *parent)
     : PluginService(parent), AutoServiceRegister<CanvasService>()
 {
     FileTreaterCt->init();
-    canvasMgrProxy = new CanvasViewManager(this);
+    canvasMgrProxy = new CanvasManager(this);
+    canvasMgrProxy->init();
 
     // todo background signal
 }

@@ -21,10 +21,15 @@
 #ifndef CANVASITEMDELEGATE_H
 #define CANVASITEMDELEGATE_H
 
+#include "dfm_desktop_service_global.h"
+
 #include <QStyledItemDelegate>
 #include <QTextOption>
 
 class QTextLayout;
+
+DSB_D_BEGIN_NAMESPACE
+
 class CanvasView;
 class CanvasItemDelegatePrivate;
 class CanvasItemDelegate : public QStyledItemDelegate
@@ -92,9 +97,11 @@ private:
 private:
     mutable QModelIndex lastAndExpandedIndex;
     QSize itemSizeHint;
-    CanvasItemDelegatePrivate *const d = nullptr;
+    CanvasItemDelegatePrivate *d = nullptr;
 
     //    QMutex mutex; //暂时不见得需要
 };
+
+DSB_D_END_NAMESPACE
 
 #endif   // CANVASITEMDELEGATE_H

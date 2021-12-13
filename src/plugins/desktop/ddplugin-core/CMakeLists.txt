@@ -38,7 +38,6 @@ set(service_cxx_cpp
     wallpaper/wallpaperservice.cpp
     wallpaper/wallpaperfactory.cpp
     canvas/services/canvasservice.cpp
-    canvas/services/canvasfactory.cpp
     screen/screenservice.cpp
 )
 
@@ -48,7 +47,6 @@ set(service_cxx_h
     wallpaper/wallpaperservice.h
     wallpaper/wallpaperfactory.h
     canvas/services/canvasservice.h
-    canvas/services/canvasfactory.h
     screen/screenservice.h
 )
 
@@ -59,10 +57,11 @@ set(core_cxx_cpp
     dbus-private/licenceInterface.cpp
     background/backgroundmanager.cpp
     background/backgrounddefault.cpp
-    canvas/canvasviewmanager.cpp
-    canvas/canvasview.cpp
-    canvas/canvasmodel.cpp
-    canvas/canvasitemdelegate.cpp
+    canvas/canvasmanager.cpp
+    canvas/view/canvasview.cpp
+    canvas/view/canvasmodel.cpp
+    canvas/view/canvasitemdelegate.cpp
+    canvas/view/gridcoordinate.cpp
     canvas/canvasgridmanager.cpp
     canvas/grid/canvasgrid.cpp
     canvas/grid/gridcore.cpp
@@ -86,16 +85,17 @@ set(core_cxx_h
     background/backgroundmanager.h
     background/backgroundmanager_p.h
     background/backgrounddefault.h
-    canvas/private/canvasview_p.h
-    canvas/private/canvasviewmanager_p.h
-    canvas/private/canvasitemdelegate_p.h
+    canvas/private/canvasmanager_p.h
     canvas/private/canvasgridmanager_p.h
     canvas/private/defaultdesktopfileinfo_p.h
     canvas/private/filetreater_p.h
-    canvas/canvasviewmanager.h
-    canvas/canvasview.h
-    canvas/canvasmodel.h
-    canvas/canvasitemdelegate.h
+    canvas//canvasmanager.h
+    canvas/view/canvasview_p.h
+    canvas/view/canvasview.h
+    canvas/view/canvasmodel.h
+    canvas/view/canvasitemdelegate.h
+    canvas/view/canvasitemdelegate_p.h
+    canvas/view/gridcoordinate.h
     canvas/canvasgridmanager.h
     canvas/grid/canvasgrid.h
     canvas/grid/canvasgrid_p.h

@@ -1,9 +1,10 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: liqiang<liqianga@uniontech.com>
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
+ *             liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,53 +19,48 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASVIEWMANAGER_P_H
-#define CANVASVIEWMANAGER_P_H
+#ifndef CANVASMANAGER_P_H
+#define CANVASMANAGER_P_H
 
-#include "canvasview_p.h"
-#include "canvasviewmanager.h"
+#include "canvasmanager.h"
+#include "view/canvasview.h"
 
-#include "dfm-base/dfm_base_global.h"
+#include "screen/screenservice.h"
+#include "services/backgroundservice.h"
 
-DFMBASE_USE_NAMESPACE
 DSB_D_BEGIN_NAMESPACE
+
 class CanvasModel;
 class CanvasSelectionModel;
 typedef QSharedPointer<CanvasView> CanvasViewPointer;
-class CanvasViewManagerPrivate : public QObject
+
+class CanvasManagerPrivate : public QObject
 {
     Q_OBJECT
-    friend class CanvasViewManager;
+    friend class CanvasManager;
 
 public:
-    explicit CanvasViewManagerPrivate(CanvasViewManager *qq)
-        : QObject(qq), q(qq)
-    {
-    }
-
-    ~CanvasViewManagerPrivate()
-    {
-        canvasViewMap.clear();
-        screenMap.clear();
-    }
-
+    explicit CanvasManagerPrivate(CanvasManager *qq);
+    ~CanvasManagerPrivate();
+    CanvasViewPointer createView(const dfmbase::ScreenPointer &, int index);
+    void updateView(const CanvasViewPointer &, const dfmbase::ScreenPointer &, int index);
+public:
     inline QRect relativeRect(const QRect &avRect, const QRect &geometry)
     {
         QPoint relativePos = avRect.topLeft() - geometry.topLeft();
         return QRect(relativePos, avRect.size());
     }
-
-public:
-    bool isDone { false };
-    CanvasModel *canvasModel = { nullptr };
-    CanvasSelectionModel *canvasSelectModel { nullptr };
-    QItemSelectionModel *selectModel = nullptr;
-    ScreenService *screenScevice { nullptr };
-    BackgroundService *backgroundService { nullptr };
-    QMap<QString, CanvasViewPointer> canvasViewMap;
-    QMap<QString, ScreenPointer> screenMap;
-    CanvasViewManager *const q { nullptr };
+protected slots:
+    void backgroundDeleted();
+protected:
+    CanvasModel *canvasModel = nullptr;
+    CanvasSelectionModel *selectionModel = nullptr ;
+    ScreenService *screenScevice = nullptr ;
+    BackgroundService *backgroundService = nullptr ;
+    QMap<QString, CanvasViewPointer> viewMap;
+private:
+    CanvasManager *q = nullptr;
 };
 
 DSB_D_END_NAMESPACE
-#endif   // CANVASVIEWMANAGER_P_H
+#endif   // CANVASMANAGER_P_H

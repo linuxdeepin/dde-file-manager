@@ -26,6 +26,8 @@
 #include <QPointer>
 #include <QTextDocument>
 
+DSB_D_BEGIN_NAMESPACE
+
 class ExpandedItem : public QWidget
 {
     Q_OBJECT
@@ -86,4 +88,5 @@ public:
     CanvasItemDelegate *const q;
 };
 
+DSB_D_END_NAMESPACE
 #endif   // CANVASITEMDELEGATE_P_H

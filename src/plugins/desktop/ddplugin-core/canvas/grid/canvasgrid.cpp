@@ -374,9 +374,9 @@ QHash<int, QHash<QString, QPoint> > CanvasGridPrivate::profiles() const
     auto idxs = surfaceIndex();
 
     // signle screen and multi-screen use different key
-    QSet<QString> keys;
+    QList<QString> keys;
     if (idxs.size() == 1)
-        keys.insert(CanvasGridSpecialist::singleIndex);
+        keys.append(CanvasGridSpecialist::singleIndex);
     else
         keys = DispalyIns->profile();
 
@@ -410,10 +410,10 @@ void CanvasGridPrivate::sync()
         DispalyIns->setCoordinates(CanvasGridSpecialist::singleIndex,
                                    CanvasGridSpecialist::covertDesktopUrlToFiles(itemPos.value(idxs.first())));
     } else {
-        QSet<QString> profile;
+        QList<QString> profile;
         for (const int &idx : idxs) {
             auto key = CanvasGridSpecialist::profileKey(idx);
-            profile.insert(key);
+            profile.append(key);
 
             // update group Screen_xx
             // for compatibility. covert "ddecesktop:/" used by code to "file://" used record file.

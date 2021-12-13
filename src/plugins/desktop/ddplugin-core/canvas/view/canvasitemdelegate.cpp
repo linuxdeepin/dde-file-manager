@@ -18,9 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "private/canvasitemdelegate_p.h"
-#include "private/canvasview_p.h"
+#include "canvasitemdelegate_p.h"
 #include "canvasmodel.h"
+#include "view/canvasview.h"
 
 #include <dtkcore_global.h>
 #include <private/qtextengine_p.h>
@@ -48,6 +48,7 @@ Q_WIDGETS_EXPORT void qt_blurImage(QImage &blurImage, qreal radius, bool quality
 QT_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
+DSB_D_USE_NAMESPACE
 
 bool ExpandedItem::event(QEvent *ee)
 {
@@ -775,8 +776,9 @@ QSize CanvasItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelInd
 void CanvasItemDelegate::updateItemSizeHint()
 {
     // todo 处理一下这些魔数
-    int width = parent()->iconSize().width() * 17 / 10;
-    int height = parent()->iconSize().height()
+    const QSize iconSize = parent()->iconSize();
+    int width = iconSize.width() * 17 / 10;
+    int height = iconSize.height()
             + 10 + 2 * d->textLineHeight;
     d->itemSizeHint = QSize(width, height);
 }

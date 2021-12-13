@@ -84,9 +84,9 @@ DisplayConfig::~DisplayConfig()
     syncTimer = nullptr;
 }
 
-QSet<QString> DisplayConfig::profile()
+QList<QString> DisplayConfig::profile()
 {
-    QSet<QString> ret;
+    QList<QString> ret;
     QMutexLocker lk(&mtxLock);
     settings->beginGroup(kKeyProfile);
     const QStringList &keys = settings->childKeys();
@@ -95,13 +95,13 @@ QSet<QString> DisplayConfig::profile()
         if (value.isEmpty())
             continue;
 
-        ret.insert(value);
+        ret.append(value);
     }
     settings->endGroup();
     return ret;
 }
 
-bool DisplayConfig::setProfile(const QSet<QString> &profile)
+bool DisplayConfig::setProfile(const QList<QString> &profile)
 {
     // clear all
     remove(kKeyProfile, "");

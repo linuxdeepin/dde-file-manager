@@ -23,15 +23,13 @@
 #define CANVASSERVICE_H
 
 #include "dfm_desktop_service_global.h"
-#include "canvasfactory.h"
-#include "dfm-base/widgets/abstractscreen.h"
-#include "canvasviewmanager.h"
 
 #include <dfm-framework/framework.h>
 
+class Core;
 
 DSB_D_BEGIN_NAMESPACE
-class CanvasViewManager;
+class CanvasManager;
 class CanvasService final : public dpf::PluginService, dpf::AutoServiceRegister<CanvasService>
 {
     Q_OBJECT
@@ -49,7 +47,7 @@ protected:
     explicit CanvasService(QObject *parent = nullptr);
     ~CanvasService();
 private:
-    CanvasViewManager *canvasMgrProxy { nullptr };
+    CanvasManager *canvasMgrProxy { nullptr };
 };
 DSB_D_END_NAMESPACE
 

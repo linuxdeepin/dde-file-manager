@@ -1,9 +1,10 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: liqiang<liqianga@uniontech.com>
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
+ *             liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,9 +63,9 @@ static int profileIndex(QString screenKey)
 
 void CanvasGridManagerPrivate::saveProfile()
 {
-    QSet<QString> profile;
+    QList<QString> profile;
     for (int index : screenCode())
-        profile.insert(screenProfile(index));
+        profile.append(screenProfile(index));
 
     DispalyIns->setProfile(profile);
 }
@@ -126,9 +127,9 @@ void CanvasGridManagerPrivate::loadProfile(const QList<DFMDesktopFileInfoPointer
     }
 
     // signle screen and multi-screen use different key
-    QSet<QString> screenProfiles;
+    QList<QString> screenProfiles;
     if (singleScreen)
-        screenProfiles.insert(kSingleScreen);
+        screenProfiles.append(kSingleScreen);
     else
         screenProfiles = DispalyIns->profile();
 

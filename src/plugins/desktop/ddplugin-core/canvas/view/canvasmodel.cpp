@@ -110,25 +110,25 @@ QVariant CanvasModel::data(const QModelIndex &index, int role) const
 
         return d;
     }
-    case FilePathRole:
-    case FileDisplayNameRole:
-    case FileNameRole:
-    case FileNameOfRenameRole:
-    case FileBaseNameRole:
-    case FileBaseNameOfRenameRole:
-    case FileSuffixRole:
-    case FileSuffixOfRenameRole:
+    case Roles::FilePathRole:
+    case Roles::FileDisplayNameRole:
+    case Roles::FileNameRole:
+    case Roles::FileNameOfRenameRole:
+    case Roles::FileBaseNameRole:
+    case Roles::FileBaseNameOfRenameRole:
+    case Roles::FileSuffixRole:
+    case Roles::FileSuffixOfRenameRole:
     case Qt::TextAlignmentRole:
-    case FileLastModifiedRole:
-    case FileLastModifiedDateTimeRole:
-    case FileSizeRole:
-    case FileSizeInKiloByteRole:
-    case FileMimeTypeRole:
-    case FileCreatedRole:
-    case FilePinyinName:
-    case ExtraProperties:
+    case Roles::FileLastModifiedRole:
+    case Roles::FileLastModifiedDateTimeRole:
+    case Roles::FileSizeRole:
+    case Roles::FileSizeInKiloByteRole:
+    case Roles::FileMimeTypeRole:
+    case Roles::FileCreatedRole:
+    case Roles::FilePinyinName:
+    case Roles::ExtraProperties:
         return dataByRole(indexFileInfo, role);
-    case FileIconRole:
+    case Roles::FileIconRole:
         return indexFileInfo->fileIcon();
     case Qt::ToolTipRole: {
         // todo:后续桌面tips需求可走这

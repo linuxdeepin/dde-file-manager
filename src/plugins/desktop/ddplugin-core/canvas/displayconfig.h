@@ -32,8 +32,8 @@ class DisplayConfig : public QObject
     Q_OBJECT
 public:
     static DisplayConfig *instance();
-    QSet<QString> profile();
-    bool setProfile(const QSet<QString> &profile);
+    QList<QString> profile();
+    bool setProfile(const QList<QString> &profile);
     QHash<QString, QPoint> coordinates(const QString &key);
     bool setCoordinates(const QString &key, const QHash<QString, QPoint> &pos);
     void sortMethod(int &role, Qt::SortOrder &order);
