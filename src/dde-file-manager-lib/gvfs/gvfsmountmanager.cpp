@@ -1518,9 +1518,11 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
 
     succeeded = g_file_mount_enclosing_volume_finish(G_FILE(object), res, &error);
 
+    DUrl rootUri = DUrl(g_file_get_uri(G_FILE (object)));
+
     if (!succeeded) {
         Q_ASSERT(error->domain == G_IO_ERROR);
-        emit fileSignalManager->requestRemoveSmbUrl(DUrl(g_file_get_uri(G_FILE (object))));
+        emit fileSignalManager->requestRemoveSmbUrl(rootUri);
         bool showWarnDlg = false;
 
         switch (error->code) {
@@ -1565,7 +1567,7 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
     } else {
         qCDebug(mountManager()) << "g_file_mount_enclosing_volume_finish" << succeeded << AskingPasswordHash.value(op);
         if (AskingPasswordHash.value(op) && SMBLoginObjHash.value(op)) {
-            SMBLoginObjHash.value(op)->insert("id", MountEventHash.value(op)->url().toString());
+            SMBLoginObjHash.value(op)->insert("id", rootUri.toString());
             if (SMBLoginObjHash.value(op)->value("passwordSave").toInt() == 2) {
                 SMBLoginObjHash.value(op)->remove("password");
                 emit fileSignalManager->requsetCacheLoginData(*SMBLoginObjHash.value(op));
