@@ -444,16 +444,14 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
         QString dstText = DFMGlobal::preprocessingFileName(srcText);
 
         //超出长度将不再被支持输入获取当前
-        bool donot_show_suffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };
+        bool showSuffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffix).toBool() };
 
         //获取当前编辑框支持的最大文字长度
-        int textMaxLen = INT_MAX;
-        if (donot_show_suffix) {
+        int textMaxLen = MAX_FILE_NAME_CHAR_COUNT;
+        if (!showSuffix) {
             const QString &suffix = d->editingIndex.data(DFileSystemModel::FileSuffixOfRenameRole).toString();
             edit->setProperty("_d_whether_show_suffix", suffix);
             textMaxLen = MAX_FILE_NAME_CHAR_COUNT - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1);
-        } else {
-            textMaxLen = MAX_FILE_NAME_CHAR_COUNT;
         }
 
         //如果存在非法字符且更改了当前的文本文件
@@ -548,14 +546,12 @@ void DListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         return;
     }
 
-    bool donot_show_suffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };
-    QString text;
+    bool showSuffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffix).toBool() };
+    QString text = index.data(DFileSystemModel::FileNameOfRenameRole).toString();
 
-    if (donot_show_suffix) {
+    if (!showSuffix) {
         edit->setProperty("_d_whether_show_suffix", index.data(DFileSystemModel::FileSuffixOfRenameRole));
         text = index.data(DFileSystemModel::FileBaseNameOfRenameRole).toString();
-    } else {
-        text = index.data(DFileSystemModel::FileNameOfRenameRole).toString();
     }
 
     edit->setText(text);
@@ -669,13 +665,12 @@ bool DListItemDelegate::eventFilter(QObject *object, QEvent *event)
         if (!edit)
             return false;
 
-        bool notShowSuffix = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool();
+        bool showSuffix = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffix).toBool();
         QString srcText;
-        if (notShowSuffix)
-        {
-            srcText = d->editingIndex.data(DFileSystemModel::FileBaseNameOfRenameRole).toString();
-        } else {
+        if (showSuffix) {
             srcText = d->editingIndex.data(DFileSystemModel::FileNameOfRenameRole).toString();
+        } else {
+            srcText = d->editingIndex.data(DFileSystemModel::FileBaseNameOfRenameRole).toString();
         }
 
         //得到处理之后的文件名称
@@ -801,7 +796,9 @@ void DListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewI
                                              QSize(rect.width() - option.fontMetrics.width(suffix), rect.height()), QTextOption::WrapAtWordBoundaryOrAnywhere,
                                              option.font, Qt::ElideRight,
                                              textLineHeight);
-            file_name.append(suffix);
+            bool showSuffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffix).toBool() };
+            if (showSuffix)
+                file_name.append(suffix);
         } while (false);
 
         if (file_name.isEmpty()) {

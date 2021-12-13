@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>AppController</name>
     <message>
@@ -2424,7 +2426,6 @@
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="139"/>
         <location filename="../configure/global-setting-template-pro.js" line="139"/>
-        <location filename="../configure/global-setting-template.js" line="139"/>
         <source>Hide file extension when rename</source>
         <translation>重命名时隐藏文件扩展名</translation>
     </message>
@@ -2594,6 +2595,11 @@
         <location filename="../configure/global-setting-template.js" line="264"/>
         <source>Dialog</source>
         <translation>对话框</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template.js" line="139"/>
+        <source>Show file extension</source>
+        <translation>显示文件扩展名</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template.js" line="202"/>
@@ -3224,29 +3230,29 @@
         <translation>密钥解锁</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="95"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="97"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>打 开</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="211"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="231"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="213"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="233"/>
         <source>Size: %1</source>
         <translation>大小：%1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="214"/>
         <source>Type: %1</source>
         <translation>类型：%1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="224"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="226"/>
         <source>Size: 0</source>
         <translation>大小：0</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="230"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="232"/>
         <source>Items: %1</source>
         <translation>文件数量：%1</translation>
     </message>
@@ -4101,8 +4107,8 @@
     <message>
         <location filename="../interfaces/diconitemdelegate.cpp" line="919"/>
         <location filename="../interfaces/diconitemdelegate.cpp" line="1080"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="479"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="688"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="477"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="683"/>
         <location filename="../views/fileitem.cpp" line="203"/>
         <source>%1 are not allowed</source>
         <translation>不得含有%1</translation>

@@ -76,6 +76,7 @@ public:
 
     QColor focusTextBackgroundBorderColor() const;
     bool enabledTextShadow() const;
+    QString displayFileName(const QModelIndex &index) const;
 
 public slots:
     void setFocusTextBackgroundBorderColor(QColor focusTextBackgroundBorderColor);

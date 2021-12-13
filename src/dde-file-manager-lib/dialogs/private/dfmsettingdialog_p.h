@@ -109,7 +109,7 @@ private:
     };
     BidirectionHash<QString, DFMApplication::GenericAttribute> keyToGA {
         {"base.hidden_files.show_hidden", DFMApplication::GA_ShowedHiddenFiles},
-        {"base.hidden_files.hide_suffix", DFMApplication::GA_ShowedFileSuffixOnRename},
+        {"base.hidden_files.show_suffix", DFMApplication::GA_ShowedFileSuffix},
         {"base.hidden_files.show_recent", DFMApplication::GA_ShowRecentFileEntry},
         {"advance.index.index_internal", DFMApplication::GA_IndexInternal},
         {"advance.index.index_external", DFMApplication::GA_IndexExternal},
