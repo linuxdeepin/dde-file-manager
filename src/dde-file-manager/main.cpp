@@ -172,8 +172,6 @@ int main(int argc, char *argv[])
     SingleApplication app(argc, argv);
 
     if (DFMGlobal::isWayLand()) {
-        //! 解决文管崩溃在defalte的问题，加上该环境变量，就不对图片进行压缩处理
-        qputenv("QT_NO_COMPRESS", "true");
         //以下代码用于视频预览使用
         setenv("PULSE_PROP_media.role", "video", 1);
         QSurfaceFormat format;
