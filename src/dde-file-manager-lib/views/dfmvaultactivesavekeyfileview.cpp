@@ -107,7 +107,7 @@ void DFMVaultActiveSaveKeyFileView::initUI()
     RadioFrame *frame = new RadioFrame;
 
     DLabel *checkBoxLabel = new DLabel(frame);
-    DFontSizeManager::instance()->bind(checkBoxLabel, DFontSizeManager::T9, QFont::Normal);
+    DFontSizeManager::instance()->bind(checkBoxLabel, DFontSizeManager::T10, QFont::Normal);
     checkBoxLabel->setForegroundRole(DPalette::TextTips);
     checkBoxLabel->setWordWrap(true);
     checkBoxLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -123,11 +123,17 @@ void DFMVaultActiveSaveKeyFileView::initUI()
 
     QVBoxLayout *layout2 = new QVBoxLayout(frame);
     layout2->setMargin(8);
+    layout2->setSpacing(0);
     layout2->addLayout(layout);
     layout2->addLayout(layout1);
     layout2->addStretch(2);
 
     RadioFrame *frame1 = new RadioFrame;
+
+    QFrame *line = new QFrame(this);
+    line->setObjectName(QString("line"));
+    line->setFixedHeight(1);
+    line->installEventFilter(this);
 
     QHBoxLayout *layout3 = new QHBoxLayout();
     layout3->setContentsMargins(0, 0, 0, 0);
@@ -135,11 +141,20 @@ void DFMVaultActiveSaveKeyFileView::initUI()
     layout3->addWidget(m_otherRadioBtnHitMsg);
     layout3->addStretch(1);
 
+    QHBoxLayout *layout4 = new QHBoxLayout;
+    layout4->setContentsMargins(8, 4, 8, 4);
+    layout4->addLayout(layout3);
+
+    QHBoxLayout *layout5 = new QHBoxLayout;
+    layout5->setContentsMargins(8, 4, 8, 4);
+    layout5->addWidget(m_SelectfileSavePathEdit);
+
     QVBoxLayout *vlayout5 = new QVBoxLayout(frame1);
-    vlayout5->setMargin(8);
-    vlayout5->addLayout(layout3);
-    vlayout5->setSpacing(2);
-    vlayout5->addWidget(m_SelectfileSavePathEdit);
+    vlayout5->setMargin(0);
+    vlayout5->setSpacing(0);
+    vlayout5->addLayout(layout4);
+    vlayout5->addWidget(line);
+    vlayout5->addLayout(layout5);
 
     QVBoxLayout *vlayout3 = new QVBoxLayout;
     vlayout3->setContentsMargins(20, 0, 20, 0);
@@ -229,6 +244,29 @@ void DFMVaultActiveSaveKeyFileView::showEvent(QShowEvent *event)
     m_SelectfileSavePathEdit->clear();
     m_otherRadioBtnHitMsg->hide();
     QWidget::showEvent(event);
+}
+
+bool DFMVaultActiveSaveKeyFileView::eventFilter(QObject *watched, QEvent *event)
+{
+    if(watched->objectName() == QString("line") && event->type() == QEvent::Paint) {
+        QFrame *frame = static_cast<QFrame*>(watched);
+        QPainter painter(frame);
+        QPalette palette = this->palette();
+        painter.setBrush(palette.background());
+
+        painter.setPen(Qt::transparent);
+        QRect rect = this->rect();
+        rect.setWidth(rect.width() - 1);
+        rect.setHeight(rect.height() - 1);
+        painter.drawRoundedRect(rect, 0, 0);
+        {
+            QPainterPath painterPath;
+            painterPath.addRoundedRect(rect, 0, 0);
+            painter.drawPath(painterPath);
+        }
+    }
+
+    return QWidget::eventFilter(watched, event);
 }
 
 RadioFrame::RadioFrame(QFrame *parent)
