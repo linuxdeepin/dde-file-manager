@@ -31,15 +31,24 @@ FILE(GLOB VAULT_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/vault/private/*.cpp"
 )
 
+FILE(GLOB SIDEBAR_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/sidebar/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sidebar/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sidebar/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sidebar/private/*.cpp"
+    )
+
 add_library(
     ${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
     ${WINDOW_FILES}
     ${VAULT_FILES}
+    ${SIDEBAR_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Qt5 COMPONENTS X11Extras REQUIRED)
 
 add_library(DFMSERVICE::filemanager ALIAS ${PROJECT_NAME})
 
@@ -58,6 +67,7 @@ target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
     DFMSERVICE::common
+    Qt5::X11Extras
     ${DtkWidget_LIBRARIES}
 
 )

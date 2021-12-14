@@ -48,8 +48,19 @@ FILE (GLOB ALL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/file/local/private/*.cpp"
     )
 
-# TODO(zhangs): move `WIDGETS_*` to here
 FILE (GLOB WIDGETS_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmfileview/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmfileview/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmfileview/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmfileview/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmkeyvaluelabel/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmkeyvaluelabel/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmsplitter/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmsplitter/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/filemanagerwindow/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/filemanagerwindow/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/filemanagerwindow/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/filemanagerwindow/private/*.cpp"
     )
 
 FILE (GLOB DBUSSERVER_FILES
@@ -58,71 +69,6 @@ FILE (GLOB DBUSSERVER_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dbusservice/dbus_interface/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dbusservice/dbus_interface/*.cpp"
     )
-
-
-# TODO(zhangs): remove `WIDGETS_*`
-set(WIDGETS_H
-    widgets/dfmfileview/private/fileview_p.h
-    widgets/dfmfileview/private/fileviewmodel_p.h
-    widgets/dfmfileview/private/traversaldirthread.h
-    widgets/dfmfileview/private/fileviewitem_p.h
-    widgets/dfmfileview/private/delegatecommon.h
-    widgets/dfmfileview/private/baseitemdelegate_p.h
-    widgets/dfmfileview/private/iconitemdelegate_p.h
-    widgets/dfmfileview/private/listitemdelegate_p.h
-    widgets/dfmfileview/private/fileselectionmodel_p.h
-    widgets/dfmsidebar/private/sidebar_p.h
-    widgets/dfmsidebar/private/sidebarview_p.h
-    widgets/dfmsidebar/private/sidebarmodel_p.h
-    widgets/dfmsidebar/sidebar.h
-    widgets/dfmsidebar/sidebaritem.h
-    widgets/dfmsidebar/sidebaritemdelegate.h
-    widgets/dfmsidebar/sidebarmodel.h
-    widgets/dfmsidebar/sidebarview.h
-    widgets/dfmsplitter/splitter.h
-    widgets/dfmfileview/fileview.h
-    widgets/dfmfileview/fileviewmodel.h
-    widgets/dfmfileview/headerview.h
-    widgets/dfmfileview/fileviewitem.h
-    widgets/dfmfileview/baseitemdelegate.h
-    widgets/dfmfileview/listitemdelegate.h
-    widgets/dfmfileview/iconitemdelegate.h
-    widgets/dfmfileview/itemdelegatehelper.h
-    widgets/dfmfileview/filesortfilterproxymodel.h
-    widgets/dfmfileview/fileselectionmodel.h
-    widgets/dfmkeyvaluelabel/keyvaluelabel.h
-    )
-
-set(WIDGETS_CPP
-    widgets/dfmfileview/private/traversaldirthread.cpp
-    widgets/dfmfileview/private/fileview_p.cpp
-    widgets/dfmfileview/private/delegatecommon.cpp
-    widgets/dfmfileview/private/baseitemdelegate_p.cpp
-    widgets/dfmfileview/private/iconitemdelegate_p.cpp
-    widgets/dfmfileview/private/listitemdelegate_p.cpp
-    widgets/dfmfileview/private/fileselectionmodel_p.cpp
-    widgets/dfmsidebar/private/sidebar_p.cpp
-    widgets/dfmsidebar/sidebar.cpp
-    widgets/dfmsidebar/sidebaritem.cpp
-    widgets/dfmsidebar/sidebaritemdelegate.cpp
-    widgets/dfmsidebar/sidebarmodel.cpp
-    widgets/dfmsidebar/sidebarview.cpp
-    widgets/dfmsplitter/splitter.cpp
-    widgets/dfmfileview/fileview.cpp
-    widgets/dfmfileview/fileviewmodel.cpp
-    widgets/dfmfileview/headerview.cpp
-    widgets/dfmfileview/fileviewitem.cpp
-    widgets/dfmfileview/baseitemdelegate.cpp
-    widgets/dfmfileview/listitemdelegate.cpp
-    widgets/dfmfileview/iconitemdelegate.cpp
-    widgets/dfmfileview/itemdelegatehelper.cpp
-    widgets/dfmfileview/filesortfilterproxymodel.cpp
-    widgets/dfmfileview/fileselectionmodel.cpp
-    widgets/dfmkeyvaluelabel/keyvaluelabel.cpp
-    )
-
-
-
 
 set(DBUSSERVICE_H
     dbusservice/dbus_interface/devicemanagerdbus_interface.h
@@ -153,8 +99,7 @@ add_library(${PROJECT_NAME}
     ${MIMETYPE_FILES}
     ${BASE_FILES}
     ${ALL_FILES}
-    ${WIDGETS_H}
-    ${WIDGETS_CPP}
+    ${WIDGETS_FILES}
     ${DBUSSERVER_FILES}
 )
 

@@ -21,10 +21,8 @@
  */
 #include "core.h"
 #include "corelog.h"
-#include "eventcaller.h"
-#include "corebrowseview.h"
 
-#include "windowservice.h"
+#include "services/filemanager/window/windowservice.h"
 #include "services/common/menu/menuservice.h"
 
 #include "dfm-base/base/application/application.h"
@@ -34,32 +32,10 @@
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/file/local/localfilemenu.h"
-#include "dfm-base/widgets/dfmsidebar/sidebar.h"
-#include "dfm-base/widgets/dfmsidebar/sidebaritem.h"
-#include "dfm-base/widgets/dfmsidebar/sidebarview.h"
-#include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
 #include "dfm-base/widgets/dfmfileview/fileview.h"
+#include "dfm-base/widgets/filemanagerwindow/filemanagerwindow.h"
 
 #include <dfm-framework/framework.h>
-
-#include <QListWidget>
-#include <QListView>
-#include <QTreeView>
-#include <QStandardItemModel>
-#include <QHeaderView>
-#include <QDockWidget>
-#include <QStatusBar>
-#include <QLabel>
-#include <QFrame>
-#include <QIcon>
-#include <QHBoxLayout>
-#include <QLineEdit>
-#include <QSplitter>
-#include <QDir>
-#include <QSizePolicy>
-#include <QCoreApplication>
-#include <QToolButton>
-#include <QApplication>
 
 DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
@@ -71,139 +47,6 @@ const int kDefaultWindowWidth = 1100;
 const int kDefaultWindowHeight = 700;
 static Application *kDFMApp = nullptr;
 }   // namespace GlobalPrivate
-
-static void initSidebar(SideBar *sidebar)
-{
-    if (!sidebar) return;
-
-    QUrl homeUrl = UrlRoute::pathToReal(QDir::home().path());
-    QUrl desktopUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::kDesktopPath));
-    QUrl videosUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::kVideosPath));
-    QUrl musicUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::kMusicPath));
-    QUrl picturesUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::kPicturesPath));
-    QUrl documentsUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::kDocumentsPath));
-    QUrl downloadsUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::kDownloadsPath));
-
-    QIcon homeIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kHomePath));
-    QIcon desktopIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDesktopPath));
-    QIcon videosIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kVideosPath));
-    QIcon musicIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kMusicPath));
-    QIcon picturesIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kPicturesPath));
-    QIcon documentsIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDocumentsPath));
-    QIcon downloadsIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDownloadsPath));
-
-    auto homeItem = new SideBarItem(homeIcon, QObject::tr("Home"), "core", homeUrl);
-    homeItem->setFlags(homeItem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
-
-    auto desktopitem = new SideBarItem(desktopIcon, QObject::tr("Desktop"), "core", desktopUrl);
-    desktopitem->setFlags(desktopitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
-
-    auto videoitem = new SideBarItem(videosIcon, QObject::tr("Video"), "core", videosUrl);
-    videoitem->setFlags(videoitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
-
-    auto musicitem = new SideBarItem(musicIcon, QObject::tr("Music"), "core", musicUrl);
-    musicitem->setFlags(musicitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
-
-    auto picturesitem = new SideBarItem(picturesIcon, QObject::tr("Pictures"), "core", picturesUrl);
-    picturesitem->setFlags(picturesitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
-
-    auto documentsitem = new SideBarItem(documentsIcon, QObject::tr("Documents"), "core", documentsUrl);
-    documentsitem->setFlags(documentsitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
-
-    auto downloadsitem = new SideBarItem(downloadsIcon, QObject::tr("Downloads"), "core", downloadsUrl);
-    downloadsitem->setFlags(downloadsitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
-
-    sidebar->addItem(homeItem);
-    sidebar->addItem(desktopitem);
-    sidebar->addItem(videoitem);
-    sidebar->addItem(musicitem);
-    sidebar->addItem(picturesitem);
-    sidebar->addItem(documentsitem);
-    sidebar->addItem(downloadsitem);
-
-    sidebar->setMinimumWidth(120);
-    sidebar->setMaximumWidth(200);
-}
-
-static void regStandardPathClass()
-{
-    UrlRoute::regScheme(SchemeTypes::kHome,
-                        QDir::home().path(),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kHomePath)),
-                        false);
-
-    UrlRoute::regScheme(SchemeTypes::kDesktop,
-                        StandardPaths::location(StandardPaths::kDesktopPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDesktopPath)),
-                        false);
-
-    UrlRoute::regScheme(SchemeTypes::kVideos,
-                        StandardPaths::location(StandardPaths::kVideosPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kVideosPath)),
-                        false);
-
-    UrlRoute::regScheme(SchemeTypes::kMusic,
-                        StandardPaths::location(StandardPaths::kMusicPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kMusicPath)),
-                        false);
-
-    UrlRoute::regScheme(SchemeTypes::kPictures,
-                        StandardPaths::location(StandardPaths::kPicturesPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kPicturesPath)),
-                        false);
-
-    UrlRoute::regScheme(SchemeTypes::kDocuments,
-                        StandardPaths::location(StandardPaths::kDocumentsPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDocumentsPath)),
-                        false);
-
-    UrlRoute::regScheme(SchemeTypes::kDownloads,
-                        StandardPaths::location(StandardPaths::kDownloadsPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDownloadsPath)),
-                        false);
-
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kHome);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kHome);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kHome);
-    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::kHome);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kHome);
-
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kDesktop);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kDesktop);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kDesktop);
-    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::kDesktop);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kDesktop);
-
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kVideos);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kVideos);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kVideos);
-    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::kVideos);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kVideos);
-
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kMusic);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kMusic);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kMusic);
-    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::kMusic);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kMusic);
-
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kPictures);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kPictures);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kPictures);
-    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::kPictures);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kPictures);
-
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kDocuments);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kDocuments);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kDocuments);
-    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::kDocuments);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kDocuments);
-
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kDownloads);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kDownloads);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kDownloads);
-    BrowseWidgetFactory::regClass<CoreBrowseView>(SchemeTypes::kDownloads);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kDownloads);
-}
 
 void Core::initialize()
 {
@@ -223,10 +66,7 @@ void Core::initialize()
     InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kFile);
     DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kFile);
     WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kFile);
-    BrowseWidgetFactory::regClass<BrowseView>(SchemeTypes::kFile);
     MenuService::regClass<LocalFileMenu>(SchemeTypes::kFile);
-
-    regStandardPathClass();
 }
 
 bool Core::start()
@@ -245,49 +85,15 @@ bool Core::start()
     if (windowService) {
         QUrl localRootUrl = QUrl::fromLocalFile("/");
         QUrl defaultUrl = UrlRoute::pathToReal(QDir::home().path());
-        BrowseWindow *newWindow = windowService->newWindow();
-
-        if (newWindow) {
-            quint64 winIdx = newWindow->internalWinId();
-            // 绑定当前插件初始化完毕进行的相关操作。
-            QObject::connect(&dpf::Listener::instance(), &dpf::Listener::pluginsStarted,
-                             this, [winIdx]() {
-                                 // 发送打开的新窗口的事件
-                                 EventCaller::sendOpenNewWindowEvent(winIdx);
-                             });
-
-            // 初始化sidebar
-            initSidebar(newWindow->sidebar());
-            ;
-            newWindow->show();
-            newWindow->resize(GlobalPrivate::kDefaultWindowWidth, GlobalPrivate::kDefaultWindowHeight);
-            newWindow->setMinimumSize(GlobalPrivate::kMinimumWindowWidth,
-                                      GlobalPrivate::kMinimumWindowHeight);
-
-            // 綁定sidebaritem的點擊邏輯
-            QObject::connect(newWindow->sidebar(), &SideBar::clickedItemUrl,
-                             newWindow, [windowService, newWindow](const QUrl &url) {
-                                 bool result = windowService->setWindowRootUrl(newWindow, url);
-                                 if (!result)
-                                     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
-                             });
-
-            // 绑定Sidebar右键菜单信号
-            QObject::connect(newWindow->sidebar(), &SideBar::customContextMenu,
-                             newWindow, [=](const QUrl &url, const QPoint &pos) {
-                                 // 发送侧边栏右键菜单事件
-                                 EventCaller::sendSideBarContextMenuEvent(url, pos);
-                             });
-
-            // 绑定搜索逻辑
-            QObject::connect(newWindow->addresssBar(), &AddressBar::editingFinishedSearch,
-                             newWindow, [newWindow, winIdx](const QString &keyword) {
-                                 // 发送搜索事件
-                                 EventCaller::sendSearchEvent(newWindow->rootUrl(), keyword, winIdx);
-                             });
+        QString error;
+        FileManagerWindow *window = windowService->showWindow(defaultUrl, true, &error);
+        if (window) {
+            window->resize(GlobalPrivate::kDefaultWindowWidth, GlobalPrivate::kDefaultWindowHeight);
+            window->setMinimumSize(GlobalPrivate::kMinimumWindowWidth,
+                                   GlobalPrivate::kMinimumWindowHeight);
+        } else {
+            qWarning() << "Cannot show window: " << error << " Url is:" << defaultUrl;
         }
-        // 设置主目录
-        windowService->setWindowRootUrl(newWindow, defaultUrl);
     }
 
     return true;

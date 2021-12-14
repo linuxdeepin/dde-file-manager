@@ -1,10 +1,11 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +19,21 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef EVENTCALLER_H
-#define EVENTCALLER_H
+*/
+#ifndef SIDEBAR_H
+#define SIDEBAR_H
 
-#include "window/contexts.h"   // TODO(zhangs): hide
+#include <dfm-framework/framework.h>
 
-DSB_FM_USE_NAMESPACE
-
-class EventCaller final
+class SideBar : public dpf::Plugin
 {
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "sidebar.json")
+
 public:
-    explicit EventCaller() = delete;
-    static void sendOpenNewWindowEvent(quint64 windowIdx);
-    static void sendSideBarContextMenuEvent(const QUrl &url, const QPoint &pos);
-    static void sendSearchEvent(const QUrl &targetUrl, const QString &keyword, quint64 winIdx);
+    virtual void initialize() override;
+    virtual bool start() override;
+    virtual ShutdownFlag stop() override;
 };
 
-#endif   // EVENTCALLER_H
+#endif   // SIDEBAR_H

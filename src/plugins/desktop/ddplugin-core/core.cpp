@@ -38,10 +38,6 @@
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/file/local/localfilemenu.h"
-#include "dfm-base/widgets/dfmsidebar/sidebar.h"
-#include "dfm-base/widgets/dfmsidebar/sidebaritem.h"
-#include "dfm-base/widgets/dfmsidebar/sidebarview.h"
-#include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
 #include "dfm-base/widgets/dfmfileview/fileview.h"
 
 #include <dfm-framework/framework.h>
@@ -83,7 +79,6 @@ void registerFileSystem()
                         StandardPaths::location(StandardPaths::kDesktopPath),
                         QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDesktopPath)),
                         false);
-
 
     InfoFactory::regClass<DefaultDesktopFileInfo>(desktopScheme);
 }

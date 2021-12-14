@@ -1,10 +1,11 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,33 +19,40 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef SIDEBAR_P_H
-#define SIDEBAR_P_H
+*/
+#ifndef FILEMANAGERWINDOW_H
+#define FILEMANAGERWINDOW_H
 
 #include "dfm-base/dfm_base_global.h"
-#include "dfm-base/widgets/dfmsidebar/sidebarview.h"
-#include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
 
-#include <QObject>
+#include <DMainWindow>
+
+DWIDGET_USE_NAMESPACE
 
 DFMBASE_BEGIN_NAMESPACE
-class SideBar;
-class GroupName;
-class SideBarPrivate : public QObject
+
+class FileManagerWindowPrivate;
+class FileManagerWindow : public DMainWindow
 {
     Q_OBJECT
-    friend class SideBar;
-    SideBar *const q;
-    SideBarView *sidebarView;
-    SideBarModel *sidebarModel;
-    explicit SideBarPrivate(SideBar *qq);
-    void customContextMenuCall(const QPoint &pos);
+    friend class FileManagerWindowPrivate;
 
-private Q_SLOTS:
-    void onItemClicked(const QModelIndex &index);
+public:
+    explicit FileManagerWindow(QWidget *parent = nullptr);
+    virtual ~FileManagerWindow();
+
+    void setRootUrl(const QUrl &url);
+    const QUrl rootUrl();
+    void moveCenter(const QPoint &cp);
+
+signals:
+
+public slots:
+
+private:
+    QScopedPointer<FileManagerWindowPrivate> d;
 };
 
 DFMBASE_END_NAMESPACE
 
-#endif   // SIDEBAR_P_H
+#endif   // FILEMANAGERWINDOW_H

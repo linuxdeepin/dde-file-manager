@@ -22,37 +22,25 @@
 #ifndef DFMWINDOWMANAGERSERVICE_H
 #define DFMWINDOWMANAGERSERVICE_H
 
-#include "browsewindow.h"
-#include "displayviewlogic.h"
 #include "dfm_filemanager_service_global.h"
+#include "dfm-base/widgets/filemanagerwindow/filemanagerwindow.h"
 
 #include <dfm-framework/framework.h>
 
-#include <QUrl>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QHash>
-
 DWIDGET_USE_NAMESPACE
-
-class Core;
-class CoreEventReceiver;
 
 DSB_FM_BEGIN_NAMESPACE
 
+class WindowServicePrivate;
 class WindowService final : public dpf::PluginService, dpf::AutoServiceRegister<WindowService>
 {
     Q_OBJECT
     Q_DISABLE_COPY(WindowService)
-
-    QHash<quint64, BrowseWindow *> windowHash;
-
-    //私有方法的权限控制，core拥有访问私有方法权限
-    friend class ::Core;
-    friend class ::CoreEventReceiver;
+    friend class dpf::QtClassFactory<dpf::PluginService>;
 
 public:
+    using FMWindow = dfmbase::FileManagerWindow;
+
     static QString name()
     {
         return "org.deepin.service.WindowService";
@@ -60,20 +48,13 @@ public:
 
     explicit WindowService(QObject *parent = nullptr);
     virtual ~WindowService() override;
-    bool addSideBarItem(quint64 windowIndex, SideBarItem *item);
-    bool removeSideBarItem(quint64 windowIndex, SideBarItem *item);
-    bool insertSideBarItem(quint64 windowIndex, int row, SideBarItem *item);
-    bool addDetailViewItem(quint64 windowIndex, QWidget *widget);
-    bool insertDetailViewItem(quint64 windowIndex, int index, QWidget *widget);
 
-private:   //@Method
-    BrowseWindow *newWindow();
-    bool setWindowRootUrl(BrowseWindow *newWindow,
-                          const QUrl &url,
-                          QString *errorString = nullptr);
-    bool setWindowRootUrl(quint64 winIdx,
-                          const QUrl &url,
-                          QString *errorString = nullptr);
+    FMWindow *showWindow(const QUrl &url, bool isNewWindow = false, QString *errorString = nullptr);
+    quint64 getWindowId(const QWidget *window);
+    FMWindow *getWindowById(quint64 winId);
+
+private:
+    QScopedPointer<WindowServicePrivate> d;
 };
 
 DSB_FM_END_NAMESPACE

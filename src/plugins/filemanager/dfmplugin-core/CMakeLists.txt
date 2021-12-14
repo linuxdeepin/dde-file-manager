@@ -4,30 +4,17 @@ project(dfmplugin-core)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+FILE(GLOB CORE_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    )
 
-set(core_cxx_cpp
-    corebrowseview.cpp
-    eventcaller.cpp
-    corelog.cpp
-    core.cpp
-    core.json
-    coreeventreceiver.cpp
-)
-
-set(core_cxx_h
-    corebrowseview.h
-    eventcaller.h
-    corelog.h
-    core.h
-    coreeventreceiver.h
-)
 
 find_package(Dtk REQUIRED Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
-    ${core_cxx_cpp}
-    ${core_cxx_h}
+    ${CORE_FILES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)

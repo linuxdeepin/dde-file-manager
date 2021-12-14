@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +19,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef RECENTROOTFILEINFO_H
-#define RECENTROOTFILEINFO_H
+*/
+#include "sidebar.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
-
-#include <QDebug>
-
-class RecentFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
+void SideBar::initialize()
 {
-public:
-    explicit RecentFileInfo(const QUrl &url)
-        : DFMBASE_NAMESPACE::AbstractFileInfo(url)
-    {
-        Q_UNUSED(url);
-    }
-};
+}
 
-#endif // RECENTROOTFILEINFO_H
+bool SideBar::start()
+{
+    return true;
+}
+
+dpf::Plugin::ShutdownFlag SideBar::stop()
+{
+    return kSync;
+}

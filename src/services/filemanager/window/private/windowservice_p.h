@@ -1,9 +1,11 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     lixiang<lixianga@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: lixiang<lixianga@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,43 +19,37 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef DETAILVIEW_H
-#define DETAILVIEW_H
+*/
+#ifndef WINDOWSERVICEPRIVATE_H
+#define WINDOWSERVICEPRIVATE_H
 
 #include "dfm_filemanager_service_global.h"
 
-#include <DFrame>
+#include "dfm-base/widgets/filemanagerwindow/filemanagerwindow.h"
+
+#include <QObject>
+#include <QPointer>
 
 DSB_FM_BEGIN_NAMESPACE
-DWIDGET_USE_NAMESPACE
 
-class DetailViewPrivate;
-class DetailView : public DFrame
+class WindowService;
+class WindowServicePrivate : public QObject
 {
+    friend class WindowService;
     Q_OBJECT
+
 public:
-    explicit DetailView(QWidget *parent = nullptr);
-    virtual ~DetailView();
+    explicit WindowServicePrivate(WindowService *serv);
+    dfmbase::FileManagerWindow *activeExistsWindowByUrl(const QUrl &url);
+    void moveWindowToScreenCenter(dfmbase::FileManagerWindow *window);
 
-    bool addCustomControl(QWidget *widget);
-
-    bool insertCustomControl(int index, QWidget *widget);
-
-public slots:
-    void setUrl(const QUrl &url);
+private slots:
 
 private:
-    void detalHandle(QUrl &url);
-
-protected:
-    void initUI();
-
-    virtual void showEvent(QShowEvent *event);
-
-private:
-    DetailViewPrivate *const detailViewPrivate = nullptr;
+    QPointer<WindowService> service;
+    QHash<quint64, dfmbase::FileManagerWindow *> windows;
 };
+
 DSB_FM_END_NAMESPACE
 
-#endif   // DETAILVIEW_H
+#endif   // WINDOWSERVICEPRIVATE_H

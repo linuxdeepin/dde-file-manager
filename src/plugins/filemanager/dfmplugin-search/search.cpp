@@ -19,9 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "search.h"
-#include "searchbrowseview.h"
 #include "searchlog.h"
-#include "searchfileinfo.h"
 
 #include "windowservice.h"
 #include "dfm-base/base/application/application.h"
@@ -31,26 +29,11 @@
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/file/local/localdiriterator.h"
-#include "dfm-base/widgets/dfmsidebar/sidebar.h"
-#include "dfm-base/widgets/dfmsidebar/sidebaritem.h"
-#include "dfm-base/widgets/dfmsidebar/sidebarview.h"
-#include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
 #include "dfm-base/widgets/dfmfileview/fileview.h"
 #include "services/common/menu/menuservice.h"
 
-#define SEARCH_SCHEME "search"
-
-DSC_USE_NAMESPACE
-
 void Search::initialize()
 {
-    //注册路由
-    UrlRoute::regScheme(SEARCH_SCHEME, "/", {}, true);
-    InfoFactory::regClass<SearchFileInfo>(SEARCH_SCHEME);
-    //    DirIteratorFactory::regClass<SearchDirIterator>(SEARCH_SCHEME);
-    //    WacherFactory::regClass<SearchFileWatcher>(SEARCH_SCHEME);
-    BrowseWidgetFactory::regClass<SearchBrowseView>(SEARCH_SCHEME);
-    MenuService::regClass<AbstractFileMenu>(SEARCH_SCHEME);
 }
 
 bool Search::start()

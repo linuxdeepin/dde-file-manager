@@ -1,20 +1,19 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-project(dfmplugin-recent)
+project(dfmplugin-sidebar)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB RECENT_FILES
+FILE(GLOB SIDEBAR_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
-
-find_package(Qt5 REQUIRED Xml REQUIRED)
 find_package(Dtk REQUIRED Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
-    ${RECENT_FILES}
+    ${SIDEBAR_FILES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
@@ -29,7 +28,6 @@ target_link_libraries(${PROJECT_NAME}
     DFM::framework
     DFMSERVICE::common
     DFMSERVICE::filemanager
-    Qt5::Xml
     ${DtkWidget_LIBRARIES}
 )
 

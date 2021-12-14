@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +19,35 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef SIDEBARMODEL_P_CPP
-#define SIDEBARMODEL_P_CPP
+*/
+#ifndef FILEMANAGERWINDOW_P_H
+#define FILEMANAGERWINDOW_P_H
 
 #include "dfm-base/dfm_base_global.h"
+
+#include <DTitlebar>
+#include <DButtonBox>
+
 #include <QObject>
 
+DWIDGET_USE_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
-class SideBarModel;
-class SideBarModelPrivate : public QObject
+
+class FileManagerWindow;
+class FileManagerWindowPrivate : public QObject
 {
     Q_OBJECT
-    friend class SideBarModel;
-    SideBarModel *const q;
-    explicit SideBarModelPrivate(SideBarModel *qq);
+    friend class FileManagerWindow;
+    FileManagerWindow *const q;
+
+public:
+    explicit FileManagerWindowPrivate(FileManagerWindow *qq);
+
+signals:
+
+public slots:
 };
 
 DFMBASE_END_NAMESPACE
-#endif // SIDEBARMODEL_P_CPP
+
+#endif   // FILEMANAGERWINDOW_P_H

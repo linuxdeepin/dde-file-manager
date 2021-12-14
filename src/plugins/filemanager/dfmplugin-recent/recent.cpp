@@ -21,13 +21,9 @@
  */
 #include "recent.h"
 #include "recentutil.h"
-#include "recentbrowseview.h"
-#include "recenteventreceiver.h"
-#include "recentfileinfo.h"
-#include "recentdiriterator.h"
 
-#include "windowservice.h"
-#include "window/browseview.h"   // TODO(zhangs): hide
+#include "services/filemanager/window/windowservice.h"
+#include "services/common/menu/menuservice.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
@@ -35,56 +31,14 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/file/local/localdiriterator.h"
-#include "dfm-base/widgets/dfmsidebar/sidebar.h"
-#include "dfm-base/widgets/dfmsidebar/sidebaritem.h"
-#include "dfm-base/widgets/dfmsidebar/sidebarview.h"
-#include "dfm-base/widgets/dfmsidebar/sidebarmodel.h"
 #include "dfm-base/widgets/dfmfileview/fileview.h"
 #include "services/common/menu/menuservice.h"
 
-#include <QListWidget>
-#include <QListView>
-#include <QTreeView>
-#include <QStandardItemModel>
-#include <QHeaderView>
-#include <QDockWidget>
-#include <QStatusBar>
-#include <QLabel>
-#include <QFrame>
-#include <QIcon>
-#include <QHBoxLayout>
-#include <QLineEdit>
-#include <QSplitter>
-#include <QDir>
-#include <QSizePolicy>
-#include <QToolButton>
 #include <dfm-framework/framework.h>
-
-//DFM_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 void Recent::initialize()
 {
     QString recentScheme { "recent" };
-
-    QString errStr;
-    auto &ctx = dpfInstance.serviceContext();
-    if (!ctx.load(MenuService::name(), &errStr)) {
-        dpfDebug() << errStr;
-        abort();
-    }
-
-    RecentUtil::initRecentSubSystem();
-    //注册路由
-    QIcon recentIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kRecentPath));
-    UrlRoute::regScheme(recentScheme, "/", recentIcon, true);
-    //注册Scheme为"recent"的扩展的文件信息 本地默认文件的
-    InfoFactory::regClass<RecentFileInfo>(recentScheme);
-    //    FileDeviceFactory::regClass<>("recent");
-    DirIteratorFactory::regClass<RecentDirIterator>(recentScheme);
-    //    WacherFactory::regClass<AbstractFileWatcher>("recent");
-    BrowseWidgetFactory::regClass<RecentBrowseView>(recentScheme);
-    MenuService::regClass<AbstractFileMenu>(recentScheme);
 }
 
 bool Recent::start()
