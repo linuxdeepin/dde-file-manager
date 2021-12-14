@@ -447,6 +447,18 @@ std::map<QString, std::multimap<QString, QString>>  DSqliteHandle::queryPartions
             std::match_results<std::basic_string<char>::const_iterator> matchedResult{};
             std::basic_string<char> partionNameStd{ partionName.toStdString() };
 
+            //考虑挂载点在映射分区的情况
+            if (partionName.contains("/mapper/") && !mountpoint.isEmpty()) {
+                int index = partionName.indexOf("/mapper/");
+                deviceName = partionName.mid(0, index + QString("/mapper").length());
+                mountpoint = DSqliteHandle::restoreEscapedChar(mountpoint);
+
+                if (!mountpoint.isEmpty()) {
+                    partionsAndMountpoints[deviceName].emplace(std::move(partionName), mountpoint);
+                    continue;
+                }
+            }
+
             if (std::regex_search(partionNameStd, matchedResult, matchNumber)) {
                 deviceName = QString::fromStdString(matchedResult.prefix());
 
