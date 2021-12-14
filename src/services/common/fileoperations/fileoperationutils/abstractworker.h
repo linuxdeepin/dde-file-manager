@@ -43,7 +43,7 @@ class AbstractWorker : public QObject
 {
     friend class AbstractJob;
     Q_OBJECT
-    virtual void setWorkArgs(const JobHandlePointer &handle, const QList<QUrl> &sources, const QUrl &target = QUrl(),
+    virtual void setWorkArgs(const JobHandlePointer &handle, const QList<QUrl> &sourceUrls, const QUrl &targetUrl = QUrl(),
                              const AbstractJobHandler::JobFlags &flags = AbstractJobHandler::JobFlag::kNoHint);
 signals:
     /*!
@@ -145,15 +145,16 @@ public:
     QAtomicInteger<qint64> sourceFilesTotalSize { 0 };   // 源文件的总大小
     QAtomicInteger<qint64> sourceFilesCount { 0 };   // source files count
     quint16 dirSize { 0 };   // 目录大小
-    QList<QUrl> sources;   // 源文件
-    QUrl target;   // 目标目录
+    QList<QUrl> sourceUrls;   // 源文件
+    QUrl targetUrl;   // 目标目录
+    QAtomicInteger<bool> isFileOnDiskUrls { false };
     AbstractJobHandler::JobFlags jobFlags { AbstractJobHandler::JobFlag::kNoHint };   // 任务标志
     AbstractJobHandler::SupportAction currentAction { AbstractJobHandler::SupportAction::kNoAction };   // 当前的操作
     QSharedPointer<QWaitCondition> handlingErrorCondition { nullptr };
     QSharedPointer<QMutex> handlingErrorQMutex { nullptr };
     AbstractJobHandler::JobState currentState = AbstractJobHandler::JobState::kUnknowState;   // current state
-    bool isSourceFileLocal { false };   // 源文件是否在可以出设备上
-    bool isTargetFileLocal { false };   // 目标文件是否在可以出设备上
+    bool isSourceFileLocal { false };   // 源文件是否在本地设备上
+    bool isTargetFileLocal { false };   // 目标文件是否在本地设备上
     QSharedPointer<QWaitCondition> waitCondition { nullptr };   // 线程等待
     QSharedPointer<QMutex> conditionMutex { nullptr };   // 线程等待锁
     QSharedPointer<QList<QUrl>> allFilesList { nullptr };   // 所有源文件的统计文件

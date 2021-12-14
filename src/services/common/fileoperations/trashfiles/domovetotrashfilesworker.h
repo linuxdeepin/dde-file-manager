@@ -25,7 +25,7 @@
 
 #include "dfm_common_service_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
-#include "fileoperations/fileoperationutils/abstractworker.h"
+#include "fileoperations/fileoperationutils/fileoperatebaseworker.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QObject>
@@ -37,7 +37,7 @@ class QStorageInfo;
 USING_IO_NAMESPACE
 DSC_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
-class DoMoveToTrashFilesWorker : public AbstractWorker
+class DoMoveToTrashFilesWorker : public FileOperateBaseWorker
 {
     friend class MoveToTrashFiles;
     Q_OBJECT
@@ -65,41 +65,7 @@ protected:
     QString getNotExistsTrashFileName(const QString &fileName);
     bool doWriteTrashInfo(const QString &fileBaseName, const QString &path, const QString &time);
     void isInSameDisk(const AbstractFileInfoPointer &fileInfo);
-    //check disk space available before do move job
-    bool checkDiskSpaceAvailable(const QUrl &file, bool &result);
     bool doCopyAndDelete(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo);
-    void readAheadSourceFile(const AbstractFileInfoPointer &fileInfo);
-    bool createFileDevices(const AbstractFileInfoPointer &fromInfo,
-                           const AbstractFileInfoPointer &toInfo,
-                           QSharedPointer<DFile> &fromeFile,
-                           QSharedPointer<DFile> &toFile,
-                           bool &result);
-    bool createFileDevice(const AbstractFileInfoPointer &needOpenInfo,
-                          QSharedPointer<DFile> &file, bool &result);
-    bool openFiles(const AbstractFileInfoPointer &fromInfo,
-                   const AbstractFileInfoPointer &toInfo,
-                   const QSharedPointer<DFile> &fromeFile,
-                   const QSharedPointer<DFile> &toFile,
-                   bool &result);
-    bool openFile(const AbstractFileInfoPointer &fileInfo,
-                  const QSharedPointer<DFile> &file,
-                  const DFMIO::DFile::OpenFlag &flags,
-                  bool &result);
-    bool doReadFile(const AbstractFileInfoPointer &fileInfo,
-                    const QSharedPointer<DFile> &fromDevice, char *data,
-                    const qint64 &blockSize,
-                    qint64 &readSize,
-                    bool &result);
-    bool doWriteFile(const AbstractFileInfoPointer &fileInfo,
-                     const QSharedPointer<DFile> &toDevice,
-                     const char *data,
-                     const qint64 &readSize,
-                     bool &result);
-    void setTargetPermissions(const AbstractFileInfoPointer &fromInfo,
-                              const AbstractFileInfoPointer &toInfo);
-    bool copyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool &reslut);
-    bool copyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool &reslut);
-    bool deleteFile(const AbstractFileInfoPointer &fileInfo);
 
 private:
     AbstractFileInfoPointer targetFileInfo { nullptr };   // target file information

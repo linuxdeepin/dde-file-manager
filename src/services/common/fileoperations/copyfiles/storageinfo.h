@@ -53,6 +53,7 @@ public:
 class StorageInfo : public QStorageInfo
 {
     friend class DoCopyFilesWorker;
+    friend class DoCutFilesWorker;
 
 public:
     enum PathHint {

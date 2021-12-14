@@ -29,8 +29,8 @@
 #include <QObject>
 #include <QThread>
 
-DFMBASE_USE_NAMESPACE
 DSC_BEGIN_NAMESPACE
+
 class CutFiles : public AbstractJob
 {
     Q_OBJECT
@@ -40,6 +40,7 @@ class CutFiles : public AbstractJob
 public:
     ~CutFiles() override;
 };
+
 DSC_END_NAMESPACE
 
 #endif   // CUTFILES_H

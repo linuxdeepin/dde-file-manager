@@ -63,8 +63,10 @@ class FileOperationsUtils
 {
     friend class AbstractWorker;
     friend class DoCopyFilesWorker;
+    friend class DoCutFilesWorker;
     friend class DoStatisticsFilesWorker;
     friend class DoMoveToTrashFilesWorker;
+    friend class FileOperateBaseWorker;
 
 public:
     struct FilesSizeInfo
@@ -82,6 +84,7 @@ private:
     static quint16 getMemoryPageSize();
     static void statisticFilesSize(const QUrl &url, QSharedPointer<FilesSizeInfo> &sizeInfo, const bool &isRecordUrl = false);
     static bool isAncestorUrl(const QUrl &from, const QUrl &to);
+    static bool isFileOnDisk(const QUrl &url);
 };
 typedef QSharedPointer<FileOperationsUtils::FilesSizeInfo> SizeInfoPoiter;
 DSC_END_NAMESPACE

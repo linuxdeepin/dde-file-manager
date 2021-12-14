@@ -65,28 +65,6 @@ QSharedPointer<FileOperationsUtils::FilesSizeInfo> FileOperationsUtils::statisti
     filesSizeInfo->dirSize = filesSizeInfo->dirSize <= 0 ? getMemoryPageSize() : filesSizeInfo->dirSize;
     return filesSizeInfo;
 }
-/*!
- * \brief FileOperationsUtils::isFileInCanRemoveDevice 判断文件是否在可移除设备上
- * 注意：这里是否可以有更好的方式，判断是固态硬盘还是机械硬盘，或者是网络设备
- * \param url 文件的url
- * \return
- */
-bool FileOperationsUtils::isFileInCanRemoveDevice(const QUrl &url)
-{
-    Q_UNUSED(url);
-    QString path = url.path();
-    if (path.isEmpty())
-        return false;
-    bool isLocal = true;
-    GFile *dest_dir_file = g_file_new_for_path(path.toUtf8().constData());
-    GMount *dest_dir_mount = g_file_find_enclosing_mount(dest_dir_file, nullptr, nullptr);
-    if (dest_dir_mount) {
-        isLocal = !g_mount_can_unmount(dest_dir_mount);
-        g_object_unref(dest_dir_mount);
-    }
-    g_object_unref(dest_dir_file);
-    return isLocal;
-}
 
 bool FileOperationsUtils::isFilesSizeOutLimit(const QUrl &url, const qint64 limitSize)
 {
@@ -167,4 +145,17 @@ bool FileOperationsUtils::isAncestorUrl(const QUrl &from, const QUrl &to)
 {
     QUrl parentUrl = UrlRoute::urlParent(to);
     return from.path() == parentUrl.path();
+}
+
+bool FileOperationsUtils::isFileOnDisk(const QUrl &url)
+{
+    if (!url.isValid())
+        return false;
+
+    g_autoptr(GFile) destDirFile = g_file_new_for_uri(url.toString().toLocal8Bit().data());
+    g_autoptr(GMount) destDirMount = g_file_find_enclosing_mount(destDirFile, nullptr, nullptr);
+    if (destDirMount) {
+        return !g_mount_can_unmount(destDirMount);
+    }
+    return false;
 }

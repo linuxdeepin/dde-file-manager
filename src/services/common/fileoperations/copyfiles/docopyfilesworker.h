@@ -31,7 +31,6 @@
 #include "dfm-base/utils/threadcontainer.hpp"
 #include "dfm-base/file/local/localfilehandler.h"
 
-
 #include <dfm-io/core/dfile.h>
 
 #include <QObject>
@@ -82,7 +81,7 @@ protected:
     AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error) override;
 
 protected:
-    void setCountProccessType();
+    void determineCountProcessType();
     bool copyFiles();
     bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo);
     bool doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, AbstractFileInfoPointer &newTargetInfo);
@@ -148,7 +147,6 @@ protected:
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from, const QUrl &to,
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const QString &errorMsg = QString());
-    QString errorToString(const AbstractJobHandler::JobErrorType &error);
     QString formatFileName(const QString &fileName);
     QString getNonExistFileName(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer targetDir);
     qint64 getWriteDataSize();

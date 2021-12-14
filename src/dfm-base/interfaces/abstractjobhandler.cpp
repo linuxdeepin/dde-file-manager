@@ -126,3 +126,49 @@ void AbstractJobHandler::onSpeedUpdated(const JobInfoPointer JobInfo)
     if (isSignalConnectOver)
         emit speedUpdatedNotify(JobInfo);
 }
+
+QString AbstractJobHandler::errorToString(const AbstractJobHandler::JobErrorType &error)
+{
+    switch (error) {
+    case AbstractJobHandler::JobErrorType::kPermissionError:
+        return tr("Permission error");
+    case AbstractJobHandler::JobErrorType::kSpecialFileError:
+        return tr("The action is denied");
+    case AbstractJobHandler::JobErrorType::kFileExistsError:
+        return tr("Target file is exists");
+    case AbstractJobHandler::JobErrorType::kDirectoryExistsError:
+        return tr("Target directory is exists");
+    case AbstractJobHandler::JobErrorType::kOpenError:
+        return tr("Failed to open the file");
+    case AbstractJobHandler::JobErrorType::kReadError:
+        return tr("Failed to read the file");
+    case AbstractJobHandler::JobErrorType::kWriteError:
+        return tr("Failed to write the file");
+    case AbstractJobHandler::JobErrorType::kMkdirError:
+        return tr("Failed to create the directory");
+    case AbstractJobHandler::JobErrorType::kRemoveError:
+        return tr("Failed to delete the file");
+    case AbstractJobHandler::JobErrorType::kRenameError:
+        return tr("Failed to move the file");
+    case AbstractJobHandler::JobErrorType::kNonexistenceError:
+        return tr("Original file does not exist");
+    case AbstractJobHandler::JobErrorType::kFileSizeTooBigError:
+        return tr("Failed, file size must be less than 4GB");
+    case AbstractJobHandler::JobErrorType::kNotEnoughSpaceError:
+        return tr("Not enough free space on the target disk");
+    case AbstractJobHandler::JobErrorType::kIntegrityCheckingError:
+        return tr("File integrity was damaged");
+    case AbstractJobHandler::JobErrorType::kTargetReadOnlyError:
+        return tr("The target device is read only");
+    case AbstractJobHandler::JobErrorType::kTargetIsSelfError:
+        return tr("Target folder is inside the source folder");
+    case AbstractJobHandler::JobErrorType::kNotSupportedError:
+        return tr("The action is not supported");
+    case AbstractJobHandler::JobErrorType::kPermissionDeniedError:
+        return tr("You do not have permission to traverse files in it");
+    default:
+        break;
+    }
+
+    return QString();
+}

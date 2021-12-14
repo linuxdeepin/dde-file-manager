@@ -211,6 +211,9 @@ public slots:
     void onFinished(const JobInfoPointer jobInfo);
     void onSpeedUpdated(const JobInfoPointer JobInfo);
 
+public:
+    static QString errorToString(const AbstractJobHandler::JobErrorType &error);
+
 private:
     QAtomicInteger<bool> isSignalConnectOver { false };
 };

@@ -124,7 +124,7 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
 {
     bool ok = true;
-    for (auto &url : sources) {
+    for (auto &url : sourceUrls) {
         const auto &info = InfoFactory::create<AbstractFileInfo>(url);
         if (!info) {
             // pause and emit error msg

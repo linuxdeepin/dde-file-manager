@@ -20,13 +20,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "cutfiles.h"
 #include "docutfilesworker.h"
 #include "fileoperations/fileoperationutils/statisticsfilessize.h"
 
-#include <QDebug>
-
 DSC_USE_NAMESPACE
+
 CutFiles::CutFiles(QObject *parent)
     : AbstractJob(new DoCutFilesWorker(), parent)
 {

@@ -23,6 +23,8 @@
 #include "abstractworker.h"
 #include "statisticsfilessize.h"
 
+#include "utils/fileutils.h"
+
 #include <QUrl>
 #include <QDebug>
 #include <QWaitCondition>
@@ -41,8 +43,9 @@ void AbstractWorker::setWorkArgs(const JobHandlePointer &handle, const QList<QUr
         return;
     }
     initHandleConnects(handle);
-    this->sources = sources;
-    this->target = target;
+    this->sourceUrls = sources;
+    this->targetUrl = target;
+    this->isFileOnDiskUrls = sourceUrls.isEmpty() ? true : FileOperationsUtils::isFileOnDisk(sourceUrls.first());
     jobFlags = flags;
 }
 
@@ -151,16 +154,16 @@ void AbstractWorker::startCountProccess()
  */
 bool AbstractWorker::statisticsFilesSize()
 {
-    if (sources.isEmpty()) {
+    if (sourceUrls.isEmpty()) {
         qWarning() << "delete sources files list is empty!";
         return false;
     }
     // 判读源文件所在设备位置，执行异步或者同统计源文件大小
-    isSourceFileLocal = FileOperationsUtils::isFileInCanRemoveDevice(sources.at(0));
+    isSourceFileLocal = FileOperationsUtils::isFileOnDisk(sourceUrls.at(0));
 
     if (isSourceFileLocal) {
         const QSharedPointer<FileOperationsUtils::FilesSizeInfo> &fileSizeInfo =
-                FileOperationsUtils::statisticsFilesSize(sources, true);
+                FileOperationsUtils::statisticsFilesSize(sourceUrls, true);
         allFilesList = fileSizeInfo->allFiles;
         sourceFilesTotalSize = fileSizeInfo->totalSize;
         dirSize = fileSizeInfo->dirSize;
@@ -168,7 +171,7 @@ bool AbstractWorker::statisticsFilesSize()
         return true;
     }
 
-    statisticsFilesSizeJob.reset(new StatisticsFilesSize(sources));
+    statisticsFilesSizeJob.reset(new StatisticsFilesSize(sourceUrls));
     connect(statisticsFilesSizeJob.data(), &StatisticsFilesSize::finished, this, &AbstractWorker::onStatisticsFilesSizeFinish);
     statisticsFilesSizeJob->start();
     return true;

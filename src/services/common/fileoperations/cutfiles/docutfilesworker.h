@@ -26,12 +26,18 @@
 #include "dfm_common_service_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "fileoperations/fileoperationutils/abstractworker.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "fileoperations/fileoperationutils/fileoperatebaseworker.h"
+
+#include "dfm-io/core/dfile.h"
 
 #include <QObject>
 
 DSC_BEGIN_NAMESPACE
-DFMBASE_USE_NAMESPACE
-class DoCutFilesWorker : public AbstractWorker
+
+class StorageInfo;
+
+class DoCutFilesWorker : public FileOperateBaseWorker
 {
     friend class CutFiles;
     Q_OBJECT
@@ -42,6 +48,26 @@ public:
 
 protected:
     bool doWork() override;
+    void stop() override;
+    bool initArgs() override;
+    void onUpdateProccess() override;
+
+    bool cutFiles();
+    bool doCutFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo);
+    bool doRenameFile(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo);
+    bool renameFileByHandler(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo);
+
+    void emitCompleteFilesUpdatedNotify(const qint64 &writCount);
+    AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from, const QUrl &to,
+                                                           const AbstractJobHandler::JobErrorType &error,
+                                                           const QString &errorMsg = QString());
+
+private:
+    AbstractFileInfoPointer targetInfo { nullptr };   // target file infor pointer
+    QSharedPointer<StorageInfo> targetStorageInfo { nullptr };   // target file's device infor
+    int totalMoveFilesCount = 1;
+    int completedFilesCount = 0;
+    qreal lastProgress = 0.01;
 };
 
 DSC_END_NAMESPACE
