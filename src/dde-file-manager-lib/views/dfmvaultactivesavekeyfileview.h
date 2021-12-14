@@ -79,6 +79,8 @@ public slots:
 protected:
     void showEvent(QShowEvent *event) override;
 
+    virtual bool eventFilter(QObject *watched, QEvent *event) override;
+
 private:
     //! 保存密钥文件页面标题
     DLabel *m_title = nullptr;
