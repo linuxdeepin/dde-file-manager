@@ -20,36 +20,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef WINDOWSERVICEPRIVATE_H
-#define WINDOWSERVICEPRIVATE_H
+#include "sidebarservice.h"
+#include "private/sidebarservice_p.h"
 
-#include "dfm_filemanager_service_global.h"
+DSB_FM_USE_NAMESPACE
 
-#include "dfm-base/widgets/filemanagerwindow/filemanagerwindow.h"
-
-#include <QObject>
-#include <QPointer>
-
-DSB_FM_BEGIN_NAMESPACE
-
-class WindowService;
-class WindowServicePrivate : public QObject
+SideBarServicePrivate::SideBarServicePrivate(SideBarService *serv)
+    : QObject(nullptr), service(serv)
 {
-    friend class WindowService;
-    Q_OBJECT
+}
 
-public:
-    explicit WindowServicePrivate(WindowService *serv);
-    dfmbase::FileManagerWindow *activeExistsWindowByUrl(const QUrl &url);
-    void moveWindowToScreenCenter(dfmbase::FileManagerWindow *window);
+SideBarService::SideBarService(QObject *parent)
+    : dpf::PluginService(parent),
+      dpf::AutoServiceRegister<SideBarService>(),
+      d(new SideBarServicePrivate(this))
+{
+}
 
-private slots:
-
-private:
-    QPointer<WindowService> service;
-    QHash<quint64, dfmbase::FileManagerWindow *> windows;
-};
-
-DSB_FM_END_NAMESPACE
-
-#endif   // WINDOWSERVICEPRIVATE_H
+SideBarService::~SideBarService()
+{
+}

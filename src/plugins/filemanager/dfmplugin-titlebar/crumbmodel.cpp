@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -19,34 +19,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "recent.h"
-#include "recentutil.h"
+#include "crumbmodel.h"
+#include "dtkwidget_global.h"
 
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/common/menu/menuservice.h"
+DWIDGET_USE_NAMESPACE
 
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfileinfo.h"
-#include "dfm-base/file/local/localdiriterator.h"
-#include "dfm-base/widgets/dfmfileview/fileview.h"
-#include "services/common/menu/menuservice.h"
-
-#include <dfm-framework/framework.h>
-
-void Recent::initialize()
+CrumbModel::CrumbModel(QObject *parent)
+    : QStandardItemModel(parent)
 {
-    QString recentScheme { "recent" };
 }
 
-bool Recent::start()
+CrumbModel::~CrumbModel()
 {
-    return true;
 }
 
-dpf::Plugin::ShutdownFlag Recent::stop()
+void CrumbModel::removeAll()
 {
-    return kSync;
+    removeRows(0, rowCount());
+}
+
+QModelIndex CrumbModel::lastIndex()
+{
+    return index(rowCount() - 1, 0);
 }

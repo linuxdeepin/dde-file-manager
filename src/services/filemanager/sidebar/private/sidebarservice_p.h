@@ -20,39 +20,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef FILEMANAGERWINDOW_P_H
-#define FILEMANAGERWINDOW_P_H
+#ifndef SIDEBARSERVICE_P_H
+#define SIDEBARSERVICE_P_H
 
-#include "dfm-base/dfm_base_global.h"
-
-#include <DTitlebar>
-#include <DButtonBox>
+#include "dfm_filemanager_service_global.h"
 
 #include <QObject>
-#include <QUrl>
-#include <QHBoxLayout>
+#include <QPointer>
 
-DWIDGET_USE_NAMESPACE
-DFMBASE_BEGIN_NAMESPACE
+DSB_FM_BEGIN_NAMESPACE
 
-class FileManagerWindow;
-class FileManagerWindowPrivate : public QObject
+class SideBarService;
+class SideBarServicePrivate : public QObject
 {
+    friend SideBarService;
     Q_OBJECT
-    friend class FileManagerWindow;
-    FileManagerWindow *const q;
 
 public:
-    explicit FileManagerWindowPrivate(const QUrl &url, FileManagerWindow *qq);
+    explicit SideBarServicePrivate(SideBarService *serv);
 
 private:
-    QUrl currentUrl;
-    static constexpr int kMinimumWindowWidth = 760;
-    static constexpr int kMinimumWindowHeight = 420;
-    static constexpr int kDefaultWindowWidth = 1100;
-    static constexpr int kDefaultWindowHeight = 700;
+    QPointer<SideBarService> service;
 };
 
-DFMBASE_END_NAMESPACE
+DSB_FM_END_NAMESPACE
 
-#endif   // FILEMANAGERWINDOW_P_H
+#endif   // SIDEBARSERVICE_P_H

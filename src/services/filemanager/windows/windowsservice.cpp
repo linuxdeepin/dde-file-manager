@@ -19,9 +19,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "windowservice.h"
-#include "private/windowservice_p.h"
+#include "windowsservice.h"
+#include "private/windowsservice_p.h"
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/application/application.h"
 #include "dfm-base/utils/finallyutil.h"
 
 #include <QDebug>
@@ -32,6 +33,7 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
+using dfmbase::Application;
 using dfmbase::FileManagerWindow;
 
 /*!
@@ -39,12 +41,12 @@ using dfmbase::FileManagerWindow;
  * \brief
  */
 
-WindowServicePrivate::WindowServicePrivate(WindowService *serv)
+WindowsServicePrivate::WindowsServicePrivate(WindowsService *serv)
     : QObject(nullptr), service(serv)
 {
 }
 
-FileManagerWindow *WindowServicePrivate::activeExistsWindowByUrl(const QUrl &url)
+FileManagerWindow *WindowsServicePrivate::activeExistsWindowByUrl(const QUrl &url)
 {
     int count = windows.count();
 
@@ -63,7 +65,7 @@ FileManagerWindow *WindowServicePrivate::activeExistsWindowByUrl(const QUrl &url
     return nullptr;
 }
 
-void WindowServicePrivate::moveWindowToScreenCenter(FileManagerWindow *window)
+void WindowsServicePrivate::moveWindowToScreenCenter(FileManagerWindow *window)
 {
     QPoint pos = QCursor::pos();
     QRect currentScreenGeometry;
@@ -86,14 +88,14 @@ void WindowServicePrivate::moveWindowToScreenCenter(FileManagerWindow *window)
  * \brief
  */
 
-WindowService::WindowService(QObject *parent)
+WindowsService::WindowsService(QObject *parent)
     : dpf::PluginService(parent),
-      dpf::AutoServiceRegister<WindowService>()
+      dpf::AutoServiceRegister<WindowsService>(),
+      d(new WindowsServicePrivate(this))
 {
-    d.reset(new WindowServicePrivate(this));
 }
 
-WindowService::~WindowService()
+WindowsService::~WindowsService()
 {
     for (auto val : d->windows.values()) {
         // 框架退出非程序退出，依然会存在QWidget相关操作，
@@ -104,7 +106,7 @@ WindowService::~WindowService()
     d->windows.clear();
 }
 
-WindowService::FMWindow *WindowService::showWindow(const QUrl &url, bool isNewWindow, QString *errorString)
+WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNewWindow, QString *errorString)
 {
     QString error;
     dfmbase::FinallyUtil finally([&]() { if (errorString) *errorString = error; });
@@ -138,11 +140,11 @@ WindowService::FMWindow *WindowService::showWindow(const QUrl &url, bool isNewWi
     }
 
     QX11Info::setAppTime(QX11Info::appUserTime());
-    auto window = new FMWindow;
-    window->setRootUrl(url);
+    auto window = new FMWindow(url.isEmpty() ? Application::instance()->appUrlAttribute(Application::AA_UrlOfNewWindow) : url);
     // TODO(zhangs): loadWindowState
     // TODO(zhangs): aboutToClose
     // TODO(zhangs): requestToSelectUrls
+    qInfo() << "New window created: " << window->winId() << url;
     d->windows.insert(window->internalWinId(), window);
 
     if (d->windows.size() == 1)
@@ -151,10 +153,11 @@ WindowService::FMWindow *WindowService::showWindow(const QUrl &url, bool isNewWi
     finally.dismiss();
     window->show();
     qApp->setActiveWindow(window);
+    emit windowOpended(window->internalWinId());
     return window;
 }
 
-quint64 WindowService::getWindowId(const QWidget *window)
+quint64 WindowsService::findWindowId(const QWidget *window)
 {
     int count = d->windows.size();
     for (int i = 0; i != count; ++i) {
@@ -175,7 +178,7 @@ quint64 WindowService::getWindowId(const QWidget *window)
     return window->window()->internalWinId();
 }
 
-WindowService::FMWindow *WindowService::getWindowById(quint64 winId)
+WindowsService::FMWindow *WindowsService::findWindowById(quint64 winId)
 {
     if (winId <= 0)
         return nullptr;
@@ -186,10 +189,15 @@ WindowService::FMWindow *WindowService::getWindowById(quint64 winId)
     qWarning() << "The `d->windows` cannot find winId: " << winId;
     for (QWidget *top : qApp->topLevelWidgets()) {
         if (top->internalWinId() == winId)
-            return qobject_cast<WindowService::FMWindow *>(top);
+            return qobject_cast<WindowsService::FMWindow *>(top);
     }
 
     return nullptr;
+}
+
+QList<quint64> WindowsService::windowIdList()
+{
+    return d->windows.keys();
 }
 
 DSB_FM_END_NAMESPACE

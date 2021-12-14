@@ -22,7 +22,7 @@
 #include "core.h"
 #include "corelog.h"
 
-#include "services/filemanager/window/windowservice.h"
+#include "services/filemanager/windows/windowsservice.h"
 #include "services/common/menu/menuservice.h"
 
 #include "dfm-base/base/application/application.h"
@@ -32,7 +32,6 @@
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/file/local/localfilemenu.h"
-#include "dfm-base/widgets/dfmfileview/fileview.h"
 #include "dfm-base/widgets/filemanagerwindow/filemanagerwindow.h"
 
 #include <dfm-framework/framework.h>
@@ -41,21 +40,14 @@ DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
 
 namespace GlobalPrivate {
-const int kMinimumWindowWidth = 760;
-const int kMinimumWindowHeight = 420;
-const int kDefaultWindowWidth = 1100;
-const int kDefaultWindowHeight = 700;
 static Application *kDFMApp = nullptr;
 }   // namespace GlobalPrivate
 
 void Core::initialize()
 {
-    dpfDebug() << __PRETTY_FUNCTION__;
-    qInfo() << Q_FUNC_INFO;
-
     QString errStr;
     auto &ctx = dpfInstance.serviceContext();
-    if (!ctx.load(WindowService::name(), &errStr)) {
+    if (!ctx.load(WindowsService::name(), &errStr)) {
         qCritical() << errStr;
         abort();
     }
@@ -72,10 +64,10 @@ void Core::initialize()
 bool Core::start()
 {
     GlobalPrivate::kDFMApp = new Application;
-    dpfDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__;
     auto &ctx = dpfInstance.serviceContext();
     qInfo() << "import service list" << ctx.services();
-    WindowService *windowService = ctx.service<WindowService>(WindowService::name());
+    WindowsService *windowService = ctx.service<WindowsService>(WindowsService::name());
 
     if (!windowService) {
         qCCritical(CorePlugin) << "Failed, init window \"windowService\" is empty";
@@ -87,13 +79,8 @@ bool Core::start()
         QUrl defaultUrl = UrlRoute::pathToReal(QDir::home().path());
         QString error;
         FileManagerWindow *window = windowService->showWindow(defaultUrl, true, &error);
-        if (window) {
-            window->resize(GlobalPrivate::kDefaultWindowWidth, GlobalPrivate::kDefaultWindowHeight);
-            window->setMinimumSize(GlobalPrivate::kMinimumWindowWidth,
-                                   GlobalPrivate::kMinimumWindowHeight);
-        } else {
+        if (!window)
             qWarning() << "Cannot show window: " << error << " Url is:" << defaultUrl;
-        }
     }
 
     return true;

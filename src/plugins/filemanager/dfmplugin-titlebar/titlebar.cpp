@@ -20,39 +20,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef FILEMANAGERWINDOW_P_H
-#define FILEMANAGERWINDOW_P_H
+#include "titlebar.h"
+#include "titlebarwidget.h"
 
-#include "dfm-base/dfm_base_global.h"
+#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/filemanagerwindow/filemanagerwindow.h"
 
-#include <DTitlebar>
-#include <DButtonBox>
+#include <dfm-framework/framework.h>
 
-#include <QObject>
-#include <QUrl>
-#include <QHBoxLayout>
+DSB_FM_USE_NAMESPACE
 
-DWIDGET_USE_NAMESPACE
-DFMBASE_BEGIN_NAMESPACE
-
-class FileManagerWindow;
-class FileManagerWindowPrivate : public QObject
+void TitleBar::initialize()
 {
-    Q_OBJECT
-    friend class FileManagerWindow;
-    FileManagerWindow *const q;
+    QString errStr;
+    auto &ctx = dpfInstance.serviceContext();
 
-public:
-    explicit FileManagerWindowPrivate(const QUrl &url, FileManagerWindow *qq);
+    WindowsService *windowService = ctx.service<WindowsService>(WindowsService::name());
+    Q_ASSERT_X(!windowService->windowIdList().isEmpty(), "TitleBar", "Cannot acquire any window");
 
-private:
-    QUrl currentUrl;
-    static constexpr int kMinimumWindowWidth = 760;
-    static constexpr int kMinimumWindowHeight = 420;
-    static constexpr int kDefaultWindowWidth = 1100;
-    static constexpr int kDefaultWindowHeight = 700;
-};
+    // get first window
+    quint64 id = windowService->windowIdList().first();
+    auto window = windowService->findWindowById(id);
+    qDebug() << window->rootUrl();
+    Q_ASSERT_X(window, "TitleBar", "Cannot find window by id");
+    window->setTitleBar(new TitleBarWidget);
+}
 
-DFMBASE_END_NAMESPACE
+bool TitleBar::start()
+{
+    return true;
+}
 
-#endif   // FILEMANAGERWINDOW_P_H
+dpf::Plugin::ShutdownFlag TitleBar::stop()
+{
+    return kSync;
+}

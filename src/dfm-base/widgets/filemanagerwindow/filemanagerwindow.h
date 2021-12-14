@@ -38,16 +38,18 @@ class FileManagerWindow : public DMainWindow
     friend class FileManagerWindowPrivate;
 
 public:
-    explicit FileManagerWindow(QWidget *parent = nullptr);
+    explicit FileManagerWindow(const QUrl &url, QWidget *parent = nullptr);
     virtual ~FileManagerWindow();
 
     void setRootUrl(const QUrl &url);
     const QUrl rootUrl();
     void moveCenter(const QPoint &cp);
+    void setTitleBar(QWidget *w);
+    void setTitleMenu(QMenu *menu);
+    void setSideBar(QWidget *w);
 
-signals:
-
-public slots:
+private:
+    void initializeUi();
 
 private:
     QScopedPointer<FileManagerWindowPrivate> d;

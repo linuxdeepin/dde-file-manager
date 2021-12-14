@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMWINDOWMANAGERSERVICE_H
-#define DFMWINDOWMANAGERSERVICE_H
+#ifndef DFMWINDOWSERVICE_H
+#define DFMWINDOWSERVICE_H
 
 #include "dfm_filemanager_service_global.h"
 #include "dfm-base/widgets/filemanagerwindow/filemanagerwindow.h"
@@ -31,11 +31,11 @@ DWIDGET_USE_NAMESPACE
 
 DSB_FM_BEGIN_NAMESPACE
 
-class WindowServicePrivate;
-class WindowService final : public dpf::PluginService, dpf::AutoServiceRegister<WindowService>
+class WindowsServicePrivate;
+class WindowsService final : public dpf::PluginService, dpf::AutoServiceRegister<WindowsService>
 {
     Q_OBJECT
-    Q_DISABLE_COPY(WindowService)
+    Q_DISABLE_COPY(WindowsService)
     friend class dpf::QtClassFactory<dpf::PluginService>;
 
 public:
@@ -46,17 +46,22 @@ public:
         return "org.deepin.service.WindowService";
     }
 
-    explicit WindowService(QObject *parent = nullptr);
-    virtual ~WindowService() override;
+    explicit WindowsService(QObject *parent = nullptr);
+    virtual ~WindowsService() override;
 
     FMWindow *showWindow(const QUrl &url, bool isNewWindow = false, QString *errorString = nullptr);
-    quint64 getWindowId(const QWidget *window);
-    FMWindow *getWindowById(quint64 winId);
+    quint64 findWindowId(const QWidget *window);
+    FMWindow *findWindowById(quint64 winId);
+    QList<quint64> windowIdList();
+
+signals:
+    void windowOpended(quint64 windId);
+    // TODO(zhangs): window closed
 
 private:
-    QScopedPointer<WindowServicePrivate> d;
+    QScopedPointer<WindowsServicePrivate> d;
 };
 
 DSB_FM_END_NAMESPACE
 
-#endif   // DFMWINDOWMANAGERSERVICE_H
+#endif   // DFMWINDOWSERVICE_H

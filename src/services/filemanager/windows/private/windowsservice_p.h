@@ -20,39 +20,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef FILEMANAGERWINDOW_P_H
-#define FILEMANAGERWINDOW_P_H
+#ifndef WINDOWSERVICEPRIVATE_H
+#define WINDOWSERVICEPRIVATE_H
 
-#include "dfm-base/dfm_base_global.h"
+#include "dfm_filemanager_service_global.h"
 
-#include <DTitlebar>
-#include <DButtonBox>
+#include "dfm-base/widgets/filemanagerwindow/filemanagerwindow.h"
 
 #include <QObject>
-#include <QUrl>
-#include <QHBoxLayout>
+#include <QPointer>
 
-DWIDGET_USE_NAMESPACE
-DFMBASE_BEGIN_NAMESPACE
+DSB_FM_BEGIN_NAMESPACE
 
-class FileManagerWindow;
-class FileManagerWindowPrivate : public QObject
+class WindowsService;
+class WindowsServicePrivate : public QObject
 {
+    friend class WindowsService;
     Q_OBJECT
-    friend class FileManagerWindow;
-    FileManagerWindow *const q;
 
 public:
-    explicit FileManagerWindowPrivate(const QUrl &url, FileManagerWindow *qq);
+    explicit WindowsServicePrivate(WindowsService *serv);
+    dfmbase::FileManagerWindow *activeExistsWindowByUrl(const QUrl &url);
+    void moveWindowToScreenCenter(dfmbase::FileManagerWindow *window);
+
+private slots:
 
 private:
-    QUrl currentUrl;
-    static constexpr int kMinimumWindowWidth = 760;
-    static constexpr int kMinimumWindowHeight = 420;
-    static constexpr int kDefaultWindowWidth = 1100;
-    static constexpr int kDefaultWindowHeight = 700;
+    QPointer<WindowsService> service;
+    QHash<quint64, dfmbase::FileManagerWindow *> windows;
 };
 
-DFMBASE_END_NAMESPACE
+DSB_FM_END_NAMESPACE
 
-#endif   // FILEMANAGERWINDOW_P_H
+#endif   // WINDOWSERVICEPRIVATE_H

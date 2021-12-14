@@ -10,17 +10,17 @@ if (NOT PROJECT_VERSION_MAJOR)
     set(PROJECT_VERSION_MAJOR 0)
 endif()
 
-# window service sources
+# windows service sources
 FILE(GLOB GLOBAL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
 
-FILE(GLOB WINDOW_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/window/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/window/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/window/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/window/private/*.cpp"
+FILE(GLOB WINDOWS_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/windows/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/windows/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/windows/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/windows/private/*.cpp"
 )
 
 
@@ -38,13 +38,22 @@ FILE(GLOB SIDEBAR_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/sidebar/private/*.cpp"
     )
 
+FILE(GLOB TITLEBAR_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/titlebar/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/titlebar/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/titlebar/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/titlebar/private/*.cpp"
+    )
+
+
 add_library(
     ${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
-    ${WINDOW_FILES}
+    ${WINDOWS_FILES}
     ${VAULT_FILES}
     ${SIDEBAR_FILES}
+    ${TITLEBAR_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)
@@ -60,7 +69,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/window
+        ${CMAKE_CURRENT_SOURCE_DIR}/windows
 )
 
 target_link_libraries(${PROJECT_NAME}

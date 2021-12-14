@@ -20,39 +20,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef FILEMANAGERWINDOW_P_H
-#define FILEMANAGERWINDOW_P_H
+#ifndef SIDEBARSERVICE_H
+#define SIDEBARSERVICE_H
 
-#include "dfm-base/dfm_base_global.h"
+#include "dfm_filemanager_service_global.h"
 
-#include <DTitlebar>
-#include <DButtonBox>
+#include <dfm-framework/framework.h>
 
-#include <QObject>
-#include <QUrl>
-#include <QHBoxLayout>
+DSB_FM_BEGIN_NAMESPACE
 
-DWIDGET_USE_NAMESPACE
-DFMBASE_BEGIN_NAMESPACE
-
-class FileManagerWindow;
-class FileManagerWindowPrivate : public QObject
+class SideBarServicePrivate;
+class SideBarService final : public dpf::PluginService, dpf::AutoServiceRegister<SideBarService>
 {
     Q_OBJECT
-    friend class FileManagerWindow;
-    FileManagerWindow *const q;
+    Q_DISABLE_COPY(SideBarService)
+    friend class dpf::QtClassFactory<dpf::PluginService>;
 
 public:
-    explicit FileManagerWindowPrivate(const QUrl &url, FileManagerWindow *qq);
+    static QString name()
+    {
+        return "org.deepin.service.SideBarService";
+    }
+
+    explicit SideBarService(QObject *parent = nullptr);
+    virtual ~SideBarService() override;
 
 private:
-    QUrl currentUrl;
-    static constexpr int kMinimumWindowWidth = 760;
-    static constexpr int kMinimumWindowHeight = 420;
-    static constexpr int kDefaultWindowWidth = 1100;
-    static constexpr int kDefaultWindowHeight = 700;
+    QScopedPointer<SideBarServicePrivate> d;
 };
 
-DFMBASE_END_NAMESPACE
+DSB_FM_END_NAMESPACE
 
-#endif   // FILEMANAGERWINDOW_P_H
+#endif   // SIDEBARSERVICE_H

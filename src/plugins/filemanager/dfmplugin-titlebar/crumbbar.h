@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -19,34 +19,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "recent.h"
-#include "recentutil.h"
+#ifndef CrumbBar_H
+#define CrumbBar_H
 
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/common/menu/menuservice.h"
-
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfileinfo.h"
-#include "dfm-base/file/local/localdiriterator.h"
-#include "dfm-base/widgets/dfmfileview/fileview.h"
-#include "services/common/menu/menuservice.h"
 
-#include <dfm-framework/framework.h>
+#include <QFrame>
+#include <QUrl>
 
-void Recent::initialize()
+class CrumbBarPrivate;
+class CrumbBar : public QFrame
 {
-    QString recentScheme { "recent" };
-}
+    Q_OBJECT
+    QScopedPointer<CrumbBarPrivate> d;
 
-bool Recent::start()
-{
-    return true;
-}
+public:
+    explicit CrumbBar(QWidget *parent = nullptr);
+    virtual ~CrumbBar() override;
 
-dpf::Plugin::ShutdownFlag Recent::stop()
-{
-    return kSync;
-}
+    void setRootUrl(const QUrl &url);
+
+Q_SIGNALS:
+    void selectedUrl(const QUrl &url);
+
+public Q_SLOTS:
+    void onCustomContextMenu(const QPoint &point);
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
+    void showEvent(QShowEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
+};
+
+#endif   // CrumbBar_H

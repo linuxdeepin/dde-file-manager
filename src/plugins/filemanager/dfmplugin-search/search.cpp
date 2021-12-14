@@ -21,7 +21,7 @@
 #include "search.h"
 #include "searchlog.h"
 
-#include "windowservice.h"
+#include "windowsservice.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 #include "dfm-base/base/standardpaths.h"

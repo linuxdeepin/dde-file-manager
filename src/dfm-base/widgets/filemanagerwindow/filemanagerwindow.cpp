@@ -28,15 +28,28 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-FileManagerWindowPrivate::FileManagerWindowPrivate(FileManagerWindow *qq)
-    : QObject(nullptr), q(qq)
+/*!
+ * \class FileManagerWindowPrivate
+ * \brief
+ */
+
+FileManagerWindowPrivate::FileManagerWindowPrivate(const QUrl &url, FileManagerWindow *qq)
+    : QObject(nullptr),
+      q(qq),
+      currentUrl(url)
 {
 }
 
-FileManagerWindow::FileManagerWindow(QWidget *parent)
+/*!
+ * \class FileManagerWindow
+ * \brief
+ */
+
+FileManagerWindow::FileManagerWindow(const QUrl &url, QWidget *parent)
     : DMainWindow(parent),
-      d(new FileManagerWindowPrivate(this))
+      d(new FileManagerWindowPrivate(url, this))
 {
+    initializeUi();
 }
 
 FileManagerWindow::~FileManagerWindow()
@@ -58,6 +71,33 @@ void FileManagerWindow::moveCenter(const QPoint &cp)
 
     qr.moveCenter(cp);
     move(qr.topLeft());
+}
+
+void FileManagerWindow::setTitleBar(QWidget *w)
+{
+    Q_ASSERT_X(w, "FileManagerWindow", "Null TitleBar");
+    titlebar()->setContentsMargins(0, 0, 0, 0);
+    titlebar()->setCustomWidget(w);
+}
+
+void FileManagerWindow::setTitleMenu(QMenu *menu)
+{
+    Q_ASSERT_X(menu, "FileManagerWindow", "Null Title Menu");
+    titlebar()->setMenu(menu);
+}
+
+void FileManagerWindow::setSideBar(QWidget *w)
+{
+    Q_ASSERT_X(w, "FileManagerWindow", "Null setSideBar");
+}
+
+void FileManagerWindow::initializeUi()
+{
+    titlebar()->setIcon(QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager")));
+
+    // size
+    resize(d->kDefaultWindowWidth, d->kDefaultWindowHeight);
+    setMinimumSize(d->kMinimumWindowWidth, d->kMinimumWindowHeight);
 }
 
 DFMBASE_END_NAMESPACE
