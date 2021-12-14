@@ -44,11 +44,12 @@ INCLUDEPATH += $$PWD/../dde-file-manager-lib\
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/release -ldde-file-manager
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/debug -ldde-file-manager
-else:unix: LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager
+else:unix: LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager \
+                   -L$$OUT_PWD/../dde-file-manager-extension -ldfm-extension
 
 CONFIG(debug, debug|release) {
-    DEPENDPATH += $$PWD/../dde-file-manager-lib
-    unix:QMAKE_RPATHDIR += $$OUT_PWD/../dde-file-manager-lib
+    DEPENDPATH += $$PWD/../dde-file-manager-lib $$PWD/../dde-file-manager-extension
+    unix:QMAKE_RPATHDIR += $$OUT_PWD/../dde-file-manager-lib $$OUT_PWD/../dde-file-manager-extension
 }
 
 SOURCES += \

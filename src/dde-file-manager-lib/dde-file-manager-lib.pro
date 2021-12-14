@@ -20,7 +20,7 @@ QT += widgets-private
 TARGET = $$ProjectName
 
 TEMPLATE = lib
-CONFIG += create_pc create_prl no_install_prl
+CONFIG += create_pc create_prl no_install_prl link_prl
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
 
@@ -204,11 +204,15 @@ readmefile.files = plugins/.readme
 contextmenusfile.path = /usr/share/applications/context-menus
 contextmenusfile.files = plugins/.readme
 
+# readme file for create dfm-extension new plugin directory
+extensions.path = $${target.path}/dde-file-manager/plugins/extensions
+extensions.files = plugins/.readme
+
 appentry.path = $$APPSHAREDIR/extensions/appEntry
 appentry.files = plugins/.readme
 
 INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations appentry \
- icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile contextmenusfile policy
+ icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile contextmenusfile policy extensions
 
 DISTFILES += \
     mimetypeassociations/mimetypeassociations.json \
@@ -216,3 +220,4 @@ DISTFILES += \
     policy/com.deepin.pkexec.deepin-vault-authenticateProxy.policy
 
 include($$PWD/settings_dialog_json.pri)
+

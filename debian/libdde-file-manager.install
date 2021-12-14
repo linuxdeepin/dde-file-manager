@@ -14,3 +14,5 @@ usr/share/glib-2.0/schemas/*.filemanager.gschema.xml
 usr/share/deepin/dde-file-manager/oem-menuextensions/.readme
 
 usr/share/applications/context-menus/.readme
+
+usr/lib/*/dde-file-manager/plugins/extensions/.readme

@@ -38,6 +38,7 @@ deepin-anything-server-plugins.subdir = src/deepin-anything-server-plugins
 dde-select-dialog-x11.subdir = src/dde-select-dialog-x11
 dde-select-dialog-wayland.subdir = src/dde-select-dialog-wayland
 
+dde-file-manager-lib.depends = dde-file-manager-extension
 dde-file-manager.depends = dde-file-manager-lib
 dde-dock-plugins.depends = dde-file-manager-lib
 dde-desktop.depends = dde-file-manager-lib

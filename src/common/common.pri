@@ -98,4 +98,5 @@ INCLUDEPATH += $$top_srcdir \
                $$top_srcdir/utils \
                $$top_srcdir/dde-file-manager-lib/interfaces \
                $$top_srcdir/dde-file-manager-lib/interfaces/plugins \
-               $$top_srcdir/dde-file-manager-plugins/plugininterfaces
+               $$top_srcdir/dde-file-manager-plugins/plugininterfaces \
+               $$top_srcdir/dde-file-manager-extension

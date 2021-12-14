@@ -102,6 +102,19 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Vers
 Description: plugin of dde-dock
  Disk mount plugin of dde-dock which is created by libdde-file-manager
 
+Package: libdfm-extension
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: extension library of dde-file-manager
+ Extension library of dde-file-manager which is provided for third parties
+
+Package: libdfm-extension-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-extension
+Description: Development package for libdfm-extension
+ This package contains the header files and pkgconfig
+ of libdfm-extension
+
 Package: dde-select-dialog-wayland
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
@@ -129,7 +142,8 @@ Depends:
  libglib2.0-dev,
  libudisks2-qt5 (>=5.0.6),
  libdisomaster (>=5.0.7),
- libdocparser
+ libdocparser,
+ libdfm-extension
 Recommends:
  libudfburn
 Breaks: dde-file-manager(<=1.2.3-3)
