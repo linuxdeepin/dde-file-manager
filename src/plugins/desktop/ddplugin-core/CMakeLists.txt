@@ -62,6 +62,7 @@ set(core_cxx_cpp
     canvas/view/canvasmodel.cpp
     canvas/view/canvasitemdelegate.cpp
     canvas/view/gridcoordinate.cpp
+    canvas/view/operator/boxselecter.cpp
     canvas/canvasgridmanager.cpp
     canvas/grid/canvasgrid.cpp
     canvas/grid/gridcore.cpp
@@ -96,6 +97,7 @@ set(core_cxx_h
     canvas/view/canvasitemdelegate.h
     canvas/view/canvasitemdelegate_p.h
     canvas/view/gridcoordinate.h
+    canvas/view/operator/boxselecter.h
     canvas/canvasgridmanager.h
     canvas/grid/canvasgrid.h
     canvas/grid/canvasgrid_p.h

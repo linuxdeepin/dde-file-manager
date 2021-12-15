@@ -144,8 +144,8 @@ void CanvasManager::onCanvasBuild()
         //检查移除的屏幕
         for (const QString &sp : d->viewMap.keys()) {
             if (!d->screenScevice->screen(sp)) {
-                d->viewMap.remove(sp);
-                qDebug() << "mode " << displayMode << "remove " << sp;
+                auto view = d->viewMap.take(sp);
+                qDebug() << "mode " << displayMode << "remove " << view->screenNum();
             }
         }
     }

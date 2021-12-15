@@ -21,9 +21,11 @@
  */
 
 #include "view/canvasview_p.h"
+#include "operator/boxselecter.h"
 #include "canvasitemdelegate.h"
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
+
 
 #include "base/schemefactory.h"
 
@@ -173,6 +175,18 @@ QString CanvasView::fileDisplayNameRole(const QModelIndex &index)
     return QString();
 }
 
+void CanvasView::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() != Qt::LeftButton) {
+        QAbstractItemView::mousePressEvent(event);
+        return;
+    }
+
+    auto index = indexAt(event->pos());
+    if (!index.isValid())
+        BoxSelIns->beginSelect(event->globalPos(), true);
+}
+
 void CanvasView::initUI()
 {
     setAttribute(Qt::WA_TranslucentBackground);
@@ -190,6 +204,9 @@ void CanvasView::initUI()
     auto delegate = new CanvasItemDelegate(this);
     setItemDelegate(delegate);
     delegate->setIconLevel(DispalyIns->iconLevel());
+
+    // repaint when selecting with mouse move.
+    connect(BoxSelIns, &BoxSelecter::changed, this, static_cast<void (CanvasView::*)()>(&CanvasView::update));
 }
 
 /*!
@@ -379,7 +396,21 @@ void CanvasView::drawLocalFile(QPainter *painter, QStyleOptionViewItem &option,
 */
 void CanvasView::drawSelectRect(QPainter *painter)
 {
-    Q_UNUSED(painter)
+    // is selecting. isBeginFrom is to limit only select on single view.
+    if (!BoxSelIns->isAcvite() || !BoxSelIns->isBeginFrom(this))
+        return;
+
+    QRect selectRect = BoxSelIns->validRect(this);
+    if (selectRect.isValid()) {
+        QStyleOptionRubberBand opt;
+        opt.initFrom(this);
+        opt.shape = QRubberBand::Rectangle;
+        opt.opaque = false;
+        opt.rect = selectRect;
+        painter->save();
+        style()->drawControl(QStyle::CE_RubberBand, &opt, painter);
+        painter->restore();
+    }
 }
 
 /*!

@@ -50,8 +50,6 @@ public:
     virtual void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override;
     virtual QRegion visualRegionForSelection(const QItemSelection &selection) const override;
 
-    virtual void paintEvent(QPaintEvent *event) override;
-
 public:
     void setScreenNum(const int screenNum);
     int screenNum() const;
@@ -61,7 +59,9 @@ public:
     void updateGrid();
 
     QString fileDisplayNameRole(const QModelIndex &index);
-
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 private:
     //todo(lq) using class painthelper to do all painting mission.
     void fileterAndRepaintLocalFiles(QPainter *painter, QStyleOptionViewItem &option, QPaintEvent *event);
