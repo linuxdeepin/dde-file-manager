@@ -85,7 +85,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     // 密码编辑框
     m_passwordEdit = new DPasswordEdit(this);
     AC_SET_ACCESSIBLE_NAME(m_passwordEdit, AC_VAULT_PASSWORD_UNLOCK_EDIT);
-    m_passwordEdit->lineEdit()->setPlaceholderText(tr("Input your password please"));
+    m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
     m_passwordEdit->lineEdit()->installEventFilter(this);
     m_passwordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
