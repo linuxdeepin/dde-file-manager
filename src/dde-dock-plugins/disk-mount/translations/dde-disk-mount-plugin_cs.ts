@@ -108,7 +108,7 @@
     <message>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Stop</source>
