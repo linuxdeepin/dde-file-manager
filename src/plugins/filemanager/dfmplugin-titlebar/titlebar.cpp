@@ -24,7 +24,7 @@
 #include "titlebarwidget.h"
 
 #include "services/filemanager/windows/windowsservice.h"
-#include "dfm-base/widgets/filemanagerwindow/filemanagerwindow.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
 #include <dfm-framework/framework.h>
 
@@ -32,16 +32,13 @@ DSB_FM_USE_NAMESPACE
 
 void TitleBar::initialize()
 {
-    QString errStr;
     auto &ctx = dpfInstance.serviceContext();
-
     WindowsService *windowService = ctx.service<WindowsService>(WindowsService::name());
     Q_ASSERT_X(!windowService->windowIdList().isEmpty(), "TitleBar", "Cannot acquire any window");
 
     // get first window
     quint64 id = windowService->windowIdList().first();
     auto window = windowService->findWindowById(id);
-    qDebug() << window->rootUrl();
     Q_ASSERT_X(window, "TitleBar", "Cannot find window by id");
     window->setTitleBar(new TitleBarWidget);
 }

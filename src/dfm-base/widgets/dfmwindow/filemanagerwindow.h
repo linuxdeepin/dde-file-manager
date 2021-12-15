@@ -31,6 +31,7 @@ DWIDGET_USE_NAMESPACE
 
 DFMBASE_BEGIN_NAMESPACE
 
+class AbstractFrame;
 class FileManagerWindowPrivate;
 class FileManagerWindow : public DMainWindow
 {
@@ -42,11 +43,16 @@ public:
     virtual ~FileManagerWindow();
 
     void setRootUrl(const QUrl &url);
-    const QUrl rootUrl();
+    const QUrl rootUrl() const;
     void moveCenter(const QPoint &cp);
-    void setTitleBar(QWidget *w);
+    void setTitleBar(AbstractFrame *w);
     void setTitleMenu(QMenu *menu);
-    void setSideBar(QWidget *w);
+    void setSideBar(AbstractFrame *w);
+    void setWorkSpace(AbstractFrame *w);
+
+    AbstractFrame *titleBar() const;
+    AbstractFrame *sideBar() const;
+    AbstractFrame *workSpace() const;
 
 private:
     void initializeUi();

@@ -23,7 +23,7 @@
 #define DFMWINDOWSERVICE_H
 
 #include "dfm_filemanager_service_global.h"
-#include "dfm-base/widgets/filemanagerwindow/filemanagerwindow.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
 #include <dfm-framework/framework.h>
 

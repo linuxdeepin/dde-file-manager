@@ -20,46 +20,46 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TITLEBARWIDGET_H
-#define TITLEBARWIDGET_H
-
-#include "navwidget.h"
-#include "addressbar.h"
-#include "crumbbar.h"
-#include "optionbuttonbox.h"
+#ifndef SIDEBARWIDGET_H
+#define SIDEBARWIDGET_H
 
 #include "dfm-base/interfaces/abstractframe.h"
 
-#include <QHBoxLayout>
-#include <QToolButton>
+#include <QWidget>
 
-class TitleBarWidget : public dfmbase::AbstractFrame
+class QAbstractItemView;
+class SideBarView;
+class SideBarModel;
+class SideBarItem;
+class SideBarWidget : public dfmbase::AbstractFrame
 {
     Q_OBJECT
 public:
-    explicit TitleBarWidget(QFrame *parent = nullptr);
+    explicit SideBarWidget(QFrame *parent = nullptr);
     void setCurrentUrl(const QUrl &url) override;
+    void changeEvent(QEvent *event) override;
+
+    QAbstractItemView *view();
+    int addItem(SideBarItem *item);
+    bool insertItem(const int index, SideBarItem *item);
+    bool removeItem(SideBarItem *item);
+
+Q_SIGNALS:
+    void clickedItemUrl(const QUrl &url);
+    void clickedItemIndex(const QModelIndex &index);
+    void customContextMenu(const QUrl &url, const QPoint &pos);
+
+private Q_SLOTS:
+    void onItemClicked(const QModelIndex &index);
+    void customContextMenuCall(const QPoint &pos);
 
 private:
     void initializeUi();
     void initConnect();
-    void showAddrsssBar();   // switch addrasssBar and crumbBar show
-    void showCrumbBar();
-    void showSearchButton();
-    void showSearchFilterButton();
-    bool eventFilter(QObject *watched, QEvent *event) override;
-
-private slots:
-    void onSearchButtonClicked();
 
 private:
-    QHBoxLayout *titleBarLayout { nullptr };   // 标题栏布局
-    NavWidget *navWidget { nullptr };   // 导航小部件
-    AddressBar *addressBar { nullptr };   // 地址编辑栏
-    QToolButton *searchButton { nullptr };   // 搜索栏按钮
-    QToolButton *searchFilterButton { nullptr };   // 搜索过滤按钮
-    OptionButtonBox *optionButtonBox { nullptr };   // 功能按鈕栏
-    CrumbBar *crumbBar { nullptr };   // 面包屑
+    SideBarView *sidebarView { nullptr };
+    SideBarModel *sidebarModel { nullptr };
 };
 
-#endif   // TITLEBARWIDGET_H
+#endif   // SIDEBARWIDGET_H

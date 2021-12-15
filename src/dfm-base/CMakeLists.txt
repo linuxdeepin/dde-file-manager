@@ -57,10 +57,10 @@ FILE (GLOB WIDGETS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmkeyvaluelabel/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmsplitter/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmsplitter/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/filemanagerwindow/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/filemanagerwindow/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/filemanagerwindow/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/filemanagerwindow/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmwindow/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmwindow/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmwindow/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmwindow/private/*.cpp"
 )
 
 FILE (GLOB DBUSSERVER_FILES

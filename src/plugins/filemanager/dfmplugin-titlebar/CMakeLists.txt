@@ -4,6 +4,7 @@ project(dfmplugin-titlebar)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# TODO(zhangs): remove private
 FILE(GLOB TITLEBAR_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"

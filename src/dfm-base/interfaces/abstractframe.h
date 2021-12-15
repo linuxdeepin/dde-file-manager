@@ -20,36 +20,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef WINDOWSERVICEPRIVATE_H
-#define WINDOWSERVICEPRIVATE_H
+#ifndef ABSTRACTFRAME_H
+#define ABSTRACTFRAME_H
 
-#include "dfm_filemanager_service_global.h"
+#include "dfm-base/dfm_base_global.h"
 
-#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+#include <QFrame>
+#include <QUrl>
 
-#include <QObject>
-#include <QPointer>
+DFMBASE_BEGIN_NAMESPACE
 
-DSB_FM_BEGIN_NAMESPACE
-
-class WindowsService;
-class WindowsServicePrivate : public QObject
+class AbstractFrame : public QFrame
 {
-    friend class WindowsService;
     Q_OBJECT
-
 public:
-    explicit WindowsServicePrivate(WindowsService *serv);
-    dfmbase::FileManagerWindow *activeExistsWindowByUrl(const QUrl &url);
-    void moveWindowToScreenCenter(dfmbase::FileManagerWindow *window);
+    explicit AbstractFrame(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    virtual ~AbstractFrame();
 
-private slots:
-
-private:
-    QPointer<WindowsService> service;
-    QHash<quint64, dfmbase::FileManagerWindow *> windows;
+    virtual void setCurrentUrl(const QUrl &url) = 0;
 };
 
-DSB_FM_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
-#endif   // WINDOWSERVICEPRIVATE_H
+#endif   // ABSTRACTFRAME_H

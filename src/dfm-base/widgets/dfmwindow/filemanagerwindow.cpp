@@ -58,11 +58,17 @@ FileManagerWindow::~FileManagerWindow()
 
 void FileManagerWindow::setRootUrl(const QUrl &url)
 {
+    if (d->titleBar)
+        d->titleBar->setCurrentUrl(url);
+    if (d->sideBar)
+        d->sideBar->setCurrentUrl(url);
+    if (d->workspace)
+        d->workspace->setCurrentUrl(url);
 }
 
-const QUrl FileManagerWindow::rootUrl()
+const QUrl FileManagerWindow::rootUrl() const
 {
-    return QUrl();
+    return d->currentUrl;
 }
 
 void FileManagerWindow::moveCenter(const QPoint &cp)
@@ -73,10 +79,11 @@ void FileManagerWindow::moveCenter(const QPoint &cp)
     move(qr.topLeft());
 }
 
-void FileManagerWindow::setTitleBar(QWidget *w)
+void FileManagerWindow::setTitleBar(AbstractFrame *w)
 {
     Q_ASSERT_X(w, "FileManagerWindow", "Null TitleBar");
-    titlebar()->setContentsMargins(0, 0, 0, 0);
+    d->titleBar = w;
+    w->setCurrentUrl(d->currentUrl);
     titlebar()->setCustomWidget(w);
 }
 
@@ -86,9 +93,42 @@ void FileManagerWindow::setTitleMenu(QMenu *menu)
     titlebar()->setMenu(menu);
 }
 
-void FileManagerWindow::setSideBar(QWidget *w)
+void FileManagerWindow::setSideBar(AbstractFrame *w)
 {
     Q_ASSERT_X(w, "FileManagerWindow", "Null setSideBar");
+    d->sideBar = w;
+    w->setCurrentUrl(d->currentUrl);
+    d->splitter->replaceWidget(0, w);
+
+    w->setMaximumWidth(d->kMaximumLeftWidth);
+    w->setMinimumWidth(d->kMinimumLeftWidth);
+}
+
+void FileManagerWindow::setWorkSpace(AbstractFrame *w)
+{
+    Q_ASSERT_X(w, "FileManagerWindow", "Null Workspace");
+    d->workspace = w;
+    w->setCurrentUrl(d->currentUrl);
+    d->splitter->replaceWidget(1, w);
+
+    QSizePolicy sp = w->sizePolicy();
+    sp.setHorizontalStretch(1);
+    w->setSizePolicy(sp);
+}
+
+AbstractFrame *FileManagerWindow::titleBar() const
+{
+    return d->titleBar;
+}
+
+AbstractFrame *FileManagerWindow::sideBar() const
+{
+    return d->sideBar;
+}
+
+AbstractFrame *FileManagerWindow::workSpace() const
+{
+    return d->workspace;
 }
 
 void FileManagerWindow::initializeUi()
@@ -98,6 +138,23 @@ void FileManagerWindow::initializeUi()
     // size
     resize(d->kDefaultWindowWidth, d->kDefaultWindowHeight);
     setMinimumSize(d->kMinimumWindowWidth, d->kMinimumWindowHeight);
+
+    // title bar
+    titlebar()->setContentsMargins(0, 0, 0, 0);
+
+    // left view
+    d->leftView = new QFrame(this);
+
+    // right view
+    d->rightView = new QFrame(this);
+
+    // splitter
+    d->splitter = new Splitter(Qt::Orientation::Horizontal, this);
+    d->splitter->setChildrenCollapsible(false);
+    d->splitter->setHandleWidth(0);
+    d->splitter->addWidget(d->leftView);
+    d->splitter->addWidget(d->rightView);
+    setCentralWidget(d->splitter);
 }
 
 DFMBASE_END_NAMESPACE

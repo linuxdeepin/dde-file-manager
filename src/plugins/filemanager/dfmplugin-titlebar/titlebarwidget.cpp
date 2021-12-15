@@ -24,11 +24,17 @@
 
 #include <QHBoxLayout>
 
+DFMBASE_USE_NAMESPACE
+
 TitleBarWidget::TitleBarWidget(QFrame *parent)
-    : QFrame(parent)
+    : AbstractFrame(parent)
 {
     initializeUi();
     initConnect();
+}
+
+void TitleBarWidget::setCurrentUrl(const QUrl &url)
+{
 }
 
 void TitleBarWidget::initializeUi()
