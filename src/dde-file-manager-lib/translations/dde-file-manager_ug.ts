@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="ug" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ug">
 <context>
     <name>AppController</name>
     <message>
@@ -231,22 +231,22 @@
         <translation>قوش چېكىپ ئەپنى ئېچىڭ</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="826"/>
+        <location filename="../models/computermodel.cpp" line="839"/>
         <source>My Directories</source>
         <translation>مۇندەرىجەم</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="829"/>
+        <location filename="../models/computermodel.cpp" line="842"/>
         <source>Disks</source>
         <translation>دىسكا</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="832"/>
+        <location filename="../models/computermodel.cpp" line="845"/>
         <source>File Vault</source>
         <translation>بىخەتەرلىك ساندۇقى</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="835"/>
+        <location filename="../models/computermodel.cpp" line="848"/>
         <source>Quick Access</source>
         <translation>تېز زىيارەت قىلىش</translation>
     </message>
@@ -254,70 +254,70 @@
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="280"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="285"/>
         <source>Computer</source>
         <translation>كومپيوتېر</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="289"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="294"/>
         <source>Basic Info</source>
         <translation>ئاساسىي ئۇچۇر</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="107"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="300"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="305"/>
         <source>Computer Name</source>
         <translation>كومپيوتېر نامى</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="109"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="301"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="306"/>
         <source>Edition</source>
         <translation>نەشىرى</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="111"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="302"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="312"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="307"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="317"/>
         <source>Version</source>
         <translation>نەشىر</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="113"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="303"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="308"/>
         <source>Type</source>
         <translation>تىپى</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="115"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="304"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="347"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="309"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="352"/>
         <source>Processor</source>
         <translation>بىر تەرەپ قىلغۇچ</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="118"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="305"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="344"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="310"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="349"/>
         <source>Memory</source>
         <translation>ئىچكى سىغىمى</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="143"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="198"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="444"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="481"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="203"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="449"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="490"/>
         <source>Bit</source>
         <translation>بىت</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="220"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="491"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="225"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="500"/>
         <source>Available</source>
         <translation>ئىشلەتكىلى بولىدۇ</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="366"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="371"/>
         <source>Obtaining...</source>
         <translation>ئېرىشىۋاتىدۇ...</translation>
     </message>
@@ -645,42 +645,42 @@
 <context>
     <name>DFMVaultActiveSaveKeyFileView</name>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="48"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="53"/>
         <source>Save Recovery Key</source>
         <translation>ئاچقۇچلۇق ھۆججەتنى ساقلاش</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="53"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="60"/>
         <source>Keep the key safe to retrieve the vault password later</source>
         <translation>ئاچقۇچ ھۆججىتى بىخەتەرلىك  ساندۇقىنىڭ پارولىنى قايتۇرۇشقا  ئىشلىتىلىدۇ،ياخشى ساقلاڭ</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="58"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="67"/>
         <source>Save to default path</source>
         <translation>كۆڭۈلدىكى يولغا ساقلاش</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="62"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="73"/>
         <source>Save to other locations</source>
         <translation>باشقا يولغا ساقلاش</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="63"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="75"/>
         <source>No permission, please reselect</source>
         <translation>ھوقۇقى يەتمىدى،قايتا تاللاڭ</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="75"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="83"/>
         <source>Select a path</source>
         <translation>ئاچقۇچلۇق ھۆججەتنى ساقلاش يولىنى تاللاڭ</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="93"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="102"/>
         <source>Next</source>
         <translation>كىيىنكىسى</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="106"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="114"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
         <translation>كۆڭۈلدىكى يول باشقا ئابونتلارنىڭ ئالاھىدە يولىنى ئاشكارىلىمايدۇ، ھەمدە يول ئۇچۇرىنى ئېنىق كۆرسەتمەيدۇ.</translation>
     </message>
@@ -971,77 +971,78 @@
 <context>
     <name>DFMVaultRetrievePassword</name>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="67"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="76"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="132"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="144"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="69"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="78"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="134"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="145"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="336"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="146"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="303"/>
         <source>Unable to get the key file</source>
         <translation>ئاچقۇچلۇق ھۆججەتكە ئېرىشەلمىدى </translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="88"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="90"/>
         <source>Verification failed</source>
         <translation>ئاچقۇچ دەلىللەش مەغلۇب بولدى</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="149"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="202"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="195"/>
         <source>Select a path</source>
         <translation>ئاچقۇچلۇق ھۆججەتنى ساقلاش يولىنى تاللاڭ</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="181"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="183"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="271"/>
         <source>Retrieve Password</source>
         <translation>پارول قايتۇرۇش</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="197"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="190"/>
         <source>By key in the default path</source>
         <translation>كۆڭۈلدىكى  يولدىكى ئاچقۇچلۇق  ھۆججەت ئارقىلىق پارول قايتۇرۇش</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="198"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="191"/>
         <source>By key in the specified path</source>
         <translation>ئاچقۇچ  ھۆججەت ئورنىنى كۆرسىتىش ئارقىلىق پارولنى قايتۇرۇش</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="221"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="287"/>
         <source>Verification Successful</source>
         <translation>ئاچقۇچ دەلىللەندى</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="224"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="218"/>
         <source>Keep it safe</source>
         <translation>ياخشى ساقلاڭ</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="285"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>قايتىش</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="285"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
         <source>Verify Key</source>
         <comment>button</comment>
         <translation>ئاچقۇچ دەلىللەش</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="285"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
         <translation>قۇلۇپ يىشىشكە قايتىش</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="285"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>تاقاش</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="318"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="284"/>
         <source>Vault password: %1</source>
         <translation>بىخەتەرلىك ساندۇقى پارولى: %1</translation>
     </message>
@@ -1049,69 +1050,69 @@
 <context>
     <name>DFMVaultUnlockPages</name>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="60"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="63"/>
         <source>Unlock File Vault</source>
         <translation>بىخەتەرلىك ساندۇقىنى ئېچىش</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="75"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="72"/>
         <source>Forgot password?</source>
         <translation>پارول قايتۇرىمەن</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="91"/>
-        <source>Input your password please</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="144"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="143"/>
         <source>Password hint: %1</source>
         <translation>پارول ئەسكەرتىشى: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="335"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="351"/>
         <source>Failed to unlock file vault</source>
         <translation>بىخەتەرلىك ساندۇقى ئېچىلمىدى</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="129"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>بىكار قىلىش</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="129"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="88"/>
+        <source>Password</source>
+        <translation>پارول</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>قۇلۇپ ئېچىش</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="253"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="269"/>
         <source>Please try again %1 minutes later</source>
         <translation>%1 مىنۇتتىن كېيىن سىناڭ</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="280"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="296"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>پارول خاتا، %1 مىنۇتتىن كېيىن سىناڭ</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="283"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="299"/>
         <source>Wrong password, one chance left</source>
         <translation>پارول خاتا، يەنە 1 قېتىم سىنىيالايسىز</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="285"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="301"/>
         <source>Wrong password, %1 chances left</source>
         <translation>پارول خاتا، يەنە %1 قېتىم سىنىيالايسىز</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="330"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="346"/>
         <source>Wrong password</source>
         <translation>پارول خاتا</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="339"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="355"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>ماقۇل</translation>
@@ -1353,12 +1354,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1304"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1302"/>
         <source>Trash</source>
         <translation>يىغىۋېلىش پونكىتى</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1313"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1311"/>
         <source>Empty</source>
         <translation>قۇرۇقداش</translation>
     </message>
@@ -1366,41 +1367,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1443"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
         <location filename="../models/trashfileinfo.cpp" line="321"/>
         <source>Name</source>
         <translation>نامى</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1122"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1445"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
         <location filename="../models/searchfileinfo.cpp" line="130"/>
         <source>Time modified</source>
         <translation>ئۆزگەرتىلگەن ۋاقىت</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1447"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
         <source>Size</source>
         <translation>چوڭلۇقى</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1449"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1455"/>
         <source>Type</source>
         <translation>تىپى</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1451"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1457"/>
         <source>Time created</source>
         <translation>قۇرۇلغان ۋاقتى</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1453"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1459"/>
         <source>Last access</source>
         <translation>ئاخىرقى زىيارەت ۋاقتى</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1455"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1461"/>
         <location filename="../models/recentfileinfo.cpp" line="211"/>
         <location filename="../models/searchfileinfo.cpp" line="128"/>
         <location filename="../models/searchfileinfo.cpp" line="133"/>
@@ -1411,22 +1412,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2806"/>
+        <location filename="../views/dfileview.cpp" line="2787"/>
         <source>Disc mount error</source>
         <translation>دىسكىغا ئورنىتىشتا خاتالىق كۆرۈلدى</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2806"/>
+        <location filename="../views/dfileview.cpp" line="2787"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>نۆۋەتتىكى قوزغاتقۇچ ئۈسكۈنىسى ئىشلىتىلىۋاتىدۇ، ئىگىلىۋالغان پىروگراممىلارنى تاقاپ قايتا ئورنىتىڭ</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2820"/>
+        <location filename="../views/dfileview.cpp" line="2800"/>
         <source>Mounting failed</source>
         <translation>مەشغۇلات مەغلۇب بولدى</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3537"/>
+        <location filename="../views/dfileview.cpp" line="3523"/>
         <source>(Reverse)</source>
         <translation>(تەتۈر تىزىش)</translation>
     </message>
@@ -1434,7 +1435,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="669"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="668"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>خەتكۈچ قوشۇش &quot;% 1&quot;</translation>
     </message>
@@ -2027,35 +2028,35 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="629"/>
-        <location filename="../controllers/filecontroller.cpp" line="685"/>
-        <location filename="../controllers/filecontroller.cpp" line="748"/>
-        <location filename="../controllers/filecontroller.cpp" line="774"/>
+        <location filename="../controllers/filecontroller.cpp" line="630"/>
+        <location filename="../controllers/filecontroller.cpp" line="686"/>
+        <location filename="../controllers/filecontroller.cpp" line="749"/>
+        <location filename="../controllers/filecontroller.cpp" line="775"/>
         <source>Unable to find the original file</source>
         <translation>ئۇلىنىش نىشان ھۆججىتىنى تاپالمىدى</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="806"/>
-        <location filename="../controllers/filecontroller.cpp" line="825"/>
-        <location filename="../controllers/filecontroller.cpp" line="844"/>
+        <location filename="../controllers/filecontroller.cpp" line="807"/>
+        <location filename="../controllers/filecontroller.cpp" line="826"/>
+        <location filename="../controllers/filecontroller.cpp" line="845"/>
         <source>Kindly Reminder</source>
         <translation>سەمىمىي ئەسكەرتىش</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="806"/>
-        <location filename="../controllers/filecontroller.cpp" line="825"/>
-        <location filename="../controllers/filecontroller.cpp" line="844"/>
+        <location filename="../controllers/filecontroller.cpp" line="807"/>
+        <location filename="../controllers/filecontroller.cpp" line="826"/>
+        <location filename="../controllers/filecontroller.cpp" line="845"/>
         <source>Please install File Roller first and then continue</source>
         <translation>داۋاملاشتۇرۇشتىن بۇرۇن ئارخىپ باشقۇرغۇچىنى قاچىلاڭ</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1519"/>
-        <location filename="../controllers/filecontroller.cpp" line="1539"/>
+        <location filename="../controllers/filecontroller.cpp" line="1520"/>
+        <location filename="../controllers/filecontroller.cpp" line="1540"/>
         <source>Unable to create files here: %1</source>
         <translation>بۇ يەردە ھۆججەت قۇرغىلى بولمايدۇ: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1521"/>
+        <location filename="../controllers/filecontroller.cpp" line="1522"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>جەزملەشتۈرۈش</translation>
@@ -2104,14 +2105,6 @@
         <source>Cancel</source>
         <comment>button</comment>
         <translation>بىكار قىلىش</translation>
-    </message>
-</context>
-<context>
-    <name>FileIconItem</name>
-    <message>
-        <location filename="../views/fileitem.cpp" line="203"/>
-        <source>%1 are not allowed</source>
-        <translation>%1 لار بولسا بولمايدۇ</translation>
     </message>
 </context>
 <context>
@@ -2633,51 +2626,51 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="876"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1551"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1557"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1560"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1552"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1558"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1561"/>
         <source>Mounting device error</source>
         <translation>قاچىلاش ئۈسكۈنىسىدە خاتالىق كۆرۈلدى</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1557"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1558"/>
         <source>Wrong username or password</source>
         <translation>ئىشلەتكۈچى نامى ياكى پارول خاتا</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1785"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1796"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1823"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1942"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1966"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1786"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1797"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1824"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1943"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1967"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>جەزملەشتۈرۈش</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1791"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1963"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1792"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1964"/>
         <source>Cannot find the mounted device</source>
         <translation>ماس ئاغدۇرۇش ئۈسكۈنىسى تېپىلمىدى</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1705"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1706"/>
         <source>No key available to unlock device</source>
         <translation>ئۈسكۈنىنى ئاچىدىغان ئاچقۇچ يوق</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1782"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1783"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>دىسكىغا “%1” ئىشلەتكۈچى ئاغدۇرۇلغان، ئۆچۈرۈش ھوقۇقىڭىز يوق.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1820"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1821"/>
         <source>Cannot unmount the device</source>
         <translation>ئۈسكۈنىنى چىقىرالمىدى</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1938"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1939"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>ئۈسكۈنە  &quot;%1&quot; نى چىقارغىلى بولمىدى</translation>
     </message>
@@ -3232,29 +3225,29 @@
         <translation>شىفىرلىق ئاچقۇچتا ئېچىش</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="97"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="95"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>ئېچىش</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="213"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="233"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="211"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="231"/>
         <source>Size: %1</source>
         <translation>چوڭلۇقى: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="214"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
         <source>Type: %1</source>
         <translation>تىپى: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="226"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="224"/>
         <source>Size: 0</source>
         <translation>سىغىمى: 0</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="232"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="230"/>
         <source>Items: %1</source>
         <translation>ھۆججەت سانى: %1</translation>
     </message>
@@ -3390,7 +3383,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1314"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1312"/>
         <source>Empty Trash</source>
         <translation>سىۋەتنى قۇرۇقداش</translation>
     </message>
@@ -3527,7 +3520,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="912"/>
         <source>Refresh</source>
-        <translation type="unfinished"/>
+        <translation>يېڭىلاش</translation>
     </message>
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="348"/>
@@ -4111,11 +4104,12 @@
         <location filename="../interfaces/diconitemdelegate.cpp" line="1080"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="479"/>
         <location filename="../interfaces/dlistitemdelegate.cpp" line="688"/>
+        <location filename="../views/fileitem.cpp" line="203"/>
         <source>%1 are not allowed</source>
         <translation>%1 لار بولسا بولمايدۇ</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1560"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1563"/>
         <location filename="../../usershare/usersharemanager.cpp" line="549"/>
         <source>Failed to start Samba services</source>
         <translation>Sambaمۇلازىمىتىنى قوزغىتالمىدى</translation>
@@ -4649,14 +4643,14 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1638"/>
+        <location filename="../controllers/appcontroller.cpp" line="1614"/>
         <location filename="../../fileoperations/filejob.cpp" line="789"/>
         <location filename="../../fileoperations/filejob.cpp" line="1052"/>
         <source>The device was not safely unmounted</source>
         <translation>ئۈسكۈنە نورمال چىقىرىلمىدى</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1645"/>
+        <location filename="../controllers/appcontroller.cpp" line="1621"/>
         <source>The device was not safely removed</source>
         <translation>ئۈسكۈنە نورمال ئۆچۈرۈلمىدى</translation>
     </message>

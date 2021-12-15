@@ -124,12 +124,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="969"/>
         <source>Loading wallpapers...</source>
-        <translation>Načítání pozadí…</translation>
+        <translation>Nahrávají se pozadí…</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="971"/>
         <source>Loading screensavers...</source>
-        <translation>Načítání šetřičů obrazovky…</translation>
+        <translation>Nahrávají se šetřiče obrazovky…</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1028"/>
