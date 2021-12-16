@@ -394,8 +394,8 @@ void BackgroundManager::onBackgroundBuild()
         auto screes = ScreenMrg->logicScreens();
         for (auto sp : m_backgroundMap.keys()) {
             if (!screes.contains(sp)) {
-                qInfo() << "screen:" << sp->name() << "  invalid, delete it.";
-                m_backgroundMap.remove(sp);
+                auto rmd = m_backgroundMap.take(sp);
+                qInfo() << "screen:" << rmd->property("myScreen") << "is invalid, delete it.";
             }
         }
         for (ScreenPointer sc : screes) {
