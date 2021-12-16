@@ -53,7 +53,7 @@ FileManagerWindow *WindowsServicePrivate::activeExistsWindowByUrl(const QUrl &ur
     for (int i = 0; i != count; ++i) {
         quint64 key = windows.keys().at(i);
         auto window = windows.value(key);
-        if (window && window->rootUrl() == url) {
+        if (window && window->currentUrl() == url) {
             qInfo() << "Find url: " << url << " window: " << window;
             if (window->isMinimized())
                 window->setWindowState(window->windowState() & ~Qt::WindowMinimized);

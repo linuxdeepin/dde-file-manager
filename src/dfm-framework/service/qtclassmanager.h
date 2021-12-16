@@ -24,24 +24,26 @@
 
 #include "dfm-framework/dfm_framework_global.h"
 
+#include <QDebug>
 #include <QObject>
 #include <QMutex>
 
 DPF_BEGIN_NAMESPACE
 
 template<class CT>
-        class GC
+class GC
 {
-    CT * ins = nullptr;
+    CT *ins = nullptr;
+
 public:
     explicit GC() = delete;
-    explicit GC(CT* instance)
+    explicit GC(CT *instance)
     {
         ins = instance;
     }
     virtual ~GC()
     {
-        if(ins) {
+        if (ins) {
             delete ins;
             ins = nullptr;
         }
@@ -52,7 +54,6 @@ template<class CT = QObject>
 class QtClassManager
 {
 public:
-
     virtual ~QtClassManager()
     {
         for (auto val : classList.keys()) {
@@ -62,9 +63,9 @@ public:
 
     virtual bool append(const QString &name, CT *obj, QString *errorString = nullptr)
     {
-        if(name.isEmpty()) {
+        if (name.isEmpty()) {
             delete obj;
-            if(errorString)
+            if (errorString)
                 *errorString = QObject::tr("Failed, Can't append the empty class name");
             return false;
         }
@@ -75,7 +76,7 @@ public:
             return false;
         }
 
-        auto castPointer = qobject_cast<QObject*>(obj);
+        auto castPointer = qobject_cast<QObject *>(obj);
         if (!castPointer) {
             if (errorString)
                 *errorString = QObject::tr("Failed, Can't append the class pointer not's qobject");
@@ -84,12 +85,12 @@ public:
 
         castPointer->setParent(nullptr);
 
-        if (classList[name]) {
-            if (errorString)
-                *errorString = QObject::tr("Failed, Objects cannot be added repeatedly");
-            return false;
+        if (classList.contains(name)) {
+            qWarning() << "Service " << name << "has been loaded";
+            return true;
+        } else {
+            classList.insert(name, obj);
         }
-        classList.insert(name, obj);
         return true;
     }
 
@@ -99,7 +100,7 @@ public:
         return res;
     }
 
-    virtual QList<CT*> values() const
+    virtual QList<CT *> values() const
     {
         return classList.values();
     }
@@ -118,15 +119,15 @@ public:
                 itera = classList.erase(itera);
                 return true;
             }
-            itera ++;
+            itera++;
         }
         return false;
     }
 
 protected:
-    QHash<QString, CT*> classList;
+    QHash<QString, CT *> classList;
 };
 
 DPF_END_NAMESPACE
 
-#endif // QTCLASSMANAGER_H
+#endif   // QTCLASSMANAGER_H

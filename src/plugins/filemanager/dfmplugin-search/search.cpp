@@ -29,7 +29,6 @@
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/file/local/localdiriterator.h"
-#include "dfm-base/widgets/dfmfileview/fileview.h"
 #include "services/common/menu/menuservice.h"
 
 void Search::initialize()

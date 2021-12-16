@@ -38,7 +38,6 @@
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/file/local/localfilemenu.h"
-#include "dfm-base/widgets/dfmfileview/fileview.h"
 
 #include <dfm-framework/framework.h>
 

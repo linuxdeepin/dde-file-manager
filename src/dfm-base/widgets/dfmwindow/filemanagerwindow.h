@@ -42,17 +42,24 @@ public:
     explicit FileManagerWindow(const QUrl &url, QWidget *parent = nullptr);
     virtual ~FileManagerWindow();
 
-    void setRootUrl(const QUrl &url);
-    const QUrl rootUrl() const;
+    void cd(const QUrl &url);
+    QUrl currentUrl() const;
     void moveCenter(const QPoint &cp);
-    void setTitleBar(AbstractFrame *w);
-    void setTitleMenu(QMenu *menu);
-    void setSideBar(AbstractFrame *w);
-    void setWorkSpace(AbstractFrame *w);
+    void installTitleBar(AbstractFrame *w);
+    void installTitleMenu(QMenu *menu);
+    void installSideBar(AbstractFrame *w);
+    void installWorkSpace(AbstractFrame *w);
 
     AbstractFrame *titleBar() const;
     AbstractFrame *sideBar() const;
     AbstractFrame *workSpace() const;
+
+signals:
+    void aboutToClose();
+    void positionChanged(const QPoint &pos);
+    void currentUrlChanged();
+    void currentViewStateChanged();
+    void selectUrlChanged(const QList<QUrl> &urlList);
 
 private:
     void initializeUi();

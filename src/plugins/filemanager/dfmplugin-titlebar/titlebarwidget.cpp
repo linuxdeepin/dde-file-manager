@@ -35,6 +35,12 @@ TitleBarWidget::TitleBarWidget(QFrame *parent)
 
 void TitleBarWidget::setCurrentUrl(const QUrl &url)
 {
+    titlebarUrl = url;
+}
+
+QUrl TitleBarWidget::currentUrl() const
+{
+    return titlebarUrl;
 }
 
 void TitleBarWidget::initializeUi()

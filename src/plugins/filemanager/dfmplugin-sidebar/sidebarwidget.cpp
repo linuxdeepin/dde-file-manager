@@ -43,19 +43,25 @@ SideBarWidget::SideBarWidget(QFrame *parent)
 
 void SideBarWidget::setCurrentUrl(const QUrl &url)
 {
+    sidebarUrl = url;
     auto model = sidebarView->model();
     sidebarView->selectionModel()->clearSelection();
     for (int i = 0; i < model->rowCount(); i++) {
         auto item = sidebarView->model()->itemFromIndex(i);
-        if (item->url() == url) {
+        if (item->url() == sidebarUrl) {
             sidebarView->selectionModel()->select(model->index(i, 0), QItemSelectionModel::SelectCurrent);
             return;
         }
-        if (item->url().scheme() == url.scheme()) {
+        if (item->url().scheme() == sidebarUrl.scheme()) {
             sidebarView->selectionModel()->select(model->index(i, 0), QItemSelectionModel::SelectCurrent);
             return;
         }
     }
+}
+
+QUrl SideBarWidget::currentUrl() const
+{
+    return sidebarUrl;
 }
 
 void SideBarWidget::changeEvent(QEvent *event)

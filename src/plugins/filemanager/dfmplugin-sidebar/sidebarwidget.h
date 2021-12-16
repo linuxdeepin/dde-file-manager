@@ -25,7 +25,7 @@
 
 #include "dfm-base/interfaces/abstractframe.h"
 
-#include <QWidget>
+#include <QUrl>
 
 class QAbstractItemView;
 class SideBarView;
@@ -36,7 +36,8 @@ class SideBarWidget : public dfmbase::AbstractFrame
     Q_OBJECT
 public:
     explicit SideBarWidget(QFrame *parent = nullptr);
-    void setCurrentUrl(const QUrl &url) override;
+    void setCurrentUrl(const QUrl &sidebarUrl) override;
+    QUrl currentUrl() const override;
     void changeEvent(QEvent *event) override;
 
     QAbstractItemView *view();
@@ -45,9 +46,9 @@ public:
     bool removeItem(SideBarItem *item);
 
 Q_SIGNALS:
-    void clickedItemUrl(const QUrl &url);
+    void clickedItemUrl(const QUrl &sidebarUrl);
     void clickedItemIndex(const QModelIndex &index);
-    void customContextMenu(const QUrl &url, const QPoint &pos);
+    void customContextMenu(const QUrl &sidebarUrl, const QPoint &pos);
 
 private Q_SLOTS:
     void onItemClicked(const QModelIndex &index);
@@ -58,6 +59,7 @@ private:
     void initConnect();
 
 private:
+    QUrl sidebarUrl;
     SideBarView *sidebarView { nullptr };
     SideBarModel *sidebarModel { nullptr };
 };

@@ -40,14 +40,14 @@ class EventPrivate;
 class Event final
 {
     EventPrivate *d;
-    friend Q_CORE_EXPORT QDebug operator <<(QDebug, const Event &);
+    friend Q_CORE_EXPORT QDebug operator<<(QDebug, const Event &);
 
 public:
     Event();
     explicit Event(const QString &topic);
-    explicit Event(const Event& event);
+    explicit Event(const Event &event);
     ~Event();
-    Event &operator =(const Event &);
+    Event &operator=(const Event &);
 
     void setTopic(const QString &topic);
     QString topic() const;
@@ -55,16 +55,16 @@ public:
     void setData(const QVariant &data);
     QVariant data() const;
 
-    void setProperty(const QString& key, const QVariant value);
+    void setProperty(const QString &key, const QVariant &value);
     QVariant property(const QString &key) const;
 };
 
 QT_BEGIN_NAMESPACE
 #ifndef QT_NO_DEBUG_STREAM
-Q_CORE_EXPORT QDebug operator <<(QDebug, const DPF_NAMESPACE::Event &);
-#endif //QT_NO_DEBUG_STREAM
+Q_CORE_EXPORT QDebug operator<<(QDebug, const DPF_NAMESPACE::Event &);
+#endif   //QT_NO_DEBUG_STREAM
 QT_END_NAMESPACE
 
 DPF_END_NAMESPACE
 
-#endif // EVENT_H
+#endif   // EVENT_H

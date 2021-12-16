@@ -56,8 +56,9 @@ FileManagerWindow::~FileManagerWindow()
 {
 }
 
-void FileManagerWindow::setRootUrl(const QUrl &url)
+void FileManagerWindow::cd(const QUrl &url)
 {
+    d->currentUrl = url;
     if (d->titleBar)
         d->titleBar->setCurrentUrl(url);
     if (d->sideBar)
@@ -66,7 +67,7 @@ void FileManagerWindow::setRootUrl(const QUrl &url)
         d->workspace->setCurrentUrl(url);
 }
 
-const QUrl FileManagerWindow::rootUrl() const
+QUrl FileManagerWindow::currentUrl() const
 {
     return d->currentUrl;
 }
@@ -79,41 +80,50 @@ void FileManagerWindow::moveCenter(const QPoint &cp)
     move(qr.topLeft());
 }
 
-void FileManagerWindow::setTitleBar(AbstractFrame *w)
+void FileManagerWindow::installTitleBar(AbstractFrame *w)
 {
     Q_ASSERT_X(w, "FileManagerWindow", "Null TitleBar");
     d->titleBar = w;
-    w->setCurrentUrl(d->currentUrl);
-    titlebar()->setCustomWidget(w);
+    d->titleBar->setCurrentUrl(d->currentUrl);
+    titlebar()->setCustomWidget(d->titleBar);
 }
 
-void FileManagerWindow::setTitleMenu(QMenu *menu)
+void FileManagerWindow::installTitleMenu(QMenu *menu)
 {
     Q_ASSERT_X(menu, "FileManagerWindow", "Null Title Menu");
     titlebar()->setMenu(menu);
 }
 
-void FileManagerWindow::setSideBar(AbstractFrame *w)
+void FileManagerWindow::installSideBar(AbstractFrame *w)
 {
     Q_ASSERT_X(w, "FileManagerWindow", "Null setSideBar");
     d->sideBar = w;
-    w->setCurrentUrl(d->currentUrl);
-    d->splitter->replaceWidget(0, w);
+    d->sideBar->setCurrentUrl(d->currentUrl);
+    d->splitter->replaceWidget(0, d->sideBar);
 
-    w->setMaximumWidth(d->kMaximumLeftWidth);
-    w->setMinimumWidth(d->kMinimumLeftWidth);
+    d->sideBar->setContentsMargins(0, 0, 0, 0);
+    d->sideBar->setMaximumWidth(d->kMaximumLeftWidth);
+    d->sideBar->setMinimumWidth(d->kMinimumLeftWidth);
+
+    // connections
+    connect(this, &FileManagerWindow::currentUrlChanged, this, [this]() {
+        d->sideBar->setCurrentUrl(d->currentUrl);
+    });
 }
 
-void FileManagerWindow::setWorkSpace(AbstractFrame *w)
+void FileManagerWindow::installWorkSpace(AbstractFrame *w)
 {
     Q_ASSERT_X(w, "FileManagerWindow", "Null Workspace");
     d->workspace = w;
-    w->setCurrentUrl(d->currentUrl);
-    d->splitter->replaceWidget(1, w);
+    d->workspace->setCurrentUrl(d->currentUrl);
+    d->splitter->replaceWidget(1, d->workspace);
 
-    QSizePolicy sp = w->sizePolicy();
+    //NOTE(zccrs): 保证窗口宽度改变时只会调整right view的宽度，侧边栏保持不变
+    //             QSplitter是使用QLayout的策略对widgets进行布局，所以此处
+    //             设置size policy可以生效
+    QSizePolicy sp = d->workspace->sizePolicy();
     sp.setHorizontalStretch(1);
-    w->setSizePolicy(sp);
+    d->workspace->setSizePolicy(sp);
 }
 
 AbstractFrame *FileManagerWindow::titleBar() const
@@ -143,10 +153,12 @@ void FileManagerWindow::initializeUi()
     titlebar()->setContentsMargins(0, 0, 0, 0);
 
     // left view
-    d->leftView = new QFrame(this);
+    d->leftView = new QFrame;
+    d->leftView->setMaximumWidth(d->kMaximumLeftWidth);
+    d->leftView->setMinimumWidth(d->kMinimumLeftWidth);
 
     // right view
-    d->rightView = new QFrame(this);
+    d->rightView = new QFrame;
 
     // splitter
     d->splitter = new Splitter(Qt::Orientation::Horizontal, this);

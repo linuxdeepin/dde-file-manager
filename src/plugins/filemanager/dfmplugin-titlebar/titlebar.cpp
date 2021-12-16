@@ -40,7 +40,7 @@ void TitleBar::initialize()
     quint64 id = windowService->windowIdList().first();
     auto window = windowService->findWindowById(id);
     Q_ASSERT_X(window, "TitleBar", "Cannot find window by id");
-    window->setTitleBar(new TitleBarWidget);
+    window->installTitleBar(new TitleBarWidget);
 }
 
 bool TitleBar::start()

@@ -96,7 +96,7 @@ void SideBar::initialize()
     Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
     auto sidebar = new SideBarWidget;
     initSideBar(sidebar);
-    window->setSideBar(sidebar);
+    window->installSideBar(sidebar);
 }
 
 bool SideBar::start()

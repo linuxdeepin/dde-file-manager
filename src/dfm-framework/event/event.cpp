@@ -113,7 +113,7 @@ QVariant Event::data() const
  * @param key 索引键值
  * @param value 关联数据值
  */
-void Event::setProperty(const QString &key, const QVariant value)
+void Event::setProperty(const QString &key, const QVariant &value)
 {
     d->sourceHash[key] = value;
 }

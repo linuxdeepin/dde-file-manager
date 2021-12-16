@@ -38,6 +38,7 @@ public:
     virtual ~AbstractFrame();
 
     virtual void setCurrentUrl(const QUrl &url) = 0;
+    virtual QUrl currentUrl() const = 0;
 };
 
 DFMBASE_END_NAMESPACE

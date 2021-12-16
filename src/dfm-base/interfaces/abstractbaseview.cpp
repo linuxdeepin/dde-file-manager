@@ -22,6 +22,8 @@
 */
 #include "abstractbaseview.h"
 
+#include "widgets/dfmwindow/filemanagerwindow.h"
+
 DFMBASE_BEGIN_NAMESPACE
 
 /*!
@@ -41,6 +43,39 @@ AbstractBaseView::~AbstractBaseView()
 AbstractBaseView::ViewState AbstractBaseView::viewState() const
 {
     return ViewState::kViewIdle;
+}
+
+QList<QAction *> AbstractBaseView::toolBarActionList() const
+{
+    return QList<QAction *>();
+}
+
+void AbstractBaseView::refresh()
+{
+}
+
+void AbstractBaseView::notifyUrlChanged()
+{
+    if (FileManagerWindow *w = qobject_cast<FileManagerWindow *>(widget()->window()))
+        emit w->currentUrlChanged();
+}
+
+void AbstractBaseView::notifyStateChanged()
+{
+    if (FileManagerWindow *w = qobject_cast<FileManagerWindow *>(widget()->window()))
+        emit w->currentViewStateChanged();
+}
+
+void AbstractBaseView::requestCdTo(const QUrl &url)
+{
+    if (FileManagerWindow *w = qobject_cast<FileManagerWindow *>(widget()->window()))
+        w->cd(url);
+}
+
+void AbstractBaseView::notifySelectUrlChanged(const QList<QUrl> &urlList)
+{
+    if (FileManagerWindow *w = qobject_cast<FileManagerWindow *>(widget()->window()))
+        emit w->selectUrlChanged(urlList);
 }
 
 DFMBASE_END_NAMESPACE
