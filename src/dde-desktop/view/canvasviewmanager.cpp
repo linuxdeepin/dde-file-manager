@@ -73,7 +73,7 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
     GridManager::instance()->restCoord();
     //实际是单屏
     if ((AbstractScreenManager::Showonly == mode) || (AbstractScreenManager::Duplicate == mode) //仅显示和复制
-            || (ScreenMrg->screens().count() == 1)){
+            || (ScreenMrg->screens().count() == 1)) {
 
         ScreenPointer primary = ScreenMrg->primaryScreen();
         if (primary == nullptr) {
@@ -147,9 +147,8 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
         //检查移除的屏幕
         for (const ScreenPointer &sp : m_canvasMap.keys()){
             if (!currentScreens.contains(sp)){
-                m_canvasMap.remove(sp);
-                qDebug() << "mode" << mode << "remove" << sp->name()
-                         << sp->geometry();
+                auto rmd = m_canvasMap.take(sp);
+                qDebug() << "mode" << mode << "remove" << rmd->screenName();
             }
         }
         GridManager::instance()->setDisplayMode(false);
