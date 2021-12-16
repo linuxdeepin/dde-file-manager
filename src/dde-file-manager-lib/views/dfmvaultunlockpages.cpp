@@ -116,8 +116,10 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     QVBoxLayout *mainLayout = new QVBoxLayout(mainFrame);
     mainLayout->setMargin(0);
     mainLayout->addWidget(pTitle);
+    mainLayout->addStretch();
     mainLayout->addLayout(play1);
     mainLayout->addLayout(play2);
+    mainLayout->addStretch();
 
     mainFrame->setLayout(mainLayout);
     addContent(mainFrame);

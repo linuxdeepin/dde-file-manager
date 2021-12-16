@@ -78,6 +78,7 @@ void DFMVaultActiveSaveKeyFileView::initUI()
     m_otherRadioBtnHitMsg->setForegroundRole(DPalette::TextWarning);
 
     m_SelectfileSavePathEdit = new DFileChooserEdit(this);
+    DFontSizeManager::instance()->bind(m_otherPathRadioBtn, DFontSizeManager::T8, QFont::Medium);
     AC_SET_ACCESSIBLE_NAME(m_SelectfileSavePathEdit, AC_VAULT_SELECT_FILE_SAVE_PATH_EDIT);
     m_SelectfileSavePathEdit->lineEdit()->setReadOnly(true);
     m_SelectfileSavePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
@@ -122,7 +123,7 @@ void DFMVaultActiveSaveKeyFileView::initUI()
     layout1->addWidget(checkBoxLabel);
 
     QVBoxLayout *layout2 = new QVBoxLayout(frame);
-    layout2->setMargin(8);
+    layout2->setContentsMargins(8, 5, 8, 5);
     layout2->setSpacing(0);
     layout2->addLayout(layout);
     layout2->addLayout(layout1);
@@ -142,11 +143,11 @@ void DFMVaultActiveSaveKeyFileView::initUI()
     layout3->addStretch(1);
 
     QHBoxLayout *layout4 = new QHBoxLayout;
-    layout4->setContentsMargins(8, 4, 8, 4);
+    layout4->setContentsMargins(8, 5, 8, 5);
     layout4->addLayout(layout3);
 
     QHBoxLayout *layout5 = new QHBoxLayout;
-    layout5->setContentsMargins(8, 4, 8, 4);
+    layout5->setContentsMargins(10, 10, 10, 10);
     layout5->addWidget(m_SelectfileSavePathEdit);
 
     QVBoxLayout *vlayout5 = new QVBoxLayout(frame1);
@@ -159,7 +160,7 @@ void DFMVaultActiveSaveKeyFileView::initUI()
     QVBoxLayout *vlayout3 = new QVBoxLayout;
     vlayout3->setContentsMargins(20, 0, 20, 0);
     vlayout3->addWidget(frame, 1);
-    vlayout3->addStretch(2);
+    vlayout3->addSpacing(3);
     vlayout3->addWidget(frame1, 1);
 
     QVBoxLayout *vlayout1 = new QVBoxLayout;
