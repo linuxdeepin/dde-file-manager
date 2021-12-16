@@ -320,10 +320,10 @@ void DeviceMonitorHandler::handleProtolDevicesSizeUsedChanged()
             if (total != oldTotal
                 || free != oldFree
                 || usage != oldUsage) {
-                qDebug() << "Protocol[new/old]: " << key
-                         << QString("total: %1/%2, ").arg(total).arg(oldTotal)
-                         << QString("usage: %1/%2, ").arg(usage).arg(oldUsage)
-                         << QString("free: %1/%2, ").arg(free).arg(oldFree);
+                qInfo() << "Protocol[new/old]: " << key
+                        << QString("total: %1/%2, ").arg(total).arg(oldTotal)
+                        << QString("usage: %1/%2, ").arg(usage).arg(oldUsage)
+                        << QString("free: %1/%2, ").arg(free).arg(oldFree);
                 DeviceServiceHelper::updateProtocolDeviceSizeUsed(&devData, total, free, usage);
                 changedDataGroup.push_back(devData);
             }
@@ -836,8 +836,52 @@ void DeviceService::unmountProtocolDeviceAsync(const QString &deviceId, const QV
     });
 }
 
-void DeviceService::mountNetworkDevice(const QString &address)
+/*!
+ * \brief DeviceService::mountNetworkDevice
+ * \param address       urls like "smb://1.2.3.4/share-folder/"
+ * \param anonymous     if anonymous mount is expected
+ * \param opts      the mount params: user(str), domain(str), passwd(str), savePasswd(0 for never, 1 for save before logout, 2 for save permanently).
+ *  "user": "Test", "domain": WORKGROUP", "passwd": "123", "savePasswd": 0
+ */
+void DeviceService::mountNetworkDevice(const QString &address, bool anonymous, const QVariantMap &opts)
 {
+    Q_ASSERT_X(!address.isEmpty(), "DeviceService", "address is emtpy");
+    if (address.isEmpty())
+        return;
+
+    dfmmount::MountPassInfo info;
+    using namespace NetworkMountParamKey;
+    if (anonymous) {
+        info.anonymous = true;
+    } else if (opts.contains(kUser) && opts.contains(kDomain) && opts.contains(kPasswd)) {
+        auto user = opts.value(kUser).toString();
+        auto domain = opts.value(kDomain).toString();
+        auto passwd = opts.value(kPasswd).toString();
+
+        using namespace dfmmount;
+        NetworkMountPasswdSaveMode mode { NetworkMountPasswdSaveMode::NeverSavePasswd };
+        if (opts.contains(kPasswdSaveMode)) {
+            mode = NetworkMountPasswdSaveMode(opts.value(kPasswdSaveMode).toInt());
+            if (mode < NetworkMountPasswdSaveMode::NeverSavePasswd
+                || mode > NetworkMountPasswdSaveMode::SavePermanently) {
+                qDebug() << "password save mode is not valid, reset to zero";
+                mode = NetworkMountPasswdSaveMode::NeverSavePasswd;
+            }
+        }
+
+        info.domain = domain;
+        info.userName = user;
+        info.passwd = passwd;
+        info.savePasswd = mode;
+    } else {
+        qDebug() << "param is not valid";
+        return;
+    }
+
+    auto whenAskPasswd = [info](QString, QString, QString) { return info; };
+    dfmmount::DFMProtocolDevice::mountNetworkDevice(address, whenAskPasswd, [address](bool ok, dfmmount::DeviceError err) {
+        qDebug() << "mount network device: " << address << ok << dfmmount::Utils::errorMessage(err);
+    });
 }
 
 bool DeviceService::stopDefenderScanDrive(const QString &deviceId)

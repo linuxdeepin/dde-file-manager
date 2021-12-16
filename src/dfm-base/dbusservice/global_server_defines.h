@@ -106,6 +106,17 @@ const char *const kMountable { "mountable" };
 const char *const kNotIgnorable { "not_ignorable" };
 }   // namespace DeviceProperty
 
+/*!
+ * \brief Options for mount network device, such as smb, ftp etc.
+ * detail in DeviceService::mountNetworkDevice
+ */
+namespace NetworkMountParamKey {
+const char *const kUser { "user" };
+const char *const kDomain { "domain" };
+const char *const kPasswd { "passwd" };
+const char *const kPasswdSaveMode { "savePasswd" };
+}   // namespace NetworkMountParamKey
+
 }   // namespace GlobalServerDefines
 
 #endif   // GLOBAL_SERVER_DEFINES_H

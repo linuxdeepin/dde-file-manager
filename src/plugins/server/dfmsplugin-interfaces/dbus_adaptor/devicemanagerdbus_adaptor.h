@@ -141,6 +141,9 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "    </method>\n"
 "    <method name=\"MountNetworkDevice\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"address\"/>\n"
+"      <arg direction=\"in\" type=\"b\" name=\"anonymous\"/>\n"
+"      <arg direction=\"in\" type=\"a{sv}\" name=\"opts\"/>\n"
+"      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.In2\"/>\n"
 "    </method>\n"
 "    <method name=\"GetBlockDevicesIdList\">\n"
 "      <arg direction=\"out\" type=\"as\"/>\n"
@@ -184,7 +187,7 @@ public Q_SLOTS: // METHODS
     bool IsMonotorWorking();
     void LockBlockDevice(const QString &id);
     void MountBlockDevice(const QString &id);
-    void MountNetworkDevice(const QString &address);
+    void MountNetworkDevice(const QString &address, bool anonymous, const QVariantMap &opts);
     void MountProtocolDevice(const QString &id);
     void PoweroffBlockDevice(const QString &id);
     QVariantMap QueryBlockDeviceInfo(const QString &id, bool detail);

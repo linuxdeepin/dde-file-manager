@@ -84,7 +84,7 @@ public slots:
     void UnmountProtocolDevice(QString id);
     void UnlockBlockDevice(QString id, QString passwd);
     void LockBlockDevice(QString id);
-    void MountNetworkDevice(QString address);
+    void MountNetworkDevice(QString address, bool anonymous, QVariantMap opts);
 
     QStringList GetBlockDevicesIdList(const QVariantMap &opts);
     QVariantMap QueryBlockDeviceInfo(QString id, bool detail);

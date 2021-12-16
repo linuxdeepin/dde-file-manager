@@ -28,7 +28,6 @@
 #include <dfm-framework/service/pluginservicecontext.h>
 
 DSS_BEGIN_NAMESPACE
-
 class DeviceMonitorHandler;
 class DeviceService final : public dpf::PluginService, dpf::AutoServiceRegister<DeviceService>
 {
@@ -73,7 +72,7 @@ public:   // operations
     bool unmountProtocolDevice(const QString &deviceId, const QVariantMap &opts = {});
     void unmountProtocolDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
 
-    void mountNetworkDevice(const QString &address);
+    void mountNetworkDevice(const QString &address, bool anonymous, const QVariantMap &opts);
 
 public:   // status
     bool isBlockDeviceMonitorWorking() const;
@@ -105,7 +104,7 @@ signals:
     void blockDevAsyncUnmounted(const QString &deviceId, bool success);
     void blockDevAsyncEjected(const QString &deviceId, bool success);
     void blockDevAsyncPoweroffed(const QString &deviceId, bool success);
-    void blockDevAsyncUnlocked(const QString &deviceId, const QString &cleartextBlkId,  bool success);
+    void blockDevAsyncUnlocked(const QString &deviceId, const QString &cleartextBlkId, bool success);
     void blockDevAsyncLocked(const QString &deviceId, bool success);
 
     void protocolDevAdded(const QString &deviceId);

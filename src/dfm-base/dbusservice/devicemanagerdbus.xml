@@ -114,6 +114,9 @@
     </method>
     <method name="MountNetworkDevice">
       <arg name="address" type="s" direction="in"/>
+      <arg name="anonymous" type="b" direction="in"/>
+      <arg name="opts" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="QVariantMap"/>
     </method>
     <method name="GetBlockDevicesIdList">
       <arg type="as" direction="out"/>

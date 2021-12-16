@@ -99,10 +99,10 @@ void DeviceManagerAdaptor::MountBlockDevice(const QString &id)
     parent()->MountBlockDevice(id);
 }
 
-void DeviceManagerAdaptor::MountNetworkDevice(const QString &address)
+void DeviceManagerAdaptor::MountNetworkDevice(const QString &address, bool anonymous, const QVariantMap &opts)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.MountNetworkDevice
-    parent()->MountNetworkDevice(address);
+    parent()->MountNetworkDevice(address, anonymous, opts);
 }
 
 void DeviceManagerAdaptor::MountProtocolDevice(const QString &id)

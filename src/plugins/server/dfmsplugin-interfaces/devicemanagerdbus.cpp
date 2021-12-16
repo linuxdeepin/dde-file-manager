@@ -205,9 +205,9 @@ void DeviceManagerDBus::LockBlockDevice(QString id)
     deviceServ->lockBlockDevice(id);
 }
 
-void DeviceManagerDBus::MountNetworkDevice(QString address)
+void DeviceManagerDBus::MountNetworkDevice(QString address, bool anonymous, QVariantMap opts)
 {
-    deviceServ->mountNetworkDevice(address);
+    deviceServ->mountNetworkDevice(address, anonymous, opts);
 }
 
 /*!

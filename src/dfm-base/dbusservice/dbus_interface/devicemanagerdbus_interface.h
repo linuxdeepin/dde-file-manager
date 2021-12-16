@@ -109,10 +109,10 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("MountBlockDevice"), argumentList);
     }
 
-    inline QDBusPendingReply<> MountNetworkDevice(const QString &address)
+    inline QDBusPendingReply<> MountNetworkDevice(const QString &address, bool anonymous, const QVariantMap &opts)
     {
         QList<QVariant> argumentList;
-        argumentList << QVariant::fromValue(address);
+        argumentList << QVariant::fromValue(address) << QVariant::fromValue(anonymous) << QVariant::fromValue(opts);
         return asyncCallWithArgumentList(QStringLiteral("MountNetworkDevice"), argumentList);
     }
 
