@@ -147,9 +147,8 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
         //检查移除的屏幕
         for (const ScreenPointer &sp : m_canvasMap.keys()){
             if (!currentScreens.contains(sp)){
-                m_canvasMap.remove(sp);
-                qDebug() << "mode" << mode << "remove" << sp->name()
-                         << sp->geometry();
+                auto rmd = m_canvasMap.take(sp);
+                qDebug() << "mode" << mode << "removed" << rmd->screenName();
             }
         }
         GridManager::instance()->setDisplayMode(false);
