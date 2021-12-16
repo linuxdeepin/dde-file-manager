@@ -25,7 +25,7 @@ DTagEdit::DTagEdit(QWidget *const parent)
 
     // wayland协议下，使用Qt::Tool仍然附带窗口边框，此时采用Qt::FramelessWindowHint消除边框
     if (DFMGlobal::isWayLand())
-        setWindowFlags(windowFlags() | Qt::Tool | Qt::FramelessWindowHint);
+        setWindowFlags(windowFlags() | Qt::Popup | Qt::FramelessWindowHint);
     else
         setWindowFlags(Qt::Tool);
 }
