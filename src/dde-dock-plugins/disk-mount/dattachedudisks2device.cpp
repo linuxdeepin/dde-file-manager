@@ -121,12 +121,12 @@ QPair<quint64, quint64> DAttachedUdisks2Device::deviceUsage()
     QStorageInfo storage_info(mountPoint);
 
     if (storage_info.isValid()) {
-        qint64 bytesTotal = storage_info.bytesTotal();
-        qint64 bytesFree = storage_info.bytesFree();
+        quint64 bytesTotal = blockDevice()->size();
+        qint64 bytesFree = storage_info.bytesAvailable();
         return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
     }
 
-    return QPair<quint64, quint64>(-1, 0);
+    return QPair<quint64, quint64>(0, 0);
 }
 
 QString DAttachedUdisks2Device::iconName()
