@@ -296,7 +296,6 @@ void ComputerPropertyDialog::initUI()
     iconLabel->setScaledContents(true);
     iconLabel->setPixmap(pixmap);
 
-    iconLabel->setPixmap(logoIcon.pixmap(152, 39));
     QLabel *nameLabel = new QLabel(tr("Computer"), this);
     auto pt = nameLabel->palette();
     pt.setColor(QPalette::Text, palette().color(QPalette::Normal, QPalette::Text));
