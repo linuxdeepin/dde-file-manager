@@ -176,8 +176,8 @@ TEST_F(TestDAttachedUdisks2Device, dummy_deviceUsage_can_get)
 {
     Stub stub;
     stub.set(ADDR(QStorageInfo,isValid), isValid_true_stub);
-    stub.set(ADDR(QStorageInfo,bytesTotal), size_2KB_stub);
-    stub.set(ADDR(QStorageInfo,bytesFree), size_1KB_stub);
+    stub.set(ADDR(DBlockDevice, size), size_2KB_stub);
+    stub.set(ADDR(QStorageInfo,bytesAvailable), size_1KB_stub);
 
     QPair<quint64, quint64> useage = mUdisks2Device->deviceUsage();
     QPair<quint64, quint64> values = QPair<quint64, quint64>(1024, 2*1024);
@@ -190,7 +190,7 @@ TEST_F(TestDAttachedUdisks2Device, dummy_deviceUsage_cannot_get)
     stub.set(ADDR(QStorageInfo,isValid), isValid_false_stub);
 
     QPair<quint64, quint64> useage = mUdisks2Device->deviceUsage();
-    QPair<quint64, quint64> values = QPair<quint64, quint64>(-1, 0);
+    QPair<quint64, quint64> values = QPair<quint64, quint64>(0, 0);
     EXPECT_EQ(useage, values);
 }
 
