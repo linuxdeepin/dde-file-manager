@@ -92,6 +92,7 @@ const char *const kMediaCompatibility { "media_compatibility" };
 const char *const kCleartextDevice { "cleartext_device" };
 
 const char *const kDisplayName { "display_name" };
+const char *const kDeviceIcon { "device_icon" };
 
 }   // namespace DeviceProperty
 

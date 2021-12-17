@@ -23,7 +23,11 @@
 #include "dattachedprotocoldevice.h"
 #include "pluginsidecar.h"
 
+#include <global_server_defines.h>
 #include <QVariantMap>
+#include <QIcon>
+
+using namespace GlobalServerDefines;
 
 /*!
  * \class DAttachedProtocolDevice
@@ -43,55 +47,56 @@ DAttachedProtocolDevice::~DAttachedProtocolDevice()
 
 bool DAttachedProtocolDevice::isValid()
 {
-    // TODO(zhans)
-    return true;
+    return !data.value(DeviceProperty::kMountpoint).toString().isEmpty();
 }
 
 void DAttachedProtocolDevice::detach()
 {
-    SidecarInstance.instance().invokeDetachProtocolDevice(data.value("id").toString());
+    SidecarInstance.instance().invokeDetachProtocolDevice(data.value(DeviceProperty::kId).toString());
 }
 
 bool DAttachedProtocolDevice::detachable()
 {
-    // TODO(zhans)
     return true;
 }
 
 QString DAttachedProtocolDevice::displayName()
 {
-    // TODO(zhans)
-    return QString();
+    return data.value(DeviceProperty::kDisplayName, tr("Unknown device")).toString();
 }
 
 bool DAttachedProtocolDevice::deviceUsageValid()
 {
-    // TODO(zhans)
     return true;
 }
 
 QPair<quint64, quint64> DAttachedProtocolDevice::deviceUsage()
 {
-    // TODO(zhans)
-    return QPair<quint64, quint64>();
+    qint64 bytesTotal = qvariant_cast<qint64>(data.value(DeviceProperty::kSizeTotal));
+    qint64 bytesFree = qvariant_cast<qint64>(data.value(DeviceProperty::kSizeFree));
+    return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
 }
 
 QString DAttachedProtocolDevice::iconName()
 {
-    // TODO(zhans)
-    return QString();
+    auto iconLst = data.value(DeviceProperty::kDeviceIcon).toStringList();
+    for (auto name : iconLst) {
+        auto icon = QIcon::fromTheme(name);
+        if (!icon.isNull())
+            return name;
+    }
+    auto iconName = QStringLiteral("drive-network");
+    return iconName;
 }
 
 QUrl DAttachedProtocolDevice::mountpointUrl()
 {
-    // TODO(zhans)
-    return QUrl();
+    return QUrl::fromLocalFile(data.value(DeviceProperty::kMountpoint).toString());
 }
 
 QUrl DAttachedProtocolDevice::accessPointUrl()
 {
-    // TODO(zhans)
-    return QUrl();
+    return mountpointUrl();
 }
 
 void DAttachedProtocolDevice::query()

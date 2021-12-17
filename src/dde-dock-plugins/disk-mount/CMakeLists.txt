@@ -57,12 +57,19 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(DdeDockInterface REQUIRED dde-dock)
 pkg_check_modules(Gesttings REQUIRED  gsettings-qt)
 
+set(QRC_FILE
+    resources.qrc
+    resources/theme-icons.qrc
+    )
+qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
+
 add_library(${PROJECT_NAME}
     SHARED
     ${MOUNT_PLUGIN_SRC}
     ${MOUNT_PLUGIN_HEADER}
     ${DBUS_INTERFACES_SRC}
     ${DBUS_INTERFACES_HEADER}
+    ${QRC_RESOURCES}
     )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ./)
@@ -73,7 +80,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${DtkWidget_INCLUDE_DIRS}
     ${Gesttings_INCLUDE_DIRS}
     ${DdeDockInterface_INCLUDE_DIRS}
-    
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE

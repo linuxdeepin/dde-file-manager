@@ -81,6 +81,7 @@ struct ProtocolDeviceData
 {
     DeviceData common;
     QString displayName;
+    QStringList deviceIcons;
 };
 
 class DeviceServiceHelper

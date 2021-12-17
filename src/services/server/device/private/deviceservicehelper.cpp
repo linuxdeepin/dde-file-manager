@@ -557,6 +557,7 @@ void DeviceServiceHelper::makeProtocolDeviceData(const DeviceServiceHelper::Prot
     data->common.sizeFree = data->common.sizeTotal - data->common.sizeUsed;
     data->common.mountpoint = ptr->mountPoint();
     data->displayName = ptr->displayName();
+    data->deviceIcons = ptr->deviceIcons();
 }
 
 void DeviceServiceHelper::makeProtocolDeviceMap(const ProtocolDeviceData &data, QVariantMap *map, bool detail)
@@ -572,6 +573,7 @@ void DeviceServiceHelper::makeProtocolDeviceMap(const ProtocolDeviceData &data, 
     map->insert(DeviceProperty::kSizeUsed, data.common.sizeUsed);
 
     map->insert(DeviceProperty::kDisplayName, data.displayName);
+    map->insert(DeviceProperty::kDeviceIcon, data.deviceIcons);
 }
 
 void DeviceServiceHelper::updateProtocolDeviceSizeUsed(ProtocolDeviceData *data, qint64 total, qint64 free, qint64 used)

@@ -116,7 +116,10 @@ void DiskControlWidget::initConnection()
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceFilesystemAdded, this, &DiskControlWidget::onDiskListChanged);
     connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceFilesystemRemoved, this, &DiskControlWidget::onDiskListChanged);
 
-    // TODO(zhangs): protocol devices signals
+    //    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceAdded, this, &DiskControlWidget::onDiskListChanged);
+    //    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceRemoved, this, &DiskControlWidget::onDiskListChanged);
+    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, &DiskControlWidget::onDiskListChanged);
+    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &DiskControlWidget::onDiskListChanged);
 }
 
 void DiskControlWidget::removeWidgets()
@@ -207,8 +210,12 @@ int DiskControlWidget::addItems(const QStringList &list, bool isBlockDevice)
         QSharedPointer<DAttachedDevice> dev;
         if (isBlockDevice)
             dev.reset(new DAttachedBlockDevice(id));
-        else
+        else {
+            // do not show local vfs mounts.
+            if (id.startsWith("file://"))
+                continue;
             dev.reset(new DAttachedProtocolDevice(id));
+        }
         dev->query();
         if (dev->isValid()) {
             mountedCount++;

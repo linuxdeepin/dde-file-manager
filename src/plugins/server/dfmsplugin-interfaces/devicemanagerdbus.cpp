@@ -123,6 +123,11 @@ void DeviceManagerDBus::initConnection()
     connect(deviceServ, &DeviceService::blockDevUnmounted, this, &DeviceManagerDBus::BlockDeviceUnmounted);
     connect(deviceServ, &DeviceService::blockDevUnlocked, this, &DeviceManagerDBus::BlockDeviceUnlocked);
     connect(deviceServ, &DeviceService::blockDevLocked, this, &DeviceManagerDBus::BlockDeviceLocked);
+
+    connect(deviceServ, &DeviceService::protocolDevMounted, this, &DeviceManagerDBus::ProtocolDeviceMounted);
+    connect(deviceServ, &DeviceService::protocolDevUnmounted, this, &DeviceManagerDBus::ProtocolDeviceUnmounted);
+    connect(deviceServ, &DeviceService::protocolDevAdded, this, &DeviceManagerDBus::ProtocolDeviceAdded);
+    connect(deviceServ, &DeviceService::protocolDevRemoved, this, &DeviceManagerDBus::ProtocolDeviceRemoved);
 }
 
 /*!
