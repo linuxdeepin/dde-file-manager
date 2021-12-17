@@ -1,44 +1,44 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="it" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="it">
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3348"/>
+        <location filename="../view/canvasgridview.cpp" line="3371"/>
         <source>Icon size</source>
         <translation>Dimensione icone</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3356"/>
+        <location filename="../view/canvasgridview.cpp" line="3379"/>
         <source>Auto merge</source>
         <translation>Organizza automaticamente</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3368"/>
+        <location filename="../view/canvasgridview.cpp" line="3391"/>
         <source>Auto arrange</source>
         <translation>Disponi automaticamente</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3405"/>
+        <location filename="../view/canvasgridview.cpp" line="3428"/>
         <source>Corner Settings</source>
         <translation>Impostazioni angoli di navigazione</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3414"/>
-        <location filename="../view/canvasgridview.cpp" line="3419"/>
+        <location filename="../view/canvasgridview.cpp" line="3437"/>
+        <location filename="../view/canvasgridview.cpp" line="3442"/>
         <source>Set Wallpaper</source>
         <translation>Imposta sfondo</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3417"/>
+        <location filename="../view/canvasgridview.cpp" line="3440"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Sfondi e screensaver</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3595"/>
+        <location filename="../view/canvasgridview.cpp" line="3618"/>
         <source>Properties</source>
         <translation>Proprietà</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3396"/>
+        <location filename="../view/canvasgridview.cpp" line="3419"/>
         <source>Display Settings</source>
         <translation>Impostazioni visualizzazione</translation>
     </message>
@@ -158,14 +158,14 @@
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="403"/>
-        <location filename="../view/watermaskframe.cpp" line="404"/>
+        <location filename="../view/watermaskframe.cpp" line="390"/>
+        <location filename="../view/watermaskframe.cpp" line="391"/>
         <source>Not authorized</source>
         <translation>Nessuna autorizzazione</translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="414"/>
-        <location filename="../view/watermaskframe.cpp" line="415"/>
+        <location filename="../view/watermaskframe.cpp" line="401"/>
+        <location filename="../view/watermaskframe.cpp" line="402"/>
         <source>In trial period</source>
         <translation>Periodo di prova</translation>
     </message>

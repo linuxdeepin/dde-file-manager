@@ -228,7 +228,7 @@
     <message>
         <location filename="../models/computermodel.cpp" line="495"/>
         <source>Double click to open it</source>
-        <translation type="unfinished"/>
+        <translation>Zum Öffnen doppelklicken</translation>
     </message>
     <message>
         <location filename="../models/computermodel.cpp" line="839"/>
@@ -248,7 +248,7 @@
     <message>
         <location filename="../models/computermodel.cpp" line="848"/>
         <source>Quick Access</source>
-        <translation type="unfinished"/>
+        <translation>Schnellzugriff</translation>
     </message>
 </context>
 <context>
@@ -669,17 +669,17 @@
         <translation>Keine Berechtigung, bitte erneut auswählen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="83"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="84"/>
         <source>Select a path</source>
         <translation>Wählen Sie einen Pfad aus</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="102"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="103"/>
         <source>Next</source>
         <translation>Weiter</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="114"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="115"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
         <translation>Der Standardpfad ist für andere Benutzer unsichtbar, und die Pfadinformationen werden nicht angezeigt.</translation>
     </message>
@@ -1059,17 +1059,17 @@
         <translation>Passwort vergessen?</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="143"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="145"/>
         <source>Password hint: %1</source>
         <translation>Passworthinweis: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="351"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="353"/>
         <source>Failed to unlock file vault</source>
         <translation>Fehler beim Entsperren des Dateitresors</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="130"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Abbrechen</translation>
@@ -1080,38 +1080,38 @@
         <translation>Passwort</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="130"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Entsperren</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="269"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="271"/>
         <source>Please try again %1 minutes later</source>
         <translation>Bitte versuchen Sie es %1 Minuten später erneut</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="296"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="298"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Falsches Passwort, bitte versuchen Sie es %1 Minuten später erneut</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="299"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="301"/>
         <source>Wrong password, one chance left</source>
         <translation>Falsches Passwort, noch eine Chance übrig</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="301"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="303"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Falsches Passwort, noch %1 Chancen übrig</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="346"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="348"/>
         <source>Wrong password</source>
         <translation>Falsches Passwort</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="355"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="357"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
@@ -1701,7 +1701,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="518"/>
         <source>Device or resource busy</source>
-        <translation type="unfinished"/>
+        <translation>Gerät oder Ressource belegt</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="530"/>
@@ -1945,7 +1945,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1269"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Bestätigen</translation>
@@ -2424,8 +2423,8 @@
         <location filename="../configure/global-setting-template-fedora.js" line="139"/>
         <location filename="../configure/global-setting-template-pro.js" line="139"/>
         <location filename="../configure/global-setting-template.js" line="139"/>
-        <source>Hide file extension when rename</source>
-        <translation>Dateierweiterungen beim Umbenennen verstecken</translation>
+        <source>Show file extensions</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="156"/>
@@ -3223,29 +3222,29 @@
         <translation>Mit Schlüssel entsperren</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="95"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="97"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="211"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="231"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="213"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="233"/>
         <source>Size: %1</source>
         <translation>Größe: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="214"/>
         <source>Type: %1</source>
         <translation>Typ: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="224"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="226"/>
         <source>Size: 0</source>
         <translation>Größe: 0</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="230"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="232"/>
         <source>Items: %1</source>
         <translation>Elemente: %1</translation>
     </message>
@@ -3518,7 +3517,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="912"/>
         <source>Refresh</source>
-        <translation type="unfinished"/>
+        <translation>Auffrischen</translation>
     </message>
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="348"/>
@@ -4100,8 +4099,8 @@
     <message>
         <location filename="../interfaces/diconitemdelegate.cpp" line="919"/>
         <location filename="../interfaces/diconitemdelegate.cpp" line="1080"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="479"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="688"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="477"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="683"/>
         <location filename="../views/fileitem.cpp" line="203"/>
         <source>%1 are not allowed</source>
         <translation>%1 sind nicht erlaubt</translation>

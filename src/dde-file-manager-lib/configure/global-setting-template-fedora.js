@@ -136,7 +136,7 @@
                         },
                         {
                             "key": "show_suffix",
-                            "text": qsTranslate("GenerateSettingTranslate", "Show file extension"),
+                            "text": qsTranslate("GenerateSettingTranslate", "Show file extensions"),
                             "type": "checkbox",
                             "default": true
                         },

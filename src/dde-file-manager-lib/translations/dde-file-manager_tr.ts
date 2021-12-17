@@ -228,7 +228,7 @@
     <message>
         <location filename="../models/computermodel.cpp" line="495"/>
         <source>Double click to open it</source>
-        <translation type="unfinished"/>
+        <translation>Açmak için çift tıklayın</translation>
     </message>
     <message>
         <location filename="../models/computermodel.cpp" line="839"/>
@@ -248,7 +248,7 @@
     <message>
         <location filename="../models/computermodel.cpp" line="848"/>
         <source>Quick Access</source>
-        <translation type="unfinished"/>
+        <translation>Hızlı Erişim</translation>
     </message>
 </context>
 <context>
@@ -647,42 +647,42 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="53"/>
         <source>Save Recovery Key</source>
-        <translation type="unfinished"/>
+        <translation>Kurtarma Anahtarını Kaydet</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="60"/>
         <source>Keep the key safe to retrieve the vault password later</source>
-        <translation type="unfinished"/>
+        <translation>Kasa parolasını daha sonra almak için anahtarı güvende tutun</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="67"/>
         <source>Save to default path</source>
-        <translation type="unfinished"/>
+        <translation>Varsayılan yola kaydet</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="73"/>
         <source>Save to other locations</source>
-        <translation type="unfinished"/>
+        <translation>Diğer konumlara kaydet</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="75"/>
         <source>No permission, please reselect</source>
-        <translation type="unfinished"/>
+        <translation>İzin yok, lütfen yeniden seçin</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="83"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="84"/>
         <source>Select a path</source>
-        <translation type="unfinished"/>
+        <translation>Bir yol seçin</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="102"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="103"/>
         <source>Next</source>
         <translation>Sonraki</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="114"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="115"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
-        <translation type="unfinished"/>
+        <translation>Varsayılan yol, diğer kullanıcılar tarafından görülmez ve yol bilgileri gösterilmez.</translation>
     </message>
 </context>
 <context>
@@ -816,7 +816,7 @@
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="50"/>
         <source>Cannot open this path</source>
-        <translation type="unfinished"/>
+        <translation>Bu yol açılamıyor</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="50"/>
@@ -978,44 +978,44 @@
         <location filename="../views/dfmvaultretrievepassword.cpp" line="146"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="303"/>
         <source>Unable to get the key file</source>
-        <translation type="unfinished"/>
+        <translation>Anahtar dosyası alınamıyor</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="90"/>
         <source>Verification failed</source>
-        <translation type="unfinished"/>
+        <translation>Doğrulama başarısız oldu</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="195"/>
         <source>Select a path</source>
-        <translation type="unfinished"/>
+        <translation>Bir yol seçin</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="183"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="271"/>
         <source>Retrieve Password</source>
-        <translation type="unfinished"/>
+        <translation>Parola Al</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="190"/>
         <source>By key in the default path</source>
-        <translation type="unfinished"/>
+        <translation>Varsayılan yolda anahtarla</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="191"/>
         <source>By key in the specified path</source>
-        <translation type="unfinished"/>
+        <translation>Belirtilen yoldaki anahtarla</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="287"/>
         <source>Verification Successful</source>
-        <translation type="unfinished"/>
+        <translation>Doğrulama Başarılı</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="218"/>
         <source>Keep it safe</source>
-        <translation type="unfinished"/>
+        <translation>Güvenli tut</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
@@ -1027,13 +1027,13 @@
         <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
         <source>Verify Key</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Anahtarı Doğrula</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Kilidi Aç&apos;a git</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
@@ -1044,7 +1044,7 @@
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="284"/>
         <source>Vault password: %1</source>
-        <translation type="unfinished"/>
+        <translation>Kasa şifresi: %1</translation>
     </message>
 </context>
 <context>
@@ -1057,20 +1057,20 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="72"/>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Parolanızı mı unuttunuz?</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="143"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="145"/>
         <source>Password hint: %1</source>
         <translation>Parola ipucu: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="351"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="353"/>
         <source>Failed to unlock file vault</source>
         <translation>Dosya kasasının kilidi açılamadı</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="130"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>İptal</translation>
@@ -1081,38 +1081,38 @@
         <translation>Parola</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="130"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Kilidi aç</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="269"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="271"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Lütfen %1 dakika sonra tekrar deneyin</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="296"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="298"/>
         <source>Wrong password, please try again %1 minutes later</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="299"/>
-        <source>Wrong password, one chance left</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış şifre, lütfen %1 dakika sonra tekrar deneyin</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="301"/>
-        <source>Wrong password, %1 chances left</source>
-        <translation type="unfinished"/>
+        <source>Wrong password, one chance left</source>
+        <translation>Yanlış şifre, bir şans kaldı</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="346"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="303"/>
+        <source>Wrong password, %1 chances left</source>
+        <translation>Yanlış şifre, %1 şans kaldı</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="348"/>
         <source>Wrong password</source>
         <translation>Yanlış parola</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="355"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="357"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Tamam</translation>
@@ -1203,7 +1203,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="248"/>
         <source>Failed to position the file pointer!</source>
-        <translation type="unfinished"/>
+        <translation>Dosya işaretçisi yerleştirilemedi!</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="670"/>
@@ -1231,7 +1231,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="3799"/>
         <source>Failed to position the file pointer, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Dosya işaretçisi konumlanamadı, neden: %1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="4474"/>
@@ -1702,7 +1702,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="518"/>
         <source>Device or resource busy</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz veya kaynak meşgul</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="530"/>
@@ -1946,7 +1946,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1269"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Onayla</translation>
@@ -2425,8 +2424,8 @@
         <location filename="../configure/global-setting-template-fedora.js" line="139"/>
         <location filename="../configure/global-setting-template-pro.js" line="139"/>
         <location filename="../configure/global-setting-template.js" line="139"/>
-        <source>Hide file extension when rename</source>
-        <translation>Yeniden adlandırırken dosya uzantısını gizle</translation>
+        <source>Show file extensions</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="156"/>
@@ -2475,7 +2474,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="257"/>
         <location filename="../configure/global-setting-template.js" line="256"/>
         <source>Keep showing the mounted Samba shares</source>
-        <translation type="unfinished"/>
+        <translation>Bağlanmış Samba paylaşımlarını göstermeye devam edin</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="269"/>
@@ -3155,7 +3154,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1429"/>
         <source>Unconnected network shared directory</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantısız ağ paylaşılan dizini</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1447"/>
@@ -3224,29 +3223,29 @@
         <translation>Anahtarla kilidi aç</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="95"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="97"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Aç</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="211"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="231"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="213"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="233"/>
         <source>Size: %1</source>
         <translation>Boyut: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="214"/>
         <source>Type: %1</source>
         <translation>Tür: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="224"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="226"/>
         <source>Size: 0</source>
         <translation>Boyut: 0</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="230"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="232"/>
         <source>Items: %1</source>
         <translation>Öge: %1</translation>
     </message>
@@ -3504,7 +3503,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
         <source>Clear saved password and unmount</source>
-        <translation type="unfinished"/>
+        <translation>Kayıtlı şifreyi temizle ve bağlantıyı kes</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
@@ -3519,7 +3518,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="912"/>
         <source>Refresh</source>
-        <translation type="unfinished"/>
+        <translation>Yenile</translation>
     </message>
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="348"/>
@@ -4101,8 +4100,8 @@
     <message>
         <location filename="../interfaces/diconitemdelegate.cpp" line="919"/>
         <location filename="../interfaces/diconitemdelegate.cpp" line="1080"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="479"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="688"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="477"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="683"/>
         <location filename="../views/fileitem.cpp" line="203"/>
         <source>%1 are not allowed</source>
         <translation>%1&apos;e izin verilmiyor</translation>
@@ -4111,7 +4110,7 @@
         <location filename="../views/dfilemanagerwindow.cpp" line="1563"/>
         <location filename="../../usershare/usersharemanager.cpp" line="549"/>
         <source>Failed to start Samba services</source>
-        <translation type="unfinished"/>
+        <translation>Samba hizmetleri başlatılamadı</translation>
     </message>
 </context>
 <context>
@@ -4131,17 +4130,17 @@
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="472"/>
         <source>Do you want to remove this item?</source>
-        <translation type="unfinished"/>
+        <translation>Bu öğeyi kaldırmak istiyor musunuz?</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="474"/>
         <source>Do yout want to remove %1 items?</source>
-        <translation type="unfinished"/>
+        <translation>%1 öğeyi kaldırmak istiyor musunuz?</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="475"/>
         <source>It does not delete the original files</source>
-        <translation type="unfinished"/>
+        <translation>Orijinal dosyaları silmez</translation>
     </message>
 </context>
 <context>
@@ -4670,7 +4669,7 @@
         <location filename="../../usershare/usersharemanager.cpp" line="415"/>
         <location filename="../../usershare/usersharemanager.cpp" line="453"/>
         <source>The share name must not contain %&lt;&gt;*?|/\+=;:,&quot; and should not start with %1</source>
-        <translation type="unfinished"/>
+        <translation>Paylaşım adı %&lt;&gt;*?|/\+=;:&quot; içermemeli ve %1 ile başlamamalıdır</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="447"/>

@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>AppController</name>
     <message>
@@ -672,17 +670,17 @@
         <translation>权限不够，请重新选择</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="83"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="84"/>
         <source>Select a path</source>
         <translation>选择密钥文件保存路径</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="102"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="103"/>
         <source>Next</source>
         <translation>下一步</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="114"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="115"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
         <translation>默认路径为不会暴露给其他用户的特殊路径，且不会明文显示路径信息。</translation>
     </message>
@@ -1062,17 +1060,17 @@
         <translation>忘记密码？</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="143"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="145"/>
         <source>Password hint: %1</source>
         <translation>密码提示：%1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="351"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="353"/>
         <source>Failed to unlock file vault</source>
         <translation>解锁保险箱失败</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="130"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>
@@ -1083,38 +1081,38 @@
         <translation>密码</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="130"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>解 锁</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="269"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="271"/>
         <source>Please try again %1 minutes later</source>
         <translation>请%1分钟后再试</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="296"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="298"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>密码错误，请%1分钟后再试</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="299"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="301"/>
         <source>Wrong password, one chance left</source>
         <translation>密码错误，您还可再输入1次</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="301"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="303"/>
         <source>Wrong password, %1 chances left</source>
         <translation>密码错误，您还可再输入%1次</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="346"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="348"/>
         <source>Wrong password</source>
         <translation>密码错误</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="355"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="357"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>确 定</translation>
@@ -1948,7 +1946,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1269"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>确 定</translation>
@@ -2426,8 +2423,9 @@
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="139"/>
         <location filename="../configure/global-setting-template-pro.js" line="139"/>
-        <source>Hide file extension when rename</source>
-        <translation>重命名时隐藏文件扩展名</translation>
+        <location filename="../configure/global-setting-template.js" line="139"/>
+        <source>Show file extensions</source>
+        <translation>显示文件扩展名</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="156"/>
@@ -2595,11 +2593,6 @@
         <location filename="../configure/global-setting-template.js" line="264"/>
         <source>Dialog</source>
         <translation>对话框</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template.js" line="139"/>
-        <source>Show file extension</source>
-        <translation>显示文件扩展名</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template.js" line="202"/>
@@ -4029,7 +4022,7 @@
     <message>
         <location filename="../views/dtagedit.cpp" line="96"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation>输入标记信息，如“工作”、“家人”等。多个标记信息之间用逗号分隔。</translation>
+        <translation>输入标记信息，如“工作”、“家人”等。多个标记信息之间用英文半角逗号分隔。</translation>
     </message>
     <message>
         <location filename="../controllers/dfmbookmarkcrumbcontroller.cpp" line="47"/>

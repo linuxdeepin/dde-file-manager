@@ -1,44 +1,44 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="ar" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ar">
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3348"/>
+        <location filename="../view/canvasgridview.cpp" line="3371"/>
         <source>Icon size</source>
         <translation>حجم الأيقونة</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3356"/>
+        <location filename="../view/canvasgridview.cpp" line="3379"/>
         <source>Auto merge</source>
         <translation>دمج تلقائى</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3368"/>
+        <location filename="../view/canvasgridview.cpp" line="3391"/>
         <source>Auto arrange</source>
         <translation>ترتيب تلقائي</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3405"/>
+        <location filename="../view/canvasgridview.cpp" line="3428"/>
         <source>Corner Settings</source>
         <translation>إعدادات التنقل الزاوي</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3414"/>
-        <location filename="../view/canvasgridview.cpp" line="3419"/>
+        <location filename="../view/canvasgridview.cpp" line="3437"/>
+        <location filename="../view/canvasgridview.cpp" line="3442"/>
         <source>Set Wallpaper</source>
         <translation>إعداد كخلفية</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3417"/>
+        <location filename="../view/canvasgridview.cpp" line="3440"/>
         <source>Wallpaper and Screensaver</source>
         <translation>الخلفيات و شاشة التوقف</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3595"/>
+        <location filename="../view/canvasgridview.cpp" line="3618"/>
         <source>Properties</source>
         <translation>الخصائص</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3396"/>
+        <location filename="../view/canvasgridview.cpp" line="3419"/>
         <source>Display Settings</source>
         <translation>إعدادات العرض</translation>
     </message>
@@ -158,14 +158,14 @@
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="403"/>
-        <location filename="../view/watermaskframe.cpp" line="404"/>
+        <location filename="../view/watermaskframe.cpp" line="390"/>
+        <location filename="../view/watermaskframe.cpp" line="391"/>
         <source>Not authorized</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="414"/>
-        <location filename="../view/watermaskframe.cpp" line="415"/>
+        <location filename="../view/watermaskframe.cpp" line="401"/>
+        <location filename="../view/watermaskframe.cpp" line="402"/>
         <source>In trial period</source>
         <translation>قيد التجربة</translation>
     </message>

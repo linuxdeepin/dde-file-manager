@@ -670,17 +670,17 @@
         <translation>དབང་ཚད་མི་འདང་བས། ཡང་བསྐྱར་འདེམས་རོགས། </translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="83"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="84"/>
         <source>Select a path</source>
         <translation>གསང་ལྡེའི་ཡིག་ཆའི་ཉར་ཚགས་བརྒྱུད་ལམ་འདེམས་རོགས། </translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="102"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="103"/>
         <source>Next</source>
         <translation>གོམ་སྟབས་རྗེས་མ།</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="114"/>
+        <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="115"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
         <translation>སོར་བཞག་བརྒྱུད་ལམ་ནི་སྤྱོད་མཁན་གཞག་དག་གིས་མི་མཐོང་བའི་བརྒྱུད་ལམ་དམིགས་བསལ་ཞིག་རེད་ལ། ཡི་གེའི་ཐོག་ནས་བརྒྱུད་ལམ་ཆ་འཕྲིན་མངོན་མི་སྲིད།</translation>
     </message>
@@ -1060,17 +1060,17 @@
         <translation>གསང་ཨང་བརྗེད་འདུག་གམ། </translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="143"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="145"/>
         <source>Password hint: %1</source>
         <translation>གསང་ཨང་དྲན་སྐུལ། %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="351"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="353"/>
         <source>Failed to unlock file vault</source>
         <translation>ཉེན་འགོག་སྒམ་ཆུང་སྒོ་ལྕགས་འབྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="130"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>འདོར་བ།</translation>
@@ -1081,38 +1081,38 @@
         <translation>གསང་ཨང་།</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="130"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>སྒོ་ལྕགས་འབྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="269"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="271"/>
         <source>Please try again %1 minutes later</source>
         <translation>སྐར་མ་%1རྗེས་ལ་ཚོད་ལྟ་གྱིས་དང་།</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="296"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="298"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>གསང་ཨང་ནོར་འདུག སྐར་མ་%1རྗེས་ལ་ཚོད་ལྟ་གྱིས་དང་།</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="299"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="301"/>
         <source>Wrong password, one chance left</source>
         <translation>གསང་ཨང་ནོར་འདུག ཁྱེད་ཀྱིས་ད་དུང་ཚོད་ལྟ་ཐེངས་1བྱས་ཆོག</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="301"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="303"/>
         <source>Wrong password, %1 chances left</source>
         <translation>གསང་ཨང་ནོར་འདུག ཁྱེད་ཀྱིས་ད་དུང་ཚོད་ལྟ་ཐེངས་%1བྱས་ཆོག</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="346"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="348"/>
         <source>Wrong password</source>
         <translation>གསང་ཨང་ནོར་བ།</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="355"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="357"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>ཆོག</translation>
@@ -1946,7 +1946,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1269"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>ཆོག</translation>
@@ -2425,8 +2424,8 @@
         <location filename="../configure/global-setting-template-fedora.js" line="139"/>
         <location filename="../configure/global-setting-template-pro.js" line="139"/>
         <location filename="../configure/global-setting-template.js" line="139"/>
-        <source>Hide file extension when rename</source>
-        <translation>ཡང་བསྐྱར་མིང་འདོགས་སྐབས་ཡིག་ཆའི་རྒྱ་སྐྱེད་མིང་ཡིབ་པ།</translation>
+        <source>Show file extensions</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="156"/>
@@ -3224,29 +3223,29 @@
         <translation>གསང་ལྡེས་སྒོ་ཕྱེ་བ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="95"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="97"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>ཡིག་ཆ་ཁ་འབྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="211"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="231"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="213"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="233"/>
         <source>Size: %1</source>
         <translation>ཆེ་ཆུང་།%1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="214"/>
         <source>Type: %1</source>
         <translation>རིགས་གྲས། %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="224"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="226"/>
         <source>Size: 0</source>
         <translation>ཆེ་ཆུང་།0</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="230"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="232"/>
         <source>Items: %1</source>
         <translation>ཡིག་ཆའི་ཁ་གྲངས།%1</translation>
     </message>
@@ -4023,7 +4022,7 @@
     <message>
         <location filename="../views/dtagedit.cpp" line="96"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation>མཚོན་རྟགས་ཆ་འཕྲིན་འབྲི་དགོས། དཔེར་ན་“ལས་ཀ་”དང་“ནང་མི་”སོགས། མཚོན་རྟགས་སོ་སོའི་དབར་ཤད་ཀྱིས་དབྱེ་བ་འབྱེད་དགོས།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../controllers/dfmbookmarkcrumbcontroller.cpp" line="47"/>
@@ -4101,8 +4100,8 @@
     <message>
         <location filename="../interfaces/diconitemdelegate.cpp" line="919"/>
         <location filename="../interfaces/diconitemdelegate.cpp" line="1080"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="479"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="688"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="477"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="683"/>
         <location filename="../views/fileitem.cpp" line="203"/>
         <source>%1 are not allowed</source>
         <translation>%1ཡོད་མི་རུང་། </translation>
