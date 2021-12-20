@@ -285,7 +285,7 @@ public:
     QString targetRootPath;
 
     QPointer<QThread> threadOfErrorHandle;
-    DFileCopyMoveJob::Action actionOfError[DFileCopyMoveJob::UnknowError] = {DFileCopyMoveJob::NoAction};
+    DFileCopyMoveJob::Action actionOfError[DFileCopyMoveJob::UnknowError + 1] = {DFileCopyMoveJob::NoAction};
     DFileStatisticsJob *fileStatistics = nullptr;
 
     QStack<JobInfo> jobStack;

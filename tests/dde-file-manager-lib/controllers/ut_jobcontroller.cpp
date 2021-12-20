@@ -69,7 +69,7 @@ TEST_F(JobControllerTest,start_JobController){
     url.fromLocalFile("~/Videos");
     jobcontroller->timer = new QElapsedTimer();
     jobcontroller.reset(new JobController(url,QStringList(),QDir::AllEntries));
-    EXPECT_EQ(2000,jobcontroller->timeCeiling());
+    EXPECT_EQ(100,jobcontroller->timeCeiling());
     jobcontroller->setTimeCeiling(10);
     EXPECT_EQ(10,jobcontroller->timeCeiling());
     jobcontroller->setCountCeiling(100);
