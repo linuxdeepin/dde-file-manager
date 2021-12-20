@@ -53,7 +53,7 @@ private slots:
     void onScreenGeometryChanged();
     void onWmDbusStarted(QString name, QString oldOwner, QString newOwner);
     void onWorkspaceSwitched(int from, int to);
-    void onAppearanceCalueChanged(const QString& key, const QVariant& value);
+    void onAppearanceCalueChanged(const QString& key);
 
 private:
     void init();

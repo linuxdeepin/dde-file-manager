@@ -14,9 +14,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/screen
 )
 
-# temp using
-add_definitions(-DNEWGRID)
-
 set(widgets_cxx_cpp
     dfm-base/widgets/abstractbackground.cpp
     dfm-base/widgets/abstractscreen.cpp
@@ -69,6 +66,8 @@ set(core_cxx_cpp
     canvas/defaultdesktopfileinfo.cpp
     canvas/filetreater.cpp
     canvas/displayconfig.cpp
+    watermask/watermaskframe.cpp
+    watermask/deepinlicensehelper.cpp
     utils/desktoputils.cpp
     screen/screenqt.cpp
     screen/screenproxyqt.cpp
@@ -106,6 +105,8 @@ set(core_cxx_h
     canvas/defaultdesktopfileinfo.h
     canvas/filetreater.h
     canvas/displayconfig.h
+    watermask/watermaskframe.h
+    watermask/deepinlicensehelper.h
     utils/desktoputils.h
     screen/screenqt.h
     screen/screenproxyqt.h
@@ -130,7 +131,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 find_package(Dtk REQUIRED Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
-pkg_check_modules(GIO-QT REQUIRED gio-qt)
 pkg_check_modules(DtkGui REQUIRED dtkgui )
 pkg_check_modules(DtkWidget REQUIRED dtkwidget )
 
@@ -146,7 +146,6 @@ target_link_libraries(${PROJECT_NAME}
     DFM::framework
     DFMSERVICE::common
     ${DFrameworkDBus_LIBRARIES}
-    ${GIO-QT_LIBRARIES}
     ${DtkWidget_LIBRARIES}
     ${DtkGui_LIBRARIES}
     )

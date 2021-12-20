@@ -26,13 +26,15 @@
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
 
-
 #include "base/schemefactory.h"
+
+#include <QGSettings>
 
 #include <QPainter>
 #include <QDebug>
 #include <QScrollBar>
 #include <QPaintEvent>
+
 
 DSB_D_USE_NAMESPACE
 
@@ -146,7 +148,9 @@ void CanvasView::setGeometry(const QRect &rect)
     } else {
         QAbstractItemView::setGeometry(rect);
         updateGrid();
-        // todo:水印
+
+        if (d->waterMask)
+            d->waterMask->refresh();
     }
 }
 
@@ -207,6 +211,14 @@ void CanvasView::initUI()
 
     // repaint when selecting with mouse move.
     connect(BoxSelIns, &BoxSelecter::changed, this, static_cast<void (CanvasView::*)()>(&CanvasView::update));
+
+    // water mask
+    if (d->isWaterMaskOn()) {
+        Q_ASSERT(!d->waterMask);
+        d->waterMask = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json", this);
+        d->waterMask->lower();
+        d->waterMask->refresh();
+    }
 }
 
 /*!
@@ -224,9 +236,6 @@ void CanvasView::fileterAndRepaintLocalFiles(QPainter *painter, QStyleOptionView
 
     // todo:封装优化代码
     QHash<QPoint, DFMDesktopFileInfoPointer> repaintLocalFiles;
-#ifndef NEWGRID
-    repaintLocalFiles = CanvasGridManager::instance()->items(d->screenNum);
-#else
     {
         const QHash<QString, QPoint> &pos = GridIns->points(d->screenNum);
         for (auto itor = pos.begin(); itor != pos.end(); ++itor) {
@@ -240,7 +249,6 @@ void CanvasView::fileterAndRepaintLocalFiles(QPainter *painter, QStyleOptionView
         }
     }
 
-#endif
     if (repaintLocalFiles.isEmpty())
         return;
 
@@ -256,14 +264,6 @@ void CanvasView::fileterAndRepaintLocalFiles(QPainter *painter, QStyleOptionView
 
     // 重叠图标绘制(不包括最底层被覆盖的图标)
     // todo暂时没考虑堆叠的栈情况；
-#ifndef NEWGRID
-    auto overLapScreen = CanvasGridManager::instance()->overlapScreen();
-    if (-1 == overLapScreen)
-        return;
-    auto overLapItems = CanvasGridManager::instance()->overlapItems();
-
-    if (d->screenNum == overLapScreen) {
-#else
     {
         QList<DFMDesktopFileInfoPointer> overlapItems;
         auto overlap = GridIns->overloadItems(d->screenNum);
@@ -276,7 +276,7 @@ void CanvasView::fileterAndRepaintLocalFiles(QPainter *painter, QStyleOptionView
 
             overlapItems.append(info);
         }
-#endif
+
         const QPoint overlapPos(d->canvasInfo.columnCount - 1, d->canvasInfo.rowCount - 1);
         for (auto &item : overlapItems) {
             // todo：拖拽让位的一些图标保持情况
@@ -516,4 +516,12 @@ QRect CanvasViewPrivate::visualRect(const QPoint &gridPos)
     auto x = gridPos.x() * canvasInfo.gridWidth + viewMargins.left();
     auto y = gridPos.y() * canvasInfo.gridHeight + viewMargins.top();
     return QRect(x, y, canvasInfo.gridWidth, canvasInfo.gridHeight);
+}
+
+bool CanvasViewPrivate::isWaterMaskOn()
+{
+    QGSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
+    if (desktopSettings.keys().contains("water-mask"))
+        return  desktopSettings.get("water-mask").toBool();
+    return true;
 }

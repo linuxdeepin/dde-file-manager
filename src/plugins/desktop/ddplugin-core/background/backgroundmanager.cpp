@@ -26,6 +26,8 @@
 #include "utils/desktoputils.h"
 #include "screenservice.h"
 
+#include <QGSettings>
+
 #include <QImageReader>
 
 DFMBASE_USE_NAMESPACE
@@ -125,7 +127,7 @@ QString BackgroundManagerPrivate::getDefaultBackground() const
 {
     QString defaultPath;
     if (gsettings) {
-        for (const QString &path : gsettings->value("background-uris").toStringList()) {
+        for (const QString &path : gsettings->get("background-uris").toStringList()) {
             if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
                 continue;
             } else {
@@ -303,8 +305,8 @@ void BackgroundManager::onRestBackgroundManager()
         }
 
         if (!d->gsettings) {
-            d->gsettings = new DGioSettings("com.deepin.dde.appearance", "", this);
-            connect(d->gsettings, &DGioSettings::valueChanged, this, &BackgroundManager::onAppearanceCalueChanged);
+            d->gsettings = new QGSettings("com.deepin.dde.appearance", "", this);
+            connect(d->gsettings, &QGSettings::changed, this, &BackgroundManager::onAppearanceCalueChanged);
         }
 
         updateBackgroundPaths();
@@ -367,10 +369,8 @@ void BackgroundManager::onWorkspaceSwitched(int from, int to)
     resetBackgroundImage();
 }
 
-void BackgroundManager::onAppearanceCalueChanged(const QString &key, const QVariant &value)
+void BackgroundManager::onAppearanceCalueChanged(const QString &key)
 {
-    Q_UNUSED(value);
-
     if (QStringLiteral("background-uris") == key) {
         updateBackgroundPaths();
         resetBackgroundImage();

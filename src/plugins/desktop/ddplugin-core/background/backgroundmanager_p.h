@@ -24,14 +24,13 @@
 #include "background/backgroundmanager.h"
 
 #include <com_deepin_wm.h>
-#include <dgiosettings.h>
 
 #include <DWindowManagerHelper>
 
 #include <QObject>
 
 using WMInter = com::deepin::wm;
-
+class QGSettings;
 DSB_D_BEGIN_NAMESPACE
 
 class ScreenService;
@@ -51,7 +50,7 @@ public:
 public:
     BackgroundManager *const q = nullptr;
     WMInter *wmInter = nullptr;
-    DGioSettings *gsettings = nullptr;
+    QGSettings *gsettings = nullptr;
     Dtk::Gui::DWindowManagerHelper* windowManagerHelper = nullptr;
     ScreenService *screenService = nullptr;
     QMap<QString, dfmbase::BackgroundWidgetPointer> backgroundWidgets;

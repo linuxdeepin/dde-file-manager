@@ -23,6 +23,7 @@
 #define CANVASVIEW_P_H
 
 #include "canvasview.h"
+#include "watermask/watermaskframe.h"
 #include "view/canvasmodel.h"
 #include "gridcoordinate.h"
 
@@ -58,6 +59,8 @@ public:
     void updateGridSize(const QSize &viewSize, const QMargins &geometryMargins, const QSize &itemSize);
     QMargins calcMargins(const QSize &inSize, const QSize &outSize);
     QRect visualRect(const QPoint &gridPos);
+
+    bool isWaterMaskOn();
 public:
     inline GridCoordinate gridCoordinate(int index)
     {
@@ -82,6 +85,7 @@ protected:
     QPoint dragTargetGrid { QPoint(-1, -1) };
 private:
     CanvasView *q;
+    WaterMaskFrame *waterMask = nullptr;
 };
 
 DSB_D_END_NAMESPACE
