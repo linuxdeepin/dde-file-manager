@@ -189,6 +189,8 @@ void DRootFileManager::startQuryRootFile()
     lk.unlock();
 
     connect(d_ptr->m_jobcontroller, &JobController::addChildren, this, [this](const DAbstractFileInfoPointer & chi) {
+        if (!chi)
+            return;
         QMutexLocker locker(&d_ptr->rootfileMtx);
         if (!d_ptr->rootfilelist.contains(chi->fileUrl()) && chi->exists()) {
             d_ptr->rootfilelist.insert(chi->fileUrl(), chi);
