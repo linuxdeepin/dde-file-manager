@@ -1135,7 +1135,6 @@ TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_select){
     EXPECT_TRUE(expectValue);
 }
 
-
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection){
     ASSERT_NE(m_canvasGridView, nullptr);
     m_canvasGridView->d->mousePressed = false;
@@ -1254,17 +1253,6 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_two){
     bottomLeftAfterSelects = m_canvasGridView->selectedUrls();
     bool expectValueBlTwo = bottomLeftBeforeSelects != bottomLeftAfterSelects && 0 == bottomLeftBeforeSelects.size() && 1 == bottomLeftAfterSelects.size();
     EXPECT_TRUE(expectValueBlTwo);
-}
-
-TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_selectedIndexCount){
-    ASSERT_NE(m_canvasGridView, nullptr);
-
-    TestHelper::runInLoop([](){}, 200);
-    m_canvasGridView->selectAll();
-    auto tempCnt1 = m_canvasGridView->selectionModel()->selectedIndexes().size();
-    auto tempCnt2= GridManager::instance()->allItems().size();
-    auto expectValue = tempCnt1 == tempCnt2;
-    EXPECT_TRUE(expectValue);
 }
 
 TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_selectedUrls){
@@ -2117,4 +2105,17 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_three){
     auto lastSelect = m_canvasGridView->selectedUrls();
     EXPECT_NO_FATAL_FAILURE(0 == lastSelect.size());
     m_canvasGridView->selectionModel()->clearSelection();
+    TestHelper::runInLoop([](){}, 5000);
+}
+
+TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_selectedIndexCount){
+    ASSERT_NE(m_canvasGridView, nullptr);
+    TestHelper::runInLoop([](){}, 15000);
+    m_canvasGridView->setCurrentUrl(m_canvasGridView->currentUrl());
+    TestHelper::runInLoop([](){}, 500);
+    m_canvasGridView->selectAll();
+    auto tempCnt1 = m_canvasGridView->selectionModel()->selectedIndexes().size();
+    auto tempCnt2= GridManager::instance()->allItems().size();
+    auto expectValue = tempCnt1 == tempCnt2;
+    EXPECT_TRUE(expectValue);
 }

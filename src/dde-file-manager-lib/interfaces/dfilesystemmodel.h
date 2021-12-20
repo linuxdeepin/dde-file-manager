@@ -261,7 +261,7 @@ private:
     void clear();
 
     void setState(State state);
-    void onJobAddChildren(const DAbstractFileInfoPointer &fileInfo);
+    void onJobAddChildren(const DAbstractFileInfoPointer fileInfo, const bool isEnd);
     void onJobFinished();
     void addFile(const DAbstractFileInfoPointer &fileInfo);
 
@@ -269,6 +269,7 @@ private:
     void selectAndRenameFile(const DUrl &fileUrl);
 
     bool beginRemoveRows(const QModelIndex &parent, int first, int last);
+    void sortByMySelf(QList<FileSystemNodePointer> &list,const DAbstractFileInfo::CompareFunction &sortFun);
     void endRemoveRows();
     //fix bug释放jobcontroller
     bool releaseJobController();

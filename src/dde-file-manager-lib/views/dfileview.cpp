@@ -1420,7 +1420,10 @@ void DFileView::delayUpdateStatusBar()
     }
 
     //判断网络文件是否可以到达
-    if (DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
+    DFileSystemModel * curModel = qobject_cast<DFileSystemModel *>(model());
+        if (!rootUrl().isSearchFile() && curModel &&
+                curModel->state() == DFileSystemModel::Idle &&
+                DFileService::instance()->checkGvfsMountfileBusy(rootUrl())) {
         d->updateStatusBarTimer->stop();
         return;
     }
