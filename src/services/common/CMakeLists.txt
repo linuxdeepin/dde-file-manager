@@ -33,7 +33,7 @@ FILE(GLOB JOB_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/trashfiles/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/fileoperationutils/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/fileoperationutils/*.cpp"
-    )
+)
 
 FILE(GLOB DIALOG_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/*.h"
@@ -44,7 +44,7 @@ FILE(GLOB DIALOG_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/propertydialog/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/mountpasswddialog/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/mountpasswddialog/*.cpp"
-    )
+)
 
 FILE(GLOB MENU_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/menu/*.h"
@@ -53,7 +53,7 @@ FILE(GLOB MENU_FILES
 #    "${CMAKE_CURRENT_SOURCE_DIR}/menu/menucore/private/*.h"
 #    "${CMAKE_CURRENT_SOURCE_DIR}/menu/menucore/*.h"
 #    "${CMAKE_CURRENT_SOURCE_DIR}/menu/menucore/*.cpp"
-    )
+)
 
 add_library(${PROJECT_NAME}
     SHARED

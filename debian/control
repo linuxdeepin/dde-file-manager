@@ -24,6 +24,9 @@ Build-Depends:
  libgtest-dev,
  libgmock-dev,
  libgsettings-qt-dev,
+ liblucene++-dev,
+ libdocparser-dev,
+ libboost-filesystem-dev,
  deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
@@ -115,6 +118,9 @@ Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
+ libdocparser,
+ liblucene++0v5,
+ liblucene++-contrib0v5
 Multi-Arch: same
 Description: DDE File Manager Service library
  This package contains the shared libraries.

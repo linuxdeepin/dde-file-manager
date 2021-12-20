@@ -36,15 +36,22 @@ FILE(GLOB SIDEBAR_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/sidebar/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/sidebar/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/sidebar/private/*.cpp"
-    )
+)
 
 FILE(GLOB TITLEBAR_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/titlebar/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/titlebar/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/titlebar/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/titlebar/private/*.cpp"
-    )
+)
 
+FILE(GLOB SEARCH_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/fulltextsearch/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/fulltextsearch/*.cpp"
+)
 
 add_library(
     ${PROJECT_NAME}
@@ -54,10 +61,16 @@ add_library(
     ${VAULT_FILES}
     ${SIDEBAR_FILES}
     ${TITLEBAR_FILES}
+    ${SEARCH_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)
 find_package(Qt5 COMPONENTS X11Extras REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+#full-text search dependences
+pkg_check_modules(Lucene REQUIRED IMPORTED_TARGET liblucene++ liblucene++-contrib)
+pkg_check_modules(Docparser REQUIRED IMPORTED_TARGET docparser)
 
 add_library(DFMSERVICE::filemanager ALIAS ${PROJECT_NAME})
 
@@ -78,7 +91,8 @@ target_link_libraries(${PROJECT_NAME}
     DFMSERVICE::common
     Qt5::X11Extras
     ${DtkWidget_LIBRARIES}
-
+    PkgConfig::Lucene
+    PkgConfig::Docparser
 )
 
 #install library file
