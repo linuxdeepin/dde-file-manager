@@ -22,21 +22,26 @@ public:
     ~FileSystemNode();
     QVariant dataByRole(int role);
     void setNodeVisible(const FileSystemNodePointer &node, bool visible);
+    void sortAllChildren(const DAbstractFileInfo::CompareFunction &sortFun, const Qt::SortOrder &order, const bool *cancel);
     void applyFileFilter(std::shared_ptr<FileFilter> filter);
     bool shouldHideByFilterRule(std::shared_ptr<FileFilter> filter);
     void noLockInsertChildren(int index, const DUrl &url, const FileSystemNodePointer &node);
-    void insertChildren(int index, const DUrl &url, const FileSystemNodePointer &node);
+    void insertChildren(int index, const DUrl &url, const FileSystemNodePointer &node, const bool *isCache);
+    int insertChildren(const DUrl &url, const FileSystemNodePointer &node, const DAbstractFileInfo::CompareFunction &sortFun,
+                       const Qt::SortOrder &order);
     void noLockAppendChildren(const DUrl &url, const FileSystemNodePointer &node);
+    void appendUnVisibaleChildren(const DUrl &url, const FileSystemNodePointer &node);
     void appendChildren(const DUrl &url, const FileSystemNodePointer &node);
     FileSystemNodePointer getNodeByUrl(const DUrl &url);
     FileSystemNodePointer getNodeByIndex(int index);
     FileSystemNodePointer takeNodeByUrl(const DUrl &url);
-    FileSystemNodePointer takeNodeByIndex(const int index);
+    FileSystemNodePointer takeNodeByIndex(const int index, const bool *isCache);
     int indexOfChild(const FileSystemNodePointer &node);
     int indexOfChild(const DUrl &url);
     int childrenCount();
     QList<FileSystemNodePointer> getChildrenList() const;
     DUrlList getChildrenUrlList();
+    QHash<DUrl, FileSystemNodePointer> getChildrenMap() const;
     void setChildrenList(const QList<FileSystemNodePointer> &list);
     void setChildrenMap(const QHash<DUrl, FileSystemNodePointer> &map);
     void clearChildren();
@@ -44,6 +49,10 @@ public:
     void addFileSystemNode(const FileSystemNodePointer &node);
     void removeFileSystemNode(const FileSystemNodePointer &node);
     const FileSystemNodePointer getFileSystemNode(FileSystemNode *parent);
+    void setChildren(const QHash<DUrl, FileSystemNodePointer> &map,
+                     const QList<FileSystemNodePointer> &list, bool &isInsertCache,
+                     const DAbstractFileInfo::CompareFunction &sortFun,
+                     const Qt::SortOrder &order, const bool &isCancel);
 public:
     DAbstractFileInfoPointer fileInfo;
     FileSystemNode *parent = Q_NULLPTR;
@@ -52,6 +61,7 @@ private:
     QHash<DUrl, FileSystemNodePointer> children;
     //fix bug 31225,if children clear,another thread useing visibleChildren will crush,so use FileSystemNodePointer
     QList<FileSystemNodePointer> visibleChildren;
+    QMap<DUrl, FileSystemNodePointer> removeCacheChildren, insertCacheChildren;
     DFileSystemModel *m_dFileSystemModel = nullptr;
     QReadWriteLock *rwLock = nullptr;
 };
@@ -177,11 +187,19 @@ public:
     {
         return static_cast<DFileSystemModel *>(parent());
     }
-    void addFile(const DAbstractFileInfoPointer &info, bool append = false);
+    void addFile(const DAbstractFileInfoPointer &info, bool append, bool isEnd);
     void removeFile(const DAbstractFileInfoPointer &info);
     void setRootNode(const FileSystemNodePointer &node);
     void setEnable(bool enable);
     void stop();
+    void setJobFinisded(const bool isFinisded) {
+        jobFinisded = isFinisded;
+    }
+    void setStart();
+    bool hasUpdateChildren() const;
+    bool *isInsertCaches();
+    bool isFileQueueEmpty();
+    QPair<EventType, DAbstractFileInfoPointer> dequeueFileQueue();
 private:
     void run() override;
 
@@ -189,7 +207,11 @@ private:
     QTimer *waitTimer;
     LockFreeQueue<QPair<EventType, DAbstractFileInfoPointer>> fileQueue;
     FileSystemNodePointer rootNode;
-    QAtomicInteger<bool> enable;
+    QAtomicInteger<bool> enable{false};
+    QAtomicInteger<bool> canStart{false};
+    QAtomicInteger<bool> jobFinisded{false};
+    QMutex mutex;
+    bool isInsertCache{false};
     QSemaphore semaphore;
 };
 
@@ -239,6 +261,7 @@ public:
     QPointer<JobController> jobController;
     QEventLoop *eventLoop = Q_NULLPTR;
     QFuture<void> updateChildrenFuture;
+    QFuture<bool> sortFuture;
     QAtomicInteger<bool> needQuitUpdateChildren;
     DAbstractFileWatcher *watcher = Q_NULLPTR;
     std::shared_ptr<FileFilter> advanceSearchFilter;
@@ -264,6 +287,7 @@ public:
     // 每列包含多个role时，存储此列活跃的role
     QMap<int, int> columnActiveRole;
     mutable QMap<DUrl, bool> nameFiltersMatchResultMap;
+
     Q_DECLARE_PUBLIC(DFileSystemModel)
 };
 
