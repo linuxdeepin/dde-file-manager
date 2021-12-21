@@ -49,7 +49,9 @@ public:
 
     void setItems(const QStringList &items);
     QStringList items(int index = -1) const;
+    QString item(int index, const QPoint &pos) const;
     QHash<QString, QPoint> points(int index) const;
+    bool point(const QString &item, QPair<int, QPoint> &pos) const;
 
     QStringList overloadItems(int index) const;
 

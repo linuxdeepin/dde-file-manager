@@ -57,9 +57,15 @@ set(core_cxx_cpp
     canvas/canvasmanager.cpp
     canvas/view/canvasview.cpp
     canvas/view/canvasmodel.cpp
-    canvas/view/canvasitemdelegate.cpp
+    canvas/view/canvasselectionmodel.cpp
     canvas/view/gridcoordinate.cpp
     canvas/view/operator/boxselecter.cpp
+    canvas/view/operator/viewpainter.cpp
+    canvas/delegate/canvasitemdelegate.cpp
+    canvas/delegate/elidetextlayout.cpp
+    canvas/delegate/expandeditem.cpp
+    canvas/delegate/tagtextformat.cpp
+    canvas/delegate/filetagobjectinterface.cpp
     canvas/canvasgridmanager.cpp
     canvas/grid/canvasgrid.cpp
     canvas/grid/gridcore.cpp
@@ -93,10 +99,16 @@ set(core_cxx_h
     canvas/view/canvasview_p.h
     canvas/view/canvasview.h
     canvas/view/canvasmodel.h
-    canvas/view/canvasitemdelegate.h
-    canvas/view/canvasitemdelegate_p.h
     canvas/view/gridcoordinate.h
+    canvas/view/canvasselectionmodel.h
     canvas/view/operator/boxselecter.h
+    canvas/view/operator/viewpainter.h
+    canvas/delegate/canvasitemdelegate_p.h
+    canvas/delegate/canvasitemdelegate.h
+    canvas/delegate/elidetextlayout.h
+    canvas/delegate/expandeditem.h
+    canvas/delegate/tagtextformat.h
+    canvas/delegate/filetagobjectinterface.h
     canvas/canvasgridmanager.h
     canvas/grid/canvasgrid.h
     canvas/grid/canvasgrid_p.h

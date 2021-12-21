@@ -38,14 +38,14 @@ class FileTreater : public QObject
 public:
     static FileTreater *instance();
     void init();
-    DFMDesktopFileInfoPointer getFileByUrl(const QString &url);
-    DFMDesktopFileInfoPointer getFileByIndex(int index);
+    DFMDesktopFileInfoPointer file(const QString &url);
+    DFMDesktopFileInfoPointer file(int index);
 
     QList<DFMDesktopFileInfoPointer> &sortFiles(QList<AbstractFileInfo *> &fileInfoLst, QString &str);
     QList<DFMDesktopFileInfoPointer> &getFiles();
     int indexOfChild(DFMDesktopFileInfoPointer info);
     int fileCount();
-    QString &homePath();
+    QString homePath();
     bool isDone();
 
 protected:

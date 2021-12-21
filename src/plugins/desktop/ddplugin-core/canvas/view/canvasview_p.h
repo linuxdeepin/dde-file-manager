@@ -25,6 +25,7 @@
 #include "canvasview.h"
 #include "watermask/watermaskframe.h"
 #include "view/canvasmodel.h"
+#include "view/canvasselectionmodel.h"
 #include "gridcoordinate.h"
 
 #include <QDebug>
@@ -35,6 +36,7 @@ class CanvasViewPrivate : public QObject
 {
     Q_OBJECT
     friend class CanvasView;
+    friend class ViewPainter;
 public:
     struct CanvasInfo
     {
@@ -48,6 +50,10 @@ public:
 
         }
 
+        inline int gridCount() const {
+            return columnCount * rowCount;
+        }
+
         int rowCount = 1;
         int columnCount = 1;
         int gridWidth = 1;
@@ -58,8 +64,9 @@ public:
     ~CanvasViewPrivate();
     void updateGridSize(const QSize &viewSize, const QMargins &geometryMargins, const QSize &itemSize);
     QMargins calcMargins(const QSize &inSize, const QSize &outSize);
-    QRect visualRect(const QPoint &gridPos);
-
+    QRect visualRect(const QPoint &gridPos) const;
+    QRect visualRect(const QString &item) const;
+    QString visualItem(const QPoint &gridPos) const;
     bool isWaterMaskOn();
 public:
     inline GridCoordinate gridCoordinate(int index)
@@ -72,6 +79,23 @@ public:
         return pos.x() * canvasInfo.rowCount + pos.y();
     }
 
+    inline QPoint overlapPos() const {
+        return QPoint(canvasInfo.columnCount - 1, canvasInfo.rowCount - 1);
+    }
+
+    inline QPoint gridAt(const QPoint &viewPos) const {
+        auto row = (viewPos.x() - viewMargins.left()) / canvasInfo.gridWidth;
+        auto col = (viewPos.y() - viewMargins.top()) / canvasInfo.gridHeight;
+        return QPoint(row, col);
+    }
+
+    inline QRect itemRect(const QString &item) const {
+        return visualRect(item).marginsRemoved(gridMargins);
+    }
+
+    QRect itemRect(const QPoint &gridPos) const {
+        return visualRect(gridPos).marginsRemoved(gridMargins);
+    }
 protected:
     static const QMargins gridMiniMargin;
     static const QSize dockReserveSize;

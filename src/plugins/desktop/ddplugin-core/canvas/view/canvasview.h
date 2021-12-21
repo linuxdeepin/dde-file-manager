@@ -22,13 +22,13 @@
 #ifndef CANVASVIEW_H
 #define CANVASVIEW_H
 #include "defaultdesktopfileinfo.h"
+#include "dfm_desktop_service_global.h"
 
 #include <QAbstractItemView>
 
-#include "dfm_desktop_service_global.h"
-
 DSB_D_BEGIN_NAMESPACE
 class CanvasModel;
+class CanvasSelectionModel;
 class CanvasItemDelegate;
 class CanvasViewPrivate;
 class CanvasView : public QAbstractItemView
@@ -49,29 +49,24 @@ public:
     virtual bool isIndexHidden(const QModelIndex &index) const override;
     virtual void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override;
     virtual QRegion visualRegionForSelection(const QItemSelection &selection) const override;
-
+    QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;
 public:
     void setScreenNum(const int screenNum);
     int screenNum() const;
     CanvasItemDelegate *itemDelegate() const;
-    CanvasModel *canvasModel() const;
+    CanvasModel *model() const;
+    CanvasSelectionModel *selectionModel() const;
     void setGeometry(const QRect &rect);
     void updateGrid();
+public:
+    bool isTransparent(const QModelIndex &index) const;
+    QList<QIcon> additionalIcon(const QModelIndex &index) const;
+protected:
+    QRect itemRect(const QModelIndex &index) const;
 
-    QString fileDisplayNameRole(const QModelIndex &index);
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
-private:
-    //todo(lq) using class painthelper to do all painting mission.
-    void fileterAndRepaintLocalFiles(QPainter *painter, QStyleOptionViewItem &option, QPaintEvent *event);
-    bool isRepaintFlash(QStyleOptionViewItem &option, QPaintEvent *event, const QPoint pos);
-
-    void drawGirdInfos(QPainter *painter);
-    void drawDodge(QPainter *painter);
-    void drawLocalFile(QPainter *painter, QStyleOptionViewItem &option, bool enabled, const QPoint pos, const DFMDesktopFileInfoPointer &file);
-    void drawSelectRect(QPainter *painter);
-    void drawDragMove(QPainter *painter, QStyleOptionViewItem &option);
 
 private:
     QScopedPointer<CanvasViewPrivate> d;

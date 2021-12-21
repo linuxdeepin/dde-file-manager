@@ -149,9 +149,30 @@ QStringList CanvasGrid::items(int index) const
     return ret;
 }
 
+QString CanvasGrid::item(int index, const QPoint &pos) const
+{
+    return d->posItem[index].value(pos);
+}
+
 QHash<QString, QPoint> CanvasGrid::points(int index) const
 {
     return d->itemPos.value(index);
+}
+
+bool CanvasGrid::point(const QString &item, QPair<int, QPoint> &pos) const
+{
+    if (item.isEmpty())
+        return false;
+
+    for (auto itor = d->itemPos.begin(); itor != d->itemPos.end(); ++itor) {
+        if (itor->contains(item)) {
+            pos.first = itor.key();
+            pos.second = itor->value(item);
+            return true;
+        }
+    }
+
+    return false;
 }
 
 QStringList CanvasGrid::overloadItems(int index) const

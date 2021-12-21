@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liqiang<liqianga@uniontech.com>
  *
@@ -18,75 +18,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASITEMDELEGATE_P_H
-#define CANVASITEMDELEGATE_P_H
+#ifndef EXPANDEDITEM_H
+#define EXPANDEDITEM_H
 
-#include "canvasitemdelegate.h"
+#include "dfm_desktop_service_global.h"
 
-#include <QPointer>
-#include <QTextDocument>
+#include <QWidget>
+#include <QModelIndex>
+#include <QStyleOptionViewItem>
 
 DSB_D_BEGIN_NAMESPACE
 
+class CanvasItemDelegate;
 class ExpandedItem : public QWidget
 {
     Q_OBJECT
-
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
-
 public:
-    explicit ExpandedItem(CanvasItemDelegate *d, QWidget *parent = nullptr)
-        : QWidget(parent), delegate(d)
-    {
-    }
-
+    explicit ExpandedItem(CanvasItemDelegate *d, QWidget *parent = nullptr);
     bool event(QEvent *ee) override;
-    qreal opacity() const;
-    void setOpacity(qreal opacity);
     void paintEvent(QPaintEvent *) override;
     QSize sizeHint() const override;
     int heightForWidth(int width) const override;
     void setIconPixmap(const QPixmap &pixmap, int height);
+    qreal opacity() const;
+    void setOpacity(qreal opacity);
     QRectF iconGeometry() const;
     QRectF textGeometry(int width = -1) const;
 
 public:
+    int iconHeight { 0 };
+    qreal expandItemOpactity { 1 };
+    bool canDeferredDelete { true };
     QPixmap iconPixmap;
-    int iconHeight = 0;
     mutable QRectF textBounding;
     QModelIndex index;
     QStyleOptionViewItem option;
-    qreal m_opactity = 1;
-    bool canDeferredDelete = true;
-    CanvasItemDelegate *delegate;
-};
-
-class CanvasItemDelegatePrivate
-{
-    friend class CanvasItemDelegate;
-
-public:
-    explicit CanvasItemDelegatePrivate(CanvasItemDelegate *qq)
-        : q(qq)
-    {
-        iconSizes << 32 << 48 << 64 << 96 << 128;
-    }
-    ~CanvasItemDelegatePrivate() {}
-
-public:
-    QPointer<ExpandedItem> expandedItem;
-    mutable QModelIndex expandedIndex;
-    mutable QModelIndex editingIndex;
-    mutable QModelIndex lastAndExpandedIndex;
-
-    QSize itemSizeHint;
-    int textLineHeight = -1;
-    int iconLevel = -1;
-    QList<int> iconSizes;
-
-    QTextDocument *document = nullptr;
-    CanvasItemDelegate *const q;
+    CanvasItemDelegate *delegate { nullptr };
 };
 
 DSB_D_END_NAMESPACE
-#endif   // CANVASITEMDELEGATE_P_H
+#endif // EXPANDEDITEM_H

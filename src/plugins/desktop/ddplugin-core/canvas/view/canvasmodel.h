@@ -73,6 +73,7 @@ public:
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
+    QUrl url(const QModelIndex &index) const;
 private:
     QVariant dataByRole(const DefaultDesktopFileInfo *fileInfo, int role) const;
     QModelIndex createIndexByFileInfo(const DFMDesktopFileInfoPointer &fileInfo, int column) const;

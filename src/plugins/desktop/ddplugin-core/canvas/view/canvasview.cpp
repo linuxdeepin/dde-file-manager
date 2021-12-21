@@ -22,7 +22,8 @@
 
 #include "view/canvasview_p.h"
 #include "operator/boxselecter.h"
-#include "canvasitemdelegate.h"
+#include "operator/viewpainter.h"
+#include "delegate/canvasitemdelegate.h"
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
 
@@ -47,8 +48,7 @@ CanvasView::CanvasView(QWidget *parent)
 
 QRect CanvasView::visualRect(const QModelIndex &index) const
 {
-    Q_UNUSED(index)
-    return QRect();
+    return d->visualRect(model()->url(index).toString());
 }
 
 void CanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint) {
@@ -58,7 +58,24 @@ void CanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHin
 
 QModelIndex CanvasView::indexAt(const QPoint &point) const
 {
-    Q_UNUSED(point)
+    QString item = d->visualItem(d->gridAt(point));
+    QModelIndex rowIndex = model()->index(item, 0);
+    auto listRect = itemPaintGeomertys(rowIndex);
+
+    // icon rect
+    if (listRect.size() > 0 && listRect.at(0).contains(point))
+        return rowIndex;
+
+    if (listRect.size() > 2) {
+        QRect label = listRect.at(1);
+        QRect text = listRect.at(2);
+
+        //identification area is text rect spread upward to label.
+        text.setTop(label.top());
+        if (text.contains(point))
+            return rowIndex;
+    }
+
     return QModelIndex();
 }
 
@@ -96,29 +113,34 @@ QRegion CanvasView::visualRegionForSelection(const QItemSelection &selection) co
     return QRegion();
 }
 
+QList<QRect> CanvasView::itemPaintGeomertys(const QModelIndex &index) const
+{
+    QStyleOptionViewItem option = viewOptions();
+    option.rect = itemRect(index);
+    return itemDelegate()->paintGeomertys(option, index);
+}
+
 void CanvasView::paintEvent(QPaintEvent *event)
 {
-    QPainter painter(viewport());
+    ViewPainter painter(d.get());
     painter.setRenderHints(QPainter::HighQualityAntialiasing);
 
-    auto option = viewOptions();
-    option.textElideMode = Qt::ElideMiddle;
-    painter.setBrush(QColor(255, 0, 0, 0));
-
     // debug网格信息展示
-    drawGirdInfos(&painter);
+    painter.drawGirdInfos();
 
     // todo:让位
-    drawDodge(&painter);
+    painter.drawDodge();
 
     // 桌面文件绘制
-    fileterAndRepaintLocalFiles(&painter, option, event);
+    auto option = viewOptions();
+
+    painter.paintFiles(option, event);
 
     // 绘制选中区域
-    drawSelectRect(&painter);
+    painter.drawSelectRect();
 
     // todo: 拖动绘制
-    drawDragMove(&painter, option);
+    painter.drawDragMove(option);
 }
 
 void CanvasView::setScreenNum(const int screenNum)
@@ -136,9 +158,14 @@ CanvasItemDelegate *CanvasView::itemDelegate() const
     return qobject_cast<CanvasItemDelegate *>(QAbstractItemView::itemDelegate());
 }
 
-CanvasModel *CanvasView::canvasModel() const
+CanvasModel *CanvasView::model() const
 {
     return qobject_cast<CanvasModel *>(QAbstractItemView::model());
+}
+
+CanvasSelectionModel *CanvasView::selectionModel() const
+{
+    return qobject_cast<CanvasSelectionModel *>(QAbstractItemView::selectionModel());
 }
 
 void CanvasView::setGeometry(const QRect &rect)
@@ -172,11 +199,26 @@ void CanvasView::updateGrid()
     update();
 }
 
-QString CanvasView::fileDisplayNameRole(const QModelIndex &index)
+bool CanvasView::isTransparent(const QModelIndex &index) const
 {
-    if (index.isValid())
-        return index.data(CanvasModel::FileDisplayNameRole).toString();
-    return QString();
+    Q_UNUSED(index)
+    // TODO(Lee): cut and staging files are transparent
+
+    return false;
+}
+
+QList<QIcon> CanvasView::additionalIcon(const QModelIndex &index) const
+{
+    Q_UNUSED(index)
+    QList<QIcon> list;
+    // TODO(LIQIANG)： get additional Icon
+
+    return list;
+}
+
+QRect CanvasView::itemRect(const QModelIndex &index) const
+{
+    return d->itemRect(model()->url(index).toString());;
 }
 
 void CanvasView::mousePressEvent(QMouseEvent *event)
@@ -187,8 +229,16 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
     }
 
     auto index = indexAt(event->pos());
-    if (!index.isValid())
+    if (!index.isValid()) {
         BoxSelIns->beginSelect(event->globalPos(), true);
+    } else {
+        selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+        update();
+        return;
+    }
+
+    // todo(zy)
+    selectionModel()->clear();
 }
 
 void CanvasView::initUI()
@@ -219,207 +269,6 @@ void CanvasView::initUI()
         d->waterMask->lower();
         d->waterMask->refresh();
     }
-}
-
-/*!
-    待显示文件过滤和绘制，包括堆叠文件绘制，传入参数\a painter用于绘制，\a option绘制项相关信息，
-    \a event绘制事件信息(包括重叠区域、待更新区域等信息)
-*/
-void CanvasView::fileterAndRepaintLocalFiles(QPainter *painter, QStyleOptionViewItem &option, QPaintEvent *event)
-{
-    Q_UNUSED(painter)
-    Q_UNUSED(option)
-    Q_UNUSED(event)
-
-    const QStyle::State state = option.state;
-    const bool enabled = (state & QStyle::State_Enabled) != 0;
-
-    // todo:封装优化代码
-    QHash<QPoint, DFMDesktopFileInfoPointer> repaintLocalFiles;
-    {
-        const QHash<QString, QPoint> &pos = GridIns->points(d->screenNum);
-        for (auto itor = pos.begin(); itor != pos.end(); ++itor) {
-            auto info = DFMBASE_NAMESPACE::InfoFactory::create<DefaultDesktopFileInfo>(itor.key());
-            if (!info){
-                qWarning() << "create file info failed" << itor.key();
-                continue;
-            }
-
-            repaintLocalFiles.insert(itor.value(), info);
-        }
-    }
-
-    if (repaintLocalFiles.isEmpty())
-        return;
-
-    // 非重叠部分(有重叠时包括重叠位置被覆盖的最底层图标)
-    for (auto fileItr = repaintLocalFiles.begin(); fileItr != repaintLocalFiles.end(); ++fileItr) {
-        // todo:暂不考虑拖拽
-
-        auto needPaint = isRepaintFlash(option, event, fileItr.key());
-        if (!needPaint)
-            continue;
-        drawLocalFile(painter, option, enabled, fileItr.key(), fileItr.value());
-    }
-
-    // 重叠图标绘制(不包括最底层被覆盖的图标)
-    // todo暂时没考虑堆叠的栈情况；
-    {
-        QList<DFMDesktopFileInfoPointer> overlapItems;
-        auto overlap = GridIns->overloadItems(d->screenNum);
-        for (auto itor = overlap.begin(); itor != overlap.end(); ++itor) {
-            auto info = DFMBASE_NAMESPACE::InfoFactory::create<DefaultDesktopFileInfo>(*itor);
-            if (!info){
-                qWarning() << "create file info failed" << *itor;
-                continue;
-            }
-
-            overlapItems.append(info);
-        }
-
-        const QPoint overlapPos(d->canvasInfo.columnCount - 1, d->canvasInfo.rowCount - 1);
-        for (auto &item : overlapItems) {
-            // todo：拖拽让位的一些图标保持情况
-
-            auto needPaint = isRepaintFlash(option, event, overlapPos);
-            if (!needPaint)
-                continue;
-            drawLocalFile(painter, option, enabled, overlapPos, item);
-        }
-    }
-}
-
-/*!
- * \brief 指定布局坐标位置是否重绘刷新
- * \param option item样式信息
- * \param event 绘制事件
- * \param pos 指定布局坐标位置
- * \return 返回刷新与否，true:刷新；false,不刷新
- */
-bool CanvasView::isRepaintFlash(QStyleOptionViewItem &option, QPaintEvent *event, const QPoint pos)
-{
-    option.rect = d->visualRect(pos);
-    auto repaintRect = event->rect();
-    // 刷新区域判定，跳过不刷新的区域
-    bool needflash = false;
-    for (auto &rr : event->region().rects()) {
-        if (rr.intersects(option.rect)) {
-            needflash = true;
-            break;
-        }
-    }
-
-    // 不需要刷新和重绘
-    if (!needflash || !repaintRect.intersects(option.rect))
-        return false;
-    return true;
-}
-
-/*!
-    绘制显示栅格信息。当debug_show_grid变量为true时绘制栅格信息，反之不绘制，传入参数\a painter用于绘制。
-*/
-void CanvasView::drawGirdInfos(QPainter *painter)
-{
-    if (!d->showGrid)
-        return;
-
-    painter->save();
-    painter->setPen(QPen(Qt::red, 2));
-
-    for (int i = 0; i < d->canvasInfo.columnCount * d->canvasInfo.rowCount; ++i) {
-        // todo:CellMargins计算有点偏移
-        auto pos = d->gridCoordinate(i);
-        auto rect = d->visualRect(pos.point());
-
-        int rowMode = pos.x() % 2;
-        int colMode = pos.y() % 2;
-        auto color = (colMode == rowMode) ? QColor(0, 0, 255, 32) : QColor(255, 0, 0, 32);
-        painter->fillRect(rect, color);
-
-        // drag target
-        if (pos.point() == d->dragTargetGrid)
-            painter->fillRect(rect, Qt::green);
-
-        painter->drawText(rect, QString("%1-%2").arg(pos.x()).arg(pos.y()));
-
-    }
-    painter->restore();
-}
-
-/*!
-    让位相关绘制，由成员变量startDodge控制，startDodge为true进行让位相关绘制，传入参数\a painter用于绘制。
-*/
-void CanvasView::drawDodge(QPainter *painter)
-{
-    Q_UNUSED(painter)
-}
-
-void CanvasView::drawLocalFile(QPainter *painter, QStyleOptionViewItem &option,
-                                      bool enabled, const QPoint pos,
-                                      const DFMDesktopFileInfoPointer &file)
-{
-    // todo：拖拽让位的一些图标保持情况
-
-    option.rect = d->visualRect(pos);
-
-    auto tempModel = qobject_cast<CanvasModel *>(QAbstractItemView::model());
-    auto index = tempModel->index(file);
-    if (!index.isValid())
-        return;
-    if (selectionModel() && selectionModel()->isSelected(index)) {
-        option.state |= QStyle::State_Selected;
-    }
-    if (enabled) {
-        // todo: to understand
-        QPalette::ColorGroup cg;
-        if ((model()->flags(index) & Qt::ItemIsEnabled) == 0) {
-            option.state &= ~QStyle::State_Enabled;
-            cg = QPalette::Disabled;
-        } else {
-            cg = QPalette::Normal;
-        }
-        option.palette.setCurrentColorGroup(cg);
-    }
-
-    // todo: focus item style set
-
-    option.state &= ~QStyle::State_MouseOver;
-    painter->save();
-
-    // todo: debug 图标geomtry信息
-    this->itemDelegate()->paint(painter, option, index);
-    painter->restore();
-}
-
-/*!
-    选择文件状态哦绘制，绘制鼠标左键框选蒙版，参数\a painter用于绘制。
-*/
-void CanvasView::drawSelectRect(QPainter *painter)
-{
-    // is selecting. isBeginFrom is to limit only select on single view.
-    if (!BoxSelIns->isAcvite() || !BoxSelIns->isBeginFrom(this))
-        return;
-
-    QRect selectRect = BoxSelIns->validRect(this);
-    if (selectRect.isValid()) {
-        QStyleOptionRubberBand opt;
-        opt.initFrom(this);
-        opt.shape = QRubberBand::Rectangle;
-        opt.opaque = false;
-        opt.rect = selectRect;
-        painter->save();
-        style()->drawControl(QStyle::CE_RubberBand, &opt, painter);
-        painter->restore();
-    }
-}
-
-/*!
-    文件拖动相关绘制，参数\a painter用于绘制， \a option拖动绘制项相关信息
-*/
-void CanvasView::drawDragMove(QPainter *painter, QStyleOptionViewItem &option)
-{
-    Q_UNUSED(painter)
-    Q_UNUSED(option)
 }
 
 const QMargins CanvasViewPrivate::gridMiniMargin = QMargins(2, 2, 2, 2);
@@ -511,11 +360,33 @@ QMargins CanvasViewPrivate::calcMargins(const QSize &inSize, const QSize &outSiz
     return QMargins(left, top, right, bottom);
 }
 
-QRect CanvasViewPrivate::visualRect(const QPoint &gridPos)
+QRect CanvasViewPrivate::visualRect(const QPoint &gridPos) const
 {
     auto x = gridPos.x() * canvasInfo.gridWidth + viewMargins.left();
     auto y = gridPos.y() * canvasInfo.gridHeight + viewMargins.top();
     return QRect(x, y, canvasInfo.gridWidth, canvasInfo.gridHeight);
+}
+
+QRect CanvasViewPrivate::visualRect(const QString &item) const
+{
+    QPair<int, QPoint> pos;
+    // query the point of item.
+    // if not find, using overlap point instead.
+    if (!GridIns->point(item, pos))
+        pos.second = overlapPos();
+
+    return visualRect(pos.second);
+}
+
+QString CanvasViewPrivate::visualItem(const QPoint &gridPos) const
+{
+    if (gridPos == overlapPos()) {
+        auto overlap = GridIns->overloadItems(screenNum);
+        if (!overlap.isEmpty())
+            return overlap.last();
+    }
+
+    return GridIns->item(screenNum, gridPos);
 }
 
 bool CanvasViewPrivate::isWaterMaskOn()

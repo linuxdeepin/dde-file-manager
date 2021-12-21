@@ -36,7 +36,7 @@ QModelIndex CanvasModel::index(int row, int column, const QModelIndex &parent) c
     if (row < 0 || column < 0 || 0 == FileTreaterCt->fileCount()) {
         return QModelIndex();
     }
-    auto fileInfo = FileTreaterCt->getFileByIndex(row);
+    auto fileInfo = FileTreaterCt->file(row);
     if (!fileInfo) {
         return QModelIndex();
     }
@@ -46,9 +46,10 @@ QModelIndex CanvasModel::index(int row, int column, const QModelIndex &parent) c
 
 QModelIndex CanvasModel::index(const QString &fileUrl, int column)
 {
-    if (!fileUrl.isEmpty())
+    if (fileUrl.isEmpty())
         return QModelIndex();
-    auto fileInfo = FileTreaterCt->getFileByUrl(fileUrl);
+
+    auto fileInfo = FileTreaterCt->file(fileUrl);
     if (!fileInfo)
         return QModelIndex();
 
@@ -139,6 +140,18 @@ QVariant CanvasModel::data(const QModelIndex &index, int role) const
         return QString();
     }
     }
+}
+
+QUrl CanvasModel::url(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return FileTreaterCt->homePath();
+
+    if (auto info = FileTreaterCt->file(index.row())) {
+        return info->url();
+    }
+
+    return QUrl();
 }
 
 QVariant CanvasModel::dataByRole(const DefaultDesktopFileInfo *fileInfo, int role) const

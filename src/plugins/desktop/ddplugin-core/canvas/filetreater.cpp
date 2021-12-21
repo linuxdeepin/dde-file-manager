@@ -54,19 +54,22 @@ FileTreater *FileTreater::instance()
  * \brief 根据url获取对应的文件对象, \a url 文件路径
  * \return
  */
-DFMDesktopFileInfoPointer FileTreater::getFileByUrl(const QString &url)
+DFMDesktopFileInfoPointer FileTreater::file(const QString &url)
 {
-    Q_UNUSED(url)
-    return nullptr;
+    return d->fileHashTable.value(url);
 }
 
 /*!
  * \brief 根据index获取对应的文件对象, \a index 文件路径
  * \return
  */
-DFMDesktopFileInfoPointer FileTreater::getFileByIndex(int index)
+DFMDesktopFileInfoPointer FileTreater::file(int index)
 {
     Q_UNUSED(index)
+    if (index >= 0 && index < fileCount()) {
+        return d->fileList.at(index);
+    }
+
     return nullptr;
 }
 
@@ -113,7 +116,7 @@ void FileTreater::init()
     }
 }
 
-QString &FileTreater::homePath()
+QString FileTreater::homePath()
 {
     return d->homePath;
 }
@@ -163,6 +166,7 @@ void FileTreater::asyncFunc(const QDir &url)
             if (!itemInfo)
                 qInfo() << "asyncFunc error: " << errString;
             d->fileList.append(itemInfo);
+            d->fileHashTable.insert(itemInfo->url().toString(), itemInfo);
         }
     }
     qDebug() << "file count " << d->fileList.size();

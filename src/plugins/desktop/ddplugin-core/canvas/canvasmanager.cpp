@@ -53,7 +53,7 @@ void CanvasManager::init()
     initConnect();
 
     d->canvasModel = new CanvasModel(this);
-    //todo create selection model
+    d->selectionModel = new CanvasSelectionModel(d->canvasModel, this);
 
     // create views
     onCanvasBuild();
@@ -221,11 +221,12 @@ CanvasViewPointer CanvasManagerPrivate::createView(const ScreenPointer &sp, int 
         return CanvasViewPointer();
 
     view.reset(new CanvasView());
+    view->setModel(canvasModel);
+    view->setSelectionModel(selectionModel);
     view->setAttribute(Qt::WA_NativeWindow, false);
     view->initUI();
 
     view->setScreenNum(index);
-    view->setModel(canvasModel);
 
     auto background = backgroundService->background(sp->name());
     view->setParent(background.get());
