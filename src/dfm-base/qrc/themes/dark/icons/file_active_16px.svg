@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>file_active_16px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="UI图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="file_active_16px">
+            <rect id="Rectangle-1" fill-opacity="0.5" fill="#A1A1A1" opacity="0" x="0" y="0" width="16" height="16"></rect>
+            <g transform="translate(0.500000, 3.000000)" fill="#2CA7F8" fill-rule="nonzero" id="Line">
+                <path d="M1,1 L14,1 C14.2761424,1 14.5,0.776142375 14.5,0.5 C14.5,0.223857625 14.2761424,0 14,0 L1,0 C0.723857625,0 0.5,0.223857625 0.5,0.5 C0.5,0.776142375 0.723857625,1 1,1 L1,1 Z"></path>
+                <path d="M1,6 L14,6 C14.2761424,6 14.5,5.77614237 14.5,5.5 C14.5,5.22385763 14.2761424,5 14,5 L1,5 C0.723857625,5 0.5,5.22385763 0.5,5.5 C0.5,5.77614237 0.723857625,6 1,6 L1,6 Z"></path>
+                <path d="M1,11 L14,11 C14.2761424,11 14.5,10.7761424 14.5,10.5 C14.5,10.2238576 14.2761424,10 14,10 L1,10 C0.723857625,10 0.5,10.2238576 0.5,10.5 C0.5,10.7761424 0.723857625,11 1,11 L1,11 Z"></path>
+            </g>
+        </g>
+    </g>
+</svg>

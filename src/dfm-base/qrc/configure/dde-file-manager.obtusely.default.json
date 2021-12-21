@@ -1,0 +1,33 @@
+{
+    "DBusFileDialog": {
+        "disable": {
+            "gtk2": ["xarchiver", "gpick", "libreoffice",  "handbrake", "ghb"],
+            "gtk3": ["libreoffice", "handbrake", "ghb"]
+        }
+    },
+    "FileViewState": {
+        "standard://downloads": {
+            "sortOrder": 1,
+            "sortRole": 262,
+            "viewMode": 2
+        },
+        "recent:///": {
+            "sortOrder": 0,
+            "sortRole": 263,
+            "viewMode": 2
+        }
+    },
+    "WindowManager": {
+        "WindowState": {
+            "width": 1100,
+            "height": 700
+        },
+        "ViewColumnState": {
+            "265": 300
+        }
+    },
+    "FileName": {
+        "non-allowableCharacters": "(^\\s+|[/\\\\:*\"'?<>|\r\n\t])",
+        "non-allowableEmptyCharactersOfEnd": true
+    }
+}

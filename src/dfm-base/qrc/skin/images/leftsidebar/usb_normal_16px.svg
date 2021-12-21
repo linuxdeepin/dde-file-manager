@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41 (35326) - http://www.bohemiancoding.com/sketch -->
+    <title>drive_harddisk_usb_symbolic_normal_16px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="drive_harddisk_usb_symbolic_normal_16px">
+            <g id="Group">
+                <rect id="Rectangle-1" fill-opacity="0.5" fill="#A1A1A1" opacity="0" x="0" y="0" width="16" height="16"></rect>
+                <path d="M1.49580834,13.0009554 C1.49580834,13.8292994 2.16586879,14.5 2.99533109,14.5 C3.82288438,14.5 4.49580834,13.8292994 4.49580834,13.0009554 C4.49580834,12.1707006 3.82288438,11.5 2.99533109,11.5 C2.16586879,11.5 1.49580834,12.1707006 1.49580834,13.0009554 Z" id="Fill-3" stroke="#303030" stroke-linecap="round" stroke-linejoin="round" transform="translate(2.995808, 13.000000) rotate(-360.000000) translate(-2.995808, -13.000000) "></path>
+                <path d="M5.49580834,4.00095541 C5.49580834,4.82929936 6.16586879,5.5 6.99533109,5.5 C7.82288438,5.5 8.49580834,4.82929936 8.49580834,4.00095541 C8.49580834,3.17070064 7.82288438,2.5 6.99533109,2.5 C6.16586879,2.5 5.49580834,3.17070064 5.49580834,4.00095541 Z" id="Fill-3" stroke="#303030" stroke-linecap="round" stroke-linejoin="round" transform="translate(6.995808, 4.000000) rotate(-360.000000) translate(-6.995808, -4.000000) "></path>
+                <path d="M4,12 L12,4" id="Path-273" stroke="#303030" stroke-linecap="round" stroke-linejoin="round"></path>
+                <polygon id="Path-274" stroke="#303030" stroke-linecap="round" stroke-linejoin="round" points="10.5 2.5 13.5 2.5 13.5 5.5"></polygon>
+                <rect id="Rectangle-116" stroke="#303030" stroke-linecap="round" stroke-linejoin="round" transform="translate(12.004333, 9.011031) rotate(-315.000000) translate(-12.004333, -9.011031) " x="10.797982" y="7.80467983" width="2.41270302" height="2.41270302"></rect>
+                <polyline id="Path-272" stroke="#303030" stroke-linecap="round" stroke-linejoin="round" points="5 11 9 12 11 10"></polyline>
+                <polyline id="Path-273" stroke="#303030" stroke-linecap="round" stroke-linejoin="round" points="6 10 4.5 6.5 5.73986816 5.26013184"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

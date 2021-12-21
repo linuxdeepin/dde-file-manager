@@ -1,0 +1,46 @@
+{
+    "ApplicationAttribute": {
+        "AllwayOpenOnNewWindow": false,
+        "IconSizeLevel": 1,
+        "ViewMode": 1,
+        "ViewSizeAdjustable": true,
+        "ViewComppactMode": false,
+        "ViewAutoCompace": false,
+        "OpenFileMode": 1,
+        "UrlOfNewWindow": "computer:///",
+        "UrlOfNewTab": "",
+        "ThemeName": "light"
+    },
+    "GenericAttribute": {
+        "IndexInternal": true,
+        "IndexExternal": false,
+        "PreviewCompressFile": false,
+        "PreviewTextFile": true,
+        "PreviewDocumentFile": true,
+        "PreviewImage": true,
+        "PreviewVideo": true,
+        "AutoMount": true,
+        "AutoMountAndOpen": false,
+        "OverrideFileChooserDialog": true,
+        "ShowedHiddenOnSearch": true,
+        "ShowedHiddenFiles": false,
+        "ShowRecentFileEntry": true,
+        "ShowedFileSuffixOnRename": true,
+        "DisableNonRemovableDeviceUnmount": false,
+        "HiddenSystemPartition": false,
+        "AlwaysShowOfflineRemoteConnections": true
+    },
+    "AnythingMonitorFilterPath": {
+        "WhiteList":[
+            "/media",
+            "/home"
+        ],
+        "BlackList": [
+            "~/.local/share/Trash"
+        ]
+    },
+    "QuickSearchFilter": {
+        "__annotation":"///You can fill it with regex(grep grammar)",
+        "BlackList":[]
+    }
+}

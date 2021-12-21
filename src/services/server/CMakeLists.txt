@@ -10,6 +10,14 @@ if (NOT PROJECT_VERSION_MAJOR)
     set(PROJECT_VERSION_MAJOR 0)
 endif()
 
+set(DFM_BASE_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/../../dfm-base)
+
+# qrc
+set(QRC_FILE
+    ${DFM_BASE_DIR}/qrc/configure.qrc
+    )
+qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
+
 FILE(GLOB GLOBAL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
@@ -24,12 +32,11 @@ FILE(GLOB DEVICE_FILES
 
 add_library(${PROJECT_NAME}
     SHARED
+    ${QRC_RESOURCES}
     ${GLOBAL_FILES}
     ${DEVICE_FILES}
 )
 
-#find_package(Dtk REQUIRED Widget REQUIRED)
-#find_package(Dtk REQUIRED Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
 
 pkg_search_module(gsettings
@@ -60,6 +67,7 @@ target_include_directories(${PROJECT_NAME}
     ${DtkWidget_INCLUDE_DIRS}
 )
 
+# TODO(xust): remove dfm-base depends
 target_link_libraries(
     ${PROJECT_NAME}
     DFM::base

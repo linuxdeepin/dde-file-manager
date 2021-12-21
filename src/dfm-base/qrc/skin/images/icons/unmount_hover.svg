@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.6.1 (26313) - http://www.bohemiancoding.com/sketch -->
+    <title>unmount_hover</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="unmount_hover" fill="#BDBABA">
+            <path d="M5.40627803,1.33876545 C5.7326447,0.889074778 6.25913412,0.88508599 6.58869692,1.33876546 L10.8360853,7.18576301 C11.1627505,7.63545368 10.9885622,8 10.4257421,8 L1.57365583,7.99999996 C1.0203643,7.99999996 0.833510453,7.63944243 1.16277202,7.18576297 L5.40627803,1.33876545 Z" id="Rectangle-87"></path>
+            <rect id="Rectangle-88" x="1" y="9" width="10" height="1" rx="1"></rect>
+        </g>
+    </g>
+</svg>

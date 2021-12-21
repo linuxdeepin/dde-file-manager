@@ -10,6 +10,16 @@ if (NOT PROJECT_VERSION_MAJOR)
     set(PROJECT_VERSION_MAJOR 0)
 endif()
 
+# qrc
+set(QRC_FILE
+    qrc/skin/skin.qrc
+    qrc/skin/filemanager.qrc
+    qrc/themes/themes.qrc
+    qrc/configure.qrc
+    qrc/resources/resources.qrc
+    )
+qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
+
 set(GLOBAL_H dfm_base_global.h)
 
 FILE (GLOB INTERFACES_FILES
@@ -94,6 +104,7 @@ pkg_search_module(util-dfm
 
 add_library(${PROJECT_NAME}
     SHARED
+    ${QRC_RESOURCES}
     ${GLOBAL_H}
     ${INTERFACES_FILES}
     ${UTILS_FILES}

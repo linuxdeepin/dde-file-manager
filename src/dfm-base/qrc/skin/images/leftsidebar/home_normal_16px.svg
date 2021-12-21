@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 40.3 (33839) - http://www.bohemiancoding.com/sketch -->
+    <title>home-normal-16px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="home-normal-16px">
+            <rect id="Rectangle-1" fill-opacity="0.5" fill="#A1A1A1" opacity="0" x="0" y="0" width="16" height="16"></rect>
+            <g id="home_normal_16px" transform="translate(0.000000, 1.000000)" stroke-linecap="round" stroke="#303030" stroke-linejoin="round">
+                <polygon id="Path-6" points="2.5 7.5 0.5 7.5 8 0.5 15.5 7.5 13.5 7.5 13.5 13.5 2.5 13.5"></polygon>
+                <path d="M7.66998821,6.70233953 L8,7 L8.33001179,6.70233953 C8.81574342,6.26401533 9.60398586,6.26401533 10.0897175,6.70233953 C10.6365227,7.19566259 10.6365227,7.99497927 10.0897175,8.48830233 L8,10.3735964 L5.90992535,8.48830233 C5.36312011,7.99497927 5.36312011,7.19566259 5.90992535,6.70233953 C6.39601414,6.26401533 7.18389942,6.26401533 7.66998821,6.70233953 Z" id="Fill-1"></path>
+            </g>
+        </g>
+    </g>
+</svg>

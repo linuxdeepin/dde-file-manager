@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>drive_harddisk_usb_symbolic_normal_16px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="UI图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="drive_harddisk_usb_symbolic_normal_16px" stroke="#DDDDDD">
+            <g id="Group" transform="translate(1.000000, 2.000000)">
+                <path d="M0.495808339,11.0009554 C0.495808339,11.8292994 1.16586879,12.5 1.99533109,12.5 C2.82288438,12.5 3.49580834,11.8292994 3.49580834,11.0009554 C3.49580834,10.1707006 2.82288438,9.5 1.99533109,9.5 C1.16586879,9.5 0.495808339,10.1707006 0.495808339,11.0009554 Z" id="Fill-3" transform="translate(1.995808, 11.000000) rotate(-360.000000) translate(-1.995808, -11.000000) "></path>
+                <path d="M4.49580834,2.00095541 C4.49580834,2.82929936 5.16586879,3.5 5.99533109,3.5 C6.82288438,3.5 7.49580834,2.82929936 7.49580834,2.00095541 C7.49580834,1.17070064 6.82288438,0.5 5.99533109,0.5 C5.16586879,0.5 4.49580834,1.17070064 4.49580834,2.00095541 Z" id="Fill-3" transform="translate(5.995808, 2.000000) rotate(-360.000000) translate(-5.995808, -2.000000) "></path>
+                <path d="M3,10 L11,2" id="Path-273"></path>
+                <polygon id="Path-274" points="9.5 0.5 12.5 0.5 12.5 3.5"></polygon>
+                <rect id="Rectangle-116" transform="translate(11.004333, 7.011031) rotate(-315.000000) translate(-11.004333, -7.011031) " x="9.79798199" y="5.80467983" width="2.41270302" height="2.41270302"></rect>
+                <polyline id="Path-272" points="4 9 8 10 10 8"></polyline>
+                <polyline id="Path-273" points="5 8 3.5 4.5 4.73986816 3.26013184"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

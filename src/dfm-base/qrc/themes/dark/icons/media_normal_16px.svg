@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>media_optical_symbolic_normal_16px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="UI图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="media_optical_symbolic_normal_16px">
+            <rect id="Rectangle-1" fill-opacity="0.5" fill="#A1A1A1" opacity="0" x="0" y="0" width="16" height="16"></rect>
+            <g id="Group" transform="translate(1.000000, 1.000000)" stroke="#DDDDDD" stroke-linecap="round" stroke-linejoin="round">
+                <circle id="Oval-14" cx="7" cy="7" r="6.5"></circle>
+                <path d="M7,9.5 C8.38071187,9.5 9.5,8.38071187 9.5,7 C9.5,5.61928813 8.38071187,4.5 7,4.5 C5.61928813,4.5 4.5,5.61928813 4.5,7 C4.5,8.38071187 5.61928813,9.5 7,9.5 Z" id="Oval-14"></path>
+                <path d="M7,2.5 C4.51471863,2.5 2.5,4.51471863 2.5,7" id="Oval-14"></path>
+            </g>
+        </g>
+    </g>
+</svg>

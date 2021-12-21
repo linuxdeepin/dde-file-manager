@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="206px" height="10px" viewBox="0 0 206 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.7.2 (28276) - http://www.bohemiancoding.com/sketch -->
+    <title>横线</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="小图标状态" transform="translate(-11.000000, -410.000000)">
+            <g id="文件管理器整体">
+                <g id="sidebar-2">
+                    <g id="横线" transform="translate(11.000000, 410.000000)">
+                        <path d="M6,5 L206,5" id="Path-212" stroke="#55A3D8"></path>
+                        <polygon id="Triangle-1" fill="#55A3D8" points="2.5 0 5 4 0 4"></polygon>
+                        <polygon id="Triangle-1-Copy" fill="#55A3D8" transform="translate(2.500000, 8.000000) scale(1, -1) translate(-2.500000, -8.000000) " points="2.5 6 5 10 0 10"></polygon>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

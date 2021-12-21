@@ -92,7 +92,7 @@ OptionButtonBox::OptionButtonBox(QWidget *parent)
         d->iconViewButton = new QToolButton;
     d->iconViewButton->setCheckable(true);
     d->iconViewButton->setFocusPolicy(Qt::NoFocus);
-    d->iconViewButton->setIcon(QIcon::fromTheme("dfviewlist_icons"));
+    d->iconViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_icons"));
     d->iconViewButton->setIconSize({ 16, 16 });
     d->iconViewButton->setFixedSize(36, 36);
 
@@ -100,7 +100,7 @@ OptionButtonBox::OptionButtonBox(QWidget *parent)
         d->listViewButton = new QToolButton;
     d->listViewButton->setCheckable(true);
     d->listViewButton->setFocusPolicy(Qt::NoFocus);
-    d->listViewButton->setIcon(QIcon::fromTheme("dfviewlist_details"));
+    d->listViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_details"));
     d->listViewButton->setIconSize({ 16, 16 });
     d->listViewButton->setFixedSize(36, 36);
 
@@ -108,7 +108,7 @@ OptionButtonBox::OptionButtonBox(QWidget *parent)
         d->detailButton = new QToolButton;
     d->detailButton->setCheckable(true);
     d->detailButton->setFocusPolicy(Qt::NoFocus);
-    d->detailButton->setIcon(QIcon::fromTheme("dfrightview_detail"));
+    d->detailButton->setIcon(QIcon::fromTheme("dfm_rightview_detail"));
     d->detailButton->setIconSize({ 16, 16 });
     d->detailButton->setFixedSize(36, 36);
     d->detailButton->show();

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.1 (47250) - http://www.bohemiancoding.com/sketch -->
+    <title>tag_deepblue_active</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="143" cy="50" r="4"></circle>
+    </defs>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-135.000000, -42.000000)">
+        <g id="tag_deepblue_active">
+            <use fill="#3468FF" fill-rule="evenodd" xlink:href="#path-1"></use>
+            <circle stroke="#0047CE" stroke-width="1" cx="143" cy="50" r="3.5"></circle>
+        </g>
+    </g>
+</svg>

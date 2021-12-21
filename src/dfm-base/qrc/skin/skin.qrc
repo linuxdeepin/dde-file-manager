@@ -1,0 +1,64 @@
+<RCC>
+    <qresource prefix="/qss">
+        <file>qss/DesktopItem.qss</file>
+        <file>qss/Tablewidget.qss</file>
+    </qresource>
+    <qresource prefix="/images">
+        <file>images/diban.svg</file>
+        <file>images/readonly.svg</file>
+        <file>images/textMask.png</file>
+        <file>images/textMask.svg</file>
+        <file>images/unreadable.svg</file>
+        <file>images/trash.png</file>
+        <file>images/dde-file-manager_96.png</file>
+        <file>images/dde-file-manager.png</file>
+        <file>images/dde-file-manager.svg</file>
+        <file>images/unreadable_small.png</file>
+        <file>images/unreadable_large.png</file>
+        <file>images/trash_full.png</file>
+        <file>images/setting_hover.png</file>
+        <file>images/setting_normal.png</file>
+        <file>images/setting_press.png</file>
+        <file>images/dde-file-manager-admin.png</file>
+        <file>images/multiple_files.png</file>
+        <file>images/multiple_files@2x.png</file>
+        <file>images/setting_press@2x.png</file>
+        <file>images/setting_normal@2x.png</file>
+        <file>images/setting_hover@2x.png</file>
+        <file>images/trash_full@2x.png</file>
+        <file>images/trash@2x.png</file>
+        <file>images/dde-file-manager_96@2x.png</file>
+        <file>images/textMask@2x.png</file>
+        <file>images/dde-file-manager@2x.png</file>
+        <file>images/share@2x.png</file>
+        <file>images/link@2x.png</file>
+        <file>images/unreadable@2x.png</file>
+        <file>images/lock@2x.png</file>
+        <file>images/dde-file-manager-admin@2x.png</file>
+        <file>images/dde-file-manager_96.svg</file>
+    </qresource>
+    <qresource prefix="/devices">
+        <file>images/device/drive-harddisk-deepin-256px.svg</file>
+        <file>images/device/drive-harddisk-ieee1394-256px.svg</file>
+        <file>images/device/drive-harddisk-linux-256px.svg</file>
+        <file>images/device/drive-harddisk-mac-256px.svg</file>
+        <file>images/device/drive-harddisk-scsi-256px.svg</file>
+        <file>images/device/drive-harddisk-usb-256px.svg</file>
+        <file>images/device/drive-harddisk-Windows-256px.svg</file>
+        <file>images/device/drive-harddisk-256px.svg</file>
+        <file>images/device/drive-optical-256px.svg</file>
+        <file>images/device/drive-removable-media-ieee1394-256px.svg</file>
+        <file>images/device/drive-removable-media-scsi-256px.svg</file>
+        <file>images/device/drive-removable-media-usb-256px.svg</file>
+        <file>images/device/drive-removable-media-256px.svg</file>
+        <file>images/device/media-cdr-256px.svg</file>
+        <file>images/device/media-cdrw-256px.svg</file>
+        <file>images/device/media-dvd-256px.svg</file>
+        <file>images/device/media-flash-256px.svg</file>
+        <file>images/device/media-optical-256px.svg</file>
+        <file>images/device/android-device-256px.svg</file>
+        <file>images/device/camera-256px.svg</file>
+        <file>images/device/drive-network-256px.svg</file>
+        <file>images/device/ios-device-256px.svg</file>
+    </qresource>
+</RCC>

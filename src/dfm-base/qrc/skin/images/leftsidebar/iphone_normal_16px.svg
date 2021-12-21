@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 40.3 (33839) - http://www.bohemiancoding.com/sketch -->
+    <title>iphone-normal-16px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="iphone-normal-16px">
+            <rect id="Rectangle-1" fill-opacity="0.5" fill="#A1A1A1" opacity="0" x="0" y="0" width="16" height="16"></rect>
+            <g id="手机" transform="translate(3.000000, 1.000000)" stroke="#303030" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1.49754465,0.5 C0.946615951,0.5 0.5,0.947489426 0.5,1.49850233 L0.5,12.5014977 C0.5,13.0529553 0.946311399,13.5 1.49754465,13.5 L8.50245535,13.5 C9.05338405,13.5 9.5,13.0525106 9.5,12.5014977 L9.5,1.49850233 C9.5,0.94704472 9.0536886,0.5 8.50245535,0.5 L1.49754465,0.5 Z" id="Path-33"></path>
+                <polygon id="Path-37" points="0.5 2.5 0.5 11.5 9.5 11.5 9.5 2.5"></polygon>
+                <path d="M4.5,12.5 L5.5,12.5" id="Path-265"></path>
+            </g>
+        </g>
+    </g>
+</svg>

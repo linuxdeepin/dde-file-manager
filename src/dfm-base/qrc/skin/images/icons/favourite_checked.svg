@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.7.1 (28215) - http://www.bohemiancoding.com/sketch -->
+    <title>favourite_checked</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="favourite_checked">
+            <rect id="Rectangle-1" opacity="0" x="0" y="0" width="22" height="22"></rect>
+            <path d="M3,19.5 C3,19.7761424 3.22385763,20 3.5,20 L11,16 L18.5,20 C18.7761424,20 19,19.7761424 19,19.5 L19,2.5 C19,2.22385763 18.7761424,2 18.5,2 L3.5,2 C3.22385763,2 3,2.22385763 3,2.5 L3,19.5 Z" id="Combined-Shape" fill="#FFFFFF"></path>
+        </g>
+    </g>
+</svg>
