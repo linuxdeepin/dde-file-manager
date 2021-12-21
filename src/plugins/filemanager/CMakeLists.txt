@@ -9,4 +9,4 @@ add_subdirectory(dfmplugin-sidebar)
 add_subdirectory(dfmplugin-titlebar)
 add_subdirectory(dfmplugin-workspace)
 add_subdirectory(dfmplugin-detailspace)
-
+add_subdirectory(dfmplugin-computer)

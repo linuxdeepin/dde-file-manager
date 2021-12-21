@@ -141,6 +141,21 @@ QString StandardPaths::location(StandardPaths::StandardLocation type)
         return QStringLiteral("bug://dde-file-manager-lib/interface/dfmstandardpaths.cpp#") + QT_STRINGIFY(type);
     }
 }
+
+QString StandardPaths::location(const QString &dirName)
+{
+    static QMap<QString, QString> path_convert {
+        { "home", location(kHomePath) },
+        { "desktop", location(kDesktopPath) },
+        { "videos", location(kVideosPath) },
+        { "music", location(kMusicPath) },
+        { "pictures", location(kPicturesPath) },
+        { "documents", location(kDocumentsPath) },
+        { "downloads", location(kDownloadsPath) }
+    };
+
+    return path_convert.value(dirName, "");
+}
 /*!
  * \brief StandardPaths::iconName 获取不同StandardLocation类型的ICON
  *
@@ -291,6 +306,37 @@ QString StandardPaths::getCachePath()
     QDir::home().mkpath(QString("%1/deepin/%2/").arg(".cache", projectName));
     QString defaultPath = QString("%1/%2/deepin/%3").arg(QDir::homePath(), ".cache", projectName);
     return defaultPath;
+}
+
+/*!
+ * \brief StandardPaths::getDisplayName
+ * \param dirName the directory name such as "videos/music/desktop"
+ * \return the display name of directory
+ */
+QString StandardPaths::displayName(const QString &dirName)
+{
+    static QMap<QString, QString> datas {
+        std::pair<QString, QString>("desktop", QObject::tr("Desktop")),
+        std::pair<QString, QString>("videos", QObject::tr("Videos")),
+        std::pair<QString, QString>("music", QObject::tr("Music")),
+        std::pair<QString, QString>("pictures", QObject::tr("Pictures")),
+        std::pair<QString, QString>("documents", QObject::tr("Documents")),
+        std::pair<QString, QString>("downloads", QObject::tr("Downloads")),
+    };
+    return datas.value(dirName, QObject::tr("Unknown"));
+}
+
+QString StandardPaths::iconName(const QString &dirName)
+{
+    static QMap<QString, QString> datas {
+        std::pair<QString, QString>("desktop", "user-desktop"),
+        std::pair<QString, QString>("videos", "folder-videos"),
+        std::pair<QString, QString>("music", "folder-music"),
+        std::pair<QString, QString>("pictures", "folder-pictures"),
+        std::pair<QString, QString>("documents", "folder-documents"),
+        std::pair<QString, QString>("downloads", "folder-downloads"),
+    };
+    return datas.value(dirName, "folder");
 }
 
 StandardPaths::StandardPaths()

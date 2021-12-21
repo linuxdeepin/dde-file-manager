@@ -51,14 +51,15 @@ dfmbase::Settings *DeviceServiceHelper::getGsGlobal()
 void DeviceServiceHelper::openFileManagerToDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
 {
     if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
-        QString root { dfmbase::UrlRoute::rootPath(dfmbase::SchemeTypes::kRoot) };
-        QString mountUrlStr { root + QFileInfo(blkDev->device()).fileName() + "." + dfmbase::SuffixInfo::kBlock };
+        QString root { dfmbase::UrlRoute::rootPath(dfmbase::SchemeTypes::kEntry) };
+        QString mountUrlStr { /*root + QFileInfo(blkDev->device()).fileName() + "." + dfmbase::SuffixInfo::kBlock */ };   // TODO(xust)
         QProcess::startDetached(QStringLiteral("dde-file-manager"), { mountUrlStr });
         qInfo() << "open by dde-file-manager: " << mountUrlStr;
         return;
     }
     QString &&mp = blkDev->mountPoint();
     qInfo() << "a new device mount to: " << mp;
+    // TODO(xust) seperate server with GUI
     DDesktopServices::showFolder(QUrl::fromLocalFile(mp));
 }
 

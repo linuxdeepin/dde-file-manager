@@ -56,6 +56,12 @@ FILE (GLOB ALL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/file/local/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/local/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/local/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/entry/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/entry/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/entry/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/entry/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/entry/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/entry/*/*.cpp"
 )
 
 FILE (GLOB WIDGETS_FILES

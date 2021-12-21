@@ -24,6 +24,7 @@
 #define UNIVERSALUTILS_H
 
 #include "dfm-base/dfm_base_global.h"
+#include "dbusservice/dbus_interface/devicemanagerdbus_interface.h"
 
 #include <QString>
 #include <QtDBus/QDBusReply>
@@ -39,6 +40,7 @@ public:
     static void notifyMessage(const QString &title, const QString &msg);
     static QString userLoginState();
     static void blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay);
+    static DeviceManagerInterface *deviceManager();
 
     static qint64 computerMemory();
 

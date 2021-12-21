@@ -67,6 +67,14 @@ FILE(GLOB SEARCH_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/search/fulltextsearch/*.cpp"
 )
 
+FILE(GLOB COMPUTER_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/computer/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/computer/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/computer/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/computer/private/*.cpp"
+)
+
+
 add_library(
     ${PROJECT_NAME}
     SHARED
@@ -78,6 +86,7 @@ add_library(
     ${WORKSPACE_FILES}
     ${DETAILSPACE_FILES}
     ${SEARCH_FILES}
+    ${COMPUTER_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

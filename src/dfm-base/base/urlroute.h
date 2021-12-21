@@ -54,13 +54,7 @@ public:
 namespace SchemeTypes {
 extern const char *const kFile;
 extern const char *const kDesktop;
-extern const char *const kHome;
-extern const char *const kVideos;
-extern const char *const kMusic;
-extern const char *const kPictures;
-extern const char *const kDocuments;
-extern const char *const kDownloads;
-extern const char *const kRoot;
+extern const char *const kEntry;
 }   // namespace SchemeTypes
 
 class UrlRoute

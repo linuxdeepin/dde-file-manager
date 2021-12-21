@@ -32,13 +32,7 @@ DFMBASE_BEGIN_NAMESPACE
 namespace SchemeTypes {
 const char *const kFile = "file";
 const char *const kDesktop = "desktop";
-const char *const kHome = "home";
-const char *const kVideos = "videos";
-const char *const kMusic = "music";
-const char *const kPictures = "pictures";
-const char *const kDocuments = "documents";
-const char *const kDownloads = "downloads";
-const char *const kRoot = "dfmroot";
+const char *const kEntry = "entry";
 }   // namespace SchemeTypes
 
 QHash<QString, SchemeNode> UrlRoute::kSchemeInfos {};

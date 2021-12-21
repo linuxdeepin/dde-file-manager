@@ -204,4 +204,19 @@ QMap<QString, QString> FileUtils::getKernelParameters()
     return result;
 }
 
+int FileUtils::supportedMaxLength(const QString &fileSystem)
+{
+    static QMap<QString, int> datas {
+        std::pair<QString, int>("VFAT", 11),
+        std::pair<QString, int>("EXFAT", 11),
+        std::pair<QString, int>("EXT2", 16),
+        std::pair<QString, int>("EXT3", 16),
+        std::pair<QString, int>("EXT4", 16),
+        std::pair<QString, int>("NTFS", 40),   // can be more than 40
+    };
+
+    const int DefaultLength = 11;
+    return datas.value(fileSystem.toUpper(), DefaultLength);
+}
+
 DFMBASE_END_NAMESPACE

@@ -67,7 +67,10 @@ public:
     };
 
     static QString location(StandardLocation type);
+    static QString location(const QString &dirName);
     static QString iconName(StandardLocation type);
+    static QString iconName(const QString &dirName);
+    static QString displayName(const QString &dirName);
     static QString displayName(StandardLocation type);
     static QString fromStandardUrl(const QUrl &url);
     static QUrl toStandardUrl(const QString &localPath);

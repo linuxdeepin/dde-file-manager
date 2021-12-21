@@ -37,13 +37,6 @@ class QDateTime;
 
 DFMBASE_BEGIN_NAMESPACE
 
-namespace SuffixInfo {
-extern const char *const kUserDir;
-extern const char *const kProtocol;
-extern const char *const kBlock;
-extern const char *const kStashedRemote;
-}   // namespace SuffixInfo
-
 class AbstractFileInfoPrivate;
 class AbstractFileInfo : public QSharedData
 {
