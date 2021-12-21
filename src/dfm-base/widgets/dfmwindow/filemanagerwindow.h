@@ -49,10 +49,12 @@ public:
     void installTitleMenu(QMenu *menu);
     void installSideBar(AbstractFrame *w);
     void installWorkSpace(AbstractFrame *w);
+    void installDetailView(AbstractFrame *w);
 
     AbstractFrame *titleBar() const;
     AbstractFrame *sideBar() const;
     AbstractFrame *workSpace() const;
+    AbstractFrame *detailView() const;
 
 signals:
     void aboutToClose();
@@ -63,6 +65,7 @@ signals:
 
 private:
     void initializeUi();
+    void initConnect();
 
 private:
     QScopedPointer<FileManagerWindowPrivate> d;
