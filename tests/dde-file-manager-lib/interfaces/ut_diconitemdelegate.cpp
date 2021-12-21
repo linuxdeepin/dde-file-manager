@@ -1,5 +1,6 @@
 #include "views/fileviewhelper.h"
 #include "interfaces/dfmviewmanager.h"
+#include "dfilesystemmodel.h"
 
 #include <DMainWindow>
 
@@ -258,4 +259,12 @@ TEST_F(TestDIconItemDelegate, test_helpEvent)
 TEST_F(TestDIconItemDelegate, test_iconSizeByIconSizeLevel)
 {
     iconItemDelegate->iconSizeByIconSizeLevel();
+}
+
+TEST_F(TestDIconItemDelegate, test_displayFileName)
+{
+    QModelIndex index = iconItemDelegate->expandedIndex();
+    QString displayFileName = iconItemDelegate->displayFileName(index);
+    QString fileNameData = index.data(DFileSystemModel::FileDisplayNameRole).toString();
+    EXPECT_TRUE(fileNameData.contains(displayFileName));
 }
