@@ -19,7 +19,7 @@ You can run, close and create a shortcut for File Manager by the following ways.
  - Click **Send to dock** to fix the application on dock.
  - Click **Add to startup** to add the application to startup, it will automatically run when the system starts up.
 
-   >![tips](../common/tips.svg)Tips: You can also press **Super** + **E** to start File Manager.
+   >![tips](../common/tips.svg) Tips: You can also press **Super** + **E** to start File Manager.
 
 ### Exit File Manager
 
@@ -49,7 +49,7 @@ On File Manager interface, you can execute many operations with the functional b
 | 6    | Status bar        | You can view the number of files or selected files.                            |
 
 
-> ![tips](../common/tips.svg)Tips: you can drag the dividing line on the right of left panel to change its width.
+> ![tips](../common/tips.svg) Tips: you can drag the dividing line on the right of left panel to change its width.
 
 
 ## Basic Functions
@@ -94,7 +94,7 @@ File Manager is featured with the basic functions as a file manager, you can eas
 
 ![1|batch_rename](fig/d_rename.png)
 
-### View files
+### View Files
 
 Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view.svg) on the interface to switch icon view and list view.
 
@@ -133,7 +133,7 @@ Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view
 
 
 
-### Hide files
+### Hide Files
 
 1. On File Manager, right-click the file you want to hide.
 2. Select **Properties**, check **Hide this file**.
@@ -203,7 +203,7 @@ By clicking the search icon, or right-click the file path and select **Edit addr
 
 - The inputting box can identify smartly. You can input keywords or an address and press **Enter**, the system will identify automatically and search or visit.
 
-### Search files
+### Search Files
 
 File Manager supports multiple indexing methods, including ordinary search by file name and file content, and advanced search by file type and creating time, so as to improve work efficiency and facilitate file management.
 
@@ -267,7 +267,7 @@ By adding tags on file/folder, you can classify and manage your files better.
 
 You can add tag to multiple files/folders at a time, or add multiple tags to a single file/folder; you can also add tags in Properties of the file/folder. The tag appears in the left panel.
 
-##### By Tag information
+##### By Tag Information
 
 1. Right-click a file/folder, select **Tag information**.
 2. Input tag info. Use comma to separate tags in case of multiple tags.
@@ -285,7 +285,7 @@ Right-click a file/folder, select a "color button" to create a color tag directl
 
 ![1|colortag](fig/d_colortag.png)
 
-##### By information column on the right side
+##### By Information Column on the Right Side
 
 Select a file/folder, click ![fileinfo](../common/fileinfo.svg), and add tags in the information column on the right side.
 
@@ -371,13 +371,13 @@ You can find sharing folders of other users in the same LAN in **Computers in LA
 
 
 
-### Open in new window as admin
+### Open in New Window as Admin
 
 1. Right-click in the blank area on File Manager. 
 2. Select **Open in new window as admin**, input your login password in the pop-up window and click **Confirm**.
 3. The file will be opened in a new window, in which you can operate with admin permissions. And you will exit admin permissions when you close this window.
 
-### Open in terminal
+### Open in Terminal
 
 1. Right-click in the blank area on File Manager. 
 2. Select **Open in terminal**, Terminal will be opened, and its directory will be the current one.
@@ -419,7 +419,7 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 
 > ![tips](../common/tips.svg)Tips: By selecting **Send to desktop** for an item, you can create a link on desktop with one click.
 
-### Send To Other Device
+### Send to Other Device
 
 When there is an external device inserted, you can directly send file/folder to it.
 
@@ -428,7 +428,7 @@ When there is an external device inserted, you can directly send file/folder to 
 3. Select the device you want to send to.
 4. File/folder will be copied to the device.
 
-### Send to bluetooth
+### Send to Bluetooth
 If your computer is equipped with Bluetooth module, you can transfer files in short distance through Bluetooth.
 
 Prerequisite: The Bluetooth devices of sender and receiver have been paired and connected successfully. Refer to [Connect to a Bluetooth Device](dman:///dde#Connect to a Bluetooth Device) for details.
@@ -451,7 +451,7 @@ You can assign an icon file to a file or folder icon through the command line an
 >- The corner marker files support formats such as svg, jpg, png, bmp, and gif, but not bigger than 100KB.
 >- The corner marker could not be added to files in USB disks and CD-ROM disks.
 
-### Add single corner marker
+### Add Single Corner Marker
 
 1. Open Terminal, input **gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path)"**, which means to add a corner marker in the lower right corner of the file/folder icon by default.
 >![attention](../common/attention.svg)Attention: the special corner markers defined by the system could not be replaced.
@@ -460,7 +460,7 @@ For example, to add a corner marker to the upper left corner, you have to input:
 **gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path);lu"**
 ![mark](fig/single.png)
 
-### Add multiple corner markers
+### Add Multiple Corner Markers
 To add 2~4 corner markers to a file/folder, you can input "|" in the command to separate multiple paths of the corner marker files. Only one corner marker can be added to the same corner, but you can replace it.
 
 For example, to add 4 corner markers to a file/folder icon, you can input:
@@ -468,7 +468,7 @@ For example, to add 4 corner markers to a file/folder icon, you can input:
 
 ![mark](fig/multi.png)
 
-### Cancel corner markers
+### Cancel Corner Markers
 Open Terminal, input **gio set xxx(file path) -t stringv metadata::emblems ""** to cancel all corner markers on the file/folder icon. 
 
 ## Disk Management
