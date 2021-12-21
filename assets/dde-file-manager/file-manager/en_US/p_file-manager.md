@@ -2,7 +2,7 @@
 
 ## Overview
 
-File Manager is a powerful, simple and easy-to-use file management tool. It follows the classic function and layout of traditional file manager, and simplifies the user operation and adds many features. The open-and-shut navigation bar, the search box with intelligent identification, a variety of views and sorting let you manage files easily. It's beyond classic, just to give you a better experience!
+File Manager is a powerful, simple and easy-to-use file management tool. It follows the classic function and layout of traditional file manager, and simplifies the user operation and adds many features. The open-and-shut navigation bar, the search box with intelligent identification, a variety of views and sorting let you manage files easily. 
 
 ![1|overview](fig/p_overview.png)
 
@@ -92,7 +92,7 @@ File Manager is featured with the basic functions as a file manager, you can eas
 
 ![1|batch_rename](fig/p_rename.png)
 
-### View files
+### View Files
 
 Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view.svg) on the interface to switch icon view and list view.
 
@@ -129,7 +129,7 @@ Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view
 
 
 
-### Hide files
+### Hide Files
 
 1. On File Manager, right-click the file you want to hide.
 2. Select **Properties**, check **Hide this file**.
@@ -178,7 +178,7 @@ In Properties of files, you can view the basic info, open with list, and permiss
 
 > ![notes](../common/notes.svg) Notes: If you check the properties of multiple files at a time, the total size and quantities will be displayed. If you check the properties of a shortcut, the source file location will be displayed in addition. You can use shortcuts **Ctrl + I** to view the properties as well.
 
-### Virus scan
+### Virus Scan
 
 1. On File Manager interface, right-click a file(folder). 
 2. Select **Virus scan**, the **Virus Scan** interface of Security Center pops up, so you can scan the file(folder) for virus. Refer to [Virus Scan](dman:///deepin-defender#Virus Scan) of Security Center for detailed operations.
@@ -208,7 +208,7 @@ By clicking the search icon, or right-click the file path and select **Edit addr
 
 - The inputting box can identify smartly. You can input keywords or an address and press **Enter**, the system will identify automatically and search or visit.
 
-### Search files
+### Search Files
 
 File Manager supports multiple search methods, including both general search by file name and file content, and advanced search by file type, creation time, and so on, which is helpful to improve efficiency and facilitate file management.
 
@@ -272,7 +272,7 @@ By adding tags on file/folder, you can classify and manage your files better.
 
 You can add tag to multiple files/folders at a time, or add multiple tags to a single file/folder. The tag appears in the left panel.
 
-##### By Tag information
+##### By Tag Information
 
 1. Right-click a file/folder, select **Tag information**.
 2. Input tag name. Use comma to separate tags in case of multiple tags.
@@ -290,7 +290,7 @@ Right-click a file/folder, select a "color button" to create a color tag directl
 
 ![1|colortag](fig/p_colortag.png)
 
-##### By information column on the right side
+##### By Information Column on the Right Side
 
 Select a file/folder, click ![fileinfo](../common/fileinfo.svg), and add tags in the information column on the right side.
 
@@ -374,7 +374,7 @@ You can find sharing folders of other users in the same LAN in **Computers in LA
 
 
 
-### Open as admin
+### Open as Admin
 
 Prerequisite: Please enable **Developer Mode** from Control Center > General Settings.
 
@@ -382,7 +382,7 @@ Prerequisite: Please enable **Developer Mode** from Control Center > General Set
 2. Select **Open as admin**, input your login password in the pop-up window and click **Confirm**.
 3. The file will be opened in a new window, in which you can operate with admin permissions. And you will exit admin permissions when you close this window.
 
-### Open in terminal
+### Open in Terminal
 
 1. Right-click in the blank area on File Manager. 
 2. Select **Open in terminal**, Terminal will be opened, and its directory will be the current one.
@@ -454,7 +454,7 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 
 > ![tips](../common/tips.svg) Tips: By selecting **Send to desktop** for an item, you can create a link on desktop with one click.
 
-### Send To Other Device
+### Send to Other Device
 
 When there is an external device inserted, you can directly send file/folder to it.
 
@@ -463,7 +463,7 @@ When there is an external device inserted, you can directly send file/folder to 
 3. Select the device you want to send to.
 4. File/folder will be copied to the device.
 
-### Send to bluetooth
+### Send to Bluetooth
 If your computer is equipped with Bluetooth module, you can transfer files in short distance through Bluetooth.
 
 Prerequisite: The Bluetooth devices of sender and receiver have been paired and connected successfully. Refer to [Connect to a Bluetooth Device](dman:///dde#Connect to a Bluetooth Device) for details.
@@ -475,6 +475,97 @@ Prerequisite: The Bluetooth devices of sender and receiver have been paired and 
 
 
 
+## UnionTech OS Assistant
+
+UnionTech OS Assistant is a practical tool to realize cross terminal cooperation, efficient transmission, and real-time synchronization. It only needs to connect the mobile phone and PC, or use wireless delivery to easily transfer pictures, videos, files, etc.
+
+>![notes](../common/notes.svg)Notes: Only Android phones are supported.
+
+### Preparation
+
+#### Install UnionTech OS Assistant
+
+1. Click ![icon](../common/found.svg) in the system tray or open File Manager and click **My Phone** in the left panel.
+
+2. Click **Install UnionTech OS Assistant**, a window with a QR code inside pops up.
+
+   - Scan the QR code with your WeChat or browser to download and install UnionTech OS Assistant.
+   - Click **Download APK** to download it locally and import it into your phone for installation.
+
+![phone](fig/myphone.png)
+
+#### Log in UnionTech OS Assistant
+
+There are three ways to log in UnionTech OS Assistant, including: cell phone quick login, WeChat login, and account password login. Please choose one to login. If you haven't registered your account yet, please click **Register** on the login screen to register.
+
+#### Discovery Settings
+
+Use the "Discovery Settings" function to set how your phone and computer are discovered. In the UnionTech OS Assistant screen, click **Discovery Settings** in the upper right corner; on the computer system tray, right-click the icon ![icon](../common/found.svg) and select **Discovery Settings**, you can choose:
+
+- **Discoverable for everyone**: Within the LAN, all devices that are on the same network and in the same network segment are allowed to discover this phone or computer.
+- **Discoverable for the same Union ID only**: Within the LAN, only devices logged into the same Union ID are allowed to discover this phone or computer.
+- **Undiscoverable**: All devices are not allowed to discover this phone or computer.
+- **Discoverable for remote devices with the same Union ID** (computer side): Remote devices logged into the same Union ID are allowed to discover this computer.
+
+ 
+
+
+### Connect PC with Phone
+
+After logging into UnionTech OS Assistant, you can connect your phone to your computer by **Scan and Connect** or **Search Computer**.
+
+#### Scan and Connect
+
+Prerequisite: The phone and the computer are on the same wireless network and in the same network segment.
+
+After the network connection is successful, then perform the following steps.
+
+1. At the computer side, click ![icon](../common/found.svg)in the system tray or open File Manager and click **My Phone** in the left panel, "Scan and connect with UnionTech OS Assistant" interface pops up.
+2. At the phone side, enter UnionTech OS Assistant interface and click **Scan and Connect**, scan the QR code pops up in step 1.
+
+#### Search Computer
+
+Prerequisite: The phone and the computer are on the same wireless network and in the same network segment (sending files to each other is supported, instead of viewing and editing files), or they have logged into the same Union ID; the phone and computer are discoverable.
+
+1. In UnionTech OS Assistant interface on your phone, click "Search Computer".
+
+2. Select the computer to be connected.
+
+If you need to disconnect, you can:
+
+   - Click ![icon](../common/exit.svg) in UnionTech OS Assistant on your phone.
+   - Right-click ![icon](../common/found.svg) in the system tray on PC, select your phone and click **Disconnect**.
+
+### Manage Files
+After the connection between the mobile phone and PC is successful, files can be transfered, viewed and managed easily.
+
+#### Transfer Files
+
+- **In UnionTech OS Assistant interface**
+
+   Send files from your phone to your computer: In the UnionTech OS Assistant interface, click **Transfer Assistant** and send files to your computer in the transfer window.
+
+- **In File Manager interface**
+
+   Send files from your computer to your phone: In the **File Manager > My Phone** interface, in the transfer window on the right side, you can select a computer file to transfer it in this window; or right-click a file on your computer and select **Send to My Phone**.
+
+- **By wireless delivery**
+
+   When the devices are logged into the same Union ID or in the same wireless network and in the same network segment, and are discoverable, you can transfer files from one device to another through wireless delivery.
+   1. On the computer, right-click the file you want to deliver and select **Wireless Deliver**. 
+
+   2. In the pop-up window, select the phone or computer you want to deliver to.
+
+   >![icon](../common/notes.svg) Notes:
+   >- You need to install UnionTech OS Assistant on the cell phone and log in to your account to receive the files delivered from the computer.
+   >- After logging in to the same Union ID, you can perform the remote delivery.
+
+
+#### View/Edit Files
+
+- View computer files on your phone: In the interface of UnionTech OS Assistant, click **My Computer**, you can open, download or share computer files.
+- View/edit phone files from computer side: In the interface of **File Manager > My Phone**, the folders of photo albums, videos, documents, etc. are categorized and displayed, you can open and edit the files in the folders, and the files will be synced to your phone after being edited and saved.
+
 ## Add Corner Marker to Files/Folders
 
 You can assign an icon file to a file or folder icon through the command line and display it as a corner marker.
@@ -482,7 +573,7 @@ You can assign an icon file to a file or folder icon through the command line an
 >- The corner marker files support formats such as svg, jpg, png, bmp, and gif, but not bigger than 100KB.
 >- The corner marker could not be added to files in USB disks and CD-ROM disks.
 
-### Add single corner marker
+### Add Single Corner Marker
 
 1. Open Terminal, input **gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path)"**, which means to add a corner marker in the lower right corner of the file/folder icon by default.
 
@@ -494,7 +585,7 @@ For example, to add a corner marker to the upper left corner, you have to input:
 
 ![mark](fig/single.png)
 
-### Add multiple corner markers
+### Add Multiple Corner Markers
 
 To add 2~4 corner markers to a file/folder, you can input "|" in the command to separate multiple paths of the corner marker files. Only one corner marker can be added to the same corner, but you can replace it.
 
@@ -503,7 +594,7 @@ For example, to add 4 corner markers to a file/folder icon, you can input:
 
 ![mark](fig/multi.png)
 
-### Cancel corner markers
+### Cancel Corner Markers
 
 Open Terminal, input **gio set xxx(file path) -t stringv metadata::emblems ""** to cancel all corner markers on the file/folder icon. 
 
@@ -511,7 +602,7 @@ Open Terminal, input **gio set xxx(file path) -t stringv metadata::emblems ""** 
 
 File Vault is designed to  create a special safe space for you and protect your privacy. With the advanced encryption technology and convenient operations, it's quite easy to use.
 
-### Set vault password
+### Set Vault Password
 
 You will have to set a password when you use File Vault for the first time as follows:
 
