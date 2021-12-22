@@ -21,8 +21,10 @@
  */
 #include "windowsservice.h"
 #include "private/windowsservice_p.h"
+
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/finallyutil.h"
 
 #include <QDebug>
@@ -30,15 +32,28 @@
 #include <QApplication>
 #include <QX11Info>
 #include <QScreen>
+#include <QWindow>
 
 DSB_FM_BEGIN_NAMESPACE
 
 using dfmbase::Application;
 using dfmbase::FileManagerWindow;
 
+enum NetWmState {
+    kNetWmStateAbove = 0x1,
+    kNetWmStateBelow = 0x2,
+    kNetWmStateFullScreen = 0x4,
+    kNetWmStateMaximizedHorz = 0x8,
+    kNetWmStateMaximizedVert = 0x10,
+    kNetWmStateModal = 0x20,
+    kNetWmStateStaysOnTop = 0x40,
+    kNetWmStateDemandsAttention = 0x80
+};
+Q_DECLARE_FLAGS(NetWmStates, NetWmState)
+
 /*!
  * \class WindowServicePrivate
- * \brief
+ * \brief private class for `WindowsService`
  */
 
 WindowsServicePrivate::WindowsServicePrivate(WindowsService *serv)
@@ -83,9 +98,93 @@ void WindowsServicePrivate::moveWindowToScreenCenter(FileManagerWindow *window)
     window->moveCenter(currentScreenGeometry.center());
 }
 
+bool WindowsServicePrivate::isValidUrl(const QUrl &url, QString *error)
+{
+    Q_ASSERT(error);
+
+    if (url.isEmpty()) {
+        *error = "Can't new window use empty url";
+        return false;
+    }
+
+    if (!url.isValid()) {
+        *error = "Can't new window use not valid ur";
+        return false;
+    }
+
+    if (!dfmbase::UrlRoute::hasScheme(url.scheme())) {
+        *error = QString("No related scheme is registered "
+                         "in the route form %0")
+                         .arg(url.scheme());
+        return false;
+    }
+    return true;
+}
+
+void WindowsServicePrivate::loadWindowState(dfmbase::FileManagerWindow *window)
+{
+    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "WindowState").toMap();
+
+    int width = state.value("width").toInt();
+    int height = state.value("height").toInt();
+    NetWmStates windowState = static_cast<NetWmStates>(state.value("state").toInt());
+
+    // fix bug 30932,获取全屏属性，必须是width全屏和height全屏熟悉都满足，才判断是全屏
+    if ((windows.size() == 0) && ((windowState & kNetWmStateMaximizedHorz) != 0 && (windowState & kNetWmStateMaximizedVert) != 0)) {
+        window->showMaximized();
+    } else {
+        window->resize(width, height);
+    }
+}
+
+void WindowsServicePrivate::saveWindowState(dfmbase::FileManagerWindow *window)
+{
+    /// The power by dxcb platform plugin
+    NetWmStates states = static_cast<NetWmStates>(window->window()->windowHandle()->property("_d_netWmStates").toInt());
+    QVariantMap state;
+    // fix bug 30932,获取全屏属性，必须是width全屏和height全屏熟悉都满足，才判断是全屏
+    if ((states & kNetWmStateMaximizedHorz) == 0 || (states & kNetWmStateMaximizedVert) == 0) {
+        state["width"] = window->size().width();
+        state["height"] = window->size().height();
+    } else {
+        const QVariantMap &state1 = Application::appObtuselySetting()->value("WindowManager", "WindowState").toMap();
+        state["width"] = state1.value("width").toInt();
+        state["height"] = state1.value("height").toInt();
+        state["state"] = static_cast<int>(states);
+    }
+    Application::appObtuselySetting()->setValue("WindowManager", "WindowState", state);
+}
+
+void WindowsServicePrivate::onWindowClosed(dfmbase::FileManagerWindow *window)
+{
+    int count = windows.count();
+    if (count <= 0)
+        return;
+
+    if (!window)
+        return;
+
+    // TODO(zhangs): window can destruct ?
+    if (count == 1) {   // last window
+        window->deleteLater();
+        saveWindowState(window);
+        // TODO(zhangs): close all property dialog
+    } else {
+        // fix bug 59239 drag事件的接受者的drop事件和发起drag事件的发起者的mousemove事件处理完成才能
+        // 析构本窗口，检查当前窗口是否可以析构
+        QPointer<FileManagerWindow> pwindow = window;
+        QTimer::singleShot(1000, this, [=]() {
+            pwindow->deleteLater();
+        });
+        qInfo() << "window deletelater !";
+    }
+
+    windows.remove(window->internalWinId());
+}
+
 /*!
  * \class WindowService
- * \brief
+ * \brief manage all windows for filemanager
  */
 
 WindowsService::WindowsService(QObject *parent)
@@ -106,27 +205,21 @@ WindowsService::~WindowsService()
     d->windows.clear();
 }
 
+/*!
+ * \brief WindowsService::showWindow
+ * \param url
+ * \param isNewWindow
+ * \param errorString
+ * \return
+ */
 WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNewWindow, QString *errorString)
 {
+    Q_ASSERT_X(thread() == qApp->thread(), "WindowsService", "Show window must in main thread!");
     QString error;
     dfmbase::FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 
-    if (url.isEmpty()) {
-        error = "Can't new window use empty url";
+    if (!d->isValidUrl(url, &error))
         return nullptr;
-    }
-
-    if (!url.isValid()) {
-        error = "Can't new window use not valid ur";
-        return nullptr;
-    }
-
-    if (!dfmbase::UrlRoute::hasScheme(url.scheme())) {
-        error = QString("No related scheme is registered "
-                        "in the route form %0")
-                        .arg(url.scheme());
-        return nullptr;
-    }
 
     // TODO(zhangs): isInitAppOver isAppQuiting, ref: WindowManager::showNewWindow
 
@@ -141,11 +234,15 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
 
     QX11Info::setAppTime(QX11Info::appUserTime());
     auto window = new FMWindow(url.isEmpty() ? Application::instance()->appUrlAttribute(Application::AA_UrlOfNewWindow) : url);
-    // TODO(zhangs): loadWindowState
-    // TODO(zhangs): aboutToClose
-    // TODO(zhangs): requestToSelectUrls
+    d->loadWindowState(window);
+    connect(window, &FileManagerWindow::aboutToClose, this, [this, window]() {
+        emit windowClosed(window->internalWinId());
+        d->onWindowClosed(window);
+    });
+
     qInfo() << "New window created: " << window->winId() << url;
     d->windows.insert(window->internalWinId(), window);
+    // TODO(zhangs): requestToSelectUrls
 
     if (d->windows.size() == 1)
         d->moveWindowToScreenCenter(window);
@@ -157,6 +254,11 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
     return window;
 }
 
+/*!
+ * \brief WindowsService::findWindowId find window id by input a window object pointer
+ * \param window
+ * \return window id
+ */
 quint64 WindowsService::findWindowId(const QWidget *window)
 {
     int count = d->windows.size();
@@ -166,8 +268,8 @@ quint64 WindowsService::findWindowId(const QWidget *window)
             return key;
     }
 
+    // if `window` not contains `d->windows`, find the windows's base class
     const QWidget *newWindow = window;
-
     while (newWindow) {
         if (newWindow->inherits("FileManagerWindow"))
             return newWindow->winId();
@@ -178,6 +280,11 @@ quint64 WindowsService::findWindowId(const QWidget *window)
     return window->window()->internalWinId();
 }
 
+/*!
+ * \brief WindowsService::findWindowById find a window by a window id
+ * \param winId
+ * \return window object pointer otherwise return nullptr
+ */
 WindowsService::FMWindow *WindowsService::findWindowById(quint64 winId)
 {
     if (winId <= 0)
@@ -195,6 +302,10 @@ WindowsService::FMWindow *WindowsService::findWindowById(quint64 winId)
     return nullptr;
 }
 
+/*!
+ * \brief WindowsService::windowIdList
+ * \return all windows id
+ */
 QList<quint64> WindowsService::windowIdList()
 {
     return d->windows.keys();

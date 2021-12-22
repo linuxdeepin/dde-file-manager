@@ -20,7 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "core.h"
-#include "corelog.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/common/menu/menuservice.h"
@@ -144,7 +143,7 @@ bool Core::start()
     WindowsService *windowService = ctx.service<WindowsService>(WindowsService::name());
 
     if (!windowService) {
-        qCCritical(CorePlugin) << "Failed, init window \"windowService\" is empty";
+        qCritical() << "Failed, init window \"windowService\" is empty";
         return false;
     }
 

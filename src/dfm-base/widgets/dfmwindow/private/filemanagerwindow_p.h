@@ -48,6 +48,9 @@ class FileManagerWindowPrivate : public QObject
 
 public:
     explicit FileManagerWindowPrivate(const QUrl &url, FileManagerWindow *qq);
+    bool processKeyPressEvent(QKeyEvent *event);
+    int splitterPosition() const;
+    void setSplitterPosition(int pos);
 
 private:
     QUrl currentUrl;

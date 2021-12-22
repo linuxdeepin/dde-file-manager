@@ -288,11 +288,12 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
 
 void FileViewModel::clear()
 {
-    for (int x = 0; x < columnCount(); x++) {
-        for (int y = 0; x < rowCount(); y++) {
-            delete itemFromIndex(index(x, y));
-        }
-    }
+    // TODO(liuyangming): crash here!
+    //    for (int x = 0; x < columnCount(); x++) {
+    //        for (int y = 0; x < rowCount(); y++) {
+    //            delete itemFromIndex(index(x, y));
+    //        }
+    //    }
 }
 /*!
  * \brief FileViewModel::rowCountMaxShow

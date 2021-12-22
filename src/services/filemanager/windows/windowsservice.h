@@ -56,7 +56,7 @@ public:
 
 signals:
     void windowOpended(quint64 windId);
-    // TODO(zhangs): window closed
+    void windowClosed(quint64 winId);
 
 private:
     QScopedPointer<WindowsServicePrivate> d;

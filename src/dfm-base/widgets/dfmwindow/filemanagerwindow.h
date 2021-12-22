@@ -40,7 +40,7 @@ class FileManagerWindow : public DMainWindow
 
 public:
     explicit FileManagerWindow(const QUrl &url, QWidget *parent = nullptr);
-    virtual ~FileManagerWindow();
+    virtual ~FileManagerWindow() override;
 
     void cd(const QUrl &url);
     QUrl currentUrl() const;
@@ -56,12 +56,34 @@ public:
     AbstractFrame *workSpace() const;
     AbstractFrame *detailView() const;
 
+protected:
+    void showEvent(QShowEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
+    void moveEvent(QMoveEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
 signals:
     void aboutToClose();
     void positionChanged(const QPoint &pos);
     void currentUrlChanged();
     void currentViewStateChanged();
     void selectUrlChanged(const QList<QUrl> &urlList);
+
+    // The following signals are used to send shortcut requests
+    void reqRefresh();   // F5
+    void reqActivateNextTab();   // ctrl + Tab
+    void reqActivatePreviousTab();   // ctrl + {shift + } BackTab
+    void reqSearchCtrlF();   // ctrl + F
+    void reqSearchCtrlL();   // ctrl + L
+    void reqBack();   // ctrl / alt + Left
+    void reqForward();   // ctrl / alt + Right
+    void reqCloseCurrentTab();   // ctrl + W
+    void reqTriggerActionByIndex(int index);   // ctrl + [1, 8]
+    void reqActivateTabByIndex(int index);   // alt + [1, 8]
+    void reqShowHotkeyHelp();   // ctrl + shift + ?
 
 private:
     void initializeUi();

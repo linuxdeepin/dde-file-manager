@@ -46,10 +46,6 @@ ListenerPrivate::ListenerPrivate(Listener *parent)
     QObject::connect(this, &ListenerPrivate::pluginsStarted,
                      q, &Listener::pluginsStarted,
                      Qt::UniqueConnection);
-
-    QObject::connect(this, &ListenerPrivate::pluginsStoped,
-                     q, &Listener::pluginsStoped,
-                     Qt::UniqueConnection);
 }
 
 DPF_END_NAMESPACE

@@ -588,9 +588,6 @@ void PluginManagerPrivate::stopPlugins()
         ++itera;
     }
 
-    // 私有类转发进行Sendler闭包
-    emit Listener::instance().d->pluginsStoped();
-
     dpfCheckTimeEnd();
 }
 

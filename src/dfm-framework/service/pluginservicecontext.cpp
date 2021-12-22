@@ -50,4 +50,9 @@ bool PluginServiceContext::unload(const QString &name)
     return this->remove(name);
 }
 
+bool PluginServiceContext::loaded(const QString &name)
+{
+    return classList.contains(name);
+}
+
 DPF_END_NAMESPACE

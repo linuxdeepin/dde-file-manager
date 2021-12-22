@@ -33,8 +33,8 @@
 DPF_BEGIN_NAMESPACE
 
 class PluginServiceContext final : public QObject,
-        public QtClassFactory<PluginService>,
-        public QtClassManager<PluginService>
+                                   public QtClassFactory<PluginService>,
+                                   public QtClassManager<PluginService>
 {
     Q_OBJECT
     Q_DISABLE_COPY(PluginServiceContext)
@@ -44,21 +44,21 @@ public:
     QStringList services();
     bool load(const QString &name, QString *errString = nullptr);
     bool unload(const QString &name);
+    bool loaded(const QString &name);
 
     template<class CT = PluginService>
     CT *service(const QString &name)
     {
-        return qobject_cast<CT*>(PluginServiceContext::instance().
-                                 value(name));
+        return qobject_cast<CT *>(PluginServiceContext::instance().value(name));
     }
 
 private:
-    explicit PluginServiceContext(QObject *parent = nullptr): QObject (parent){}
+    explicit PluginServiceContext(QObject *parent = nullptr)
+        : QObject(parent) {}
 };
 
-
 // auto register all services
-template <typename T>
+template<typename T>
 class AutoServiceRegister
 {
 public:
@@ -75,9 +75,9 @@ private:
     static bool isRegistered;
 };
 
-template <typename T>
+template<typename T>
 bool AutoServiceRegister<T>::isRegistered = AutoServiceRegister<T>::trigger();
-template <typename T>
+template<typename T>
 bool AutoServiceRegister<T>::trigger()
 {
     qInfo() << "Register Service: " << __PRETTY_FUNCTION__;
@@ -91,4 +91,4 @@ bool AutoServiceRegister<T>::trigger()
 
 DPF_END_NAMESPACE
 
-#endif // PLUGINSERVICECONTEXT_H
+#endif   // PLUGINSERVICECONTEXT_H

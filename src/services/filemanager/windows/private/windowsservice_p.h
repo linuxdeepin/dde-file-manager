@@ -42,8 +42,10 @@ public:
     explicit WindowsServicePrivate(WindowsService *serv);
     dfmbase::FileManagerWindow *activeExistsWindowByUrl(const QUrl &url);
     void moveWindowToScreenCenter(dfmbase::FileManagerWindow *window);
-
-private slots:
+    bool isValidUrl(const QUrl &url, QString *error);
+    void loadWindowState(dfmbase::FileManagerWindow *window);
+    void saveWindowState(dfmbase::FileManagerWindow *window);
+    void onWindowClosed(dfmbase::FileManagerWindow *window);
 
 private:
     QPointer<WindowsService> service;

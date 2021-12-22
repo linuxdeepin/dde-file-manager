@@ -21,10 +21,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "filemanagerwindow.h"
-
 #include "private/filemanagerwindow_p.h"
 
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
+
 #include <QUrl>
+#include <QCloseEvent>
+#include <QKeyEvent>
+#include <QHideEvent>
 
 #include <mutex>
 
@@ -40,6 +45,94 @@ FileManagerWindowPrivate::FileManagerWindowPrivate(const QUrl &url, FileManagerW
       q(qq),
       currentUrl(url)
 {
+}
+
+bool FileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
+{
+    switch (event->modifiers()) {
+    case Qt::NoModifier: {
+        switch (event->key()) {
+        case Qt::Key_F5:
+            emit q->reqRefresh();
+            return true;
+        }
+        break;
+    }
+    case Qt::ControlModifier: {
+        switch (event->key()) {
+        case Qt::Key_Tab:
+            emit q->reqActivateNextTab();
+            return true;
+        case Qt::Key_Backtab:
+            emit q->reqActivatePreviousTab();
+            return true;
+        case Qt::Key_F:
+            emit q->reqSearchCtrlF();
+            return true;
+        case Qt::Key_L:
+            emit q->reqSearchCtrlL();
+            return true;
+        case Qt::Key_Left:
+            emit q->reqBack();
+            return true;
+        case Qt::Key_Right:
+            emit q->reqForward();
+            return true;
+        case Qt::Key_W:
+            emit q->reqCloseCurrentTab();
+            return true;
+        case Qt::Key_1:
+        case Qt::Key_2:
+        case Qt::Key_3:
+        case Qt::Key_4:
+        case Qt::Key_5:
+        case Qt::Key_6:
+        case Qt::Key_7:
+        case Qt::Key_8:
+        case Qt::Key_9:
+            emit q->reqTriggerActionByIndex(event->key() - Qt::Key_1);
+            return true;
+        }
+        break;
+    }
+    case Qt::AltModifier:
+    case Qt::AltModifier | Qt::KeypadModifier:
+        if (event->key() >= Qt::Key_1 && event->key() <= Qt::Key_8) {
+            emit q->reqActivateTabByIndex(event->key() - Qt::Key_1);
+            return true;
+        }
+
+        switch (event->key()) {
+        case Qt::Key_Left:
+            emit q->reqBack();
+            return true;
+        case Qt::Key_Right:
+            emit q->reqForward();
+            return true;
+        }
+        break;
+    case Qt::ControlModifier | Qt::ShiftModifier:
+        if (event->key() == Qt::Key_Question) {
+            emit q->reqShowHotkeyHelp();
+            return true;
+        } else if (event->key() == Qt::Key_Backtab) {
+            emit q->reqActivatePreviousTab();
+            return true;
+        }
+        break;
+    }
+    return false;
+}
+
+int FileManagerWindowPrivate::splitterPosition() const
+{
+    return splitter ? splitter->sizes().at(0) : kMaximumLeftWidth;
+}
+
+void FileManagerWindowPrivate::setSplitterPosition(int pos)
+{
+    if (splitter)
+        splitter->setSizes({ pos, splitter->width() - pos - splitter->handleWidth() });
 }
 
 /*!
@@ -135,6 +228,7 @@ void FileManagerWindow::installWorkSpace(AbstractFrame *w)
         sp.setHorizontalStretch(1);
         d->workspace->setSizePolicy(sp);
         d->workspace->setCurrentUrl(d->currentUrl);
+        d->workspace->installEventFilter(this);
     });
 }
 
@@ -173,6 +267,68 @@ AbstractFrame *FileManagerWindow::workSpace() const
 AbstractFrame *FileManagerWindow::detailView() const
 {
     return d->detailSpace;
+}
+
+void FileManagerWindow::showEvent(QShowEvent *event)
+{
+    DMainWindow::showEvent(event);
+
+    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
+    int splitterPos = state.value("sidebar", d->kMaximumLeftWidth).toInt();
+    d->setSplitterPosition(splitterPos);
+}
+
+void FileManagerWindow::closeEvent(QCloseEvent *event)
+{
+    // NOTE(zhangs): bug 59239
+    emit aboutToClose();
+    DMainWindow::closeEvent(event);
+}
+
+void FileManagerWindow::hideEvent(QHideEvent *event)
+{
+    QVariantMap state;
+    state["sidebar"] = d->splitterPosition();
+    Application::appObtuselySetting()->setValue("WindowManager", "SplitterState", state);
+
+    return DMainWindow::hideEvent(event);
+}
+
+void FileManagerWindow::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if (event->y() <= d->titleBar->height()) {
+        if (isMaximized()) {
+            showNormal();
+        } else {
+            showMaximized();
+        }
+    } else {
+        DMainWindow::mouseDoubleClickEvent(event);
+    }
+}
+
+void FileManagerWindow::moveEvent(QMoveEvent *event)
+{
+    DMainWindow::moveEvent(event);
+
+    emit positionChanged(event->pos());
+}
+
+void FileManagerWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (!d->processKeyPressEvent(event))
+        return DMainWindow::keyPressEvent(event);
+}
+
+bool FileManagerWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (!d->workspace || watched != d->workspace)
+        return false;
+
+    if (event->type() != QEvent::KeyPress)
+        return false;
+
+    return d->processKeyPressEvent(static_cast<QKeyEvent *>(event));
 }
 
 void FileManagerWindow::initializeUi()
