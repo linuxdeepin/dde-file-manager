@@ -55,6 +55,7 @@
 #include "drootfilemanager.h"
 #include "plugins/schemepluginmanager.h"
 #include "extensionimpl/dfmextpluginmanager.h"
+#include "plugins/pluginemblemmanager.h"
 
 #include <DArrowRectangle>
 
@@ -544,6 +545,12 @@ void DFMGlobal::initBluetoothManager()
 void DFMGlobal::initRootFileManager()
 {
     rootFileManager;
+}
+
+void DFMGlobal::initEmblemPluginManagerConnection()
+{
+    connect(PluginEmblemManager::instance(), &PluginEmblemManager::updatePluginEmblem,
+            fileSignalManager, &FileSignalManager::requestUpdateAllFileView);
 }
 
 QString DFMGlobal::getUser()
@@ -1156,15 +1163,9 @@ bool DFMGlobal::fileNameCorrection(const QByteArray &filePath)
 
 bool DFMGlobal::autoInitExtPluginManager()
 {
-    if (DFMExtPluginManager::instance().pluginPaths().isEmpty()) {
-        auto pluginPaths = DFMExtPluginManager::instance().pluginPaths();
-        pluginPaths.append(DFMExtPluginManager::instance().pluginDefaultPath());
-        DFMExtPluginManager::instance().setPluginPaths(pluginPaths);
-    }
-
     if (DFMExtPluginManager::instance().state() == DFMExtPluginManager::State::Invalid) {
         qInfo() << "extPluginPath:" << DFMExtPluginManager::instance().pluginPaths();
-        DFMExtPluginManager::instance().scannPlugins();
+        DFMExtPluginManager::instance().scanPlugins();
         qInfo() << "extPlugin scanned all plugin";
     }
 
@@ -1179,7 +1180,7 @@ bool DFMGlobal::autoInitExtPluginManager()
     }
 
     if (DFMExtPluginManager::instance().state() == DFMExtPluginManager::State::Initialized) {
-        qDebug() << "extPlugin contain menus: " << DFMExtPluginManager::instance().menus();
+        qInfo() << "extPlugin initialization has been successful!";
     }
 
     return true;

@@ -173,6 +173,8 @@ signals:
     /*request fresh file view*/
     void requestFreshFileView(quint64 winId);
     void requestFreshAllFileView();
+    /*request update file view*/
+    void requestUpdateAllFileView();
     /*request fresh desktop view*/
     void requestFreshAllDesktop();
 

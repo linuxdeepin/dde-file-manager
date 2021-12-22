@@ -247,6 +247,7 @@ int main(int argc, char *argv[])
         DFMGlobal::initRootFileManager();
         DFMGlobal::setInitAppOver();
     });
+    DFMGlobal::initEmblemPluginManagerConnection();
 
     DFMGlobal::IsFileManagerDiloagProcess = true; // for compatibility.
     int ret = app.exec();

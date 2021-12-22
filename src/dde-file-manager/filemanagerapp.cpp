@@ -154,6 +154,9 @@ void FileManagerApp::initApp()
     /*init rootfile manager*/
     DFMGlobal::initRootFileManager();
 
+    /*init emblemplugin manager*/
+    DFMGlobal::initEmblemPluginManagerConnection();
+
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 }
 

@@ -254,7 +254,9 @@ HEADERS += \
     $$PWD/views/dfmvaultactivesavekeyfileview.h \
     $$PWD/views/dfmvaultretrievepassword.h \
     $$PWD/plugins/schemeplugininterface.h \
-    $$PWD/plugins/schemepluginmanager.h
+    $$PWD/plugins/schemepluginmanager.h \
+    $$PWD/plugins/pluginemblemmanager.h \
+    $$PWD/plugins/private/pluginemblemmanagerprivate.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
@@ -471,7 +473,9 @@ SOURCES += \
     $$PWD/controllers/dfmsftpcrumbcontroller.cpp \
     $$PWD/views/dfmvaultactivesavekeyfileview.cpp \
     $$PWD/views/dfmvaultretrievepassword.cpp \
-    $$PWD/plugins/schemepluginmanager.cpp
+    $$PWD/plugins/schemepluginmanager.cpp \
+    $$PWD/plugins/pluginemblemmanager.cpp \
+    $$PWD/plugins/private/pluginemblemmanagerprivate.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h

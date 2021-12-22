@@ -46,6 +46,7 @@
 #include "shutil/danythingmonitorfilter.h"
 #include "dfmapplication.h"
 #include "dfmstandardpaths.h"
+#include "plugins/pluginemblemmanager.h"
 
 #ifdef SW_LABEL
 #include "sw_label/filemanagerlibrary.h"
@@ -434,6 +435,9 @@ QList<QIcon> DFileInfo::additionalIcon() const
         icons << QIcon::fromTheme("emblem-shared", DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon));
     }
 
+    // 记录系统角标的个数
+    int countOfSystemIcon = icons.count();
+
     //部分文件和目录不显示徽标
     if (needEmblem &&
             fileUrl().parentUrl().path() != "/" &&
@@ -447,6 +451,9 @@ QList<QIcon> DFileInfo::additionalIcon() const
         icons << QIcon(labelIconPath);
     }
 #endif
+
+    // 添加插件角标
+    PluginEmblemManager::instance()->getPluginEmblemIconsFromMap(fileUrl(), countOfSystemIcon, icons);
 
     return icons;
 }

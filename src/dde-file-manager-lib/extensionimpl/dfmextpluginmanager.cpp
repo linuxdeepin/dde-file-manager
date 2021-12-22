@@ -55,10 +55,10 @@ QStringList DFMExtPluginManager::pluginPaths() const
 }
 
 /*!
- * \brief scannPlugins 扫描已设置路径下的所有插件
+ * \brief scanPlugins 扫描已设置路径下的所有插件
  * \return 返回执行结果，如果扫描路径下存在不可失败的so文件将返回false
  */
-bool DFMExtPluginManager::scannPlugins()
+bool DFMExtPluginManager::scanPlugins()
 {
     for(auto val : d->pluginPaths) {
         QDirIterator itera(val, QDir::Files | QDir::NoSymLinks);
@@ -198,5 +198,8 @@ DFMExtPluginManagerPrivate::DFMExtPluginManagerPrivate(DFMExtPluginManager *qq)
 {
 #ifdef EXTENSIONSDIR
         pluginDefaultPath = EXTENSIONSDIR;
+#else
+#error You Should setting pluginDefaultPath
 #endif
+    pluginPaths.append(pluginDefaultPath);
 }

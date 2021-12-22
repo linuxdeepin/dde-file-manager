@@ -310,6 +310,7 @@ public:
     static void initThumbnailConnection();
     static void initBluetoothManager();
     static void initRootFileManager();
+    static void initEmblemPluginManagerConnection();
 
     static QString getUser();
     static int getUserId();

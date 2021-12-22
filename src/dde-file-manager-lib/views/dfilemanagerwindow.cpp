@@ -75,6 +75,7 @@
 #include "views/dfmvaultactiveview.h"
 #include "vault/vaultglobaldefine.h"
 #include "dde-file-manager-daemon/dbusservice/dbusinterface/usershare_interface.h"
+#include "plugins/pluginemblemmanager.h"
 
 #include <DPlatformWindowHandle>
 #include <DTitlebar>
@@ -292,6 +293,10 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 {
     Q_Q(DFileManagerWindow);
     qInfo() << "  cd   to " << fileUrl;
+
+    // 每次切换目录，清空插件角标缓存
+    PluginEmblemManager::instance()->clearEmblemIconsMap();
+
     DFMBaseView *current_view = tab->fileView();
 
     const QString &scheme = fileUrl.scheme();

@@ -33,7 +33,10 @@ SOURCES += \
     menu/private/dfmextactionprivate.cpp \
     menu/private/dfmextmenuprivate.cpp \
     menu/private/dfmextmenuproxyprivate.cpp \
-    emblemicon/dfmextemblemiconplugin.cpp
+    emblemicon/dfmextemblemiconplugin.cpp \
+    emblemicon/dfmextemblem.cpp \
+    emblemicon/private/dfmextemblemprivate.cpp \
+    emblemicon/dfmextemblemiconlayout.cpp
 
 HEADERS += \
     dfm-extension-global.h \
@@ -45,7 +48,11 @@ HEADERS += \
     menu/private/dfmextactionprivate.h \
     menu/private/dfmextmenuprivate.h \
     menu/private/dfmextmenuproxyprivate.h \
-    emblemicon/dfmextemblemiconplugin.h
+    emblemicon/dfmextemblemiconplugin.h \
+    emblemicon/dfmextemblem.h \
+    emblemicon/private/dfmextemblemprivate.h \
+    emblemicon/dfmextemblemiconlayout.h \
+    emblemicon/private/dfmextemblemiconlayoutprivate.h
 
 DISTFILES += \
     .readme

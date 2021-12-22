@@ -2591,6 +2591,7 @@ void DFileView::initConnects()
     connect(DFMApplication::instance(), &DFMApplication::iconSizeLevelChanged, this, &DFileView::setIconSizeBySizeIndex);
     connect(DFMApplication::instance(), &DFMApplication::showedHiddenFilesChanged, this, &DFileView::onShowHiddenFileChanged);
     connect(fileSignalManager, &FileSignalManager::requestFreshAllFileView, this, &DFileView::freshView, Qt::QueuedConnection);
+    connect(fileSignalManager, &FileSignalManager::requestUpdateAllFileView, this, static_cast<void (DFileView::*)()>(&DFileView::update));
     connect(DFMApplication::instance(), &DFMApplication::viewModeChanged, this, [this](const int &viewMode) {
         setDefaultViewMode(static_cast<ViewMode>(viewMode));
     });

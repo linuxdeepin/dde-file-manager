@@ -46,6 +46,7 @@
 #include "dstorageinfo.h"
 #include "shutil/danythingmonitorfilter.h"
 #include "dfmapplication.h"
+#include "plugins/pluginemblemmanager.h"
 
 #ifdef SW_LABEL
 #include "sw_label/filemanagerlibrary.h"
@@ -547,8 +548,11 @@ QList<QIcon> DGvfsFileInfo::additionalIcon() const
     // wayland TASK-38720 修复重命名文件时，文件图标有小锁显示的问题，
     // 当为快捷方式时，有源文件文件不存在的情况，所以增加特殊判断
     if (!isSymLink()) {
-        if (exists())
+        if (exists()) {
+            // 添加插件角标
+            PluginEmblemManager::instance()->getPluginEmblemIconsFromMap(fileUrl(), icons.size(), icons);
             return icons;
+        }
     }
 
     if (isSymLink()) {
@@ -565,6 +569,9 @@ QList<QIcon> DGvfsFileInfo::additionalIcon() const
         icons << QIcon(labelIconPath);
     }
 #endif
+
+    // 添加插件角标
+    PluginEmblemManager::instance()->getPluginEmblemIconsFromMap(fileUrl(), icons.size(), icons);
 
     return icons;
 }

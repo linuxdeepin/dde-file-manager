@@ -82,6 +82,7 @@
 #include "../dde-wallpaper-chooser/screensavercontrol.h"
 
 #include "accessibility/ac-desktop-define.h"
+#include "app/filesignalmanager.h"
 
 #define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
 #define DRAGICON_SIZE 128       //拖拽聚合默认icon边长
@@ -2930,6 +2931,9 @@ void CanvasGridView::initConnection()
     });
 
     connect(DFMApplication::instance(), &DFMApplication::previewAttributeChanged, this->model(), &DFileSystemModel::update);
+
+    // 收到角标变化信号后后，桌面视图重绘一次
+    connect(fileSignalManager, &FileSignalManager::requestUpdateAllFileView, this, static_cast<void (CanvasGridView::*)()>(&CanvasGridView::update));
 }
 
 void CanvasGridView::updateCanvas()

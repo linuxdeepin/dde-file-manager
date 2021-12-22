@@ -47,7 +47,7 @@ public:
     QString pluginDefaultPath();
     void setPluginPaths(const QStringList &paths);
     QStringList pluginPaths() const;
-    bool scannPlugins();
+    bool scanPlugins();
     bool loadPlugins();
     bool initPlugins();
     bool shutdownPlugins();
