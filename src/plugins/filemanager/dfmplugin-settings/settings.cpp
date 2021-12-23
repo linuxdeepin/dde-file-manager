@@ -21,6 +21,7 @@
 
 #include "settings.h"
 
+DPSETTINGS_BEGIN_NAMESPACE
 void Settings::initialize()
 {
 }
@@ -34,3 +35,4 @@ dpf::Plugin::ShutdownFlag Settings::stop()
 {
     return kSync;
 }
+DPSETTINGS_END_NAMESPACE

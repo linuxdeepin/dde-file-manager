@@ -21,8 +21,11 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include "dfmplugin_settings_global.h"
+
 #include <dfm-framework/framework.h>
 
+DPSETTINGS_BEGIN_NAMESPACE
 class Settings : public dpf::Plugin
 {
     Q_OBJECT
@@ -33,5 +36,5 @@ public:
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
 };
-
+DPSETTINGS_END_NAMESPACE
 #endif   // SETTINGS_H
