@@ -32,6 +32,7 @@
 #include "deviceinfo/udisklistener.h"
 
 #include "views/windowmanager.h"
+#include "shutil/fileutils.h"
 
 #include "gvfsmountmanager.h"
 
@@ -301,21 +302,15 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
     }
 
     DFMUrlBaseEvent *event = static_cast<DFMUrlBaseEvent *>(user_data);
-    DUrl neturl = event->fileUrl();
-    static QRegularExpression regExp("^(smb|smb-share)://((?!/).*)/(?<name>((?!/).*))",
-                                     QRegularExpression::DotMatchesEverythingOption
-                                     | QRegularExpression::DontCaptureOption
-                                     | QRegularExpression::OptimizeOnFirstUsageOption);
+    DUrl neturl = event->fileUrl(); // smb://ttt;uos:1@xx.xx.xx.xx/io/path
     std::string stdStr = neturl.toString().toStdString();
     QString urlString = QUrl::fromPercentEncoding(stdStr.data());
-    const QRegularExpressionMatch &match = regExp.match(urlString, 0, QRegularExpression::NormalMatch,
-                                                        QRegularExpression::DontCheckSubjectStringMatchOption);
-    if (match.hasMatch()) {
-        QString filename = match.captured("name");
-        if (!filename.isEmpty())
-            neturl = DUrl(urlString.replace(filename,filename.toLower()));
-        qInfo() << "current net url = " << neturl.toString();
-    }
+
+    QString shareName = FileUtils::smbAttribute(urlString, FileUtils::SmbAttribute::kShareName);
+    if (!shareName.isEmpty())
+        neturl = DUrl(urlString.replace(shareName, shareName.toLower()));
+    qInfo() << "current net url = " << neturl.toString();
+
     NetworkNodes.remove(neturl);
     NetworkNodes.insert(neturl, nodeList);
     qDebug() << "request NetworkNodeList successfully";
@@ -374,6 +369,9 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
 
                 if (info && info->canRedirectionFileUrl()) {
                     DUrl redirectUrl = info->redirectedFileUrl();
+                    const DAbstractFileInfoPointer &localInfo = DFileService::instance()->createFileInfo(nullptr, redirectUrl);
+                    if(localInfo && localInfo->isFile())
+                        redirectUrl.setPath(localInfo->absolutePath());
                     redirectUrl.setScheme(redirectUrl.scheme()+ NETWORK_REDIRECT_SCHEME_EX);
                     redirectUrl.setQuery(fullPath);
                     DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(nullptr, redirectUrl, main_window);

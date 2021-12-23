@@ -44,6 +44,14 @@ class FileUtils
 {
 public:
 
+    enum class SmbAttribute : uint8_t{
+        kDomain,
+        kServer,
+        kShareName,
+        kSharePath,
+        kUser,
+    };
+
     static QString XDG_RUNTIME_DIR;
     static QStringList CURRENT_ISGVFSFILE_PATH;
 
@@ -150,8 +158,14 @@ public:
     // 判断当前的网络挂载路径是否挂载了
     static bool isNetworkUrlMounted(const DUrl &url);
 
-    static DUrl smbFileUrl(const QString &filePath);
     static bool isSmbUnmountedFile(const DUrl &url);
+
+    // 判断挂载路径是否是smb路径
+    static bool isSmbPath(const QString &localPath);
+    // 根据本地路径返回DUrl
+    static DUrl durlFromLocalPath(const QString &localPath);
+    // 获取Smb地址元素
+    static QString smbAttribute(const QString &localPath, SmbAttribute id);
 };
 
 #endif // FILEUTILS_H

@@ -37,6 +37,7 @@
 #include "dfilemenu.h"
 #include "models/dfmrootfileinfo.h"
 #include "interfaces/drootfilemanager.h"
+#include "shutil/fileutils.h"
 
 #include <QAction>
 
@@ -72,12 +73,12 @@ DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
     //到DRootFileManager中去获取缓存，如果缓存不存在就返回
     const QString urlString = url.toString();
     if(!infoPointer->exists() && infoPointer->suffix() == SUFFIX_GVFSMP &&
-            ((urlString.contains("smb-share") && urlString.contains("server")) ||
+            ( FileUtils::isSmbPath(urlString) ||
              (urlString.contains("ftp") && urlString.contains("host")))) {
         infoPointer = DRootFileManager::getFileInfo(url);
     }
     if(!infoPointer  || (!infoPointer->exists() && infoPointer->suffix() != SUFFIX_GVFSMP &&
-                         !((urlString.contains("smb-share") && urlString.contains("server")) ||
+                         !( FileUtils::isSmbPath(urlString) ||
                            (urlString.contains("ftp") && urlString.contains("host"))))) {
         return nullptr;
     }

@@ -585,7 +585,7 @@ quint64 DFMVfsDevice::freeBytes() const
 /*!
  * \brief Get the root path of the mount point
  *
- * e.g. "/run/user/1002/gvfs/smb-share:server=10.0.12.161,share=share"
+ * e.g. "/run/user/1000/gvfs/smb-share:domain=ttt,server=xx.xx.xx.xx,share=io,user=uos/path"
  */
 QString DFMVfsDevice::rootPath() const
 {

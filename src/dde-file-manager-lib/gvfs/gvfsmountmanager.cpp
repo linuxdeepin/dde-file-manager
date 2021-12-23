@@ -1336,7 +1336,7 @@ bool GvfsMountManager::errorCodeNeedSilent(int errorCode)
 
 /*
  * get real mount url from  mounted_root_uri of info
- * smb://10.0.12.150/share -> file:///run/user/1000/gvfs/smb-share:server=10.0.12.150,share=share
+ * smb://ttt;uos:1@xx.xx.xx.xx/io/path -> file:///run/user/1000/gvfs/smb-share:domain=ttt,server=xx.xx.xx.xx,share=io,user=uos/path
 */
 DUrl GvfsMountManager::getRealMountUrl(const QDiskInfo &info)
 {
