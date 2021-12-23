@@ -25,6 +25,7 @@
 
 #include <dfm-framework/framework.h>
 
+class SideBarWidget;
 class SideBar : public dpf::Plugin
 {
     Q_OBJECT
@@ -34,6 +35,13 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
+
+private slots:
+    void onWindowOpened(quint64 windId);
+    void onWindowClosed(quint64 winId);
+
+private:
+    void initSideBar(SideBarWidget *sidebar);
 };
 
 #endif   // SIDEBAR_H

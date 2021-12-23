@@ -46,6 +46,7 @@ public:
     QUrl rootUrl() const override;
     ViewState viewState() const override;
     QList<QAction *> toolBarActionList() const override;
+    QList<QUrl> selectedUrlList() const override;
     void refresh() override;
 
     void setViewMode(QListView::ViewMode mode);
@@ -63,6 +64,7 @@ public slots:
     void onClicked(const QModelIndex &index);
 
 protected:
+    void keyPressEvent(QKeyEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     QModelIndexList selectedIndexes() const override;
 
@@ -70,6 +72,8 @@ Q_SIGNALS:
     void urlClicked(const QUrl &url);
     void fileClicked(const QUrl &url);
     void dirClicked(const QUrl &url);
+
+    void reqOpenNewWindow(const QList<QUrl> &urls);
 
 private:
     void initializeModel();

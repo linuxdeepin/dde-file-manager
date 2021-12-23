@@ -35,15 +35,15 @@ class Listener final : public QObject
     friend class ListenerPrivate;
     ListenerPrivate *const d;
     friend class PluginManagerPrivate;
+
 public:
     explicit Listener(QObject *parent = nullptr);
     static Listener &instance();
 signals:
     void pluginsInitialized();
     void pluginsStarted();
-    void pluginsStoped();
 };
 
 DPF_END_NAMESPACE
 
-#endif // LISTENER_H
+#endif   // LISTENER_H

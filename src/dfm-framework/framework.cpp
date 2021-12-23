@@ -113,6 +113,11 @@ EventCallProxy &Framework::eventProxy() const
     return EventCallProxy::instance();
 }
 
+const Listener &Framework::listener() const
+{
+    return Listener::instance();
+}
+
 AppBus &Framework::appBus() const
 {
     if (!d->appBus) {

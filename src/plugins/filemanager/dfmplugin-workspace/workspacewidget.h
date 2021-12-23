@@ -27,6 +27,9 @@
 
 #include <QUrl>
 
+namespace DFMBASE_NAMESPACE {
+class AbstractBaseView;
+}   // namespace dfmbase
 class FileView;
 class QVBoxLayout;
 class QStackedLayout;
@@ -38,17 +41,22 @@ public:
     void setCurrentUrl(const QUrl &url) override;
     QUrl currentUrl() const override;
 
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+    void showEvent(QShowEvent *event) override;
+
 private:
     void initializeUi();
     void initConnect();
     void initTabBar();
     void initViewLayout();
+    void handleCtrlN();
 
 private:
     QUrl workspaceUrl;
     QVBoxLayout *widgetLayout { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
-    FileView *fileView { nullptr };
+    DFMBASE_NAMESPACE::AbstractBaseView *fileView { nullptr };
 };
 
 #endif   // WORKSPACEWIDGET_H

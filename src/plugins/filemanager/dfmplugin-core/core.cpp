@@ -39,81 +39,9 @@ DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
 
 namespace GlobalPrivate {
-static Application *kDFMApp = nullptr;
+static Application *kDFMApp { nullptr };
+static WindowsService *windowService { nullptr };
 }   // namespace GlobalPrivate
-
-static void regStandardPathClass()
-{
-    UrlRoute::regScheme(SchemeTypes::kHome,
-                        QDir::home().path(),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kHomePath)),
-                        false);
-
-    UrlRoute::regScheme(SchemeTypes::kDesktop,
-                        StandardPaths::location(StandardPaths::kDesktopPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDesktopPath)),
-                        false);
-
-    UrlRoute::regScheme(SchemeTypes::kVideos,
-                        StandardPaths::location(StandardPaths::kVideosPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kVideosPath)),
-                        false);
-
-    UrlRoute::regScheme(SchemeTypes::kMusic,
-                        StandardPaths::location(StandardPaths::kMusicPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kMusicPath)),
-                        false);
-
-    UrlRoute::regScheme(SchemeTypes::kPictures,
-                        StandardPaths::location(StandardPaths::kPicturesPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kPicturesPath)),
-                        false);
-
-    UrlRoute::regScheme(SchemeTypes::kDocuments,
-                        StandardPaths::location(StandardPaths::kDocumentsPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDocumentsPath)),
-                        false);
-
-    UrlRoute::regScheme(SchemeTypes::kDownloads,
-                        StandardPaths::location(StandardPaths::kDownloadsPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDownloadsPath)),
-                        false);
-
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kHome);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kHome);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kHome);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kHome);
-
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kDesktop);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kDesktop);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kDesktop);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kDesktop);
-
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kVideos);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kVideos);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kVideos);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kVideos);
-
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kMusic);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kMusic);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kMusic);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kMusic);
-
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kPictures);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kPictures);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kPictures);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kPictures);
-
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kDocuments);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kDocuments);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kDocuments);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kDocuments);
-
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kDownloads);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kDownloads);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kDownloads);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kDownloads);
-}
 
 void Core::initialize()
 {
@@ -131,7 +59,6 @@ void Core::initialize()
     DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kFile);
     WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kFile);
     MenuService::regClass<LocalFileMenu>(SchemeTypes::kFile);
-    regStandardPathClass();
 }
 
 bool Core::start()
@@ -140,21 +67,14 @@ bool Core::start()
     qDebug() << __PRETTY_FUNCTION__;
     auto &ctx = dpfInstance.serviceContext();
     qInfo() << "import service list" << ctx.services();
-    WindowsService *windowService = ctx.service<WindowsService>(WindowsService::name());
-
-    if (!windowService) {
+    GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());
+    if (!GlobalPrivate::windowService) {
         qCritical() << "Failed, init window \"windowService\" is empty";
-        return false;
+        abort();
     }
 
-    if (windowService) {
-        // TODO(zhangs): default url should read it from config file
-        QUrl defaultUrl = UrlRoute::pathToReal(QDir::home().path());
-        QString error;
-        FileManagerWindow *window = windowService->showWindow(defaultUrl, true, &error);
-        if (!window)
-            qWarning() << "Cannot show window: " << error << " Url is:" << defaultUrl;
-    }
+    // show first window when all plugin initialized
+    connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &Core::onAllPluginsInitialized);
 
     return true;
 }
@@ -162,4 +82,14 @@ bool Core::start()
 dpf::Plugin::ShutdownFlag Core::stop()
 {
     return kSync;
+}
+
+void Core::onAllPluginsInitialized()
+{
+    QString error;
+    FileManagerWindow *window = GlobalPrivate::windowService->showWindow(QUrl(), true, &error);
+    if (!window) {
+        qWarning() << "Cannot show window: " << error;
+        abort();
+    }
 }

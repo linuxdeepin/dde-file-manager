@@ -34,6 +34,10 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
+
+private slots:
+    void onWindowOpened(quint64 windId);
+    void onWindowClosed(quint64 winId);
 };
 
 #endif   // WORKSPACE_H

@@ -110,8 +110,14 @@ dfmbase::AbstractBaseView::ViewState FileView::viewState() const
 
 QList<QAction *> FileView::toolBarActionList() const
 {
-    // TODO(zhangs): impl it
+    // TODO(zhangs): impl me
     return QList<QAction *>();
+}
+
+QList<QUrl> FileView::selectedUrlList() const
+{
+    // TODO(zhangs): impl me
+    return QList<QUrl>();
 }
 
 void FileView::refresh()
@@ -195,6 +201,13 @@ void FileView::onClicked(const QModelIndex &index)
 
     if (item->fileinfo()->isFile())
         Q_EMIT fileClicked(item->url());
+}
+
+void FileView::keyPressEvent(QKeyEvent *event)
+{
+    // TODO(zhangs): impl me
+
+    DListView::keyPressEvent(event);
 }
 
 void FileView::resizeEvent(QResizeEvent *event)

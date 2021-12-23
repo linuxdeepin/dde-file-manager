@@ -23,8 +23,15 @@
 #include "workspacewidget.h"
 #include "fileview.h"
 
+#include "services/filemanager/windows/windowsservice.h"
+
+#include "dfm-base/interfaces/abstractbaseview.h"
+
 #include <QVBoxLayout>
 #include <QStackedLayout>
+#include <QKeyEvent>
+
+DSB_FM_USE_NAMESPACE
 
 WorkspaceWidget::WorkspaceWidget(QFrame *parent)
     : AbstractFrame(parent)
@@ -37,17 +44,41 @@ WorkspaceWidget::WorkspaceWidget(QFrame *parent)
 void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 {
     workspaceUrl = url;
-    // NOTE(zhangs): follw is temp code
+    // NOTE(zhangs): follw is temp code, create view by url!
     if (fileView == nullptr) {
         fileView = new FileView;
-        viewStackLayout->addWidget(fileView);
+        viewStackLayout->addWidget(static_cast<FileView *>(fileView));
     }
     fileView->setRootUrl(url);
 }
 
 QUrl WorkspaceWidget::currentUrl() const
 {
+
     return workspaceUrl;
+}
+
+void WorkspaceWidget::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->modifiers()) {
+    case Qt::ControlModifier:
+        switch (event->key()) {
+        case Qt::Key_N:
+            handleCtrlN();
+            return;
+        default:
+            break;
+        }
+        break;
+    }
+    AbstractFrame::keyPressEvent(event);
+}
+
+void WorkspaceWidget::showEvent(QShowEvent *event)
+{
+    AbstractFrame::showEvent(event);
+
+    setFocus();
 }
 
 // NOTE(zhangs): please ref to: DFileManagerWindow::initRightView (old filemanager)
@@ -77,4 +108,18 @@ void WorkspaceWidget::initViewLayout()
     viewStackLayout = new QStackedLayout;
     viewStackLayout->setSpacing(0);
     viewStackLayout->setContentsMargins(0, 0, 0, 0);
+}
+
+void WorkspaceWidget::handleCtrlN()
+{
+    QList<QUrl> urls { fileView->selectedUrlList() };
+    auto &ctx = dpfInstance.serviceContext();
+    auto windowService = ctx.service<WindowsService>(WindowsService::name());
+    if (urls.isEmpty()) {
+        windowService->showWindow(QUrl(), true);
+    } else {
+        for (const QUrl &url : urls) {
+            windowService->showWindow(url, true);
+        }
+    }
 }

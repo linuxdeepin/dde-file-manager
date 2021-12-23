@@ -30,17 +30,17 @@
 
 DSB_FM_USE_NAMESPACE
 
+namespace GlobalPrivate {
+static WindowsService *windowService { nullptr };
+}   // namespace GlobalPrivate
+
 void TitleBar::initialize()
 {
     auto &ctx = dpfInstance.serviceContext();
-    WindowsService *windowService = ctx.service<WindowsService>(WindowsService::name());
-    Q_ASSERT_X(!windowService->windowIdList().isEmpty(), "TitleBar", "Cannot acquire any window");
-
-    // get first window
-    quint64 id = windowService->windowIdList().first();
-    auto window = windowService->findWindowById(id);
-    Q_ASSERT_X(window, "TitleBar", "Cannot find window by id");
-    window->installTitleBar(new TitleBarWidget);
+    Q_ASSERT_X(ctx.loaded(WindowsService::name()), "SideBar", "WindowService not loaded");
+    GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());
+    connect(GlobalPrivate::windowService, &WindowsService::windowOpened, this, &TitleBar::onWindowOpened, Qt::DirectConnection);
+    connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &TitleBar::onWindowClosed, Qt::DirectConnection);
 }
 
 bool TitleBar::start()
@@ -51,4 +51,16 @@ bool TitleBar::start()
 dpf::Plugin::ShutdownFlag TitleBar::stop()
 {
     return kSync;
+}
+
+void TitleBar::onWindowOpened(quint64 windId)
+{
+    auto window = GlobalPrivate::windowService->findWindowById(windId);
+    Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
+    window->installTitleBar(new TitleBarWidget);
+}
+
+void TitleBar::onWindowClosed(quint64 winId)
+{
+    // TODO(zhangs): impl me!
 }

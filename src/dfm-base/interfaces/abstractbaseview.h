@@ -26,6 +26,7 @@
 #include "dfm-base/dfm_base_global.h"
 
 #include <QWidget>
+#include <QUrl>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -47,6 +48,7 @@ public:
     virtual ViewState viewState() const;
     virtual bool setRootUrl(const QUrl &url) = 0;
     virtual QList<QAction *> toolBarActionList() const;
+    virtual QList<QUrl> selectedUrlList() const;
     virtual void refresh();
 
 protected:

@@ -50,6 +50,11 @@ QList<QAction *> AbstractBaseView::toolBarActionList() const
     return QList<QAction *>();
 }
 
+QList<QUrl> AbstractBaseView::selectedUrlList() const
+{
+    return QList<QUrl>();
+}
+
 void AbstractBaseView::refresh()
 {
 }

@@ -48,6 +48,7 @@ public:
     const LifeCycle &lifeCycle() const;
     PluginServiceContext &serviceContext() const;
     EventCallProxy &eventProxy() const;
+    const Listener &listener() const;
     AppBus &appBus() const;
 
 private:

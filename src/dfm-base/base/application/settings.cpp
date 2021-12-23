@@ -529,19 +529,19 @@ QStringList Settings::keyList(const QString &group) const
  */
 QUrl Settings::toUrlValue(const QVariant &url)
 {
-    const QString &url_string = url.toString();
+    const QString &urlString = url.toString();
 
-    if (url_string.isEmpty()) {
+    if (urlString.isEmpty()) {
         return QUrl();
     }
 
-    const QString &path = StandardPaths::fromStandardUrl(QUrl(url_string));
+    const QString &path = StandardPaths::fromStandardUrl(QUrl(urlString));
 
     if (!path.isEmpty()) {
         return QUrl::fromLocalFile(path);
     }
 
-    return QUrl::fromUserInput(url_string);
+    return QUrl::fromUserInput(urlString);
 }
 /*!
  * \brief Settings::value 获取某个组的某个key对应的value，配置的某个属性

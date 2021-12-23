@@ -34,7 +34,11 @@
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-static void initSideBar(SideBarWidget *sidebar)
+namespace GlobalPrivate {
+static WindowsService *windowService { nullptr };
+}   // namespace GlobalPrivate
+
+void SideBar::initSideBar(SideBarWidget *sidebar)
 {
     Q_ASSERT_X(sidebar, "SideBar", "SideBar is NULL");
 
@@ -88,15 +92,10 @@ static void initSideBar(SideBarWidget *sidebar)
 void SideBar::initialize()
 {
     auto &ctx = dpfInstance.serviceContext();
-    WindowsService *windowService = ctx.service<WindowsService>(WindowsService::name());
-    Q_ASSERT_X(!windowService->windowIdList().isEmpty(), "SideBar", "Cannot acquire any window");
-    // get first window
-    quint64 id = windowService->windowIdList().first();
-    auto window = windowService->findWindowById(id);
-    Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
-    auto sidebar = new SideBarWidget;
-    initSideBar(sidebar);
-    window->installSideBar(sidebar);
+    Q_ASSERT_X(ctx.loaded(WindowsService::name()), "SideBar", "WindowService not loaded");
+    GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());
+    connect(GlobalPrivate::windowService, &WindowsService::windowOpened, this, &SideBar::onWindowOpened, Qt::DirectConnection);
+    connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &SideBar::onWindowClosed, Qt::DirectConnection);
 }
 
 bool SideBar::start()
@@ -107,4 +106,18 @@ bool SideBar::start()
 dpf::Plugin::ShutdownFlag SideBar::stop()
 {
     return kSync;
+}
+
+void SideBar::onWindowOpened(quint64 windId)
+{
+    auto window = GlobalPrivate::windowService->findWindowById(windId);
+    Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
+    auto sidebar = new SideBarWidget;
+    initSideBar(sidebar);
+    window->installSideBar(sidebar);
+}
+
+void SideBar::onWindowClosed(quint64 winId)
+{
+    // TODO(zhangs): impl me!
 }

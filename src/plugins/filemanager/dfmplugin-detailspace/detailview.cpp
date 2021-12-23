@@ -302,5 +302,7 @@ void FileBaseInfoView::setFileUrl(QUrl &url)
         fileViewSize->setVisible(false);
         fileDuration->setVisible(false);
         break;
+    default:
+        break;
     }
 }

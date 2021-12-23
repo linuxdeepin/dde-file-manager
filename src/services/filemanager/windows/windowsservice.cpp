@@ -38,6 +38,7 @@ DSB_FM_BEGIN_NAMESPACE
 
 using dfmbase::Application;
 using dfmbase::FileManagerWindow;
+using dfmbase::UrlRoute;
 
 enum NetWmState {
     kNetWmStateAbove = 0x1,
@@ -112,7 +113,7 @@ bool WindowsServicePrivate::isValidUrl(const QUrl &url, QString *error)
         return false;
     }
 
-    if (!dfmbase::UrlRoute::hasScheme(url.scheme())) {
+    if (!UrlRoute::hasScheme(url.scheme())) {
         *error = QString("No related scheme is registered "
                          "in the route form %0")
                          .arg(url.scheme());
@@ -218,29 +219,34 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
     QString error;
     dfmbase::FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 
-    if (!d->isValidUrl(url, &error))
-        return nullptr;
-
-    // TODO(zhangs): isInitAppOver isAppQuiting, ref: WindowManager::showNewWindow
+    QUrl showedUrl { url.isEmpty() ? Application::instance()->appUrlAttribute(Application::kUrlOfNewWindow) : url };
+    if (!d->isValidUrl(showedUrl, &error)) {
+        qWarning() << "Url: " << showedUrl << "is Invalid, error: " << error;
+        // use home as showed url if default url is invalid
+        showedUrl = UrlRoute::pathToReal(QDir::home().path());
+        if (!d->isValidUrl(showedUrl, &error))
+            return nullptr;
+    }
 
     // Directly active window if the window exists
     if (!isNewWindow) {
-        auto window = d->activeExistsWindowByUrl(url);
+        auto window = d->activeExistsWindowByUrl(showedUrl);
         if (window)
             return window;
         else
-            qWarning() << "Cannot find a exists window by url: " << url;
+            qWarning() << "Cannot find a exists window by url: " << showedUrl;
     }
 
     QX11Info::setAppTime(QX11Info::appUserTime());
-    auto window = new FMWindow(url.isEmpty() ? Application::instance()->appUrlAttribute(Application::kUrlOfNewWindow) : url);
+
+    auto window = new FMWindow(showedUrl);
     d->loadWindowState(window);
     connect(window, &FileManagerWindow::aboutToClose, this, [this, window]() {
         emit windowClosed(window->internalWinId());
         d->onWindowClosed(window);
     });
 
-    qInfo() << "New window created: " << window->winId() << url;
+    qInfo() << "New window created: " << window->winId() << showedUrl;
     d->windows.insert(window->internalWinId(), window);
     // TODO(zhangs): requestToSelectUrls
 
@@ -250,7 +256,7 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
     finally.dismiss();
     window->show();
     qApp->setActiveWindow(window);
-    emit windowOpended(window->internalWinId());
+    emit windowOpened(window->internalWinId());
     return window;
 }
 
