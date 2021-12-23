@@ -25,6 +25,7 @@
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractbaseview.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
 #include "dfm-base/interfaces/private/infocache.h"
@@ -35,6 +36,7 @@
 
 #include <QSharedPointer>
 #include <QDirIterator>
+#include <QListView>
 #include <QDebug>
 
 #include <functional>
@@ -157,6 +159,30 @@ public:
 private:
     static InfoFactory &instance();   // 获取全局实例
     explicit InfoFactory() {}
+};
+
+class ViewFactory final : public SchemeFactory<AbstractBaseView>
+{
+    Q_DISABLE_COPY(ViewFactory)
+    friend class GC<ViewFactory>;
+    static ViewFactory *ins;
+
+public:
+    template<class CT = AbstractBaseView>
+    static bool regClass(const QString &scheme, QString *errorString = nullptr)
+    {
+        return instance().SchemeFactory<AbstractBaseView>::regClass<CT>(scheme, errorString);
+    }
+
+    template<class T>
+    static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
+    {
+        return instance().SchemeFactory<AbstractBaseView>::create(url, errorString);
+    }
+
+private:
+    static ViewFactory &instance();
+    explicit ViewFactory() {}
 };
 
 class WacherFactory final : public SchemeFactory<AbstractFileWatcher>

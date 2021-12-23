@@ -35,11 +35,11 @@
 
 #include <dfm-framework/framework.h>
 
+DPCORE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
 
 namespace GlobalPrivate {
-static Application *kDFMApp { nullptr };
 static WindowsService *windowService { nullptr };
 }   // namespace GlobalPrivate
 
@@ -63,7 +63,6 @@ void Core::initialize()
 
 bool Core::start()
 {
-    GlobalPrivate::kDFMApp = new Application;
     qDebug() << __PRETTY_FUNCTION__;
     auto &ctx = dpfInstance.serviceContext();
     qInfo() << "import service list" << ctx.services();

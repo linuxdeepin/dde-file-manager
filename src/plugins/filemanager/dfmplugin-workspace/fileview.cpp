@@ -32,7 +32,7 @@
 #include <QResizeEvent>
 #include <QScrollBar>
 
-FileView::FileView(QWidget *parent)
+FileView::FileView(const QUrl &url, QWidget *parent)
     : DListView(parent), d(new FileViewPrivate(this))
 {
     setResizeMode(QListView::Adjust);
@@ -49,6 +49,7 @@ FileView::FileView(QWidget *parent)
 
     // TODO(liuyangming): init data from config
     QAbstractItemView::model()->sort(0);
+    setRootUrl(url);
 }
 
 QWidget *FileView::widget() const

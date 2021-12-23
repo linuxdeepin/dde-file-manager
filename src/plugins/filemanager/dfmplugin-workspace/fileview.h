@@ -32,14 +32,14 @@ DWIDGET_USE_NAMESPACE
 class FileViewModel;
 class FileViewPrivate;
 class BaseItemDelegate;
-class FileView : public DListView, public DFMBASE_NAMESPACE::AbstractBaseView
+class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseView
 {
     Q_OBJECT
     friend class FileViewPrivate;
     QSharedPointer<FileViewPrivate> d;
 
 public:
-    explicit FileView(QWidget *parent = nullptr);
+    explicit FileView(const QUrl &url, QWidget *parent = nullptr);
 
     QWidget *widget() const override;
     bool setRootUrl(const QUrl &url) override;

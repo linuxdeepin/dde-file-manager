@@ -56,7 +56,7 @@ private:
     QUrl workspaceUrl;
     QVBoxLayout *widgetLayout { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
-    DFMBASE_NAMESPACE::AbstractBaseView *fileView { nullptr };
+    QSharedPointer<DFMBASE_NAMESPACE::AbstractBaseView> fileView { nullptr };
 };
 
 #endif   // WORKSPACEWIDGET_H

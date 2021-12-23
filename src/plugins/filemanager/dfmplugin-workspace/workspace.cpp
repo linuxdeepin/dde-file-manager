@@ -22,9 +22,11 @@
 */
 #include "workspace.h"
 #include "workspacewidget.h"
+#include "fileview.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+#include "dfm-base/base/schemefactory.h"
 
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -35,8 +37,10 @@ static WindowsService *windowService { nullptr };
 
 void Workspace::initialize()
 {
+    ViewFactory::regClass<FileView>(SchemeTypes::kFile);
+
     auto &ctx = dpfInstance.serviceContext();
-    Q_ASSERT_X(ctx.loaded(WindowsService::name()), "SideBar", "WindowService not loaded");
+    Q_ASSERT_X(ctx.loaded(WindowsService::name()), "Workspace", "WindowService not loaded");
     GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());
     connect(GlobalPrivate::windowService, &WindowsService::windowOpened, this, &Workspace::onWindowOpened, Qt::DirectConnection);
     connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &Workspace::onWindowClosed, Qt::DirectConnection);

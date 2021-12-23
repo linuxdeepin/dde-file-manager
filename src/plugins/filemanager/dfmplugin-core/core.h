@@ -22,6 +22,8 @@
 #ifndef COREPLUGIN_H
 #define COREPLUGIN_H
 
+#include "dfmplugin_core_global.h"
+
 #include <dfm-framework/framework.h>
 
 DPF_BEGIN_NAMESPACE
@@ -30,6 +32,7 @@ class PluginServiceGlobal;
 };
 DPF_END_NAMESPACE
 
+DPCORE_BEGIN_NAMESPACE
 class Core : public dpf::Plugin
 {
     Q_OBJECT
@@ -42,5 +45,6 @@ public:
 private slots:
     void onAllPluginsInitialized();
 };
+DPCORE_END_NAMESPACE
 
 #endif   // COREPLUGIN_H

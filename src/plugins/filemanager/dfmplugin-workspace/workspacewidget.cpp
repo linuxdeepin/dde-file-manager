@@ -26,12 +26,14 @@
 #include "services/filemanager/windows/windowsservice.h"
 
 #include "dfm-base/interfaces/abstractbaseview.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QVBoxLayout>
 #include <QStackedLayout>
 #include <QKeyEvent>
 
 DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 WorkspaceWidget::WorkspaceWidget(QFrame *parent)
     : AbstractFrame(parent)
@@ -44,12 +46,16 @@ WorkspaceWidget::WorkspaceWidget(QFrame *parent)
 void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 {
     workspaceUrl = url;
-    // NOTE(zhangs): follw is temp code, create view by url!
+    // NOTE(zhangs): follw is temp code, need tab!
     if (fileView == nullptr) {
-        fileView = new FileView;
-        viewStackLayout->addWidget(static_cast<FileView *>(fileView));
+        QString error;
+        fileView = ViewFactory::create<AbstractBaseView>(url, &error);
+        if (!fileView) {
+            qWarning() << "Cannot create view for " << url << "Reason: " << error;
+            return;
+        }
+        viewStackLayout->addWidget(dynamic_cast<QWidget *>(fileView.get()));
     }
-    fileView->setRootUrl(url);
 }
 
 QUrl WorkspaceWidget::currentUrl() const

@@ -28,9 +28,10 @@ namespace GlobalPrivate {
 static bool dfmioIsInit = DFMIO::dfmio_init();
 }
 
-InfoFactory *InfoFactory::ins = nullptr;
-WacherFactory *WacherFactory::ins = nullptr;
-DirIteratorFactory *DirIteratorFactory::ins = nullptr;
+InfoFactory *InfoFactory::ins { nullptr };
+ViewFactory *ViewFactory::ins { nullptr };
+WacherFactory *WacherFactory::ins { nullptr };
+DirIteratorFactory *DirIteratorFactory::ins { nullptr };
 
 InfoFactory &InfoFactory::instance()
 {
@@ -55,6 +56,15 @@ DirIteratorFactory &DirIteratorFactory::instance()
     if (!ins) {
         ins = new DirIteratorFactory();
         static GC<DirIteratorFactory> gc(ins);
+    }
+    return *ins;
+}
+
+ViewFactory &ViewFactory::instance()
+{
+    if (!ins) {
+        ins = new ViewFactory();
+        static GC<ViewFactory> gc(ins);
     }
     return *ins;
 }
