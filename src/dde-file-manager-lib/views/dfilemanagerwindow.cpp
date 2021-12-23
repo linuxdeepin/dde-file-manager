@@ -304,10 +304,8 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 
     bool fileSamba = false;
     {
-        const auto &decodeUrl = QUrl::fromEncoded(fileUrl.toString().toLocal8Bit()).toString();
-        QRegularExpression rx(R"(.*/run/user/.*gvfs/smb-share:server=\d+.\d+.\d+.\d+.*)");
-        QRegularExpressionMatch match = rx.match(decodeUrl);
-        fileSamba = match.hasMatch();
+        const QString &decodeUrl = QUrl::fromEncoded(fileUrl.toString().toLocal8Bit()).toString();
+        fileSamba = FileUtils::isSmbPath(decodeUrl);
     }
 
     if (scheme == BURN_SCHEME) {
@@ -328,7 +326,7 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
                 qDebug() << "mount the device{" << blkDevicePath << " } at:" << blk->mount({});
             }
         }
-    } else if (scheme == SMB_SCHEME || (fileUrl.toString().contains("/run/user") && fileUrl.toString().contains("smb-share"))) {
+    } else if (scheme == SMB_SCHEME || (FileUtils::isSmbPath(fileUrl.toString()))) {
         // 需求 88316，smb 可能已经关闭 这里需求尝试启动
 
         // 首先判断smb地址是否是自己ip

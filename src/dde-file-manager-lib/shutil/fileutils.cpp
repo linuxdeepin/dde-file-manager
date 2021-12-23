@@ -158,20 +158,9 @@ bool FileUtils::isNetworkAncestorUrl(const DUrl &dest, const bool isDestGvfs, co
 
     QString gvfsUrlStr = isDestGvfs ? dest.path() : source.path();
 
-    static QRegularExpression regExp("^/run/user/\\d+/gvfs/smb-share:server=(?<host>.*),share=(?<shareName>[^/]+)(?<path>.*)",
-                                     QRegularExpression::DotMatchesEverythingOption
-                                     | QRegularExpression::DontCaptureOption
-                                     | QRegularExpression::OptimizeOnFirstUsageOption);
-
-    const QRegularExpressionMatch &match = regExp.match(gvfsUrlStr, 0, QRegularExpression::NormalMatch,
-                                                        QRegularExpression::DontCheckSubjectStringMatchOption);
-
-    if (!match.hasMatch())
-        return false;
-
-    const QString &host = match.captured("host");
-    const QString &shareName = match.captured("shareName");
-    const QString &path = match.captured("path");
+    const QString &host = FileUtils::smbAttribute(gvfsUrlStr, FileUtils::SmbAttribute::kServer);
+    const QString &shareName = FileUtils::smbAttribute(gvfsUrlStr, FileUtils::SmbAttribute::kShareName);
+    const QString &path = FileUtils::smbAttribute(gvfsUrlStr, FileUtils::SmbAttribute::kSharePath);
     // 获取本机ip判断是否是自己
     bool selfIp = false;
     const auto &allAddresses = QNetworkInterface::allAddresses();
@@ -1046,7 +1035,7 @@ bool FileUtils::launchApp(const QString &desktopFile, const QStringList &filePat
         DUrl fileUrl(filePaths[0]);
         if (isSmbUnmountedFile(fileUrl)) {
             newList.clear();
-            newList << smbFileUrl(filePaths[0]).toString();
+            newList << durlFromLocalPath(filePaths[0]).toString();
         }
     }
 
@@ -1878,34 +1867,172 @@ bool FileUtils::isSambaServiceRunning()
     return false;
 }
 
-DUrl FileUtils::smbFileUrl(const QString &filePath)
-{
-    static QRegularExpression regExp("file:///run/user/\\d+/gvfs/smb-share:server=(?<host>.*),share=(?<path>.*)",
-                                     QRegularExpression::DotMatchesEverythingOption
-                                     | QRegularExpression::DontCaptureOption
-                                     | QRegularExpression::OptimizeOnFirstUsageOption);
-
-    const QRegularExpressionMatch &match = regExp.match(filePath, 0, QRegularExpression::NormalMatch,
-                                                        QRegularExpression::DontCheckSubjectStringMatchOption);
-
-    if (!match.hasMatch())
-        return DUrl::fromLocalFile(filePath);
-
-    const QString &host = match.captured("host");
-    const QString &path = match.captured("path");
-
-    DUrl newUrl;
-    newUrl.setScheme("smb");
-    newUrl.setHost(host);
-    newUrl.setPath("/" + path.mid(0, path.lastIndexOf("/")));
-    return newUrl;
-}
-
 bool FileUtils::isSmbUnmountedFile(const DUrl &url)
 {
-    return url.path().startsWith("/run/user/")
-            && url.path().contains("/gvfs/smb-share:server=")
-            && DFileService::instance()->checkGvfsMountfileBusy(url, false);
+    return isSmbPath(url.path()) && DFileService::instance()->checkGvfsMountfileBusy(url, false);
+}
+
+bool FileUtils::isSmbPath(const QString &localPath)
+{
+    // like file:///run/user/1000/gvfs/smb-share:domain=ttt,server=xx.xx.xx.xx,share=io,user=uos/path
+    QRegExp reg("/run/user/.+gvfs/smb-share:.*server.+share.+");
+    int idx = reg.indexIn(localPath);
+    if(idx == -1) {
+        // like smb://ttt;uos:1@xx.xx.xx.xx/io/path
+        // maybe access by mapping addr, like smb://xxx.com/io
+        reg.setPattern("smb://.+");
+        idx = reg.indexIn(localPath);
+    }
+    return idx != -1;
+}
+
+DUrl FileUtils::durlFromLocalPath(const QString &localPath)
+{
+    // file:///run/user/1000/gvfs/smb-share:domain=ttt,server=xx.xx.xx.xx,share=io,user=uos/path
+    // to
+    // smb://ttt;uos@xx.xx.xx.xx/io/path
+
+    const QString &doMain = smbAttribute(localPath, SmbAttribute::kDomain);
+    const QString &server = smbAttribute(localPath, SmbAttribute::kServer);
+    const QString &shareName = smbAttribute(localPath, SmbAttribute::kShareName);
+    const QString &sharePath = smbAttribute(localPath, SmbAttribute::kSharePath);
+    const QString &user = smbAttribute(localPath, SmbAttribute::kUser);
+
+    QString fullUrl = "smb://";
+    if(!doMain.isEmpty() && !user.isEmpty())
+        fullUrl.append(doMain+";");
+    if(!user.isEmpty())
+        fullUrl.append(user).append("@");
+    fullUrl.append(server).append("/");
+    fullUrl.append(shareName);
+    if(!sharePath.isEmpty())
+        fullUrl.append("/").append(sharePath);
+
+    qDebug() << fullUrl;
+
+    return DUrl(fullUrl);
+}
+
+QString extractSmbDomain(const QString &subLocalPath)
+{
+    QString doMain;
+    QRegExp reg("domain=(.*),");
+    reg.setMinimal(true);
+    int idx = reg.indexIn(subLocalPath);
+    if (idx != -1)
+        doMain = reg.cap(1);
+    return std::move(doMain);
+}
+
+QString extractSmbServer(const QString &subLocalPath)
+{
+    QString server;
+    QRegExp reg("server=(.*),");
+    reg.setMinimal(true);
+    int idx = reg.indexIn(subLocalPath);
+    if (idx != -1)
+        server = reg.cap(1);
+    return server;
+}
+
+QString extractSmbShareName(const QString &subLocalPath)
+{
+    QString shareName;
+    QRegExp reg("share=(.*),");
+    int idx = reg.indexIn(subLocalPath);
+    if (idx != -1) {
+        shareName = reg.cap(1);
+    } else {
+        reg.setPattern("share=(.*)");
+        reg.setMinimal(false);
+        idx = reg.indexIn(subLocalPath);
+        if (idx != -1)
+            shareName = reg.cap(1);
+        if(shareName.contains("/")) {
+            reg.setPattern("(.*)/");
+            reg.setMinimal(true);
+            idx = reg.indexIn(shareName);
+            auto list = reg.capturedTexts();
+            if (idx != -1){
+                shareName = reg.cap(1);
+            }
+        }
+    }
+    return shareName;
+}
+
+QString extractSmbSharePath(const QString &subLocalPath)
+{
+    QString fullShare;
+    QString sharePath;
+    QRegExp reg("share=(.*)");
+    int idx = reg.indexIn(subLocalPath);
+    if(idx != -1)
+        fullShare = reg.cap(1);
+
+    reg.setPattern("share=(.*)/");
+    reg.setMinimal(true);
+    idx = reg.indexIn(subLocalPath);
+    if(idx != -1) {
+        sharePath = reg.cap(1);
+        sharePath = fullShare.mid(sharePath.size() + 1); // remove '/' in head, function caller need deal itself
+    }
+    return sharePath;
+}
+
+QString extractSmbUser(const QString &subLocalPath)
+{
+    QString user;
+    QRegExp reg("user=(.*)");
+    reg.setMinimal(false);
+    int idx = reg.indexIn(subLocalPath);
+    if (idx != -1)
+        user = reg.cap(1);
+    if(user.contains("/")) {
+        reg.setPattern("(.*)/");
+        idx = reg.indexIn(user);
+        if (idx != -1){
+            user = reg.cap(1);
+        }
+    }
+    return user;
+}
+
+QString FileUtils::smbAttribute(const QString &localPath, FileUtils::SmbAttribute id)
+{
+    // file:///run/user/1000/gvfs/smb-share:domain=ttt,server=xx.xx.xx.xx,share=io,user=uos/path
+    // to
+    // smb://ttt;uos@xx.xx.xx.xx/io/path
+
+    QString smbMain;
+
+    QRegExp reg("gvfs/smb-share:(.+)");
+    int idx = reg.indexIn(localPath);
+    if(idx == -1)
+        return QString();
+    smbMain = reg.cap(1);
+    if(smbMain.endsWith("/"))
+        smbMain.chop(1);
+
+    switch (id) {
+    case FileUtils::SmbAttribute::kDomain:{
+        return extractSmbDomain(smbMain);
+    }
+    case FileUtils::SmbAttribute::kServer:{
+        return extractSmbServer(smbMain);
+    }
+    case FileUtils::SmbAttribute::kShareName:{
+        return extractSmbShareName(smbMain);
+    }
+    case FileUtils::SmbAttribute::kSharePath:{
+        return extractSmbSharePath(smbMain);
+    }
+    case FileUtils::SmbAttribute::kUser:{
+        return extractSmbUser(smbMain);
+    }
+    }
+
+    return QString();
 }
 
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率

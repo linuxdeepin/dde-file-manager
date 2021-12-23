@@ -508,16 +508,16 @@ bool DFMRootFileWatcherPrivate::start()
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         QString mountPointPath = mnt->getRootFile()->path();
-        if (mountPointPath.startsWith("/run/user/") && mountPointPath.contains("/gvfs/smb-share:server=")) {
+        url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
+        Q_EMIT wpar->subfileCreated(url);
+        if (FileUtils::isSmbPath(mountPointPath)) {
             //refresh all dde-file-manager window
             emit fileSignalManager->requestFreshAllFileView();
             //refresh dde-desktop
             emit fileSignalManager->requestFreshAllDesktop();
-        }
-        url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
-        Q_EMIT wpar->subfileCreated(url);
-        if (mountPointPath.startsWith("/run/user/") && mountPointPath.contains("/gvfs/smb-share:server="))
+
             emit fileSignalManager->requestShowNewWindows();
+        }
     }));
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountRemoved, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
         if (mnt->getVolume() && mnt->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
@@ -548,15 +548,15 @@ bool DFMRootFileWatcherPrivate::start()
             }
         }
         qDebug() << path;
-        if (path.startsWith("/run/user/") && path.contains("/gvfs/smb-share:server=")) {
-            emit fileSignalManager->requestFreshAllFileView();
-            emit fileSignalManager->requestFreshAllDesktop();
-        }
         url.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
         Q_EMIT wpar->fileDeleted(url);
         QString uri = mnt->getRootFile()->uri();
         fileSignalManager->requestRemoveRecentFile(path);
         qDebug() << uri << "mount removed";
+        if (FileUtils::isSmbPath(path)) {
+            emit fileSignalManager->requestFreshAllFileView();
+            emit fileSignalManager->requestFreshAllDesktop();
+        }
         if (uri.contains("smb-share://") || uri.contains("smb://") || uri.contains("ftp://") || uri.contains("sftp://")) {
             // remove NetworkNodes cache, so next time cd uri will fetchNetworks
             std::string stdStr = uri.toStdString();

@@ -38,6 +38,8 @@
 #include "app/define.h"
 #include "dfmapplication.h"
 
+#include "shutil/fileutils.h"
+
 
 DFM_USE_NAMESPACE
 
@@ -309,18 +311,15 @@ void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QStrin
 {
     if (!DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool())
         return;
-    QString key {mpt}, protocol, host, share;
+    QString key {mpt}, protocol, host, share, sharePath;
     QString mountPoint(mpt);
-    if (mountPoint.contains("/smb-share:")) { // parse smb mpt(//run/user/1000/gvfs/smb-share:server=1.2.3.4,share=sharefolder)
+    if (FileUtils::isSmbPath(mountPoint)) { // parse smb mpt(/run/user/1000/gvfs/smb-share:domain=ttt,server=xx.xx.xx.xx,share=io,user=uos/path)
         protocol = "smb";
-        QRegExp reg("smb-share:server=(.*),");
-        int idx = reg.indexIn(mountPoint);
-        if (idx > 0)
-            host = reg.cap(1);
-        reg.setPattern("share=(.*)");
-        idx = reg.indexIn(mountPoint);
-        if (idx > 0)
-            share = QByteArray::fromPercentEncoding((reg.cap(1)).toUtf8());
+        host = FileUtils::smbAttribute(mountPoint, FileUtils::SmbAttribute::kServer);
+        share = FileUtils::smbAttribute(mountPoint, FileUtils::SmbAttribute::kShareName);
+        sharePath = FileUtils::smbAttribute(mountPoint, FileUtils::SmbAttribute::kSharePath);
+        if(!sharePath.isEmpty())
+            share.append("/").append(sharePath);
     } else if (mountPoint.contains("/ftp:")) { // parse ftp mpt(//run/user/1000/gvfs/ftp:host=4.3.2.1)
         // TODO: maybe someday we need to stash ftp too. but for now, just return.
         qInfo() << "not valid smb share, do not stash.";
