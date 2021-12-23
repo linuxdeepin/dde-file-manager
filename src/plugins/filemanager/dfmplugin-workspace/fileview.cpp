@@ -28,9 +28,11 @@
 #include "baseitemdelegate.h"
 #include "iconitemdelegate.h"
 #include "listitemdelegate.h"
+#include "statusbar.h"
 
 #include <QResizeEvent>
 #include <QScrollBar>
+#include <QTimer>
 
 FileView::FileView(const QUrl &url, QWidget *parent)
     : DListView(parent), d(new FileViewPrivate(this))
@@ -46,6 +48,8 @@ FileView::FileView(const QUrl &url, QWidget *parent)
 
     initializeModel();
     initializeDelegate();
+    initializeStatusBar();
+    initializeConnect();
 
     // TODO(liuyangming): init data from config
     QAbstractItemView::model()->sort(0);
@@ -95,6 +99,10 @@ void FileView::setDelegate(QListView::ViewMode mode, BaseItemDelegate *view)
 bool FileView::setRootUrl(const QUrl &url)
 {
     model()->setRootUrl(url);
+
+    delayUpdateStatusBar();
+    update();
+
     return true;
 }
 
@@ -146,6 +154,11 @@ void FileView::setModel(QAbstractItemModel *model)
     QObject::connect(this, &FileView::clicked, this, &FileView::onClicked, Qt::UniqueConnection);
 }
 
+FileSortFilterProxyModel *FileView::proxyModel() const
+{
+    return qobject_cast<FileSortFilterProxyModel *>(QAbstractItemView::model());
+}
+
 int FileView::getColumnWidth(const int &column) const
 {
     if (d->headerView)
@@ -160,6 +173,11 @@ int FileView::getHeaderViewWidth() const
         return d->headerView->sectionsTotalWidth();
 
     return 0;
+}
+
+int FileView::selectedIndexCount() const
+{
+    return selectionModel()->selectedIndexes().count();
 }
 
 void FileView::onHeaderViewMouseReleased()
@@ -207,8 +225,18 @@ void FileView::onClicked(const QModelIndex &index)
 void FileView::keyPressEvent(QKeyEvent *event)
 {
     // TODO(zhangs): impl me
-
     DListView::keyPressEvent(event);
+}
+
+void FileView::onScalingValueChanged(const int value)
+{
+    qobject_cast<IconItemDelegate *>(itemDelegate())->setIconSizeByIconSizeLevel(value);
+}
+
+void FileView::delayUpdateStatusBar()
+{
+    if (d->updateStatusBarTimer)
+        d->updateStatusBarTimer->start();
 }
 
 void FileView::resizeEvent(QResizeEvent *event)
@@ -223,24 +251,54 @@ void FileView::resizeEvent(QResizeEvent *event)
     return DListView::resizeEvent(event);
 }
 
-QModelIndexList FileView::selectedIndexes() const
-{
-    return qobject_cast<FileSelectionModel *>(selectionModel())->selectedIndexes();
-}
-
 void FileView::initializeModel()
 {
-    auto model = new FileViewModel(this);
-    auto proxyModel = new FileSortFilterProxyModel(this);
+    FileViewModel *model = new FileViewModel(this);
+    FileSortFilterProxyModel *proxyModel = new FileSortFilterProxyModel(this);
     proxyModel->setSourceModel(model);
     setModel(proxyModel);
 
-    auto selectionModel = new FileSelectionModel(model);
-    setSelectionModel(selectionModel);
+    // TODO(liuyangming): refactor selection
+    //    auto selectionModel = new FileSelectionModel(model);
+    //    setSelectionModel(selectionModel);
 }
 
 void FileView::initializeDelegate()
 {
     setDelegate(QListView::ViewMode::IconMode, new IconItemDelegate(this));
     setDelegate(QListView::ViewMode::ListMode, new ListItemDelegate(this));
+}
+
+void FileView::initializeStatusBar()
+{
+    d->statusBar = new StatusBar(this);
+    d->statusBar->resetScalingSlider(GlobalPrivate::kIconSizeList.length() - 1);
+
+    d->updateStatusBarTimer = new QTimer(this);
+    d->updateStatusBarTimer->setInterval(100);
+    d->updateStatusBarTimer->setSingleShot(true);
+
+    addFooterWidget(d->statusBar);
+}
+
+void FileView::initializeConnect()
+{
+    connect(d->updateStatusBarTimer, &QTimer::timeout, this, &FileView::updateStatusBar);
+    connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &FileView::onScalingValueChanged);
+    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::delayUpdateStatusBar);
+}
+
+void FileView::updateStatusBar()
+{
+    int count = selectedIndexCount();
+    if (count == 0) {
+        d->statusBar->itemCounted(proxyModel()->rowCount());
+        return;
+    }
+
+    QList<const FileViewItem *> list;
+    for (const QModelIndex &index : selectedIndexes())
+        list << model()->itemFromIndex(proxyModel()->mapToSource(index));
+
+    d->statusBar->itemSelected(list);
 }

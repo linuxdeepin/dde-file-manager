@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -22,7 +22,9 @@
 
 #include "fileview_p.h"
 #include "headerview.h"
+#include "statusbar.h"
 #include "fileviewmodel.h"
+#include "filesortfilterproxymodel.h"
 
 FileViewPrivate::FileViewPrivate(FileView *qq)
     : q(qq)
@@ -48,6 +50,13 @@ void FileViewPrivate::initIconModeView()
         q->removeHeaderWidget(0);
         delete headerView;
         headerView = nullptr;
+    }
+
+    if (statusBar) {
+        statusBar->setScalingVisible(true);
+        int sizeLevel = statusBar->scalingValue();
+        q->setIconSize(QSize(GlobalPrivate::kIconSizeList[sizeLevel],
+                             GlobalPrivate::kIconSizeList[sizeLevel]));
     }
 }
 
@@ -78,6 +87,9 @@ void FileViewPrivate::initListModeView()
     QObject::connect(headerView, &HeaderView::sortIndicatorChanged, q, &FileView::onSortIndicatorChanged);
 
     updateListModeColumnWidth();
+
+    if (statusBar)
+        statusBar->setScalingVisible(false);
 }
 
 void FileViewPrivate::updateListModeColumnWidth()

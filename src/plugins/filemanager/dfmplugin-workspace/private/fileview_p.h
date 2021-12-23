@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -33,8 +33,10 @@ const int kListViewSpacing { 1 };
 const int kListViewMinimumWidth { 80 };
 const int kListViewDefaultWidth { 120 };
 const int kListViewIconSize { 24 };
+const QList<int> kIconSizeList { 48, 64, 96, 128, 256 };
 }   // namespace GlobalPrivate
 
+class StatusBar;
 class HeaderView;
 class BaseItemDelegate;
 class FileSortFilterProxyModel;
@@ -44,8 +46,10 @@ class FileViewPrivate
     FileView *const q;
     QAtomicInteger<bool> allowedAdjustColumnSize = true;
     QHash<int, BaseItemDelegate *> delegates;
+    StatusBar *statusBar = nullptr;
     HeaderView *headerView = nullptr;
     FileSortFilterProxyModel *proxyModel = nullptr;
+    QTimer *updateStatusBarTimer = nullptr;
     QUrl url;
 
     explicit FileViewPrivate(FileView *qq);

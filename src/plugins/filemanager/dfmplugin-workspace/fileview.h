@@ -32,6 +32,7 @@ DWIDGET_USE_NAMESPACE
 class FileViewModel;
 class FileViewPrivate;
 class BaseItemDelegate;
+class FileSortFilterProxyModel;
 class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseView
 {
     Q_OBJECT
@@ -54,19 +55,22 @@ public:
     FileViewModel *model() const;
     void setModel(QAbstractItemModel *model) override;
 
+    FileSortFilterProxyModel *proxyModel() const;
     int getColumnWidth(const int &column) const;
     int getHeaderViewWidth() const;
+    int selectedIndexCount() const;
 
 public slots:
     void onHeaderViewMouseReleased();
     void onHeaderSectionResized(int logicalIndex, int oldSize, int newSize);
     void onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order);
     void onClicked(const QModelIndex &index);
+    void onScalingValueChanged(const int value);
+    void delayUpdateStatusBar();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
-    QModelIndexList selectedIndexes() const override;
 
 Q_SIGNALS:
     void urlClicked(const QUrl &url);
@@ -78,6 +82,10 @@ Q_SIGNALS:
 private:
     void initializeModel();
     void initializeDelegate();
+    void initializeStatusBar();
+    void initializeConnect();
+
+    void updateStatusBar();
 };
 
 #endif   // FILEVIEW_H
