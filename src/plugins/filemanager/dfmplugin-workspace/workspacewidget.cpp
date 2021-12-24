@@ -55,7 +55,9 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
             return;
         }
         viewStackLayout->addWidget(dynamic_cast<QWidget *>(fileView.get()));
+        return;
     }
+    fileView->setRootUrl(url);
 }
 
 QUrl WorkspaceWidget::currentUrl() const

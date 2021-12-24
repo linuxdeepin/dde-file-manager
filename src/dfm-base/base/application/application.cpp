@@ -59,7 +59,7 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
     if (group == QT_STRINGIFY(ApplicationAttribute)) {
         const QMetaEnum &me = QMetaEnum::fromType<Application::ApplicationAttribute>();
 
-        Application::ApplicationAttribute aa = static_cast<Application::ApplicationAttribute>(me.keyToValue(QByteArray("AA_" + key.toLatin1()).constData()));
+        Application::ApplicationAttribute aa = static_cast<Application::ApplicationAttribute>(me.keyToValue(QByteArray("k" + key.toLatin1()).constData()));
 
         if (edited)
             Q_EMIT self->appAttributeEdited(aa, value);
@@ -131,7 +131,7 @@ QVariant Application::appAttribute(Application::ApplicationAttribute aa)
 {
     const QString group(QT_STRINGIFY(ApplicationAttribute));
     const QMetaEnum &me = QMetaEnum::fromType<ApplicationAttribute>();
-    const QString key = QString::fromLatin1(me.valueToKey(aa)).split("_").last();
+    const QString key = QString::fromLatin1(me.valueToKey(aa)).remove(0, 1);
 
     return appSetting()->value(group, key);
 }
@@ -140,7 +140,7 @@ QUrl Application::appUrlAttribute(Application::ApplicationAttribute aa)
 {
     const QString group(QT_STRINGIFY(ApplicationAttribute));
     const QMetaEnum &me = QMetaEnum::fromType<ApplicationAttribute>();
-    const QString key = QString::fromLatin1(me.valueToKey(aa)).split("_").last();
+    const QString key = QString::fromLatin1(me.valueToKey(aa)).remove(0, 1);
 
     return appSetting()->urlValue(group, key);
 }
@@ -149,7 +149,7 @@ void Application::setAppAttribute(Application::ApplicationAttribute aa, const QV
 {
     const QString group(QT_STRINGIFY(ApplicationAttribute));
     const QMetaEnum &me = QMetaEnum::fromType<ApplicationAttribute>();
-    const QString key = QString::fromLatin1(me.valueToKey(aa)).split("_").last();
+    const QString key = QString::fromLatin1(me.valueToKey(aa)).remove(0, 1);
 
     // clear all self iconSize, use globbal iconSize
     if (key == "IconSizeLevel") {
@@ -196,7 +196,7 @@ QVariant Application::genericAttribute(Application::GenericAttribute ga)
 
     const QString group(QT_STRINGIFY(GenericAttribute));
     const QMetaEnum &me = QMetaEnum::fromType<GenericAttribute>();
-    const QString key = QString::fromLatin1(me.valueToKey(ga)).split("_").last();
+    const QString key = QString::fromLatin1(me.valueToKey(ga)).remove(0, 1);
 
     return genericSetting()->value(group, key);
 }
@@ -215,7 +215,7 @@ void Application::setGenericAttribute(Application::GenericAttribute ga, const QV
 
     const QString group(QT_STRINGIFY(GenericAttribute));
     const QMetaEnum &me = QMetaEnum::fromType<GenericAttribute>();
-    const QString key = QString::fromLatin1(me.valueToKey(ga)).split("_").last();
+    const QString key = QString::fromLatin1(me.valueToKey(ga)).remove(0, 1);
 
     genericSetting()->setValue(group, key, value);
 }
