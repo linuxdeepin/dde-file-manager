@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -89,6 +89,7 @@ public:
         kProrogramError,   // 程序错误
         kDfmIoError,   // 程序错误
         kDeleteFileError,   // 删除文件错误
+        kMakeStandardTrashError,   // 回收站目录错误
         kUnknowError,   // 未知错误
     };
     Q_ENUM(JobErrorType)

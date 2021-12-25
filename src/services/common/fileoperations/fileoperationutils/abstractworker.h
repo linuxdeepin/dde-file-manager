@@ -150,6 +150,7 @@ public:
     AbstractJobHandler::JobFlags jobFlags { AbstractJobHandler::JobFlag::kNoHint };   // 任务标志
     AbstractJobHandler::SupportAction currentAction { AbstractJobHandler::SupportAction::kNoAction };   // 当前的操作
     QSharedPointer<QWaitCondition> handlingErrorCondition { nullptr };
+    QSharedPointer<QMutex> handlingErrorQMutex { nullptr };
     AbstractJobHandler::JobState currentState = AbstractJobHandler::JobState::kUnknowState;   // current state
     bool isSourceFileLocal { false };   // 源文件是否在可以出设备上
     bool isTargetFileLocal { false };   // 目标文件是否在可以出设备上

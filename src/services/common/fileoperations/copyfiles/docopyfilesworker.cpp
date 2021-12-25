@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -180,9 +180,7 @@ void DoCopyFilesWorker::setCountProccessType()
         }
         qDebug("targetIsRemovable = %d", bool(targetIsRemovable));
     }
-    // no error handling
-    // this syscall has existed since Linux 2.4.11 and cannot fail
-    if (isTargetFileLocal && isTargetFileLocal)
+    if (isSourceFileLocal && isTargetFileLocal)
         countWriteType = CountWriteSizeType::kCustomizeType;
 
     copyTid = countWriteType == CountWriteSizeType::kTidType ? syscall(SYS_gettid) : -1;
@@ -245,7 +243,7 @@ bool DoCopyFilesWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo, con
     }
     // 检查源文件是否存在
     if (!fromInfo->exists()) {
-        AbstractJobHandler::JobErrorType errortype = (fromInfo->path().startsWith("/root/") && !fromInfo->path().startsWith("/root/")) ? AbstractJobHandler::JobErrorType::kPermissionError : AbstractJobHandler::JobErrorType::kNonexistenceError;
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->path().startsWith("/root/") && !toInfo->path().startsWith("/root/")) ? AbstractJobHandler::JobErrorType::kPermissionError : AbstractJobHandler::JobErrorType::kNonexistenceError;
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfo == nullptr ? QUrl() : toInfo->url(), errortype);
         cancelThreadProcessingError();
         return AbstractJobHandler::SupportAction::kSkipAction == action;
@@ -258,7 +256,7 @@ bool DoCopyFilesWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo, con
     }
     // 检查目标文件是否存在
     if (!toInfo->exists()) {
-        AbstractJobHandler::JobErrorType errortype = (fromInfo->path().startsWith("/root/") && !fromInfo->path().startsWith("/root/")) ? AbstractJobHandler::JobErrorType::kPermissionError : AbstractJobHandler::JobErrorType::kNonexistenceError;
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->path().startsWith("/root/") && !toInfo->path().startsWith("/root/")) ? AbstractJobHandler::JobErrorType::kPermissionError : AbstractJobHandler::JobErrorType::kNonexistenceError;
         doHandleErrorAndWait(fromInfo->url(), toInfo->url(), errortype);
         cancelThreadProcessingError();
         return false;
@@ -407,22 +405,22 @@ bool DoCopyFilesWorker::creatSystemLink(const AbstractFileInfoPointer &fromInfo,
         }
     }
 
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+    AbstractJobHandler::SupportAction actionForlink = AbstractJobHandler::SupportAction::kNoAction;
 
     do {
         if (handler->createSystemLink(toInfo->url(), newFromInfo->url())) {
             return true;
         }
-        action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kSymlinkError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(handler->errorString()));
-    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+        actionForlink = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kSymlinkError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(handler->errorString()));
+    } while (!isStopped() && actionForlink == AbstractJobHandler::SupportAction::kRetryAction);
     cancelThreadProcessingError();
-    return action == AbstractJobHandler::SupportAction::kSkipAction;
+    return actionForlink == AbstractJobHandler::SupportAction::kSkipAction;
 }
 
 bool DoCopyFilesWorker::checkAndCopyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo)
 {
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-    while (doCheckFileFreeSpace(fromInfo->size())) {
+    while (!doCheckFileFreeSpace(fromInfo->size())) {
         action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kNotEnoughSpaceError);
         if (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction) {
             continue;
@@ -460,6 +458,7 @@ bool DoCopyFilesWorker::checkAndCopyFile(const AbstractFileInfoPointer fromInfo,
         if (!threadPool)
             threadPool.reset(new QThreadPool);
         QtConcurrent::run(threadPool.data(), this, static_cast<bool (DoCopyFilesWorker::*)()>(&DoCopyFilesWorker::doThreadPoolCopyFile));
+        return true;
     }
     if (threadPool) {
         while (threadPool->activeThreadCount() > 0) {
@@ -668,7 +667,7 @@ bool DoCopyFilesWorker::doReadFile(const AbstractFileInfoPointer &fromInfo,
 {
     readSize = 0;
     qint64 currentPos = fromDevice->pos();
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+    AbstractJobHandler::SupportAction actionForRead = AbstractJobHandler::SupportAction::kNoAction;
 
     if (Q_UNLIKELY(!stateCheck())) {
         return false;
@@ -687,26 +686,26 @@ bool DoCopyFilesWorker::doReadFile(const AbstractFileInfoPointer &fromInfo,
             AbstractJobHandler::JobErrorType errortype = fromInfo->exists() ? AbstractJobHandler::JobErrorType::kReadError : AbstractJobHandler::JobErrorType::kNonexistenceError;
             QString errorstr = fromInfo->exists() ? QString(QObject::tr("DFileCopyMoveJob", "Failed to read the file, cause: %1")).arg("to something!") : QString();
 
-            action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), errortype, errorstr);
+            actionForRead = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), errortype, errorstr);
 
-            if (action == AbstractJobHandler::SupportAction::kRetryAction) {
+            if (actionForRead == AbstractJobHandler::SupportAction::kRetryAction) {
                 if (!fromDevice->seek(currentPos)) {
-                    AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(),
-                                                                                    toInfo->url(),
-                                                                                    AbstractJobHandler::JobErrorType::kSeekError);
-                    result = action == AbstractJobHandler::SupportAction::kSkipAction;
+                    AbstractJobHandler::SupportAction actionForReadSeek = doHandleErrorAndWait(fromInfo->url(),
+                                                                                               toInfo->url(),
+                                                                                               AbstractJobHandler::JobErrorType::kSeekError);
+                    result = actionForReadSeek == AbstractJobHandler::SupportAction::kSkipAction;
                     skipWritSize += result ? fromInfo->size() - currentPos : 0;
                     cancelThreadProcessingError();
                     return false;
                 }
             }
         }
-    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStopped() && actionForRead == AbstractJobHandler::SupportAction::kRetryAction);
 
     cancelThreadProcessingError();
 
-    if (action != AbstractJobHandler::SupportAction::kNoAction) {
-        result = action == AbstractJobHandler::SupportAction::kSkipAction;
+    if (actionForRead != AbstractJobHandler::SupportAction::kNoAction) {
+        result = actionForRead == AbstractJobHandler::SupportAction::kSkipAction;
         return false;
     }
 
@@ -716,7 +715,7 @@ bool DoCopyFilesWorker::doReadFile(const AbstractFileInfoPointer &fromInfo,
 bool DoCopyFilesWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, const QSharedPointer<DFile> &toDevice, const char *data, const qint64 &readSize, bool &result)
 {
     qint64 currentPos = toDevice->pos();
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+    AbstractJobHandler::SupportAction actionForWrite = AbstractJobHandler::SupportAction::kNoAction;
     qint64 sizeWrite = 0;
     qint64 surplusSize = readSize;
     do {
@@ -735,26 +734,25 @@ bool DoCopyFilesWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo, con
         }
         QString errorstr = QString(QObject::tr("Failed to write the file, cause: %1")).arg("some thing to do!");
 
-        AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-        action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kWriteError, errorstr);
-        if (action == AbstractJobHandler::SupportAction::kRetryAction) {
+        actionForWrite = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kWriteError, errorstr);
+        if (actionForWrite == AbstractJobHandler::SupportAction::kRetryAction) {
             if (!toDevice->seek(currentPos)) {
-                AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(),
-                                                                                toInfo->url(),
-                                                                                AbstractJobHandler::JobErrorType::kSeekError);
-                result = action == AbstractJobHandler::SupportAction::kSkipAction;
+                AbstractJobHandler::SupportAction actionForWriteSeek = doHandleErrorAndWait(fromInfo->url(),
+                                                                                            toInfo->url(),
+                                                                                            AbstractJobHandler::JobErrorType::kSeekError);
+                result = actionForWriteSeek == AbstractJobHandler::SupportAction::kSkipAction;
                 currentWritSize += readSize - surplusSize;
                 skipWritSize += result ? fromInfo->size() - (currentPos + readSize - surplusSize) : 0;
                 cancelThreadProcessingError();
                 return false;
             }
         }
-    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStopped() && actionForWrite == AbstractJobHandler::SupportAction::kRetryAction);
 
     cancelThreadProcessingError();
 
-    if (action != AbstractJobHandler::SupportAction::kNoAction) {
-        result = action == AbstractJobHandler::SupportAction::kSkipAction;
+    if (actionForWrite != AbstractJobHandler::SupportAction::kNoAction) {
+        result = actionForWrite == AbstractJobHandler::SupportAction::kSkipAction;
         currentWritSize += readSize - surplusSize;
         skipWritSize += result ? fromInfo->size() - (currentPos + readSize - surplusSize) : 0;
         return false;
@@ -878,13 +876,12 @@ bool DoCopyFilesWorker::verifyFileIntegrity(const qint64 &blockSize,
             }
 
             QString errorstr = QObject::tr("File integrity was damaged, cause: %1").arg("some error occ!");
-            AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-            action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kIntegrityCheckingError, errorstr);
-            if (!isStopped() && AbstractJobHandler::SupportAction::kRetryAction == action) {
+            AbstractJobHandler::SupportAction actionForCheckRead = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kIntegrityCheckingError, errorstr);
+            if (!isStopped() && AbstractJobHandler::SupportAction::kRetryAction == actionForCheckRead) {
                 continue;
             } else {
                 cancelThreadProcessingError();
-                return action == AbstractJobHandler::SupportAction::kSkipAction;
+                return actionForCheckRead == AbstractJobHandler::SupportAction::kSkipAction;
             }
         }
 
@@ -905,10 +902,9 @@ bool DoCopyFilesWorker::verifyFileIntegrity(const qint64 &blockSize,
     if (sourceCheckSum != targetCheckSum) {
         qWarning("Failed on file integrity checking, source file: 0x%lx, target file: 0x%lx", sourceCheckSum, targetCheckSum);
         QString errorstr = QObject::tr("File integrity was damaged, cause: %1").arg("some error occ!");
-        AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-        action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kIntegrityCheckingError, errorstr);
+        AbstractJobHandler::SupportAction actionForCheck = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kIntegrityCheckingError, errorstr);
         cancelThreadProcessingError();
-        return action == AbstractJobHandler::SupportAction::kSkipAction;
+        return actionForCheck == AbstractJobHandler::SupportAction::kSkipAction;
     }
     return true;
 }

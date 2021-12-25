@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -64,6 +64,7 @@ class FileOperationsUtils
     friend class AbstractWorker;
     friend class DoCopyFilesWorker;
     friend class DoStatisticsFilesWorker;
+    friend class DoMoveToTrashFilesWorker;
 
 public:
     struct FilesSizeInfo
@@ -77,6 +78,7 @@ public:
 private:
     static QSharedPointer<FilesSizeInfo> statisticsFilesSize(const QList<QUrl> &files, const bool &isRecordUrl = false);
     static bool isFileInCanRemoveDevice(const QUrl &url);
+    static bool isFilesSizeOutLimit(const QUrl &url, const qint64 limitSize);
     static quint16 getMemoryPageSize();
     static void statisticFilesSize(const QUrl &url, QSharedPointer<FilesSizeInfo> &sizeInfo, const bool &isRecordUrl = false);
     static bool isAncestorUrl(const QUrl &from, const QUrl &to);

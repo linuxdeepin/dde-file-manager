@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -38,7 +38,7 @@ extern "C" {
 #include <unistd.h>
 #include <sys/utsname.h>
 
-static const int kDefaultMemoryPageSize { 4096 };
+const static int kDefaultMemoryPageSize { 4096 };
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -86,6 +86,39 @@ bool FileOperationsUtils::isFileInCanRemoveDevice(const QUrl &url)
     }
     g_object_unref(dest_dir_file);
     return isLocal;
+}
+
+bool FileOperationsUtils::isFilesSizeOutLimit(const QUrl &url, const qint64 limitSize)
+{
+    qint64 totalSize = 0;
+    char *paths[2] = { nullptr, nullptr };
+    paths[0] = strdup(url.path().toUtf8().toStdString().data());
+    FTS *fts = fts_open(paths, 0, nullptr);
+    if (paths[0])
+        free(paths[0]);
+
+    if (nullptr == fts) {
+        perror("fts_open");
+        qWarning() << "fts_open open error : " << QString::fromLocal8Bit(strerror(errno));
+        return false;
+    }
+    while (1) {
+        FTSENT *ent = fts_read(fts);
+        if (ent == nullptr) {
+            break;
+        }
+        unsigned short flag = ent->fts_info;
+
+        if (flag != FTS_DP)
+            totalSize += ent->fts_statp->st_size <= 0 ? getMemoryPageSize() : ent->fts_statp->st_size;
+
+        if (totalSize > limitSize)
+            break;
+    }
+
+    fts_close(fts);
+
+    return totalSize > limitSize;
 }
 /*!
  * \brief FileOperationsUtils::getMemoryPageSize 获取当前內存页大小

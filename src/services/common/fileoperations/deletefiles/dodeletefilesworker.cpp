@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -44,6 +44,7 @@ bool DoDeleteFilesWorker::doWork()
     if (!AbstractWorker::doWork())
         return false;
     // ToDo::执行删除的业务逻辑
+    deleteAllFiles();
     // 完成
     endWork();
 
@@ -225,7 +226,6 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const AbstractFileInfoPointer &
 /*!
  * \brief DoCopyFilesWorker::doHandleErrorAndWait Blocking handles errors and returns
  * actions supported by the operation
- * 注意：处理这个错误时，其他线程都要阻塞，这个错误处理完成了才能
  * \param from source information
  * \param to target information
  * \param error error type
