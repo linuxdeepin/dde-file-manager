@@ -267,6 +267,9 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
  */
 quint64 WindowsService::findWindowId(const QWidget *window)
 {
+    if (!window)
+        return 0;
+
     int count = d->windows.size();
     for (int i = 0; i != count; ++i) {
         quint64 key = d->windows.keys().at(i);

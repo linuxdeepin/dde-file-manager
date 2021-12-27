@@ -31,6 +31,7 @@
 
 static const char *const kOpen = "open";
 static const char *const kEjectAll = "eject_all";
+static const char *const kDiskMountKey = "mount-item-key";
 
 DWIDGET_USE_NAMESPACE
 
@@ -153,7 +154,7 @@ void DiskMountPlugin::setSortKey(const QString &itemKey, const int order)
 
 void DiskMountPlugin::refreshIcon(const QString &itemKey)
 {
-    if (itemKey == DISK_MOUNT_KEY)
+    if (itemKey == kDiskMountKey)
         diskPluginItem->updateIcon();
 }
 
@@ -165,9 +166,9 @@ void DiskMountPlugin::diskCountChanged(const int count)
     pluginAdded = bool(count);
 
     if (pluginAdded)
-        proxyInter()->itemAdded(this, DISK_MOUNT_KEY);
+        proxyInter()->itemAdded(this, kDiskMountKey);
     else
-        proxyInter()->itemRemoved(this, DISK_MOUNT_KEY);
+        proxyInter()->itemRemoved(this, kDiskMountKey);
 }
 
 void DiskMountPlugin::initCompoments()

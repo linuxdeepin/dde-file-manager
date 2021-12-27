@@ -31,6 +31,7 @@
 
 #include <dfm-framework/framework.h>
 
+DPSIDEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 

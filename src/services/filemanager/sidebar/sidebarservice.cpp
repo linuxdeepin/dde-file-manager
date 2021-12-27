@@ -21,14 +21,50 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "sidebarservice.h"
+#include "sidebar_defines.h"
 #include "private/sidebarservice_p.h"
 
+DSB_FM_BEGIN_NAMESPACE
+
+namespace Sidebar {
+namespace EventTopic {
+const char *const kSideBar { "/org/deepin/event/sidebar" };
+const char *const kSideBarItem { "/org/deepin/event/sidebar/item" };
+}   // namespace EventTopic
+
+namespace EventData {
+const char *const kCdAction { "CdAction" };
+const char *const kContexMenu { "ContexMenu" };
+const char *const kRename { "Rename" };
+}   // namespace EventData
+
+namespace EventProperty {
+const char *const kWindowId { "WindowId" };
+const char *const kUrl { "Url" };
+const char *const kName { "Name" };
+const char *const kPos { "Pos" };
+}   // namespace EventProperty
+
+}   // namespace Sidebar
+
+DSB_FM_END_NAMESPACE
+
 DSB_FM_USE_NAMESPACE
+
+/*!
+ * \class SideBarServicePrivate
+ * \brief
+ */
 
 SideBarServicePrivate::SideBarServicePrivate(SideBarService *serv)
     : QObject(nullptr), service(serv)
 {
 }
+
+/*!
+ * \class SideBarService
+ * \brief
+ */
 
 SideBarService::SideBarService(QObject *parent)
     : dpf::PluginService(parent),

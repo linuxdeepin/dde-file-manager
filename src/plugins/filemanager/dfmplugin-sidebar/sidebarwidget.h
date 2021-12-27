@@ -23,11 +23,15 @@
 #ifndef SIDEBARWIDGET_H
 #define SIDEBARWIDGET_H
 
+#include "dfmplugin_sidebar_global.h"
+
 #include "dfm-base/interfaces/abstractframe.h"
 
 #include <QUrl>
 
 class QAbstractItemView;
+
+DPSIDEBAR_BEGIN_NAMESPACE
 class SideBarView;
 class SideBarModel;
 class SideBarItem;
@@ -46,12 +50,10 @@ public:
     bool removeItem(SideBarItem *item);
 
 Q_SIGNALS:
-    void clickedItemUrl(const QUrl &sidebarUrl);
-    void clickedItemIndex(const QModelIndex &index);
     void customContextMenu(const QUrl &sidebarUrl, const QPoint &pos);
 
 private Q_SLOTS:
-    void onItemClicked(const QModelIndex &index);
+    void onItemActived(const QModelIndex &index);
     void customContextMenuCall(const QPoint &pos);
 
 private:
@@ -63,5 +65,6 @@ private:
     SideBarView *sidebarView { nullptr };
     SideBarModel *sidebarModel { nullptr };
 };
+DPSIDEBAR_END_NAMESPACE
 
 #endif   // SIDEBARWIDGET_H

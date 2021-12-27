@@ -28,8 +28,6 @@
 #include <QWidget>
 #include <QPixmap>
 
-static const char *const DISK_MOUNT_KEY = "mount-item-key";
-
 class DiskPluginItem : public QWidget
 {
     Q_OBJECT

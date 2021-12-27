@@ -25,11 +25,13 @@
 #include "sidebarmodel.h"
 #include "sidebaritem.h"
 #include "sidebaritemdelegate.h"
+#include "sidebareventcaller.h"
 
 #include <QApplication>
 #include <QVBoxLayout>
 #include <QScrollBar>
 
+DPSIDEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 SideBarWidget::SideBarWidget(QFrame *parent)
@@ -49,10 +51,6 @@ void SideBarWidget::setCurrentUrl(const QUrl &url)
     for (int i = 0; i < model->rowCount(); i++) {
         auto item = sidebarView->model()->itemFromIndex(i);
         if (item->url() == sidebarUrl) {
-            sidebarView->selectionModel()->select(model->index(i, 0), QItemSelectionModel::SelectCurrent);
-            return;
-        }
-        if (item->url().scheme() == sidebarUrl.scheme()) {
             sidebarView->selectionModel()->select(model->index(i, 0), QItemSelectionModel::SelectCurrent);
             return;
         }
@@ -95,13 +93,13 @@ bool SideBarWidget::removeItem(SideBarItem *item)
     return sidebarModel->removeRow(item);
 }
 
-void SideBarWidget::onItemClicked(const QModelIndex &index)
+void SideBarWidget::onItemActived(const QModelIndex &index)
 {
     SideBarItem *item = sidebarModel->itemFromIndex(index);
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     QUrl url = qvariant_cast<QUrl>(item->data(SideBarItem::Roles::ItemUrlRole));
     if (!url.isEmpty())
-        Q_EMIT clickedItemUrl(url);
+        SideBarEventCaller::sendItemActived(this, url);
 }
 
 void SideBarWidget::customContextMenuCall(const QPoint &pos)
@@ -137,13 +135,15 @@ void SideBarWidget::initializeUi()
 
 void SideBarWidget::initConnect()
 {
-    connect(sidebarView, &SideBarView::clicked,
-            this, &SideBarWidget::clickedItemIndex);
+    // do `cd` work
+    connect(sidebarView, &SideBarView::activated,
+            this, &SideBarWidget::onItemActived);
 
+    // we need single click also trigger activated()
     connect(sidebarView, &SideBarView::clicked,
-            this, &SideBarWidget::onItemClicked,
-            Qt::UniqueConnection);
+            this, &SideBarWidget::onItemActived);
 
+    // context menu
     connect(sidebarView, &SideBarView::customContextMenuRequested,
             this, &SideBarWidget::customContextMenuCall);
 }

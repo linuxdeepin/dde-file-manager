@@ -22,9 +22,13 @@
 #ifndef SIDEBARVIEW_P_H
 #define SIDEBARVIEW_P_H
 
+#include "dfmplugin_sidebar_global.h"
+
 #include <QObject>
 #include <QPoint>
 #include <QModelIndex>
+
+DPSIDEBAR_BEGIN_NAMESPACE
 
 class SideBarView;
 class SideBarViewPrivate : public QObject
@@ -47,5 +51,7 @@ class SideBarViewPrivate : public QObject
     bool checkOpTime();   //检查当前操作与上次操作的时间间隔
     void currentChanged(const QModelIndex &previous);
 };
+
+DPSIDEBAR_END_NAMESPACE
 
 #endif   // SIDEBARVIEW_P_H

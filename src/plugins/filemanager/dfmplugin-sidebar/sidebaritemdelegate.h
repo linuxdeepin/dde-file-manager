@@ -21,9 +21,12 @@
  */
 #pragma once
 
+#include "dfmplugin_sidebar_global.h"
+
 #include <DStyledItemDelegate>
 
 DWIDGET_USE_NAMESPACE
+DPSIDEBAR_BEGIN_NAMESPACE
 
 class SideBarItemDelegate : public DStyledItemDelegate
 {
@@ -45,3 +48,4 @@ public:
 Q_SIGNALS:
     void rename(const QModelIndex &index, QString newName) const;
 };
+DPSIDEBAR_END_NAMESPACE

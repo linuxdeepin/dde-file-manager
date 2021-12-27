@@ -25,6 +25,8 @@
 #include <QObject>
 #include <QVariant>
 
+DPSIDEBAR_USE_NAMESPACE
+
 SideBarItem::SideBarItem(const QUrl &url)
     : SideBarItem(QIcon(), QString(), QString(), url)
 {

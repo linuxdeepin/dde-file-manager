@@ -25,12 +25,7 @@
 #include "sidebarmodel.h"
 #include "sidebarview.h"
 
-/*********************************************************/
-//bug 26937 书签目标目录不存在情况下还可以重命名问题。相关头文件添加
-//#include "file/local/dfileservices.h"
-/*********************************************************/
-
-#include "file/local/localfileinfo.h"
+#include "dfm-base/file/local/localfileinfo.h"
 
 #include <QPainter>
 #include <QDebug>
@@ -39,6 +34,7 @@
 #include <qdrawutil.h>
 #include <QLineEdit>
 
+DPSIDEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 QT_USE_NAMESPACE

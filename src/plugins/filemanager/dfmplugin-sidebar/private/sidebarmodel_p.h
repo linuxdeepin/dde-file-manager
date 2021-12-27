@@ -22,7 +22,11 @@
 #ifndef SIDEBARMODEL_P_CPP
 #define SIDEBARMODEL_P_CPP
 
+#include "dfmplugin_sidebar_global.h"
+
 #include <QObject>
+
+DPSIDEBAR_BEGIN_NAMESPACE
 
 class SideBarModel;
 class SideBarModelPrivate : public QObject
@@ -32,5 +36,7 @@ class SideBarModelPrivate : public QObject
     SideBarModel *const q;
     explicit SideBarModelPrivate(SideBarModel *qq);
 };
+
+DPSIDEBAR_END_NAMESPACE
 
 #endif   // SIDEBARMODEL_P_CPP

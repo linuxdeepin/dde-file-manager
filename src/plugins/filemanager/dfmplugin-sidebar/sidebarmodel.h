@@ -21,7 +21,11 @@
  */
 #pragma once
 
+#include "dfmplugin_sidebar_global.h"
+
 #include <QStandardItemModel>
+
+DPSIDEBAR_BEGIN_NAMESPACE
 
 class SideBarItem;
 class SideBarModelPrivate;
@@ -43,3 +47,5 @@ public:
     bool removeRow(SideBarItem *item);
     QStringList groups() const;
 };
+
+DPSIDEBAR_END_NAMESPACE

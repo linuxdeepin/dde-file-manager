@@ -21,13 +21,15 @@
  */
 #ifndef DFMSIDEBARITEM_H
 #define DFMSIDEBARITEM_H
-#pragma once
+
+#include "dfmplugin_sidebar_global.h"
 
 #include <DStandardItem>
-
 #include <QUrl>
 
 DWIDGET_USE_NAMESPACE
+
+DPSIDEBAR_BEGIN_NAMESPACE
 
 class SideBarItem : public DStandardItem
 {
@@ -51,8 +53,9 @@ public:
     QUrl url() const;
     QString group() const;
 };
+DPSIDEBAR_END_NAMESPACE
 
-class DFMSideBarItemSeparator : public SideBarItem
+class DFMSideBarItemSeparator : public DPSIDEBAR_NAMESPACE::SideBarItem
 {
 public:
     explicit DFMSideBarItemSeparator(const QString &group = "");

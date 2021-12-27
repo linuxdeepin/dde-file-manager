@@ -20,35 +20,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SIDEBARSERVICE_H
-#define SIDEBARSERVICE_H
+#include "sidebareventcaller.h"
 
-#include "sidebar_defines.h"
+#include "services/filemanager/sidebar/sidebar_defines.h"
+#include "services/filemanager/windows/windowsservice.h"
 
 #include <dfm-framework/framework.h>
+#include <QUrl>
 
-DSB_FM_BEGIN_NAMESPACE
+DPSIDEBAR_USE_NAMESPACE
+DSB_FM_USE_NAMESPACE
 
-class SideBarServicePrivate;
-class SideBarService final : public dpf::PluginService, dpf::AutoServiceRegister<SideBarService>
+void SideBarEventCaller::sendItemActived(QWidget *sender, const QUrl &url)
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(SideBarService)
-    friend class dpf::QtClassFactory<dpf::PluginService>;
+    quint64 id = windowId(sender);
+    dpf::Event event;
+    event.setTopic(Sidebar::EventTopic::kSideBarItem);
+    event.setData(Sidebar::EventData::kCdAction);
+    event.setProperty(Sidebar::EventProperty::kWindowId, id);
+    event.setProperty(Sidebar::EventProperty::kUrl, url);
+    dpfInstance.eventProxy().pubEvent(event);
+}
 
-public:
-    static QString name()
-    {
-        return "org.deepin.service.SideBarService";
-    }
-
-private:
-    explicit SideBarService(QObject *parent = nullptr);
-    virtual ~SideBarService() override;
-
-    QScopedPointer<SideBarServicePrivate> d;
-};
-
-DSB_FM_END_NAMESPACE
-
-#endif   // SIDEBARSERVICE_H
+quint64 SideBarEventCaller::windowId(QWidget *sender)
+{
+    auto &ctx = dpfInstance.serviceContext();
+    auto windowService = ctx.service<WindowsService>(WindowsService::name());
+    return windowService->findWindowId(sender);
+}

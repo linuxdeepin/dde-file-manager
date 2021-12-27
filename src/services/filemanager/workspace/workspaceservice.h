@@ -20,35 +20,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SIDEBARSERVICE_H
-#define SIDEBARSERVICE_H
+#ifndef WORKSPACESERVICE_H
+#define WORKSPACESERVICE_H
 
-#include "sidebar_defines.h"
+#include "workspace_defines.h"
 
 #include <dfm-framework/framework.h>
 
 DSB_FM_BEGIN_NAMESPACE
 
-class SideBarServicePrivate;
-class SideBarService final : public dpf::PluginService, dpf::AutoServiceRegister<SideBarService>
+class WorkspaceServicePrivate;
+class WorkspaceService final : public dpf::PluginService, dpf::AutoServiceRegister<WorkspaceService>
 {
     Q_OBJECT
-    Q_DISABLE_COPY(SideBarService)
+    Q_DISABLE_COPY(WorkspaceService)
     friend class dpf::QtClassFactory<dpf::PluginService>;
 
 public:
     static QString name()
     {
-        return "org.deepin.service.SideBarService";
+        return "org.deepin.service.WorkspaceService";
     }
 
 private:
-    explicit SideBarService(QObject *parent = nullptr);
-    virtual ~SideBarService() override;
+    explicit WorkspaceService(QObject *parent = nullptr);
+    virtual ~WorkspaceService() override;
 
-    QScopedPointer<SideBarServicePrivate> d;
+    QScopedPointer<WorkspaceServicePrivate> d;
 };
 
 DSB_FM_END_NAMESPACE
 
-#endif   // SIDEBARSERVICE_H
+#endif   // WORKSPACESERVICE_H

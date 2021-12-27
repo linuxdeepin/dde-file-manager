@@ -63,24 +63,23 @@ void EventCallProxy::registerHandler(EventHandler::Type type, const QStringList 
 {
     QMutexLocker locker(eventMutex());
     auto &infoList = getInfoList();
-    ExportFunc invoke {nullptr};
+    ExportFunc invoke { nullptr };
     if (type == EventHandler::Type::Sync) {
-        invoke = [creator] (HandlerInfo &info, const Event &event) {
+        invoke = [creator](HandlerInfo &info, const Event &event) {
             fillInfo(info, creator);
             info.handler->eventProcess(event);
         };
     }
 
-    if (type ==  EventHandler::Type::Async) {
-        invoke = [creator] (HandlerInfo &info, const Event &event) {
+    if (type == EventHandler::Type::Async) {
+        invoke = [creator](HandlerInfo &info, const Event &event) {
             fillInfo(info, creator);
             info.future = QtConcurrent::run(info.handler.data(), &EventHandler::eventProcess, event);
         };
     }
     qInfo() << "Register Handler, type " << static_cast<int>(type) << ", topics" << topics;
-    infoList.append(HandlerInfo{nullptr, invoke, topics, QFuture<void>()});
+    infoList.append(HandlerInfo { nullptr, invoke, topics, QFuture<void>() });
 }
-
 
 QList<EventCallProxy::HandlerInfo> &EventCallProxy::getInfoList()
 {
@@ -101,9 +100,3 @@ QMutex *EventCallProxy::eventMutex()
 }
 
 DPF_END_NAMESPACE
-
-
-
-
-
-

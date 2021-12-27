@@ -20,35 +20,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SIDEBARSERVICE_H
-#define SIDEBARSERVICE_H
+#ifndef SIDEBAR_DEFINES_H
+#define SIDEBAR_DEFINES_H
 
-#include "sidebar_defines.h"
-
-#include <dfm-framework/framework.h>
+#include "dfm_filemanager_service_global.h"
 
 DSB_FM_BEGIN_NAMESPACE
 
-class SideBarServicePrivate;
-class SideBarService final : public dpf::PluginService, dpf::AutoServiceRegister<SideBarService>
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(SideBarService)
-    friend class dpf::QtClassFactory<dpf::PluginService>;
+namespace Sidebar {
+namespace EventTopic {
+extern const char *const kSideBar;   // define "/org/deepin/event/sidebar"
+extern const char *const kSideBarItem;   // define "/org/deepin/event/sidebar/item"
+}   // namespace EventTopics
 
-public:
-    static QString name()
-    {
-        return "org.deepin.service.SideBarService";
-    }
+namespace EventData {
+extern const char *const kCdAction;
+extern const char *const kContexMenu;
+extern const char *const kRename;
+}   // namespace EventData
 
-private:
-    explicit SideBarService(QObject *parent = nullptr);
-    virtual ~SideBarService() override;
+namespace EventProperty {
+extern const char *const kWindowId;
+extern const char *const kUrl;
+extern const char *const kName;
+extern const char *const kPos;
+}   // namespace EventProperty
 
-    QScopedPointer<SideBarServicePrivate> d;
-};
+}   // namespace Sidebar
 
 DSB_FM_END_NAMESPACE
 
-#endif   // SIDEBARSERVICE_H
+#endif   // SIDEBAR_DEFINES_H

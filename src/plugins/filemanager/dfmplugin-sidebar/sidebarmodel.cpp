@@ -30,6 +30,8 @@
 
 #define MODELITEM_MIMETYPE "application/x-dfmsidebaritemmodeldata"
 
+DPSIDEBAR_USE_NAMESPACE
+
 namespace GlobalPrivate {
 QByteArray generateMimeData(const QModelIndexList &indexes)
 {

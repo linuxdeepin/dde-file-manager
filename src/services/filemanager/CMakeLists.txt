@@ -45,6 +45,20 @@ FILE(GLOB TITLEBAR_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/titlebar/private/*.cpp"
 )
 
+FILE(GLOB WORKSPACE_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/workspace/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/workspace/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/workspace/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/workspace/private/*.cpp"
+)
+
+FILE(GLOB DETAILSPACE_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/private/*.cpp"
+)
+
 FILE(GLOB SEARCH_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/search/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/search/*.cpp"
@@ -61,6 +75,8 @@ add_library(
     ${VAULT_FILES}
     ${SIDEBAR_FILES}
     ${TITLEBAR_FILES}
+    ${WORKSPACE_FILES}
+    ${DETAILSPACE_FILES}
     ${SEARCH_FILES}
 )
 

@@ -20,35 +20,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SIDEBARSERVICE_H
-#define SIDEBARSERVICE_H
+#ifndef SIDEBAREVENTCALLER_H
+#define SIDEBAREVENTCALLER_H
 
-#include "sidebar_defines.h"
+#include "dfmplugin_sidebar_global.h"
 
-#include <dfm-framework/framework.h>
+#include <QObject>
 
-DSB_FM_BEGIN_NAMESPACE
+class QUrl;
+class QWidget;
+DPSIDEBAR_BEGIN_NAMESPACE
 
-class SideBarServicePrivate;
-class SideBarService final : public dpf::PluginService, dpf::AutoServiceRegister<SideBarService>
+class SideBarEventCaller
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(SideBarService)
-    friend class dpf::QtClassFactory<dpf::PluginService>;
+    SideBarEventCaller() = delete;
 
 public:
-    static QString name()
-    {
-        return "org.deepin.service.SideBarService";
-    }
+    static void sendItemActived(QWidget *sender, const QUrl &url);
 
 private:
-    explicit SideBarService(QObject *parent = nullptr);
-    virtual ~SideBarService() override;
-
-    QScopedPointer<SideBarServicePrivate> d;
+    static quint64 windowId(QWidget *sender);
 };
 
-DSB_FM_END_NAMESPACE
+DPSIDEBAR_END_NAMESPACE
 
-#endif   // SIDEBARSERVICE_H
+#endif   // SIDEBAREVENTCALLER_H

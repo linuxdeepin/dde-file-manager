@@ -23,6 +23,7 @@
 #include "sidebaritem.h"
 #include "sidebarmodel.h"
 #include "private/sidebarview_p.h"
+
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/base/urlroute.h"
 
@@ -34,6 +35,7 @@
 
 #include <unistd.h>
 
+DPSIDEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 #define DRAG_EVENT_URLS ((getuid() == 0) ? (QString(getlogin()) + "_RootUrlsInDragEvent") : (QString(getlogin()) + "_UrlsInDragEvent"))

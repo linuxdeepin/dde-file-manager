@@ -23,7 +23,11 @@
 #ifndef SIDEBAR_H
 #define SIDEBAR_H
 
+#include "dfmplugin_sidebar_global.h"
+
 #include <dfm-framework/framework.h>
+
+DPSIDEBAR_BEGIN_NAMESPACE
 
 class SideBarWidget;
 class SideBar : public dpf::Plugin
@@ -43,5 +47,7 @@ private slots:
 private:
     void initSideBar(SideBarWidget *sidebar);
 };
+
+DPSIDEBAR_END_NAMESPACE
 
 #endif   // SIDEBAR_H

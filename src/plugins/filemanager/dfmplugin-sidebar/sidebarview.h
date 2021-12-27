@@ -21,9 +21,13 @@
  */
 #pragma once
 
+#include "dfmplugin_sidebar_global.h"
+
 #include <DListView>
 
 DWIDGET_USE_NAMESPACE
+
+DPSIDEBAR_BEGIN_NAMESPACE
 
 class SideBarItem;
 class SideBarModel;
@@ -56,3 +60,5 @@ protected:
 Q_SIGNALS:
     void requestRemoveItem();
 };
+
+DPSIDEBAR_END_NAMESPACE
