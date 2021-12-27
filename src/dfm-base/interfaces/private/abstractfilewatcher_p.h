@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -47,6 +47,7 @@ public:
 
 protected:
     QAtomicInteger<bool> started { false };   // 是否开始监视
+    QAtomicInt cacheInfoConnectSize { 0 };   // Cached FileInfo, number of connections monitored
     QUrl url;   // 监视文件的url
     QString path;   // 监视文件的路径
     QSharedPointer<DWatcher> watcher { nullptr };   // dfm-io的文件监视器

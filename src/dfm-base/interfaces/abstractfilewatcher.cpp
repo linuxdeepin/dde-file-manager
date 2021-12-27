@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -143,9 +143,32 @@ bool AbstractFileWatcher::restartWatcher()
  *
  * \param bool enabled 是否能监视
  */
-void AbstractFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled) {
+void AbstractFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled)
+{
     Q_UNUSED(subfileUrl)
-            Q_UNUSED(enabled)
+    Q_UNUSED(enabled)
+}
+/*!
+ * \brief AbstractFileWatcher::getCachInfoConnectSize Gets the number of file information cache monitors
+ * \return Number of file information cache monitors
+ */
+int AbstractFileWatcher::getCacheInfoConnectSize() const
+{
+    return d->cacheInfoConnectSize;
+}
+/*!
+ * \brief AbstractFileWatcher::addCachInfoConnectSize Increase the number of file information cache monitoring
+ */
+void AbstractFileWatcher::addCacheInfoConnectSize()
+{
+    d->cacheInfoConnectSize++;
+}
+/*!
+ * \brief AbstractFileWatcher::reduceCachInfoConnectSize Reduce the number of file information cache monitoring
+ */
+void AbstractFileWatcher::reduceCacheInfoConnectSize()
+{
+    d->cacheInfoConnectSize--;
 }
 
 DFMBASE_END_NAMESPACE

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -47,6 +47,9 @@ public:
     virtual bool stopWatcher();
     virtual bool restartWatcher();
     virtual void setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled = true);
+    int getCacheInfoConnectSize() const;
+    void addCacheInfoConnectSize();
+    void reduceCacheInfoConnectSize();
     //debug function
     static QStringList getMonitorFiles();
 

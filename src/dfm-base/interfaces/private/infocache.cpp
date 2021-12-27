@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -254,12 +254,24 @@ void InfoCache::cacheInfo(const QUrl &url, const AbstractFileInfoPointer &info)
 {
     Q_D(InfoCache);
 
+    if (!info)
+        return;
+
     //获取监视器，监听当前的file的改变
-    QSharedPointer<AbstractFileWatcher> watcher = WacherFactory::create<AbstractFileWatcher>(url);
+    QSharedPointer<AbstractFileWatcher> watcher { nullptr };
+    if (info->isSymLink() || info->isFile()) {
+        watcher = WacherFactory::create<AbstractFileWatcher>(UrlRoute::urlParent(url));
+    } else {
+        watcher = WacherFactory::create<AbstractFileWatcher>(url);
+    }
+
     if (watcher) {
-        connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &InfoCache::refreshFileInfo);
-        connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &InfoCache::refreshFileInfo);
-        connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &InfoCache::refreshFileInfo);
+        if (watcher->getCacheInfoConnectSize() == 0) {
+            connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &InfoCache::refreshFileInfo);
+            connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &InfoCache::refreshFileInfo);
+            connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &InfoCache::refreshFileInfo);
+        }
+        watcher->addCacheInfoConnectSize();
     }
 
     d->fileInfos.insert(url, info);
@@ -294,8 +306,13 @@ void InfoCache::removeCacheInfo(const QUrl &url)
     // 断开信号连接
     QSharedPointer<AbstractFileWatcher> watcher = WacherFactory::create<AbstractFileWatcher>(url);
     if (watcher) {
-        disconnect(watcher.data());
-        WatcherCache::instance().removCacheWatcher(url);
+        watcher->reduceCacheInfoConnectSize();
+        if (watcher->getCacheInfoConnectSize() <= 0) {
+            disconnect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &InfoCache::refreshFileInfo);
+            disconnect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &InfoCache::refreshFileInfo);
+            disconnect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &InfoCache::refreshFileInfo);
+            WatcherCache::instance().removCacheWatcher(url);
+        }
     }
     d->fileInfos.remove(url);
     //移除刷新的url
