@@ -36,20 +36,18 @@ public:
         return "org.deepin.service.SearchService";
     }
 
-    QStringList fulltextSearch(quint64 winId, const QString &path, const QString &keyword);
-    bool createFullTextIndex(const QString &path);
-    void updateFullTextIndex(quint64 winId, const QString &path);
-    bool hasUpdated(quint64 winId);
-
-    QStringList fileSearch(quint64 winId, const QString &path, const QString &keyword, bool useRegExp = true);
-    QStringList fileSearch(quint64 winId, qint32 maxCount, qint64 maxTime, quint32 &startOffset, quint32 &endOffset,
-                           const QString &path, const QString &keyword, bool useRegExp = true);
-
+    bool search(quint64 winId, const QUrl &url, const QString &keyword);
+    QStringList matchedResults(quint64 winId);
     void stop(quint64 winId);
+
+signals:
+    void matched(quint64 winId);
+    void searchCompleted(quint64 winId);
 
 private:
     explicit SearchService(QObject *parent = nullptr);
     ~SearchService();
+    void init();
 
     QScopedPointer<SearchServicePrivate> d;
 };

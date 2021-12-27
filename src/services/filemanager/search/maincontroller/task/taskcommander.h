@@ -18,25 +18,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SEARCHSERVICE_P_H
-#define SEARCHSERVICE_P_H
+#ifndef TASKCOMMANDER_H
+#define TASKCOMMANDER_H
 
-#include "search/searchservice.h"
-#include "search/maincontroller/maincontroller.h"
+#include <QObject>
 
-#include <QFuture>
-
-class SearchServicePrivate : public QObject
+class TaskCommanderPrivate;
+class TaskCommander : public QObject
 {
     Q_OBJECT
-    friend class SearchService;
-
-public:
-    explicit SearchServicePrivate(SearchService *parent);
-    ~SearchServicePrivate();
+    friend class MainController;
 
 private:
-    MainController *mainController = nullptr;
+    explicit TaskCommander(quint64 taskId, const QUrl &url, const QString &keyword, QObject *parent = nullptr);
+    quint64 taskID() const;
+    QStringList getResults() const;
+    bool start();
+    void stop();
+    void deleteSelf();
+    void createSearcher(const QUrl &url, const QString &keyword);
+
+signals:
+    void matched(quint64 taskId);
+    void finished(quint64 taskId);
+
+private:
+    TaskCommanderPrivate *d;
 };
 
-#endif   // SEARCHSERVICE_P_H
+#endif   // TASKCOMMANDER_H

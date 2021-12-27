@@ -20,95 +20,62 @@
  */
 #include "searchservice.h"
 #include "private/searchservice_p.h"
-#include "fulltextsearch/fulltextsearch.h"
 
 #include <QtConcurrent>
 
-SearchServicePrivate::SearchServicePrivate()
-    : createIndexSearcher(new FullTextSearch)
+SearchServicePrivate::SearchServicePrivate(SearchService *parent)
+    : QObject(parent)
 {
 }
 
 SearchServicePrivate::~SearchServicePrivate()
 {
-}
-
-SearchService::SearchService(QObject *parent)
-    : dpf::PluginService(parent),
-      dpf::AutoServiceRegister<SearchService>(),
-      d(new SearchServicePrivate)
-{
-}
-
-SearchService::~SearchService()
-{
-    if (!d->fullTextSearchers.isEmpty()) {
-        for (const auto &searcher : d->fullTextSearchers.values())
-            searcher->stop();
-        d->fullTextSearchers.clear();
-    }
-
-    if (d->createIndexSearcher && d->createIndexFuture.isRunning()) {
-        d->createIndexSearcher->stop();
-        d->createIndexFuture.waitForFinished();
+    if (mainController) {
+        delete mainController;
+        mainController = nullptr;
     }
 }
 
-QStringList SearchService::fulltextSearch(quint64 winId, const QString &path, const QString &keyword)
+bool SearchService::search(quint64 winId, const QUrl &url, const QString &keyword)
 {
-    if (!d->fullTextSearchers.contains(winId)) {
-        QSharedPointer<FullTextSearch> searcher(new FullTextSearch);
-        d->fullTextSearchers.insert(winId, searcher);
-    }
+    if (d->mainController)
+        return d->mainController->doSearchTask(winId, url, keyword);
 
-    return d->fullTextSearchers[winId]->search(path, keyword);
+    return false;
 }
 
-bool SearchService::createFullTextIndex(const QString &path)
+QStringList SearchService::matchedResults(quint64 winId)
 {
-    if (d->createIndexFuture.isRunning())
-        return false;
+    if (d->mainController)
+        return d->mainController->getResults(winId);
 
-    d->createIndexFuture = QtConcurrent::run([=]() {
-        d->createIndexSearcher->createIndex(path);
-    });
-
-    return true;
-}
-
-void SearchService::updateFullTextIndex(quint64 winId, const QString &path)
-{
-    if (!d->fullTextSearchers.contains(winId))
-        return;
-
-    d->fullTextSearchers[winId]->updateIndex(path);
-}
-
-bool SearchService::hasUpdated(quint64 winId)
-{
-    if (!d->fullTextSearchers.contains(winId))
-        return false;
-
-    return d->fullTextSearchers[winId]->isUpdated();
-}
-
-QStringList SearchService::fileSearch(quint64 winId, const QString &path, const QString &keyword, bool useRegExp)
-{
-    // TODO(liuzhangjian)
-    return {};
-}
-
-QStringList SearchService::fileSearch(quint64 winId, qint32 maxCount, qint64 maxTime, quint32 &startOffset, quint32 &endOffset,
-                                      const QString &path, const QString &keyword, bool useRegExp)
-{
-    // TODO(liuzhangjian)
     return {};
 }
 
 void SearchService::stop(quint64 winId)
 {
-    if (d->fullTextSearchers.contains(winId)) {
-        d->fullTextSearchers[winId]->stop();
-        d->fullTextSearchers.remove(winId);
-    }
+    if (d->mainController)
+        d->mainController->stop(winId);
+}
+
+SearchService::SearchService(QObject *parent)
+    : dpf::PluginService(parent),
+      dpf::AutoServiceRegister<SearchService>(),
+      d(new SearchServicePrivate(this))
+{
+    init();
+}
+
+SearchService::~SearchService()
+{
+}
+
+void SearchService::init()
+{
+    Q_ASSERT(d->mainController == nullptr);
+
+    d->mainController = new MainController;
+    //直连，防止被事件循环打乱时序
+    connect(d->mainController, &MainController::matched, this, &SearchService::matched, Qt::DirectConnection);
+    connect(d->mainController, &MainController::searchCompleted, this, &SearchService::searchCompleted, Qt::DirectConnection);
 }

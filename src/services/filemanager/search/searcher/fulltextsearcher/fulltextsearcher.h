@@ -18,25 +18,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SEARCHSERVICE_P_H
-#define SEARCHSERVICE_P_H
+#ifndef FULLTEXTSEARCHER_H
+#define FULLTEXTSEARCHER_H
 
-#include "search/searchservice.h"
-#include "search/maincontroller/maincontroller.h"
+#include "search/searcher/abstractsearcher.h"
 
-#include <QFuture>
+#include <QObject>
 
-class SearchServicePrivate : public QObject
+class FullTextSearcherPrivate;
+class FullTextSearcher : public AbstractSearcher
 {
     Q_OBJECT
-    friend class SearchService;
-
-public:
-    explicit SearchServicePrivate(SearchService *parent);
-    ~SearchServicePrivate();
+    friend class TaskCommander;
+    friend class FullTextSearcherPrivate;
 
 private:
-    MainController *mainController = nullptr;
+    explicit FullTextSearcher(const QUrl &url, const QString &key, QObject *parent = nullptr);
+    void initConfigMonitor();
+    bool search() override;
+    void stop() override;
+    bool hasItem() const override;
+    QStringList takeAll() override;
+    static bool isSupport(const QUrl &url);
+
+private:
+    FullTextSearcherPrivate *d = nullptr;
 };
 
-#endif   // SEARCHSERVICE_P_H
+#endif   // FULLTEXTSEARCHER_H

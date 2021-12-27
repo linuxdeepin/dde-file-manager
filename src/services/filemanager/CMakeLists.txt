@@ -63,8 +63,16 @@ FILE(GLOB SEARCH_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/search/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/search/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/search/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/fulltextsearch/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/fulltextsearch/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/maincontroller/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/maincontroller/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/maincontroller/task/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/maincontroller/task/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/fulltextsearcher/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/fulltextsearcher/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/filenamesearcher/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/filenamesearcher/*.cpp"
 )
 
 FILE(GLOB COMPUTER_FILES

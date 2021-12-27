@@ -18,29 +18,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FULLTEXTSEARCH_H
-#define FULLTEXTSEARCH_H
+#ifndef MAINCONTROLLER_H
+#define MAINCONTROLLER_H
 
-#include <QObject>
+#include "task/taskcommander.h"
 
-class FullTextSearchPrivate;
-class FullTextSearch
+#include <QHash>
+
+class MainControllerPrivate;
+class MainController : public QObject
 {
+    Q_OBJECT
     friend class SearchService;
-
-public:
-    explicit FullTextSearch();
-    ~FullTextSearch();
+    friend class SearchServicePrivate;
 
 private:
-    bool createIndex(const QString &path);
-    bool updateIndex(const QString &path);
-    QStringList search(const QString &path, const QString &keyword);
-    bool isUpdated();
-    void stop();
+    explicit MainController(QObject *parent = nullptr);
+    ~MainController();
+    bool init();
+
+    void stop(quint64 winId);
+    bool doSearchTask(quint64 winId, const QUrl &url, const QString &keyword);
+    QStringList getResults(quint64 winId);
+
+signals:
+    void matched(quint64 winId);
+    void searchCompleted(quint64 winId);
 
 private:
-    QScopedPointer<FullTextSearchPrivate> d;
+    QHash<quint64, TaskCommander *> taskManager;
 };
 
-#endif   // FULLTEXTSEARCH_H
+#endif   // MAINCONTROLLER_H

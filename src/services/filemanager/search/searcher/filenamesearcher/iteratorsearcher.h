@@ -18,25 +18,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SEARCHSERVICE_P_H
-#define SEARCHSERVICE_P_H
+#ifndef ITERATORSEARCHER_H
+#define ITERATORSEARCHER_H
 
-#include "search/searchservice.h"
-#include "search/maincontroller/maincontroller.h"
+#include "search/searcher/abstractsearcher.h"
 
-#include <QFuture>
+#include <QTime>
+#include <QMutex>
+#include <QRegularExpression>
 
-class SearchServicePrivate : public QObject
+class IteratorSearcher : public AbstractSearcher
 {
     Q_OBJECT
-    friend class SearchService;
-
-public:
-    explicit SearchServicePrivate(SearchService *parent);
-    ~SearchServicePrivate();
+    friend class TaskCommander;
+    friend class TaskCommanderPrivate;
 
 private:
-    MainController *mainController = nullptr;
+    explicit IteratorSearcher(const QUrl &url, const QString &keyword, QObject *parent = nullptr);
+
+    bool search() override;
+    void stop() override;
+    bool hasItem() const override;
+    QStringList takeAll() override;
+    void tryNotify();
+    void doSearch();
+
+private:
+    QAtomicInt status = kReady;
+    QStringList allResults;
+    mutable QMutex mutex;
+    QList<QUrl> searchPathList;
+    QRegularExpression regex;
+
+    //计时
+    QTime notifyTimer;
+    int lastEmit = 0;
 };
 
-#endif   // SEARCHSERVICE_P_H
+#endif   // ITERATORSEARCHER_H

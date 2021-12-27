@@ -18,25 +18,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FULLTEXTSEARCH_P_H
-#define FULLTEXTSEARCH_P_H
+#ifndef FULLTEXTSEARCHER_P_H
+#define FULLTEXTSEARCHER_P_H
 
-#include <QObject>
+#include "search/searcher/abstractsearcher.h"
 
 #include <lucene++/LuceneHeaders.h>
 
-class FullTextSearchPrivate : public QObject
+#include <QMutex>
+#include <QTime>
+
+class FullTextSearcher;
+class FullTextSearcherPrivate : public QObject
 {
     Q_OBJECT
-    friend class FullTextSearch;
+    friend class FullTextSearcher;
 
 public:
-    enum SearchState {
-        kIdle,
-        kStarted,
-        kStoped
-    };
-
     enum WordType {
         kCn,
         kEn,
@@ -56,8 +54,8 @@ public:
     };
     Q_ENUM(IndexType)
 
-    explicit FullTextSearchPrivate();
-    ~FullTextSearchPrivate();
+    explicit FullTextSearcherPrivate(FullTextSearcher *parent);
+    ~FullTextSearcherPrivate();
 
 private:
     Lucene::IndexWriterPtr newIndexWriter(bool create = false);
@@ -65,17 +63,26 @@ private:
 
     bool createIndex(const QString &path);
     bool updateIndex(const QString &path);
-    QStringList doSearch(const QString &path, const QString &keyword);
+    bool doSearch(const QString &path, const QString &keyword);
 
     Lucene::DocumentPtr fileDocument(const QString &file);
     QString dealKeyword(const QString &keyword);
     void doIndexTask(const Lucene::IndexReaderPtr &reader, const Lucene::IndexWriterPtr &writer, const QString &path, TaskType type);
     void indexDocs(const Lucene::IndexWriterPtr &writer, const QString &file, IndexType type);
     bool checkUpdate(const Lucene::IndexReaderPtr &reader, const QString &file, IndexType &type);
+    void tryNotify();
 
     QString indexStorePath;
     bool isUpdated = false;
-    QAtomicInt currentState = kIdle;
+    QAtomicInt status = AbstractSearcher::kReady;
+    QStringList allResults;
+    mutable QMutex mutex;
+
+    //计时
+    QTime notifyTimer;
+    int lastEmit = 0;
+
+    FullTextSearcher *q = nullptr;
 };
 
-#endif   // FULLTEXTSEARCH_P_H
+#endif   // FULLTEXTSEARCHER_P_H
