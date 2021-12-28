@@ -34,6 +34,8 @@
 #include <QScrollBar>
 #include <QTimer>
 
+DPWORKSPACE_USE_NAMESPACE
+
 FileView::FileView(const QUrl &url, QWidget *parent)
     : DListView(parent), d(new FileViewPrivate(this))
 {
@@ -63,17 +65,14 @@ QWidget *FileView::widget() const
 
 void FileView::setViewMode(QListView::ViewMode mode)
 {
-    if (viewMode() == mode)
-        return;
-
     QListView::setViewMode(mode);
     setItemDelegate(d->delegates[mode]);
 
     switch (mode) {
-    case QListView::IconMode:
+    case IconMode:
         d->initIconModeView();
         break;
-    case QListView::ListMode:
+    case ListMode:
         if (model())
             setMinimumWidth(model()->columnCount() * GlobalPrivate::kListViewMinimumWidth);
         d->initListModeView();
@@ -101,7 +100,7 @@ bool FileView::setRootUrl(const QUrl &url)
     model()->setRootUrl(url);
 
     delayUpdateStatusBar();
-    update();
+    setDefaultViewMode();
 
     return true;
 }
@@ -201,25 +200,20 @@ void FileView::onHeaderSectionResized(int logicalIndex, int oldSize, int newSize
 
 void FileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
 {
-    auto proxyModel = qobject_cast<FileSortFilterProxyModel *>(QAbstractItemView::model());
-    proxyModel->setSortRole(model()->getRoleByColumn(logicalIndex));
-
-    proxyModel->sort(logicalIndex, order);
+    proxyModel()->setSortRole(model()->getRoleByColumn(logicalIndex));
+    proxyModel()->sort(logicalIndex, order);
 
     //TODO liuyangming: save data to config
 }
 
 void FileView::onClicked(const QModelIndex &index)
 {
-    auto item = FileView::model()->itemFromIndex(index);
-    if (item)
-        Q_EMIT urlClicked(item->url());
+    openIndexByClicked(ClickedAction::kClicked, index);
+}
 
-    if (item->fileinfo()->isDir())
-        Q_EMIT dirClicked(item->url());
-
-    if (item->fileinfo()->isFile())
-        Q_EMIT fileClicked(item->url());
+void FileView::onDoubleClicked(const QModelIndex &index)
+{
+    openIndexByClicked(ClickedAction::kDoubleClicked, index);
 }
 
 void FileView::keyPressEvent(QKeyEvent *event)
@@ -286,6 +280,9 @@ void FileView::initializeConnect()
     connect(d->updateStatusBarTimer, &QTimer::timeout, this, &FileView::updateStatusBar);
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &FileView::onScalingValueChanged);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::delayUpdateStatusBar);
+
+    connect(this, &DListView::clicked, this, &FileView::onClicked);
+    connect(this, &DListView::doubleClicked, this, &FileView::onDoubleClicked);
 }
 
 void FileView::updateStatusBar()
@@ -298,7 +295,47 @@ void FileView::updateStatusBar()
 
     QList<const FileViewItem *> list;
     for (const QModelIndex &index : selectedIndexes())
-        list << model()->itemFromIndex(proxyModel()->mapToSource(index));
+        list << sourceItem(index);
 
     d->statusBar->itemSelected(list);
+}
+
+void FileView::setDefaultViewMode()
+{
+    // TODO(liuyangming): set view mode with config
+    setViewMode(IconMode);
+}
+
+void FileView::openIndexByClicked(const ClickedAction action, const QModelIndex &index)
+{
+    ClickedAction configAction = ClickedAction::kDoubleClicked;
+    if (action == configAction) {
+        Qt::ItemFlags flags = model()->flags(proxyModel()->mapToSource(index));
+        if (!flags.testFlag(Qt::ItemIsEnabled))
+            return;
+
+        //if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed()) TODO(liuyangming): remind code
+        openIndex(index);
+    }
+}
+
+void FileView::openIndex(const QModelIndex &index)
+{
+    const FileViewItem *item = sourceItem(index);
+
+    if (!item)
+        return;
+
+    if (item->fileinfo()->isDir())
+        setRootUrl(item->url());
+}
+
+/**
+ * @brief FileView::sourceItem get source FileViewItem by porxy index
+ * @param index
+ * @return
+ */
+const FileViewItem *FileView::sourceItem(const QModelIndex &index) const
+{
+    return model()->itemFromIndex(proxyModel()->mapToSource(index));
 }

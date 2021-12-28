@@ -31,6 +31,8 @@
 #include <QWindow>
 #include <QTextDocument>
 
+DPWORKSPACE_BEGIN_NAMESPACE
+
 class IconItemDelegate;
 class IconItemDelegatePrivate : public BaseItemDelegatePrivate
 {
@@ -44,5 +46,7 @@ public:
 
     Q_DECLARE_PUBLIC(IconItemDelegate)
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // ICONITEMDELEGATE_P_H

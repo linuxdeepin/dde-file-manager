@@ -24,6 +24,8 @@
 
 #include "fileviewitem.h"
 
+DPWORKSPACE_BEGIN_NAMESPACE
+
 class FileViewItem;
 class FileViewItemPrivate : public QSharedData
 {
@@ -38,5 +40,7 @@ public:
     {
     }
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // FILEVIEWITEM_P_H

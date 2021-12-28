@@ -26,6 +26,8 @@
 #include "fileviewmodel.h"
 #include "filesortfilterproxymodel.h"
 
+DPWORKSPACE_USE_NAMESPACE
+
 FileViewPrivate::FileViewPrivate(FileView *qq)
     : q(qq)
 {

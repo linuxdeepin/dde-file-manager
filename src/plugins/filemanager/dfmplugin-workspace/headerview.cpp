@@ -22,6 +22,8 @@
 
 #include "headerview.h"
 
+DPWORKSPACE_USE_NAMESPACE
+
 HeaderView::HeaderView(Qt::Orientation orientation, QWidget *parent)
     : QHeaderView(orientation, parent)
 {

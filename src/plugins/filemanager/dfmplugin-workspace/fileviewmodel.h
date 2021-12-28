@@ -38,6 +38,9 @@
 #include <unistd.h>
 
 class QAbstractItemView;
+
+DPWORKSPACE_BEGIN_NAMESPACE
+
 class FileViewModelPrivate;
 class FileViewModel : public QAbstractItemModel
 {
@@ -68,5 +71,7 @@ public:
     int getColumnWidth(const int &column) const;
     FileViewItem::Roles getRoleByColumn(const int &column) const;
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // FILEVIEWMODEL_H

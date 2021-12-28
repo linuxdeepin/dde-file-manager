@@ -22,7 +22,11 @@
 #ifndef BASEITEMDELEGATE_H
 #define BASEITEMDELEGATE_H
 
+#include "dfmplugin_workspace_global.h"
+
 #include <QStyledItemDelegate>
+
+DPWORKSPACE_BEGIN_NAMESPACE
 
 class FileView;
 class BaseItemDelegatePrivate;
@@ -56,5 +60,7 @@ protected:
 
     Q_DECLARE_PRIVATE_D(d, BaseItemDelegate)
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // BASEITEMDELEGATE_H

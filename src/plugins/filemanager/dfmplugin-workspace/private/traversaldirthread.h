@@ -22,6 +22,7 @@
 #ifndef TRAVERSALDIRTHREAD_H
 #define TRAVERSALDIRTHREAD_H
 
+#include "dfmplugin_workspace_global.h"
 #include "file/local/localdiriterator.h"
 #include "fileviewitem.h"
 #include "dfm-base/utils/threadcontainer.hpp"
@@ -30,6 +31,8 @@
 #include <QObject>
 #include <QThread>
 #include <QUrl>
+
+DPWORKSPACE_BEGIN_NAMESPACE
 
 class TraversalDirThread : public QThread
 {
@@ -55,5 +58,7 @@ Q_SIGNALS:
 protected:
     virtual void run() override;
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // DFMTRAVERSALDIRTHREAD_H

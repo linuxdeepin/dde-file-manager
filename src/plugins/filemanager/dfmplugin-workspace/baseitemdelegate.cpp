@@ -23,6 +23,8 @@
 #include "private/baseitemdelegate_p.h"
 #include "fileview.h"
 
+DPWORKSPACE_USE_NAMESPACE
+
 BaseItemDelegate::BaseItemDelegate(FileView *parent)
     : QStyledItemDelegate(parent),
       d(new BaseItemDelegatePrivate(this))

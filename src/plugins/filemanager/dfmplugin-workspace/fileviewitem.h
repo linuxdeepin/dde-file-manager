@@ -23,12 +23,15 @@
 #ifndef FILEVIEWITEM_H
 #define FILEVIEWITEM_H
 
+#include "dfmplugin_workspace_global.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <QStandardItem>
 #include <QMetaType>
+
+DPWORKSPACE_BEGIN_NAMESPACE
 
 class FileViewItemPrivate;
 
@@ -119,10 +122,12 @@ public:
     }
 };
 
-Q_DECLARE_METATYPE(FileViewItem);
-Q_DECLARE_METATYPE(FileViewItem *);
-Q_DECLARE_METATYPE(QSharedPointer<FileViewItem>);
-Q_DECLARE_METATYPE(IconLayer);
-Q_DECLARE_METATYPE(IconLayers);
+DPWORKSPACE_END_NAMESPACE
+
+Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::FileViewItem);
+Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::FileViewItem *);
+Q_DECLARE_METATYPE(QSharedPointer<DPWORKSPACE_NAMESPACE::FileViewItem>);
+Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::IconLayer);
+Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::IconLayers);
 
 #endif   // DFMFILEVIEWITEM_H

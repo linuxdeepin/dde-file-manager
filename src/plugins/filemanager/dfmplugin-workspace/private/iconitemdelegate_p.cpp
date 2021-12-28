@@ -21,6 +21,8 @@
  */
 #include "iconitemdelegate_p.h"
 
+DPWORKSPACE_USE_NAMESPACE
+
 IconItemDelegatePrivate::IconItemDelegatePrivate(IconItemDelegate *qq)
     : BaseItemDelegatePrivate(qq)
 {

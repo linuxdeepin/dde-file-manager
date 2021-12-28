@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     liuyangming<liuyangming@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
  *             yanghao<yanghao@uniontech.com>
@@ -19,27 +19,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LISTITEMDELEGATE_P_H
-#define LISTITEMDELEGATE_P_H
+#ifndef DFMPLUGIN_WORKSPACE_GLOBAL_H
+#define DFMPLUGIN_WORKSPACE_GLOBAL_H
 
-#include "dfm_base_global.h"
-#include "baseitemdelegate_p.h"
-#include "listitemdelegate.h"
+#define DPWORKSPACE_BEGIN_NAMESPACE namespace dfmplugin_workspace {
+#define DPWORKSPACE_END_NAMESPACE }
+#define DPWORKSPACE_USE_NAMESPACE using namespace dfmplugin_workspace;
+#define DPWORKSPACE_NAMESPACE dfmplugin_workspace
 
-#include <QObject>
-
-DPWORKSPACE_BEGIN_NAMESPACE
-
-class ListItemDelegate;
-class ListItemDelegatePrivate : public BaseItemDelegatePrivate
-{
-public:
-    explicit ListItemDelegatePrivate(ListItemDelegate *qq);
-    virtual ~ListItemDelegatePrivate();
-
-    Q_DECLARE_PUBLIC(ListItemDelegate)
-};
-
-DPWORKSPACE_END_NAMESPACE
-
-#endif   // LISTITEMDELEGATE_P_H
+#endif   // DFMPLUGIN_WORKSPACE_GLOBAL_H

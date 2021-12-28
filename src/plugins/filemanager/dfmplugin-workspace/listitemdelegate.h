@@ -26,6 +26,8 @@
 
 #include <QStyledItemDelegate>
 
+DPWORKSPACE_BEGIN_NAMESPACE
+
 class ListItemDelegatePrivate;
 class ListItemDelegate : public BaseItemDelegate
 {
@@ -56,5 +58,7 @@ private:
 
     Q_DECLARE_PRIVATE_D(d, ListItemDelegate)
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // DLISTITEMDELEGATE_H

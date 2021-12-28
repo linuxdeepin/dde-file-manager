@@ -47,6 +47,7 @@
 #include <QtMath>
 
 DWIDGET_USE_NAMESPACE
+DPWORKSPACE_USE_NAMESPACE
 
 IconItemDelegate::IconItemDelegate(FileView *parent)
     : BaseItemDelegate(*new IconItemDelegatePrivate(this), parent)

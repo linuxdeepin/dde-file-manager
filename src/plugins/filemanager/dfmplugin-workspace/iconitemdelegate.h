@@ -31,6 +31,8 @@ QT_BEGIN_NAMESPACE
 class QTextDocument;
 QT_END_NAMESPACE
 
+DPWORKSPACE_BEGIN_NAMESPACE
+
 class FileIconItem;
 class IconItemDelegatePrivate;
 class IconItemDelegate : public BaseItemDelegate
@@ -57,5 +59,7 @@ public:
 private:
     Q_DECLARE_PRIVATE_D(d, IconItemDelegate)
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // DFMICONITEMDELEGATE_H

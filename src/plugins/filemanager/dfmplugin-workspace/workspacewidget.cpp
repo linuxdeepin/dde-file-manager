@@ -34,6 +34,7 @@
 
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DPWORKSPACE_USE_NAMESPACE
 
 WorkspaceWidget::WorkspaceWidget(QFrame *parent)
     : AbstractFrame(parent)

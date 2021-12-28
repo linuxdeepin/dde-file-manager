@@ -45,6 +45,7 @@
 #include <linux/limits.h>
 
 DWIDGET_USE_NAMESPACE
+DPWORKSPACE_USE_NAMESPACE
 
 ListItemDelegate::ListItemDelegate(FileView *parent)
     : BaseItemDelegate(*new ListItemDelegatePrivate(this), parent)

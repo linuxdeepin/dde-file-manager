@@ -22,10 +22,14 @@
 #ifndef STATUSBAR_P_H
 #define STATUSBAR_P_H
 
+#include "dfmplugin_workspace_global.h"
+
 #include <DAnchors>
 
 #include <QObject>
 #include <QString>
+
+DPWORKSPACE_BEGIN_NAMESPACE
 
 class StatusBarPrivate : public QObject
 {
@@ -50,5 +54,7 @@ public:
 
     void initFormatStrings();
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // STATUSBAR_P_H

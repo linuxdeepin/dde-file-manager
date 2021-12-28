@@ -22,6 +22,7 @@
 #ifndef STATUSBAR_H
 #define STATUSBAR_H
 
+#include "dfmplugin_workspace_global.h"
 #include "dfm-base/dfm_base_global.h"
 
 #include <dpicturesequenceview.h>
@@ -38,6 +39,7 @@ class QHBoxLayout;
 class QPushButton;
 
 DWIDGET_USE_NAMESPACE
+DPWORKSPACE_BEGIN_NAMESPACE
 
 class FileViewItem;
 class StatusBarPrivate;
@@ -75,5 +77,7 @@ private:
     QSharedPointer<StatusBarPrivate> d;
     Q_DECLARE_PRIVATE_D(d, StatusBar)
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // STATUSBAR_H

@@ -23,8 +23,12 @@
 #ifndef ITEMDELEGATEHELPER_H
 #define ITEMDELEGATEHELPER_H
 
+#include "dfmplugin_workspace_global.h"
+
 #include <QStyledItemDelegate>
 #include <QTextLayout>
+
+DPWORKSPACE_BEGIN_NAMESPACE
 
 // begin file view item icon delegate global define
 static const int kIconModeTextPadding = 4;
@@ -81,5 +85,7 @@ private:
                           qreal backgroundRadius = 4,
                           QList<QRectF> *boundingRegion = nullptr);
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // ITEMDELEGATEHELPER_H

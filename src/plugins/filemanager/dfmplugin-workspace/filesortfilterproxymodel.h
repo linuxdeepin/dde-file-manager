@@ -22,7 +22,11 @@
 #ifndef FILESORTFILTERPROXYMODEL_H
 #define FILESORTFILTERPROXYMODEL_H
 
+#include "dfmplugin_workspace_global.h"
+
 #include <QSortFilterProxyModel>
+
+DPWORKSPACE_BEGIN_NAMESPACE
 
 class FileSortFilterProxyModel : public QSortFilterProxyModel
 {
@@ -35,5 +39,7 @@ protected:
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
     virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // FILESORTFILTERPROXYMODEL_H

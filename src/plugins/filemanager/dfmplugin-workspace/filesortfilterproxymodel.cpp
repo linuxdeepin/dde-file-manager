@@ -23,6 +23,7 @@
 #include "fileviewmodel.h"
 
 DFMBASE_USE_NAMESPACE
+DPWORKSPACE_USE_NAMESPACE
 
 FileSortFilterProxyModel::FileSortFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent)

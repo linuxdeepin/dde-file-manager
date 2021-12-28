@@ -21,6 +21,8 @@
  */
 #include "statusbar_p.h"
 
+DPWORKSPACE_USE_NAMESPACE
+
 StatusBarPrivate::StatusBarPrivate(QObject *parent)
     : QObject(parent)
 {

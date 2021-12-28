@@ -26,6 +26,8 @@
 #include <QDebug>
 
 DFMBASE_USE_NAMESPACE
+DPWORKSPACE_USE_NAMESPACE
+
 TraversalDirThread::TraversalDirThread(const QUrl &url,
                                        const QStringList &nameFilters,
                                        QDir::Filters filters,

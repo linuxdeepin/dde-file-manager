@@ -31,6 +31,8 @@
 #include <QQueue>
 #include <QTimer>
 
+DPWORKSPACE_BEGIN_NAMESPACE
+
 class FileViewModelPrivate : public QObject
 {
     enum EventType {
@@ -82,5 +84,7 @@ private:
     bool checkFileEventQueue();
     QString roleDisplayString(int role);
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // FILEVIEWMODEL_P_H

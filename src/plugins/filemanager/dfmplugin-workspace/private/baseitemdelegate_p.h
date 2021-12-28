@@ -22,10 +22,14 @@
 #ifndef BASEITEMDELEGATE_P_H
 #define BASEITEMDELEGATE_P_H
 
+#include "dfmplugin_workspace_global.h"
+
 #include <QModelIndex>
 #include <QtGlobal>
 
 class QLineEdit;
+
+DPWORKSPACE_BEGIN_NAMESPACE
 
 class FileView;
 class BaseItemDelegate;
@@ -43,5 +47,7 @@ public:
     BaseItemDelegate *q_ptr;
     Q_DECLARE_PUBLIC(BaseItemDelegate)
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // BASEITEMDELEGATE_P_H

@@ -21,6 +21,8 @@
  */
 #include "listitemdelegate_p.h"
 
+DPWORKSPACE_USE_NAMESPACE
+
 ListItemDelegatePrivate::ListItemDelegatePrivate(ListItemDelegate *qq)
     : BaseItemDelegatePrivate(qq)
 {

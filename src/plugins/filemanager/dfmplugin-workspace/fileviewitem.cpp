@@ -25,6 +25,8 @@
 #include "private/fileviewitem_p.h"
 
 DFMBASE_USE_NAMESPACE
+DPWORKSPACE_USE_NAMESPACE
+
 FileViewItem::FileViewItem()
     : d(new FileViewItemPrivate(this))
 {

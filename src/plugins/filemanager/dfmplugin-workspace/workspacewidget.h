@@ -23,6 +23,7 @@
 #ifndef WORKSPACEWIDGET_H
 #define WORKSPACEWIDGET_H
 
+#include "dfmplugin_workspace_global.h"
 #include "dfm-base/interfaces/abstractframe.h"
 
 #include <QUrl>
@@ -30,9 +31,13 @@
 namespace DFMBASE_NAMESPACE {
 class AbstractBaseView;
 }   // namespace dfmbase
-class FileView;
+
 class QVBoxLayout;
 class QStackedLayout;
+
+DPWORKSPACE_BEGIN_NAMESPACE
+
+class FileView;
 class WorkspaceWidget : public dfmbase::AbstractFrame
 {
     Q_OBJECT
@@ -58,5 +63,7 @@ private:
     QStackedLayout *viewStackLayout { nullptr };
     QSharedPointer<DFMBASE_NAMESPACE::AbstractBaseView> fileView { nullptr };
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // WORKSPACEWIDGET_H

@@ -31,6 +31,8 @@
 
 #define CEIL(x) (static_cast<int>(std::ceil(x)))
 
+DPWORKSPACE_USE_NAMESPACE
+
 /*!
  * \brief getIconPixmap 获取icon的pixmap
  *

@@ -23,7 +23,11 @@
 #ifndef HEADERVIEW_H
 #define HEADERVIEW_H
 
+#include "dfmplugin_workspace_global.h"
+
 #include <QHeaderView>
+
+DPWORKSPACE_BEGIN_NAMESPACE
 
 class HeaderView : public QHeaderView
 {
@@ -43,5 +47,7 @@ Q_SIGNALS:
     void mouseReleased();
     void viewResized();
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // DFMHEADERVIEW_H

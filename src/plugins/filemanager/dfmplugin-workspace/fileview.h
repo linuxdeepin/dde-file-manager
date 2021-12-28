@@ -23,12 +23,15 @@
 #ifndef FILEVIEW_H
 #define FILEVIEW_H
 
+#include "dfmplugin_workspace_global.h"
 #include "dfm-base/interfaces/abstractbaseview.h"
 
 #include <DListView>
 
 DWIDGET_USE_NAMESPACE
+DPWORKSPACE_BEGIN_NAMESPACE
 
+class FileViewItem;
 class FileViewModel;
 class FileViewPrivate;
 class BaseItemDelegate;
@@ -40,6 +43,11 @@ class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseV
     QSharedPointer<FileViewPrivate> d;
 
 public:
+    enum class ClickedAction : uint8_t {
+        kClicked = 0,
+        kDoubleClicked
+    };
+
     explicit FileView(const QUrl &url, QWidget *parent = nullptr);
 
     QWidget *widget() const override;
@@ -60,11 +68,21 @@ public:
     int getHeaderViewWidth() const;
     int selectedIndexCount() const;
 
+    inline void setViewModeToList()
+    {
+        setViewMode(ListMode);
+    }
+    inline void setViewModeToIcon()
+    {
+        setViewMode(IconMode);
+    }
+
 public slots:
     void onHeaderViewMouseReleased();
     void onHeaderSectionResized(int logicalIndex, int oldSize, int newSize);
     void onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order);
     void onClicked(const QModelIndex &index);
+    void onDoubleClicked(const QModelIndex &index);
     void onScalingValueChanged(const int value);
     void delayUpdateStatusBar();
 
@@ -73,10 +91,6 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 
 Q_SIGNALS:
-    void urlClicked(const QUrl &url);
-    void fileClicked(const QUrl &url);
-    void dirClicked(const QUrl &url);
-
     void reqOpenNewWindow(const QList<QUrl> &urls);
 
 private:
@@ -86,6 +100,12 @@ private:
     void initializeConnect();
 
     void updateStatusBar();
+    void setDefaultViewMode();
+    void openIndexByClicked(const ClickedAction action, const QModelIndex &index);
+    void openIndex(const QModelIndex &index);
+    const FileViewItem *sourceItem(const QModelIndex &index) const;
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // FILEVIEW_H

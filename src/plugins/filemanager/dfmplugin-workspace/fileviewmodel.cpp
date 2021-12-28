@@ -28,6 +28,7 @@
 #include <QPointer>
 
 DFMBASE_USE_NAMESPACE
+DPWORKSPACE_USE_NAMESPACE
 
 FileViewModelPrivate::FileViewModelPrivate(FileViewModel *qq)
     : QObject(qq), q(qq)
@@ -243,6 +244,8 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     }
 
     d->canFetchMoreFlag = true;
+    fetchMore(root);
+
     return root;
 }
 

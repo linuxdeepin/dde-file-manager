@@ -36,6 +36,8 @@ const int kListViewIconSize { 24 };
 const QList<int> kIconSizeList { 48, 64, 96, 128, 256 };
 }   // namespace GlobalPrivate
 
+DPWORKSPACE_BEGIN_NAMESPACE
+
 class StatusBar;
 class HeaderView;
 class BaseItemDelegate;
@@ -61,5 +63,7 @@ class FileViewPrivate
 
     void updateListModeColumnWidth();
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // FILEVIEW_P_H

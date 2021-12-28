@@ -33,6 +33,7 @@
 #include <QLabel>
 
 DFMBASE_USE_NAMESPACE
+DPWORKSPACE_USE_NAMESPACE
 
 StatusBar::StatusBar(QWidget *parent)
     : QFrame(parent),
