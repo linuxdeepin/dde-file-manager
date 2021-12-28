@@ -20,30 +20,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TITLEBAR_H
-#define TITLEBAR_H
+#ifndef DFMPLUGIN_TITLEBAR_GLOBAL_H
+#define DFMPLUGIN_TITLEBAR_GLOBAL_H
 
-#include "dfmplugin_titlebar_global.h"
+#define DPTITLEBAR_BEGIN_NAMESPACE namespace dfmplugin_titlebar {
+#define DPTITLEBAR_END_NAMESPACE }
+#define DPTITLEBAR_USE_NAMESPACE using namespace dfmplugin_titlebar;
+#define DPTITLEBAR_NAMESPACE dfmplugin_titlebar
 
-#include <dfm-framework/framework.h>
-
-DPTITLEBAR_BEGIN_NAMESPACE
-
-class TitleBar : public dpf::Plugin
-{
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "titlebar.json")
-
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-
-private slots:
-    void onWindowOpened(quint64 windId);
-    void onWindowClosed(quint64 windId);
-};
-
-DPTITLEBAR_END_NAMESPACE
-
-#endif   // TITLEBAR_H
+#endif   // DFMPLUGIN_TITLEBAR_GLOBAL_H

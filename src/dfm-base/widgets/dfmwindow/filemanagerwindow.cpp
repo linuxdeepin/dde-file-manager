@@ -31,8 +31,6 @@
 #include <QKeyEvent>
 #include <QHideEvent>
 
-#include <mutex>
-
 DFMBASE_BEGIN_NAMESPACE
 
 /*!
@@ -181,8 +179,7 @@ void FileManagerWindow::moveCenter(const QPoint &cp)
 void FileManagerWindow::installTitleBar(AbstractFrame *w)
 {
     Q_ASSERT_X(w, "FileManagerWindow", "Null TitleBar");
-    std::once_flag flag;
-    std::call_once(flag, [this, w]() {
+    std::call_once(d->titleBarFlag, [this, w]() {
         d->titleBar = w;
         d->titleBar->setCurrentUrl(d->currentUrl);
         titlebar()->setCustomWidget(d->titleBar);
@@ -192,8 +189,7 @@ void FileManagerWindow::installTitleBar(AbstractFrame *w)
 void FileManagerWindow::installTitleMenu(QMenu *menu)
 {
     Q_ASSERT_X(menu, "FileManagerWindow", "Null Title Menu");
-    std::once_flag flag;
-    std::call_once(flag, [this, menu]() {
+    std::call_once(d->titleMenuFlag, [this, menu]() {
         titlebar()->setMenu(menu);
     });
 }
@@ -201,8 +197,7 @@ void FileManagerWindow::installTitleMenu(QMenu *menu)
 void FileManagerWindow::installSideBar(AbstractFrame *w)
 {
     Q_ASSERT_X(w, "FileManagerWindow", "Null setSideBar");
-    std::once_flag flag;
-    std::call_once(flag, [this, w]() {
+    std::call_once(d->sideBarFlag, [this, w]() {
         d->sideBar = w;
         d->splitter->replaceWidget(0, d->sideBar);
 
@@ -216,8 +211,7 @@ void FileManagerWindow::installSideBar(AbstractFrame *w)
 void FileManagerWindow::installWorkSpace(AbstractFrame *w)
 {
     Q_ASSERT_X(w, "FileManagerWindow", "Null Workspace");
-    std::once_flag flag;
-    std::call_once(flag, [this, w]() {
+    std::call_once(d->workspaceFlag, [this, w]() {
         d->workspace = w;
         d->splitter->replaceWidget(1, d->workspace);
 
@@ -239,8 +233,7 @@ void FileManagerWindow::installWorkSpace(AbstractFrame *w)
 void FileManagerWindow::installDetailView(AbstractFrame *w)
 {
     Q_ASSERT_X(w, "FileManagerWindow", "Null Detail view");
-    std::once_flag flag;
-    std::call_once(flag, [this, w]() {
+    std::call_once(d->detailVewFlag, [this, w]() {
         d->detailSpace = w;
         d->detailSpace->setFixedWidth(320);
         d->midLayout->addWidget(d->detailSpace, 1);

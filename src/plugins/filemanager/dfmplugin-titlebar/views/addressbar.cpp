@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
@@ -19,43 +19,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CrumbBar_P_H
-#define CrumbBar_P_H
+#include "views/private/addressbar_p.h"
+#include "views/addressbar.h"
 
-#include <QPushButton>
-#include <DListView>
-#include <QHBoxLayout>
+#include <QCompleter>
 
-DWIDGET_USE_NAMESPACE
+DPTITLEBAR_USE_NAMESPACE
 
-class CrumbBar;
-class CrumbModel;
-class CrumbBarPrivate
+AddressBar::AddressBar(QWidget *parent)
+    : QLineEdit(parent), d(new AddressBarPrivate(this))
 {
-    friend class CrumbBar;
-    CrumbBar *const q;
+}
 
-    QPushButton leftArrow;
-    QPushButton rightArrow;
-    DListView crumbView;
-    CrumbModel *crumbModel = nullptr;
-    QHBoxLayout *crumbBarLayout;
-    QPoint clickedPos;
-    bool clickableAreaEnabled = false;
+bool AddressBar::completerViewVisible()
+{
+    return d->completerView->isVisible();
+}
 
-public:
-    explicit CrumbBarPrivate(CrumbBar *qq);
-    virtual ~CrumbBarPrivate();
+void AddressBar::startSpinner()
+{
+    d->startSpinner();
+}
 
-    void clearCrumbs();
-    void checkArrowVisiable();
-    void updateController(const QUrl &url);
-    void setClickableAreaEnabled(bool enabled);
-
-private:
-    void initUI();
-    void initData();
-    void initConnections();
-};
-
-#endif   // CrumbBar_P_H
+void AddressBar::stopSpinner()
+{
+    d->stopSpinner();
+}

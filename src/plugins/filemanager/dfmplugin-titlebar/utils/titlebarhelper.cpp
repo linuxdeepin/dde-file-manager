@@ -20,31 +20,48 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "sidebareventcaller.h"
+#include "titlebarhelper.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
 
 #include <dfm-framework/framework.h>
-#include <QUrl>
 
-DPSIDEBAR_USE_NAMESPACE
+DPTITLEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 
-void SideBarEventCaller::sendItemActived(QWidget *sender, const QUrl &url)
+QMap<quint64, TitleBarWidget *> TitleBarHelper::kTitleBarMap {};
+
+TitleBarWidget *TitleBarHelper::findTileBarByWindowId(quint64 windowId)
 {
-    quint64 id = windowId(sender);
-    dpf::Event event;
-    event.setTopic(SideBar::EventTopic::kSideBarItem);
-    event.setData(SideBar::EventData::kCdAction);
-    event.setProperty(SideBar::EventProperty::kWindowId, id);
-    event.setProperty(SideBar::EventProperty::kUrl, url);
-    dpfInstance.eventProxy().pubEvent(event);
+    if (!kTitleBarMap.contains(windowId))
+        return nullptr;
+
+    return kTitleBarMap[windowId];
 }
 
-quint64 SideBarEventCaller::windowId(QWidget *sender)
+void TitleBarHelper::addTileBar(quint64 windowId, TitleBarWidget *titleBar)
+{
+    QMutexLocker locker(&TitleBarHelper::mutex());
+    if (!kTitleBarMap.contains(windowId))
+        kTitleBarMap.insert(windowId, titleBar);
+}
+
+void TitleBarHelper::removeTileBar(quint64 windowId)
+{
+    QMutexLocker locker(&TitleBarHelper::mutex());
+    if (kTitleBarMap.contains(windowId))
+        kTitleBarMap.remove(windowId);
+}
+
+quint64 TitleBarHelper::windowId(QWidget *sender)
 {
     auto &ctx = dpfInstance.serviceContext();
     auto windowService = ctx.service<WindowsService>(WindowsService::name());
     return windowService->findWindowId(sender);
+}
+
+QMutex &TitleBarHelper::mutex()
+{
+    static QMutex m;
+    return m;
 }

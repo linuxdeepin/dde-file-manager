@@ -28,7 +28,7 @@
 DSB_FM_BEGIN_NAMESPACE
 
 namespace Workspace {
-namespace EventTopics {
+namespace EventTopic {
 
 }   // namespace EventTopics
 }   // namespace Workspace

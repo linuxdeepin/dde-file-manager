@@ -20,30 +20,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TITLEBAR_H
-#define TITLEBAR_H
+#ifndef TITLEBAR_DEFINES_H
+#define TITLEBAR_DEFINES_H
 
-#include "dfmplugin_titlebar_global.h"
+#include "dfm_filemanager_service_global.h"
 
-#include <dfm-framework/framework.h>
+DSB_FM_BEGIN_NAMESPACE
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace TitleBar {
+namespace EventTopic {
+extern const char *const kTitleBarOptionBtn;   // deifine "/org/deepin/event/titlebar/optionbutton"
+}   // namespace EventTopic
 
-class TitleBar : public dpf::Plugin
-{
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "titlebar.json")
+namespace EventData {
+extern const char *const kSwitchMode;
+}   // namespace EventData
 
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+namespace EventProperty {
+extern const char *const kWindowId;   // value is quint64
+extern const char *const kViewMode;   // value is ViewMode
+}   // namespace EventProperty
 
-private slots:
-    void onWindowOpened(quint64 windId);
-    void onWindowClosed(quint64 windId);
+enum ViewMode {
+    kIconMode = 0x01,
+    kListMode = 0x02,
+    kExtendMode = 0x04,
+    AllViewMode = kIconMode | kListMode | kExtendMode
 };
 
-DPTITLEBAR_END_NAMESPACE
+}   // namespace TitleBar
 
-#endif   // TITLEBAR_H
+DSB_FM_END_NAMESPACE
+
+#endif   // TITLEBAR_DEFINES_H

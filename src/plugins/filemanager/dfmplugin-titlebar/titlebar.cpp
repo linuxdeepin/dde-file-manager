@@ -21,13 +21,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "titlebar.h"
-#include "titlebarwidget.h"
+#include "utils/titlebarhelper.h"
+#include "views/titlebarwidget.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
 #include <dfm-framework/framework.h>
 
+DPTITLEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 
 namespace GlobalPrivate {
@@ -57,10 +59,12 @@ void TitleBar::onWindowOpened(quint64 windId)
 {
     auto window = GlobalPrivate::windowService->findWindowById(windId);
     Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
-    window->installTitleBar(new TitleBarWidget);
+    TitleBarWidget *titleBar = new TitleBarWidget;
+    window->installTitleBar(titleBar);
+    TitleBarHelper::addTileBar(windId, titleBar);
 }
 
-void TitleBar::onWindowClosed(quint64 winId)
+void TitleBar::onWindowClosed(quint64 windId)
 {
-    // TODO(zhangs): impl me!
+    TitleBarHelper::removeTileBar(windId);
 }

@@ -21,11 +21,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "coreeventreceiver.h"
+#include "corehelper.h"
 
-#include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/base/urlroute.h"
-
-#include <dfm-framework/framework.h>
 
 #include <functional>
 
@@ -38,12 +36,12 @@ CoreEventReceiver::CoreEventReceiver()
 {
     // add event topic map in here
     CoreEventReceiver::eventTopicHandlers = {
-        { Sidebar::EventTopic::kSideBarItem, std::bind(&CoreEventReceiver::handleSideBarItemTopic, this, std::placeholders::_1) }
+        { SideBar::EventTopic::kSideBarItem, std::bind(&CoreEventReceiver::handleSideBarItemTopic, this, std::placeholders::_1) }
     };
 
     // add event data map in here
     CoreEventReceiver::eventDataHandlers = {
-        { Sidebar::EventData::kCdAction, std::bind(&CoreEventReceiver::handleSideBarItemActived, this, std::placeholders::_1) }
+        { SideBar::EventData::kCdAction, std::bind(&CoreEventReceiver::handleSideBarItemActived, this, std::placeholders::_1) }
     };
 }
 
@@ -71,24 +69,14 @@ void CoreEventReceiver::handleSideBarItemTopic(const dpf::Event &event)
 
 void CoreEventReceiver::handleSideBarItemActived(const dpf::Event &event)
 {
-    QUrl url { qvariant_cast<QUrl>(event.property(Sidebar::EventProperty::kUrl)) };
+    QUrl url { qvariant_cast<QUrl>(event.property(SideBar::EventProperty::kUrl)) };
     if (!url.isValid()) {
         qWarning() << "Invalid Url: " << url;
         return;
     }
 
     if (url.scheme() == SchemeTypes::kFile) {
-        quint64 windowId { qvariant_cast<quint64>(event.property(Sidebar::EventProperty::kWindowId)) };
-        auto &ctx = dpfInstance.serviceContext();
-        auto windowService = ctx.service<WindowsService>(WindowsService::name());
-        auto window = windowService->findWindowById(windowId);
-
-        if (!window) {
-            qWarning() << "Invalid window id: " << windowId;
-            return;
-        }
-
-        qInfo() << "cd to " << url;
-        window->cd(url);
+        quint64 windowId { qvariant_cast<quint64>(event.property(SideBar::EventProperty::kWindowId)) };
+        CoreHelper::cd(windowId, url);
     }
 }

@@ -19,8 +19,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "private/navwidget_p.h"
-#include "navwidget.h"
+#include "views/private/navwidget_p.h"
+#include "views/navwidget.h"
+
+DPTITLEBAR_USE_NAMESPACE
 
 void NavWidgetPrivate::doButtonClicked()
 {

@@ -38,6 +38,8 @@ class CoreEventReceiver : public dpf::EventHandler, dpf::AutoEventHandlerRegiste
     Q_OBJECT
 
 public:
+    using HandlerMap = QMap<QString, std::function<void(const dpf::Event &)>>;
+
     static EventHandler::Type type()
     {
         return EventHandler::Type::Sync;
@@ -45,7 +47,7 @@ public:
 
     static QStringList topics()
     {
-        return QStringList() << DSB_FM_NAMESPACE::Sidebar::EventTopic::kSideBarItem;
+        return QStringList() << DSB_FM_NAMESPACE::SideBar::EventTopic::kSideBarItem;
     }
 
     explicit CoreEventReceiver();
@@ -58,8 +60,8 @@ private:   // event data (sub topics)
     void handleSideBarItemActived(const dpf::Event &event);
 
 private:
-    QMap<QString, std::function<void(const dpf::Event &)>> eventTopicHandlers;
-    QMap<QString, std::function<void(const dpf::Event &)>> eventDataHandlers;
+    HandlerMap eventTopicHandlers;
+    HandlerMap eventDataHandlers;
 };
 DPCORE_END_NAMESPACE
 

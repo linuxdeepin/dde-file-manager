@@ -19,9 +19,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMCOMPLETERVIEW_H
-#define DFMCOMPLETERVIEW_H
+#ifndef COMPLETERVIEW_P_H
+#define COMPLETERVIEW_P_H
 
+#include "dfmplugin_titlebar_global.h"
+
+#include <QObject>
 #include <QCompleter>
 #include <QListView>
 #include <QStringListModel>
@@ -29,25 +32,32 @@
 #include <QPainter>
 #include <QFileSystemModel>
 
-class CompleterViewDelegate;
-class CompleterViewPrivate;
-class CompleterView : public QListView
+DPTITLEBAR_BEGIN_NAMESPACE
+class CompleterViewDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
-    friend class CompleterViewPrivate;
-    CompleterViewPrivate *const d;
-
 public:
-    explicit CompleterView();
-    QCompleter *completer();
-    QStringListModel *model();
-    CompleterViewDelegate *itemDelegate();
-
-Q_SIGNALS:
-    void completerActivated(const QString &text);
-    void completerActivated(const QModelIndex &index);
-    void completerHighlighted(const QString &text);
-    void completerHighlighted(const QModelIndex &index);
+    explicit CompleterViewDelegate(QObject *parent = nullptr);
+    void paint(QPainter *painter,
+               const QStyleOptionViewItem &option,
+               const QModelIndex &index) const override;
+    QSize sizeHint(const QStyleOptionViewItem &option,
+                   const QModelIndex &index) const override;
 };
 
-#endif   //DFMCOMPLETERVIEW_H
+class CompleterView;
+class CompleterViewPrivate : public QObject
+{
+    Q_OBJECT
+    friend class CompleterView;
+    CompleterView *const q;
+
+    QCompleter completer;
+    QStringListModel model;
+    CompleterViewDelegate delegate;
+
+    explicit CompleterViewPrivate(CompleterView *qq);
+};
+DPTITLEBAR_END_NAMESPACE
+
+#endif   // COMPLETERVIEW_P_H

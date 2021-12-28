@@ -20,30 +20,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TITLEBAR_H
-#define TITLEBAR_H
+#ifndef TITLEBAREVENTCALLER_H
+#define TITLEBAREVENTCALLER_H
 
 #include "dfmplugin_titlebar_global.h"
 
-#include <dfm-framework/framework.h>
+#include "services/filemanager/titlebar/titlebar_defines.h"
+
+#include <QObject>
 
 DPTITLEBAR_BEGIN_NAMESPACE
 
-class TitleBar : public dpf::Plugin
+class TitleBarEventCaller
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "titlebar.json")
+    TitleBarEventCaller() = delete;
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-
-private slots:
-    void onWindowOpened(quint64 windId);
-    void onWindowClosed(quint64 windId);
+    static void sendViewMode(QWidget *sender, DSB_FM_NAMESPACE::TitleBar::ViewMode mode);
 };
 
 DPTITLEBAR_END_NAMESPACE
 
-#endif   // TITLEBAR_H
+#endif   // TITLEBAREVENTCALLER_H

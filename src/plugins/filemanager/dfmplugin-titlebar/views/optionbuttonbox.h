@@ -22,9 +22,12 @@
 #ifndef OptionButtonBox_H
 #define OptionButtonBox_H
 
+#include "dfmplugin_titlebar_global.h"
+
 #include <QWidget>
 #include <QToolButton>
 
+DPTITLEBAR_BEGIN_NAMESPACE
 class ActionButton : public QToolButton
 {
     Q_OBJECT
@@ -50,6 +53,14 @@ public:
     void setIconViewButton(QToolButton *iconViewButton);
     void setListViewButton(QToolButton *listViewButton);
     void setDetailButton(QToolButton *detailButton);
+
+public slots:
+    void onUrlChanged(const QUrl &url);
+
+private:
+    void initializeUi();
+    void initConnect();
 };
+DPTITLEBAR_END_NAMESPACE
 
 #endif   // OptionButtonBox_H

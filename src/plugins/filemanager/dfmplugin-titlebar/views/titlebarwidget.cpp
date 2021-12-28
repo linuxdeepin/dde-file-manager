@@ -24,6 +24,7 @@
 
 #include <QHBoxLayout>
 
+DPTITLEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 TitleBarWidget::TitleBarWidget(QFrame *parent)
@@ -36,6 +37,7 @@ TitleBarWidget::TitleBarWidget(QFrame *parent)
 void TitleBarWidget::setCurrentUrl(const QUrl &url)
 {
     titlebarUrl = url;
+    emit currentUrlChanged(url);
 }
 
 QUrl TitleBarWidget::currentUrl() const
@@ -95,8 +97,9 @@ void TitleBarWidget::initializeUi()
 
 void TitleBarWidget::initConnect()
 {
-    QObject::connect(searchButton, &QToolButton::clicked,
-                     this, &TitleBarWidget::onSearchButtonClicked);
+    connect(searchButton, &QToolButton::clicked,
+            this, &TitleBarWidget::onSearchButtonClicked);
+    connect(this, &TitleBarWidget::currentUrlChanged, optionButtonBox, &OptionButtonBox::onUrlChanged);
 }
 
 void TitleBarWidget::showAddrsssBar()

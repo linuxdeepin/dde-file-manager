@@ -22,8 +22,9 @@
 #ifndef AddressBar_P_H
 #define AddressBar_P_H
 
-#include "addressbar.h"
-#include "completerview.h"
+#include "dfmplugin_titlebar_global.h"
+#include "views/addressbar.h"
+#include "views/completerview.h"
 
 #include "dfm-base/base/urlroute.h"
 
@@ -46,6 +47,7 @@
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
+DPTITLEBAR_BEGIN_NAMESPACE
 class AddressBarPrivate : public QObject
 {
     Q_OBJECT
@@ -336,5 +338,7 @@ protected:
         return false;
     }
 };
+
+DPTITLEBAR_END_NAMESPACE
 
 #endif   //AddressBar_P_H

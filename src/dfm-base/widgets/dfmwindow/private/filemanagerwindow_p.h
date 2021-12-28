@@ -36,6 +36,8 @@
 #include <QUrl>
 #include <QHBoxLayout>
 
+#include <mutex>
+
 DWIDGET_USE_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
 
@@ -70,6 +72,12 @@ private:
     AbstractFrame *sideBar { nullptr };
     AbstractFrame *workspace { nullptr };
     AbstractFrame *detailSpace { nullptr };
+
+    std::once_flag titleBarFlag;
+    std::once_flag sideBarFlag;
+    std::once_flag workspaceFlag;
+    std::once_flag titleMenuFlag;
+    std::once_flag detailVewFlag;
 };
 
 DFMBASE_END_NAMESPACE

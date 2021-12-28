@@ -19,26 +19,47 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "crumbmodel.h"
-#include "dtkwidget_global.h"
+#ifndef CrumbBar_P_H
+#define CrumbBar_P_H
+
+#include "dfmplugin_titlebar_global.h"
+
+#include <QPushButton>
+#include <DListView>
+#include <QHBoxLayout>
 
 DWIDGET_USE_NAMESPACE
 
-CrumbModel::CrumbModel(QObject *parent)
-    : QStandardItemModel(parent)
+DPTITLEBAR_BEGIN_NAMESPACE
+class CrumbBar;
+class CrumbModel;
+class CrumbBarPrivate
 {
-}
+    friend class CrumbBar;
+    CrumbBar *const q;
 
-CrumbModel::~CrumbModel()
-{
-}
+    QPushButton leftArrow;
+    QPushButton rightArrow;
+    DListView crumbView;
+    CrumbModel *crumbModel = nullptr;
+    QHBoxLayout *crumbBarLayout;
+    QPoint clickedPos;
+    bool clickableAreaEnabled = false;
 
-void CrumbModel::removeAll()
-{
-    removeRows(0, rowCount());
-}
+public:
+    explicit CrumbBarPrivate(CrumbBar *qq);
+    virtual ~CrumbBarPrivate();
 
-QModelIndex CrumbModel::lastIndex()
-{
-    return index(rowCount() - 1, 0);
-}
+    void clearCrumbs();
+    void checkArrowVisiable();
+    void updateController(const QUrl &url);
+    void setClickableAreaEnabled(bool enabled);
+
+private:
+    void initUI();
+    void initData();
+    void initConnections();
+};
+DPTITLEBAR_END_NAMESPACE
+
+#endif   // CrumbBar_P_H

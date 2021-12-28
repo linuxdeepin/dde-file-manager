@@ -19,9 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "private/crumbbar_p.h"
-#include "crumbbar.h"
-#include "crumbmodel.h"
+#include "views/private/crumbbar_p.h"
+#include "views/crumbbar.h"
+#include "models/crumbmodel.h"
 
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
@@ -40,6 +40,7 @@
 #include <QPushButton>
 #include <QMouseEvent>
 
+DPTITLEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 

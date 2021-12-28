@@ -20,30 +20,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TITLEBAR_H
-#define TITLEBAR_H
+#include "corehelper.h"
 
-#include "dfmplugin_titlebar_global.h"
+#include "services/filemanager/windows/windowsservice.h"
 
 #include <dfm-framework/framework.h>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+DPCORE_USE_NAMESPACE
+DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
-class TitleBar : public dpf::Plugin
+void CoreHelper::cd(quint64 windowId, const QUrl &url)
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "titlebar.json")
+    auto &ctx = dpfInstance.serviceContext();
+    auto windowService = ctx.service<WindowsService>(WindowsService::name());
+    auto window = windowService->findWindowById(windowId);
 
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    if (!window) {
+        qWarning() << "Invalid window id: " << windowId;
+        return;
+    }
 
-private slots:
-    void onWindowOpened(quint64 windId);
-    void onWindowClosed(quint64 windId);
-};
-
-DPTITLEBAR_END_NAMESPACE
-
-#endif   // TITLEBAR_H
+    qInfo() << "cd to " << url;
+    window->cd(url);
+}

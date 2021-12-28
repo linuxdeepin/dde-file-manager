@@ -1,10 +1,11 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,29 +19,22 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef OPTIONBUTTONBOX_P_H
-#define OPTIONBUTTONBOX_P_H
+*/
+#ifndef COREHELPER_H
+#define COREHELPER_H
 
-#include <QPushButton>
-#include <QHBoxLayout>
+#include "dfmplugin_core_global.h"
 
-class QToolButton;
-class QHBoxLayout;
+#include <QObject>
 
-class OptionButtonBox;
-class OptionButtonBoxPrivate : public QObject
+DPCORE_BEGIN_NAMESPACE
+
+class CoreHelper
 {
-    Q_OBJECT
-    friend class OptionButtonBox;
-    OptionButtonBox *const q;
-
-    QToolButton *iconViewButton = nullptr;
-    QToolButton *listViewButton = nullptr;
-    QToolButton *detailButton = nullptr;
-    QHBoxLayout *hBoxLayout = nullptr;
-
-    explicit OptionButtonBoxPrivate(OptionButtonBox *parent);
+public:
+    static void cd(quint64 windowId, const QUrl &url);
 };
 
-#endif   // OPTIONBUTTONBOX_P_H
+DPCORE_END_NAMESPACE
+
+#endif   // COREHELPER_H

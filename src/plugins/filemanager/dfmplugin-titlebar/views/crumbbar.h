@@ -19,34 +19,46 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef NavWidget_H
-#define NavWidget_H
+#ifndef CrumbBar_H
+#define CrumbBar_H
 
-#include <DButtonBox>
+#include "dfmplugin_titlebar_global.h"
 
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/schemefactory.h"
+
+#include <QFrame>
 #include <QUrl>
-#include <QWidget>
-#include <QHBoxLayout>
 
-DWIDGET_USE_NAMESPACE
+DPTITLEBAR_BEGIN_NAMESPACE
 
-class NavWidgetPrivate;
-class NavWidget : public QWidget
+class CrumbBarPrivate;
+class CrumbBar : public QFrame
 {
     Q_OBJECT
-    friend class NavWidgetPrivate;
-    NavWidgetPrivate *const d;
+    QScopedPointer<CrumbBarPrivate> d;
 
 public:
-    explicit NavWidget(QWidget *parent = nullptr);
-    DButtonBoxButton *navBackButton() const;
-    DButtonBoxButton *navForwardButton() const;
-    void setNavBackButton(DButtonBoxButton *navBackButton);
-    void setNavForwardButton(DButtonBoxButton *navForwardButton);
-public Q_SLOTS:
-    void appendUrl(const QUrl &url);
+    explicit CrumbBar(QWidget *parent = nullptr);
+    virtual ~CrumbBar() override;
+
+    void setRootUrl(const QUrl &url);
+
 Q_SIGNALS:
-    void releaseUrl(const QUrl &url);
+    void selectedUrl(const QUrl &url);
+
+public Q_SLOTS:
+    void onCustomContextMenu(const QPoint &point);
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
+    void showEvent(QShowEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 };
 
-#endif   // NavWidget_H
+DPTITLEBAR_END_NAMESPACE
+
+#endif   // CrumbBar_H

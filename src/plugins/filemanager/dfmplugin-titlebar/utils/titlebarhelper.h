@@ -20,30 +20,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TITLEBAR_H
-#define TITLEBAR_H
+#ifndef TITLEBARHELPER_H
+#define TITLEBARHELPER_H
 
 #include "dfmplugin_titlebar_global.h"
 
-#include <dfm-framework/framework.h>
+#include <QMap>
+#include <QMutex>
+#include <QWidget>
 
 DPTITLEBAR_BEGIN_NAMESPACE
 
-class TitleBar : public dpf::Plugin
+class TitleBarWidget;
+class TitleBarHelper
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "titlebar.json")
-
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    static TitleBarWidget *findTileBarByWindowId(quint64 windowId);
+    static void addTileBar(quint64 windowId, TitleBarWidget *titleBar);
+    static void removeTileBar(quint64 windowId);
+    static quint64 windowId(QWidget *sender);
 
-private slots:
-    void onWindowOpened(quint64 windId);
-    void onWindowClosed(quint64 windId);
+private:
+    static QMutex &mutex();
+    static QMap<quint64, TitleBarWidget *> kTitleBarMap;
 };
 
 DPTITLEBAR_END_NAMESPACE
 
-#endif   // TITLEBAR_H
+#endif   // TITLEBARHELPER_H

@@ -26,9 +26,8 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-namespace Sidebar {
+namespace SideBar {
 namespace EventTopic {
-const char *const kSideBar { "/org/deepin/event/sidebar" };
 const char *const kSideBarItem { "/org/deepin/event/sidebar/item" };
 }   // namespace EventTopic
 

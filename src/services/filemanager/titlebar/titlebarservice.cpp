@@ -21,7 +21,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "titlebarservice.h"
+#include "titlebar_defines.h"
 #include "private/titlebarservice_p.h"
+
+DSB_FM_BEGIN_NAMESPACE
+namespace TitleBar {
+namespace EventTopic {
+const char *const kTitleBarOptionBtn { "/org/deepin/event/titlebar/optionbutton" };
+}   // namespace EventTopic
+
+namespace EventData {
+const char *const kSwitchMode { "SwitchMode" };
+}   // namespace EventData
+
+namespace EventProperty {
+const char *const kWindowId { "WindowId" };
+const char *const kViewMode { "ViewMode" };
+}   // namespace EventProperty
+}   // namespace TitleBar
+DSB_FM_END_NAMESPACE
 
 DSB_FM_USE_NAMESPACE
 

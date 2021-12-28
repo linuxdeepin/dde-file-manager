@@ -27,7 +27,7 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-namespace Sidebar {
+namespace SideBar {
 namespace EventTopic {
 extern const char *const kSideBar;   // define "/org/deepin/event/sidebar"
 extern const char *const kSideBarItem;   // define "/org/deepin/event/sidebar/item"
@@ -40,13 +40,12 @@ extern const char *const kRename;
 }   // namespace EventData
 
 namespace EventProperty {
-extern const char *const kWindowId;
-extern const char *const kUrl;
-extern const char *const kName;
-extern const char *const kPos;
+extern const char *const kWindowId;   // value is quint64
+extern const char *const kUrl;   // value is Qurl
+extern const char *const kName;   // value is QString
+extern const char *const kPos;   // value is int
 }   // namespace EventProperty
-
-}   // namespace Sidebar
+}   // namespace SideBar
 
 DSB_FM_END_NAMESPACE
 

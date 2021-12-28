@@ -23,15 +23,18 @@
 #ifndef TITLEBARWIDGET_H
 #define TITLEBARWIDGET_H
 
-#include "navwidget.h"
-#include "addressbar.h"
-#include "crumbbar.h"
-#include "optionbuttonbox.h"
+#include "dfmplugin_titlebar_global.h"
+#include "views/navwidget.h"
+#include "views/addressbar.h"
+#include "views/crumbbar.h"
+#include "views/optionbuttonbox.h"
 
 #include "dfm-base/interfaces/abstractframe.h"
 
 #include <QHBoxLayout>
 #include <QToolButton>
+
+DPTITLEBAR_BEGIN_NAMESPACE
 
 class TitleBarWidget : public dfmbase::AbstractFrame
 {
@@ -50,6 +53,9 @@ private:
     void showSearchFilterButton();
     bool eventFilter(QObject *watched, QEvent *event) override;
 
+signals:
+    void currentUrlChanged(const QUrl &url);
+
 private slots:
     void onSearchButtonClicked();
 
@@ -63,5 +69,7 @@ private:
     OptionButtonBox *optionButtonBox { nullptr };   // 功能按鈕栏
     CrumbBar *crumbBar { nullptr };   // 面包屑
 };
+
+DPTITLEBAR_END_NAMESPACE
 
 #endif   // TITLEBARWIDGET_H

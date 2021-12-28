@@ -19,29 +19,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef AddressBar_H
-#define AddressBar_H
+#include "crumbmodel.h"
+#include "dtkwidget_global.h"
 
-#include <QLineEdit>
+DPTITLEBAR_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
-class AddressBarPrivate;
-class AddressBar : public QLineEdit
+CrumbModel::CrumbModel(QObject *parent)
+    : QStandardItemModel(parent)
 {
-    Q_OBJECT
-    friend class AddressBarPrivate;
-    AddressBarPrivate *const d;
+}
 
-public:
-    explicit AddressBar(QWidget *parent = nullptr);
-    bool completerViewVisible();
+CrumbModel::~CrumbModel()
+{
+}
 
-Q_SIGNALS:
-    void editingFinishedUrl(const QUrl &url);
-    void editingFinishedSearch(const QString &url);
+void CrumbModel::removeAll()
+{
+    removeRows(0, rowCount());
+}
 
-public
-    Q_SLOT : void startSpinner();
-    void stopSpinner();
-};
-
-#endif   //AddressBar_H
+QModelIndex CrumbModel::lastIndex()
+{
+    return index(rowCount() - 1, 0);
+}

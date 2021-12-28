@@ -1,11 +1,10 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     zhangsheng<zhangsheng@uniontech.com>
+ * Author:     huanyu<huanyub@uniontech.com>
  *
- * Maintainer: max-lv<lvwujun@uniontech.com>
- *             lanxuesong<lanxuesong@uniontech.com>
- *             xushitong<xushitong@uniontech.com>
+ * Maintainer: zhengyouge<zhengyouge@uniontech.com>
+ *             yanghao<yanghao@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,31 +18,36 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#ifndef TITLEBAR_H
-#define TITLEBAR_H
+ */
+#ifndef AddressBar_H
+#define AddressBar_H
 
 #include "dfmplugin_titlebar_global.h"
 
-#include <dfm-framework/framework.h>
+#include <QLineEdit>
 
 DPTITLEBAR_BEGIN_NAMESPACE
 
-class TitleBar : public dpf::Plugin
+class AddressBarPrivate;
+class AddressBar : public QLineEdit
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "titlebar.json")
+    friend class AddressBarPrivate;
+    AddressBarPrivate *const d;
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    explicit AddressBar(QWidget *parent = nullptr);
+    bool completerViewVisible();
 
-private slots:
-    void onWindowOpened(quint64 windId);
-    void onWindowClosed(quint64 windId);
+Q_SIGNALS:
+    void editingFinishedUrl(const QUrl &url);
+    void editingFinishedSearch(const QString &url);
+
+public
+    Q_SLOT : void startSpinner();
+    void stopSpinner();
 };
 
 DPTITLEBAR_END_NAMESPACE
 
-#endif   // TITLEBAR_H
+#endif   //AddressBar_H

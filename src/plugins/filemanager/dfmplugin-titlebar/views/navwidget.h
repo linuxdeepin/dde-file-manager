@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
@@ -19,27 +19,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "private/addressbar_p.h"
-#include "addressbar.h"
+#ifndef NavWidget_H
+#define NavWidget_H
 
-#include <QCompleter>
+#include "dfmplugin_titlebar_global.h"
 
-AddressBar::AddressBar(QWidget *parent)
-    : QLineEdit(parent), d(new AddressBarPrivate(this))
+#include <DButtonBox>
+#include <QUrl>
+#include <QWidget>
+#include <QHBoxLayout>
+
+DWIDGET_USE_NAMESPACE
+
+DPTITLEBAR_BEGIN_NAMESPACE
+class NavWidgetPrivate;
+class NavWidget : public QWidget
 {
-}
+    Q_OBJECT
+    friend class NavWidgetPrivate;
+    NavWidgetPrivate *const d;
 
-bool AddressBar::completerViewVisible()
-{
-    return d->completerView->isVisible();
-}
+public:
+    explicit NavWidget(QWidget *parent = nullptr);
+    DButtonBoxButton *navBackButton() const;
+    DButtonBoxButton *navForwardButton() const;
+    void setNavBackButton(DButtonBoxButton *navBackButton);
+    void setNavForwardButton(DButtonBoxButton *navForwardButton);
+public Q_SLOTS:
+    void appendUrl(const QUrl &url);
+Q_SIGNALS:
+    void releaseUrl(const QUrl &url);
+};
+DPTITLEBAR_END_NAMESPACE
 
-void AddressBar::startSpinner()
-{
-    d->startSpinner();
-}
-
-void AddressBar::stopSpinner()
-{
-    d->stopSpinner();
-}
+#endif   // NavWidget_H

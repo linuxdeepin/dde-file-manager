@@ -19,31 +19,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef NAVWIDGET_P_H
-#define NAVWIDGET_P_H
+#ifndef DFMCOMPLETERVIEW_H
+#define DFMCOMPLETERVIEW_H
 
-#include <DButtonBox>
+#include "dfmplugin_titlebar_global.h"
 
-#include <QObject>
-#include <QHBoxLayout>
+#include <QCompleter>
+#include <QListView>
+#include <QStringListModel>
+#include <QStyledItemDelegate>
+#include <QPainter>
+#include <QFileSystemModel>
 
-class NavWidget;
-class NavWidgetPrivate : public QObject
+DPTITLEBAR_BEGIN_NAMESPACE
+class CompleterViewDelegate;
+class CompleterViewPrivate;
+class CompleterView : public QListView
 {
     Q_OBJECT
-    friend class NavWidget;
-    NavWidget *const q;
-    Dtk::Widget::DButtonBox *buttonBox = nullptr;
-    Dtk::Widget::DButtonBoxButton *navBackButton = nullptr;
-    Dtk::Widget::DButtonBoxButton *navForwardButton = nullptr;
-    QHBoxLayout *hboxLayout = nullptr;
-    int listIdx = -1;
-    QList<QUrl> urlCacheList {};
+    friend class CompleterViewPrivate;
+    CompleterViewPrivate *const d;
 
-    explicit NavWidgetPrivate(NavWidget *qq);
+public:
+    explicit CompleterView();
+    QCompleter *completer();
+    QStringListModel *model();
+    CompleterViewDelegate *itemDelegate();
 
-private Q_SLOTS:
-    void doButtonClicked();
+Q_SIGNALS:
+    void completerActivated(const QString &text);
+    void completerActivated(const QModelIndex &index);
+    void completerHighlighted(const QString &text);
+    void completerHighlighted(const QModelIndex &index);
 };
+DPTITLEBAR_END_NAMESPACE
 
-#endif   // NAVWIDGET_P_H
+#endif   //DFMCOMPLETERVIEW_H

@@ -20,30 +20,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TITLEBAR_H
-#define TITLEBAR_H
-
-#include "dfmplugin_titlebar_global.h"
+#include "titlebareventcaller.h"
+#include "utils/titlebarhelper.h"
 
 #include <dfm-framework/framework.h>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+DPTITLEBAR_USE_NAMESPACE
+DSB_FM_USE_NAMESPACE
 
-class TitleBar : public dpf::Plugin
+void TitleBarEventCaller::sendViewMode(QWidget *sender, TitleBar::ViewMode mode)
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "titlebar.json")
-
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-
-private slots:
-    void onWindowOpened(quint64 windId);
-    void onWindowClosed(quint64 windId);
-};
-
-DPTITLEBAR_END_NAMESPACE
-
-#endif   // TITLEBAR_H
+    quint64 id = TitleBarHelper::windowId(sender);
+    Q_ASSERT(id > 0);
+    dpf::Event event;
+    event.setTopic(TitleBar::EventTopic::kTitleBarOptionBtn);
+    event.setData(TitleBar::EventData::kSwitchMode);
+    event.setProperty(TitleBar::EventProperty::kWindowId, id);
+    event.setProperty(TitleBar::EventProperty::kViewMode, mode);
+    qDebug() << "send event: " << event;
+    dpfInstance.eventProxy().pubEvent(event);
+}

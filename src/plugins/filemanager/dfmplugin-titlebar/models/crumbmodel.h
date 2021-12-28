@@ -22,11 +22,14 @@
 #ifndef CrumbModel_H
 #define CrumbModel_H
 
-#include <DStandardItem>
+#include "dfmplugin_titlebar_global.h"
 
+#include <DStandardItem>
 #include <QStandardItemModel>
 
 DWIDGET_USE_NAMESPACE
+
+DPTITLEBAR_BEGIN_NAMESPACE
 
 class CrumbModel : public QStandardItemModel
 {
@@ -43,5 +46,7 @@ public:
     void removeAll();
     QModelIndex lastIndex();
 };
+
+DPTITLEBAR_END_NAMESPACE
 
 #endif   // CrumbModel_H
