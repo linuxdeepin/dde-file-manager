@@ -51,16 +51,11 @@ public:
     }
 public:
     void paintFiles(QStyleOptionViewItem option, QPaintEvent *event);
-protected:
-    void drawFile(QStyleOptionViewItem option, const QModelIndex &index, const QPoint &pos);
-public:
-    void _drawFile(QStyleOptionViewItem option, const DFMDesktopFileInfoPointer &file, const QPoint &pos, bool enabled);
-
-    bool isRepaintFlash(QStyleOptionViewItem &option, QPaintEvent *event, const QPoint pos);
-
     void drawGirdInfos();
-    void drawDodge();
+    void drawFile(QStyleOptionViewItem option, const QModelIndex &index, const QPoint &gridPos);
     void drawSelectRect();
+
+    void drawDodge();
     void drawDragMove(QStyleOptionViewItem &option);
 protected:
     CanvasViewPrivate *d = nullptr;

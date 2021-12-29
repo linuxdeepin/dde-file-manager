@@ -142,6 +142,16 @@ QVariant CanvasModel::data(const QModelIndex &index, int role) const
     }
 }
 
+Qt::ItemFlags CanvasModel::flags(const QModelIndex &index) const
+{
+    Qt::ItemFlags flags = QAbstractItemModel::flags(index);
+    if (!index.isValid())
+        return flags;
+
+    flags |= Qt::ItemIsDragEnabled;
+    return flags;
+}
+
 QUrl CanvasModel::url(const QModelIndex &index) const
 {
     if (!index.isValid())

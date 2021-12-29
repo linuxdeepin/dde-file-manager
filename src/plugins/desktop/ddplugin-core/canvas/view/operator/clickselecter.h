@@ -4,7 +4,6 @@
  * Author:     zhangyu<zhangyub@uniontech.com>
  *
  * Maintainer: zhangyu<zhangyub@uniontech.com>
- *             liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,43 +18,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASMANAGER_H
-#define CANVASMANAGER_H
-
+#ifndef CLICKSELECTER_H
+#define CLICKSELECTER_H
 #include "dfm_desktop_service_global.h"
 
 #include <QObject>
+#include <QModelIndex>
 
 DSB_D_BEGIN_NAMESPACE
 class CanvasView;
-class CanvasModel;
-class CanvasSelectionModel;
-class CanvasManagerPrivate;
-class CanvasManager : public QObject
+class ClickSelecter : public QObject
 {
     Q_OBJECT
-    friend class CanvasManagerPrivate;
-
 public:
-    static CanvasManager *instance();
-    void init();
-    void update();
-    CanvasModel *model() const;
-    CanvasSelectionModel *selectionModel() const;
-    QList<QSharedPointer<CanvasView> > views() const;
-public slots:
-    void onCanvasBuild();
-    void onGeometryChanged();
-protected slots:
-    void reloadItem();
-protected:
-    explicit CanvasManager(QObject *parent = nullptr);
-    void initConnect();
+    explicit ClickSelecter(CanvasView *parent);
+    void click(const QModelIndex &index);
+    void release(const QModelIndex &index);
 signals:
 
-private:
-    CanvasManagerPrivate *d = nullptr;
+public slots:
+protected:
+    CanvasView *view;
+    QModelIndex lastPressedIndex;
 };
-#define CanvasIns CanvasManager::instance()
 DSB_D_END_NAMESPACE
-#endif   // CANVASMANAGER_H
+#endif // CLICKSELECTER_H

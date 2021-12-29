@@ -66,7 +66,7 @@ protected:
     static QPixmap getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio,
                           QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
     static Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment);
-    QList<QRectF> elideTextRect(const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rect) const;
+    QList<QRectF> elideTextRect(const QStyleOptionViewItem &option, const QModelIndex &index, QRect rect) const;
 public:
     void updateItemSizeHint() const;
 public:
@@ -76,8 +76,6 @@ public:
     static const int kIconRectRadius;
 private:
     CanvasItemDelegatePrivate *const d = nullptr;
-
-    //TODO(LQ):  QMutex mutex;
 };
 
 DSB_D_END_NAMESPACE

@@ -456,6 +456,11 @@ QString CanvasGridSpecialist::profileKey(int index)
 
 int CanvasGridSpecialist::profileIndex(QString screenKey)
 {
+    // single screen return index 1.
+    if (screenKey == QString(CanvasGridSpecialist::singleIndex))
+        return 1;
+
+    // multi-screen
     auto strIdx = screenKey.remove(profilePrefix);
     bool ok = false;
     int idx = strIdx.toInt(&ok);

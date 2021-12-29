@@ -60,7 +60,9 @@ set(core_cxx_cpp
     canvas/view/canvasselectionmodel.cpp
     canvas/view/gridcoordinate.cpp
     canvas/view/operator/boxselecter.cpp
+    canvas/view/operator/clickselecter.cpp
     canvas/view/operator/viewpainter.cpp
+    canvas/view/operator/operstate.cpp
     canvas/delegate/canvasitemdelegate.cpp
     canvas/delegate/elidetextlayout.cpp
     canvas/delegate/expandeditem.cpp
@@ -102,7 +104,9 @@ set(core_cxx_h
     canvas/view/gridcoordinate.h
     canvas/view/canvasselectionmodel.h
     canvas/view/operator/boxselecter.h
+    canvas/view/operator/clickselecter.h
     canvas/view/operator/viewpainter.h
+    canvas/view/operator/operstate.h
     canvas/delegate/canvasitemdelegate_p.h
     canvas/delegate/canvasitemdelegate.h
     canvas/delegate/elidetextlayout.h

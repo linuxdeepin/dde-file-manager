@@ -27,6 +27,7 @@
 #include <QAbstractItemView>
 
 DSB_D_BEGIN_NAMESPACE
+class ClickSelecter;
 class CanvasModel;
 class CanvasSelectionModel;
 class CanvasItemDelegate;
@@ -34,6 +35,9 @@ class CanvasViewPrivate;
 class CanvasView : public QAbstractItemView
 {
     Q_OBJECT
+    friend class BoxSelecter;
+    friend class ClickSelecter;
+    friend class ViewPainter;
     friend class CanvasViewPrivate;
 public:
     explicit CanvasView(QWidget *parent = nullptr);
@@ -47,7 +51,7 @@ public:
     virtual int horizontalOffset() const override;
     virtual int verticalOffset() const override;
     virtual bool isIndexHidden(const QModelIndex &index) const override;
-    virtual void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override;
+    QT_DEPRECATED virtual void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override;
     virtual QRegion visualRegionForSelection(const QItemSelection &selection) const override;
     QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;
 public:
@@ -63,9 +67,10 @@ public:
     QList<QIcon> additionalIcon(const QModelIndex &index) const;
 protected:
     QRect itemRect(const QModelIndex &index) const;
-
 protected:
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *events) override;
     void paintEvent(QPaintEvent *event) override;
 
 private:

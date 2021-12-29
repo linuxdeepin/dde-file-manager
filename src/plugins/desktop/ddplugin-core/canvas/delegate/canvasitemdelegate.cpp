@@ -23,7 +23,7 @@
 #include "view/canvasview.h"
 #include "view/canvasmodel.h"
 #include "view/canvasselectionmodel.h"
-
+#include "view/canvasview_p.h"
 #include <DApplication>
 #include <DApplicationHelper>
 
@@ -154,7 +154,7 @@ void CanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         // todo(zy) 绘制角标
 
         // draw text.
-        paintLabel(painter, indexOption, index, labelRect(option.rect, rIcon));
+         paintLabel(painter, indexOption, index, labelRect(option.rect, rIcon));
     }
 
     painter->restore();
@@ -232,14 +232,17 @@ Qt::Alignment CanvasItemDelegate::visualAlignment(Qt::LayoutDirection direction,
     return alignment;
 }
 
-QList<QRectF> CanvasItemDelegate::elideTextRect(const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rect) const
+QList<QRectF> CanvasItemDelegate::elideTextRect(const QStyleOptionViewItem &option, const QModelIndex &index, QRect rect) const
 {
     // show decoration for selected item.
     auto model = parent()->selectionModel();
     bool isSelected = model->isSelected(index) && option.showDecorationSelected;
 
+    QModelIndex expandIndex;
     // only single selected no need to elide. and other item need elide.
-    bool elide = (!isSelected || !mayExpand());
+    bool elide = (!isSelected || !mayExpand(&expandIndex));
+    if (!elide && expandIndex == index) // as painting, the item expanded need unlimit height to calc.
+        rect.setBottom(INT_MAX);
 
     // create text Layout.
     QScopedPointer<ElideTextLayout> layout(d->createTextlayout(index));
@@ -290,8 +293,10 @@ void CanvasItemDelegate::drawNormlText(QPainter *painter, const QStyleOptionView
 
 void CanvasItemDelegate::drawHighlightText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRectF &rect) const
 {
-    // single item selected will to expand.
-    if (mayExpand()) {
+    bool isDrag = painter->device() != parent(); // 拖拽聚合后，拖拽的绘制代码不走这，可以删除， todo
+
+    // single item selected and not in drag will to expand.
+    if (!isDrag && mayExpand()) {
         // calc that showing text require how large area.
         QRect calcNeedRect = rect.toRect();
         calcNeedRect.setBottom(INT_MAX);
@@ -299,6 +304,18 @@ void CanvasItemDelegate::drawHighlightText(QPainter *painter, const QStyleOption
 
         // the label rect cannot show all the text, need to expand.
         if (needHeight > rect.height()) {
+            {
+                // 展开时文本区域的宽需扩大到整个网格
+                // 处理会导致实际绘制使用的区域与paintGeomertys以及textPaintRect算出的不一致
+                // todo 后续考虑是否取消这一效果
+                auto margins = CanvasViewPrivate::gridMarginsHelper(parent());
+                margins.setTop(0);
+                margins.setBottom(0);
+                calcNeedRect.moveLeft(calcNeedRect.left() - kTextPadding);
+                calcNeedRect.setWidth(calcNeedRect.width() + 2 * kTextPadding);
+                calcNeedRect = calcNeedRect.marginsAdded(margins);
+            }
+
             drawExpandText(painter, option, index, calcNeedRect);
             return;
         }
@@ -339,19 +356,19 @@ QPixmap CanvasItemDelegate::getIconPixmap(const QIcon &icon, const QSize &size,
 {
     // TODO: 优化
 
-    // 开启Qt::AA_UseHighDpiPixmaps后，QIcon::pixmap会自动执行 pixmapSize *= qApp->devicePixelRatio()
-    // 而且，在有些QIconEngine的实现中，会去调用另一个QIcon::pixmap，导致 pixmapSize 在这种嵌套调用中越来越大
-    // 最终会获取到一个是期望大小几倍的图片，由于图片太大，会很快将 QPixmapCache 塞满，导致后面再调用QIcon::pixmap
-    // 读取新的图片时无法缓存，非常影响图片绘制性能。此处在获取图片前禁用 Qt::AA_UseHighDpiPixmaps，自行处理图片大小问题
-    bool useHighDpiPixmaps = qApp->testAttribute(Qt::AA_UseHighDpiPixmaps);
-    qApp->setAttribute(Qt::AA_UseHighDpiPixmaps, false);
-
     if (icon.isNull())
         return QPixmap();
 
     // 确保当前参数参入获取图片大小大于0
     if (size.width() <= 0 || size.height() <= 0)
         return QPixmap();
+
+    // 开启Qt::AA_UseHighDpiPixmaps后，QIcon::pixmap会自动执行 pixmapSize *= qApp->devicePixelRatio()
+    // 而且，在有些QIconEngine的实现中，会去调用另一个QIcon::pixmap，导致 pixmapSize 在这种嵌套调用中越来越大
+    // 最终会获取到一个是期望大小几倍的图片，由于图片太大，会很快将 QPixmapCache 塞满，导致后面再调用QIcon::pixmap
+    // 读取新的图片时无法缓存，非常影响图片绘制性能。此处在获取图片前禁用 Qt::AA_UseHighDpiPixmaps，自行处理图片大小问题
+    bool useHighDpiPixmaps = qApp->testAttribute(Qt::AA_UseHighDpiPixmaps);
+    qApp->setAttribute(Qt::AA_UseHighDpiPixmaps, false);
 
     QSize iconSize = icon.actualSize(size, mode, state);
     // 取出icon的真实大小
@@ -362,6 +379,8 @@ QPixmap CanvasItemDelegate::getIconPixmap(const QIcon &icon, const QSize &size,
     else
         iconRealSize = iconSize;
     if (iconRealSize.width() <= 0 || iconRealSize.height() <= 0) {
+        // restore the value
+        qApp->setAttribute(Qt::AA_UseHighDpiPixmaps, useHighDpiPixmaps);
         return icon.pixmap(iconSize);
     }
 
@@ -535,12 +554,11 @@ void CanvasItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMo
 
     // selected
     if (model->isSelected(index)) {
-        // todo(zy) 用于检测是否需要设置
-        Q_ASSERT((option->state & QStyle::State_Selected) == 0);
+         // set seleted state. it didn't be seted in QStyledItemDelegate::initStyleOption.
         option->state |= QStyle::State_Selected;
-    }
-    else
+    } else {
         option->state &= QStyle::StateFlag(~QStyle::State_Selected);
+    }
 
     // enable
     if (option->state & QStyle::State_Enabled) {

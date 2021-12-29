@@ -26,6 +26,8 @@
 #include "watermask/watermaskframe.h"
 #include "view/canvasmodel.h"
 #include "view/canvasselectionmodel.h"
+#include "operator/clickselecter.h"
+#include "operator/operstate.h"
 #include "gridcoordinate.h"
 
 #include <QDebug>
@@ -69,13 +71,11 @@ public:
     QString visualItem(const QPoint &gridPos) const;
     bool isWaterMaskOn();
 public:
-    inline GridCoordinate gridCoordinate(int index)
-    {
+    inline GridCoordinate gridCoordinate(int index) {
         return GridCoordinate(index / canvasInfo.rowCount, index % canvasInfo.rowCount);
     }
 
-    inline int gridIndex(const QPoint &pos)
-    {
+    inline int gridIndex(const QPoint &pos) {
         return pos.x() * canvasInfo.rowCount + pos.y();
     }
 
@@ -96,15 +96,29 @@ public:
     QRect itemRect(const QPoint &gridPos) const {
         return visualRect(gridPos).marginsRemoved(gridMargins);
     }
+
+    inline OperState &operState() {
+        return state;
+    }
+public: // 绘制扩展的特殊处理
+    static inline QMargins gridMarginsHelper(CanvasView *view){
+        QMargins margins(0, 0, 0, 0);
+        if (view)
+            margins = view->d->gridMargins;
+        return margins;
+    }
 protected:
     static const QMargins gridMiniMargin;
     static const QSize dockReserveSize;
-
     bool showGrid = false;
     int screenNum;
+
     CanvasInfo canvasInfo;
     QMargins gridMargins;  // grid inner margin.
     QMargins viewMargins;  // view margin is to decrease canvas rect on view.
+
+    ClickSelecter *clickSelecter;
+    OperState state;
 
     QPoint dragTargetGrid { QPoint(-1, -1) };
 private:

@@ -18,28 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DESKTOPUTILS_H
-#define DESKTOPUTILS_H
+#include "operstate.h"
 
-#include "dfm_desktop_service_global.h"
+DSB_D_USE_NAMESPACE
 
-#include <QWidget>
-#include <QApplication>
+OperState::OperState(QObject *parent) : QObject(parent)
+{
 
-DSB_D_BEGIN_NAMESPACE
-
-bool waylandDectected();
-void setDesktopWindow(QWidget *w);
-void setPrviewWindow(QWidget *w);
-
-inline bool isCtrlPressed() {
-    return qApp->keyboardModifiers() == Qt::ControlModifier;
 }
 
-inline bool isShiftPressed() {
-    return qApp->keyboardModifiers() == Qt::ShiftModifier;
-}
 
-DSB_D_END_NAMESPACE
-
-#endif // DESKTOPUTILS_H

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangyu<zhangyub@uniontech.com>
@@ -27,8 +27,10 @@
 #include <QPoint>
 #include <QObject>
 
-DSB_D_BEGIN_NAMESPACE
+class QItemSelection;
 
+DSB_D_BEGIN_NAMESPACE
+class CanvasView;
 class BoxSelecter : public QObject
 {
     Q_OBJECT
@@ -38,10 +40,11 @@ public:
     void endSelect();
     void setBegin(const QPoint &globalPos);
     void setEnd(const QPoint &globalPos);
-    QRect validRect(QWidget *) const;
+    QRect validRect(CanvasView *) const;
     QRect globalRect() const;
     QRect clipRect(QRect rect, const QRect &geometry) const;
-    bool isBeginFrom(QWidget *w);
+    bool isBeginFrom(CanvasView *w);
+    void selection(CanvasView *w, const QRect &rect, QItemSelection *newSelection);
 public:
     inline bool isAcvite() const {
         return active;
@@ -50,6 +53,11 @@ protected:
     void setAcvite(bool ac);
     explicit BoxSelecter(QObject *parent = nullptr);
     bool eventFilter(QObject *watched, QEvent *event);
+protected:
+    virtual void updateSelection();
+    virtual void updateCurrentIndex();
+private:
+    void selection(QItemSelection *newSelection);
 signals:
     void changed();
 public slots:

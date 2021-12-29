@@ -35,6 +35,7 @@
 #include <QDebug>
 #include <QScrollBar>
 #include <QPaintEvent>
+#include <QApplication>
 
 
 DSB_D_USE_NAMESPACE
@@ -102,15 +103,26 @@ bool CanvasView::isIndexHidden(const QModelIndex &index) const
     return false;
 }
 
-void CanvasView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) {
-    Q_UNUSED(rect)
-            Q_UNUSED(command)
+void CanvasView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command)
+{
+    //! do not enable QAbstractItemView using this to select.
+    //! it will disturb selections of CanvasView
+    //qWarning() << __FUNCTION__ << "do not using this" << rect.normalized();
+    return;
+
+    QItemSelection selection;
+    BoxSelIns->selection(this, rect.normalized(), &selection);
+    selectionModel()->select(selection, command);
 }
 
 QRegion CanvasView::visualRegionForSelection(const QItemSelection &selection) const
 {
-    Q_UNUSED(selection)
-    return QRegion();
+    QRegion region;
+    auto selectedList = selection.indexes();
+    for (auto &index : selectedList)
+        region = region.united(QRegion(visualRect(index)));
+
+    return region;
 }
 
 QList<QRect> CanvasView::itemPaintGeomertys(const QModelIndex &index) const
@@ -218,7 +230,7 @@ QList<QIcon> CanvasView::additionalIcon(const QModelIndex &index) const
 
 QRect CanvasView::itemRect(const QModelIndex &index) const
 {
-    return d->itemRect(model()->url(index).toString());;
+    return d->itemRect(model()->url(index).toString());
 }
 
 void CanvasView::mousePressEvent(QMouseEvent *event)
@@ -229,16 +241,34 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
     }
 
     auto index = indexAt(event->pos());
-    if (!index.isValid()) {
+    if (!index.isValid()) { //empty area
         BoxSelIns->beginSelect(event->globalPos(), true);
-    } else {
-        selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
-        update();
+        setState(DragSelectingState);
+    }
+
+    {
+        d->clickSelecter->click(index);
+        QAbstractItemView::mousePressEvent(event);
+    }
+}
+
+void CanvasView::mouseMoveEvent(QMouseEvent *event)
+{
+    QAbstractItemView::mouseMoveEvent(event);
+}
+
+void CanvasView::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() != Qt::LeftButton) {
+        QAbstractItemView::mouseReleaseEvent(event);
         return;
     }
 
-    // todo(zy)
-    selectionModel()->clear();
+    auto releaseIndex = indexAt(event->pos());
+    d->clickSelecter->release(releaseIndex);
+
+    setState(NoState);
+    QAbstractItemView::mouseReleaseEvent(event);
 }
 
 void CanvasView::initUI()
@@ -248,7 +278,11 @@ void CanvasView::initUI()
     viewport()->setAutoFillBackground(false);
     setFrameShape(QFrame::NoFrame);
 
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    // using NoSelection to turn off selection of QAbstractItemView
+    // and CanvasView will to do selection by itself.
+    setSelectionMode(QAbstractItemView::NoSelection);
+    setSelectionBehavior(QAbstractItemView::SelectItems);
+
     setAcceptDrops(true);
     setDragDropMode(QAbstractItemView::DragDrop);
     setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::SelectedClicked);
@@ -284,11 +318,12 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
 #ifdef QT_DEBUG
     showGrid = true;
 #endif
+    clickSelecter = new ClickSelecter(qq);
 }
 
 CanvasViewPrivate::~CanvasViewPrivate()
 {
-
+    clickSelecter = nullptr;
 }
 
 void CanvasViewPrivate::updateGridSize(const QSize &viewSize, const QMargins &geometryMargins, const QSize &itemSize)

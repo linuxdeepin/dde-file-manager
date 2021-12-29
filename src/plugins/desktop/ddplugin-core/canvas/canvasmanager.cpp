@@ -31,12 +31,19 @@
 #include "dfm-framework/framework.h"
 
 DSB_D_USE_NAMESPACE
+class CanvasManagerGlobal : public CanvasManager{};
+Q_GLOBAL_STATIC(CanvasManagerGlobal, canvasManagerGlobal)
 
 CanvasManager::CanvasManager(QObject *parent)
     : QObject(parent)
     , d(new CanvasManagerPrivate(this))
 {
+    Q_ASSERT(thread() == qApp->thread());
+}
 
+CanvasManager *CanvasManager::instance()
+{
+    return canvasManagerGlobal;
 }
 
 void CanvasManager::init()
@@ -64,6 +71,21 @@ void CanvasManager::update()
     for (auto itor = d->viewMap.begin(); itor != d->viewMap.end(); ++itor) {
         itor.value()->repaint();
     }
+}
+
+CanvasModel *CanvasManager::model() const
+{
+    return d->canvasModel;
+}
+
+CanvasSelectionModel *CanvasManager::selectionModel() const
+{
+    return d->selectionModel;
+}
+
+QList<QSharedPointer<CanvasView> > CanvasManager::views() const
+{
+    return d->viewMap.values();
 }
 
 void CanvasManager::initConnect()

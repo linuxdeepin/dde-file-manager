@@ -40,8 +40,11 @@ ViewPainter::ViewPainter(CanvasViewPrivate *dd)
 */
 void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
 {
+    QRect repaintRect = event->rect();
+    QVector<QRect> region = event->region().rects();
+
     QPair<QModelIndex, QPoint> expandItem;
-    // set invalid pos.
+    // if need expand.
     expandItem.second = QPoint(-1, -1);
 
     // item may need expand.
@@ -62,15 +65,21 @@ void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
             if (!index.isValid())
                 continue;
 
-            // expand item need to last draw.
-            if (expandItem.first == index)
-                expandItem.second = itor.value();
+            // item rect that can be used to draw. is need to move it to CanvasItemDelegate::initStyleOption?
+            // using CanvasView::itemPaintRect to get rect
+            option.rect = d->itemRect(itor.value());
 
-            // todo(zy) 暂时不考虑判断是否绘制，目前event的rect都是整个窗口大小，等完工后查看是否存在局部绘制的场景
-            /* auto needPaint = isRepaintFlash(option, event, fileItr.key());
-            if (!needPaint)
-                continue; */
-            drawFile(option, index, itor.value());
+            // expand item need to last draw.
+            if (expandItem.first == index) {
+                expandItem.second = itor.value();
+            } else if (repaintRect.intersects(option.rect)) {
+                for (auto &rr : region) {
+                    if (rr.intersects(option.rect)) {
+                        drawFile(option, index, itor.value());
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -86,60 +95,36 @@ void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
                 continue;
             }
 
-            // todo：拖拽让位的一些图标保持情况
-//todo(zy)
-//            auto needPaint = isRepaintFlash(option, event, overlapPos);
-//            if (!needPaint)
-//                continue;
+            option.rect = d->itemRect(overlapPos);
             auto index = model()->index(info);
             if (!index.isValid())
                 continue;
 
             // expand item need to last draw.
-            if (expandItem.first == index)
+            if (expandItem.first == index) {
                 expandItem.second = overlapPos;
-
-            drawFile(option, index, overlapPos);
+            } else if (repaintRect.intersects(option.rect)) {
+                for (auto &rr : region) {
+                    if (rr.intersects(option.rect)) {
+                        drawFile(option, index, overlapPos);
+                        break;
+                    }
+                }
+            }
         }
     }
 
     // try to expand it if necessary
-     if (expandItem.first.isValid() && expandItem.second.x() > -1 && expandItem.second.y() > -1)
+     if (expandItem.first.isValid() && expandItem.second.x() > -1 && Q_LIKELY(expandItem.second.y() > -1)) {
+        option.rect = d->itemRect(expandItem.second);
         drawFile(option, expandItem.first, expandItem.second);
+     }
 }
 
-void ViewPainter::drawFile(QStyleOptionViewItem option, const QModelIndex &index, const QPoint &pos)
+void ViewPainter::drawFile(QStyleOptionViewItem option, const QModelIndex &index, const QPoint &gridPos)
 {
-    // item rect that can be used to draw. is need to move it to CanvasItemDelegate::initStyleOption?
-    option.rect = d->itemRect(pos);
-
+    Q_UNUSED(gridPos);
     itemDelegate()->paint(this, option, index);
-}
-
-/*!
- * \brief 指定布局坐标位置是否重绘刷新
- * \param option item样式信息
- * \param event 绘制事件
- * \param pos 指定布局坐标位置
- * \return 返回刷新与否，true:刷新；false,不刷新
- */
-bool ViewPainter::isRepaintFlash(QStyleOptionViewItem &option, QPaintEvent *event, const QPoint pos)
-{
-    option.rect = d->visualRect(pos);
-    auto repaintRect = event->rect();
-    // 刷新区域判定，跳过不刷新的区域
-    bool needflash = false;
-    for (auto &rr : event->region().rects()) {
-        if (rr.intersects(option.rect)) {
-            needflash = true;
-            break;
-        }
-    }
-
-    // 不需要刷新和重绘
-    if (!needflash || !repaintRect.intersects(option.rect))
-        return false;
-    return true;
 }
 
 /*!
@@ -184,6 +169,9 @@ void ViewPainter::drawGirdInfos()
        auto item = GridIns->item(d->screenNum, pos.point());
        if (!item.isEmpty()) {
            QModelIndex index = model()->index(item, 0);
+           // draw item rect
+           drawRect(d->itemRect(pos.point()));
+
            if (index.isValid()) {
                for (auto rect : view()->itemPaintGeomertys(index)) {
                    drawRect(rect);
@@ -202,42 +190,6 @@ void ViewPainter::drawGirdInfos()
 void ViewPainter::drawDodge()
 {
 
-}
-
-// todo(zy) 修改file为url
-void ViewPainter::_drawFile(QStyleOptionViewItem option, const DFMDesktopFileInfoPointer &file, const QPoint &pos, bool enabled)
-{
-    // todo：拖拽让位的一些图标保持情况
-
-    option.rect = d->visualRect(pos);
-
-    auto index = model()->index(file);
-    if (!index.isValid())
-        return;
-
-    // todo(zy) using initOpt()?
-    if (selectionModel()->isSelected(index))
-        option.state |= QStyle::State_Selected;
-
-    // why?
-    if (enabled) {
-        // todo: to understand
-        QPalette::ColorGroup cg;
-        if ((model()->flags(index) & Qt::ItemIsEnabled) == 0) {
-            option.state &= ~QStyle::State_Enabled;
-            cg = QPalette::Disabled;
-        } else {
-            cg = QPalette::Normal;
-        }
-        option.palette.setCurrentColorGroup(cg);
-    }
-
-    // todo: focus item style set
-
-    option.state &= ~QStyle::State_MouseOver;
-    save();
-    itemDelegate()->paint(this, option, index);
-    restore();
 }
 
 /*!

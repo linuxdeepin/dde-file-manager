@@ -19,7 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "boxselecter.h"
+#include "canvasmanager.h"
+#include "view/canvasview_p.h"
+#include "view/canvasselectionmodel.h"
+#include "utils/desktoputils.h"
 
+#include <QItemSelection>
 #include <QWidget>
 #include <QMouseEvent>
 #include <QEvent>
@@ -72,7 +77,7 @@ void BoxSelecter::setEnd(const QPoint &globalPos)
     emit changed();
 }
 
-QRect BoxSelecter::validRect(QWidget *w) const
+QRect BoxSelecter::validRect(CanvasView *w) const
 {
     QRect selectRect;
     if (!w)
@@ -115,7 +120,7 @@ QRect BoxSelecter::clipRect(QRect rect, const QRect &geometry) const
     return rect;
 }
 
-bool BoxSelecter::isBeginFrom(QWidget *w)
+bool BoxSelecter::isBeginFrom(CanvasView *w)
 {
     if (!w)
         return false;
@@ -153,6 +158,8 @@ bool BoxSelecter::eventFilter(QObject *watched, QEvent *event)
         {
             QMouseEvent *e = dynamic_cast<QMouseEvent *>(event);
             end = e->globalPos();
+            updateSelection();
+            updateCurrentIndex();
             QMetaObject::invokeMethod(this, "changed", Qt::QueuedConnection);
         }
             break;
@@ -162,4 +169,87 @@ bool BoxSelecter::eventFilter(QObject *watched, QEvent *event)
     }
 
     return QObject::eventFilter(watched, event);
+}
+
+void BoxSelecter::updateSelection()
+{
+    auto selectModel = CanvasIns->selectionModel();
+    Q_ASSERT(selectModel);
+
+    QItemSelection rectSelection;
+    selection(&rectSelection);
+
+    if (isCtrlPressed())
+        selectModel->select(rectSelection, QItemSelectionModel::ToggleCurrent);
+    else if (isShiftPressed())
+        selectModel->select(rectSelection, QItemSelectionModel::SelectCurrent);
+    else
+        selectModel->select(rectSelection, QItemSelectionModel::ClearAndSelect);
+}
+
+void BoxSelecter::updateCurrentIndex()
+{
+    auto views = CanvasIns->views();
+    for (QSharedPointer<CanvasView> view : views) {
+        // limit only select on single view
+        if (!isBeginFrom(view.get()))
+            continue;
+
+        auto pos = view->mapFromGlobal(end);
+        auto index = view->indexAt(pos);
+        if (index.isValid() && view->selectionModel()->isSelected(index))
+            view->d->operState().setFocus(index);
+    }
+}
+
+void BoxSelecter::selection(QItemSelection *newSelection)
+{
+    QItemSelection allSelection;
+    auto views = CanvasIns->views();
+    for (QSharedPointer<CanvasView> view : views) {
+        // limit only select on single view
+        if (!isBeginFrom(view.get()))
+            continue;
+
+        auto selectRect = validRect(view.get());
+        QItemSelection rectSelection;
+        selection(view.get(), selectRect, &rectSelection);
+        allSelection.merge(rectSelection, QItemSelectionModel::Select);
+    }
+
+    *newSelection = allSelection;
+}
+
+void BoxSelecter::selection(CanvasView *w, const QRect &rect, QItemSelection *newSelection)
+{
+    if (!w || !newSelection || !rect.isValid())
+        return;
+
+    auto model = w->model();
+    if (!model)
+        return;
+
+    QItemSelection rectSelection;
+    auto topLeftGridPos = w->d->gridAt(rect.topLeft());
+    auto bottomRightGridPos = w->d->gridAt(rect.bottomRight());
+
+    for (auto x = topLeftGridPos.x(); x <= bottomRightGridPos.x(); ++x) {
+        for (auto y = topLeftGridPos.y(); y <= bottomRightGridPos.y(); ++y) {
+            const QPoint gridPos(x ,y);
+            QString item = w->d->visualItem(gridPos);
+            if (item.isEmpty())
+                continue;
+
+            auto itemRect = w->d->itemRect(QPoint(x ,y));
+            if (itemRect.intersects(rect)) {
+                QModelIndex rowIndex = model->index(item, 0);
+                QItemSelectionRange selectionRange(rowIndex);
+
+                if (!rectSelection.contains(rowIndex))
+                    rectSelection.push_back(selectionRange);
+            }
+        }
+    }
+
+    *newSelection = rectSelection;
 }

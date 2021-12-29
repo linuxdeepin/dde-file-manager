@@ -29,7 +29,7 @@ CanvasService::CanvasService(QObject *parent)
     : PluginService(parent), AutoServiceRegister<CanvasService>()
 {
     FileTreaterCt->init();
-    canvasMgrProxy = new CanvasManager(this);
+    canvasMgrProxy = CanvasIns->instance();
     canvasMgrProxy->init();
 
     // todo background signal

@@ -51,7 +51,7 @@ public:
 public:
     // default icon size is 48px.
     int currentIconLevel = -1;
-    int textLineHeight { -1 };
+    int textLineHeight = -1;
     QList<int> iconSizes;
     QStringList iconLevelDescriptions;
     // 最后一次绘制item是否画了背景
