@@ -265,8 +265,8 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         if (urllist.contains(QString("/" + QUrl::toPercentEncoding(rootFile->path()) + "." SUFFIX_GVFSMP)))
             continue;
         DAbstractFileInfoPointer fp(new DFMRootFileInfo(url));
+        urllist << QString("/" + QUrl::toPercentEncoding(rootFile->path()) + "." SUFFIX_GVFSMP);
         if (fp->exists()) {
-            urllist << QString("/" + QUrl::toPercentEncoding(rootFile->path()) + "." SUFFIX_GVFSMP);
             ret.push_back(fp);
         }
     }
