@@ -20,9 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "sidebarview.h"
-#include "sidebaritem.h"
-#include "sidebarmodel.h"
-#include "private/sidebarview_p.h"
+#include "views/sidebaritem.h"
+#include "models/sidebarmodel.h"
+#include "views/private/sidebarview_p.h"
 
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/base/urlroute.h"

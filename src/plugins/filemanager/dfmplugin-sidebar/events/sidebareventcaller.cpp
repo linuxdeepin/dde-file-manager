@@ -20,22 +20,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef COREHELPER_H
-#define COREHELPER_H
+#include "sidebareventcaller.h"
 
-#include "dfmplugin_core_global.h"
+#include "utils/sidebarhelper.h"
 
-#include <QObject>
+#include "services/filemanager/sidebar/sidebar_defines.h"
 
-DPCORE_BEGIN_NAMESPACE
+#include <dfm-framework/framework.h>
+#include <QUrl>
 
-class CoreHelper
+DPSIDEBAR_USE_NAMESPACE
+DSB_FM_USE_NAMESPACE
+
+void SideBarEventCaller::sendItemActived(QWidget *sender, const QUrl &url)
 {
-public:
-    static void cd(quint64 windowId, const QUrl &url);
-    static void openNewWindow();
-};
-
-DPCORE_END_NAMESPACE
-
-#endif   // COREHELPER_H
+    quint64 id = SideBarHelper::windowId(sender);
+    dpf::Event event;
+    event.setTopic(SideBar::EventTopic::kSideBar);
+    event.setData(SideBar::EventData::kCdAction);
+    event.setProperty(SideBar::EventProperty::kWindowId, id);
+    event.setProperty(SideBar::EventProperty::kUrl, url);
+    dpfInstance.eventProxy().pubEvent(event);
+}

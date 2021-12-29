@@ -21,9 +21,9 @@
  */
 #include "sidebaritemdelegate.h"
 
-#include "sidebaritem.h"
-#include "sidebarmodel.h"
-#include "sidebarview.h"
+#include "views/sidebaritem.h"
+#include "models/sidebarmodel.h"
+#include "views/sidebarview.h"
 
 #include "dfm-base/file/local/localfileinfo.h"
 

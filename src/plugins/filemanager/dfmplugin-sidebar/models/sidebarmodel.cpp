@@ -19,10 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "private/sidebarmodel_p.h"
 #include "sidebarmodel.h"
-#include "sidebaritemdelegate.h"
-#include "sidebaritem.h"
+#include "views/sidebaritemdelegate.h"
+#include "views/sidebaritem.h"
 
 #include <QMimeData>
 #include <QDebug>
@@ -54,13 +53,12 @@ int getRowIndexFromMimeData(const QByteArray &data)
 }
 }   // namespace GlobalPrivate
 
-SideBarModelPrivate::SideBarModelPrivate(SideBarModel *qq)
-    : QObject(qq), q(qq)
-{
-}
-
+/*!
+ * \class SideBarModel
+ * \brief
+ */
 SideBarModel::SideBarModel(QObject *parent)
-    : QStandardItemModel(parent), d(new SideBarModelPrivate(this))
+    : QStandardItemModel(parent)
 {
 }
 

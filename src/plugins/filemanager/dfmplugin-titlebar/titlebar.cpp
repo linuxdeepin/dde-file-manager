@@ -62,6 +62,7 @@ void TitleBar::onWindowOpened(quint64 windId)
     TitleBarWidget *titleBar = new TitleBarWidget;
     window->installTitleBar(titleBar);
     TitleBarHelper::addTileBar(windId, titleBar);
+    window->installTitleMenu(TitleBarHelper::createSettingsMenu(windId));
 }
 
 void TitleBar::onWindowClosed(quint64 windId)

@@ -29,16 +29,18 @@ DSB_FM_BEGIN_NAMESPACE
 
 namespace TitleBar {
 namespace EventTopic {
-extern const char *const kTitleBarOptionBtn;   // deifine "/org/deepin/event/titlebar/optionbutton"
+extern const char *const kTitleBar;   // deifine "/org/deepin/event/titlebar"
 }   // namespace EventTopic
 
 namespace EventData {
 extern const char *const kSwitchMode;
+extern const char *const kSettingsMenuTriggered;
 }   // namespace EventData
 
 namespace EventProperty {
 extern const char *const kWindowId;   // value is quint64
 extern const char *const kViewMode;   // value is ViewMode
+extern const char *const kMenuAction;   // value is MenuAction
 }   // namespace EventProperty
 
 enum ViewMode {
@@ -46,6 +48,13 @@ enum ViewMode {
     kListMode = 0x02,
     kExtendMode = 0x04,
     AllViewMode = kIconMode | kListMode | kExtendMode
+};
+
+enum MenuAction {
+    kNewWindow,
+    kConnectToServer,
+    kSetUserSharePassword,
+    kSettings
 };
 
 }   // namespace TitleBar

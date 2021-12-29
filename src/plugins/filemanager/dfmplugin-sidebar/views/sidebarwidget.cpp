@@ -21,11 +21,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "sidebarwidget.h"
-#include "sidebarview.h"
-#include "sidebarmodel.h"
-#include "sidebaritem.h"
-#include "sidebaritemdelegate.h"
-#include "sidebareventcaller.h"
+#include "views/sidebarview.h"
+#include "models/sidebarmodel.h"
+#include "views/sidebaritem.h"
+#include "views/sidebaritemdelegate.h"
+#include "events/sidebareventcaller.h"
 
 #include <QApplication>
 #include <QVBoxLayout>

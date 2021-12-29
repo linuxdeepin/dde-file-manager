@@ -36,12 +36,8 @@ CoreEventReceiver::CoreEventReceiver()
 {
     // add event topic map in here
     CoreEventReceiver::eventTopicHandlers = {
-        { SideBar::EventTopic::kSideBarItem, std::bind(&CoreEventReceiver::handleSideBarItemTopic, this, std::placeholders::_1) }
-    };
-
-    // add event data map in here
-    CoreEventReceiver::eventDataHandlers = {
-        { SideBar::EventData::kCdAction, std::bind(&CoreEventReceiver::handleSideBarItemActived, this, std::placeholders::_1) }
+        { SideBar::EventTopic::kSideBar, std::bind(&CoreEventReceiver::handleSideBarTopic, this, std::placeholders::_1) },
+        { TitleBar::EventTopic::kTitleBar, std::bind(&CoreEventReceiver::handleTitleBarTopic, this, std::placeholders::_1) }
     };
 }
 
@@ -56,15 +52,35 @@ void CoreEventReceiver::eventProcess(const dpf::Event &event)
     eventTopicHandlers[topic](event);
 }
 
-void CoreEventReceiver::handleSideBarItemTopic(const dpf::Event &event)
+void CoreEventReceiver::handleSideBarTopic(const dpf::Event &event)
+{
+    // add event data map in here
+    static HandlerMap eventDataHandlers = {
+        { SideBar::EventData::kCdAction, std::bind(&CoreEventReceiver::handleSideBarItemActived, this, std::placeholders::_1) }
+    };
+
+    callHandler(event, eventDataHandlers);
+}
+
+void CoreEventReceiver::handleTitleBarTopic(const dpf::Event &event)
+{
+    // add event data map in here
+    static HandlerMap eventDataHandlers = {
+        { TitleBar::EventData::kSettingsMenuTriggered, std::bind(&CoreEventReceiver::handleTileBarSettingsMenuTriggered, this, std::placeholders::_1) }
+    };
+
+    callHandler(event, eventDataHandlers);
+}
+
+void CoreEventReceiver::callHandler(const dpf::Event &event, const HandlerMap &map)
 {
     QString subTopic { event.data().toString() };
-    if (!eventDataHandlers.contains(subTopic)) {
+    if (!map.contains(subTopic)) {
         qWarning() << "Invalid event data: " << subTopic;
         return;
     }
 
-    eventDataHandlers[subTopic](event);
+    map[subTopic](event);
 }
 
 void CoreEventReceiver::handleSideBarItemActived(const dpf::Event &event)
@@ -79,4 +95,11 @@ void CoreEventReceiver::handleSideBarItemActived(const dpf::Event &event)
         quint64 windowId { qvariant_cast<quint64>(event.property(SideBar::EventProperty::kWindowId)) };
         CoreHelper::cd(windowId, url);
     }
+}
+
+void CoreEventReceiver::handleTileBarSettingsMenuTriggered(const dpf::Event &event)
+{
+    int action = event.property(TitleBar::EventProperty::kMenuAction).toInt();
+    if (action == TitleBar::MenuAction::kNewWindow)
+        CoreHelper::openNewWindow();
 }

@@ -28,6 +28,7 @@
 #include <QMap>
 #include <QMutex>
 #include <QWidget>
+#include <QMenu>
 
 DPTITLEBAR_BEGIN_NAMESPACE
 
@@ -39,6 +40,7 @@ public:
     static void addTileBar(quint64 windowId, TitleBarWidget *titleBar);
     static void removeTileBar(quint64 windowId);
     static quint64 windowId(QWidget *sender);
+    static QMenu *createSettingsMenu(quint64 id);
 
 private:
     static QMutex &mutex();

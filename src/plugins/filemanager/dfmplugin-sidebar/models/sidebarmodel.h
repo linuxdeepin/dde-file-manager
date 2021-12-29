@@ -19,24 +19,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SIDEBARMODEL_P_CPP
-#define SIDEBARMODEL_P_CPP
+#pragma once
 
 #include "dfmplugin_sidebar_global.h"
 
-#include <QObject>
+#include <QStandardItemModel>
 
 DPSIDEBAR_BEGIN_NAMESPACE
 
-class SideBarModel;
-class SideBarModelPrivate : public QObject
+class SideBarItem;
+class SideBarModel : public QStandardItemModel
 {
     Q_OBJECT
-    friend class SideBarModel;
-    SideBarModel *const q;
-    explicit SideBarModelPrivate(SideBarModel *qq);
+    friend class SideBarModelPrivate;
+
+public:
+    explicit SideBarModel(QObject *parent = nullptr);
+    bool canDropMimeData(const QMimeData *data, Qt::DropAction action,
+                         int row, int column, const QModelIndex &parent) const override;
+    QMimeData *mimeData(const QModelIndexList &indexes) const override;
+    SideBarItem *itemFromIndex(const QModelIndex &index) const;
+    SideBarItem *itemFromIndex(int index) const;
+    bool insertRow(int row, SideBarItem *item);
+    int appendRow(SideBarItem *item);
+    bool removeRow(SideBarItem *item);
+    QStringList groups() const;
 };
 
 DPSIDEBAR_END_NAMESPACE
-
-#endif   // SIDEBARMODEL_P_CPP

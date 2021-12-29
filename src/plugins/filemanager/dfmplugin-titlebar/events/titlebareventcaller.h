@@ -37,6 +37,7 @@ class TitleBarEventCaller
 
 public:
     static void sendViewMode(QWidget *sender, DSB_FM_NAMESPACE::TitleBar::ViewMode mode);
+    static void sendSettingsMenuTriggered(quint64 windowId, DSB_FM_NAMESPACE::TitleBar::MenuAction action);
 };
 
 DPTITLEBAR_END_NAMESPACE

@@ -44,3 +44,10 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
     qInfo() << "cd to " << url;
     window->cd(url);
 }
+
+void CoreHelper::openNewWindow()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    auto windowService = ctx.service<WindowsService>(WindowsService::name());
+    windowService->showWindow(QUrl(), true);
+}

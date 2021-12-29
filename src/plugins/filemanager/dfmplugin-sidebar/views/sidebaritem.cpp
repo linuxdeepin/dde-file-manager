@@ -20,7 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "sidebaritem.h"
-#include "base/standardpaths.h"
+
+#include "dfm-base/base/standardpaths.h"
 
 #include <QObject>
 #include <QVariant>

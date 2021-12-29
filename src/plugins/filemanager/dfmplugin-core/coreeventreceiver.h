@@ -25,6 +25,7 @@
 
 #include "dfmplugin_core_global.h"
 #include "services/filemanager/sidebar/sidebar_defines.h"
+#include "services/filemanager/titlebar/titlebar_defines.h"
 
 #include <dfm-framework/event/eventhandler.h>
 #include <dfm-framework/event/eventcallproxy.h>
@@ -47,21 +48,25 @@ public:
 
     static QStringList topics()
     {
-        return QStringList() << DSB_FM_NAMESPACE::SideBar::EventTopic::kSideBarItem;
+        // TODO(zhangs): add custom topic
+        return QStringList() << DSB_FM_NAMESPACE::SideBar::EventTopic::kSideBar
+                             << DSB_FM_NAMESPACE::TitleBar::EventTopic::kTitleBar;
     }
 
     explicit CoreEventReceiver();
     void eventProcess(const dpf::Event &event) override;
 
 private:   // event topics
-    void handleSideBarItemTopic(const dpf::Event &event);
+    void handleSideBarTopic(const dpf::Event &event);
+    void handleTitleBarTopic(const dpf::Event &event);
+    void callHandler(const dpf::Event &event, const HandlerMap &map);
 
 private:   // event data (sub topics)
     void handleSideBarItemActived(const dpf::Event &event);
+    void handleTileBarSettingsMenuTriggered(const dpf::Event &event);
 
 private:
     HandlerMap eventTopicHandlers;
-    HandlerMap eventDataHandlers;
 };
 DPCORE_END_NAMESPACE
 

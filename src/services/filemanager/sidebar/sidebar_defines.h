@@ -30,7 +30,6 @@ DSB_FM_BEGIN_NAMESPACE
 namespace SideBar {
 namespace EventTopic {
 extern const char *const kSideBar;   // define "/org/deepin/event/sidebar"
-extern const char *const kSideBarItem;   // define "/org/deepin/event/sidebar/item"
 }   // namespace EventTopics
 
 namespace EventData {

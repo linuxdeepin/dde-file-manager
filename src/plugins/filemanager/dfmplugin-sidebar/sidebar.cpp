@@ -21,8 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "sidebar.h"
-#include "sidebarwidget.h"
-#include "sidebaritem.h"
+#include "views/sidebarwidget.h"
+#include "views/sidebaritem.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"

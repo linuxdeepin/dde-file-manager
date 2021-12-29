@@ -27,16 +27,18 @@
 DSB_FM_BEGIN_NAMESPACE
 namespace TitleBar {
 namespace EventTopic {
-const char *const kTitleBarOptionBtn { "/org/deepin/event/titlebar/optionbutton" };
+const char *const kTitleBar { "/org/deepin/event/titlebar" };
 }   // namespace EventTopic
 
 namespace EventData {
 const char *const kSwitchMode { "SwitchMode" };
+const char *const kSettingsMenuTriggered { "SettingsMenuTriggered" };
 }   // namespace EventData
 
 namespace EventProperty {
 const char *const kWindowId { "WindowId" };
 const char *const kViewMode { "ViewMode" };
+const char *const kMenuAction { "MenuAction" };
 }   // namespace EventProperty
 }   // namespace TitleBar
 DSB_FM_END_NAMESPACE

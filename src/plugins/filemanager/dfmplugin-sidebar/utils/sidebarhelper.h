@@ -20,22 +20,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef COREHELPER_H
-#define COREHELPER_H
+#ifndef SIDEBARHELPER_H
+#define SIDEBARHELPER_H
 
-#include "dfmplugin_core_global.h"
+#include "dfmplugin_sidebar_global.h"
 
 #include <QObject>
 
-DPCORE_BEGIN_NAMESPACE
+DPSIDEBAR_BEGIN_NAMESPACE
 
-class CoreHelper
+class SideBarHelper
 {
 public:
-    static void cd(quint64 windowId, const QUrl &url);
-    static void openNewWindow();
+    static quint64 windowId(QWidget *sender);
 };
 
-DPCORE_END_NAMESPACE
+DPSIDEBAR_END_NAMESPACE
 
-#endif   // COREHELPER_H
+#endif   // SIDEBARHELPER_H

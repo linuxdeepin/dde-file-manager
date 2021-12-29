@@ -33,10 +33,22 @@ void TitleBarEventCaller::sendViewMode(QWidget *sender, TitleBar::ViewMode mode)
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
     dpf::Event event;
-    event.setTopic(TitleBar::EventTopic::kTitleBarOptionBtn);
+    event.setTopic(TitleBar::EventTopic::kTitleBar);
     event.setData(TitleBar::EventData::kSwitchMode);
     event.setProperty(TitleBar::EventProperty::kWindowId, id);
     event.setProperty(TitleBar::EventProperty::kViewMode, mode);
+    qDebug() << "send event: " << event;
+    dpfInstance.eventProxy().pubEvent(event);
+}
+
+void TitleBarEventCaller::sendSettingsMenuTriggered(quint64 windowId, TitleBar::MenuAction action)
+{
+    Q_ASSERT(windowId > 0);
+    dpf::Event event;
+    event.setTopic(TitleBar::EventTopic::kTitleBar);
+    event.setData(TitleBar::EventData::kSettingsMenuTriggered);
+    event.setProperty(TitleBar::EventProperty::kWindowId, windowId);
+    event.setProperty(TitleBar::EventProperty::kMenuAction, action);
     qDebug() << "send event: " << event;
     dpfInstance.eventProxy().pubEvent(event);
 }
