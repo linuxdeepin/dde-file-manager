@@ -48,22 +48,25 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 {
     workspaceUrl = url;
     // NOTE(zhangs): follw is temp code, need tab!
-    if (fileView == nullptr) {
+    QString scheme { url.scheme() };
+    if (!views.contains(scheme)) {
         QString error;
-        fileView = ViewFactory::create<AbstractBaseView>(url, &error);
+        ViewPtr fileView = ViewFactory::create<AbstractBaseView>(url, &error);
         if (!fileView) {
             qWarning() << "Cannot create view for " << url << "Reason: " << error;
             return;
         }
         viewStackLayout->addWidget(dynamic_cast<QWidget *>(fileView.get()));
+        viewStackLayout->setCurrentWidget(fileView->widget());
+        views.insert(url.scheme(), fileView);
         return;
     }
-    fileView->setRootUrl(url);
+    views[scheme]->setRootUrl(url);
+    viewStackLayout->setCurrentWidget(views[scheme]->widget());
 }
 
 QUrl WorkspaceWidget::currentUrl() const
 {
-
     return workspaceUrl;
 }
 
@@ -121,6 +124,11 @@ void WorkspaceWidget::initViewLayout()
 
 void WorkspaceWidget::handleCtrlN()
 {
+    ViewPtr fileView = views[workspaceUrl.scheme()];
+    if (!fileView) {
+        qWarning() << "Cannot find view by url: " << workspaceUrl;
+        return;
+    }
     QList<QUrl> urls { fileView->selectedUrlList() };
     auto &ctx = dpfInstance.serviceContext();
     auto windowService = ctx.service<WindowsService>(WindowsService::name());

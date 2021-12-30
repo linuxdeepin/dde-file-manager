@@ -37,6 +37,7 @@ TitleBarWidget::TitleBarWidget(QFrame *parent)
 void TitleBarWidget::setCurrentUrl(const QUrl &url)
 {
     titlebarUrl = url;
+    crumbBar->setRootUrl(url);
     emit currentUrlChanged(url);
 }
 

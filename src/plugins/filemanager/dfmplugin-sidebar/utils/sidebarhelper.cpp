@@ -29,9 +29,39 @@
 DPSIDEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 
+QMap<quint64, SideBarWidget *> SideBarHelper::kSideBarMap {};
+
+SideBarWidget *SideBarHelper::findSideBarByWindowId(quint64 windowId)
+{
+    if (!kSideBarMap.contains(windowId))
+        return nullptr;
+
+    return kSideBarMap[windowId];
+}
+
+void SideBarHelper::addSideBar(quint64 windowId, SideBarWidget *titleBar)
+{
+    QMutexLocker locker(&SideBarHelper::mutex());
+    if (!kSideBarMap.contains(windowId))
+        kSideBarMap.insert(windowId, titleBar);
+}
+
+void SideBarHelper::removeSideBar(quint64 windowId)
+{
+    QMutexLocker locker(&SideBarHelper::mutex());
+    if (kSideBarMap.contains(windowId))
+        kSideBarMap.remove(windowId);
+}
+
 quint64 SideBarHelper::windowId(QWidget *sender)
 {
     auto &ctx = dpfInstance.serviceContext();
     auto windowService = ctx.service<WindowsService>(WindowsService::name());
     return windowService->findWindowId(sender);
+}
+
+QMutex &SideBarHelper::mutex()
+{
+    static QMutex m;
+    return m;
 }

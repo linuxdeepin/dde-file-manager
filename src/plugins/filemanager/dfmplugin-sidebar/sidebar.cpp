@@ -23,6 +23,7 @@
 #include "sidebar.h"
 #include "views/sidebarwidget.h"
 #include "views/sidebaritem.h"
+#include "utils/sidebarhelper.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
@@ -116,9 +117,10 @@ void SideBar::onWindowOpened(quint64 windId)
     auto sidebar = new SideBarWidget;
     initSideBar(sidebar);
     window->installSideBar(sidebar);
+    SideBarHelper::addSideBar(windId, sidebar);
 }
 
 void SideBar::onWindowClosed(quint64 winId)
 {
-    // TODO(zhangs): impl me!
+    SideBarHelper::removeSideBar(winId);
 }

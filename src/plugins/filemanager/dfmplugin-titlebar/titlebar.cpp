@@ -67,5 +67,5 @@ void TitleBar::onWindowOpened(quint64 windId)
 
 void TitleBar::onWindowClosed(quint64 windId)
 {
-    TitleBarHelper::removeTileBar(windId);
+    TitleBarHelper::removeTitleBar(windId);
 }

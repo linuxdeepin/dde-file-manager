@@ -25,14 +25,24 @@
 
 #include "dfmplugin_sidebar_global.h"
 
-#include <QObject>
+#include <QMap>
+#include <QMutex>
+#include <QWidget>
 
 DPSIDEBAR_BEGIN_NAMESPACE
 
+class SideBarWidget;
 class SideBarHelper
 {
 public:
+    static SideBarWidget *findSideBarByWindowId(quint64 windowId);
+    static void addSideBar(quint64 windowId, SideBarWidget *titleBar);
+    static void removeSideBar(quint64 windowId);
     static quint64 windowId(QWidget *sender);
+
+private:
+    static QMutex &mutex();
+    static QMap<quint64, SideBarWidget *> kSideBarMap;
 };
 
 DPSIDEBAR_END_NAMESPACE

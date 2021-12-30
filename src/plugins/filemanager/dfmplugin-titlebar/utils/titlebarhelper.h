@@ -38,7 +38,7 @@ class TitleBarHelper
 public:
     static TitleBarWidget *findTileBarByWindowId(quint64 windowId);
     static void addTileBar(quint64 windowId, TitleBarWidget *titleBar);
-    static void removeTileBar(quint64 windowId);
+    static void removeTitleBar(quint64 windowId);
     static quint64 windowId(QWidget *sender);
     static QMenu *createSettingsMenu(quint64 id);
 

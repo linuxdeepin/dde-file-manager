@@ -58,7 +58,6 @@ void CoreHelper::showSettingsDialog(quint64 windowId)
 {
     auto &ctx = dpfInstance.serviceContext();
     auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    auto dialogService = ctx.service<DialogService>(DialogService::name());
     auto window = windowService->findWindowById(windowId);
 
     if (!window) {
@@ -66,5 +65,6 @@ void CoreHelper::showSettingsDialog(quint64 windowId)
         return;
     }
 
+    auto dialogService = ctx.service<DialogService>(DialogService::name());
     dialogService->showSetingsDialog(window);
 }

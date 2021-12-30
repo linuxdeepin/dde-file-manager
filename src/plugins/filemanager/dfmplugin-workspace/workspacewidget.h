@@ -27,6 +27,7 @@
 #include "dfm-base/interfaces/abstractframe.h"
 
 #include <QUrl>
+#include <QMap>
 
 namespace DFMBASE_NAMESPACE {
 class AbstractBaseView;
@@ -41,6 +42,8 @@ class FileView;
 class WorkspaceWidget : public dfmbase::AbstractFrame
 {
     Q_OBJECT
+    using ViewPtr = QSharedPointer<DFMBASE_NAMESPACE::AbstractBaseView>;
+
 public:
     explicit WorkspaceWidget(QFrame *parent = nullptr);
     void setCurrentUrl(const QUrl &url) override;
@@ -61,7 +64,7 @@ private:
     QUrl workspaceUrl;
     QVBoxLayout *widgetLayout { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
-    QSharedPointer<DFMBASE_NAMESPACE::AbstractBaseView> fileView { nullptr };
+    QMap<QString, ViewPtr> views;
 };
 
 DPWORKSPACE_END_NAMESPACE
