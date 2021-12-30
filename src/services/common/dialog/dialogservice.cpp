@@ -24,6 +24,7 @@
 #include "taskdialog/taskdialog.h"
 #include "propertydialog/computerpropertydialog.h"
 #include "propertydialog/trashpropertydialog.h"
+#include "settingsdialog/settingdialog.h"
 
 DSC_USE_NAMESPACE
 
@@ -86,6 +87,22 @@ void DialogService::showTrashPropertyDialog()
         trashPropertyDialog = new TrashPropertyDialog();
 
     trashPropertyDialog->show();
+}
+
+void DialogService::showSetingsDialog(FileManagerWindow *window)
+{
+    Q_ASSERT(window);
+
+    if (window->property("isSettingDialogShown").toBool()) {
+        qWarning() << "isSettingDialogShown true";
+        return;
+    }
+    window->setProperty("isSettingDialogShown", true);
+    DSettingsDialog *dsd = new SettingDialog(window);
+    dsd->show();
+    connect(dsd, &DSettingsDialog::finished, [window] {
+        window->setProperty("isSettingDialogShown", false);
+    });
 }
 
 DialogService::DialogService(QObject *parent)

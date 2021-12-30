@@ -21,11 +21,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "detailspace.h"
+#include "utils/detailspacehelper.h"
+
+#include "services/filemanager/windows/windowsservice.h"
+
+#include <dfm-framework/framework.h>
+
+DPDETAILSPACE_USE_NAMESPACE
+DSB_FM_USE_NAMESPACE
 
 void DetailSpace::initialize()
 {
     // Note: Don't install detail view widget in here!
     // You shout install it when detail button clicked in titlebar
+    auto &ctx = dpfInstance.serviceContext();
+    Q_ASSERT_X(ctx.loaded(WindowsService::name()), "DetalSpace", "WindowService not loaded");
+    auto windowService = ctx.service<WindowsService>(WindowsService::name());
+    connect(windowService, &WindowsService::windowClosed, this, &DetailSpace::onWindowClosed, Qt::DirectConnection);
 }
 
 bool DetailSpace::start()
@@ -36,4 +48,9 @@ bool DetailSpace::start()
 dpf::Plugin::ShutdownFlag DetailSpace::stop()
 {
     return kSync;
+}
+
+void DetailSpace::onWindowClosed(quint64 windId)
+{
+    DetailSpaceHelper::removeDetailSpace(windId);
 }

@@ -31,7 +31,6 @@ class SideBarItem;
 class SideBarModel : public QStandardItemModel
 {
     Q_OBJECT
-    friend class SideBarModelPrivate;
 
 public:
     explicit SideBarModel(QObject *parent = nullptr);

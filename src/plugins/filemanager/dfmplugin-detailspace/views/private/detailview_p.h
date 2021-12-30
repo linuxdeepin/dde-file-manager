@@ -21,7 +21,9 @@
 #ifndef DETAILVIEW_P_H
 #define DETAILVIEW_P_H
 
-#include "dfm_filemanager_service_global.h"
+#include "dfmplugin_detailspace_global.h"
+
+#include "services/filemanager/dfm_filemanager_service_global.h"
 #include "dfm-base/widgets/dfmsplitter/splitter.h"
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 
@@ -30,6 +32,8 @@
 
 class QLabel;
 class QScrollArea;
+
+DPDETAILSPACE_BEGIN_NAMESPACE
 class DetailView;
 class FileBaseInfoView : public QFrame
 {
@@ -73,5 +77,6 @@ private:
     DetailView *detailView { nullptr };
     QScrollArea *scrollArea { nullptr };
 };
+DPDETAILSPACE_END_NAMESPACE
 
 #endif   // DETAILVIEW_P_H

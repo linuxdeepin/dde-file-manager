@@ -41,6 +41,7 @@ DSC_USE_NAMESPACE
 
 namespace GlobalPrivate {
 static WindowsService *windowService { nullptr };
+static Application *kDFMApp { nullptr };
 }   // namespace GlobalPrivate
 
 void Core::initialize()
@@ -64,6 +65,7 @@ void Core::initialize()
 bool Core::start()
 {
     qDebug() << __PRETTY_FUNCTION__;
+    GlobalPrivate::kDFMApp = new Application;   // must create it
     auto &ctx = dpfInstance.serviceContext();
     qInfo() << "import service list" << ctx.services();
     GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());

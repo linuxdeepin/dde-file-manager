@@ -52,3 +52,16 @@ void TitleBarEventCaller::sendSettingsMenuTriggered(quint64 windowId, TitleBar::
     qDebug() << "send event: " << event;
     dpfInstance.eventProxy().pubEvent(event);
 }
+
+void TitleBarEventCaller::sendDetailViewState(QWidget *sender, bool checked)
+{
+    quint64 id = TitleBarHelper::windowId(sender);
+    Q_ASSERT(id > 0);
+    dpf::Event event;
+    event.setTopic(TitleBar::EventTopic::kTitleBar);
+    event.setData(TitleBar::EventData::kShowDetailView);
+    event.setProperty(TitleBar::EventProperty::kWindowId, id);
+    event.setProperty(TitleBar::EventProperty::kDetailState, checked);
+    qDebug() << "send event: " << event;
+    dpfInstance.eventProxy().pubEvent(event);
+}

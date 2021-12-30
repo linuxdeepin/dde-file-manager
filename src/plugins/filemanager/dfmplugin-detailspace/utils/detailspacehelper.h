@@ -20,43 +20,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "detailspacewidget.h"
-#include "detailview.h"
+#ifndef DETAILSPACEHELPER_H
+#define DETAILSPACEHELPER_H
 
-#include <QHBoxLayout>
+#include "dfmplugin_detailspace_global.h"
 
-DetailSpaceWidget::DetailSpaceWidget(QFrame *parent)
-    : AbstractFrame(parent)
+#include <QMap>
+#include <QMutex>
+DPDETAILSPACE_BEGIN_NAMESPACE
+
+class DetailSpaceWidget;
+class DetailSpaceHelper
 {
-    initializeUi();
-    initConnect();
-}
+public:
+    static DetailSpaceWidget *findDetailSpaceByWindowId(quint64 windowId);
+    static void addDetailSpace(quint64 windowId, DetailSpaceWidget *titleBar);
+    static void removeDetailSpace(quint64 windowId);
+    static void showDetailView(quint64 windowId, bool checked);
 
-void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
-{
-    detailSpaceUrl = url;
-    detailView->setUrl(url);
-}
+private:
+    static QMutex &mutex();
+    static QMap<quint64, DetailSpaceWidget *> kDetailSpaceMap;
+};
 
-QUrl DetailSpaceWidget::currentUrl() const
-{
-    return detailSpaceUrl;
-}
+DPDETAILSPACE_END_NAMESPACE
 
-void DetailSpaceWidget::initializeUi()
-{
-    setAutoFillBackground(true);
-    setBackgroundRole(QPalette::ColorRole::Base);
-
-    QHBoxLayout *rvLayout = new QHBoxLayout(this);
-    rvLayout->setMargin(0);
-    detailView = new DetailView;
-    QFrame *rightDetailVLine = new QFrame;
-    rightDetailVLine->setFrameShape(QFrame::VLine);
-    rvLayout->addWidget(rightDetailVLine);
-    rvLayout->addWidget(detailView, 1);
-}
-
-void DetailSpaceWidget::initConnect()
-{
-}
+#endif   // DETAILSPACEHELPER_H

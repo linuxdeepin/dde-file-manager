@@ -23,7 +23,11 @@
 #ifndef DETAILSPACE_H
 #define DETAILSPACE_H
 
+#include "dfmplugin_detailspace_global.h"
+
 #include <dfm-framework/framework.h>
+
+DPDETAILSPACE_BEGIN_NAMESPACE
 
 class DetailSpace : public dpf::Plugin
 {
@@ -34,6 +38,11 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
+
+private slots:
+    void onWindowClosed(quint64 windId);
 };
+
+DPDETAILSPACE_END_NAMESPACE
 
 #endif   // DETAILSPACE_H

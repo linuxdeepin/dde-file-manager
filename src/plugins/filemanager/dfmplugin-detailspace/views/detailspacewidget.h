@@ -20,23 +20,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef COREHELPER_H
-#define COREHELPER_H
+#ifndef DETAILSPACEWIDGET_H
+#define DETAILSPACEWIDGET_H
 
-#include "dfmplugin_core_global.h"
+#include "dfmplugin_detailspace_global.h"
+#include "dfm-base/interfaces/abstractframe.h"
 
-#include <QObject>
+#include <QUrl>
 
-DPCORE_BEGIN_NAMESPACE
+DPDETAILSPACE_BEGIN_NAMESPACE
 
-class CoreHelper
+class DetailView;
+class DetailSpaceWidget : public dfmbase::AbstractFrame
 {
+    Q_OBJECT
+    Q_DISABLE_COPY(DetailSpaceWidget)
+
 public:
-    static void cd(quint64 windowId, const QUrl &url);
-    static void openNewWindow();
-    static void showSettingsDialog(quint64 windowId);
+    explicit DetailSpaceWidget(QFrame *parent = nullptr);
+    void setCurrentUrl(const QUrl &url) override;
+    QUrl currentUrl() const override;
+
+private:
+    void initializeUi();
+    void initConnect();
+
+private:
+    QUrl detailSpaceUrl;
+    DetailView *detailView { nullptr };
 };
 
-DPCORE_END_NAMESPACE
+DPDETAILSPACE_END_NAMESPACE
 
-#endif   // COREHELPER_H
+#endif   // DETAILSPACEWIDGET_H

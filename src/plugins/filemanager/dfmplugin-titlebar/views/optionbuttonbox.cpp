@@ -167,9 +167,8 @@ void OptionButtonBox::initConnect()
         d->setViewMode(ViewMode::kListMode);
     });
 
-    connect(d->detailButton, &QToolButton::clicked, this, [](bool checked) {
-        if (checked)
-            qDebug() << "TODO(zhangs): impl me!";
+    connect(d->detailButton, &QToolButton::clicked, this, [this](bool checked) {
+        TitleBarEventCaller::sendDetailViewState(this, checked);
     });
 
     connect(Application::instance(), &Application::viewModeChanged, d, &OptionButtonBoxPrivate::onViewModeChanged);

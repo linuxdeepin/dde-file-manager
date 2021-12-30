@@ -99,7 +99,16 @@ void CoreEventReceiver::handleSideBarItemActived(const dpf::Event &event)
 
 void CoreEventReceiver::handleTileBarSettingsMenuTriggered(const dpf::Event &event)
 {
+    quint64 windowId { qvariant_cast<quint64>(event.property(TitleBar::EventProperty::kWindowId)) };
     int action = event.property(TitleBar::EventProperty::kMenuAction).toInt();
-    if (action == TitleBar::MenuAction::kNewWindow)
+    switch (action) {
+    case TitleBar::MenuAction::kNewWindow:
         CoreHelper::openNewWindow();
+        break;
+    case TitleBar::MenuAction::kSettings:
+        CoreHelper::showSettingsDialog(windowId);
+        break;
+    default:
+        break;
+    }
 }

@@ -25,8 +25,10 @@
 
 #include "dfm_common_service_global.h"
 
+#include "dfm-base/interfaces/abstractjobhandler.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+
 #include <dfm-framework/service/pluginservicecontext.h>
-#include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <DDialog>
 
@@ -52,6 +54,7 @@ public:
     void addTask(const JobHandlePointer &task);
     void showComputerPropertyDialog();
     void showTrashPropertyDialog();
+    void showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window);
 
 private:
     explicit DialogService(QObject *parent = nullptr);

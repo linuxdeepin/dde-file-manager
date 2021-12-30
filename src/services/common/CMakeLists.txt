@@ -44,6 +44,8 @@ FILE(GLOB DIALOG_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/propertydialog/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/mountpasswddialog/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/mountpasswddialog/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/settingsdialog/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/settingsdialog/*.cpp"
 )
 
 FILE(GLOB MENU_FILES

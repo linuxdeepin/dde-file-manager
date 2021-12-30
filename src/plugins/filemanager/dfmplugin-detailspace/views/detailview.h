@@ -18,19 +18,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DETAILEXTENDVIEW_H
-#define DETAILEXTENDVIEW_H
+#ifndef DETAILVIEW_H
+#define DETAILVIEW_H
 
-#include <QWidget>
+#include "dfmplugin_detailspace_global.h"
 
-class DetailExtendView : public QWidget
+#include <QFrame>
+
+DPDETAILSPACE_BEGIN_NAMESPACE
+
+class DetailViewPrivate;
+class DetailView : public QFrame
 {
     Q_OBJECT
 public:
-    explicit DetailExtendView(QWidget *praent);
-    virtual ~DetailExtendView();
+    explicit DetailView(QWidget *parent = nullptr);
+    virtual ~DetailView();
 
-    virtual void setFileUrl(QUrl &url) = 0;
+    bool addCustomControl(QWidget *widget);
+    bool insertCustomControl(int index, QWidget *widget);
+
+public slots:
+    void setUrl(const QUrl &url);
+
+private:
+    void detailHandle(QUrl &url);
+
+protected:
+    virtual void showEvent(QShowEvent *event);
+
+private:
+    DetailViewPrivate *const detailViewPrivate { nullptr };
 };
 
-#endif   // DETAILEXTENDVIEW_H
+DPDETAILSPACE_END_NAMESPACE
+
+#endif   // DETAILVIEW_H

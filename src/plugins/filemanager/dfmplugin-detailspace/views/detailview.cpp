@@ -35,6 +35,7 @@
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DPDETAILSPACE_USE_NAMESPACE
 
 DetailView::DetailView(QWidget *parent)
     : QFrame(parent),

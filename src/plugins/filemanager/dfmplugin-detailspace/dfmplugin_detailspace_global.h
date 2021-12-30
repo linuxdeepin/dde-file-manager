@@ -1,9 +1,11 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     lixiang<lixianga@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: lixiang<lixianga@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,19 +19,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#include "detailextendview.h"
+*/
+#ifndef DFMPLUGIN_DETAILSPACE_GLOBAL_H
+#define DFMPLUGIN_DETAILSPACE_GLOBAL_H
 
-/*!
- * \class DetailExtendView
- * \brief 用于最右信息控件扩展专用继承类
- */
+#define DPDETAILSPACE_BEGIN_NAMESPACE namespace dfmplugin_detailspace {
+#define DPDETAILSPACE_END_NAMESPACE }
+#define DPDETAILSPACE_USE_NAMESPACE using namespace dfmplugin_detailspace;
+#define DPDETAILSPACE_NAMESPACE dfmplugin_detailspace
 
-DetailExtendView::DetailExtendView(QWidget *praent)
-    : QWidget(praent)
-{
-}
-
-DetailExtendView::~DetailExtendView()
-{
-}
+#endif   // DFMPLUGIN_DETAILSPACE_GLOBAL_H

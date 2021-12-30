@@ -33,12 +33,14 @@ const char *const kTitleBar { "/org/deepin/event/titlebar" };
 namespace EventData {
 const char *const kSwitchMode { "SwitchMode" };
 const char *const kSettingsMenuTriggered { "SettingsMenuTriggered" };
+const char *const kShowDetailView { "ShowDetailView" };
 }   // namespace EventData
 
 namespace EventProperty {
 const char *const kWindowId { "WindowId" };
 const char *const kViewMode { "ViewMode" };
 const char *const kMenuAction { "MenuAction" };
+const char *const kDetailState { "DetailState" };
 }   // namespace EventProperty
 }   // namespace TitleBar
 DSB_FM_END_NAMESPACE

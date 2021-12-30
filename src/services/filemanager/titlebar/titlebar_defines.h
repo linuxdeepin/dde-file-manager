@@ -35,12 +35,14 @@ extern const char *const kTitleBar;   // deifine "/org/deepin/event/titlebar"
 namespace EventData {
 extern const char *const kSwitchMode;
 extern const char *const kSettingsMenuTriggered;
+extern const char *const kShowDetailView;
 }   // namespace EventData
 
 namespace EventProperty {
 extern const char *const kWindowId;   // value is quint64
 extern const char *const kViewMode;   // value is ViewMode
 extern const char *const kMenuAction;   // value is MenuAction
+extern const char *const kDetailState;   // value is bool
 }   // namespace EventProperty
 
 enum ViewMode {

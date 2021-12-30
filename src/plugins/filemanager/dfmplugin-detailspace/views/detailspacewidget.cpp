@@ -20,29 +20,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DETAILSPACEWIDGET_H
-#define DETAILSPACEWIDGET_H
+#include "detailspacewidget.h"
+#include "detailview.h"
 
-#include "dfm-base/interfaces/abstractframe.h"
+#include <QHBoxLayout>
 
-#include <QUrl>
+DPDETAILSPACE_USE_NAMESPACE
 
-class DetailView;
-class DetailSpaceWidget : public dfmbase::AbstractFrame
+DetailSpaceWidget::DetailSpaceWidget(QFrame *parent)
+    : AbstractFrame(parent)
 {
-    Q_OBJECT
-public:
-    explicit DetailSpaceWidget(QFrame *parent = nullptr);
-    void setCurrentUrl(const QUrl &url) override;
-    QUrl currentUrl() const override;
+    initializeUi();
+    initConnect();
+}
 
-private:
-    void initializeUi();
-    void initConnect();
+void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
+{
+    detailSpaceUrl = url;
+    detailView->setUrl(url);
+}
 
-private:
-    QUrl detailSpaceUrl;
-    DetailView *detailView { nullptr };
-};
+QUrl DetailSpaceWidget::currentUrl() const
+{
+    return detailSpaceUrl;
+}
 
-#endif   // DETAILSPACEWIDGET_H
+void DetailSpaceWidget::initializeUi()
+{
+    setAutoFillBackground(true);
+    setBackgroundRole(QPalette::ColorRole::Base);
+
+    QHBoxLayout *rvLayout = new QHBoxLayout(this);
+    rvLayout->setMargin(0);
+    detailView = new DetailView;
+    QFrame *rightDetailVLine = new QFrame;
+    rightDetailVLine->setFrameShape(QFrame::VLine);
+    rvLayout->addWidget(rightDetailVLine);
+    rvLayout->addWidget(detailView, 1);
+}
+
+void DetailSpaceWidget::initConnect()
+{
+}

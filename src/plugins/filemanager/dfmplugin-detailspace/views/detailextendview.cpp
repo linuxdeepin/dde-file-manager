@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     yanghao<yanghao@uniontech.com>
+ * Author:     lixiang<lixianga@uniontech.com>
  *
- * Maintainer: yanghao<yanghao@uniontech.com>
+ * Maintainer: lixiang<lixianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,23 +18,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#include "detailextendview.h"
 
-#include "dfmplugin_settings_global.h"
+DPDETAILSPACE_USE_NAMESPACE
 
-#include <dfm-framework/framework.h>
+/*!
+ * \class DetailExtendView
+ * \brief 用于最右信息控件扩展专用继承类
+ */
 
-DPSETTINGS_BEGIN_NAMESPACE
-class Settings : public dpf::Plugin
+DetailExtendView::DetailExtendView(QWidget *praent)
+    : QWidget(praent)
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "settings.json")
+}
 
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-};
-DPSETTINGS_END_NAMESPACE
-#endif   // SETTINGS_H
+DetailExtendView::~DetailExtendView()
+{
+}

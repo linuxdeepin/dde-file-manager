@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     yanghao<yanghao@uniontech.com>
+ * Author:     lixiang<lixianga@uniontech.com>
  *
- * Maintainer: yanghao<yanghao@uniontech.com>
+ * Maintainer: lixiang<lixianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef DETAILEXTENDVIEW_H
+#define DETAILEXTENDVIEW_H
 
-#include "settings.h"
+#include "dfmplugin_detailspace_global.h"
 
-DPSETTINGS_BEGIN_NAMESPACE
-void Settings::initialize()
+#include <QWidget>
+
+DPDETAILSPACE_BEGIN_NAMESPACE
+
+class DetailExtendView : public QWidget
 {
-}
+    Q_OBJECT
+public:
+    explicit DetailExtendView(QWidget *praent);
+    virtual ~DetailExtendView();
 
-bool Settings::start()
-{
-    return true;
-}
+    virtual void setFileUrl(QUrl &url) = 0;
+};
 
-dpf::Plugin::ShutdownFlag Settings::stop()
-{
-    return kSync;
-}
-DPSETTINGS_END_NAMESPACE
+DPDETAILSPACE_END_NAMESPACE
+
+#endif   // DETAILEXTENDVIEW_H

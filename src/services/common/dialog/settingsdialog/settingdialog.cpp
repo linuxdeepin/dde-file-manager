@@ -22,7 +22,7 @@
 */
 
 #include "settingdialog.h"
-#include "private/settingdialog_p.h"
+#include "settingdialog_p.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -47,7 +47,7 @@
 
 DFMBASE_USE_NAMESPACE
 
-DPSETTINGS_BEGIN_NAMESPACE
+DSC_BEGIN_NAMESPACE
 
 #ifdef DISABLE_QUICK_SEARCH
 namespace {
@@ -265,8 +265,8 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
 #endif
 }
 
-QPointer<QCheckBox> SettingDialog::AutoMountCheckBox = nullptr;
-QPointer<QCheckBox> SettingDialog::AutoMountOpenCheckBox = nullptr;
+QPointer<QCheckBox> SettingDialog::kAutoMountCheckBox = nullptr;
+QPointer<QCheckBox> SettingDialog::kAutoMountOpenCheckBox = nullptr;
 
 SettingDialog::SettingDialog(QWidget *parent)
     : DSettingsDialog(parent)
@@ -281,7 +281,7 @@ SettingDialog::SettingDialog(QWidget *parent)
 #    ifdef DISABLE_FFMEPG
     m_settings = fromJsJson(":/configure/global-setting-template-fedora.js").data();
 #    else
-    m_settings = fromJsJson(":/configure/global-setting-template.js").data();
+    dtkSettings = fromJsJson(":/configure/global-setting-template.js").data();
 #    endif
 #endif
 
@@ -296,10 +296,10 @@ SettingDialog::SettingDialog(QWidget *parent)
 
     // load conf value
     auto backen = new SettingBackend(this);
-    if (m_settings) {
-        m_settings->setParent(this);
-        m_settings->setBackend(backen);
-        updateSettings("GenerateSettingTranslate", m_settings);
+    if (dtkSettings) {
+        dtkSettings->setParent(this);
+        dtkSettings->setBackend(backen);
+        updateSettings("GenerateSettingTranslate", dtkSettings);
     }
 }
 
@@ -307,12 +307,12 @@ QPair<QWidget *, QWidget *> SettingDialog::createAutoMountCheckBox(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
     QCheckBox *mountCheckBox = new QCheckBox(QObject::tr("Auto mount"));
-    SettingDialog::AutoMountCheckBox = mountCheckBox;
+    SettingDialog::kAutoMountCheckBox = mountCheckBox;
 
     if (option->value().toBool()) {
         mountCheckBox->setChecked(true);
-    } else if (AutoMountOpenCheckBox) {
-        AutoMountOpenCheckBox->setDisabled(true);
+    } else if (kAutoMountOpenCheckBox) {
+        kAutoMountOpenCheckBox->setDisabled(true);
     }
 
     QObject::connect(mountCheckBox,
@@ -333,13 +333,13 @@ QPair<QWidget *, QWidget *> SettingDialog::createAutoMountOpenCheckBox(QObject *
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
     QCheckBox *openCheckBox = new QCheckBox(QObject::tr("Open after auto mount"));
-    SettingDialog::AutoMountOpenCheckBox = openCheckBox;
+    SettingDialog::kAutoMountOpenCheckBox = openCheckBox;
 
     if (option->value().toBool()) {
         openCheckBox->setChecked(true);
         openCheckBox->setDisabled(false);
     } else {
-        if (AutoMountCheckBox && !AutoMountCheckBox->isChecked()) {
+        if (kAutoMountCheckBox && !kAutoMountCheckBox->isChecked()) {
             openCheckBox->setDisabled(true);
         }
     }
@@ -361,14 +361,14 @@ QPair<QWidget *, QWidget *> SettingDialog::createAutoMountOpenCheckBox(QObject *
 void SettingDialog::mountCheckBoxStateChangedHandle(DSettingsOption *option, int state)
 {
     if (state == 0) {
-        if (SettingDialog::AutoMountOpenCheckBox) {
-            SettingDialog::AutoMountOpenCheckBox->setDisabled(true);
-            SettingDialog::AutoMountOpenCheckBox->setChecked(false);
+        if (SettingDialog::kAutoMountOpenCheckBox) {
+            SettingDialog::kAutoMountOpenCheckBox->setDisabled(true);
+            SettingDialog::kAutoMountOpenCheckBox->setChecked(false);
         }
         option->setValue(false);
     } else if (state == 2) {
-        if (SettingDialog::AutoMountOpenCheckBox) {
-            SettingDialog::AutoMountOpenCheckBox->setDisabled(false);
+        if (SettingDialog::kAutoMountOpenCheckBox) {
+            SettingDialog::kAutoMountOpenCheckBox->setDisabled(false);
         }
 
         option->setValue(true);
@@ -384,4 +384,4 @@ void SettingDialog::autoMountCheckBoxChangedHandle(DSettingsOption *option, int 
     }
 }
 
-DPSETTINGS_END_NAMESPACE
+DSC_END_NAMESPACE
