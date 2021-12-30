@@ -35,10 +35,6 @@
 #include <base/urlroute.h>
 
 DSB_FM_USE_NAMESPACE
-namespace GlobalPrivate {
-static WindowsService *windowService { nullptr };
-static SideBarService *sidebarService { nullptr };
-}
 
 DPCOMPUTER_BEGIN_NAMESPACE
 /*!
@@ -47,12 +43,6 @@ DPCOMPUTER_BEGIN_NAMESPACE
  */
 void Computer::initialize()
 {
-    auto &ctx = dpfInstance.serviceContext();
-    Q_ASSERT_X(ctx.loaded(WindowsService::name()), "Computer", "WindowService not loaded");
-    Q_ASSERT_X(ctx.loaded(SideBarService::name()), "Computer", "SideBarService not loaded");
-    GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());
-    GlobalPrivate::sidebarService = ctx.service<SideBarService>(SideBarService::name());
-
     DFMBASE_USE_NAMESPACE
     DPCOMPUTER_USE_NAMESPACE
     UrlRoute::regScheme(ComputerUtils::scheme(), "/", ComputerUtils::icon(), true);
