@@ -85,6 +85,7 @@ public slots:
     void onDoubleClicked(const QModelIndex &index);
     void onScalingValueChanged(const int value);
     void delayUpdateStatusBar();
+    void viewModeChanged(quint64 windowId, int viewMode);
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
@@ -92,6 +93,9 @@ protected:
 
 Q_SIGNALS:
     void reqOpenNewWindow(const QList<QUrl> &urls);
+
+private slots:
+    void loadViewState(const QUrl &url);
 
 private:
     void initializeModel();

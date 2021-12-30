@@ -29,7 +29,7 @@
 #include "iconitemdelegate.h"
 #include "listitemdelegate.h"
 #include "statusbar.h"
-
+#include "utils/workspacehelper.h"
 #include <QResizeEvent>
 #include <QScrollBar>
 #include <QTimer>
@@ -233,6 +233,19 @@ void FileView::delayUpdateStatusBar()
         d->updateStatusBarTimer->start();
 }
 
+void FileView::viewModeChanged(quint64 windowId, int viewMode)
+{
+    auto thisWindId = WorkspaceHelper::instance()->windowId(this);
+    if (thisWindId == windowId) {
+        // TODO(yanghao): enum
+        if (viewMode == 1) {
+            setViewModeToIcon();
+        } else if (viewMode == 2) {
+            setViewModeToList();
+        }
+    }
+}
+
 void FileView::resizeEvent(QResizeEvent *event)
 {
     if (d->headerView) {
@@ -283,6 +296,7 @@ void FileView::initializeConnect()
 
     connect(this, &DListView::clicked, this, &FileView::onClicked);
     connect(this, &DListView::doubleClicked, this, &FileView::onDoubleClicked);
+    connect(WorkspaceHelper::instance(), &WorkspaceHelper::viewModeChanged, this, &FileView::viewModeChanged);
 }
 
 void FileView::updateStatusBar()
@@ -304,6 +318,11 @@ void FileView::setDefaultViewMode()
 {
     // TODO(liuyangming): set view mode with config
     setViewMode(IconMode);
+}
+
+void FileView::loadViewState(const QUrl &url)
+{
+    // TODO:(yanghao)
 }
 
 void FileView::openIndexByClicked(const ClickedAction action, const QModelIndex &index)

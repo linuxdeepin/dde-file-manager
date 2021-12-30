@@ -23,6 +23,7 @@
 #include "workspace.h"
 #include "workspacewidget.h"
 #include "fileview.h"
+#include "utils/workspacehelper.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
@@ -61,10 +62,13 @@ void Workspace::onWindowOpened(quint64 windId)
 {
     auto window = GlobalPrivate::windowService->findWindowById(windId);
     Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
-    window->installWorkSpace(new WorkspaceWidget);
+    WorkspaceWidget *workspace = new WorkspaceWidget;
+    window->installWorkSpace(workspace);
+    WorkspaceHelper::instance()->addWorkspace(windId, workspace);
 }
 
-void Workspace::onWindowClosed(quint64 winId)
+void Workspace::onWindowClosed(quint64 windId)
 {
     // TODO(zhangs): impl me!
+    WorkspaceHelper::instance()->removeWorkspace(windId);
 }
