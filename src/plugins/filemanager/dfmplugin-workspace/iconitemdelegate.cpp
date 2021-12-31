@@ -26,6 +26,7 @@
 #include "dfm-base/dfm_base_global.h"
 #include "itemdelegatehelper.h"
 #include "fileviewitem.h"
+#include "fileview.h"
 
 #include <DApplicationHelper>
 #include <DStyleOption>
@@ -91,17 +92,15 @@ void IconItemDelegate::paint(QPainter *painter,
     if (option.state & QStyle::StateFlag::State_Selected) {
         backgroundColor.setAlpha(backgroundColor.alpha() + 30);
     } else if (option.state & QStyle::StateFlag::State_MouseOver) {
-        DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(baseColor);
-        if (ct == DGuiApplicationHelper::DarkType) {
-            baseColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, +5, 0, 0, 0, 0);
-            backgroundColor = baseColor;
-        } else
-            backgroundColor = backgroundColor.lighter();
+        backgroundColor = backgroundColor.lighter();
+    } else {
+        backgroundColor = baseColor;
     }
 
     QRectF backgroundRect = opt.rect;
     int backgroundMargin = kIconModeColumnPadding;
     backgroundRect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin);
+
     // draw background
     QPainterPath path;
     backgroundRect.moveTopLeft(QPointF(0.5, 0.5) + backgroundRect.topLeft());
@@ -165,6 +164,7 @@ int IconItemDelegate::setIconSizeByIconSizeLevel(int level)
         d->itemIconSize.setWidth(length);
         d->itemIconSize.setHeight(length);
 
+        d->fileView->setIconSize(d->itemIconSize);
         return level;
     }
 
@@ -182,6 +182,7 @@ QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
             + 3 * 21   // 3行文字的高度
             + 2 * kIconModeTextPadding   // 文字两边的间距
             + kIconModeIconSpacing;   // icon的间距
+
     return QSize(height, height);
 }
 

@@ -46,6 +46,7 @@ class FileViewPrivate
 {
     friend class FileView;
     FileView *const q;
+
     QAtomicInteger<bool> allowedAdjustColumnSize = true;
     QHash<int, BaseItemDelegate *> delegates;
     StatusBar *statusBar = nullptr;
@@ -53,6 +54,9 @@ class FileViewPrivate
     FileSortFilterProxyModel *proxyModel = nullptr;
     QTimer *updateStatusBarTimer = nullptr;
     QUrl url;
+
+    FileView::ViewMode configViewMode = FileView::ViewMode::IconMode;
+    int configIconSizeLevel = 1;
 
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;

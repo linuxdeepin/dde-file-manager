@@ -48,6 +48,13 @@ public:
         kDoubleClicked
     };
 
+    enum class ViewMode : uint8_t {
+        IconMode = 0x01,
+        ListMode = 0x02,
+        ExtendMode = 0x04,
+        AllViewMode = IconMode | ListMode | ExtendMode
+    };
+
     explicit FileView(const QUrl &url, QWidget *parent = nullptr);
 
     QWidget *widget() const override;
@@ -58,8 +65,8 @@ public:
     QList<QUrl> selectedUrlList() const override;
     void refresh() override;
 
-    void setViewMode(QListView::ViewMode mode);
-    void setDelegate(QListView::ViewMode mode, BaseItemDelegate *view);
+    void setViewMode(ViewMode mode);
+    void setDelegate(ViewMode mode, BaseItemDelegate *view);
     FileViewModel *model() const;
     void setModel(QAbstractItemModel *model) override;
 
@@ -70,11 +77,11 @@ public:
 
     inline void setViewModeToList()
     {
-        setViewMode(ListMode);
+        setViewMode(ViewMode::ListMode);
     }
     inline void setViewModeToIcon()
     {
-        setViewMode(IconMode);
+        setViewMode(ViewMode::IconMode);
     }
 
 public slots:
@@ -108,6 +115,9 @@ private:
     void openIndexByClicked(const ClickedAction action, const QModelIndex &index);
     void openIndex(const QModelIndex &index);
     const FileViewItem *sourceItem(const QModelIndex &index) const;
+
+    QVariant fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue);
+    void setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value);
 };
 
 DPWORKSPACE_END_NAMESPACE

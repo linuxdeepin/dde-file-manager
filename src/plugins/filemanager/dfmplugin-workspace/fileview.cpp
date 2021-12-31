@@ -30,16 +30,19 @@
 #include "listitemdelegate.h"
 #include "statusbar.h"
 #include "utils/workspacehelper.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
+
 #include <QResizeEvent>
 #include <QScrollBar>
 #include <QTimer>
 
 DPWORKSPACE_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 FileView::FileView(const QUrl &url, QWidget *parent)
     : DListView(parent), d(new FileViewPrivate(this))
 {
-    setResizeMode(QListView::Adjust);
     setDragDropMode(QAbstractItemView::DragDrop);
     setDropIndicatorShown(false);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -63,41 +66,56 @@ QWidget *FileView::widget() const
     return const_cast<FileView *>(this);
 }
 
-void FileView::setViewMode(QListView::ViewMode mode)
+void FileView::setViewMode(ViewMode mode)
 {
-    QListView::setViewMode(mode);
-    setItemDelegate(d->delegates[mode]);
+    setItemDelegate(d->delegates[static_cast<int>(mode)]);
 
     switch (mode) {
-    case IconMode:
+    case ViewMode::IconMode:
+        setUniformItemSizes(false);
+        setResizeMode(Adjust);
+        setOrientation(QListView::LeftToRight, true);
+        setSpacing(GlobalPrivate::kIconViewSpacing);
+
         d->initIconModeView();
         break;
-    case ListMode:
+    case ViewMode::ListMode:
+        setUniformItemSizes(true);
+        setResizeMode(Fixed);
+        setOrientation(QListView::TopToBottom, false);
+        setSpacing(GlobalPrivate::kListViewSpacing);
+
         if (model())
             setMinimumWidth(model()->columnCount() * GlobalPrivate::kListViewMinimumWidth);
         d->initListModeView();
         break;
+    case ViewMode::ExtendMode:
+        break;
+    case ViewMode::AllViewMode:
+        break;
     }
 }
 
-void FileView::setDelegate(QListView::ViewMode mode, BaseItemDelegate *view)
+void FileView::setDelegate(ViewMode mode, BaseItemDelegate *view)
 {
     if (!view)
         return;
 
-    auto delegate = d->delegates[mode];
+    auto delegate = d->delegates[static_cast<int>(mode)];
     if (delegate) {
         if (delegate->parent())
             delegate->setParent(nullptr);
         delete delegate;
     }
 
-    d->delegates[mode] = view;
+    d->delegates[static_cast<int>(mode)] = view;
 }
 
 bool FileView::setRootUrl(const QUrl &url)
 {
     model()->setRootUrl(url);
+
+    loadViewState(url);
 
     delayUpdateStatusBar();
     setDefaultViewMode();
@@ -236,11 +254,12 @@ void FileView::delayUpdateStatusBar()
 void FileView::viewModeChanged(quint64 windowId, int viewMode)
 {
     auto thisWindId = WorkspaceHelper::instance()->windowId(this);
+    ViewMode mode = static_cast<ViewMode>(viewMode);
     if (thisWindId == windowId) {
         // TODO(yanghao): enum
-        if (viewMode == 1) {
+        if (mode == ViewMode::IconMode) {
             setViewModeToIcon();
-        } else if (viewMode == 2) {
+        } else if (mode == ViewMode::ListMode) {
             setViewModeToList();
         }
     }
@@ -272,8 +291,8 @@ void FileView::initializeModel()
 
 void FileView::initializeDelegate()
 {
-    setDelegate(QListView::ViewMode::IconMode, new IconItemDelegate(this));
-    setDelegate(QListView::ViewMode::ListMode, new ListItemDelegate(this));
+    setDelegate(ViewMode::IconMode, new IconItemDelegate(this));
+    setDelegate(ViewMode::ListMode, new ListItemDelegate(this));
 }
 
 void FileView::initializeStatusBar()
@@ -316,13 +335,17 @@ void FileView::updateStatusBar()
 
 void FileView::setDefaultViewMode()
 {
-    // TODO(liuyangming): set view mode with config
-    setViewMode(IconMode);
+    setViewMode(d->configViewMode);
 }
 
 void FileView::loadViewState(const QUrl &url)
 {
     // TODO:(yanghao)
+    QVariant defaultViewMode = Application::instance()->appAttribute(Application::kViewMode).toInt();
+    d->configViewMode = static_cast<ViewMode>(fileViewStateValue(url, "viewMode", defaultViewMode).toInt());
+
+    QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();
+    d->configIconSizeLevel = fileViewStateValue(url, "iconSizeLevel", defaultIconSize).toInt();
 }
 
 void FileView::openIndexByClicked(const ClickedAction action, const QModelIndex &index)
@@ -357,4 +380,18 @@ void FileView::openIndex(const QModelIndex &index)
 const FileViewItem *FileView::sourceItem(const QModelIndex &index) const
 {
     return model()->itemFromIndex(proxyModel()->mapToSource(index));
+}
+
+QVariant FileView::fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue)
+{
+    return Application::appObtuselySetting()->value("FileViewState", url).toMap().value(key, defalutValue);
+}
+
+void FileView::setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value)
+{
+    QVariantMap map = Application::appObtuselySetting()->value("FileViewState", url).toMap();
+
+    map[key] = value;
+
+    Application::appObtuselySetting()->setValue("FileViewState", url, map);
 }
