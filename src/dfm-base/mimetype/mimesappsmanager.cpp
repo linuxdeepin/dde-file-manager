@@ -23,7 +23,7 @@
 
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
-#include "dfm-base/base/dfmstandardpaths.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <QDir>
 #include <QSettings>
@@ -397,7 +397,7 @@ QStringList MimesAppsManager::getrecommendedAppsFromMimeWhiteList(const QUrl &ur
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     QString aliasMimeType = info->fileMimeType().name();
     QStringList recommendedApps;
-    QString mimeAssociationsFile = QString("%1/%2/%3").arg(DFMStandardPaths::location(DFMStandardPaths::kApplicationSharePath), "mimetypeassociations", "mimetypeassociations.json");
+    QString mimeAssociationsFile = QString("%1/%2/%3").arg(StandardPaths::location(StandardPaths::kApplicationSharePath), "mimetypeassociations", "mimetypeassociations.json");
     QFile file(mimeAssociationsFile);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "could not open file :" << mimeAssociationsFile << ", error:" << file.errorString();
@@ -440,7 +440,7 @@ QStringList MimesAppsManager::getApplicationsFolders()
 
 QString MimesAppsManager::getMimeAppsCacheFile()
 {
-    return QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::kCachePath), "MimeApps.json");
+    return QString("%1/%2").arg(StandardPaths::location(StandardPaths::kCachePath), "MimeApps.json");
 }
 
 QString MimesAppsManager::getMimeInfoCacheFilePath()
@@ -455,12 +455,12 @@ QString MimesAppsManager::getMimeInfoCacheFileRootPath()
 
 QString MimesAppsManager::getDesktopFilesCacheFile()
 {
-    return QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::kCachePath), "DesktopFiles.json");
+    return QString("%1/%2").arg(StandardPaths::location(StandardPaths::kCachePath), "DesktopFiles.json");
 }
 
 QString MimesAppsManager::getDesktopIconsCacheFile()
 {
-    return QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::kCachePath), "DesktopIcons.json");
+    return QString("%1/%2").arg(StandardPaths::location(StandardPaths::kCachePath), "DesktopIcons.json");
 }
 
 QStringList MimesAppsManager::getDesktopFiles()

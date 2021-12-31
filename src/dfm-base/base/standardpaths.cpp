@@ -75,6 +75,20 @@ QString StandardPaths::location(StandardPaths::StandardLocation type)
         }
         return path;
     }
+    case kExtensionsPath: {
+        QString path = APPSHAREDIR "/extensions";
+        if (!QDir(path).exists()) {
+            path = qApp->applicationDirPath() + "/extensions";
+        }
+        return path;
+    }
+    case kExtensionsAppEntryPath: {
+        QString path = APPSHAREDIR "/extensions/appEntry";
+        if (!QDir(path).exists()) {
+            path = qApp->applicationDirPath() + "/extensions/appEntry";
+        }
+        return path;
+    }
 #endif
 #ifdef PLUGINDIR
     case PluginsPath: {
@@ -89,8 +103,10 @@ QString StandardPaths::location(StandardPaths::StandardLocation type)
     case ApplicationConfigPath:
         return getConfigPath();
 #endif
-    case kThumbnailPath:
-        return QDir::homePath() + "/.cache/thumbnails";
+    case kThumbnailPath: {
+        const QString &cachePath = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).first();
+        return cachePath + "/thumbnails";
+    }
     case kThumbnailFailPath:
         return location(kThumbnailPath) + "/fail";
     case kThumbnailLargePath:
@@ -137,6 +153,8 @@ QString StandardPaths::location(StandardPaths::StandardLocation type)
 #endif
     case kRoot:
         return "/";
+    case kVault:
+        return "dfmvault:///";   // 根据需求确定使用哪种类型
     default:
         return QStringLiteral("bug://dde-file-manager-lib/interface/dfmstandardpaths.cpp#") + QT_STRINGIFY(type);
     }
@@ -227,12 +245,12 @@ QString StandardPaths::displayName(StandardPaths::StandardLocation type)
  *
  * \return 快捷目录的路径
  */
-QString StandardPaths::fromStandardUrl(const QUrl &url)
+QString StandardPaths::fromStandardUrl(const QUrl &standardUrl)
 {
-    if (url.scheme() != "standard")
+    if (standardUrl.scheme() != "standard")
         return QString();
 
-    static QMap<QString, QString> path_convert {
+    static const QMap<QString, QString> pathConverts {
         { "home", location(kHomePath) },
         { "desktop", location(kDesktopPath) },
         { "videos", location(kVideosPath) },
@@ -242,17 +260,17 @@ QString StandardPaths::fromStandardUrl(const QUrl &url)
         { "downloads", location(kDownloadsPath) }
     };
 
-    const QString &path = path_convert.value(url.host());
+    const QString &path = pathConverts.value(standardUrl.host());
 
     if (path.isEmpty())
         return path;
 
-    const QString &url_path = url.path();
+    const QString &urlPath = standardUrl.path();
 
-    if (url_path.isEmpty() || url_path == "/")
+    if (urlPath.isEmpty() || urlPath == "/")
         return path;
 
-    return path + url.path();
+    return path + standardUrl.path();
 }
 /*!
  * \brief StandardPaths::toStandardUrl 获取基本路径的QUrl
@@ -263,7 +281,7 @@ QString StandardPaths::fromStandardUrl(const QUrl &url)
  */
 QUrl StandardPaths::toStandardUrl(const QString &localPath)
 {
-    static QList<QPair<QString, QString>> path_convert {
+    static const QList<QPair<QString, QString>> pathConverts {
         { location(kDesktopPath), "desktop" },
         { location(kVideosPath), "videos" },
         { location(kMusicPath), "music" },
@@ -273,23 +291,25 @@ QUrl StandardPaths::toStandardUrl(const QString &localPath)
         { location(kHomePath), "home" }
     };
 
-    for (auto begin : path_convert) {
-        if (localPath.startsWith(begin.first)) {
-            const QString &path = localPath.mid(begin.first.size());
+    auto it = std::find_if(pathConverts.begin(), pathConverts.end(), [localPath](const QPair<QString, QString> &pathConvert) {
+        const QString &pathFirst = pathConvert.first;
+        const QString &path = localPath.mid(pathFirst.size());
+        return localPath.startsWith(pathFirst) && (path.isEmpty() || path.startsWith("/"));
+    });
 
-            if (!path.isEmpty() && !path.startsWith("/"))
-                continue;
+    if (it != pathConverts.end()) {
+        const QString &valueFirst = (*it).first;
+        const QString &valueSecond = (*it).second;
+        const QString &path = localPath.mid(valueFirst.size());
 
-            QUrl url;
+        QUrl url;
+        url.setScheme("standard");
+        url.setHost(valueSecond);
 
-            url.setScheme("standard");
-            url.setHost(begin.second);
+        if (!path.isEmpty() && path != "/")
+            url.setPath(path);
 
-            if (!path.isEmpty() && path != "/")
-                url.setPath(path);
-
-            return url;
-        }
+        return url;
     }
 
     return QUrl();
@@ -302,10 +322,14 @@ QUrl StandardPaths::toStandardUrl(const QString &localPath)
 QString StandardPaths::getCachePath()
 {
     QString projectName = qApp->applicationName();
-    QDir::home().mkpath(".cache");
-    QDir::home().mkpath(QString("%1/deepin/%2/").arg(".cache", projectName));
-    QString defaultPath = QString("%1/%2/deepin/%3").arg(QDir::homePath(), ".cache", projectName);
-    return defaultPath;
+
+    const QString &cachePath = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).first();
+    QDir::home().mkpath(cachePath);
+
+    const QString &projectPath = QString("%1/%2/%3/").arg(cachePath, qApp->organizationName(), projectName);
+    QDir::home().mkpath(projectPath);
+
+    return projectPath;
 }
 
 /*!

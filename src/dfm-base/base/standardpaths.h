@@ -42,6 +42,8 @@ public:
         kTemplatesPath,   // 临时文件所在路径
         kMimeTypePath,   // mimetype文件的路径
         kPluginsPath,   // 插件路径
+        kExtensionsPath,
+        kExtensionsAppEntryPath,
         kThumbnailPath,   // 缩略图路径
         kThumbnailFailPath,   // 缩略图s失败路径
         kThumbnailLargePath,   // 缩略图大图片路径

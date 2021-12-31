@@ -21,7 +21,7 @@
 
 #include "mimetypedisplaymanager.h"
 
-#include "dfm-base/base/dfmstandardpaths.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <QFile>
 #include <QTextStream>
@@ -145,13 +145,13 @@ QStringList MimeTypeDisplayManager::readlines(const QString &path)
 
 void MimeTypeDisplayManager::loadSupportMimeTypes()
 {
-    QString textPath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::kMimeTypePath), "text.mimetype");
-    QString archivePath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::kMimeTypePath), "archive.mimetype");
-    QString videoPath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::kMimeTypePath), "video.mimetype");
-    QString audioPath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::kMimeTypePath), "audio.mimetype");
-    QString imagePath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::kMimeTypePath), "image.mimetype");
-    QString executablePath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::kMimeTypePath), "executable.mimetype");
-    QString backupPath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::kMimeTypePath), "backup.mimetype");
+    QString textPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "text.mimetype");
+    QString archivePath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "archive.mimetype");
+    QString videoPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "video.mimetype");
+    QString audioPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "audio.mimetype");
+    QString imagePath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "image.mimetype");
+    QString executablePath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "executable.mimetype");
+    QString backupPath = QString("%1/%2").arg(StandardPaths::location(StandardPaths::kMimeTypePath), "backup.mimetype");
     TextMimeTypes = readlines(textPath);
     ArchiveMimeTypes = readlines(archivePath);
     VideoMimeTypes = readlines(videoPath);
