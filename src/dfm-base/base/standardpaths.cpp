@@ -162,7 +162,7 @@ QString StandardPaths::location(StandardPaths::StandardLocation type)
 
 QString StandardPaths::location(const QString &dirName)
 {
-    static QMap<QString, QString> path_convert {
+    static QMap<QString, QString> pathConvert {
         { "home", location(kHomePath) },
         { "desktop", location(kDesktopPath) },
         { "videos", location(kVideosPath) },
@@ -172,7 +172,7 @@ QString StandardPaths::location(const QString &dirName)
         { "downloads", location(kDownloadsPath) }
     };
 
-    return path_convert.value(dirName, "");
+    return pathConvert.value(dirName, "");
 }
 /*!
  * \brief StandardPaths::iconName 获取不同StandardLocation类型的ICON

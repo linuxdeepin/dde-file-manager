@@ -21,13 +21,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "sidebarhelper.h"
+#include "views/sidebaritem.h"
 
 #include "services/filemanager/windows/windowsservice.h"
+
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/utils/systempathutil.h"
 
 #include <dfm-framework/framework.h>
 
 DPSIDEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 QMap<quint64, SideBarWidget *> SideBarHelper::kSideBarMap {};
 
@@ -58,6 +63,23 @@ quint64 SideBarHelper::windowId(QWidget *sender)
     auto &ctx = dpfInstance.serviceContext();
     auto windowService = ctx.service<WindowsService>(WindowsService::name());
     return windowService->findWindowId(sender);
+}
+
+SideBarItem *SideBarHelper::createItem(const QString &pathKey, const QString &group)
+{
+    QString iconName { SystemPathUtil::instance()->systemPathIconName(pathKey) };
+    QString text { SystemPathUtil::instance()->systemPathDisplayName(pathKey) };
+    QString path { SystemPathUtil::instance()->systemPath(pathKey) };
+    if (!iconName.contains("-symbolic"))
+        iconName.append("-symbolic");
+
+    SideBarItem *item = new SideBarItem(QIcon::fromTheme(iconName),
+                                        text,
+                                        group,
+                                        UrlRoute::pathToReal(path));
+    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled);
+
+    return item;
 }
 
 QMutex &SideBarHelper::mutex()

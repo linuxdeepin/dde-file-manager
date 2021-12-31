@@ -40,57 +40,6 @@ namespace GlobalPrivate {
 static WindowsService *windowService { nullptr };
 }   // namespace GlobalPrivate
 
-void SideBar::initSideBar(SideBarWidget *sidebar)
-{
-    Q_ASSERT_X(sidebar, "SideBar", "SideBar is NULL");
-
-    QUrl &&homeUrl = UrlRoute::pathToReal(QDir::home().path());
-    QUrl &&desktopUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::kDesktopPath));
-    QUrl &&videosUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::kVideosPath));
-    QUrl &&musicUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::kMusicPath));
-    QUrl &&picturesUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::kPicturesPath));
-    QUrl &&documentsUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::kDocumentsPath));
-    QUrl &&downloadsUrl = UrlRoute::pathToReal(StandardPaths::location(StandardPaths::kDownloadsPath));
-
-    // TODO(zhangs): follow icons is error, fix it
-    QIcon &&homeIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kHomePath));
-    QIcon &&desktopIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDesktopPath));
-    QIcon &&videosIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kVideosPath));
-    QIcon &&musicIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kMusicPath));
-    QIcon &&picturesIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kPicturesPath));
-    QIcon &&documentsIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDocumentsPath));
-    QIcon &&downloadsIcon = QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDownloadsPath));
-
-    auto homeItem = new SideBarItem(homeIcon, QObject::tr("Home"), "core", homeUrl);
-    homeItem->setFlags(homeItem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
-
-    auto desktopitem = new SideBarItem(desktopIcon, QObject::tr("Desktop"), "core", desktopUrl);
-    desktopitem->setFlags(desktopitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
-
-    auto videoitem = new SideBarItem(videosIcon, QObject::tr("Video"), "core", videosUrl);
-    videoitem->setFlags(videoitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
-
-    auto musicitem = new SideBarItem(musicIcon, QObject::tr("Music"), "core", musicUrl);
-    musicitem->setFlags(musicitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
-
-    auto picturesitem = new SideBarItem(picturesIcon, QObject::tr("Pictures"), "core", picturesUrl);
-    picturesitem->setFlags(picturesitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
-
-    auto documentsitem = new SideBarItem(documentsIcon, QObject::tr("Documents"), "core", documentsUrl);
-    documentsitem->setFlags(documentsitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
-
-    auto downloadsitem = new SideBarItem(downloadsIcon, QObject::tr("Downloads"), "core", downloadsUrl);
-    downloadsitem->setFlags(downloadsitem->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled));
-
-    sidebar->addItem(homeItem);
-    sidebar->addItem(desktopitem);
-    sidebar->addItem(videoitem);
-    sidebar->addItem(musicitem);
-    sidebar->addItem(picturesitem);
-    sidebar->addItem(documentsitem);
-    sidebar->addItem(downloadsitem);
-}
-
 void SideBar::initialize()
 {
     auto &ctx = dpfInstance.serviceContext();
@@ -115,7 +64,6 @@ void SideBar::onWindowOpened(quint64 windId)
     auto window = GlobalPrivate::windowService->findWindowById(windId);
     Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
     auto sidebar = new SideBarWidget;
-    initSideBar(sidebar);
     window->installSideBar(sidebar);
     SideBarHelper::addSideBar(windId, sidebar);
 }

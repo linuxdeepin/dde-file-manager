@@ -21,11 +21,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "sidebarwidget.h"
-#include "views/sidebarview.h"
 #include "models/sidebarmodel.h"
+#include "views/sidebarview.h"
 #include "views/sidebaritem.h"
 #include "views/sidebaritemdelegate.h"
 #include "events/sidebareventcaller.h"
+#include "utils/sidebarhelper.h"
+
+#include "dfm-base/utils/systempathutil.h"
 
 #include <QApplication>
 #include <QVBoxLayout>
@@ -40,6 +43,7 @@ SideBarWidget::SideBarWidget(QFrame *parent)
       sidebarModel(new SideBarModel(this))
 {
     initializeUi();
+    initDefaultModel();
     initConnect();
 }
 
@@ -131,6 +135,18 @@ void SideBarWidget::initializeUi()
 
     setMaximumWidth(200);
     setFocusProxy(sidebarView);
+}
+
+void SideBarWidget::initDefaultModel()
+{
+    // TODO(zhangs): 1. Separator line; 2. define group name
+    addItem(SideBarHelper::createItem("Home", "core"));
+    addItem(SideBarHelper::createItem("Desktop", "core"));
+    addItem(SideBarHelper::createItem("Videos", "core"));
+    addItem(SideBarHelper::createItem("Music", "core"));
+    addItem(SideBarHelper::createItem("Pictures", "core"));
+    addItem(SideBarHelper::createItem("Documents", "core"));
+    addItem(SideBarHelper::createItem("Downloads", "core"));
 }
 
 void SideBarWidget::initConnect()

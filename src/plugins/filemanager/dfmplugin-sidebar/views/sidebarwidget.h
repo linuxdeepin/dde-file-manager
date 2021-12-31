@@ -58,6 +58,7 @@ private Q_SLOTS:
 
 private:
     void initializeUi();
+    void initDefaultModel();
     void initConnect();
 
 private:

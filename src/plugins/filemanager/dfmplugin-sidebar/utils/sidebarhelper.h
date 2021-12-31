@@ -32,6 +32,7 @@
 DPSIDEBAR_BEGIN_NAMESPACE
 
 class SideBarWidget;
+class SideBarItem;
 class SideBarHelper
 {
 public:
@@ -39,6 +40,7 @@ public:
     static void addSideBar(quint64 windowId, SideBarWidget *titleBar);
     static void removeSideBar(quint64 windowId);
     static quint64 windowId(QWidget *sender);
+    static SideBarItem *createItem(const QString &pathKey, const QString &group);
 
 private:
     static QMutex &mutex();

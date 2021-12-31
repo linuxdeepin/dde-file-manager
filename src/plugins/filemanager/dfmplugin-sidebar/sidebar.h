@@ -43,9 +43,6 @@ public:
 private slots:
     void onWindowOpened(quint64 windId);
     void onWindowClosed(quint64 winId);
-
-private:
-    void initSideBar(SideBarWidget *sidebar);
 };
 
 DPSIDEBAR_END_NAMESPACE
