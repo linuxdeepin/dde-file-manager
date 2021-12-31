@@ -24,7 +24,7 @@
 #include "file/entry/entryfileinfo.h"
 #include "dbusservice/global_server_defines.h"
 #include "utils/fileutils.h"
-#include "utils/universalutils.h"
+#include "utils/devicemanager.h"
 
 #include "base/application/application.h"
 #include "base/application/settings.h"
@@ -84,6 +84,9 @@ QString BlockEntryFileEntity::displayName() const
         }
     }
 
+    if (datas.value(DeviceProperty::kOpticalDrive).toBool())
+        return getNameOfOptical();
+
     QString label = datas.value(DeviceProperty::kIdLabel).toString();
     if (label.isEmpty()) {
         long size = datas.value(DeviceProperty::kSizeTotal).toLongLong();
@@ -98,7 +101,7 @@ QIcon BlockEntryFileEntity::icon() const
     if (isRootDisk)
         return QIcon::fromTheme(IconName::kRootBlock);
 
-    bool isOptical = datas.value(DeviceProperty::kOptical).toBool();
+    bool isOptical = datas.value(DeviceProperty::kOptical).toBool() || datas.value(DeviceProperty::kOpticalDrive).toBool();
     bool isRemovable = datas.value(DeviceProperty::kRemovable).toBool();
     if (isOptical)
         return isRemovable ? QIcon::fromTheme(IconName::kOpticalBlockExternal) : QIcon::fromTheme(IconName::kOpticalBlock);
@@ -187,12 +190,12 @@ EntryFileInfo::EntryOrder BlockEntryFileEntity::order() const
     if (datas.value(DeviceProperty::kHintSystem).toBool()) {
         if (datas.value(DeviceProperty::kMountpoint).toString() == "/")
             return EntryFileInfo::EntryOrder::kOrderSysDiskRoot;
-        if (0)   // if is Data TODO(xust)
+        if (datas.value(DeviceProperty::kIdLabel).toString().startsWith("_dde_"))
             return EntryFileInfo::EntryOrder::kOrderSysDiskData;
         return EntryFileInfo::EntryOrder::kOrderSysDisks;
     }
 
-    if (datas.value(DeviceProperty::kOptical).toBool()) {
+    if (datas.value(DeviceProperty::kOptical).toBool() || datas.value(DeviceProperty::kOpticalDrive).toBool()) {
         return EntryFileInfo::EntryOrder::kOrderOptical;
     }
 
@@ -222,26 +225,11 @@ void BlockEntryFileEntity::refresh()
     auto id = QString(DeviceId::kBlockDeviceIdPrefix)
             + entryUrl.path().remove("." + QString(SuffixInfo::kBlock));
 
-    auto reply = UniversalUtils::deviceManager()->QueryBlockDeviceInfo(id, true);
-    reply.waitForFinished();
-    if (reply.isValid()) {
-        datas = reply.value();
-        auto clearBlkId = datas.value(DeviceProperty::kCleartextDevice).toString();
-
-        if (datas.value(DeviceProperty::kIsEncrypted).toBool()
-            && clearBlkId.length() > 1) {
-            // query the real block's info
-            auto clearBlkReply = UniversalUtils::deviceManager()->QueryBlockDeviceInfo(clearBlkId, true);
-            clearBlkReply.waitForFinished();
-            if (clearBlkReply.isValid()) {
-                auto clearDatas = clearBlkReply.value();
-                datas.insert(AdditionalProperty::kClearBlockProperty, clearDatas);
-            } else {
-                qDebug() << "cannot get detail info of " << clearBlkId;
-            }
-        }
-    } else {
-        qDebug() << "cannot get info of " << id;
+    datas = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id, true);
+    auto clearBlkId = datas.value(DeviceProperty::kCleartextDevice).toString();
+    if (datas.value(DeviceProperty::kIsEncrypted).toBool() && clearBlkId.length() > 1) {
+        auto clearBlkData = DeviceManagerInstance.invokeQueryBlockDeviceInfo(clearBlkId, true);
+        datas.insert(AdditionalProperty::kClearBlockProperty, clearBlkData);
     }
 }
 
@@ -282,21 +270,78 @@ QString BlockEntryFileEntity::getNameOrAlias() const
     // TODO(xust)
     const auto &lst = Application::genericSetting()->value(AdditionalProperty::kAliasGroupName, AdditionalProperty::kAliasItemName).toList();
 
-    QString name;
     for (const QVariant &v : lst) {
         const QVariantMap &map = v.toMap();
         if (map.value(AdditionalProperty::kAliasItemUUID).toString() == datas.value(DeviceProperty::kUUID).toString()) {
-            name = map.value(AdditionalProperty::kAliasItemAlias).toString();
-            break;
+            return map.value(AdditionalProperty::kAliasItemAlias).toString();
         }
     }
 
-    if (!name.isEmpty())
-        return name;
-
     // get system disk name if there is no alias
+    if (datas.value(DeviceProperty::kMountpoint).toString() == "/")
+        return tr("System Disk");
+    if (datas.value(DeviceProperty::kIdLabel).toString() == "_dde_")
+        return tr("Data Disk");
+    return datas.value(DeviceProperty::kIdLabel).toString();
+}
 
-    return name;
+QString BlockEntryFileEntity::getNameOfOptical() const
+{
+    QString label = datas.value(DeviceProperty::kIdLabel).toString();
+    if (!label.isEmpty())
+        return label;
+
+    static const std::initializer_list<std::pair<QString, QString>> opticalMedias {
+        { "optical", "Optical" },
+        { "optical_cd", "CD-ROM" },
+        { "optical_cd_r", "CD-R" },
+        { "optical_cd_rw", "CD-RW" },
+        { "optical_dvd", "DVD-ROM" },
+        { "optical_dvd_r", "DVD-R" },
+        { "optical_dvd_rw", "DVD-RW" },
+        { "optical_dvd_ram", "DVD-RAM" },
+        { "optical_dvd_plus_r", "DVD+R" },
+        { "optical_dvd_plus_rw", "DVD+RW" },
+        { "optical_dvd_plus_r_dl", "DVD+R/DL" },
+        { "optical_dvd_plus_rw_dl", "DVD+RW/DL" },
+        { "optical_bd", "BD-ROM" },
+        { "optical_bd_r", "BD-R" },
+        { "optical_bd_re", "BD-RE" },
+        { "optical_hddvd", "HD DVD-ROM" },
+        { "optical_hddvd_r", "HD DVD-R" },
+        { "optical_hddvd_rw", "HD DVD-RW" },
+        { "optical_mo", "MO" }
+    };
+    static const QMap<QString, QString> discMapper(opticalMedias);
+    static const QVector<std::pair<QString, QString>> discVector(opticalMedias);
+
+    if (datas.value(DeviceProperty::kOptical).toBool()) {   // medium loaded
+        if (datas.value(DeviceProperty::kOpticalBlank).toBool()) {   // show empty disc name
+            QString mediaType = datas.value(DeviceProperty::kMedia).toString();
+            return tr("Blank %1 Disc").arg(discMapper.value(mediaType, tr("Unknown")));
+        } else {
+            return getIdLabel();
+        }
+    } else {   // show drive name, medium is not loaded
+        auto medias = datas.value(DeviceProperty::kMediaCompatibility).toStringList();
+        QString maxCompatibility;
+        for (auto iter = discVector.crbegin(); iter != discVector.crend(); ++iter) {
+            if (medias.contains(iter->first))
+                return tr("%1 Drive").arg(iter->second);
+        }
+    }
+
+    return getIdLabel();
+}
+
+QString BlockEntryFileEntity::getIdLabel() const
+{
+    QString label = datas.value(DeviceProperty::kIdLabel).toString();
+    if (label.isEmpty()) {
+        long size = datas.value(DeviceProperty::kSizeTotal).toLongLong();
+        return tr("%1 Volume").arg(FileUtils::formatSize(size));
+    }
+    return label;
 }
 
 QVariant BlockEntryFileEntity::getProperty(const char *const key) const

@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef PLUGINSIDECAR_H
-#define PLUGINSIDECAR_H
+#ifndef DEVICEMANAGER_H
+#define DEVICEMANAGER_H
 
 #include <dbus_interface/devicemanagerdbus_interface.h>
 
@@ -29,23 +29,25 @@
 #include <QPointer>
 #include <QDBusServiceWatcher>
 
-class PluginSidecar : public QObject
+class DeviceManager : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(PluginSidecar)
+    Q_DISABLE_COPY(DeviceManager)
 public:
-    static PluginSidecar &instance();
+    static DeviceManager &instance();
     QPointer<DeviceManagerInterface> getDeviceInterface();
     bool connectToServer();
     void initConnection();
+
+    // TODO(xust) if launch in root mode, invoke service directly.
 
     void invokeDetachAllMountedDevices();
     void invokeDetachAllMountedDevicesForced();
     bool invokeIsMonotorWorking();
     QStringList invokeBlockDevicesIdList(const QVariantMap &opt);
     QStringList invokeProtolcolDevicesIdList(const QVariantMap &opt);
-    QVariantMap invokeQueryBlockDeviceInfo(const QString &id);
-    QVariantMap invokeQueryProtocolDeviceInfo(const QString &id);
+    QVariantMap invokeQueryBlockDeviceInfo(const QString &id, bool detail = false);
+    QVariantMap invokeQueryProtocolDeviceInfo(const QString &id, bool detail = false);
     void invokeDetachBlockDevice(const QString &id);
     void invokeDetachBlockDeviceForced(const QString &id);
     void invokeUnmountBlockDeviceForced(const QString &id);
@@ -57,14 +59,14 @@ signals:
     void askStopScanning(const QString &method, const QString &id);
 
 private:
-    explicit PluginSidecar(QObject *parent = nullptr);
-    ~PluginSidecar();
+    explicit DeviceManager(QObject *parent = nullptr);
+    ~DeviceManager();
 
 private:
     QScopedPointer<DeviceManagerInterface> deviceInterface { nullptr };
     QScopedPointer<QDBusServiceWatcher> watcher { nullptr };
 };
 
-#define SidecarInstance PluginSidecar::instance()
+#define DeviceManagerInstance DeviceManager::instance()
 
-#endif   // PLUGINSIDECAR_H
+#endif   // DEVICEMANAGER_H

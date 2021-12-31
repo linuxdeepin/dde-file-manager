@@ -40,7 +40,6 @@ public:
     static void notifyMessage(const QString &title, const QString &msg);
     static QString userLoginState();
     static void blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay);
-    static DeviceManagerInterface *deviceManager();
 
     static qint64 computerMemory();
 

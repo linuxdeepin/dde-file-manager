@@ -21,7 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dattachedprotocoldevice.h"
-#include "pluginsidecar.h"
+#include "devicemanager.h"
 
 #include <global_server_defines.h>
 #include <QVariantMap>
@@ -52,7 +52,7 @@ bool DAttachedProtocolDevice::isValid()
 
 void DAttachedProtocolDevice::detach()
 {
-    SidecarInstance.instance().invokeDetachProtocolDevice(data.value(DeviceProperty::kId).toString());
+    DeviceManagerInstance.instance().invokeDetachProtocolDevice(data.value(DeviceProperty::kId).toString());
 }
 
 bool DAttachedProtocolDevice::detachable()
@@ -101,5 +101,5 @@ QUrl DAttachedProtocolDevice::accessPointUrl()
 
 void DAttachedProtocolDevice::query()
 {
-    data = SidecarInstance.invokeQueryProtocolDeviceInfo(deviceId);
+    data = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(deviceId);
 }

@@ -53,6 +53,8 @@ public:
 
 private:
     QString getNameOrAlias() const;
+    QString getNameOfOptical() const;
+    QString getIdLabel() const;
     QVariant getProperty(const char *const key) const;
     bool showSizeAndProgress() const;
 

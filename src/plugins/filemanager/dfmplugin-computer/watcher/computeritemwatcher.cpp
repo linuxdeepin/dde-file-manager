@@ -23,7 +23,7 @@
 #include "computeritemwatcher.h"
 #include "dbusservice/dbus_interface/devicemanagerdbus_interface.h"
 #include "dbusservice/global_server_defines.h"
-#include "utils/universalutils.h"
+#include "utils/devicemanager.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/file/entry/entryfileinfo.h>
@@ -82,7 +82,9 @@ bool ComputerItemWatcher::typeCompare(const ComputerItemData &a, const ComputerI
 
 void ComputerItemWatcher::initConn()
 {
-    connect(UniversalUtils::deviceManager(), &DeviceManagerInterface::BlockDeviceAdded, this, [this](const QString &id) {
+    DeviceManagerInstance.connectToServer();
+
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceAdded, this, [this](const QString &id) {
         auto &&devUrl = makeBlockDevUrl(id);
         DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
         if (!info->exists()) return;
@@ -93,7 +95,7 @@ void ComputerItemWatcher::initConn()
         data.info = info;
         Q_EMIT this->itemAdded(data);
     });
-    connect(UniversalUtils::deviceManager(), &DeviceManagerInterface::BlockDeviceRemoved, this, [this](const QString &id) {
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceRemoved, this, [this](const QString &id) {
         auto &&devUrl = makeBlockDevUrl(id);
         Q_EMIT this->itemRemoved(devUrl);
     });
@@ -102,25 +104,21 @@ void ComputerItemWatcher::initConn()
         auto &&devUrl = makeBlockDevUrl(id);
         Q_EMIT this->itemUpdated(devUrl);
     };
-    connect(UniversalUtils::deviceManager(), &DeviceManagerInterface::BlockDeviceMounted, this, [updateItem](const QString &id) {
-        auto &&reply = UniversalUtils::deviceManager()->QueryBlockDeviceInfo(id, false);
-        reply.waitForFinished();
-        if (reply.isValid()) {
-            auto datas = reply.value();
-            auto shellDevId = datas.value(GlobalServerDefines::DeviceProperty::kCryptoBackingDevice).toString();
-            if (shellDevId.length() > 1) {
-                updateItem(shellDevId);
-                return;
-            }
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, [updateItem](const QString &id) {
+        auto datas = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+        auto shellDevId = datas.value(GlobalServerDefines::DeviceProperty::kCryptoBackingDevice).toString();
+        if (shellDevId.length() > 1) {
+            updateItem(shellDevId);
+            return;
         }
         updateItem(id);
     });
-    connect(UniversalUtils::deviceManager(), &DeviceManagerInterface::BlockDeviceUnmounted, this, updateItem);
-    connect(UniversalUtils::deviceManager(), &DeviceManagerInterface::BlockDeviceLocked, this, updateItem);
-    connect(UniversalUtils::deviceManager(), &DeviceManagerInterface::BlockDeviceUnlocked, this, updateItem);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnmounted, this, updateItem);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceLocked, this, updateItem);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnlocked, this, updateItem);
 
     // TODO(xust): protocolDeviceAdded
-    connect(UniversalUtils::deviceManager(), &DeviceManagerInterface::ProtocolDeviceMounted, this, [this](const QString &id) {
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, [this](const QString &id) {
         auto &&devUrl = makeProtocolDevUrl(id);
         DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
         if (!info->exists()) return;
@@ -131,20 +129,16 @@ void ComputerItemWatcher::initConn()
         data.info = info;
         Q_EMIT this->itemAdded(data);
     });
-    connect(UniversalUtils::deviceManager(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, [this](const QString &id) {
-        auto &&reply = UniversalUtils::deviceManager()->QueryProtocolDeviceInfo(id, false);
-        reply.waitForFinished();
-        if (reply.isValid()) {
-            auto datas = reply.value();
-            auto &&devUrl = makeProtocolDevUrl(id);
-            if (datas.value(GlobalServerDefines::DeviceProperty::kId).toString().isEmpty())   // device have been removed
-                Q_EMIT this->itemRemoved(devUrl);
-            else
-                Q_EMIT this->itemUpdated(devUrl);
-        }
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, [this](const QString &id) {
+        auto datas = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id);
+        auto &&devUrl = makeProtocolDevUrl(id);
+        if (datas.value(GlobalServerDefines::DeviceProperty::kId).toString().isEmpty())   // device have been removed
+            Q_EMIT this->itemRemoved(devUrl);
+        else
+            Q_EMIT this->itemUpdated(devUrl);
     });
 
-    connect(UniversalUtils::deviceManager(), &DeviceManagerInterface::SizeUsedChanged, this, [this](const QString &id) {
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, [this](const QString &id) {
         QUrl devUrl;
         if (id.startsWith(DeviceId::kBlockDeviceIdPrefix))
             devUrl = makeBlockDevUrl(id);
@@ -184,9 +178,7 @@ ComputerDataList ComputerItemWatcher::getUserDirItems()
 ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
 {
     ComputerDataList ret;
-    auto &&reply = UniversalUtils::deviceManager()->GetBlockDevicesIdList({});
-    reply.waitForFinished();
-    auto devs = reply.value();
+    auto devs = DeviceManagerInstance.invokeBlockDevicesIdList({});
 
     for (const auto &dev : devs) {
         auto devUrl = makeBlockDevUrl(dev);
@@ -209,9 +201,7 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
 ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
 {
     ComputerDataList ret;
-    auto &&reply = UniversalUtils::deviceManager()->GetProtocolDevicesIdList();
-    reply.waitForFinished();
-    auto devs = reply.value();
+    auto devs = DeviceManagerInstance.invokeProtolcolDevicesIdList({});
 
     for (const auto &dev : devs) {
         auto devUrl = makeProtocolDevUrl(dev);

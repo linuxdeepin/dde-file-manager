@@ -21,7 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dattachedblockdevice.h"
-#include "pluginsidecar.h"
+#include "devicemanager.h"
 #include "sizeformathelper.h"
 
 #include <global_server_defines.h>
@@ -80,7 +80,7 @@ bool DAttachedBlockDevice::isValid()
 
 void DAttachedBlockDevice::detach()
 {
-    SidecarInstance.instance().invokeDetachBlockDevice(qvariant_cast<QString>(data.value(DeviceProperty::kId)));
+    DeviceManagerInstance.instance().invokeDetachBlockDevice(qvariant_cast<QString>(data.value(DeviceProperty::kId)));
 }
 
 bool DAttachedBlockDevice::detachable()
@@ -176,12 +176,12 @@ QUrl DAttachedBlockDevice::accessPointUrl()
 
 void DAttachedBlockDevice::query()
 {
-    data = SidecarInstance.invokeQueryBlockDeviceInfo(deviceId);
+    data = DeviceManagerInstance.invokeQueryBlockDeviceInfo(deviceId);
 }
 
 void DAttachedBlockDevice::initializeConnect()
 {
-    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, &DAttachedBlockDevice::onSizeChanged);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, &DAttachedBlockDevice::onSizeChanged);
 }
 
 void DAttachedBlockDevice::onSizeChanged(const QString &id, qint64 total, qint64 free)

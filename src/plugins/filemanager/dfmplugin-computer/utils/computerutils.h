@@ -41,7 +41,7 @@ public:
 
     inline static QIcon icon()
     {
-        return QIcon::fromTheme("computer");
+        return QIcon::fromTheme("computer-symbolic");
     }
 
     inline static QUrl rootUrl()

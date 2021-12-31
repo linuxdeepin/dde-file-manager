@@ -14,6 +14,9 @@ set(DBUS_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/../../dfm-base/dbusservice)
 set(DBUS_INTERFACES_DIR  ${DBUS_DIR}/dbus_interface)
 include_directories(${DBUS_DIR})
 
+set(BASE_UTIL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../dfm-base/utils)
+include_directories(${BASE_UTIL_DIR})
+
 set(MOUNT_PLUGIN_SRC
     disk-mount.json
     diskmountplugin.cpp
@@ -24,7 +27,7 @@ set(MOUNT_PLUGIN_SRC
     dattachedblockdevice.cpp
     dattachedprotocoldevice.cpp
     dattacheddevice.cpp
-    pluginsidecar.cpp
+    ${BASE_UTIL_DIR}/devicemanager.cpp
     )
 
 set(MOUNT_PLUGIN_HEADER
@@ -37,7 +40,7 @@ set(MOUNT_PLUGIN_HEADER
     dattachedprotocoldevice.h
     dattacheddevice.h
     sizeformathelper.h
-    pluginsidecar.h
+    ${BASE_UTIL_DIR}/devicemanager.h
     )
 
 set(DBUS_INTERFACES_SRC

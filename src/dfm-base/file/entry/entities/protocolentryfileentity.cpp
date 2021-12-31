@@ -23,8 +23,8 @@
 #include "protocolentryfileentity.h"
 #include "file/entry/entryfileinfo.h"
 #include "dbusservice/global_server_defines.h"
-#include "utils/universalutils.h"
 #include "base/urlroute.h"
+#include "utils/devicemanager.h"
 
 DFMBASE_USE_NAMESPACE
 
@@ -136,12 +136,7 @@ void ProtocolEntryFileEntity::refresh()
     auto encodecId = entryUrl.path().remove("." + QString(SuffixInfo::kProtocol)).toUtf8();
     auto id = QString(QByteArray::fromBase64(encodecId));
 
-    auto reply = UniversalUtils::deviceManager()->QueryProtocolDeviceInfo(id, false);
-    reply.waitForFinished();
-    if (reply.isValid())
-        datas = reply.value();
-    else
-        qDebug() << "cannot get info of " << id;
+    datas = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id);
 }
 
 QUrl ProtocolEntryFileEntity::targetUrl() const

@@ -24,7 +24,7 @@
 #include "dattachedblockdevice.h"
 #include "dattachedprotocoldevice.h"
 #include "diskcontrolitem.h"
-#include "pluginsidecar.h"
+#include "devicemanager.h"
 
 #include <global_server_defines.h>
 #include <dbus_interface/devicemanagerdbus_interface.h>
@@ -58,7 +58,7 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
 
 void DiskControlWidget::initListByMonitorState()
 {
-    if (SidecarInstance.invokeIsMonotorWorking()) {
+    if (DeviceManagerInstance.invokeIsMonotorWorking()) {
         onDiskListChanged();
     } else {
         // if failed retry once after 3s
@@ -93,33 +93,33 @@ void DiskControlWidget::initConnection()
     // refreshes the list of controls to fit the text color under the new theme
     connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
             this, &DiskControlWidget::onDiskListChanged);
-    connect(&SidecarInstance, &PluginSidecar::serviceUnregistered, this, [this]() {
+    connect(&DeviceManagerInstance, &DeviceManager::serviceUnregistered, this, [this]() {
         qWarning() << "[disk-mount] dde-file-manager-server disconnect!";
         onDiskListChanged();
     });
-    connect(&SidecarInstance, &PluginSidecar::serviceRegistered, this, [this]() {
+    connect(&DeviceManagerInstance, &DeviceManager::serviceRegistered, this, [this]() {
         qInfo() << "[disk-mount] dde-file-manager-server connect!";
         // wait server initialized
         QTimer::singleShot(3000, this, [this]() {
             onDiskListChanged();
         });
     });
-    connect(&SidecarInstance, &PluginSidecar::askStopScanning, this, &DiskControlWidget::onAskStopScanning);
-    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::NotifyDeviceBusy, this, &DiskControlWidget::onDeviceBusy);
-    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveAdded, this, &DiskControlWidget::onDiskListChanged);
-    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveRemoved, this, [this]() {
+    connect(&DeviceManagerInstance, &DeviceManager::askStopScanning, this, &DiskControlWidget::onAskStopScanning);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::NotifyDeviceBusy, this, &DiskControlWidget::onDeviceBusy);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveAdded, this, &DiskControlWidget::onDiskListChanged);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveRemoved, this, [this]() {
         notifyMessage(QObject::tr("The device has been safely removed"));
         onDiskListChanged();
     });
-    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, &DiskControlWidget::onDiskListChanged);
-    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnmounted, this, &DiskControlWidget::onDiskListChanged);
-    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceFilesystemAdded, this, &DiskControlWidget::onDiskListChanged);
-    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceFilesystemRemoved, this, &DiskControlWidget::onDiskListChanged);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, &DiskControlWidget::onDiskListChanged);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnmounted, this, &DiskControlWidget::onDiskListChanged);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceFilesystemAdded, this, &DiskControlWidget::onDiskListChanged);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceFilesystemRemoved, this, &DiskControlWidget::onDiskListChanged);
 
-    //    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceAdded, this, &DiskControlWidget::onDiskListChanged);
-    //    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceRemoved, this, &DiskControlWidget::onDiskListChanged);
-    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, &DiskControlWidget::onDiskListChanged);
-    connect(SidecarInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &DiskControlWidget::onDiskListChanged);
+    //    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceAdded, this, &DiskControlWidget::onDiskListChanged);
+    //    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceRemoved, this, &DiskControlWidget::onDiskListChanged);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, &DiskControlWidget::onDiskListChanged);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &DiskControlWidget::onDiskListChanged);
 }
 
 void DiskControlWidget::removeWidgets()
@@ -186,7 +186,7 @@ int DiskControlWidget::addBlockDevicesItems()
 {
     int mountedCount = 0;
 
-    QStringList &&list = SidecarInstance.invokeBlockDevicesIdList({ { ListOpt::kUnmountable, true } });
+    QStringList &&list = DeviceManagerInstance.invokeBlockDevicesIdList({ { ListOpt::kUnmountable, true } });
     mountedCount = addItems(list, true);
 
     return mountedCount;
@@ -196,7 +196,7 @@ int DiskControlWidget::addProtocolDevicesItems()
 {
     int mountedCount = 0;
 
-    QStringList &&list = SidecarInstance.invokeProtolcolDevicesIdList({});
+    QStringList &&list = DeviceManagerInstance.invokeProtolcolDevicesIdList({});
     mountedCount = addItems(list, false);
 
     return mountedCount;
@@ -246,11 +246,11 @@ DDialog *DiskControlWidget::showQueryScanningDialog(const QString &title)
 void DiskControlWidget::handleWhetherScanning(const QString &method, const QString &id)
 {
     if (method == "unmount" && !id.isEmpty()) {
-        SidecarInstance.invokeUnmountBlockDeviceForced(id);
+        DeviceManagerInstance.invokeUnmountBlockDeviceForced(id);
     } else if (method == "detach" && !id.isEmpty()) {
-        SidecarInstance.invokeDetachBlockDeviceForced(id);
+        DeviceManagerInstance.invokeDetachBlockDeviceForced(id);
     } else if (method == "detach_all") {
-        SidecarInstance.invokeDetachAllMountedDevicesForced();
+        DeviceManagerInstance.invokeDetachAllMountedDevicesForced();
     } else {
         qWarning() << "[disk-mount] unknow method: " << method << "or id: " << id;
     }

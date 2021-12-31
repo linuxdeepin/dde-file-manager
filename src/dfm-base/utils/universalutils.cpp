@@ -128,14 +128,6 @@ void UniversalUtils::blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay)
     qInfo() << " create over dbus to block computer shut down!!!";
 }
 
-DeviceManagerInterface *UniversalUtils::deviceManager()
-{
-    static DeviceManagerInterface iface("com.deepin.filemanager.service",
-                                        "/com/deepin/filemanager/service/DeviceManager",
-                                        QDBusConnection::sessionBus(), nullptr);
-    return &iface;
-}
-
 qint64 UniversalUtils::computerMemory()
 {
     //! 从com.deepin.system.SystemInfo中获取实际安装的内存的大小

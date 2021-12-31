@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "pluginsidecar.h"
+#include "devicemanager.h"
 
 #include <QDebug>
 
@@ -29,18 +29,18 @@
  * \brief PluginSidecar is wrapper for a series of D-Bus intefaces
  */
 
-PluginSidecar &PluginSidecar::instance()
+DeviceManager &DeviceManager::instance()
 {
-    static PluginSidecar ins;
+    static DeviceManager ins;
     return ins;
 }
 
-QPointer<DeviceManagerInterface> PluginSidecar::getDeviceInterface()
+QPointer<DeviceManagerInterface> DeviceManager::getDeviceInterface()
 {
     return deviceInterface.data();
 }
 
-bool PluginSidecar::connectToServer()
+bool DeviceManager::connectToServer()
 {
     qInfo() << "Start initilize dbus: `DeviceManagerInterface`";
     // Note: the plugin depends on `dde-file-manager-server`!
@@ -64,7 +64,7 @@ bool PluginSidecar::connectToServer()
     return true;
 }
 
-void PluginSidecar::initConnection()
+void DeviceManager::initConnection()
 {
     // hanlder server signals
     // method refrecent to `DiskControlWidget::onAskStopScanning`
@@ -82,11 +82,11 @@ void PluginSidecar::initConnection()
 
     // monitor server status
     watcher.reset(new QDBusServiceWatcher("com.deepin.filemanager.service", deviceInterface->connection()));
-    connect(watcher.data(), &QDBusServiceWatcher::serviceUnregistered, this, &PluginSidecar::serviceUnregistered);
-    connect(watcher.data(), &QDBusServiceWatcher::serviceRegistered, this, &PluginSidecar::serviceRegistered);
+    connect(watcher.data(), &QDBusServiceWatcher::serviceUnregistered, this, &DeviceManager::serviceUnregistered);
+    connect(watcher.data(), &QDBusServiceWatcher::serviceRegistered, this, &DeviceManager::serviceRegistered);
 }
 
-void PluginSidecar::invokeDetachAllMountedDevices()
+void DeviceManager::invokeDetachAllMountedDevices()
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
@@ -97,7 +97,7 @@ void PluginSidecar::invokeDetachAllMountedDevices()
     }
 }
 
-void PluginSidecar::invokeDetachAllMountedDevicesForced()
+void DeviceManager::invokeDetachAllMountedDevicesForced()
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
@@ -108,7 +108,7 @@ void PluginSidecar::invokeDetachAllMountedDevicesForced()
     }
 }
 
-bool PluginSidecar::invokeIsMonotorWorking()
+bool DeviceManager::invokeIsMonotorWorking()
 {
     bool ret = false;
     if (deviceInterface) {
@@ -124,7 +124,7 @@ bool PluginSidecar::invokeIsMonotorWorking()
     return ret;
 }
 
-QStringList PluginSidecar::invokeBlockDevicesIdList(const QVariantMap &opt)
+QStringList DeviceManager::invokeBlockDevicesIdList(const QVariantMap &opt)
 {
     QStringList ret;
 
@@ -142,7 +142,7 @@ QStringList PluginSidecar::invokeBlockDevicesIdList(const QVariantMap &opt)
     return ret;
 }
 
-QStringList PluginSidecar::invokeProtolcolDevicesIdList(const QVariantMap &opt)
+QStringList DeviceManager::invokeProtolcolDevicesIdList(const QVariantMap &opt)
 {
     QStringList ret;
 
@@ -161,12 +161,12 @@ QStringList PluginSidecar::invokeProtolcolDevicesIdList(const QVariantMap &opt)
     return ret;
 }
 
-QVariantMap PluginSidecar::invokeQueryBlockDeviceInfo(const QString &id)
+QVariantMap DeviceManager::invokeQueryBlockDeviceInfo(const QString &id, bool detail)
 {
     QVariantMap ret;
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto &&reply = deviceInterface->QueryBlockDeviceInfo(id, false);
+        auto &&reply = deviceInterface->QueryBlockDeviceInfo(id, detail);
         reply.waitForFinished();
         if (reply.isValid())
             ret = reply.value();
@@ -177,12 +177,12 @@ QVariantMap PluginSidecar::invokeQueryBlockDeviceInfo(const QString &id)
     return ret;
 }
 
-QVariantMap PluginSidecar::invokeQueryProtocolDeviceInfo(const QString &id)
+QVariantMap DeviceManager::invokeQueryProtocolDeviceInfo(const QString &id, bool detail)
 {
     QVariantMap ret;
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto &&reply = deviceInterface->QueryProtocolDeviceInfo(id, false);
+        auto &&reply = deviceInterface->QueryProtocolDeviceInfo(id, detail);
         reply.waitForFinished();
         if (reply.isValid())
             ret = reply.value();
@@ -193,7 +193,7 @@ QVariantMap PluginSidecar::invokeQueryProtocolDeviceInfo(const QString &id)
     return ret;
 }
 
-void PluginSidecar::invokeDetachBlockDevice(const QString &id)
+void DeviceManager::invokeDetachBlockDevice(const QString &id)
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
@@ -204,7 +204,7 @@ void PluginSidecar::invokeDetachBlockDevice(const QString &id)
     }
 }
 
-void PluginSidecar::invokeDetachBlockDeviceForced(const QString &id)
+void DeviceManager::invokeDetachBlockDeviceForced(const QString &id)
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
@@ -215,7 +215,7 @@ void PluginSidecar::invokeDetachBlockDeviceForced(const QString &id)
     }
 }
 
-void PluginSidecar::invokeUnmountBlockDeviceForced(const QString &id)
+void DeviceManager::invokeUnmountBlockDeviceForced(const QString &id)
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
@@ -226,7 +226,7 @@ void PluginSidecar::invokeUnmountBlockDeviceForced(const QString &id)
     }
 }
 
-void PluginSidecar::invokeDetachProtocolDevice(const QString &id)
+void DeviceManager::invokeDetachProtocolDevice(const QString &id)
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
@@ -237,11 +237,11 @@ void PluginSidecar::invokeDetachProtocolDevice(const QString &id)
     }
 }
 
-PluginSidecar::PluginSidecar(QObject *parent)
+DeviceManager::DeviceManager(QObject *parent)
     : QObject(parent)
 {
 }
 
-PluginSidecar::~PluginSidecar()
+DeviceManager::~DeviceManager()
 {
 }
