@@ -65,7 +65,7 @@ quint64 SideBarHelper::windowId(QWidget *sender)
     return windowService->findWindowId(sender);
 }
 
-SideBarItem *SideBarHelper::createItem(const QString &pathKey, const QString &group)
+SideBarItem *SideBarHelper::createDefaultItem(const QString &pathKey, const QString &group)
 {
     QString iconName { SystemPathUtil::instance()->systemPathIconName(pathKey) };
     QString text { SystemPathUtil::instance()->systemPathDisplayName(pathKey) };
@@ -79,6 +79,13 @@ SideBarItem *SideBarHelper::createItem(const QString &pathKey, const QString &gr
                                         UrlRoute::pathToReal(path));
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled);
 
+    return item;
+}
+
+DFMSideBarItemSeparator *SideBarHelper::createSeparatorItem(const QString &group)
+{
+    DFMSideBarItemSeparator *item = new DFMSideBarItemSeparator(group);
+    item->setFlags(Qt::NoItemFlags);
     return item;
 }
 

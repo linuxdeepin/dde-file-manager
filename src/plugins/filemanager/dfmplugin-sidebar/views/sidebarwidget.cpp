@@ -28,19 +28,25 @@
 #include "events/sidebareventcaller.h"
 #include "utils/sidebarhelper.h"
 
+#include "services/filemanager/sidebar/sidebar_defines.h"
 #include "dfm-base/utils/systempathutil.h"
 
 #include <QApplication>
 #include <QVBoxLayout>
 #include <QScrollBar>
+#include <QThread>
 
 DPSIDEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DSB_FM_USE_NAMESPACE
 
 SideBarWidget::SideBarWidget(QFrame *parent)
     : AbstractFrame(parent),
       sidebarView(new SideBarView(this)),
-      sidebarModel(new SideBarModel(this))
+      sidebarModel(new SideBarModel(this)),
+      currentGroups { SideBar::DefaultGroup::kCommon, SideBar::DefaultGroup::kDevice,
+                      SideBar::DefaultGroup::kBookmark, SideBar::DefaultGroup::kNetwork,
+                      SideBar::DefaultGroup::kTag, SideBar::DefaultGroup::kOther }
 {
     initializeUi();
     initDefaultModel();
@@ -84,24 +90,30 @@ QAbstractItemView *SideBarWidget::view()
 
 int SideBarWidget::addItem(SideBarItem *item)
 {
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
+    // TODO(zhangs): custom group
     return sidebarModel->appendRow(item);
 }
 
 bool SideBarWidget::insertItem(const int index, SideBarItem *item)
 {
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
     return sidebarModel->insertRow(index, item);
 }
 
 bool SideBarWidget::removeItem(SideBarItem *item)
 {
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
     return sidebarModel->removeRow(item);
 }
 
 void SideBarWidget::onItemActived(const QModelIndex &index)
 {
     SideBarItem *item = sidebarModel->itemFromIndex(index);
+    if (dynamic_cast<DFMSideBarItemSeparator *>(item))
+        return;
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-    QUrl url = qvariant_cast<QUrl>(item->data(SideBarItem::Roles::ItemUrlRole));
+    QUrl url { qvariant_cast<QUrl>(item->data(SideBarItem::Roles::ItemUrlRole)) };
     if (!url.isEmpty())
         SideBarEventCaller::sendItemActived(this, url);
 }
@@ -139,14 +151,21 @@ void SideBarWidget::initializeUi()
 
 void SideBarWidget::initDefaultModel()
 {
-    // TODO(zhangs): 1. Separator line; 2. define group name
-    addItem(SideBarHelper::createItem("Home", "core"));
-    addItem(SideBarHelper::createItem("Desktop", "core"));
-    addItem(SideBarHelper::createItem("Videos", "core"));
-    addItem(SideBarHelper::createItem("Music", "core"));
-    addItem(SideBarHelper::createItem("Pictures", "core"));
-    addItem(SideBarHelper::createItem("Documents", "core"));
-    addItem(SideBarHelper::createItem("Downloads", "core"));
+    // create defualt separator line;
+    for (const QString &group : currentGroups)
+        addItem(SideBarHelper::createSeparatorItem(group));
+
+    // create defualt items
+    addItem(SideBarHelper::createDefaultItem("Home", SideBar::DefaultGroup::kCommon));
+    addItem(SideBarHelper::createDefaultItem("Desktop", SideBar::DefaultGroup::kCommon));
+    addItem(SideBarHelper::createDefaultItem("Videos", SideBar::DefaultGroup::kCommon));
+    addItem(SideBarHelper::createDefaultItem("Music", SideBar::DefaultGroup::kCommon));
+    addItem(SideBarHelper::createDefaultItem("Pictures", SideBar::DefaultGroup::kCommon));
+    addItem(SideBarHelper::createDefaultItem("Documents", SideBar::DefaultGroup::kCommon));
+    addItem(SideBarHelper::createDefaultItem("Downloads", SideBar::DefaultGroup::kCommon));
+
+    // init done, then we should update the separator visible state.
+    updateSeparatorVisibleState();
 }
 
 void SideBarWidget::initConnect()
@@ -162,4 +181,37 @@ void SideBarWidget::initConnect()
     // context menu
     connect(sidebarView, &SideBarView::customContextMenuRequested,
             this, &SideBarWidget::customContextMenuCall);
+
+    // so no extra separator if a group is empty.
+    // since we do this, ensure we do initConnection() after initModelData().
+    connect(sidebarModel, &SideBarModel::rowsInserted, this, &SideBarWidget::updateSeparatorVisibleState);
+    connect(sidebarModel, &SideBarModel::rowsRemoved, this, &SideBarWidget::updateSeparatorVisibleState);
+    connect(sidebarModel, &SideBarModel::rowsMoved, this, &SideBarWidget::updateSeparatorVisibleState);
+}
+
+void SideBarWidget::updateSeparatorVisibleState()
+{
+    QString lastGroupName = "__not_existed_group";
+    int lastGroupItemCount = 0;
+    int lastSeparatorIndex = -1;
+
+    for (int i = 0; i < sidebarModel->rowCount(); i++) {
+        SideBarItem *item = sidebarModel->itemFromIndex(i);
+        if (item->group() != lastGroupName) {
+            if (dynamic_cast<DFMSideBarItemSeparator *>(item)) {   // Separator
+                sidebarView->setRowHidden(i, lastGroupItemCount == 0);
+                lastSeparatorIndex = i;
+                lastGroupItemCount = 0;
+                lastGroupName = item->group();
+            }
+        } else {
+            if (!dynamic_cast<DFMSideBarItemSeparator *>(item))   // SidebarItem
+                lastGroupItemCount++;
+        }
+    }
+
+    // hide the last one if last group is empty
+    if (lastGroupItemCount == 0) {
+        sidebarView->setRowHidden(lastSeparatorIndex, true);
+    }
 }

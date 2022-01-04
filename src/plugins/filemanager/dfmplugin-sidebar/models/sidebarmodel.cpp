@@ -184,7 +184,7 @@ int SideBarModel::appendRow(SideBarItem *item)
             QStandardItemModel::appendRow(item);
             return 0;
         } else {
-            //find insert group
+            // find insert group
             for (int row = rowCount() - 1; row >= 0; row--) {
                 auto findedItem = dynamic_cast<SideBarItem *>(this->item(row, 0));
 

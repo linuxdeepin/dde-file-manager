@@ -38,6 +38,7 @@ class SideBarItem;
 class SideBarWidget : public dfmbase::AbstractFrame
 {
     Q_OBJECT
+
 public:
     explicit SideBarWidget(QFrame *parent = nullptr);
     void setCurrentUrl(const QUrl &sidebarUrl) override;
@@ -60,11 +61,13 @@ private:
     void initializeUi();
     void initDefaultModel();
     void initConnect();
+    void updateSeparatorVisibleState();
 
 private:
     QUrl sidebarUrl;
     SideBarView *sidebarView { nullptr };
     SideBarModel *sidebarModel { nullptr };
+    QStringList currentGroups;
 };
 DPSIDEBAR_END_NAMESPACE
 

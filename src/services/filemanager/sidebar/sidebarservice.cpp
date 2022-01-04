@@ -44,6 +44,15 @@ const char *const kName { "Name" };
 const char *const kPos { "Pos" };
 }   // namespace EventProperty
 
+namespace DefaultGroup {
+const char *const kCommon { "Common" };
+const char *const kDevice { "Device" };
+const char *const kBookmark { "Bookmark" };
+const char *const kNetwork { "Network" };
+const char *const kTag { "Tag" };
+const char *const kOther { "Other" };
+}   // namespace DefaultGroup
+
 }   // namespace Sidebar
 
 DSB_FM_END_NAMESPACE

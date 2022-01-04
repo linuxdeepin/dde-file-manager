@@ -44,6 +44,16 @@ extern const char *const kUrl;   // value is Qurl
 extern const char *const kName;   // value is QString
 extern const char *const kPos;   // value is int
 }   // namespace EventProperty
+
+namespace DefaultGroup {
+extern const char *const kCommon;
+extern const char *const kDevice;
+extern const char *const kBookmark;
+extern const char *const kNetwork;
+extern const char *const kTag;
+extern const char *const kOther;
+}   // namespace DefaultGroup
+
 }   // namespace SideBar
 
 DSB_FM_END_NAMESPACE
