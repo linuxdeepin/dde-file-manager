@@ -82,19 +82,7 @@ bool ComputerItemWatcher::typeCompare(const ComputerItemData &a, const ComputerI
 
 void ComputerItemWatcher::initConn()
 {
-    DeviceManagerInstance.connectToServer();
-
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceAdded, this, [this](const QString &id) {
-        auto &&devUrl = makeBlockDevUrl(id);
-        DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
-        if (!info->exists()) return;
-
-        ComputerItemData data;
-        data.url = devUrl;
-        data.shape = ComputerItemData::kLargeItem;
-        data.info = info;
-        Q_EMIT this->itemAdded(data);
-    });
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceAdded, this, &ComputerItemWatcher::onDeviceAdded);
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceRemoved, this, [this](const QString &id) {
         auto &&devUrl = makeBlockDevUrl(id);
         Q_EMIT this->itemRemoved(devUrl);
@@ -107,28 +95,15 @@ void ComputerItemWatcher::initConn()
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, [updateItem](const QString &id) {
         auto datas = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
         auto shellDevId = datas.value(GlobalServerDefines::DeviceProperty::kCryptoBackingDevice).toString();
-        if (shellDevId.length() > 1) {
-            updateItem(shellDevId);
-            return;
-        }
-        updateItem(id);
+        updateItem(shellDevId.length() > 1 ? shellDevId : id);
     });
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnmounted, this, updateItem);
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceLocked, this, updateItem);
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnlocked, this, updateItem);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDevicePropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChanged);
 
     // TODO(xust): protocolDeviceAdded
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, [this](const QString &id) {
-        auto &&devUrl = makeProtocolDevUrl(id);
-        DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
-        if (!info->exists()) return;
-
-        ComputerItemData data;
-        data.url = devUrl;
-        data.shape = ComputerItemData::kLargeItem;
-        data.info = info;
-        Q_EMIT this->itemAdded(data);
-    });
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, &ComputerItemWatcher::onDeviceAdded);
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, [this](const QString &id) {
         auto datas = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id);
         auto &&devUrl = makeProtocolDevUrl(id);
@@ -139,11 +114,7 @@ void ComputerItemWatcher::initConn()
     });
 
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, [this](const QString &id) {
-        QUrl devUrl;
-        if (id.startsWith(DeviceId::kBlockDeviceIdPrefix))
-            devUrl = makeBlockDevUrl(id);
-        else
-            devUrl = makeProtocolDevUrl(id);
+        QUrl devUrl = id.startsWith(DeviceId::kBlockDeviceIdPrefix) ? makeBlockDevUrl(id) : makeProtocolDevUrl(id);
         Q_EMIT this->itemUpdated(devUrl);
     });
 }
@@ -280,4 +251,39 @@ QUrl ComputerItemWatcher::makeProtocolDevUrl(const QString &id)
     devUrl.setPath(encodecPath);
     return devUrl;
 }
+
+void ComputerItemWatcher::onDeviceAdded(const QString &id)
+{
+    QUrl devUrl;
+    if (id.startsWith(DeviceId::kBlockDeviceIdPrefix))
+        devUrl = makeBlockDevUrl(id);
+    else
+        devUrl = makeProtocolDevUrl(id);
+
+    DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
+    if (!info->exists()) return;
+
+    ComputerItemData data;
+    data.url = devUrl;
+    data.shape = ComputerItemData::kLargeItem;
+    data.info = info;
+    Q_EMIT this->itemAdded(data);
+}
+
+void ComputerItemWatcher::onDevicePropertyChanged(const QString &id, const QString &propertyName, const QDBusVariant &var)
+{
+    if (id.startsWith(DeviceId::kBlockDeviceIdPrefix)) {
+        // if `hintIgnore` changed to TRUE, then remove the display in view, else add it.
+        if (propertyName == GlobalServerDefines::DBusDeviceProperty::kHintIgnore) {
+            if (var.variant().toBool())
+                Q_EMIT itemRemoved(makeBlockDevUrl(id));
+            else
+                onDeviceAdded(id);
+        } else {
+            auto &&devUrl = makeBlockDevUrl(id);
+            Q_EMIT itemUpdated(devUrl);
+        }
+    }
+}
+
 DPCOMPUTER_END_NAMESPACE

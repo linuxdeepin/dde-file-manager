@@ -25,14 +25,13 @@
 #include "views/computerview.h"
 #include "fileentity/appentryfileentity.h"
 
-#include "services/filemanager/windows/windowsservice.h"
+#include "computer/computerservice.h"
+
+#include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/entry/entities/entryentities.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
-
-#include <sidebar/sidebarservice.h>
-#include <computer/computerservice.h>
-#include <base/urlroute.h>
+#include "dfm-base/utils/devicemanager.h"
 
 DSB_FM_USE_NAMESPACE
 
@@ -53,6 +52,10 @@ void Computer::initialize()
     EntryEntityFactor::registCreator<ProtocolEntryFileEntity>(SuffixInfo::kProtocol);
     EntryEntityFactor::registCreator<StashedProtocolEntryFileEntity>(SuffixInfo::kStashedRemote);
     EntryEntityFactor::registCreator<AppEntryFileEntity>(SuffixInfo::kAppEntry);
+
+    bool ret = DeviceManagerInstance.connectToServer();
+    if (!ret)
+        qCritical() << "device manager cannot connect to server!";
 }
 
 bool Computer::start()

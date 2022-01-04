@@ -28,6 +28,7 @@
 
 #include <QObject>
 #include <QUrl>
+#include <QDBusVariant>
 
 DPCOMPUTER_BEGIN_NAMESPACE
 typedef QList<ComputerItemData> ComputerDataList;
@@ -52,6 +53,8 @@ Q_SIGNALS:
     void itemUpdated(const QUrl &url);
 
 protected Q_SLOTS:
+    void onDeviceAdded(const QString &id);
+    void onDevicePropertyChanged(const QString &id, const QString &propertyName, const QDBusVariant &var);
 
 private:
     void initConn();

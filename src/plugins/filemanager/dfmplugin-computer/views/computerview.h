@@ -56,6 +56,11 @@ public:
     // QObject interface
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
 
+protected:
+    // QWidget interface
+    virtual void showEvent(QShowEvent *event) override;
+    virtual void hideEvent(QHideEvent *event) override;
+
 private:
     void initView();
     void initConnect();

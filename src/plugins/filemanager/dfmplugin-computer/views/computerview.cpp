@@ -113,6 +113,22 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
     return DListView::eventFilter(watched, event);
 }
 
+void ComputerView::showEvent(QShowEvent *event)
+{
+    auto model = qobject_cast<ComputerModel *>(this->model());
+    if (model)
+        model->startConnect();
+    DListView::showEvent(event);
+}
+
+void ComputerView::hideEvent(QHideEvent *event)
+{
+    auto model = qobject_cast<ComputerModel *>(this->model());
+    if (model)
+        model->stopConnect();
+    DListView::hideEvent(event);
+}
+
 void ComputerView::initView()
 {
     dp->model = new ComputerModel(this);
@@ -136,16 +152,16 @@ void ComputerView::initView()
 
 void ComputerView::initConnect()
 {
-    const int EnterBySingleClick = 0;
-    const int EnterByDoubleClick = 1;
-    const int EnterByEnter = 2;
+    const int kEnterBySingleClick = 0;
+    const int kEnterByDoubleClick = 1;
+    const int kEnterByEnter = 2;
     auto enter = [this](const QModelIndex &idx, int type) {
         int mode = dfmbase::Application::appAttribute(dfmbase::Application::ApplicationAttribute::kOpenFileMode).toInt();
-        if (type == mode || type == EnterByEnter)
+        if (type == mode || type == kEnterByEnter)
             this->cdTo(idx);
     };
-    connect(this, &QAbstractItemView::clicked, this, std::bind(enter, std::placeholders::_1, EnterBySingleClick));
-    connect(this, &QAbstractItemView::doubleClicked, this, std::bind(enter, std::placeholders::_1, EnterByDoubleClick));
+    connect(this, &QAbstractItemView::clicked, this, std::bind(enter, std::placeholders::_1, kEnterBySingleClick));
+    connect(this, &QAbstractItemView::doubleClicked, this, std::bind(enter, std::placeholders::_1, kEnterByDoubleClick));
     connect(this, &ComputerView::enterPressed, this, &ComputerView::cdTo);
 
     connect(this, &ComputerView::customContextMenuRequested, this, &ComputerView::onMenuRequest);

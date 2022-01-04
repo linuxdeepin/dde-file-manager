@@ -34,8 +34,6 @@ ComputerModel::ComputerModel(QObject *parent)
 {
     view = qobject_cast<ComputerView *>(parent);
     items = watcher->items();
-
-    initConn();
 }
 
 ComputerModel::~ComputerModel()
@@ -173,45 +171,57 @@ int ComputerModel::findItem(const QUrl &target)
     return -1;
 }
 
-void ComputerModel::initConn()
+void ComputerModel::onItemAdded(const ComputerItemData &data)
 {
-    connect(watcher.data(), &ComputerItemWatcher::itemAdded, this, [this](const ComputerItemData &data) {
-        int pos = findItem(data.url);
-        if (pos > 0) {
-            // update item
-            this->beginRemoveRows(QModelIndex(), pos, pos);
-            items.at(pos).info->refresh();
-            this->endRemoveRows();
-        } else {
-            int i = 7;   // the Disks begin
-            for (; i < items.count(); i++) {
-                if (ComputerItemWatcher::typeCompare(data, items.at(i))) {
-                    this->beginInsertRows(QModelIndex(), i, i);
-                    this->items.insert(i, data);
-                    this->endInsertRows();
-                    return;
-                }
-            }
-            this->beginInsertRows(QModelIndex(), i, i);
-            this->items.append(data);
-            this->endInsertRows();
-        }
-    });
-    connect(watcher.data(), &ComputerItemWatcher::itemRemoved, this, [this](const QUrl &url) {
-        int pos = findItem(url);
-        if (pos > 0) {
-            this->beginRemoveRows(QModelIndex(), pos, pos);
-            items.removeAt(pos);
-            this->endRemoveRows();
-        }
-    });
-    connect(watcher.data(), &ComputerItemWatcher::itemUpdated, this, [this](const QUrl &url) {
-        int pos = findItem(url);
-        if (pos > 0) {
-            items.at(pos).info->refresh();
-            this->view->update(this->index(pos, 0));
-        }
-    });
+    int pos = findItem(data.url);
+    if (pos > 0)   // update the item
+        onItemUpdated(data.url);
+    else {
+        int i = 7;   // where the disk begin.
+        for (; i < items.count(); i++)
+            if (ComputerItemWatcher::typeCompare(data, items.at(i)))
+                break;
+        beginInsertRows(QModelIndex(), i, i);
+        items.insert(i, data);
+        endInsertRows();
+    }
+}
+
+void ComputerModel::onItemRemoved(const QUrl &url)
+{
+    int pos = findItem(url);
+    if (pos > 0) {
+        beginRemoveRows(QModelIndex(), pos, pos);
+        items.removeAt(pos);
+        endRemoveRows();
+    } else {
+        qDebug() << "target item not found" << url;
+    }
+}
+
+void ComputerModel::onItemUpdated(const QUrl &url)
+{
+    int pos = findItem(url);
+    if (pos > 0) {
+        items.at(pos).info->refresh();
+        view->update(this->index(pos, 0));
+    } else {
+        qDebug() << "target item not found" << url;
+    }
+}
+
+void ComputerModel::startConnect()
+{
+    connect(watcher.data(), &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
+    connect(watcher.data(), &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);
+    connect(watcher.data(), &ComputerItemWatcher::itemUpdated, this, &ComputerModel::onItemUpdated);
+}
+
+void ComputerModel::stopConnect()
+{
+    disconnect(watcher.data(), &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
+    disconnect(watcher.data(), &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);
+    disconnect(watcher.data(), &ComputerItemWatcher::itemUpdated, this, &ComputerModel::onItemUpdated);
 }
 
 DPCOMPUTER_END_NAMESPACE

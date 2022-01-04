@@ -97,6 +97,13 @@ const char *const kDeviceIcon { "device_icon" };
 }   // namespace DeviceProperty
 
 /*!
+ * \brief the original device property key in dbus
+ */
+namespace DBusDeviceProperty {
+const char *const kHintIgnore { "HintIgnore" };
+}   // namespace DBusDeviceProperty
+
+/*!
  * \brief Options for processing the device list interface,
  * returning a list of devices with different contents
  * detail in: DeviceService::blockDevicesIdList

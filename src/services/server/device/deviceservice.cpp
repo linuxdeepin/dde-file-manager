@@ -181,51 +181,78 @@ void DeviceMonitorHandler::removeProtocolDeviceData(const QString &deviceId)
 void DeviceMonitorHandler::updateDataWithOpticalInfo(BlockDeviceData *data, const QMap<dfmmount::Property, QVariant> &changes)
 {
     auto &&opticalFlag = DFMMOUNT::Property::DriveOptical;
-    auto &&idUsageFlag = DFMMOUNT::Property::BlockIDUsage;
+    if (data->opticalDrive && changes.contains(opticalFlag)) {
+        if (changes.value(opticalFlag).toBool()) {   // disc inserted
+            data->optical = changes.value(opticalFlag).toBool();
 
-    // CD inserted / ejected
-    if (changes.contains(opticalFlag)) {
-        data->optical = changes.value(opticalFlag).toBool();
-        auto &&opticalBlankFlag = DFMMOUNT::Property::DriveOpticalBlank;
-        if (changes.contains(opticalBlankFlag))
-            data->opticalBlank = changes.value(opticalBlankFlag).toBool();
-        // TODO(zhangs): emit a signal about optical inserted or ejected
-    }
+            auto &&driveMediaFlag = DFMMOUNT::Property::DriveMedia;
+            if (changes.contains(driveMediaFlag))
+                data->media = changes.value(driveMediaFlag).toString();
 
-    // CD recognized / not recognized
-    // TODO(zhangs): test CD-RW
-    if (changes.contains(idUsageFlag)) {
-        QString &&usage = changes.value(idUsageFlag).toString().toLower();
-        if (usage.toLower() == "filesystem") {
-            auto &&idTypeFlag = DFMMOUNT::Property::BlockIDType;
-            data->common.filesystem = changes.value(idTypeFlag).toString();
+            auto &&driveMediaAvailable = DFMMOUNT::Property::DriveMediaAvailable;
+            if (changes.contains(driveMediaAvailable))
+                data->mediaAvailable = changes.value(driveMediaAvailable).toBool();
+
+            auto &&partitionSizeFlag = DFMMOUNT::Property::PartitionSize;
+            if (changes.contains(partitionSizeFlag)) {
+                data->common.sizeTotal = changes.value(partitionSizeFlag).toLongLong();
+                data->common.sizeFree = 0;
+                data->common.sizeUsed = data->common.sizeTotal;
+            }
+
+            auto &&driveOpticalBlank = DFMMOUNT::Property::DriveOpticalBlank;
+            if (changes.contains(driveOpticalBlank))
+                data->opticalBlank = changes.value(driveOpticalBlank).toBool();
+        } else {   // disc ejected, clear all property associated with optical
+            data->common.filesystem.clear();
+            data->common.sizeUsed = 0;
+            data->common.sizeFree = 0;
+            data->common.sizeTotal = 0;
+            data->common.mountpoint.clear();
+
+            data->mountpoints.clear();
+            data->fsVersion.clear();
+            data->hasFileSystem = false;
+            data->hasPartition = false;
+            data->idLabel.clear();
+            data->media.clear();
+            data->mediaAvailable = false;
+            data->optical = false;
+            data->opticalBlank = false;
+            data->uuid.clear();
         }
-        data->hasFileSystem = data->common.filesystem.isEmpty() ? false : true;
     }
 }
 
 void DeviceMonitorHandler::updateDataWithMountedInfo(BlockDeviceData *data, const QMap<dfmmount::Property, QVariant> &changes)
 {
-    auto &&mptFlag = DFMMOUNT::Property::FileSystemMountPoint;
+    auto &&idTypeFlag = DFMMOUNT::Property::BlockIDType;
+    if (changes.contains(idTypeFlag))
+        data->common.filesystem = changes.value(idTypeFlag).toString();
 
-    // mounted / unmounted / size
+    //    auto &&idUsageFlag = DFMMOUNT::Property::BlockIDUsage;
+    //    if (changes.contains(idUsageFlag))
+
+    auto &&idUUIDFlag = DFMMOUNT::Property::BlockIDUUID;
+    if (changes.contains(idUUIDFlag))
+        data->uuid = changes.value(idUUIDFlag).toString();
+
+    auto &&idVersionFlag = DFMMOUNT::Property::BlockIDVersion;
+    if (changes.contains(idVersionFlag))
+        data->fsVersion = changes.value(idVersionFlag).toString();
+
+    auto &&mptFlag = DFMMOUNT::Property::FileSystemMountPoint;
     if (changes.contains(mptFlag)) {
-        QString &&mpt = changes.value(mptFlag).toString();
-        if (mpt.isEmpty()) {   // unmounted
-            data->common.mountpoint = QString("");
-            data->mountpoints.clear();
-        } else {   // mounted
-            data->common.mountpoint = mpt;
-            if (!data->mountpoints.contains(mpt))
-                data->mountpoints.append(mpt);
-            QStorageInfo sizeInfo(mpt);
-            // cannot acquire correct strorage info in optical device
-            if (sizeInfo.isValid() && !data->optical) {
+        data->mountpoints = changes.value(mptFlag).toStringList();
+        if (data->mountpoints.isEmpty())
+            data->common.mountpoint.clear();
+        else {
+            data->common.mountpoint = data->mountpoints.first();
+
+            if (!data->opticalDrive) {
+                QStorageInfo sizeInfo(data->common.mountpoint);
                 data->common.sizeUsed = data->common.sizeTotal - sizeInfo.bytesAvailable();
                 data->common.sizeFree = sizeInfo.bytesAvailable();
-            }
-            if (data->optical) {
-                // TODO(zhangs): update optical disk size info (should async)
             }
         }
     }

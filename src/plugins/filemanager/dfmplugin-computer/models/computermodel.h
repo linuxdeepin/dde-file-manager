@@ -70,11 +70,16 @@ public:
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
 
+    void startConnect();
+    void stopConnect();
+
 protected:
     int findItem(const QUrl &target);
 
-private:
-    void initConn();
+protected Q_SLOTS:
+    void onItemAdded(const ComputerItemData &data);
+    void onItemRemoved(const QUrl &url);
+    void onItemUpdated(const QUrl &url);
 
 private:
     ComputerView *view { nullptr };
