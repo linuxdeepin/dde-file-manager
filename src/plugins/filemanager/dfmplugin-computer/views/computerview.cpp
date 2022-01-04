@@ -20,12 +20,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "private/computerview_p.h"
 #include "computerview.h"
+#include "private/computerview_p.h"
 #include "models/computermodel.h"
 #include "delegate/computeritemdelegate.h"
 #include "utils/computerutils.h"
-#include "base/application/application.h"
+
+#include "dfm-base/base/application/application.h"
 
 #include <QEvent>
 #include <QKeyEvent>

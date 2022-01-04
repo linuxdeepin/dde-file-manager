@@ -24,7 +24,7 @@
 #define COMPUTERVIEW_H
 
 #include "dfmplugin_computer_global.h"
-#include <dfm-base/interfaces/abstractbaseview.h>
+#include "dfm-base/interfaces/abstractbaseview.h"
 
 #include <QUrl>
 #include <QScopedPointer>

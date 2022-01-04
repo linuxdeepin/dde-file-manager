@@ -22,10 +22,11 @@
 */
 #include "computermodel.h"
 #include "views/computerview.h"
-#include "file/entry/entryfileinfo.h"
-#include "utils/fileutils.h"
+#include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QVector>
+
 DPCOMPUTER_BEGIN_NAMESPACE
 
 ComputerModel::ComputerModel(QObject *parent)

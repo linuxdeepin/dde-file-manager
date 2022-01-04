@@ -24,10 +24,11 @@
 #define COMPUTERDATASTRUCT_H
 
 #include "dfmplugin_computer_global.h"
-#include <dfm-base/file/entry/entryfileinfo.h>
+#include "dfm-base/file/entry/entryfileinfo.h"
 
 #include <QUrl>
-#include <QWidget>
+
+class QWidget;
 DPCOMPUTER_BEGIN_NAMESPACE
 /*!
  * \brief The ComputerItemData struct

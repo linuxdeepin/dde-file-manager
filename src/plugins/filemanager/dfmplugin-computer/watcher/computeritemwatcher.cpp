@@ -21,12 +21,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "computeritemwatcher.h"
-#include "dbusservice/dbus_interface/devicemanagerdbus_interface.h"
-#include "dbusservice/global_server_defines.h"
-#include "utils/devicemanager.h"
 
-#include <dfm-base/base/urlroute.h>
-#include <dfm-base/file/entry/entryfileinfo.h>
+#include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
+#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/file/entry/entryfileinfo.h"
 
 #include <QDebug>
 

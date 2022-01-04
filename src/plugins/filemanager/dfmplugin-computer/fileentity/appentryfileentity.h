@@ -24,7 +24,7 @@
 #define APPENTRYFILEENTITY_H
 
 #include "dfm-base/dfm_base_global.h"
-#include "file/entry/entities/abstractentryfileentity.h"
+#include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 #include "dfmplugin_computer_global.h"
 
 DFMBASE_BEGIN_NAMESPACE

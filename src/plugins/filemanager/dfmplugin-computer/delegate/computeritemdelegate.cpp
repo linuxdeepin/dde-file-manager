@@ -25,7 +25,7 @@
 #include "models/computermodel.h"
 #include "utils/computerdatastruct.h"
 
-#include "utils/fileutils.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <DApplication>
 #include <DApplicationHelper>
