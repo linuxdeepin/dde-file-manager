@@ -2489,6 +2489,11 @@ void DFileView::onShowHiddenFileChanged()
     model()->setFilters(filters);
 }
 
+void DFileView::onShowFileSuffixChanged()
+{
+    update();
+}
+
 void DFileView::initDelegate()
 {
     D_D(DFileView);
@@ -2590,6 +2595,7 @@ void DFileView::initConnects()
 
     connect(DFMApplication::instance(), &DFMApplication::iconSizeLevelChanged, this, &DFileView::setIconSizeBySizeIndex);
     connect(DFMApplication::instance(), &DFMApplication::showedHiddenFilesChanged, this, &DFileView::onShowHiddenFileChanged);
+    connect(DFMApplication::instance(), &DFMApplication::showedFileSuffixChanged, this, &DFileView::onShowFileSuffixChanged);
     connect(fileSignalManager, &FileSignalManager::requestFreshAllFileView, this, &DFileView::freshView, Qt::QueuedConnection);
     connect(DFMApplication::instance(), &DFMApplication::viewModeChanged, this, [this](const int &viewMode) {
         setDefaultViewMode(static_cast<ViewMode>(viewMode));
