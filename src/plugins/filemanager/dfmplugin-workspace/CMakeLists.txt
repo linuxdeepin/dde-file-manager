@@ -12,8 +12,14 @@ FILE(GLOB WORKSPACE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/events/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/models/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/models/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/views/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/views/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/models/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/models/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 find_package(Dtk REQUIRED Widget REQUIRED)

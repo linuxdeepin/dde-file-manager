@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liuyangming<liuyangming@uniontech.com>
+ * Author:     huanyu<huanyub@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
  *             yanghao<yanghao@uniontech.com>
@@ -19,12 +19,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMPLUGIN_WORKSPACE_GLOBAL_H
-#define DFMPLUGIN_WORKSPACE_GLOBAL_H
+#ifndef FILEVIEWITEM_P_H
+#define FILEVIEWITEM_P_H
 
-#define DPWORKSPACE_BEGIN_NAMESPACE namespace dfmplugin_workspace {
-#define DPWORKSPACE_END_NAMESPACE }
-#define DPWORKSPACE_USE_NAMESPACE using namespace dfmplugin_workspace;
-#define DPWORKSPACE_NAMESPACE dfmplugin_workspace
+#include "views/fileviewitem.h"
 
-#endif   // DFMPLUGIN_WORKSPACE_GLOBAL_H
+DPWORKSPACE_BEGIN_NAMESPACE
+
+class FileViewItem;
+class FileViewItemPrivate : public QSharedData
+{
+    friend class FileViewItem;
+    FileViewItem *const q;
+    QMimeType mimeType;
+    AbstractFileInfoPointer fileinfo;
+
+public:
+    explicit FileViewItemPrivate(FileViewItem *qq)
+        : q(qq)
+    {
+    }
+};
+
+DPWORKSPACE_END_NAMESPACE
+
+#endif   // FILEVIEWITEM_P_H

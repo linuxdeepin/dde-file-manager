@@ -19,12 +19,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMPLUGIN_WORKSPACE_GLOBAL_H
-#define DFMPLUGIN_WORKSPACE_GLOBAL_H
+#include "baseitemdelegate.h"
+#include "private/baseitemdelegate_p.h"
+#include "fileview.h"
 
-#define DPWORKSPACE_BEGIN_NAMESPACE namespace dfmplugin_workspace {
-#define DPWORKSPACE_END_NAMESPACE }
-#define DPWORKSPACE_USE_NAMESPACE using namespace dfmplugin_workspace;
-#define DPWORKSPACE_NAMESPACE dfmplugin_workspace
+DPWORKSPACE_USE_NAMESPACE
 
-#endif   // DFMPLUGIN_WORKSPACE_GLOBAL_H
+BaseItemDelegate::BaseItemDelegate(FileView *parent)
+    : QStyledItemDelegate(parent),
+      d(new BaseItemDelegatePrivate(this))
+{
+    Q_D(BaseItemDelegate);
+    d->fileView = parent;
+    d->textLineHeight = parent->fontMetrics().lineSpacing();
+}
+
+BaseItemDelegate::BaseItemDelegate(BaseItemDelegatePrivate &dd, FileView *parent)
+    : QStyledItemDelegate(parent),
+      d(&dd)
+{
+    Q_D(BaseItemDelegate);
+    d->fileView = parent;
+    d->textLineHeight = parent->fontMetrics().lineSpacing();
+}
+
+BaseItemDelegate::~BaseItemDelegate()
+{
+}
+
+int BaseItemDelegate::setIconSizeByIconSizeLevel(int level)
+{
+    Q_UNUSED(level)
+    return -1;
+}

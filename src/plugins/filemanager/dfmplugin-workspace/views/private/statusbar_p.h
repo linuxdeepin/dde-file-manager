@@ -19,12 +19,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMPLUGIN_WORKSPACE_GLOBAL_H
-#define DFMPLUGIN_WORKSPACE_GLOBAL_H
+#ifndef STATUSBAR_P_H
+#define STATUSBAR_P_H
 
-#define DPWORKSPACE_BEGIN_NAMESPACE namespace dfmplugin_workspace {
-#define DPWORKSPACE_END_NAMESPACE }
-#define DPWORKSPACE_USE_NAMESPACE using namespace dfmplugin_workspace;
-#define DPWORKSPACE_NAMESPACE dfmplugin_workspace
+#include "dfmplugin_workspace_global.h"
 
-#endif   // DFMPLUGIN_WORKSPACE_GLOBAL_H
+#include <DAnchors>
+
+#include <QObject>
+#include <QString>
+
+DPWORKSPACE_BEGIN_NAMESPACE
+
+class StatusBarPrivate : public QObject
+{
+public:
+    explicit StatusBarPrivate(QObject *parent = nullptr);
+
+    QString onlyOneItemCounted;
+    QString counted;
+    QString onlyOneItemSelected;
+    QString selected;
+
+    QString selectFolders;
+    QString selectOnlyOneFolder;
+    QString selectFiles;
+    QString selectOnlyOneFile;
+    QString selectedNetworkOnlyOneFolder;
+
+    int fileCount = 0;
+    qint64 fileSize = 0;
+    int folderCount = 0;
+    int folderContains = 0;
+
+    void initFormatStrings();
+};
+
+DPWORKSPACE_END_NAMESPACE
+
+#endif   // STATUSBAR_P_H

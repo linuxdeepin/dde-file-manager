@@ -19,12 +19,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMPLUGIN_WORKSPACE_GLOBAL_H
-#define DFMPLUGIN_WORKSPACE_GLOBAL_H
+#ifndef FILESELECTIONMODEL_P_H
+#define FILESELECTIONMODEL_P_H
 
-#define DPWORKSPACE_BEGIN_NAMESPACE namespace dfmplugin_workspace {
-#define DPWORKSPACE_END_NAMESPACE }
-#define DPWORKSPACE_USE_NAMESPACE using namespace dfmplugin_workspace;
-#define DPWORKSPACE_NAMESPACE dfmplugin_workspace
+#include "models/fileselectionmodel.h"
 
-#endif   // DFMPLUGIN_WORKSPACE_GLOBAL_H
+#include <QTimer>
+
+class FileSelectionModelPrivate : public QObject
+{
+    Q_OBJECT
+    friend class FileSelectionModel;
+    FileSelectionModel *const q;
+
+public:
+    explicit FileSelectionModelPrivate(FileSelectionModel *qq);
+
+    void updateSelecteds();
+
+    mutable QModelIndexList selectedList;
+    QItemSelection selection;
+    QModelIndex firstSelectedIndex;
+    QModelIndex lastSelectedIndex;
+    QItemSelectionModel::SelectionFlags currentCommand;
+    QTimer timer;
+};
+
+#endif   // FILESELECTIONMODEL_P_H

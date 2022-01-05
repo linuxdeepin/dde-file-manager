@@ -20,29 +20,53 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef WORKSPACE_H
-#define WORKSPACE_H
+#ifndef WORKSPACEWIDGET_H
+#define WORKSPACEWIDGET_H
 
 #include "dfmplugin_workspace_global.h"
-#include <dfm-framework/framework.h>
+#include "dfm-base/interfaces/abstractframe.h"
+
+#include <QUrl>
+#include <QMap>
+
+namespace DFMBASE_NAMESPACE {
+class AbstractBaseView;
+}   // namespace dfmbase
+
+class QVBoxLayout;
+class QStackedLayout;
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
-class Workspace : public dpf::Plugin
+class FileView;
+class WorkspaceWidget : public dfmbase::AbstractFrame
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "workspace.json")
+    using ViewPtr = QSharedPointer<DFMBASE_NAMESPACE::AbstractBaseView>;
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    explicit WorkspaceWidget(QFrame *parent = nullptr);
+    void setCurrentUrl(const QUrl &url) override;
+    QUrl currentUrl() const override;
 
-private slots:
-    void onWindowOpened(quint64 windId);
-    void onWindowClosed(quint64 winId);
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+    void showEvent(QShowEvent *event) override;
+
+private:
+    void initializeUi();
+    void initConnect();
+    void initTabBar();
+    void initViewLayout();
+    void handleCtrlN();
+
+private:
+    QUrl workspaceUrl;
+    QVBoxLayout *widgetLayout { nullptr };
+    QStackedLayout *viewStackLayout { nullptr };
+    QMap<QString, ViewPtr> views;
 };
 
 DPWORKSPACE_END_NAMESPACE
 
-#endif   // WORKSPACE_H
+#endif   // WORKSPACEWIDGET_H

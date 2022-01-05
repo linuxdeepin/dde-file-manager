@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liuyangming<liuyangming@uniontech.com>
+ * Author:     huanyu<huanyub@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
  *             yanghao<yanghao@uniontech.com>
@@ -19,12 +19,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMPLUGIN_WORKSPACE_GLOBAL_H
-#define DFMPLUGIN_WORKSPACE_GLOBAL_H
 
-#define DPWORKSPACE_BEGIN_NAMESPACE namespace dfmplugin_workspace {
-#define DPWORKSPACE_END_NAMESPACE }
-#define DPWORKSPACE_USE_NAMESPACE using namespace dfmplugin_workspace;
-#define DPWORKSPACE_NAMESPACE dfmplugin_workspace
+#ifndef HEADERVIEW_H
+#define HEADERVIEW_H
 
-#endif   // DFMPLUGIN_WORKSPACE_GLOBAL_H
+#include "dfmplugin_workspace_global.h"
+
+#include <QHeaderView>
+
+DPWORKSPACE_BEGIN_NAMESPACE
+
+class HeaderView : public QHeaderView
+{
+    Q_OBJECT
+public:
+    explicit HeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
+    QSize sizeHint() const override;
+    using QHeaderView::updateGeometries;
+
+    int sectionsTotalWidth() const;
+
+protected:
+    void mouseReleaseEvent(QMouseEvent *e) override;
+    void resizeEvent(QResizeEvent *e) override;
+
+Q_SIGNALS:
+    void mouseReleased();
+    void viewResized();
+};
+
+DPWORKSPACE_END_NAMESPACE
+
+#endif   // DFMHEADERVIEW_H

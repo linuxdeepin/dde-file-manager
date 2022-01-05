@@ -19,12 +19,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMPLUGIN_WORKSPACE_GLOBAL_H
-#define DFMPLUGIN_WORKSPACE_GLOBAL_H
 
-#define DPWORKSPACE_BEGIN_NAMESPACE namespace dfmplugin_workspace {
-#define DPWORKSPACE_END_NAMESPACE }
-#define DPWORKSPACE_USE_NAMESPACE using namespace dfmplugin_workspace;
-#define DPWORKSPACE_NAMESPACE dfmplugin_workspace
+#include "baseitemdelegate_p.h"
+#include "views/baseitemdelegate.h"
+#include "views/fileview.h"
 
-#endif   // DFMPLUGIN_WORKSPACE_GLOBAL_H
+DPWORKSPACE_USE_NAMESPACE
+
+BaseItemDelegatePrivate::BaseItemDelegatePrivate(BaseItemDelegate *qq)
+    : q_ptr(qq)
+{
+}
+
+BaseItemDelegatePrivate::~BaseItemDelegatePrivate()
+{
+}

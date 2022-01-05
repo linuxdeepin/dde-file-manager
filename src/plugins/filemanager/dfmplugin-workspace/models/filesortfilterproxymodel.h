@@ -19,12 +19,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMPLUGIN_WORKSPACE_GLOBAL_H
-#define DFMPLUGIN_WORKSPACE_GLOBAL_H
+#ifndef FILESORTFILTERPROXYMODEL_H
+#define FILESORTFILTERPROXYMODEL_H
 
-#define DPWORKSPACE_BEGIN_NAMESPACE namespace dfmplugin_workspace {
-#define DPWORKSPACE_END_NAMESPACE }
-#define DPWORKSPACE_USE_NAMESPACE using namespace dfmplugin_workspace;
-#define DPWORKSPACE_NAMESPACE dfmplugin_workspace
+#include "dfmplugin_workspace_global.h"
 
-#endif   // DFMPLUGIN_WORKSPACE_GLOBAL_H
+#include <QSortFilterProxyModel>
+
+DPWORKSPACE_BEGIN_NAMESPACE
+
+class FileSortFilterProxyModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+public:
+    explicit FileSortFilterProxyModel(QObject *parent = nullptr);
+    virtual ~FileSortFilterProxyModel() override;
+
+protected:
+    virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
+    virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+};
+
+DPWORKSPACE_END_NAMESPACE
+
+#endif   // FILESORTFILTERPROXYMODEL_H

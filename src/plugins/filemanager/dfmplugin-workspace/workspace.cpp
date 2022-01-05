@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -21,8 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "workspace.h"
-#include "workspacewidget.h"
-#include "fileview.h"
+#include "views/workspacewidget.h"
+#include "views/fileview.h"
 #include "utils/workspacehelper.h"
 #include "events/workspaceeventreceiver.h"
 

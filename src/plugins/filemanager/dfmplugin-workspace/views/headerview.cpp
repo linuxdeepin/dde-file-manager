@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liuyangming<liuyangming@uniontech.com>
+ * Author:     huanyu<huanyub@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
  *             yanghao<yanghao@uniontech.com>
@@ -19,12 +19,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMPLUGIN_WORKSPACE_GLOBAL_H
-#define DFMPLUGIN_WORKSPACE_GLOBAL_H
 
-#define DPWORKSPACE_BEGIN_NAMESPACE namespace dfmplugin_workspace {
-#define DPWORKSPACE_END_NAMESPACE }
-#define DPWORKSPACE_USE_NAMESPACE using namespace dfmplugin_workspace;
-#define DPWORKSPACE_NAMESPACE dfmplugin_workspace
+#include "headerview.h"
 
-#endif   // DFMPLUGIN_WORKSPACE_GLOBAL_H
+DPWORKSPACE_USE_NAMESPACE
+
+HeaderView::HeaderView(Qt::Orientation orientation, QWidget *parent)
+    : QHeaderView(orientation, parent)
+{
+}
+
+QSize HeaderView::sizeHint() const
+{
+    QSize size = QHeaderView::sizeHint();
+
+    size.setWidth(length());
+
+    return size;
+}
+
+int HeaderView::sectionsTotalWidth() const
+{
+    int totalWidth = 0;
+    for (int i = 0; i < model()->columnCount(); ++i) {
+        totalWidth += sectionSize(i);
+    }
+
+    return totalWidth;
+}
+
+void HeaderView::mouseReleaseEvent(QMouseEvent *e)
+{
+    Q_EMIT mouseReleased();
+
+    return QHeaderView::mouseReleaseEvent(e);
+}
+
+void HeaderView::resizeEvent(QResizeEvent *e)
+{
+    Q_EMIT viewResized();
+
+    return QHeaderView::resizeEvent(e);
+}

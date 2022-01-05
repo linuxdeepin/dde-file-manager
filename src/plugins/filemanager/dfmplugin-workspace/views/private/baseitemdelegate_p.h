@@ -19,12 +19,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMPLUGIN_WORKSPACE_GLOBAL_H
-#define DFMPLUGIN_WORKSPACE_GLOBAL_H
+#ifndef BASEITEMDELEGATE_P_H
+#define BASEITEMDELEGATE_P_H
 
-#define DPWORKSPACE_BEGIN_NAMESPACE namespace dfmplugin_workspace {
-#define DPWORKSPACE_END_NAMESPACE }
-#define DPWORKSPACE_USE_NAMESPACE using namespace dfmplugin_workspace;
-#define DPWORKSPACE_NAMESPACE dfmplugin_workspace
+#include "dfmplugin_workspace_global.h"
 
-#endif   // DFMPLUGIN_WORKSPACE_GLOBAL_H
+#include <QModelIndex>
+#include <QtGlobal>
+
+class QLineEdit;
+
+DPWORKSPACE_BEGIN_NAMESPACE
+
+class FileView;
+class BaseItemDelegate;
+class BaseItemDelegatePrivate
+{
+public:
+    explicit BaseItemDelegatePrivate(BaseItemDelegate *qq);
+    virtual ~BaseItemDelegatePrivate();
+
+    FileView *fileView = nullptr;
+    int textLineHeight = -1;
+    mutable QModelIndex editingIndex;
+    mutable QLineEdit *editor = nullptr;
+
+    BaseItemDelegate *q_ptr;
+    Q_DECLARE_PUBLIC(BaseItemDelegate)
+};
+
+DPWORKSPACE_END_NAMESPACE
+
+#endif   // BASEITEMDELEGATE_P_H
