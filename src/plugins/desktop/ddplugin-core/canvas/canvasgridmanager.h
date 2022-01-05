@@ -22,7 +22,8 @@
 #define CANVASGRIDMANAGER_H
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
-#include "defaultdesktopfileinfo.h"
+#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm_desktop_service_global.h"
 
 DSB_D_BEGIN_NAMESPACE
 
@@ -36,25 +37,25 @@ public:
 public:
     void initCoord(const int screenCount);
     void initGridItemsInfo();
-    void initArrage(const QList<DFMDesktopFileInfoPointer> &items);
+    void initArrage(const QList<DFMLocalFileInfoPointer> &items);
     void updateGridSize(const int screenNum, const int width, const int height);
-    DFMDesktopFileInfoPointer atPosFile(const int screenNum, const QPoint &pos);
-    QPoint filePos(const int screenNum, const DFMDesktopFileInfoPointer &info);
+    DFMLocalFileInfoPointer atPosFile(const int screenNum, const QPoint &pos);
+    QPoint filePos(const int screenNum, const DFMLocalFileInfoPointer &info);
     QPoint filePos(const int screenNum, const QModelIndex &info);
     int emptyPostionCount(int screenNum) const;
     bool find(const QString &itemId, QPair<int, QPoint> &pos);
-    QPoint pos5ition(int screenNum, const DFMDesktopFileInfoPointer &file);
+    QPoint pos5ition(int screenNum, const DFMLocalFileInfoPointer &file);
     bool isEmpty(int screenNum, int x, int y);
     bool contains(int screebNum, const QString &id);
-    DFMDesktopFileInfoPointer firstItemId(int screenNum);
-    DFMDesktopFileInfoPointer lastItemId(int screenNum);
-    DFMDesktopFileInfoPointer itemId(int screenNum, QPoint pos);
-    DFMDesktopFileInfoPointer itemTop(int screenNum, int x, int y);
-    DFMDesktopFileInfoPointer itemTop(int screenNum, QPoint pos);
-    QList<DFMDesktopFileInfoPointer> overlapItems() const;
+    DFMLocalFileInfoPointer firstItemId(int screenNum);
+    DFMLocalFileInfoPointer lastItemId(int screenNum);
+    DFMLocalFileInfoPointer itemId(int screenNum, QPoint pos);
+    DFMLocalFileInfoPointer itemTop(int screenNum, int x, int y);
+    DFMLocalFileInfoPointer itemTop(int screenNum, QPoint pos);
+    QList<DFMLocalFileInfoPointer> overlapItems() const;
     int overlapScreen();
-    void allItems(QList<DFMDesktopFileInfoPointer> &list) const;
-    QHash<QPoint, DFMDesktopFileInfoPointer> items(const int screenNum) const;
+    void allItems(QList<DFMLocalFileInfoPointer> &list) const;
+    QHash<QPoint, DFMLocalFileInfoPointer> items(const int screenNum) const;
     void setShowHiddenFiles(bool value) noexcept;
     bool getShowHiddenFiles() noexcept;
     void delaySyncAllProfile(int ms = 100);

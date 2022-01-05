@@ -119,7 +119,7 @@ bool CanvasGridManagerPrivate::setCellStatus(const int screenNum, const int inde
  * \param orderedItems 需要处理的的文件列表，用于解析文件后，配置文件中不存在的项去查找新位置（该项可能比existItems少）
  * \param existItems 实际存在的文件哈西表，用于解析文件时，判断该文件实际是否存在（使用QHash而非QList是为了提升性能）
  */
-void CanvasGridManagerPrivate::loadProfile(const QList<DFMDesktopFileInfoPointer> &orderedItems, QHash<DFMDesktopFileInfoPointer, bool> existItems)
+void CanvasGridManagerPrivate::loadProfile(const QList<DFMLocalFileInfoPointer> &orderedItems, QHash<DFMLocalFileInfoPointer, bool> existItems)
 {
     if (screenCode().isEmpty()) {
         qWarning() << "not found screen,give up load profile!!!";
@@ -146,16 +146,16 @@ void CanvasGridManagerPrivate::loadProfile(const QList<DFMDesktopFileInfoPointer
        screenFilePos.insert(idx, filePos);
     }
 
-    QMap<int, QList<DFMDesktopFileInfoPointer>> other;
+    QMap<int, QList<DFMLocalFileInfoPointer>> other;
 
     // restore current screen's files into coordinates as it configured
     for (int screenIdx : screenCode()) {
         const QHash<QString, QPoint> &filePos = screenFilePos.value(screenIdx);
         for (auto iter = filePos.cbegin(); iter != filePos.end(); ++iter) {
-            QString path = UrlRoute::urlToPath(iter.key());
-            QUrl url = UrlRoute::pathToReal(path);
+            QString path = dfmbase::UrlRoute::urlToPath(iter.key());
+            QUrl url = dfmbase::UrlRoute::pathToReal(path);
             QString errString;
-            auto itemInfo = InfoFactory::create<DefaultDesktopFileInfo>(url, &errString);
+            auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(url, &errString);
             if (!itemInfo)
                 qInfo() << "loadProfile error: " << errString;
             if (existItems.contains(itemInfo)) {
@@ -208,14 +208,14 @@ void CanvasGridManagerPrivate::syncProfile(const int screenNum)
  * \brief GridManagerPrivate::autoArrange,自动排列，自动排列功能仅排列收拢已排序数据
  * \param sortedItems，所有排序数据
  */
-void CanvasGridManagerPrivate::autoArrange(QList<DFMDesktopFileInfoPointer> sortedItems)
+void CanvasGridManagerPrivate::autoArrange(QList<DFMLocalFileInfoPointer> sortedItems)
 {
     // todo：过滤gsetting中配置的文件
     auto screenOrder = screenCode();
     for (int screenNum : screenOrder) {
         qDebug() << "arrange Num" << screenNum << sortedItems.size();
-        QHash<QPoint, DFMDesktopFileInfoPointer> tempGridItems;
-        QHash<DFMDesktopFileInfoPointer, QPoint> tempItemGrids;
+        QHash<QPoint, DFMLocalFileInfoPointer> tempGridItems;
+        QHash<DFMLocalFileInfoPointer, QPoint> tempItemGrids;
         if (!sortedItems.empty()) {
             auto tempCellStatus = cellStatus.value(screenNum);
             int coordHeight = gridSize.value(screenNum).x();
@@ -241,9 +241,9 @@ void CanvasGridManagerPrivate::clear()
     cellStatus.clear();
 
     for (int i : screenCode()) {
-        QHash<QPoint, DFMDesktopFileInfoPointer> gridItem;
+        QHash<QPoint, DFMLocalFileInfoPointer> gridItem;
         gridItems.insert(i, gridItem);
-        QHash<DFMDesktopFileInfoPointer, QPoint> itemGrid;
+        QHash<DFMLocalFileInfoPointer, QPoint> itemGrid;
         itemGrids.insert(i, itemGrid);
     }
 
@@ -261,7 +261,7 @@ void CanvasGridManagerPrivate::clear()
     }
 }
 
-bool CanvasGridManagerPrivate::add(const int screenNum, const QPoint &pos, const DFMDesktopFileInfoPointer &info)
+bool CanvasGridManagerPrivate::add(const int screenNum, const QPoint &pos, const DFMLocalFileInfoPointer &info)
 {
     if (!info) {
         qCritical() << "add empty item";
@@ -299,7 +299,7 @@ bool CanvasGridManagerPrivate::add(const int screenNum, const QPoint &pos, const
     return ret;
 }
 
-bool CanvasGridManagerPrivate::add(const int screenNum, const DFMDesktopFileInfoPointer &info)
+bool CanvasGridManagerPrivate::add(const int screenNum, const DFMLocalFileInfoPointer &info)
 {
     if (!info) {
         qCritical() << "add empty item";
@@ -310,7 +310,7 @@ bool CanvasGridManagerPrivate::add(const int screenNum, const DFMDesktopFileInfo
     return add(posPair.first, posPair.second, info);
 }
 
-bool CanvasGridManagerPrivate::add(const DFMDesktopFileInfoPointer &info)
+bool CanvasGridManagerPrivate::add(const DFMLocalFileInfoPointer &info)
 {
     if (!info) {
         qCritical() << "add empty item";
@@ -321,7 +321,7 @@ bool CanvasGridManagerPrivate::add(const DFMDesktopFileInfoPointer &info)
     return add(posPair.first, posPair.second, info);
 }
 
-bool CanvasGridManagerPrivate::remove(const int screenNum, const DFMDesktopFileInfoPointer &info)
+bool CanvasGridManagerPrivate::remove(const int screenNum, const DFMLocalFileInfoPointer &info)
 {
     if (!itemGrids.value(screenNum).contains(info)) {
         qDebug() << "can not remove:" << info->filePath() << " from screen:" << screenNum;
@@ -340,7 +340,7 @@ bool CanvasGridManagerPrivate::remove(const int screenNum, const DFMDesktopFileI
     return setCellStatus(screenNum, usageIndex, false);
 }
 
-bool CanvasGridManagerPrivate::remove(const DFMDesktopFileInfoPointer &info)
+bool CanvasGridManagerPrivate::remove(const DFMLocalFileInfoPointer &info)
 {
     if (overlapItems.contains(info)) {
         overlapItems.removeAll(info);
@@ -401,10 +401,10 @@ void CanvasGridManager::initCoord(const int screenCount)
 
 void CanvasGridManager::initGridItemsInfo()
 {
-    QList<DFMDesktopFileInfoPointer> list;
-    QHash<DFMDesktopFileInfoPointer, bool> existItems;
-    QList<DFMDesktopFileInfoPointer> &actualList = FileTreaterCt->getFiles();
-    for (const DFMDesktopFileInfoPointer &df : actualList) {
+    QList<DFMLocalFileInfoPointer> list;
+    QHash<DFMLocalFileInfoPointer, bool> existItems;
+    QList<DFMLocalFileInfoPointer> &actualList = FileTreaterCt->getFiles();
+    for (const DFMLocalFileInfoPointer &df : actualList) {
         list.append(df);
         qDebug() << df->fileName() << df;
         existItems.insert(df, false);
@@ -412,7 +412,7 @@ void CanvasGridManager::initGridItemsInfo()
     d->loadProfile(list, existItems);
 }
 
-void CanvasGridManager::initArrage(const QList<DFMDesktopFileInfoPointer> &items)
+void CanvasGridManager::initArrage(const QList<DFMLocalFileInfoPointer> &items)
 {
     d->clear();
     d->autoArrange(items);
@@ -433,7 +433,7 @@ void CanvasGridManager::updateGridSize(const int screenNum, const int width, con
     d->updateGridSize(screenNum, width, height);
 }
 
-QPoint CanvasGridManager::filePos(const int screenNum, const DFMDesktopFileInfoPointer &info)
+QPoint CanvasGridManager::filePos(const int screenNum, const DFMLocalFileInfoPointer &info)
 {
     Q_UNUSED(screenNum)
     Q_UNUSED(info)
@@ -475,26 +475,26 @@ bool CanvasGridManager::contains(int screebNum, const QString &id)
     return false;
 }
 
-DFMDesktopFileInfoPointer CanvasGridManager::firstItemId(int screenNum)
+DFMLocalFileInfoPointer CanvasGridManager::firstItemId(int screenNum)
 {
     Q_UNUSED(screenNum)
     return nullptr;
 }
 
-DFMDesktopFileInfoPointer CanvasGridManager::lastItemId(int screenNum)
+DFMLocalFileInfoPointer CanvasGridManager::lastItemId(int screenNum)
 {
     Q_UNUSED(screenNum)
     return nullptr;
 }
 
-DFMDesktopFileInfoPointer CanvasGridManager::itemId(int screenNum, QPoint pos)
+DFMLocalFileInfoPointer CanvasGridManager::itemId(int screenNum, QPoint pos)
 {
     Q_UNUSED(screenNum)
     Q_UNUSED(pos)
     return nullptr;
 }
 
-DFMDesktopFileInfoPointer CanvasGridManager::itemTop(int screenNum, int x, int y)
+DFMLocalFileInfoPointer CanvasGridManager::itemTop(int screenNum, int x, int y)
 {
     Q_UNUSED(screenNum)
     Q_UNUSED(x)
@@ -502,14 +502,14 @@ DFMDesktopFileInfoPointer CanvasGridManager::itemTop(int screenNum, int x, int y
     return nullptr;
 }
 
-DFMDesktopFileInfoPointer CanvasGridManager::itemTop(int screenNum, QPoint pos)
+DFMLocalFileInfoPointer CanvasGridManager::itemTop(int screenNum, QPoint pos)
 {
     Q_UNUSED(screenNum)
     Q_UNUSED(pos)
     return nullptr;
 }
 
-QList<DFMDesktopFileInfoPointer> CanvasGridManager::overlapItems() const
+QList<DFMLocalFileInfoPointer> CanvasGridManager::overlapItems() const
 {
     return {};
 }
@@ -529,11 +529,11 @@ int CanvasGridManager::overlapScreen()
     return ++screenCount;
 }
 
-void CanvasGridManager::allItems(QList<DFMDesktopFileInfoPointer> &list) const {
+void CanvasGridManager::allItems(QList<DFMLocalFileInfoPointer> &list) const {
     Q_UNUSED(list)
 }
 
-QHash<QPoint, DFMDesktopFileInfoPointer> CanvasGridManager::items(const int screenNum) const
+QHash<QPoint, DFMLocalFileInfoPointer> CanvasGridManager::items(const int screenNum) const
 {
     return d->gridItems.value(screenNum);
 }

@@ -32,17 +32,17 @@ class CanvasGridManagerPrivate
     friend class CanvasGridManager;
 public:
     explicit CanvasGridManagerPrivate(CanvasGridManager *q_ptr);
-    void loadProfile(const QList<DFMDesktopFileInfoPointer> &orderedItems, QHash<DFMDesktopFileInfoPointer, bool> existItems);
+    void loadProfile(const QList<DFMLocalFileInfoPointer> &orderedItems, QHash<DFMLocalFileInfoPointer, bool> existItems);
     void syncAllProfile();
     void syncProfile(const int screenNum);
-    void autoArrange(QList<DFMDesktopFileInfoPointer> sortedItems);
+    void autoArrange(QList<DFMLocalFileInfoPointer> sortedItems);
     void clear();
-    bool add(const int screenNum, const QPoint &pos, const DFMDesktopFileInfoPointer &info);
-    bool add(const int screenNum, const DFMDesktopFileInfoPointer &info);
-    bool add(const DFMDesktopFileInfoPointer &info);
+    bool add(const int screenNum, const QPoint &pos, const DFMLocalFileInfoPointer &info);
+    bool add(const int screenNum, const DFMLocalFileInfoPointer &info);
+    bool add(const DFMLocalFileInfoPointer &info);
 
-    bool remove(const int screenNum, const DFMDesktopFileInfoPointer &info);
-    bool remove(const DFMDesktopFileInfoPointer &info);
+    bool remove(const int screenNum, const DFMLocalFileInfoPointer &info);
+    bool remove(const DFMLocalFileInfoPointer &info);
 
     void updateGridSize(const int screenNum, const int width, const int height);
 
@@ -156,13 +156,13 @@ private:
     // 屏幕编号-是否有图标
     QHash<int, QVector<bool>> cellStatus;
     // 屏幕编号<栅格位置,文件info>
-    QHash<int, QHash<QPoint, DFMDesktopFileInfoPointer>> gridItems;
+    QHash<int, QHash<QPoint, DFMLocalFileInfoPointer>> gridItems;
     // 屏幕编号-<文件info,栅格位置>
-    QHash<int, QHash<DFMDesktopFileInfoPointer, QPoint>> itemGrids;
+    QHash<int, QHash<DFMLocalFileInfoPointer, QPoint>> itemGrids;
     // 堆叠文件
-    QList<DFMDesktopFileInfoPointer> overlapItems;
+    QList<DFMLocalFileInfoPointer> overlapItems;
     // 所有文件
-    QList<DFMDesktopFileInfoPointer> allItems;
+    QList<DFMLocalFileInfoPointer> allItems;
     CanvasGridManager *const q;
 
     bool singleScreen = false;

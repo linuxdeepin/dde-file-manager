@@ -21,7 +21,6 @@
  */
 #ifndef CANVASVIEW_H
 #define CANVASVIEW_H
-#include "defaultdesktopfileinfo.h"
 #include "dfm_desktop_service_global.h"
 
 #include <QAbstractItemView>

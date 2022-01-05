@@ -19,9 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "canvasmodel.h"
-#include "defaultdesktopfileinfo.h"
 #include "filetreater.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
+
+DFMBASE_USE_NAMESPACE
 
 DSB_D_BEGIN_NAMESPACE
 
@@ -56,7 +57,7 @@ QModelIndex CanvasModel::index(const QString &fileUrl, int column)
     return createIndexByFileInfo(fileInfo, column);
 }
 
-QModelIndex CanvasModel::index(const DFMDesktopFileInfoPointer &fileInfo, int column) const
+QModelIndex CanvasModel::index(const DFMLocalFileInfoPointer &fileInfo, int column) const
 {
     if (!fileInfo)
         return QModelIndex();
@@ -91,7 +92,7 @@ QVariant CanvasModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    auto indexFileInfo = static_cast<DefaultDesktopFileInfo *>(index.internalPointer());
+    auto indexFileInfo = static_cast<LocalFileInfo *>(index.internalPointer());
     if (!indexFileInfo) {
         return QVariant();
     }
@@ -164,7 +165,7 @@ QUrl CanvasModel::url(const QModelIndex &index) const
     return QUrl();
 }
 
-QVariant CanvasModel::dataByRole(const DefaultDesktopFileInfo *fileInfo, int role) const
+QVariant CanvasModel::dataByRole(const LocalFileInfo *fileInfo, int role) const
 {
     // todo temp使用
     switch (role) {
@@ -190,10 +191,10 @@ QVariant CanvasModel::dataByRole(const DefaultDesktopFileInfo *fileInfo, int rol
     }
 }
 
-QModelIndex CanvasModel::createIndexByFileInfo(const DFMDesktopFileInfoPointer &fileInfo, int column) const
+QModelIndex CanvasModel::createIndexByFileInfo(const DFMLocalFileInfoPointer &fileInfo, int column) const
 {
     int row = (0 < FileTreaterCt->fileCount()) ? FileTreaterCt->indexOfChild(fileInfo) : 0;
-    return createIndex(row, column, const_cast<DefaultDesktopFileInfo *>(fileInfo.data()));
+    return createIndex(row, column, const_cast<LocalFileInfo *>(fileInfo.data()));
 }
 
 DSB_D_END_NAMESPACE

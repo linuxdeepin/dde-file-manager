@@ -22,7 +22,7 @@
 #define CANVASMODEL_H
 
 #include "dfm_desktop_service_global.h"
-#include "canvas/defaultdesktopfileinfo.h"
+#include "dfm-base/file/local/localfileinfo.h"
 
 #include <QAbstractItemModel>
 
@@ -65,7 +65,7 @@ public:
     QModelIndex index(int row, int column,
                       const QModelIndex &parent = QModelIndex()) const override;
     QModelIndex index(const QString &fileUrl, int column = 0);
-    QModelIndex index(const DFMDesktopFileInfoPointer &fileInfo, int column = 0) const;
+    QModelIndex index(const DFMLocalFileInfoPointer &fileInfo, int column = 0) const;
     QModelIndex parent(const QModelIndex &index) const override;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -76,8 +76,8 @@ public:
 
     QUrl url(const QModelIndex &index) const;
 private:
-    QVariant dataByRole(const DefaultDesktopFileInfo *fileInfo, int role) const;
-    QModelIndex createIndexByFileInfo(const DFMDesktopFileInfoPointer &fileInfo, int column) const;
+    QVariant dataByRole(const dfmbase::LocalFileInfo *fileInfo, int role) const;
+    QModelIndex createIndexByFileInfo(const DFMLocalFileInfoPointer &fileInfo, int column) const;
 };
 DSB_D_END_NAMESPACE
 #endif   // CANVASMODEL_H

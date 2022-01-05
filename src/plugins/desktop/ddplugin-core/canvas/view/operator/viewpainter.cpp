@@ -55,7 +55,7 @@ void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
     {
         const QHash<QString, QPoint> &pos = GridIns->points(d->screenNum);
         for (auto itor = pos.begin(); itor != pos.end(); ++itor) {
-            auto info = DFMBASE_NAMESPACE::InfoFactory::create<DefaultDesktopFileInfo>(itor.key());
+            auto info = DFMBASE_NAMESPACE::InfoFactory::create<dfmbase::LocalFileInfo>(itor.key());
             if (!info){
                 qWarning() << "create file info failed" << itor.key();
                 continue;
@@ -89,7 +89,7 @@ void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
         auto overlapPos = d->overlapPos();
         auto overlap = GridIns->overloadItems(d->screenNum);
         for (auto itor = overlap.begin(); itor != overlap.end(); ++itor) {
-            auto info = DFMBASE_NAMESPACE::InfoFactory::create<DefaultDesktopFileInfo>(*itor);
+            auto info = DFMBASE_NAMESPACE::InfoFactory::create<dfmbase::LocalFileInfo>(*itor);
             if (!info){
                 qWarning() << "create file info failed" << *itor;
                 continue;

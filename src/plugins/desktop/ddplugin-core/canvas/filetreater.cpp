@@ -54,7 +54,7 @@ FileTreater *FileTreater::instance()
  * \brief 根据url获取对应的文件对象, \a url 文件路径
  * \return
  */
-DFMDesktopFileInfoPointer FileTreater::file(const QString &url)
+DFMLocalFileInfoPointer FileTreater::file(const QString &url)
 {
     return d->fileHashTable.value(url);
 }
@@ -63,7 +63,7 @@ DFMDesktopFileInfoPointer FileTreater::file(const QString &url)
  * \brief 根据index获取对应的文件对象, \a index 文件路径
  * \return
  */
-DFMDesktopFileInfoPointer FileTreater::file(int index)
+DFMLocalFileInfoPointer FileTreater::file(int index)
 {
     Q_UNUSED(index)
     if (index >= 0 && index < fileCount()) {
@@ -79,19 +79,19 @@ DFMDesktopFileInfoPointer FileTreater::file(int index)
  * \param str 排序方式
  * \return 排序后的列表
  */
-QList<DFMDesktopFileInfoPointer> &FileTreater::sortFiles(QList<AbstractFileInfo *> &fileInfoLst, QString &str)
+QList<DFMLocalFileInfoPointer> &FileTreater::sortFiles(QList<dfmbase::AbstractFileInfo *> &fileInfoLst, QString &str)
 {
     Q_UNUSED(fileInfoLst)
     Q_UNUSED(str)
     return d->fileList;
 }
 
-QList<DFMDesktopFileInfoPointer> &FileTreater::getFiles()
+QList<DFMLocalFileInfoPointer> &FileTreater::getFiles()
 {
     return d->fileList;
 }
 
-int FileTreater::indexOfChild(DFMDesktopFileInfoPointer info)
+int FileTreater::indexOfChild(DFMLocalFileInfoPointer info)
 {
     return d->fileList.indexOf(info, 0);
 }
@@ -160,9 +160,9 @@ void FileTreater::asyncFunc(const QDir &url)
     for (auto info : dir.entryInfoList()) {
         if ((!info.isHidden()) || (info.isHidden() && isHidden)) {
             qDebug() << info.filePath();
-            auto routeU = UrlRoute::pathToReal(info.filePath());
+            auto routeU = dfmbase::UrlRoute::pathToReal(info.filePath());
             QString errString;
-            auto itemInfo = InfoFactory::create<DefaultDesktopFileInfo>(routeU, &errString);
+            auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(routeU, &errString);
             if (!itemInfo)
                 qInfo() << "asyncFunc error: " << errString;
             d->fileList.append(itemInfo);

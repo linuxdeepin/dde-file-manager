@@ -24,11 +24,12 @@
 #include "view/canvasview_p.h"
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
-
 #include "filetreater.h"
-#include "private/canvasmanager_p.h"
 
 #include "dfm-framework/framework.h"
+#include "dfm-base/widgets/screenglobal.h"
+
+DFMBASE_USE_NAMESPACE
 
 DSB_D_USE_NAMESPACE
 class CanvasManagerGlobal : public CanvasManager{};
@@ -105,11 +106,11 @@ void CanvasManager::initConnect()
 
 void CanvasManager::onCanvasBuild()
 {
-    dfmbase::DisplayMode displayMode = d->screenScevice->lastChangedMode();
+    DisplayMode displayMode = d->screenScevice->lastChangedMode();
     auto screenSize = d->screenScevice->screens().size();
 
-    if ((displayMode == dfmbase::DisplayMode::Showonly)
-        || (displayMode == dfmbase::DisplayMode::Duplicate)
+    if ((displayMode == DisplayMode::Showonly)
+        || (displayMode == DisplayMode::Duplicate)
         || (1 == screenSize)) {
 
         // 仅显示模式(Showonly)、复制模式(Duplicate)、单屏
@@ -147,7 +148,7 @@ void CanvasManager::onCanvasBuild()
         GridIns->initSurface(currentScreens.size());
 
         //检查新增的屏幕
-        for (const dfmbase::ScreenPointer &sp : currentScreens) {
+        for (const ScreenPointer &sp : currentScreens) {
             ++screenNum;
 
             const QString screenName = sp->name();
@@ -209,8 +210,8 @@ void CanvasManager::reloadItem()
     //todo 默认初始化（按类型排序）以及按配置还原
     GridIns->setMode(CanvasGrid::Mode::Custom);
     QStringList existItems;
-    QList<DFMDesktopFileInfoPointer> &actualList = FileTreaterCt->getFiles();
-    for (const DFMDesktopFileInfoPointer &df : actualList) {
+    QList<DFMLocalFileInfoPointer> &actualList = FileTreaterCt->getFiles();
+    for (const DFMLocalFileInfoPointer &df : actualList) {
         existItems.append(df->url().toString());
     }
 

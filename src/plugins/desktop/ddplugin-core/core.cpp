@@ -29,7 +29,6 @@
 #include "screenservice.h"
 #include "backgroundservice.h"
 #include "canvasservice.h"
-#include "defaultdesktopfileinfo.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
@@ -58,8 +57,7 @@ void registerAllService()
         abort();
     }
 
-    auto &ctxCanvas = dpfInstance.serviceContext();
-    if (!ctxCanvas.load(CanvasService::name(), &errStr)) {
+    if (!ctx.load(CanvasService::name(), &errStr)) {
         qCritical() << errStr;
         abort();
     }
@@ -73,13 +71,8 @@ void registerFileSystem()
                         QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDesktopPath)),
                         false);
 
-    const QString desktopScheme("ddedesktop");
-    UrlRoute::regScheme(desktopScheme,
-                        StandardPaths::location(StandardPaths::kDesktopPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDesktopPath)),
-                        false);
-
-    InfoFactory::regClass<DefaultDesktopFileInfo>(desktopScheme);
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kFile);
+    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kDesktop);
 }
 
 void Core::initialize()

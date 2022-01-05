@@ -18,7 +18,6 @@ set(widgets_cxx_cpp
     dfm-base/widgets/abstractbackground.cpp
     dfm-base/widgets/abstractscreen.cpp
     dfm-base/widgets/abstractscreenproxy.cpp
-    dfm-base/widgets/abstractfiletreater.cpp
     )
 
 set(widgets_cxx_h
@@ -26,7 +25,6 @@ set(widgets_cxx_h
     dfm-base/widgets/abstractscreen.h
     dfm-base/widgets/abstractscreenproxy.h
     dfm-base/widgets/screenglobal.h
-    dfm-base/widgets/abstractfiletreater.h
     )
 
 set(service_cxx_cpp
@@ -71,7 +69,6 @@ set(core_cxx_cpp
     canvas/canvasgridmanager.cpp
     canvas/grid/canvasgrid.cpp
     canvas/grid/gridcore.cpp
-    canvas/defaultdesktopfileinfo.cpp
     canvas/filetreater.cpp
     canvas/displayconfig.cpp
     watermask/watermaskframe.cpp
@@ -95,7 +92,6 @@ set(core_cxx_h
     background/backgrounddefault.h
     canvas/private/canvasmanager_p.h
     canvas/private/canvasgridmanager_p.h
-    canvas/private/defaultdesktopfileinfo_p.h
     canvas/private/filetreater_p.h
     canvas//canvasmanager.h
     canvas/view/canvasview_p.h
@@ -118,7 +114,6 @@ set(core_cxx_h
     canvas/grid/canvasgrid_p.h
     canvas/grid/canvasgridspecialist.h
     canvas/grid/gridcore.h
-    canvas/defaultdesktopfileinfo.h
     canvas/filetreater.h
     canvas/displayconfig.h
     watermask/watermaskframe.h

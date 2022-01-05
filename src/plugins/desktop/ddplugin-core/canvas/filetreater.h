@@ -21,14 +21,13 @@
 #ifndef FILETREATER_H
 #define FILETREATER_H
 
-#include "dfm-base/widgets/abstractfiletreater.h"
-#include "defaultdesktopfileinfo.h"
+#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm_desktop_service_global.h"
 
 #include <QObject>
 #include <QFuture>
 #include <QFutureWatcher>
 
-DFMBASE_USE_NAMESPACE
 DSB_D_BEGIN_NAMESPACE
 
 class FileTreaterPrivate;
@@ -38,12 +37,12 @@ class FileTreater : public QObject
 public:
     static FileTreater *instance();
     void init();
-    DFMDesktopFileInfoPointer file(const QString &url);
-    DFMDesktopFileInfoPointer file(int index);
+    DFMLocalFileInfoPointer file(const QString &url);
+    DFMLocalFileInfoPointer file(int index);
 
-    QList<DFMDesktopFileInfoPointer> &sortFiles(QList<AbstractFileInfo *> &fileInfoLst, QString &str);
-    QList<DFMDesktopFileInfoPointer> &getFiles();
-    int indexOfChild(DFMDesktopFileInfoPointer info);
+    QList<DFMLocalFileInfoPointer> &sortFiles(QList<dfmbase::AbstractFileInfo *> &fileInfoLst, QString &str);
+    QList<DFMLocalFileInfoPointer> &getFiles();
+    int indexOfChild(DFMLocalFileInfoPointer info);
     int fileCount();
     QString homePath();
     bool isDone();

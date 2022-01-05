@@ -32,8 +32,8 @@ public:
         : q(q_ptr) {}
 
 public:
-    QList<DFMDesktopFileInfoPointer> fileList;
-    QMap<QString, DFMDesktopFileInfoPointer> fileHashTable;
+    QList<DFMLocalFileInfoPointer> fileList;
+    QMap<QString, DFMLocalFileInfoPointer> fileHashTable;
     QString homePath;
     bool isDone { false };
     FileTreater *q { nullptr };
