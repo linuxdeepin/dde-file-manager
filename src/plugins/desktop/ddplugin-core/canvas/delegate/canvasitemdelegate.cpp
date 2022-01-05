@@ -293,7 +293,7 @@ void CanvasItemDelegate::drawNormlText(QPainter *painter, const QStyleOptionView
 
 void CanvasItemDelegate::drawHighlightText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRectF &rect) const
 {
-    bool isDrag = painter->device() != parent(); // 拖拽聚合后，拖拽的绘制代码不走这，可以删除， todo
+    bool isDrag = painter->device() != parent()->viewport(); // 拖拽聚合后，拖拽的绘制代码不走这，可以删除， todo
 
     // single item selected and not in drag will to expand.
     if (!isDrag && mayExpand()) {

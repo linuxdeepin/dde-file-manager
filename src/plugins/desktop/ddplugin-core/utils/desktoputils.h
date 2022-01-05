@@ -40,6 +40,10 @@ inline bool isShiftPressed() {
     return qApp->keyboardModifiers() == Qt::ShiftModifier;
 }
 
+inline bool isCtrlOrShiftPressed() {
+    return isCtrlPressed() || isShiftPressed();
+}
+
 DSB_D_END_NAMESPACE
 
 #endif // DESKTOPUTILS_H

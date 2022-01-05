@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "operstate.h"
+#include "view/canvasview.h"
+#include "view/canvasselectionmodel.h"
 
 DSB_D_USE_NAMESPACE
 
@@ -26,5 +28,46 @@ OperState::OperState(QObject *parent) : QObject(parent)
 {
 
 }
+
+void OperState::setView(CanvasView *v)
+{
+    if (view = v) {
+        connect(view->selectionModel(), &CanvasSelectionModel::selectionChanged,
+                this, &OperState::selectionChanged);
+    }
+}
+
+QModelIndex OperState::current() const
+{
+    return view->currentIndex();
+}
+
+void OperState::setCurrent(const QModelIndex &value)
+{
+    view->setCurrentIndex(value);
+}
+
+void OperState::selectionChanged()
+{
+    if (Q_UNLIKELY(!view))
+        return;
+
+    // reset state when selection changed in other view.
+    if (auto model = view->selectionModel()) {
+        // the focus is not be selected.
+        auto focus = current();
+        if (focus.isValid() && !model->isSelected(focus))
+            setCurrent(QModelIndex());
+
+        if (contBegin.isValid() && !model->isSelected(contBegin))
+            contBegin = QModelIndex();
+    }
+
+    //! when selection changed, we need to update all view.
+    //! otherwise the expanded text will partly remain.
+    view->update();
+}
+
+
 
 

@@ -22,6 +22,7 @@
 #include "view/canvasselectionmodel.h"
 #include "view/canvasview_p.h"
 #include "utils/desktoputils.h"
+#include "grid/canvasgrid.h"
 
 DSB_D_USE_NAMESPACE
 
@@ -39,27 +40,15 @@ void ClickSelecter::click(const QModelIndex &index)
     lastPressedIndex = index;
 
     if (!index.isValid()) {
-        if (!ctrl && !shift) {
-            view->selectionModel()->clear();
-            view->d->operState().setFocus(index);
-        }
+        if (!ctrl && !shift)
+            clear();
     } else {
-        bool isSeleted = view->selectionModel()->isSelected(index);
-        if (ctrl) {
-            view->selectionModel()->select(index, QItemSelectionModel::Toggle);
-            view->d->operState().setFocus(isSeleted ? QModelIndex() : index);
-        } else if (shift) {
-            //view->d->operState().setFocus(index);
-        } else {
-            if (!isSeleted) {
-                // single select it.
-                view->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
-            } else {
-               //! index is selected, it will to clear other selection.
-               //! but this action should to do in mouse release.
-            }
-            view->d->operState().setFocus(index);
-        }
+        if (ctrl)
+            toggleSelect(index);
+        else if (shift)
+            continuesSelect(index);
+        else
+            singleSelect(index);
     }
 
     view->update();
@@ -72,11 +61,164 @@ void ClickSelecter::release(const QModelIndex &index)
 
     //! if pressed on selected item, clear other selected items when mouse release.
     bool isSeleted = view->selectionModel()->isSelected(index);
-    if (isSeleted && index == lastPressedIndex && !isCtrlPressed()) {
+    if (isSeleted && index == lastPressedIndex && !isCtrlOrShiftPressed()) {
         view->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
         //Q_ASSERT(lastPressedIndex == view->d->operState().getFocus());//检查有不同的情况。todo delete
-        view->d->operState().setFocus(lastPressedIndex);
+        view->d->operState().setCurrent(lastPressedIndex);
     }
 
     view->update();
+}
+
+void ClickSelecter::order(const QPoint &p1, const QPoint &p2, QPoint &from, QPoint &to)
+{
+    // the begin pos is what y is smaller than another.
+    if (p1.y() < p2.y()) {
+        from = p1;
+        to = p2;
+    } else if (p1.y() == p2.y()){
+        if (p1.x() < p2.x()) {
+            from = p1;
+            to = p2;
+        } else {
+            from = p2;
+            to = p1;
+        }
+    } else {
+        from = p2;
+        to = p1;
+    }
+}
+
+QList<QPoint> ClickSelecter::horizontalTraversal(const QPoint &from, const QPoint &to, const QSize &gridSize)
+{
+    QList<QPoint> pos;
+    int x = from.x();
+    int y = from.y();
+    for (; y <= to.y(); ++y) {
+        for (; x < gridSize.width(); ++x) {
+            pos.append(QPoint(x, y));
+            if (y == to.y() && x == to.x())
+                break;
+        }
+        // wrap
+        x = 0;
+    }
+
+    return pos;
+}
+
+void ClickSelecter::clear()
+{
+    view->selectionModel()->clear();
+    OperState &state = view->d->operState();
+    state.setCurrent(QModelIndex());
+    state.setContBegin(QModelIndex());
+}
+
+void ClickSelecter::toggleSelect(const QModelIndex &index)
+{
+    bool isSeleted = view->selectionModel()->isSelected(index);
+    view->selectionModel()->select(index, QItemSelectionModel::Toggle);
+
+    {
+        OperState &state = view->d->operState();
+        QModelIndex cur = isSeleted ? QModelIndex() : index;
+        state.setContBegin(cur);
+        state.setCurrent(cur);
+    }
+}
+
+void ClickSelecter::singleSelect(const QModelIndex &index)
+{
+    auto model = view->selectionModel();
+    if (!model->isSelected(index)) {
+        // single select it.
+        model->select(index, QItemSelectionModel::ClearAndSelect);
+    } else {
+       //! index is selected, it will to clear other selection.
+       //! but this action should to do in mouse release.
+    }
+
+    OperState &state = view->d->operState();
+    state.setCurrent(index);
+    state.setContBegin(index);
+}
+
+void ClickSelecter::continuesSelect(const QModelIndex &index)
+{
+    OperState &state = view->d->operState();
+
+    auto focus = state.current();
+    auto begin = state.getContBegin();
+    if (begin.isValid()) {
+        // use index as end
+        traverseSelect(begin, index);
+        state.setCurrent(index);
+    } else if (focus.isValid()) {
+        // there is no begin, use focus as begin and index as end
+        traverseSelect(focus, index);
+        state.setCurrent(index);
+        state.setContBegin(focus);
+    } else {
+        // single select it.
+        view->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+        state.setCurrent(index);
+        state.setContBegin(index);
+    }
+}
+
+void ClickSelecter::traverseSelect(const QModelIndex &from, const QModelIndex &to)
+{
+    auto model = view->model();
+    auto item1 = model->url(from).toString();
+    auto item2 = model->url(to).toString();
+    if (item1.isEmpty() || item2.isEmpty()) {
+        qWarning() << "invalid item" << "from:" << item1 << "to:" << item2;
+        return ;
+    }
+
+    QPair<int, QPoint> pos1;
+    if (!GridIns->point(item1, pos1)) {
+        qWarning() << "from" << item1 << "has no pos";
+        return;
+    }
+
+    QPair<int, QPoint> pos2;
+    if (!GridIns->point(item2, pos2)) {
+        qWarning() << "to" << item2 << "has no pos";
+        return;
+    }
+
+    int num = view->screenNum();
+    if (pos1.first != num || pos2.first != num) {
+        qWarning() << "item pos is not in view" << num;
+        return;
+    }
+
+    traverseSelect(pos1.second, pos2.second);
+}
+
+void ClickSelecter::traverseSelect(const QPoint &p1, const QPoint &p2)
+{
+    QPoint from;
+    QPoint to;
+    order(p1, p2, from, to);
+
+    QList<QPoint> pos = horizontalTraversal(from, to, GridIns->surfaceSize(view->screenNum()));
+    auto model = view->model();
+    QItemSelection selection;
+    for (const QPoint &p : pos) {
+        auto item = GridIns->item(view->screenNum(), p);
+        if (item.isEmpty())
+            continue;
+
+        auto idx = model->index(item);
+        if (!idx.isValid())
+            continue;
+
+        selection.append(QItemSelectionRange(idx));
+    }
+
+    view->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
 }

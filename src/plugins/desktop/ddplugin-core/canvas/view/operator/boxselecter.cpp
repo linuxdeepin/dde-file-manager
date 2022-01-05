@@ -197,8 +197,18 @@ void BoxSelecter::updateCurrentIndex()
 
         auto pos = view->mapFromGlobal(end);
         auto index = view->indexAt(pos);
-        if (index.isValid() && view->selectionModel()->isSelected(index))
-            view->d->operState().setFocus(index);
+        if (index.isValid()) {
+            // for shift and focus
+            auto cur = view->selectionModel()->isSelected(index) ? index : QModelIndex();
+            // box selection need update focus and shift begin.
+            view->d->operState().setCurrent(cur);
+            view->d->operState().setContBegin(cur);
+        } else {
+            // todo(zy) there is no item at end pos. reset all focus index.
+            // we maybe need to find a greater method to process it.
+            view->d->operState().setCurrent(QModelIndex());
+            view->d->operState().setContBegin(QModelIndex());
+        }
     }
 }
 

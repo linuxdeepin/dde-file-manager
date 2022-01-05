@@ -27,6 +27,7 @@
 #include "view/canvasmodel.h"
 #include "view/canvasselectionmodel.h"
 #include "operator/clickselecter.h"
+#include "operator/keyselecter.h"
 #include "operator/operstate.h"
 #include "gridcoordinate.h"
 
@@ -71,12 +72,15 @@ public:
     QString visualItem(const QPoint &gridPos) const;
     bool isWaterMaskOn();
 public:
-    inline GridCoordinate gridCoordinate(int index) {
+    QModelIndex firstIndex() const;
+    QModelIndex lastIndex() const;
+public:
+    inline GridCoordinate gridCoordinate(int index) const {
         return GridCoordinate(index / canvasInfo.rowCount, index % canvasInfo.rowCount);
     }
 
-    inline int gridIndex(const QPoint &pos) {
-        return pos.x() * canvasInfo.rowCount + pos.y();
+    inline int gridIndex(const QPoint &gridPos) const{
+        return gridPos.x() * canvasInfo.rowCount + gridPos.y();
     }
 
     inline QPoint overlapPos() const {
@@ -118,6 +122,7 @@ protected:
     QMargins viewMargins;  // view margin is to decrease canvas rect on view.
 
     ClickSelecter *clickSelecter;
+    KeySelecter *keySelecter;
     OperState state;
 
     QPoint dragTargetGrid { QPoint(-1, -1) };

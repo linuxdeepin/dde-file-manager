@@ -27,6 +27,7 @@
 
 DSB_D_BEGIN_NAMESPACE
 class ClickSelecter;
+class KeySelecter;
 class CanvasModel;
 class CanvasSelectionModel;
 class CanvasItemDelegate;
@@ -36,17 +37,18 @@ class CanvasView : public QAbstractItemView
     Q_OBJECT
     friend class BoxSelecter;
     friend class ClickSelecter;
+    friend class KeySelecter;
     friend class ViewPainter;
     friend class CanvasViewPrivate;
 public:
+    using CursorAction = QAbstractItemView::CursorAction;
     explicit CanvasView(QWidget *parent = nullptr);
     void initUI();
 public:
     virtual QRect visualRect(const QModelIndex &index) const override;
     virtual void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
     virtual QModelIndex indexAt(const QPoint &point) const override;
-    virtual QModelIndex moveCursor(CursorAction cursorAction,
-                                   Qt::KeyboardModifiers modifiers) override;
+    virtual QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
     virtual int horizontalOffset() const override;
     virtual int verticalOffset() const override;
     virtual bool isIndexHidden(const QModelIndex &index) const override;
@@ -67,6 +69,7 @@ public:
 protected:
     QRect itemRect(const QModelIndex &index) const;
 protected:
+    void keyPressEvent(QKeyEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *events) override;

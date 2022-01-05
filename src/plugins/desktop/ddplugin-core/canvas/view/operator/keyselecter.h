@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangyu<zhangyub@uniontech.com>
  *
@@ -18,41 +18,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef OPERSTATE_H
-#define OPERSTATE_H
-
+#ifndef KEYSELECTER_H
+#define KEYSELECTER_H
 #include "dfm_desktop_service_global.h"
+#include "clickselecter.h"
 
 #include <QObject>
 #include <QModelIndex>
 
+class QKeyEvent;
 DSB_D_BEGIN_NAMESPACE
 class CanvasView;
-class OperState : public QObject
+class KeySelecter : private ClickSelecter
 {
     Q_OBJECT
 public:
-    explicit OperState(QObject *parent = nullptr);
-    void setView(CanvasView *v);
-    QModelIndex current() const;
-    void setCurrent(const QModelIndex &value);
-
-    inline QModelIndex getContBegin() const {
-        return contBegin;
-    }
-
-    inline void setContBegin(const QModelIndex &value) {
-        contBegin = value;
-    }
+    explicit KeySelecter(CanvasView *parent);
+    void keyPressed(QKeyEvent *event);
+    static const QList<Qt::Key> &filterKeys();
+protected:
+    QPersistentModelIndex moveCursor(QKeyEvent *event) const;
+    void singleSelect(const QModelIndex &index);
+    void incrementSelect(const QModelIndex &index);
 signals:
 
 public slots:
-protected slots:
-    void selectionChanged();
 protected:
-    // todo(zy) using url to instead index.
-    CanvasView *view = nullptr;
-    QPersistentModelIndex contBegin; //for shift
+    CanvasView *view;
 };
+
 DSB_D_END_NAMESPACE
-#endif // OPERSTATE_H
+#endif // KEYSELECTER_H

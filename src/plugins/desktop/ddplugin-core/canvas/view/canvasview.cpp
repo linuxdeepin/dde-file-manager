@@ -82,9 +82,92 @@ QModelIndex CanvasView::indexAt(const QPoint &point) const
 
 QModelIndex CanvasView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
 {
-    Q_UNUSED(cursorAction)
     Q_UNUSED(modifiers)
-    return QModelIndex();
+
+    QModelIndex current = currentIndex();
+    if (!current.isValid()) {
+        qDebug() << "current index is invalid.";
+        return d->firstIndex();
+    }
+
+    QPoint pos;
+    {
+        QPair<int, QPoint> postion;
+        auto currentItem = model()->url(current).toString();
+        if (Q_UNLIKELY(!GridIns->point(currentItem, postion))) {
+            qWarning() << "can not find pos for" << currentItem;
+            return current;
+        }
+
+        if (Q_UNLIKELY(postion.first != screenNum())) {
+            qWarning() << "item is not on" << screenNum() << postion.first;
+            return current;
+        }
+        pos = postion.second;
+    }
+
+    GridCoordinate newCoord(pos);
+    QString currentItem;
+
+#define checkItem(pos, it) \
+    it = GridIns->item(screenNum(), pos);\
+    if (!it.isEmpty()) \
+        break
+
+    switch (cursorAction) {
+    case MoveLeft:
+        while (pos.x() >= 0) {
+            newCoord = newCoord.moveLeft();
+            pos = newCoord.point();
+            checkItem(pos, currentItem);
+        }
+        break;
+    case MoveRight:
+        while (pos.x() < d->canvasInfo.gridWidth) {
+            newCoord = newCoord.moveRight();
+            pos = newCoord.point();
+            checkItem(pos, currentItem);
+        }
+        break;
+    case MovePrevious:
+    case MoveUp:
+        while (pos.y() >= 0 && pos.x() >= 0) {
+            newCoord = newCoord.moveUp();
+            pos = newCoord.point();
+            if (pos.y() < 0) {
+                newCoord = GridCoordinate(pos.x() - 1, d->canvasInfo.rowCount - 1);
+                pos = newCoord.point();
+            }
+            checkItem(pos, currentItem);
+        }
+        break;
+    case MoveNext:
+    case MoveDown:
+        while (pos.y() < d->canvasInfo.rowCount && pos.x() < d->canvasInfo.columnCount) {
+            newCoord = newCoord.moveDown();
+            pos = newCoord.point();
+            if (pos.y() >= d->canvasInfo.rowCount) {
+                newCoord = GridCoordinate(pos.x() + 1, 0);
+                pos = newCoord.point();
+            }
+            checkItem(pos, currentItem);
+        }
+        break;
+    case MoveHome:
+    case MovePageUp:
+        return d->firstIndex();
+    case MoveEnd:
+    case MovePageDown:
+        return d->lastIndex();
+    default:
+         break;
+    }
+
+    if (pos == d->overlapPos())
+        return d->lastIndex();
+
+    qDebug() << "cursorAction" << cursorAction << "KeyboardModifiers" << modifiers << currentItem;
+    return model()->index(currentItem);
 }
 
 int CanvasView::horizontalOffset() const
@@ -233,10 +316,22 @@ QRect CanvasView::itemRect(const QModelIndex &index) const
     return d->itemRect(model()->url(index).toString());
 }
 
+void CanvasView::keyPressEvent(QKeyEvent *event)
+{
+    // todo(zy) disable shortcuts ("ApplicationAttribute", "DisableDesktopShortcuts", false)
+    if (KeySelecter::filterKeys().contains(static_cast<Qt::Key>(event->key()))) {
+        d->keySelecter->keyPressed(event);
+        return;
+    }
+
+    QAbstractItemView::keyPressEvent(event);
+}
+
 void CanvasView::mousePressEvent(QMouseEvent *event)
 {
+    QAbstractItemView::mousePressEvent(event);
+
     if (event->button() != Qt::LeftButton) {
-        QAbstractItemView::mousePressEvent(event);
         return;
     }
 
@@ -246,10 +341,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
         setState(DragSelectingState);
     }
 
-    {
-        d->clickSelecter->click(index);
-        QAbstractItemView::mousePressEvent(event);
-    }
+    d->clickSelecter->click(index);
 }
 
 void CanvasView::mouseMoveEvent(QMouseEvent *event)
@@ -259,16 +351,15 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 
 void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (event->button() != Qt::LeftButton) {
-        QAbstractItemView::mouseReleaseEvent(event);
+    QAbstractItemView::mouseReleaseEvent(event);
+
+    if (event->button() != Qt::LeftButton)
         return;
-    }
 
     auto releaseIndex = indexAt(event->pos());
     d->clickSelecter->release(releaseIndex);
 
     setState(NoState);
-    QAbstractItemView::mouseReleaseEvent(event);
 }
 
 void CanvasView::initUI()
@@ -296,6 +387,9 @@ void CanvasView::initUI()
     // repaint when selecting with mouse move.
     connect(BoxSelIns, &BoxSelecter::changed, this, static_cast<void (CanvasView::*)()>(&CanvasView::update));
 
+    Q_ASSERT(selectionModel());
+    d->operState().setView(this);
+
     // water mask
     if (d->isWaterMaskOn()) {
         Q_ASSERT(!d->waterMask);
@@ -318,7 +412,8 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
 #ifdef QT_DEBUG
     showGrid = true;
 #endif
-    clickSelecter = new ClickSelecter(qq);
+    clickSelecter = new ClickSelecter(q);
+    keySelecter = new KeySelecter(q);
 }
 
 CanvasViewPrivate::~CanvasViewPrivate()
@@ -430,4 +525,33 @@ bool CanvasViewPrivate::isWaterMaskOn()
     if (desktopSettings.keys().contains("water-mask"))
         return  desktopSettings.get("water-mask").toBool();
     return true;
+}
+
+QModelIndex CanvasViewPrivate::firstIndex() const
+{
+    int count = GridIns->gridCount(screenNum);
+    for (int i = 0; i < count; ++i) {
+        auto item = GridIns->item(screenNum, gridCoordinate(i).point());
+        if (!item.isEmpty()) {
+            return q->model()->index(item);
+        }
+    }
+    return QModelIndex();
+}
+
+QModelIndex CanvasViewPrivate::lastIndex() const
+{
+    auto overlop = GridIns->overloadItems(screenNum);
+    if (!overlop.isEmpty())
+        return q->model()->index(overlop.last());
+
+    int count = GridIns->gridCount(screenNum);
+    for (int i = count - 1; i >= 0; --i) {
+        auto item = GridIns->item(screenNum, gridCoordinate(i).point());
+        if (!item.isEmpty()) {
+            return q->model()->index(item);
+        }
+    }
+
+    return QModelIndex();
 }
