@@ -241,6 +241,18 @@ QUrl ComputerItemWatcher::makeBlockDevUrl(const QString &id)
     return devUrl;
 }
 
+QString ComputerItemWatcher::getBlockDevIdByUrl(const QUrl &url)
+{
+    if (url.scheme() != SchemeTypes::kEntry)
+        return "";
+    if (!url.path().endsWith(SuffixInfo::kBlock))
+        return "";
+
+    QString suffix = QString(".%1").arg(SuffixInfo::kBlock);
+    QString id = QString("%1%2").arg(DeviceId::kBlockDeviceIdPrefix).arg(url.path().remove(suffix));
+    return id;
+}
+
 QUrl ComputerItemWatcher::makeProtocolDevUrl(const QString &id)
 {
     QUrl devUrl;
@@ -249,6 +261,19 @@ QUrl ComputerItemWatcher::makeProtocolDevUrl(const QString &id)
     QString encodecPath = QString("%1.%2").arg(QString(path)).arg(SuffixInfo::kProtocol);
     devUrl.setPath(encodecPath);
     return devUrl;
+}
+
+QString ComputerItemWatcher::getProtocolDevIdByUrl(const QUrl &url)
+{
+    if (url.scheme() != SchemeTypes::kEntry)
+        return "";
+    if (!url.path().endsWith(SuffixInfo::kProtocol))
+        return "";
+
+    QString suffix = QString(".%1").arg(SuffixInfo::kProtocol);
+    QString encodecId = url.path().remove(suffix);
+    QString id = QByteArray::fromBase64(encodecId.toUtf8());
+    return id;
 }
 
 void ComputerItemWatcher::onDeviceAdded(const QString &id)

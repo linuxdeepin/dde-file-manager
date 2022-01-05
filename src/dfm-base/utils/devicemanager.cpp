@@ -23,6 +23,8 @@
 #include "devicemanager.h"
 
 #include <QDebug>
+#include <QtConcurrent/QtConcurrent>
+#include <QFutureWatcher>
 
 /*!
  * \class PluginSidecar
@@ -235,6 +237,73 @@ void DeviceManager::invokeDetachProtocolDevice(const QString &id)
             qCritical() << "D-Bus reply is invalid ";
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
     }
+}
+
+QString DeviceManager::invokeUnlockBlockDevice(const QString &id, const QString &passwd)
+{
+    if (deviceInterface) {
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        auto &&reply = deviceInterface->UnlockBlockDevice(id, passwd);
+        reply.waitForFinished();
+        if (!reply.isValid()) {
+            qCritical() << "D-Bus reply is invalid ";
+            qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+            return "";
+        } else {
+            qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+            return reply.value();
+        }
+    }
+    return "";
+}
+
+QString DeviceManager::invokeMountBlockDevice(const QString &id)
+{
+    if (deviceInterface) {
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        auto &&reply = deviceInterface->MountBlockDevice(id);
+        reply.waitForFinished();
+        if (!reply.isValid())
+            qCritical() << "D-Bus reply is invalid";
+        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+        return reply.value();
+    }
+    return "";
+}
+
+void DeviceManager::invokeUnmountBlockDevice(const QString &id)
+{
+    if (deviceInterface) {
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        auto &&reply = deviceInterface->UnmountBlockDevice(id);
+        reply.waitForFinished();
+        if (!reply.isValid())
+            qCritical() << "D-Bus reply is invalid ";
+        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+    }
+}
+
+QString DeviceManager::invokeMountProtocolDevice(const QString &id)
+{
+    // TODO(xust)
+    return {};
+}
+
+void DeviceManager::invokeUnmountProtocolDevice(const QString &id)
+{
+    // TODO(xust)
+}
+
+void DeviceManager::unlockAndDo(const QString &id, const QString &passwd, HandleAfterUnlock handler)
+{
+    QFuture<QString> fu = QtConcurrent::run(this, &DeviceManager::invokeUnlockBlockDevice, id, passwd);
+    QFutureWatcher<QString> *watcher = new QFutureWatcher<QString>;
+    connect(watcher, &QFutureWatcher<QString>::finished, this, [handler, watcher] {
+        QString id = watcher->result();
+        handler(id);
+        watcher->deleteLater();
+    });
+    watcher->setFuture(fu);
 }
 
 DeviceManager::DeviceManager(QObject *parent)

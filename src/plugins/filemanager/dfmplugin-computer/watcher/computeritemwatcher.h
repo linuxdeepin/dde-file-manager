@@ -41,6 +41,10 @@ public:
 
     ComputerDataList items();
     static bool typeCompare(const ComputerItemData &a, const ComputerItemData &b);
+    static QUrl makeBlockDevUrl(const QString &id);
+    static QString getBlockDevIdByUrl(const QUrl &url);
+    static QUrl makeProtocolDevUrl(const QString &id);
+    static QString getProtocolDevIdByUrl(const QUrl &url);
 
     enum GroupType {
         kGroupDirs,
@@ -66,9 +70,6 @@ private:
     ComputerDataList getAppEntryItems(bool &hasNewItem);
 
     ComputerItemData getGroup(GroupType type);
-
-    static QUrl makeBlockDevUrl(const QString &id);
-    static QUrl makeProtocolDevUrl(const QString &id);
 
 private:
     // TODO(xust)

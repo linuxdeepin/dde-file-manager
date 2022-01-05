@@ -85,6 +85,7 @@
     <method name="DetachAllMountedDevicesForced">
     </method>
     <method name="MountBlockDevice">
+      <arg type="s" direction="out"/>
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="UnmountBlockDevice">
@@ -100,12 +101,14 @@
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="MountProtocolDevice">
+      <arg type="s" direction="out"/>
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="UnmountProtocolDevice">
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="UnlockBlockDevice">
+      <arg type="s" direction="out"/>
       <arg name="id" type="s" direction="in"/>
       <arg name="passwd" type="s" direction="in"/>
     </method>

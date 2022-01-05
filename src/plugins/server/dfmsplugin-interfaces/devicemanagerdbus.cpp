@@ -155,9 +155,9 @@ void DeviceManagerDBus::DetachAllMountedDevicesForced()
     }
 }
 
-void DeviceManagerDBus::MountBlockDevice(QString id)
+QString DeviceManagerDBus::MountBlockDevice(QString id)
 {
-    deviceServ->mountBlockDeviceAsync(id);
+    return deviceServ->mountBlockDevice(id);
 }
 
 void DeviceManagerDBus::UnmountBlockDevice(QString id)
@@ -190,9 +190,9 @@ void DeviceManagerDBus::PoweroffBlockDevice(QString id)
     deviceServ->poweroffBlockDeviceAsync(id);
 }
 
-void DeviceManagerDBus::MountProtocolDevice(QString id)
+QString DeviceManagerDBus::MountProtocolDevice(QString id)
 {
-    deviceServ->mountProtocolDeviceAsync(id);
+    return deviceServ->mountProtocolDevice(id);
 }
 
 void DeviceManagerDBus::UnmountProtocolDevice(QString id)
@@ -200,9 +200,9 @@ void DeviceManagerDBus::UnmountProtocolDevice(QString id)
     deviceServ->unmountProtocolDeviceAsync(id);
 }
 
-void DeviceManagerDBus::UnlockBlockDevice(QString id, QString passwd)
+QString DeviceManagerDBus::UnlockBlockDevice(QString id, QString passwd)
 {
-    deviceServ->unlockBlockDevice(passwd, id);
+    return deviceServ->unlockBlockDevice(passwd, id);
 }
 
 void DeviceManagerDBus::LockBlockDevice(QString id)

@@ -50,6 +50,9 @@ public:
     virtual bool removable() override;
     virtual QMenu *createMenu() override;
     virtual QUrl targetUrl() const override;
+    virtual bool isEncrypted() const override;
+    virtual bool isUnlocked() const override;
+    virtual QString clearDeviceId() const override;
 
 private:
     QString getNameOrAlias() const;

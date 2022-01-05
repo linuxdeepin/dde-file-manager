@@ -75,14 +75,14 @@ public slots:
     void DetachProtocolDevice(QString id);
     void DetachAllMountedDevices();
     void DetachAllMountedDevicesForced();
-    void MountBlockDevice(QString id);
+    QString MountBlockDevice(QString id);
     void UnmountBlockDevice(QString id);
     void UnmountBlockDeviceForced(QString id);
     void EjectBlockDevice(QString id);
     void PoweroffBlockDevice(QString id);
-    void MountProtocolDevice(QString id);
+    QString MountProtocolDevice(QString id);
     void UnmountProtocolDevice(QString id);
-    void UnlockBlockDevice(QString id, QString passwd);
+    QString UnlockBlockDevice(QString id, QString passwd);
     void LockBlockDevice(QString id);
     void MountNetworkDevice(QString address, bool anonymous, QVariantMap opts);
 

@@ -227,8 +227,10 @@ void DeviceMonitorHandler::updateDataWithOpticalInfo(BlockDeviceData *data, cons
 void DeviceMonitorHandler::updateDataWithMountedInfo(BlockDeviceData *data, const QMap<dfmmount::Property, QVariant> &changes)
 {
     auto &&idTypeFlag = DFMMOUNT::Property::BlockIDType;
-    if (changes.contains(idTypeFlag))
+    if (changes.contains(idTypeFlag)) {
         data->common.filesystem = changes.value(idTypeFlag).toString();
+        data->hasFileSystem = !(data->common.filesystem.isEmpty());
+    }
 
     //    auto &&idUsageFlag = DFMMOUNT::Property::BlockIDUsage;
     //    if (changes.contains(idUsageFlag))
@@ -294,7 +296,7 @@ void DeviceMonitorHandler::handleBlockDevicesSizeUsedChanged()
     auto &&keys = allBlockDevData.keys();
     for (const auto &key : keys) {
         auto &val = allBlockDevData[key];
-        if (!DeviceServiceHelper::isIgnorableBlockDevice(val)) {
+        if (!DeviceServiceHelper::isIgnorableBlockDevice(val) || val.cryptoBackingDevice.length() > 1) { // need to report the size change of unlocked device
             if (val.optical)
                 continue;
             if (val.mountpoints.isEmpty())
@@ -408,7 +410,13 @@ void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
         return;
     }
 
-    if (!service->mountBlockDevice(deviceId, {})) {
+    bool isUnlockedDevice = blkDev->getProperty(DFMMOUNT::Property::BlockCryptoBackingDevice).toString().length() > 1;
+    if (isUnlockedDevice) {
+        qDebug() << "No auto mount for unlocked device: " << blkDev->path();
+        return;
+    }
+
+    if (service->mountBlockDevice(deviceId, {}).isEmpty()) {
         qWarning() << "Mount device failed: " << blkDev->path();
         return;
     }
@@ -515,7 +523,7 @@ void DeviceMonitorHandler::onProtocolDeviceAdded(const QString &deviceId)
     }
 
     // TODO(xust) do mount volume here
-    if (!service->mountProtocolDevice(deviceId, {})) {
+    if (service->mountProtocolDevice(deviceId, {}).isEmpty()) {
         qWarning() << "Mount device failed: " << protoDev->displayName();
         return;
     }
@@ -805,16 +813,16 @@ void DeviceService::lockBlockDeviceAsync(const QString &deviceId, const QVariant
     });
 }
 
-bool DeviceService::mountProtocolDevice(const QString &deviceId, const QVariantMap &opts)
+QString DeviceService::mountProtocolDevice(const QString &deviceId, const QVariantMap &opts)
 {
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createProtocolDevice(deviceId);
     if (!ptr) {
         qWarning() << "Null protocol pointer" << deviceId;
-        return false;
+        return "";
     }
 
-    return !ptr->mount(opts).isEmpty();
+    return ptr->mount(opts);
 }
 
 void DeviceService::mountProtocolDeviceAsync(const QString &deviceId, const QVariantMap &opts)
@@ -1008,17 +1016,17 @@ void DeviceService::mountBlockDeviceAsync(const QString &deviceId, const QVarian
     }
 }
 
-bool DeviceService::mountBlockDevice(const QString &deviceId, const QVariantMap &opts)
+QString DeviceService::mountBlockDevice(const QString &deviceId, const QVariantMap &opts)
 {
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
     QString errMsg;
     if (DeviceServiceHelper::isMountableBlockDevice(ptr, &errMsg))
-        return !ptr->mount(opts).isEmpty();
+        return ptr->mount(opts);
     else
         qWarning() << "Not mountable device: " << errMsg;
 
-    return false;
+    return "";
 }
 
 void DeviceService::unmountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts)

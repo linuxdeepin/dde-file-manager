@@ -25,6 +25,7 @@
 #include "propertydialog/computerpropertydialog.h"
 #include "propertydialog/trashpropertydialog.h"
 #include "settingsdialog/settingdialog.h"
+#include "mountpasswddialog/mountsecretdiskaskpassworddialog.h"
 
 DSC_USE_NAMESPACE
 
@@ -103,6 +104,16 @@ void DialogService::showSetingsDialog(FileManagerWindow *window)
     connect(dsd, &DSettingsDialog::finished, [window] {
         window->setProperty("isSettingDialogShown", false);
     });
+}
+
+/*!
+ * \brief DialogService::askPasswordForLockedDevice
+ * \return the password user inputed.
+ */
+QString DialogService::askPasswordForLockedDevice()
+{
+    MountSecretDiskAskPasswordDialog dialog(tr("Need password to unlock device"));
+    return dialog.exec() == QDialog::Accepted ? dialog.getUerInputedPassword() : "";
 }
 
 DialogService::DialogService(QObject *parent)

@@ -102,7 +102,7 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("LockBlockDevice"), argumentList);
     }
 
-    inline QDBusPendingReply<> MountBlockDevice(const QString &id)
+    inline QDBusPendingReply<QString> MountBlockDevice(const QString &id)
     {
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(id);
@@ -116,7 +116,7 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("MountNetworkDevice"), argumentList);
     }
 
-    inline QDBusPendingReply<> MountProtocolDevice(const QString &id)
+    inline QDBusPendingReply<QString> MountProtocolDevice(const QString &id)
     {
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(id);
@@ -151,7 +151,7 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("SafelyRemoveBlockDevice"), argumentList);
     }
 
-    inline QDBusPendingReply<> UnlockBlockDevice(const QString &id, const QString &passwd)
+    inline QDBusPendingReply<QString> UnlockBlockDevice(const QString &id, const QString &passwd)
     {
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(id) << QVariant::fromValue(passwd);

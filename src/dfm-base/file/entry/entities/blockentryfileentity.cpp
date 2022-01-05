@@ -265,6 +265,21 @@ QUrl BlockEntryFileEntity::targetUrl() const
     return target;
 }
 
+bool BlockEntryFileEntity::isEncrypted() const
+{
+    return datas.value(DeviceProperty::kIsEncrypted).toBool();
+}
+
+bool BlockEntryFileEntity::isUnlocked() const
+{
+    return datas.value(DeviceProperty::kCleartextDevice).toString() != "/";
+}
+
+QString BlockEntryFileEntity::clearDeviceId() const
+{
+    return datas.value(DeviceProperty::kCleartextDevice, "").toString();
+}
+
 QString BlockEntryFileEntity::getNameOrAlias() const
 {
     // TODO(xust)

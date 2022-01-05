@@ -55,6 +55,7 @@ public:
     void showComputerPropertyDialog();
     void showTrashPropertyDialog();
     void showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window);
+    QString askPasswordForLockedDevice();
 
 private:
     explicit DialogService(QObject *parent = nullptr);

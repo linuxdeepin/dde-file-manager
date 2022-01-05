@@ -82,6 +82,9 @@ public:
     bool removable() const;
     QUrl targetUrl() const;
     QMenu *createMenu() const;
+    bool isEncrypted() const;
+    bool isUnlocked() const;
+    QString clearDeviceId() const;
 
     // AbstractFileInfo interface
     virtual bool exists() const override;

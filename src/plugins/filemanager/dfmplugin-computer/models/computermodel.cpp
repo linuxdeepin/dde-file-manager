@@ -125,6 +125,15 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     case kItemIsEditing:
         return item->isEditing;
 
+    case kDeviceIsEncrypted:
+        return item->info ? item->info->isEncrypted() : false;
+
+    case kDeviceIsUnlocked:
+        return item->info ? item->info->isUnlocked() : false;
+
+    case kDeviceClearDevId:
+        return item->info ? item->info->clearDeviceId() : "";
+
     default:
         return {};
     }
@@ -172,6 +181,16 @@ int ComputerModel::findItem(const QUrl &target)
     return -1;
 }
 
+int ComputerModel::findItemByClearDeviceId(const QString &id)
+{
+    auto iter = std::find_if(items.cbegin(), items.cend(), [=](const ComputerItemData &item) {
+        return item.info ? item.info->clearDeviceId() == id : false;
+    });
+    if (iter != items.cend())
+        return iter - items.cbegin();
+    return -1;
+}
+
 void ComputerModel::onItemAdded(const ComputerItemData &data)
 {
     int pos = findItem(data.url);
@@ -202,11 +221,19 @@ void ComputerModel::onItemRemoved(const QUrl &url)
 
 void ComputerModel::onItemUpdated(const QUrl &url)
 {
-    int pos = findItem(url);
-    if (pos > 0) {
+    auto updateItemInfo = [this](int pos) {
         items.at(pos).info->refresh();
         view->update(this->index(pos, 0));
+    };
+    int pos = findItem(url);
+    if (pos > 0) {
+        updateItemInfo(pos);
     } else {
+        pos = findItemByClearDeviceId(ComputerItemWatcher::getBlockDevIdByUrl(url));
+        if (pos > 0) {
+            updateItemInfo(pos);
+            return;
+        }
         qDebug() << "target item not found" << url;
     }
 }

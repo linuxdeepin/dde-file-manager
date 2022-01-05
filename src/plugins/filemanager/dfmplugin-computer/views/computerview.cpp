@@ -27,11 +27,16 @@
 #include "utils/computerutils.h"
 
 #include "dfm-base/base/application/application.h"
+#include "dfm-base/utils/devicemanager.h"
+
+#include <services/common/dialog/dialogservice.h>
+#include <dfm-framework/framework.h>
 
 #include <QEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QMenu>
+#include <QtConcurrent>
 
 DPCOMPUTER_BEGIN_NAMESPACE
 
@@ -187,6 +192,52 @@ void ComputerView::onMenuRequest(const QPoint &pos)
     delete menu;
 }
 
+void ComputerView::mountAndEnterBlockDevice(const QModelIndex &index)
+{
+    // if is encrypted, unlock first
+    bool isEncrypted = index.data(ComputerModel::DataRoles::kDeviceIsEncrypted).toBool();
+    bool isUnlocked = index.data(ComputerModel::DataRoles::kDeviceIsUnlocked).toBool();
+    auto devUrl = index.data(ComputerModel::DataRoles::kDeviceUrlRole).toUrl();
+    QString shellDevId = ComputerItemWatcher::getBlockDevIdByUrl(devUrl);
+
+    if (isEncrypted) {
+        if (!isUnlocked) {
+            auto &ctx = dpfInstance.serviceContext();
+            auto dialogServ = ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
+            QString passwd = dialogServ->askPasswordForLockedDevice();
+            if (passwd.isEmpty())
+                return;
+
+            QPointer<ComputerView> guard(this);
+            DeviceManagerInstance.unlockAndDo(shellDevId, passwd, [guard, dialogServ](const QString &newID) {
+                if (newID.isEmpty())
+                    dialogServ->showErrorDialog(tr("Unlock device failed"), tr("Wrong password is inputed"));
+                else if (guard)
+                    guard->mountAndEnterBlockDevice(newID);
+                else
+                    qCritical() << "ComputerView is released somewhere.";
+            });
+        } else {
+            auto realDevId = index.data(ComputerModel::DataRoles::kDeviceClearDevId).toString();
+            mountAndEnterBlockDevice(realDevId);
+        }
+    } else {
+        mountAndEnterBlockDevice(shellDevId);
+    }
+}
+
+void ComputerView::mountAndEnterBlockDevice(const QString &blkId)
+{
+    QFuture<QString> fu = QtConcurrent::run(&DeviceManagerInstance, &DeviceManager::invokeMountBlockDevice, blkId);
+    QFutureWatcher<QString> *watcher = new QFutureWatcher<QString>();
+    connect(watcher, &QFutureWatcher<QString>::finished, this, [this, watcher] {
+        QString mpt = watcher->result();
+        qDebug() << "mount and cd to: " << mpt;   // TODO(xust)
+        watcher->deleteLater();
+    });
+    watcher->setFuture(fu);
+}
+
 void ComputerView::cdTo(const QModelIndex &index)
 {
     // TODO(xust)
@@ -202,10 +253,15 @@ void ComputerView::cdTo(const QModelIndex &index)
     auto url = index.data(ComputerModel::DataRoles::kRealUrlRole).toUrl();
 
     if (url.isValid()) {
-        qDebug() << "cd to: " + index.data(Qt::DisplayRole).toString() << url;
+        qDebug() << "cd to: " + index.data(Qt::DisplayRole).toString() << url;   // TODO(xust)
     } else {
         QString suffix = index.data(ComputerModel::DataRoles::kSuffixRole).toString();
-        //    if (suffix ==)
+        if (suffix == dfmbase::SuffixInfo::kBlock) {
+            mountAndEnterBlockDevice(index);
+        } else if (suffix == dfmbase::SuffixInfo::kProtocol) {
+
+        } else if (suffix == dfmbase::SuffixInfo::kStashedRemote) {
+        }
     }
 }
 

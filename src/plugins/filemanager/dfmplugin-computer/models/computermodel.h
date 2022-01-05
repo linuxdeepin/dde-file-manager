@@ -48,7 +48,10 @@ public:
         kSizeUsageRole,
         kFileSystemRole,   // string
         kRealUrlRole,   // string: real mountpoint
-        kDeviceUrlRole,   // string: device path such as entry:///dev/sdb1.localdisk
+        kDeviceUrlRole,   // string: device path such as entry://sdb1.localdisk
+        kDeviceIsEncrypted,
+        kDeviceIsUnlocked,
+        kDeviceClearDevId,
         kSuffixRole,   // string: blockdev/protocoldev/userdir/...
         kProgressVisiableRole,   // bool
         kTotalSizeVisiableRole,   // bool
@@ -75,6 +78,7 @@ public:
 
 protected:
     int findItem(const QUrl &target);
+    int findItemByClearDeviceId(const QString &id);
 
 protected Q_SLOTS:
     void onItemAdded(const ComputerItemData &data);

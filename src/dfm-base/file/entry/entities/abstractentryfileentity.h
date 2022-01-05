@@ -59,6 +59,9 @@ public:
     virtual QString fileSystem() const { return {}; }
     virtual QString description() const { return {}; }
     virtual QUrl targetUrl() const { return {}; }
+    virtual bool isEncrypted() const { return false; }
+    virtual bool isUnlocked() const { return false; }
+    virtual QString clearDeviceId() const { return ""; }
 
 protected:
     QUrl entryUrl {};

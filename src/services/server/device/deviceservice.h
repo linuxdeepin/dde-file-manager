@@ -53,7 +53,7 @@ public:   // operations
     void detachAllMountedBlockDevices();
     void detachAllMountedProtocolDevices();
     void mountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
-    bool mountBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
+    QString mountBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
     void unmountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
     bool unmountBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
     void ejectBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
@@ -67,7 +67,7 @@ public:   // operations
     bool lockBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
     void lockBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
 
-    bool mountProtocolDevice(const QString &deviceId, const QVariantMap &opts = {});
+    QString mountProtocolDevice(const QString &deviceId, const QVariantMap &opts = {});
     void mountProtocolDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
     bool unmountProtocolDevice(const QString &deviceId, const QVariantMap &opts = {});
     void unmountProtocolDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});

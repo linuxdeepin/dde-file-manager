@@ -241,11 +241,6 @@ bool DeviceServiceHelper::isMountableBlockDevice(const BlockDeviceData &data, QS
         return false;
     }
 
-    if (data.cryptoBackingDevice.length() > 1) {   // bug: 77010 TODO(xust) perhaps this is no need to concern anymore
-        error = QString("Block Device: %1 cryptoDev length > 1").arg(id);
-        return false;
-    }
-
     if (data.hintIgnore) {
         error = QString("Block Device: %1 hintIgnore").arg(id);
         return false;

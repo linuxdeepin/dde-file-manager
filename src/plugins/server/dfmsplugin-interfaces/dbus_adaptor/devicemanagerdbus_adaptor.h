@@ -112,6 +112,7 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "    <method name=\"DetachAllMountedDevices\"/>\n"
 "    <method name=\"DetachAllMountedDevicesForced\"/>\n"
 "    <method name=\"MountBlockDevice\">\n"
+"      <arg direction=\"out\" type=\"s\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
 "    <method name=\"UnmountBlockDevice\">\n"
@@ -127,12 +128,14 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
 "    <method name=\"MountProtocolDevice\">\n"
+"      <arg direction=\"out\" type=\"s\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
 "    <method name=\"UnmountProtocolDevice\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
 "    <method name=\"UnlockBlockDevice\">\n"
+"      <arg direction=\"out\" type=\"s\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"passwd\"/>\n"
 "    </method>\n"
@@ -186,14 +189,14 @@ public Q_SLOTS: // METHODS
     QStringList GetProtocolDevicesIdList();
     bool IsMonotorWorking();
     void LockBlockDevice(const QString &id);
-    void MountBlockDevice(const QString &id);
+    QString MountBlockDevice(const QString &id);
     void MountNetworkDevice(const QString &address, bool anonymous, const QVariantMap &opts);
-    void MountProtocolDevice(const QString &id);
+    QString MountProtocolDevice(const QString &id);
     void PoweroffBlockDevice(const QString &id);
     QVariantMap QueryBlockDeviceInfo(const QString &id, bool detail);
     QVariantMap QueryProtocolDeviceInfo(const QString &id, bool detail);
     void SafelyRemoveBlockDevice(const QString &id);
-    void UnlockBlockDevice(const QString &id, const QString &passwd);
+    QString UnlockBlockDevice(const QString &id, const QString &passwd);
     void UnmountBlockDevice(const QString &id);
     void UnmountBlockDeviceForced(const QString &id);
     void UnmountProtocolDevice(const QString &id);

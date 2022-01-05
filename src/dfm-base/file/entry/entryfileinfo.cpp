@@ -86,6 +86,21 @@ QMenu *EntryFileInfo::createMenu() const
     return d->entity ? d->entity->createMenu() : nullptr;
 }
 
+bool EntryFileInfo::isEncrypted() const
+{
+    return d->entity ? d->entity->isEncrypted() : false;
+}
+
+bool EntryFileInfo::isUnlocked() const
+{
+    return d->entity ? d->entity->isUnlocked() : false;
+}
+
+QString EntryFileInfo::clearDeviceId() const
+{
+    return d->entity ? d->entity->clearDeviceId() : "";
+}
+
 bool EntryFileInfo::renamable() const
 {
     // TODO(xust)
