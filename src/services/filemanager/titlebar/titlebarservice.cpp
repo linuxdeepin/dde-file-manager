@@ -24,24 +24,19 @@
 #include "titlebar_defines.h"
 #include "private/titlebarservice_p.h"
 
+#include "dfm-base/utils/universalutils.h"
+
+#include <dfm-framework/framework.h>
+
 DSB_FM_BEGIN_NAMESPACE
 namespace TitleBar {
-namespace EventTopic {
-const char *const kTitleBar { "/org/deepin/event/titlebar" };
-}   // namespace EventTopic
+// custm event type
+namespace EventType {
+const int kSwitchMode = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kSettingsMenuTriggered = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kShowDetailView = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+};   // namespace EventType
 
-namespace EventData {
-const char *const kSwitchMode { "SwitchMode" };
-const char *const kSettingsMenuTriggered { "SettingsMenuTriggered" };
-const char *const kShowDetailView { "ShowDetailView" };
-}   // namespace EventData
-
-namespace EventProperty {
-const char *const kWindowId { "WindowId" };
-const char *const kViewMode { "ViewMode" };
-const char *const kMenuAction { "MenuAction" };
-const char *const kDetailState { "DetailState" };
-}   // namespace EventProperty
 }   // namespace TitleBar
 DSB_FM_END_NAMESPACE
 

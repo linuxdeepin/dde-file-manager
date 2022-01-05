@@ -13,64 +13,31 @@ endif()
 add_definitions(-DDPF_LIBRARY)
 add_definitions(-DDTK_LOG)
 
-set(LOBAL_H
-    dfm_framework_global.h
-)
+FILE(GLOB FRAMEWORK_GLOBAL_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    )
 
-set(PRIVATE_H
-    lifecycle/private/pluginmanager_p.h
-    lifecycle/private/pluginmetaobject_p.h
-    abus/private/appbus_p.h
-    event/private/event_p.h
-)
-
-set(PRIVATE_CPP
-    lifecycle/private/pluginmanager_p.cpp
-    abus/private/appbus_p.cpp
-)
-
-set(PUBLIC_H
-    event/event.h
-    event/eventcallproxy.h
-    event/eventhandler.h
-    log/frameworklog.h
-    log/codetimecheck.h
-    log/logutils.h
-    service/qtclassmanager.h
-    service/qtclassfactory.h
-    service/pluginservicecontext.h
-    service/pluginservice.h
-    lifecycle/pluginsetting.h
-    lifecycle/pluginmetaobject.h
-    lifecycle/plugin.h
-    lifecycle/pluginmanager.h
-    lifecycle/lifecycle.h
-    lifecycle/plugindepend.h
-    abus/appbus.h
-    listener/private/listener_p.h
-    listener/listener.h
-    backtrace/backtrace.h
-    framework.h
-)
-
-set(PUBLIC_CPP
-    event/event.cpp
-    event/eventcallproxy.cpp
-    event/eventhandler.cpp
-    log/frameworklog.cpp
-    log/codetimecheck.cpp
-    log/logutils.cpp
-    lifecycle/pluginsetting.cpp
-    lifecycle/pluginmetaobject.cpp
-    lifecycle/plugin.cpp
-    lifecycle/pluginmanager.cpp
-    lifecycle/lifecycle.cpp
-    service/pluginservicecontext.cpp
-    abus/appbus.cpp
-    listener/listener.cpp
-    backtrace/backtrace.cpp
-    framework.cpp
-)
+FILE(GLOB FRAMEWORK_FEATURE_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/backtrace/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/backtrace/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/event/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/event/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/event/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/event/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/lifecycle/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/lifecycle/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/lifecycle/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/lifecycle/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/listener/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/listener/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/listener/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/listener/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/log/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/log/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/service/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/service/*.cpp"
+    )
 
 find_package(Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt5 COMPONENTS Concurrent REQUIRED)
@@ -78,11 +45,8 @@ find_package(Qt5 COMPONENTS Network REQUIRED)
 find_package(Dtk COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
-    ${LOBAL_H}
-    ${PRIVATE_H}
-    ${PRIVATE_CPP}
-    ${PUBLIC_H}
-    ${PUBLIC_CPP}
+    ${FRAMEWORK_GLOBAL_FILES}
+    ${FRAMEWORK_FEATURE_FILES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

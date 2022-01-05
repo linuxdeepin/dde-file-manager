@@ -25,85 +25,45 @@
 
 #include "dfm-base/base/urlroute.h"
 
+#include <QDebug>
+#include <QUrl>
+
 #include <functional>
 
 DPCORE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-CoreEventReceiver::CoreEventReceiver()
-    : AutoEventHandlerRegister<CoreEventReceiver>()
+CoreEventReceiver::CoreEventReceiver(QObject *parent)
+    : QObject(parent)
 {
-    // add event topic map in here
-    CoreEventReceiver::eventTopicHandlers = {
-        { SideBar::EventTopic::kSideBar, std::bind(&CoreEventReceiver::handleSideBarTopic, this, std::placeholders::_1) },
-        { TitleBar::EventTopic::kTitleBar, std::bind(&CoreEventReceiver::handleTitleBarTopic, this, std::placeholders::_1) }
-    };
 }
 
-void CoreEventReceiver::eventProcess(const dpf::Event &event)
+CoreEventReceiver *CoreEventReceiver::instance()
 {
-    QString topic { event.topic() };
-    if (!eventTopicHandlers.contains(topic)) {
-        qWarning() << "Invalid event topic: " << topic;
-        return;
-    }
-
-    eventTopicHandlers[topic](event);
+    static CoreEventReceiver receiver;
+    return &receiver;
 }
 
-void CoreEventReceiver::handleSideBarTopic(const dpf::Event &event)
+void CoreEventReceiver::handleChangeUrl(quint64 windowId, const QUrl &url)
 {
-    // add event data map in here
-    static HandlerMap eventDataHandlers = {
-        { SideBar::EventData::kCdAction, std::bind(&CoreEventReceiver::handleSideBarItemActived, this, std::placeholders::_1) }
-    };
-
-    callHandler(event, eventDataHandlers);
-}
-
-void CoreEventReceiver::handleTitleBarTopic(const dpf::Event &event)
-{
-    // add event data map in here
-    static HandlerMap eventDataHandlers = {
-        { TitleBar::EventData::kSettingsMenuTriggered, std::bind(&CoreEventReceiver::handleTileBarSettingsMenuTriggered, this, std::placeholders::_1) }
-    };
-
-    callHandler(event, eventDataHandlers);
-}
-
-void CoreEventReceiver::callHandler(const dpf::Event &event, const HandlerMap &map)
-{
-    QString subTopic { event.data().toString() };
-    if (!map.contains(subTopic)) {
-        qWarning() << "Invalid event data: " << subTopic;
-        return;
-    }
-
-    map[subTopic](event);
-}
-
-void CoreEventReceiver::handleSideBarItemActived(const dpf::Event &event)
-{
-    QUrl url { qvariant_cast<QUrl>(event.property(SideBar::EventProperty::kUrl)) };
     if (!url.isValid()) {
         qWarning() << "Invalid Url: " << url;
         return;
     }
-
-    if (url.scheme() == SchemeTypes::kFile) {
-        quint64 windowId { qvariant_cast<quint64>(event.property(SideBar::EventProperty::kWindowId)) };
-        CoreHelper::cd(windowId, url);
-    }
+    CoreHelper::cd(windowId, url);
 }
 
-void CoreEventReceiver::handleTileBarSettingsMenuTriggered(const dpf::Event &event)
+void CoreEventReceiver::handleOpenWindow(const QUrl &url)
 {
-    quint64 windowId { qvariant_cast<quint64>(event.property(TitleBar::EventProperty::kWindowId)) };
-    int action = event.property(TitleBar::EventProperty::kMenuAction).toInt();
+    CoreHelper::openNewWindow(url);
+}
+
+void CoreEventReceiver::handleTileBarSettingsMenuTriggered(quint64 windowId, TitleBar::MenuAction action)
+{
     switch (action) {
     case TitleBar::MenuAction::kNewWindow:
-        CoreHelper::openNewWindow();
+        CoreHelper::openNewWindow(QUrl());
         break;
     case TitleBar::MenuAction::kSettings:
         CoreHelper::showSettingsDialog(windowId);

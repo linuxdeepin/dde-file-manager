@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,23 +20,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SIDEBAREVENTCALLER_H
-#define SIDEBAREVENTCALLER_H
+#ifndef WORKSPACEEVENTCALLER_H
+#define WORKSPACEEVENTCALLER_H
 
-#include "dfmplugin_sidebar_global.h"
+#include "dfmplugin_workspace_global.h"
 
 #include <QObject>
 
-DPSIDEBAR_BEGIN_NAMESPACE
+DPWORKSPACE_BEGIN_NAMESPACE
 
-class SideBarEventCaller
+class WorkspaceEventCaller
 {
-    SideBarEventCaller() = delete;
+    WorkspaceEventCaller() = delete;
 
 public:
-    static void sendItemActived(QWidget *sender, const QUrl &url);
+    static void sendOpenWindow(const QList<QUrl> &urls);
 };
 
-DPSIDEBAR_END_NAMESPACE
+DPWORKSPACE_END_NAMESPACE
 
-#endif   // SIDEBAREVENTCALLER_H
+#endif   // WORKSPACEEVENTCALLER_H

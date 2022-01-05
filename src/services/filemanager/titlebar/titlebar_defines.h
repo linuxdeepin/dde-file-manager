@@ -25,26 +25,20 @@
 
 #include "dfm_filemanager_service_global.h"
 
+#include <QObject>
+
 DSB_FM_BEGIN_NAMESPACE
 
 namespace TitleBar {
-namespace EventTopic {
-extern const char *const kTitleBar;   // deifine "/org/deepin/event/titlebar"
-}   // namespace EventTopic
 
-namespace EventData {
-extern const char *const kSwitchMode;
-extern const char *const kSettingsMenuTriggered;
-extern const char *const kShowDetailView;
-}   // namespace EventData
+// custm event type
+namespace EventType {
+extern const int kSwitchMode;
+extern const int kSettingsMenuTriggered;
+extern const int kShowDetailView;
+};   // namespace EventType
 
-namespace EventProperty {
-extern const char *const kWindowId;   // value is quint64
-extern const char *const kViewMode;   // value is ViewMode
-extern const char *const kMenuAction;   // value is MenuAction
-extern const char *const kDetailState;   // value is bool
-}   // namespace EventProperty
-
+// TODO(zhangs): move to global
 enum ViewMode {
     kIconMode = 0x01,
     kListMode = 0x02,
@@ -58,9 +52,11 @@ enum MenuAction {
     kSetUserSharePassword,
     kSettings
 };
-
 }   // namespace TitleBar
 
 DSB_FM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::TitleBar::ViewMode);
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::TitleBar::MenuAction);
 
 #endif   // TITLEBAR_DEFINES_H

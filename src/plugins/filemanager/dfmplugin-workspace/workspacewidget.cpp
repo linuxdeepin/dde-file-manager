@@ -22,6 +22,7 @@
 */
 #include "workspacewidget.h"
 #include "fileview.h"
+#include "events/workspaceeventcaller.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 
@@ -129,14 +130,5 @@ void WorkspaceWidget::handleCtrlN()
         qWarning() << "Cannot find view by url: " << workspaceUrl;
         return;
     }
-    QList<QUrl> urls { fileView->selectedUrlList() };
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    if (urls.isEmpty()) {
-        windowService->showWindow(QUrl(), true);
-    } else {
-        for (const QUrl &url : urls) {
-            windowService->showWindow(url, true);
-        }
-    }
+    WorkspaceEventCaller::sendOpenWindow(fileView->selectedUrlList());
 }

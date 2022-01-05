@@ -25,7 +25,7 @@
 #include "dfm-framework/lifecycle/lifecycle.h"
 #include "dfm-framework/listener/listener.h"
 #include "dfm-framework/event/eventcallproxy.h"
-#include "dfm-framework/abus/appbus.h"
+#include "dfm-framework/event/eventdispatcher.h"
 #include "dfm-framework/service/pluginservicecontext.h"
 
 #include <QObject>
@@ -49,7 +49,7 @@ public:
     PluginServiceContext &serviceContext() const;
     EventCallProxy &eventProxy() const;
     const Listener &listener() const;
-    AppBus &appBus() const;
+    EventDispatcherManager &eventDispatcher() const;
 
 private:
     Framework();

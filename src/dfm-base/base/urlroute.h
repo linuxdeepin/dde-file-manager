@@ -81,6 +81,5 @@ public:
 };
 
 DFMBASE_END_NAMESPACE
-Q_DECLARE_METATYPE(QUrl);
 
 #endif   // URLROUTE_H

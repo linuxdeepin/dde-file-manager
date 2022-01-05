@@ -24,50 +24,30 @@
 #define COREEVENTRECEIVER_H
 
 #include "dfmplugin_core_global.h"
-#include "services/filemanager/sidebar/sidebar_defines.h"
+
 #include "services/filemanager/titlebar/titlebar_defines.h"
 
-#include <dfm-framework/event/eventhandler.h>
-#include <dfm-framework/event/eventcallproxy.h>
-
-#include <QMap>
-#include <QString>
+#include <QObject>
 
 DPCORE_BEGIN_NAMESPACE
-class CoreEventReceiver : public dpf::EventHandler, dpf::AutoEventHandlerRegister<CoreEventReceiver>
+
+class CoreEventReceiver final : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(CoreEventReceiver)
 
 public:
-    using HandlerMap = QMap<QString, std::function<void(const dpf::Event &)>>;
+    static CoreEventReceiver *instance();
 
-    static EventHandler::Type type()
-    {
-        return EventHandler::Type::Sync;
-    }
-
-    static QStringList topics()
-    {
-        // TODO(zhangs): add custom topic
-        return QStringList() << DSB_FM_NAMESPACE::SideBar::EventTopic::kSideBar
-                             << DSB_FM_NAMESPACE::TitleBar::EventTopic::kTitleBar;
-    }
-
-    explicit CoreEventReceiver();
-    void eventProcess(const dpf::Event &event) override;
-
-private:   // event topics
-    void handleSideBarTopic(const dpf::Event &event);
-    void handleTitleBarTopic(const dpf::Event &event);
-    void callHandler(const dpf::Event &event, const HandlerMap &map);
-
-private:   // event data (sub topics)
-    void handleSideBarItemActived(const dpf::Event &event);
-    void handleTileBarSettingsMenuTriggered(const dpf::Event &event);
+public slots:
+    void handleChangeUrl(quint64 windowId, const QUrl &url);
+    void handleOpenWindow(const QUrl &url);
+    void handleTileBarSettingsMenuTriggered(quint64 windowId, DSB_FM_NAMESPACE::TitleBar::MenuAction action);
 
 private:
-    HandlerMap eventTopicHandlers;
+    explicit CoreEventReceiver(QObject *parent = nullptr);
 };
+
 DPCORE_END_NAMESPACE
 
 #endif   // COREEVENTRECEIVER_H

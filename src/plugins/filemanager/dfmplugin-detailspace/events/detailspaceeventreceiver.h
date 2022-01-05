@@ -27,40 +27,23 @@
 
 #include "services/filemanager/titlebar/titlebar_defines.h"
 
-#include <dfm-framework/event/eventhandler.h>
-#include <dfm-framework/event/eventcallproxy.h>
+#include <QObject>
 
 DPDETAILSPACE_BEGIN_NAMESPACE
 
-class DetailSpaceEventReceiver : public dpf::EventHandler, dpf::AutoEventHandlerRegister<DetailSpaceEventReceiver>
+class DetailSpaceEventReceiver final : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(DetailSpaceEventReceiver)
+
 public:
-    using HandlerMap = QMap<QString, std::function<void(const dpf::Event &)>>;
+    static DetailSpaceEventReceiver *instance();
 
-    static EventHandler::Type type()
-    {
-        return EventHandler::Type::Sync;
-    }
-
-    static QStringList topics()
-    {
-        // TODO(zhangs): add custom topic
-        return QStringList() << DSB_FM_NAMESPACE::TitleBar::EventTopic::kTitleBar;
-    }
-
-    explicit DetailSpaceEventReceiver();
-    void eventProcess(const dpf::Event &event) override;
-
-private:   // event topics
-    void handleTitleBarTopic(const dpf::Event &event);
-    void callHandler(const dpf::Event &event, const HandlerMap &map);
-
-private:   // event data (sub topics)
-    void handleTileBarShowDetailView(const dpf::Event &event);
+public slots:
+    void handleTileBarShowDetailView(quint64 windowId, bool checked);
 
 private:
-    HandlerMap eventTopicHandlers;
+    explicit DetailSpaceEventReceiver(QObject *parent = nullptr);
 };
 
 DPDETAILSPACE_END_NAMESPACE

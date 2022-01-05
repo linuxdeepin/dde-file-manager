@@ -71,7 +71,7 @@ bool SideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction action,
     Q_ASSERT(column == 0);
 
     auto isSeparator = [](SideBarItem *item) -> bool {
-        return item && dynamic_cast<DFMSideBarItemSeparator *>(item);
+        return item && dynamic_cast<SideBarItemSeparator *>(item);
     };
     auto isItemDragEnabled = [](SideBarItem *item) -> bool {
         return item && item->flags().testFlag(Qt::ItemIsDragEnabled);

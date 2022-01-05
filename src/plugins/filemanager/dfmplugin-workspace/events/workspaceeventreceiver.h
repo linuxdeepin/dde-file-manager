@@ -25,43 +25,25 @@
 #include "dfmplugin_workspace_global.h"
 #include "services/filemanager/titlebar/titlebar_defines.h"
 
-#include <dfm-framework/event/eventhandler.h>
-#include <dfm-framework/event/eventcallproxy.h>
-
-#include <QMap>
-#include <QString>
+#include <QObject>
 
 DPWORKSPACE_BEGIN_NAMESPACE
-class WorkspaceEventReceiver : public dpf::EventHandler, dpf::AutoEventHandlerRegister<WorkspaceEventReceiver>
+
+class WorkspaceEventReceiver final : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(WorkspaceEventReceiver)
 
 public:
-    using HandlerMap = QMap<QString, std::function<void(const dpf::Event &)>>;
+    static WorkspaceEventReceiver *instance();
 
-    static EventHandler::Type type()
-    {
-        return EventHandler::Type::Sync;
-    }
-
-    static QStringList topics()
-    {
-        return QStringList() << DSB_FM_NAMESPACE::TitleBar::EventTopic::kTitleBar;
-    }
-
-    explicit WorkspaceEventReceiver();
-    void eventProcess(const dpf::Event &event) override;
-
-private:   // event topics
-    void handleTitleBarTopic(const dpf::Event &event);
-    void callHandler(const dpf::Event &event, const HandlerMap &map);
-
-private:   // event data (sub topics)
-    void handleTileBarSwitchModeTriggered(const dpf::Event &event);
+public slots:
+    void handleTileBarSwitchModeTriggered(quint64 windowId, DSB_FM_NAMESPACE::TitleBar::ViewMode mode);
 
 private:
-    HandlerMap eventTopicHandlers;
+    explicit WorkspaceEventReceiver(QObject *parent = nullptr);
 };
+
 DPWORKSPACE_END_NAMESPACE
 
 #endif   // WORKSPACEEVENTRECEIVER_H

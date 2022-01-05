@@ -24,10 +24,15 @@
 #include "workspacewidget.h"
 #include "fileview.h"
 #include "utils/workspacehelper.h"
+#include "events/workspaceeventreceiver.h"
 
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/filemanager/titlebar/titlebar_defines.h"
+#include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 #include "dfm-base/base/schemefactory.h"
+
+#include <dfm-framework/framework.h>
 
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -50,6 +55,8 @@ void Workspace::initialize()
 
 bool Workspace::start()
 {
+    dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kSwitchMode,
+                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
     return true;
 }
 

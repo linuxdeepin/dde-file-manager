@@ -60,7 +60,7 @@ SideBarItemDelegate::SideBarItemDelegate(QAbstractItemView *parent)
 void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
-    if (dynamic_cast<DFMSideBarItemSeparator *>(item)) {
+    if (dynamic_cast<SideBarItemSeparator *>(item)) {
         return GlobalPrivate::paintSeparator(painter, option);
     }
 
@@ -70,7 +70,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 QSize SideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
-    if (dynamic_cast<DFMSideBarItemSeparator *>(item)) {
+    if (dynamic_cast<SideBarItemSeparator *>(item)) {
         return QSize(200, 5);
     }
     return DStyledItemDelegate::sizeHint(option, index);

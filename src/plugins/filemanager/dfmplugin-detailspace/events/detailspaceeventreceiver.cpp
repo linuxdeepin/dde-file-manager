@@ -28,48 +28,18 @@
 DPDETAILSPACE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 
-DetailSpaceEventReceiver::DetailSpaceEventReceiver()
+DetailSpaceEventReceiver *DetailSpaceEventReceiver::instance()
 {
-    // add event topic map in here
-    DetailSpaceEventReceiver::eventTopicHandlers = {
-        { TitleBar::EventTopic::kTitleBar, std::bind(&DetailSpaceEventReceiver::handleTitleBarTopic, this, std::placeholders::_1) }
-    };
+    static DetailSpaceEventReceiver receiver;
+    return &receiver;
 }
 
-void DetailSpaceEventReceiver::eventProcess(const dpf::Event &event)
+void DetailSpaceEventReceiver::handleTileBarShowDetailView(quint64 windowId, bool checked)
 {
-    QString topic { event.topic() };
-    if (!eventTopicHandlers.contains(topic)) {
-        qWarning() << "Invalid event topic: " << topic;
-        return;
-    }
-
-    eventTopicHandlers[topic](event);
-}
-
-void DetailSpaceEventReceiver::handleTitleBarTopic(const dpf::Event &event)
-{
-    static HandlerMap eventDataHandlers = {
-        { TitleBar::EventData::kShowDetailView, std::bind(&DetailSpaceEventReceiver::handleTileBarShowDetailView, this, std::placeholders::_1) }
-    };
-
-    callHandler(event, eventDataHandlers);
-}
-
-void DetailSpaceEventReceiver::callHandler(const dpf::Event &event, const DetailSpaceEventReceiver::HandlerMap &map)
-{
-    QString subTopic { event.data().toString() };
-    if (!map.contains(subTopic)) {
-        qWarning() << "Invalid event data: " << subTopic;
-        return;
-    }
-
-    map[subTopic](event);
-}
-
-void DetailSpaceEventReceiver::handleTileBarShowDetailView(const dpf::Event &event)
-{
-    quint64 windowId { qvariant_cast<quint64>(event.property(TitleBar::EventProperty::kWindowId)) };
-    bool checked { qvariant_cast<bool>(event.property(TitleBar::EventProperty::kDetailState)) };
     DetailSpaceHelper::showDetailView(windowId, checked);
+}
+
+DetailSpaceEventReceiver::DetailSpaceEventReceiver(QObject *parent)
+    : QObject(parent)
+{
 }

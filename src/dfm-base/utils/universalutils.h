@@ -35,14 +35,13 @@ DFMBASE_BEGIN_NAMESPACE
 class UniversalUtils
 {
 public:
+    static int registerEventType() noexcept;
     static bool inMainThread();
     static void notifyMessage(const QString &msg);
     static void notifyMessage(const QString &title, const QString &msg);
     static QString userLoginState();
     static void blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay);
-
     static qint64 computerMemory();
-
     static void computerInformation(QString &cpuinfo, QString &systemType, QString &Edition, QString &version);
 };
 

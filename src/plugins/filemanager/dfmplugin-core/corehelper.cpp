@@ -34,6 +34,7 @@ DFMBASE_USE_NAMESPACE
 
 void CoreHelper::cd(quint64 windowId, const QUrl &url)
 {
+    Q_ASSERT(url.isValid());
     auto &ctx = dpfInstance.serviceContext();
     auto windowService = ctx.service<WindowsService>(WindowsService::name());
     auto window = windowService->findWindowById(windowId);
@@ -47,11 +48,11 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
     window->cd(url);
 }
 
-void CoreHelper::openNewWindow()
+void CoreHelper::openNewWindow(const QUrl &url)
 {
     auto &ctx = dpfInstance.serviceContext();
     auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    windowService->showWindow(QUrl(), true);
+    windowService->showWindow(url, true);
 }
 
 void CoreHelper::showSettingsDialog(quint64 windowId)

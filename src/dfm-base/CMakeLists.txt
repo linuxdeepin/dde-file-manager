@@ -20,7 +20,8 @@ set(QRC_FILE
     )
 qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
 
-set(GLOBAL_H dfm_base_global.h)
+set(GLOBAL_H dfm_base_global.h
+             dfm_event_defines.h)
 
 FILE (GLOB INTERFACES_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/*.h"

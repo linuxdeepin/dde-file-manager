@@ -22,8 +22,10 @@
 */
 #include "detailspace.h"
 #include "utils/detailspacehelper.h"
+#include "events/detailspaceeventreceiver.h"
 
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/filemanager/titlebar/titlebar_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -42,6 +44,8 @@ void DetailSpace::initialize()
 
 bool DetailSpace::start()
 {
+    dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kShowDetailView,
+                                            DetailSpaceEventReceiver::instance(), &DetailSpaceEventReceiver::handleTileBarShowDetailView);
     return true;
 }
 

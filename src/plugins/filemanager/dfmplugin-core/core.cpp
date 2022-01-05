@@ -20,10 +20,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "core.h"
+#include "coreeventreceiver.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/common/menu/menuservice.h"
-
+#include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
@@ -93,4 +94,12 @@ void Core::onAllPluginsInitialized()
         qWarning() << "Cannot show window: " << error;
         abort();
     }
+
+    // subscribe events
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kChangeCurrentUrl,
+                                            CoreEventReceiver::instance(), &CoreEventReceiver::handleChangeUrl);
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenNewWindow,
+                                            CoreEventReceiver::instance(), &CoreEventReceiver::handleOpenWindow);
+    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::TitleBar::EventType::kSettingsMenuTriggered,
+                                            CoreEventReceiver::instance(), &CoreEventReceiver::handleTileBarSettingsMenuTriggered);
 }

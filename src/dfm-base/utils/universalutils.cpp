@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "universalutils.h"
+#include "dfm_event_defines.h"
 
 #include <DDBusSender>
 #include <QCoreApplication>
@@ -90,6 +91,20 @@ QString UniversalUtils::userLoginState()
     if (replay.isValid())
         state = replay.toString();
     return state;
+}
+
+/*!
+ * \brief register EventType
+ * \return -1 if all available values are already taken or the
+ *  program is shutting down.
+ */
+[[gnu::hot]] int UniversalUtils::registerEventType() noexcept
+{
+    Q_ASSERT(inMainThread());
+    static int type = GlobalEventType::kCustomBase;
+    if (type > GlobalEventType::kMaxCustom)
+        return -1;
+    return type++;
 }
 
 /*!

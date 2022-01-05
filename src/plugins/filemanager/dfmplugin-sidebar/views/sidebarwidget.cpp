@@ -110,7 +110,7 @@ bool SideBarWidget::removeItem(SideBarItem *item)
 void SideBarWidget::onItemActived(const QModelIndex &index)
 {
     SideBarItem *item = sidebarModel->itemFromIndex(index);
-    if (dynamic_cast<DFMSideBarItemSeparator *>(item))
+    if (dynamic_cast<SideBarItemSeparator *>(item))
         return;
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     QUrl url { qvariant_cast<QUrl>(item->data(SideBarItem::Roles::ItemUrlRole)) };
@@ -198,14 +198,14 @@ void SideBarWidget::updateSeparatorVisibleState()
     for (int i = 0; i < sidebarModel->rowCount(); i++) {
         SideBarItem *item = sidebarModel->itemFromIndex(i);
         if (item->group() != lastGroupName) {
-            if (dynamic_cast<DFMSideBarItemSeparator *>(item)) {   // Separator
+            if (dynamic_cast<SideBarItemSeparator *>(item)) {   // Separator
                 sidebarView->setRowHidden(i, lastGroupItemCount == 0);
                 lastSeparatorIndex = i;
                 lastGroupItemCount = 0;
                 lastGroupName = item->group();
             }
         } else {
-            if (!dynamic_cast<DFMSideBarItemSeparator *>(item))   // SidebarItem
+            if (!dynamic_cast<SideBarItemSeparator *>(item))   // SidebarItem
                 lastGroupItemCount++;
         }
     }

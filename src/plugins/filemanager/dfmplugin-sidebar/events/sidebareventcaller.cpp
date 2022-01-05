@@ -21,24 +21,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "sidebareventcaller.h"
-
 #include "utils/sidebarhelper.h"
 
 #include "services/filemanager/sidebar/sidebar_defines.h"
+#include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
 #include <QUrl>
 
 DPSIDEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
+
+static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
+{
+    return &dpfInstance.eventDispatcher();
+}
 
 void SideBarEventCaller::sendItemActived(QWidget *sender, const QUrl &url)
 {
     quint64 id = SideBarHelper::windowId(sender);
-    dpf::Event event;
-    event.setTopic(SideBar::EventTopic::kSideBar);
-    event.setData(SideBar::EventData::kCdAction);
-    event.setProperty(SideBar::EventProperty::kWindowId, id);
-    event.setProperty(SideBar::EventProperty::kUrl, url);
-    dpfInstance.eventProxy().pubEvent(event);
+    dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, id, url);
 }

@@ -53,15 +53,16 @@ public:
     QUrl url() const;
     QString group() const;
 };
-DPSIDEBAR_END_NAMESPACE
 
-class DFMSideBarItemSeparator : public DPSIDEBAR_NAMESPACE::SideBarItem
+class SideBarItemSeparator : public DPSIDEBAR_NAMESPACE::SideBarItem
 {
 public:
-    explicit DFMSideBarItemSeparator(const QString &group = "");
-    virtual ~DFMSideBarItemSeparator();
+    explicit SideBarItemSeparator(const QString &group = "");
+    virtual ~SideBarItemSeparator();
 };
 
-Q_DECLARE_METATYPE(DFMSideBarItemSeparator)
+DPSIDEBAR_END_NAMESPACE
+
+Q_DECLARE_METATYPE(DPSIDEBAR_NAMESPACE::SideBarItemSeparator)
 
 #endif   //DFMSIDEBARITEM_H

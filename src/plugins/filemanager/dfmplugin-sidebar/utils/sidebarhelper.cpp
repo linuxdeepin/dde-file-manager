@@ -82,9 +82,9 @@ SideBarItem *SideBarHelper::createDefaultItem(const QString &pathKey, const QStr
     return item;
 }
 
-DFMSideBarItemSeparator *SideBarHelper::createSeparatorItem(const QString &group)
+SideBarItemSeparator *SideBarHelper::createSeparatorItem(const QString &group)
 {
-    DFMSideBarItemSeparator *item = new DFMSideBarItemSeparator(group);
+    SideBarItemSeparator *item = new SideBarItemSeparator(group);
     item->setFlags(Qt::NoItemFlags);
     return item;
 }

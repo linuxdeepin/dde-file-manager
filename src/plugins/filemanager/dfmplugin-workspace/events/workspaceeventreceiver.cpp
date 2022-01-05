@@ -29,51 +29,18 @@
 DPWORKSPACE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 
-WorkspaceEventReceiver::WorkspaceEventReceiver()
-    : AutoEventHandlerRegister<WorkspaceEventReceiver>()
+WorkspaceEventReceiver::WorkspaceEventReceiver(QObject *parent)
+    : QObject(parent)
 {
-    // add event topic map in here
-    WorkspaceEventReceiver::eventTopicHandlers = {
-        { TitleBar::EventTopic::kTitleBar, std::bind(&WorkspaceEventReceiver::handleTitleBarTopic, this, std::placeholders::_1) }
-    };
 }
 
-void WorkspaceEventReceiver::eventProcess(const dpf::Event &event)
+WorkspaceEventReceiver *WorkspaceEventReceiver::instance()
 {
-    QString topic { event.topic() };
-    if (!eventTopicHandlers.contains(topic)) {
-        qWarning() << "Invalid event topic: " << topic;
-        return;
-    }
-
-    eventTopicHandlers[topic](event);
+    static WorkspaceEventReceiver receiver;
+    return &receiver;
 }
 
-void WorkspaceEventReceiver::handleTitleBarTopic(const dpf::Event &event)
+void WorkspaceEventReceiver::handleTileBarSwitchModeTriggered(quint64 windowId, TitleBar::ViewMode mode)
 {
-    // add event data map in here
-    static HandlerMap eventDataHandlers = {
-        { TitleBar::EventData::kSwitchMode, std::bind(&WorkspaceEventReceiver::handleTileBarSwitchModeTriggered, this, std::placeholders::_1) }
-    };
-
-    callHandler(event, eventDataHandlers);
-}
-
-void WorkspaceEventReceiver::callHandler(const dpf::Event &event, const HandlerMap &map)
-{
-    QString subTopic { event.data().toString() };
-    if (!map.contains(subTopic)) {
-        qWarning() << "Invalid event data: " << subTopic;
-        return;
-    }
-
-    map[subTopic](event);
-}
-
-void WorkspaceEventReceiver::handleTileBarSwitchModeTriggered(const dpf::Event &event)
-{
-
-    quint64 windowId { qvariant_cast<quint64>(event.property(TitleBar::EventProperty::kWindowId)) };
-    int viewMode { qvariant_cast<int>(event.property(TitleBar::EventProperty::kViewMode).toInt()) };
-    WorkspaceHelper::instance()->switchViewMode(windowId, viewMode);
+    WorkspaceHelper::instance()->switchViewMode(windowId, mode);
 }

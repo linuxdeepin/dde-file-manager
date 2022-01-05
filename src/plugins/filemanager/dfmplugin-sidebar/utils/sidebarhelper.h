@@ -29,11 +29,12 @@
 #include <QMutex>
 #include <QWidget>
 
-class DFMSideBarItemSeparator;
 DPSIDEBAR_BEGIN_NAMESPACE
 
 class SideBarWidget;
 class SideBarItem;
+class SideBarItemSeparator;
+
 class SideBarHelper
 {
 public:
@@ -42,7 +43,7 @@ public:
     static void removeSideBar(quint64 windowId);
     static quint64 windowId(QWidget *sender);
     static SideBarItem *createDefaultItem(const QString &pathKey, const QString &group);
-    static DFMSideBarItemSeparator *createSeparatorItem(const QString &group);
+    static SideBarItemSeparator *createSeparatorItem(const QString &group);
 
 private:
     static QMutex &mutex();

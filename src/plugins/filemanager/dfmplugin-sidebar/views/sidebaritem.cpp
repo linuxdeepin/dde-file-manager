@@ -73,12 +73,12 @@ QString SideBarItem::group() const
     return data(Roles::ItemGroupRole).toString();
 }
 
-DFMSideBarItemSeparator::DFMSideBarItemSeparator(const QString &group)
+SideBarItemSeparator::SideBarItemSeparator(const QString &group)
     : SideBarItem(QUrl())
 {
     setGroup(group);
 }
 
-DFMSideBarItemSeparator::~DFMSideBarItemSeparator()
+SideBarItemSeparator::~SideBarItemSeparator()
 {
 }

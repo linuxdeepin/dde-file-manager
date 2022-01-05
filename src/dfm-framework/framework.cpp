@@ -31,7 +31,6 @@ class FrameworkPrivate
     Framework *const q;
     // Plugin lifeCycle manager.
     QScopedPointer<LifeCycle> lifeCycle;
-    QScopedPointer<AppBus> appBus;
     bool bInitialized = false;
 
     explicit FrameworkPrivate(Framework *dd);
@@ -118,12 +117,9 @@ const Listener &Framework::listener() const
     return Listener::instance();
 }
 
-AppBus &Framework::appBus() const
+EventDispatcherManager &Framework::eventDispatcher() const
 {
-    if (!d->appBus) {
-        d->appBus.reset(new AppBus());
-    }
-    return *d->appBus;
+    return EventDispatcherManager::instance();
 }
 
 Framework::Framework()
