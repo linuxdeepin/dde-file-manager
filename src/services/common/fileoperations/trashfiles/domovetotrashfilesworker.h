@@ -51,9 +51,6 @@ protected:
     bool statisticsFilesSize() override;
 
 protected:
-    AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from,
-                                                           const AbstractJobHandler::JobErrorType &error,
-                                                           const QString &errorMsg = QString());
     bool doMoveToTrash();
     bool checkTrashDirIsReady();
     bool canMoveToTrash(const QString &filePath);

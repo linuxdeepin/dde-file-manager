@@ -78,32 +78,6 @@ bool DoMoveToTrashFilesWorker::statisticsFilesSize()
 
     return true;
 }
-
-/*!
- * \brief DoCopyFilesWorker::doHandleErrorAndWait Blocking handles errors and returns
- * actions supported by the operation
- * \param from source information
- * \param to target information
- * \param error error type
- * \param needRetry is neef retry action
- * \param errorMsg error message
- * \return support action
- */
-AbstractJobHandler::SupportAction DoMoveToTrashFilesWorker::doHandleErrorAndWait(const QUrl &from, const AbstractJobHandler::JobErrorType &error, const QString &errorMsg)
-{
-    setStat(AbstractJobHandler::JobState::kPauseState);
-    emitErrorNotify(from, targetUrl, error, errorMsg);
-
-    if (!handlingErrorQMutex)
-        handlingErrorQMutex.reset(new QMutex);
-    handlingErrorQMutex->lock();
-    if (handlingErrorCondition.isNull())
-        handlingErrorCondition.reset(new QWaitCondition);
-    handlingErrorCondition->wait(handlingErrorQMutex.data());
-    handlingErrorQMutex->unlock();
-
-    return currentAction;
-}
 /*!
  * \brief DoMoveToTrashFilesWorker::doMoveToTrash do move to trash
  * \return move to trash success
@@ -137,7 +111,7 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
         const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
         if (!fileInfo) {
             // pause and emit error msg
-            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kProrogramError)) {
+            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetUrl, url, AbstractJobHandler::JobErrorType::kProrogramError)) {
                 return false;
             } else {
                 compeleteFilesCount++;
@@ -157,11 +131,6 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
 
         if (!ok)
             return false;
-        // 写入trash信息
-        // 链接文件设置 1。写入trash信息，2。在回收站创建新的链接，3。删除原来的链接
-        // 获取文件是否和回收站 同一个磁盘
-        // 是，执rename,加入完成列表
-        // 否，检查磁盘空间，1。是执行拷贝，拷贝成功删除源文件，2。否错误提示
     }
     return true;
 }
@@ -174,14 +143,14 @@ bool DoMoveToTrashFilesWorker::checkTrashDirIsReady()
     QDir trashDir;
 
     if (!trashDir.mkpath(StandardPaths::location(StandardPaths::kTrashFilesPath))) {
-        doHandleErrorAndWait(sourceUrls.first(), AbstractJobHandler::JobErrorType::kMakeStandardTrashError);
+        doHandleErrorAndWait(sourceUrls.first(), targetUrl, QUrl(), AbstractJobHandler::JobErrorType::kMakeStandardTrashError);
         qWarning() << " mk " << StandardPaths::location(StandardPaths::kTrashInfosPath) << "failed!";
 
         return false;
     }
 
     if (!trashDir.mkpath(StandardPaths::location(StandardPaths::kTrashInfosPath))) {
-        doHandleErrorAndWait(sourceUrls.first(), AbstractJobHandler::JobErrorType::kMakeStandardTrashError);
+        doHandleErrorAndWait(sourceUrls.first(), targetUrl, QUrl(), AbstractJobHandler::JobErrorType::kMakeStandardTrashError);
         qWarning() << " mk " << StandardPaths::location(StandardPaths::kTrashInfosPath) << "failed!";
 
         return false;
@@ -242,7 +211,7 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool &result)
     do {
         if (!canMoveToTrash(url.path()))
             // pause and emit error msg
-            action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kPermissionDeniedError);
+            action = doHandleErrorAndWait(url, targetUrl, url, AbstractJobHandler::JobErrorType::kPermissionDeniedError);
 
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -264,10 +233,14 @@ bool DoMoveToTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer &
     if (!stateCheck())
         return false;
 
-    QFileInfo fromInfo(fileInfo->url().path());
+    const QUrl &fromUrl = fileInfo->url();
+
+    QFileInfo fromInfo(fromUrl.path());
     QString srcFileName = fromInfo.fileName();
     QString srcPath = fileInfo->path();
     QString targetPath;
+
+    emitCurrentTaskNotify(fileInfo->url(), targetUrl);
 
     bool result = false;
     if (!WriteTrashInfo(fileInfo, targetPath, result)) {
@@ -280,7 +253,7 @@ bool DoMoveToTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer &
     do {
         if (!targetFile.link(targetPath))
             // pause and emit error msg
-            action = doHandleErrorAndWait(fileInfo->url(), AbstractJobHandler::JobErrorType::kSymlinkError);
+            action = doHandleErrorAndWait(fromUrl, targetUrl, fromUrl, AbstractJobHandler::JobErrorType::kSymlinkError);
 
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -305,7 +278,10 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
         return result;
     }
 
-    emitCurrentTaskNotify(fileInfo->url(), QUrl::fromLocalFile(targetPath));
+    const QUrl &sourceUrl = fileInfo->url();
+    const QUrl &targetUrl = QUrl::fromLocalFile(targetPath);
+
+    emitCurrentTaskNotify(fileInfo->url(), targetUrl);
 
     // ToDo::判断是否同盘，是就直接rename
     if (isSameDisk == 1) {
@@ -314,7 +290,7 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
 
         do {
             if (!handler->renameFile(fileInfo->url(), QUrl::fromLocalFile(targetPath))) {
-                action = doHandleErrorAndWait(fileInfo->url(), AbstractJobHandler::JobErrorType::kRenameError, handler->errorString());
+                action = doHandleErrorAndWait(sourceUrl, QUrl::fromLocalFile(targetPath), fileInfo->url(), AbstractJobHandler::JobErrorType::kRenameError, handler->errorString());
             }
         } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -330,16 +306,16 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
     if (!checkFileOutOfLimit(fileInfo)) {
         // ToDo::大于1G，执行侧底删除代码
 
-        return deleteFile(fileInfo);
+        return deleteFile(sourceUrl, QUrl(), fileInfo);
     }
     // 检查磁盘空间是否不足
-    if (!checkDiskSpaceAvailable(targetStorageInfo, fileInfo->url(), &result))
+    if (!checkDiskSpaceAvailable(sourceUrl, QUrl::fromLocalFile(targetPath), targetStorageInfo, &result))
         return result;
     // 拷贝并删除文件
     const auto &toInfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(targetPath));
     if (!toInfo) {
         // pause and emit error msg
-        return AbstractJobHandler::SupportAction::kSkipAction == doHandleErrorAndWait(toInfo->url(), AbstractJobHandler::JobErrorType::kProrogramError);
+        return AbstractJobHandler::SupportAction::kSkipAction == doHandleErrorAndWait(sourceUrl, toInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kProrogramError);
     }
 
     return doCopyAndDelete(fileInfo, toInfo);
@@ -370,7 +346,7 @@ bool DoMoveToTrashFilesWorker::WriteTrashInfo(const AbstractFileInfoPointer &fil
     do {
         if (!doWriteTrashInfo(baseName, fileInfo->path(), delTime))
             // pause and emit error msg
-            action = doHandleErrorAndWait(fileInfo->url(), AbstractJobHandler::JobErrorType::kPermissionDeniedError);
+            action = doHandleErrorAndWait(fileInfo->url(), targetUrl, fileInfo->url(), AbstractJobHandler::JobErrorType::kPermissionDeniedError);
 
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -494,7 +470,7 @@ bool DoMoveToTrashFilesWorker::doCopyAndDelete(const AbstractFileInfoPointer &fr
             return result;
     }
 
-    if (!deleteFile(fromInfo))
+    if (!deleteFile(fromInfo->url(), toInfo->url(), fromInfo))
         return false;
 
     return true;

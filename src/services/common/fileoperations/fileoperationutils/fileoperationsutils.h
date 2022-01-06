@@ -66,6 +66,7 @@ class FileOperationsUtils
     friend class DoCutFilesWorker;
     friend class DoStatisticsFilesWorker;
     friend class DoMoveToTrashFilesWorker;
+    friend class DoRestoreTrashFilesWorker;
     friend class FileOperateBaseWorker;
 
 public:
@@ -79,7 +80,6 @@ public:
 
 private:
     static QSharedPointer<FilesSizeInfo> statisticsFilesSize(const QList<QUrl> &files, const bool &isRecordUrl = false);
-    static bool isFileInCanRemoveDevice(const QUrl &url);
     static bool isFilesSizeOutLimit(const QUrl &url, const qint64 limitSize);
     static quint16 getMemoryPageSize();
     static void statisticFilesSize(const QUrl &url, QSharedPointer<FilesSizeInfo> &sizeInfo, const bool &isRecordUrl = false);

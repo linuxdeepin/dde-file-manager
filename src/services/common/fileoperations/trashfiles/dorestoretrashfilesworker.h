@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -25,13 +25,19 @@
 
 #include "dfm_common_service_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
-#include "fileoperations/fileoperationutils/abstractworker.h"
+#include "fileoperations/fileoperationutils/fileoperatebaseworker.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
+
+#include <dfm-io/core/dfile.h>
 
 #include <QObject>
 
+class QStorageInfo;
+
+USING_IO_NAMESPACE
 DSC_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
-class DoRestoreTrashFilesWorker : public AbstractWorker
+class DoRestoreTrashFilesWorker : public FileOperateBaseWorker
 {
     friend class RestoreTrashFiles;
     Q_OBJECT
@@ -42,6 +48,22 @@ public:
 
 protected:
     bool doWork() override;
+    bool statisticsFilesSize() override;
+    bool initArgs() override;
+
+protected:
+    bool doRestoreTrashFiles();
+    bool getRestoreFileUrl(const AbstractFileInfoPointer &trashFileInfo, QUrl &restoreUrl, bool &result);
+    bool handleSymlinkFile(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo);
+    bool handleRestoreTrash(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo);
+    bool clearTrashFile(const QUrl &fromUrl, const QUrl &toUrl, const AbstractFileInfoPointer &trashInfo);
+    //check disk space available before do move job
+    bool checkDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl, bool *result);
+    bool doCopyAndClearTrashFile(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo);
+
+private:
+    QAtomicInteger<qint64> compeleteFilesCount { 0 };   // move to trash success file count
+    QSharedPointer<QStorageInfo> trashStorageInfo { nullptr };   // target file's device infor
 };
 
 DSC_END_NAMESPACE

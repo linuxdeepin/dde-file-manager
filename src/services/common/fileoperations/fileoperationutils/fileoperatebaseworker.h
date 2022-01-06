@@ -40,7 +40,9 @@ public:
     virtual ~FileOperateBaseWorker() override;
 
 public:
-    AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from,
+    AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &fromUrl,
+                                                           const QUrl &toUrl,
+                                                           const QUrl &errorUrl,
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const QString &errorMsg = QString());
     bool createFileDevices(const AbstractFileInfoPointer &fromInfo,
@@ -48,32 +50,44 @@ public:
                            QSharedPointer<DFMIO::DFile> &fromeFile,
                            QSharedPointer<DFMIO::DFile> &toFile,
                            bool *result);
-    bool createFileDevice(const AbstractFileInfoPointer &needOpenInfo,
+    bool createFileDevice(const QUrl &fromUrl,
+                          const QUrl &toUrl,
+                          const AbstractFileInfoPointer &needOpenInfo,
                           QSharedPointer<DFMIO::DFile> &file, bool *result);
     bool openFiles(const AbstractFileInfoPointer &fromInfo,
                    const AbstractFileInfoPointer &toInfo,
                    const QSharedPointer<DFMIO::DFile> &fromeFile,
                    const QSharedPointer<DFMIO::DFile> &toFile,
                    bool *result);
-    bool openFile(const AbstractFileInfoPointer &fileInfo,
+    bool openFile(const QUrl &fromUrl,
+                  const QUrl &toUrl,
+                  const AbstractFileInfoPointer &fileInfo,
                   const QSharedPointer<DFMIO::DFile> &file,
                   const DFMIO::DFile::OpenFlag &flags,
                   bool *result);
     void setTargetPermissions(const AbstractFileInfoPointer &fromInfo,
                               const AbstractFileInfoPointer &toInfo);
-    bool doReadFile(const AbstractFileInfoPointer &fileInfo,
+    bool doReadFile(const QUrl &fromUrl,
+                    const QUrl &toUrl,
+                    const AbstractFileInfoPointer &fileInfo,
                     const QSharedPointer<DFMIO::DFile> &fromDevice, char *data,
                     const qint64 &blockSize,
                     qint64 &readSize,
                     bool *result);
-    bool doWriteFile(const AbstractFileInfoPointer &fileInfo,
+    bool doWriteFile(const QUrl &fromUrl,
+                     const QUrl &toUrl,
+                     const AbstractFileInfoPointer &fileInfo,
                      const QSharedPointer<DFMIO::DFile> &toDevice,
                      const char *data,
                      const qint64 &readSize,
                      bool *result);
     void readAheadSourceFile(const AbstractFileInfoPointer &fileInfo);
-    bool checkDiskSpaceAvailable(QSharedPointer<QStorageInfo> targetStorageInfo, const QUrl &file, bool *result);
-    bool deleteFile(const AbstractFileInfoPointer &fileInfo);
+    bool checkDiskSpaceAvailable(const QUrl &fromUrl,
+                                 const QUrl &toUrl,
+                                 QSharedPointer<QStorageInfo> targetStorageInfo,
+                                 bool *result);
+    bool deleteFile(const QUrl &fromUrl,
+                    const QUrl &toUrl, const AbstractFileInfoPointer &fileInfo);
     bool copyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *reslut);
     bool copyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *reslut);
 };

@@ -134,7 +134,7 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
 
     bool result = false;
     // check space
-    if (!checkDiskSpaceAvailable(targetStorageInfo, fromInfo->url(), &result))
+    if (!checkDiskSpaceAvailable(fromInfo->url(), toInfo->url(), targetStorageInfo, &result))
         return result;
 
     if (fromInfo->isFile()) {
@@ -147,27 +147,10 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
             return result;
     }
 
-    if (!deleteFile(fromInfo))
+    if (!deleteFile(fromInfo->url(), toInfo->url(), fromInfo))
         return false;
 
     return true;
-}
-
-AbstractJobHandler::SupportAction DoCutFilesWorker::doHandleErrorAndWait(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const QString &errorMsg)
-{
-    setStat(AbstractJobHandler::JobState::kPauseState);
-    emitErrorNotify(from, targetUrl, error, errorMsg);
-
-    if (handlingErrorQMutex.isNull())
-        handlingErrorQMutex.reset(new QMutex);
-    if (handlingErrorCondition.isNull())
-        handlingErrorCondition.reset(new QWaitCondition);
-
-    handlingErrorQMutex->lock();
-    handlingErrorCondition->wait(handlingErrorQMutex.data(), 3000);
-    handlingErrorQMutex->unlock();
-
-    return currentAction;
 }
 
 void DoCutFilesWorker::onUpdateProccess()
@@ -214,21 +197,22 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
     QSharedPointer<StorageInfo> sourceStorageInfo = nullptr;
     sourceStorageInfo.reset(new StorageInfo(sourceInfo->url().path()));
 
+    const QUrl &sourceUrl = sourceInfo->url();
+    const QUrl &targetUrl = targetInfo->url();
+
     if (targetStorageInfo->device() != "gvfsd-fuse" || sourceStorageInfo == targetStorageInfo) {
         AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
 
         if (sourceInfo->isSymLink()) {
             // TODO(lanxs)
             if (targetInfo->exists()) {
-                bool succ = deleteFile(targetInfo);
+                bool succ = deleteFile(sourceUrl, targetUrl, targetInfo);
                 if (!succ) {
                     return false;
                 }
             }
 
             // create link
-            const QUrl &sourceUrl = sourceInfo->url();
-            const QUrl &targetUrl = targetInfo->url();
 
             do {
                 if (!handler->createSystemLink(sourceUrl, targetUrl))
@@ -242,7 +226,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
             }
 
             // remove old link file
-            return deleteFile(sourceInfo);
+            return deleteFile(sourceUrl, targetUrl, sourceInfo);
 
         } else {
 
