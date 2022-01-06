@@ -56,7 +56,8 @@
 #define GET_COMPRESSOR_PID_SHELL(x)     QString("ps -xo pid,cmd | grep /usr/bin/deepin-compressor | grep ")+x+QString(" | grep -v grep | awk '{print $1}'")
 
 //! 保险箱时间配置文件
-#define VAULT_TIME_CONFIG_FILE          QString("/../dde-file-manager/vaultTimeConfig.json")
+#define VAULT_TIME_CONFIG_FILE_SUFFIX          QString("/../dde-file-manager/vaultTimeConfig.json")
+#define VAULT_TIME_CONFIG_FILE          QString("/../dde-file-manager/vaultTimeConfig")
 
 enum EN_VaultState {
     NotExisted = 0,
