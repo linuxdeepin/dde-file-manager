@@ -938,7 +938,15 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
             key = "Name";
         }
 
+        const QString currentName = oldfilePointer->fileDisplayName();
+
         const QString old_name = desktop.value(key).toString();
+        // 名称没有改变
+        if (currentName == newfilePointer->fileName()) {
+            qDebug() << "rename" << filePath << "currentName"
+                     << currentName << "key" << key  << old_name << "new name" << newfilePointer->fileName();
+            return true;
+        }
 
         desktop.set(key, newfilePointer->fileName());
         desktop.set("X-Deepin-Vendor", QStringLiteral("user-custom"));
