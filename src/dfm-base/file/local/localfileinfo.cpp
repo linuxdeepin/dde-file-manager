@@ -49,9 +49,9 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
 
 LocalFileInfo::LocalFileInfo(const QUrl &url)
-    : AbstractFileInfo(url), d(new LocalFileInfoPrivate(this))
+    : AbstractFileInfo(url, new LocalFileInfoPrivate(this))
 {
-    d->url = url;
+    d = static_cast<LocalFileInfoPrivate *>(dptr.data());
     if (url.isEmpty()) {
         qWarning("Failed, can't use empty url init fileinfo");
         abort();
@@ -84,6 +84,7 @@ LocalFileInfo::LocalFileInfo(const QUrl &url)
 
 LocalFileInfo::~LocalFileInfo()
 {
+    d = nullptr;
 }
 
 LocalFileInfo &LocalFileInfo::operator=(const LocalFileInfo &info)
@@ -596,7 +597,7 @@ bool LocalFileInfo::isSymLink() const
     if (!d->caches.contains(kTypeIsSymLink)) {
         if (d->dfmFileInfo) {
             bool success = true;
-            d->caches.insert(kTypeIsDir, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIsSymlink, &success));
+            d->caches.insert(kTypeIsSymLink, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIsSymlink, &success));
             if (!success)
                 qWarning() << "get dfm-io DFileInfo StandardIsSymlink failed!";
         } else {
@@ -791,9 +792,8 @@ QFileDevice::Permissions LocalFileInfo::permissions() const
     if (!d->caches.contains(kTypePermissions)) {
         if (d->dfmFileInfo) {
             // @todo 目前dfm-io还没实现，等待实现
-            //            bool success(false);
-            //            d->caches.insert(TypePermissions,d->dfmFileInfo->
-            //                                           attribute(DFileInfo::AttributeID::OwnerGroup, &success));
+            bool success(false);
+            d->caches.insert(kTypePermissions, d->dfmFileInfo->attribute(DFileInfo::AttributeID::OwnerGroup, &success));
         } else {
             QFileDevice::Permissions ps;
             return ps;
@@ -824,7 +824,7 @@ qint64 LocalFileInfo::size() const
             return 0;
         }
     }
-    return static_cast<QFileDevice::Permissions>(d->caches.value(kTypeSize).toInt());
+    return d->caches.value(kTypeSize).toInt();
 }
 /*!
  * \brief created 获取文件的创建时间

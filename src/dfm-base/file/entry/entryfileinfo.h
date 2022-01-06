@@ -96,7 +96,7 @@ public:
     virtual void refresh() override;
 
 private:
-    QSharedPointer<EntryFileInfoPrivate> d;
+    EntryFileInfoPrivate *d = nullptr;
 };
 
 DFMBASE_END_NAMESPACE

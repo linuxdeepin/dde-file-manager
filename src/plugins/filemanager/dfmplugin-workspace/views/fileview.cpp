@@ -369,7 +369,7 @@ void FileView::openIndex(const QModelIndex &index)
 
     if (!item)
         return;
-
+    qInfo() << item->fileinfo() << item->fileinfo()->url();
     if (item->fileinfo()->isDir())
         setRootUrl(item->url());
 }

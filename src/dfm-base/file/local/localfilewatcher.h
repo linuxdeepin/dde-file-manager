@@ -31,26 +31,16 @@
 
 class QUrl;
 DFMBASE_BEGIN_NAMESPACE
-class LocalFileWatcherPrivate;
 class LocalFileWatcher : public AbstractFileWatcher
 {
     Q_OBJECT
-    LocalFileWatcherPrivate *const d;
-
 public:
     explicit LocalFileWatcher() = delete;
     explicit LocalFileWatcher(const QUrl &url, QObject *parent = nullptr);
-    virtual ~LocalFileWatcher();
+    ~LocalFileWatcher() override;
 
-    virtual QUrl url() const;
-    virtual bool startWatcher();
-    virtual bool stopWatcher();
-    virtual bool restartWatcher();
-    virtual void setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled = true);
     //debug function
     static QStringList getMonitorFiles();
-
-protected:
 };
 DFMBASE_END_NAMESPACE
 

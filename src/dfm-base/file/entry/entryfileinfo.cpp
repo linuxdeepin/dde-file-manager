@@ -42,7 +42,11 @@ const char *const kStashedRemote { "stashedprotodev" };
 }   // namespace SuffixInfo
 
 EntryFileInfoPrivate::EntryFileInfoPrivate(EntryFileInfo *qq)
-    : AbstractFileInfoPrivate(qq), q(qq)
+    : AbstractFileInfoPrivate(qq)
+{
+}
+
+void EntryFileInfoPrivate::init()
 {
     const auto &&suffix = q->suffix();
     entity.reset(EntryEntityFactor::create(suffix, q->url()));
@@ -57,13 +61,16 @@ EntryFileInfoPrivate::~EntryFileInfoPrivate()
  * \brief this is a proxy class for file info, the real info is in private class and should be registered by suffix
  */
 EntryFileInfo::EntryFileInfo(const QUrl &url)
-    : AbstractFileInfo(url), d(new EntryFileInfoPrivate(this))
+    : AbstractFileInfo(url, new EntryFileInfoPrivate(this))
 {
+    d = static_cast<EntryFileInfoPrivate *>(dptr.data());
+    d->init();
     Q_ASSERT_X(url.scheme() == SchemeTypes::kEntry, __FUNCTION__, "This is not EntryFileInfo's scheme");
 }
 
 EntryFileInfo::~EntryFileInfo()
 {
+    d = nullptr;
 }
 
 EntryFileInfo::EntryOrder EntryFileInfo::order() const

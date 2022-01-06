@@ -230,16 +230,21 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         d->column = 4;
 
     if (!d->watcher.isNull()) {
-        disconnect(d->watcher.data());
+        disconnect(d->watcher.data(), &AbstractFileWatcher::fileDeleted,
+                   d.data(), &FileViewModelPrivate::doFileDeleted);
+        disconnect(d->watcher.data(), &AbstractFileWatcher::subfileCreated,
+                   d.data(), &FileViewModelPrivate::dofileCreated);
+        disconnect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged,
+                   d.data(), &FileViewModelPrivate::doFileUpdated);
     }
     d->watcher = WacherFactory::create<AbstractFileWatcher>(url);
     if (!d->watcher.isNull()) {
-        QObject::connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted,
-                         d.data(), &FileViewModelPrivate::doFileDeleted);
-        QObject::connect(d->watcher.data(), &AbstractFileWatcher::subfileCreated,
-                         d.data(), &FileViewModelPrivate::dofileCreated);
-        QObject::connect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged,
-                         d.data(), &FileViewModelPrivate::doFileUpdated);
+        connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted,
+                d.data(), &FileViewModelPrivate::doFileDeleted);
+        connect(d->watcher.data(), &AbstractFileWatcher::subfileCreated,
+                d.data(), &FileViewModelPrivate::dofileCreated);
+        connect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged,
+                d.data(), &FileViewModelPrivate::doFileUpdated);
         d->watcher->startWatcher();
     }
 

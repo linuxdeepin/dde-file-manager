@@ -40,7 +40,6 @@ DFMBASE_BEGIN_NAMESPACE
 class AbstractFileInfoPrivate;
 class AbstractFileInfo : public QSharedData
 {
-    QScopedPointer<AbstractFileInfoPrivate> d;
 
 public:
     /*!
@@ -98,7 +97,6 @@ public:
 
 public:
     explicit AbstractFileInfo() = delete;
-    explicit AbstractFileInfo(const QUrl &url);
     virtual ~AbstractFileInfo();
     virtual AbstractFileInfo &operator=(const AbstractFileInfo &fileinfo);
     virtual bool operator==(const AbstractFileInfo &fileinfo) const;
@@ -150,6 +148,10 @@ public:
     virtual QMimeType fileMimeType() const;
     virtual QVariantHash extraProperties() const;
     virtual Type fileType() const;
+
+protected:
+    explicit AbstractFileInfo(const QUrl &url, AbstractFileInfoPrivate *d);
+    QScopedPointer<AbstractFileInfoPrivate> dptr;
 };
 DFMBASE_END_NAMESPACE
 

@@ -23,11 +23,6 @@
 #include "interfaces/private/abstractfilewatcher_p.h"
 #include "base/urlroute.h"
 
-#include <dfm-io/core/dwatcher.h>
-#include <dfmio_global.h>
-#include <dfmio_register.h>
-#include <dfm-io/core/diofactory.h>
-
 #include <QEvent>
 #include <QDir>
 #include <QDebug>
@@ -40,9 +35,11 @@ DThreadList<QString> AbstractFileWatcherPrivate::watcherPath;
  *
  * \brief 存储DAbstractFileWatcher的使用的变量和数据
  */
-AbstractFileWatcherPrivate::AbstractFileWatcherPrivate(AbstractFileWatcher *qq)
-    : QObject(qq), q(qq)
+AbstractFileWatcherPrivate::AbstractFileWatcherPrivate(const QUrl &fileUrl, AbstractFileWatcher *qq)
+    : QObject(), q(qq)
 {
+    url = fileUrl;
+    this->path = formatPath(UrlRoute::urlToPath(fileUrl));
 }
 /*!
  * \brief start 启动文件监视器
@@ -92,10 +89,9 @@ QString AbstractFileWatcherPrivate::formatPath(const QString &path)
  *
  * \brief 负责文件的监视，通过不同的url监视不同的文件和目录
  */
-AbstractFileWatcher::AbstractFileWatcher(const QUrl &url, QObject *parent)
-    : QObject(parent), d(new AbstractFileWatcherPrivate(this))
+AbstractFileWatcher::AbstractFileWatcher(AbstractFileWatcherPrivate *dptr, QObject *parent)
+    : QObject(parent), d(dptr)
 {
-    d->path = AbstractFileWatcherPrivate::formatPath(UrlRoute::urlToPath(url));
 }
 /*!
  * \brief url 获取监视文件的url
@@ -113,6 +109,15 @@ QUrl AbstractFileWatcher::url() const
  */
 bool AbstractFileWatcher::startWatcher()
 {
+    if (d->started)
+        return true;
+
+    QObject::moveToThread(qApp->thread());
+    if (!d->started) {
+        d->start();
+        d->started = true;
+        return true;
+    }
     return false;
 }
 /*!
@@ -122,6 +127,14 @@ bool AbstractFileWatcher::startWatcher()
  */
 bool AbstractFileWatcher::stopWatcher()
 {
+    if (!d->started)
+        return false;
+
+    if (d->stop()) {
+        d->started = false;
+        return true;
+    }
+
     return false;
 }
 /*!

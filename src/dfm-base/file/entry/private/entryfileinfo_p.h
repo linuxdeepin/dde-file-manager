@@ -31,11 +31,11 @@ DFMBASE_BEGIN_NAMESPACE
 class EntryFileInfoPrivate : public AbstractFileInfoPrivate
 {
     friend class EntryFileInfo;
-    EntryFileInfo *q { nullptr };
     QScopedPointer<AbstractEntryFileEntity> entity { nullptr };
 
 public:
     explicit EntryFileInfoPrivate(EntryFileInfo *qq);
+    void init();
     virtual ~EntryFileInfoPrivate() override;
 };
 

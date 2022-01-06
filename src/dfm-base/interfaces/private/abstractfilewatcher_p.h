@@ -33,24 +33,22 @@ USING_IO_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
 class AbstractFileWatcherPrivate : public QObject
 {
-    Q_OBJECT
     Q_DISABLE_COPY(AbstractFileWatcherPrivate)
     friend class AbstractFileWatcher;
-    AbstractFileWatcher *q;
 
 public:
-    explicit AbstractFileWatcherPrivate(AbstractFileWatcher *qq);
+    explicit AbstractFileWatcherPrivate(const QUrl &fileUrl, AbstractFileWatcher *qq);
     virtual ~AbstractFileWatcherPrivate() {}
     virtual bool start();
     virtual bool stop();
     static QString formatPath(const QString &path);
 
 protected:
+    AbstractFileWatcher *q = nullptr;
     QAtomicInteger<bool> started { false };   // 是否开始监视
     QAtomicInt cacheInfoConnectSize { 0 };   // Cached FileInfo, number of connections monitored
     QUrl url;   // 监视文件的url
     QString path;   // 监视文件的路径
-    QSharedPointer<DWatcher> watcher { nullptr };   // dfm-io的文件监视器
     static DThreadList<QString> watcherPath;   // 全局监视文件的监视列表
 };
 DFMBASE_END_NAMESPACE

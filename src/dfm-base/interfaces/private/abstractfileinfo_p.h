@@ -39,11 +39,14 @@ DFMBASE_BEGIN_NAMESPACE
 class AbstractFileInfoPrivate
 {
     friend class AbstractFileInfo;
-    AbstractFileInfo *const q;   // DAbstractFileInfo实例对象
+
 public:
     QUrl url;   // 文件的url
     explicit AbstractFileInfoPrivate(AbstractFileInfo *qq);
     virtual ~AbstractFileInfoPrivate();
+
+protected:
+    AbstractFileInfo *const q;   // DAbstractFileInfo实例对象
 };
 
 DFMBASE_END_NAMESPACE

@@ -47,11 +47,11 @@ Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<AbstractFileInfoPoin
  *
  * \param QUrl & 文件的URL
  */
-AbstractFileInfo::AbstractFileInfo(const QUrl &url)
-    : d(new AbstractFileInfoPrivate(this))
+AbstractFileInfo::AbstractFileInfo(const QUrl &url, dfmbase::AbstractFileInfoPrivate *d)
+    : dptr(d)
 {
     Q_UNUSED(type_id)
-    d->url = url;
+    dptr->url = url;
 }
 
 AbstractFileInfo::~AbstractFileInfo()
@@ -66,7 +66,7 @@ AbstractFileInfo::~AbstractFileInfo()
  */
 AbstractFileInfo &AbstractFileInfo::operator=(const AbstractFileInfo &fileinfo)
 {
-    d->url = fileinfo.d->url;
+    dptr->url = fileinfo.dptr->url;
     return *this;
 }
 /*!
@@ -78,7 +78,7 @@ AbstractFileInfo &AbstractFileInfo::operator=(const AbstractFileInfo &fileinfo)
  */
 bool AbstractFileInfo::operator==(const AbstractFileInfo &fileinfo) const
 {
-    return d->url == fileinfo.d->url;
+    return dptr->url == fileinfo.dptr->url;
 }
 /*!
  * \brief != 重载操作符!=
@@ -101,7 +101,7 @@ bool AbstractFileInfo::operator!=(const AbstractFileInfo &fileinfo) const
  */
 void AbstractFileInfo::setFile(const QUrl &url)
 {
-    d->url = url;
+    dptr->url = url;
 }
 /*!
  * \brief setFile 设置文件的File，跟新当前的fileinfo
@@ -112,7 +112,7 @@ void AbstractFileInfo::setFile(const QUrl &url)
  */
 void AbstractFileInfo::setFile(const DFileInfo &file)
 {
-    d->url = file.uri();
+    dptr->url = file.uri();
 }
 /*!
  * \brief exists 文件是否存在
@@ -329,7 +329,7 @@ QDir AbstractFileInfo::absoluteDir() const
  */
 QUrl AbstractFileInfo::url() const
 {
-    return d->url;
+    return dptr->url;
 }
 /*!
  * \brief isReadable 获取文件是否可读

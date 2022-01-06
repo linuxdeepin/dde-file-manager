@@ -204,7 +204,7 @@ public:
     static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
     {
         QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(url);
-        if (!watcher) {
+        if (watcher.isNull()) {
             watcher = instance().SchemeFactory<AbstractFileWatcher>::create(url, errorString);
             WatcherCache::instance().cacheWatcher(url, watcher);
         }

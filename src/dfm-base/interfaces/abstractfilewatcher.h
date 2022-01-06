@@ -35,11 +35,16 @@ class AbstractFileWatcher : public QObject
 {
     Q_OBJECT
     friend class AbstractFileWatcherPrivate;
+
+public:
     QScopedPointer<AbstractFileWatcherPrivate> d;
+
+protected:
+    explicit AbstractFileWatcher(AbstractFileWatcherPrivate *dptr, QObject *parent = nullptr);
 
 public:
     explicit AbstractFileWatcher() = delete;
-    explicit AbstractFileWatcher(const QUrl &url, QObject *parent = nullptr);
+
     virtual ~AbstractFileWatcher();
 
     virtual QUrl url() const;

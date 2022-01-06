@@ -33,7 +33,7 @@ DFMBASE_BEGIN_NAMESPACE
 class LocalFileInfoPrivate;
 class LocalFileInfo : public AbstractFileInfo
 {
-    QSharedPointer<LocalFileInfoPrivate> d;
+    LocalFileInfoPrivate *d;
 
 public:
     enum FlagIcon {

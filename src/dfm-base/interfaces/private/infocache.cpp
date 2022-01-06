@@ -233,6 +233,7 @@ InfoCache &InfoCache::instance()
 AbstractFileInfoPointer InfoCache::getCacheInfo(const QUrl &url)
 {
     Q_D(InfoCache);
+    qInfo() << url;
     if (d->fileInfos.contains(url)) {
         d->updateSortByTimeCacheUrlList(url);
         if (d->needRemoveCacheList.contains(url)) {
@@ -259,6 +260,7 @@ void InfoCache::cacheInfo(const QUrl &url, const AbstractFileInfoPointer &info)
 
     //获取监视器，监听当前的file的改变
     QSharedPointer<AbstractFileWatcher> watcher { nullptr };
+    qInfo() << url;
     if (info->isSymLink() || info->isFile()) {
         watcher = WacherFactory::create<AbstractFileWatcher>(UrlRoute::urlParent(url));
     } else {

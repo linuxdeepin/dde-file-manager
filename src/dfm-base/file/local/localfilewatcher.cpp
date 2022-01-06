@@ -39,8 +39,8 @@ DFMBASE_BEGIN_NAMESPACE
  *
  * \brief 存储DAbstractFileWatcher的使用的变量和数据
  */
-LocalFileWatcherPrivate::LocalFileWatcherPrivate(LocalFileWatcher *qq)
-    : AbstractFileWatcherPrivate(qq), q(qq)
+LocalFileWatcherPrivate::LocalFileWatcherPrivate(const QUrl &fileUrl, LocalFileWatcher *qq)
+    : AbstractFileWatcherPrivate(fileUrl, qq)
 {
 }
 /*!
@@ -52,7 +52,7 @@ LocalFileWatcherPrivate::LocalFileWatcherPrivate(LocalFileWatcher *qq)
  */
 bool LocalFileWatcherPrivate::start()
 {
-    if (!watcher)
+    if (watcher.isNull())
         return false;
     started = watcher->start(0);
     if (started)
@@ -68,7 +68,7 @@ bool LocalFileWatcherPrivate::start()
  */
 bool LocalFileWatcherPrivate::stop()
 {
-    if (!watcher)
+    if (watcher.isNull())
         return false;
     started = watcher->stop();
     if (started)
@@ -78,103 +78,14 @@ bool LocalFileWatcherPrivate::stop()
 
 LocalFileWatcher::~LocalFileWatcher()
 {
-    stopWatcher();
-    if (d->watcher)
-        disconnect(d->watcher.data());
-}
-/*!
- * \brief formatPath 获取文件的绝对路径
- *
- * 通过QFileInfo来获取绝对路径
- *
- * \return QString 文件的绝对路径
- */
-QString LocalFileWatcherPrivate::formatPath(const QString &path)
-{
-    QString p = QFileInfo(path).absoluteFilePath();
-
-    if (p.endsWith(QDir::separator()))
-        p.chop(1);
-
-    return p.isEmpty() ? path : p;
 }
 
 LocalFileWatcher::LocalFileWatcher(const QUrl &url, QObject *parent)
-    : AbstractFileWatcher(url, parent), d(new LocalFileWatcherPrivate(this))
+    : AbstractFileWatcher(new LocalFileWatcherPrivate(url, this), parent)
 {
-    d->path = LocalFileWatcherPrivate::formatPath(UrlRoute::urlToPath(url));
-    if (!UrlRoute::isVirtual(url)) {
-        d->initFileWatcher();
-        d->initConnect();
-    }
-}
-/*!
- * \brief url 获取监视文件的url
- *
- * \return QUrl 文件的绝对路径
- */
-QUrl LocalFileWatcher::url() const
-{
-    return d->url;
-}
-/*!
- * \brief startWatcher 启动文件监视器（在主线程中执行）
- *
- * \return bool 启动文件监视是否成功
- */
-bool LocalFileWatcher::startWatcher()
-{
-    if (d->started)
-        return true;
-
-    QObject::moveToThread(qApp->thread());
-    if (d->start()) {
-        d->started = true;
-        return true;
-    }
-
-    return false;
-}
-/*!
- * \brief stopWatcher 停止文件监视器（在主线程中执行）
- *
- * \return bool 停止文件监视是否成功
- */
-bool LocalFileWatcher::stopWatcher()
-{
-    if (!d->started)
-        return false;
-
-    if (d->stop()) {
-        d->started = false;
-        return true;
-    }
-
-    return false;
-}
-/*!
- * \brief restartWatcher 重新启动文件监视器（在主线程中执行）
- *
- * 实际是先停止在启动，那么就是停止和启动都要成功，当监视器未启动时，调用返回失败，停止失败，但是文件监视器已启动
- *
- * \return bool 重启文件监视是否成功
- */
-bool LocalFileWatcher::restartWatcher()
-{
-    bool ok = stopWatcher();
-    return ok && startWatcher();
-}
-/*!
- * \brief setEnabledSubfileWatcher 设置当前目录下的子文件是否可以监视
- *
- * \param const QUrl &subfileUrl 当前目录下的子文件的URL
- *
- * \param bool enabled 是否能监视
- */
-void LocalFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled)
-{
-    Q_UNUSED(subfileUrl)
-    Q_UNUSED(enabled)
+    LocalFileWatcherPrivate *dptr = static_cast<LocalFileWatcherPrivate *>(d.data());
+    dptr->initFileWatcher();
+    dptr->initConnect();
 }
 
 /*!
@@ -200,8 +111,8 @@ void LocalFileWatcherPrivate::initFileWatcher()
  */
 void LocalFileWatcherPrivate::initConnect()
 {
-    QObject::connect(watcher.data(), &DWatcher::fileChanged, q, &LocalFileWatcher::fileAttributeChanged);
-    QObject::connect(watcher.data(), &DWatcher::fileDeleted, q, &LocalFileWatcher::fileDeleted);
-    QObject::connect(watcher.data(), &DWatcher::fileAdded, q, &LocalFileWatcher::subfileCreated);
+    connect(watcher.data(), &DWatcher::fileChanged, q, &AbstractFileWatcher::fileAttributeChanged);
+    connect(watcher.data(), &DWatcher::fileDeleted, q, &AbstractFileWatcher::fileDeleted);
+    connect(watcher.data(), &DWatcher::fileAdded, q, &AbstractFileWatcher::subfileCreated);
 }
 DFMBASE_END_NAMESPACE
