@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,37 +20,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SIDEBARSERVICE_H
-#define SIDEBARSERVICE_H
+#ifndef SIDEBARUNICASTRECEIVER_H
+#define SIDEBARUNICASTRECEIVER_H
 
-#include "sidebar_defines.h"
+#include "dfmplugin_sidebar_global.h"
+#include "services/filemanager/sidebar/sidebar_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <QObject>
 
-DSB_FM_BEGIN_NAMESPACE
+DPSIDEBAR_BEGIN_NAMESPACE
 
-class SideBarServicePrivate;
-class SideBarService final : public dpf::PluginService, dpf::AutoServiceRegister<SideBarService>
+class SideBarUnicastReceiver : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(SideBarService)
-    friend class dpf::QtClassFactory<dpf::PluginService>;
+    Q_DISABLE_COPY(SideBarUnicastReceiver)
 
 public:
-    static QString name()
-    {
-        return "org.deepin.service.SideBarService";
-    }
+    static SideBarUnicastReceiver *instance();
+    void connectService();
 
-    void addItem(const SideBar::ItemInfo &info);
+public slots:
+    void invokeAddItem(const DSB_FM_NAMESPACE::SideBar::ItemInfo &info);
 
 private:
-    explicit SideBarService(QObject *parent = nullptr);
-    virtual ~SideBarService() override;
-
-    QScopedPointer<SideBarServicePrivate> d;
+    explicit SideBarUnicastReceiver(QObject *parent = nullptr);
 };
 
-DSB_FM_END_NAMESPACE
+DPSIDEBAR_END_NAMESPACE
 
-#endif   // SIDEBARSERVICE_H
+#endif   // SIDEBARUNICASTRECEIVER_H

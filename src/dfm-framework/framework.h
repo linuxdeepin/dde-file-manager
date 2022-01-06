@@ -24,8 +24,9 @@
 #include "dfm-framework/dfm_framework_global.h"
 #include "dfm-framework/lifecycle/lifecycle.h"
 #include "dfm-framework/listener/listener.h"
-#include "dfm-framework/event/eventcallproxy.h"
-#include "dfm-framework/event/eventdispatcher.h"
+#include "dfm-framework/event/pubsub/eventcallproxy.h"
+#include "dfm-framework/event/dispatcher/eventdispatcher.h"
+#include "dfm-framework/event/unicast/eventunicast.h"
 #include "dfm-framework/service/pluginservicecontext.h"
 
 #include <QObject>
@@ -48,8 +49,9 @@ public:
     const LifeCycle &lifeCycle() const;
     PluginServiceContext &serviceContext() const;
     EventCallProxy &eventProxy() const;
-    const Listener &listener() const;
     EventDispatcherManager &eventDispatcher() const;
+    EventUnicastManager &eventUnicast() const;
+    const Listener &listener() const;
 
 private:
     Framework();

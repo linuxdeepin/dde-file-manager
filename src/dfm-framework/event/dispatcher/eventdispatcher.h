@@ -24,8 +24,8 @@
 #define EVENTDISPATCHER_H
 
 #include "dfm-framework/dfm_framework_global.h"
-#include "eventhelper.h"
-#include "invokehelper.h"
+#include "dfm-framework/event/eventhelper.h"
+#include "dfm-framework/event/invokehelper.h"
 
 #include <QVariant>
 #include <QFuture>
@@ -39,8 +39,6 @@ public:
     using EventType = int;
     using Listener = std::function<QVariant(const QVariantList &)>;
     using ListenerList = QList<Listener>;
-
-    EventDispatcher(EventType type);
 
     void dispatch();
     void dispatch(const QVariantList &params);
@@ -80,13 +78,12 @@ private:
     template<class T, class... Args>
     inline static void makeVariantList(QVariantList *list, T t, Args &&... args)
     {
-        *list << t;
+        *list << QVariant::fromValue(t);
         if (sizeof...(args) > 0)
             packParamsHelper(*list, std::forward<Args>(args)...);
     }
 
 private:
-    int eventType;
     ListenerList allListeners;
     QMutex listenerMutex;
 };
@@ -108,7 +105,7 @@ public:
         if (dispatcherMap.contains(type)) {
             dispatcherMap[type]->appendListener(obj, method);
         } else {
-            DispatcherPtr dispatcher { new EventDispatcher(type) };
+            DispatcherPtr dispatcher { new EventDispatcher };
             dispatcher->appendListener(obj, method);
             dispatcherMap.insert(type, dispatcher);
         }
@@ -120,7 +117,6 @@ public:
     [[gnu::hot]] inline bool publish(EventType type, T param, Args &&... args)
     {
         if (Q_LIKELY(dispatcherMap.contains(type))) {
-            QVariantList ret;
             dispatcherMap[type]->dispatch(param, std::forward<Args>(args)...);
             return true;
         }
@@ -140,8 +136,8 @@ private:
     using DispatcherPtr = QSharedPointer<EventDispatcher>;
     using EventDispatcherMap = QMap<int, DispatcherPtr>;
 
-    EventDispatcherManager();
-    ~EventDispatcherManager();
+    EventDispatcherManager() = default;
+    ~EventDispatcherManager() = default;
 
 private:
     EventDispatcherMap dispatcherMap;

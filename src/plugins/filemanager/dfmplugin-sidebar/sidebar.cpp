@@ -24,6 +24,7 @@
 #include "views/sidebarwidget.h"
 #include "views/sidebaritem.h"
 #include "utils/sidebarhelper.h"
+#include "events/sidebarunicastreceiver.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
@@ -33,8 +34,9 @@
 #include <dfm-framework/framework.h>
 
 DPSIDEBAR_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+using DSB_FM_NAMESPACE::WindowsService;
 
 namespace GlobalPrivate {
 static WindowsService *windowService { nullptr };
@@ -47,6 +49,7 @@ void SideBar::initialize()
     GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());
     connect(GlobalPrivate::windowService, &WindowsService::windowOpened, this, &SideBar::onWindowOpened, Qt::DirectConnection);
     connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &SideBar::onWindowClosed, Qt::DirectConnection);
+    SideBarUnicastReceiver::instance()->connectService();
 }
 
 bool SideBar::start()

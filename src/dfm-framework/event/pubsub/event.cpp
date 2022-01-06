@@ -21,8 +21,6 @@
  */
 #include "event.h"
 
-#include "private/event_p.h"
-
 #include <QDebug>
 #include <QMutex>
 
@@ -32,6 +30,20 @@ namespace PrivateGlobal {
 static const char *kEventTopicKey { "EVENT_TOPIC_KEY" };
 static const char *kEventDataKey { "EVENT_DATA_KEY" };
 }   // namespace PrivateGlobal
+
+class EventPrivate
+{
+    friend class Event;
+    Event *const q;
+    QHash<QString, QVariant> sourceHash;
+    friend Q_CORE_EXPORT QDebug operator<<(QDebug, const Event &);
+
+public:
+    explicit EventPrivate(Event *qq)
+        : q(qq)
+    {
+    }
+};
 
 Event::Event()
     : d(new EventPrivate(this))

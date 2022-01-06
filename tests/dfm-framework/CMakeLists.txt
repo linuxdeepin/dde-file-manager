@@ -4,7 +4,7 @@ project(test-dfm-framework)
 
 # UT文件
 file(GLOB_RECURSE UT_CXX_FILE
-    FILES_MATCHING PATTERN "*.cpp")
+    FILES_MATCHING PATTERN "*.cpp" "*.h")
 
 add_executable(${PROJECT_NAME}
     ${UT_CXX_FILE}

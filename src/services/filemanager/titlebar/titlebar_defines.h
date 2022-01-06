@@ -31,7 +31,7 @@ DSB_FM_BEGIN_NAMESPACE
 
 namespace TitleBar {
 
-// custm event type
+// custom event type
 namespace EventType {
 extern const int kSwitchMode;
 extern const int kSettingsMenuTriggered;

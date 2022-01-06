@@ -22,8 +22,8 @@
 #ifndef EVENTCALLPROXY_H
 #define EVENTCALLPROXY_H
 
-#include "dfm-framework/event/event.h"
-#include "dfm-framework/event/eventhandler.h"
+#include "dfm-framework/event/pubsub/event.h"
+#include "dfm-framework/event/pubsub/eventhandler.h"
 #include "dfm-framework/log/frameworklog.h"
 
 #include <QObject>
@@ -33,14 +33,13 @@
 #include <functional>
 #include <memory>
 
-
 DPF_BEGIN_NAMESPACE
 class EventCallProxy final
 {
-    template <typename T>
+    template<typename T>
     friend class AutoEventHandlerRegister;
     struct HandlerInfo;
-    using CreateFunc = std::function<QSharedPointer<EventHandler>()> ;
+    using CreateFunc = std::function<QSharedPointer<EventHandler>()>;
     using ExportFunc = std::function<void(HandlerInfo &info, const Event &event)>;
 
     struct HandlerInfo
@@ -53,7 +52,7 @@ class EventCallProxy final
 
 public:
     static EventCallProxy &instance();
-    bool pubEvent(const Event& event);
+    bool pubEvent(const Event &event);
 
 private:
     static void registerHandler(EventHandler::Type type, const QStringList &topics, CreateFunc creator);
@@ -63,7 +62,7 @@ private:
 };
 
 // auto register all event handler
-template <typename T>
+template<typename T>
 class AutoEventHandlerRegister
 {
 public:
@@ -102,10 +101,9 @@ private:
  * };
  */
 
-
-template <typename T>
+template<typename T>
 bool AutoEventHandlerRegister<T>::isRegistered = AutoEventHandlerRegister<T>::trigger();
-template <typename T>
+template<typename T>
 bool AutoEventHandlerRegister<T>::trigger()
 {
     qInfo() << "Register: " << __PRETTY_FUNCTION__;
@@ -115,4 +113,4 @@ bool AutoEventHandlerRegister<T>::trigger()
 
 DPF_END_NAMESPACE
 
-#endif // EVENTCALLPROXY_H
+#endif   // EVENTCALLPROXY_H

@@ -24,8 +24,8 @@
 #define COMPUTEREVENTHANDLER_H
 
 #include "dfmplugin_computer_global.h"
-#include <dfm-framework/event/eventhandler.h>
-#include <dfm-framework/event/eventcallproxy.h>
+#include <dfm-framework/event/pubsub/eventhandler.h>
+#include <dfm-framework/event/pubsub/eventcallproxy.h>
 
 DPCOMPUTER_BEGIN_NAMESPACE
 

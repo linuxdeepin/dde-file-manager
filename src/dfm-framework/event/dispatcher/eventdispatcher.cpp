@@ -26,11 +26,6 @@
 
 DPF_USE_NAMESPACE
 
-EventDispatcher::EventDispatcher(EventType type)
-    : eventType(type)
-{
-}
-
 void EventDispatcher::dispatch()
 {
     return dispatch(QVariantList());
@@ -70,14 +65,4 @@ void EventDispatcherManager::unsubscribe(EventDispatcherManager::EventType type)
     QMutexLocker guard(&mutex);
     if (dispatcherMap.contains(type))
         dispatcherMap.remove(type);
-}
-
-EventDispatcherManager::EventDispatcherManager()
-{
-}
-
-EventDispatcherManager::~EventDispatcherManager()
-{
-    auto keys = dispatcherMap.keys();
-    dispatcherMap.clear();
 }

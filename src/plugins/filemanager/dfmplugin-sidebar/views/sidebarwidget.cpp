@@ -164,6 +164,11 @@ void SideBarWidget::initDefaultModel()
     addItem(SideBarHelper::createDefaultItem("Documents", SideBar::DefaultGroup::kCommon));
     addItem(SideBarHelper::createDefaultItem("Downloads", SideBar::DefaultGroup::kCommon));
 
+    auto &&infos = SideBarHelper::allCacheInfo();
+    for (auto info : infos) {
+        addItem(SideBarHelper::createItemByInfo(info));
+    }
+
     // init done, then we should update the separator visible state.
     updateSeparatorVisibleState();
 }

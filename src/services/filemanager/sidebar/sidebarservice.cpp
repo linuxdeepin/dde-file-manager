@@ -27,22 +27,6 @@
 DSB_FM_BEGIN_NAMESPACE
 
 namespace SideBar {
-namespace EventTopic {
-const char *const kSideBar { "/org/deepin/event/sidebar" };
-}   // namespace EventTopic
-
-namespace EventData {
-const char *const kCdAction { "CdAction" };
-const char *const kContexMenu { "ContexMenu" };
-const char *const kRename { "Rename" };
-}   // namespace EventData
-
-namespace EventProperty {
-const char *const kWindowId { "WindowId" };
-const char *const kUrl { "Url" };
-const char *const kName { "Name" };
-const char *const kPos { "Pos" };
-}   // namespace EventProperty
 
 namespace DefaultGroup {
 const char *const kCommon { "Common" };
@@ -83,4 +67,13 @@ SideBarService::SideBarService(QObject *parent)
 
 SideBarService::~SideBarService()
 {
+}
+
+/*!
+ * \brief SideBarService::addItem
+ * \param info
+ */
+void SideBarService::addItem(const SideBar::ItemInfo &info)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, info);
 }

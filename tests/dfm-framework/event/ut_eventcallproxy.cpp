@@ -1,5 +1,5 @@
-#include "event/event.h"
-#include "event/eventcallproxy.h"
+#include "event/pubsub/event.h"
+#include "event/pubsub/eventcallproxy.h"
 #include "framework.h"
 
 #include <QCoreApplication>
@@ -8,14 +8,14 @@
 
 #include <gtest/gtest.h>
 
-
-class TestHander1: public dpf::EventHandler, dpf::AutoEventHandlerRegister<TestHander1>
+class TestHander1 : public dpf::EventHandler, dpf::AutoEventHandlerRegister<TestHander1>
 {
     // add Q_OBJECT in business code
 public:
     static Qt::HANDLE threadId;
 
-    TestHander1(): dpf::AutoEventHandlerRegister<TestHander1>() {}
+    TestHander1()
+        : dpf::AutoEventHandlerRegister<TestHander1>() {}
 
     static EventHandler::Type type()
     {
@@ -24,7 +24,7 @@ public:
 
     static QStringList topics()
     {
-         return QStringList() << "WindowEvent";
+        return QStringList() << "WindowEvent";
     }
 
     void eventProcess(const dpf::Event &event) override
@@ -35,16 +35,17 @@ public:
         threadId = QThread::currentThreadId();
     }
 
-    static Qt::HANDLE getRunThreadID(){return TestHander1::threadId;}
+    static Qt::HANDLE getRunThreadID() { return TestHander1::threadId; }
 };
 Qt::HANDLE TestHander1::threadId = nullptr;
 
-class TestHander2: public dpf::EventHandler, dpf::AutoEventHandlerRegister<TestHander2>
+class TestHander2 : public dpf::EventHandler, dpf::AutoEventHandlerRegister<TestHander2>
 {
     // add Q_OBJECT in business code
 public:
     static Qt::HANDLE threadId;
-    TestHander2(): dpf::AutoEventHandlerRegister<TestHander2>() {}
+    TestHander2()
+        : dpf::AutoEventHandlerRegister<TestHander2>() {}
 
     static EventHandler::Type type()
     {
@@ -53,7 +54,7 @@ public:
 
     static QStringList topics()
     {
-         return QStringList() << "LauchEvent";
+        return QStringList() << "LauchEvent";
     }
 
     void eventProcess(const dpf::Event &event) override
@@ -64,7 +65,7 @@ public:
         threadId = QThread::currentThreadId();
     }
 
-    static Qt::HANDLE getRunThreadID(){return threadId;}
+    static Qt::HANDLE getRunThreadID() { return threadId; }
 };
 Qt::HANDLE TestHander2::threadId = nullptr;
 
@@ -72,11 +73,12 @@ class UT_EventCallProxy : public testing::Test
 {
 
 public:
-    virtual void SetUp() override {
-
+    virtual void SetUp() override
+    {
     }
 
-    virtual void TearDown() override {
+    virtual void TearDown() override
+    {
     }
 };
 
@@ -113,4 +115,3 @@ TEST_F(UT_EventCallProxy, test_callEvent)
     // 异步线程非主线程
     EXPECT_EQ(true, TestHander2::getRunThreadID() != qApp->thread()->currentThreadId());
 }
-

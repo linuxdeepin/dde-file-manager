@@ -35,9 +35,27 @@ DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 QMap<quint64, SideBarWidget *> SideBarHelper::kSideBarMap {};
+QList<DSB_FM_NAMESPACE::SideBar::ItemInfo> SideBarHelper::cacheInfo {};
+
+QList<SideBarWidget *> SideBarHelper::allSideBar()
+{
+    QMutexLocker locker(&SideBarHelper::mutex());
+    QList<SideBarWidget *> list;
+    auto keys = kSideBarMap.keys();
+    for (auto k : keys)
+        list.push_back(kSideBarMap[k]);
+
+    return list;
+}
+
+QList<SideBar::ItemInfo> SideBarHelper::allCacheInfo()
+{
+    return cacheInfo;
+}
 
 SideBarWidget *SideBarHelper::findSideBarByWindowId(quint64 windowId)
 {
+    QMutexLocker locker(&SideBarHelper::mutex());
     if (!kSideBarMap.contains(windowId))
         return nullptr;
 
@@ -79,6 +97,18 @@ SideBarItem *SideBarHelper::createDefaultItem(const QString &pathKey, const QStr
                                         UrlRoute::pathToReal(path));
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled);
 
+    return item;
+}
+
+SideBarItem *SideBarHelper::createItemByInfo(const SideBar::ItemInfo &info)
+{
+    SideBarItem *item = new SideBarItem(QIcon::fromTheme(info.iconName),
+                                        info.text,
+                                        info.group,
+                                        info.url);
+    item->setFlags(info.flag);
+    if (!cacheInfo.contains(info))
+        cacheInfo.push_back(info);
     return item;
 }
 

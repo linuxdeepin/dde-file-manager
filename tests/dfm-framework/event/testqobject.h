@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,37 +20,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SIDEBARSERVICE_H
-#define SIDEBARSERVICE_H
+#ifndef TESTQOBJECT_H
+#define TESTQOBJECT_H
 
-#include "sidebar_defines.h"
+#include <QObject>
 
-#include <dfm-framework/framework.h>
-
-DSB_FM_BEGIN_NAMESPACE
-
-class SideBarServicePrivate;
-class SideBarService final : public dpf::PluginService, dpf::AutoServiceRegister<SideBarService>
+class TestQObject : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(SideBarService)
-    friend class dpf::QtClassFactory<dpf::PluginService>;
-
 public:
-    static QString name()
-    {
-        return "org.deepin.service.SideBarService";
-    }
+    explicit TestQObject(QObject *parent = nullptr);
 
-    void addItem(const SideBar::ItemInfo &info);
-
-private:
-    explicit SideBarService(QObject *parent = nullptr);
-    virtual ~SideBarService() override;
-
-    QScopedPointer<SideBarServicePrivate> d;
+public slots:
+    int test1(int a);
 };
 
-DSB_FM_END_NAMESPACE
-
-#endif   // SIDEBARSERVICE_H
+#endif   // TESTQOBJECT_H

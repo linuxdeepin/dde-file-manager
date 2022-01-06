@@ -22,7 +22,7 @@
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H
 
-#include "dfm-framework/event/event.h"
+#include "dfm-framework/event/pubsub/event.h"
 #include "dfm-framework/log/frameworklog.h"
 #include "dfm-framework/log/codetimecheck.h"
 #include "dfm-framework/dfm_framework_global.h"
@@ -55,8 +55,7 @@ public:
      * }
      *
      */
-    enum class Type : uint8_t
-    {
+    enum class Type : uint8_t {
         Sync,
         Async
     };
@@ -67,7 +66,7 @@ public:
     /*!
      * \brief eventProcess 事件处理入口
      */
-    virtual void eventProcess(const Event&) = 0;
+    virtual void eventProcess(const Event &) = 0;
 
     // TODO:
 Q_SIGNALS:
@@ -77,4 +76,4 @@ Q_SIGNALS:
 
 DPF_END_NAMESPACE
 
-#endif // EVENTHANDLER_H
+#endif   // EVENTHANDLER_H

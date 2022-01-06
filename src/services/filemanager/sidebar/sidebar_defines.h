@@ -25,26 +25,12 @@
 
 #include "dfm_filemanager_service_global.h"
 
+#include <QObject>
+#include <QUrl>
+
 DSB_FM_BEGIN_NAMESPACE
 
 namespace SideBar {
-namespace EventTopic {
-extern const char *const kSideBar;   // define "/org/deepin/event/sidebar"
-}   // namespace EventTopics
-
-namespace EventData {
-extern const char *const kCdAction;
-extern const char *const kContexMenu;
-extern const char *const kRename;
-}   // namespace EventData
-
-namespace EventProperty {
-extern const char *const kWindowId;   // value is quint64
-extern const char *const kUrl;   // value is Qurl
-extern const char *const kName;   // value is QString
-extern const char *const kPos;   // value is int
-}   // namespace EventProperty
-
 namespace DefaultGroup {
 extern const char *const kCommon;
 extern const char *const kDevice;
@@ -54,8 +40,23 @@ extern const char *const kTag;
 extern const char *const kOther;
 }   // namespace DefaultGroup
 
+struct ItemInfo
+{
+    QString group;
+    QString iconName;
+    QString text;
+    QUrl url;
+    Qt::ItemFlags flag;
+
+    bool operator==(const ItemInfo &info)
+    {
+        return (url == info.url && group == info.group);
+    }
+};
+
 }   // namespace SideBar
 
 DSB_FM_END_NAMESPACE
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::SideBar::ItemInfo)
 
 #endif   // SIDEBAR_DEFINES_H

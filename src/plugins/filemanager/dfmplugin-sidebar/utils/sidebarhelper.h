@@ -25,6 +25,8 @@
 
 #include "dfmplugin_sidebar_global.h"
 
+#include "services/filemanager/sidebar/sidebar_defines.h"
+
 #include <QMap>
 #include <QMutex>
 #include <QWidget>
@@ -38,16 +40,20 @@ class SideBarItemSeparator;
 class SideBarHelper
 {
 public:
+    static QList<SideBarWidget *> allSideBar();
+    static QList<DSB_FM_NAMESPACE::SideBar::ItemInfo> allCacheInfo();
     static SideBarWidget *findSideBarByWindowId(quint64 windowId);
     static void addSideBar(quint64 windowId, SideBarWidget *titleBar);
     static void removeSideBar(quint64 windowId);
     static quint64 windowId(QWidget *sender);
     static SideBarItem *createDefaultItem(const QString &pathKey, const QString &group);
+    static SideBarItem *createItemByInfo(const DSB_FM_NAMESPACE::SideBar::ItemInfo &info);
     static SideBarItemSeparator *createSeparatorItem(const QString &group);
 
 private:
     static QMutex &mutex();
     static QMap<quint64, SideBarWidget *> kSideBarMap;
+    static QList<DSB_FM_NAMESPACE::SideBar::ItemInfo> cacheInfo;
 };
 
 DPSIDEBAR_END_NAMESPACE
