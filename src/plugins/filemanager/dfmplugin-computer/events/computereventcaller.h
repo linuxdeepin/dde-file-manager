@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,28 +20,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef COMPUTEREVENTHANDLER_H
-#define COMPUTEREVENTHANDLER_H
+#ifndef COMPUTEREVENTCALLER_H
+#define COMPUTEREVENTCALLER_H
 
 #include "dfmplugin_computer_global.h"
-#include <dfm-framework/event/pubsub/eventhandler.h>
-#include <dfm-framework/event/pubsub/eventcallproxy.h>
 
+#include <QUrl>
+
+class QWidget;
 DPCOMPUTER_BEGIN_NAMESPACE
 
-class ComputerEventHandler final : public dpf::EventHandler, dpf::AutoEventHandlerRegister<ComputerEventHandler>
+class ComputerEventCaller
 {
-    Q_OBJECT
-
 public:
-    explicit ComputerEventHandler(QObject *parent = nullptr);
+    ComputerEventCaller() = delete;
 
-    static EventHandler::Type type();
-    static QStringList topics();
-
-    // EventHandler interface
-public:
-    void eventProcess(const dpf::Event &);
+    static void cdTo(QWidget *sender, const QUrl &url);
+    static void cdTo(QWidget *sender, const QString &path);
 };
+
 DPCOMPUTER_END_NAMESPACE
-#endif   // COMPUTEREVENTHANDLER_H
+
+#endif   // COMPUTEREVENTCALLER_H

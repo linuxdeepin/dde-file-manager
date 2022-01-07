@@ -46,8 +46,8 @@ public:
     explicit ComputerService(QObject *parent = nullptr);
     ~ComputerService() override;
 
-    void addDevice();
-    void removeDevice();
+    void addDevice(const QString &groupName, const QUrl &url);
+    void removeDevice(const QUrl &url);
 
 private:
     QScopedPointer<ComputerServicePrivate> d;

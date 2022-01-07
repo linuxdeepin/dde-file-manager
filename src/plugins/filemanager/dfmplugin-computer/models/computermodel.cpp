@@ -30,11 +30,11 @@
 DPCOMPUTER_BEGIN_NAMESPACE
 
 ComputerModel::ComputerModel(QObject *parent)
-    : QAbstractItemModel(parent),
-      watcher(new ComputerItemWatcher(this))
+    : QAbstractItemModel(parent)
 {
     view = qobject_cast<ComputerView *>(parent);
-    items = watcher->items();
+    items = ComputerItemWatcherIns->items();
+    initConnect();
 }
 
 ComputerModel::~ComputerModel()
@@ -191,6 +191,15 @@ int ComputerModel::findItemByClearDeviceId(const QString &id)
     return -1;
 }
 
+void ComputerModel::initConnect()
+{
+    connect(ComputerItemWatcherIns, &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
+    connect(ComputerItemWatcherIns, &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);
+
+    // TODO(xust) find a way to update the property of devices, not just refresh it.
+    connect(ComputerItemWatcherIns, &ComputerItemWatcher::itemUpdated, this, &ComputerModel::onItemUpdated);
+}
+
 void ComputerModel::onItemAdded(const ComputerItemData &data)
 {
     int pos = findItem(data.url);
@@ -236,20 +245,6 @@ void ComputerModel::onItemUpdated(const QUrl &url)
         }
         qDebug() << "target item not found" << url;
     }
-}
-
-void ComputerModel::startConnect()
-{
-    connect(watcher.data(), &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
-    connect(watcher.data(), &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);
-    connect(watcher.data(), &ComputerItemWatcher::itemUpdated, this, &ComputerModel::onItemUpdated);
-}
-
-void ComputerModel::stopConnect()
-{
-    disconnect(watcher.data(), &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
-    disconnect(watcher.data(), &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);
-    disconnect(watcher.data(), &ComputerItemWatcher::itemUpdated, this, &ComputerModel::onItemUpdated);
 }
 
 DPCOMPUTER_END_NAMESPACE

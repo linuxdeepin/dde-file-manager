@@ -73,12 +73,11 @@ public:
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-    void startConnect();
-    void stopConnect();
-
 protected:
     int findItem(const QUrl &target);
     int findItemByClearDeviceId(const QString &id);
+
+    void initConnect();
 
 protected Q_SLOTS:
     void onItemAdded(const ComputerItemData &data);
@@ -88,7 +87,7 @@ protected Q_SLOTS:
 private:
     ComputerView *view { nullptr };
     QList<ComputerItemData> items;
-    QScopedPointer<ComputerItemWatcher> watcher { nullptr };
+    //    QScopedPointer<ComputerItemWatcher> watcher { nullptr };
 };
 
 DPCOMPUTER_END_NAMESPACE

@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "sidebarmanager.h"
+#include "utils/sidebarhelper.h"
 
 DPSIDEBAR_USE_NAMESPACE
 
@@ -35,6 +36,8 @@ void SideBarManager::runCd(const QString &identifier, quint64 windowId, const QU
     if (cdCallbackMap.contains(identifier)) {
         Q_ASSERT(cdCallbackMap[identifier]);
         cdCallbackMap[identifier](windowId, url);
+    } else {
+        SideBarHelper::defaultCdAction(windowId, url);
     }
 }
 

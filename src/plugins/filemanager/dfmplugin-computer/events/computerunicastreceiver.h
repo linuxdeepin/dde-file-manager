@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,13 +20,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef COMPUTER_DEFINES_H
-#define COMPUTER_DEFINES_H
+#ifndef COMPUTERUNICASTRECEIVER_H
+#define COMPUTERUNICASTRECEIVER_H
 
-#include "dfm_filemanager_service_global.h"
+#include "dfmplugin_computer_global.h"
 
-DSB_FM_BEGIN_NAMESPACE
+#include <dfm-framework/framework.h>
 
-DSB_FM_END_NAMESPACE
+#include <QObject>
 
-#endif   // COMPUTER_DEFINES_H
+DPCOMPUTER_BEGIN_NAMESPACE
+
+class ComputerUnicastReceiver : public QObject
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(ComputerUnicastReceiver)
+
+public:
+    static ComputerUnicastReceiver *instance();
+    void connectService();
+
+protected:
+    void doAddDevice(const QString &name, const QUrl &url);
+    void doRemoveDevice(const QUrl &url);
+
+private:
+    explicit ComputerUnicastReceiver(QObject *parent = nullptr);
+};
+
+DPCOMPUTER_END_NAMESPACE
+
+#endif   // COMPUTERUNICASTRECEIVER_H

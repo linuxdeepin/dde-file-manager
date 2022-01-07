@@ -25,35 +25,9 @@
 #include "private/computerservice_p.h"
 #include "computer_defines.h"
 
+#include <dfm-framework/framework.h>
+
 DSB_FM_BEGIN_NAMESPACE
-
-namespace Computer {
-namespace EventTopic {
-const char *const kComputer { "computerEvent" };
-}   // namespace EventTopic
-
-namespace EventData {
-const char *const kOpenDevice { "open" };
-const char *const kOpenDeviceInNewWindow { "openInNewWindow" };
-const char *const kOpenDeviceInNewTab { "openInNewTab" };
-const char *const kShowDeviceProperty { "showProperty" };
-const char *const kRenameDevice { "rename" };
-const char *const kUnmountDevice { "unmount" };
-const char *const kMountDevice { "mount" };
-const char *const kSafelyRemoveDevice { "safelyRemove" };
-const char *const kFormatDevice { "format" };
-
-const char *const kAddDevice { "addDevice" };
-const char *const kRemoveDevice { "removeDevice" };
-const char *const kInsertDevice { "insertDevice" };
-const char *const kAddGroup { "addGroup" };
-const char *const kRemoveGroup { "removeGroup" };
-}   // namespace EventData
-
-namespace EventProperty {
-
-}   // namespace EventProperty
-}   // namespace Computer
 
 ComputerService::ComputerService(QObject *parent)
     : dpf::PluginService(parent),
@@ -64,6 +38,16 @@ ComputerService::ComputerService(QObject *parent)
 
 ComputerService::~ComputerService()
 {
+}
+
+void ComputerService::addDevice(const QString &groupName, const QUrl &url)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, groupName, url);
+}
+
+void ComputerService::removeDevice(const QUrl &url)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, url);
 }
 
 ComputerServicePrivate::ComputerServicePrivate(dfm_service_filemanager::ComputerService *serv)

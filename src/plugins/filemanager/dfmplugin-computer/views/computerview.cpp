@@ -25,6 +25,7 @@
 #include "models/computermodel.h"
 #include "delegate/computeritemdelegate.h"
 #include "utils/computerutils.h"
+#include "events/computereventcaller.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/utils/devicemanager.h"
@@ -37,6 +38,7 @@
 #include <QMouseEvent>
 #include <QMenu>
 #include <QtConcurrent>
+#include <QApplication>
 
 DPCOMPUTER_BEGIN_NAMESPACE
 
@@ -44,10 +46,10 @@ ComputerView::ComputerView(const QUrl &url, QWidget *parent)
     : DListView(parent),
       dp(new ComputerViewPrivate(this))
 {
+    Q_UNUSED(url);
+
     initView();
     initConnect();
-
-    setRootUrl(url);
 }
 
 ComputerView::~ComputerView()
@@ -71,7 +73,7 @@ dfmbase::AbstractBaseView::ViewState ComputerView::viewState() const
 
 bool ComputerView::setRootUrl(const QUrl &url)
 {
-    // TODO(xust)
+    Q_UNUSED(url);
     return true;
 }
 
@@ -121,17 +123,12 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
 
 void ComputerView::showEvent(QShowEvent *event)
 {
-    auto model = qobject_cast<ComputerModel *>(this->model());
-    if (model)
-        model->startConnect();
+    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
     DListView::showEvent(event);
 }
 
 void ComputerView::hideEvent(QHideEvent *event)
 {
-    auto model = qobject_cast<ComputerModel *>(this->model());
-    if (model)
-        model->stopConnect();
     DListView::hideEvent(event);
 }
 
@@ -230,9 +227,10 @@ void ComputerView::mountAndEnterBlockDevice(const QString &blkId)
 {
     QFuture<QString> fu = QtConcurrent::run(&DeviceManagerInstance, &DeviceManager::invokeMountBlockDevice, blkId);
     QFutureWatcher<QString> *watcher = new QFutureWatcher<QString>();
-    connect(watcher, &QFutureWatcher<QString>::finished, this, [this, watcher] {
-        QString mpt = watcher->result();
-        qDebug() << "mount and cd to: " << mpt;   // TODO(xust)
+    connect(watcher, &QFutureWatcher<QString>::finished, this, [this, watcher, blkId] {
+        QString path = watcher->result();
+        qDebug() << "cd to: " + path << ", " << blkId;
+        ComputerEventCaller::cdTo(this, path);
         watcher->deleteLater();
     });
     watcher->setFuture(fu);
@@ -253,7 +251,8 @@ void ComputerView::cdTo(const QModelIndex &index)
     auto url = index.data(ComputerModel::DataRoles::kRealUrlRole).toUrl();
 
     if (url.isValid()) {
-        qDebug() << "cd to: " + index.data(Qt::DisplayRole).toString() << url;   // TODO(xust)
+        qDebug() << "cd to: " + index.data(Qt::DisplayRole).toString() << url;
+        ComputerEventCaller::cdTo(this, url);
     } else {
         QString suffix = index.data(ComputerModel::DataRoles::kSuffixRole).toString();
         if (suffix == dfmbase::SuffixInfo::kBlock) {

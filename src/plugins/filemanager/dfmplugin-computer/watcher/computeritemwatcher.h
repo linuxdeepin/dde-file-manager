@@ -30,13 +30,15 @@
 #include <QUrl>
 #include <QDBusVariant>
 
+#define ComputerItemWatcherIns ComputerItemWatcher::instance()
+
 DPCOMPUTER_BEGIN_NAMESPACE
 typedef QList<ComputerItemData> ComputerDataList;
 class ComputerItemWatcher : public QObject
 {
     Q_OBJECT
 public:
-    explicit ComputerItemWatcher(QObject *parent = nullptr);
+    static ComputerItemWatcher *instance();
     virtual ~ComputerItemWatcher() override;
 
     ComputerDataList items();
@@ -51,6 +53,8 @@ public:
         kGroupDisks,
     };
 
+    void addGroup(const QString &name);
+
 Q_SIGNALS:
     void itemAdded(const ComputerItemData &item);
     void itemRemoved(const QUrl &url);
@@ -61,6 +65,7 @@ protected Q_SLOTS:
     void onDevicePropertyChanged(const QString &id, const QString &propertyName, const QDBusVariant &var);
 
 private:
+    explicit ComputerItemWatcher(QObject *parent = nullptr);
     void initConn();
 
     ComputerDataList getUserDirItems();

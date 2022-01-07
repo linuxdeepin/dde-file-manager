@@ -24,8 +24,7 @@
 #include "utils/computerutils.h"
 #include "views/computerview.h"
 #include "fileentity/appentryfileentity.h"
-
-#include "computer/computerservice.h"
+#include "events/computerunicastreceiver.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -33,7 +32,7 @@
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/devicemanager.h"
 
-DSB_FM_USE_NAMESPACE
+#include "services/filemanager/sidebar/sidebarservice.h"
 
 DPCOMPUTER_BEGIN_NAMESPACE
 /*!
@@ -46,6 +45,8 @@ void Computer::initialize()
     DPCOMPUTER_USE_NAMESPACE
     UrlRoute::regScheme(ComputerUtils::scheme(), "/", ComputerUtils::icon(), true);
     ViewFactory::regClass<ComputerView>(ComputerUtils::scheme());
+    UrlRoute::regScheme(SchemeTypes::kEntry, "/", QIcon(), true);
+    InfoFactory::regClass<EntryFileInfo>(SchemeTypes::kEntry);
 
     EntryEntityFactor::registCreator<UserEntryFileEntity>(SuffixInfo::kUserDir);
     EntryEntityFactor::registCreator<BlockEntryFileEntity>(SuffixInfo::kBlock);
@@ -53,6 +54,7 @@ void Computer::initialize()
     EntryEntityFactor::registCreator<StashedProtocolEntryFileEntity>(SuffixInfo::kStashedRemote);
     EntryEntityFactor::registCreator<AppEntryFileEntity>(SuffixInfo::kAppEntry);
 
+    ComputerUnicastReceiver::instance()->connectService();
     bool ret = DeviceManagerInstance.connectToServer();
     if (!ret)
         qCritical() << "device manager cannot connect to server!";
@@ -60,6 +62,20 @@ void Computer::initialize()
 
 bool Computer::start()
 {
+    auto &ctx = dpfInstance.serviceContext();
+
+    DSB_FM_USE_NAMESPACE
+    if (!ctx.load(SideBarService::name()))
+        abort();
+    auto sidebarServ = ctx.service<SideBarService>(SideBarService::name());
+
+    SideBar::ItemInfo entry;
+    entry.group = SideBar::DefaultGroup::kDevice;
+    entry.iconName = ComputerUtils::icon().name();
+    entry.text = tr("Computer");
+    entry.url = ComputerUtils::rootUrl();
+    entry.flag = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
+    sidebarServ->addItem(entry, nullptr, nullptr);
     return true;
 }
 

@@ -297,7 +297,7 @@ QString BlockEntryFileEntity::getNameOrAlias() const
         return tr("System Disk");
     if (datas.value(DeviceProperty::kIdLabel).toString() == "_dde_")
         return tr("Data Disk");
-    return datas.value(DeviceProperty::kIdLabel).toString();
+    return getIdLabel();
 }
 
 QString BlockEntryFileEntity::getNameOfOptical() const

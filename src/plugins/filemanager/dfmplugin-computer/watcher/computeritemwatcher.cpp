@@ -26,6 +26,7 @@
 #include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QDebug>
 
@@ -35,6 +36,12 @@ DPCOMPUTER_BEGIN_NAMESPACE
  * \class ComputerItemWatcher
  * \brief watches the change of computer item
  */
+ComputerItemWatcher *ComputerItemWatcher::instance()
+{
+    static ComputerItemWatcher watcher;
+    return &watcher;
+}
+
 ComputerItemWatcher::ComputerItemWatcher(QObject *parent)
     : QObject(parent)
 {
@@ -129,9 +136,9 @@ ComputerDataList ComputerItemWatcher::getUserDirItems()
         QUrl url;
         url.setScheme(dfmbase::SchemeTypes::kEntry);
         url.setPath(QString("%1.%2").arg(dir).arg(SuffixInfo::kUserDir));
+        //        auto info = InfoFactory::create<EntryFileInfo>(url);
         DFMEntryFileInfoPointer info(new EntryFileInfo(url));
-        if (!info->exists())
-            continue;
+        if (!info->exists()) continue;
 
         ComputerItemData data;
         data.url = url;
@@ -152,6 +159,7 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
 
     for (const auto &dev : devs) {
         auto devUrl = makeBlockDevUrl(dev);
+        //        auto info = InfoFactory::create<EntryFileInfo>(devUrl);
         DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
         if (!info->exists())
             continue;
@@ -175,6 +183,7 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
 
     for (const auto &dev : devs) {
         auto devUrl = makeProtocolDevUrl(dev);
+        //        auto info = InfoFactory::create<EntryFileInfo>(devUrl);
         DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
         if (!info->exists())
             continue;
@@ -276,6 +285,14 @@ QString ComputerItemWatcher::getProtocolDevIdByUrl(const QUrl &url)
     return id;
 }
 
+void ComputerItemWatcher::addGroup(const QString &name)
+{
+    ComputerItemData data;
+    data.shape = ComputerItemData::kSplitterItem;
+    data.groupName = name;
+    emit itemAdded(data);
+}
+
 void ComputerItemWatcher::onDeviceAdded(const QString &id)
 {
     QUrl devUrl;
@@ -284,6 +301,7 @@ void ComputerItemWatcher::onDeviceAdded(const QString &id)
     else
         devUrl = makeProtocolDevUrl(id);
 
+    //    auto info = InfoFactory::create<EntryFileInfo>(devUrl);
     DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
     if (!info->exists()) return;
 
