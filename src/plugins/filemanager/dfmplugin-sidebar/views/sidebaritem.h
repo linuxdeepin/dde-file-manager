@@ -37,6 +37,7 @@ public:
     enum Roles {
         ItemUrlRole = Dtk::UserRole + 1,
         ItemGroupRole,
+        ItemUseRegisteredHandlerRole,
         ItemUserCustomRole = Dtk::UserRole + 0x0100
     };
 
@@ -48,10 +49,14 @@ public:
     explicit SideBarItem(const SideBarItem &item);
     virtual ~SideBarItem();
 
-    void setUrl(const QUrl &url);
-    void setGroup(const QString &group = "");
     QUrl url() const;
+    void setUrl(const QUrl &url);
+
     QString group() const;
+    void setGroup(const QString &group = "");
+
+    QString registeredHandler() const;
+    void setRegisteredHandler(const QString &identifier);
 };
 
 class SideBarItemSeparator : public DPSIDEBAR_NAMESPACE::SideBarItem

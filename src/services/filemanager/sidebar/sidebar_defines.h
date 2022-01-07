@@ -28,6 +28,8 @@
 #include <QObject>
 #include <QUrl>
 
+#include <functional>
+
 DSB_FM_BEGIN_NAMESPACE
 
 namespace SideBar {
@@ -54,9 +56,16 @@ struct ItemInfo
     }
 };
 
+using CdActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+using RenameCallback = std::function<void(quint64 windowId, const QUrl &url, const QString &name)>;
+
 }   // namespace SideBar
 
 DSB_FM_END_NAMESPACE
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::SideBar::ItemInfo)
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::SideBar::CdActionCallback)
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::SideBar::ContextMenuCallback)
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::SideBar::RenameCallback)
 
 #endif   // SIDEBAR_DEFINES_H

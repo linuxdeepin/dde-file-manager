@@ -34,7 +34,7 @@ class SideBarEventCaller
     SideBarEventCaller() = delete;
 
 public:
-    static void sendItemActived(QWidget *sender, const QUrl &url);
+    static void sendItemActived(quint64 windowId, const QUrl &url);
 };
 
 DPSIDEBAR_END_NAMESPACE

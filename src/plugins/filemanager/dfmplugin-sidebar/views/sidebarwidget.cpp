@@ -27,6 +27,7 @@
 #include "views/sidebaritemdelegate.h"
 #include "events/sidebareventcaller.h"
 #include "utils/sidebarhelper.h"
+#include "utils/sidebarmanager.h"
 
 #include "services/filemanager/sidebar/sidebar_defines.h"
 #include "dfm-base/utils/systempathutil.h"
@@ -114,18 +115,21 @@ void SideBarWidget::onItemActived(const QModelIndex &index)
         return;
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     QUrl url { qvariant_cast<QUrl>(item->data(SideBarItem::Roles::ItemUrlRole)) };
-    if (!url.isEmpty())
-        SideBarEventCaller::sendItemActived(this, url);
+    SideBarManager::instance()->runCd(item->registeredHandler(), SideBarHelper::windowId(this), url);
 }
 
 void SideBarWidget::customContextMenuCall(const QPoint &pos)
 {
+    SideBarItem *item = sidebarView->itemAt(pos);
+    if (!item)
+        return;
     // 拿到Item对应的QUrl
     const QUrl &url = sidebarView->urlAt(pos);
     // 相对坐标转全局坐标
     const QPoint &globalPos = sidebarView->mapToGlobal(pos);
 
-    Q_EMIT customContextMenu(url, globalPos);
+    SideBarManager::instance()->runContextMenu(item->registeredHandler(), SideBarHelper::windowId(this),
+                                               url, globalPos);
 }
 
 void SideBarWidget::initializeUi()
@@ -156,18 +160,19 @@ void SideBarWidget::initDefaultModel()
         addItem(SideBarHelper::createSeparatorItem(group));
 
     // create defualt items
-    addItem(SideBarHelper::createDefaultItem("Home", SideBar::DefaultGroup::kCommon));
-    addItem(SideBarHelper::createDefaultItem("Desktop", SideBar::DefaultGroup::kCommon));
-    addItem(SideBarHelper::createDefaultItem("Videos", SideBar::DefaultGroup::kCommon));
-    addItem(SideBarHelper::createDefaultItem("Music", SideBar::DefaultGroup::kCommon));
-    addItem(SideBarHelper::createDefaultItem("Pictures", SideBar::DefaultGroup::kCommon));
-    addItem(SideBarHelper::createDefaultItem("Documents", SideBar::DefaultGroup::kCommon));
-    addItem(SideBarHelper::createDefaultItem("Downloads", SideBar::DefaultGroup::kCommon));
+    static const QStringList names { "Home", "Desktop", "Videos", "Music", "Pictures", "Documents", "Downloads" };
 
-    auto &&infos = SideBarHelper::allCacheInfo();
-    for (auto info : infos) {
-        addItem(SideBarHelper::createItemByInfo(info));
+    for (const QString &name : names) {
+        SideBarItem *item = SideBarHelper::createDefaultItem(name, SideBar::DefaultGroup::kCommon);
+        SideBarManager::instance()->registerCallback(item->registeredHandler(),
+                                                     &SideBarHelper::defaultCdAction, &SideBarHelper::defaultContenxtMenu, nullptr);
+        addItem(item);
     }
+
+    // add cache info
+    auto &&infos = SideBarHelper::allCacheInfo();
+    for (auto info : infos)
+        addItem(SideBarHelper::createItemByInfo(info));
 
     // init done, then we should update the separator visible state.
     updateSeparatorVisibleState();

@@ -70,10 +70,13 @@ SideBarService::~SideBarService()
 }
 
 /*!
- * \brief SideBarService::addItem
+ * \brief add a item to sidebar, like `DFMSideBarItemInterface` of old filemanager
  * \param info
+ * \param cdFunc
+ * \param menuFunc
  */
-void SideBarService::addItem(const SideBar::ItemInfo &info)
+void SideBarService::addItem(const SideBar::ItemInfo &info, const SideBar::CdActionCallback &cdFunc,
+                             const SideBar::ContextMenuCallback &menuFunc, const SideBar::RenameCallback &renameFunc)
 {
-    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, info);
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, info, cdFunc, menuFunc, renameFunc);
 }

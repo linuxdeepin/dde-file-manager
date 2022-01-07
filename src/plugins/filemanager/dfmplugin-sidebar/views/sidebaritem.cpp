@@ -68,6 +68,16 @@ void SideBarItem::setGroup(const QString &group)
     setData(group, Roles::ItemGroupRole);
 }
 
+QString SideBarItem::registeredHandler() const
+{
+    return data(ItemUseRegisteredHandlerRole).toString();
+}
+
+void SideBarItem::setRegisteredHandler(const QString &identifier)
+{
+    setData(identifier, ItemUseRegisteredHandlerRole);
+}
+
 QString SideBarItem::group() const
 {
     return data(Roles::ItemGroupRole).toString();

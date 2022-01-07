@@ -49,11 +49,14 @@ public:
     static SideBarItem *createDefaultItem(const QString &pathKey, const QString &group);
     static SideBarItem *createItemByInfo(const DSB_FM_NAMESPACE::SideBar::ItemInfo &info);
     static SideBarItemSeparator *createSeparatorItem(const QString &group);
+    static QString makeItemIdentifier(const QString &group, const QUrl &url);
+    static void defaultCdAction(quint64 windowId, const QUrl &url);
+    static void defaultContenxtMenu(quint64 windowId, const QUrl &url, const QPoint &globalPos);
 
 private:
     static QMutex &mutex();
     static QMap<quint64, SideBarWidget *> kSideBarMap;
-    static QList<DSB_FM_NAMESPACE::SideBar::ItemInfo> cacheInfo;
+    static QList<DSB_FM_NAMESPACE::SideBar::ItemInfo> kCacheInfo;
 };
 
 DPSIDEBAR_END_NAMESPACE

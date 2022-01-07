@@ -50,9 +50,6 @@ public:
     bool insertItem(const int index, SideBarItem *item);
     bool removeItem(SideBarItem *item);
 
-Q_SIGNALS:
-    void customContextMenu(const QUrl &sidebarUrl, const QPoint &pos);
-
 private Q_SLOTS:
     void onItemActived(const QModelIndex &index);
     void customContextMenuCall(const QPoint &pos);

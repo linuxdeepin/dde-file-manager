@@ -21,7 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "sidebareventcaller.h"
-#include "utils/sidebarhelper.h"
 
 #include "services/filemanager/sidebar/sidebar_defines.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -38,8 +37,7 @@ static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
     return &dpfInstance.eventDispatcher();
 }
 
-void SideBarEventCaller::sendItemActived(QWidget *sender, const QUrl &url)
+void SideBarEventCaller::sendItemActived(quint64 windowId, const QUrl &url)
 {
-    quint64 id = SideBarHelper::windowId(sender);
-    dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, id, url);
+    dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
 }

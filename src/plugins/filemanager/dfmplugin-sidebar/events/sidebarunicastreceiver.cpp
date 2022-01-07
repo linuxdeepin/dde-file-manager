@@ -22,7 +22,9 @@
 */
 #include "sidebarunicastreceiver.h"
 #include "utils/sidebarhelper.h"
+#include "utils/sidebarmanager.h"
 #include "views/sidebarwidget.h"
+#include "views/sidebaritem.h"
 
 #include <dfm-framework/framework.h>
 
@@ -30,6 +32,8 @@ DPSIDEBAR_USE_NAMESPACE
 
 #define STR1(s) #s
 #define STR2(s) STR1(s)
+
+using namespace DSB_FM_NAMESPACE::SideBar;
 
 /*!
  * \brief topic is defined in SideBarService
@@ -52,13 +56,15 @@ void SideBarUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("SideBarService::addItem"), this, &SideBarUnicastReceiver::invokeAddItem);
 }
 
-void SideBarUnicastReceiver::invokeAddItem(const dfm_service_filemanager::SideBar::ItemInfo &info)
+void SideBarUnicastReceiver::invokeAddItem(const ItemInfo &info, CdActionCallback cdFunc, ContextMenuCallback menuFunc, RenameCallback renameFunc)
 {
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     for (SideBarWidget *sidebar : allSideBar) {
         SideBarItem *item = SideBarHelper::createItemByInfo(info);
-        if (item)
+        if (item) {
             sidebar->addItem(item);
+            SideBarManager::instance()->registerCallback(item->registeredHandler(), cdFunc, menuFunc, renameFunc);
+        }
     }
 }
 

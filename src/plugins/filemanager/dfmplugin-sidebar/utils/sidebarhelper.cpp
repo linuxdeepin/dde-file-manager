@@ -22,6 +22,7 @@
 */
 #include "sidebarhelper.h"
 #include "views/sidebaritem.h"
+#include "events/sidebareventcaller.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 
@@ -35,7 +36,7 @@ DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 QMap<quint64, SideBarWidget *> SideBarHelper::kSideBarMap {};
-QList<DSB_FM_NAMESPACE::SideBar::ItemInfo> SideBarHelper::cacheInfo {};
+QList<DSB_FM_NAMESPACE::SideBar::ItemInfo> SideBarHelper::kCacheInfo {};
 
 QList<SideBarWidget *> SideBarHelper::allSideBar()
 {
@@ -50,7 +51,7 @@ QList<SideBarWidget *> SideBarHelper::allSideBar()
 
 QList<SideBar::ItemInfo> SideBarHelper::allCacheInfo()
 {
-    return cacheInfo;
+    return kCacheInfo;
 }
 
 SideBarWidget *SideBarHelper::findSideBarByWindowId(quint64 windowId)
@@ -91,10 +92,13 @@ SideBarItem *SideBarHelper::createDefaultItem(const QString &pathKey, const QStr
     if (!iconName.contains("-symbolic"))
         iconName.append("-symbolic");
 
+    QUrl url { UrlRoute::pathToReal(path) };
     SideBarItem *item = new SideBarItem(QIcon::fromTheme(iconName),
                                         text,
                                         group,
-                                        UrlRoute::pathToReal(path));
+                                        url);
+
+    item->setRegisteredHandler(makeItemIdentifier(group, url));
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled);
 
     return item;
@@ -106,9 +110,10 @@ SideBarItem *SideBarHelper::createItemByInfo(const SideBar::ItemInfo &info)
                                         info.text,
                                         info.group,
                                         info.url);
+    item->setRegisteredHandler(makeItemIdentifier(info.group, info.url));
     item->setFlags(info.flag);
-    if (!cacheInfo.contains(info))
-        cacheInfo.push_back(info);
+    if (!kCacheInfo.contains(info))
+        kCacheInfo.push_back(info);
     return item;
 }
 
@@ -117,6 +122,23 @@ SideBarItemSeparator *SideBarHelper::createSeparatorItem(const QString &group)
     SideBarItemSeparator *item = new SideBarItemSeparator(group);
     item->setFlags(Qt::NoItemFlags);
     return item;
+}
+
+QString SideBarHelper::makeItemIdentifier(const QString &group, const QUrl &url)
+{
+    return group + url.url();
+}
+
+void SideBarHelper::defaultCdAction(quint64 windowId, const QUrl &url)
+{
+    if (!url.isEmpty())
+        SideBarEventCaller::sendItemActived(windowId, url);
+}
+
+void SideBarHelper::defaultContenxtMenu(quint64 windowId, const QUrl &url, const QPoint &globalPos)
+{
+    // TODO(zhangs);
+    qDebug() << windowId << url << globalPos;
 }
 
 QMutex &SideBarHelper::mutex()

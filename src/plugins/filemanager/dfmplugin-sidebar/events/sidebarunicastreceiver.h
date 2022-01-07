@@ -40,7 +40,10 @@ public:
     void connectService();
 
 public slots:
-    void invokeAddItem(const DSB_FM_NAMESPACE::SideBar::ItemInfo &info);
+    void invokeAddItem(const DSB_FM_NAMESPACE::SideBar::ItemInfo &info,
+                       DSB_FM_NAMESPACE::SideBar::CdActionCallback cdFunc,
+                       DSB_FM_NAMESPACE::SideBar::ContextMenuCallback menuFunc,
+                       DSB_FM_NAMESPACE::SideBar::RenameCallback renameFunc);
 
 private:
     explicit SideBarUnicastReceiver(QObject *parent = nullptr);

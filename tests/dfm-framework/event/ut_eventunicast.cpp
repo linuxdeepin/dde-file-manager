@@ -75,6 +75,7 @@ TEST_F(UT_EventUnicast, test_manager_post)
     EventUnicastManager &manager = dpfInstance.eventUnicast();
     manager.connect("test_send", &b, &TestQObject::test1);
     EventUnicastFuture future = manager.post("test_send", 10);
+    future.waitForFinished();
     QVariant value = future.result();
     EXPECT_EQ(value.toInt(), 20);
 }

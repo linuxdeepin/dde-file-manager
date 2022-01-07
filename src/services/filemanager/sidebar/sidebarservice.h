@@ -42,7 +42,8 @@ public:
         return "org.deepin.service.SideBarService";
     }
 
-    void addItem(const SideBar::ItemInfo &info);
+    void addItem(const SideBar::ItemInfo &info, const SideBar::CdActionCallback &cdFunc,
+                 const SideBar::ContextMenuCallback &menuFunc, const SideBar::RenameCallback &renameFunc = nullptr);
 
 private:
     explicit SideBarService(QObject *parent = nullptr);
