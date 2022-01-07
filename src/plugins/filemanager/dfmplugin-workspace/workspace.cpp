@@ -25,6 +25,7 @@
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
 #include "events/workspaceeventreceiver.h"
+#include "events/workspaceunicastreceiver.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/titlebar/titlebar_defines.h"
@@ -51,6 +52,7 @@ void Workspace::initialize()
     GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());
     connect(GlobalPrivate::windowService, &WindowsService::windowOpened, this, &Workspace::onWindowOpened, Qt::DirectConnection);
     connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &Workspace::onWindowClosed, Qt::DirectConnection);
+    WorkspaceUnicastReceiver::instance()->connectService();
 }
 
 bool Workspace::start()

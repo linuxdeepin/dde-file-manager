@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -21,27 +21,70 @@
  */
 #include "recent.h"
 #include "recentutil.h"
+#include "recentfileinfo.h"
+#include "recentdiriterator.h"
 
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/common/menu/menuservice.h"
-
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
-#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfileinfo.h"
-#include "dfm-base/file/local/localdiriterator.h"
-#include "services/common/menu/menuservice.h"
+
+#include "services/filemanager/sidebar/sidebarservice.h"
+#include "services/filemanager/sidebar/sidebar_defines.h"
+#include "services/filemanager/workspace/workspaceservice.h"
 
 #include <dfm-framework/framework.h>
 
+DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
+
+DPRECENT_BEGIN_NAMESPACE
+
+namespace GlobalPrivate {
+static SideBarService *sideBarService { nullptr };
+static WorkspaceService *workspaceService { nullptr };
+}   // namespace GlobalPrivate
+
 void Recent::initialize()
 {
-    QString recentScheme { "recent" };
+    auto &ctx = dpfInstance.serviceContext();
+    QString errStr;
+    if (!ctx.load(SideBarService::name(), &errStr)) {
+        qCritical() << errStr;
+        abort();
+    }
+    if (!ctx.load(WorkspaceService::name(), &errStr)) {
+        qCritical() << errStr;
+        abort();
+    }
+
+    UrlRoute::regScheme(RecentUtil::scheme(), "/", RecentUtil::icon(), true);
+    //注册Scheme为"recent"的扩展的文件信息 本地默认文件的
+    InfoFactory::regClass<RecentFileInfo>(RecentUtil::scheme());
+    DirIteratorFactory::regClass<RecentDirIterator>(RecentUtil::scheme());
 }
 
 bool Recent::start()
 {
+    auto &ctx = dpfInstance.serviceContext();
+    GlobalPrivate::sideBarService = ctx.service<SideBarService>(SideBarService::name());
+    if (!GlobalPrivate::sideBarService) {
+        qCritical() << "Failed, init sidebar \"sideBarService\" is empty";
+        abort();
+    }
+    SideBar::ItemInfo item;
+    item.group = SideBar::DefaultGroup::kCommon;
+    item.url = RecentUtil::rootUrl();
+    item.iconName = "document-open-recent";
+    item.text = "Recent";
+    item.flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+
+    GlobalPrivate::sideBarService->addItem(item, nullptr, nullptr);
+
+    GlobalPrivate::workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
+    if (!GlobalPrivate::workspaceService) {
+        qCritical() << "Failed, init workspace \"workspaceService\" is empty";
+        abort();
+    }
+    GlobalPrivate::workspaceService->addScheme(RecentUtil::scheme());
     return true;
 }
 
@@ -49,3 +92,5 @@ dpf::Plugin::ShutdownFlag Recent::stop()
 {
     return kSync;
 }
+
+DPRECENT_END_NAMESPACE

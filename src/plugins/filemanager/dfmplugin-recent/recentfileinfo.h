@@ -19,24 +19,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef COREPLUGIN_H
-#define COREPLUGIN_H
+#ifndef RECENTROOTFILEINFO_H
+#define RECENTROOTFILEINFO_H
 
 #include "dfmplugin_recent_global.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
-#include <dfm-framework/framework.h>
-
+DFMBASE_USE_NAMESPACE
 DPRECENT_BEGIN_NAMESPACE
-class Recent : public dpf::Plugin
+
+class RecentFileInfoPrivate;
+class RecentFileInfo : public AbstractFileInfo
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "recent.json")
+    Q_GADGET
+    friend class RecentFileInfoPrivate;
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    explicit RecentFileInfo(const QUrl &url);
+    ~RecentFileInfo() override;
+    virtual QString fileName() const override;
+
+private:
+    RecentFileInfoPrivate *d;
 };
 
+using RecentFileInfoPointer = QSharedPointer<RecentFileInfo>;
 DPRECENT_END_NAMESPACE
-#endif   // COREPLUGIN_H
+
+#endif   // RECENTROOTFILEINFO_H

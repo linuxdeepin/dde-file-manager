@@ -1,10 +1,11 @@
 /*
  * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +19,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef COREPLUGIN_H
-#define COREPLUGIN_H
+*/
+#ifndef DFMPLUGIN_RECENT_GLOBAL_H
+#define DFMPLUGIN_RECENT_GLOBAL_H
 
-#include "dfmplugin_recent_global.h"
+#define DPRECENT_BEGIN_NAMESPACE namespace dfmplugin_recent {
+#define DPRECENT_END_NAMESPACE }
+#define DPRECENT_USE_NAMESPACE using namespace dfmplugin_recent;
+#define DPSIDEBAR_NAMESPACE dfmplugin_recent
 
-#include <dfm-framework/framework.h>
-
-DPRECENT_BEGIN_NAMESPACE
-class Recent : public dpf::Plugin
-{
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "recent.json")
-
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-};
-
-DPRECENT_END_NAMESPACE
-#endif   // COREPLUGIN_H
+#endif   // DFMPLUGIN_RECENT_GLOBAL_H

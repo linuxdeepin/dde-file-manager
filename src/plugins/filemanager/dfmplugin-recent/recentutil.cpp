@@ -19,24 +19,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef COREPLUGIN_H
-#define COREPLUGIN_H
-
-#include "dfmplugin_recent_global.h"
-
-#include <dfm-framework/framework.h>
+#include "recentutil.h"
 
 DPRECENT_BEGIN_NAMESPACE
-class Recent : public dpf::Plugin
-{
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "recent.json")
 
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-};
+QDomNodeList RecentUtil::nodes {};
+
+bool RecentUtil::initRecentSubSystem()
+{
+    QDomDocument recentDom;
+    QFile recentFile;
+
+    recentFile.setFileName(QStandardPaths::locate(QStandardPaths::HomeLocation, "", QStandardPaths::LocateDirectory)
+                           + ".local/share/recently-used.xbel");
+
+    if (!recentFile.open(QFile::OpenModeFlag::ReadOnly)) {
+        qInfo() << "Failed, open recent file:" << recentFile.fileName();
+        return false;
+    }
+
+    if (!recentDom.setContent(&recentFile)) {
+        qInfo() << "Failed, QDomDocument setContent recent file";
+        return false;
+    }
+
+    nodes = recentDom.elementsByTagName("bookmark");
+
+    return true;
+}
 
 DPRECENT_END_NAMESPACE
-#endif   // COREPLUGIN_H

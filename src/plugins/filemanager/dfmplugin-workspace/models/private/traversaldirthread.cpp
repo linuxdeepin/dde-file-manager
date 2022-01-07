@@ -38,8 +38,8 @@ TraversalDirThread::TraversalDirThread(const QUrl &url,
     qRegisterMetaType<QList<QSharedPointer<FileViewItem>>>("QList<QSharedPointer<DFMFileViewItem>>");
     qRegisterMetaType<QList<QSharedPointer<FileViewItem>>>("QList<QSharedPointer<DFMFileViewItem>>&");
 
-    if (dirUrl.isValid() && !UrlRoute::isVirtual(dirUrl)) {
-        m_dirIterator = DirIteratorFactory::create<LocalDirIterator>(url, nameFilters, filters, flags);
+    if (dirUrl.isValid() /*&& !UrlRoute::isVirtual(dirUrl)*/) {
+        m_dirIterator = DirIteratorFactory::create<AbstractDirIterator>(url, nameFilters, filters, flags);
         if (!m_dirIterator) {
             qInfo() << "Failed create dir iterator from" << url;
             abort();

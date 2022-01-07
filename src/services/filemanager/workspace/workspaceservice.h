@@ -42,6 +42,8 @@ public:
         return "org.deepin.service.WorkspaceService";
     }
 
+    void addScheme(const QString &scheme);
+
 private:
     explicit WorkspaceService(QObject *parent = nullptr);
     virtual ~WorkspaceService() override;

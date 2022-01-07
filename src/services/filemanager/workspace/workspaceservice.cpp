@@ -50,3 +50,8 @@ WorkspaceService::WorkspaceService(QObject *parent)
 WorkspaceService::~WorkspaceService()
 {
 }
+
+void WorkspaceService::addScheme(const QString &scheme)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme);
+}

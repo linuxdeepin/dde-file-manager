@@ -20,12 +20,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "workspacehelper.h"
+#include "views/fileview.h"
 #include "services/filemanager/windows/windowsservice.h"
+
+#include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/framework.h>
 
 DPWORKSPACE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 QMap<quint64, WorkspaceWidget *> WorkspaceHelper::kWorkspaceMap {};
 
@@ -67,6 +71,11 @@ quint64 WorkspaceHelper::windowId(QWidget *sender)
 void WorkspaceHelper::switchViewMode(quint64 windowId, int viewMode)
 {
     emit viewModeChanged(windowId, viewMode);
+}
+
+void WorkspaceHelper::addScheme(const QString &scheme)
+{
+    ViewFactory::regClass<FileView>(scheme);
 }
 
 WorkspaceHelper::WorkspaceHelper(QObject *parent)

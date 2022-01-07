@@ -41,6 +41,7 @@ public:
     void removeWorkspace(quint64 windowId);
     quint64 windowId(QWidget *sender);
     void switchViewMode(quint64 windowId, int viewMode);
+    void addScheme(const QString &scheme);
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);
 

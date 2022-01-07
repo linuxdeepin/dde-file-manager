@@ -38,7 +38,7 @@ class TraversalDirThread : public QThread
 {
     Q_OBJECT
     QUrl dirUrl;   // 遍历的目录的url
-    QSharedPointer<dfmbase::LocalDirIterator> m_dirIterator;   // 当前遍历目录的diriterator
+    QSharedPointer<dfmbase::AbstractDirIterator> m_dirIterator;   // 当前遍历目录的diriterator
     dfmbase::DThreadList<FileViewItem *> m_childrenList;   // 当前遍历出来的所有文件
     bool stopFlag = false;
 
