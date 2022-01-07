@@ -931,11 +931,19 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
         QString filePath = oldUrl.toLocalFile();
         Properties desktop(filePath, "Desktop Entry");
         QString key;
-        QString localKey = QString("Name[%1]").arg(QLocale::system().name());
+        const QString local = QLocale::system().name();
+        const QString keyTemplate = QString("Name[%1]");
+        QString localKey = keyTemplate.arg(local);
         if (desktop.contains(localKey)) {
             key = localKey;
         } else {
-            key = "Name";
+            // split xx_XX
+            auto splitedLocal = local.trimmed().split("_");
+            if (!splitedLocal.isEmpty()
+                    && desktop.contains(localKey = keyTemplate.arg(splitedLocal.first())))
+                key = localKey;
+             else
+                key = "Name";
         }
 
         const QString currentName = oldfilePointer->fileDisplayName();
