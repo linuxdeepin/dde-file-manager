@@ -96,6 +96,11 @@ static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice>
         }
     }
 
+    if (!blk->hasFileSystem() && blk->size() < 1024) { // a super block is at least 1024 bytes, a full filesystem always have a superblock.
+        qWarning() << "block device is ignored cause it's size is less than 1024";
+        return true;
+    }
+
     if (blk->cryptoBackingDevice().length() > 1) {
         qWarning()  << "block device is ignored by crypted back device:"  << blkPath;
         return true;
