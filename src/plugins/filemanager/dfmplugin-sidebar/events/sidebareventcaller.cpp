@@ -41,3 +41,9 @@ void SideBarEventCaller::sendItemActived(quint64 windowId, const QUrl &url)
 {
     dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
 }
+
+void SideBarEventCaller::sendEject(const QUrl &url)
+{
+    qInfo() << "Eject device: " << url;
+    dispatcher()->publish(SideBar::EventType::kEjectAction, url);
+}

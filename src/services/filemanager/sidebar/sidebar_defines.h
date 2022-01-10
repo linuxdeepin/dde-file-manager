@@ -42,6 +42,11 @@ extern const char *const kTag;
 extern const char *const kOther;
 }   // namespace DefaultGroup
 
+// custom event type
+namespace EventType {
+extern const int kEjectAction;
+};   // namespace EventType
+
 struct ItemInfo
 {
     QString group;
@@ -49,6 +54,7 @@ struct ItemInfo
     QString text;
     QUrl url;
     Qt::ItemFlags flag;
+    bool removable { false };
 
     bool operator==(const ItemInfo &info)
     {

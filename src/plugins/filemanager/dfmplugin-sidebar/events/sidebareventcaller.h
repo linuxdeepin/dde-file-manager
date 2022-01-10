@@ -35,6 +35,7 @@ class SideBarEventCaller
 
 public:
     static void sendItemActived(quint64 windowId, const QUrl &url);
+    static void sendEject(const QUrl &url);
 };
 
 DPSIDEBAR_END_NAMESPACE

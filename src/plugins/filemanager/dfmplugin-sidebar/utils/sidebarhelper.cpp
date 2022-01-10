@@ -112,8 +112,23 @@ SideBarItem *SideBarHelper::createItemByInfo(const SideBar::ItemInfo &info)
                                         info.url);
     item->setRegisteredHandler(makeItemIdentifier(info.group, info.url));
     item->setFlags(info.flag);
+
+    // create `unmount action` for removable device
+    if (info.removable) {
+        DViewItemActionList lst;
+        DViewItemAction *action = new DViewItemAction(Qt::AlignCenter, QSize(16, 16), QSize(), true);
+        action->setIcon(QIcon::fromTheme("media-eject-symbolic"));
+        action->setVisible(true);
+        QObject::connect(action, &QAction::triggered, [info]() {
+            SideBarEventCaller::sendEject(info.url);
+        });
+        lst.push_back(action);
+        item->setActionList(Qt::RightEdge, lst);
+    }
+
     if (!kCacheInfo.contains(info))
         kCacheInfo.push_back(info);
+
     return item;
 }
 

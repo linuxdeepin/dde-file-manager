@@ -57,14 +57,11 @@ SideBarWidget::SideBarWidget(QFrame *parent)
 void SideBarWidget::setCurrentUrl(const QUrl &url)
 {
     sidebarUrl = url;
-    auto model = sidebarView->model();
-    sidebarView->selectionModel()->clearSelection();
-    for (int i = 0; i < model->rowCount(); i++) {
-        auto item = sidebarView->model()->itemFromIndex(i);
-        if (item->url() == sidebarUrl) {
-            sidebarView->selectionModel()->select(model->index(i, 0), QItemSelectionModel::SelectCurrent);
-            return;
-        }
+    int index = findItem(url);
+    if (index != -1) {
+        sidebarView->setCurrentIndex(sidebarModel->index(index, 0));
+    } else {
+        sidebarView->clearSelection();
     }
 }
 
@@ -108,11 +105,30 @@ bool SideBarWidget::removeItem(SideBarItem *item)
     return sidebarModel->removeRow(item);
 }
 
+/*!
+ * \brief Find the index of the first item match the given \a url
+ * \param url
+ * \return the index of the item we can found, or -1 if not found.
+ */
+int SideBarWidget::findItem(const QUrl &url) const
+{
+    for (int i = 0; i < sidebarModel->rowCount(); i++) {
+        SideBarItem *item = sidebarModel->itemFromIndex(i);
+        if (!dynamic_cast<SideBarItemSeparator *>(item)) {
+            if (item->url().scheme() == url.scheme() && item->url().path() == url.path())
+                return i;
+        }
+    }
+
+    return -1;
+}
+
 void SideBarWidget::onItemActived(const QModelIndex &index)
 {
     SideBarItem *item = sidebarModel->itemFromIndex(index);
     if (dynamic_cast<SideBarItemSeparator *>(item))
         return;
+
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     QUrl url { qvariant_cast<QUrl>(item->data(SideBarItem::Roles::ItemUrlRole)) };
     SideBarManager::instance()->runCd(item->registeredHandler(), SideBarHelper::windowId(this), url);
@@ -123,6 +139,7 @@ void SideBarWidget::customContextMenuCall(const QPoint &pos)
     SideBarItem *item = sidebarView->itemAt(pos);
     if (!item)
         return;
+
     // 拿到Item对应的QUrl
     const QUrl &url = sidebarView->urlAt(pos);
     // 相对坐标转全局坐标

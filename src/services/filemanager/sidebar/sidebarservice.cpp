@@ -24,6 +24,8 @@
 #include "sidebar_defines.h"
 #include "private/sidebarservice_p.h"
 
+#include "dfm-base/utils/universalutils.h"
+
 DSB_FM_BEGIN_NAMESPACE
 
 namespace SideBar {
@@ -36,6 +38,11 @@ const char *const kNetwork { "Network" };
 const char *const kTag { "Tag" };
 const char *const kOther { "Other" };
 }   // namespace DefaultGroup
+
+// custom event type
+namespace EventType {
+extern const int kEjectAction = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+};   // namespace EventType
 
 }   // namespace Sidebar
 

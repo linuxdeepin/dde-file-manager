@@ -58,12 +58,20 @@ void SideBarUnicastReceiver::connectService()
 
 void SideBarUnicastReceiver::invokeAddItem(const ItemInfo &info, CdActionCallback cdFunc, ContextMenuCallback menuFunc, RenameCallback renameFunc)
 {
+    if (SideBarHelper::allCacheInfo().contains(info)) {
+        qWarning() << "Cannot add repeated info " << info.url;
+        return;
+    }
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     for (SideBarWidget *sidebar : allSideBar) {
         SideBarItem *item = SideBarHelper::createItemByInfo(info);
         if (item) {
             sidebar->addItem(item);
             SideBarManager::instance()->registerCallback(item->registeredHandler(), cdFunc, menuFunc, renameFunc);
+            QUrl &&itemUrl = item->url();
+            QUrl &&sidebarUrl = sidebar->currentUrl().url();
+            if (itemUrl.scheme() == sidebarUrl.scheme() && itemUrl.path() == sidebarUrl.path())
+                sidebar->setCurrentUrl(item->url());
         }
     }
 }

@@ -46,6 +46,7 @@ SideBarItem::SideBarItem(const SideBarItem &item)
 }
 
 SideBarItem::SideBarItem(const QIcon &icon, const QString &text, const QString &group, const QUrl &url)
+    : DStandardItem(icon, text)
 {
     setIcon(icon);
     setText(text);
