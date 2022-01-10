@@ -25,7 +25,7 @@
         "ShowedHiddenOnSearch": true,
         "ShowedHiddenFiles": false,
         "ShowRecentFileEntry": true,
-        "ShowedFileSuffix": true,
+        "ShowedFileSuffixOnRename": true,
         "DisableNonRemovableDeviceUnmount": false,
         "HiddenSystemPartition": false,
         "AlwaysShowOfflineRemoteConnections": true
