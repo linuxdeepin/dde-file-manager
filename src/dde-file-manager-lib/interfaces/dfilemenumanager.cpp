@@ -65,6 +65,8 @@
 #include "extensionimpl/dfmextpluginmanager.h"
 #include "extensionimpl/dfmextmenuimplproxy.h"
 #include "extensionimpl/dfmextmenuimpl.h"
+#include "extensionimpl/dfmextmendefine.h"
+#include "extensionimpl/private/dfmextmenuimpl_p.h"
 
 #include <DSysInfo>
 
@@ -1248,10 +1250,17 @@ void DFileMenuManager::extensionPluginCustomMenu(DFileMenu *menu,
     std::string newCurrentUrl = currentUrl.toString().toStdString();
     std::string newFocusUrl = focusFile.toString().toStdString();
 
+    //生命周期与DFileMene绑定
+    DFMExtMenuImplPrivate *extMenuImplPrivate = DFMExt_Get_MenuPrivate(menu);
+    DFMExtMenuImpl *extMenuImpl = nullptr;
+    if (!extMenuImplPrivate) {
+        extMenuImpl = DFileMenuData::createMenuImpl(menu);
+    } else {
+        extMenuImpl = extMenuImplPrivate->menuImpl();
+    }
+
     for (auto val : DFMExtPluginManager::instance().menus()) {
         val->initialize(DFMExtPluginManager::instance().pluginMenuProxy());
-        //生命周期与DFileMene绑定
-        DFMExtMenuImpl *extMenuImpl = DFileMenuData::createMenuImpl(menu);
         if (isNormal) {
             std::list<std::string> newSection;
             for (auto url : selected) { //导出所有的Durl到std::string
