@@ -1350,7 +1350,7 @@ QString DAbstractFileInfo::suffix() const
     QString strSuffix;
     while (strSuffix.isEmpty()) {
         nIdx = tmpName.lastIndexOf(".");
-        if (nIdx == -1 || nIdx == 0)
+        if (nIdx == -1)
             return QString();
         strSuffix = tmpName.mid(nIdx + 1);
         tmpName = tmpName.mid(0, nIdx);

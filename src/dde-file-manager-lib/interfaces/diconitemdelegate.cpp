@@ -1318,7 +1318,7 @@ QString DIconItemDelegate::displayFileName(const QModelIndex &index) const
     QString str = index.data(DFileSystemModel::FileDisplayNameRole).toString();
     const QString &suffix = "." + index.data(DFileSystemModel::FileSuffixRole).toString();
 
-    if (!showSuffix && str.endsWith(suffix) && suffix != ".")
+    if (!showSuffix && str.endsWith(suffix))
         str = str.mid(0, str.length() - suffix.length());
 
     return str;

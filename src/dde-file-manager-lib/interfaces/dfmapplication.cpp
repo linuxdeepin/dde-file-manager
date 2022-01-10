@@ -95,9 +95,6 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
         case DFMApplication::GA_ShowedHiddenFiles:
             Q_EMIT self->showedHiddenFilesChanged(value.toBool());
             break;
-        case DFMApplication::GA_ShowedFileSuffix:
-            Q_EMIT self->showedFileSuffixChanged(value.toBool());
-            break;
         case DFMApplication::GA_ShowRecentFileEntry:
             Q_EMIT self->recentDisplayChanged(value.toBool());
             break;

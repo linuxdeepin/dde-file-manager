@@ -272,7 +272,6 @@ protected:
 #endif
 
     void onShowHiddenFileChanged();
-    void onShowFileSuffixChanged();
 
     void initDelegate();
     void initUI();

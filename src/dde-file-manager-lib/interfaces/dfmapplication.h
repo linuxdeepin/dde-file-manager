@@ -111,7 +111,6 @@ Q_SIGNALS:
     void previewCompressFileChanged(bool enable);
     void previewAttributeChanged(GenericAttribute ga, bool enable);
     void showedHiddenFilesChanged(bool enable);
-    void showedFileSuffixChanged(bool enable);
     void recentDisplayChanged(bool enable);
     void csdClickableAreaAttributeChanged(bool enabled);
     void reloadComputerModel();
