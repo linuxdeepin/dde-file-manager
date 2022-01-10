@@ -1794,17 +1794,7 @@ int FileUtils::getMemoryPageSize()
 
 bool FileUtils::isFtpFile(const DUrl &url)
 {
-    static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
-                                     QRegularExpression::DotMatchesEverythingOption
-                                     | QRegularExpression::DontCaptureOption
-                                     | QRegularExpression::OptimizeOnFirstUsageOption);
-
-    if (!regExp.match(url.path(), 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch()) {
-        return false;
-    }
-    if (url.path().contains("/ftp:host="))
-        return true;
-    return false;
+    return url.path().contains(QRegExp("/run/user/.+gvfs/ftp:.*host=.+"));
 }
 /**
  * @brief jugment file is local file(in system disk file)(使用gio判断挂载点是否可以卸载)
@@ -2014,25 +2004,31 @@ QString FileUtils::smbAttribute(const QString &localPath, FileUtils::SmbAttribut
     if(smbMain.endsWith("/"))
         smbMain.chop(1);
 
+    QString tmpStr;
     switch (id) {
     case FileUtils::SmbAttribute::kDomain:{
-        return extractSmbDomain(smbMain);
+        tmpStr = extractSmbDomain(smbMain);
+        break;
     }
     case FileUtils::SmbAttribute::kServer:{
-        return extractSmbServer(smbMain);
+        tmpStr = extractSmbServer(smbMain);
+        break;
     }
     case FileUtils::SmbAttribute::kShareName:{
-        return extractSmbShareName(smbMain);
+        tmpStr = extractSmbShareName(smbMain);
+        break;
     }
     case FileUtils::SmbAttribute::kSharePath:{
-        return extractSmbSharePath(smbMain);
+        tmpStr = extractSmbSharePath(smbMain);
+        break;
     }
     case FileUtils::SmbAttribute::kUser:{
-        return extractSmbUser(smbMain);
+        tmpStr = extractSmbUser(smbMain);
+        break;
     }
     }
-
-    return QString();
+    std::string tmpStdStr = tmpStr.toStdString();
+    return QUrl::fromPercentEncoding(tmpStdStr.data());
 }
 
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
