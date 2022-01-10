@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QSharedPointer>
 #include <QVariant>
+#include <QMutex>
 
 typedef QSharedPointer<QMap<quint8, QVariant>> JobInfoPointer;
 Q_DECLARE_METATYPE(JobInfoPointer);
@@ -136,8 +137,18 @@ public:
         kSpeedKey,
         kRemindTimeKey,
         kCompleteFilesKey,
+        kJobHandlePointer,
     };
     Q_ENUM(NotifyInfoKey)
+    enum NotifyType : uint8_t {
+        kNotifyProccessChangedKey,
+        kNotifyStateChangedKey,
+        kNotifyCurrentTaskKey,
+        kNotifyFinishedKey,
+        kNotifySpeedUpdatedTaskKey,
+        kNotifyErrorTaskKey,
+    };
+    Q_ENUM(NotifyType)
     explicit AbstractJobHandler(QObject *parent = nullptr);
     virtual ~AbstractJobHandler();
     virtual qreal currentJobProcess() const;
@@ -145,6 +156,8 @@ public:
     virtual qint64 currentSize() const;
     virtual JobState currentState() const;
     virtual void setSignalConnectFinished();
+    virtual QMap<NotifyType, JobInfoPointer> getAllTaskInfo();
+    virtual JobInfoPointer getTaskInfoByNotifyType(const NotifyType &notifyType);
 signals:   // 发送给任务调用者使用的信号
     /*!
      * @brief proccessChanged 当前任务的进度变化信号，此信号都可能是异步连接，所以所有参数都没有使用引用
@@ -206,18 +219,21 @@ signals:   // 发送给任务使用的信号
     void userAction(SupportActions actions);
 public slots:
     void operateTaskJob(SupportActions actions);
-    void onProccessChanged(const JobInfoPointer JobInfo);
-    void onStateChanged(const JobInfoPointer JobInfo);
-    void onCurrentTask(const JobInfoPointer JobInfo);
-    void onError(const JobInfoPointer JobInfo);
+    void onProccessChanged(const JobInfoPointer jobInfo);
+    void onStateChanged(const JobInfoPointer jobInfo);
+    void onCurrentTask(const JobInfoPointer jobInfo);
+    void onError(const JobInfoPointer jobInfo);
     void onFinished(const JobInfoPointer jobInfo);
-    void onSpeedUpdated(const JobInfoPointer JobInfo);
+    void onSpeedUpdated(const JobInfoPointer jobInfo);
 
 public:
+    void start();
     static QString errorToString(const AbstractJobHandler::JobErrorType &error);
 
 private:
     QAtomicInteger<bool> isSignalConnectOver { false };
+    QMutex taskInfoMutex;
+    QMap<NotifyType, JobInfoPointer> taskInfo;
 };
 DFMBASE_END_NAMESPACE
 

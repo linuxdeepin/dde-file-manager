@@ -42,6 +42,8 @@ TaskDialog::TaskDialog(QObject *parent)
 {
     moveToThread(qApp->thread());
     initUI();
+    if (!addTaskMutex)
+        addTaskMutex = new QMutex();
 }
 /*!
  * \brief TaskDialog::addTask 添加一个任务显示，立即显示，绑定所有taskHandler的信号，在listview中添加一个taskwidget
@@ -49,8 +51,6 @@ TaskDialog::TaskDialog(QObject *parent)
  */
 void TaskDialog::addTask(const JobHandlePointer &taskHandler)
 {
-    if (!addTaskMutex)
-        addTaskMutex = new QMutex();
 
     QMutexLocker lk(addTaskMutex);
 
@@ -63,7 +63,8 @@ void TaskDialog::addTask(const JobHandlePointer &taskHandler)
     wid = new TaskWidget(this);
 
     connect(wid, &TaskWidget::heightChanged, this, &TaskDialog::adjustSize, Qt::QueuedConnection);
-    connect(taskHandler.data(), &AbstractJobHandler::finishedNotify, this, &TaskDialog::removeTask, Qt::QueuedConnection);
+    taskHandler->connect(taskHandler.data(), &AbstractJobHandler::finishedNotify, this, &TaskDialog::removeTask);
+
     wid->setTaskHandle(taskHandler);
 
     taskHandler->setSignalConnectFinished();
@@ -205,21 +206,20 @@ void TaskDialog::moveYCenter()
 /*!
  * \brief TaskDialog::removeTask 移除任务的item，当list中的item <= 0时，关闭整个进度显示框
  */
-void TaskDialog::removeTask()
+void TaskDialog::removeTask(const JobInfoPointer info)
 {
-    JobHandlePointer send(qobject_cast<dfmbase::AbstractJobHandler *>(sender()));
-    if (!send)
-        return;
+    QMutexLocker lk(addTaskMutex);
+    JobHandlePointer jobHandler = info->value(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer).value<JobHandlePointer>();
 
-    if (!taskItems.contains(send)) {
+    if (!taskItems.contains(jobHandler)) {
         qWarning() << "taskItems not contains the task!";
         return;
     }
 
-    QListWidgetItem *item = taskItems.value(send);
+    QListWidgetItem *item = taskItems.value(jobHandler);
     taskListWidget->removeItemWidget(item);
     taskListWidget->takeItem(taskListWidget->row(item));
-    taskItems.remove(send);
+    taskItems.remove(jobHandler);
     setTitle(taskListWidget->count());
     if (taskListWidget->count() == 0) {
         close();

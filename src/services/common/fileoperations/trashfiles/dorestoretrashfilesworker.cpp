@@ -43,6 +43,7 @@ DoRestoreTrashFilesWorker::DoRestoreTrashFilesWorker(QObject *parent)
 
 DoRestoreTrashFilesWorker::~DoRestoreTrashFilesWorker()
 {
+    stop();
 }
 
 bool DoRestoreTrashFilesWorker::doWork()
@@ -207,7 +208,7 @@ bool DoRestoreTrashFilesWorker::handleRestoreTrash(const AbstractFileInfoPointer
     emitCurrentTaskNotify(fromUrl, toUrl);
 
     if (restoreInfo->exists()) {
-        AbstractJobHandler::SupportAction actionForExists = AbstractJobHandler::SupportAction::kNoAction;
+        AbstractJobHandler::SupportAction actionForExists { AbstractJobHandler::SupportAction::kNoAction };
         if (trashInfo->isFile()) {
             actionForExists = doHandleErrorAndWait(fromUrl, toUrl, toUrl, AbstractJobHandler::JobErrorType::kFileExistsError);
         } else {
@@ -297,7 +298,7 @@ bool DoRestoreTrashFilesWorker::doCopyAndClearTrashFile(const AbstractFileInfoPo
     emitCurrentTaskNotify(trashUrl, restoreUrl);
 
     if (restoreInfo->exists()) {
-        AbstractJobHandler::SupportAction actionForExist = AbstractJobHandler::SupportAction::kNoAction;
+        AbstractJobHandler::SupportAction actionForExist { AbstractJobHandler::SupportAction::kNoAction };
         if (trashInfo->isFile()) {
             actionForExist = doHandleErrorAndWait(trashUrl, restoreUrl, restoreUrl, AbstractJobHandler::JobErrorType::kFileExistsError);
         } else {

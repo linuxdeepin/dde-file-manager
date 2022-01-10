@@ -47,6 +47,7 @@ DoMoveToTrashFilesWorker::DoMoveToTrashFilesWorker(QObject *parent)
 
 DoMoveToTrashFilesWorker::~DoMoveToTrashFilesWorker()
 {
+    stop();
 }
 /*!
  * \brief DoMoveToTrashFilesWorker::doWork the thread move to trash work function

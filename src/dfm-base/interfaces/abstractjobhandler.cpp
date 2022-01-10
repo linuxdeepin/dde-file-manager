@@ -72,6 +72,18 @@ void AbstractJobHandler::setSignalConnectFinished()
 {
     isSignalConnectOver = true;
 }
+
+QMap<AbstractJobHandler::NotifyType, JobInfoPointer> AbstractJobHandler::getAllTaskInfo()
+{
+    QMutexLocker lk(&taskInfoMutex);
+    return taskInfo;
+}
+
+JobInfoPointer AbstractJobHandler::getTaskInfoByNotifyType(const AbstractJobHandler::NotifyType &notifyType)
+{
+    QMutexLocker lk(&taskInfoMutex);
+    return taskInfo.value(notifyType);
+}
 /*!
  * \brief AbstractJobHandler::operateTaskJob 对任务进行操作
  * 如：停止任务，暂停任务，任务重试，替换操作
@@ -79,52 +91,83 @@ void AbstractJobHandler::setSignalConnectFinished()
  */
 void AbstractJobHandler::operateTaskJob(SupportActions actions)
 {
+
     emit userAction(actions);
 }
 
-void AbstractJobHandler::onProccessChanged(const JobInfoPointer JobInfo)
+void AbstractJobHandler::onProccessChanged(const JobInfoPointer jobInfo)
 {
     //TODO:: do save something to use
-
+    {
+        QMutexLocker lk(&taskInfoMutex);
+        taskInfo.insert(kNotifyProccessChangedKey, jobInfo);
+    }
     if (isSignalConnectOver)
-        emit proccessChangedNotify(JobInfo);
+        emit proccessChangedNotify(jobInfo);
 }
 
-void AbstractJobHandler::onStateChanged(const JobInfoPointer JobInfo)
+void AbstractJobHandler::onStateChanged(const JobInfoPointer jobInfo)
 {
     //TODO:: do save something to use
-
+    {
+        QMutexLocker lk(&taskInfoMutex);
+        taskInfo.insert(kNotifyStateChangedKey, jobInfo);
+    }
     if (isSignalConnectOver)
-        emit stateChangedNotify(JobInfo);
+        emit stateChangedNotify(jobInfo);
 }
 
-void AbstractJobHandler::onCurrentTask(const JobInfoPointer JobInfo)
+void AbstractJobHandler::onCurrentTask(const JobInfoPointer jobInfo)
 {
     //TODO:: do save something to use
-
+    {
+        QMutexLocker lk(&taskInfoMutex);
+        taskInfo.insert(kNotifyCurrentTaskKey, jobInfo);
+    }
     if (isSignalConnectOver)
-        emit currentTaskNotify(JobInfo);
+        emit currentTaskNotify(jobInfo);
 }
 
-void AbstractJobHandler::onError(const JobInfoPointer JobInfo)
+void AbstractJobHandler::onError(const JobInfoPointer jobInfo)
 {
     //TODO:: do save something to use
-    if (isSignalConnectOver)
-        emit currentTaskNotify(JobInfo);
+    {
+        QMutexLocker lk(&taskInfoMutex);
+        JobInfoPointer tempInfo(new QMap<quint8, QVariant>);
+        *tempInfo = *jobInfo;
+        tempInfo->remove(kJobHandlePointer);
+        taskInfo.insert(kNotifyErrorTaskKey, tempInfo);
+    }
+    emit errorNotify(jobInfo);
 }
 
 void AbstractJobHandler::onFinished(const JobInfoPointer jobInfo)
 {
-    if (isSignalConnectOver)
-        emit finishedNotify(jobInfo);
+    {
+        QMutexLocker lk(&taskInfoMutex);
+        JobInfoPointer tempInfo(new QMap<quint8, QVariant>);
+        *tempInfo = *jobInfo;
+        tempInfo->remove(kJobHandlePointer);
+        taskInfo.insert(kNotifyFinishedKey, tempInfo);
+    }
+
+    emit finishedNotify(jobInfo);
 }
 
-void AbstractJobHandler::onSpeedUpdated(const JobInfoPointer JobInfo)
+void AbstractJobHandler::onSpeedUpdated(const JobInfoPointer jobInfo)
 {
     //TODO:: do save something to use
-
+    {
+        QMutexLocker lk(&taskInfoMutex);
+        taskInfo.insert(kNotifySpeedUpdatedTaskKey, jobInfo);
+    }
     if (isSignalConnectOver)
-        emit speedUpdatedNotify(JobInfo);
+        emit speedUpdatedNotify(jobInfo);
+}
+
+void AbstractJobHandler::start()
+{
+    operateTaskJob(kStartAction);
 }
 
 QString AbstractJobHandler::errorToString(const AbstractJobHandler::JobErrorType &error)

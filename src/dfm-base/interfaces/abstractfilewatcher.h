@@ -63,26 +63,28 @@ Q_SIGNALS:
      * \brief fileDeleted 文件删除信号
      *
      * \param const QUrl &url 删除的文件的url
-     *
-     * \param const DFileInfo &fileInfo 文件的fileinfo
      */
-    void fileDeleted(const QUrl &url, const DFMIO::DFileInfo &fileInfo);
+    void fileDeleted(const QUrl &url);
     /*!
      * \brief fileAttributeChanged 文件的属性发生改变信号
      *
      * \param const QUrl &url 文件属性改变的url
-     *
-     * \param const DFileInfo &fileInfo 文件的fileinfo
      */
-    void fileAttributeChanged(const QUrl &url, const DFMIO::DFileInfo &fileInfo);
+    void fileAttributeChanged(const QUrl &url);
     /*!
      * \brief fileDeleted 当前监视目录下的子文件创建信号
      *
      * \param const QUrl &url 当前监视目录下的子文件的url
-     *
-     * \param const DFileInfo &fileInfo 文件的fileinfo
      */
-    void subfileCreated(const QUrl &url, const DFMIO::DFileInfo &fileInfo);
+    void subfileCreated(const QUrl &url);
+    /*!
+     * \brief fileRename 当前监视目录文件重命名时发送此信号
+     *
+     * \param const QUrl &oldUrl 重命名前的文件url
+     *
+     * \param const DFileInfo &newUrl 重名后的文件url
+     */
+    void fileRename(const QUrl &oldUrl, const QUrl &newUrl);
 };
 DFMBASE_END_NAMESPACE
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileWatcher> AbstractFileWatcherPointer;

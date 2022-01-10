@@ -669,7 +669,7 @@ QString LocalFileHandler::errorString()
  */
 void LocalFileHandler::setError(const QString &error)
 {
-    if (errorStr)
+    if (!errorStr)
         errorStr = new QString;
 
     *errorStr = error;

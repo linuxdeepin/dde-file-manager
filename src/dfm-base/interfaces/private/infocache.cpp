@@ -32,7 +32,7 @@ static constexpr int kRefreshSpaceTime = 500;
 // 文件缓存文件的总个数
 static constexpr int kCacheFileinfoCount = 100000;
 // 文件缓存移除的时间
-static constexpr int kCacheRemoveTime = (5 * 60 * 1000);
+static constexpr int kCacheRemoveTime = (60 * 1000);
 
 DFMBASE_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(InfoCache, _InfoCacheManager)
@@ -233,7 +233,6 @@ InfoCache &InfoCache::instance()
 AbstractFileInfoPointer InfoCache::getCacheInfo(const QUrl &url)
 {
     Q_D(InfoCache);
-    qInfo() << url;
     if (d->fileInfos.contains(url)) {
         d->updateSortByTimeCacheUrlList(url);
         if (d->needRemoveCacheList.contains(url)) {
@@ -260,12 +259,8 @@ void InfoCache::cacheInfo(const QUrl &url, const AbstractFileInfoPointer &info)
 
     //获取监视器，监听当前的file的改变
     QSharedPointer<AbstractFileWatcher> watcher { nullptr };
-    qInfo() << url;
-    if (info->isSymLink() || info->isFile()) {
-        watcher = WacherFactory::create<AbstractFileWatcher>(UrlRoute::urlParent(url));
-    } else {
-        watcher = WacherFactory::create<AbstractFileWatcher>(url);
-    }
+
+    watcher = WacherFactory::create<AbstractFileWatcher>(UrlRoute::urlParent(url));
 
     if (watcher) {
         if (watcher->getCacheInfoConnectSize() == 0) {
@@ -329,11 +324,11 @@ void InfoCache::removeCacheInfo(const QUrl &url)
  *
  * \return
  */
-void InfoCache::refreshFileInfo(const QUrl &url, const DFMIO::DFileInfo &fileInfo)
+void InfoCache::refreshFileInfo(const QUrl &url)
 {
     AbstractFileInfoPointer info = getCacheInfo(url);
     if (info) {
-        info->setFile(fileInfo);
+        info->setFile(url);
     }
 }
 /*!
@@ -367,7 +362,7 @@ void InfoCache::timeNeedRemoveCache()
             d->needRemoveCacheList.push_back(*itr);
             continue;
         }
-        itr++;
+        itr = itr.operator++();
     }
 }
 /*!

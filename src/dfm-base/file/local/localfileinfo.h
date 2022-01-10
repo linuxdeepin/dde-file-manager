@@ -33,7 +33,7 @@ DFMBASE_BEGIN_NAMESPACE
 class LocalFileInfoPrivate;
 class LocalFileInfo : public AbstractFileInfo
 {
-    LocalFileInfoPrivate *d;
+    LocalFileInfoPrivate *d = nullptr;
 
 public:
     enum FlagIcon {
@@ -49,7 +49,7 @@ public:
     LocalFileInfo &operator=(const LocalFileInfo &info);
     virtual bool operator==(const LocalFileInfo &fileinfo) const;
     virtual bool operator!=(const LocalFileInfo &fileinfo) const;
-    virtual void setFile(const DFMIO::DFileInfo &file) override;
+    virtual void setFile(const QUrl &url) override;
     virtual bool exists() const override;
     virtual void refresh() override;
     virtual QString filePath() const override;
@@ -98,12 +98,14 @@ public:
     virtual bool isSocket() const;
     virtual bool isRegular() const;
     virtual Type fileType() const override;
-    virtual QString linkTargetPath() const;
     virtual int countChildFile() const override;
     virtual QString sizeFormat() const override;
     virtual QString fileDisplayName() const;
     virtual QFileInfo toQFileInfo() const;
     virtual quint64 inode() const;
+
+private:
+    void init(const QUrl &url);
 };
 DFMBASE_END_NAMESPACE
 typedef QSharedPointer<DFMBASE_NAMESPACE::LocalFileInfo> DFMLocalFileInfoPointer;

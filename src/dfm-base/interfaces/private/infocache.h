@@ -74,7 +74,7 @@ public:
     void cacheInfo(const QUrl &url, const AbstractFileInfoPointer &info);
     void removeCacheInfo(const QUrl &url);
 private Q_SLOTS:
-    void refreshFileInfo(const QUrl &url, const DFMIO::DFileInfo &fileInfo);
+    void refreshFileInfo(const QUrl &url);
     void timeNeedRemoveCache();
     void timeRemoveCache();
 };

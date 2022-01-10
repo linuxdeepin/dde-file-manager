@@ -47,6 +47,7 @@ DoCutFilesWorker::DoCutFilesWorker(QObject *parent)
 
 DoCutFilesWorker::~DoCutFilesWorker()
 {
+    stop();
 }
 
 bool DoCutFilesWorker::doWork()

@@ -157,5 +157,5 @@ bool FileOperationsUtils::isFileOnDisk(const QUrl &url)
     if (destDirMount) {
         return !g_mount_can_unmount(destDirMount);
     }
-    return false;
+    return true;
 }

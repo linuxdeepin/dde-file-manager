@@ -36,6 +36,7 @@ DoDeleteFilesWorker::DoDeleteFilesWorker(QObject *parent)
 
 DoDeleteFilesWorker::~DoDeleteFilesWorker()
 {
+    stop();
 }
 
 bool DoDeleteFilesWorker::doWork()

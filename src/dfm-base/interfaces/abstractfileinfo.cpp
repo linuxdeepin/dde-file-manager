@@ -26,8 +26,69 @@
 #include <QDateTime>
 #include <QVariant>
 #include <QDir>
+#include <QCollator>
 
 USING_IO_NAMESPACE
+
+namespace FileSortFunction {
+//fix 多线程排序时，该处的全局变量在compareByString函数中可能导致软件崩溃
+//QCollator sortCollator;
+class DCollator : public QCollator
+{
+public:
+    DCollator()
+        : QCollator()
+    {
+        setNumericMode(true);
+        setCaseSensitivity(Qt::CaseInsensitive);
+    }
+};
+
+bool startWithSymbol(const QString &text)
+{
+    if (text.isEmpty())
+        return false;
+
+    //匹配字母、数字和中文开头的字符串
+    QRegExp regExp("^[a-zA-Z0-9\u4e00-\u9fa5].*$");
+    return !regExp.exactMatch(text);
+}
+
+bool startWithHanzi(const QString &text)
+{
+    if (text.isEmpty())
+        return false;
+
+    return text.at(0).script() == QChar::Script_Han;
+}
+
+bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder order)
+{
+    thread_local static DCollator sortCollator;
+    //其他符号要排在最后，需要在中文前先做判断
+    if (startWithSymbol(str1)) {
+        if (!startWithSymbol(str2))
+            return order == Qt::DescendingOrder;
+    } else if (startWithSymbol(str2))
+        return order != Qt::DescendingOrder;
+
+    if (startWithHanzi(str1)) {
+        if (!startWithHanzi(str2)) {
+            return order == Qt::DescendingOrder;
+        }
+    } else if (startWithHanzi(str2)) {
+        return order != Qt::DescendingOrder;
+    }
+
+    return ((order == Qt::DescendingOrder) ^ (sortCollator.compare(str1, str2) < 0)) == 0x01;
+}
+
+COMPARE_FUN_DEFINE(fileName, FileName, DFMBASE_NAMESPACE::AbstractFileInfo)
+COMPARE_FUN_DEFINE(size, Size, DFMBASE_NAMESPACE::AbstractFileInfo)
+COMPARE_FUN_DEFINE(lastModified, Modified, DFMBASE_NAMESPACE::AbstractFileInfo)
+COMPARE_FUN_DEFINE(created, Created, DFMBASE_NAMESPACE::AbstractFileInfo)
+COMPARE_FUN_DEFINE(lastRead, LastRead, DFMBASE_NAMESPACE::AbstractFileInfo)
+}   /// end namespace FileSortFunction
 
 DFMBASE_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<AbstractFileInfoPointer>("AbstractFileInfo") });
@@ -102,17 +163,6 @@ bool AbstractFileInfo::operator!=(const AbstractFileInfo &fileinfo) const
 void AbstractFileInfo::setFile(const QUrl &url)
 {
     dptr->url = url;
-}
-/*!
- * \brief setFile 设置文件的File，跟新当前的fileinfo
- *
- * \param const QSharedPointer<DFMIO::DFileInfo> &file 新文件的dfm-io的fileinfo
- *
- * \return
- */
-void AbstractFileInfo::setFile(const DFileInfo &file)
-{
-    dptr->url = file.uri();
 }
 /*!
  * \brief exists 文件是否存在
@@ -707,6 +757,23 @@ QString dfmbase::AbstractFileInfo::sizeFormat() const
 dfmbase::AbstractFileInfo::Type dfmbase::AbstractFileInfo::fileType() const
 {
     return kUnknown;
+}
+
+dfmbase::AbstractFileInfo::CompareFunction AbstractFileInfo::compareFunByKey(const SortKey &sortKey) const
+{
+    switch (sortKey) {
+    case kSortByFileName:
+        return FileSortFunction::compareFileListByFileName;
+    case kSortByModified:
+        return FileSortFunction::compareFileListByModified;
+    case kSortByFileSize:
+        return FileSortFunction::compareFileListBySize;
+    case kSortByFileCreated:
+        return FileSortFunction::compareFileListByCreated;
+    case kSortByFileLastRead:
+        return FileSortFunction::compareFileListByLastRead;
+    }
+    return CompareFunction();
 }
 
 QIcon dfmbase::AbstractFileInfo::fileIcon() const

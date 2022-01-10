@@ -16,7 +16,7 @@ FILE(GLOB GLOBAL_FILES
 )
 
 
-FILE(GLOB JOB_FILES
+FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/copyfiles/*.h"
@@ -56,7 +56,7 @@ FILE(GLOB MENU_FILES
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
-    ${JOB_FILES}
+    ${FILEOPERATIONS_FILES}
     ${DIALOG_FILES}
     ${MENU_FILES}
 )

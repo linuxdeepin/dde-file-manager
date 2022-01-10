@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -20,23 +20,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FILEOPERATIONSSERVICE_H
-#define FILEOPERATIONSSERVICE_H
+#ifndef FILEOPERATIONSUTILS_H
+#define FILEOPERATIONSUTILS_H
 
-#include "dfm_common_service_global.h"
-#include "dfm-framework/service/pluginservicecontext.h"
+#include "dfmplugin_fileoperations_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
+#include "services/common/dialog/dialogservice.h"
+#include "services/common/fileoperations/fileoperationsservice.h"
 
-DSC_BEGIN_NAMESPACE
-class FileOperationsService final : public dpf::PluginService,
-                                    dpf::AutoServiceRegister<FileOperationsService>
+#include <QObject>
+#include <QPointer>
+
+class QTimer;
+
+DPFILEOPERATIONS_BEGIN_NAMESPACE
+
+class FileOperationsUtils : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(FileOperationsService)
-    friend class dpf::QtClassFactory<dpf::PluginService>;
-
 public:
-    static QString name() { return "org.deepin.service.FileOperationsService"; }
+    explicit FileOperationsUtils(QObject *parent = nullptr);
+    ~FileOperationsUtils() override = default;
 
     JobHandlePointer copy(const QList<QUrl> &sources, const QUrl &target,
                           const dfmbase::AbstractJobHandler::JobFlags &flags = dfmbase::AbstractJobHandler::JobFlag::kNoHint);
@@ -50,11 +54,21 @@ public:
                          const dfmbase::AbstractJobHandler::JobFlags &flags = dfmbase::AbstractJobHandler::JobFlag::kNoHint);
 
 private:
-    explicit FileOperationsService(QObject *parent = nullptr);
-    virtual ~FileOperationsService() override;
-    static QList<JobHandlePointer> copyTask;
+    bool getOperationsAndDialogService();
+    void initArguments(const JobHandlePointer &handler);
+private slots:
+    void onHandleAddTask();
+    void onHandleAddTaskWithArgs(const JobInfoPointer info);
+    void onHandleTaskFinished(const JobInfoPointer info);
+
+private:
+    QMap<JobHandlePointer, QSharedPointer<QTimer>> copyMoveTask;
+    QSharedPointer<QMutex> copyMoveTaskMutex { nullptr };
+    QSharedPointer<QMutex> getOperationsAndDialogServiceMutex { nullptr };
+    QPointer<DSC_NAMESPACE::FileOperationsService> operationsService { nullptr };
+    QPointer<DSC_NAMESPACE::DialogService> dialogService { nullptr };
 };
 
-DSC_END_NAMESPACE
+DPFILEOPERATIONS_END_NAMESPACE
 
-#endif   // FILEOPERATIONSSERVICE_H
+#endif   // FILEOPERATIONSUTILS_H

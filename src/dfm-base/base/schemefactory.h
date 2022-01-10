@@ -146,12 +146,13 @@ public:
     // 提供任意子类的转换方法模板，仅限DAbstractFileInfo树族，
     // 与qSharedPointerDynamicCast保持一致
     template<class T>
-    static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
+    static QSharedPointer<T> create(const QUrl &url, const bool cache = true, QString *errorString = nullptr)
     {
         QSharedPointer<AbstractFileInfo> info = InfoCache::instance().getCacheInfo(url);
         if (!info) {
             info = instance().SchemeFactory<AbstractFileInfo>::create(url, errorString);
-            InfoCache::instance().cacheInfo(url, info);
+            if (cache)
+                InfoCache::instance().cacheInfo(url, info);
         }
         return qSharedPointerDynamicCast<T>(info);
     }

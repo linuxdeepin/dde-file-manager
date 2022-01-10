@@ -140,6 +140,7 @@ public:
     virtual ~AbstractWorker();
 
 public:
+    JobHandlePointer handle { nullptr };   // handle
     AbstractJobHandler::JobType jobType { AbstractJobHandler::JobType::kUnknow };   // current task type
     QSharedPointer<StatisticsFilesSize> statisticsFilesSizeJob { nullptr };   // 异步文件大小统计
     QAtomicInteger<qint64> sourceFilesTotalSize { 0 };   // 源文件的总大小
@@ -147,7 +148,6 @@ public:
     quint16 dirSize { 0 };   // 目录大小
     QList<QUrl> sourceUrls;   // 源文件
     QUrl targetUrl;   // 目标目录
-    QAtomicInteger<bool> isFileOnDiskUrls { false };
     AbstractJobHandler::JobFlags jobFlags { AbstractJobHandler::JobFlag::kNoHint };   // 任务标志
     AbstractJobHandler::SupportAction currentAction { AbstractJobHandler::SupportAction::kNoAction };   // 当前的操作
     QSharedPointer<QWaitCondition> handlingErrorCondition { nullptr };

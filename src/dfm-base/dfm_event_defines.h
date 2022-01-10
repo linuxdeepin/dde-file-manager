@@ -43,6 +43,20 @@ enum GlobalEventType {
     kSaveOperator,   // save operator
     kCleanSaveOperator,   // Ctrl+Z
     kRevocation,
+    // file operations
+    kOpenFiles,
+    kOpenFilesByApp,
+    kRenameFile,
+    kMkdir,
+    kTouchFile,
+    kCreateSymlink,
+    kSetPermission,
+    kWriteUrlsToClipboard,
+    kDeleteFiles,
+    kMoveToTrash,
+    kRestoreFromTrash,
+    kPasteFile,
+    kCutFile,
 
     // first user event id, use EventManager::registerEventType crreate custom event type
     kCustomBase = 1000,   // first user event id

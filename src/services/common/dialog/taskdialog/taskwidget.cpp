@@ -89,6 +89,28 @@ void TaskWidget::setTaskHandle(const JobHandlePointer &handle)
     if (!handle)
         return;
 
+    JobInfoPointer info { nullptr };
+    info = handle->getTaskInfoByNotifyType(AbstractJobHandler::NotifyType::kNotifyStateChangedKey);
+    if (!info.isNull()) {
+        onHandlerTaskStateChange(info);
+    }
+    info = handle->getTaskInfoByNotifyType(AbstractJobHandler::NotifyType::kNotifyCurrentTaskKey);
+    if (!info.isNull()) {
+        onShowTaskInfo(info);
+    }
+    info = handle->getTaskInfoByNotifyType(AbstractJobHandler::NotifyType::kNotifyProccessChangedKey);
+    if (!info.isNull()) {
+        onShowTaskProccess(info);
+    }
+    info = handle->getTaskInfoByNotifyType(AbstractJobHandler::NotifyType::kNotifySpeedUpdatedTaskKey);
+    if (!info.isNull()) {
+        onShowSpeedUpdatedInfo(info);
+    }
+    info = handle->getTaskInfoByNotifyType(AbstractJobHandler::NotifyType::kNotifyErrorTaskKey);
+    if (!info.isNull()) {
+        onShowErrors(info);
+    }
+
     connect(handle.data(), &AbstractJobHandler::proccessChangedNotify, this, &TaskWidget::onShowTaskProccess, Qt::QueuedConnection);
     connect(handle.data(), &AbstractJobHandler::stateChangedNotify, this, &TaskWidget::onHandlerTaskStateChange, Qt::QueuedConnection);
     connect(handle.data(), &AbstractJobHandler::errorNotify, this, &TaskWidget::onShowErrors, Qt::QueuedConnection);
@@ -132,7 +154,7 @@ void TaskWidget::onShowErrors(const JobInfoPointer JobInfo)
         QUrl target = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetUrlKey).value<QUrl>();
         return onShowConflictInfo(source, target, actions);
     }
-    QString errorMsg = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey).toString();
+    QString errorMsg = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey).toString();
     lbErrorMsg->setText(errorMsg);
     lbErrorMsg->setHidden(errorMsg.isEmpty());
     if (!widButton) {
@@ -140,8 +162,15 @@ void TaskWidget::onShowErrors(const JobInfoPointer JobInfo)
         mainLayout->addWidget(widButton);
     }
     widButton->setHidden(false);
+
+    if (!widConfict) {
+        widConfict = createConflictWidget();
+        rVLayout->addWidget(widConfict);
+    }
+
     if (widConfict)
         widConfict->hide();
+
     showBtnByAction(actions);
     showConflictButtons(true, false);
 }
@@ -162,18 +191,22 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
         rVLayout->addWidget(widConfict);
     }
     QString error;
-    const AbstractFileInfoPointer &originInfo = InfoFactory::create<AbstractFileInfo>(source, &error);
-    if (originInfo && !error.isEmpty()) {
+    const AbstractFileInfoPointer &originInfo = InfoFactory::create<AbstractFileInfo>(source, true, &error);
+    if (!originInfo) {
         lbErrorMsg->setText(QString(tr("create source file %1 Info failed in show conflict Info function!")).arg(source.path()));
+        showBtnByAction(AbstractJobHandler::SupportAction::kCancelAction);
+        lbErrorMsg->show();
         showConflictButtons(true, false);
         qWarning() << QString("create source file %1 Info failed in show conflict Info function!").arg(source.path());
         return;
     }
     error.clear();
-    AbstractFileInfoPointer targetInfo = InfoFactory::create<AbstractFileInfo>(target, &error);
-    if (originInfo && !error.isEmpty()) {
-        lbErrorMsg->setText(QString(tr("create source file %1 Info failed in show conflict Info function!")).arg(target.path()));
+    AbstractFileInfoPointer targetInfo = InfoFactory::create<AbstractFileInfo>(target, true, &error);
+    if (!targetInfo) {
+        lbErrorMsg->setText(QString(tr("create target file %1 Info failed in show conflict Info function!")).arg(target.path()));
+        lbErrorMsg->show();
         showConflictButtons(true, false);
+        showBtnByAction(AbstractJobHandler::SupportAction::kCancelAction);
         qWarning() << QString("create source file %1 Info failed in show conflict Info function!").arg(target.path());
         return;
     }
@@ -387,15 +420,14 @@ void TaskWidget::initUI()
     lbErrorMsg->setVisible(false);
     btnPause->setVisible(false);
     btnStop->setVisible(false);
+
+    initConnection();
 }
 /*!
  * \brief TaskWidget::initConnection 初始化信号连接
  */
 void TaskWidget::initConnection()
 {
-    connect(btnSkip, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
-    connect(btnReplace, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
-    connect(btnCoexist, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
     connect(btnPause, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
     connect(btnStop, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
 }
@@ -471,15 +503,17 @@ QWidget *TaskWidget::createBtnWidget()
     variantCoexit.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kCoexistAction);
     btnCoexist = new QPushButton(TaskWidget::tr("Keep both", "button"));
     btnCoexist->setProperty(kBtnPropertyActionName, variantCoexit);
-    btnSkip = new QPushButton(TaskWidget::tr("Skip", "button"));
 
+    btnSkip = new QPushButton(TaskWidget::tr("Skip", "button"));
     QVariant variantSkip;
     variantSkip.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kSkipAction);
     btnSkip->setProperty(kBtnPropertyActionName, variantSkip);
+
     btnReplace = new QPushButton(TaskWidget::tr("Replace", "button"));
     QVariant variantReplace;
     variantReplace.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kReplaceAction);
     btnReplace->setProperty(kBtnPropertyActionName, variantReplace);
+
     btnSkip->setFocusPolicy(Qt::NoFocus);
     btnReplace->setFocusPolicy(Qt::NoFocus);
 
@@ -504,6 +538,11 @@ QWidget *TaskWidget::createBtnWidget()
     btnMainLayout->addSpacing(0);
     btnMainLayout->addLayout(buttonLayout);
     buttonWidget->setLayout(btnMainLayout);
+
+    connect(btnSkip, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
+    connect(btnReplace, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
+    connect(btnCoexist, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
+
     return buttonWidget;
 }
 /*!
@@ -544,7 +583,7 @@ void TaskWidget::showConflictButtons(bool showBtns, bool showConflict)
         return;
     }
 
-    int h = 100;
+    int h = 110;
     if (showBtns) {
         h += widButton->sizeHint().height();
         if (showConflict) {

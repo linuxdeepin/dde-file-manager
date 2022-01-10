@@ -84,12 +84,14 @@ protected:
     void determineCountProcessType();
     bool copyFiles();
     bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo);
-    bool doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, AbstractFileInfoPointer &newTargetInfo);
+    bool doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+                     AbstractFileInfoPointer &newTargetInfo, bool &result);
 
     bool doCheckNewFile(const AbstractFileInfoPointer &fromInfo,
                         const AbstractFileInfoPointer &toInfo,
                         AbstractFileInfoPointer &newTargetInfo,
                         QString &fileNewName,
+                        bool &result,
                         bool isCountSize = false);
     bool doCheckFileFreeSpace(const qint64 &size);
     bool creatSystemLink(const AbstractFileInfoPointer &fromInfo,
@@ -114,7 +116,7 @@ protected:
     bool openFile(const AbstractFileInfoPointer &fromInfo,
                   const AbstractFileInfoPointer &toInfo,
                   const QSharedPointer<DFile> &file,
-                  const DFMIO::DFile::OpenFlag &flags,
+                  const DFile::OpenFlags &flags,
                   bool &result);
     bool resizeTargetFile(const AbstractFileInfoPointer &fromInfo,
                           const AbstractFileInfoPointer &toInfo,

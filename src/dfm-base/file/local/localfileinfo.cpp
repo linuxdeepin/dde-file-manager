@@ -52,34 +52,7 @@ LocalFileInfo::LocalFileInfo(const QUrl &url)
     : AbstractFileInfo(url, new LocalFileInfoPrivate(this))
 {
     d = static_cast<LocalFileInfoPrivate *>(dptr.data());
-    if (url.isEmpty()) {
-        qWarning("Failed, can't use empty url init fileinfo");
-        abort();
-    }
-
-    if (UrlRoute::isVirtual(url)) {
-        qWarning("Failed, can't use virtual scheme init local fileinfo");
-        abort();
-    }
-
-    QUrl cvtResultUrl = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
-
-    if (!url.isValid()) {
-        qWarning("Failed, can't use valid url init fileinfo");
-        abort();
-    }
-
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(cvtResultUrl.scheme(), static_cast<QUrl>(cvtResultUrl));
-    if (!factory) {
-        qWarning("Failed, dfm-io create factory");
-        abort();
-    }
-
-    d->dfmFileInfo = factory->createFileInfo();
-    if (!d->dfmFileInfo) {
-        qWarning("Failed, dfm-io use factory create fileinfo");
-        abort();
-    }
+    init(url);
 }
 
 LocalFileInfo::~LocalFileInfo()
@@ -89,9 +62,12 @@ LocalFileInfo::~LocalFileInfo()
 
 LocalFileInfo &LocalFileInfo::operator=(const LocalFileInfo &info)
 {
+    d->lock.lockForRead();
     AbstractFileInfo::operator=(info);
+    d->url = info.d->url;
     d->dfmFileInfo = info.d->dfmFileInfo;
     d->inode = info.d->inode;
+    d->lock.unlock();
     return *this;
 }
 /*!
@@ -123,11 +99,12 @@ bool LocalFileInfo::operator!=(const LocalFileInfo &fileinfo) const
  *
  * \return
  */
-void LocalFileInfo::setFile(const DFileInfo &file)
+void LocalFileInfo::setFile(const QUrl &url)
 {
-    d->url = file.uri();
-    d->dfmFileInfo.reset(new DFileInfo(file));
-    refresh();
+    d->lock.lockForWrite();
+    d->url = url;
+    init(url);
+    d->lock.unlock();
 }
 /*!
  * \brief exists 文件是否存在
@@ -138,14 +115,16 @@ void LocalFileInfo::setFile(const DFileInfo &file)
  */
 bool LocalFileInfo::exists() const
 {
-    if (!d->caches.contains(kTypeExists)) {
-        if (d->dfmFileInfo) {
-            d->caches.insert(kTypeExists, QVariant(d->dfmFileInfo->exists()));
-        } else {
-            return false;
-        }
+    bool exists = false;
+    d->lock.lockForRead();
+    if (d->dfmFileInfo) {
+        exists = d->dfmFileInfo->exists();
+    } else {
+        exists = QFileInfo::exists(d->url.path());
     }
-    return d->caches.value(kTypeExists).toBool();
+    d->lock.unlock();
+
+    return exists;
 }
 /*!
  * \brief refresh 跟新文件信息，清理掉缓存的所有的文件信息
@@ -156,7 +135,9 @@ bool LocalFileInfo::exists() const
  */
 void LocalFileInfo::refresh()
 {
-    d->caches.clear();
+    d->lock.lockForWrite();
+    d->dfmFileInfo->flush();
+    d->lock.unlock();
 }
 /*!
  * \brief filePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径
@@ -171,18 +152,21 @@ void LocalFileInfo::refresh()
  */
 QString LocalFileInfo::filePath() const
 {
-    //文件的路径（当前文件的父目录）
-    if (!d->caches.contains(kTypeFilePath)) {
-        if (d->dfmFileInfo) {
-            bool success = false;
-            d->caches.insert(kTypeFilePath, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardFilePath, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo StandardFilePath failed!";
-        } else {
-            return QString();
-        }
+    //文件的路径
+    d->lock.lockForRead();
+    QString filePath;
+    bool success = false;
+    if (d->dfmFileInfo) {
+        filePath = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardFilePath, &success).toString();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardFilePath failed!";
     }
-    return d->caches.value(kTypeFilePath).toString();
+
+    if (!success)
+        filePath = QFileInfo(d->url.path()).path();
+
+    d->lock.unlock();
+    return filePath;
 }
 
 /*!
@@ -213,20 +197,18 @@ QString LocalFileInfo::absoluteFilePath() const
  */
 QString LocalFileInfo::fileName() const
 {
-    if (!d->caches.contains(kTypeFileName)
-        || !d->caches.value(kTypeFileName).isValid()) {
-        if (d->dfmFileInfo.isNull()) {
-            return QString();
-        }
-
-        bool success = false;
-        d->caches.insert(kTypeFileName, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, &success));
+    d->lock.lockForRead();
+    bool success = false;
+    QString fileName;
+    if (d->dfmFileInfo) {
+        fileName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, &success).toString();
         if (!success)
             qWarning() << "get dfm-io DFileInfo StandardName failed!";
     }
-
-    QString string = d->caches.value(kTypeFileName).toString();
-    return string;
+    if (!success)
+        fileName = QFileInfo(d->url.path()).fileName();
+    d->lock.unlock();
+    return QFileInfo(d->url.path()).fileName();
 }
 /*!
  * \brief baseName 文件的基本名称
@@ -241,17 +223,18 @@ QString LocalFileInfo::fileName() const
  */
 QString LocalFileInfo::baseName() const
 {
-    if (!d->caches.contains(kTypeBaseName)) {
-        if (d->dfmFileInfo) {
-            bool success = false;
-            d->caches.insert(kTypeBaseName, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardBaseName, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo StandardBaseName failed!";
-        } else {
-            return QString();
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    QString baseName;
+    if (d->dfmFileInfo) {
+        baseName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardBaseName, &success).toString();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardBaseName failed!";
     }
-    return d->caches.value(kTypeBaseName).toString();
+    if (!success)
+        baseName = QFileInfo(d->url.path()).baseName();
+    d->lock.unlock();
+    return baseName;
 }
 /*!
  * \brief completeBaseName 文件的完整基本名称
@@ -266,17 +249,18 @@ QString LocalFileInfo::baseName() const
  */
 QString LocalFileInfo::completeBaseName() const
 {
-    if (!d->caches.contains(kTypeCompleteBaseName)) {
-        if (d->dfmFileInfo) {
-            bool success = false;
-            d->caches.insert(kTypeCompleteBaseName, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardBaseName, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo StandardBaseName failed!";
-        } else {
-            return QString();
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    QString completeBaseName;
+    if (d->dfmFileInfo) {
+        completeBaseName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardBaseName, &success).toString();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardBaseName failed!";
     }
-    return d->caches.value(kTypeCompleteBaseName).toString();
+    if (!success)
+        completeBaseName = QFileInfo(d->url.path()).completeBaseName();
+    d->lock.unlock();
+    return completeBaseName;
 }
 /*!
  * \brief suffix 文件的suffix
@@ -291,17 +275,18 @@ QString LocalFileInfo::completeBaseName() const
  */
 QString LocalFileInfo::suffix() const
 {
-    if (!d->caches.contains(kTypeSuffix)) {
-        if (d->dfmFileInfo) {
-            bool success = false;
-            d->caches.insert(kTypeSuffix, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardSuffix, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo StandardSuffix failed!";
-        } else {
-            return QString();
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    QString suffix;
+    if (d->dfmFileInfo) {
+        suffix = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardSuffix, &success).toString();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardSuffix failed!";
     }
-    return d->caches.value(kTypeSuffix).toString();
+    if (!success)
+        suffix = QFileInfo(d->url.path()).suffix();
+    d->lock.unlock();
+    return suffix;
 }
 /*!
  * \brief suffix 文件的完整suffix
@@ -316,17 +301,18 @@ QString LocalFileInfo::suffix() const
  */
 QString LocalFileInfo::completeSuffix()
 {
-    if (!d->caches.contains(kTypeCompleteSuffix)) {
-        if (d->dfmFileInfo) {
-            bool success = false;
-            d->caches.insert(kTypeCompleteSuffix, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardCompleteSuffix, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo StandardCompleteSuffix failed!";
-        } else {
-            return QString();
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    QString completeSuffix;
+    if (d->dfmFileInfo) {
+        completeSuffix = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardCompleteSuffix, &success).toString();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardCompleteSuffix failed!";
     }
-    return d->caches.value(kTypeCompleteSuffix).toString();
+    if (!success)
+        completeSuffix = QFileInfo(d->url.path()).completeSuffix();
+    d->lock.unlock();
+    return completeSuffix;
 }
 /*!
  * \brief path 获取文件路径，不包含文件的名称，相当于是父目录
@@ -341,17 +327,18 @@ QString LocalFileInfo::completeSuffix()
  */
 QString LocalFileInfo::path() const
 {
-    if (!d->caches.contains(kTypePath)) {
-        if (d->dfmFileInfo) {
-            bool success = false;
-            d->caches.insert(kTypePath, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardFilePath, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo StandardFilePath failed!";
-        } else {
-            return QString();
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    QString path;
+    if (d->dfmFileInfo) {
+        path = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardFilePath, &success).toString();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardFilePath failed!";
     }
-    return d->caches.value(kTypePath).toString();
+    if (!success)
+        path = QFileInfo(d->url.path()).path();
+    d->lock.unlock();
+    return path;
 }
 /*!
  * \brief path 获取文件路径，不包含文件的名称，相当于是父目录
@@ -426,7 +413,10 @@ QDir LocalFileInfo::absoluteDir() const
  */
 QUrl LocalFileInfo::url() const
 {
-    return UrlRoute::pathToReal(UrlRoute::urlToPath(d->dfmFileInfo->uri()));
+    d->lock.lockForRead();
+    QUrl tmp = d->dfmFileInfo->uri();
+    d->lock.unlock();
+    return tmp;
 }
 /*!
  * \brief isReadable 获取文件是否可读
@@ -441,17 +431,18 @@ QUrl LocalFileInfo::url() const
  */
 bool LocalFileInfo::isReadable() const
 {
-    if (!d->caches.contains(kTypeIsReadable)) {
-        if (d->dfmFileInfo) {
-            bool success = false;
-            d->caches.insert(kTypeIsReadable, d->dfmFileInfo->attribute(DFileInfo::AttributeID::AccessCanRead, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo AccessCanRead failed!";
-        } else {
-            return false;
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    bool isReadable = false;
+    if (d->dfmFileInfo) {
+        isReadable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::AccessCanRead, &success).toBool();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo AccessCanRead failed!";
     }
-    return d->caches.value(kTypeIsReadable).toBool();
+    if (!success)
+        isReadable = QFileInfo(d->url.path()).isReadable();
+    d->lock.unlock();
+    return isReadable;
 }
 /*!
  * \brief isWritable 获取文件是否可写
@@ -466,17 +457,18 @@ bool LocalFileInfo::isReadable() const
  */
 bool LocalFileInfo::isWritable() const
 {
-    if (!d->caches.contains(kTypeIsWritable)) {
-        if (d->dfmFileInfo) {
-            bool success = false;
-            d->caches.insert(kTypeIsWritable, d->dfmFileInfo->attribute(DFileInfo::AttributeID::AccessCanWrite, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo AccessCanWrite failed!";
-        } else {
-            return false;
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    bool isWritable = false;
+    if (d->dfmFileInfo) {
+        isWritable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::AccessCanWrite, &success).toBool();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo AccessCanWrite failed!";
     }
-    return d->caches.value(kTypeIsWritable).toBool();
+    if (!success)
+        isWritable = QFileInfo(d->url.path()).isWritable();
+    d->lock.unlock();
+    return isWritable;
 }
 /*!
  * \brief isExecutable 获取文件是否可执行
@@ -487,17 +479,18 @@ bool LocalFileInfo::isWritable() const
  */
 bool LocalFileInfo::isExecutable() const
 {
-    if (!d->caches.contains(kTypeIsExecutable)) {
-        if (d->dfmFileInfo) {
-            bool success = false;
-            d->caches.insert(kTypeIsExecutable, d->dfmFileInfo->attribute(DFileInfo::AttributeID::AccessCanExecute, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo AccessCanExecute failed!";
-        } else {
-            return false;
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    bool isExecutable = false;
+    if (d->dfmFileInfo) {
+        isExecutable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::AccessCanExecute, &success).toBool();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo AccessCanExecute failed!";
     }
-    return d->caches.value(kTypeIsExecutable).toBool();
+    if (!success)
+        isExecutable = QFileInfo(d->url.path()).isExecutable();
+    d->lock.unlock();
+    return isExecutable;
 }
 /*!
  * \brief isHidden 获取文件是否是隐藏
@@ -508,18 +501,18 @@ bool LocalFileInfo::isExecutable() const
  */
 bool LocalFileInfo::isHidden() const
 {
-    if (!d->caches.contains(kTypeIsHidden)
-        || !d->caches.value(kTypeIsHidden).isValid()) {
-        if (d->dfmFileInfo) {
-            bool success = false;
-            d->caches.insert(kTypeIsHidden, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIsHidden, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo StandardIsHidden failed!";
-        } else {
-            return false;
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    bool isHidden = false;
+    if (d->dfmFileInfo) {
+        isHidden = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIsHidden, &success).toBool();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardIsHidden failed!";
     }
-    return d->caches.value(kTypeIsHidden).toBool();
+    if (!success)
+        isHidden = QFileInfo(d->url.path()).isHidden();
+    d->lock.unlock();
+    return isHidden;
 }
 /*!
  * \brief isFile 获取文件是否是文件
@@ -536,17 +529,18 @@ bool LocalFileInfo::isHidden() const
  */
 bool LocalFileInfo::isFile() const
 {
-    if (!d->caches.contains(kTypeIsFile)) {
-        if (d->dfmFileInfo) {
-            bool success = false;
-            d->caches.insert(kTypeIsFile, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIsFile, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo StandardIsFile failed!";
-        } else {
-            return false;
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    bool isFile = false;
+    if (d->dfmFileInfo) {
+        isFile = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIsFile, &success).toBool();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardIsFile failed!";
     }
-    return d->caches.value(kTypeIsFile).toBool();
+    if (!success)
+        isFile = QFileInfo(d->url.path()).isFile();
+    d->lock.unlock();
+    return isFile;
 }
 /*!
  * \brief isDir 获取文件是否是目录
@@ -561,17 +555,18 @@ bool LocalFileInfo::isFile() const
  */
 bool LocalFileInfo::isDir() const
 {
-    if (!d->caches.contains(kTypeIsDir)) {
-        if (d->dfmFileInfo) {
-            bool success = true;
-            d->caches.insert(kTypeIsDir, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIsDir, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo StandardIsDir failed!";
-        } else {
-            return false;
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    bool isDir = false;
+    if (d->dfmFileInfo) {
+        isDir = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIsDir, &success).toBool();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardIsDir failed!";
     }
-    return d->caches.value(kTypeIsDir).toBool();
+    if (!success)
+        isDir = QFileInfo(d->url.path()).isDir();
+    d->lock.unlock();
+    return isDir;
 }
 /*!
  * \brief isSymLink 获取文件是否是链接文件
@@ -594,17 +589,18 @@ bool LocalFileInfo::isDir() const
  */
 bool LocalFileInfo::isSymLink() const
 {
-    if (!d->caches.contains(kTypeIsSymLink)) {
-        if (d->dfmFileInfo) {
-            bool success = true;
-            d->caches.insert(kTypeIsSymLink, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIsSymlink, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo StandardIsSymlink failed!";
-        } else {
-            return false;
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    bool isSymLink = false;
+    if (d->dfmFileInfo) {
+        isSymLink = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIsSymlink, &success).toBool();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardIsSymlink failed!";
     }
-    return d->caches.value(kTypeIsSymLink).toBool();
+    if (!success)
+        isSymLink = QFileInfo(d->url.path()).isSymLink();
+    d->lock.unlock();
+    return isSymLink;
 }
 /*!
  * \brief isRoot 获取文件是否是根目录
@@ -634,7 +630,10 @@ bool LocalFileInfo::isRoot() const
  */
 bool LocalFileInfo::isBundle() const
 {
-    return false;
+    d->lock.lockForRead();
+    bool isBundle = QFileInfo(d->url.path()).isBundle();
+    d->lock.unlock();
+    return isBundle;
 }
 /*!
  * \brief isBundle 获取文件的链接目标文件
@@ -653,17 +652,18 @@ bool LocalFileInfo::isBundle() const
  */
 QString LocalFileInfo::symLinkTarget() const
 {
-    if (!d->caches.contains(kTypeSymLinkTarget)) {
-        if (d->dfmFileInfo) {
-            bool success(false);
-            d->caches.insert(kTypeSymLinkTarget, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardSymlinkTarget, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo StandardSymlinkTarget failed!";
-        } else {
-            return QString();
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    QString symLinkTarget;
+    if (d->dfmFileInfo) {
+        symLinkTarget = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardSymlinkTarget, &success).toString();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardSymlinkTarget failed!";
     }
-    return d->caches.value(kTypeSymLinkTarget).toString();
+    if (!success)
+        symLinkTarget = QFileInfo(d->url.path()).symLinkTarget();
+    d->lock.unlock();
+    return symLinkTarget;
 }
 /*!
  * \brief owner 获取文件的拥有者
@@ -680,17 +680,18 @@ QString LocalFileInfo::symLinkTarget() const
  */
 QString LocalFileInfo::owner() const
 {
-    if (!d->caches.contains(kTypeOwner)) {
-        if (d->dfmFileInfo) {
-            bool success(false);
-            d->caches.insert(kTypeOwner, d->dfmFileInfo->attribute(DFileInfo::AttributeID::OwnerUser, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo OwnerUser failed!";
-        } else {
-            return QString();
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    QString owner;
+    if (d->dfmFileInfo) {
+        owner = d->dfmFileInfo->attribute(DFileInfo::AttributeID::OwnerUser, &success).toString();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo OwnerUser failed!";
     }
-    return d->caches.value(kTypeOwner).toString();
+    if (!success)
+        owner = QFileInfo(d->url.path()).owner();
+    d->lock.unlock();
+    return owner;
 }
 /*!
  * \brief ownerId 获取文件的拥有者ID
@@ -703,17 +704,18 @@ QString LocalFileInfo::owner() const
  */
 uint LocalFileInfo::ownerId() const
 {
-    if (!d->caches.contains(kTypeOwnerID)) {
-        if (d->dfmFileInfo) {
-            bool success(false);
-            d->caches.insert(kTypeOwnerID, d->dfmFileInfo->attribute(DFileInfo::AttributeID::OwnerUser, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo OwnerUser failed!";
-        } else {
-            return static_cast<uint>(-1);
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    uint ownerId = 0;
+    if (d->dfmFileInfo) {
+        ownerId = d->dfmFileInfo->attribute(DFileInfo::AttributeID::OwnerUser, &success).toUInt();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo OwnerUser failed!";
     }
-    return d->caches.value(kTypeOwnerID).toUInt();
+    if (!success)
+        ownerId = QFileInfo(d->url.path()).ownerId();
+    d->lock.unlock();
+    return ownerId;
 }
 /*!
  * \brief group 获取文件所属组
@@ -728,17 +730,18 @@ uint LocalFileInfo::ownerId() const
  */
 QString LocalFileInfo::group() const
 {
-    if (!d->caches.contains(kTypeGroup)) {
-        if (d->dfmFileInfo) {
-            bool success(false);
-            d->caches.insert(kTypeGroup, d->dfmFileInfo->attribute(DFileInfo::AttributeID::OwnerGroup, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo OwnerGroup failed!";
-        } else {
-            return QString();
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    QString group;
+    if (d->dfmFileInfo) {
+        group = d->dfmFileInfo->attribute(DFileInfo::AttributeID::OwnerGroup, &success).toString();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo OwnerGroup failed!";
     }
-    return d->caches.value(kTypeGroup).toString();
+    if (!success)
+        group = QFileInfo(d->url.path()).group();
+    d->lock.unlock();
+    return group;
 }
 /*!
  * \brief groupId 获取文件所属组的ID
@@ -751,17 +754,18 @@ QString LocalFileInfo::group() const
  */
 uint LocalFileInfo::groupId() const
 {
-    if (!d->caches.contains(kTypeGroupID)) {
-        if (d->dfmFileInfo) {
-            bool success(false);
-            d->caches.insert(kTypeGroupID, d->dfmFileInfo->attribute(DFileInfo::AttributeID::OwnerGroup, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo OwnerGroup failed!";
-        } else {
-            return static_cast<uint>(-1);
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    uint groupId = 0;
+    if (d->dfmFileInfo) {
+        groupId = d->dfmFileInfo->attribute(DFileInfo::AttributeID::OwnerGroup, &success).toUInt();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo OwnerGroup failed!";
     }
-    return d->caches.value(kTypeGroupID).toUInt();
+    if (!success)
+        groupId = QFileInfo(d->url.path()).groupId();
+    d->lock.unlock();
+    return groupId;
 }
 /*!
  * \brief permission 判断文件是否有传入的权限
@@ -789,17 +793,18 @@ bool LocalFileInfo::permission(QFileDevice::Permissions permissions) const
  */
 QFileDevice::Permissions LocalFileInfo::permissions() const
 {
-    if (!d->caches.contains(kTypePermissions)) {
-        if (d->dfmFileInfo) {
-            // @todo 目前dfm-io还没实现，等待实现
-            bool success(false);
-            d->caches.insert(kTypePermissions, d->dfmFileInfo->attribute(DFileInfo::AttributeID::OwnerGroup, &success));
-        } else {
-            QFileDevice::Permissions ps;
-            return ps;
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    QFileDevice::Permissions ps;
+    if (d->dfmFileInfo) {
+        ps = static_cast<QFileDevice::Permissions>(static_cast<uint16_t>(d->dfmFileInfo->permissions()));
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo permissions failed!";
     }
-    return static_cast<QFileDevice::Permissions>(d->caches.value(kTypePermissions).toInt());
+    if (!success)
+        ps = QFileInfo(d->url.path()).permissions();
+    d->lock.unlock();
+    return ps;
 }
 /*!
  * \brief size 获取文件的大小
@@ -814,17 +819,18 @@ QFileDevice::Permissions LocalFileInfo::permissions() const
  */
 qint64 LocalFileInfo::size() const
 {
-    if (!d->caches.contains(kTypeSize)) {
-        if (d->dfmFileInfo) {
-            bool success(false);
-            d->caches.insert(kTypeSize, d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardSize, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo StandardSize failed!";
-        } else {
-            return 0;
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    qint64 size = 0;
+    if (d->dfmFileInfo) {
+        size = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardSize, &success).value<qint64>();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardSize failed!";
     }
-    return d->caches.value(kTypeSize).toInt();
+    if (!success)
+        size = QFileInfo(d->url.path()).size();
+    d->lock.unlock();
+    return size;
 }
 /*!
  * \brief created 获取文件的创建时间
@@ -841,18 +847,19 @@ qint64 LocalFileInfo::size() const
  */
 QDateTime LocalFileInfo::created() const
 {
-    if (!d->caches.contains(kTypeCreateTime)) {
-        if (d->dfmFileInfo) {
-            bool success(false);
-            d->caches.insert(kTypeCreateTime, d->dfmFileInfo->attribute(DFileInfo::AttributeID::TimeCreated, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo TimeCreated failed!";
-        } else {
-            return QDateTime();
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    uint64_t created = 0;
+    if (d->dfmFileInfo) {
+        created = d->dfmFileInfo->attribute(DFileInfo::AttributeID::TimeCreated, &success).value<uint64_t>();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo TimeCreated failed!";
     }
-    uint64_t data = d->caches.value(kTypeCreateTime).value<uint64_t>();
-    return QDateTime::fromTime_t(static_cast<uint>(data));
+    QDateTime time = QDateTime::fromTime_t(static_cast<uint>(created));
+    if (!success)
+        time = QFileInfo(d->url.path()).created();
+    d->lock.unlock();
+    return time;
 }
 /*!
  * \brief birthTime 获取文件的创建时间
@@ -888,18 +895,19 @@ QDateTime LocalFileInfo::birthTime() const
  */
 QDateTime LocalFileInfo::metadataChangeTime() const
 {
-    if (!d->caches.contains(kTypeChangeTime)) {
-        if (d->dfmFileInfo) {
-            bool success(false);
-            d->caches.insert(kTypeChangeTime, d->dfmFileInfo->attribute(DFileInfo::AttributeID::TimeChanged, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo TimeChanged failed!";
-        } else {
-            return QDateTime();
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    uint64_t data = 0;
+    if (d->dfmFileInfo) {
+        data = d->dfmFileInfo->attribute(DFileInfo::AttributeID::TimeChanged, &success).value<uint64_t>();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo TimeChanged failed!";
     }
-    uint64_t data = d->caches.value(kTypeChangeTime).value<uint64_t>();
-    return QDateTime::fromTime_t(static_cast<uint>(data));
+    QDateTime time = QDateTime::fromTime_t(static_cast<uint>(data));
+    if (!success)
+        time = QFileInfo(d->url.path()).metadataChangeTime();
+    d->lock.unlock();
+    return time;
 }
 /*!
  * \brief lastModified 获取文件的最后修改时间
@@ -910,18 +918,19 @@ QDateTime LocalFileInfo::metadataChangeTime() const
  */
 QDateTime LocalFileInfo::lastModified() const
 {
-    if (!d->caches.contains(kTypeLastModifyTime)) {
-        if (d->dfmFileInfo) {
-            bool success(false);
-            d->caches.insert(kTypeLastModifyTime, d->dfmFileInfo->attribute(DFileInfo::AttributeID::TimeModified, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo TimeModified failed!";
-        } else {
-            return QDateTime();
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    uint64_t data = 0;
+    if (d->dfmFileInfo) {
+        data = d->dfmFileInfo->attribute(DFileInfo::AttributeID::TimeModified, &success).value<uint64_t>();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo TimeModified failed!";
     }
-    uint64_t data = d->caches.value(kTypeLastModifyTime).value<uint64_t>();
-    return QDateTime::fromTime_t(static_cast<uint>(data));
+    QDateTime time = QDateTime::fromTime_t(static_cast<uint>(data));
+    if (!success)
+        time = QFileInfo(d->url.path()).lastModified();
+    d->lock.unlock();
+    return time;
 }
 /*!
  * \brief lastRead 获取文件的最后读取时间
@@ -932,18 +941,19 @@ QDateTime LocalFileInfo::lastModified() const
  */
 QDateTime LocalFileInfo::lastRead() const
 {
-    if (!d->caches.contains(kTypeLastReadTime)) {
-        if (d->dfmFileInfo) {
-            bool success(false);
-            d->caches.insert(kTypeLastReadTime, d->dfmFileInfo->attribute(DFileInfo::AttributeID::TimeAccess, &success));
-            if (!success)
-                qWarning() << "get dfm-io DFileInfo TimeAccess failed!";
-        } else {
-            return QDateTime();
-        }
+    d->lock.lockForRead();
+    bool success = false;
+    uint64_t data = 0;
+    if (d->dfmFileInfo) {
+        data = d->dfmFileInfo->attribute(DFileInfo::AttributeID::TimeChanged, &success).value<uint64_t>();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo TimelastRead failed!";
     }
-    uint64_t data = d->caches.value(kTypeLastReadTime).value<uint64_t>();
-    return QDateTime::fromTime_t(static_cast<uint>(data));
+    QDateTime time = QDateTime::fromTime_t(static_cast<uint>(data));
+    if (!success)
+        time = QFileInfo(d->url.path()).lastRead();
+    d->lock.unlock();
+    return time;
 }
 /*!
  * \brief fileTime 获取文件的事件通过传入的参数
@@ -1032,14 +1042,21 @@ bool LocalFileInfo::isRegular() const
  */
 LocalFileInfo::Type LocalFileInfo::fileType() const
 {
-    if (d->fileType != MimeDatabase::FileType::kUnknown)
-        return Type(d->fileType);
+    d->lock.lockForRead();
+    Type fileType;
+    if (d->fileType != MimeDatabase::FileType::kUnknown) {
+        fileType = Type(d->fileType);
+        d->lock.unlock();
+        return fileType;
+    }
 
     QString absoluteFilePath = filePath();
     if (absoluteFilePath.startsWith(StandardPaths::location(StandardPaths::kTrashFilesPath))
         && isSymLink()) {
         d->fileType = MimeDatabase::FileType::kRegularFile;
-        return Type(d->fileType);
+        fileType = Type(d->fileType);
+        d->lock.unlock();
+        return fileType;
     }
 
     // Cannot access statBuf.st_mode from the filesystem engine, so we have to stat again.
@@ -1066,16 +1083,9 @@ LocalFileInfo::Type LocalFileInfo::fileType() const
             d->fileType = MimeDatabase::FileType::kRegularFile;
     }
 
-    return Type(d->fileType);
-}
-/*!
- * \brief linkTargetPath 获取链接文件的目标路径
- *
- * \return QString 链接文件的目标文件路径
- */
-QString LocalFileInfo::linkTargetPath() const
-{
-    return AbstractFileInfo::symLinkTarget();
+    fileType = Type(d->fileType);
+    d->lock.unlock();
+    return fileType;
 }
 /*!
  * \brief countChildFile 文件夹下子文件的个数，只统计下一层不递归
@@ -1085,9 +1095,11 @@ QString LocalFileInfo::linkTargetPath() const
 int LocalFileInfo::countChildFile() const
 {
     if (isDir()) {
+        d->lock.lockForRead();
         QDir dir(absoluteFilePath());
         QStringList entryList = dir.entryList(QDir::AllEntries | QDir::System
                                               | QDir::NoDotAndDotDot | QDir::Hidden);
+        d->lock.unlock();
         return entryList.size();
     }
 
@@ -1151,7 +1163,8 @@ QString LocalFileInfo::fileDisplayName() const
  */
 QFileInfo LocalFileInfo::toQFileInfo() const
 {
-    return QFileInfo(d->url.path());
+    QFileInfo info = QFileInfo(d->url.path());
+    return info;
 }
 /*!
  * \brief extraProperties 获取文件的扩展属性
@@ -1167,7 +1180,10 @@ QVariantHash LocalFileInfo::extraProperties() const
 
 QIcon LocalFileInfo::fileIcon() const
 {
-    return DFileIconProvider::globalProvider()->icon(this->path());
+    d->lock.lockForRead();
+    QIcon icon = DFileIconProvider::globalProvider()->icon(this->path());
+    d->lock.unlock();
+    return icon;
 }
 /*!
  * \brief inode linux系统下的唯一表示符
@@ -1176,18 +1192,54 @@ QIcon LocalFileInfo::fileIcon() const
  */
 quint64 LocalFileInfo::inode() const
 {
+    d->lock.lockForRead();
+    quint64 inNode = d->inode;
     if (d->inode != 0) {
-        return d->inode;
+        d->lock.unlock();
+        return inNode;
     }
 
     struct stat statinfo;
     int filestat = stat(absoluteFilePath().toStdString().c_str(), &statinfo);
     if (filestat != 0) {
+        d->lock.unlock();
         return 0;
     }
     d->inode = statinfo.st_ino;
-
+    d->lock.unlock();
     return d->inode;
+}
+
+void LocalFileInfo::init(const QUrl &url)
+{
+    if (url.isEmpty()) {
+        qWarning("Failed, can't use empty url init fileinfo");
+        abort();
+    }
+
+    if (UrlRoute::isVirtual(url)) {
+        qWarning("Failed, can't use virtual scheme init local fileinfo");
+        abort();
+    }
+
+    QUrl cvtResultUrl = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
+
+    if (!url.isValid()) {
+        qWarning("Failed, can't use valid url init fileinfo");
+        abort();
+    }
+
+    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(cvtResultUrl.scheme(), static_cast<QUrl>(cvtResultUrl));
+    if (!factory) {
+        qWarning("Failed, dfm-io create factory");
+        abort();
+    }
+
+    d->dfmFileInfo = factory->createFileInfo();
+    if (!d->dfmFileInfo) {
+        qWarning("Failed, dfm-io use factory create fileinfo");
+        abort();
+    }
 }
 
 DFMBASE_END_NAMESPACE

@@ -42,10 +42,10 @@ void AbstractWorker::setWorkArgs(const JobHandlePointer &handle, const QList<QUr
         qWarning() << "JobHandlePointer is a nullptr, setWorkArgs failed!";
         return;
     }
+    this->handle = handle;
     initHandleConnects(handle);
     this->sourceUrls = sources;
     this->targetUrl = target;
-    this->isFileOnDiskUrls = sourceUrls.isEmpty() ? true : FileOperationsUtils::isFileOnDisk(sourceUrls.first());
     jobFlags = flags;
 }
 
@@ -108,6 +108,14 @@ void AbstractWorker::stop()
 
     if (errorCondition)
         errorCondition->wakeAll();
+
+    if (updateProccessTimer)
+        updateProccessTimer->stopTimer();
+
+    if (updateProccessThread) {
+        updateProccessThread->quit();
+        updateProccessThread->wait();
+    }
 }
 /*!
  * \brief AbstractWorker::pause paused task
@@ -145,7 +153,7 @@ void AbstractWorker::startCountProccess()
     updateProccessTimer->moveToThread(updateProccessThread.data());
     updateProccessThread->start();
     connect(this, &AbstractWorker::startUpdateProccessTimer, updateProccessTimer.data(), &UpdateProccessTimer::doStartTime);
-    connect(updateProccessTimer.data(), &UpdateProccessTimer::updateProccessNotify, this, &AbstractWorker::onUpdateProccess);
+    connect(updateProccessTimer.data(), &UpdateProccessTimer::updateProccessNotify, this, &AbstractWorker::onUpdateProccess, Qt::DirectConnection);
     emit startUpdateProccessTimer();
 }
 /*!
@@ -231,6 +239,7 @@ void AbstractWorker::endWork()
     JobInfoPointer info(new QMap<quint8, QVariant>);
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
     info->insert(AbstractJobHandler::NotifyInfoKey::kCompleteFilesKey, QVariant::fromValue(completeFiles));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer, QVariant::fromValue(handle));
 
     emit finishedNotify(info);
 }
@@ -266,7 +275,7 @@ void AbstractWorker::emitProccessChangedNotify(const qint64 &writSize)
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
     if (AbstractJobHandler::JobType::kCopyType == jobType) {
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(int(sourceFilesTotalSize)));
-    } else if (AbstractJobHandler::JobType::kCopyType == jobType) {
+    } else {
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(int(sourceFilesCount)));
     }
 
@@ -284,9 +293,11 @@ void AbstractWorker::emitProccessChangedNotify(const qint64 &writSize)
 void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const QString &errorMsg)
 {
     JobInfoPointer info = createCopyJobInfo(from, to);
+    info->insert(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer, QVariant::fromValue(handle));
     info->insert(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey, QVariant::fromValue(error));
     info->insert(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey, QVariant::fromValue(errorMsg));
     info->insert(AbstractJobHandler::NotifyInfoKey::kActionsKey, QVariant::fromValue(supportActions(error)));
+
     emit errorNotify(info);
 }
 /*!
@@ -308,7 +319,7 @@ JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &t
     JobInfoPointer info(new QMap<quint8, QVariant>);
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
     info->insert(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey, QVariant::fromValue(from));
-    info->insert(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey, QVariant::fromValue(to));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kTargetUrlKey, QVariant::fromValue(to));
     QString fromMsg, toMsg;
     if (AbstractJobHandler::JobType::kCopyType == jobType) {
         fromMsg = QString(QObject::tr("copy file %1")).arg(from.path());
@@ -332,7 +343,7 @@ bool AbstractWorker::doWork()
         return false;
     }
     // 统计文件总大小
-    if (statisticsFilesSize()) {
+    if (!statisticsFilesSize()) {
         endWork();
         return false;
     }
@@ -381,11 +392,6 @@ AbstractWorker::AbstractWorker(QObject *parent)
 
 AbstractWorker::~AbstractWorker()
 {
-    stop();
-    if (updateProccessThread) {
-        updateProccessThread->quit();
-        updateProccessThread->wait();
-    }
 }
 
 /*!

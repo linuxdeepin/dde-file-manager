@@ -57,7 +57,7 @@ signals:
 private slots:
     void adjustSize();
     void moveYCenter();
-    void removeTask();
+    void removeTask(const JobInfoPointer info);
 
 protected:
     void closeEvent(QCloseEvent *event);

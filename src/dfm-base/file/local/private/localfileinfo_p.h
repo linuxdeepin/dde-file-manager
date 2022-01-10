@@ -39,16 +39,11 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
 {
     friend class LocalFileInfo;
     LocalFileInfo *const q;
-    // 文件的inode，唯一表示符
-    QAtomicInteger<quint64> inode { 0 };
-    // 扩展属性列表
-    QVariantHash extraProperties;
-    // 缓存文件的FileType
-    MimeDatabase::FileType fileType { MimeDatabase::FileType::kUnknown };
-    // 文件缓存
-    DThreadMap<AbstractFileInfo::FileInfoCacheType, QVariant> caches;
-    // dfm文件的信息
-    QSharedPointer<DFileInfo> dfmFileInfo { nullptr };
+    QAtomicInteger<quint64> inode { 0 };   // 文件的inode，唯一表示符
+    QVariantHash extraProperties;   // 扩展属性列表
+    MimeDatabase::FileType fileType { MimeDatabase::FileType::kUnknown };   // 缓存文件的FileType
+    QSharedPointer<DFileInfo> dfmFileInfo { nullptr };   // dfm文件的信息
+    QReadWriteLock lock;
 
 public:
     explicit LocalFileInfoPrivate(LocalFileInfo *qq);
