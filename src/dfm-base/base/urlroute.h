@@ -37,18 +37,21 @@ struct SchemeNode
     QString path;   // 根路径
     QIcon icon;   // 标志root的图标
     bool virtualFlag;   // 没有本地路径作为映射的Url
+    QString name;   // 根目录对应的路径名称，例如 computer:/// 「计算机」，recent:/// 「最近使用」
     friend class QHash<QString, SchemeNode>;
     SchemeNode() {}
 
 public:
     SchemeNode(const QString &root,
                const QIcon &icon = QIcon(),
-               const bool isVirtual = false);
+               const bool isVirtual = false,
+               const QString &name = QString());
     SchemeNode &operator=(const SchemeNode &node);
     bool isEmpty();
     QString rootPath() const;
     QIcon pathIcon() const;
     bool isVirtual() const;
+    QString displayName() const;
 };
 
 namespace SchemeTypes {
@@ -66,6 +69,7 @@ public:
                           const QString &root,
                           const QIcon &icon = QIcon(),
                           const bool isVirtual = false,
+                          const QString &displayName = QString(),
                           QString *errorString = nullptr);
     static bool hasScheme(const QString &scheme);
     static QIcon icon(const QString &scheme);
@@ -78,6 +82,7 @@ public:
     static bool isVirtual(const QUrl &url);
     static bool isRootUrl(const QUrl &url);
     static QUrl urlParent(const QUrl &url);
+    static QString rootDisplayName(const QString &scheme);
 };
 
 DFMBASE_END_NAMESPACE

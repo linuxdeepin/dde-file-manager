@@ -59,6 +59,7 @@ bool UrlRoute::regScheme(const QString &scheme,
                          const QString &root,
                          const QIcon &icon,
                          const bool isVirtual,
+                         const QString &displayName,
                          QString *errorString)
 {
     QString error;
@@ -84,7 +85,7 @@ bool UrlRoute::regScheme(const QString &scheme,
         int treeLevel = temp.count("/") - 1;
         kSchemeRealTree.insert(treeLevel, scheme);   // 缓存层级
     }
-    kSchemeInfos.insert(scheme, { formatRoot, icon, isVirtual });
+    kSchemeInfos.insert(scheme, { formatRoot, icon, isVirtual, displayName });
     finally.dismiss();
     return true;
 }
@@ -163,6 +164,18 @@ QUrl UrlRoute::urlParent(const QUrl &url)
     reUrl.setPath(list.join("/"));
 
     return reUrl;
+}
+
+/*!
+ * \brief UrlRoute::rootDisplayName get the display name of a root url
+ * \param scheme which has been registered
+ * \return if an unregistered scheme is passed then returns an empty string, otherwise returns the registered display name of scheme
+ */
+QString UrlRoute::rootDisplayName(const QString &scheme)
+{
+    if (!hasScheme(scheme))
+        return "";
+    return kSchemeInfos[scheme].displayName();
 }
 
 /*!
@@ -284,10 +297,11 @@ QIcon SchemeNode::pathIcon() const
 /*!
  * \brief 路由Url注册节点类
  */
-SchemeNode::SchemeNode(const QString &root, const QIcon &icon, const bool isVirtual)
+SchemeNode::SchemeNode(const QString &root, const QIcon &icon, const bool isVirtual, const QString &displayName)
     : path(root),
       icon(icon),
-      virtualFlag(isVirtual)
+      virtualFlag(isVirtual),
+      name(displayName)
 {
 }
 
@@ -311,6 +325,11 @@ QString SchemeNode::rootPath() const
 bool SchemeNode::isVirtual() const
 {
     return virtualFlag;
+}
+
+QString SchemeNode::displayName() const
+{
+    return name;
 }
 
 DFMBASE_END_NAMESPACE
