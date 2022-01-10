@@ -42,8 +42,11 @@ public:
     quint64 windowId(QWidget *sender);
     void switchViewMode(quint64 windowId, int viewMode);
     void addScheme(const QString &scheme);
+    void openUrlInNewTab(quint64 windowId, const QUrl &viewMode);
+
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);
+    void openNewTab(quint64 windowId, const QUrl &url);
 
 private:
     explicit WorkspaceHelper(QObject *parent = nullptr);

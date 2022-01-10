@@ -44,3 +44,9 @@ void WorkspaceEventCaller::sendOpenWindow(const QList<QUrl> &urls)
             dispatcher()->publish(GlobalEventType::kOpenNewWindow, url);
     }
 }
+
+void WorkspaceEventCaller::sendChangeCurrentUrl(const quint64 windowId, const QUrl &url)
+{
+    if (!url.isEmpty())
+        dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
+}

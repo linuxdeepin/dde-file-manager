@@ -26,6 +26,8 @@
 #include "dfmplugin_workspace_global.h"
 #include "dfm-base/interfaces/abstractframe.h"
 
+#include "dtkwidget_global.h"
+
 #include <QUrl>
 #include <QMap>
 
@@ -33,11 +35,18 @@ namespace DFMBASE_NAMESPACE {
 class AbstractBaseView;
 }   // namespace dfmbase
 
+DWIDGET_BEGIN_NAMESPACE
+class DIconButton;
+class DHorizontalLine;
+DWIDGET_END_NAMESPACE
+
+class QHBoxLayout;
 class QVBoxLayout;
 class QStackedLayout;
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
+class TabBar;
 class FileView;
 class WorkspaceWidget : public dfmbase::AbstractFrame
 {
@@ -48,6 +57,16 @@ public:
     explicit WorkspaceWidget(QFrame *parent = nullptr);
     void setCurrentUrl(const QUrl &url) override;
     QUrl currentUrl() const override;
+    void openNewTab(const QUrl &url);
+
+public slots:
+    void onOpenUrlInNewTab(quint64 windowId, const QUrl &url);
+    void onCurrentTabChanged(int tabIndex);
+    void onRequestCloseTab(const int index, const bool &remainState);
+    void onTabAddableChanged(bool addable);
+    void showNewTabButton();
+    void hideNewTabButton();
+    void onNewTabButtonClicked();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
@@ -60,11 +79,16 @@ private:
     void initViewLayout();
     void handleCtrlN();
 
-private:
     QUrl workspaceUrl;
+    QHBoxLayout *tabBarLayout { nullptr };
     QVBoxLayout *widgetLayout { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
     QMap<QString, ViewPtr> views;
+
+    TabBar *tabBar { nullptr };
+    DTK_WIDGET_NAMESPACE::DIconButton *newTabButton { nullptr };
+    DTK_WIDGET_NAMESPACE::DHorizontalLine *tabTopLine { nullptr };
+    DTK_WIDGET_NAMESPACE::DHorizontalLine *tabBottomLine { nullptr };
 };
 
 DPWORKSPACE_END_NAMESPACE

@@ -44,3 +44,8 @@ void WorkspaceEventReceiver::handleTileBarSwitchModeTriggered(quint64 windowId, 
 {
     WorkspaceHelper::instance()->switchViewMode(windowId, mode);
 }
+
+void WorkspaceEventReceiver::handleOpenNewTabTriggered(quint64 windowId, const QUrl &url)
+{
+    WorkspaceHelper::instance()->openUrlInNewTab(windowId, url);
+}

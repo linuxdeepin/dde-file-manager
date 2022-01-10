@@ -78,6 +78,11 @@ void WorkspaceHelper::addScheme(const QString &scheme)
     ViewFactory::regClass<FileView>(scheme);
 }
 
+void WorkspaceHelper::openUrlInNewTab(quint64 windowId, const QUrl &url)
+{
+    emit openNewTab(windowId, url);
+}
+
 WorkspaceHelper::WorkspaceHelper(QObject *parent)
     : QObject(parent)
 {

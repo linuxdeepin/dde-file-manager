@@ -35,6 +35,7 @@ class WorkspaceEventCaller
 
 public:
     static void sendOpenWindow(const QList<QUrl> &urls);
+    static void sendChangeCurrentUrl(const quint64 windowId, const QUrl &url);
 };
 
 DPWORKSPACE_END_NAMESPACE

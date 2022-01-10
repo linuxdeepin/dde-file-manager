@@ -59,6 +59,8 @@ bool Workspace::start()
 {
     dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kSwitchMode,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenNewTab,
+                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleOpenNewTabTriggered);
     return true;
 }
 

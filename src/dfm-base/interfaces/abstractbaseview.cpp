@@ -40,6 +40,10 @@ AbstractBaseView::~AbstractBaseView()
 {
 }
 
+void AbstractBaseView::deleteLater()
+{
+}
+
 AbstractBaseView::ViewState AbstractBaseView::viewState() const
 {
     return ViewState::kViewIdle;

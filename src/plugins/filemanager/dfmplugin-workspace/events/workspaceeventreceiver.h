@@ -26,6 +26,7 @@
 #include "services/filemanager/titlebar/titlebar_defines.h"
 
 #include <QObject>
+#include <QUrl>
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
@@ -39,6 +40,7 @@ public:
 
 public slots:
     void handleTileBarSwitchModeTriggered(quint64 windowId, DSB_FM_NAMESPACE::TitleBar::ViewMode mode);
+    void handleOpenNewTabTriggered(quint64 windowId, const QUrl &url);
 
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);

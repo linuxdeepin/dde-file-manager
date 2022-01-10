@@ -36,6 +36,7 @@ enum GlobalEventType {
 
     kChangeCurrentUrl = 1,
     kOpenNewWindow,
+    kOpenNewTab,
     kOpenUrl,
     kBack,
     kForward,
