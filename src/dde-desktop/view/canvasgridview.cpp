@@ -2932,6 +2932,8 @@ void CanvasGridView::initConnection()
 
     connect(DFMApplication::instance(), &DFMApplication::previewAttributeChanged, this->model(), &DFileSystemModel::update);
 
+    connect(DFMApplication::instance(), &DFMApplication::showedFileSuffixChanged, this->model(), &DFileSystemModel::update);
+
     // 收到角标变化信号后后，桌面视图重绘一次
     connect(fileSignalManager, &FileSignalManager::requestUpdateAllFileView, this, static_cast<void (CanvasGridView::*)()>(&CanvasGridView::update));
 }
