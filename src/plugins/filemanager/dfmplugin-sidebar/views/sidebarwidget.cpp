@@ -105,6 +105,18 @@ bool SideBarWidget::removeItem(SideBarItem *item)
     return sidebarModel->removeRow(item);
 }
 
+bool SideBarWidget::removeItem(const QUrl &url)
+{
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
+    return sidebarModel->removeRow(url);
+}
+
+void SideBarWidget::updateItem(const QUrl &url, const QString &newName)
+{
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
+    sidebarModel->updateRow(url, newName);
+}
+
 /*!
  * \brief Find the index of the first item match the given \a url
  * \param url

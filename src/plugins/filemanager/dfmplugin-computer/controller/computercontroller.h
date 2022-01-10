@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,40 +20,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef COMPUTERDATASTRUCT_H
-#define COMPUTERDATASTRUCT_H
+#ifndef COMPUTERCONTROLLER_H
+#define COMPUTERCONTROLLER_H
 
 #include "dfmplugin_computer_global.h"
+
 #include "dfm-base/file/entry/entryfileinfo.h"
 
 #include <QUrl>
+#include <QObject>
 
-class QWidget;
+#define ComputerControllerInstance DPCOMPUTER_NAMESPACE::ComputerController::instance()
+
 DPCOMPUTER_BEGIN_NAMESPACE
-/*!
- * \brief The ComputerItemData struct
- * provide the basic info of computer item
- */
-struct ComputerItemData
-{
-    /*!
-     * \brief The ItemType enum
-     * descripe the type of a item.
-     */
-    enum ShapeType {
-        kSmallItem,
-        kLargeItem,
-        kSplitterItem,
-        kWidgetItem,
-    };
 
-    QUrl url;   // entry://desktop.userdir
-    ShapeType shape;
-    QString groupName;
-    QWidget *widget { nullptr };
-    bool isEditing = false;
-    DFMEntryFileInfoPointer info { nullptr };
+class ComputerController : public QObject
+{
+    Q_OBJECT
+public:
+    static ComputerController *instance();
+
+    static void cdTo(quint64 winId, const QUrl &url);
+    static void requestMenu(quint64 winId, const QUrl &url, const QPoint &pos);
+    static void rename(quint64 winId, const QUrl &url, const QString &name);
+
+    static void mountAndEnterBlockDevice(quint64 winId, const DFMEntryFileInfoPointer info);
+    static void mountAndEnterBlockDevice(quint64 winId, const QString &id);
+
+private:
+    explicit ComputerController(QObject *parent = nullptr);
 };
 
 DPCOMPUTER_END_NAMESPACE
-#endif   // COMPUTERDATASTRUCT_H
+
+#endif   // COMPUTERCONTROLLER_H

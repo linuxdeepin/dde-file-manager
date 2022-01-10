@@ -37,6 +37,8 @@ public:
 
     static void cdTo(QWidget *sender, const QUrl &url);
     static void cdTo(QWidget *sender, const QString &path);
+    static void cdTo(quint64 winId, const QUrl &url);
+    static void cdTo(quint64 winId, const QString &path);
 };
 
 DPCOMPUTER_END_NAMESPACE

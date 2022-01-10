@@ -42,13 +42,12 @@ void ComputerEventCaller::cdTo(QWidget *sender, const QUrl &url)
     if (!url.isValid())
         return;
 
-    DFMBASE_USE_NAMESPACE
     DSB_FM_USE_NAMESPACE
     auto &ctx = dpfInstance.serviceContext();
     auto windowServ = ctx.service<WindowsService>(WindowsService::name());
     quint64 winId = windowServ->findWindowId(sender);
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, winId, url);
+    cdTo(winId, url);
 }
 
 /*!
@@ -64,6 +63,20 @@ void ComputerEventCaller::cdTo(QWidget *sender, const QString &path)
     u.setScheme(dfmbase::SchemeTypes::kFile);
     u.setPath(path);
     cdTo(sender, u);
+}
+
+void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
+{
+    DFMBASE_USE_NAMESPACE
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, winId, url);
+}
+
+void ComputerEventCaller::cdTo(quint64 winId, const QString &path)
+{
+    QUrl u;
+    u.setScheme(dfmbase::SchemeTypes::kFile);
+    u.setPath(path);
+    cdTo(winId, u);
 }
 
 DPCOMPUTER_END_NAMESPACE

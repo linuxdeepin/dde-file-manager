@@ -67,8 +67,8 @@ void SideBar::onWindowOpened(quint64 windId)
     auto window = GlobalPrivate::windowService->findWindowById(windId);
     Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
     auto sidebar = new SideBarWidget;
-    window->installSideBar(sidebar);
     SideBarHelper::addSideBar(windId, sidebar);
+    window->installSideBar(sidebar);
 }
 
 void SideBar::onWindowClosed(quint64 winId)

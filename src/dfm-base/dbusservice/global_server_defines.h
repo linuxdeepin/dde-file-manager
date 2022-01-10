@@ -101,6 +101,8 @@ const char *const kDeviceIcon { "device_icon" };
  */
 namespace DBusDeviceProperty {
 const char *const kHintIgnore { "HintIgnore" };
+const char *const kCleartextDevice { "CleartextDevice" };
+const char *const kIdLabel { "IdLabel" };
 }   // namespace DBusDeviceProperty
 
 /*!

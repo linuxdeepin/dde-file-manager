@@ -57,13 +57,10 @@ void ComputerUnicastReceiver::connectService()
 
 void ComputerUnicastReceiver::doAddDevice(const QString &name, const QUrl &url)
 {
-    // TODO(xust) complete the slots
-    qDebug() << "hello" << __FUNCTION__ << name << url;
-    ComputerItemWatcherIns->addGroup("add through service");
+    ComputerItemWatcherIns->addDevice(name, url);
 }
 
 void ComputerUnicastReceiver::doRemoveDevice(const QUrl &url)
 {
-    // TODO(xust) complete the slots
-    qDebug() << "hello" << __FUNCTION__;
+    ComputerItemWatcherIns->removeDevice(url);
 }

@@ -25,6 +25,7 @@
 #include "views/computerview.h"
 #include "fileentity/appentryfileentity.h"
 #include "events/computerunicastreceiver.h"
+#include "watcher/computeritemwatcher.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -33,6 +34,12 @@
 #include "dfm-base/utils/devicemanager.h"
 
 #include "services/filemanager/sidebar/sidebarservice.h"
+#include "services/filemanager/windows/windowsservice.h"
+
+DSB_FM_USE_NAMESPACE
+namespace GlobalPrivate {
+static WindowsService *winServ { nullptr };
+}   // namespace GlobalPrivate
 
 DPCOMPUTER_BEGIN_NAMESPACE
 /*!
@@ -58,9 +65,39 @@ void Computer::initialize()
     bool ret = DeviceManagerInstance.connectToServer();
     if (!ret)
         qCritical() << "device manager cannot connect to server!";
+
+    auto &ctx = dpfInstance.serviceContext();
+    DSB_FM_USE_NAMESPACE
+    Q_ASSERT_X(ctx.loaded(WindowsService::name()), "Computer", "WindowService not loaded");
+    GlobalPrivate::winServ = ctx.service<WindowsService>(WindowsService::name());
+    connect(GlobalPrivate::winServ, &WindowsService::windowOpened, this, &Computer::onWindowOpened, Qt::DirectConnection);
+    connect(GlobalPrivate::winServ, &WindowsService::windowClosed, this, &Computer::onWindowClosed, Qt::DirectConnection);
 }
 
 bool Computer::start()
+{
+    return true;
+}
+
+dpf::Plugin::ShutdownFlag Computer::stop()
+{
+    return kSync;
+}
+
+void Computer::onWindowOpened(quint64 windId)
+{
+    auto window = GlobalPrivate::winServ->findWindowById(windId);
+    Q_ASSERT_X(window, "Computer", "Cannot find window by id");
+    connect(window, &FileManagerWindow::workspaceInstallFinished, this, [] { ComputerItemWatcherIns->startQueryItems(); }, Qt::DirectConnection);
+    connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { this->addComputerToSidebar(); }, Qt::DirectConnection);
+}
+
+void Computer::onWindowClosed(quint64 winId)
+{
+    // TODO(xust)
+}
+
+void Computer::addComputerToSidebar()
 {
     auto &ctx = dpfInstance.serviceContext();
 
@@ -76,11 +113,6 @@ bool Computer::start()
     entry.url = ComputerUtils::rootUrl();
     entry.flag = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
     sidebarServ->addItem(entry, nullptr, nullptr);
-    return true;
 }
 
-dpf::Plugin::ShutdownFlag Computer::stop()
-{
-    return kSync;
-}
 DPCOMPUTER_END_NAMESPACE

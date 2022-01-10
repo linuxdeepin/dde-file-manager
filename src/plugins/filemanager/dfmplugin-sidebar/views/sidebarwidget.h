@@ -49,6 +49,8 @@ public:
     int addItem(SideBarItem *item);
     bool insertItem(const int index, SideBarItem *item);
     bool removeItem(SideBarItem *item);
+    bool removeItem(const QUrl &url);
+    void updateItem(const QUrl &url, const QString &newName);
     int findItem(const QUrl &url) const;
 
 private Q_SLOTS:

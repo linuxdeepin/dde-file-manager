@@ -76,6 +76,7 @@ public:
 protected:
     int findItem(const QUrl &target);
     int findItemByClearDeviceId(const QString &id);
+    int findSplitter(const QString &group);
 
     void initConnect();
 

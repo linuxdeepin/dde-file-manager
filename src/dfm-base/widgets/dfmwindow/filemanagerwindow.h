@@ -85,6 +85,12 @@ signals:
     void reqActivateTabByIndex(int index);   // alt + [1, 8]
     void reqShowHotkeyHelp();   // ctrl + shift + ?
 
+    void titleBarInstallFinished();
+    void titleMenuInstallFinished();
+    void sideBarInstallFinished();
+    void workspaceInstallFinished();
+    void detailViewInstallFinished();
+
 private:
     void initializeUi();
     void initConnect();

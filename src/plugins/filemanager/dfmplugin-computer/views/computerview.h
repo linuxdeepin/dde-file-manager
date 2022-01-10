@@ -68,8 +68,6 @@ private:
 private Q_SLOTS:
     void cdTo(const QModelIndex &index);
     void onMenuRequest(const QPoint &pos);
-    void mountAndEnterBlockDevice(const QModelIndex &index);
-    void mountAndEnterBlockDevice(const QString &blkId);
 
 Q_SIGNALS:
     void enterPressed(const QModelIndex &index);

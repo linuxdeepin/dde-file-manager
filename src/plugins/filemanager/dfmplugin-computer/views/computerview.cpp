@@ -26,11 +26,13 @@
 #include "delegate/computeritemdelegate.h"
 #include "utils/computerutils.h"
 #include "events/computereventcaller.h"
+#include "controller/computercontroller.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/utils/devicemanager.h"
 
 #include <services/common/dialog/dialogservice.h>
+#include <services/filemanager/windows/windowsservice.h>
 #include <dfm-framework/framework.h>
 
 #include <QEvent>
@@ -74,6 +76,7 @@ dfmbase::AbstractBaseView::ViewState ComputerView::viewState() const
 bool ComputerView::setRootUrl(const QUrl &url)
 {
     Q_UNUSED(url);
+    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
     return true;
 }
 
@@ -189,53 +192,6 @@ void ComputerView::onMenuRequest(const QPoint &pos)
     delete menu;
 }
 
-void ComputerView::mountAndEnterBlockDevice(const QModelIndex &index)
-{
-    // if is encrypted, unlock first
-    bool isEncrypted = index.data(ComputerModel::DataRoles::kDeviceIsEncrypted).toBool();
-    bool isUnlocked = index.data(ComputerModel::DataRoles::kDeviceIsUnlocked).toBool();
-    auto devUrl = index.data(ComputerModel::DataRoles::kDeviceUrlRole).toUrl();
-    QString shellDevId = ComputerItemWatcher::getBlockDevIdByUrl(devUrl);
-
-    if (isEncrypted) {
-        if (!isUnlocked) {
-            auto &ctx = dpfInstance.serviceContext();
-            auto dialogServ = ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
-            QString passwd = dialogServ->askPasswordForLockedDevice();
-            if (passwd.isEmpty())
-                return;
-
-            QPointer<ComputerView> guard(this);
-            DeviceManagerInstance.unlockAndDo(shellDevId, passwd, [guard, dialogServ](const QString &newID) {
-                if (newID.isEmpty())
-                    dialogServ->showErrorDialog(tr("Unlock device failed"), tr("Wrong password is inputed"));
-                else if (guard)
-                    guard->mountAndEnterBlockDevice(newID);
-                else
-                    qCritical() << "ComputerView is released somewhere.";
-            });
-        } else {
-            auto realDevId = index.data(ComputerModel::DataRoles::kDeviceClearDevId).toString();
-            mountAndEnterBlockDevice(realDevId);
-        }
-    } else {
-        mountAndEnterBlockDevice(shellDevId);
-    }
-}
-
-void ComputerView::mountAndEnterBlockDevice(const QString &blkId)
-{
-    QFuture<QString> fu = QtConcurrent::run(&DeviceManagerInstance, &DeviceManager::invokeMountBlockDevice, blkId);
-    QFutureWatcher<QString> *watcher = new QFutureWatcher<QString>();
-    connect(watcher, &QFutureWatcher<QString>::finished, this, [this, watcher, blkId] {
-        QString path = watcher->result();
-        qDebug() << "cd to: " + path << ", " << blkId;
-        ComputerEventCaller::cdTo(this, path);
-        watcher->deleteLater();
-    });
-    watcher->setFuture(fu);
-}
-
 void ComputerView::cdTo(const QModelIndex &index)
 {
     // TODO(xust)
@@ -248,20 +204,11 @@ void ComputerView::cdTo(const QModelIndex &index)
     ItemType type = ItemType(index.data(ComputerModel::DataRoles::kItemShapeTypeRole).toInt());
     if (type == ItemType::kSplitterItem)
         return;
-    auto url = index.data(ComputerModel::DataRoles::kRealUrlRole).toUrl();
 
-    if (url.isValid()) {
-        qDebug() << "cd to: " + index.data(Qt::DisplayRole).toString() << url;
-        ComputerEventCaller::cdTo(this, url);
-    } else {
-        QString suffix = index.data(ComputerModel::DataRoles::kSuffixRole).toString();
-        if (suffix == dfmbase::SuffixInfo::kBlock) {
-            mountAndEnterBlockDevice(index);
-        } else if (suffix == dfmbase::SuffixInfo::kProtocol) {
-
-        } else if (suffix == dfmbase::SuffixInfo::kStashedRemote) {
-        }
-    }
+    auto url = index.data(ComputerModel::DataRoles::kDeviceUrlRole).toUrl();
+    auto &ctx = dpfInstance.serviceContext();
+    auto winServ = ctx.service<DSB_FM_NAMESPACE::WindowsService>(DSB_FM_NAMESPACE::WindowsService::name());
+    ComputerController::cdTo(winServ->findWindowId(this), url);
 }
 
 ComputerViewPrivate::ComputerViewPrivate(ComputerView *qq)

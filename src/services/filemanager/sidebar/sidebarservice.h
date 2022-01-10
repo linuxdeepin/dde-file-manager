@@ -44,6 +44,8 @@ public:
 
     void addItem(const SideBar::ItemInfo &info, const SideBar::CdActionCallback &cdFunc,
                  const SideBar::ContextMenuCallback &menuFunc, const SideBar::RenameCallback &renameFunc = nullptr);
+    void removeItem(const QUrl &url);
+    void updateItem(const QUrl &url, const QString &newName);
 
 private:
     explicit SideBarService(QObject *parent = nullptr);

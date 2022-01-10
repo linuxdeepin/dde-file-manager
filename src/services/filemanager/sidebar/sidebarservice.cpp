@@ -87,3 +87,17 @@ void SideBarService::addItem(const SideBar::ItemInfo &info, const SideBar::CdAct
 {
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, info, cdFunc, menuFunc, renameFunc);
 }
+
+/*!
+ * \brief SideBarService::removeItem remove the item from sidebar.
+ * \param url  key to find the item
+ */
+void SideBarService::removeItem(const QUrl &url)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, url);
+}
+
+void SideBarService::updateItem(const QUrl &url, const QString &newName)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, url, newName);
+}

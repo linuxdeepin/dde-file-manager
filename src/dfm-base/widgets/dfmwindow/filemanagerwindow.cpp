@@ -183,6 +183,8 @@ void FileManagerWindow::installTitleBar(AbstractFrame *w)
         d->titleBar = w;
         d->titleBar->setCurrentUrl(d->currentUrl);
         titlebar()->setCustomWidget(d->titleBar);
+
+        emit this->titleBarInstallFinished();
     });
 }
 
@@ -191,6 +193,8 @@ void FileManagerWindow::installTitleMenu(QMenu *menu)
     Q_ASSERT_X(menu, "FileManagerWindow", "Null Title Menu");
     std::call_once(d->titleMenuFlag, [this, menu]() {
         titlebar()->setMenu(menu);
+
+        emit this->titleMenuInstallFinished();
     });
 }
 
@@ -205,6 +209,8 @@ void FileManagerWindow::installSideBar(AbstractFrame *w)
         d->sideBar->setMaximumWidth(d->kMaximumLeftWidth);
         d->sideBar->setMinimumWidth(d->kMinimumLeftWidth);
         d->sideBar->setCurrentUrl(d->currentUrl);
+
+        emit this->sideBarInstallFinished();
     });
 }
 
@@ -223,6 +229,7 @@ void FileManagerWindow::installWorkSpace(AbstractFrame *w)
         d->workspace->setSizePolicy(sp);
         d->workspace->setCurrentUrl(d->currentUrl);
         d->workspace->installEventFilter(this);
+        emit this->workspaceInstallFinished();
     });
 }
 
@@ -239,6 +246,8 @@ void FileManagerWindow::installDetailView(AbstractFrame *w)
         d->midLayout->addWidget(d->detailSpace, 1);
         d->detailSpace->setVisible(false);
         d->detailSpace->setCurrentUrl(d->currentUrl);
+
+        emit this->detailViewInstallFinished();
     });
 }
 

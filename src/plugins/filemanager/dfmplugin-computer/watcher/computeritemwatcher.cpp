@@ -21,6 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "computeritemwatcher.h"
+#include "controller/computercontroller.h"
+#include "utils/computerutils.h"
 
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
@@ -28,10 +30,28 @@
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 
+#include "services/filemanager/sidebar/sidebar_defines.h"
+#include "services/filemanager/sidebar/sidebarservice.h"
+
 #include <QDebug>
+#include <QApplication>
+#include <QWindow>
+
+static DSB_FM_NAMESPACE::SideBarService *sbIns()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSB_FM_NAMESPACE::SideBarService::name()))
+            abort();
+    });
+
+    return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
+}
 
 DFMBASE_USE_NAMESPACE
 DPCOMPUTER_BEGIN_NAMESPACE
+
 /*!
  * \class ComputerItemWatcher
  * \brief watches the change of computer item
@@ -88,14 +108,15 @@ bool ComputerItemWatcher::typeCompare(const ComputerItemData &a, const ComputerI
 
 void ComputerItemWatcher::initConn()
 {
+    connect(this, &ComputerItemWatcher::itemRemoved, this, &ComputerItemWatcher::removeSidebarItem);
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceAdded, this, &ComputerItemWatcher::onDeviceAdded);
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceRemoved, this, [this](const QString &id) {
-        auto &&devUrl = makeBlockDevUrl(id);
+        auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
         Q_EMIT this->itemRemoved(devUrl);
     });
 
     auto updateItem = [this](const QString &id) {
-        auto &&devUrl = makeBlockDevUrl(id);
+        auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
         Q_EMIT this->itemUpdated(devUrl);
     };
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, [updateItem](const QString &id) {
@@ -112,7 +133,7 @@ void ComputerItemWatcher::initConn()
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, &ComputerItemWatcher::onDeviceAdded);
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, [this](const QString &id) {
         auto datas = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id);
-        auto &&devUrl = makeProtocolDevUrl(id);
+        auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
         if (datas.value(GlobalServerDefines::DeviceProperty::kId).toString().isEmpty())   // device have been removed
             Q_EMIT this->itemRemoved(devUrl);
         else
@@ -120,7 +141,7 @@ void ComputerItemWatcher::initConn()
     });
 
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, [this](const QString &id) {
-        QUrl devUrl = id.startsWith(DeviceId::kBlockDeviceIdPrefix) ? makeBlockDevUrl(id) : makeProtocolDevUrl(id);
+        QUrl devUrl = id.startsWith(DeviceId::kBlockDeviceIdPrefix) ? ComputerUtils::makeBlockDevUrl(id) : ComputerUtils::makeProtocolDevUrl(id);
         Q_EMIT this->itemUpdated(devUrl);
     });
 }
@@ -158,7 +179,7 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
     auto devs = DeviceManagerInstance.invokeBlockDevicesIdList({});
 
     for (const auto &dev : devs) {
-        auto devUrl = makeBlockDevUrl(dev);
+        auto devUrl = ComputerUtils::makeBlockDevUrl(dev);
         //        auto info = InfoFactory::create<EntryFileInfo>(devUrl);
         DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
         if (!info->exists())
@@ -170,6 +191,8 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
         data.info = info;
         ret.push_back(data);
         hasNewItem = true;
+
+        addSidebarItem(devUrl, info->fileIcon().name(), info->displayName());
     }
 
     std::sort(ret.begin(), ret.end(), ComputerItemWatcher::typeCompare);
@@ -182,7 +205,7 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
     auto devs = DeviceManagerInstance.invokeProtolcolDevicesIdList({});
 
     for (const auto &dev : devs) {
-        auto devUrl = makeProtocolDevUrl(dev);
+        auto devUrl = ComputerUtils::makeProtocolDevUrl(dev);
         //        auto info = InfoFactory::create<EntryFileInfo>(devUrl);
         DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
         if (!info->exists())
@@ -194,6 +217,8 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
         data.info = info;
         ret.push_back(data);
         hasNewItem = true;
+
+        addSidebarItem(devUrl, info->fileIcon().name(), info->displayName());
     }
 
     std::sort(ret.begin(), ret.end(), ComputerItemWatcher::typeCompare);
@@ -224,6 +249,11 @@ ComputerDataList ComputerItemWatcher::getAppEntryItems(bool &hasNewItem)
     return ret;
 }
 
+/*!
+ * \brief ComputerItemWatcher::getGroup, create a group item
+ * \param type
+ * \return
+ */
 ComputerItemData ComputerItemWatcher::getGroup(ComputerItemWatcher::GroupType type)
 {
     ComputerItemData splitter;
@@ -239,52 +269,51 @@ ComputerItemData ComputerItemWatcher::getGroup(ComputerItemWatcher::GroupType ty
     return splitter;
 }
 
-QUrl ComputerItemWatcher::makeBlockDevUrl(const QString &id)
+void ComputerItemWatcher::addSidebarItem(const QUrl &url, const QString &icon, const QString &name)
 {
-    QUrl devUrl;
-    devUrl.setScheme(SchemeTypes::kEntry);
-    auto shortenBlk = id;
-    shortenBlk.remove(QString(DeviceId::kBlockDeviceIdPrefix));   // /org/freedesktop/UDisks2/block_devices/sda1 -> sda1
-    auto path = QString("%1.%2").arg(shortenBlk).arg(SuffixInfo::kBlock);   // sda1.blockdev
-    devUrl.setPath(path);   // entry:sda1.blockdev
-    return devUrl;
+    // additem to sidebar
+    DSB_FM_USE_NAMESPACE;
+    SideBar::ItemInfo sbItem;
+    sbItem.group = SideBar::DefaultGroup::kDevice;
+    sbItem.url = url;
+    sbItem.flag = Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable;
+    sbItem.iconName = icon + "-symbolic";
+    sbItem.text = name;
+
+    sbIns()->addItem(sbItem, ComputerController::cdTo, ComputerController::requestMenu, ComputerController::rename);
 }
 
-QString ComputerItemWatcher::getBlockDevIdByUrl(const QUrl &url)
+void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
 {
-    if (url.scheme() != SchemeTypes::kEntry)
-        return "";
-    if (!url.path().endsWith(SuffixInfo::kBlock))
-        return "";
-
-    QString suffix = QString(".%1").arg(SuffixInfo::kBlock);
-    QString id = QString("%1%2").arg(DeviceId::kBlockDeviceIdPrefix).arg(url.path().remove(suffix));
-    return id;
+    sbIns()->removeItem(url);
 }
 
-QUrl ComputerItemWatcher::makeProtocolDevUrl(const QString &id)
+void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName)
 {
-    QUrl devUrl;
-    devUrl.setScheme(SchemeTypes::kEntry);
-    auto path = id.toUtf8().toBase64();
-    QString encodecPath = QString("%1.%2").arg(QString(path)).arg(SuffixInfo::kProtocol);
-    devUrl.setPath(encodecPath);
-    return devUrl;
+    sbIns()->updateItem(url, newName);
 }
 
-QString ComputerItemWatcher::getProtocolDevIdByUrl(const QUrl &url)
+void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url)
 {
-    if (url.scheme() != SchemeTypes::kEntry)
-        return "";
-    if (!url.path().endsWith(SuffixInfo::kProtocol))
-        return "";
-
-    QString suffix = QString(".%1").arg(SuffixInfo::kProtocol);
-    QString encodecId = url.path().remove(suffix);
-    QString id = QByteArray::fromBase64(encodecId.toUtf8());
-    return id;
+    // TODO(xust)
 }
 
+void ComputerItemWatcher::removeDevice(const QUrl &url)
+{
+    // TODO(xust)
+}
+
+void ComputerItemWatcher::startQueryItems()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    auto ret = items();
+    Q_EMIT itemQueryFinished(ret);
+}
+
+/*!
+ * \brief ComputerItemWatcher::addGroup, add and emit itemAdded signal
+ * \param name
+ */
 void ComputerItemWatcher::addGroup(const QString &name)
 {
     ComputerItemData data;
@@ -297,9 +326,9 @@ void ComputerItemWatcher::onDeviceAdded(const QString &id)
 {
     QUrl devUrl;
     if (id.startsWith(DeviceId::kBlockDeviceIdPrefix))
-        devUrl = makeBlockDevUrl(id);
+        devUrl = ComputerUtils::makeBlockDevUrl(id);
     else
-        devUrl = makeProtocolDevUrl(id);
+        devUrl = ComputerUtils::makeProtocolDevUrl(id);
 
     //    auto info = InfoFactory::create<EntryFileInfo>(devUrl);
     DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
@@ -310,19 +339,29 @@ void ComputerItemWatcher::onDeviceAdded(const QString &id)
     data.shape = ComputerItemData::kLargeItem;
     data.info = info;
     Q_EMIT this->itemAdded(data);
+
+    addSidebarItem(devUrl, info->fileIcon().name(), info->displayName());
 }
 
 void ComputerItemWatcher::onDevicePropertyChanged(const QString &id, const QString &propertyName, const QDBusVariant &var)
 {
     if (id.startsWith(DeviceId::kBlockDeviceIdPrefix)) {
+        auto url = ComputerUtils::makeBlockDevUrl(id);
         // if `hintIgnore` changed to TRUE, then remove the display in view, else add it.
         if (propertyName == GlobalServerDefines::DBusDeviceProperty::kHintIgnore) {
             if (var.variant().toBool())
-                Q_EMIT itemRemoved(makeBlockDevUrl(id));
+                Q_EMIT itemRemoved(url);
             else
                 onDeviceAdded(id);
         } else {
-            auto &&devUrl = makeBlockDevUrl(id);
+            if (propertyName == GlobalServerDefines::DBusDeviceProperty::kIdLabel)
+                updateSidebarItem(url, var.variant().toString());
+
+            if (propertyName == GlobalServerDefines::DBusDeviceProperty::kCleartextDevice) {
+                DFMEntryFileInfoPointer info(new EntryFileInfo(url));
+                updateSidebarItem(url, info->displayName());
+            }
+            auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
             Q_EMIT itemUpdated(devUrl);
         }
     }

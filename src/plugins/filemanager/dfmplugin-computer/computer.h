@@ -37,6 +37,13 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
+
+protected Q_SLOTS:
+    void onWindowOpened(quint64 windId);
+    void onWindowClosed(quint64 winId);
+
+private:
+    void addComputerToSidebar();
 };
 DPCOMPUTER_END_NAMESPACE
 

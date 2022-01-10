@@ -54,6 +54,8 @@ SideBarUnicastReceiver *SideBarUnicastReceiver::instance()
 void SideBarUnicastReceiver::connectService()
 {
     dpfInstance.eventUnicast().connect(topic("SideBarService::addItem"), this, &SideBarUnicastReceiver::invokeAddItem);
+    dpfInstance.eventUnicast().connect(topic("SideBarService::removeItem"), this, &SideBarUnicastReceiver::invokeRemoveItem);
+    dpfInstance.eventUnicast().connect(topic("SideBarService::updateItem"), this, &SideBarUnicastReceiver::invokeUpdateItem);
 }
 
 void SideBarUnicastReceiver::invokeAddItem(const ItemInfo &info, CdActionCallback cdFunc, ContextMenuCallback menuFunc, RenameCallback renameFunc)
@@ -74,6 +76,21 @@ void SideBarUnicastReceiver::invokeAddItem(const ItemInfo &info, CdActionCallbac
                 sidebar->setCurrentUrl(item->url());
         }
     }
+}
+
+void SideBarUnicastReceiver::invokeRemoveItem(const QUrl &url)
+{
+    QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
+    for (SideBarWidget *sidebar : allSideBar)
+        sidebar->removeItem(url);
+    SideBarHelper::removeItemFromCache(url);
+}
+
+void SideBarUnicastReceiver::invokeUpdateItem(const QUrl &url, const QString &newName)
+{
+    QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
+    for (SideBarWidget *sidebar : allSideBar)
+        sidebar->updateItem(url, newName);
 }
 
 SideBarUnicastReceiver::SideBarUnicastReceiver(QObject *parent)

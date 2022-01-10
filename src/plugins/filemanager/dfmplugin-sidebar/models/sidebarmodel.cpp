@@ -212,8 +212,8 @@ bool SideBarModel::removeRow(SideBarItem *item)
 
     auto controller = QtConcurrent::run([&]() {
         for (int row = rowCount() - 1; row >= 0; row--) {
-            auto findedItem = dynamic_cast<SideBarItem *>(this->item(row, 0));
-            if (item == findedItem) {
+            auto foundItem = dynamic_cast<SideBarItem *>(this->item(row, 0));
+            if (item == foundItem) {
                 QStandardItemModel::removeRow(row);
                 return true;
             }
@@ -227,6 +227,33 @@ bool SideBarModel::removeRow(SideBarItem *item)
         return false;
     else
         return true;
+}
+
+bool SideBarModel::removeRow(const QUrl &url)
+{
+    if (!url.isValid())
+        return false;
+
+    for (int r = 0; r < rowCount(); r++) {
+        auto item = itemFromIndex(r);
+        if (item && item->url() == url) {
+            QStandardItemModel::removeRow(r);
+            return true;
+        }
+    }
+    return false;
+}
+
+void SideBarModel::updateRow(const QUrl &url, const QString &newName)
+{
+    if (!url.isValid())
+        return;
+
+    for (int r = 0; r < rowCount(); r++) {
+        auto item = itemFromIndex(r);
+        if (item->url() == url)
+            item->setText(newName);
+    }
 }
 
 QStringList SideBarModel::groups() const

@@ -102,5 +102,6 @@ private:
 DFMBASE_END_NAMESPACE
 
 typedef QSharedPointer<DFMBASE_NAMESPACE::EntryFileInfo> DFMEntryFileInfoPointer;
+Q_DECLARE_METATYPE(DFMEntryFileInfoPointer)
 
 #endif   // ENTRYFILEINFO_H

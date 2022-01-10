@@ -51,6 +51,11 @@ public:
         u.setPath("/");
         return u;
     }
+
+    static QUrl makeBlockDevUrl(const QString &id);
+    static QString getBlockDevIdByUrl(const QUrl &url);
+    static QUrl makeProtocolDevUrl(const QString &id);
+    static QString getProtocolDevIdByUrl(const QUrl &url);
 };
 
 DPCOMPUTER_END_NAMESPACE

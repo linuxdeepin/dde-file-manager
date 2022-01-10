@@ -42,6 +42,8 @@ public:
     bool insertRow(int row, SideBarItem *item);
     int appendRow(SideBarItem *item);
     bool removeRow(SideBarItem *item);
+    bool removeRow(const QUrl &url);
+    void updateRow(const QUrl &url, const QString &newName);
     QStringList groups() const;
 };
 

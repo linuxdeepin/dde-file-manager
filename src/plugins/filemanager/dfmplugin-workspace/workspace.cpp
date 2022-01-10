@@ -72,7 +72,7 @@ dpf::Plugin::ShutdownFlag Workspace::stop()
 void Workspace::onWindowOpened(quint64 windId)
 {
     auto window = GlobalPrivate::windowService->findWindowById(windId);
-    Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
+    Q_ASSERT_X(window, "WorkSpace", "Cannot find window by id");
     WorkspaceWidget *workspace = new WorkspaceWidget;
     window->installWorkSpace(workspace);
     WorkspaceHelper::instance()->addWorkspace(windId, workspace);

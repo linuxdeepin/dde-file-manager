@@ -55,6 +55,16 @@ QList<SideBar::ItemInfo> SideBarHelper::allCacheInfo()
     return kCacheInfo;
 }
 
+void SideBarHelper::removeItemFromCache(const QUrl &url)
+{
+    for (int i = 0; i < kCacheInfo.size(); i++) {
+        if (kCacheInfo.at(i).url == url) {
+            kCacheInfo.removeAt(i);
+            return;
+        }
+    }
+}
+
 SideBarWidget *SideBarHelper::findSideBarByWindowId(quint64 windowId)
 {
     QMutexLocker locker(&SideBarHelper::mutex());

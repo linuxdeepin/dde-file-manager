@@ -30,7 +30,7 @@
 #include <QUrl>
 #include <QDBusVariant>
 
-#define ComputerItemWatcherIns ComputerItemWatcher::instance()
+#define ComputerItemWatcherIns DPCOMPUTER_NAMESPACE::ComputerItemWatcher::instance()
 
 DPCOMPUTER_BEGIN_NAMESPACE
 typedef QList<ComputerItemData> ComputerDataList;
@@ -43,19 +43,19 @@ public:
 
     ComputerDataList items();
     static bool typeCompare(const ComputerItemData &a, const ComputerItemData &b);
-    static QUrl makeBlockDevUrl(const QString &id);
-    static QString getBlockDevIdByUrl(const QUrl &url);
-    static QUrl makeProtocolDevUrl(const QString &id);
-    static QString getProtocolDevIdByUrl(const QUrl &url);
 
     enum GroupType {
         kGroupDirs,
         kGroupDisks,
     };
 
-    void addGroup(const QString &name);
+    void addDevice(const QString &groupName, const QUrl &url);
+    void removeDevice(const QUrl &url);
+
+    void startQueryItems();
 
 Q_SIGNALS:
+    void itemQueryFinished(const ComputerDataList &results);
     void itemAdded(const ComputerItemData &item);
     void itemRemoved(const QUrl &url);
     void itemUpdated(const QUrl &url);
@@ -63,6 +63,10 @@ Q_SIGNALS:
 protected Q_SLOTS:
     void onDeviceAdded(const QString &id);
     void onDevicePropertyChanged(const QString &id, const QString &propertyName, const QDBusVariant &var);
+
+    void addSidebarItem(const QUrl &url, const QString &icon, const QString &name);
+    void removeSidebarItem(const QUrl &url);
+    void updateSidebarItem(const QUrl &url, const QString &newName);
 
 private:
     explicit ComputerItemWatcher(QObject *parent = nullptr);
@@ -74,6 +78,7 @@ private:
     ComputerDataList getStashedProtocolItems(bool &hasNewItem);
     ComputerDataList getAppEntryItems(bool &hasNewItem);
 
+    void addGroup(const QString &name);
     ComputerItemData getGroup(GroupType type);
 
 private:

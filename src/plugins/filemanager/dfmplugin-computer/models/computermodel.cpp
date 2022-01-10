@@ -22,6 +22,8 @@
 */
 #include "computermodel.h"
 #include "views/computerview.h"
+#include "utils/computerutils.h"
+
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/fileutils.h"
 
@@ -33,7 +35,6 @@ ComputerModel::ComputerModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
     view = qobject_cast<ComputerView *>(parent);
-    items = ComputerItemWatcherIns->items();
     initConnect();
 }
 
@@ -191,8 +192,25 @@ int ComputerModel::findItemByClearDeviceId(const QString &id)
     return -1;
 }
 
+int ComputerModel::findSplitter(const QString &group)
+{
+    auto iter = std::find_if(items.cbegin(), items.cend(), [=](const ComputerItemData &item) {
+        if (item.shape == ComputerItemData::kSplitterItem && item.groupName == group)
+            return true;
+        return false;
+    });
+    if (iter != items.cend())
+        return iter - items.cbegin();
+    return -1;
+}
+
 void ComputerModel::initConnect()
 {
+    connect(ComputerItemWatcherIns, &ComputerItemWatcher::itemQueryFinished, this, [this](const ComputerDataList &datas) {
+        this->beginResetModel();
+        items = datas;
+        this->endResetModel();
+    });
     connect(ComputerItemWatcherIns, &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
     connect(ComputerItemWatcherIns, &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);
 
@@ -202,7 +220,14 @@ void ComputerModel::initConnect()
 
 void ComputerModel::onItemAdded(const ComputerItemData &data)
 {
-    int pos = findItem(data.url);
+    int pos = -1;
+    if (data.shape == ComputerItemData::kSplitterItem) {
+        pos = findSplitter(data.groupName);
+        if (pos >= 0)
+            return;
+    }
+
+    pos = findItem(data.url);
     if (pos > 0)   // update the item
         onItemUpdated(data.url);
     else {
@@ -238,7 +263,7 @@ void ComputerModel::onItemUpdated(const QUrl &url)
     if (pos > 0) {
         updateItemInfo(pos);
     } else {
-        pos = findItemByClearDeviceId(ComputerItemWatcher::getBlockDevIdByUrl(url));
+        pos = findItemByClearDeviceId(ComputerUtils::getBlockDevIdByUrl(url));
         if (pos > 0) {
             updateItemInfo(pos);
             return;

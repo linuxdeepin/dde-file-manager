@@ -42,6 +42,7 @@ class SideBarHelper
 public:
     static QList<SideBarWidget *> allSideBar();
     static QList<DSB_FM_NAMESPACE::SideBar::ItemInfo> allCacheInfo();
+    static void removeItemFromCache(const QUrl &url);
     static SideBarWidget *findSideBarByWindowId(quint64 windowId);
     static void addSideBar(quint64 windowId, SideBarWidget *titleBar);
     static void removeSideBar(quint64 windowId);
