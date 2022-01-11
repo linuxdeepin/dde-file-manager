@@ -28,7 +28,7 @@ public:
     void noLockInsertChildren(int index, const DUrl &url, const FileSystemNodePointer &node);
     void insertChildren(int index, const DUrl &url, const FileSystemNodePointer &node, const bool *isCache);
     int insertChildren(const DUrl &url, const FileSystemNodePointer &node, const DAbstractFileInfo::CompareFunction &sortFun,
-                       const Qt::SortOrder &order);
+                       const Qt::SortOrder &order,const bool &isInsert = true);
     void noLockAppendChildren(const DUrl &url, const FileSystemNodePointer &node);
     void appendUnVisibaleChildren(const DUrl &url, const FileSystemNodePointer &node);
     void appendChildren(const DUrl &url, const FileSystemNodePointer &node);
