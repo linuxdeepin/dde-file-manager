@@ -46,10 +46,12 @@ class CanvasView : public QAbstractItemView
     friend class ViewPainter;
     friend class CanvasViewMenuProxy;
     friend class CanvasViewPrivate;
+
 public:
     using CursorAction = QAbstractItemView::CursorAction;
     explicit CanvasView(QWidget *parent = nullptr);
     void initUI();
+
 public:
     virtual QRect visualRect(const QModelIndex &index) const override;
     virtual void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
@@ -62,6 +64,7 @@ public:
     virtual QRegion visualRegionForSelection(const QItemSelection &selection) const override;
     virtual void keyboardSearch(const QString &search) override;
     QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;
+
 public:
     void setScreenNum(const int screenNum);
     int screenNum() const;
@@ -72,6 +75,7 @@ public:
     void updateGrid();
 
 public:
+    bool isEmptyArea(const QPoint &pos);
     QList<QIcon> additionalIcon(const QModelIndex &index) const;
 public Q_SLOTS:
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
@@ -80,6 +84,7 @@ public Q_SLOTS:
 
 protected:
     QRect itemRect(const QModelIndex &index) const;
+
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;

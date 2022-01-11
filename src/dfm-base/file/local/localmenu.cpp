@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -19,7 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "localfilemenu.h"
+#include "localmenu.h"
+
 #include "dfm-base/base/urlroute.h"
 
 #include <QUrl>
@@ -27,19 +28,19 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-LocalFileMenu::LocalFileMenu(QObject *parent)
-    : AbstractFileMenu(parent)
+LocalMenu::LocalMenu(QObject *parent)
+    : AbstractMenu(parent)
 {
 }
 
-QMenu *LocalFileMenu::build(AbstractFileMenu::MenuMode mode,
-                            const QUrl &rootUrl, const QUrl &foucsUrl,
-                            const QList<QUrl> &selected)
+QMenu *LocalMenu::build(QWidget *parent, AbstractMenu::MenuMode mode,
+                        const QUrl &rootUrl, const QUrl &foucsUrl,
+                        const QList<QUrl> &selected, QVariant customData)
 {
     QString path = UrlRoute::urlToPath(rootUrl);
     if (!QDir(path).exists())
         return nullptr;
-    return AbstractFileMenu::build(mode, rootUrl, foucsUrl, selected);
+    return AbstractMenu::build(parent, mode, rootUrl, foucsUrl, selected, customData);
 }
 
 DFMBASE_END_NAMESPACE

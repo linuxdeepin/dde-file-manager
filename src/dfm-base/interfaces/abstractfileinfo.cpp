@@ -900,6 +900,18 @@ dfmbase::AbstractFileInfo::Type dfmbase::AbstractFileInfo::fileType() const
 
     return kUnknown;
 }
+
+QVector<dfmbase::ActionType> dfmbase::AbstractFileInfo::menuActionList(dfmbase::AbstractMenu::MenuType type) const
+{
+    Q_UNUSED(type)
+    return {};
+}
+
+QSet<dfmbase::ActionType> dfmbase::AbstractFileInfo::disableMenuActionList() const
+{
+    return {};
+}
+
 /*!
  * \brief AbstractFileInfo::compareFunByKey Get sorting function through key
  * \param sortKey Sorted key value

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -19,12 +19,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ABSTRACTFILEMENU_H
-#define ABSTRACTFILEMENU_H
+#ifndef ABSTRACTMENU_H
+#define ABSTRACTMENU_H
 
 #include "dfm-base/dfm_base_global.h"
+#include "dfm-base/dfm_actiontype_defines.h"
 
 #include <QObject>
+#include <QVariant>
 
 QT_BEGIN_NAMESPACE
 class QMenu;
@@ -32,7 +34,7 @@ class QAction;
 QT_END_NAMESPACE
 
 DFMBASE_BEGIN_NAMESPACE
-class AbstractFileMenuPrivate;
+class AbstractMenuPrivate;
 
 namespace FileMenuTypes {
 extern const QString kCreateNewDir;
@@ -49,7 +51,7 @@ extern const QString kPaste;
 extern const QString kRename;
 }   // namesapce FileMenuTypes
 
-class AbstractFileMenu : public QObject
+class AbstractMenu : public QObject
 {
     Q_OBJECT
 public:
@@ -58,14 +60,22 @@ public:
         kNormal,
     };
 
-    explicit AbstractFileMenu(QObject *parent = nullptr);
-    virtual ~AbstractFileMenu();
-    virtual QMenu *build(MenuMode mode,
+    enum MenuType {
+        kSingleFile,
+        kMultiFiles,
+        kMultiFilesSystemPathIncluded,
+        kSpaceArea
+    };
+    explicit AbstractMenu(QObject *parent = nullptr);
+    virtual ~AbstractMenu();
+    virtual QMenu *build(QWidget *parent,
+                         MenuMode mode,
                          const QUrl &rootUrl,
                          const QUrl &foucsUrl,
-                         const QList<QUrl> &selected = {});
+                         const QList<QUrl> &selected = {},
+                         QVariant customData = QVariant());
 };
 
 DFMBASE_END_NAMESPACE
 
-#endif   // ABSTRACTFILEMENU_H
+#endif   // ABSTRACTMENU_H

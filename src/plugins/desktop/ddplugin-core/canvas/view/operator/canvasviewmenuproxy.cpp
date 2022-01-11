@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     wangchunlin<wangchunlin@uniontech.com>
  *
@@ -24,153 +24,73 @@
 #include "canvas/grid/canvasgrid.h"
 #include "canvas/view/canvasview.h"
 #include "canvas/view/canvasmodel.h"
+#include "canvas/view/canvasselectionmodel.h"
 #include "canvas/view/operator/fileoperaterproxy.h"
+#include "canvas/menu/canvasmenu.h"
+
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/dfm_global_defines.h"
 
+#include "dfm-framework/framework.h"
+
 #include <QMenu>
 #include <QtDebug>
 
+DSC_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
 
 CanvasViewMenuProxy::CanvasViewMenuProxy(CanvasView *parent)
-    : QObject(parent)
-    , view(parent)
+    : QObject(parent), view(parent)
 {
-
+    // 获取扩展菜单服务
+    auto &ctx = dpfInstance.serviceContext();
+    extensionMenuServer = ctx.service<MenuService>(MenuService::name());
 }
 
 CanvasViewMenuProxy::~CanvasViewMenuProxy()
 {
-
 }
 
 void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, const QPoint gridPos)
 {
+    // TODO(lee) 这里的Q_UNUSED参数后续随着业务接入会进行优化
     Q_UNUSED(indexFlags)
-    // todo menu
 
-    // test code
-    QMenu *tstMenu = new QMenu;
-    QAction *tstAction = nullptr;
+    QMenu *menu = new QMenu;
+    menu = extensionMenuServer->createMenu(view,
+                                           MenuScene::kDesktopMenu,
+                                           AbstractMenu::MenuMode::kEmpty,
+                                           view->model()->rootUrl(),
+                                           QUrl(),
+                                           {},
+                                           kAllExtensionAction,
+                                           QVariant::fromValue(gridPos));
 
-    tstAction = tstMenu->addAction(tr("Create file"));
-    connect(tstAction, &QAction::triggered, this, [=](){
-        // todo(wangcl):get file type,or suffix.See FileOperationsEventReceiver::newDocmentName
-        FileOperaterProxyIns->touchFile(view, gridPos, kCreateFileTypeText);
-    });
-
-    tstAction = tstMenu->addAction(tr("Create folder"));
-    connect(tstAction, &QAction::triggered, this, [=](){
-        FileOperaterProxyIns->touchFolder(view, gridPos);
-    });
-
-    tstAction = tstMenu->addAction(tr("Paste"));
-    tstAction->setEnabled(!ClipBoard::instance()->clipboardFileUrlList().isEmpty());
-    connect(tstAction, &QAction::triggered, this, [=](){
-        FileOperaterProxyIns->pasteFiles(view, gridPos);
-    });
-
-    auto sortByRole = [=](const dfmbase::AbstractFileInfo::SortKey role)->bool{
-        Qt::SortOrder order = view->model()->sortOrder();
-        if (role == view->model()->sortRole()) {
-            order = order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
-        }
-        view->model()->setSortRole(role, order);
-        view->model()->sort();
-        // save config
-        DispalyIns->setSortMethod(role, order);
-        return true;
-    };
-
-    QMenu *subMenu = tstMenu->addMenu(tr("Sort by"));
-    tstAction = subMenu->addAction(tr("Name"));
-    connect(tstAction, &QAction::triggered, this, [=](){
-        sortByRole(AbstractFileInfo::kSortByFileName);
-    });
-
-    tstAction = subMenu->addAction(tr("Time modified"));
-    connect(tstAction, &QAction::triggered, this, [=](){
-        sortByRole(AbstractFileInfo::kSortByModified);
-    });
-
-    tstAction = subMenu->addAction(tr("Size"));
-    connect(tstAction, &QAction::triggered, this, [=](){
-        sortByRole(AbstractFileInfo::kSortByFileSize);
-    });
-
-    tstAction = subMenu->addAction(tr("Type"));
-    connect(tstAction, &QAction::triggered, this, [=](){
-        sortByRole(AbstractFileInfo::kSortByFileMimeType);
-    });
-
-    tstAction = tstMenu->addAction(tr("Auto arrange"));
-    tstAction->setCheckable(true);
-    tstAction->setChecked(GridIns->mode() == CanvasGrid::Mode::Align);
-    connect(tstAction, &QAction::triggered, this, [=](){
-        auto align = DispalyIns->autoAlign();
-        align = !align;
-        DispalyIns->setAutoAlign(align);
-
-        if (align) {
-            GridIns->setMode(CanvasGrid::Mode::Align);
-            GridIns->setItems(GridIns->items());
-        } else {
-            GridIns->setMode(CanvasGrid::Mode::Custom);
-        }
-
-        CanvasIns->update();
-    });
-
-    tstAction = tstMenu->addAction(tr("Wallpaper and Screensaver"));
-    connect(tstAction, &QAction::triggered, this, [=](){
-        CanvasIns->onWallperSetting(view);
-    });
-
-    tstMenu->exec(QCursor::pos());
-    delete tstMenu;
+    if (menu) {
+        menu->exec(QCursor::pos());
+    }
 }
 
 void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QPoint gridPos)
 {
-    Q_UNUSED(index)
+    // TODO(lee) 这里的Q_UNUSED参数后续随着业务接入会进行优化
     Q_UNUSED(indexFlags)
-    Q_UNUSED(gridPos)
-    // todo menu
 
-    // test code
-    QMenu *tstMenu = new QMenu;
-    QAction *tstAction = nullptr;
+    auto selectUrls = view->selectionModel()->selectedUrls();
+    auto tgUrl = view->model()->url(index);
+    QMenu *menu = extensionMenuServer->createMenu(view,
+                                                  MenuScene::kDesktopMenu,
+                                                  AbstractMenu::MenuMode::kNormal,
+                                                  QUrl(),
+                                                  tgUrl,
+                                                  selectUrls,
+                                                  kAllExtensionAction,
+                                                  QVariant::fromValue(gridPos));
 
-    tstAction = tstMenu->addAction(tr("Open"));
-    connect(tstAction, &QAction::triggered, this, [=](){
-        FileOperaterProxyIns->openFiles(view);
-    });
-
-    tstAction = tstMenu->addAction(tr("Delete"));
-    connect(tstAction, &QAction::triggered, this, [=](){
-        FileOperaterProxyIns->moveToTrash(view);
-    });
-
-    tstAction = tstMenu->addAction(tr("Delete forever"));
-    connect(tstAction, &QAction::triggered, this, [=](){
-        FileOperaterProxyIns->deleteFiles(view);
-    });
-
-    tstAction = tstMenu->addAction(tr("Copy"));
-    connect(tstAction, &QAction::triggered, this, [=](){
-        FileOperaterProxyIns->copyFiles(view);
-    });
-
-    tstAction = tstMenu->addAction(tr("Cut"));
-    connect(tstAction, &QAction::triggered, this, [=](){
-        FileOperaterProxyIns->cutFiles(view);
-    });
-
-    tstMenu->exec(QCursor::pos());
-    delete tstMenu;
+    if (menu) {
+        menu->exec(QCursor::pos());
+    }
 }
-

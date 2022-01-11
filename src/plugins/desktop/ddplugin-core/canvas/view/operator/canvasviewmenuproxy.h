@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     wangchunlin<wangchunlin@uniontech.com>
  *
@@ -22,6 +22,7 @@
 #define CANVASVIEWMENUPROXY_H
 
 #include "dfm_desktop_service_global.h"
+#include "services/common/menu/menuservice.h"
 #include <QObject>
 
 DSB_D_BEGIN_NAMESPACE
@@ -38,8 +39,9 @@ public:
 
 private:
     CanvasView *view;
+    DSC_NAMESPACE::MenuService *extensionMenuServer = nullptr;
 };
 
 DSB_D_END_NAMESPACE
 
-#endif // CANVASVIEWMENUPROXY_H
+#endif   // CANVASVIEWMENUPROXY_H

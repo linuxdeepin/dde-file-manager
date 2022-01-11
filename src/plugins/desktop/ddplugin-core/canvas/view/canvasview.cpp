@@ -46,10 +46,8 @@
 DSB_D_USE_NAMESPACE
 
 CanvasView::CanvasView(QWidget *parent)
-    : QAbstractItemView(parent)
-    , d(new CanvasViewPrivate(this))
+    : QAbstractItemView(parent), d(new CanvasViewPrivate(this))
 {
-
 }
 
 QRect CanvasView::visualRect(const QModelIndex &index) const
@@ -57,14 +55,14 @@ QRect CanvasView::visualRect(const QModelIndex &index) const
     return d->visualRect(model()->url(index).toString());
 }
 
-void CanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint) {
-    Q_UNUSED(index)
-    Q_UNUSED(hint)
+void CanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
+{
+    // todo(Lee)
 }
 
 QModelIndex CanvasView::indexAt(const QPoint &point) const
 {
-    auto checkRect = [](const QList<QRect> &listRect, const QPoint &point) ->bool {
+    auto checkRect = [](const QList<QRect> &listRect, const QPoint &point) -> bool {
         // icon rect
         if (listRect.size() > 0 && listRect.at(0).contains(point))
             return true;
@@ -89,7 +87,7 @@ QModelIndex CanvasView::indexAt(const QPoint &point) const
             //qDebug() << "preesed on editor" << rowIndex;
             return rowIndex;
         }
-    } else if (itemDelegate()->mayExpand(&rowIndex)) {  // second
+    } else if (itemDelegate()->mayExpand(&rowIndex)) {   // second
         // get the expended rect.
         auto listRect = itemPaintGeomertys(rowIndex);
         if (checkRect(listRect, point)) {
@@ -144,10 +142,10 @@ QModelIndex CanvasView::moveCursor(QAbstractItemView::CursorAction cursorAction,
     GridCoordinate newCoord(pos);
     QString currentItem;
 
-#define checkItem(pos, it) \
-    it = GridIns->item(screenNum(), pos);\
-    if (!it.isEmpty()) \
-        break
+#define checkItem(pos, it)                \
+    it = GridIns->item(screenNum(), pos); \
+    if (!it.isEmpty())                    \
+        break;
 
     switch (cursorAction) {
     case MoveLeft:
@@ -195,7 +193,7 @@ QModelIndex CanvasView::moveCursor(QAbstractItemView::CursorAction cursorAction,
     case MovePageDown:
         return d->lastIndex();
     default:
-         break;
+        break;
     }
 
     if (pos == d->overlapPos())
@@ -434,6 +432,32 @@ void CanvasView::refresh()
     d->flicker = false;
 }
 
+bool CanvasView::isEmptyArea(const QPoint &pos)
+{
+    const QModelIndex &index = this->indexAt(pos);
+
+    if (index.isValid() && this->selectionModel()->isSelected(index)) {
+        return false;
+    } else {
+        const QRect &rect = this->visualRect(index);
+
+        if (!rect.contains(pos)) {
+            return true;
+        }
+
+        QStyleOptionViewItem option = this->viewOptions();
+        option.rect = rect;
+        const QList<QRect> &geometry_list = itemDelegate()->paintGeomertys(option, index);
+        auto ret = std::any_of(geometry_list.begin(), geometry_list.end(), [pos](const QRect &rect) {
+            return rect.contains(pos);
+        });
+        if (ret)
+            return false;
+    }
+
+    return index.isValid();
+}
+
 QList<QIcon> CanvasView::additionalIcon(const QModelIndex &index) const
 {
     Q_UNUSED(index)
@@ -467,7 +491,7 @@ bool CanvasView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger t
 
 void CanvasView::selectAll()
 {
-#if 0 // only select all item that on this view.
+#if 0   // only select all item that on this view.
     QStringList items;
     items << GridIns->points(d->screenNum).keys();
     items << GridIns->overloadItems(d->screenNum);
@@ -494,7 +518,7 @@ void CanvasView::selectAll()
 #else
     QItemSelection selection;
     auto m = model();
-    for (int row = 0 ; row < m->rowCount(rootIndex()); ++row) {
+    for (int row = 0; row < m->rowCount(rootIndex()); ++row) {
         auto index = m->index(row, 0);
         if (index.isValid())
             selection.append(QItemSelectionRange(index));
@@ -529,7 +553,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 
     QAbstractItemView::mousePressEvent(event);
 
-    if (!index.isValid() && event->button() == Qt::LeftButton) { //empty area
+    if (!index.isValid() && event->button() == Qt::LeftButton) {   //empty area
         BoxSelIns->beginSelect(event->globalPos(), true);
         setState(DragSelectingState);
     }
@@ -564,17 +588,17 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
 
     if (isPersistentEditorOpen(index)) {
         itemDelegate()->commitDataAndCloseEditor();
-        QTimer::singleShot(200, this, [this, pos](){
+        QTimer::singleShot(200, this, [this, pos]() {
             // file info and url changed,but pos will not change
             const QModelIndex &renamedIndex = indexAt(pos);
             const QUrl &renamedUrl = model()->url(renamedIndex);
-            FileOperaterProxyIns->openFiles(this, {renamedUrl});
+            FileOperaterProxyIns->openFiles(this, { renamedUrl });
         });
         return;
     }
 
     const QUrl &url = model()->url(index);
-    FileOperaterProxyIns->openFiles(this, {url});
+    FileOperaterProxyIns->openFiles(this, { url });
 }
 
 void CanvasView::wheelEvent(QWheelEvent *event)
@@ -636,8 +660,7 @@ const QMargins CanvasViewPrivate::gridMiniMargin = QMargins(2, 2, 2, 2);
 const QSize CanvasViewPrivate::dockReserveSize = QSize(80, 80);
 
 CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
-    : QObject(qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
 #ifdef QT_DEBUG
     showGrid = true;
@@ -659,7 +682,7 @@ void CanvasViewPrivate::updateGridSize(const QSize &viewSize, const QMargins &ge
     // canvas size is view size minus geometry margins.
     QSize canvasSize(viewSize.width() - geometryMargins.left() - geometryMargins.right(),
                      viewSize.height() - geometryMargins.top() - geometryMargins.bottom());
-    qInfo() << "view size" << viewSize << "canvas size" << canvasSize  << "view margin" << geometryMargins << "item size" << itemSize;
+    qInfo() << "view size" << viewSize << "canvas size" << canvasSize << "view margin" << geometryMargins << "item size" << itemSize;
 
     if (canvasSize.width() < 1 || canvasSize.height() < 1) {
         qCritical() << "canvas size is invalid.";
@@ -690,7 +713,7 @@ void CanvasViewPrivate::updateGridSize(const QSize &viewSize, const QMargins &ge
 
     // mins dockReserveSize is to keep row count same as the old.
     // it leads to fewer row count and rise the grid margin.
-    int rowCount = (canvasSize.height() - dockReserveSize.height())/ miniGridHeight;
+    int rowCount = (canvasSize.height() - dockReserveSize.height()) / miniGridHeight;
     if (Q_UNLIKELY(rowCount < 1)) {
         qCritical() << "row count is 0. set it to 1 and set grid height to" << canvasSize.height();
         gridHeight = canvasSize.height();
@@ -768,7 +791,7 @@ bool CanvasViewPrivate::isWaterMaskOn()
 {
     QGSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
     if (desktopSettings.keys().contains("water-mask"))
-        return  desktopSettings.get("water-mask").toBool();
+        return desktopSettings.get("water-mask").toBool();
     return true;
 }
 

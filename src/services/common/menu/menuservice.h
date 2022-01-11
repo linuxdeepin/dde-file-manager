@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liqiang<liqianga@uniontech.com>
  *
@@ -22,10 +22,15 @@
 #ifndef MENUSERVICE_H
 #define MENUSERVICE_H
 
-#include "menufactory.h"
 #include "dfm_common_service_global.h"
+
+#include "dfm-base/base/menufactory.h"
 #include "dfm-base/base/urlroute.h"
-#include "dfm-base/interfaces/abstractfilemenu.h"
+#include "dfm-base/widgets/action/actiondatacontainer.h"
+#include "dfm-base/dfm_actiontype_defines.h"
+#include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/interfaces/abstractmenu.h"
+
 #include <dfm-framework/service/pluginservicecontext.h>
 
 #include <QUrl>
@@ -34,7 +39,6 @@
 #include <functional>
 
 DSC_BEGIN_NAMESPACE
-DFMBASE_USE_NAMESPACE
 
 class MenuService final : public dpf::PluginService, dpf::AutoServiceRegister<MenuService>
 {
@@ -43,6 +47,8 @@ class MenuService final : public dpf::PluginService, dpf::AutoServiceRegister<Me
     friend class dpf::QtClassFactory<dpf::PluginService>;
 
 public:
+    Q_DECLARE_FLAGS(ExtensionFlags, DFMBASE_NAMESPACE::ExtensionType)
+
     static QString name()
     {
         return "org.deepin.service.MenuService";
@@ -51,13 +57,17 @@ public:
     template<class T>
     static bool regClass(const QString &name, QString *errorString = nullptr)
     {
-        return MenuFactory::regClass<T>(name, errorString);
+        return DFMBASE_NAMESPACE::MenuFactory::regClass<T>(name, errorString);
     }
 
-    QMenu *createMenu(AbstractFileMenu::MenuMode mode,
+    QMenu *createMenu(QWidget *parent,
+                      const QString &scene,
+                      DFMBASE_NAMESPACE::AbstractMenu::MenuMode mode,
                       const QUrl &rootUrl,
                       const QUrl &foucsUrl,
-                      const QList<QUrl> selected);
+                      const QList<QUrl> selected,
+                      ExtensionFlags flags = DFMBASE_NAMESPACE::ExtensionType::kAllExtensionAction,
+                      QVariant customData = QVariant());
 
 private:
     explicit MenuService(QObject *parent = nullptr);

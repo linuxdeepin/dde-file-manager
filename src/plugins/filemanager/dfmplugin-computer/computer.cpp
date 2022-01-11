@@ -55,6 +55,8 @@ void Computer::initialize()
 {
     DFMBASE_USE_NAMESPACE
     DPCOMPUTER_USE_NAMESPACE
+    DSC_USE_NAMESPACE
+
     UrlRoute::regScheme(ComputerUtils::scheme(), "/", ComputerUtils::icon(), true, tr("Computer"));
     ViewFactory::regClass<ComputerView>(ComputerUtils::scheme());
     UrlRoute::regScheme(SchemeTypes::kEntry, "/", QIcon(), true);

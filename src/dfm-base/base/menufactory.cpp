@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -19,29 +19,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LOCALFILEMENU_H
-#define LOCALFILEMENU_H
-
-#include "dfm-base/dfm_base_global.h"
-#include "dfm-base/interfaces/abstractfilemenu.h"
-
-#include <QObject>
-#include <QSharedPointer>
+#include "menufactory.h"
 
 DFMBASE_BEGIN_NAMESPACE
-class LocalMenuPrivate;
-class LocalFileMenu : public AbstractFileMenu
+
+MenuFactory::MenuFactory()
 {
-    Q_OBJECT
-    QSharedPointer<LocalMenuPrivate> d;
+}
 
-public:
-    explicit LocalFileMenu(QObject *parent = nullptr);
-    virtual QMenu *build(MenuMode mode,
-                         const QUrl &rootUrl,
-                         const QUrl &foucsUrl,
-                         const QList<QUrl> &selected = {});
-};
+MenuFactory::~MenuFactory()
+{
+}
+
+AbstractMenu *MenuFactory::create(const QString name, QString *errorString)
+{
+    auto topClass = MenuFactory::instance().dpf::QtClassManager<AbstractMenu>::value(name);
+    if (topClass)
+        return topClass;
+    topClass = MenuFactory::instance().dpf::QtClassFactory<AbstractMenu>::create(name);
+    MenuFactory::instance().dpf::QtClassManager<AbstractMenu>::append(name, topClass, errorString);   //缓存
+    return topClass;
+}
+
+MenuFactory &MenuFactory::instance()
+{
+    static MenuFactory factory;
+    return factory;
+}
+
 DFMBASE_END_NAMESPACE
-
-#endif   // LOCALFILEMENU_H

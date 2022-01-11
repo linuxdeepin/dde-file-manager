@@ -27,6 +27,7 @@
 #include "displayconfig.h"
 #include "wallpaperservice.h"
 #include "canvas/view/operator/fileoperaterproxy.h"
+
 #include "dfm-framework/framework.h"
 #include "dfm-base/widgets/screenglobal.h"
 #include "dfm-base/base/schemefactory.h"
@@ -34,12 +35,13 @@
 DFMBASE_USE_NAMESPACE
 
 DSB_D_USE_NAMESPACE
-class CanvasManagerGlobal : public CanvasManager{};
+class CanvasManagerGlobal : public CanvasManager
+{
+};
 Q_GLOBAL_STATIC(CanvasManagerGlobal, canvasManagerGlobal)
 
 CanvasManager::CanvasManager(QObject *parent)
-    : QObject(parent)
-    , d(new CanvasManagerPrivate(this))
+    : QObject(parent), d(new CanvasManagerPrivate(this))
 {
     Q_ASSERT(thread() == qApp->thread());
 }
@@ -87,7 +89,7 @@ CanvasSelectionModel *CanvasManager::selectionModel() const
     return d->selectionModel;
 }
 
-QList<QSharedPointer<CanvasView> > CanvasManager::views() const
+QList<QSharedPointer<CanvasView>> CanvasManager::views() const
 {
     return d->viewMap.values();
 }
@@ -195,7 +197,7 @@ void CanvasManager::onWallperSetting(CanvasView *view)
 {
     // find screen
     QString screen;
-    for(auto it = d->viewMap.begin(); it != d->viewMap.end(); ++it) {
+    for (auto it = d->viewMap.begin(); it != d->viewMap.end(); ++it) {
         if (it.value().get() == view) {
             screen = it.key();
             break;
@@ -234,8 +236,7 @@ void CanvasManager::reloadItem()
 }
 
 CanvasManagerPrivate::CanvasManagerPrivate(CanvasManager *qq)
-    : QObject(qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
 }
 
@@ -247,10 +248,6 @@ CanvasManagerPrivate::~CanvasManagerPrivate()
 void CanvasManagerPrivate::initConnect()
 {
     // 屏幕增删，模式改变
-
-
-
-
 }
 
 void CanvasManagerPrivate::initModel()
@@ -284,7 +281,7 @@ void CanvasManagerPrivate::initModel()
 CanvasViewPointer CanvasManagerPrivate::createView(const ScreenPointer &sp, int index)
 {
     CanvasViewPointer view;
-    if ( Q_UNLIKELY(sp == nullptr || index < 1))
+    if (Q_UNLIKELY(sp == nullptr || index < 1))
         return CanvasViewPointer();
 
     view.reset(new CanvasView());

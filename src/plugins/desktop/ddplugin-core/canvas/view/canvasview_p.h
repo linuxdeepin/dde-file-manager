@@ -33,6 +33,7 @@
 #include "operator/shortcutoper.h"
 #include "operator/canvasviewmenuproxy.h"
 #include "gridcoordinate.h"
+#include "dfm_desktop_service_global.h"
 
 #include <QDebug>
 

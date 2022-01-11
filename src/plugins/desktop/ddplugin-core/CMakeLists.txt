@@ -73,6 +73,7 @@ set(core_cxx_cpp
     canvas/grid/gridcore.cpp
     canvas/filetreater.cpp
     canvas/displayconfig.cpp
+    canvas/menu/canvasmenu.cpp
     watermask/watermaskframe.cpp
     watermask/deepinlicensehelper.cpp
     wallpaper/wallpapersettings.cpp
@@ -131,6 +132,7 @@ set(core_cxx_h
     canvas/grid/gridcore.h
     canvas/filetreater.h
     canvas/displayconfig.h
+    canvas/menu/canvasmenu.h
     watermask/watermaskframe.h
     watermask/deepinlicensehelper.h
     wallpaper/wallpapersettings.h

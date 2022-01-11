@@ -22,9 +22,12 @@
 #ifndef ABSTRACTFILEINFO_H
 #define ABSTRACTFILEINFO_H
 
+#include "abstractmenu.h"
+
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/mimetype/mimedatabase.h"
+#include "dfm-base/dfm_actiontype_defines.h"
 
 #include <dfm-io/core/dfileinfo.h>
 
@@ -206,6 +209,9 @@ public:
     virtual QMimeType fileMimeType() const;
     virtual QVariantHash extraProperties() const;
     virtual Type fileType() const;
+    virtual QVector<ActionType> menuActionList(AbstractMenu::MenuType type = AbstractMenu::MenuType::kSingleFile) const;
+    virtual QSet<ActionType> disableMenuActionList() const;
+
     typedef std::function<bool(const QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> &,
                                const QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> &,
                                Qt::SortOrder)>

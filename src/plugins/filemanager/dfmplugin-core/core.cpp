@@ -31,12 +31,12 @@
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
-#include "dfm-base/file/local/localfilemenu.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
 #include <dfm-framework/framework.h>
 
+DFMBASE_USE_NAMESPACE
 DPCORE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
@@ -61,7 +61,6 @@ void Core::initialize()
     InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kFile);
     DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kFile);
     WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kFile);
-    MenuService::regClass<LocalFileMenu>(SchemeTypes::kFile);
     // 初始化剪切板
     ClipBoard::instance();
 }

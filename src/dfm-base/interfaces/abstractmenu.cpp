@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractfilemenu.h"
+#include "abstractmenu.h"
 
 #include <QAction>
 #include <QMenu>
@@ -41,26 +41,30 @@ const QString kPaste { QObject::tr("Paste") };
 const QString kRename { QObject::tr("Rename") };
 }   // namespace FileMenuTypes
 
-AbstractFileMenu::AbstractFileMenu(QObject *parent)
+AbstractMenu::AbstractMenu(QObject *parent)
     : QObject(parent)
 {
 }
 
-AbstractFileMenu::~AbstractFileMenu()
+AbstractMenu::~AbstractMenu()
 {
 }
 
-QMenu *AbstractFileMenu::build(AbstractFileMenu::MenuMode mode,
-                               const QUrl &rootUrl,
-                               const QUrl &foucsUrl,
-                               const QList<QUrl> &selected)
+QMenu *AbstractMenu::build(QWidget *parent,
+                           AbstractMenu::MenuMode mode,
+                           const QUrl &rootUrl,
+                           const QUrl &foucsUrl,
+                           const QList<QUrl> &selected,
+                           QVariant customData)
 {
     Q_UNUSED(rootUrl)
     Q_UNUSED(foucsUrl)
     Q_UNUSED(selected)
+    Q_UNUSED(customData)
 
-    if (AbstractFileMenu::MenuMode::kEmpty == mode) {
-        QMenu *menu = new QMenu(nullptr);
+    QMenu *menu = new QMenu(parent);
+    if (AbstractMenu::MenuMode::kEmpty == mode) {
+
         menu->addAction(FileMenuTypes::kCreateNewDir);
         menu->addAction(FileMenuTypes::kCreateNewDoc);
         menu->addAction(FileMenuTypes::kViewModeSwitch);
@@ -72,8 +76,7 @@ QMenu *AbstractFileMenu::build(AbstractFileMenu::MenuMode mode,
         return menu;
     }
 
-    if (AbstractFileMenu::MenuMode::kNormal == mode) {
-        QMenu *menu = new QMenu(nullptr);
+    if (AbstractMenu::MenuMode::kNormal == mode) {
         menu->addAction(FileMenuTypes::kCreateNewDir);
         menu->addAction(FileMenuTypes::kCreateNewDoc);
         menu->addAction(FileMenuTypes::kViewModeSwitch);

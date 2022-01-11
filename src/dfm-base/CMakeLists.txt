@@ -23,7 +23,8 @@ qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
 
 set(GLOBAL_H dfm_base_global.h
              dfm_event_defines.h
-             dfm_global_defines.h)
+             dfm_global_defines.h
+             dfm_actiontype_defines.h)
 
 FILE (GLOB INTERFACES_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/*.h"
@@ -65,6 +66,8 @@ FILE (GLOB ALL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/file/entry/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/entry/*/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/entry/*/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/fileAction/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/fileAction/*.cpp"
 )
 
 FILE (GLOB WIDGETS_FILES
@@ -80,6 +83,8 @@ FILE (GLOB WIDGETS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmwindow/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmwindow/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmwindow/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/action/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/action/*.cpp"
 )
 
 FILE (GLOB DBUSSERVER_FILES
