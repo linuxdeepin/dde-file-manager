@@ -1005,7 +1005,7 @@ db_support(const char *search_path, bool is_data_prefix)
 
     regex_t reg;
     regmatch_t pmatch[1];
-    const char *pattern = "^((/boot)|(/dev)|(/proc)|(/sys)|(/root)|(/run)|(/data)).*$";
+    static const char *pattern = "^((/boot)|(/dev)|(/proc)|(/sys)|(/root)|(/run)|(/data)).*$";
 
     regcomp(&reg, pattern, REG_EXTENDED);
     if (regexec(&reg, search_path, 1, pmatch, 0) == 0) {

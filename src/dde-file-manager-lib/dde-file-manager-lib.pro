@@ -92,10 +92,7 @@ include(io/io.pri)
 include(interfaces/vfs/vfs.pri)
 include(interfaces/customization/customization.pri)
 include(src.pri)
-
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) | isEqual(ARCH, loongarch64) {
-    include(search/dfsearch.pri)
-}
+include(search/dfsearch.pri)
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
