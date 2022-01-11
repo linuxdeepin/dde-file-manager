@@ -183,6 +183,23 @@ void DoCutFilesWorker::emitCompleteFilesUpdatedNotify(const qint64 &writCount)
     emit stateChangedNotify(info);
 }
 
+AbstractJobHandler::SupportAction DoCutFilesWorker::doHandleErrorAndWait(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const QString &errorMsg)
+{
+    setStat(AbstractJobHandler::JobState::kPauseState);
+    emitErrorNotify(from, QUrl(), error, errorMsg);
+
+    if (!handlingErrorQMutex)
+        handlingErrorQMutex.reset(new QMutex);
+
+    handlingErrorQMutex->lock();
+    if (handlingErrorCondition.isNull())
+        handlingErrorCondition.reset(new QWaitCondition);
+    handlingErrorCondition->wait(handlingErrorQMutex.data());
+    handlingErrorQMutex->unlock();
+
+    return currentAction;
+}
+
 bool DoCutFilesWorker::renameFileByHandler(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo)
 {
     if (handler) {
@@ -234,7 +251,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
             do {
                 if (!renameFileByHandler(sourceInfo, targetInfo))
                     // pause and emit error msg
-                    action = doHandleErrorAndWait(sourceInfo->url(), targetInfo->url(), AbstractJobHandler::JobErrorType::kSymlinkError);
+                    action = doHandleErrorAndWait(sourceInfo->url(), targetInfo->url(), AbstractJobHandler::JobErrorType::kRenameError);
 
             } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 

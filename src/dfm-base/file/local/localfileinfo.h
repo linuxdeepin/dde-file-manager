@@ -103,6 +103,7 @@ public:
     virtual QString fileDisplayName() const;
     virtual QFileInfo toQFileInfo() const;
     virtual quint64 inode() const;
+    virtual QMimeType fileMimeType() const override;
 
 private:
     void init(const QUrl &url);

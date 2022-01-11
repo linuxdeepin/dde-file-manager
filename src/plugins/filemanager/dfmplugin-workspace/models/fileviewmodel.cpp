@@ -38,9 +38,9 @@ FileViewModelPrivate::FileViewModelPrivate(FileViewModel *qq)
 FileViewModelPrivate::~FileViewModelPrivate()
 {
 }
-// 文件的在当前目录下创建、修改、删除都需要顺序处理，并且都是在遍历目录完成后才有序的处理
-// 处理方式，受到这3个事件，都加入到事件处理队列
-// 判断当前遍历目录是否完成，是启动异步文件监视事件处理，否文件遍历完成时，启动异步文件监视事件处理
+// 文件在当前目录下创建、修改、删除都需要顺序处理，并且都是在遍历目录完成后才有序的处理
+// 处理方式，收到这3个事件，都加入到事件处理队列
+// 判断当前遍历目录是否完成，是-启动异步文件监视事件处理，否-文件遍历完成时，启动异步文件监视事件处理
 // 在退出时清理异步事件处理，再次进行fetchmore时（遍历新目录时）清理文件监视事件。
 void FileViewModelPrivate::doFileDeleted(const QUrl &url)
 {
@@ -105,6 +105,7 @@ void FileViewModelPrivate::doUpdateChildren(const QList<FileViewItem *> &childre
     }
     q->endResetModel();
     isUpdatedChildren = true;
+
     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
 }
 

@@ -31,7 +31,7 @@ class ClipBoard : public QObject
 {
     Q_OBJECT
 public:
-    enum ClipboardAction : u_int8_t {
+    enum ClipboardAction : uint8_t {
         kCutAction,
         kCopyAction,
         kDeleteAction,

@@ -502,15 +502,10 @@ bool LocalFileInfo::isExecutable() const
 bool LocalFileInfo::isHidden() const
 {
     d->lock.lockForRead();
-    bool success = false;
     bool isHidden = false;
     if (d->dfmFileInfo) {
-        isHidden = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIsHidden, &success).toBool();
-        if (!success)
-            qWarning() << "get dfm-io DFileInfo StandardIsHidden failed!";
+        isHidden = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIsHidden, nullptr).toBool();
     }
-    if (!success)
-        isHidden = QFileInfo(d->url.path()).isHidden();
     d->lock.unlock();
     return isHidden;
 }
@@ -1115,7 +1110,7 @@ QString LocalFileInfo::sizeFormat() const
         return QStringLiteral("-");
     }
 
-    qreal fileSize(size());
+    qlonglong fileSize(size());
     bool withUnitVisible = true;
     int forceUnit = -1;
 
@@ -1208,6 +1203,11 @@ quint64 LocalFileInfo::inode() const
     d->inode = statinfo.st_ino;
     d->lock.unlock();
     return d->inode;
+}
+
+QMimeType LocalFileInfo::fileMimeType() const
+{
+    return MimeDatabase::mimeTypeForUrl(d->url);
 }
 
 void LocalFileInfo::init(const QUrl &url)

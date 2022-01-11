@@ -54,7 +54,7 @@ bool startWithSymbol(const QString &text)
     return !regExp.exactMatch(text);
 }
 
-bool startWithHanzi(const QString &text)
+bool startWithCNChar(const QString &text)
 {
     if (text.isEmpty())
         return false;
@@ -72,11 +72,11 @@ bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder ord
     } else if (startWithSymbol(str2))
         return order != Qt::DescendingOrder;
 
-    if (startWithHanzi(str1)) {
-        if (!startWithHanzi(str2)) {
+    if (startWithCNChar(str1)) {
+        if (!startWithCNChar(str2)) {
             return order == Qt::DescendingOrder;
         }
-    } else if (startWithHanzi(str2)) {
+    } else if (startWithCNChar(str2)) {
         return order != Qt::DescendingOrder;
     }
 

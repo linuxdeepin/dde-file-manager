@@ -191,8 +191,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
         return false;
     }
 
-    const QString &newName = newUrl.fileName();
-    bool success = oper->renameFile(newName);
+    bool success = oper->renameFile(newUrl);
     if (!success) {
         qWarning() << "rename file failed, url: " << url;
 
@@ -478,6 +477,9 @@ bool LocalFileHandler::setFileTime(const QUrl &url, const QDateTime &accessDateT
 
 bool LocalFileHandler::launchApp(const QString &desktopFilePath, const QStringList &fileUrls)
 {
+    if(fileUrls.empty())
+        return false;
+
     QStringList newFileUrls(fileUrls);
 
     if (isFileManagerSelf(desktopFilePath) && fileUrls.count() > 1) {
@@ -526,7 +528,7 @@ bool LocalFileHandler::launchAppByGio(const QString &desktopFilePath, const QStr
         return false;
     }
 
-    g_autolist(GList) gfiles = nullptr;
+    GList *gfiles = nullptr;
     foreach (const QString &url, fileUrls) {
         const char *cFilePath = url.toLocal8Bit().data();
         GFile *gfile = g_file_new_for_uri(cFilePath);
@@ -543,6 +545,8 @@ bool LocalFileHandler::launchAppByGio(const QString &desktopFilePath, const QStr
     if (!ok) {
         qWarning() << "Failed to open desktop file with gio: g_app_info_launch returns false";
     }
+    if(gfiles)
+        g_list_free(gfiles);
 
     return ok;
 }
