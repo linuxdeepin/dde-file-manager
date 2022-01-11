@@ -25,7 +25,7 @@
 #include "models/sidebarmodel.h"
 #include "views/sidebarview.h"
 
-#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QPainter>
 #include <QDebug>
@@ -97,8 +97,10 @@ QWidget *SideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
     SideBarModel *sidebarModel = dynamic_cast<SideBarModel *>(sidebarView->model());
     SideBarItem *tgItem = sidebarModel->itemFromIndex(index);
 
-    const LocalFileInfo sourceInfo(tgItem->url());
-    if (!sourceInfo.exists())
+    auto sourceInfo = InfoFactory::create<AbstractFileInfo>(tgItem->url());
+    if (!sourceInfo)
+        return nullptr;
+    if (!sourceInfo->exists())
         return nullptr;
     /***************************************************************************************************************/
     QWidget *editor = DStyledItemDelegate::createEditor(parent, option, index);
@@ -107,7 +109,7 @@ QWidget *SideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
         QRegExp regx("^[^\\.\\\\/\':\\*\\?\"<>|%&][^\\\\/\':\\*\\?\"<>|%&]*");   //屏蔽特殊字符
         QValidator *validator = new QRegExpValidator(regx, qle);
         qle->setValidator(validator);
-        const QString &fs = sourceInfo.extraProperties()["fsType"].toString();
+        const QString &fs = sourceInfo->extraProperties()["fsType"].toString();
         // 普通文件系统限制最长输入字符为 40, vfat exfat 由于文件系统的原因，只能输入 11 个字符
         int maxLen = fs.toLower().endsWith("fat") ? 11 : 40;
         qle->setMaxLength(maxLen);

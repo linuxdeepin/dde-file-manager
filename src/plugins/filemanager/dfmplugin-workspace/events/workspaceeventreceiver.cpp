@@ -40,9 +40,9 @@ WorkspaceEventReceiver *WorkspaceEventReceiver::instance()
     return &receiver;
 }
 
-void WorkspaceEventReceiver::handleTileBarSwitchModeTriggered(quint64 windowId, TitleBar::ViewMode mode)
+void WorkspaceEventReceiver::handleTileBarSwitchModeTriggered(quint64 windowId, DFMBASE_NAMESPACE::Global::ViewMode mode)
 {
-    WorkspaceHelper::instance()->switchViewMode(windowId, mode);
+    WorkspaceHelper::instance()->switchViewMode(windowId, int(mode));
 }
 
 void WorkspaceEventReceiver::handleOpenNewTabTriggered(quint64 windowId, const QUrl &url)

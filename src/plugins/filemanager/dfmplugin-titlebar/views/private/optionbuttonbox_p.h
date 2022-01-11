@@ -23,7 +23,9 @@
 #define OPTIONBUTTONBOX_P_H
 
 #include "dfmplugin_titlebar_global.h"
+
 #include "services/filemanager/titlebar/titlebar_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QPushButton>
 #include <QHBoxLayout>
@@ -35,7 +37,7 @@ class QHBoxLayout;
 DSB_FM_USE_NAMESPACE
 DPTITLEBAR_BEGIN_NAMESPACE
 
-using DSB_FM_NAMESPACE::TitleBar::ViewMode;
+using DFMBASE_NAMESPACE::Global::ViewMode;
 class OptionButtonBox;
 class OptionButtonBoxPrivate : public QObject
 {

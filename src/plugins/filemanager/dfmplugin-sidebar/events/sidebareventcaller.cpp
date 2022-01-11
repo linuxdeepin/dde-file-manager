@@ -47,3 +47,13 @@ void SideBarEventCaller::sendEject(const QUrl &url)
     qInfo() << "Eject device: " << url;
     dispatcher()->publish(SideBar::EventType::kEjectAction, url);
 }
+
+void SideBarEventCaller::sendOpenWindow(const QUrl &url)
+{
+    dispatcher()->publish(GlobalEventType::kOpenNewWindow, url);
+}
+
+void SideBarEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
+{
+    dispatcher()->publish(GlobalEventType::kOpenNewTab, windowId, url);
+}

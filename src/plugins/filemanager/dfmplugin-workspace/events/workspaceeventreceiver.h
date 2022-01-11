@@ -23,7 +23,9 @@
 #define WORKSPACEEVENTRECEIVER_H
 
 #include "dfmplugin_workspace_global.h"
+
 #include "services/filemanager/titlebar/titlebar_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QObject>
 #include <QUrl>
@@ -39,7 +41,7 @@ public:
     static WorkspaceEventReceiver *instance();
 
 public slots:
-    void handleTileBarSwitchModeTriggered(quint64 windowId, DSB_FM_NAMESPACE::TitleBar::ViewMode mode);
+    void handleTileBarSwitchModeTriggered(quint64 windowId, DFMBASE_NAMESPACE::Global::ViewMode mode);
     void handleOpenNewTabTriggered(quint64 windowId, const QUrl &url);
 
 private:

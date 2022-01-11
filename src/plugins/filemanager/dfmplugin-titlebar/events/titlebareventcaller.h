@@ -26,6 +26,7 @@
 #include "dfmplugin_titlebar_global.h"
 
 #include "services/filemanager/titlebar/titlebar_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QObject>
 
@@ -36,7 +37,7 @@ class TitleBarEventCaller
     TitleBarEventCaller() = delete;
 
 public:
-    static void sendViewMode(QWidget *sender, DSB_FM_NAMESPACE::TitleBar::ViewMode mode);
+    static void sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::ViewMode mode);
     static void sendSettingsMenuTriggered(quint64 windowId, DSB_FM_NAMESPACE::TitleBar::MenuAction action);
     static void sendDetailViewState(QWidget *sender, bool checked);
 };

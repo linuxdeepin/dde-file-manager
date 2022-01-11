@@ -73,8 +73,8 @@ bool Recent::start()
     SideBar::ItemInfo item;
     item.group = SideBar::DefaultGroup::kCommon;
     item.url = RecentUtil::rootUrl();
-    item.iconName = "document-open-recent";
-    item.text = "Recent";
+    item.iconName = "document-open-recent-symbolic";
+    item.text = tr("Recent");
     item.flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 
     GlobalPrivate::sideBarService->addItem(item, nullptr, nullptr);

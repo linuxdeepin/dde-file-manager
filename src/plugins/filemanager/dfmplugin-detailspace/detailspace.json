@@ -1,5 +1,5 @@
 {
-    "Name" : "dfmplugin-detailpace",
+    "Name" : "dfmplugin-detailspace",
     "Version" : "1.0.0",
     "CompatVersion" : "1.0.0",
     "Vendor" : "The Uniontech Software Technology Co., Ltd.",
@@ -17,7 +17,7 @@
             will be met: https://www.gnu.org/licenses/gpl-3.0.html."
     ],
     "Category" : "",
-    "Description" : "The detailpace plugin for the filemanager.",
+    "Description" : "The detailspace plugin for the filemanager.",
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
         {"Name" : "core", "Version": "1.0.0"}

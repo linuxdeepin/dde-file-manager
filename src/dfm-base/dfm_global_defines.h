@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,26 +20,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SIDEBAREVENTCALLER_H
-#define SIDEBAREVENTCALLER_H
+#ifndef DFM_GLOBAL_DEFINES_H
+#define DFM_GLOBAL_DEFINES_H
 
-#include "dfmplugin_sidebar_global.h"
+#include "dfm_base_global.h"
 
 #include <QObject>
 
-DPSIDEBAR_BEGIN_NAMESPACE
-
-class SideBarEventCaller
-{
-    SideBarEventCaller() = delete;
-
-public:
-    static void sendItemActived(quint64 windowId, const QUrl &url);
-    static void sendEject(const QUrl &url);
-    static void sendOpenWindow(const QUrl &url);
-    static void sendOpenTab(quint64 windowId, const QUrl &url);
+DFMBASE_BEGIN_NAMESPACE
+namespace Global {
+enum class ViewMode {
+    kIconMode = 0x01,
+    kListMode = 0x02,
+    kExtendMode = 0x04,
+    AllViewMode = kIconMode | kListMode | kExtendMode
 };
+}   //namespace Global
 
-DPSIDEBAR_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
-#endif   // SIDEBAREVENTCALLER_H
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::ViewMode);
+
+#endif   // DFM_GLOBAL_DEFINES_H

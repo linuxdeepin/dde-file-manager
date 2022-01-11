@@ -58,7 +58,9 @@ struct ItemInfo
 
     bool operator==(const ItemInfo &info)
     {
-        return (url == info.url && group == info.group);
+        return (url.scheme() == info.url.scheme()
+                && url.path() == info.url.path()
+                && group == info.group);
     }
 };
 

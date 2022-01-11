@@ -24,8 +24,8 @@
 #include "models/sidebarmodel.h"
 #include "views/private/sidebarview_p.h"
 
-#include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QtConcurrent>
 #include <QDebug>
@@ -240,12 +240,11 @@ QModelIndex SideBarView::getCurrentIndex() const
 
 bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction action) const
 {
-    const LocalFileInfo dstInfo(dstUrl);
+    auto dstInfo = InfoFactory::create<AbstractFileInfo>(dstUrl);
 
     // convert destnation url to real path if it's a symbol link.
-    if (dstInfo.isSymLink()) {
-        dstUrl = dstInfo.linkTargetPath();
-    }
+    if (dstInfo->isSymLink())
+        dstUrl = dstInfo->symLinkTarget();
 
     switch (action) {
     case Qt::CopyAction:
@@ -300,9 +299,11 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
         return Qt::IgnoreAction;
     }
 
+    // TODO(zhangs): impl me!
+
     for (const QUrl &url : urls) {
-        const LocalFileInfo fileInfo(url);
-        if (!fileInfo.isReadable()) {
+        auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        if (!fileInfo->isReadable()) {
             return Qt::IgnoreAction;
         }
         //        //部分文件不能复制或剪切，需要在拖拽时忽略
@@ -310,8 +311,6 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
         //            return Qt::IgnoreAction;
         //        }
     }
-
-    const LocalFileInfo info(item->url());
 
     //    if (!info/* || !info->canDrop()*/) {
     //        return Qt::IgnoreAction;

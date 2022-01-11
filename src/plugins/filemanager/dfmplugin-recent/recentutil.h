@@ -55,7 +55,7 @@ public:
 
     inline static QIcon icon()
     {
-        return QIcon::fromTheme("document-open-recent");
+        return QIcon::fromTheme("document-open-recent-symbolic");
     }
 
     static QUrl rootUrl()

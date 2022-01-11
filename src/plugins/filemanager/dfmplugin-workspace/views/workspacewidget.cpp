@@ -183,7 +183,7 @@ void WorkspaceWidget::initializeUi()
 
 void WorkspaceWidget::initConnect()
 {
-    connect(WorkspaceHelper::instance(), &WorkspaceHelper::openUrlInNewTab, this, &WorkspaceWidget::onOpenUrlInNewTab);
+    connect(WorkspaceHelper::instance(), &WorkspaceHelper::openNewTab, this, &WorkspaceWidget::onOpenUrlInNewTab);
 
     QObject::connect(tabBar, &TabBar::currentChanged, this, &WorkspaceWidget::onCurrentTabChanged);
     QObject::connect(tabBar, &TabBar::tabCloseRequested, this, &WorkspaceWidget::onRequestCloseTab);

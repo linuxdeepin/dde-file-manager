@@ -25,11 +25,12 @@
 #include "events/sidebareventcaller.h"
 
 #include "services/filemanager/windows/windowsservice.h"
-
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/systempathutil.h"
 
 #include <dfm-framework/framework.h>
+
+#include <QMenu>
 
 DPSIDEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -152,8 +153,23 @@ void SideBarHelper::defaultCdAction(quint64 windowId, const QUrl &url)
 
 void SideBarHelper::defaultContenxtMenu(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
-    // TODO(zhangs);
-    qDebug() << windowId << url << globalPos;
+    // ref (DFMSideBarDefaultItemHandler::contextMenu)
+    QMenu *menu = new QMenu;
+    menu->addAction(QObject::tr("Open in new window"), [url]() {
+        SideBarEventCaller::sendOpenWindow(url);
+    });
+
+    auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {
+        SideBarEventCaller::sendOpenTab(windowId, url);
+    });
+    newTabAct->setDisabled(false);   // TODO(zhangs): tabAddableByWinId
+
+    menu->addSeparator();
+    menu->addAction(QObject::tr("Properties"), [url]() {
+        // TODO(zhangs): show property dialog
+    });
+    menu->exec(globalPos);
+    delete menu;
 }
 
 QMutex &SideBarHelper::mutex()

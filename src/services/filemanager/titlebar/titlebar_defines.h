@@ -38,14 +38,6 @@ extern const int kSettingsMenuTriggered;
 extern const int kShowDetailView;
 };   // namespace EventType
 
-// TODO(zhangs): move to global
-enum ViewMode {
-    kIconMode = 0x01,
-    kListMode = 0x02,
-    kExtendMode = 0x04,
-    AllViewMode = kIconMode | kListMode | kExtendMode
-};
-
 enum MenuAction {
     kNewWindow,
     kConnectToServer,
@@ -56,7 +48,6 @@ enum MenuAction {
 
 DSB_FM_END_NAMESPACE
 
-Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::TitleBar::ViewMode);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::TitleBar::MenuAction);
 
 #endif   // TITLEBAR_DEFINES_H

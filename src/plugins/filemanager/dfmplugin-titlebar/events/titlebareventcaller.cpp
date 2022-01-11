@@ -28,11 +28,11 @@
 DPTITLEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 
-void TitleBarEventCaller::sendViewMode(QWidget *sender, TitleBar::ViewMode mode)
+void TitleBarEventCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::ViewMode mode)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfInstance.eventDispatcher().publish(TitleBar::EventType::kSwitchMode, id, mode);
+    dpfInstance.eventDispatcher().publish(TitleBar::EventType::kSwitchMode, id, int(mode));
 }
 
 void TitleBarEventCaller::sendSettingsMenuTriggered(quint64 windowId, TitleBar::MenuAction action)
