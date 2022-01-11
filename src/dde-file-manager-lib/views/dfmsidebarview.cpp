@@ -91,6 +91,16 @@ void DFMSideBarView::mousePressEvent(QMouseEvent *event)
 
 void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
 {
+    // Fix bug#106858
+    // 当侧边栏选中项不可拖拽，但用户执行拖拽移动操作时，直接返回
+    if (event->buttons() & Qt::LeftButton) {
+        DFMSideBarModel *mod = dynamic_cast<DFMSideBarModel *>(model());
+        if (mod) {
+            DFMSideBarItem *item = mod->itemFromIndex(currentIndex());
+            if (!item->isDragEnabled())
+                return;
+        }
+    }
     DListView::mouseMoveEvent(event);
     // sp3 feature 35，光标悬浮到光驱item上如果正在加载，需要显示为繁忙光标。添加判定避免额外操作
     if (event->button() == Qt::NoButton) {
