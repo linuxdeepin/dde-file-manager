@@ -26,14 +26,13 @@
 #include <QItemSelectionModel>
 
 DSB_D_BEGIN_NAMESPACE
-
+class CanvasModel;
 class CanvasSelectionModel : public QItemSelectionModel
 {
     Q_OBJECT
 public:
-    explicit CanvasSelectionModel(QAbstractItemModel *model, QObject *parent);
-    bool isSelected(const QModelIndex &index) const;
-    QModelIndexList selectedIndexes() const;
+    explicit CanvasSelectionModel(CanvasModel *model, QObject *parent);
+    CanvasModel *model();
 };
 DSB_D_END_NAMESPACE
 #endif // CANVASSELECTIONMODEL_H

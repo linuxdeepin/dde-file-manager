@@ -38,6 +38,8 @@
 #include <QPaintEvent>
 #include <QApplication>
 #include <QMenu>
+#include <QDrag>
+#include <QMimeData>
 
 DSB_D_USE_NAMESPACE
 
@@ -97,12 +99,12 @@ QModelIndex CanvasView::moveCursor(QAbstractItemView::CursorAction cursorAction,
         auto currentItem = model()->url(current).toString();
         if (Q_UNLIKELY(!GridIns->point(currentItem, postion))) {
             qWarning() << "can not find pos for" << currentItem;
-            return current;
+            return d->firstIndex();
         }
 
         if (Q_UNLIKELY(postion.first != screenNum())) {
-            qWarning() << "item is not on" << screenNum() << postion.first;
-            return current;
+            qWarning() << currentItem << "item is not on" << screenNum() << postion.first;
+            return d->firstIndex();
         }
         pos = postion.second;
     }
@@ -211,6 +213,9 @@ QRegion CanvasView::visualRegionForSelection(const QItemSelection &selection) co
 
 QList<QRect> CanvasView::itemPaintGeomertys(const QModelIndex &index) const
 {
+    if (!index.isValid())
+        return {};
+
     QStyleOptionViewItem option = viewOptions();
     option.rect = itemRect(index);
     return itemDelegate()->paintGeomertys(option, index);
@@ -252,6 +257,65 @@ void CanvasView::contextMenuEvent(QContextMenuEvent *event)
         flags = model()->flags(index);
         d->showNormalMenu(index, flags);
     }
+}
+
+void CanvasView::startDrag(Qt::DropActions supportedActions)
+{
+    QModelIndexList validIndexes = selectionModel()->selectedIndexes();
+    if (validIndexes.count() > 1) {
+        QMimeData *data = model()->mimeData(validIndexes);
+        if (!data)
+            return;
+
+        QPixmap pixmap = ViewPainter::polymerize(validIndexes, d.get());
+        QDrag *drag = new QDrag(this);
+        drag->setPixmap(pixmap);
+        drag->setMimeData(data);
+        drag->setHotSpot(QPoint(static_cast<int>(pixmap.size().width() / (2 * pixmap.devicePixelRatio())),
+                                static_cast<int>(pixmap.size().height() / (2 * pixmap.devicePixelRatio()))));
+        Qt::DropAction dropAction = Qt::IgnoreAction;
+        Qt::DropAction defaultDropAction = QAbstractItemView::defaultDropAction();
+        if (defaultDropAction != Qt::IgnoreAction && (supportedActions & defaultDropAction))
+            dropAction = defaultDropAction;
+        else if (supportedActions & Qt::CopyAction && dragDropMode() != QAbstractItemView::InternalMove)
+            dropAction = Qt::CopyAction;
+        drag->exec(supportedActions, dropAction);
+    } else {
+        QAbstractItemView::startDrag(supportedActions);
+    }
+}
+
+void CanvasView::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (!d->dragDropOper->enter(event))
+        return;
+
+    QAbstractItemView::dragEnterEvent(event);
+    qInfo() << __FUNCTION__ << event->possibleActions() << event->dropAction() << model()->mimeTypes();
+}
+
+void CanvasView::dragMoveEvent(QDragMoveEvent *event)
+{
+    if (!d->dragDropOper->move(event))
+        return;
+    qInfo() << __FUNCTION__ << event->dropAction();
+    QAbstractItemView::dragMoveEvent(event);
+}
+
+void CanvasView::dragLeaveEvent(QDragLeaveEvent *event)
+{
+    d->dragDropOper->leave(event);
+    QAbstractItemView::dragLeaveEvent(event);
+}
+
+void CanvasView::dropEvent(QDropEvent *event)
+{
+    setState(NoState);
+    if (!d->dragDropOper->drop(event)) {
+        activateWindow();
+        return;
+    }
+    QAbstractItemView::dropEvent(event);
 }
 
 void CanvasView::setScreenNum(const int screenNum)
@@ -430,6 +494,7 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
 #endif
     clickSelecter = new ClickSelecter(q);
     keySelecter = new KeySelecter(q);
+    dragDropOper = new DragDropOper(q);
 }
 
 CanvasViewPrivate::~CanvasViewPrivate()
@@ -568,7 +633,7 @@ void CanvasViewPrivate::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     connect(tstAction, &QAction::triggered, q, [=](){
         emit q->createFileByMenu(screenNum, lastMenuGridPos);
 
-        QString path = q->model()->desktopUrl().path();
+        QString path = q->model()->rootUrl().path();
         path += "/testFile.txt";
 
         QFile file(path);
@@ -581,7 +646,7 @@ void CanvasViewPrivate::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     connect(tstAction, &QAction::triggered, q, [=](){
         emit q->createFileByMenu(screenNum, lastMenuGridPos);
 
-        QDir dir(q->model()->desktopUrl().path());
+        QDir dir(q->model()->rootUrl().path());
         dir.mkdir("testFolder");
     });
 

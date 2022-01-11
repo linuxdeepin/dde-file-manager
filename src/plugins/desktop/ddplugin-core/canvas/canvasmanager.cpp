@@ -290,7 +290,7 @@ void CanvasManagerPrivate::onFileCreated(const QUrl &url)
         if (createFileByMenu) {
             // todo(wangcl) 优化为回调函数处理(在canvasview的右键菜单调用时传入回调函数)，此处直接刷新返回
             createFileByMenu = false;
-            GridIns->tryAppendAfter(path, createFileScreenNum, createFileGridPos);
+            GridIns->tryAppendAfter({path}, createFileScreenNum, createFileGridPos);
 
             // todo open editor for rename file
         } else {

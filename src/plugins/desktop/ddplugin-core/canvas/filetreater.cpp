@@ -114,7 +114,7 @@ void FileTreaterPrivate::doWatcherEvent()
         if (!fileUrl.isValid())
             continue;
 
-        if (UrlRoute::urlParent(fileUrl) != desktopUrl)
+        if (UrlRoute::urlParent(fileUrl) != rootUrl)
             continue;
 
         if (event.second == AddFile) {
@@ -202,9 +202,9 @@ int FileTreater::indexOfChild(AbstractFileInfoPointer info)
  */
 void FileTreater::init()
 {
-    d->desktopUrl = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
-    if (!d->desktopUrl.isValid()) {
-        qWarning() << "desktop url is invalid:" << d->desktopUrl;
+    d->rootUrl = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
+    if (!d->rootUrl.isValid()) {
+        qWarning() << "desktop url is invalid:" << d->rootUrl;
         return;
     }
 
@@ -214,7 +214,7 @@ void FileTreater::init()
         disconnect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged, d.data(), &FileTreaterPrivate::doFileUpdated);
     }
 
-    d->watcher = WacherFactory::create<AbstractFileWatcher>(d->desktopUrl);
+    d->watcher = WacherFactory::create<AbstractFileWatcher>(d->rootUrl);
     if (!d->watcher.isNull()) {
         connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted, d.data(), &FileTreaterPrivate::doFileDeleted);
         connect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, d.data(), &FileTreaterPrivate::dofileCreated);
@@ -235,9 +235,9 @@ int FileTreater::fileCount() const
     return d->fileList.count();
 }
 
-QUrl FileTreater::desktopUrl() const
+QUrl FileTreater::rootUrl() const
 {
-    return d->desktopUrl;
+    return d->rootUrl;
 }
 
 bool FileTreater::canRefresh() const
@@ -257,7 +257,7 @@ void FileTreater::refresh()
         d->traversalThread->wait();
         disconnect(d->traversalThread.data());
     }
-    d->traversalThread.reset(new TraversalDirThread(d->desktopUrl, QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System, QDirIterator::NoIteratorFlags));
+    d->traversalThread.reset(new TraversalDirThread(d->rootUrl, QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System, QDirIterator::NoIteratorFlags));
     if (d->traversalThread.isNull()) {
         d->canRefreshFlag = true;
         d->refreshedFlag = true;

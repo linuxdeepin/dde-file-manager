@@ -19,20 +19,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "canvasselectionmodel.h"
+#include "canvasmodel.h"
 
 DSB_D_USE_NAMESPACE
 
-CanvasSelectionModel::CanvasSelectionModel(QAbstractItemModel *model, QObject *parent) : QItemSelectionModel(model, parent)
+CanvasSelectionModel::CanvasSelectionModel(CanvasModel *model, QObject *parent) : QItemSelectionModel(model, parent)
 {
 
 }
 
-bool CanvasSelectionModel::isSelected(const QModelIndex &index) const
+CanvasModel *CanvasSelectionModel::model()
 {
-    return QItemSelectionModel::isSelected(index);
-}
-
-QModelIndexList CanvasSelectionModel::selectedIndexes() const
-{
-    return QItemSelectionModel::selectedIndexes();
+    return qobject_cast<CanvasModel *>(QItemSelectionModel::model());
 }

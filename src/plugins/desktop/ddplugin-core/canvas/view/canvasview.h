@@ -26,6 +26,7 @@
 #include <QAbstractItemView>
 
 DSB_D_BEGIN_NAMESPACE
+class DragDropOper;
 class ClickSelecter;
 class KeySelecter;
 class CanvasModel;
@@ -35,6 +36,7 @@ class CanvasViewPrivate;
 class CanvasView : public QAbstractItemView
 {
     Q_OBJECT
+    friend class DragDropOper;
     friend class BoxSelecter;
     friend class ClickSelecter;
     friend class KeySelecter;
@@ -81,6 +83,11 @@ protected:
 
     void contextMenuEvent(QContextMenuEvent *event) override;
 
+    void startDrag(Qt::DropActions supportedActions) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void dragLeaveEvent(QDragLeaveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 private:
     QScopedPointer<CanvasViewPrivate> d;
 };

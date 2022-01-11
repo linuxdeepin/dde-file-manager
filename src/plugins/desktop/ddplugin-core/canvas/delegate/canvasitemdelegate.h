@@ -50,13 +50,14 @@ public:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     bool mayExpand(QModelIndex *who = nullptr) const;
     static QRectF boundingRect(const QList<QRectF> &rects);
+    QSize paintDragIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index);
 protected:
     virtual void initTextLayout(const QModelIndex &index, QTextLayout *layout) const;
     virtual void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
     QRect iconRect(const QRect &paintRect) const;
     static QRect labelRect(const QRect &paintRect, const QRect &usedRect);
     QRect textPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &label) const;
-    static void paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment = Qt::AlignCenter,
+    static QRect paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment = Qt::AlignCenter,
                               QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
     void paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rect) const;
     void drawNormlText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRectF &rect) const;

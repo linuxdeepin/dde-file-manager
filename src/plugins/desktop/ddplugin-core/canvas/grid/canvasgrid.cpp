@@ -21,6 +21,7 @@
 
 #include "grid/canvasgrid_p.h"
 #include "displayconfig.h"
+#include "utils/fileutil.h"
 
 #include <QApplication>
 #include <QUrl>
@@ -208,7 +209,7 @@ bool CanvasGrid::move(int toIndex, const QPoint &toPos, const QString &focus, co
         return false;
 
     // it's unmovable if target pos is not void and the item on the pos is not in \a items.
-    if (!d->isVoid(toIndex, toPos) && !items.contains(d->item(GridPos(toIndex, toPos))));
+    if (!d->isVoid(toIndex, toPos) && !items.contains(d->item(GridPos(toIndex, toPos))))
         return false;
 
     GridPos centerPos;
@@ -218,6 +219,7 @@ bool CanvasGrid::move(int toIndex, const QPoint &toPos, const QString &focus, co
     MoveGridOper oper(d);
     if (oper.move(GridPos(toIndex, toPos), centerPos, items)) {
         d->applay(&oper);
+        d->requestSync();
         return true;
     }
 
@@ -273,13 +275,13 @@ void CanvasGrid::append(QStringList items)
     d->requestSync();
 }
 
-void CanvasGrid::tryAppendAfter(const QString &item, int index, const QPoint &begin)
+void CanvasGrid::tryAppendAfter(const QStringList &items, int index, const QPoint &begin)
 {
-    if (Q_UNLIKELY(item.isEmpty()))
+    if (Q_UNLIKELY(items.isEmpty()))
         return;
 
     AppendOper oper(d);
-    oper.tryAppendAfter(QStringList() << item, index, begin);
+    oper.tryAppendAfter(items, index, begin);
     d->applay(&oper);
 
     d->requestSync();
@@ -368,7 +370,9 @@ void CanvasGridPrivate::restore(QStringList currentItems)
         // restore item always existed to recored pos.
         for (auto itor = oldPos.begin(); itor != oldPos.end(); ++itor) {
             // for compatibility. record use 'file://' like.
-            QString item = CanvasGridSpecialist::covertFileUrlToDesktop(itor.key()).toString();
+            // if currentItems's schema is desktop://,
+            // using covertFileUrlToDesktop(itor.key()).toString() to cover it to file://
+            QString item = itor.key();
 
             if (!currentItems.contains(item))
                 continue; // item was removed.
@@ -440,8 +444,10 @@ void CanvasGridPrivate::sync()
     // single mode
     if (count == 1) {
         // update group SingleScreen
-        DispalyIns->setCoordinates(CanvasGridSpecialist::singleIndex,
-                                   CanvasGridSpecialist::covertDesktopUrlToFiles(itemPos.value(idxs.first())));
+        DispalyIns->setCoordinates(CanvasGridSpecialist::singleIndex,itemPos.value(idxs.first()));
+        // if itemPos's schema is desktop://,
+        // using CanvasGridSpecialist::covertDesktopUrlToFiles(itemPos.value(idxs.first())) to cover it to file://
+
     } else {
         QList<QString> profile;
         for (const int &idx : idxs) {
@@ -450,7 +456,9 @@ void CanvasGridPrivate::sync()
 
             // update group Screen_xx
             // for compatibility. covert "ddecesktop:/" used by code to "file://" used record file.
-            DispalyIns->setCoordinates(key, CanvasGridSpecialist::covertDesktopUrlToFiles(itemPos.value(idx)));
+            // if itemPos's schema is desktop://,
+            // using CanvasGridSpecialist::covertDesktopUrlToFiles(itemPos.value(idx)) to cover it to file://
+            DispalyIns->setCoordinates(key, itemPos.value(idx));
         }
 
         // update group ProFile
@@ -509,13 +517,13 @@ QStringList CanvasGridSpecialist::sortItemInGrid(const QHash<QString, QPoint> &i
 }
 
 // covert item from desktop url(ddedesktop:/) to file path with scheme "file://"
-QHash<QString, QPoint> CanvasGridSpecialist::covertDesktopUrlToFiles(const QHash<QString, QPoint> &urls)
-{
-    QHash<QString, QPoint> ret;
-    for (auto itor = urls.begin(); itor != urls.end(); ++itor) {
-        ret.insert(covertDesktopUrlToFile(itor.key()).toString(), itor.value());
-    }
-    return ret;
-}
+//QHash<QString, QPoint> CanvasGridSpecialist::covertDesktopUrlToFiles(const QHash<QString, QPoint> &urls)
+//{
+//    QHash<QString, QPoint> ret;
+//    for (auto itor = urls.begin(); itor != urls.end(); ++itor) {
+//        ret.insert(covertDesktopUrlToFile(itor.key()).toString(), itor.value());
+//    }
+//    return ret;
+//}
 
 

@@ -204,7 +204,7 @@ void MoveGridOper::calcDestination(const QStringList &orgItems, const GridPos &r
     GridPos tempPos;
     for (const QString &item : orgItems) {
 
-        if (Q_UNLIKELY(!item.isEmpty()))
+        if (Q_UNLIKELY(item.isEmpty()))
             continue;
 
         if (position(item, tempPos)) {
@@ -213,7 +213,10 @@ void MoveGridOper::calcDestination(const QStringList &orgItems, const GridPos &r
                 invalid.append(item);
             } else {
                 auto target = tempPos.second - ref.second + focus;
-                dest.insert(item, target);
+                if (isValid(ref.first, target))
+                    dest.insert(item, target);
+                else // invalid pos
+                    invalid.append(item);
             }
         } else { // origin pos is invalid.
             invalid.append(item);

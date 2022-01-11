@@ -24,6 +24,7 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QDateTime>
+#include <QMimeData>
 
 DFMBASE_USE_NAMESPACE
 DSB_D_BEGIN_NAMESPACE
@@ -133,6 +134,7 @@ Qt::ItemFlags CanvasModel::flags(const QModelIndex &index) const
         return flags;
 
     flags |= Qt::ItemIsDragEnabled;
+    flags |= Qt::ItemIsDropEnabled; // todo
     return flags;
 }
 
@@ -155,21 +157,68 @@ bool CanvasModel::isRefreshed() const
     return FileTreaterCt->isRefreshed();
 }
 
-QUrl CanvasModel::desktopUrl() const
+QUrl CanvasModel::rootUrl() const
 {
-    return FileTreaterCt->desktopUrl();
+    return FileTreaterCt->rootUrl();
 }
 
 QUrl CanvasModel::url(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return FileTreaterCt->desktopUrl();
+        return FileTreaterCt->rootUrl();
 
     if (auto info = FileTreaterCt->fileInfo(index.row())) {
         return info->url();
     }
 
     return QUrl();
+}
+
+QMimeData *CanvasModel::mimeData(const QModelIndexList &indexes) const
+{
+    QMimeData *data = new QMimeData();
+    QList<QUrl> urls;
+
+    for (const QModelIndex &idx : indexes)
+        urls << url(idx);
+
+    data->setUrls(urls);
+    return data;
+}
+
+bool CanvasModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+    Q_UNUSED(row);
+    Q_UNUSED(column);
+    if (!parent.isValid()) {
+        // copy file to desktop
+        qDebug() << "copy file to desktop" << data->urls() << action;
+        return true;
+    } else {
+        auto item = url(parent);
+        qDebug() << "drop on item" << item << data->urls() << action;
+        return true;
+    }
+
+    return true;
+}
+
+QStringList CanvasModel::mimeTypes() const
+{
+    static QStringList types {QLatin1String("text/uri-list")};
+    return types;
+}
+
+Qt::DropActions CanvasModel::supportedDragActions() const
+{
+    // todo
+    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
+}
+
+Qt::DropActions CanvasModel::supportedDropActions() const
+{
+    // todo
+    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
 
 bool CanvasModel::enableSort() const

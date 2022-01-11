@@ -23,6 +23,7 @@
 #define CANVASMODEL_H
 
 #include "dfm_desktop_service_global.h"
+#include "utils/fileutil.h"
 #include "dfm-base/file/local/localfileinfo.h"
 
 #include <QAbstractItemModel>
@@ -52,8 +53,13 @@ public:
     void fetchMore(const QModelIndex &parent) override;
     bool isRefreshed() const;
 
-    QUrl desktopUrl() const;
+    QUrl rootUrl() const;
     QUrl url(const QModelIndex &index) const;
+    QMimeData *mimeData(const QModelIndexList &indexes) const override;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
+    QStringList mimeTypes() const override;
+    Qt::DropActions supportedDragActions() const override;
+    Qt::DropActions supportedDropActions() const override;
 
     bool enableSort() const;
     void setEnabledSort(bool enabledSort);

@@ -66,7 +66,7 @@ public:
     QAtomicInteger<bool> refreshedFlag = false;
     QAtomicInteger<bool> processFileEventRuning = false;
 
-    QUrl desktopUrl;
+    QUrl rootUrl;
     bool canRefreshFlag = true;
 
     bool enableSort = true;

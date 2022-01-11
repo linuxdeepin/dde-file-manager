@@ -74,7 +74,7 @@ public:
     const QList<QUrl> &getFiles() const;
     int fileCount() const;
 
-    QUrl desktopUrl() const;
+    QUrl rootUrl() const;
     bool canRefresh() const;
     void refresh();
     bool isRefreshed() const;

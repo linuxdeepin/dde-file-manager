@@ -62,6 +62,7 @@ set(core_cxx_cpp
     canvas/view/operator/viewpainter.cpp
     canvas/view/operator/operstate.cpp
     canvas/view/operator/keyselecter.cpp
+    canvas/view/operator/dragdropoper.cpp
     canvas/delegate/canvasitemdelegate.cpp
     canvas/delegate/elidetextlayout.cpp
     canvas/delegate/expandeditem.cpp
@@ -75,6 +76,7 @@ set(core_cxx_cpp
     watermask/watermaskframe.cpp
     watermask/deepinlicensehelper.cpp
     utils/desktoputils.cpp
+    utils/fileutil.cpp
     screen/screenqt.cpp
     screen/screenproxyqt.cpp
     screen/screendbus.cpp
@@ -105,6 +107,7 @@ set(core_cxx_h
     canvas/view/operator/viewpainter.h
     canvas/view/operator/operstate.h
     canvas/view/operator/keyselecter.h
+    canvas/view/operator/dragdropoper.h
     canvas/delegate/canvasitemdelegate_p.h
     canvas/delegate/canvasitemdelegate.h
     canvas/delegate/elidetextlayout.h
@@ -120,6 +123,7 @@ set(core_cxx_h
     watermask/watermaskframe.h
     watermask/deepinlicensehelper.h
     utils/desktoputils.h
+    utils/fileutil.h
     screen/screenqt.h
     screen/screenproxyqt.h
     screen/screendbus.h

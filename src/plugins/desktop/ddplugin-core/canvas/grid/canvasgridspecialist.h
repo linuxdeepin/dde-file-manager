@@ -33,21 +33,7 @@ DSB_D_BEGIN_NAMESPACE
 class CanvasGridSpecialist
 {
 public:
-    static QHash<QString, QPoint> covertDesktopUrlToFiles(const QHash<QString, QPoint> &);
-
-    static inline QUrl covertFileUrlToDesktop(const QUrl &fileUrl){
-        QUrl desktopUrl = DFMBASE_NAMESPACE::UrlRoute::pathToReal(
-                    DFMBASE_NAMESPACE::UrlRoute::urlToPath(fileUrl));
-        return desktopUrl;
-    }
-
-    static inline QUrl covertDesktopUrlToFile(const QUrl &desktopUrl) {
-        QUrl fileUrl = DFMBASE_NAMESPACE::UrlRoute::pathToUrl(
-                    DFMBASE_NAMESPACE::UrlRoute::urlToPath(desktopUrl),
-                    DFMBASE_NAMESPACE::SchemeTypes::kFile);
-        return fileUrl;
-    }
-
+    //static QHash<QString, QPoint> covertDesktopUrlToFiles(const QHash<QString, QPoint> &);
     static inline bool isValid(const QPoint &pos, const QSize &size) {
         return size.width() > pos.x() && size.height() > pos.y()
                 && pos.x() >= 0 && pos.y() >= 0;

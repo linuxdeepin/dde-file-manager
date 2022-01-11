@@ -57,6 +57,10 @@ public:
 
     void drawDodge();
     void drawDragMove(QStyleOptionViewItem &option);
+    static QPixmap polymerize(QModelIndexList indexs, CanvasViewPrivate *d);
+protected:
+    static void drawDragText(QPainter *painter, const QString &str, const QRect &rect);
+    static void drawEllipseBackground(QPainter *painter, const QRect &rect);
 protected:
     CanvasViewPrivate *d = nullptr;
 };

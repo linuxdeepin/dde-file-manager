@@ -29,6 +29,7 @@
 #include "operator/clickselecter.h"
 #include "operator/keyselecter.h"
 #include "operator/operstate.h"
+#include "operator/dragdropoper.h"
 #include "gridcoordinate.h"
 
 #include <QDebug>
@@ -127,6 +128,7 @@ protected:
 
     ClickSelecter *clickSelecter;
     KeySelecter *keySelecter;
+    DragDropOper *dragDropOper;
     OperState state;
 
     QPoint dragTargetGrid { QPoint(-1, -1) };

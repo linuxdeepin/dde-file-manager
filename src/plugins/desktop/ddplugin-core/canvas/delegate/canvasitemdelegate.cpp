@@ -202,6 +202,19 @@ QRectF CanvasItemDelegate::boundingRect(const QList<QRectF> &rects)
     return bounding;
 }
 
+QSize CanvasItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    // the global option.
+    QStyleOptionViewItem indexOption = option;
+
+    // init option for each index.
+    // and the rect of index was inited outside.
+    initStyleOption(&indexOption, index);
+
+    painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
+    return paintIcon(painter, indexOption.icon, indexOption.rect, Qt::AlignCenter, QIcon::Normal).size();
+}
+
 QList<QRect> CanvasItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QList<QRect> geometries;
@@ -616,7 +629,7 @@ void CanvasItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMo
  * \param mode: icon mode (Normal, Disabled, Active, Selected )
  * \param state: The state for which a pixmap is intended to be used. (On, Off)
  */
-void CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
+QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
                                    const QRectF &rect, Qt::Alignment alignment,
                                    QIcon::Mode mode, QIcon::State state)
 {
@@ -638,6 +651,9 @@ void CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
         x += (rect.size().width() - w) / 2.0;
 
     painter->drawPixmap(qRound(x), qRound(y), px);
+
+    // return rect before scale
+    return QRect(qRound(x), qRound(y), w, h);
 }
 
 void CanvasItemDelegate::paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rect) const

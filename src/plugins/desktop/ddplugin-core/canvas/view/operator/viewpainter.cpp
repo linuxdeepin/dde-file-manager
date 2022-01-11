@@ -55,13 +55,7 @@ void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
     {
         const QHash<QString, QPoint> &pos = GridIns->points(d->screenNum);
         for (auto itor = pos.begin(); itor != pos.end(); ++itor) {
-            auto info = DFMBASE_NAMESPACE::InfoFactory::create<dfmbase::LocalFileInfo>(itor.key());
-            if (!info){
-                qWarning() << "create file info failed" << itor.key();
-                continue;
-            }
-
-            auto index = model()->index(info);
+            auto index = model()->index(itor.key());
             if (!index.isValid())
                 continue;
 
@@ -89,14 +83,8 @@ void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
         auto overlapPos = d->overlapPos();
         auto overlap = GridIns->overloadItems(d->screenNum);
         for (auto itor = overlap.begin(); itor != overlap.end(); ++itor) {
-            auto info = DFMBASE_NAMESPACE::InfoFactory::create<dfmbase::LocalFileInfo>(*itor);
-            if (!info){
-                qWarning() << "create file info failed" << *itor;
-                continue;
-            }
-
             option.rect = d->itemRect(overlapPos);
-            auto index = model()->index(info);
+            auto index = model()->index(*itor);
             if (!index.isValid())
                 continue;
 
@@ -220,4 +208,131 @@ void ViewPainter::drawSelectRect()
 void ViewPainter::drawDragMove(QStyleOptionViewItem &option)
 {
     Q_UNUSED(option)
+}
+
+QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
+{
+    if (indexs.isEmpty() || !d)
+        return QPixmap();
+
+    auto view = d->q;
+    // get foucs item to set it on top.
+    auto foucs = d->operState().current();
+    if (!foucs.isValid()) {
+        qWarning() << "current index is invalid.";
+        foucs = indexs.first();
+    } else if (!indexs.contains(foucs)) {
+        qWarning() << "current index is not in indexs.";
+        foucs = indexs.first();
+    }
+    const int indexCount = indexs.count();
+    // remove focus which will paint on top
+    indexs.removeAll(foucs);
+
+    static const int iconWidth = 128;
+    static const int iconMargin = 30;    // add margin for showing ratoted item.
+    static const int maxIconCount = 4;   // max painting item number.
+    static const int maxTextCount = 99;  //max text number.
+    static const qreal rotateBase = 10.0;
+    static const qreal opacityBase = 0.1;
+    static const int rectSzie = iconWidth + iconMargin * 2;
+    const qreal scale = view->devicePixelRatioF();
+
+    QRect pixRect(0, 0, rectSzie, rectSzie);
+    QPixmap pixmap(pixRect.size() * scale);
+    pixmap.setDevicePixelRatio(scale);
+    pixmap.fill(Qt::transparent);
+
+    const qreal offsetX = pixRect.width() / 2;
+    const qreal offsetY = pixRect.height() / 2;
+    const QSize iconSize(iconWidth, iconWidth);
+
+    QStyleOptionViewItem option = view->viewOptions();
+    option.state |= QStyle::State_Selected;
+    // icon rect in pixmap.
+    option.rect = pixRect.translated(iconMargin, iconMargin);
+    option.rect.setSize(iconSize);
+
+    QPainter painter(&pixmap);
+    // paint items except focus
+    for (int i = qMin(maxIconCount - 1, indexs.count() - 1); i >= 0 ; --i) {
+        painter.save();
+
+        //opacity 50% 40% 30% 20%
+        painter.setOpacity(1.0 - (i + 5) * opacityBase);
+
+        //rotate
+        {
+            qreal rotate = rotateBase * (qRound((i + 1.0) / 2.0) / 2.0 + 1.0) * (i % 2 == 1 ? -1 : 1);
+            auto tf = painter.transform();
+
+            // rotate on center
+            tf = tf.translate(offsetX, offsetY).rotate(rotate).translate(-offsetX, -offsetY);
+            painter.setTransform(tf);
+        }
+
+        //paint icon
+        view->itemDelegate()->paintDragIcon(&painter, option, indexs.at(i));
+
+        painter.restore();
+    }
+
+    // paint focus
+    QSize topIconSize;
+    {
+        painter.save();
+        painter.setOpacity(0.8);
+        topIconSize = view->itemDelegate()->paintDragIcon(&painter, option, foucs);
+        painter.restore();;
+    }
+
+    // paint text
+    {
+        int length = 0;
+        QString text;
+        if (indexCount > maxTextCount) {
+            length = 28; //there are three characters showed.
+            text = QString::number(maxTextCount).append("+");
+        } else {
+            length = 24; // one or two characters
+            text = QString::number(indexCount);
+        }
+
+        // the text rect is on right bottom of top icon.
+        // using actual size of top icon to calc postion.
+        int x = iconMargin + (iconWidth + topIconSize.width() - length) / 2;
+        int y = iconMargin + (iconWidth + topIconSize.height() - length) / 2;
+        QRect textRect(x, y, length, length);
+
+        // paint text background.
+        drawEllipseBackground(&painter, textRect);
+        drawDragText(&painter, text, textRect);
+    }
+
+    return pixmap;
+}
+
+void ViewPainter::drawDragText(QPainter *painter, const QString &str, const QRect &rect)
+{
+    painter->save();
+    painter->setPen(Qt::white);
+    //the font defined by ui ：Arial，12px, Bold
+    QFont ft("Arial");
+    ft.setPixelSize(12);
+    ft.setBold(true);
+    painter->setFont(ft);
+    painter->drawText(rect, Qt::AlignCenter, str);
+    painter->restore();
+}
+
+void ViewPainter::drawEllipseBackground(QPainter *painter, const QRect &rect)
+{
+    painter->save();
+    QColor pointColor(244, 74, 74);
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setOpacity(1);
+    painter->setPen(pointColor);
+    painter->setBrush(pointColor);
+    painter->drawEllipse(rect);
+    painter->restore();
 }

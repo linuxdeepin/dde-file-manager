@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangyu<zhangyub@uniontech.com>
  *
@@ -18,36 +18,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DESKTOPUTILS_H
-#define DESKTOPUTILS_H
+#ifndef FILEUTIL_H
+#define FILEUTIL_H
 
 #include "dfm_desktop_service_global.h"
 
-#include <QWidget>
-#include <QApplication>
+#include "base/urlroute.h"
+
+#include <QUrl>
 
 DSB_D_BEGIN_NAMESPACE
-
-bool waylandDectected();
-void setDesktopWindow(QWidget *w);
-void setPrviewWindow(QWidget *w);
-
-inline bool isCtrlPressed() {
-    return qApp->keyboardModifiers() == Qt::ControlModifier;
+#if 0 // destop should use file:// rather than desktop://.
+inline QUrl covertDesktopUrlToFile(const QUrl &desktopUrl) {
+    QUrl fileUrl = DFMBASE_NAMESPACE::UrlRoute::pathToUrl(
+                DFMBASE_NAMESPACE::UrlRoute::urlToPath(desktopUrl),
+                DFMBASE_NAMESPACE::SchemeTypes::kFile);
+    return fileUrl;
 }
 
-inline bool isShiftPressed() {
-    return qApp->keyboardModifiers() == Qt::ShiftModifier;
+static inline QUrl covertFileUrlToDesktop(const QUrl &fileUrl){
+    QUrl desktopUrl = DFMBASE_NAMESPACE::UrlRoute::pathToReal(
+                DFMBASE_NAMESPACE::UrlRoute::urlToPath(fileUrl));
+    return desktopUrl;
 }
-
-inline bool isCtrlOrShiftPressed() {
-    return isCtrlPressed() || isShiftPressed();
-}
-
-inline bool isAltPressed() {
-    return qApp->keyboardModifiers() == Qt::AltModifier;
-}
-
+#endif
 DSB_D_END_NAMESPACE
 
-#endif // DESKTOPUTILS_H
+#endif // FILEUTIL_H
