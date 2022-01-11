@@ -60,6 +60,7 @@ public:
     bool remove(int index, const QString &item);
     void append(const QString &item);
     void append(QStringList items);
+    void tryAppendAfter(const QString &item, int index, const QPoint &begin);
     void popOverload();
 signals:
 

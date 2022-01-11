@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liqiang<liqianga@uniontech.com>
  *
  * Maintainer: liqiang<liqianga@uniontech.com>
+ *             wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@
 #include "dfm-base/file/local/localfileinfo.h"
 
 #include <QAbstractItemModel>
+#include <QDir>
 
 DSB_D_BEGIN_NAMESPACE
 
@@ -32,34 +34,6 @@ class CanvasModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
-    // todo: 待剔除非桌面使用部分
-    enum Roles {
-        FileIconRole = Qt::DecorationRole,
-        FilePathRole = Qt::UserRole + 1,
-        FileNameRole = Qt::UserRole + 2,
-        FileSizeRole = Qt::UserRole + 3,
-        FileMimeTypeRole = Qt::UserRole + 4,
-        FileOwnerRole = Qt::UserRole + 5,
-        FileLastModifiedRole = Qt::UserRole + 6,
-        FileLastReadRole = Qt::UserRole + 7,
-        FileCreatedRole = Qt::UserRole + 8,
-        FileDisplayNameRole = Qt::UserRole + 9,
-        FilePinyinName = Qt::UserRole + 10,
-        ExtraProperties = Qt::UserRole + 11,
-        FileBaseNameRole = Qt::UserRole + 12,
-        FileSuffixRole = Qt::UserRole + 13,
-        FileNameOfRenameRole = Qt::UserRole + 14,
-        FileBaseNameOfRenameRole = Qt::UserRole + 15,
-        FileSuffixOfRenameRole = Qt::UserRole + 16,
-        FileSizeInKiloByteRole = Qt::UserRole + 17,
-        FileLastModifiedDateTimeRole = Qt::UserRole + 18,
-        FileIconModelToolTipRole = Qt::UserRole + 19,
-        FileLastReadDateTimeRole = Qt::UserRole + 20,
-        FileCreatedDateTimeRole = Qt::UserRole + 21,
-        FileUserRole = Qt::UserRole + 99,
-        UnknowRole = Qt::UserRole + 999
-    };
-
     explicit CanvasModel(QObject *parent = nullptr);
 
     QModelIndex index(int row, int column,
@@ -74,10 +48,34 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
+    bool canFetchMore(const QModelIndex &parent) const override;
+    void fetchMore(const QModelIndex &parent) override;
+    bool isRefreshed() const;
+
+    QUrl desktopUrl() const;
     QUrl url(const QModelIndex &index) const;
+
+    bool enableSort() const;
+    void setEnabledSort(bool enabledSort);
+    void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
+    bool sort();
+
+    Qt::SortOrder sortOrder() const;
+    void setSortOrder(const Qt::SortOrder &order);
+
+    int sortRole() const;
+    void setSortRole(int role, Qt::SortOrder order = Qt::AscendingOrder);
+
+signals:
+    void fileCreated(const QUrl &url);
+    void fileDeleted(const QUrl &url);
+    void fileRenamed(const QUrl &url);
+
+    void fileRefreshed();
+    void enableSortChanged(bool enableSort);
+
 private:
-    QVariant dataByRole(const dfmbase::LocalFileInfo *fileInfo, int role) const;
-    QModelIndex createIndexByFileInfo(const DFMLocalFileInfoPointer &fileInfo, int column) const;
+    void connection();
 };
 DSB_D_END_NAMESPACE
 #endif   // CANVASMODEL_H

@@ -67,10 +67,10 @@ set(core_cxx_cpp
     canvas/delegate/expandeditem.cpp
     canvas/delegate/tagtextformat.cpp
     canvas/delegate/filetagobjectinterface.cpp
-    canvas/canvasgridmanager.cpp
     canvas/grid/canvasgrid.cpp
     canvas/grid/gridcore.cpp
     canvas/filetreater.cpp
+    canvas/private/traversaldirthread.cpp
     canvas/displayconfig.cpp
     watermask/watermaskframe.cpp
     watermask/deepinlicensehelper.cpp
@@ -92,8 +92,8 @@ set(core_cxx_h
     background/backgroundmanager_p.h
     background/backgrounddefault.h
     canvas/private/canvasmanager_p.h
-    canvas/private/canvasgridmanager_p.h
     canvas/private/filetreater_p.h
+    canvas/private/traversaldirthread.h
     canvas//canvasmanager.h
     canvas/view/canvasview_p.h
     canvas/view/canvasview.h
@@ -111,7 +111,6 @@ set(core_cxx_h
     canvas/delegate/expandeditem.h
     canvas/delegate/tagtextformat.h
     canvas/delegate/filetagobjectinterface.h
-    canvas/canvasgridmanager.h
     canvas/grid/canvasgrid.h
     canvas/grid/canvasgrid_p.h
     canvas/grid/canvasgridspecialist.h

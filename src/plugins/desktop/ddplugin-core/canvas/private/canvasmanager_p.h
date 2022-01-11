@@ -50,6 +50,17 @@ public:
         QPoint relativePos = avRect.topLeft() - geometry.topLeft();
         return QRect(relativePos, avRect.size());
     }
+
+public slots:
+    void onFileCreated(const QUrl &url);
+    void onFileDeleted(const QUrl &url);
+    void onFileRenamed(const QUrl &url);
+
+    void onFileRefreshed();
+    void onEnableSortChanged(bool enableSort);
+
+    void recordMenuLocation(const int screenNum, const QPoint &pos);
+
 protected slots:
     void backgroundDeleted();
 protected:
@@ -60,6 +71,11 @@ protected:
     QMap<QString, CanvasViewPointer> viewMap;
 private:
     CanvasManager *q = nullptr;
+
+    QMutex createFileMutex;
+    bool createFileByMenu = false;
+    int createFileScreenNum = 0;
+    QPoint createFileGridPos;
 };
 
 DSB_D_END_NAMESPACE

@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liqiang<liqianga@uniontech.com>
  *
  * Maintainer: liqiang<liqianga@uniontech.com>
+ *             wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,26 +23,28 @@
 #include "filetreater.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-DFMBASE_USE_NAMESPACE
+#include <QDateTime>
 
+DFMBASE_USE_NAMESPACE
 DSB_D_BEGIN_NAMESPACE
 
 CanvasModel::CanvasModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
+    connection();
 }
 
 QModelIndex CanvasModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    if (row < 0 || column < 0 || 0 == FileTreaterCt->fileCount()) {
+    if (row < 0 || column < 0 || FileTreaterCt->fileCount() <= row) {
         return QModelIndex();
     }
-    auto fileInfo = FileTreaterCt->file(row);
+    auto fileInfo = FileTreaterCt->fileInfo(row);
     if (!fileInfo) {
         return QModelIndex();
     }
-    // 临时处理
+
     return createIndex(row, column, fileInfo.data());
 }
 
@@ -50,24 +53,23 @@ QModelIndex CanvasModel::index(const QString &fileUrl, int column)
     if (fileUrl.isEmpty())
         return QModelIndex();
 
-    auto fileInfo = FileTreaterCt->file(fileUrl);
-    if (!fileInfo)
-        return QModelIndex();
+    auto fileInfo = FileTreaterCt->fileInfo(fileUrl);
 
-    return createIndexByFileInfo(fileInfo, column);
+    return index(fileInfo, column);
 }
 
 QModelIndex CanvasModel::index(const DFMLocalFileInfoPointer &fileInfo, int column) const
 {
     if (!fileInfo)
         return QModelIndex();
-    return createIndexByFileInfo(fileInfo, column);
+
+    int row = (0 < FileTreaterCt->fileCount()) ? FileTreaterCt->indexOfChild(fileInfo) : 0;
+    return createIndex(row, column, const_cast<LocalFileInfo *>(fileInfo.data()));
 }
 
 QModelIndex CanvasModel::parent(const QModelIndex &index) const
 {
     Q_UNUSED(index)
-    // 用不着此接口
     return QModelIndex();
 }
 
@@ -82,12 +84,11 @@ int CanvasModel::rowCount(const QModelIndex &parent) const
 int CanvasModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return 0;
+    return 1;
 }
 
 QVariant CanvasModel::data(const QModelIndex &index, int role) const
 {
-    // todo: 待优化剔除非桌面角色
     if (!index.isValid() || index.model() != this) {
         return QVariant();
     }
@@ -96,50 +97,32 @@ QVariant CanvasModel::data(const QModelIndex &index, int role) const
     if (!indexFileInfo) {
         return QVariant();
     }
-    // todo：可能仍有桌面有用不到的role,待排除
     switch (role) {
-    case Qt::EditRole:
-    case Qt::DisplayRole: {
-        const QVariant &d = data(index.sibling(index.row(), 0), Roles::FileDisplayNameRole);
-
-        if (d.canConvert<QString>()) {
-            return d;
-        } else if (d.canConvert<QPair<QString, QString>>()) {
-            return qvariant_cast<QPair<QString, QString>>(d).first;
-        } else if (d.canConvert<QPair<QString, QPair<QString, QString>>>()) {
-            return qvariant_cast<QPair<QString, QPair<QString, QString>>>(d).first;
-        }
-
-        return d;
-    }
-    case Roles::FilePathRole:
-    case Roles::FileDisplayNameRole:
-    case Roles::FileNameRole:
-    case Roles::FileNameOfRenameRole:
-    case Roles::FileBaseNameRole:
-    case Roles::FileBaseNameOfRenameRole:
-    case Roles::FileSuffixRole:
-    case Roles::FileSuffixOfRenameRole:
-    case Qt::TextAlignmentRole:
-    case Roles::FileLastModifiedRole:
-    case Roles::FileLastModifiedDateTimeRole:
-    case Roles::FileSizeRole:
-    case Roles::FileSizeInKiloByteRole:
-    case Roles::FileMimeTypeRole:
-    case Roles::FileCreatedRole:
-    case Roles::FilePinyinName:
-    case Roles::ExtraProperties:
-        return dataByRole(indexFileInfo, role);
-    case Roles::FileIconRole:
+    case FileTreater::kFileIconRole:
         return indexFileInfo->fileIcon();
-    case Qt::ToolTipRole: {
-        // todo:后续桌面tips需求可走这
+    case Qt::EditRole:
+    case Qt::DisplayRole:
+    case FileTreater::kFileNameRole:
+    case FileTreater::kFileDisplayNameRole:
+        return indexFileInfo->fileName();
+    case FileTreater::kFileLastModifiedRole:
+        return indexFileInfo->lastModified().toString();    // todo by file info: lastModifiedDisplayName
+    case FileTreater::kFileSizeRole:
+        return indexFileInfo->size();   // todo by file info: sizeDisplayName
+    case FileTreater::kFileMimeTypeRole:
+        return indexFileInfo->fileMimeType().name();    // todo by file info: mimeTypeDisplayName
+    case FileTreater::kExtraProperties:
+        return indexFileInfo->extraProperties();
+    case FileTreater::kFileSuffixRole:
+        return indexFileInfo->suffix();
+    case FileTreater::kFileNameOfRenameRole:
+        return "";  // todo by file info: fileNameOfRename
+    case FileTreater::kFileBaseNameOfRenameRole:
+        return "";  // todo by file info: baseNameOfRename
+    case FileTreater::kFileSuffixOfRenameRole:
+        return "";  // todo by file info: suffixOfRename
+    default:
         return QString();
-    }
-
-    default: {
-        return QString();
-    }
     }
 }
 
@@ -153,48 +136,92 @@ Qt::ItemFlags CanvasModel::flags(const QModelIndex &index) const
     return flags;
 }
 
+bool CanvasModel::canFetchMore(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent)
+
+    return FileTreaterCt->canRefresh();
+}
+
+void CanvasModel::fetchMore(const QModelIndex &parent)
+{
+    Q_UNUSED(parent)
+
+    FileTreaterCt->refresh();
+}
+
+bool CanvasModel::isRefreshed() const
+{
+    return FileTreaterCt->isRefreshed();
+}
+
+QUrl CanvasModel::desktopUrl() const
+{
+    return FileTreaterCt->desktopUrl();
+}
+
 QUrl CanvasModel::url(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return FileTreaterCt->homePath();
+        return FileTreaterCt->desktopUrl();
 
-    if (auto info = FileTreaterCt->file(index.row())) {
+    if (auto info = FileTreaterCt->fileInfo(index.row())) {
         return info->url();
     }
 
     return QUrl();
 }
 
-QVariant CanvasModel::dataByRole(const LocalFileInfo *fileInfo, int role) const
+bool CanvasModel::enableSort() const
 {
-    // todo temp使用
-    switch (role) {
-    case Roles::FilePathRole:
-        return fileInfo->absoluteFilePath();
-    case Roles::FileDisplayNameRole:
-        return fileInfo->fileDisplayName();
-    case Roles::FileNameRole:
-        return fileInfo->fileName();
-    case Roles::FileBaseNameRole:
-        return fileInfo->baseName();
-    case Roles::FileSuffixRole:
-        return fileInfo->suffix();
-    case Qt::TextAlignmentRole:
-        return Qt::AlignVCenter;
-    case Roles::FileSizeInKiloByteRole:
-        return fileInfo->size();
-    case Roles::ExtraProperties:
-        return fileInfo->extraProperties();
-    default: {
-        return QVariant();
-    }
-    }
+    return FileTreaterCt->enableSort();
 }
 
-QModelIndex CanvasModel::createIndexByFileInfo(const DFMLocalFileInfoPointer &fileInfo, int column) const
+void CanvasModel::setEnabledSort(bool enabledSort)
 {
-    int row = (0 < FileTreaterCt->fileCount()) ? FileTreaterCt->indexOfChild(fileInfo) : 0;
-    return createIndex(row, column, const_cast<LocalFileInfo *>(fileInfo.data()));
+    FileTreaterCt->setEnabledSort(enabledSort);
+}
+
+void CanvasModel::sort(int column, Qt::SortOrder order)
+{
+    Q_UNUSED(column)
+    Q_UNUSED(order)
+
+    sort();
+}
+
+bool CanvasModel::sort()
+{
+    return FileTreaterCt->sort();
+}
+
+Qt::SortOrder CanvasModel::sortOrder() const
+{
+    return FileTreaterCt->sortOrder();
+}
+
+void CanvasModel::setSortOrder(const Qt::SortOrder &order)
+{
+    FileTreaterCt->setSortOrder(order);
+}
+
+int CanvasModel::sortRole() const
+{
+    return FileTreaterCt->sortRole();
+}
+
+void CanvasModel::setSortRole(int role, Qt::SortOrder order)
+{
+    FileTreaterCt->setSortRole(role, order);
+}
+
+void CanvasModel::connection()
+{
+    connect(FileTreaterCt, &FileTreater::fileCreated, this, &CanvasModel::fileCreated);
+    connect(FileTreaterCt, &FileTreater::fileDeleted, this, &CanvasModel::fileDeleted);
+    connect(FileTreaterCt, &FileTreater::fileRenamed, this, &CanvasModel::fileRenamed);
+    connect(FileTreaterCt, &FileTreater::fileRefreshed, this, &CanvasModel::fileRefreshed);
+    connect(FileTreaterCt, &FileTreater::enableSortChanged, this, &CanvasModel::enableSortChanged);
 }
 
 DSB_D_END_NAMESPACE

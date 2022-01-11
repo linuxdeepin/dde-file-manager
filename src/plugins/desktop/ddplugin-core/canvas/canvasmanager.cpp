@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangyu<zhangyub@uniontech.com>
  *
@@ -56,12 +56,12 @@ void CanvasManager::init()
     // 获取背景服务
     d->backgroundService = ctx.service<BackgroundService>(BackgroundService::name());
 
+    d->canvasModel = new CanvasModel(this);
+    d->selectionModel = new CanvasSelectionModel(d->canvasModel, this);
+
     // 绑定背景信号
     // todo
     initConnect();
-
-    d->canvasModel = new CanvasModel(this);
-    d->selectionModel = new CanvasSelectionModel(d->canvasModel, this);
 
     // create views
     onCanvasBuild();
@@ -92,16 +92,20 @@ QList<QSharedPointer<CanvasView> > CanvasManager::views() const
 void CanvasManager::initConnect()
 {
     // 遍历数据完成后通知更新栅格位置信息
-    connect(FileTreaterCt, &FileTreater::fileFinished, this, &CanvasManager::reloadItem, Qt::QueuedConnection);
+    connect(FileTreaterCt, &FileTreater::fileRefreshed, this, &CanvasManager::reloadItem, Qt::QueuedConnection);
 
     // 屏幕增删，模式改变
     connect(d->backgroundService, &BackgroundService::sigBackgroundBuilded, this, &CanvasManager::onCanvasBuild);
 
-    //屏幕大小改变
+    // 屏幕大小改变
     connect(d->screenScevice, &ScreenService::screenGeometryChanged, this, &CanvasManager::onGeometryChanged);
 
-    //可用区改变
+    // 可用区改变
     connect(d->screenScevice, &ScreenService::screenAvailableGeometryChanged, this, &CanvasManager::onGeometryChanged);
+
+    connect(d->canvasModel, &CanvasModel::fileCreated, d, &CanvasManagerPrivate::onFileCreated);
+    connect(d->canvasModel, &CanvasModel::fileDeleted, d, &CanvasManagerPrivate::onFileDeleted);
+    connect(d->canvasModel, &CanvasModel::fileRenamed, d, &CanvasManagerPrivate::onFileRenamed);
 }
 
 void CanvasManager::onCanvasBuild()
@@ -174,7 +178,7 @@ void CanvasManager::onCanvasBuild()
     }
 
     // todo(zy) 优化首次加载与屏幕改变的加载重复问题，现在在初始化时有冗余
-    if (FileTreaterCt->isDone())
+    if (FileTreaterCt->isRefreshed())
         reloadItem();
 }
 
@@ -210,9 +214,9 @@ void CanvasManager::reloadItem()
     //todo 默认初始化（按类型排序）以及按配置还原
     GridIns->setMode(CanvasGrid::Mode::Custom);
     QStringList existItems;
-    QList<DFMLocalFileInfoPointer> &actualList = FileTreaterCt->getFiles();
-    for (const DFMLocalFileInfoPointer &df : actualList) {
-        existItems.append(df->url().toString());
+    const QList<QUrl> &actualList = FileTreaterCt->getFiles();
+    for (const QUrl &df : actualList) {
+        existItems.append(df.toString());
     }
 
     GridIns->setItems(existItems);
@@ -250,6 +254,7 @@ CanvasViewPointer CanvasManagerPrivate::createView(const ScreenPointer &sp, int 
     view->initUI();
 
     view->setScreenNum(index);
+    connect(view.get(), &CanvasView::createFileByMenu, this, &CanvasManagerPrivate::recordMenuLocation, Qt::DirectConnection);
 
     auto background = backgroundService->background(sp->name());
     view->setParent(background.get());
@@ -275,6 +280,49 @@ void CanvasManagerPrivate::updateView(const CanvasViewPointer &view, const Scree
 
     auto avRect = relativeRect(sp->availableGeometry(), sp->geometry());
     view->setGeometry(avRect);
+}
+
+void CanvasManagerPrivate::onFileCreated(const QUrl &url)
+{
+    QString path = url.toString();
+    {
+        QMutexLocker l(&createFileMutex);
+        if (createFileByMenu) {
+            // todo(wangcl) 优化为回调函数处理(在canvasview的右键菜单调用时传入回调函数)，此处直接刷新返回
+            createFileByMenu = false;
+            GridIns->tryAppendAfter(path, createFileScreenNum, createFileGridPos);
+
+            // todo open editor for rename file
+        } else {
+            GridIns->append(path);
+        }
+    }
+
+    q->update();
+}
+
+void CanvasManagerPrivate::onFileDeleted(const QUrl &url)
+{
+    QString path = url.toString();
+    QPair<int, QPoint> pos;
+    if (GridIns->point(path, pos)) {
+        GridIns->remove(pos.first, path);
+        q->update();
+    }
+}
+
+void CanvasManagerPrivate::onFileRenamed(const QUrl &url)
+{
+    Q_UNUSED(url)
+    // todo(wangcl)
+}
+
+void CanvasManagerPrivate::recordMenuLocation(const int screenNum, const QPoint &pos)
+{
+    QMutexLocker l(&createFileMutex);
+    createFileByMenu = true;
+    createFileScreenNum = screenNum;
+    createFileGridPos = pos;
 }
 
 void CanvasManagerPrivate::backgroundDeleted()

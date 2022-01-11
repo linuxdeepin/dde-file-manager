@@ -273,6 +273,18 @@ void CanvasGrid::append(QStringList items)
     d->requestSync();
 }
 
+void CanvasGrid::tryAppendAfter(const QString &item, int index, const QPoint &begin)
+{
+    if (Q_UNLIKELY(item.isEmpty()))
+        return;
+
+    AppendOper oper(d);
+    oper.tryAppendAfter(QStringList() << item, index, begin);
+    d->applay(&oper);
+
+    d->requestSync();
+}
+
 void CanvasGrid::popOverload()
 {
     if (!d->overload.isEmpty()) {

@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangyu<zhangyub@uniontech.com>
  *
  * Maintainer: zhangyu<zhangyub@uniontech.com>
  *             liqiang<liqianga@uniontech.com>
+ *             wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@
 #include <QScrollBar>
 #include <QPaintEvent>
 #include <QApplication>
-
+#include <QMenu>
 
 DSB_D_USE_NAMESPACE
 
@@ -54,7 +55,7 @@ QRect CanvasView::visualRect(const QModelIndex &index) const
 
 void CanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint) {
     Q_UNUSED(index)
-            Q_UNUSED(hint)
+    Q_UNUSED(hint)
 }
 
 QModelIndex CanvasView::indexAt(const QPoint &point) const
@@ -236,6 +237,21 @@ void CanvasView::paintEvent(QPaintEvent *event)
 
     // todo: 拖动绘制
     painter.drawDragMove(option);
+}
+
+void CanvasView::contextMenuEvent(QContextMenuEvent *event)
+{
+    d->lastMenuGridPos = d->gridAt(event->pos());
+
+    const QModelIndex &index = indexAt(event->pos());
+    Qt::ItemFlags flags;
+
+    if (d->isEmptyArea(event->pos())) {
+        d->showEmptyAreaMenu(flags);
+    } else {
+        flags = model()->flags(index);
+        d->showNormalMenu(index, flags);
+    }
 }
 
 void CanvasView::setScreenNum(const int screenNum)
@@ -519,12 +535,82 @@ QString CanvasViewPrivate::visualItem(const QPoint &gridPos) const
     return GridIns->item(screenNum, gridPos);
 }
 
+bool CanvasViewPrivate::isEmptyArea(const QPoint &pos) const
+{
+    const QModelIndex &index = q->indexAt(pos);
+    if (index.isValid() && q->selectionModel()->isSelected(index)) {
+        qDebug() << "not empty:" << pos << index.data().toString();
+        return false;
+    }
+    // todo(wangcl) expand item geometry,and so on
+
+    return true;
+}
+
 bool CanvasViewPrivate::isWaterMaskOn()
 {
     QGSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
     if (desktopSettings.keys().contains("water-mask"))
         return  desktopSettings.get("water-mask").toBool();
     return true;
+}
+
+void CanvasViewPrivate::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
+{
+    Q_UNUSED(indexFlags)
+    // todo menu
+
+    // test code
+    QMenu *tstMenu = new QMenu;
+    QAction *tstAction = nullptr;
+
+    tstAction = tstMenu->addAction(tr("create file"));
+    connect(tstAction, &QAction::triggered, q, [=](){
+        emit q->createFileByMenu(screenNum, lastMenuGridPos);
+
+        QString path = q->model()->desktopUrl().path();
+        path += "/testFile.txt";
+
+        QFile file(path);
+        if (file.open(QIODevice::WriteOnly)) {
+            file.close();
+        }
+    });
+
+    tstAction = tstMenu->addAction(tr("create folder"));
+    connect(tstAction, &QAction::triggered, q, [=](){
+        emit q->createFileByMenu(screenNum, lastMenuGridPos);
+
+        QDir dir(q->model()->desktopUrl().path());
+        dir.mkdir("testFolder");
+    });
+
+    tstMenu->exec(QCursor::pos());
+    delete tstMenu;
+}
+
+void CanvasViewPrivate::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
+{
+    Q_UNUSED(index)
+    Q_UNUSED(indexFlags)
+    // todo menu
+
+    // test code
+    QMenu *tstMenu = new QMenu;
+    QAction *tstAction = nullptr;
+
+    tstAction = tstMenu->addAction(tr("open"));
+    connect(tstAction, &QAction::triggered, q, [=](){
+
+    });
+
+    tstAction = tstMenu->addAction(tr("delete"));
+    connect(tstAction, &QAction::triggered, q, [=](){
+
+    });
+
+    tstMenu->exec(QCursor::pos());
+    delete tstMenu;
 }
 
 QModelIndex CanvasViewPrivate::firstIndex() const

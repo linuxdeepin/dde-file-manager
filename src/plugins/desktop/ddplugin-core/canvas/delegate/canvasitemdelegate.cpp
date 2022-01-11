@@ -24,6 +24,8 @@
 #include "view/canvasmodel.h"
 #include "view/canvasselectionmodel.h"
 #include "view/canvasview_p.h"
+#include "filetreater.h"
+
 #include <DApplication>
 #include <DApplicationHelper>
 
@@ -63,7 +65,7 @@ CanvasItemDelegatePrivate::~CanvasItemDelegatePrivate()
 
 ElideTextLayout *CanvasItemDelegatePrivate::createTextlayout(const QModelIndex &index, const QPainter *painter) const
 {
-    ElideTextLayout *layout = new ElideTextLayout(index.data(CanvasModel::FileDisplayNameRole).toString());
+    ElideTextLayout *layout = new ElideTextLayout(index.data(FileTreater::kFileDisplayNameRole).toString());
 
     // tag rect
     q->initTextLayout(index, layout);
@@ -524,7 +526,7 @@ void CanvasItemDelegate::updateItemSizeHint() const
 void CanvasItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
 {
     // todo(zy) 注释
-    const QVariantHash &ep = index.data(CanvasModel::ExtraProperties).toHash();
+    const QVariantHash &ep = index.data(FileTreater::kExtraProperties).toHash();
     const QList<QColor> &colors = qvariant_cast<QList<QColor>>(ep.value("colored"));
 
     if (!colors.isEmpty()) {

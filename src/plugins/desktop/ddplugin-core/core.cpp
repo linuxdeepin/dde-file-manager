@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huangyu<huangyub@uniontech.com>
  *
@@ -66,13 +66,11 @@ void registerAllService()
 void registerFileSystem()
 {
     UrlRoute::regScheme(SchemeTypes::kFile, "/");
-    UrlRoute::regScheme(SchemeTypes::kDesktop,
-                        StandardPaths::location(StandardPaths::kDesktopPath),
-                        QIcon::fromTheme(StandardPaths::iconName(StandardPaths::kDesktopPath)),
-                        false);
 
     InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kFile);
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kDesktop);
+    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kFile);
+    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kFile);
+    MenuService::regClass<LocalFileMenu>(SchemeTypes::kFile);
 }
 
 void Core::initialize()

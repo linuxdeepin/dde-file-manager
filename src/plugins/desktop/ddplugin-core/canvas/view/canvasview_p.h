@@ -70,7 +70,11 @@ public:
     QRect visualRect(const QPoint &gridPos) const;
     QRect visualRect(const QString &item) const;
     QString visualItem(const QPoint &gridPos) const;
+    bool isEmptyArea(const QPoint &pos) const;
     bool isWaterMaskOn();
+
+    void showEmptyAreaMenu(const Qt::ItemFlags &indexFlags);
+    void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags);
 public:
     QModelIndex firstIndex() const;
     QModelIndex lastIndex() const;
@@ -126,6 +130,8 @@ protected:
     OperState state;
 
     QPoint dragTargetGrid { QPoint(-1, -1) };
+
+    QPoint lastMenuGridPos;
 private:
     CanvasView *q;
     WaterMaskFrame *waterMask = nullptr;

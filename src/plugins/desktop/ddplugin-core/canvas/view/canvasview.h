@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangyu<zhangyub@uniontech.com>
  *
@@ -66,6 +66,10 @@ public:
 public:
     bool isTransparent(const QModelIndex &index) const;
     QList<QIcon> additionalIcon(const QModelIndex &index) const;
+
+signals:
+    void createFileByMenu(const int &screenNum, const QPoint &pos);
+
 protected:
     QRect itemRect(const QModelIndex &index) const;
 protected:
@@ -74,6 +78,8 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *events) override;
     void paintEvent(QPaintEvent *event) override;
+
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
     QScopedPointer<CanvasViewPrivate> d;

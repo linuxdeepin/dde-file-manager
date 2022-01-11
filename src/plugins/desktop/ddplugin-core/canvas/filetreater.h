@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liqiang<liqianga@uniontech.com>
  *
  * Maintainer: liqiang<liqianga@uniontech.com>
+ *             wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,46 +36,73 @@ class FileTreater : public QObject
 {
     Q_OBJECT
 public:
+
+    // tod(wangcl) some need del
+    enum Roles {
+        kFileIconRole = Qt::DecorationRole,
+//        kFilePathRole = Qt::UserRole + 1,
+        kFileNameRole = Qt::UserRole + 2,
+        kFileSizeRole = Qt::UserRole + 3,
+        kFileMimeTypeRole = Qt::UserRole + 4,
+//        kFileOwnerRole = Qt::UserRole + 5,
+        kFileLastModifiedRole = Qt::UserRole + 6,
+//        kFileLastReadRole = Qt::UserRole + 7,
+//        kFileCreatedRole = Qt::UserRole + 8,
+        kFileDisplayNameRole = Qt::UserRole + 9,
+//        kFilePinyinName = Qt::UserRole + 10,
+        kExtraProperties = Qt::UserRole + 11,
+//        kFileBaseNameRole = Qt::UserRole + 12,
+        kFileSuffixRole = Qt::UserRole + 13,
+        kFileNameOfRenameRole = Qt::UserRole + 14,
+        kFileBaseNameOfRenameRole = Qt::UserRole + 15,
+        kFileSuffixOfRenameRole = Qt::UserRole + 16,
+//        kFileSizeInKiloByteRole = Qt::UserRole + 17,
+//        kFileLastModifiedDateTimeRole = Qt::UserRole + 18,
+//        kFileIconModelToolTipRole = Qt::UserRole + 19,
+//        kFileLastReadDateTimeRole = Qt::UserRole + 20,
+//        kFileCreatedDateTimeRole = Qt::UserRole + 21,
+//        kFileUserRole = Qt::UserRole + 99,
+        UnknowRole = Qt::UserRole + 999
+    };
+
     static FileTreater *instance();
     void init();
-    DFMLocalFileInfoPointer file(const QString &url);
-    DFMLocalFileInfoPointer file(int index);
+    DFMLocalFileInfoPointer fileInfo(const QString &url);
+    DFMLocalFileInfoPointer fileInfo(int index);
 
-    QList<DFMLocalFileInfoPointer> &sortFiles(QList<dfmbase::AbstractFileInfo *> &fileInfoLst, QString &str);
-    QList<DFMLocalFileInfoPointer> &getFiles();
-    int indexOfChild(DFMLocalFileInfoPointer info);
-    int fileCount();
-    QString homePath();
-    bool isDone();
+    int indexOfChild(AbstractFileInfoPointer info);
+    const QList<QUrl> &getFiles() const;
+    int fileCount() const;
 
-protected:
-    void loadData(const QDir &url);
-    void initconnection();
-    bool startWatch();
-    bool stopWatch();
-    void updateFile(const QString &);
-    void asyncFunc(const QDir &url);
+    QUrl desktopUrl() const;
+    bool canRefresh() const;
+    void refresh();
+    bool isRefreshed() const;
+
+    bool enableSort() const;
+    void setEnabledSort(const bool enabledSort);
+    bool sort();
+
+    Qt::SortOrder sortOrder() const;
+    void setSortOrder(const Qt::SortOrder order);
+
+    int sortRole() const;
+    void setSortRole(const int role, const Qt::SortOrder order = Qt::AscendingOrder);
 
 signals:
-    void fileMove(const QStringList &oldLst, const QStringList &newLst);
-    void fileAdd(const QString &);
-    void fileDelete(const QString &);
-    void fileFinished();
+    void fileCreated(const QUrl &url);
+    void fileDeleted(const QUrl &url);
+    void fileRenamed(const QUrl &url);
 
-protected slots:
-    void onAddFile(const QString &);
-    void onDeleteFile(const QString &);
-    void onMoveFile(const QString &, const QString &);
-    void onFileWatcher();
+    void fileRefreshed();
+    void enableSortChanged(bool enableSort);
 
 protected:
     explicit FileTreater(QObject *parent = nullptr);
     ~FileTreater();
+
 private:
-    QFuture<void> future;
-    QFutureWatcher<void> futureWatcher;
-    FileTreaterPrivate *d;
-    QMutex mutex;
+    QSharedPointer<FileTreaterPrivate> d;
 };
 
 #define FileTreaterCt DSB_D_NAMESPACE::FileTreater::instance()

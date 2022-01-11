@@ -191,7 +191,7 @@ bool MoveGridOper::move(const GridPos &to, const GridPos &center, const QStringL
     // append all items that can not move to \a destPos
     if (!invalidPos.isEmpty()) {
         AppendOper oper(this);
-        oper.appendAfter(invalidPos, to.first, to.second);
+        oper.tryAppendAfter(invalidPos, to.first, to.second);
         applay(&oper);
     }
 
@@ -231,7 +231,7 @@ void AppendOper::tryAppendAfter(QStringList items, int index, const QPoint &begi
     items = appendAfter(items, index, begin);
 
     // left over
-    if (!items.isEmpty())
+    if (items.isEmpty())
         return;
 
     // apeend begin head on the surface
@@ -249,7 +249,7 @@ void AppendOper::tryAppendAfter(QStringList items, int index, const QPoint &begi
 
 QStringList AppendOper::appendAfter(QStringList items, int index, const QPoint &begin)
 {
-    if (!items.isEmpty())
+    if (items.isEmpty())
         return items;
 
     QList<QPoint> posList = voidPos(index);
