@@ -59,7 +59,7 @@
 
 static int FindInsertPosInOrderList(const FileSystemNodePointer &needNode,
         const QList<FileSystemNodePointer> &list, const DAbstractFileInfo::CompareFunction &sortFun,
-        const Qt::SortOrder &order, const bool &isCancel){
+        const Qt::SortOrder &order, const bool *isCancel){
     int begin = 0;
     int end = list.count();
     int row = (begin + end)/2;
@@ -67,7 +67,7 @@ static int FindInsertPosInOrderList(const FileSystemNodePointer &needNode,
     // 先找到文件还是目录
     forever {
 
-        if (isCancel)
+        if (*isCancel)
             return row;
 
         if (begin == end)
@@ -96,7 +96,6 @@ static int FindInsertPosInOrderList(const FileSystemNodePointer &needNode,
             }
         }
     }
-
     return row;
 }
 
@@ -279,18 +278,20 @@ void FileSystemNode::insertChildren(int index, const DUrl &url, const FileSystem
     rwLock->unlock();
 }
 
-int FileSystemNode::insertChildren(const DUrl &url, const FileSystemNodePointer &needNode, const DAbstractFileInfo::CompareFunction &sortFun, const Qt::SortOrder &order)
+int FileSystemNode::insertChildren(const DUrl &url, const FileSystemNodePointer &needNode, const DAbstractFileInfo::CompareFunction &sortFun, const Qt::SortOrder &order, const bool &isInsert)
 {
     rwLock->lockForWrite();
     int row = 0;
     if (!children.contains(url)) {
         if (!sortFun) {
-            noLockAppendChildren(url, needNode);
-            row = childrenCount() - 1;
+            row = childrenCount();
+            if (isInsert)
+                noLockAppendChildren(url, needNode);
         } else {
             bool isCancel{false};
-            row = FindInsertPosInOrderList(needNode, visibleChildren, sortFun, order, isCancel);
-            noLockInsertChildren(row, url, needNode);
+            row = FindInsertPosInOrderList(needNode, visibleChildren, sortFun, order, &isCancel);
+            if (isInsert)
+                noLockInsertChildren(row, url, needNode);
         }
     }
     rwLock->unlock();
@@ -516,7 +517,7 @@ void FileSystemNode::setChildren(const QHash<DUrl, FileSystemNodePointer> &map, 
             continue;
         const FileSystemNodePointer &node = insertCacheChildren.value(fileUrl);
         children[fileUrl] = node;
-        row = FindInsertPosInOrderList(node, visibleChildren, sortFun, order, isCancel);
+        row = FindInsertPosInOrderList(node, visibleChildren, sortFun, order, &isCancel);
         visibleChildren.insert(row, node);
     }
 
@@ -2370,8 +2371,9 @@ bool DFileSystemModel::doSortBusiness(bool emitDataChange)
     }
 
     QList<FileSystemNodePointer> list;
-
+    beginInsertRows(createIndex(node, 0), 0, node->childrenCount());
     bool ok = sort(node->fileInfo, list);
+    endInsertRows();
 
     if (ok && !isNeedToBreakBusyCase) {
         if (!list.isEmpty())
@@ -2969,7 +2971,7 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
                     DUrl tempUrl = fileUrl;
                     FileSystemNodePointer tempNode = node;
                     Qt::SortOrder order = d->srotOrder;
-                    d->rootNode->insertChildren(tempUrl, tempNode, compareFun, order);
+                    row = d->rootNode->insertChildren(tempUrl, tempNode, compareFun, order, false);
                 });
             }
 
@@ -2990,8 +2992,11 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
         beginInsertRows(createIndex(parentNode, 0), row == -1 ? parentNode->childrenCount() : row,
                         row == -1 ? parentNode->childrenCount() : row);
 
-        if (row == -1)
+        if (row == -1) {
             parentNode->insertChildren(parentNode->childrenCount(), fileUrl, node, d->rootNodeManager->isInsertCaches());
+        } else {
+            parentNode->insertChildren(row,fileUrl, node, &isNeedToBreakBusyCase);
+        }
 
         endInsertRows();
     }
@@ -3135,7 +3140,7 @@ void DFileSystemModel::sortByMySelf(QList<FileSystemNodePointer> &list, const DA
     for (const auto & needNode : list) {
         if (isNeedToBreakBusyCase)
             return;
-        row = FindInsertPosInOrderList(needNode, sortList, sortFun, d->srotOrder, isNeedToBreakBusyCase);
+        row = FindInsertPosInOrderList(needNode, sortList, sortFun, d->srotOrder, &isNeedToBreakBusyCase);
         if (isNeedToBreakBusyCase)
             return;
         sortList.insert(row, needNode);
