@@ -23,6 +23,7 @@
 #include "tab.h"
 #include "tabclosebutton.h"
 #include "events/workspaceeventcaller.h"
+#include "utils/workspacehelper.h"
 
 #include <QUrl>
 #include <QEvent>
@@ -67,7 +68,10 @@ int TabBar::createTab(AbstractBaseView *view)
     setCurrentIndex(index);
     lastAddTabState = false;
 
-    tabAddableChanged(count() < 8);
+    tabAddableChanged(count() < kMaxTabCount);
+
+    quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
+    WorkspaceEventCaller::sendTabAdded(thisWinID);
 
     return index;
 }
@@ -78,6 +82,9 @@ void TabBar::removeTab(const int index, const bool &remainState)
 
     tabList.removeAt(index);
     tab->deleteLater();
+
+    quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
+    WorkspaceEventCaller::sendTabRemoved(thisWinID, index);
 
     if (tabCloseButton->getClosingIndex() <= count() - 1
         && tabCloseButton->getClosingIndex() >= 0) {
@@ -99,7 +106,7 @@ void TabBar::removeTab(const int index, const bool &remainState)
         setCurrentIndex(index);
     else
         setCurrentIndex(count() - 1);
-    emit tabAddableChanged(count() < 8);
+    emit tabAddableChanged(count() < kMaxTabCount);
 
     if (count() < 2) {
         lastDeleteState = false;
@@ -115,7 +122,7 @@ int TabBar::getCurrentIndex() const
 
 bool TabBar::tabAddable() const
 {
-    return count() < 8;
+    return count() < kMaxTabCount;
 }
 
 Tab *TabBar::currentTab() const
@@ -208,20 +215,32 @@ void TabBar::onTabCloseButtonClicked()
 
 void TabBar::onMoveNext(Tab *tab)
 {
-    if (tabList.indexOf(tab) >= count() - 1)
+    int tabIndex = tabList.indexOf(tab);
+    if (tabIndex >= count() - 1)
         return;
-    tabList.swap(tabList.indexOf(tab), tabList.indexOf(tab) + 1);
-    emit tabMoved(tabList.indexOf(tab) - 1, tabList.indexOf(tab));
-    setCurrentIndex(tabList.indexOf(tab));
+
+    tabList.swap(tabIndex, tabIndex + 1);
+
+    quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
+    WorkspaceEventCaller::sendTabMoved(thisWinID, tabIndex - 1, tabIndex);
+    emit tabMoved(tabIndex - 1, tabIndex);
+
+    setCurrentIndex(tabIndex);
 }
 
 void TabBar::onMovePrevius(Tab *tab)
 {
-    if (tabList.indexOf(tab) <= 0)
+    int tabIndex = tabList.indexOf(tab);
+    if (tabIndex <= 0)
         return;
-    tabList.swap(tabList.indexOf(tab), tabList.indexOf(tab) - 1);
-    emit tabMoved(tabList.indexOf(tab) + 1, tabList.indexOf(tab));
-    setCurrentIndex(tabList.indexOf(tab));
+
+    tabList.swap(tabIndex, tabIndex - 1);
+
+    quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
+    WorkspaceEventCaller::sendTabMoved(thisWinID, tabIndex + 1, tabIndex);
+    emit tabMoved(tabIndex + 1, tabIndex);
+
+    setCurrentIndex(tabIndex);
 }
 
 void TabBar::onRequestNewWindow(const QUrl url)

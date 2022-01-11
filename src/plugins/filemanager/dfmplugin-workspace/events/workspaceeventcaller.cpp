@@ -22,11 +22,13 @@
 */
 #include "workspaceeventcaller.h"
 
+#include "services/filemanager/workspace/workspace_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/framework.h>
 
+DSB_FM_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -49,4 +51,24 @@ void WorkspaceEventCaller::sendChangeCurrentUrl(const quint64 windowId, const QU
 {
     if (!url.isEmpty())
         dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
+}
+
+void WorkspaceEventCaller::sendTabAdded(const quint64 windowID)
+{
+    dispatcher()->publish(Workspace::EventType::kTabAdded, windowID);
+}
+
+void WorkspaceEventCaller::sendTabChanged(const quint64 windowID, const int index)
+{
+    dispatcher()->publish(Workspace::EventType::kTabChanged, windowID, index);
+}
+
+void WorkspaceEventCaller::sendTabMoved(const quint64 windowID, const int from, const int to)
+{
+    dispatcher()->publish(Workspace::EventType::kTabMoved, windowID, from, to);
+}
+
+void WorkspaceEventCaller::sendTabRemoved(const quint64 windowID, const int index)
+{
+    dispatcher()->publish(Workspace::EventType::kTabRemoved, windowID, index);
 }

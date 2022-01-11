@@ -56,8 +56,8 @@ void FileViewPrivate::initIconModeView()
 
     if (statusBar) {
         statusBar->setScalingVisible(true);
-        q->setIconSize(QSize(GlobalPrivate::kIconSizeList[configIconSizeLevel],
-                             GlobalPrivate::kIconSizeList[configIconSizeLevel]));
+        q->setIconSize(QSize(kIconSizeList[configIconSizeLevel],
+                             kIconSizeList[configIconSizeLevel]));
         statusBar->scalingSlider()->setValue(configIconSizeLevel);
     }
 }

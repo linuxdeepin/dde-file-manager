@@ -33,7 +33,7 @@ enum class ViewMode {
     kIconMode = 0x01,
     kListMode = 0x02,
     kExtendMode = 0x04,
-    AllViewMode = kIconMode | kListMode | kExtendMode
+    kAllViewMode = kIconMode | kListMode | kExtendMode
 };
 }   //namespace Global
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -28,9 +28,15 @@
 DSB_FM_BEGIN_NAMESPACE
 
 namespace Workspace {
-namespace EventTopic {
 
-}   // namespace EventTopics
+// custom event type
+namespace EventType {
+extern const int kTabAdded;
+extern const int kTabChanged;
+extern const int kTabMoved;
+extern const int kTabRemoved;
+};   // namespace EventType
+
 }   // namespace Workspace
 
 DSB_FM_END_NAMESPACE

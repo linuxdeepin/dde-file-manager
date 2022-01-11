@@ -23,6 +23,24 @@
 #include "workspaceservice.h"
 #include "private/workspaceservice_p.h"
 
+#include "dfm-base/utils/universalutils.h"
+
+DSB_FM_BEGIN_NAMESPACE
+
+namespace Workspace {
+
+// custom event type
+namespace EventType {
+extern const int kTabAdded = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+extern const int kTabChanged = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+extern const int kTabMoved = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+extern const int kTabRemoved = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+};   // namespace EventType
+
+}   // namespace Sidebar
+
+DSB_FM_END_NAMESPACE
+
 DSB_FM_USE_NAMESPACE
 
 /*!
@@ -54,4 +72,9 @@ WorkspaceService::~WorkspaceService()
 void WorkspaceService::addScheme(const QString &scheme)
 {
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme);
+}
+
+bool WorkspaceService::tabAddable(const quint64 windowID)
+{
+    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID).toBool();
 }

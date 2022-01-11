@@ -55,9 +55,12 @@ class WorkspaceWidget : public dfmbase::AbstractFrame
 
 public:
     explicit WorkspaceWidget(QFrame *parent = nullptr);
+
     void setCurrentUrl(const QUrl &url) override;
     QUrl currentUrl() const override;
+
     void openNewTab(const QUrl &url);
+    bool canAddNewTab();
 
 public slots:
     void onOpenUrlInNewTab(quint64 windowId, const QUrl &url);

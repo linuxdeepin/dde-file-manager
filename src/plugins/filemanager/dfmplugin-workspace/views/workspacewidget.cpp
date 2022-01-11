@@ -51,11 +51,9 @@ WorkspaceWidget::WorkspaceWidget(QFrame *parent)
     initConnect();
 }
 
-// NOTE(zhangs): please ref to : DFileManagerWindowPrivate::cdForTab (old filemanager)
 void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 {
     workspaceUrl = url;
-    // NOTE(zhangs): follw is temp code, need tab!
 
     if (!tabBar->currentTab())
         tabBar->createTab(nullptr);
@@ -101,6 +99,14 @@ void WorkspaceWidget::openNewTab(const QUrl &url)
     WorkspaceEventCaller::sendChangeCurrentUrl(windowID, url);
 }
 
+bool WorkspaceWidget::canAddNewTab()
+{
+    if (tabBar)
+        return tabBar->tabAddable();
+
+    return false;
+}
+
 void WorkspaceWidget::onOpenUrlInNewTab(quint64 windowId, const QUrl &url)
 {
     quint64 thisWindowID = WorkspaceHelper::instance()->windowId(this);
@@ -114,6 +120,7 @@ void WorkspaceWidget::onCurrentTabChanged(int tabIndex)
     if (tab) {
         auto windowID = WorkspaceHelper::instance()->windowId(this);
         WorkspaceEventCaller::sendChangeCurrentUrl(windowID, tab->getCurrentUrl());
+        WorkspaceEventCaller::sendTabChanged(windowID, tabIndex);
     }
 }
 

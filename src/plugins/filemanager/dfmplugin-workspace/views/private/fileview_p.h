@@ -23,6 +23,7 @@
 #define FILEVIEW_P_H
 
 #include "views/fileview.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QObject>
 #include <QUrl>
@@ -33,7 +34,6 @@ const int kListViewSpacing { 1 };
 const int kListViewMinimumWidth { 80 };
 const int kListViewDefaultWidth { 120 };
 const int kListViewIconSize { 24 };
-const QList<int> kIconSizeList { 48, 64, 96, 128, 256 };
 }   // namespace GlobalPrivate
 
 DPWORKSPACE_BEGIN_NAMESPACE
@@ -55,7 +55,7 @@ class FileViewPrivate
     QTimer *updateStatusBarTimer = nullptr;
     QUrl url;
 
-    FileView::ViewMode configViewMode = FileView::ViewMode::IconMode;
+    DFMBASE_NAMESPACE::Global::ViewMode configViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
     int configIconSizeLevel = 1;
 
     explicit FileViewPrivate(FileView *qq);

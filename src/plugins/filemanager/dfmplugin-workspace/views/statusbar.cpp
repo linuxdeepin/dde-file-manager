@@ -54,7 +54,7 @@ QSize StatusBar::sizeHint() const
 void StatusBar::resetScalingSlider(const int stepCount)
 {
     if (scaleSlider)
-        scaleSlider->setMaximum(stepCount - 1);
+        scaleSlider->setMaximum(stepCount);
 }
 
 void StatusBar::setScalingVisible(const bool visible)

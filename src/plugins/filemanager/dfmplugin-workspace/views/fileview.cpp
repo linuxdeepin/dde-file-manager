@@ -68,12 +68,12 @@ QWidget *FileView::widget() const
     return const_cast<FileView *>(this);
 }
 
-void FileView::setViewMode(ViewMode mode)
+void FileView::setViewMode(Global::ViewMode mode)
 {
     setItemDelegate(d->delegates[static_cast<int>(mode)]);
 
     switch (mode) {
-    case ViewMode::IconMode:
+    case Global::ViewMode::kIconMode:
         setUniformItemSizes(false);
         setResizeMode(Adjust);
         setOrientation(QListView::LeftToRight, true);
@@ -81,7 +81,7 @@ void FileView::setViewMode(ViewMode mode)
 
         d->initIconModeView();
         break;
-    case ViewMode::ListMode:
+    case Global::ViewMode::kListMode:
         setUniformItemSizes(true);
         setResizeMode(Fixed);
         setOrientation(QListView::TopToBottom, false);
@@ -91,14 +91,14 @@ void FileView::setViewMode(ViewMode mode)
             setMinimumWidth(model()->columnCount() * GlobalPrivate::kListViewMinimumWidth);
         d->initListModeView();
         break;
-    case ViewMode::ExtendMode:
+    case Global::ViewMode::kExtendMode:
         break;
-    case ViewMode::AllViewMode:
+    case Global::ViewMode::kAllViewMode:
         break;
     }
 }
 
-void FileView::setDelegate(ViewMode mode, BaseItemDelegate *view)
+void FileView::setDelegate(Global::ViewMode mode, BaseItemDelegate *view)
 {
     if (!view)
         return;
@@ -256,12 +256,12 @@ void FileView::delayUpdateStatusBar()
 void FileView::viewModeChanged(quint64 windowId, int viewMode)
 {
     auto thisWindId = WorkspaceHelper::instance()->windowId(this);
-    ViewMode mode = static_cast<ViewMode>(viewMode);
+    Global::ViewMode mode = static_cast<Global::ViewMode>(viewMode);
     if (thisWindId == windowId) {
         // TODO(yanghao): enum
-        if (mode == ViewMode::IconMode) {
+        if (mode == Global::ViewMode::kIconMode) {
             setViewModeToIcon();
-        } else if (mode == ViewMode::ListMode) {
+        } else if (mode == Global::ViewMode::kListMode) {
             setViewModeToList();
         }
     }
@@ -293,14 +293,14 @@ void FileView::initializeModel()
 
 void FileView::initializeDelegate()
 {
-    setDelegate(ViewMode::IconMode, new IconItemDelegate(this));
-    setDelegate(ViewMode::ListMode, new ListItemDelegate(this));
+    setDelegate(Global::ViewMode::kIconMode, new IconItemDelegate(this));
+    setDelegate(Global::ViewMode::kListMode, new ListItemDelegate(this));
 }
 
 void FileView::initializeStatusBar()
 {
     d->statusBar = new StatusBar(this);
-    d->statusBar->resetScalingSlider(GlobalPrivate::kIconSizeList.length() - 1);
+    d->statusBar->resetScalingSlider(kIconSizeList.length() - 1);
 
     d->updateStatusBarTimer = new QTimer(this);
     d->updateStatusBarTimer->setInterval(100);
@@ -344,7 +344,7 @@ void FileView::loadViewState(const QUrl &url)
 {
     // TODO:(yanghao)
     QVariant defaultViewMode = Application::instance()->appAttribute(Application::kViewMode).toInt();
-    d->configViewMode = static_cast<ViewMode>(fileViewStateValue(url, "viewMode", defaultViewMode).toInt());
+    d->configViewMode = static_cast<Global::ViewMode>(fileViewStateValue(url, "viewMode", defaultViewMode).toInt());
 
     QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();
     d->configIconSizeLevel = fileViewStateValue(url, "iconSizeLevel", defaultIconSize).toInt();

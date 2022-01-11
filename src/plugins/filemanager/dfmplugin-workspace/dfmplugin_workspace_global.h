@@ -27,4 +27,16 @@
 #define DPWORKSPACE_USE_NAMESPACE using namespace dfmplugin_workspace;
 #define DPWORKSPACE_NAMESPACE dfmplugin_workspace
 
+#include <QList>
+
+DPWORKSPACE_BEGIN_NAMESPACE
+
+// view defines
+const QList<int> kIconSizeList { 48, 64, 96, 128, 256 };
+
+// tab defines
+const int kMaxTabCount = 8;
+
+DPWORKSPACE_END_NAMESPACE
+
 #endif   // DFMPLUGIN_WORKSPACE_GLOBAL_H

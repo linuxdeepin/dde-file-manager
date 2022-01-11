@@ -55,8 +55,8 @@ IconItemDelegate::IconItemDelegate(FileView *parent)
 {
     Q_D(IconItemDelegate);
 
-    d->itemIconSize.setWidth(d->sizeList[1]);
-    d->itemIconSize.setHeight(d->sizeList[1]);
+    d->itemIconSize.setWidth(kIconSizeList[1]);
+    d->itemIconSize.setHeight(kIconSizeList[1]);
 }
 
 IconItemDelegate::~IconItemDelegate()
@@ -159,8 +159,8 @@ QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
 int IconItemDelegate::setIconSizeByIconSizeLevel(int level)
 {
     Q_D(IconItemDelegate);
-    if (level < d->sizeList.length()) {
-        int length = d->sizeList.at(level);
+    if (level < kIconSizeList.length()) {
+        int length = kIconSizeList.at(level);
         d->itemIconSize.setWidth(length);
         d->itemIconSize.setHeight(length);
 

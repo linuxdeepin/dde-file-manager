@@ -25,6 +25,7 @@
 
 #include "dfmplugin_workspace_global.h"
 #include "dfm-base/interfaces/abstractbaseview.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <DListView>
 
@@ -48,13 +49,6 @@ public:
         kDoubleClicked
     };
 
-    enum class ViewMode : uint8_t {
-        IconMode = 0x01,
-        ListMode = 0x02,
-        ExtendMode = 0x04,
-        AllViewMode = IconMode | ListMode | ExtendMode
-    };
-
     explicit FileView(const QUrl &url, QWidget *parent = nullptr);
 
     QWidget *widget() const override;
@@ -65,8 +59,8 @@ public:
     QList<QUrl> selectedUrlList() const override;
     void refresh() override;
 
-    void setViewMode(ViewMode mode);
-    void setDelegate(ViewMode mode, BaseItemDelegate *view);
+    void setViewMode(DFMBASE_NAMESPACE::Global::ViewMode mode);
+    void setDelegate(DFMBASE_NAMESPACE::Global::ViewMode mode, BaseItemDelegate *view);
     FileViewModel *model() const;
     void setModel(QAbstractItemModel *model) override;
 
@@ -77,11 +71,11 @@ public:
 
     inline void setViewModeToList()
     {
-        setViewMode(ViewMode::ListMode);
+        setViewMode(DFMBASE_NAMESPACE::Global::ViewMode::kListMode);
     }
     inline void setViewModeToIcon()
     {
-        setViewMode(ViewMode::IconMode);
+        setViewMode(DFMBASE_NAMESPACE::Global::ViewMode::kIconMode);
     }
 
 public slots:

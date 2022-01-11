@@ -17,6 +17,7 @@ public:
 
 public slots:
     void invokeAddScheme(const QString &scheme);
+    bool invokeTabAddable(const quint64 windowID);
 
 private:
     explicit WorkspaceUnicastReceiver(QObject *parent = nullptr);

@@ -43,6 +43,7 @@ public:
     }
 
     void addScheme(const QString &scheme);
+    bool tabAddable(const quint64 windowID);
 
 private:
     explicit WorkspaceService(QObject *parent = nullptr);

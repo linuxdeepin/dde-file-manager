@@ -65,7 +65,6 @@ public slots:
     void onTabDragStarted();
     void activateNextTab();
     void activatePreviousTab();
-    //    void onCurrentUrlChanged(const DFMUrlBaseEvent &event);
 
 signals:
     void currentChanged(const int &index);

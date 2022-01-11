@@ -229,6 +229,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     painter->setPen(pen);
     int y = static_cast<int>(boundingRect().height());
     int x = static_cast<int>(boundingRect().width());
+
     qDrawShadeLine(painter, QPoint(x, 0), QPoint(x, y), pal);
     QPalette::ColorGroup cp = isChecked() || d->hovered ? QPalette::Active : QPalette::Inactive;
     pen.setColor(pal.color(cp, QPalette::Foreground));
