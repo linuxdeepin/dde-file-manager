@@ -26,6 +26,7 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/finallyutil.h"
+#include "dfm-base/shortcut/shortcut.h"
 
 #include <QDebug>
 #include <QEvent>
@@ -34,6 +35,7 @@
 #include <QScreen>
 #include <QWindow>
 
+DFMBASE_USE_NAMESPACE
 DSB_FM_BEGIN_NAMESPACE
 
 using dfmbase::Application;
@@ -183,6 +185,18 @@ void WindowsServicePrivate::onWindowClosed(dfmbase::FileManagerWindow *window)
     windows.remove(window->internalWinId());
 }
 
+void WindowsServicePrivate::onShowHotkeyHelp(FileManagerWindow *window)
+{
+    QRect rect = window->geometry();
+    QPoint pos(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2);
+    Shortcut sc;
+    QStringList args;
+    QString param1 = "-j=" + sc.toStr();
+    QString param2 = "-p=" + QString::number(pos.x()) + "," + QString::number(pos.y());
+    args << param1 << param2;
+    QProcess::startDetached("deepin-shortcut-viewer", args);
+}
+
 /*!
  * \class WindowService
  * \brief manage all windows for filemanager
@@ -244,6 +258,10 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
     connect(window, &FileManagerWindow::aboutToClose, this, [this, window]() {
         emit windowClosed(window->internalWinId());
         d->onWindowClosed(window);
+    });
+
+    connect(window, &FileManagerWindow::reqShowHotkeyHelp, this, [this, window]() {
+        d->onShowHotkeyHelp(window);
     });
 
     qInfo() << "New window created: " << window->winId() << showedUrl;

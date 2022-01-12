@@ -88,6 +88,11 @@ FILE (GLOB DBUSSERVER_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dbusservice/dbus_interface/*.cpp"
 )
 
+FILE(GLOB SHORTCUT_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/shortcut/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/shortcut/*.cpp"
+)
+
 set(DBUSSERVICE_H
     dbusservice/dbus_interface/devicemanagerdbus_interface.h
     dbusservice/global_server_defines.h
@@ -121,6 +126,7 @@ add_library(${PROJECT_NAME}
     ${ALL_FILES}
     ${WIDGETS_FILES}
     ${DBUSSERVER_FILES}
+    ${SHORTCUT_FILES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

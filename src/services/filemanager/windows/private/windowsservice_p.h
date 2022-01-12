@@ -46,6 +46,7 @@ public:
     void loadWindowState(dfmbase::FileManagerWindow *window);
     void saveWindowState(dfmbase::FileManagerWindow *window);
     void onWindowClosed(dfmbase::FileManagerWindow *window);
+    void onShowHotkeyHelp(dfmbase::FileManagerWindow *window);
 
 private:
     QPointer<WindowsService> service;

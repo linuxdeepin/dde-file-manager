@@ -1,12 +1,10 @@
 /*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
+ * Author:     huanyu<huanyub@uniontech.com>
  *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
+ * Maintainer: zhengyouge<zhengyouge@uniontech.com>
+ *             yanghao<yanghao@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +22,25 @@
 #ifndef SHORTCUT_H
 #define SHORTCUT_H
 
+#include "dfm-base/dfm_base_global.h"
+
 #include <QObject>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
-struct ShortcutItem{
+
+DFMBASE_BEGIN_NAMESPACE
+
+struct ShortcutItem
+{
     QString name;
     QString value;
-    ShortcutItem(QString n,QString v):name(n),value(v){}
+    ShortcutItem(QString n, QString v)
+        : name(n), value(v) {}
 };
 
-struct ShortcutGroup{
+struct ShortcutGroup
+{
     QString groupName;
     QList<ShortcutItem> groupItems;
 };
@@ -43,7 +49,7 @@ class Shortcut : public QObject
 {
     Q_OBJECT
 public:
-    explicit Shortcut(QObject *parent = 0);
+    explicit Shortcut(QObject *parent = nullptr);
     QString toStr();
 
 Q_SIGNALS:
@@ -51,8 +57,9 @@ Q_SIGNALS:
 public Q_SLOTS:
 
 private:
-    QJsonObject m_shortcutObj;
-    QList<ShortcutGroup> m_shortcutGroups;
+    QJsonObject shortcutObj;
+    QList<ShortcutGroup> shortcutGroups;
 };
 
-#endif // SHORTCUT_H
+DFMBASE_END_NAMESPACE
+#endif   // SHORTCUT_H
