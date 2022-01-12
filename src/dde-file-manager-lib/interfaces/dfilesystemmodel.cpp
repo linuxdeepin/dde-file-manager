@@ -75,7 +75,7 @@ static int FindInsertPosInOrderList(const FileSystemNodePointer &needNode,
 
         const FileSystemNodePointer &node = list.at(row);
         if (isDir) {
-            if (node->fileInfo->isDir() && sortFun(needNode->fileInfo, node->fileInfo, order)) {
+            if (node->fileInfo->isDir() && !sortFun(needNode->fileInfo, node->fileInfo, order)) {
                 begin = row;
                 row = (end + begin + 1) / 2 ;
                 if (row >= end)
@@ -85,7 +85,7 @@ static int FindInsertPosInOrderList(const FileSystemNodePointer &needNode,
                 row = (end + begin) / 2 ;
             }
         } else {
-            if (node->fileInfo->isDir() || sortFun(needNode->fileInfo, node->fileInfo, order)) {
+            if (node->fileInfo->isDir() || !sortFun(needNode->fileInfo, node->fileInfo, order)) {
                 begin = row;
                 row = (end + begin + 1) / 2 ;
                 if (row >= end)
@@ -2992,11 +2992,7 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
         beginInsertRows(createIndex(parentNode, 0), row == -1 ? parentNode->childrenCount() : row,
                         row == -1 ? parentNode->childrenCount() : row);
 
-        if (row == -1) {
-            parentNode->insertChildren(parentNode->childrenCount(), fileUrl, node, d->rootNodeManager->isInsertCaches());
-        } else {
-            parentNode->insertChildren(row,fileUrl, node, &isNeedToBreakBusyCase);
-        }
+        parentNode->insertChildren(row == -1 ? parentNode->childrenCount() : row, fileUrl, node, d->rootNodeManager->isInsertCaches());
 
         endInsertRows();
     }
