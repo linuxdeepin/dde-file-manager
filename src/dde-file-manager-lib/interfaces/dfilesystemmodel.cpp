@@ -59,6 +59,8 @@
 static int FindInsertPosInOrderList(const FileSystemNodePointer &needNode,
         const QList<FileSystemNodePointer> &list, const DAbstractFileInfo::CompareFunction &sortFun,
         const Qt::SortOrder &order, const bool *isCancel){
+    if (!sortFun)
+        return list.count();
     int begin = 0;
     int end = list.count();
     int row = (begin + end)/2;
@@ -74,7 +76,7 @@ static int FindInsertPosInOrderList(const FileSystemNodePointer &needNode,
 
         const FileSystemNodePointer &node = list.at(row);
         if (isDir) {
-            if (node->fileInfo->isDir() && sortFun(needNode->fileInfo, node->fileInfo, order)) {
+            if (node->fileInfo->isDir() && !sortFun(needNode->fileInfo, node->fileInfo, order)) {
                 begin = row;
                 row = (end + begin + 1) / 2 ;
                 if (row >= end)
@@ -84,7 +86,7 @@ static int FindInsertPosInOrderList(const FileSystemNodePointer &needNode,
                 row = (end + begin) / 2 ;
             }
         } else {
-            if (node->fileInfo->isDir() || sortFun(needNode->fileInfo, node->fileInfo, order)) {
+            if (node->fileInfo->isDir() || !sortFun(needNode->fileInfo, node->fileInfo, order)) {
                 begin = row;
                 row = (end + begin + 1) / 2 ;
                 if (row >= end)
@@ -773,7 +775,7 @@ begin:
 
             int row = -1;
 
-            if (model()->enabledSort()) {
+            if (fileInfo->hasOrderly() && model()->enabledSort()) {
                 if (!compareFun)
                     compareFun = fileInfo->compareFunByColumn(model()->sortRole());
                 FileSystemNodePointer node = model()->createNode(rootNode.data(), fileInfo);
@@ -2963,7 +2965,6 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
         beginInsertRows(createIndex(parentNode, 0), row == -1 ? parentNode->childrenCount() : row,
                         row == -1 ? parentNode->childrenCount() : row);
 
-        
         parentNode->insertChildren(row == -1 ? parentNode->childrenCount() : row, fileUrl, node, d->rootNodeManager->isInsertCaches());
 
         endInsertRows();
