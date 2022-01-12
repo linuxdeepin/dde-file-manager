@@ -916,17 +916,19 @@ void DFMSideBar::initTagsConnection()
 //NOTE [XIAO] 从Plugin中导入SideBarItem
 void DFMSideBar::initItemFromPlugin()
 {
-    // tab标签页不会显示“我的手机”，因为路径初始化的时候还没有开始加载插件
-    // 在这里插件已经加载过所以调用initPaths再加载一下插件的路径 add by CL
-    Singleton<PathManager>::instance()->initPaths();
-    qWarning() << "[PLUGIN]" << "try to load plugin of sidebar item";
-    auto plugins = SchemePluginManager::instance()->schemePlugins();
-    for (auto plugin : plugins) {
-        qWarning() << "[PLUGIN]" << "load sidebar item from plugin:" << plugin.first;
-        DFMSideBarItem *item = plugin.second->createSideBarItem();
-        // NOTE [XIAO] 插件中的GroupName与文管版本中一致。
-        //this->addItem(item, item->groupName());
-        this->appendItem(item, item->groupName());
+    if (!m_disableUrlSchemes.contains(PLUGIN_SCHEME)) {
+        // tab标签页不会显示“我的手机”，因为路径初始化的时候还没有开始加载插件
+        // 在这里插件已经加载过所以调用initPaths再加载一下插件的路径 add by CL
+        Singleton<PathManager>::instance()->initPaths();
+        qInfo() << "[PLUGIN]" << "try to load plugin of sidebar item";
+        auto plugins = SchemePluginManager::instance()->schemePlugins();
+        for (auto plugin : plugins) {
+            qInfo() << "[PLUGIN]" << "load sidebar item from plugin:" << plugin.first;
+            DFMSideBarItem *item = plugin.second->createSideBarItem();
+            // NOTE [XIAO] 插件中的GroupName与文管版本中一致。
+            //this->addItem(item, item->groupName());
+            this->appendItem(item, item->groupName());
+        }
     }
 }
 
