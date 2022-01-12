@@ -111,10 +111,10 @@ bool SideBarWidget::removeItem(const QUrl &url)
     return sidebarModel->removeRow(url);
 }
 
-void SideBarWidget::updateItem(const QUrl &url, const QString &newName)
+void SideBarWidget::updateItem(const QUrl &url, const QString &newName, bool editable)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
-    sidebarModel->updateRow(url, newName);
+    sidebarModel->updateRow(url, newName, editable);
 }
 
 /*!

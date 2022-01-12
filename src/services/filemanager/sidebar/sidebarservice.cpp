@@ -97,9 +97,9 @@ void SideBarService::removeItem(const QUrl &url)
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, url);
 }
 
-void SideBarService::updateItem(const QUrl &url, const QString &newName)
+void SideBarService::updateItem(const QUrl &url, const QString &newName, bool editable)
 {
-    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, url, newName);
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, url, newName, editable);
 }
 
 void SideBarService::insertItem(int index, const SideBar::ItemInfo &info, const SideBar::CdActionCallback &cdFunc, const SideBar::ContextMenuCallback &menuFunc, const SideBar::RenameCallback &renameFunc)

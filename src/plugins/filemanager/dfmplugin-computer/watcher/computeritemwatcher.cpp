@@ -192,7 +192,7 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
         ret.push_back(data);
         hasNewItem = true;
 
-        addSidebarItem(devUrl, info->fileIcon().name(), info->displayName());
+        addSidebarItem(info);
     }
 
     std::sort(ret.begin(), ret.end(), ComputerItemWatcher::typeCompare);
@@ -218,7 +218,7 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
         ret.push_back(data);
         hasNewItem = true;
 
-        addSidebarItem(devUrl, info->fileIcon().name(), info->displayName());
+        addSidebarItem(info);
     }
 
     std::sort(ret.begin(), ret.end(), ComputerItemWatcher::typeCompare);
@@ -269,18 +269,27 @@ ComputerItemData ComputerItemWatcher::getGroup(ComputerItemWatcher::GroupType ty
     return splitter;
 }
 
-void ComputerItemWatcher::addSidebarItem(const QUrl &url, const QString &icon, const QString &name)
+void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 {
     // additem to sidebar
     DSB_FM_USE_NAMESPACE;
     SideBar::ItemInfo sbItem;
     sbItem.group = SideBar::DefaultGroup::kDevice;
-    sbItem.url = url;
-    sbItem.flag = Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable;
-    sbItem.iconName = icon + "-symbolic";
-    sbItem.text = name;
+    sbItem.url = info->url();
+    sbItem.flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    if (info->renamable())
+        sbItem.flag |= Qt::ItemIsEditable;
+    if (info->fileIcon().name().startsWith("media"))
+        sbItem.iconName = "media-optical-symbolic";
+    else
+        sbItem.iconName = info->fileIcon().name() + "-symbolic";
+    sbItem.text = info->displayName();
+    sbItem.removable = info->removable();
 
-    sbIns()->addItem(sbItem, ComputerController::cdTo, ComputerController::requestMenu, ComputerController::rename);
+    SideBar::CdActionCallback cd = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
+    SideBar::ContextMenuCallback menu = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
+    SideBar::RenameCallback rename = [](quint64 winId, const QUrl &url, const QString &name) { ComputerControllerInstance->doRename(winId, url, name); };
+    sbIns()->addItem(sbItem, cd, menu, rename);
 }
 
 void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
@@ -288,9 +297,9 @@ void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
     sbIns()->removeItem(url);
 }
 
-void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName)
+void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName, bool editable)
 {
-    sbIns()->updateItem(url, newName);
+    sbIns()->updateItem(url, newName, editable);
 }
 
 void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url)
@@ -340,7 +349,7 @@ void ComputerItemWatcher::onDeviceAdded(const QString &id)
     data.info = info;
     Q_EMIT this->itemAdded(data);
 
-    addSidebarItem(devUrl, info->fileIcon().name(), info->displayName());
+    addSidebarItem(info);
 }
 
 void ComputerItemWatcher::onDevicePropertyChanged(const QString &id, const QString &propertyName, const QDBusVariant &var)
@@ -354,13 +363,6 @@ void ComputerItemWatcher::onDevicePropertyChanged(const QString &id, const QStri
             else
                 onDeviceAdded(id);
         } else {
-            if (propertyName == GlobalServerDefines::DBusDeviceProperty::kIdLabel)
-                updateSidebarItem(url, var.variant().toString());
-
-            if (propertyName == GlobalServerDefines::DBusDeviceProperty::kCleartextDevice) {
-                DFMEntryFileInfoPointer info(new EntryFileInfo(url));
-                updateSidebarItem(url, info->displayName());
-            }
             auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
             Q_EMIT itemUpdated(devUrl);
         }

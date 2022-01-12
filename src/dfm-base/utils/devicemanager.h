@@ -52,6 +52,7 @@ public:
     void invokeDetachBlockDeviceForced(const QString &id);
     void invokeUnmountBlockDeviceForced(const QString &id);
     void invokeDetachProtocolDevice(const QString &id);
+    void invokeRenameBlockDevice(const QString &id, const QString &newName);
 
     QString invokeUnlockBlockDevice(const QString &id, const QString &passwd);
     QString invokeMountBlockDevice(const QString &id);

@@ -46,6 +46,8 @@ void SideBarManager::runContextMenu(const QString &identifier, quint64 windowId,
     if (menuCallbackMap.contains(identifier)) {
         Q_ASSERT(menuCallbackMap[identifier]);
         menuCallbackMap[identifier](windowId, url, globalPos);
+    } else {
+        SideBarHelper::defaultContenxtMenu(windowId, url, globalPos);
     }
 }
 

@@ -56,6 +56,8 @@ public:
     static QString getBlockDevIdByUrl(const QUrl &url);
     static QUrl makeProtocolDevUrl(const QString &id);
     static QString getProtocolDevIdByUrl(const QUrl &url);
+
+    static quint64 getWinId(QWidget *widget);
 };
 
 DPCOMPUTER_END_NAMESPACE

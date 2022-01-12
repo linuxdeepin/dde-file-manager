@@ -26,29 +26,37 @@
 #include "utils/computerutils.h"
 
 #include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/dfm_event_defines.h"
 #include "services/common/dialog/dialogservice.h"
 #include <dfm-framework/framework.h>
 
 #include <QDebug>
 #include <QApplication>
+#include <QMenu>
 
 DFMBASE_USE_NAMESPACE
 DPCOMPUTER_USE_NAMESPACE
 
 ComputerController *ComputerController::instance()
 {
-    static ComputerController ins(nullptr);
-    return &ins;
+    static ComputerController instance;
+    return &instance;
 }
 
-void ComputerController::cdTo(quint64 winId, const QUrl &url)
+void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
 {
-    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
-
     // TODO(xust) get the info from factory
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
     if (!info) {
         qDebug() << "cannot create info of " << url;
+        QApplication::setOverrideCursor(Qt::ArrowCursor);
+        return;
+    }
+
+    if (!info->isAccessable()) {
+        qDebug() << "cannot access device: " << url;
+        QApplication::setOverrideCursor(Qt::ArrowCursor);
         return;
     }
 
@@ -58,7 +66,7 @@ void ComputerController::cdTo(quint64 winId, const QUrl &url)
     } else {
         QString suffix = info->suffix();
         if (suffix == dfmbase::SuffixInfo::kBlock) {
-            mountAndEnterBlockDevice(winId, info);
+            mountDevice(winId, info);
         } else if (suffix == dfmbase::SuffixInfo::kProtocol) {
         } else if (suffix == dfmbase::SuffixInfo::kStashedRemote) {
         } else if (suffix == dfmbase::SuffixInfo::kAppEntry) {
@@ -66,17 +74,41 @@ void ComputerController::cdTo(quint64 winId, const QUrl &url)
     }
 }
 
-void ComputerController::requestMenu(quint64 winId, const QUrl &url, const QPoint &pos)
+void ComputerController::onMenuRequest(quint64 winId, const QUrl &url, bool triggerFromSidebar)
 {
-    qDebug() << "hello" << __FUNCTION__ << url << pos;
+    DFMEntryFileInfoPointer info(new EntryFileInfo(url));
+    QMenu *menu = info->createMenu();
+    if (menu) {
+        connect(menu, &QMenu::triggered, [=](QAction *act) {
+            QString actText = act->text();
+            actionTriggered(url, winId, actText, triggerFromSidebar);
+        });
+        menu->exec(QCursor::pos());
+        menu->deleteLater();
+    }
 }
 
-void ComputerController::rename(quint64 winId, const QUrl &url, const QString &name)
+void ComputerController::doRename(quint64 winId, const QUrl &url, const QString &name)
 {
-    qDebug() << "hello" << __FUNCTION__ << url << name;
+    Q_UNUSED(winId);
+
+    DFMEntryFileInfoPointer info(new EntryFileInfo(url));
+    if (info->removable() && info->suffix() == SuffixInfo::kBlock) {
+        QString devId = ComputerUtils::getBlockDevIdByUrl(url);   // for now only block devices can be renamed.
+        DeviceManagerInstance.invokeRenameBlockDevice(devId, name);
+        return;
+    }
+
+    if (!info->removable())
+        doSetAlias(info, name);
 }
 
-void ComputerController::mountAndEnterBlockDevice(quint64 winId, const DFMEntryFileInfoPointer info)
+void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString &alias)
+{
+    // TODO(xust)}
+}
+
+void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointer info, ActionAfterMount act)
 {
     if (!info) {
         qDebug() << "a null info pointer is transfered";
@@ -89,38 +121,186 @@ void ComputerController::mountAndEnterBlockDevice(quint64 winId, const DFMEntryF
 
     if (isEncrypted) {
         if (!isUnlocked) {
+            QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
             auto &ctx = dpfInstance.serviceContext();
             auto dialogServ = ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
             QString passwd = dialogServ->askPasswordForLockedDevice();
-            if (passwd.isEmpty())
+            if (passwd.isEmpty()) {
+                QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
                 return;
+            }
+            QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-            DeviceManagerInstance.unlockAndDo(shellId, passwd, [dialogServ, winId](const QString &newID) {
+            DeviceManagerInstance.unlockAndDo(shellId, passwd, [=](const QString &newID) {
                 if (newID.isEmpty())
                     dialogServ->showErrorDialog(tr("Unlock device failed"), tr("Wrong password is inputed"));
                 else
-                    mountAndEnterBlockDevice(winId, newID);
+                    mountDevice(winId, newID, act);
             });
         } else {
             auto realDevId = info->clearDeviceId();
-            mountAndEnterBlockDevice(winId, realDevId);
+            mountDevice(winId, realDevId, act);
         }
     } else {
-        mountAndEnterBlockDevice(winId, shellId);
+        mountDevice(winId, shellId, act);
     }
 }
 
-void ComputerController::mountAndEnterBlockDevice(quint64 winId, const QString &id)
+void ComputerController::mountDevice(quint64 winId, const QString &id, ActionAfterMount act)
 {
-    QFuture<QString> fu = QtConcurrent::run(&DeviceManagerInstance, &DeviceManager::invokeMountBlockDevice, id);
     QFutureWatcher<QString> *watcher = new QFutureWatcher<QString>();
-    connect(watcher, &QFutureWatcher<QString>::finished, [watcher, id, winId] {
+    connect(watcher, &QFutureWatcher<QString>::finished, [=] {
         QString path = watcher->result();
-        qDebug() << "cd to: " + path << ", " << id;
-        ComputerEventCaller::cdTo(winId, path);
+        QUrl u;
+        u.setScheme(SchemeTypes::kFile);
+        u.setPath(path);
+        if (act == kEnterDirectory)
+            ComputerEventCaller::cdTo(winId, path);
+        else if (act == kEnterInNewWindow)
+            ComputerEventCaller::sendEnterInNewWindow(u);
+        else if (act == kEnterInNewTab)
+            ComputerEventCaller::sendEnterInNewTab(winId, u);
         watcher->deleteLater();
     });
+    QFuture<QString> fu = QtConcurrent::run(&DeviceManagerInstance, &DeviceManager::invokeMountBlockDevice, id);
     watcher->setFuture(fu);
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
+}
+
+void ComputerController::actionTriggered(const QUrl &url, quint64 winId, const QString &actionText, bool triggerFromSidebar)
+{
+    DFMEntryFileInfoPointer info(new EntryFileInfo(url));
+
+    // if not original supported suffix, publish event to notify subscribers to handle
+    QString sfx = info->suffix();
+    if (sfx != SuffixInfo::kBlock
+        && sfx != SuffixInfo::kProtocol
+        && sfx != SuffixInfo::kUserDir
+        && sfx != SuffixInfo::kAppEntry
+        && sfx != SuffixInfo::kStashedRemote) {
+        ComputerEventCaller::sendContextActionTriggered(url, actionText);
+        return;
+    }
+
+    if (actionText == ContextMenuActionTrs::trOpenInNewWin())
+        actOpenInNewWindow(winId, info);
+    else if (actionText == ContextMenuActionTrs::trOpenInNewTab())
+        actOpenInNewTab(winId, info);
+    else if (actionText == ContextMenuActionTrs::trMount())
+        actMount(info);
+    else if (actionText == ContextMenuActionTrs::trUnmount())
+        actUnmount(info);
+    else if (actionText == ContextMenuActionTrs::trRename())
+        actRename(winId, info, triggerFromSidebar);
+    else if (actionText == ContextMenuActionTrs::trFormat())
+        actFormat(winId, info);
+    else if (actionText == ContextMenuActionTrs::trSafelyRemove())
+        actSafelyRemove(info);
+    else if (actionText == ContextMenuActionTrs::trEject())
+        actEject(url);
+    else if (actionText == ContextMenuActionTrs::trProperties())
+        actProperties(url);
+}
+
+void ComputerController::actEject(const QUrl &url)
+{
+    QString id;
+    if (url.path().endsWith(SuffixInfo::kBlock)) {
+        id = ComputerUtils::getBlockDevIdByUrl(url);
+        DeviceManagerInstance.invokeDetachBlockDevice(id);
+    } else if (url.path().endsWith(SuffixInfo::kProtocol)) {
+        id = ComputerUtils::getProtocolDevIdByUrl(url);
+        DeviceManagerInstance.invokeDetachProtocolDevice(id);
+    } else {
+        qDebug() << url << "is not support " << __FUNCTION__;
+    }
+}
+
+void ComputerController::actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPointer info)
+{
+    auto target = info->targetUrl();
+    if (target.isValid())
+        ComputerEventCaller::sendEnterInNewWindow(target);
+    else
+        mountDevice(winId, info, kEnterInNewWindow);
+}
+
+void ComputerController::actOpenInNewTab(quint64 winId, DFMEntryFileInfoPointer info)
+{
+    auto target = info->targetUrl();
+    if (target.isValid())
+        ComputerEventCaller::sendEnterInNewTab(winId, target);
+    else
+        mountDevice(winId, info, kEnterInNewTab);
+}
+
+void ComputerController::actMount(DFMEntryFileInfoPointer info)
+{
+    mountDevice(0, info, kNone);
+}
+
+void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
+{
+    QString devId;
+    if (info->suffix() == SuffixInfo::kBlock) {
+        devId = ComputerUtils::getBlockDevIdByUrl(info->url());
+        DeviceManagerInstance.invokeUnmountBlockDevice(devId);
+    } else if (info->suffix() == SuffixInfo::kProtocol) {
+        devId = ComputerUtils::getProtocolDevIdByUrl(info->url());
+        DeviceManagerInstance.invokeUnmountProtocolDevice(devId);
+    } else {
+        qDebug() << info->url() << "is not support " << __FUNCTION__;
+    }
+}
+
+void ComputerController::actSafelyRemove(DFMEntryFileInfoPointer info)
+{
+    actEject(info->url());
+}
+
+void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, bool triggerFromSidebar)
+{
+    if (!info) {
+        qWarning() << "info is not valid!" << __FUNCTION__;
+        return;
+    }
+
+    if (info->removable() && info->targetUrl().isValid()) {
+        qWarning() << "cannot rename a mounted device! " << __FUNCTION__;
+        return;
+    }
+
+    if (!triggerFromSidebar)
+        Q_EMIT requestRename(winId, info->url());
+    else
+        ;   // TODO(xust), trigger edit in sidebar
+}
+
+void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
+{
+    if (info->suffix() != SuffixInfo::kBlock) {
+        qWarning() << "non block device is not support format" << info->url();
+        return;
+    }
+    auto url = info->url();
+    QString devDesc = "/dev/" + url.path().remove("." + QString(SuffixInfo::kBlock));
+    qDebug() << devDesc;
+
+    QString cmd = "dde-device-formatter";
+    QStringList args;
+    args << "-m=" + QString::number(winId) << devDesc;
+
+    QProcess::startDetached(cmd, args);
+}
+
+void ComputerController::actRemove(DFMEntryFileInfoPointer info)
+{
+    // TODO(xust)
+}
+
+void ComputerController::actProperties(const QUrl &url)
+{
+    // TODO(xust)
 }
 
 ComputerController::ComputerController(QObject *parent)

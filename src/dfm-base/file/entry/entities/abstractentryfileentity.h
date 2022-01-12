@@ -31,6 +31,7 @@
 #include <QIcon>
 #include <QAction>
 #include <QDebug>
+#include <QMenu>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -52,7 +53,7 @@ public:
     virtual EntryFileInfo::EntryOrder order() const = 0;
 
     virtual QMenu *createMenu() { return nullptr; }
-    virtual bool removable() { return false; }
+    virtual bool removable() const { return false; }
     virtual void refresh() {}
     virtual long sizeTotal() const { return 0; }
     virtual long sizeUsage() const { return 0; }
@@ -62,6 +63,8 @@ public:
     virtual bool isEncrypted() const { return false; }
     virtual bool isUnlocked() const { return false; }
     virtual QString clearDeviceId() const { return ""; }
+    virtual bool isAccessable() const { return true; }
+    virtual bool renamable() const { return false; }
 
 protected:
     QUrl entryUrl {};

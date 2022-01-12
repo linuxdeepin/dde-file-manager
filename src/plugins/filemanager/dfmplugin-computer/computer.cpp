@@ -25,6 +25,7 @@
 #include "views/computerview.h"
 #include "fileentity/appentryfileentity.h"
 #include "events/computerunicastreceiver.h"
+#include "events/computereventreceiver.h"
 #include "watcher/computeritemwatcher.h"
 
 #include "dfm-base/base/urlroute.h"
@@ -76,6 +77,7 @@ void Computer::initialize()
 
 bool Computer::start()
 {
+    dpfInstance.eventDispatcher().subscribe(SideBar::EventType::kEjectAction, ComputerEventReceiverIns, &ComputerEventReceiver::handleItemEject);
     return true;
 }
 

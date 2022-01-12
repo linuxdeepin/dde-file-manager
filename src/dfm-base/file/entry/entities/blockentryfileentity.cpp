@@ -30,8 +30,6 @@
 #include "base/application/settings.h"
 #include "base/urlroute.h"
 
-#include <QMenu>
-
 DFMBASE_USE_NAMESPACE
 
 namespace IconName {
@@ -233,24 +231,47 @@ void BlockEntryFileEntity::refresh()
     }
 }
 
-bool BlockEntryFileEntity::removable()
+bool BlockEntryFileEntity::removable() const
 {
     return datas.value(DeviceProperty::kRemovable).toBool();
 }
 
 QMenu *BlockEntryFileEntity::createMenu()
-{
-    // TODO(xust) may delete later.
+{   // this might be a temperary solution, see if the framework can provide menu generate
     QMenu *menu = new QMenu();
-    QAction *act = new QAction(tr("Open"), menu);
-    menu->addAction(act);
-    act = new QAction(tr("Open in new window"), menu);
-    menu->addAction(act);
-    act = new QAction(tr("Open in new tab"), menu);
-    menu->addAction(act);
+
+    auto addAction = [menu](const QString &text) {
+        QAction *act = new QAction(text, menu);
+        menu->addAction(act);
+    };
+
+    addAction(ContextMenuActionTrs::trOpenInNewWin());
+    addAction(ContextMenuActionTrs::trOpenInNewTab());
     menu->addSeparator();
-    act = new QAction(tr("Property"), menu);
-    menu->addAction(act);
+
+    bool isOptical = datas.value(DeviceProperty::kOpticalDrive).toBool();
+    if (datas.value(DeviceProperty::kHintSystem).toBool()) {
+        addAction(ContextMenuActionTrs::trRename());
+    } else {
+        if (targetUrl().isValid()) {
+            addAction(ContextMenuActionTrs::trUnmount());
+        } else {
+            addAction(ContextMenuActionTrs::trMount());
+            if (!isOptical) {   // optical drive cannot be renamed and formated
+                addAction(ContextMenuActionTrs::trRename());
+                addAction(ContextMenuActionTrs::trFormat());
+            }
+        }
+
+        if (isOptical)
+            addAction(ContextMenuActionTrs::trEject());
+
+        addAction(ContextMenuActionTrs::trSafelyRemove());
+    }
+    menu->addSeparator();
+
+    addAction(ContextMenuActionTrs::trProperties());
+
     return menu;
 }
 
@@ -278,6 +299,24 @@ bool BlockEntryFileEntity::isUnlocked() const
 QString BlockEntryFileEntity::clearDeviceId() const
 {
     return datas.value(DeviceProperty::kCleartextDevice, "").toString();
+}
+
+bool BlockEntryFileEntity::isAccessable() const
+{
+    if (isEncrypted())
+        return true;
+    return datas.value(DeviceProperty::kHasFileSystem).toBool();
+}
+
+bool BlockEntryFileEntity::renamable() const
+{
+    if (!removable())
+        return true;
+    else {
+        if (isAccessable() && datas.value(DeviceProperty::kMountpoint).toString().isEmpty())
+            return true;
+        return false;
+    }
 }
 
 QString BlockEntryFileEntity::getNameOrAlias() const

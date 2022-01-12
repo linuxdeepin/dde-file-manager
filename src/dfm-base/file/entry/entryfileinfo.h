@@ -42,6 +42,19 @@ extern const char *const kBlock;
 extern const char *const kStashedRemote;
 }   // namespace SuffixInfo
 
+// TODO(xust) this might be a temperary solution
+namespace ContextMenuActionTrs {
+extern QString trOpenInNewWin();
+extern QString trOpenInNewTab();
+extern QString trMount();
+extern QString trUnmount();
+extern QString trRename();
+extern QString trFormat();
+extern QString trEject();
+extern QString trSafelyRemove();
+extern QString trProperties();
+}   // namespace ContextMenuActionTrs
+
 class EntryFileInfoPrivate;
 class EntryFileInfo : public AbstractFileInfo
 {
@@ -85,6 +98,7 @@ public:
     bool isEncrypted() const;
     bool isUnlocked() const;
     QString clearDeviceId() const;
+    bool isAccessable() const;
 
     // AbstractFileInfo interface
     virtual bool exists() const override;

@@ -180,6 +180,12 @@ void DeviceManagerDBus::UnmountBlockDeviceForced(QString id)
     }
 }
 
+bool DeviceManagerDBus::RenameBlockDevice(QString id, QString newName)
+{
+    // TODO(xust) this may take a long time while renaming ext* series filesystem, consider using async version instead.
+    return deviceServ->renameBlockDevice(id, newName);
+}
+
 void DeviceManagerDBus::EjectBlockDevice(QString id)
 {
     deviceServ->ejectBlockDeviceAsync(id);

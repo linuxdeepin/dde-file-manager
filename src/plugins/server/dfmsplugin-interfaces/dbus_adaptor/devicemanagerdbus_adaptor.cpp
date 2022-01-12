@@ -129,6 +129,12 @@ QVariantMap DeviceManagerAdaptor::QueryProtocolDeviceInfo(const QString &id, boo
     return parent()->QueryProtocolDeviceInfo(id, detail);
 }
 
+bool DeviceManagerAdaptor::RenameBlockDevice(const QString &id, const QString &newName)
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.RenameBlockDevice
+    return parent()->RenameBlockDevice(id, newName);
+}
+
 void DeviceManagerAdaptor::SafelyRemoveBlockDevice(const QString &id)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.SafelyRemoveBlockDevice

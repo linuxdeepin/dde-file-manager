@@ -87,11 +87,11 @@ void SideBarUnicastReceiver::invokeRemoveItem(const QUrl &url)
     SideBarHelper::removeItemFromCache(url);
 }
 
-void SideBarUnicastReceiver::invokeUpdateItem(const QUrl &url, const QString &newName)
+void SideBarUnicastReceiver::invokeUpdateItem(const QUrl &url, const QString &newName, bool editable)
 {
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     for (SideBarWidget *sidebar : allSideBar)
-        sidebar->updateItem(url, newName);
+        sidebar->updateItem(url, newName, editable);
 }
 
 void SideBarUnicastReceiver::invokeInsertItem(int index, const ItemInfo &info, CdActionCallback cdFunc, ContextMenuCallback menuFunc, RenameCallback renameFunc)

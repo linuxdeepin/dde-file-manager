@@ -23,6 +23,7 @@
 #include "computermodel.h"
 #include "views/computerview.h"
 #include "utils/computerutils.h"
+#include "controller/computercontroller.h"
 
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/fileutils.h"
@@ -147,11 +148,15 @@ bool ComputerModel::setData(const QModelIndex &index, const QVariant &value, int
     if (row < 0 || row >= items.count())
         return false;
 
-    const auto &item = items.at(row);
+    auto &item = items[row];
     if (role == Qt::EditRole) {
         if (!item.info || !item.info->renamable())
             return false;
-        // TODO(xust) DO RENAME HERE
+        ComputerControllerInstance->doRename(0, item.url, value.toString());
+        return true;
+    } else if (role == DataRoles::kItemIsEditing) {
+        item.isEditing = value.toBool();
+        return true;
     }
     return false;
 }
@@ -255,10 +260,6 @@ void ComputerModel::onItemRemoved(const QUrl &url)
 
 void ComputerModel::onItemUpdated(const QUrl &url)
 {
-    auto updateItemInfo = [this](int pos) {
-        items.at(pos).info->refresh();
-        view->update(this->index(pos, 0));
-    };
     int pos = findItem(url);
     if (pos > 0) {
         updateItemInfo(pos);
@@ -270,6 +271,20 @@ void ComputerModel::onItemUpdated(const QUrl &url)
         }
         qDebug() << "target item not found" << url;
     }
+}
+
+void ComputerModel::updateItemInfo(int pos)
+{
+    if (pos < 0 || pos >= items.count())
+        return;
+    auto &info = items.at(pos);
+    QString oldName = info.info->displayName();
+    info.info->refresh();
+    view->update(this->index(pos, 0));
+    QString newName = info.info->displayName();
+
+    if (oldName != newName)
+        ComputerItemWatcherIns->updateSidebarItem(info.url, newName, info.info->renamable());
 }
 
 DPCOMPUTER_END_NAMESPACE

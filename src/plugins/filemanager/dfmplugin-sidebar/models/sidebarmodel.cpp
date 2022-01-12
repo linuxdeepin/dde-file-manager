@@ -244,15 +244,22 @@ bool SideBarModel::removeRow(const QUrl &url)
     return false;
 }
 
-void SideBarModel::updateRow(const QUrl &url, const QString &newName)
+void SideBarModel::updateRow(const QUrl &url, const QString &newName, bool editable)
 {
     if (!url.isValid())
         return;
 
     for (int r = 0; r < rowCount(); r++) {
         auto item = itemFromIndex(r);
-        if (item->url() == url)
+        if (item->url() == url) {
             item->setText(newName);
+            Qt::ItemFlags flags = item->flags();
+            if (editable)
+                flags |= Qt::ItemIsEditable;
+            else
+                flags &= (~Qt::ItemIsEditable);
+            item->setFlags(flags);
+        }
     }
 }
 

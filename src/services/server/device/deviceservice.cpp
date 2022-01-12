@@ -296,7 +296,7 @@ void DeviceMonitorHandler::handleBlockDevicesSizeUsedChanged()
     auto &&keys = allBlockDevData.keys();
     for (const auto &key : keys) {
         auto &val = allBlockDevData[key];
-        if (!DeviceServiceHelper::isIgnorableBlockDevice(val) || val.cryptoBackingDevice.length() > 1) { // need to report the size change of unlocked device
+        if (!DeviceServiceHelper::isIgnorableBlockDevice(val) || val.cryptoBackingDevice.length() > 1) {   // need to report the size change of unlocked device
             if (val.optical)
                 continue;
             if (val.mountpoints.isEmpty())
@@ -685,6 +685,32 @@ bool DeviceService::poweroffBlockDevice(const QString &deviceId, const QVariantM
     return false;
 }
 
+bool DeviceService::renameBlockDevice(const QString &deviceId, const QString &newName, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (!ptr->mountPoints().isEmpty()) {
+        qWarning() << "cannot rename a mounted device!";
+        return false;
+    }
+    return ptr->rename(newName, opts);
+}
+
+void DeviceService::renameBlockDeviceAsync(const QString &deviceId, const QString &newName, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+    auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
+    if (!ptr->mountPoints().isEmpty()) {
+        qWarning() << "cannot rename a mounted device!";
+        return;
+    }
+    ptr->renameAsync(newName, opts, [=](bool ret, DFMMOUNT::DeviceError err) {
+        if (err != DFMMOUNT::DeviceError::NoError)
+            qWarning() << "an error occured while renaming a device: " << deviceId << DFMMOUNT::Utils::errorMessage(err);
+        emit blockDevAsyncRenamed(deviceId, ret);
+    });
+}
+
 QString DeviceService::unlockBlockDevice(const QString &passwd, const QString &deviceId, const QVariantMap &opts)
 {
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
@@ -974,9 +1000,10 @@ void DeviceService::detachBlockDevice(const QString &deviceId)
             qWarning() << "Detach " << id << " abnormal, it's cannot unmount";
     });
 
-    if (ptr->optical())
-        ejectBlockDeviceAsync(deviceId);
-    else
+    if (ptr->mediaCompatibility().join(" ").contains("optical")) {
+        if (ptr->optical())
+            ejectBlockDeviceAsync(deviceId);
+    } else
         poweroffBlockDeviceAsync(deviceId);
 }
 
@@ -1035,14 +1062,33 @@ void DeviceService::unmountBlockDeviceAsync(const QString &deviceId, const QVari
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
     QString errMsg;
     if (DeviceServiceHelper::isUnmountableBlockDevice(ptr, &errMsg)) {
-        ptr->unmountAsync(opts, [this, deviceId](bool ret, DFMMOUNT::DeviceError err) {
-            if (!ret) {
-                qWarning() << "Unmount failed: " << int(err);
-                emit blockDevAsyncUnmounted(deviceId, false);
-            } else {
-                emit blockDevAsyncUnmounted(deviceId, true);
+        if (Q_UNLIKELY(ptr->isEncrypted())) {
+            auto clearBlkId = ptr->getProperty(dfmmount::Property::EncryptedCleartextDevice).toString();
+            if (clearBlkId.length() > 1) {
+                auto clearBlkPtr = DeviceServiceHelper::createBlockDevice(clearBlkId);
+                clearBlkPtr->unmountAsync(opts, [deviceId, this, ptr](bool ret, DFMMOUNT::DeviceError err) {
+                    if (err != DFMMOUNT::DeviceError::NoError)
+                        qWarning() << "unmount device failed: " << deviceId << ": " << DFMMOUNT::Utils::errorMessage(err);
+                    emit this->blockDevAsyncUnmounted(deviceId, ret);
+                    if (ret) {
+                        ptr->lockAsync({}, [this, deviceId](bool ret, DFMMOUNT::DeviceError lockErr) {
+                            if (lockErr != DFMMOUNT::DeviceError::NoError)
+                                qWarning() << "lock device failed: " << deviceId << ": " << DFMMOUNT::Utils::errorMessage(lockErr);
+                            emit this->blockDevAsyncLocked(deviceId, ret);
+                        });
+                    }
+                });
             }
-        });
+        } else {
+            ptr->unmountAsync(opts, [this, deviceId](bool ret, DFMMOUNT::DeviceError err) {
+                if (!ret) {
+                    qWarning() << "Unmount failed: " << int(err);
+                    emit blockDevAsyncUnmounted(deviceId, false);
+                } else {
+                    emit blockDevAsyncUnmounted(deviceId, true);
+                }
+            });
+        }
     } else {
         qWarning() << "Not unmountable device: " << errMsg;
     }
@@ -1053,9 +1099,17 @@ bool DeviceService::unmountBlockDevice(const QString &deviceId, const QVariantMa
     Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
     QString errMsg;
-    if (DeviceServiceHelper::isUnmountableBlockDevice(ptr, &errMsg))
-        return ptr->unmount(opts);
-    else
+    if (DeviceServiceHelper::isUnmountableBlockDevice(ptr, &errMsg)) {
+        if (Q_UNLIKELY(ptr->isEncrypted())) {
+            auto clearBlkId = ptr->getProperty(dfmmount::Property::EncryptedCleartextDevice).toString();
+            if (clearBlkId.length() > 1) {
+                auto clearBlkPtr = DeviceServiceHelper::createBlockDevice(clearBlkId);
+                return clearBlkPtr->unmount(opts) && ptr->lock();
+            }
+        } else {
+            return ptr->unmount(opts);
+        }
+    } else
         qWarning() << "Not unmountable device: " << errMsg;
 
     return false;

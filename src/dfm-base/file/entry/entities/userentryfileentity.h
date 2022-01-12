@@ -43,6 +43,7 @@ public:
     virtual void onOpen() override;
     virtual EntryFileInfo::EntryOrder order() const override;
     virtual QUrl targetUrl() const override;
+    virtual QMenu *createMenu() override;
 
 private:
     QString dirName;

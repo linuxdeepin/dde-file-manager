@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,18 +20,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef COMPUTER_DEFINES_H
-#define COMPUTER_DEFINES_H
+#include "computereventreceiver.h"
+#include "controller/computercontroller.h"
 
-#include "dfm_filemanager_service_global.h"
+#include <QDebug>
 
-DSB_FM_BEGIN_NAMESPACE
+DPCOMPUTER_USE_NAMESPACE
 
-// custom event type
-namespace EventType {
-extern const int kContextActionTriggered;   // (QUrl url, QString actionText)
-};   // namespace EventType
+ComputerEventReceiver *ComputerEventReceiver::instance()
+{
+    static ComputerEventReceiver ins;
+    return &ins;
+}
 
-DSB_FM_END_NAMESPACE
+void ComputerEventReceiver::handleItemEject(const QUrl &url)
+{
+    ComputerControllerInstance->actEject(url);
+}
 
-#endif   // COMPUTER_DEFINES_H
+ComputerEventReceiver::ComputerEventReceiver(QObject *parent)
+    : QObject(parent)
+{
+}

@@ -121,6 +121,11 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "    <method name=\"UnmountBlockDeviceForced\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
+"    <method name=\"RenameBlockDevice\">\n"
+"      <arg direction=\"out\" type=\"b\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"newName\"/>\n"
+"    </method>\n"
 "    <method name=\"EjectBlockDevice\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
@@ -195,6 +200,7 @@ public Q_SLOTS: // METHODS
     void PoweroffBlockDevice(const QString &id);
     QVariantMap QueryBlockDeviceInfo(const QString &id, bool detail);
     QVariantMap QueryProtocolDeviceInfo(const QString &id, bool detail);
+    bool RenameBlockDevice(const QString &id, const QString &newName);
     void SafelyRemoveBlockDevice(const QString &id);
     QString UnlockBlockDevice(const QString &id, const QString &passwd);
     void UnmountBlockDevice(const QString &id);

@@ -25,6 +25,7 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/urlroute.h"
 
+#include "services/filemanager/computer/computer_defines.h"
 #include <services/filemanager/windows/windowsservice.h>
 #include <dfm-framework/framework.h>
 
@@ -77,6 +78,22 @@ void ComputerEventCaller::cdTo(quint64 winId, const QString &path)
     u.setScheme(dfmbase::SchemeTypes::kFile);
     u.setPath(path);
     cdTo(winId, u);
+}
+
+void ComputerEventCaller::sendEnterInNewWindow(const QUrl &url)
+{
+    dpfInstance.eventDispatcher().publish(dfmbase::GlobalEventType::kOpenNewWindow, url);
+}
+
+void ComputerEventCaller::sendEnterInNewTab(quint64 winId, const QUrl &url)
+{
+    dpfInstance.eventDispatcher().publish(dfmbase::GlobalEventType::kOpenNewTab, winId, url);
+}
+
+void ComputerEventCaller::sendContextActionTriggered(const QUrl &url, const QString &action)
+{
+    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::EventType::kContextActionTriggered, url, action);
+    qDebug() << "action triggered: " << url << action;
 }
 
 DPCOMPUTER_END_NAMESPACE

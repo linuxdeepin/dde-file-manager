@@ -84,6 +84,7 @@ protected Q_SLOTS:
     void onItemAdded(const ComputerItemData &data);
     void onItemRemoved(const QUrl &url);
     void onItemUpdated(const QUrl &url);
+    void updateItemInfo(int pos);
 
 private:
     ComputerView *view { nullptr };

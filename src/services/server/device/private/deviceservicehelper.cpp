@@ -158,6 +158,9 @@ bool DeviceServiceHelper::isUnmountableBlockDevice(const BlockDeviceData &data, 
         return false;
     }
 
+    if (isMountedEncryptedDevice(data))
+        return true;
+
     if (data.common.filesystem.isEmpty()) {
         error = QString("Block Device: %1 haven't a filesystem!").arg(id);
         return false;
@@ -373,6 +376,22 @@ bool DeviceServiceHelper::isIgnorableBlockDevice(const BlockDeviceData &data, QS
     finally.dismiss();
 
     return false;
+}
+
+bool DeviceServiceHelper::isMountedEncryptedDevice(const BlockDeviceData &data)
+{
+    if (!data.isEncrypted || data.cleartextDevice.length() == 1)
+        return false;
+
+    auto clearBlkPtr = createBlockDevice(data.cleartextDevice);
+    if (!clearBlkPtr) {
+        qDebug() << "cannot create device pointer of unlocked device: " << data.cleartextDevice;
+        return false;
+    }
+
+    BlockDeviceData clearBlkData;
+    makeBlockDeviceData(clearBlkPtr, &clearBlkData);
+    return !clearBlkData.mountpoints.isEmpty();
 }
 
 DeviceServiceHelper::BlockDevPtr DeviceServiceHelper::createBlockDevice(const QString &devId)

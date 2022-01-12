@@ -144,6 +144,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("QueryProtocolDeviceInfo"), argumentList);
     }
 
+    inline QDBusPendingReply<bool> RenameBlockDevice(const QString &id, const QString &newName)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(id) << QVariant::fromValue(newName);
+        return asyncCallWithArgumentList(QStringLiteral("RenameBlockDevice"), argumentList);
+    }
+
     inline QDBusPendingReply<> SafelyRemoveBlockDevice(const QString &id)
     {
         QList<QVariant> argumentList;

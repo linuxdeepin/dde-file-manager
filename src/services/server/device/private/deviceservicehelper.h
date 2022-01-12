@@ -116,6 +116,7 @@ private:
     static bool isCanPoweroffBlockDevice(const BlockDeviceData &data);
     static bool isProtectedBlocDevice(const BlockDeviceData &data);
     static bool isIgnorableBlockDevice(const BlockDeviceData &data, QString *errMsg = nullptr);
+    static bool isMountedEncryptedDevice(const BlockDeviceData &data);
 
     static BlockDevPtr createBlockDevice(const QString &devId);
     static ProtocolDevPtr createProtocolDevice(const QString &devId);

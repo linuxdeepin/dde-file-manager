@@ -25,6 +25,9 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 
+#include <dfm-framework/framework.h>
+#include <services/filemanager/windows/windowsservice.h>
+
 DPCOMPUTER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -72,4 +75,11 @@ QString ComputerUtils::getProtocolDevIdByUrl(const QUrl &url)
     QString encodecId = url.path().remove(suffix);
     QString id = QByteArray::fromBase64(encodecId.toUtf8());
     return id;
+}
+
+quint64 ComputerUtils::getWinId(QWidget *widget)
+{
+    auto &ctx = dpfInstance.serviceContext();
+    auto winServ = ctx.service<DSB_FM_NAMESPACE::WindowsService>(DSB_FM_NAMESPACE::WindowsService::name());
+    return winServ->findWindowId(widget);
 }

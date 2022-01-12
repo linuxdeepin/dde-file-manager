@@ -239,6 +239,19 @@ void DeviceManager::invokeDetachProtocolDevice(const QString &id)
     }
 }
 
+void DeviceManager::invokeRenameBlockDevice(const QString &id, const QString &newName)
+{
+    // TODO(xust)
+    if (deviceInterface) {
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        auto &&reply = deviceInterface->RenameBlockDevice(id, newName);
+        reply.waitForFinished();
+        if (!reply.isValid())
+            qCritical() << "D-Bus reply is invalid";
+        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+    }
+}
+
 QString DeviceManager::invokeUnlockBlockDevice(const QString &id, const QString &passwd)
 {
     if (deviceInterface) {

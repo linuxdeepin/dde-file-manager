@@ -41,6 +41,46 @@ const char *const kBlock { "blockdev" };
 const char *const kStashedRemote { "stashedprotodev" };
 }   // namespace SuffixInfo
 
+// this might be a temperary solution
+namespace ContextMenuActionTrs {
+QString trOpenInNewWin()
+{
+    return QObject::tr("Open in new window");
+}
+QString trOpenInNewTab()
+{
+    return QObject::tr("Open in new tab");
+}
+QString trMount()
+{
+    return QObject::tr("Mount");
+}
+QString trUnmount()
+{
+    return QObject::tr("Unmount");
+}
+QString trRename()
+{
+    return QObject::tr("Rename");
+}
+QString trEject()
+{
+    return QObject::tr("Eject");
+}
+QString trSafelyRemove()
+{
+    return QObject::tr("Safely Remove");
+}
+QString trProperties()
+{
+    return QObject::tr("Properties");
+}
+QString trFormat()
+{
+    return QObject::tr("Format");
+}
+}   // namespace ContextMenuActionTrs
+
 EntryFileInfoPrivate::EntryFileInfoPrivate(EntryFileInfo *qq)
     : AbstractFileInfoPrivate(qq)
 {
@@ -108,10 +148,14 @@ QString EntryFileInfo::clearDeviceId() const
     return d->entity ? d->entity->clearDeviceId() : "";
 }
 
+bool EntryFileInfo::isAccessable() const
+{
+    return d->entity ? d->entity->isAccessable() : false;
+}
+
 bool EntryFileInfo::renamable() const
 {
-    // TODO(xust)
-    return false;
+    return d->entity ? d->entity->renamable() : false;
 }
 
 QString EntryFileInfo::displayName() const

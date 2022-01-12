@@ -171,7 +171,10 @@ void ComputerItemDelegate::setEditorData(QWidget *editor, const QModelIndex &ind
 void ComputerItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
     auto currEditor = qobject_cast<QLineEdit *>(editor);
-    model->setData(index, currEditor->text());
+    QString originalText = index.data(Qt::DisplayRole).toString();
+    QString newText = currEditor->text();
+    if (originalText != newText)
+        model->setData(index, currEditor->text());
     model->setData(index, false, ComputerModel::kItemIsEditing);
 }
 

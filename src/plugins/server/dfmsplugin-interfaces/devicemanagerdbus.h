@@ -78,6 +78,7 @@ public slots:
     QString MountBlockDevice(QString id);
     void UnmountBlockDevice(QString id);
     void UnmountBlockDeviceForced(QString id);
+    bool RenameBlockDevice(QString id, QString newName);
     void EjectBlockDevice(QString id);
     void PoweroffBlockDevice(QString id);
     QString MountProtocolDevice(QString id);

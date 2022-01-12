@@ -40,12 +40,36 @@ class ComputerController : public QObject
 public:
     static ComputerController *instance();
 
-    static void cdTo(quint64 winId, const QUrl &url);
-    static void requestMenu(quint64 winId, const QUrl &url, const QPoint &pos);
-    static void rename(quint64 winId, const QUrl &url, const QString &name);
+    enum ActionAfterMount {
+        kEnterDirectory,
+        kEnterInNewWindow,
+        kEnterInNewTab,
+        kNone,
+    };
 
-    static void mountAndEnterBlockDevice(quint64 winId, const DFMEntryFileInfoPointer info);
-    static void mountAndEnterBlockDevice(quint64 winId, const QString &id);
+    void onOpenItem(quint64 winId, const QUrl &url);
+    void onMenuRequest(quint64 winId, const QUrl &url, bool triggerFromSidebar);
+    void doRename(quint64 winId, const QUrl &url, const QString &name);
+
+    void doSetAlias(DFMEntryFileInfoPointer info, const QString &alias);
+
+    void mountDevice(quint64 winId, const DFMEntryFileInfoPointer info, ActionAfterMount act = kEnterDirectory);
+    void mountDevice(quint64 winId, const QString &id, ActionAfterMount act = kEnterDirectory);
+
+    void actionTriggered(const QUrl &url, quint64 winId, const QString &actionText, bool triggerFromSidebar);
+    void actEject(const QUrl &url);
+    void actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPointer info);
+    void actOpenInNewTab(quint64 winId, DFMEntryFileInfoPointer info);
+    void actMount(DFMEntryFileInfoPointer info);
+    void actUnmount(DFMEntryFileInfoPointer info);
+    void actSafelyRemove(DFMEntryFileInfoPointer info);
+    void actRename(quint64 winId, DFMEntryFileInfoPointer info, bool triggerFromSidebar);
+    void actFormat(quint64 winId, DFMEntryFileInfoPointer info);
+    void actRemove(DFMEntryFileInfoPointer info);
+    void actProperties(const QUrl &url);
+
+Q_SIGNALS:
+    void requestRename(quint64 winId, const QUrl &url);
 
 private:
     explicit ComputerController(QObject *parent = nullptr);

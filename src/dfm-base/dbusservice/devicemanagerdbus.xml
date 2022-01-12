@@ -94,6 +94,11 @@
     <method name="UnmountBlockDeviceForced">
       <arg name="id" type="s" direction="in"/>
     </method>
+    <method name="RenameBlockDevice">
+      <arg type="b" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="newName" type="s" direction="in"/>
+    </method>
     <method name="EjectBlockDevice">
       <arg name="id" type="s" direction="in"/>
     </method>

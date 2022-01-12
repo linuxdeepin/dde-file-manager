@@ -171,6 +171,7 @@ void ComputerView::initConnect()
     connect(this, &ComputerView::enterPressed, this, &ComputerView::cdTo);
 
     connect(this, &ComputerView::customContextMenuRequested, this, &ComputerView::onMenuRequest);
+    connect(ComputerControllerInstance, &ComputerController::requestRename, this, &ComputerView::onRenameRequest);
 }
 
 void ComputerView::onMenuRequest(const QPoint &pos)
@@ -183,13 +184,23 @@ void ComputerView::onMenuRequest(const QPoint &pos)
     if (index.data(ComputerModel::DataRoles::kItemShapeTypeRole).toInt() == ComputerItemData::kSplitterItem)
         return;
 
-    qDebug() << "menu requested: " << index.data(Qt::DisplayRole).toString();
-    int row = index.row();
-    auto computerModel = qobject_cast<ComputerModel *>(this->model());
-    auto menu = computerModel->items.at(row).info->createMenu();
-    if (menu)
-        menu->exec(QCursor::pos());
-    delete menu;
+    auto url = index.data(ComputerModel::DataRoles::kDeviceUrlRole).toUrl();
+    ComputerControllerInstance->onMenuRequest(ComputerUtils::getWinId(this), url, false);
+}
+
+void ComputerView::onRenameRequest(quint64 winId, const QUrl &url)
+{
+    if (winId != ComputerUtils::getWinId(this))
+        return;
+
+    auto model = qobject_cast<ComputerModel *>(this->model());
+    if (!model)
+        return;
+
+    int r = model->findItem(url);
+    auto idx = model->index(r, 0);
+    if (idx.isValid())
+        edit(idx);
 }
 
 void ComputerView::cdTo(const QModelIndex &index)
@@ -206,9 +217,7 @@ void ComputerView::cdTo(const QModelIndex &index)
         return;
 
     auto url = index.data(ComputerModel::DataRoles::kDeviceUrlRole).toUrl();
-    auto &ctx = dpfInstance.serviceContext();
-    auto winServ = ctx.service<DSB_FM_NAMESPACE::WindowsService>(DSB_FM_NAMESPACE::WindowsService::name());
-    ComputerController::cdTo(winServ->findWindowId(this), url);
+    ComputerControllerInstance->onOpenItem(ComputerUtils::getWinId(this), url);
 }
 
 ComputerViewPrivate::ComputerViewPrivate(ComputerView *qq)

@@ -53,6 +53,7 @@ public:
     void removeDevice(const QUrl &url);
 
     void startQueryItems();
+    void updateSidebarItem(const QUrl &url, const QString &newName, bool editable);
 
 Q_SIGNALS:
     void itemQueryFinished(const ComputerDataList &results);
@@ -64,9 +65,8 @@ protected Q_SLOTS:
     void onDeviceAdded(const QString &id);
     void onDevicePropertyChanged(const QString &id, const QString &propertyName, const QDBusVariant &var);
 
-    void addSidebarItem(const QUrl &url, const QString &icon, const QString &name);
+    void addSidebarItem(DFMEntryFileInfoPointer info);
     void removeSidebarItem(const QUrl &url);
-    void updateSidebarItem(const QUrl &url, const QString &newName);
 
 private:
     explicit ComputerItemWatcher(QObject *parent = nullptr);

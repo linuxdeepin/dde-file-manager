@@ -60,6 +60,8 @@ public:   // operations
     bool ejectBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
     void poweroffBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
     bool poweroffBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
+    bool renameBlockDevice(const QString &deviceId, const QString &newName, const QVariantMap &opts = {});
+    void renameBlockDeviceAsync(const QString &deviceId, const QString &newName, const QVariantMap &opts = {});
 
     QString unlockBlockDevice(const QString &passwd, const QString &deviceId, const QVariantMap &opts = {});
     void unlockBlockDeviceAsync(const QString &passwd, const QString &deviceId, const QVariantMap &opts = {});
@@ -106,6 +108,7 @@ signals:
     void blockDevAsyncPoweroffed(const QString &deviceId, bool success);
     void blockDevAsyncUnlocked(const QString &deviceId, const QString &cleartextBlkId, bool success);
     void blockDevAsyncLocked(const QString &deviceId, bool success);
+    void blockDevAsyncRenamed(const QString &deviceId, bool success);
 
     void protocolDevAdded(const QString &deviceId);
     void protocolDevRemoved(const QString &deviceId);

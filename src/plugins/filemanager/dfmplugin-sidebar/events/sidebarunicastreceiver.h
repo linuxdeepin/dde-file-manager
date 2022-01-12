@@ -45,8 +45,7 @@ public slots:
                        DSB_FM_NAMESPACE::SideBar::ContextMenuCallback menuFunc,
                        DSB_FM_NAMESPACE::SideBar::RenameCallback renameFunc);
     void invokeRemoveItem(const QUrl &url);
-    void invokeUpdateItem(const QUrl &url, const QString &newName);
-
+    void invokeUpdateItem(const QUrl &url, const QString &newName, bool editable);
     void invokeInsertItem(int index,
                           const DSB_FM_NAMESPACE::SideBar::ItemInfo &info,
                           DSB_FM_NAMESPACE::SideBar::CdActionCallback cdFunc,

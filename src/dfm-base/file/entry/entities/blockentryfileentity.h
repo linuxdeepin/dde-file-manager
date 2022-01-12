@@ -47,12 +47,14 @@ public:
     virtual long sizeUsage() const override;
     virtual QString fileSystem() const override;
     virtual void refresh() override;
-    virtual bool removable() override;
+    virtual bool removable() const override;
     virtual QMenu *createMenu() override;
     virtual QUrl targetUrl() const override;
     virtual bool isEncrypted() const override;
     virtual bool isUnlocked() const override;
     virtual QString clearDeviceId() const override;
+    virtual bool isAccessable() const override;
+    virtual bool renamable() const override;
 
 private:
     QString getNameOrAlias() const;

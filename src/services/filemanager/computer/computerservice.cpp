@@ -20,14 +20,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 #include "computerservice.h"
 #include "private/computerservice_p.h"
 #include "computer_defines.h"
 
+#include "dfm-base/utils/universalutils.h"
 #include <dfm-framework/framework.h>
 
 DSB_FM_BEGIN_NAMESPACE
+
+// custom event type
+namespace EventType {
+const int kContextActionTriggered = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+};   // namespace EventType
 
 ComputerService::ComputerService(QObject *parent)
     : dpf::PluginService(parent),

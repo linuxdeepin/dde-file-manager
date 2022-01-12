@@ -39,6 +39,11 @@ public:
     static void cdTo(QWidget *sender, const QString &path);
     static void cdTo(quint64 winId, const QUrl &url);
     static void cdTo(quint64 winId, const QString &path);
+
+    static void sendEnterInNewWindow(const QUrl &url);
+    static void sendEnterInNewTab(quint64 winId, const QUrl &url);
+
+    static void sendContextActionTriggered(const QUrl &url, const QString &action);
 };
 
 DPCOMPUTER_END_NAMESPACE
