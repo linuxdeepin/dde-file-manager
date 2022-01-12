@@ -60,6 +60,8 @@
 static int FindInsertPosInOrderList(const FileSystemNodePointer &needNode,
         const QList<FileSystemNodePointer> &list, const DAbstractFileInfo::CompareFunction &sortFun,
         const Qt::SortOrder &order, const bool *isCancel){
+    if (!sortFun)
+        return list.count();
     int begin = 0;
     int end = list.count();
     int row = (begin + end)/2;
@@ -75,7 +77,7 @@ static int FindInsertPosInOrderList(const FileSystemNodePointer &needNode,
 
         const FileSystemNodePointer &node = list.at(row);
         if (isDir) {
-            if (node->fileInfo->isDir() && sortFun(needNode->fileInfo, node->fileInfo, order)) {
+            if (node->fileInfo->isDir() && !sortFun(needNode->fileInfo, node->fileInfo, order)) {
                 begin = row;
                 row = (end + begin + 1) / 2 ;
                 if (row >= end)
@@ -85,7 +87,7 @@ static int FindInsertPosInOrderList(const FileSystemNodePointer &needNode,
                 row = (end + begin) / 2 ;
             }
         } else {
-            if (node->fileInfo->isDir() || sortFun(needNode->fileInfo, node->fileInfo, order)) {
+            if (node->fileInfo->isDir() || !sortFun(needNode->fileInfo, node->fileInfo, order)) {
                 begin = row;
                 row = (end + begin + 1) / 2 ;
                 if (row >= end)
@@ -774,7 +776,7 @@ begin:
         }
         const DUrl &fileUrl = fileInfo->fileUrl();
 
-        if (v.first == AddFile || v.first == AppendFile) {
+        if (fileInfo->hasOrderly() && (v.first == AddFile || v.first == AppendFile)) {
             if (rootNode->childContains(fileUrl))
                 continue;
 
@@ -2992,7 +2994,6 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
         beginInsertRows(createIndex(parentNode, 0), row == -1 ? parentNode->childrenCount() : row,
                         row == -1 ? parentNode->childrenCount() : row);
 
-        
         parentNode->insertChildren(row == -1 ? parentNode->childrenCount() : row, fileUrl, node, d->rootNodeManager->isInsertCaches());
 
         endInsertRows();

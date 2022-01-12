@@ -94,10 +94,10 @@ TEST_F(TestDFileSystemModel, test_data)
         ASSERT_TRUE(m_model->canFetchMore(rootIndex));
         m_model->fetchMore(rootIndex);
     });
-    DAbstractFileInfoPointer tmpFileInfo = DFileService::instance()->createFileInfo(nullptr, tmpFileUrl2);
+    DAbstractFileInfoPointer tmpFileInfo = DFileService::instance()->createFileInfo(nullptr, tmpFileUrl);
     QModelIndex index = m_model->index(0, 0);
     QString name = m_model->data(index,   Qt::DisplayRole).toString();
-    ASSERT_EQ(tmpFileUrl2.fileName(), name);
+    ASSERT_EQ(tmpFileUrl.fileName(), name);
     ASSERT_EQ(m_model->data(index, DFileSystemModel::FilePathRole).toString(), tmpFileInfo->filePath());
     ASSERT_EQ(m_model->data(index, DFileSystemModel::FileDisplayNameRole).toString(), tmpFileInfo->fileDisplayName());
     ASSERT_EQ(m_model->data(index, DFileSystemModel::FileNameRole).toString(), tmpFileInfo->fileName());
@@ -234,7 +234,7 @@ TEST_F(TestDFileSystemModel, test_getUrlByIndex)
     QModelIndex index = m_model->index(0, 0);
     url = m_model->getUrlByIndex(index);
     DAbstractFileInfoPointer tmpFileInfo = DFileService::instance()->createFileInfo(nullptr, tmpFileUrl);
-    ASSERT_EQ(url, tmpFileUrl2);
+    ASSERT_EQ(url, tmpFileUrl);
 }
 #endif
 
