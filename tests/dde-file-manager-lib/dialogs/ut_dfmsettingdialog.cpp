@@ -204,7 +204,7 @@ TEST_F(TestSettingBackend, testDoSetOption2)
     Stub stu3;
     stu3.set(ADDR(DFMApplication, setGenericAttribute), stu_setGenericAttribute);
 
-    QString key("base.hidden_files.show_suffix");
+    QString key("base.hidden_files.hide_suffix");
     QVariant value("");
     EXPECT_NO_FATAL_FAILURE(m_pTesting->doSetOption(key, value));
 }

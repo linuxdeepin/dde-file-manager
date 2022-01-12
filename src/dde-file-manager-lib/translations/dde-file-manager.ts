@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="en">
 <context>
     <name>AppController</name>
     <message>
@@ -2426,6 +2424,7 @@
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="139"/>
         <location filename="../configure/global-setting-template-pro.js" line="139"/>
+        <location filename="../configure/global-setting-template.js" line="139"/>
         <source>Hide file extension when rename</source>
         <translation>Hide file extension when rename</translation>
     </message>
@@ -2595,11 +2594,6 @@
         <location filename="../configure/global-setting-template.js" line="264"/>
         <source>Dialog</source>
         <translation>Dialog</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template.js" line="139"/>
-        <source>Show file extension</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template.js" line="202"/>
@@ -3230,29 +3224,29 @@
         <translation>Unlock by key</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="97"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="95"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Open</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="213"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="233"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="211"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="231"/>
         <source>Size: %1</source>
         <translation>Size: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="214"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
         <source>Type: %1</source>
         <translation>Type: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="226"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="224"/>
         <source>Size: 0</source>
         <translation>Size: 0</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="232"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="230"/>
         <source>Items: %1</source>
         <translation>Items: %1</translation>
     </message>
@@ -4107,8 +4101,8 @@
     <message>
         <location filename="../interfaces/diconitemdelegate.cpp" line="919"/>
         <location filename="../interfaces/diconitemdelegate.cpp" line="1080"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="477"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="683"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="479"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="688"/>
         <location filename="../views/fileitem.cpp" line="203"/>
         <source>%1 are not allowed</source>
         <translation>%1 are not allowed</translation>

@@ -339,7 +339,7 @@ public:
                          width() - TEXT_PADDING * 2 - margins.left() - margins.right(),
                          INT_MAX);
 
-        QString str = delegate->displayFileName(index);
+        QString str = index.data(DFileSystemModel::FileDisplayNameRole).toString();
         const QList<QRectF> &lines = delegate->drawText(index, &pa, str, label_rect, ICON_MODE_RECT_RADIUS,
                                                         option.palette.brush(QPalette::Normal, QPalette::Highlight),
                                                         QTextOption::WrapAtWordBoundaryOrAnywhere,
@@ -403,7 +403,7 @@ public:
                              width - TEXT_PADDING * 2,
                              INT_MAX);
 
-            QString str = delegate->displayFileName(index);
+            QString str = index.data(DFileSystemModel::FileDisplayNameRole).toString();
             const QList<QRectF> &lines = delegate->drawText(index, nullptr, str, label_rect, ICON_MODE_RECT_RADIUS, Qt::NoBrush,
                                                             QTextOption::WrapAtWordBoundaryOrAnywhere, option.textElideMode, Qt::AlignCenter);
 
@@ -699,7 +699,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     }
 
     //icon模式下固定展示文件名
-    QString str = displayFileName(index);
+    QString str = index.data(DFileSystemModel::FileDisplayNameRole).toString();
 
     /// init file name geometry
     QRectF label_rect = opt.rect;
@@ -1028,12 +1028,12 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         return;
 
     //获取当前是否显示文件后缀
-    bool showSuffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffix).toBool() };
+    bool donot_show_suffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };
 
     if (item->edit->isReadOnly()) {
         item->edit->setPlainText(index.data(DFileSystemModel::FileDisplayNameRole).toString());
     } else {
-        if (!showSuffix) {
+        if (donot_show_suffix) {
             const QString &suffix = index.data(DFileSystemModel::FileSuffixOfRenameRole).toString();
 
             editor->setProperty("_d_whether_show_suffix", suffix);
@@ -1048,7 +1048,7 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 
     //　源文件名称不存在更改,此处会受到textChanged的更改出现光标重新计算(更改此处请慎重)
     QString srcText;
-    if (!showSuffix) {
+    if (donot_show_suffix) {
         srcText = index.data(DFileSystemModel::FileBaseNameOfRenameRole).toString();
     } else {
         srcText = index.data(DFileSystemModel::FileNameOfRenameRole).toString();
@@ -1310,18 +1310,6 @@ bool DIconItemDelegate::enabledTextShadow() const
     Q_D(const DIconItemDelegate);
 
     return d->enabledTextShadow;
-}
-
-QString DIconItemDelegate::displayFileName(const QModelIndex &index) const
-{
-    bool showSuffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffix).toBool() };
-    QString str = index.data(DFileSystemModel::FileDisplayNameRole).toString();
-    const QString &suffix = "." + index.data(DFileSystemModel::FileSuffixRole).toString();
-
-    if (!showSuffix && str.endsWith(suffix))
-        str = str.mid(0, str.length() - suffix.length());
-
-    return str;
 }
 
 void DIconItemDelegate::setFocusTextBackgroundBorderColor(QColor focusTextBackgroundBorderColor)

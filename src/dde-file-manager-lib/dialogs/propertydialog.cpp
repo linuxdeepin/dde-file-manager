@@ -695,12 +695,12 @@ void PropertyDialog::updateFolderSize(qint64 size)
 
 void PropertyDialog::renameFile()
 {
-    bool showSuffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffix).toBool() };
+    bool donotShowSuffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };
 
     const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, m_url);
 
     QString fileName;
-    if (!showSuffix &&
+    if (donotShowSuffix &&
             fileInfo->isFile() &&
             !fileInfo->suffix().isEmpty() && !fileInfo->isDesktopFile()) {
         fileName = fileInfo->baseNameOfRename();
@@ -717,7 +717,7 @@ void PropertyDialog::renameFile()
     if (fileInfo->isFile()) {
 
         QString suffixStr{ fileInfo->suffix() };
-        if (suffixStr.isEmpty() || !showSuffix || fileInfo->isDesktopFile()) {
+        if (suffixStr.isEmpty() || donotShowSuffix || fileInfo->isDesktopFile()) {
             endPos = m_edit->toPlainText().length();
         } else if (m_edit->toPlainText().endsWith(suffixStr)) {
             endPos = m_edit->toPlainText().length() - fileInfo->suffix().length() - 1;
@@ -737,7 +737,7 @@ void PropertyDialog::showTextShowFrame()
 {
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
 
-    bool showSuffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffix).toBool() };
+    bool donotShowSuffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };
 
     QString newName = m_edit->toPlainText();
 
@@ -745,7 +745,7 @@ void PropertyDialog::showTextShowFrame()
         m_edit->setIsCanceled(true);
     }
 
-    if (!showSuffix && fileInfo->isFile() &&
+    if (donotShowSuffix && fileInfo->isFile() &&
             !fileInfo->suffix().isEmpty() && !fileInfo->isDesktopFile()) {
         newName += "." + fileInfo->suffix();
     }
