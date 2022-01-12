@@ -23,31 +23,17 @@
 #define DFMRECENTUTIL_H
 
 #include "dfmplugin_recent_global.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/urlroute.h"
 
 #include <QUrl>
-#include <QDomDocument>
-#include <QStandardPaths>
-#include <QFile>
 #include <QDebug>
+#include <QDir>
+#include <QIcon>
 
 DPRECENT_BEGIN_NAMESPACE
 class RecentUtil final
 {
 
 public:
-    static QString sidebarDisplayText;
-
-    explicit RecentUtil() = delete;
-
-    inline static QDomNodeList getRecentNodes()
-    {
-        return nodes;
-    }
-
-    static bool initRecentSubSystem();
-
     inline static QString scheme()
     {
         return "recent";
@@ -56,6 +42,11 @@ public:
     inline static QIcon icon()
     {
         return QIcon::fromTheme("document-open-recent-symbolic");
+    }
+
+    inline static QString xbelPath()
+    {
+        return QDir::homePath() + "/.local/share/recently-used.xbel";
     }
 
     static QUrl rootUrl()
@@ -67,7 +58,7 @@ public:
     }
 
 private:
-    static QDomNodeList nodes;
+    explicit RecentUtil() = delete;
 };
 DPRECENT_END_NAMESPACE
 #endif   // DFMRECENTUTIL_H

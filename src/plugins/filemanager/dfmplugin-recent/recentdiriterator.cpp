@@ -23,49 +23,92 @@
 #include "recentdiriterator.h"
 #include "recentutil.h"
 #include "recentfileinfo.h"
+#include "recentiterateworker.h"
+#include "private/recentdiriterator_p.h"
 
-#include <QQueue>
+#include "dfm-base/base/schemefactory.h"
 
 DPRECENT_BEGIN_NAMESPACE
 
-class RecentDirIteratorPrivate
+RecentDirIteratorPrivate::RecentDirIteratorPrivate(RecentDirIterator *qq)
+    : QObject(nullptr),
+      q(qq)
 {
-    friend class RecentDirIterator;
 
-public:
-    explicit RecentDirIteratorPrivate() {}
+    RecentIterateWorker *worker = new RecentIterateWorker;
+    worker->moveToThread(&workerThread);
+    connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
+    connect(this, &RecentDirIteratorPrivate::asyncHandleFileChanged, worker, &RecentIterateWorker::doWork);
+    connect(worker, &RecentIterateWorker::recentUrls, this, &RecentDirIteratorPrivate::handleFileChanged);
+    workerThread.start();
 
-private:
-    QUrl currentUrl;
-    QQueue<QUrl> urlList;
-    QMap<QUrl, AbstractFileInfoPointer> recentNodes;
-};
+    emit asyncHandleFileChanged();
+    watcher = WacherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(RecentUtil::xbelPath()));
+    connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &RecentDirIteratorPrivate::asyncHandleFileChanged);
+    connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &RecentDirIteratorPrivate::asyncHandleFileChanged);
+    watcher->startWatcher();
+    for (QUrl url : recentNodes.keys())
+        urlList << url;
+}
+
+RecentDirIteratorPrivate::~RecentDirIteratorPrivate()
+{
+}
+
+void RecentDirIteratorPrivate::handleFileChanged(QList<QPair<QUrl, qint64>> &results)
+{
+    QList<QUrl> urlList;
+    for (auto pair : results) {
+        const QUrl &url = pair.first;
+        urlList << url;
+        if (!recentNodes.contains(url)) {
+            recentNodes[url] = QSharedPointer<RecentFileInfo>(new RecentFileInfo(url));
+            QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentUtil::rootUrl());
+            if (watcher) {
+                emit watcher->subfileCreated(url);
+            }
+        }
+    }
+
+    // delete does not exist url.
+    for (auto iter = recentNodes.begin(); iter != recentNodes.end();) {
+
+        const QUrl url = iter.key();
+        if (!urlList.contains(url)) {
+            iter = recentNodes.erase(iter);
+            QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentUtil::rootUrl());
+            if (watcher) {
+                emit watcher->fileDeleted(url);
+            }
+
+        } else {
+            auto info = iter.value();
+            if (info) {
+                // Todo(yanghao):updateInfo
+                //               iter.value()->updateInfo();
+                ++iter;
+            } else {
+                iter = recentNodes.erase(iter);
+            }
+        }
+    }
+}
 
 RecentDirIterator::RecentDirIterator(const QUrl &url,
                                      const QStringList &nameFilters,
                                      QDir::Filters filters,
                                      QDirIterator::IteratorFlags flags)
     : AbstractDirIterator(url, nameFilters, filters, flags),
-      d(new RecentDirIteratorPrivate())
+      d(new RecentDirIteratorPrivate(this))
 {
-    RecentUtil::initRecentSubSystem();
-    for (int i = 0; i < RecentUtil::getRecentNodes().size(); i++) {
-        QUrl url = QUrl(RecentUtil::getRecentNodes().at(i).toElement().attribute("href"));
-        QUrl schemeUrl = UrlRoute::pathToReal(url.path());
-        if (!schemeUrl.isValid())
-            continue;
-        QFileInfo info(url.toLocalFile());
-        if (info.exists() && info.isFile()) {
-            d->urlList << schemeUrl;
-            d->recentNodes[schemeUrl] = QSharedPointer<RecentFileInfo>(new RecentFileInfo(schemeUrl));
-        }
-    }
-    // ToDo(yanghao):watcher
 }
 
 RecentDirIterator::~RecentDirIterator()
 {
     if (d) {
+        d->watcher->stopWatcher();
+        d->workerThread.quit();
+        d->workerThread.wait();
         delete d;
     }
 }
@@ -76,7 +119,6 @@ QUrl RecentDirIterator::next()
         d->currentUrl = d->urlList.dequeue();
         return d->currentUrl;
     }
-
     return QUrl();
 }
 

@@ -58,6 +58,7 @@ class FileViewPrivate
     DFMBASE_NAMESPACE::Global::ViewMode configViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
     int configIconSizeLevel = 1;
 
+    FileView::RandeIndex visibleIndexRande;
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
     QUrl modelIndexUrl(const QModelIndex &index) const;

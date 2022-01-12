@@ -101,3 +101,8 @@ void SideBarService::updateItem(const QUrl &url, const QString &newName)
 {
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, url, newName);
 }
+
+void SideBarService::insertItem(int index, const SideBar::ItemInfo &info, const SideBar::CdActionCallback &cdFunc, const SideBar::ContextMenuCallback &menuFunc, const SideBar::RenameCallback &renameFunc)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, index, info, cdFunc, menuFunc, renameFunc);
+}

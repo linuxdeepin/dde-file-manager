@@ -19,33 +19,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "recentutil.h"
+#ifndef LOCALFILEWATCHER_H
+#define LOCALFILEWATCHER_H
 
+#include "dfmplugin_recent_global.h"
+#include "dfm-base/interfaces/abstractfilewatcher.h"
+
+class QUrl;
+
+DFMBASE_USE_NAMESPACE
 DPRECENT_BEGIN_NAMESPACE
 
-QDomNodeList RecentUtil::nodes {};
-
-bool RecentUtil::initRecentSubSystem()
+class RecentFileWatcherPrivate;
+class RecentFileWatcher : public AbstractFileWatcher
 {
-    QDomDocument recentDom;
-    QFile recentFile;
+    Q_OBJECT
+public:
+    explicit RecentFileWatcher() = delete;
+    explicit RecentFileWatcher(const QUrl &url, QObject *parent = nullptr);
+    ~RecentFileWatcher() override;
+    virtual void setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled = true) override;
 
-    recentFile.setFileName(QStandardPaths::locate(QStandardPaths::HomeLocation, "", QStandardPaths::LocateDirectory)
-                           + ".local/share/recently-used.xbel");
+private:
+    void addWatcher(const QUrl &url);
+    void removeWatcher(const QUrl &url);
 
-    if (!recentFile.open(QFile::OpenModeFlag::ReadOnly)) {
-        qInfo() << "Failed, open recent file:" << recentFile.fileName();
-        return false;
-    }
+    void onFileDeleted(const QUrl &url);
+    void onFileAttributeChanged(const QUrl &url);
 
-    if (!recentDom.setContent(&recentFile)) {
-        qInfo() << "Failed, QDomDocument setContent recent file";
-        return false;
-    }
-
-    nodes = recentDom.elementsByTagName("bookmark");
-
-    return true;
-}
-
+    RecentFileWatcherPrivate *dptr;
+};
 DPRECENT_END_NAMESPACE
+
+#endif   // LOCALFILEWATCHER_H

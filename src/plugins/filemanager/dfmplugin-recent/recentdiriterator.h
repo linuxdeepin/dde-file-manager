@@ -33,6 +33,7 @@ DPRECENT_BEGIN_NAMESPACE
 class RecentDirIteratorPrivate;
 class RecentDirIterator : public AbstractDirIterator
 {
+    Q_OBJECT
     friend class RecentDirIteratorPrivate;
 
 public:

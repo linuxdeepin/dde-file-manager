@@ -89,14 +89,6 @@ bool FileSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
     QModelIndex rowIndex = sourceModel()->index(sourceRow, 0, sourceParent);
 
     AbstractFileInfoPointer fileInfo = fileModel->itemFromIndex(rowIndex)->fileinfo();
-    if (!fileInfo)
-        return false;
 
-    QSharedPointer<LocalFileInfo> localFileInfo = qSharedPointerDynamicCast<LocalFileInfo>(fileInfo);
-    // filter files which are not exist
-    //    if (!localFileInfo->exists())
-    //        return false;
-
-    // TODO(liuyangming): hide file by config
-    return !localFileInfo->isHidden();
+    return fileInfo && !fileInfo->isHidden();
 }

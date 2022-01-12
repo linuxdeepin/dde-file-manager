@@ -70,6 +70,7 @@ public:
 
     int getColumnWidth(const int &column) const;
     FileViewItem::Roles getRoleByColumn(const int &column) const;
+    AbstractFileWatcherPointer fileWatcher() const;
 };
 
 DPWORKSPACE_END_NAMESPACE

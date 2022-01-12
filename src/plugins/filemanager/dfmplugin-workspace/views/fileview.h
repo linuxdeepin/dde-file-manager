@@ -42,6 +42,8 @@ class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseV
     Q_OBJECT
     friend class FileViewPrivate;
     QSharedPointer<FileViewPrivate> d;
+    using RandeIndex = QPair<int, int>;
+    using RandeIndexList = QList<RandeIndex>;
 
 public:
     enum class ClickedAction : uint8_t {
@@ -88,6 +90,8 @@ public slots:
     void delayUpdateStatusBar();
     void viewModeChanged(quint64 windowId, int viewMode);
 
+    void onRowCountChanged();
+
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
@@ -112,6 +116,10 @@ private:
 
     QVariant fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue);
     void setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value);
+
+    void updateModelActiveIndex();
+    RandeIndexList visibleIndexes(QRect rect) const;
+    QSize itemSizeHint() const;
 };
 
 DPWORKSPACE_END_NAMESPACE

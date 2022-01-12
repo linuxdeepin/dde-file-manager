@@ -48,8 +48,8 @@ void FileViewModelPrivate::doFileDeleted(const QUrl &url)
         QMutexLocker lk(&watcherEventMutex);
         watcherEvent.enqueue(QPair<QUrl, EventType>(url, RmFile));
     }
-    if (isUpdatedChildren)
-        return;
+    //    if (isUpdatedChildren)
+    //        return;
     metaObject()->invokeMethod(this, QT_STRINGIFY(doWatcherEvent), Qt::QueuedConnection);
 }
 
@@ -59,8 +59,9 @@ void FileViewModelPrivate::dofileCreated(const QUrl &url)
         QMutexLocker lk(&watcherEventMutex);
         watcherEvent.enqueue(QPair<QUrl, EventType>(url, AddFile));
     }
-    if (isUpdatedChildren)
-        return;
+    // Todo(liyigang):isUpdatedChildren
+    //    if (isUpdatedChildren)
+    //        return;
     metaObject()->invokeMethod(this, QT_STRINGIFY(doWatcherEvent), Qt::QueuedConnection);
 }
 
@@ -109,8 +110,9 @@ void FileViewModelPrivate::doUpdateChildren(const QList<FileViewItem *> &childre
 
 void FileViewModelPrivate::doWatcherEvent()
 {
-    if (isUpdatedChildren)
-        return;
+    // Todo(liyigang):isUpdatedChildren
+    //    if (isUpdatedChildren)
+    //        return;
 
     if (processFileEventRuning)
         return;
@@ -124,7 +126,7 @@ void FileViewModelPrivate::doWatcherEvent()
         }
         const QUrl &fileUrl = event.first;
 
-        if (fileUrl.isValid())
+        if (!fileUrl.isValid())
             continue;
 
         if (fileUrl == root->url()) {
@@ -133,8 +135,9 @@ void FileViewModelPrivate::doWatcherEvent()
             //todo:先不做
         }
 
-        if (UrlRoute::urlParent(fileUrl) != root->url())
-            continue;
+        // Todo(liyigang): parentUrl
+        // if (UrlRoute::urlParent(fileUrl) != root->url())
+        //    continue;
 
         if (event.second == AddFile) {
             if (childrenMap.contains(fileUrl))
@@ -156,7 +159,7 @@ void FileViewModelPrivate::doWatcherEvent()
             q->beginRemoveRows(QModelIndex(), fileIndex, fileIndex);
             childrens.removeOne(childrenMap.value(fileUrl));
             childrenMap.remove(fileUrl);
-            q->endMoveRows();
+            q->endRemoveRows();
         }
     }
     processFileEventRuning = false;
@@ -383,6 +386,11 @@ FileViewItem::Roles FileViewModel::getRoleByColumn(const int &column) const
         return columnRoleList.at(column);
 
     return FileViewItem::kItemNameRole;
+}
+
+AbstractFileWatcherPointer FileViewModel::fileWatcher() const
+{
+    return d->watcher;
 }
 
 int FileViewModel::getColumnWidth(const int &column) const

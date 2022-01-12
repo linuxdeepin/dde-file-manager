@@ -20,6 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "recentfileinfo.h"
+#include "recentutil.h"
+
 #include "interfaces/private/abstractfileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
 
@@ -56,7 +58,7 @@ RecentFileInfo::RecentFileInfo(const QUrl &url)
 {
     d = static_cast<RecentFileInfoPrivate *>(dptr.data());
     if (url.path() != "/") {
-        d->setProxy(InfoFactory::create<AbstractFileInfo>(url));
+        d->setProxy(InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(url.path())));
     }
 }
 
@@ -71,5 +73,25 @@ QString RecentFileInfo::fileName() const
     }
     return QString();
 }
+
+bool RecentFileInfo::exists() const
+{
+    if (url() == RecentUtil::rootUrl())
+        return true;
+    return d->proxy && d->proxy->exists();
+}
+
+bool RecentFileInfo::isHidden() const
+{
+    return d->proxy && d->proxy->isHidden();
+}
+
+qint64 RecentFileInfo::size() const
+{
+    if (d->proxy) {
+        return d->proxy->size();
+    }
+    return -1;
+};
 
 DPRECENT_END_NAMESPACE

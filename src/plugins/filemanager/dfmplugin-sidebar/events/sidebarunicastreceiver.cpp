@@ -56,6 +56,7 @@ void SideBarUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("SideBarService::addItem"), this, &SideBarUnicastReceiver::invokeAddItem);
     dpfInstance.eventUnicast().connect(topic("SideBarService::removeItem"), this, &SideBarUnicastReceiver::invokeRemoveItem);
     dpfInstance.eventUnicast().connect(topic("SideBarService::updateItem"), this, &SideBarUnicastReceiver::invokeUpdateItem);
+    dpfInstance.eventUnicast().connect(topic("SideBarService::insertItem"), this, &SideBarUnicastReceiver::invokeInsertItem);
 }
 
 void SideBarUnicastReceiver::invokeAddItem(const ItemInfo &info, CdActionCallback cdFunc, ContextMenuCallback menuFunc, RenameCallback renameFunc)
@@ -91,6 +92,32 @@ void SideBarUnicastReceiver::invokeUpdateItem(const QUrl &url, const QString &ne
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     for (SideBarWidget *sidebar : allSideBar)
         sidebar->updateItem(url, newName);
+}
+
+void SideBarUnicastReceiver::invokeInsertItem(int index, const ItemInfo &info, CdActionCallback cdFunc, ContextMenuCallback menuFunc, RenameCallback renameFunc)
+{
+    if (SideBarHelper::allCacheInfo().contains(info)) {
+        qWarning() << "Cannot add repeated info " << info.url;
+        return;
+    }
+    // Todo: index position
+    if (index >= SideBarHelper::allCacheInfo().size())
+        index = SideBarHelper::allCacheInfo().size();
+    if (index <= 0)
+        index = 0;
+
+    QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
+    for (SideBarWidget *sidebar : allSideBar) {
+        SideBarItem *item = SideBarHelper::createItemByInfo(info);
+        if (item) {
+            sidebar->insertItem(index, item);
+            SideBarManager::instance()->registerCallback(item->registeredHandler(), cdFunc, menuFunc, renameFunc);
+            QUrl &&itemUrl = item->url();
+            QUrl &&sidebarUrl = sidebar->currentUrl().url();
+            if (itemUrl.scheme() == sidebarUrl.scheme() && itemUrl.path() == sidebarUrl.path())
+                sidebar->setCurrentUrl(item->url());
+        }
+    }
 }
 
 SideBarUnicastReceiver::SideBarUnicastReceiver(QObject *parent)

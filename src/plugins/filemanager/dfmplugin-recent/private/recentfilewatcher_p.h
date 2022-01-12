@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     yanghao<yanghao@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,34 +18,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef RECENTROOTFILEINFO_H
-#define RECENTROOTFILEINFO_H
+
+#ifndef RECENTDIRITERATORPRIVATE_H
+#define RECENTDIRITERATORPRIVATE_H
 
 #include "dfmplugin_recent_global.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
 
 DFMBASE_USE_NAMESPACE
 DPRECENT_BEGIN_NAMESPACE
 
-class RecentFileInfoPrivate;
-class RecentFileInfo : public AbstractFileInfo
+class RecentFileWatcher;
+class RecentFileWatcherPrivate : public AbstractFileWatcherPrivate
 {
-    Q_GADGET
-    friend class RecentFileInfoPrivate;
+    friend RecentFileWatcher;
 
 public:
-    explicit RecentFileInfo(const QUrl &url);
-    ~RecentFileInfo() override;
-    virtual QString fileName() const override;
-    virtual bool exists() const override;
-    virtual bool isHidden() const override;
-    virtual qint64 size() const override;
+    RecentFileWatcherPrivate(const QUrl &fileUrl, RecentFileWatcher *qq);
 
-private:
-    RecentFileInfoPrivate *d;
+public:
+    bool start() override;
+    bool stop() override;
+
+    void initFileWatcher();
+    void initConnect();
+
+    AbstractFileWatcherPointer proxy;
+    QMap<QUrl, AbstractFileWatcherPointer> urlToWatcherMap;
 };
 
-using RecentFileInfoPointer = QSharedPointer<RecentFileInfo>;
 DPRECENT_END_NAMESPACE
-
-#endif   // RECENTROOTFILEINFO_H
+#endif   // RECENTDIRITERATORPRIVATE_H

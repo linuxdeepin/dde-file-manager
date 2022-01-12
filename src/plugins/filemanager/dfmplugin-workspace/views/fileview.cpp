@@ -267,16 +267,136 @@ void FileView::viewModeChanged(quint64 windowId, int viewMode)
     }
 }
 
+void FileView::updateModelActiveIndex()
+{
+    const RandeIndexList randeList = visibleIndexes(QRect(QPoint(0, verticalScrollBar()->value()), QSize(size())));
+
+    if (randeList.isEmpty()) {
+        return;
+    }
+
+    const RandeIndex &rande = randeList.first();
+    AbstractFileWatcherPointer fileWatcher = model()->fileWatcher();
+
+    for (int i = d->visibleIndexRande.first; i < rande.first; ++i) {
+        const AbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
+
+        if (fileInfo && fileWatcher)
+            fileWatcher->setEnabledSubfileWatcher(fileInfo->url(), false);
+    }
+
+    for (int i = rande.second; i < d->visibleIndexRande.second; ++i) {
+        const AbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
+
+        if (fileInfo && fileWatcher) {
+            fileWatcher->setEnabledSubfileWatcher(fileInfo->url(), false);
+        }
+    }
+
+    d->visibleIndexRande = rande;
+    for (int i = rande.first; i <= rande.second; ++i) {
+        const AbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
+
+        if (fileInfo) {
+            if (!fileInfo->exists()) {
+                model()->removeRow(i, rootIndex());
+            } else if (fileWatcher) {
+                fileWatcher->setEnabledSubfileWatcher(fileInfo->url());
+            }
+        }
+    }
+}
+
+FileView::RandeIndexList FileView::visibleIndexes(QRect rect) const
+{
+    RandeIndexList list;
+
+    QSize item_size = itemSizeHint();
+    QSize icon_size = iconSize();
+
+    int count = this->count();
+    int spacing = this->spacing();
+    int item_width = item_size.width() + spacing * 2;
+    int item_height = item_size.height() + spacing * 2;
+
+    if (item_size.width() == -1) {
+        list << RandeIndex(qMax((rect.top() + spacing) / item_height, 0),
+                           qMin((rect.bottom() - spacing) / item_height, count - 1));
+    } else {
+        rect -= QMargins(spacing, spacing, spacing, spacing);
+
+        int column_count = d->iconModeColumnCount(item_width);
+
+        if (column_count <= 0)
+            return list;
+
+        int begin_row_index = rect.top() / item_height;
+        int end_row_index = rect.bottom() / item_height;
+        int begin_column_index = rect.left() / item_width;
+        int end_column_index = rect.right() / item_width;
+
+        if (rect.top() % item_height > icon_size.height())
+            ++begin_row_index;
+
+        int icon_margin = (item_width - icon_size.width()) / 2;
+
+        if (rect.left() % item_width > item_width - icon_margin)
+            ++begin_column_index;
+
+        if (rect.right() % item_width < icon_margin)
+            --end_column_index;
+
+        begin_row_index = qMax(begin_row_index, 0);
+        begin_column_index = qMax(begin_column_index, 0);
+        end_row_index = qMin(end_row_index, count / column_count);
+        end_column_index = qMin(end_column_index, column_count - 1);
+
+        if (begin_row_index > end_row_index || begin_column_index > end_column_index)
+            return list;
+
+        int begin_index = begin_row_index * column_count;
+
+        if (end_column_index - begin_column_index + 1 == column_count) {
+            list << RandeIndex(qMax(begin_index, 0), qMin((end_row_index + 1) * column_count - 1, count - 1));
+
+            return list;
+        }
+
+        for (int i = begin_row_index; i <= end_row_index; ++i) {
+            if (begin_index + begin_column_index >= count)
+                break;
+
+            list << RandeIndex(qMax(begin_index + begin_column_index, 0),
+                               qMin(begin_index + end_column_index, count - 1));
+
+            begin_index += column_count;
+        }
+    }
+
+    return list;
+}
+
+QSize FileView::itemSizeHint() const
+{
+    return itemDelegate()->sizeHint(viewOptions(), rootIndex());
+}
+
+void FileView::onRowCountChanged()
+{
+    updateModelActiveIndex();
+}
+
 void FileView::resizeEvent(QResizeEvent *event)
 {
+    DListView::resizeEvent(event);
+
     if (d->headerView) {
         if (qAbs(d->headerView->sectionsTotalWidth() - width()) < 10)
             d->allowedAdjustColumnSize = true;
 
         d->updateListModeColumnWidth();
     }
-
-    return DListView::resizeEvent(event);
+    updateModelActiveIndex();
 }
 
 void FileView::initializeModel()
@@ -314,6 +434,9 @@ void FileView::initializeConnect()
     connect(d->updateStatusBarTimer, &QTimer::timeout, this, &FileView::updateStatusBar);
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &FileView::onScalingValueChanged);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::delayUpdateStatusBar);
+
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &FileView::updateModelActiveIndex);
+    connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);
 
     connect(this, &DListView::clicked, this, &FileView::onClicked);
     connect(this, &DListView::doubleClicked, this, &FileView::onDoubleClicked);

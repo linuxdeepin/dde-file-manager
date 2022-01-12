@@ -23,9 +23,11 @@
 #include "recentutil.h"
 #include "recentfileinfo.h"
 #include "recentdiriterator.h"
+#include "recentfilewatcher.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/application/application.h"
 
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/sidebar/sidebar_defines.h"
@@ -59,6 +61,7 @@ void Recent::initialize()
     UrlRoute::regScheme(RecentUtil::scheme(), "/", RecentUtil::icon(), true);
     //注册Scheme为"recent"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<RecentFileInfo>(RecentUtil::scheme());
+    WacherFactory::regClass<RecentFileWatcher>(RecentUtil::scheme());
     DirIteratorFactory::regClass<RecentDirIterator>(RecentUtil::scheme());
 }
 
@@ -70,6 +73,41 @@ bool Recent::start()
         qCritical() << "Failed, init sidebar \"sideBarService\" is empty";
         abort();
     }
+
+    bool showRecentEnabled = Application::instance()->genericAttribute(Application::kShowRecentFileEntry).toBool();
+
+    if (showRecentEnabled) {
+        addRecentItem();
+    }
+
+    GlobalPrivate::workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
+
+    if (!GlobalPrivate::workspaceService) {
+        qCritical() << "Failed, init workspace \"workspaceService\" is empty";
+        abort();
+    }
+    GlobalPrivate::workspaceService->addScheme(RecentUtil::scheme());
+
+    connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
+    return true;
+}
+
+dpf::Plugin::ShutdownFlag Recent::stop()
+{
+    return kSync;
+}
+
+void Recent::onRecentDisplayChanged(bool enabled)
+{
+    if (enabled) {
+        addRecentItem();
+    } else {
+        removeRecentItem();
+    }
+}
+
+void Recent::addRecentItem()
+{
     SideBar::ItemInfo item;
     item.group = SideBar::DefaultGroup::kCommon;
     item.url = RecentUtil::rootUrl();
@@ -77,20 +115,12 @@ bool Recent::start()
     item.text = tr("Recent");
     item.flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 
-    GlobalPrivate::sideBarService->addItem(item, nullptr, nullptr);
-
-    GlobalPrivate::workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
-    if (!GlobalPrivate::workspaceService) {
-        qCritical() << "Failed, init workspace \"workspaceService\" is empty";
-        abort();
-    }
-    GlobalPrivate::workspaceService->addScheme(RecentUtil::scheme());
-    return true;
+    GlobalPrivate::sideBarService->insertItem(0, item, nullptr, nullptr);
 }
 
-dpf::Plugin::ShutdownFlag Recent::stop()
+void Recent::removeRecentItem()
 {
-    return kSync;
+    GlobalPrivate::sideBarService->removeItem(RecentUtil::rootUrl());
 }
 
 DPRECENT_END_NAMESPACE

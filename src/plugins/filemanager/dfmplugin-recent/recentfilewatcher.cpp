@@ -1,0 +1,150 @@
+/*
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ *
+ * Author:     huanyu<huanyub@uniontech.com>
+ *
+ * Maintainer: zhengyouge<zhengyouge@uniontech.com>
+ *             yanghao<yanghao@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#include "recentfilewatcher.h"
+#include "recentutil.h"
+#include "private/recentfilewatcher_p.h"
+#include "dfm-base/base/schemefactory.h"
+
+#include "base/urlroute.h"
+
+#include <dfm-io/core/dwatcher.h>
+#include <dfmio_global.h>
+#include <dfmio_register.h>
+#include <dfm-io/core/diofactory.h>
+
+#include <QEvent>
+#include <QDir>
+#include <QDebug>
+#include <QApplication>
+
+DPRECENT_BEGIN_NAMESPACE
+
+RecentFileWatcherPrivate::RecentFileWatcherPrivate(const QUrl &fileUrl, RecentFileWatcher *qq)
+    : AbstractFileWatcherPrivate(fileUrl, qq)
+{
+}
+
+bool RecentFileWatcherPrivate::start()
+{
+    return proxy && proxy->startWatcher();
+}
+
+bool RecentFileWatcherPrivate::stop()
+{
+    return proxy && proxy->stopWatcher();
+}
+
+void RecentFileWatcherPrivate::initFileWatcher()
+{
+    QUrl watchUrl = QUrl::fromLocalFile(path);
+
+    proxy = WacherFactory::create<AbstractFileWatcher>(watchUrl);
+
+    if (!proxy) {
+        qWarning("watcher create failed.");
+        abort();
+    }
+}
+
+void RecentFileWatcherPrivate::initConnect()
+{
+
+    connect(proxy.data(), &AbstractFileWatcher::fileDeleted, q, &AbstractFileWatcher::fileDeleted);
+    connect(proxy.data(), &AbstractFileWatcher::fileAttributeChanged, q, &AbstractFileWatcher::fileAttributeChanged);
+    connect(proxy.data(), &AbstractFileWatcher::subfileCreated, q, &AbstractFileWatcher::subfileCreated);
+}
+
+RecentFileWatcher::RecentFileWatcher(const QUrl &url, QObject *parent)
+    : AbstractFileWatcher(new RecentFileWatcherPrivate(url, this), parent)
+{
+    dptr = static_cast<RecentFileWatcherPrivate *>(d.data());
+    dptr->initFileWatcher();
+    dptr->initConnect();
+}
+
+RecentFileWatcher::~RecentFileWatcher()
+{
+}
+
+void RecentFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled)
+{
+    if (subfileUrl.scheme() != RecentUtil::scheme())
+        return;
+    if (enabled) {
+        addWatcher(subfileUrl);
+    } else {
+        removeWatcher(subfileUrl);
+    }
+}
+
+void RecentFileWatcher::addWatcher(const QUrl &url)
+{
+    if (!url.isValid() || dptr->urlToWatcherMap.contains(url)) {
+        return;
+    }
+
+    QUrl real_url = url;
+    real_url.setScheme(SchemeTypes::kFile);
+    AbstractFileWatcherPointer watcher = WacherFactory::create<AbstractFileWatcher>(real_url);
+    if (!watcher)
+        return;
+
+    watcher->moveToThread(this->thread());
+    watcher->setParent(this);
+
+    connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &RecentFileWatcher::onFileAttributeChanged);
+    connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &RecentFileWatcher::onFileDeleted);
+
+    dptr->urlToWatcherMap[url] = watcher;
+
+    if (dptr->started) {
+        watcher->startWatcher();
+    }
+}
+
+void RecentFileWatcher::removeWatcher(const QUrl &url)
+{
+    AbstractFileWatcherPointer watcher = dptr->urlToWatcherMap.take(url);
+
+    if (!watcher) {
+        return;
+    }
+}
+
+void RecentFileWatcher::onFileDeleted(const QUrl &url)
+{
+    QUrl newUrl = url;
+    newUrl.setScheme(RecentUtil::scheme());
+    removeWatcher(newUrl);
+
+    emit fileDeleted(newUrl);
+}
+
+void RecentFileWatcher::onFileAttributeChanged(const QUrl &url)
+{
+    QUrl newUrl = url;
+    newUrl.setScheme(RecentUtil::scheme());
+
+    emit fileAttributeChanged(newUrl);
+}
+
+DPRECENT_END_NAMESPACE
