@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,39 +20,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TITLEBARHELPER_H
-#define TITLEBARHELPER_H
+#ifndef TITLEBARUNICASTRECEIVER_H
+#define TITLEBARUNICASTRECEIVER_H
 
 #include "dfmplugin_titlebar_global.h"
 #include "services/filemanager/titlebar/titlebar_defines.h"
 
-#include <QMap>
-#include <QMutex>
-#include <QWidget>
-#include <QMenu>
+#include <QObject>
 
 DPTITLEBAR_BEGIN_NAMESPACE
 
-using DSB_FM_NAMESPACE::TitleBar::CrumbData;
-
-class TitleBarWidget;
-class TitleBarHelper
+class TitleBarUnicastReceiver : public QObject
 {
+    Q_OBJECT
+    Q_DISABLE_COPY(TitleBarUnicastReceiver)
+
 public:
-    static TitleBarWidget *findTileBarByWindowId(quint64 windowId);
-    static void addTileBar(quint64 windowId, TitleBarWidget *titleBar);
-    static void removeTitleBar(quint64 windowId);
-    static quint64 windowId(QWidget *sender);
-    static QMenu *createSettingsMenu(quint64 id);
-    static bool crumbSupportedUrl(const QUrl &url);
-    static QList<CrumbData> crumbSeprateUrl(const QUrl &url);
+    static TitleBarUnicastReceiver *instance();
+    void connectService();
+
+public slots:
+    bool invokeAddCustomCrumbar(const DSB_FM_NAMESPACE::TitleBar::CustomCrumb &info, const DSB_FM_NAMESPACE::TitleBar::supportedUrlCallback &supportedUrlFunc,
+                                const DSB_FM_NAMESPACE::TitleBar::seprateUrlCallback &seprateUrlFunc);
 
 private:
-    static QMutex &mutex();
-    static QString getDisplayName(const QString &name);
-    static QMap<quint64, TitleBarWidget *> kTitleBarMap;
+    explicit TitleBarUnicastReceiver(QObject *parent = nullptr);
 };
 
 DPTITLEBAR_END_NAMESPACE
 
-#endif   // TITLEBARHELPER_H
+#endif   // TITLEBARUNICASTRECEIVER_H

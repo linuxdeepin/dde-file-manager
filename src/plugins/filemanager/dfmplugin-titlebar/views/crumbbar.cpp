@@ -22,6 +22,7 @@
 #include "views/private/crumbbar_p.h"
 #include "views/crumbbar.h"
 #include "models/crumbmodel.h"
+#include "utils/crumbmanager.h"
 
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
@@ -43,6 +44,39 @@
 DPTITLEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+
+static QString getIconName(const CrumbData &c)
+{
+    QString iconName = c.iconName;
+
+    if (!iconName.isEmpty() && !iconName.startsWith("dfm_") && !iconName.contains("-symbolic"))
+        iconName.append("-symbolic");
+
+    return iconName;
+}
+
+/*!
+ * \class IconItemDelegate
+ * \brief
+ */
+
+IconItemDelegate::IconItemDelegate(QAbstractItemView *parent)
+    : DStyledItemDelegate(parent)
+{
+    setItemSpacing(10);
+}
+
+void IconItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    QStyleOptionViewItem opt = option;
+    opt.decorationAlignment = Qt::AlignCenter;
+    DStyledItemDelegate::paint(painter, opt, index);
+}
+
+/*!
+ * \class CrumbBarPrivate
+ * \brief
+ */
 
 CrumbBarPrivate::CrumbBarPrivate(CrumbBar *qq)
     : q(qq)
@@ -81,6 +115,26 @@ void CrumbBarPrivate::checkArrowVisiable()
     rightArrow.setEnabled(scrollBar->value() != scrollBar->maximum());
 }
 
+void CrumbBarPrivate::updateController(const QUrl &url)
+{
+    if (!crumbController || !crumbController->supportedUrl(url)) {
+        if (crumbController) {
+            crumbController->deleteLater();
+        }
+        crumbController = CrumbManager::instance()->createControllerByUrl(url);
+        // Not found? Then nothing here...
+        if (!crumbController) {
+            qWarning() << "Unsupported url / scheme: " << url;
+            // always has default controller
+            crumbController = new CrumbInterface;
+        }
+        crumbController->setParent(q);
+        QObject::connect(crumbController, &CrumbInterface::hideAddressBar, q, &CrumbBar::onHideAddressBar);
+        QObject::connect(crumbController, &CrumbInterface::keepAddressBar, q, &CrumbBar::onKeepAddressBar);
+        QObject::connect(crumbController, &CrumbInterface::hideAddrAndUpdateCrumbs, q, &CrumbBar::onHideAddrAndUpdateCrumbs);
+    }
+}
+
 /*!
  * \brief Update the crumb controller hold by the crumb bar.
  *
@@ -96,9 +150,6 @@ void CrumbBarPrivate::setClickableAreaEnabled(bool enabled)
 
 void CrumbBarPrivate::initUI()
 {
-    // Crumbbar Widget
-    //q->setFixedHeight(24);
-
     // Arrows
     QSize size(24, 24), iconSize(16, 16);
 
@@ -137,24 +188,6 @@ void CrumbBarPrivate::initUI()
 
     // 点击listview空白可拖动窗口
     crumbView.viewport()->installEventFilter(q);
-
-    // for first icon item icon AlignCenter...
-    class IconItemDelegate : public DStyledItemDelegate
-    {
-    public:
-        explicit IconItemDelegate(QAbstractItemView *parent = nullptr)
-            : DStyledItemDelegate(parent)
-        {
-            setItemSpacing(10);
-        }
-
-        void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
-        {
-            QStyleOptionViewItem opt = option;
-            opt.decorationAlignment = Qt::AlignCenter;
-            DStyledItemDelegate::paint(painter, opt, index);
-        }
-    };
     crumbView.setItemDelegateForRow(0, new IconItemDelegate(&crumbView));
 
     // Crumb Bar Layout
@@ -234,41 +267,9 @@ CrumbBar::~CrumbBar()
 {
 }
 
-void CrumbBar::setRootUrl(const QUrl &url)
+CrumbInterface *CrumbBar::controller() const
 {
-    d->clearCrumbs();
-    const QIcon firstIcon = UrlRoute::icon(url.scheme());
-
-    QString scheme = url.scheme();
-    QString path = url.path();
-    QStringList pathList = path.split("/");
-
-    QStandardItem *firstItem = new QStandardItem(firstIcon, "");
-    for (int nodeCount = pathList.size() - 1; nodeCount > 0; nodeCount--) {
-        if (pathList.at(nodeCount).isEmpty())
-            continue;
-
-        auto currNodeItem = new QStandardItem(pathList.at(nodeCount));
-        QStringList currNodeList;
-        for (int index = 0; index <= nodeCount; index++) {
-            if (pathList.at(index).isEmpty())
-                continue;
-            currNodeList.append(pathList.at(index));
-        }
-        auto currNodeUrl = UrlRoute::pathToUrl(currNodeList.join("/"), url.scheme());
-        currNodeItem->setData(currNodeUrl, CrumbModel::Roles::FileUrlRole);
-
-        d->crumbModel->insertRow(0, currNodeItem);
-    }
-    d->crumbModel->insertRow(0, firstItem);
-
-    if (d->crumbView.selectionModel() && d->crumbModel) {
-        qInfo() << d->crumbModel->lastIndex();
-        d->crumbView.selectionModel()->select(d->crumbModel->lastIndex(), QItemSelectionModel::Select);
-    }
-
-    d->checkArrowVisiable();
-    d->crumbView.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
+    return d->crumbController;
 }
 
 void CrumbBar::mousePressEvent(QMouseEvent *event)
@@ -348,4 +349,63 @@ void CrumbBar::onCustomContextMenu(const QPoint &point)
     if (!index.isValid())
         return;
     qInfo() << "need add mouse right clicked menu show logic";
+}
+
+void CrumbBar::onUrlChanged(const QUrl &url)
+{
+    d->updateController(url);
+
+    if (d->crumbController)
+        d->crumbController->crumbUrlChangedBehavior(url);
+}
+
+void CrumbBar::onHideAddressBar()
+{
+    emit hideAddressBar();
+}
+
+void CrumbBar::onKeepAddressBar()
+{
+    // TODO(zhangs): impl me!
+}
+
+void CrumbBar::onHideAddrAndUpdateCrumbs(const QUrl &url)
+{
+    emit hideAddressBar();
+
+    d->clearCrumbs();
+
+    if (!d->crumbController) {
+        qWarning("No controller found when trying to call DFMCrumbBar::updateCrumbs() !!!");
+        qDebug() << "updateCrumbs (no controller) : " << url;
+        return;
+    }
+
+    QList<CrumbData> &&crumbDataList = d->crumbController->seprateUrl(url);
+
+    // create QStandardItem by crumb data
+    for (const CrumbData &c : crumbDataList) {
+        if (d->crumbModel) {
+            QStandardItem *listitem = nullptr;
+            if (c.iconName.isEmpty()) {
+                listitem = new QStandardItem(c.displayText);
+            } else {
+                listitem = new QStandardItem(QIcon::fromTheme(getIconName(c)), QString());
+            }
+
+            listitem->setTextAlignment(Qt::AlignCenter);
+            listitem->setCheckable(false);
+            Q_ASSERT(c.url.isValid());
+            listitem->setData(c.url, CrumbModel::Roles::FileUrlRole);
+            d->crumbModel->appendRow(listitem);
+        }
+    }
+
+    if (d->crumbView.selectionModel() && d->crumbModel) {
+        qInfo() << d->crumbModel->lastIndex();
+        d->crumbView.selectionModel()->select(d->crumbModel->lastIndex(), QItemSelectionModel::Select);
+    }
+
+    d->checkArrowVisiable();
+    d->crumbView.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 }

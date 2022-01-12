@@ -23,6 +23,8 @@
 #include "titlebareventcaller.h"
 #include "utils/titlebarhelper.h"
 
+#include "dfm-base/dfm_event_defines.h"
+
 #include <dfm-framework/framework.h>
 
 DPTITLEBAR_USE_NAMESPACE
@@ -46,4 +48,11 @@ void TitleBarEventCaller::sendDetailViewState(QWidget *sender, bool checked)
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
     dpfInstance.eventDispatcher().publish(TitleBar::EventType::kShowDetailView, id, checked);
+}
+
+void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
+{
+    quint64 id = TitleBarHelper::windowId(sender);
+    Q_ASSERT(id > 0);
+    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
 }

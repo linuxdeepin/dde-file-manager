@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,39 +20,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TITLEBARHELPER_H
-#define TITLEBARHELPER_H
+#ifndef CRUMBMANAGER_H
+#define CRUMBMANAGER_H
 
 #include "dfmplugin_titlebar_global.h"
-#include "services/filemanager/titlebar/titlebar_defines.h"
 
+#include <QObject>
 #include <QMap>
-#include <QMutex>
-#include <QWidget>
-#include <QMenu>
+#include <QSharedPointer>
+
+#include <functional>
 
 DPTITLEBAR_BEGIN_NAMESPACE
 
-using DSB_FM_NAMESPACE::TitleBar::CrumbData;
-
-class TitleBarWidget;
-class TitleBarHelper
+class CrumbInterface;
+class CrumbManager final : public QObject
 {
+    Q_OBJECT
+    Q_DISABLE_COPY(CrumbManager)
+
 public:
-    static TitleBarWidget *findTileBarByWindowId(quint64 windowId);
-    static void addTileBar(quint64 windowId, TitleBarWidget *titleBar);
-    static void removeTitleBar(quint64 windowId);
-    static quint64 windowId(QWidget *sender);
-    static QMenu *createSettingsMenu(quint64 id);
-    static bool crumbSupportedUrl(const QUrl &url);
-    static QList<CrumbData> crumbSeprateUrl(const QUrl &url);
+    using KeyType = QString;
+    using CrumbCreator = std::function<CrumbInterface *()>;
+    using CrumbCreatorMap = QMap<KeyType, CrumbCreator>;
+
+public:
+    static CrumbManager *instance();
+
+    void registerCrumbCreator(const KeyType &scheme, const CrumbCreator &creator);
+    bool isRegisted(const KeyType &scheme) const;
+    CrumbInterface *createControllerByUrl(const QUrl &url);
 
 private:
-    static QMutex &mutex();
-    static QString getDisplayName(const QString &name);
-    static QMap<quint64, TitleBarWidget *> kTitleBarMap;
+    explicit CrumbManager(QObject *parent = nullptr);
+    ~CrumbManager();
+
+private:
+    CrumbCreatorMap creators;
 };
 
 DPTITLEBAR_END_NAMESPACE
 
-#endif   // TITLEBARHELPER_H
+#endif   // CRUMBMANAGER_H

@@ -22,27 +22,43 @@
 */
 #include "titlebar.h"
 #include "utils/titlebarhelper.h"
+#include "utils/crumbinterface.h"
+#include "utils/crumbmanager.h"
 #include "views/titlebarwidget.h"
+#include "events/titlebarunicastreceiver.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+#include "dfm-base/base/urlroute.h"
 
 #include <dfm-framework/framework.h>
 
 DPTITLEBAR_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 
 namespace GlobalPrivate {
-static WindowsService *windowService { nullptr };
+static DSB_FM_NAMESPACE::WindowsService *windowService { nullptr };
 }   // namespace GlobalPrivate
 
 void TitleBar::initialize()
 {
+    DSB_FM_USE_NAMESPACE
+    DFMBASE_USE_NAMESPACE
+
     auto &ctx = dpfInstance.serviceContext();
     Q_ASSERT_X(ctx.loaded(WindowsService::name()), "SideBar", "WindowService not loaded");
     GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());
     connect(GlobalPrivate::windowService, &WindowsService::windowOpened, this, &TitleBar::onWindowOpened, Qt::DirectConnection);
     connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &TitleBar::onWindowClosed, Qt::DirectConnection);
+
+    // file scheme for crumbar
+    CrumbManager::instance()->registerCrumbCreator(SchemeTypes::kFile, []() {
+        CrumbInterface *interface { new CrumbInterface };
+        interface->registewrSupportedUrlCallback(&TitleBarHelper::crumbSupportedUrl);
+        interface->registerSeprateUrlCallback(&TitleBarHelper::crumbSeprateUrl);
+        return interface;
+    });
+
+    TitleBarUnicastReceiver::instance()->connectService();
 }
 
 bool TitleBar::start()
@@ -61,8 +77,8 @@ void TitleBar::onWindowOpened(quint64 windId)
     Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
     TitleBarWidget *titleBar = new TitleBarWidget;
     window->installTitleBar(titleBar);
-    TitleBarHelper::addTileBar(windId, titleBar);
     window->installTitleMenu(TitleBarHelper::createSettingsMenu(windId));
+    TitleBarHelper::addTileBar(windId, titleBar);
 }
 
 void TitleBar::onWindowClosed(quint64 windId)

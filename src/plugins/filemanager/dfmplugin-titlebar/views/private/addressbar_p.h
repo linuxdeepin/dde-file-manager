@@ -229,21 +229,6 @@ public Q_SLOTS:
     }
 
 protected:
-    virtual bool eventFilterKeyPress(AddressBar *addressbar, QKeyEvent *event)
-    {
-        Q_UNUSED(addressbar)
-        if (Qt::Key_Escape == event->key()) {
-            q->hide();
-            return false;
-        }
-
-        if (Qt::Key_Tab == event->key()) {
-            return false;
-        }
-
-        return false;
-    }
-
     virtual bool eventFilterResize(AddressBar *addressbar, QResizeEvent *event)
     {
         Q_UNUSED(addressbar)
@@ -255,15 +240,6 @@ protected:
         return false;
     }
 
-    virtual bool eventFilterShow(AddressBar *addressbar, QShowEvent *event)
-    {
-        Q_UNUSED(addressbar)
-        Q_UNUSED(event)
-        stopSpinner();
-        timer.start();
-        return false;
-    }
-
     virtual bool eventFilterHide(AddressBar *addressbar, QHideEvent *event)
     {
         Q_UNUSED(addressbar)
@@ -272,48 +248,8 @@ protected:
         return false;
     }
 
-    virtual bool eventFilterPaint(AddressBar *addressbar, QPaintEvent *event)
-    {
-        //此处调用addressbar绘制事件
-        addressbar->paintEvent(event);
-
-        QPainter painter(addressbar);
-        //设置提示text
-        if (addressbar->text().isEmpty()) {
-            QPen oldpen = painter.pen();
-            QColor phColor = q->palette().text().color();
-            const int flags = static_cast<int>(QStyle::visualAlignment(Qt::LeftToRight, QFlag(Qt::AlignCenter)));
-
-            phColor.setAlpha(128);
-            painter.setPen(phColor);
-
-            painter.drawText(q->rect(), flags, placeholderText);
-
-            painter.setPen(oldpen);
-        }
-        //绘制波纹效果
-        if (animation.state() != QAbstractAnimation::Stopped) {
-
-            QIcon icon = QIcon::fromTheme("dfm_addressbar_glowing");
-            if (icon.availableSizes().isEmpty())
-                return true;
-            const QSize size = icon.availableSizes().first();
-            QPixmap glowingImg = icon.pixmap(size);
-            float curValue = animation.currentValue().toFloat();
-            float xPos = (q->width() + glowingImg.width()) * curValue - glowingImg.width();
-
-            painter.drawPixmap(static_cast<int>(xPos), 0, glowingImg);
-        }
-        return true;
-    }
-
     virtual bool eventFilter(QObject *watched, QEvent *event) override
     {
-
-        if (watched == q && event->type() == QEvent::Show) {
-            return eventFilterShow(qobject_cast<AddressBar *>(watched),
-                                   dynamic_cast<QShowEvent *>(event));
-        }
 
         if (watched == q && event->type() == QEvent::Hide) {
             return eventFilterHide(qobject_cast<AddressBar *>(watched),
@@ -323,16 +259,6 @@ protected:
         if (watched == q && event->type() == QEvent::Resize) {
             return eventFilterResize(qobject_cast<AddressBar *>(watched),
                                      dynamic_cast<QResizeEvent *>(event));
-        }
-
-        if (watched == q && event->type() == QEvent::KeyPress) {
-            return eventFilterKeyPress(qobject_cast<AddressBar *>(watched),
-                                       dynamic_cast<QKeyEvent *>(event));
-        }
-
-        if (watched == q && event->type() == QEvent::Paint) {
-            return eventFilterPaint(qobject_cast<AddressBar *>(watched),
-                                    dynamic_cast<QPaintEvent *>(event));
         }
 
         return false;

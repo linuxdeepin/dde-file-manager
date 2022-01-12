@@ -162,9 +162,21 @@ QUrl UrlRoute::urlParent(const QUrl &url)
     QUrl reUrl;
     url.scheme();
     reUrl.setScheme(url.scheme());
-    reUrl.setPath(list.join("/"));
+    QString path { list.join("/") };
+    reUrl.setPath(path.isEmpty() ? "/" : path);
 
     return reUrl;
+}
+
+void UrlRoute::urlParentList(QUrl url, QList<QUrl> *list)
+{
+    Q_ASSERT(list);
+
+    while (!isRootUrl(url)) {
+        QUrl parent { urlParent(url) };
+        list->append(parent);
+        url = parent;
+    }
 }
 
 /*!
@@ -189,6 +201,17 @@ QString UrlRoute::rootPath(const QString &scheme)
     if (!hasScheme(scheme))
         return "";
     return kSchemeInfos[scheme].path;
+}
+
+QUrl UrlRoute::rootUrl(const QString &scheme)
+{
+    if (!hasScheme(scheme))
+        return QUrl();
+
+    QUrl root;
+    root.setScheme(scheme);
+    root.setPath(rootPath(scheme));
+    return root;
 }
 
 /*!

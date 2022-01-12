@@ -65,6 +65,11 @@ CompleterViewDelegate *CompleterView::itemDelegate()
     return &d->delegate;
 }
 
+void CompleterView::keyPressEvent(QKeyEvent *e)
+{
+    return QListView::keyPressEvent(e);
+}
+
 CompleterViewDelegate::CompleterViewDelegate(QObject *parent)
     : QStyledItemDelegate(parent)
 {

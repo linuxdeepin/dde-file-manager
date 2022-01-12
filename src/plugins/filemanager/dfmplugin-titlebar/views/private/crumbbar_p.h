@@ -23,6 +23,7 @@
 #define CrumbBar_P_H
 
 #include "dfmplugin_titlebar_global.h"
+#include "utils/crumbinterface.h"
 
 #include <QPushButton>
 #include <DListView>
@@ -31,6 +32,15 @@
 DWIDGET_USE_NAMESPACE
 
 DPTITLEBAR_BEGIN_NAMESPACE
+
+// for first icon item icon AlignCenter...
+class IconItemDelegate : public DStyledItemDelegate
+{
+public:
+    explicit IconItemDelegate(QAbstractItemView *parent = nullptr);
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+};
+
 class CrumbBar;
 class CrumbModel;
 class CrumbBarPrivate
@@ -41,10 +51,12 @@ class CrumbBarPrivate
     QPushButton leftArrow;
     QPushButton rightArrow;
     DListView crumbView;
-    CrumbModel *crumbModel = nullptr;
+    CrumbModel *crumbModel { nullptr };
     QHBoxLayout *crumbBarLayout;
     QPoint clickedPos;
-    bool clickableAreaEnabled = false;
+    bool clickableAreaEnabled { false };
+
+    CrumbInterface *crumbController { nullptr };
 
 public:
     explicit CrumbBarPrivate(CrumbBar *qq);

@@ -229,7 +229,19 @@ QString AbstractFileInfo::absoluteFilePath() const
  */
 QString AbstractFileInfo::fileName() const
 {
-    return QString();
+    QString filePath = this->filePath();
+
+    if (filePath.endsWith(QDir::separator())) {
+        filePath.chop(1);
+    }
+
+    int index = filePath.lastIndexOf(QDir::separator());
+
+    if (index >= 0) {
+        return filePath.mid(index + 1);
+    }
+
+    return filePath;
 }
 /*!
  * \brief baseName 文件的基本名称
@@ -244,7 +256,14 @@ QString AbstractFileInfo::fileName() const
  */
 QString AbstractFileInfo::baseName() const
 {
-    return QString();
+    const QString &fileName = this->fileName();
+    const QString &suffix = this->suffix();
+
+    if (suffix.isEmpty()) {
+        return fileName;
+    }
+
+    return fileName.left(fileName.length() - suffix.length() - 1);
 }
 /*!
  * \brief completeBaseName 文件的完整基本名称

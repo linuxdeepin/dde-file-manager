@@ -26,10 +26,36 @@
 #include "dfm_filemanager_service_global.h"
 
 #include <QObject>
+#include <QUrl>
+
+#include <functional>
 
 DSB_FM_BEGIN_NAMESPACE
 
 namespace TitleBar {
+
+struct CustomCrumb
+{
+    QString scheme;
+    bool keepAddressBar { false };
+};
+
+// item of CrumbBar
+struct CrumbData
+{
+public:
+    CrumbData(QUrl theUrl = QUrl(), QString theDisplayText = QString(), QString theIconName = QString())
+        : url(theUrl), displayText(theDisplayText), iconName(theIconName)
+    {
+    }
+
+    QUrl url {};
+    QString displayText;
+    QString iconName;
+};
+
+using supportedUrlCallback = std::function<bool(const QUrl &)>;
+using seprateUrlCallback = std::function<QList<CrumbData>(const QUrl &)>;
 
 // custom event type
 namespace EventType {
@@ -38,6 +64,7 @@ extern const int kSettingsMenuTriggered;
 extern const int kShowDetailView;
 };   // namespace EventType
 
+// setting menu action list
 enum MenuAction {
     kNewWindow,
     kConnectToServer,
@@ -48,6 +75,10 @@ enum MenuAction {
 
 DSB_FM_END_NAMESPACE
 
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::TitleBar::CustomCrumb);
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::TitleBar::CrumbData);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::TitleBar::MenuAction);
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::TitleBar::supportedUrlCallback);
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::TitleBar::seprateUrlCallback);
 
 #endif   // TITLEBAR_DEFINES_H

@@ -26,10 +26,16 @@
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
 
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/utils/systempathutil.h"
+
 #include <dfm-framework/framework.h>
 
 DPTITLEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 QMap<quint64, TitleBarWidget *> TitleBarHelper::kTitleBarMap {};
 
@@ -85,14 +91,83 @@ QMenu *TitleBarHelper::createSettingsMenu(quint64 id)
     menu->addAction(action);
 
     QObject::connect(menu, &QMenu::triggered, [id](QAction *act) {
-        TitleBarEventCaller::sendSettingsMenuTriggered(id, static_cast<TitleBar::MenuAction>(act->data().toInt()));
+        bool ok { false };
+        int val { act->data().toInt(&ok) };
+        if (ok)
+            TitleBarEventCaller::sendSettingsMenuTriggered(id, static_cast<TitleBar::MenuAction>(val));
     });
 
     return menu;
+}
+
+bool TitleBarHelper::crumbSupportedUrl(const QUrl &url)
+{
+    return url.scheme() == SchemeTypes::kFile;
+}
+
+QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
+{
+    static const QString kHomePath { QStandardPaths::standardLocations(QStandardPaths::HomeLocation).last() };
+
+    QList<CrumbData> list;
+    const QString &path = url.toLocalFile();
+    if (path.isEmpty())
+        return list;
+
+    QString prefixPath { "/" };
+    if (path.startsWith(kHomePath)) {
+        prefixPath = kHomePath;
+        QString iconName { SystemPathUtil::instance()->systemPathIconName("Home") };
+        CrumbData data { QUrl::fromLocalFile(kHomePath), getDisplayName("Home"), iconName };
+        list.append(data);
+    } else {
+        QStorageInfo storageInfo(path);
+        QString iconName = QStringLiteral("drive-harddisk-symbolic");
+        prefixPath = storageInfo.rootPath();
+        // TODO(zhangs): device info  (ref DFMFileCrumbController::seprateUrl)
+
+        if (prefixPath == "/") {
+            CrumbData data(UrlRoute::rootUrl(SchemeTypes::kFile), getDisplayName("System Disk"), "drive-harddisk-root-symbolic");
+            list.append(data);
+        } else {
+            CrumbData data(QUrl::fromLocalFile(prefixPath), QString(), iconName);
+            list.append(data);
+        }
+    }
+
+    QList<QUrl> urls;
+    urls.push_back(url);
+    UrlRoute::urlParentList(url, &urls);
+
+    // Push urls into crumb list (without prefix url)
+    QList<QUrl>::const_reverse_iterator iter = urls.crbegin();
+    while (iter != urls.crend()) {
+        const QUrl &oneUrl = *iter;
+        QString localFile = oneUrl.toLocalFile();
+        if (!prefixPath.startsWith(oneUrl.toLocalFile())) {
+            QString displayText = oneUrl.fileName();
+            // Check for possible display text.
+            auto infoPointer = InfoFactory::create<DFMBASE_NAMESPACE::LocalFileInfo>(oneUrl);
+            if (infoPointer)
+                displayText = infoPointer->fileDisplayName();
+            CrumbData data(oneUrl, displayText);
+            list.append(data);
+        }
+        ++iter;
+    }
+
+    return list;
 }
 
 QMutex &TitleBarHelper::mutex()
 {
     static QMutex m;
     return m;
+}
+
+QString TitleBarHelper::getDisplayName(const QString &name)
+{
+    QString displayName { SystemPathUtil::instance()->systemPathDisplayName(name) };
+    displayName = displayName.isEmpty() ? name : displayName;
+    return displayName;
 }

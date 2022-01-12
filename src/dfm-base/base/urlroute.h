@@ -74,6 +74,7 @@ public:
     static bool hasScheme(const QString &scheme);
     static QIcon icon(const QString &scheme);
     static QString rootPath(const QString &scheme);
+    static QUrl rootUrl(const QString &scheme);
     static QString urlToPath(const QUrl &url);
     static QUrl fromLocalFile(const QString &path);
     static QUrl pathToReal(const QString &path);
@@ -82,6 +83,7 @@ public:
     static bool isVirtual(const QUrl &url);
     static bool isRootUrl(const QUrl &url);
     static QUrl urlParent(const QUrl &url);
+    static void urlParentList(QUrl url, QList<QUrl> *list);
     static QString rootDisplayName(const QString &scheme);
 };
 

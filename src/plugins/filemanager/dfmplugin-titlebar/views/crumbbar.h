@@ -33,6 +33,7 @@
 
 DPTITLEBAR_BEGIN_NAMESPACE
 
+class CrumbInterface;
 class CrumbBarPrivate;
 class CrumbBar : public QFrame
 {
@@ -43,13 +44,18 @@ public:
     explicit CrumbBar(QWidget *parent = nullptr);
     virtual ~CrumbBar() override;
 
-    void setRootUrl(const QUrl &url);
+    CrumbInterface *controller() const;
 
 Q_SIGNALS:
+    void hideAddressBar();
     void selectedUrl(const QUrl &url);
 
 public Q_SLOTS:
     void onCustomContextMenu(const QPoint &point);
+    void onUrlChanged(const QUrl &url);
+    void onHideAddressBar();
+    void onKeepAddressBar();
+    void onHideAddrAndUpdateCrumbs(const QUrl &url);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

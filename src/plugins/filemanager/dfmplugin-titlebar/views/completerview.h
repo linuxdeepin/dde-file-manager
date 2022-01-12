@@ -45,6 +45,7 @@ public:
     QCompleter *completer();
     QStringListModel *model();
     CompleterViewDelegate *itemDelegate();
+    void keyPressEvent(QKeyEvent *e) override;
 
 Q_SIGNALS:
     void completerActivated(const QString &text);

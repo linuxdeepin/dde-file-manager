@@ -122,6 +122,7 @@ void SystemPathUtil::initialize()
     systemPathDisplayNamesMap["Documents"] = tr("Documents");
     systemPathDisplayNamesMap["Downloads"] = tr("Downloads");
     systemPathDisplayNamesMap["Trash"] = tr("Trash");
+    systemPathDisplayNamesMap["System Disk"] = tr("System Disk");
 
     systemPathIconNamesMap["Home"] = "user-home";
     systemPathIconNamesMap["Desktop"] = "user-desktop";
@@ -131,6 +132,7 @@ void SystemPathUtil::initialize()
     systemPathIconNamesMap["Documents"] = "folder-documents";
     systemPathIconNamesMap["Downloads"] = "folder-downloads";
     systemPathIconNamesMap["Trash"] = "user-trash";
+    systemPathIconNamesMap["System Disk"] = "drive-harddisk-root";
 }
 
 void SystemPathUtil::mkPath(const QString &path)
@@ -164,6 +166,7 @@ void SystemPathUtil::loadSystemPaths()
     systemPathsMap["Documents"] = StandardPaths::location(StandardPaths::kDocumentsPath);
     systemPathsMap["Downloads"] = StandardPaths::location(StandardPaths::kDownloadsPath);
     systemPathsMap["Trash"] = StandardPaths::location(StandardPaths::kTrashFilesPath);
+    systemPathsMap["System Disk"] = StandardPaths::location(StandardPaths::kDiskPath);
 
     systemPathsSet.reserve(systemPathsMap.size());
 

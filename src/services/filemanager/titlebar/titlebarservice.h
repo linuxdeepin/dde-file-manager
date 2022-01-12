@@ -24,6 +24,7 @@
 #define TITLEBARSERVICE_H
 
 #include "dfm_filemanager_service_global.h"
+#include "titlebar_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -42,10 +43,12 @@ public:
         return "org.deepin.service.TitleBarService";
     }
 
-    explicit TitleBarService(QObject *parent = nullptr);
-    virtual ~TitleBarService() override;
+    bool addCustomCrumbar(const TitleBar::CustomCrumb &info, const TitleBar::supportedUrlCallback &supportedUrlFunc,
+                          const TitleBar::seprateUrlCallback &seprateUrlFunc = nullptr);
 
 private:
+    explicit TitleBarService(QObject *parent = nullptr);
+    virtual ~TitleBarService() override;
     QScopedPointer<TitleBarServicePrivate> d;
 };
 

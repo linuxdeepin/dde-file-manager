@@ -22,6 +22,10 @@
 */
 #include "titlebarwidget.h"
 
+#include "events/titlebareventcaller.h"
+#include "utils/crumbinterface.h"
+#include "utils/crumbmanager.h"
+
 #include <QHBoxLayout>
 
 DPTITLEBAR_USE_NAMESPACE
@@ -37,7 +41,6 @@ TitleBarWidget::TitleBarWidget(QFrame *parent)
 void TitleBarWidget::setCurrentUrl(const QUrl &url)
 {
     titlebarUrl = url;
-    crumbBar->setRootUrl(url);
     emit currentUrlChanged(url);
 }
 
@@ -48,6 +51,8 @@ QUrl TitleBarWidget::currentUrl() const
 
 void TitleBarWidget::initializeUi()
 {
+    setFocusPolicy(Qt::NoFocus);
+
     // layout
     titleBarLayout = new QHBoxLayout(this);
     titleBarLayout->setMargin(0);
@@ -100,7 +105,24 @@ void TitleBarWidget::initConnect()
 {
     connect(searchButton, &QToolButton::clicked,
             this, &TitleBarWidget::onSearchButtonClicked);
+
     connect(this, &TitleBarWidget::currentUrlChanged, optionButtonBox, &OptionButtonBox::onUrlChanged);
+    connect(this, &TitleBarWidget::currentUrlChanged, crumbBar, &CrumbBar::onUrlChanged);
+
+    connect(crumbBar, &CrumbBar::hideAddressBar, addressBar, &AddressBar::hide);
+    connect(crumbBar, &CrumbBar::selectedUrl, this, [this](const QUrl &url) {
+        TitleBarEventCaller::sendCd(this, url);
+    });
+
+    connect(addressBar, &AddressBar::escKeyPressed, this, [this]() {
+        if (crumbBar->controller())
+            crumbBar->controller()->processAction(CrumbInterface::kEscKeyPressed);
+    });
+    connect(addressBar, &AddressBar::lostFocus, this, [this]() {
+        if (crumbBar->controller())
+            crumbBar->controller()->processAction(CrumbInterface::kAddressBarLostFocus);
+    });
+    // TODO(zhangs): addressbar clear, pause
 }
 
 void TitleBarWidget::showAddrsssBar()

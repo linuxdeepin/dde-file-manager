@@ -36,12 +36,30 @@ class AddressBar : public QLineEdit
     AddressBarPrivate *const d;
 
 public:
+    enum IndicatorType {
+        Search,
+        JumpTo
+    };
+
     explicit AddressBar(QWidget *parent = nullptr);
     bool completerViewVisible();
+
+protected:
+    bool event(QEvent *e) override;
+    void focusInEvent(QFocusEvent *e) override;
+    void focusOutEvent(QFocusEvent *e) override;
+    void keyPressEvent(QKeyEvent *e) override;
+    void paintEvent(QPaintEvent *e) override;
+    void showEvent(QShowEvent *event) override;
+    void inputMethodEvent(QInputMethodEvent *e) override;
+    void enterEvent(QEvent *e) override;
+    void leaveEvent(QEvent *e) override;
 
 Q_SIGNALS:
     void editingFinishedUrl(const QUrl &url);
     void editingFinishedSearch(const QString &url);
+    void lostFocus();
+    void escKeyPressed();
 
 public
     Q_SLOT : void startSpinner();
