@@ -165,7 +165,7 @@ DFileDialog::DFileDialog(QWidget *parent)
     setAcceptMode(QFileDialog::AcceptOpen);
     handleNewView(DFileManagerWindow::getFileView());
 
-    getLeftSideBar()->setDisableUrlSchemes(QSet<QString>() << "trash" << "network");
+    getLeftSideBar()->setDisableUrlSchemes(QSet<QString>() << "trash" << "network" << "plugin");
     getLeftSideBar()->setContextMenuEnabled(false);
     getLeftSideBar()->setAcceptDrops(false);
 

@@ -828,14 +828,16 @@ void DFMSideBar::initTagsConnection()
 //NOTE [XIAO] 从Plugin中导入SideBarItem
 void DFMSideBar::initItemFromPlugin()
 {
-    qWarning() << "[PLUGIN]" << "try to load plugin of sidebar item";
-    auto plugins = SchemePluginManager::instance()->schemePlugins();
-    for (auto plugin : plugins) {
-        qWarning() << "[PLUGIN]" << "load sidebar item from plugin:" << plugin.first;
-        DFMSideBarItem *item = plugin.second->createSideBarItem();
-        // NOTE [XIAO] 插件中的GroupName与文管版本中一致。
-        //this->addItem(item, item->groupName());
-        this->appendItem(item, item->groupName());
+    if (!m_disableUrlSchemes.contains(PLUGIN_SCHEME)) {
+        qInfo() << "[PLUGIN]" << "try to load plugin of sidebar item";
+        auto plugins = SchemePluginManager::instance()->schemePlugins();
+        for (auto plugin : plugins) {
+            qInfo() << "[PLUGIN]" << "load sidebar item from plugin:" << plugin.first;
+            DFMSideBarItem *item = plugin.second->createSideBarItem();
+            // NOTE [XIAO] 插件中的GroupName与文管版本中一致。
+            //this->addItem(item, item->groupName());
+            this->appendItem(item, item->groupName());
+        }
     }
 }
 
