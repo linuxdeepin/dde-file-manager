@@ -38,6 +38,8 @@ class TabPrivate;
 class Tab : public QGraphicsObject
 {
     Q_OBJECT
+    Q_PROPERTY(QRect geometry READ geometry WRITE setGeometry)
+
 public:
     explicit Tab(QGraphicsObject *parent = nullptr, DFMBASE_NAMESPACE::AbstractBaseView *view = nullptr);
 

@@ -294,7 +294,6 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             d->dragObject->deleteLater();
             d->pressed = false;
 
-            //            DFileManagerWindow::flagForNewWindowFromTab.store(true, std::memory_order_seq_cst);
             emit requestNewWindow(d->url);
         }
     }

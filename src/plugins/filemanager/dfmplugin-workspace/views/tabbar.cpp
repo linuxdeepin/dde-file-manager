@@ -221,6 +221,7 @@ void TabBar::onMoveNext(Tab *tab)
 
     tabList.swap(tabIndex, tabIndex + 1);
 
+    ++tabIndex;
     quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
     WorkspaceEventCaller::sendTabMoved(thisWinID, tabIndex - 1, tabIndex);
     emit tabMoved(tabIndex - 1, tabIndex);
@@ -236,6 +237,7 @@ void TabBar::onMovePrevius(Tab *tab)
 
     tabList.swap(tabIndex, tabIndex - 1);
 
+    --tabIndex;
     quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
     WorkspaceEventCaller::sendTabMoved(thisWinID, tabIndex + 1, tabIndex);
     emit tabMoved(tabIndex + 1, tabIndex);
@@ -399,8 +401,6 @@ void TabBar::wheelEvent(QWheelEvent *event)
 
 void TabBar::initializeUI()
 {
-    setMouseTracking(true);
-    setFrameShape(QFrame::NoFrame);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -415,8 +415,10 @@ void TabBar::initializeUI()
     tabCloseButton->hide();
     scene->addItem(tabCloseButton);
 
-    initializeConnections();
+    setMouseTracking(true);
+    setFrameShape(QFrame::NoFrame);
 
+    initializeConnections();
     hide();
 }
 
@@ -432,7 +434,8 @@ void TabBar::updateScreen()
     int counter = 0;
     int lastX = 0;
     for (Tab *tab : tabList) {
-        QRect rect(lastX, 0, tabSizeHint(counter).width(), tabSizeHint(counter).height());
+        QSize tabSize = tabSizeHint(counter);
+        QRect rect(lastX, 0, tabSize.width(), tabSize.height());
         lastX = rect.x() + rect.width();
 
         if (tab->isDragging()) {

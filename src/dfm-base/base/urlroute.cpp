@@ -126,7 +126,8 @@ bool UrlRoute::isRootUrl(const QUrl &url)
     urlCmp.setScheme(url.scheme());
     urlCmp.setPath(kSchemeInfos[url.scheme()].rootPath());
 
-    if (url == urlCmp)
+    if (url.scheme() == urlCmp.scheme()
+        && url.path() == urlCmp.path())
         return true;
 
     return false;
