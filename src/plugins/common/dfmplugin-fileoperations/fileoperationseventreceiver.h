@@ -37,7 +37,7 @@ Q_DECLARE_METATYPE(QFileDevice::Permissions)
 Q_DECLARE_METATYPE(QList<QUrl>)
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
-class FileOperationsUtils;
+class FileCopyMoveJob;
 
 class FileOperationsEventReceiver final : public QObject
 {
@@ -77,7 +77,7 @@ private:
     bool getDialogService();
 
 private:
-    QSharedPointer<FileOperationsUtils> copyMoveUtils { nullptr };
+    QSharedPointer<FileCopyMoveJob> copyMoveJob { nullptr };
     QSharedPointer<QMutex> getServiceMutex { nullptr };
     QPointer<DSC_NAMESPACE::FileOperationsService> operationsService { nullptr };
     QPointer<DSC_NAMESPACE::DialogService> dialogService { nullptr };

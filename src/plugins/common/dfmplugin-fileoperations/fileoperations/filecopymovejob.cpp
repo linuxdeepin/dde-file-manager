@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "fileoperationsutils.h"
+#include "filecopymovejob.h"
 
 #include <dfm-framework/framework.h>
 
@@ -32,14 +32,14 @@
  */
 DFMBASE_USE_NAMESPACE
 DPFILEOPERATIONS_USE_NAMESPACE
-FileOperationsUtils::FileOperationsUtils(QObject *parent)
+FileCopyMoveJob::FileCopyMoveJob(QObject *parent)
     : QObject(parent)
 {
     copyMoveTaskMutex.reset(new QMutex);
     getOperationsAndDialogServiceMutex.reset(new QMutex);
 }
 
-bool FileOperationsUtils::getOperationsAndDialogService()
+bool FileCopyMoveJob::getOperationsAndDialogService()
 {
     QMutexLocker lk(getOperationsAndDialogServiceMutex.data());
     if (operationsService.isNull()) {
@@ -69,7 +69,7 @@ bool FileOperationsUtils::getOperationsAndDialogService()
     return operationsService && dialogService;
 }
 
-void FileOperationsUtils::onHandleAddTask()
+void FileCopyMoveJob::onHandleAddTask()
 {
     QMutexLocker lk(copyMoveTaskMutex.data());
     QObject *send = sender();
@@ -80,10 +80,10 @@ void FileOperationsUtils::onHandleAddTask()
         return;
     }
     dialogService->addTask(jobHandler);
-    jobHandler->disconnect(jobHandler.data(), &AbstractJobHandler::finishedNotify, this, &FileOperationsUtils::onHandleTaskFinished);
+    jobHandler->disconnect(jobHandler.data(), &AbstractJobHandler::finishedNotify, this, &FileCopyMoveJob::onHandleTaskFinished);
 }
 
-void FileOperationsUtils::onHandleAddTaskWithArgs(const JobInfoPointer info)
+void FileCopyMoveJob::onHandleAddTaskWithArgs(const JobInfoPointer info)
 {
     QMutexLocker lk(copyMoveTaskMutex.data());
 
@@ -97,7 +97,7 @@ void FileOperationsUtils::onHandleAddTaskWithArgs(const JobInfoPointer info)
     dialogService->addTask(jobHandler);
 }
 
-void FileOperationsUtils::onHandleTaskFinished(const JobInfoPointer info)
+void FileCopyMoveJob::onHandleTaskFinished(const JobInfoPointer info)
 {
     JobHandlePointer jobHandler = info->value(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer).value<JobHandlePointer>();
     {
@@ -106,14 +106,14 @@ void FileOperationsUtils::onHandleTaskFinished(const JobInfoPointer info)
     }
 }
 
-void FileOperationsUtils::initArguments(const JobHandlePointer &handler)
+void FileCopyMoveJob::initArguments(const JobHandlePointer &handler)
 {
     QSharedPointer<QTimer> timer(new QTimer);
     timer->setSingleShot(true);
     timer->setInterval(1000);
-    timer->connect(timer.data(), &QTimer::timeout, this, &FileOperationsUtils::onHandleAddTask);
-    handler->connect(handler.data(), &AbstractJobHandler::errorNotify, this, &FileOperationsUtils::onHandleAddTaskWithArgs);
-    handler->connect(handler.data(), &AbstractJobHandler::finishedNotify, this, &FileOperationsUtils::onHandleTaskFinished);
+    timer->connect(timer.data(), &QTimer::timeout, this, &FileCopyMoveJob::onHandleAddTask);
+    handler->connect(handler.data(), &AbstractJobHandler::errorNotify, this, &FileCopyMoveJob::onHandleAddTaskWithArgs);
+    handler->connect(handler.data(), &AbstractJobHandler::finishedNotify, this, &FileCopyMoveJob::onHandleTaskFinished);
     timer->setProperty("jobPointer", QVariant::fromValue(handler));
     {
         QMutexLocker lk(copyMoveTaskMutex.data());
@@ -131,8 +131,8 @@ void FileOperationsUtils::initArguments(const JobHandlePointer &handler)
  * \param target 目标目录
  * \return QSharedPointer<AbstractJobHandler> 任务控制器
  */
-JobHandlePointer FileOperationsUtils::copy(const QList<QUrl> &sources, const QUrl &target,
-                                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
+JobHandlePointer FileCopyMoveJob::copy(const QList<QUrl> &sources, const QUrl &target,
+                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
     if (!getOperationsAndDialogService()) {
         qCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
@@ -151,8 +151,8 @@ JobHandlePointer FileOperationsUtils::copy(const QList<QUrl> &sources, const QUr
  * \param sources 移动到回收站的源文件
  * \return JobHandlePointer 任务控制器
  */
-JobHandlePointer FileOperationsUtils::moveToTrash(const QList<QUrl> &sources,
-                                                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
+JobHandlePointer FileCopyMoveJob::moveToTrash(const QList<QUrl> &sources,
+                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
     if (!getOperationsAndDialogService()) {
         qCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
@@ -170,8 +170,8 @@ JobHandlePointer FileOperationsUtils::moveToTrash(const QList<QUrl> &sources,
  * \param sources 需要还原的文件
  * \return JobHandlePointer 任务控制器
  */
-JobHandlePointer FileOperationsUtils::restoreFromTrash(const QList<QUrl> &sources,
-                                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
+JobHandlePointer FileCopyMoveJob::restoreFromTrash(const QList<QUrl> &sources,
+                                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
     if (!getOperationsAndDialogService()) {
         qCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
@@ -189,8 +189,8 @@ JobHandlePointer FileOperationsUtils::restoreFromTrash(const QList<QUrl> &source
  * \param sources 需要删除的源文件
  * \return JobHandlePointer 任务控制器
  */
-JobHandlePointer FileOperationsUtils::deletes(const QList<QUrl> &sources,
-                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
+JobHandlePointer FileCopyMoveJob::deletes(const QList<QUrl> &sources,
+                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
     if (!getOperationsAndDialogService()) {
         qCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
@@ -210,8 +210,8 @@ JobHandlePointer FileOperationsUtils::deletes(const QList<QUrl> &sources,
  * \param target 目标目录
  * \return JobHandlePointer 任务控制器
  */
-JobHandlePointer FileOperationsUtils::cut(const QList<QUrl> &sources, const QUrl &target,
-                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
+JobHandlePointer FileCopyMoveJob::cut(const QList<QUrl> &sources, const QUrl &target,
+                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
     if (!getOperationsAndDialogService()) {
         qCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";

@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FILEOPERATIONSUTILS_H
-#define FILEOPERATIONSUTILS_H
+#ifndef FILECOPYMOVEJOB_H
+#define FILECOPYMOVEJOB_H
 
 #include "dfmplugin_fileoperations_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
@@ -35,12 +35,12 @@ class QTimer;
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 
-class FileOperationsUtils : public QObject
+class FileCopyMoveJob : public QObject
 {
     Q_OBJECT
 public:
-    explicit FileOperationsUtils(QObject *parent = nullptr);
-    ~FileOperationsUtils() override = default;
+    explicit FileCopyMoveJob(QObject *parent = nullptr);
+    ~FileCopyMoveJob() override = default;
 
     JobHandlePointer copy(const QList<QUrl> &sources, const QUrl &target,
                           const dfmbase::AbstractJobHandler::JobFlags &flags = dfmbase::AbstractJobHandler::JobFlag::kNoHint);
@@ -71,4 +71,4 @@ private:
 
 DPFILEOPERATIONS_END_NAMESPACE
 
-#endif   // FILEOPERATIONSUTILS_H
+#endif   // FILECOPYMOVEJOB_H

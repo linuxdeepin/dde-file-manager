@@ -21,15 +21,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fileoperationseventreceiver.h"
+#include "fileoperations/filecopymovejob.h"
 #include "dfm-base/base/urlroute.h"
-#include "fileoperations/fileoperationsutils.h"
 #include "dfm-base/file/local/localfilehandler.h"
+
+#include <dfm-framework/framework.h>
 
 #include <QDebug>
 #include <QUrl>
-#include <dfm-framework/framework.h>
-
-#include <functional>
 
 DPFILEOPERATIONS_USE_NAMESPACE
 
@@ -37,7 +36,7 @@ FileOperationsEventReceiver::FileOperationsEventReceiver(QObject *parent)
     : QObject(parent)
 {
     getServiceMutex.reset(new QMutex);
-    copyMoveUtils.reset(new FileOperationsUtils);
+    copyMoveJob.reset(new FileCopyMoveJob);
     initService();
 }
 
@@ -99,35 +98,35 @@ void FileOperationsEventReceiver::handleOperationCopy(quint64 windowId, const QL
                                                       const dfmbase::AbstractJobHandler::JobFlags flags)
 {
     Q_UNUSED(windowId);
-    copyMoveUtils->copy(sources, target, flags);
+    copyMoveJob->copy(sources, target, flags);
     // TODO:: file copy finished need to send copy finished event
 }
 
 void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QList<QUrl> sources, const QUrl target, const dfmbase::AbstractJobHandler::JobFlags flags)
 {
     Q_UNUSED(windowId);
-    copyMoveUtils->cut(sources, target, flags);
+    copyMoveJob->cut(sources, target, flags);
     // TODO:: file cut finished need to send cut file finished event
 }
 
 void FileOperationsEventReceiver::handleOperationMoveToTrash(quint64 windowId, const QList<QUrl> sources, const dfmbase::AbstractJobHandler::JobFlags flags)
 {
     Q_UNUSED(windowId);
-    copyMoveUtils->moveToTrash(sources, flags);
+    copyMoveJob->moveToTrash(sources, flags);
     // TODO:: file moveToTrash finished need to send file moveToTrash finished event
 }
 
 void FileOperationsEventReceiver::handleOperationRestoreFromTrash(quint64 windowId, const QList<QUrl> sources, const dfmbase::AbstractJobHandler::JobFlags flags)
 {
     Q_UNUSED(windowId);
-    copyMoveUtils->restoreFromTrash(sources, flags);
+    copyMoveJob->restoreFromTrash(sources, flags);
     // TODO:: file restoreFromTrash finished need to send file restoreFromTrash finished event
 }
 
 void FileOperationsEventReceiver::handleOperationDeletes(quint64 windowId, const QList<QUrl> sources, const dfmbase::AbstractJobHandler::JobFlags flags)
 {
     Q_UNUSED(windowId);
-    copyMoveUtils->deletes(sources, flags);
+    copyMoveJob->deletes(sources, flags);
     // TODO:: file deletes finished need to send file deletes finished event
 }
 

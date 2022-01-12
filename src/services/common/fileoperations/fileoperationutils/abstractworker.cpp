@@ -226,6 +226,7 @@ bool AbstractWorker::initArgs()
 
     if (!errorThreadIdQueueMutex)
         errorThreadIdQueueMutex.reset(new QMutex);
+
     return true;
 }
 /*!

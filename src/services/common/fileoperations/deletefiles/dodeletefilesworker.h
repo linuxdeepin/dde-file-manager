@@ -46,7 +46,6 @@ protected:
     void stop() override;
     void onUpdateProccess() override;
     void doOperateWork(AbstractJobHandler::SupportActions actions) override;
-    void endWork() override;
     AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error) override;
 
 protected:

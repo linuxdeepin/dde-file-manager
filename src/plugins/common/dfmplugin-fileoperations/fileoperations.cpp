@@ -21,18 +21,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fileoperations.h"
+#include "fileoperationseventreceiver.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_event_defines.h"
-#include "fileoperationseventreceiver.h"
 
 DFMBASE_USE_NAMESPACE
 DPFILEOPERATIONS_USE_NAMESPACE
 
 void FileOperations::initialize()
 {
-    // show first window when all plugin initialized
-    connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &FileOperations::onAllPluginsInitialized);
+    initEventHandle();
 }
 
 bool FileOperations::start()
@@ -44,8 +43,10 @@ dpf::Plugin::ShutdownFlag FileOperations::stop()
 {
     return kSync;
 }
-
-void FileOperations::onAllPluginsInitialized()
+/*!
+ * \brief FileOperations::initEventHandle Initialize all event handling
+ */
+void FileOperations::initEventHandle()
 {
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kPasteFile,
                                             FileOperationsEventReceiver::instance(),

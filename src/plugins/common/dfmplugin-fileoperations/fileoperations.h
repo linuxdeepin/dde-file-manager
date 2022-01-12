@@ -38,7 +38,7 @@ public:
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
 private slots:
-    void onAllPluginsInitialized();
+    void initEventHandle();
 };
 
 DPFILEOPERATIONS_END_NAMESPACE

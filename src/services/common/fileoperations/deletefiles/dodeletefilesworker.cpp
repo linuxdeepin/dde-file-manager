@@ -69,10 +69,6 @@ void DoDeleteFilesWorker::doOperateWork(AbstractJobHandler::SupportActions actio
     resume();
 }
 
-void DoDeleteFilesWorker::endWork()
-{
-}
-
 AbstractJobHandler::SupportActions DoDeleteFilesWorker::supportActions(const AbstractJobHandler::JobErrorType &error)
 {
     return AbstractWorker::supportActions(error);
@@ -96,7 +92,7 @@ bool DoDeleteFilesWorker::deleteAllFiles()
  */
 bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 {
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+    AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     for (QList<QUrl>::iterator it = --allFilesList->end(); it != --allFilesList->begin(); --it) {
         if (!stateCheck())
             return false;
@@ -157,7 +153,7 @@ bool DoDeleteFilesWorker::deleteFileOnOtherDevice(const QUrl &url)
 
     emitCurrentTaskNotify(url, QUrl());
 
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+    AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     do {
         if (!handler->deleteFile(url)) {
             action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError, handler->errorString());
@@ -169,7 +165,7 @@ bool DoDeleteFilesWorker::deleteFileOnOtherDevice(const QUrl &url)
     if (action == AbstractJobHandler::SupportAction::kSkipAction)
         return true;
 
-    return action != AbstractJobHandler::SupportAction::kNoAction;
+    return action == AbstractJobHandler::SupportAction::kNoAction;
 }
 /*!
  * \brief DoDeleteFilesWorker::deleteDirOnOtherDevice Delete dir on removable devices and other
@@ -184,7 +180,7 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const AbstractFileInfoPointer &
     if (dir->countChildFile() < 0)
         return deleteFileOnOtherDevice(dir->url());
 
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+    AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     AbstractDirIteratorPointer iterator(nullptr);
     do {
         QString errorMsg;
@@ -239,12 +235,14 @@ AbstractJobHandler::SupportAction DoDeleteFilesWorker::doHandleErrorAndWait(cons
     setStat(AbstractJobHandler::JobState::kPauseState);
     emitErrorNotify(from, QUrl(), error, errorMsg);
 
-    QMutex lock;
-    lock.lock();
+    if (!handlingErrorQMutex)
+        handlingErrorQMutex.reset(new QMutex);
+
+    handlingErrorQMutex->lock();
     if (handlingErrorCondition.isNull())
         handlingErrorCondition.reset(new QWaitCondition);
-    handlingErrorCondition->wait(&lock);
-    lock.unlock();
+    handlingErrorCondition->wait(handlingErrorQMutex.data());
+    handlingErrorQMutex->unlock();
 
     return currentAction;
 }

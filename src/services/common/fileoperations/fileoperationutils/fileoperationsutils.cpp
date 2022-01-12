@@ -129,7 +129,7 @@ void FileOperationsUtils::statisticFilesSize(const QUrl &url,
             break;
         }
         unsigned short flag = ent->fts_info;
-        if (isRecordUrl)
+        if (isRecordUrl && flag != FTS_DP)
             sizeInfo->allFiles->append(QUrl::fromLocalFile(ent->fts_path));
         if (flag != FTS_DP)
             sizeInfo->totalSize += ent->fts_statp->st_size <= 0 ? getMemoryPageSize() : ent->fts_statp->st_size;
