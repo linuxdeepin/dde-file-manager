@@ -52,8 +52,6 @@ public:
     DDialog *showQueryScanningDialog(const QString &title);
     void showErrorDialog(const QString &title, const QString &message);
     void addTask(const JobHandlePointer &task);
-    void showComputerPropertyDialog();
-    void showTrashPropertyDialog();
     void showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window);
     QString askPasswordForLockedDevice();
 
@@ -61,8 +59,6 @@ private:
     explicit DialogService(QObject *parent = nullptr);
     virtual ~DialogService() override;
     TaskDialog *taskdailog = nullptr;   // 文件任务进度和错误处理弹窗
-    ComputerPropertyDialog *computerPropertyDialog { nullptr };
-    TrashPropertyDialog *trashPropertyDialog { nullptr };
 };
 
 DSC_END_NAMESPACE

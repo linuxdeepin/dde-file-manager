@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     lixiang<lixianga@uniontech.com>
  *
@@ -21,7 +21,7 @@
 #ifndef COMPUTERDETAILVIEW_H
 #define COMPUTERDETAILVIEW_H
 
-#include "dfm_common_service_global.h"
+#include "dfmplugin_propertydialog_global.h"
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 
 #include <DAbstractDialog>
@@ -31,10 +31,7 @@
 #include <QGroupBox>
 #include <QThread>
 
-DWIDGET_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
-DSC_BEGIN_NAMESPACE
-
+DPPROPERTYDIALOG_BEGIN_NAMESPACE
 class ComputerInfoThread : public QThread
 {
     Q_OBJECT
@@ -81,16 +78,16 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 
 private:
-    DLabel *computer { nullptr };
-    DLabel *computerIcon { nullptr };
-    DLabel *basicInfo { nullptr };
-    KeyValueLabel *computerName { nullptr };
-    KeyValueLabel *computerEdition { nullptr };
-    KeyValueLabel *computerVersionNum { nullptr };
-    KeyValueLabel *computerType { nullptr };
-    KeyValueLabel *computerCpu { nullptr };
-    KeyValueLabel *computerMemory { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *computer { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *computerIcon { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *basicInfo { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *computerName { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *computerEdition { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *computerVersionNum { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *computerType { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *computerCpu { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *computerMemory { nullptr };
     ComputerInfoThread *thread { nullptr };
 };
-DSC_END_NAMESPACE
+DPPROPERTYDIALOG_END_NAMESPACE
 #endif   // COMPUTERDETAILVIEW_H

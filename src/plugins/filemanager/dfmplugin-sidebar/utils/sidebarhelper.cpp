@@ -26,6 +26,7 @@
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
+#include "services/common/propertydialog/propertydialogservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/systempathutil.h"
 
@@ -36,6 +37,7 @@
 DPSIDEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
 QMap<quint64, SideBarWidget *> SideBarHelper::kSideBarMap {};
 QList<DSB_FM_NAMESPACE::SideBar::ItemInfo> SideBarHelper::kCacheInfo {};
@@ -187,6 +189,16 @@ void SideBarHelper::defaultContenxtMenu(quint64 windowId, const QUrl &url, const
     menu->addSeparator();
     menu->addAction(QObject::tr("Properties"), [url]() {
         // TODO(zhangs): show property dialog
+        auto &ctx = dpfInstance.serviceContext();
+        QString errStr;
+        if (!ctx.load(PropertyDialogService::name(), &errStr)) {
+            qCritical() << errStr;
+            abort();
+        }
+        PropertyDialogService *service = ctx.service<PropertyDialogService>(PropertyDialogService::name());
+        QList<QUrl> urls;
+        urls << url;
+        service->addFileProperty(urls);
     });
     menu->exec(globalPos);
     delete menu;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     lixiang<lixianga@uniontech.com>
  *
@@ -28,12 +28,17 @@
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
+DPPROPERTYDIALOG_USE_NAMESPACE
 TrashPropertyDialog::TrashPropertyDialog(QWidget *parent)
     : DDialog(parent),
-      fileExtendAttribThread(new FileExtendAttribThread())
+      fileCalculationUtils(new FileCalculationUtils())
 {
     initUI();
+}
+
+TrashPropertyDialog::~TrashPropertyDialog()
+{
+    fileCalculationUtils->deleteLater();
 }
 
 void TrashPropertyDialog::initUI()
@@ -89,8 +94,8 @@ void TrashPropertyDialog::initUI()
 
     addContent(contenFrame);
 
-    connect(fileExtendAttribThread, &FileExtendAttribThread::sigDirSizeChange, this, &TrashPropertyDialog::slotTrashDirSizeChange);
-    fileExtendAttribThread->startThread(QList<QUrl>() << url);
+    connect(fileCalculationUtils, &FileCalculationUtils::sigFileChange, this, &TrashPropertyDialog::slotTrashDirSizeChange);
+    fileCalculationUtils->startThread(QList<QUrl>() << url);
 }
 
 void TrashPropertyDialog::slotTrashDirSizeChange(qint64 size)
@@ -102,6 +107,6 @@ void TrashPropertyDialog::showEvent(QShowEvent *event)
 {
     QString path = StandardPaths::location(StandardPaths::kTrashFilesPath);
     QUrl url(QUrl::fromLocalFile(path));
-    fileExtendAttribThread->startThread(QList<QUrl>() << url);
+    fileCalculationUtils->startThread(QList<QUrl>() << url);
     DDialog::showEvent(event);
 }

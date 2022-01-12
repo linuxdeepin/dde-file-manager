@@ -1,11 +1,9 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liyigang<liyigang@uniontech.com>
+ * Author:     lixiang<lixianga@uniontech.com>
  *
- * Maintainer: max-lv<lvwujun@uniontech.com>
- *             lanxuesong<lanxuesong@uniontech.com>
- *             xushitong<xushitong@uniontech.com>
+ * Maintainer: lixiang<lixianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,12 +17,24 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#include "devicepropertydialog.h"
+*/
+#include "propertydialog.h"
+#include "events/propertyunicastreceiver.h"
 
-DWIDGET_USE_NAMESPACE
-DSC_USE_NAMESPACE
-DevicePropertyDialog::DevicePropertyDialog(QObject *parent)
-    : DAbstractDialog(parent)
+DFMBASE_USE_NAMESPACE
+DPPROPERTYDIALOG_USE_NAMESPACE
+
+void PropertyDialog::initialize()
 {
+    PropertyUnicastReceiver::instance()->connectService();
+}
+
+bool PropertyDialog::start()
+{
+    return true;
+}
+
+dpf::Plugin::ShutdownFlag PropertyDialog::stop()
+{
+    return kSync;
 }

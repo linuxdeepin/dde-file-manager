@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     lixiang<lixianga@uniontech.com>
  *
@@ -35,12 +35,13 @@
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
+DPPROPERTYDIALOG_USE_NAMESPACE
 ComputerPropertyDialog::ComputerPropertyDialog(QWidget *parent)
     : DDialog(parent)
 {
     iniUI();
     iniThread();
+    this->setAttribute(Qt::WA_DeleteOnClose, true);
 }
 
 ComputerPropertyDialog::~ComputerPropertyDialog()

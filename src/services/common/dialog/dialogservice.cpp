@@ -22,8 +22,6 @@
 */
 #include "dialogservice.h"
 #include "taskdialog/taskdialog.h"
-#include "propertydialog/computerpropertydialog.h"
-#include "propertydialog/trashpropertydialog.h"
 #include "settingsdialog/settingdialog.h"
 #include "mountpasswddialog/mountsecretdiskaskpassworddialog.h"
 
@@ -68,29 +66,7 @@ void DialogService::addTask(const JobHandlePointer &task)
     taskdailog->addTask(task);
 }
 
-/*!
- * \brief 创建与显示计算机属性页面
- */
-void DialogService::showComputerPropertyDialog()
-{
-    if (!computerPropertyDialog)
-        computerPropertyDialog = new ComputerPropertyDialog();
-
-    computerPropertyDialog->show();
-}
-
-/*!
- * \brief 创建与显示回收站属性页面
- */
-void DialogService::showTrashPropertyDialog()
-{
-    if (!trashPropertyDialog)
-        trashPropertyDialog = new TrashPropertyDialog();
-
-    trashPropertyDialog->show();
-}
-
-void DialogService::showSetingsDialog(FileManagerWindow *window)
+void DialogService::showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window)
 {
     Q_ASSERT(window);
 

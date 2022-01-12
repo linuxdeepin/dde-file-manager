@@ -230,4 +230,19 @@ bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringLi
     return true;
 }
 
+int UniversalUtils::dockHeight()
+{
+    QDBusInterface deepinDockInfo("com.deepin.dde.daemon.Dock",
+                                  "/com/deepin/dde/daemon/Dock",
+                                  "com.deepin.dde.daemon.Dock",
+                                  QDBusConnection::sessionBus());
+
+    int dockHeight = 0;
+    if (deepinDockInfo.isValid()) {
+        QVariant temp = deepinDockInfo.property("WindowSizeEfficient");
+        dockHeight = temp.toInt();
+    }
+    return dockHeight;
+}
+
 DFMBASE_END_NAMESPACE

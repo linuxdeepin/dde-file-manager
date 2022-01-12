@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     lixiang<lixianga@uniontech.com>
  *
@@ -22,19 +22,19 @@
 #ifndef TRASHPROPERTYDIALOG_H
 #define TRASHPROPERTYDIALOG_H
 
-#include "dfm_common_service_global.h"
+#include "dfmplugin_propertydialog_global.h"
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
-#include "dfm-base/utils/fileextendattribthread.h"
+#include "utils/filecalculationutils.h"
 
 #include <DDialog>
 
-DWIDGET_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
-DSC_BEGIN_NAMESPACE
-class TrashPropertyDialog : public DDialog
+DPPROPERTYDIALOG_BEGIN_NAMESPACE
+class TrashPropertyDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
 public:
     explicit TrashPropertyDialog(QWidget *parent = nullptr);
+
+    virtual ~TrashPropertyDialog() override;
 
 private:
     void initUI();
@@ -43,13 +43,13 @@ public slots:
     void slotTrashDirSizeChange(qint64 size);
 
 protected:
-    virtual void showEvent(QShowEvent *event);
+    virtual void showEvent(QShowEvent *event) override;
 
 private:
-    DLabel *trashNameLabel { nullptr };
-    DLabel *trashIconLabel { nullptr };
-    KeyValueLabel *fileCountAndFileSize { nullptr };
-    FileExtendAttribThread *fileExtendAttribThread { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *trashNameLabel { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *trashIconLabel { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *fileCountAndFileSize { nullptr };
+    FileCalculationUtils *fileCalculationUtils { nullptr };
 };
-DSC_END_NAMESPACE
+DPPROPERTYDIALOG_END_NAMESPACE
 #endif   // TRASHPROPERTYDIALOG_H

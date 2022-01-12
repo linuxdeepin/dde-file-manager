@@ -37,7 +37,7 @@ FileExtendAttribThreadPrivate::~FileExtendAttribThreadPrivate()
 
 FileExtendAttribThread::FileExtendAttribThread(QObject *parent)
     : QThread(parent),
-      fileExtendAttribThreadPrivate(new FileExtendAttribThreadPrivate(this))
+      dp(new FileExtendAttribThreadPrivate(this))
 {
 }
 
@@ -48,21 +48,21 @@ FileExtendAttribThread::~FileExtendAttribThread()
 
 void FileExtendAttribThread::startThread(const QList<QUrl> &urls)
 {
-    if (fileExtendAttribThreadPrivate->state == FileExtendAttribThread::kRunningState)
+    if (dp->state == FileExtendAttribThread::kRunningState)
         return;
-    fileExtendAttribThreadPrivate->totalSize = 0;
-    fileExtendAttribThreadPrivate->urlList = urls;
-    fileExtendAttribThreadPrivate->state = FileExtendAttribThread::kRunningState;
+    dp->totalSize = 0;
+    dp->urlList = urls;
+    dp->state = FileExtendAttribThread::kRunningState;
     start();
 }
 
 void FileExtendAttribThread::stopThread()
 {
-    if (fileExtendAttribThreadPrivate->state == FileExtendAttribThread::kStoppedState) {
+    if (dp->state == FileExtendAttribThread::kStoppedState) {
         return;
     }
 
-    fileExtendAttribThreadPrivate->state = FileExtendAttribThread::kStoppedState;
+    dp->state = FileExtendAttribThread::kStoppedState;
 }
 
 /*!
@@ -110,18 +110,18 @@ void FileExtendAttribThread::dirSizeProcess(const QUrl &url)
 
         size = info->size();
         if (size > 0) {
-            fileExtendAttribThreadPrivate->totalSize += size;
-            emit sigDirSizeChange(fileExtendAttribThreadPrivate->totalSize);
+            dp->totalSize += size;
+            emit sigDirSizeChange(dp->totalSize);
         }
     } else if (info->isDir()) {
-        fileExtendAttribThreadPrivate->dirList << url;
+        dp->dirList << url;
     }
 }
 
 void FileExtendAttribThread::run()
 {
     QString error {};
-    for (const QUrl &url : fileExtendAttribThreadPrivate->urlList) {
+    for (const QUrl &url : dp->urlList) {
         const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<LocalDirIterator>(url, &error);
         if (!error.isEmpty()) {
             qWarning() << error;
@@ -133,19 +133,19 @@ void FileExtendAttribThread::run()
             continue;
         }
 
-        bool status = fileExtendAttribThreadPrivate->state == FileExtendAttribThread::kRunningState;
+        bool status = dp->state == FileExtendAttribThread::kRunningState;
         while (iterator->hasNext() && status) {
             QUrl url = iterator->next();
             dirSizeProcess(url);
         }
 
-        if (fileExtendAttribThreadPrivate->state == FileExtendAttribThread::kStoppedState)
+        if (dp->state == FileExtendAttribThread::kStoppedState)
             return;
     }
 
     error.clear();
-    while (!fileExtendAttribThreadPrivate->dirList.isEmpty() && fileExtendAttribThreadPrivate->state == FileExtendAttribThread::kRunningState) {
-        const QUrl &directory_url = fileExtendAttribThreadPrivate->dirList.dequeue();
+    while (!dp->dirList.isEmpty() && dp->state == FileExtendAttribThread::kRunningState) {
+        const QUrl &directory_url = dp->dirList.dequeue();
         const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<LocalDirIterator>(directory_url, &error);
         if (!error.isEmpty()) {
             qWarning() << error;
@@ -157,14 +157,14 @@ void FileExtendAttribThread::run()
             continue;
         }
 
-        while (iterator->hasNext() && fileExtendAttribThreadPrivate->state == FileExtendAttribThread::kRunningState) {
+        while (iterator->hasNext() && dp->state == FileExtendAttribThread::kRunningState) {
             QUrl url = iterator->next();
             dirSizeProcess(url);
         }
     }
 
-    if (fileExtendAttribThreadPrivate->totalSize == 0) {
-        emit sigDirSizeChange(fileExtendAttribThreadPrivate->totalSize);
+    if (dp->totalSize == 0) {
+        emit sigDirSizeChange(dp->totalSize);
         stopThread();
         return;
     }

@@ -72,7 +72,7 @@ private:
     void run() override;
 
 private:
-    FileExtendAttribThreadPrivate *fileExtendAttribThreadPrivate { nullptr };
+    FileExtendAttribThreadPrivate *dp { nullptr };
 };
 DFMBASE_END_NAMESPACE
 #endif   // FILEEXTENDEDATTRIBUTESTETHREAD_H

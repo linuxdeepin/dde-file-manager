@@ -44,6 +44,11 @@ FILE(GLOB DIALOG_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dialog/settingsdialog/*.cpp"
 )
 
+FILE(GLOB PROPERTYDIALOG_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/propertydialog/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/propertydialog/*.cpp"
+)
+
 FILE(GLOB MENU_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/menu/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/menu/*.cpp"
@@ -59,6 +64,7 @@ add_library(${PROJECT_NAME}
     ${FILEOPERATIONS_FILES}
     ${DIALOG_FILES}
     ${MENU_FILES}
+    ${PROPERTYDIALOG_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

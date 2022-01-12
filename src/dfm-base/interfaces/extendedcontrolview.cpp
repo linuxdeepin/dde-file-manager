@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     lixiang<lixianga@uniontech.com>
  *
@@ -18,24 +18,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "extendedcontrolview.h"
 
-#ifndef FILEPROPERTYVIEW_H
-#define FILEPROPERTYVIEW_H
+#include <denhancedwidget.h>
 
-#include "dfm_common_service_global.h"
-
-#include <DAbstractDialog>
 DWIDGET_USE_NAMESPACE
-DSC_BEGIN_NAMESPACE
-class FilePropertyDialog : public DAbstractDialog
+DFMBASE_USE_NAMESPACE
+ExtendedControlView::ExtendedControlView(QWidget *parent)
+    : QFrame(parent)
 {
-    Q_OBJECT
-public:
-    explicit FilePropertyDialog(QObject *parent = nullptr);
+}
 
-signals:
+void ExtendedControlView::setSelectFileUrl(const QUrl &url)
+{
+    //! todo inheritance implementation;
+}
 
-public slots:
-};
-DSC_END_NAMESPACE
-#endif   // FILEPROPERTYVIEW_H
+ExtendedControlDrawerView::ExtendedControlDrawerView(QWidget *parent)
+    : DArrowLineDrawer(parent)
+{
+    DEnhancedWidget *hanceedWidget = new DEnhancedWidget(this, this);
+    connect(hanceedWidget, &DEnhancedWidget::heightChanged, this, &ExtendedControlDrawerView::heightChanged);
+}
+
+void ExtendedControlDrawerView::setSelectFileUrl(const QUrl &url)
+{
+    //! todo inheritance implementation;
+}

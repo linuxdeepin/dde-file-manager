@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     lixiang<lixianga@uniontech.com>
  *
@@ -17,25 +17,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
+#ifndef DFMPLUGIN_PROPERTYDIALOG_GLOBAL_H
+#define DFMPLUGIN_PROPERTYDIALOG_GLOBAL_H
 
-#ifndef DEVICEPROPERTYVIEW_H
-#define DEVICEPROPERTYVIEW_H
+#define DPPROPERTYDIALOG_BEGIN_NAMESPACE namespace dfmplugin_propertydialog {
+#define DPPROPERTYDIALOG_END_NAMESPACE }
+#define DPPROPERTYDIALOG_USE_NAMESPACE using namespace dfmplugin_propertydialog;
+#define DPPROPERTYDIALOG_NAMESPACE dfmplugin_propertydialog
 
-#include "dfm_common_service_global.h"
-
-#include <DAbstractDialog>
-DWIDGET_USE_NAMESPACE
-DSC_BEGIN_NAMESPACE
-class DevicePropertyDialog : public DAbstractDialog
-{
-    Q_OBJECT
-public:
-    explicit DevicePropertyDialog(QObject *parent = nullptr);
-
-signals:
-
-public slots:
-};
-DSC_END_NAMESPACE
-#endif   // DEVICEPROPERTYVIEW_H
+#endif   // DFMPLUGIN_PROPERTYDIALOG_GLOBAL_H
