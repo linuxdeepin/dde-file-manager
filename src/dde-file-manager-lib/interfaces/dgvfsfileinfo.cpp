@@ -550,7 +550,8 @@ QList<QIcon> DGvfsFileInfo::additionalIcon() const
     if (!isSymLink()) {
         if (exists()) {
             // 添加插件角标
-            PluginEmblemManager::instance()->getPluginEmblemIconsFromMap(fileUrl(), icons.size(), icons);
+            if (icons.size() < kMaxEmblemCount)
+                PluginEmblemManager::instance()->getPluginEmblemIconsFromMap(fileUrl(), icons.size(), icons);
             return icons;
         }
     }
@@ -571,7 +572,8 @@ QList<QIcon> DGvfsFileInfo::additionalIcon() const
 #endif
 
     // 添加插件角标
-    PluginEmblemManager::instance()->getPluginEmblemIconsFromMap(fileUrl(), icons.size(), icons);
+    if (icons.size() < kMaxEmblemCount)
+        PluginEmblemManager::instance()->getPluginEmblemIconsFromMap(fileUrl(), icons.size(), icons);
 
     return icons;
 }

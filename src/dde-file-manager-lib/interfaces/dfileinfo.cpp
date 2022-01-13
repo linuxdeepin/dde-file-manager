@@ -453,7 +453,8 @@ QList<QIcon> DFileInfo::additionalIcon() const
 #endif
 
     // 添加插件角标
-    PluginEmblemManager::instance()->getPluginEmblemIconsFromMap(fileUrl(), countOfSystemIcon, icons);
+    if (countOfSystemIcon < kMaxEmblemCount)
+        PluginEmblemManager::instance()->getPluginEmblemIconsFromMap(fileUrl(), countOfSystemIcon, icons);
 
     return icons;
 }

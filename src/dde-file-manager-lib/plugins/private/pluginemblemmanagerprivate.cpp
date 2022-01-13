@@ -30,7 +30,6 @@
 #include <QApplication>
 #include <QTimer>
 
-static const int kMaxEmblemCount { 4 };
 static const int kEmblemUpdateTime { 300 };
 
 USING_DFMEXT_NAMESPACE
@@ -66,15 +65,21 @@ void PluginEmblemManagerPrivate::getPluginEmblemIconsFromMap(const DUrl &fileUrl
 
     QString strFilePath = fileUrl.toLocalFile();
     if (mapIcons.contains(strFilePath)) {
+        QList<QIcon> newIcons = {QIcon(), QIcon(), QIcon(), QIcon()};
+        for (int i = 0; i < qMin(kMaxEmblemCount, icons.size()); ++i) {
+            newIcons[i] = icons.at(i);
+        }
         QList<QString> listPath = mapIcons[strFilePath];
         for (int i = systemIconCount; i < kMaxEmblemCount; ++i) {
             if (!listPath[i].isEmpty()) {
                 // 优先从主题中拿角标，如果主题中没有，则认为是本地路径
                 QIcon icon = QIcon::fromTheme(listPath[i]);
-                if (!icon.isNull())
-                    icons << icon;
+                if (!icon.isNull()) {
+                    newIcons[i] = icon;
+                }
             }
         }
+        icons = newIcons;
     }
 }
 

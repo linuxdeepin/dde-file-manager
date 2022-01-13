@@ -118,6 +118,8 @@
 #define DFM_END_NAMESPACE }
 #define DFM_USE_NAMESPACE using namespace DFM_NAMESPACE;
 
+static const int kMaxEmblemCount { 4 };
+
 class DFMGlobal : public QObject
 {
     Q_OBJECT
