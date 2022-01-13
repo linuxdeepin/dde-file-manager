@@ -690,6 +690,12 @@ void DFileService::pasteFileByClipboard(const QObject *sender, const DUrl &targe
         pasteFile(sender, action, targetUrl, DUrlList());
         return;
     }
+    // 远程协助
+    if (action == DFMGlobal::RemoteCopiedAction) {
+        qInfo() << "Remote Copy: set Current Url to Clipboard";
+        DFMGlobal::setCurUrlToClipboardForRemote(targetUrl);
+        return;
+    }
     const DUrlList &list = DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList());
 
     if (action == DFMGlobal::CutAction) {

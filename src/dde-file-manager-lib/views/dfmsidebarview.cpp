@@ -97,7 +97,7 @@ void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
         DFMSideBarModel *mod = dynamic_cast<DFMSideBarModel *>(model());
         if (mod) {
             DFMSideBarItem *item = mod->itemFromIndex(currentIndex());
-            if (!item->isDragEnabled())
+            if (item && !item->isDragEnabled())
                 return;
         }
     }

@@ -109,6 +109,8 @@ extern "C"
 }
 #endif //__cplusplus
 
+#define CURRENT_URL_KEY "uos/remote-copied-files"
+
 namespace GlobalData {
 static QList<QUrl> clipboardFileUrls;
 static QMutex clipboardFileUrlsMutex;
@@ -132,6 +134,12 @@ void onClipboardDataChanged()
         qInfo() << "clipboard use other !";
         clipboardAction = DFMGlobal::RemoteAction;
         remoteCurrentCount++;
+        return;
+    }
+    // 远程协助功能
+    if (mimeData->hasFormat(CURRENT_URL_KEY)) {
+        qInfo() << "Remote copy: set remote copy action";
+        clipboardAction = DFMGlobal::RemoteCopiedAction;
         return;
     }
     const QByteArray &data = mimeData->data("x-special/gnome-copied-files");
@@ -282,6 +290,25 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
         mimeData->setData("userId", userId);
     }
 
+    qApp->clipboard()->setMimeData(mimeData);
+}
+
+void DFMGlobal::setCurUrlToClipboardForRemote(const DUrl &curUrl)
+{
+    if (!curUrl.isValid())
+        return;
+    QByteArray localPath;
+    if (curUrl.isLocalFile()) {
+        localPath = curUrl.toString().toLocal8Bit();
+    } else {
+        qInfo() << "Remote copy: current url not local file";
+        return;
+    }
+
+    if (localPath.isEmpty())
+        return;
+    QMimeData *mimeData = new QMimeData();
+    mimeData->setData(CURRENT_URL_KEY, localPath);
     qApp->clipboard()->setMimeData(mimeData);
 }
 

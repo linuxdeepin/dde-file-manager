@@ -130,6 +130,7 @@ public:
         CopyAction,
         DeleteAction,
         RemoteAction,
+        RemoteCopiedAction,
         UnknowAction = 255
     };
 
@@ -278,6 +279,7 @@ public:
     static bool installTranslator();
 
     static void setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::ClipboardAction action, QMimeData *mimeData = nullptr);
+    static void setCurUrlToClipboardForRemote(const DUrl &curUrl);
     static const QList<QUrl> fetchUrlsFromClipboard();
     static DFMGlobal::ClipboardAction fetchClipboardAction();
     static void clearClipboard();
