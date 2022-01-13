@@ -311,65 +311,65 @@ FileView::RandeIndexList FileView::visibleIndexes(QRect rect) const
 {
     RandeIndexList list;
 
-    QSize item_size = itemSizeHint();
-    QSize icon_size = iconSize();
+    QSize itemSize = itemSizeHint();
+    QSize aIconSize = iconSize();
 
     int count = this->count();
     int spacing = this->spacing();
-    int item_width = item_size.width() + spacing * 2;
-    int item_height = item_size.height() + spacing * 2;
+    int itemWidth = itemSize.width() + spacing * 2;
+    int itemHeight = itemSize.height() + spacing * 2;
 
-    if (item_size.width() == -1) {
-        list << RandeIndex(qMax((rect.top() + spacing) / item_height, 0),
-                           qMin((rect.bottom() - spacing) / item_height, count - 1));
+    if (itemSize.width() == -1) {
+        list << RandeIndex(qMax((rect.top() + spacing) / itemHeight, 0),
+                           qMin((rect.bottom() - spacing) / itemHeight, count - 1));
     } else {
         rect -= QMargins(spacing, spacing, spacing, spacing);
 
-        int column_count = d->iconModeColumnCount(item_width);
+        int columnCount = d->iconModeColumnCount(itemWidth);
 
-        if (column_count <= 0)
+        if (columnCount <= 0)
             return list;
 
-        int begin_row_index = rect.top() / item_height;
-        int end_row_index = rect.bottom() / item_height;
-        int begin_column_index = rect.left() / item_width;
-        int end_column_index = rect.right() / item_width;
+        int beginRowIndex = rect.top() / itemHeight;
+        int endRowIndex = rect.bottom() / itemHeight;
+        int beginColumnIndex = rect.left() / itemWidth;
+        int endColumnIndex = rect.right() / itemWidth;
 
-        if (rect.top() % item_height > icon_size.height())
-            ++begin_row_index;
+        if (rect.top() % itemHeight > aIconSize.height())
+            ++beginRowIndex;
 
-        int icon_margin = (item_width - icon_size.width()) / 2;
+        int iconMargin = (itemWidth - aIconSize.width()) / 2;
 
-        if (rect.left() % item_width > item_width - icon_margin)
-            ++begin_column_index;
+        if (rect.left() % itemWidth > itemWidth - iconMargin)
+            ++beginColumnIndex;
 
-        if (rect.right() % item_width < icon_margin)
-            --end_column_index;
+        if (rect.right() % itemWidth < iconMargin)
+            --endColumnIndex;
 
-        begin_row_index = qMax(begin_row_index, 0);
-        begin_column_index = qMax(begin_column_index, 0);
-        end_row_index = qMin(end_row_index, count / column_count);
-        end_column_index = qMin(end_column_index, column_count - 1);
+        beginRowIndex = qMax(beginRowIndex, 0);
+        beginColumnIndex = qMax(beginColumnIndex, 0);
+        endRowIndex = qMin(endRowIndex, count / columnCount);
+        endColumnIndex = qMin(endColumnIndex, columnCount - 1);
 
-        if (begin_row_index > end_row_index || begin_column_index > end_column_index)
+        if (beginRowIndex > endRowIndex || beginColumnIndex > endColumnIndex)
             return list;
 
-        int begin_index = begin_row_index * column_count;
+        int beginIndex = beginRowIndex * columnCount;
 
-        if (end_column_index - begin_column_index + 1 == column_count) {
-            list << RandeIndex(qMax(begin_index, 0), qMin((end_row_index + 1) * column_count - 1, count - 1));
+        if (endColumnIndex - beginColumnIndex + 1 == columnCount) {
+            list << RandeIndex(qMax(beginIndex, 0), qMin((endRowIndex + 1) * columnCount - 1, count - 1));
 
             return list;
         }
 
-        for (int i = begin_row_index; i <= end_row_index; ++i) {
-            if (begin_index + begin_column_index >= count)
+        for (int i = beginRowIndex; i <= endRowIndex; ++i) {
+            if (beginIndex + beginColumnIndex >= count)
                 break;
 
-            list << RandeIndex(qMax(begin_index + begin_column_index, 0),
-                               qMin(begin_index + end_column_index, count - 1));
+            list << RandeIndex(qMax(beginIndex + beginColumnIndex, 0),
+                               qMin(beginIndex + endColumnIndex, count - 1));
 
-            begin_index += column_count;
+            beginIndex += columnCount;
         }
     }
 

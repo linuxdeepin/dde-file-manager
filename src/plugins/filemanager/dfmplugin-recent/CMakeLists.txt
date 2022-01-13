@@ -7,10 +7,14 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 FILE(GLOB RECENT_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
-    )
+)
 
 find_package(Qt5 REQUIRED Xml REQUIRED)
 find_package(Dtk REQUIRED Widget REQUIRED)

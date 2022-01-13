@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     yanghao<yanghao@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: huangyu<huangyub@uniontech.com>
+ *             liuyangming<liuyangming@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMRECENTUTIL_H
-#define DFMRECENTUTIL_H
+#ifndef DFMRECENTHELPER_H
+#define DFMRECENTHELPER_H
 
 #include "dfmplugin_recent_global.h"
 
@@ -28,9 +28,11 @@
 #include <QDebug>
 #include <QDir>
 #include <QIcon>
+#include <QFile>
 
 DPRECENT_BEGIN_NAMESPACE
-class RecentUtil final
+
+class RecentHelper final
 {
 
 public:
@@ -49,16 +51,13 @@ public:
         return QDir::homePath() + "/.local/share/recently-used.xbel";
     }
 
-    static QUrl rootUrl()
-    {
-        QUrl url;
-        url.setScheme(scheme());
-        url.setPath("/");
-        return url;
-    }
+    static QUrl rootUrl();
+
+    static void clearRecent();
+    static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
 
 private:
-    explicit RecentUtil() = delete;
+    explicit RecentHelper() = delete;
 };
 DPRECENT_END_NAMESPACE
-#endif   // DFMRECENTUTIL_H
+#endif   // DFMRECENTHELPER_H

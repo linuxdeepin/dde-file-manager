@@ -25,6 +25,7 @@
 #include "events/sidebareventcaller.h"
 
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/filemanager/workspace/workspaceservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/systempathutil.h"
 
@@ -172,7 +173,13 @@ void SideBarHelper::defaultContenxtMenu(quint64 windowId, const QUrl &url, const
     auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {
         SideBarEventCaller::sendOpenTab(windowId, url);
     });
-    newTabAct->setDisabled(false);   // TODO(zhangs): tabAddableByWinId
+    auto &ctx = dpfInstance.serviceContext();
+    auto workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
+    if (!workspaceService) {
+        qCritical() << "Failed, defaultContenxtMenu \"WorkspaceService\" is empty";
+        abort();
+    }
+    newTabAct->setDisabled(!workspaceService->tabAddable(windowId));
 
     menu->addSeparator();
     menu->addAction(QObject::tr("Properties"), [url]() {

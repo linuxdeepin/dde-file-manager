@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "recentfileinfo.h"
-#include "recentutil.h"
+#include "utils/recenthelper.h"
 
 #include "interfaces/private/abstractfileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
@@ -76,7 +76,7 @@ QString RecentFileInfo::fileName() const
 
 bool RecentFileInfo::exists() const
 {
-    if (url() == RecentUtil::rootUrl())
+    if (url() == RecentHelper::rootUrl())
         return true;
     return d->proxy && d->proxy->exists();
 }

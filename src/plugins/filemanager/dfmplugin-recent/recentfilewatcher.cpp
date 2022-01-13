@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "recentfilewatcher.h"
-#include "recentutil.h"
+#include "utils/recenthelper.h"
 #include "private/recentfilewatcher_p.h"
 #include "dfm-base/base/schemefactory.h"
 
@@ -87,7 +87,7 @@ RecentFileWatcher::~RecentFileWatcher()
 
 void RecentFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled)
 {
-    if (subfileUrl.scheme() != RecentUtil::scheme())
+    if (subfileUrl.scheme() != RecentHelper::scheme())
         return;
     if (enabled) {
         addWatcher(subfileUrl);
@@ -133,7 +133,7 @@ void RecentFileWatcher::removeWatcher(const QUrl &url)
 void RecentFileWatcher::onFileDeleted(const QUrl &url)
 {
     QUrl newUrl = url;
-    newUrl.setScheme(RecentUtil::scheme());
+    newUrl.setScheme(RecentHelper::scheme());
     removeWatcher(newUrl);
 
     emit fileDeleted(newUrl);
@@ -142,7 +142,7 @@ void RecentFileWatcher::onFileDeleted(const QUrl &url)
 void RecentFileWatcher::onFileAttributeChanged(const QUrl &url)
 {
     QUrl newUrl = url;
-    newUrl.setScheme(RecentUtil::scheme());
+    newUrl.setScheme(RecentHelper::scheme());
 
     emit fileAttributeChanged(newUrl);
 }

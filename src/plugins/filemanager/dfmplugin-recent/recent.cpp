@@ -20,10 +20,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "recent.h"
-#include "recentutil.h"
 #include "recentfileinfo.h"
 #include "recentdiriterator.h"
 #include "recentfilewatcher.h"
+#include "utils/recenthelper.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -58,11 +58,11 @@ void Recent::initialize()
         abort();
     }
 
-    UrlRoute::regScheme(RecentUtil::scheme(), "/", RecentUtil::icon(), true);
+    UrlRoute::regScheme(RecentHelper::scheme(), "/", RecentHelper::icon(), true, tr("Recent"));
     //注册Scheme为"recent"的扩展的文件信息 本地默认文件的
-    InfoFactory::regClass<RecentFileInfo>(RecentUtil::scheme());
-    WacherFactory::regClass<RecentFileWatcher>(RecentUtil::scheme());
-    DirIteratorFactory::regClass<RecentDirIterator>(RecentUtil::scheme());
+    InfoFactory::regClass<RecentFileInfo>(RecentHelper::scheme());
+    WacherFactory::regClass<RecentFileWatcher>(RecentHelper::scheme());
+    DirIteratorFactory::regClass<RecentDirIterator>(RecentHelper::scheme());
 }
 
 bool Recent::start()
@@ -86,7 +86,7 @@ bool Recent::start()
         qCritical() << "Failed, init workspace \"workspaceService\" is empty";
         abort();
     }
-    GlobalPrivate::workspaceService->addScheme(RecentUtil::scheme());
+    GlobalPrivate::workspaceService->addScheme(RecentHelper::scheme());
 
     connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
     return true;
@@ -110,17 +110,17 @@ void Recent::addRecentItem()
 {
     SideBar::ItemInfo item;
     item.group = SideBar::DefaultGroup::kCommon;
-    item.url = RecentUtil::rootUrl();
-    item.iconName = "document-open-recent-symbolic";
+    item.url = RecentHelper::rootUrl();
+    item.iconName = RecentHelper::icon().name();
     item.text = tr("Recent");
     item.flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 
-    GlobalPrivate::sideBarService->insertItem(0, item, nullptr, nullptr);
+    GlobalPrivate::sideBarService->insertItem(0, item, nullptr, RecentHelper::contenxtMenuHandle);
 }
 
 void Recent::removeRecentItem()
 {
-    GlobalPrivate::sideBarService->removeItem(RecentUtil::rootUrl());
+    GlobalPrivate::sideBarService->removeItem(RecentHelper::rootUrl());
 }
 
 DPRECENT_END_NAMESPACE

@@ -20,7 +20,8 @@
  */
 
 #include "recentiterateworker.h"
-#include "recentutil.h"
+#include "utils/recenthelper.h"
+
 #include "dfm-base/base/schemefactory.h"
 
 #include <QDir>
@@ -40,7 +41,7 @@ RecentIterateWorker::RecentIterateWorker()
 
 void RecentIterateWorker::doWork()
 {
-    QFile file(RecentUtil::xbelPath());
+    QFile file(RecentHelper::xbelPath());
     QList<QPair<QUrl, qint64>> urlList;
 
     if (file.open(QIODevice::ReadOnly)) {
@@ -59,7 +60,7 @@ void RecentIterateWorker::doWork()
                 QUrl url = QUrl(location.toString());
                 QFileInfo info(url.toLocalFile());
                 QUrl recentUrl = url;
-                recentUrl.setScheme(RecentUtil::scheme());
+                recentUrl.setScheme(RecentHelper::scheme());
                 if (info.exists() && info.isFile()) {
                     qint64 readTimeSecs = QDateTime::fromString(readTime.toString(), Qt::ISODate).toSecsSinceEpoch();
                     urlList.append(qMakePair(recentUrl, readTimeSecs));

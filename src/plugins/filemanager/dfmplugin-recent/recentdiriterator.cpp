@@ -21,9 +21,9 @@
  */
 
 #include "recentdiriterator.h"
-#include "recentutil.h"
 #include "recentfileinfo.h"
 #include "recentiterateworker.h"
+#include "utils/recenthelper.h"
 #include "private/recentdiriterator_p.h"
 
 #include "dfm-base/base/schemefactory.h"
@@ -43,7 +43,7 @@ RecentDirIteratorPrivate::RecentDirIteratorPrivate(RecentDirIterator *qq)
     workerThread.start();
 
     emit asyncHandleFileChanged();
-    watcher = WacherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(RecentUtil::xbelPath()));
+    watcher = WacherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(RecentHelper::xbelPath()));
     connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &RecentDirIteratorPrivate::asyncHandleFileChanged);
     connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &RecentDirIteratorPrivate::asyncHandleFileChanged);
     watcher->startWatcher();
@@ -63,7 +63,7 @@ void RecentDirIteratorPrivate::handleFileChanged(QList<QPair<QUrl, qint64>> &res
         urlList << url;
         if (!recentNodes.contains(url)) {
             recentNodes[url] = QSharedPointer<RecentFileInfo>(new RecentFileInfo(url));
-            QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentUtil::rootUrl());
+            QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
             if (watcher) {
                 emit watcher->subfileCreated(url);
             }
@@ -76,7 +76,7 @@ void RecentDirIteratorPrivate::handleFileChanged(QList<QPair<QUrl, qint64>> &res
         const QUrl url = iter.key();
         if (!urlList.contains(url)) {
             iter = recentNodes.erase(iter);
-            QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentUtil::rootUrl());
+            QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
             if (watcher) {
                 emit watcher->fileDeleted(url);
             }
@@ -152,7 +152,7 @@ const AbstractFileInfoPointer RecentDirIterator::fileInfo() const
 
 QUrl RecentDirIterator::url() const
 {
-    return RecentUtil::rootUrl();
+    return RecentHelper::rootUrl();
 }
 
 DPRECENT_END_NAMESPACE
