@@ -3173,12 +3173,15 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SpaceArea);
 
     // 右键刷新，根据开关移除
-    {
+    if (DGioSettings::isSchemaInstalled("com.deepin.dde.filemanager.contextmenu")) {
         static const DGioSettings menuSwitch("com.deepin.dde.filemanager.contextmenu",
                                              "/com/deepin/dde/filemanager/contextmenu/");
         auto showRefreh = menuSwitch.value("Refresh");
         if (!showRefreh.isValid() || !showRefreh.toBool())
             actions.removeAll(MenuAction::RefreshView);
+    } else {
+        actions.removeAll(MenuAction::RefreshView);
+        qWarning() << "com.deepin.dde.filemanager.contextmenu is not installed.";
     }
 
     if (actions.isEmpty())
