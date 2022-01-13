@@ -31,6 +31,7 @@
 
 #include "dfm-base/interfaces/abstractbaseview.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <DIconButton>
 #include <DHorizontalLine>
@@ -66,7 +67,7 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
             qWarning() << "Cannot create view for " << url << "Reason: " << error;
             return;
         }
-        viewStackLayout->addWidget(dynamic_cast<QWidget *>(fileView.get()));
+        viewStackLayout->addWidget(fileView->widget());
         viewStackLayout->setCurrentWidget(fileView->widget());
         views.insert(url.scheme(), fileView);
         tabBar->setCurrentView(fileView.get());
@@ -89,13 +90,12 @@ void WorkspaceWidget::openNewTab(const QUrl &url)
     if (!tabBar->tabAddable())
         return;
 
-    if (url.isEmpty()) {
-        // turn to home path
-    }
-
     tabBar->createTab(nullptr);
 
     auto windowID = WorkspaceHelper::instance()->windowId(this);
+    if (url.isEmpty())
+        WorkspaceEventCaller::sendChangeCurrentUrl(windowID, StandardPaths::location(StandardPaths::kHomePath));
+
     WorkspaceEventCaller::sendChangeCurrentUrl(windowID, url);
 }
 

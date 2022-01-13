@@ -22,6 +22,7 @@
 #ifndef FILEVIEW_P_H
 #define FILEVIEW_P_H
 
+#include "views/fileviewitem.h"
 #include "views/fileview.h"
 #include "dfm-base/dfm_global_defines.h"
 
@@ -53,10 +54,13 @@ class FileViewPrivate
     HeaderView *headerView = nullptr;
     FileSortFilterProxyModel *proxyModel = nullptr;
     QTimer *updateStatusBarTimer = nullptr;
+    QTimer *sortTimer = nullptr;
     QUrl url;
 
     DFMBASE_NAMESPACE::Global::ViewMode configViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
     int configIconSizeLevel = 1;
+    FileViewItem::Roles currentSortRole = FileViewItem::Roles::kItemNameRole;
+    Qt::SortOrder currentSortOrder = Qt::SortOrder::AscendingOrder;
 
     FileView::RandeIndex visibleIndexRande;
     explicit FileViewPrivate(FileView *qq);

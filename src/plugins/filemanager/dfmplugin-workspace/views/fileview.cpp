@@ -58,8 +58,6 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     initializeStatusBar();
     initializeConnect();
 
-    // TODO(liuyangming): init data from config
-    QAbstractItemView::model()->sort(0);
     setRootUrl(url);
 }
 
@@ -96,6 +94,8 @@ void FileView::setViewMode(Global::ViewMode mode)
     case Global::ViewMode::kAllViewMode:
         break;
     }
+
+    d->configViewMode = mode;
 }
 
 void FileView::setDelegate(Global::ViewMode mode, BaseItemDelegate *view)
@@ -121,6 +121,9 @@ bool FileView::setRootUrl(const QUrl &url)
 
     delayUpdateStatusBar();
     setDefaultViewMode();
+
+    if (d->sortTimer)
+        d->sortTimer->start();
 
     return true;
 }
@@ -223,7 +226,10 @@ void FileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
     proxyModel()->setSortRole(model()->getRoleByColumn(logicalIndex));
     proxyModel()->sort(logicalIndex, order);
 
-    //TODO liuyangming: save data to config
+    const QUrl &url = rootUrl();
+
+    setFileViewStateValue(url, "sortRole", model()->getRoleByColumn(logicalIndex));
+    setFileViewStateValue(url, "sortOrder", static_cast<int>(order));
 }
 
 void FileView::onClicked(const QModelIndex &index)
@@ -245,6 +251,7 @@ void FileView::keyPressEvent(QKeyEvent *event)
 void FileView::onScalingValueChanged(const int value)
 {
     qobject_cast<IconItemDelegate *>(itemDelegate())->setIconSizeByIconSizeLevel(value);
+    setFileViewStateValue(rootUrl(), "iconSizeLevel", value);
 }
 
 void FileView::delayUpdateStatusBar()
@@ -258,13 +265,14 @@ void FileView::viewModeChanged(quint64 windowId, int viewMode)
     auto thisWindId = WorkspaceHelper::instance()->windowId(this);
     Global::ViewMode mode = static_cast<Global::ViewMode>(viewMode);
     if (thisWindId == windowId) {
-        // TODO(yanghao): enum
         if (mode == Global::ViewMode::kIconMode) {
             setViewModeToIcon();
         } else if (mode == Global::ViewMode::kListMode) {
             setViewModeToList();
         }
     }
+
+    saveViewModeState();
 }
 
 void FileView::updateModelActiveIndex()
@@ -378,7 +386,10 @@ FileView::RandeIndexList FileView::visibleIndexes(QRect rect) const
 
 QSize FileView::itemSizeHint() const
 {
-    return itemDelegate()->sizeHint(viewOptions(), rootIndex());
+    if (itemDelegate())
+        return itemDelegate()->sizeHint(viewOptions(), rootIndex());
+
+    return QSize();
 }
 
 void FileView::onRowCountChanged()
@@ -406,6 +417,10 @@ void FileView::initializeModel()
     proxyModel->setSourceModel(model);
     setModel(proxyModel);
 
+    d->sortTimer = new QTimer(this);
+    d->sortTimer->setInterval(5);
+    d->sortTimer->setSingleShot(true);
+
     // TODO(liuyangming): refactor selection
     //    auto selectionModel = new FileSelectionModel(model);
     //    setSelectionModel(selectionModel);
@@ -431,6 +446,7 @@ void FileView::initializeStatusBar()
 
 void FileView::initializeConnect()
 {
+    connect(d->sortTimer, &QTimer::timeout, this, &FileView::delaySort);
     connect(d->updateStatusBarTimer, &QTimer::timeout, this, &FileView::updateStatusBar);
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &FileView::onScalingValueChanged);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::delayUpdateStatusBar);
@@ -465,12 +481,19 @@ void FileView::setDefaultViewMode()
 
 void FileView::loadViewState(const QUrl &url)
 {
-    // TODO:(yanghao)
     QVariant defaultViewMode = Application::instance()->appAttribute(Application::kViewMode).toInt();
     d->configViewMode = static_cast<Global::ViewMode>(fileViewStateValue(url, "viewMode", defaultViewMode).toInt());
 
     QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();
     d->configIconSizeLevel = fileViewStateValue(url, "iconSizeLevel", defaultIconSize).toInt();
+
+    d->currentSortRole = static_cast<FileViewItem::Roles>(fileViewStateValue(url, "sortRole", FileViewItem::Roles::kItemNameRole).toInt());
+    d->currentSortOrder = static_cast<Qt::SortOrder>(fileViewStateValue(url, "sortOrder", Qt::SortOrder::AscendingOrder).toInt());
+}
+
+void FileView::delaySort()
+{
+    QAbstractItemView::model()->sort(model()->getColumnByRole(d->currentSortRole), d->currentSortOrder);
 }
 
 void FileView::openIndexByClicked(const ClickedAction action, const QModelIndex &index)
@@ -521,4 +544,12 @@ void FileView::setFileViewStateValue(const QUrl &url, const QString &key, const 
     map[key] = value;
 
     Application::appObtuselySetting()->setValue("FileViewState", url, map);
+}
+
+void FileView::saveViewModeState()
+{
+    const QUrl &url = rootUrl();
+
+    setFileViewStateValue(url, "iconSizeLevel", d->statusBar->scalingSlider()->value());
+    setFileViewStateValue(url, "viewMode", static_cast<int>(d->configViewMode));
 }

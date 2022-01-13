@@ -70,6 +70,7 @@ public:
 
     int getColumnWidth(const int &column) const;
     FileViewItem::Roles getRoleByColumn(const int &column) const;
+    int getColumnByRole(const FileViewItem::Roles role) const;
     AbstractFileWatcherPointer fileWatcher() const;
 };
 

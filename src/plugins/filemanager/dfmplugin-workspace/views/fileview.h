@@ -101,6 +101,7 @@ Q_SIGNALS:
 
 private slots:
     void loadViewState(const QUrl &url);
+    void delaySort();
 
 private:
     void initializeModel();
@@ -116,6 +117,7 @@ private:
 
     QVariant fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue);
     void setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value);
+    void saveViewModeState();
 
     void updateModelActiveIndex();
     RandeIndexList visibleIndexes(QRect rect) const;

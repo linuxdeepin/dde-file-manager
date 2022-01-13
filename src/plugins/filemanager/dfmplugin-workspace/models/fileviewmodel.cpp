@@ -388,6 +388,16 @@ FileViewItem::Roles FileViewModel::getRoleByColumn(const int &column) const
     return FileViewItem::kItemNameRole;
 }
 
+int FileViewModel::getColumnByRole(const FileViewItem::Roles role) const
+{
+    // TODO(liuyangming): get role list from config
+    static QList<FileViewItem::Roles> columnRoleList = QList<FileViewItem::Roles>() << FileViewItem::kItemNameRole
+                                                                                    << FileViewItem::kItemFileLastModifiedRole
+                                                                                    << FileViewItem::kItemFileSizeRole
+                                                                                    << FileViewItem::kItemFileMimeTypeRole;
+    return columnRoleList.indexOf(role);
+}
+
 AbstractFileWatcherPointer FileViewModel::fileWatcher() const
 {
     return d->watcher;

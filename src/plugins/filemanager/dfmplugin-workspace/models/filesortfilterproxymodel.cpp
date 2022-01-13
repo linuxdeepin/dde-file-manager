@@ -36,10 +36,23 @@ FileSortFilterProxyModel::~FileSortFilterProxyModel()
 
 bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
+    if (!left.isValid())
+        return false;
+    if (!right.isValid())
+        return false;
+
     FileViewModel *fileModel = qobject_cast<FileViewModel *>(sourceModel());
 
-    AbstractFileInfoPointer leftInfo = fileModel->itemFromIndex(left)->fileinfo();
-    AbstractFileInfoPointer rightInfo = fileModel->itemFromIndex(right)->fileinfo();
+    const FileViewItem *leftItem = fileModel->itemFromIndex(left);
+    const FileViewItem *rightItem = fileModel->itemFromIndex(right);
+
+    if (!leftItem)
+        return false;
+    if (!rightItem)
+        return false;
+
+    AbstractFileInfoPointer leftInfo = leftItem->fileinfo();
+    AbstractFileInfoPointer rightInfo = rightItem->fileinfo();
 
     if (!leftInfo)
         return false;
