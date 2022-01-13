@@ -1,6 +1,7 @@
 #include "dbusfiledialogmanager.h"
 #include "filedialogmanager_adaptor.h"
 #include "log/dfmLogManager.h"
+#include <dfmapplication.h>
 
 #include <DApplication>
 
@@ -49,6 +50,11 @@ int main(int argc, char *argv[])
     a.setQuitOnLastWindowClosed(false);
     // 初始化日志系统
     DFMLogManager::registerFileAppender();
+
+    // need fmApp singal
+    DFMApplication fmApp;
+    Q_UNUSED(fmApp)
+
     // 打印平台信息
     qInfo() << "平台信息：" << QApplication::platformName();
     // ability to show file selection dialog
