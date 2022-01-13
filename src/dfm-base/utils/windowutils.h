@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     yanghao<yanghao@uniontech.com>
  *
@@ -29,6 +29,10 @@ class WindowUtils
 {
 public:
     static bool isWayLand();
+
+    static bool keyShiftIsPressed();
+
+    static bool keyCtrlIsPressed();
 };
 
 DFMBASE_END_NAMESPACE

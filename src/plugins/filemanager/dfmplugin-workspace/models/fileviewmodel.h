@@ -55,7 +55,7 @@ public:
     virtual const FileViewItem *itemFromIndex(const QModelIndex &index) const;
     virtual QModelIndex setRootUrl(const QUrl &url);
     virtual QUrl rootUrl() const;
-    virtual AbstractFileInfoPointer fileInfo(const QModelIndex &index);
+    virtual AbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
     virtual QModelIndex parent(const QModelIndex &child) const override;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     virtual int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -72,6 +72,7 @@ public:
     FileViewItem::Roles getRoleByColumn(const int &column) const;
     int getColumnByRole(const FileViewItem::Roles role) const;
     AbstractFileWatcherPointer fileWatcher() const;
+    QUrl getUrlByIndex(const QModelIndex &index) const;
 };
 
 DPWORKSPACE_END_NAMESPACE

@@ -29,10 +29,11 @@
 #include "iconitemdelegate.h"
 #include "listitemdelegate.h"
 #include "statusbar.h"
+#include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
-#include "events/workspaceeventcaller.h"
+#include "dfm-base/utils/windowutils.h"
 
 #include <QResizeEvent>
 #include <QScrollBar>
@@ -148,7 +149,16 @@ QList<QAction *> FileView::toolBarActionList() const
 QList<QUrl> FileView::selectedUrlList() const
 {
     // TODO(zhangs): impl me
-    return QList<QUrl>();
+    QModelIndex rootIndex = this->rootIndex();
+    QList<QUrl> list;
+
+    for (const QModelIndex &index : selectedIndexes()) {
+        if (index.parent() != rootIndex)
+            continue;
+        list << model()->getUrlByIndex(index);
+    }
+
+    return list;
 }
 
 void FileView::refresh()
@@ -202,6 +212,12 @@ int FileView::selectedIndexCount() const
     return selectionModel()->selectedIndexes().count();
 }
 
+void FileView::setAlwaysOpenInCurrentWindow(bool openInCurrentWindow)
+{
+    // for dialog
+    d->isAlwaysOpenInCurrentWindow = openInCurrentWindow;
+}
+
 void FileView::onHeaderViewMouseReleased()
 {
     if (d->headerView->sectionsTotalWidth() != width())
@@ -245,7 +261,8 @@ void FileView::onDoubleClicked(const QModelIndex &index)
 void FileView::keyPressEvent(QKeyEvent *event)
 {
     // TODO(zhangs): impl me
-    DListView::keyPressEvent(event);
+    if (!d->processKeyPressEvent(event))
+        return DListView::keyPressEvent(event);
 }
 
 void FileView::onScalingValueChanged(const int value)
@@ -498,14 +515,14 @@ void FileView::delaySort()
 
 void FileView::openIndexByClicked(const ClickedAction action, const QModelIndex &index)
 {
-    ClickedAction configAction = ClickedAction::kDoubleClicked;
+    ClickedAction configAction = static_cast<ClickedAction>(Application::instance()->appAttribute(Application::kOpenFileMode).toInt());
     if (action == configAction) {
         Qt::ItemFlags flags = model()->flags(proxyModel()->mapToSource(index));
         if (!flags.testFlag(Qt::ItemIsEnabled))
             return;
 
-        //if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed()) TODO(liuyangming): remind code
-        openIndex(index);
+        if (!WindowUtils::keyCtrlIsPressed() && !WindowUtils::keyShiftIsPressed())
+            openIndex(index);
     }
 }
 
@@ -516,10 +533,19 @@ void FileView::openIndex(const QModelIndex &index)
     if (!item)
         return;
 
-    if (item->fileinfo()->isDir()) {
-        auto windowID = WorkspaceHelper::instance()->windowId(this);
-        WorkspaceEventCaller::sendChangeCurrentUrl(windowID, item->url());
+    WorkspaceHelper::DirOpenMode mode;
+
+    if (d->isAlwaysOpenInCurrentWindow) {
+        mode = WorkspaceHelper::DirOpenMode::kOpenNewWindow;
+    } else {
+        if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
+            mode = WorkspaceHelper::DirOpenMode::kOpenNewWindow;
+        } else {
+            mode = WorkspaceHelper::DirOpenMode::kOpenInCurrentWindow;
+        }
     }
+    auto windowID = WorkspaceHelper::instance()->windowId(this);
+    WorkspaceHelper::instance()->actionOpen(windowID, { item->url() }, mode);
 }
 
 /**

@@ -72,3 +72,23 @@ void WorkspaceEventCaller::sendTabRemoved(const quint64 windowID, const int inde
 {
     dispatcher()->publish(Workspace::EventType::kTabRemoved, windowID, index);
 }
+
+void WorkspaceEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls)
+{
+    dispatcher()->publish(GlobalEventType::kOpenFiles, windowID, urls);
+}
+
+void WorkspaceEventCaller::sendMoveToTrash(quint64 windowID, const QList<QUrl> &urls, const AbstractJobHandler::JobFlags flags)
+{
+    dispatcher()->publish(GlobalEventType::kMoveToTrash, windowID, urls, flags);
+}
+
+void WorkspaceEventCaller::sendNewFolder(quint64 windowID, const QUrl &url)
+{
+    dispatcher()->publish(GlobalEventType::kMkdir, windowID, url);
+}
+
+void WorkspaceEventCaller::sendDeletes(quint64 windowID, const QList<QUrl> &urls, const AbstractJobHandler::JobFlags flags)
+{
+    dispatcher()->publish(GlobalEventType::kDeleteFiles, windowID, urls, flags);
+}

@@ -63,6 +63,9 @@ class FileViewPrivate
     Qt::SortOrder currentSortOrder = Qt::SortOrder::AscendingOrder;
 
     FileView::RandeIndex visibleIndexRande;
+
+    bool isAlwaysOpenInCurrentWindow { false };
+
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
     QUrl modelIndexUrl(const QModelIndex &index) const;
@@ -71,6 +74,11 @@ class FileViewPrivate
     void initListModeView();
 
     void updateListModeColumnWidth();
+
+    bool processKeyPressEvent(QKeyEvent *event);
+    bool normalKeyPressEventHandle(const QKeyEvent *event);
+
+    bool cdUp();
 };
 
 DPWORKSPACE_END_NAMESPACE

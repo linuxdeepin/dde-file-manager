@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -23,6 +23,7 @@
 #include "mimetype/mimedatabase.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/finallyutil.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QFileInfo>
 #include <QTimer>
@@ -217,6 +218,27 @@ int FileUtils::supportedMaxLength(const QString &fileSystem)
 
     const int DefaultLength = 11;
     return datas.value(fileSystem.toUpper(), DefaultLength);
+}
+
+QUrl FileUtils::newDocumentUrl(const AbstractFileInfoPointer targetDirInfo, const QString &baseName, const QString &suffix)
+{
+    // Todo:(yanghao): isVirtualEntry
+    int i = 0;
+    QString fileName = suffix.isEmpty() ? QString("%1").arg(baseName) : QString("%1.%2").arg(baseName, suffix);
+
+    QUrl fileUrl = targetDirInfo->getUrlByChildFileName(fileName);
+    while (true) {
+        AbstractFileInfoPointer newInfo = InfoFactory::create<AbstractFileInfo>(fileUrl);
+        if (newInfo && newInfo->exists()) {
+            ++i;
+            fileName = suffix.isEmpty()
+                    ? QString("%1%2").arg(baseName, QString::number(i))
+                    : QString("%1%2.%3").arg(baseName, QString::number(i), suffix);
+            fileUrl = targetDirInfo->getUrlByChildFileName(fileName);
+        } else {
+            return fileUrl;
+        }
+    }
 }
 
 DFMBASE_END_NAMESPACE

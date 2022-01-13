@@ -24,10 +24,12 @@
 #define WORKSPACEEVENTCALLER_H
 
 #include "dfmplugin_workspace_global.h"
+#include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <QObject>
 
 DPWORKSPACE_BEGIN_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 class WorkspaceEventCaller
 {
@@ -41,6 +43,10 @@ public:
     static void sendTabChanged(const quint64 windowID, const int index);
     static void sendTabMoved(const quint64 windowID, const int from, const int to);
     static void sendTabRemoved(const quint64 windowID, const int index);
+    static void sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls);
+    static void sendMoveToTrash(quint64 windowID, const QList<QUrl> &urls, const AbstractJobHandler::JobFlags flags = AbstractJobHandler::JobFlag::kNoHint);
+    static void sendNewFolder(quint64 windowID, const QUrl &url);
+    static void sendDeletes(quint64 windowID, const QList<QUrl> &urls, const AbstractJobHandler::JobFlags flags = AbstractJobHandler::JobFlag::kNoHint);
 };
 
 DPWORKSPACE_END_NAMESPACE

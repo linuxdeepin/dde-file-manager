@@ -204,6 +204,7 @@ public:
                                Qt::SortOrder)>
             CompareFunction;
     virtual CompareFunction compareFunByKey(const SortKey &sortKey) const;
+    virtual QUrl getUrlByChildFileName(const QString &fileName) const;
 
 protected:
     explicit AbstractFileInfo(const QUrl &url, AbstractFileInfoPrivate *d);

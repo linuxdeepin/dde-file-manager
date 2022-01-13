@@ -263,7 +263,7 @@ QUrl FileViewModel::rootUrl() const
     return d->root->fileinfo()->url();
 }
 
-AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index)
+AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
 {
     if (!index.isValid())
         return nullptr;
@@ -402,6 +402,16 @@ int FileViewModel::getColumnByRole(const FileViewItem::Roles role) const
 AbstractFileWatcherPointer FileViewModel::fileWatcher() const
 {
     return d->watcher;
+}
+
+QUrl FileViewModel::getUrlByIndex(const QModelIndex &index) const
+{
+    const AbstractFileInfoPointer &info = fileInfo(index);
+    if (!info) {
+        return QUrl();
+    }
+
+    return info->url();
 }
 
 int FileViewModel::getColumnWidth(const int &column) const

@@ -21,9 +21,11 @@
 */
 #include "workspacehelper.h"
 #include "views/fileview.h"
+#include "events/workspaceeventcaller.h"
 #include "services/filemanager/windows/windowsservice.h"
 
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/framework.h>
 
@@ -81,6 +83,66 @@ void WorkspaceHelper::addScheme(const QString &scheme)
 void WorkspaceHelper::openUrlInNewTab(quint64 windowId, const QUrl &url)
 {
     emit openNewTab(windowId, url);
+}
+
+void WorkspaceHelper::actionShowFilePreviewDialog(const QList<QUrl> &urls)
+{
+    //Todo(yanghao):
+}
+
+void WorkspaceHelper::actionNewWindow(const QList<QUrl> &urls)
+{
+    WorkspaceEventCaller::sendOpenWindow(urls);
+}
+
+void WorkspaceHelper::actionNewTab(quint64 windowId, const QUrl &url)
+{
+    openUrlInNewTab(windowId, url);
+}
+
+void WorkspaceHelper::actionHiddenFiles(quint64 windowId, const QUrl &url)
+{
+    //Todo(yanghao):
+}
+
+void WorkspaceHelper::actionOpen(quint64 windowId, const QList<QUrl> &urls, const DirOpenMode openMode)
+{
+    for (const QUrl &url : urls) {
+        const AbstractFileInfoPointer &fileInfoPtr = InfoFactory::create<AbstractFileInfo>(url);
+        if (fileInfoPtr && fileInfoPtr->isDir()) {
+            if (openMode == DirOpenMode::kOpenNewWindow) {
+                WorkspaceEventCaller::sendOpenWindow({ url });
+            } else {
+                WorkspaceEventCaller::sendChangeCurrentUrl(windowId, url);
+            }
+        } else {
+            WorkspaceEventCaller::sendOpenFiles(windowId, { url });
+        }
+    }
+}
+
+void WorkspaceHelper::actionProperty(quint64 windowId, const QList<QUrl> &urls)
+{
+    //Todo(yanghao):
+}
+
+void WorkspaceHelper::actionDeleteFiles(quint64 windowId, const QList<QUrl> &urls)
+{
+    WorkspaceEventCaller::sendDeletes(windowId, urls);
+}
+
+void WorkspaceHelper::actionOpenInTerminal(quint64 windowId, const QList<QUrl> &urls)
+{
+    //Todo(yanghao):
+}
+
+void WorkspaceHelper::actionNewFolder(quint64 windowId, const QUrl &url)
+{
+    const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+    if (fileInfo) {
+        const QUrl &url = FileUtils::newDocumentUrl(fileInfo, tr("New Folder"), "");
+        WorkspaceEventCaller::sendNewFolder(windowId, url);
+    }
 }
 
 WorkspaceHelper::WorkspaceHelper(QObject *parent)

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     yanghao<yanghao@uniontech.com>
@@ -35,6 +35,12 @@ class WorkspaceHelper : public QObject
 {
     Q_OBJECT
 public:
+    enum class DirOpenMode {
+        kOpenInCurrentWindow,
+        kOpenNewWindow,
+        //kForceOpenNewWindow ???
+    };
+
     static WorkspaceHelper *instance();
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
     void addWorkspace(quint64 windowId, WorkspaceWidget *workspace);
@@ -43,6 +49,16 @@ public:
     void switchViewMode(quint64 windowId, int viewMode);
     void addScheme(const QString &scheme);
     void openUrlInNewTab(quint64 windowId, const QUrl &viewMode);
+
+    void actionShowFilePreviewDialog(const QList<QUrl> &urls);
+    void actionNewWindow(const QList<QUrl> &urls);
+    void actionNewTab(quint64 windowId, const QUrl &url);
+    void actionHiddenFiles(quint64 windowId, const QUrl &url);
+    void actionOpen(quint64 windowId, const QList<QUrl> &urls, const DirOpenMode openMode = DirOpenMode::kOpenInCurrentWindow);
+    void actionProperty(quint64 windowId, const QList<QUrl> &urls);
+    void actionDeleteFiles(quint64 windowId, const QList<QUrl> &urls);
+    void actionOpenInTerminal(quint64 windowId, const QList<QUrl> &urls);
+    void actionNewFolder(quint64 windowId, const QUrl &url);
 
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);

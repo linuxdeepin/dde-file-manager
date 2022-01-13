@@ -80,6 +80,8 @@ public:
         setViewMode(DFMBASE_NAMESPACE::Global::ViewMode::kIconMode);
     }
 
+    void setAlwaysOpenInCurrentWindow(bool openInCurrentWindow);
+
 public slots:
     void onHeaderViewMouseReleased();
     void onHeaderSectionResized(int logicalIndex, int oldSize, int newSize);

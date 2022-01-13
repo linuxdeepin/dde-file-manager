@@ -795,6 +795,16 @@ dfmbase::AbstractFileInfo::CompareFunction AbstractFileInfo::compareFunByKey(con
     return CompareFunction();
 }
 
+QUrl dfmbase::AbstractFileInfo::getUrlByChildFileName(const QString &fileName) const
+{
+    if (!isDir()) {
+        return QUrl();
+    }
+    QUrl theUrl = url();
+    theUrl.setPath(absoluteFilePath() + QDir::separator() + fileName);
+    return theUrl;
+}
+
 QIcon dfmbase::AbstractFileInfo::fileIcon() const
 {
     return QIcon();
