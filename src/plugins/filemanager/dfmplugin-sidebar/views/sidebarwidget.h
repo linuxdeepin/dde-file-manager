@@ -52,10 +52,12 @@ public:
     bool removeItem(const QUrl &url);
     void updateItem(const QUrl &url, const QString &newName, bool editable);
     int findItem(const QUrl &url) const;
+    void editItem(const QUrl &url);
 
 private Q_SLOTS:
     void onItemActived(const QModelIndex &index);
     void customContextMenuCall(const QPoint &pos);
+    void onItemRenamed(const QModelIndex &index, const QString &newName);
 
 private:
     void initializeUi();

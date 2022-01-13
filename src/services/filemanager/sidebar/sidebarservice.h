@@ -48,6 +48,7 @@ public:
     void insertItem(int index, const SideBar::ItemInfo &info, const SideBar::CdActionCallback &cdFunc,
                     const SideBar::ContextMenuCallback &menuFunc, const SideBar::RenameCallback &renameFunc = nullptr);
     void updateItem(const QUrl &url, const QString &newName, bool editable);
+    void triggerItemEdit(quint64 winId, const QUrl &url);
 
 private:
     explicit SideBarService(QObject *parent = nullptr);

@@ -30,24 +30,9 @@
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
-#include "services/filemanager/sidebar/sidebarservice.h"
-
 #include <QDebug>
 #include <QApplication>
 #include <QWindow>
-
-static DSB_FM_NAMESPACE::SideBarService *sbIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::SideBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
-}
 
 DFMBASE_USE_NAMESPACE
 DPCOMPUTER_BEGIN_NAMESPACE
@@ -289,17 +274,17 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     SideBar::CdActionCallback cd = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
     SideBar::ContextMenuCallback menu = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
     SideBar::RenameCallback rename = [](quint64 winId, const QUrl &url, const QString &name) { ComputerControllerInstance->doRename(winId, url, name); };
-    sbIns()->addItem(sbItem, cd, menu, rename);
+    ComputerUtils::sbIns()->addItem(sbItem, cd, menu, rename);
 }
 
 void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
 {
-    sbIns()->removeItem(url);
+    ComputerUtils::sbIns()->removeItem(url);
 }
 
 void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName, bool editable)
 {
-    sbIns()->updateItem(url, newName, editable);
+    ComputerUtils::sbIns()->updateItem(url, newName, editable);
 }
 
 void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url)

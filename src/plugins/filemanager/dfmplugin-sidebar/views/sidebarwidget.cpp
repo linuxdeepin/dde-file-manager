@@ -135,6 +135,17 @@ int SideBarWidget::findItem(const QUrl &url) const
     return -1;
 }
 
+void SideBarWidget::editItem(const QUrl &url)
+{
+    int pos = findItem(url);
+    if (pos < 0)
+        return;
+
+    auto idx = sidebarModel->index(pos, 0);
+    if (idx.isValid())
+        sidebarView->edit(idx);
+}
+
 void SideBarWidget::onItemActived(const QModelIndex &index)
 {
     SideBarItem *item = sidebarModel->itemFromIndex(index);
@@ -159,6 +170,16 @@ void SideBarWidget::customContextMenuCall(const QPoint &pos)
 
     SideBarManager::instance()->runContextMenu(item->registeredHandler(), SideBarHelper::windowId(this),
                                                url, globalPos);
+}
+
+void SideBarWidget::onItemRenamed(const QModelIndex &index, const QString &newName)
+{
+    SideBarItem *item = sidebarModel->itemFromIndex(index);
+    if (!item)
+        return;
+
+    QUrl url { qvariant_cast<QUrl>(item->data(SideBarItem::Roles::ItemUrlRole)) };
+    SideBarManager::instance()->runRename(item->registeredHandler(), SideBarHelper::windowId(this), url, newName);
 }
 
 void SideBarWidget::initializeUi()
@@ -221,6 +242,9 @@ void SideBarWidget::initConnect()
     connect(sidebarView, &SideBarView::customContextMenuRequested,
             this, &SideBarWidget::customContextMenuCall);
 
+    auto delegate = qobject_cast<SideBarItemDelegate *>(sidebarView->itemDelegate());
+    if (delegate)
+        connect(delegate, &SideBarItemDelegate::rename, this, &SideBarWidget::onItemRenamed);
     // so no extra separator if a group is empty.
     // since we do this, ensure we do initConnection() after initModelData().
     connect(sidebarModel, &SideBarModel::rowsInserted, this, &SideBarWidget::updateSeparatorVisibleState);

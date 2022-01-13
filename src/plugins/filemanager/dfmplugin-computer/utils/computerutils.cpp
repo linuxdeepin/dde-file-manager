@@ -83,3 +83,15 @@ quint64 ComputerUtils::getWinId(QWidget *widget)
     auto winServ = ctx.service<DSB_FM_NAMESPACE::WindowsService>(DSB_FM_NAMESPACE::WindowsService::name());
     return winServ->findWindowId(widget);
 }
+
+dfm_service_filemanager::SideBarService *ComputerUtils::sbIns()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSB_FM_NAMESPACE::SideBarService::name()))
+            abort();
+    });
+
+    return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
+}

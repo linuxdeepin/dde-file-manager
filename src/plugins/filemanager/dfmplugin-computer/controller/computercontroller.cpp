@@ -273,7 +273,7 @@ void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, 
     if (!triggerFromSidebar)
         Q_EMIT requestRename(winId, info->url());
     else
-        ;   // TODO(xust), trigger edit in sidebar
+        ComputerUtils::sbIns()->triggerItemEdit(winId, info->url());
 }
 
 void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)

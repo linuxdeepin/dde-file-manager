@@ -51,6 +51,7 @@ public slots:
                           DSB_FM_NAMESPACE::SideBar::CdActionCallback cdFunc,
                           DSB_FM_NAMESPACE::SideBar::ContextMenuCallback menuFunc,
                           DSB_FM_NAMESPACE::SideBar::RenameCallback renameFunc);
+    void invokeTriggerItemEdit(quint64 winId, const QUrl &url);
 
 private:
     explicit SideBarUnicastReceiver(QObject *parent = nullptr);

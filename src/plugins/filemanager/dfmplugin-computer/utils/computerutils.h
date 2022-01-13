@@ -24,6 +24,8 @@
 #define COMPUTERUTILS_H
 
 #include "dfmplugin_computer_global.h"
+#include "services/filemanager/sidebar/sidebar_defines.h"
+#include "services/filemanager/sidebar/sidebarservice.h"
 
 #include <QString>
 #include <QIcon>
@@ -58,6 +60,8 @@ public:
     static QString getProtocolDevIdByUrl(const QUrl &url);
 
     static quint64 getWinId(QWidget *widget);
+
+    static DSB_FM_NAMESPACE::SideBarService *sbIns();
 };
 
 DPCOMPUTER_END_NAMESPACE

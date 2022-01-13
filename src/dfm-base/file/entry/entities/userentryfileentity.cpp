@@ -25,6 +25,7 @@
 #include "base/standardpaths.h"
 
 #include <QDebug>
+#include <QMenu>
 
 DFMBASE_BEGIN_NAMESPACE
 

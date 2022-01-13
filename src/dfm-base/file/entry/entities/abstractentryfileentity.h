@@ -29,9 +29,9 @@
 
 #include <QUrl>
 #include <QIcon>
-#include <QAction>
 #include <QDebug>
-#include <QMenu>
+
+class QMenu;
 
 DFMBASE_BEGIN_NAMESPACE
 

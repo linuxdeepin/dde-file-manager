@@ -30,6 +30,8 @@
 #include "base/application/settings.h"
 #include "base/urlroute.h"
 
+#include <QMenu>
+
 DFMBASE_USE_NAMESPACE
 
 namespace IconName {
@@ -249,10 +251,10 @@ QMenu *BlockEntryFileEntity::createMenu()
     addAction(ContextMenuActionTrs::trOpenInNewTab());
     menu->addSeparator();
 
-    bool isOptical = datas.value(DeviceProperty::kOpticalDrive).toBool();
     if (datas.value(DeviceProperty::kHintSystem).toBool()) {
         addAction(ContextMenuActionTrs::trRename());
     } else {
+        bool isOptical = datas.value(DeviceProperty::kOpticalDrive).toBool();
         if (targetUrl().isValid()) {
             addAction(ContextMenuActionTrs::trUnmount());
         } else {
@@ -310,9 +312,9 @@ bool BlockEntryFileEntity::isAccessable() const
 
 bool BlockEntryFileEntity::renamable() const
 {
-    if (!removable())
+    if (!removable()) {
         return true;
-    else {
+    } else {
         if (isAccessable() && datas.value(DeviceProperty::kMountpoint).toString().isEmpty())
             return true;
         return false;

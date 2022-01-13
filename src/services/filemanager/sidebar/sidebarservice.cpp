@@ -102,6 +102,11 @@ void SideBarService::updateItem(const QUrl &url, const QString &newName, bool ed
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, url, newName, editable);
 }
 
+void SideBarService::triggerItemEdit(quint64 winId, const QUrl &url)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, winId, url);
+}
+
 void SideBarService::insertItem(int index, const SideBar::ItemInfo &info, const SideBar::CdActionCallback &cdFunc, const SideBar::ContextMenuCallback &menuFunc, const SideBar::RenameCallback &renameFunc)
 {
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, index, info, cdFunc, menuFunc, renameFunc);

@@ -57,6 +57,7 @@ void SideBarUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("SideBarService::removeItem"), this, &SideBarUnicastReceiver::invokeRemoveItem);
     dpfInstance.eventUnicast().connect(topic("SideBarService::updateItem"), this, &SideBarUnicastReceiver::invokeUpdateItem);
     dpfInstance.eventUnicast().connect(topic("SideBarService::insertItem"), this, &SideBarUnicastReceiver::invokeInsertItem);
+    dpfInstance.eventUnicast().connect(topic("SideBarService::triggerItemEdit"), this, &SideBarUnicastReceiver::invokeTriggerItemEdit);
 }
 
 void SideBarUnicastReceiver::invokeAddItem(const ItemInfo &info, CdActionCallback cdFunc, ContextMenuCallback menuFunc, RenameCallback renameFunc)
@@ -117,6 +118,15 @@ void SideBarUnicastReceiver::invokeInsertItem(int index, const ItemInfo &info, C
             if (itemUrl.scheme() == sidebarUrl.scheme() && itemUrl.path() == sidebarUrl.path())
                 sidebar->setCurrentUrl(item->url());
         }
+    }
+}
+
+void SideBarUnicastReceiver::invokeTriggerItemEdit(quint64 winId, const QUrl &url)
+{
+    QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
+    for (SideBarWidget *sidebar : allSideBar) {
+        if (SideBarHelper::windowId(sidebar) == winId)
+            sidebar->editItem(url);
     }
 }
 
