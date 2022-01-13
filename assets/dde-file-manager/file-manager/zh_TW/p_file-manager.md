@@ -25,7 +25,7 @@
 
 - 在檔案管理器介面，單擊  ![close_icon](../common/close_icon.svg)，關閉檔案管理器。
 - 在任務欄右鍵單擊 ![deepin_file_manager](../common/deepin_file_manager.svg)，選擇 **全部關閉** 來關閉檔案管理器。
-- 在檔案管理器介面，單擊 ![icon_menu](../common/icon_menu.svg)，選擇 **離開** 來關閉檔案管理器。
+- 在檔案管理器介面，單擊 ![icon_menu](../common/icon_menu.svg)，選擇 **退出** 來關閉檔案管理器。
 
 ### 查看快捷鍵
 
@@ -801,7 +801,7 @@
 3. 查看檔案管理器的版本和介紹。
 
 
-### 離開
+### 退出
 
 1. 在檔案管理器介面，單擊 ![icon_menu](../common/icon_menu.svg)。
-2. 單擊 **離開**。
+2. 單擊 **退出**。
