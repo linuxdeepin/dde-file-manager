@@ -3325,12 +3325,14 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     actions << MenuAction::Paste
             << MenuAction::SelectAll << MenuAction::OpenInTerminal;
     // 右键刷新
-    {
+    if (DGioSettings::isSchemaInstalled("com.deepin.dde.filemanager.contextmenu")) {
         static const DGioSettings menuSwitch("com.deepin.dde.filemanager.contextmenu",
                                          "/com/deepin/dde/filemanager/contextmenu/");
         auto showRefreh = menuSwitch.value("Refresh");
         if (showRefreh.isValid() && showRefreh.toBool())
             actions << MenuAction::RefreshView;
+    } else {
+        qWarning() << "com.deepin.dde.filemanager.contextmenu is not installed.";
     }
 
     actions << MenuAction::Property << MenuAction::Separator;
