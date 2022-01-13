@@ -60,6 +60,8 @@
 static int FindInsertPosInOrderList(const FileSystemNodePointer &needNode,
         const QList<FileSystemNodePointer> &list, const DAbstractFileInfo::CompareFunction &sortFun,
         const Qt::SortOrder &order, const bool *isCancel){
+    if (!sortFun)
+        return list.count();
     int begin = 0;
     int end = list.count();
     int row = (begin + end)/2;
@@ -284,7 +286,7 @@ int FileSystemNode::insertChildren(const DUrl &url, const FileSystemNodePointer 
     int row = 0;
     if (!children.contains(url)) {
         if (!sortFun) {
-            row = childrenCount();
+            row = visibleChildren.count();
             if (isInsert)
                 noLockAppendChildren(url, needNode);
         } else {
@@ -774,7 +776,7 @@ begin:
         }
         const DUrl &fileUrl = fileInfo->fileUrl();
 
-        if (v.first == AddFile || v.first == AppendFile) {
+        if (fileInfo->hasOrderly() && (v.first == AddFile || v.first == AppendFile)) {
             if (rootNode->childContains(fileUrl))
                 continue;
 
