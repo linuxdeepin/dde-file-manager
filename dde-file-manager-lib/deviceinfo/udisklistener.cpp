@@ -47,6 +47,7 @@
 #include <linux/cdrom.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <mntent.h>
 
 #include <DSysInfo>
 #include <QSettings>
@@ -552,6 +553,33 @@ bool UDiskListener::isFileFromDisc(const QString &filePath)
         }
     }
     return false;
+}
+
+bool UDiskListener::isFromNativeBlockDev(const QString &mntPath)
+{
+    static const char * const filename = "/proc/mounts";
+    FILE *mntfile;
+    struct mntent mntent;
+    bool ret = false;
+    char strs[1024] = {0};
+
+    mntfile = setmntent(filename, "r");
+    if (!mntfile) {
+        qCritical() << "Failed to read mtab file, error: " << strerror(errno);
+        return ret;
+    }
+
+    while ((getmntent_r(mntfile, &mntent, strs, sizeof (strs)))) {
+        QString name(mntent.mnt_fsname);
+        QString path(mntent.mnt_dir);
+        if (mntPath == path && name.startsWith("/dev")) {
+            ret = true;
+            break;
+        }
+    }
+
+    endmntent(mntfile);
+    return ret;
 }
 
 void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)

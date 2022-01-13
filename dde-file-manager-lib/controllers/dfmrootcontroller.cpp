@@ -26,6 +26,8 @@
 #include "utils/singleton.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
+#include "app/define.h"
+#include "deviceinfo/udisklistener.h"
 
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
@@ -159,9 +161,27 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         if (gvfsmp->mountClass() == "GUnixMount") {
             continue;
         }
+
+        auto rootFile = gvfsmp->getRootFile();
+        if (!rootFile)
+            continue;
+
         if (DUrl(gvfsmp->getRootFile()->uri()).scheme() == BURN_SCHEME) {
             continue;
         }
+
+        // fix bug 60719. 分区编辑器打开后，原本该被过滤的由 udisks2 控制的磁盘，现无法过滤了，导致缓存中的 udisks2 磁盘显示一次
+        // 在这里的 gvfs 里又显示一次，且数据内容不一致。
+        // 因此，在这里通过过滤 /meida/ 目录挂载点的方式，来过滤 udisks2 设备（udisks2 在默认情况下都是挂载磁盘到 /media/$USER/ 目录下）
+        // 手动 sudo mount 挂载的设备不会被 Gio 捕获，因此不用考虑手动使用 mount 挂载到 /media 目录下的磁盘被过滤
+        if (rootFile->uri().startsWith("file:///media/"))
+            // fix bug 97468
+            // 仅在特殊场景下会触发此代码，因此不影响启动性能
+            // 原 bug 60719 修复会将块设备和协议设备全部跳过，因此造成了协议设备
+            // 挂载到 /media 下后无法在计算机页面显示的问题
+            if (deviceListener->isFromNativeBlockDev(rootFile->path()))
+                continue;
+
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP);
@@ -340,6 +360,16 @@ bool DFMRootFileWatcherPrivate::start()
         if (mnt->getRootFile()->path().length() == 0) {
             return;
         }
+
+        if (mnt->getRootFile()->uri().startsWith("file:///media/")) {
+            // fix bug 97468
+            // 仅在特殊场景下会触发此代码，因此不影响启动性能
+            // 原 bug 60719 修复会将块设备和协议设备全部跳过，因此造成了协议设备
+            // 挂载到 /media 下后无法在计算机页面显示的问题
+            if (deviceListener->isFromNativeBlockDev(mnt->getRootFile()->path()))
+                return;
+        }
+
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);

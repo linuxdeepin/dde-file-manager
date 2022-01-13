@@ -99,6 +99,7 @@ public:
     bool isMountedRemovableDiskExits();
 
     bool isFileFromDisc(const QString &filePath); // 文件是否来自光盘
+    bool isFromNativeBlockDev(const QString &mntPath); // 挂载点的设备是否是本地的块设备
 
 signals:
     void volumeAdded(UDiskDeviceInfoPointer device);
