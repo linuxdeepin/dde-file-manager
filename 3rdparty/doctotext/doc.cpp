@@ -53,7 +53,7 @@ int Doc::convert(bool addStyle, bool extractImages, char mergingMode) {
 
     // Find necessary table
     std::string tableStream = getStream(std::to_string(whichTableStream) + "Table");
-    if (tableStream.empty())
+    if (tableStream.empty() || tableStream.size() < clxPos + clxSize)
         return 2;
     Cfb::clear();
 
