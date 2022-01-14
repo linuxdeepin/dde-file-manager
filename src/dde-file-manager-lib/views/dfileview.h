@@ -340,6 +340,10 @@ private:
     SelectWork  *m_pSelectWork{nullptr};
     bool m_destroyFlag = false;
 
+    // 记录左键按下的移动范围
+    QPoint startPos { QPoint(0, 0) };
+    QRect moveRect { QRect(-1, -1, 1, 1) };
+
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileView)
     Q_PRIVATE_SLOT(d_ptr, void _q_onSectionHandleDoubleClicked(int))
 };

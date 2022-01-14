@@ -111,6 +111,8 @@ DWIDGET_USE_NAMESPACE
 #define DRAGICON_OPACITY 0.1   //拖拽聚合透明度梯度
 #define DRAGICON_MAX_COUNT 99   //最大显示计数
 
+static const int kMinMoveLenght { 5 };
+
 SelectWork::SelectWork(QObject *parent)
     : QThread(parent), m_pModel(nullptr), m_bStop(false)
 {
@@ -1200,6 +1202,8 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     //获取已按下的鼠标是否存在左侧按键
     if (event->buttons().testFlag(Qt::LeftButton)) {
         d->m_isMouseLeftPress = true;
+        // 记录鼠标左键按下位置
+        startPos = event->globalPos();
     } else {
         d->m_isMouseLeftPress = false;
     }
@@ -1336,6 +1340,10 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
     //        }
     //    }
     Q_D(DFileView);
+    // 记录移动范围
+    if (event->buttons() & Qt::LeftButton) {
+        moveRect = QRect(event->globalPos(), startPos);
+    }
     //fix bug 59239 drag事件的发起者是在mouseMoveEvent中，所以等待mouseMoveEvent结束才能析构窗口
     d->m_isMouseMoveing.store(true);
     DListView::mouseMoveEvent(event);
@@ -1347,6 +1355,12 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
 void DFileView::mouseReleaseEvent(QMouseEvent *event)
 {
     D_D(DFileView);
+
+    // 移动范围清零
+    if (event->buttons() & Qt::LeftButton) {
+        moveRect = QRect(-1, -1, 1, 1);
+        startPos = QPoint(0, 0);
+    }
 
     d->dragMoveHoverIndex = QModelIndex();
     d->currentSelection = QItemSelection();
@@ -1755,8 +1769,8 @@ bool DFileView::canShowContextMenu(QContextMenuEvent *event)
 {
     Q_D(DFileView);
 
-    //左键按下则不触发右键菜单
-    if (d->m_isMouseLeftPress) {
+    //左键按下（且按下后移动的距离大于kMinSelectLength）则不触发右键菜单
+    if (d->m_isMouseLeftPress && (abs(moveRect.width()) > kMinMoveLenght || abs(moveRect.height()) > kMinMoveLenght)) {
         return false;
     }
 
