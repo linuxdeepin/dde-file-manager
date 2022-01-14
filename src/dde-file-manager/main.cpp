@@ -112,7 +112,7 @@ void handleEnvOfOpenAsAdmin()
 {
     QProcess p;
     p.start("bash", QStringList() << "-c"
-                                  << "echo $(dbus-launch)");
+            << "echo $(dbus-launch --autolaunch $(cat /var/lib/dbus/machine-id))");
     p.waitForFinished();
     QString envName("DBUS_SESSION_BUS_ADDRESS");
     QString output(p.readAllStandardOutput());
