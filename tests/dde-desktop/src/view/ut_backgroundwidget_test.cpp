@@ -70,7 +70,6 @@ TEST_F(BackgroundWidgetTest, call_paintEvent)
     //reference from:qt/src/qtbase/tests/auto/widgets/widgets/qtabwidget
     MyBackgroundWidget w;
     w.paintEventCalled = false;
-    w.activateWindow();
     w.show();
     ASSERT_TRUE(QTest::qWaitForWindowExposed(&w));
     // Wait for extra paint events that happen at least on macOS

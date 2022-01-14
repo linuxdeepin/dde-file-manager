@@ -220,9 +220,6 @@ void JobController::run()
     //刷新已完成
     m_updateFinished = true;
 
-    if (m_state != Stoped)
-        emit addChildren(DAbstractFileInfoPointer(nullptr), true);
-
     if (timer) {
         delete timer;
         timer = Q_NULLPTR;
