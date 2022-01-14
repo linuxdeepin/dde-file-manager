@@ -155,7 +155,7 @@ QList<QUrl> FileView::selectedUrlList() const
     for (const QModelIndex &index : selectedIndexes()) {
         if (index.parent() != rootIndex)
             continue;
-        list << model()->getUrlByIndex(index);
+        list << model()->getUrlByIndex(proxyModel()->mapToSource(index));
     }
 
     return list;
