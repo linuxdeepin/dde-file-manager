@@ -90,7 +90,7 @@ void Computer::onWindowOpened(quint64 windId)
 {
     auto window = GlobalPrivate::winServ->findWindowById(windId);
     Q_ASSERT_X(window, "Computer", "Cannot find window by id");
-    connect(window, &FileManagerWindow::workspaceInstallFinished, this, [] { ComputerItemWatcherIns->startQueryItems(); }, Qt::DirectConnection);
+    connect(window, &FileManagerWindow::workspaceInstallFinished, this, [] { ComputerItemWatcherInstance->startQueryItems(); }, Qt::DirectConnection);
     connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { this->addComputerToSidebar(); }, Qt::DirectConnection);
 }
 

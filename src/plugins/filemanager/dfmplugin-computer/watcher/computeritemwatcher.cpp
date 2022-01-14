@@ -80,6 +80,11 @@ ComputerDataList ComputerItemWatcher::items()
     return ret;
 }
 
+ComputerDataList ComputerItemWatcher::getInitedItems()
+{
+    return initedDatas;
+}
+
 bool ComputerItemWatcher::typeCompare(const ComputerItemData &a, const ComputerItemData &b)
 {
     if (a.info && b.info) {
@@ -299,9 +304,10 @@ void ComputerItemWatcher::removeDevice(const QUrl &url)
 
 void ComputerItemWatcher::startQueryItems()
 {
-    qDebug() << __PRETTY_FUNCTION__;
-    auto ret = items();
-    Q_EMIT itemQueryFinished(ret);
+    // if computer view is not init view, no receiver to receive the signal, cause when cd to computer view, shows empty.
+    // on initialize computer view/model, get the cached items in construction.
+    initedDatas = items();
+    Q_EMIT itemQueryFinished(initedDatas);
 }
 
 /*!

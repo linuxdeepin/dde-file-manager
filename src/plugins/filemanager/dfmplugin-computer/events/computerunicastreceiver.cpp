@@ -57,10 +57,10 @@ void ComputerUnicastReceiver::connectService()
 
 void ComputerUnicastReceiver::doAddDevice(const QString &name, const QUrl &url)
 {
-    ComputerItemWatcherIns->addDevice(name, url);
+    ComputerItemWatcherInstance->addDevice(name, url);
 }
 
 void ComputerUnicastReceiver::doRemoveDevice(const QUrl &url)
 {
-    ComputerItemWatcherIns->removeDevice(url);
+    ComputerItemWatcherInstance->removeDevice(url);
 }

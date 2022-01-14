@@ -36,6 +36,7 @@ ComputerModel::ComputerModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
     view = qobject_cast<ComputerView *>(parent);
+    items = ComputerItemWatcherInstance->getInitedItems();
     initConnect();
 }
 
@@ -211,16 +212,16 @@ int ComputerModel::findSplitter(const QString &group)
 
 void ComputerModel::initConnect()
 {
-    connect(ComputerItemWatcherIns, &ComputerItemWatcher::itemQueryFinished, this, [this](const ComputerDataList &datas) {
+    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemQueryFinished, this, [this](const ComputerDataList &datas) {
         this->beginResetModel();
         items = datas;
         this->endResetModel();
     });
-    connect(ComputerItemWatcherIns, &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
-    connect(ComputerItemWatcherIns, &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);
+    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
+    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);
 
     // TODO(xust) find a way to update the property of devices, not just refresh it.
-    connect(ComputerItemWatcherIns, &ComputerItemWatcher::itemUpdated, this, &ComputerModel::onItemUpdated);
+    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemUpdated, this, &ComputerModel::onItemUpdated);
 }
 
 void ComputerModel::onItemAdded(const ComputerItemData &data)
@@ -284,7 +285,7 @@ void ComputerModel::updateItemInfo(int pos)
     QString newName = info.info->displayName();
 
     if (oldName != newName)
-        ComputerItemWatcherIns->updateSidebarItem(info.url, newName, info.info->renamable());
+        ComputerItemWatcherInstance->updateSidebarItem(info.url, newName, info.info->renamable());
 }
 
 DPCOMPUTER_END_NAMESPACE

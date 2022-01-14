@@ -30,7 +30,7 @@
 #include <QUrl>
 #include <QDBusVariant>
 
-#define ComputerItemWatcherIns DPCOMPUTER_NAMESPACE::ComputerItemWatcher::instance()
+#define ComputerItemWatcherInstance DPCOMPUTER_NAMESPACE::ComputerItemWatcher::instance()
 
 DPCOMPUTER_BEGIN_NAMESPACE
 typedef QList<ComputerItemData> ComputerDataList;
@@ -42,6 +42,7 @@ public:
     virtual ~ComputerItemWatcher() override;
 
     ComputerDataList items();
+    ComputerDataList getInitedItems();
     static bool typeCompare(const ComputerItemData &a, const ComputerItemData &b);
 
     enum GroupType {
@@ -82,6 +83,7 @@ private:
     ComputerItemData getGroup(GroupType type);
 
 private:
+    ComputerDataList initedDatas;
     // TODO(xust)
     // appEntryWatcher
 };
