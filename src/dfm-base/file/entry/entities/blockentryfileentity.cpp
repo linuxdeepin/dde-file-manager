@@ -242,37 +242,32 @@ QMenu *BlockEntryFileEntity::createMenu()
 {   // this might be a temperary solution, see if the framework can provide menu generate
     QMenu *menu = new QMenu();
 
-    auto addAction = [menu](const QString &text) {
-        QAction *act = new QAction(text, menu);
-        menu->addAction(act);
-    };
-
-    addAction(ContextMenuActionTrs::trOpenInNewWin());
-    addAction(ContextMenuActionTrs::trOpenInNewTab());
+    menu->addAction(ContextMenuActionTrs::trOpenInNewWin());
+    menu->addAction(ContextMenuActionTrs::trOpenInNewTab());
     menu->addSeparator();
 
     if (datas.value(DeviceProperty::kHintSystem).toBool()) {
-        addAction(ContextMenuActionTrs::trRename());
+        menu->addAction(ContextMenuActionTrs::trRename());
     } else {
         bool isOptical = datas.value(DeviceProperty::kOpticalDrive).toBool();
         if (targetUrl().isValid()) {
-            addAction(ContextMenuActionTrs::trUnmount());
+            menu->addAction(ContextMenuActionTrs::trUnmount());
         } else {
-            addAction(ContextMenuActionTrs::trMount());
+            menu->addAction(ContextMenuActionTrs::trMount());
             if (!isOptical) {   // optical drive cannot be renamed and formated
-                addAction(ContextMenuActionTrs::trRename());
-                addAction(ContextMenuActionTrs::trFormat());
+                menu->addAction(ContextMenuActionTrs::trRename());
+                menu->addAction(ContextMenuActionTrs::trFormat());
             }
         }
 
         if (isOptical)
-            addAction(ContextMenuActionTrs::trEject());
+            menu->addAction(ContextMenuActionTrs::trEject());
 
-        addAction(ContextMenuActionTrs::trSafelyRemove());
+        menu->addAction(ContextMenuActionTrs::trSafelyRemove());
     }
     menu->addSeparator();
 
-    addAction(ContextMenuActionTrs::trProperties());
+    menu->addAction(ContextMenuActionTrs::trProperties());
 
     return menu;
 }

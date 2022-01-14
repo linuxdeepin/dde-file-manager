@@ -47,6 +47,7 @@ public:
     virtual QString fileSystem() const override;
     virtual void refresh() override;
     virtual QUrl targetUrl() const override;
+    virtual QMenu *createMenu() override;
 
 private:
     QVariantMap datas;

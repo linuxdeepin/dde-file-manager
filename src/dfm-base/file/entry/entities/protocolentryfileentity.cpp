@@ -26,6 +26,8 @@
 #include "base/urlroute.h"
 #include "utils/devicemanager.h"
 
+#include <QMenu>
+
 DFMBASE_USE_NAMESPACE
 
 using namespace GlobalServerDefines;
@@ -148,4 +150,15 @@ QUrl ProtocolEntryFileEntity::targetUrl() const
     target.setScheme(dfmbase::SchemeTypes::kFile);
     target.setPath(mpt);
     return target;
+}
+
+QMenu *ProtocolEntryFileEntity::createMenu()
+{
+    QMenu *menu = new QMenu();
+
+    menu->addAction(ContextMenuActionTrs::trOpenInNewWin());
+    menu->addAction(ContextMenuActionTrs::trOpenInNewTab());
+    menu->addSeparator();
+    menu->addAction(ContextMenuActionTrs::trProperties());
+    return menu;
 }

@@ -98,16 +98,11 @@ QMenu *UserEntryFileEntity::createMenu()
 {
     QMenu *menu = new QMenu();
 
-    auto addAction = [menu](const QString &text) {
-        QAction *act = new QAction(text, menu);
-        menu->addAction(act);
-    };
-
-    addAction(ContextMenuActionTrs::trOpenInNewWin());
-    addAction(ContextMenuActionTrs::trOpenInNewTab());
+    menu->addAction(ContextMenuActionTrs::trOpenInNewWin());
+    menu->addAction(ContextMenuActionTrs::trOpenInNewTab());
     menu->addSeparator();
 
-    addAction(ContextMenuActionTrs::trProperties());
+    menu->addAction(ContextMenuActionTrs::trProperties());
     return menu;
 }
 
