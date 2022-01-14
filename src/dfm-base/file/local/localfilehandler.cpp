@@ -28,6 +28,7 @@
 #include "dfm-base/mimetype/mimesappsmanager.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 #include "dfm-base/utils/desktopfile.h"
+#include "utils/universalutils.h"
 
 #include <dfm-io/dfmio_register.h>
 #include <dfm-io/core/doperator.h>
@@ -477,7 +478,7 @@ bool LocalFileHandler::setFileTime(const QUrl &url, const QDateTime &accessDateT
 
 bool LocalFileHandler::launchApp(const QString &desktopFilePath, const QStringList &fileUrls)
 {
-    if(fileUrls.empty())
+    if (fileUrls.empty())
         return false;
 
     QStringList newFileUrls(fileUrls);
@@ -506,13 +507,8 @@ bool LocalFileHandler::launchApp(const QString &desktopFilePath, const QStringLi
 
 bool LocalFileHandler::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
-    // TODO(lanxs)
-    /*if (appController->checkLaunchAppInterface()) {
-        qDebug() << "launchApp by dbus:" << desktopFile << filePaths;
-
-        appController->startManagerInterface()->LaunchApp(desktopFile, static_cast<uint>(QX11Info::getTimestamp()), filePaths);
-        return true;
-    }*/
+    if (UniversalUtils::checkLaunchAppInterface())
+        return UniversalUtils::launchAppByDBus(desktopFile, filePaths);
     return false;
 }
 
@@ -545,7 +541,7 @@ bool LocalFileHandler::launchAppByGio(const QString &desktopFilePath, const QStr
     if (!ok) {
         qWarning() << "Failed to open desktop file with gio: g_app_info_launch returns false";
     }
-    if(gfiles)
+    if (gfiles)
         g_list_free(gfiles);
 
     return ok;

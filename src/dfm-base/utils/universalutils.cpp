@@ -28,6 +28,7 @@
 #include <QApplication>
 #include <QThread>
 #include <QDebug>
+#include <QX11Info>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -182,6 +183,51 @@ void UniversalUtils::computerInformation(QString &cpuinfo, QString &systemType, 
             }
         }
     }
+}
+
+bool UniversalUtils::checkLaunchAppInterface()
+{
+    static bool initStatus = true;
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        QDBusInterface introspect("com.deepin.SessionManager",
+                                  "/com/deepin/StartManager",
+                                  "org.freedesktop.DBus.Introspectable",
+                                  QDBusConnection::sessionBus());
+        introspect.setTimeout(1000);
+        QDBusPendingReply<QString> reply = introspect.asyncCallWithArgumentList(QStringLiteral("Introspect"), {});
+        reply.waitForFinished();
+        if (reply.isFinished() && reply.isValid() && !reply.isError()) {
+            QString xmlCode = reply.argumentAt(0).toString();
+            if (xmlCode.contains("com.deepin.StartManager")) {
+                if (xmlCode.contains("LaunchApp")) {
+                    initStatus = true;
+                } else {
+                    qWarning() << "com.deepin.SessionManager : StartManager doesn't have LaunchApp interface.";
+                    initStatus = false;
+                }
+            } else {
+                qWarning() << "com.deepin.SessionManager Introspect error" << xmlCode;
+                initStatus = false;
+            }
+        } else {
+            initStatus = false;
+        }
+    });
+    return initStatus;
+}
+
+bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
+{
+    QDBusInterface systemInfo("com.deepin.SessionManager",
+                              "/com/deepin/StartManager",
+                              "com.deepin.StartManager",
+                              QDBusConnection::sessionBus());
+
+    QList<QVariant> argumentList;
+    argumentList << QVariant::fromValue(desktopFile) << QVariant::fromValue(static_cast<uint>(QX11Info::getTimestamp())) << QVariant::fromValue(filePaths);
+    systemInfo.asyncCallWithArgumentList(QStringLiteral("LaunchApp"), argumentList);
+    return true;
 }
 
 DFMBASE_END_NAMESPACE

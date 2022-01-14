@@ -43,6 +43,9 @@ public:
     static void blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay);
     static qint64 computerMemory();
     static void computerInformation(QString &cpuinfo, QString &systemType, QString &Edition, QString &version);
+
+    static bool checkLaunchAppInterface();
+    static bool launchAppByDBus(const QString &desktopFile, const QStringList &filePaths);
 };
 
 DFMBASE_END_NAMESPACE
