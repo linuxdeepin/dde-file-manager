@@ -138,10 +138,9 @@ int CryFsHandle::runVaultProcess(QString lockBaseDir, QString unlockFileDir, QSt
     m_process->terminate();
 
     if(m_process->exitStatus() == QProcess::NormalExit)
-        return static_cast<int>(ErrorCode::Success);
-    else
         return m_process->exitCode();
-
+    else
+        return -1;
 }
 
 int CryFsHandle::lockVaultProcess(QString unlockFileDir)
@@ -162,9 +161,10 @@ int CryFsHandle::lockVaultProcess(QString unlockFileDir)
         } else {
             qDebug() << "Vault Info: remove vault unlock dir success";
         }
-        return static_cast<int>(ErrorCode::Success);
-    } else
         return m_process->exitCode();
+    } else {
+        return -1;
+    }
 }
 
 void CryFsHandle::slotReadError()

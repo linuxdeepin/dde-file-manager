@@ -350,7 +350,7 @@ void DFMVaultUnlockPages::onVaultUlocked(int state)
             }
         } else {
             // error tips
-            QString errMsg = tr("Failed to unlock file vault");
+            QString errMsg = tr("Failed to unlock file vault") + QString("code: %1").arg(state);
             DDialog dialog(this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"));
             dialog.setTitle(errMsg);
