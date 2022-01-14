@@ -544,7 +544,6 @@ void FilePreviewDialog::switchToPage(int index)
         static_cast<QVBoxLayout *>(layout())->removeWidget(m_preview->contentWidget());
     }
 
-
     static_cast<QVBoxLayout *>(layout())->insertWidget(0, preview->contentWidget());
 
     if (m_preview)
@@ -556,18 +555,21 @@ void FilePreviewDialog::switchToPage(int index)
     m_separator->setVisible(preview->showStatusBarSeparator());
     m_preview = preview;
 
-    QTimer::singleShot(0, this, [this] {
+     QTimer::singleShot(0, this, [this] {
         updateTitle();
         m_statusBar->openButton()->setFocus();
-        this->resize(m_preview->contentWidget()->size().width(), m_preview->contentWidget()->size().height());
-        QSize end_zoompin = size();
+        int perviewwidth = m_preview->contentWidget()->size().width();
+        int perviewheight = m_preview->contentWidget()->size().height();
+        this->resize(perviewwidth, perviewheight);
         adjustSize();
-        if (end_zoompin.width() > size().width() && (m_preview->metaObject()->className() == QStringLiteral("dde_file_manager::DFMFilePreview"))) {
-            /*m_preview->contentWidget()->size().width() * 2 2和1.5是adjustSize的自适应值*/
-            resize((double)m_preview->contentWidget()->size().width() * 2, (double)m_preview->contentWidget()->size().height() * 1.5);
-        } else if (end_zoompin.width() == size().width()) {
-            resize(m_preview->contentWidget()->size().width(), m_preview->contentWidget()->size().height());
+        m_preview->contentWidget()->adjustSize();
+        int newPerviewWidth = m_preview->contentWidget()->size().width();
+        int newPerviewHeight = m_preview->contentWidget()->size().height();
+
+        if(perviewwidth != newPerviewWidth || perviewheight != newPerviewHeight){
+            resize(newPerviewWidth, newPerviewHeight);
         }
+
         playCurrentPreviewFile();
         moveToCenter();
     });
