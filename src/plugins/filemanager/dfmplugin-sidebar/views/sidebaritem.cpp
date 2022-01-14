@@ -69,14 +69,14 @@ void SideBarItem::setGroup(const QString &group)
     setData(group, Roles::ItemGroupRole);
 }
 
-QString SideBarItem::registeredHandler() const
+void SideBarItem::setItemInfo(DSB_FM_NAMESPACE::SideBar::ItemInfo info)
 {
-    return data(ItemUseRegisteredHandlerRole).toString();
+    this->info = info;
 }
 
-void SideBarItem::setRegisteredHandler(const QString &identifier)
+DSB_FM_NAMESPACE::SideBar::ItemInfo SideBarItem::itemInfo() const
 {
-    setData(identifier, ItemUseRegisteredHandlerRole);
+    return this->info;
 }
 
 QString SideBarItem::group() const

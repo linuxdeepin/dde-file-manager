@@ -40,17 +40,11 @@ public:
     void connectService();
 
 public slots:
-    void invokeAddItem(const DSB_FM_NAMESPACE::SideBar::ItemInfo &info,
-                       DSB_FM_NAMESPACE::SideBar::CdActionCallback cdFunc,
-                       DSB_FM_NAMESPACE::SideBar::ContextMenuCallback menuFunc,
-                       DSB_FM_NAMESPACE::SideBar::RenameCallback renameFunc);
+    void invokeAddItem(const DSB_FM_NAMESPACE::SideBar::ItemInfo &info);
     void invokeRemoveItem(const QUrl &url);
     void invokeUpdateItem(const QUrl &url, const QString &newName, bool editable);
     void invokeInsertItem(int index,
-                          const DSB_FM_NAMESPACE::SideBar::ItemInfo &info,
-                          DSB_FM_NAMESPACE::SideBar::CdActionCallback cdFunc,
-                          DSB_FM_NAMESPACE::SideBar::ContextMenuCallback menuFunc,
-                          DSB_FM_NAMESPACE::SideBar::RenameCallback renameFunc);
+                          const DSB_FM_NAMESPACE::SideBar::ItemInfo &info);
     void invokeTriggerItemEdit(quint64 winId, const QUrl &url);
 
 private:

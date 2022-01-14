@@ -60,7 +60,7 @@ void SideBarUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("SideBarService::triggerItemEdit"), this, &SideBarUnicastReceiver::invokeTriggerItemEdit);
 }
 
-void SideBarUnicastReceiver::invokeAddItem(const ItemInfo &info, CdActionCallback cdFunc, ContextMenuCallback menuFunc, RenameCallback renameFunc)
+void SideBarUnicastReceiver::invokeAddItem(const ItemInfo &info)
 {
     if (SideBarHelper::allCacheInfo().contains(info)) {
         qWarning() << "Cannot add repeated info " << info.url;
@@ -71,7 +71,6 @@ void SideBarUnicastReceiver::invokeAddItem(const ItemInfo &info, CdActionCallbac
         SideBarItem *item = SideBarHelper::createItemByInfo(info);
         if (item) {
             sidebar->addItem(item);
-            SideBarManager::instance()->registerCallback(item->registeredHandler(), cdFunc, menuFunc, renameFunc);
             QUrl &&itemUrl = item->url();
             QUrl &&sidebarUrl = sidebar->currentUrl().url();
             if (itemUrl.scheme() == sidebarUrl.scheme() && itemUrl.path() == sidebarUrl.path())
@@ -95,7 +94,7 @@ void SideBarUnicastReceiver::invokeUpdateItem(const QUrl &url, const QString &ne
         sidebar->updateItem(url, newName, editable);
 }
 
-void SideBarUnicastReceiver::invokeInsertItem(int index, const ItemInfo &info, CdActionCallback cdFunc, ContextMenuCallback menuFunc, RenameCallback renameFunc)
+void SideBarUnicastReceiver::invokeInsertItem(int index, const ItemInfo &info)
 {
     if (SideBarHelper::allCacheInfo().contains(info)) {
         qWarning() << "Cannot add repeated info " << info.url;
@@ -112,7 +111,6 @@ void SideBarUnicastReceiver::invokeInsertItem(int index, const ItemInfo &info, C
         SideBarItem *item = SideBarHelper::createItemByInfo(info);
         if (item) {
             sidebar->insertItem(index, item);
-            SideBarManager::instance()->registerCallback(item->registeredHandler(), cdFunc, menuFunc, renameFunc);
             QUrl &&itemUrl = item->url();
             QUrl &&sidebarUrl = sidebar->currentUrl().url();
             if (itemUrl.scheme() == sidebarUrl.scheme() && itemUrl.path() == sidebarUrl.path())

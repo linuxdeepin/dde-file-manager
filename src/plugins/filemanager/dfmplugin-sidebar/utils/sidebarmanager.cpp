@@ -22,6 +22,7 @@
 */
 #include "sidebarmanager.h"
 #include "utils/sidebarhelper.h"
+#include "views/sidebaritem.h"
 
 DPSIDEBAR_USE_NAMESPACE
 
@@ -31,42 +32,44 @@ SideBarManager *SideBarManager::instance()
     return &manager;
 }
 
-void SideBarManager::runCd(const QString &identifier, quint64 windowId, const QUrl &url)
+void SideBarManager::runCd(SideBarItem *item, quint64 windowId)
 {
-    if (cdCallbackMap.contains(identifier)) {
-        Q_ASSERT(cdCallbackMap[identifier]);
-        cdCallbackMap[identifier](windowId, url);
+    if (!item)
+        return;
+
+    auto url = item->url();
+    auto info = item->itemInfo();
+    if (info.cdCb) {
+        info.cdCb(windowId, url);
     } else {
         SideBarHelper::defaultCdAction(windowId, url);
     }
 }
 
-void SideBarManager::runContextMenu(const QString &identifier, quint64 windowId, const QUrl &url, const QPoint &globalPos)
+void SideBarManager::runContextMenu(SideBarItem *item, quint64 windowId, const QPoint &globalPos)
 {
-    if (menuCallbackMap.contains(identifier)) {
-        Q_ASSERT(menuCallbackMap[identifier]);
-        menuCallbackMap[identifier](windowId, url, globalPos);
+    if (!item)
+        return;
+
+    auto url = item->url();
+    auto info = item->itemInfo();
+    if (info.contextMenuCb) {
+        info.contextMenuCb(windowId, url, globalPos);
     } else {
         SideBarHelper::defaultContenxtMenu(windowId, url, globalPos);
     }
 }
 
-void SideBarManager::runRename(const QString &identifier, quint64 windowId, const QUrl &url, const QString &name)
+void SideBarManager::runRename(SideBarItem *item, quint64 windowId, const QString &name)
 {
-    if (renameCallbackMap.contains(identifier)) {
-        Q_ASSERT(renameCallbackMap[identifier]);
-        renameCallbackMap[identifier](windowId, url, name);
-    }
-}
+    if (!item)
+        return;
 
-void SideBarManager::registerCallback(const QString &identifier, const SideBarManager::CdCallback &cd, const SideBarManager::ContextMenuCallback &contexMenu, const SideBarManager::RenameCallback &rename)
-{
-    if (cd)
-        cdCallbackMap.insert(identifier, cd);
-    if (contexMenu)
-        menuCallbackMap.insert(identifier, contexMenu);
-    if (rename)
-        renameCallbackMap.insert(identifier, rename);
+    auto url = item->url();
+    auto info = item->itemInfo();
+    if (info.contextMenuCb) {
+        info.renameCb(windowId, url, name);
+    }
 }
 
 SideBarManager::SideBarManager(QObject *parent)

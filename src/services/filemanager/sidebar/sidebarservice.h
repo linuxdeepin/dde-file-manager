@@ -42,11 +42,9 @@ public:
         return "org.deepin.service.SideBarService";
     }
 
-    void addItem(const SideBar::ItemInfo &info, const SideBar::CdActionCallback &cdFunc,
-                 const SideBar::ContextMenuCallback &menuFunc, const SideBar::RenameCallback &renameFunc = nullptr);
+    void addItem(const SideBar::ItemInfo &info);
     void removeItem(const QUrl &url);
-    void insertItem(int index, const SideBar::ItemInfo &info, const SideBar::CdActionCallback &cdFunc,
-                    const SideBar::ContextMenuCallback &menuFunc, const SideBar::RenameCallback &renameFunc = nullptr);
+    void insertItem(int index, const SideBar::ItemInfo &info);
     void updateItem(const QUrl &url, const QString &newName, bool editable);
     void triggerItemEdit(quint64 winId, const QUrl &url);
 

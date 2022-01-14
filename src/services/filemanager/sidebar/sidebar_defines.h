@@ -47,6 +47,11 @@ namespace EventType {
 extern const int kEjectAction;
 };   // namespace EventType
 
+using CdActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+using RenameCallback = std::function<void(quint64 windowId, const QUrl &url, const QString &name)>;
+using FindMeCallback = std::function<bool(const QUrl &itemUrl, const QUrl &targetUrl)>;
+
 struct ItemInfo
 {
     QString group;
@@ -56,6 +61,11 @@ struct ItemInfo
     Qt::ItemFlags flag;
     bool removable { false };
 
+    CdActionCallback cdCb { nullptr };
+    ContextMenuCallback contextMenuCb { nullptr };
+    RenameCallback renameCb { nullptr };
+    FindMeCallback findMeCb { nullptr };
+
     bool operator==(const ItemInfo &info)
     {
         return (url.scheme() == info.url.scheme()
@@ -64,10 +74,6 @@ struct ItemInfo
     }
 };
 
-using CdActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
-using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
-using RenameCallback = std::function<void(quint64 windowId, const QUrl &url, const QString &name)>;
-
 }   // namespace SideBar
 
 DSB_FM_END_NAMESPACE
@@ -75,5 +81,6 @@ Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::SideBar::ItemInfo)
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::SideBar::CdActionCallback)
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::SideBar::ContextMenuCallback)
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::SideBar::RenameCallback)
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::SideBar::FindMeCallback)
 
 #endif   // SIDEBAR_DEFINES_H

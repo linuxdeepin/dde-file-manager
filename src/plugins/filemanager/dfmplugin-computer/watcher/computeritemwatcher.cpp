@@ -276,10 +276,15 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     sbItem.text = info->displayName();
     sbItem.removable = info->removable();
 
-    SideBar::CdActionCallback cd = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
-    SideBar::ContextMenuCallback menu = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
-    SideBar::RenameCallback rename = [](quint64 winId, const QUrl &url, const QString &name) { ComputerControllerInstance->doRename(winId, url, name); };
-    ComputerUtils::sbIns()->addItem(sbItem, cd, menu, rename);
+    sbItem.cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
+    sbItem.contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
+    sbItem.renameCb = [](quint64 winId, const QUrl &url, const QString &name) { ComputerControllerInstance->doRename(winId, url, name); };
+    sbItem.findMeCb = [](const QUrl &itemUrl, const QUrl &targetUrl) {
+        DFMEntryFileInfoPointer info(new EntryFileInfo(itemUrl));
+        auto mntUrl = info->targetUrl();
+        return mntUrl.scheme() == targetUrl.scheme() && mntUrl.path() == targetUrl.path();
+    };
+    ComputerUtils::sbIns()->addItem(sbItem);
 }
 
 void ComputerItemWatcher::removeSidebarItem(const QUrl &url)

@@ -32,34 +32,24 @@
 #include <QMap>
 
 DPSIDEBAR_BEGIN_NAMESPACE
+class SideBarItem;
 
 class SideBarManager final : public QObject
 {
     Q_OBJECT
 
 public:
-    using CdCallback = DSB_FM_NAMESPACE::SideBar::CdActionCallback;
-    using ContextMenuCallback = DSB_FM_NAMESPACE::SideBar::ContextMenuCallback;
-    using RenameCallback = DSB_FM_NAMESPACE::SideBar::RenameCallback;
-
-public:
     static SideBarManager *instance();
 
-    void runCd(const QString &identifier, quint64 windowId, const QUrl &url);
-    void runContextMenu(const QString &identifier, quint64 windowId, const QUrl &url, const QPoint &globalPos);
-    void runRename(const QString &identifier, quint64 windowId, const QUrl &url, const QString &name);
-
-    void registerCallback(const QString &identifier,
-                          const CdCallback &cd, const ContextMenuCallback &contexMenu, const RenameCallback &rename);
+    void runCd(SideBarItem *item, quint64 windowId);
+    void runContextMenu(SideBarItem *item, quint64 windowId, const QPoint &globalPos);
+    void runRename(SideBarItem *item, quint64 windowId, const QString &name);
 
 private:
     explicit SideBarManager(QObject *parent = nullptr);
     ~SideBarManager();
 
 private:
-    QMap<QString, CdCallback> cdCallbackMap;
-    QMap<QString, ContextMenuCallback> menuCallbackMap;
-    QMap<QString, RenameCallback> renameCallbackMap;
 };
 
 DPSIDEBAR_END_NAMESPACE

@@ -127,7 +127,8 @@ int SideBarWidget::findItem(const QUrl &url) const
     for (int i = 0; i < sidebarModel->rowCount(); i++) {
         SideBarItem *item = sidebarModel->itemFromIndex(i);
         if (!dynamic_cast<SideBarItemSeparator *>(item)) {
-            if (item->url().scheme() == url.scheme() && item->url().path() == url.path())
+            bool foundByCb = item->itemInfo().findMeCb && item->itemInfo().findMeCb(item->url(), url);
+            if (foundByCb || (item->url().scheme() == url.scheme() && item->url().path() == url.path()))
                 return i;
         }
     }
@@ -154,7 +155,7 @@ void SideBarWidget::onItemActived(const QModelIndex &index)
 
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     QUrl url { qvariant_cast<QUrl>(item->data(SideBarItem::Roles::ItemUrlRole)) };
-    SideBarManager::instance()->runCd(item->registeredHandler(), SideBarHelper::windowId(this), url);
+    SideBarManager::instance()->runCd(item, SideBarHelper::windowId(this));
 }
 
 void SideBarWidget::customContextMenuCall(const QPoint &pos)
@@ -163,13 +164,10 @@ void SideBarWidget::customContextMenuCall(const QPoint &pos)
     if (!item)
         return;
 
-    // 拿到Item对应的QUrl
-    const QUrl &url = sidebarView->urlAt(pos);
     // 相对坐标转全局坐标
     const QPoint &globalPos = sidebarView->mapToGlobal(pos);
 
-    SideBarManager::instance()->runContextMenu(item->registeredHandler(), SideBarHelper::windowId(this),
-                                               url, globalPos);
+    SideBarManager::instance()->runContextMenu(item, SideBarHelper::windowId(this), globalPos);
 }
 
 void SideBarWidget::onItemRenamed(const QModelIndex &index, const QString &newName)
@@ -179,7 +177,7 @@ void SideBarWidget::onItemRenamed(const QModelIndex &index, const QString &newNa
         return;
 
     QUrl url { qvariant_cast<QUrl>(item->data(SideBarItem::Roles::ItemUrlRole)) };
-    SideBarManager::instance()->runRename(item->registeredHandler(), SideBarHelper::windowId(this), url, newName);
+    SideBarManager::instance()->runRename(item, SideBarHelper::windowId(this), newName);
 }
 
 void SideBarWidget::initializeUi()
@@ -214,8 +212,6 @@ void SideBarWidget::initDefaultModel()
 
     for (const QString &name : names) {
         SideBarItem *item = SideBarHelper::createDefaultItem(name, SideBar::DefaultGroup::kCommon);
-        SideBarManager::instance()->registerCallback(item->registeredHandler(),
-                                                     &SideBarHelper::defaultCdAction, &SideBarHelper::defaultContenxtMenu, nullptr);
         addItem(item);
     }
 

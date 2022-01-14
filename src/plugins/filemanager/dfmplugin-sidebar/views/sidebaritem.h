@@ -24,6 +24,8 @@
 
 #include "dfmplugin_sidebar_global.h"
 
+#include "services/filemanager/sidebar/sidebar_defines.h"
+
 #include <DStandardItem>
 #include <QUrl>
 
@@ -37,7 +39,6 @@ public:
     enum Roles {
         ItemUrlRole = Dtk::UserRole + 1,
         ItemGroupRole,
-        ItemUseRegisteredHandlerRole,
         ItemUserCustomRole = Dtk::UserRole + 0x0100
     };
 
@@ -55,8 +56,11 @@ public:
     QString group() const;
     void setGroup(const QString &group = "");
 
-    QString registeredHandler() const;
-    void setRegisteredHandler(const QString &identifier);
+    void setItemInfo(DSB_FM_NAMESPACE::SideBar::ItemInfo info);
+    DSB_FM_NAMESPACE::SideBar::ItemInfo itemInfo() const;
+
+private:
+    DSB_FM_NAMESPACE::SideBar::ItemInfo info;
 };
 
 class SideBarItemSeparator : public DPSIDEBAR_NAMESPACE::SideBarItem

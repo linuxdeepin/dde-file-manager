@@ -114,8 +114,9 @@ void Recent::addRecentItem()
     item.iconName = RecentHelper::icon().name();
     item.text = tr("Recent");
     item.flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    item.contextMenuCb = RecentHelper::contenxtMenuHandle;
 
-    GlobalPrivate::sideBarService->insertItem(0, item, nullptr, RecentHelper::contenxtMenuHandle);
+    GlobalPrivate::sideBarService->insertItem(0, item);
 }
 
 void Recent::removeRecentItem()

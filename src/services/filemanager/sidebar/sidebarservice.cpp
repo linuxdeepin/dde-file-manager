@@ -82,10 +82,9 @@ SideBarService::~SideBarService()
  * \param cdFunc
  * \param menuFunc
  */
-void SideBarService::addItem(const SideBar::ItemInfo &info, const SideBar::CdActionCallback &cdFunc,
-                             const SideBar::ContextMenuCallback &menuFunc, const SideBar::RenameCallback &renameFunc)
+void SideBarService::addItem(const SideBar::ItemInfo &info)
 {
-    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, info, cdFunc, menuFunc, renameFunc);
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, info);
 }
 
 /*!
@@ -107,7 +106,7 @@ void SideBarService::triggerItemEdit(quint64 winId, const QUrl &url)
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, winId, url);
 }
 
-void SideBarService::insertItem(int index, const SideBar::ItemInfo &info, const SideBar::CdActionCallback &cdFunc, const SideBar::ContextMenuCallback &menuFunc, const SideBar::RenameCallback &renameFunc)
+void SideBarService::insertItem(int index, const SideBar::ItemInfo &info)
 {
-    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, index, info, cdFunc, menuFunc, renameFunc);
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, index, info);
 }

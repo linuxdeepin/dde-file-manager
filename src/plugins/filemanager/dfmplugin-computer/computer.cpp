@@ -114,7 +114,7 @@ void Computer::addComputerToSidebar()
     entry.text = tr("Computer");
     entry.url = ComputerUtils::rootUrl();
     entry.flag = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
-    sidebarServ->addItem(entry, nullptr, nullptr);
+    sidebarServ->addItem(entry);
 }
 
 DPCOMPUTER_END_NAMESPACE

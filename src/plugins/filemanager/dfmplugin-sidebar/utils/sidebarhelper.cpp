@@ -109,8 +109,11 @@ SideBarItem *SideBarHelper::createDefaultItem(const QString &pathKey, const QStr
                                         text,
                                         group,
                                         url);
+    DSB_FM_NAMESPACE::SideBar::ItemInfo info;
+    info.cdCb = defaultCdAction;
+    info.contextMenuCb = defaultContenxtMenu;
+    item->setItemInfo(info);
 
-    item->setRegisteredHandler(makeItemIdentifier(group, url));
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled);
 
     return item;
@@ -122,8 +125,8 @@ SideBarItem *SideBarHelper::createItemByInfo(const SideBar::ItemInfo &info)
                                         info.text,
                                         info.group,
                                         info.url);
-    item->setRegisteredHandler(makeItemIdentifier(info.group, info.url));
     item->setFlags(info.flag);
+    item->setItemInfo(info);
 
     // create `unmount action` for removable device
     if (info.removable) {
