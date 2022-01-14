@@ -96,7 +96,7 @@ void Computer::onWindowOpened(quint64 windId)
 
 void Computer::onWindowClosed(quint64 winId)
 {
-    // TODO(xust)
+    Q_UNUSED(winId);
 }
 
 void Computer::addComputerToSidebar()

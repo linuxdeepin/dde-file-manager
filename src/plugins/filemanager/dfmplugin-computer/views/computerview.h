@@ -24,15 +24,19 @@
 #define COMPUTERVIEW_H
 
 #include "dfmplugin_computer_global.h"
+
 #include "dfm-base/interfaces/abstractbaseview.h"
+#include "dfm-base/base/application/application.h"
 
 #include <QUrl>
 #include <QScopedPointer>
 
 #include <DListView>
 
+DFMBASE_USE_NAMESPACE
 DPCOMPUTER_BEGIN_NAMESPACE
 
+class ComputerModel;
 class ComputerViewPrivate;
 class ComputerView : public Dtk::Widget::DListView, public DFMBASE_NAMESPACE::AbstractBaseView
 {
@@ -56,10 +60,13 @@ public:
     // QObject interface
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
 
+    void hideSystemPartitions(bool hide);
+
 protected:
     // QWidget interface
     virtual void showEvent(QShowEvent *event) override;
     virtual void hideEvent(QHideEvent *event) override;
+    ComputerModel *computerModel() const;
 
 private:
     void initView();
@@ -69,6 +76,7 @@ private Q_SLOTS:
     void cdTo(const QModelIndex &index);
     void onMenuRequest(const QPoint &pos);
     void onRenameRequest(quint64 winId, const QUrl &url);
+    void onAppAttrChanged(Application::GenericAttribute ga, const QVariant &value);
 
 Q_SIGNALS:
     void enterPressed(const QModelIndex &index);

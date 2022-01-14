@@ -62,6 +62,8 @@ public:
     static quint64 getWinId(QWidget *widget);
 
     static DSB_FM_NAMESPACE::SideBarService *sbIns();
+
+    static bool hideSystemPartition();
 };
 
 DPCOMPUTER_END_NAMESPACE

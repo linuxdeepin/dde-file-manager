@@ -24,6 +24,7 @@
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/base/application/application.h"
 
 #include <dfm-framework/framework.h>
 #include <services/filemanager/windows/windowsservice.h>
@@ -94,4 +95,9 @@ dfm_service_filemanager::SideBarService *ComputerUtils::sbIns()
     });
 
     return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
+}
+
+bool ComputerUtils::hideSystemPartition()
+{
+    return Application::instance()->genericAttribute(Application::kHiddenSystemPartition).toBool();
 }

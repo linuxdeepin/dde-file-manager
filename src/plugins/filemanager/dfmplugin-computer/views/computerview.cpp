@@ -28,7 +28,6 @@
 #include "events/computereventcaller.h"
 #include "controller/computercontroller.h"
 
-#include "dfm-base/base/application/application.h"
 #include "dfm-base/utils/devicemanager.h"
 
 #include <services/common/dialog/dialogservice.h>
@@ -127,12 +126,19 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
 void ComputerView::showEvent(QShowEvent *event)
 {
     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+    hideSystemPartitions(ComputerUtils::hideSystemPartition());
     DListView::showEvent(event);
 }
 
 void ComputerView::hideEvent(QHideEvent *event)
 {
     DListView::hideEvent(event);
+}
+
+ComputerModel *ComputerView::computerModel() const
+{
+    auto model = qobject_cast<ComputerModel *>(DListView::model());
+    return model;
 }
 
 void ComputerView::initView()
@@ -172,6 +178,7 @@ void ComputerView::initConnect()
 
     connect(this, &ComputerView::customContextMenuRequested, this, &ComputerView::onMenuRequest);
     connect(ComputerControllerInstance, &ComputerController::requestRename, this, &ComputerView::onRenameRequest);
+    connect(Application::instance(), &Application::genericAttributeChanged, this, &ComputerView::onAppAttrChanged);
 }
 
 void ComputerView::onMenuRequest(const QPoint &pos)
@@ -201,6 +208,40 @@ void ComputerView::onRenameRequest(quint64 winId, const QUrl &url)
     auto idx = model->index(r, 0);
     if (idx.isValid())
         edit(idx);
+}
+
+void ComputerView::onAppAttrChanged(Application::GenericAttribute ga, const QVariant &value)
+{
+    if (ga == Application::GenericAttribute::kShowFileSystemTagOnDiskIcon) {
+        this->update();
+    } else if (ga == Application::GenericAttribute::kHiddenSystemPartition) {
+        bool hide = value.toBool();
+        hideSystemPartitions(hide);
+    }
+}
+
+void ComputerView::hideSystemPartitions(bool hide)
+{
+    auto model = this->computerModel();
+    if (!model) {
+        qCritical() << "model is released somewhere! " << __FUNCTION__;
+        return;
+    }
+
+    for (int i = 7; i < model->items.count(); i++) {   // 7 means where the disk group start.
+        auto item = model->items.at(i);
+        if (!item.url.path().endsWith(SuffixInfo::kBlock))
+            continue;
+
+        if (item.info && !item.info->removable()) {
+            this->setRowHidden(i, hide);
+
+            if (hide)
+                ComputerItemWatcherInstance->removeSidebarItem(item.url);
+            else
+                ComputerItemWatcherInstance->addSidebarItem(item.info);
+        }
+    }
 }
 
 void ComputerView::cdTo(const QModelIndex &index)

@@ -26,6 +26,7 @@
 #include "utils/computerdatastruct.h"
 
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/application/application.h"
 
 #include <DApplication>
 #include <DApplicationHelper>
@@ -315,7 +316,8 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
     const int IconSize = view->iconSize().width();
     const int TextMaxWidth = sizeHint(option, index).width() - IconSize - kItemLeftMargin - kIconLabelSpacing - kItemRightMargin;
     // if show-fs is enabled in setting, then add a 2pix spacing, else treat it as 0.
-    bool showFsTag = true;   // TODO(xust) get this from setting
+    DFMBASE_USE_NAMESPACE
+    bool showFsTag = Application::instance()->genericAttribute(Application::GenericAttribute::kShowFileSystemTagOnDiskIcon).toBool();
     showFsTag &= !fs.isEmpty();
     if (showFsTag)
         fsLabelWidth += 2;
