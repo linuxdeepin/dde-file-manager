@@ -57,6 +57,8 @@ RecentDirIteratorPrivate::~RecentDirIteratorPrivate()
 
 void RecentDirIteratorPrivate::handleFileChanged(QList<QPair<QUrl, qint64>> &results)
 {
+    // Todo(yanghao): performance optimization
+
     QList<QUrl> urlList;
     for (auto pair : results) {
         const QUrl &url = pair.first;

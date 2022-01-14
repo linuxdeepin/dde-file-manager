@@ -92,6 +92,22 @@ qint64 RecentFileInfo::size() const
         return d->proxy->size();
     }
     return -1;
+}
+
+QString RecentFileInfo::sizeFormat() const
+{
+    if (d->proxy) {
+        return d->proxy->sizeFormat();
+    }
+    return QString();
+}
+
+QDateTime RecentFileInfo::lastModified() const
+{
+    if (d->proxy) {
+        return d->proxy->lastModified();
+    }
+    return QDateTime();
 };
 
 DPRECENT_END_NAMESPACE

@@ -41,6 +41,8 @@ public:
     virtual bool exists() const override;
     virtual bool isHidden() const override;
     virtual qint64 size() const override;
+    virtual QString sizeFormat() const override;
+    virtual QDateTime lastModified() const override;
 
 private:
     RecentFileInfoPrivate *d;
