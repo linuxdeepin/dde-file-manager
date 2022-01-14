@@ -49,16 +49,16 @@
 #include <fnmatch.h>
 
 DFM_BEGIN_NAMESPACE
-#define SEARCH_RESULT_NUM   100000
+#define SEARCH_RESULT_NUM 100000
 
 DFMFullTextSearchManager::DFMFullTextSearchManager(QObject *parent)
     : QObject(parent)
 {
     status = false;
     indexStorePath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first()
-                     + "/" + QApplication::organizationName()
-                     + "/" + QApplication::applicationName()
-                     + "/" + "index";
+            + "/" + QApplication::organizationName()
+            + "/" + QApplication::applicationName()
+            + "/" + "index";
 }
 
 DFMFullTextSearchManager *DFMFullTextSearchManager::getInstance()
@@ -111,17 +111,16 @@ QString DFMFullTextSearchManager::getFileContents(const QString &filePath)
     //
     extractor.setFormattingStyle(options);
 
-    //解析文件内容,
-    /*
-     * 原因是解析出来的内容和 tests目录下面 *.out 中的内容不相符，
-     * 例如: 解析 tests/1.doc.out 最终结果的内容就是现在下面 printf 所打印输出的内容格式，
-     * 从可以 tests/Makefile 中看到，在测试的过程中是通过 diff 命令比较，也就是通过比较 1.doc
-     * 的解析结果内容和 1.doc.out 内容的是否相同来判断程序是否正常运行的
-     */
-    if (!extractor.processFile(filePath.toStdString(), text)) {
-        qDebug() << "Error processing file " << filePath;
-        return "";
+    try {
+        //解析文件内容,
+        if (!extractor.processFile(filePath.toStdString(), text)) {
+            qDebug() << "Error processing file " << filePath;
+            return "";
+        }
+    } catch (...) {
+        qWarning() << "parse file failed!" << filePath;
     }
+
     return QString(text.c_str());
 }
 
@@ -189,7 +188,7 @@ bool DFMFullTextSearchManager::searchByKeyworld(const QString &keyword, const QS
         SearcherPtr searcher = newLucene<IndexSearcher>(reader);
         AnalyzerPtr analyzer = newLucene<ChineseAnalyzer>();
         QueryParserPtr parser = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"contents", analyzer);
-        parser->setAllowLeadingWildcard(true);//设定第一个* 可以匹配
+        parser->setAllowLeadingWildcard(true);   //设定第一个* 可以匹配
 
         QString newKeyWorld = dealKeyWorld(keyword);
         QueryPtr query = parser->parse(newKeyWorld.toStdWString());
@@ -211,7 +210,7 @@ int DFMFullTextSearchManager::fulltextIndex(const QString &sourceDir)
         return 0;
     } else {
         status = true;
-        QtConcurrent::run([ = ] {
+        QtConcurrent::run([=] {
             createFileIndex(sourceDir);
             status = false;
         });
@@ -376,8 +375,8 @@ bool DFMFullTextSearchManager::updateIndex(const QString &filePath)
                     IndexWriterPtr writer = newLucene<IndexWriter>(FSDirectory::open(indexStorePath.toStdWString()),
                                                                    newLucene<ChineseAnalyzer>(),
                                                                    IndexWriter::MaxFieldLengthLIMITED);
-                    writer->addDocument(getFileDocument(file));
                     qDebug() << "Add file: [" << file << "]";
+                    writer->addDocument(getFileDocument(file));
                     writer->close();
                     res = true;
                 } catch (LuceneException &ex) {
@@ -399,8 +398,8 @@ bool DFMFullTextSearchManager::updateIndex(const QString &filePath)
                         //定义一个更新条件
                         TermPtr term = newLucene<Term>(L"path", file.toStdWString());
                         //更新
-                        writer->updateDocument(term, getFileDocument(file));
                         qDebug() << "Update file: [" << file << "]";
+                        writer->updateDocument(term, getFileDocument(file));
                         //关闭
                         writer->close();
                         res = true;
