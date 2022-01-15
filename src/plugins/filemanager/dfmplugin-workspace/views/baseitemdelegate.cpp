@@ -47,6 +47,31 @@ BaseItemDelegate::~BaseItemDelegate()
 {
 }
 
+int BaseItemDelegate::iconSizeLevel() const
+{
+    return -1;
+}
+
+int BaseItemDelegate::minimumIconSizeLevel() const
+{
+    return -1;
+}
+
+int BaseItemDelegate::maximumIconSizeLevel() const
+{
+    return -1;
+}
+
+int BaseItemDelegate::increaseIcon()
+{
+    return -1;
+}
+
+int BaseItemDelegate::decreaseIcon()
+{
+    return -1;
+}
+
 int BaseItemDelegate::setIconSizeByIconSizeLevel(int level)
 {
     Q_UNUSED(level)

@@ -55,8 +55,7 @@ IconItemDelegate::IconItemDelegate(FileView *parent)
 {
     Q_D(IconItemDelegate);
 
-    d->itemIconSize.setWidth(kIconSizeList[1]);
-    d->itemIconSize.setHeight(kIconSizeList[1]);
+    d->itemIconSize = iconSizeByIconSizeLevel();
 }
 
 IconItemDelegate::~IconItemDelegate()
@@ -156,19 +155,62 @@ QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
     return QList<QRect>();
 }
 
+int IconItemDelegate::iconSizeLevel() const
+{
+    Q_D(const IconItemDelegate);
+
+    return d->currentIconSizeIndex;
+}
+
+int IconItemDelegate::minimumIconSizeLevel() const
+{
+    return 0;
+}
+
+int IconItemDelegate::maximumIconSizeLevel() const
+{
+    return kIconSizeList.count() - 1;
+}
+
+int IconItemDelegate::increaseIcon()
+{
+    Q_D(const IconItemDelegate);
+
+    return setIconSizeByIconSizeLevel(d->currentIconSizeIndex + 1);
+}
+
+int IconItemDelegate::decreaseIcon()
+{
+    Q_D(const IconItemDelegate);
+
+    return setIconSizeByIconSizeLevel(d->currentIconSizeIndex - 1);
+}
+
 int IconItemDelegate::setIconSizeByIconSizeLevel(int level)
 {
     Q_D(IconItemDelegate);
-    if (level < kIconSizeList.length()) {
-        int length = kIconSizeList.at(level);
-        d->itemIconSize.setWidth(length);
-        d->itemIconSize.setHeight(length);
 
-        d->fileView->setIconSize(d->itemIconSize);
+    if (level == iconSizeLevel()) {
         return level;
     }
 
+    if (level >= minimumIconSizeLevel() && level <= maximumIconSizeLevel()) {
+        d->currentIconSizeIndex = level;
+        d->itemIconSize = iconSizeByIconSizeLevel();
+        d->fileView->setIconSize(iconSizeByIconSizeLevel());
+        return d->currentIconSizeIndex;
+    }
+
     return -1;
+}
+
+QSize IconItemDelegate::iconSizeByIconSizeLevel() const
+{
+    Q_D(const IconItemDelegate);
+
+    int size = kIconSizeList.at(d->currentIconSizeIndex);
+
+    return QSize(size, size);
 }
 
 QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const

@@ -258,6 +258,27 @@ void FileView::onDoubleClicked(const QModelIndex &index)
     openIndexByClicked(ClickedAction::kDoubleClicked, index);
 }
 
+void FileView::wheelEvent(QWheelEvent *event)
+{
+    if (d->configViewMode == Global::ViewMode::kIconMode) {
+        if (WindowUtils::keyCtrlIsPressed()) {
+            if (event->angleDelta().y() > 0) {
+                increaseIcon();
+            } else {
+                decreaseIcon();
+            }
+            emit viewStateChanged();
+            event->accept();
+        } else {
+            verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
+        }
+    } else if (event->modifiers() == Qt::AltModifier) {
+        horizontalScrollBar()->setSliderPosition(horizontalScrollBar()->sliderPosition() - event->angleDelta().x());
+    } else {
+        verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
+    }
+}
+
 void FileView::keyPressEvent(QKeyEvent *event)
 {
     // TODO(zhangs): impl me
@@ -401,12 +422,40 @@ FileView::RandeIndexList FileView::visibleIndexes(QRect rect) const
     return list;
 }
 
+BaseItemDelegate *FileView::itemDelegate() const
+{
+    return qobject_cast<BaseItemDelegate *>(DListView::itemDelegate());
+}
+
 QSize FileView::itemSizeHint() const
 {
     if (itemDelegate())
         return itemDelegate()->sizeHint(viewOptions(), rootIndex());
 
     return QSize();
+}
+
+void FileView::increaseIcon()
+{
+    int level = itemDelegate()->increaseIcon();
+    if (level >= 0)
+        setIconSizeBySizeIndex(level);
+}
+
+void FileView::decreaseIcon()
+{
+    int level = itemDelegate()->decreaseIcon();
+    if (level >= 0)
+        setIconSizeBySizeIndex(level);
+}
+
+void FileView::setIconSizeBySizeIndex(const int sizeIndex)
+{
+    QSignalBlocker blocker(d->statusBar->scalingSlider());
+    Q_UNUSED(blocker)
+
+    d->statusBar->scalingSlider()->setValue(sizeIndex);
+    itemDelegate()->setIconSizeByIconSizeLevel(sizeIndex);
 }
 
 void FileView::onRowCountChanged()
@@ -465,15 +514,19 @@ void FileView::initializeConnect()
 {
     connect(d->sortTimer, &QTimer::timeout, this, &FileView::delaySort);
     connect(d->updateStatusBarTimer, &QTimer::timeout, this, &FileView::updateStatusBar);
+
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &FileView::onScalingValueChanged);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::delayUpdateStatusBar);
 
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &FileView::updateModelActiveIndex);
-    connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);
 
+    connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);
     connect(this, &DListView::clicked, this, &FileView::onClicked);
     connect(this, &DListView::doubleClicked, this, &FileView::onDoubleClicked);
+
+    connect(this, &FileView::viewStateChanged, this, &FileView::saveViewModeState);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::viewModeChanged, this, &FileView::viewModeChanged);
+    connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
 }
 
 void FileView::updateStatusBar()

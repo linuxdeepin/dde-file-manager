@@ -54,9 +54,17 @@ public:
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
     QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode = false) const override;
+
+    int iconSizeLevel() const override;
+    int minimumIconSizeLevel() const override;
+    int maximumIconSizeLevel() const override;
+
+    int increaseIcon() override;
+    int decreaseIcon() override;
     int setIconSizeByIconSizeLevel(int level) override;
 
 private:
+    QSize iconSizeByIconSizeLevel() const;
     Q_DECLARE_PRIVATE_D(d, IconItemDelegate)
 };
 

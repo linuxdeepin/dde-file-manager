@@ -46,6 +46,36 @@ public:
      */
     virtual QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode = false) const = 0;
 
+    /**
+     * @brief iconSizeLevel return icon size level
+     * @return Return current icon level if level is vaild, otherwise return -1
+     */
+    virtual int iconSizeLevel() const;
+
+    /**
+     * @brief minimumIconSizeLevel return minimum icon size level
+     * @return Return minimum icon level if level is vaild, otherwise return -1
+     */
+    virtual int minimumIconSizeLevel() const;
+
+    /**
+     * @brief maximumIconSizeLevel return maximum icon size level
+     * @return Return maximum icon level if level is vaild, otherwise return -1
+     */
+    virtual int maximumIconSizeLevel() const;
+
+    /**
+     * @brief increaseIcon increase icon size level
+     * @return  Return current icon level if icon can increase; otherwise return -1.
+     */
+    virtual int increaseIcon();
+
+    /**
+     * @brief increaseIcon decrease icon size level
+     * @return  Return current icon level if icon can decrease; otherwise return -1.
+     */
+    virtual int decreaseIcon();
+
     /*!
      * \brief setIconSizeByIconSizeLevel set icon size level
      * \param level

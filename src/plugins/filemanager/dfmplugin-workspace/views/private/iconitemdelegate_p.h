@@ -43,6 +43,9 @@ public:
     QIcon checkedIcon = QIcon::fromTheme("emblem-checked");
     QSize itemIconSize;
 
+    // default icon size is 64px.
+    int currentIconSizeIndex = 1;
+
     Q_DECLARE_PUBLIC(IconItemDelegate)
 };
 

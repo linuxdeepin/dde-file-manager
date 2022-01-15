@@ -95,14 +95,17 @@ public slots:
     void onRowCountChanged();
 
 protected:
+    void wheelEvent(QWheelEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
 
 Q_SIGNALS:
     void reqOpenNewWindow(const QList<QUrl> &urls);
+    void viewStateChanged();
 
 private slots:
     void loadViewState(const QUrl &url);
+    void saveViewModeState();
     void delaySort();
 
 private:
@@ -119,11 +122,17 @@ private:
 
     QVariant fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue);
     void setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value);
-    void saveViewModeState();
 
     void updateModelActiveIndex();
     RandeIndexList visibleIndexes(QRect rect) const;
+
     QSize itemSizeHint() const;
+
+    BaseItemDelegate *itemDelegate() const;
+
+    void increaseIcon();
+    void decreaseIcon();
+    void setIconSizeBySizeIndex(const int sizeIndex);
 };
 
 DPWORKSPACE_END_NAMESPACE
