@@ -191,44 +191,17 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
     qApp->clipboard()->setMimeData(mimeData);
 }
 /*!
- * \brief ClipBoard::fetchUrlsFromClipboard Read URLs from the clipboard
- * \return QList<QUrl>  URL list of files
+ * \brief ClipBoard::setDataToClopboard Set user data to clipboard
+ * \param mimeData
  */
-const QList<QUrl> ClipBoard::fetchUrlsFromClipboard()
+void ClipBoard::setDataToClipboard(QMimeData *mimeData)
 {
-    if (GlobalData::clipboardAction != ClipBoard::kRemoteAction && qApp->clipboard()) {
-        const QMimeData *mimeData = qApp->clipboard()->mimeData();
-        if (mimeData) {
-            return mimeData->urls();
-        }
+    if (!mimeData) {
+        qWarning() << "set data to clipboard failed, mimeData is null!";
+        return;
     }
 
-    return QList<QUrl>();
-}
-/*!
- * \brief ClipBoard::fetchClipboardAction Read the current operation from the clipboard
- * \return ClipBoard::ClipboardAction
- */
-ClipBoard::ClipboardAction ClipBoard::fetchClipboardAction()
-{
-    if (GlobalData::clipboardAction == ClipBoard::kRemoteAction)
-        return ClipBoard::kRemoteAction;
-
-    if (qApp->clipboard()) {
-        const QMimeData *mimeData = qApp->clipboard()->mimeData();
-        if (mimeData) {
-            QByteArray ba = mimeData->data("x-special/gnome-copied-files");
-            QString tStr(ba);
-            if (tStr.startsWith("cut")) {
-                return ClipBoard::kCutAction;
-            }
-            if (tStr.startsWith("copy")) {
-                return ClipBoard::kCopyAction;
-            }
-        }
-    }
-
-    return ClipBoard::kUnknowAction;
+    qApp->clipboard()->setMimeData(mimeData);
 }
 /*!
  * \brief ClipBoard::clearClipboard  Clean the shear plate
@@ -245,6 +218,30 @@ void ClipBoard::clearClipboard()
 QList<QUrl> ClipBoard::getRemoteUrls()
 {
     return getUrlsByX11();
+}
+/*!
+ * \brief ClipBoard::clipboardFileUrlList Get URLs in the clipboard
+ * \return
+ */
+QList<QUrl> ClipBoard::clipboardFileUrlList() const
+{
+    return GlobalData::clipboardFileUrls;
+}
+/*!
+ * \brief ClipBoard::clipboardFileInodeList Gets the inode of URLs in the clipboard
+ * \return
+ */
+QList<quint64> ClipBoard::clipboardFileInodeList() const
+{
+    return GlobalData::clipbordFileinode;
+}
+/*!
+ * \brief ClipBoard::clipboardAction Gets the current operation of the clipboard
+ * \return
+ */
+ClipBoard::ClipboardAction ClipBoard::clipboardAction() const
+{
+    return GlobalData::clipboardAction;
 }
 /*!
  * \brief ClipBoard::getUrlsByX11 Use X11 to read URLs downloaded

@@ -23,9 +23,9 @@
 #ifndef DFMPLUGIN_FILEOPERATIONS_GLOBAL_H
 #define DFMPLUGIN_FILEOPERATIONS_GLOBAL_H
 
-#define DPFILEOPERATIONS_BEGIN_NAMESPACE namespace dfmplugin_fileoperatios {
+#define DPFILEOPERATIONS_BEGIN_NAMESPACE namespace dfmplugin_fileoperations {
 #define DPFILEOPERATIONS_END_NAMESPACE }
-#define DPFILEOPERATIONS_USE_NAMESPACE using namespace dfmplugin_fileoperatios;
-#define DPFILEOPERATIONS_NAMESPACE dfmplugin_fileoperatios
+#define DPFILEOPERATIONS_USE_NAMESPACE using namespace dfmplugin_fileoperations;
+#define DPFILEOPERATIONS_NAMESPACE dfmplugin_fileoperations
 
 #endif   // DFMPLUGIN_FILEOPERATIONS_GLOBAL_H

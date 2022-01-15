@@ -23,9 +23,10 @@
 #ifndef FILEOPERATIONSSERVICE_H
 #define FILEOPERATIONSSERVICE_H
 
+#include "fileoperations_defines.h"
 #include "dfm_common_service_global.h"
-#include "dfm-framework/service/pluginservicecontext.h"
-#include "dfm-base/interfaces/abstractjobhandler.h"
+
+#include <dfm-framework/framework.h>
 
 DSC_BEGIN_NAMESPACE
 class FileOperationsService final : public dpf::PluginService,
@@ -38,21 +39,24 @@ class FileOperationsService final : public dpf::PluginService,
 public:
     static QString name() { return "org.deepin.service.FileOperationsService"; }
 
-    JobHandlePointer copy(const QList<QUrl> &sources, const QUrl &target,
-                          const dfmbase::AbstractJobHandler::JobFlags &flags = dfmbase::AbstractJobHandler::JobFlag::kNoHint);
+    JobHandlePointer paste(const QList<QUrl> &sources,
+                           const QUrl &target,
+                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     JobHandlePointer moveToTrash(const QList<QUrl> &sources,
-                                 const dfmbase::AbstractJobHandler::JobFlags &flags = dfmbase::AbstractJobHandler::JobFlag::kNoHint);
+                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     JobHandlePointer restoreFromTrash(const QList<QUrl> &sources,
-                                      const dfmbase::AbstractJobHandler::JobFlags &flags = dfmbase::AbstractJobHandler::JobFlag::kNoHint);
+                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     JobHandlePointer deletes(const QList<QUrl> &sources,
-                             const dfmbase::AbstractJobHandler::JobFlags &flags = dfmbase::AbstractJobHandler::JobFlag::kNoHint);
-    JobHandlePointer cut(const QList<QUrl> &sources, const QUrl &target,
-                         const dfmbase::AbstractJobHandler::JobFlags &flags = dfmbase::AbstractJobHandler::JobFlag::kNoHint);
+                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+    JobHandlePointer cut(const QList<QUrl> &sources,
+                         const QUrl &target,
+                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+    void registerOperations(const QString scheme, const FileOperationsFunctions function);
+    void unregisterOperations(const QString scheme);
 
 private:
     explicit FileOperationsService(QObject *parent = nullptr);
     virtual ~FileOperationsService() override;
-    static QList<JobHandlePointer> copyTask;
 };
 
 DSC_END_NAMESPACE

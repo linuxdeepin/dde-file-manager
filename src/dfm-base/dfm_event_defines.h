@@ -25,6 +25,7 @@
 
 #include "dfm_base_global.h"
 
+class QUrl;
 DFMBASE_BEGIN_NAMESPACE
 
 /*!
@@ -46,21 +47,28 @@ enum GlobalEventType {
     kOpenFilesByApp,
     kRenameFile,
     kMkdir,
+    kMkdirCallBack,
     kTouchFile,
+    kTouchCallBack,
     kCreateSymlink,
     kSetPermission,
-    kWriteUrlsToClipboard,
+    kCopy,
     kDeleteFiles,
     kMoveToTrash,
     kRestoreFromTrash,
     kPasteFile,
     kCutFile,
+    kOpenFilesResult,
+    kOpenFilesByAppResult,
+    kRenameFileResult,
+    kMkdirResult,
+    kTouchFileResult,
+    kCreateSymlinkResult,
+    kSetPermissionResult,
 
     // first user event id, use UniversalUtils::registerEventType crreate custom event type
     kCustomBase = 1000,   // first user event id
     kMaxCustom = 65535   // last user event id
 };
-
 DFMBASE_END_NAMESPACE
-
 #endif   // DFM_EVENT_DEFINES_H

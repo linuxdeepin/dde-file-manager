@@ -32,6 +32,7 @@
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/file/local/localfilemenu.h"
+#include "dfm-base/utils/clipboard.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
 #include <dfm-framework/framework.h>
@@ -61,6 +62,8 @@ void Core::initialize()
     DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kFile);
     WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kFile);
     MenuService::regClass<LocalFileMenu>(SchemeTypes::kFile);
+    // 初始化剪切板
+    ClipBoard::instance();
 }
 
 bool Core::start()

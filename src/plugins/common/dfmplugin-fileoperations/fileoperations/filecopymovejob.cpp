@@ -131,15 +131,15 @@ void FileCopyMoveJob::initArguments(const JobHandlePointer &handler)
  * \param target 目标目录
  * \return QSharedPointer<AbstractJobHandler> 任务控制器
  */
-JobHandlePointer FileCopyMoveJob::copy(const QList<QUrl> &sources, const QUrl &target,
-                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
+JobHandlePointer FileCopyMoveJob::paste(const QList<QUrl> &sources, const QUrl &target,
+                                        const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
     if (!getOperationsAndDialogService()) {
         qCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
         return nullptr;
     }
 
-    JobHandlePointer jobHandle = operationsService->copy(sources, target, flags);
+    JobHandlePointer jobHandle = operationsService->paste(sources, target, flags);
     initArguments(jobHandle);
 
     return jobHandle;

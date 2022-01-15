@@ -50,8 +50,8 @@ FileOperationsService::~FileOperationsService() {}
  * \param target 目标目录
  * \return QSharedPointer<AbstractJobHandler> 任务控制器
  */
-JobHandlePointer FileOperationsService::copy(const QList<QUrl> &sources, const QUrl &target,
-                                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
+JobHandlePointer FileOperationsService::paste(const QList<QUrl> &sources, const QUrl &target,
+                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
     JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
     CopyFiles *task = new CopyFiles();
@@ -116,4 +116,16 @@ JobHandlePointer FileOperationsService::cut(const QList<QUrl> &sources, const QU
     CutFiles *task = new CutFiles();
     task->setJobArgs(jobHandler, sources, target, flags);
     return jobHandler;
+}
+
+void FileOperationsService::registerOperations(const QString scheme, const FileOperationsFunctions function)
+{
+    QString topic = QString(metaObject()->className()) + "::" + QString(__FUNCTION__);
+    dpfInstance.eventUnicast().push(topic, scheme, function);
+}
+
+void FileOperationsService::unregisterOperations(const QString scheme)
+{
+    QString topic = QString(metaObject()->className()) + "::" + QString(__FUNCTION__);
+    dpfInstance.eventUnicast().push(topic, scheme);
 }

@@ -267,6 +267,7 @@ void InfoCache::cacheInfo(const QUrl &url, const AbstractFileInfoPointer &info)
             connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &InfoCache::refreshFileInfo);
             connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &InfoCache::refreshFileInfo);
             connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &InfoCache::refreshFileInfo);
+            connect(watcher.data(), &AbstractFileWatcher::fileRename, this, &InfoCache::refreshFileInfo);
         }
         watcher->addCacheInfoConnectSize();
     }
@@ -308,6 +309,7 @@ void InfoCache::removeCacheInfo(const QUrl &url)
             disconnect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &InfoCache::refreshFileInfo);
             disconnect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &InfoCache::refreshFileInfo);
             disconnect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &InfoCache::refreshFileInfo);
+            disconnect(watcher.data(), &AbstractFileWatcher::fileRename, this, &InfoCache::refreshFileInfo);
             WatcherCache::instance().removCacheWatcher(url);
         }
     }

@@ -104,7 +104,7 @@ struct EventHelper<Result (T::*)(Arg1)>
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() >= 1) {
+        if (args.count() == 1) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>()),
                     ApplyReturnValue<Result>(ret.data());
         }
@@ -125,7 +125,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2)>
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() >= 2) {
+        if (args.count() == 2) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>()),
                     ApplyReturnValue<Result>(ret.data());
@@ -147,7 +147,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3)>
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() >= 3) {
+        if (args.count() == 3) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
                         args.at(2).value<REMOVE_CONST_REF(Arg3)>()),
@@ -170,7 +170,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4)>
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() >= 4) {
+        if (args.count() == 4) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
                         args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
@@ -194,7 +194,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5)>
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() >= 5) {
+        if (args.count() == 5) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
                         args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
@@ -219,7 +219,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)>
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() >= 6) {
+        if (args.count() == 6) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
                         args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
@@ -245,7 +245,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)>
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() >= 7) {
+        if (args.count() == 7) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
                         args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
@@ -272,7 +272,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() >= 8) {
+        if (args.count() == 8) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
                         args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
@@ -299,8 +299,9 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
         : s(self), f(func) {}
     QVariant invoke(const QVariantList &args)
     {
+
         QVariant ret = resultGenerator<Result>();
-        if (args.count() >= 9) {
+        if (args.count() == 9) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
                         args.at(2).value<REMOVE_CONST_REF(Arg3)>(),

@@ -24,6 +24,7 @@
 #define DFM_GLOBAL_DEFINES_H
 
 #include "dfm_base_global.h"
+#include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <QObject>
 
@@ -35,9 +36,30 @@ enum class ViewMode {
     kExtendMode = 0x04,
     kAllViewMode = kIconMode | kListMode | kExtendMode
 };
+using CreateFileCallback = void (*)(const quint64 windowId, const QUrl url, const bool successed);
+using SetFilePermissionCallback = void (*)(const quint64 windowId, const QUrl url, const bool successed);
+using RenameFileCallback = void (*)(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl,
+                                    const bool successed);
+using LinkFileCallback = void (*)(const quint64 windowId, const QUrl url, const QUrl link,
+                                  const bool successed);
+using CopyMoveFileCallback = void (*)(const quint64 windowId, JobHandlePointer handle);
+using OpenFilesCallback = void (*)(const quint64 windowId, const QList<QUrl>, const bool successed);
 }   //namespace Global
-
+enum GlobalCreateFileType : uint8_t{
+    kCreateFileTypeUnknow = 0,
+    kCreateFileTypeFolder,
+    kCreateFileTypeText,
+    kCreateFileTypeExcel,
+    kCreateFileTypeWord,
+    kCreateFileTypePowerpoint,
+};
 DFMBASE_END_NAMESPACE
+
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::GlobalCreateFileType);
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::CreateFileCallback);
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::RenameFileCallback);
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::CopyMoveFileCallback);
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OpenFilesCallback);
 
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::ViewMode);
 

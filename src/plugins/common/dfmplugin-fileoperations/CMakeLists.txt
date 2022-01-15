@@ -4,7 +4,7 @@ project(dfmplugin-fileoperations)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB COMPUTER_FILES
+FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
@@ -15,7 +15,7 @@ find_package(Dtk REQUIRED Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
-    ${COMPUTER_FILES}
+    ${FILEOPERATIONS_FILES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
