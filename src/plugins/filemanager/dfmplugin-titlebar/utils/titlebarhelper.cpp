@@ -122,16 +122,18 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
         list.append(data);
     } else {
         QStorageInfo storageInfo(path);
-        QString iconName = QStringLiteral("drive-harddisk-symbolic");
-        prefixPath = storageInfo.rootPath();
-        // TODO(zhangs): device info  (ref DFMFileCrumbController::seprateUrl)
+        if (storageInfo.isValid()) {
+            QString iconName = QStringLiteral("drive-harddisk-symbolic");
+            prefixPath = storageInfo.rootPath();
+            // TODO(zhangs): device info  (ref DFMFileCrumbController::seprateUrl)
 
-        if (prefixPath == "/") {
-            CrumbData data(UrlRoute::rootUrl(SchemeTypes::kFile), getDisplayName("System Disk"), "drive-harddisk-root-symbolic");
-            list.append(data);
-        } else {
-            CrumbData data(QUrl::fromLocalFile(prefixPath), QString(), iconName);
-            list.append(data);
+            if (prefixPath == "/") {
+                CrumbData data(UrlRoute::rootUrl(SchemeTypes::kFile), getDisplayName("System Disk"), "drive-harddisk-root-symbolic");
+                list.append(data);
+            } else {
+                CrumbData data(QUrl::fromLocalFile(prefixPath), QString(), iconName);
+                list.append(data);
+            }
         }
     }
 

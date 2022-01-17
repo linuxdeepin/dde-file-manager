@@ -43,6 +43,7 @@ public:
     explicit TitleBarWidget(QFrame *parent = nullptr);
     void setCurrentUrl(const QUrl &url) override;
     QUrl currentUrl() const override;
+    NavWidget *navWidget() const;
 
 private:
     void initializeUi();
@@ -62,7 +63,7 @@ private slots:
 private:
     QUrl titlebarUrl;
     QHBoxLayout *titleBarLayout { nullptr };   // 标题栏布局
-    NavWidget *navWidget { nullptr };   // 导航小部件
+    NavWidget *curNavWidget { nullptr };   // 导航小部件
     AddressBar *addressBar { nullptr };   // 地址编辑栏
     QToolButton *searchButton { nullptr };   // 搜索栏按钮
     QToolButton *searchFilterButton { nullptr };   // 搜索过滤按钮

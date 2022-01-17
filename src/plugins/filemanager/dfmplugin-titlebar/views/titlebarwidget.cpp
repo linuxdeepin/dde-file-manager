@@ -49,6 +49,11 @@ QUrl TitleBarWidget::currentUrl() const
     return titlebarUrl;
 }
 
+NavWidget *TitleBarWidget::navWidget() const
+{
+    return curNavWidget;
+}
+
 void TitleBarWidget::initializeUi()
 {
     setFocusPolicy(Qt::NoFocus);
@@ -59,9 +64,9 @@ void TitleBarWidget::initializeUi()
     titleBarLayout->setSpacing(0);
 
     // nav
-    navWidget = new NavWidget;
+    curNavWidget = new NavWidget;
     titleBarLayout->addSpacing(14);   // 导航栏左侧间隔14
-    titleBarLayout->addWidget(navWidget, 0, Qt::AlignLeft);
+    titleBarLayout->addWidget(curNavWidget, 0, Qt::AlignLeft);
 
     // address
     addressBar = new AddressBar;
@@ -108,7 +113,7 @@ void TitleBarWidget::initConnect()
 
     connect(this, &TitleBarWidget::currentUrlChanged, optionButtonBox, &OptionButtonBox::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, crumbBar, &CrumbBar::onUrlChanged);
-
+    connect(this, &TitleBarWidget::currentUrlChanged, curNavWidget, &NavWidget::onUrlChanged);
     connect(crumbBar, &CrumbBar::hideAddressBar, addressBar, &AddressBar::hide);
     connect(crumbBar, &CrumbBar::selectedUrl, this, [this](const QUrl &url) {
         TitleBarEventCaller::sendCd(this, url);

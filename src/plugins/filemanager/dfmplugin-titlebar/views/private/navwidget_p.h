@@ -23,10 +23,13 @@
 #define NAVWIDGET_P_H
 
 #include "dfmplugin_titlebar_global.h"
+#include "utils/historystack.h"
 
 #include <DButtonBox>
 #include <QObject>
 #include <QHBoxLayout>
+
+#include <memory>
 
 DPTITLEBAR_BEGIN_NAMESPACE
 class NavWidget;
@@ -34,18 +37,22 @@ class NavWidgetPrivate : public QObject
 {
     Q_OBJECT
     friend class NavWidget;
-    NavWidget *const q;
-    Dtk::Widget::DButtonBox *buttonBox = nullptr;
-    Dtk::Widget::DButtonBoxButton *navBackButton = nullptr;
-    Dtk::Widget::DButtonBoxButton *navForwardButton = nullptr;
-    QHBoxLayout *hboxLayout = nullptr;
-    int listIdx = -1;
-    QList<QUrl> urlCacheList {};
+
+public:
+    static constexpr int kMaxStackCount = UINT16_MAX;
 
     explicit NavWidgetPrivate(NavWidget *qq);
+    void updateBackForwardButtonsState();
 
-private Q_SLOTS:
-    void doButtonClicked();
+private:
+    NavWidget *const q;
+    Dtk::Widget::DButtonBox *buttonBox { nullptr };
+    Dtk::Widget::DButtonBoxButton *navBackButton { nullptr };
+    Dtk::Widget::DButtonBoxButton *navForwardButton { nullptr };
+    QHBoxLayout *hboxLayout { nullptr };
+    QUrl currentUrl {};
+    std::shared_ptr<HistoryStack> curNavStack { nullptr };
+    QList<std::shared_ptr<HistoryStack>> allNavStacks;
 };
 DPTITLEBAR_END_NAMESPACE
 

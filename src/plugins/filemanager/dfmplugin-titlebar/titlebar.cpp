@@ -26,8 +26,10 @@
 #include "utils/crumbmanager.h"
 #include "views/titlebarwidget.h"
 #include "events/titlebarunicastreceiver.h"
+#include "events/titlebareventreceiver.h"
 
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/filemanager/workspace/workspace_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 #include "dfm-base/base/urlroute.h"
 
@@ -58,11 +60,23 @@ void TitleBar::initialize()
         return interface;
     });
 
+    // event has been sended before the Window showed
+    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kTabAdded,
+                                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabAdded);
+    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kTabChanged,
+                                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabChanged);
+
     TitleBarUnicastReceiver::instance()->connectService();
 }
 
 bool TitleBar::start()
 {
+    DSB_FM_USE_NAMESPACE
+
+    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kTabMoved,
+                                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabMoved);
+    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kTabRemoved,
+                                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabRemovd);
     return true;
 }
 
@@ -73,12 +87,21 @@ dpf::Plugin::ShutdownFlag TitleBar::stop()
 
 void TitleBar::onWindowOpened(quint64 windId)
 {
+    DFMBASE_USE_NAMESPACE
+
     auto window = GlobalPrivate::windowService->findWindowById(windId);
     Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
     TitleBarWidget *titleBar = new TitleBarWidget;
     window->installTitleBar(titleBar);
     window->installTitleMenu(TitleBarHelper::createSettingsMenu(windId));
     TitleBarHelper::addTileBar(windId, titleBar);
+
+    Q_ASSERT(titleBar->navWidget());
+    connect(window, &FileManagerWindow::reqBack, titleBar->navWidget(), &NavWidget::back);
+    connect(window, &FileManagerWindow::reqForward, titleBar->navWidget(), &NavWidget::forward);
+    // First window's tab created before first url changed in titlebar
+    connect(window, &FileManagerWindow::workspaceInstallFinished, titleBar->navWidget(),
+            &NavWidget::onNewWindowOpended);
 }
 
 void TitleBar::onWindowClosed(quint64 windId)

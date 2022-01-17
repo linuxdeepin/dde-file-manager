@@ -38,8 +38,6 @@ enum GlobalEventType {
     kOpenNewWindow,
     kOpenNewTab,
     kOpenUrl,
-    kBack,
-    kForward,
     kSaveOperator,   // save operator
     kCleanSaveOperator,   // Ctrl+Z
     kRevocation,
@@ -58,7 +56,7 @@ enum GlobalEventType {
     kPasteFile,
     kCutFile,
 
-    // first user event id, use EventManager::registerEventType crreate custom event type
+    // first user event id, use UniversalUtils::registerEventType crreate custom event type
     kCustomBase = 1000,   // first user event id
     kMaxCustom = 65535   // last user event id
 };

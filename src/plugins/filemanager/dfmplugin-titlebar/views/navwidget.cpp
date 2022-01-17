@@ -21,48 +21,137 @@
  */
 #include "views/private/navwidget_p.h"
 #include "views/navwidget.h"
+#include "events/titlebareventcaller.h"
+
+#include <QAbstractButton>
 
 DPTITLEBAR_USE_NAMESPACE
-
-void NavWidgetPrivate::doButtonClicked()
-{
-    if (!sender() || listIdx == -1) return;
-
-    if (sender() == navBackButton) {
-        if (0 == listIdx) {
-            Q_EMIT q->releaseUrl(urlCacheList[listIdx]);
-            return;   // 头节点
-        }
-        Q_EMIT q->releaseUrl(urlCacheList[--listIdx]);
-        return;
-    }
-
-    if (sender() == navForwardButton) {
-        if (urlCacheList.size() - 1 == listIdx) {
-            Q_EMIT q->releaseUrl(urlCacheList[listIdx]);   // 尾节点
-            return;
-        }
-        q->releaseUrl(urlCacheList[++listIdx]);
-        return;
-    }
-}
 
 NavWidgetPrivate::NavWidgetPrivate(NavWidget *qq)
     : QObject(qq), q(qq)
 {
 }
 
+void NavWidgetPrivate::updateBackForwardButtonsState()
+{
+    if (!curNavStack || curNavStack->size() <= 1) {
+        navBackButton->setEnabled(false);
+        navForwardButton->setEnabled(false);
+    } else {
+        if (curNavStack->isFirst()) {
+            navBackButton->setEnabled(false);
+        } else {
+            navBackButton->setEnabled(true);
+        }
+
+        if (curNavStack->isLast()) {
+            navForwardButton->setEnabled(false);
+        } else {
+            navForwardButton->setEnabled(true);
+        }
+    }
+}
+
 NavWidget::NavWidget(QWidget *parent)
     : QWidget(parent), d(new NavWidgetPrivate(this))
 {
-    if (!d->navBackButton)
-        d->navBackButton = new DButtonBoxButton(QStyle::SP_ArrowBack);
-    if (!d->navForwardButton)
-        d->navForwardButton = new DButtonBoxButton(QStyle::SP_ArrowForward);
-    if (!d->buttonBox)
-        d->buttonBox = new DButtonBox;
-    if (!d->hboxLayout)
-        d->hboxLayout = new QHBoxLayout;
+    initializeUi();
+    initConnect();
+}
+
+void NavWidget::pushUrlToHistoryStack(const QUrl &url)
+{
+    if (!d->curNavStack)
+        return;
+
+    d->curNavStack->append(url);
+    d->updateBackForwardButtonsState();
+}
+
+void NavWidget::back()
+{
+    QUrl &&url = d->curNavStack->back();
+
+    if (!url.isEmpty()) {
+        d->updateBackForwardButtonsState();
+        TitleBarEventCaller::sendCd(this, url);
+    }
+}
+
+void NavWidget::forward()
+{
+    QUrl &&url = d->curNavStack->forward();
+
+    if (!url.isEmpty()) {
+        d->updateBackForwardButtonsState();
+        TitleBarEventCaller::sendCd(this, url);
+    }
+}
+
+void NavWidget::addHistroyStack()
+{
+    d->allNavStacks.append(std::shared_ptr<HistoryStack>(new HistoryStack(NavWidgetPrivate::kMaxStackCount)));
+}
+
+void NavWidget::moveNavStacks(int from, int to)
+{
+    d->allNavStacks.move(from, to);
+}
+
+void NavWidget::removeNavStackAt(int index)
+{
+    d->allNavStacks.removeAt(index);
+
+    if (index < d->allNavStacks.count())
+        d->curNavStack = d->allNavStacks.at(index);
+    else
+        d->curNavStack = d->allNavStacks.at(d->allNavStacks.count() - 1);
+
+    if (!d->curNavStack)
+        return;
+    if (d->curNavStack->size() > 1)
+        d->navBackButton->setEnabled(true);
+    else
+        d->navBackButton->setEnabled(false);
+
+    if (d->curNavStack->isLast())
+        d->navForwardButton->setEnabled(false);
+    else
+        d->navForwardButton->setEnabled(true);
+}
+
+void NavWidget::switchHistoryStack(const int index)
+{
+    d->curNavStack = d->allNavStacks.at(index);
+    if (!d->curNavStack)
+        return;
+    d->updateBackForwardButtonsState();
+}
+
+void NavWidget::onUrlChanged(const QUrl &url)
+{
+    d->currentUrl = url;
+    pushUrlToHistoryStack(url);
+}
+
+void NavWidget::onNewWindowOpended()
+{
+    addHistroyStack();
+    pushUrlToHistoryStack(d->currentUrl);
+}
+
+void NavWidget::initializeUi()
+{
+    d->navBackButton = new DButtonBoxButton(QStyle::SP_ArrowBack);
+    d->navBackButton->setDisabled(true);
+    d->navBackButton->setFixedWidth(36);
+
+    d->navForwardButton = new DButtonBoxButton(QStyle::SP_ArrowForward);
+    d->navForwardButton->setDisabled(true);
+    d->navForwardButton->setFixedWidth(36);
+
+    d->buttonBox = new DButtonBox;
+    d->hboxLayout = new QHBoxLayout;
 
     d->buttonBox->setButtonList({ d->navBackButton, d->navForwardButton }, false);
     this->setLayout(d->hboxLayout);
@@ -70,73 +159,13 @@ NavWidget::NavWidget(QWidget *parent)
 
     d->hboxLayout->setSpacing(0);
     d->hboxLayout->setContentsMargins(0, 0, 0, 0);
-
-    QObject::connect(d->navBackButton, &DButtonBoxButton::clicked,
-                     d, &NavWidgetPrivate::doButtonClicked,
-                     Qt::UniqueConnection);
-
-    QObject::connect(d->navForwardButton, &DButtonBoxButton::clicked,
-                     d, &NavWidgetPrivate::doButtonClicked,
-                     Qt::UniqueConnection);
 }
 
-DButtonBoxButton *NavWidget::navBackButton() const
+void NavWidget::initConnect()
 {
-    return d->navBackButton;
-}
+    DSB_FM_USE_NAMESPACE
+    DFMBASE_USE_NAMESPACE
 
-void NavWidget::setNavBackButton(DButtonBoxButton *navBackButton)
-{
-    if (!d->navBackButton) return;
-
-    if (d->navBackButton) {
-        delete d->navBackButton;
-        d->navBackButton = nullptr;
-    }
-
-    if (!d->navBackButton)
-        d->navBackButton = navBackButton;
-
-    if (d->navBackButton->icon().isNull())
-        d->navBackButton->setIcon(QStyle::SP_ArrowBack);
-
-    d->buttonBox->setButtonList({ d->navBackButton, d->navForwardButton }, false);
-}
-
-DButtonBoxButton *NavWidget::navForwardButton() const
-{
-    return d->navForwardButton;
-}
-
-void NavWidget::setNavForwardButton(DButtonBoxButton *navForwardButton)
-{
-    if (!d->navForwardButton) return;
-
-    if (d->navForwardButton) {
-        delete d->navForwardButton;
-        d->navForwardButton = nullptr;
-    }
-
-    if (!d->navForwardButton)
-        d->navForwardButton = navForwardButton;
-
-    if (d->navBackButton->icon().isNull())
-        d->navBackButton->setIcon(QStyle::SP_ArrowForward);
-
-    d->buttonBox->setButtonList({ d->navBackButton, d->navForwardButton }, false);
-}
-
-void NavWidget::appendUrl(const QUrl &url)
-{
-    //始终保持指针指向最后
-
-    if (d->listIdx >= 0
-        && d->listIdx < d->urlCacheList.size()) {
-        if (d->urlCacheList[d->listIdx] == url) {
-            return;   //略过当前目录的重复点击
-        }
-    }
-
-    d->urlCacheList.append(url);
-    d->listIdx = d->urlCacheList.size() - 1;
+    connect(d->navBackButton, &QAbstractButton::clicked, this, &NavWidget::back);
+    connect(d->navForwardButton, &QAbstractButton::clicked, this, &NavWidget::forward);
 }

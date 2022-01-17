@@ -47,6 +47,9 @@ int TabBar::createTab(AbstractBaseView *view)
     tabList.append(tab);
     scene->addItem(tab);
 
+    quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
+    WorkspaceEventCaller::sendTabAdded(thisWinID);
+
     if (isHidden() && count() >= 2) {
         show();
         emit tabBarShown();
@@ -69,9 +72,6 @@ int TabBar::createTab(AbstractBaseView *view)
     lastAddTabState = false;
 
     tabAddableChanged(count() < kMaxTabCount);
-
-    quint64 thisWinID = WorkspaceHelper::instance()->windowId(qobject_cast<QWidget *>(parent()));
-    WorkspaceEventCaller::sendTabAdded(thisWinID);
 
     return index;
 }

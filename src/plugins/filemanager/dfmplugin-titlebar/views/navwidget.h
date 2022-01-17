@@ -32,6 +32,7 @@
 DWIDGET_USE_NAMESPACE
 
 DPTITLEBAR_BEGIN_NAMESPACE
+class HistoryStack;
 class NavWidgetPrivate;
 class NavWidget : public QWidget
 {
@@ -41,14 +42,22 @@ class NavWidget : public QWidget
 
 public:
     explicit NavWidget(QWidget *parent = nullptr);
-    DButtonBoxButton *navBackButton() const;
-    DButtonBoxButton *navForwardButton() const;
-    void setNavBackButton(DButtonBoxButton *navBackButton);
-    void setNavForwardButton(DButtonBoxButton *navForwardButton);
-public Q_SLOTS:
-    void appendUrl(const QUrl &url);
-Q_SIGNALS:
-    void releaseUrl(const QUrl &url);
+    void pushUrlToHistoryStack(const QUrl &url);
+
+    void addHistroyStack();
+    void moveNavStacks(int from, int to);
+    void removeNavStackAt(int index);
+    void switchHistoryStack(const int index);
+
+public slots:
+    void onUrlChanged(const QUrl &url);
+    void onNewWindowOpended();
+    void back();
+    void forward();
+
+private:
+    void initializeUi();
+    void initConnect();
 };
 DPTITLEBAR_END_NAMESPACE
 

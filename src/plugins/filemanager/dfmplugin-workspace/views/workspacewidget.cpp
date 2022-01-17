@@ -119,8 +119,9 @@ void WorkspaceWidget::onCurrentTabChanged(int tabIndex)
     Tab *tab = tabBar->tabAt(tabIndex);
     if (tab) {
         auto windowID = WorkspaceHelper::instance()->windowId(this);
-        WorkspaceEventCaller::sendChangeCurrentUrl(windowID, tab->getCurrentUrl());
+        // switch tab must before change url! otherwise NavWidget can not work!
         WorkspaceEventCaller::sendTabChanged(windowID, tabIndex);
+        WorkspaceEventCaller::sendChangeCurrentUrl(windowID, tab->getCurrentUrl());
     }
 }
 
