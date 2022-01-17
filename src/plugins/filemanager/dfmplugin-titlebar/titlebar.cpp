@@ -102,6 +102,8 @@ void TitleBar::onWindowOpened(quint64 windId)
     // First window's tab created before first url changed in titlebar
     connect(window, &FileManagerWindow::workspaceInstallFinished, titleBar->navWidget(),
             &NavWidget::onNewWindowOpended);
+    connect(window, &FileManagerWindow::reqSearchCtrlF, titleBar, &TitleBarWidget::handleHotkeyCtrlF);
+    connect(window, &FileManagerWindow::reqSearchCtrlL, titleBar, &TitleBarWidget::handleHotkeyCtrlL);
 }
 
 void TitleBar::onWindowClosed(quint64 windId)

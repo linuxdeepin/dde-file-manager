@@ -43,6 +43,7 @@ public:
 
     explicit AddressBar(QWidget *parent = nullptr);
     bool completerViewVisible();
+    void setCurrentUrl(const QUrl &url);
 
 protected:
     bool event(QEvent *e) override;

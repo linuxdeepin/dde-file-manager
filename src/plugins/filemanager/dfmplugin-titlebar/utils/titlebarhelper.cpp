@@ -25,6 +25,7 @@
 
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/filemanager/workspace/workspaceservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -32,6 +33,8 @@
 #include "dfm-base/utils/systempathutil.h"
 
 #include <dfm-framework/framework.h>
+
+#include <QGSettings>
 
 DPTITLEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -159,6 +162,23 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
     }
 
     return list;
+}
+
+bool TitleBarHelper::displayIcon()
+{
+    QGSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
+    return settings.get("context-menu-icons").toBool();
+}
+
+bool TitleBarHelper::tabAddable(quint64 windowId)
+{
+
+    auto &ctx = dpfInstance.serviceContext();
+    auto workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
+    if (workspaceService)
+        return workspaceService->tabAddable(windowId);
+
+    return false;
 }
 
 QMutex &TitleBarHelper::mutex()

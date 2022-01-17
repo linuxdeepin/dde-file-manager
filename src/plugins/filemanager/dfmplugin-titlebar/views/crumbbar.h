@@ -49,6 +49,7 @@ public:
 Q_SIGNALS:
     void hideAddressBar();
     void selectedUrl(const QUrl &url);
+    void editUrl(const QUrl &url);
 
 public Q_SLOTS:
     void onCustomContextMenu(const QPoint &point);

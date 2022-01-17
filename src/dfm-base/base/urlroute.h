@@ -76,6 +76,7 @@ public:
     static QString rootPath(const QString &scheme);
     static QUrl rootUrl(const QString &scheme);
     static QString urlToPath(const QUrl &url);
+    static QString urlToLocalPath(const QUrl &url);
     static QUrl fromLocalFile(const QString &path);
     static QUrl pathToReal(const QString &path);
     static QUrl pathToUrl(const QString &path, const QString &scheme);

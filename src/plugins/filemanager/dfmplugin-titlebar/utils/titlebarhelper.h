@@ -46,6 +46,8 @@ public:
     static QMenu *createSettingsMenu(quint64 id);
     static bool crumbSupportedUrl(const QUrl &url);
     static QList<CrumbData> crumbSeprateUrl(const QUrl &url);
+    static bool displayIcon();
+    static bool tabAddable(quint64 windowId);
 
 private:
     static QMutex &mutex();

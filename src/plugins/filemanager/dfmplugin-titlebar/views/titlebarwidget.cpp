@@ -54,6 +54,16 @@ NavWidget *TitleBarWidget::navWidget() const
     return curNavWidget;
 }
 
+void TitleBarWidget::handleHotkeyCtrlF()
+{
+    onSearchButtonClicked();
+}
+
+void TitleBarWidget::handleHotkeyCtrlL()
+{
+    showAddrsssBar(currentUrl());
+}
+
 void TitleBarWidget::initializeUi()
 {
     setFocusPolicy(Qt::NoFocus);
@@ -118,6 +128,7 @@ void TitleBarWidget::initConnect()
     connect(crumbBar, &CrumbBar::selectedUrl, this, [this](const QUrl &url) {
         TitleBarEventCaller::sendCd(this, url);
     });
+    connect(crumbBar, &CrumbBar::editUrl, this, &TitleBarWidget::showAddrsssBar);
 
     connect(addressBar, &AddressBar::escKeyPressed, this, [this]() {
         if (crumbBar->controller())
@@ -130,11 +141,12 @@ void TitleBarWidget::initConnect()
     // TODO(zhangs): addressbar clear, pause
 }
 
-void TitleBarWidget::showAddrsssBar()
+void TitleBarWidget::showAddrsssBar(const QUrl &url)
 {
     crumbBar->hide();
     addressBar->show();
     addressBar->setFocus();
+    addressBar->setCurrentUrl(url);
 }
 
 void TitleBarWidget::showCrumbBar()
@@ -184,6 +196,6 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
 
 void TitleBarWidget::onSearchButtonClicked()
 {
-    showAddrsssBar();
+    showAddrsssBar(QUrl());
     searchButton->hide();
 }

@@ -309,6 +309,15 @@ QString UrlRoute::urlToPath(const QUrl &url)
     return result;
 }
 
+QString UrlRoute::urlToLocalPath(const QUrl &url)
+{
+    if (!url.isValid())
+        return {};
+    QUrl localUrl { url };
+    localUrl.setScheme(SchemeTypes::kFile);
+    return localUrl.toString().replace(0, 4, url.scheme());
+}
+
 /*!
  * \brief SchemeNode::icon 获取文件icon
  * \return QIcon 文件的ICON实例

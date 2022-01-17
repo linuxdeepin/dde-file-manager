@@ -56,3 +56,13 @@ void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
     Q_ASSERT(id > 0);
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
 }
+
+void TitleBarEventCaller::sendOpenWindow(const QUrl &url)
+{
+    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, url);
+}
+
+void TitleBarEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
+{
+    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewTab, windowId, url);
+}

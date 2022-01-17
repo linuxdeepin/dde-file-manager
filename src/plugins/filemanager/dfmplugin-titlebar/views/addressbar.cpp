@@ -36,6 +36,13 @@ bool AddressBar::completerViewVisible()
     return d->completerView->isVisible();
 }
 
+void AddressBar::setCurrentUrl(const QUrl &url)
+{
+    QString text = url.isLocalFile() ? url.toLocalFile() : UrlRoute::urlToLocalPath(url.toString());
+    this->setText(text);
+    this->setSelection(0, text.length());
+}
+
 bool AddressBar::event(QEvent *e)
 {
     // blumia: When window lost focus and then get activated, we should hide

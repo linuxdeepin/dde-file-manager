@@ -27,8 +27,6 @@
 
 #include <dfm-framework/framework.h>
 
-DWIDGET_USE_NAMESPACE
-
 DSB_FM_BEGIN_NAMESPACE
 
 class WindowsServicePrivate;

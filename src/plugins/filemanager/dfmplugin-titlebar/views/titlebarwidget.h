@@ -45,10 +45,14 @@ public:
     QUrl currentUrl() const override;
     NavWidget *navWidget() const;
 
+public slots:
+    void handleHotkeyCtrlF();
+    void handleHotkeyCtrlL();
+
 private:
     void initializeUi();
     void initConnect();
-    void showAddrsssBar();   // switch addrasssBar and crumbBar show
+    void showAddrsssBar(const QUrl &url);   // switch addrasssBar and crumbBar show
     void showCrumbBar();
     void showSearchButton();
     void showSearchFilterButton();

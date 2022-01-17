@@ -23,13 +23,15 @@
 #include "views/crumbbar.h"
 #include "models/crumbmodel.h"
 #include "utils/crumbmanager.h"
+#include "utils/titlebarhelper.h"
+#include "events/titlebareventcaller.h"
 
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 
 #include <DListView>
-
+#include <QGSettings>
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QScrollBar>
@@ -348,7 +350,41 @@ void CrumbBar::onCustomContextMenu(const QPoint &point)
     QModelIndex index = d->crumbView.indexAt(point);
     if (!index.isValid())
         return;
-    qInfo() << "need add mouse right clicked menu show logic";
+
+    quint64 id { window()->internalWinId() };
+    bool tabAddable { TitleBarHelper::tabAddable(id) };
+    bool displayIcon { TitleBarHelper::displayIcon() };
+    QMenu *menu { new QMenu() };
+    QUrl url { index.data(CrumbModel::FileUrlRole).toUrl() };
+    QIcon copyIcon, newWndIcon, newTabIcon, editIcon;
+    if (displayIcon) {
+        copyIcon = QIcon::fromTheme("edit-copy");
+        newWndIcon = QIcon::fromTheme("window-new");
+        newTabIcon = QIcon::fromTheme("tab-new");
+        editIcon = QIcon::fromTheme("entry-edit");
+    }
+
+    menu->addAction(copyIcon, QObject::tr("Copy path"), [url]() {
+        QGuiApplication::clipboard()->setText(url.toString());
+    });
+
+    menu->addAction(newWndIcon, QObject::tr("Open in new window"), [url]() {
+        TitleBarEventCaller::sendOpenWindow(url);
+    });
+
+    QAction *tabAct = menu->addAction(newTabIcon, QObject::tr("Open in new tab"), [url, id]() {
+        TitleBarEventCaller::sendOpenTab(id, url);
+    });
+    tabAct->setDisabled(!tabAddable);
+
+    menu->addSeparator();
+
+    menu->addAction(editIcon, QObject::tr("Edit address"), this, [this, url]() {
+        emit this->editUrl(url);
+    });
+
+    menu->exec(QCursor::pos());
+    delete menu;
 }
 
 void CrumbBar::onUrlChanged(const QUrl &url)

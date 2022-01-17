@@ -41,6 +41,8 @@ public:
     static void sendSettingsMenuTriggered(quint64 windowId, DSB_FM_NAMESPACE::TitleBar::MenuAction action);
     static void sendDetailViewState(QWidget *sender, bool checked);
     static void sendCd(QWidget *sender, const QUrl &url);
+    static void sendOpenWindow(const QUrl &url);
+    static void sendOpenTab(quint64 windowId, const QUrl &url);
 };
 
 DPTITLEBAR_END_NAMESPACE
