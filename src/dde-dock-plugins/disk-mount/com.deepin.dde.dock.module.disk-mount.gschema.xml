@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<schemalist>
+
+  <schema path="/com/deepin/dde/dock/module/disk-mount/" id="com.deepin.dde.dock.module.disk-mount" gettext-domain="dde-dock-disk-mount">
+
+    <key type="b" name="control">
+      <default>false</default>
+      <summary>Blocking event</summary>
+      <description>
+            Blocking mouse events
+      </description>
+    </key>
+    <key type="b" name="enable">
+      <default>true</default>
+      <summary>Module Enable</summary>
+      <description>
+            Control Module Enable
+      </description>
+    </key>
+
+    <key name='filemanager-integration' type='b'>
+      <default>true</default>
+      <summary>Able to integration with file manager app</summary>
+      <description>
+        If enabled, it's able to integrate with file manager.
+        If disabled, will not try to open up file manager in any case.
+      </description>
+    </key>
+
+    <key name='protect-non-media-mounts' type='b'>
+      <default>true</default>
+      <summary>Hide the item and do not allowed eject or unmount if mount point is not under /media</summary>
+      <description>
+        If enabled, mounts which not mounted under /media will not allowed to eject or unmount.
+      </description>
+    </key>
+
+    <key name='protect-root-device-mounts' type='b'>
+      <default>true</default>
+      <summary>Hide the item and do not allowed eject or unmount if the mount device provided root (/) mount point</summary>
+      <description>
+        If enabled, mounts which on the same device as root (/) mount will not allowed to eject or unmount.
+      </description>
+    </key>
+
+  </schema>
+
+</schemalist>

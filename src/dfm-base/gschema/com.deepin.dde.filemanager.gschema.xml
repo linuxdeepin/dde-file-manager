@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<schemalist>
+
+  <schema path="/com/deepin/dde/filemanager/general/" id="com.deepin.dde.filemanager.general" gettext-domain="dde-file-manager-general">
+
+    <key name='context-menu-icons' type='b'>
+      <default>false</default>
+      <summary>Show icons in context menu</summary>
+      <description>
+        If enabled, icons can be displayed in context menu.
+        If disabled, context menu will not have any icons.
+      </description>
+    </key>
+
+    <key name='property-dlg-hidefile-checkbox' type='b'>
+      <default>true</default>
+      <summary>Display a checkbox to hide or unhide a file in property dialog</summary>
+      <description>
+        If enabled, there will be a checkbox to toggle hide state of a file in property dialog.
+        There will be a '.hidden' file generated in the folder which contains the file, which
+        recorded all the file names that should hide from the file view.
+      </description>
+    </key>
+
+    <key name='protect-non-media-mounts' type='b'>
+      <default>true</default>
+      <summary>Do not allowed eject or unmount if mount point is not under /media</summary>
+      <description>
+        If enabled, mounts which not mounted under /media will not allowed to eject or unmount.
+      </description>
+    </key>
+
+    <key name='protect-root-device-mounts' type='b'>
+      <default>true</default>
+      <summary>Do not allowed eject or unmount if the mount device provided root (/) mount point</summary>
+      <description>
+        If enabled, mounts which on the same device as root (/) mount will not allowed to eject or unmount.
+      </description>
+    </key>
+
+  </schema>
+
+  <schema path="/com/deepin/dde/filemanager/desktop/" id="com.deepin.dde.filemanager.desktop" gettext-domain="dde-file-manager-desktop">
+
+    <key name='auto-merge' type='b'>
+      <default>true</default>
+      <summary>Wether use auto merge on the desktop</summary>
+      <description>
+        If enabled, auto merge menu will display on the desktop.
+        If disabled, auto merge menu will not display on the desktop.
+      </description>
+    </key>
+
+    <key name='water-mask' type='b'>
+      <default>true</default>
+      <summary>Wether use watermask on the desktop</summary>
+      <description>
+        If enabled, watermask will display on the desktop.
+        If disabled, watermask will not display on the desktop.s
+      </description>
+    </key>
+
+    <key name='show-screen-saver' type='b'>
+      <default>true</default>
+      <summary>Wether use screen saver on the desktop</summary>
+      <description>
+        If enabled, screen saver will display on the desktop.
+        If disabled, screen saver will not display on the desktop.s
+      </description>
+    </key>
+
+    <key name='context-menu' type='b'>
+      <default>true</default>
+      <summary>Wether use context menu on the desktop</summary>
+      <description>
+        If enabled, context menu will display on the desktop.
+        If disabled, context menu will not display on the desktop.s
+      </description>
+    </key>
+
+    <key name='desktop-computer' type='b'>
+      <default>true</default>
+      <summary>Wether use desktop computer on the desktop</summary>
+      <description>
+        If enabled, desktop computer will display on the desktop.
+        If disabled, desktop computer will not display on the desktop.s
+      </description>
+    </key>
+
+    <key name='desktop-trash' type='b'>
+      <default>true</default>
+      <summary>Wether use desktop trash on the desktop</summary>
+      <description>
+        If enabled, desktop trash will display on the desktop.
+        If disabled, desktop trash will not display on the desktop.s
+      </description>
+    </key>
+
+    <key name='desktop-home-directory' type='b'>
+      <default>true</default>
+      <summary>Wether use desktop home directory on the desktop</summary>
+      <description>
+        If enabled, desktop home directory will display on the desktop.
+        If disabled, desktop home directory will not display on the desktop.s
+      </description>
+    </key>
+
+  </schema>
+
+</schemalist>

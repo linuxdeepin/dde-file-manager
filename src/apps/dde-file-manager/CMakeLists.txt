@@ -32,4 +32,7 @@ target_link_libraries(
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
+# desktop
+install(FILES dde-file-manager.desktop DESTINATION share/applications)
+
 # TODO(zhangs): translation

@@ -1,4 +1,1 @@
-usr/lib/*/dde-file-manager/plugins/libddplugin-core.so
-usr/lib/*/dde-file-manager/plugins/libdfmplugin-core.so
-usr/lib/*/dde-file-manager/plugins/libdfmplugin-recent.so
-usr/lib/*/dde-file-manager/plugins/libdfmsplugin-interfaces.so
+usr/lib/*/dde-file-manager/plugins/*.so

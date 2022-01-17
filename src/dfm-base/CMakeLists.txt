@@ -175,3 +175,11 @@ install(DIRECTORY
     PATTERN "private" EXCLUDE
     PATTERN "resources" EXCLUDE  
 )
+
+# schemas
+FILE(GLOB SCHEMA_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/gschema/*.xml"
+)
+
+install(FILES ${SCHEMA_FILES} DESTINATION share/glib-2.0/schemas)
+install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")

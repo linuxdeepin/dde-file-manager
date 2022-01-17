@@ -97,4 +97,8 @@ set(CMAKE_INSTALL_PREFIX "/usr")
 
 install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib/dde-dock/plugins/system-trays)
 
+# schemas
+install(FILES com.deepin.dde.dock.module.disk-mount.gschema.xml DESTINATION share/glib-2.0/schemas)
+install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")
+
 # TODO(zhangs): translation
