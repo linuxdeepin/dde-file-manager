@@ -212,30 +212,17 @@ long BlockEntryFileEntity::sizeUsage() const
     return getProperty(DeviceProperty::kSizeUsed).toLongLong();
 }
 
-QString BlockEntryFileEntity::fileSystem() const
-{
-    if (getProperty(DeviceProperty::kMountpoint).toString().isEmpty())
-        return {};
-
-    return getProperty(DeviceProperty::kFilesystem).toString();
-}
-
 void BlockEntryFileEntity::refresh()
 {
     auto id = QString(DeviceId::kBlockDeviceIdPrefix)
             + entryUrl.path().remove("." + QString(SuffixInfo::kBlock));
 
-    datas = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id, true);
+    datas = convertFromQMap(DeviceManagerInstance.invokeQueryBlockDeviceInfo(id, true));
     auto clearBlkId = datas.value(DeviceProperty::kCleartextDevice).toString();
     if (datas.value(DeviceProperty::kIsEncrypted).toBool() && clearBlkId.length() > 1) {
         auto clearBlkData = DeviceManagerInstance.invokeQueryBlockDeviceInfo(clearBlkId, true);
         datas.insert(AdditionalProperty::kClearBlockProperty, clearBlkData);
     }
-}
-
-bool BlockEntryFileEntity::removable() const
-{
-    return datas.value(DeviceProperty::kRemovable).toBool();
 }
 
 QMenu *BlockEntryFileEntity::createMenu()
@@ -283,21 +270,6 @@ QUrl BlockEntryFileEntity::targetUrl() const
     return target;
 }
 
-bool BlockEntryFileEntity::isEncrypted() const
-{
-    return datas.value(DeviceProperty::kIsEncrypted).toBool();
-}
-
-bool BlockEntryFileEntity::isUnlocked() const
-{
-    return datas.value(DeviceProperty::kCleartextDevice).toString() != "/";
-}
-
-QString BlockEntryFileEntity::clearDeviceId() const
-{
-    return datas.value(DeviceProperty::kCleartextDevice, "").toString();
-}
-
 bool BlockEntryFileEntity::isAccessable() const
 {
     if (isEncrypted())
@@ -314,6 +286,11 @@ bool BlockEntryFileEntity::renamable() const
             return true;
         return false;
     }
+}
+
+QVariantHash BlockEntryFileEntity::extraProperties() const
+{
+    return datas;
 }
 
 QString BlockEntryFileEntity::getNameOrAlias() const
@@ -417,4 +394,15 @@ bool BlockEntryFileEntity::showSizeAndProgress() const
     }
 
     return true;
+}
+
+QVariantHash BlockEntryFileEntity::convertFromQMap(const QVariantMap &orig)
+{
+    QVariantHash ret;
+    auto iter = orig.cbegin();
+    while (iter != orig.cend()) {
+        ret.insert(iter.key(), iter.value());
+        iter += 1;
+    }
+    return ret;
 }

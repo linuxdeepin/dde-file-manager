@@ -50,7 +50,6 @@ public:
     void onOpenItem(quint64 winId, const QUrl &url);
     void onMenuRequest(quint64 winId, const QUrl &url, bool triggerFromSidebar);
     void doRename(quint64 winId, const QUrl &url, const QString &name);
-
     void doSetAlias(DFMEntryFileInfoPointer info, const QString &alias);
 
     void mountDevice(quint64 winId, const DFMEntryFileInfoPointer info, ActionAfterMount act = kEnterDirectory);
@@ -70,6 +69,7 @@ public:
 
 Q_SIGNALS:
     void requestRename(quint64 winId, const QUrl &url);
+    void updateItemAlias(const QUrl &url);
 
 private:
     explicit ComputerController(QObject *parent = nullptr);

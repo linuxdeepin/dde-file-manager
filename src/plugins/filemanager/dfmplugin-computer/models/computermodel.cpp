@@ -27,10 +27,12 @@
 
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dbusservice/global_server_defines.h"
 
 #include <QVector>
 
 DPCOMPUTER_BEGIN_NAMESPACE
+using namespace GlobalServerDefines;
 
 ComputerModel::ComputerModel(QObject *parent)
     : QAbstractItemModel(parent)
@@ -96,7 +98,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         return item->info ? QVariant::fromValue<long>(item->info->sizeUsage()) : 0;
 
     case kFileSystemRole:
-        return item->info ? item->info->fileSystem() : "";
+        return item->info ? item->info->extraProperty(DeviceProperty::kFilesystem).toString() : "";
 
     case kRealUrlRole:
         return item->info ? item->info->targetUrl() : QUrl();
@@ -117,7 +119,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         return item->info ? item->info->showUsedSize() : false;
 
     case kDeviceNameMaxLengthRole:
-        return dfmbase::FileUtils::supportedMaxLength(item->info ? item->info->fileSystem() : "");
+        return dfmbase::FileUtils::supportedMaxLength(item->info ? item->info->extraProperty(DeviceProperty::kFilesystem).toString() : "");
 
     case kItemShapeTypeRole:
         return item->shape;
@@ -129,13 +131,17 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         return item->isEditing;
 
     case kDeviceIsEncrypted:
-        return item->info ? item->info->isEncrypted() : false;
+        return item->info ? item->info->extraProperty(DeviceProperty::kIsEncrypted).toBool() : false;
 
-    case kDeviceIsUnlocked:
-        return item->info ? item->info->isUnlocked() : false;
+    case kDeviceIsUnlocked: {
+        bool isUnlocked = false;
+        if (item->info)
+            isUnlocked = item->info->extraProperty(DeviceProperty::kCleartextDevice).toString().length() > 1;
+        return isUnlocked;
+    }
 
     case kDeviceClearDevId:
-        return item->info ? item->info->clearDeviceId() : "";
+        return item->info ? item->info->extraProperty(DeviceProperty::kCleartextDevice).toString() : "";
 
     default:
         return {};
@@ -191,7 +197,7 @@ int ComputerModel::findItem(const QUrl &target)
 int ComputerModel::findItemByClearDeviceId(const QString &id)
 {
     auto iter = std::find_if(items.cbegin(), items.cend(), [=](const ComputerItemData &item) {
-        return item.info ? item.info->clearDeviceId() == id : false;
+        return item.info ? item.info->extraProperty(DeviceProperty::kCleartextDevice).toString() == id : false;
     });
     if (iter != items.cend())
         return iter - items.cbegin();

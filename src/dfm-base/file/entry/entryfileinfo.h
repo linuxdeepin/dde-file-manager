@@ -88,17 +88,13 @@ public:
     long sizeTotal() const;
     long sizeUsage() const;
     long sizeFree() const;
-    QString fileSystem() const;
     bool showTotalSize() const;
     bool showUsedSize() const;
     bool showProgress() const;
-    bool removable() const;
     QUrl targetUrl() const;
     QMenu *createMenu() const;
-    bool isEncrypted() const;
-    bool isUnlocked() const;
-    QString clearDeviceId() const;
     bool isAccessable() const;
+    QVariant extraProperty(const QString &property) const;
 
     // AbstractFileInfo interface
     virtual bool exists() const override;
@@ -108,6 +104,7 @@ public:
     virtual QString path() const override;
     virtual QIcon fileIcon() const override;
     virtual void refresh() override;
+    virtual QVariantHash extraProperties() const override;
 
 private:
     EntryFileInfoPrivate *d = nullptr;

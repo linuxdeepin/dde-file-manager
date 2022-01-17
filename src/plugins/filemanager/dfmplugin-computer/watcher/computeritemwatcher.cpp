@@ -30,6 +30,7 @@
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
+#include "dbusservice/global_server_defines.h"
 
 #include <QDebug>
 #include <QApplication>
@@ -37,6 +38,7 @@
 
 DFMBASE_USE_NAMESPACE
 DPCOMPUTER_BEGIN_NAMESPACE
+using namespace GlobalServerDefines;
 
 /*!
  * \class ComputerItemWatcher
@@ -265,8 +267,8 @@ ComputerItemData ComputerItemWatcher::getGroup(ComputerItemWatcher::GroupType ty
 void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 {
     // additem to sidebar
-    if (Q_UNLIKELY(ComputerUtils::hideSystemPartition() && info->suffix() == SuffixInfo::kBlock && !info->removable()))
-        return;
+    bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool();
+    if (Q_UNLIKELY(ComputerUtils::hideSystemPartition() && info->suffix() == SuffixInfo::kBlock && !removable)) return;
 
     DSB_FM_USE_NAMESPACE;
     SideBar::ItemInfo sbItem;
@@ -280,7 +282,7 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     else
         sbItem.iconName = info->fileIcon().name() + "-symbolic";
     sbItem.text = info->displayName();
-    sbItem.removable = info->removable();
+    sbItem.removable = removable;
 
     sbItem.cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
     sbItem.contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };

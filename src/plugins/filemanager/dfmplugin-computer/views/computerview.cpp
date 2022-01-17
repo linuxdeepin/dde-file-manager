@@ -30,6 +30,7 @@
 
 #include "dfm-base/utils/devicemanager.h"
 
+#include "dbusservice/global_server_defines.h"
 #include <services/common/dialog/dialogservice.h>
 #include <services/filemanager/windows/windowsservice.h>
 #include <dfm-framework/framework.h>
@@ -42,6 +43,7 @@
 #include <QApplication>
 
 DPCOMPUTER_BEGIN_NAMESPACE
+using namespace GlobalServerDefines;
 
 ComputerView::ComputerView(const QUrl &url, QWidget *parent)
     : DListView(parent),
@@ -177,8 +179,12 @@ void ComputerView::initConnect()
     connect(this, &ComputerView::enterPressed, this, &ComputerView::cdTo);
 
     connect(this, &ComputerView::customContextMenuRequested, this, &ComputerView::onMenuRequest);
-    connect(ComputerControllerInstance, &ComputerController::requestRename, this, &ComputerView::onRenameRequest);
     connect(Application::instance(), &Application::genericAttributeChanged, this, &ComputerView::onAppAttrChanged);
+    connect(ComputerControllerInstance, &ComputerController::requestRename, this, &ComputerView::onRenameRequest);
+    connect(ComputerControllerInstance, &ComputerController::updateItemAlias, this, [this](const QUrl &url) {
+        int row = computerModel()->findItem(url);
+        this->update(computerModel()->index(row, 0));
+    });
 }
 
 void ComputerView::onMenuRequest(const QPoint &pos)
@@ -233,7 +239,8 @@ void ComputerView::hideSystemPartitions(bool hide)
         if (!item.url.path().endsWith(SuffixInfo::kBlock))
             continue;
 
-        if (item.info && !item.info->removable()) {
+        bool removable = item.info && item.info->extraProperty(DeviceProperty::kRemovable).toBool();
+        if (!removable) {
             this->setRowHidden(i, hide);
 
             if (hide)

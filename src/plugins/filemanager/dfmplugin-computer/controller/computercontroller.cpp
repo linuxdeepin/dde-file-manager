@@ -25,10 +25,14 @@
 #include "fileentity/appentryfileentity.h"
 #include "utils/computerutils.h"
 
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/file/entry/entities/blockentryfileentity.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "services/common/dialog/dialogservice.h"
+#include "dbusservice/global_server_defines.h"
 #include <dfm-framework/framework.h>
 
 #include <QDebug>
@@ -37,6 +41,7 @@
 
 DFMBASE_USE_NAMESPACE
 DPCOMPUTER_USE_NAMESPACE
+using namespace GlobalServerDefines;
 
 ComputerController *ComputerController::instance()
 {
@@ -93,19 +98,66 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
     Q_UNUSED(winId);
 
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
-    if (info->removable() && info->suffix() == SuffixInfo::kBlock) {
+    bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool();
+    if (removable && info->suffix() == SuffixInfo::kBlock) {
         QString devId = ComputerUtils::getBlockDevIdByUrl(url);   // for now only block devices can be renamed.
         DeviceManagerInstance.invokeRenameBlockDevice(devId, name);
         return;
     }
 
-    if (!info->removable())
+    if (!removable) {
         doSetAlias(info, name);
+    }
 }
 
 void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString &alias)
 {
-    // TODO(xust)}
+    QString uuid = info->extraProperty(DeviceProperty::kUUID).toString();
+    if (uuid.isEmpty()) {
+        qWarning() << "params exception!" << info->url();
+        return;
+    }
+
+    using namespace AdditionalProperty;
+    QString displayAlias = alias.trimmed();
+    QString displayName = info->displayName();
+    QVariantList list = Application::genericSetting()->value(kAliasGroupName, kAliasItemName).toList();
+
+    // [a] empty alias  -> remove from list
+    // [b] exists alias -> cover it
+    // [c] not exists   -> append
+    bool exists = false;
+    for (int i = 0; i < list.count(); i++) {
+        QVariantMap map = list.at(i).toMap();
+        if (map.value(kAliasItemUUID).toString() == uuid) {
+            if (displayAlias.isEmpty()) {   // [a]
+                list.removeAt(i);
+            } else {   // [b]
+                map[kAliasItemName] = displayName;
+                map[kAliasItemAlias] = displayAlias;
+                list[i] = map;
+            }
+            exists = true;
+            break;
+        }
+    }
+
+    // [c]
+    if (!exists && !displayAlias.isEmpty() && !uuid.isEmpty()) {
+        QVariantMap map;
+        map[kAliasItemUUID] = uuid;
+        map[kAliasItemName] = displayName;
+        map[kAliasItemAlias] = displayAlias;
+        list.append(map);
+        qInfo() << "append setting item: " << map;
+    }
+
+    Application::genericSetting()->setValue(kAliasGroupName, kAliasItemName, list);
+
+    // update sidebar and computer display
+    QString sidebarName = displayAlias.isEmpty() ? info->displayName() : displayAlias;
+    ComputerUtils::sbIns()->updateItem(info->url(), sidebarName, true);
+    Q_EMIT updateItemAlias(info->url());
 }
 
 void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointer info, ActionAfterMount act)
@@ -115,8 +167,8 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
         return;
     }
 
-    bool isEncrypted = info->isEncrypted();
-    bool isUnlocked = info->isUnlocked();
+    bool isEncrypted = info->extraProperty(DeviceProperty::kIsEncrypted).toBool();
+    bool isUnlocked = info->extraProperty(DeviceProperty::kCleartextDevice).toString().length() > 1;
     QString shellId = ComputerUtils::getBlockDevIdByUrl(info->url());
 
     if (isEncrypted) {
@@ -138,7 +190,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
                     mountDevice(winId, newID, act);
             });
         } else {
-            auto realDevId = info->clearDeviceId();
+            auto realDevId = info->extraProperty(DeviceProperty::kCleartextDevice).toString();
             mountDevice(winId, realDevId, act);
         }
     } else {
@@ -265,7 +317,7 @@ void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, 
         return;
     }
 
-    if (info->removable() && info->targetUrl().isValid()) {
+    if (info->extraProperty(DeviceProperty::kRemovable).toBool() && info->targetUrl().isValid()) {
         qWarning() << "cannot rename a mounted device! " << __FUNCTION__;
         return;
     }

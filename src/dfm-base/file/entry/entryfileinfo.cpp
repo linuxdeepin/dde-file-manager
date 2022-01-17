@@ -118,11 +118,6 @@ EntryFileInfo::EntryOrder EntryFileInfo::order() const
     return d->entity ? d->entity->order() : EntryOrder::kOrderFiles;
 }
 
-bool EntryFileInfo::removable() const
-{
-    return d->entity ? d->entity->removable() : false;
-}
-
 QUrl EntryFileInfo::targetUrl() const
 {
     return d->entity ? d->entity->targetUrl() : QUrl();
@@ -133,24 +128,15 @@ QMenu *EntryFileInfo::createMenu() const
     return d->entity ? d->entity->createMenu() : nullptr;
 }
 
-bool EntryFileInfo::isEncrypted() const
-{
-    return d->entity ? d->entity->isEncrypted() : false;
-}
-
-bool EntryFileInfo::isUnlocked() const
-{
-    return d->entity ? d->entity->isUnlocked() : false;
-}
-
-QString EntryFileInfo::clearDeviceId() const
-{
-    return d->entity ? d->entity->clearDeviceId() : "";
-}
-
 bool EntryFileInfo::isAccessable() const
 {
     return d->entity ? d->entity->isAccessable() : false;
+}
+
+QVariant EntryFileInfo::extraProperty(const QString &property) const
+{
+    auto properties = extraProperties();
+    return properties.contains(property) ? properties[property] : QVariant();
 }
 
 bool EntryFileInfo::renamable() const
@@ -176,11 +162,6 @@ long EntryFileInfo::sizeUsage() const
 long EntryFileInfo::sizeFree() const
 {
     return d->entity ? sizeTotal() - sizeUsage() : 0;
-}
-
-QString EntryFileInfo::fileSystem() const
-{
-    return d->entity ? d->entity->fileSystem() : "";
 }
 
 bool EntryFileInfo::showTotalSize() const
@@ -237,6 +218,11 @@ void EntryFileInfo::refresh()
 {
     if (d->entity)
         d->entity->refresh();
+}
+
+QVariantHash EntryFileInfo::extraProperties() const
+{
+    return d->entity ? d->entity->extraProperties() : QVariantHash();
 }
 
 DFMBASE_END_NAMESPACE

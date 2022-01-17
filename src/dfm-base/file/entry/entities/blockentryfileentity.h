@@ -26,6 +26,14 @@
 #include "dfm-base/dfm_base_global.h"
 #include "abstractentryfileentity.h"
 
+namespace AdditionalProperty {
+extern const char *const kClearBlockProperty;
+extern const char *const kAliasGroupName;
+extern const char *const kAliasItemName;
+extern const char *const kAliasItemUUID;
+extern const char *const kAliasItemAlias;
+}   // namespace AdditionalProperty
+
 DFMBASE_BEGIN_NAMESPACE
 
 class BlockEntryFileEntity : public AbstractEntryFileEntity
@@ -45,16 +53,12 @@ public:
 
     virtual long sizeTotal() const override;
     virtual long sizeUsage() const override;
-    virtual QString fileSystem() const override;
     virtual void refresh() override;
-    virtual bool removable() const override;
     virtual QMenu *createMenu() override;
     virtual QUrl targetUrl() const override;
-    virtual bool isEncrypted() const override;
-    virtual bool isUnlocked() const override;
-    virtual QString clearDeviceId() const override;
     virtual bool isAccessable() const override;
     virtual bool renamable() const override;
+    virtual QVariantHash extraProperties() const override;
 
 private:
     QString getNameOrAlias() const;
@@ -62,9 +66,12 @@ private:
     QString getIdLabel() const;
     QVariant getProperty(const char *const key) const;
     bool showSizeAndProgress() const;
+    QVariantHash convertFromQMap(const QVariantMap &orig);
 
 private:
-    QVariantMap datas;
+    QVariantHash datas;
+
+public:
 };
 
 DFMBASE_END_NAMESPACE

@@ -65,6 +65,7 @@ public:
     virtual QString clearDeviceId() const { return ""; }
     virtual bool isAccessable() const { return true; }
     virtual bool renamable() const { return false; }
+    virtual QVariantHash extraProperties() const { return {}; }
 
 protected:
     QUrl entryUrl {};
