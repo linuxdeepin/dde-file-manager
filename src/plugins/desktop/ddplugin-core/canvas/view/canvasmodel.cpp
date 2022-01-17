@@ -21,7 +21,9 @@
  */
 #include "canvasmodel.h"
 #include "filetreater.h"
+
 #include "dfm-base/interfaces/abstractfileinfo.h"
+#include "base/schemefactory.h"
 
 #include <QDateTime>
 #include <QMimeData>
@@ -54,8 +56,10 @@ QModelIndex CanvasModel::index(const QString &fileUrl, int column)
     if (fileUrl.isEmpty())
         return QModelIndex();
 
-    auto fileInfo = FileTreaterCt->fileInfo(fileUrl);
+    if (fileUrl == rootUrl().toString())
+        return rootIndex();
 
+    auto fileInfo = FileTreaterCt->fileInfo(fileUrl);
     return index(fileInfo, column);
 }
 
@@ -68,18 +72,20 @@ QModelIndex CanvasModel::index(const DFMLocalFileInfoPointer &fileInfo, int colu
     return createIndex(row, column, const_cast<LocalFileInfo *>(fileInfo.data()));
 }
 
-QModelIndex CanvasModel::parent(const QModelIndex &index) const
+QModelIndex CanvasModel::parent(const QModelIndex &child) const
 {
-    Q_UNUSED(index)
+    if (child.isValid())
+        return rootIndex();
+
     return QModelIndex();
 }
 
 int CanvasModel::rowCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid())
-        return 0;
+    if (parent == rootIndex())
+        return FileTreaterCt->fileCount();
 
-    return FileTreaterCt->fileCount();
+    return 0;
 }
 
 int CanvasModel::columnCount(const QModelIndex &parent) const
@@ -190,14 +196,56 @@ bool CanvasModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int
 {
     Q_UNUSED(row);
     Q_UNUSED(column);
+
+    QList<QUrl> urlList = data->urls();
+    if (urlList.isEmpty())
+        return false;
+
+    QUrl targetFileUrl;
     if (!parent.isValid()) {
-        // copy file to desktop
-        qDebug() << "copy file to desktop" << data->urls() << action;
-        return true;
+        // drop file to desktop
+        targetFileUrl = rootUrl();
+        qInfo() << "drop file to desktop" << targetFileUrl << "data" << urlList << action ;
     } else {
-        auto item = url(parent);
-        qDebug() << "drop on item" << item << data->urls() << action;
-        return true;
+        targetFileUrl = url(parent);
+        qInfo() << "drop file to " << targetFileUrl << "data:" << urlList << action;
+    }
+
+    auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(targetFileUrl);
+    if (!itemInfo) {
+        qWarning() << "can not get file info" << targetFileUrl;
+        return false;
+    }
+
+    if (itemInfo->isSymLink()) {
+        targetFileUrl = itemInfo->symLinkTarget();
+    }
+
+    // todo Compress
+
+    //todo
+//    if (DFMGlobal::isTrashDesktopFile(toUrl)) {
+//        toUrl = DUrl::fromTrashFile("/");
+//        fileService->moveToTrash(this, urlList);
+//        return true;
+//    } else if (DFMGlobal::isComputerDesktopFile(toUrl)) {
+//        return true;
+//    } else if (DFMGlobal::isDesktopFile(toUrl)) {
+//        return FileUtils::launchApp(toUrl.toLocalFile(), DUrl::toStringList(urlList));
+//    }
+
+    switch (action) {
+    case Qt::CopyAction:
+        // todo copy
+        break;
+    case Qt::LinkAction:
+        break;
+    case Qt::MoveAction:
+        // todo move to trash if targetFileUrl is trash
+        // else do copy.
+        break;
+    default:
+        return false;
     }
 
     return true;

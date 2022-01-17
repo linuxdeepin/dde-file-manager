@@ -60,9 +60,9 @@ void KeySelecter::keyPressed(QKeyEvent *event)
     view->update();
 }
 
-const QList<Qt::Key> &KeySelecter::filterKeys()
+QList<Qt::Key> KeySelecter::filterKeys() const
 {
-    static const QList<Qt::Key> filter = {
+        QList<Qt::Key> filter = {
         Qt::Key_Down,
         Qt::Key_Up,
         Qt::Key_Left,
@@ -71,10 +71,10 @@ const QList<Qt::Key> &KeySelecter::filterKeys()
         Qt::Key_End,
         Qt::Key_PageUp,
         Qt::Key_PageDown,
-        Qt::Key_Tab,
-        Qt::Key_Backtab
     };
 
+    if (view->tabKeyNavigation())
+        filter << Qt::Key_Tab << Qt::Key_Backtab;
     return filter;
 }
 

@@ -63,6 +63,7 @@ set(core_cxx_cpp
     canvas/view/operator/operstate.cpp
     canvas/view/operator/keyselecter.cpp
     canvas/view/operator/dragdropoper.cpp
+    canvas/view/operator/shortcutoper.cpp
     canvas/delegate/canvasitemdelegate.cpp
     canvas/delegate/elidetextlayout.cpp
     canvas/delegate/expandeditem.cpp
@@ -108,6 +109,7 @@ set(core_cxx_h
     canvas/view/operator/operstate.h
     canvas/view/operator/keyselecter.h
     canvas/view/operator/dragdropoper.h
+    canvas/view/operator/shortcutoper.h
     canvas/delegate/canvasitemdelegate_p.h
     canvas/delegate/canvasitemdelegate.h
     canvas/delegate/elidetextlayout.h

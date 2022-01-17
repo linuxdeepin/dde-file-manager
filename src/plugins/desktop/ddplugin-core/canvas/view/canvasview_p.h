@@ -30,6 +30,7 @@
 #include "operator/keyselecter.h"
 #include "operator/operstate.h"
 #include "operator/dragdropoper.h"
+#include "operator/shortcutoper.h"
 #include "gridcoordinate.h"
 
 #include <QDebug>
@@ -129,7 +130,9 @@ protected:
     ClickSelecter *clickSelecter;
     KeySelecter *keySelecter;
     DragDropOper *dragDropOper;
+    ShortcutOper *shortcutOper;
     OperState state;
+    bool flicker = false;
 
     QPoint dragTargetGrid { QPoint(-1, -1) };
 

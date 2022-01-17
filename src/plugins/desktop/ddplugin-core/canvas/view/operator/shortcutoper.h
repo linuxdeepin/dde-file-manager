@@ -18,34 +18,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KEYSELECTER_H
-#define KEYSELECTER_H
+#ifndef SHORTCUTOPER_H
+#define SHORTCUTOPER_H
+
 #include "dfm_desktop_service_global.h"
-#include "clickselecter.h"
 
 #include <QObject>
-#include <QModelIndex>
+#include <QKeyEvent>
 
-class QKeyEvent;
 DSB_D_BEGIN_NAMESPACE
 class CanvasView;
-class KeySelecter : private ClickSelecter
+class ShortcutOper : public QObject
 {
     Q_OBJECT
 public:
-    explicit KeySelecter(CanvasView *parent);
-    void keyPressed(QKeyEvent *event);
-    QList<Qt::Key> filterKeys() const;
-protected:
-    QPersistentModelIndex moveCursor(QKeyEvent *event) const;
-    void singleSelect(const QModelIndex &index);
-    void incrementSelect(const QModelIndex &index);
-signals:
-
-public slots:
+    explicit ShortcutOper(CanvasView *parent);
+    void regShortcut();
+    bool keyPressed(QKeyEvent *event);
+protected slots:
+    void helpAction();
+    void openAction();
+    void moveToTrash();
+    void deleteFile();
+    void tabToFirst();
 protected:
     CanvasView *view;
 };
 
 DSB_D_END_NAMESPACE
-#endif // KEYSELECTER_H
+
+#endif // SHORTCUTOPER_H

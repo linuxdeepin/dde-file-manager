@@ -68,7 +68,9 @@ public:
 public:
     bool isTransparent(const QModelIndex &index) const;
     QList<QIcon> additionalIcon(const QModelIndex &index) const;
-
+public Q_SLOTS:
+    void refresh();
+    void selectAll() override;
 signals:
     void createFileByMenu(const int &screenNum, const QPoint &pos);
 

@@ -235,7 +235,9 @@ void CanvasView::paintEvent(QPaintEvent *event)
     // 桌面文件绘制
     auto option = viewOptions();
 
-    painter.paintFiles(option, event);
+    // for flicker when refresh.
+    if (!d->flicker)
+        painter.paintFiles(option, event);
 
     // 绘制选中区域
     painter.drawSelectRect();
@@ -374,6 +376,17 @@ void CanvasView::updateGrid()
     update();
 }
 
+void CanvasView::refresh()
+{
+    model()->fetchMore(QModelIndex());
+
+    // flicker
+    d->flicker = true;
+    repaint();
+    update();
+    d->flicker = false;
+}
+
 bool CanvasView::isTransparent(const QModelIndex &index) const
 {
     Q_UNUSED(index)
@@ -391,6 +404,44 @@ QList<QIcon> CanvasView::additionalIcon(const QModelIndex &index) const
     return list;
 }
 
+void CanvasView::selectAll()
+{
+#if 0
+    QStringList items;
+    items << GridIns->points(d->screenNum).keys();
+    items << GridIns->overloadItems(d->screenNum);
+
+    if (items.isEmpty())
+        return;
+
+    QItemSelection selection;
+    auto m = model();
+    for (const QString &item : items) {
+        auto index = m->index(item);
+        selection.append(QItemSelectionRange(index));
+    }
+
+    selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+
+    // set focus to first index.
+    {
+        auto first = d->firstIndex();
+        d->operState().setCurrent(first);
+        d->operState().setContBegin(first);
+    }
+
+#else
+    QItemSelection selection;
+    auto m = model();
+    for (int row = 0 ; row < m->rowCount(rootIndex()); ++row) {
+        auto index = m->index(row, 0);
+        if (index.isValid())
+            selection.append(QItemSelectionRange(index));
+    }
+    selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+#endif
+}
+
 QRect CanvasView::itemRect(const QModelIndex &index) const
 {
     return d->itemRect(model()->url(index).toString());
@@ -399,8 +450,11 @@ QRect CanvasView::itemRect(const QModelIndex &index) const
 void CanvasView::keyPressEvent(QKeyEvent *event)
 {
     // todo(zy) disable shortcuts ("ApplicationAttribute", "DisableDesktopShortcuts", false)
-    if (KeySelecter::filterKeys().contains(static_cast<Qt::Key>(event->key()))) {
+    // todo 触摸屏
+    if (d->keySelecter->filterKeys().contains(static_cast<Qt::Key>(event->key()))) {
         d->keySelecter->keyPressed(event);
+        return;
+    } else if (d->shortcutOper->keyPressed(event)) {
         return;
     }
 
@@ -411,12 +465,8 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 {
     QAbstractItemView::mousePressEvent(event);
 
-    if (event->button() != Qt::LeftButton) {
-        return;
-    }
-
     auto index = indexAt(event->pos());
-    if (!index.isValid()) { //empty area
+    if (!index.isValid() && event->button() == Qt::LeftButton) { //empty area
         BoxSelIns->beginSelect(event->globalPos(), true);
         setState(DragSelectingState);
     }
@@ -469,6 +519,9 @@ void CanvasView::initUI()
 
     Q_ASSERT(selectionModel());
     d->operState().setView(this);
+    Q_ASSERT(model());
+    setRootIndex(model()->rootIndex());
+    d->shortcutOper->regShortcut();
 
     // water mask
     if (d->isWaterMaskOn()) {
@@ -495,6 +548,7 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
     clickSelecter = new ClickSelecter(q);
     keySelecter = new KeySelecter(q);
     dragDropOper = new DragDropOper(q);
+    shortcutOper = new ShortcutOper(q);
 }
 
 CanvasViewPrivate::~CanvasViewPrivate()
@@ -649,6 +703,12 @@ void CanvasViewPrivate::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
         QDir dir(q->model()->rootUrl().path());
         dir.mkdir("testFolder");
     });
+
+    tstAction = tstMenu->addAction(tr("select all"));
+    connect(tstAction, &QAction::triggered, q, &CanvasView::selectAll);
+
+    tstAction = tstMenu->addAction(tr("refresh"));
+    connect(tstAction, &QAction::triggered, q, &CanvasView::refresh);
 
     tstMenu->exec(QCursor::pos());
     delete tstMenu;

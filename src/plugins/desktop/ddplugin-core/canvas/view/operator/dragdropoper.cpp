@@ -26,6 +26,8 @@
 #include "view/canvasview_p.h"
 #include "canvasmanager.h"
 
+#include "base/schemefactory.h"
+
 #include <DFileDragClient>
 
 #include <QDebug>
@@ -136,6 +138,12 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
     } else if (urls.isEmpty()) {
         return;
     } else {
+        auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(targetFileUrl);
+        if (!itemInfo) {
+            qWarning() << "can not get file info" << targetFileUrl;
+            return;
+        }
+
         Qt::DropAction defaultAction = Qt::CopyAction;
         const QUrl from = urls.first();
 
@@ -150,13 +158,22 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
             }
         }
 
-        // is from or to trash
-        // todo
+        // is from or to trash or is to trash
         {
+            bool isFromTrash = from.url().contains(".local/share/Trash/");
+            bool isToTrash = false;//to.isTrashFile(); // todo(zy)
 
+            if (isFromTrash && isToTrash) {
+                event->setDropAction(Qt::IgnoreAction);
+                return;
+            } else if (isFromTrash || isToTrash) {
+                defaultAction = Qt::MoveAction;
+            }
         }
 
-        // recent file
+        // todo is from vault
+
+        // is from recent file
         // todo
 
         event->setDropAction(defaultAction);
