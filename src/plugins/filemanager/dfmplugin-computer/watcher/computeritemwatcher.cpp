@@ -106,18 +106,18 @@ void ComputerItemWatcher::initConn()
         Q_EMIT this->itemRemoved(devUrl);
     });
 
-    auto updateItem = [this](const QString &id) {
+    auto updateBlockItem = [this](const QString &id) {
         auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
         Q_EMIT this->itemUpdated(devUrl);
     };
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, [updateItem](const QString &id) {
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, [updateBlockItem](const QString &id) {
         auto datas = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
         auto shellDevId = datas.value(GlobalServerDefines::DeviceProperty::kCryptoBackingDevice).toString();
-        updateItem(shellDevId.length() > 1 ? shellDevId : id);
+        updateBlockItem(shellDevId.length() > 1 ? shellDevId : id);
     });
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnmounted, this, updateItem);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceLocked, this, updateItem);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnlocked, this, updateItem);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnmounted, this, updateBlockItem);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceLocked, this, updateBlockItem);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnlocked, this, updateBlockItem);
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDevicePropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChanged);
 
     // TODO(xust): protocolDeviceAdded
@@ -135,6 +135,8 @@ void ComputerItemWatcher::initConn()
         QUrl devUrl = id.startsWith(DeviceId::kBlockDeviceIdPrefix) ? ComputerUtils::makeBlockDevUrl(id) : ComputerUtils::makeProtocolDevUrl(id);
         Q_EMIT this->itemUpdated(devUrl);
     });
+
+    connect(&DeviceManagerInstance, &DeviceManager::serviceRegistered, this, &ComputerItemWatcher::startQueryItems);
 }
 
 ComputerDataList ComputerItemWatcher::getUserDirItems()

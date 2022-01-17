@@ -53,11 +53,13 @@ public:
     void addDevice(const QString &groupName, const QUrl &url);
     void removeDevice(const QUrl &url);
 
-    void startQueryItems();
 
     void updateSidebarItem(const QUrl &url, const QString &newName, bool editable);
     void addSidebarItem(DFMEntryFileInfoPointer info);
     void removeSidebarItem(const QUrl &url);
+
+public Q_SLOTS:
+    void startQueryItems();
 
 Q_SIGNALS:
     void itemQueryFinished(const ComputerDataList &results);
