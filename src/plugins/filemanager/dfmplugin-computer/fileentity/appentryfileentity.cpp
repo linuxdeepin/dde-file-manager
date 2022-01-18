@@ -21,9 +21,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "appentryfileentity.h"
+#include "utils/computerutils.h"
+
+#include "dfm-base/utils/desktopfile.h"
+
+#include <QFile>
+#include <QMenu>
 
 DFMBASE_USE_NAMESPACE
 DPCOMPUTER_BEGIN_NAMESPACE
+
+namespace ExtraPropertyName {
+const char *const kExecuteCommand { "execute_command" };
+}   // namespace ExtraPropertyName
 
 /*!
  * \class AppEntryFileEntity
@@ -32,37 +42,38 @@ DPCOMPUTER_BEGIN_NAMESPACE
 AppEntryFileEntity::AppEntryFileEntity(const QUrl &url)
     : AbstractEntryFileEntity(url)
 {
-    // TODO(xust) FINISH THIS CLASS
+    fileUrl = ComputerUtils::getAppEntryFileUrl(url);
+    desktopInfo.reset(new DesktopFile(fileUrl.path()));
 }
 
 QString AppEntryFileEntity::displayName() const
 {
-    return {};
+    return desktopInfo->getDisplayName();
 }
 
 QIcon AppEntryFileEntity::icon() const
 {
-    return {};
+    return QIcon::fromTheme(desktopInfo->getIcon());
 }
 
 bool AppEntryFileEntity::exists() const
 {
-    return {};
+    return QFile(fileUrl.path()).exists();
 }
 
 bool AppEntryFileEntity::showProgress() const
 {
-    return {};
+    return false;
 }
 
 bool AppEntryFileEntity::showTotalSize() const
 {
-    return {};
+    return false;
 }
 
 bool AppEntryFileEntity::showUsageSize() const
 {
-    return {};
+    return false;
 }
 
 void AppEntryFileEntity::onOpen()
@@ -71,7 +82,7 @@ void AppEntryFileEntity::onOpen()
 
 QString AppEntryFileEntity::description() const
 {
-    return {};
+    return tr("Double click to open it");
 }
 
 EntryFileInfo::EntryOrder AppEntryFileEntity::order() const
@@ -79,4 +90,43 @@ EntryFileInfo::EntryOrder AppEntryFileEntity::order() const
     return EntryFileInfo::EntryOrder::kOrderApps;
 }
 
+QVariantHash AppEntryFileEntity::extraProperties() const
+{
+    QVariantHash ret;
+    ret.insert(ExtraPropertyName::kExecuteCommand, getFormattedExecCommand());
+    return ret;
+}
+
+bool AppEntryFileEntity::isAccessable() const
+{
+    return exists();
+}
+
+QMenu *AppEntryFileEntity::createMenu()
+{
+    QMenu *menu = new QMenu();
+    menu->addAction(ContextMenuActionTrs::trOpen());
+    return menu;
+}
+
+QString AppEntryFileEntity::getFormattedExecCommand() const
+{
+    // no parameters transfered
+    static const QStringList unsupportedParams {
+        "%U",   // A list of Urls
+        "%u",   // A Url
+        "%F",   // A list of files
+        "%f"   // A file
+    };
+    auto cmd = desktopInfo->getExec();
+    for (const auto &param : unsupportedParams)
+        cmd.remove(param);
+    return cmd.remove("\"").remove("'");
+}
+
 DPCOMPUTER_END_NAMESPACE
+
+QString ContextMenuActionTrs::trOpen()
+{
+    return DPCOMPUTER_NAMESPACE::AppEntryFileEntity::tr("Open");
+}

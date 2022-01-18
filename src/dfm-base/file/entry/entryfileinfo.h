@@ -94,6 +94,7 @@ public:
     QUrl targetUrl() const;
     QMenu *createMenu() const;
     bool isAccessable() const;
+    QString description() const;
     QVariant extraProperty(const QString &property) const;
 
     // AbstractFileInfo interface

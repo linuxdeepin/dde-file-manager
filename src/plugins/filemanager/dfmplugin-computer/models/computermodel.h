@@ -49,9 +49,9 @@ public:
         kFileSystemRole,   // string
         kRealUrlRole,   // string: real mountpoint
         kDeviceUrlRole,   // string: device path such as entry://sdb1.localdisk
-        kDeviceIsEncrypted,
-        kDeviceIsUnlocked,
-        kDeviceClearDevId,
+        kDeviceIsEncryptedRole,
+        kDeviceIsUnlockedRole,
+        kDeviceClearDevIdRole,
         kSuffixRole,   // string: blockdev/protocoldev/userdir/...
         kProgressVisiableRole,   // bool
         kTotalSizeVisiableRole,   // bool
@@ -59,7 +59,8 @@ public:
         kDeviceNameMaxLengthRole,   // int: the max length of name when rename a disk
         kItemShapeTypeRole,   // int: indicates the type of item, small/large/splitter/widgets
         kActionListRole,   // return the action list that item should have
-        kItemIsEditing,   // bool: if an item is renaming
+        kItemIsEditingRole,   // bool: if an item is renaming
+        kDeviceDescriptionRole,
     };
     Q_ENUM(DataRoles)
 

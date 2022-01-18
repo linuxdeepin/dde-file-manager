@@ -32,6 +32,10 @@
 
 #define ComputerItemWatcherInstance DPCOMPUTER_NAMESPACE::ComputerItemWatcher::instance()
 
+DFMBASE_BEGIN_NAMESPACE
+class LocalFileWatcher;
+DFMBASE_END_NAMESPACE
+
 DPCOMPUTER_BEGIN_NAMESPACE
 typedef QList<ComputerItemData> ComputerDataList;
 class ComputerItemWatcher : public QObject
@@ -68,12 +72,13 @@ Q_SIGNALS:
     void itemUpdated(const QUrl &url);
 
 protected Q_SLOTS:
-    void onDeviceAdded(const QString &id);
+    void onDeviceAdded(const QUrl &devUrl, bool needSidebarItem = true);
     void onDevicePropertyChanged(const QString &id, const QString &propertyName, const QDBusVariant &var);
 
 private:
     explicit ComputerItemWatcher(QObject *parent = nullptr);
     void initConn();
+    void initAppWatcher();
 
     ComputerDataList getUserDirItems();
     ComputerDataList getBlockDeviceItems(bool &hasNewItem);
@@ -86,8 +91,7 @@ private:
 
 private:
     ComputerDataList initedDatas;
-    // TODO(xust)
-    // appEntryWatcher
+    QSharedPointer<DFMBASE_NAMESPACE::LocalFileWatcher> appEntryWatcher { nullptr };
 };
 DPCOMPUTER_END_NAMESPACE
 #endif   // COMPUTERITEMWATCHER_H

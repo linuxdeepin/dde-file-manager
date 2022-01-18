@@ -23,18 +23,29 @@
 #ifndef APPENTRYFILEENTITY_H
 #define APPENTRYFILEENTITY_H
 
+#include "dfmplugin_computer_global.h"
+
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
-#include "dfmplugin_computer_global.h"
 
 DFMBASE_BEGIN_NAMESPACE
 namespace SuffixInfo {
 const char *const kAppEntry { "appentry" };
 }   // namespace SuffixInfo
+
+namespace ContextMenuActionTrs {
+extern QString trOpen();
+}   // namespace ContextMenuActionTrs
+
+class DesktopFile;
 DFMBASE_END_NAMESPACE
 
-DPCOMPUTER_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DPCOMPUTER_BEGIN_NAMESPACE
+
+namespace ExtraPropertyName {
+extern const char *const kExecuteCommand;
+}   // namespace ExtraPropertyName
 
 class AppEntryFileEntity : public AbstractEntryFileEntity
 {
@@ -51,6 +62,16 @@ public:
     virtual void onOpen() override;
     virtual QString description() const override;
     virtual EntryFileInfo::EntryOrder order() const override;
+    virtual QVariantHash extraProperties() const override;
+    virtual bool isAccessable() const override;
+    virtual QMenu *createMenu() override;
+
+private:
+    QString getFormattedExecCommand() const;
+
+private:
+    QSharedPointer<DesktopFile> desktopInfo;
+    QUrl fileUrl;
 };
 
 DPCOMPUTER_END_NAMESPACE

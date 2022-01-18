@@ -23,13 +23,16 @@
 #include "computeritemwatcher.h"
 #include "controller/computercontroller.h"
 #include "utils/computerutils.h"
+#include "fileentity/appentryfileentity.h"
 
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
+#include "dfm-base/base/standardpaths.h"
 #include "dbusservice/global_server_defines.h"
 
 #include <QDebug>
@@ -53,6 +56,7 @@ ComputerItemWatcher *ComputerItemWatcher::instance()
 ComputerItemWatcher::ComputerItemWatcher(QObject *parent)
     : QObject(parent)
 {
+    initAppWatcher();
     initConn();
 }
 
@@ -74,8 +78,7 @@ ComputerDataList ComputerItemWatcher::items()
     ret.append(getProtocolDeviceItems(hasInsertNewDisk));
     // get stashed mounts
     //    ret.append(getStashedProtocolItems(hasInsertNewDisk));
-    // get application entries
-    //    ret.append(getAppEntryItems(hasInsertNewDisk));
+    ret.append(getAppEntryItems(hasInsertNewDisk));
 
     if (!hasInsertNewDisk)
         ret.pop_back();
@@ -102,7 +105,10 @@ bool ComputerItemWatcher::typeCompare(const ComputerItemData &a, const ComputerI
 void ComputerItemWatcher::initConn()
 {
     connect(this, &ComputerItemWatcher::itemRemoved, this, &ComputerItemWatcher::removeSidebarItem);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceAdded, this, &ComputerItemWatcher::onDeviceAdded);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceAdded, this, [this](const QString &id) {
+        auto url = ComputerUtils::makeBlockDevUrl(id);
+        this->onDeviceAdded(url);
+    });
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceRemoved, this, [this](const QString &id) {
         auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
         Q_EMIT this->itemRemoved(devUrl);
@@ -123,7 +129,10 @@ void ComputerItemWatcher::initConn()
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDevicePropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChanged);
 
     // TODO(xust): protocolDeviceAdded
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, &ComputerItemWatcher::onDeviceAdded);
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, [this](const QString &id) {
+        auto url = ComputerUtils::makeProtocolDevUrl(id);
+        this->onDeviceAdded(url);
+    });
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, [this](const QString &id) {
         auto datas = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id);
         auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
@@ -139,6 +148,27 @@ void ComputerItemWatcher::initConn()
     });
 
     connect(&DeviceManagerInstance, &DeviceManager::serviceRegistered, this, &ComputerItemWatcher::startQueryItems);
+    connect(appEntryWatcher.data(), &LocalFileWatcher::subfileCreated, this, [this](const QUrl &url) {
+        auto appUrl = ComputerUtils::makeAppEntryUrl(url.path());
+        if (!appUrl.isValid())
+            return;
+        this->onDeviceAdded(appUrl, false);
+    });
+    connect(appEntryWatcher.data(), &LocalFileWatcher::fileDeleted, this, [this](const QUrl &url) {
+        auto appUrl = ComputerUtils::makeAppEntryUrl(url.path());
+        if (!appUrl.isValid())
+            return;
+        Q_EMIT this->itemRemoved(appUrl);
+    });
+}
+
+void ComputerItemWatcher::initAppWatcher()
+{
+    QUrl extensionUrl;
+    extensionUrl.setScheme(SchemeTypes::kFile);
+    extensionUrl.setPath(StandardPaths::location(StandardPaths::kExtensionsAppEntryPath));
+    appEntryWatcher.reset(new LocalFileWatcher(extensionUrl, this));
+    appEntryWatcher->startWatcher();
 }
 
 ComputerDataList ComputerItemWatcher::getUserDirItems()
@@ -234,10 +264,36 @@ ComputerDataList ComputerItemWatcher::getStashedProtocolItems(bool &hasNewItem)
 
 ComputerDataList ComputerItemWatcher::getAppEntryItems(bool &hasNewItem)
 {
-    // TODO(xust)
+    static const QString appEntryPath = StandardPaths::location(StandardPaths::kExtensionsAppEntryPath);
+    QDir appEntryDir(appEntryPath);
+    if (!appEntryDir.exists())
+        return {};
+
     ComputerDataList ret;
-    {
-        // loop to get devices
+
+    auto entries = appEntryDir.entryList(QDir::Files);
+    QStringList cmds;   // for de-duplication
+    for (auto entry : entries) {
+        auto entryUrl = ComputerUtils::makeAppEntryUrl(QString("%1/%2").arg(appEntryPath).arg(entry));
+        if (!entryUrl.isValid())
+            continue;
+
+        DFMEntryFileInfoPointer info(new EntryFileInfo(entryUrl));
+        if (!info->exists()) {
+            qInfo() << "the appentry is in extension folder but not exist: " << info->url();
+            continue;
+        }
+        QString cmd = info->extraProperty(ExtraPropertyName::kExecuteCommand).toString();
+        if (cmds.contains(cmd))
+            continue;
+        cmds.append(cmd);
+
+        ComputerItemData data;
+        data.url = entryUrl;
+        data.shape = ComputerItemData::kLargeItem;
+        data.info = info;
+        ret.push_back(data);
+        hasNewItem = true;
     }
 
     std::sort(ret.begin(), ret.end(), ComputerItemWatcher::typeCompare);
@@ -268,7 +324,7 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 {
     // additem to sidebar
     bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool();
-    if (Q_UNLIKELY(ComputerUtils::hideSystemPartition() && info->suffix() == SuffixInfo::kBlock && !removable)) return;
+    if (ComputerUtils::shouldSystemPartitionHide() && info->suffix() == SuffixInfo::kBlock && !removable) return;
 
     DSB_FM_USE_NAMESPACE;
     SideBar::ItemInfo sbItem;
@@ -335,15 +391,8 @@ void ComputerItemWatcher::addGroup(const QString &name)
     emit itemAdded(data);
 }
 
-void ComputerItemWatcher::onDeviceAdded(const QString &id)
+void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, bool needSidebarItem)
 {
-    QUrl devUrl;
-    if (id.startsWith(DeviceId::kBlockDeviceIdPrefix))
-        devUrl = ComputerUtils::makeBlockDevUrl(id);
-    else
-        devUrl = ComputerUtils::makeProtocolDevUrl(id);
-
-    //    auto info = InfoFactory::create<EntryFileInfo>(devUrl);
     DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
     if (!info->exists()) return;
 
@@ -353,7 +402,8 @@ void ComputerItemWatcher::onDeviceAdded(const QString &id)
     data.info = info;
     Q_EMIT this->itemAdded(data);
 
-    addSidebarItem(info);
+    if (needSidebarItem)
+        addSidebarItem(info);
 }
 
 void ComputerItemWatcher::onDevicePropertyChanged(const QString &id, const QString &propertyName, const QDBusVariant &var)

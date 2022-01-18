@@ -58,12 +58,14 @@ public:
     static QString getBlockDevIdByUrl(const QUrl &url);
     static QUrl makeProtocolDevUrl(const QString &id);
     static QString getProtocolDevIdByUrl(const QUrl &url);
+    static QUrl makeAppEntryUrl(const QString &filePath);
+    static QUrl getAppEntryFileUrl(const QUrl &entryUrl);
 
     static quint64 getWinId(QWidget *widget);
 
     static DSB_FM_NAMESPACE::SideBarService *sbIns();
 
-    static bool hideSystemPartition();
+    static bool shouldSystemPartitionHide();
 };
 
 DPCOMPUTER_END_NAMESPACE

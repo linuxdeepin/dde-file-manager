@@ -115,7 +115,7 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
         if (ke->key() == Qt::Key::Key_Enter || ke->key() == Qt::Key::Key_Return) {
             const auto &idx = this->selectionModel()->currentIndex();
             if (idx.isValid()) {
-                if (!this->model()->data(idx, ComputerModel::DataRoles::kItemIsEditing).toBool()) {
+                if (!this->model()->data(idx, ComputerModel::DataRoles::kItemIsEditingRole).toBool()) {
                     Q_EMIT enterPressed(idx);
                     return true;
                 }
@@ -128,7 +128,7 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
 void ComputerView::showEvent(QShowEvent *event)
 {
     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
-    hideSystemPartitions(ComputerUtils::hideSystemPartition());
+    hideSystemPartitions(ComputerUtils::shouldSystemPartitionHide());
     DListView::showEvent(event);
 }
 

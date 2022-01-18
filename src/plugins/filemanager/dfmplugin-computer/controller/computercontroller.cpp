@@ -75,6 +75,8 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
         } else if (suffix == dfmbase::SuffixInfo::kProtocol) {
         } else if (suffix == dfmbase::SuffixInfo::kStashedRemote) {
         } else if (suffix == dfmbase::SuffixInfo::kAppEntry) {
+            QString cmd = info->extraProperty(ExtraPropertyName::kExecuteCommand).toString();
+            QProcess::startDetached(cmd);
         }
     }
 }
@@ -252,6 +254,8 @@ void ComputerController::actionTriggered(const QUrl &url, quint64 winId, const Q
         actEject(url);
     else if (actionText == ContextMenuActionTrs::trProperties())
         actProperties(url);
+    else if (actionText == ContextMenuActionTrs::trOpen())
+        onOpenItem(0, url);
 }
 
 void ComputerController::actEject(const QUrl &url)

@@ -21,10 +21,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "computerutils.h"
+#include "fileentity/appentryfileentity.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/base/application/application.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <dfm-framework/framework.h>
 #include <services/filemanager/windows/windowsservice.h>
@@ -78,6 +80,37 @@ QString ComputerUtils::getProtocolDevIdByUrl(const QUrl &url)
     return id;
 }
 
+QUrl ComputerUtils::makeAppEntryUrl(const QString &filePath)
+{
+    if (!filePath.startsWith(StandardPaths::location(StandardPaths::kExtensionsAppEntryPath)))
+        return {};
+    if (!filePath.endsWith(".desktop"))
+        return {};
+
+    QString fileName = filePath.mid(filePath.lastIndexOf("/") + 1);
+    fileName.remove(".desktop");
+    QString newPath = QString("%1.%2").arg(fileName).arg(SuffixInfo::kAppEntry);
+
+    QUrl url;
+    url.setScheme(SchemeTypes::kEntry);
+    url.setPath(newPath);
+    return url;
+}
+
+QUrl ComputerUtils::getAppEntryFileUrl(const QUrl &entryUrl)
+{
+    if (!entryUrl.isValid())
+        return {};
+    if (!entryUrl.path().endsWith(SuffixInfo::kAppEntry))
+        return {};
+
+    QString fileName = entryUrl.path().remove("." + QString(SuffixInfo::kAppEntry));
+    QUrl origUrl;
+    origUrl.setScheme(SchemeTypes::kFile);
+    origUrl.setPath(QString("%1/%2.%3").arg(StandardPaths::location(StandardPaths::kExtensionsAppEntryPath)).arg(fileName).arg("desktop"));
+    return origUrl;
+}
+
 quint64 ComputerUtils::getWinId(QWidget *widget)
 {
     auto &ctx = dpfInstance.serviceContext();
@@ -97,7 +130,7 @@ dfm_service_filemanager::SideBarService *ComputerUtils::sbIns()
     return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
 }
 
-bool ComputerUtils::hideSystemPartition()
+bool ComputerUtils::shouldSystemPartitionHide()
 {
     return Application::instance()->genericAttribute(Application::kHiddenSystemPartition).toBool();
 }

@@ -127,21 +127,24 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     case kActionListRole:
         return "";
 
-    case kItemIsEditing:
+    case kItemIsEditingRole:
         return item->isEditing;
 
-    case kDeviceIsEncrypted:
+    case kDeviceIsEncryptedRole:
         return item->info ? item->info->extraProperty(DeviceProperty::kIsEncrypted).toBool() : false;
 
-    case kDeviceIsUnlocked: {
+    case kDeviceIsUnlockedRole: {
         bool isUnlocked = false;
         if (item->info)
             isUnlocked = item->info->extraProperty(DeviceProperty::kCleartextDevice).toString().length() > 1;
         return isUnlocked;
     }
 
-    case kDeviceClearDevId:
+    case kDeviceClearDevIdRole:
         return item->info ? item->info->extraProperty(DeviceProperty::kCleartextDevice).toString() : "";
+
+    case kDeviceDescriptionRole:
+        return item->info ? item->info->description() : "";
 
     default:
         return {};
@@ -161,7 +164,7 @@ bool ComputerModel::setData(const QModelIndex &index, const QVariant &value, int
             return false;
         ComputerControllerInstance->doRename(0, item.url, value.toString());
         return true;
-    } else if (role == DataRoles::kItemIsEditing) {
+    } else if (role == DataRoles::kItemIsEditingRole) {
         item.isEditing = value.toBool();
         return true;
     }
@@ -222,7 +225,7 @@ void ComputerModel::initConnect()
         this->beginResetModel();
         items = datas;
         this->endResetModel();
-        view->hideSystemPartitions(ComputerUtils::hideSystemPartition());
+        view->hideSystemPartitions(ComputerUtils::shouldSystemPartitionHide());
     });
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);

@@ -133,6 +133,11 @@ bool EntryFileInfo::isAccessable() const
     return d->entity ? d->entity->isAccessable() : false;
 }
 
+QString EntryFileInfo::description() const
+{
+    return d->entity ? d->entity->description() : "";
+}
+
 QVariant EntryFileInfo::extraProperty(const QString &property) const
 {
     auto properties = extraProperties();

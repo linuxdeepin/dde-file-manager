@@ -165,7 +165,7 @@ void ComputerItemDelegate::setEditorData(QWidget *editor, const QModelIndex &ind
     auto currEditor = qobject_cast<QLineEdit *>(editor);
     if (currEditor) {
         currEditor->setText(index.data(Qt::DisplayRole).toString());
-        this->view->model()->setData(index, true, ComputerModel::kItemIsEditing);
+        this->view->model()->setData(index, true, ComputerModel::kItemIsEditingRole);
     }
 }
 
@@ -176,7 +176,7 @@ void ComputerItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *mod
     QString newText = currEditor->text();
     if (originalText != newText)
         model->setData(index, currEditor->text());
-    model->setData(index, false, ComputerModel::kItemIsEditing);
+    model->setData(index, false, ComputerModel::kItemIsEditingRole);
 }
 
 void ComputerItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -438,6 +438,11 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
         auto style = option.widget && option.widget->style() ? option.widget->style() : qApp->style();
         style->drawControl(QStyle::ControlElement::CE_ProgressBarGroove, &progressBar, painter, option.widget);
         style->drawControl(QStyle::ControlElement::CE_ProgressBarContents, &progressBar, painter, option.widget);
+    }
+
+    QString deviceDescription = index.data(ComputerModel::kDeviceDescriptionRole).toString();
+    if (!showSize && !progressVisiable && !deviceDescription.isEmpty()) {
+        painter->drawText(detailRect, Qt::AlignLeft, deviceDescription);
     }
 }
 
