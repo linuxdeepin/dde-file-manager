@@ -1597,6 +1597,11 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 
 void CanvasGridView::paintEvent(QPaintEvent *event)
 {
+    if (m_paintingLog) {
+        qInfo() << "view paint" << screenName() << m_paintingLog << event->rect();
+        m_paintingLog--;
+    }
+
     //不关心Dropflag，节省时间,bug#10926
     IgnoreDropFlag idf(model());
 

@@ -76,6 +76,7 @@ private:
     bool m_visible = true;
     int currentWorkspaceIndex = 1;
     bool m_backgroundEnable = true;
+    bool m_wmInited = false;
 
     QMap<ScreenPointer,BackgroundWidgetPointer> m_backgroundMap;
 

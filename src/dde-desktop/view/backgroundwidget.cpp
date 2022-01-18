@@ -59,6 +59,10 @@ void BackgroundWidget::setPixmap(const QPixmap &pixmap)
 
 void BackgroundWidget::paintEvent(QPaintEvent *event)
 {
+    if (m_paintingLog) {
+        qInfo() << "Background paint" << m_paintingLog << event->rect();
+        m_paintingLog--;
+    }
     qreal scale = devicePixelRatioF();
     if (scale > 1.0 && event->rect() == rect()) {
         if (backingStore()->handle()->paintDevice()->devType() != QInternal::Image) {

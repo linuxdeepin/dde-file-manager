@@ -234,6 +234,7 @@ QString BackgroundManager::getBackgroundFromWm(const QString &screen)
             }
         } else {
             qInfo() << "getBackgroundFromWm GetCurrentWorkspaceBackgroundForMonitor path :" << ret << "screen" << screen;
+            m_wmInited = true;
         }
     } else {
         qInfo() << "Get background path terminated screen:" << screen << wmInter;
@@ -496,10 +497,12 @@ void BackgroundManager::onWmDbusStarted(QString name, QString oldOwner, QString 
     Q_UNUSED(newOwner)
     //窗管服务注销也会进入该函数，因此需要判断服务是否已注册
     if (name == QString("com.deepin.wm") && QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm")) {
-        qInfo() << "dbus server com.deepin.wm started.";
-        pullImageSettings();
-        onResetBackgroundImage();
-
+        qInfo() << "dbus server com.deepin.wm started." << m_wmInited;
+        if (!m_wmInited) {
+            pullImageSettings();
+            onResetBackgroundImage();
+        }
+        m_wmInited = true;
         QDBusConnection::sessionBus().disconnect("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus",  "NameOwnerChanged", this, SLOT(onWmDbusStarted(QString, QString, QString)));
     }
 }

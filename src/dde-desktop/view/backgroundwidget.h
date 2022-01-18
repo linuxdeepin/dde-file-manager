@@ -43,6 +43,7 @@ private:
     QPixmap m_pixmap;
     QPixmap m_noScalePixmap;
     QSharedPointer<CanvasGridView> m_view; //保有view的指针，防止背景释放时，连带一起释放view
+    int m_paintingLog = 3;
 };
 
 typedef QSharedPointer<BackgroundWidget> BackgroundWidgetPointer;

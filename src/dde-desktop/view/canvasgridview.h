@@ -232,6 +232,7 @@ private:
     QTime m_rt; //刷新计时，可以删除
 
     DUrl m_currentTargetUrl; //缓存当前目标Url
+    int m_paintingLog = 3;
 };
 
 

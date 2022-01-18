@@ -109,6 +109,7 @@ static bool registerFileManager1DBus()
 
 int main(int argc, char *argv[])
 {
+    QString startTime = QDateTime::currentDateTime().toString("yyyyMMdd.hh:mm:ss:zzz");
     //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
     if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")){
         qputenv("XDG_CURRENT_DESKTOP", "Deepin");
@@ -177,7 +178,7 @@ int main(int argc, char *argv[])
     DFMApplication fmApp;
     Q_UNUSED(fmApp)
 
-    qInfo() << "start " << app.applicationName() << app.applicationVersion();
+    qInfo() << "start " << app.applicationName() << app.applicationVersion() << startTime;
     qInfo() << "pid:" << getpid() << " preload:" << preload << "fileDialogOnly:" << fileDialogOnly;
 
     if (!preload && !fileDialogOnly) {
