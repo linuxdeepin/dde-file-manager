@@ -111,10 +111,10 @@ public slots:
                                    DFMBASE_NAMESPACE::Global::RenameFileCallback callback);
     QString handleOperationMkdir(const quint64 windowId,
                                  const QUrl url,
-                                 const DFMBASE_NAMESPACE::GlobalCreateFileType fileType);
+                                 const DFMBASE_NAMESPACE::Global::CreateFileType fileType);
     void handleOperationMkdir(const quint64 windowId,
                               const QUrl url,
-                              const DFMBASE_NAMESPACE::GlobalCreateFileType fileType,
+                              const DFMBASE_NAMESPACE::Global::CreateFileType fileType,
                               DFMBASE_NAMESPACE::Global::CreateFileCallback callBack);
     bool handleOperationMkdir(const quint64 windowId,
                               const QUrl url);
@@ -128,10 +128,10 @@ public slots:
                                   DFMBASE_NAMESPACE::Global::CreateFileCallback callBack);
     QString handleOperationTouchFile(const quint64 windowId,
                                      const QUrl url,
-                                     const DFMBASE_NAMESPACE::GlobalCreateFileType fileType);
+                                     const DFMBASE_NAMESPACE::Global::CreateFileType fileType);
     void handleOperationTouchFile(const quint64 windowId,
                                   const QUrl url,
-                                  const DFMBASE_NAMESPACE::GlobalCreateFileType fileType,
+                                  const DFMBASE_NAMESPACE::Global::CreateFileType fileType,
                                   DFMBASE_NAMESPACE::Global::CreateFileCallback callBack);
     bool handleOperationLinkFile(const quint64 windowId,
                                  const QUrl url,
@@ -147,9 +147,11 @@ public slots:
                                       const QUrl url,
                                       const QFileDevice::Permissions permissions,
                                       DFMBASE_NAMESPACE::Global::SetFilePermissionCallback callBack);
-    bool handleOperationCopy(const quint64 windowId,
-                             const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
-                             const QList<QUrl> urls);
+    bool handleOperationWriteToClipboard(const quint64 windowId,
+                                         const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
+                                         const QList<QUrl> urls);
+    bool handleOperationOpenInTerminal(const quint64 windowId,
+                                       const QUrl url);
 private slots:
     void invokeRegister(const QString scheme, const FileOperationsFunctions functions);
     void invokeUnregister(const QString scheme);
@@ -159,10 +161,11 @@ private:
     bool initService();
     bool getDialogService();
     QString newDocmentName(const QString targetdir,
-                           const DFMBASE_NAMESPACE::GlobalCreateFileType fileType);
+                           const DFMBASE_NAMESPACE::Global::CreateFileType fileType);
     QString newDocmentName(QString targetdir,
                            const QString &baseName,
                            const QString &suffix);
+    QString defaultTerminalPath();
 
 private:
     QSharedPointer<FileCopyMoveJob> copyMoveJob { nullptr };

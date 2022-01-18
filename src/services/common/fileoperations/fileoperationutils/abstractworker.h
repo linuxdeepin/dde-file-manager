@@ -26,6 +26,7 @@
 #include "dfm_common_service_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/file/local/localfilehandler.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 #include "fileoperationsutils.h"
 
 #include <QObject>
@@ -135,6 +136,8 @@ protected slots:
 protected:
     void initHandleConnects(const JobHandlePointer &handle);
     explicit AbstractWorker(QObject *parent = nullptr);
+    QString formatFileName(const QString &fileName);
+    QString getNonExistFileName(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer targetDir);
 
 public:
     virtual ~AbstractWorker();

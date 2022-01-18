@@ -32,6 +32,8 @@
 #include <QDebug>
 #include <QUrl>
 
+DFMGLOBAL_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 DPFILEOPERATIONS_USE_NAMESPACE
 
 FileOperationsEventReceiver::FileOperationsEventReceiver(QObject *parent)
@@ -92,27 +94,27 @@ bool FileOperationsEventReceiver::getDialogService()
 }
 
 QString FileOperationsEventReceiver::newDocmentName(QString targetdir,
-                                                    const DFMBASE_NAMESPACE::GlobalCreateFileType fileType)
+                                                    const CreateFileType fileType)
 {
     QString suffix;
     QString baseName;
     switch (fileType) {
-    case DFMBASE_NAMESPACE::GlobalCreateFileType::kCreateFileTypeFolder:
+    case CreateFileType::kCreateFileTypeFolder:
         baseName = QObject::tr("New Folder");
         break;
-    case DFMBASE_NAMESPACE::GlobalCreateFileType::kCreateFileTypeText:
+    case CreateFileType::kCreateFileTypeText:
         baseName = QObject::tr("Text");
         suffix = "txt";
         break;
-    case DFMBASE_NAMESPACE::GlobalCreateFileType::kCreateFileTypeWord:
+    case CreateFileType::kCreateFileTypeWord:
         baseName = QObject::tr("Document");
         suffix = DFMBASE_NAMESPACE::WindowUtils::isWayLand() ? "wps" : "doc";
         break;
-    case DFMBASE_NAMESPACE::GlobalCreateFileType::kCreateFileTypeExcel:
+    case CreateFileType::kCreateFileTypeExcel:
         baseName = QObject::tr("Spreadsheet");
         suffix = DFMBASE_NAMESPACE::WindowUtils::isWayLand() ? "et" : "xls";
         break;
-    case DFMBASE_NAMESPACE::GlobalCreateFileType::kCreateFileTypePowerpoint:
+    case CreateFileType::kCreateFileTypePowerpoint:
         baseName = QObject::tr("Presentation");
         suffix = DFMBASE_NAMESPACE::WindowUtils::isWayLand() ? "dps" : "ppt";
         break;
@@ -146,6 +148,20 @@ QString FileOperationsEventReceiver::newDocmentName(QString targetdir,
     }
 }
 
+QString FileOperationsEventReceiver::defaultTerminalPath()
+{
+    const static QString ddeDaemonDefaultTerm = QStringLiteral("/usr/lib/deepin-daemon/default-terminal");
+    const static QString debianXTermEmu = QStringLiteral("/usr/bin/x-terminal-emulator");
+
+    if (QFileInfo::exists(ddeDaemonDefaultTerm)) {
+        return ddeDaemonDefaultTerm;
+    } else if (QFileInfo::exists(debianXTermEmu)) {
+        return debianXTermEmu;
+    }
+
+    return QStandardPaths::findExecutable("xterm");
+}
+
 FileOperationsEventReceiver *FileOperationsEventReceiver::instance()
 {
     static FileOperationsEventReceiver receiver;
@@ -174,7 +190,7 @@ JobHandlePointer FileOperationsEventReceiver::handleOperationPaste(const quint64
             return function->paste(windowId, sources, target, flags);
         }
     }
-    return copyMoveJob->paste(sources, target, flags);
+    return copyMoveJob->copy(sources, target, flags);
 }
 
 JobHandlePointer FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QList<QUrl> sources, const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
@@ -249,7 +265,7 @@ void FileOperationsEventReceiver::handleOperationPaste(const quint64 windowId,
                                                        const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                                        DFMBASE_NAMESPACE::Global::CopyMoveFileCallback callback)
 {
-    JobHandlePointer handle = copyMoveJob->paste(sources, target, flags);
+    JobHandlePointer handle = copyMoveJob->copy(sources, target, flags);
     if (callback)
         callback(windowId, handle);
 }
@@ -425,7 +441,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
 void FileOperationsEventReceiver::handleOperationRenameFile(const quint64 windowId,
                                                             const QUrl oldUrl,
                                                             const QUrl newUrl,
-                                                            DFMBASE_NAMESPACE::Global::RenameFileCallback callback)
+                                                            RenameFileCallback callback)
 {
     bool ok = handleOperationRenameFile(windowId, oldUrl, newUrl);
     if (callback)
@@ -434,7 +450,7 @@ void FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
 
 QString FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
                                                           const QUrl url,
-                                                          const DFMBASE_NAMESPACE::GlobalCreateFileType fileType)
+                                                          const CreateFileType fileType)
 {
     QString newPath = newDocmentName(url.path(), fileType);
     if (newPath.isEmpty())
@@ -445,8 +461,8 @@ QString FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId
 
 void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
                                                        const QUrl url,
-                                                       const DFMBASE_NAMESPACE::GlobalCreateFileType fileType,
-                                                       DFMBASE_NAMESPACE::Global::CreateFileCallback callBack)
+                                                       CreateFileType fileType,
+                                                       CreateFileCallback callBack)
 {
     QString newPath = handleOperationMkdir(windowId, url, fileType);
     if (callBack)
@@ -455,7 +471,7 @@ void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
 
 void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
                                                        const QUrl url,
-                                                       DFMBASE_NAMESPACE::Global::CreateFileCallback callBack)
+                                                       CreateFileCallback callBack)
 {
     bool ok = handleOperationMkdir(windowId, url);
     if (callBack)
@@ -534,7 +550,7 @@ bool FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
 
 void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
                                                            const QUrl url,
-                                                           DFMBASE_NAMESPACE::Global::CreateFileCallback callBack)
+                                                           CreateFileCallback callBack)
 {
     bool ok = handleOperationTouchFile(windowId, url);
     if (callBack)
@@ -543,7 +559,7 @@ void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
 
 QString FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
                                                               const QUrl url,
-                                                              const DFMBASE_NAMESPACE::GlobalCreateFileType fileType)
+                                                              const CreateFileType fileType)
 {
     QString newPath = newDocmentName(url.path(), fileType);
     if (newPath.isEmpty())
@@ -554,8 +570,8 @@ QString FileOperationsEventReceiver::handleOperationTouchFile(const quint64 wind
 
 void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
                                                            const QUrl url,
-                                                           const DFMBASE_NAMESPACE::GlobalCreateFileType fileType,
-                                                           DFMBASE_NAMESPACE::Global::CreateFileCallback callBack)
+                                                           const CreateFileType fileType,
+                                                           CreateFileCallback callBack)
 {
     QString newPath = handleOperationTouchFile(windowId, url, fileType);
     if (callBack)
@@ -653,9 +669,9 @@ void FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
         callBack(windowId, url, ok);
 }
 
-bool FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
-                                                      const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
-                                                      const QList<QUrl> urls)
+bool FileOperationsEventReceiver::handleOperationWriteToClipboard(const quint64 windowId,
+                                                                  const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
+                                                                  const QList<QUrl> urls)
 {
     QString error;
     if (!urls.isEmpty() && !urls.first().isLocalFile()) {
@@ -671,6 +687,43 @@ bool FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
     }
     DFMBASE_NAMESPACE::ClipBoard::instance()->setUrlsToClipboard(urls, action);
     return true;
+}
+
+bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 windowId, const QUrl url)
+{
+    QString error;
+    bool ok = false;
+    if (!url.isLocalFile()) {
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(url.scheme());
+        }
+        if (function && function->openInTerminal) {
+            ok = function->openInTerminal(windowId, url, &error);
+            if (!ok && getDialogService()) {
+                dialogService->showErrorDialog("open file in terminal error", error);
+            }
+            // TODO:: open file in terminal finished need to send open file in terminal finished event
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenInTerminalResult,
+                                                  windowId, QList<QUrl>() << url, ok, error);
+            return ok;
+        }
+    }
+
+    const QString &current_dir = QDir::currentPath();
+
+    QDir::setCurrent(url.toLocalFile());
+
+    ok = QProcess::startDetached(defaultTerminalPath());
+
+    QDir::setCurrent(current_dir);
+
+    // TODO:: open file in terminal finished need to send open file in terminal finished event
+    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
+                                          windowId, QList<QUrl>() << url, ok, error);
+
+    return ok;
 }
 
 void FileOperationsEventReceiver::invokeRegister(const QString scheme, const FileOperationsFunctions functions)

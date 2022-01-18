@@ -39,6 +39,7 @@ DSC_USE_NAMESPACE
 DoRestoreTrashFilesWorker::DoRestoreTrashFilesWorker(QObject *parent)
     : FileOperateBaseWorker(parent)
 {
+    jobType = AbstractJobHandler::JobType::kRestoreType;
 }
 
 DoRestoreTrashFilesWorker::~DoRestoreTrashFilesWorker()

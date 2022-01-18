@@ -54,11 +54,11 @@ protected:
     bool doMoveToTrash();
     bool checkTrashDirIsReady();
     bool canMoveToTrash(const QString &filePath);
-    bool isCanMoveToTrash(const QUrl &url, bool &result);
+    bool isCanMoveToTrash(const QUrl &url, bool *result);
     bool handleSymlinkFile(const AbstractFileInfoPointer &fileInfo);
     bool handleMoveToTrash(const AbstractFileInfoPointer &fileInfo);
     bool checkFileOutOfLimit(const AbstractFileInfoPointer &fileInfo);
-    bool WriteTrashInfo(const AbstractFileInfoPointer &fileInfo, QString &targetPath, bool &result);
+    bool WriteTrashInfo(const AbstractFileInfoPointer &fileInfo, QString &targetPath, bool *result);
     QString getNotExistsTrashFileName(const QString &fileName);
     bool doWriteTrashInfo(const QString &fileBaseName, const QString &path, const QString &time);
     void isInSameDisk(const AbstractFileInfoPointer &fileInfo);

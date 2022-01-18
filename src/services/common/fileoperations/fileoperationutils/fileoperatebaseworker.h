@@ -63,7 +63,7 @@ public:
                   const QUrl &toUrl,
                   const AbstractFileInfoPointer &fileInfo,
                   const QSharedPointer<DFMIO::DFile> &file,
-                  const DFMIO::DFile::OpenFlag &flags,
+                  const dfmio::DFile::OpenFlags &flags,
                   bool *result);
     void setTargetPermissions(const AbstractFileInfoPointer &fromInfo,
                               const AbstractFileInfoPointer &toInfo);
@@ -87,9 +87,20 @@ public:
                                  QSharedPointer<QStorageInfo> targetStorageInfo,
                                  bool *result);
     bool deleteFile(const QUrl &fromUrl,
-                    const QUrl &toUrl, const AbstractFileInfoPointer &fileInfo);
-    bool copyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *reslut);
-    bool copyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *reslut);
+                    const QUrl &toUrl, const AbstractFileInfoPointer &fileInfo, bool *result);
+    bool copyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result);
+    bool copyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result);
+    bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result);
+    bool doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+                     AbstractFileInfoPointer &newTargetInfo, bool *result);
+    bool creatSystemLink(const AbstractFileInfoPointer &fromInfo,
+                         const AbstractFileInfoPointer &toInfo,
+                         bool *result);
+    bool doCheckNewFile(const AbstractFileInfoPointer &fromInfo,
+                        const AbstractFileInfoPointer &toInfo,
+                        AbstractFileInfoPointer &newTargetInfo,
+                        QString &fileNewName,
+                        bool *result);
 };
 
 DSC_END_NAMESPACE

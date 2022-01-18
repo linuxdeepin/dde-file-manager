@@ -25,9 +25,11 @@
 #include "services/filemanager/workspace/workspace_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm_global_defines.h"
 
 #include <dfm-framework/framework.h>
 
+DFMGLOBAL_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -85,7 +87,7 @@ void WorkspaceEventCaller::sendMoveToTrash(quint64 windowID, const QList<QUrl> &
 
 void WorkspaceEventCaller::sendNewFolder(quint64 windowID, const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kMkdir, windowID, url);
+    dispatcher()->publish(GlobalEventType::kMkdir, windowID, url, CreateFileType::kCreateFileTypeFolder);
 }
 
 void WorkspaceEventCaller::sendDeletes(quint64 windowID, const QList<QUrl> &urls, const AbstractJobHandler::JobFlags flags)

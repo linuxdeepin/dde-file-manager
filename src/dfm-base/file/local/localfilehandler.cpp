@@ -192,7 +192,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
         return false;
     }
 
-    bool success = oper->renameFile(newUrl.path());
+    bool success = oper->renameFile(newUrl);
     if (!success) {
         qWarning() << "rename file failed, url: " << url;
 

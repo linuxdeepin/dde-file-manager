@@ -43,6 +43,7 @@ DSC_USE_NAMESPACE
 DoMoveToTrashFilesWorker::DoMoveToTrashFilesWorker(QObject *parent)
     : FileOperateBaseWorker(parent)
 {
+    jobType = AbstractJobHandler::JobType::kMoveToTrashType;
 }
 
 DoMoveToTrashFilesWorker::~DoMoveToTrashFilesWorker()
@@ -73,7 +74,7 @@ bool DoMoveToTrashFilesWorker::doWork()
 bool DoMoveToTrashFilesWorker::statisticsFilesSize()
 {
     sourceFilesCount = sourceUrls.size();
-    targetUrl = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath));
+    targetUrl = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath).endsWith("/") ? StandardPaths::location(StandardPaths::kTrashFilesPath) : StandardPaths::location(StandardPaths::kTrashFilesPath) + "/");
     trashLocalDir = QString("%1/.local/share/Trash").arg(QDir::homePath());
     targetStorageInfo.reset(new QStorageInfo(trashLocalDir));
 
@@ -100,7 +101,7 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
         }
 
         // url是否可以删除 canrename
-        if (!isCanMoveToTrash(url, result)) {
+        if (!isCanMoveToTrash(url, &result)) {
             if (result) {
                 compeleteFilesCount++;
                 continue;
@@ -201,7 +202,7 @@ bool DoMoveToTrashFilesWorker::canMoveToTrash(const QString &filePath)
  * \param result Output parameters, is skip this file
  * \return can move to trash
  */
-bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool &result)
+bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool *result)
 {
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
 
@@ -217,7 +218,7 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool &result)
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     if (action != AbstractJobHandler::SupportAction::kNoAction) {
-        result = action == AbstractJobHandler::SupportAction::kSkipAction;
+        *result = action == AbstractJobHandler::SupportAction::kSkipAction;
         return false;
     }
 
@@ -244,7 +245,7 @@ bool DoMoveToTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer &
     emitCurrentTaskNotify(fileInfo->url(), targetUrl);
 
     bool result = false;
-    if (!WriteTrashInfo(fileInfo, targetPath, result)) {
+    if (!WriteTrashInfo(fileInfo, targetPath, &result)) {
         return result;
     }
     QFile targetFile(fileInfo->symLinkTarget());
@@ -273,9 +274,9 @@ bool DoMoveToTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer &
  */
 bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &fileInfo)
 {
-    bool result = false;
     QString targetPath;
-    if (!WriteTrashInfo(fileInfo, targetPath, result)) {
+    bool result = false;
+    if (!WriteTrashInfo(fileInfo, targetPath, &result)) {
         return result;
     }
 
@@ -304,10 +305,9 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
     }
 
     // ToDo:: 不是检查文件是否操过1G，再检查磁盘空间是否够用，再执行拷贝文件，再去删除文件
-    if (!checkFileOutOfLimit(fileInfo)) {
+    if (checkFileOutOfLimit(fileInfo)) {
         // ToDo::大于1G，执行侧底删除代码
-
-        return deleteFile(sourceUrl, QUrl(), fileInfo);
+        return deleteFile(sourceUrl, QUrl(), fileInfo, &result);
     }
     // 检查磁盘空间是否不足
     if (!checkDiskSpaceAvailable(sourceUrl, QUrl::fromLocalFile(targetPath), targetStorageInfo, &result))
@@ -331,7 +331,7 @@ bool DoMoveToTrashFilesWorker::checkFileOutOfLimit(const AbstractFileInfoPointer
     return FileOperationsUtils::isFilesSizeOutLimit(fileInfo->url(), 1024 * 1024 * 1024);
 }
 
-bool DoMoveToTrashFilesWorker::WriteTrashInfo(const AbstractFileInfoPointer &fileInfo, QString &targetPath, bool &result)
+bool DoMoveToTrashFilesWorker::WriteTrashInfo(const AbstractFileInfoPointer &fileInfo, QString &targetPath, bool *result)
 {
     if (!stateCheck())
         return false;
@@ -352,7 +352,7 @@ bool DoMoveToTrashFilesWorker::WriteTrashInfo(const AbstractFileInfoPointer &fil
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     if (action != AbstractJobHandler::SupportAction::kNoAction) {
-        result = action == AbstractJobHandler::SupportAction::kSkipAction;
+        *result = action == AbstractJobHandler::SupportAction::kSkipAction;
         return false;
     }
 
@@ -470,9 +470,6 @@ bool DoMoveToTrashFilesWorker::doCopyAndDelete(const AbstractFileInfoPointer &fr
         if (!copyDir(fromInfo, toInfo, &result))
             return result;
     }
-
-    if (!deleteFile(fromInfo->url(), toInfo->url(), fromInfo))
-        return false;
 
     return true;
 }

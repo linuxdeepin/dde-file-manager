@@ -25,7 +25,6 @@
 
 #include "dfm_base_global.h"
 
-class QUrl;
 DFMBASE_BEGIN_NAMESPACE
 
 /*!
@@ -56,8 +55,9 @@ enum GlobalEventType {
     kDeleteFiles,
     kMoveToTrash,
     kRestoreFromTrash,
-    kPasteFile,
+    kWriteUrlsToClipboard,
     kCutFile,
+    kOpenInTerminal,
     kOpenFilesResult,
     kOpenFilesByAppResult,
     kRenameFileResult,
@@ -65,6 +65,7 @@ enum GlobalEventType {
     kTouchFileResult,
     kCreateSymlinkResult,
     kSetPermissionResult,
+    kOpenInTerminalResult,
 
     // first user event id, use UniversalUtils::registerEventType crreate custom event type
     kCustomBase = 1000,   // first user event id

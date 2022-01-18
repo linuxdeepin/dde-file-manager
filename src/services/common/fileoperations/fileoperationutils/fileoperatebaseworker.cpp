@@ -33,6 +33,7 @@
 #include <QWaitCondition>
 #include <QDateTime>
 #include <QStorageInfo>
+#include <QApplication>
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -157,7 +158,7 @@ bool FileOperateBaseWorker::openFiles(const AbstractFileInfoPointer &fromInfo, c
         return false;
     }
 
-    if (!openFile(fromInfo->url(), toInfo->url(), toInfo, toFile, DFile::OpenFlag::Truncate, result)) {
+    if (!openFile(fromInfo->url(), toInfo->url(), toInfo, toFile, DFile::OpenFlag::WriteOnly | DFile::OpenFlag::Truncate, result)) {
         return false;
     }
 
@@ -174,7 +175,7 @@ bool FileOperateBaseWorker::openFiles(const AbstractFileInfoPointer &fromInfo, c
  * \param result result Output parameter: whether skip
  * \return wether open the file successfully
  */
-bool FileOperateBaseWorker::openFile(const QUrl &fromUrl, const QUrl &toUrl, const AbstractFileInfoPointer &fileInfo, const QSharedPointer<DFile> &file, const DFile::OpenFlag &flags, bool *result)
+bool FileOperateBaseWorker::openFile(const QUrl &fromUrl, const QUrl &toUrl, const AbstractFileInfoPointer &fileInfo, const QSharedPointer<DFile> &file, const DFile::OpenFlags &flags, bool *result)
 {
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
@@ -280,7 +281,7 @@ bool FileOperateBaseWorker::doWriteFile(const QUrl &fromUrl,
                                         const char *data, const qint64 &readSize, bool *result)
 {
     qint64 currentPos = toDevice->pos();
-    AbstractJobHandler::SupportAction actionForWrite = AbstractJobHandler::SupportAction::kNoAction;
+    AbstractJobHandler::SupportAction actionForWrite { AbstractJobHandler::SupportAction::kNoAction };
     qint64 sizeWrite = 0;
     qint64 surplusSize = readSize;
     do {
@@ -294,7 +295,7 @@ bool FileOperateBaseWorker::doWriteFile(const QUrl &fromUrl,
         } while (sizeWrite > 0 && sizeWrite < surplusSize);
 
         // 表示全部数据写入完成
-        if (sizeWrite > 0) {
+        if (sizeWrite >= 0) {
             break;
         }
         QString errorstr = QString(QObject::tr("Failed to write the file, cause: %1")).arg("some thing to do!");
@@ -360,7 +361,7 @@ bool FileOperateBaseWorker::checkDiskSpaceAvailable(const QUrl &fromUrl,
         targetStorageInfo->refresh();
         qint64 freeBytes = targetStorageInfo->bytesFree();
 
-        if (!FileOperationsUtils::isFilesSizeOutLimit(fromUrl, freeBytes))
+        if (FileOperationsUtils::isFilesSizeOutLimit(fromUrl, freeBytes))
             action = doHandleErrorAndWait(fromUrl, toUrl, fromUrl, AbstractJobHandler::JobErrorType::kNotEnoughSpaceError);
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -379,7 +380,7 @@ bool FileOperateBaseWorker::checkDiskSpaceAvailable(const QUrl &fromUrl,
  * \param fileInfo delete file information
  * \return Delete file successfully
  */
-bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, const AbstractFileInfoPointer &fileInfo)
+bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, const AbstractFileInfoPointer &fileInfo, bool *result)
 {
     if (!stateCheck())
         return false;
@@ -391,8 +392,7 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, c
         }
     } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
-    if (action == AbstractJobHandler::SupportAction::kSkipAction)
-        return true;
+    *result = action == AbstractJobHandler::SupportAction::kSkipAction;
 
     return action != AbstractJobHandler::SupportAction::kNoAction;
 }
@@ -404,19 +404,19 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, c
  * \param reslut result Output parameter: whether skip
  * \return Whether the copied file is complete
  */
-bool FileOperateBaseWorker::copyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *reslut)
+bool FileOperateBaseWorker::copyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result)
 {
     //预先读取
     readAheadSourceFile(fromInfo);
 
     // 创建文件的divice
     QSharedPointer<DFile> fromDevice { nullptr }, toDevice { nullptr };
-    if (!createFileDevices(fromInfo, toInfo, fromDevice, toDevice, reslut))
-        return reslut;
+    if (!createFileDevices(fromInfo, toInfo, fromDevice, toDevice, result))
+        return result;
 
     // 打开文件并创建
-    if (!openFiles(fromInfo, toInfo, fromDevice, toDevice, reslut))
-        return reslut;
+    if (!openFiles(fromInfo, toInfo, fromDevice, toDevice, result))
+        return result;
 
     // 源文件大小如果为0
     if (fromInfo->size() <= 0) {
@@ -429,18 +429,18 @@ bool FileOperateBaseWorker::copyFile(const AbstractFileInfoPointer &fromInfo, co
     char *data = new char[blockSize + 1];
     qint64 sizeRead = 0;
     do {
-        if (!doReadFile(fromInfo->url(), toInfo->url(), fromInfo, fromDevice, data, blockSize, sizeRead, reslut)) {
+        if (!doReadFile(fromInfo->url(), toInfo->url(), fromInfo, fromDevice, data, blockSize, sizeRead, result)) {
             delete[] data;
             data = nullptr;
-            return reslut;
+            return result;
         }
 
-        if (!doWriteFile(fromInfo->url(), toInfo->url(), toInfo, toDevice, data, sizeRead, reslut)) {
+        if (!doWriteFile(fromInfo->url(), toInfo->url(), toInfo, toDevice, data, sizeRead, result)) {
             delete[] data;
             data = nullptr;
-            return reslut;
+            return result;
         }
-    } while (fromDevice->pos() == fromInfo->size());
+    } while (fromDevice->pos() != fromInfo->size());
 
     delete[] data;
     data = nullptr;
@@ -450,6 +450,9 @@ bool FileOperateBaseWorker::copyFile(const AbstractFileInfoPointer &fromInfo, co
     if (Q_UNLIKELY(!stateCheck())) {
         return false;
     }
+
+    if (!deleteFile(fromInfo->url(), toInfo->url(), fromInfo, result))
+        return false;
 
     return true;
 }
@@ -461,7 +464,7 @@ bool FileOperateBaseWorker::copyFile(const AbstractFileInfoPointer &fromInfo, co
  * \param reslut result Output parameter: whether skip
  * \return Whether the copied dir is complete
  */
-bool FileOperateBaseWorker::copyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *reslut)
+bool FileOperateBaseWorker::copyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result)
 {
     // 检查文件的一些合法性，源文件是否存在，创建新的目标目录名称，检查新创建目标目录名称是否存在
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
@@ -475,7 +478,7 @@ bool FileOperateBaseWorker::copyDir(const AbstractFileInfoPointer &fromInfo, con
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
         if (AbstractJobHandler::SupportAction::kNoAction != action) {
             // skip write size += all file size in sources dir
-            *reslut = AbstractJobHandler::SupportAction::kSkipAction == action;
+            *result = AbstractJobHandler::SupportAction::kSkipAction == action;
             return false;
         }
     }
@@ -487,7 +490,7 @@ bool FileOperateBaseWorker::copyDir(const AbstractFileInfoPointer &fromInfo, con
     // 遍历源文件，执行一个一个的拷贝
     QString error;
     const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(fromInfo->url(), &error);
-    if (iterator) {
+    if (!iterator) {
         doHandleErrorAndWait(fromInfo->url(), toInfo->url(), fromInfo->url(), AbstractJobHandler::JobErrorType::kProrogramError, QString(QObject::tr("create dir's iterator failed, case : %1")).arg(error));
         return false;
     }
@@ -500,12 +503,211 @@ bool FileOperateBaseWorker::copyDir(const AbstractFileInfoPointer &fromInfo, con
         const QUrl &url = iterator->next();
         Q_UNUSED(url);
         const AbstractFileInfoPointer &info = iterator->fileInfo();
-        if (!copyFile(info, toInfo, reslut)) {
+        if (!doCopyFile(info, toInfo, result)) {
+            if (result)
+                continue;
             return false;
         }
     }
 
     handler->setPermissions(toInfo->url(), permissions);
+
+    if (!deleteFile(fromInfo->url(), toInfo->url(), fromInfo, result))
+        return false;
+
+    return true;
+}
+/*!
+ * \brief FileOperateBaseWorker::doCopyFile Copy to a new file and delete the source file
+ * \param fromInfo File information of source file
+ * \param toInfo File information of target file
+ * \param result Output parameter: whether skip
+ * \return Is the copy successful
+ */
+bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result)
+{
+    AbstractFileInfoPointer newTargetInfo(nullptr);
+    bool ok = false;
+    if (!doCheckFile(fromInfo, toInfo, newTargetInfo, result))
+        return ok;
+
+    if (fromInfo->isSymLink()) {
+        ok = creatSystemLink(fromInfo, newTargetInfo, result);
+        if (!deleteFile(fromInfo->url(), toInfo->url(), fromInfo, result))
+            return false;
+    } else if (fromInfo->isDir()) {
+        ok = copyDir(fromInfo, newTargetInfo, result);
+    } else {
+        ok = copyFile(fromInfo, newTargetInfo, result);
+    }
+    return ok;
+}
+/*!
+ * \brief FileOperateBaseWorker::doCheckFile Check and get the name of the target file
+ * \param fromInfo File information of source file
+ * \param toInfo File information of target file
+ * \param newTargetInfo Output parameter: information of new file
+ * \param result Output parameter: whether skip
+ * \return Is it successful
+ */
+bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, AbstractFileInfoPointer &newTargetInfo, bool *result)
+{
+    // 检查源文件的文件信息
+    if (!fromInfo) {
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(QUrl(), toInfo == nullptr ? QUrl() : toInfo->url(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
+        *result = AbstractJobHandler::SupportAction::kSkipAction != action;
+        return false;
+    }
+    // 检查源文件是否存在
+    if (!fromInfo->exists()) {
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->path().startsWith("/root/") && !toInfo->path().startsWith("/root/")) ? AbstractJobHandler::JobErrorType::kPermissionError
+                                                                                                                                     : AbstractJobHandler::JobErrorType::kNonexistenceError;
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfo == nullptr ? QUrl() : toInfo->url(), fromInfo->url(), errortype);
+
+        *result = AbstractJobHandler::SupportAction::kSkipAction != action;
+        return false;
+    }
+    // 检查目标文件的文件信息
+    if (!toInfo) {
+        doHandleErrorAndWait(fromInfo->url(), QUrl(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
+        return false;
+    }
+    // 检查目标文件是否存在
+    if (!toInfo->exists()) {
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->path().startsWith("/root/") && !toInfo->path().startsWith("/root/")) ? AbstractJobHandler::JobErrorType::kPermissionError
+                                                                                                                                     : AbstractJobHandler::JobErrorType::kNonexistenceError;
+        doHandleErrorAndWait(fromInfo->url(), toInfo->url(), toInfo->url(), errortype);
+        return false;
+    }
+    // 特殊文件判断
+    switch (fromInfo->fileType()) {
+    case AbstractFileInfo::kCharDevice:
+    case AbstractFileInfo::kBlockDevice:
+    case AbstractFileInfo::kFIFOFile:
+    case AbstractFileInfo::kSocketFile: {
+
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), fromInfo->url(), AbstractJobHandler::JobErrorType::kSpecialFileError);
+        return AbstractJobHandler::SupportAction::kSkipAction == action;
+    }
+    default:
+        break;
+    }
+
+    // 创建新的目标文件并做检查
+    QString fileNewName = fromInfo->fileName();
+    newTargetInfo.reset(nullptr);
+    if (!doCheckNewFile(fromInfo, toInfo, newTargetInfo, fileNewName, result))
+        return false;
+
+    return true;
+}
+/*!
+ * \brief FileOperateBaseWorker::creatSystemLink Create system link file
+ * \param fromInfo File information of source file
+ * \param toInfo File information of target file
+ * \param result Output parameter: whether skip
+ * \return Was the linked file created successfully
+ */
+bool FileOperateBaseWorker::creatSystemLink(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result)
+{
+    // 创建链接文件
+    AbstractFileInfoPointer newFromInfo = fromInfo;
+
+    AbstractJobHandler::SupportAction actionForlink { AbstractJobHandler::SupportAction::kNoAction };
+
+    do {
+        if (handler->createSystemLink(toInfo->url(), newFromInfo->url())) {
+            return true;
+        }
+        actionForlink = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), fromInfo->url(), AbstractJobHandler::JobErrorType::kSymlinkError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(handler->errorString()));
+    } while (!isStopped() && actionForlink == AbstractJobHandler::SupportAction::kRetryAction);
+    *result = actionForlink == AbstractJobHandler::SupportAction::kSkipAction;
+    return actionForlink == AbstractJobHandler::SupportAction::kNoAction;
+}
+/*!
+ * \brief FileOperateBaseWorker::doCheckNewFile Check the legitimacy of the new file
+ * \param fromInfo File information of source file
+ * \param toInfo File information of target file
+ * \param newTargetInfo Output parameter: information of new file
+ * \param fileNewName File name
+ * \param result Output parameter: whether skip
+ * \return Is it successful
+ */
+bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, AbstractFileInfoPointer &newTargetInfo, QString &fileNewName, bool *result)
+{
+    fileNewName = formatFileName(fileNewName);
+    // 创建文件的名称
+    QUrl newTargetUrl = toInfo->url();
+    const QString &newTargetPath = newTargetUrl.path();
+
+    QString newPath = newTargetPath.endsWith("/") ? newTargetPath + fileNewName
+                                                  : newTargetPath + "/" + fileNewName;
+
+    newTargetUrl.setPath(newPath);
+
+    newTargetInfo.reset(nullptr);
+    newTargetInfo = InfoFactory::create<AbstractFileInfo>(newTargetUrl);
+
+    if (!newTargetInfo) {
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), newTargetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
+
+        *result = AbstractJobHandler::SupportAction::kSkipAction != action;
+        return false;
+    }
+
+    if (newTargetInfo->exists()) {
+        if (!jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyToSelf) && FileOperationsUtils::isAncestorUrl(fromInfo->url(), newTargetUrl)) {
+            AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), newTargetUrl, AbstractJobHandler::JobErrorType::kTargetIsSelfError);
+
+            if (AbstractJobHandler::SupportAction::kSkipAction == action) {
+                *result = AbstractJobHandler::SupportAction::kSkipAction != action;
+                return false;
+            }
+
+            if (action != AbstractJobHandler::SupportAction::kEnforceAction) {
+                return false;
+            }
+        };
+        bool fromIsFile = fromInfo->isFile() || fromInfo->isSymLink();
+        bool newTargetIsFile = newTargetInfo->isFile() || newTargetInfo->isSymLink();
+        AbstractJobHandler::JobErrorType errortype = newTargetIsFile ? AbstractJobHandler::JobErrorType::kFileExistsError
+                                                                     : AbstractJobHandler::JobErrorType::kDirectoryExistsError;
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), newTargetInfo->url(), newTargetUrl, errortype);
+        switch (action) {
+        case AbstractJobHandler::SupportAction::kReplaceAction:
+            if (newTargetUrl == fromInfo->url()) {
+                return true;
+            }
+
+            if (fromIsFile && fromIsFile == newTargetIsFile) {
+                break;
+            } else {
+                // TODO:: something is doing here
+
+                return false;
+            }
+        case AbstractJobHandler::SupportAction::kMergeAction:
+            if (!fromIsFile && fromIsFile == newTargetIsFile) {
+                break;
+            } else {
+                // TODO:: something is doing here
+
+                return false;
+            }
+        case AbstractJobHandler::SupportAction::kSkipAction:
+            return true;
+        case AbstractJobHandler::SupportAction::kCoexistAction: {
+            fileNewName = getNonExistFileName(fromInfo, toInfo);
+
+            bool ok = doCheckNewFile(fromInfo, toInfo, newTargetInfo, fileNewName, result);
+
+            return ok;
+        }
+        default:
+            return false;
+        }
+        return true;
+    }
 
     return true;
 }

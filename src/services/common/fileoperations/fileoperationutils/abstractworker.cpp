@@ -22,13 +22,16 @@
  */
 #include "abstractworker.h"
 #include "statisticsfilessize.h"
-
-#include "utils/fileutils.h"
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QUrl>
 #include <QDebug>
 #include <QWaitCondition>
 #include <QMutex>
+#include <QStorageInfo>
+#include <QApplication>
+#include <QRegularExpression>
 
 DSC_USE_NAMESPACE
 /*!
@@ -327,6 +330,15 @@ JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &t
         toMsg = QString(QObject::tr("to %1")).arg(to.path());
     } else if (AbstractJobHandler::JobType::kDeleteTpye == jobType) {
         fromMsg = QString(QObject::tr("delete file %1")).arg(from.path());
+    } else if (AbstractJobHandler::JobType::kCutType == jobType) {
+        fromMsg = QString(QObject::tr("cut file %1")).arg(from.path());
+        toMsg = QString(QObject::tr("to %1")).arg(to.path());
+    } else if (AbstractJobHandler::JobType::kMoveToTrashType == jobType) {
+        fromMsg = QString(QObject::tr("move file %1")).arg(from.path());
+        toMsg = QString(QObject::tr("to trash %1")).arg(to.path());
+    } else if (AbstractJobHandler::JobType::kRestoreType == jobType) {
+        fromMsg = QString(QObject::tr("restore file %1 from trash ")).arg(from.path());
+        toMsg = QString(QObject::tr("to %1")).arg(to.path());
     }
     info->insert(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey, QVariant::fromValue(fromMsg));
     info->insert(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey, QVariant::fromValue(toMsg));
@@ -389,6 +401,73 @@ void AbstractWorker::onStatisticsFilesSizeFinish(const SizeInfoPoiter sizeInfo)
 AbstractWorker::AbstractWorker(QObject *parent)
     : QObject(parent)
 {
+}
+/*!
+ * \brief AbstractWorker::formatFileName Processing and formatting file names
+ * \param fileName file name
+ * \return format file name
+ */
+QString AbstractWorker::formatFileName(const QString &fileName)
+{
+    // 获取目标文件的文件系统，是vfat格式是否要特殊处理，以前的文管处理的
+    if (jobFlags.testFlag(AbstractJobHandler::JobFlag::kDontFormatFileName)) {
+        return fileName;
+    }
+
+    const QString &fs_type = QStorageInfo(targetUrl.path()).fileSystemType();
+
+    if (fs_type == "vfat") {
+        QString new_name = fileName;
+
+        return new_name.replace(QRegExp("[\"*:<>?\\|]"), "_");
+    }
+
+    return fileName;
+}
+/*!
+ * \brief DoCopyFilesWorker::getNonExistFileName Gets the name of a file that does not exist
+ * \param fromInfo Source file information
+ * \param targetDir Target directory information
+ * \return file name
+ */
+QString AbstractWorker::getNonExistFileName(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer targetDir)
+{
+    if (!targetDir || !targetDir->exists()) {
+        // TODO:: paused and handle error
+        return QString();
+    }
+    const QString &copy_text = QCoreApplication::translate("DoCopyFilesWorker", "copy",
+                                                           "Extra name added to new file name when used for file name.");
+
+    AbstractFileInfoPointer targetFileInfo { nullptr };
+    QString fileBaseName = fromInfo->baseName();
+    QString suffix = fromInfo->suffix();
+    QString fileName = fromInfo->fileName();
+    //在7z分卷压缩后的名称特殊处理7z.003
+    if (fileName.contains(QRegularExpression(".7z.[0-9]{3,10}$"))) {
+        fileBaseName = fileName.left(fileName.indexOf(QRegularExpression(".7z.[0-9]{3,10}$")));
+        suffix = fileName.mid(fileName.indexOf(QRegularExpression(".7z.[0-9]{3,10}$")) + 1);
+    }
+
+    int number = 0;
+
+    QString newFileName;
+
+    do {
+        newFileName = number > 0 ? QString("%1(%2 %3)").arg(fileBaseName, copy_text).arg(number) : QString("%1(%2)").arg(fileBaseName, copy_text);
+
+        if (!suffix.isEmpty()) {
+            newFileName.append('.').append(suffix);
+        }
+
+        ++number;
+        QUrl newUrl;
+        newUrl = targetDir->url();
+        newUrl.setPath(newUrl.path() + "/" + newFileName);
+        targetFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
+    } while (targetFileInfo && targetFileInfo->exists());
+
+    return newFileName;
 }
 
 AbstractWorker::~AbstractWorker()

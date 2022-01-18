@@ -122,7 +122,7 @@ void FileTreaterPrivate::doWatcherEvent()
                 continue;
 
             QString errString;
-            auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(fileUrl, &errString);
+            auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(fileUrl, true, &errString);
             if (!itemInfo) {
                 qInfo() << "create LocalFileInfo error: " << errString;
                 continue;

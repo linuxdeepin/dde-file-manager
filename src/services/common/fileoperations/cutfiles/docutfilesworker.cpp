@@ -43,6 +43,7 @@ DSC_USE_NAMESPACE
 DoCutFilesWorker::DoCutFilesWorker(QObject *parent)
     : FileOperateBaseWorker(parent)
 {
+    jobType = AbstractJobHandler::JobType::kCutType;
 }
 
 DoCutFilesWorker::~DoCutFilesWorker()
@@ -75,6 +76,8 @@ void DoCutFilesWorker::stop()
 
 bool DoCutFilesWorker::initArgs()
 {
+    AbstractWorker::initArgs();
+
     if (sourceUrls.count() <= 0) {
         // pause and emit error msg
         doHandleErrorAndWait(QUrl(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
@@ -82,30 +85,29 @@ bool DoCutFilesWorker::initArgs()
     }
     if (!targetUrl.isValid()) {
         // pause and emit error msg
-        doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
+        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
     targetInfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
     if (!targetInfo) {
         // pause and emit error msg
-        doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
+        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
 
-    if (targetInfo->exists()) {
+    if (!targetInfo->exists()) {
         // pause and emit error msg
-        doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError);
+        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError);
         return false;
     }
 
     targetStorageInfo.reset(new StorageInfo(targetUrl.path()));
 
-    return AbstractWorker::initArgs();
+    return true;
 }
 
 bool DoCutFilesWorker::cutFiles()
 {
-    bool reslut = false;
     for (const auto &url : sourceUrls) {
         if (!stateCheck()) {
             return false;
@@ -124,7 +126,7 @@ bool DoCutFilesWorker::cutFiles()
         }
         ++completedFilesCount;
     }
-    return reslut;
+    return true;
 }
 
 bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo)
@@ -138,18 +140,8 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
     if (!checkDiskSpaceAvailable(fromInfo->url(), toInfo->url(), targetStorageInfo, &result))
         return result;
 
-    if (fromInfo->isFile()) {
-
-        if (!copyFile(fromInfo, toInfo, &result))
-            return result;
-
-    } else {
-        if (!copyDir(fromInfo, toInfo, &result))
-            return result;
-    }
-
-    if (!deleteFile(fromInfo->url(), toInfo->url(), fromInfo))
-        return false;
+    if (!doCopyFile(fromInfo, toInfo, &result))
+        return result;
 
     return true;
 }
@@ -186,7 +178,7 @@ void DoCutFilesWorker::emitCompleteFilesUpdatedNotify(const qint64 &writCount)
 AbstractJobHandler::SupportAction DoCutFilesWorker::doHandleErrorAndWait(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const QString &errorMsg)
 {
     setStat(AbstractJobHandler::JobState::kPauseState);
-    emitErrorNotify(from, QUrl(), error, errorMsg);
+    emitErrorNotify(from, to, error, errorMsg);
 
     if (!handlingErrorQMutex)
         handlingErrorQMutex.reset(new QMutex);
@@ -217,23 +209,29 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
 
     const QUrl &sourceUrl = sourceInfo->url();
     const QUrl &targetUrl = targetInfo->url();
+    qInfo() << sourceStorageInfo->device() << targetStorageInfo->device();
 
-    if (targetStorageInfo->device() != "gvfsd-fuse" || sourceStorageInfo == targetStorageInfo) {
+    if (sourceStorageInfo->device() == targetStorageInfo->device()) {
+        bool result = false;
         AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+        AbstractFileInfoPointer newTargetInfo(nullptr);
+        if (!doCheckFile(sourceInfo, targetInfo, newTargetInfo, &result))
+            return result;
 
         if (sourceInfo->isSymLink()) {
             // TODO(lanxs)
+
             if (targetInfo->exists()) {
-                bool succ = deleteFile(sourceUrl, targetUrl, targetInfo);
+                bool succ = deleteFile(sourceUrl, targetUrl, targetInfo, &result);
                 if (!succ) {
-                    return false;
+                    return result;
                 }
             }
 
             // create link
 
             do {
-                if (!handler->createSystemLink(sourceUrl, targetUrl))
+                if (!handler->createSystemLink(sourceUrl, newTargetInfo->url()))
                     // pause and emit error msg
                     action = doHandleErrorAndWait(sourceUrl, targetUrl, AbstractJobHandler::JobErrorType::kSymlinkError);
 
@@ -244,12 +242,15 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
             }
 
             // remove old link file
-            return deleteFile(sourceUrl, targetUrl, sourceInfo);
+            if (!deleteFile(sourceUrl, targetUrl, sourceInfo, &result))
+                return result;
+
+            return true;
 
         } else {
 
             do {
-                if (!renameFileByHandler(sourceInfo, targetInfo))
+                if (!renameFileByHandler(sourceInfo, newTargetInfo))
                     // pause and emit error msg
                     action = doHandleErrorAndWait(sourceInfo->url(), targetInfo->url(), AbstractJobHandler::JobErrorType::kRenameError);
 

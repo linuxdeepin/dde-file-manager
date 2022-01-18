@@ -28,6 +28,11 @@
 
 #include <QObject>
 
+#define DFMGLOBAL_BEGIN_NAMESPACE namespace DFMBASE_NAMESPACE::Global {
+#define DFMGLOBAL_END_NAMESPACE }
+#define DFMGLOBAL_NAMESPACE DFMBASE_NAMESPACE::Global
+#define DFMGLOBAL_USE_NAMESPACE using namespace DFMBASE_NAMESPACE::Global;
+
 DFMBASE_BEGIN_NAMESPACE
 namespace Global {
 enum class ViewMode {
@@ -44,8 +49,7 @@ using LinkFileCallback = void (*)(const quint64 windowId, const QUrl url, const 
                                   const bool successed);
 using CopyMoveFileCallback = void (*)(const quint64 windowId, JobHandlePointer handle);
 using OpenFilesCallback = void (*)(const quint64 windowId, const QList<QUrl>, const bool successed);
-}   //namespace Global
-enum GlobalCreateFileType : uint8_t{
+enum CreateFileType : uint8_t {
     kCreateFileTypeUnknow = 0,
     kCreateFileTypeFolder,
     kCreateFileTypeText,
@@ -53,9 +57,11 @@ enum GlobalCreateFileType : uint8_t{
     kCreateFileTypeWord,
     kCreateFileTypePowerpoint,
 };
+}   //namespace Global
+
 DFMBASE_END_NAMESPACE
 
-Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::GlobalCreateFileType);
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::CreateFileType);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::CreateFileCallback);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::RenameFileCallback);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::CopyMoveFileCallback);

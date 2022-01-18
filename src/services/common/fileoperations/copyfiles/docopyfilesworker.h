@@ -149,8 +149,6 @@ protected:
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from, const QUrl &to,
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const QString &errorMsg = QString());
-    QString formatFileName(const QString &fileName);
-    QString getNonExistFileName(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer targetDir);
     qint64 getWriteDataSize();
     qint64 getTidWriteSize();
     qint64 getSectorsWritten();

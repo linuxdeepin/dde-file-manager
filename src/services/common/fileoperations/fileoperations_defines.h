@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -85,6 +85,9 @@ using handleOperationSetPermission = std::function<bool(const quint64 windowId,
 using handleOperationCopy = std::function<bool(const quint64 windowId,
                                                const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
                                                const QList<QUrl> urls)>;
+using handleOperationOpenInTerminal = std::function<bool(const quint64 windowId,
+                                                         const QUrl url,
+                                                         QString *)>;
 
 struct FileOperationsInfo
 {
@@ -101,13 +104,14 @@ struct FileOperationsInfo
     handleOperationLinkFile linkFile { nullptr };
     handleOperationSetPermission setPermission { nullptr };
     handleOperationCopy copy { nullptr };
+    handleOperationOpenInTerminal openInTerminal { nullptr };
 };
 
-};   // namespace FileOperations
+};   // namespace FileOperationsSpace
 
 DSC_END_NAMESPACE
 
-typedef QSharedPointer<DSC_NAMESPACE::FileOperationsSpace::FileOperationsInfo> FileOperationsFunctions;
+using FileOperationsFunctions = QSharedPointer<DSC_NAMESPACE::FileOperationsSpace::FileOperationsInfo>;
 Q_DECLARE_METATYPE(FileOperationsFunctions)
 
 #endif   // FILEOPERATIONS_DEFINES_H

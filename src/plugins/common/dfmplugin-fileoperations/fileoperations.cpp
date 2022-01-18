@@ -21,12 +21,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fileoperations.h"
-#include "./fileoperationsevent/fileoperationseventreceiver.h"
+#include "fileoperationsevent/fileoperationseventreceiver.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 DPFILEOPERATIONS_USE_NAMESPACE
 
 void FileOperations::initialize()
@@ -49,7 +51,7 @@ dpf::Plugin::ShutdownFlag FileOperations::stop()
  */
 void FileOperations::initEventHandle()
 {
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kPasteFile,
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kCopy,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<JobHandlePointer (FileOperationsEventReceiver::*)(const quint64, const QList<QUrl>,
                                                                                                           const QUrl, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags)>(&FileOperationsEventReceiver::handleOperationPaste));
@@ -69,7 +71,7 @@ void FileOperations::initEventHandle()
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<JobHandlePointer (FileOperationsEventReceiver::*)(const quint64, const QList<QUrl>,
                                                                                                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags)>(&FileOperationsEventReceiver::handleOperationDeletes));
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kPasteFile,
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kCopy,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QList<QUrl>,
                                                                                               const QUrl, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
@@ -113,7 +115,7 @@ void FileOperations::initEventHandle()
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QList<QUrl>,
                                                                                               const QList<QString>,
-                                                                                              DFMBASE_NAMESPACE::Global::OpenFilesCallback)>(&FileOperationsEventReceiver::handleOperationOpenFilesByApp));
+                                                                                              OpenFilesCallback)>(&FileOperationsEventReceiver::handleOperationOpenFilesByApp));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRenameFile,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<bool (FileOperationsEventReceiver::*)(const quint64,
@@ -124,36 +126,36 @@ void FileOperations::initEventHandle()
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QUrl,
                                                                                               const QUrl,
-                                                                                              DFMBASE_NAMESPACE::Global::RenameFileCallback)>(&FileOperationsEventReceiver::handleOperationRenameFile));
+                                                                                              RenameFileCallback)>(&FileOperationsEventReceiver::handleOperationRenameFile));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kMkdir,
                                             FileOperationsEventReceiver::instance(),
-                                            static_cast<QString (FileOperationsEventReceiver::*)(const quint64, const QUrl, const DFMBASE_NAMESPACE::GlobalCreateFileType)>(&FileOperationsEventReceiver::handleOperationMkdir));
+                                            static_cast<QString (FileOperationsEventReceiver::*)(const quint64, const QUrl, const CreateFileType)>(&FileOperationsEventReceiver::handleOperationMkdir));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kMkdir,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<bool (FileOperationsEventReceiver::*)(const quint64, const QUrl)>(&FileOperationsEventReceiver::handleOperationMkdir));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kMkdirCallBack,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QUrl,
-                                                                                              DFMBASE_NAMESPACE::Global::CreateFileCallback)>(&FileOperationsEventReceiver::handleOperationMkdir));
+                                                                                              Global::CreateFileCallback)>(&FileOperationsEventReceiver::handleOperationMkdir));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kMkdirCallBack,
                                             FileOperationsEventReceiver::instance(),
-                                            static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QUrl, const DFMBASE_NAMESPACE::GlobalCreateFileType,
-                                                                                              DFMBASE_NAMESPACE::Global::CreateFileCallback)>(&FileOperationsEventReceiver::handleOperationMkdir));
+                                            static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QUrl, const CreateFileType,
+                                                                                              CreateFileCallback)>(&FileOperationsEventReceiver::handleOperationMkdir));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kTouchFile,
                                             FileOperationsEventReceiver::instance(),
-                                            static_cast<QString (FileOperationsEventReceiver::*)(const quint64, const QUrl, const DFMBASE_NAMESPACE::GlobalCreateFileType)>(&FileOperationsEventReceiver::handleOperationTouchFile));
+                                            static_cast<QString (FileOperationsEventReceiver::*)(const quint64, const QUrl, const CreateFileType)>(&FileOperationsEventReceiver::handleOperationTouchFile));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kTouchFile,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<bool (FileOperationsEventReceiver::*)(const quint64, const QUrl)>(&FileOperationsEventReceiver::handleOperationTouchFile));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kTouchCallBack,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QUrl,
-                                                                                              DFMBASE_NAMESPACE::Global::CreateFileCallback)>(&FileOperationsEventReceiver::handleOperationTouchFile));
+                                                                                              CreateFileCallback)>(&FileOperationsEventReceiver::handleOperationTouchFile));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kTouchCallBack,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QUrl,
-                                                                                              const DFMBASE_NAMESPACE::GlobalCreateFileType,
-                                                                                              DFMBASE_NAMESPACE::Global::CreateFileCallback)>(&FileOperationsEventReceiver::handleOperationTouchFile));
+                                                                                              const CreateFileType,
+                                                                                              CreateFileCallback)>(&FileOperationsEventReceiver::handleOperationTouchFile));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kCreateSymlink,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<bool (FileOperationsEventReceiver::*)(const quint64,
@@ -164,7 +166,7 @@ void FileOperations::initEventHandle()
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QUrl,
                                                                                               const QUrl,
-                                                                                              DFMBASE_NAMESPACE::Global::LinkFileCallback)>(&FileOperationsEventReceiver::handleOperationLinkFile));
+                                                                                              LinkFileCallback)>(&FileOperationsEventReceiver::handleOperationLinkFile));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kSetPermission,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<bool (FileOperationsEventReceiver::*)(const quint64,
@@ -175,8 +177,11 @@ void FileOperations::initEventHandle()
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QUrl,
                                                                                               const QFileDevice::Permissions,
-                                                                                              DFMBASE_NAMESPACE::Global::SetFilePermissionCallback)>(&FileOperationsEventReceiver::handleOperationSetPermission));
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kCopy,
+                                                                                              SetFilePermissionCallback)>(&FileOperationsEventReceiver::handleOperationSetPermission));
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kWriteUrlsToClipboard,
                                             FileOperationsEventReceiver::instance(),
-                                            &FileOperationsEventReceiver::handleOperationCopy);
+                                            &FileOperationsEventReceiver::handleOperationWriteToClipboard);
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenInTerminal,
+                                            FileOperationsEventReceiver::instance(),
+                                            &FileOperationsEventReceiver::handleOperationOpenInTerminal);
 }

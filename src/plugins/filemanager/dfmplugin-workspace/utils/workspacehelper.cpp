@@ -140,7 +140,6 @@ void WorkspaceHelper::actionNewFolder(quint64 windowId, const QUrl &url)
 {
     const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
     if (fileInfo) {
-        const QUrl &url = FileUtils::newDocumentUrl(fileInfo, tr("New Folder"), "");
         WorkspaceEventCaller::sendNewFolder(windowId, url);
     }
 }

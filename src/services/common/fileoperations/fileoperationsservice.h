@@ -39,9 +39,9 @@ class FileOperationsService final : public dpf::PluginService,
 public:
     static QString name() { return "org.deepin.service.FileOperationsService"; }
 
-    JobHandlePointer paste(const QList<QUrl> &sources,
-                           const QUrl &target,
-                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+    JobHandlePointer copy(const QList<QUrl> &sources,
+                          const QUrl &target,
+                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     JobHandlePointer moveToTrash(const QList<QUrl> &sources,
                                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     JobHandlePointer restoreFromTrash(const QList<QUrl> &sources,
