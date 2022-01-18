@@ -345,7 +345,7 @@ struct ThreadSafeOLEStorage::Implementation {
         if (!m_is_valid_ole)
             return;
         size_t records_count = m_sector_size / 4;
-        m_mini_sectors_chain.resize(m_number_of_mini_fat_sectors * records_count);
+        m_mini_sectors_chain.reserve(m_number_of_mini_fat_sectors * records_count);
         size_t mini_sector_location = m_first_mini_fat_sector_location;
         for (size_t i = 0; i < m_number_of_mini_fat_sectors; ++i) {
             if (!m_data_stream->seek((1 + mini_sector_location) * m_sector_size, SEEK_SET)) {
@@ -374,7 +374,7 @@ struct ThreadSafeOLEStorage::Implementation {
         if (!m_is_valid_ole)
             return;
         size_t records_count = m_sector_size / 4;
-        m_sectors_chain.resize(m_number_of_fat_sectors * records_count);
+        m_sectors_chain.reserve(m_number_of_fat_sectors * records_count);
         for (size_t i = 0; i < m_number_of_fat_sectors; ++i) {
             if (!m_data_stream->seek((1 + m_fat_sectors_chain[i]) * m_sector_size, SEEK_SET)) {
                 m_error = "Position of sector is outside of the file!";
@@ -394,7 +394,7 @@ struct ThreadSafeOLEStorage::Implementation {
         if (!m_is_valid_ole)
             return;
         uint32_t records_count = m_sector_size / 4 - 1;
-        m_fat_sectors_chain.resize(m_number_of_fat_sectors);
+        m_fat_sectors_chain.reserve(m_number_of_fat_sectors);
         uint32_t remaining_fat_sector_chain_count = m_number_of_fat_sectors;
         for (int i = 0; i < 109; ++i) {
             if (remaining_fat_sector_chain_count == 0)
