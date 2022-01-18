@@ -162,7 +162,7 @@ QVariantMap DeviceManager::invokeQueryBlockDeviceInfo(const QString &id, bool de
 {
     QVariantMap ret;
     if (deviceInterface) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id << detail;
         auto &&reply = deviceInterface->QueryBlockDeviceInfo(id, detail);
         reply.waitForFinished();
         if (reply.isValid())
@@ -178,7 +178,7 @@ QVariantMap DeviceManager::invokeQueryProtocolDeviceInfo(const QString &id, bool
 {
     QVariantMap ret;
     if (deviceInterface) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id << detail;
         auto &&reply = deviceInterface->QueryProtocolDeviceInfo(id, detail);
         reply.waitForFinished();
         if (reply.isValid())
@@ -193,7 +193,7 @@ QVariantMap DeviceManager::invokeQueryProtocolDeviceInfo(const QString &id, bool
 void DeviceManager::invokeDetachBlockDevice(const QString &id)
 {
     if (deviceInterface) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
         auto &&reply = deviceInterface->DetachBlockDevice(id);
         if (!reply.isValid())
             qCritical() << "D-Bus reply is invalid " << reply.error();
@@ -204,7 +204,7 @@ void DeviceManager::invokeDetachBlockDevice(const QString &id)
 void DeviceManager::invokeDetachBlockDeviceForced(const QString &id)
 {
     if (deviceInterface) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
         auto &&reply = deviceInterface->DetachBlockDeviceForced(id);
         if (!reply.isValid())
             qCritical() << "D-Bus reply is invalid " << reply.error();
@@ -215,7 +215,7 @@ void DeviceManager::invokeDetachBlockDeviceForced(const QString &id)
 void DeviceManager::invokeUnmountBlockDeviceForced(const QString &id)
 {
     if (deviceInterface) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
         auto &&reply = deviceInterface->UnmountBlockDeviceForced(id);
         if (!reply.isValid())
             qCritical() << "D-Bus reply is invalid " << reply.error();
@@ -226,7 +226,7 @@ void DeviceManager::invokeUnmountBlockDeviceForced(const QString &id)
 void DeviceManager::invokeDetachProtocolDevice(const QString &id)
 {
     if (deviceInterface) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
         auto &&reply = deviceInterface->DetachProtocolDevice(id);
         if (!reply.isValid())
             qCritical() << "D-Bus reply is invalid " << reply.error();
@@ -236,9 +236,8 @@ void DeviceManager::invokeDetachProtocolDevice(const QString &id)
 
 void DeviceManager::invokeRenameBlockDevice(const QString &id, const QString &newName)
 {
-    // TODO(xust)
     if (deviceInterface) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id << newName;
         auto &&reply = deviceInterface->RenameBlockDevice(id, newName);
         reply.waitForFinished();
         if (!reply.isValid())
@@ -250,7 +249,7 @@ void DeviceManager::invokeRenameBlockDevice(const QString &id, const QString &ne
 QString DeviceManager::invokeUnlockBlockDevice(const QString &id, const QString &passwd)
 {
     if (deviceInterface) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id << passwd;
         auto &&reply = deviceInterface->UnlockBlockDevice(id, passwd);
         reply.waitForFinished();
         if (!reply.isValid()) {
@@ -268,7 +267,7 @@ QString DeviceManager::invokeUnlockBlockDevice(const QString &id, const QString 
 QString DeviceManager::invokeMountBlockDevice(const QString &id)
 {
     if (deviceInterface) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
         auto &&reply = deviceInterface->MountBlockDevice(id);
         reply.waitForFinished();
         if (!reply.isValid())
@@ -282,7 +281,7 @@ QString DeviceManager::invokeMountBlockDevice(const QString &id)
 void DeviceManager::invokeUnmountBlockDevice(const QString &id)
 {
     if (deviceInterface) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
         auto &&reply = deviceInterface->UnmountBlockDevice(id);
         reply.waitForFinished();
         if (!reply.isValid())
@@ -293,13 +292,31 @@ void DeviceManager::invokeUnmountBlockDevice(const QString &id)
 
 QString DeviceManager::invokeMountProtocolDevice(const QString &id)
 {
-    // TODO(xust)
+    if (deviceInterface) {
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
+        auto &&reply = deviceInterface->MountProtocolDevice(id);
+        reply.waitForFinished();
+        if (!reply.isValid()) {
+            qCritical() << "D-Bus reply is invalid " << reply.error();
+            qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+            return {};
+        }
+        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+        return reply.value();
+    }
     return {};
 }
 
 void DeviceManager::invokeUnmountProtocolDevice(const QString &id)
 {
-    // TODO(xust)
+    if (deviceInterface) {
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
+        auto &&reply = deviceInterface->UnmountProtocolDevice(id);
+        reply.waitForFinished();
+        if (!reply.isValid())
+            qCritical() << "D-Bus reply is invalid " << reply.error();
+        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+    }
 }
 
 void DeviceManager::unlockAndDo(const QString &id, const QString &passwd, HandleAfterUnlock handler)

@@ -97,7 +97,7 @@ QString BlockEntryFileEntity::displayName() const
 
 QIcon BlockEntryFileEntity::icon() const
 {
-    bool isRootDisk = datas.value(DeviceProperty::kMountpoint).toString() == "/";
+    bool isRootDisk = datas.value(DeviceProperty::kMountPoint).toString() == "/";
     if (isRootDisk)
         return QIcon::fromTheme(IconName::kRootBlock);
 
@@ -188,7 +188,7 @@ void BlockEntryFileEntity::onOpen()
 EntryFileInfo::EntryOrder BlockEntryFileEntity::order() const
 {
     if (datas.value(DeviceProperty::kHintSystem).toBool()) {
-        if (datas.value(DeviceProperty::kMountpoint).toString() == "/")
+        if (datas.value(DeviceProperty::kMountPoint).toString() == "/")
             return EntryFileInfo::EntryOrder::kOrderSysDiskRoot;
         if (datas.value(DeviceProperty::kIdLabel).toString().startsWith("_dde_"))
             return EntryFileInfo::EntryOrder::kOrderSysDiskData;
@@ -261,7 +261,7 @@ QMenu *BlockEntryFileEntity::createMenu()
 
 QUrl BlockEntryFileEntity::targetUrl() const
 {
-    auto mpt = getProperty(DeviceProperty::kMountpoint).toString();
+    auto mpt = getProperty(DeviceProperty::kMountPoint).toString();
     QUrl target;
     if (mpt.isEmpty())
         return target;
@@ -272,25 +272,20 @@ QUrl BlockEntryFileEntity::targetUrl() const
 
 bool BlockEntryFileEntity::isAccessable() const
 {
-    if (isEncrypted())
+    if (datas.value(DeviceProperty::kIsEncrypted).toBool())
         return true;
     return datas.value(DeviceProperty::kHasFileSystem).toBool();
 }
 
 bool BlockEntryFileEntity::renamable() const
 {
-    if (!removable()) {
+    if (!datas.value(DeviceProperty::kRemovable).toBool()) {
         return true;
     } else {
-        if (isAccessable() && datas.value(DeviceProperty::kMountpoint).toString().isEmpty())
+        if (isAccessable() && datas.value(DeviceProperty::kMountPoint).toString().isEmpty())
             return true;
         return false;
     }
-}
-
-QVariantHash BlockEntryFileEntity::extraProperties() const
-{
-    return datas;
 }
 
 QString BlockEntryFileEntity::getNameOrAlias() const
@@ -306,7 +301,7 @@ QString BlockEntryFileEntity::getNameOrAlias() const
     }
 
     // get system disk name if there is no alias
-    if (datas.value(DeviceProperty::kMountpoint).toString() == "/")
+    if (datas.value(DeviceProperty::kMountPoint).toString() == "/")
         return tr("System Disk");
     if (datas.value(DeviceProperty::kIdLabel).toString() == "_dde_")
         return tr("Data Disk");
@@ -384,7 +379,7 @@ QVariant BlockEntryFileEntity::getProperty(const char *const key) const
 
 bool BlockEntryFileEntity::showSizeAndProgress() const
 {
-    if (getProperty(DeviceProperty::kMountpoint).toString().isEmpty())
+    if (getProperty(DeviceProperty::kMountPoint).toString().isEmpty())
         return false;
 
     if (datas.value(DeviceProperty::kIsEncrypted).toBool()) {

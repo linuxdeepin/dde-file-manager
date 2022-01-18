@@ -142,9 +142,9 @@ void ComputerItemWatcher::initConn()
             Q_EMIT this->itemUpdated(devUrl);
     });
 
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, [this](const QString &id) {
+    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, [this](const QString &id, qlonglong total, qlonglong free) {
         QUrl devUrl = id.startsWith(DeviceId::kBlockDeviceIdPrefix) ? ComputerUtils::makeBlockDevUrl(id) : ComputerUtils::makeProtocolDevUrl(id);
-        Q_EMIT this->itemUpdated(devUrl);
+        Q_EMIT this->itemSizeChanged(devUrl, total, free);
     });
 
     connect(&DeviceManagerInstance, &DeviceManager::serviceRegistered, this, &ComputerItemWatcher::startQueryItems);
@@ -411,14 +411,16 @@ void ComputerItemWatcher::onDevicePropertyChanged(const QString &id, const QStri
     if (id.startsWith(DeviceId::kBlockDeviceIdPrefix)) {
         auto url = ComputerUtils::makeBlockDevUrl(id);
         // if `hintIgnore` changed to TRUE, then remove the display in view, else add it.
-        if (propertyName == GlobalServerDefines::DBusDeviceProperty::kHintIgnore) {
+        if (propertyName == DeviceProperty::kHintIgnore) {
             if (var.variant().toBool())
                 Q_EMIT itemRemoved(url);
             else
                 onDeviceAdded(id);
         } else {
             auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
-            Q_EMIT itemUpdated(devUrl);
+            if (propertyName == DeviceProperty::kOptical)
+                Q_EMIT itemUpdated(devUrl);
+            Q_EMIT itemPropertyChanged(devUrl, propertyName, var.variant());
         }
     }
 }

@@ -88,7 +88,7 @@ void ComputerController::onMenuRequest(quint64 winId, const QUrl &url, bool trig
     if (menu) {
         connect(menu, &QMenu::triggered, [=](QAction *act) {
             QString actText = act->text();
-            actionTriggered(url, winId, actText, triggerFromSidebar);
+            actionTriggered(info, winId, actText, triggerFromSidebar);
         });
         menu->exec(QCursor::pos());
         menu->deleteLater();
@@ -221,10 +221,8 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, ActionAft
     QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
-void ComputerController::actionTriggered(const QUrl &url, quint64 winId, const QString &actionText, bool triggerFromSidebar)
+void ComputerController::actionTriggered(DFMEntryFileInfoPointer info, quint64 winId, const QString &actionText, bool triggerFromSidebar)
 {
-    DFMEntryFileInfoPointer info(new EntryFileInfo(url));
-
     // if not original supported suffix, publish event to notify subscribers to handle
     QString sfx = info->suffix();
     if (sfx != SuffixInfo::kBlock
@@ -232,7 +230,7 @@ void ComputerController::actionTriggered(const QUrl &url, quint64 winId, const Q
         && sfx != SuffixInfo::kUserDir
         && sfx != SuffixInfo::kAppEntry
         && sfx != SuffixInfo::kStashedRemote) {
-        ComputerEventCaller::sendContextActionTriggered(url, actionText);
+        ComputerEventCaller::sendContextActionTriggered(info->url(), actionText);
         return;
     }
 
@@ -251,11 +249,11 @@ void ComputerController::actionTriggered(const QUrl &url, quint64 winId, const Q
     else if (actionText == ContextMenuActionTrs::trSafelyRemove())
         actSafelyRemove(info);
     else if (actionText == ContextMenuActionTrs::trEject())
-        actEject(url);
+        actEject(info->url());
     else if (actionText == ContextMenuActionTrs::trProperties())
-        actProperties(url);
+        actProperties(info->url());
     else if (actionText == ContextMenuActionTrs::trOpen())
-        onOpenItem(0, url);
+        onOpenItem(0, info->url());
 }
 
 void ComputerController::actEject(const QUrl &url)

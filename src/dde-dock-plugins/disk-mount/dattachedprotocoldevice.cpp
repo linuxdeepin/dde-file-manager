@@ -47,7 +47,7 @@ DAttachedProtocolDevice::~DAttachedProtocolDevice()
 
 bool DAttachedProtocolDevice::isValid()
 {
-    return !data.value(DeviceProperty::kMountpoint).toString().isEmpty();
+    return !data.value(DeviceProperty::kMountPoint).toString().isEmpty();
 }
 
 void DAttachedProtocolDevice::detach()
@@ -91,7 +91,7 @@ QString DAttachedProtocolDevice::iconName()
 
 QUrl DAttachedProtocolDevice::mountpointUrl()
 {
-    return QUrl::fromLocalFile(data.value(DeviceProperty::kMountpoint).toString());
+    return QUrl::fromLocalFile(data.value(DeviceProperty::kMountPoint).toString());
 }
 
 QUrl DAttachedProtocolDevice::accessPointUrl()

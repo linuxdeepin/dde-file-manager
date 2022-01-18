@@ -436,12 +436,14 @@ void DeviceMonitorHandler::onFilesystemAdded(const QString &deviceId)
 {
     qInfo() << "A block device fs added: " << deviceId;
     emit service->blockDevFilesystemAdded(deviceId);
+    emit service->blockDevicePropertyChanged(deviceId, DeviceProperty::kHasFileSystem, true);
 }
 
 void DeviceMonitorHandler::onFilesystemRemoved(const QString &deviceId)
 {
-    qInfo() << "A block device fs remvoved: " << deviceId;
+    qInfo() << "A block device fs removed: " << deviceId;
     emit service->blockDevFilesystemRemoved(deviceId);
+    emit service->blockDevicePropertyChanged(deviceId, DeviceProperty::kHasFileSystem, false);
 }
 
 void DeviceMonitorHandler::onBlockDeviceMounted(const QString &deviceId, const QString &mountPoint)

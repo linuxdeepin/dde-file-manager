@@ -44,13 +44,12 @@ public:
     virtual EntryFileInfo::EntryOrder order() const override;
     virtual long sizeTotal() const override;
     virtual long sizeUsage() const override;
-    virtual QString fileSystem() const override;
     virtual void refresh() override;
     virtual QUrl targetUrl() const override;
     virtual QMenu *createMenu() override;
 
 private:
-    QVariantMap datas;
+    QVariantHash convertFromQMap(const QVariantMap &orig);
 };
 
 DFMBASE_END_NAMESPACE

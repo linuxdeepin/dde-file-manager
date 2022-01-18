@@ -70,7 +70,7 @@ bool DAttachedBlockDevice::isValid()
         return false;
     if (!qvariant_cast<bool>(data.value(DeviceProperty::kHasFileSystem)))
         return false;
-    if (qvariant_cast<QString>(data.value(DeviceProperty::kMountpoint)).isEmpty())
+    if (qvariant_cast<QString>(data.value(DeviceProperty::kMountPoint)).isEmpty())
         return false;
     if (qvariant_cast<bool>(data.value(DeviceProperty::kHintIgnore)))
         return false;
@@ -158,7 +158,7 @@ QString DAttachedBlockDevice::iconName()
 
 QUrl DAttachedBlockDevice::mountpointUrl()
 {
-    return QUrl::fromLocalFile(data.value(DeviceProperty::kMountpoint).toString());
+    return QUrl::fromLocalFile(data.value(DeviceProperty::kMountPoint).toString());
 }
 
 QUrl DAttachedBlockDevice::accessPointUrl()

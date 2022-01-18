@@ -509,8 +509,8 @@ void DeviceServiceHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVaria
     Q_ASSERT_X(map, "DeviceServiceHelper", "Map is NULL");
 
     map->insert(DeviceProperty::kId, data.common.id);
-    map->insert(DeviceProperty::kMountpoint, data.common.mountpoint);
-    map->insert(DeviceProperty::kFilesystem, data.common.filesystem);
+    map->insert(DeviceProperty::kMountPoint, data.common.mountpoint);
+    map->insert(DeviceProperty::kFileSystem, data.common.filesystem);
     map->insert(DeviceProperty::kSizeTotal, data.common.sizeTotal);
     map->insert(DeviceProperty::kSizeFree, data.common.sizeFree);
     map->insert(DeviceProperty::kSizeUsed, data.common.sizeUsed);
@@ -581,8 +581,8 @@ void DeviceServiceHelper::makeProtocolDeviceMap(const ProtocolDeviceData &data, 
     Q_UNUSED(detail);
 
     map->insert(DeviceProperty::kId, data.common.id);
-    map->insert(DeviceProperty::kMountpoint, data.common.mountpoint);
-    map->insert(DeviceProperty::kFilesystem, data.common.filesystem);
+    map->insert(DeviceProperty::kMountPoint, data.common.mountpoint);
+    map->insert(DeviceProperty::kFileSystem, data.common.filesystem);
     map->insert(DeviceProperty::kSizeTotal, data.common.sizeTotal);
     map->insert(DeviceProperty::kSizeFree, data.common.sizeFree);
     map->insert(DeviceProperty::kSizeUsed, data.common.sizeUsed);

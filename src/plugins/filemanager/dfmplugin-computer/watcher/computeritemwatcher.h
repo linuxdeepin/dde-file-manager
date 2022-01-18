@@ -57,7 +57,6 @@ public:
     void addDevice(const QString &groupName, const QUrl &url);
     void removeDevice(const QUrl &url);
 
-
     void updateSidebarItem(const QUrl &url, const QString &newName, bool editable);
     void addSidebarItem(DFMEntryFileInfoPointer info);
     void removeSidebarItem(const QUrl &url);
@@ -70,6 +69,8 @@ Q_SIGNALS:
     void itemAdded(const ComputerItemData &item);
     void itemRemoved(const QUrl &url);
     void itemUpdated(const QUrl &url);
+    void itemPropertyChanged(const QUrl &url, const QString &property, const QVariant &var);
+    void itemSizeChanged(const QUrl &url, qlonglong, qlonglong);
 
 protected Q_SLOTS:
     void onDeviceAdded(const QUrl &devUrl, bool needSidebarItem = true);

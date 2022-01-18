@@ -144,6 +144,12 @@ QVariant EntryFileInfo::extraProperty(const QString &property) const
     return properties.contains(property) ? properties[property] : QVariant();
 }
 
+void EntryFileInfo::setExtraProperty(const QString &property, const QVariant &value)
+{
+    if (d->entity)
+        d->entity->setExtraProperty(property, value);
+}
+
 bool EntryFileInfo::renamable() const
 {
     return d->entity ? d->entity->renamable() : false;

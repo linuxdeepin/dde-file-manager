@@ -128,22 +128,17 @@ long ProtocolEntryFileEntity::sizeUsage() const
     return datas.value(DeviceProperty::kSizeUsed).toLongLong();
 }
 
-QString ProtocolEntryFileEntity::fileSystem() const
-{
-    return datas.value(DeviceProperty::kFilesystem).toString();
-}
-
 void ProtocolEntryFileEntity::refresh()
 {
     auto encodecId = entryUrl.path().remove("." + QString(SuffixInfo::kProtocol)).toUtf8();
     auto id = QString(QByteArray::fromBase64(encodecId));
 
-    datas = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id);
+    datas = convertFromQMap(DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id));
 }
 
 QUrl ProtocolEntryFileEntity::targetUrl() const
 {
-    auto mpt = datas.value(DeviceProperty::kMountpoint).toString();
+    auto mpt = datas.value(DeviceProperty::kMountPoint).toString();
     QUrl target;
     if (mpt.isEmpty())
         return target;
@@ -161,4 +156,15 @@ QMenu *ProtocolEntryFileEntity::createMenu()
     menu->addSeparator();
     menu->addAction(ContextMenuActionTrs::trProperties());
     return menu;
+}
+
+QVariantHash ProtocolEntryFileEntity::convertFromQMap(const QVariantMap &orig)
+{
+    QVariantHash ret;
+    auto iter = orig.cbegin();
+    while (iter != orig.cend()) {
+        ret.insert(iter.key(), iter.value());
+        iter += 1;
+    }
+    return ret;
 }

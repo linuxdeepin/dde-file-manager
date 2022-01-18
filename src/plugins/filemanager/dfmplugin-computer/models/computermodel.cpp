@@ -98,7 +98,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         return item->info ? QVariant::fromValue<long>(item->info->sizeUsage()) : 0;
 
     case kFileSystemRole:
-        return item->info ? item->info->extraProperty(DeviceProperty::kFilesystem).toString() : "";
+        return item->info ? item->info->extraProperty(DeviceProperty::kFileSystem).toString() : "";
 
     case kRealUrlRole:
         return item->info ? item->info->targetUrl() : QUrl();
@@ -119,7 +119,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         return item->info ? item->info->showUsedSize() : false;
 
     case kDeviceNameMaxLengthRole:
-        return dfmbase::FileUtils::supportedMaxLength(item->info ? item->info->extraProperty(DeviceProperty::kFilesystem).toString() : "");
+        return dfmbase::FileUtils::supportedMaxLength(item->info ? item->info->extraProperty(DeviceProperty::kFileSystem).toString() : "");
 
     case kItemShapeTypeRole:
         return item->shape;
@@ -230,8 +230,9 @@ void ComputerModel::initConnect()
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);
 
-    // TODO(xust) find a way to update the property of devices, not just refresh it.
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemUpdated, this, &ComputerModel::onItemUpdated);
+    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemSizeChanged, this, &ComputerModel::onItemSizeChanged);
+    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemPropertyChanged, this, &ComputerModel::onItemPropertyChanged);
 }
 
 void ComputerModel::onItemAdded(const ComputerItemData &data)
@@ -296,6 +297,43 @@ void ComputerModel::updateItemInfo(int pos)
 
     if (oldName != newName)
         ComputerItemWatcherInstance->updateSidebarItem(info.url, newName, info.info->renamable());
+}
+
+void ComputerModel::onItemSizeChanged(const QUrl &url, qlonglong total, qlonglong free)
+{
+    int pos = findItem(url);
+    if (pos < 0 || pos >= items.count())
+        return;
+
+    auto &info = items.at(pos);
+    if (!info.info)
+        return;
+    auto entryInfo = info.info;
+    entryInfo->setExtraProperty(DeviceProperty::kSizeTotal, total);
+    entryInfo->setExtraProperty(DeviceProperty::kSizeFree, free);
+    entryInfo->setExtraProperty(DeviceProperty::kSizeUsed, total - free);
+    view->update(this->index(pos, 0));
+}
+
+void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, const QVariant &val)
+{
+    int pos = findItem(url);
+    if (pos < 0 || pos >= items.count())
+        return;
+
+    auto &info = items.at(pos);
+    if (!info.info)
+        return;
+    auto entryInfo = info.info;
+    entryInfo->setExtraProperty(key, val);
+    if (key == DeviceProperty::kMountPoints) {
+        auto mpts = val.toStringList();
+        entryInfo->setExtraProperty(DeviceProperty::kMountPoint, mpts.isEmpty() ? "" : mpts.first());
+    }
+    view->update(this->index(pos, 0));
+
+    if (key == DeviceProperty::kIdLabel)
+        ComputerUtils::sbIns()->updateItem(url, val.toString(), true);
 }
 
 DPCOMPUTER_END_NAMESPACE

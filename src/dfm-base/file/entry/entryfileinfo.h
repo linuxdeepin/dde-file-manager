@@ -69,7 +69,7 @@ public:
         kOrderOptical,
 
         kOrderSmb,
-        kOrderStashedSmb,
+        kOrderStashedSmb = kOrderSmb,   // same order with mounted smb
         kOrderFtp,
         kOrderMTP,
         kOrderGPhoto2,
@@ -96,6 +96,7 @@ public:
     bool isAccessable() const;
     QString description() const;
     QVariant extraProperty(const QString &property) const;
+    void setExtraProperty(const QString &property, const QVariant &value);
 
     // AbstractFileInfo interface
     virtual bool exists() const override;

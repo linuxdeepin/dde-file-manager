@@ -53,22 +53,19 @@ public:
     virtual EntryFileInfo::EntryOrder order() const = 0;
 
     virtual QMenu *createMenu() { return nullptr; }
-    virtual bool removable() const { return false; }
     virtual void refresh() {}
     virtual long sizeTotal() const { return 0; }
     virtual long sizeUsage() const { return 0; }
-    virtual QString fileSystem() const { return {}; }
     virtual QString description() const { return {}; }
     virtual QUrl targetUrl() const { return {}; }
-    virtual bool isEncrypted() const { return false; }
-    virtual bool isUnlocked() const { return false; }
-    virtual QString clearDeviceId() const { return ""; }
     virtual bool isAccessable() const { return true; }
     virtual bool renamable() const { return false; }
-    virtual QVariantHash extraProperties() const { return {}; }
+    virtual QVariantHash extraProperties() const { return datas; }
+    virtual void setExtraProperty(const QString &key, const QVariant &val) { datas[key] = val; }
 
 protected:
     QUrl entryUrl {};
+    QVariantHash datas;
 };
 
 class EntryEntityFactor

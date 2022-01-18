@@ -58,7 +58,6 @@ public:
     virtual QUrl targetUrl() const override;
     virtual bool isAccessable() const override;
     virtual bool renamable() const override;
-    virtual QVariantHash extraProperties() const override;
 
 private:
     QString getNameOrAlias() const;
@@ -67,11 +66,6 @@ private:
     QVariant getProperty(const char *const key) const;
     bool showSizeAndProgress() const;
     QVariantHash convertFromQMap(const QVariantMap &orig);
-
-private:
-    QVariantHash datas;
-
-public:
 };
 
 DFMBASE_END_NAMESPACE
