@@ -80,13 +80,13 @@ MountSecretDiskAskPasswordDialog *GvfsMountManager::mountSecretDiskAskPasswordDi
 
 bool GvfsMountManager::AskedPasswordWhileMountDisk = false;
 
-QHash<GMountOperation *, QSharedPointer<DFMUrlBaseEvent>> GvfsMountManager::MountEventHash;
-QHash<GMountOperation *, QSharedPointer<QTimer>> GvfsMountManager::MountTimerHash;
-QHash<GMountOperation *, GCancellable *> GvfsMountManager::CancellHash;
-QHash<GMountOperation *, QSharedPointer<QEventLoop>> GvfsMountManager::eventLoopHash;
-QHash<GMountOperation *, bool> GvfsMountManager::AskingPasswordHash;
-QHash<GMountOperation *, MountAskPasswordDialog *> GvfsMountManager::askPasswordDialogHash;
-QHash<GMountOperation *, QJsonObject *> GvfsMountManager::SMBLoginObjHash;
+QHash<GMountOperation *,DFMUrlBaseEvent*> GvfsMountManager::MountEventHash;
+QHash<GMountOperation *,QSharedPointer<QTimer>> GvfsMountManager::MountTimerHash;
+QHash<GMountOperation *,GCancellable *> GvfsMountManager::CancellHash;
+QHash<GMountOperation *,QSharedPointer<QEventLoop>> GvfsMountManager::eventLoopHash;
+QHash<GMountOperation *,bool> GvfsMountManager::AskingPasswordHash;
+QHash<GMountOperation *,MountAskPasswordDialog *> GvfsMountManager::askPasswordDialogHash;
+QHash<GMountOperation *,QJsonObject *> GvfsMountManager::SMBLoginObjHash;
 
 //fix: 每次弹出光驱时需要删除临时缓存数据文件
 QString GvfsMountManager::g_qVolumeId = "sr0";
@@ -808,7 +808,7 @@ void GvfsMountManager::ask_question_cb(GMountOperation *op, const char *message,
         qDebug() << newmsg;
     }
 
-    if (MountEventHash.contains(op) && MountEventHash.value(op)) {
+    if (MountEventHash.contains(op)) {
             choice = DThreadUtil::runInMainThread(requestAnswerDialog, MountEventHash.value(op)->windowId(), newmsg, choiceList);
         } else {
             choice = -1;
@@ -857,7 +857,7 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
             DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                         tr("Mounting device error"), tr("Wrong username or password"));
         //fix bug 63796,是sftp和ftp时，后面不会弹窗，所以这里要弹提示
-        if (!AskingPasswordHash.value(op) && MountEventHash.value(op) && MountEventHash.contains(op) && MountEventHash.value(op)->fileUrl().scheme() != SMB_SCHEME)
+        if (!AskingPasswordHash.value(op) && MountEventHash.value(op)->fileUrl().scheme() != SMB_SCHEME)
             DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                          tr("Mounting device error"), QString());
         return;
@@ -885,7 +885,7 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
     obj.insert("GAskPasswordFlags", flags);
     obj.insert("passwordSave", passwordSave);
     QJsonObject loginObj;
-    if (MountTimerHash.contains(op) && MountEventHash.value(op)) {
+    if (MountTimerHash.contains(op)) {
         loginObj = DThreadUtil::runInMainThread(requestPasswordDialog,
                                                 MountEventHash.value(op)->windowId(),
                                                 MountEventHash.value(op)->fileUrl().isSMBFile(), obj, op);
@@ -1431,11 +1431,11 @@ MountStatus GvfsMountManager::mount_sync(const DFMUrlBaseEvent &event)
     GMountOperation *op = new_mount_op(false);
 
 
-    QSharedPointer<DFMUrlBaseEvent> evettemp(new DFMUrlBaseEvent(event));
+    DFMUrlBaseEvent evettemp = event;
 
-    MountEventHash.insert(op, evettemp);
+    MountEventHash.insert(op, &evettemp);
     QSharedPointer<QEventLoop> event_loop(new QEventLoop);
-    eventLoopHash.insert(op, event_loop);
+    eventLoopHash.insert(op,event_loop);
 
     QSharedPointer<QTimer> timer(new QTimer);
     MountTimerHash.insert(op,timer);
