@@ -1298,23 +1298,19 @@ bool DFileMenuManager::isCustomMenuSupported(const DUrl &viewRootUrl)
 
 }
 
-bool DFileMenuManager::isReadOnlyRemovableDiskDevice(const DUrl &viewRootUrl)
+/*
+ * 需求，所有非虚拟路径下显示扩展菜单项(so菜单)
+*/
+bool DFileMenuManager::isExtensionsSupported(const DUrl &viewRootUrl)
 {
-    //外部设备只读时不展示第三方插件自定义菜单
+    if (viewRootUrl.isTrashFile() || (VaultController::ins()->isVaultFile(viewRootUrl.path())))
+        return false;
 
-    const QString &path = viewRootUrl.toLocalFile();
-    const auto deviceList = deviceListener->getDeviceList();
-    for (int i = 0; i < deviceList.size(); i++) {
-        UDiskDeviceInfoPointer info = deviceList.at(i);
-        if (info->getDiskInfo().is_removable() && info->getDiskInfo().can_unmount()) {
-            QString mountPath = info->getMountPointUrl().path();
-            if (!mountPath.isEmpty() && mountPath != "/" && path.startsWith(mountPath)) {
-                if (info->getDiskInfo().read_only())
-                    return true;
-            }
-        }
-    }
-    return false;
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, viewRootUrl);
+    if ((!info) || info->isVirtualEntry())
+        return false;
+
+    return true;
 }
 
 void DFileMenuManager::addActionWhitelist(MenuAction action)

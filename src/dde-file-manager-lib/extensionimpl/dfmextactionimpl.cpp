@@ -119,7 +119,7 @@ void DFMExtActionImplPrivate::setText(const std::string &text)
         return;
 
     if (action)
-        action->setText(QString::fromStdString(text));
+        omitText(text);
 }
 
 std::string DFMExtActionImplPrivate::text() const
@@ -194,7 +194,7 @@ void DFMExtActionImplPrivate::setSeparator(bool b)
 bool DFMExtActionImplPrivate::isSeparator() const
 {
     if (action)
-        action->isSeparator();
+        return action->isSeparator();
 
     return false;
 }
@@ -211,7 +211,7 @@ void DFMExtActionImplPrivate::setCheckable(bool b)
 bool DFMExtActionImplPrivate::isCheckable() const
 {
     if (action)
-        action->isCheckable();
+        return action->isCheckable();
 
     return false;
 }
@@ -245,9 +245,20 @@ void DFMExtActionImplPrivate::setEnabled(bool b)
 bool DFMExtActionImplPrivate::isEnabled() const
 {
     if (action)
-        action->isEnabled();
+        return action->isEnabled();
 
     return false;
+}
+
+void DFMExtActionImplPrivate::omitText(const std::string &text)
+{
+    auto tempText = QString::fromStdString(text).toLocal8Bit();
+    QFontMetrics fm(action->font());
+    // 需求固定宽度与现有宽度限制保持一致
+    const QString &&elidedName = fm.elidedText(tempText, Qt::ElideMiddle, 150);
+    action->setText(elidedName);
+    if (elidedName != tempText)
+        action->setToolTip(tempText);
 }
 
 void DFMExtActionImplPrivate::onActionHovered()

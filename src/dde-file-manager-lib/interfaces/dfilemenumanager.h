@@ -86,7 +86,7 @@ public:
                                               bool onDesktop = false);
 
     static bool isCustomMenuSupported(const DUrl &viewRootUrl);
-    static bool isReadOnlyRemovableDiskDevice(const DUrl &viewRootUrl);
+    static bool isExtensionsSupported(const DUrl &viewRootUrl);
 
     /// actions filter(global)
     static void addActionWhitelist(MenuAction action);

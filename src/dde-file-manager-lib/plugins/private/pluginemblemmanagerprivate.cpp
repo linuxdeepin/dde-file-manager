@@ -135,6 +135,8 @@ void PluginEmblemManagerPrivate::run()
 
             // 遍历角标插件对象
             for (auto plugin : DFMExtPluginManager::instance().emblemIcons()) {
+                if (!plugin)
+                    continue;
                 // 获得插件中通过emblemIcons接口设置的角标
                 getEmblemIcons(plugin, data, bHaveIcon, newIcons);
                 // 获取插件中通过locationEmblemIcons接口设置的角标

@@ -62,6 +62,9 @@ public:
 
     void setEnabled(bool b) Q_DECL_OVERRIDE;
     bool isEnabled() const Q_DECL_OVERRIDE;
+
+private:
+    void omitText(const std::string &text);
 private slots:
     void onActionHovered();
     void onActionTriggered(bool checked);

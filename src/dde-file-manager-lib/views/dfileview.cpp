@@ -3278,11 +3278,12 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     DFileMenuManager::loadEmptyAreaPluginMenu(menu, rootUrl(), false);
 
     //扩展菜单
-    if (DFileMenuManager::isCustomMenuSupported(rootUrl())) {
+    if (DFileMenuManager::isCustomMenuSupported(rootUrl()))
         DFileMenuManager::extendCustomMenu(menu, false, rootUrl(), {}, {});
-        if (!DFileMenuManager::isReadOnlyRemovableDiskDevice(rootUrl()))
-            DFileMenuManager::extensionPluginCustomMenu(menu, false, rootUrl(), {}, {});
-    }
+
+    //so扩展菜单
+    if (DFileMenuManager::isExtensionsSupported(rootUrl()))
+        DFileMenuManager::extensionPluginCustomMenu(menu, false, rootUrl(), {}, {});
 
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
 
@@ -3380,11 +3381,12 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
             }
         }
 
-        if (customMenu) {
+        if (customMenu)
             DFileMenuManager::extendCustomMenu(menu, true, viewRootUrl, info->fileUrl(), list);
-            if (!DFileMenuManager::isReadOnlyRemovableDiskDevice(rootUrl()))
-                DFileMenuManager::extensionPluginCustomMenu(menu, true, viewRootUrl, info->fileUrl(), list);
-        }
+
+        //so扩展菜单
+        if (DFileMenuManager::isExtensionsSupported(rootUrl()))
+            DFileMenuManager::extensionPluginCustomMenu(menu, false, rootUrl(), {}, {});
     }
 
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this, index);
