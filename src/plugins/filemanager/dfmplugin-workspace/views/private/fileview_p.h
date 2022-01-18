@@ -37,6 +37,7 @@ const int kListViewIconSize { 24 };
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
+class FileViewHelper;
 class StatusBar;
 class HeaderView;
 class BaseItemDelegate;
@@ -46,13 +47,13 @@ class FileViewPrivate
     friend class FileView;
     FileView *const q;
 
-    QAtomicInteger<bool> allowedAdjustColumnSize = true;
+    QAtomicInteger<bool> allowedAdjustColumnSize { true };
     QHash<int, BaseItemDelegate *> delegates;
-    StatusBar *statusBar = nullptr;
-    HeaderView *headerView = nullptr;
-    FileSortFilterProxyModel *proxyModel = nullptr;
-    QTimer *updateStatusBarTimer = nullptr;
-    QTimer *sortTimer = nullptr;
+    StatusBar *statusBar { nullptr };
+    HeaderView *headerView { nullptr };
+    FileSortFilterProxyModel *proxyModel { nullptr };
+    QTimer *updateStatusBarTimer { nullptr };
+    QTimer *sortTimer { nullptr };
     QUrl url;
 
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
@@ -66,6 +67,7 @@ class FileViewPrivate
 
     QItemSelection currentSelection;
     QModelIndex currentPressedIndex;
+    FileViewHelper *fileViewHelper { nullptr };
 
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;

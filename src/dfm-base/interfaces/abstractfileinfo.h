@@ -162,6 +162,7 @@ public:
     virtual QString fileName() const;
     virtual QString baseName() const;
     virtual QString completeBaseName() const;
+    virtual QString fileNameOfRename() const;
     virtual QString suffix() const;
     virtual QString completeSuffix();
     virtual QString path() const;
@@ -170,6 +171,7 @@ public:
     virtual QDir dir() const;
     virtual QDir absoluteDir() const;
     virtual QUrl url() const;
+    virtual bool canRename() const;
     virtual bool isReadable() const;
     virtual bool isWritable() const;
     virtual bool isExecutable() const;
@@ -205,6 +207,7 @@ public:
             CompareFunction;
     virtual CompareFunction compareFunByKey(const SortKey &sortKey) const;
     virtual QUrl getUrlByChildFileName(const QString &fileName) const;
+    virtual QUrl getUrlByNewFileName(const QString &fileName) const;
 
 protected:
     explicit AbstractFileInfo(const QUrl &url, AbstractFileInfoPrivate *d);

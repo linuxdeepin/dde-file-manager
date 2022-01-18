@@ -69,7 +69,7 @@ public:
         kOverrideFileChooserDialog,   // dialog box when using DDE File Manager as an application to select files
         kShowedHiddenOnSearch,   // show hidden files when searching
         kShowedHiddenFiles,   // show hidden files
-        kShowedFileSuffixOnRename,   // show suffix when renaming files
+        kShowedFileSuffix,   // show suffix
         kDisableNonRemovableDeviceUnmount,   // disable local disk uninstallation
         kHiddenSystemPartition,   // hide system partition
         kShowRecentFileEntry,   // show "Recent Documents" entry in the sidebar

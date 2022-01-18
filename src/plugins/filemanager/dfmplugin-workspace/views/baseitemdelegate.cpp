@@ -22,29 +22,63 @@
 #include "baseitemdelegate.h"
 #include "private/baseitemdelegate_p.h"
 #include "fileview.h"
+#include "utils/fileviewhelper.h"
+#include "utils/itemdelegatehelper.h"
+
+#include <QTextLayout>
+#include <QPainter>
 
 DPWORKSPACE_USE_NAMESPACE
 
-BaseItemDelegate::BaseItemDelegate(FileView *parent)
-    : QStyledItemDelegate(parent),
-      d(new BaseItemDelegatePrivate(this))
+BaseItemDelegate::BaseItemDelegate(FileViewHelper *parent)
+    : BaseItemDelegate(*new BaseItemDelegatePrivate(this), parent)
 {
-    Q_D(BaseItemDelegate);
-    d->fileView = parent;
-    d->textLineHeight = parent->fontMetrics().lineSpacing();
 }
 
-BaseItemDelegate::BaseItemDelegate(BaseItemDelegatePrivate &dd, FileView *parent)
+BaseItemDelegate::BaseItemDelegate(BaseItemDelegatePrivate &dd, FileViewHelper *parent)
     : QStyledItemDelegate(parent),
       d(&dd)
 {
-    Q_D(BaseItemDelegate);
-    d->fileView = parent;
-    d->textLineHeight = parent->fontMetrics().lineSpacing();
+    dd.init();
+}
+
+void BaseItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
+{
+    Q_UNUSED(index);
+    Q_UNUSED(layout);
+}
+
+void BaseItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
+{
+    QStyledItemDelegate::initStyleOption(option, index);
+    parent()->initStyleOption(option, index);
+}
+
+QList<QRectF> BaseItemDelegate::getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const
+{
+    QList<QRectF> list;
+    double offset = baseRect.width() / 8;
+    const QSizeF &offsetSize = cornerSize / 2;
+
+    list.append(QRectF(QPointF(baseRect.right() - offset - offsetSize.width(),
+                               baseRect.bottom() - offset - offsetSize.height()),
+                       cornerSize));
+    list.append(QRectF(QPointF(baseRect.left() + offset - offsetSize.width(), list.first().top()), cornerSize));
+    list.append(QRectF(QPointF(list.at(1).left(), baseRect.top() + offset - offsetSize.height()), cornerSize));
+    list.append(QRectF(QPointF(list.first().left(), list.at(2).top()), cornerSize));
+
+    return list;
 }
 
 BaseItemDelegate::~BaseItemDelegate()
 {
+}
+
+QSize BaseItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
+{
+    Q_D(const BaseItemDelegate);
+
+    return d->itemSizeHint;
 }
 
 int BaseItemDelegate::iconSizeLevel() const
@@ -76,4 +110,82 @@ int BaseItemDelegate::setIconSizeByIconSizeLevel(int level)
 {
     Q_UNUSED(level)
     return -1;
+}
+
+QModelIndexList BaseItemDelegate::hasWidgetIndexs() const
+{
+    Q_D(const BaseItemDelegate);
+
+    if (!d->editingIndex.isValid())
+        return QModelIndexList();
+    return QModelIndexList() << d->editingIndex;
+}
+
+void BaseItemDelegate::hideAllIIndexWidget()
+{
+    hideNotEditingIndexWidget();
+
+    if (d->editingIndex.isValid()) {
+        parent()->parent()->setIndexWidget(d->editingIndex, nullptr);
+
+        d->editingIndex = QModelIndex();
+    }
+}
+
+void BaseItemDelegate::hideNotEditingIndexWidget()
+{
+}
+
+void BaseItemDelegate::commitDataAndCloseActiveEditor()
+{
+    QWidget *editor = parent()->indexWidget(d->editingIndex);
+
+    if (!editor)
+        return;
+
+    QMetaObject::invokeMethod(this, "_q_commitDataAndCloseEditor",
+                              Qt::DirectConnection, Q_ARG(QWidget *, editor));
+}
+
+QList<QRectF> BaseItemDelegate::drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout, const QRectF &boundingRect, qreal radius, const QBrush &background, QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
+{
+    initTextLayout(index, layout);
+
+    QList<QRectF> boundingRegion;
+
+    ItemDelegateHelper::elideText(layout, boundingRect.size(), wordWrap, mode, d_func()->textLineHeight, flags, nullptr,
+                                  painter, boundingRect.topLeft(), shadowColor, QPointF(0, 1),
+                                  background, radius, &boundingRegion);
+    return boundingRegion;
+}
+
+QList<QRectF> BaseItemDelegate::drawText(const QModelIndex &index, QPainter *painter, const QString &text, const QRectF &boundingRect, qreal radius, const QBrush &background, QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
+{
+    QTextLayout layout;
+
+    layout.setText(text);
+
+    if (painter)
+        layout.setFont(painter->font());
+
+    return drawText(index, painter, &layout, boundingRect, radius, background, wordWrap, mode, flags, shadowColor);
+}
+
+FileViewHelper *BaseItemDelegate::parent() const
+{
+    return dynamic_cast<FileViewHelper *>(QStyledItemDelegate::parent());
+}
+
+QModelIndex BaseItemDelegate::editingIndex() const
+{
+    Q_D(const BaseItemDelegate);
+
+    return d->editingIndex;
+}
+
+QWidget *BaseItemDelegate::editingIndexWidget() const
+{
+    Q_D(const BaseItemDelegate);
+
+    return parent()->indexWidget(d->editingIndex);
 }

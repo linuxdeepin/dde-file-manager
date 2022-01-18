@@ -70,9 +70,6 @@ public:
                              QTextOption::WrapMode wordWrap, const QFont &font,
                              Qt::TextElideMode mode, qreal lineHeight, qreal flags = 0);
 
-private:
-    static void drawBackground(const qreal &backgroundRadius, const QRectF &rect,
-                               const QBrush &backgroundBrush, QPainter *painter);
     static void elideText(QTextLayout *layout, const QSizeF &size,
                           QTextOption::WrapMode wordWrap,
                           Qt::TextElideMode mode, qreal lineHeight,
@@ -83,6 +80,12 @@ private:
                           const QBrush &background = QBrush(Qt::NoBrush),
                           qreal backgroundRadius = 4,
                           QList<QRectF> *boundingRegion = nullptr);
+
+    static void hideTooltipImmediately();
+
+private:
+    static void drawBackground(const qreal &backgroundRadius, const QRectF &rect,
+                               QRectF &lastLineRect, const QBrush &backgroundBrush, QPainter *painter);
 };
 
 DPWORKSPACE_END_NAMESPACE

@@ -280,6 +280,11 @@ QString AbstractFileInfo::completeBaseName() const
 {
     return QString();
 }
+
+QString dfmbase::AbstractFileInfo::fileNameOfRename() const
+{
+    return fileName();
+}
 /*!
  * \brief suffix 文件的suffix
  *
@@ -400,6 +405,12 @@ QUrl AbstractFileInfo::url() const
 {
     return dptr->url;
 }
+
+bool dfmbase::AbstractFileInfo::canRename() const
+{
+    return false;
+}
+
 /*!
  * \brief isReadable 获取文件是否可读
  *
@@ -802,6 +813,15 @@ QUrl dfmbase::AbstractFileInfo::getUrlByChildFileName(const QString &fileName) c
     }
     QUrl theUrl = url();
     theUrl.setPath(absoluteFilePath() + QDir::separator() + fileName);
+    return theUrl;
+}
+
+QUrl dfmbase::AbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
+{
+    QUrl theUrl = url();
+
+    theUrl.setPath(absolutePath() + QDir::separator() + fileName);
+
     return theUrl;
 }
 

@@ -27,6 +27,9 @@
 #include "models/fileviewmodel.h"
 #include "dfm-base/dfm_base_global.h"
 #include "utils/itemdelegatehelper.h"
+#include "utils/fileviewhelper.h"
+
+#include "dfm-base/base/application/application.h"
 
 #include <DListView>
 #include <DArrowRectangle>
@@ -45,13 +48,14 @@
 #include <linux/limits.h>
 
 DWIDGET_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
-ListItemDelegate::ListItemDelegate(FileView *parent)
+ListItemDelegate::ListItemDelegate(FileViewHelper *parent)
     : BaseItemDelegate(*new ListItemDelegatePrivate(this), parent)
 {
-    parent->setIconSize(QSize(GlobalPrivate::kListViewIconSize,
-                              GlobalPrivate::kListViewIconSize));
+    parent->parent()->setIconSize(QSize(GlobalPrivate::kListViewIconSize,
+                                        GlobalPrivate::kListViewIconSize));
 }
 
 ListItemDelegate::~ListItemDelegate()
@@ -64,6 +68,20 @@ void ListItemDelegate::paint(QPainter *painter,
 {
     paintItemBackground(painter, option, index);
 
+    static QFont oldFont = option.font;
+
+    if (oldFont != option.font) {
+        QWidget *editingWidget = editingIndexWidget();
+
+        if (editingWidget) {
+            editingWidget->setFont(option.font);
+        }
+
+        const_cast<ListItemDelegate *>(this)->updateItemSizeHint();
+    }
+
+    oldFont = option.font;
+
     QRect iconRect = paintItemIcon(painter, option, index);
 
     paintItemColumn(painter, option, index, iconRect);
@@ -73,11 +91,16 @@ void ListItemDelegate::paint(QPainter *painter,
 
 QSize ListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    Q_UNUSED(option)
-    Q_UNUSED(index)
+    const AbstractFileInfoPointer &fileInfo = parent()->fileInfo(index);
 
-    return QSize(d->fileView->width() - kListModeLeftMargin - kListModeRightMargin,
-                 qMax(int(d->fileView->iconSize().height() * 1.1), d->textLineHeight));
+    if (!fileInfo) {
+        return BaseItemDelegate::sizeHint(option, index);
+    }
+
+    Q_D(const ListItemDelegate);
+
+    // Todo(yanghao): isColumnCompact (fontMetrics.height() * 2 + 10)
+    return QSize(d->itemSizeHint.width(), qMax(option.fontMetrics.height(), d->itemSizeHint.height()));
 }
 
 QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -88,8 +111,9 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     d->editingIndex = index;
     d->editor = new QLineEdit(parent);
 
-    const AbstractFileInfoPointer &file_info = qobject_cast<FileViewModel *>(this->parent())->fileInfo(index);
-    if (file_info->url().scheme() == "search") {
+    const AbstractFileInfoPointer &fileInfo = this->parent()->fileInfo(index);
+
+    if (fileInfo->url().scheme() == "search") {
         d->editor->setFixedHeight(GlobalPrivate::kListEditorHeight * 2 - 10);
     } else {
         d->editor->setFixedHeight(GlobalPrivate::kListEditorHeight);
@@ -111,7 +135,35 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 
 void ListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    return QStyledItemDelegate::updateEditorGeometry(editor, option, index);
+    Q_UNUSED(index);
+    const QSize &iconSize = parent()->parent()->iconSize();
+    int columnX = 0;
+
+    const QRect &optRect = option.rect + QMargins(-kListModeLeftMargin - kListModeLeftPadding, 0, -kListModeRightMargin - kListModeRightMargin, 0);
+    QRect iconRect = optRect;
+    iconRect.setSize(iconSize);
+
+    const QList<QPair<int, int>> &columnRoleList = index.data(FileViewItem::kItemColumListRole).value<QList<QPair<int, int>>>();
+    if (columnRoleList.isEmpty())
+        return;
+    QRect rect = optRect;
+    for (int i = 0; i < columnRoleList.length(); ++i) {
+        int rol = columnRoleList.at(i).first;
+        if (rol == FileViewItem::kItemNameRole) {
+            int iconOffset = i == 0 ? iconRect.right() + 1 : 0;
+
+            rect.setLeft(columnX + iconOffset);
+            columnX += parent()->parent()->getColumnWidth(i) - 1 - parent()->fileViewViewportMargins().left();
+
+            rect.setRight(qMin(columnX, optRect.right()));
+            rect.setTop(optRect.y() + (optRect.height() - editor->height()) / 2);
+            break;
+        } else {
+            columnX += parent()->parent()->getColumnWidth(i);
+        }
+    }
+
+    editor->setGeometry(rect);
 }
 
 void ListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
@@ -123,14 +175,12 @@ void ListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
         return;
     }
 
-    bool isNotShowSuffix = false;
-    QString text;
+    bool isNotShowSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
+    QString text = index.data(FileViewItem::kItemFileNameOfRenameRole).toString();
 
     if (isNotShowSuffix) {
         edit->setProperty("_d_whether_show_suffix", index.data(FileViewItem::kItemFileSuffixRole));
-        text = index.data(FileViewItem::kItemNameRole).toString();
-    } else {
-        text = index.data(FileViewItem::kItemNameRole).toString();
+        text = index.data(FileViewItem::kItemFileNameOfRenameRole).toString();
     }
 
     edit->setText(text);
@@ -138,11 +188,44 @@ void ListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
 
 bool ListItemDelegate::eventFilter(QObject *object, QEvent *event)
 {
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *e = static_cast<QKeyEvent *>(event);
+        if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) {
+            e->accept();
+            QLineEdit *edit = qobject_cast<QLineEdit *>(object);
+            if (edit) {
+                edit->close();
+                edit->parentWidget()->setFocus();
+            }
+            return true;
+        }
+    }
     return QStyledItemDelegate::eventFilter(object, event);
 }
 
 bool ListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
+    if (event->type() == QEvent::ToolTip) {
+        const QString tooltip = index.data(FileViewItem::kItemToolTipRole).toString();
+
+        if (tooltip.isEmpty()) {
+            ItemDelegateHelper::hideTooltipImmediately();
+        } else {
+            int tooltipSize = tooltip.size();
+            const int nlong = 32;
+            int lines = tooltipSize / nlong + 1;
+            QString strtooltip;
+            for (int i = 0; i < lines; ++i) {
+                strtooltip.append(tooltip.mid(i * nlong, nlong));
+                strtooltip.append("\n");
+            }
+            strtooltip.chop(1);
+            QToolTip::showText(event->globalPos(), strtooltip, view);
+            // Todo(yanghao): fix 81894
+        }
+        return true;
+    }
+
     return QStyledItemDelegate::helpEvent(event, view, option, index);
 }
 
@@ -155,6 +238,14 @@ QList<QRect> ListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
     return QList<QRect>();
 }
 
+void ListItemDelegate::updateItemSizeHint()
+{
+    Q_D(ListItemDelegate);
+
+    d->textLineHeight = parent()->parent()->fontMetrics().lineSpacing();
+    d->itemSizeHint = QSize(-1, qMax(int(parent()->parent()->iconSize().height() * 1.1), d->textLineHeight));
+}
+
 void ListItemDelegate::onEditorTextChanged(const QString &text)
 {
     if (!d->editor)
@@ -164,7 +255,7 @@ void ListItemDelegate::onEditorTextChanged(const QString &text)
     QString dstText = GlobalPrivate::replaceFileName(text);
 
     // 超出长度将不再被支持输入获取当前
-    bool isNotShowSuffix = false; /*{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };*/
+    bool isNotShowSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
 
     // 获取当前编辑框支持的最大文字长度
     int textMaxLen = INT_MAX;
@@ -184,15 +275,15 @@ void ListItemDelegate::onEditorTextChanged(const QString &text)
             return;
         }
 
-        auto view = this->parent();
+        auto view = this->parent()->parent();
 
         if (!view)
             return;
 
-        auto showPoint = d->fileView->mapToGlobal(QPoint(d->editor->pos().x() + d->editor->width() / 2,
-                                                         d->editor->pos().y() + d->editor->height() * 2));
+        auto showPoint = view->mapToGlobal(QPoint(d->editor->pos().x() + d->editor->width() / 2,
+                                                  d->editor->pos().y() + d->editor->height() * 2));
         // 背板主题一致
-        auto color = d->fileView->palette().background().color();
+        auto color = view->palette().background().color();
 
         GlobalPrivate::showAlertMessage(showPoint,
                                         color,
@@ -227,19 +318,19 @@ void ListItemDelegate::onEditorTextChanged(const QString &text)
  **/
 void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    D_DC(ListItemDelegate);
     painter->save();   // 保存之前的绘制样式
     // 反走样抗锯齿
     painter->setRenderHints(QPainter::Antialiasing
                             | QPainter::TextAntialiasing
                             | QPainter::SmoothPixmapTransform);
 
-    if (!d->fileView)
+    FileView *view = parent()->parent();
+    if (!view)
         return;
 
     // 获取item范围
-    auto itemRect = d->fileView->visualRect(index);
-    int totalWidth = d->fileView->getHeaderViewWidth();
+    auto itemRect = view->visualRect(index);
+    int totalWidth = view->getHeaderViewWidth();
     // 左右间隔10 px UI设计要求 选中与交替渐变背景
     QRect dstRect(itemRect.x() + kListModeLeftMargin,
                   itemRect.y(),
@@ -247,26 +338,6 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
                   itemRect.height());
 
     // draw background
-    bool isSelected = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
-
-    QPalette::ColorGroup cg = (option.widget ? option.widget->isEnabled() : (option.state & QStyle::State_Enabled))
-            ? QPalette::Normal
-            : QPalette::Disabled;
-    if (cg == QPalette::Normal && !(option.state & QStyle::State_Active))
-        cg = QPalette::Inactive;
-
-    QPalette::ColorRole colorRole = QPalette::Background;
-    if (isSelected) {
-        colorRole = QPalette::Highlight;
-        QPainterPath path;
-        path.addRoundedRect(dstRect, kListModeRectRadius, kListModeRectRadius);
-        painter->save();
-        painter->setOpacity(1);
-        painter->setRenderHint(QPainter::Antialiasing);
-        painter->fillPath(path, option.palette.color(cg, colorRole));
-        painter->restore();
-    }
-
     if (option.widget) {
         // 调色板获取
         DPalette pl(DApplicationHelper::instance()->palette(option.widget));
@@ -306,7 +377,24 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
             }
         }
     }
+    QPalette::ColorGroup cg = (option.widget ? option.widget->isEnabled() : (option.state & QStyle::State_Enabled))
+            ? QPalette::Normal
+            : QPalette::Disabled;
+    if (cg == QPalette::Normal && !(option.state & QStyle::State_Active))
+        cg = QPalette::Inactive;
 
+    bool isSelected = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
+    QPalette::ColorRole colorRole = QPalette::Background;
+    if (isSelected) {
+        colorRole = QPalette::Highlight;
+        QPainterPath path;
+        path.addRoundedRect(dstRect, kListModeRectRadius, kListModeRectRadius);
+        painter->save();
+        painter->setOpacity(1);
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->fillPath(path, option.palette.color(cg, colorRole));
+        painter->restore();
+    }
     painter->restore();   // 恢复之前的绘制，防止在此逻辑前的绘制丢失
 }
 /*!
@@ -316,8 +404,7 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
  **/
 QRect ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    D_DC(ListItemDelegate);
-    if (!d->fileView)
+    if (!parent() || !parent()->parent())
         return QRect();
 
     bool isEnabled = option.state & QStyle::State_Enabled;
@@ -331,7 +418,7 @@ QRect ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionViewI
 
     // draw icon
     QRect iconRect = opt.rect;
-    iconRect.setSize(d->fileView->iconSize());
+    iconRect.setSize(parent()->parent()->iconSize());
     iconRect.moveTop(iconRect.top() + (opt.rect.bottom() - iconRect.bottom()) / 2);
 
     ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
@@ -360,9 +447,9 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
     if (isSelected)
         painter->setPen(opt.palette.color(QPalette::Active, QPalette::HighlightedText));
 
-    // 绘制那些需要显示的xiang
+    // 绘制那些需要显示的项
     for (int i = 0; i < columnRoleList.count(); ++i) {
-        int columnWidth = d->fileView->getColumnWidth(i);
+        int columnWidth = parent()->parent()->getColumnWidth(i);
         //第一列需要去掉图标宽度
         if (i == 0)
             columnWidth -= iconRect.right() + kListModeIconSpacing;

@@ -84,6 +84,21 @@ public:
 
     void setAlwaysOpenInCurrentWindow(bool openInCurrentWindow);
 
+    BaseItemDelegate *itemDelegate() const;
+    int itemCountForRow() const;
+    int rowCount() const;
+
+    inline int indexOfRow(const QModelIndex &index) const
+    {
+        return index.row() / itemCountForRow();
+    }
+
+    bool isSelected(const QModelIndex &index) const;
+
+    using DListView::edit;
+    using DListView::updateGeometries;
+    using DListView::viewportMargins;
+
 public slots:
     void onHeaderViewMouseReleased();
     void onHeaderSectionResized(int logicalIndex, int oldSize, int newSize);
@@ -95,6 +110,8 @@ public slots:
     void viewModeChanged(quint64 windowId, int viewMode);
     void onRowCountChanged();
 
+    bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
+
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
@@ -102,6 +119,7 @@ protected:
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    void updateGeometries() override;
 
 Q_SIGNALS:
     void reqOpenNewWindow(const QList<QUrl> &urls);
@@ -131,8 +149,6 @@ private:
     RandeIndexList visibleIndexes(QRect rect) const;
 
     QSize itemSizeHint() const;
-
-    BaseItemDelegate *itemDelegate() const;
 
     void increaseIcon();
     void decreaseIcon();

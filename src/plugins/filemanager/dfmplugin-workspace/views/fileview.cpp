@@ -31,7 +31,8 @@
 #include "statusbar.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
-#include "utils/fileveiwhelper.h"
+#include "utils/fileviewhelper.h"
+
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/windowutils.h"
@@ -261,7 +262,7 @@ void FileView::onDoubleClicked(const QModelIndex &index)
 
 void FileView::wheelEvent(QWheelEvent *event)
 {
-    if (d->currentViewMode == Global::ViewMode::kIconMode) {
+    if (isIconViewMode()) {
         if (WindowUtils::keyCtrlIsPressed()) {
             if (event->angleDelta().y() > 0) {
                 increaseIcon();
@@ -428,6 +429,28 @@ BaseItemDelegate *FileView::itemDelegate() const
     return qobject_cast<BaseItemDelegate *>(DListView::itemDelegate());
 }
 
+int FileView::rowCount() const
+{
+    int count = this->count();
+    int itemCountForRow = this->itemCountForRow();
+
+    return count / itemCountForRow + int(count % itemCountForRow > 0);
+}
+
+bool FileView::isSelected(const QModelIndex &index) const
+{
+    return selectionModel()->isSelected(index);
+}
+
+int FileView::itemCountForRow() const
+{
+
+    if (!isIconViewMode())
+        return 1;
+
+    return d->iconModeColumnCount();
+}
+
 QSize FileView::itemSizeHint() const
 {
     if (itemDelegate())
@@ -527,6 +550,11 @@ void FileView::onRowCountChanged()
     updateModelActiveIndex();
 }
 
+bool FileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
+{
+    return DListView::edit(index, trigger, event);
+}
+
 void FileView::resizeEvent(QResizeEvent *event)
 {
     DListView::resizeEvent(event);
@@ -597,7 +625,7 @@ void FileView::mousePressEvent(QMouseEvent *event)
 {
     switch (event->button()) {
     case Qt::LeftButton: {
-        bool isEmptyArea = FileVeiwHelper::isEmptyArea(this, event->pos());
+        bool isEmptyArea = FileViewHelper::isEmptyArea(this, event->pos());
 
         QModelIndex index = indexAt(event->pos());
         d->currentPressedIndex = isEmptyArea ? QModelIndex() : index;
@@ -626,12 +654,24 @@ QModelIndex FileView::indexAt(const QPoint &pos) const
 
     int index = -1;
     if (isListViewMode()) {
-        index = FileVeiwHelper::caculateListItemIndex(itemSize, actualPos);
+        index = FileViewHelper::caculateListItemIndex(itemSize, actualPos);
     } else if (isIconViewMode()) {
-        index = FileVeiwHelper::caculateIconItemIndex(this, itemSize, actualPos);
+        index = FileViewHelper::caculateIconItemIndex(this, itemSize, actualPos);
     }
 
     return proxyModel()->index(index, 0);
+}
+
+void FileView::updateGeometries()
+{
+
+    if (!d->headerView || !d->allowedAdjustColumnSize) {
+        return DListView::updateGeometries();
+    }
+
+    resizeContents(d->headerView->length(), contentsSize().height());
+
+    DListView::updateGeometries();
 }
 
 void FileView::initializeModel()
@@ -651,8 +691,9 @@ void FileView::initializeModel()
 
 void FileView::initializeDelegate()
 {
-    setDelegate(Global::ViewMode::kIconMode, new IconItemDelegate(this));
-    setDelegate(Global::ViewMode::kListMode, new ListItemDelegate(this));
+    d->fileViewHelper = new FileViewHelper(this);
+    setDelegate(Global::ViewMode::kIconMode, new IconItemDelegate(d->fileViewHelper));
+    setDelegate(Global::ViewMode::kListMode, new ListItemDelegate(d->fileViewHelper));
 }
 
 void FileView::initializeStatusBar()

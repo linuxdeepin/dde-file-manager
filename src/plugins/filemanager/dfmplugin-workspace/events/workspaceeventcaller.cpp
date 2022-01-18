@@ -94,3 +94,23 @@ void WorkspaceEventCaller::sendDeletes(quint64 windowID, const QList<QUrl> &urls
 {
     dispatcher()->publish(GlobalEventType::kDeleteFiles, windowID, urls, flags);
 }
+
+void WorkspaceEventCaller::sendRenameFile(quint64 windowID, const QUrl &oldUrl, const QUrl &newUrl)
+{
+    dispatcher()->publish(GlobalEventType::kRenameFile, windowID, oldUrl, newUrl);
+}
+
+void WorkspaceEventCaller::sendWriteToClipboard(const quint64 windowID, const ClipBoard::ClipboardAction action, const QList<QUrl> &urls)
+{
+    dispatcher()->publish(GlobalEventType::kWriteUrlsToClipboard, windowID, action, urls);
+}
+
+void WorkspaceEventCaller::sendCopyFiles(const quint64 windowID, const QList<QUrl> &sourceUrls, const QUrl &target, const AbstractJobHandler::JobFlags flags)
+{
+    dispatcher()->publish(GlobalEventType::kCopy, windowID, sourceUrls, target, flags);
+}
+
+void WorkspaceEventCaller::sendCutFiles(const quint64 windowID, const QList<QUrl> &sourceUrls, const QUrl &target, const AbstractJobHandler::JobFlags flags)
+{
+    dispatcher()->publish(GlobalEventType::kCutFile, windowID, sourceUrls, target, flags);
+}

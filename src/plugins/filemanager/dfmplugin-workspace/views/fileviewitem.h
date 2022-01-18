@@ -85,7 +85,10 @@ public:
         kItemCornerMarkTRRole = Qt::UserRole + 10,
         kItemCornerMarkBLRole = Qt::UserRole + 11,
         kItemCornerMarkBRRole = Qt::UserRole + 12,
-        kItemIconLayersRole = Qt::UserRole + 13
+        kItemIconLayersRole = Qt::UserRole + 13,
+        kItemFileNameOfRenameRole = Qt::UserRole + 14,
+        kItemExtraProperties = Qt::UserRole + 15,
+        kItemFileIconModelToolTipRole = Qt::UserRole + 16,   // 用于返回图标视图下的tooltip
     };
 
     enum CornerMark {

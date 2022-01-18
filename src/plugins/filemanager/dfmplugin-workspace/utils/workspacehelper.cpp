@@ -144,6 +144,25 @@ void WorkspaceHelper::actionNewFolder(quint64 windowId, const QUrl &url)
     }
 }
 
+void WorkspaceHelper::actionRenameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl)
+{
+    WorkspaceEventCaller::sendRenameFile(windowId, oldUrl, newUrl);
+}
+
+void WorkspaceHelper::actionWriteToClipboard(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> &urls)
+{
+    WorkspaceEventCaller::sendWriteToClipboard(windowId, action, urls);
+}
+
+void WorkspaceHelper::actionPastFiles(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> &sourceUrls, const QUrl &target, const AbstractJobHandler::JobFlags flags)
+{
+    if (action == ClipBoard::kCopyAction) {
+        WorkspaceEventCaller::sendCopyFiles(windowId, sourceUrls, target, flags);
+    } else if (action == ClipBoard::kCutAction) {
+        WorkspaceEventCaller::sendCutFiles(windowId, sourceUrls, target, flags);
+    }
+}
+
 WorkspaceHelper::WorkspaceHelper(QObject *parent)
     : QObject(parent)
 {

@@ -65,6 +65,7 @@ public:
     virtual void fetchMore(const QModelIndex &parent) override;
     virtual bool canFetchMore(const QModelIndex &parent) const override;
     virtual QVariant headerData(int column, Qt::Orientation, int role) const override;
+    virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
 
     virtual void updateViewItem(const QModelIndex &index);
 

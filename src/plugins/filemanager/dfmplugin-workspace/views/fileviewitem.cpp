@@ -73,6 +73,7 @@ FileViewItem &FileViewItem::operator=(const FileViewItem &other)
     setData(other.data(kItemFilePathRole), kItemFilePathRole);
     setData(other.data(kItemColumListRole), kItemColumListRole);
     setData(other.data(kItemColumWidthScaleListRole), kItemColumWidthScaleListRole);
+    setData(other.data(kItemFileNameOfRenameRole), kItemFileNameOfRenameRole);
 
     return *this;
 }
@@ -230,6 +231,8 @@ QVariant FileViewItem::data(int role) const
         return d->fileinfo->fileName();
     case kItemSizeHintRole:
         return QSize(-1, 26);
+    case kItemFileNameOfRenameRole:
+        return d->fileinfo->fileNameOfRename();
     default:
         return QVariant();
     }

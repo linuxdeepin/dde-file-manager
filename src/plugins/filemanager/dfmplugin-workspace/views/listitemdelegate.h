@@ -33,20 +33,22 @@ class ListItemDelegate : public BaseItemDelegate
 {
     Q_OBJECT
 public:
-    explicit ListItemDelegate(FileView *parent = nullptr);
+    explicit ListItemDelegate(FileViewHelper *parent = nullptr);
     virtual ~ListItemDelegate() override;
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &) const override;
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     void setEditorData(QWidget *editor, const QModelIndex &index) const override;
-    bool eventFilter(QObject *object, QEvent *event) override;
-    bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
-
     QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode = false) const override;
+    void updateItemSizeHint() override;
 
 public slots:
     void onEditorTextChanged(const QString &text);
+
+protected:
+    bool eventFilter(QObject *object, QEvent *event) override;
+    bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
 private:
     void paintItemBackground(QPainter *painter, const QStyleOptionViewItem &option,

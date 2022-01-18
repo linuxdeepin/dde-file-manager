@@ -114,7 +114,7 @@ private:
     };
     BidirectionHash<QString, Application::GenericAttribute> keyToGA {
         { "base.hidden_files.show_hidden", Application::kShowedHiddenFiles },
-        { "base.hidden_files.hide_suffix", Application::kShowedFileSuffixOnRename },
+        { "base.hidden_files.hide_suffix", Application::kShowedFileSuffix },
         { "base.hidden_files.show_recent", Application::kShowRecentFileEntry },
         { "advance.index.index_internal", Application::kIndexInternal },
         { "advance.index.index_external", Application::kIndexExternal },

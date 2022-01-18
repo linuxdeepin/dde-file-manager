@@ -370,6 +370,22 @@ QVariant FileViewModel::headerData(int column, Qt::Orientation, int role) const
     return QVariant();
 }
 
+Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
+{
+    Qt::ItemFlags flags = QAbstractItemModel::flags(index);
+
+    const FileViewItem *item = itemFromIndex(index);
+    if (!item)
+        return flags;
+
+    const AbstractFileInfoPointer &fileInfo = item->fileinfo();
+    if (fileInfo && fileInfo->canRename()) {
+        flags |= Qt::ItemIsEditable;
+    }
+
+    return flags;
+}
+
 void FileViewModel::updateViewItem(const QModelIndex &index)
 {
     FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());

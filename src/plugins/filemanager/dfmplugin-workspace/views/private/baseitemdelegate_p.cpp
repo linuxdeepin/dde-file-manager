@@ -23,6 +23,9 @@
 #include "baseitemdelegate_p.h"
 #include "views/baseitemdelegate.h"
 #include "views/fileview.h"
+#include "utils/fileviewhelper.h"
+
+#include <QAbstractItemView>
 
 DPWORKSPACE_USE_NAMESPACE
 
@@ -33,4 +36,12 @@ BaseItemDelegatePrivate::BaseItemDelegatePrivate(BaseItemDelegate *qq)
 
 BaseItemDelegatePrivate::~BaseItemDelegatePrivate()
 {
+}
+
+void BaseItemDelegatePrivate::init()
+{
+    Q_Q(BaseItemDelegate);
+
+    q->connect(q, &BaseItemDelegate::commitData, q->parent(), &FileViewHelper::handleCommitData);
+    q->connect(q->parent()->parent(), &QAbstractItemView::iconSizeChanged, q, &BaseItemDelegate::updateItemSizeHint);
 }

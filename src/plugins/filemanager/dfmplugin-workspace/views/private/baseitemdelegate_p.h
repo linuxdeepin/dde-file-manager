@@ -31,7 +31,7 @@ class QLineEdit;
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
-class FileView;
+class FileViewHelper;
 class BaseItemDelegate;
 class BaseItemDelegatePrivate
 {
@@ -39,8 +39,10 @@ public:
     explicit BaseItemDelegatePrivate(BaseItemDelegate *qq);
     virtual ~BaseItemDelegatePrivate();
 
-    FileView *fileView = nullptr;
-    int textLineHeight = -1;
+    void init();
+
+    int textLineHeight { -1 };
+    QSize itemSizeHint;
     mutable QModelIndex editingIndex;
     mutable QLineEdit *editor = nullptr;
 

@@ -23,11 +23,15 @@
 #define DETAILSPACEHELPER_H
 
 #include "dfmplugin_workspace_global.h"
+#include "dfm-base/dfm_base_global.h"
+#include "dfm-base/utils/clipboard.h"
+#include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <QMap>
 #include <QMutex>
 #include <QObject>
 
+DFMBASE_USE_NAMESPACE
 DPWORKSPACE_BEGIN_NAMESPACE
 
 class WorkspaceWidget;
@@ -38,7 +42,7 @@ public:
     enum class DirOpenMode {
         kOpenInCurrentWindow,
         kOpenNewWindow,
-        //kForceOpenNewWindow ???
+        //kForceOpenNewWindow // Todo(yanghao): ???
     };
 
     static WorkspaceHelper *instance();
@@ -59,6 +63,11 @@ public:
     void actionDeleteFiles(quint64 windowId, const QList<QUrl> &urls);
     void actionOpenInTerminal(quint64 windowId, const QList<QUrl> &urls);
     void actionNewFolder(quint64 windowId, const QUrl &url);
+    void actionRenameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl);
+    void actionWriteToClipboard(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> &urls);
+    void actionPastFiles(const quint64 windowId, const ClipBoard::ClipboardAction action,
+                         const QList<QUrl> &sourceUrls, const QUrl &target,
+                         const AbstractJobHandler::JobFlags flags = AbstractJobHandler::JobFlag::kNoHint);
 
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);

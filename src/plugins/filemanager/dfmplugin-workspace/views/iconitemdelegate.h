@@ -33,7 +33,7 @@ QT_END_NAMESPACE
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
-class FileIconItem;
+class IconItemEditor;
 class IconItemDelegatePrivate;
 class IconItemDelegate : public BaseItemDelegate
 {
@@ -41,8 +41,9 @@ class IconItemDelegate : public BaseItemDelegate
     friend class ExpandedItem;
 
 public:
-    explicit IconItemDelegate(FileView *parent);
+    explicit IconItemDelegate(FileViewHelper *parent);
     ~IconItemDelegate() override;
+
     void paint(QPainter *painter,
                const QStyleOptionViewItem &option,
                const QModelIndex &index) const override;
@@ -52,18 +53,34 @@ public:
     void setEditorData(QWidget *editor, const QModelIndex &index) const override;
     bool eventFilter(QObject *object, QEvent *event) override;
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
-
     QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode = false) const override;
+    void updateItemSizeHint() override;
 
     int iconSizeLevel() const override;
     int minimumIconSizeLevel() const override;
     int maximumIconSizeLevel() const override;
-
     int increaseIcon() override;
     int decreaseIcon() override;
     int setIconSizeByIconSizeLevel(int level) override;
 
+    void hideNotEditingIndexWidget() override;
+
+    QString displayFileName(const QModelIndex &index) const;
+
+protected:
+    virtual void initTextLayout(const QModelIndex &index, QTextLayout *layout) const override;
+
 private:
+    void onTriggerEdit(const QModelIndex &index);
+
+    QPainterPath paintItemBackgroundAndGeomerty(QPainter *painter, const QStyleOptionViewItem &option,
+                                                const QModelIndex &index, int backgroundMargin) const;
+    QRectF paintItemIcon(QPainter *painter, const QStyleOptionViewItem &option,
+                         const QModelIndex &index) const;
+
+    void paintItemFileName(QPainter *painter, QRectF iconRect, QPainterPath path, int backgroundMargin, const QStyleOptionViewItem &option,
+                           const QModelIndex &index) const;
+    void editTextChangedHandle(IconItemEditor *editor);
     QSize iconSizeByIconSizeLevel() const;
     Q_DECLARE_PRIVATE_D(d, IconItemDelegate)
 };

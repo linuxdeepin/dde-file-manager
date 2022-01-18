@@ -25,11 +25,9 @@
 #include "dfm_base_global.h"
 #include "baseitemdelegate_p.h"
 #include "views/iconitemdelegate.h"
+#include "views/expandedItem.h"
 
-#include <QObject>
-#include <QMutex>
-#include <QWindow>
-#include <QTextDocument>
+#include <QPointer>
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
@@ -43,9 +41,14 @@ public:
     QIcon checkedIcon = QIcon::fromTheme("emblem-checked");
     QSize itemIconSize;
 
-    // default icon size is 64px.
-    int currentIconSizeIndex = 1;
+    QPointer<ExpandedItem> expandedItem;
+    mutable QModelIndex lastAndExpandedInde;
+    mutable QModelIndex expandedIndex;
 
+    // default icon size is 64px.
+    int currentIconSizeIndex { 1 };
+
+    QTextDocument *document { nullptr };
     Q_DECLARE_PUBLIC(IconItemDelegate)
 };
 

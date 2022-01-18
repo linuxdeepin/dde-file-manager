@@ -25,6 +25,7 @@
 #include "base/standardpaths.h"
 #include "base/schemefactory.h"
 #include "utils/fileutils.h"
+#include "utils/systempathutil.h"
 #include "dfileiconprovider.h"
 
 #include <dfm-io/local/dlocalfileinfo.h>
@@ -353,7 +354,18 @@ QString LocalFileInfo::path() const
  */
 QString LocalFileInfo::absolutePath() const
 {
-    return path();
+    d->lock.lockForRead();
+    bool success = false;
+    QString path;
+    if (d->dfmFileInfo) {
+        path = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardParentPath, &success).toString();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardFilePath failed!";
+    }
+    if (!success)
+        path = QFileInfo(d->url.path()).absolutePath();
+    d->lock.unlock();
+    return path;
 }
 /*!
  * \brief canonicalPath 获取文件canonical路径，包含文件的名称，相当于文件的全路径
@@ -417,6 +429,13 @@ QUrl LocalFileInfo::url() const
     QUrl tmp = d->dfmFileInfo->uri();
     d->lock.unlock();
     return tmp;
+}
+
+bool LocalFileInfo::canRename() const
+{
+    if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))
+        return false;
+    return isWritable();
 }
 /*!
  * \brief isReadable 获取文件是否可读

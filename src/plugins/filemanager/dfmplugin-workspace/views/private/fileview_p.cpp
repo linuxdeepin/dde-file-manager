@@ -41,8 +41,14 @@ FileViewPrivate::FileViewPrivate(FileView *qq)
 
 int FileViewPrivate::iconModeColumnCount(int itemWidth) const
 {
+    int horizontalMargin = 0;
+
     int contentWidth = q->maximumViewportSize().width();
-    return qMax((contentWidth - 1) / itemWidth, 1);
+
+    if (itemWidth <= 0)
+        itemWidth = q->itemSizeHint().width() + q->spacing() * 2;
+
+    return qMax((contentWidth - horizontalMargin - 1) / itemWidth, 1);
 }
 
 QUrl FileViewPrivate::modelIndexUrl(const QModelIndex &index) const

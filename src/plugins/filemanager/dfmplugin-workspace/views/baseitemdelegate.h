@@ -25,17 +25,24 @@
 #include "dfmplugin_workspace_global.h"
 
 #include <QStyledItemDelegate>
+#include <QTextOption>
+
+QT_BEGIN_NAMESPACE
+class QTextLayout;
+QT_END_NAMESPACE
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
+class FileViewHelper;
 class FileView;
 class BaseItemDelegatePrivate;
 class BaseItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit BaseItemDelegate(FileView *parent);
-    virtual ~BaseItemDelegate();
+    explicit BaseItemDelegate(FileViewHelper *parent);
+
+    virtual ~BaseItemDelegate() override;
 
     /*!
      * \brief paintGeomertys paint geomertys for all items
@@ -45,6 +52,8 @@ public:
      * \return
      */
     virtual QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode = false) const = 0;
+
+    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const override;
 
     /**
      * @brief iconSizeLevel return icon size level
@@ -83,11 +92,57 @@ public:
      */
     virtual int setIconSizeByIconSizeLevel(int level);
 
-    QScopedPointer<BaseItemDelegatePrivate> d;
+    /**
+     * @brief hasWidgetIndexs
+     * @return
+     */
+    virtual QModelIndexList hasWidgetIndexs() const;
+
+    /**
+     * @brief hideAllIIndexWidget
+     */
+    virtual void hideAllIIndexWidget();
+    /**
+     * @brief hideNotEditingIndexWidget
+     */
+    virtual void hideNotEditingIndexWidget();
+
+    /**
+     * @brief commitDataAndCloseActiveEditor
+     */
+    virtual void commitDataAndCloseActiveEditor();
+
+    /**
+     * @brief updateItemSizeHint when icon size change or font change on pain event call
+     */
+    virtual void updateItemSizeHint() = 0;
+
+    virtual QList<QRectF> drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout,
+                                   const QRectF &boundingRect, qreal radius, const QBrush &background,
+                                   QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                   Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
+                                   const QColor &shadowColor = QColor()) const;
+
+    QList<QRectF> drawText(const QModelIndex &index, QPainter *painter, const QString &text,
+                           const QRectF &boundingRect, qreal radius, const QBrush &background,
+                           QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
+                           Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
+                           const QColor &shadowColor = QColor()) const;
+
+    QModelIndex editingIndex() const;
+
+    QWidget *editingIndexWidget() const;
+
+    FileViewHelper *parent() const;
 
 protected:
-    explicit BaseItemDelegate(BaseItemDelegatePrivate &dd, FileView *parent);
+    explicit BaseItemDelegate(BaseItemDelegatePrivate &dd, FileViewHelper *parent);
 
+    virtual void initTextLayout(const QModelIndex &index, QTextLayout *layout) const;
+    virtual void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
+
+    QList<QRectF> getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const;
+    QScopedPointer<BaseItemDelegatePrivate> d;
     Q_DECLARE_PRIVATE_D(d, BaseItemDelegate)
 };
 

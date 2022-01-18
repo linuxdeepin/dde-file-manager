@@ -147,13 +147,11 @@ QString ItemDelegateHelper::elideText(const QString &text, const QSizeF &size, Q
     return lines.join('\n');
 }
 
-void ItemDelegateHelper::drawBackground(const qreal &backgroundRadius, const QRectF &rect, const QBrush &backgroundBrush, QPainter *painter)
+void ItemDelegateHelper::drawBackground(const qreal &backgroundRadius, const QRectF &rect, QRectF &lastLineRect, const QBrush &backgroundBrush, QPainter *painter)
 {
     const QMarginsF margins(backgroundRadius, 0, backgroundRadius, 0);
     QRectF backBounding = rect;
     QPainterPath path;
-    QRectF lastLineRect;
-
     if (lastLineRect.isValid()) {
         if (qAbs(rect.width() - lastLineRect.width()) < backgroundRadius * 2) {
             backBounding.setWidth(lastLineRect.width());
@@ -205,7 +203,10 @@ void ItemDelegateHelper::drawBackground(const qreal &backgroundRadius, const QRe
     painter->setOpacity(painterOpacity);
 }
 
-void ItemDelegateHelper::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, qreal lineHeight, int flags, QStringList *lines, QPainter *painter, QPointF offset, const QColor &shadowColor, const QPointF &shadowOffset, const QBrush &background, qreal backgroundRadius, QList<QRectF> *boundingRegion)
+void ItemDelegateHelper::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::WrapMode wordWrap,
+                                   Qt::TextElideMode mode, qreal lineHeight, int flags, QStringList *lines,
+                                   QPainter *painter, QPointF offset, const QColor &shadowColor, const QPointF &shadowOffset,
+                                   const QBrush &background, qreal backgroundRadius, QList<QRectF> *boundingRegion)
 {
     qreal height = 0;
     bool drawShadow = shadowColor.isValid();
@@ -231,7 +232,7 @@ void ItemDelegateHelper::elideText(QTextLayout *layout, const QSizeF &size, QTex
     layout->beginLayout();
 
     QTextLine line = layout->createLine();
-
+    QRectF lastLineRect;
     while (line.isValid()) {
         height += lineHeight;
         if (height + lineHeight > size.height()) {
@@ -258,7 +259,7 @@ void ItemDelegateHelper::elideText(QTextLayout *layout, const QSizeF &size, QTex
 
         if (painter) {
             if (background.style() != Qt::NoBrush)
-                drawBackground(backgroundRadius, rect, background, painter);
+                drawBackground(backgroundRadius, rect, lastLineRect, background, painter);
 
             if (drawShadow) {
                 const QPen pen = painter->pen();
@@ -287,4 +288,14 @@ void ItemDelegateHelper::elideText(QTextLayout *layout, const QSizeF &size, QTex
     }
 
     layout->endLayout();
+}
+
+void ItemDelegateHelper::hideTooltipImmediately()
+{
+    QWidgetList qwl = QApplication::topLevelWidgets();
+    for (QWidget *qw : qwl) {
+        if (QStringLiteral("QTipLabel") == qw->metaObject()->className()) {
+            qw->close();
+        }
+    }
 }

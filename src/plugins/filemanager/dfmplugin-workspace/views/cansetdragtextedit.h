@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liuyangming<liuyangming@uniontech.com>
+ * Author:     huanyu<huanyub@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
  *             yanghao<yanghao@uniontech.com>
@@ -19,22 +19,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FILEVEIWHELPER_H
-#define FILEVEIWHELPER_H
+#ifndef CANSETDRAGTEXTEDIT_H
+#define CANSETDRAGTEXTEDIT_H
 
 #include "dfmplugin_workspace_global.h"
 
+#include <DTextEdit>
+
+DWIDGET_USE_NAMESPACE
 DPWORKSPACE_BEGIN_NAMESPACE
 
-class FileView;
-class FileVeiwHelper
+class CanSetDragTextEdit : public DTextEdit
 {
+    Q_OBJECT
+    friend class ExpandedItem;
+
 public:
-    static bool isEmptyArea(const FileView *view, const QPoint &pos);
-    static int caculateListItemIndex(const QSize &itemSize, const QPoint &pos);
-    static int caculateIconItemIndex(const FileView *view, const QSize &itemSize, const QPoint &pos);
+    explicit CanSetDragTextEdit(QWidget *parent = nullptr);
+    explicit CanSetDragTextEdit(const QString &text, QWidget *parent = nullptr);
+    //set QTextEdit can drag
+    void setDragEnabled(const bool &bdrag);
 };
 
 DPWORKSPACE_END_NAMESPACE
 
-#endif   // FILEVEIWHELPER_H
+#endif   // CANSETDRAGTEXTEDIT_H

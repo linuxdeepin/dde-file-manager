@@ -48,7 +48,7 @@ std::string demangle(void *value)
     std::ostringstream ostream;
     ostream.imbue(std::locale::classic());
     ostream << value << " : ";
-    Dl_info info = {nullptr, nullptr, nullptr, nullptr};
+    Dl_info info = { nullptr, nullptr, nullptr, nullptr };
     if (dladdr(value, &info) == 0) {
         ostream << "???";
     } else {
@@ -66,7 +66,7 @@ std::string demangle(void *value)
         }
 
         long offset = reinterpret_cast<char *>(value) - reinterpret_cast<char *>(info.dli_saddr);
-        ostream << std::hex << " + 0x" << offset ;
+        ostream << std::hex << " + 0x" << offset;
 
         if (info.dli_fname)
             ostream << " @ " << info.dli_fname;
@@ -81,7 +81,7 @@ std::string demangle(void *value)
 [[noreturn]] void logStackInfo(int signal)
 {
     const int bufSize = 100;
-    void *buffer[bufSize] = {nullptr};
+    void *buffer[bufSize] = { nullptr };
     int numLine = ::backtrace(buffer, bufSize);
 
     std::string strSig;
@@ -92,7 +92,7 @@ std::string demangle(void *value)
     case SIGILL: /* Illegal instruction.  */
         strSig = TOSTRING(SIGILL);
         break;
-    case SIGABRT:  /* Abnormal termination.  */
+    case SIGABRT: /* Abnormal termination.  */
         strSig = TOSTRING(SIGABRT);
         break;
     case SIGFPE: /* Erroneous arithmetic operation.  */
@@ -105,21 +105,21 @@ std::string demangle(void *value)
         strSig = TOSTRING(SIGTERM);
         break;
     default:
-        char szTmpBuf[bufSize] = {0};
+        char szTmpBuf[bufSize] = { 0 };
         sprintf(szTmpBuf, "No register signal: %d", signal);
         strSig = szTmpBuf;
         break;
     };
-    QString head,end;
+    QString head, end;
     head = QString("****************** %0 crashed backtrace ******************")
-            .arg(qApp->applicationName());
+                   .arg(qApp->applicationName());
     qCritical("%s", head.toStdString().data());
     qCritical("* signal:%s numLine:%d", strSig.data(), numLine);
     for (int i = 1; i < numLine; ++i) {
         std::string stackInfo = demangle(buffer[i]);
         qCritical("* %d>  %s", i, stackInfo.data());
     }
-    for(int index = head.size(); index > 0; index --) {
+    for (int index = head.size(); index > 0; index--) {
         end += "*";
     }
     qCritical("%s", end.toStdString().data());

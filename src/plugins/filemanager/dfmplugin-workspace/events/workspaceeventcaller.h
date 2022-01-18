@@ -25,6 +25,8 @@
 
 #include "dfmplugin_workspace_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
+#include "dfm-base/dfm_base_global.h"
+#include "dfm-base/utils/clipboard.h"
 
 #include <QObject>
 
@@ -47,6 +49,10 @@ public:
     static void sendMoveToTrash(quint64 windowID, const QList<QUrl> &urls, const AbstractJobHandler::JobFlags flags = AbstractJobHandler::JobFlag::kNoHint);
     static void sendNewFolder(quint64 windowID, const QUrl &url);
     static void sendDeletes(quint64 windowID, const QList<QUrl> &urls, const AbstractJobHandler::JobFlags flags = AbstractJobHandler::JobFlag::kNoHint);
+    static void sendRenameFile(quint64 windowID, const QUrl &oldUrl, const QUrl &newUrl);
+    static void sendWriteToClipboard(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> &urls);
+    static void sendCopyFiles(const quint64 windowId, const QList<QUrl> &sourceUrls, const QUrl &target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    static void sendCutFiles(const quint64 windowId, const QList<QUrl> &sourceUrls, const QUrl &target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 };
 
 DPWORKSPACE_END_NAMESPACE
