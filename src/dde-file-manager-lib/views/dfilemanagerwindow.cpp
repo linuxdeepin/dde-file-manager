@@ -62,6 +62,7 @@
 #include "usershare/usersharemanager.h"
 #include "controllers/pathmanager.h"
 #include "shutil/fileutils.h"
+#include "shutil/mountutils.h"
 #include "gvfs/networkmanager.h"
 #include "dde-file-manager/singleapplication.h"
 #include "dialogs/dialogmanager.h"
@@ -323,7 +324,7 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
             QString blkDevicePath = fi->extraProperties()["udisksblk"].toString();
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blkDevicePath));
             if (blk->mountPoints().empty()) {
-                qDebug() << "mount the device{" << blkDevicePath << " } at:" << blk->mount({});
+                qDebug() << "mount the device{" << blkDevicePath << " } at:" << MountUtils::mountBlkWithParams(blk.data());
             }
         }
     } else if (scheme == SMB_SCHEME || (FileUtils::isSmbPath(fileUrl.toString()))) {

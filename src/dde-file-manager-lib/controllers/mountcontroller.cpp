@@ -22,7 +22,7 @@
  */
 
 #include "mountcontroller.h"
-
+#include "shutil/mountutils.h"
 #include "app/define.h"
 #include "views/windowmanager.h"
 #include "models/mountfileinfo.h"
@@ -74,7 +74,7 @@ const QList<DAbstractFileInfoPointer> MountController::getChildren(const QShared
         QString mountPoint;
 
         if (blDev->mountPoints().isEmpty()) {
-            mountPoint = blDev->mount({});
+            mountPoint = MountUtils::mountBlkWithParams(blDev.data());
         } else {
             mountPoint = blDev->mountPoints().first();
         }

@@ -41,9 +41,12 @@
 #include "ddiskdevice.h"
 #include "ddiskmanager.h"
 #include "shutil/fileutils.h"
+#include "shutil/mountutils.h"
 #include "dialogs/dialogmanager.h"
 #include "private/dabstractfilewatcher_p.h"
 #include "app/define.h"
+#include "gvfs/mountsecretdiskaskpassworddialog.h"
+
 #include <linux/cdrom.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
@@ -757,16 +760,10 @@ void UDiskListener::changeVolumeDiskInfo(const QDiskInfo &diskInfo)
 void UDiskListener::mount(const QString &path)
 {
     qDebug() << path;
-    // main.cpp : handleEnvOfOpenAsAdmin 已经解决 gio root 用户下的挂载问题
-    GvfsMountManager::mount(path);
-#if 0
-    // The gio's method cannot mount block device, use the UDisks's method replace it.(bug 42690)
-    if (DFMGlobal::isOpenAsAdmin() && mountByUDisks(path)) {
-        return;
-    } else {
+    if (path.startsWith("/dev/"))
+        mountByUDisks(path);
+    else
         GvfsMountManager::mount(path);
-    }
-#endif
 }
 
 bool UDiskListener::mountByUDisks(const QString &path)
@@ -779,7 +776,36 @@ bool UDiskListener::mountByUDisks(const QString &path)
     const QString &udiskspath = rootDeviceNode.first();
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     if (blkdev) {
-        const QString &mountedPath = blkdev->mount({});
+        if (!blkdev->hasFileSystem()) {
+            dialogManager->showFormatDialog(path);
+            return false;
+        }
+
+        // for encrypted device, mount with gvfs cannot pass selinux params, so we have to unlock and mount by udisks
+        if (blkdev->isEncrypted()) {
+            MountSecretDiskAskPasswordDialog dlg(tr("Need password to access the device ") + blkdev->idLabel());
+            dlg.exec();
+            QString passwd = dlg.password();
+            if (passwd.isEmpty()) {
+                qDebug() << "user inputed a null string to unlock device";
+                return false;
+            }
+
+            QString clearBlkPath = blkdev->unlock(passwd, {});
+            if (clearBlkPath.isEmpty()) {
+                qInfo() << "cannot unlock device! " << blkdev->lastError();
+                DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
+                                             tr("Mounting device error"), tr("Wrong password"));
+                return false;
+            }
+
+            QSharedPointer<DBlockDevice> unlockedDev(DDiskManager::createBlockDevice(clearBlkPath));
+            if (!unlockedDev)
+                return false;
+            blkdev.swap(unlockedDev);
+        }
+
+        const QString &mountedPath = MountUtils::mountBlkWithParams(blkdev.data());
         qDebug() << "mounted path by udisks:" << mountedPath;
         return mountedPath.isEmpty() ? false : true;
     }

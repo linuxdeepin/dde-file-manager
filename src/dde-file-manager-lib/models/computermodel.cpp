@@ -42,6 +42,7 @@
 
 #include "views/computerview.h"
 #include "shutil/fileutils.h"
+#include "shutil/mountutils.h"
 #include "vault/vaulthelper.h"
 #include "computermodel.h"
 
@@ -381,7 +382,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         if (pitmdata->fi) {
             QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(pitmdata->fi->extraProperties()["udisksblk"].toString()));
             if (pitmdata->fi->suffix() == SUFFIX_UDISKS && blkdev && blkdev->mountPoints().size() == 0) {
-                blkdev->mount({});
+                MountUtils::mountBlkWithParams(blkdev.data());
             }
             return QVariant::fromValue(pitmdata->fi->redirectedFileUrl());
         }

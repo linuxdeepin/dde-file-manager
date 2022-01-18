@@ -28,6 +28,7 @@
 #include "dfmdeviceinfo.h"
 #include "dabstractfilewatcher.h"
 #include "private/dabstractfilewatcher_p.h"
+#include "shutil/mountutils.h"
 
 #include <dblockdevice.h>
 #include <dfmvfsdevice.h>
@@ -152,7 +153,7 @@ void DFMDeviceController::mount(const QString &path)
             m_vfsMgr->attach(QUrl::fromUserInput(pathStr));
         } else {
             QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(pathStr));
-            blDev->mount({});
+            MountUtils::mountBlkWithParams(blDev.data());
         }
     } else {
         // consider accept path like "/dev/sda1" ?

@@ -971,13 +971,10 @@ void GvfsMountManager::ask_disk_password_cb(GMountOperation *op, const char *mes
     bool anonymous = g_mount_operation_get_anonymous(op);
     GPasswordSave passwordSave = g_mount_operation_get_password_save(op);
 
-    const char *default_password = g_mount_operation_get_password(op);
-
     qCDebug(mountManager()) << "anonymous" << anonymous;
     qCDebug(mountManager()) << "message" << message;
     qCDebug(mountManager()) << "username" << default_user;
     qCDebug(mountManager()) << "domain" << default_domain;
-    qCDebug(mountManager()) << "password" << default_password;
     qCDebug(mountManager()) << "GAskPasswordFlags" << flags;
     qCDebug(mountManager()) << "passwordSave" << passwordSave;
 
@@ -1002,7 +999,6 @@ void GvfsMountManager::ask_disk_password_cb(GMountOperation *op, const char *mes
         if (code == 0) {
             p.clear();
         }
-        qCDebug(mountManager()) << "password is:" << p;
         std::string pstd = p.toStdString();
         g_mount_operation_set_password(op, pstd.c_str());
         mountSecretDiskAskPasswordDialog->deleteLater();

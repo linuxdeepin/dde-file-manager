@@ -23,6 +23,7 @@
 
 
 #include "dfmudisks2deviceinfo.h"
+#include "shutil/mountutils.h"
 
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
@@ -47,7 +48,7 @@ DFMUdisks2DeviceInfo::DFMUdisks2DeviceInfo(const QString &dbusPath)
 
 void DFMUdisks2DeviceInfo::mount()
 {
-    blockDevice()->mount({});
+    MountUtils::mountBlkWithParams(blockDevice());
 }
 
 bool DFMUdisks2DeviceInfo::unmountable()

@@ -28,6 +28,7 @@
 #include "models/dfmrootfileinfo.h"
 #include "interfaces/dumountmanager.h"
 #include "diskglobal.h"
+#include "shutil/mountutils.h"
 
 #include <dgiovolumemanager.h>
 #include <dgiomount.h>
@@ -172,7 +173,11 @@ void DiskControlWidget::doStartupAutoMount()
 
         QList<QByteArray> mountPoints = blDev->mountPoints();
         if (blDev->hasFileSystem() && blDev->mountPoints().isEmpty()) {
-            blDev->mount({{"auth.no_user_interaction", true}});
+            auto diskDev = DDiskManager::createDiskDevice(blDev->drive());
+            bool removable = diskDev ? diskDev->removable() : true;
+            auto params = MountUtils::getSeLinuxMountParams(removable);
+            params.insert("auth.no_user_interaction", true);
+            blDev->mount(params);
         }
     }
 }
@@ -554,7 +559,7 @@ void DiskControlWidget::onBlockDeviceAdded(const QString &path)
     if (blkDev->hintIgnore()) return;
     if (!blkDev->hasFileSystem()) return;
 
-    QString mountPoint = blkDev->mount({});
+    QString mountPoint = MountUtils::mountBlkWithParams(blkDev.data());
 
     if (mountPoint.isEmpty() || blkDev->lastError().type() != QDBusError::NoError) {
         qDebug() << "auto mount error: " << blkDev->lastError().type() << blkDev->lastError().message();

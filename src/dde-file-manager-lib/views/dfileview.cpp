@@ -60,6 +60,7 @@
 #include "dfilesystemmodel.h"
 
 #include "shutil/fileutils.h"
+#include "shutil/mountutils.h"
 #include "shutil/mimesappsmanager.h"
 #include "fileoperations/filejob.h"
 #include "deviceinfo/udisklistener.h"
@@ -2820,7 +2821,8 @@ bool DFileView::setRootUrl(const DUrl &url)
                 }
                 ISOMaster->getDeviceProperty();
                 ISOMaster->releaseDevice();
-                blkdev->mount({});
+
+                MountUtils::mountBlkWithParams(blkdev.data());
 
                 return true;
             }));
@@ -2831,7 +2833,7 @@ bool DFileView::setRootUrl(const DUrl &url)
             d->headerOpticalDisc->show();
             auto points = blkdev->mountPoints();
             if (points.empty()) {
-                blkdev->mount({});
+                MountUtils::mountBlkWithParams(blkdev.data());
                 // 挂载后更新缓存的挂载点
                 points = blkdev->mountPoints();
             }
