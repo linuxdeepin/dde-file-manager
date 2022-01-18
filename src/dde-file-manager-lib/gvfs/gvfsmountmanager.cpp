@@ -1378,8 +1378,7 @@ void GvfsMountManager::cancellMountSync(GMountOperation *op)
         CancellHash.remove(op);
         if (cancell) {
             g_cancellable_cancel(cancell);
-            //84859 g_cancellable_get_fd或g_cancellable_make_pollfd 后才能调用g_cancellable_release_fd
-            //g_cancellable_release_fd(cancell);
+            g_cancellable_release_fd(cancell);
             g_object_unref(cancell);
         }
     }
