@@ -146,10 +146,20 @@ bool VaultHelper::killVaultTasks()
 
 bool VaultHelper::isVaultEnabled()
 {
-    if (!DSysInfo::isCommunityEdition()) {  // 如果不是社区版
-        DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
+    // 获取系统类型
+    DSysInfo::UosType uosType = DSysInfo::uosType();
+    // 获取系统版本
+    DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
+    if (DSysInfo::UosServer == uosType) {   // 如果是服务器类型
+        // 如果是企业版/行业版/欧拉版
+        if (DSysInfo::UosEnterprise == uosEdition
+                || DSysInfo::UosEnterpriseC == uosEdition
+                || DSysInfo::UosEuler == uosEdition) {
+            return true;
+        }
+    } else if (DSysInfo::UosDesktop == uosType) {   // 如果是桌面类型
         // 如果是专业版
-        if (DSysInfo::DeepinType::DeepinProfessional == deepinType) {
+        if (DSysInfo::UosProfessional == uosEdition) {
             return true;
         }
     }
