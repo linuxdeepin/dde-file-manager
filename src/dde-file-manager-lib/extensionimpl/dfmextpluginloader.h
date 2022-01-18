@@ -39,7 +39,8 @@ public:
     bool loadPlugin();
     bool initialize();
     void shutdown();
-    QString errorString();
+    QString fileName() const;
+    QString errorString() const;
     QSharedPointer<DFMEXT::DFMExtMenuPlugin> extMenuPlugin();
     QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin> extEmbleIconPlugin();
 };

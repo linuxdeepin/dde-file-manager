@@ -35,28 +35,46 @@ class DFMExtPluginManager : public QObject
     Q_DISABLE_COPY(DFMExtPluginManager)
     DFMExtPluginManagerPrivate *const d;
 public:
-    enum State{
+    enum State {
         Invalid,
         Scanned,
         Loaded,
         Initialized,
         Shutdown
     };
-    typedef QList<QSharedPointer<DFMEXT::DFMExtMenuPlugin>> DFMExtMenus;
-    typedef QList<QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>> DFMExtEmblemIcons;
+
+    enum PluginLogicState {
+        Enable,
+        Disbale
+    };
+
+    using DFMExtMenus = QList<QSharedPointer<DFMEXT::DFMExtMenuPlugin>>;
+    using DFMExtEmblemIcons = QList<QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>>;
+    using DFMExtMenuState = QPair<PluginLogicState, QSharedPointer<DFMEXT::DFMExtMenuPlugin>>;
+    using DFMExtEmblemState =  QPair<PluginLogicState, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>>;
+    using DFMExtMenuMap = QHash<QString, DFMExtMenuState>;
+    using DFMExtEmblemIconMap = QHash<QString, DFMExtEmblemState>;
+
     QString pluginDefaultPath();
     void setPluginPaths(const QStringList &paths);
     QStringList pluginPaths() const;
     bool scanPlugins();
     bool loadPlugins();
     bool initPlugins();
+    bool monitorPlugins();
     bool shutdownPlugins();
-    DFMExtMenus menus();
-    DFMExtEmblemIcons emblemIcons();
+    DFMExtMenus menus() const;
+    DFMExtEmblemIcons emblemIcons() const;
     DFMExtMenuImplProxy *pluginMenuProxy();
     State state() const;
     QString errorString() const;
     static DFMExtPluginManager &instance();
+
+signals:
+    void extensionPluginCreated(const QString &path);
+    void extensionPluginEnable(const QString &path);
+    void extensionPluginDisbale(const QString &path);
+
 private:
     explicit DFMExtPluginManager(QObject *parent = nullptr);
 };

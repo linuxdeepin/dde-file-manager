@@ -88,6 +88,7 @@
 #include <sstream>
 #include <fstream>
 #include <sys/stat.h>
+#include <mutex>
 
 #include <KCodecs>
 #include <KEncodingProber>
@@ -1180,6 +1181,10 @@ bool DFMGlobal::autoInitExtPluginManager()
     }
 
     if (DFMExtPluginManager::instance().state() == DFMExtPluginManager::State::Initialized) {
+       if (!DFMExtPluginManager::instance().monitorPlugins()) {
+           qWarning() << "init plugin monitor failed!";
+           return false;
+       }
         qInfo() << "extPlugin initialization has been successful!";
     }
 

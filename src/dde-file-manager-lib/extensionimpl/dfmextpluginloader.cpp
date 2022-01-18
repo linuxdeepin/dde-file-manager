@@ -169,7 +169,12 @@ void DFMExtPluginLoader::shutdown()
     }
 }
 
-QString DFMExtPluginLoader::errorString()
+QString DFMExtPluginLoader::fileName() const
+{
+    return d->qlib.fileName();
+}
+
+QString DFMExtPluginLoader::errorString() const
 {
     return d->qlib.errorString();
 }

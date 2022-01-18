@@ -39,7 +39,7 @@ class PluginEmblemManagerPrivate : public QThread
 {
 public:
     explicit PluginEmblemManagerPrivate(PluginEmblemManager *qq);
-    ~PluginEmblemManagerPrivate();
+    ~PluginEmblemManagerPrivate() override;
 
     // 从缓存获取插件角标
     void getPluginEmblemIconsFromMap(const DUrl &fileUrl, int systemIconCount, QList<QIcon> &icons);

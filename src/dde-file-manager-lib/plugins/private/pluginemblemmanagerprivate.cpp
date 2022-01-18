@@ -39,6 +39,17 @@ PluginEmblemManagerPrivate::PluginEmblemManagerPrivate(PluginEmblemManager *qq)
 {
     // 开启获取插件角标线程
     startWork();
+    // 运行时增加插件，恢复线程刷新角标
+    connect(&DFMExtPluginManager::instance(), &DFMExtPluginManager::extensionPluginCreated, this, [this]() {
+        this->startWork();
+    });
+    connect(&DFMExtPluginManager::instance(), &DFMExtPluginManager::extensionPluginEnable, this, [this]() {
+        emit q->updatePluginEmblem();
+    });
+    connect(&DFMExtPluginManager::instance(), &DFMExtPluginManager::extensionPluginDisbale, this, [this]() {
+        clearEmblemIconsMap();
+        emit q->updatePluginEmblem();
+    });
 }
 
 PluginEmblemManagerPrivate::~PluginEmblemManagerPrivate()
@@ -107,6 +118,7 @@ void PluginEmblemManagerPrivate::run()
         DFMGlobal::autoInitExtPluginManager();
         // 判断是否存在角标对象，如果不存在，线程退出
         if (DFMExtPluginManager::instance().emblemIcons().isEmpty()) {
+            bInitPlugin = false;
             return;
         }
         bHaveEmblemObj = true;
@@ -155,10 +167,10 @@ void PluginEmblemManagerPrivate::getEmblemIcons(QSharedPointer<DFMExtEmblemIconP
     if (!emblems.empty()) {
         bHaveIcon = true;
         size_t len = emblems.size() < kMaxEmblemCount ? emblems.size() : kMaxEmblemCount;
-        for (int i = 0, pos = 0; i < len; ++i) {
+        for (int i = 0, pos = 0; i < static_cast<int>(len); ++i) {
             pos = data.second + i;
             if (pos < newIcons.size()) {
-                newIcons[data.second + i] = QString::fromStdString(emblems[i]);
+                newIcons[data.second + i] = QString::fromStdString(emblems[static_cast<size_t>(i)]);
             }
         }
     }

@@ -448,7 +448,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         }
 
         QAction *action = new QAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), openWithMenu);
-        action->setData((int)MenuAction::OpenWithCustom);
+        action->setData(static_cast<int>(MenuAction::OpenWithCustom));
         openWithMenu->addAction(action);
         DFileMenuData::actions[MenuAction::OpenWithCustom] = action;
         DFileMenuData::actionToMenuAction[action] = MenuAction::OpenWithCustom;
