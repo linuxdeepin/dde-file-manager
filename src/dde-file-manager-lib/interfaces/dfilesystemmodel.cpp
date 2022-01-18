@@ -776,13 +776,13 @@ begin:
         }
         const DUrl &fileUrl = fileInfo->fileUrl();
 
-        if (fileInfo->hasOrderly() && (v.first == AddFile || v.first == AppendFile)) {
+        if (v.first == AddFile || v.first == AppendFile) {
             if (rootNode->childContains(fileUrl))
                 continue;
 
             int row = -1;
 
-            if (model()->enabledSort()) {
+            if (fileInfo->hasOrderly() && model()->enabledSort()) {
                 if (!compareFun)
                     compareFun = fileInfo->compareFunByColumn(model()->sortRole());
                 FileSystemNodePointer node = model()->createNode(rootNode.data(), fileInfo);
