@@ -54,9 +54,10 @@ public:
 public slots:
     void onFileCreated(const QUrl &url);
     void onFileDeleted(const QUrl &url);
-    void onFileRenamed(const QUrl &url);
+    void onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
 
     void onFileRefreshed();
+    void onFileSorted();
     void onEnableSortChanged(bool enableSort);
 
     void recordMenuLocation(const int screenNum, const QPoint &pos);

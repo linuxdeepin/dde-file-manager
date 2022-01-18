@@ -74,6 +74,12 @@ void GridCore::remove(int index, const QString &item)
     posItem[index].remove(pos);
 }
 
+void GridCore::remove(int index, const QPoint &pos)
+{
+    auto item = posItem[index].take(pos);
+    itemPos[index].remove(item);
+}
+
 QList<QPoint> GridCore::voidPos(int index) const
 {
     QList<QPoint> ret;

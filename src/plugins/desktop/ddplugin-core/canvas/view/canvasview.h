@@ -29,6 +29,7 @@ DSB_D_BEGIN_NAMESPACE
 class DragDropOper;
 class ClickSelecter;
 class KeySelecter;
+class CanvasViewMenuProxy;
 class CanvasModel;
 class CanvasSelectionModel;
 class CanvasItemDelegate;
@@ -41,6 +42,7 @@ class CanvasView : public QAbstractItemView
     friend class ClickSelecter;
     friend class KeySelecter;
     friend class ViewPainter;
+    friend class CanvasViewMenuProxy;
     friend class CanvasViewPrivate;
 public:
     using CursorAction = QAbstractItemView::CursorAction;
@@ -65,14 +67,14 @@ public:
     CanvasSelectionModel *selectionModel() const;
     void setGeometry(const QRect &rect);
     void updateGrid();
+
+    QPoint lastMenuPos() const; // todo(wangcl):delete it when call back
 public:
     bool isTransparent(const QModelIndex &index) const;
     QList<QIcon> additionalIcon(const QModelIndex &index) const;
 public Q_SLOTS:
     void refresh();
     void selectAll() override;
-signals:
-    void createFileByMenu(const int &screenNum, const QPoint &pos);
 
 protected:
     QRect itemRect(const QModelIndex &index) const;
@@ -82,14 +84,13 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *events) override;
     void paintEvent(QPaintEvent *event) override;
-
     void contextMenuEvent(QContextMenuEvent *event) override;
-
     void startDrag(Qt::DropActions supportedActions) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dragMoveEvent(QDragMoveEvent *event) override;
     void dragLeaveEvent(QDragLeaveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
+
 private:
     QScopedPointer<CanvasViewPrivate> d;
 };

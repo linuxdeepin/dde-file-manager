@@ -58,6 +58,8 @@ public:
 
     QUrl rootUrl() const;
     QUrl url(const QModelIndex &index) const;
+    const QList<QUrl> &getFiles() const;
+
     QMimeData *mimeData(const QModelIndexList &indexes) const override;
     bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
     QStringList mimeTypes() const override;
@@ -73,14 +75,17 @@ public:
     void setSortOrder(const Qt::SortOrder &order);
 
     int sortRole() const;
-    void setSortRole(int role, Qt::SortOrder order = Qt::AscendingOrder);
+    void setSortRole(dfmbase::AbstractFileInfo::SortKey role, Qt::SortOrder order = Qt::AscendingOrder);
 
+    bool whetherShowHiddenFiles() const;
+    void setWhetherShowHiddenFiles(const bool isShow);
 signals:
     void fileCreated(const QUrl &url);
     void fileDeleted(const QUrl &url);
-    void fileRenamed(const QUrl &url);
+    void fileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
 
     void fileRefreshed();
+    void fileSorted();
     void enableSortChanged(bool enableSort);
 
 private:

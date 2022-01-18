@@ -26,6 +26,7 @@
 #include "traversaldirthread.h"
 #include "utils/threadcontainer.hpp"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QTimer>
 #include <QQueue>
@@ -37,17 +38,22 @@ class FileTreaterPrivate : public QObject
     Q_OBJECT
 public:
     enum EventType {
-        AddFile,
-        RmFile
+        kAddFile,
+        kRmFile,
+        kReFile
     };
 
     explicit FileTreaterPrivate(FileTreater *q_ptr);
 
     void doFileDeleted(const QUrl &url);
-    void dofileCreated(const QUrl &url);
+    void doFileCreated(const QUrl &url);
+    void doFileRename(const QUrl &oldUrl, const QUrl &newUrl);
     void doFileUpdated(const QUrl &url);
     void doUpdateChildren(const QList<QUrl> &childrens);
     Q_INVOKABLE void doWatcherEvent();
+
+    inline void beginRefresh();
+    inline void endRefresh();
 
 private:
     bool checkFileEventQueue();
@@ -61,18 +67,23 @@ public:
     QSharedPointer<TraversalDirThread> traversalThread;
     AbstractFileWatcherPointer watcher;
     QMutex watcherEventMutex;
-    QQueue<QPair<QUrl, EventType>> watcherEvent;
+    QQueue<QVariant> watcherEvent;
+    QDir::Filters filters = QDir::NoFilter;
 
     QAtomicInteger<bool> refreshedFlag = false;
+    QAtomicInteger<bool> canRefreshFlag = true;
     QAtomicInteger<bool> processFileEventRuning = false;
 
-    QUrl rootUrl;
-    bool canRefreshFlag = true;
-
+    QUrl desktopUrl;
     bool enableSort = true;
-    int sortRole = FileTreater::kFileNameRole;
+    dfmbase::AbstractFileInfo::SortKey sortRole = dfmbase::AbstractFileInfo::kSortByFileName;
     Qt::SortOrder sortOrder = Qt::AscendingOrder;
+
+    QAtomicInteger<bool> whetherShowHiddenFile = false;
 };
 
 DSB_D_END_NAMESPACE
+
+Q_DECLARE_METATYPE(dfm_service_desktop::FileTreaterPrivate::EventType);
+
 #endif   // FILETREATER_P_H

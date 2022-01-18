@@ -42,6 +42,7 @@ public:
     virtual bool applay(GridCore *);
     virtual void insert(int index, const QPoint &pos, const QString &item);
     virtual void remove(int index, const QString &item);
+    virtual void remove(int index, const QPoint &pos);
     virtual QList<QPoint> voidPos(int index) const;
     virtual bool findVoidPos(GridPos &pos) const;
     virtual bool isFull(int index) const;

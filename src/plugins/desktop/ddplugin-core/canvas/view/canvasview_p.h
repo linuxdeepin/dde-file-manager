@@ -31,6 +31,7 @@
 #include "operator/operstate.h"
 #include "operator/dragdropoper.h"
 #include "operator/shortcutoper.h"
+#include "operator/canvasviewmenuproxy.h"
 #include "gridcoordinate.h"
 
 #include <QDebug>
@@ -74,9 +75,7 @@ public:
     QString visualItem(const QPoint &gridPos) const;
     bool isEmptyArea(const QPoint &pos) const;
     bool isWaterMaskOn();
-
-    void showEmptyAreaMenu(const Qt::ItemFlags &indexFlags);
-    void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags);
+    QList<QUrl> selectedUrls() const;
 public:
     QModelIndex firstIndex() const;
     QModelIndex lastIndex() const;
@@ -136,7 +135,8 @@ protected:
 
     QPoint dragTargetGrid { QPoint(-1, -1) };
 
-    QPoint lastMenuGridPos;
+    CanvasViewMenuProxy *menuProxy = nullptr;
+    QPoint lastMenuGridPos; // todo(wangcl):delete
 private:
     CanvasView *q;
     WaterMaskFrame *waterMask = nullptr;

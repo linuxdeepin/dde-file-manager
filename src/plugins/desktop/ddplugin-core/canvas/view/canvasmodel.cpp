@@ -165,19 +165,24 @@ bool CanvasModel::isRefreshed() const
 
 QUrl CanvasModel::rootUrl() const
 {
-    return FileTreaterCt->rootUrl();
+    return FileTreaterCt->desktopUrl();
 }
 
 QUrl CanvasModel::url(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return FileTreaterCt->rootUrl();
+        return FileTreaterCt->desktopUrl();
 
     if (auto info = FileTreaterCt->fileInfo(index.row())) {
         return info->url();
     }
 
     return QUrl();
+}
+
+const QList<QUrl> &CanvasModel::getFiles() const
+{
+    return FileTreaterCt->getFiles();
 }
 
 QMimeData *CanvasModel::mimeData(const QModelIndexList &indexes) const
@@ -307,17 +312,29 @@ int CanvasModel::sortRole() const
     return FileTreaterCt->sortRole();
 }
 
-void CanvasModel::setSortRole(int role, Qt::SortOrder order)
+void CanvasModel::setSortRole(dfmbase::AbstractFileInfo::SortKey role, Qt::SortOrder order)
 {
     FileTreaterCt->setSortRole(role, order);
 }
 
+bool CanvasModel::whetherShowHiddenFiles() const
+{
+    return FileTreaterCt->whetherShowHiddenFiles();
+}
+
+void CanvasModel::setWhetherShowHiddenFiles(const bool isShow)
+{
+    FileTreaterCt->setWhetherShowHiddenFiles(isShow);
+}
+
 void CanvasModel::connection()
 {
+    // todo(wangcl):delete and send mode original signal
     connect(FileTreaterCt, &FileTreater::fileCreated, this, &CanvasModel::fileCreated);
     connect(FileTreaterCt, &FileTreater::fileDeleted, this, &CanvasModel::fileDeleted);
     connect(FileTreaterCt, &FileTreater::fileRenamed, this, &CanvasModel::fileRenamed);
     connect(FileTreaterCt, &FileTreater::fileRefreshed, this, &CanvasModel::fileRefreshed);
+    connect(FileTreaterCt, &FileTreater::fileSorted, this, &CanvasModel::fileSorted);
     connect(FileTreaterCt, &FileTreater::enableSortChanged, this, &CanvasModel::enableSortChanged);
 }
 

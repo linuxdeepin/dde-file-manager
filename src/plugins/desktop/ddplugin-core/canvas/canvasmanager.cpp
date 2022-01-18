@@ -24,8 +24,7 @@
 #include "view/canvasview_p.h"
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
-#include "filetreater.h"
-
+#include "canvas/view/operator/fileoperaterproxy.h"
 #include "dfm-framework/framework.h"
 #include "dfm-base/widgets/screenglobal.h"
 
@@ -91,9 +90,6 @@ QList<QSharedPointer<CanvasView> > CanvasManager::views() const
 
 void CanvasManager::initConnect()
 {
-    // 遍历数据完成后通知更新栅格位置信息
-    connect(FileTreaterCt, &FileTreater::fileRefreshed, this, &CanvasManager::reloadItem, Qt::QueuedConnection);
-
     // 屏幕增删，模式改变
     connect(d->backgroundService, &BackgroundService::sigBackgroundBuilded, this, &CanvasManager::onCanvasBuild);
 
@@ -103,9 +99,14 @@ void CanvasManager::initConnect()
     // 可用区改变
     connect(d->screenScevice, &ScreenService::screenAvailableGeometryChanged, this, &CanvasManager::onGeometryChanged);
 
-    connect(d->canvasModel, &CanvasModel::fileCreated, d, &CanvasManagerPrivate::onFileCreated);
-    connect(d->canvasModel, &CanvasModel::fileDeleted, d, &CanvasManagerPrivate::onFileDeleted);
-    connect(d->canvasModel, &CanvasModel::fileRenamed, d, &CanvasManagerPrivate::onFileRenamed);
+    connect(d->canvasModel, &CanvasModel::fileCreated, d, &CanvasManagerPrivate::onFileCreated, Qt::QueuedConnection);
+    connect(d->canvasModel, &CanvasModel::fileDeleted, d, &CanvasManagerPrivate::onFileDeleted, Qt::QueuedConnection);
+    connect(d->canvasModel, &CanvasModel::fileRenamed, d, &CanvasManagerPrivate::onFileRenamed, Qt::QueuedConnection);
+    connect(d->canvasModel, &CanvasModel::fileSorted, d, &CanvasManagerPrivate::onFileSorted, Qt::QueuedConnection);
+    connect(d->canvasModel, &CanvasModel::fileRefreshed, d, &CanvasManagerPrivate::onFileRefreshed, Qt::QueuedConnection);
+
+    // todo(wangcl):callback
+    connect(FileOperaterProxyIns, &FileOperaterProxy::createFileByMenu, d, &CanvasManagerPrivate::recordMenuLocation, Qt::DirectConnection);
 }
 
 void CanvasManager::onCanvasBuild()
@@ -178,7 +179,7 @@ void CanvasManager::onCanvasBuild()
     }
 
     // todo(zy) 优化首次加载与屏幕改变的加载重复问题，现在在初始化时有冗余
-    if (FileTreaterCt->isRefreshed())
+    if (d->canvasModel->isRefreshed())
         reloadItem();
 }
 
@@ -214,7 +215,7 @@ void CanvasManager::reloadItem()
     //todo 默认初始化（按类型排序）以及按配置还原
     GridIns->setMode(CanvasGrid::Mode::Custom);
     QStringList existItems;
-    const QList<QUrl> &actualList = FileTreaterCt->getFiles();
+    const QList<QUrl> &actualList = d->canvasModel->getFiles();
     for (const QUrl &df : actualList) {
         existItems.append(df.toString());
     }
@@ -254,7 +255,6 @@ CanvasViewPointer CanvasManagerPrivate::createView(const ScreenPointer &sp, int 
     view->initUI();
 
     view->setScreenNum(index);
-    connect(view.get(), &CanvasView::createFileByMenu, this, &CanvasManagerPrivate::recordMenuLocation, Qt::DirectConnection);
 
     auto background = backgroundService->background(sp->name());
     view->setParent(background.get());
@@ -290,6 +290,7 @@ void CanvasManagerPrivate::onFileCreated(const QUrl &url)
         if (createFileByMenu) {
             // todo(wangcl) 优化为回调函数处理(在canvasview的右键菜单调用时传入回调函数)，此处直接刷新返回
             createFileByMenu = false;
+            // todo(wangcl):自动排序的情况下，直接append
             GridIns->tryAppendAfter({path}, createFileScreenNum, createFileGridPos);
 
             // todo open editor for rename file
@@ -311,10 +312,29 @@ void CanvasManagerPrivate::onFileDeleted(const QUrl &url)
     }
 }
 
-void CanvasManagerPrivate::onFileRenamed(const QUrl &url)
+void CanvasManagerPrivate::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    Q_UNUSED(url)
-    // todo(wangcl)
+    if (GridIns->replace(oldUrl.toString(), newUrl.toString()))
+        q->update();
+}
+
+void CanvasManagerPrivate::onFileRefreshed()
+{
+    q->reloadItem();
+}
+
+void CanvasManagerPrivate::onFileSorted()
+{
+    GridIns->setMode(CanvasGrid::Mode::Align);
+    QStringList existItems;
+    const QList<QUrl> &actualList = canvasModel->getFiles();
+    for (const QUrl &df : actualList) {
+        existItems.append(df.toString());
+    }
+
+    GridIns->setItems(existItems);
+
+    q->update();
 }
 
 void CanvasManagerPrivate::recordMenuLocation(const int screenNum, const QPoint &pos)

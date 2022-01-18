@@ -32,3 +32,14 @@ CanvasModel *CanvasSelectionModel::model()
 {
     return qobject_cast<CanvasModel *>(QItemSelectionModel::model());
 }
+
+QList<QUrl> CanvasSelectionModel::selectedUrls()
+{
+    auto indexs = selectedIndexes();
+    QList<QUrl> urls;
+    for (auto index : indexs) {
+        urls <<  model()->url(index);
+    }
+
+    return urls;
+}

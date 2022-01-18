@@ -62,7 +62,15 @@ public:
 //        kFileLastReadDateTimeRole = Qt::UserRole + 20,
 //        kFileCreatedDateTimeRole = Qt::UserRole + 21,
 //        kFileUserRole = Qt::UserRole + 99,
-        UnknowRole = Qt::UserRole + 999
+        kUnknowRole = Qt::UserRole + 999
+    };
+
+    // todo: move to menu manager
+    enum MenuAction {
+        kName,
+        kSize,
+        kType,
+        kLastModifiedDate
     };
 
     static FileTreater *instance();
@@ -74,7 +82,7 @@ public:
     const QList<QUrl> &getFiles() const;
     int fileCount() const;
 
-    QUrl rootUrl() const;
+    QUrl desktopUrl() const;
     bool canRefresh() const;
     void refresh();
     bool isRefreshed() const;
@@ -87,14 +95,18 @@ public:
     void setSortOrder(const Qt::SortOrder order);
 
     int sortRole() const;
-    void setSortRole(const int role, const Qt::SortOrder order = Qt::AscendingOrder);
+    void setSortRole(const dfmbase::AbstractFileInfo::SortKey role, const Qt::SortOrder order = Qt::AscendingOrder);
+
+    bool whetherShowHiddenFiles() const;
+    void setWhetherShowHiddenFiles(const bool isShow);
 
 signals:
     void fileCreated(const QUrl &url);
     void fileDeleted(const QUrl &url);
-    void fileRenamed(const QUrl &url);
+    void fileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
 
     void fileRefreshed();
+    void fileSorted();
     void enableSortChanged(bool enableSort);
 
 protected:

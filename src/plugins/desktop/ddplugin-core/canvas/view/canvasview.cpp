@@ -27,17 +27,14 @@
 #include "delegate/canvasitemdelegate.h"
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
-
-#include "base/schemefactory.h"
+#include "operator/canvasviewmenuproxy.h"
 
 #include <QGSettings>
-
 #include <QPainter>
 #include <QDebug>
 #include <QScrollBar>
 #include <QPaintEvent>
 #include <QApplication>
-#include <QMenu>
 #include <QDrag>
 #include <QMimeData>
 
@@ -254,10 +251,10 @@ void CanvasView::contextMenuEvent(QContextMenuEvent *event)
     Qt::ItemFlags flags;
 
     if (d->isEmptyArea(event->pos())) {
-        d->showEmptyAreaMenu(flags);
+        d->menuProxy->showEmptyAreaMenu(flags);
     } else {
         flags = model()->flags(index);
-        d->showNormalMenu(index, flags);
+        d->menuProxy->showNormalMenu(index, flags);
     }
 }
 
@@ -385,6 +382,11 @@ void CanvasView::refresh()
     repaint();
     update();
     d->flicker = false;
+}
+
+QPoint CanvasView::lastMenuPos() const
+{
+    return d->lastMenuGridPos;
 }
 
 bool CanvasView::isTransparent(const QModelIndex &index) const
@@ -549,6 +551,7 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
     keySelecter = new KeySelecter(q);
     dragDropOper = new DragDropOper(q);
     shortcutOper = new ShortcutOper(q);
+    menuProxy = new CanvasViewMenuProxy(q);
 }
 
 CanvasViewPrivate::~CanvasViewPrivate()
@@ -674,68 +677,9 @@ bool CanvasViewPrivate::isWaterMaskOn()
     return true;
 }
 
-void CanvasViewPrivate::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
+QList<QUrl> CanvasViewPrivate::selectedUrls() const
 {
-    Q_UNUSED(indexFlags)
-    // todo menu
-
-    // test code
-    QMenu *tstMenu = new QMenu;
-    QAction *tstAction = nullptr;
-
-    tstAction = tstMenu->addAction(tr("create file"));
-    connect(tstAction, &QAction::triggered, q, [=](){
-        emit q->createFileByMenu(screenNum, lastMenuGridPos);
-
-        QString path = q->model()->rootUrl().path();
-        path += "/testFile.txt";
-
-        QFile file(path);
-        if (file.open(QIODevice::WriteOnly)) {
-            file.close();
-        }
-    });
-
-    tstAction = tstMenu->addAction(tr("create folder"));
-    connect(tstAction, &QAction::triggered, q, [=](){
-        emit q->createFileByMenu(screenNum, lastMenuGridPos);
-
-        QDir dir(q->model()->rootUrl().path());
-        dir.mkdir("testFolder");
-    });
-
-    tstAction = tstMenu->addAction(tr("select all"));
-    connect(tstAction, &QAction::triggered, q, &CanvasView::selectAll);
-
-    tstAction = tstMenu->addAction(tr("refresh"));
-    connect(tstAction, &QAction::triggered, q, &CanvasView::refresh);
-
-    tstMenu->exec(QCursor::pos());
-    delete tstMenu;
-}
-
-void CanvasViewPrivate::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
-{
-    Q_UNUSED(index)
-    Q_UNUSED(indexFlags)
-    // todo menu
-
-    // test code
-    QMenu *tstMenu = new QMenu;
-    QAction *tstAction = nullptr;
-
-    tstAction = tstMenu->addAction(tr("open"));
-    connect(tstAction, &QAction::triggered, q, [=](){
-
-    });
-
-    tstAction = tstMenu->addAction(tr("delete"));
-    connect(tstAction, &QAction::triggered, q, [=](){
-
-    });
-
-    tstMenu->exec(QCursor::pos());
-    delete tstMenu;
+    return q->selectionModel()->selectedUrls();
 }
 
 QModelIndex CanvasViewPrivate::firstIndex() const

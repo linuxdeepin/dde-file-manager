@@ -21,7 +21,7 @@
  */
 #include "filetreater.h"
 #include "private/filetreater_p.h"
-//#include "grid/canvasgrid.h"
+#include "canvas/displayconfig.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 #include "dfm-base/base/urlroute.h"
@@ -47,17 +47,35 @@ void FileTreaterPrivate::doFileDeleted(const QUrl &url)
 {
     {
         QMutexLocker lk(&watcherEventMutex);
-        watcherEvent.enqueue(QPair<QUrl, EventType>(url, RmFile));
+        QPair<EventType, QVariant> rmFile(kRmFile, QVariant(url));
+        QVariant data = QVariant::fromValue(rmFile);
+        watcherEvent.enqueue(data);
     }
 
     metaObject()->invokeMethod(this, QT_STRINGIFY(doWatcherEvent), Qt::QueuedConnection);
 }
 
-void FileTreaterPrivate::dofileCreated(const QUrl &url)
+void FileTreaterPrivate::doFileRename(const QUrl &oldUrl, const QUrl &newUrl)
 {
     {
         QMutexLocker lk(&watcherEventMutex);
-        watcherEvent.enqueue(QPair<QUrl, EventType>(url, AddFile));
+        QPair<QUrl, QUrl> urls(oldUrl, newUrl);
+        QVariant varUrls = QVariant::fromValue(urls);
+        QPair<EventType, QVariant> reFile(kReFile, varUrls);
+        QVariant data = QVariant::fromValue(reFile);
+        watcherEvent.enqueue(data);
+    }
+
+    metaObject()->invokeMethod(this, QT_STRINGIFY(doWatcherEvent), Qt::QueuedConnection);
+}
+
+void FileTreaterPrivate::doFileCreated(const QUrl &url)
+{
+    {
+        QMutexLocker lk(&watcherEventMutex);
+        QPair<EventType, QVariant> rmFile(kAddFile, QVariant(url));
+        QVariant data = QVariant::fromValue(rmFile);
+        watcherEvent.enqueue(data);
     }
 
     metaObject()->invokeMethod(this, "doWatcherEvent", Qt::QueuedConnection);
@@ -76,22 +94,17 @@ void FileTreaterPrivate::doUpdateChildren(const QList<QUrl> &childrens)
     QString errString;
     for (auto children : childrens) {
 
-        auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(children, &errString);
-        if (!itemInfo) {
+        auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(children, true, &errString);
+        if (Q_UNLIKELY(!itemInfo)) {
             qInfo() << "create LocalFileInfo error: " << errString;
             continue;
         }
-        if (itemInfo->isHidden()) {
-            qInfo() << "file is hidden:" << itemInfo->path();
-            continue;
-        }
+
         fileList.append(children);
         fileMap.insert(children, itemInfo);
     }
 
-    refreshedFlag = true;
-    canRefreshFlag = true;
-
+    endRefresh();
     emit q->fileRefreshed();
 }
 
@@ -105,44 +118,89 @@ void FileTreaterPrivate::doWatcherEvent()
 
     processFileEventRuning = true;
     while (checkFileEventQueue()) {
-        QPair<QUrl, EventType> event;
+        QVariant event;
         {
             QMutexLocker lk(&watcherEventMutex);
             event = watcherEvent.dequeue();
         }
-        const QUrl &fileUrl = event.first;
-        if (!fileUrl.isValid())
-            continue;
 
-        if (UrlRoute::urlParent(fileUrl) != rootUrl)
+        if (!event.canConvert<QPair<EventType, QVariant>>()) {
+            qInfo() << "data error format:" << event;
             continue;
+        }
 
-        if (event.second == AddFile) {
-            if (fileMap.contains(fileUrl))
+        QPair<EventType, QVariant> eventData = event.value<QPair<EventType, QVariant>>();
+        const EventType eventType = eventData.first;
+
+        if (kAddFile == eventType) {
+            const QUrl &url = eventData.second.toUrl();
+            if (Q_UNLIKELY(fileList.contains(url)))
                 continue;
 
             QString errString;
-            auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(fileUrl, true, &errString);
-            if (!itemInfo) {
-                qInfo() << "create LocalFileInfo error: " << errString;
+            auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(url, true, &errString);
+            if (Q_UNLIKELY(!itemInfo)) {
+                qInfo() << "create LocalFileInfo error: " << errString << url;
                 continue;
             }
-            if (itemInfo->isHidden()) {
-                qInfo() << "file is hidden:" << itemInfo->path();
+
+            fileList.append(url);
+            fileMap.insert(url, itemInfo);
+
+            emit q->fileCreated(url);
+        } else if (kRmFile == eventType){
+            const QUrl &url = eventData.second.toUrl();
+            if (Q_UNLIKELY(!fileList.contains(url)))
+                continue;
+            fileList.removeOne(url);
+            fileMap.remove(url);
+
+            emit q->fileDeleted(url);
+        } else if (kReFile == eventType) {
+            const QPair<QUrl, QUrl> urls = eventData.second.value<QPair<QUrl, QUrl>>();
+            const QUrl &oldUrl = urls.first;
+            const QUrl &newUrl = urls.second;
+
+            if (Q_UNLIKELY(!fileList.contains(oldUrl)) || Q_UNLIKELY(fileList.contains(newUrl))) {
+                qWarning() << "unknow error in rename file:" << fileList.contains(oldUrl) << oldUrl << fileList.contains(newUrl) << newUrl;
+            }
+
+            int index = fileList.indexOf(oldUrl);
+            if (Q_LIKELY(-1 != index)) {
+                fileList.removeAt(index);
+            }
+            fileMap.remove(oldUrl);
+
+            QString errString;
+            auto info = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(newUrl, true, &errString);
+            if (Q_UNLIKELY(!info)) {
+                qInfo() << "create LocalFileInfo error: " << errString << newUrl;
                 continue;
             }
-            fileList.append(fileUrl);
-            fileMap.insert(fileUrl, itemInfo);
 
-            emit q->fileCreated(fileUrl);
-        } else {
-            fileList.removeOne(fileUrl);
-            fileMap.remove(fileUrl);
+            if (Q_LIKELY(-1 != index)) {
+                fileList.insert(index, newUrl);
+            } else {
+                fileList.append(newUrl);
+            }
+            fileMap.insert(newUrl, info);
 
-            emit q->fileDeleted(fileUrl);
+            emit q->fileRenamed(oldUrl, newUrl);
         }
     }
     processFileEventRuning = false;
+}
+
+void FileTreaterPrivate::beginRefresh()
+{
+    canRefreshFlag = false;
+    refreshedFlag = false;
+}
+
+void FileTreaterPrivate::endRefresh()
+{
+    canRefreshFlag = true;
+    refreshedFlag = true;
 }
 
 bool FileTreaterPrivate::checkFileEventQueue()
@@ -202,26 +260,38 @@ int FileTreater::indexOfChild(AbstractFileInfoPointer info)
  */
 void FileTreater::init()
 {
-    d->rootUrl = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
-    if (!d->rootUrl.isValid()) {
-        qWarning() << "desktop url is invalid:" << d->rootUrl;
+    d->desktopUrl = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
+    if (Q_UNLIKELY(!d->desktopUrl.isValid())) {
+        qWarning() << "desktop url is invalid:" << d->desktopUrl;
         return;
     }
 
     if (!d->watcher.isNull()) {
         disconnect(d->watcher.data(), &AbstractFileWatcher::fileDeleted, d.data(), &FileTreaterPrivate::doFileDeleted);
-        disconnect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, d.data(), &FileTreaterPrivate::dofileCreated);
+        disconnect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, d.data(), &FileTreaterPrivate::doFileCreated);
+        disconnect(d->watcher.data(), &AbstractFileWatcher::fileRename, d.data(), &FileTreaterPrivate::doFileRename);
         disconnect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged, d.data(), &FileTreaterPrivate::doFileUpdated);
     }
 
-    d->watcher = WacherFactory::create<AbstractFileWatcher>(d->rootUrl);
-    if (!d->watcher.isNull()) {
+    d->watcher = WacherFactory::create<AbstractFileWatcher>(d->desktopUrl);
+    if (Q_LIKELY(!d->watcher.isNull())) {
         connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted, d.data(), &FileTreaterPrivate::doFileDeleted);
-        connect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, d.data(), &FileTreaterPrivate::dofileCreated);
+        connect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, d.data(), &FileTreaterPrivate::doFileCreated);
+        connect(d->watcher.data(), &AbstractFileWatcher::fileRename, d.data(), &FileTreaterPrivate::doFileRename);
         connect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged, d.data(), &FileTreaterPrivate::doFileUpdated);
         d->watcher->startWatcher();
     }
 
+    d->filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+
+    // todo(wangcl):by DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedHiddenFiles).toBool()
+    d->whetherShowHiddenFile = false;
+    if (d->whetherShowHiddenFile)
+        d->filters |= QDir::Hidden;
+    else
+        d->filters &= ~QDir::Hidden;
+
+    d->refreshedFlag = false;
     d->canRefreshFlag = true;
 }
 
@@ -235,9 +305,9 @@ int FileTreater::fileCount() const
     return d->fileList.count();
 }
 
-QUrl FileTreater::rootUrl() const
+QUrl FileTreater::desktopUrl() const
 {
-    return d->rootUrl;
+    return d->desktopUrl;
 }
 
 bool FileTreater::canRefresh() const
@@ -247,22 +317,22 @@ bool FileTreater::canRefresh() const
 
 void FileTreater::refresh()
 {
-    if (!d->canRefreshFlag)
+    if (!canRefresh())
         return;
 
-    d->canRefreshFlag = false;
-    d->refreshedFlag = false;
+    d->beginRefresh();
     if (!d->traversalThread.isNull()) {
         d->traversalThread->quit();
         d->traversalThread->wait();
         disconnect(d->traversalThread.data());
     }
-    d->traversalThread.reset(new TraversalDirThread(d->rootUrl, QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System, QDirIterator::NoIteratorFlags));
-    if (d->traversalThread.isNull()) {
-        d->canRefreshFlag = true;
-        d->refreshedFlag = true;
+
+    d->traversalThread.reset(new TraversalDirThread(d->desktopUrl, QStringList(), d->filters, QDirIterator::NoIteratorFlags));
+    if (Q_UNLIKELY(d->traversalThread.isNull())) {
+        d->endRefresh();
         return;
     }
+
     QObject::connect(d->traversalThread.data(), &TraversalDirThread::updateChildren, d.data(), &FileTreaterPrivate::doUpdateChildren, Qt::QueuedConnection);
     d->traversalThread->start();
 }
@@ -289,7 +359,43 @@ void FileTreater::setEnabledSort(const bool enabledSort)
 
 bool FileTreater::sort()
 {
-    // todo(wangcl)
+    if (!enableSort())
+        return false;
+
+    if (getFiles().isEmpty())
+        return true;
+
+    d->beginRefresh();
+
+    auto firstInfo = d->fileMap.values().first();
+    AbstractFileInfo::CompareFunction sortFun = firstInfo->compareFunByKey(d->sortRole);
+
+    if (!sortFun) {
+        d->endRefresh();
+        return false;
+    }
+
+    QList<DFMLocalFileInfoPointer> list = d->fileMap.values();
+
+    std::sort(list.begin(), list.end(), [sortFun,  this](const DFMLocalFileInfoPointer info1, const DFMLocalFileInfoPointer info2) {
+        return sortFun(info1, info2, this->d->sortOrder);
+    });
+    QList<QUrl> fileList;
+    QMap<QUrl, DFMLocalFileInfoPointer> fileMap;
+    for (auto itemInfo : list) {
+        if (Q_UNLIKELY(!itemInfo))
+            continue;
+
+        fileList.append(itemInfo->url());
+        fileMap.insert(itemInfo->url(), itemInfo);
+    }
+
+    d->fileList = fileList;
+    d->fileMap = fileMap;
+
+    d->endRefresh();
+    emit fileSorted();
+
     return true;
 }
 
@@ -311,12 +417,28 @@ int FileTreater::sortRole() const
     return d->sortRole;
 }
 
-void FileTreater::setSortRole(const int role, const Qt::SortOrder order)
+void FileTreater::setSortRole(const AbstractFileInfo::SortKey role, const Qt::SortOrder order)
 {
     if (role != d->sortRole)
         d->sortRole = role;
     if (order != d->sortOrder)
         d->sortOrder = order;
+}
+
+bool FileTreater::whetherShowHiddenFiles() const
+{
+    return d->whetherShowHiddenFile;
+}
+
+void FileTreater::setWhetherShowHiddenFiles(const bool isShow)
+{
+    if (d->whetherShowHiddenFile == isShow)
+        return;
+    d->whetherShowHiddenFile = isShow;
+    if (d->whetherShowHiddenFile)
+        d->filters |= QDir::Hidden;
+    else
+        d->filters &= ~QDir::Hidden;
 }
 
 DSB_D_END_NAMESPACE

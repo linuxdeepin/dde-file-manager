@@ -245,6 +245,19 @@ bool CanvasGrid::remove(int index, const QString &item)
     return false;
 }
 
+bool CanvasGrid::replace(const QString &oldItem, const QString &newItem)
+{
+    QPair<int, QPoint> pos;
+    if (!point(oldItem, pos))
+        return false;
+
+    d->remove(pos.first, pos.second);
+    d->insert(pos.first, pos.second, newItem);
+    d->requestSync();
+
+    return true;
+}
+
 void CanvasGrid::append(const QString &item)
 {
     if (Q_UNLIKELY(item.isEmpty()))

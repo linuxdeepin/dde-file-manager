@@ -48,6 +48,7 @@ DWIDGET_USE_NAMESPACE
 
 /// @brief PLUGIN_INTERFACE 默认插件iid
 static const char *const kFmPluginInterface = "org.deepin.plugin.desktop";
+static const char *const kCommonPluginInterface = "org.deepin.plugin.common";
 static const char *const kPluginCore = "ddplugin-core";
 static const char *const kLibCore = "libddplugin-core.so";
 
@@ -59,6 +60,7 @@ static bool pluginsLoad()
 
     // set plugin iid from qt style
     lifeCycle.addPluginIID(kFmPluginInterface);
+    lifeCycle.addPluginIID(kCommonPluginInterface);
 
     QDir dir(qApp->applicationDirPath());
     QString pluginsDir;

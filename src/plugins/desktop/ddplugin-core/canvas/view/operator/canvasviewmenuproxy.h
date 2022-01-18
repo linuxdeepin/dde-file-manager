@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     zhangyu<zhangyub@uniontech.com>
+ * Author:     wangchunlin<wangchunlin@uniontech.com>
  *
- * Maintainer: zhangyu<zhangyub@uniontech.com>
+ * Maintainer: wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASSELECTIONMODEL_H
-#define CANVASSELECTIONMODEL_H
+#ifndef CANVASVIEWMENUPROXY_H
+#define CANVASVIEWMENUPROXY_H
 
 #include "dfm_desktop_service_global.h"
-
-#include <QItemSelectionModel>
+#include <QObject>
 
 DSB_D_BEGIN_NAMESPACE
-class CanvasModel;
-class CanvasSelectionModel : public QItemSelectionModel
+class CanvasView;
+class CanvasViewMenuProxy : public QObject
 {
     Q_OBJECT
 public:
-    explicit CanvasSelectionModel(CanvasModel *model, QObject *parent);
-    CanvasModel *model();
-    QList<QUrl> selectedUrls();
+    explicit CanvasViewMenuProxy(CanvasView *parent = nullptr);
+    ~CanvasViewMenuProxy();
+
+    void showEmptyAreaMenu(const Qt::ItemFlags &indexFlags);
+    void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags);
+
+private:
+    CanvasView *view;
 };
+
 DSB_D_END_NAMESPACE
-#endif // CANVASSELECTIONMODEL_H
+
+#endif // CANVASVIEWMENUPROXY_H
