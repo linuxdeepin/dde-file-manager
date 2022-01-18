@@ -141,6 +141,7 @@ Qt::ItemFlags CanvasModel::flags(const QModelIndex &index) const
 
     flags |= Qt::ItemIsDragEnabled;
     flags |= Qt::ItemIsDropEnabled; // todo
+    flags |= Qt::ItemIsEditable;
     return flags;
 }
 

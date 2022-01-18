@@ -48,6 +48,10 @@ public:
     QSize sizeHint(const QStyleOptionViewItem &opt, const QModelIndex &index) const override;
     QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const override;
+    void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &) const override;
+    void setEditorData(QWidget *editor, const QModelIndex &index) const override;
+    void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override;
     bool mayExpand(QModelIndex *who = nullptr) const;
     static QRectF boundingRect(const QList<QRectF> &rects);
     QSize paintDragIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index);
@@ -56,20 +60,23 @@ protected:
     virtual void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
     QRect iconRect(const QRect &paintRect) const;
     static QRect labelRect(const QRect &paintRect, const QRect &usedRect);
-    QRect textPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &label) const;
+    QRect textPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &label, bool elide) const;
     static QRect paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment = Qt::AlignCenter,
                               QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
-    void paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rect) const;
-    void drawNormlText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRectF &rect) const;
-    void drawHighlightText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRectF &rect) const;
+    void paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel) const;
+    void drawNormlText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRectF &rText) const;
+    void drawHighlightText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel) const;
     void drawExpandText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRectF &rect) const;
 
     static QPixmap getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio,
                           QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
     static Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment);
-    QList<QRectF> elideTextRect(const QStyleOptionViewItem &option, const QModelIndex &index, QRect rect) const;
-public:
+    QList<QRectF> elideTextRect(const QModelIndex &index, const QRect &rect, const Qt::TextElideMode &elideMode) const;
+    bool isTransparent(const QModelIndex &index) const;
+public slots:
     void updateItemSizeHint() const;
+    void commitDataAndCloseEditor();
+    void revertAndcloseEditor();
 public:
     static const int kTextPadding;
     static const int kIconSpacing;

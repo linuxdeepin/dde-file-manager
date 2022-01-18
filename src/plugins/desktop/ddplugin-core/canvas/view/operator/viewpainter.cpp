@@ -161,8 +161,12 @@ void ViewPainter::drawGirdInfos()
            drawRect(d->itemRect(pos.point()));
 
            if (index.isValid()) {
-               for (auto rect : view()->itemPaintGeomertys(index)) {
-                   drawRect(rect);
+               auto geos = view()->itemPaintGeomertys(index);
+               for (int j = 0; j < geos.size(); ++j) {
+                   save();
+                   setPen(QPen(Qt::GlobalColor(Qt::red + j), 1));
+                   drawRect(geos.at(j));
+                   restore();
                }
            }
        }

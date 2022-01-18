@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "displayconfig.h"
 #include "view/canvasview_p.h"
 #include "operator/boxselecter.h"
 #include "operator/viewpainter.h"
@@ -28,6 +29,7 @@
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
 #include "operator/canvasviewmenuproxy.h"
+#include "utils/desktoputils.h"
 
 #include <QGSettings>
 #include <QPainter>
@@ -59,22 +61,52 @@ void CanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHin
 
 QModelIndex CanvasView::indexAt(const QPoint &point) const
 {
-    QString item = d->visualItem(d->gridAt(point));
-    QModelIndex rowIndex = model()->index(item, 0);
-    auto listRect = itemPaintGeomertys(rowIndex);
+    auto checkRect = [](const QList<QRect> &listRect, const QPoint &point) ->bool {
+        // icon rect
+        if (listRect.size() > 0 && listRect.at(0).contains(point))
+            return true;
 
-    // icon rect
-    if (listRect.size() > 0 && listRect.at(0).contains(point))
-        return rowIndex;
+        if (listRect.size() > 1) {
+            QRect identify = listRect.at(1);
+            if (identify.contains(point))
+                return true;
+        }
+        return false;
+    };
 
-    if (listRect.size() > 2) {
-        QRect label = listRect.at(1);
-        QRect text = listRect.at(2);
-
-        //identification area is text rect spread upward to label.
-        text.setTop(label.top());
-        if (text.contains(point))
+    QModelIndex rowIndex = currentIndex();
+    // first check the editing item or the expended item.
+    // the editing item and the expended item must be one item.
+    if (rowIndex.isValid() && isPersistentEditorOpen(rowIndex)) {
+        QList<QRect> identify;
+        // editor area that the height is higher than visualRect.
+        if (QWidget *editor = indexWidget(rowIndex))
+            identify << editor->geometry();
+        if (checkRect(identify, point)) {
+            //qDebug() << "preesed on editor" << rowIndex;
             return rowIndex;
+        }
+    } else if (itemDelegate()->mayExpand(&rowIndex)) {  // second
+        // get the expended rect.
+        auto listRect = itemPaintGeomertys(rowIndex);
+        if (checkRect(listRect, point)) {
+            //qDebug() << "preesed on expand index" << rowIndex;
+            return rowIndex;
+        }
+    }
+
+    // then check the item on the point.
+    {
+        QString item = d->visualItem(d->gridAt(point));
+        rowIndex = model()->index(item, 0);
+        if (!rowIndex.isValid())
+            return rowIndex;
+
+        auto listRect = itemPaintGeomertys(rowIndex);
+        if (checkRect(listRect, point)) {
+            //qDebug() << "pressed on" << item << rowIndex;
+            return rowIndex;
+        }
     }
 
     return QModelIndex();
@@ -166,7 +198,7 @@ QModelIndex CanvasView::moveCursor(QAbstractItemView::CursorAction cursorAction,
     if (pos == d->overlapPos())
         return d->lastIndex();
 
-    qDebug() << "cursorAction" << cursorAction << "KeyboardModifiers" << modifiers << currentItem;
+    //qDebug() << "cursorAction" << cursorAction << "KeyboardModifiers" << modifiers << currentItem;
     return model()->index(currentItem);
 }
 
@@ -246,6 +278,7 @@ void CanvasView::paintEvent(QPaintEvent *event)
 void CanvasView::contextMenuEvent(QContextMenuEvent *event)
 {
     d->lastMenuGridPos = d->gridAt(event->pos());
+    itemDelegate()->revertAndcloseEditor();
 
     const QModelIndex &index = indexAt(event->pos());
     Qt::ItemFlags flags;
@@ -290,14 +323,12 @@ void CanvasView::dragEnterEvent(QDragEnterEvent *event)
         return;
 
     QAbstractItemView::dragEnterEvent(event);
-    qInfo() << __FUNCTION__ << event->possibleActions() << event->dropAction() << model()->mimeTypes();
 }
 
 void CanvasView::dragMoveEvent(QDragMoveEvent *event)
 {
     if (!d->dragDropOper->move(event))
         return;
-    qInfo() << __FUNCTION__ << event->dropAction();
     QAbstractItemView::dragMoveEvent(event);
 }
 
@@ -357,8 +388,10 @@ void CanvasView::setGeometry(const QRect &rect)
 
 void CanvasView::updateGrid()
 {
-    // todo:
     itemDelegate()->updateItemSizeHint();
+    //close editor
+    itemDelegate()->revertAndcloseEditor();
+
     auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
 
     // add view margin. present is none.
@@ -366,10 +399,6 @@ void CanvasView::updateGrid()
     d->updateGridSize(geometry().size(), geometryMargins, itemSize);
 
     GridIns->updateSize(d->screenNum, QSize(d->canvasInfo.columnCount, d->canvasInfo.rowCount));
-
-    //todo update expend item if needed.
-    //auto expandedWidget = reinterpret_cast<QWidget *>(itemDelegate()->expandedIndexWidget());
-
     update();
 }
 
@@ -389,14 +418,6 @@ QPoint CanvasView::lastMenuPos() const
     return d->lastMenuGridPos;
 }
 
-bool CanvasView::isTransparent(const QModelIndex &index) const
-{
-    Q_UNUSED(index)
-    // TODO(Lee): cut and staging files are transparent
-
-    return false;
-}
-
 QList<QIcon> CanvasView::additionalIcon(const QModelIndex &index) const
 {
     Q_UNUSED(index)
@@ -406,9 +427,31 @@ QList<QIcon> CanvasView::additionalIcon(const QModelIndex &index) const
     return list;
 }
 
+bool CanvasView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
+{
+    // only click on single selected index can be edited.
+    if (selectionModel()->selectedRows().size() != 1)
+        return false;
+
+    // donot edit if ctrl or shift is pressed.
+    if (isCtrlOrShiftPressed())
+        return false;
+
+    // check pressed on text area
+    if (trigger == SelectedClicked) {
+        auto list = itemPaintGeomertys(index);
+        if (list.size() >= 2) {
+            if (!list.at(1).contains(static_cast<QMouseEvent *>(event)->pos()))
+                return false;
+        }
+    }
+
+    return QAbstractItemView::edit(index, trigger, event);
+}
+
 void CanvasView::selectAll()
 {
-#if 0
+#if 0 // only select all item that on this view.
     QStringList items;
     items << GridIns->points(d->screenNum).keys();
     items << GridIns->overloadItems(d->screenNum);
@@ -465,9 +508,11 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 
 void CanvasView::mousePressEvent(QMouseEvent *event)
 {
+    // must get index on pos before QAbstractItemView::mousePressEvent
+    auto index = indexAt(event->pos());
+
     QAbstractItemView::mousePressEvent(event);
 
-    auto index = indexAt(event->pos());
     if (!index.isValid() && event->button() == Qt::LeftButton) { //empty area
         BoxSelIns->beginSelect(event->globalPos(), true);
         setState(DragSelectingState);

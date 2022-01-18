@@ -20,11 +20,13 @@
  */
 #include "canvasitemdelegate_p.h"
 #include "elidetextlayout.h"
+#include "filetreater.h"
+#include "itemeditor.h"
 #include "view/canvasview.h"
 #include "view/canvasmodel.h"
 #include "view/canvasselectionmodel.h"
 #include "view/canvasview_p.h"
-#include "filetreater.h"
+
 
 #include <DApplication>
 #include <DApplicationHelper>
@@ -82,6 +84,41 @@ ElideTextLayout *CanvasItemDelegatePrivate::createTextlayout(const QModelIndex &
     return layout;
 }
 
+bool CanvasItemDelegatePrivate::needExpend(const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel, QRect *needLabel) const
+{
+    // calc that showing text require how large area.
+    QRect calcNeedRect = rLabel;
+    calcNeedRect.setBottom(INT_MAX);
+    QRect paintRect = q->textPaintRect(option, index, calcNeedRect, false);
+
+    // the label rect cannot show all the text, need to expand.
+    if (paintRect.height() > rLabel.height()) {
+        if (needLabel) {
+            // When expanding, the width of the text area needs to be expanded to the whole grid
+            QRect newlabelRect = calcNeedRect;
+
+            // restore to grid size by adding kTextPadding that minsed in q->labelRect()
+            newlabelRect.moveLeft(calcNeedRect.left() - q->kTextPadding);
+            newlabelRect.setWidth(calcNeedRect.width() + 2 * q->kTextPadding);
+
+            // add left and right margins to restore width to view::visualRect's one.
+            auto margins = CanvasViewPrivate::gridMarginsHelper(q->parent());
+            margins.setTop(0);
+            margins.setBottom(0);
+            newlabelRect = newlabelRect.marginsAdded(margins);
+
+            // the height is INT_MAX.
+            // using this rect to call textPaintRect to get right height.
+            *needLabel = newlabelRect; // output label rect.
+        }
+        return true;
+    } else {
+        if (needLabel)
+            *needLabel = paintRect; // output text rect that is really used to draw.
+        return false;
+    }
+}
+
 CanvasItemDelegate::CanvasItemDelegate(QAbstractItemView *parentPtr)
     : QStyledItemDelegate(parentPtr)
     , d(new CanvasItemDelegatePrivate(this))
@@ -99,14 +136,6 @@ CanvasItemDelegate::CanvasItemDelegate(QAbstractItemView *parentPtr)
     const int iconLevel = 1;
     Q_ASSERT(iconLevel < d->iconSizes.size());
     setIconLevel(iconLevel);
-
-    // todo(zy) need?
-//    d->expandedItem = new ExpandedItem(this, parent()->viewport());
-//    d->expandedItem->setAttribute(Qt::WA_TransparentForMouseEvents);
-//    d->expandedItem->canDeferredDelete = false;
-//    d->expandedItem->setContentsMargins(0, 0, 0, 0);
-//    // prevent flash when first call show()
-//    d->expandedItem->setFixedWidth(0);
     d->textLineHeight = parent()->fontMetrics().height();
 
 
@@ -121,14 +150,8 @@ CanvasItemDelegate::~CanvasItemDelegate()
 QSize CanvasItemDelegate::sizeHint(const QStyleOptionViewItem &opt, const QModelIndex &index) const
 {
     Q_UNUSED(opt)
-    const QSize &size = d->itemSizeHint;
-    // todo(zy) for what
-//    if (index.isValid() && index == d->lastExpandedIndex) {
-//        d->expandedItem->iconHeight = parent()->iconSize().height();
-//        return QSize(size.width(), d->expandedItem->heightForWidth(size.width()));
-//    }
-
-    return size;
+    Q_UNUSED(index)
+    return d->itemSizeHint;
 }
 
 void CanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -143,7 +166,7 @@ void CanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     painter->save();
 
     // paint a translucent effect.
-    painter->setOpacity(parent()->isTransparent(index) ? 0.3 : 1.0);
+    painter->setOpacity(isTransparent(index) ? 0.3 : 1.0);
 
     // get item paint geomerty
     // the method to get rect for each element is equal to paintGeomertys(option, index);
@@ -155,11 +178,67 @@ void CanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 
         // todo(zy) 绘制角标
 
-        // draw text.
-         paintLabel(painter, indexOption, index, labelRect(option.rect, rIcon));
+        // do not draw text if index is in editing,
+        if (!parent()->isPersistentEditorOpen(index)) {
+            // draw text
+            paintLabel(painter, indexOption, index, labelRect(option.rect, rIcon));
+        }
     }
 
     painter->restore();
+}
+
+QWidget *CanvasItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
+{
+    Q_UNUSED(index);
+    auto editor = new ItemEditor(parent);
+    connect(editor, &ItemEditor::inputFocusOut, this, &CanvasItemDelegate::commitDataAndCloseEditor);
+    editor->setOpacity(isTransparent(index) ? 0.3 : 1);
+    return editor;
+}
+
+void CanvasItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    Q_UNUSED(index);
+    ItemEditor *itemEditor = qobject_cast<ItemEditor *>(editor);
+    if (!itemEditor)
+        return;
+
+    // option.rect is view->visualRect;
+    auto geo = option.rect;
+    auto margins = QMargins(0 , CanvasViewPrivate::gridMarginsHelper(parent()).top(), 0 , 0);
+    {
+        auto gridTop = geo;
+        gridTop.setTop(margins.top()); //remove top magrin to adjust visualRect to itemRect.
+        auto icon = iconRect(gridTop);
+        auto label = labelRect(gridTop, icon);
+        auto text = d->availableTextRect(label);
+        margins.setTop(text.top()); // get text rect top
+    }
+    // grid top + icon height +kIconSpacing + kTextPadding is the text begin pos.
+    //margins.setTop(margins.top() + parent()->iconSize().height() + kIconSpacing + kTextPadding);
+    itemEditor->setBaseGeometry(geo, d->itemSizeHint, margins);
+
+    return;}
+
+void CanvasItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+{
+    ItemEditor *itemEditor = qobject_cast<ItemEditor *>(editor);
+    if (!itemEditor)
+        return;
+    //todo 是否显示判断后缀
+    QString name = index.data(Qt::DisplayRole).toString();
+    itemEditor->setText(name);
+
+    // todo FileBaseNameOfRenameRole
+    itemEditor->select(name.left(name.indexOf('.')));
+}
+
+void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
+{
+    ItemEditor *itemEditor = qobject_cast<ItemEditor *>(editor);
+    qDebug() << __FUNCTION__ << index << itemEditor->text();
+    //todo rename file
 }
 
 bool CanvasItemDelegate::mayExpand(QModelIndex *who) const
@@ -218,20 +297,46 @@ QSize CanvasItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionVie
 QList<QRect> CanvasItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QList<QRect> geometries;
-    // todo(zy) index == d->expandedIndex
+
+    // the global option.
+    QStyleOptionViewItem indexOption = option;
+
+    // init option for the index.
+    // and the rect of index was inited outside.
+    initStyleOption(&indexOption, index);
 
     // icon rect, for draw icon
-    auto icon = iconRect(option.rect);
+    auto icon = iconRect(indexOption.rect);
     geometries << icon;
 
+    QRect text;
+
     // label rect is a hot zone and contain text rect.
-    auto label = labelRect(option.rect, icon);
-    geometries << label;
+    QRect label = labelRect(indexOption.rect, icon);
 
-    // calc text rect base on label. and text rect is for draw text.
-    auto text = textPaintRect(option, index, label);
+    // do not expand if in editing.
+    if (!parent()->isPersistentEditorOpen(index) && d->isHighlight(indexOption) && mayExpand()) {
+        if (d->needExpend(indexOption, index, label, &text)) {
+            // expand, the text is label rect that need to calc really used text rect.
+            text = textPaintRect(indexOption, index, text, false);
+        } else {
+            // if donot expand, the \a text is the rect that text really uses.
+        }
+    } else {
+        // calc text rect base on label. and text rect is for draw text.
+        text = textPaintRect(indexOption, index, label, true);
+    }
+
+    //identification area for mouse press
+    {
+        auto area = text;
+        //text rect spread upward to label.
+        area.setTop(label.top());
+        geometries << area;
+    }
+
+    // painting-used area
     geometries << text;
-
     return geometries;
 }
 
@@ -247,34 +352,29 @@ Qt::Alignment CanvasItemDelegate::visualAlignment(Qt::LayoutDirection direction,
     return alignment;
 }
 
-QList<QRectF> CanvasItemDelegate::elideTextRect(const QStyleOptionViewItem &option, const QModelIndex &index, QRect rect) const
+QList<QRectF> CanvasItemDelegate::elideTextRect(const QModelIndex &index, const QRect &rect, const Qt::TextElideMode &elideMode) const
 {
-    // show decoration for selected item.
-    auto model = parent()->selectionModel();
-    bool isSelected = model->isSelected(index) && option.showDecorationSelected;
-
-    QModelIndex expandIndex;
-    // only single selected no need to elide. and other item need elide.
-    bool elide = (!isSelected || !mayExpand(&expandIndex));
-    if (!elide && expandIndex == index) // as painting, the item expanded need unlimit height to calc.
-        rect.setBottom(INT_MAX);
-
     // create text Layout.
     QScopedPointer<ElideTextLayout> layout(d->createTextlayout(index));
 
     // elide mode
-    auto elideMode = elide ? option.textElideMode : Qt::ElideNone;
     auto textLines = layout->layout(rect, elideMode);
     return textLines;
 }
 
-void CanvasItemDelegate::drawNormlText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRectF &rect) const
+bool CanvasItemDelegate::isTransparent(const QModelIndex &index) const
+{
+    return false;
+}
+
+void CanvasItemDelegate::drawNormlText(QPainter *painter, const QStyleOptionViewItem &option,
+                                       const QModelIndex &index, const QRectF &rText) const
 {
     painter->save();
     painter->setPen(option.palette.color(QPalette::Text));
 
     qreal pixelRatio = painter->device()->devicePixelRatioF();
-    QImage textImage((rect.size() * pixelRatio).toSize(), QImage::Format_ARGB32_Premultiplied);
+    QImage textImage((rText.size() * pixelRatio).toSize(), QImage::Format_ARGB32_Premultiplied);
     textImage.fill(Qt::transparent);
     textImage.setDevicePixelRatio(pixelRatio);
 
@@ -301,37 +401,19 @@ void CanvasItemDelegate::drawNormlText(QPainter *painter, const QStyleOptionView
         p.end();
     }
 
-    painter->drawImage(rect.translated(0, 1), textImage);
-    painter->drawPixmap(rect.topLeft(), textPixmap);
+    painter->drawImage(rText.translated(0, 1), textImage);
+    painter->drawPixmap(rText.topLeft(), textPixmap);
     painter->restore();
 }
 
-void CanvasItemDelegate::drawHighlightText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRectF &rect) const
+void CanvasItemDelegate::drawHighlightText(QPainter *painter, const QStyleOptionViewItem &option,
+                                           const QModelIndex &index, const QRect &rLabel) const
 {
-    bool isDrag = painter->device() != parent()->viewport(); // 拖拽聚合后，拖拽的绘制代码不走这，可以删除， todo
-
     // single item selected and not in drag will to expand.
-    if (!isDrag && mayExpand()) {
-        // calc that showing text require how large area.
-        QRect calcNeedRect = rect.toRect();
-        calcNeedRect.setBottom(INT_MAX);
-        int needHeight = textPaintRect(option, index, calcNeedRect).height();
-
-        // the label rect cannot show all the text, need to expand.
-        if (needHeight > rect.height()) {
-            {
-                // 展开时文本区域的宽需扩大到整个网格
-                // 处理会导致实际绘制使用的区域与paintGeomertys以及textPaintRect算出的不一致
-                // todo 后续考虑是否取消这一效果
-                auto margins = CanvasViewPrivate::gridMarginsHelper(parent());
-                margins.setTop(0);
-                margins.setBottom(0);
-                calcNeedRect.moveLeft(calcNeedRect.left() - kTextPadding);
-                calcNeedRect.setWidth(calcNeedRect.width() + 2 * kTextPadding);
-                calcNeedRect = calcNeedRect.marginsAdded(margins);
-            }
-
-            drawExpandText(painter, option, index, calcNeedRect);
+    if (mayExpand()) {
+        QRect needRect;
+        if (d->needExpend(option, index, rLabel, &needRect)) {
+            drawExpandText(painter, option, index, d->availableTextRect(needRect));
             return;
         }
     }
@@ -346,7 +428,7 @@ void CanvasItemDelegate::drawHighlightText(QPainter *painter, const QStyleOption
         layout->setBackgroundRadius(kIconRectRadius);
 
         // elide and draw
-        layout->layout(rect, option.textElideMode, painter, background);
+        layout->layout(d->availableTextRect(rLabel), option.textElideMode, painter, background);
         painter->restore();
     }
 }
@@ -514,12 +596,12 @@ QRect CanvasItemDelegate::labelRect(const QRect &paintRect, const QRect &usedRec
     return lable;
 }
 
-QRect CanvasItemDelegate::textPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &label) const
+QRect CanvasItemDelegate::textPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &label, bool elide) const
 {
     QRect rect = d->availableTextRect(label);
 
     // per line
-    auto lines = elideTextRect(option, index, rect);
+    auto lines = elideTextRect(index, rect, elide ? option.textElideMode : Qt::ElideNone);
 
     // total rect
     rect = boundingRect(lines).toRect();
@@ -534,6 +616,32 @@ void CanvasItemDelegate::updateItemSizeHint() const
     int height = parent()->iconSize().height()
             + 10 + 2 * d->textLineHeight;
     d->itemSizeHint = QSize(width, height);
+}
+
+void CanvasItemDelegate::commitDataAndCloseEditor()
+{
+    //todo 需观察editor不是currentIndex的情况
+    auto view = parent();
+    QModelIndex index = view->currentIndex();
+    if (view->isPersistentEditorOpen(index)) {
+        QWidget *editor = parent()->indexWidget(index);
+        if (editor) {
+            //send to view and call method of the same name.
+            emit commitData(editor);
+            emit closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
+        } else {
+            qWarning() << "currentIndex is not in editing.";
+        }
+    }
+}
+
+void CanvasItemDelegate::revertAndcloseEditor()
+{
+    //todo 需观察editor不是currentIndex的情况
+    auto view = parent();
+    QModelIndex index = view->currentIndex();
+    if (view->isPersistentEditorOpen(index))
+        view->closePersistentEditor(index);
 }
 
 void CanvasItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
@@ -610,7 +718,7 @@ void CanvasItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMo
     }
 
     // int cut
-    if (view->isTransparent(index))
+    if (isTransparent(index))
         option->backgroundBrush = QColor("#BFE4FC");
 
     // why?
@@ -656,17 +764,13 @@ QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
     return QRect(qRound(x), qRound(y), w, h);
 }
 
-void CanvasItemDelegate::paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rect) const
+void CanvasItemDelegate::paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel) const
 {
     painter->save();
-
-    QRect availableRect = d->availableTextRect(rect);
-
-    bool isSelected = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
-    if (isSelected) {
-        drawHighlightText(painter, option, index, availableRect);
+    if (d->isHighlight(option)) {
+        drawHighlightText(painter, option, index, rLabel);
     } else {
-        drawNormlText(painter, option, index, availableRect);
+        drawNormlText(painter, option, index, d->availableTextRect(rLabel));
     }
     painter->restore();
 }

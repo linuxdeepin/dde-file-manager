@@ -68,7 +68,7 @@ set(core_cxx_cpp
     canvas/view/operator/fileoperaterproxy.cpp
     canvas/delegate/canvasitemdelegate.cpp
     canvas/delegate/elidetextlayout.cpp
-    canvas/delegate/expandeditem.cpp
+    canvas/delegate/itemeditor.cpp
     canvas/delegate/tagtextformat.cpp
     canvas/delegate/filetagobjectinterface.cpp
     canvas/grid/canvasgrid.cpp
@@ -117,7 +117,7 @@ set(core_cxx_h
     canvas/delegate/canvasitemdelegate_p.h
     canvas/delegate/canvasitemdelegate.h
     canvas/delegate/elidetextlayout.h
-    canvas/delegate/expandeditem.h
+    canvas/delegate/itemeditor.h
     canvas/delegate/tagtextformat.h
     canvas/delegate/filetagobjectinterface.h
     canvas/grid/canvasgrid.h

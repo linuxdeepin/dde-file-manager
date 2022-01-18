@@ -71,7 +71,6 @@ void dfm_service_desktop::TraversalDirThread::run()
         QUrl fileurl = dirIterator->next();
         if (!fileurl.isValid())
             continue;
-
         fileUrls.append(fileurl);
     }
     stopFlag = true;

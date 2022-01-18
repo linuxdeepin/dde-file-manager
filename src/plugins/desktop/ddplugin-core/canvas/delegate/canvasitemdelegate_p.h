@@ -42,12 +42,18 @@ public:
 
     ElideTextLayout *createTextlayout(const QModelIndex &index, const QPainter *painter = nullptr) const;
 
-    inline QRect availableTextRect(QRect labelRect) {
+    inline QRect availableTextRect(QRect labelRect) const {
         // available text rect top is label rect minus icon space and text padding.
         labelRect.setTop(labelRect.top() + CanvasItemDelegate::kIconSpacing
                     + CanvasItemDelegate::kTextPadding);
         return labelRect;
     }
+    inline bool isHighlight(const QStyleOptionViewItem &option) const {
+        return (option.state & QStyle::State_Selected) && option.showDecorationSelected;
+    }
+
+    bool needExpend(const QStyleOptionViewItem &option,
+                    const QModelIndex &index, const QRect &rLabel, QRect *needLabel = nullptr) const;
 public:
     // default icon size is 48px.
     int currentIconLevel = -1;

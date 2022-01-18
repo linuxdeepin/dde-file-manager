@@ -70,9 +70,9 @@ public:
 
     QPoint lastMenuPos() const; // todo(wangcl):delete it when call back
 public:
-    bool isTransparent(const QModelIndex &index) const;
     QList<QIcon> additionalIcon(const QModelIndex &index) const;
 public Q_SLOTS:
+    bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
     void refresh();
     void selectAll() override;
 
