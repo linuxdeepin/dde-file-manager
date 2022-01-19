@@ -72,7 +72,7 @@ public slots:
 
 signals:
     void stateChanged(State state);
-    void addChildren(const DAbstractFileInfoPointer &info);
+    void addChildren(const DAbstractFileInfoPointer info, const bool isEnd = false);
     void addChildrenList(const QList<DAbstractFileInfoPointer> &infoList);
     void childrenUpdated(const QList<DAbstractFileInfoPointer> &list);
 
@@ -89,8 +89,8 @@ private:
 
     QElapsedTimer *timer = Q_NULLPTR;
 
-    int m_timeCeiling = 2000;
-    int m_countCeiling = 9999999;
+    int m_timeCeiling = 100;
+    int m_countCeiling = 3000;
     volatile bool m_updateFinished = true; //刷新完成标志
 
     void run() override;
