@@ -36,13 +36,15 @@ public:
         return "org.deepin.service.SearchService";
     }
 
-    bool search(quint64 winId, const QUrl &url, const QString &keyword);
-    QStringList matchedResults(quint64 winId);
-    void stop(quint64 winId);
+    bool regSearchPath(const QString &scheme, const QString &path, QString *errMsg = nullptr);
+    QHash<QString, QString> regInfos();
+    bool search(QString taskId, const QUrl &url, const QString &keyword);
+    QList<QUrl> matchedResults(QString taskId);
+    void stop(QString taskId);
 
 signals:
-    void matched(quint64 winId);
-    void searchCompleted(quint64 winId);
+    void matched(QString taskId);
+    void searchCompleted(QString taskId);
 
 private:
     explicit SearchService(QObject *parent = nullptr);

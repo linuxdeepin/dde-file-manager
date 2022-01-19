@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liuzhangjian<liuzhangjian@uniontech.com>
  *
@@ -18,26 +18,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SEARCH_H
-#define SEARCH_H
+#ifndef SEARCHEVENTCALLER_H
+#define SEARCHEVENTCALLER_H
 
 #include "dfmplugin_search_global.h"
 
-#include <dfm-framework/framework.h>
+#include <QObject>
 
 DPSEARCH_BEGIN_NAMESPACE
 
-class Search : public dpf::Plugin
+class SearchEventCaller
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "search.json")
-
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    static void sendDoSearch(quint64 winId, const QUrl &url);
+
+private:
+    SearchEventCaller() = delete;
 };
 
 DPSEARCH_END_NAMESPACE
 
-#endif   // SEARCH_H
+#endif   // SEARCHEVENTCALLER_H

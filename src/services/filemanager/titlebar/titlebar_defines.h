@@ -62,6 +62,7 @@ namespace EventType {
 extern const int kSwitchMode;
 extern const int kSettingsMenuTriggered;
 extern const int kShowDetailView;
+extern const int kDoSearch;
 };   // namespace EventType
 
 // setting menu action list

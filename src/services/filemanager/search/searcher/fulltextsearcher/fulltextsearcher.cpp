@@ -387,7 +387,7 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
                         resultPath.insert(0, L"/data");
                     {
                         QMutexLocker lk(&mutex);
-                        allResults.append(StringUtils::toUTF8(resultPath).c_str());
+                        allResults.append(QUrl::fromLocalFile(StringUtils::toUTF8(resultPath).c_str()));
                     }
 
                     //推送
@@ -466,7 +466,7 @@ bool FullTextSearcher::isSupport(const QUrl &url)
 
     // TODO(liuzhangjian) 未勾选全文搜索
 
-    return true;
+    return false;
 }
 
 bool FullTextSearcher::search()
@@ -506,7 +506,7 @@ bool FullTextSearcher::hasItem() const
     return !d->allResults.isEmpty();
 }
 
-QStringList FullTextSearcher::takeAll()
+QList<QUrl> FullTextSearcher::takeAll()
 {
     QMutexLocker lk(&d->mutex);
     return std::move(d->allResults);

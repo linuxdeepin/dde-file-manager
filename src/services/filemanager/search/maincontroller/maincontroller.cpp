@@ -20,6 +20,7 @@
  */
 #include "maincontroller.h"
 
+#include <QUrl>
 #include <QDebug>
 
 MainController::MainController(QObject *parent)
@@ -37,30 +38,30 @@ MainController::~MainController()
     taskManager.clear();
 }
 
-void MainController::stop(quint64 winId)
+void MainController::stop(QString taskId)
 {
-    if (taskManager.contains(winId)) {
-        disconnect(taskManager[winId]);
-        taskManager[winId]->stop();
-        taskManager[winId]->deleteSelf();
-        taskManager[winId] = nullptr;
-        taskManager.remove(winId);
+    if (taskManager.contains(taskId)) {
+        disconnect(taskManager[taskId]);
+        taskManager[taskId]->stop();
+        taskManager[taskId]->deleteSelf();
+        taskManager[taskId] = nullptr;
+        taskManager.remove(taskId);
     }
 }
 
-bool MainController::doSearchTask(quint64 winId, const QUrl &url, const QString &keyword)
+bool MainController::doSearchTask(QString taskId, const QUrl &url, const QString &keyword)
 {
-    if (taskManager.contains(winId))
-        stop(winId);
+    if (taskManager.contains(taskId))
+        stop(taskId);
 
-    auto task = new TaskCommander(winId, url, keyword);
+    auto task = new TaskCommander(taskId, url, keyword);
     qInfo() << "new task: " << task << task->taskID();
     Q_ASSERT(task);
-    taskManager.insert(winId, task);
+    taskManager.insert(taskId, task);
 
-    //直连，防止被事件循环打乱时序
+    //直连，防止1被事件循环打乱时序
     connect(task, &TaskCommander::matched, this, &MainController::matched, Qt::DirectConnection);
-    connect(task, &TaskCommander::finished, this, &MainController::searchCompleted, Qt::DirectConnection);
+    connect(task, &TaskCommander::finished, this, &MainController::onFinished, Qt::DirectConnection);
 
     if (task->start())
         return true;
@@ -70,10 +71,18 @@ bool MainController::doSearchTask(quint64 winId, const QUrl &url, const QString 
     return false;
 }
 
-QStringList MainController::getResults(quint64 winId)
+QList<QUrl> MainController::getResults(QString taskId)
 {
-    if (taskManager.contains(winId))
-        return taskManager[winId]->getResults();
+    if (taskManager.contains(taskId))
+        return taskManager[taskId]->getResults();
 
     return {};
+}
+
+void MainController::onFinished(QString taskId)
+{
+    if (taskManager.contains(taskId))
+        stop(taskId);
+
+    emit searchCompleted(taskId);
 }

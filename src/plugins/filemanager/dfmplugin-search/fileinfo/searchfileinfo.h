@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liuzhangjian<liuzhangjian@uniontech.com>
  *
@@ -18,26 +18,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SEARCH_H
-#define SEARCH_H
+#ifndef SEARCHFILEINFO_H
+#define SEARCHFILEINFO_H
 
 #include "dfmplugin_search_global.h"
 
-#include <dfm-framework/framework.h>
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
+DFMBASE_USE_NAMESPACE
 DPSEARCH_BEGIN_NAMESPACE
 
-class Search : public dpf::Plugin
+class SearchFileInfoPrivate;
+class SearchFileInfo : public AbstractFileInfo
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "search.json")
-
+    Q_GADGET
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    explicit SearchFileInfo(const QUrl &url);
+    ~SearchFileInfo() override;
+    virtual QString fileName() const override;
+    virtual bool exists() const override;
+    virtual bool isHidden() const override;
+    virtual qint64 size() const override;
+    virtual QString sizeFormat() const override;
+    virtual QDateTime lastModified() const override;
+
+private:
+    SearchFileInfoPrivate *d;
 };
 
+using SearchFileInfoPointer = QSharedPointer<SearchFileInfo>;
 DPSEARCH_END_NAMESPACE
 
-#endif   // SEARCH_H
+#endif   // SEARCHFILEINFO_H

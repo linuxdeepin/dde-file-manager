@@ -35,21 +35,22 @@ class AnythingSearcher : public AbstractSearcher
     friend class TaskCommanderPrivate;
 
 private:
-    explicit AnythingSearcher(const QUrl &url, const QString &keyword, QObject *parent = nullptr);
+    explicit AnythingSearcher(const QUrl &url, const QString &keyword, bool dataFlag, QObject *parent = nullptr);
     virtual ~AnythingSearcher() override;
 
-    static bool isSupported(const QUrl &url);
+    static bool isSupported(const QUrl &url, bool &isPrependData);
     bool search() override;
     void stop() override;
     bool hasItem() const override;
-    QStringList takeAll() override;
+    QList<QUrl> takeAll() override;
     void tryNotify();
 
 private:
     ComDeepinAnythingInterface *anythingInterface = nullptr;
     QAtomicInt status = kReady;
-    QStringList allResults;
+    QList<QUrl> allResults;
     mutable QMutex mutex;
+    bool isPrependData;
 
     //计时
     QTime notifyTimer;

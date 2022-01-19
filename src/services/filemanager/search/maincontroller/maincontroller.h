@@ -37,16 +37,19 @@ private:
     ~MainController();
     bool init();
 
-    void stop(quint64 winId);
-    bool doSearchTask(quint64 winId, const QUrl &url, const QString &keyword);
-    QStringList getResults(quint64 winId);
+    void stop(QString taskId);
+    bool doSearchTask(QString taskId, const QUrl &url, const QString &keyword);
+    QList<QUrl> getResults(QString taskId);
+
+private slots:
+    void onFinished(QString taskId);
 
 signals:
-    void matched(quint64 winId);
-    void searchCompleted(quint64 winId);
+    void matched(QString taskId);
+    void searchCompleted(QString taskId);
 
 private:
-    QHash<quint64, TaskCommander *> taskManager;
+    QHash<QString, TaskCommander *> taskManager;
 };
 
 #endif   // MAINCONTROLLER_H

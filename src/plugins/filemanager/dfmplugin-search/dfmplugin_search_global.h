@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liuzhangjian<liuzhangjian@uniontech.com>
  *
@@ -18,26 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SEARCH_H
-#define SEARCH_H
+#ifndef DFMPLUGIN_SEARCH_GLOBAL_H
+#define DFMPLUGIN_SEARCH_GLOBAL_H
 
-#include "dfmplugin_search_global.h"
+#define DPSEARCH_BEGIN_NAMESPACE namespace dfmplugin_search {
+#define DPSEARCH_END_NAMESPACE }
+#define DPSEARCH_USE_NAMESPACE using namespace dfmplugin_search;
+#define DPSEARCH_NAMESPACE dfmplugin_search
 
-#include <dfm-framework/framework.h>
-
-DPSEARCH_BEGIN_NAMESPACE
-
-class Search : public dpf::Plugin
-{
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "search.json")
-
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-};
-
-DPSEARCH_END_NAMESPACE
-
-#endif   // SEARCH_H
+#endif   // DFMPLUGIN_SEARCH_GLOBAL_H

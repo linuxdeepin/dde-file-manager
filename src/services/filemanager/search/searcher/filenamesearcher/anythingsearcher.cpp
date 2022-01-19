@@ -33,8 +33,9 @@ static qint64 kMaxTime = 500;   // 最大搜索时间（ms）
 }
 
 DFMBASE_USE_NAMESPACE
-AnythingSearcher::AnythingSearcher(const QUrl &url, const QString &keyword, QObject *parent)
-    : AbstractSearcher(url, keyword, parent)
+AnythingSearcher::AnythingSearcher(const QUrl &url, const QString &keyword, bool dataFlag, QObject *parent)
+    : AbstractSearcher(url, keyword, parent),
+      isPrependData(dataFlag)
 {
     anythingInterface = new ComDeepinAnythingInterface("com.deepin.anything",
                                                        "/com/deepin/anything",
@@ -53,7 +54,10 @@ bool AnythingSearcher::search()
         return false;
 
     QStringList searchDirList;
-    const auto &path = UrlRoute::urlToPath(searchUrl);
+    auto path = UrlRoute::urlToPath(searchUrl);
+    if (isPrependData)
+        path.prepend("/data");
+
     if (path.isEmpty() || keyword.isEmpty()) {
         status.storeRelease(kCompleted);
         return false;
@@ -73,22 +77,19 @@ bool AnythingSearcher::search()
         if (status.loadAcquire() != kRuning)
             return false;
 
-        const auto &results = anythingInterface->search(kMaxCount, kMaxTime, startOffset, endOffset, searchDirList.first(), keyword, true);
-        if (results.error().type() != QDBusError::NoError) {
+        const auto &reply = anythingInterface->search(kMaxCount, kMaxTime, startOffset, endOffset, searchDirList.first(), keyword, true);
+        auto results = reply.argumentAt<0>();
+        if (reply.error().type() != QDBusError::NoError) {
             qWarning() << "deepin-anything search failed:"
-                       << QDBusError::errorString(results.error().type())
-                       << results.error().message();
+                       << QDBusError::errorString(reply.error().type())
+                       << reply.error().message();
             startOffset = endOffset = 0;
             searchDirList.removeAt(0);
             continue;
         }
 
-        {
-            QMutexLocker lk(&mutex);
-            allResults += results.argumentAt<0>();
-        }
-        startOffset = results.argumentAt<1>();
-        endOffset = results.argumentAt<2>();
+        startOffset = reply.argumentAt<1>();
+        endOffset = reply.argumentAt<2>();
 
         // 当前目录已经搜索到了结尾
         if (startOffset >= endOffset) {
@@ -96,8 +97,23 @@ bool AnythingSearcher::search()
             searchDirList.removeAt(0);
         }
 
-        //推送
-        tryNotify();
+        for (auto &item : results) {
+            // 中断
+            if (status.loadAcquire() != kRuning)
+                return false;
+
+            // 去除掉添加的data前缀
+            if (isPrependData && item.startsWith("/data"))
+                item = item.mid(5);
+
+            {
+                QMutexLocker lk(&mutex);
+                allResults << QUrl::fromLocalFile(item);
+            }
+
+            // 推送
+            tryNotify();
+        }
     }
 
     //检查是否还有数据
@@ -121,7 +137,7 @@ bool AnythingSearcher::hasItem() const
     return !allResults.isEmpty();
 }
 
-QStringList AnythingSearcher::takeAll()
+QList<QUrl> AnythingSearcher::takeAll()
 {
     QMutexLocker lk(&mutex);
     return std::move(allResults);
@@ -137,7 +153,7 @@ void AnythingSearcher::tryNotify()
     }
 }
 
-bool AnythingSearcher::isSupported(const QUrl &url)
+bool AnythingSearcher::isSupported(const QUrl &url, bool &isPrependData)
 {
     if (!url.isValid() || UrlRoute::isVirtual(url))
         return false;
@@ -148,6 +164,17 @@ bool AnythingSearcher::isSupported(const QUrl &url)
     if (!anything.isValid())
         return false;
 
-    const auto &path = UrlRoute::urlToPath(url);
-    return anything.hasLFT(path);
+    auto path = UrlRoute::urlToPath(url);
+    if (!anything.hasLFT(path)) {
+        if (path.startsWith("/home") && QDir().exists("/data/home")) {
+            path.prepend("/data");
+            if (!anything.hasLFT(path))
+                return false;
+            isPrependData = true;
+        } else {
+            return false;
+        }
+    }
+
+    return true;
 }

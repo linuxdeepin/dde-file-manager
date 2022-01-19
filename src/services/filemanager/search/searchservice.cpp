@@ -21,7 +21,11 @@
 #include "searchservice.h"
 #include "private/searchservice_p.h"
 
+#include "dfm-base/base/urlroute.h"
+
 #include <QtConcurrent>
+
+DFMBASE_USE_NAMESPACE
 
 SearchServicePrivate::SearchServicePrivate(SearchService *parent)
     : QObject(parent)
@@ -36,26 +40,55 @@ SearchServicePrivate::~SearchServicePrivate()
     }
 }
 
-bool SearchService::search(quint64 winId, const QUrl &url, const QString &keyword)
+bool SearchService::regSearchPath(const QString &scheme, const QString &path, QString *errMsg)
+{
+    if (!UrlRoute::hasScheme(scheme)) {
+        if (errMsg)
+            *errMsg = QString("the scheme \"%1\" has not register!").arg(scheme);
+        return false;
+    }
+
+    if (!QFile::exists(path)) {
+        if (errMsg)
+            *errMsg = QString("the path \"%1\" is not exists!").arg(path);
+        return false;
+    }
+
+    if (d->registerInfos.contains(scheme)) {
+        if (errMsg)
+            *errMsg = QString("the scheme \"%1\" already registered!").arg(scheme);
+        return false;
+    }
+
+    d->registerInfos.insert(scheme, path);
+    return true;
+}
+
+QHash<QString, QString> SearchService::regInfos()
+{
+    return d->registerInfos;
+}
+
+bool SearchService::search(QString taskId, const QUrl &url, const QString &keyword)
 {
     if (d->mainController)
-        return d->mainController->doSearchTask(winId, url, keyword);
+        return d->mainController->doSearchTask(taskId, url, keyword);
 
     return false;
 }
 
-QStringList SearchService::matchedResults(quint64 winId)
+QList<QUrl> SearchService::matchedResults(QString taskId)
 {
     if (d->mainController)
-        return d->mainController->getResults(winId);
+        return d->mainController->getResults(taskId);
 
     return {};
 }
 
-void SearchService::stop(quint64 winId)
+void SearchService::stop(QString taskId)
 {
     if (d->mainController)
-        d->mainController->stop(winId);
+        d->mainController->stop(taskId);
 }
 
 SearchService::SearchService(QObject *parent)

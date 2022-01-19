@@ -30,17 +30,17 @@ class TaskCommander : public QObject
     friend class MainController;
 
 private:
-    explicit TaskCommander(quint64 taskId, const QUrl &url, const QString &keyword, QObject *parent = nullptr);
-    quint64 taskID() const;
-    QStringList getResults() const;
+    explicit TaskCommander(QString taskId, const QUrl &url, const QString &keyword, QObject *parent = nullptr);
+    QString taskID() const;
+    QList<QUrl> getResults() const;
     bool start();
     void stop();
     void deleteSelf();
     void createSearcher(const QUrl &url, const QString &keyword);
 
 signals:
-    void matched(quint64 taskId);
-    void finished(quint64 taskId);
+    void matched(QString taskId);
+    void finished(QString taskId);
 
 private:
     TaskCommanderPrivate *d;

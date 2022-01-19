@@ -38,7 +38,7 @@ private:
     bool search() override;
     void stop() override;
     bool hasItem() const override;
-    QStringList takeAll() override;
+    QList<QUrl> takeAll() override;
     static bool isSupport(const QUrl &url);
 
 private:

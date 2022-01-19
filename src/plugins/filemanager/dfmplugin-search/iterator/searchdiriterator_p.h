@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liuzhangjian<liuzhangjian@uniontech.com>
  *
@@ -18,26 +18,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SEARCH_H
-#define SEARCH_H
+#ifndef SEARCHDIRITERATOR_P_H
+#define SEARCHDIRITERATOR_P_H
 
 #include "dfmplugin_search_global.h"
 
-#include <dfm-framework/framework.h>
+#include "interfaces/abstractfileinfo.h"
+
+#include <QObject>
+#include <QQueue>
+#include <QUrl>
+#include <QMutex>
 
 DPSEARCH_BEGIN_NAMESPACE
 
-class Search : public dpf::Plugin
+class SearchDirIterator;
+class SearchDirIteratorPrivate : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "search.json")
+    friend class SearchDirIterator;
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    explicit SearchDirIteratorPrivate(const QUrl &url, QObject *parent = nullptr);
+    ~SearchDirIteratorPrivate();
+
+    void stop();
+
+public slots:
+    void onMatched(QString id);
+    void onSearchCompleted(QString id);
+
+private:
+    bool searchFinished = false;
+    QUrl fileUrl;
+    QQueue<QUrl> childrens;
+    AbstractFileInfoPointer currentFileInfo;
+    QString taskId;
+    QMutex mutex;
 };
 
 DPSEARCH_END_NAMESPACE
 
-#endif   // SEARCH_H
+#endif   // SEARCHDIRITERATOR_P_H

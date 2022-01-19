@@ -67,7 +67,7 @@ bool IteratorSearcher::hasItem() const
     return !allResults.isEmpty();
 }
 
-QStringList IteratorSearcher::takeAll()
+QList<QUrl> IteratorSearcher::takeAll()
 {
     QMutexLocker lk(&mutex);
     return std::move(allResults);
@@ -117,7 +117,7 @@ void IteratorSearcher::doSearch()
                 const auto &fileUrl = info->url();
                 {
                     QMutexLocker lk(&mutex);
-                    allResults << fileUrl.toLocalFile();
+                    allResults << fileUrl;
                 }
 
                 //推送

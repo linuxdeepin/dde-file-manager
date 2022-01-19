@@ -48,11 +48,11 @@ private slots:
 private:
     TaskCommander *q = nullptr;
     volatile bool isWorking = false;
-    quint64 taskId;
+    QString taskId;
 
     //当前所有的搜索结果和新数据缓冲区
     QReadWriteLock rwLock;
-    QStringList resultList;
+    QList<QUrl> resultList;
 
     bool deleted = false;
     bool finished = false;   //保证结束信号只发一次

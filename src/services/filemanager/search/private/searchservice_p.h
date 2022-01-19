@@ -37,6 +37,7 @@ public:
 
 private:
     MainController *mainController = nullptr;
+    QHash<QString, QString> registerInfos;
 };
 
 #endif   // SEARCHSERVICE_P_H

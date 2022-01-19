@@ -75,7 +75,7 @@ private:
     QString indexStorePath;
     bool isUpdated = false;
     QAtomicInt status = AbstractSearcher::kReady;
-    QStringList allResults;
+    QList<QUrl> allResults;
     mutable QMutex mutex;
 
     //计时

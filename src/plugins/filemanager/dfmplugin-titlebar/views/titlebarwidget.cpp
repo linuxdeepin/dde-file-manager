@@ -138,6 +138,9 @@ void TitleBarWidget::initConnect()
         if (crumbBar->controller())
             crumbBar->controller()->processAction(CrumbInterface::kAddressBarLostFocus);
     });
+    connect(addressBar, &AddressBar::editingFinishedSearch, this, [this](const QString &keyword) {
+        TitleBarEventCaller::sendSearch(this, keyword);
+    });
     // TODO(zhangs): addressbar clear, pause
 }
 

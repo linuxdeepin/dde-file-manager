@@ -39,13 +39,13 @@ private:
     bool search() override;
     void stop() override;
     bool hasItem() const override;
-    QStringList takeAll() override;
+    QList<QUrl> takeAll() override;
     void tryNotify();
     void doSearch();
 
 private:
     QAtomicInt status = kReady;
-    QStringList allResults;
+    QList<QUrl> allResults;
     mutable QMutex mutex;
     QList<QUrl> searchPathList;
     QRegularExpression regex;

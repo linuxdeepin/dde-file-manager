@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liuzhangjian<liuzhangjian@uniontech.com>
  *
@@ -18,6 +18,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "searchlog.h"
+#include "searcheventcaller.h"
 
-Q_LOGGING_CATEGORY(SearchPlugin, "SearchPlugin")
+#include "dfm-base/dfm_event_defines.h"
+
+#include <dfm-framework/framework.h>
+
+DFMBASE_USE_NAMESPACE
+DPSEARCH_BEGIN_NAMESPACE
+
+static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
+{
+    return &dpfInstance.eventDispatcher();
+}
+
+void dfmplugin_search::SearchEventCaller::sendDoSearch(quint64 winId, const QUrl &url)
+{
+    dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, winId, url);
+}
+
+DPSEARCH_END_NAMESPACE

@@ -19,24 +19,57 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "search.h"
-#include "searchlog.h"
+#include "events/searcheventreceiver.h"
+#include "utils/searchhelper.h"
+#include "fileinfo/searchfileinfo.h"
+#include "iterator/searchdiriterator.h"
 
-#include "windowsservice.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
-#include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfileinfo.h"
-#include "dfm-base/file/local/localfilewatcher.h"
-#include "dfm-base/file/local/localdiriterator.h"
-#include "services/common/menu/menuservice.h"
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/dfm_event_defines.h"
+
+#include "services/filemanager/search/searchservice.h"
+#include "services/filemanager/titlebar/titlebar_defines.h"
+#include "services/filemanager/workspace/workspaceservice.h"
+
+DFMBASE_USE_NAMESPACE
+DSB_FM_USE_NAMESPACE
+DPSEARCH_BEGIN_NAMESPACE
+
+namespace GlobalPrivate {
+static WorkspaceService *workspaceService { nullptr };
+}   // namespace GlobalPrivate
 
 void Search::initialize()
 {
+    auto &ctx = dpfInstance.serviceContext();
+    QString errStr;
+    if (!ctx.load(SearchService::name(), &errStr)) {
+        qCritical() << errStr;
+        abort();
+    }
+
+    UrlRoute::regScheme(SearchHelper::scheme(), "/", {}, true, "");
+    //注册Scheme为"search"的扩展的文件信息
+    InfoFactory::regClass<SearchFileInfo>(SearchHelper::scheme());
+    DirIteratorFactory::regClass<SearchDirIterator>(SearchHelper::scheme());
 }
 
 bool Search::start()
 {
+    dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kDoSearch,
+                                            SearchEventReceiverIns,
+                                            &SearchEventReceiver::hadleSearch);
+
+    auto &ctx = dpfInstance.serviceContext();
+    GlobalPrivate::workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
+
+    if (!GlobalPrivate::workspaceService) {
+        qCritical() << "Failed, init workspace \"workspaceService\" is empty";
+        abort();
+    }
+    GlobalPrivate::workspaceService->addScheme(SearchHelper::scheme());
+
     return true;
 }
 
@@ -44,3 +77,5 @@ dpf::Plugin::ShutdownFlag Search::stop()
 {
     return kSync;
 }
+
+DPSEARCH_END_NAMESPACE

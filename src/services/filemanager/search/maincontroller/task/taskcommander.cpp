@@ -43,8 +43,9 @@ void TaskCommanderPrivate::working(AbstractSearcher *searcher)
 
 AbstractSearcher *TaskCommanderPrivate::createFileNameSearcher(const QUrl &url, const QString &keyword)
 {
-    if (AnythingSearcher::isSupported(url))
-        return new AnythingSearcher(url, keyword, q);
+    bool isPrependData = false;
+    if (AnythingSearcher::isSupported(url, isPrependData))
+        return new AnythingSearcher(url, keyword, isPrependData, q);
 
     return new IteratorSearcher(url, keyword, q);
 }
@@ -61,7 +62,7 @@ void TaskCommanderPrivate::onUnearthed(AbstractSearcher *searcher)
         resultList += results;
         //回到主线程发送信号
         if (isEmpty)
-            QMetaObject::invokeMethod(q, "matched", Qt::QueuedConnection, Q_ARG(quint64, taskId));
+            QMetaObject::invokeMethod(q, "matched", Qt::QueuedConnection, Q_ARG(QString, taskId));
     }
 }
 
@@ -73,14 +74,14 @@ void TaskCommanderPrivate::onFinished()
         if (deleted) {
             q->deleteLater();
             disconnect(q, nullptr, nullptr, nullptr);
-        } else if (allSearchers.isEmpty() && !finished) {
+        } else if (!finished) {
             finished = true;
             emit q->finished(taskId);
         }
     }
 }
 
-TaskCommander::TaskCommander(quint64 taskId, const QUrl &url, const QString &keyword, QObject *parent)
+TaskCommander::TaskCommander(QString taskId, const QUrl &url, const QString &keyword, QObject *parent)
     : QObject(parent),
       d(new TaskCommanderPrivate(this))
 {
@@ -88,12 +89,12 @@ TaskCommander::TaskCommander(quint64 taskId, const QUrl &url, const QString &key
     createSearcher(url, keyword);
 }
 
-quint64 TaskCommander::taskID() const
+QString TaskCommander::taskID() const
 {
     return d->taskId;
 }
 
-QStringList TaskCommander::getResults() const
+QList<QUrl> TaskCommander::getResults() const
 {
     QReadLocker lk(&d->rwLock);
     return std::move(d->resultList);
@@ -118,7 +119,7 @@ bool TaskCommander::start()
         d->isWorking = false;
         qWarning() << __FUNCTION__ << "no searcher...";
         // 加入队列，在start函数返回后发送结束信号
-        QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection, Q_ARG(quint64, d->taskId));
+        QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection, Q_ARG(QString, d->taskId));
     }
 
     return true;

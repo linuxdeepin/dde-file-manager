@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liuzhangjian<liuzhangjian@uniontech.com>
  *
@@ -18,12 +18,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SEARCHLOG_H
-#define SEARCHLOG_H
+#ifndef SEARCHEVENTRECEIVER_H
+#define SEARCHEVENTRECEIVER_H
 
-#include <QDebug>
-#include <QLoggingCategory>
+#include "dfmplugin_search_global.h"
 
-Q_DECLARE_LOGGING_CATEGORY(SearchPlugin)
+#include <QObject>
 
-#endif // SEARCHLOG_H
+#define SearchEventReceiverIns DPSEARCH_NAMESPACE::SearchEventReceiver::instance()
+
+DPSEARCH_BEGIN_NAMESPACE
+
+class SearchEventReceiver final : public QObject
+{
+    Q_OBJECT
+public:
+    static SearchEventReceiver *instance();
+
+public slots:
+    void hadleSearch(quint64 winId, const QString &keyword);
+
+private:
+    SearchEventReceiver(QObject *parent = nullptr);
+};
+
+DPSEARCH_END_NAMESPACE
+
+#endif   // SEARCHEVENTRECEIVER_H

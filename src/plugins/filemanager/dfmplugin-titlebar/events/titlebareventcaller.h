@@ -43,6 +43,7 @@ public:
     static void sendCd(QWidget *sender, const QUrl &url);
     static void sendOpenWindow(const QUrl &url);
     static void sendOpenTab(quint64 windowId, const QUrl &url);
+    static void sendSearch(QWidget *sender, const QString &keyword);
 };
 
 DPTITLEBAR_END_NAMESPACE

@@ -36,10 +36,12 @@
 
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/filemanager/search/searchservice.h"
 
 DSB_FM_USE_NAMESPACE
 namespace GlobalPrivate {
 static WindowsService *winServ { nullptr };
+static SearchService *searchServ { nullptr };
 }   // namespace GlobalPrivate
 
 DPCOMPUTER_BEGIN_NAMESPACE
@@ -78,6 +80,12 @@ void Computer::initialize()
 bool Computer::start()
 {
     dpfInstance.eventDispatcher().subscribe(SideBar::EventType::kEjectAction, ComputerEventReceiverIns, &ComputerEventReceiver::handleItemEject);
+
+    auto &ctx = dpfInstance.serviceContext();
+    Q_ASSERT_X(ctx.loaded(SearchService::name()), "Search", "SearchService not loaded");
+    GlobalPrivate::searchServ = ctx.service<SearchService>(SearchService::name());
+    GlobalPrivate::searchServ->regSearchPath(ComputerUtils::scheme(), "/");
+
     return true;
 }
 

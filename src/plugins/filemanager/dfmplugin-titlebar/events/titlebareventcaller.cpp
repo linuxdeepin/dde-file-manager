@@ -66,3 +66,10 @@ void TitleBarEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 {
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewTab, windowId, url);
 }
+
+void TitleBarEventCaller::sendSearch(QWidget *sender, const QString &keyword)
+{
+    quint64 id = TitleBarHelper::windowId(sender);
+    Q_ASSERT(id > 0);
+    dpfInstance.eventDispatcher().publish(TitleBar::EventType::kDoSearch, id, keyword);
+}
