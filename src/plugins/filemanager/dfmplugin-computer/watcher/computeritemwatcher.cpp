@@ -23,7 +23,9 @@
 #include "computeritemwatcher.h"
 #include "controller/computercontroller.h"
 #include "utils/computerutils.h"
+#include "utils/stashmountsutils.h"
 #include "fileentity/appentryfileentity.h"
+#include "fileentity/stashedprotocolentryfileentity.h"
 
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
@@ -73,12 +75,15 @@ ComputerDataList ComputerItemWatcher::items()
     // these are all in Disk group
     bool hasInsertNewDisk = false;
     ret.push_back(getGroup(kGroupDisks));
+    int diskStartPos = ret.count();
 
     ret.append(getBlockDeviceItems(hasInsertNewDisk));
-    ret.append(getProtocolDeviceItems(hasInsertNewDisk));
-    // get stashed mounts
-    //    ret.append(getStashedProtocolItems(hasInsertNewDisk));
+    ComputerDataList protocolDevices = getProtocolDeviceItems(hasInsertNewDisk);
+    ret.append(protocolDevices);
+    ret.append(getStashedProtocolItems(hasInsertNewDisk, protocolDevices));
     ret.append(getAppEntryItems(hasInsertNewDisk));
+
+    std::sort(ret.begin() + diskStartPos, ret.end(), ComputerItemWatcher::typeCompare);
 
     if (!hasInsertNewDisk)
         ret.pop_back();
@@ -136,10 +141,13 @@ void ComputerItemWatcher::initConn()
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, [this](const QString &id) {
         auto datas = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id);
         auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
-        if (datas.value(GlobalServerDefines::DeviceProperty::kId).toString().isEmpty())   // device have been removed
+        if (datas.value(GlobalServerDefines::DeviceProperty::kId).toString().isEmpty()) {   // device have been removed
             Q_EMIT this->itemRemoved(devUrl);
-        else
+            if (id.startsWith("smb"))
+                this->onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id));
+        } else {
             Q_EMIT this->itemUpdated(devUrl);
+        }
     });
 
     connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, [this](const QString &id, qlonglong total, qlonglong free) {
@@ -160,6 +168,8 @@ void ComputerItemWatcher::initConn()
             return;
         Q_EMIT this->itemRemoved(appUrl);
     });
+
+    connect(Application::instance(), &Application::genericAttributeChanged, this, &ComputerItemWatcher::onAppAttributeChanged);
 }
 
 void ComputerItemWatcher::initAppWatcher()
@@ -220,7 +230,6 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
         addSidebarItem(info);
     }
 
-    std::sort(ret.begin(), ret.end(), ComputerItemWatcher::typeCompare);
     return ret;
 }
 
@@ -246,19 +255,42 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
         addSidebarItem(info);
     }
 
-    std::sort(ret.begin(), ret.end(), ComputerItemWatcher::typeCompare);
     return ret;
 }
 
-ComputerDataList ComputerItemWatcher::getStashedProtocolItems(bool &hasNewItem)
+ComputerDataList ComputerItemWatcher::getStashedProtocolItems(bool &hasNewItem, const ComputerDataList &protocolDevs)
 {
-    // TODO(xust)
+    auto hasProtocolDev = [](const QUrl &url, const ComputerDataList &container) {
+        for (auto dev : container) {
+            if (dev.url == url)
+                return true;
+        }
+        return false;
+    };
     ComputerDataList ret;
-    {
-        // loop to get devices
+
+    const QMap<QString, QString> &&stashedMounts = StashMountsUtils::stashedMounts();
+    for (auto iter = stashedMounts.cbegin(); iter != stashedMounts.cend(); ++iter) {
+        QUrl protocolUrl = ComputerUtils::makeProtocolDevUrl(iter.key());
+        if (hasProtocolDev(protocolUrl, ret) || hasProtocolDev(protocolUrl, protocolDevs))
+            continue;
+
+        QUrl stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(iter.key());
+        DFMEntryFileInfoPointer info(new EntryFileInfo(stashedUrl));
+        if (!info->exists())
+            continue;
+
+        ComputerItemData data;
+        data.url = stashedUrl;
+        data.shape = ComputerItemData::kLargeItem;
+        data.info = info;
+        ret.push_back(data);
+
+        addSidebarItem(info);
+
+        hasNewItem = true;
     }
 
-    std::sort(ret.begin(), ret.end(), ComputerItemWatcher::typeCompare);
     return ret;
 }
 
@@ -296,7 +328,6 @@ ComputerDataList ComputerItemWatcher::getAppEntryItems(bool &hasNewItem)
         hasNewItem = true;
     }
 
-    std::sort(ret.begin(), ret.end(), ComputerItemWatcher::typeCompare);
     return ret;
 }
 
@@ -323,7 +354,7 @@ ComputerItemData ComputerItemWatcher::getGroup(ComputerItemWatcher::GroupType ty
 void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 {
     // additem to sidebar
-    bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool();
+    bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool() || info->suffix() == SuffixInfo::kProtocol;
     if (ComputerUtils::shouldSystemPartitionHide() && info->suffix() == SuffixInfo::kBlock && !removable) return;
 
     DSB_FM_USE_NAMESPACE;
@@ -402,6 +433,14 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, bool needSidebarItem
     data.info = info;
     Q_EMIT this->itemAdded(data);
 
+    if (info->suffix() == SuffixInfo::kProtocol) {
+        QString id = ComputerUtils::getProtocolDevIdByUrl(info->url());
+        if (id.startsWith("smb")) {
+            StashMountsUtils::stashMount(info->url(), info->displayName());
+            Q_EMIT this->itemRemoved(ComputerUtils::makeStashedProtocolDevUrl(id));
+        }
+    }
+
     if (needSidebarItem)
         addSidebarItem(info);
 }
@@ -421,6 +460,36 @@ void ComputerItemWatcher::onDevicePropertyChanged(const QString &id, const QStri
             if (propertyName == DeviceProperty::kOptical)
                 Q_EMIT itemUpdated(devUrl);
             Q_EMIT itemPropertyChanged(devUrl, propertyName, var.variant());
+        }
+    }
+}
+
+void ComputerItemWatcher::onAppAttributeChanged(Application::GenericAttribute ga, const QVariant &value)
+{
+    if (ga == Application::GenericAttribute::kShowFileSystemTagOnDiskIcon) {
+        Q_EMIT hideFileSystemTag(!value.toBool());
+    } else if (ga == Application::GenericAttribute::kHiddenSystemPartition) {
+        bool hide = value.toBool();
+        Q_EMIT hideNativeDisks(hide);
+        for (const auto &data : initedDatas) {
+            if (data.info && !data.info->extraProperty(DeviceProperty::kRemovable).toBool() && data.info->suffix() == SuffixInfo::kBlock) {
+                if (hide)
+                    removeSidebarItem(data.url);
+                else
+                    addSidebarItem(data.info);
+            }
+        }
+    } else if (ga == Application::GenericAttribute::kAlwaysShowOfflineRemoteConnections) {
+        if (!value.toBool()) {
+            QStringList mounts = StashMountsUtils::stashedMounts().keys();
+            for (const auto &mountUrl : mounts) {
+                QUrl stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(mountUrl);
+                Q_EMIT itemRemoved(stashedUrl);
+                removeSidebarItem(stashedUrl);
+            }
+            StashMountsUtils::clearStashedMounts();
+        } else {
+            StashMountsUtils::stashMountedMounts();
         }
     }
 }

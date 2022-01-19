@@ -76,7 +76,6 @@ private Q_SLOTS:
     void cdTo(const QModelIndex &index);
     void onMenuRequest(const QPoint &pos);
     void onRenameRequest(quint64 winId, const QUrl &url);
-    void onAppAttrChanged(Application::GenericAttribute ga, const QVariant &value);
 
 Q_SIGNALS:
     void enterPressed(const QModelIndex &index);

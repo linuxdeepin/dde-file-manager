@@ -53,6 +53,8 @@ QString StandardPaths::location(StandardPaths::StandardLocation type)
         return QDir::homePath() + "/.local/share/Trash/files";
     case kTrashInfosPath:
         return QDir::homePath() + "/.local/share/Trash/info";
+    case kApplicationConfigPath:
+        return QDir::homePath() + "/.config";
 #ifdef APPSHAREDIR
     case kTranslationPath: {
         QString path = APPSHAREDIR "/translations";

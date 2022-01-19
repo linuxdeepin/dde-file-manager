@@ -38,7 +38,6 @@ namespace SuffixInfo {
 const char *const kUserDir { "userdir" };
 const char *const kProtocol { "protodev" };
 const char *const kBlock { "blockdev" };
-const char *const kStashedRemote { "stashedprotodev" };
 }   // namespace SuffixInfo
 
 // this might be a temperary solution
@@ -78,6 +77,14 @@ QString trProperties()
 QString trFormat()
 {
     return QObject::tr("Format");
+}
+QString trRemove()
+{
+    return QObject::tr("Remove");
+}
+QString trLogoutAndClearSavedPasswd()
+{
+    return QObject::tr("Clear saved password and unmount");
 }
 }   // namespace ContextMenuActionTrs
 

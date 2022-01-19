@@ -23,7 +23,10 @@
 #include "computercontroller.h"
 #include "events/computereventcaller.h"
 #include "fileentity/appentryfileentity.h"
+#include "fileentity/stashedprotocolentryfileentity.h"
 #include "utils/computerutils.h"
+#include "utils/stashmountsutils.h"
+#include "watcher/computeritemwatcher.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -254,6 +257,10 @@ void ComputerController::actionTriggered(DFMEntryFileInfoPointer info, quint64 w
         actProperties(info->url());
     else if (actionText == ContextMenuActionTrs::trOpen())
         onOpenItem(0, info->url());
+    else if (actionText == ContextMenuActionTrs::trRemove())
+        actRemove(info);
+    else if (actionText == ContextMenuActionTrs::trLogoutAndClearSavedPasswd())
+        actLogoutAndForgetPasswd(info);
 }
 
 void ComputerController::actEject(const QUrl &url)
@@ -290,7 +297,17 @@ void ComputerController::actOpenInNewTab(quint64 winId, DFMEntryFileInfoPointer 
 
 void ComputerController::actMount(DFMEntryFileInfoPointer info)
 {
-    mountDevice(0, info, kNone);
+    QString sfx = info->suffix();
+    if (sfx == SuffixInfo::kStashedRemote) {
+        ;
+        return;
+    } else if (sfx == SuffixInfo::kBlock) {
+        mountDevice(0, info, kNone);
+        return;
+    } else if (sfx == SuffixInfo::kProtocol) {
+        ;
+        return;
+    }
 }
 
 void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
@@ -349,12 +366,20 @@ void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
 
 void ComputerController::actRemove(DFMEntryFileInfoPointer info)
 {
-    // TODO(xust)
+    if (info->suffix() != SuffixInfo::kStashedRemote)
+        return;
+    StashMountsUtils::removeStashedMount(info->url());
+    Q_EMIT ComputerItemWatcherInstance->itemRemoved(info->url());
 }
 
 void ComputerController::actProperties(const QUrl &url)
 {
     // TODO(xust)
+}
+
+void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
+{
+    // TODO(xust);
 }
 
 ComputerController::ComputerController(QObject *parent)

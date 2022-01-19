@@ -21,6 +21,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "stashedprotocolentryfileentity.h"
+#include "utils/stashmountsutils.h"
+
+#include "dfm-base/base/standardpaths.h"
+
+#include <QMenu>
 
 DFMBASE_USE_NAMESPACE
 
@@ -36,32 +41,32 @@ StashedProtocolEntryFileEntity::StashedProtocolEntryFileEntity(const QUrl &url)
 
 QString StashedProtocolEntryFileEntity::displayName() const
 {
-    return {};
+    return DPCOMPUTER_NAMESPACE::StashMountsUtils::displayName(entryUrl);
 }
 
 QIcon StashedProtocolEntryFileEntity::icon() const
 {
-    return {};
+    return QIcon::fromTheme("folder-remote");
 }
 
 bool StashedProtocolEntryFileEntity::exists() const
 {
-    return {};
+    return DPCOMPUTER_NAMESPACE::StashMountsUtils::isStashedDevExist(entryUrl);
 }
 
 bool StashedProtocolEntryFileEntity::showProgress() const
 {
-    return {};
+    return false;
 }
 
 bool StashedProtocolEntryFileEntity::showTotalSize() const
 {
-    return {};
+    return false;
 }
 
 bool StashedProtocolEntryFileEntity::showUsageSize() const
 {
-    return {};
+    return false;
 }
 
 void StashedProtocolEntryFileEntity::onOpen()
@@ -71,4 +76,17 @@ void StashedProtocolEntryFileEntity::onOpen()
 EntryFileInfo::EntryOrder StashedProtocolEntryFileEntity::order() const
 {
     return EntryFileInfo::EntryOrder::kOrderStashedSmb;
+}
+
+QMenu *StashedProtocolEntryFileEntity::createMenu()
+{
+    QMenu *menu = new QMenu();
+    menu->addAction(ContextMenuActionTrs::trMount());
+    menu->addAction(ContextMenuActionTrs::trRemove());
+    return menu;
+}
+
+bool StashedProtocolEntryFileEntity::isAccessable() const
+{
+    return true;
 }

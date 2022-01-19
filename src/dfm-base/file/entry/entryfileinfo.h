@@ -39,7 +39,6 @@ namespace SuffixInfo {
 extern const char *const kUserDir;
 extern const char *const kProtocol;
 extern const char *const kBlock;
-extern const char *const kStashedRemote;
 }   // namespace SuffixInfo
 
 // TODO(xust) this might be a temperary solution
@@ -51,6 +50,8 @@ extern QString trUnmount();
 extern QString trRename();
 extern QString trFormat();
 extern QString trEject();
+extern QString trLogoutAndClearSavedPasswd();
+extern QString trRemove();
 extern QString trSafelyRemove();
 extern QString trProperties();
 }   // namespace ContextMenuActionTrs

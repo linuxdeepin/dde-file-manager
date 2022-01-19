@@ -24,9 +24,13 @@
 #define STASHEDPROTOCOLENTRYFILEENTITY_H
 
 #include "dfm-base/dfm_base_global.h"
-#include "abstractentryfileentity.h"
+#include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 
 DFMBASE_BEGIN_NAMESPACE
+namespace SuffixInfo {
+const char *const kStashedRemote { "stashedprotodev" };
+}   // namespace SuffixInfo
+
 class StashedProtocolEntryFileEntity : public AbstractEntryFileEntity
 {
 public:
@@ -41,6 +45,8 @@ public:
     virtual bool showUsageSize() const override;
     virtual void onOpen() override;
     virtual EntryFileInfo::EntryOrder order() const override;
+    virtual QMenu *createMenu() override;
+    virtual bool isAccessable() const override;
 };
 
 DFMBASE_END_NAMESPACE

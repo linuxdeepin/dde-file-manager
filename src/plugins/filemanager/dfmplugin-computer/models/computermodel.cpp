@@ -98,8 +98,13 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     case kSizeUsageRole:
         return item->info ? QVariant::fromValue<long>(item->info->sizeUsage()) : 0;
 
-    case kFileSystemRole:
-        return item->info ? item->info->extraProperty(DeviceProperty::kFileSystem).toString() : "";
+    case kFileSystemRole: {
+        if (!item->info)
+            return "";
+        if (item->info->targetUrl().isValid())
+            return item->info->extraProperty(DeviceProperty::kFileSystem).toString();
+        return "";
+    }
 
     case kRealUrlRole:
         return item->info ? item->info->targetUrl() : QUrl();

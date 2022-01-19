@@ -26,6 +26,5 @@
 #include "userentryfileentity.h"
 #include "blockentryfileentity.h"
 #include "protocolentryfileentity.h"
-#include "stashedprotocolentryfileentity.h"
 
 #endif   // ENTRYENTITIES_H

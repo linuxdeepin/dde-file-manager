@@ -25,6 +25,7 @@
 #include "models/computermodel.h"
 #include "delegate/computeritemdelegate.h"
 #include "utils/computerutils.h"
+#include "utils/stashmountsutils.h"
 #include "events/computereventcaller.h"
 #include "controller/computercontroller.h"
 
@@ -179,12 +180,14 @@ void ComputerView::initConnect()
     connect(this, &ComputerView::enterPressed, this, &ComputerView::cdTo);
 
     connect(this, &ComputerView::customContextMenuRequested, this, &ComputerView::onMenuRequest);
-    connect(Application::instance(), &Application::genericAttributeChanged, this, &ComputerView::onAppAttrChanged);
     connect(ComputerControllerInstance, &ComputerController::requestRename, this, &ComputerView::onRenameRequest);
     connect(ComputerControllerInstance, &ComputerController::updateItemAlias, this, [this](const QUrl &url) {
         int row = computerModel()->findItem(url);
         this->update(computerModel()->index(row, 0));
     });
+
+    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideNativeDisks, this, [this](bool hide) { this->hideSystemPartitions(hide); });
+    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideFileSystemTag, this, [this]() { this->update(); });
 }
 
 void ComputerView::onMenuRequest(const QPoint &pos)
@@ -216,16 +219,6 @@ void ComputerView::onRenameRequest(quint64 winId, const QUrl &url)
         edit(idx);
 }
 
-void ComputerView::onAppAttrChanged(Application::GenericAttribute ga, const QVariant &value)
-{
-    if (ga == Application::GenericAttribute::kShowFileSystemTagOnDiskIcon) {
-        this->update();
-    } else if (ga == Application::GenericAttribute::kHiddenSystemPartition) {
-        bool hide = value.toBool();
-        hideSystemPartitions(hide);
-    }
-}
-
 void ComputerView::hideSystemPartitions(bool hide)
 {
     auto model = this->computerModel();
@@ -240,14 +233,8 @@ void ComputerView::hideSystemPartitions(bool hide)
             continue;
 
         bool removable = item.info && item.info->extraProperty(DeviceProperty::kRemovable).toBool();
-        if (!removable) {
+        if (!removable)
             this->setRowHidden(i, hide);
-
-            if (hide)
-                ComputerItemWatcherInstance->removeSidebarItem(item.url);
-            else
-                ComputerItemWatcherInstance->addSidebarItem(item.info);
-        }
     }
 }
 

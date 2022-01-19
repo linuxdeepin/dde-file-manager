@@ -60,6 +60,10 @@ public:
     static QString getProtocolDevIdByUrl(const QUrl &url);
     static QUrl makeAppEntryUrl(const QString &filePath);
     static QUrl getAppEntryFileUrl(const QUrl &entryUrl);
+    static QUrl makeStashedProtocolDevUrl(const QString &id);
+    static QString getProtocolDevIdByStashedUrl(const QUrl &url);
+    static QUrl convertToProtocolDevUrlFrom(const QUrl &stashedUrl);
+    static QUrl convertToStashedUrlFrom(const QUrl &protocolDevUrl);
 
     static quint64 getWinId(QWidget *widget);
 

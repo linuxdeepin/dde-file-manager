@@ -24,6 +24,7 @@
 #include "utils/computerutils.h"
 #include "views/computerview.h"
 #include "fileentity/appentryfileentity.h"
+#include "fileentity/stashedprotocolentryfileentity.h"
 #include "events/computerunicastreceiver.h"
 #include "events/computereventreceiver.h"
 #include "watcher/computeritemwatcher.h"

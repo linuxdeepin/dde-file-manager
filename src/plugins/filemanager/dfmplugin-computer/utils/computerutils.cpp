@@ -22,6 +22,7 @@
 */
 #include "computerutils.h"
 #include "fileentity/appentryfileentity.h"
+#include "fileentity/stashedprotocolentryfileentity.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
@@ -109,6 +110,59 @@ QUrl ComputerUtils::getAppEntryFileUrl(const QUrl &entryUrl)
     origUrl.setScheme(SchemeTypes::kFile);
     origUrl.setPath(QString("%1/%2.%3").arg(StandardPaths::location(StandardPaths::kExtensionsAppEntryPath)).arg(fileName).arg("desktop"));
     return origUrl;
+}
+
+QUrl ComputerUtils::makeStashedProtocolDevUrl(const QString &id)
+{
+    QUrl devUrl;
+    devUrl.setScheme(SchemeTypes::kEntry);
+    auto path = id.toUtf8().toBase64();
+    QString encodecPath = QString("%1.%2").arg(QString(path)).arg(SuffixInfo::kStashedRemote);
+    devUrl.setPath(encodecPath);
+    return devUrl;
+}
+
+QString ComputerUtils::getProtocolDevIdByStashedUrl(const QUrl &url)
+{
+    if (url.scheme() != SchemeTypes::kEntry)
+        return "";
+    if (!url.path().endsWith(SuffixInfo::kStashedRemote))
+        return "";
+
+    QString suffix = QString(".%1").arg(SuffixInfo::kStashedRemote);
+    QString encodecId = url.path().remove(suffix);
+    QString id = QByteArray::fromBase64(encodecId.toUtf8());
+    return id;
+}
+
+QUrl ComputerUtils::convertToProtocolDevUrlFrom(const QUrl &stashedUrl)
+{
+    if (stashedUrl.scheme() != SchemeTypes::kEntry)
+        return {};
+    if (!stashedUrl.path().endsWith(SuffixInfo::kStashedRemote))
+        return {};
+
+    QString path = stashedUrl.path();
+    path.replace(SuffixInfo::kStashedRemote, SuffixInfo::kProtocol);
+    QUrl ret;
+    ret.setScheme(SchemeTypes::kEntry);
+    ret.setPath(path);
+    return ret;
+}
+
+QUrl ComputerUtils::convertToStashedUrlFrom(const QUrl &protocolDevUrl)
+{
+    if (protocolDevUrl.scheme() != SchemeTypes::kEntry)
+        return {};
+    if (!protocolDevUrl.path().endsWith(SuffixInfo::kProtocol))
+        return {};
+
+    QString path = protocolDevUrl.path();
+    path.replace(SuffixInfo::kProtocol, SuffixInfo::kStashedRemote);
+    QUrl ret;
+    ret.setScheme(SchemeTypes::kEntry);
+    ret.setPath(path);
+    return ret;
 }
 
 quint64 ComputerUtils::getWinId(QWidget *widget)

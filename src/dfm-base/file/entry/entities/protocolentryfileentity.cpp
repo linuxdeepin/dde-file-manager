@@ -154,6 +154,15 @@ QMenu *ProtocolEntryFileEntity::createMenu()
     menu->addAction(ContextMenuActionTrs::trOpenInNewWin());
     menu->addAction(ContextMenuActionTrs::trOpenInNewTab());
     menu->addSeparator();
+
+    if (targetUrl().isValid()) {
+        menu->addAction(ContextMenuActionTrs::trUnmount());
+
+        QString origId = datas[DeviceProperty::kId].toString();
+        if (origId.startsWith("smb") || origId.startsWith("ftp") || origId.startsWith("sftp") || origId.startsWith("dav"))
+            menu->addAction(ContextMenuActionTrs::trLogoutAndClearSavedPasswd());
+    }
+
     menu->addAction(ContextMenuActionTrs::trProperties());
     return menu;
 }

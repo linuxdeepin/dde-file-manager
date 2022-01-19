@@ -26,6 +26,8 @@
 #include "dfmplugin_computer_global.h"
 #include "utils/computerdatastruct.h"
 
+#include "dfm-base/base/application/application.h"
+
 #include <QObject>
 #include <QUrl>
 #include <QDBusVariant>
@@ -36,6 +38,7 @@ DFMBASE_BEGIN_NAMESPACE
 class LocalFileWatcher;
 DFMBASE_END_NAMESPACE
 
+DFMBASE_USE_NAMESPACE
 DPCOMPUTER_BEGIN_NAMESPACE
 typedef QList<ComputerItemData> ComputerDataList;
 class ComputerItemWatcher : public QObject
@@ -71,10 +74,13 @@ Q_SIGNALS:
     void itemUpdated(const QUrl &url);
     void itemPropertyChanged(const QUrl &url, const QString &property, const QVariant &var);
     void itemSizeChanged(const QUrl &url, qlonglong, qlonglong);
+    void hideFileSystemTag(bool hide);
+    void hideNativeDisks(bool hide);
 
 protected Q_SLOTS:
     void onDeviceAdded(const QUrl &devUrl, bool needSidebarItem = true);
     void onDevicePropertyChanged(const QString &id, const QString &propertyName, const QDBusVariant &var);
+    void onAppAttributeChanged(Application::GenericAttribute ga, const QVariant &value);
 
 private:
     explicit ComputerItemWatcher(QObject *parent = nullptr);
@@ -84,7 +90,7 @@ private:
     ComputerDataList getUserDirItems();
     ComputerDataList getBlockDeviceItems(bool &hasNewItem);
     ComputerDataList getProtocolDeviceItems(bool &hasNewItem);
-    ComputerDataList getStashedProtocolItems(bool &hasNewItem);
+    ComputerDataList getStashedProtocolItems(bool &hasNewItem, const ComputerDataList &protocolDevs);
     ComputerDataList getAppEntryItems(bool &hasNewItem);
 
     void addGroup(const QString &name);
