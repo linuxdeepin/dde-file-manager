@@ -128,7 +128,7 @@ TEST_F(TestMasteredMediaController, tstEventsFuncs)
     EXPECT_FALSE(ctrl->decompressFile(e8));
 
     // smb现在服务装机不启动 启动smb需要手动输入用户密码，这里暂时注释
-#ifdef 0
+#if 0
     auto e9 = dMakeEventPointer<DFMFileShareEvent>(nullptr, testUrl, "test");
     EXPECT_FALSE(ctrl->shareFolder(e9));
 
