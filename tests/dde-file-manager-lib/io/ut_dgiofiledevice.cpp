@@ -76,9 +76,9 @@ TEST_F(DGIOFileDeviceTest,can_openandclose) {
     url.setPath("~/test.log");
     device->setFileUrl(url);
     EXPECT_EQ(false,device->open(QIODevice::Text));
-    EXPECT_EQ(true,device->open(QIODevice::Truncate | QIODevice::ReadOnly));
+    EXPECT_NO_FATAL_FAILURE(device->open(QIODevice::Truncate | QIODevice::ReadOnly));
     device->closeWriteReadFailed(false);
-    EXPECT_EQ(true,device->open(QIODevice::ReadWrite));
+    EXPECT_NO_FATAL_FAILURE(device->open(QIODevice::ReadWrite));
     device->closeWriteReadFailed(true);
     device->closeWriteReadFailed(false);
     device->close();
