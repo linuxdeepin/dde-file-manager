@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liyigang<liyigang@uniontech.com>
+ * Author:     lanxuesong<liyigang@uniontech.com>
  *
  * Maintainer: max-lv<lvwujun@uniontech.com>
  *             lanxuesong<lanxuesong@uniontech.com>
@@ -22,7 +22,6 @@
  */
 
 #include "docutfilesworker.h"
-#include "fileoperations/copyfiles/storageinfo.h"
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
@@ -32,6 +31,7 @@
 #include <QUrl>
 #include <QProcess>
 #include <QMutex>
+#include <QStorageInfo>
 #include <QWaitCondition>
 #include <QQueue>
 #include <QDebug>
@@ -101,7 +101,7 @@ bool DoCutFilesWorker::initArgs()
         return false;
     }
 
-    targetStorageInfo.reset(new StorageInfo(targetUrl.path()));
+    targetStorageInfo.reset(new QStorageInfo(targetUrl.path()));
 
     return true;
 }
@@ -204,12 +204,11 @@ bool DoCutFilesWorker::renameFileByHandler(const AbstractFileInfoPointer &source
 
 bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo)
 {
-    QSharedPointer<StorageInfo> sourceStorageInfo = nullptr;
-    sourceStorageInfo.reset(new StorageInfo(sourceInfo->url().path()));
+    QSharedPointer<QStorageInfo> sourceStorageInfo = nullptr;
+    sourceStorageInfo.reset(new QStorageInfo(sourceInfo->url().path()));
 
     const QUrl &sourceUrl = sourceInfo->url();
     const QUrl &targetUrl = targetInfo->url();
-    qInfo() << sourceStorageInfo->device() << targetStorageInfo->device();
 
     if (sourceStorageInfo->device() == targetStorageInfo->device()) {
         bool result = false;
@@ -248,17 +247,9 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
             return true;
 
         } else {
-
-            do {
-                if (!renameFileByHandler(sourceInfo, newTargetInfo))
-                    // pause and emit error msg
-                    action = doHandleErrorAndWait(sourceInfo->url(), targetInfo->url(), AbstractJobHandler::JobErrorType::kRenameError);
-
-            } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
-
-            if (action != AbstractJobHandler::SupportAction::kNoAction) {
-                return action == AbstractJobHandler::SupportAction::kSkipAction;
-            }
+            if (!renameFileByHandler(sourceInfo, newTargetInfo))
+                // pause and emit error msg
+                return false;
 
             // TODO(lanxs) need update progress
             if (Q_UNLIKELY(!stateCheck())) {

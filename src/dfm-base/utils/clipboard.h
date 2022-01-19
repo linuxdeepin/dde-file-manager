@@ -42,13 +42,13 @@ public:
 public:
     virtual ~ClipBoard() = default;
     static ClipBoard *instance();
-    static void setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::ClipboardAction action, QMimeData *mimeData = nullptr);
-    static void setDataToClipboard(QMimeData *mimeData);
-    static void clearClipboard();
     static QList<QUrl> getRemoteUrls();
     QList<QUrl> clipboardFileUrlList() const;
     QList<quint64> clipboardFileInodeList() const;
     ClipboardAction clipboardAction() const;
+    static void clearClipboard();
+    static void setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::ClipboardAction action, QMimeData *mimeData = nullptr);
+    static void setDataToClipboard(QMimeData *mimeData);
 
 private:
     explicit ClipBoard(QObject *parent = nullptr);

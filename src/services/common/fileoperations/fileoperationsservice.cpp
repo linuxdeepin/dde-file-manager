@@ -26,6 +26,7 @@
 #include "deletefiles/deletefiles.h"
 #include "trashfiles/movetotrashfiles.h"
 #include "trashfiles/restoretrashfiles.h"
+#include "cleantrash/cleantrashfiles.h"
 
 #include <QUrl>
 
@@ -115,6 +116,19 @@ JobHandlePointer FileOperationsService::cut(const QList<QUrl> &sources, const QU
     JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
     CutFiles *task = new CutFiles();
     task->setJobArgs(jobHandler, sources, target, flags);
+    return jobHandler;
+}
+/*!
+ * \brief FileOperationsService::cleanTrash 清理回收站文件
+ * 一个清理回收站的任务的源文件都是在同一目录下，所以源文件都是在同一个设备上。但是要清理
+ * \param sources 源文件的列表
+ * \return JobHandlePointer 任务控制器
+ */
+JobHandlePointer FileOperationsService::cleanTrash(const QList<QUrl> &sources)
+{
+    JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
+    CleanTrashFiles *task = new CleanTrashFiles();
+    task->setJobArgs(jobHandler, sources);
     return jobHandler;
 }
 /*!

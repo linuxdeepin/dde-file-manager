@@ -37,74 +37,80 @@
 DSC_BEGIN_NAMESPACE
 
 namespace FileOperationsSpace {
-using handleOperationPaste = std::function<JobHandlePointer(const quint64 windowId,
-                                                            const QList<QUrl> sources,
-                                                            const QUrl target,
-                                                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)>;
-using handleOperationCut = std::function<JobHandlePointer(const quint64 windowId,
+using HandleOperationCopy = std::function<JobHandlePointer(const quint64 windowId,
+                                                           const QList<QUrl> sources,
+                                                           const QUrl target,
+                                                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)>;
+using HandleOperationCut = std::function<JobHandlePointer(const quint64 windowId,
                                                           const QList<QUrl> sources,
                                                           const QUrl target,
                                                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)>;
-using handleOperationMoveToTrash = std::function<JobHandlePointer(const quint64 windowId,
+using HandleOperationMoveToTrash = std::function<JobHandlePointer(const quint64 windowId,
                                                                   const QList<QUrl> sources,
                                                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)>;
-using handleOperationRestoreFromTrash = std::function<JobHandlePointer(const quint64 windowId,
+using HandleOperationRestoreFromTrash = std::function<JobHandlePointer(const quint64 windowId,
                                                                        const QList<QUrl> sources,
                                                                        const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)>;
-using handleOperationDeletes = std::function<JobHandlePointer(const quint64 windowId,
+using HandleOperationDeletes = std::function<JobHandlePointer(const quint64 windowId,
                                                               const QList<QUrl> sources,
                                                               const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)>;
-using handleOperationOpenFiles = std::function<bool(const quint64 windowId,
+using HandleOperationOpenFiles = std::function<bool(const quint64 windowId,
                                                     const QList<QUrl> urls,
                                                     QString *)>;
 
-using handleOperationOpenFilesByApp = std::function<bool(const quint64 windowId,
+using HandleOperationOpenFilesByApp = std::function<bool(const quint64 windowId,
                                                          const QList<QUrl> urls,
                                                          const QList<QString> apps,
                                                          QString *)>;
 
-using handleOperationRenameFile = std::function<bool(const quint64 windowId,
+using HandleOperationRenameFile = std::function<bool(const quint64 windowId,
                                                      const QUrl oldUrl,
                                                      const QUrl newUrl,
                                                      QString *)>;
 
-using handleOperationMkdir = std::function<bool(const quint64 windowId,
+using HandleOperationMkdir = std::function<bool(const quint64 windowId,
                                                 const QUrl url,
                                                 QString *)>;
-using handleOperationTouchFile = std::function<bool(const quint64 windowId,
+using HandleOperationTouchFile = std::function<bool(const quint64 windowId,
                                                     const QUrl url,
                                                     QString *)>;
-using handleOperationLinkFile = std::function<bool(const quint64 windowId,
+using HandleOperationLinkFile = std::function<bool(const quint64 windowId,
                                                    const QUrl url,
                                                    const QUrl link,
                                                    QString *)>;
-using handleOperationSetPermission = std::function<bool(const quint64 windowId,
+using HandleOperationSetPermission = std::function<bool(const quint64 windowId,
                                                         const QUrl url,
                                                         const QFileDevice::Permissions permissions,
                                                         QString *)>;
-using handleOperationCopy = std::function<bool(const quint64 windowId,
-                                               const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
-                                               const QList<QUrl> urls)>;
-using handleOperationOpenInTerminal = std::function<bool(const quint64 windowId,
-                                                         const QUrl url,
+using HandleOperationWriteUrlsToClipboard = std::function<bool(const quint64 windowId,
+                                                               const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
+                                                               const QList<QUrl> urls)>;
+using HandleOperationOpenInTerminal = std::function<bool(const quint64 windowId,
+                                                         const QList<QUrl> urls,
                                                          QString *)>;
+using HandleOperationCleanTrash = std::function<JobHandlePointer(const quint64 windowId,
+                                                                 const QList<QUrl> sources)>;
+using HandleOperationWriteDataToClipboard = std::function<JobHandlePointer(const quint64 windowId,
+                                                                           const QMimeData *data)>;
 
 struct FileOperationsInfo
 {
-    handleOperationPaste paste { nullptr };
-    handleOperationCut cut { nullptr };
-    handleOperationMoveToTrash moveToTash { nullptr };
-    handleOperationRestoreFromTrash restoreFromTrash { nullptr };
-    handleOperationDeletes deletes { nullptr };
-    handleOperationOpenFiles openFiles { nullptr };
-    handleOperationOpenFilesByApp openFilesByApp { nullptr };
-    handleOperationRenameFile renameFile { nullptr };
-    handleOperationMkdir makedir { nullptr };
-    handleOperationTouchFile touchFile { nullptr };
-    handleOperationLinkFile linkFile { nullptr };
-    handleOperationSetPermission setPermission { nullptr };
-    handleOperationCopy copy { nullptr };
-    handleOperationOpenInTerminal openInTerminal { nullptr };
+    HandleOperationCopy copy { nullptr };
+    HandleOperationCut cut { nullptr };
+    HandleOperationMoveToTrash moveToTash { nullptr };
+    HandleOperationRestoreFromTrash restoreFromTrash { nullptr };
+    HandleOperationDeletes deletes { nullptr };
+    HandleOperationOpenFiles openFiles { nullptr };
+    HandleOperationOpenFilesByApp openFilesByApp { nullptr };
+    HandleOperationRenameFile renameFile { nullptr };
+    HandleOperationMkdir makedir { nullptr };
+    HandleOperationTouchFile touchFile { nullptr };
+    HandleOperationLinkFile linkFile { nullptr };
+    HandleOperationSetPermission setPermission { nullptr };
+    HandleOperationWriteUrlsToClipboard writeUrlsToClipboard { nullptr };
+    HandleOperationOpenInTerminal openInTerminal { nullptr };
+    HandleOperationCleanTrash cleanTrash { nullptr };
+    HandleOperationWriteDataToClipboard writeDataToClipboard { nullptr };
 };
 
 };   // namespace FileOperationsSpace

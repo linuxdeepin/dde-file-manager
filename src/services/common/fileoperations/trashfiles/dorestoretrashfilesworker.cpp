@@ -70,6 +70,8 @@ bool DoRestoreTrashFilesWorker::statisticsFilesSize()
 bool DoRestoreTrashFilesWorker::initArgs()
 {
     trashStorageInfo.reset(new QStorageInfo(StandardPaths::location(StandardPaths::kTrashFilesPath)));
+    trashInfoPath = StandardPaths::location(StandardPaths::kTrashInfosPath);
+    trashInfoPath = trashInfoPath.endsWith("/") ? trashInfoPath : trashInfoPath + "/";
     return AbstractWorker::initArgs();
 }
 /*!
@@ -100,7 +102,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
 
         QUrl restoreFileUrl;
 
-        if (!getRestoreFileUrl(fileInfo, restoreFileUrl, result)) {
+        if (!getRestoreFileUrl(fileInfo, restoreFileUrl, &result)) {
             if (result) {
                 compeleteFilesCount++;
                 continue;
@@ -117,6 +119,15 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             } else {
                 compeleteFilesCount++;
                 continue;
+            }
+        }
+
+        if (!createParentDir(fileInfo, restoreInfo, &result)) {
+            if (result) {
+                compeleteFilesCount++;
+                continue;
+            } else {
+                return false;
             }
         }
 
@@ -142,12 +153,12 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
  * \return Is it successful
  */
 bool DoRestoreTrashFilesWorker::getRestoreFileUrl(const AbstractFileInfoPointer &trashFileInfo,
-                                                  QUrl &restoreUrl, bool &result)
+                                                  QUrl &restoreUrl, bool *result)
 {
     restoreUrl.clear();
-    const QString &fileBaseName = trashFileInfo->baseName();
+    const QString &fileBaseName = trashFileInfo->fileName();
 
-    QString location(StandardPaths::location(StandardPaths::kTrashInfosPath) + fileBaseName + ".trashinfo");
+    QString location(trashInfoPath + fileBaseName + ".trashinfo");
     if (QFile::exists(location)) {
         QSettings setting(location, QSettings::NativeFormat);
 
@@ -160,7 +171,7 @@ bool DoRestoreTrashFilesWorker::getRestoreFileUrl(const AbstractFileInfoPointer 
     }
 
     if (!restoreUrl.isValid()) {
-        result = AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(trashFileInfo->url(), restoreUrl, restoreUrl, AbstractJobHandler::JobErrorType::kGetRestorePathError);
+        *result = AbstractJobHandler::SupportAction::kSkipAction == doHandleErrorAndWait(trashFileInfo->url(), restoreUrl, restoreUrl, AbstractJobHandler::JobErrorType::kGetRestorePathError);
         return false;
     }
 
@@ -180,15 +191,17 @@ bool DoRestoreTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer 
 
     emitCurrentTaskNotify(fromUrl, toUrl);
 
+    QDir parentDir(UrlRoute::urlParent(toUrl).path());
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+
     if (restoreInfo->exists()) {
         action = doHandleErrorAndWait(fromUrl, toUrl, toUrl, AbstractJobHandler::JobErrorType::kFileExistsError);
     } else {
         do {
-            QFile targetFile(trashInfo->symLinkTarget());
-            if (!targetFile.link(restoreInfo->filePath()))
+            QFile targetfile(trashInfo->symLinkTarget());
+            if (!targetfile.link(restoreInfo->filePath()))
                 // pause and emit error msg
-                action = doHandleErrorAndWait(fromUrl, toUrl, fromUrl, AbstractJobHandler::JobErrorType::kSymlinkError, targetFile.errorString());
+                action = doHandleErrorAndWait(fromUrl, toUrl, toUrl, AbstractJobHandler::JobErrorType::kSymlinkError, targetfile.errorString());
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
     }
     // 清理tashfileinfo
@@ -207,7 +220,7 @@ bool DoRestoreTrashFilesWorker::handleRestoreTrash(const AbstractFileInfoPointer
     const QUrl &fromUrl = trashInfo->url();
     const QUrl &toUrl = restoreInfo->url();
     emitCurrentTaskNotify(fromUrl, toUrl);
-
+    compeleteFilesCount++;
     if (restoreInfo->exists()) {
         AbstractJobHandler::SupportAction actionForExists { AbstractJobHandler::SupportAction::kNoAction };
         if (trashInfo->isFile()) {
@@ -217,26 +230,17 @@ bool DoRestoreTrashFilesWorker::handleRestoreTrash(const AbstractFileInfoPointer
         }
 
         if (actionForExists == AbstractJobHandler::SupportAction::kSkipAction) {
-            compeleteFilesCount++;
             return true;
         }
     }
 
-    AbstractJobHandler::SupportAction actionForRename = AbstractJobHandler::SupportAction::kNoAction;
-    do {
-        if (!handler->renameFile(fromUrl, toUrl)) {
-            actionForRename = doHandleErrorAndWait(fromUrl, toUrl, fromUrl, AbstractJobHandler::JobErrorType::kRenameError, handler->errorString());
-        }
-    } while (isStopped() && actionForRename == AbstractJobHandler::SupportAction::kRetryAction);
-
-    compeleteFilesCount++;
-
-    if (actionForRename == AbstractJobHandler::SupportAction::kSkipAction || actionForRename == AbstractJobHandler::SupportAction::kNoAction)
-        return true;
+    if (handler->renameFile(fromUrl, toUrl))
+        return clearTrashFile(fromUrl, toUrl, trashInfo, true);
 
     bool result = false;
+    QUrl parent = UrlRoute::urlParent(toUrl);
     // 检查磁盘空间是否不足
-    if (!checkDiskSpaceAvailable(fromUrl, toUrl, &result))
+    if (!checkDiskSpaceAvailable(fromUrl, parent, &result))
         return result;
 
     return doCopyAndClearTrashFile(trashInfo, restoreInfo);
@@ -248,11 +252,11 @@ bool DoRestoreTrashFilesWorker::handleRestoreTrash(const AbstractFileInfoPointer
  * \param trashInfo File information in Recycle Bin
  * \return Is the execution successful
  */
-bool DoRestoreTrashFilesWorker::clearTrashFile(const QUrl &fromUrl, const QUrl &toUrl, const AbstractFileInfoPointer &trashInfo)
+bool DoRestoreTrashFilesWorker::clearTrashFile(const QUrl &fromUrl, const QUrl &toUrl, const AbstractFileInfoPointer &trashInfo, const bool isSourceDel)
 {
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-    QString location(StandardPaths::location(StandardPaths::kTrashInfosPath) + trashInfo->baseName() + ".trashinfo");
-    bool resultFile = false;
+    QString location(trashInfoPath + trashInfo->fileName() + ".trashinfo");
+    bool resultFile = isSourceDel;
     bool resultInfo = false;
     do {
         if (!resultFile)
@@ -279,10 +283,7 @@ bool DoRestoreTrashFilesWorker::checkDiskSpaceAvailable(const QUrl &fromUrl, con
 {
 
     QSharedPointer<QStorageInfo> restoreStorage(new QStorageInfo(toUrl.path()));
-
-    FileOperateBaseWorker::checkDiskSpaceAvailable(fromUrl, toUrl, restoreStorage, result);
-
-    return true;
+    return FileOperateBaseWorker::checkDiskSpaceAvailable(fromUrl, toUrl, restoreStorage, result);
 }
 /*!
  * \brief DoRestoreTrashFilesWorker::doCopyAndClearTrashFile Copy and clean recycle bin files
@@ -315,11 +316,34 @@ bool DoRestoreTrashFilesWorker::doCopyAndClearTrashFile(const AbstractFileInfoPo
     if (trashInfo->isFile()) {
         if (!copyFile(trashInfo, restoreInfo, &result))
             return result;
-
     } else {
         if (!copyDir(trashInfo, restoreInfo, &result))
             return result;
     }
 
-    return clearTrashFile(trashUrl, restoreUrl, trashInfo);
+    compeleteFilesCount++;
+
+    return clearTrashFile(trashUrl, restoreUrl, trashInfo, false);
+}
+
+bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo, bool *result)
+{
+    const QUrl &fromUrl = trashInfo->url();
+    const QUrl &toUrl = restoreInfo->url();
+    QDir parentDir(UrlRoute::urlParent(toUrl).path());
+    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+    if (!parentDir.exists()) {
+        do {
+            if (parentDir.mkpath(UrlRoute::urlParent(toUrl).path()))
+                // pause and emit error msg
+                action = doHandleErrorAndWait(fromUrl, toUrl, toUrl, AbstractJobHandler::JobErrorType::kCreateParentDirError);
+        } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+
+        if (action != AbstractJobHandler::SupportAction::kNoAction) {
+            *result = action == AbstractJobHandler::SupportAction::kSkipAction;
+            return false;
+        }
+    }
+
+    return true;
 }

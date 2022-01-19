@@ -449,7 +449,7 @@ void DoMoveToTrashFilesWorker::isInSameDisk(const AbstractFileInfoPointer &fileI
     const QStorageInfo &sourceStorage = fileInfo->isSymLink() ? QStorageInfo(fileInfo->absolutePath())
                                                               : QStorageInfo(fileInfo->absoluteFilePath());
 
-    isSameDisk = sourceStorage.rootPath() == targetStorageInfo->rootPath();
+    isSameDisk = sourceStorage.device() == targetStorageInfo->device();
 }
 /*!
  * \brief DoMoveToTrashFilesWorker::doCopyAndDelete Execute file copy and delete source files

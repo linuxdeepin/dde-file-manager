@@ -223,3 +223,21 @@ JobHandlePointer FileCopyMoveJob::cut(const QList<QUrl> &sources, const QUrl &ta
 
     return jobHandle;
 }
+/*!
+ * \brief FileCopyMoveJob::cleanTrash 清理回收站文件
+ * 一个清理回收站的任务的源文件都是在同一目录下，所以源文件都是在同一个设备上。但是要清理
+ * \param sources 源文件的列表
+ * \return JobHandlePointer 任务控制器
+ */
+JobHandlePointer FileCopyMoveJob::cleanTrash(const QList<QUrl> &sources)
+{
+    if (!getOperationsAndDialogService()) {
+        qCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
+        return nullptr;
+    }
+
+    JobHandlePointer jobHandle = operationsService->cleanTrash(sources);
+    initArguments(jobHandle);
+
+    return jobHandle;
+}

@@ -53,7 +53,7 @@ public:
     virtual bool setPermissions(const QUrl &url, QFileDevice::Permissions permissions);
     virtual bool deleteFile(const QUrl &file);
     virtual bool setFileTime(const QUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime);
-
+    QString defaultTerminalPath();
     QString errorString();
 
 private:
@@ -66,7 +66,6 @@ private:
     QUrl smbFileUrl(const QString &filePath);
     QString getFileMimetypeFromGio(const QUrl &url);
     void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
-    QString defaultTerminalPath();
     QString getFileMimetype(const QString &path);
 
 private:

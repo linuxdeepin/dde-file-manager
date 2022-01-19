@@ -21,10 +21,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fileoperatebaseworker.h"
-
+#include "fileoperations/fileoperationutils/fileoperationsutils.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
 #include "dfm-base/base/schemefactory.h"
-#include "fileoperations/fileoperationutils/fileoperationsutils.h"
 
 #include <dfm-io/core/diofactory.h>
 #include <dfm-io/dfmio_register.h>

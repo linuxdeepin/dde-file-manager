@@ -23,6 +23,7 @@
 #include "fileoperationsutils.h"
 #include "dfm-base/base/urlroute.h"
 
+#include <QDirIterator>
 #include <QUrl>
 #include <QDebug>
 
@@ -38,7 +39,7 @@ extern "C" {
 #include <unistd.h>
 #include <sys/utsname.h>
 
-const static int kDefaultMemoryPageSize { 4096 };
+const static int kDefaultMemoryPageSize = 4096;
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -158,4 +159,25 @@ bool FileOperationsUtils::isFileOnDisk(const QUrl &url)
         return !g_mount_can_unmount(destDirMount);
     }
     return true;
+}
+
+QSharedPointer<QList<QUrl>> FileOperationsUtils::getDirFiles(const QUrl &url)
+{
+    DIR *dir = nullptr;
+    struct dirent *ptr = nullptr;
+    if ((dir = opendir(url.path().toStdString().data())) == nullptr) {
+        qCritical() << "Open dir error by system c opendir function";
+        return nullptr;
+    }
+
+    QSharedPointer<QList<QUrl>> files(new QList<QUrl>());
+    while ((ptr = readdir(dir)) != nullptr) {
+        if (strcmp(ptr->d_name, ".") == 0 || strcmp(ptr->d_name, "..") == 0) {
+            continue;
+        } else if (ptr->d_type == 4 || ptr->d_type == 8 || ptr->d_type == 10) {
+            files->append(QUrl::fromLocalFile(ptr->d_name));
+        }
+    }
+
+    return files;
 }

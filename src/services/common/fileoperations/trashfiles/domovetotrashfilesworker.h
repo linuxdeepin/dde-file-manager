@@ -32,11 +32,10 @@
 
 #include <dfm-io/core/dfile.h>
 
-class QStorageInfo;
-
 USING_IO_NAMESPACE
 DSC_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
+class StorageInfo;
 class DoMoveToTrashFilesWorker : public FileOperateBaseWorker
 {
     friend class MoveToTrashFiles;

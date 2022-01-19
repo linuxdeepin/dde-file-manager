@@ -41,14 +41,17 @@ enum class ViewMode {
     kExtendMode = 0x04,
     kAllViewMode = kIconMode | kListMode | kExtendMode
 };
-using CreateFileCallback = void (*)(const quint64 windowId, const QUrl url, const bool successed);
-using SetFilePermissionCallback = void (*)(const quint64 windowId, const QUrl url, const bool successed);
-using RenameFileCallback = void (*)(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl,
-                                    const bool successed);
-using LinkFileCallback = void (*)(const quint64 windowId, const QUrl url, const QUrl link,
-                                  const bool successed);
-using CopyMoveFileCallback = void (*)(const quint64 windowId, JobHandlePointer handle);
-using OpenFilesCallback = void (*)(const quint64 windowId, const QList<QUrl>, const bool successed);
+enum class CallbackKey : uint8_t {
+    kWindowId,   // quint64 windowId
+    kSuccessed,   // bool
+    kSourceUrls,   // QList<QUrl>
+    kTargets,   // QList<QUrl>
+    kJobHandle,   // JobHandlePointer
+    kCustom,   // QVariant
+};
+using CallbackArgus = QSharedPointer<QMap<CallbackKey, QVariant>>;
+using OperaterCallback = void (*)(const CallbackArgus args);
+
 enum CreateFileType : uint8_t {
     kCreateFileTypeUnknow = 0,
     kCreateFileTypeFolder,
@@ -56,16 +59,14 @@ enum CreateFileType : uint8_t {
     kCreateFileTypeExcel,
     kCreateFileTypeWord,
     kCreateFileTypePowerpoint,
+    kCreateFileTypeDefault = 0xff,
 };
 }   //namespace Global
 
 DFMBASE_END_NAMESPACE
 
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::CreateFileType);
-Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::CreateFileCallback);
-Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::RenameFileCallback);
-Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::CopyMoveFileCallback);
-Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OpenFilesCallback);
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OperaterCallback);
 
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::ViewMode);
 

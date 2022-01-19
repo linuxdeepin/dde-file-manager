@@ -51,10 +51,10 @@ public:
     void connectService();
 
 public slots:
-    JobHandlePointer handleOperationPaste(const quint64 windowId,
-                                          const QList<QUrl> sources,
-                                          const QUrl target,
-                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    JobHandlePointer handleOperationCopy(const quint64 windowId,
+                                         const QList<QUrl> sources,
+                                         const QUrl target,
+                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
     JobHandlePointer handleOperationCut(const quint64 windowId,
                                         const QList<QUrl> sources,
                                         const QUrl target,
@@ -68,90 +68,109 @@ public slots:
     JobHandlePointer handleOperationDeletes(const quint64 windowId,
                                             const QList<QUrl> sources,
                                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    void handleOperationPaste(const quint64 windowId,
-                              const QList<QUrl> sources,
-                              const QUrl target,
-                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                              DFMBASE_NAMESPACE::Global::CopyMoveFileCallback callback);
+    JobHandlePointer handleOperationCleanTrash(const quint64 windowId,
+                                               const QList<QUrl> sources);
+    void handleOperationCopy(const quint64 windowId,
+                             const QList<QUrl> sources,
+                             const QUrl target,
+                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                             DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     void handleOperationCut(const quint64 windowId,
                             const QList<QUrl> sources,
                             const QUrl target,
                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                            DFMBASE_NAMESPACE::Global::CopyMoveFileCallback callback);
+                            DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     void handleOperationMoveToTrash(const quint64 windowId,
                                     const QList<QUrl> sources,
                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                    DFMBASE_NAMESPACE::Global::CopyMoveFileCallback callback);
+                                    DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     void handleOperationRestoreFromTrash(const quint64 windowId,
                                          const QList<QUrl> sources,
                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                         DFMBASE_NAMESPACE::Global::CopyMoveFileCallback callback);
+                                         DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     void handleOperationDeletes(const quint64 windowId,
                                 const QList<QUrl> sources,
                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                DFMBASE_NAMESPACE::Global::CopyMoveFileCallback callback);
+                                DFMBASE_NAMESPACE::Global::OperaterCallback callback);
+    void handleOperationCleanTrash(const quint64 windowId,
+                                   const QList<QUrl> sources,
+                                   DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     bool handleOperationOpenFiles(const quint64 windowId,
                                   const QList<QUrl> urls);
     void handleOperationOpenFiles(const quint64 windowId,
                                   const QList<QUrl> urls,
-                                  DFMBASE_NAMESPACE::Global::OpenFilesCallback callback);
+                                  const QVariant custom,
+                                  DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     bool handleOperationOpenFilesByApp(const quint64 windowId,
                                        const QList<QUrl> urls,
                                        const QList<QString> apps);
     void handleOperationOpenFilesByApp(const quint64 windowId,
                                        const QList<QUrl> urls,
                                        const QList<QString> apps,
-                                       DFMBASE_NAMESPACE::Global::OpenFilesCallback callback);
+                                       const QVariant custom,
+                                       DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     bool handleOperationRenameFile(const quint64 windowId,
                                    const QUrl oldUrl,
                                    const QUrl newUrl);
     void handleOperationRenameFile(const quint64 windowId,
                                    const QUrl oldUrl,
                                    const QUrl newUrl,
-                                   DFMBASE_NAMESPACE::Global::RenameFileCallback callback);
+                                   const QVariant custom,
+                                   DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     QString handleOperationMkdir(const quint64 windowId,
                                  const QUrl url,
                                  const DFMBASE_NAMESPACE::Global::CreateFileType fileType);
     void handleOperationMkdir(const quint64 windowId,
                               const QUrl url,
                               const DFMBASE_NAMESPACE::Global::CreateFileType fileType,
-                              DFMBASE_NAMESPACE::Global::CreateFileCallback callBack);
+                              const QVariant custom,
+                              DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     bool handleOperationMkdir(const quint64 windowId,
                               const QUrl url);
     void handleOperationMkdir(const quint64 windowId,
                               const QUrl url,
-                              DFMBASE_NAMESPACE::Global::CreateFileCallback callBack);
+                              const QVariant custom,
+                              DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     bool handleOperationTouchFile(const quint64 windowId,
                                   const QUrl url);
     void handleOperationTouchFile(const quint64 windowId,
                                   const QUrl url,
-                                  DFMBASE_NAMESPACE::Global::CreateFileCallback callBack);
+                                  const QVariant custom,
+                                  DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     QString handleOperationTouchFile(const quint64 windowId,
                                      const QUrl url,
-                                     const DFMBASE_NAMESPACE::Global::CreateFileType fileType);
+                                     const DFMBASE_NAMESPACE::Global::CreateFileType fileType,
+                                     const QString suffix);
     void handleOperationTouchFile(const quint64 windowId,
                                   const QUrl url,
                                   const DFMBASE_NAMESPACE::Global::CreateFileType fileType,
-                                  DFMBASE_NAMESPACE::Global::CreateFileCallback callBack);
+                                  const QString suffix,
+                                  const QVariant custom,
+                                  DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     bool handleOperationLinkFile(const quint64 windowId,
                                  const QUrl url,
                                  const QUrl link);
     void handleOperationLinkFile(const quint64 windowId,
                                  const QUrl url,
                                  const QUrl link,
-                                 DFMBASE_NAMESPACE::Global::LinkFileCallback callback);
+                                 const QVariant custom,
+                                 DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     bool handleOperationSetPermission(const quint64 windowId,
                                       const QUrl url,
                                       const QFileDevice::Permissions permissions);
     void handleOperationSetPermission(const quint64 windowId,
                                       const QUrl url,
                                       const QFileDevice::Permissions permissions,
-                                      DFMBASE_NAMESPACE::Global::SetFilePermissionCallback callBack);
+                                      const QVariant custom,
+                                      DFMBASE_NAMESPACE::Global::OperaterCallback callBack);
     bool handleOperationWriteToClipboard(const quint64 windowId,
                                          const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
                                          const QList<QUrl> urls);
+    bool handleOperationWriteDataToClipboard(const quint64 windowId,
+                                             QMimeData *data);
     bool handleOperationOpenInTerminal(const quint64 windowId,
-                                       const QUrl url);
+                                       const QList<QUrl> urls);
+
 private slots:
     void invokeRegister(const QString scheme, const FileOperationsFunctions functions);
     void invokeUnregister(const QString scheme);
@@ -161,11 +180,11 @@ private:
     bool initService();
     bool getDialogService();
     QString newDocmentName(const QString targetdir,
+                           const QString suffix,
                            const DFMBASE_NAMESPACE::Global::CreateFileType fileType);
     QString newDocmentName(QString targetdir,
                            const QString &baseName,
                            const QString &suffix);
-    QString defaultTerminalPath();
 
 private:
     QSharedPointer<FileCopyMoveJob> copyMoveJob { nullptr };

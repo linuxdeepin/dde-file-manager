@@ -66,6 +66,7 @@ class FileOperationsUtils
     friend class DoCutFilesWorker;
     friend class DoStatisticsFilesWorker;
     friend class DoMoveToTrashFilesWorker;
+    friend class DoCleanTrashFilesWorker;
     friend class DoRestoreTrashFilesWorker;
     friend class FileOperateBaseWorker;
 
@@ -85,6 +86,7 @@ private:
     static void statisticFilesSize(const QUrl &url, QSharedPointer<FilesSizeInfo> &sizeInfo, const bool &isRecordUrl = false);
     static bool isAncestorUrl(const QUrl &from, const QUrl &to);
     static bool isFileOnDisk(const QUrl &url);
+    static QSharedPointer<QList<QUrl>> getDirFiles(const QUrl &url);
 };
 typedef QSharedPointer<FileOperationsUtils::FilesSizeInfo> SizeInfoPoiter;
 DSC_END_NAMESPACE

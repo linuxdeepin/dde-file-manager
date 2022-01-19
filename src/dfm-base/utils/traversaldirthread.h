@@ -52,7 +52,8 @@ public:
     void stopAndDeleteLater();
 
 Q_SIGNALS:
-    void updateChildren(const QList<QUrl> &children);
+    void updateChildrens(const QList<QUrl> &children);
+    void updateChildren(const QUrl url);
     void stoped();
 
 protected:

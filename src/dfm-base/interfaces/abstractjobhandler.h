@@ -93,6 +93,8 @@ public:
         kMakeStandardTrashError,   // 回收站目录错误
         kGetRestorePathError,   // 获取回收站文件信息失败
         kDeleteTrashFileError,   // 删除回收站文件错误
+        kIsNotTrashFileError,   // 不是回收站文件
+        kCreateParentDirError,   // 创建父目录失败
         kUnknowError,   // 未知错误
     };
     Q_ENUM(JobErrorType)
@@ -102,6 +104,7 @@ public:
         kDeleteTpye,   // 删除任务
         kMoveToTrashType,   //移动到回收站
         kRestoreType,   // 从回收站还原
+        kCleanTrashType,   // 清理回收站
         kUnknow
     };
     Q_ENUM(JobType)

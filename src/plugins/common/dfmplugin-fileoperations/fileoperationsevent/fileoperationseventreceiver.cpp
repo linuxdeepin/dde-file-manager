@@ -94,9 +94,10 @@ bool FileOperationsEventReceiver::getDialogService()
 }
 
 QString FileOperationsEventReceiver::newDocmentName(QString targetdir,
+                                                    const QString suffix,
                                                     const CreateFileType fileType)
 {
-    QString suffix;
+    QString suffixex;
     QString baseName;
     switch (fileType) {
     case CreateFileType::kCreateFileTypeFolder:
@@ -104,24 +105,28 @@ QString FileOperationsEventReceiver::newDocmentName(QString targetdir,
         break;
     case CreateFileType::kCreateFileTypeText:
         baseName = QObject::tr("Text");
-        suffix = "txt";
+        suffixex = "txt";
         break;
     case CreateFileType::kCreateFileTypeWord:
         baseName = QObject::tr("Document");
-        suffix = DFMBASE_NAMESPACE::WindowUtils::isWayLand() ? "wps" : "doc";
+        suffixex = DFMBASE_NAMESPACE::WindowUtils::isWayLand() ? "wps" : "doc";
         break;
     case CreateFileType::kCreateFileTypeExcel:
         baseName = QObject::tr("Spreadsheet");
-        suffix = DFMBASE_NAMESPACE::WindowUtils::isWayLand() ? "et" : "xls";
+        suffixex = DFMBASE_NAMESPACE::WindowUtils::isWayLand() ? "et" : "xls";
         break;
     case CreateFileType::kCreateFileTypePowerpoint:
         baseName = QObject::tr("Presentation");
-        suffix = DFMBASE_NAMESPACE::WindowUtils::isWayLand() ? "dps" : "ppt";
+        suffixex = DFMBASE_NAMESPACE::WindowUtils::isWayLand() ? "dps" : "ppt";
+        break;
+    case CreateFileType::kCreateFileTypeDefault:
+        baseName = QObject::tr("New File");
+        suffixex = suffix;
         break;
     default:
         return QString();
     }
-    return newDocmentName(targetdir, baseName, suffix);
+    return newDocmentName(targetdir, baseName, suffixex);
 }
 
 QString FileOperationsEventReceiver::newDocmentName(QString targetdir,
@@ -148,20 +153,6 @@ QString FileOperationsEventReceiver::newDocmentName(QString targetdir,
     }
 }
 
-QString FileOperationsEventReceiver::defaultTerminalPath()
-{
-    const static QString ddeDaemonDefaultTerm = QStringLiteral("/usr/lib/deepin-daemon/default-terminal");
-    const static QString debianXTermEmu = QStringLiteral("/usr/bin/x-terminal-emulator");
-
-    if (QFileInfo::exists(ddeDaemonDefaultTerm)) {
-        return ddeDaemonDefaultTerm;
-    } else if (QFileInfo::exists(debianXTermEmu)) {
-        return debianXTermEmu;
-    }
-
-    return QStandardPaths::findExecutable("xterm");
-}
-
 FileOperationsEventReceiver *FileOperationsEventReceiver::instance()
 {
     static FileOperationsEventReceiver receiver;
@@ -174,10 +165,10 @@ void FileOperationsEventReceiver::connectService()
     dpfInstance.eventUnicast().connect("dfm_service_common::FileOperationsService::unregisterOperations", this, &FileOperationsEventReceiver::invokeUnregister);
 }
 
-JobHandlePointer FileOperationsEventReceiver::handleOperationPaste(const quint64 windowId,
-                                                                   const QList<QUrl> sources,
-                                                                   const QUrl target,
-                                                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
+JobHandlePointer FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
+                                                                  const QList<QUrl> sources,
+                                                                  const QUrl target,
+                                                                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
 {
     Q_UNUSED(windowId);
     if (!sources.isEmpty() && !sources.first().isLocalFile()) {
@@ -186,8 +177,8 @@ JobHandlePointer FileOperationsEventReceiver::handleOperationPaste(const quint64
             QMutexLocker lk(functionsMutex.data());
             function = this->functions.value(sources.first().scheme());
         }
-        if (function && function->paste) {
-            return function->paste(windowId, sources, target, flags);
+        if (function && function->copy) {
+            return function->copy(windowId, sources, target, flags);
         }
     }
     return copyMoveJob->copy(sources, target, flags);
@@ -259,56 +250,103 @@ JobHandlePointer FileOperationsEventReceiver::handleOperationDeletes(const quint
     return copyMoveJob->deletes(sources, flags);
 }
 
-void FileOperationsEventReceiver::handleOperationPaste(const quint64 windowId,
-                                                       const QList<QUrl> sources,
-                                                       const QUrl target,
-                                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                       DFMBASE_NAMESPACE::Global::CopyMoveFileCallback callback)
+JobHandlePointer FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 windowId, const QList<QUrl> sources)
+{
+    Q_UNUSED(windowId);
+    if (!sources.isEmpty() && !sources.first().isLocalFile()) {
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(sources.first().scheme());
+        }
+        if (function && function->cleanTrash) {
+            return function->cleanTrash(windowId, sources);
+        }
+    }
+    return copyMoveJob->cleanTrash(sources);
+}
+
+void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
+                                                      const QList<QUrl> sources,
+                                                      const QUrl target,
+                                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                                      DFMBASE_NAMESPACE::Global::OperaterCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->copy(sources, target, flags);
-    if (callback)
-        callback(windowId, handle);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        callback(args);
+    }
 }
 
 void FileOperationsEventReceiver::handleOperationCut(const quint64 windowId,
                                                      const QList<QUrl> sources,
                                                      const QUrl target,
                                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                     DFMBASE_NAMESPACE::Global::CopyMoveFileCallback callback)
+                                                     DFMBASE_NAMESPACE::Global::OperaterCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->cut(sources, target, flags);
-    if (callback)
-        callback(windowId, handle);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        callback(args);
+    }
 }
 
 void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windowId,
                                                              const QList<QUrl> sources,
                                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                             DFMBASE_NAMESPACE::Global::CopyMoveFileCallback callback)
+                                                             DFMBASE_NAMESPACE::Global::OperaterCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->moveToTrash(sources, flags);
-    if (callback)
-        callback(windowId, handle);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        callback(args);
+    }
 }
 
 void FileOperationsEventReceiver::handleOperationRestoreFromTrash(const quint64 windowId,
                                                                   const QList<QUrl> sources,
                                                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                                  DFMBASE_NAMESPACE::Global::CopyMoveFileCallback callback)
+                                                                  DFMBASE_NAMESPACE::Global::OperaterCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->restoreFromTrash(sources, flags);
-    if (callback)
-        callback(windowId, handle);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        callback(args);
+    }
 }
 
 void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          const QList<QUrl> sources,
                                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                         DFMBASE_NAMESPACE::Global::CopyMoveFileCallback callback)
+                                                         DFMBASE_NAMESPACE::Global::OperaterCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->deletes(sources, flags);
-    if (callback)
-        callback(windowId, handle);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        callback(args);
+    }
+}
+
+void FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 windowId, const QList<QUrl> sources, OperaterCallback callback)
+{
+    JobHandlePointer handle = copyMoveJob->deletes(sources);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        callback(args);
+    }
 }
 
 bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowId,
@@ -346,21 +384,35 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
 
 void FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowId,
                                                            const QList<QUrl> urls,
-                                                           DFMBASE_NAMESPACE::Global::OpenFilesCallback callback)
+                                                           const QVariant custom,
+                                                           DFMBASE_NAMESPACE::Global::OperaterCallback callback)
 {
     bool ok = handleOperationOpenFiles(windowId, urls);
-    if (callback)
-        callback(windowId, urls, ok);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(urls));
+        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
 }
 
 void FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 windowId,
                                                                 const QList<QUrl> urls,
                                                                 const QList<QString> apps,
-                                                                DFMBASE_NAMESPACE::Global::OpenFilesCallback callback)
+                                                                const QVariant custom,
+                                                                DFMBASE_NAMESPACE::Global::OperaterCallback callback)
 {
     bool ok = handleOperationOpenFilesByApp(windowId, urls, apps);
-    if (callback)
-        callback(windowId, urls, ok);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(urls));
+        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
 }
 
 bool FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 windowId,
@@ -440,19 +492,26 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
 
 void FileOperationsEventReceiver::handleOperationRenameFile(const quint64 windowId,
                                                             const QUrl oldUrl,
-                                                            const QUrl newUrl,
-                                                            RenameFileCallback callback)
+                                                            const QUrl newUrl, const QVariant custom,
+                                                            OperaterCallback callback)
 {
     bool ok = handleOperationRenameFile(windowId, oldUrl, newUrl);
-    if (callback)
-        callback(windowId, oldUrl, newUrl, ok);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << oldUrl));
+        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << oldUrl));
+        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
 }
 
 QString FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
                                                           const QUrl url,
                                                           const CreateFileType fileType)
 {
-    QString newPath = newDocmentName(url.path(), fileType);
+    QString newPath = newDocmentName(url.path(), QString(), fileType);
     if (newPath.isEmpty())
         return newPath;
 
@@ -462,20 +521,34 @@ QString FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId
 void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
                                                        const QUrl url,
                                                        CreateFileType fileType,
-                                                       CreateFileCallback callBack)
+                                                       const QVariant custom,
+                                                       OperaterCallback callback)
 {
     QString newPath = handleOperationMkdir(windowId, url, fileType);
-    if (callBack)
-        callBack(windowId, QUrl::fromLocalFile(newPath), !newPath.isEmpty());
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << QUrl::fromLocalFile(newPath)));
+        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(!newPath.isEmpty()));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
 }
 
 void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
-                                                       const QUrl url,
-                                                       CreateFileCallback callBack)
+                                                       const QUrl url, const QVariant custom,
+                                                       OperaterCallback callback)
 {
     bool ok = handleOperationMkdir(windowId, url);
-    if (callBack)
-        callBack(windowId, url, ok);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
 }
 
 bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
@@ -549,19 +622,25 @@ bool FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
 }
 
 void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
-                                                           const QUrl url,
-                                                           CreateFileCallback callBack)
+                                                           const QUrl url, const QVariant custom,
+                                                           OperaterCallback callback)
 {
     bool ok = handleOperationTouchFile(windowId, url);
-    if (callBack)
-        callBack(windowId, url, ok);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
 }
 
 QString FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
                                                               const QUrl url,
-                                                              const CreateFileType fileType)
+                                                              const CreateFileType fileType, const QString suffix)
 {
-    QString newPath = newDocmentName(url.path(), fileType);
+    QString newPath = newDocmentName(url.path(), suffix, fileType);
     if (newPath.isEmpty())
         return newPath;
 
@@ -571,11 +650,20 @@ QString FileOperationsEventReceiver::handleOperationTouchFile(const quint64 wind
 void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
                                                            const QUrl url,
                                                            const CreateFileType fileType,
-                                                           CreateFileCallback callBack)
+                                                           const QString suffix,
+                                                           const QVariant custom,
+                                                           OperaterCallback callback)
 {
-    QString newPath = handleOperationTouchFile(windowId, url, fileType);
-    if (callBack)
-        callBack(windowId, QUrl::fromLocalFile(newPath), !newPath.isEmpty());
+    QString newPath = handleOperationTouchFile(windowId, url, fileType, suffix);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << QUrl::fromLocalFile(newPath)));
+        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(!newPath.isEmpty()));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
 }
 
 bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId,
@@ -616,12 +704,20 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
 
 void FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId,
                                                           const QUrl url,
-                                                          const QUrl link,
-                                                          DFMBASE_NAMESPACE::Global::LinkFileCallback callback)
+                                                          const QUrl link, const QVariant custom,
+                                                          DFMBASE_NAMESPACE::Global::OperaterCallback callback)
 {
     bool ok = handleOperationLinkFile(windowId, url, link);
-    if (callback)
-        callback(windowId, url, link, ok);
+
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << link));
+        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
 }
 
 bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 windowId,
@@ -661,12 +757,18 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
 
 void FileOperationsEventReceiver::handleOperationSetPermission(const quint64 windowId,
                                                                const QUrl url,
-                                                               const QFileDevice::Permissions permissions,
-                                                               DFMBASE_NAMESPACE::Global::SetFilePermissionCallback callBack)
+                                                               const QFileDevice::Permissions permissions, const QVariant custom,
+                                                               DFMBASE_NAMESPACE::Global::OperaterCallback callback)
 {
     bool ok = handleOperationSetPermission(windowId, url, permissions);
-    if (callBack)
-        callBack(windowId, url, ok);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
 }
 
 bool FileOperationsEventReceiver::handleOperationWriteToClipboard(const quint64 windowId,
@@ -680,8 +782,8 @@ bool FileOperationsEventReceiver::handleOperationWriteToClipboard(const quint64 
             QMutexLocker lk(functionsMutex.data());
             function = this->functions.value(urls.first().scheme());
         }
-        if (function && function->copy) {
-            function->copy(windowId, action, urls);
+        if (function && function->writeUrlsToClipboard) {
+            function->writeUrlsToClipboard(windowId, action, urls);
             return true;
         }
     }
@@ -689,39 +791,60 @@ bool FileOperationsEventReceiver::handleOperationWriteToClipboard(const quint64 
     return true;
 }
 
-bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 windowId, const QUrl url)
+bool FileOperationsEventReceiver::handleOperationWriteDataToClipboard(const quint64 windowId, QMimeData *data)
+{
+    Q_UNUSED(windowId);
+    if (!data) {
+        qWarning() << " write to clipboard data is nullptr!!!!!!!";
+        return false;
+    }
+
+    DFMBASE_NAMESPACE::ClipBoard::instance()->setDataToClipboard(data);
+    return true;
+}
+
+bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 windowId, const QList<QUrl> urls)
 {
     QString error;
     bool ok = false;
-    if (!url.isLocalFile()) {
+    bool result = false;
+    QSharedPointer<LocalFileHandler> filehandler = nullptr;
+    if (urls.count() > 0 && !urls.first().isLocalFile()) {
         FileOperationsFunctions function { nullptr };
         {
             QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(url.scheme());
+            function = this->functions.value(urls.first().scheme());
         }
         if (function && function->openInTerminal) {
-            ok = function->openInTerminal(windowId, url, &error);
+            ok = function->openInTerminal(windowId, urls, &error);
+            if (!result)
+                result = ok;
             if (!ok && getDialogService()) {
                 dialogService->showErrorDialog("open file in terminal error", error);
             }
             // TODO:: open file in terminal finished need to send open file in terminal finished event
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenInTerminalResult,
-                                                  windowId, QList<QUrl>() << url, ok, error);
+            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
+                                                  windowId, urls, result, error);
             return ok;
         }
     }
 
-    const QString &current_dir = QDir::currentPath();
-
-    QDir::setCurrent(url.toLocalFile());
-
-    ok = QProcess::startDetached(defaultTerminalPath());
-
-    QDir::setCurrent(current_dir);
+    for (const auto &url : urls) {
+        const QString &current_dir = QDir::currentPath();
+        QDir::setCurrent(url.toLocalFile());
+        if (!url.isLocalFile()) {
+        }
+        if (filehandler.isNull())
+            filehandler.reset(new LocalFileHandler());
+        ok = QProcess::startDetached(filehandler->defaultTerminalPath());
+        if (!result)
+            result = ok;
+        QDir::setCurrent(current_dir);
+    }
 
     // TODO:: open file in terminal finished need to send open file in terminal finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
-                                          windowId, QList<QUrl>() << url, ok, error);
+                                          windowId, urls, result, error);
 
     return ok;
 }

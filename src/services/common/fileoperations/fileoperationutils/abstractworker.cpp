@@ -29,8 +29,8 @@
 #include <QDebug>
 #include <QWaitCondition>
 #include <QMutex>
-#include <QStorageInfo>
 #include <QApplication>
+#include <QStorageInfo>
 #include <QRegularExpression>
 
 DSC_USE_NAMESPACE
@@ -166,7 +166,7 @@ void AbstractWorker::startCountProccess()
 bool AbstractWorker::statisticsFilesSize()
 {
     if (sourceUrls.isEmpty()) {
-        qWarning() << "delete sources files list is empty!";
+        qWarning() << "sources files list is empty!";
         return false;
     }
     // 判读源文件所在设备位置，执行异步或者同统计源文件大小
@@ -339,6 +339,8 @@ JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &t
     } else if (AbstractJobHandler::JobType::kRestoreType == jobType) {
         fromMsg = QString(QObject::tr("restore file %1 from trash ")).arg(from.path());
         toMsg = QString(QObject::tr("to %1")).arg(to.path());
+    } else if (AbstractJobHandler::JobType::kCleanTrashType == jobType) {
+        fromMsg = QString(QObject::tr("clean trash file %1  ")).arg(from.path());
     }
     info->insert(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey, QVariant::fromValue(fromMsg));
     info->insert(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey, QVariant::fromValue(toMsg));

@@ -32,7 +32,6 @@ class QObject;
 class QStorageInfo;
 
 DSC_BEGIN_NAMESPACE
-
 class FileOperateBaseWorker : public AbstractWorker
 {
 public:

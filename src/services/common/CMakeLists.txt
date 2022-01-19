@@ -25,6 +25,8 @@ FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/cutfiles/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/deletefiles/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/deletefiles/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/cleantrash/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/cleantrash/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/trashfiles/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/trashfiles/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/fileoperationutils/*.h"

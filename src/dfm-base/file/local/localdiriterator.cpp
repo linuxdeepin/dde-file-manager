@@ -26,8 +26,11 @@
 #include "base/schemefactory.h"
 
 #include <dfm-io/local/dlocalenumerator.h>
+#include <dfm-io/core/denumerator.h>
 
-DFMBASE_BEGIN_NAMESPACE
+USING_IO_NAMESPACE
+DFMBASE_USE_NAMESPACE
+
 LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
                                                  const QStringList &nameFilters,
                                                  QDir::Filters filters,
@@ -46,7 +49,9 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
         abort();
     }
 
-    dfmioDirIterator = factory->createEnumerator();
+    dfmioDirIterator = factory->createEnumerator(nameFilters,
+                                                 static_cast<DEnumerator::DirFilter>(static_cast<int>(filters)),
+                                                 static_cast<DEnumerator::IteratorFlag>(static_cast<qint8>(flags)));
     if (!dfmioDirIterator) {
         qWarning("Failed dfm-io use factory create enumerator");
         abort();
@@ -93,19 +98,6 @@ QUrl LocalDirIterator::next()
  */
 bool LocalDirIterator::hasNext() const
 {
-    if (d->curFilters.testFlag(QDir::Hidden)) {
-        while (d->dfmioDirIterator && d->dfmioDirIterator->hasNext()) {
-            d->isCurrent = true;
-            const QString &path = d->dfmioDirIterator->next();
-            d->currentUrl = QUrl::fromLocalFile(path);
-
-            if (d->currentUrl.isValid() && !d->currentUrl.path().startsWith("/."))
-                return true;
-        }
-
-        return false;
-    }
-
     if (d->dfmioDirIterator)
         return d->dfmioDirIterator->hasNext();
 
@@ -163,5 +155,3 @@ QUrl LocalDirIterator::url() const
 
     return QUrl();
 }
-
-DFMBASE_END_NAMESPACE

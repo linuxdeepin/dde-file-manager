@@ -33,7 +33,6 @@
 #include <QObject>
 
 class QStorageInfo;
-
 USING_IO_NAMESPACE
 DSC_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -53,17 +52,21 @@ protected:
 
 protected:
     bool doRestoreTrashFiles();
-    bool getRestoreFileUrl(const AbstractFileInfoPointer &trashFileInfo, QUrl &restoreUrl, bool &result);
+    bool getRestoreFileUrl(const AbstractFileInfoPointer &trashFileInfo, QUrl &restoreUrl, bool *result);
     bool handleSymlinkFile(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo);
     bool handleRestoreTrash(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo);
-    bool clearTrashFile(const QUrl &fromUrl, const QUrl &toUrl, const AbstractFileInfoPointer &trashInfo);
+    bool clearTrashFile(const QUrl &fromUrl, const QUrl &toUrl, const AbstractFileInfoPointer &trashInfo,
+                        const bool isSourceDel = false);
     //check disk space available before do move job
     bool checkDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl, bool *result);
     bool doCopyAndClearTrashFile(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo);
+    bool createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo,
+                         bool *result);
 
 private:
     QAtomicInteger<qint64> compeleteFilesCount { 0 };   // move to trash success file count
     QSharedPointer<QStorageInfo> trashStorageInfo { nullptr };   // target file's device infor
+    QString trashInfoPath;
 };
 
 DSC_END_NAMESPACE

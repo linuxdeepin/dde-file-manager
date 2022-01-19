@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DELETEFILES_H
-#define DELETEFILES_H
+#ifndef CLEANTRASHFILES_H
+#define CLEANTRASHFILES_H
 
 #include "fileoperations/fileoperationutils/abstractjob.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
@@ -31,15 +31,15 @@
 
 DFMBASE_USE_NAMESPACE
 DSC_BEGIN_NAMESPACE
-class DeleteFiles : public AbstractJob
+class CleanTrashFiles : public AbstractJob
 {
     Q_OBJECT
     friend class FileOperationsService;
-    explicit DeleteFiles(QObject *parent = nullptr);
+    explicit CleanTrashFiles(QObject *parent = nullptr);
 
 public:
-    ~DeleteFiles() override;
+    ~CleanTrashFiles() override;
 };
 DSC_END_NAMESPACE
 
-#endif   // DELETEFILES_H
+#endif   // CLEANTRASHFILES_H

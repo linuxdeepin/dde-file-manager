@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     lanxuesong<liyigang@uniontech.com>
+ * Author:     liyigang<liyigang@uniontech.com>
  *
  * Maintainer: max-lv<lvwujun@uniontech.com>
  *             lanxuesong<lanxuesong@uniontech.com>
@@ -20,54 +20,48 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DOCUTFILESWORKER_H
-#define DOCUTFILESWORKER_H
+#ifndef DOCLEANTRASHFILESWORKER_H
+#define DOCLEANTRASHFILESWORKER_H
 
 #include "dfm_common_service_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "fileoperations/fileoperationutils/abstractworker.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
-#include "fileoperations/fileoperationutils/fileoperatebaseworker.h"
-
-#include "dfm-io/core/dfile.h"
 
 #include <QObject>
 
 DSC_BEGIN_NAMESPACE
-
-class DoCutFilesWorker : public FileOperateBaseWorker
+DFMBASE_USE_NAMESPACE
+class DoCleanTrashFilesWorker : public AbstractWorker
 {
-    friend class CutFiles;
+    friend class CleanTrashFiles;
     Q_OBJECT
-    explicit DoCutFilesWorker(QObject *parent = nullptr);
+    explicit DoCleanTrashFilesWorker(QObject *parent = nullptr);
 
 public:
-    virtual ~DoCutFilesWorker() override;
+    virtual ~DoCleanTrashFilesWorker() override;
 
 protected:
     bool doWork() override;
-    void stop() override;
-    bool initArgs() override;
     void onUpdateProccess() override;
+    bool statisticsFilesSize() override;
+    bool initArgs() override;
+    void doOperateWork(AbstractJobHandler::SupportActions actions) override;
+    AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error) override;
 
-    bool cutFiles();
-    bool doCutFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo);
-    bool doRenameFile(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo);
-    bool renameFileByHandler(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo);
-
-    void emitCompleteFilesUpdatedNotify(const qint64 &writCount);
-    AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from, const QUrl &to,
+protected:
+    bool cleanAllTrashFiles();
+    bool clearTrashFile(const AbstractFileInfoPointer &trashInfo);
+    AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from,
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const QString &errorMsg = QString());
 
 private:
-    AbstractFileInfoPointer targetInfo { nullptr };   // target file infor pointer
-    QSharedPointer<QStorageInfo> targetStorageInfo { nullptr };   // target file's device infor
-    int totalMoveFilesCount = 1;
-    int completedFilesCount = 0;
-    qreal lastProgress = 0.01;
+    QAtomicInteger<qint64> cleanTrashFilesCount { 0 };
+    QString trashInfoPath;
+    QString trashFilePath;
 };
 
 DSC_END_NAMESPACE
 
-#endif   // DOCUTFILESWORKER_H
+#endif   // DOCLEANTRASHFILESWORKER_H

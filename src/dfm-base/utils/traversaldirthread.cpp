@@ -86,5 +86,5 @@ void TraversalDirThread::run()
         childrenList.append(fileurl);
     }
     stopFlag = true;
-    Q_EMIT updateChildren(childrenList.list());
+    Q_EMIT updateChildrens(childrenList.list());
 }

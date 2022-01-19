@@ -349,7 +349,7 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
         d->isUpdatedChildren = true;
         return;
     }
-    QObject::connect(d->traversalThread.data(), &TraversalDirThread::updateChildren,
+    QObject::connect(d->traversalThread.data(), &TraversalDirThread::updateChildrens,
                      d.data(), &FileViewModelPrivate::doUpdateChildren,
                      Qt::QueuedConnection);
 
