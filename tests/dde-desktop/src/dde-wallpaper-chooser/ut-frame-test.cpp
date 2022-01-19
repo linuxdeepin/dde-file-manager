@@ -379,11 +379,9 @@ TEST_F(FrameTest, test_refreshlist_wallpaper)
                 , 3000);
 
     if (m_frame->m_itemwait == nullptr) {
-        EXPECT_FALSE(m_frame->m_loadTimer.isActive());
         EXPECT_GE(m_frame->m_wallpaperList->count(), 0);
     } else {
-        EXPECT_TRUE(m_frame->m_loadTimer.isActive());
-        m_frame->m_loadTimer.stop();
+        qDebug() << "get wallpaper time out.";
     }
 }
 
