@@ -45,7 +45,7 @@ const char *const kOpticalBlockExternal { "media-external" };
 }   // namespace IconName
 
 namespace AdditionalProperty {
-const char *const kClearBlockProperty { "clearBlockDevice" };
+const char *const kClearBlockProperty { "ClearBlockDeviceInfo" };
 const char *const kAliasGroupName { "LocalDiskAlias" };
 const char *const kAliasItemName { "Items" };
 const char *const kAliasItemUUID { "uuid" };

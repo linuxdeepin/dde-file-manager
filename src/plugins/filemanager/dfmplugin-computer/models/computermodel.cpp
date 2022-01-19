@@ -26,6 +26,7 @@
 #include "controller/computercontroller.h"
 
 #include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/file/entry/entities/blockentryfileentity.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dbusservice/global_server_defines.h"
 
@@ -301,7 +302,12 @@ void ComputerModel::updateItemInfo(int pos)
 
 void ComputerModel::onItemSizeChanged(const QUrl &url, qlonglong total, qlonglong free)
 {
+    bool foundEncryptedDev = false;
     int pos = findItem(url);
+    if (pos < 0 || pos >= items.count()) {
+        pos = findItemByClearDeviceId(ComputerUtils::getBlockDevIdByUrl(url));
+        foundEncryptedDev = true;
+    }
     if (pos < 0 || pos >= items.count())
         return;
 
@@ -309,15 +315,29 @@ void ComputerModel::onItemSizeChanged(const QUrl &url, qlonglong total, qlonglon
     if (!info.info)
         return;
     auto entryInfo = info.info;
-    entryInfo->setExtraProperty(DeviceProperty::kSizeTotal, total);
-    entryInfo->setExtraProperty(DeviceProperty::kSizeFree, free);
-    entryInfo->setExtraProperty(DeviceProperty::kSizeUsed, total - free);
+
+    if (foundEncryptedDev) {
+        auto clearDevInfo = entryInfo->extraProperty(AdditionalProperty::kClearBlockProperty).toHash();
+        clearDevInfo[DeviceProperty::kSizeTotal] = total;
+        clearDevInfo[DeviceProperty::kSizeFree] = free;
+        clearDevInfo[DeviceProperty::kSizeUsed] = total - free;
+        entryInfo->setExtraProperty(AdditionalProperty::kClearBlockProperty, clearDevInfo);
+    } else {
+        entryInfo->setExtraProperty(DeviceProperty::kSizeTotal, total);
+        entryInfo->setExtraProperty(DeviceProperty::kSizeFree, free);
+        entryInfo->setExtraProperty(DeviceProperty::kSizeUsed, total - free);
+    }
     view->update(this->index(pos, 0));
 }
 
 void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, const QVariant &val)
 {
+    bool foundEncryptedDev = false;
     int pos = findItem(url);
+    if (pos < 0 || pos >= items.count()) {
+        pos = findItemByClearDeviceId(ComputerUtils::getBlockDevIdByUrl(url));
+        foundEncryptedDev = true;
+    }
     if (pos < 0 || pos >= items.count())
         return;
 
@@ -325,10 +345,21 @@ void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, c
     if (!info.info)
         return;
     auto entryInfo = info.info;
-    entryInfo->setExtraProperty(key, val);
-    if (key == DeviceProperty::kMountPoints) {
-        auto mpts = val.toStringList();
-        entryInfo->setExtraProperty(DeviceProperty::kMountPoint, mpts.isEmpty() ? "" : mpts.first());
+
+    if (foundEncryptedDev) {
+        auto clearDevInfo = entryInfo->extraProperty(AdditionalProperty::kClearBlockProperty).toHash();
+        clearDevInfo[key] = val;
+        if (key == DeviceProperty::kMountPoints) {
+            auto mpts = val.toStringList();
+            clearDevInfo[DeviceProperty::kMountPoint] = mpts.isEmpty() ? "" : mpts.first();
+        }
+        entryInfo->setExtraProperty(AdditionalProperty::kClearBlockProperty, clearDevInfo);
+    } else {
+        entryInfo->setExtraProperty(key, val);
+        if (key == DeviceProperty::kMountPoints) {
+            auto mpts = val.toStringList();
+            entryInfo->setExtraProperty(DeviceProperty::kMountPoint, mpts.isEmpty() ? "" : mpts.first());
+        }
     }
     view->update(this->index(pos, 0));
 
