@@ -73,7 +73,11 @@ void ListItemDelegate::paint(QPainter *painter,
 
 QSize ListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    return QStyledItemDelegate::sizeHint(option, index);
+    Q_UNUSED(option)
+    Q_UNUSED(index)
+
+    return QSize(d->fileView->width() - kListModeLeftMargin - kListModeRightMargin,
+                 qMax(int(d->fileView->iconSize().height() * 1.1), d->textLineHeight));
 }
 
 QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const

@@ -41,9 +41,8 @@ FileViewPrivate::FileViewPrivate(FileView *qq)
 
 int FileViewPrivate::iconModeColumnCount(int itemWidth) const
 {
-    int horizontalMargin = 0;
     int contentWidth = q->maximumViewportSize().width();
-    return qMax((contentWidth - horizontalMargin - 1) / itemWidth, 1);
+    return qMax((contentWidth - 1) / itemWidth, 1);
 }
 
 QUrl FileViewPrivate::modelIndexUrl(const QModelIndex &index) const
@@ -62,9 +61,9 @@ void FileViewPrivate::initIconModeView()
 
     if (statusBar) {
         statusBar->setScalingVisible(true);
-        q->setIconSize(QSize(kIconSizeList[configIconSizeLevel],
-                             kIconSizeList[configIconSizeLevel]));
-        statusBar->scalingSlider()->setValue(configIconSizeLevel);
+        q->setIconSize(QSize(kIconSizeList[currentIconSizeLevel],
+                             kIconSizeList[currentIconSizeLevel]));
+        statusBar->scalingSlider()->setValue(currentIconSizeLevel);
     }
 }
 

@@ -33,7 +33,6 @@ DPWORKSPACE_BEGIN_NAMESPACE
 // begin file view item icon delegate global define
 static const int kIconModeTextPadding = 4;
 static const int kIconModeIconSpacing = 5;
-static const int kIconModeColumnPadding = 10;
 static const int kIconModeRectRadius = kIconModeTextPadding;
 static const int kIconModeBackRadius = 18;
 // end

@@ -31,12 +31,14 @@
 #include "statusbar.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
+#include "utils/fileveiwhelper.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/windowutils.h"
 
 #include <QResizeEvent>
 #include <QScrollBar>
+#include <QScroller>
 #include <QTimer>
 
 DPWORKSPACE_USE_NAMESPACE
@@ -76,7 +78,7 @@ void FileView::setViewMode(Global::ViewMode mode)
         setUniformItemSizes(false);
         setResizeMode(Adjust);
         setOrientation(QListView::LeftToRight, true);
-        setSpacing(GlobalPrivate::kIconViewSpacing);
+        setSpacing(kIconViewSpacing);
 
         d->initIconModeView();
         break;
@@ -84,7 +86,7 @@ void FileView::setViewMode(Global::ViewMode mode)
         setUniformItemSizes(true);
         setResizeMode(Fixed);
         setOrientation(QListView::TopToBottom, false);
-        setSpacing(GlobalPrivate::kListViewSpacing);
+        setSpacing(kListViewSpacing);
 
         if (model())
             setMinimumWidth(model()->columnCount() * GlobalPrivate::kListViewMinimumWidth);
@@ -96,7 +98,7 @@ void FileView::setViewMode(Global::ViewMode mode)
         break;
     }
 
-    d->configViewMode = mode;
+    d->currentViewMode = mode;
 }
 
 void FileView::setDelegate(Global::ViewMode mode, BaseItemDelegate *view)
@@ -148,7 +150,6 @@ QList<QAction *> FileView::toolBarActionList() const
 
 QList<QUrl> FileView::selectedUrlList() const
 {
-    // TODO(zhangs): impl me
     QModelIndex rootIndex = this->rootIndex();
     QList<QUrl> list;
 
@@ -260,7 +261,7 @@ void FileView::onDoubleClicked(const QModelIndex &index)
 
 void FileView::wheelEvent(QWheelEvent *event)
 {
-    if (d->configViewMode == Global::ViewMode::kIconMode) {
+    if (d->currentViewMode == Global::ViewMode::kIconMode) {
         if (WindowUtils::keyCtrlIsPressed()) {
             if (event->angleDelta().y() > 0) {
                 increaseIcon();
@@ -365,10 +366,10 @@ FileView::RandeIndexList FileView::visibleIndexes(QRect rect) const
     int itemWidth = itemSize.width() + spacing * 2;
     int itemHeight = itemSize.height() + spacing * 2;
 
-    if (itemSize.width() == -1) {
+    if (isListViewMode()) {
         list << RandeIndex(qMax((rect.top() + spacing) / itemHeight, 0),
                            qMin((rect.bottom() - spacing) / itemHeight, count - 1));
-    } else {
+    } else if (isIconViewMode()) {
         rect -= QMargins(spacing, spacing, spacing, spacing);
 
         int columnCount = d->iconModeColumnCount(itemWidth);
@@ -458,6 +459,69 @@ void FileView::setIconSizeBySizeIndex(const int sizeIndex)
     itemDelegate()->setIconSizeByIconSizeLevel(sizeIndex);
 }
 
+bool FileView::isIconViewMode() const
+{
+    return d->currentViewMode == Global::ViewMode::kIconMode;
+}
+
+bool FileView::isListViewMode() const
+{
+    return d->currentViewMode == Global::ViewMode::kListMode;
+}
+
+void FileView::caculateSelection(const QRect &rect, QItemSelection *selection)
+{
+    if (isIconViewMode()) {
+        caculateIconViewSelection(rect, selection);
+    } else if (isListViewMode()) {
+        caculateListViewSelection(rect, selection);
+    }
+}
+
+void FileView::caculateIconViewSelection(const QRect &rect, QItemSelection *selection)
+{
+    int itemCount = model()->rowCount();
+    QPoint offset(-horizontalOffset(), 0);
+    QRect actualRect(qMin(rect.left(), rect.right()),
+                     qMin(rect.top(), rect.bottom()) + verticalOffset(),
+                     abs(rect.width()),
+                     abs(rect.height()));
+
+    QVector<QModelIndex> selectItems;
+    for (int i = 0; i < itemCount; ++i) {
+        const QModelIndex &index = proxyModel()->index(i, 0);
+        const QRect &itemRect = rectForIndex(index);
+
+        QPoint iconOffset = QPoint(kIconModeColumnPadding, kIconModeColumnPadding);
+        QRect realItemRect(itemRect.topLeft() + offset + iconOffset,
+                           itemRect.bottomRight() + offset - iconOffset);
+
+        if (!(actualRect.left() > realItemRect.right() - 3
+              || actualRect.top() > realItemRect.bottom() - 3
+              || realItemRect.left() + 3 > actualRect.right()
+              || realItemRect.top() + 3 > actualRect.bottom())) {
+            if (!selection->contains(index)) {
+                QItemSelectionRange selectionRange(index);
+                selection->push_back(selectionRange);
+            }
+        }
+    }
+}
+
+void FileView::caculateListViewSelection(const QRect &rect, QItemSelection *selection)
+{
+    QRect tmpRect = rect;
+
+    tmpRect.translate(horizontalOffset(), verticalOffset());
+    tmpRect.setCoords(qMin(tmpRect.left(), tmpRect.right()), qMin(tmpRect.top(), tmpRect.bottom()),
+                      qMax(tmpRect.left(), tmpRect.right()), qMax(tmpRect.top(), tmpRect.bottom()));
+
+    const RandeIndexList &list = visibleIndexes(tmpRect);
+    for (const RandeIndex &index : list) {
+        selection->append(QItemSelectionRange(proxyModel()->index(index.first, 0), proxyModel()->index(index.second, 0)));
+    }
+}
+
 void FileView::onRowCountChanged()
 {
     updateModelActiveIndex();
@@ -476,6 +540,100 @@ void FileView::resizeEvent(QResizeEvent *event)
     updateModelActiveIndex();
 }
 
+void FileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags)
+{
+    Q_UNUSED(flags)
+
+    // select with shift
+    if (WindowUtils::keyShiftIsPressed()) {
+        if (!d->currentPressedIndex.isValid()) {
+            QItemSelection oldSelection = d->currentSelection;
+            caculateSelection(rect, &oldSelection);
+            selectionModel()->select(oldSelection, QItemSelectionModel::ClearAndSelect);
+            return;
+        }
+
+        const QModelIndex &index = indexAt(rect.bottomRight());
+        if (!index.isValid())
+            return;
+
+        const QModelIndex &lastSelectedIndex = indexAt(rect.topLeft());
+        if (!lastSelectedIndex.isValid())
+            return;
+
+        selectionModel()->select(QItemSelection(lastSelectedIndex, index), QItemSelectionModel::ClearAndSelect);
+        return;
+    }
+
+    // select with ctrl
+    if (WindowUtils::keyCtrlIsPressed()) {
+        QItemSelection oldSelection = d->currentSelection;
+        selectionModel()->select(oldSelection, QItemSelectionModel::ClearAndSelect);
+
+        if (!d->currentPressedIndex.isValid()) {
+            QItemSelection newSelection;
+            caculateSelection(rect, &newSelection);
+
+            selectionModel()->select(newSelection, QItemSelectionModel::Toggle);
+            return;
+        }
+
+        const QModelIndex &lastSelectedIndex = indexAt(rect.topLeft());
+        if (!lastSelectedIndex.isValid())
+            return;
+
+        selectionModel()->select(lastSelectedIndex, QItemSelectionModel::Toggle);
+        return;
+    }
+
+    // normal select
+    QItemSelection newSelection;
+    caculateSelection(rect, &newSelection);
+
+    selectionModel()->select(newSelection, QItemSelectionModel::ClearAndSelect);
+}
+
+void FileView::mousePressEvent(QMouseEvent *event)
+{
+    switch (event->button()) {
+    case Qt::LeftButton: {
+        bool isEmptyArea = FileVeiwHelper::isEmptyArea(this, event->pos());
+
+        QModelIndex index = indexAt(event->pos());
+        d->currentPressedIndex = isEmptyArea ? QModelIndex() : index;
+        d->currentSelection = selectionModel()->selection();
+
+        DListView::mousePressEvent(event);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void FileView::mouseReleaseEvent(QMouseEvent *event)
+{
+    d->currentSelection = QItemSelection();
+
+    if (!QScroller::hasScroller(this))
+        return DListView::mouseReleaseEvent(event);
+}
+
+QModelIndex FileView::indexAt(const QPoint &pos) const
+{
+    QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset());
+    QSize itemSize = itemSizeHint();
+
+    int index = -1;
+    if (isListViewMode()) {
+        index = FileVeiwHelper::caculateListItemIndex(itemSize, actualPos);
+    } else if (isIconViewMode()) {
+        index = FileVeiwHelper::caculateIconItemIndex(this, itemSize, actualPos);
+    }
+
+    return proxyModel()->index(index, 0);
+}
+
 void FileView::initializeModel()
 {
     FileViewModel *model = new FileViewModel(this);
@@ -487,9 +645,8 @@ void FileView::initializeModel()
     d->sortTimer->setInterval(5);
     d->sortTimer->setSingleShot(true);
 
-    // TODO(liuyangming): refactor selection
-    //    auto selectionModel = new FileSelectionModel(model);
-    //    setSelectionModel(selectionModel);
+    FileSelectionModel *selectionModel = new FileSelectionModel(model);
+    setSelectionModel(selectionModel);
 }
 
 void FileView::initializeDelegate()
@@ -546,16 +703,16 @@ void FileView::updateStatusBar()
 
 void FileView::setDefaultViewMode()
 {
-    setViewMode(d->configViewMode);
+    setViewMode(d->currentViewMode);
 }
 
 void FileView::loadViewState(const QUrl &url)
 {
     QVariant defaultViewMode = Application::instance()->appAttribute(Application::kViewMode).toInt();
-    d->configViewMode = static_cast<Global::ViewMode>(fileViewStateValue(url, "viewMode", defaultViewMode).toInt());
+    d->currentViewMode = static_cast<Global::ViewMode>(fileViewStateValue(url, "viewMode", defaultViewMode).toInt());
 
     QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();
-    d->configIconSizeLevel = fileViewStateValue(url, "iconSizeLevel", defaultIconSize).toInt();
+    d->currentIconSizeLevel = fileViewStateValue(url, "iconSizeLevel", defaultIconSize).toInt();
 
     d->currentSortRole = static_cast<FileViewItem::Roles>(fileViewStateValue(url, "sortRole", FileViewItem::Roles::kItemNameRole).toInt());
     d->currentSortOrder = static_cast<Qt::SortOrder>(fileViewStateValue(url, "sortOrder", Qt::SortOrder::AscendingOrder).toInt());
@@ -630,5 +787,5 @@ void FileView::saveViewModeState()
     const QUrl &url = rootUrl();
 
     setFileViewStateValue(url, "iconSizeLevel", d->statusBar->scalingSlider()->value());
-    setFileViewStateValue(url, "viewMode", static_cast<int>(d->configViewMode));
+    setFileViewStateValue(url, "viewMode", static_cast<int>(d->currentViewMode));
 }

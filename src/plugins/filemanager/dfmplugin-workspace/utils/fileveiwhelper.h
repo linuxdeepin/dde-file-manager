@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liuyangming<liuyangming@uniontech.com>
  *
@@ -19,27 +19,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMPLUGIN_WORKSPACE_GLOBAL_H
-#define DFMPLUGIN_WORKSPACE_GLOBAL_H
+#ifndef FILEVEIWHELPER_H
+#define FILEVEIWHELPER_H
 
-#define DPWORKSPACE_BEGIN_NAMESPACE namespace dfmplugin_workspace {
-#define DPWORKSPACE_END_NAMESPACE }
-#define DPWORKSPACE_USE_NAMESPACE using namespace dfmplugin_workspace;
-#define DPWORKSPACE_NAMESPACE dfmplugin_workspace
-
-#include <QList>
+#include "dfmplugin_workspace_global.h"
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
-// view defines
-const QList<int> kIconSizeList { 48, 64, 96, 128, 256 };
-const int kIconViewSpacing = 5;
-const int kListViewSpacing = 0;
-const int kIconModeColumnPadding = 10;
-
-// tab defines
-const int kMaxTabCount = 8;
+class FileView;
+class FileVeiwHelper
+{
+public:
+    static bool isEmptyArea(const FileView *view, const QPoint &pos);
+    static int caculateListItemIndex(const QSize &itemSize, const QPoint &pos);
+    static int caculateIconItemIndex(const FileView *view, const QSize &itemSize, const QPoint &pos);
+};
 
 DPWORKSPACE_END_NAMESPACE
 
-#endif   // DFMPLUGIN_WORKSPACE_GLOBAL_H
+#endif   // FILEVEIWHELPER_H

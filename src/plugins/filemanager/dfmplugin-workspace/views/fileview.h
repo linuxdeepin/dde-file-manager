@@ -66,6 +66,8 @@ public:
     FileViewModel *model() const;
     void setModel(QAbstractItemModel *model) override;
 
+    QModelIndex indexAt(const QPoint &pos) const override;
+
     FileSortFilterProxyModel *proxyModel() const;
     int getColumnWidth(const int &column) const;
     int getHeaderViewWidth() const;
@@ -91,13 +93,15 @@ public slots:
     void onScalingValueChanged(const int value);
     void delayUpdateStatusBar();
     void viewModeChanged(quint64 windowId, int viewMode);
-
     void onRowCountChanged();
 
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
+    void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
 Q_SIGNALS:
     void reqOpenNewWindow(const QList<QUrl> &urls);
@@ -133,6 +137,13 @@ private:
     void increaseIcon();
     void decreaseIcon();
     void setIconSizeBySizeIndex(const int sizeIndex);
+
+    bool isIconViewMode() const;
+    bool isListViewMode() const;
+
+    void caculateSelection(const QRect &rect, QItemSelection *selection);
+    void caculateIconViewSelection(const QRect &rect, QItemSelection *selection);
+    void caculateListViewSelection(const QRect &rect, QItemSelection *selection);
 };
 
 DPWORKSPACE_END_NAMESPACE

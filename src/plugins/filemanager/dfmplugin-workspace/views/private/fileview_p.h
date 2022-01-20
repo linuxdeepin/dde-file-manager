@@ -30,8 +30,6 @@
 #include <QUrl>
 
 namespace GlobalPrivate {
-const int kIconViewSpacing { 5 };
-const int kListViewSpacing { 1 };
 const int kListViewMinimumWidth { 80 };
 const int kListViewDefaultWidth { 120 };
 const int kListViewIconSize { 24 };
@@ -57,14 +55,17 @@ class FileViewPrivate
     QTimer *sortTimer = nullptr;
     QUrl url;
 
-    DFMBASE_NAMESPACE::Global::ViewMode configViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
-    int configIconSizeLevel = 1;
+    DFMBASE_NAMESPACE::Global::ViewMode currentViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
+    int currentIconSizeLevel = 1;
     FileViewItem::Roles currentSortRole = FileViewItem::Roles::kItemNameRole;
     Qt::SortOrder currentSortOrder = Qt::SortOrder::AscendingOrder;
 
     FileView::RandeIndex visibleIndexRande;
 
     bool isAlwaysOpenInCurrentWindow { false };
+
+    QItemSelection currentSelection;
+    QModelIndex currentPressedIndex;
 
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
