@@ -22,9 +22,8 @@
 #ifndef TRAVERSALDIRTHREAD_H
 #define TRAVERSALDIRTHREAD_H
 
-#include "dfmplugin_workspace_global.h"
-#include "file/local/localdiriterator.h"
-#include "views/fileviewitem.h"
+#include "dfm_base_global.h"
+#include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/utils/threadcontainer.hpp"
 
 #include <QMetaType>
@@ -32,14 +31,14 @@
 #include <QThread>
 #include <QUrl>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 
 class TraversalDirThread : public QThread
 {
     Q_OBJECT
     QUrl dirUrl;   // 遍历的目录的url
-    QSharedPointer<dfmbase::AbstractDirIterator> m_dirIterator;   // 当前遍历目录的diriterator
-    dfmbase::DThreadList<FileViewItem *> m_childrenList;   // 当前遍历出来的所有文件
+    QSharedPointer<dfmbase::AbstractDirIterator> dirIterator;   // 当前遍历目录的diriterator
+    dfmbase::DThreadList<QUrl> childrenList;   // 当前遍历出来的所有文件
     bool stopFlag = false;
 
 public:
@@ -50,15 +49,16 @@ public:
     virtual ~TraversalDirThread() override;
     void stop();
     void quit();
+    void stopAndDeleteLater();
 
 Q_SIGNALS:
-    void updateChildren(const QList<FileViewItem *> &children);
+    void updateChildren(const QList<QUrl> &children);
     void stoped();
 
 protected:
     virtual void run() override;
 };
 
-DPWORKSPACE_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
 #endif   // DFMTRAVERSALDIRTHREAD_H

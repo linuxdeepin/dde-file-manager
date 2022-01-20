@@ -96,13 +96,16 @@ void FileViewModelPrivate::doFilesUpdated()
     }
 }
 
-void FileViewModelPrivate::doUpdateChildren(const QList<FileViewItem *> &children)
+void FileViewModelPrivate::doUpdateChildren(const QList<QUrl> &children)
 {
     q->beginResetModel();
-    childrens.setList(children);
-    for (auto fileItem : children) {
-        childrenMap.insert(fileItem->url(), fileItem);
+
+    for (auto url : children) {
+        FileViewItem *item = new FileViewItem(url);
+        childrenMap.insert(url, item);
+        childrens.append(item);
     }
+
     q->endResetModel();
     isUpdatedChildren = true;
 

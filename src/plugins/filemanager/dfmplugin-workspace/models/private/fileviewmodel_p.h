@@ -23,9 +23,8 @@
 #define FILEVIEWMODEL_P_H
 
 #include "models/fileviewmodel.h"
-#include "models/private/traversaldirthread.h"
-#include "utils/fileutils.h"
-#include "utils/threadcontainer.hpp"
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/traversaldirthread.h"
 
 #include <QReadWriteLock>
 #include <QQueue>
@@ -47,7 +46,7 @@ class FileViewModelPrivate : public QObject
     QSharedPointer<FileViewItem> root;
     int column = 0;
     AbstractFileWatcherPointer watcher;
-    QSharedPointer<TraversalDirThread> traversalThread;
+    QSharedPointer<DFMBASE_NAMESPACE::TraversalDirThread> traversalThread;
     bool canFetchMoreFlag = true;
     dfmbase::DThreadList<QUrl> handlingFileList;
     QQueue<QPair<QUrl, EventType>> watcherEvent;
@@ -77,7 +76,7 @@ private Q_SLOTS:
     void doFileUpdated(const QUrl &url);
     void doFilesUpdated();
     void dofileClosed(const QUrl &url) { Q_UNUSED(url); }
-    void doUpdateChildren(const QList<FileViewItem *> &childrens);
+    void doUpdateChildren(const QList<QUrl> &childrens);
     void doWatcherEvent();
 
 private:

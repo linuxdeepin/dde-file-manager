@@ -138,10 +138,15 @@ void TitleBarWidget::initConnect()
         if (crumbBar->controller())
             crumbBar->controller()->processAction(CrumbInterface::kAddressBarLostFocus);
     });
+    connect(addressBar, &AddressBar::clearButtonPressed, this, [this]() {
+        if (crumbBar->controller())
+            crumbBar->controller()->processAction(CrumbInterface::kClearButtonPressed);
+    });
     connect(addressBar, &AddressBar::editingFinishedSearch, this, [this](const QString &keyword) {
         TitleBarEventCaller::sendSearch(this, keyword);
     });
-    // TODO(zhangs): addressbar clear, pause
+    connect(addressBar, &AddressBar::editingFinishedUrl, this, &TitleBarWidget::onAddressBarJump);
+    // TODO(zhangs): addressbar pause
 }
 
 void TitleBarWidget::showAddrsssBar(const QUrl &url)
@@ -201,4 +206,18 @@ void TitleBarWidget::onSearchButtonClicked()
 {
     showAddrsssBar(QUrl());
     searchButton->hide();
+}
+
+void TitleBarWidget::onAddressBarJump(const QUrl &url)
+{
+    const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
+    if (info && info->exists() && info->isFile()) {
+        TitleBarEventCaller::sendOpenFile(this, url);
+    } else {
+        const QString &currentDir = QDir::currentPath();
+        if (titlebarUrl.isLocalFile())
+            QDir::setCurrent(titlebarUrl.toLocalFile());
+        QDir::setCurrent(currentDir);
+        TitleBarEventCaller::sendCd(this, url);
+    }
 }

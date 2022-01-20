@@ -22,52 +22,40 @@
 #include "views/private/completerview_p.h"
 #include "views/completerview.h"
 
+#include <QScrollBar>
+
 DPTITLEBAR_USE_NAMESPACE
-CompleterView::CompleterView()
-    : d(new CompleterViewPrivate(this))
+CompleterView::CompleterView(QWidget *parent)
+    : QListView(parent), d(new CompleterViewPrivate(this))
 {
-    this->setModel(&d->model);
-
-    d->completer.setModel(&d->model);
-    d->completer.setModel(&d->model);
-    d->completer.setPopup(this);
-    d->completer.setCompletionMode(QCompleter::PopupCompletion);
-    d->completer.setCaseSensitivity(Qt::CaseSensitive);
-    d->completer.setMaxVisibleItems(10);
-
-    QObject::connect(&d->completer, QOverload<const QString &>::of(&QCompleter::activated),
-                     this, QOverload<const QString &>::of(&CompleterView::completerActivated));
-
-    QObject::connect(&d->completer, QOverload<const QModelIndex &>::of(&QCompleter::activated),
-                     this, QOverload<const QModelIndex &>::of(&CompleterView::completerActivated));
-
-    QObject::connect(&d->completer, QOverload<const QString &>::of(&QCompleter::highlighted),
-                     this, QOverload<const QString &>::of(&CompleterView::completerHighlighted));
-
-    QObject::connect(&d->completer, QOverload<const QModelIndex &>::of(&QCompleter::highlighted),
-                     this, QOverload<const QModelIndex &>::of(&CompleterView::completerHighlighted));
+    overrideWindowFlags(Qt::Tool /*| Qt::WindowDoesNotAcceptFocus*/);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setViewportMargins(0, 0, -verticalScrollBar()->sizeHint().width(), 0);
+    setMouseTracking(true);
 
     setItemDelegate(&d->delegate);
-}
-
-QCompleter *CompleterView::completer()
-{
-    return &d->completer;
-}
-
-QStringListModel *CompleterView::model()
-{
-    return &d->model;
-}
-
-CompleterViewDelegate *CompleterView::itemDelegate()
-{
-    return &d->delegate;
+    //解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复，设置这个属性listview就可以拥有地址兰的输入法
+    setAttribute(Qt::WA_InputMethodEnabled);
 }
 
 void CompleterView::keyPressEvent(QKeyEvent *e)
 {
     return QListView::keyPressEvent(e);
+}
+
+void CompleterView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    Q_UNUSED(previous);
+    emit listCurrentChanged(current);
+    QListView::currentChanged(current, previous);
+}
+
+void CompleterView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    Q_UNUSED(deselected);
+    emit listSelectionChanged(selected);
+    QListView::selectionChanged(selected, deselected);
 }
 
 CompleterViewDelegate::CompleterViewDelegate(QObject *parent)

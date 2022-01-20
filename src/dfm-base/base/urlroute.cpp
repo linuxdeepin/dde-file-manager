@@ -24,7 +24,6 @@
 #include "utils/finallyutil.h"
 
 #include <QDir>
-#include <QUrl>
 #include <QRegularExpression>
 
 DFMBASE_BEGIN_NAMESPACE
@@ -153,17 +152,28 @@ bool UrlRoute::isVirtual(const QUrl &url)
  */
 QUrl UrlRoute::urlParent(const QUrl &url)
 {
-    if (isRootUrl(url))
-        return url;
+    const QString &path = url.path();
 
-    auto &&list = url.path().split("/");
-    list.removeAt(list.size() - 1);
-
+    if (path == "/")
+        return QUrl();
     QUrl reUrl;
-    url.scheme();
     reUrl.setScheme(url.scheme());
-    QString path { list.join("/") };
-    reUrl.setPath(path.isEmpty() ? "/" : path);
+    QStringList paths = path.split("/");
+    paths.removeAt(0);
+    if (!paths.isEmpty() && paths.last().isEmpty())
+        paths.removeLast();
+
+    if (!paths.isEmpty())
+        paths.removeLast();
+
+    QString curPath;
+    for (QString p : paths)
+        curPath += "/" + p;
+
+    if (curPath.isEmpty())
+        curPath += "/";
+
+    reUrl.setPath(curPath);
 
     return reUrl;
 }
@@ -189,6 +199,30 @@ QString UrlRoute::rootDisplayName(const QString &scheme)
     if (!hasScheme(scheme))
         return "";
     return kSchemeInfos[scheme].displayName();
+}
+
+QUrl UrlRoute::fromUserInput(const QString &userInput, bool preferredLocalPath)
+{
+    return fromUserInput(userInput, QString(), preferredLocalPath);
+}
+
+QUrl UrlRoute::fromUserInput(const QString &userInput, QString workingDirectory, bool preferredLocalPath, QUrl::UserInputResolutionOptions options)
+{
+    if (options != QUrl::AssumeLocalFile) {
+        return QUrl(QUrl::fromUserInput(userInput, workingDirectory, options));
+    }
+
+    if ((userInput.startsWith("~") && preferredLocalPath) || userInput.startsWith("~/")) {
+        return QUrl::fromLocalFile(QDir::homePath() + userInput.mid(1));
+    } else if ((preferredLocalPath && QDir().exists(userInput)) || userInput.startsWith("./")
+               || userInput.startsWith("../") || userInput.startsWith("/")) {
+        QDir dir(userInput);
+
+        return QUrl::fromLocalFile(dir.absolutePath());
+    } else {
+        QUrl url(userInput);
+        return url;
+    }
 }
 
 /*!

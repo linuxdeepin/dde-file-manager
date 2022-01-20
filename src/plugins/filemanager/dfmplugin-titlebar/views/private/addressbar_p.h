@@ -48,221 +48,63 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 DPTITLEBAR_BEGIN_NAMESPACE
+class CrumbInterface;
 class AddressBarPrivate : public QObject
 {
     Q_OBJECT
     friend class AddressBar;
     AddressBar *const q;
-    CompleterView *completerView = nullptr;
-    QStringList inputHistory;
+    QStringList historyList;
     QTimer timer;
     DSpinner spinner;
     QVariantAnimation animation;
-    QString placeholderText = QObject::tr("Search or enter address");
+    QString placeholderText { tr("Search or enter address") };
     QAction indicatorAction;
     QAction clearAction;
+    QString completerBaseString;
+    QString lastEditedString;
+    AddressBar::IndicatorType indicatorType { AddressBar::IndicatorType::Search };
+    bool isHistoryInCompleterModel { false };
+    int lastPressedKey { Qt::Key_D };   // just an init value
+    int lastPreviousKey { Qt::Key_Control };   //记录上前一个按钮
+    bool isKeyPressed { false };
+    CrumbInterface *crumbController { nullptr };
+    QStringListModel completerModel;
+    CompleterView *completerView { nullptr };
+    QCompleter *urlCompleter { nullptr };
+    // inputMethodEvent中获取不到选中的内容，故缓存光标开始位置以及选中长度
+    int selectPosStart { 0 };
+    int selectLength { 0 };
 
 public:
-    explicit AddressBarPrivate(AddressBar *qq)
-        : QObject(qq),
-          q(qq)
-    {
-        if (!completerView)
-            completerView = new CompleterView;
-
-        // 设置补全组件
-        q->setCompleter(completerView->completer());
-
-        // 设置补全选择组件为popup的焦点
-        completerView->setFocus(Qt::FocusReason::PopupFocusReason);
-
-        // 左侧Action按钮 设置
-        q->addAction(&indicatorAction, QLineEdit::LeadingPosition);
-        // default icon is search
-        indicatorAction.setIcon(QIcon::fromTheme("search"));
-
-        QObject::connect(&indicatorAction, &QAction::triggered, this, [=]() {
-            if (indicatorAction.icon().name() == "search") {
-                Q_EMIT q->editingFinishedSearch(q->text());
-            }
-
-            if (indicatorAction.icon().name() == "go-right") {
-                QUrl url(q->text());
-                if (UrlRoute::hasScheme(url.scheme()) && url.isValid())
-                    Q_EMIT q->editingFinishedUrl(url);
-            }
-        });
-
-        // lineEdit clear Action按钮
-        q->setClearButtonEnabled(true);
-
-        spinner.setParent(q);
-        spinner.setAttribute(Qt::WA_TransparentForMouseEvents);
-        spinner.setFocusPolicy(Qt::NoFocus);
-        spinner.hide();
-
-        animation.setParent(q);
-        animation.setDuration(616);
-        animation.setEasingCurve(QEasingCurve::OutQuad);
-        animation.setStartValue(QVariant(1.0f));
-        animation.setEndValue(QVariant(0.0f));
-
-        QObject::connect(&animation, &QVariantAnimation::valueChanged,
-                         q, QOverload<>::of(&AddressBar::update));
-
-        timer.setInterval(200);
-        timer.setSingleShot(true);
-        QObject::connect(&timer, &QTimer::timeout, &animation, [=]() {
-            animation.start();
-            q->update();
-        });
-
-        QObject::connect(qq, &QLineEdit::textEdited,
-                         this, &AddressBarPrivate::procTextEdited,
-                         Qt::ConnectionType::DirectConnection);
-
-        QObject::connect(qq, &QLineEdit::editingFinished,
-                         this, &AddressBarPrivate::inputSave);
-
-        QObject::connect(qq, &QLineEdit::returnPressed,
-                         this, &AddressBarPrivate::procReturnPressed);
-
-        qq->installEventFilter(this);
-    }
+    explicit AddressBarPrivate(AddressBar *qq);
+    void initializeUi();
+    void initConnect();
+    void initData();
+    void setIndicator(enum AddressBar::IndicatorType type);
+    void setCompleter(QCompleter *c);
+    void clearCompleterModel();
+    void updateCompletionState(const QString &text);
+    void doComplete();
+    void requestCompleteByUrl(const QUrl &url);
 
 public Q_SLOTS:
-
-    void startSpinner()
-    {
-        spinner.start();
-        spinner.show();
-    }
-
-    void stopSpinner()
-    {
-        spinner.stop();
-        spinner.hide();
-    }
-
-    void procTextEdited(const QString &string)
-    {
-        if (string.isEmpty()) {
-            indicatorAction.setIcon(QIcon::fromTheme("search"));
-            return;
-        }
-
-        if (UrlRoute::hasScheme(string)) {
-            QStringList rootUrls;
-            QString localPath = UrlRoute::rootPath(string);
-            if (QFileInfo::exists(localPath) && !UrlRoute::isVirtual(string)) {
-
-                QDirIterator itera(localPath,
-                                   QDir::Dirs | QDir::NoDotAndDotDot | QDir::System,
-                                   QDirIterator::NoIteratorFlags);
-
-                while (itera.hasNext()) {
-                    itera.next();
-                    rootUrls << UrlRoute::pathToUrl(itera.filePath(), string).toString();
-                }
-            }
-
-            if (completerView)
-                completerView->model()->setStringList(rootUrls);
-
-            indicatorAction.setIcon(QIcon::fromTheme("go-right"));
-            return;
-        }
-
-        if (QFileInfo::exists(string)) {
-            QStringList localPaths;
-            QDirIterator itera(string,
-                               QDir::Dirs | QDir::NoDotAndDotDot | QDir::System,
-                               QDirIterator::NoIteratorFlags);
-
-            while (itera.hasNext()) {
-                itera.next();
-                localPaths << itera.filePath();
-            }
-            if (completerView)
-                completerView->model()->setStringList(localPaths);
-            indicatorAction.setIcon(QIcon::fromTheme("go-right"));
-            return;
-        }
-        if (completerView)
-            completerView->model()->setStringList(inputHistory);
-        indicatorAction.setIcon(QIcon::fromTheme("search"));
-    }
-
-    void inputSave()
-    {
-        if (completerView && 0 > completerView->model()->stringList().indexOf(q->text()))
-            inputHistory << q->text();
-    }
-
-    void procReturnPressed()
-    {
-        QUrl url(q->text());
-        if (!UrlRoute::isVirtual(url)) {
-            QString localPath = UrlRoute::urlToPath(url);
-            if (!localPath.isEmpty() && QDir(localPath).exists()) {
-                qInfo() << "sig editingFinishedUrl :" << url;
-                Q_EMIT q->editingFinishedUrl(url);
-                startSpinner();
-                return;
-            }
-        }
-
-        if (QDir(q->text()).exists()) {
-            QUrl url = UrlRoute::pathToReal(q->text());
-            if (!url.isValid()) {
-                qInfo() << "sig editingFinishedUrl :" << url;
-                Q_EMIT q->editingFinishedUrl(url);
-                startSpinner();
-                return;
-            }
-        }
-
-        qInfo() << "sig editingFinishedSearch :" << q->text();
-        Q_EMIT q->editingFinishedSearch(q->text());
-        startSpinner();
-        return;
-    }
+    void startSpinner();
+    void stopSpinner();
+    void onTextEdited(const QString &text);
+    void onReturnPressed();
+    void insertCompletion(const QString &completion);
+    void onCompletionHighlighted(const QString &highlightedCompletion);
+    void updateIndicatorIcon();
+    void onCompletionModelCountChanged();
+    void appendToCompleterModel(const QStringList &stringList);
+    void onTravelCompletionListFinished();
+    void onIndicatorTriggerd();
 
 protected:
-    virtual bool eventFilterResize(AddressBar *addressbar, QResizeEvent *event)
-    {
-        Q_UNUSED(addressbar)
-        spinner.setFixedSize(q->height() - 8, q->height() - 8);
-        spinner.setGeometry(event->size().width() - spinner.size().width() - 45,
-                            (event->size().height() - spinner.size().height()) / 2,
-                            spinner.size().width(), spinner.size().height());
-
-        return false;
-    }
-
-    virtual bool eventFilterHide(AddressBar *addressbar, QHideEvent *event)
-    {
-        Q_UNUSED(addressbar)
-        Q_UNUSED(event)
-        timer.stop();
-        return false;
-    }
-
-    virtual bool eventFilter(QObject *watched, QEvent *event) override
-    {
-
-        if (watched == q && event->type() == QEvent::Hide) {
-            return eventFilterHide(qobject_cast<AddressBar *>(watched),
-                                   dynamic_cast<QHideEvent *>(event));
-        }
-
-        if (watched == q && event->type() == QEvent::Resize) {
-            return eventFilterResize(qobject_cast<AddressBar *>(watched),
-                                     dynamic_cast<QResizeEvent *>(event));
-        }
-
-        return false;
-    }
+    virtual bool eventFilterResize(AddressBar *addressbar, QResizeEvent *event);
+    virtual bool eventFilterHide(AddressBar *addressbar, QHideEvent *event);
+    virtual bool eventFilter(QObject *watched, QEvent *event) override;
 };
 
 DPTITLEBAR_END_NAMESPACE

@@ -57,6 +57,13 @@ void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
 }
 
+void TitleBarEventCaller::sendOpenFile(QWidget *sender, const QUrl &url)
+{
+    quint64 id = TitleBarHelper::windowId(sender);
+    Q_ASSERT(id > 0);
+    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFiles, id, QList<QUrl>() << url);
+}
+
 void TitleBarEventCaller::sendOpenWindow(const QUrl &url)
 {
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, url);

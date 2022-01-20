@@ -61,9 +61,10 @@ Q_SIGNALS:
     void editingFinishedSearch(const QString &url);
     void lostFocus();
     void escKeyPressed();
+    void clearButtonPressed();
 
-public
-    Q_SLOT : void startSpinner();
+public slots:
+    void startSpinner();
     void stopSpinner();
 };
 

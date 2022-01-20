@@ -23,6 +23,7 @@
 #include "crumbinterface.h"
 
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/schemefactory.h"
 
 DPTITLEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -91,12 +92,57 @@ QList<CrumbData> CrumbInterface::seprateUrl(const QUrl &url)
     return list;
 }
 
+/*!
+ * TODO(zhangs): virtual ?
+ * \brief Start request a completion list for address bar auto-completion.
+ *
+ * \param url The base url need to be completed.
+ *
+ * Since completion list can be long, so we need do async completion. Calling this
+ * function will start a completion request and the completion list item will be sent
+ * via signal completionFound. When user no longer need current completion list and
+ * the transmission isn't completed, you should call cancelCompletionListTransmission.
+ * When transmission completed, it will send completionListTransmissionCompleted signal.
+ *
+ * \sa completionFound, completionListTransmissionCompleted, cancelCompletionListTransmission
+ */
 void CrumbInterface::requestCompletionList(const QUrl &url)
 {
+    if (folderCompleterJobPointer) {
+        folderCompleterJobPointer->disconnect();
+        folderCompleterJobPointer->stopAndDeleteLater();
+        folderCompleterJobPointer->setParent(nullptr);
+    }
+    folderCompleterJobPointer = new TraversalDirThread(url, QStringList(),
+                                                       QDir::Dirs | QDir::Hidden | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
+    folderCompleterJobPointer->setParent(this);
+    if (folderCompleterJobPointer.isNull())
+        return;
+
+    connect(folderCompleterJobPointer.data(), &TraversalDirThread::updateChildren, this,
+            &CrumbInterface::onUpdateChildren, Qt::DirectConnection);
+
+    connect(folderCompleterJobPointer.data(), &TraversalDirThread::finished, this,
+            [this]() {
+                emit completionListTransmissionCompleted();
+            },
+            Qt::QueuedConnection);
+    // TODO(liyigang): imple follow interfaces
+    //    folderCompleterJobPointer->setTimeCeiling(1000);
+    //    folderCompleterJobPointer->setCountCeiling(500);
+    folderCompleterJobPointer->start();
 }
 
+/*!
+ * TODO(zhangs): virtual ?
+ * \brief Cancel the started completion list transmission.
+ *
+ * \sa completionFound, completionListTransmissionCompleted, requestCompletionList
+ */
 void CrumbInterface::cancelCompletionListTransmission()
 {
+    if (folderCompleterJobPointer)
+        folderCompleterJobPointer->stop();
 }
 
 void CrumbInterface::registewrSupportedUrlCallback(const supportedUrlCallback &func)
@@ -107,4 +153,16 @@ void CrumbInterface::registewrSupportedUrlCallback(const supportedUrlCallback &f
 void CrumbInterface::registerSeprateUrlCallback(const seprateUrlCallback &func)
 {
     seprateUrlFunc = func;
+}
+
+void CrumbInterface::onUpdateChildren(const QList<QUrl> &urlList)
+{
+    QStringList list;
+
+    for (const QUrl &url : urlList) {
+        auto infoPointer = InfoFactory::create<AbstractFileInfo>(url);
+        if (infoPointer.data())
+            list.append(infoPointer->fileName());
+    }
+    emit completionFound(list);
 }

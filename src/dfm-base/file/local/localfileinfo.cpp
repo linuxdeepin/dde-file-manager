@@ -208,7 +208,7 @@ QString LocalFileInfo::fileName() const
     if (!success)
         fileName = QFileInfo(d->url.path()).fileName();
     d->lock.unlock();
-    return QFileInfo(d->url.path()).fileName();
+    return fileName;
 }
 /*!
  * \brief baseName 文件的基本名称

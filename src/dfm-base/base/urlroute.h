@@ -27,9 +27,8 @@
 #include <QString>
 #include <QIcon>
 #include <QMap>
+#include <QUrl>
 
-class QUrl;
-class QString;
 DFMBASE_BEGIN_NAMESPACE
 
 struct SchemeNode
@@ -86,6 +85,9 @@ public:
     static QUrl urlParent(const QUrl &url);
     static void urlParentList(QUrl url, QList<QUrl> *list);
     static QString rootDisplayName(const QString &scheme);
+    static QUrl fromUserInput(const QString &userInput, bool preferredLocalPath = true);
+    static QUrl fromUserInput(const QString &userInput, QString workingDirectory,
+                              bool preferredLocalPath = true, QUrl::UserInputResolutionOptions options = QUrl::AssumeLocalFile);
 };
 
 DFMBASE_END_NAMESPACE

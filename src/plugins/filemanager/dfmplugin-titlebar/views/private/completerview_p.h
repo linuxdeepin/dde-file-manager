@@ -51,9 +51,6 @@ class CompleterViewPrivate : public QObject
     Q_OBJECT
     friend class CompleterView;
     CompleterView *const q;
-
-    QCompleter completer;
-    QStringListModel model;
     CompleterViewDelegate delegate;
 
     explicit CompleterViewPrivate(CompleterView *qq);

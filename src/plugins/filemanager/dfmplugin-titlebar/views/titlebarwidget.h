@@ -63,6 +63,7 @@ signals:
 
 private slots:
     void onSearchButtonClicked();
+    void onAddressBarJump(const QUrl &url);
 
 private:
     QUrl titlebarUrl;

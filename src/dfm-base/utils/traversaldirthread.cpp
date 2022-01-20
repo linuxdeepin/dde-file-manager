@@ -26,7 +26,6 @@
 #include <QDebug>
 
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
 
 TraversalDirThread::TraversalDirThread(const QUrl &url,
                                        const QStringList &nameFilters,
@@ -35,12 +34,9 @@ TraversalDirThread::TraversalDirThread(const QUrl &url,
                                        QObject *parent)
     : QThread(parent), dirUrl(url)
 {
-    qRegisterMetaType<QList<QSharedPointer<FileViewItem>>>("QList<QSharedPointer<DFMFileViewItem>>");
-    qRegisterMetaType<QList<QSharedPointer<FileViewItem>>>("QList<QSharedPointer<DFMFileViewItem>>&");
-
     if (dirUrl.isValid() /*&& !UrlRoute::isVirtual(dirUrl)*/) {
-        m_dirIterator = DirIteratorFactory::create<AbstractDirIterator>(url, nameFilters, filters, flags);
-        if (!m_dirIterator) {
+        dirIterator = DirIteratorFactory::create<AbstractDirIterator>(url, nameFilters, filters, flags);
+        if (!dirIterator) {
             qInfo() << "Failed create dir iterator from" << url;
             abort();
         }
@@ -62,21 +58,33 @@ void TraversalDirThread::quit()
     QThread::quit();
 }
 
+void TraversalDirThread::stopAndDeleteLater()
+{
+    stop();
+
+    if (!isRunning()) {
+        deleteLater();
+    } else {
+        disconnect(this, &TraversalDirThread::finished, this, &TraversalDirThread::deleteLater);
+        connect(this, &TraversalDirThread::finished, this, &TraversalDirThread::deleteLater);
+    }
+}
+
 void TraversalDirThread::run()
 {
-    if (m_dirIterator.isNull())
+    if (dirIterator.isNull())
         return;
 
-    while (m_dirIterator->hasNext()) {
+    while (dirIterator->hasNext()) {
         if (stopFlag)
             break;
 
-        QUrl fileurl = m_dirIterator->next();
+        QUrl &&fileurl = dirIterator->next();
         if (!fileurl.isValid())
             continue;
 
-        m_childrenList.append(new FileViewItem(fileurl));
+        childrenList.append(fileurl);
     }
     stopFlag = true;
-    Q_EMIT updateChildren(m_childrenList.list());
+    Q_EMIT updateChildren(childrenList.list());
 }

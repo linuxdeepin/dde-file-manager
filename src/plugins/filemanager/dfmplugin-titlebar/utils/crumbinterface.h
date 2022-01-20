@@ -26,8 +26,10 @@
 #include "dfmplugin_titlebar_global.h"
 
 #include "services/filemanager/titlebar/titlebar_defines.h"
+#include "dfm-base/utils/traversaldirthread.h"
 
 #include <QObject>
+#include <QPointer>
 
 DPTITLEBAR_BEGIN_NAMESPACE
 
@@ -69,10 +71,14 @@ signals:
     void completionFound(const QStringList &completions);   //< emit multiple times with less or equials to 10 items in a group.
     void completionListTransmissionCompleted();   //< emit when all avaliable completions has been sent.
 
+private slots:
+    void onUpdateChildren(const QList<QUrl> &urlList);
+
 private:
     bool keepAddr { false };
     supportedUrlCallback supportedUrlFunc;
     seprateUrlCallback seprateUrlFunc;
+    QPointer<DFMBASE_NAMESPACE::TraversalDirThread> folderCompleterJobPointer;
 };
 
 DPTITLEBAR_END_NAMESPACE

@@ -41,17 +41,16 @@ class CompleterView : public QListView
     CompleterViewPrivate *const d;
 
 public:
-    explicit CompleterView();
-    QCompleter *completer();
-    QStringListModel *model();
-    CompleterViewDelegate *itemDelegate();
+    explicit CompleterView(QWidget *parent = nullptr);
     void keyPressEvent(QKeyEvent *e) override;
 
-Q_SIGNALS:
-    void completerActivated(const QString &text);
-    void completerActivated(const QModelIndex &index);
-    void completerHighlighted(const QString &text);
-    void completerHighlighted(const QModelIndex &index);
+protected:
+    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
+    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
+
+signals:
+    void listCurrentChanged(const QModelIndex &current);
+    void listSelectionChanged(const QItemSelection &selected);
 };
 DPTITLEBAR_END_NAMESPACE
 
