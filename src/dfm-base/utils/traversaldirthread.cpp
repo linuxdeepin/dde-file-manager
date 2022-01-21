@@ -37,8 +37,8 @@ TraversalDirThread::TraversalDirThread(const QUrl &url,
     if (dirUrl.isValid() /*&& !UrlRoute::isVirtual(dirUrl)*/) {
         dirIterator = DirIteratorFactory::create<AbstractDirIterator>(url, nameFilters, filters, flags);
         if (!dirIterator) {
-            qInfo() << "Failed create dir iterator from" << url;
-            abort();
+            qWarning() << "Failed create dir iterator from" << url;
+            return;
         }
     }
 }

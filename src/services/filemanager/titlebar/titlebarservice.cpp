@@ -43,9 +43,9 @@ DSB_FM_END_NAMESPACE
 
 DSB_FM_USE_NAMESPACE
 
-bool TitleBarService::addCustomCrumbar(const TitleBar::CustomCrumb &info, const TitleBar::supportedUrlCallback &supportedUrlFunc, const TitleBar::seprateUrlCallback &seprateUrlFunc)
+bool TitleBarService::addCustomCrumbar(const TitleBar::CustomCrumbInfo &info)
 {
-    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, info, supportedUrlFunc, seprateUrlFunc).toBool();
+    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, info).toBool();
 }
 
 TitleBarService::TitleBarService(QObject *parent)

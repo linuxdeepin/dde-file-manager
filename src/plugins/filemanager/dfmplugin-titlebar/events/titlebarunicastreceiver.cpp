@@ -51,9 +51,7 @@ void TitleBarUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("TitleBarService::addCustomCrumbar"), this, &TitleBarUnicastReceiver::invokeAddCustomCrumbar);
 }
 
-bool TitleBarUnicastReceiver::invokeAddCustomCrumbar(const CustomCrumb &info,
-                                                     const supportedUrlCallback &supportedUrlFunc,
-                                                     const seprateUrlCallback &seprateUrlFunc)
+bool TitleBarUnicastReceiver::invokeAddCustomCrumbar(const CustomCrumbInfo &info)
 {
     if (CrumbManager::instance()->isRegisted(info.scheme)) {
         qWarning() << "Crumb sechme " << info.scheme << "has been resigtered!";
@@ -63,8 +61,8 @@ bool TitleBarUnicastReceiver::invokeAddCustomCrumbar(const CustomCrumb &info,
     CrumbManager::instance()->registerCrumbCreator(info.scheme, [=]() {
         CrumbInterface *interface { new CrumbInterface };
         interface->setKeepAddressBar(info.keepAddressBar);
-        interface->registewrSupportedUrlCallback(supportedUrlFunc);
-        interface->registerSeprateUrlCallback(seprateUrlFunc);
+        interface->registewrSupportedUrlCallback(info.supportedCb);
+        interface->registerSeprateUrlCallback(info.seperateCb);
         return interface;
     });
     return true;

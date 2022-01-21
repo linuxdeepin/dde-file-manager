@@ -43,8 +43,7 @@ public:
         return "org.deepin.service.TitleBarService";
     }
 
-    bool addCustomCrumbar(const TitleBar::CustomCrumb &info, const TitleBar::supportedUrlCallback &supportedUrlFunc,
-                          const TitleBar::seprateUrlCallback &seprateUrlFunc = nullptr);
+    bool addCustomCrumbar(const TitleBar::CustomCrumbInfo &info);
 
 private:
     explicit TitleBarService(QObject *parent = nullptr);

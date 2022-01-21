@@ -30,8 +30,9 @@
 #include "dfm-base/base/application/application.h"
 
 #include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/filemanager/sidebar/sidebar_defines.h"
 #include "services/filemanager/workspace/workspaceservice.h"
+#include "services/filemanager/windows/windowsservice.h"
+#include "services/filemanager/titlebar/titlebarservice.h"
 
 #include <dfm-framework/framework.h>
 
@@ -41,6 +42,7 @@ DFMBASE_USE_NAMESPACE
 DPRECENT_BEGIN_NAMESPACE
 
 namespace GlobalPrivate {
+static WindowsService *winServ { nullptr };
 static SideBarService *sideBarService { nullptr };
 static WorkspaceService *workspaceService { nullptr };
 }   // namespace GlobalPrivate
@@ -63,6 +65,10 @@ void Recent::initialize()
     InfoFactory::regClass<RecentFileInfo>(RecentHelper::scheme());
     WacherFactory::regClass<RecentFileWatcher>(RecentHelper::scheme());
     DirIteratorFactory::regClass<RecentDirIterator>(RecentHelper::scheme());
+
+    GlobalPrivate::winServ = ctx.service<WindowsService>(WindowsService::name());
+    Q_ASSERT(GlobalPrivate::winServ);
+    connect(GlobalPrivate::winServ, &WindowsService::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
 }
 
 bool Recent::start()
@@ -106,6 +112,16 @@ void Recent::onRecentDisplayChanged(bool enabled)
     }
 }
 
+void Recent::onWindowOpened(quint64 windId)
+{
+    auto window = GlobalPrivate::winServ->findWindowById(windId);
+    Q_ASSERT_X(window, "Recent", "Cannot find window by id");
+    if (window->titleBar())
+        regRecentCrumbToTitleBar();
+    else
+        connect(window, &FileManagerWindow::titleBarInstallFinished, this, &Recent::regRecentCrumbToTitleBar, Qt::DirectConnection);
+}
+
 void Recent::addRecentItem()
 {
     SideBar::ItemInfo item;
@@ -122,6 +138,25 @@ void Recent::addRecentItem()
 void Recent::removeRecentItem()
 {
     GlobalPrivate::sideBarService->removeItem(RecentHelper::rootUrl());
+}
+
+void Recent::regRecentCrumbToTitleBar()
+{
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        auto &ctx = dpfInstance.serviceContext();
+        if (ctx.load(TitleBarService::name())) {
+            auto titleBarServ = ctx.service<TitleBarService>(TitleBarService::name());
+            TitleBar::CustomCrumbInfo info;
+            info.scheme = RecentHelper::scheme();
+            info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == RecentHelper::scheme(); };
+            info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
+                Q_UNUSED(url);
+                return { TitleBar::CrumbData(RecentHelper::rootUrl(), tr("Recent"), RecentHelper::icon().name()) };
+            };
+            titleBarServ->addCustomCrumbar(info);
+        }
+    });
 }
 
 DPRECENT_END_NAMESPACE

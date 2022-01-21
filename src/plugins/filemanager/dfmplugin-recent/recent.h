@@ -39,6 +39,8 @@ public:
 
 private slots:
     void onRecentDisplayChanged(bool enabled);
+    void onWindowOpened(quint64 windId);
+    void regRecentCrumbToTitleBar();
 
 private:
     void addRecentItem();

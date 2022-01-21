@@ -40,8 +40,7 @@ public:
     void connectService();
 
 public slots:
-    bool invokeAddCustomCrumbar(const DSB_FM_NAMESPACE::TitleBar::CustomCrumb &info, const DSB_FM_NAMESPACE::TitleBar::supportedUrlCallback &supportedUrlFunc,
-                                const DSB_FM_NAMESPACE::TitleBar::seprateUrlCallback &seprateUrlFunc);
+    bool invokeAddCustomCrumbar(const DSB_FM_NAMESPACE::TitleBar::CustomCrumbInfo &info);
 
 private:
     explicit TitleBarUnicastReceiver(QObject *parent = nullptr);

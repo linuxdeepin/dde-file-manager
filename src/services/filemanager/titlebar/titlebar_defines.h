@@ -33,13 +33,6 @@
 DSB_FM_BEGIN_NAMESPACE
 
 namespace TitleBar {
-
-struct CustomCrumb
-{
-    QString scheme;
-    bool keepAddressBar { false };
-};
-
 // item of CrumbBar
 struct CrumbData
 {
@@ -56,6 +49,15 @@ public:
 
 using supportedUrlCallback = std::function<bool(const QUrl &)>;
 using seprateUrlCallback = std::function<QList<CrumbData>(const QUrl &)>;
+
+struct CustomCrumbInfo
+{
+    QString scheme;
+    bool keepAddressBar { false };   // don't lost focus at addressbar, only search use it now
+
+    supportedUrlCallback supportedCb { nullptr };
+    seprateUrlCallback seperateCb { nullptr };
+};
 
 // custom event type
 namespace EventType {
@@ -76,7 +78,7 @@ enum MenuAction {
 
 DSB_FM_END_NAMESPACE
 
-Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::TitleBar::CustomCrumb);
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::TitleBar::CustomCrumbInfo);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::TitleBar::CrumbData);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::TitleBar::MenuAction);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::TitleBar::supportedUrlCallback);

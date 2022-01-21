@@ -38,6 +38,7 @@
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/search/searchservice.h"
+#include "services/filemanager/titlebar/titlebarservice.h"
 
 DSB_FM_USE_NAMESPACE
 namespace GlobalPrivate {
@@ -82,11 +83,6 @@ bool Computer::start()
 {
     dpfInstance.eventDispatcher().subscribe(SideBar::EventType::kEjectAction, ComputerEventReceiverIns, &ComputerEventReceiver::handleItemEject);
 
-    auto &ctx = dpfInstance.serviceContext();
-    Q_ASSERT_X(ctx.loaded(SearchService::name()), "Search", "SearchService not loaded");
-    GlobalPrivate::searchServ = ctx.service<SearchService>(SearchService::name());
-    GlobalPrivate::searchServ->regSearchPath(ComputerUtils::scheme(), "/");
-
     return true;
 }
 
@@ -99,8 +95,28 @@ void Computer::onWindowOpened(quint64 windId)
 {
     auto window = GlobalPrivate::winServ->findWindowById(windId);
     Q_ASSERT_X(window, "Computer", "Cannot find window by id");
-    connect(window, &FileManagerWindow::workspaceInstallFinished, this, [] { ComputerItemWatcherInstance->startQueryItems(); }, Qt::DirectConnection);
-    connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { this->addComputerToSidebar(); }, Qt::DirectConnection);
+
+    if (window->workSpace())
+        ComputerItemWatcherInstance->startQueryItems();
+    else
+        connect(window, &FileManagerWindow::workspaceInstallFinished, this, [] { ComputerItemWatcherInstance->startQueryItems(); }, Qt::DirectConnection);
+
+    if (window->sideBar())
+        addComputerToSidebar();
+    else
+        connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addComputerToSidebar(); }, Qt::DirectConnection);
+
+    if (window->titleBar()) {
+        regComputerCrumbToTitleBar();
+        regComputerToSearch();
+    } else {
+        connect(window, &FileManagerWindow::titleBarInstallFinished, this,
+                [this] {
+                    regComputerCrumbToTitleBar();
+                    regComputerToSearch();
+                },
+                Qt::DirectConnection);
+    }
 }
 
 void Computer::onWindowClosed(quint64 winId)
@@ -124,6 +140,36 @@ void Computer::addComputerToSidebar()
     entry.url = ComputerUtils::rootUrl();
     entry.flag = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
     sidebarServ->addItem(entry);
+}
+
+void Computer::regComputerCrumbToTitleBar()
+{
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        auto &ctx = dpfInstance.serviceContext();
+        if (ctx.load(TitleBarService::name())) {
+            auto titleBarServ = ctx.service<TitleBarService>(TitleBarService::name());
+            TitleBar::CustomCrumbInfo info;
+            info.scheme = ComputerUtils::scheme();
+            info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == ComputerUtils::scheme(); };
+            info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
+                Q_UNUSED(url);
+                return { TitleBar::CrumbData(ComputerUtils::rootUrl(), tr("Computer"), ComputerUtils::icon().name()) };
+            };
+            titleBarServ->addCustomCrumbar(info);
+        }
+    });
+}
+
+void Computer::regComputerToSearch()
+{
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        auto &ctx = dpfInstance.serviceContext();
+        Q_ASSERT_X(ctx.loaded(SearchService::name()), "Search", "SearchService not loaded");
+        GlobalPrivate::searchServ = ctx.service<SearchService>(SearchService::name());
+        GlobalPrivate::searchServ->regSearchPath(ComputerUtils::scheme(), "/");
+    });
 }
 
 DPCOMPUTER_END_NAMESPACE

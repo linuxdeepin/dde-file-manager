@@ -74,9 +74,9 @@ private:
     AbstractFrame *detailSpace { nullptr };
 
     std::once_flag titleBarFlag;
+    std::once_flag titleMenuFlag;
     std::once_flag sideBarFlag;
     std::once_flag workspaceFlag;
-    std::once_flag titleMenuFlag;
     std::once_flag detailVewFlag;
 };
 

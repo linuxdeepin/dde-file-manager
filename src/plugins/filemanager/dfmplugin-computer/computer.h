@@ -44,6 +44,8 @@ protected Q_SLOTS:
 
 private:
     void addComputerToSidebar();
+    void regComputerCrumbToTitleBar();
+    void regComputerToSearch();
 };
 DPCOMPUTER_END_NAMESPACE
 
