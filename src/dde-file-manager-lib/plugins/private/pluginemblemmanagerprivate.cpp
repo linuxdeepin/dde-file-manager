@@ -40,16 +40,12 @@ PluginEmblemManagerPrivate::PluginEmblemManagerPrivate(PluginEmblemManager *qq)
     // 开启获取插件角标线程
     startWork();
     // 运行时增加插件，恢复线程刷新角标
-    connect(&DFMExtPluginManager::instance(), &DFMExtPluginManager::extensionPluginCreated, this, [this]() {
-        this->startWork();
+    connect(&DFMExtPluginManager::instance(), &DFMExtPluginManager::extensionPluginCreated, this, [=](){
+        startWork();
+        updatePluginEmblem();
     });
-    connect(&DFMExtPluginManager::instance(), &DFMExtPluginManager::extensionPluginEnable, this, [this]() {
-        emit q->updatePluginEmblem();
-    });
-    connect(&DFMExtPluginManager::instance(), &DFMExtPluginManager::extensionPluginDisbale, this, [this]() {
-        clearEmblemIconsMap();
-        emit q->updatePluginEmblem();
-    });
+    connect(&DFMExtPluginManager::instance(), &DFMExtPluginManager::extensionPluginEnable, this, &PluginEmblemManagerPrivate::updatePluginEmblem);
+    connect(&DFMExtPluginManager::instance(), &DFMExtPluginManager::extensionPluginDisbale, this, &PluginEmblemManagerPrivate::updatePluginEmblem);
 }
 
 PluginEmblemManagerPrivate::~PluginEmblemManagerPrivate()
@@ -230,6 +226,12 @@ void PluginEmblemManagerPrivate::cacheEmblemToMap(bool &bHaveIcon, const QPair<Q
             }
         }
     }
+}
+
+void PluginEmblemManagerPrivate::updatePluginEmblem()
+{
+    clearEmblemIconsMap();
+    emit q->updatePluginEmblem();
 }
 
 void PluginEmblemManagerPrivate::updateTimerTimeout()

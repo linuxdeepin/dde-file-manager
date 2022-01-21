@@ -49,6 +49,8 @@ public:
 
 private slots:
     void updateTimerTimeout();
+    // 更新插件角标
+    void updatePluginEmblem();
 
 private:
     // 异步调用插件接口更新角标
