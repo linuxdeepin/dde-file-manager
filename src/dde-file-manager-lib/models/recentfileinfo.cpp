@@ -29,6 +29,8 @@
 #include "singleton.h"
 #include "controllers/pathmanager.h"
 #include "shutil/mimetypedisplaymanager.h"
+#include "shutil/fileutils.h"
+
 #include <QXmlStreamReader>
 #include <QFile>
 
@@ -81,7 +83,7 @@ bool RecentFileInfo::isWritable() const
 {
     if (isGvfsMountFile()) {
         if (m_isWriteAble == -1)
-            const_cast<RecentFileInfo*>(this)->m_isWriteAble =
+            const_cast<RecentFileInfo *>(this)->m_isWriteAble =
                 permissions().testFlag(QFile::Permission::WriteUser);
         return m_isWriteAble > 0;
     }
@@ -204,10 +206,9 @@ QVariant RecentFileInfo::userColumnData(int userColumnRole) const
     return DAbstractFileInfo::userColumnData(userColumnRole);
 }
 
-
 QVariant RecentFileInfo::userColumnDisplayName(int userColumnRole) const
 {
-    if (userColumnRole == DFileSystemModel::FileUserRole + 1){
+    if (userColumnRole == DFileSystemModel::FileUserRole + 1) {
         return qApp->translate("DFileSystemModel",  "Path");
     }
 
@@ -222,7 +223,6 @@ MenuAction RecentFileInfo::menuActionByColumnRole(int userColumnRole) const
 
     return DAbstractFileInfo::menuActionByColumnRole(userColumnRole);
 }
-
 
 int RecentFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const
 {
@@ -326,7 +326,9 @@ void RecentFileInfo::updateInfo()
             const QStringRef &dateTime = reader.attributes().value("modified");
 
             if (!location.isEmpty()) {
-                DUrl findUrl = DUrl(location.toString());
+                QString path = location.toString();
+                path = FileUtils::bindPathTransform(path);
+                DUrl findUrl = DUrl(path);
 
                 if (findUrl.toLocalFile() == fileUrl().path()) {
                     setReadDateTime(dateTime.toString());

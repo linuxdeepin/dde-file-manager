@@ -166,6 +166,14 @@ public:
     static DUrl durlFromLocalPath(const QString &localPath);
     // 获取Smb地址元素
     static QString smbAttribute(const QString &localPath, SmbAttribute id);
+
+    static QString bindPathTransform(const QString &path);
+
+    static QList<QStringList> readBindPathInfo();
+
+    static QList<QStringList> bindPathInfo(const QString &grepData);
+
+    static QList<QStringList> catFstabFileInfo(const QString &mountPoint);
 };
 
 #endif // FILEUTILS_H
