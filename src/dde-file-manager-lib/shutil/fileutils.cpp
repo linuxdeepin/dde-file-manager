@@ -2031,6 +2031,88 @@ QString FileUtils::smbAttribute(const QString &localPath, FileUtils::SmbAttribut
     return QUrl::fromPercentEncoding(tmpStdStr.data());
 }
 
+QString FileUtils::bindPathTransform(const QString &path)
+{
+    QString transformPath = path;
+    QList<QStringList> bindPathInfoList = readBindPathInfo();
+
+    for (QStringList infos : bindPathInfoList) {
+        if(infos.count() >= 2) {
+            QString oldbindpath = infos.first();
+            QString bindPath = infos[1];
+            if (transformPath.contains(oldbindpath)) {
+                transformPath = transformPath.replace(oldbindpath, bindPath);
+                break;
+            }
+        }
+    }
+
+    return transformPath;
+}
+
+QList<QStringList> FileUtils::readBindPathInfo()
+{
+    static QList<QStringList> lists;
+    static bool flg = true;
+    if (flg) {
+        lists << bindPathInfo(QString("defaults,bind"));
+        flg = false;
+    }
+    return lists;
+}
+
+/*!
+ * \brief           获取挂载点路径映射关于信息
+ * \param grepData  需要查询信息的关键词
+ * \return          返回查询结果
+ */
+QList<QStringList> FileUtils::bindPathInfo(const QString &grepData)
+{
+    QList<QStringList> data = catFstabFileInfo(grepData);
+    if(data.isEmpty())
+        return QList<QStringList>();
+
+    QList<QStringList> infoList;
+
+    for (QStringList &sl : data) {
+        QStringList bindmount;
+        if (sl.count() >= 4) {
+            if (sl[3] == grepData) {
+                bindmount.append(QString("file://") + sl[0]);
+                bindmount.append(QString("file://") + sl[1]);
+                infoList.append(bindmount);
+            }
+        }
+    }
+    return infoList;
+}
+
+/*!
+ * \brief               使用cat获取/etc/fstab文件信息
+ * \param grepData      需要查询信息的关键词
+ * \return              返回查询结果
+ */
+QList<QStringList> FileUtils::catFstabFileInfo(const QString &grepData)
+{
+    QList<QStringList> listMountInfo;
+    QStringList options;
+    options << "-c";
+    options << QString("cat") + QString(" /etc/fstab | grep %1").arg(grepData);
+    QProcess process;
+    process.start("/bin/bash", options);
+    process.waitForStarted();
+    process.waitForReadyRead();
+    while(process.canReadLine()){
+        QString out = process.readLine();
+        QStringList outs = out.split(" ", QString::SkipEmptyParts);
+        listMountInfo.append(outs);
+    }
+    process.waitForFinished();
+    process.terminate();
+
+    return listMountInfo;
+}
+
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
 bool FileUtils::isDesktopFile(const QString &filePath)
 {

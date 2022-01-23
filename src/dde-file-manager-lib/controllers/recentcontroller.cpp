@@ -176,7 +176,7 @@ void RecentFileWatcher::removeWatcher(const DUrl &url)
 }
 
 void RecentFileWatcher::onFileDeleted(const DUrl &url)
-{    
+{
     DUrl newUrl = url;
     newUrl.setScheme(RECENT_SCHEME);
     removeWatcher(newUrl);
@@ -342,7 +342,7 @@ bool RecentController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) c
         d.addButton(QObject::tr("Cancel","button"), false, DDialog::ButtonRecommend);
         d.setMaximumWidth(640);
         if(d.exec() == 0)
-            DRecentManager::removeItem(event->url().path()); //删除当前最近使用项
+            DRecentManager::removeItem(event->url().path());   //删除当前最近使用项
         return true;
     }
 
@@ -600,7 +600,9 @@ void RecentController::handleFileChanged()
             const QStringRef &readTime = reader.attributes().value("modified");
 
             if (!location.isEmpty()) {
-                DUrl url = DUrl(location.toString());
+                QString path = location.toString();
+                path = FileUtils::bindPathTransform(path);
+                DUrl url = DUrl(path);
                 QFileInfo info(url.toLocalFile());
                 DUrl recentUrl = url;
                 recentUrl.setScheme(RECENT_SCHEME);
