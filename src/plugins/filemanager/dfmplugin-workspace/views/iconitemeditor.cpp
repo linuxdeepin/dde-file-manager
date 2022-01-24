@@ -56,7 +56,7 @@ void IconItemEditor::setOpacity(qreal opacity)
     if (opacity - 1.0 >= 0) {
         if (d->opacityEffect) {
             d->opacityEffect->deleteLater();
-            d->opacityEffect = Q_NULLPTR;
+            d->opacityEffect = nullptr;
         }
 
         return;
@@ -144,18 +144,18 @@ void IconItemEditor::popupEditContentMenu()
         return;
     }
 
-    QAction *undo_action = menu->findChild<QAction *>(QStringLiteral("edit-undo"));
-    QAction *redo_action = menu->findChild<QAction *>(QStringLiteral("edit-redo"));
+    QAction *undoAction = menu->findChild<QAction *>(QStringLiteral("edit-undo"));
+    QAction *redoAction = menu->findChild<QAction *>(QStringLiteral("edit-redo"));
 
-    if (undo_action) {
-        undo_action->setEnabled(d->editTextStackCurrentIndex > 0);
-        disconnect(undo_action, SIGNAL(triggered(bool)));
-        connect(undo_action, &QAction::triggered, this, &IconItemEditor::editUndo);
+    if (undoAction) {
+        undoAction->setEnabled(d->editTextStackCurrentIndex > 0);
+        disconnect(undoAction, SIGNAL(triggered(bool)));
+        connect(undoAction, &QAction::triggered, this, &IconItemEditor::editUndo);
     }
-    if (redo_action) {
-        redo_action->setEnabled(d->editTextStackCurrentIndex < d->editTextStack.count() - 1);
-        disconnect(redo_action, SIGNAL(triggered(bool)));
-        connect(redo_action, &QAction::triggered, this, &IconItemEditor::editRedo);
+    if (redoAction) {
+        redoAction->setEnabled(d->editTextStackCurrentIndex < d->editTextStack.count() - 1);
+        disconnect(redoAction, SIGNAL(triggered(bool)));
+        connect(redoAction, &QAction::triggered, this, &IconItemEditor::editRedo);
     }
 
     menu->exec(QCursor::pos());
@@ -187,6 +187,7 @@ void IconItemEditor::doLineEditTextChanged()
     Q_UNUSED(blocker)
 
     const QString srcText = d->edit->toPlainText();
+    // Todo(yanghao):preprocessingFileName
     QString dstText = srcText /* DFMGlobal::preprocessingFileName(srcText)*/;
 
     if (srcText != dstText) {
@@ -198,10 +199,10 @@ void IconItemEditor::doLineEditTextChanged()
     }
 
     QVector<uint> list = dstText.toUcs4();
-    int cursor_pos = d->edit->textCursor().position() - srcText.length() + dstText.length();
+    int cursorPos = d->edit->textCursor().position() - srcText.length() + dstText.length();
 
     while (dstText.toLocal8Bit().size() > d->maxCharSize) {
-        list.removeAt(--cursor_pos);
+        list.removeAt(--cursorPos);
 
         dstText = QString::fromUcs4(list.data(), list.size());
     }
@@ -225,7 +226,7 @@ void IconItemEditor::doLineEditTextChanged()
         cursor.setBlockFormat(format);
     } while (cursor.movePosition(QTextCursor::NextBlock));
 
-    cursor.setPosition(cursor_pos);
+    cursor.setPosition(cursorPos);
 
     d->edit->setTextCursor(cursor);
     d->edit->setAlignment(Qt::AlignHCenter);
@@ -258,7 +259,7 @@ void IconItemEditor::updateEditorGeometry()
             d->edit->setFixedHeight(textHeight);
         }
     } else {
-        d->edit->setFixedHeight(qMin(fontMetrics().height() * 3 + 4 /*TEXT_PADDING*/ * 2, textHeight));
+        d->edit->setFixedHeight(qMin(fontMetrics().height() * 3 + kIconModeTextPadding * 2, textHeight));
     }
 }
 

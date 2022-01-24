@@ -61,17 +61,21 @@ public:
     explicit FileViewModelPrivate(FileViewModel *qq);
     virtual ~FileViewModelPrivate();
 private Q_SLOTS:
+
     void doFileDeleted(const QUrl &url);
+
     void dofileAttributeChanged(const QUrl &url, const int &isExternalSource = 1)
     {
         Q_UNUSED(url);
         Q_UNUSED(isExternalSource);
     }
+
     void dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
     {
-        Q_UNUSED(fromUrl);
-        Q_UNUSED(toUrl);
+        doFileDeleted(fromUrl);
+        dofileCreated(toUrl);
     }
+
     void dofileCreated(const QUrl &url);
     void doFileUpdated(const QUrl &url);
     void doFilesUpdated();

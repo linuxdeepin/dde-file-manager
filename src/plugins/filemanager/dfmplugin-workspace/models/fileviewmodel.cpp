@@ -243,6 +243,8 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
                    d.data(), &FileViewModelPrivate::dofileCreated);
         disconnect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged,
                    d.data(), &FileViewModelPrivate::doFileUpdated);
+        disconnect(d->watcher.data(), &AbstractFileWatcher::fileRename,
+                   d.data(), &FileViewModelPrivate::dofileMoved);
     }
     d->watcher = WacherFactory::create<AbstractFileWatcher>(url);
     if (!d->watcher.isNull()) {
@@ -252,6 +254,9 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
                 d.data(), &FileViewModelPrivate::dofileCreated);
         connect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged,
                 d.data(), &FileViewModelPrivate::doFileUpdated);
+        connect(d->watcher.data(), &AbstractFileWatcher::fileRename,
+                d.data(), &FileViewModelPrivate::dofileMoved);
+
         d->watcher->startWatcher();
     }
 
