@@ -1913,7 +1913,7 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
             return createFSearchIterator(keyword);
         }
     } else {
-        qDebug() << "support quick search for: " << pathForSearching;
+        qInfo() << "support quick search for: " << pathForSearching;
     }
 
     // fix bug#48091 当文件路径中存在快捷方式时，将其转换为真实地址
@@ -1961,12 +1961,15 @@ bool FileDirIterator::hasSymLinkDir(const QString &path)
 bool FileDirIterator::createFSearchIterator(const QString &keyword)
 {
     const QString pathForSearching = iterator->url().toLocalFile();
-    if (!DFSearch::isSupportFSearch(pathForSearching))
+    if (!DFSearch::isSupportFSearch(pathForSearching)) {
+        qInfo() << "this path does not support fsearch: " << pathForSearching;
         return false;
+    }
 
     if (iterator)
         delete iterator;
 
+    qInfo() << "this path supports fsearch: " << pathForSearching;
     iterator = new DFMFSearchDirIterator(pathForSearching, keyword);
     return true;
 }

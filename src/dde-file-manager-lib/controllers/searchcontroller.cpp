@@ -280,6 +280,7 @@ public:
     mutable QList<DUrl> searchPathList;
     mutable DDirIteratorPointer it;
     mutable bool m_hasIteratorByKeywordOfCurrentIt = false;
+    mutable bool m_onceCheckFlag = true;
 
 #ifndef DISABLE_QUICK_SEARCH
     // 所有支持快速搜索的子目录(可包含待搜索目录本身)
@@ -507,7 +508,7 @@ bool SearchDiriterator::hasNext() const
             m_hasIteratorByKeywordOfCurrentIt = false;
 
 #ifndef DISABLE_QUICK_SEARCH
-            if (url.isLocalFile()) { // 针对本地文件, 先判断此目录是否是索引数据的子目录, 可以依此过滤掉很多目录, 减少对anything dbus接口的调用
+             if (url.isLocalFile()) { // 针对本地文件, 先判断此目录是否是索引数据的子目录, 可以依此过滤掉很多目录, 减少对anything dbus接口的调用
                 const QString &file = url.toLocalFile().append("/");
 
                 for (const QString &path : hasLFTSubdirectories) {
@@ -522,8 +523,10 @@ bool SearchDiriterator::hasNext() const
                     }
                 }
 
-                if (m_hasIteratorByKeywordOfCurrentIt)
+                if (m_hasIteratorByKeywordOfCurrentIt || m_onceCheckFlag) {
+                    m_onceCheckFlag = false;
                     m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(m_fileUrl.searchKeyword());
+                }
             } else
 #endif
             {
