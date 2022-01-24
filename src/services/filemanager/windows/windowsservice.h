@@ -53,6 +53,7 @@ public:
     QList<quint64> windowIdList();
 
 signals:
+    void windowCreated(quint64 windId);
     void windowOpened(quint64 windId);
     void windowClosed(quint64 winId);
 

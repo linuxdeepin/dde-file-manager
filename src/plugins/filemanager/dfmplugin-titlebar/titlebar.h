@@ -40,6 +40,7 @@ public:
     virtual ShutdownFlag stop() override;
 
 private slots:
+    void onWindowCreated(quint64 windId);
     void onWindowOpened(quint64 windId);
     void onWindowClosed(quint64 windId);
 };

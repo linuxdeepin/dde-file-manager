@@ -29,6 +29,7 @@
 #include <QReadWriteLock>
 #include <QQueue>
 #include <QTimer>
+#include <QPointer>
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
@@ -46,7 +47,7 @@ class FileViewModelPrivate : public QObject
     QSharedPointer<FileViewItem> root;
     int column = 0;
     AbstractFileWatcherPointer watcher;
-    QSharedPointer<DFMBASE_NAMESPACE::TraversalDirThread> traversalThread;
+    QPointer<DFMBASE_NAMESPACE::TraversalDirThread> traversalThread;
     bool canFetchMoreFlag = true;
     dfmbase::DThreadList<QUrl> handlingFileList;
     QQueue<QPair<QUrl, EventType>> watcherEvent;

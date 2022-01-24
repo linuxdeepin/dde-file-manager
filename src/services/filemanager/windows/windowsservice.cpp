@@ -254,6 +254,8 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
     QX11Info::setAppTime(QX11Info::appUserTime());
 
     auto window = new FMWindow(showedUrl);
+    window->show();
+    emit windowCreated(window->internalWinId());
     d->loadWindowState(window);
     connect(window, &FileManagerWindow::aboutToClose, this, [this, window]() {
         emit windowClosed(window->internalWinId());
@@ -272,7 +274,6 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
         d->moveWindowToScreenCenter(window);
 
     finally.dismiss();
-    window->show();
     qApp->setActiveWindow(window);
     emit windowOpened(window->internalWinId());
     return window;

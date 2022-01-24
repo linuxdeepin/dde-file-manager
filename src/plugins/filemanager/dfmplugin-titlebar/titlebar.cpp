@@ -39,6 +39,7 @@ DPTITLEBAR_USE_NAMESPACE
 
 namespace GlobalPrivate {
 static DSB_FM_NAMESPACE::WindowsService *windowService { nullptr };
+static TitleBarWidget *titleBar { nullptr };
 }   // namespace GlobalPrivate
 
 void TitleBar::initialize()
@@ -49,6 +50,7 @@ void TitleBar::initialize()
     auto &ctx = dpfInstance.serviceContext();
     Q_ASSERT_X(ctx.loaded(WindowsService::name()), "SideBar", "WindowService not loaded");
     GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());
+    connect(GlobalPrivate::windowService, &WindowsService::windowCreated, this, &TitleBar::onWindowCreated, Qt::DirectConnection);
     connect(GlobalPrivate::windowService, &WindowsService::windowOpened, this, &TitleBar::onWindowOpened, Qt::DirectConnection);
     connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &TitleBar::onWindowClosed, Qt::DirectConnection);
 
@@ -85,25 +87,29 @@ dpf::Plugin::ShutdownFlag TitleBar::stop()
     return kSync;
 }
 
+void TitleBar::onWindowCreated(quint64 windId)
+{
+    GlobalPrivate::titleBar = new TitleBarWidget;
+    TitleBarHelper::addTileBar(windId, GlobalPrivate::titleBar);
+}
+
 void TitleBar::onWindowOpened(quint64 windId)
 {
     DFMBASE_USE_NAMESPACE
 
     auto window = GlobalPrivate::windowService->findWindowById(windId);
     Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
-    TitleBarWidget *titleBar = new TitleBarWidget;
-    window->installTitleBar(titleBar);
+    window->installTitleBar(GlobalPrivate::titleBar);
     window->installTitleMenu(TitleBarHelper::createSettingsMenu(windId));
-    TitleBarHelper::addTileBar(windId, titleBar);
 
-    Q_ASSERT(titleBar->navWidget());
-    connect(window, &FileManagerWindow::reqBack, titleBar->navWidget(), &NavWidget::back);
-    connect(window, &FileManagerWindow::reqForward, titleBar->navWidget(), &NavWidget::forward);
+    Q_ASSERT(GlobalPrivate::titleBar->navWidget());
+    connect(window, &FileManagerWindow::reqBack, GlobalPrivate::titleBar->navWidget(), &NavWidget::back);
+    connect(window, &FileManagerWindow::reqForward, GlobalPrivate::titleBar->navWidget(), &NavWidget::forward);
     // First window's tab created before first url changed in titlebar
-    connect(window, &FileManagerWindow::workspaceInstallFinished, titleBar->navWidget(),
+    connect(window, &FileManagerWindow::workspaceInstallFinished, GlobalPrivate::titleBar->navWidget(),
             &NavWidget::onNewWindowOpended);
-    connect(window, &FileManagerWindow::reqSearchCtrlF, titleBar, &TitleBarWidget::handleHotkeyCtrlF);
-    connect(window, &FileManagerWindow::reqSearchCtrlL, titleBar, &TitleBarWidget::handleHotkeyCtrlL);
+    connect(window, &FileManagerWindow::reqSearchCtrlF, GlobalPrivate::titleBar, &TitleBarWidget::handleHotkeyCtrlF);
+    connect(window, &FileManagerWindow::reqSearchCtrlL, GlobalPrivate::titleBar, &TitleBarWidget::handleHotkeyCtrlL);
 }
 
 void TitleBar::onWindowClosed(quint64 windId)
