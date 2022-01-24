@@ -1115,6 +1115,7 @@ void DFileDialog::handleNewView(DFMBaseView *view)
     fileView->setMenuActionWhitelist(whitelist);
     fileView->setDragEnabled(false);
     fileView->setDragDropMode(QAbstractItemView::NoDragDrop);
+    fileView->setProperty("isFileDialog", true);
 
     connect(fileView->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &DFileDialog::selectionFilesChanged);

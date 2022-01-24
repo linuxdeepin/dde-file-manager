@@ -3282,7 +3282,8 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
         DFileMenuManager::extendCustomMenu(menu, false, rootUrl(), {}, {});
 
     //so扩展菜单
-    if (DFileMenuManager::isExtensionsSupported(rootUrl()))
+    bool isFileDialog = this->property("isFileDialog").toBool();
+    if (!isFileDialog && DFileMenuManager::isExtensionsSupported(rootUrl()))
         DFileMenuManager::extensionPluginCustomMenu(menu, false, rootUrl(), {}, {});
 
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
@@ -3385,8 +3386,9 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
             DFileMenuManager::extendCustomMenu(menu, true, viewRootUrl, info->fileUrl(), list);
 
         //so扩展菜单
-        if (DFileMenuManager::isExtensionsSupported(rootUrl()))
-            DFileMenuManager::extensionPluginCustomMenu(menu, false, rootUrl(), {}, {});
+        bool isFileDialog = this->property("isFileDialog").toBool();
+        if (!isFileDialog && DFileMenuManager::isExtensionsSupported(rootUrl()))
+            DFileMenuManager::extensionPluginCustomMenu(menu, true, rootUrl(), {}, {});
     }
 
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this, index);
