@@ -27,7 +27,7 @@
 #include "dfmextmenuimplproxy.h"
 #include "interfaces/dfilesystemwatcher.h"
 
-#include <QHash>
+#include <QMap>
 #include <QObject>
 #include <QMutex>
 
@@ -52,7 +52,7 @@ class DFMExtPluginManagerPrivate : public QObject
     DFMExtPluginManager::DFMExtMenuMap menus;
 
     //! pluginName and loader cache
-    QHash<QString, DFMExtPluginLoaderPointer> loaders;
+    QMap<QString, DFMExtPluginLoaderPointer> loaders;
     DFileSystemWatcher *extensionWathcer { nullptr };
     std::once_flag watcherFlag;
     QMutex mutex;

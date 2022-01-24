@@ -52,8 +52,8 @@ public:
     using DFMExtEmblemIcons = QList<QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>>;
     using DFMExtMenuState = QPair<PluginLogicState, QSharedPointer<DFMEXT::DFMExtMenuPlugin>>;
     using DFMExtEmblemState =  QPair<PluginLogicState, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>>;
-    using DFMExtMenuMap = QHash<QString, DFMExtMenuState>;
-    using DFMExtEmblemIconMap = QHash<QString, DFMExtEmblemState>;
+    using DFMExtMenuMap = QMap<QString, DFMExtMenuState>;
+    using DFMExtEmblemIconMap = QMap<QString, DFMExtEmblemState>;
 
     QString pluginDefaultPath();
     void setPluginPaths(const QStringList &paths);
