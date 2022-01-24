@@ -341,7 +341,6 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
     QRectF iconRect = opt.rect;
     iconRect.setSize(parent()->parent()->iconSize());
     double iconTopOffset = (opt.rect.height() - iconRect.height()) / 3.0;
-    qDebug() << "paintItemIcon  " << iconTopOffset;
     iconRect.moveLeft(opt.rect.left() + (opt.rect.width() - iconRect.width()) / 2.0);
     iconRect.moveTop(opt.rect.top() + iconTopOffset);   // move icon down
 

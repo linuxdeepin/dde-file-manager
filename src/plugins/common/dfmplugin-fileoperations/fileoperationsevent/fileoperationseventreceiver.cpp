@@ -367,7 +367,7 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
                 dialogService->showErrorDialog("open file error", error);
             }
             // TODO:: file Open finished need to send file Open finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFiles, windowId, urls, ok, error);
+            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
             return ok;
         }
     }
@@ -378,7 +378,7 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
         dialogService->showErrorDialog("open file error", error);
     }
     // TODO:: file Open finished need to send file Open finished event
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFiles, windowId, urls, ok, error);
+    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
     return ok;
 }
 

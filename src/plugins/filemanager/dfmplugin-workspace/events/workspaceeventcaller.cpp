@@ -114,3 +114,8 @@ void WorkspaceEventCaller::sendCutFiles(const quint64 windowID, const QList<QUrl
 {
     dispatcher()->publish(GlobalEventType::kCutFile, windowID, sourceUrls, target, flags);
 }
+
+void WorkspaceEventCaller::sendOpenInTerminal(const quint64 windowID, const QList<QUrl> &urls)
+{
+    dispatcher()->publish(GlobalEventType::kOpenInTerminal, windowID, urls);
+}

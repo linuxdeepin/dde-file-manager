@@ -53,6 +53,7 @@ public:
     static void sendWriteToClipboard(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> &urls);
     static void sendCopyFiles(const quint64 windowId, const QList<QUrl> &sourceUrls, const QUrl &target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
     static void sendCutFiles(const quint64 windowId, const QList<QUrl> &sourceUrls, const QUrl &target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    static void sendOpenInTerminal(const quint64 windowId, const QList<QUrl> &urls);
 };
 
 DPWORKSPACE_END_NAMESPACE

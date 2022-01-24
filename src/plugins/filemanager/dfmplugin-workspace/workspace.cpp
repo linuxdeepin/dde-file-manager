@@ -29,12 +29,15 @@
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/titlebar/titlebar_defines.h"
+#include "services/common/propertydialog/propertydialogservice.h"
+
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/framework.h>
 
+DSC_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
@@ -49,6 +52,13 @@ void Workspace::initialize()
 
     auto &ctx = dpfInstance.serviceContext();
     Q_ASSERT_X(ctx.loaded(WindowsService::name()), "Workspace", "WindowService not loaded");
+
+    QString errStr;
+    if (!ctx.load(PropertyDialogService::name(), &errStr)) {
+        qCritical() << errStr;
+        abort();
+    }
+
     GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());
     connect(GlobalPrivate::windowService, &WindowsService::windowOpened, this, &Workspace::onWindowOpened, Qt::DirectConnection);
     connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &Workspace::onWindowClosed, Qt::DirectConnection);

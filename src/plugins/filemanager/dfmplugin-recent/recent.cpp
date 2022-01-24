@@ -81,8 +81,7 @@ void Recent::initialize()
     GlobalPrivate::fileOperationsService = ctx.service<FileOperationsService>(FileOperationsService::name());
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->openFiles = &RecentHelper::openFilesHandle;
-    fileOpeationsHandle->copy = &RecentHelper::writeToClipBoardHandle;
-    //    fileOpeationsHandle->cut = &RecentHelper::cutHandle;
+    fileOpeationsHandle->writeUrlsToClipboard = &RecentHelper::writeToClipBoardHandle;
     GlobalPrivate::fileOperationsService->registerOperations(RecentHelper::scheme(), fileOpeationsHandle);
 }
 
