@@ -307,12 +307,6 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
         return false;
     }
 
-    bool fileSamba = false;
-    {
-        const QString &decodeUrl = QUrl::fromEncoded(fileUrl.toString().toLocal8Bit()).toString();
-        fileSamba = FileUtils::isSmbPath(decodeUrl);
-    }
-
     if (scheme == BURN_SCHEME) {
         // 如果当前设备正在执行刻录或擦除，激活进度窗口，拒绝跳转至文件列表页面
         QString strVolTag = DFMOpticalMediaWidget::getVolTag(fileUrl);
@@ -331,7 +325,7 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
                 qDebug() << "mount the device{" << blkDevicePath << " } at:" << blk->mount({});
             }
         }
-    } else if (scheme == SMB_SCHEME || (FileUtils::isSmbPath(fileUrl.toString()))) {
+    } else if (scheme == SMB_SCHEME || (FileUtils::isSmbPath(fileUrl.path()))) {
         // 需求 88316，smb 可能已经关闭 这里需求尝试启动
 
         // 首先判断smb地址是否是自己ip

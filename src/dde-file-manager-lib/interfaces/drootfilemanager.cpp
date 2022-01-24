@@ -268,7 +268,7 @@ const DAbstractFileInfoPointer DRootFileManager::getFileInfo(const DUrl &fileUrl
 
 bool DRootFileManager::isRootFileContainSmb(const DUrl &smburl)
 {
-    const QString &smburlPath = smburl.toString();
+    const QString &smburlPath = smburl.path();
     if(!FileUtils::isSmbPath(smburlPath))
         return false;
 

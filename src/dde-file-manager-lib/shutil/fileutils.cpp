@@ -1867,13 +1867,19 @@ bool FileUtils::isSmbPath(const QString &localPath)
     // like file:///run/user/1000/gvfs/smb-share:domain=ttt,server=xx.xx.xx.xx,share=io,user=uos/path
     QRegExp reg("/run/user/.+gvfs/smb-share:.*server.+share.+");
     int idx = reg.indexIn(localPath);
-    if(idx == -1) {
+
+    if(-1 == idx) {
+        // 传进来的可能是加密的路径
+        idx = reg.indexIn(QUrl::fromPercentEncoding(localPath.toLocal8Bit()));
+    }
+
+    if(-1 == idx) {
         // like smb://ttt;uos:1@xx.xx.xx.xx/io/path
         // maybe access by mapping addr, like smb://xxx.com/io
         reg.setPattern("smb://.+");
         idx = reg.indexIn(localPath);
     }
-    return idx != -1;
+    return -1 != idx;
 }
 
 DUrl FileUtils::durlFromLocalPath(const QString &localPath)
