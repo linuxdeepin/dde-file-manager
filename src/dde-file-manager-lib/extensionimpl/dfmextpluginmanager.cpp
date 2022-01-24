@@ -119,8 +119,12 @@ bool DFMExtPluginManager::monitorPlugins()
                 return false;
 
             connect(d->extensionWathcer, &DFileSystemWatcher::fileDeleted, d, &DFMExtPluginManagerPrivate::onExtensionFileDeleted, Qt::DirectConnection);
-            connect(d->extensionWathcer, &DFileSystemWatcher::fileCreated, d, &DFMExtPluginManagerPrivate::onExtensionFileCreated, Qt::DirectConnection);
-            connect(d->extensionWathcer, &DFileSystemWatcher::fileMoved, d, &DFMExtPluginManagerPrivate::onExtensionFIleMoved, Qt::DirectConnection);
+            connect(d->extensionWathcer, &DFileSystemWatcher::fileCreated, d,
+                    [this](const QString &path, const QString &name) {
+                        d->onExtensionFileCreatedLater(path, name, DFMExtPluginManagerPrivate::kDefaultWatiTime);
+                    },
+                    Qt::DirectConnection);
+            connect(d->extensionWathcer, &DFileSystemWatcher::fileMoved, d, &DFMExtPluginManagerPrivate::onExtensionFileMoved, Qt::DirectConnection);
             return d->extensionWathcer->addPath(d->pluginDefaultPath);
         });
     });
@@ -243,13 +247,13 @@ void DFMExtPluginManagerPrivate::appendExtension(const QString &libName, const D
     QMutexLocker guard(&mutex);
     auto menu = loader->extMenuPlugin();
     if (!menu.isNull()) {
-        DFMExtPluginManager::DFMExtMenuState state (DFMExtPluginManager::Enable, menu);
+        DFMExtPluginManager::DFMExtMenuState state(DFMExtPluginManager::Enable, menu);
         menus.insert(libName, state);
     }
 
     auto embleIcon = loader->extEmbleIconPlugin();
     if (!embleIcon.isNull()) {
-        DFMExtPluginManager::DFMExtEmblemState state (DFMExtPluginManager::Enable, embleIcon);
+        DFMExtPluginManager::DFMExtEmblemState state(DFMExtPluginManager::Enable, embleIcon);
         emblemIcons.insert(libName, state);
     }
 }
@@ -270,7 +274,7 @@ void DFMExtPluginManagerPrivate::onExtensionFileDeleted(const QString &path, con
     if (path != pluginDefaultPath)
         return;
     QString libName { path + "/" + name };
-    if (loaders.contains(libName)) { // 只需要 disbale 插件的能力
+    if (loaders.contains(libName)) {   // 只需要 disbale 插件的能力
         qInfo() << "Disbale pugin: " << libName;
         updateExtensionState(libName, DFMExtPluginManager::Disbale);
         Q_EMIT q->extensionPluginDisbale(libName);
@@ -283,12 +287,21 @@ void DFMExtPluginManagerPrivate::onExtensionFileCreated(const QString &path, con
     if (path != pluginDefaultPath)
         return;
     QString libName { path + "/" + name };
-    if (loaders.contains(libName)) { // 插件曾经被加载，然后被删除了，此时只是功能上被屏蔽了，因此只需要 enebale 功能
+    if (loaders.contains(libName)) {   // 插件曾经被加载，然后被删除了，此时只是功能上被屏蔽了，因此只需要 enebale 功能
         qInfo() << "Enable pugin: " << libName;
         updateExtensionState(libName, DFMExtPluginManager::Enable);
         Q_EMIT q->extensionPluginEnable(libName);
-    } else { // 插件第一次安装，因此需要加载并初始化它
+    } else {   // 插件第一次安装，因此需要加载并初始化它
         if (!scanPlugin(libName)) {
+            // 由于此时无法确保插件能够拷贝完成，因此尝试重复读取插件
+            if (!retryMap.contains(libName))
+                retryMap.insert(libName, 0);
+            if (retryMap.value(libName) < kMaxRetryCount) {
+                qInfo() << "Retry read plugin: " << libName << retryMap[libName];
+                onExtensionFileCreatedLater(path, name, kDefaultWatiTime);
+                retryMap[libName]++;
+                return;
+            }
             qWarning() << "The plugin " << libName << " has not symbol!";
             return;
         }
@@ -309,7 +322,15 @@ void DFMExtPluginManagerPrivate::onExtensionFileCreated(const QString &path, con
     }
 }
 
-void DFMExtPluginManagerPrivate::onExtensionFIleMoved(const QString &fromPath, const QString &fromName, const QString &toPath, const QString &toName)
+void DFMExtPluginManagerPrivate::onExtensionFileCreatedLater(const QString &path, const QString &name, int ms)
+{
+    // created 信号并不代表扩展库拷贝完成，加载将会失败。这里延迟一定时间，绝大部分扩展库能够拷贝完成
+    QTimer::singleShot(ms, this, [this, path, name]() {
+        this->onExtensionFileCreated(path, name);
+    });
+}
+
+void DFMExtPluginManagerPrivate::onExtensionFileMoved(const QString &fromPath, const QString &fromName, const QString &toPath, const QString &toName)
 {
     if (fromPath == pluginDefaultPath) {
         onExtensionFileDeleted(fromPath, fromName);
@@ -317,7 +338,7 @@ void DFMExtPluginManagerPrivate::onExtensionFIleMoved(const QString &fromPath, c
     }
 
     if (toPath == pluginDefaultPath) {
-        onExtensionFileCreated(toPath, toName);
+        onExtensionFileCreatedLater(toPath, toName, DFMExtPluginManagerPrivate::kDefaultWatiTime);
         return;
     }
 }

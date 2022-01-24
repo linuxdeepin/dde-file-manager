@@ -57,6 +57,9 @@ class DFMExtPluginManagerPrivate : public QObject
     std::once_flag watcherFlag;
     QMutex mutex;
 
+    QMap<QString, int> retryMap {};
+    static const int kMaxRetryCount { 10 };
+    static const int kDefaultWatiTime { 1000 };
 public:
     explicit DFMExtPluginManagerPrivate(DFMExtPluginManager *qq);
     bool scanPlugin(const QString &path);
@@ -66,7 +69,8 @@ public:
 public slots:
     void onExtensionFileDeleted(const QString &path, const QString &name);
     void onExtensionFileCreated(const QString &path, const QString &name);
-    void onExtensionFIleMoved(const QString &fromPath, const QString &fromName,
+    void onExtensionFileCreatedLater(const QString &path, const QString &name, int ms);
+    void onExtensionFileMoved(const QString &fromPath, const QString &fromName,
                               const QString &toPath, const QString &toName);
 };
 
