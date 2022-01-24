@@ -23,11 +23,28 @@
 #ifndef DEVICEMANAGER_H
 #define DEVICEMANAGER_H
 
-#include <dbus_interface/devicemanagerdbus_interface.h>
+#include "dfm-base/dfm_base_global.h"
+#include "dbus_interface/devicemanagerdbus_interface.h"
 
 #include <QObject>
 #include <QPointer>
 #include <QDBusServiceWatcher>
+
+DFMBASE_BEGIN_NAMESPACE
+
+struct NetworkMountInfo
+{
+    QString userName;
+    QString domain;
+    QString passwd;
+    int saveMode { 0 };
+    bool anonymous { false };
+
+    inline bool isValid()
+    {
+        return anonymous || (!userName.isEmpty() && !domain.isEmpty() && !passwd.isEmpty());
+    }
+};
 
 class DeviceManager : public QObject
 {
@@ -63,6 +80,9 @@ public:
     using HandleAfterUnlock = std::function<void(const QString &unlockResult)>;
     void unlockAndDo(const QString &id, const QString &passwd, HandleAfterUnlock handler);
 
+    using AskForMountInfo = std::function<NetworkMountInfo(QString message)>;
+    QString invokeMountNetworkDevice(const QString address, AskForMountInfo requestMountInfo);
+
 signals:
     void serviceUnregistered(const QString &service);
     void serviceRegistered(const QString &service);
@@ -77,6 +97,8 @@ private:
     QScopedPointer<QDBusServiceWatcher> watcher { nullptr };
 };
 
-#define DeviceManagerInstance DeviceManager::instance()
+DFMBASE_END_NAMESPACE
+
+#define DeviceManagerInstance DFMBASE_NAMESPACE::DeviceManager::instance()
 
 #endif   // DEVICEMANAGER_H

@@ -25,11 +25,22 @@
 #include "events/titlebareventcaller.h"
 #include "utils/crumbinterface.h"
 #include "utils/crumbmanager.h"
+#include "utils/devicemanager.h"
+#include "services/common/dfm_common_service_global.h"
+#include "services/common/dialog/dialogservice.h"
+#include "dfm-framework/framework.h"
 
 #include <QHBoxLayout>
 
 DPTITLEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+static DSC_NAMESPACE::DialogService *dlgServ()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    auto dlgServ = ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
+    return dlgServ;
+}
 
 TitleBarWidget::TitleBarWidget(QFrame *parent)
     : AbstractFrame(parent)
@@ -202,6 +213,26 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
+bool TitleBarWidget::handleConnection(const QUrl &url)
+{
+    QString &&scheme = url.scheme();
+    if (scheme != SchemeTypes::kSmb && scheme != SchemeTypes::kFtp && scheme != SchemeTypes::kSFtp)
+        return false;
+
+    // TODO(xust) MAY BE TEMP CODE
+    if (url.host().isEmpty()) {
+        dlgServ()->showErrorDialog("", tr("Mounting device error"));
+        return true;
+    }
+
+    DeviceManagerInstance.invokeMountNetworkDevice(url.toString(), [](const QString &address) {
+        // TODO(xust) TEMP CODE. for now, connection can only be connected, we should use api directly to mount and enter shares
+        return dlgServ()->askInfoWhenMountingNetworkDevice(address);
+    });
+
+    return true;
+}
+
 void TitleBarWidget::onSearchButtonClicked()
 {
     showAddrsssBar(QUrl());
@@ -214,6 +245,9 @@ void TitleBarWidget::onAddressBarJump(const QUrl &url)
     if (info && info->exists() && info->isFile()) {
         TitleBarEventCaller::sendOpenFile(this, url);
     } else {
+        if (handleConnection(url))
+            return;
+
         const QString &currentDir = QDir::currentPath();
         if (titlebarUrl.isLocalFile())
             QDir::setCurrent(titlebarUrl.toLocalFile());

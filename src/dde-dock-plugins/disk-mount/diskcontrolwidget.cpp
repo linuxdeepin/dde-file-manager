@@ -89,6 +89,7 @@ void DiskControlWidget::initializeUi()
 
 void DiskControlWidget::initConnection()
 {
+    DFMBASE_USE_NAMESPACE
     // When the system theme changes,
     // refreshes the list of controls to fit the text color under the new theme
     connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,

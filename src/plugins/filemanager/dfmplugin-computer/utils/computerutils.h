@@ -26,6 +26,7 @@
 #include "dfmplugin_computer_global.h"
 #include "services/filemanager/sidebar/sidebar_defines.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
+#include "services/common/dialog/dialogservice.h"
 
 #include <QString>
 #include <QIcon>
@@ -65,9 +66,12 @@ public:
     static QUrl convertToProtocolDevUrlFrom(const QUrl &stashedUrl);
     static QUrl convertToStashedUrlFrom(const QUrl &protocolDevUrl);
 
+    static QUrl makeLocalUrl(const QString &path);
+
     static quint64 getWinId(QWidget *widget);
 
     static DSB_FM_NAMESPACE::SideBarService *sbIns();
+    static DSC_NAMESPACE::DialogService *dlgServIns();
 
     static bool shouldSystemPartitionHide();
 };

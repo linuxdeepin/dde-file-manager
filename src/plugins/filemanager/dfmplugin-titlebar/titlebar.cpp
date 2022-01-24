@@ -68,6 +68,10 @@ void TitleBar::initialize()
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kTabChanged,
                                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabChanged);
 
+    UrlRoute::regScheme(SchemeTypes::kSmb, "/", {}, true);
+    UrlRoute::regScheme(SchemeTypes::kFtp, "/", {}, true);
+    UrlRoute::regScheme(SchemeTypes::kSFtp, "/", {}, true);
+
     TitleBarUnicastReceiver::instance()->connectService();
 }
 

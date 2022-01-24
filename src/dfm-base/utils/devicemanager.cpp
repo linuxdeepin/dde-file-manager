@@ -21,10 +21,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "devicemanager.h"
+#include "global_server_defines.h"
 
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
 #include <QFutureWatcher>
+
+DFMBASE_USE_NAMESPACE
 
 /*!
  * \class PluginSidecar
@@ -329,6 +332,38 @@ void DeviceManager::unlockAndDo(const QString &id, const QString &passwd, Handle
         watcher->deleteLater();
     });
     watcher->setFuture(fu);
+}
+
+QString DeviceManager::invokeMountNetworkDevice(const QString address, AskForMountInfo requestMountInfo)
+{
+    if (address.isEmpty())
+        return "";
+
+    // TODO(xust) 1. check if the password of current address is already saved.
+
+    // 2. ask to input passwd
+    if (/*TODO(xust) password is not saved*/ 1) {
+        NetworkMountInfo mountInfo = requestMountInfo ? requestMountInfo(address) : NetworkMountInfo();
+        if (!mountInfo.isValid())
+            return "";
+        if (deviceInterface) {
+            using namespace GlobalServerDefines;
+            QVariantMap info;
+            info.insert(NetworkMountParamKey::kUser, mountInfo.userName);
+            info.insert(NetworkMountParamKey::kDomain, mountInfo.domain);
+            info.insert(NetworkMountParamKey::kPasswd, mountInfo.passwd);
+            info.insert(NetworkMountParamKey::kPasswdSaveMode, mountInfo.saveMode);
+
+            qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << address;
+            auto &&reply = deviceInterface->MountNetworkDevice(address, mountInfo.anonymous, info);
+            reply.waitForFinished();
+            if (!reply.isValid())
+                qCritical() << "D-Bus reply is invalid " << reply.error();
+            qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+        }
+    }
+
+    return "";
 }
 
 DeviceManager::DeviceManager(QObject *parent)

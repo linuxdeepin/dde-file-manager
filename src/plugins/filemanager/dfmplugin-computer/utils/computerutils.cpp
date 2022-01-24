@@ -165,6 +165,14 @@ QUrl ComputerUtils::convertToStashedUrlFrom(const QUrl &protocolDevUrl)
     return ret;
 }
 
+QUrl ComputerUtils::makeLocalUrl(const QString &path)
+{
+    QUrl u;
+    u.setScheme(SchemeTypes::kFile);
+    u.setPath(path);
+    return u;
+}
+
 quint64 ComputerUtils::getWinId(QWidget *widget)
 {
     auto &ctx = dpfInstance.serviceContext();
@@ -182,6 +190,18 @@ dfm_service_filemanager::SideBarService *ComputerUtils::sbIns()
     });
 
     return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
+}
+
+dfm_service_common::DialogService *ComputerUtils::dlgServIns()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSC_NAMESPACE::DialogService::name()))
+            abort();
+    });
+
+    return ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
 }
 
 bool ComputerUtils::shouldSystemPartitionHide()

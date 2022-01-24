@@ -27,6 +27,7 @@
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+#include "dfm-base/utils/devicemanager.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
@@ -54,6 +55,7 @@ public:
     void addTask(const JobHandlePointer &task);
     void showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window);
     QString askPasswordForLockedDevice();
+    DFMBASE_NAMESPACE::NetworkMountInfo askInfoWhenMountingNetworkDevice(const QString &address);
 
 private:
     explicit DialogService(QObject *parent = nullptr);

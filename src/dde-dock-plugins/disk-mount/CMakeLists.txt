@@ -16,6 +16,7 @@ include_directories(${DBUS_DIR})
 
 set(BASE_UTIL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../dfm-base/utils)
 include_directories(${BASE_UTIL_DIR})
+include_directories(${BASE_UTIL_DIR}/../../)
 
 set(MOUNT_PLUGIN_SRC
     disk-mount.json

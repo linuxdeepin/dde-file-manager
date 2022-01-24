@@ -76,7 +76,9 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
         if (suffix == dfmbase::SuffixInfo::kBlock) {
             mountDevice(winId, info);
         } else if (suffix == dfmbase::SuffixInfo::kProtocol) {
+            // TODO(xust)
         } else if (suffix == dfmbase::SuffixInfo::kStashedRemote) {
+            actMount(winId, info);
         } else if (suffix == dfmbase::SuffixInfo::kAppEntry) {
             QString cmd = info->extraProperty(ExtraPropertyName::kExecuteCommand).toString();
             QProcess::startDetached(cmd);
@@ -242,7 +244,7 @@ void ComputerController::actionTriggered(DFMEntryFileInfoPointer info, quint64 w
     else if (actionText == ContextMenuActionTrs::trOpenInNewTab())
         actOpenInNewTab(winId, info);
     else if (actionText == ContextMenuActionTrs::trMount())
-        actMount(info);
+        actMount(winId, info);
     else if (actionText == ContextMenuActionTrs::trUnmount())
         actUnmount(info);
     else if (actionText == ContextMenuActionTrs::trRename())
@@ -295,17 +297,20 @@ void ComputerController::actOpenInNewTab(quint64 winId, DFMEntryFileInfoPointer 
         mountDevice(winId, info, kEnterInNewTab);
 }
 
-void ComputerController::actMount(DFMEntryFileInfoPointer info)
+void ComputerController::actMount(quint64 winId, DFMEntryFileInfoPointer info, bool enterAfterMounted)
 {
     QString sfx = info->suffix();
     if (sfx == SuffixInfo::kStashedRemote) {
-        ;
+        QString devId = ComputerUtils::getProtocolDevIdByStashedUrl(info->url());
+        DeviceManagerInstance.invokeMountNetworkDevice(devId, [](const QString &msg) {
+            return ComputerUtils::dlgServIns()->askInfoWhenMountingNetworkDevice(msg);
+        });
         return;
     } else if (sfx == SuffixInfo::kBlock) {
         mountDevice(0, info, kNone);
         return;
     } else if (sfx == SuffixInfo::kProtocol) {
-        ;
+        // TODO(xust)
         return;
     }
 }

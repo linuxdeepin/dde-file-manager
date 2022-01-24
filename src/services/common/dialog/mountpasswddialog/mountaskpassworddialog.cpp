@@ -22,10 +22,13 @@
  */
 
 #include "mountaskpassworddialog.h"
+#include "global_server_defines.h"
 
 #include <QVBoxLayout>
 #include <QFormLayout>
 #include <QDebug>
+
+using namespace GlobalServerDefines;
 
 MountAskPasswordDialog::MountAskPasswordDialog(QWidget *parent)
     : DDialog(parent)
@@ -64,6 +67,7 @@ void MountAskPasswordDialog::initUI()
     registerButton->setCheckable(true);
     registerButton->setMinimumWidth(100);
     registerButton->setFocusPolicy(Qt::NoFocus);
+    registerButton->click();
 
     QList<DButtonBoxButton *> buttonList;
     buttonList << anonymousButton << registerButton;
@@ -79,6 +83,7 @@ void MountAskPasswordDialog::initUI()
 
     usernameLineEdit = new QLineEdit;
     usernameLineEdit->setMinimumWidth(240);
+    usernameLineEdit->setText(qgetenv("USER"));
 
     domainLabel = new QLabel(tr("Domain"));
     domainLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
@@ -86,6 +91,7 @@ void MountAskPasswordDialog::initUI()
 
     domainLineEdit = new QLineEdit;
     domainLineEdit->setMinimumWidth(240);
+    domainLineEdit->setText("WORKGROUP");
 
     QLabel *passwordLable = new QLabel(tr("Password"));
     passwordLable->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
@@ -160,24 +166,24 @@ QJsonObject MountAskPasswordDialog::getLoginData()
 void MountAskPasswordDialog::setLoginData(const QJsonObject &obj)
 {
     loginObj = obj;
-
+    using namespace NetworkMountParamKey;
     QFontMetrics fm(this->font());
-    const QString &str = fm.elidedText(loginObj.value("message").toString(), Qt::ElideMiddle,
+    const QString &str = fm.elidedText(loginObj.value(kMessage).toString(), Qt::ElideMiddle,
                                        this->size().width() - 80);
 
     setTitle(str);
 
-    if (loginObj.value("anonymous").toBool()) {
+    if (loginObj.value(kAnonymous).toBool()) {
         anonymousButton->click();
     } else {
         registerButton->click();
     }
 
-    usernameLineEdit->setText(loginObj.value("username").toString());
-    domainLineEdit->setText(loginObj.value("domain").toString());
-    passwordLineEdit->setText(loginObj.value("password").toString());
+    usernameLineEdit->setText(loginObj.value(kUser).toString());
+    domainLineEdit->setText(loginObj.value(kDomain).toString());
+    passwordLineEdit->setText(loginObj.value(kPasswd).toString());
 
-    if (loginObj.value("passwordSave").toInt() == kSavePermanently) {   // 2 for save password permanenty. and 1 for save before logout, 0 for never save.
+    if (loginObj.value(kPasswdSaveMode).toInt() == kSavePermanently) {   // 2 for save password permanenty. and 1 for save before logout, 0 for never save.
         passwordCheckBox->setChecked(true);
     } else {
         passwordCheckBox->setChecked(false);
@@ -186,22 +192,24 @@ void MountAskPasswordDialog::setLoginData(const QJsonObject &obj)
 
 void MountAskPasswordDialog::handleConnect()
 {
-    loginObj.insert("message", title());
+    using namespace NetworkMountParamKey;
+
+    loginObj.insert(kMessage, title());
 
     if (anonymousButton->isChecked()) {
-        loginObj.insert("anonymous", true);
+        loginObj.insert(kAnonymous, true);
     } else {
-        loginObj.insert("anonymous", false);
+        loginObj.insert(kAnonymous, false);
     }
 
-    loginObj.insert("username", usernameLineEdit->text());
-    loginObj.insert("domain", domainLineEdit->text());
-    loginObj.insert("password", passwordLineEdit->text());
+    loginObj.insert(kUser, usernameLineEdit->text());
+    loginObj.insert(kDomain, domainLineEdit->text());
+    loginObj.insert(kPasswd, passwordLineEdit->text());
 
     if (passwordCheckBox->isChecked()) {
-        loginObj.insert("passwordSave", kSavePermanently);
+        loginObj.insert(kPasswdSaveMode, kSavePermanently);
     } else {
-        loginObj.insert("passwordSave", kNeverSave);
+        loginObj.insert(kPasswdSaveMode, kNeverSave);
     }
     accept();
 }

@@ -59,7 +59,7 @@ public:
     void actEject(const QUrl &url);
     void actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPointer info);
     void actOpenInNewTab(quint64 winId, DFMEntryFileInfoPointer info);
-    void actMount(DFMEntryFileInfoPointer info);
+    void actMount(quint64 winId, DFMEntryFileInfoPointer info, bool enterAfterMounted = false);
     void actUnmount(DFMEntryFileInfoPointer info);
     void actSafelyRemove(DFMEntryFileInfoPointer info);
     void actRename(quint64 winId, DFMEntryFileInfoPointer info, bool triggerFromSidebar);

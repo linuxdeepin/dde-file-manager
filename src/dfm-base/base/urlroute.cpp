@@ -32,6 +32,9 @@ namespace SchemeTypes {
 const char *const kFile = "file";
 const char *const kDesktop = "desktop";
 const char *const kEntry = "entry";
+const char *const kSmb = "smb";
+const char *const kFtp = "ftp";
+const char *const kSFtp = "sftp";
 }   // namespace SchemeTypes
 
 QHash<QString, SchemeNode> UrlRoute::kSchemeInfos {};

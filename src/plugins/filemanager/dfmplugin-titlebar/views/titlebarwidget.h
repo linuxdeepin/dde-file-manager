@@ -58,6 +58,8 @@ private:
     void showSearchFilterButton();
     bool eventFilter(QObject *watched, QEvent *event) override;
 
+    bool handleConnection(const QUrl &url);
+
 signals:
     void currentUrlChanged(const QUrl &url);
 

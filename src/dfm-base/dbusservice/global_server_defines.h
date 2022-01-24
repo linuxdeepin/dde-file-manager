@@ -116,6 +116,8 @@ const char *const kUser { "user" };
 const char *const kDomain { "domain" };
 const char *const kPasswd { "passwd" };
 const char *const kPasswdSaveMode { "savePasswd" };
+const char *const kAnonymous { "anonymous" };
+const char *const kMessage { "message" };
 }   // namespace NetworkMountParamKey
 
 }   // namespace GlobalServerDefines

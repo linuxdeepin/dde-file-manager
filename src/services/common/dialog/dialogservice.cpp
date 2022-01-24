@@ -24,6 +24,9 @@
 #include "taskdialog/taskdialog.h"
 #include "settingsdialog/settingdialog.h"
 #include "mountpasswddialog/mountsecretdiskaskpassworddialog.h"
+#include "mountpasswddialog/mountaskpassworddialog.h"
+
+#include "global_server_defines.h"
 
 DSC_USE_NAMESPACE
 
@@ -90,6 +93,32 @@ QString DialogService::askPasswordForLockedDevice()
 {
     MountSecretDiskAskPasswordDialog dialog(tr("Need password to unlock device"));
     return dialog.exec() == QDialog::Accepted ? dialog.getUerInputedPassword() : "";
+}
+
+dfmbase::NetworkMountInfo DialogService::askInfoWhenMountingNetworkDevice(const QString &address)
+{
+    using namespace GlobalServerDefines::NetworkMountParamKey;
+    DFMBASE_USE_NAMESPACE;
+
+    NetworkMountInfo info;
+    MountAskPasswordDialog dlg;
+    if (!address.startsWith("smb"))
+        dlg.setDomainLineVisible(false);
+    dlg.setTitle(address);
+
+    if (dlg.exec() == QDialog::Accepted) {
+        QJsonObject loginInfo = dlg.getLoginData();
+        auto data = loginInfo.toVariantMap();
+        if (data.contains(kAnonymous) && data.value(kAnonymous).toBool()) {
+            info.anonymous = true;
+        } else {
+            info.userName = data.value(kUser).toString();
+            info.domain = data.value(kDomain).toString();
+            info.passwd = data.value(kPasswd).toString();
+            info.saveMode = data.value(kPasswdSaveMode).toInt();
+        }
+    }
+    return info;
 }
 
 DialogService::DialogService(QObject *parent)
