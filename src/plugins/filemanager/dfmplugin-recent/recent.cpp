@@ -33,9 +33,11 @@
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
+#include "services/common/fileoperations/fileoperationsservice.h"
 
 #include <dfm-framework/framework.h>
 
+DSC_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -45,6 +47,7 @@ namespace GlobalPrivate {
 static WindowsService *winServ { nullptr };
 static SideBarService *sideBarService { nullptr };
 static WorkspaceService *workspaceService { nullptr };
+static FileOperationsService *fileOperationsService { nullptr };
 }   // namespace GlobalPrivate
 
 void Recent::initialize()
@@ -60,6 +63,11 @@ void Recent::initialize()
         abort();
     }
 
+    if (!ctx.load(FileOperationsService::name(), &errStr)) {
+        qCritical() << errStr;
+        abort();
+    }
+
     UrlRoute::regScheme(RecentHelper::scheme(), "/", RecentHelper::icon(), true, tr("Recent"));
     //注册Scheme为"recent"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<RecentFileInfo>(RecentHelper::scheme());
@@ -69,6 +77,13 @@ void Recent::initialize()
     GlobalPrivate::winServ = ctx.service<WindowsService>(WindowsService::name());
     Q_ASSERT(GlobalPrivate::winServ);
     connect(GlobalPrivate::winServ, &WindowsService::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
+
+    GlobalPrivate::fileOperationsService = ctx.service<FileOperationsService>(FileOperationsService::name());
+    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
+    fileOpeationsHandle->openFiles = &RecentHelper::openFilesHandle;
+    fileOpeationsHandle->copy = &RecentHelper::writeToClipBoardHandle;
+    //    fileOpeationsHandle->cut = &RecentHelper::cutHandle;
+    GlobalPrivate::fileOperationsService->registerOperations(RecentHelper::scheme(), fileOpeationsHandle);
 }
 
 bool Recent::start()

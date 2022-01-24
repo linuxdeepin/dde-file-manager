@@ -24,6 +24,9 @@
 
 #include "dfmplugin_recent_global.h"
 
+#include "dfm-base/utils/clipboard.h"
+#include "dfm-base/interfaces/abstractjobhandler.h"
+
 #include <QUrl>
 #include <QDebug>
 #include <QDir>
@@ -55,6 +58,11 @@ public:
 
     static void clearRecent();
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
+    static bool openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error);
+
+    static bool writeToClipBoardHandle(const quint64 windowId,
+                                       const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
+                                       const QList<QUrl> urls);
 
 private:
     explicit RecentHelper() = delete;

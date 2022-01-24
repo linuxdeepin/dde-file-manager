@@ -252,9 +252,12 @@ void FileViewHelper::init()
 
     QObject::connect(cutAction, &QAction::triggered, this, [this] {
         // Todo(yanghao): 只支持回收站根目录下的文件执行剪切
-        // Todo(yanghao):  "Read only folders do not support Cut
+        qInfo() << "cut shortcut key to clipboard";
+        const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(parent()->rootUrl());
+        if (!fileInfo || !fileInfo->isWritable())
+            return;
         QList<QUrl> selectedUrls = parent()->selectedUrlList();
-        qInfo() << "cut shortcut key to clipboard, selected urls: " << selectedUrls
+        qInfo() << "selected urls: " << selectedUrls
                 << " currentUrl: " << parent()->rootUrl();
         auto windowId = WorkspaceHelper::instance()->windowId(parent());
         WorkspaceHelper::instance()->actionWriteToClipboard(windowId, ClipBoard::ClipboardAction::kCutAction, selectedUrls);

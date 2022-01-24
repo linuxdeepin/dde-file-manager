@@ -108,6 +108,28 @@ QDateTime RecentFileInfo::lastModified() const
         return d->proxy->lastModified();
     }
     return QDateTime();
+}
+
+QFile::Permissions RecentFileInfo::permissions() const
+{
+    if (url() == RecentHelper::rootUrl()) {
+        return QFileDevice::ReadGroup | QFileDevice::ReadOwner | QFileDevice::ReadOther;
+    }
+    if (d->proxy)
+        return d->proxy->permissions();
+
+    return QFile::Permissions();
+}
+
+bool RecentFileInfo::isReadable() const
+{
+    return permissions().testFlag(QFile::Permission::ReadUser);
+}
+
+bool RecentFileInfo::isWritable() const
+{
+    // Todo(yanghao): gvfs优化
+    return permissions().testFlag(QFile::Permission::WriteUser);
 };
 
 DPRECENT_END_NAMESPACE

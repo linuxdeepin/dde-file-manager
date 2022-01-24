@@ -21,9 +21,11 @@
  */
 
 #include "recenthelper.h"
+#include "recentfileinfo.h"
 #include "events/recenteventcaller.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QFile>
 #include <QMenu>
@@ -82,4 +84,28 @@ void RecentHelper::contenxtMenuHandle(quint64 windowId, const QUrl &url, const Q
     });
     menu->exec(globalPos);
     delete menu;
+}
+
+bool RecentHelper::openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error)
+{
+    Q_UNUSED(error)
+
+    QList<QUrl> redirectedFileUrls;
+    for (QUrl url : urls) {
+        url.setScheme(SchemeTypes::kFile);
+        redirectedFileUrls << url;
+    }
+    RecentEventCaller::sendOpenFiles(windowId, redirectedFileUrls);
+    return true;
+}
+
+bool RecentHelper::writeToClipBoardHandle(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
+{
+    QList<QUrl> redirectedFileUrls;
+    for (QUrl url : urls) {
+        url.setScheme(SchemeTypes::kFile);
+        redirectedFileUrls << url;
+    }
+    RecentEventCaller::sendWriteToClipboard(windowId, action, redirectedFileUrls);
+    return true;
 }

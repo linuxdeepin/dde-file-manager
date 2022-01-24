@@ -43,3 +43,23 @@ void RecentEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 {
     dispatcher()->publish(GlobalEventType::kOpenNewTab, windowId, url);
 }
+
+void RecentEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls)
+{
+    dispatcher()->publish(GlobalEventType::kOpenFiles, windowID, urls);
+}
+
+void RecentEventCaller::sendWriteToClipboard(const quint64 windowID, const ClipBoard::ClipboardAction action, const QList<QUrl> &urls)
+{
+    dispatcher()->publish(GlobalEventType::kWriteUrlsToClipboard, windowID, action, urls);
+}
+
+void RecentEventCaller::sendCopyFiles(const quint64 windowID, const QList<QUrl> &sourceUrls, const QUrl &target, const AbstractJobHandler::JobFlags flags)
+{
+    dispatcher()->publish(GlobalEventType::kCopy, windowID, sourceUrls, target, flags);
+}
+
+void RecentEventCaller::sendCutFiles(const quint64 windowID, const QList<QUrl> &sourceUrls, const QUrl &target, const AbstractJobHandler::JobFlags flags)
+{
+    dispatcher()->publish(GlobalEventType::kCutFile, windowID, sourceUrls, target, flags);
+}
