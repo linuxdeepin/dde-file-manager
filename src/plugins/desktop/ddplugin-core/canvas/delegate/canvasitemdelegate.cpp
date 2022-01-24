@@ -219,15 +219,19 @@ void CanvasItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptio
     //margins.setTop(margins.top() + parent()->iconSize().height() + kIconSpacing + kTextPadding);
     itemEditor->setBaseGeometry(geo, d->itemSizeHint, margins);
 
-    return;}
+    return;
+}
 
 void CanvasItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     ItemEditor *itemEditor = qobject_cast<ItemEditor *>(editor);
     if (!itemEditor)
         return;
+
     //todo 是否显示判断后缀
     QString name = index.data(Qt::DisplayRole).toString();
+
+    itemEditor->setMaximumLength(255);
     itemEditor->setText(name);
 
     // todo FileBaseNameOfRenameRole

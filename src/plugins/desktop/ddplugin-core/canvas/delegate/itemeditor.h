@@ -27,10 +27,15 @@
 
 #include <QFrame>
 #include <QTextEdit>
+#include <QStack>
 
 class QGraphicsOpacityEffect;
-DSB_D_BEGIN_NAMESPACE
 
+DWIDGET_BEGIN_NAMESPACE
+class DArrowRectangle;
+DWIDGET_END_NAMESPACE
+
+DSB_D_BEGIN_NAMESPACE
 class RenameEdit: public DTK_WIDGET_NAMESPACE::DTextEdit
 {
     Q_OBJECT
@@ -39,10 +44,19 @@ public slots:
     void undo();
     void redo();
 protected:
+    void pushStatck(const QString &item);
+    QString stackCurrent() const;
+    QString stackBack();
+    QString stackAdvance();
+protected:
     using DTextEdit::DTextEdit;
     void contextMenuEvent(QContextMenuEvent *e) override;
     void focusOutEvent(QFocusEvent *e) override;
     void keyPressEvent(QKeyEvent *e) override;
+private:
+    bool enableStack = true;
+    int stackCurrentIndex = -1;
+    QStack<QString> textStack;
 };
 
 class ItemEditor : public QFrame
@@ -52,22 +66,38 @@ public:
     explicit ItemEditor(QWidget* parent = nullptr);
     ~ItemEditor();
     void setBaseGeometry(const QRect &base, const QSize &itemSize, const QMargins &margin);
-    void updateGeometry();
     QString text() const;
     void setText(const QString &text);
     void setItemSizeHint(QSize size);
     void select(const QString &part);
     void setOpacity(qreal opacity);
+    inline void setMaximumLength(int l) {
+        if (l > 0)
+            maxTextLength = l;
+    }
+
+    inline int maximumLength() const {
+        return maxTextLength;
+    }
+public slots:
+    void updateGeometry();
+    void showAlertMessage(const QString &text, int duration = 3000);
 signals:
     void inputFocusOut();
 protected:
-    static RenameEdit *creatEditor();
+    static RenameEdit *createEditor();
+    static DTK_WIDGET_NAMESPACE::DArrowRectangle *createTooltip();
+    bool processLength(const QString &srcText, int srcPos, QString &dstText, int &dstPos);
+private slots:
+    void textChanged();
 private:
     void init();
 protected:
+    int maxTextLength = INT_MAX;
     RenameEdit *textEditor = nullptr;
     QSize itemSizeHint;
-    QGraphicsOpacityEffect *opacityEffect = Q_NULLPTR;
+    QGraphicsOpacityEffect *opacityEffect = nullptr;
+    DTK_WIDGET_NAMESPACE::DArrowRectangle *tooltip = nullptr;
 };
 
 DSB_D_END_NAMESPACE
