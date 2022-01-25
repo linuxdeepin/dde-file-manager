@@ -23,10 +23,10 @@
 #define FILETREATER_P_H
 
 #include "filetreater.h"
-#include "traversaldirthread.h"
 #include "utils/threadcontainer.hpp"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/utils/traversaldirthread.h"
 
 #include <QTimer>
 #include <QQueue>
@@ -64,7 +64,7 @@ public:
     QList<QUrl> fileList;
     QMap<QUrl, DFMLocalFileInfoPointer> fileMap;
 
-    QSharedPointer<TraversalDirThread> traversalThread;
+    QSharedPointer<dfmbase::TraversalDirThread> traversalThread;
     AbstractFileWatcherPointer watcher;
     QMutex watcherEventMutex;
     QQueue<QVariant> watcherEvent;

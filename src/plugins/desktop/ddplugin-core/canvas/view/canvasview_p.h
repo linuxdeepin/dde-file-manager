@@ -136,7 +136,6 @@ protected:
     QPoint dragTargetGrid { QPoint(-1, -1) };
 
     CanvasViewMenuProxy *menuProxy = nullptr;
-    QPoint lastMenuGridPos; // todo(wangcl):delete
 private:
     CanvasView *q;
     WaterMaskFrame *waterMask = nullptr;

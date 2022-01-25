@@ -26,7 +26,9 @@
 #include "view/canvasmodel.h"
 #include "view/canvasselectionmodel.h"
 #include "view/canvasview_p.h"
-
+#include "view/operator/fileoperaterproxy.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 
 #include <DApplication>
 #include <DApplicationHelper>
@@ -242,7 +244,40 @@ void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
 {
     ItemEditor *itemEditor = qobject_cast<ItemEditor *>(editor);
     qDebug() << __FUNCTION__ << index << itemEditor->text();
-    //todo rename file
+
+    //todo(wangcl): rename file
+
+    QString newName = itemEditor->text();
+    if (newName.isEmpty()) {
+        return;
+    }
+
+    // todo(wangcl):editor->setProperty
+    QString suffix { editor->property("_d_whether_show_suffix").toString() };
+
+    if (!suffix.isEmpty()) {
+        newName += QStringLiteral("." ) + suffix;
+    } else if (dfmbase::Application::genericObtuselySetting()->value("FileName", "non-allowableEmptyCharactersOfEnd").toBool()) {
+        // todo(wangcl):空后缀处理
+        // retain space symbols in file names
+//        if (newName.isEmpty()) {
+//            return;
+//        }
+    }
+
+    CanvasModel *canvasModel = qobject_cast<CanvasModel *>(model);
+    if (Q_UNLIKELY(!canvasModel))
+        return;
+
+    const AbstractFileInfoPointer &fileInfo = canvasModel->fileInfo(index);
+    if (fileInfo->fileName() == newName) {
+        return;
+    }
+
+    QUrl oldUrl = fileInfo->url();
+    QUrl newUrl = fileInfo->getUrlByNewFileName(newName);
+
+    FileOperaterProxyIns->renameFiles(parent(), oldUrl, newUrl);
 }
 
 bool CanvasItemDelegate::mayExpand(QModelIndex *who) const

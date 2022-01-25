@@ -333,7 +333,7 @@ void FileTreater::refresh()
         return;
     }
 
-    QObject::connect(d->traversalThread.data(), &TraversalDirThread::updateChildren, d.data(), &FileTreaterPrivate::doUpdateChildren, Qt::QueuedConnection);
+    QObject::connect(d->traversalThread.data(), &TraversalDirThread::updateChildrens, d.data(), &FileTreaterPrivate::doUpdateChildren, Qt::QueuedConnection);
     d->traversalThread->start();
 }
 

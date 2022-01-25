@@ -60,8 +60,6 @@ public slots:
     void onFileSorted();
     void onEnableSortChanged(bool enableSort);
 
-    void recordMenuLocation(const int screenNum, const QPoint &pos);
-
 protected slots:
     void backgroundDeleted();
 protected:
@@ -72,11 +70,6 @@ protected:
     QMap<QString, CanvasViewPointer> viewMap;
 private:
     CanvasManager *q = nullptr;
-
-    QMutex createFileMutex;
-    bool createFileByMenu = false;
-    int createFileScreenNum = 0;
-    QPoint createFileGridPos;
 };
 
 DSB_D_END_NAMESPACE

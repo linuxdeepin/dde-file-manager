@@ -18,28 +18,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASVIEWMENUPROXY_H
-#define CANVASVIEWMENUPROXY_H
+#ifndef FILEOPERATERPROXY_P_H
+#define FILEOPERATERPROXY_P_H
 
-#include "dfm_desktop_service_global.h"
-#include <QObject>
+#include "fileoperaterproxy.h"
 
 DSB_D_BEGIN_NAMESPACE
-class CanvasView;
-class CanvasViewMenuProxy : public QObject
+
+class FileOperaterProxyPrivate : public QObject
 {
     Q_OBJECT
 public:
-    explicit CanvasViewMenuProxy(CanvasView *parent = nullptr);
-    ~CanvasViewMenuProxy();
 
-    void showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, const QPoint gridPos);
-    void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QPoint gridPos);
+    enum CallBackFunc {
+        kCallBackTouchFile,
+        kCallBackTouchFolder,
+        kCallBackCopyFiles,
+        kCallBackCutFiles,
+        kCallBackPasteFiles,
+        kCallBackOpenFiles,
+        kCallBackRenameFiles,
+        kCallBackOpenFilesByApp,
+        kCallBackMoveToTrash,
+        kCallBackDeleteFiles
+    };
 
-private:
-    CanvasView *view;
+    explicit FileOperaterProxyPrivate(FileOperaterProxy *q_ptr);
+
+    static void callBackTouchFile(const QUrl &target, const QVariantMap &customData);
+
+public:
+    FileOperaterProxy *const q;
 };
 
 DSB_D_END_NAMESPACE
 
-#endif // CANVASVIEWMENUPROXY_H
+Q_DECLARE_METATYPE(dfm_service_desktop::FileOperaterProxyPrivate::CallBackFunc)
+
+#endif // FILEOPERATERPROXY_P_H

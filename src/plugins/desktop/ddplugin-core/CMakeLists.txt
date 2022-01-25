@@ -74,7 +74,6 @@ set(core_cxx_cpp
     canvas/grid/canvasgrid.cpp
     canvas/grid/gridcore.cpp
     canvas/filetreater.cpp
-    canvas/private/traversaldirthread.cpp
     canvas/displayconfig.cpp
     watermask/watermaskframe.cpp
     watermask/deepinlicensehelper.cpp
@@ -98,7 +97,6 @@ set(core_cxx_h
     background/backgrounddefault.h
     canvas/private/canvasmanager_p.h
     canvas/private/filetreater_p.h
-    canvas/private/traversaldirthread.h
     canvas//canvasmanager.h
     canvas/view/canvasview_p.h
     canvas/view/canvasview.h
@@ -113,6 +111,7 @@ set(core_cxx_h
     canvas/view/operator/dragdropoper.h
     canvas/view/operator/shortcutoper.h
     canvas/view/operator/canvasviewmenuproxy.h
+    canvas/view/operator/fileoperaterproxy_p.h
     canvas/view/operator/fileoperaterproxy.h
     canvas/delegate/canvasitemdelegate_p.h
     canvas/delegate/canvasitemdelegate.h

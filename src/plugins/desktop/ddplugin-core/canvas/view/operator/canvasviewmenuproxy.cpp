@@ -47,7 +47,7 @@ CanvasViewMenuProxy::~CanvasViewMenuProxy()
 
 }
 
-void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
+void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, const QPoint gridPos)
 {
     Q_UNUSED(indexFlags)
     // todo menu
@@ -58,17 +58,19 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
 
     tstAction = tstMenu->addAction(tr("Create file"));
     connect(tstAction, &QAction::triggered, this, [=](){
-        FileOperaterProxyIns->touchFile(view, kCreateFileTypeText);
+        // todo(wangcl):get file type,or suffix.See FileOperationsEventReceiver::newDocmentName
+        FileOperaterProxyIns->touchFile(view, gridPos, kCreateFileTypeText);
     });
 
     tstAction = tstMenu->addAction(tr("Create folder"));
     connect(tstAction, &QAction::triggered, this, [=](){
-        FileOperaterProxyIns->touchFolder(view);
+        FileOperaterProxyIns->touchFolder(view, gridPos);
     });
 
     tstAction = tstMenu->addAction(tr("Paste"));
+    tstAction->setEnabled(!ClipBoard::instance()->clipboardFileUrlList().isEmpty());
     connect(tstAction, &QAction::triggered, this, [=](){
-        FileOperaterProxyIns->pasteFiles(view);
+        FileOperaterProxyIns->pasteFiles(view, gridPos);
     });
 
     auto sortByRole = [=](const dfmbase::AbstractFileInfo::SortKey role)->bool{
@@ -102,6 +104,8 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     });
 
     tstAction = tstMenu->addAction(tr("Auto arrange"));
+    tstAction->setCheckable(true);
+    tstAction->setChecked(GridIns->mode() == CanvasGrid::Mode::Align);
     connect(tstAction, &QAction::triggered, this, [=](){
         auto align = DispalyIns->autoAlign();
         align = !align;
@@ -119,10 +123,11 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     delete tstMenu;
 }
 
-void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
+void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QPoint gridPos)
 {
     Q_UNUSED(index)
     Q_UNUSED(indexFlags)
+    Q_UNUSED(gridPos)
     // todo menu
 
     // test code

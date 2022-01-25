@@ -21,6 +21,7 @@
 #include "shortcutoper.h"
 #include "view/canvasview.h"
 #include "view/canvasselectionmodel.h"
+#include "fileoperaterproxy.h"
 
 #include <DApplication>
 
@@ -51,9 +52,9 @@ void ShortcutOper::regShortcut()
     regAction(QKeySequence::SelectAll, [this](){view->selectAll();}); // ctrl+a
     regAction(QKeySequence::ZoomIn, [this](){qDebug() << "zoom in";}); // ctrl+-
     regAction(QKeySequence::ZoomOut, [this](){qDebug() << "zoom out";});// ctrl++(c_s_=)
-    regAction(QKeySequence::Copy, [this](){qDebug() << "Copy";});// ctrl+c
-    regAction(QKeySequence::Cut, [this](){qDebug() << "Cut";});// ctrl+x
-    regAction(QKeySequence::Paste, [this](){qDebug() << "Paste";});// ctrl+v
+    regAction(QKeySequence::Copy, &ShortcutOper::copyFiles);// ctrl+c
+    regAction(QKeySequence::Cut, &ShortcutOper::cutFiles);// ctrl+x
+    regAction(QKeySequence::Paste, &ShortcutOper::pasteFiles);// ctrl+v
     regAction(QKeySequence::Undo, [this](){qDebug() << "Undo";});// ctrl+z
     //regAction(QKeySequence::New, [this](){qDebug() << "New";});// ctrl+n
     //regAction(QKeySequence::Open, &ShortcutOper::openAction); // ctrl+o
@@ -141,17 +142,32 @@ void ShortcutOper::helpAction()
 
 void ShortcutOper::openAction()
 {
-    qDebug() << "open!!!!!!!!";
+    FileOperaterProxyIns->openFiles(view);
 }
 
 void ShortcutOper::moveToTrash()
 {
-    qInfo() << "move to trash";
+    FileOperaterProxyIns->moveToTrash(view);
 }
 
 void ShortcutOper::deleteFile()
 {
-    qDebug() << "delete file";
+    FileOperaterProxyIns->deleteFiles(view);
+}
+
+void ShortcutOper::copyFiles()
+{
+    FileOperaterProxyIns->copyFiles(view);
+}
+
+void ShortcutOper::cutFiles()
+{
+    FileOperaterProxyIns->cutFiles(view);
+}
+
+void ShortcutOper::pasteFiles()
+{
+    FileOperaterProxyIns->pasteFiles(view);
 }
 
 void ShortcutOper::tabToFirst()

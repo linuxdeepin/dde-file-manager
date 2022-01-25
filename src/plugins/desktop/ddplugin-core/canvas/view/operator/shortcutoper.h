@@ -40,6 +40,9 @@ protected slots:
     void openAction();
     void moveToTrash();
     void deleteFile();
+    void copyFiles();
+    void cutFiles();
+    void pasteFiles();
     void tabToFirst();
 protected:
     CanvasView *view;

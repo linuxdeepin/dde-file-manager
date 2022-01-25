@@ -23,32 +23,38 @@
 
 #include "dfm_desktop_service_global.h"
 #include "dfm_global_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QObject>
+#include <QPoint>
 
 DSB_D_BEGIN_NAMESPACE
 class CanvasView;
+class FileOperaterProxyPrivate;
 class FileOperaterProxy : public QObject
 {
     Q_OBJECT
 public:
     static FileOperaterProxy *instance();
-    void touchFile(const CanvasView *view, const dfmbase::Global::CreateFileType type);
-    void touchFolder(const CanvasView *view);
+    void touchFile(const CanvasView *view, const QPoint pos, const dfmbase::Global::CreateFileType type, QString suffix = "");
+    void touchFolder(const CanvasView *view, const QPoint pos);
     void copyFiles(const CanvasView *view);
     void cutFiles(const CanvasView *view);
-    void pasteFiles(const CanvasView *view);
+    void pasteFiles(const CanvasView *view, const QPoint pos = QPoint(0, 0));
     void openFiles(const CanvasView *view);
-    void renameFiles(const CanvasView *view);
+    void renameFiles(const CanvasView *view, const QUrl &oldUrl, const QUrl &newUrl);
     void openFilesByApp(const CanvasView *view);
     void moveToTrash(const CanvasView *view);
     void deleteFiles(const CanvasView *view);
 
-signals:
-    void createFileByMenu(const int &screenNum, const QPoint &pos);
+public:
+    static void callBackFunction(const dfmbase::Global::CallbackArgus args);
 
 protected:
     explicit FileOperaterProxy(QObject *parent = nullptr);
+
+private:
+    QSharedPointer<FileOperaterProxyPrivate> d;
 };
 
 #define FileOperaterProxyIns DSB_D_NAMESPACE::FileOperaterProxy::instance()

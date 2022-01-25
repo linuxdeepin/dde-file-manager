@@ -104,9 +104,6 @@ void CanvasManager::initConnect()
     connect(d->canvasModel, &CanvasModel::fileRenamed, d, &CanvasManagerPrivate::onFileRenamed, Qt::QueuedConnection);
     connect(d->canvasModel, &CanvasModel::fileSorted, d, &CanvasManagerPrivate::onFileSorted, Qt::QueuedConnection);
     connect(d->canvasModel, &CanvasModel::fileRefreshed, d, &CanvasManagerPrivate::onFileRefreshed, Qt::QueuedConnection);
-
-    // todo(wangcl):callback
-    connect(FileOperaterProxyIns, &FileOperaterProxy::createFileByMenu, d, &CanvasManagerPrivate::recordMenuLocation, Qt::DirectConnection);
 }
 
 void CanvasManager::onCanvasBuild()
@@ -285,20 +282,13 @@ void CanvasManagerPrivate::updateView(const CanvasViewPointer &view, const Scree
 void CanvasManagerPrivate::onFileCreated(const QUrl &url)
 {
     QString path = url.toString();
-    {
-        QMutexLocker l(&createFileMutex);
-        if (createFileByMenu) {
-            // todo(wangcl) 优化为回调函数处理(在canvasview的右键菜单调用时传入回调函数)，此处直接刷新返回
-            createFileByMenu = false;
-            // todo(wangcl):自动排序的情况下，直接append
-            GridIns->tryAppendAfter({path}, createFileScreenNum, createFileGridPos);
-
-            // todo open editor for rename file
-        } else {
-            GridIns->append(path);
-        }
+    QPair<int, QPoint> pos;
+    if (GridIns->point(path, pos)) {
+        // already hand by call back
+        qDebug() << "item:" << path << " existed:" << pos.first << pos.second;
+        return;
     }
-
+    GridIns->append(path);
     q->update();
 }
 
@@ -335,14 +325,6 @@ void CanvasManagerPrivate::onFileSorted()
     GridIns->setItems(existItems);
 
     q->update();
-}
-
-void CanvasManagerPrivate::recordMenuLocation(const int screenNum, const QPoint &pos)
-{
-    QMutexLocker l(&createFileMutex);
-    createFileByMenu = true;
-    createFileScreenNum = screenNum;
-    createFileGridPos = pos;
 }
 
 void CanvasManagerPrivate::backgroundDeleted()

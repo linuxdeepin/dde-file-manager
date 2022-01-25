@@ -181,6 +181,14 @@ QUrl CanvasModel::url(const QModelIndex &index) const
     return QUrl();
 }
 
+DFMLocalFileInfoPointer CanvasModel::fileInfo(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return nullptr;
+
+    return FileTreaterCt->fileInfo(index.row());
+}
+
 const QList<QUrl> &CanvasModel::getFiles() const
 {
     return FileTreaterCt->getFiles();

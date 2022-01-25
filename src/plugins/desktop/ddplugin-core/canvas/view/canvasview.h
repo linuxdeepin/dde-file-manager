@@ -68,7 +68,6 @@ public:
     void setGeometry(const QRect &rect);
     void updateGrid();
 
-    QPoint lastMenuPos() const; // todo(wangcl):delete it when call back
 public:
     QList<QIcon> additionalIcon(const QModelIndex &index) const;
 public Q_SLOTS:

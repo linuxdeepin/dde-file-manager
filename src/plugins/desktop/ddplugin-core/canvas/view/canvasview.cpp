@@ -277,17 +277,17 @@ void CanvasView::paintEvent(QPaintEvent *event)
 
 void CanvasView::contextMenuEvent(QContextMenuEvent *event)
 {
-    d->lastMenuGridPos = d->gridAt(event->pos());
+    QPoint gridPos = d->gridAt(event->pos());
     itemDelegate()->revertAndcloseEditor();
 
     const QModelIndex &index = indexAt(event->pos());
     Qt::ItemFlags flags;
 
     if (d->isEmptyArea(event->pos())) {
-        d->menuProxy->showEmptyAreaMenu(flags);
+        d->menuProxy->showEmptyAreaMenu(flags, gridPos);
     } else {
         flags = model()->flags(index);
-        d->menuProxy->showNormalMenu(index, flags);
+        d->menuProxy->showNormalMenu(index, flags, gridPos);
     }
 }
 
@@ -411,11 +411,6 @@ void CanvasView::refresh()
     repaint();
     update();
     d->flicker = false;
-}
-
-QPoint CanvasView::lastMenuPos() const
-{
-    return d->lastMenuGridPos;
 }
 
 QList<QIcon> CanvasView::additionalIcon(const QModelIndex &index) const

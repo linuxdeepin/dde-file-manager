@@ -58,6 +58,7 @@ public:
 
     QUrl rootUrl() const;
     QUrl url(const QModelIndex &index) const;
+    DFMLocalFileInfoPointer fileInfo(const QModelIndex &index) const;
     const QList<QUrl> &getFiles() const;
 
     QMimeData *mimeData(const QModelIndexList &indexes) const override;
