@@ -112,7 +112,7 @@ void handleEnvOfOpenAsAdmin()
 {
     QProcess p;
     p.start("bash", QStringList() << "-c"
-            << "echo $(dbus-launch --autolaunch $(cat /var/lib/dbus/machine-id))");
+                                  << "echo $(dbus-launch --autolaunch $(cat /var/lib/dbus/machine-id))");
     p.waitForFinished();
     QString envName("DBUS_SESSION_BUS_ADDRESS");
     QString output(p.readAllStandardOutput());
@@ -178,9 +178,6 @@ int main(int argc, char *argv[])
     if (DFMGlobal::isWayLand()) {
         //以下代码用于视频预览使用
         setenv("PULSE_PROP_media.role", "video", 1);
-        QSurfaceFormat format;
-        format.setRenderableType(QSurfaceFormat::OpenGLES);
-        format.setDefaultFormat(format);
     }
 
     app.setOrganizationName(QMAKE_ORGANIZATION_NAME);

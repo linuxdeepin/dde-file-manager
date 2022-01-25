@@ -110,7 +110,7 @@ static bool registerFileManager1DBus()
 int main(int argc, char *argv[])
 {
     //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
-    if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")){
+    if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")) {
         qputenv("XDG_CURRENT_DESKTOP", "Deepin");
     }
 
@@ -122,9 +122,6 @@ int main(int argc, char *argv[])
     if (DesktopInfo().waylandDectected()) {
         //! 以下代码用于视频预览使用
         setenv("PULSE_PROP_media.role", "video", 1);
-        QSurfaceFormat format;
-        format.setRenderableType(QSurfaceFormat::OpenGLES);
-        format.setDefaultFormat(format);
     } else {
         //fix bug59539 向桌面拖拽文件，进度条框无法拖动
         //根因：桌面启动时窗管未完全启动，导致xcb插件fallback到不同的分支
@@ -154,11 +151,11 @@ int main(int argc, char *argv[])
     }
 
     //因bug#46452，--file-dialog-only不再判断root
-//    if (fileDialogOnly && getuid() != 0) {
-//        // --file-dialog-only should only used by `root`.
-//        qDebug() << "Current UID != 0, the `--file-dialog-only` argument is ignored.";
-//        fileDialogOnly = false;
-//    }
+    //    if (fileDialogOnly && getuid() != 0) {
+    //        // --file-dialog-only should only used by `root`.
+    //        qDebug() << "Current UID != 0, the `--file-dialog-only` argument is ignored.";
+    //        fileDialogOnly = false;
+    //    }
 
     app.setQuitOnLastWindowClosed(false);
     app.loadTranslator();
@@ -248,7 +245,7 @@ int main(int argc, char *argv[])
         DFMGlobal::setInitAppOver();
     });
 
-    DFMGlobal::IsFileManagerDiloagProcess = true; // for compatibility.
+    DFMGlobal::IsFileManagerDiloagProcess = true;   // for compatibility.
     int ret = app.exec();
     qInfo() << "exit: " << ret << "pid:" << getpid();
     return ret;
