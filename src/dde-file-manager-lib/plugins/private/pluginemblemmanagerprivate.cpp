@@ -168,7 +168,10 @@ void PluginEmblemManagerPrivate::getEmblemIcons(QSharedPointer<DFMExtEmblemIconP
         for (int i = 0, pos = 0; i < static_cast<int>(len); ++i) {
             pos = data.second + i;
             if (pos < newIcons.size()) {
-                newIcons[data.second + i] = QString::fromStdString(emblems[static_cast<size_t>(i)]);
+                QString iconPath = QString::fromStdString(emblems[static_cast<size_t>(i)]);
+                if (!iconPath.isEmpty()) {
+                    setFilePath(iconPath, newIcons, pos);
+                }
             }
         }
     }
@@ -185,7 +188,10 @@ void PluginEmblemManagerPrivate::getLocationEmblemIcons(QSharedPointer<DFMExtEmb
             DFMExtEmblemIconLayout iconLayout = veIcon[i];
             int nType = static_cast<int>(iconLayout.locationType());
             if (nType < newIcons.size()) {
-                newIcons[nType] = QString::fromStdString(iconLayout.iconPath());
+                QString iconPath = QString::fromStdString(iconLayout.iconPath());
+                if (!iconPath.isEmpty()) {
+                    setFilePath(iconPath, newIcons, nType);
+                }
             }
         }
     }
@@ -225,6 +231,19 @@ void PluginEmblemManagerPrivate::cacheEmblemToMap(bool &bHaveIcon, const QPair<Q
                 QMetaObject::invokeMethod(updateTimer, "start", Qt::QueuedConnection);
             }
         }
+    }
+}
+
+void PluginEmblemManagerPrivate::setFilePath(const QString &iconPath, QStringList &newIcons, int index)
+{
+    QIcon icon = QIcon::fromTheme(iconPath);
+    if (!icon.name().isEmpty()) {
+        newIcons[index] = iconPath;
+    } else {
+        QImage image;
+        bool bValid = image.load(iconPath);
+        if (bValid)
+            newIcons[index] = iconPath;
     }
 }
 

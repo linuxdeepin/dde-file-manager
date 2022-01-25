@@ -66,6 +66,8 @@ private:
                                   bool &bHaveIcon, QStringList &newIcons);
     // 将从插件中获取到的角标缓存到容器
     void cacheEmblemToMap(bool &bHaveIcon, const QPair<QString, int> &data, const QStringList &newIcons);
+    // 设置文件路径
+    void setFilePath(const QString &iconPath, QStringList &newIcons, int index);
 
 private:
     PluginEmblemManager *const q {};
