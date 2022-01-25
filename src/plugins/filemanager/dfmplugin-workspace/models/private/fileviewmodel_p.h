@@ -42,8 +42,13 @@ class FileViewModelPrivate : public QObject
     Q_OBJECT
     friend class FileViewModel;
     FileViewModel *const q;
-    dfmbase::DThreadList<FileViewItem *> childrens;
-    dfmbase::DThreadMap<QUrl, FileViewItem *> childrenMap;
+    QList<FileViewItem *> children;
+    QMap<QUrl, FileViewItem *> childrenMap;
+    QMap<QUrl, FileViewItem *> childrenAddMap;
+    QMap<QUrl, FileViewItem *> childrenRemoveMap;
+    QAtomicInteger<bool> canAdd { false };
+    QAtomicInteger<bool> cacheChildren { false };
+    QMutex childrenMutex;
     QSharedPointer<FileViewItem> root;
     int column = 0;
     AbstractFileWatcherPointer watcher;
@@ -81,11 +86,14 @@ private Q_SLOTS:
     void doFileUpdated(const QUrl &url);
     void doFilesUpdated();
     void dofileClosed(const QUrl &url) { Q_UNUSED(url); }
-    void doUpdateChildren(const QList<QUrl> &childrens);
+    void doUpdateChildren(const QList<QUrl> &children);
+    void doUpdateChild(const QUrl &child);
     void doWatcherEvent();
 
 private:
     bool checkFileEventQueue();
+    void insertChild(const QUrl &child);
+    void insertChildren(QList<FileViewItem *> &tmpChildren, QMap<QUrl, FileViewItem *> &tmpChildrenMap);
     QString roleDisplayString(int role);
 };
 

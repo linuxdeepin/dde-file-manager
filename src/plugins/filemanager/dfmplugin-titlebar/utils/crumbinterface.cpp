@@ -122,7 +122,7 @@ void CrumbInterface::requestCompletionList(const QUrl &url)
     if (folderCompleterJobPointer.isNull())
         return;
 
-    connect(folderCompleterJobPointer.data(), &TraversalDirThread::updateChildrens, this,
+    connect(folderCompleterJobPointer.data(), &TraversalDirThread::updateChildren, this,
             &CrumbInterface::onUpdateChildren, Qt::DirectConnection);
 
     connect(folderCompleterJobPointer.data(), &TraversalDirThread::finished, this,

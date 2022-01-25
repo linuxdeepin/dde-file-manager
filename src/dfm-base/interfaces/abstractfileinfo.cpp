@@ -21,6 +21,7 @@
  */
 #include "private/abstractfileinfo_p.h"
 #include "abstractfileinfo.h"
+#include "dfm-base/mimetype/mimetypedisplaymanager.h"
 
 #include <QMetaType>
 #include <QDateTime>
@@ -88,8 +89,11 @@ COMPARE_FUN_DEFINE(size, Size, DFMBASE_NAMESPACE::AbstractFileInfo)
 COMPARE_FUN_DEFINE(lastModified, Modified, DFMBASE_NAMESPACE::AbstractFileInfo)
 COMPARE_FUN_DEFINE(created, Created, DFMBASE_NAMESPACE::AbstractFileInfo)
 COMPARE_FUN_DEFINE(lastRead, LastRead, DFMBASE_NAMESPACE::AbstractFileInfo)
+COMPARE_FUN_DEFINE(fileTypeDisplayName, MimeType, DFMBASE_NAMESPACE::AbstractFileInfo)
 }   /// end namespace FileSortFunction
 
+#define CALL_PROXY(Fun) \
+    if (dptr->proxy) return dptr->proxy->Fun;
 DFMBASE_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<AbstractFileInfoPointer>("AbstractFileInfo") });
 
@@ -113,6 +117,11 @@ AbstractFileInfo::AbstractFileInfo(const QUrl &url, dfmbase::AbstractFileInfoPri
 {
     Q_UNUSED(type_id)
     dptr->url = url;
+}
+
+void dfmbase::AbstractFileInfo::setProxy(const AbstractFileInfoPointer &proxy)
+{
+    dptr->proxy = proxy;
 }
 
 AbstractFileInfo::~AbstractFileInfo()
@@ -173,6 +182,8 @@ void AbstractFileInfo::setFile(const QUrl &url)
  */
 bool AbstractFileInfo::exists() const
 {
+    CALL_PROXY(exists());
+
     return false;
 }
 /*!
@@ -198,6 +209,7 @@ void AbstractFileInfo::refresh()
  */
 QString AbstractFileInfo::filePath() const
 {
+    CALL_PROXY(filePath());
     return QString();
 }
 
@@ -214,6 +226,7 @@ QString AbstractFileInfo::filePath() const
  */
 QString AbstractFileInfo::absoluteFilePath() const
 {
+    CALL_PROXY(absoluteFilePath());
     return filePath();
 }
 /*!
@@ -229,6 +242,8 @@ QString AbstractFileInfo::absoluteFilePath() const
  */
 QString AbstractFileInfo::fileName() const
 {
+    CALL_PROXY(fileName());
+
     QString filePath = this->filePath();
 
     if (filePath.endsWith(QDir::separator())) {
@@ -256,6 +271,8 @@ QString AbstractFileInfo::fileName() const
  */
 QString AbstractFileInfo::baseName() const
 {
+    CALL_PROXY(baseName());
+
     const QString &fileName = this->fileName();
     const QString &suffix = this->suffix();
 
@@ -278,11 +295,15 @@ QString AbstractFileInfo::baseName() const
  */
 QString AbstractFileInfo::completeBaseName() const
 {
+    CALL_PROXY(completeBaseName());
+
     return QString();
 }
 
 QString dfmbase::AbstractFileInfo::fileNameOfRename() const
 {
+    CALL_PROXY(fileNameOfRename());
+
     return fileName();
 }
 /*!
@@ -298,6 +319,8 @@ QString dfmbase::AbstractFileInfo::fileNameOfRename() const
  */
 QString AbstractFileInfo::suffix() const
 {
+    CALL_PROXY(suffix());
+
     return QString();
 }
 /*!
@@ -313,6 +336,8 @@ QString AbstractFileInfo::suffix() const
  */
 QString AbstractFileInfo::completeSuffix()
 {
+    CALL_PROXY(completeSuffix());
+
     return QString();
 }
 /*!
@@ -328,6 +353,8 @@ QString AbstractFileInfo::completeSuffix()
  */
 QString AbstractFileInfo::path() const
 {
+    CALL_PROXY(path());
+
     return QString();
 }
 /*!
@@ -343,6 +370,8 @@ QString AbstractFileInfo::path() const
  */
 QString AbstractFileInfo::absolutePath() const
 {
+    CALL_PROXY(absolutePath());
+
     return path();
 }
 /*!
@@ -358,6 +387,9 @@ QString AbstractFileInfo::absolutePath() const
  */
 QString AbstractFileInfo::canonicalPath() const
 {
+
+    CALL_PROXY(canonicalPath());
+
     return filePath();
 }
 /*!
@@ -375,6 +407,8 @@ QString AbstractFileInfo::canonicalPath() const
  */
 QDir AbstractFileInfo::dir() const
 {
+    CALL_PROXY(dir());
+
     return QDir(path());
 }
 /*!
@@ -392,6 +426,8 @@ QDir AbstractFileInfo::dir() const
  */
 QDir AbstractFileInfo::absoluteDir() const
 {
+    CALL_PROXY(absoluteDir());
+
     return dir();
 }
 /*!
@@ -408,6 +444,9 @@ QUrl AbstractFileInfo::url() const
 
 bool dfmbase::AbstractFileInfo::canRename() const
 {
+
+    CALL_PROXY(canRename());
+
     return false;
 }
 
@@ -424,6 +463,8 @@ bool dfmbase::AbstractFileInfo::canRename() const
  */
 bool AbstractFileInfo::isReadable() const
 {
+    CALL_PROXY(isReadable());
+
     return false;
 }
 /*!
@@ -439,6 +480,8 @@ bool AbstractFileInfo::isReadable() const
  */
 bool AbstractFileInfo::isWritable() const
 {
+    CALL_PROXY(isWritable());
+
     return false;
 }
 /*!
@@ -450,6 +493,8 @@ bool AbstractFileInfo::isWritable() const
  */
 bool AbstractFileInfo::isExecutable() const
 {
+    CALL_PROXY(isExecutable());
+
     return false;
 }
 /*!
@@ -461,6 +506,8 @@ bool AbstractFileInfo::isExecutable() const
  */
 bool AbstractFileInfo::isHidden() const
 {
+    CALL_PROXY(isHidden());
+
     return false;
 }
 /*!
@@ -478,6 +525,8 @@ bool AbstractFileInfo::isHidden() const
  */
 bool AbstractFileInfo::isFile() const
 {
+    CALL_PROXY(isFile());
+
     return false;
 }
 /*!
@@ -493,6 +542,8 @@ bool AbstractFileInfo::isFile() const
  */
 bool AbstractFileInfo::isDir() const
 {
+    CALL_PROXY(isDir());
+
     return false;
 }
 /*!
@@ -516,6 +567,8 @@ bool AbstractFileInfo::isDir() const
  */
 bool AbstractFileInfo::isSymLink() const
 {
+    CALL_PROXY(isSymLink());
+
     return false;
 }
 /*!
@@ -531,6 +584,8 @@ bool AbstractFileInfo::isSymLink() const
  */
 bool AbstractFileInfo::isRoot() const
 {
+    CALL_PROXY(isRoot());
+
     return filePath() == "/";
 }
 /*!
@@ -546,6 +601,8 @@ bool AbstractFileInfo::isRoot() const
  */
 bool AbstractFileInfo::isBundle() const
 {
+    CALL_PROXY(isBundle());
+
     return false;
 }
 /*!
@@ -565,6 +622,8 @@ bool AbstractFileInfo::isBundle() const
  */
 QString AbstractFileInfo::symLinkTarget() const
 {
+    CALL_PROXY(symLinkTarget());
+
     return QString();
 }
 /*!
@@ -582,6 +641,8 @@ QString AbstractFileInfo::symLinkTarget() const
  */
 QString AbstractFileInfo::owner() const
 {
+    CALL_PROXY(owner());
+
     return QString();
 }
 /*!
@@ -595,6 +656,8 @@ QString AbstractFileInfo::owner() const
  */
 uint AbstractFileInfo::ownerId() const
 {
+    CALL_PROXY(ownerId());
+
     return static_cast<uint>(-1);
 }
 /*!
@@ -610,6 +673,8 @@ uint AbstractFileInfo::ownerId() const
  */
 QString AbstractFileInfo::group() const
 {
+    CALL_PROXY(group());
+
     return QString();
 }
 /*!
@@ -623,6 +688,8 @@ QString AbstractFileInfo::group() const
  */
 uint AbstractFileInfo::groupId() const
 {
+    CALL_PROXY(groupId());
+
     return static_cast<uint>(-1);
 }
 /*!
@@ -640,6 +707,8 @@ uint AbstractFileInfo::groupId() const
  */
 bool AbstractFileInfo::permission(QFileDevice::Permissions permissions) const
 {
+    CALL_PROXY(permission(permissions));
+
     return this->permissions() & permissions;
 }
 /*!
@@ -651,6 +720,8 @@ bool AbstractFileInfo::permission(QFileDevice::Permissions permissions) const
  */
 QFileDevice::Permissions AbstractFileInfo::permissions() const
 {
+    CALL_PROXY(permissions());
+
     return QFileDevice::Permissions();
 }
 /*!
@@ -666,6 +737,8 @@ QFileDevice::Permissions AbstractFileInfo::permissions() const
  */
 qint64 AbstractFileInfo::size() const
 {
+    CALL_PROXY(size());
+
     return 0;
 }
 /*!
@@ -683,6 +756,8 @@ qint64 AbstractFileInfo::size() const
  */
 QDateTime AbstractFileInfo::created() const
 {
+    CALL_PROXY(created());
+
     return QDateTime();
 }
 /*!
@@ -700,6 +775,8 @@ QDateTime AbstractFileInfo::created() const
  */
 QDateTime AbstractFileInfo::birthTime() const
 {
+    CALL_PROXY(birthTime());
+
     return created();
 }
 /*!
@@ -719,6 +796,8 @@ QDateTime AbstractFileInfo::birthTime() const
  */
 QDateTime AbstractFileInfo::metadataChangeTime() const
 {
+    CALL_PROXY(metadataChangeTime());
+
     return QDateTime();
 }
 /*!
@@ -730,6 +809,8 @@ QDateTime AbstractFileInfo::metadataChangeTime() const
  */
 QDateTime AbstractFileInfo::lastModified() const
 {
+    CALL_PROXY(lastModified());
+
     return QDateTime();
 }
 /*!
@@ -741,6 +822,8 @@ QDateTime AbstractFileInfo::lastModified() const
  */
 QDateTime AbstractFileInfo::lastRead() const
 {
+    CALL_PROXY(lastRead());
+
     return QDateTime();
 }
 /*!
@@ -752,6 +835,8 @@ QDateTime AbstractFileInfo::lastRead() const
  */
 QDateTime AbstractFileInfo::fileTime(QFileDevice::FileTime time) const
 {
+    CALL_PROXY(fileTime(time));
+
     if (time == QFileDevice::FileAccessTime) {
         return lastRead();
     } else if (time == QFileDevice::FileBirthTime) {
@@ -770,6 +855,8 @@ QDateTime AbstractFileInfo::fileTime(QFileDevice::FileTime time) const
  */
 int dfmbase::AbstractFileInfo::countChildFile() const
 {
+    CALL_PROXY(countChildFile());
+
     return -1;
 }
 /*!
@@ -778,6 +865,8 @@ int dfmbase::AbstractFileInfo::countChildFile() const
  */
 QString dfmbase::AbstractFileInfo::sizeFormat() const
 {
+    CALL_PROXY(sizeFormat());
+
     return QString();
 }
 /*!
@@ -786,11 +875,19 @@ QString dfmbase::AbstractFileInfo::sizeFormat() const
  */
 dfmbase::AbstractFileInfo::Type dfmbase::AbstractFileInfo::fileType() const
 {
+    CALL_PROXY(fileType());
+
     return kUnknown;
 }
-
+/*!
+ * \brief AbstractFileInfo::compareFunByKey Get sorting function through key
+ * \param sortKey Sorted key value
+ * \return Sorting function
+ */
 dfmbase::AbstractFileInfo::CompareFunction AbstractFileInfo::compareFunByKey(const SortKey &sortKey) const
 {
+    CALL_PROXY(compareFunByKey(sortKey));
+
     switch (sortKey) {
     case kSortByFileName:
         return FileSortFunction::compareFileListByFileName;
@@ -802,12 +899,20 @@ dfmbase::AbstractFileInfo::CompareFunction AbstractFileInfo::compareFunByKey(con
         return FileSortFunction::compareFileListByCreated;
     case kSortByFileLastRead:
         return FileSortFunction::compareFileListByLastRead;
+    case kSortByFileMimeType:
+        return FileSortFunction::compareFileListByMimeType;
     }
     return CompareFunction();
 }
-
+/*!
+ * \brief dfmbase::AbstractFileInfo::getUrlByChildFileName Get the URL based on the name of the sub file
+ * \param fileName Sub file name
+ * \return URL of the file
+ */
 QUrl dfmbase::AbstractFileInfo::getUrlByChildFileName(const QString &fileName) const
 {
+    CALL_PROXY(getUrlByChildFileName(fileName));
+
     if (!isDir()) {
         return QUrl();
     }
@@ -815,23 +920,139 @@ QUrl dfmbase::AbstractFileInfo::getUrlByChildFileName(const QString &fileName) c
     theUrl.setPath(absoluteFilePath() + QDir::separator() + fileName);
     return theUrl;
 }
-
+/*!
+ * \brief dfmbase::AbstractFileInfo::getUrlByNewFileName Get URL based on new file name
+ * \param fileName New file name
+ * \return URL of the file
+ */
 QUrl dfmbase::AbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
 {
+    CALL_PROXY(getUrlByNewFileName(fileName));
+
     QUrl theUrl = url();
 
     theUrl.setPath(absolutePath() + QDir::separator() + fileName);
 
     return theUrl;
 }
+/*!
+ * \brief dfmbase::AbstractFileInfo::fileTypeDisplayName Display name of the file type
+ * \return Display name of the file typ
+ */
+QString dfmbase::AbstractFileInfo::fileTypeDisplayName() const
+{
+    CALL_PROXY(fileTypeDisplayName());
 
+    return QString::number(
+                   MimeTypeDisplayManager::instance()->displayNameToEnum(fileMimeType().name()))
+            .append(suffix());
+}
+/*!
+ * \brief dfmbase::AbstractFileInfo::canRedirectionFileUrl Can I redirect files
+ * \return
+ */
+bool dfmbase::AbstractFileInfo::canRedirectionFileUrl() const
+{
+    CALL_PROXY(canRedirectionFileUrl());
+
+    return false;
+}
+/*!
+ * \brief dfmbase::AbstractFileInfo::redirectedFileUrl redirection file
+ * \return
+ */
+QUrl dfmbase::AbstractFileInfo::redirectedFileUrl() const
+{
+    CALL_PROXY(redirectedFileUrl());
+
+    return QUrl();
+}
+/*!
+ * \brief dfmbase::AbstractFileInfo::canDrop
+ * \return
+ */
+bool dfmbase::AbstractFileInfo::canDrop() const
+{
+    CALL_PROXY(canDrop());
+
+    return true;
+}
+/*!
+ * \brief dfmbase::AbstractFileInfo::parentUrl
+ * \return
+ */
+QUrl dfmbase::AbstractFileInfo::parentUrl() const
+{
+    CALL_PROXY(parentUrl());
+
+    return UrlRoute::urlParent(url());
+}
+/*!
+ * \brief dfmbase::AbstractFileInfo::supportedDragActions
+ * \return
+ */
+Qt::DropActions dfmbase::AbstractFileInfo::supportedDragActions() const
+{
+    CALL_PROXY(supportedDragActions());
+
+    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
+}
+/*!
+ * \brief dfmbase::AbstractFileInfo::supportedDropActions
+ * \return
+ */
+Qt::DropActions dfmbase::AbstractFileInfo::supportedDropActions() const
+{
+    CALL_PROXY(supportedDropActions());
+
+    if (isWritable()) {
+        return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
+    }
+
+    if (canDrop()) {
+        return Qt::CopyAction | Qt::MoveAction;
+    }
+
+    return Qt::IgnoreAction;
+}
+/*!
+ * \brief dfmbase::AbstractFileInfo::canDragCompress
+ * \return
+ */
+bool dfmbase::AbstractFileInfo::canDragCompress() const
+{
+    CALL_PROXY(canDragCompress());
+
+    return true;
+}
+/*!
+ * \brief dfmbase::AbstractFileInfo::isDragCompressFileFormat
+ * \return
+ */
+bool dfmbase::AbstractFileInfo::isDragCompressFileFormat() const
+{
+    CALL_PROXY(isDragCompressFileFormat());
+
+    return true;
+}
+/*!
+ * \brief dfmbase::AbstractFileInfo::fileIcon
+ * \return
+ */
 QIcon dfmbase::AbstractFileInfo::fileIcon() const
 {
+    CALL_PROXY(fileIcon());
+
     return QIcon();
 }
-
+/*!
+ * \brief dfmbase::AbstractFileInfo::fileMimeType
+ * \return
+ */
 QMimeType dfmbase::AbstractFileInfo::fileMimeType() const
 {
+    CALL_PROXY(fileMimeType());
+
     return QMimeType();
 }
 
@@ -841,6 +1062,8 @@ QMimeType dfmbase::AbstractFileInfo::fileMimeType() const
  */
 QVariantHash dfmbase::AbstractFileInfo::extraProperties() const
 {
+    CALL_PROXY(extraProperties());
+
     return QVariantHash();
 }
 

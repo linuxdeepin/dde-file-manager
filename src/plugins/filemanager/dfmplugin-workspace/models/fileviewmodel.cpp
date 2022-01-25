@@ -26,6 +26,7 @@
 
 #include <QApplication>
 #include <QPointer>
+#include <QList>
 
 DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
@@ -88,7 +89,7 @@ void FileViewModelPrivate::doFilesUpdated()
     for (auto &fileUrl : fileUrls) {
         if (!childrenMap.contains(fileUrl))
             continue;
-        int fileRow = childrens.indexOf(childrenMap.value(fileUrl));
+        int fileRow = children.indexOf(childrenMap.value(fileUrl));
         if (fileRow < 0)
             continue;
 
@@ -98,18 +99,38 @@ void FileViewModelPrivate::doFilesUpdated()
 
 void FileViewModelPrivate::doUpdateChildren(const QList<QUrl> &children)
 {
-    q->beginResetModel();
-
-    for (auto url : children) {
-        FileViewItem *item = new FileViewItem(url);
-        childrenMap.insert(url, item);
-        childrens.append(item);
+    canAdd = false;
+    cacheChildren = true;
+    QList<FileViewItem *> tmpChildren;
+    QMap<QUrl, FileViewItem *> tmpChildrenMap;
+    {
+        QMutexLocker lk(&childrenMutex);
+        tmpChildren = this->children;
+        tmpChildrenMap = this->childrenMap;
     }
 
+    for (auto url : children) {
+        if (tmpChildrenMap.contains(url))
+            continue;
+        FileViewItem *item(new FileViewItem(url));
+        tmpChildrenMap.insert(url, item);
+        tmpChildren.append(item);
+    }
+
+    q->beginResetModel();
+    {
+        insertChildren(tmpChildren, tmpChildrenMap);
+    }
     q->endResetModel();
-    isUpdatedChildren = true;
 
     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+}
+
+void FileViewModelPrivate::doUpdateChild(const QUrl &child)
+{
+    if (!canAdd)
+        return;
+    insertChild(child);
 }
 
 void FileViewModelPrivate::doWatcherEvent()
@@ -147,22 +168,23 @@ void FileViewModelPrivate::doWatcherEvent()
             if (childrenMap.contains(fileUrl))
                 continue;
 
-            q->beginInsertRows(QModelIndex(), childrens.count(), childrens.count());
-            FileViewItem *item = new FileViewItem(fileUrl);
-            childrens.append(item);
-            childrenMap.insert(fileUrl, item);
-            q->endInsertRows();
+            insertChild(fileUrl);
         } else {
             if (!childrenMap.contains(fileUrl))
                 continue;
 
-            int fileIndex = childrens.indexOf(childrenMap.value(fileUrl));
+            int fileIndex = children.indexOf(childrenMap.value(fileUrl));
             if (fileIndex == -1)
                 continue;
 
             q->beginRemoveRows(QModelIndex(), fileIndex, fileIndex);
-            childrens.removeOne(childrenMap.value(fileUrl));
-            childrenMap.remove(fileUrl);
+            {
+                QMutexLocker lk(&childrenMutex);
+                if (cacheChildren)
+                    childrenRemoveMap.insert(fileUrl, childrenMap.value(fileUrl));
+                children.removeOne(childrenMap.value(fileUrl));
+                childrenMap.remove(fileUrl);
+            }
             q->endRemoveRows();
         }
     }
@@ -174,6 +196,50 @@ bool FileViewModelPrivate::checkFileEventQueue()
     QMutexLocker lk(&watcherEventMutex);
     bool isEmptyQueue = watcherEvent.isEmpty();
     return !isEmptyQueue;
+}
+
+void FileViewModelPrivate::insertChild(const QUrl &child)
+{
+    int row = -1;
+    {
+        QMutexLocker lk(&childrenMutex);
+        if (childrenMap.contains(child))
+            return;
+        row = children.count();
+    }
+    q->beginInsertRows(QModelIndex(), row, row);
+    FileViewItem *item = new FileViewItem(child);
+    {
+        QMutexLocker lk(&childrenMutex);
+        if (cacheChildren)
+            childrenAddMap.insert(child, item);
+        children.append(item);
+        childrenMap.insert(child, item);
+    }
+    q->endInsertRows();
+}
+
+void FileViewModelPrivate::insertChildren(QList<FileViewItem *> &tmpChildren, QMap<QUrl, FileViewItem *> &tmpChildrenMap)
+{
+    QMutexLocker lk(&childrenMutex);
+    QList<QUrl> keys = childrenAddMap.keys();
+    for (const auto &url : childrenAddMap.keys()) {
+        if (tmpChildrenMap.contains(url))
+            continue;
+        tmpChildren.append(childrenAddMap.value(url));
+        tmpChildrenMap.insert(url, childrenAddMap.value(url));
+    }
+    for (const auto &url : childrenRemoveMap.keys()) {
+        if (!tmpChildrenMap.contains(url))
+            continue;
+        tmpChildren.removeOne(childrenAddMap.value(url));
+        tmpChildrenMap.remove(url);
+    }
+    this->children = tmpChildren;
+    this->childrenMap = tmpChildrenMap;
+    cacheChildren = false;
+    childrenAddMap.clear();
+    childrenRemoveMap.clear();
 }
 
 QString FileViewModelPrivate::roleDisplayString(int role)
@@ -205,26 +271,26 @@ FileViewModel::~FileViewModel()
 QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    if (row < 0 || column < 0 || d->childrens.size() <= row)
+    if (row < 0 || column < 0 || d->children.size() <= row)
         return QModelIndex();
 
-    return createIndex(row, column, d->childrens.at(row));
+    return createIndex(row, column, d->children.at(row));
 }
 
 const FileViewItem *FileViewModel::itemFromIndex(const QModelIndex &index) const
 {
-    if (0 > index.row() || index.row() >= d->childrens.size())
+    if (0 > index.row() || index.row() >= d->children.size())
         return nullptr;
-    return d->childrens.at(index.row());
+    return d->children.at(index.row());
 }
 
 QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 {
+    clear();
+
     if (!d->root.isNull() && d->root->url() == url) {
         QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
         QModelIndex root = createIndex(-1, 0, &d->root);
-
-        d->childrens.clear();
 
         d->canFetchMoreFlag = true;
         fetchMore(root);
@@ -237,8 +303,6 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 
     if (!url.isValid())
         return root;
-
-    d->childrens.clear();
 
     if (d->column == 0)
         d->column = 4;
@@ -268,8 +332,8 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     }
 
     d->canFetchMoreFlag = true;
+    d->canAdd = true;
     fetchMore(root);
-
     return root;
 }
 
@@ -282,9 +346,9 @@ AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
 {
     if (!index.isValid())
         return nullptr;
-    if (index.row() < 0 || d->childrens.size() <= index.row())
+    if (index.row() < 0 || d->children.size() <= index.row())
         return nullptr;
-    return d->childrens.at(index.row())->fileinfo();
+    return d->children.at(index.row())->fileinfo();
 }
 
 QModelIndex FileViewModel::parent(const QModelIndex &child) const
@@ -296,7 +360,7 @@ QModelIndex FileViewModel::parent(const QModelIndex &child) const
 int FileViewModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return d->childrens.size();
+    return d->children.size();
 }
 
 int FileViewModel::columnCount(const QModelIndex &parent) const
@@ -315,12 +379,14 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
 
 void FileViewModel::clear()
 {
-    // TODO(liuyangming): crash here!
-    //    for (int x = 0; x < columnCount(); x++) {
-    //        for (int y = 0; x < rowCount(); y++) {
-    //            delete itemFromIndex(index(x, y));
-    //        }
-    //    }
+    d->canAdd = false;
+    d->cacheChildren = false;
+    d->childrenAddMap.clear();
+    d->childrenRemoveMap.clear();
+    beginRemoveRows(QModelIndex(), 0, d->childrenMap.count());
+    d->children.clear();
+    d->childrenMap.clear();
+    endRemoveRows();
 }
 /*!
  * \brief FileViewModel::rowCountMaxShow
@@ -350,7 +416,7 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
     }
 
     d->traversalThread = new TraversalDirThread(d->root->url(), QStringList(),
-                                                QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden,
+                                                QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System,
                                                 QDirIterator::NoIteratorFlags);
 
     d->traversalThread->setParent(this);
@@ -360,8 +426,11 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
         return;
     }
 
-    QObject::connect(d->traversalThread.data(), &TraversalDirThread::updateChildrens,
+    QObject::connect(d->traversalThread.data(), &TraversalDirThread::updateChildren,
                      d.data(), &FileViewModelPrivate::doUpdateChildren,
+                     Qt::QueuedConnection);
+    QObject::connect(d->traversalThread.data(), &TraversalDirThread::updateChild,
+                     d.data(), &FileViewModelPrivate::doUpdateChild,
                      Qt::QueuedConnection);
 
     if (d->canFetchMoreFlag) {
@@ -431,7 +500,7 @@ int FileViewModel::getColumnByRole(const FileViewItem::Roles role) const
                                                                                     << FileViewItem::kItemFileLastModifiedRole
                                                                                     << FileViewItem::kItemFileSizeRole
                                                                                     << FileViewItem::kItemFileMimeTypeRole;
-    return columnRoleList.indexOf(role);
+    return columnRoleList.indexOf(role) < 0 ? 0 : columnRoleList.indexOf(role);
 }
 
 AbstractFileWatcherPointer FileViewModel::fileWatcher() const

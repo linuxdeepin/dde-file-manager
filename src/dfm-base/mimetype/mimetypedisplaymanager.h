@@ -32,11 +32,11 @@ DFMBASE_BEGIN_NAMESPACE
 class MimeTypeDisplayManager : public QObject
 {
     Q_OBJECT
+    explicit MimeTypeDisplayManager(QObject *parent = nullptr);
 
 public:
     typedef AbstractFileInfo::Type FileType;
 
-    explicit MimeTypeDisplayManager(QObject *parent = nullptr);
     ~MimeTypeDisplayManager();
 
     void initData();
@@ -51,8 +51,10 @@ public:
     static void loadSupportMimeTypes();
     static QStringList supportArchiveMimetypes();
     static QStringList supportVideoMimeTypes();
+    static MimeTypeDisplayManager *instance();
 
 private:
+    static MimeTypeDisplayManager *self;
     QMap<FileType, QString> displayNamesMap;
     QMap<FileType, QString> defaultIconNames;
     static QStringList ArchiveMimeTypes;

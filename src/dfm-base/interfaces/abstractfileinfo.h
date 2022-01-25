@@ -81,7 +81,10 @@ bool compareByString(T, T, Qt::SortOrder order = Qt::AscendingOrder)
 }
 
 DFMBASE_BEGIN_NAMESPACE
-
+class AbstractFileInfo;
+DFMBASE_END_NAMESPACE
+typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> AbstractFileInfoPointer;
+DFMBASE_BEGIN_NAMESPACE
 class AbstractFileInfoPrivate;
 class AbstractFileInfo : public QSharedData
 {
@@ -145,6 +148,7 @@ public:
         kSortByFileSize,
         kSortByFileCreated,
         kSortByFileLastRead,
+        kSortByFileMimeType,
     };
 
 public:
@@ -208,14 +212,23 @@ public:
     virtual CompareFunction compareFunByKey(const SortKey &sortKey) const;
     virtual QUrl getUrlByChildFileName(const QString &fileName) const;
     virtual QUrl getUrlByNewFileName(const QString &fileName) const;
+    virtual QString fileTypeDisplayName() const;
+    virtual bool canRedirectionFileUrl() const;
+    virtual QUrl redirectedFileUrl() const;
+    virtual bool canDrop() const;
+    virtual QUrl parentUrl() const;
+    virtual Qt::DropActions supportedDragActions() const;
+    virtual Qt::DropActions supportedDropActions() const;
+    virtual bool canDragCompress() const;
+    virtual bool isDragCompressFileFormat() const;
 
 protected:
     explicit AbstractFileInfo(const QUrl &url, AbstractFileInfoPrivate *d);
+    void setProxy(const AbstractFileInfoPointer &proxy);
     QScopedPointer<AbstractFileInfoPrivate> dptr;
 };
 DFMBASE_END_NAMESPACE
 
-typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> AbstractFileInfoPointer;
 typedef std::function<const AbstractFileInfoPointer(int)> getFileInfoFun;
 Q_DECLARE_METATYPE(AbstractFileInfoPointer)
 

@@ -36,6 +36,7 @@ QStringList MimeTypeDisplayManager::AudioMimeTypes;
 QStringList MimeTypeDisplayManager::ImageMimeTypes;
 QStringList MimeTypeDisplayManager::ExecutableMimeTypes;
 QStringList MimeTypeDisplayManager::BackupMimeTypes;
+MimeTypeDisplayManager *MimeTypeDisplayManager::self { nullptr };
 
 MimeTypeDisplayManager::MimeTypeDisplayManager(QObject *parent)
     : QObject(parent)
@@ -169,4 +170,11 @@ QStringList MimeTypeDisplayManager::supportArchiveMimetypes()
 QStringList MimeTypeDisplayManager::supportVideoMimeTypes()
 {
     return VideoMimeTypes;
+}
+
+MimeTypeDisplayManager *MimeTypeDisplayManager::instance()
+{
+    if (!self)
+        self = new MimeTypeDisplayManager();
+    return self;
 }

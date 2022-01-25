@@ -45,11 +45,13 @@ TraversalDirThread::TraversalDirThread(const QUrl &url,
 
 TraversalDirThread::~TraversalDirThread()
 {
+    stop();
 }
 
 void TraversalDirThread::stop()
 {
     stopFlag = true;
+    wait();
 }
 
 void TraversalDirThread::quit()
@@ -83,8 +85,9 @@ void TraversalDirThread::run()
         if (!fileurl.isValid())
             continue;
 
+        emit updateChild(fileurl);
         childrenList.append(fileurl);
     }
     stopFlag = true;
-    Q_EMIT updateChildrens(childrenList.list());
+    emit updateChildren(childrenList);
 }

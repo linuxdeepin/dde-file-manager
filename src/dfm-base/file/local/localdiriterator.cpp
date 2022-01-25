@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -38,9 +38,6 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
                                                  LocalDirIterator *q)
     : q(q), curFilters(filters)
 {
-    Q_UNUSED(nameFilters);
-    Q_UNUSED(flags);
-
     QUrl temp = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
 
     QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(temp.scheme(), static_cast<QUrl>(temp));
@@ -50,7 +47,7 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
     }
 
     dfmioDirIterator = factory->createEnumerator(nameFilters,
-                                                 static_cast<DEnumerator::DirFilter>(static_cast<int>(filters)),
+                                                 static_cast<DEnumerator::DirFilter>(static_cast<qint64>(filters)),
                                                  static_cast<DEnumerator::IteratorFlag>(static_cast<qint8>(flags)));
     if (!dfmioDirIterator) {
         qWarning("Failed dfm-io use factory create enumerator");

@@ -38,7 +38,7 @@ class TraversalDirThread : public QThread
     Q_OBJECT
     QUrl dirUrl;   // 遍历的目录的url
     QSharedPointer<dfmbase::AbstractDirIterator> dirIterator;   // 当前遍历目录的diriterator
-    dfmbase::DThreadList<QUrl> childrenList;   // 当前遍历出来的所有文件
+    QList<QUrl> childrenList;   // 当前遍历出来的所有文件
     bool stopFlag = false;
 
 public:
@@ -52,8 +52,8 @@ public:
     void stopAndDeleteLater();
 
 Q_SIGNALS:
-    void updateChildrens(const QList<QUrl> &children);
-    void updateChildren(const QUrl url);
+    void updateChildren(const QList<QUrl> children);
+    void updateChild(const QUrl url);
     void stoped();
 
 protected:

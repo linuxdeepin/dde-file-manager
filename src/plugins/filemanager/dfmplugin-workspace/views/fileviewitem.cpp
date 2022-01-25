@@ -217,7 +217,7 @@ QVariant FileViewItem::data(int role) const
             return QString::number(d->fileinfo->size());
         }
     case kItemFileMimeTypeRole:
-        return mimeType().name();
+        return d->fileinfo->fileTypeDisplayName();
     case kItemColumListRole: {
         QList<QPair<int, int>> columrollist;
         columrollist << QPair<int, int>(kItemNameRole, 32) << QPair<int, int>(kItemFileLastModifiedRole, 32)
