@@ -33,7 +33,7 @@ dfmplugin_search::SearchEventReceiver *dfmplugin_search::SearchEventReceiver::in
     return &ins;
 }
 
-void SearchEventReceiver::hadleSearch(quint64 winId, const QString &keyword)
+void SearchEventReceiver::handleSearch(quint64 winId, const QString &keyword)
 {
     auto &ctx = dpfInstance.serviceContext();
     auto windowService = ctx.service<WindowsService>(WindowsService::name());

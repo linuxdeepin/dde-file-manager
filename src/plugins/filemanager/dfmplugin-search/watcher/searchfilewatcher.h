@@ -18,31 +18,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SEARCHEVENTRECEIVER_H
-#define SEARCHEVENTRECEIVER_H
+#ifndef SEARCHFILEWATCHER_H
+#define SEARCHFILEWATCHER_H
 
 #include "dfmplugin_search_global.h"
 
-#include <QObject>
-
-#define SearchEventReceiverIns DPSEARCH_NAMESPACE::SearchEventReceiver::instance()
+#include "dfm-base/interfaces/abstractfilewatcher.h"
 
 DPSEARCH_BEGIN_NAMESPACE
 
-class SearchEventReceiver final : public QObject
+class SearchFileWatcherPrivate;
+class SearchFileWatcher : public dfmbase::AbstractFileWatcher
 {
     Q_OBJECT
-    Q_DISABLE_COPY(SearchEventReceiver)
 public:
-    static SearchEventReceiver *instance();
-
-public slots:
-    void handleSearch(quint64 winId, const QString &keyword);
+    explicit SearchFileWatcher() = delete;
+    explicit SearchFileWatcher(const QUrl &url, QObject *parent = nullptr);
+    ~SearchFileWatcher() override;
+    virtual void setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled = true) override;
 
 private:
-    explicit SearchEventReceiver(QObject *parent = nullptr);
+    void addWatcher(const QUrl &url);
+    void removeWatcher(const QUrl &url);
+
+    void onFileDeleted(const QUrl &url);
+    void onFileAttributeChanged(const QUrl &url);
+    void onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl);
+
+    SearchFileWatcherPrivate *dptr;
 };
 
 DPSEARCH_END_NAMESPACE
 
-#endif   // SEARCHEVENTRECEIVER_H
+#endif   // SEARCHFILEWATCHER_H

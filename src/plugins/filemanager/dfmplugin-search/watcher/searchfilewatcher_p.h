@@ -18,31 +18,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SEARCHEVENTRECEIVER_H
-#define SEARCHEVENTRECEIVER_H
+#ifndef SEARCHFILEWATCHER_P_H
+#define SEARCHFILEWATCHER_P_H
 
 #include "dfmplugin_search_global.h"
 
-#include <QObject>
+#include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
 
-#define SearchEventReceiverIns DPSEARCH_NAMESPACE::SearchEventReceiver::instance()
-
+DFMBASE_USE_NAMESPACE
 DPSEARCH_BEGIN_NAMESPACE
 
-class SearchEventReceiver final : public QObject
+class SearchFileWatcher;
+class SearchFileWatcherPrivate : public AbstractFileWatcherPrivate
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(SearchEventReceiver)
-public:
-    static SearchEventReceiver *instance();
+    friend class SearchFileWatcher;
 
-public slots:
-    void handleSearch(quint64 winId, const QString &keyword);
+public:
+    explicit SearchFileWatcherPrivate(const QUrl &fileUrl, SearchFileWatcher *qq);
 
 private:
-    explicit SearchEventReceiver(QObject *parent = nullptr);
+    bool start() override;
+    bool stop() override;
+
+    QHash<QUrl, AbstractFileWatcherPointer> urlToWatcherHash;
 };
 
 DPSEARCH_END_NAMESPACE
 
-#endif   // SEARCHEVENTRECEIVER_H
+#endif   // SEARCHFILEWATCHER_P_H

@@ -23,16 +23,17 @@
 #include "utils/searchhelper.h"
 #include "fileinfo/searchfileinfo.h"
 #include "iterator/searchdiriterator.h"
-
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/dfm_event_defines.h"
+#include "watcher/searchfilewatcher.h"
 
 #include "services/filemanager/search/searchservice.h"
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
+
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/dfm_event_defines.h"
 
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -56,6 +57,7 @@ void Search::initialize()
     //注册Scheme为"search"的扩展的文件信息
     InfoFactory::regClass<SearchFileInfo>(SearchHelper::scheme());
     DirIteratorFactory::regClass<SearchDirIterator>(SearchHelper::scheme());
+    WacherFactory::regClass<SearchFileWatcher>(SearchHelper::scheme());
 
     GlobalPrivate::winServ = ctx.service<WindowsService>(WindowsService::name());
     Q_ASSERT(GlobalPrivate::winServ);
@@ -66,7 +68,7 @@ bool Search::start()
 {
     dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kDoSearch,
                                             SearchEventReceiverIns,
-                                            &SearchEventReceiver::hadleSearch);
+                                            &SearchEventReceiver::handleSearch);
 
     auto &ctx = dpfInstance.serviceContext();
     GlobalPrivate::workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
