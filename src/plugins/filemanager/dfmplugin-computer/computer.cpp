@@ -82,7 +82,6 @@ void Computer::initialize()
 bool Computer::start()
 {
     dpfInstance.eventDispatcher().subscribe(SideBar::EventType::kEjectAction, ComputerEventReceiverIns, &ComputerEventReceiver::handleItemEject);
-
     return true;
 }
 

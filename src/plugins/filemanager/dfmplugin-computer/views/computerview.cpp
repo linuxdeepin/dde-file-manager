@@ -192,7 +192,6 @@ void ComputerView::initConnect()
 
 void ComputerView::onMenuRequest(const QPoint &pos)
 {
-    // TODO(xust) tem code
     QModelIndex index = indexAt(pos);
     if (!index.isValid())
         return;
@@ -232,6 +231,7 @@ void ComputerView::hideSystemPartitions(bool hide)
         if (!item.url.path().endsWith(SuffixInfo::kBlock))
             continue;
 
+        // TODO(xust) Disk group should be hidden when no disk is visiable.
         bool removable = item.info && item.info->extraProperty(DeviceProperty::kRemovable).toBool();
         if (!removable)
             this->setRowHidden(i, hide);
@@ -240,7 +240,6 @@ void ComputerView::hideSystemPartitions(bool hide)
 
 void ComputerView::cdTo(const QModelIndex &index)
 {
-    // TODO(xust)
     int r = index.row();
     if (r < 0 || r >= model()->rowCount()) {
         return;

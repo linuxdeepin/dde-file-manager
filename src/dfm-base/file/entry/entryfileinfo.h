@@ -41,7 +41,6 @@ extern const char *const kProtocol;
 extern const char *const kBlock;
 }   // namespace SuffixInfo
 
-// TODO(xust) this might be a temperary solution
 namespace ContextMenuActionTrs {
 extern QString trOpenInNewWin();
 extern QString trOpenInNewTab();
@@ -77,6 +76,8 @@ public:
         kOrderFiles,
 
         kOrderApps,
+
+        kOrderCustom,
     };
 
     explicit EntryFileInfo(const QUrl &url);

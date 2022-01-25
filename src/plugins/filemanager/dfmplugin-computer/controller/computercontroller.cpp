@@ -62,6 +62,13 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
         return;
     }
 
+    DFMBASE_USE_NAMESPACE;
+    QString suffix = info->suffix();
+    if (!ComputerUtils::isPresetSuffix(suffix)) {
+        ComputerEventCaller::sendOpenItem(info->url());
+        return;
+    }
+
     if (!info->isAccessable()) {
         qDebug() << "cannot access device: " << url;
         bool needAskForFormat = info->suffix() == SuffixInfo::kBlock
@@ -79,14 +86,13 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
     if (target.isValid()) {
         ComputerEventCaller::cdTo(winId, target);
     } else {
-        QString suffix = info->suffix();
-        if (suffix == dfmbase::SuffixInfo::kBlock) {
+        if (suffix == SuffixInfo::kBlock) {
             mountDevice(winId, info);
-        } else if (suffix == dfmbase::SuffixInfo::kProtocol) {
+        } else if (suffix == SuffixInfo::kProtocol) {
             // TODO(xust)
-        } else if (suffix == dfmbase::SuffixInfo::kStashedRemote) {
+        } else if (suffix == SuffixInfo::kStashedRemote) {
             actMount(winId, info);
-        } else if (suffix == dfmbase::SuffixInfo::kAppEntry) {
+        } else if (suffix == SuffixInfo::kAppEntry) {
             QString cmd = info->extraProperty(ExtraPropertyName::kExecuteCommand).toString();
             QProcess::startDetached(cmd);
         }
@@ -247,11 +253,7 @@ void ComputerController::actionTriggered(DFMEntryFileInfoPointer info, quint64 w
 {
     // if not original supported suffix, publish event to notify subscribers to handle
     QString sfx = info->suffix();
-    if (sfx != SuffixInfo::kBlock
-        && sfx != SuffixInfo::kProtocol
-        && sfx != SuffixInfo::kUserDir
-        && sfx != SuffixInfo::kAppEntry
-        && sfx != SuffixInfo::kStashedRemote) {
+    if (!ComputerUtils::isPresetSuffix(sfx)) {
         ComputerEventCaller::sendContextActionTriggered(info->url(), actionText);
         return;
     }

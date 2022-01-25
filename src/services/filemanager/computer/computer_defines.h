@@ -30,6 +30,7 @@ DSB_FM_BEGIN_NAMESPACE
 // custom event type
 namespace EventType {
 extern const int kContextActionTriggered;   // (QUrl url, QString actionText)
+extern const int kOnOpenItem;
 };   // namespace EventType
 
 DSB_FM_END_NAMESPACE

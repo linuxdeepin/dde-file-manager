@@ -76,7 +76,6 @@ int ComputerModel::columnCount(const QModelIndex &parent) const
 
 QVariant ComputerModel::data(const QModelIndex &index, int role) const
 {
-    // TODO(xust)
     if (items.count() <= index.row())
         return {};
     const auto item = &items[index.row()];
@@ -159,7 +158,6 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 
 bool ComputerModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    // TODO(xust)
     int row = index.row();
     if (row < 0 || row >= items.count())
         return false;
@@ -243,8 +241,9 @@ void ComputerModel::initConnect()
 
 void ComputerModel::onItemAdded(const ComputerItemData &data)
 {
+    ComputerItemData::ShapeType shape = data.shape;
     int pos = -1;
-    if (data.shape == ComputerItemData::kSplitterItem) {
+    if (shape == ComputerItemData::kSplitterItem) {
         pos = findSplitter(data.groupName);
         if (pos >= 0)
             return;
@@ -254,13 +253,19 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
     if (pos > 0)   // update the item
         onItemUpdated(data.url);
     else {
-        int i = 7;   // where the disk begin.
-        for (; i < items.count(); i++)
-            if (ComputerItemWatcher::typeCompare(data, items.at(i)))
-                break;
-        beginInsertRows(QModelIndex(), i, i);
-        items.insert(i, data);
-        endInsertRows();
+        if (shape != ComputerItemData::kSplitterItem && data.info->order() >= EntryFileInfo::kOrderCustom) {
+            beginInsertRows(QModelIndex(), items.count() - 1, items.count() - 1);
+            items.append(data);
+            endInsertRows();
+        } else {
+            int i = 7;   // where the disk begin.
+            for (; i < items.count(); i++)
+                if (ComputerItemWatcher::typeCompare(data, items.at(i)))
+                    break;
+            beginInsertRows(QModelIndex(), i, i);
+            items.insert(i, data);
+            endInsertRows();
+        }
     }
 }
 
@@ -271,6 +276,13 @@ void ComputerModel::onItemRemoved(const QUrl &url)
         beginRemoveRows(QModelIndex(), pos, pos);
         items.removeAt(pos);
         endRemoveRows();
+        if (items.last().shape == ComputerItemData::kSplitterItem) {
+            pos = items.count() - 1;
+            beginRemoveRows(QModelIndex(), pos, pos);
+            items.removeAt(pos);
+            endRemoveRows();
+            qDebug() << "remove last orphan group";
+        }
     } else {
         qDebug() << "target item not found" << url;
     }

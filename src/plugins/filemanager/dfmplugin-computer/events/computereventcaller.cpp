@@ -96,4 +96,10 @@ void ComputerEventCaller::sendContextActionTriggered(const QUrl &url, const QStr
     qDebug() << "action triggered: " << url << action;
 }
 
+void ComputerEventCaller::sendOpenItem(const QUrl &url)
+{
+    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::EventType::kOnOpenItem, url);
+    qDebug() << "send open item: " << url;
+}
+
 DPCOMPUTER_END_NAMESPACE

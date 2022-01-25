@@ -32,6 +32,7 @@ DSB_FM_BEGIN_NAMESPACE
 // custom event type
 namespace EventType {
 const int kContextActionTriggered = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kOnOpenItem = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 };   // namespace EventType
 
 ComputerService::ComputerService(QObject *parent)

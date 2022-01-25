@@ -73,6 +73,8 @@ public:
     static DSB_FM_NAMESPACE::SideBarService *sbIns();
     static DSC_NAMESPACE::DialogService *dlgServIns();
 
+    static bool isPresetSuffix(const QString &suffix);
+
     static bool shouldSystemPartitionHide();
 };
 

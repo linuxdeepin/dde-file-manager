@@ -122,7 +122,7 @@ EntryFileInfo::~EntryFileInfo()
 
 EntryFileInfo::EntryOrder EntryFileInfo::order() const
 {
-    return d->entity ? d->entity->order() : EntryOrder::kOrderFiles;
+    return d->entity ? d->entity->order() : EntryOrder::kOrderCustom;
 }
 
 QUrl EntryFileInfo::targetUrl() const

@@ -36,7 +36,6 @@ DFMBASE_USE_NAMESPACE
 StashedProtocolEntryFileEntity::StashedProtocolEntryFileEntity(const QUrl &url)
     : AbstractEntryFileEntity(url)
 {
-    // TODO(xust) FINISH THIS CLASS
 }
 
 QString StashedProtocolEntryFileEntity::displayName() const

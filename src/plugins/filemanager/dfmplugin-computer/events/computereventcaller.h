@@ -44,6 +44,7 @@ public:
     static void sendEnterInNewTab(quint64 winId, const QUrl &url);
 
     static void sendContextActionTriggered(const QUrl &url, const QString &action);
+    static void sendOpenItem(const QUrl &url);
 };
 
 DPCOMPUTER_END_NAMESPACE

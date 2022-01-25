@@ -394,12 +394,13 @@ void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newN
 
 void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url)
 {
-    // TODO(xust)
+    addGroup(groupName);
+    onDeviceAdded(url, false);
 }
 
 void ComputerItemWatcher::removeDevice(const QUrl &url)
 {
-    // TODO(xust)
+    Q_EMIT itemRemoved(url);
 }
 
 void ComputerItemWatcher::startQueryItems()

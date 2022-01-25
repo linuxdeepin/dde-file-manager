@@ -71,7 +71,6 @@ BlockEntryFileEntity::BlockEntryFileEntity(const QUrl &url)
 
 QString BlockEntryFileEntity::displayName() const
 {
-    // TODO(xust) more details
     if (datas.value(DeviceProperty::kHintSystem).toBool()) {
         return getNameOrAlias();
     }
@@ -290,7 +289,6 @@ bool BlockEntryFileEntity::renamable() const
 
 QString BlockEntryFileEntity::getNameOrAlias() const
 {
-    // TODO(xust)
     const auto &lst = Application::genericSetting()->value(AdditionalProperty::kAliasGroupName, AdditionalProperty::kAliasItemName).toList();
 
     for (const QVariant &v : lst) {

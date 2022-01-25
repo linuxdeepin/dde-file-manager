@@ -204,6 +204,12 @@ dfm_service_common::DialogService *ComputerUtils::dlgServIns()
     return ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
 }
 
+bool ComputerUtils::isPresetSuffix(const QString &suffix)
+{
+    return suffix == SuffixInfo::kBlock || suffix == SuffixInfo::kProtocol || suffix == SuffixInfo::kUserDir
+            || suffix == SuffixInfo::kAppEntry || suffix == SuffixInfo::kStashedRemote;
+}
+
 bool ComputerUtils::shouldSystemPartitionHide()
 {
     return Application::instance()->genericAttribute(Application::kHiddenSystemPartition).toBool();
