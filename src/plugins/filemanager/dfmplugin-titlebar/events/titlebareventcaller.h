@@ -38,7 +38,6 @@ class TitleBarEventCaller
 
 public:
     static void sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::ViewMode mode);
-    static void sendSettingsMenuTriggered(quint64 windowId, DSB_FM_NAMESPACE::TitleBar::MenuAction action);
     static void sendDetailViewState(QWidget *sender, bool checked);
     static void sendCd(QWidget *sender, const QUrl &url);
     static void sendOpenFile(QWidget *sender, const QUrl &url);

@@ -28,8 +28,8 @@
 #include "events/titlebarunicastreceiver.h"
 #include "events/titlebareventreceiver.h"
 
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspace_defines.h"
+#include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 #include "dfm-base/base/urlroute.h"
 

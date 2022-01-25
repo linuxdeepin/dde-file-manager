@@ -23,13 +23,11 @@
 #include "corehelper.h"
 
 #include "services/filemanager/windows/windowsservice.h"
-#include "services/common/dialog/dialogservice.h"
 
 #include <dfm-framework/framework.h>
 
 DPCORE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 void CoreHelper::cd(quint64 windowId, const QUrl &url)
@@ -53,19 +51,4 @@ void CoreHelper::openNewWindow(const QUrl &url)
     auto &ctx = dpfInstance.serviceContext();
     auto windowService = ctx.service<WindowsService>(WindowsService::name());
     windowService->showWindow(url, true);
-}
-
-void CoreHelper::showSettingsDialog(quint64 windowId)
-{
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    auto window = windowService->findWindowById(windowId);
-
-    if (!window) {
-        qWarning() << "Invalid window id: " << windowId;
-        return;
-    }
-
-    auto dialogService = ctx.service<DialogService>(DialogService::name());
-    dialogService->showSetingsDialog(window);
 }

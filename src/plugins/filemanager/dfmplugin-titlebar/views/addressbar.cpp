@@ -23,6 +23,8 @@
 #include "views/addressbar.h"
 #include "utils/crumbmanager.h"
 #include "utils/crumbinterface.h"
+#include "utils/searchhistroymanager.h"
+#include "utils/titlebarhelper.h"
 
 #include "dfm-base/base/schemefactory.h"
 
@@ -119,7 +121,7 @@ void AddressBarPrivate::initData()
     completerView->setFocus(Qt::FocusReason::PopupFocusReason);
 
     historyList.clear();
-    // TODO(zhangs):    historyList.append(Singleton<SearchHistroyManager>::instance()->toStringList());
+    historyList.append(SearchHistroyManager::instance()->toStringList());
 }
 
 /*!
@@ -288,16 +290,11 @@ void AddressBarPrivate::onTravelCompletionListFinished()
 
 void AddressBarPrivate::onIndicatorTriggerd()
 {
-    if (indicatorAction.icon().name() == "search") {
-        Q_EMIT q->editingFinishedSearch(q->text());
-        return;
-    }
     onReturnPressed();
 }
 
 void AddressBarPrivate::requestCompleteByUrl(const QUrl &url)
 {
-    // TODO(zhangs): support computer, recent
     if (!crumbController || !crumbController->supportedUrl(url)) {
         if (crumbController) {
             crumbController->cancelCompletionListTransmission();
@@ -352,22 +349,26 @@ void AddressBarPrivate::onTextEdited(const QString &text)
 
 void AddressBarPrivate::onReturnPressed()
 {
-    if (q->text().isEmpty())
+    QString text { q->text() };
+    if (text.isEmpty())
         return;
 
-    // TODO(zhangs): setEnterText
-    QUrl url(UrlRoute::fromUserInput(q->text()));
-    QString scheme { url.scheme() };
-    if (!url.scheme().isEmpty() && UrlRoute::hasScheme(scheme)) {
-        qInfo() << "sig editingFinishedUrl :" << q->text();
-        Q_EMIT q->editingFinishedUrl(url);
-        return;
+    // add search history list
+    if (!UrlRoute::fromUserInput(text).isLocalFile()) {
+        if (!historyList.contains(text)) {
+            historyList.append(text);
+            SearchHistroyManager::instance()->writeIntoSearchHistory(text);
+        }
     }
 
-    qInfo() << "sig editingFinishedSearch :" << q->text();
-    Q_EMIT q->editingFinishedSearch(q->text());
-    startSpinner();
-    return;
+    bool isSearch { false };
+    TitleBarHelper::handlePressed(q, text, &isSearch);
+
+    if (isSearch) {
+        startSpinner();
+    } else {
+        emit q->urlChanged();
+    }
 }
 
 void AddressBarPrivate::insertCompletion(const QString &completion)
@@ -529,13 +530,12 @@ void AddressBar::keyPressEvent(QKeyEvent *e)
     if (urlComplter && urlComplter->popup()->isVisible()) {
         if (d->isHistoryInCompleterModel && e->modifiers() == Qt::ShiftModifier && e->key() == Qt::Key_Delete) {
             QString completeResult = d->completerView->currentIndex().data().toString();
-            // TODO(zhangs): search histroy
-            //            bool ret = Singleton<SearchHistroyManager>::instance()->removeSearchHistory(completeResult);
-            //            if (ret) {
-            //                historyList.clear();
-            //                historyList.append(Singleton<SearchHistroyManager>::instance()->toStringList());
-            //                completerModel.setStringList(historyList);
-            //            }
+            bool ret = SearchHistroyManager::instance()->removeSearchHistory(completeResult);
+            if (ret) {
+                d->historyList.clear();
+                d->historyList.append(SearchHistroyManager::instance()->toStringList());
+                d->completerModel.setStringList(d->historyList);
+            }
         }
 
         // The following keys are forwarded by the completer to the widget

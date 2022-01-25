@@ -57,11 +57,10 @@ protected:
     void leaveEvent(QEvent *e) override;
 
 Q_SIGNALS:
-    void editingFinishedUrl(const QUrl &url);
-    void editingFinishedSearch(const QString &url);
     void lostFocus();
     void escKeyPressed();
     void clearButtonPressed();
+    void urlChanged();
 
 public slots:
     void startSpinner();

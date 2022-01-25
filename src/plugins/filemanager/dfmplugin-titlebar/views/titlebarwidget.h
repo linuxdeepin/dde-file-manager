@@ -58,14 +58,12 @@ private:
     void showSearchFilterButton();
     bool eventFilter(QObject *watched, QEvent *event) override;
 
-    bool handleConnection(const QUrl &url);
-
 signals:
     void currentUrlChanged(const QUrl &url);
 
 private slots:
     void onSearchButtonClicked();
-    void onAddressBarJump(const QUrl &url);
+    void onAddressBarJump();
 
 private:
     QUrl titlebarUrl;

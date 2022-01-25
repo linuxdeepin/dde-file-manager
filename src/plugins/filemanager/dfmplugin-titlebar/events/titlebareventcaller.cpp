@@ -24,6 +24,7 @@
 #include "utils/titlebarhelper.h"
 
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/framework.h>
 
@@ -37,12 +38,6 @@ void TitleBarEventCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Globa
     dpfInstance.eventDispatcher().publish(TitleBar::EventType::kSwitchMode, id, int(mode));
 }
 
-void TitleBarEventCaller::sendSettingsMenuTriggered(quint64 windowId, TitleBar::MenuAction action)
-{
-    Q_ASSERT(windowId > 0);
-    dpfInstance.eventDispatcher().publish(TitleBar::EventType::kSettingsMenuTriggered, windowId, action);
-}
-
 void TitleBarEventCaller::sendDetailViewState(QWidget *sender, bool checked)
 {
     quint64 id = TitleBarHelper::windowId(sender);
@@ -52,9 +47,21 @@ void TitleBarEventCaller::sendDetailViewState(QWidget *sender, bool checked)
 
 void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
 {
+    DFMBASE_USE_NAMESPACE
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
+    if (!url.isValid()) {
+        qWarning() << "Invalid url: " << url;
+        return;
+    }
+    const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
+    if (info && info->exists() && info->isFile()) {
+        TitleBarEventCaller::sendOpenFile(sender, url);
+    } else {
+        if (Q_UNLIKELY(TitleBarHelper::handleConnection(url)))
+            return;
+        dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
+    }
 }
 
 void TitleBarEventCaller::sendOpenFile(QWidget *sender, const QUrl &url)

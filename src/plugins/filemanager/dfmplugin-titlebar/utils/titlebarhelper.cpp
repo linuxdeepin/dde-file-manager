@@ -22,15 +22,18 @@
 */
 #include "titlebarhelper.h"
 #include "events/titlebareventcaller.h"
+#include "dialogs/connecttoserverdialog.h"
 
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
+#include "services/common/dialog/dialogservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/utils/finallyutil.h"
 
 #include <dfm-framework/framework.h>
 
@@ -39,6 +42,13 @@
 DPTITLEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+static DSC_NAMESPACE::DialogService *dlgServ()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    auto dlgServ = ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
+    return dlgServ;
+}
 
 QMap<quint64, TitleBarWidget *> TitleBarHelper::kTitleBarMap {};
 
@@ -97,7 +107,7 @@ QMenu *TitleBarHelper::createSettingsMenu(quint64 id)
         bool ok { false };
         int val { act->data().toInt(&ok) };
         if (ok)
-            TitleBarEventCaller::sendSettingsMenuTriggered(id, static_cast<TitleBar::MenuAction>(val));
+            handleSettingMenuTriggered(id, val);
     });
 
     return menu;
@@ -181,10 +191,105 @@ bool TitleBarHelper::tabAddable(quint64 windowId)
     return false;
 }
 
+void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *isSearch)
+{
+    bool search { false };
+    FinallyUtil finally([&]() {if (isSearch) *isSearch = search; });
+    QUrl url(UrlRoute::fromUserInput(text));
+    QString scheme { url.scheme() };
+    if (!url.scheme().isEmpty() && UrlRoute::hasScheme(scheme)) {
+        if (url.path().isEmpty())
+            url = UrlRoute::fromUserInput(text + "/");
+        qInfo() << "jump :" << text;
+        TitleBarEventCaller::sendCd(sender, url);
+    } else {
+        search = true;
+        qInfo() << "search :" << text;
+        TitleBarEventCaller::sendSearch(sender, text);
+    }
+}
+
+bool TitleBarHelper::handleConnection(const QUrl &url)
+{
+    QString &&scheme = url.scheme();
+    if (scheme != SchemeTypes::kSmb && scheme != SchemeTypes::kFtp && scheme != SchemeTypes::kSFtp)
+        return false;
+
+    // TODO(xust) MAY BE TEMP CODE
+    if (url.host().isEmpty()) {
+        dlgServ()->showErrorDialog("", QObject::tr("Mounting device error"));
+        return true;
+    }
+
+    DeviceManagerInstance.invokeMountNetworkDevice(url.toString(), [](const QString &address) {
+        // TODO(xust) TEMP CODE. for now, connection can only be connected, we should use api directly to mount and enter shares
+        return dlgServ()->askInfoWhenMountingNetworkDevice(address);
+    });
+
+    return true;
+}
+
+void TitleBarHelper::showSettingsDialog(quint64 windowId)
+{
+    DSC_USE_NAMESPACE
+    auto &ctx = dpfInstance.serviceContext();
+    auto windowService = ctx.service<WindowsService>(WindowsService::name());
+    auto window = windowService->findWindowById(windowId);
+
+    if (!window) {
+        qWarning() << "Invalid window id: " << windowId;
+        return;
+    }
+
+    auto dialogService = ctx.service<DialogService>(DialogService::name());
+    dialogService->showSetingsDialog(window);
+}
+
+void TitleBarHelper::showConnectToServerDialog(quint64 windowId)
+{
+    auto &ctx = dpfInstance.serviceContext();
+    auto windowService = ctx.service<WindowsService>(WindowsService::name());
+    auto window = windowService->findWindowById(windowId);
+
+    if (!window || window->property("ConnectToServerDialogShown").toBool())
+        return;
+
+    ConnectToServerDialog *dialog = new ConnectToServerDialog(window->currentUrl(), window);
+    dialog->show();
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    QObject::connect(dialog, &ConnectToServerDialog::finished, dialog, &ConnectToServerDialog::onButtonClicked);
+    window->setProperty("ConnectToServerDialogShown", true);
+    QObject::connect(dialog, &ConnectToServerDialog::closed, [window] {
+        window->setProperty("ConnectToServerDialogShown", false);
+    });
+}
+
+void TitleBarHelper::showUserSharePasswordSettingDialog(quint64 windowId)
+{
+}
+
 QMutex &TitleBarHelper::mutex()
 {
     static QMutex m;
     return m;
+}
+
+void TitleBarHelper::handleSettingMenuTriggered(quint64 windowId, int action)
+{
+    switch (static_cast<TitleBar::MenuAction>(action)) {
+    case TitleBar::MenuAction::kNewWindow:
+        TitleBarEventCaller::sendOpenWindow(QUrl());
+        break;
+    case TitleBar::MenuAction::kSettings:
+        TitleBarHelper::showSettingsDialog(windowId);
+        break;
+    case TitleBar::MenuAction::kConnectToServer:
+        TitleBarHelper::showConnectToServerDialog(windowId);
+        break;
+    case TitleBar::MenuAction::kSetUserSharePassword:
+        TitleBarHelper::showUserSharePasswordSettingDialog(windowId);
+        break;
+    }
 }
 
 QString TitleBarHelper::getDisplayName(const QString &name)

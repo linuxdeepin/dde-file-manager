@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,41 +20,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "coreeventreceiver.h"
-#include "corehelper.h"
+#ifndef SEARCHHISTROYMANAGER_H
+#define SEARCHHISTROYMANAGER_H
 
-#include "dfm-base/base/urlroute.h"
+#include "dfmplugin_titlebar_global.h"
 
-#include <QDebug>
-#include <QUrl>
+#include <QObject>
 
-#include <functional>
+DPTITLEBAR_BEGIN_NAMESPACE
 
-DPCORE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
-
-CoreEventReceiver::CoreEventReceiver(QObject *parent)
-    : QObject(parent)
+class SearchHistroyManager : public QObject
 {
-}
+    Q_OBJECT
+    Q_DISABLE_COPY(SearchHistroyManager)
 
-CoreEventReceiver *CoreEventReceiver::instance()
-{
-    static CoreEventReceiver receiver;
-    return &receiver;
-}
+public:
+    static SearchHistroyManager *instance();
 
-void CoreEventReceiver::handleChangeUrl(quint64 windowId, const QUrl &url)
-{
-    if (!url.isValid()) {
-        qWarning() << "Invalid Url: " << url;
-        return;
-    }
-    CoreHelper::cd(windowId, url);
-}
+    QStringList toStringList();
+    void writeIntoSearchHistory(QString keyword);
+    bool removeSearchHistory(QString keyword);
+    void clearHistory();
 
-void CoreEventReceiver::handleOpenWindow(const QUrl &url)
-{
-    CoreHelper::openNewWindow(url);
-}
+private:
+    explicit SearchHistroyManager(QObject *parent = nullptr);
+};
+
+DPTITLEBAR_END_NAMESPACE
+
+#endif   // SEARCHHISTROYMANAGER_H

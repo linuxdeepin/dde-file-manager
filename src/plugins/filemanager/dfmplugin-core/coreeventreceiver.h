@@ -42,7 +42,6 @@ public:
 public slots:
     void handleChangeUrl(quint64 windowId, const QUrl &url);
     void handleOpenWindow(const QUrl &url);
-    void handleTileBarSettingsMenuTriggered(quint64 windowId, DSB_FM_NAMESPACE::TitleBar::MenuAction action);
 
 private:
     explicit CoreEventReceiver(QObject *parent = nullptr);

@@ -43,14 +43,22 @@ public:
     static void addTileBar(quint64 windowId, TitleBarWidget *titleBar);
     static void removeTitleBar(quint64 windowId);
     static quint64 windowId(QWidget *sender);
+
     static QMenu *createSettingsMenu(quint64 id);
     static bool crumbSupportedUrl(const QUrl &url);
     static QList<CrumbData> crumbSeprateUrl(const QUrl &url);
     static bool displayIcon();
     static bool tabAddable(quint64 windowId);
+    static void handlePressed(QWidget *sender, const QString &text, bool *isSearch = nullptr);
+    static bool handleConnection(const QUrl &url);
+
+    static void showSettingsDialog(quint64 windowId);
+    static void showConnectToServerDialog(quint64 windowId);
+    static void showUserSharePasswordSettingDialog(quint64 windowId);
 
 private:
     static QMutex &mutex();
+    static void handleSettingMenuTriggered(quint64 windowId, int action);
     static QString getDisplayName(const QString &name);
     static QMap<quint64, TitleBarWidget *> kTitleBarMap;
 };
