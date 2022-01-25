@@ -38,7 +38,6 @@ class ScreenService;
 class BackgroundManagerPrivate : public QObject
 {
     Q_OBJECT
-    friend class BackgroundManager;
 public:
     explicit BackgroundManagerPrivate(BackgroundManager *qq);
     ~BackgroundManagerPrivate();

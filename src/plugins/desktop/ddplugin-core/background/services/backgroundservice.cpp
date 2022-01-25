@@ -33,6 +33,16 @@ BackgroundService::BackgroundService(QObject *parent)
             , this, &BackgroundService::sigBackgroundBuilded, Qt::UniqueConnection);
 }
 
+BackgroundService::~BackgroundService()
+{
+    delete proxy;
+}
+
+void BackgroundService::init()
+{
+    proxy->init();
+}
+
 QMap<QString, dfmbase::BackgroundWidgetPointer> BackgroundService::allBackground()
 {
     return proxy->allBackgroundWidgets();
@@ -51,6 +61,11 @@ QMap<QString, QString> BackgroundService::allBackgroundPath()
 QString BackgroundService::backgroundPath(const QString &screen)
 {
     return proxy->backgroundPath(screen);
+}
+
+void BackgroundService::setBackgroundPath(const QString &screen, const QString &path)
+{
+    proxy->setBackgroundPath(screen, path);
 }
 
 DSB_D_END_NAMESPACE

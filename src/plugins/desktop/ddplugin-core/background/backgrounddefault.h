@@ -29,17 +29,16 @@ DSB_D_BEGIN_NAMESPACE
 
 class ScreenService;
 
-class BackgroundDefault: public dfmbase::AbstractBackground
+class BackgroundDefault : public dfmbase::AbstractBackground
 {
     Q_OBJECT
 public:
     explicit BackgroundDefault(const QString &screenName, QWidget *parent = nullptr);
-    virtual void paintEvent(QPaintEvent *event) override;
     virtual void setMode(int mode) override;
     virtual void setDisplay(const QString &path) override;
     virtual void updateDisplay() override;
-
-private:
+protected:
+    void paintEvent(QPaintEvent *event) override;
     QPixmap getPixmap(const QString &path, const QPixmap &defalutPixmap);
 
 private:

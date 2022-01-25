@@ -38,7 +38,7 @@ class BackgroundService final : public dpf::PluginService, dpf::AutoServiceRegis
     Q_DISABLE_COPY(BackgroundService)
     friend class dpf::QtClassFactory<dpf::PluginService>;
     friend class ::Core; //权限管控
-    explicit BackgroundService(QObject *parent = nullptr);
+    void init();
 public:
     static QString name()
     {
@@ -49,10 +49,12 @@ public:
     dfmbase::BackgroundWidgetPointer background(const QString &screenName);
     QMap<QString, QString> allBackgroundPath();
     QString backgroundPath(const QString &screen);
-
+    void setBackgroundPath(const QString &screen,const QString &path);
 signals:
     void sigBackgroundBuilded(int mode);
-
+protected:
+    explicit BackgroundService(QObject *parent = nullptr);
+    ~BackgroundService();
 private:
     BackgroundManager *proxy = nullptr;
 };

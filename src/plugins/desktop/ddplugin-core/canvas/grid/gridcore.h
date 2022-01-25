@@ -65,7 +65,7 @@ public:
     inline void pushOverload(const QStringList &items){
         overload.append(items);
     }
-protected:
+public:
     QMap<int, QSize> surfaces;
     QMap<int, QHash<QPoint, QString>> posItem;
     QMap<int, QHash<QString, QPoint>> itemPos;

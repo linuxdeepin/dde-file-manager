@@ -31,7 +31,7 @@ DSB_D_BEGIN_NAMESPACE
 bool waylandDectected();
 void setDesktopWindow(QWidget *w);
 void setPrviewWindow(QWidget *w);
-
+bool enableScreensaver();
 inline bool isCtrlPressed() {
     return qApp->keyboardModifiers() == Qt::ControlModifier;
 }

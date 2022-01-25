@@ -151,10 +151,9 @@ bool BackgroundManagerPrivate::isEnableBackground()
 }
 
 BackgroundManager::BackgroundManager(QObject *parent)
-    : d(new BackgroundManagerPrivate(this))
+    : QObject(parent)
+    , d(new BackgroundManagerPrivate(this))
 {
-    init();
-
     QDBusConnection::sessionBus().connect("org.freedesktop.DBus"
                                           , "/org/freedesktop/DBus"
                                           , "org.freedesktop.DBus"
@@ -165,12 +164,6 @@ BackgroundManager::BackgroundManager(QObject *parent)
 
 BackgroundManager::~BackgroundManager()
 {
-    QDBusConnection::sessionBus().disconnect("org.freedesktop.DBus"
-                                             , "/org/freedesktop/DBus"
-                                             , "org.freedesktop.DBus"
-                                             ,  "NameOwnerChanged"
-                                             , this,
-                                             SLOT(onWmDbusStarted(QString, QString, QString)));
 }
 
 void BackgroundManager::init()
@@ -201,6 +194,15 @@ QMap<QString, QString> BackgroundManager::allBackgroundPath()
 QString BackgroundManager::backgroundPath(const QString &screen)
 {
     return d->backgroundPaths.value(screen);
+}
+
+void BackgroundManager::setBackgroundPath(const QString &screen, const QString &path)
+{
+    if (screen.isEmpty() || path.isEmpty())
+        return;
+
+    d->backgroundPaths.insert(screen, path);
+    resetBackgroundImage();
 }
 
 void BackgroundManager::onBackgroundBuild()
@@ -371,7 +373,7 @@ void BackgroundManager::onWorkspaceSwitched(int from, int to)
 
 void BackgroundManager::onAppearanceCalueChanged(const QString &key)
 {
-    if (QStringLiteral("background-uris") == key) {
+    if (QStringLiteral("backgroundUris") == key) {
         updateBackgroundPaths();
         resetBackgroundImage();
     }
@@ -396,9 +398,6 @@ void BackgroundManager::updateBackgroundPaths()
 void BackgroundManager::resetBackgroundImage()
 {
     if (d->isEnableBackground()) {
-
-        QPixmap defaultImage;
-
         QMap<QString, QString> recorder; // 记录有效的壁纸
         for (auto screenName : d->backgroundWidgets.keys()) {
             QString userPath;

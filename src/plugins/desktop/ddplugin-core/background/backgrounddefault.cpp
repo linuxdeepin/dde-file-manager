@@ -99,13 +99,14 @@ void BackgroundDefault::updateDisplay()
 
         QPixmap defaultImage;
         QPixmap backgroundPixmap = getPixmap(filePath, defaultImage);
+        QSize trueSize = screenService->screen(screen)->handleGeometry().size(); // 使用屏幕缩放前的分辨率
         if (backgroundPixmap.isNull()) {
             qCritical() << "screen " << screen << "backfround path" << filePath
                         << "can not read!";
-            return;
+            backgroundPixmap = QPixmap(trueSize);
+            backgroundPixmap.fill(Qt::white);
         }
 
-        QSize trueSize = screenService->screen(screen)->handleGeometry().size(); // 使用屏幕缩放前的分辨率
         if (AbstractBackground::Stretch == displayZoom) {
             auto pix = backgroundPixmap.scaled(trueSize,
                                                Qt::KeepAspectRatioByExpanding,

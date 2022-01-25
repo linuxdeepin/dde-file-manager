@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.10)
 
 add_subdirectory(dde-desktop)
 add_subdirectory(dde-file-manager)

@@ -37,12 +37,12 @@ class CanvasService final : public dpf::PluginService, dpf::AutoServiceRegister<
 
     friend class dpf::QtClassFactory<dpf::PluginService>;
     friend class ::Core;
-
 public:
     static QString name()
     {
         return "org.deepin.service.CanvasService";
     }
+    void init();
 protected:
     explicit CanvasService(QObject *parent = nullptr);
     ~CanvasService();

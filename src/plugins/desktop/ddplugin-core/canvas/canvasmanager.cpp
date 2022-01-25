@@ -24,6 +24,7 @@
 #include "view/canvasview_p.h"
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
+#include "wallpaperservice.h"
 #include "canvas/view/operator/fileoperaterproxy.h"
 #include "dfm-framework/framework.h"
 #include "dfm-base/widgets/screenglobal.h"
@@ -48,6 +49,10 @@ CanvasManager *CanvasManager::instance()
 
 void CanvasManager::init()
 {
+    // init single object
+    DispalyIns;
+    GridIns;
+
     auto &ctx = dpfInstance.serviceContext();
     // 获取屏幕服务
     d->screenScevice = ctx.service<ScreenService>(ScreenService::name());
@@ -202,6 +207,28 @@ void CanvasManager::onGeometryChanged()
         qDebug() << "view geometry change from" << view->geometry() << "to" << avRect
                  << "view screen" << sp->name() << sp->geometry() << sp->availableGeometry();
         view->setGeometry(avRect);
+    }
+}
+
+void CanvasManager::onWallperSetting(CanvasView *view)
+{
+    // find screen
+    QString screen;
+    for(auto it = d->viewMap.begin(); it != d->viewMap.end(); ++it) {
+        if (it.value().get() == view) {
+            screen = it.key();
+            break;
+        }
+    };
+
+    if (screen.isEmpty())
+        return;
+
+    auto &ctx = dpfInstance.serviceContext();
+
+    // get wallpaper service
+    if (auto wallpaperService = ctx.service<WallpaperService>(WallpaperService::name())) {
+        wallpaperService->wallpaperSetting(screen);
     }
 }
 

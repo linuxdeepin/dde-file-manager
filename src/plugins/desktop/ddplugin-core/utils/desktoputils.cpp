@@ -20,10 +20,15 @@
  */
 #include "desktoputils.h"
 
+#include <QGSettings>
+
 #include <QApplication>
 #include <QWindow>
 #include <QDebug>
 #include <QtPlatformHeaders/QXcbWindowFunctions>
+#include <QProcessEnvironment>
+#include <QDBusMessage>
+#include <QDBusConnection>
 
 bool dfm_service_desktop::waylandDectected()
 {
@@ -70,4 +75,33 @@ void dfm_service_desktop::setPrviewWindow(QWidget *w)
         qDebug() << "wayland set role dock";
         window->setProperty("_d_dwayland_window-type","wallpaper");
     }
+}
+
+bool dfm_service_desktop::enableScreensaver()
+{
+    static const char *envKey = "DESKTOP_CAN_SCREENSAVER";
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    if ((env.contains(envKey) && env.value(envKey).startsWith("N"))) {
+        qWarning() << "System environment variables do not support screen savers";
+        return false;
+    }
+
+    qInfo() << "check com.deepin.ScreenSaver";
+    QDBusMessage msg = QDBusMessage::createMethodCall("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ListActivatableNames");
+    QDBusMessage response = QDBusConnection::sessionBus().call(msg);
+    if (response.type() == QDBusMessage::ReplyMessage && !response.arguments().isEmpty()
+            && response.arguments().first().toList().contains("com.deepin.ScreenSaver")){
+        qDebug() << "com.deepin.ScreenSaver is ok";
+    } else {
+        qWarning() << "The screen saver is uninstalled";
+        return false;
+    }
+
+    QGSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
+    if (desktopSettings.keys().contains("show-screen-saver") && !desktopSettings.get("show-screen-saver").toBool()) {
+        qWarning() << "Gsetting show-screen-saver is false";
+        return false;
+    }
+
+    return true;
 }

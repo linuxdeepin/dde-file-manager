@@ -26,17 +26,33 @@
 
 #include <dfm-framework/framework.h>
 
+class Core;
 DSB_D_BEGIN_NAMESPACE
+class WallpaperSettings;
 class WallpaperService final : public dpf::PluginService, dpf::AutoServiceRegister<WallpaperService>
 {
     Q_OBJECT
     Q_DISABLE_COPY(WallpaperService)
     friend class dpf::QtClassFactory<dpf::PluginService>;
+    friend class ::Core;
 public:
     static QString name()
     {
         return "org.deepin.service.WallpaperService";
     }
+    void init();
+public slots:
+    void wallpaperSetting(QString name);
+    void screenSaverSetting(QString name);
+private slots:
+    void onQuit();
+    void onChanged();
+protected:
+    explicit WallpaperService(QObject *parent = nullptr);
+    ~WallpaperService();
+    void show(QString name, int mode);
+private:
+    WallpaperSettings *wallpaperSettings = nullptr;
 };
 DSB_D_END_NAMESPACE
 

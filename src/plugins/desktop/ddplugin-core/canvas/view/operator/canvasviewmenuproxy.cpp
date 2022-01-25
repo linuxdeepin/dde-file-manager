@@ -20,6 +20,7 @@
  */
 #include "canvasviewmenuproxy.h"
 #include "displayconfig.h"
+#include "canvas/canvasmanager.h"
 #include "canvas/grid/canvasgrid.h"
 #include "canvas/view/canvasview.h"
 #include "canvas/view/canvasmodel.h"
@@ -117,6 +118,11 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
         } else {
             GridIns->setMode(CanvasGrid::Mode::Custom);
         }
+    });
+
+    tstAction = tstMenu->addAction(tr("Wallpaper and Screensaver"));
+    connect(tstAction, &QAction::triggered, this, [=](){
+        CanvasIns->onWallperSetting(view);
     });
 
     tstMenu->exec(QCursor::pos());

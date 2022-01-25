@@ -46,6 +46,7 @@ public:
 public slots:
     void onCanvasBuild();
     void onGeometryChanged();
+    void onWallperSetting(CanvasView *);
 protected slots:
     void reloadItem();
 protected:

@@ -26,19 +26,24 @@
 DSB_D_BEGIN_NAMESPACE
 
 CanvasService::CanvasService(QObject *parent)
-    : PluginService(parent), AutoServiceRegister<CanvasService>()
+    : PluginService(parent)
+    , AutoServiceRegister<CanvasService>()
 {
-    FileTreaterCt->init();
-    canvasMgrProxy = CanvasIns->instance();
-    canvasMgrProxy->init();
-
-    // todo background signal
 }
 
 CanvasService::~CanvasService()
 {
-    delete canvasMgrProxy;
     canvasMgrProxy = nullptr;
+}
+
+void CanvasService::init()
+{
+    FileTreaterCt->init();
+
+    canvasMgrProxy = CanvasIns->instance();
+    canvasMgrProxy->init();
+
+    // todo background signal
 }
 
 DSB_D_END_NAMESPACE

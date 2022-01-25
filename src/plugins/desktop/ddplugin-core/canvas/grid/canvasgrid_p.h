@@ -31,7 +31,6 @@ DSB_D_BEGIN_NAMESPACE
 class CanvasGridPrivate : public QObject, public GridCore
 {
     Q_OBJECT
-    friend class CanvasGrid;
 public:
     explicit CanvasGridPrivate(CanvasGrid *qq);
     void sequence(QStringList sortedItems);
@@ -44,7 +43,7 @@ protected slots:
 protected:
     QHash<int, QHash<QString, QPoint>> profiles() const;
 
-protected:
+public:
     CanvasGrid::Mode mode = CanvasGrid::Mode::Custom;
 private:
     CanvasGrid *q;

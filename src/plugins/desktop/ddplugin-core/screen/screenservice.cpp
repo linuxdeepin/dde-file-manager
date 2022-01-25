@@ -29,7 +29,19 @@
 
 DSB_D_BEGIN_NAMESPACE
 
-ScreenService::ScreenService(QObject *parent) : PluginService(parent), AutoServiceRegister<ScreenService>()
+ScreenService::ScreenService(QObject *parent)
+    : PluginService(parent)
+    , AutoServiceRegister<ScreenService>()
+{
+
+}
+
+ScreenService::~ScreenService()
+{
+    delete proxy;
+}
+
+void ScreenService::init()
 {
     if (waylandDectected())
         proxy = new ScreenProxyDBus(this);
@@ -47,7 +59,7 @@ ScreenService::ScreenService(QObject *parent) : PluginService(parent), AutoServi
                      this, &ScreenService::screenGeometryChanged, Qt::UniqueConnection);
 
     connect(proxy, &dfmbase::AbstractScreenProxy::screenAvailableGeometryChanged,
-                     this, &ScreenService::screenAvailableGeometryChanged, Qt::UniqueConnection);
+            this, &ScreenService::screenAvailableGeometryChanged, Qt::UniqueConnection);
 }
 
 dfmbase::ScreenPointer ScreenService::primaryScreen()

@@ -62,6 +62,11 @@ void registerAllService()
         qCritical() << errStr;
         abort();
     }
+
+    if (!ctx.load(WallpaperService::name(), &errStr)) {
+        qCritical() << errStr;
+        abort();
+    }
 }
 
 void registerFileSystem()
@@ -83,9 +88,16 @@ void Core::initialize()
 
     auto &ctx = dpfInstance.serviceContext();
     ScreenService *screenService = ctx.service<ScreenService>(ScreenService::name());
-    screenService->screens();
+    screenService->init();
 
-    //获取所有的背景
+    BackgroundService *backgroundService = ctx.service<BackgroundService>(BackgroundService::name());
+    backgroundService->init();
+
+    CanvasService *canvasService = ctx.service<CanvasService>(CanvasService::name());
+    canvasService->init();
+
+    WallpaperService *wallpaperService = ctx.service<WallpaperService>(WallpaperService::name());
+    wallpaperService->init();
 }
 
 bool Core::start()

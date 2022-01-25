@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.10)
 
 project(ddplugin-core)
 
@@ -31,7 +31,6 @@ set(service_cxx_cpp
     background/services/backgroundservice.cpp
     background/services/backgroundfactory.cpp
     wallpaper/wallpaperservice.cpp
-    wallpaper/wallpaperfactory.cpp
     canvas/services/canvasservice.cpp
     screen/screenservice.cpp
 )
@@ -40,7 +39,6 @@ set(service_cxx_h
     background/services/backgroundservice.h
     background/services/backgroundfactory.h
     wallpaper/wallpaperservice.h
-    wallpaper/wallpaperfactory.h
     canvas/services/canvasservice.h
     screen/screenservice.h
 )
@@ -77,6 +75,14 @@ set(core_cxx_cpp
     canvas/displayconfig.cpp
     watermask/watermaskframe.cpp
     watermask/deepinlicensehelper.cpp
+    wallpaper/wallpapersettings.cpp
+    wallpaper/wallpaperlist.cpp
+    wallpaper/wallpaperitem.cpp
+    wallpaper/loadinglabel.cpp
+    wallpaper/thumbnailmanager.cpp
+    wallpaper/wallaperpreview.cpp
+    wallpaper/private/autoactivatewindow.cpp
+    wallpaper/dbus/screensaver_interface.cpp
     utils/desktoputils.cpp
     utils/fileutil.cpp
     screen/screenqt.cpp
@@ -127,6 +133,16 @@ set(core_cxx_h
     canvas/displayconfig.h
     watermask/watermaskframe.h
     watermask/deepinlicensehelper.h
+    wallpaper/wallpapersettings.h
+    wallpaper/private/wallpapersettings_p.h
+    wallpaper/private/autoactivatewindow.h
+    wallpaper/private/autoactivatewindow_p.h
+    wallpaper/wallpaperlist.h
+    wallpaper/loadinglabel.h
+    wallpaper/wallpaperitem.h
+    wallpaper/thumbnailmanager.h
+    wallpaper/wallaperpreview.h
+    wallpaper/dbus/screensaver_interface.h
     utils/desktoputils.h
     utils/fileutil.h
     screen/screenqt.h
@@ -137,6 +153,11 @@ set(core_cxx_h
     dfm_desktop_service_global.h
 )
 
+# 指定资源文件
+set(QRCS
+    wallpaper/images.qrc
+)
+
 add_library(${PROJECT_NAME}
     SHARED
     ${core_cxx_cpp}
@@ -145,6 +166,7 @@ add_library(${PROJECT_NAME}
     ${service_cxx_h}
     ${widgets_cxx_cpp}
     ${widgets_cxx_h}
+    ${QRCS}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)

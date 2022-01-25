@@ -37,8 +37,6 @@ typedef QSharedPointer<CanvasView> CanvasViewPointer;
 class CanvasManagerPrivate : public QObject
 {
     Q_OBJECT
-    friend class CanvasManager;
-
 public:
     explicit CanvasManagerPrivate(CanvasManager *qq);
     ~CanvasManagerPrivate();
@@ -62,7 +60,7 @@ public slots:
 
 protected slots:
     void backgroundDeleted();
-protected:
+public:
     CanvasModel *canvasModel = nullptr;
     CanvasSelectionModel *selectionModel = nullptr ;
     ScreenService *screenScevice = nullptr ;

@@ -24,6 +24,7 @@
 
 #include "dfm_desktop_service_global.h"
 #include "dfm-base/widgets/screenglobal.h"
+#include "dfm-base/widgets/abstractscreen.h"
 
 #include <dfm-framework/framework.h>
 
@@ -39,14 +40,12 @@ class ScreenService final : public dpf::PluginService, dpf::AutoServiceRegister<
     Q_DISABLE_COPY(ScreenService)
     friend class dpf::QtClassFactory<dpf::PluginService>;
     friend class ::Core;
-    explicit ScreenService(QObject *parent = nullptr);
 public:
-
     static QString name()
     {
         return "org.deepin.service.ScreenService";
     }
-
+    void init();
     dfmbase::ScreenPointer primaryScreen();
     QVector<dfmbase::ScreenPointer> screens() const;
     QVector<dfmbase::ScreenPointer> logicScreens() const;
@@ -61,6 +60,9 @@ signals:
     void displayModeChanged();
     void screenGeometryChanged();
     void screenAvailableGeometryChanged();
+protected:
+    explicit ScreenService(QObject *parent = nullptr);
+    ~ScreenService();
 private:
     dfmbase::AbstractScreenProxy *proxy = nullptr;
 };

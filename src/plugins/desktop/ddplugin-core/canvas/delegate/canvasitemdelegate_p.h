@@ -35,7 +35,6 @@ DSB_D_BEGIN_NAMESPACE
 
 class CanvasItemDelegatePrivate
 {
-    friend class CanvasItemDelegate;
 public:
     explicit CanvasItemDelegatePrivate(CanvasItemDelegate *qq);
     ~CanvasItemDelegatePrivate();

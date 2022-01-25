@@ -37,13 +37,13 @@ class BackgroundManager : public QObject
 public:
     explicit BackgroundManager(QObject *parent = nullptr);
     ~BackgroundManager();
-
+     void init();
 public:
     virtual QMap<QString, dfmbase::BackgroundWidgetPointer> allBackgroundWidgets();
     virtual dfmbase::BackgroundWidgetPointer backgroundWidget(const QString &screen);
     virtual QMap<QString, QString> allBackgroundPath();
     virtual QString backgroundPath(const QString &screen);
-
+    virtual void setBackgroundPath(const QString &screen,const QString &path);
 signals:
     void sigBackgroundBuilded(int mode);
 
@@ -56,7 +56,6 @@ private slots:
     void onAppearanceCalueChanged(const QString& key);
 
 private:
-    void init();
     void updateBackgroundPaths();
     void resetBackgroundImage();
     QString getBackground(const QString &screen);
