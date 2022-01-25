@@ -32,21 +32,28 @@
 #include <QPlainTextEdit>
 #include <QDebug>
 #include <QScrollBar>
+#include <QTimer>
 
+using namespace std;
 DFM_USE_NAMESPACE
+
+#define READTEXTSIZE 100000
 
 TextPreview::TextPreview(QObject *parent):
     DFMFilePreview(parent)
 {
-
+    m_timer = new QTimer(this);
+    connect(m_timer, &QTimer::timeout, this, &TextPreview::appendText);
 }
 
 TextPreview::~TextPreview()
 {
     if (m_textBrowser)
         m_textBrowser->deleteLater();
-    if (m_device)
-        m_device->deleteLater();
+
+    if(m_timer){
+        m_timer->stop();
+    }
 }
 
 bool TextPreview::setFileUrl(const DUrl &url)
@@ -54,46 +61,11 @@ bool TextPreview::setFileUrl(const DUrl &url)
     if (m_url == url)
         return true;
 
+    m_timer->stop();
+
     m_url = url;
 
-    m_flg = true;   //! 预览新文件时对其设置初始值
-
-    //! 关闭并回收上个文件使用的m_device文件操作对象
-    if (m_device) {
-        m_device->close();
-        delete m_device;
-        m_device = nullptr;
-    }
-
-    QByteArray text;
-
-    {
-        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
-
-        if (!info)
-            return false;
-
-        m_device = info->createIODevice();
-
-        if (!m_device) {
-            if (url.isLocalFile()) {
-                m_device = new QFile(url.toLocalFile());
-            }
-        }
-
-        if (!m_device)
-            return false;
-
-        if (!m_device->open(QIODevice::ReadOnly)) {
-            return false;
-        }
-
-        //fix 如果文件不可读行，之后读行会导致文管假死或中断
-        //文本如果不可读行就不显示预览
-        if (!m_device->canReadLine()) {
-            return false;
-        }
-    }
+    m_device.open(url.path().toLocal8Bit().data(), ios::binary);
 
     if (!m_textBrowser) {
         m_textBrowser = new QPlainTextEdit();
@@ -104,19 +76,28 @@ bool TextPreview::setFileUrl(const DUrl &url)
         m_textBrowser->setFixedSize(800, 500);
         m_textBrowser->setFocusPolicy(Qt::NoFocus);
         m_textBrowser->setContextMenuPolicy(Qt::NoContextMenu);
-
-        //! 滚动条值改变的信号与曹的连接，用以处理分段加载数据的问题
-        connect(m_textBrowser->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(valueChanged(int)));
     }
-
-    //! 每次预览文本时，预先加载49行数据提供显示
-    for (int i = 0; i < 49; ++i) {
-        text.append(m_device->readLine());
-    }
-    QString convertedStr{ DFMGlobal::toUnicode(text, url.toLocalFile()) };
-    m_textBrowser->setPlainText(convertedStr);
 
     m_title = QFileInfo(url.toLocalFile()).fileName();
+
+    vector<char> buf(m_device.seekg(0, ios::end).tellg());
+    m_device.seekg(0, ios::beg).read(&buf[0], static_cast<streamsize>(buf.size()));
+    m_device.close();
+
+    char * txt = new char[buf.size() + 1];
+    copy(buf.begin(), buf.end(), txt);
+    m_textData = QString::fromLocal8Bit(txt, buf.size());
+    delete [] txt;
+    txt = nullptr;
+    m_textSize = m_textData.count();
+    m_readSize = m_textSize > READTEXTSIZE ? READTEXTSIZE : m_textSize;
+    if(m_textSize > m_readSize) {
+        m_textSize = m_textSize - m_readSize;
+        m_textBrowser->setPlainText(m_textData.mid(0, m_readSize));
+        m_timer->start(500);
+    } else {
+        m_textBrowser->setPlainText(m_textData);
+    }
 
     Q_EMIT titleChanged();
 
@@ -143,24 +124,17 @@ bool TextPreview::showStatusBarSeparator() const
     return true;
 }
 
-void TextPreview::valueChanged(int index)
+void TextPreview::appendText()
 {
-    if (index >= m_textBrowser->verticalScrollBar()->maximum() && m_flg) {
-        if (!m_device)
-            return ;
-
-        m_flg = false; //! 等待这次文本数据加载完成后重新设置为true，以免在设置数据时重复执行以下代码
-
-        //! 每次分段加载数据36行
-        QByteArray text;
-        for (int i = 0; i < 36; ++i) {
-            text.append(m_device->readLine()); //! 读取文本一行数据，并追加到text中
+    if(m_textSize > 0) {
+        if(m_textSize < READTEXTSIZE) {
+            m_textSize = 0;
+            m_textBrowser->appendPlainText(m_textData.mid(m_readSize));
+            m_timer->stop();
+        } else {
+            m_textSize = m_textSize - READTEXTSIZE;
+            m_textBrowser->appendPlainText(m_textData.mid(m_readSize, READTEXTSIZE));
+            m_readSize += READTEXTSIZE;
         }
-        QString convertedStr{ DFMGlobal::toUnicode(text, m_url.toLocalFile()) }; //! 字符编码转换
-
-        m_textBrowser->appendPlainText(convertedStr);
-        m_textBrowser->verticalScrollBar()->setValue(index);    //! 设置垂直滚动条停留的位置
-
-        m_flg = true; //! 设置为true使得下次需要分段加载数据能够被执行
     }
 }
