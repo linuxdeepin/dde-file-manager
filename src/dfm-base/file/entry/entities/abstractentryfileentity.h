@@ -54,8 +54,8 @@ public:
 
     virtual QMenu *createMenu() { return nullptr; }
     virtual void refresh() {}
-    virtual long sizeTotal() const { return 0; }
-    virtual long sizeUsage() const { return 0; }
+    virtual qint64 sizeTotal() const { return 0; }
+    virtual qint64 sizeUsage() const { return 0; }
     virtual QString description() const { return {}; }
     virtual QUrl targetUrl() const { return {}; }
     virtual bool isAccessable() const { return true; }

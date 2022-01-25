@@ -65,7 +65,7 @@ public:
     void actRename(quint64 winId, DFMEntryFileInfoPointer info, bool triggerFromSidebar);
     void actFormat(quint64 winId, DFMEntryFileInfoPointer info);
     void actRemove(DFMEntryFileInfoPointer info);
-    void actProperties(const QUrl &url);
+    void actProperties(quint64 winId, DFMEntryFileInfoPointer info);
     void actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info);
 
 Q_SIGNALS:

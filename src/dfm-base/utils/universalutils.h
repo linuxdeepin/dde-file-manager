@@ -43,6 +43,8 @@ public:
     static void blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay);
     static qint64 computerMemory();
     static void computerInformation(QString &cpuinfo, QString &systemType, QString &Edition, QString &version);
+    static double sizeFormat(qint64 size, QString &unit);
+    static QString sizeFormat(qint64 size, int percision);
 
     static bool checkLaunchAppInterface();
     static bool launchAppByDBus(const QString &desktopFile, const QStringList &filePaths);

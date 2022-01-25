@@ -29,16 +29,16 @@
 #include "events/computereventreceiver.h"
 #include "watcher/computeritemwatcher.h"
 
+#include "services/filemanager/sidebar/sidebarservice.h"
+#include "services/filemanager/windows/windowsservice.h"
+#include "services/filemanager/search/searchservice.h"
+#include "services/filemanager/titlebar/titlebarservice.h"
+
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/entry/entities/entryentities.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/devicemanager.h"
-
-#include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/search/searchservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
 
 DSB_FM_USE_NAMESPACE
 namespace GlobalPrivate {

@@ -29,11 +29,11 @@
 #include "events/computereventcaller.h"
 #include "controller/computercontroller.h"
 
+#include "services/filemanager/windows/windowsservice.h"
+#include "services/common/dialog/dialogservice.h"
 #include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
-#include "dbusservice/global_server_defines.h"
-#include <services/common/dialog/dialogservice.h>
-#include <services/filemanager/windows/windowsservice.h>
 #include <dfm-framework/framework.h>
 
 #include <QEvent>

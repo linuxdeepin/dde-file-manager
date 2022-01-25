@@ -20,6 +20,7 @@
 */
 #include "devicebasicwidget.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/universalutils.h"
 
 DWIDGET_USE_NAMESPACE
 DSC_USE_NAMESPACE
@@ -81,10 +82,15 @@ void DeviceBasicWidget::setSelectFileInfo(const DeviceInfo &info)
 {
     deviceType->setRightValue(info.deviceType);
     deviceType->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
-    deviceTotalSize->setRightValue(info.totalCapacity);
+
+    QString sizeTotalStr = UniversalUtils::sizeFormat(info.totalCapacity, 1);
+    deviceTotalSize->setRightValue(sizeTotalStr);
     deviceTotalSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
+
     fileSystem->setRightValue(info.fileSystem);
     fileSystem->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
-    freeSize->setRightValue(info.availableSpace);
+
+    QString sizeFreeStr = UniversalUtils::sizeFormat(info.availableSpace, 1);
+    freeSize->setRightValue(sizeFreeStr);
     freeSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
 }

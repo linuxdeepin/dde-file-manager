@@ -36,9 +36,9 @@ struct DeviceInfo
     QUrl deviceUrl;
     QString deviceName;
     QString deviceType;
-    QString totalCapacity;
     QString fileSystem;
-    QString availableSpace;
+    qint64 totalCapacity;
+    qint64 availableSpace;
 };
 
 class RegisterCreateMethod

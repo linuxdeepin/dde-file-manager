@@ -24,9 +24,11 @@
 #define COMPUTERUTILS_H
 
 #include "dfmplugin_computer_global.h"
+
 #include "services/filemanager/sidebar/sidebar_defines.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/common/dialog/dialogservice.h"
+#include "services/common/propertydialog/propertydialogservice.h"
 
 #include <QString>
 #include <QIcon>
@@ -70,8 +72,9 @@ public:
 
     static quint64 getWinId(QWidget *widget);
 
-    static DSB_FM_NAMESPACE::SideBarService *sbIns();
+    static DSB_FM_NAMESPACE::SideBarService *sbServIns();
     static DSC_NAMESPACE::DialogService *dlgServIns();
+    static DSC_NAMESPACE::PropertyDialogService *propertyDlgServIns();
 
     static bool isPresetSuffix(const QString &suffix);
 

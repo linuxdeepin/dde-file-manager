@@ -24,6 +24,7 @@
 #define COMPUTER_H
 
 #include "dfmplugin_computer_global.h"
+
 #include <dfm-framework/framework.h>
 
 DPCOMPUTER_BEGIN_NAMESPACE

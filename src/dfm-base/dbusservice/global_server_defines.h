@@ -31,10 +31,10 @@ namespace GlobalServerDefines {
  * for 'Device Busy'-related messages sent to the Notification Center
  */
 namespace DeviceBusyAction {
-const int kSafelyRemove { 0 };
-const int kUnmount { 1 };
-const int kRemove { 2 };
-const int kEject { 3 };
+constexpr int kSafelyRemove { 0 };
+constexpr int kUnmount { 1 };
+constexpr int kRemove { 2 };
+constexpr int kEject { 3 };
 }   // namespace DeviceBusyAction
 
 /*!
@@ -43,11 +43,11 @@ const int kEject { 3 };
  * for changes are listed here
  */
 namespace DeviceAttribute {
-const char *const kIdLabel { "IdLabel" };
-const char *const kMountPoints { "MountPoints" };
-const char *const kBlockSize { "BlockSize" };
-const char *const kSize { "Size" };
-const char *const kCleartextDevice { "CleartextDevice" };
+constexpr char kIdLabel[] { "IdLabel" };
+constexpr char kMountPoints[] { "MountPoints" };
+constexpr char kBlockSize[] { "BlockSize" };
+constexpr char kSize[] { "Size" };
+constexpr char kCleartextDevice[] { "CleartextDevice" };
 }   // namespace DeviceAttribute
 
 /*!
@@ -55,44 +55,43 @@ const char *const kCleartextDevice { "CleartextDevice" };
  */
 namespace DeviceProperty {
 // common
-const char *const kId { "Id" };
-const char *const kMountPoint { "MountPoint" };
-const char *const kFileSystem { "IdType" };
-const char *const kSizeTotal { "SizeTotal" };
-const char *const kSizeFree { "SizeFree" };
-const char *const kSizeUsed { "SizeUsed" };
+constexpr char kId[] { "Id" };
+constexpr char kMountPoint[] { "MountPoint" };
+constexpr char kFileSystem[] { "IdType" };
+constexpr char kSizeTotal[] { "SizeTotal" };
+constexpr char kSizeFree[] { "SizeFree" };
+constexpr char kSizeUsed[] { "SizeUsed" };
 
 // block
-const char *const kUUID { "IdUUID" };
-const char *const kFsVersion { "IdVersion" };
-const char *const kDevice { "Device" };
-const char *const kIdLabel { "IdLabel" };
-const char *const kMedia { "Media" };
-const char *const kReadOnly { "ReadOnly" };
-const char *const kRemovable { "Removable" };
-const char *const kMediaRemovable { "MediaRemovable" };
-const char *const kOptical { "Optical" };
-const char *const kOpticalDrive { "OpticalDrive" };
-const char *const kOpticalBlank { "OpticalBlank" };
-const char *const kMediaAvailable { "MediaAvailable" };
-const char *const kCanPowerOff { "CanPowerOff" };
-const char *const kEjectable { "Ejectable" };
-const char *const kIsEncrypted { "IsEncrypted" };
-const char *const kIsLoopDevice { "IsLoopDevice" };
-const char *const kHasFileSystem { "HasFileSystem" };
-const char *const kHasPartitionTable { "HasPartitionTable" };
-const char *const kHasPartition { "HasPartition" };
-const char *const kHasExtendedPatition { "HasExtendedPartition" };
-const char *const kHintSystem { "HintSystem" };
-const char *const kHintIgnore { "HintIgnore" };
-const char *const kCryptoBackingDevice { "CryptoBackingDevice" };
-const char *const kDrive { "Drive" };
-const char *const kMountPoints { "MountPoints" };
-const char *const kMediaCompatibility { "MediaCompatibility" };
-const char *const kCleartextDevice { "CleartextDevice" };
-
-const char *const kDisplayName { "DisplayName" };
-const char *const kDeviceIcon { "DeviceIcon" };
+constexpr char kUUID[] { "IdUUID" };
+constexpr char kFsVersion[] { "IdVersion" };
+constexpr char kDevice[] { "Device" };
+constexpr char kIdLabel[] { "IdLabel" };
+constexpr char kMedia[] { "Media" };
+constexpr char kReadOnly[] { "ReadOnly" };
+constexpr char kRemovable[] { "Removable" };
+constexpr char kMediaRemovable[] { "MediaRemovable" };
+constexpr char kOptical[] { "Optical" };
+constexpr char kOpticalDrive[] { "OpticalDrive" };
+constexpr char kOpticalBlank[] { "OpticalBlank" };
+constexpr char kMediaAvailable[] { "MediaAvailable" };
+constexpr char kCanPowerOff[] { "CanPowerOff" };
+constexpr char kEjectable[] { "Ejectable" };
+constexpr char kIsEncrypted[] { "IsEncrypted" };
+constexpr char kIsLoopDevice[] { "IsLoopDevice" };
+constexpr char kHasFileSystem[] { "HasFileSystem" };
+constexpr char kHasPartitionTable[] { "HasPartitionTable" };
+constexpr char kHasPartition[] { "HasPartition" };
+constexpr char kHasExtendedPatition[] { "HasExtendedPartition" };
+constexpr char kHintSystem[] { "HintSystem" };
+constexpr char kHintIgnore[] { "HintIgnore" };
+constexpr char kCryptoBackingDevice[] { "CryptoBackingDevice" };
+constexpr char kDrive[] { "Drive" };
+constexpr char kMountPoints[] { "MountPoints" };
+constexpr char kMediaCompatibility[] { "MediaCompatibility" };
+constexpr char kCleartextDevice[] { "CleartextDevice" };
+constexpr char kDisplayName[] { "DisplayName" };
+constexpr char kDeviceIcon[] { "DeviceIcon" };
 
 }   // namespace DeviceProperty
 
@@ -102,9 +101,9 @@ const char *const kDeviceIcon { "DeviceIcon" };
  * detail in: DeviceService::blockDevicesIdList
  */
 namespace ListOpt {
-const char *const kUnmountable { "unmountable" };
-const char *const kMountable { "mountable" };
-const char *const kNotIgnorable { "not_ignorable" };
+constexpr char kUnmountable[] { "unmountable" };
+constexpr char kMountable[] { "mountable" };
+constexpr char kNotIgnorable[] { "not_ignorable" };
 }   // namespace DeviceProperty
 
 /*!
@@ -112,12 +111,12 @@ const char *const kNotIgnorable { "not_ignorable" };
  * detail in DeviceService::mountNetworkDevice
  */
 namespace NetworkMountParamKey {
-const char *const kUser { "user" };
-const char *const kDomain { "domain" };
-const char *const kPasswd { "passwd" };
-const char *const kPasswdSaveMode { "savePasswd" };
-const char *const kAnonymous { "anonymous" };
-const char *const kMessage { "message" };
+constexpr char kUser[] { "user" };
+constexpr char kDomain[] { "domain" };
+constexpr char kPasswd[] { "passwd" };
+constexpr char kPasswdSaveMode[] { "savePasswd" };
+constexpr char kAnonymous[] { "anonymous" };
+constexpr char kMessage[] { "message" };
 }   // namespace NetworkMountParamKey
 
 }   // namespace GlobalServerDefines

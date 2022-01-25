@@ -25,10 +25,10 @@
 #include "utils/computerutils.h"
 #include "controller/computercontroller.h"
 
+#include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/file/entry/entities/blockentryfileentity.h"
 #include "dfm-base/utils/fileutils.h"
-#include "dbusservice/global_server_defines.h"
 
 #include <QVector>
 
@@ -381,7 +381,7 @@ void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, c
     view->update(this->index(pos, 0));
 
     if (key == DeviceProperty::kIdLabel)
-        ComputerUtils::sbIns()->updateItem(url, val.toString(), true);
+        ComputerUtils::sbServIns()->updateItem(url, val.toString(), true);
 }
 
 DPCOMPUTER_END_NAMESPACE

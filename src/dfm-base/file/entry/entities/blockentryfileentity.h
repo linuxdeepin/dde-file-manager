@@ -51,8 +51,8 @@ public:
     virtual void onOpen() override;
     virtual EntryFileInfo::EntryOrder order() const override;
 
-    virtual long sizeTotal() const override;
-    virtual long sizeUsage() const override;
+    virtual qint64 sizeTotal() const override;
+    virtual qint64 sizeUsage() const override;
     virtual void refresh() override;
     virtual QMenu *createMenu() override;
     virtual QUrl targetUrl() const override;

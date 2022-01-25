@@ -138,10 +138,10 @@ void DevicePropertyDialog::handleHeight(int height)
     setGeometry(rect);
 }
 
-void DevicePropertyDialog::setProgressBar(QString totalSize, QString freeSize)
+void DevicePropertyDialog::setProgressBar(qint64 totalSize, qint64 freeSize)
 {
-    devicesProgressBar->setMaximum(totalSize.toInt());
-    devicesProgressBar->setValue(freeSize.toInt() / totalSize.toInt());
+    devicesProgressBar->setMaximum(static_cast<int>(totalSize));
+    devicesProgressBar->setValue(totalSize == 0 ? 0 : static_cast<int>(freeSize / totalSize));
     devicesProgressBar->setMaximumHeight(8);
     devicesProgressBar->setTextVisible(false);
 

@@ -185,6 +185,34 @@ void UniversalUtils::computerInformation(QString &cpuinfo, QString &systemType, 
     }
 }
 
+double UniversalUtils::sizeFormat(qint64 size, QString &unit)
+{
+    static const double kSizeStep = 1024.0;
+    static const QStringList kUnits { "B", "KB", "MB", "GB", "TB", "PB" };
+
+    double formatedSize = size;
+    int loopCount = 0;
+    while (formatedSize >= kSizeStep && loopCount < kUnits.count() - 1) {
+        formatedSize /= kSizeStep;
+        loopCount += 1;
+    }
+    unit = kUnits[loopCount];
+    return formatedSize;
+}
+
+/*!
+ * \brief UniversalUtils::sizeFormat, returns the most appropriate size string. the return's number part is less than 1024.
+ * \param size
+ * \param percision, how many bit after dot.
+ * \return
+ */
+QString UniversalUtils::sizeFormat(qint64 size, int percision)
+{
+    QString unit;
+    double numberPart = sizeFormat(size, unit);
+    return QString("%1 %2").arg(QString::number(numberPart, 'f', percision)).arg(unit);
+}
+
 bool UniversalUtils::checkLaunchAppInterface()
 {
     static bool initStatus = true;

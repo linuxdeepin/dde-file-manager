@@ -201,12 +201,12 @@ EntryFileInfo::EntryOrder BlockEntryFileEntity::order() const
     return EntryFileInfo::EntryOrder::kOrderRemovableDisks;
 }
 
-long BlockEntryFileEntity::sizeTotal() const
+qint64 BlockEntryFileEntity::sizeTotal() const
 {
     return getProperty(DeviceProperty::kSizeTotal).toLongLong();
 }
 
-long BlockEntryFileEntity::sizeUsage() const
+qint64 BlockEntryFileEntity::sizeUsage() const
 {
     return getProperty(DeviceProperty::kSizeUsed).toLongLong();
 }

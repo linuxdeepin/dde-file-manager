@@ -22,6 +22,7 @@
 */
 #include "computerunicastreceiver.h"
 #include "watcher/computeritemwatcher.h"
+
 #include "services/filemanager/dfm_filemanager_service_global.h"
 
 DPCOMPUTER_USE_NAMESPACE

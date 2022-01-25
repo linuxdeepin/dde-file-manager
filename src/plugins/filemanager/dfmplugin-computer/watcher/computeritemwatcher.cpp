@@ -35,7 +35,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
-#include "dbusservice/global_server_defines.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <QDebug>
 #include <QApplication>
@@ -379,17 +379,17 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         auto mntUrl = info->targetUrl();
         return mntUrl.scheme() == targetUrl.scheme() && mntUrl.path() == targetUrl.path();
     };
-    ComputerUtils::sbIns()->addItem(sbItem);
+    ComputerUtils::sbServIns()->addItem(sbItem);
 }
 
 void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
 {
-    ComputerUtils::sbIns()->removeItem(url);
+    ComputerUtils::sbServIns()->removeItem(url);
 }
 
 void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName, bool editable)
 {
-    ComputerUtils::sbIns()->updateItem(url, newName, editable);
+    ComputerUtils::sbServIns()->updateItem(url, newName, editable);
 }
 
 void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url)

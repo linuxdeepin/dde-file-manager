@@ -28,14 +28,16 @@
 #include "utils/stashmountsutils.h"
 #include "watcher/computeritemwatcher.h"
 
+#include "services/common/dialog/dialogservice.h"
+#include "services/common/propertydialog/property_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/file/entry/entities/blockentryfileentity.h"
 #include "dfm-base/dfm_event_defines.h"
-#include "services/common/dialog/dialogservice.h"
-#include "dbusservice/global_server_defines.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
+
 #include <dfm-framework/framework.h>
 
 #include <QDebug>
@@ -176,7 +178,7 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
 
     // update sidebar and computer display
     QString sidebarName = displayAlias.isEmpty() ? info->displayName() : displayAlias;
-    ComputerUtils::sbIns()->updateItem(info->url(), sidebarName, true);
+    ComputerUtils::sbServIns()->updateItem(info->url(), sidebarName, true);
     Q_EMIT updateItemAlias(info->url());
 }
 
@@ -275,7 +277,7 @@ void ComputerController::actionTriggered(DFMEntryFileInfoPointer info, quint64 w
     else if (actionText == ContextMenuActionTrs::trEject())
         actEject(info->url());
     else if (actionText == ContextMenuActionTrs::trProperties())
-        actProperties(info->url());
+        actProperties(winId, info);
     else if (actionText == ContextMenuActionTrs::trOpen())
         onOpenItem(0, info->url());
     else if (actionText == ContextMenuActionTrs::trRemove())
@@ -368,7 +370,7 @@ void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, 
     if (!triggerFromSidebar)
         Q_EMIT requestRename(winId, info->url());
     else
-        ComputerUtils::sbIns()->triggerItemEdit(winId, info->url());
+        ComputerUtils::sbServIns()->triggerItemEdit(winId, info->url());
 }
 
 void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
@@ -396,9 +398,28 @@ void ComputerController::actRemove(DFMEntryFileInfoPointer info)
     Q_EMIT ComputerItemWatcherInstance->itemRemoved(info->url());
 }
 
-void ComputerController::actProperties(const QUrl &url)
+void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer info)
 {
-    // TODO(xust)
+    Q_UNUSED(winId);
+    if (!info)
+        return;
+
+    if (info->suffix() == SuffixInfo::kUserDir) {
+        ComputerUtils::propertyDlgServIns()->addFileProperty({ info->targetUrl() });
+        return;
+    }
+
+    DSC_USE_NAMESPACE;
+    DeviceInfo devInfo;
+    devInfo.icon = info->fileIcon();
+    devInfo.deviceUrl = info->url();
+    devInfo.deviceName = info->displayName();
+    devInfo.deviceType = "test";   // TODO(xust) complete the device type here.
+    devInfo.fileSystem = info->extraProperty(DeviceProperty::kFileSystem).toString();
+    devInfo.totalCapacity = info->sizeTotal();
+    devInfo.availableSpace = info->sizeFree();
+
+    ComputerUtils::propertyDlgServIns()->addDeviceProperty(devInfo);
 }
 
 void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)

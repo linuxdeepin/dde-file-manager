@@ -22,11 +22,11 @@
 */
 #include "computereventcaller.h"
 
+#include "services/filemanager/computer/computer_defines.h"
+#include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/urlroute.h"
 
-#include "services/filemanager/computer/computer_defines.h"
-#include <services/filemanager/windows/windowsservice.h>
 #include <dfm-framework/framework.h>
 
 #include <QWidget>

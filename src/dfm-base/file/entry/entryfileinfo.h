@@ -87,9 +87,9 @@ public:
 
     bool renamable() const;
     QString displayName() const;
-    long sizeTotal() const;
-    long sizeUsage() const;
-    long sizeFree() const;
+    qint64 sizeTotal() const;
+    qint64 sizeUsage() const;
+    qint64 sizeFree() const;
     bool showTotalSize() const;
     bool showUsedSize() const;
     bool showProgress() const;

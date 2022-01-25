@@ -118,12 +118,12 @@ EntryFileInfo::EntryOrder ProtocolEntryFileEntity::order() const
     return EntryFileInfo::EntryOrder::kOrderFiles;
 }
 
-long ProtocolEntryFileEntity::sizeTotal() const
+qint64 ProtocolEntryFileEntity::sizeTotal() const
 {
     return datas.value(DeviceProperty::kSizeTotal).toLongLong();
 }
 
-long ProtocolEntryFileEntity::sizeUsage() const
+qint64 ProtocolEntryFileEntity::sizeUsage() const
 {
     return datas.value(DeviceProperty::kSizeUsed).toLongLong();
 }

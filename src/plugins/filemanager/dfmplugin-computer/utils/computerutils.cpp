@@ -24,13 +24,13 @@
 #include "fileentity/appentryfileentity.h"
 #include "fileentity/stashedprotocolentryfileentity.h"
 
+#include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
 
 #include <dfm-framework/framework.h>
-#include <services/filemanager/windows/windowsservice.h>
 
 DPCOMPUTER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -180,7 +180,7 @@ quint64 ComputerUtils::getWinId(QWidget *widget)
     return winServ->findWindowId(widget);
 }
 
-dfm_service_filemanager::SideBarService *ComputerUtils::sbIns()
+dfm_service_filemanager::SideBarService *ComputerUtils::sbServIns()
 {
     auto &ctx = dpfInstance.serviceContext();
     static std::once_flag onceFlag;
@@ -208,6 +208,18 @@ bool ComputerUtils::isPresetSuffix(const QString &suffix)
 {
     return suffix == SuffixInfo::kBlock || suffix == SuffixInfo::kProtocol || suffix == SuffixInfo::kUserDir
             || suffix == SuffixInfo::kAppEntry || suffix == SuffixInfo::kStashedRemote;
+}
+
+dfm_service_common::PropertyDialogService *ComputerUtils::propertyDlgServIns()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSC_NAMESPACE::PropertyDialogService::name()))
+            abort();
+    });
+
+    return ctx.service<DSC_NAMESPACE::PropertyDialogService>(DSC_NAMESPACE::PropertyDialogService::name());
 }
 
 bool ComputerUtils::shouldSystemPartitionHide()

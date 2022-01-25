@@ -54,7 +54,7 @@ private:
 
     void handleHeight(int height);
 
-    void setProgressBar(QString totalSize, QString freeSize);
+    void setProgressBar(qint64 totalSize, qint64 freeSize);
 
 public slots:
     void setSelectDeviceInfo(const DSC_NAMESPACE::DeviceInfo &info);
