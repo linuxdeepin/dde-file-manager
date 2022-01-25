@@ -98,14 +98,17 @@ QString MountUtils::mountBlkWithParams(DBlockDevice *dev)
         return "";
     }
 
-    bool removable = true;
-    QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(dev->drive()));
-    if (!diskDev)
-        qWarning() << "cannot create disk device, treat like removable device";
-    else
-        removable = diskDev->removable();
+    QVariantMap params;
+    if (dev->idType().startsWith("ext")) {
+        bool removable = true;
+        QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(dev->drive()));
+        if (!diskDev)
+            qWarning() << "cannot create disk device, treat like removable device";
+        else
+            removable = diskDev->removable();
 
-    auto &&params = getSeLinuxMountParams(removable);
-    qInfo() << "mount device: " << dev->device() << "with params: " << params;
+        params = getSeLinuxMountParams(removable);
+        qInfo() << "mount device: " << dev->device() << "with params: " << params;
+    }
     return dev->mount(params);
 }

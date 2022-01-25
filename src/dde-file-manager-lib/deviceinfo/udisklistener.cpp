@@ -776,14 +776,9 @@ bool UDiskListener::mountByUDisks(const QString &path)
     const QString &udiskspath = rootDeviceNode.first();
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     if (blkdev) {
-        if (!blkdev->hasFileSystem()) {
-            dialogManager->showFormatDialog(path);
-            return false;
-        }
-
         // for encrypted device, mount with gvfs cannot pass selinux params, so we have to unlock and mount by udisks
         if (blkdev->isEncrypted()) {
-            MountSecretDiskAskPasswordDialog dlg(tr("Need password to access the device ") + blkdev->idLabel());
+            MountSecretDiskAskPasswordDialog dlg("");
             dlg.exec();
             QString passwd = dlg.password();
             if (passwd.isEmpty()) {
@@ -803,6 +798,11 @@ bool UDiskListener::mountByUDisks(const QString &path)
             if (!unlockedDev)
                 return false;
             blkdev.swap(unlockedDev);
+        }
+
+        if (!blkdev->hasFileSystem()) {
+            dialogManager->showFormatDialog(path);
+            return false;
         }
 
         const QString &mountedPath = MountUtils::mountBlkWithParams(blkdev.data());

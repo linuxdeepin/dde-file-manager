@@ -173,9 +173,12 @@ void DiskControlWidget::doStartupAutoMount()
 
         QList<QByteArray> mountPoints = blDev->mountPoints();
         if (blDev->hasFileSystem() && blDev->mountPoints().isEmpty()) {
-            auto diskDev = DDiskManager::createDiskDevice(blDev->drive());
-            bool removable = diskDev ? diskDev->removable() : true;
-            auto params = MountUtils::getSeLinuxMountParams(removable);
+            QVariantMap params;
+            if (blDev->idType().startsWith("ext")) {
+                auto diskDev = DDiskManager::createDiskDevice(blDev->drive());
+                bool removable = diskDev ? diskDev->removable() : true;
+                params = MountUtils::getSeLinuxMountParams(removable);
+            }
             params.insert("auth.no_user_interaction", true);
             blDev->mount(params);
         }
