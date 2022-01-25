@@ -662,7 +662,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     /// draw file additional icon
 
     const QSizeF &cornerBaseSize = icon_rect.size() / 3;
-    QList<QRectF> cornerGeometryList = getCornerGeometryList(icon_rect, QSizeF(qMin(24.0, cornerBaseSize.width()), qMin(24.0, cornerBaseSize.height())));
+    QList<QRectF> cornerGeometryList = getCornerGeometryList(icon_rect, QSizeF(qMin(128.0, cornerBaseSize.width()), qMin(128.0, cornerBaseSize.height())));
     const QList<QIcon> &cornerIconList = parent()->additionalIcon(index);
 
     for (int i = 0; i < cornerIconList.count(); ++i) {
