@@ -56,6 +56,7 @@ public:
     void showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window);
     QString askPasswordForLockedDevice();
     DFMBASE_NAMESPACE::NetworkMountInfo askInfoWhenMountingNetworkDevice(const QString &address);
+    bool askForFormat();
 
 private:
     explicit DialogService(QObject *parent = nullptr);

@@ -121,6 +121,16 @@ dfmbase::NetworkMountInfo DialogService::askInfoWhenMountingNetworkDevice(const 
     return info;
 }
 
+bool DialogService::askForFormat()
+{
+    DDialog dlg;
+    dlg.setIcon(QIcon::fromTheme("dialog-warning"));
+    dlg.addButton(tr("Cancel", "button"));
+    dlg.addButton(tr("Format", "button"), true, DDialog::ButtonRecommend);
+    dlg.setTitle(tr("To access the device, you must format the disk first. Are you sure you want to format it now?"));
+    return dlg.exec() == QDialog::Accepted;
+}
+
 DialogService::DialogService(QObject *parent)
     : dpf::PluginService(parent),
       dpf::AutoServiceRegister<DialogService>()

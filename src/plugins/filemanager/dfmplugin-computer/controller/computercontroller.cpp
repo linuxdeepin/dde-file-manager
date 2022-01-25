@@ -64,6 +64,13 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
 
     if (!info->isAccessable()) {
         qDebug() << "cannot access device: " << url;
+        bool needAskForFormat = info->suffix() == SuffixInfo::kBlock
+                && !info->extraProperty(DeviceProperty::kHasFileSystem).toBool()
+                && !info->extraProperty(DeviceProperty::kIsEncrypted).toBool();
+        if (needAskForFormat) {
+            if (ComputerUtils::dlgServIns()->askForFormat())
+                actFormat(winId, info);
+        }
         QApplication::setOverrideCursor(Qt::ArrowCursor);
         return;
     }
@@ -177,6 +184,16 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
     bool isEncrypted = info->extraProperty(DeviceProperty::kIsEncrypted).toBool();
     bool isUnlocked = info->extraProperty(DeviceProperty::kCleartextDevice).toString().length() > 1;
     QString shellId = ComputerUtils::getBlockDevIdByUrl(info->url());
+    bool hasFileSystem = info->extraProperty(DeviceProperty::kHasFileSystem).toBool();
+
+    bool needAskForFormat = info->suffix() == SuffixInfo::kBlock
+            && !hasFileSystem
+            && !isEncrypted;
+    if (needAskForFormat) {
+        if (ComputerUtils::dlgServIns()->askForFormat())
+            actFormat(winId, info);
+        return;
+    }
 
     if (isEncrypted) {
         if (!isUnlocked) {
