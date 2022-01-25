@@ -30,6 +30,8 @@
 #include "dfmfilepreview.h"
 #include "durl.h"
 
+#include <fstream>
+
 QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
 QT_END_NAMESPACE
@@ -53,11 +55,7 @@ public:
     QWidget *previewWidget();
 
 public slots:
-    /**
-     * @brief valueChanged 用于文本内容分段加载使用
-     * @param index 当前滚动条的值，这里使用的是垂直滚动条
-     */
-    void valueChanged(int index);
+    void appendText();
 
 private:
     DUrl m_url;
@@ -66,12 +64,15 @@ private:
     QPointer<QPlainTextEdit> m_textBrowser;
 
     //! 操作文件的对象
-    QPointer<QIODevice> m_device;
+    std::ifstream m_device;
 
-    //! 用来控制m_textBrowser中使用appendPlainText追加数据后会发送valueChanged信号导致在
-    //! 重复调用曹函数valueChange导致程序崩溃，所以m_flg为true时valueChanged曹函数中的逻辑
-    //! 可以执行，否则不执行
-    bool m_flg = false;
+    QTimer *m_timer {nullptr};
+
+    int m_textSize = 0;
+
+    int m_readSize = 0;
+
+    QString m_textData;
 };
 
 #endif // TEXTPREVIEW_H
